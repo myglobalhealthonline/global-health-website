@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FileText, Download } from "lucide-react";
+import { FileSearch, FileText, Download } from "lucide-react";
 import { fetchDoctorPatientDocuments } from "@/lib/api/doctor-api";
 
 /**
@@ -39,9 +39,15 @@ export async function AllDocumentsCard({ email }: { email: string }) {
       </p>
 
       {isEmpty ? (
-        <p className="mt-4 text-[13px] text-[var(--color-text-muted)]">
-          No documents on file.
-        </p>
+        <div className="mt-4 rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-5 text-center">
+          <FileSearch className="mx-auto size-7 text-[var(--color-text-muted)]" aria-hidden />
+          <p className="mt-2 text-sm font-bold text-[var(--color-text-primary)]">
+            No documents on file
+          </p>
+          <p className="mx-auto mt-1 max-w-sm text-[12px] text-[var(--color-text-muted)]">
+            Uploaded files and generated PDFs will collect here across this patient&apos;s appointments.
+          </p>
+        </div>
       ) : (
         <div className="gh-doctor-document-section-list mt-4 grid gap-4">
           <Section
@@ -102,7 +108,7 @@ function Section({
           {rows.map((r) => (
             <li
               key={r.key}
-              className="gh-doctor-document-row flex items-center justify-between gap-3 py-2"
+              className="gh-doctor-document-row grid gap-3 py-3 sm:grid-cols-[1fr_auto] sm:items-center"
             >
               <div className="flex min-w-0 items-start gap-2">
                 <FileText
@@ -118,7 +124,7 @@ function Section({
                   </p>
                 </div>
               </div>
-              <div className="gh-doctor-document-actions flex shrink-0 items-center gap-2">
+              <div className="gh-doctor-document-actions flex shrink-0 flex-wrap items-center gap-2">
                 {r.badge ? (
                   <span className="rounded-full bg-[var(--color-background-soft)] px-2 py-0.5 text-[11px] font-semibold text-[var(--color-text-muted)]">
                     {r.badge}
@@ -126,7 +132,7 @@ function Section({
                 ) : null}
                 <Link
                   href={`/doctor/appointments/${r.appointmentId}`}
-                  className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+                  className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--color-border)] px-2 py-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)] sm:w-auto"
                 >
                   <Download className="size-3" aria-hidden /> Open
                 </Link>

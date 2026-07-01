@@ -2,7 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Download, FileText, Trash2, Upload } from "lucide-react";
+import { Download, FileText, FolderOpen, Trash2, Upload } from "lucide-react";
 import type { DoctorDocumentDto } from "@/lib/api/doctor-api";
 
 function formatSize(bytes: number): string {
@@ -119,15 +119,24 @@ export function DocumentsList({
       </div>
 
       {items.length === 0 ? (
-        <p className="text-[13px] text-[var(--color-text-muted)]">
-          No documents attached yet.
-        </p>
+        <div className="rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-4 text-center">
+          <FolderOpen
+            className="mx-auto size-6 text-[var(--color-text-muted)]"
+            aria-hidden
+          />
+          <p className="mt-2 text-sm font-bold text-[var(--color-text-primary)]">
+            No appointment documents yet
+          </p>
+          <p className="mx-auto mt-1 max-w-sm text-[12px] text-[var(--color-text-muted)]">
+            Upload referrals, lab results, scans, or notes so the consultation record stays complete.
+          </p>
+        </div>
       ) : (
         <ul className="grid gap-2">
           {items.map((d) => (
             <li
               key={d.id}
-              className="flex items-center gap-3 rounded-md border border-[var(--color-border)] bg-white p-3"
+              className="grid gap-3 rounded-md border border-[var(--color-border)] bg-white p-3 sm:grid-cols-[auto_1fr_auto_auto] sm:items-center"
             >
               <FileText
                 className="size-5 shrink-0 text-[var(--color-text-muted)]"
@@ -146,14 +155,14 @@ export function DocumentsList({
                 href={d.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] px-2 py-1 text-[12px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--color-border)] px-2 py-1 text-[12px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)] sm:w-auto"
               >
                 <Download className="size-3.5" /> Open
               </a>
               <button
                 type="button"
                 onClick={() => remove(d.id)}
-                className="text-[var(--color-text-muted)] hover:text-[var(--color-status-error)]"
+                className="inline-flex w-full items-center justify-center rounded-md border border-[var(--color-border)] px-2 py-1 text-[var(--color-text-muted)] hover:text-[var(--color-status-error)] sm:w-auto sm:border-0 sm:px-0"
                 aria-label="Delete document"
               >
                 <Trash2 className="size-3.5" />

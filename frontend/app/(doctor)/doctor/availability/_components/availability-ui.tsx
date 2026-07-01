@@ -12,7 +12,14 @@ import type {
   AvailabilityWindow,
   DoctorTimeSlotView,
 } from "@/lib/api/doctor-availability-types";
-import { AdminCard, Btn, Pill, SectionHeader } from "@/components/portal-atoms";
+import {
+  AdminCard,
+  AdminEmptyState,
+  AdminSummaryStrip,
+  Btn,
+  Pill,
+  SectionHeader,
+} from "@/components/portal-atoms";
 
 const WEEKDAYS = [
   { value: 0, label: "Sun" },
@@ -156,6 +163,20 @@ export function DoctorAvailabilityUI({
     }
     return map;
   }, [slots, countryTimeZone]);
+  const slotCounts = useMemo(
+    () =>
+      slots.reduce(
+        (acc, slot) => {
+          acc.total += 1;
+          if (slot.status === "OPEN") acc.open += 1;
+          if (slot.status === "BLOCKED") acc.blocked += 1;
+          if (slot.status === "BOOKED") acc.booked += 1;
+          return acc;
+        },
+        { total: 0, open: 0, blocked: 0, booked: 0 },
+      ),
+    [slots],
+  );
 
   return (
     <>
@@ -164,6 +185,36 @@ export function DoctorAvailabilityUI({
           {error}
         </div>
       ) : null}
+
+      <AdminSummaryStrip
+        className="mb-4"
+        items={[
+          {
+            label: "Weekly windows",
+            value: windows.length,
+            hint: "Recurring schedule rules",
+            tone: windows.length > 0 ? "brand" : "warning",
+          },
+          {
+            label: "Open slots",
+            value: slotCounts.open,
+            hint: `${slotCounts.total} generated`,
+            tone: slotCounts.open > 0 ? "success" : "neutral",
+          },
+          {
+            label: "Booked",
+            value: slotCounts.booked,
+            hint: "Patient claimed",
+            tone: slotCounts.booked > 0 ? "brand" : "neutral",
+          },
+          {
+            label: "Blocked",
+            value: slotCounts.blocked,
+            hint: "Marked unavailable",
+            tone: slotCounts.blocked > 0 ? "warning" : "neutral",
+          },
+        ]}
+      />
 
       <div className="gh-doctor-detail-grid gh-doctor-availability-grid grid gap-4 lg:grid-cols-[1fr_360px]">
         {/* ── Concrete slots day grid ───────────────────────────── */}
@@ -174,10 +225,12 @@ export function DoctorAvailabilityUI({
           />
           <div className="p-5">
             {slotsByDay.size === 0 ? (
-              <p className="text-sm text-[var(--color-text-muted)]">
-                No slots yet. Add a weekly window on the right to generate
-                slots automatically.
-              </p>
+              <AdminEmptyState
+                className="gh-doctor-empty-state"
+                icon={<CalendarClock className="size-5" aria-hidden />}
+                title="No generated slots yet"
+                description="Add a weekly window to generate bookable slots. Patients only see slots that remain open."
+              />
             ) : (
               <div className="gh-doctor-slot-day-list grid gap-4">
                 {Array.from(slotsByDay.entries()).map(([day, daySlots]) => (
@@ -252,9 +305,12 @@ export function DoctorAvailabilityUI({
             />
             <div className="p-5">
               {windows.length === 0 ? (
-                <p className="text-sm text-[var(--color-text-muted)]">
-                  No windows yet. Add your first one below.
-                </p>
+                <AdminEmptyState
+                  className="gh-doctor-empty-state"
+                  icon={<CalendarClock className="size-5" aria-hidden />}
+                  title="No weekly windows"
+                  description="Create a recurring day and time band to generate public booking slots."
+                />
               ) : (
                 <ul className="gh-doctor-window-list grid gap-2">
                   {windows.map((w) => (

@@ -51,7 +51,7 @@ export function EventDetailDialog({ item, tz, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="gh-calendar-dialog w-full max-w-md rounded-t-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 shadow-[var(--shadow-elevated)] sm:rounded-[var(--radius-card)]"
+        className="gh-calendar-dialog max-h-[calc(100vh-1rem)] w-full max-w-md overflow-y-auto rounded-t-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 shadow-[var(--shadow-elevated)] sm:max-h-[calc(100vh-2rem)] sm:rounded-[var(--radius-card)]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3">
@@ -73,7 +73,7 @@ export function EventDetailDialog({ item, tz, onClose }: Props) {
           </button>
         </div>
 
-        <dl className="mt-4 grid gap-3 text-sm">
+        <dl className="mt-4 grid gap-3 rounded-lg border border-[var(--color-border)] bg-white/75 p-3 text-sm">
           <Row label="When">
             {formatAppDateTime(item.startAt, tz)}
           </Row>
@@ -116,11 +116,11 @@ export function EventDetailDialog({ item, tz, onClose }: Props) {
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between gap-3">
+    <div className="grid gap-1 sm:grid-cols-[110px_1fr] sm:items-center">
       <dt className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
         {label}
       </dt>
-      <dd className="text-right font-medium text-[var(--color-text-primary)]">
+      <dd className="font-medium text-[var(--color-text-primary)] sm:text-right">
         {children}
       </dd>
     </div>

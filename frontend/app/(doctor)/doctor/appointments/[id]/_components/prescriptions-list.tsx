@@ -88,11 +88,17 @@ export function PrescriptionsList({
     <div>
       {/* List of issued prescriptions */}
       {items.length === 0 ? (
-        <p className="mt-3 text-[13px] text-[var(--color-text-muted)]">
-          {consultationLocked
-            ? "No prescriptions were issued during this consultation."
-            : "No prescriptions yet. Use the form below to add one."}
-        </p>
+        <div className="mt-3 rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+          <p className="flex items-center gap-2 text-sm font-bold text-[var(--color-text-primary)]">
+            <Pill className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
+            No prescriptions recorded
+          </p>
+          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+            {consultationLocked
+              ? "No prescriptions were issued during this consultation."
+              : "Issue a prescription here when medication is part of the follow-up plan."}
+          </p>
+        </div>
       ) : (
         <ul className="mt-3 grid gap-2">
           {items.map((p) => (

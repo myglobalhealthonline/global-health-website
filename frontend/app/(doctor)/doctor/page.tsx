@@ -4,6 +4,8 @@ import {
   Bell,
   Calendar,
   ChevronRight,
+  ClipboardList,
+  FileText,
   Stethoscope,
   Users,
   Video,
@@ -15,6 +17,8 @@ import {
 } from "@/lib/api/doctor-api";
 import {
   AdminCard,
+  AdminEmptyState,
+  AdminSummaryStrip,
   Btn,
   PageHeader,
   SectionHeader,
@@ -76,6 +80,13 @@ export default async function DoctorOverviewPage() {
   );
   const missingMeetingLink = upcoming24h.filter((a) => !a.meetingUrl);
   const unreadNotifs = notifRes.ok ? notifRes.data.items : [];
+  const nextAppointment = todayAppointments
+    .filter((a) => a.scheduledAt)
+    .sort(
+      (a, b) =>
+        new Date(a.scheduledAt ?? 0).getTime() -
+        new Date(b.scheduledAt ?? 0).getTime(),
+    )[0];
 
   const subtitle =
     `${doctor.title} · ${doctor.country.name}` +
@@ -86,9 +97,51 @@ export default async function DoctorOverviewPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Welcome"
+        eyebrow="Doctor workspace"
         title={doctor.fullName}
         description={subtitle}
+        actions={
+          <>
+            <Btn href="/doctor/calendar" variant="soft" size="sm">
+              Calendar
+            </Btn>
+            <Btn href="/doctor/availability" variant="secondary" size="sm">
+              Availability
+            </Btn>
+          </>
+        }
+      />
+
+      <AdminSummaryStrip
+        className="mb-4"
+        items={[
+          {
+            label: "Next appointment",
+            value: nextAppointment?.scheduledAt
+              ? formatAppTime(nextAppointment.scheduledAt)
+              : "Clear",
+            hint: nextAppointment?.fullName ?? "No open consults today",
+            tone: nextAppointment ? "brand" : "success",
+          },
+          {
+            label: "Needs link",
+            value: missingMeetingLink.length,
+            hint: "Within 24 hours",
+            tone: missingMeetingLink.length > 0 ? "warning" : "neutral",
+          },
+          {
+            label: "Unread",
+            value: unreadNotifs.length,
+            hint: "Notifications",
+            tone: unreadNotifs.length > 0 ? "warning" : "neutral",
+          },
+          {
+            label: "Markets",
+            value: 1 + doctor.additionalCountries.length,
+            hint: doctor.country.name,
+            tone: "neutral",
+          },
+        ]}
       />
 
       {/* ── Stat tiles ─────────────────────────────────────────────── */}
@@ -169,16 +222,22 @@ export default async function DoctorOverviewPage() {
           />
           <div className="p-5">
             {todayAppointments.length === 0 ? (
-              <p className="text-[13px] text-[var(--color-text-muted)]">
-                Nothing on the calendar for today. Browse the full list at{" "}
-                <Link
-                  href="/doctor/appointments"
-                  className="font-semibold text-[var(--color-brand-primary)] hover:underline"
-                >
-                  My appointments
-                </Link>
-                .
-              </p>
+              <AdminEmptyState
+                className="gh-doctor-empty-state"
+                icon={<Calendar className="size-5" aria-hidden />}
+                title="No open appointments today"
+                description="Your schedule is clear for now. Review the full appointment queue or add availability for future bookings."
+                action={
+                  <div className="flex flex-wrap gap-2">
+                    <Btn href="/doctor/appointments" variant="soft" size="sm">
+                      My appointments
+                    </Btn>
+                    <Btn href="/doctor/availability" variant="secondary" size="sm">
+                      Add availability
+                    </Btn>
+                  </div>
+                }
+              />
             ) : (
               <ul className="gh-doctor-schedule-list divide-y divide-[var(--color-border)]">
                 {todayAppointments.slice(0, 8).map((a) => (
@@ -234,9 +293,12 @@ export default async function DoctorOverviewPage() {
           />
           <div className="p-5">
             {unreadNotifs.length === 0 ? (
-              <p className="text-[13px] text-[var(--color-text-muted)]">
-                You&apos;re caught up.
-              </p>
+              <AdminEmptyState
+                className="gh-doctor-empty-state"
+                icon={<Bell className="size-5" aria-hidden />}
+                title="No unread notifications"
+                description="New appointment assignments, document activity, and internal messages will appear here."
+              />
             ) : (
               <ul className="gh-doctor-notification-mini-list grid gap-3">
                 {unreadNotifs.slice(0, 6).map((n) => (
@@ -281,13 +343,13 @@ export default async function DoctorOverviewPage() {
         />
         <QuickActionCard
           href="/doctor/forms"
-          icon={<Calendar className="size-5" aria-hidden />}
+          icon={<ClipboardList className="size-5" aria-hidden />}
           label="Forms"
           hint="Intake / pre-consult / follow-up"
         />
         <QuickActionCard
           href="/doctor/invoices"
-          icon={<Stethoscope className="size-5" aria-hidden />}
+          icon={<FileText className="size-5" aria-hidden />}
           label="Invoices"
           hint="Payment status + history"
         />

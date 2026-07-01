@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronRight, Eye } from "lucide-react";
+import { ChevronDown, ChevronRight, Eye, FileText } from "lucide-react";
 
 export type SessionMeta = {
   sessionDate: string;
@@ -114,7 +114,8 @@ export function GeneratedDocumentsTable({
   session: SessionMeta;
 }) {
   return (
-    <div className="gh-doctor-table-wrap overflow-x-auto">
+    <>
+    <div className="hidden md:block gh-doctor-table-wrap overflow-x-auto">
       <table className="w-full min-w-[720px] text-[13px]">
         <thead>
           <tr className={TABLE_HEAD}>
@@ -158,6 +159,18 @@ export function GeneratedDocumentsTable({
         </tbody>
       </table>
     </div>
+    <div className="grid gap-3 p-3 md:hidden">
+      {rows.map((r) => (
+        <DocumentMobileCard
+          key={r.id}
+          fileName={r.fileName}
+          fileTypeLabel={r.fileTypeLabel}
+          viewUrl={r.pdfUrl}
+          session={session}
+        />
+      ))}
+    </div>
+    </>
   );
 }
 
@@ -176,7 +189,8 @@ export function UploadedFilesTable({
   session: SessionMeta;
 }) {
   return (
-    <div className="gh-doctor-table-wrap overflow-x-auto">
+    <>
+    <div className="hidden md:block gh-doctor-table-wrap overflow-x-auto">
       <table className="w-full min-w-[720px] text-[13px]">
         <thead>
           <tr className={TABLE_HEAD}>
@@ -220,6 +234,18 @@ export function UploadedFilesTable({
         </tbody>
       </table>
     </div>
+    <div className="grid gap-3 p-3 md:hidden">
+      {rows.map((u) => (
+        <DocumentMobileCard
+          key={u.id}
+          fileName={u.fileName}
+          fileTypeLabel={u.fileTypeLabel}
+          viewUrl={u.viewUrl}
+          session={session}
+        />
+      ))}
+    </div>
+    </>
   );
 }
 
@@ -247,5 +273,57 @@ export function DocTypeGroup({
       </button>
       {open ? <GeneratedDocumentsTable rows={rows} session={session} /> : null}
     </div>
+  );
+}
+
+function DocumentMobileCard({
+  fileName,
+  fileTypeLabel,
+  viewUrl,
+  session,
+}: {
+  fileName: string;
+  fileTypeLabel: string;
+  viewUrl: string;
+  session: SessionMeta;
+}) {
+  return (
+    <article className="gh-doctor-document-row rounded-[10px] border border-[var(--color-border)] bg-white p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="flex items-center gap-2 truncate text-sm font-bold text-[var(--color-text-primary)]">
+            <FileText className="size-4 shrink-0 text-[var(--color-brand-primary)]" aria-hidden />
+            {fileName}
+          </p>
+          <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+            {session.sessionDate} at {session.sessionTime}
+          </p>
+        </div>
+        <FileTypeBadge label={fileTypeLabel} />
+      </div>
+      <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
+        <div>
+          <dt className="text-[var(--color-text-muted)]">Order</dt>
+          <dd className="font-semibold text-[var(--color-text-primary)]">
+            {session.orderNumber}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-[var(--color-text-muted)]">Uploaded by</dt>
+          <dd className="font-semibold text-[var(--color-text-primary)]">
+            {session.uploadedBy}
+          </dd>
+        </div>
+      </dl>
+      <a
+        href={viewUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="gh-btn gh-btn-soft mt-4 w-full text-sm"
+      >
+        <Eye className="size-3.5" aria-hidden />
+        View document
+      </a>
+    </article>
   );
 }

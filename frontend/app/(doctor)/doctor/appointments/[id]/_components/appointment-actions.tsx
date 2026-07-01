@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarClock, Save, Video } from "lucide-react";
+import { CalendarClock, Route, Save, Video } from "lucide-react";
 
 const STATUS_OPTIONS = [
   { value: "REQUEST_RECEIVED", label: "Created" },
@@ -115,7 +115,22 @@ export function AppointmentActions({
   }
 
   return (
-    <form onSubmit={save} className="mt-3 grid gap-3">
+    <form onSubmit={save} className="mt-3 grid gap-4 rounded-lg border border-[var(--color-border)] bg-white/75 p-3 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--color-border)] pb-3">
+        <div>
+          <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+            Consultation controls
+          </p>
+          <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+            Update the slot, delivery mode, meeting link, and workflow status in one save.
+          </p>
+        </div>
+        <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-background-soft)] px-2.5 py-1 text-[11px] font-bold text-[var(--color-brand-primary)]">
+          <Route className="size-3" aria-hidden />
+          {STATUS_OPTIONS.find((option) => option.value === status)?.label ?? status}
+        </span>
+      </div>
+
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5">
           <span className="gh-field-label inline-flex items-center gap-1">
@@ -191,7 +206,7 @@ export function AppointmentActions({
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-[var(--color-background-soft)] px-3 py-2">
         {meetingUrl ? (
           <a
             href={meetingUrl}

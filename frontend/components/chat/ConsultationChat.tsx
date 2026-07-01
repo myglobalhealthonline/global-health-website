@@ -268,12 +268,17 @@ export function ConsultationChat({
         )}
 
         {!loading && items.length === 0 && (
-          <p className="gh-chat-empty text-sm text-slate-500">
-            No messages yet.{" "}
-            {canSend
-              ? "Start the conversation below or attach a document."
-              : "The chat window is currently closed."}
-          </p>
+          <div className="gh-chat-empty rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-center">
+            <Send className="mx-auto size-5 text-slate-400" aria-hidden />
+            <p className="mt-2 text-sm font-bold text-slate-800">
+              No messages yet
+            </p>
+            <p className="mx-auto mt-1 max-w-sm text-xs text-slate-500">
+              {canSend
+                ? "Start the conversation below or attach a document for the patient record."
+                : "The chat window is currently closed."}
+            </p>
+          </div>
         )}
 
         <ul className="gh-chat-list space-y-2">
@@ -383,7 +388,7 @@ export function ConsultationChat({
           </button>
         </form>
       ) : (
-        <div className="gh-chat-disabled border-t border-slate-100 px-4 py-3 text-center text-xs text-slate-400">
+        <div className="gh-chat-disabled border-t border-slate-100 bg-slate-50 px-4 py-3 text-center text-xs font-medium text-slate-500">
           {paymentRequired
             ? viewerRole === "PATIENT"
               ? "Complete your booking payment to unlock the chat."

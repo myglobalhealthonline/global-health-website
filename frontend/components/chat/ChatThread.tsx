@@ -122,9 +122,15 @@ export function ChatThread({
         ) : null}
 
         {!loading && items.length === 0 ? (
-          <p className="gh-chat-empty text-sm text-slate-500">
-            No messages yet. Start the conversation below.
-          </p>
+          <div className="gh-chat-empty rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-center">
+            <Send className="mx-auto size-5 text-slate-400" aria-hidden />
+            <p className="mt-2 text-sm font-bold text-slate-800">
+              No messages yet
+            </p>
+            <p className="mx-auto mt-1 max-w-sm text-xs text-slate-500">
+              Start the conversation below.
+            </p>
+          </div>
         ) : null}
 
         <ul className="gh-chat-list space-y-2">

@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { ChevronDown, ChevronRight, Eye } from "lucide-react";
+import { ChevronDown, ChevronRight, ClipboardList, Eye, FileSearch } from "lucide-react";
 
 type MedicalNoteRow = {
   id: string;
@@ -154,7 +154,23 @@ const TABLE_HEAD =
 
 function DocumentTable({ rows }: { rows: DocRow[] }) {
   return (
-    <div className="gh-doctor-table-wrap overflow-x-auto">
+    <>
+    <div className="grid gap-2 p-3 md:hidden">
+      {rows.map((r) => (
+        <DocumentMobileRow
+          key={r.id}
+          title={r.fileName}
+          sessionDate={r.sessionDate}
+          sessionTime={r.sessionTime}
+          orderNumber={r.orderNumber}
+          consultationTypeLabel={r.consultationTypeLabel}
+          fileTypeLabel={r.fileTypeLabel}
+          uploadedBy={r.uploadedBy}
+          viewUrl={r.pdfUrl}
+        />
+      ))}
+    </div>
+    <div className="gh-doctor-table-wrap hidden overflow-x-auto md:block">
       <table className="w-full min-w-[720px] text-[13px]">
         <thead>
           <tr className={TABLE_HEAD}>
@@ -198,12 +214,29 @@ function DocumentTable({ rows }: { rows: DocRow[] }) {
         </tbody>
       </table>
     </div>
+    </>
   );
 }
 
 function UploadsTable({ rows }: { rows: UploadRow[] }) {
   return (
-    <div className="gh-doctor-table-wrap overflow-x-auto">
+    <>
+    <div className="grid gap-2 p-3 md:hidden">
+      {rows.map((u) => (
+        <DocumentMobileRow
+          key={u.id}
+          title={u.fileName}
+          sessionDate={u.sessionDate}
+          sessionTime={u.sessionTime}
+          orderNumber={u.orderNumber}
+          consultationTypeLabel={u.consultationTypeLabel}
+          fileTypeLabel={u.fileTypeLabel}
+          uploadedBy={u.uploadedBy}
+          viewUrl={u.viewUrl}
+        />
+      ))}
+    </div>
+    <div className="gh-doctor-table-wrap hidden overflow-x-auto md:block">
       <table className="w-full min-w-[720px] text-[13px]">
         <thead>
           <tr className={TABLE_HEAD}>
@@ -247,6 +280,58 @@ function UploadsTable({ rows }: { rows: UploadRow[] }) {
         </tbody>
       </table>
     </div>
+    </>
+  );
+}
+
+function DocumentMobileRow({
+  title,
+  sessionDate,
+  sessionTime,
+  orderNumber,
+  consultationTypeLabel,
+  fileTypeLabel,
+  uploadedBy,
+  viewUrl,
+}: {
+  title: string;
+  sessionDate: string;
+  sessionTime: string;
+  orderNumber: string;
+  consultationTypeLabel: string;
+  fileTypeLabel: string;
+  uploadedBy: string;
+  viewUrl: string;
+}) {
+  return (
+    <article className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-[13px] font-bold text-[var(--color-text-primary)]">
+            {title}
+          </p>
+          <p className="mt-1 text-[11px] text-[var(--color-text-muted)]">
+            {sessionDate} at {sessionTime} · order {orderNumber}
+          </p>
+        </div>
+        <FileTypeBadge label={fileTypeLabel} />
+      </div>
+      <div className="mt-2 flex flex-wrap gap-2">
+        <SessionTypeBadge label={consultationTypeLabel} />
+        <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-[var(--color-text-muted)]">
+          {uploadedBy}
+        </span>
+      </div>
+      <a
+        href={viewUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-3 inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-2.5 py-1.5 text-[12px] font-semibold text-[var(--color-brand-primary)]"
+      >
+        <Eye className="size-3.5" aria-hidden />
+        View
+      </a>
+    </article>
   );
 }
 
@@ -271,13 +356,21 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
 
   if (loading) {
     return (
-      <p className="text-[13px] text-[var(--color-text-muted)]">Loading consultation history…</p>
+      <div className="rounded-lg border border-[var(--color-border)] bg-white/75 p-4">
+        <div className="h-4 w-40 rounded bg-[var(--color-background-soft)]" />
+        <div className="mt-3 grid gap-2">
+          <div className="h-16 rounded bg-[var(--color-background-soft)]" />
+          <div className="h-16 rounded bg-[var(--color-background-soft)]" />
+        </div>
+      </div>
     );
   }
 
   if (!data) {
     return (
-      <p className="text-[13px] text-[var(--color-text-muted)]">Could not load history.</p>
+      <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        Could not load consultation history.
+      </div>
     );
   }
 
@@ -288,9 +381,15 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
 
   if (!hasAny) {
     return (
-      <p className="text-[13px] text-[var(--color-text-muted)]">
-        No consultation documents yet.
-      </p>
+      <div className="rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-5 text-center">
+        <FileSearch className="mx-auto size-7 text-[var(--color-text-muted)]" aria-hidden />
+        <p className="mt-2 text-sm font-bold text-[var(--color-text-primary)]">
+          No consultation documents yet
+        </p>
+        <p className="mx-auto mt-1 max-w-sm text-[12px] text-[var(--color-text-muted)]">
+          Notes, uploaded files, and generated documents will appear here after appointments are completed.
+        </p>
+      </div>
     );
   }
 
@@ -300,7 +399,32 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
     <div className="gh-doctor-consultation-history space-y-4">
       {data.medicalNotes.length > 0 ? (
         <HistorySection title="Medical notes" count={data.medicalNotes.length}>
-          <div className="gh-doctor-table-wrap overflow-x-auto">
+          <div className="grid gap-2 p-3 md:hidden">
+            {data.medicalNotes.map((n) => (
+              <article
+                key={n.id}
+                className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3"
+              >
+                <p className="flex items-center gap-2 text-[13px] font-bold text-[var(--color-text-primary)]">
+                  <ClipboardList className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
+                  {n.sessionDate} at {n.sessionTime}
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <SessionTypeBadge label={n.consultationTypeLabel} />
+                  <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-[var(--color-text-muted)]">
+                    {n.createdByName}
+                  </span>
+                </div>
+                <p className="mt-2 text-[12px] text-[var(--color-text-muted)]">
+                  {n.symptoms?.trim() || "No symptoms recorded"}
+                </p>
+                <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--color-text-primary)]">
+                  {n.content}
+                </p>
+              </article>
+            ))}
+          </div>
+          <div className="gh-doctor-table-wrap hidden overflow-x-auto md:block">
             <table className="w-full min-w-[640px] text-[13px]">
               <thead>
                 <tr className={TABLE_HEAD}>

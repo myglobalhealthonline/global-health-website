@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, Trash2 } from "lucide-react";
+import { BadgeCheck, Globe2, Landmark, Upload, Trash2 } from "lucide-react";
 import { RichTextHtmlField } from "@/app/(admin)/admin/_components/rich-text-html-field";
 import { PhoneField } from "@/components/forms/phone-field";
 import {
@@ -209,6 +209,7 @@ export function DoctorProfileEditForm({
   );
   const [photoError, setPhotoError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const verifiedMarketCount = initial.markets.filter((market) => market.isVerified).length;
 
   useEffect(() => {
     setFullName(initial.fullName);
@@ -433,6 +434,28 @@ export function DoctorProfileEditForm({
   return (
     <div className="gh-doctor-detail-grid gh-doctor-profile-edit-layout grid gap-4">
       <div className="grid gap-4">
+        <section className="gh-card p-4">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <ProfileInsight
+              icon={<Globe2 className="size-4" aria-hidden />}
+              label="Markets"
+              value={String(initial.markets.length)}
+              helper={activeCountryName ? `Editing ${activeCountryName}` : "Default doctor profile"}
+            />
+            <ProfileInsight
+              icon={<BadgeCheck className="size-4" aria-hidden />}
+              label="Verified"
+              value={`${verifiedMarketCount}/${initial.markets.length || 1}`}
+              helper="Country registration status"
+            />
+            <ProfileInsight
+              icon={<Landmark className="size-4" aria-hidden />}
+              label="Payout"
+              value={activeMarketHasIban ? "On file" : "Missing"}
+              helper={activeCountryName ?? "Bank details"}
+            />
+          </div>
+        </section>
         {/* ── Public profile form ─────────────────── */}
         <form onSubmit={onSubmitProfile}>
           <section className="gh-card gh-doctor-profile-form-card p-6">
@@ -835,6 +858,33 @@ export function DoctorProfileEditForm({
           </p>
         </section>
       </aside>
+    </div>
+  );
+}
+
+function ProfileInsight({
+  icon,
+  label,
+  value,
+  helper,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  helper: string;
+}) {
+  return (
+    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3">
+      <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+        <span className="text-[var(--color-brand-primary)]">{icon}</span>
+        {label}
+      </p>
+      <p className="mt-2 text-lg font-extrabold text-[var(--color-text-primary)]">
+        {value}
+      </p>
+      <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+        {helper}
+      </p>
     </div>
   );
 }

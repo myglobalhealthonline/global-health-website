@@ -1,5 +1,5 @@
 import { CalendarRange } from "lucide-react";
-import { PageHeader, AdminCard } from "@/components/portal-atoms";
+import { PageHeader, AdminCard, AdminSummaryStrip } from "@/components/portal-atoms";
 import { fetchDoctorAvailabilityRange } from "@/lib/api/doctor-availability-server";
 import { fetchDoctorAppointments } from "@/lib/api/doctor-api";
 import { monthGridRangeIso } from "@/components/calendar/calendar-utils";
@@ -65,6 +65,8 @@ export default async function DoctorCalendarPage() {
         countryCode: a.countryCode,
       },
     }));
+  const openSlots = initialSlots.filter((slot) => slot.status === "OPEN").length;
+  const blockedSlots = initialSlots.filter((slot) => slot.status === "BLOCKED").length;
 
   return (
     <>
@@ -76,6 +78,36 @@ export default async function DoctorCalendarPage() {
         }
         title="Calendar"
         description="Your consultations and available slots in one view. Click a day to see its agenda, block individual slots, or set time off. Blocked slots disappear from the public booking page automatically."
+      />
+
+      <AdminSummaryStrip
+        className="mb-4"
+        items={[
+          {
+            label: "Consultations",
+            value: consultations.length,
+            hint: "Scheduled appointments",
+            tone: consultations.length > 0 ? "brand" : "neutral",
+          },
+          {
+            label: "Open slots",
+            value: openSlots,
+            hint: "Bookable this range",
+            tone: openSlots > 0 ? "success" : "warning",
+          },
+          {
+            label: "Blocked slots",
+            value: blockedSlots,
+            hint: "Unavailable",
+            tone: blockedSlots > 0 ? "warning" : "neutral",
+          },
+          {
+            label: "Timezone",
+            value: clinicTimezone.split("/").pop()?.replace(/_/g, " ") ?? clinicTimezone,
+            hint: "Clinic default",
+            tone: "neutral",
+          },
+        ]}
       />
 
       <DoctorCalendarUI

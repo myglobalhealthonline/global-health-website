@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { CalendarDays, Video } from "lucide-react";
+import { CalendarDays, Search, Video } from "lucide-react";
 import { formatAppTime } from "@/lib/format-datetime";
 import type { CalendarItem } from "./calendar-types";
 import { dayLabel } from "./calendar-utils";
@@ -55,11 +55,25 @@ export function DayAgenda({
 
       <div className="flex-1 overflow-y-auto p-4">
         {!dayKey ? (
-          <p className="text-sm text-[var(--color-text-muted)]">
-            Select a day on the calendar to see its consultations and slots.
-          </p>
+          <div className="rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-5 text-center">
+            <CalendarDays className="mx-auto size-7 text-[var(--color-text-muted)]" aria-hidden />
+            <p className="mt-2 text-sm font-bold text-[var(--color-text-primary)]">
+              Select a day
+            </p>
+            <p className="mx-auto mt-1 max-w-xs text-[12px] text-[var(--color-text-muted)]">
+              Consultations and availability slots for the selected day will appear here.
+            </p>
+          </div>
         ) : items.length === 0 ? (
-          <p className="text-sm text-[var(--color-text-muted)]">{emptyLabel}</p>
+          <div className="rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-5 text-center">
+            <Search className="mx-auto size-7 text-[var(--color-text-muted)]" aria-hidden />
+            <p className="mt-2 text-sm font-bold text-[var(--color-text-primary)]">
+              {emptyLabel}
+            </p>
+            <p className="mx-auto mt-1 max-w-xs text-[12px] text-[var(--color-text-muted)]">
+              Add availability or open another day to review appointments.
+            </p>
+          </div>
         ) : (
           <div className="grid gap-4">
             {consultations.length > 0 ? (

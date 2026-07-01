@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, ClipboardCheck } from "lucide-react";
 
 export function FinalizeChecklist({
   appointmentId,
@@ -23,10 +23,15 @@ export function FinalizeChecklist({
 
   if (initialFinalized) {
     return (
-      <p className="mt-3 flex items-center gap-2 text-sm font-semibold text-emerald-800">
-        <CheckCircle2 className="size-4" aria-hidden />
-        Appointment finalized
-      </p>
+      <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50/80 p-3 text-sm font-semibold text-emerald-800">
+        <p className="flex items-center gap-2">
+          <CheckCircle2 className="size-4" aria-hidden />
+          Appointment finalized
+        </p>
+        <p className="mt-1 text-[12px] font-medium text-emerald-700">
+          Notes and required documents were confirmed for this consultation.
+        </p>
+      </div>
     );
   }
 
@@ -55,8 +60,21 @@ export function FinalizeChecklist({
   }
 
   return (
-    <div className="mt-3 space-y-3">
-      <label className="flex items-center gap-2 text-sm">
+    <div className="mt-3 space-y-3 rounded-lg border border-[var(--color-border)] bg-white/75 p-3 shadow-sm">
+      <div className="flex items-start gap-2">
+        <span className="grid size-9 shrink-0 place-items-center rounded-md bg-[var(--color-brand-primary)] text-white">
+          <ClipboardCheck className="size-4" aria-hidden />
+        </span>
+        <div>
+          <p className="text-sm font-bold text-[var(--color-text-primary)]">
+            Final consultation checklist
+          </p>
+          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+            Confirm clinical notes and files before closing the appointment.
+          </p>
+        </div>
+      </div>
+      <label className="flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2 text-sm">
         <input
           type="checkbox"
           checked={notesUploaded}
@@ -64,7 +82,7 @@ export function FinalizeChecklist({
         />
         Consultation notes uploaded / complete
       </label>
-      <label className="flex items-center gap-2 text-sm">
+      <label className="flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2 text-sm">
         <input
           type="checkbox"
           checked={filesUploaded}
@@ -72,7 +90,11 @@ export function FinalizeChecklist({
         />
         Required files uploaded
       </label>
-      {message ? <p className="text-sm text-red-700">{message}</p> : null}
+      {message ? (
+        <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+          {message}
+        </p>
+      ) : null}
       <button
         type="button"
         disabled={pending}

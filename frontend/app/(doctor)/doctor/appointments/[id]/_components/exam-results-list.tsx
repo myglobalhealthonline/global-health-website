@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Check, ExternalLink, Trash2 } from "lucide-react";
+import { Check, ClipboardPlus, ExternalLink, FlaskConical, Trash2 } from "lucide-react";
 
 type ExamItem = {
   id: string;
@@ -122,7 +122,20 @@ export function ExamResultsList({
 
   return (
     <div className="mt-4 grid gap-4">
-      <form onSubmit={add} className="grid gap-3">
+      <form onSubmit={add} className="grid gap-3 rounded-lg border border-[var(--color-border)] bg-white/75 p-3 shadow-sm">
+        <div className="flex items-start gap-2">
+          <span className="grid size-9 shrink-0 place-items-center rounded-md bg-[var(--color-background-soft)] text-[var(--color-brand-primary)]">
+            <ClipboardPlus className="size-4" aria-hidden />
+          </span>
+          <div>
+            <p className="text-sm font-bold text-[var(--color-text-primary)]">
+              Exams and results
+            </p>
+            <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+              Request a test or log a completed external result for this consultation.
+            </p>
+          </div>
+        </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">Test name</span>
@@ -202,9 +215,15 @@ export function ExamResultsList({
       </form>
 
       {items.length === 0 ? (
-        <p className="text-[13px] text-[var(--color-text-muted)]">
-          No exams logged yet.
-        </p>
+        <div className="rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+          <p className="flex items-center gap-2 text-sm font-bold text-[var(--color-text-primary)]">
+            <FlaskConical className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
+            No exams logged yet
+          </p>
+          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+            Requested exams, lab links, and completed results will appear here.
+          </p>
+        </div>
       ) : (
         <ul className="grid gap-3">
           {items.map((r) => (

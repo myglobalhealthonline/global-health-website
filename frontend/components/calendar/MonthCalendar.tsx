@@ -50,7 +50,7 @@ export function MonthCalendar({
   return (
     <div className="gh-calendar-panel gh-card overflow-hidden p-0">
       {/* Header — month label + nav */}
-      <div className="flex items-center justify-between gap-3 border-b border-[var(--color-border)] px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--color-border)] px-4 py-3">
         <h2 className="text-base font-bold text-[var(--color-text-primary)]">
           {monthLabel(year, month)}
         </h2>
@@ -94,7 +94,7 @@ export function MonthCalendar({
       </div>
 
       {/* Day grid */}
-      <div className="gh-calendar-grid grid grid-cols-7">
+      <div className="gh-calendar-grid grid grid-cols-7 overflow-hidden">
         {cells.map((cell) => {
           const items = itemsByDay.get(cell.key);
           const { consults, open, blocked, booked } = summarize(items);
@@ -106,7 +106,7 @@ export function MonthCalendar({
               key={cell.key}
               type="button"
               onClick={() => onSelectDay(cell.key)}
-              className={`gh-calendar-day relative flex min-h-[78px] flex-col items-start gap-1 border-b border-r border-[var(--color-border)] p-1.5 text-left transition sm:min-h-[92px] ${
+              className={`gh-calendar-day relative flex min-h-[68px] flex-col items-start gap-1 border-b border-r border-[var(--color-border)] p-1 text-left transition sm:min-h-[92px] sm:p-1.5 ${
                 cell.inMonth
                   ? "bg-[var(--color-background-page)]"
                   : "gh-calendar-day-outside bg-[var(--color-background-soft)]"
@@ -127,7 +127,7 @@ export function MonthCalendar({
               {hasAny ? (
                 <span className="mt-auto flex w-full flex-wrap gap-1">
                   {consults > 0 ? (
-                    <span className="inline-flex items-center rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold leading-none text-emerald-800">
+                    <span className="inline-flex max-w-full items-center truncate rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold leading-none text-emerald-800">
                       {consults} consult{consults > 1 ? "s" : ""}
                     </span>
                   ) : null}

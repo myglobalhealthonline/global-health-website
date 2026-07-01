@@ -2,7 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Upload } from "lucide-react";
+import { FileUp, Upload } from "lucide-react";
 import type { DoctorDocumentDto } from "@/lib/api/doctor-api";
 
 /**
@@ -52,7 +52,20 @@ export function DocumentUploadForm({
   }
 
   return (
-    <div className="grid gap-3">
+    <div className="grid gap-3 rounded-lg border border-[var(--color-border)] bg-white/75 p-3 shadow-sm">
+      <div className="flex items-start gap-2">
+        <span className="grid size-9 shrink-0 place-items-center rounded-md bg-[var(--color-background-soft)] text-[var(--color-brand-primary)]">
+          <FileUp className="size-4" aria-hidden />
+        </span>
+        <div>
+          <p className="text-sm font-bold text-[var(--color-text-primary)]">
+            Upload appointment document
+          </p>
+          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+            Add clinical files that should stay attached to this patient appointment.
+          </p>
+        </div>
+      </div>
       <label className="flex flex-col gap-1">
         <span className="gh-field-label">File type / label</span>
         <input

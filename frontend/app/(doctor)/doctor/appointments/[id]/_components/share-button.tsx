@@ -55,9 +55,12 @@ export function ShareConsultationButton({
 
   if (disabled) {
     return (
-      <p className="text-[12px] text-[var(--color-text-muted)]">
-        Sign the note to enable a 7-day share link.
-      </p>
+      <div className="rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2">
+        <p className="flex items-center gap-2 text-[12px] font-semibold text-[var(--color-text-muted)]">
+          <Share2 className="size-3.5" aria-hidden />
+          Sign the note to enable a 7-day share link.
+        </p>
+      </div>
     );
   }
 

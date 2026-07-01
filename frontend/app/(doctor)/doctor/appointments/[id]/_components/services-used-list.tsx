@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2 } from "lucide-react";
+import { ClipboardList, Plus, Trash2 } from "lucide-react";
 import type { ConsultationServiceLineDto } from "@/lib/api/doctor-api";
 
 function formatPrice(cents: number | null, code: string | null) {
@@ -44,10 +44,15 @@ export function ServicesUsedList({
 
   if (!consultationId) {
     return (
-      <p className="mt-3 text-[13px] text-[var(--color-text-muted)]">
-        Save a draft of the consultation note first; line items attach to
-        the consultation row.
-      </p>
+      <div className="mt-3 rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+        <p className="flex items-center gap-2 text-sm font-bold text-[var(--color-text-primary)]">
+          <ClipboardList className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
+          Save the clinical note first
+        </p>
+        <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+          Service line items attach to the consultation record after the first draft is saved.
+        </p>
+      </div>
     );
   }
 
@@ -118,9 +123,15 @@ export function ServicesUsedList({
   return (
     <div className="mt-4 grid gap-3">
       {items.length === 0 ? (
-        <p className="text-[13px] text-[var(--color-text-muted)]">
-          No services logged for this consult.
-        </p>
+        <div className="rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+          <p className="flex items-center gap-2 text-sm font-bold text-[var(--color-text-primary)]">
+            <ClipboardList className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
+            No services logged yet
+          </p>
+          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+            Add billable or clinical service lines used during this consultation.
+          </p>
+        </div>
       ) : (
         <div className="gh-doctor-table-wrap overflow-x-auto">
           <table className="w-full min-w-[620px] text-[13px]">

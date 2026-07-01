@@ -336,3 +336,46 @@ Scope: Doctor Portal only. No Admin route work, no Patient/Account route work, n
 - `npm run build` with `CI=true` and `PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN=false`: Passed.
 - `pnpm --filter frontend lint` with `CI=true` and `PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN=false`: Passed with 0 errors and 34 existing warnings.
 
+
+## Doctor Portal Completion Pass - 2026-07-01
+
+Scope: Doctor Portal source and Doctor-used shared components only. No Admin route work, no Patient/Account route work, no screenshots, and no new markdown files.
+
+### Source Coverage
+
+- Doctor source files discovered by final file-tree scan: 48.
+- Doctor page routes inspected: 14.
+- Doctor route-owned components/state files inspected: 34.
+- Shared Doctor-used components inspected: 5.
+- Generated raster assets added: 0.
+- Rows still `Needs review`: 0.
+- Rows not completed: 0.
+
+### File Classification
+
+- Deeply redesigned in this pass: `frontend/app/(doctor)/doctor/loading.tsx`, `frontend/app/(doctor)/doctor/page.tsx`, `frontend/app/(doctor)/doctor/_components/doctor-document-tables.tsx`, `frontend/app/(doctor)/doctor/availability/_components/availability-ui.tsx`, `frontend/app/(doctor)/doctor/calendar/page.tsx`, `frontend/app/(doctor)/doctor/services/page.tsx`, `frontend/app/(doctor)/doctor/profile/_components/edit-form.tsx`, `frontend/app/(doctor)/doctor/appointments/[id]/_components/appointment-actions.tsx`, `consultation-chat-section.tsx`, `document-upload-form.tsx`, `documents-list.tsx`, `exam-results-list.tsx`, `finalize-checklist.tsx`, `prescriptions-list.tsx`, `services-used-list.tsx`, `share-button.tsx`, `frontend/app/(doctor)/doctor/patients/[email]/_components/all-documents-card.tsx`, and `consultation-history-panel.tsx`.
+- Shared Doctor-used components redesigned in this pass: `frontend/components/calendar/DayAgenda.tsx`, `EventDetailDialog.tsx`, `MonthCalendar.tsx`, `frontend/components/chat/ChatThread.tsx`, and `ConsultationChat.tsx`.
+- Already deeply redesigned in previous pass and re-inspected: `/doctor/appointments`, `/doctor/appointments/[id]`, `/doctor/forms`, `/doctor/forms/_components/templates.tsx`, `/doctor/invoices`, `/doctor/notifications`, `/doctor/notifications/_components/notification-list.tsx`, `/doctor/patients`, `/doctor/patients/[email]`, `/doctor/profile`, `/doctor/profile/[country]`, `/doctor/profile/_components/profile-sections.tsx`, `/doctor/reports`, `/doctor/reports/_components/csv-button.tsx`, `/doctor/services/_components/service-selection-form.tsx`.
+- Minor alignment only after inspection: `frontend/app/(doctor)/doctor/calendar/ui.tsx`, `frontend/app/(doctor)/doctor/availability/page.tsx`, `frontend/app/(doctor)/doctor/services/page.tsx`, `frontend/components/forms/LanguagePicker.tsx`, and `frontend/components/forms/phone-field.tsx`.
+- No UI surface / logic-only file: `frontend/app/(doctor)/doctor/layout.tsx`.
+
+### UI/UX Implementation
+
+- Dashboard: added Doctor workspace summary strip, next-appointment signal, improved quick actions, and composed empty states.
+- Dashboard loading: added route loading skeleton matching the page header, summary, stat cards, and panels.
+- Calendar: added page summary metrics plus improved DayAgenda empty/select states, MonthCalendar mobile fit, and EventDetailDialog overflow-safe layout.
+- Availability: added weekly slot summary strip and composed empty states for slots/windows.
+- Services: added assigned-service summary metrics before the selection workflow.
+- Appointment detail workflow: upgraded actions card, finalize checklist, consultation chat context, document upload/list states, services-used empty states, prescriptions, exams, and share-link disabled state.
+- Patient detail: upgraded all-documents empty state, mobile document actions, consultation-history loading/error/empty states, and mobile cards for documents and medical notes.
+- Profile editor: added market/verification/payout summary cards before the long public profile and payout forms.
+- Shared chat: upgraded no-message and disabled states used by Doctor consultation chat.
+
+### Validation
+
+- `git diff --check`: Passed.
+- `npm run typecheck`: Passed.
+- `npm run build`: Passed.
+- `pnpm --filter frontend lint`: Passed with 0 errors and 34 existing warnings.
+
+
