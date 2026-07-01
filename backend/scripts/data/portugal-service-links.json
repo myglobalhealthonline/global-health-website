@@ -1,0 +1,58 @@
+[
+  { "source": "medical-consultation", "target": "pain-management-consultation", "type": "UPGRADE", "priority": 0,
+    "heading": "A dor é a sua principal preocupação?", "body": "Se a dor ou uma lesão músculo-esquelética é a sua principal preocupação, a nossa Avaliação Músculo-Esquelética e da Dor proporciona uma avaliação clínica mais focada.", "ctaLabel": "Avaliação Músculo-Esquelética e da Dor" },
+  { "source": "medical-consultation", "target": "cardiology-consultation", "type": "UPGRADE", "priority": 1,
+    "heading": "Sintomas cardiovasculares novos?", "body": "Para sintomas cardiovasculares novos que exijam avaliação especializada, a nossa Consulta de Cardiologia proporciona cuidados ao nível especializado.", "ctaLabel": "Consulta de Cardiologia" },
+
+  { "source": "family-and-general-medicine", "target": "cardiology-consultation", "type": "UPGRADE", "priority": 0,
+    "heading": "Condição cardiovascular a exigir especialista?", "body": "Para condições cardiovasculares que exijam avaliação especializada — incluindo hipertensão complexa, arritmia, ou doença cardíaca — a nossa Consulta de Cardiologia proporciona cuidados ao nível especializado.", "ctaLabel": "Consulta de Cardiologia" },
+  { "source": "family-and-general-medicine", "target": "psychiatry-consultation", "type": "UPGRADE", "priority": 1,
+    "heading": "Saúde mental a exigir gestão especializada?", "body": "Quando a sua condição crónica tem uma dimensão significativa de saúde mental que exija gestão psiquiátrica especializada, a nossa Consulta de Psiquiatria proporciona avaliação e cuidados ao nível especializado.", "ctaLabel": "Consulta de Psiquiatria" },
+  { "source": "family-and-general-medicine", "target": "nutrition-consultation", "type": "UPGRADE", "priority": 2,
+    "heading": "Precisa de gestão dietética estruturada?", "body": "Para gestão dietética estruturada e especializada da sua condição crónica — incluindo nutrição em diabetes, dieta cardiovascular, ou gestão metabólica relacionada com o peso — a nossa Consulta de Nutrição proporciona apoio nutricional dedicado.", "ctaLabel": "Consulta de Nutrição" },
+  { "source": "family-and-general-medicine", "target": "pediatric-consultation", "type": "UPGRADE", "priority": 3,
+    "heading": "Condição pediátrica crónica complexa?", "body": "Para condições pediátricas crónicas ou complexas que exijam avaliação por pediatra, a nossa Consulta de Pediatria Especialista proporciona cuidados ao nível especializado.", "ctaLabel": "Consulta de Pediatria Especialista" },
+
+  { "source": "weight-loss-consultation", "target": "nutrition-consultation", "type": "UPGRADE", "priority": 0,
+    "heading": "Quer um plano nutricional estruturado?", "body": "Para avaliação nutricional especializada dedicada e planeamento alimentar personalizado, a nossa Consulta de Nutrição proporciona apoio dietético estruturado em paralelo com a sua gestão médica de peso.", "ctaLabel": "Consulta de Nutrição" },
+  { "source": "weight-loss-consultation", "target": "cardiology-consultation", "type": "UPGRADE", "priority": 1,
+    "heading": "Risco cardiovascular associado ao peso?", "body": "Quando o excesso de peso acarreta risco cardiovascular que justifique avaliação especializada, a nossa Consulta de Cardiologia proporciona avaliação ao nível especializado.", "ctaLabel": "Consulta de Cardiologia" },
+  { "source": "weight-loss-consultation", "target": "family-and-general-medicine", "type": "UPGRADE", "priority": 2,
+    "heading": "Condição metabólica a exigir gestão contínua?", "body": "Se a sua preocupação com o peso está ligada a condições metabólicas crónicas — diabetes, resistência à insulina, SOP, ou doença da tiroide — a nossa Consulta de Medicina Geral e Familiar proporciona gestão contínua integrada.", "ctaLabel": "Consulta de Medicina Geral e Familiar" },
+
+  { "source": "pain-management-consultation", "target": "family-and-general-medicine", "type": "UPGRADE", "priority": 0,
+    "heading": "Dor crónica a exigir gestão contínua?", "body": "Para condições de dor crónica — fibromialgia, artrite inflamatória, ou doença músculo-esquelética complexa — que exijam gestão contínua estruturada, a nossa Consulta de Medicina Geral e Familiar proporciona um percurso de cuidados dedicado a longo prazo.", "ctaLabel": "Consulta de Medicina Geral e Familiar" },
+
+  { "source": "erectile-dysfunction-consultation", "target": "cardiology-consultation", "type": "UPGRADE", "priority": 0,
+    "heading": "Avaliação de risco cardiovascular?", "body": "A disfunção erétil é frequentemente um marcador precoce de doença cardiovascular. Para doentes em que a avaliação de risco cardiovascular é indicada, a nossa Consulta de Cardiologia proporciona avaliação especializada.", "ctaLabel": "Consulta de Cardiologia" },
+  { "source": "erectile-dysfunction-consultation", "target": "psychology-consultation", "type": "UPGRADE", "priority": 1,
+    "heading": "Contribuintes psicológicos?", "body": "Para ansiedade de desempenho, preocupações de saúde sexual relacionadas com a relação, ou outros contribuintes psicológicos, a nossa Consulta de Psicologia proporciona apoio psicológico dedicado.", "ctaLabel": "Consulta de Psicologia" },
+
+  { "source": "dermatology-consultation", "target": "nutrition-consultation", "type": "UPGRADE", "priority": 0,
+    "heading": "Contribuintes dietéticos para a pele?", "body": "Para contribuintes dietéticos para acne ou condições inflamatórias da pele, a nossa Consulta de Nutrição proporciona avaliação nutricional dedicada.", "ctaLabel": "Consulta de Nutrição" },
+
+  { "source": "travelers-consultation", "target": "family-and-general-medicine", "type": "UPGRADE", "priority": 0,
+    "heading": "Gerir uma condição crónica em viagem?", "body": "Para a gestão de condições crónicas durante a viagem, a nossa Consulta de Medicina Geral e Familiar proporciona um percurso de cuidados contínuo.", "ctaLabel": "Consulta de Medicina Geral e Familiar" },
+
+  { "source": "sick-leave", "target": "pain-management-consultation", "type": "UPGRADE", "priority": 0,
+    "heading": "Baixa relacionada com lesão ou dor?", "body": "Se a sua falta está relacionada com uma lesão músculo-esquelética ou condição de dor, a nossa Avaliação Músculo-Esquelética e da Dor proporciona uma avaliação clínica focada e plano de gestão.", "ctaLabel": "Avaliação Músculo-Esquelética e da Dor" },
+  { "source": "sick-leave", "target": "family-and-general-medicine", "type": "UPGRADE", "priority": 1,
+    "heading": "Condição crónica a exigir baixa prolongada?", "body": "Para o agravamento de uma condição crónica que exija baixa prolongada, a nossa Consulta de Medicina Geral e Familiar proporciona avaliação e gestão contínua.", "ctaLabel": "Consulta de Medicina Geral e Familiar" },
+
+  { "source": "treatment-renewal", "target": "family-and-general-medicine", "type": "UPGRADE", "priority": 0,
+    "heading": "Precisa de gestão estruturada contínua?", "body": "Se a sua revisão de tratamento revelar que a sua condição beneficiaria de gestão estruturada contínua e um plano de cuidados a longo prazo, a nossa Consulta de Medicina Geral e Familiar proporciona isto como um serviço dedicado.", "ctaLabel": "Consulta de Medicina Geral e Familiar" },
+  { "source": "treatment-renewal", "target": "psychiatry-consultation", "type": "UPGRADE", "priority": 1,
+    "heading": "Revisão de medicação psiquiátrica?", "body": "Quando a sua revisão de tratamento envolve medicação psiquiátrica que exija supervisão especializada, a nossa Consulta de Psiquiatria proporciona avaliação e gestão especializada.", "ctaLabel": "Consulta de Psiquiatria" },
+  { "source": "treatment-renewal", "target": "cardiology-consultation", "type": "UPGRADE", "priority": 2,
+    "heading": "Revisão de medicação cardiovascular?", "body": "Quando a sua revisão de tratamento envolve medicação cardiovascular que exija supervisão especializada, a nossa Consulta de Cardiologia proporciona avaliação especializada.", "ctaLabel": "Consulta de Cardiologia" },
+
+  { "source": "smoking-cessation-consultation", "target": "family-and-general-medicine", "type": "UPGRADE", "priority": 0,
+    "heading": "Condições crónicas relacionadas com o tabagismo?", "body": "Para condições crónicas relacionadas com o tabagismo que exijam acompanhamento contínuo, a nossa Consulta de Medicina Geral e Familiar proporciona gestão integrada.", "ctaLabel": "Consulta de Medicina Geral e Familiar" },
+
+  { "source": "cardiology-consultation", "target": "family-and-general-medicine", "type": "ENTRY", "priority": 0,
+    "heading": "Ainda não teve avaliação do seu médico?", "body": "Se ainda não teve uma avaliação do seu médico relativamente à sua preocupação cardiovascular, a nossa Consulta de Medicina Geral e Familiar é o ponto de partida adequado. O seu médico avalia a sua condição e aconselha sobre se é necessário apoio de cardiologia especializada.", "ctaLabel": "Consulta de Medicina Geral e Familiar" },
+  { "source": "nutrition-consultation", "target": "weight-loss-consultation", "type": "ENTRY", "priority": 0,
+    "heading": "Ainda não teve avaliação médica do peso?", "body": "Se ainda não teve uma avaliação médica do seu peso ou saúde metabólica, a nossa Consulta de Gestão de Peso é o ponto de partida adequado. O seu médico avalia o quadro clínico e aconselha se o apoio especializado de nutrição é o passo mais adequado a seguir.", "ctaLabel": "Consulta de Gestão de Peso" },
+  { "source": "oncology-consultation", "target": "medical-consultation", "type": "ENTRY", "priority": 0,
+    "heading": "Ainda não tem diagnóstico?", "body": "Se ainda não tem diagnóstico e tem sintomas que o preocupam, a nossa Consulta de Clínica Geral é o ponto de partida adequado. O seu médico avalia os sintomas e coordena a investigação e referenciação urgente quando indicado.", "ctaLabel": "Consulta de Clínica Geral" }
+]
