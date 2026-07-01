@@ -36,6 +36,7 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-doctors"
           eyebrow="Global"
           title="New doctor profile"
           actions={
@@ -67,6 +68,7 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-doctors"
           eyebrow="Global"
           title="New doctor profile"
           description="Choose a country first — categories are loaded for that country only."
@@ -77,7 +79,7 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
           }
         />
         <AdminCard>
-          <form method="get" className="gh-admin-doctor-country-picker flex flex-wrap items-end gap-3">
+          <form method="get" className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-country-picker flex flex-wrap items-end gap-3">
             <label className="flex flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select
@@ -108,6 +110,7 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-doctors"
           eyebrow="Global"
           title="New doctor profile"
           actions={
@@ -218,6 +221,7 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
         <ArrowLeft className="size-3.5" /> Back to doctors
       </Link>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-doctors"
         eyebrow="Global"
         title="New doctor profile"
         description="Public marketing profile — not a login account."
@@ -234,8 +238,8 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
         </p>
       ) : null}
 
-      <AdminCard className="gh-admin-doctor-form-card">
-        <form action={createDoctorAction} className="gh-admin-doctor-form flex flex-col gap-8">
+      <AdminCard className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-form-card">
+        <form action={createDoctorAction} className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-form flex flex-col gap-8">
           <DoctorFields
             countries={countries}
             specialties={specialtiesResult.data.specialties}
@@ -247,7 +251,7 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
               No formId needed; the hidden input is already a child of
               this <form>. */}
           <DoctorProfileImageField />
-          <div className="gh-admin-doctor-form-actions flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
+          <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-form-actions flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Create profile
             </button>

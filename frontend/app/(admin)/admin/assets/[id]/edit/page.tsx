@@ -35,6 +35,7 @@ export default async function AdminEditAssetPage({
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-assets"
           eyebrow="Global"
           title="Edit asset"
           actions={
@@ -56,6 +57,7 @@ export default async function AdminEditAssetPage({
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-assets"
           eyebrow="Global"
           title="Edit asset"
           actions={
@@ -132,6 +134,7 @@ export default async function AdminEditAssetPage({
         <ArrowLeft className="size-3.5" /> Back to {asset.key}
       </Link>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-assets"
         eyebrow="Global"
         title={`Edit ${asset.key}`}
         description="Path, kind, alt text, and optional doctor link."
@@ -149,13 +152,13 @@ export default async function AdminEditAssetPage({
       ) : null}
 
       <AdminCard>
-        <form action={updateAssetAction} className="gh-admin-asset-form">
+        <form action={updateAssetAction} className="gh-admin-area-hero gh-admin-area-assets gh-admin-asset-form">
           <AssetFields
             countries={countries}
             doctorOptions={doctorOptions}
             initial={asset}
           />
-          <div className="gh-admin-asset-actions border-t border-[var(--color-border)] pt-6">
+          <div className="gh-admin-area-hero gh-admin-area-assets gh-admin-asset-actions border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Save changes
             </button>

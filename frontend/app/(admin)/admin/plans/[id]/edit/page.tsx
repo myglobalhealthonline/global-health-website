@@ -347,6 +347,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
         <ArrowLeft className="size-3.5" /> Back to plans
       </Link>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-plans"
         eyebrow="Subscriptions"
         title={plan.name}
         description={`${PLAN_TYPE_LABEL[plan.planType] ?? plan.planType} plan for ${plan.country.name}. Edit each section below, then press its Save button — changes go live straight away.`}
@@ -364,12 +365,12 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
         <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">{sp.error}</p>
       ) : null}
 
-      <p className="gh-admin-plan-editor-note mb-4 text-sm text-[var(--color-text-muted)]">
+      <p className="gh-admin-area-hero gh-admin-area-plans gh-admin-plan-editor-note mb-4 text-sm text-[var(--color-text-muted)]">
         Set up the plan one tab at a time. Each tab saves on its own — press the button inside it.
         Existing subscribers keep their current terms until renewal.
       </p>
 
-      <div className="gh-admin-plan-editor">
+      <div className="gh-admin-area-hero gh-admin-area-plans gh-admin-plan-editor">
       <PlanEditTabs
         defaultTabId={sp.previewLocale ? "preview" : undefined}
         tabs={[

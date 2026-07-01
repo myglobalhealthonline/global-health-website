@@ -40,6 +40,7 @@ export default async function AdminEditCountryPage({
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-countries"
           eyebrow="Global"
           title="Edit country"
           actions={
@@ -61,6 +62,7 @@ export default async function AdminEditCountryPage({
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-countries"
           eyebrow="Global"
           title="Edit country"
           actions={
@@ -139,6 +141,7 @@ export default async function AdminEditCountryPage({
         <ArrowLeft className="size-3.5" /> Back to {country.name}
       </Link>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-countries"
         eyebrow="Global"
         title={`Edit ${country.name}`}
         description="Identifiers, hero copy, currency, languages, and routes."
@@ -156,12 +159,12 @@ export default async function AdminEditCountryPage({
       ) : null}
 
       <AdminCard>
-        <form action={updateCountryAction} className="gh-admin-country-form flex flex-col gap-8">
+        <form action={updateCountryAction} className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-form flex flex-col gap-8">
           <CountryFields
             currencies={currenciesResult.data.currencies}
             initial={country}
           />
-          <div className="gh-admin-country-actions flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
+          <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-actions flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Save changes
             </button>

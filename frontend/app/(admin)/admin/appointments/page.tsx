@@ -145,6 +145,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
   return (
     <>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-appointments"
         eyebrow="Operations"
         title="Appointment queue"
         description="Internal review queue. Filters and pagination run on the server; status moves follow rules on the detail page."
@@ -166,8 +167,8 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
 
       {/* Filters */}
       <AdminCard padding={0} className="mb-4 overflow-hidden">
-        <form method="get" className="gh-admin-appointment-filters px-5 py-4">
-          <div className="gh-admin-appointment-filter-grid">
+        <form method="get" className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-filters px-5 py-4">
+          <div className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-filter-grid">
             <label className="flex min-w-0 flex-col gap-1.5">
               <span className="gh-field-label">Status</span>
               <select
@@ -234,7 +235,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
             </label>
           </div>
           <input type="hidden" name="page" value="1" />
-          <div className="gh-admin-appointment-actions mt-4 flex flex-wrap items-center gap-3">
+          <div className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-actions mt-4 flex flex-wrap items-center gap-3">
             <button type="submit" className="gh-btn gh-btn-primary min-h-9">
               Apply filters
             </button>
@@ -265,83 +266,135 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
             </p>
           </div>
         ) : (
-          <div className="gh-admin-appointment-table-wrap overflow-x-auto">
-            <AdminTable>
-              <Thead>
-                <Th>Patient</Th>
-                <Th>Contact</Th>
-                <Th>Country</Th>
-                <Th>Consultation</Th>
-                <Th>Doctor</Th>
-                <Th>Status</Th>
-                <Th>Created</Th>
-                <Th>Notes</Th>
-                <Th align="right" className="w-20">
-                  Detail
-                </Th>
-              </Thead>
-              <tbody>
-                {items.map((appointment) => (
-                  <Tr key={appointment.id}>
-                    <Td>
-                      <span className="font-bold text-[var(--color-text-primary)]">
-                        {appointment.fullName}
-                      </span>
-                    </Td>
-                    <Td>
-                      <div className="text-[13px] text-[var(--color-text-body)]">
-                        {appointment.email}
-                      </div>
-                      <div className="text-[12px] text-[var(--color-text-muted)]">
-                        {appointment.phone ?? "No phone"}
-                      </div>
-                    </Td>
-                    <Td>
-                      <span className="inline-flex items-center gap-2">
-                        <FlagBadge code={appointment.country} size={14} />
-                        <span className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                          {appointment.country}
+          <>
+            <div className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-table-wrap overflow-x-auto">
+              <AdminTable>
+                <Thead>
+                  <Th>Patient</Th>
+                  <Th>Contact</Th>
+                  <Th>Country</Th>
+                  <Th>Consultation</Th>
+                  <Th>Doctor</Th>
+                  <Th>Status</Th>
+                  <Th>Created</Th>
+                  <Th>Notes</Th>
+                  <Th align="right" className="w-20">
+                    Detail
+                  </Th>
+                </Thead>
+                <tbody>
+                  {items.map((appointment) => (
+                    <Tr key={appointment.id}>
+                      <Td>
+                        <span className="font-bold text-[var(--color-text-primary)]">
+                          {appointment.fullName}
                         </span>
-                      </span>
-                    </Td>
-                    <Td>
-                      <span className="text-[13px] text-[var(--color-text-muted)]">
-                        {appointment.consultationType}
-                      </span>
-                    </Td>
-                    <Td>
-                      <span className="text-[13px] text-[var(--color-text-body)]">
-                        {appointment.doctorName ?? "Unassigned"}
-                      </span>
-                    </Td>
-                    <Td>
-                      <Pill tone={statusToneFor(appointment.status)}>
-                        {statusLabel(appointment.status)}
-                      </Pill>
-                    </Td>
-                    <Td>
-                      <span className="text-[12px] text-[var(--color-text-muted)]">
-                        {formatDate(appointment.createdAt)}
-                      </span>
-                    </Td>
-                    <Td>
-                      <span className="block max-w-[18rem] truncate text-[13px] text-[var(--color-text-muted)]">
-                        {appointment.notesPreview ?? "—"}
-                      </span>
-                    </Td>
-                    <Td align="right">
-                      <IconBtn
-                        ariaLabel={`Open ${appointment.fullName}`}
-                        href={`/admin/appointments/${appointment.id}`}
-                      >
-                        <ExternalLink className="size-3.5" aria-hidden />
-                      </IconBtn>
-                    </Td>
-                  </Tr>
-                ))}
-              </tbody>
-            </AdminTable>
-          </div>
+                      </Td>
+                      <Td>
+                        <div className="text-[13px] text-[var(--color-text-body)]">
+                          {appointment.email}
+                        </div>
+                        <div className="text-[12px] text-[var(--color-text-muted)]">
+                          {appointment.phone ?? "No phone"}
+                        </div>
+                      </Td>
+                      <Td>
+                        <span className="inline-flex items-center gap-2">
+                          <FlagBadge code={appointment.country} size={14} />
+                          <span className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                            {appointment.country}
+                          </span>
+                        </span>
+                      </Td>
+                      <Td>
+                        <span className="text-[13px] text-[var(--color-text-muted)]">
+                          {appointment.consultationType}
+                        </span>
+                      </Td>
+                      <Td>
+                        <span className="text-[13px] text-[var(--color-text-body)]">
+                          {appointment.doctorName ?? "Unassigned"}
+                        </span>
+                      </Td>
+                      <Td>
+                        <Pill tone={statusToneFor(appointment.status)}>
+                          {statusLabel(appointment.status)}
+                        </Pill>
+                      </Td>
+                      <Td>
+                        <span className="text-[12px] text-[var(--color-text-muted)]">
+                          {formatDate(appointment.createdAt)}
+                        </span>
+                      </Td>
+                      <Td>
+                        <span className="block max-w-[18rem] truncate text-[13px] text-[var(--color-text-muted)]">
+                          {appointment.notesPreview ?? "—"}
+                        </span>
+                      </Td>
+                      <Td align="right">
+                        <IconBtn
+                          ariaLabel={`Open ${appointment.fullName}`}
+                          href={`/admin/appointments/${appointment.id}`}
+                        >
+                          <ExternalLink className="size-3.5" aria-hidden />
+                        </IconBtn>
+                      </Td>
+                    </Tr>
+                  ))}
+                </tbody>
+              </AdminTable>
+            </div>
+
+            <div className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-mobile-list">
+              {items.map((appointment) => (
+                <article key={appointment.id} className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-mobile-card">
+                  <div className="flex min-w-0 items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h3 className="m-0 text-[15px] font-bold leading-snug text-[var(--color-text-primary)]">
+                        {appointment.fullName}
+                      </h3>
+                      <p className="m-0 mt-1 break-words text-[12px] text-[var(--color-text-muted)]">
+                        {appointment.email}
+                      </p>
+                    </div>
+                    <Pill tone={statusToneFor(appointment.status)}>{statusLabel(appointment.status)}</Pill>
+                  </div>
+                  <dl className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-mobile-meta">
+                    <div>
+                      <dt>Country</dt>
+                      <dd>
+                        <FlagBadge code={appointment.country} size={14} />
+                        <span>{appointment.country.toUpperCase()}</span>
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Consultation</dt>
+                      <dd>{appointment.consultationType}</dd>
+                    </div>
+                    <div>
+                      <dt>Doctor</dt>
+                      <dd>{appointment.doctorName ?? "Unassigned"}</dd>
+                    </div>
+                    <div>
+                      <dt>Created</dt>
+                      <dd>{formatDate(appointment.createdAt)}</dd>
+                    </div>
+                  </dl>
+                  <div className="flex items-center justify-between gap-3 border-t border-[var(--color-border)] pt-3">
+                    <p className="m-0 min-w-0 truncate text-[12px] text-[var(--color-text-muted)]">
+                      {appointment.notesPreview ?? "No notes"}
+                    </p>
+                    <IconBtn
+                      ariaLabel={`Open ${appointment.fullName}`}
+                      href={`/admin/appointments/${appointment.id}`}
+                    >
+                      <ExternalLink className="size-3.5" aria-hidden />
+                    </IconBtn>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </>
         )}
 
         {totalPages > 1 ? (

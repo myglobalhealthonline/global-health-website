@@ -64,6 +64,20 @@ function priceToCents(value: string): number {
   return Math.round(Number(raw) * 100);
 }
 
+function formatMoney(cents: number | null | undefined, currency: string | null | undefined) {
+  if (cents == null) return "Not set";
+  const code = currency?.trim().toUpperCase() || "EUR";
+  try {
+    return new Intl.NumberFormat("en", {
+      style: "currency",
+      currency: code,
+      maximumFractionDigits: 2,
+    }).format(cents / 100);
+  } catch {
+    return `${code} ${(cents / 100).toFixed(2)}`;
+  }
+}
+
 export default async function AdminEditServicePage({
   params,
   searchParams,
@@ -80,6 +94,7 @@ export default async function AdminEditServicePage({
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-services"
           eyebrow="Services"
           title="Edit service"
           actions={
@@ -101,6 +116,7 @@ export default async function AdminEditServicePage({
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-services"
           eyebrow="Services"
           title="Edit service"
           actions={
@@ -389,6 +405,7 @@ export default async function AdminEditServicePage({
         <ArrowLeft className="size-3.5" /> Back to {service.name}
       </Link>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-services gh-admin-service-edit-hero"
         eyebrow={
           <span className="inline-flex items-center gap-2">
             <FlagBadge code={service.country.code} size={14} /> {service.country.name} ·{" "}
@@ -409,6 +426,24 @@ export default async function AdminEditServicePage({
         }
       />
 
+      <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-edit-summary">
+        <div>
+          <span className="gh-field-label">Publishing</span>
+          <strong>{service.isActive ? "Live service" : "Draft service"}</strong>
+          <span>{meta.label}</span>
+        </div>
+        <div>
+          <span className="gh-field-label">Starting price</span>
+          <strong>{formatMoney(service.basePriceCents, service.currencyCode)}</strong>
+          <span>{service.currencyCode ?? "No currency"}</span>
+        </div>
+        <div>
+          <span className="gh-field-label">Assigned doctors</span>
+          <strong>{service.assignedDoctors.length}</strong>
+          <span>{doctorOptions.length} eligible</span>
+        </div>
+      </div>
+
       {messages.error ? (
         <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
           {messages.error}
@@ -420,7 +455,7 @@ export default async function AdminEditServicePage({
         </p>
       ) : null}
 
-      <div className="gh-admin-service-layout">
+      <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-layout">
         {/* Main column — form + internal links */}
         <div className="grid gap-4">
         <AdminCard>
@@ -433,7 +468,7 @@ export default async function AdminEditServicePage({
           <p className="mb-5 mt-1 text-[13px] text-[var(--color-text-muted)]">
             Shown in lists and cards across the public site.
           </p>
-          <form action={updateServiceAction} className="gh-admin-service-form">
+          <form action={updateServiceAction} className="gh-admin-area-hero gh-admin-area-services gh-admin-service-form">
             <ServiceFields
               countries={countries}
               kind={kind}
@@ -443,7 +478,7 @@ export default async function AdminEditServicePage({
               locales={locales}
               defaultLocale={defaultLocale}
             />
-            <div className="gh-admin-service-actions border-t border-[var(--color-border)] pt-6">
+            <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-actions border-t border-[var(--color-border)] pt-6">
               <button type="submit" className="gh-btn gh-btn-primary">
                 Save changes
               </button>
@@ -484,7 +519,7 @@ export default async function AdminEditServicePage({
               ManagedImageField labelled "Hero image" inside the form on the
               left — showing two upload UIs would mean two form inputs with
               the same name and the data wouldn't round-trip. */}
-          <AdminCard>
+          <AdminCard className="gh-admin-area-hero gh-admin-area-services gh-admin-service-side-card">
             <h3
               className="m-0 text-[var(--color-text-primary)]"
               style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
@@ -493,7 +528,7 @@ export default async function AdminEditServicePage({
             </h3>
             {service.assets[0]?.path ? (
               <>
-                <div className="gh-admin-service-image-preview mt-3 overflow-hidden rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)]">
+                <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-image-preview mt-3 overflow-hidden rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={service.assets[0].path}
@@ -508,7 +543,7 @@ export default async function AdminEditServicePage({
               </>
             ) : (
               <div
-                className="gh-admin-service-image-empty mt-3 grid place-items-center text-center text-[12px] text-[var(--color-text-muted)]"
+                className="gh-admin-area-hero gh-admin-area-services gh-admin-service-image-empty mt-3 grid place-items-center text-center text-[12px] text-[var(--color-text-muted)]"
                 style={{
                   aspectRatio: "4 / 3",
                   borderRadius: 12,
@@ -531,7 +566,7 @@ export default async function AdminEditServicePage({
           </AdminCard>
 
           {/* Visibility card */}
-          <AdminCard>
+          <AdminCard className="gh-admin-area-hero gh-admin-area-services gh-admin-service-side-card">
             <h3
               className="m-0 text-[var(--color-text-primary)]"
               style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
@@ -539,7 +574,7 @@ export default async function AdminEditServicePage({
               Visibility
             </h3>
             <div
-              className="gh-admin-service-visibility-row mt-3 flex items-center justify-between"
+              className="gh-admin-area-hero gh-admin-area-services gh-admin-service-visibility-row mt-3 flex items-center justify-between"
               style={{
                 padding: "12px 0",
                 borderTop: "1px solid var(--color-border)",
@@ -586,14 +621,14 @@ export default async function AdminEditServicePage({
           </AdminCard>
 
           {/* Key facts card — duration / price / sort */}
-          <AdminCard>
+          <AdminCard className="gh-admin-area-hero gh-admin-area-services gh-admin-service-side-card">
             <h3
               className="m-0 text-[var(--color-text-primary)]"
               style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
             >
               Key facts
             </h3>
-            <dl className="gh-admin-service-facts mt-3 grid gap-3">
+            <dl className="gh-admin-area-hero gh-admin-area-services gh-admin-service-facts mt-3 grid gap-3">
               <div className="flex items-center justify-between">
                 <dt className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                   Duration

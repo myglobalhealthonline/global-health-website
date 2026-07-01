@@ -28,6 +28,7 @@ export default async function AdminNewAssetPage({ searchParams }: PageProps) {
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-assets"
           eyebrow="Global"
           title="New asset"
           actions={
@@ -55,6 +56,7 @@ export default async function AdminNewAssetPage({ searchParams }: PageProps) {
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-assets"
           eyebrow="Global"
           title="New asset"
           description="Choose a country to load doctor profiles for optional linking, or create a global asset without a country."
@@ -65,7 +67,7 @@ export default async function AdminNewAssetPage({ searchParams }: PageProps) {
           }
         />
         <AdminCard>
-          <form method="get" className="gh-admin-asset-country-form">
+          <form method="get" className="gh-admin-area-hero gh-admin-area-assets gh-admin-asset-country-form">
             <label className="flex flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select
@@ -154,6 +156,7 @@ export default async function AdminNewAssetPage({ searchParams }: PageProps) {
         <ArrowLeft className="size-3.5" /> Back to assets
       </Link>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-assets"
         eyebrow="Global"
         title="New asset"
         description={
@@ -175,9 +178,9 @@ export default async function AdminNewAssetPage({ searchParams }: PageProps) {
       ) : null}
 
       <AdminCard>
-        <form action={createAssetAction} className="gh-admin-asset-form">
+        <form action={createAssetAction} className="gh-admin-area-hero gh-admin-area-assets gh-admin-asset-form">
           <AssetFields countries={countries} doctorOptions={doctorOptions} />
-          <div className="gh-admin-asset-actions border-t border-[var(--color-border)] pt-6">
+          <div className="gh-admin-area-hero gh-admin-area-assets gh-admin-asset-actions border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Create asset
             </button>

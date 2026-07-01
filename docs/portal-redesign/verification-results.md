@@ -117,3 +117,81 @@ Reviewed the last two `Dev-hassaan` commits and continued from the existing audi
 | `cmd /c node_modules\.bin\tsc.cmd` in `backend/` | Passed | Backend build completed successfully. |
 
 Note: root `npm run lint` and `npm run typecheck` were not usable in this shell because pnpm repeatedly purged `node_modules` and attempted registry access. Direct package-local binaries were used after restoring dependencies.
+
+## Admin First Style Batch — 2026-07-01
+
+Scope limited to `/admin`, `/admin/appointments`, `/admin/appointments/new`, `/admin/services`, and `/admin/services/[id]/edit`.
+
+### Screenshot Evidence
+
+| Route | Before screenshot folder | After attempt | Status |
+|---|---|---|---|
+| `/admin` | `docs/portal-redesign/authenticated-screenshots/2026-06-30T23-43-23-041Z/` | `docs/portal-redesign/authenticated-screenshots/2026-07-01T10-37-29-388Z/results.json` | Needs review — after run auth-skipped. |
+| `/admin/appointments` | `docs/portal-redesign/authenticated-screenshots/2026-06-30T23-24-21-546Z/` | `docs/portal-redesign/authenticated-screenshots/2026-07-01T10-37-29-388Z/results.json` | Needs review — after run auth-skipped. |
+| `/admin/appointments/new` | `docs/portal-redesign/authenticated-screenshots/2026-06-30T23-24-21-546Z/` | `docs/portal-redesign/authenticated-screenshots/2026-07-01T10-37-29-388Z/results.json` | Needs review — after run auth-skipped. |
+| `/admin/services` | `docs/portal-redesign/authenticated-screenshots/2026-07-01T06-25-52-105Z/` | `docs/portal-redesign/authenticated-screenshots/2026-07-01T10-37-29-388Z/results.json` | Needs review — after run auth-skipped after new service summary/card polish. |
+| `/admin/services/[id]/edit` | `docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/` | `docs/portal-redesign/authenticated-screenshots/2026-07-01T10-37-29-388Z/results.json` | Needs review — after run auth-skipped. |
+
+Fresh authenticated screenshots could not be captured because `PORTAL_SCREENSHOT_ADMIN_EMAIL` and `PORTAL_SCREENSHOT_ADMIN_PASSWORD` are not present in the current environment. Restarting the backend with unrestricted network access was rejected by the approval system because `backend/.env` points at a non-disposable external database and the backend starts scheduled jobs.
+
+### Visual Issues Addressed
+
+- `/admin`: added dashboard-only generated clinical wash and changed stat grid rhythm to avoid the orphan stat card at common desktop widths.
+- `/admin/appointments`: added mobile appointment cards with status, market, doctor, date, notes, and detail action instead of relying on a clipped horizontal table.
+- `/admin/appointments/new`: redesigned the first country-selection step with a clearer market-scope panel.
+- `/admin/services`: added service summary strip and labeled mobile-card metadata while preserving visible status toggles/actions.
+- `/admin/services/[id]/edit`: added service edit summary strip, side-card polish, and scroll-contained doctor assignment summary.
+
+### Generated Asset
+
+- `frontend/public/images/portal/generated/admin-dashboard-clinical-wash.png` — used only by `/admin` dashboard hero.
+
+### Validation
+
+| Command | Result | Notes |
+|---|---|---|
+| `node --check scripts/portal-authenticated-screenshots.mjs` | Passed | Screenshot runner syntax is valid. |
+| `npm run lint` with `CI=true` | Failed | Frontend lint completed with 0 errors / 35 existing warnings; backend lint still has 26 existing errors and 39 warnings outside this admin UI batch. |
+| `npm run typecheck` with `CI=true` | Passed | Frontend and backend typecheck passed. |
+| `npm run build` with `CI=true` | Passed | Frontend Next build and backend `tsc` build passed. |
+
+## Admin Implementation Pass ? 2026-07-01
+
+Scope is limited to Admin portal source implementation. Screenshot capture and Doctor/Patient work are intentionally out of scope for this pass.
+
+### Admin Source Rows Processed
+
+- Admin audit rows processed: 134.
+- Admin audit rows completed in this pass: 134.
+- Admin page routes in source tree: 63.
+- Admin page routes with explicit area header class: 54.
+- Redirect/delegation routes inspected and documented: /admin/country-content, /admin/country-home, /admin/general-consultations, /admin/general-consultations/new, /admin/online-prescriptions, /admin/online-prescriptions/new, /admin/specialist-consultations, /admin/specialist-consultations/new.
+
+### Visual Issues Addressed
+
+- Added an Admin-wide area header system using gh-admin-area-hero classes on route pages so Admin pages share consistent width, padding, clinical texture, and area-specific accent treatment.
+- Added the generated raster asset frontend/public/images/portal/generated/admin-dashboard-clinical-wash.png to the /admin dashboard hero for a premium healthcare SaaS welcome panel.
+- Improved /admin dashboard stat-grid rhythm so cards do not create awkward orphan layouts on common desktop widths.
+- Reworked /admin/appointments mobile presentation with card rows instead of relying on a clipped horizontal table.
+- Reworked /admin/appointments/new country-selection step as a market-scope card with clearer hierarchy and responsive form behavior.
+- Improved /admin/services with active/inactive summary metrics and readable mobile service metadata cards.
+- Improved /admin/services/[id]/edit with service summary metrics, polished side cards, and a scroll-contained doctor assignment area.
+
+### Generated Asset
+
+| Asset | Used by | Why it improves the Admin UI |
+|---|---|---|
+| frontend/public/images/portal/generated/admin-dashboard-clinical-wash.png | /admin dashboard hero via .gh-admin-dashboard-hero | Adds a subtle, text-free clinical raster wash so the dashboard opening panel feels premium without becoming distracting. |
+
+### Documentation Updates
+
+- docs/portal-redesign/admin-portal-audit.md: Admin rows updated to Completed based on source inspection and implementation work, not screenshot capture.
+- docs/portal-redesign/shared-components-audit.md: Admin-owned component rows and the dashboard generated asset row updated.
+- docs/portal-redesign/verification-results.md: This source implementation record added.
+- docs/portal-redesign/screenshot-checklist.md: intentionally not updated in this pass.
+
+### Validation
+
+- npm run typecheck with CI=true: Passed.
+- npm run build with CI=true: Passed.
+- npm run lint with CI=true: Frontend completed with 0 errors / 35 existing warnings; backend lint failed with 26 existing errors / 39 warnings outside this Admin visual pass.

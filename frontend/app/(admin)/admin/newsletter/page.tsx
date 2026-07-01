@@ -20,6 +20,7 @@ export default async function AdminNewsletterPage() {
           the backend. A direct cross-origin <a href> would 401 because
           the browser doesn't send cookies on cross-site navigations. */}
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-content"
         eyebrow="Marketing"
         title="Newsletter subscribers"
         description="People who signed up via the public footer form. Export CSV for your mailer."
@@ -49,7 +50,7 @@ export default async function AdminNewsletterPage() {
         </AdminCard>
       ) : (
         <AdminCard padding={0}>
-          <div className="gh-admin-ops-table-wrap overflow-x-auto">
+          <div className="gh-admin-area-hero gh-admin-area-content gh-admin-ops-table-wrap overflow-x-auto">
           <table className="w-full min-w-[760px] text-sm">
             <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
               <tr>
@@ -63,7 +64,7 @@ export default async function AdminNewsletterPage() {
             </thead>
             <tbody className="divide-y divide-[var(--color-border)]">
               {result.items.map((s) => (
-                <tr key={s.id} className="gh-admin-newsletter-row">
+                <tr key={s.id} className="gh-admin-area-hero gh-admin-area-content gh-admin-newsletter-row">
                   <td className="px-4 py-2 font-semibold text-[var(--color-text-primary)]">{s.email}</td>
                   <td className="px-4 py-2">{s.countryCode ?? "—"}</td>
                   <td className="px-4 py-2">{s.locale ?? "—"}</td>
@@ -77,9 +78,9 @@ export default async function AdminNewsletterPage() {
                   </td>
                   <td className="px-4 py-2">
                     {s.unsubscribedAt ? (
-                      <span className="gh-admin-ops-badge inline-block rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold uppercase text-rose-700">Unsubscribed</span>
+                      <span className="gh-admin-area-hero gh-admin-area-content gh-admin-ops-badge inline-block rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold uppercase text-rose-700">Unsubscribed</span>
                     ) : (
-                      <span className="gh-admin-ops-badge inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-800">Active</span>
+                      <span className="gh-admin-area-hero gh-admin-area-content gh-admin-ops-badge inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-800">Active</span>
                     )}
                   </td>
                 </tr>

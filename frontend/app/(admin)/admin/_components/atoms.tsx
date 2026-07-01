@@ -26,15 +26,17 @@ export function PageHeader({
   title,
   description,
   actions,
+  className = "",
 }: {
   eyebrow?: ReactNode;
   title: ReactNode;
   description?: ReactNode;
   actions?: ReactNode;
+  className?: string;
 }) {
   return (
     <header
-      className="gh-portal-page-header relative mb-5 flex flex-wrap items-end justify-between gap-4"
+      className={`gh-portal-page-header relative mb-5 flex flex-wrap items-end justify-between gap-4 ${className}`}
     >
       <div className="min-w-0">
         {eyebrow ? (

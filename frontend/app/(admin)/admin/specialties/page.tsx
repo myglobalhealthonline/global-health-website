@@ -214,6 +214,7 @@ export default async function AdminCategoriesMatrixPage({
   return (
     <>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-services"
         eyebrow="Global"
         title="Categories"
         description="One global pool of specialties. Toggle cells to enable a category in a specific country."
@@ -239,8 +240,8 @@ export default async function AdminCategoriesMatrixPage({
         </p>
       ) : null}
 
-      <AdminCard padding={0} className="gh-admin-specialties-list overflow-hidden">
-        <div className="gh-admin-support-table-wrap overflow-x-auto">
+      <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-services gh-admin-specialties-list overflow-hidden">
+        <div className="gh-admin-area-hero gh-admin-area-services gh-admin-support-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Category</Th>
@@ -366,12 +367,12 @@ export default async function AdminCategoriesMatrixPage({
       </AdminCard>
 
       {/* Sort-order editor — pick a country to manage per-country specialty order */}
-      <AdminCard className="gh-admin-specialty-sort mt-6">
+      <AdminCard className="gh-admin-area-hero gh-admin-area-services gh-admin-specialty-sort mt-6">
         <h3 className="text-[15px] font-bold text-[var(--color-text-primary)]">Sort order</h3>
         <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
           Choose a country to set the display order of its categories. Lower number = appears first.
         </p>
-        <form method="get" className="gh-admin-support-filter-row mt-3 flex flex-wrap items-end gap-3">
+        <form method="get" className="gh-admin-area-hero gh-admin-area-services gh-admin-support-filter-row mt-3 flex flex-wrap items-end gap-3">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">Country</span>
             <select
@@ -393,7 +394,7 @@ export default async function AdminCategoriesMatrixPage({
         </form>
 
         {sortCountry && sortSpecialties.length > 0 ? (
-          <form action={reorderSpecialtiesAction} className="gh-admin-specialty-sort-form mt-5">
+          <form action={reorderSpecialtiesAction} className="gh-admin-area-hero gh-admin-area-services gh-admin-specialty-sort-form mt-5">
             <input
               type="hidden"
               name="_reorderItems"
@@ -404,7 +405,7 @@ export default async function AdminCategoriesMatrixPage({
             <p className="mb-3 text-[13px] font-semibold text-[var(--color-text-body)]">
               {sortCountry.name}
             </p>
-            <div className="gh-admin-specialty-order-list grid gap-2">
+            <div className="gh-admin-area-hero gh-admin-area-services gh-admin-specialty-order-list grid gap-2">
               {sortSpecialties.map((s) => (
                 <div key={s.id} className="flex items-center gap-3">
                   <input

@@ -47,6 +47,7 @@ export default async function AdminEditDoctorPage({
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-doctors"
           eyebrow="Global"
           title="Edit doctor profile"
           actions={
@@ -68,6 +69,7 @@ export default async function AdminEditDoctorPage({
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-doctors"
           eyebrow="Global"
           title="Edit doctor profile"
           actions={
@@ -96,6 +98,7 @@ export default async function AdminEditDoctorPage({
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-doctors"
           eyebrow="Global"
           title={`Edit ${doctor.fullName}`}
           actions={
@@ -239,6 +242,7 @@ export default async function AdminEditDoctorPage({
         <ArrowLeft className="size-3.5" /> Back to {doctor.fullName}
       </Link>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-doctors"
         eyebrow={
           <span className="inline-flex items-center gap-2">
             <FlagBadge code={doctor.country.code} size={14} /> Edit doctor
@@ -269,10 +273,10 @@ export default async function AdminEditDoctorPage({
         </p>
       ) : null}
 
-      <div className="gh-admin-doctor-detail-layout grid gap-4">
+      <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-detail-layout grid gap-4">
         {/* Main column — identity form, then per-country profile editor */}
         <div className="grid gap-4">
-          <AdminCard className="gh-admin-doctor-form-card">
+          <AdminCard className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-form-card">
           <h3
             className="m-0 text-[var(--color-text-primary)]"
             style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
@@ -289,7 +293,7 @@ export default async function AdminEditDoctorPage({
           <form
             id="doctor-edit-form"
             action={updateDoctorAction}
-            className="gh-admin-doctor-form flex flex-col gap-8"
+            className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-form flex flex-col gap-8"
           >
             <DoctorFields
               countries={countries}
@@ -300,7 +304,7 @@ export default async function AdminEditDoctorPage({
               showTranslationTabs={false}
               showSpecialties={false}
             />
-            <div className="gh-admin-doctor-form-actions flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
+            <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-form-actions flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
               <button type="submit" className="gh-btn gh-btn-primary">
                 Save changes
               </button>
@@ -322,7 +326,7 @@ export default async function AdminEditDoctorPage({
         </div>
 
         {/* Right sidebar — visibility + practicing-in */}
-        <div className="gh-admin-doctor-side-stack grid gap-4 self-start">
+        <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-side-stack grid gap-4 self-start">
           <AdminCard>
             <h3
               className="m-0 text-[var(--color-text-primary)]"
@@ -369,7 +373,7 @@ export default async function AdminEditDoctorPage({
               return (
                 <label
                   key={c.id}
-                  className="gh-admin-doctor-country-row flex items-center gap-2.5 border-t border-[var(--color-border)] py-3"
+                  className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-country-row flex items-center gap-2.5 border-t border-[var(--color-border)] py-3"
                   style={{ cursor: isPrimary ? "default" : "pointer" }}
                 >
                   <FlagBadge code={c.code} size={16} />

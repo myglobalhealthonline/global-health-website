@@ -126,6 +126,7 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
   return (
     <>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-services"
         eyebrow="Services"
         title="Health tests"
         description="Product-style pages with price, sample type, result timing, structured coverage, and image-led public layouts."
@@ -156,8 +157,8 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
 
       {/* Filters */}
       <AdminCard padding={0} className="mb-4 overflow-hidden">
-        <form method="get" className="gh-admin-health-filters px-5 py-4">
-          <div className="gh-admin-health-filter-grid">
+        <form method="get" className="gh-admin-area-hero gh-admin-area-services gh-admin-health-filters px-5 py-4">
+          <div className="gh-admin-area-hero gh-admin-area-services gh-admin-health-filter-grid">
             <label className="flex min-w-0 flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select
@@ -197,7 +198,7 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
             </label>
           </div>
           <input type="hidden" name="page" value="1" />
-          <div className="gh-admin-health-actions mt-4 flex flex-wrap items-center gap-3">
+          <div className="gh-admin-area-hero gh-admin-area-services gh-admin-health-actions mt-4 flex flex-wrap items-center gap-3">
             <button type="submit" className="gh-btn gh-btn-primary" style={{ minHeight: 36 }}>
               Apply filters
             </button>
@@ -218,7 +219,7 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
 
       {/* Table */}
       <AdminCard padding={0} className="overflow-hidden">
-        <div className="gh-admin-health-table-wrap overflow-x-auto">
+        <div className="gh-admin-area-hero gh-admin-area-services gh-admin-health-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Title</Th>
@@ -270,7 +271,7 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
                     </Pill>
                   </Td>
                   <Td align="right">
-                    <div className="gh-admin-health-actions gh-admin-health-actions--row flex justify-end gap-1.5">
+                    <div className="gh-admin-area-hero gh-admin-area-services gh-admin-health-actions gh-admin-health-actions--row flex justify-end gap-1.5">
                       <IconBtn
                         ariaLabel={`View ${item.title}`}
                         href={`/admin/health-tests/${item.id}`}

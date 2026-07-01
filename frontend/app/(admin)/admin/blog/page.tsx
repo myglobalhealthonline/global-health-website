@@ -54,6 +54,7 @@ export default async function AdminBlogListPage({
   return (
     <>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-content"
         eyebrow="Global"
         title="Blog"
         description="Upload and publish blog articles. Published posts appear on the public /blog."
@@ -65,7 +66,7 @@ export default async function AdminBlogListPage({
       />
 
       <AdminCard padding={16}>
-        <form action="/admin/blog" className="gh-admin-blog-filters px-2 py-1" method="get">
+        <form action="/admin/blog" className="gh-admin-area-hero gh-admin-area-content gh-admin-blog-filters px-2 py-1" method="get">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label text-[12px]">Search</span>
             <input
@@ -115,7 +116,7 @@ export default async function AdminBlogListPage({
               <option value="false">No translations</option>
             </select>
           </label>
-          <div className="gh-admin-blog-actions pb-0.5">
+          <div className="gh-admin-area-hero gh-admin-area-content gh-admin-blog-actions pb-0.5">
             <Btn type="submit" variant="secondary" size="sm">
               Apply
             </Btn>
@@ -126,7 +127,7 @@ export default async function AdminBlogListPage({
         </form>
       </AdminCard>
 
-      <div className="gh-admin-blog-list mt-6">
+      <div className="gh-admin-area-hero gh-admin-area-content gh-admin-blog-list mt-6">
         {!result.ok ? (
           <AdminCard>
             <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
@@ -141,7 +142,7 @@ export default async function AdminBlogListPage({
           </AdminCard>
         ) : (
           <AdminCard padding={0}>
-            <div className="gh-admin-blog-table-wrap">
+            <div className="gh-admin-area-hero gh-admin-area-content gh-admin-blog-table-wrap">
             <AdminTable>
               <Thead>
                 <Th>Title</Th>

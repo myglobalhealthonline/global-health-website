@@ -218,6 +218,16 @@ export function ServiceFields({
           </p>
         ) : (
           <>
+            <div className="gh-admin-service-doctor-summary">
+              <div>
+                <strong>{assignedDoctorIds.size}</strong>
+                <span>assigned</span>
+              </div>
+              <div>
+                <strong>{doctorOptions.length}</strong>
+                <span>eligible</span>
+              </div>
+            </div>
             {/* Sentinel — an empty hidden input ensures formData.getAll
                 ("doctorIds") returns at least the empty string when the
                 admin un-ticks every box. The parser filters falsy

@@ -122,6 +122,7 @@ export default async function AdminDoctorDetailPage({
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-doctors"
           eyebrow="Global"
           title="Doctor profile"
           actions={
@@ -185,6 +186,7 @@ export default async function AdminDoctorDetailPage({
         <ArrowLeft className="size-3.5" /> Back to doctors
       </Link>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-doctors"
         eyebrow={
           <span className="inline-flex items-center gap-2">
             <FlagBadge code={d.country.code} size={14} />
@@ -244,14 +246,14 @@ export default async function AdminDoctorDetailPage({
         </p>
       ) : null}
 
-      <div className="gh-admin-doctor-detail-layout grid gap-4">
+      <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-detail-layout grid gap-4">
         <div className="grid gap-4">
           <AdminCard>
             <h3 className={cardTitleClass}>Identifiers</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Public marketing profile — not a login account.
             </p>
-            <div className="gh-admin-doctor-field-grid grid gap-4 sm:grid-cols-2">
+            <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-field-grid grid gap-4 sm:grid-cols-2">
               <FieldRow label="Slug" value={d.slug} mono />
               <FieldRow label="Country" value={`${d.country.name} (${d.country.code.toUpperCase()})`} />
               <FieldRow label="Public path" value={publicPath} mono full />
@@ -313,7 +315,7 @@ export default async function AdminDoctorDetailPage({
           <AdminCard>
             <h3 className={cardTitleClass}>Qualifications</h3>
             {d.qualifications.length > 0 ? (
-              <ul className="gh-admin-doctor-chip-list mt-3 grid gap-2 text-[14px] leading-relaxed text-[var(--color-text-body)]">
+              <ul className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-chip-list mt-3 grid gap-2 text-[14px] leading-relaxed text-[var(--color-text-body)]">
                 {d.qualifications.map((q, i) => (
                   <li
                     key={i}
@@ -376,7 +378,7 @@ export default async function AdminDoctorDetailPage({
               encrypted; revealing the full number is logged.
             </p>
             {bank && (bank.ibanSet || bank.accountHolder || bank.bic) ? (
-              <dl className="gh-admin-doctor-bank-list grid gap-3">
+              <dl className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-bank-list grid gap-3">
                 <div>
                   <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                     Account holder
@@ -420,7 +422,7 @@ export default async function AdminDoctorDetailPage({
           </AdminCard>
         </div>
 
-        <div className="gh-admin-doctor-side-stack grid gap-4 self-start">
+        <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-side-stack grid gap-4 self-start">
           <AdminCard>
             <h3 className={cardTitleClass}>Account access</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
@@ -429,7 +431,7 @@ export default async function AdminDoctorDetailPage({
             </p>
             {d.loginUser ? (
               <div className="grid gap-3">
-                <div className="gh-admin-doctor-account-card rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3 text-[13px]">
+                <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-account-card rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3 text-[13px]">
                   <p className="flex items-center gap-2 font-semibold text-[var(--color-text-primary)]">
                     <span>{d.loginUser.email}</span>
                     <span className="inline-block rounded border border-[var(--color-border)] bg-[var(--color-background)] px-1.5 py-px text-[10px] font-semibold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">
@@ -445,7 +447,7 @@ export default async function AdminDoctorDetailPage({
                     {d.loginUser.isActive ? "Account active" : "Account suspended"}
                   </p>
                 </div>
-                <form action={inviteDoctorAction} className="gh-admin-doctor-invite-form grid gap-2">
+                <form action={inviteDoctorAction} className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-invite-form grid gap-2">
                   <input type="hidden" name="email" value={d.loginUser.email} />
                   <input type="hidden" name="fullName" value={d.loginUser.fullName} />
                   <button
@@ -463,7 +465,7 @@ export default async function AdminDoctorDetailPage({
                 </Link>
               </div>
             ) : (
-              <form action={inviteDoctorAction} className="gh-admin-doctor-invite-form grid gap-2.5">
+              <form action={inviteDoctorAction} className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-invite-form grid gap-2.5">
                 <label className="flex flex-col gap-1">
                   <span className="gh-field-label">Email address</span>
                   <input
@@ -504,7 +506,7 @@ export default async function AdminDoctorDetailPage({
               Deactivating hides this profile from the public doctors listing API.
             </p>
             {isActive ? (
-            <form action={deactivateDoctorAction} className="gh-admin-doctor-danger-action">
+            <form action={deactivateDoctorAction} className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-danger-action">
                 <button type="submit" className="gh-btn gh-btn-danger w-full">
                   Deactivate profile
                 </button>
@@ -523,7 +525,7 @@ export default async function AdminDoctorDetailPage({
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Permanent delete removes this profile and any linked assets.
             </p>
-            <form action={deleteDoctorAction} className="gh-admin-doctor-danger-action">
+            <form action={deleteDoctorAction} className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-danger-action">
               <ConfirmDeleteButton
                 message="Permanently delete this doctor profile and any linked assets? This cannot be undone."
                 className="gh-btn gh-btn-danger w-full"

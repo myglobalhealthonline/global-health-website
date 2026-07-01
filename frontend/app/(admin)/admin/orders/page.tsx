@@ -19,6 +19,7 @@ export default async function AdminOrdersPage({
   return (
     <>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-orders"
         eyebrow={
           <span className="inline-flex items-center gap-2">
             <ShoppingBag className="size-3.5" aria-hidden /> Commerce
@@ -28,10 +29,10 @@ export default async function AdminOrdersPage({
         description="Multi-item product orders. Google Meet links are created automatically when consultation orders are paid."
       />
 
-      <AdminCard padding={0} className="gh-admin-orders-page">
+      <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-orders gh-admin-orders-page">
         <div className="p-5">
           <AdminOrdersTable items={items} />
-          <div className="gh-admin-order-pagination mt-4 flex items-center justify-between text-[13px]">
+          <div className="gh-admin-area-hero gh-admin-area-orders gh-admin-order-pagination mt-4 flex items-center justify-between text-[13px]">
             {cursor ? (
               <Link href="/admin/orders" className="font-semibold underline">
                 ← First page

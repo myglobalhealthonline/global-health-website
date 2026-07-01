@@ -56,6 +56,7 @@ export default async function AdminHealthTestDetailPage({
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-services"
           eyebrow="Services"
           title="Health test"
           actions={
@@ -107,6 +108,7 @@ export default async function AdminHealthTestDetailPage({
         <ArrowLeft className="size-3.5" /> Back to health tests
       </Link>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-services"
         eyebrow={
           <span className="inline-flex items-center gap-2">
             <FlagBadge code={test.country.code} size={14} />
@@ -138,10 +140,10 @@ export default async function AdminHealthTestDetailPage({
         </p>
       ) : null}
 
-      <div className="gh-admin-health-layout">
+      <div className="gh-admin-area-hero gh-admin-area-services gh-admin-health-layout">
         <div className="grid gap-4">
           <AdminCard padding={0}>
-            <div className="gh-admin-health-preview bg-[var(--color-background-soft)] p-6">
+            <div className="gh-admin-area-hero gh-admin-area-services gh-admin-health-preview bg-[var(--color-background-soft)] p-6">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={test.productImagePath}
@@ -149,7 +151,7 @@ export default async function AdminHealthTestDetailPage({
                 className="mx-auto block max-h-72 max-w-full rounded-[var(--radius-card-sm)] object-contain"
               />
             </div>
-            <div className="gh-admin-health-detail-grid p-6">
+            <div className="gh-admin-area-hero gh-admin-area-services gh-admin-health-detail-grid p-6">
               <FieldRow label="Slug" value={test.slug} mono />
               <FieldRow
                 label="Price"
@@ -176,7 +178,7 @@ export default async function AdminHealthTestDetailPage({
                 {test.whatThisTestCovers.map((item) => (
                   <li
                     key={item}
-                    className="gh-admin-health-list-item"
+                    className="gh-admin-area-hero gh-admin-area-services gh-admin-health-list-item"
                   >
                     <span
                       aria-hidden
@@ -203,7 +205,7 @@ export default async function AdminHealthTestDetailPage({
                 {test.whyGetTested.map((item) => (
                   <li
                     key={item}
-                    className="gh-admin-health-list-item"
+                    className="gh-admin-area-hero gh-admin-area-services gh-admin-health-list-item"
                   >
                     <span
                       aria-hidden

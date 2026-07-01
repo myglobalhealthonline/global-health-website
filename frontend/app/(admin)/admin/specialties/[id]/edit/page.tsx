@@ -36,6 +36,7 @@ export default async function AdminSpecialtyEditPage({
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-services"
           eyebrow="Global"
           title="Edit category"
           actions={
@@ -57,6 +58,7 @@ export default async function AdminSpecialtyEditPage({
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-services"
           eyebrow="Global"
           title="Edit category"
           actions={
@@ -116,6 +118,7 @@ export default async function AdminSpecialtyEditPage({
         <ArrowLeft className="size-3.5" /> Back to categories
       </Link>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-services"
         eyebrow="Global"
         title={`Edit ${s.name}`}
         description="Update card image, summary, theme color, and sort order."
@@ -133,7 +136,7 @@ export default async function AdminSpecialtyEditPage({
       ) : null}
 
       <AdminCard>
-        <form action={updateSpecialtyAction} className="gh-admin-specialty-form grid gap-4">
+        <form action={updateSpecialtyAction} className="gh-admin-area-hero gh-admin-area-services gh-admin-specialty-form grid gap-4">
           <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">Country</span>
             <select
@@ -177,7 +180,7 @@ export default async function AdminSpecialtyEditPage({
             helperText="Shown on the public specialty cards."
           />
 
-          <div className="gh-admin-support-field-grid grid gap-4 sm:grid-cols-2">
+          <div className="gh-admin-area-hero gh-admin-area-services gh-admin-support-field-grid grid gap-4 sm:grid-cols-2">
             <label className="flex flex-col gap-1.5">
               <span className="gh-field-label">Theme color</span>
               <input
@@ -217,7 +220,7 @@ export default async function AdminSpecialtyEditPage({
             Active
           </label>
 
-          <div className="gh-admin-support-actions flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
+          <div className="gh-admin-area-hero gh-admin-area-services gh-admin-support-actions flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Save changes
             </button>

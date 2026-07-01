@@ -37,6 +37,7 @@ export default async function AdminEditHealthTestPage({
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-services"
           eyebrow="Services"
           title="Edit health test"
           actions={
@@ -58,6 +59,7 @@ export default async function AdminEditHealthTestPage({
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-services"
           eyebrow="Services"
           title="Edit health test"
           actions={
@@ -142,6 +144,7 @@ export default async function AdminEditHealthTestPage({
         <ArrowLeft className="size-3.5" /> Back to {test.title}
       </Link>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-services"
         eyebrow="Services"
         title={`Edit ${test.title}`}
         description="Update title, pricing, sample/results metadata, and detail content."
@@ -159,7 +162,7 @@ export default async function AdminEditHealthTestPage({
       ) : null}
 
       <AdminCard>
-        <form action={updateAction} className="gh-admin-health-form">
+        <form action={updateAction} className="gh-admin-area-hero gh-admin-area-services gh-admin-health-form">
           <HealthTestFields
             countries={countries}
             initial={test}
@@ -167,7 +170,7 @@ export default async function AdminEditHealthTestPage({
             locales={locales}
             defaultLocale={defaultLocale}
           />
-          <div className="gh-admin-health-actions border-t border-[var(--color-border)] pt-6">
+          <div className="gh-admin-area-hero gh-admin-area-services gh-admin-health-actions border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Save changes
             </button>

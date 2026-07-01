@@ -43,6 +43,7 @@ export default async function AdminPlansPage() {
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-plans"
           eyebrow="Subscriptions"
           title="Plans"
           description="Pick a country in the top bar — plans are configured per country."
@@ -61,6 +62,7 @@ export default async function AdminPlansPage() {
   return (
     <>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-plans"
         eyebrow="Subscriptions"
         title="Plans"
         description={`Monthly subscription plans for ${active.name}. Create, configure, reorder, and deactivate.`}
@@ -88,8 +90,8 @@ export default async function AdminPlansPage() {
           </p>
         </AdminCard>
       ) : (
-        <AdminCard padding={0} className="gh-admin-plan-list">
-          <div className="gh-admin-plan-table-wrap overflow-x-auto">
+        <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-plans gh-admin-plan-list">
+          <div className="gh-admin-area-hero gh-admin-area-plans gh-admin-plan-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Plan</Th>
@@ -135,7 +137,7 @@ export default async function AdminPlansPage() {
                     )}
                   </Td>
                   <Td>
-                    <div className="gh-admin-plan-row-actions flex items-center gap-3">
+                    <div className="gh-admin-area-hero gh-admin-area-plans gh-admin-plan-row-actions flex items-center gap-3">
                       <Link
                         href={`/admin/plans/${plan.id}/edit`}
                         className="text-[13px] font-semibold text-[var(--color-brand-primary)] hover:underline"

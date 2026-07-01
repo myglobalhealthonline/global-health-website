@@ -138,6 +138,7 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
       </Link>
 
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-countries"
         eyebrow={
           <span className="inline-flex items-center gap-2">
             <FlagBadge code={c.code} size={14} />
@@ -165,8 +166,8 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
       ) : null}
 
       {/* Document list */}
-      <AdminCard padding={0} className="gh-admin-country-legal-docs overflow-hidden">
-        <div className="gh-admin-country-table-wrap overflow-x-auto">
+      <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-legal-docs overflow-hidden">
+        <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-table-wrap overflow-x-auto">
         <AdminTable>
           <Thead>
             <Th>Document type</Th>
@@ -241,14 +242,14 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
 
       {/* Edit / create form */}
       {editType ? (
-        <AdminCard className="gh-admin-country-editor mt-4">
+        <AdminCard className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-editor mt-4">
           <h3
             className="m-0 text-[var(--color-text-primary)]"
             style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
           >
             {editDoc ? "Edit" : "Create"}: {DOCUMENT_TYPE_LABELS[editType as LegalDocumentType] ?? editType}
           </h3>
-          <form action={saveDocumentAction} className="gh-admin-country-editor-form mt-4 grid gap-4" encType="multipart/form-data">
+          <form action={saveDocumentAction} className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-editor-form mt-4 grid gap-4" encType="multipart/form-data">
             <input type="hidden" name="type" value={editType} />
             <input type="hidden" name="existingPdfPath" value={editDoc?.pdfPath ?? ""} />
             <label className="flex flex-col gap-1">
@@ -310,7 +311,7 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
               />
               <span className="text-[13px] text-[var(--color-text-body)]">Published</span>
             </label>
-            <div className="gh-admin-country-actions flex items-center gap-3">
+            <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-actions flex items-center gap-3">
               <button type="submit" className="gh-btn gh-btn-primary">
                 Save document
               </button>

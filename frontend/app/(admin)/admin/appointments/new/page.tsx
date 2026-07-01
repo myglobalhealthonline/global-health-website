@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
  *  details (temp password, invite + payment links) to the detail page,
  *  so these secrets never appear in the URL / server logs / history. */
 export const MANUAL_BOOKING_COOKIE = "gh_manual_booking";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Globe2 } from "lucide-react";
 import {
   fetchAdminClinicsByCountryCode,
   fetchAdminCountries,
@@ -39,6 +39,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-appointments"
           eyebrow="Operations"
           title="New manual booking"
           actions={
@@ -69,32 +70,48 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
           <ArrowLeft className="size-3.5" /> Back to queue
         </Link>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-appointments"
           eyebrow="Operations"
           title="New manual booking"
           description="Walk-in / phone-in booking. Choose a country first — services + doctors + clinics are scoped to that country."
         />
-        <AdminCard>
-          <form method="get" className="gh-admin-appointment-country-form">
-            <label className="flex flex-col gap-1.5">
-              <span className="gh-field-label">Country</span>
-              <select
-                name="countryCode"
-                className="gh-select min-w-[240px]"
-                required
-                defaultValue=""
-              >
-                <option value="">Select…</option>
-                {countries.map((c) => (
-                  <option key={c.id} value={c.code}>
-                    {c.name} ({c.code.toUpperCase()})
-                  </option>
-                ))}
-              </select>
-            </label>
-            <button type="submit" className="gh-btn gh-btn-primary">
-              Continue
-            </button>
-          </form>
+        <AdminCard className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-country-card">
+          <div className="gh-admin-area-hero gh-admin-area-appointments gh-admin-country-choice">
+            <div className="gh-admin-area-hero gh-admin-area-appointments gh-admin-country-choice__intro">
+              <span className="gh-icon-tile gh-icon-tile-lg">
+                <Globe2 className="size-5" aria-hidden />
+              </span>
+              <div>
+                <h2 className="m-0 text-[17px] font-bold text-[var(--color-text-primary)]">
+                  Start with country scope
+                </h2>
+                <p className="m-0 mt-1 text-[13px] leading-relaxed text-[var(--color-text-muted)]">
+                  Services, doctors, clinics, phone defaults, and payment currency are loaded from the selected market.
+                </p>
+              </div>
+            </div>
+            <form method="get" className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-country-form">
+              <label className="flex min-w-0 flex-col gap-1.5">
+                <span className="gh-field-label">Country</span>
+                <select
+                  name="countryCode"
+                  className="gh-select min-w-0"
+                  required
+                  defaultValue=""
+                >
+                  <option value="">Select...</option>
+                  {countries.map((c) => (
+                    <option key={c.id} value={c.code}>
+                      {c.name} ({c.code.toUpperCase()})
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button type="submit" className="gh-btn gh-btn-primary">
+                Continue
+              </button>
+            </form>
+          </div>
         </AdminCard>
       </>
     );
@@ -110,6 +127,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-appointments"
           eyebrow="Operations"
           title="New manual booking"
           actions={
@@ -267,6 +285,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
         <ArrowLeft className="size-3.5" /> Back to queue
       </Link>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-appointments"
         eyebrow="Operations"
         title="New manual booking"
         description="Fill in the patient's details — we create their portal account, send the branded reservation email (payment + portal access), and show recovery links for the admin."

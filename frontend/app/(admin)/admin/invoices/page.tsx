@@ -65,6 +65,7 @@ export default async function AdminInvoicesPage({
   return (
     <>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-orders"
         eyebrow={
           <span className="inline-flex items-center gap-2">
             <Receipt className="size-3.5" aria-hidden /> Commerce
@@ -75,7 +76,7 @@ export default async function AdminInvoicesPage({
       />
 
       <AdminCard padding={0}>
-        <div className="gh-admin-ops-table-wrap overflow-x-auto">
+        <div className="gh-admin-area-hero gh-admin-area-orders gh-admin-ops-table-wrap overflow-x-auto">
           <table className="w-full min-w-[860px] text-[13px]">
             <thead>
               <tr className="border-b border-[var(--color-border)] text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
@@ -103,7 +104,7 @@ export default async function AdminInvoicesPage({
                 items.map((inv) => (
                   <tr
                     key={inv.id}
-                    className="gh-admin-invoices-row border-b border-[var(--color-border)] hover:bg-[var(--color-bg-subtle)]"
+                    className="gh-admin-area-hero gh-admin-area-orders gh-admin-invoices-row border-b border-[var(--color-border)] hover:bg-[var(--color-bg-subtle)]"
                   >
                     <td className="px-4 py-3">
                       <span className="font-mono text-[13px] font-bold text-[var(--color-text-primary)]">
@@ -142,11 +143,11 @@ export default async function AdminInvoicesPage({
                     </td>
                     <td className="px-4 py-3">
                       {inv.emailSentAt ? (
-                        <span className="gh-admin-ops-badge inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-800">
+                        <span className="gh-admin-area-hero gh-admin-area-orders gh-admin-ops-badge inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-800">
                           Sent
                         </span>
                       ) : (
-                        <span className="gh-admin-ops-badge inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-800">
+                        <span className="gh-admin-area-hero gh-admin-area-orders gh-admin-ops-badge inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-800">
                           Pending
                         </span>
                       )}
@@ -156,7 +157,7 @@ export default async function AdminInvoicesPage({
                         href={`/print/order-invoices/${inv.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="gh-admin-invoices-view-link inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-[11px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]"
+                        className="gh-admin-area-hero gh-admin-area-orders gh-admin-invoices-view-link inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-[11px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]"
                       >
                         <ExternalLink className="size-3" aria-hidden />
                         View
@@ -169,7 +170,7 @@ export default async function AdminInvoicesPage({
           </table>
         </div>
 
-        <div className="gh-admin-ops-pagination flex items-center justify-between border-t border-[var(--color-border)] px-5 py-4 text-[13px]">
+        <div className="gh-admin-area-hero gh-admin-area-orders gh-admin-ops-pagination flex items-center justify-between border-t border-[var(--color-border)] px-5 py-4 text-[13px]">
           {cursor ? (
             <Link href="/admin/invoices" className="font-semibold underline">
               ← First page

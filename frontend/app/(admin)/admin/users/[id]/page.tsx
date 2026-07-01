@@ -28,6 +28,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-users"
           eyebrow="Global"
           title="User"
           actions={
@@ -134,6 +135,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
         <ArrowLeft className="size-3.5" /> Back to users
       </Link>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-users"
         eyebrow="Global"
         title={user.fullName || user.email}
         description={user.email}
@@ -155,8 +157,8 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
         </p>
       ) : null}
 
-      <div className="gh-admin-user-detail-layout grid gap-4">
-        <div className="gh-admin-user-detail-main grid gap-4">
+      <div className="gh-admin-area-hero gh-admin-area-users gh-admin-user-detail-layout grid gap-4">
+        <div className="gh-admin-area-hero gh-admin-area-users gh-admin-user-detail-main grid gap-4">
           <AdminCard>
             <h3
               className="m-0 text-[var(--color-text-primary)]"
@@ -164,7 +166,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
             >
               Profile
             </h3>
-            <dl className="gh-admin-user-facts mt-4 grid gap-4 sm:grid-cols-2">
+            <dl className="gh-admin-area-hero gh-admin-area-users gh-admin-user-facts mt-4 grid gap-4 sm:grid-cols-2">
               <Field label="Email" value={user.email} />
               <Field label="Full name" value={user.fullName} />
               <Field label="Phone" value={user.phone ?? "—"} />
@@ -185,7 +187,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
           ) : null}
         </div>
 
-        <div className="gh-admin-user-detail-side grid gap-4 self-start">
+        <div className="gh-admin-area-hero gh-admin-area-users gh-admin-user-detail-side grid gap-4 self-start">
           <AdminCard>
             <h3
               className="m-0 text-[var(--color-text-primary)]"

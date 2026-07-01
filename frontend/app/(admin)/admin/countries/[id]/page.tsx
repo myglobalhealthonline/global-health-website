@@ -62,6 +62,7 @@ export default async function AdminCountryDetailPage({
     return (
       <>
         <PageHeader
+          className="gh-admin-area-hero gh-admin-area-countries"
           eyebrow="Global"
           title="Country"
           actions={
@@ -128,6 +129,7 @@ export default async function AdminCountryDetailPage({
         <ArrowLeft className="size-3.5" /> Back to countries
       </Link>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-countries"
         eyebrow={
           <span className="inline-flex items-center gap-2">
             <FlagBadge code={c.code} size={14} />
@@ -168,9 +170,9 @@ export default async function AdminCountryDetailPage({
         </p>
       ) : null}
 
-      <div className="gh-admin-country-detail-layout grid gap-4">
+      <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-detail-layout grid gap-4">
         {/* Main column */}
-        <div className="gh-admin-country-detail-main grid gap-4">
+        <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-detail-main grid gap-4">
           <AdminCard>
             <h3
               className="m-0 text-[var(--color-text-primary)]"
@@ -181,7 +183,7 @@ export default async function AdminCountryDetailPage({
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Used in URLs, billing, and DB joins.
             </p>
-            <dl className="gh-admin-country-facts grid gap-4 sm:grid-cols-2">
+            <dl className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-facts grid gap-4 sm:grid-cols-2">
               <Field label="Country code" value={c.code.toUpperCase()} mono />
               <Field label="URL slug" value={c.slug} mono />
               <Field label="Default locale" value={c.defaultLocale} />
@@ -206,7 +208,7 @@ export default async function AdminCountryDetailPage({
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Paths the public site uses to reach this country.
             </p>
-            <ul className="gh-admin-country-route-list grid gap-2 font-mono text-[12.5px] text-[var(--color-text-body)]">
+            <ul className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-route-list grid gap-2 font-mono text-[12.5px] text-[var(--color-text-body)]">
               <li className="rounded-md bg-[var(--color-background-soft)] px-3 py-2">
                 {c.legacyHomePath}
               </li>
@@ -235,7 +237,7 @@ export default async function AdminCountryDetailPage({
             {c.domains.length === 0 ? (
               <p className="text-[13px] text-[var(--color-text-muted)]">None configured.</p>
             ) : (
-              <ul className="gh-admin-country-domain-list grid gap-2 font-mono text-[12.5px]">
+              <ul className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-domain-list grid gap-2 font-mono text-[12.5px]">
                 {c.domains.map((d) => (
                   <li
                     key={d.id}
@@ -272,7 +274,7 @@ export default async function AdminCountryDetailPage({
                 the same-day flow can run.
               </p>
             ) : (
-              <form action={saveGpSettingsAction} className="gh-admin-country-gp-form grid gap-4">
+              <form action={saveGpSettingsAction} className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-gp-form grid gap-4">
                 <label className="grid gap-1.5">
                   <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                     Same-day GP service
@@ -326,7 +328,7 @@ export default async function AdminCountryDetailPage({
         </div>
 
         {/* Sidebar */}
-        <div className="gh-admin-country-detail-side grid gap-4 self-start">
+        <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-detail-side grid gap-4 self-start">
           <AdminCard>
             <h3
               className="m-0 text-[var(--color-text-primary)]"
@@ -362,7 +364,7 @@ export default async function AdminCountryDetailPage({
             >
               Stats
             </h3>
-            <div className="gh-admin-country-stats mt-3 grid gap-1">
+            <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-stats mt-3 grid gap-1">
               {(
                 [
                   ["Doctors assigned", String(stats.doctors)],

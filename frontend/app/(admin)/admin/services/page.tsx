@@ -25,6 +25,7 @@ import {
   Btn,
   IconBtn,
   PageHeader,
+  Pill,
   Td,
   Th,
   Thead,
@@ -144,6 +145,8 @@ export default async function AdminServicesPage({
   const filterCountry = filterCountryId
     ? countries.find((c) => c.id === filterCountryId) ?? null
     : null;
+  const visibleActive = items.filter((service) => service.isActive).length;
+  const visibleInactive = items.length - visibleActive;
 
   async function deleteServiceAction(formData: FormData) {
     "use server";
@@ -207,6 +210,24 @@ export default async function AdminServicesPage({
 
       <ScopeBanner activeCountry={activeCountry} clearHref={basePath} />
 
+      <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-summary-strip">
+        <div>
+          <span className="gh-field-label">Visible records</span>
+          <strong>{items.length}</strong>
+          <span>of {total} total</span>
+        </div>
+        <div>
+          <span className="gh-field-label">Active on site</span>
+          <strong>{visibleActive}</strong>
+          <span>{visibleInactive} inactive in this view</span>
+        </div>
+        <div>
+          <span className="gh-field-label">Service type</span>
+          <strong>{meta.label}</strong>
+          <span>{filterCountry ? filterCountry.name : "All markets"}</span>
+        </div>
+      </div>
+
       {/* Service-type segmented control — only on the generic
           /admin/services route. The kind-specific wrappers
           (general-consultations, specialist-consultations,
@@ -215,7 +236,7 @@ export default async function AdminServicesPage({
           the same control twice was redundant. */}
       {showKindTabs ? (
         <div
-          className="gh-admin-service-kind-tabs mb-4 inline-flex items-center gap-1 border border-[var(--color-border)]"
+          className="gh-admin-area-hero gh-admin-area-services gh-admin-service-kind-tabs mb-4 inline-flex items-center gap-1 border border-[var(--color-border)]"
           style={{
             padding: 4,
             background: "var(--color-background-soft)",
@@ -266,9 +287,9 @@ export default async function AdminServicesPage({
 
       {/* Filters */}
       <AdminCard padding={0} className="mb-4 overflow-hidden">
-        <form method="get" className="gh-admin-service-filters px-5 py-4">
+        <form method="get" className="gh-admin-area-hero gh-admin-area-services gh-admin-service-filters px-5 py-4">
           <input type="hidden" name="kind" value={kind} />
-          <div className="gh-admin-service-filter-grid">
+          <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-filter-grid">
             <label className="flex min-w-0 flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select
@@ -309,7 +330,7 @@ export default async function AdminServicesPage({
             </label>
           </div>
           <input type="hidden" name="page" value="1" />
-          <div className="gh-admin-service-actions gh-admin-service-actions--filters mt-4">
+          <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-actions gh-admin-service-actions--filters mt-4">
             <button type="submit" className="gh-btn gh-btn-primary" style={{ minHeight: 36 }}>
               Apply filters
             </button>
@@ -330,7 +351,7 @@ export default async function AdminServicesPage({
 
       {/* Table */}
       <AdminCard padding={0} className="overflow-hidden">
-        <div className="gh-admin-service-table-wrap overflow-x-auto">
+        <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Title</Th>
@@ -383,7 +404,7 @@ export default async function AdminServicesPage({
                     </span>
                   </Td>
                   <Td>
-                    <form action={toggleServiceAction} className="gh-admin-service-toggle-form inline-flex">
+                    <form action={toggleServiceAction} className="gh-admin-area-hero gh-admin-area-services gh-admin-service-toggle-form inline-flex">
                       <input type="hidden" name="id" value={service.id} />
                       <input
                         type="hidden"
@@ -402,17 +423,17 @@ export default async function AdminServicesPage({
                             : "gh-admin-status-toggle-off"
                         }`}
                       >
-                        <span className="gh-admin-status-toggle__track" aria-hidden>
-                          <span className="gh-admin-status-toggle__thumb" />
+                        <span className="gh-admin-area-hero gh-admin-area-services gh-admin-status-toggle__track" aria-hidden>
+                          <span className="gh-admin-area-hero gh-admin-area-services gh-admin-status-toggle__thumb" />
                         </span>
-                        <span className="gh-admin-status-toggle__label">
+                        <span className="gh-admin-area-hero gh-admin-area-services gh-admin-status-toggle__label">
                           {service.isActive ? "Active" : "Inactive"}
                         </span>
                       </button>
                     </form>
                   </Td>
                   <Td align="right">
-                    <div className="gh-admin-service-row-actions flex justify-end gap-1.5">
+                    <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-row-actions flex justify-end gap-1.5">
                       <IconBtn
                         ariaLabel={`View ${service.name}`}
                         href={adminHrefForService(service)}
@@ -440,29 +461,46 @@ export default async function AdminServicesPage({
           </AdminTable>
         </div>
 
-        <div className="gh-admin-service-mobile-list">
+        <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-mobile-list">
           {items.map((service) => (
-            <article key={service.id} className="gh-admin-service-mobile-card">
-              <div className="min-w-0">
-                <h3 className="text-[15px] font-bold leading-snug text-[var(--color-text-primary)]">
-                  {service.name}
-                </h3>
-                <p className="mt-1 break-words font-mono text-[11px] text-[var(--color-text-muted)]">
-                  {service.slug}
-                </p>
+            <article key={service.id} className="gh-admin-area-hero gh-admin-area-services gh-admin-service-mobile-card">
+              <div className="flex min-w-0 items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="m-0 text-[15px] font-bold leading-snug text-[var(--color-text-primary)]">
+                    {service.name}
+                  </h3>
+                  <p className="m-0 mt-1 break-words font-mono text-[11px] text-[var(--color-text-muted)]">
+                    {service.slug}
+                  </p>
+                </div>
+                <Pill tone={service.isActive ? "active" : "inactive"}>
+                  {service.isActive ? "Active" : "Inactive"}
+                </Pill>
               </div>
-              <div className="gh-admin-service-mobile-meta">
-                <span className="inline-flex items-center gap-2">
-                  <FlagBadge code={service.country.code} size={14} />
-                  <span>{service.country.code}</span>
-                </span>
-                <span>{formatMoney(service.basePriceCents, service.currencyCode)}</span>
+              <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-mobile-meta">
                 <span>
-                  {service.durationMinutes != null ? `${service.durationMinutes} min` : "—"}
+                  <em>Market</em>
+                  <strong className="inline-flex items-center gap-2">
+                    <FlagBadge code={service.country.code} size={14} />
+                    {service.country.code.toUpperCase()}
+                  </strong>
                 </span>
-                <span>Order {service.sortOrder}</span>
+                <span>
+                  <em>Price</em>
+                  <strong>{formatMoney(service.basePriceCents, service.currencyCode)}</strong>
+                </span>
+                <span>
+                  <em>Duration</em>
+                  <strong>
+                    {service.durationMinutes != null ? `${service.durationMinutes} min` : "—"}
+                  </strong>
+                </span>
+                <span>
+                  <em>Order</em>
+                  <strong>{service.sortOrder}</strong>
+                </span>
               </div>
-              <div className="gh-admin-service-mobile-controls">
+              <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-mobile-controls">
                 <form action={toggleServiceAction} className="inline-flex">
                   <input type="hidden" name="id" value={service.id} />
                   <input
@@ -482,15 +520,15 @@ export default async function AdminServicesPage({
                         : "gh-admin-status-toggle-off"
                     }`}
                   >
-                    <span className="gh-admin-status-toggle__track" aria-hidden>
-                      <span className="gh-admin-status-toggle__thumb" />
+                    <span className="gh-admin-area-hero gh-admin-area-services gh-admin-status-toggle__track" aria-hidden>
+                      <span className="gh-admin-area-hero gh-admin-area-services gh-admin-status-toggle__thumb" />
                     </span>
-                    <span className="gh-admin-status-toggle__label">
+                    <span className="gh-admin-area-hero gh-admin-area-services gh-admin-status-toggle__label">
                       {service.isActive ? "Active" : "Inactive"}
                     </span>
                   </button>
                 </form>
-                <div className="gh-admin-service-row-actions flex justify-end gap-1.5">
+                <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-row-actions flex justify-end gap-1.5">
                   <IconBtn
                     ariaLabel={`View ${service.name}`}
                     href={adminHrefForService(service)}

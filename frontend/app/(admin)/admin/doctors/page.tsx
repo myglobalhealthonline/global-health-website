@@ -143,6 +143,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
   return (
     <>
       <PageHeader
+        className="gh-admin-area-hero gh-admin-area-doctors"
         eyebrow="Global"
         title="Doctors"
         description="Public clinician directory. Doctors are profiles only — patient-facing login is a separate portal."
@@ -170,9 +171,9 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
       ) : null}
 
       {/* Filters card */}
-      <AdminCard padding={0} className="gh-admin-doctor-filters mb-4 overflow-hidden">
+      <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-filters mb-4 overflow-hidden">
         <form method="get" className="px-5 py-4">
-          <div className="gh-admin-doctor-filter-grid grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-filter-grid grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <label className="flex min-w-0 flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select
@@ -228,7 +229,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
             </label>
           </div>
           <input type="hidden" name="page" value="1" />
-          <div className="gh-admin-doctor-actions mt-4 flex flex-wrap items-center gap-3">
+          <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-actions mt-4 flex flex-wrap items-center gap-3">
             <button type="submit" className="gh-btn gh-btn-primary gh-admin-pager-btn">
               Apply filters
             </button>
@@ -248,8 +249,8 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
       </AdminCard>
 
       {/* Table card */}
-      <AdminCard padding={0} className="gh-admin-doctor-table-card overflow-hidden">
-        <div className="gh-admin-doctor-table-wrap overflow-x-auto">
+      <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-table-card overflow-hidden">
+        <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Doctor</Th>
@@ -280,7 +281,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                       >
                         <span
                           aria-hidden
-                          className="gh-admin-doctor-avatar inline-flex shrink-0 items-center justify-center text-white"
+                          className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-avatar inline-flex shrink-0 items-center justify-center text-white"
                         >
                           {initials || "·"}
                         </span>
@@ -364,7 +365,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                       </Pill>
                     </Td>
                     <Td align="right">
-                      <div className="gh-admin-doctor-row-actions flex justify-end gap-1.5">
+                      <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-row-actions flex justify-end gap-1.5">
                         <IconBtn
                           ariaLabel={`View ${d.fullName}`}
                           href={`/admin/doctors/${d.id}`}
@@ -400,7 +401,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
         ) : null}
 
         {totalPages > 1 ? (
-          <nav className="gh-admin-doctor-pagination flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3 text-[13px]">
+          <nav className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-pagination flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3 text-[13px]">
             <div className="text-[var(--color-text-muted)]">
               Page {page} of {totalPages} · {pageSize} per page
             </div>
