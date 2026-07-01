@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Edit3, Eye, Plus } from "lucide-react";
+import { Edit3, Eye, Layers, Plus } from "lucide-react";
 import {
   fetchAdminCountries,
   fetchAdminServices,
@@ -557,7 +557,7 @@ export default async function AdminServicesPage({
 
         {items.length === 0 ? (
           <AdminEmptyState
-            assetSrc="/images/portal/generated/admin-content-management-accent.png"
+            icon={<Layers className="size-8" aria-hidden />}
             title="No services match these filters"
             description="Clear search, market, or status filters to review the full service catalog."
             action={

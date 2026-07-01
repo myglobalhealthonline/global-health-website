@@ -27,17 +27,17 @@ A true screenshot completion pass still needs valid local sessions or seeded aut
 
 ## Authenticated Screenshot Phase Started
 
-Added `scripts/portal-authenticated-screenshots.mjs` and `docs/portal-redesign/authenticated-screenshot-runbook.md` to make the visual review repeatable with role credentials and the local Chrome binary.
+Added `temporary authenticated screenshot runner removed during cleanup` and `authenticated screenshot runbook removed during cleanup` to make the visual review repeatable with role credentials and the local Chrome binary.
 
 Smoke evidence:
 
 - Chrome binary verified at `C:\Users\kingh\Downloads\chrome-win\chrome.exe`.
 - Direct backend login succeeded for the admin role.
 - Authenticated `/admin` screenshots captured at 390px and 1280px.
-- Result file: `docs/portal-redesign/authenticated-screenshots/2026-06-30T23-04-15-389Z/results.json`.
+- Result file: `historical screenshot artifact removed during cleanup`.
 - Screenshot files:
-  - `docs/portal-redesign/authenticated-screenshots/2026-06-30T23-04-15-389Z/images/admin/390/admin-admin-390.png`
-  - `docs/portal-redesign/authenticated-screenshots/2026-06-30T23-04-15-389Z/images/admin/1280/admin-admin-1280.png`
+  - `historical screenshot artifact removed during cleanup`
+  - `historical screenshot artifact removed during cleanup`
 
 Admin checklist batch evidence:
 
@@ -71,7 +71,7 @@ Reviewed the last two `Dev-hassaan` commits and continued from the existing audi
 
 ### Dynamic Route Mapping Used
 
-- Route map file: `docs/portal-redesign/route-maps/admin-dynamic-routes-2026-07-01.json`
+- Route map file: `historical route map removed during cleanup`
 - Admin appointment detail: `/admin/appointments/[id]` -> `/admin/appointments/cmr0fymsd0xm101o9al9nwf24`
 - The same route-map file also resolves admin assets, blog, countries, doctors, health tests, orders, pages, patients, plans, services, specialties, and users dynamic routes for follow-up visual review.
 
@@ -79,9 +79,9 @@ Reviewed the last two `Dev-hassaan` commits and continued from the existing audi
 
 | Status | Portal | Route | Evidence | Widths | Result |
 |---|---|---|---|---|---|
-| Completed | Admin | `/admin/services` | `docs/portal-redesign/authenticated-screenshots/2026-07-01T06-25-52-105Z/results.json` | 320, 390, 430, 768, 1024, 1280, 1440, 1920 | 8 HTTP 200 screenshots, no horizontal overflow diagnostics. |
-| Completed | Admin | `/admin/appointments/[id]` | `docs/portal-redesign/authenticated-screenshots/2026-07-01T06-18-10-394Z/results.json` | 320, 390, 430, 768, 1024, 1280, 1440, 1920 | 8 HTTP 200 screenshots, no horizontal overflow diagnostics. |
-| Needs review | Admin dynamic route set | Route map output | `docs/portal-redesign/authenticated-screenshots/2026-07-01T05-25-48-514Z/results.json` and `docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/results.json` | 320, 390, 430, 768, 1024, 1280, 1440, 1920 where captured | Concrete routes now captured; rows remain `Needs review` until each screenshot is visually inspected. |
+| Completed | Admin | `/admin/services` | `historical screenshot artifact removed during cleanup` | 320, 390, 430, 768, 1024, 1280, 1440, 1920 | 8 HTTP 200 screenshots, no horizontal overflow diagnostics. |
+| Completed | Admin | `/admin/appointments/[id]` | `historical screenshot artifact removed during cleanup` | 320, 390, 430, 768, 1024, 1280, 1440, 1920 | 8 HTTP 200 screenshots, no horizontal overflow diagnostics. |
+| Needs review | Admin dynamic route set | Route map output | `historical screenshot artifact removed during cleanup` and `historical screenshot artifact removed during cleanup` | 320, 390, 430, 768, 1024, 1280, 1440, 1920 where captured | Concrete routes now captured; rows remain `Needs review` until each screenshot is visually inspected. |
 
 ### Visual Issues Fixed
 
@@ -95,8 +95,8 @@ Reviewed the last two `Dev-hassaan` commits and continued from the existing audi
 
 | Asset | Used by | Why |
 |---|---|---|
-| `frontend/public/images/portal/generated/clinical-panel-wash.png` | Shared portal page headers through `.gh-portal-page-header` | Adds a subtle clinical SaaS panel wash using the lower part of the generated image so headers no longer look like a plain white screen. |
-| `frontend/public/images/portal/generated/patient-record-empty-state.png` | `/account/medical-files` empty state | Adds a calm medical-record illustration for empty patient document states without text, logos, watermarks, or fake UI. |
+| `removed generated clinical panel wash asset` | Shared portal page headers through `.gh-portal-page-header` | Adds a subtle clinical SaaS panel wash using the lower part of the generated image so headers no longer look like a plain white screen. |
+| `removed generated patient record empty-state asset` | `/account/medical-files` empty state | Adds a calm medical-record illustration for empty patient document states without text, logos, watermarks, or fake UI. |
 
 ### Remaining Blockers
 
@@ -108,7 +108,7 @@ Reviewed the last two `Dev-hassaan` commits and continued from the existing audi
 
 | Command | Result | Notes |
 |---|---|---|
-| `node --check scripts/portal-authenticated-screenshots.mjs` | Passed | Screenshot runner syntax is valid. |
+| `node --check temporary authenticated screenshot runner removed during cleanup` | Passed | Screenshot runner syntax is valid. |
 | `cmd /c node_modules\.bin\eslint.cmd` in `frontend/` | Passed with warnings | 0 errors, 35 existing warnings. |
 | `cmd /c node_modules\.bin\tsc.cmd --noEmit` in `frontend/` | Passed | TypeScript check completed successfully. |
 | `cmd /c node_modules\.bin\eslint.cmd src --ext .ts` in `backend/` | Failed | 26 existing lint errors and 39 warnings outside this change set; not introduced by the portal visual QA files. |
@@ -126,11 +126,11 @@ Scope limited to `/admin`, `/admin/appointments`, `/admin/appointments/new`, `/a
 
 | Route | Before screenshot folder | After attempt | Status |
 |---|---|---|---|
-| `/admin` | `docs/portal-redesign/authenticated-screenshots/2026-06-30T23-43-23-041Z/` | `docs/portal-redesign/authenticated-screenshots/2026-07-01T10-37-29-388Z/results.json` | Needs review — after run auth-skipped. |
-| `/admin/appointments` | `docs/portal-redesign/authenticated-screenshots/2026-06-30T23-24-21-546Z/` | `docs/portal-redesign/authenticated-screenshots/2026-07-01T10-37-29-388Z/results.json` | Needs review — after run auth-skipped. |
-| `/admin/appointments/new` | `docs/portal-redesign/authenticated-screenshots/2026-06-30T23-24-21-546Z/` | `docs/portal-redesign/authenticated-screenshots/2026-07-01T10-37-29-388Z/results.json` | Needs review — after run auth-skipped. |
-| `/admin/services` | `docs/portal-redesign/authenticated-screenshots/2026-07-01T06-25-52-105Z/` | `docs/portal-redesign/authenticated-screenshots/2026-07-01T10-37-29-388Z/results.json` | Needs review — after run auth-skipped after new service summary/card polish. |
-| `/admin/services/[id]/edit` | `docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/` | `docs/portal-redesign/authenticated-screenshots/2026-07-01T10-37-29-388Z/results.json` | Needs review — after run auth-skipped. |
+| `/admin` | `historical screenshot artifact removed during cleanup` | `historical screenshot artifact removed during cleanup` | Needs review — after run auth-skipped. |
+| `/admin/appointments` | `historical screenshot artifact removed during cleanup` | `historical screenshot artifact removed during cleanup` | Needs review — after run auth-skipped. |
+| `/admin/appointments/new` | `historical screenshot artifact removed during cleanup` | `historical screenshot artifact removed during cleanup` | Needs review — after run auth-skipped. |
+| `/admin/services` | `historical screenshot artifact removed during cleanup` | `historical screenshot artifact removed during cleanup` | Needs review — after run auth-skipped after new service summary/card polish. |
+| `/admin/services/[id]/edit` | `historical screenshot artifact removed during cleanup` | `historical screenshot artifact removed during cleanup` | Needs review — after run auth-skipped. |
 
 Fresh authenticated screenshots could not be captured because `PORTAL_SCREENSHOT_ADMIN_EMAIL` and `PORTAL_SCREENSHOT_ADMIN_PASSWORD` are not present in the current environment. Restarting the backend with unrestricted network access was rejected by the approval system because `backend/.env` points at a non-disposable external database and the backend starts scheduled jobs.
 
@@ -144,13 +144,13 @@ Fresh authenticated screenshots could not be captured because `PORTAL_SCREENSHOT
 
 ### Generated Asset
 
-- `frontend/public/images/portal/generated/admin-dashboard-clinical-wash.png` — used only by `/admin` dashboard hero.
+- `removed generated admin dashboard wash asset` — used only by `/admin` dashboard hero.
 
 ### Validation
 
 | Command | Result | Notes |
 |---|---|---|
-| `node --check scripts/portal-authenticated-screenshots.mjs` | Passed | Screenshot runner syntax is valid. |
+| `node --check temporary authenticated screenshot runner removed during cleanup` | Passed | Screenshot runner syntax is valid. |
 | `npm run lint` with `CI=true` | Failed | Frontend lint completed with 0 errors / 35 existing warnings; backend lint still has 26 existing errors and 39 warnings outside this admin UI batch. |
 | `npm run typecheck` with `CI=true` | Passed | Frontend and backend typecheck passed. |
 | `npm run build` with `CI=true` | Passed | Frontend Next build and backend `tsc` build passed. |
@@ -170,7 +170,7 @@ Scope is limited to Admin portal source implementation. Screenshot capture and D
 ### Visual Issues Addressed
 
 - Added an Admin-wide area header system using gh-admin-area-hero classes on route pages so Admin pages share consistent width, padding, clinical texture, and area-specific accent treatment.
-- Added the generated raster asset frontend/public/images/portal/generated/admin-dashboard-clinical-wash.png to the /admin dashboard hero for a premium healthcare SaaS welcome panel.
+- Added the generated raster asset removed generated admin dashboard wash asset to the /admin dashboard hero for a premium healthcare SaaS welcome panel.
 - Improved /admin dashboard stat-grid rhythm so cards do not create awkward orphan layouts on common desktop widths.
 - Reworked /admin/appointments mobile presentation with card rows instead of relying on a clipped horizontal table.
 - Reworked /admin/appointments/new country-selection step as a market-scope card with clearer hierarchy and responsive form behavior.
@@ -181,7 +181,7 @@ Scope is limited to Admin portal source implementation. Screenshot capture and D
 
 | Asset | Used by | Why it improves the Admin UI |
 |---|---|---|
-| frontend/public/images/portal/generated/admin-dashboard-clinical-wash.png | /admin dashboard hero via .gh-admin-dashboard-hero | Adds a subtle, text-free clinical raster wash so the dashboard opening panel feels premium without becoming distracting. |
+| removed generated admin dashboard wash asset | /admin dashboard hero via .gh-admin-dashboard-hero | Adds a subtle, text-free clinical raster wash so the dashboard opening panel feels premium without becoming distracting. |
 
 ### Documentation Updates
 
@@ -283,7 +283,7 @@ Scope: Admin Portal only. No Doctor/Patient work. No screenshots. No new markdow
 
 ### Source Implementation
 
-- Generated and added `frontend/public/images/portal/generated/admin-content-management-accent.png` for Admin content/billing/subscriber/service empty states; no text, logos, watermarks, fake UI text, or gore.
+- Generated and added `removed generated admin content management accent asset` for Admin content/billing/subscriber/service empty states; no text, logos, watermarks, fake UI text, or gore.
 - `/admin/audit-log`: added summary metrics, polished empty state, and mobile audit-event cards while preserving filters and pagination.
 - `/admin/automation`: added order/run summary strips, structured empty states, and mobile automation-run cards while preserving order drilldown and automation-key filtering.
 - `/admin/blog`: added post summary metrics, generated-asset empty state with action, desktop table responsive wrapper, and mobile post cards.

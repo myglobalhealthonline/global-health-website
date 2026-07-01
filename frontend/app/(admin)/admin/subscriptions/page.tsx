@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { BadgeCheck, CreditCard } from "lucide-react";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
@@ -121,7 +122,7 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
               </p>
             ) : grantsResult.data.grants.length === 0 ? (
               <AdminEmptyState
-                assetSrc="/images/portal/generated/admin-content-management-accent.png"
+                icon={<BadgeCheck className="size-8" aria-hidden />}
                 title="No pending perk approvals"
                 description="Manual approval perks will appear here when subscribers meet the configured rule and require admin review."
               />
@@ -181,7 +182,7 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
               </p>
             ) : subsResult.data.items.length === 0 ? (
               <AdminEmptyState
-                assetSrc="/images/portal/generated/admin-content-management-accent.png"
+                icon={<CreditCard className="size-8" aria-hidden />}
                 title="No subscriptions match this filter"
                 description="Choose a different status filter to review active, paused, canceled, or incomplete subscriptions."
               />

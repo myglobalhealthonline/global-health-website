@@ -233,7 +233,7 @@ Each batch must update the relevant audit markdown as work is completed.
 ## Batch 6 - Responsive pass
 
 - Status: Inaccessible — reason documented; source-level responsive pass completed, but rendered route screenshots are blocked by the protected portal auth gate in this local session.
-- Render evidence: documented in `docs/portal-redesign/render-accessibility-check.md` and `docs/portal-redesign/sample-render-check.json`.
+- Render evidence: documented in `render accessibility notes removed during cleanup` and `sample render artifact removed during cleanup`.
 - Static validation: `npm run lint` passed with warnings, `npm run typecheck` passed, and `npm run build` passed.
 
 - Review every audited route at 320, 360, 390, 430, 640, 768, 1024, 1280, 1440, 1536, 1920, and 2560.
