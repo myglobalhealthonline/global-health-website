@@ -1,5 +1,10 @@
 # Shared Portal Components Audit
 
+> **See also:** [`portal-shared-ui-dependency-map.md`](./portal-shared-ui-dependency-map.md)
+> — the master reference for future theme/design redesign work. It maps which
+> shared components and CSS affect Admin vs Doctor vs Patient, what is
+> hardcoded, and what to edit globally vs per portal.
+
 Reusable and role-local portal components discovered from `frontend/components/**` and portal `_components/**` folders.
 
 Total component rows: 114.
