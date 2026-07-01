@@ -44,6 +44,13 @@ Run one smoke route:
 node scripts/portal-authenticated-screenshots.mjs --portal admin --route /admin --widths 390,1280
 ```
 
+Run the checklist in smaller batches:
+
+```powershell
+node scripts/portal-authenticated-screenshots.mjs --portal admin --route-offset 0 --route-limit 10
+node scripts/portal-authenticated-screenshots.mjs --portal admin --route-offset 10 --route-limit 10
+```
+
 Run all available portals:
 
 ```powershell
@@ -72,6 +79,8 @@ Each run writes:
 - `docs/portal-redesign/authenticated-screenshots/<timestamp>/images/**`
 
 The `results.json` file records route, width, final path, HTTP status, login redirects, skipped dynamic routes, and screenshot paths.
+
+The runner writes `results.json` incrementally after each result, so partial evidence survives long-running batches or timeouts.
 
 ## Authentication Method
 

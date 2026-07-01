@@ -30,6 +30,8 @@ function parseArgs(argv) {
       process.env.PORTAL_SCREENSHOT_CHROME ??
       "C:\\Users\\kingh\\Downloads\\chrome-win\\chrome.exe",
     routeMapJson: process.env.PORTAL_SCREENSHOT_ROUTE_MAP_JSON ?? "{}",
+    routeOffset: 0,
+    routeLimit: null,
   };
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -62,10 +64,18 @@ function parseArgs(argv) {
     } else if (current === "--chrome" && next) {
       args.chromePath = next;
       index += 1;
+    } else if (current === "--route-offset" && next) {
+      args.routeOffset = Number.parseInt(next, 10);
+      index += 1;
+    } else if (current === "--route-limit" && next) {
+      args.routeLimit = Number.parseInt(next, 10);
+      index += 1;
     }
   }
 
   if (args.portals.length === 0) args.portals = ["Admin", "Doctor", "Patient"];
+  if (!Number.isFinite(args.routeOffset) || args.routeOffset < 0) args.routeOffset = 0;
+  if (!Number.isFinite(args.routeLimit) || args.routeLimit <= 0) args.routeLimit = null;
   return args;
 }
 
@@ -183,26 +193,54 @@ async function loginForPortal(context, page, args, portal) {
   return { ok: true };
 }
 
-async function loginForPortalViaUi(page, siteUrl, portal) {
-  const loginUrl = new URL("/login", siteUrl);
-  loginUrl.searchParams.set("next", PORTAL_HOME[portal]);
-  await page.goto(loginUrl.toString(), { waitUntil: "domcontentloaded" });
-  await page.locator('input[name="email"]').fill(email);
-  await page.locator('input[name="password"]').fill(password);
-  await Promise.all([
-    page.waitForLoadState("networkidle").catch(() => undefined),
-    page.locator('button[type="submit"]').click(),
-  ]);
-  await page.waitForTimeout(800);
+async function collectLayoutDiagnostics(page) {
+  return page.evaluate(() => {
+    const doc = document.documentElement;
+    const body = document.body;
+    const viewportWidth = window.innerWidth;
+    const scrollWidth = Math.max(doc.scrollWidth, body?.scrollWidth ?? 0);
+    const horizontalOverflowPx = Math.max(0, Math.round(scrollWidth - viewportWidth));
+    const offscreenElements = Array.from(document.body.querySelectorAll("*"))
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        if (rect.width < 1 || rect.height < 1) return null;
+        if (rect.right <= viewportWidth + 1 && rect.left >= -1) return null;
+        const className =
+          typeof element.className === "string" && element.className.trim()
+            ? `.${element.className.trim().split(/\s+/).slice(0, 4).join(".")}`
+            : "";
+        return {
+          tag: element.tagName.toLowerCase(),
+          id: element.id ? `#${element.id}` : "",
+          className,
+          left: Math.round(rect.left),
+          right: Math.round(rect.right),
+          width: Math.round(rect.width),
+        };
+      })
+      .filter(Boolean)
+      .slice(0, 8);
 
-  const finalPath = new URL(page.url()).pathname;
-  if (finalPath === "/login") {
     return {
-      ok: false,
-      reason: `Login stayed on /login for ${portal}`,
+      viewportWidth,
+      scrollWidth,
+      horizontalOverflowPx,
+      hasHorizontalOverflow: horizontalOverflowPx > 1,
+      offscreenElements,
     };
+  });
+}
+
+async function dismissCookieNotice(page) {
+  const noticeButton = page.getByRole("button", { name: /^got it$/i }).first();
+  try {
+    if (await noticeButton.isVisible({ timeout: 800 })) {
+      await noticeButton.click({ timeout: 2_000 });
+      await page.waitForTimeout(150);
+    }
+  } catch {
+    // Some routes do not show the banner; screenshots should continue.
   }
-  return { ok: true };
 }
 
 async function screenshotRoute(page, siteUrl, outDir, portal, route, width) {
@@ -211,13 +249,20 @@ async function screenshotRoute(page, siteUrl, outDir, portal, route, width) {
   const response = await page.goto(url, { waitUntil: "domcontentloaded" });
   await page.waitForLoadState("networkidle").catch(() => undefined);
   await page.waitForTimeout(400);
+  await dismissCookieNotice(page);
 
   const finalUrl = page.url();
   const finalPath = new URL(finalUrl).pathname;
+  const layout = await collectLayoutDiagnostics(page);
   const fileName = `${portal.toLowerCase()}-${safeName(route || "home")}-${width}.png`;
   const screenshotPath = path.join(outDir, "images", portal.toLowerCase(), `${width}`, fileName);
   await mkdir(path.dirname(screenshotPath), { recursive: true });
-  await page.screenshot({ path: screenshotPath, fullPage: true, scale: "css" });
+  await page.screenshot({
+    path: screenshotPath,
+    fullPage: true,
+    scale: "css",
+    timeout: 90_000,
+  });
 
   return {
     portal,
@@ -226,6 +271,7 @@ async function screenshotRoute(page, siteUrl, outDir, portal, route, width) {
     status: response?.status() ?? null,
     finalPath,
     redirectedToLogin: finalPath === "/login",
+    layout,
     screenshotPath: screenshotPath.replaceAll("\\", "/"),
   };
 }
@@ -236,16 +282,47 @@ async function main() {
   const routeMap = JSON.parse(args.routeMapJson);
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const outDir = path.join(args.outDir, timestamp);
+  const resultPath = path.join(outDir, "results.json");
+  await mkdir(outDir, { recursive: true });
 
-  const allEntries = parseChecklist(checklist)
+  let allEntries = parseChecklist(checklist)
     .filter((entry) => args.portals.includes(entry.portal))
     .filter((entry) => args.routes.length === 0 || args.routes.includes(entry.route));
+  if (args.routeOffset || args.routeLimit) {
+    allEntries = allEntries.slice(
+      args.routeOffset,
+      args.routeLimit ? args.routeOffset + args.routeLimit : undefined,
+    );
+  }
 
   const browser = await chromium.launch({
     headless: true,
     executablePath: args.chromePath,
   });
   const results = [];
+
+  async function writeSummary() {
+    const summary = {
+      checkedAt: new Date().toISOString(),
+      siteUrl: args.siteUrl,
+      apiUrl: args.apiUrl,
+      chromePath: args.chromePath,
+      checklist: args.checklist,
+      portals: args.portals,
+      widths: args.widths,
+      routeOffset: args.routeOffset,
+      routeLimit: args.routeLimit,
+      selectedRoutes: allEntries.length,
+      totals: results.reduce((acc, result) => {
+        const key = result.status ?? (result.redirectedToLogin ? "redirected" : "captured");
+        acc[key] = (acc[key] ?? 0) + 1;
+        return acc;
+      }, {}),
+      results,
+    };
+    await writeFile(resultPath, `${JSON.stringify(summary, null, 2)}\n`, "utf8");
+    return summary;
+  }
 
   try {
     for (const portal of args.portals) {
@@ -254,6 +331,7 @@ async function main() {
       const login = await loginForPortal(context, page, args, portal);
       if (!login.ok) {
         results.push({ portal, status: "auth-skipped", reason: login.reason });
+        await writeSummary();
         await context.close();
         continue;
       }
@@ -268,6 +346,7 @@ async function main() {
             status: "route-skipped",
             reason: "Dynamic route requires PORTAL_SCREENSHOT_ROUTE_MAP_JSON replacement",
           });
+          await writeSummary();
           continue;
         }
 
@@ -283,6 +362,7 @@ async function main() {
               reason: error instanceof Error ? error.message : String(error),
             });
           }
+          await writeSummary();
         }
       }
       await context.close();
@@ -291,23 +371,7 @@ async function main() {
     await browser.close();
   }
 
-  await mkdir(outDir, { recursive: true });
-  const resultPath = path.join(outDir, "results.json");
-  const summary = {
-    checkedAt: new Date().toISOString(),
-    siteUrl: args.siteUrl,
-    chromePath: args.chromePath,
-    checklist: args.checklist,
-    portals: args.portals,
-    widths: args.widths,
-    totals: results.reduce((acc, result) => {
-      const key = result.status ?? (result.redirectedToLogin ? "redirected" : "captured");
-      acc[key] = (acc[key] ?? 0) + 1;
-      return acc;
-    }, {}),
-    results,
-  };
-  await writeFile(resultPath, `${JSON.stringify(summary, null, 2)}\n`, "utf8");
+  const summary = await writeSummary();
   console.log(JSON.stringify({ resultPath: resultPath.replaceAll("\\", "/"), totals: summary.totals }, null, 2));
 }
 

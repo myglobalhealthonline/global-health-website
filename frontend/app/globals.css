@@ -1296,6 +1296,16 @@ img {
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
 }
 
+@media (max-width: 1024px) {
+  .gh-admin-detail-layout.gh-admin-appointment-workspace {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .gh-admin-detail-layout.gh-admin-appointment-workspace > .grid {
+    min-width: 0;
+  }
+}
+
 .gh-admin-pager-btn {
   min-height: 36px;
   padding: 0 14px;
@@ -1571,9 +1581,9 @@ img {
   border: 1px solid rgba(29, 75, 54, 0.1);
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.9);
-  background-image: url("/images/portal/portal-header-wash.png");
+  background-image: url("/images/portal/generated/clinical-panel-wash.png");
   background-size: cover;
-  background-position: center;
+  background-position: center bottom;
   box-shadow: 0 16px 44px rgba(29, 75, 54, 0.08);
   overflow: hidden;
 }
@@ -1822,8 +1832,8 @@ img {
   background-color: rgba(255, 255, 255, 0.9) !important;
   background-image:
     linear-gradient(90deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.73)),
-    url("/images/portal/portal-clinical-wash.png") !important;
-  background-position: center, center 88% !important;
+    url("/images/portal/generated/clinical-panel-wash.png") !important;
+  background-position: center, center bottom !important;
   background-size: cover, cover !important;
   box-shadow: var(--portal-shadow) !important;
 }
@@ -2110,15 +2120,18 @@ img {
 }
 
 .gh-admin-main button.gh-admin-status-toggle[type="submit"] {
+  display: inline-flex !important;
   width: auto !important;
   min-height: auto !important;
+  align-items: center !important;
+  gap: 8px !important;
   justify-content: center !important;
-  padding: 0 !important;
+  padding: 3px 7px 3px 3px !important;
   border: none !important;
-  border-radius: 0 !important;
+  border-radius: 999px !important;
   background: transparent !important;
   box-shadow: none !important;
-  color: inherit !important;
+  color: var(--color-text-secondary) !important;
   white-space: nowrap;
 }
 
@@ -2136,11 +2149,62 @@ img {
 }
 
 .gh-admin-status-toggle__track {
+  display: inline-flex;
+  width: 36px;
+  height: 20px;
+  align-items: center;
+  border-radius: 999px;
+  padding: 2px;
   flex: 0 0 auto;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  transition:
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.gh-admin-status-toggle-on .gh-admin-status-toggle__track {
+  justify-content: flex-end;
+  background: var(--color-brand-primary);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+    0 8px 18px rgba(29, 75, 54, 0.16);
+}
+
+.gh-admin-status-toggle-off .gh-admin-status-toggle__track {
+  justify-content: flex-start;
+  background: #d9e3dd;
+  box-shadow: inset 0 0 0 1px rgba(29, 75, 54, 0.08);
+}
+
+.gh-admin-status-toggle__thumb {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(29, 75, 54, 0.22);
+}
+
+.gh-admin-status-toggle__label {
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.gh-admin-status-toggle-on .gh-admin-status-toggle__label {
+  color: var(--color-brand-primary);
+}
+
+.gh-admin-status-toggle-off .gh-admin-status-toggle__label {
+  color: #64776e;
 }
 
 /* Batch 3A: admin services route family */
+.gh-admin-service-mobile-list {
+  display: none;
+}
+
 .gh-admin-service-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.85fr);
@@ -2421,12 +2485,53 @@ img {
     margin-left: 0;
   }
 
+  .gh-admin-service-table-wrap {
+    display: none;
+  }
+
+  .gh-admin-service-mobile-list {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .gh-admin-service-mobile-card {
+    display: grid;
+    gap: 12px;
+    border: 1px solid rgba(29, 75, 54, 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.94);
+    padding: 14px;
+    box-shadow: 0 14px 28px rgba(20, 55, 43, 0.055);
+  }
+
+  .gh-admin-service-mobile-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    color: var(--color-text-muted);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .gh-admin-service-mobile-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
   .gh-admin-service-actions :where(.gh-btn, button, a),
   .gh-admin-service-country-form :where(.gh-btn, button),
   .gh-admin-service-faq__actions :where(.gh-btn, button),
   .gh-admin-service-row-actions :where(.gh-btn, button, a) {
     width: 100%;
     justify-content: center;
+  }
+
+  .gh-admin-service-mobile-controls .gh-admin-service-row-actions :where(.gh-btn, button, a) {
+    width: 34px;
+    min-width: 34px;
   }
 }
 
@@ -5328,6 +5433,23 @@ img {
   scrollbar-width: thin;
 }
 
+.gh-patient-medical-empty {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+  text-align: left;
+}
+
+.gh-patient-medical-empty__image {
+  width: 112px;
+  height: 112px;
+  border-radius: 8px;
+  object-fit: cover;
+  object-position: center;
+  box-shadow: 0 14px 32px rgba(20, 55, 43, 0.08);
+}
+
 .gh-patient-tabs > button {
   white-space: nowrap;
 }
@@ -5458,6 +5580,17 @@ img {
   .gh-patient-family-card,
   .gh-patient-empty-state {
     padding: 16px;
+  }
+
+  .gh-patient-medical-empty {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .gh-patient-medical-empty__image {
+    margin-inline: auto;
+    width: 96px;
+    height: 96px;
   }
 
   .gh-patient-delete-modal {

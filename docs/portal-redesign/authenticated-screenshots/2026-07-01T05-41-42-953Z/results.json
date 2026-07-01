@@ -1,0 +1,1580 @@
+{
+  "checkedAt": "2026-07-01T05:46:49.960Z",
+  "siteUrl": "http://localhost:3000",
+  "apiUrl": "http://127.0.0.1:4000",
+  "chromePath": "C:\\Users\\kingh\\Downloads\\chrome-win\\chrome.exe",
+  "checklist": "docs/portal-redesign/screenshot-checklist.md",
+  "portals": [
+    "Admin"
+  ],
+  "widths": [
+    320,
+    390,
+    430,
+    768,
+    1024,
+    1280,
+    1440,
+    1920
+  ],
+  "routeOffset": 0,
+  "routeLimit": null,
+  "selectedRoutes": 4,
+  "totals": {
+    "200": 32
+  },
+  "results": [
+    {
+      "portal": "Admin",
+      "route": "/admin/services/cmqzrjut0002ftcjuv6pzmw64/edit",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/services/cmqzrjut0002ftcjuv6pzmw64/edit",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 320,
+        "scrollWidth": 320,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/320/admin-admin-services-cmqzrjut0002ftcjuv6pzmw64-edit-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services/cmqzrjut0002ftcjuv6pzmw64/edit",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/services/cmqzrjut0002ftcjuv6pzmw64/edit",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 390,
+        "scrollWidth": 390,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/390/admin-admin-services-cmqzrjut0002ftcjuv6pzmw64-edit-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services/cmqzrjut0002ftcjuv6pzmw64/edit",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/services/cmqzrjut0002ftcjuv6pzmw64/edit",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 430,
+        "scrollWidth": 430,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/430/admin-admin-services-cmqzrjut0002ftcjuv6pzmw64-edit-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services/cmqzrjut0002ftcjuv6pzmw64/edit",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/services/cmqzrjut0002ftcjuv6pzmw64/edit",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 768,
+        "scrollWidth": 768,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/768/admin-admin-services-cmqzrjut0002ftcjuv6pzmw64-edit-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services/cmqzrjut0002ftcjuv6pzmw64/edit",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/services/cmqzrjut0002ftcjuv6pzmw64/edit",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1024,
+        "scrollWidth": 1024,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/1024/admin-admin-services-cmqzrjut0002ftcjuv6pzmw64-edit-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services/cmqzrjut0002ftcjuv6pzmw64/edit",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/services/cmqzrjut0002ftcjuv6pzmw64/edit",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1280,
+        "scrollWidth": 1280,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/1280/admin-admin-services-cmqzrjut0002ftcjuv6pzmw64-edit-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services/cmqzrjut0002ftcjuv6pzmw64/edit",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/services/cmqzrjut0002ftcjuv6pzmw64/edit",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1440,
+        "scrollWidth": 1440,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/1440/admin-admin-services-cmqzrjut0002ftcjuv6pzmw64-edit-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services/cmqzrjut0002ftcjuv6pzmw64/edit",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/services/cmqzrjut0002ftcjuv6pzmw64/edit",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1920,
+        "scrollWidth": 1920,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/1920/admin-admin-services-cmqzrjut0002ftcjuv6pzmw64-edit-1920.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services/cmqzrjut0002ftcjuv6pzmw64",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/services/cmqzrjut0002ftcjuv6pzmw64",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 320,
+        "scrollWidth": 320,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/320/admin-admin-services-cmqzrjut0002ftcjuv6pzmw64-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services/cmqzrjut0002ftcjuv6pzmw64",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/services/cmqzrjut0002ftcjuv6pzmw64",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 390,
+        "scrollWidth": 390,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/390/admin-admin-services-cmqzrjut0002ftcjuv6pzmw64-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services/cmqzrjut0002ftcjuv6pzmw64",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/services/cmqzrjut0002ftcjuv6pzmw64",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 430,
+        "scrollWidth": 430,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/430/admin-admin-services-cmqzrjut0002ftcjuv6pzmw64-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services/cmqzrjut0002ftcjuv6pzmw64",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/services/cmqzrjut0002ftcjuv6pzmw64",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 768,
+        "scrollWidth": 768,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/768/admin-admin-services-cmqzrjut0002ftcjuv6pzmw64-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services/cmqzrjut0002ftcjuv6pzmw64",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/services/cmqzrjut0002ftcjuv6pzmw64",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1024,
+        "scrollWidth": 1024,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/1024/admin-admin-services-cmqzrjut0002ftcjuv6pzmw64-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services/cmqzrjut0002ftcjuv6pzmw64",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/services/cmqzrjut0002ftcjuv6pzmw64",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1280,
+        "scrollWidth": 1280,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/1280/admin-admin-services-cmqzrjut0002ftcjuv6pzmw64-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services/cmqzrjut0002ftcjuv6pzmw64",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/services/cmqzrjut0002ftcjuv6pzmw64",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1440,
+        "scrollWidth": 1440,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/1440/admin-admin-services-cmqzrjut0002ftcjuv6pzmw64-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services/cmqzrjut0002ftcjuv6pzmw64",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/services/cmqzrjut0002ftcjuv6pzmw64",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1920,
+        "scrollWidth": 1920,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/1920/admin-admin-services-cmqzrjut0002ftcjuv6pzmw64-1920.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/specialties/cmp5qz9z50008ssjul5ss9d5f/edit",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/specialties/cmp5qz9z50008ssjul5ss9d5f/edit",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 320,
+        "scrollWidth": 320,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/320/admin-admin-specialties-cmp5qz9z50008ssjul5ss9d5f-edit-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/specialties/cmp5qz9z50008ssjul5ss9d5f/edit",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/specialties/cmp5qz9z50008ssjul5ss9d5f/edit",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 390,
+        "scrollWidth": 390,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/390/admin-admin-specialties-cmp5qz9z50008ssjul5ss9d5f-edit-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/specialties/cmp5qz9z50008ssjul5ss9d5f/edit",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/specialties/cmp5qz9z50008ssjul5ss9d5f/edit",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 430,
+        "scrollWidth": 430,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/430/admin-admin-specialties-cmp5qz9z50008ssjul5ss9d5f-edit-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/specialties/cmp5qz9z50008ssjul5ss9d5f/edit",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/specialties/cmp5qz9z50008ssjul5ss9d5f/edit",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 768,
+        "scrollWidth": 768,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/768/admin-admin-specialties-cmp5qz9z50008ssjul5ss9d5f-edit-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/specialties/cmp5qz9z50008ssjul5ss9d5f/edit",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/specialties/cmp5qz9z50008ssjul5ss9d5f/edit",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1024,
+        "scrollWidth": 1024,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/1024/admin-admin-specialties-cmp5qz9z50008ssjul5ss9d5f-edit-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/specialties/cmp5qz9z50008ssjul5ss9d5f/edit",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/specialties/cmp5qz9z50008ssjul5ss9d5f/edit",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1280,
+        "scrollWidth": 1280,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/1280/admin-admin-specialties-cmp5qz9z50008ssjul5ss9d5f-edit-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/specialties/cmp5qz9z50008ssjul5ss9d5f/edit",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/specialties/cmp5qz9z50008ssjul5ss9d5f/edit",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1440,
+        "scrollWidth": 1440,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/1440/admin-admin-specialties-cmp5qz9z50008ssjul5ss9d5f-edit-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/specialties/cmp5qz9z50008ssjul5ss9d5f/edit",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/specialties/cmp5qz9z50008ssjul5ss9d5f/edit",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1920,
+        "scrollWidth": 1920,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/1920/admin-admin-specialties-cmp5qz9z50008ssjul5ss9d5f-edit-1920.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users/cmr0b5b1i09us01o9ea51cnr4",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/users/cmr0b5b1i09us01o9ea51cnr4",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 320,
+        "scrollWidth": 320,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/320/admin-admin-users-cmr0b5b1i09us01o9ea51cnr4-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users/cmr0b5b1i09us01o9ea51cnr4",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/users/cmr0b5b1i09us01o9ea51cnr4",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 390,
+        "scrollWidth": 390,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/390/admin-admin-users-cmr0b5b1i09us01o9ea51cnr4-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users/cmr0b5b1i09us01o9ea51cnr4",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/users/cmr0b5b1i09us01o9ea51cnr4",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 430,
+        "scrollWidth": 430,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/430/admin-admin-users-cmr0b5b1i09us01o9ea51cnr4-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users/cmr0b5b1i09us01o9ea51cnr4",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/users/cmr0b5b1i09us01o9ea51cnr4",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 768,
+        "scrollWidth": 768,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/768/admin-admin-users-cmr0b5b1i09us01o9ea51cnr4-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users/cmr0b5b1i09us01o9ea51cnr4",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/users/cmr0b5b1i09us01o9ea51cnr4",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1024,
+        "scrollWidth": 1024,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/1024/admin-admin-users-cmr0b5b1i09us01o9ea51cnr4-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users/cmr0b5b1i09us01o9ea51cnr4",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/users/cmr0b5b1i09us01o9ea51cnr4",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1280,
+        "scrollWidth": 1280,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/1280/admin-admin-users-cmr0b5b1i09us01o9ea51cnr4-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users/cmr0b5b1i09us01o9ea51cnr4",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/users/cmr0b5b1i09us01o9ea51cnr4",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1440,
+        "scrollWidth": 1440,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/1440/admin-admin-users-cmr0b5b1i09us01o9ea51cnr4-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users/cmr0b5b1i09us01o9ea51cnr4",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/users/cmr0b5b1i09us01o9ea51cnr4",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1920,
+        "scrollWidth": 1920,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T05-41-42-953Z/images/admin/1920/admin-admin-users-cmr0b5b1i09us01o9ea51cnr4-1920.png"
+    }
+  ]
+}

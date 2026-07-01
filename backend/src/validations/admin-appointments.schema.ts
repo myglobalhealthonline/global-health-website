@@ -9,8 +9,18 @@ export const appointmentStatusValues = [
   "COMPLETED",
 ] as const;
 
+const appointmentIdSchema = z
+  .string()
+  .trim()
+  .min(8, "Invalid appointment id")
+  .max(40, "Invalid appointment id")
+  .regex(
+    /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|c[a-z0-9]{20,30})$/i,
+    "Invalid appointment id",
+  );
+
 export const appointmentIdParamsSchema = z.object({
-  id: z.string().uuid("Invalid appointment id"),
+  id: appointmentIdSchema,
 });
 
 export const appointmentStatusSchema = z.enum(appointmentStatusValues);

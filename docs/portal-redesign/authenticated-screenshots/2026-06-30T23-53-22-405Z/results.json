@@ -1,0 +1,179 @@
+{
+  "checkedAt": "2026-06-30T23:54:38.659Z",
+  "siteUrl": "http://localhost:3000",
+  "apiUrl": "http://127.0.0.1:4000",
+  "chromePath": "C:\\Users\\kingh\\Downloads\\chrome-win\\chrome.exe",
+  "checklist": "docs/portal-redesign/screenshot-checklist.md",
+  "portals": [
+    "Admin"
+  ],
+  "widths": [
+    320,
+    390,
+    430,
+    768,
+    1024,
+    1280,
+    1440,
+    1920
+  ],
+  "routeOffset": 60,
+  "routeLimit": 20,
+  "selectedRoutes": 3,
+  "totals": {
+    "200": 16,
+    "route-skipped": 1
+  },
+  "results": [
+    {
+      "portal": "Admin",
+      "route": "/admin/subscriptions",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/subscriptions",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-53-22-405Z/images/admin/320/admin-admin-subscriptions-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/subscriptions",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/subscriptions",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-53-22-405Z/images/admin/390/admin-admin-subscriptions-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/subscriptions",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/subscriptions",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-53-22-405Z/images/admin/430/admin-admin-subscriptions-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/subscriptions",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/subscriptions",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-53-22-405Z/images/admin/768/admin-admin-subscriptions-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/subscriptions",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/subscriptions",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-53-22-405Z/images/admin/1024/admin-admin-subscriptions-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/subscriptions",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/subscriptions",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-53-22-405Z/images/admin/1280/admin-admin-subscriptions-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/subscriptions",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/subscriptions",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-53-22-405Z/images/admin/1440/admin-admin-subscriptions-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/subscriptions",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/subscriptions",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-53-22-405Z/images/admin/1920/admin-admin-subscriptions-1920.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users/[id]",
+      "status": "route-skipped",
+      "reason": "Dynamic route requires PORTAL_SCREENSHOT_ROUTE_MAP_JSON replacement"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/users",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-53-22-405Z/images/admin/320/admin-admin-users-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/users",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-53-22-405Z/images/admin/390/admin-admin-users-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/users",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-53-22-405Z/images/admin/430/admin-admin-users-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/users",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-53-22-405Z/images/admin/768/admin-admin-users-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/users",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-53-22-405Z/images/admin/1024/admin-admin-users-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/users",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-53-22-405Z/images/admin/1280/admin-admin-users-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/users",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-53-22-405Z/images/admin/1440/admin-admin-users-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/users",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/users",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-53-22-405Z/images/admin/1920/admin-admin-users-1920.png"
+    }
+  ]
+}

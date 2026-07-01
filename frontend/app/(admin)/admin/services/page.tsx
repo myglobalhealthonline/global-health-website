@@ -395,40 +395,18 @@ export default async function AdminServicesPage({
                         role="switch"
                         aria-checked={service.isActive}
                         aria-label={`${service.isActive ? "Deactivate" : "Activate"} ${service.name}`}
-                        title={service.isActive ? "Active — click to deactivate" : "Inactive — click to activate"}
+                        title={service.isActive ? "Active - click to deactivate" : "Inactive - click to activate"}
                         className={`gh-admin-status-toggle ${
                           service.isActive
                             ? "gh-admin-status-toggle-on"
                             : "gh-admin-status-toggle-off"
-                        } inline-flex items-center`}
-                        style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                        }`}
                       >
-                        <span
-                          className="gh-admin-status-toggle__track"
-                          aria-hidden
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            width: 38,
-                            height: 22,
-                            borderRadius: 999,
-                            padding: 2,
-                            justifyContent: service.isActive ? "flex-end" : "flex-start",
-                            background: service.isActive
-                              ? "var(--color-brand-primary)"
-                              : "var(--color-border-strong, var(--color-border))",
-                            transition: "background 150ms",
-                          }}
-                        >
-                          <span
-                            style={{
-                              width: 18,
-                              height: 18,
-                              borderRadius: 999,
-                              background: "#fff",
-                              boxShadow: "var(--shadow-soft)",
-                            }}
-                          />
+                        <span className="gh-admin-status-toggle__track" aria-hidden>
+                          <span className="gh-admin-status-toggle__thumb" />
+                        </span>
+                        <span className="gh-admin-status-toggle__label">
+                          {service.isActive ? "Active" : "Inactive"}
                         </span>
                       </button>
                     </form>
@@ -460,6 +438,82 @@ export default async function AdminServicesPage({
               ))}
             </tbody>
           </AdminTable>
+        </div>
+
+        <div className="gh-admin-service-mobile-list">
+          {items.map((service) => (
+            <article key={service.id} className="gh-admin-service-mobile-card">
+              <div className="min-w-0">
+                <h3 className="text-[15px] font-bold leading-snug text-[var(--color-text-primary)]">
+                  {service.name}
+                </h3>
+                <p className="mt-1 break-words font-mono text-[11px] text-[var(--color-text-muted)]">
+                  {service.slug}
+                </p>
+              </div>
+              <div className="gh-admin-service-mobile-meta">
+                <span className="inline-flex items-center gap-2">
+                  <FlagBadge code={service.country.code} size={14} />
+                  <span>{service.country.code}</span>
+                </span>
+                <span>{formatMoney(service.basePriceCents, service.currencyCode)}</span>
+                <span>
+                  {service.durationMinutes != null ? `${service.durationMinutes} min` : "—"}
+                </span>
+                <span>Order {service.sortOrder}</span>
+              </div>
+              <div className="gh-admin-service-mobile-controls">
+                <form action={toggleServiceAction} className="inline-flex">
+                  <input type="hidden" name="id" value={service.id} />
+                  <input
+                    type="hidden"
+                    name="next"
+                    value={service.isActive ? "false" : "true"}
+                  />
+                  <button
+                    type="submit"
+                    role="switch"
+                    aria-checked={service.isActive}
+                    aria-label={`${service.isActive ? "Deactivate" : "Activate"} ${service.name}`}
+                    title={service.isActive ? "Active - click to deactivate" : "Inactive - click to activate"}
+                    className={`gh-admin-status-toggle ${
+                      service.isActive
+                        ? "gh-admin-status-toggle-on"
+                        : "gh-admin-status-toggle-off"
+                    }`}
+                  >
+                    <span className="gh-admin-status-toggle__track" aria-hidden>
+                      <span className="gh-admin-status-toggle__thumb" />
+                    </span>
+                    <span className="gh-admin-status-toggle__label">
+                      {service.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </button>
+                </form>
+                <div className="gh-admin-service-row-actions flex justify-end gap-1.5">
+                  <IconBtn
+                    ariaLabel={`View ${service.name}`}
+                    href={adminHrefForService(service)}
+                  >
+                    <Eye className="size-3.5" aria-hidden />
+                  </IconBtn>
+                  <IconBtn
+                    ariaLabel={`Edit ${service.name}`}
+                    href={adminHrefForService(service, "edit")}
+                  >
+                    <Edit3 className="size-3.5" aria-hidden />
+                  </IconBtn>
+                  <form action={deleteServiceAction} className="inline-flex">
+                    <input type="hidden" name="id" value={service.id} />
+                    <ConfirmDeleteButton
+                      message={`Permanently delete service "${service.name}"? This cannot be undone.`}
+                      ariaLabel={`Delete ${service.name}`}
+                    />
+                  </form>
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
 
         {items.length === 0 ? (

@@ -381,7 +381,7 @@ export default async function AdminAppointmentDetailPage({
         </div>
       ) : null}
 
-      <div className="gh-admin-detail-layout">
+      <div className="gh-admin-detail-layout gh-admin-appointment-workspace">
         <div className="grid gap-4">
           <AdminCard>
             <h3 className="gh-admin-card-title">Patient details</h3>

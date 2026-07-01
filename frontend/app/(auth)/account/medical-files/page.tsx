@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 import { Download, FileText, FlaskConical, Stethoscope, Upload } from "lucide-react";
 
@@ -289,9 +290,23 @@ export default function MedicalFilesPage() {
       {!loaded ? (
         <div className="gh-patient-empty-state gh-card p-6 text-sm text-[var(--color-text-muted)]">Loading…</div>
       ) : filteredDocs.length === 0 ? (
-        <div className="gh-patient-empty-state gh-card p-8 text-center text-sm text-[var(--color-text-muted)]">
-          No{" "}
-          {currentTabConfig?.label.toLowerCase() ?? "documents"} yet.
+        <div className="gh-patient-empty-state gh-patient-medical-empty gh-card p-6">
+          <Image
+            src="/images/portal/generated/patient-record-empty-state.png"
+            alt=""
+            aria-hidden
+            width={224}
+            height={224}
+            className="gh-patient-medical-empty__image"
+          />
+          <div className="min-w-0">
+            <p className="font-semibold text-[var(--color-text-primary)]">
+              No {currentTabConfig?.label.toLowerCase() ?? "documents"} yet
+            </p>
+            <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+              Uploaded reports, prescriptions, requests, and summaries will appear here.
+            </p>
+          </div>
         </div>
       ) : (
         <div className="gh-patient-doc-list space-y-3">

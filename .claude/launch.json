@@ -3,18 +3,16 @@
   "configurations": [
     {
       "name": "frontend",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["dev:frontend"],
       "port": 3000,
-      "autoPort": true,
-      "cwd": "frontend"
+      "autoPort": true
     },
     {
       "name": "backend",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 4000,
-      "cwd": "backend"
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["dev:backend"],
+      "port": 4000
     }
   ]
 }

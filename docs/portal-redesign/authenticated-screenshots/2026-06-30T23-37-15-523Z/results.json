@@ -1,0 +1,617 @@
+{
+  "checkedAt": "2026-06-30T23:43:05.551Z",
+  "siteUrl": "http://localhost:3000",
+  "apiUrl": "http://127.0.0.1:4000",
+  "chromePath": "C:\\Users\\kingh\\Downloads\\chrome-win\\chrome.exe",
+  "checklist": "docs/portal-redesign/screenshot-checklist.md",
+  "portals": [
+    "Admin"
+  ],
+  "widths": [
+    320,
+    390,
+    430,
+    768,
+    1024,
+    1280,
+    1440,
+    1920
+  ],
+  "routeOffset": 30,
+  "routeLimit": 10,
+  "selectedRoutes": 10,
+  "totals": {
+    "200": 64,
+    "route-skipped": 2
+  },
+  "results": [
+    {
+      "portal": "Admin",
+      "route": "/admin/general-consultations/new",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/services/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/320/admin-admin-general-consultations-new-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/general-consultations/new",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/services/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/390/admin-admin-general-consultations-new-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/general-consultations/new",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/services/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/430/admin-admin-general-consultations-new-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/general-consultations/new",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/services/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/768/admin-admin-general-consultations-new-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/general-consultations/new",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/services/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1024/admin-admin-general-consultations-new-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/general-consultations/new",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/services/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1280/admin-admin-general-consultations-new-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/general-consultations/new",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/services/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1440/admin-admin-general-consultations-new-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/general-consultations/new",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/services/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1920/admin-admin-general-consultations-new-1920.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/general-consultations",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/general-consultations",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/320/admin-admin-general-consultations-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/general-consultations",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/general-consultations",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/390/admin-admin-general-consultations-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/general-consultations",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/general-consultations",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/430/admin-admin-general-consultations-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/general-consultations",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/general-consultations",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/768/admin-admin-general-consultations-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/general-consultations",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/general-consultations",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1024/admin-admin-general-consultations-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/general-consultations",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/general-consultations",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1280/admin-admin-general-consultations-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/general-consultations",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/general-consultations",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1440/admin-admin-general-consultations-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/general-consultations",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/general-consultations",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1920/admin-admin-general-consultations-1920.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests/[id]/edit",
+      "status": "route-skipped",
+      "reason": "Dynamic route requires PORTAL_SCREENSHOT_ROUTE_MAP_JSON replacement"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests/[id]",
+      "status": "route-skipped",
+      "reason": "Dynamic route requires PORTAL_SCREENSHOT_ROUTE_MAP_JSON replacement"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests/new",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/health-tests/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/320/admin-admin-health-tests-new-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests/new",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/health-tests/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/390/admin-admin-health-tests-new-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests/new",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/health-tests/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/430/admin-admin-health-tests-new-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests/new",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/health-tests/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/768/admin-admin-health-tests-new-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests/new",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/health-tests/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1024/admin-admin-health-tests-new-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests/new",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/health-tests/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1280/admin-admin-health-tests-new-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests/new",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/health-tests/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1440/admin-admin-health-tests-new-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests/new",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/health-tests/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1920/admin-admin-health-tests-new-1920.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/health-tests",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/320/admin-admin-health-tests-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/health-tests",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/390/admin-admin-health-tests-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/health-tests",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/430/admin-admin-health-tests-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/health-tests",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/768/admin-admin-health-tests-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/health-tests",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1024/admin-admin-health-tests-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/health-tests",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1280/admin-admin-health-tests-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/health-tests",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1440/admin-admin-health-tests-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/health-tests",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/health-tests",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1920/admin-admin-health-tests-1920.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/invoices",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/invoices",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/320/admin-admin-invoices-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/invoices",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/invoices",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/390/admin-admin-invoices-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/invoices",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/invoices",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/430/admin-admin-invoices-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/invoices",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/invoices",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/768/admin-admin-invoices-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/invoices",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/invoices",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1024/admin-admin-invoices-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/invoices",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/invoices",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1280/admin-admin-invoices-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/invoices",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/invoices",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1440/admin-admin-invoices-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/invoices",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/invoices",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1920/admin-admin-invoices-1920.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/newsletter",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/newsletter",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/320/admin-admin-newsletter-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/newsletter",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/newsletter",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/390/admin-admin-newsletter-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/newsletter",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/newsletter",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/430/admin-admin-newsletter-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/newsletter",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/newsletter",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/768/admin-admin-newsletter-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/newsletter",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/newsletter",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1024/admin-admin-newsletter-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/newsletter",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/newsletter",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1280/admin-admin-newsletter-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/newsletter",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/newsletter",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1440/admin-admin-newsletter-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/newsletter",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/newsletter",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1920/admin-admin-newsletter-1920.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/online-prescriptions/new",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/services/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/320/admin-admin-online-prescriptions-new-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/online-prescriptions/new",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/services/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/390/admin-admin-online-prescriptions-new-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/online-prescriptions/new",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/services/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/430/admin-admin-online-prescriptions-new-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/online-prescriptions/new",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/services/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/768/admin-admin-online-prescriptions-new-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/online-prescriptions/new",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/services/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1024/admin-admin-online-prescriptions-new-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/online-prescriptions/new",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/services/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1280/admin-admin-online-prescriptions-new-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/online-prescriptions/new",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/services/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1440/admin-admin-online-prescriptions-new-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/online-prescriptions/new",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/services/new",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1920/admin-admin-online-prescriptions-new-1920.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/online-prescriptions",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/online-prescriptions",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/320/admin-admin-online-prescriptions-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/online-prescriptions",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/online-prescriptions",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/390/admin-admin-online-prescriptions-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/online-prescriptions",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/online-prescriptions",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/430/admin-admin-online-prescriptions-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/online-prescriptions",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/online-prescriptions",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/768/admin-admin-online-prescriptions-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/online-prescriptions",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/online-prescriptions",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1024/admin-admin-online-prescriptions-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/online-prescriptions",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/online-prescriptions",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1280/admin-admin-online-prescriptions-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/online-prescriptions",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/online-prescriptions",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1440/admin-admin-online-prescriptions-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/online-prescriptions",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/online-prescriptions",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-37-15-523Z/images/admin/1920/admin-admin-online-prescriptions-1920.png"
+    }
+  ]
+}

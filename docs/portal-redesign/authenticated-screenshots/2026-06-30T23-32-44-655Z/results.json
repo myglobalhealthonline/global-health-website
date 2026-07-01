@@ -1,0 +1,485 @@
+{
+  "checkedAt": "2026-06-30T23:36:56.780Z",
+  "siteUrl": "http://localhost:3000",
+  "apiUrl": "http://127.0.0.1:4000",
+  "chromePath": "C:\\Users\\kingh\\Downloads\\chrome-win\\chrome.exe",
+  "checklist": "docs/portal-redesign/screenshot-checklist.md",
+  "portals": [
+    "Admin"
+  ],
+  "widths": [
+    320,
+    390,
+    430,
+    768,
+    1024,
+    1280,
+    1440,
+    1920
+  ],
+  "routeOffset": 20,
+  "routeLimit": 10,
+  "selectedRoutes": 10,
+  "totals": {
+    "200": 48,
+    "route-skipped": 4
+  },
+  "results": [
+    {
+      "portal": "Admin",
+      "route": "/admin/country-content",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/pages",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/320/admin-admin-country-content-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-content",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/pages",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/390/admin-admin-country-content-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-content",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/pages",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/430/admin-admin-country-content-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-content",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/pages",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/768/admin-admin-country-content-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-content",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/pages",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1024/admin-admin-country-content-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-content",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/pages",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1280/admin-admin-country-content-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-content",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/pages",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1440/admin-admin-country-content-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-content",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/pages",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1920/admin-admin-country-content-1920.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-features",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/country-features",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/320/admin-admin-country-features-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-features",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/country-features",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/390/admin-admin-country-features-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-features",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/country-features",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/430/admin-admin-country-features-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-features",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/country-features",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/768/admin-admin-country-features-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-features",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/country-features",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1024/admin-admin-country-features-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-features",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/country-features",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1280/admin-admin-country-features-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-features",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/country-features",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1440/admin-admin-country-features-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-features",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/country-features",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1920/admin-admin-country-features-1920.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-home",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/pages",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/320/admin-admin-country-home-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-home",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/pages",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/390/admin-admin-country-home-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-home",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/pages",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/430/admin-admin-country-home-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-home",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/pages",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/768/admin-admin-country-home-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-home",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/pages",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1024/admin-admin-country-home-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-home",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/pages",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1280/admin-admin-country-home-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-home",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/pages",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1440/admin-admin-country-home-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/country-home",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/pages",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1920/admin-admin-country-home-1920.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors/[id]/availability",
+      "status": "route-skipped",
+      "reason": "Dynamic route requires PORTAL_SCREENSHOT_ROUTE_MAP_JSON replacement"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors/[id]/edit",
+      "status": "route-skipped",
+      "reason": "Dynamic route requires PORTAL_SCREENSHOT_ROUTE_MAP_JSON replacement"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors/[id]",
+      "status": "route-skipped",
+      "reason": "Dynamic route requires PORTAL_SCREENSHOT_ROUTE_MAP_JSON replacement"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors/[id]/services",
+      "status": "route-skipped",
+      "reason": "Dynamic route requires PORTAL_SCREENSHOT_ROUTE_MAP_JSON replacement"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors/create",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/doctors/create",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/320/admin-admin-doctors-create-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors/create",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/doctors/create",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/390/admin-admin-doctors-create-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors/create",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/doctors/create",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/430/admin-admin-doctors-create-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors/create",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/doctors/create",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/768/admin-admin-doctors-create-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors/create",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/doctors/create",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1024/admin-admin-doctors-create-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors/create",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/doctors/create",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1280/admin-admin-doctors-create-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors/create",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/doctors/create",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1440/admin-admin-doctors-create-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors/create",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/doctors/create",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1920/admin-admin-doctors-create-1920.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/doctors",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/320/admin-admin-doctors-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/doctors",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/390/admin-admin-doctors-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/doctors",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/430/admin-admin-doctors-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/doctors",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/768/admin-admin-doctors-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/doctors",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1024/admin-admin-doctors-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/doctors",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1280/admin-admin-doctors-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/doctors",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1440/admin-admin-doctors-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/doctors",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1920/admin-admin-doctors-1920.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/footer",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/footer",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/320/admin-admin-footer-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/footer",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/footer",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/390/admin-admin-footer-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/footer",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/footer",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/430/admin-admin-footer-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/footer",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/footer",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/768/admin-admin-footer-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/footer",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/footer",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1024/admin-admin-footer-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/footer",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/footer",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1280/admin-admin-footer-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/footer",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/footer",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1440/admin-admin-footer-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/footer",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/footer",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-32-44-655Z/images/admin/1920/admin-admin-footer-1920.png"
+    }
+  ]
+}

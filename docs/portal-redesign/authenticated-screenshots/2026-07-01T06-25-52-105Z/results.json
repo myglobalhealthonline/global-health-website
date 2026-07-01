@@ -1,0 +1,481 @@
+{
+  "checkedAt": "2026-07-01T06:27:05.024Z",
+  "siteUrl": "http://localhost:3000",
+  "apiUrl": "http://127.0.0.1:4000",
+  "chromePath": "C:\\Users\\kingh\\Downloads\\chrome-win\\chrome.exe",
+  "checklist": "docs/portal-redesign/screenshot-checklist.md",
+  "portals": [
+    "Admin"
+  ],
+  "widths": [
+    320,
+    390,
+    430,
+    768,
+    1024,
+    1280,
+    1440,
+    1920
+  ],
+  "routeOffset": 0,
+  "routeLimit": null,
+  "selectedRoutes": 1,
+  "totals": {
+    "200": 8
+  },
+  "results": [
+    {
+      "portal": "Admin",
+      "route": "/admin/services",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/admin/services",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 320,
+        "scrollWidth": 320,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T06-25-52-105Z/images/admin/320/admin-admin-services-320.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin/services",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 390,
+        "scrollWidth": 390,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T06-25-52-105Z/images/admin/390/admin-admin-services-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services",
+      "width": 430,
+      "status": 200,
+      "finalPath": "/admin/services",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 430,
+        "scrollWidth": 430,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T06-25-52-105Z/images/admin/430/admin-admin-services-430.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/admin/services",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 768,
+        "scrollWidth": 768,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "aside",
+            "id": "",
+            "className": ".gh-portal-sidebar.fixed.inset-y-0.left-0",
+            "left": -272,
+            "right": 0,
+            "width": 272
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".gh-admin-sidebar-logo.px-5.pb-[18px].pt-5",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "a",
+            "id": "",
+            "className": ".inline-flex.items-center.gap-2.5",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "img",
+            "id": "",
+            "className": "",
+            "left": -252,
+            "right": -184,
+            "width": 68
+          },
+          {
+            "tag": "p",
+            "id": "",
+            "className": ".mt-2.text-[10px].font-bold.uppercase",
+            "left": -252,
+            "right": -21,
+            "width": 231
+          },
+          {
+            "tag": "nav",
+            "id": "",
+            "className": ".gh-dark-scroll.flex-1.overflow-y-auto",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "div",
+            "id": "",
+            "className": ".flex.items-center.gap-2.px-6",
+            "left": -272,
+            "right": -1,
+            "width": 271
+          },
+          {
+            "tag": "span",
+            "id": "",
+            "className": "",
+            "left": -248,
+            "right": -234,
+            "width": 14
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T06-25-52-105Z/images/admin/768/admin-admin-services-768.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services",
+      "width": 1024,
+      "status": 200,
+      "finalPath": "/admin/services",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1024,
+        "scrollWidth": 1024,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": [
+          {
+            "tag": "table",
+            "id": "",
+            "className": ".gh-admin-table",
+            "left": 293,
+            "right": 1173,
+            "width": 880
+          },
+          {
+            "tag": "thead",
+            "id": "",
+            "className": "",
+            "left": 293,
+            "right": 1173,
+            "width": 880
+          },
+          {
+            "tag": "tr",
+            "id": "",
+            "className": "",
+            "left": 293,
+            "right": 1173,
+            "width": 880
+          },
+          {
+            "tag": "th",
+            "id": "",
+            "className": "",
+            "left": 927,
+            "right": 1053,
+            "width": 127
+          },
+          {
+            "tag": "th",
+            "id": "",
+            "className": "",
+            "left": 1053,
+            "right": 1173,
+            "width": 120
+          },
+          {
+            "tag": "tbody",
+            "id": "",
+            "className": "",
+            "left": 293,
+            "right": 1173,
+            "width": 880
+          },
+          {
+            "tag": "tr",
+            "id": "",
+            "className": ".gh-admin-row",
+            "left": 293,
+            "right": 1173,
+            "width": 880
+          },
+          {
+            "tag": "td",
+            "id": "",
+            "className": "",
+            "left": 927,
+            "right": 1053,
+            "width": 127
+          }
+        ]
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T06-25-52-105Z/images/admin/1024/admin-admin-services-1024.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin/services",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1280,
+        "scrollWidth": 1280,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T06-25-52-105Z/images/admin/1280/admin-admin-services-1280.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services",
+      "width": 1440,
+      "status": 200,
+      "finalPath": "/admin/services",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1440,
+        "scrollWidth": 1440,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T06-25-52-105Z/images/admin/1440/admin-admin-services-1440.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/admin/services",
+      "redirectedToLogin": false,
+      "layout": {
+        "viewportWidth": 1920,
+        "scrollWidth": 1920,
+        "horizontalOverflowPx": 0,
+        "hasHorizontalOverflow": false,
+        "offscreenElements": []
+      },
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-07-01T06-25-52-105Z/images/admin/1920/admin-admin-services-1920.png"
+    }
+  ]
+}
