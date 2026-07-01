@@ -1,7 +1,13 @@
 import Link from "next/link";
-import { ChevronRight, Video } from "lucide-react";
+import { CalendarDays, ChevronRight, SearchX, Video } from "lucide-react";
 import { fetchDoctorAppointments, type DoctorAppointment } from "@/lib/api/doctor-api";
 import { appointmentStatusLabel } from "@/lib/api/appointment-status-labels";
+import {
+  AdminEmptyState,
+  AdminSummaryStrip,
+  PageHeader,
+  Pill,
+} from "@/components/portal-atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -38,17 +44,57 @@ export default async function DoctorAppointmentsPage({
     ...(openOnly ? { openOnly: "true" } : {}),
     ...(finalized ? { finalized } : {}),
   });
+  const appointments = result.ok ? result.data.items : [];
+  const openAppointments = appointments.filter(
+    (item) => item.status !== "COMPLETED" && item.status !== "CANCELLED",
+  ).length;
+  const readyToJoin = appointments.filter((item) => item.meetingUrl).length;
+  const unfinalized = appointments.filter((item) => !item.finalized).length;
 
   return (
     <>
-      <header className="gh-doctor-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-          Doctor
-        </p>
-        <h2 className="mt-1 text-2xl font-bold text-[var(--color-text-primary)]">
-          My appointments
-        </h2>
-      </header>
+      <PageHeader
+        eyebrow="Consultation queue"
+        title="My appointments"
+        description="Review today's queue, find patient context quickly, and open the consultation workspace without scanning a wide table."
+        actions={
+          <Link href="/doctor/calendar" className="gh-btn gh-btn-soft text-sm">
+            Calendar view
+          </Link>
+        }
+      />
+
+      {result.ok ? (
+        <AdminSummaryStrip
+          className="mb-4"
+          items={[
+            {
+              label: "Visible results",
+              value: appointments.length,
+              hint: `${result.data.pagination.total} total`,
+              tone: "brand",
+            },
+            {
+              label: "Open consults",
+              value: openAppointments,
+              hint: "Need clinical attention",
+              tone: openAppointments > 0 ? "warning" : "neutral",
+            },
+            {
+              label: "Meeting links",
+              value: readyToJoin,
+              hint: "Ready to join",
+              tone: readyToJoin > 0 ? "success" : "neutral",
+            },
+            {
+              label: "Not finalized",
+              value: unfinalized,
+              hint: "Notes or documents pending",
+              tone: unfinalized > 0 ? "warning" : "neutral",
+            },
+          ]}
+        />
+      ) : null}
 
       <div className="gh-card gh-doctor-filter-card mb-4 p-4">
         <form className="gh-doctor-filter-grid grid grid-cols-1 gap-3 sm:grid-cols-6">
@@ -143,13 +189,21 @@ export default async function DoctorAppointmentsPage({
             {result.message}
           </p>
         </div>
-      ) : result.data.items.length === 0 ? (
-        <div className="gh-card gh-doctor-empty-state p-10 text-center text-sm text-[var(--color-text-muted)]">
-          No appointments match those filters.
-        </div>
+      ) : appointments.length === 0 ? (
+        <AdminEmptyState
+          className="gh-doctor-empty-state"
+          icon={<SearchX className="size-5" aria-hidden />}
+          title="No appointments match these filters"
+          description="Try widening the date range or clearing status filters. New assigned consultations appear here as soon as they are scheduled."
+          action={
+            <Link href="/doctor/appointments" className="gh-btn gh-btn-soft text-sm">
+              Clear filters
+            </Link>
+          }
+        />
       ) : (
         <div className="gh-card gh-doctor-table-card p-0 overflow-hidden">
-          <div className="gh-doctor-table-wrap overflow-x-auto">
+          <div className="hidden md:block gh-doctor-table-wrap overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
               <tr>
@@ -162,7 +216,7 @@ export default async function DoctorAppointmentsPage({
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-border)]">
-              {result.data.items.map((a: DoctorAppointment) => (
+              {appointments.map((a: DoctorAppointment) => (
                 <tr key={a.id}>
                   <td className="px-4 py-3">
                     <p className="font-semibold text-[var(--color-text-primary)]">
@@ -184,7 +238,11 @@ export default async function DoctorAppointmentsPage({
                         })
                       : "—"}
                   </td>
-                  <td className="px-4 py-3 text-xs">{appointmentStatusLabel(a.status)}</td>
+                  <td className="px-4 py-3 text-xs">
+                    <Pill tone={a.status === "COMPLETED" ? "active" : a.status === "CANCELLED" ? "inactive" : "pending"} withDot>
+                      {appointmentStatusLabel(a.status)}
+                    </Pill>
+                  </td>
                   <td className="px-4 py-3 text-xs">{a.paymentStatus}</td>
                   <td className="px-4 py-3 text-right">
                     <div className="inline-flex items-center gap-2">
@@ -210,6 +268,79 @@ export default async function DoctorAppointmentsPage({
               ))}
             </tbody>
           </table>
+          </div>
+          <div className="grid gap-3 p-3 md:hidden">
+            {appointments.map((a) => (
+              <article
+                key={a.id}
+                className="gh-doctor-mobile-card rounded-[10px] border border-[var(--color-border)] bg-white p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold text-[var(--color-text-primary)]">
+                      {a.fullName}
+                    </p>
+                    <p className="mt-0.5 truncate text-xs text-[var(--color-text-muted)]">
+                      {a.email}
+                    </p>
+                  </div>
+                  <Pill tone={a.status === "COMPLETED" ? "active" : a.status === "CANCELLED" ? "inactive" : "pending"} withDot>
+                    {appointmentStatusLabel(a.status)}
+                  </Pill>
+                </div>
+                <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <dt className="text-[var(--color-text-muted)]">Type</dt>
+                    <dd className="font-semibold capitalize text-[var(--color-text-primary)]">
+                      {a.consultationType}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-[var(--color-text-muted)]">Scheduled</dt>
+                    <dd className="font-semibold text-[var(--color-text-primary)]">
+                      {a.scheduledAt
+                        ? new Date(a.scheduledAt).toLocaleString(undefined, {
+                            month: "short",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "Unscheduled"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-[var(--color-text-muted)]">Payment</dt>
+                    <dd className="font-semibold text-[var(--color-text-primary)]">
+                      {a.paymentStatus}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-[var(--color-text-muted)]">Meeting</dt>
+                    <dd className="font-semibold text-[var(--color-text-primary)]">
+                      {a.meetingUrl ? "Ready" : "Not set"}
+                    </dd>
+                  </div>
+                </dl>
+                <div className="mt-4 grid gap-2">
+                  {a.meetingUrl ? (
+                    <a
+                      href={a.meetingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="gh-btn gh-btn-primary text-sm"
+                    >
+                      <Video className="size-3.5" aria-hidden /> Join session
+                    </a>
+                  ) : null}
+                  <Link
+                    href={`/doctor/appointments/${a.id}`}
+                    className="gh-btn gh-btn-soft text-sm"
+                  >
+                    <CalendarDays className="size-3.5" aria-hidden /> Open workspace
+                  </Link>
+                </div>
+              </article>
+            ))}
           </div>
           {result.data.pagination.totalPages > 1 ? (
             <div className="border-t border-[var(--color-border)] px-4 py-3 text-xs text-[var(--color-text-muted)]">

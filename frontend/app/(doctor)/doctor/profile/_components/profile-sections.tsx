@@ -1,4 +1,5 @@
 import type { DoctorMe } from "@/lib/api/doctor-api";
+import { AdminSummaryStrip } from "@/components/portal-atoms";
 import { DoctorProfileEditForm } from "./edit-form";
 
 type DoctorData = DoctorMe["doctor"];
@@ -38,6 +39,36 @@ export function ProfileSections({
           admin-managed — ping support if anything there needs to change.
         </p>
       </header>
+
+      <AdminSummaryStrip
+        className="mb-4"
+        items={[
+          {
+            label: "Primary country",
+            value: primaryCountry.code.toUpperCase(),
+            hint: primaryCountry.name,
+            tone: "brand",
+          },
+          {
+            label: "Markets",
+            value: 1 + additional.length,
+            hint: "Active country listings",
+            tone: "neutral",
+          },
+          {
+            label: "Categories",
+            value: specialties.length,
+            hint: specialties.length === 0 ? "Admin assignment needed" : "Approved specialties",
+            tone: specialties.length > 0 ? "success" : "warning",
+          },
+          {
+            label: "Languages",
+            value: doctor.languages.length,
+            hint: "Patient-facing profile",
+            tone: "neutral",
+          },
+        ]}
+      />
 
       {/* Admin-set context: primary country + additional country
           listings + categories the doctor is approved for. Surface

@@ -301,3 +301,38 @@ Scope: Admin Portal only. No Doctor/Patient work. No screenshots. No new markdow
 - npm run typecheck with CI=true: Passed during this continuation pass.
 - npm run build with CI=true: Passed after this continuation pass.
 - pnpm --filter frontend lint with CI=true: Passed with 0 errors / 34 warnings; warnings are existing React hook and unused-variable warnings outside the Admin-only changes, plus existing admin rich-text/order-panel warnings.
+
+## Doctor Portal Implementation Pass — 2026-07-01
+
+Scope: Doctor Portal only. No Admin route work, no Patient/Account route work, no screenshots, and no new markdown files.
+
+### Source Coverage
+
+- Doctor source files discovered by file-tree scan: 48.
+- Doctor page/layout routes inspected: 14.
+- Doctor route-owned components inspected: 34.
+- Doctor audit rows updated to `Completed` based on source inspection and implementation work.
+
+### UI/UX Implementation
+
+- `/doctor/appointments`: added consultation-queue header, status summary strip, composed empty state, status pills, and mobile appointment cards.
+- `/doctor/appointments/[id]`: added consultation workflow summary strip for signed state, document queue, clinical items, and internal messages above tabs.
+- `/doctor/patients`: added patient-record header, summary strip, privacy-correct search prompt, and mobile patient cards.
+- `/doctor/patients/[email]`: added patient-record header, summary strip, composed no-history state, and mobile appointment-history cards.
+- `/doctor/invoices`: added billing header, invoice/payment summary strip, composed empty state, payment pills, and mobile invoice cards.
+- `/doctor/reports`: added shared portal header, CSV action placement, improved section headers, and composed no-data states.
+- `/doctor/forms`: added clinical-template header, template summary strip, and composed template empty state.
+- `/doctor/notifications`: added attention-queue header, unread/total summary strip, and composed notification empty state.
+- `/doctor/profile` and `/doctor/profile/[country]`: added profile readiness summary for markets, categories, and languages.
+- Existing Doctor availability, calendar, services, dashboard, and consultation route-owned components were re-opened and confirmed aligned with the Doctor-specific clinical workspace system already present.
+
+### Generated Raster Assets
+
+- No new raster assets were added in this pass. Existing shared clinical portal raster assets remain available, but this Doctor-only pass did not need additional image dependencies.
+
+### Validation
+
+- `npm run typecheck` with `CI=true` and `PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN=false`: Passed.
+- `npm run build` with `CI=true` and `PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN=false`: Passed.
+- `pnpm --filter frontend lint` with `CI=true` and `PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN=false`: Passed with 0 errors and 34 existing warnings.
+

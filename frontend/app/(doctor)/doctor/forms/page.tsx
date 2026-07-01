@@ -1,4 +1,5 @@
 import { fetchDoctorFormTemplates } from "@/lib/api/doctor-api";
+import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 import { FormTemplatesClient } from "./_components/templates";
 
 export const dynamic = "force-dynamic";
@@ -8,18 +9,31 @@ export default async function DoctorFormsPage() {
 
   return (
     <>
-      <header className="mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-          Doctor
-        </p>
-        <h2 className="mt-1 text-2xl font-bold text-[var(--color-text-primary)]">
-          Forms
-        </h2>
-        <p className="text-sm text-[var(--color-text-muted)]">
-          Reusable intake / pre-consult / post-consult templates. Use them
-          from the appointment workspace to log answers per patient.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Clinical templates"
+        title="Forms"
+        description="Reusable intake, pre-consult, and follow-up templates. Use them from the appointment workspace to capture patient answers consistently."
+      />
+
+      {result.ok ? (
+        <AdminSummaryStrip
+          className="mb-4"
+          items={[
+            {
+              label: "Templates",
+              value: result.data.items.length,
+              hint: "Available for consultations",
+              tone: "brand",
+            },
+            {
+              label: "Workflow",
+              value: "Reusable",
+              hint: "Attach inside appointment detail",
+              tone: "neutral",
+            },
+          ]}
+        />
+      ) : null}
 
       {!result.ok ? (
         <div className="gh-card p-6">

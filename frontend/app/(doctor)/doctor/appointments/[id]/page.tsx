@@ -32,6 +32,7 @@ import {
   ConsultationDocumentsTrigger,
 } from "./_components/consultation-documents-section";
 import { BrazilConsentPanel } from "./_components/brazil-consent-panel";
+import { AdminSummaryStrip } from "@/components/portal-atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -188,6 +189,39 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           </Link>
         </div>
       </header>
+
+      <AdminSummaryStrip
+        className="mb-4"
+        items={[
+          {
+            label: "Consultation note",
+            value: signed ? "Signed" : "Draft",
+            hint: signed ? "Locked clinical record" : "Can still be edited",
+            tone: signed ? "success" : "warning",
+          },
+          {
+            label: "Documents",
+            value: documents.length + pendingSendCount,
+            hint:
+              pendingSendCount > 0
+                ? `${pendingSendCount} waiting to send`
+                : "Uploads and generated PDFs",
+            tone: pendingSendCount > 0 ? "warning" : "neutral",
+          },
+          {
+            label: "Clinical items",
+            value: exams.length + prescriptions.length,
+            hint: "Exam results and prescriptions",
+            tone: exams.length + prescriptions.length > 0 ? "brand" : "neutral",
+          },
+          {
+            label: "Messages",
+            value: messages.length,
+            hint: "Internal handoff notes",
+            tone: messages.length > 0 ? "success" : "neutral",
+          },
+        ]}
+      />
 
       <AppointmentTabs
         tabs={[

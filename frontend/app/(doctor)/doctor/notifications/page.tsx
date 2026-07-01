@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Bell } from "lucide-react";
 import { fetchDoctorNotifications } from "@/lib/api/doctor-api";
+import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 import { NotificationListClient } from "./_components/notification-list";
 
 export const dynamic = "force-dynamic";
@@ -27,19 +29,35 @@ export default async function DoctorNotificationsPage() {
 
   return (
     <>
-      <header className="gh-doctor-page-header mb-6 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-            Doctor
-          </p>
-          <h2 className="mt-1 text-2xl font-bold text-[var(--color-text-primary)]">
-            Notifications
-          </h2>
-          <p className="text-sm text-[var(--color-text-muted)]">
-            {result.data.unreadCount} unread · {result.data.items.length} total
-          </p>
-        </div>
-      </header>
+      <PageHeader
+        eyebrow="Attention queue"
+        title="Notifications"
+        description="Appointment assignments, internal messages, signed consults, submitted forms, and logged exam results that may need follow-up."
+      />
+
+      <AdminSummaryStrip
+        className="mb-4"
+        items={[
+          {
+            label: "Unread",
+            value: result.data.unreadCount,
+            hint: "Needs review",
+            tone: result.data.unreadCount > 0 ? "warning" : "neutral",
+          },
+          {
+            label: "Total",
+            value: result.data.items.length,
+            hint: "Recent notifications",
+            tone: "brand",
+          },
+          {
+            label: "Source",
+            value: <Bell className="size-5" aria-hidden />,
+            hint: "Consultation workflow",
+            tone: "success",
+          },
+        ]}
+      />
 
       <NotificationListClient
         initial={result.data.items.map((n) => ({

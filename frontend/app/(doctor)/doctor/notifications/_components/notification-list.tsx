@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Check, CheckCheck } from "lucide-react";
+import { Bell, Check, CheckCheck } from "lucide-react";
 import { formatAppDateTime } from "@/lib/format-datetime";
+import { AdminEmptyState } from "@/components/portal-atoms";
 
 type NotificationItem = {
   id: string;
@@ -49,9 +50,12 @@ export function NotificationListClient({
 
   if (items.length === 0) {
     return (
-      <div className="gh-card gh-doctor-empty-state p-10 text-center text-sm text-[var(--color-text-muted)]">
-        Nothing here yet.
-      </div>
+      <AdminEmptyState
+        className="gh-doctor-empty-state"
+        icon={<Bell className="size-5" aria-hidden />}
+        title="No notifications yet"
+        description="Appointment assignments, messages, signed consults, form submissions, and exam results will appear here."
+      />
     );
   }
 

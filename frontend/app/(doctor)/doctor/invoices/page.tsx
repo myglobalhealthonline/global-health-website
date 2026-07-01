@@ -1,6 +1,12 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Receipt, SearchX } from "lucide-react";
 import { fetchDoctorInvoicesList } from "@/lib/api/doctor-api";
+import {
+  AdminEmptyState,
+  AdminSummaryStrip,
+  PageHeader,
+  Pill,
+} from "@/components/portal-atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +38,13 @@ const PAYMENT_TONE: Record<string, string> = {
   FAILED: "bg-rose-100 text-rose-800",
 };
 
+function paymentTone(status: string): "active" | "inactive" | "pending" | "neutral" {
+  if (status === "PAID") return "active";
+  if (status === "FAILED" || status === "UNPAID") return "inactive";
+  if (status === "PENDING") return "pending";
+  return "neutral";
+}
+
 export default async function DoctorInvoicesPage({
   searchParams,
 }: {
@@ -50,22 +63,53 @@ export default async function DoctorInvoicesPage({
     ...(from ? { from } : {}),
     ...(to ? { to } : {}),
   });
+  const invoices = result.ok ? result.data.items : [];
+  const totalCents = invoices.reduce((sum, row) => sum + (row.amountCents ?? 0), 0);
+  const paidCount = invoices.filter((row) => row.paymentStatus === "PAID").length;
+  const attentionCount = invoices.filter((row) =>
+    ["UNPAID", "FAILED", "PENDING"].includes(row.paymentStatus),
+  ).length;
+  const currencyCode = invoices.find((row) => row.currencyCode)?.currencyCode ?? "USD";
 
   return (
     <>
-      <header className="gh-doctor-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-          Doctor
-        </p>
-        <h2 className="mt-1 text-2xl font-bold text-[var(--color-text-primary)]">
-          Invoices & payments
-        </h2>
-        <p className="text-sm text-[var(--color-text-muted)]">
-          Read-only view of billing on your consultations. Admin issues
-          and refunds; this surface flags Unpaid or Failed so you can
-          chase before the next session.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Billing visibility"
+        title="Invoices and payments"
+        description="Read-only billing context for your consultations. Unpaid, pending, and failed payments are highlighted so follow-up can happen before the next session."
+      />
+
+      {result.ok ? (
+        <AdminSummaryStrip
+          className="mb-4"
+          items={[
+            {
+              label: "Visible invoices",
+              value: invoices.length,
+              hint: `${result.data.pagination.total} total`,
+              tone: "brand",
+            },
+            {
+              label: "Visible value",
+              value: fmtMoney(totalCents, currencyCode),
+              hint: "Current filtered page",
+              tone: "neutral",
+            },
+            {
+              label: "Paid",
+              value: paidCount,
+              hint: "Settled consults",
+              tone: "success",
+            },
+            {
+              label: "Needs attention",
+              value: attentionCount,
+              hint: "Unpaid, pending, or failed",
+              tone: attentionCount > 0 ? "warning" : "neutral",
+            },
+          ]}
+        />
+      ) : null}
 
       <div className="gh-card gh-doctor-filter-card mb-4 p-4">
         <form className="gh-doctor-filter-grid grid grid-cols-1 gap-3 sm:grid-cols-5">
@@ -115,13 +159,31 @@ export default async function DoctorInvoicesPage({
             {result.message}
           </p>
         </div>
-      ) : result.data.items.length === 0 ? (
-        <div className="gh-card gh-doctor-empty-state p-10 text-center text-sm text-[var(--color-text-muted)]">
-          No invoices match those filters.
-        </div>
+      ) : invoices.length === 0 ? (
+        <AdminEmptyState
+          className="gh-doctor-empty-state"
+          icon={status || from || to ? <SearchX className="size-5" aria-hidden /> : <Receipt className="size-5" aria-hidden />}
+          title={status || from || to ? "No invoices match these filters" : "No invoices yet"}
+          description={
+            status || from || to
+              ? "Clear the payment status or date range to review more billing records."
+              : "Invoices will appear here after consultations are booked and billing records are created."
+          }
+          action={
+            status || from || to ? (
+              <Link href="/doctor/invoices" className="gh-btn gh-btn-soft text-sm">
+                Clear filters
+              </Link>
+            ) : (
+              <Link href="/doctor/appointments" className="gh-btn gh-btn-primary text-sm">
+                View appointments
+              </Link>
+            )
+          }
+        />
       ) : (
         <div className="gh-card gh-doctor-table-card p-0 overflow-hidden">
-          <div className="gh-doctor-table-wrap overflow-x-auto">
+          <div className="hidden md:block gh-doctor-table-wrap overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
               <tr>
@@ -135,7 +197,7 @@ export default async function DoctorInvoicesPage({
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-border)]">
-              {result.data.items.map((row) => (
+              {invoices.map((row) => (
                 <tr key={row.id}>
                   <td className="px-4 py-3">
                     <p className="font-semibold text-[var(--color-text-primary)]">
@@ -182,6 +244,50 @@ export default async function DoctorInvoicesPage({
               ))}
             </tbody>
           </table>
+          </div>
+          <div className="grid gap-3 p-3 md:hidden">
+            {invoices.map((row) => (
+              <article
+                key={row.id}
+                className="gh-doctor-mobile-card rounded-[10px] border border-[var(--color-border)] bg-white p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold text-[var(--color-text-primary)]">
+                      {row.fullName}
+                    </p>
+                    <p className="mt-1 text-xs capitalize text-[var(--color-text-muted)]">
+                      {row.consultationType}
+                    </p>
+                  </div>
+                  <Pill tone={paymentTone(row.paymentStatus)} withDot>
+                    {row.paymentStatus}
+                  </Pill>
+                </div>
+                <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <dt className="text-[var(--color-text-muted)]">Amount</dt>
+                    <dd className="font-semibold text-[var(--color-text-primary)]">
+                      {fmtMoney(row.amountCents, row.currencyCode)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-[var(--color-text-muted)]">When</dt>
+                    <dd className="font-semibold text-[var(--color-text-primary)]">
+                      {row.scheduledAt
+                        ? new Date(row.scheduledAt).toLocaleDateString()
+                        : new Date(row.createdAt).toLocaleDateString()}
+                    </dd>
+                  </div>
+                </dl>
+                <Link
+                  href={`/doctor/appointments/${row.id}`}
+                  className="gh-btn gh-btn-soft mt-4 w-full text-sm"
+                >
+                  Open consultation <ChevronRight className="size-3.5" />
+                </Link>
+              </article>
+            ))}
           </div>
           {result.data.pagination.totalPages > 1 ? (
             <div className="border-t border-[var(--color-border)] px-4 py-3 text-xs text-[var(--color-text-muted)]">

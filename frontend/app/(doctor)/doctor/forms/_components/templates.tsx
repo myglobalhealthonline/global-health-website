@@ -2,9 +2,10 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2 } from "lucide-react";
+import { FileText, Plus, Trash2 } from "lucide-react";
 import type { FormFieldDef, FormTemplateDto } from "@/lib/api/doctor-api";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
+import { AdminEmptyState } from "@/components/portal-atoms";
 
 /**
  * Form templates manager. Tiny inline builder — title + description +
@@ -151,9 +152,12 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
           Your templates
         </h3>
         {items.length === 0 ? (
-          <p className="mt-4 text-[13px] text-[var(--color-text-muted)]">
-            No templates yet. Use the form on the right.
-          </p>
+          <AdminEmptyState
+            className="gh-doctor-empty-state mt-4"
+            icon={<FileText className="size-5" aria-hidden />}
+            title="No templates yet"
+            description="Create your first intake, consent, or follow-up form from the builder. Templates become available inside appointment workspaces."
+          />
         ) : (
           <ul className="gh-doctor-template-items mt-4 grid gap-3">
             {items.map((t) => (

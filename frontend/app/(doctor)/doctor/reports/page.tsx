@@ -1,4 +1,5 @@
 import { fetchDoctorReports } from "@/lib/api/doctor-api";
+import { AdminEmptyState, PageHeader, SectionHeader } from "@/components/portal-atoms";
 import { ReportsCsvButton } from "./_components/csv-button";
 
 export const dynamic = "force-dynamic";
@@ -43,18 +44,12 @@ export default async function DoctorReportsPage({
 
   return (
     <>
-      <header className="gh-doctor-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-          Doctor
-        </p>
-        <h2 className="mt-1 text-2xl font-bold text-[var(--color-text-primary)]">
-          Reports
-        </h2>
-        <p className="text-sm text-[var(--color-text-muted)]">
-          Aggregated counts over your assigned appointments. Defaults to the
-          last 30 days.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Practice analytics"
+        title="Reports"
+        description="Aggregated consultation, patient, follow-up, and paid revenue signals for your assigned appointments. Defaults to the last 30 days."
+        actions={result.ok ? <ReportsCsvButton data={result.data} /> : null}
+      />
 
       <form className="gh-card gh-doctor-filter-card gh-doctor-filter-grid mb-4 grid gap-3 p-4 sm:grid-cols-5" method="get">
         <label className="flex flex-col gap-1">
@@ -124,7 +119,6 @@ export default async function DoctorReportsPage({
           <button type="submit" className="gh-btn gh-btn-primary text-sm">
             Apply
           </button>
-          {result.ok ? <ReportsCsvButton data={result.data} /> : null}
         </div>
       </form>
 
@@ -167,16 +161,10 @@ export default async function DoctorReportsPage({
 
           <div className="gh-doctor-report-grid grid gap-4 lg:grid-cols-2">
             <section className="gh-card gh-doctor-report-card p-6">
-              <h3
-                className="m-0 text-[var(--color-text-primary)]"
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: 16,
-                  fontWeight: 800,
-                }}
-              >
-                By status
-              </h3>
+              <SectionHeader
+                title="By status"
+                description="Consultation lifecycle mix in the selected date range."
+              />
               <BreakdownTable
                 rows={result.data.appointments.byStatus.map((r) => ({
                   label: r.status,
@@ -185,16 +173,10 @@ export default async function DoctorReportsPage({
               />
             </section>
             <section className="gh-card gh-doctor-report-card p-6">
-              <h3
-                className="m-0 text-[var(--color-text-primary)]"
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: 16,
-                  fontWeight: 800,
-                }}
-              >
-                By consultation type
-              </h3>
+              <SectionHeader
+                title="By consultation type"
+                description="Clinical workload split by appointment category."
+              />
               <BreakdownTable
                 rows={result.data.appointments.byConsultationType.map((r) => ({
                   label: r.consultationType,
@@ -225,9 +207,11 @@ function Tile({ label, value }: { label: string; value: string }) {
 function BreakdownTable({ rows }: { rows: { label: string; count: number }[] }) {
   if (rows.length === 0) {
     return (
-      <p className="mt-4 text-[13px] text-[var(--color-text-muted)]">
-        Nothing in this range.
-      </p>
+      <AdminEmptyState
+        className="gh-doctor-empty-state mt-4"
+        title="Nothing in this range"
+        description="Change the date or status filters to review more report data."
+      />
     );
   }
   return (

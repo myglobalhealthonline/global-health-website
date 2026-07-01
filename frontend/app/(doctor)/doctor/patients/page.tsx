@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { fetchDoctorPatients } from "@/lib/api/doctor-api";
+import {
+  AdminSummaryStrip,
+  PageHeader,
+  Pill,
+} from "@/components/portal-atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -33,21 +38,47 @@ export default async function DoctorPatientsPage({
     : q
       ? result.data.items.filter((p) => p.fullName.toLowerCase().includes(q))
       : result.data.items;
+  const totalPatients = result.ok ? result.data.items.length : 0;
+  const totalBookings = result.ok
+    ? result.data.items.reduce((sum, patient) => sum + patient.appointmentCount, 0)
+    : 0;
+  const countries = result.ok
+    ? new Set(result.data.items.map((patient) => patient.countryCode)).size
+    : 0;
 
   return (
     <>
-      <header className="gh-doctor-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-          Doctor
-        </p>
-        <h2 className="mt-1 text-2xl font-bold text-[var(--color-text-primary)]">
-          My patients
-        </h2>
-        <p className="text-sm text-[var(--color-text-muted)]">
-          Distinct patients who&apos;ve booked a consultation with you. Deduped by
-          email — guest bookings + signed-in patients all surface here.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Patient records"
+        title="My patients"
+        description="Distinct patients who have booked with you. Contact details stay protected; use appointment workspaces for clinical chat and document review."
+      />
+
+      {result.ok ? (
+        <AdminSummaryStrip
+          className="mb-4"
+          items={[
+            {
+              label: "Patients",
+              value: totalPatients,
+              hint: q ? `${items.length} matching search` : "Visible in your panel",
+              tone: "brand",
+            },
+            {
+              label: "Bookings",
+              value: totalBookings,
+              hint: "Across patient history",
+              tone: "neutral",
+            },
+            {
+              label: "Markets",
+              value: countries,
+              hint: "Countries represented",
+              tone: "success",
+            },
+          ]}
+        />
+      ) : null}
 
       <div className="gh-card gh-doctor-filter-card mb-4 p-4">
         <form className="gh-doctor-filter-actions flex flex-wrap items-end gap-3">
@@ -56,7 +87,7 @@ export default async function DoctorPatientsPage({
             <input
               name="q"
               defaultValue={q ?? ""}
-              placeholder="Name, email, or phone"
+              placeholder="Patient name"
               className="gh-input"
             />
           </label>
@@ -85,7 +116,7 @@ export default async function DoctorPatientsPage({
         </div>
       ) : (
         <div className="gh-card gh-doctor-table-card p-0 overflow-hidden">
-          <div className="gh-doctor-table-wrap overflow-x-auto">
+          <div className="hidden md:block gh-doctor-table-wrap overflow-x-auto">
           <table className="w-full text-sm">
             {/* Email + phone columns intentionally removed (GDPR/privacy).
                 Doctors contact patients only through the in-app chat thread
@@ -125,6 +156,46 @@ export default async function DoctorPatientsPage({
               ))}
             </tbody>
           </table>
+          </div>
+          <div className="grid gap-3 p-3 md:hidden">
+            {items.map((p) => (
+              <article
+                key={p.email}
+                className="gh-doctor-mobile-card rounded-[10px] border border-[var(--color-border)] bg-white p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold text-[var(--color-text-primary)]">
+                      {p.fullName}
+                    </p>
+                    <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                      First seen {new Date(p.firstSeen).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <Pill tone="brand">{p.countryCode}</Pill>
+                </div>
+                <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <dt className="text-[var(--color-text-muted)]">Bookings</dt>
+                    <dd className="font-semibold text-[var(--color-text-primary)]">
+                      {p.appointmentCount}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-[var(--color-text-muted)]">Record</dt>
+                    <dd className="font-semibold text-[var(--color-text-primary)]">
+                      History and documents
+                    </dd>
+                  </div>
+                </dl>
+                <Link
+                  href={`/doctor/patients/${encodeURIComponent(p.email)}`}
+                  className="gh-btn gh-btn-soft mt-4 w-full text-sm"
+                >
+                  Open patient record <ChevronRight className="size-3.5" />
+                </Link>
+              </article>
+            ))}
           </div>
         </div>
       )}

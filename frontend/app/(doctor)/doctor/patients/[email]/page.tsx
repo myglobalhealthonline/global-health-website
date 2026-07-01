@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { fetchDoctorPatientDetail } from "@/lib/api/doctor-api";
+import { AdminEmptyState, AdminSummaryStrip, PageHeader, Pill } from "@/components/portal-atoms";
 import { PatientProfilePanel } from "./_components/patient-profile-panel";
 import { ConsultationHistoryPanel } from "./_components/consultation-history-panel";
 
@@ -39,20 +40,35 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
       >
         <ArrowLeft className="size-3.5" /> Back to patients
       </Link>
-      <header className="mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-          Patient
-        </p>
-        <h2 className="mt-1 text-2xl font-bold text-[var(--color-text-primary)]">
-          {patient.fullName}
-        </h2>
-        {/* Email + phone intentionally omitted from the doctor view.
-            Doctor contacts patient via the in-app chat thread on the
-            appointment workspace; admin keeps full PII under /admin/users. */}
-        <p className="text-sm text-[var(--color-text-muted)]">
-          {patient.countryCode.toUpperCase()}
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Patient record"
+        title={patient.fullName}
+        description="Clinical history, signed consultations, and appointment documents visible to your doctor role. Direct patient contact remains inside appointment chat."
+      />
+
+      <AdminSummaryStrip
+        className="mb-4"
+        items={[
+          {
+            label: "Country",
+            value: patient.countryCode.toUpperCase(),
+            hint: "Booking market",
+            tone: "brand",
+          },
+          {
+            label: "Appointments",
+            value: patient.appointmentCount,
+            hint: "With you",
+            tone: "neutral",
+          },
+          {
+            label: "Signed consults",
+            value: patient.signedConsultCount,
+            hint: "Locked clinical notes",
+            tone: patient.signedConsultCount > 0 ? "success" : "neutral",
+          },
+        ]}
+      />
 
       <div className="gh-doctor-detail-grid gh-doctor-patient-detail-layout grid gap-4">
         <div className="grid gap-4">
@@ -72,11 +88,14 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
             jump into the workspace.
           </p>
           {appointments.length === 0 ? (
-            <p className="mt-4 text-[13px] text-[var(--color-text-muted)]">
-              No appointments.
-            </p>
+            <AdminEmptyState
+              className="gh-doctor-empty-state mt-4"
+              title="No appointments yet"
+              description="When this patient books with you, consultation history will appear here."
+            />
           ) : (
-            <div className="gh-doctor-table-wrap mt-4 overflow-x-auto">
+            <>
+            <div className="hidden md:block gh-doctor-table-wrap mt-4 overflow-x-auto">
             <table className="w-full text-[13px]">
               <thead>
                 <tr className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
@@ -131,6 +150,67 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
               </tbody>
             </table>
             </div>
+            <div className="mt-4 grid gap-3 md:hidden">
+              {appointments.map((a) => (
+                <article
+                  key={a.id}
+                  className="gh-doctor-mobile-card rounded-[10px] border border-[var(--color-border)] bg-white p-4"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-bold capitalize text-[var(--color-text-primary)]">
+                        {a.consultationType}
+                      </p>
+                      <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                        {a.scheduledAt
+                          ? new Date(a.scheduledAt).toLocaleString()
+                          : new Date(a.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <Pill tone={a.status === "COMPLETED" ? "active" : a.status === "CANCELLED" ? "inactive" : "pending"} withDot>
+                      {a.status.replace(/_/g, " ")}
+                    </Pill>
+                  </div>
+                  <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <dt className="text-[var(--color-text-muted)]">Payment</dt>
+                      <dd className="font-semibold text-[var(--color-text-primary)]">
+                        {a.paymentStatus}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-[var(--color-text-muted)]">Consult</dt>
+                      <dd className="font-semibold text-[var(--color-text-primary)]">
+                        {a.consultation
+                          ? a.consultation.status === "SIGNED"
+                            ? "Signed"
+                            : "Draft"
+                          : "No note"}
+                      </dd>
+                    </div>
+                  </dl>
+                  <div className="mt-4 grid gap-2">
+                    {a.meetingUrl ? (
+                      <a
+                        href={a.meetingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="gh-btn gh-btn-primary text-sm"
+                      >
+                        <ExternalLink className="size-3" /> Join
+                      </a>
+                    ) : null}
+                    <Link
+                      href={`/doctor/appointments/${a.id}`}
+                      className="gh-btn gh-btn-soft text-sm"
+                    >
+                      Open workspace <ChevronRight className="size-3" />
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+            </>
           )}
         </section>
 
