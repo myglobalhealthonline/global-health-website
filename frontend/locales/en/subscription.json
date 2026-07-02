@@ -115,7 +115,10 @@
       "cancelled": "Checkout was cancelled — no payment was taken.",
       "incomplete": "We're waiting for your first payment to clear. This can take a moment.",
       "actionRequired": "Your bank needs to confirm this payment. Complete the verification to activate your membership.",
-      "completePayment": "Complete payment verification"
+      "completePayment": "Complete payment verification",
+      "confirming": "Confirming your payment… this usually takes only a few seconds.",
+      "stillProcessing": "Payment received — activating your membership is taking a little longer than usual.",
+      "refresh": "Refresh"
     }
   },
   "coverage": {

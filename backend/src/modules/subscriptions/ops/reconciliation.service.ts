@@ -1,3 +1,4 @@
+import { env } from "../../../config/env.js";
 import { prisma } from "../../../db/prisma.js";
 import { getBillingPort } from "../../billing/billing.factory.js";
 
@@ -19,6 +20,10 @@ export interface InvariantAlert {
 }
 export interface SubscriptionHealthReport {
   lastReconciliationAt: string | null;
+  /** Active billing driver. `fake` in production is a misconfiguration (B1). */
+  billingDriver: "fake" | "stripe";
+  /** True when the fake driver is live in production — checkout URLs are dead. */
+  billingMisconfigured: boolean;
   drift: DriftEntry[];
   invariantAlerts: InvariantAlert[];
   priceSyncFailures: Array<{ planId: string; slug: string }>;
@@ -32,8 +37,11 @@ export async function runReconciliation(now = new Date()): Promise<SubscriptionH
     checkMissingGrants(),
   ]);
   const unswept = await checkUnsweptReservations(now);
+  const billingDriver = getBillingPort().driver;
   return {
     lastReconciliationAt: now.toISOString(),
+    billingDriver,
+    billingMisconfigured: billingDriver === "fake" && env.NODE_ENV === "production",
     drift,
     invariantAlerts: [...invariantAlerts, ...unswept, ...missingGrants],
     priceSyncFailures,

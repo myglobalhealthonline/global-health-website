@@ -102,6 +102,12 @@ async function meRequest<T>(
   }
 }
 
+/** Current subscription view — used by the activation poller on return from
+ *  Stripe checkout to await the webhook flipping status to ACTIVE (B4). */
+export function getSubscription(): Promise<MeResult<SubscriptionView>> {
+  return meRequest("subscription");
+}
+
 export function getRedemptions(): Promise<MeResult<RedemptionsView>> {
   return meRequest("redemptions");
 }

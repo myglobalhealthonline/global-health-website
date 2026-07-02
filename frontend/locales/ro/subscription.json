@@ -115,7 +115,10 @@
       "cancelled": "Plata a fost anulată — nu a fost efectuată nicio plată.",
       "incomplete": "Așteptăm confirmarea primei dumneavoastră plăți. Acest lucru poate dura un moment.",
       "actionRequired": "Banca dumneavoastră trebuie să confirme această plată. Finalizați verificarea pentru a activa abonamentul.",
-      "completePayment": "Finalizați verificarea plății"
+      "completePayment": "Finalizați verificarea plății",
+      "confirming": "Confirmăm plata dumneavoastră… de obicei durează doar câteva secunde.",
+      "stillProcessing": "Plată primită — activarea abonamentului durează puțin mai mult decât de obicei.",
+      "refresh": "Reîmprospătați"
     }
   },
   "coverage": {

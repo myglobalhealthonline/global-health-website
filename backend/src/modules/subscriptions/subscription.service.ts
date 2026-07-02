@@ -6,6 +6,7 @@ import { isSubscriptionsEnabled } from "./feature-gate.js";
 import { captureSnapshot } from "./plan-snapshot.service.js";
 import { notifySubscriptionCanceled } from "./subscription-emails.service.js";
 import { handleSubscriptionEvent } from "./subscription-webhook.service.js";
+import { emitOpsAlert } from "./ops/ops-alert.js";
 import type { Prisma } from "@prisma/client";
 
 /**
@@ -35,6 +36,41 @@ function siteBase(): string {
   return env.PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? "http://localhost:3000";
 }
 
+/**
+ * Hard-fail guard for a misconfigured production billing driver (B1).
+ *
+ * The factory silently falls back to the in-memory FAKE driver when
+ * BILLING_DRIVER=stripe / STRIPE_SECRET_KEY isn't wired — which in production
+ * serves a dead `fake-billing.local` checkout URL and leaves the subscriber
+ * stuck INCOMPLETE with no payment ever taken and no alert. Rather than degrade
+ * silently, refuse the money-path entrypoints and raise a critical ops alert.
+ *
+ * Exempt when ALLOW_TEST_SUBSCRIPTION_ACTIVATION=true (an intentional
+ * fake-driver test/staging deployment) and outside production (dev/test).
+ */
+function assertBillingConfigured(operation: string): void {
+  const testActivationFlag =
+    env.ALLOW_TEST_SUBSCRIPTION_ACTIVATION === "true" ||
+    env.ALLOW_TEST_SUBSCRIPTION_ACTIVATION === true;
+  const misconfigured =
+    env.NODE_ENV === "production" &&
+    getBillingPort().driver === "fake" &&
+    !testActivationFlag;
+  if (!misconfigured) return;
+
+  void emitOpsAlert({
+    severity: "critical",
+    title: "Subscription billing is not configured in production",
+    detail:
+      `${operation} was blocked: BILLING_DRIVER/STRIPE_SECRET_KEY are not both set, so the ` +
+      "fake in-memory driver is active. Set BILLING_DRIVER=stripe + STRIPE_SECRET_KEY to enable real billing.",
+  });
+  throw new SubscriptionServiceError(
+    "NOT_ELIGIBLE",
+    "Billing is not configured. Please try again later.",
+  );
+}
+
 export interface StartSubscriptionInput {
   userId: string;
   email: string;
@@ -51,6 +87,7 @@ export interface StartSubscriptionInput {
 export async function startSubscription(
   input: StartSubscriptionInput,
 ): Promise<{ checkoutUrl: string }> {
+  assertBillingConfigured("startSubscription");
   const billing = getBillingPort();
   const plan = await prisma.pricingPlan.findUnique({
     where: { id: input.planId },
@@ -177,6 +214,7 @@ export async function changePlan(
   userId: string,
   newPlanId: string,
 ): Promise<{ pendingChangeEffectiveAt: Date | null }> {
+  assertBillingConfigured("changePlan");
   const sub = await prisma.userSubscription.findFirst({
     where: { userId, status: { in: ["ACTIVE", "PAST_DUE"] } },
     orderBy: { createdAt: "desc" },
@@ -268,6 +306,7 @@ export async function getBillingPortalUrl(
   userId: string,
   returnTo?: string,
 ): Promise<{ portalUrl: string }> {
+  assertBillingConfigured("getBillingPortalUrl");
   const sub = await prisma.userSubscription.findFirst({
     where: { userId, stripeCustomerId: { not: null } },
     orderBy: { createdAt: "desc" },

@@ -157,8 +157,10 @@ export async function processInvoicePaid(
     });
 
     if (!granted) {
-      // Duplicate period — still persist a refreshed snapshot if we captured one
-      // but DO NOT advance paidMonthsCount or re-grant.
+      // Duplicate period (retry / same-period reprocess). The original grant for
+      // this period already persisted the snapshot and advanced paidMonthsCount,
+      // so this is a pure idempotent no-op: any snapshot captured above is
+      // intentionally discarded and nothing is written.
       return {
         handled: true,
         granted: false,

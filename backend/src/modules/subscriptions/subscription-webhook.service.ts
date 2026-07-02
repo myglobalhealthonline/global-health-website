@@ -39,6 +39,9 @@ const SUBSCRIPTION_EVENT_TYPES = new Set([
   "customer.subscription.updated",
   "customer.subscription.deleted",
   "invoice.payment_succeeded",
+  // `invoice.paid` is a Stripe alias of `invoice.payment_succeeded` — accept it
+  // as free hardening in case an endpoint is subscribed only to `invoice.paid`.
+  "invoice.paid",
   "invoice.payment_failed",
   "invoice.payment_action_required",
   "invoice.finalization_failed",
@@ -54,6 +57,15 @@ export function isSubscriptionEvent(event: MinimalStripeEvent): boolean {
   if (event.type === "checkout.session.completed") {
     return obj.mode === "subscription" || obj.kind === "subscription" ||
       (obj.metadata as Record<string, string> | undefined)?.kind === "subscription";
+  }
+  // charge.refunded / charge.dispute.created (B2): a charge belongs to a
+  // subscription ONLY when it was raised against an invoice. One-off order &
+  // appointment charges use payment-mode Checkout (no invoice), so they must
+  // fall through to the order/appointment refund branch in the route — a
+  // blanket match here would swallow every consultation-order refund and,
+  // worse, let an unrelated one-off refund cancel the customer's subscription.
+  if (event.type === "charge.refunded" || event.type === "charge.dispute.created") {
+    return Boolean(obj.invoice);
   }
   return true;
 }
@@ -82,6 +94,7 @@ export async function handleSubscriptionEvent(
       result = await onSubscriptionDeleted(event);
       break;
     case "invoice.payment_succeeded":
+    case "invoice.paid":
       result = await onInvoicePaid(event);
       break;
     case "invoice.payment_failed":
@@ -178,6 +191,10 @@ async function onSubscriptionSynced(
     data: {
       status: nextStatus,
       cancelAtPeriodEnd,
+      // Write periodStart too (the stale-period guard above already rejects a
+      // rewind, so this only ever moves it forward — the grant path still owns
+      // the authoritative period, this just keeps the sync echo complete).
+      ...(periodStart ? { currentPeriodStart: periodStart } : {}),
       ...(periodEnd ? { currentPeriodEnd: periodEnd } : {}),
     },
   });

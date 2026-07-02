@@ -23,6 +23,7 @@ import { completeOrderPaymentFromCheckoutSession } from "../modules/orders/compl
 import {
   commitOrderCreditReservations,
   linkReservationsToOrderItems,
+  releaseOrderCreditReservations,
   reserveAndPriceConsultations,
 } from "../modules/subscriptions/checkout-pricing.service.js";
 import { computeEffectivePrices } from "../modules/orders/effective-pricing.service.js";
@@ -869,6 +870,22 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           where: { id: params.data.id },
           data: { status: body.data.status },
         });
+
+        // Settle any subscription credit reservations on this order (B11).
+        // Admin PAID → commit (RESERVED → CONSUMED); CANCELLED → release
+        // (RESERVED → RELEASED, credit restored). Both are idempotent and
+        // no-ops for orders without reservations. The webhook path already
+        // commits on Stripe success, but a manual admin transition would
+        // otherwise strand the reserved credit until the 1h sweep alert.
+        if (body.data.status === OrderStatus.PAID) {
+          await commitOrderCreditReservations(order.id).catch((err) => {
+            request.log.error({ err, orderId: order.id }, "Commit order credit reservations failed");
+          });
+        } else if (body.data.status === OrderStatus.CANCELLED) {
+          await releaseOrderCreditReservations(order.id).catch((err) => {
+            request.log.error({ err, orderId: order.id }, "Release order credit reservations failed");
+          });
+        }
         return okResponse({ id: order.id, status: order.status });
       } catch (err) {
         if (err instanceof DatabaseUnavailableError) {

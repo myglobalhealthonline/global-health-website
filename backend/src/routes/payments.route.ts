@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
 import { z } from "zod";
-import { PaymentStatus } from "@prisma/client";
+import { OrderStatus, PaymentStatus } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import {
   getStripeClient,
@@ -521,12 +521,16 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
             },
           }).catch(() => undefined);
         } else if (eventType === "charge.refunded") {
+          // Only NON-subscription charges reach here (isSubscriptionEvent routes
+          // invoice-backed charges to the subscription clawback handler). This
+          // is a one-off appointment or cart-order refund (B2).
           const charge = event.data.object as {
             payment_intent?: string | null;
             amount_refunded?: number | null;
             currency?: string | null;
           };
           if (charge.payment_intent) {
+            // Legacy single-item appointment booking.
             const appt = await prisma.appointment.findUnique({
               where: { stripePaymentIntentId: charge.payment_intent },
               select: { id: true },
@@ -550,6 +554,24 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                   },
                 }),
               ]);
+            } else {
+              // Cart-order refund — Orders carry no Payment row (no appointmentId),
+              // so flip the Order to REFUNDED directly. Idempotent (skips if
+              // already REFUNDED). Subscription ids are excluded upstream, so this
+              // can never touch a UserSubscription.
+              const order = await prisma.order.findUnique({
+                where: { stripePaymentIntentId: charge.payment_intent },
+                select: { id: true, status: true },
+              });
+              if (order && order.status !== OrderStatus.REFUNDED) {
+                await prisma.order.update({
+                  where: { id: order.id },
+                  data: {
+                    status: OrderStatus.REFUNDED,
+                    paymentStatus: PaymentStatus.REFUNDED,
+                  },
+                });
+              }
             }
           }
         }

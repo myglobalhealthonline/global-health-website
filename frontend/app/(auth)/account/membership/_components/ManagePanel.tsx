@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AlertCircle, CheckCircle2, CreditCard, Loader2 } from "lucide-react";
@@ -9,6 +9,7 @@ import {
   cancelSubscription,
   changePlan,
   getBillingPortalUrl,
+  getSubscription,
 } from "@/lib/api/me-subscription";
 import { formatAppDate } from "@/lib/format-datetime";
 import { interpolate } from "@/lib/subscription/format";
@@ -74,8 +75,56 @@ export function ManagePanel(props: ManagePanelProps) {
   const canChange =
     props.planOptions.length > 0 && (props.status === "ACTIVE" || props.status === "PAST_DUE");
 
+  // Webhook race after a successful Stripe return (B4): the page reads status
+  // once, server-side, and the activating webhook may not have landed yet — so
+  // a freshly-paid subscriber would otherwise see the INCOMPLETE "complete your
+  // payment" scold. When we returned with ?subscription=ok but status isn't yet
+  // ACTIVE, poll GET /api/me/subscription (2s, ~30s cap); on ACTIVE we refresh
+  // the server render (→ success banner); on timeout we show a soft
+  // "still processing" state with a refresh CTA — never the scold.
+  const shouldConfirm =
+    props.returnState === "ok" && props.status !== "ACTIVE" && props.status !== "CANCELED";
+  const [confirmPhase, setConfirmPhase] = useState<"idle" | "confirming" | "timeout">(
+    shouldConfirm ? "confirming" : "idle",
+  );
+  const deadlineRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!shouldConfirm) {
+      setConfirmPhase("idle");
+      return;
+    }
+    setConfirmPhase("confirming");
+    deadlineRef.current = Date.now() + 30_000;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      if (cancelled) return;
+      const res = await getSubscription();
+      if (cancelled) return;
+      if (res.ok && res.data.status === "ACTIVE") {
+        router.refresh(); // server re-render flips to the success banner
+        return;
+      }
+      if (Date.now() >= (deadlineRef.current ?? 0)) {
+        setConfirmPhase("timeout");
+        return;
+      }
+      timer = setTimeout(poll, 2000);
+    };
+    timer = setTimeout(poll, 2000);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [shouldConfirm, router]);
+
   // Return / status banner (success, SCA action-required, INCOMPLETE, cancelled).
   const banner = (() => {
+    if (confirmPhase === "confirming")
+      return { kind: "info" as const, text: t.return.confirming, spinner: true as const };
+    if (confirmPhase === "timeout")
+      return { kind: "info" as const, text: t.return.stillProcessing, action: "refresh" as const };
     if (props.status === "INCOMPLETE") return { kind: "info" as const, text: t.return.incomplete, action: "portal" as const };
     if (props.status === "PAST_DUE") return { kind: "warn" as const, text: t.return.actionRequired, action: "portal" as const };
     if (props.returnState === "ok" && props.status === "ACTIVE") return { kind: "ok" as const, text: t.return.ok };
@@ -161,7 +210,9 @@ export function ManagePanel(props: ManagePanelProps) {
           }
           role="status"
         >
-          {banner.kind === "ok" ? (
+          {"spinner" in banner ? (
+            <Loader2 className="mt-0.5 size-4 shrink-0 animate-spin" aria-hidden />
+          ) : banner.kind === "ok" ? (
             <CheckCircle2 className="mt-0.5 size-4 shrink-0" aria-hidden />
           ) : (
             <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
@@ -176,6 +227,14 @@ export function ManagePanel(props: ManagePanelProps) {
                 disabled={busy === "portal"}
               >
                 {t.return.completePayment}
+              </button>
+            ) : "action" in banner && banner.action === "refresh" ? (
+              <button
+                type="button"
+                onClick={() => router.refresh()}
+                className="mt-2 font-semibold underline"
+              >
+                {t.return.refresh}
               </button>
             ) : null}
           </div>

@@ -115,7 +115,10 @@
       "cancelled": "El pago se ha cancelado: no se ha realizado ningún cobro.",
       "incomplete": "Estamos esperando a que se confirme su primer pago. Puede tardar un momento.",
       "actionRequired": "Su banco necesita confirmar este pago. Complete la verificación para activar su membresía.",
-      "completePayment": "Completar la verificación del pago"
+      "completePayment": "Completar la verificación del pago",
+      "confirming": "Confirmando su pago… normalmente solo tarda unos segundos.",
+      "stillProcessing": "Pago recibido: la activación de su membresía está tardando un poco más de lo habitual.",
+      "refresh": "Actualizar"
     }
   },
   "coverage": {

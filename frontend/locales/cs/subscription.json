@@ -115,7 +115,10 @@
       "cancelled": "Pokladna byla zrušena — žádná platba nebyla provedena.",
       "incomplete": "Čekáme na potvrzení vaší první platby. Může to chvíli trvat.",
       "actionRequired": "Vaše banka musí tuto platbu potvrdit. Dokončete ověření, abyste aktivovali své členství.",
-      "completePayment": "Dokončit ověření platby"
+      "completePayment": "Dokončit ověření platby",
+      "confirming": "Potvrzujeme vaši platbu… obvykle to trvá jen několik sekund.",
+      "stillProcessing": "Platba přijata — aktivace vašeho členství trvá o něco déle než obvykle.",
+      "refresh": "Obnovit"
     }
   },
   "coverage": {
