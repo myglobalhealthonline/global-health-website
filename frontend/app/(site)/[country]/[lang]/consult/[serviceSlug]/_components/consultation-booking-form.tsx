@@ -233,6 +233,15 @@ export function ConsultationBookingForm({
   );
 
   const maxDob = new Date().toISOString().slice(0, 10);
+  const dobInputProps = {
+    type: "text",
+    inputMode: "numeric" as const,
+    placeholder: "YYYY-MM-DD",
+    pattern: "\\d{4}-\\d{2}-\\d{2}",
+    maxLength: 10,
+    title: "Use YYYY-MM-DD format",
+    autoComplete: "bday",
+  };
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -648,13 +657,15 @@ export function ConsultationBookingForm({
                 {i18n.dateOfBirth}
               </span>
               <input
-                type="date"
                 name="dateOfBirth"
-                max={maxDob}
                 defaultValue={defaults.dateOfBirth}
                 suppressHydrationWarning
+                {...dobInputProps}
                 className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
               />
+              <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                Enter a date up to {maxDob}.
+              </p>
             </label>
           ) : null}
         </div>
@@ -712,10 +723,9 @@ export function ConsultationBookingForm({
                   <span className="text-[11px] font-normal text-[var(--color-text-muted)]">(optional)</span>
                 </span>
                 <input
-                  type="date"
                   name="patientOtherDob"
-                  max={maxDob}
                   suppressHydrationWarning
+                  {...dobInputProps}
                   className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
                 />
               </label>

@@ -912,6 +912,15 @@ const cartRoute: FastifyPluginAsync = async (app) => {
         return reply.status(500).send(errorResponse("Cart resolution failed"));
       }
 
+      const expiredHolds = await sweepExpiredHolds(cart.id);
+      if (expiredHolds > 0) {
+        const freshCart = await loadFullCart(cart.id);
+        if (!freshCart) {
+          return reply.status(404).send(errorResponse("Cart not found"));
+        }
+        cart = freshCart;
+      }
+
       // Currency lock — block cross-country adds
       if (cart.countryCode && cart.countryCode !== countryCode) {
         return reply
@@ -949,20 +958,22 @@ const cartRoute: FastifyPluginAsync = async (app) => {
           return okResponse(await serializeFreshCart(cart.id));
         }
       } else {
-        // Block adding the same slot twice in cart layer
-        const slotTaken = await prisma.cartItem.findUnique({
-          where: { timeSlotId },
-        });
+        const existingInCart = timeSlotId
+          ? cart.items.find((i) => i.timeSlotId === timeSlotId)
+          : null;
+        if (existingInCart) {
+          return okResponse(await serializeFreshCart(cart.id, expiredHolds));
+        }
+
+        const slotTaken = timeSlotId
+          ? await prisma.cartItem.findUnique({ where: { timeSlotId } })
+          : null;
         if (slotTaken) {
           return reply
             .status(409)
-            .send(errorResponse("That time slot is already in a cart"));
+            .send(errorResponse("That time slot is no longer available"));
         }
       }
-
-      // Sweep before consultation add — frees expired holds so the
-      // patient doesn't see stale slots they think they reserved.
-      if (cart) await sweepExpiredHolds(cart.id);
 
       // For consultation items: claim the slot OPEN → HELD atomically
       // BEFORE creating the CartItem. If another patient grabbed it via

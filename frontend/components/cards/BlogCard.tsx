@@ -88,7 +88,7 @@ export function BlogCard({
 
         <Link
           href={href}
-          className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-[var(--color-brand-primary)] transition-colors hover:text-[var(--color-brand-primary-hover)]"
+          className="mt-5 inline-flex min-h-11 w-fit items-center gap-2 rounded-full border border-[rgba(29,75,54,0.22)] bg-[var(--color-background-soft)] px-4 text-sm font-extrabold text-[var(--color-brand-primary)] transition-[background-color,border-color,color,transform] hover:-translate-y-0.5 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(29,75,54,0.35)] motion-reduce:hover:translate-y-0"
         >
           Read article
           <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />

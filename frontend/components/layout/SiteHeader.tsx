@@ -264,7 +264,7 @@ export function SiteHeader({
           <img
             src={brandLogo?.src ?? "/logos/global-health-dark.png"}
             alt={brandLogo?.alt ?? siteName ?? "Global Health"}
-            className="h-10 w-auto"
+            className="h-12 w-auto md:h-14"
           />
         </Link>
 

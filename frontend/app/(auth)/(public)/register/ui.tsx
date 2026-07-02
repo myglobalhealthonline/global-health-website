@@ -185,7 +185,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
       </p>
 
       <div
-        className="pt-1"
+        className="mt-2 pt-5"
         style={{ borderTop: "1px solid var(--color-border)" }}
       >
         <button type="submit" className="gh2-btn-lime w-full justify-center disabled:opacity-60" disabled={loading} style={{ width: "100%" }}>
@@ -206,5 +206,4 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
     </form>
   );
 }
-
 

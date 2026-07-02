@@ -22,7 +22,7 @@ export default async function BlogIndexPage() {
         accent="articles."
         watermark="Blog"
         body="Evidence-based guides written and reviewed by our medical team. No ads, no fluff."
-        meta={<p className="gh2-index">{ordered.length} articles available</p>}
+        meta={<p className="gh2-index">{ordered.length} {ordered.length === 1 ? "article" : "articles"} available</p>}
       />
 
       <section

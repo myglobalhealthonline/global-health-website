@@ -45,19 +45,23 @@ export function ServiceTimePicker({
 
   const tz = clinicTimezone ?? "Europe/Dublin";
   const tzLabel = tz.includes("/") ? tz.slice(tz.lastIndexOf("/") + 1).replace(/_/g, " ") : tz;
+  const openSlots = useMemo(
+    () => slots.filter((slot) => new Date(slot.startAt).getTime() > Date.now()),
+    [slots],
+  );
 
   const grouped = useMemo(() => {
     const map = new Map<string, Slot[]>();
-    for (const s of slots) {
+    for (const s of openSlots) {
       const day = formatAppDate(s.startAt, tz);
       const list = map.get(day) ?? [];
       list.push(s);
       map.set(day, list);
     }
     return map;
-  }, [slots, tz]);
+  }, [openSlots, tz]);
 
-  const firstSlot = slots[0] ?? null;
+  const firstSlot = openSlots[0] ?? null;
   const [selectedDay, setSelectedDay] = useState<string | null>(
     firstSlot ? formatAppDate(firstSlot.startAt, tz) : null,
   );
@@ -70,7 +74,7 @@ export function ServiceTimePicker({
     });
   }
 
-  if (slots.length === 0) {
+  if (openSlots.length === 0) {
     return <p className="text-sm text-[var(--color-text-muted)]">{i18n.noOpenSlots}</p>;
   }
 

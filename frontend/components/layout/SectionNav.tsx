@@ -28,13 +28,13 @@ export type SectionNavItem = {
 };
 
 const PILL_BASE =
-  "group/navitem relative inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-bold whitespace-nowrap cursor-pointer outline-none transition-[color,background-color] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2";
+  "group/navitem relative inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-bold whitespace-nowrap cursor-pointer outline-none transition-[color,background-color,border-color] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2";
 
 function pillClass(active: boolean, dark: boolean): string {
   if (dark) {
     return active
-      ? `${PILL_BASE} text-[var(--color-brand-accent)] bg-white/[0.07] focus-visible:ring-[color:rgba(176,241,34,0.45)]`
-      : `${PILL_BASE} text-white/55 hover:text-white hover:bg-white/[0.07] focus-visible:ring-white/40`;
+      ? `${PILL_BASE} border border-[color:rgba(176,241,34,0.34)] text-[var(--color-brand-accent)] bg-white/[0.07] focus-visible:ring-[color:rgba(176,241,34,0.45)]`
+      : `${PILL_BASE} border border-transparent text-white/65 hover:border-white/15 hover:text-white hover:bg-white/[0.07] focus-visible:ring-white/40`;
   }
   return active
     ? `${PILL_BASE} text-[var(--color-brand-primary)] bg-white shadow-[var(--shadow-soft)] focus-visible:ring-[color:rgba(29,75,54,0.3)]`
@@ -90,7 +90,6 @@ export function SectionNav({
                 className={pillClass(active, isDark)}
                 aria-label={`${item.label} submenu`}
               >
-                {active ? <ActiveDot /> : null}
                 {item.label}
                 <ChevronDown
                   className="size-3.5 opacity-70 transition-transform duration-200 group-data-[state=open]/navitem:rotate-180 motion-reduce:transition-none"
@@ -151,9 +150,8 @@ export function SectionNav({
             className={pillClass(active, isDark)}
             aria-current={active ? "page" : undefined}
           >
-            {active ? <ActiveDot /> : null}
             {active && isDark ? (
-              <span className="border-b-2 border-[var(--color-brand-accent)] pb-px">
+              <span>
                 {item.label}
               </span>
             ) : (
@@ -163,16 +161,5 @@ export function SectionNav({
         );
       })}
     </nav>
-  );
-}
-
-/** Small lime pulse dot marking the active tab — the signature accent. */
-function ActiveDot() {
-  return (
-    <span
-      aria-hidden
-      className="inline-block size-1.5 shrink-0 rounded-full gh-pulse-dot"
-      style={{ background: "var(--color-brand-accent)" }}
-    />
   );
 }

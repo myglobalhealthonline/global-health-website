@@ -343,7 +343,7 @@ export function GH2AuthShell({
 
       {/* ── RIGHT — form panel ────────────────────────────────────── */}
       <main
-        className="relative flex flex-col items-center justify-center overflow-y-auto px-5 py-6"
+        className="relative flex flex-col items-center justify-center overflow-y-auto px-5 py-8 sm:py-10"
         style={{ background: "#F5F8F5" }}
       >
         <div className="w-full" style={{ maxWidth: 500 }}>
