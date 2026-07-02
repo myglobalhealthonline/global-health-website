@@ -176,6 +176,32 @@ export function getCartPreview(): Promise<MeResult<CartCoverageView>> {
   return meRequest("cart-preview");
 }
 
+export interface ServiceBenefitOption {
+  selection: BenefitSelection;
+  unitPriceCents: number;
+  creditsToReserve: number;
+}
+
+export interface ServiceBenefitPreview {
+  subscriptionId: string | null;
+  planName: string | null;
+  benefitsUnlocked: boolean;
+  consultationCreditsRemaining: number;
+  eligibleSelections: BenefitSelection[];
+  options: ServiceBenefitOption[];
+  basePriceCents: number;
+}
+
+/** Per-service benefit preview for the booking step (B6). Guests get 401 →
+ *  the form simply omits the selector. */
+export function getBenefitPreview(
+  serviceId: string,
+  basePriceCents: number,
+): Promise<MeResult<ServiceBenefitPreview>> {
+  const qs = `?serviceId=${encodeURIComponent(serviceId)}&basePriceCents=${basePriceCents}`;
+  return meRequest(`benefit-preview${qs}`);
+}
+
 /** Patient in-app notifications (§30). Payload carries pre-localized copy. */
 export interface NotificationItem {
   id: string;

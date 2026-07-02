@@ -268,6 +268,10 @@
     "onlineAppointments": "Online termíny"
   },
   "bookingForm": {
+    "benefitHeading": "Použít váš plán",
+    "benefitPayNormal": "Zaplatit běžně",
+    "benefitUseCredit": "Použít kredit plánu",
+    "benefitUseDiscount": "Použít slevu plánu",
     "pickDate": "Vybrat datum",
     "daysAvailable": "{count} {day} k dispozici · časy v {tz}",
     "day": "den",
@@ -587,7 +591,8 @@
   "checkoutStatus": {
     "successTitle": "Platba přijata",
     "successBody": "Vaše objednávka je potvrzena. Doklad vám byl zaslán e-mailem.",
-    "orderRef": "ORDER #{id}",
+    "processingTitle": "Potvrzujeme vaši platbu…",
+    "processingBody": "Vaše platba se potvrzuje. Obvykle to trvá jen chvíli — tato stránka se automaticky aktualizuje.",    "orderRef": "ORDER #{id}",
     "shipping": "Doprava",
     "totalPaid": "Celkem zaplaceno",
     "receiptError": "Doklad se nám nyní nepodařilo načíst. Vaše platba je potvrzena; podrobnosti objednávky najdete ve svém e-mailu.",

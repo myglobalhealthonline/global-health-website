@@ -5,7 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "@/components/cart/CartContext";
-import type { CartItemKind } from "@/lib/api/cart-types";
+import type { CartItemKind, BenefitSelection } from "@/lib/api/cart-types";
+import { getBenefitPreview, type ServiceBenefitOption } from "@/lib/api/me-subscription";
 import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
 import { listFamilyMembers, type FamilyMember } from "@/lib/api/family-client";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
@@ -119,6 +120,12 @@ export function ConsultationBookingForm({
   // usage). Only those approved to use plan benefits (canUseCredits) appear.
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
   const [selectedFamilyId, setSelectedFamilyId] = useState("");
+  // Booking-step plan benefit selector (B6) — for SELF bookings, the resolved
+  // price for each eligible option (credit / discount / pay normally) so the
+  // subscriber can choose here instead of only in the cart. Pre-selected to the
+  // cheapest eligible option; written onto the line at add-to-cart.
+  const [benefitOptions, setBenefitOptions] = useState<ServiceBenefitOption[]>([]);
+  const [benefitSelection, setBenefitSelection] = useState<BenefitSelection>("PAY_NORMAL");
   // Saved profile (address + national ID) so we don't ask for it again (req #2).
   const [profile, setProfile] = useState<ProfileAddress | null>(null);
   const [profileLoaded, setProfileLoaded] = useState(false);
@@ -171,6 +178,34 @@ export function ConsultationBookingForm({
       cancelled = true;
     };
   }, []);
+
+  // Fetch the per-service benefit preview once we know the signed-in patient +
+  // the slot price. Pre-select the cheapest eligible option (prefer a plan
+  // credit on a tie) so the best deal is the default; the user can still switch.
+  const slotPriceCents = selectedSlot?.priceCents;
+  const meId = me?.id;
+  useEffect(() => {
+    if (!meId || slotPriceCents == null) return;
+    let cancelled = false;
+    void getBenefitPreview(serviceId, slotPriceCents).then((res) => {
+      if (cancelled || !res.ok) return;
+      const opts = res.data.options;
+      setBenefitOptions(opts);
+      if (opts.length > 1) {
+        const best = [...opts].sort((a, b) =>
+          a.unitPriceCents !== b.unitPriceCents
+            ? a.unitPriceCents - b.unitPriceCents
+            : a.selection === "USE_PLAN_CREDIT"
+              ? -1
+              : 1,
+        )[0];
+        if (best) setBenefitSelection(best.selection);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [meId, serviceId, slotPriceCents]);
 
   const approvedMembers = useMemo(
     () => familyMembers.filter((m) => m.canUseCredits),
@@ -321,10 +356,14 @@ export function ConsultationBookingForm({
         doctorId: useDoctorId,
         timeSlotId: useSlotId,
         // Premium family usage — the line targets an approved dependent and
-        // pre-selects the credit benefit (server re-verifies eligibility).
+        // pre-selects the credit benefit (server re-verifies eligibility). For a
+        // SELF booking, carry the benefit chosen at this step (B6); the server
+        // re-resolves it authoritatively at checkout.
         ...(selectedMember
           ? { familyMemberId: selectedMember.id, benefitSelection: "USE_PLAN_CREDIT" as const }
-          : {}),
+          : !treatingOther && benefitSelection !== "PAY_NORMAL"
+            ? { benefitSelection }
+            : {}),
         patient: {
           fullName: patientName,
           email,
@@ -511,6 +550,48 @@ export function ConsultationBookingForm({
               {i18n.manageFamily}
             </Link>
           </p>
+        ) : null}
+
+        {/* Plan benefit selector (B6) — self bookings with an eligible plan pick
+          * credit / discount / pay-normally here, pre-set to the best deal. */}
+        {me && !treatingOther && benefitOptions.length > 1 ? (
+          <div className="mt-3">
+            <span className="text-xs font-semibold text-[var(--color-text-body)]">
+              {i18n.benefitHeading}
+            </span>
+            <div role="radiogroup" aria-label={i18n.benefitHeading} className="mt-1.5 flex flex-wrap gap-1.5">
+              {benefitOptions.map((opt) => {
+                const active = benefitSelection === opt.selection;
+                const label =
+                  opt.selection === "USE_PLAN_CREDIT"
+                    ? i18n.benefitUseCredit
+                    : opt.selection === "USE_PLAN_DISCOUNT"
+                      ? i18n.benefitUseDiscount
+                      : i18n.benefitPayNormal;
+                return (
+                  <button
+                    key={opt.selection}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => setBenefitSelection(opt.selection)}
+                    className="rounded-full px-3 py-1 text-[12px] font-semibold transition-colors"
+                    style={
+                      active
+                        ? { background: "var(--color-brand-primary)", color: "#fff" }
+                        : {
+                            background: "var(--color-background-soft)",
+                            color: "var(--color-text-body)",
+                            border: "1px solid var(--color-border)",
+                          }
+                    }
+                  >
+                    {label} — {formatPriceRounded(opt.unitPriceCents, selectedSlot?.currencyCode ?? "EUR")}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         ) : null}
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">

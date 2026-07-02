@@ -34,6 +34,29 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
   const doctorsHref = `/${country}/${lang}/doctors`;
   const t = loadLocaleBundle(lang as LocaleCode).common.checkoutStatus;
 
+  // Processing state (2.3): when we have an order that Stripe hasn't confirmed
+  // paid yet (webhook race) and the server sync didn't confirm it either, show a
+  // "confirming payment" state instead of an unconditional success. The client
+  // SyncOrderPaymentOnReturn keeps retrying + reloads the page once it lands.
+  const orderConfirmedPaid =
+    order?.paymentStatus === "PAID" || order?.status === "PAID" || paymentSynced;
+  const processing = Boolean(orderId) && !orderConfirmedPaid;
+
+  if (processing) {
+    return (
+      <>
+        <Suspense fallback={null}>
+          <SyncOrderPaymentOnReturn skipIfSynced={false} />
+        </Suspense>
+        <GH2StatusPage status="loading" title={t.processingTitle} body={t.processingBody}>
+          <Link href="/account/orders" className="gh2-btn-lime">
+            {t.viewOrders}
+          </Link>
+        </GH2StatusPage>
+      </>
+    );
+  }
+
   return (
     <>
       <Suspense fallback={null}>

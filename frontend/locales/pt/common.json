@@ -268,6 +268,10 @@
     "onlineAppointments": "Consultas online"
   },
   "bookingForm": {
+    "benefitHeading": "Aplicar o seu plano",
+    "benefitPayNormal": "Pagar normalmente",
+    "benefitUseCredit": "Usar crédito do plano",
+    "benefitUseDiscount": "Usar desconto do plano",
     "pickDate": "Escolher data",
     "daysAvailable": "{count} {day} disponível · horários em {tz}",
     "day": "dia",
@@ -587,7 +591,8 @@
   "checkoutStatus": {
     "successTitle": "Pagamento recebido",
     "successBody": "A sua encomenda está confirmada. Foi-lhe enviado um recibo por email.",
-    "orderRef": "ORDER #{id}",
+    "processingTitle": "A confirmar o seu pagamento…",
+    "processingBody": "O seu pagamento está a ser confirmado. Normalmente demora apenas alguns momentos — esta página será atualizada automaticamente.",    "orderRef": "ORDER #{id}",
     "shipping": "Envio",
     "totalPaid": "Total pago",
     "receiptError": "Não foi possível carregar o recibo neste momento. O seu pagamento está confirmado; verifique o seu email para os detalhes da encomenda.",

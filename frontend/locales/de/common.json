@@ -268,6 +268,10 @@
     "onlineAppointments": "Online-Termine"
   },
   "bookingForm": {
+    "benefitHeading": "Tarif anwenden",
+    "benefitPayNormal": "Normal bezahlen",
+    "benefitUseCredit": "Tarif-Guthaben verwenden",
+    "benefitUseDiscount": "Tarif-Rabatt verwenden",
     "pickDate": "Datum wählen",
     "daysAvailable": "{count} {day} verfügbar · Zeiten in {tz}",
     "day": "Tag",
@@ -587,7 +591,8 @@
   "checkoutStatus": {
     "successTitle": "Zahlung erhalten",
     "successBody": "Ihre Bestellung ist bestätigt. Ein Beleg wurde Ihnen per E-Mail zugesendet.",
-    "orderRef": "ORDER #{id}",
+    "processingTitle": "Zahlung wird bestätigt…",
+    "processingBody": "Ihre Zahlung wird bestätigt. Das dauert in der Regel nur einen Moment — diese Seite wird automatisch aktualisiert.",    "orderRef": "ORDER #{id}",
     "shipping": "Versand",
     "totalPaid": "Gesamt bezahlt",
     "receiptError": "Wir konnten den Beleg gerade nicht laden. Ihre Zahlung ist bestätigt; prüfen Sie Ihre E-Mails für die Bestelldetails.",

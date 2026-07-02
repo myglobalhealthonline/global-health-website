@@ -257,6 +257,11 @@ export type CommonLocale = {
     onlineAppointments: string;
   };
   bookingForm: {
+    /** Booking-step plan benefit selector (B6). */
+    benefitHeading: string;
+    benefitPayNormal: string;
+    benefitUseCredit: string;
+    benefitUseDiscount: string;
     pickDate: string;
     daysAvailable: string;
     day: string;
@@ -582,6 +587,9 @@ export type CommonLocale = {
   checkoutStatus: {
     successTitle: string;
     successBody: string;
+    /** Shown while the payment webhook hasn't confirmed the order yet (2.3). */
+    processingTitle: string;
+    processingBody: string;
     orderRef: string;
     shipping: string;
     totalPaid: string;

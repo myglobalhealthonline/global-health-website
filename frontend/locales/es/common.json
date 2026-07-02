@@ -268,6 +268,10 @@
     "onlineAppointments": "Citas online"
   },
   "bookingForm": {
+    "benefitHeading": "Aplicar su plan",
+    "benefitPayNormal": "Pagar normal",
+    "benefitUseCredit": "Usar crédito del plan",
+    "benefitUseDiscount": "Usar descuento del plan",
     "pickDate": "Elegir fecha",
     "daysAvailable": "{count} {day} disponible · horarios en {tz}",
     "day": "día",
@@ -587,7 +591,8 @@
   "checkoutStatus": {
     "successTitle": "Pago recibido",
     "successBody": "Tu pedido está confirmado. Se te ha enviado un recibo por correo electrónico.",
-    "orderRef": "ORDER #{id}",
+    "processingTitle": "Confirmando su pago…",
+    "processingBody": "Se está confirmando su pago. Normalmente solo tarda unos momentos; esta página se actualizará automáticamente.",    "orderRef": "ORDER #{id}",
     "shipping": "Envío",
     "totalPaid": "Total pagado",
     "receiptError": "No hemos podido cargar el recibo en este momento. Tu pago está confirmado; consulta tu correo electrónico para ver los detalles del pedido.",

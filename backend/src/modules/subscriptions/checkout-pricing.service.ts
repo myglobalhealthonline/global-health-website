@@ -426,6 +426,108 @@ export async function linkReservationsToOrderItems(
 }
 
 /** Commit all consultation reservations for an order (payment / €0 confirm). */
+export interface ServiceBenefitOption {
+  selection: BenefitSelection;
+  unitPriceCents: number;
+  creditsToReserve: number;
+}
+
+export interface ServiceBenefitPreview {
+  subscriptionId: string | null;
+  planName: string | null;
+  benefitsUnlocked: boolean;
+  consultationCreditsRemaining: number;
+  eligibleSelections: BenefitSelection[];
+  options: ServiceBenefitOption[];
+  basePriceCents: number;
+}
+
+/**
+ * Read-only benefit preview for a SINGLE service at the booking step (B6),
+ * before the line is in the cart. Runs the same pure resolver as checkout for
+ * each eligible SELF selection so the booking form can offer "use plan credit /
+ * discount / pay normally" with the resolved price, pre-selected to the best
+ * option. Reserves nothing. Non-subscribers / ineligible → PAY_NORMAL only.
+ */
+export async function previewServiceBenefit(input: {
+  userId: string;
+  serviceId: string;
+  basePriceCents: number;
+  now?: Date;
+}): Promise<ServiceBenefitPreview> {
+  const now = input.now ?? new Date();
+  const base = Math.max(0, Math.round(input.basePriceCents));
+  const payNormalOnly: ServiceBenefitPreview = {
+    subscriptionId: null,
+    planName: null,
+    benefitsUnlocked: false,
+    consultationCreditsRemaining: 0,
+    eligibleSelections: ["PAY_NORMAL"],
+    options: [{ selection: "PAY_NORMAL", unitPriceCents: base, creditsToReserve: 0 }],
+    basePriceCents: base,
+  };
+
+  const sub = await prisma.userSubscription.findFirst({
+    where: { userId: input.userId, status: { in: ["ACTIVE", "PAST_DUE"] } },
+    orderBy: { createdAt: "desc" },
+    include: { plan: { select: { name: true } } },
+  });
+  if (
+    !sub ||
+    !isBenefitEligible({
+      status: sub.status,
+      cancelAtPeriodEnd: sub.cancelAtPeriodEnd,
+      currentPeriodEnd: sub.currentPeriodEnd,
+      now,
+    })
+  ) {
+    return payNormalOnly;
+  }
+
+  const snapshot = asPlanSnapshot(sub.planSnapshot);
+  if (!snapshot) return { ...payNormalOnly, subscriptionId: sub.id, planName: sub.plan.name };
+
+  const rule = snapshot.consultationRules.find((r) => r.serviceId === input.serviceId) ?? null;
+  const balanceRow = await prisma.subscriptionCreditBalance.findUnique({
+    where: { userSubscriptionId_kind: { userSubscriptionId: sub.id, kind: "CONSULTATION" } },
+  });
+  const creditsAvailable = balanceRow?.balance ?? 0;
+  const benefitsUnlockMonths = snapshotBenefitsUnlockMonths(snapshot);
+
+  const eligibleSelections = eligibleBenefitSelections({
+    rule,
+    paidMonthsCount: sub.paidMonthsCount,
+    benefitsUnlockAfterPaidMonths: benefitsUnlockMonths,
+    familyEligible: true, // self-booking
+  });
+  const options: ServiceBenefitOption[] = eligibleSelections.map((selection) => {
+    const resolved = resolveConsultationPrice({
+      rule,
+      basePriceCents: base,
+      creditsAvailable,
+      paidMonthsCount: sub.paidMonthsCount,
+      benefitsUnlockAfterPaidMonths: benefitsUnlockMonths,
+      benefitSelection: selection,
+      familyEligible: true,
+    });
+    return {
+      selection,
+      unitPriceCents: resolved.unitPriceCents,
+      creditsToReserve: resolved.creditsToReserve,
+    };
+  });
+
+  return {
+    subscriptionId: sub.id,
+    planName: sub.plan.name,
+    benefitsUnlocked: sub.paidMonthsCount >= benefitsUnlockMonths,
+    consultationCreditsRemaining: creditsAvailable,
+    eligibleSelections,
+    options,
+    basePriceCents: base,
+  };
+}
+
 export async function commitOrderCreditReservations(orderId: string): Promise<void> {
   const rows = await loadOrderReservations(orderId);
   for (const row of rows) {

@@ -268,6 +268,10 @@
     "onlineAppointments": "Programări online"
   },
   "bookingForm": {
+    "benefitHeading": "Aplicați planul",
+    "benefitPayNormal": "Plătiți normal",
+    "benefitUseCredit": "Folosiți creditul planului",
+    "benefitUseDiscount": "Folosiți reducerea planului",
     "pickDate": "Alege data",
     "daysAvailable": "{count} {day} disponibil · ore în {tz}",
     "day": "zi",
@@ -587,7 +591,8 @@
   "checkoutStatus": {
     "successTitle": "Plată primită",
     "successBody": "Comanda ta este confirmată. O chitanță ți-a fost trimisă pe e-mail.",
-    "orderRef": "ORDER #{id}",
+    "processingTitle": "Confirmăm plata dumneavoastră…",
+    "processingBody": "Plata dumneavoastră se confirmă. De obicei durează doar câteva momente — această pagină se va actualiza automat.",    "orderRef": "ORDER #{id}",
     "shipping": "Livrare",
     "totalPaid": "Total plătit",
     "receiptError": "Nu am putut încărca chitanța în acest moment. Plata ta este confirmată; verifică-ți e-mailul pentru detaliile comenzii.",

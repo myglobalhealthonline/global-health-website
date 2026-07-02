@@ -268,6 +268,10 @@
     "onlineAppointments": "Online appointments"
   },
   "bookingForm": {
+    "benefitHeading": "Apply your plan",
+    "benefitPayNormal": "Pay normally",
+    "benefitUseCredit": "Use plan credit",
+    "benefitUseDiscount": "Use plan discount",
     "pickDate": "Pick a date",
     "daysAvailable": "{count} {day} available · times in {tz}",
     "day": "day",
@@ -587,7 +591,8 @@
   "checkoutStatus": {
     "successTitle": "Payment received",
     "successBody": "Your order is confirmed. A receipt has been emailed to you.",
-    "orderRef": "ORDER #{id}",
+    "processingTitle": "Confirming your payment…",
+    "processingBody": "Your payment is being confirmed. This usually takes only a few moments — this page will update automatically.",    "orderRef": "ORDER #{id}",
     "shipping": "Shipping",
     "totalPaid": "Total paid",
     "receiptError": "We could not load the receipt right now. Your payment is confirmed; check your email for the order details.",
