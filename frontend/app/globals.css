@@ -3495,6 +3495,117 @@ a.gh-stat-card:hover {
   white-space: nowrap;
 }
 
+/* PortalMobileCard — DESIGN.md §5.14, new shared primitive replacing the
+ * per-page .gh-admin-mobile-card bodies above (migrated progressively). */
+.gh-portal-mobile-card {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--portal-line);
+  border-radius: var(--portal-radius-lg);
+  background: var(--portal-surface);
+  padding: 16px 16px 16px 19px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.gh-portal-mobile-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: var(--portal-radius-lg) 0 0 var(--portal-radius-lg);
+  background: var(--portal-line-strong);
+}
+
+.gh-portal-mobile-card--success::before { background: var(--portal-success); }
+.gh-portal-mobile-card--warning::before { background: var(--portal-warning); }
+.gh-portal-mobile-card--danger::before { background: var(--portal-danger); }
+.gh-portal-mobile-card--info::before { background: var(--portal-info); }
+.gh-portal-mobile-card--brand::before { background: var(--portal-primary); }
+
+.gh-portal-mobile-card__title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.gh-portal-mobile-card__leading {
+  flex-shrink: 0;
+}
+
+.gh-portal-mobile-card__title-block {
+  min-width: 0;
+}
+
+.gh-portal-mobile-card__title {
+  display: block;
+  overflow: hidden;
+  color: var(--portal-text);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gh-portal-mobile-card__subtitle {
+  display: block;
+  overflow: hidden;
+  margin-top: 3px;
+  color: var(--portal-muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gh-portal-mobile-card__meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.gh-portal-mobile-card__meta-item {
+  min-width: 0;
+  border: 1px solid var(--portal-line);
+  border-radius: var(--portal-radius-sm);
+  background: var(--portal-well);
+  padding: 8px;
+}
+
+.gh-portal-mobile-card__meta-item em {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--portal-muted);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gh-portal-mobile-card__meta-item strong {
+  display: block;
+  overflow: hidden;
+  color: var(--portal-text);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gh-portal-mobile-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .gh-admin-mobile-actions {
   display: flex;
   align-items: center;
