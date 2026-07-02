@@ -163,7 +163,7 @@
     "creditsRemainingThisMonth": "zbývá tento měsíc",
     "creditsUsed": "Použito {used} z {total}",
     "creditsNone": "Tento měsíc žádné kredity na konzultace.",
-    "creditsLocked": "Vašich {total} měsíčních kreditů se odemkne po vaší 2. platbě.",
+    "creditsLocked": "Vašich {total} měsíčních kreditů se odemkne po {months} zaplacených měsících.",
     "creditsHint": "Tento měsíc vám zbývá {count} kreditů na konzultace s praktickým lékařem.",
     "creditsHintSingular": "Tento měsíc vám zbývá {count} kredit na konzultaci s praktickým lékařem.",
     "wellnessTitle": "Wellness kredity",

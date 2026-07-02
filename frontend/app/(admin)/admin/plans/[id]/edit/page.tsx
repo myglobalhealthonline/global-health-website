@@ -487,7 +487,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
               </label>
               <label className="flex flex-col gap-1.5">
                 <span className="gh-field-label">Unlock after (months)</span>
-                <input name="unlockAfterPaidMonths" type="number" min="0" defaultValue="0" className="gh-input min-w-0" />
+                <input name="unlockAfterPaidMonths" type="number" min="0" defaultValue={plan.benefitsUnlockAfterPaidMonths} className="gh-input min-w-0" />
                 <span className="text-xs text-[var(--color-text-muted)]">0 = available right away.</span>
               </label>
               <div className="flex flex-col gap-2 pt-1 text-sm lg:col-span-2">
@@ -577,7 +577,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
               </label>
               <label className="flex flex-col gap-1.5">
                 <span className="gh-field-label">After how many months</span>
-                <input name="unlockAfterPaidMonths" type="number" min="0" defaultValue="2" className="gh-input min-w-0" />
+                <input name="unlockAfterPaidMonths" type="number" min="0" defaultValue={plan.benefitsUnlockAfterPaidMonths} className="gh-input min-w-0" />
                 <span className="text-xs text-[var(--color-text-muted)]">Only used with &ldquo;After N paid months&rdquo;.</span>
               </label>
               <div>

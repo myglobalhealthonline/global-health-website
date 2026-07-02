@@ -528,7 +528,7 @@
     "orderSummary": "Souhrn objednávky",
     "subtotalItems": "Mezisoučet ({count} {unit})",
     "shipping": "Doprava",
-    "total": "Celkem",
+    "planSavings": "Úspora s plánem",    "total": "Celkem",
     "continueToCheckout": "Pokračovat k pokladně",
     "trustSecure": "Bezpečná platba zajištěná přes Stripe",
     "trustNoStore": "Nikdy neukládáme údaje o vaší kartě",

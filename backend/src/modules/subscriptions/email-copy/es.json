@@ -17,18 +17,21 @@
     "subject": "Su membresía {plan} ya está activa",
     "title": "Le damos la bienvenida a {plan}",
     "p1": "Su membresía mensual de atención sanitaria en línea está activa. Puede reservar consultas en línea o por videollamada y utilizar sus ventajas de socio de inmediato.",
-    "p2": "Dispone de {credits} crédito(s) de consulta en línea este mes."
+    "p2": "Dispone de {credits} crédito(s) de consulta en línea este mes.",
+    "p2Locked": "Sus créditos de consulta se desbloquearán a partir de su 2.º pago mensual; le avisaremos cuando estén listos. Las recompensas de bienestar comienzan de inmediato."
   },
   "renewed": {
     "subject": "Su {plan} se ha renovado: los créditos de este mes están listos",
     "title": "Sus créditos mensuales ya están disponibles",
     "p1": "Gracias por seguir con nosotros. Su membresía {plan} se ha renovado correctamente.",
-    "p2": "Hemos añadido {credits} crédito(s) de consulta en línea para el nuevo mes. Los créditos no utilizados no se acumulan, así que aprovéchelos al máximo."
+    "p2": "Hemos añadido {credits} crédito(s) de consulta en línea para el nuevo mes. Los créditos no utilizados no se acumulan, así que aprovéchelos al máximo.",
+    "p2Locked": "Sus créditos de consulta se desbloquearán a medida que avance su membresía. Las recompensas de bienestar siguen acumulándose."
   },
   "perkUnlocked": {
     "subject": "Se ha desbloqueado una nueva ventaja de socio",
     "title": "Ventaja desbloqueada",
     "p1": "Buenas noticias: {perk} ya está disponible en su plan tras {months} mes(es) de pago.",
+    "p1Now": "Buenas noticias: {perk} ya está disponible en su plan.",
     "p2": "Inicie sesión en su cuenta para empezar a utilizarla."
   },
   "wellnessEarned": {

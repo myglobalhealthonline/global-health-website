@@ -65,12 +65,16 @@ export async function listRedemptions(userId: string): Promise<{ kits: Redemptio
     currentPeriodEnd: sub.currentPeriodEnd,
     now,
   });
-  const perkRule = snapshot.perkRules.find(
+  // Redemption is governed by *every* redemption perk the plan carries — if a
+  // plan lists both TEST_KIT_REDEMPTION and WELLNESS_REDEMPTION, both must be
+  // unlocked (not whichever happens to appear first in the array). Absent any
+  // such perk, redemption is unlocked by default.
+  const redemptionPerks = snapshot.perkRules.filter(
     (p) => p.perkKey === "TEST_KIT_REDEMPTION" || p.perkKey === "WELLNESS_REDEMPTION",
   );
-  const perkUnlocked = perkRule
-    ? isPerkUnlocked(perkRule, sub.paidMonthsCount)
-    : true;
+  const perkUnlocked = redemptionPerks.every((p) =>
+    isPerkUnlocked(p, sub.paidMonthsCount),
+  );
 
   const kits = await prisma.healthTest.findMany({
     where: { id: { in: snapshot.healthTestRules.map((r) => r.healthTestId) } },
@@ -161,12 +165,13 @@ export async function startRedemption(
     throw new RedemptionError("NOT_ELIGIBLE", "Subscription not active");
   }
   // Plan-level redemption perk gate (B10) — same check listRedemptions applies
-  // to the kit list, so the POST can't bypass it: if the plan carries a
-  // WELLNESS/TEST_KIT redemption perk, it must be unlocked.
-  const perkRule = snapshot.perkRules.find(
+  // to the kit list, so the POST can't bypass it: if the plan carries one or
+  // more WELLNESS/TEST_KIT redemption perks, *all* of them must be unlocked
+  // (array-order-independent — a single unlocked perk can't shadow a locked one).
+  const redemptionPerks = snapshot.perkRules.filter(
     (p) => p.perkKey === "TEST_KIT_REDEMPTION" || p.perkKey === "WELLNESS_REDEMPTION",
   );
-  if (perkRule && !isPerkUnlocked(perkRule, sub.paidMonthsCount)) {
+  if (!redemptionPerks.every((p) => isPerkUnlocked(p, sub.paidMonthsCount))) {
     throw new RedemptionError("NOT_ELIGIBLE", "Redemption not yet unlocked");
   }
   // Per-kit unlock threshold.
@@ -383,6 +388,45 @@ export async function commitRedemption(redemptionId: string): Promise<void> {
     // Redemption confirmation email (§30) — fire-and-forget.
     void notifyRedemptionConfirmed(redemptionId).catch(() => {});
   }
+}
+
+/**
+ * Admin fulfilment (§11): mark an APPROVED redemption as FULFILLED once the kit
+ * has been dispatched. Idempotent — a no-op if already FULFILLED. Rejects any
+ * redemption that isn't APPROVED (REQUESTED = credits still reserved / postage
+ * unpaid; CANCELED = released). Follow-up: no admin route wires this yet.
+ */
+export async function fulfillRedemption(
+  redemptionId: string,
+  actorUserId?: string,
+): Promise<void> {
+  const redemption = await prisma.healthTestRedemption.findUnique({
+    where: { id: redemptionId },
+    select: { id: true, status: true, userId: true, healthTestId: true },
+  });
+  if (!redemption) {
+    throw new RedemptionError("NOT_REDEEMABLE", "Redemption not found");
+  }
+  if (redemption.status === "FULFILLED") return; // idempotent no-op.
+  if (redemption.status !== "APPROVED") {
+    throw new RedemptionError(
+      "NOT_REDEEMABLE",
+      "Only an APPROVED redemption can be fulfilled",
+    );
+  }
+
+  await prisma.healthTestRedemption.update({
+    where: { id: redemption.id },
+    data: { status: "FULFILLED" },
+  });
+
+  void recordAudit({
+    action: "HEALTH_TEST_REDEEMED",
+    entityType: "HealthTestRedemption",
+    entityId: redemption.id,
+    actorUserId: actorUserId ?? redemption.userId,
+    metadata: { healthTestId: redemption.healthTestId, stage: "FULFILLED" },
+  });
 }
 
 /** Release on abandon/expiry: restore credits + stock, cancel order/redemption. */

@@ -80,6 +80,9 @@ export default function CartPage() {
   // reason) for the benefit selector. Fetched from the read-only preview;
   // `coverageNonce` also forces the PlanCoverage panel to re-fetch in sync.
   const [coverageLines, setCoverageLines] = useState<Record<string, CartCoverageLine>>({});
+  // Aggregate plan savings across consultation lines (subscriber's picked
+  // benefits) — drives the benefit-adjusted order total (B5).
+  const [coverageSaved, setCoverageSaved] = useState(0);
   const [coverageNonce, setCoverageNonce] = useState(0);
   const [benefitError, setBenefitError] = useState<string | null>(null);
   const loadCoverage = useCallback(async () => {
@@ -87,6 +90,7 @@ export default function CartPage() {
     setCoverageLines(
       res.ok ? Object.fromEntries(res.data.lines.map((l) => [l.itemId, l])) : {},
     );
+    setCoverageSaved(res.ok ? res.data.totalSavedCents : 0);
   }, []);
   // `?added=1` arrives from the consult booking form so the patient
   // gets explicit positive feedback after add-to-cart. Auto-clears
@@ -205,6 +209,8 @@ export default function CartPage() {
     0,
   );
   const total = cart.subtotalCents + shippingCents;
+  // Savings only reduce the item subtotal (never shipping); clamp defensively.
+  const payableSaved = Math.min(Math.max(0, coverageSaved), cart.subtotalCents);
 
   return (
     <>
@@ -330,6 +336,17 @@ export default function CartPage() {
                     </dd>
                   </div>
                 ) : null}
+                {/* Benefit-adjusted total (B5): subtract the plan savings the
+                    subscriber selected so the displayed total equals the amount
+                    Stripe will charge. */}
+                {payableSaved > 0 ? (
+                  <div className="flex justify-between">
+                    <dt style={{ color: "var(--color-brand-primary)" }}>{t.planSavings}</dt>
+                    <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-brand-primary)" }}>
+                      −{formatPrice(payableSaved, cart.currencyCode)}
+                    </dd>
+                  </div>
+                ) : null}
                 <div
                   className="flex items-baseline justify-between border-t pt-3"
                   style={{ borderColor: "var(--color-border)" }}
@@ -339,7 +356,7 @@ export default function CartPage() {
                     className="text-xl font-extrabold tracking-[-0.02em] [font-variant-numeric:tabular-nums]"
                     style={{ color: "var(--color-text-primary)" }}
                   >
-                    {formatPrice(total, cart.currencyCode)}
+                    {formatPrice(Math.max(0, total - payableSaved), cart.currencyCode)}
                   </dd>
                 </div>
               </dl>

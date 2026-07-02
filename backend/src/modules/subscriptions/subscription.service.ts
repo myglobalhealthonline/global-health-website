@@ -158,6 +158,11 @@ export async function startSubscription(
       where: { id: existing.id },
       data: {
         planId: plan.id,
+        // Re-point the reused INCOMPLETE row at the new plan's country too —
+        // otherwise an abandoned checkout on country X then a subscribe to
+        // country Y leaves countryCode=X, and the country-scoped pricing/preview
+        // would apply benefits in the wrong country (never the right one) (#3).
+        countryCode: plan.country.code,
         stripeCustomerId: customer.customerId,
         stripePriceId,
         planSnapshot: snapshot as unknown as Prisma.InputJsonValue,

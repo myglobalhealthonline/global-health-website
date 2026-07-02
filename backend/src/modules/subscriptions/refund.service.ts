@@ -104,6 +104,17 @@ export async function reconcileRefund(params: ReconcileRefundParams): Promise<Re
   const policyViolation = (await creditUsedThisPeriod(sub)) || Boolean(params.sevenDayBreach);
   const monthWellness = asPlanSnapshot(sub.planSnapshot)?.wellnessCreditsPerMonth ?? 0;
 
+  // Idempotency token for the clawback keys. A refund reverses the CURRENT
+  // period's benefits, so key the clawback to the period — NOT to the caller's
+  // reasonKey. Both reconcilers for the SAME refund (the inline `manual:` run in
+  // refundSubscription AND the `charge.refunded` webhook that Stripe fires for
+  // it) then produce IDENTICAL keys, so the second run is a true no-op. Without
+  // this, wellness (which is floored at `monthWellness`, not the full balance)
+  // would be clawed twice, eating protected prior-month accruals (B18).
+  const refundToken = sub.currentPeriodStart
+    ? `refund-period:${sub.currentPeriodStart.toISOString()}`
+    : `refund:${params.reasonKey}`;
+
   // Read balances OUTSIDE the tx (each opens its own connection — keep the
   // interactive tx short so it can't time out against a high-latency DB).
   // clawbackCredits re-floors at the live balance inside the tx, so a concurrent
@@ -120,24 +131,27 @@ export async function reconcileRefund(params: ReconcileRefundParams): Promise<Re
   await prisma.$transaction(
     async (tx) => {
       if (unusedConsultation > 0) {
-        await clawbackCredits(tx, {
+        // `applied` is false when this key was already clawed (a prior run for
+        // the same refund) — only then do we count/audit it, so a re-run reports
+        // 0 rather than a phantom clawback.
+        const applied = await clawbackCredits(tx, {
           userSubscriptionId: sub.id,
           userId: sub.userId,
           kind: "CONSULTATION",
           amount: unusedConsultation,
-          idempotencyKey: clawbackKey(sub.id, params.reasonKey, "CONSULTATION"),
+          idempotencyKey: clawbackKey(sub.id, refundToken, "CONSULTATION"),
         });
-        consultationClawedBack = unusedConsultation;
+        if (applied) consultationClawedBack = unusedConsultation;
       }
       if (wellnessToClaw > 0) {
-        await clawbackCredits(tx, {
+        const applied = await clawbackCredits(tx, {
           userSubscriptionId: sub.id,
           userId: sub.userId,
           kind: "WELLNESS",
           amount: wellnessToClaw,
-          idempotencyKey: clawbackKey(sub.id, params.reasonKey, "WELLNESS"),
+          idempotencyKey: clawbackKey(sub.id, refundToken, "WELLNESS"),
         });
-        wellnessClawedBack = wellnessToClaw;
+        if (applied) wellnessClawedBack = wellnessToClaw;
       }
       if (sub.status !== "CANCELED") {
         await tx.userSubscription.update({

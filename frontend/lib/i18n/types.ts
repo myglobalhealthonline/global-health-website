@@ -518,6 +518,8 @@ export type CommonLocale = {
     orderSummary: string;
     subtotalItems: string;
     shipping: string;
+    /** "Plan savings" line in the order summary (benefit-adjusted total). */
+    planSavings: string;
     total: string;
     continueToCheckout: string;
     trustSecure: string;

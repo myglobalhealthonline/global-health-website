@@ -528,7 +528,7 @@
     "orderSummary": "Resumo da encomenda",
     "subtotalItems": "Subtotal ({count} {unit})",
     "shipping": "Envio",
-    "total": "Total",
+    "planSavings": "Poupança do plano",    "total": "Total",
     "continueToCheckout": "Continuar para finalizar compra",
     "trustSecure": "Pagamento seguro com tecnologia Stripe",
     "trustNoStore": "Nunca guardamos os dados do seu cartão",

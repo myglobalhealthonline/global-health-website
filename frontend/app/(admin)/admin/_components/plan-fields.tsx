@@ -1,4 +1,5 @@
 import type { AdminPlanDetail, PlanType } from "@/lib/admin/plans-api";
+import { BenefitsUnlockField } from "./benefits-unlock-field";
 
 type CountryOpt = { id: string; code: string; name: string };
 
@@ -195,6 +196,7 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
           // Non-Premium: wellness is forced to 0 server-side; send an explicit 0.
           <input type="hidden" name="wellnessCreditsPerMonth" value="0" />
         )}
+        <BenefitsUnlockField defaultValue={initial?.benefitsUnlockAfterPaidMonths ?? 2} />
       </div>
 
       <label className="flex flex-col gap-1.5">
@@ -213,6 +215,15 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
           <input type="checkbox" name="isFeatured" className="size-4" defaultChecked={initial?.isFeatured ?? false} />
           Highlight this plan (recommended)
         </label>
+        {isPremium ? (
+          <label
+            className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-primary)]"
+            title="Let family members share this plan's credits (Premium only)"
+          >
+            <input type="checkbox" name="familyEnabled" className="size-4" defaultChecked={initial?.familyEnabled ?? false} />
+            Allow family credit sharing
+          </label>
+        ) : null}
         {initial ? (
           <label className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-primary)]">
             <input type="checkbox" name="isActive" className="size-4" defaultChecked={initial.isActive} />

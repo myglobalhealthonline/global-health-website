@@ -12,6 +12,7 @@ import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
 import {
   creditReasonLabel,
+  effectivePerkUnlockMonths,
   formatCreditDelta,
   interpolate,
   perkStatus,
@@ -78,6 +79,8 @@ export async function SubscriptionDashboard({
   const granted = livePlan?.monthlyConsultationCredits ?? remaining + used;
   // D25: benefits (incl. GP credits) are withheld until the unlock month.
   const benefitsLocked = sub.benefitsUnlocked === false;
+  // Data-driven unlock month (§36.17) — never a hardcoded "2" (issue #11).
+  const benefitsUnlockMonths = sub.benefitsUnlockAfterPaidMonths ?? 2;
 
   // Wellness: balance + progress toward the cheapest kit
   const wellnessBalance = credits?.wellness.balance ?? 0;
@@ -154,13 +157,13 @@ export async function SubscriptionDashboard({
           <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--color-text-muted)" }}>
             {t.creditsTitle}
           </p>
-          {benefitsLocked && granted > 0 ? (
-            // D25: month-1 credits are withheld (not granted, so they can't be
-            // wiped by the month-2 reset). Show the unlock condition rather than
-            // a confusing "0 of N used".
+          {benefitsLocked ? (
+            // D25: credits are withheld until the unlock month (not granted, so
+            // they can't be wiped by the reset). Show the data-driven unlock
+            // condition rather than a confusing "0 of N used" or "no credits".
             <p className="mt-2 flex items-start gap-2 text-sm" style={{ color: "var(--color-text-muted)" }}>
               <Lock className="mt-0.5 size-4 shrink-0" aria-hidden />
-              <span>{interpolate(t.creditsLocked, { total: granted })}</span>
+              <span>{interpolate(t.creditsLocked, { total: granted, months: benefitsUnlockMonths })}</span>
             </p>
           ) : granted > 0 || remaining > 0 ? (
             <>
@@ -236,8 +239,10 @@ export async function SubscriptionDashboard({
           </div>
           <ul className="mt-4 grid gap-3 sm:grid-cols-2">
             {perks.map((perk) => {
-              const status = perkStatus(perk, sub.paidMonthsCount);
-              const months = perk.unlockAfterPaidMonths ?? 0;
+              // Apply the plan-level D25 floor so a perk can't read "unlocked"
+              // here while the cart still prices it LOCKED (issue #12).
+              const status = perkStatus(perk, sub.paidMonthsCount, benefitsUnlockMonths);
+              const months = effectivePerkUnlockMonths(perk, benefitsUnlockMonths);
               const condition =
                 status === "unlocked"
                   ? t.perkUnlocked

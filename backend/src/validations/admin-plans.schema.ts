@@ -187,7 +187,7 @@ export const adminPerkRuleBodySchema = z
 
 export const adminHealthTestRuleBodySchema = z.object({
   healthTestId: z.string().trim().min(1),
-  requiredWellnessCredits: z.coerce.number().int().min(1),
+  requiredWellnessCredits: z.coerce.number().int().min(1).max(24),
   unlockAfterPaidMonths: z.coerce.number().int().min(0).default(0),
   isActive: z.boolean().default(true),
 });

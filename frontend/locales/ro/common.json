@@ -528,7 +528,7 @@
     "orderSummary": "Rezumatul comenzii",
     "subtotalItems": "Subtotal ({count} {unit})",
     "shipping": "Livrare",
-    "total": "Total",
+    "planSavings": "Economii cu planul",    "total": "Total",
     "continueToCheckout": "Continuă către finalizare",
     "trustSecure": "Plată securizată oferită de Stripe",
     "trustNoStore": "Nu stocăm niciodată datele cardului tău",

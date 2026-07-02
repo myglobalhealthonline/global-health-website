@@ -37,6 +37,7 @@ export type AdminPlanListItem = {
   badgeLabel: string | null;
   monthlyConsultationCredits: number;
   wellnessCreditsPerMonth: number;
+  benefitsUnlockAfterPaidMonths: number;
   familyEnabled: boolean;
   stripePriceId: string | null;
   country: AdminPlanCountry;

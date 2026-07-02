@@ -159,22 +159,20 @@ export async function notifySubscriptionConfirmed(subscriptionId: string, credit
   const r = await loadRecipient(subscriptionId);
   if (!r) return;
   const c = COPY[r.locale] ?? COPY.EN;
+  // Month-1 benefits are withheld under D25 (credits === 0) — never tell the
+  // subscriber they have "0 credits"; explain that credits unlock next cycle.
+  const creditLine = credits > 0 ? interpolate(c.confirmed.p2, { credits }) : c.confirmed.p2Locked;
   await dispatch(r.email, r.locale, {
     subject: interpolate(c.confirmed.subject, { plan: r.planName }),
     title: interpolate(c.confirmed.title, { plan: r.planName }),
-    paragraphs: [
-      greetingParagraph(c, r.fullName),
-      c.confirmed.p1,
-      interpolate(c.confirmed.p2, { credits }),
-      c.common.signoff,
-    ],
+    paragraphs: [greetingParagraph(c, r.fullName), c.confirmed.p1, creditLine, c.common.signoff],
     cta: { label: c.common.manageCta, href: absoluteSiteUrl("/account/membership") },
   });
   await writeInApp(
     r.userId,
     "SUBSCRIPTION_CONFIRMED",
     interpolate(c.confirmed.title, { plan: r.planName }),
-    interpolate(c.confirmed.p2, { credits }),
+    creditLine,
     "/account/membership",
   );
 }
@@ -183,24 +181,21 @@ export async function notifySubscriptionRenewed(subscriptionId: string, credits:
   const r = await loadRecipient(subscriptionId);
   if (!r) return;
   const c = COPY[r.locale] ?? COPY.EN;
+  // A renewal that still withholds credits (unlock threshold > 2) shows the
+  // locked line rather than "we added 0 credits".
+  const creditLine = credits > 0 ? interpolate(c.renewed.p2, { credits }) : c.renewed.p2Locked;
   await dispatch(r.email, r.locale, {
     subject: interpolate(c.renewed.subject, { plan: r.planName }),
     title: c.renewed.title,
     paragraphs: [
       greetingParagraph(c, r.fullName),
       interpolate(c.renewed.p1, { plan: r.planName }),
-      interpolate(c.renewed.p2, { credits }),
+      creditLine,
       c.common.signoff,
     ],
     cta: { label: c.common.dashboardCta, href: absoluteSiteUrl("/account") },
   });
-  await writeInApp(
-    r.userId,
-    "SUBSCRIPTION_RENEWED",
-    c.renewed.title,
-    interpolate(c.renewed.p2, { credits }),
-    "/account",
-  );
+  await writeInApp(r.userId, "SUBSCRIPTION_RENEWED", c.renewed.title, creditLine, "/account");
 }
 
 export async function notifyPerkUnlocked(subscriptionId: string, perkKey: string): Promise<void> {
@@ -215,22 +210,23 @@ export async function notifyPerkUnlocked(subscriptionId: string, perkKey: string
   });
   const snapshot = asPlanSnapshot(subRow?.planSnapshot);
   const months = snapshot?.perkRules.find((p) => p.perkKey === perkKey)?.unlockAfterPaidMonths ?? 0;
+  // MONTH_1 perks have no month threshold (months < 1) — don't render the
+  // nonsensical "available after 0 paid month(s)"; use the immediate variant.
+  const p1 =
+    months >= 1
+      ? interpolate(c.perkUnlocked.p1, { perk: perkLabel, months })
+      : interpolate(c.perkUnlocked.p1Now, { perk: perkLabel });
   await dispatch(r.email, r.locale, {
     subject: c.perkUnlocked.subject,
     title: c.perkUnlocked.title,
-    paragraphs: [
-      greetingParagraph(c, r.fullName),
-      interpolate(c.perkUnlocked.p1, { perk: perkLabel, months }),
-      c.perkUnlocked.p2,
-      c.common.signoff,
-    ],
+    paragraphs: [greetingParagraph(c, r.fullName), p1, c.perkUnlocked.p2, c.common.signoff],
     cta: { label: c.common.manageCta, href: absoluteSiteUrl("/account/membership") },
   });
   await writeInApp(
     r.userId,
     "SUBSCRIPTION_PERK_UNLOCKED",
     c.perkUnlocked.title,
-    interpolate(c.perkUnlocked.p1, { perk: perkLabel, months }),
+    p1,
     "/account/membership",
   );
 }

@@ -17,18 +17,21 @@
     "subject": "Vaše členství {plan} je nyní aktivní",
     "title": "Vítejte v plánu {plan}",
     "p1": "Vaše měsíční členství v online zdravotní péči je aktivní. Můžete si ihned objednat online/video konzultace a využívat své členské výhody.",
-    "p2": "Tento měsíc máte k dispozici {credits} kreditů na online konzultace."
+    "p2": "Tento měsíc máte k dispozici {credits} kreditů na online konzultace.",
+    "p2Locked": "Vaše kredity na konzultace se odemknou od vaší 2. měsíční platby — dáme vám vědět, až budou připraveny. Případné wellness odměny začínají ihned."
   },
   "renewed": {
     "subject": "Vaše členství {plan} bylo obnoveno — kredity na tento měsíc jsou připraveny",
     "title": "Vaše měsíční kredity jsou připsány",
     "p1": "Děkujeme, že zůstáváte s námi. Vaše členství {plan} bylo úspěšně obnoveno.",
-    "p2": "Na nový měsíc jsme vám připsali {credits} kreditů na online konzultace. Nevyužité kredity se nepřevádějí, proto je co nejlépe využijte."
+    "p2": "Na nový měsíc jsme vám připsali {credits} kreditů na online konzultace. Nevyužité kredity se nepřevádějí, proto je co nejlépe využijte.",
+    "p2Locked": "Vaše kredity na konzultace se odemknou, jak vaše členství poroste. Případné wellness odměny se dále načítají."
   },
   "perkUnlocked": {
     "subject": "Právě se odemkla nová členská výhoda",
     "title": "Výhoda odemčena",
     "p1": "Dobrá zpráva — výhoda {perk} je nyní ve vašem plánu dostupná po {months} zaplacených měsících.",
+    "p1Now": "Dobrá zpráva — výhoda {perk} je nyní ve vašem plánu dostupná.",
     "p2": "Přihlaste se ke svému účtu a začněte ji využívat."
   },
   "wellnessEarned": {

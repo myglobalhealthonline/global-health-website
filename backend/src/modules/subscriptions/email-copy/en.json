@@ -17,18 +17,21 @@
     "subject": "Your {plan} membership is now active",
     "title": "Welcome to {plan}",
     "p1": "Your monthly online healthcare membership is active. You can book online/video consultations and use your member benefits right away.",
-    "p2": "You have {credits} online consultation credit(s) available this month."
+    "p2": "You have {credits} online consultation credit(s) available this month.",
+    "p2Locked": "Your consultation credits unlock from your 2nd monthly payment — we'll let you know when they're ready. Any wellness rewards start right away."
   },
   "renewed": {
     "subject": "Your {plan} renewed — this month's credits are ready",
     "title": "Your monthly credits are in",
     "p1": "Thanks for staying with us. Your {plan} membership renewed successfully.",
-    "p2": "We've added {credits} online consultation credit(s) for the new month. Unused credits don't roll over, so make the most of them."
+    "p2": "We've added {credits} online consultation credit(s) for the new month. Unused credits don't roll over, so make the most of them.",
+    "p2Locked": "Your consultation credits will unlock as your membership matures. Any wellness rewards keep accruing."
   },
   "perkUnlocked": {
     "subject": "A new member perk just unlocked",
     "title": "Perk unlocked",
     "p1": "Good news — {perk} is now available on your plan after {months} paid month(s).",
+    "p1Now": "Good news — {perk} is now available on your plan.",
     "p2": "Sign in to your account to start using it."
   },
   "wellnessEarned": {

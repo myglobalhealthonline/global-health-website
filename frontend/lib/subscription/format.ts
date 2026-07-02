@@ -76,19 +76,35 @@ export type PerkStatus = "unlocked" | "locked" | "manual";
  * Resolve a perk's unlock state for the dashboard from its rule + the
  * subscriber's paid-months count. Data-driven (§36.17): the gate is the rule's
  * own `unlockAfterPaidMonths`, never a hardcoded 2.
+ *
+ * `benefitsUnlockMonths` is the plan-level D25 floor — the cart resolver prices
+ * every benefit LOCKED until `max(floor, rule)`, so the dashboard must apply the
+ * same floor or a perk shows "unlocked" here while the cart still prices it
+ * LOCKED (issue #12). Defaults to 0 (no floor) for backward compatibility.
  */
 export function perkStatus(
   perk: { unlockMode: string; unlockAfterPaidMonths: number | null },
   paidMonths: number,
+  benefitsUnlockMonths = 0,
 ): PerkStatus {
   switch (perk.unlockMode) {
     case "MONTH_1":
-      return "unlocked";
+      return paidMonths >= benefitsUnlockMonths ? "unlocked" : "locked";
     case "AFTER_PAID_MONTHS":
-      return paidMonths >= (perk.unlockAfterPaidMonths ?? 0) ? "unlocked" : "locked";
+      return paidMonths >= Math.max(perk.unlockAfterPaidMonths ?? 0, benefitsUnlockMonths)
+        ? "unlocked"
+        : "locked";
     case "MANUAL_APPROVAL":
       return "manual";
     default:
       return "locked";
   }
+}
+
+/** Effective unlock month for display copy — the later of the rule + plan floor. */
+export function effectivePerkUnlockMonths(
+  perk: { unlockAfterPaidMonths: number | null },
+  benefitsUnlockMonths = 0,
+): number {
+  return Math.max(perk.unlockAfterPaidMonths ?? 0, benefitsUnlockMonths);
 }

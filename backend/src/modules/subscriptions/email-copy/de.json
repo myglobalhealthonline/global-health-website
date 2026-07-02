@@ -17,18 +17,21 @@
     "subject": "Ihre {plan}-Mitgliedschaft ist jetzt aktiv",
     "title": "Willkommen bei {plan}",
     "p1": "Ihre monatliche Online-Gesundheitsmitgliedschaft ist aktiv. Sie können sofort Online-/Videoberatungen buchen und Ihre Mitgliedervorteile nutzen.",
-    "p2": "Ihnen stehen diesen Monat {credits} Guthaben für Online-Beratung(en) zur Verfügung."
+    "p2": "Ihnen stehen diesen Monat {credits} Guthaben für Online-Beratung(en) zur Verfügung.",
+    "p2Locked": "Ihre Beratungsguthaben werden ab Ihrer 2. monatlichen Zahlung freigeschaltet — wir benachrichtigen Sie, sobald sie bereit sind. Etwaige Wellness-Prämien beginnen sofort."
   },
   "renewed": {
     "subject": "Ihr {plan} wurde verlängert — das Guthaben dieses Monats ist bereit",
     "title": "Ihr monatliches Guthaben ist da",
     "p1": "Vielen Dank, dass Sie bei uns bleiben. Ihre {plan}-Mitgliedschaft wurde erfolgreich verlängert.",
-    "p2": "Wir haben {credits} Guthaben für Online-Beratung(en) für den neuen Monat hinzugefügt. Nicht genutztes Guthaben wird nicht übertragen, nutzen Sie es daher optimal."
+    "p2": "Wir haben {credits} Guthaben für Online-Beratung(en) für den neuen Monat hinzugefügt. Nicht genutztes Guthaben wird nicht übertragen, nutzen Sie es daher optimal.",
+    "p2Locked": "Ihre Beratungsguthaben werden freigeschaltet, sobald Ihre Mitgliedschaft reift. Etwaige Wellness-Prämien werden weiterhin gesammelt."
   },
   "perkUnlocked": {
     "subject": "Ein neuer Mitgliedervorteil wurde gerade freigeschaltet",
     "title": "Vorteil freigeschaltet",
     "p1": "Gute Nachrichten — {perk} ist nach {months} bezahlten Monat(en) jetzt in Ihrem Tarif verfügbar.",
+    "p1Now": "Gute Nachrichten — {perk} ist jetzt in Ihrem Tarif verfügbar.",
     "p2": "Melden Sie sich in Ihrem Konto an, um ihn zu nutzen."
   },
   "wellnessEarned": {

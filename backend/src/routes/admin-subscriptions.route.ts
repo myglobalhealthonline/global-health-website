@@ -5,6 +5,8 @@ import {
   adminAdjustSubscriptionCredits,
   getAdminSubscriptionLedger,
   listAdminSubscriptions,
+  regrantCurrentPeriod,
+  resyncSubscription,
   SubscriptionNotFoundError,
 } from "../modules/plans/admin-subscriptions.service.js";
 import {
@@ -111,6 +113,47 @@ const adminSubscriptionsRoute: FastifyPluginAsync = async (app) => {
         request,
       }).catch(() => {});
       return okResponse({ balance: result.balance }, "Credits adjusted");
+    } catch (error) {
+      return handleError(app, reply, error);
+    }
+  });
+
+  // Resync (§6.4): re-fetch the live provider subscription and monotonically
+  // reconcile status/period into our row (reuses the webhook guard). Drift
+  // (provider returned null) and no-provider are surfaced, not silently ignored.
+  app.post("/api/admin/subscriptions/:id/resync", async (request, reply) => {
+    const auth = await requireManageSubscriptions(request, reply);
+    if (!auth) return;
+    const params = subscriptionIdParamsSchema.safeParse(request.params);
+    if (!params.success) return reply.status(400).send(errorResponse("Invalid subscription id"));
+    try {
+      const result = await resyncSubscription(params.data.id, auth.actorUserId);
+      if (result.outcome === "NO_PROVIDER") {
+        return reply
+          .status(409)
+          .send(errorResponse("Subscription has no linked provider subscription", { code: "NO_PROVIDER" }));
+      }
+      return okResponse(result, result.outcome === "DRIFT" ? "Provider subscription not found" : "Subscription resynced");
+    } catch (error) {
+      return handleError(app, reply, error);
+    }
+  });
+
+  // Regrant (§6.4): re-run the current period's credit grant. Idempotent via the
+  // period grant key (no-op if already granted).
+  app.post("/api/admin/subscriptions/:id/regrant-period", async (request, reply) => {
+    const auth = await requireManageSubscriptions(request, reply);
+    if (!auth) return;
+    const params = subscriptionIdParamsSchema.safeParse(request.params);
+    if (!params.success) return reply.status(400).send(errorResponse("Invalid subscription id"));
+    try {
+      const result = await regrantCurrentPeriod(params.data.id, auth.actorUserId);
+      if (result.outcome === "NOT_APPLICABLE") {
+        return reply
+          .status(409)
+          .send(errorResponse("Subscription period grant is not applicable", { code: result.reason }));
+      }
+      return okResponse(result, "Period grant re-run");
     } catch (error) {
       return handleError(app, reply, error);
     }

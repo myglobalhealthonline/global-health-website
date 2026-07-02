@@ -528,7 +528,7 @@
     "orderSummary": "Order summary",
     "subtotalItems": "Subtotal ({count} {unit})",
     "shipping": "Shipping",
-    "total": "Total",
+    "planSavings": "Plan savings",    "total": "Total",
     "continueToCheckout": "Continue to checkout",
     "trustSecure": "Secure checkout powered by Stripe",
     "trustNoStore": "We never store your card details",

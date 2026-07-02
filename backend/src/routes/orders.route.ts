@@ -819,6 +819,21 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           where: { id: { in: body.data.ids } },
           data: { status: body.data.status },
         });
+
+        // Settle subscription credit reservations for each affected order,
+        // mirroring the single-order PATCH (#17): CANCELLED releases, FULFILLED
+        // commits. Idempotent + no-op without reservations.
+        for (const orderId of body.data.ids) {
+          if (body.data.status === OrderStatus.CANCELLED) {
+            await releaseOrderCreditReservations(orderId).catch((err) => {
+              request.log.error({ err, orderId }, "Bulk release order credit reservations failed");
+            });
+          } else if (body.data.status === OrderStatus.FULFILLED) {
+            await commitOrderCreditReservations(orderId).catch((err) => {
+              request.log.error({ err, orderId }, "Bulk commit order credit reservations failed");
+            });
+          }
+        }
         return okResponse({ count: result.count, status: body.data.status });
       } catch (err) {
         if (err instanceof DatabaseUnavailableError) {
@@ -871,13 +886,13 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           data: { status: body.data.status },
         });
 
-        // Settle any subscription credit reservations on this order (B11).
-        // Admin PAID → commit (RESERVED → CONSUMED); CANCELLED → release
-        // (RESERVED → RELEASED, credit restored). Both are idempotent and
-        // no-ops for orders without reservations. The webhook path already
-        // commits on Stripe success, but a manual admin transition would
-        // otherwise strand the reserved credit until the 1h sweep alert.
-        if (body.data.status === OrderStatus.PAID) {
+        // Settle any subscription credit reservations on this order (B11/#16).
+        // PAID or FULFILLED → commit (RESERVED → CONSUMED); CANCELLED → release
+        // (RESERVED → RELEASED, credit restored). FULFILLED must also commit: an
+        // admin can transition PENDING→FULFILLED directly, which would otherwise
+        // strand the reservation forever (the sweep only releases CANCELLED
+        // orders). All are idempotent and no-ops for orders without reservations.
+        if (body.data.status === OrderStatus.PAID || body.data.status === OrderStatus.FULFILLED) {
           await commitOrderCreditReservations(order.id).catch((err) => {
             request.log.error({ err, orderId: order.id }, "Commit order credit reservations failed");
           });

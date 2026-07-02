@@ -10,7 +10,7 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { formatPrice } from "@/lib/format-currency";
-import { interpolate, pluralTemplate } from "@/lib/subscription/format";
+import { formatPerkUnlockNote, interpolate, pluralTemplate } from "@/lib/subscription/format";
 import { PageHeader } from "@/components/portal-atoms";
 import { SubscribeForm } from "./_components/SubscribeForm";
 
@@ -70,6 +70,9 @@ export default async function SubscribeConfirmPage({
   const priceLabel = formatPrice(plan.monthlyPriceCents, plan.currencyCode, { maximumFractionDigits: 0 });
   const credits = plan.monthlyConsultationCredits;
   const wellness = plan.wellnessCreditsPerMonth;
+  // Data-driven benefit-unlock note (D25) — "benefits unlock after N paid
+  // months". perkUnlockMonths now reflects the plan-level floor (issue #10).
+  const unlockNote = formatPerkUnlockNote(plan.perkUnlockMonths, subscription.note);
   const features = [
     interpolate(pluralTemplate(credits, pricing.creditLabel, pricing.creditsLabel), { count: credits }),
     pricing.secureLine,
@@ -83,6 +86,7 @@ export default async function SubscribeConfirmPage({
           pricing.wellnessRedeemLine,
         ]
       : []),
+    ...(unlockNote ? [unlockNote] : []),
   ];
 
   const config = code ? getCountryByCode(code) : null;

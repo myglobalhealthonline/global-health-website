@@ -17,18 +17,21 @@
     "subject": "Abonamentul dumneavoastră {plan} este acum activ",
     "title": "Bun venit la {plan}",
     "p1": "Abonamentul dumneavoastră lunar de asistență medicală online este activ. Puteți programa consultații online/video și puteți folosi imediat beneficiile de membru.",
-    "p2": "Aveți {credits} credit(e) de consultație online disponibil(e) în această lună."
+    "p2": "Aveți {credits} credit(e) de consultație online disponibil(e) în această lună.",
+    "p2Locked": "Creditele dumneavoastră de consultație se vor debloca începând cu a 2-a plată lunară — vă anunțăm când sunt gata. Eventualele recompense de wellness încep imediat."
   },
   "renewed": {
     "subject": "Abonamentul dumneavoastră {plan} s-a reînnoit — creditele acestei luni sunt pregătite",
     "title": "Creditele dumneavoastră lunare au sosit",
     "p1": "Vă mulțumim că rămâneți alături de noi. Abonamentul dumneavoastră {plan} s-a reînnoit cu succes.",
-    "p2": "Am adăugat {credits} credit(e) de consultație online pentru luna nouă. Creditele nefolosite nu se reportează, așa că folosiți-le la maximum."
+    "p2": "Am adăugat {credits} credit(e) de consultație online pentru luna nouă. Creditele nefolosite nu se reportează, așa că folosiți-le la maximum.",
+    "p2Locked": "Creditele dumneavoastră de consultație se vor debloca pe măsură ce abonamentul avansează. Eventualele recompense de wellness continuă să se acumuleze."
   },
   "perkUnlocked": {
     "subject": "Un nou beneficiu de membru tocmai s-a deblocat",
     "title": "Beneficiu deblocat",
     "p1": "Vești bune — {perk} este acum disponibil în planul dumneavoastră după {months} lună(i) plătită(e).",
+    "p1Now": "Vești bune — {perk} este acum disponibil în planul dumneavoastră.",
     "p2": "Conectați-vă la contul dumneavoastră pentru a începe să îl folosiți."
   },
   "wellnessEarned": {

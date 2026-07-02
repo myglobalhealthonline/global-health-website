@@ -163,7 +163,7 @@
     "creditsRemainingThisMonth": "restantes este mes",
     "creditsUsed": "{used} de {total} utilizados",
     "creditsNone": "No hay créditos de consulta este mes.",
-    "creditsLocked": "Sus {total} créditos mensuales se desbloquean tras su 2.º pago.",
+    "creditsLocked": "Sus {total} créditos mensuales se desbloquean tras {months} meses de pago.",
     "creditsHint": "Le quedan {count} créditos de consulta de medicina general este mes.",
     "creditsHintSingular": "Le queda {count} crédito de consulta de medicina general este mes.",
     "wellnessTitle": "Créditos de bienestar",

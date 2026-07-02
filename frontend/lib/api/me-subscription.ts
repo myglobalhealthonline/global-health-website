@@ -29,6 +29,8 @@ export interface SubscriptionView {
   benefitsUnlockAfterPaidMonths?: number;
   /** Whether plan benefits (GP credits + discounts) are usable yet. */
   benefitsUnlocked?: boolean;
+  /** Plan allows family credit use AND sub is benefit-eligible now (Premium). */
+  familyEligible?: boolean;
   pendingChange?: { planName: string; effectiveAt: string | null };
 }
 

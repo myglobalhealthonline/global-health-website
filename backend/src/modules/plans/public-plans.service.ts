@@ -48,11 +48,15 @@ export interface PublicPlanView {
   billingInterval: string;
   monthlyConsultationCredits: number;
   wellnessCreditsPerMonth: number;
+  /** Plan-level benefit-unlock threshold (D25). Benefits (GP credits + specialist
+   *  discounts) become usable from this paid month. Wellness earns immediately. */
+  benefitsUnlockAfterPaidMonths: number;
   /** Admin-edited "Includes" bullets for the resolved locale. Empty → the card
    *  renders its auto-generated default bullets (§12). */
   features: string[];
-  /** Soonest "after N paid months" unlock across gated perk/consultation rules,
-   *  or null when nothing is gated (hide the universal note). Data-driven. */
+  /** Representative "after N paid months" unlock for the card's universal note,
+   *  or null when nothing is gated. Data-driven — reflects the plan-level D25
+   *  floor (which gates credits + discounts) as the headline. */
   perkUnlockMonths: number | null;
   perks: PublicPlanPerk[];
   wellnessKits: PublicPlanWellnessKit[];
@@ -89,6 +93,14 @@ type PublicPlanRecord = Prisma.PricingPlanGetPayload<{ include: typeof publicPla
  * Returns null when nothing is month-gated.
  */
 function derivePerkUnlockMonths(plan: PublicPlanRecord): number | null {
+  // Plan-level D25 floor gates EVERY benefit (credits + discounts), so when it's
+  // set it IS the headline "benefits unlock after N months" — otherwise the card
+  // would hide the note or advertise a smaller rule-level number than the
+  // effective max(floor, rule) the resolver actually enforces (issue #10).
+  const floor = plan.benefitsUnlockAfterPaidMonths ?? 0;
+  if (floor > 0) return floor;
+
+  // Legacy/immediate plans (floor 0): fall back to the soonest rule/perk gate.
   const months: number[] = [];
   for (const perk of plan.perkRules) {
     if (perk.unlockMode === "AFTER_PAID_MONTHS" && perk.unlockAfterPaidMonths && perk.unlockAfterPaidMonths > 0) {
@@ -118,6 +130,7 @@ function serializePublicPlan(plan: PublicPlanRecord, requested: LocaleCode, defa
     billingInterval: plan.billingInterval,
     monthlyConsultationCredits: plan.monthlyConsultationCredits,
     wellnessCreditsPerMonth: plan.wellnessCreditsPerMonth,
+    benefitsUnlockAfterPaidMonths: plan.benefitsUnlockAfterPaidMonths,
     features: tr?.features ?? [],
     perkUnlockMonths: derivePerkUnlockMonths(plan),
     perks: plan.perkRules.map((p) => ({

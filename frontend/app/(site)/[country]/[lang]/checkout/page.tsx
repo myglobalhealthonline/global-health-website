@@ -17,6 +17,7 @@ import {
 import { useCart } from "@/components/cart/CartContext";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { startCheckout } from "@/lib/api/cart-client";
+import { getCartPreview } from "@/lib/api/me-subscription";
 import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
 import { PhoneField } from "@/components/forms/phone-field";
 import { dialCodeForCountrySlug } from "@/lib/phone/dial-codes";
@@ -56,6 +57,9 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null);
   const [me, setMe] = useState<AuthUser | null>(null);
   const [authLoaded, setAuthLoaded] = useState(false);
+  // Plan savings the subscriber selected — so the pay button + total match the
+  // amount Stripe charges (server recomputes the same benefits) (B5).
+  const [coverageSaved, setCoverageSaved] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -66,6 +70,16 @@ export default function CheckoutPage() {
       setAuthLoaded(true);
     })().catch(() => {
       if (!cancelled) setAuthLoaded(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void getCartPreview().then((res) => {
+      if (!cancelled) setCoverageSaved(res.ok ? res.data.totalSavedCents : 0);
     });
     return () => {
       cancelled = true;
@@ -155,6 +169,8 @@ export default function CheckoutPage() {
     0,
   );
   const total = cart.subtotalCents + shippingCents;
+  const payableSaved = Math.min(Math.max(0, coverageSaved), cart.subtotalCents);
+  const payableTotal = Math.max(0, total - payableSaved);
   // Shipping address gate. HEALTH_TEST kits always ship physically.
   // Other kinds only need it when admin set a non-zero shipping fee.
   const needsShipping = cart.items.some(
@@ -327,7 +343,7 @@ export default function CheckoutPage() {
                 ) : (
                   <Lock className="size-4" aria-hidden />
                 )}
-                {submitting ? t.redirecting : t.paySecurely.replace("{amount}", formatPrice(total, cart.currencyCode))}
+                {submitting ? t.redirecting : t.paySecurely.replace("{amount}", formatPrice(payableTotal, cart.currencyCode))}
               </button>
               <p
                 className="mt-3 flex items-center gap-1.5 text-xs"
@@ -409,6 +425,14 @@ export default function CheckoutPage() {
                       </dd>
                     </div>
                   ) : null}
+                  {payableSaved > 0 ? (
+                    <div className="flex justify-between">
+                      <dt style={{ color: "var(--color-brand-primary)" }}>{common.cartPage.planSavings}</dt>
+                      <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-brand-primary)" }}>
+                        −{formatPrice(payableSaved, cart.currencyCode)}
+                      </dd>
+                    </div>
+                  ) : null}
                   <div
                     className="flex items-baseline justify-between border-t pt-3"
                     style={{ borderColor: "var(--color-border)" }}
@@ -418,7 +442,7 @@ export default function CheckoutPage() {
                       className="text-xl font-extrabold tracking-[-0.02em] [font-variant-numeric:tabular-nums]"
                       style={{ color: "var(--color-text-primary)" }}
                     >
-                      {formatPrice(total, cart.currencyCode)}
+                      {formatPrice(payableTotal, cart.currencyCode)}
                     </dd>
                   </div>
                 </dl>

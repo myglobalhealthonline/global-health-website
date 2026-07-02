@@ -528,7 +528,7 @@
     "orderSummary": "Bestellübersicht",
     "subtotalItems": "Zwischensumme ({count} {unit})",
     "shipping": "Versand",
-    "total": "Gesamt",
+    "planSavings": "Plan-Ersparnis",    "total": "Gesamt",
     "continueToCheckout": "Weiter zur Kasse",
     "trustSecure": "Sicherer Checkout powered by Stripe",
     "trustNoStore": "Wir speichern niemals Ihre Kartendaten",

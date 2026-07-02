@@ -385,16 +385,48 @@ async function onScaRequired(event: MinimalStripeEvent): Promise<SubscriptionEve
 
 async function onRefundOrDispute(event: MinimalStripeEvent): Promise<SubscriptionEventResult> {
   const obj = event.data.object;
-  const stripeCustomerId = str(obj.customer);
   const isDispute = event.type === "charge.dispute.created";
-  if (!stripeCustomerId) return { handled: true, detail: "no-customer" };
+  const stripeInvoiceId = str(obj.invoice);
+  const stripeCustomerId = str(obj.customer);
 
-  const sub = await prisma.userSubscription.findFirst({
-    where: { stripeCustomerId },
-    orderBy: { createdAt: "desc" },
-    select: { id: true },
-  });
+  // Resolve the subscription by the charge's INVOICE first — an invoice belongs
+  // to exactly ONE subscription, so this targets the correct sub even when the
+  // customer has since started a different one. Only fall back to newest-by-
+  // customer when the invoice isn't mirrored yet (B18/#19: newest-by-customer
+  // alone could claw back the wrong subscription).
+  let sub: { id: string } | null = null;
+  if (stripeInvoiceId) {
+    const inv = await prisma.subscriptionInvoice.findUnique({
+      where: { stripeInvoiceId },
+      select: { userSubscriptionId: true },
+    });
+    if (inv) sub = { id: inv.userSubscriptionId };
+  }
+  if (!sub && stripeCustomerId) {
+    sub = await prisma.userSubscription.findFirst({
+      where: { stripeCustomerId },
+      orderBy: { createdAt: "desc" },
+      select: { id: true },
+    });
+  }
   if (!sub) return { handled: true, detail: "sub-not-found" };
+
+  // Partial-refund guard (D19 = full-refund-only): a partial charge.refunded
+  // (amount_refunded < amount) must NOT clawback + CANCEL the whole membership —
+  // flag it for ops instead (#20). Disputes always reconcile.
+  if (!isDispute) {
+    const amount = num(obj.amount);
+    const refunded = num(obj.amount_refunded);
+    if (amount != null && refunded != null && refunded > 0 && refunded < amount) {
+      void emitOpsAlert({
+        severity: "warning",
+        title: "Partial subscription refund — not auto-reconciled",
+        detail: `sub ${sub.id} refunded ${refunded}/${amount}; review + reconcile manually`,
+        context: { subscriptionId: sub.id, amount, refunded },
+      });
+      return { handled: true, detail: "partial-refund-skipped" };
+    }
+  }
 
   // 7-day window check from the charge.created epoch (UTC) — a Dashboard refund
   // can bypass our pre-refund guard, so flag a breach for ops review (§36.5).

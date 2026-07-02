@@ -19,6 +19,8 @@ export type PlanFormBody = {
   currencyCode: string;
   monthlyConsultationCredits: number;
   wellnessCreditsPerMonth: number;
+  /** Paid months before benefits unlock (D25). Server clamps 0-24, default 2. */
+  benefitsUnlockAfterPaidMonths: number;
   displayOrder: number;
   isFeatured: boolean;
   badgeLabel: string | null;
@@ -88,6 +90,7 @@ export function parsePlanForm(
     currencyCode,
     monthlyConsultationCredits: intField(fd, "monthlyConsultationCredits"),
     wellnessCreditsPerMonth: intField(fd, "wellnessCreditsPerMonth"),
+    benefitsUnlockAfterPaidMonths: intField(fd, "benefitsUnlockAfterPaidMonths", 2),
     displayOrder: intField(fd, "displayOrder"),
     isFeatured: bool(fd, "isFeatured"),
     badgeLabel: nullable(fd, "badgeLabel"),

@@ -1,5 +1,6 @@
 import { prisma } from "../../db/prisma.js";
 import { asPlanSnapshot, snapshotBenefitsUnlockMonths } from "./plan-snapshot.js";
+import { isBenefitEligible } from "./subscription-eligibility.js";
 
 /**
  * Read models for the patient money APIs (Phase 5). Shapes match contracts.md.
@@ -24,6 +25,10 @@ export interface SubscriptionView {
   benefitsUnlockAfterPaidMonths: number;
   /** Whether plan benefits (GP credits + discounts) are usable yet. */
   benefitsUnlocked: boolean;
+  /** Whether the plan allows family-member credit use AND the sub is
+   *  benefit-eligible now (Premium + active/in-period). Drives the booking
+   *  family selector + family-page tier banner (B12). */
+  familyEligible: boolean;
   pendingChange?: { planName: string; effectiveAt: string | null };
 }
 
@@ -52,6 +57,12 @@ export async function getSubscriptionView(userId: string): Promise<SubscriptionV
 
   const snapshot = asPlanSnapshot(sub.planSnapshot);
   const benefitsUnlockAfterPaidMonths = snapshot ? snapshotBenefitsUnlockMonths(snapshot) : 0;
+  const benefitEligibleNow = isBenefitEligible({
+    status: sub.status,
+    cancelAtPeriodEnd: sub.cancelAtPeriodEnd,
+    currentPeriodEnd: sub.currentPeriodEnd,
+    now: new Date(),
+  });
 
   return {
     plan: sub.plan,
@@ -62,6 +73,7 @@ export async function getSubscriptionView(userId: string): Promise<SubscriptionV
     cancelAtPeriodEnd: sub.cancelAtPeriodEnd,
     benefitsUnlockAfterPaidMonths,
     benefitsUnlocked: sub.paidMonthsCount >= benefitsUnlockAfterPaidMonths,
+    familyEligible: Boolean(snapshot?.familyEnabled) && benefitEligibleNow,
     ...(pendingChange ? { pendingChange } : {}),
   };
 }
