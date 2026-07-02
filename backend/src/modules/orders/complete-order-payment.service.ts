@@ -503,15 +503,16 @@ export async function syncOrderPaymentFromStripe(
   orderId: string,
   log: PaymentLog = noopLog,
 ): Promise<SyncOrderPaymentResult> {
-  if (!isStripeConfigured()) {
-    return { ok: false, code: "STRIPE_NOT_CONFIGURED" };
-  }
-
   const order = await prisma.order.findUnique({
     where: { id: orderId },
-    select: { id: true, paymentStatus: true, status: true, stripeSessionId: true },
+    select: { id: true, paymentStatus: true, status: true, stripeSessionId: true, countryCode: true },
   });
   if (!order) return { ok: false, code: "NOT_FOUND" };
+  // Config check is per the order's account — a PT/ES/CZ order needs its own
+  // sandbox key (falls back to Ireland when the sandbox key is unset).
+  if (!isStripeConfigured(order.countryCode)) {
+    return { ok: false, code: "STRIPE_NOT_CONFIGURED" };
+  }
   if (order.paymentStatus === "PAID" || order.status === "PAID") {
     await ensureOrderPaidAutomations(orderId, log);
     return { ok: true, code: "ALREADY_PAID" };
@@ -520,7 +521,8 @@ export async function syncOrderPaymentFromStripe(
     return { ok: false, code: "NO_SESSION" };
   }
 
-  const stripe = getStripeClient();
+  // Session id is account-scoped — retrieve from the account that issued it.
+  const stripe = getStripeClient(order.countryCode);
   const session = await stripe.checkout.sessions.retrieve(order.stripeSessionId);
   if (session.payment_status !== "paid") {
     return { ok: false, code: "NOT_PAID", paymentStatus: session.payment_status ?? undefined };
@@ -549,23 +551,15 @@ export async function syncOrderPaymentFromStripeSession(
   stripeSessionId: string,
   log: PaymentLog = noopLog,
 ): Promise<SyncOrderPaymentResult> {
-  if (!isStripeConfigured()) {
-    return { ok: false, code: "STRIPE_NOT_CONFIGURED" };
-  }
+  // Resolve the order from OUR DB by the stored session id so we know which
+  // account (country) issued it — the session id is account-scoped and can
+  // only be retrieved with the matching client. syncOrderPaymentFromStripe
+  // then does the Stripe retrieve with the correct account client.
+  const order = await prisma.order.findFirst({
+    where: { stripeSessionId },
+    select: { id: true },
+  });
+  if (!order) return { ok: false, code: "NOT_FOUND" };
 
-  const stripe = getStripeClient();
-  const session = await stripe.checkout.sessions.retrieve(stripeSessionId);
-  if (session.payment_status !== "paid") {
-    return { ok: false, code: "NOT_PAID", paymentStatus: session.payment_status ?? undefined };
-  }
-
-  const orderId =
-    session.client_reference_id ??
-    session.metadata?.orderId ??
-    null;
-  if (!orderId) {
-    return { ok: false, code: "NOT_FOUND" };
-  }
-
-  return syncOrderPaymentFromStripe(orderId, log);
+  return syncOrderPaymentFromStripe(order.id, log);
 }

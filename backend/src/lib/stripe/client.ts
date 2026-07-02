@@ -7,52 +7,139 @@ import { env } from "../../config/env.js";
 type StripeInstance = InstanceType<typeof Stripe>;
 
 /**
- * Stripe adapter. Feature-gated on STRIPE_SECRET_KEY:
- *   - No key → `isStripeConfigured()` returns false, every payments route
- *     returns 503 "Payments not configured". The rest of the site still
- *     works (bookings go straight to admin inbox without payment).
- *   - Key set → real Stripe client; checkout sessions + webhook all wired.
+ * Multi-account Stripe adapter.
  *
- * To go live:
- *   1. Create a Stripe account (sign up at stripe.com)
- *   2. Toggle TEST MODE on (top-right of the dashboard) while developing
- *   3. Get your API keys from https://dashboard.stripe.com/test/apikeys
- *      - Set STRIPE_SECRET_KEY=sk_test_…  in backend/.env
- *      - Set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_… in frontend/.env.local
- *   4. Set STRIPE_WEBHOOK_SECRET=whsec_… in backend/.env
- *      - Easiest: run `stripe listen --forward-to localhost:4000/api/payments/webhook`
- *        which prints the whsec_… to use locally.
- *   5. Restart both dev servers.
+ * One-off consultation/order payments route to a per-country Stripe account:
+ *   - Portugal (pt)      → PT sandbox
+ *   - Spain    (es/sp)   → ES sandbox
+ *   - Czech    (cz)      → CZ sandbox
+ *   - everything else    → Ireland (the default account)
  *
- * For production: rotate to live keys (pk_live_…, sk_live_…) and register the
- * webhook endpoint at https://dashboard.stripe.com/webhooks.
+ * Ireland is the DEFAULT account and reuses the original
+ * STRIPE_SECRET_KEY / STRIPE_WEBHOOK_SECRET env vars, so every call-site that
+ * doesn't pass a country (subscriptions, Brazil-consent, redemption shipping)
+ * transparently keeps hitting Ireland.
+ *
+ * Each account (PT/ES/CZ) has its own STRIPE_SECRET_KEY_<CC> /
+ * STRIPE_WEBHOOK_SECRET_<CC>. When a sandbox key is unset the account degrades
+ * to Ireland's key rather than failing — a half-configured sandbox can never
+ * take a market offline (503).
+ *
+ * Feature-gated on the resolved account's secret key: no key → the payments
+ * routes return 503 "Payments not configured" and the rest of the site still
+ * works (bookings go straight to the admin inbox without payment).
+ *
+ * To go live for a market: replace that account's sk_test_…/whsec_… with live
+ * values and register the webhook endpoint at
+ * https://dashboard.stripe.com/webhooks (URL is the same for all accounts).
  */
 
-let cached: StripeInstance | null = null;
+export type StripeAccountId = "ie" | "pt" | "es" | "cz";
 
-export function isStripeConfigured(): boolean {
-  return Boolean(env.STRIPE_SECRET_KEY);
+interface StripeAccountConfig {
+  secretKey?: string;
+  webhookSecret?: string;
 }
 
-export function isStripeWebhookConfigured(): boolean {
-  return Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_WEBHOOK_SECRET);
-}
-
-export function getStripeClient(): StripeInstance {
-  if (!env.STRIPE_SECRET_KEY) {
-    throw new Error("Stripe is not configured: STRIPE_SECRET_KEY missing");
+/**
+ * Account config table. `ie` is the default and reads the original env vars;
+ * PT/ES/CZ read their own pair and fall back to Ireland's key when unset.
+ */
+function accountConfig(id: StripeAccountId): StripeAccountConfig {
+  switch (id) {
+    case "pt":
+      return {
+        secretKey: env.STRIPE_SECRET_KEY_PT ?? env.STRIPE_SECRET_KEY,
+        webhookSecret: env.STRIPE_WEBHOOK_SECRET_PT,
+      };
+    case "es":
+      return {
+        secretKey: env.STRIPE_SECRET_KEY_ES ?? env.STRIPE_SECRET_KEY,
+        webhookSecret: env.STRIPE_WEBHOOK_SECRET_ES,
+      };
+    case "cz":
+      return {
+        secretKey: env.STRIPE_SECRET_KEY_CZ ?? env.STRIPE_SECRET_KEY,
+        webhookSecret: env.STRIPE_WEBHOOK_SECRET_CZ,
+      };
+    case "ie":
+    default:
+      return {
+        secretKey: env.STRIPE_SECRET_KEY,
+        webhookSecret: env.STRIPE_WEBHOOK_SECRET,
+      };
   }
-  if (!cached) {
+}
+
+/**
+ * Map a country code to the Stripe account that should handle its one-off
+ * payments. Unknown / undefined → Ireland (the default account).
+ */
+export function resolveStripeAccount(countryCode?: string | null): StripeAccountId {
+  switch (countryCode?.trim().toLowerCase()) {
+    case "pt":
+      return "pt";
+    case "es":
+    case "sp":
+      return "es";
+    case "cz":
+      return "cz";
+    default:
+      return "ie";
+  }
+}
+
+export function isStripeConfigured(countryCode?: string | null): boolean {
+  return Boolean(accountConfig(resolveStripeAccount(countryCode)).secretKey);
+}
+
+export function isStripeWebhookConfigured(countryCode?: string | null): boolean {
+  const cfg = accountConfig(resolveStripeAccount(countryCode));
+  return Boolean(cfg.secretKey && cfg.webhookSecret);
+}
+
+/**
+ * All distinct configured webhook signing secrets across every account. The
+ * webhook receiver tries each until one verifies the incoming signature — the
+ * matching secret identifies which account sent the event.
+ */
+export function getConfiguredWebhookSecrets(): string[] {
+  const ids: StripeAccountId[] = ["ie", "pt", "es", "cz"];
+  const secrets = new Set<string>();
+  for (const id of ids) {
+    const secret = accountConfig(id).webhookSecret;
+    if (secret) secrets.add(secret);
+  }
+  return [...secrets];
+}
+
+const clients = new Map<StripeAccountId, StripeInstance>();
+
+/**
+ * Resolve the Stripe client for a country's account. No country / unknown
+ * country → Ireland (default). Throws if the resolved account has no key.
+ */
+export function getStripeClient(countryCode?: string | null): StripeInstance {
+  const accountId = resolveStripeAccount(countryCode);
+  const cfg = accountConfig(accountId);
+  if (!cfg.secretKey) {
+    throw new Error(
+      `Stripe is not configured for account "${accountId}": secret key missing`,
+    );
+  }
+  let client = clients.get(accountId);
+  if (!client) {
     // Use SDK default apiVersion — typed against the SDK build to avoid
     // string-literal drift. Pin in env later if you need older-version
     // backward compat for an existing integration.
-    cached = new Stripe(env.STRIPE_SECRET_KEY, {
+    client = new Stripe(cfg.secretKey, {
       typescript: true,
       appInfo: {
         name: "global-health-website",
         version: "1.0.0",
       },
     });
+    clients.set(accountId, client);
   }
-  return cached;
+  return client;
 }

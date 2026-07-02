@@ -115,11 +115,17 @@ const accountPaymentsRoute: FastifyPluginAsync = async (app) => {
             id: request.params.id,
             appointment: { userId: authUser.id },
           },
-          select: { stripePaymentIntentId: true },
+          select: {
+            stripePaymentIntentId: true,
+            appointment: { select: { countryCode: true } },
+          },
         });
         if (!payment) return reply.status(404).send(errorResponse("Payment not found"));
 
-        const url = await getReceiptUrl(payment.stripePaymentIntentId ?? null);
+        const url = await getReceiptUrl(
+          payment.stripePaymentIntentId ?? null,
+          payment.appointment?.countryCode ?? null,
+        );
         return okResponse({ url });
       } catch (error) {
         app.log.error(error);

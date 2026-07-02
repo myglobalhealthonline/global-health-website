@@ -10,6 +10,7 @@ import {
 } from "../../lib/stripe/client.js";
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import { generateOrderNumber } from "../../lib/order-number.js";
+import { buildPtStripeInvoiceData } from "../invoices/pt-stripe-invoice-data.js";
 import { issuePasswordResetToken } from "../auth/auth.service.js";
 import { recordAudit } from "../audit/audit.service.js";
 import {
@@ -471,9 +472,9 @@ export async function createManualBooking(
   // has the recovery banner to act on by hand.
   let paymentUrl: string | null = null;
   let paymentSessionId: string | null = null;
-  if (isStripeConfigured()) {
+  if (isStripeConfigured(input.countryCode)) {
     try {
-      const stripe = getStripeClient();
+      const stripe = getStripeClient(input.countryCode);
       const baseUrl =
         env.PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? "http://localhost:3000";
       const returnBase = input.returnTo ?? "/account/bookings";
@@ -499,7 +500,10 @@ export async function createManualBooking(
         ],
         success_url: successUrl,
         cancel_url: cancelUrl,
-        invoice_creation: { enabled: true },
+        invoice_creation:
+          (await buildPtStripeInvoiceData(input.countryCode, email, service.name)) ?? {
+            enabled: true,
+          },
         metadata: {
           kind: "order",
           orderId: order.id,

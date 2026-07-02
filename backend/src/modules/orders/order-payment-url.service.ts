@@ -1,6 +1,7 @@
 import { env } from "../../config/env.js";
 import { prisma } from "../../db/prisma.js";
 import { getStripeClient, isStripeConfigured } from "../../lib/stripe/client.js";
+import { buildPtStripeInvoiceData } from "../invoices/pt-stripe-invoice-data.js";
 
 function isSessionOpen(session: {
   status: string | null;
@@ -32,7 +33,7 @@ export async function resolveOrderPaymentUrl(
   });
   if (!order || order.items.length === 0) return "";
 
-  const stripe = getStripeClient();
+  const stripe = getStripeClient(order.countryCode);
 
   if (order.stripeSessionId) {
     try {
@@ -71,6 +72,15 @@ export async function resolveOrderPaymentUrl(
     const successUrl = `${baseUrl}/checkout/success?orderId=${order.id}&payment=ok&session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${baseUrl}/checkout/cancelled?orderId=${order.id}&payment=cancelled`;
 
+    // Portugal: attach NIF + service to the auto-created Stripe invoice for
+    // InvoiceExpress. Non-PT orders keep Stripe's default (no invoice created
+    // on this resend path).
+    const invoiceCreation = await buildPtStripeInvoiceData(
+      order.countryCode,
+      order.email,
+      order.items[0]?.name ?? "Medical Consultation",
+    );
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
@@ -79,6 +89,7 @@ export async function resolveOrderPaymentUrl(
       line_items: lineItems,
       success_url: successUrl,
       cancel_url: cancelUrl,
+      ...(invoiceCreation ? { invoice_creation: invoiceCreation } : {}),
       metadata: {
         kind: "order",
         orderId: order.id,

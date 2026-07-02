@@ -8,6 +8,7 @@ import {
 } from "../lib/stripe/client.js";
 import { env } from "../config/env.js";
 import { generateOrderNumber } from "../lib/order-number.js";
+import { buildPtStripeInvoiceData } from "../modules/invoices/pt-stripe-invoice-data.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
@@ -306,14 +307,14 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         }
 
         // Paid order → Stripe is required from here on.
-        if (!isStripeConfigured()) {
+        if (!isStripeConfigured(cart.countryCode)) {
           return reply
             .status(503)
             .send(errorResponse("Payments not configured. Set STRIPE_SECRET_KEY."));
         }
 
         // Build Stripe line_items (one per cart item + a shipping line)
-        const stripe = getStripeClient();
+        const stripe = getStripeClient(cart.countryCode);
         const lineItems: Array<{
           quantity: number;
           price_data: {
@@ -350,6 +351,16 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         const successUrl = `${baseUrl}${returnBase}/success?orderId=${order.id}&payment=ok&session_id={CHECKOUT_SESSION_ID}`;
         const cancelUrl = `${baseUrl}${returnBase}/cancelled?orderId=${order.id}&payment=cancelled`;
 
+        // Portugal: enrich the auto-created Stripe invoice with NIF + service
+        // name so InvoiceExpress issues a complete invoice. Non-PT → plain
+        // invoice_creation (Stripe's own invoice, no InvoiceExpress).
+        const invoiceCreation =
+          (await buildPtStripeInvoiceData(
+            cart.countryCode,
+            body.data.email,
+            order.items[0]?.name ?? "Medical Consultation",
+          )) ?? { enabled: true };
+
         const session = await stripe.checkout.sessions.create({
           mode: "payment",
           payment_method_types: ["card"],
@@ -358,7 +369,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           line_items: lineItems,
           success_url: successUrl,
           cancel_url: cancelUrl,
-          invoice_creation: { enabled: true },
+          invoice_creation: invoiceCreation,
           metadata: {
             kind: "order",
             orderId: order.id,

@@ -5,7 +5,7 @@ import { prisma } from "../db/prisma.js";
 import {
   getStripeClient,
   isStripeConfigured,
-  isStripeWebhookConfigured,
+  getConfiguredWebhookSecrets,
 } from "../lib/stripe/client.js";
 import { env } from "../config/env.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -115,7 +115,7 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
           .send(errorResponse("Service has no price configured"));
       }
 
-      const stripe = getStripeClient();
+      const stripe = getStripeClient(appointment.countryCode);
 
       // Idempotency — if a Checkout Session already exists for this
       // appointment and is still openable, reuse its URL instead of
@@ -238,7 +238,8 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
   app.post(
     "/api/payments/webhook",
     async (request: FastifyRequest, reply: FastifyReply) => {
-      if (!isStripeWebhookConfigured()) {
+      const webhookSecrets = getConfiguredWebhookSecrets();
+      if (webhookSecrets.length === 0) {
         return reply
           .status(503)
           .send(errorResponse("Stripe webhook not configured (missing STRIPE_WEBHOOK_SECRET)"));
@@ -254,16 +255,25 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Empty webhook body"));
       }
 
+      // Multi-account: the event may originate from any of the PT/ES/CZ/IE
+      // accounts, each signing with its own secret. Try each configured secret
+      // until one verifies — the matching secret identifies the source account.
+      // The client used for constructEvent is irrelevant (the signing secret,
+      // not the API key, verifies the signature), so the default client is fine.
       const stripe = getStripeClient();
+      const payload = typeof rawBody === "string" ? rawBody : rawBody.toString("utf8");
       let event;
-      try {
-        event = stripe.webhooks.constructEvent(
-          typeof rawBody === "string" ? rawBody : rawBody.toString("utf8"),
-          sig,
-          env.STRIPE_WEBHOOK_SECRET!,
-        );
-      } catch (error) {
-        app.log.warn({ err: error }, "Stripe signature verification failed");
+      let lastError: unknown;
+      for (const secret of webhookSecrets) {
+        try {
+          event = stripe.webhooks.constructEvent(payload, sig, secret);
+          break;
+        } catch (error) {
+          lastError = error;
+        }
+      }
+      if (!event) {
+        app.log.warn({ err: lastError }, "Stripe signature verification failed");
         return reply
           .status(400)
           .send(errorResponse("Invalid Stripe signature"));

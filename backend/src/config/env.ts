@@ -21,6 +21,13 @@ function mergeRailwayBucketAliases(): NodeJS.ProcessEnv {
   return out;
 }
 
+/** Optional secret that treats an empty string (blank .env / Railway var) as
+ *  unset, so a blank placeholder never fails the `.min(1)` check. */
+const optionalSecret = z.preprocess(
+  (v) => (v === "" || v === undefined ? undefined : v),
+  z.string().trim().min(1).optional(),
+);
+
 const envSchema = z.object({
   // Railway (and a few other PaaS) export NODE_ENV as the empty string
   // when no value is set, which bypasses Zod's `.default()` (that only
@@ -75,9 +82,24 @@ const envSchema = z.object({
   /** Used to build absolute URLs in emails (e.g. https://myglobalhealth.online). No trailing slash. */
   PUBLIC_SITE_URL: z.string().trim().url().optional(),
 
-  /** Stripe — keep test keys in dev. Payments stay disabled when STRIPE_SECRET_KEY is absent. */
+  /** Stripe — keep test keys in dev. Payments stay disabled when STRIPE_SECRET_KEY is absent.
+   *  STRIPE_SECRET_KEY / STRIPE_WEBHOOK_SECRET are the DEFAULT (Ireland) account —
+   *  used for every country except PT/ES/CZ and for all subscription / Brazil /
+   *  redemption flows. */
   STRIPE_SECRET_KEY: z.string().trim().min(1).optional(),
   STRIPE_WEBHOOK_SECRET: z.string().trim().min(1).optional(),
+
+  /** Per-country Stripe sandbox accounts for one-off payments. Each falls back
+   *  to the Ireland key when unset (a half-configured sandbox degrades to
+   *  Ireland instead of taking the market offline). See lib/stripe/client.ts.
+   *  Blank placeholders ("") are treated as unset — safe to leave in .env until
+   *  the sandbox keys are pasted in. */
+  STRIPE_SECRET_KEY_PT: optionalSecret,
+  STRIPE_WEBHOOK_SECRET_PT: optionalSecret,
+  STRIPE_SECRET_KEY_ES: optionalSecret,
+  STRIPE_WEBHOOK_SECRET_ES: optionalSecret,
+  STRIPE_SECRET_KEY_CZ: optionalSecret,
+  STRIPE_WEBHOOK_SECRET_CZ: optionalSecret,
 
   /** Subscription billing provider. `fake` (default) = in-memory port, no
    *  Stripe keys needed (dev/test). `stripe` = real Stripe Subscriptions —
