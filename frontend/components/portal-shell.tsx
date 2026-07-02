@@ -444,7 +444,7 @@ function SidebarSectionLabel({ label }: { label: string }) {
           width: 14,
           height: 2,
           borderRadius: 2,
-          background: "var(--color-brand-mint)",
+          background: "var(--portal-mint)",
         }}
       />
       <span>{label}</span>

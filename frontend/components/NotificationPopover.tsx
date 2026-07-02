@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Bell } from "lucide-react";
 import { formatAppDate } from "@/lib/format-datetime";
+import { Btn } from "@/components/portal-atoms";
 
 /**
  * Notification dropdown for the admin/doctor/patient topbar.
@@ -204,14 +205,15 @@ export function NotificationPopover({
             )}
 
             {viewAllHref ? (
-              <Link
+              <Btn
                 href={viewAllHref}
                 onClick={() => setOpen(false)}
-                className="mt-2 block rounded-[var(--portal-radius)] py-2 text-center text-[12px] font-bold"
-                style={{ background: "var(--portal-mint-soft)", color: "var(--portal-mint-text)" }}
+                variant="soft"
+                size="sm"
+                className="mt-2 w-full justify-center"
               >
                 View all
-              </Link>
+              </Btn>
             ) : null}
           </div>
         </>

@@ -5215,6 +5215,52 @@ a.gh-stat-card:hover {
   border-radius: var(--portal-radius-pill, 999px) !important;
 }
 
+/* "Now" tick — DESIGN.md §5.18, the one ambient animation on this surface. */
+.gh-agenda-now {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.gh-agenda-now__rail {
+  width: 14px;
+  height: 1px;
+  background: var(--portal-line);
+  flex-shrink: 0;
+}
+
+.gh-agenda-now__tick {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--portal-signal);
+  box-shadow: 0 0 0 4px var(--portal-signal-glow);
+  animation: gh-agenda-now-breathe 3s ease-in-out infinite;
+}
+
+.gh-agenda-now__label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--portal-muted);
+  white-space: nowrap;
+}
+
+@keyframes gh-agenda-now-breathe {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-agenda-now__tick {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 /* Agenda panel is a column flex container; without min-width:0 its flex
  * items refuse to shrink below their unbroken content (slot-chip text),
  * which pushes the whole panel wider than its grid track and forces

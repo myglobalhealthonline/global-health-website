@@ -10,4 +10,9 @@ export {
   TableSkeleton,
   FormSkeleton,
   ListPageSkeleton,
+  CommandBandSkeleton,
+  StatGridSkeleton,
+  CalendarMonthSkeleton,
+  ChatThreadSkeleton,
+  DashboardSkeleton,
 } from "@/components/portal-skeletons";

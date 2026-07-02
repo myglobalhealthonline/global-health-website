@@ -9,6 +9,73 @@ function Bar({ className = "" }: { className?: string }) {
   return <div className={`gh-skeleton-bar ${className}`} />;
 }
 
+/** Dark dashboard band — mirrors CommandBand's own markup so the existing
+ *  `.gh-command-band--skeleton` shimmer CSS applies without needing real
+ *  metric data (route `loading.tsx` files render before data is fetched). */
+export function CommandBandSkeleton({ metrics = 3 }: { metrics?: number }) {
+  return (
+    <section className="gh-command-band gh-command-band--skeleton" aria-hidden>
+      <div className="min-w-0">
+        <p className="gh-command-band__context">&nbsp;</p>
+        <h2 className="gh-command-band__title">&nbsp;</h2>
+      </div>
+      <div className="gh-command-band__metrics">
+        {Array.from({ length: metrics }).map((_, i) => (
+          <div key={i} className="gh-command-band__metric">
+            <p className="gh-command-band__metric-label">&nbsp;</p>
+            <p className="gh-command-band__metric-value">&nbsp;</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function StatGridSkeleton({ items = 6 }: { items?: number }) {
+  return (
+    <section className="gh-admin-dashboard-stats mb-5 grid gap-3" aria-hidden>
+      {Array.from({ length: items }).map((_, i) => (
+        <div key={i} className="gh-admin-card gh-stat-card" style={{ padding: 18 }}>
+          <div className="flex items-start justify-between">
+            <Bar className="h-3 w-20" />
+            <Bar className="h-10 w-10 rounded-[var(--portal-radius)]" />
+          </div>
+          <Bar className="mt-3 h-8 w-16" />
+          <Bar className="mt-2 h-3 w-24" />
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function CalendarMonthSkeleton() {
+  return (
+    <div className="gh-calendar-panel gh-card overflow-hidden p-0" aria-hidden>
+      <div className="flex items-center justify-between px-4 py-3">
+        <Bar className="h-5 w-32" />
+        <Bar className="h-8 w-24" />
+      </div>
+      <div className="grid grid-cols-7 gap-px p-2">
+        {Array.from({ length: 35 }).map((_, i) => (
+          <Bar key={i} className="h-16 w-full" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function ChatThreadSkeleton({ bubbles = 4 }: { bubbles?: number }) {
+  return (
+    <div className="gh-chat-panel flex h-[480px] flex-col p-4" aria-hidden>
+      {Array.from({ length: bubbles }).map((_, i) => (
+        <div key={i} className={`mb-3 flex ${i % 2 === 0 ? "justify-start" : "justify-end"}`}>
+          <Bar className="h-10 w-[60%] rounded-2xl" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function PageHeaderSkeleton() {
   return (
     <header className="gh-portal-page-header gh-skeleton-header space-y-2">
@@ -95,6 +162,15 @@ export function FormSkeleton({ sections = 3 }: { sections?: number }) {
           </div>
         </section>
       ))}
+    </div>
+  );
+}
+
+export function DashboardSkeleton({ statItems = 6 }: { statItems?: number }) {
+  return (
+    <div className="gh-skeleton-dashboard">
+      <CommandBandSkeleton />
+      <StatGridSkeleton items={statItems} />
     </div>
   );
 }

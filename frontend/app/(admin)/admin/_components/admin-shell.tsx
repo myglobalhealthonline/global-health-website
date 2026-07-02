@@ -573,9 +573,14 @@ export function AdminShell({
             </div>
           </header>
 
-          {/* Mobile country picker row */}
+          {/* Mobile country picker row — chrome-toned bar so the
+              chrome-styled CountryPicker trigger (near-white text) stays
+              legible; a white bar here would nearly hide the text. */}
           {countries.length > 0 ? (
-            <div className="border-b border-[var(--color-border)] bg-white px-4 py-3 sm:hidden">
+            <div
+              className="px-4 py-3 sm:hidden"
+              style={{ background: "var(--portal-chrome-solid)", borderBottom: "1px solid var(--portal-chrome-border)" }}
+            >
               <CountryPicker
                 countries={countries}
                 current={activeCountry}
@@ -592,9 +597,9 @@ export function AdminShell({
         toastOptions={{
           classNames: {
             toast:
-              "rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm shadow-md",
-            title: "font-semibold text-[var(--color-text-primary)]",
-            description: "text-[var(--color-text-muted)]",
+              "rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface)] px-3 py-2 text-sm shadow-md",
+            title: "font-semibold text-[var(--portal-text)]",
+            description: "text-[var(--portal-muted)]",
           },
         }}
       />
@@ -630,7 +635,7 @@ function SidebarSectionLabel({
           width: 14,
           height: 2,
           borderRadius: 2,
-          background: "var(--color-brand-mint)",
+          background: "var(--portal-mint)",
         }}
       />
       <span>{label}</span>

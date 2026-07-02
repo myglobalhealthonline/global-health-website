@@ -34,7 +34,10 @@ export function CountryPicker({
 
   if (countries.length === 0) {
     return (
-      <span className="gh-admin-country-picker gh-admin-country-picker--empty inline-flex items-center gap-2 rounded-[10px] border border-[var(--color-border)] bg-white px-3 py-2 text-xs font-semibold text-[var(--color-text-muted)]">
+      <span
+        className="gh-admin-country-picker gh-admin-country-picker--empty inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold"
+        style={{ border: "1px solid var(--portal-chrome-border)", color: "var(--portal-chrome-text)" }}
+      >
         No countries
       </span>
     );

@@ -1,10 +1,33 @@
 "use client";
 
-import type { CSSProperties, ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { CalendarDays, Search, Video } from "lucide-react";
 import { formatAppTime } from "@/lib/format-datetime";
 import type { CalendarItem } from "./calendar-types";
-import { dayLabel } from "./calendar-utils";
+import { dayLabel, todayKey } from "./calendar-utils";
+
+/** Live clock, viewer-tz. Only ticks while `active` (today's agenda is open) —
+ *  DESIGN.md §5.18 "now" tick, the one ambient animation on this surface. */
+function useNowLabel(tz: string, active: boolean): string | null {
+  const [label, setLabel] = useState<string | null>(null);
+  useEffect(() => {
+    if (!active) return;
+    function tick() {
+      setLabel(
+        new Intl.DateTimeFormat("en-GB", {
+          timeZone: tz,
+          hour: "2-digit",
+          minute: "2-digit",
+          hourCycle: "h23",
+        }).format(new Date()),
+      );
+    }
+    tick();
+    const id = setInterval(tick, 30_000);
+    return () => clearInterval(id);
+  }, [tz, active]);
+  return label;
+}
 
 type Props = {
   dayKey: string | null;
@@ -43,6 +66,8 @@ export function DayAgenda({
 }: Props) {
   const consultations = items.filter((i) => i.kind === "consultation");
   const slots = items.filter((i) => i.kind === "slot");
+  const isToday = dayKey !== null && dayKey === todayKey(tz);
+  const nowLabel = useNowLabel(tz, isToday);
 
   return (
     <div className="gh-agenda-panel gh-card flex h-full flex-col p-0">
@@ -54,6 +79,13 @@ export function DayAgenda({
         <h3 className="text-sm font-bold" style={{ color: "var(--portal-text)" }}>
           {dayKey ? dayLabel(dayKey) : "Pick a day"}
         </h3>
+        {isToday && nowLabel ? (
+          <span aria-hidden className="gh-agenda-now ml-auto">
+            <span className="gh-agenda-now__rail" />
+            <span className="gh-agenda-now__tick" />
+            <span className="gh-agenda-now__label">Now · {nowLabel}</span>
+          </span>
+        ) : null}
       </div>
 
       <div className="flex-1 overflow-y-auto p-4">
