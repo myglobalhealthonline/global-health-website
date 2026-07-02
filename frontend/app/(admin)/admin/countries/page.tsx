@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { Edit3, Eye, Globe2, Plus } from "lucide-react";
 import { fetchAdminCountries, purgeAdminCountry } from "@/lib/admin/admin-api";
 import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
-import { DeleteCountryButton } from "./_components/delete-country-button";
+import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import { FlagBadge } from "../_components/flag-badge";
 import {
   AdminCard,
@@ -186,7 +186,10 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
                       </IconBtn>
                       <form action={deleteCountryAction} className="inline-flex">
                         <input type="hidden" name="id" value={c.id} />
-                        <DeleteCountryButton countryName={c.name} />
+                        <ConfirmDeleteButton
+                          message={`Delete ${c.name}? This deactivates the country and cannot be undone from this action.`}
+                          ariaLabel={`Delete ${c.name}`}
+                        />
                       </form>
                     </div>
                   </Td>

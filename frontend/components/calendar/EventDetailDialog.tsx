@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
-import { createPortal } from "react-dom";
-import { Video, X } from "lucide-react";
+import type { ReactNode } from "react";
+import { Video } from "lucide-react";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import type { CalendarItem } from "./calendar-types";
+import { PortalDialog } from "@/components/PortalDialog";
 
 type Props = {
   item: CalendarItem | null;
@@ -30,97 +30,63 @@ function humanize(status: string): string {
 }
 
 export function EventDetailDialog({ item, tz, onClose }: Props) {
-  useEffect(() => {
-    if (!item) return;
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [item, onClose]);
+  const meetingUrl = item?.meta?.meetingUrl ?? null;
 
-  if (!item || typeof document === "undefined") return null;
+  return (
+    <PortalDialog open={item !== null} onClose={onClose} title={item?.title ?? ""} width="sm">
+      {item ? (
+        <>
+          <p className="gh-eyebrow mb-3">{item.meta?.consultationType ?? "Consultation"}</p>
 
-  const meetingUrl = item.meta?.meetingUrl ?? null;
+          <dl
+            className="grid gap-3 rounded-[var(--portal-radius)] p-3 text-sm"
+            style={{ border: "1px solid var(--portal-line)", background: "var(--portal-well)" }}
+          >
+            <Row label="When">{formatAppDateTime(item.startAt, tz)}</Row>
+            {item.meta?.doctorName ? <Row label="Doctor">{item.meta.doctorName}</Row> : null}
+            {item.meta?.patientName ? <Row label="Patient">{item.meta.patientName}</Row> : null}
+            {item.meta?.countryCode ? (
+              <Row label="Country">{item.meta.countryCode.toUpperCase()}</Row>
+            ) : null}
+            <Row label="Status">
+              <span className={`gh-badge ${statusBadgeClass(item.status)}`}>
+                {humanize(item.status)}
+              </span>
+            </Row>
+          </dl>
 
-  return createPortal(
-    <div
-      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/45 p-0 backdrop-blur-sm sm:items-center sm:p-4"
-      role="dialog"
-      aria-modal="true"
-      onClick={onClose}
-    >
-      <div
-        className="gh-calendar-dialog max-h-[calc(100vh-1rem)] w-full max-w-md overflow-y-auto rounded-t-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 shadow-[var(--shadow-elevated)] sm:max-h-[calc(100vh-2rem)] sm:rounded-[var(--radius-card)]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--color-brand-primary)]">
-              {item.meta?.consultationType ?? "Consultation"}
+          {meetingUrl ? (
+            <a
+              href={meetingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="gh-btn gh-btn-primary mt-5 flex w-full items-center justify-center gap-2"
+              style={{ minHeight: 44 }}
+            >
+              <Video className="size-4" aria-hidden />
+              Join video call
+            </a>
+          ) : (
+            <p
+              className="mt-5 rounded-[var(--portal-radius-sm)] px-3 py-2.5 text-center text-xs"
+              style={{ background: "var(--portal-well)", color: "var(--portal-muted)" }}
+            >
+              Join link will appear here once the call is scheduled.
             </p>
-            <h2 className="mt-0.5 truncate text-lg font-bold text-[var(--color-text-primary)]">
-              {item.title}
-            </h2>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            className="inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-text-muted)] transition hover:bg-[var(--color-background-soft)]"
-          >
-            <X className="size-4" aria-hidden />
-          </button>
-        </div>
-
-        <dl className="mt-4 grid gap-3 rounded-lg border border-[var(--color-border)] bg-white/75 p-3 text-sm">
-          <Row label="When">
-            {formatAppDateTime(item.startAt, tz)}
-          </Row>
-          {item.meta?.doctorName ? (
-            <Row label="Doctor">{item.meta.doctorName}</Row>
-          ) : null}
-          {item.meta?.patientName ? (
-            <Row label="Patient">{item.meta.patientName}</Row>
-          ) : null}
-          {item.meta?.countryCode ? (
-            <Row label="Country">{item.meta.countryCode.toUpperCase()}</Row>
-          ) : null}
-          <Row label="Status">
-            <span className={`gh-badge ${statusBadgeClass(item.status)}`}>
-              {humanize(item.status)}
-            </span>
-          </Row>
-        </dl>
-
-        {meetingUrl ? (
-          <a
-            href={meetingUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-[999px] bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800"
-          >
-            <Video className="size-4" aria-hidden />
-            Join video call
-          </a>
-        ) : (
-          <p className="mt-5 rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] px-3 py-2.5 text-center text-xs text-[var(--color-text-muted)]">
-            Join link will appear here once the call is scheduled.
-          </p>
-        )}
-      </div>
-    </div>,
-    document.body,
+          )}
+        </>
+      ) : null}
+    </PortalDialog>
   );
 }
 
-function Row({ label, children }: { label: string; children: React.ReactNode }) {
+function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="grid gap-1 sm:grid-cols-[110px_1fr] sm:items-center">
-      <dt className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+      <dt className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--portal-muted)" }}>
         {label}
       </dt>
-      <dd className="font-medium text-[var(--color-text-primary)] sm:text-right">
+      <dd className="font-medium sm:text-right" style={{ color: "var(--portal-text)" }}>
         {children}
       </dd>
     </div>

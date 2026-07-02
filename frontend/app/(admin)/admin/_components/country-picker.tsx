@@ -46,20 +46,30 @@ export function CountryPicker({
         <button
           type="button"
           disabled={isPending}
-          className="gh-admin-country-picker inline-flex min-w-0 items-center gap-2.5 rounded-[10px] border border-[var(--color-border)] bg-white px-3 py-2 text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-border-strong)] disabled:opacity-60"
+          className="gh-admin-country-picker inline-flex min-w-0 items-center gap-2.5 rounded-full px-3 py-2 text-sm font-semibold transition hover:bg-white/5 disabled:opacity-60"
+          style={{ border: "1px solid var(--portal-chrome-border)", color: "var(--portal-chrome-text-active)" }}
         >
           <FlagBadge code={current?.slug ?? "all"} size={16} />
           <span className="min-w-0 truncate">{current?.name ?? "All countries"}</span>
-          <ChevronDown className="size-3.5 text-[var(--color-text-muted)]" aria-hidden />
+          <ChevronDown className="size-3.5 opacity-70" aria-hidden />
         </button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content
           align="end"
           sideOffset={6}
-          className="gh-admin-country-picker-menu z-50 min-w-[240px] rounded-xl border border-[var(--color-border)] bg-white p-1.5 shadow-[var(--shadow-elevated)]"
+          className="gh-admin-country-picker-menu z-50 min-w-[240px] p-1.5"
+          style={{
+            borderRadius: "var(--portal-radius-xl)",
+            border: "1px solid var(--portal-line)",
+            background: "var(--portal-surface-elevated)",
+            boxShadow: "var(--portal-shadow-modal)",
+          }}
         >
-          <div className="px-2.5 pb-1.5 pt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+          <div
+            className="px-2.5 pb-1.5 pt-1 text-[10px] font-bold uppercase tracking-[0.12em]"
+            style={{ color: "var(--portal-muted)" }}
+          >
             Admin market scope
           </div>
           {countries.map((c) => {
@@ -68,16 +78,13 @@ export function CountryPicker({
               <DropdownMenu.Item
                 key={c.id}
                 onSelect={() => select(c.slug)}
-                className={`gh-admin-country-picker-item flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-semibold outline-none ${
-                  active
-                    ? "bg-[var(--color-background-soft)] text-[var(--color-text-primary)]"
-                    : "text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
-                }`}
+                className="gh-admin-country-picker-item flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-semibold outline-none hover:bg-[var(--portal-well)]"
+                style={active ? { background: "var(--portal-mint-soft)", color: "var(--portal-accent-text)" } : { color: "var(--portal-text)" }}
               >
                 <FlagBadge code={c.slug} size={16} />
                 <span>{c.name}</span>
                 {active ? (
-                  <Check className="ml-auto size-3.5 text-[var(--color-brand-primary)]" aria-hidden />
+                  <Check className="ml-auto size-3.5" style={{ color: "var(--portal-accent-text)" }} aria-hidden />
                 ) : null}
               </DropdownMenu.Item>
             );

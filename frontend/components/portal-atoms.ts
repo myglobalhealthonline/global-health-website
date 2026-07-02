@@ -25,6 +25,7 @@ export {
   IconBtn,
   Toggle,
   Btn,
+  CommandBand,
 } from "@/app/(admin)/admin/_components/atoms";
 
 export type {
@@ -32,4 +33,5 @@ export type {
   PillTone,
   BtnVariant,
   BtnSize,
+  CommandBandMetric,
 } from "@/app/(admin)/admin/_components/atoms";

@@ -40,28 +40,32 @@ export function PageHeader({
     >
       <div className="min-w-0">
         {eyebrow ? (
-          <p className="gh-eyebrow inline-flex items-center gap-2">
-            <span
-              aria-hidden
-              className="gh-portal-eyebrow-dot"
-            />
-            {eyebrow}
-          </p>
+          <>
+            <p className="gh-eyebrow inline-flex items-center gap-2">
+              <span aria-hidden className="gh-portal-eyebrow-dot" />
+              {eyebrow}
+            </p>
+            <span aria-hidden className="gh-portal-eyebrow-hairline" />
+          </>
         ) : null}
         <h1
-          className="m-0 tracking-[-0.025em] text-[var(--color-text-primary)]"
+          className="m-0 tracking-[-0.02em]"
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: "clamp(24px, 2.2vw, 34px)",
+            fontSize: "clamp(24px, 2vw, 34px)",
             fontWeight: 800,
-            lineHeight: 1.06,
+            lineHeight: 1.08,
             marginTop: eyebrow ? 10 : 0,
+            color: "var(--portal-text)",
           }}
         >
           {title}
         </h1>
         {description ? (
-          <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-[var(--color-text-muted)]">
+          <p
+            className="mt-2 text-[14px] leading-relaxed"
+            style={{ color: "var(--portal-text-2)", maxWidth: "68ch" }}
+          >
             {description}
           </p>
         ) : null}
@@ -99,29 +103,25 @@ export function SectionHeader({
   right?: ReactNode;
 }) {
   return (
-    <div
-      className="gh-portal-section-header flex items-start justify-between gap-4 border-b border-[var(--color-border)] px-5 py-4"
-    >
+    <div className="gh-portal-section-header flex items-start justify-between gap-4 px-5 py-4">
       <div className="min-w-0">
         <div className="flex items-center gap-2.5">
-          <span
-            aria-hidden
-            className="gh-portal-section-rule"
-          />
+          <span aria-hidden className="gh-portal-section-rule" />
           <h3
-            className="m-0 text-[var(--color-text-primary)]"
+            className="m-0"
             style={{
               fontFamily: "var(--font-display)",
               fontSize: 16,
               fontWeight: 800,
               letterSpacing: "-0.01em",
+              color: "var(--portal-text)",
             }}
           >
             {title}
           </h3>
         </div>
         {description ? (
-          <p className="mt-1 pl-[14px] text-[12px] text-[var(--color-text-muted)]">
+          <p className="mt-1 pl-[14px] text-[12px]" style={{ color: "var(--portal-muted)" }}>
             {description}
           </p>
         ) : null}
@@ -147,17 +147,7 @@ export function AdminCard({
   style?: CSSProperties;
 }) {
   return (
-    <div
-      className={`gh-admin-card ${className}`}
-      style={{
-        background: "var(--color-background-page)",
-        border: "1px solid var(--color-border)",
-        borderRadius: 12,
-        boxShadow: "var(--shadow-soft)",
-        padding,
-        ...style,
-      }}
-    >
+    <div className={`gh-admin-card ${className}`} style={{ padding, ...style }}>
       {children}
     </div>
   );
@@ -203,6 +193,7 @@ export function AdminEmptyState({
   action,
   icon,
   assetSrc,
+  tone = "neutral",
   className = "",
 }: {
   title: ReactNode;
@@ -210,6 +201,8 @@ export function AdminEmptyState({
   action?: ReactNode;
   icon?: ReactNode;
   assetSrc?: string;
+  /** "danger" = root error.tsx anatomy (DESIGN.md §16 DoD); neutral = normal empty list. */
+  tone?: "neutral" | "danger";
   className?: string;
 }) {
   return (
@@ -224,7 +217,10 @@ export function AdminEmptyState({
           loading="lazy"
         />
       ) : icon ? (
-        <span className="gh-admin-empty-state__icon" aria-hidden>
+        <span
+          className={`gh-admin-empty-state__icon ${tone === "danger" ? "gh-admin-empty-state__icon--danger" : ""}`}
+          aria-hidden
+        >
           {icon}
         </span>
       ) : null}
@@ -234,6 +230,70 @@ export function AdminEmptyState({
         {action ? <div className="gh-admin-empty-state__action">{action}</div> : null}
       </div>
     </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CommandBand — the signature (DESIGN.md §5.3). Dashboard pages only
+   (/admin, /doctor, /account). Presentational: role pages fetch data
+   and pass it in; the atom never fetches.
+   ───────────────────────────────────────────────────────────── */
+
+export type CommandBandMetric = {
+  label: string;
+  value: ReactNode;
+  /** Renders the numeral in --portal-signal with a glow — the ONE most
+   *  important metric on the band. At most one per band. */
+  signal?: boolean;
+  /** "consultation live" / "next appointment in Xm" — renders the lime
+   *  live tick. At most one live element per band (§8 motion budget). */
+  live?: ReactNode;
+};
+
+export function CommandBand({
+  context,
+  title,
+  chip,
+  metrics,
+  action,
+  loading = false,
+}: {
+  context: ReactNode;
+  title: ReactNode;
+  chip?: ReactNode;
+  metrics: CommandBandMetric[];
+  action?: ReactNode;
+  loading?: boolean;
+}) {
+  return (
+    <section className={`gh-command-band${loading ? " gh-command-band--skeleton" : ""}`}>
+      <div className="min-w-0">
+        <p className="gh-command-band__context">{context}</p>
+        <h2 className="gh-command-band__title">{title}</h2>
+        {chip ? <span className="gh-command-band__chip">{chip}</span> : null}
+      </div>
+      <div className="gh-command-band__metrics">
+        {metrics.map((metric, index) => (
+          <div key={index} className="gh-command-band__metric">
+            <p className="gh-command-band__metric-label">{metric.label}</p>
+            <p
+              className={`gh-command-band__metric-value${
+                metric.signal ? " gh-command-band__metric-value--signal" : ""
+              }`}
+            >
+              {metric.value}
+            </p>
+            {metric.live ? (
+              <span className="gh-command-band__live">
+                <span aria-hidden className="gh-command-band__live-dot" />
+                {metric.live}
+              </span>
+            ) : null}
+          </div>
+        ))}
+      </div>
+      {action ? <div className="shrink-0">{action}</div> : null}
+    </section>
   );
 }
 
@@ -251,65 +311,18 @@ export function StatCard({
   value: ReactNode;
   hint?: ReactNode;
   icon: ReactNode;
+  /** Neutral = ink glyph (default). Brand/accent tint the glyph with the
+   *  role accent — the tile fill itself always stays the neutral well
+   *  (DESIGN.md §5.6: surfaces are never green, only glyphs signal). */
   tone?: StatTone;
   href?: string;
 }) {
-  const tileBg =
-    tone === "brand"
-      ? "var(--color-brand-primary)"
-      : tone === "accent"
-        ? "var(--color-accent)"
-        : "var(--color-background-soft)";
-  const tileFg =
-    tone === "brand" ? "#B0F122" : tone === "accent" ? "#143B30" : "var(--color-brand-primary)";
-  const tileShadow =
-    tone === "brand"
-      ? "inset 0 1px 0 rgba(255,255,255,0.12)"
-      : tone === "accent"
-        ? "inset 0 1px 0 rgba(255,255,255,0.45)"
-        : "inset 0 1px 0 rgba(255,255,255,0.75)";
+  const tileGlyphColor = tone === "neutral" ? "var(--portal-text)" : "var(--portal-accent-text)";
 
   const inner = (
     <div className="relative">
-      {/* Decorative corner glow — borrowed from 21st premium dashboard
-          cards (two soft circles in the corner, low opacity). Pure CSS
-          radial gradients avoid SVG filter-id collisions when many cards
-          render on the same page. */}
-      <span
-        aria-hidden
-        className="gh-stat-decor"
-        style={{
-          position: "absolute",
-          top: -10,
-          right: -10,
-          width: 140,
-          height: 140,
-          background:
-            "radial-gradient(circle at 70% 30%, rgba(176,241,34,0.18) 0%, transparent 38%), radial-gradient(circle at 50% 50%, rgba(29,75,54,0.12) 0%, transparent 55%)",
-          pointerEvents: "none",
-          borderRadius: 999,
-        }}
-      />
-      {/* Decorative top accent rule — thin gradient line that fades in on hover */}
-      <span
-        aria-hidden
-        className="gh-stat-accent"
-        style={{
-          position: "absolute",
-          top: -20,
-          left: -20,
-          right: -20,
-          height: 2,
-          borderTopLeftRadius: 16,
-          borderTopRightRadius: 16,
-          background:
-            "linear-gradient(90deg, transparent 0%, var(--color-accent) 50%, transparent 100%)",
-          opacity: 0,
-          transition: "opacity 220ms ease-out",
-        }}
-      />
-      <div className="relative flex items-start justify-between" style={{ zIndex: 1 }}>
-        <p className="m-0 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+      <div className="relative flex items-start justify-between">
+        <p className="m-0 text-[10.5px] font-bold uppercase tracking-[0.12em]" style={{ color: "var(--portal-muted)" }}>
           {label}
         </p>
         <span
@@ -317,55 +330,27 @@ export function StatCard({
           style={{
             width: 40,
             height: 40,
-            borderRadius: 10,
-            background: tileBg,
-            color: tileFg,
-            boxShadow: tileShadow,
+            borderRadius: "var(--portal-radius)",
+            background: "var(--portal-well)",
+            color: tileGlyphColor,
           }}
         >
           {icon}
         </span>
       </div>
-      <p
-        className="relative m-0 mt-3"
-        style={{
-          fontFamily: "var(--font-display)",
-          fontSize: 36,
-          fontWeight: 800,
-          letterSpacing: "-0.02em",
-          lineHeight: 1,
-          color: "var(--color-text-primary)",
-          fontVariantNumeric: "tabular-nums",
-        }}
-      >
-        {value}
-      </p>
+      <p className="gh-stat-card__value relative m-0 mt-3">{value}</p>
       {hint ? (
-        <p className="m-0 mt-1.5 text-[12px] font-medium text-[var(--color-text-muted)]">
+        <p className="m-0 mt-1.5 text-[12px] font-medium" style={{ color: "var(--portal-muted)" }}>
           {hint}
         </p>
       ) : null}
+      {href ? <span aria-hidden className="gh-stat-card__underline" /> : null}
     </div>
   );
 
   if (href) {
     return (
-      <Link
-        href={href}
-        className="gh-stat-card block"
-        style={{
-          background: "var(--color-background-page)",
-          border: "1px solid var(--color-border)",
-          borderRadius: 12,
-          boxShadow: "var(--shadow-soft)",
-          padding: 18,
-          textDecoration: "none",
-          color: "inherit",
-          position: "relative",
-          overflow: "hidden",
-          transition: "transform 200ms ease-out, box-shadow 200ms ease-out, border-color 200ms ease-out",
-        }}
-      >
+      <Link href={href} className="gh-stat-card block" style={{ padding: 18, textDecoration: "none", color: "inherit" }}>
         {inner}
       </Link>
     );
@@ -388,36 +373,22 @@ export type PillTone =
   | "pending"
   | "active"
   | "inactive"
-  | "brand";
+  | "brand"
+  | "live";
 
+/** One tone map feeding both Pill and raw `.gh-badge-*` usage (DESIGN.md
+ *  §5.7) — existing semantics preserved: pending→warning, active/published→
+ *  success, inactive→danger, draft/neutral→neutral, brand→brand. `live` is
+ *  the only glowing tone ("happening now" — active consult, online, unread). */
 const PILL_TONES: Record<PillTone, { bg: string; fg: string; bd: string; dot?: string }> = {
-  neutral: { bg: "var(--color-background-soft)", fg: "var(--color-text-body)", bd: "var(--color-border)", dot: "#9A9A9A" },
-  published: {
-    bg: "rgba(143,176,33,0.14)",
-    fg: "var(--color-brand-primary)",
-    bd: "rgba(143,176,33,0.40)",
-    dot: "var(--color-brand-mint)",
-  },
-  draft: { bg: "#F5F5F4", fg: "#78716C", bd: "#E5E5E3", dot: "#A8A29E" },
-  pending: {
-    bg: "#FEF3C7",
-    fg: "#92400E",
-    bd: "#FDE68A",
-    dot: "#D97706",
-  },
-  active: {
-    bg: "#DCFCE7",
-    fg: "#166534",
-    bd: "#BBF7D0",
-    dot: "#22C55E",
-  },
-  inactive: { bg: "#FEE2E2", fg: "#991B1B", bd: "#FECACA", dot: "#EF4444" },
-  brand: {
-    bg: "var(--color-brand-primary)",
-    fg: "#B0F122",
-    bd: "transparent",
-    dot: "#B0F122",
-  },
+  neutral: { bg: "var(--portal-well)", fg: "var(--portal-text-2)", bd: "transparent", dot: "var(--portal-muted)" },
+  published: { bg: "var(--portal-success-soft)", fg: "var(--portal-success-text)", bd: "transparent", dot: "var(--portal-success)" },
+  draft: { bg: "var(--portal-well)", fg: "var(--portal-text-2)", bd: "transparent", dot: "var(--portal-muted)" },
+  pending: { bg: "var(--portal-warning-soft)", fg: "var(--portal-warning-text)", bd: "transparent", dot: "var(--portal-warning)" },
+  active: { bg: "var(--portal-success-soft)", fg: "var(--portal-success-text)", bd: "transparent", dot: "var(--portal-success)" },
+  inactive: { bg: "var(--portal-danger-soft)", fg: "var(--portal-danger-text)", bd: "transparent", dot: "var(--portal-danger)" },
+  brand: { bg: "rgba(29, 75, 54, 0.10)", fg: "var(--portal-primary)", bd: "transparent", dot: "var(--portal-primary)" },
+  live: { bg: "var(--portal-signal-soft)", fg: "var(--portal-text-2)", bd: "transparent", dot: "var(--portal-signal)" },
 };
 
 export function Pill({
@@ -435,7 +406,7 @@ export function Pill({
       className={`gh-pill gh-pill-${tone} inline-flex items-center gap-1.5 whitespace-nowrap`}
       style={{
         padding: "3px 10px",
-        borderRadius: 999,
+        borderRadius: "var(--portal-radius-pill)",
         fontSize: 10.5,
         fontWeight: 800,
         letterSpacing: "0.06em",
@@ -443,7 +414,6 @@ export function Pill({
         background: t.bg,
         color: t.fg,
         border: `1px solid ${t.bd}`,
-        boxShadow: tone === "brand" ? "0 1px 2px rgba(29,75,54,0.20)" : "none",
       }}
     >
       {withDot && t.dot ? (
@@ -454,7 +424,7 @@ export function Pill({
             height: 5,
             borderRadius: 999,
             background: t.dot,
-            boxShadow: `0 0 0 2px ${t.dot}33`,
+            boxShadow: tone === "live" ? "0 0 0 2px var(--portal-signal-glow)" : "none",
           }}
         />
       ) : null}
@@ -470,7 +440,7 @@ export function Pill({
 export function AdminTable({ children }: { children: ReactNode }) {
   return (
     <div className="gh-admin-table-wrap">
-      <table className="gh-admin-table" style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+      <table className="gh-admin-table" style={{ width: "100%", borderCollapse: "collapse", fontSize: 13.5 }}>
         {children}
       </table>
     </div>
@@ -480,12 +450,7 @@ export function AdminTable({ children }: { children: ReactNode }) {
 export function Thead({ children }: { children: ReactNode }) {
   return (
     <thead>
-      <tr
-        style={{
-          background: "var(--color-background-soft)",
-          borderBottom: "1px solid var(--color-border-strong)",
-        }}
-      >
+      <tr style={{ background: "transparent", borderBottom: "1px solid var(--portal-line-strong)" }}>
         {children}
       </tr>
     </thead>
@@ -509,11 +474,12 @@ export function Th({
       style={{
         padding: "13px 16px",
         textAlign: align,
-        fontSize: 10.5,
+        fontSize: 11,
         fontWeight: 800,
-        letterSpacing: "0.12em",
+        letterSpacing: "0.1em",
         textTransform: "uppercase",
-        color: "var(--color-brand-primary)",
+        color: "var(--portal-muted)",
+        fontVariantNumeric: align === "right" ? "tabular-nums" : undefined,
         ...style,
       }}
     >
@@ -537,6 +503,8 @@ export function Td({
         padding: "14px 16px",
         textAlign: align,
         verticalAlign: "middle",
+        color: "var(--portal-text-2)",
+        fontVariantNumeric: align === "right" ? "tabular-nums" : undefined,
         ...style,
       }}
     >
@@ -546,7 +514,7 @@ export function Td({
 }
 
 export function Tr({ children }: { children: ReactNode }) {
-  return <tr className="gh-admin-row" style={{ borderTop: "1px solid var(--color-border)" }}>{children}</tr>;
+  return <tr className="gh-admin-row">{children}</tr>;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -571,14 +539,14 @@ export function IconBtn(props: IconBtnButtonProps | IconBtnLinkProps) {
     width: 32,
     height: 32,
     borderRadius: 9,
-    border: "1px solid var(--color-border)",
-    background: "var(--color-background-page)",
-    color: "var(--color-text-muted)",
+    border: "none",
+    background: "transparent",
+    color: "var(--portal-text)",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
     cursor: "pointer",
-    transition: "color 160ms, border-color 160ms, background 160ms, transform 160ms",
+    transition: "opacity 160ms, background 160ms, box-shadow 160ms, transform 160ms",
   };
 
   if ("href" in props) {
@@ -647,7 +615,7 @@ export function Toggle({
         width: trackWidth,
         height: trackHeight,
         borderRadius: 999,
-        background: on ? "var(--color-brand-primary)" : "var(--color-border-strong)",
+        background: on ? "var(--portal-primary)" : "var(--portal-line-strong)",
         border: "none",
         cursor: "pointer",
         padding,
@@ -665,7 +633,7 @@ export function Toggle({
           width: knobSize,
           height: knobSize,
           borderRadius: "50%",
-          background: "#fff",
+          background: "var(--portal-surface)",
           boxShadow: "0 1px 3px rgba(0,0,0,0.20)",
           transition: "left 180ms ease-out",
         }}
@@ -678,46 +646,16 @@ export function Toggle({
    Btn — pill button with variants
    ───────────────────────────────────────────────────────────── */
 
-export type BtnVariant = "primary" | "secondary" | "soft" | "ghost" | "accent" | "danger";
+export type BtnVariant = "primary" | "secondary" | "soft" | "ghost" | "accent" | "danger" | "on-chrome";
 export type BtnSize = "sm" | "md" | "lg";
 
+/** Sizes only (DESIGN.md §5.8) — variant fills/borders/hovers live in CSS
+ *  (`.gh-portal-shell .gh-btn-*`, scoped so the public site keeps its own
+ *  `.gh-btn-*` styling per hard rule #10). The atom keeps only layout. */
 const BTN_SIZES: Record<BtnSize, { minHeight: number; padding: string; fontSize: number }> = {
-  sm: { minHeight: 36, padding: "0 14px", fontSize: 13 },
-  md: { minHeight: 44, padding: "0 20px", fontSize: 14 },
-  lg: { minHeight: 48, padding: "0 24px", fontSize: 14 },
-};
-
-const BTN_VARIANTS: Record<BtnVariant, CSSProperties> = {
-  primary: {
-    background: "var(--color-brand-primary)",
-    color: "#fff",
-    border: "1px solid var(--color-brand-primary)",
-  },
-  secondary: {
-    background: "var(--color-background-page)",
-    color: "var(--color-brand-primary)",
-    border: "1px solid var(--color-brand-primary)",
-  },
-  soft: {
-    background: "var(--color-background-soft)",
-    color: "var(--color-brand-primary)",
-    border: "1px solid transparent",
-  },
-  ghost: {
-    background: "transparent",
-    color: "var(--color-text-body)",
-    border: "1px solid transparent",
-  },
-  accent: {
-    background: "var(--color-accent)",
-    color: "#143B30",
-    border: "1px solid transparent",
-  },
-  danger: {
-    background: "#FEE2E2",
-    color: "#991B1B",
-    border: "1px solid #FCA5A5",
-  },
+  sm: { minHeight: 32, padding: "0 14px", fontSize: 13 },
+  md: { minHeight: 40, padding: "0 20px", fontSize: 14 },
+  lg: { minHeight: 44, padding: "0 24px", fontSize: 14 },
 };
 
 type BtnBaseProps = {
@@ -726,6 +664,10 @@ type BtnBaseProps = {
   size?: BtnSize;
   iconLeft?: ReactNode;
   iconRight?: ReactNode;
+  /** 16px spinner replaces iconLeft; label stays (§7 states matrix). */
+  loading?: boolean;
+  /** One-shot success border pulse after a save resolves. */
+  success?: boolean;
 };
 
 type BtnButtonProps = BtnBaseProps &
@@ -739,10 +681,10 @@ type BtnLinkProps = BtnBaseProps &
 export function Btn(props: BtnButtonProps | BtnLinkProps) {
   const variant = props.variant ?? "primary";
   const size = props.size ?? "md";
-  const { iconLeft, iconRight, children } = props;
+  const { iconLeft, iconRight, children, loading, success } = props;
   const inner = (
     <>
-      {iconLeft}
+      {loading ? <span aria-hidden className="gh-btn__spinner" /> : iconLeft}
       <span className="whitespace-nowrap">{children}</span>
       {iconRight}
     </>
@@ -752,27 +694,25 @@ export function Btn(props: BtnButtonProps | BtnLinkProps) {
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    borderRadius: 999,
     fontWeight: 700,
     lineHeight: 1,
     fontFamily: "inherit",
-    boxShadow: "var(--shadow-soft)",
-    transition: "all 180ms ease-out",
     whiteSpace: "nowrap",
-    cursor: "pointer",
+    cursor: loading ? "default" : "pointer",
     textDecoration: "none",
     ...BTN_SIZES[size],
-    ...BTN_VARIANTS[variant],
   };
+  const stateClass = success ? " gh-btn--success-pulse" : "";
 
   if ("href" in props) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { variant: _v, size: _s, iconLeft: _il, iconRight: _ir, children: _c, href, style, className, ...rest } = props;
+    const { variant: _v, size: _s, iconLeft: _il, iconRight: _ir, children: _c, loading: _l, success: _sc, href, style, className, ...rest } = props;
     return (
       <Link
         href={href}
-        className={`gh-btn gh-btn-${variant} ${className ?? ""}`}
+        className={`gh-btn gh-btn-${variant}${stateClass} ${className ?? ""}`}
         style={{ ...baseStyle, ...style }}
+        aria-busy={loading || undefined}
         {...rest}
       >
         {inner}
@@ -780,12 +720,14 @@ export function Btn(props: BtnButtonProps | BtnLinkProps) {
     );
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { variant: _v, size: _s, iconLeft: _il, iconRight: _ir, children: _c, style, type, className, ...rest } = props;
+  const { variant: _v, size: _s, iconLeft: _il, iconRight: _ir, children: _c, loading: _l, success: _sc, style, type, className, disabled, ...rest } = props;
   return (
     <button
       type={type ?? "button"}
-      className={`gh-btn gh-btn-${variant} ${className ?? ""}`}
+      className={`gh-btn gh-btn-${variant}${stateClass} ${className ?? ""}`}
       style={{ ...baseStyle, ...style }}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
       {...rest}
     >
       {inner}

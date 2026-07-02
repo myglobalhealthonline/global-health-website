@@ -20,8 +20,8 @@ export function TimezoneSelect({ value, options, onChange, label = "View in" }: 
   if (options.length <= 1) return null;
   return (
     <label className="inline-flex items-center gap-2 text-sm">
-      <Globe className="size-4 text-[var(--color-text-muted)]" aria-hidden />
-      <span className="text-xs font-semibold text-[var(--color-text-muted)]">{label}</span>
+      <Globe className="size-4" style={{ color: "var(--portal-muted)" }} aria-hidden />
+      <span className="text-xs font-semibold" style={{ color: "var(--portal-muted)" }}>{label}</span>
       <select
         className="gh-select h-9 min-h-0 py-0 text-sm"
         value={value}

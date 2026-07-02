@@ -73,14 +73,18 @@ export function NotificationPopover({
         aria-label="Notifications"
         aria-expanded={open}
         aria-haspopup="menu"
-        className="gh-notification-button relative inline-flex size-9 items-center justify-center rounded-[10px] border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-muted)] transition hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)]"
+        className="gh-notification-button relative inline-flex size-9 items-center justify-center rounded-full transition hover:bg-white/5"
+        style={{ color: "var(--portal-chrome-text)" }}
       >
         <Bell className="size-4" aria-hidden />
         {unreadCount > 0 ? (
           <span
             aria-hidden
-            className="absolute right-[6px] top-[6px] size-[6px] rounded-full ring-2 ring-[var(--color-background-page)]"
-            style={{ background: "var(--color-brand-accent)" }}
+            className="absolute right-[6px] top-[6px] size-[6px] rounded-full"
+            style={{
+              background: "var(--portal-signal)",
+              boxShadow: "0 0 0 2px var(--portal-signal-glow)",
+            }}
           />
         ) : null}
         {unreadCount > 0 ? (
@@ -98,22 +102,33 @@ export function NotificationPopover({
           />
           <div
             role="menu"
-            className="gh-notification-popover absolute right-0 top-[calc(100%+8px)] z-40 w-[min(360px,calc(100vw-32px))] rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-2"
-            style={{ boxShadow: "var(--shadow-elevated)" }}
+            className="gh-notification-popover absolute right-0 top-[calc(100%+8px)] z-40 w-[min(360px,calc(100vw-32px))] p-2"
+            style={{
+              borderRadius: "var(--portal-radius-xl)",
+              border: "1px solid var(--portal-line)",
+              background: "var(--portal-surface-elevated)",
+              boxShadow: "var(--portal-shadow-modal)",
+            }}
           >
-            <div className="gh-notification-popover__header flex items-center justify-between border-b border-[var(--color-border)] px-2 pb-2">
-              <span className="text-sm font-bold text-[var(--color-text-primary)]">
+            <div
+              className="gh-notification-popover__header flex items-center justify-between px-2 pb-2"
+              style={{ borderBottom: "1px solid var(--portal-line)" }}
+            >
+              <span className="text-sm font-bold" style={{ color: "var(--portal-text)" }}>
                 Notifications
               </span>
               {unreadCount > 0 ? (
-                <span className="text-[11px] font-semibold text-[var(--color-text-muted)]">
+                <span className="text-[11px] font-semibold" style={{ color: "var(--portal-muted)" }}>
                   {unreadCount} unread
                 </span>
               ) : null}
             </div>
 
             {recent.length === 0 ? (
-              <p className="gh-notification-popover__empty px-3 py-6 text-center text-sm text-[var(--color-text-muted)]">
+              <p
+                className="gh-notification-popover__empty px-3 py-6 text-center text-sm"
+                style={{ color: "var(--portal-muted)" }}
+              >
                 {emptyMessage}
               </p>
             ) : (
@@ -121,23 +136,37 @@ export function NotificationPopover({
                 {recent.map((n) => {
                   const unread = n.readAt === null;
                   const inner = (
-                    <span className="flex flex-col gap-0.5">
-                      <span
-                        className={`text-sm ${
-                          unread
-                            ? "font-bold text-[var(--color-text-primary)]"
-                            : "font-semibold text-[var(--color-text-muted)]"
-                        }`}
-                      >
-                        {n.title}
-                      </span>
-                      {n.body ? (
-                        <span className="line-clamp-2 text-[12.5px] text-[var(--color-text-muted)]">
-                          {n.body}
+                    <span className="flex items-start gap-2">
+                      {unread ? (
+                        <span
+                          aria-hidden
+                          className="mt-[6px] size-[5px] shrink-0 rounded-full"
+                          style={{ background: "var(--portal-signal)" }}
+                        />
+                      ) : (
+                        <span aria-hidden className="mt-[6px] size-[5px] shrink-0" />
+                      )}
+                      <span className="flex min-w-0 flex-col gap-0.5">
+                        <span
+                          className="text-sm"
+                          style={{
+                            fontWeight: unread ? 700 : 600,
+                            color: unread ? "var(--portal-text)" : "var(--portal-muted)",
+                          }}
+                        >
+                          {n.title}
                         </span>
-                      ) : null}
-                      <span className="text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">
-                        {timeAgo(n.createdAt)}
+                        {n.body ? (
+                          <span className="line-clamp-2 text-[12.5px]" style={{ color: "var(--portal-muted)" }}>
+                            {n.body}
+                          </span>
+                        ) : null}
+                        <span
+                          className="text-[10px] uppercase tracking-wider"
+                          style={{ color: "var(--portal-muted)" }}
+                        >
+                          {timeAgo(n.createdAt)}
+                        </span>
                       </span>
                     </span>
                   );
@@ -147,12 +176,26 @@ export function NotificationPopover({
                         <Link
                           href={n.href}
                           onClick={() => setOpen(false)}
-                          className="gh-notification-popover__item block rounded-md px-3 py-2 hover:bg-[var(--color-background-soft)]"
+                          className="gh-notification-popover__item block rounded-[var(--portal-radius-sm)] px-3 py-2 hover:bg-[var(--portal-well)]"
+                          style={{
+                            background: unread
+                              ? "color-mix(in srgb, var(--portal-signal-soft) 50%, transparent)"
+                              : "transparent",
+                          }}
                         >
                           {inner}
                         </Link>
                       ) : (
-                        <div className="gh-notification-popover__item px-3 py-2">{inner}</div>
+                        <div
+                          className="gh-notification-popover__item rounded-[var(--portal-radius-sm)] px-3 py-2"
+                          style={{
+                            background: unread
+                              ? "color-mix(in srgb, var(--portal-signal-soft) 50%, transparent)"
+                              : "transparent",
+                          }}
+                        >
+                          {inner}
+                        </div>
                       )}
                     </li>
                   );
@@ -164,7 +207,8 @@ export function NotificationPopover({
               <Link
                 href={viewAllHref}
                 onClick={() => setOpen(false)}
-                className="mt-1 block border-t border-[var(--color-border)] py-2 text-center text-[12px] font-bold text-[var(--color-brand-primary)] hover:underline"
+                className="mt-2 block rounded-[var(--portal-radius)] py-2 text-center text-[12px] font-bold"
+                style={{ background: "var(--portal-mint-soft)", color: "var(--portal-mint-text)" }}
               >
                 View all
               </Link>

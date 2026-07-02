@@ -50,15 +50,19 @@ export function MonthCalendar({
   return (
     <div className="gh-calendar-panel gh-card overflow-hidden p-0">
       {/* Header — month label + nav */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--color-border)] px-4 py-3">
-        <h2 className="text-base font-bold text-[var(--color-text-primary)]">
+      <div
+        className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
+        style={{ borderBottom: "1px solid var(--portal-line)" }}
+      >
+        <h2 className="text-base font-bold" style={{ color: "var(--portal-text)" }}>
           {monthLabel(year, month)}
         </h2>
         <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={onToday}
-            className="rounded-[999px] border border-[var(--color-border)] px-3 py-1.5 text-xs font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-border-strong)] hover:bg-[var(--color-background-soft)]"
+            className="rounded-[999px] px-3 py-1.5 text-xs font-semibold transition hover:bg-[var(--portal-well)]"
+            style={{ border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
           >
             Today
           </button>
@@ -66,7 +70,8 @@ export function MonthCalendar({
             type="button"
             onClick={onPrevMonth}
             aria-label="Previous month"
-            className="inline-flex size-8 items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-text-primary)] transition hover:border-[var(--color-border-strong)] hover:bg-[var(--color-background-soft)]"
+            className="inline-flex size-8 items-center justify-center rounded-full transition hover:bg-[var(--portal-well)]"
+            style={{ border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
           >
             <ChevronLeft className="size-4" aria-hidden />
           </button>
@@ -74,7 +79,8 @@ export function MonthCalendar({
             type="button"
             onClick={onNextMonth}
             aria-label="Next month"
-            className="inline-flex size-8 items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-text-primary)] transition hover:border-[var(--color-border-strong)] hover:bg-[var(--color-background-soft)]"
+            className="inline-flex size-8 items-center justify-center rounded-full transition hover:bg-[var(--portal-well)]"
+            style={{ border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
           >
             <ChevronRight className="size-4" aria-hidden />
           </button>
@@ -82,11 +88,15 @@ export function MonthCalendar({
       </div>
 
       {/* Weekday row */}
-      <div className="grid grid-cols-7 border-b border-[var(--color-border)] bg-[var(--color-background-soft)]">
+      <div
+        className="grid grid-cols-7"
+        style={{ borderBottom: "1px solid var(--portal-line)" }}
+      >
         {WEEKDAY_LABELS.map((d) => (
           <div
             key={d}
-            className="px-2 py-2 text-center text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]"
+            className="px-2 py-2 text-center text-[10px] font-bold uppercase tracking-[0.12em]"
+            style={{ color: "var(--portal-muted)" }}
           >
             {d}
           </div>
@@ -106,20 +116,24 @@ export function MonthCalendar({
               key={cell.key}
               type="button"
               onClick={() => onSelectDay(cell.key)}
-              className={`gh-calendar-day relative flex min-h-[68px] flex-col items-start gap-1 border-b border-r border-[var(--color-border)] p-1 text-left transition sm:min-h-[92px] sm:p-1.5 ${
-                cell.inMonth
-                  ? "bg-[var(--color-background-page)]"
-                  : "gh-calendar-day-outside bg-[var(--color-background-soft)]"
-              } ${isSelected ? "gh-calendar-day-selected ring-2 ring-inset ring-[var(--color-brand-primary)]" : "hover:bg-[var(--color-background-soft)]"}`}
+              className={`gh-calendar-day relative flex min-h-[68px] flex-col items-start gap-1 p-1 text-left transition sm:min-h-[92px] sm:p-1.5 ${
+                cell.inMonth ? "" : "gh-calendar-day-outside"
+              } ${isSelected ? "gh-calendar-day-selected" : ""}`}
+              style={{
+                borderBottom: "1px solid var(--portal-line-soft)",
+                borderRight: "1px solid var(--portal-line-soft)",
+                background: cell.inMonth ? "var(--portal-surface)" : "var(--portal-well)",
+              }}
             >
               <span
-                className={`inline-flex size-6 items-center justify-center rounded-full text-xs font-semibold ${
-                  isToday
-                    ? "bg-[var(--color-brand-primary)] text-white"
-                    : cell.inMonth
-                      ? "text-[var(--color-text-primary)]"
-                      : "text-[var(--color-text-muted)]"
-                }`}
+                className={`gh-calendar-day-number inline-flex size-6 items-center justify-center rounded-full text-xs font-semibold ${
+                  isToday ? "gh-calendar-day-number--today" : ""
+                } ${isSelected ? "gh-calendar-day-number--selected" : ""}`}
+                style={
+                  !isToday && !isSelected
+                    ? { color: cell.inMonth ? "var(--portal-text)" : "var(--portal-muted)" }
+                    : undefined
+                }
               >
                 {cell.day}
               </span>
@@ -127,25 +141,37 @@ export function MonthCalendar({
               {hasAny ? (
                 <span className="mt-auto flex w-full flex-wrap gap-1">
                   {consults > 0 ? (
-                    <span className="inline-flex max-w-full items-center truncate rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold leading-none text-emerald-800">
+                    <span
+                      className="inline-flex max-w-full items-center truncate rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none"
+                      style={{ background: "var(--portal-success-soft)", color: "var(--portal-success-text)" }}
+                    >
                       {consults} consult{consults > 1 ? "s" : ""}
                     </span>
                   ) : null}
                   {booked > 0 ? (
-                    <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-blue-700">
-                      <span className="size-1.5 rounded-full bg-blue-500" />
+                    <span
+                      className="inline-flex items-center gap-0.5 text-[10px] font-semibold"
+                      style={{ color: "var(--portal-info-text)" }}
+                    >
+                      <span className="size-1.5 rounded-full" style={{ background: "var(--portal-info)" }} />
                       {booked}
                     </span>
                   ) : null}
                   {open > 0 ? (
-                    <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700">
-                      <span className="size-1.5 rounded-full bg-emerald-500" />
+                    <span
+                      className="inline-flex items-center gap-0.5 text-[10px] font-semibold"
+                      style={{ color: "var(--portal-success-text)" }}
+                    >
+                      <span className="size-1.5 rounded-full" style={{ background: "var(--portal-success)" }} />
                       {open}
                     </span>
                   ) : null}
                   {blocked > 0 ? (
-                    <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-rose-600">
-                      <span className="size-1.5 rounded-full bg-rose-400" />
+                    <span
+                      className="inline-flex items-center gap-0.5 text-[10px] font-semibold"
+                      style={{ color: "var(--portal-danger-text)" }}
+                    >
+                      <span className="size-1.5 rounded-full" style={{ background: "var(--portal-danger)" }} />
                       {blocked}
                     </span>
                   ) : null}

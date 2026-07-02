@@ -96,6 +96,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   return (
     <PortalShell
       user={{ fullName: user.fullName, email: user.email, role: user.role }}
+      portalKey="patient"
       sections={sections}
       portalLabel={a.portal.label}
       sectionLabel={a.portal.sectionLabel}

@@ -28,7 +28,7 @@ import {
   AdminCard,
   AdminTable,
   Btn,
-  PageHeader,
+  CommandBand,
   Pill,
   SectionHeader,
   StatCard,
@@ -222,41 +222,38 @@ export default async function AdminDashboardPage() {
 
   return (
     <>
-      <PageHeader
-        className="gh-admin-area-hero gh-admin-area-dashboard gh-admin-dashboard-hero"
-        eyebrow={activeCountry ? `Scope · ${activeCountry.name}` : "Scope · All countries"}
+      <CommandBand
+        context={activeCountry ? `Scope · ${activeCountry.name}` : "Scope · All countries"}
         title={`${greeting()}, ${firstName}`}
-        description={
-          activeCountry
-            ? `Activity scoped to ${activeCountry.name}. Switch the country in the top-right to change scope.`
-            : "Activity across all countries. Pick a country in the top-right to drill in."
-        }
-        actions={
-          <>
+        metrics={[
+          { label: "Doctors live", value: doctorsActive },
+          { label: "Bookings pending", value: pendingAppointments, signal: pendingAppointments > 0 },
+          { label: "Approvals", value: pendingApprovals },
+        ]}
+        action={
+          <div className="flex flex-wrap items-center gap-2.5">
             <Btn
               href={activeCountry ? `/${activeCountry.slug}` : "/"}
-              variant="secondary"
-              size="md"
+              variant="on-chrome"
+              size="sm"
               iconLeft={<Eye className="size-3.5" aria-hidden />}
             >
               View public site
             </Btn>
             <Btn
               href="/admin/pages/new"
-              variant="primary"
-              size="md"
+              variant="on-chrome"
+              size="sm"
               iconLeft={<Plus className="size-3.5" aria-hidden />}
             >
               New page
             </Btn>
-          </>
+          </div>
         }
       />
 
       {/* Stat strip — 5 up */}
-      <section
-        className="gh-admin-area-hero gh-admin-area-dashboard gh-admin-dashboard-stats mb-5 grid gap-3"
-      >
+      <section className="gh-admin-dashboard-stats mb-5 grid gap-3">
         <StatCard
           label="Active countries"
           value={countries.filter((c) => c.isActive).length}
@@ -318,7 +315,7 @@ export default async function AdminDashboardPage() {
       </section>
 
       {/* Two-column body: activity + quick actions */}
-      <div className="gh-admin-area-hero gh-admin-area-dashboard gh-admin-dashboard-body grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+      <div className="gh-admin-dashboard-body grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <AdminCard padding={0} className="overflow-hidden">
           <SectionHeader
             title="Recent activity"
@@ -351,13 +348,13 @@ export default async function AdminDashboardPage() {
               </p>
             </div>
           ) : (
-            <ul className="gh-admin-area-hero gh-admin-area-dashboard gh-admin-activity-list m-0 list-none p-0">
+            <ul className="gh-admin-activity-list m-0 list-none p-0">
               {recentActivity.map((row, i) => {
                 const isLast = i === recentActivity.length - 1;
                 return (
                   <li
                     key={row.id}
-                    className="gh-admin-area-hero gh-admin-area-dashboard gh-admin-activity-row flex items-center gap-3.5 px-5 py-3.5"
+                    className="gh-admin-activity-row flex items-center gap-3.5 px-5 py-3.5"
                     style={{
                       borderBottom: isLast ? "none" : "1px solid var(--color-border)",
                     }}
@@ -405,20 +402,20 @@ export default async function AdminDashboardPage() {
             title="Quick actions"
             description="Shortcuts to common tasks"
           />
-          <div className="gh-admin-area-hero gh-admin-area-dashboard gh-admin-quick-actions grid gap-2 p-4">
+          <div className="gh-admin-quick-actions grid gap-2 p-4">
             {quickActions.map((a) => {
               const Icon = a.icon;
               return (
                 <Link
                   key={a.label}
                   href={a.href}
-                  className="gh-admin-area-hero gh-admin-area-dashboard gh-admin-quick-action gh-quick-action group flex items-center gap-3 transition-all duration-200"
+                  className="gh-admin-quick-action gh-quick-action group flex items-center gap-3 transition-all duration-200"
                   style={{
                     padding: 14,
                     paddingLeft: 18,
-                    borderRadius: 8,
-                    border: "1px solid var(--color-border)",
-                    background: "var(--color-background-page)",
+                    borderRadius: "var(--portal-radius)",
+                    border: "1px solid var(--portal-line)",
+                    background: "var(--portal-surface)",
                     textDecoration: "none",
                   }}
                 >
@@ -428,24 +425,23 @@ export default async function AdminDashboardPage() {
                       width: 38,
                       height: 38,
                       borderRadius: 8,
-                      background: "var(--color-accent)",
-                      color: "#143B30",
-                      boxShadow:
-                        "0 4px 12px rgba(176,241,34,0.28), inset 0 1px 0 rgba(255,255,255,0.4)",
+                      background: "var(--portal-well)",
+                      color: "var(--portal-accent-text)",
                     }}
                   >
                     <Icon className="size-4" aria-hidden />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="m-0 text-[13px] font-bold text-[var(--color-text-primary)]">
+                    <p className="m-0 text-[13px] font-bold" style={{ color: "var(--portal-text)" }}>
                       {a.label}
                     </p>
-                    <p className="m-0 mt-0.5 text-[12px] text-[var(--color-text-muted)]">
+                    <p className="m-0 mt-0.5 text-[12px]" style={{ color: "var(--portal-muted)" }}>
                       {a.sub}
                     </p>
                   </div>
                   <ChevronRight
-                    className="size-3.5 shrink-0 text-[var(--color-text-muted)] transition group-hover:translate-x-0.5 group-hover:text-[var(--color-brand-primary)]"
+                    className="size-3.5 shrink-0 transition group-hover:translate-x-0.5"
+                    style={{ color: "var(--portal-muted)" }}
                     aria-hidden
                   />
                 </Link>
@@ -455,11 +451,10 @@ export default async function AdminDashboardPage() {
         </AdminCard>
       </div>
 
-      {/* Country health — only shown when no specific country is scoped.
-          One row per active country with at-a-glance counts. Clicking a flag
-          jumps into that country's pages list. */}
-      {!activeCountry && countryRows.length > 0 ? (
-        <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-dashboard gh-admin-country-health mt-4 overflow-hidden">
+      {/* Country health — one row per active country with at-a-glance
+          counts. Clicking a flag jumps into that country's pages list. */}
+      {countryRows.length > 0 ? (
+        <AdminCard padding={0} className="gh-admin-country-health mt-4 overflow-hidden">
           <SectionHeader
             title="Country health"
             description="Per-country counts. Click a row to scope the portal to that country."

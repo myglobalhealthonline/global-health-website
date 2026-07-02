@@ -118,6 +118,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
   return (
     <PortalShell
       user={{ fullName: user.fullName, email: user.email, role: user.role }}
+      portalKey="doctor"
       sections={sections}
       portalLabel="Doctor portal"
       sectionLabel="Global"
