@@ -1,4 +1,4 @@
-# Stripe multi-account (PT / ES / CZ sandboxes + Ireland) & Portugal InvoiceExpress
+# Stripe multi-account (PT / CZ sandboxes + Ireland) & Portugal InvoiceExpress
 
 ## What the code does now
 
@@ -7,9 +7,8 @@ One-off consultation/order payments pick a Stripe account by the row's `countryC
 | Country code        | Stripe account        | Env pair                                          |
 |---------------------|-----------------------|---------------------------------------------------|
 | `pt`                | Portugal sandbox      | `STRIPE_SECRET_KEY_PT` / `STRIPE_WEBHOOK_SECRET_PT` |
-| `es`, `sp`          | Spain sandbox         | `STRIPE_SECRET_KEY_ES` / `STRIPE_WEBHOOK_SECRET_ES` |
 | `cz`                | Czech sandbox         | `STRIPE_SECRET_KEY_CZ` / `STRIPE_WEBHOOK_SECRET_CZ` |
-| everything else (`ie`, `rm`/`ro`, `br`, unknown) | Ireland (default) | `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` |
+| everything else (`ie`, `es`/`sp`, `rm`/`ro`, `br`, unknown) | Ireland (default) | `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` |
 
 - Routing logic: `resolveStripeAccount()` in [src/lib/stripe/client.ts](../src/lib/stripe/client.ts).
 - A blank sandbox key falls back to the Ireland key — a half-configured sandbox never 503s a market.
@@ -25,7 +24,8 @@ One-off consultation/order payments pick a Stripe account by the row's `countryC
 
 Stripe **Sandboxes** are isolated test environments under one org.
 
-Do this **once per market** (PT, ES, CZ) and confirm the existing Ireland account:
+Do this **once per market** (PT, CZ) and confirm the existing Ireland account
+(Spain uses the Ireland account — no separate sandbox):
 
 1. **Create the sandbox**
    Dashboard → account switcher (top-left) → **Sandboxes** → **Create sandbox** →
@@ -51,7 +51,7 @@ Do this **once per market** (PT, ES, CZ) and confirm the existing Ireland accoun
 
 4. **Confirm currency / payment methods**
    Settings → payments. Make sure the account's currency matches what the app charges
-   that country (EUR for PT/ES/IE). **Czech: confirm CZK vs EUR** — the code lowercases
+   that country (EUR for PT/IE). **Czech: confirm CZK vs EUR** — the code lowercases
    `order.currencyCode` and defaults EUR, so CZ orders must carry the intended `currencyCode`
    or the CZ sandbox must accept EUR.
 
@@ -66,8 +66,6 @@ Do this **once per market** (PT, ES, CZ) and confirm the existing Ireland accoun
    ```
    STRIPE_SECRET_KEY_PT="sk_test_…"
    STRIPE_WEBHOOK_SECRET_PT="whsec_…"
-   STRIPE_SECRET_KEY_ES="sk_test_…"
-   STRIPE_WEBHOOK_SECRET_ES="whsec_…"
    STRIPE_SECRET_KEY_CZ="sk_test_…"
    STRIPE_WEBHOOK_SECRET_CZ="whsec_…"
    ```

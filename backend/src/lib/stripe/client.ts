@@ -11,9 +11,8 @@ type StripeInstance = InstanceType<typeof Stripe>;
  *
  * One-off consultation/order payments route to a per-country Stripe account:
  *   - Portugal (pt)      → PT sandbox
- *   - Spain    (es/sp)   → ES sandbox
  *   - Czech    (cz)      → CZ sandbox
- *   - everything else    → Ireland (the default account)
+ *   - everything else (incl. Spain es/sp) → Ireland (the default account)
  *
  * Ireland is the DEFAULT account and reuses the original
  * STRIPE_SECRET_KEY / STRIPE_WEBHOOK_SECRET env vars, so every call-site that
@@ -34,7 +33,7 @@ type StripeInstance = InstanceType<typeof Stripe>;
  * https://dashboard.stripe.com/webhooks (URL is the same for all accounts).
  */
 
-export type StripeAccountId = "ie" | "pt" | "es" | "cz";
+export type StripeAccountId = "ie" | "pt" | "cz";
 
 interface StripeAccountConfig {
   secretKey?: string;
@@ -51,11 +50,6 @@ function accountConfig(id: StripeAccountId): StripeAccountConfig {
       return {
         secretKey: env.STRIPE_SECRET_KEY_PT ?? env.STRIPE_SECRET_KEY,
         webhookSecret: env.STRIPE_WEBHOOK_SECRET_PT,
-      };
-    case "es":
-      return {
-        secretKey: env.STRIPE_SECRET_KEY_ES ?? env.STRIPE_SECRET_KEY,
-        webhookSecret: env.STRIPE_WEBHOOK_SECRET_ES,
       };
     case "cz":
       return {
@@ -79,12 +73,10 @@ export function resolveStripeAccount(countryCode?: string | null): StripeAccount
   switch (countryCode?.trim().toLowerCase()) {
     case "pt":
       return "pt";
-    case "es":
-    case "sp":
-      return "es";
     case "cz":
       return "cz";
     default:
+      // Everything else — Ireland, Romania, Spain (es/sp), Brazil, unknown.
       return "ie";
   }
 }
@@ -104,7 +96,7 @@ export function isStripeWebhookConfigured(countryCode?: string | null): boolean 
  * matching secret identifies which account sent the event.
  */
 export function getConfiguredWebhookSecrets(): string[] {
-  const ids: StripeAccountId[] = ["ie", "pt", "es", "cz"];
+  const ids: StripeAccountId[] = ["ie", "pt", "cz"];
   const secrets = new Set<string>();
   for (const id of ids) {
     const secret = accountConfig(id).webhookSecret;

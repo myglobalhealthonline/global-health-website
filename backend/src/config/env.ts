@@ -96,8 +96,6 @@ const envSchema = z.object({
    *  the sandbox keys are pasted in. */
   STRIPE_SECRET_KEY_PT: optionalSecret,
   STRIPE_WEBHOOK_SECRET_PT: optionalSecret,
-  STRIPE_SECRET_KEY_ES: optionalSecret,
-  STRIPE_WEBHOOK_SECRET_ES: optionalSecret,
   STRIPE_SECRET_KEY_CZ: optionalSecret,
   STRIPE_WEBHOOK_SECRET_CZ: optionalSecret,
 

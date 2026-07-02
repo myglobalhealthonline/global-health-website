@@ -9,16 +9,13 @@ describe("resolveStripeAccount", () => {
     assert.equal(resolveStripeAccount(" Pt "), "pt");
   });
 
-  it("routes Spain (es and legacy sp) to the Spain account", () => {
-    assert.equal(resolveStripeAccount("es"), "es");
-    assert.equal(resolveStripeAccount("sp"), "es");
-  });
-
   it("routes Czech to its own account", () => {
     assert.equal(resolveStripeAccount("cz"), "cz");
   });
 
-  it("routes everything else (incl. Ireland, Romania, Brazil, unknown) to Ireland", () => {
+  it("routes everything else (incl. Spain, Ireland, Romania, Brazil, unknown) to Ireland", () => {
+    assert.equal(resolveStripeAccount("es"), "ie");
+    assert.equal(resolveStripeAccount("sp"), "ie");
     assert.equal(resolveStripeAccount("ie"), "ie");
     assert.equal(resolveStripeAccount("rm"), "ie");
     assert.equal(resolveStripeAccount("ro"), "ie");
