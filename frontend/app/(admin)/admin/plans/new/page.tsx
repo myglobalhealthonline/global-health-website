@@ -46,7 +46,6 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
     return (
       <>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-plans"
           eyebrow="Subscriptions"
           title="New plan"
           description="Choose a country first — plans are configured per country."
@@ -57,7 +56,7 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
           }
         />
         <AdminCard>
-          <form method="get" className="gh-admin-area-hero gh-admin-area-plans gh-admin-plan-country-form flex flex-wrap items-end gap-3">
+          <form method="get" className="gh-admin-plan-country-form flex flex-wrap items-end gap-3">
             <label className="flex flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select name="countryId" className="gh-select min-w-[240px]" required defaultValue="">
@@ -84,7 +83,6 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
     return (
       <>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-plans"
           eyebrow="Subscriptions"
           title="New plan — choose a tier"
           description="Pick the plan tier. This sets the defaults and which sections appear, and can't be changed after the plan is created."
@@ -95,7 +93,7 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
           }
         />
         <AdminCard>
-          <form method="get" className="gh-admin-area-hero gh-admin-area-plans gh-admin-plan-type-form flex flex-col gap-3">
+          <form method="get" className="gh-admin-plan-type-form flex flex-col gap-3">
             <input type="hidden" name="countryId" value={countryId} />
             {PLAN_TYPES.map((t) => (
               <button
@@ -103,7 +101,7 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
                 type="submit"
                 name="planType"
                 value={t.value}
-                className="gh-admin-area-hero gh-admin-area-plans gh-admin-plan-type-card flex flex-col items-start gap-0.5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-4 py-3 text-left transition-colors hover:border-[var(--color-brand-accent)] hover:bg-[var(--color-surface-2)]"
+                className="gh-admin-plan-type-card flex flex-col items-start gap-0.5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-4 py-3 text-left transition-colors hover:border-[var(--color-brand-accent)] hover:bg-[var(--color-surface-2)]"
               >
                 <span className="font-semibold text-[var(--color-text-primary)]">{t.label}</span>
                 <span className="text-[13px] text-[var(--color-text-muted)]">{t.blurb}</span>
@@ -140,7 +138,6 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
         <ArrowLeft className="size-3.5" /> Back to plans
       </Link>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-plans"
         eyebrow="Subscriptions"
         title="New plan — basics & price"
         description="Fill in the name, price, and what's included. Billing is set up automatically when you save. You'll add doctor visits, perks, and card text on the next screen."
@@ -154,9 +151,9 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
         <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">{createError}</p>
       ) : null}
       <AdminCard>
-        <form action={createPlanAction} className="gh-admin-area-hero gh-admin-area-plans gh-admin-plan-form flex flex-col gap-8">
+        <form action={createPlanAction} className="gh-admin-plan-form flex flex-col gap-8">
           <PlanFields countries={countries} pinnedCountryId={countryId} planType={planType} />
-          <div className="gh-admin-area-hero gh-admin-area-plans gh-admin-plan-actions flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
+          <div className="gh-admin-plan-actions flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Create plan
             </button>

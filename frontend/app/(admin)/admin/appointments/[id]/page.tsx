@@ -328,7 +328,7 @@ export default async function AdminAppointmentDetailPage({
       ) : null}
 
       {manualBooking ? (
-        <div className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-recovery mb-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border-strong)] bg-[var(--color-background-soft)] px-4 py-3 text-sm">
+        <div className="gh-admin-appointment-recovery mb-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border-strong)] bg-[var(--color-background-soft)] px-4 py-3 text-sm">
           <p className="font-bold text-[var(--color-text-primary)]">
             Manual booking created.
             {manualBooking.emailQueued === "1"
@@ -381,14 +381,14 @@ export default async function AdminAppointmentDetailPage({
         </div>
       ) : null}
 
-      <div className="gh-admin-area-hero gh-admin-area-appointments gh-admin-detail-layout gh-admin-appointment-workspace">
+      <div className="gh-admin-detail-layout gh-admin-appointment-workspace">
         <div className="grid gap-4">
           <AdminCard>
-            <h3 className="gh-admin-area-hero gh-admin-area-appointments gh-admin-card-title">Patient details</h3>
+            <h3 className="gh-admin-card-title">Patient details</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Contact info captured at booking.
             </p>
-            <div className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-detail-grid">
+            <div className="gh-admin-appointment-detail-grid">
               <FieldRow label="Full name" value={appointment.fullName} />
               <FieldRow label="Email" value={appointment.email} />
               <FieldRow
@@ -438,7 +438,7 @@ export default async function AdminAppointmentDetailPage({
           </AdminCard>
 
           <AdminCard>
-            <h3 className="gh-admin-area-hero gh-admin-area-appointments gh-admin-card-title">Notes</h3>
+            <h3 className="gh-admin-card-title">Notes</h3>
             <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed text-[var(--color-text-body)]">
               {appointment.notes ?? "No notes provided."}
             </p>
@@ -447,7 +447,7 @@ export default async function AdminAppointmentDetailPage({
 
         <div className="grid gap-4 self-start">
           <AdminCard>
-            <h3 className="gh-admin-area-hero gh-admin-area-appointments gh-admin-card-title">Status</h3>
+            <h3 className="gh-admin-card-title">Status</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               {terminal
                 ? "This booking request is closed. Status updates are disabled."
@@ -457,7 +457,7 @@ export default async function AdminAppointmentDetailPage({
             </p>
 
             {canUpdate ? (
-              <form action={updateStatusAction} className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-side-form">
+              <form action={updateStatusAction} className="gh-admin-appointment-side-form">
                 <label className="flex flex-col gap-1.5">
                   <span className="gh-field-label">Move status to</span>
                   <select
@@ -483,7 +483,7 @@ export default async function AdminAppointmentDetailPage({
           {/* Patient ↔ admin chat for this appointment. Polling-based;
               only loads when this page is in view. */}
           <AdminCard>
-            <h3 className="gh-admin-area-hero gh-admin-area-appointments gh-admin-card-title">Patient chat</h3>
+            <h3 className="gh-admin-card-title">Patient chat</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Pre-consult messages. The patient sees replies on /account/bookings.
             </p>
@@ -494,7 +494,7 @@ export default async function AdminAppointmentDetailPage({
               patient-visible. Same thread surface as on the doctor portal
               at /doctor/appointments/[id]. */}
           <AdminCard>
-            <h3 className="gh-admin-area-hero gh-admin-area-appointments gh-admin-card-title">Internal notes (doctor ↔ admin)</h3>
+            <h3 className="gh-admin-card-title">Internal notes (doctor ↔ admin)</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Handoff context between you and the doctor. Hidden from the
               patient.
@@ -510,13 +510,13 @@ export default async function AdminAppointmentDetailPage({
           {/* Schedule the Google Meet call. Filling both fields and saving
               emails the patient with the link via SendGrid. */}
           <AdminCard>
-            <h3 className="gh-admin-area-hero gh-admin-area-appointments gh-admin-card-title">Schedule call</h3>
+            <h3 className="gh-admin-card-title">Schedule call</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Set the slot and paste the Google Meet (or Zoom/Teams/Whereby/Daily)
               link. Saving emails the patient with the link.
             </p>
 
-            <form action={scheduleCallAction} className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-side-form">
+            <form action={scheduleCallAction} className="gh-admin-appointment-side-form">
               {/* Browser-side TZ offset so the server can convert the
                   datetime-local string to a UTC ISO that matches the
                   admin's actual clock — independent of the Node server
@@ -569,7 +569,7 @@ export default async function AdminAppointmentDetailPage({
               </label>
 
               {isInPerson ? (
-                <fieldset className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-venue">
+                <fieldset className="gh-admin-appointment-venue">
                   <legend className="px-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                     Where (in-person)
                   </legend>

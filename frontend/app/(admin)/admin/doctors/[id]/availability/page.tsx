@@ -119,7 +119,6 @@ export default async function AdminDoctorAvailabilityPage({
     return (
       <>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-doctors"
           eyebrow="Doctor"
           title="Availability"
           actions={
@@ -153,7 +152,6 @@ export default async function AdminDoctorAvailabilityPage({
         <ArrowLeft className="size-3.5" /> Back to doctor
       </Link>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-doctors"
         eyebrow="Doctor"
         title={`${doctor.fullName} · Availability`}
         description="Weekly recurring windows. Patients booking from the doctor profile see open 30-minute slots in the next 14 days, claimed atomically on submit."
@@ -170,7 +168,7 @@ export default async function AdminDoctorAvailabilityPage({
         </p>
       ) : null}
 
-      <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-detail-layout gh-admin-doctor-availability-layout grid gap-4">
+      <div className="gh-admin-doctor-detail-layout gh-admin-doctor-availability-layout grid gap-4">
         <AdminCard>
           <h3
             className="m-0 text-[var(--color-text-primary)]"
@@ -197,8 +195,8 @@ export default async function AdminDoctorAvailabilityPage({
               window using the form to the right.
             </p>
           ) : (
-            <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-availability-table-wrap mt-4 overflow-x-auto">
-            <table className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-availability-table w-full text-[13px]">
+            <div className="gh-admin-doctor-availability-table-wrap mt-4 overflow-x-auto">
+            <table className="gh-admin-doctor-availability-table w-full text-[13px]">
               <thead>
                 <tr className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                   <th className="py-2 text-left">Day</th>
@@ -252,7 +250,7 @@ export default async function AdminDoctorAvailabilityPage({
           >
             Add window
           </h3>
-          <form action={createAction} className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-availability-form mt-3 grid gap-3">
+          <form action={createAction} className="gh-admin-doctor-availability-form mt-3 grid gap-3">
             <label className="flex flex-col gap-1">
               <span className="gh-field-label">Day of week</span>
               <select name="weekday" defaultValue="1" required className="gh-select">
@@ -263,7 +261,7 @@ export default async function AdminDoctorAvailabilityPage({
                 ))}
               </select>
             </label>
-            <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-time-grid grid grid-cols-2 gap-3">
+            <div className="gh-admin-doctor-time-grid grid grid-cols-2 gap-3">
               <label className="flex flex-col gap-1">
                 <span className="gh-field-label">From (clinic time)</span>
                 <input

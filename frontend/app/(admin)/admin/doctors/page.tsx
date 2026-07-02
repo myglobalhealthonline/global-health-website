@@ -150,7 +150,6 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
   return (
     <>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-doctors"
         eyebrow="Global"
         title="Doctors"
         description="Public clinician directory. Doctors are profiles only — patient-facing login is a separate portal."

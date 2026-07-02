@@ -50,7 +50,6 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
     return (
       <>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-countries"
           eyebrow="Global"
           title="Countries"
           description="Manage countries, locales, currencies, and key routes."
@@ -72,7 +71,6 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
   return (
     <>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-countries"
         eyebrow="Global"
         title="Countries"
         description="The axis of the platform. Each country has its own hero copy, currency, doctors, and services."

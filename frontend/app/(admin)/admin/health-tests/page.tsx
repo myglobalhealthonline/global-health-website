@@ -131,7 +131,6 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
   return (
     <>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-services"
         eyebrow="Services"
         title="Health tests"
         description="Product-style pages with price, sample type, result timing, structured coverage, and image-led public layouts."

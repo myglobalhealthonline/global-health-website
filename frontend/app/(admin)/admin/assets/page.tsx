@@ -144,7 +144,6 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
   return (
     <>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-assets"
         eyebrow="Global"
         title="Assets"
         description="Paths and URLs for hero, logo, badge, social, and icon imagery. Configure S3/Railway env vars for uploads."

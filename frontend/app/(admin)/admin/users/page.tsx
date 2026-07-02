@@ -44,13 +44,12 @@ export default async function AdminUsersPage({
   return (
     <>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-users"
         eyebrow="Global"
         title="Users"
         description="Patients + admin accounts. Search by name/email, filter by role or status."
       />
 
-      <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-users gh-admin-users-list">
+      <AdminCard padding={0} className="gh-admin-users-list">
         {result.ok ? (
           <div className="border-b border-[var(--color-border)] px-4 pt-4">
             <AdminSummaryStrip
@@ -77,7 +76,7 @@ export default async function AdminUsersPage({
             />
           </div>
         ) : null}
-        <form className="gh-admin-area-hero gh-admin-area-users gh-admin-support-filter-row flex flex-wrap items-end gap-3 border-b border-[var(--color-border)] p-4">
+        <form className="gh-admin-support-filter-row flex flex-wrap items-end gap-3 border-b border-[var(--color-border)] p-4">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">Search</span>
             <input
@@ -120,7 +119,7 @@ export default async function AdminUsersPage({
           />
         ) : (
           <>
-          <div className="gh-admin-area-hero gh-admin-area-users gh-admin-support-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
+          <div className="gh-admin-support-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
           <table className="w-full min-w-[820px] text-sm">
             <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
               <tr>
@@ -204,7 +203,7 @@ export default async function AdminUsersPage({
         )}
 
         {result.ok && result.data.pagination.totalPages > 1 ? (
-          <div className="gh-admin-area-hero gh-admin-area-users gh-admin-support-pagination flex items-center justify-between border-t border-[var(--color-border)] px-4 py-3 text-xs text-[var(--color-text-muted)]">
+          <div className="gh-admin-support-pagination flex items-center justify-between border-t border-[var(--color-border)] px-4 py-3 text-xs text-[var(--color-text-muted)]">
             <span>
               Page {result.data.pagination.page} of{" "}
               {result.data.pagination.totalPages} ({result.data.pagination.total} users)

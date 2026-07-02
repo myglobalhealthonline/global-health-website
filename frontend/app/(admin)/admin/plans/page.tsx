@@ -45,7 +45,6 @@ export default async function AdminPlansPage() {
     return (
       <>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-plans"
           eyebrow="Subscriptions"
           title="Plans"
           description="Pick a country in the top bar — plans are configured per country."
@@ -68,7 +67,6 @@ export default async function AdminPlansPage() {
   return (
     <>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-plans"
         eyebrow="Subscriptions"
         title="Plans"
         description={`Monthly subscription plans for ${active.name}. Create, configure, reorder, and deactivate.`}

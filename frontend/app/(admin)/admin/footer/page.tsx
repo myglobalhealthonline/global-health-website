@@ -38,7 +38,6 @@ export default async function AdminFooterPage({
     return (
       <>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-content"
           eyebrow="Country · Footer"
           title="Per-country footer"
           description="Pick a country from the topbar to edit its footer."
@@ -84,7 +83,6 @@ export default async function AdminFooterPage({
   return (
     <>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-content"
         eyebrow={
           <span className="inline-flex items-center gap-2">
             <FlagBadge code={active.slug} size={14} />
@@ -111,7 +109,7 @@ export default async function AdminFooterPage({
         </div>
       ) : null}
 
-      <div className="gh-admin-area-hero gh-admin-area-content gh-admin-support-editor">
+      <div className="gh-admin-support-editor">
       <FooterEditor
         initial={initialFooter}
         saveAction={saveFooterAction}

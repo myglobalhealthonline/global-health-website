@@ -85,7 +85,6 @@ export default async function AdminServiceDetailPage({
     return (
       <>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-services"
           eyebrow="Services"
           title="Service"
           actions={
@@ -153,7 +152,6 @@ export default async function AdminServiceDetailPage({
         <ArrowLeft className="size-3.5" /> Back to {meta.label.toLowerCase()}
       </Link>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-services"
         eyebrow={
           <span className="inline-flex items-center gap-2">
             <FlagBadge code={service.country.code} size={14} />
@@ -188,14 +186,14 @@ export default async function AdminServiceDetailPage({
         </p>
       ) : null}
 
-      <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-layout">
+      <div className="gh-admin-service-layout">
         <div className="grid gap-4">
           <AdminCard>
             <h3 style={cardTitleStyle}>Basics</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Identifiers and pricing.
             </p>
-            <dl className="gh-admin-area-hero gh-admin-area-services gh-admin-service-details">
+            <dl className="gh-admin-service-details">
               <FieldRow label="Slug" value={service.slug} mono />
               <FieldRow
                 label="Country"

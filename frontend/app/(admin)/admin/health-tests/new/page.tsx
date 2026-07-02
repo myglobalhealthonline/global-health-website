@@ -26,7 +26,6 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
     return (
       <>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-services"
           eyebrow="Services"
           title="New health test"
           actions={
@@ -109,7 +108,6 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
     return (
       <>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-services"
           eyebrow="Services"
           title="New health test"
           description="Choose a country so this product page is tied to the correct clinic."
@@ -120,7 +118,7 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
           }
         />
         <AdminCard>
-          <form method="get" className="gh-admin-area-hero gh-admin-area-services gh-admin-health-country-form">
+          <form method="get" className="gh-admin-health-country-form">
             <label className="flex flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select
@@ -155,7 +153,6 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
         <ArrowLeft className="size-3.5" /> Back to health tests
       </Link>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-services"
         eyebrow="Services"
         title="New health test"
         description="Product-style page — price, sample type, result timing, and image-led layout."
@@ -173,14 +170,14 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
       ) : null}
 
       <AdminCard>
-        <form action={createAction} className="gh-admin-area-hero gh-admin-area-services gh-admin-health-form">
+        <form action={createAction} className="gh-admin-health-form">
           <HealthTestFields
             countries={countries}
             pinnedCountryId={countryId}
             locales={locales}
             defaultLocale={defaultLocale}
           />
-          <div className="gh-admin-area-hero gh-admin-area-services gh-admin-health-actions border-t border-[var(--color-border)] pt-6">
+          <div className="gh-admin-health-actions border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Create health test
             </button>

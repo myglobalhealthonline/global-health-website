@@ -26,7 +26,6 @@ export default async function AdminNewPagePage({ searchParams }: PageProps) {
     return (
       <>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-cms"
           eyebrow="Global"
           title="New page"
           actions={
@@ -75,7 +74,6 @@ export default async function AdminNewPagePage({ searchParams }: PageProps) {
         <ArrowLeft className="size-3.5" /> Back to pages
       </Link>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-cms"
         eyebrow="Global"
         title="New page"
         description="Create a country-scoped page. Each (country, page type, locale) is unique."
@@ -87,13 +85,13 @@ export default async function AdminNewPagePage({ searchParams }: PageProps) {
         </AdminCard>
       ) : null}
 
-      <form action={createPageAction} className="gh-admin-area-hero gh-admin-area-cms gh-admin-page-form mt-6 flex flex-col gap-6">
+      <form action={createPageAction} className="gh-admin-page-form mt-6 flex flex-col gap-6">
         <PageFields
           countries={countries}
           isCreate
           defaultCountryId={messages.countryId}
         />
-        <div className="gh-admin-area-hero gh-admin-area-cms gh-admin-support-actions flex items-center justify-end gap-2">
+        <div className="gh-admin-support-actions flex items-center justify-end gap-2">
           <Btn href="/admin/pages" variant="ghost" size="md">
             Cancel
           </Btn>

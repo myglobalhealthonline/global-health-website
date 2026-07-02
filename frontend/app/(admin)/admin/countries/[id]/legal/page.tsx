@@ -159,7 +159,6 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
       </Link>
 
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-countries"
         eyebrow={
           <span className="inline-flex items-center gap-2">
             <FlagBadge code={c.code} size={14} />
@@ -186,7 +185,7 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
         </p>
       ) : null}
 
-      <form action={saveLegalProfileAction} className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-legal-form grid gap-4">
+      <form action={saveLegalProfileAction} className="gh-admin-country-legal-form grid gap-4">
         {/* Medical Disclaimer */}
         <AdminCard>
           <SectionTitle>Medical Disclaimer</SectionTitle>
@@ -214,7 +213,7 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
         {/* Company & Contact */}
         <AdminCard>
           <SectionTitle>Company &amp; Contact</SectionTitle>
-          <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-field-grid mt-4 grid gap-4 sm:grid-cols-2">
+          <div className="gh-admin-country-field-grid mt-4 grid gap-4 sm:grid-cols-2">
             <Field label="Legal company name" name="legalCompanyName" defaultValue={p?.legalCompanyName} />
             <Field label="Support email" name="supportEmail" type="email" defaultValue={p?.supportEmail} />
             <Field label="Billing email" name="billingEmail" type="email" defaultValue={p?.billingEmail} />
@@ -227,7 +226,7 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
               defaultValue={p?.legalAddress}
             />
           </div>
-          <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-field-grid mt-4 grid gap-4 sm:grid-cols-2">
+          <div className="gh-admin-country-field-grid mt-4 grid gap-4 sm:grid-cols-2">
             <TextareaField
               label="Public phones (one per line)"
               name="publicPhones"
@@ -248,7 +247,7 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
         {/* Registration & Regulatory */}
         <AdminCard>
           <SectionTitle>Registration &amp; Regulatory</SectionTitle>
-          <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-field-grid mt-4 grid gap-4 sm:grid-cols-2">
+          <div className="gh-admin-country-field-grid mt-4 grid gap-4 sm:grid-cols-2">
             <Field label="Company registration number" name="companyRegistrationNumber" defaultValue={p?.companyRegistrationNumber} />
             <Field label="Tax / VAT number" name="taxVatNumber" defaultValue={p?.taxVatNumber} />
             <Field label="Medical registration number" name="medicalRegistrationNumber" defaultValue={p?.medicalRegistrationNumber} />
@@ -277,7 +276,7 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
           <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
             URLs linked from legal pages / footer for regulatory transparency.
           </p>
-          <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-field-grid mt-4 grid gap-4 sm:grid-cols-2">
+          <div className="gh-admin-country-field-grid mt-4 grid gap-4 sm:grid-cols-2">
             <Field label="Company registry URL" name="companyRegistryUrl" type="url" defaultValue={p?.companyRegistryUrl} />
             <Field label="Medical regulator URL" name="medicalRegulatorUrl" type="url" defaultValue={p?.medicalRegulatorUrl} />
             <Field label="Healthcare authority URL" name="healthcareAuthorityUrl" type="url" defaultValue={p?.healthcareAuthorityUrl} />
@@ -293,7 +292,7 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
           <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
             Override &ldquo;GDPR&rdquo; with the country-specific law name (e.g. LGPD for Brazil).
           </p>
-          <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-field-grid mt-4 grid gap-4 sm:grid-cols-2">
+          <div className="gh-admin-country-field-grid mt-4 grid gap-4 sm:grid-cols-2">
             <Field label="Data protection law name" name="dataProtectionLawName" defaultValue={p?.dataProtectionLawName ?? "GDPR"} placeholder="GDPR" />
             <Field label="Policy page title" name="dataProtectionPolicyTitle" defaultValue={p?.dataProtectionPolicyTitle} />
             <Field label="DPO name" name="dpoName" defaultValue={p?.dpoName} />
@@ -304,7 +303,7 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
         {/* Dispute Resolution */}
         <AdminCard>
           <SectionTitle>Dispute Resolution</SectionTitle>
-          <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-field-grid mt-4 grid gap-4 sm:grid-cols-2">
+          <div className="gh-admin-country-field-grid mt-4 grid gap-4 sm:grid-cols-2">
             <Field label="Dispute body name" name="disputeBodyName" defaultValue={p?.disputeBodyName} />
             <Field label="Dispute email" name="disputeEmail" type="email" defaultValue={p?.disputeEmail} />
             <label className="flex flex-col gap-1">
@@ -312,7 +311,7 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
               <PhoneField name="disputePhone" defaultValue={p?.disputePhone ?? ""} />
             </label>
           </div>
-          <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-field-grid gh-admin-country-field-grid--single mt-4 grid gap-4">
+          <div className="gh-admin-country-field-grid gh-admin-country-field-grid--single mt-4 grid gap-4">
             <TextareaField
               label="Dispute process description"
               name="disputeProcessText"
@@ -334,14 +333,14 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
           </div>
         </AdminCard>
 
-        <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-actions flex justify-end">
+        <div className="gh-admin-country-actions flex justify-end">
           <button type="submit" className="gh-btn gh-btn-primary">
             Save legal profile
           </button>
         </div>
       </form>
 
-      <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-authority-wrap mt-4">
+      <div className="gh-admin-country-authority-wrap mt-4">
         <AuthorityLinksManager countryId={id} countryCode={c.code} rows={authorityLinks} />
       </div>
     </>

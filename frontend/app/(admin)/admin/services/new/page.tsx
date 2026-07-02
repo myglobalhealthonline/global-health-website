@@ -48,7 +48,6 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
     return (
       <>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-services"
           eyebrow="Services"
           title={`New ${meta.singularLabel.toLowerCase()}`}
           actions={
@@ -76,7 +75,6 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
     return (
       <>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-services"
           eyebrow="Services"
           title={`New ${meta.singularLabel.toLowerCase()}`}
           description="Choose a country first — content and pricing stay tied to the correct clinic."
@@ -87,7 +85,7 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
           }
         />
         <AdminCard>
-          <form method="get" className="gh-admin-area-hero gh-admin-area-services gh-admin-service-country-form">
+          <form method="get" className="gh-admin-service-country-form">
             <input type="hidden" name="kind" value={kind} />
             <label className="flex flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
@@ -245,7 +243,6 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
         <ArrowLeft className="size-3.5" /> Back to {meta.label.toLowerCase()}
       </Link>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-services"
         eyebrow="Services"
         title={`New ${meta.singularLabel.toLowerCase()}`}
         description={`Configure title, pricing, duration, sort order, and detail content for this ${meta.singularLabel.toLowerCase()}.`}
@@ -263,7 +260,7 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
       ) : null}
 
       <AdminCard>
-        <form action={createServiceAction} className="gh-admin-area-hero gh-admin-area-services gh-admin-service-form">
+        <form action={createServiceAction} className="gh-admin-service-form">
           <ServiceFields
             countries={countries}
             kind={kind}
@@ -272,7 +269,7 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
             locales={locales}
             defaultLocale={defaultLocale}
           />
-          <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-actions border-t border-[var(--color-border)] pt-6">
+          <div className="gh-admin-service-actions border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Create {meta.singularLabel.toLowerCase()}
             </button>

@@ -82,7 +82,6 @@ export default async function AdminAuditLogPage({
   return (
     <>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-audit-log"
         eyebrow="Compliance"
         title="Audit log"
         description="Append-only trail of clinical mutations and collaboration events. Filter by entity or actor to investigate a specific case."
@@ -113,7 +112,7 @@ export default async function AdminAuditLogPage({
             ]}
           />
         ) : null}
-        <div className="gh-admin-area-hero gh-admin-area-audit-log gh-admin-ops-quick-filters mb-3 flex flex-wrap items-center gap-2">
+        <div className="gh-admin-ops-quick-filters mb-3 flex flex-wrap items-center gap-2">
           <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
             Quick filters
           </span>
@@ -144,7 +143,7 @@ export default async function AdminAuditLogPage({
           ) : null}
         </div>
 
-        <form className="gh-admin-area-hero gh-admin-area-audit-log gh-admin-ops-filter-grid mb-4 grid gap-3 sm:grid-cols-4" method="get">
+        <form className="gh-admin-ops-filter-grid mb-4 grid gap-3 sm:grid-cols-4" method="get">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">Action</span>
             <select name="action" defaultValue={action ?? ""} className="gh-select">
@@ -236,7 +235,7 @@ export default async function AdminAuditLogPage({
               </article>
             ))}
           </div>
-          <div className="gh-admin-area-hero gh-admin-area-audit-log gh-admin-ops-table-wrap gh-admin-deep-table-wrap overflow-hidden rounded-md border border-[var(--color-border)]">
+          <div className="gh-admin-ops-table-wrap gh-admin-deep-table-wrap overflow-hidden rounded-md border border-[var(--color-border)]">
             <table className="w-full text-[13px]">
               <thead className="bg-[var(--color-background-soft)] text-left text-[11px] uppercase tracking-wider text-[var(--color-text-muted)]">
                 <tr>
@@ -315,7 +314,7 @@ export default async function AdminAuditLogPage({
                   return `/admin/audit-log?${qs.toString()}`;
                 };
                 return (
-                  <div className="gh-admin-area-hero gh-admin-area-audit-log gh-admin-ops-pagination flex items-center justify-between gap-3 border-t border-[var(--color-border)] px-3 py-2 text-[12px] text-[var(--color-text-muted)]">
+                  <div className="gh-admin-ops-pagination flex items-center justify-between gap-3 border-t border-[var(--color-border)] px-3 py-2 text-[12px] text-[var(--color-text-muted)]">
                     <span>
                       Page {cur} of {totalPages} · {result.data.pagination.total} events total
                     </span>
