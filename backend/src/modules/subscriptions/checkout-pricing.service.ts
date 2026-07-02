@@ -3,7 +3,11 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { recordAudit } from "../audit/audit.service.js";
 import { commitReservation, releaseReservation, reserveCredits } from "../credits/credit-balance.service.js";
-import { asPlanSnapshot, type SnapshotConsultationRule } from "./plan-snapshot.js";
+import {
+  asPlanSnapshot,
+  snapshotBenefitsUnlockMonths,
+  type SnapshotConsultationRule,
+} from "./plan-snapshot.js";
 import {
   eligibleBenefitSelections,
   resolveConsultationPrice,
@@ -170,6 +174,7 @@ export async function reserveAndPriceConsultations(
       basePriceCents,
       creditsAvailable,
       paidMonthsCount: sub.paidMonthsCount,
+      benefitsUnlockAfterPaidMonths: snapshotBenefitsUnlockMonths(snapshot),
       benefitSelection,
       familyEligible,
     });
@@ -199,6 +204,7 @@ export async function reserveAndPriceConsultations(
         basePriceCents,
         creditsAvailable: 0,
         paidMonthsCount: sub.paidMonthsCount,
+        benefitsUnlockAfterPaidMonths: snapshotBenefitsUnlockMonths(snapshot),
         benefitSelection,
         familyEligible,
       });
@@ -354,6 +360,7 @@ export async function previewConsultationPricing(input: {
       basePriceCents,
       creditsAvailable,
       paidMonthsCount: sub.paidMonthsCount,
+      benefitsUnlockAfterPaidMonths: snapshotBenefitsUnlockMonths(snapshot),
       benefitSelection: selection,
       familyEligible: family.eligible,
     });
@@ -380,6 +387,7 @@ export async function previewConsultationPricing(input: {
       eligibleSelections: eligibleBenefitSelections({
         rule,
         paidMonthsCount: sub.paidMonthsCount,
+        benefitsUnlockAfterPaidMonths: snapshotBenefitsUnlockMonths(snapshot),
         familyEligible: family.eligible,
       }),
       familyMemberId,

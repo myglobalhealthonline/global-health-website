@@ -12,6 +12,8 @@ import {
   PlanCountryNotFoundError,
   PlanPriceSyncError,
   PlanFamilyNotPremiumError,
+  PlanTierLimitError,
+  PlanDuplicateTierError,
 } from "../modules/plans/plans.service.js";
 import {
   getPlanPreview,
@@ -37,12 +39,16 @@ function handlePlanWriteError(app: { log: { error: (e: unknown) => void } }, rep
   if (
     error instanceof PlanCountryNotFoundError ||
     error instanceof LocaleNotSupportedError ||
-    error instanceof PlanFamilyNotPremiumError
+    error instanceof PlanFamilyNotPremiumError ||
+    error instanceof PlanTierLimitError
   ) {
     return reply.status(400).send(errorResponse(error.message));
   }
   if (error instanceof PlanNotFoundError) {
     return reply.status(404).send(errorResponse(error.message));
+  }
+  if (error instanceof PlanDuplicateTierError) {
+    return reply.status(409).send(errorResponse(error.message));
   }
   if (error instanceof PlanPriceSyncError) {
     return reply.status(502).send(errorResponse(error.message));

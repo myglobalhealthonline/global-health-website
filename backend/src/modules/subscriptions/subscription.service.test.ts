@@ -128,6 +128,10 @@ describe("subscription lifecycle", () => {
           countryId: fx.countryId,
           slug: `target-${tag}`,
           name: "Target Plan",
+          // Different tier from the fixture's COMPREHENSIVE — the partial
+          // unique [countryId, planType] WHERE isActive (B9) allows only one
+          // active plan per tier per country.
+          planType: "PREMIUM",
           monthlyPriceCents: 3900,
           currencyCode: "EUR",
           monthlyConsultationCredits: 2,

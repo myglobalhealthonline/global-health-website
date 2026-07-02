@@ -49,6 +49,13 @@ export interface ResolvePriceInput {
   /** Subscriber's paid-month count (gates rule application + perks). */
   paidMonthsCount: number;
   /**
+   * Plan-level benefit-unlock threshold from the snapshot (D25 — default 2).
+   * Applied as the FLOOR for every benefit: the effective unlock is
+   * max(this, rule.unlockAfterPaidMonths), so a per-rule value can only be
+   * stricter, never looser. 0 = immediate (legacy/grandfathered snapshots).
+   */
+  benefitsUnlockAfterPaidMonths: number;
+  /**
    * The line's explicit benefit choice. There is NO auto-apply: a line only
    * gets a credit/discount when the user picked it (default PAY_NORMAL).
    */
@@ -98,6 +105,7 @@ export function resolveConsultationPrice(input: ResolvePriceInput): ResolvedPric
     basePriceCents,
     creditsAvailable,
     paidMonthsCount,
+    benefitsUnlockAfterPaidMonths,
     benefitSelection,
     familyEligible,
   } = input;
@@ -114,8 +122,10 @@ export function resolveConsultationPrice(input: ResolvePriceInput): ResolvedPric
   if (!familyEligible) return normal("FAMILY_UNAVAILABLE");
   // Explicit pay-normal: never reserve, never discount.
   if (benefitSelection === "PAY_NORMAL") return normal("NOT_COVERED");
-  // Perk-unlock gate (§9) applies to credit + discount alike.
-  if (paidMonthsCount < rule.unlockAfterPaidMonths) return normal("LOCKED");
+  // Unlock gate (§9/D25): plan-level floor unified with the per-rule value —
+  // credits AND discounts are LOCKED until the later of the two thresholds.
+  const effectiveUnlock = Math.max(benefitsUnlockAfterPaidMonths, rule.unlockAfterPaidMonths);
+  if (paidMonthsCount < effectiveUnlock) return normal("LOCKED");
 
   if (benefitSelection === "USE_PLAN_CREDIT") {
     const isCreditRule = rule.isIncluded && rule.usesCredits && rule.creditsPerUse > 0;
@@ -167,12 +177,17 @@ export function resolveConsultationPrice(input: ResolvePriceInput): ResolvedPric
 export function eligibleBenefitSelections(input: {
   rule: SnapshotConsultationRule | null;
   paidMonthsCount: number;
+  benefitsUnlockAfterPaidMonths: number;
   familyEligible: boolean;
 }): BenefitSelection[] {
   const out: BenefitSelection[] = ["PAY_NORMAL"];
-  const { rule, paidMonthsCount, familyEligible } = input;
+  const { rule, paidMonthsCount, benefitsUnlockAfterPaidMonths, familyEligible } = input;
   if (!rule || !familyEligible) return out;
-  if (paidMonthsCount < rule.unlockAfterPaidMonths) return out;
+  // Same unified unlock floor as resolveConsultationPrice — pre-unlock the cart
+  // offers only PAY_NORMAL (credit/discount options are hidden, shown LOCKED).
+  if (paidMonthsCount < Math.max(benefitsUnlockAfterPaidMonths, rule.unlockAfterPaidMonths)) {
+    return out;
+  }
 
   if (rule.isIncluded && rule.usesCredits && rule.creditsPerUse > 0) {
     out.push("USE_PLAN_CREDIT");

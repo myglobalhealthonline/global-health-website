@@ -163,6 +163,7 @@
     "creditsRemainingThisMonth": "in diesem Monat verbleibend",
     "creditsUsed": "{used} von {total} verwendet",
     "creditsNone": "Keine Beratungsguthaben in diesem Monat.",
+    "creditsLocked": "Ihre {total} monatlichen Guthaben werden nach Ihrer 2. Zahlung freigeschaltet.",
     "creditsHint": "Sie haben in diesem Monat noch {count} hausärztliche Beratungsguthaben.",
     "creditsHintSingular": "Sie haben in diesem Monat noch {count} hausärztliches Beratungsguthaben.",
     "wellnessTitle": "Wellness-Guthaben",

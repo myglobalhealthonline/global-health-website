@@ -36,6 +36,8 @@ function input(
     basePriceCents: 5000,
     creditsAvailable: 0,
     paidMonthsCount: 5,
+    // Default 0 = plan-level gate off; per-test overrides exercise it.
+    benefitsUnlockAfterPaidMonths: 0,
     familyEligible: true,
     ...overrides,
   };
@@ -214,6 +216,20 @@ describe("resolveConsultationPrice — explicit selection (§ appointment-claim)
     });
   });
 
+  it("plan-level floor (D25) LOCKS a rule with unlock=0 until benefitsUnlock months", () => {
+    const r = resolveConsultationPrice(
+      input({
+        rule: rule({ isIncluded: true, usesCredits: true, creditsPerUse: 1, unlockAfterPaidMonths: 0 }),
+        creditsAvailable: 5,
+        paidMonthsCount: 1,
+        benefitsUnlockAfterPaidMonths: 2,
+        benefitSelection: "USE_PLAN_CREDIT",
+      }),
+    );
+    assert.equal(r.mode, "NORMAL");
+    assert.equal(r.reason, "LOCKED");
+  });
+
   it("unlocks exactly at threshold", () => {
     const r = resolveConsultationPrice(
       input({
@@ -245,7 +261,12 @@ describe("resolveConsultationPrice — explicit selection (§ appointment-claim)
 describe("eligibleBenefitSelections", () => {
   it("PAY_NORMAL only when no rule", () => {
     assert.deepEqual(
-      eligibleBenefitSelections({ rule: null, paidMonthsCount: 5, familyEligible: true }),
+      eligibleBenefitSelections({
+        rule: null,
+        paidMonthsCount: 5,
+        benefitsUnlockAfterPaidMonths: 0,
+        familyEligible: true,
+      }),
       ["PAY_NORMAL"],
     );
   });
@@ -254,6 +275,7 @@ describe("eligibleBenefitSelections", () => {
       eligibleBenefitSelections({
         rule: rule({ isIncluded: true, usesCredits: true, creditsPerUse: 1 }),
         paidMonthsCount: 5,
+        benefitsUnlockAfterPaidMonths: 0,
         familyEligible: false,
       }),
       ["PAY_NORMAL"],
@@ -264,6 +286,7 @@ describe("eligibleBenefitSelections", () => {
       eligibleBenefitSelections({
         rule: rule({ isIncluded: true, usesCredits: true, creditsPerUse: 1 }),
         paidMonthsCount: 5,
+        benefitsUnlockAfterPaidMonths: 0,
         familyEligible: true,
       }),
       ["PAY_NORMAL", "USE_PLAN_CREDIT"],
@@ -274,6 +297,7 @@ describe("eligibleBenefitSelections", () => {
       eligibleBenefitSelections({
         rule: rule({ discountMode: "FIXED", fixedPriceCents: 6000 }),
         paidMonthsCount: 5,
+        benefitsUnlockAfterPaidMonths: 0,
         familyEligible: true,
       }),
       ["PAY_NORMAL", "USE_PLAN_DISCOUNT"],
@@ -284,9 +308,32 @@ describe("eligibleBenefitSelections", () => {
       eligibleBenefitSelections({
         rule: rule({ isIncluded: true, usesCredits: true, creditsPerUse: 1, unlockAfterPaidMonths: 3 }),
         paidMonthsCount: 1,
+        benefitsUnlockAfterPaidMonths: 0,
         familyEligible: true,
       }),
       ["PAY_NORMAL"],
+    );
+  });
+  it("plan-level unlock floor (D25) hides credit/discount pre-unlock even when rule.unlock=0", () => {
+    // Month 1 with benefitsUnlockAfterPaidMonths=2 → only PAY_NORMAL.
+    assert.deepEqual(
+      eligibleBenefitSelections({
+        rule: rule({ isIncluded: true, usesCredits: true, creditsPerUse: 1 }),
+        paidMonthsCount: 1,
+        benefitsUnlockAfterPaidMonths: 2,
+        familyEligible: true,
+      }),
+      ["PAY_NORMAL"],
+    );
+    // Month 2 → unlocked.
+    assert.deepEqual(
+      eligibleBenefitSelections({
+        rule: rule({ isIncluded: true, usesCredits: true, creditsPerUse: 1 }),
+        paidMonthsCount: 2,
+        benefitsUnlockAfterPaidMonths: 2,
+        familyEligible: true,
+      }),
+      ["PAY_NORMAL", "USE_PLAN_CREDIT"],
     );
   });
 });

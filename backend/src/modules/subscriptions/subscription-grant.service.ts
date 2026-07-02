@@ -1,7 +1,11 @@
 import { Prisma, type PerkKey } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { grantMonthlyCredits } from "../credits/credit-balance.service.js";
-import { asPlanSnapshot, type PlanSnapshot } from "./plan-snapshot.js";
+import {
+  asPlanSnapshot,
+  snapshotBenefitsUnlockMonths,
+  type PlanSnapshot,
+} from "./plan-snapshot.js";
 import { captureSnapshot } from "./plan-snapshot.service.js";
 
 type Tx = Prisma.TransactionClient;
@@ -148,11 +152,22 @@ export async function processInvoicePaid(
       snapshot = await captureSnapshot(planId, snapshotVersion, tx);
     }
 
+    // D25 (B3): consultation credits are withheld until benefits unlock (2nd
+    // paid month by default). paidMonthsCount is 0 before this invoice, so this
+    // period's count is sub.paidMonthsCount + 1. Granting 0 (rather than a
+    // locked-then-wiped balance) keeps the ledger honest — a month-1 credit
+    // would be reset by the month-2 grant before it could ever be used. Wellness
+    // is exempt and keeps earning from the first payment.
+    const nextPaidMonths = sub.paidMonthsCount + 1;
+    const benefitsUnlock = snapshotBenefitsUnlockMonths(snapshot);
+    const consultationCredits =
+      nextPaidMonths >= benefitsUnlock ? snapshot.monthlyConsultationCredits : 0;
+
     const granted = await grantMonthlyCredits(tx, {
       userSubscriptionId: sub.id,
       userId: sub.userId,
       periodStart: input.periodStart,
-      consultationCredits: snapshot.monthlyConsultationCredits,
+      consultationCredits,
       wellnessCredits: snapshot.wellnessCreditsPerMonth,
     });
 
@@ -170,7 +185,7 @@ export async function processInvoicePaid(
       };
     }
 
-    const paidMonthsCount = sub.paidMonthsCount + 1;
+    const paidMonthsCount = nextPaidMonths;
     await tx.userSubscription.update({
       where: { id: sub.id },
       data: {
@@ -202,7 +217,7 @@ export async function processInvoicePaid(
       subscriptionId: sub.id,
       userId: sub.userId,
       newlyUnlockedPerks,
-      consultationCreditsGranted: snapshot.monthlyConsultationCredits,
+      consultationCreditsGranted: consultationCredits,
       wellnessCreditsGranted: snapshot.wellnessCreditsPerMonth,
     };
     },

@@ -35,6 +35,17 @@ const currencyCodeSchema = z
 
 export const billingIntervalSchema = z.enum(["MONTHLY"]);
 export const planTypeSchema = z.enum(["ESSENTIAL", "COMPREHENSIVE", "PREMIUM"]);
+
+/**
+ * Tier-derived hard bounds (§5.3 / B9). planType is immutable, so these caps
+ * are enforced on create (zod, planType present) AND on update (service layer,
+ * reading the row's planType). Credits: 1/2/3. Wellness + family: Premium-only.
+ */
+export const TIER_LIMITS = {
+  ESSENTIAL: { maxCredits: 1, wellnessAllowed: false, familyAllowed: false },
+  COMPREHENSIVE: { maxCredits: 2, wellnessAllowed: false, familyAllowed: false },
+  PREMIUM: { maxCredits: 3, wellnessAllowed: true, familyAllowed: true },
+} as const;
 export const planDiscountModeSchema = z.enum(["NONE", "PERCENT", "FIXED"]);
 export const perkKeySchema = z.enum([
   "SPECIALIST_DISCOUNT",
@@ -88,6 +99,8 @@ const planCreateBase = z.object({
   monthlyConsultationCredits: z.coerce.number().int().min(0).default(0),
   wellnessCreditsPerMonth: z.coerce.number().int().min(0).default(0),
   familyEnabled: z.boolean().default(false),
+  /** Paid months before benefits unlock (D25). Default 2. 0/1 = immediate. */
+  benefitsUnlockAfterPaidMonths: z.coerce.number().int().min(0).max(24).default(2),
 });
 // NOTE: VAT removed from these plans (no vatMode/vatRatePct input). The service
 // layer forces vatMode=EXEMPT on every write and checkout sets automaticTax=false.
@@ -96,10 +109,20 @@ const planCreateBase = z.object({
 // schema can self-refine because planType is present; the update schema omits
 // planType (immutable) so its guard lives in the service layer where the
 // existing planType is fetched.
-export const adminPlanCreateBodySchema = planCreateBase.refine(
-  (d) => !d.familyEnabled || d.planType === "PREMIUM",
-  { message: "familyEnabled is only allowed on PREMIUM plans", path: ["familyEnabled"] },
-);
+export const adminPlanCreateBodySchema = planCreateBase
+  .refine(
+    (d) => !d.familyEnabled || d.planType === "PREMIUM",
+    { message: "familyEnabled is only allowed on PREMIUM plans", path: ["familyEnabled"] },
+  )
+  .refine((d) => d.monthlyConsultationCredits <= TIER_LIMITS[d.planType].maxCredits, {
+    message:
+      "monthlyConsultationCredits exceeds the tier cap (Essential 1 / Comprehensive 2 / Premium 3)",
+    path: ["monthlyConsultationCredits"],
+  })
+  .refine((d) => !d.wellnessCreditsPerMonth || TIER_LIMITS[d.planType].wellnessAllowed, {
+    message: "wellnessCreditsPerMonth is only allowed on PREMIUM plans",
+    path: ["wellnessCreditsPerMonth"],
+  });
 
 export const adminPlanUpdateBodySchema = planCreateBase
   .omit({ countryId: true, slug: true, planType: true })

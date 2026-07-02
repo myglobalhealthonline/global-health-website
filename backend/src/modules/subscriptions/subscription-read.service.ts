@@ -1,4 +1,5 @@
 import { prisma } from "../../db/prisma.js";
+import { asPlanSnapshot, snapshotBenefitsUnlockMonths } from "./plan-snapshot.js";
 
 /**
  * Read models for the patient money APIs (Phase 5). Shapes match contracts.md.
@@ -19,6 +20,10 @@ export interface SubscriptionView {
   currentPeriodEnd: string | null;
   paidMonthsCount: number;
   cancelAtPeriodEnd: boolean;
+  /** Paid months before benefits unlock (D25) — from the snapshot. */
+  benefitsUnlockAfterPaidMonths: number;
+  /** Whether plan benefits (GP credits + discounts) are usable yet. */
+  benefitsUnlocked: boolean;
   pendingChange?: { planName: string; effectiveAt: string | null };
 }
 
@@ -45,6 +50,9 @@ export async function getSubscriptionView(userId: string): Promise<SubscriptionV
     };
   }
 
+  const snapshot = asPlanSnapshot(sub.planSnapshot);
+  const benefitsUnlockAfterPaidMonths = snapshot ? snapshotBenefitsUnlockMonths(snapshot) : 0;
+
   return {
     plan: sub.plan,
     countryCode: sub.countryCode ?? null,
@@ -52,6 +60,8 @@ export async function getSubscriptionView(userId: string): Promise<SubscriptionV
     currentPeriodEnd: sub.currentPeriodEnd?.toISOString() ?? null,
     paidMonthsCount: sub.paidMonthsCount,
     cancelAtPeriodEnd: sub.cancelAtPeriodEnd,
+    benefitsUnlockAfterPaidMonths,
+    benefitsUnlocked: sub.paidMonthsCount >= benefitsUnlockAfterPaidMonths,
     ...(pendingChange ? { pendingChange } : {}),
   };
 }

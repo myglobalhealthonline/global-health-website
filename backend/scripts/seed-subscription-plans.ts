@@ -15,6 +15,7 @@ loadEnv({ path: join(__dirname, "..", ".env") });
 
 interface PlanSeed {
   slug: string;
+  planType: "ESSENTIAL" | "COMPREHENSIVE" | "PREMIUM";
   name: string;
   shortDescription: string;
   monthlyPriceCents: number;
@@ -27,6 +28,7 @@ interface PlanSeed {
 const PLAN_SEEDS: PlanSeed[] = [
   {
     slug: "essential-care",
+    planType: "ESSENTIAL",
     name: "Essential Care Plan",
     shortDescription: "Affordable monthly access to online GP care.",
     monthlyPriceCents: 2000,
@@ -37,6 +39,7 @@ const PLAN_SEEDS: PlanSeed[] = [
   },
   {
     slug: "comprehensive-care",
+    planType: "COMPREHENSIVE",
     name: "Comprehensive Care Plan",
     shortDescription: "More monthly GP access for regular healthcare needs.",
     monthlyPriceCents: 3900,
@@ -47,6 +50,7 @@ const PLAN_SEEDS: PlanSeed[] = [
   },
   {
     slug: "premium-wellness-care",
+    planType: "PREMIUM",
     name: "Premium Wellness Care Plan",
     shortDescription: "Online care with added wellness rewards.",
     monthlyPriceCents: 4900,
@@ -90,6 +94,7 @@ async function main(): Promise<void> {
       create: {
         countryId: country.id,
         slug: seed.slug,
+        planType: seed.planType,
         name: seed.name,
         shortDescription: seed.shortDescription,
         monthlyPriceCents: seed.monthlyPriceCents,
@@ -114,11 +119,48 @@ async function main(): Promise<void> {
     });
 
     // Perk rules: specialist discount unlocks after 2 paid months; Premium adds
-    // wellness/test-kit redemption (also after 2 months). GP credits are MONTH_1.
+    // wellness/test-kit redemption (also after 2 months). GP credits follow the
+    // plan-level benefitsUnlockAfterPaidMonths (default 2 — D25).
     await upsertPerk(prisma, plan.id, "SPECIALIST_DISCOUNT", 2);
     if (seed.wellnessCreditsPerMonth > 0) {
       await upsertPerk(prisma, plan.id, "WELLNESS_REDEMPTION", 2);
       await upsertPerk(prisma, plan.id, "TEST_KIT_REDEMPTION", 2);
+    }
+
+    // Consultation rules for the country's active GP services — without these
+    // credits exist but no service can consume them (§13 seed note). Rule-level
+    // unlock stays 0: the plan-level benefitsUnlockAfterPaidMonths (default 2)
+    // is the effective floor, so the seed doesn't duplicate the policy.
+    const gpServices = await prisma.service.findMany({
+      where: { countryId: country.id, kind: "GENERAL", isActive: true },
+      select: { id: true, slug: true },
+    });
+    for (const svc of gpServices) {
+      await prisma.planConsultationRule.upsert({
+        where: { planId_serviceId: { planId: plan.id, serviceId: svc.id } },
+        create: {
+          planId: plan.id,
+          countryId: country.id,
+          serviceId: svc.id,
+          isIncluded: true,
+          usesCredits: true,
+          creditsPerUse: 1,
+          unlockAfterPaidMonths: 0,
+          familyUsable: seed.planType === "PREMIUM",
+        },
+        update: {
+          isIncluded: true,
+          usesCredits: true,
+          creditsPerUse: 1,
+          familyUsable: seed.planType === "PREMIUM",
+          isActive: true,
+        },
+      });
+    }
+    if (gpServices.length > 0) {
+      console.log(`[seed]   ${seed.slug}: GP credit rules for ${gpServices.map((s) => s.slug).join(", ")}`);
+    } else {
+      console.warn(`[seed]   ${seed.slug}: no active GENERAL services in ${code} — no credit rules seeded`);
     }
 
     // Stripe Price sync (fake billing in dev) — gives the plan a stripePriceId.

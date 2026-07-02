@@ -163,6 +163,7 @@
     "creditsRemainingThisMonth": "rămase luna aceasta",
     "creditsUsed": "{used} din {total} utilizate",
     "creditsNone": "Niciun credit de consultație luna aceasta.",
+    "creditsLocked": "Cele {total} credite lunare se deblochează după a 2-a plată.",
     "creditsHint": "Mai aveți {count} credite de consultație la medicul de familie luna aceasta.",
     "creditsHintSingular": "Mai aveți {count} credit de consultație la medicul de familie luna aceasta.",
     "wellnessTitle": "Credite de wellness",

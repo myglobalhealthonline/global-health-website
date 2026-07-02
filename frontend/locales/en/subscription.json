@@ -163,6 +163,7 @@
     "creditsRemainingThisMonth": "remaining this month",
     "creditsUsed": "{used} of {total} used",
     "creditsNone": "No consultation credits this month.",
+    "creditsLocked": "Your {total} monthly credits unlock after your 2nd payment.",
     "creditsHint": "You have {count} GP consultation credits remaining this month.",
     "creditsHintSingular": "You have {count} GP consultation credit remaining this month.",
     "wellnessTitle": "Wellness credits",

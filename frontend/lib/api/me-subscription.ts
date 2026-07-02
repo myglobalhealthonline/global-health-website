@@ -24,6 +24,11 @@ export interface SubscriptionView {
   currentPeriodEnd: string | null;
   paidMonthsCount: number;
   cancelAtPeriodEnd: boolean;
+  /** Paid months before plan benefits unlock (D25). Optional for resilience
+   *  against older API responses; treat missing as 0 (immediate). */
+  benefitsUnlockAfterPaidMonths?: number;
+  /** Whether plan benefits (GP credits + discounts) are usable yet. */
+  benefitsUnlocked?: boolean;
   pendingChange?: { planName: string; effectiveAt: string | null };
 }
 

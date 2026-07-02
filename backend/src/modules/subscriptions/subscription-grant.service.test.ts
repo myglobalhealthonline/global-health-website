@@ -87,6 +87,54 @@ describe("processInvoicePaid grant engine", () => {
     }
   });
 
+  it("D25: month-1 withholds consultation credits (0), wellness still earns; month-2 grants full", async (t) => {
+    if (skip()) return t.skip();
+    const subStripeId = `sub_grant_${Date.now()}_unlock`;
+    const fx = await makeSubscriptionFixture(prisma, "grant-unlock", {
+      status: "INCOMPLETE",
+      paidMonthsCount: 0,
+      monthlyConsultationCredits: 3,
+      wellnessCreditsPerMonth: 1,
+      benefitsUnlockAfterPaidMonths: 2,
+      stripeSubscriptionId: subStripeId,
+    });
+    try {
+      // Month 1 (create): benefits locked → 0 consultation credits, but ACTIVE
+      // and wellness earns from the first payment.
+      const create = await processInvoicePaid({
+        stripeSubscriptionId: subStripeId,
+        periodStart: P1.start,
+        periodEnd: P1.end,
+        billingReason: "subscription_create",
+        amountPaid: 2000,
+      });
+      assert.equal(create.granted, true);
+      assert.equal(create.consultationCreditsGranted, 0, "month-1 consultation credits withheld");
+      let sub = await prisma.userSubscription.findUniqueOrThrow({ where: { id: fx.subscriptionId } });
+      assert.equal(sub.status, "ACTIVE");
+      assert.equal(sub.paidMonthsCount, 1);
+      assert.equal(await getBalance(fx.subscriptionId, "CONSULTATION"), 0, "no month-1 credits");
+      assert.equal(await getBalance(fx.subscriptionId, "WELLNESS"), 1, "wellness earns from payment 1");
+
+      // Month 2 (cycle): benefits unlock → full consultation credits granted.
+      const cycle = await processInvoicePaid({
+        stripeSubscriptionId: subStripeId,
+        periodStart: P2.start,
+        periodEnd: P2.end,
+        billingReason: "subscription_cycle",
+        amountPaid: 2000,
+      });
+      assert.equal(cycle.granted, true);
+      assert.equal(cycle.consultationCreditsGranted, 3, "month-2 grants full credits");
+      sub = await prisma.userSubscription.findUniqueOrThrow({ where: { id: fx.subscriptionId } });
+      assert.equal(sub.paidMonthsCount, 2);
+      assert.equal(await getBalance(fx.subscriptionId, "CONSULTATION"), 3);
+      assert.equal(await getBalance(fx.subscriptionId, "WELLNESS"), 2, "wellness additive");
+    } finally {
+      await fx.cleanup();
+    }
+  });
+
   it("€0 invoice (trial/coupon) → no grant, no paidMonths advance", async (t) => {
     if (skip()) return t.skip();
     const subStripeId = `sub_grant_${Date.now()}_b`;

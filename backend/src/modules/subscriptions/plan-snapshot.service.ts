@@ -27,6 +27,7 @@ export async function loadPlanForSnapshot(
     monthlyConsultationCredits: plan.monthlyConsultationCredits,
     wellnessCreditsPerMonth: plan.wellnessCreditsPerMonth,
     familyEnabled: plan.familyEnabled,
+    benefitsUnlockAfterPaidMonths: plan.benefitsUnlockAfterPaidMonths,
     consultationRules: plan.consultationRules.map((r) => ({
       serviceId: r.serviceId,
       isIncluded: r.isIncluded,

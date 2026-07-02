@@ -1032,6 +1032,13 @@ model PricingPlan {
   /// Family usage allowed on this plan. Seeded false in v1 (family is
   /// Wave 5 — D20); flipped on by the future family migration.
   familyEnabled              Boolean                       @default(false)
+  /// Paid months before ANY plan benefit (GP credits + specialist discounts)
+  /// becomes usable/granted. Default 2 = "unlocks from the 2nd paid month"
+  /// (D25). Wellness is exempt (earns from payment 1). The pricing resolver
+  /// takes max(this, rule.unlockAfterPaidMonths), and the grant withholds
+  /// consultation credits until paidMonthsCount reaches it. Legacy snapshots
+  /// without the field are read as 0 (grandfathered until next renewal).
+  benefitsUnlockAfterPaidMonths Int                        @default(2)
   /// VAT treatment for this plan's country. Default EXEMPT (medical
   /// telemedicine). Accountant confirms per country at go-live — D21.
   vatMode                    VatMode                       @default(EXEMPT)

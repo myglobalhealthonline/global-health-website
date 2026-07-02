@@ -160,6 +160,16 @@ export async function startRedemption(
   ) {
     throw new RedemptionError("NOT_ELIGIBLE", "Subscription not active");
   }
+  // Plan-level redemption perk gate (B10) — same check listRedemptions applies
+  // to the kit list, so the POST can't bypass it: if the plan carries a
+  // WELLNESS/TEST_KIT redemption perk, it must be unlocked.
+  const perkRule = snapshot.perkRules.find(
+    (p) => p.perkKey === "TEST_KIT_REDEMPTION" || p.perkKey === "WELLNESS_REDEMPTION",
+  );
+  if (perkRule && !isPerkUnlocked(perkRule, sub.paidMonthsCount)) {
+    throw new RedemptionError("NOT_ELIGIBLE", "Redemption not yet unlocked");
+  }
+  // Per-kit unlock threshold.
   if (
     !isPerkUnlocked(
       { unlockMode: "AFTER_PAID_MONTHS", unlockAfterPaidMonths: rule.unlockAfterPaidMonths },

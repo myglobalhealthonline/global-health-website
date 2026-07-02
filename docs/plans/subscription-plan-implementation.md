@@ -26,7 +26,14 @@ Use this on all pricing cards:
 
 Use this on detailed plan pages:
 
-Core online consultation credits start from Month 1. Selected member perks unlock after 2 successful monthly payments.
+> **AMENDED by D25 (2026-07-02):** all plan benefits — GP consultation credits
+> AND specialist discounts — unlock from the **2nd successful monthly payment**
+> (`PricingPlan.benefitsUnlockAfterPaidMonths`, default 2, snapshot-carried).
+> Wellness points earn from the first payment. Existing subscribers are
+> grandfathered until their next renewal snapshot. The Month-1 copy below is
+> superseded.
+
+~~Core online consultation credits start from Month 1.~~ Plan benefits unlock after your 2nd successful monthly payment. Wellness rewards start immediately.
 
 Tooltip:
 
@@ -234,7 +241,10 @@ Super Admin should control:
 
 Locked behavior:
 
-- GP/general consultation credits start from Month 1.
+- ~~GP/general consultation credits start from Month 1.~~ **AMENDED by D25:**
+  consultation credits (and all other benefits) unlock from the 2nd paid month
+  (`benefitsUnlockAfterPaidMonths`, default 2). Month-1 grants 0 credits (a
+  locked credit would be wiped by the month-2 reset before it could be used).
 - Credits reset every billing month; unused credits do **not** roll over (Q1=A).
 - Credits are issued only after successful payment.
 - Specialist consultations are not included unless Super Admin enables them (per-`PlanConsultationRule`).
@@ -960,6 +970,7 @@ All decisions answered by product owner. Build may proceed once Q10 is confirmed
 | D22 | Price change for existing subscribers | **Grandfather** at snapshotted price until they cancel — no forced migration (§38.6) |
 | D23 | Free trials / promo coupons in v1 | **No** — out of scope v1; block coupons/trials on the subscription Price (§38.8) |
 | D24 | Health-kit redemption shipping/stock | **LOCKED** — shipping charged separately (credits cover kit only); stock decremented at confirm; cancel restores credits + stock (§11) |
+| D25 | Benefit unlock timing (2026-07-02) | **LOCKED** — ALL plan benefits (GP credits + specialist discounts) unlock from the **2nd paid month**: `PricingPlan.benefitsUnlockAfterPaidMonths` (default 2), snapshot-carried; resolver takes `max(planLevel, rule.unlockAfterPaidMonths)`; month-1 grants **0** consultation credits (a locked credit would be wiped by the month-2 reset). Wellness earns from payment 1. Existing subscribers grandfathered until next renewal snapshot. **Supersedes the §2/§8/§31 "Month 1" copy.** |
 
 ---
 

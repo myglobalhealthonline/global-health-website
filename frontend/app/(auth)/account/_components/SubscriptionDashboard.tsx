@@ -76,6 +76,8 @@ export async function SubscriptionDashboard({
   const remaining = credits?.consultation.balance ?? 0;
   const used = credits?.consultation.usedThisPeriod ?? 0;
   const granted = livePlan?.monthlyConsultationCredits ?? remaining + used;
+  // D25: benefits (incl. GP credits) are withheld until the unlock month.
+  const benefitsLocked = sub.benefitsUnlocked === false;
 
   // Wellness: balance + progress toward the cheapest kit
   const wellnessBalance = credits?.wellness.balance ?? 0;
@@ -152,7 +154,15 @@ export async function SubscriptionDashboard({
           <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--color-text-muted)" }}>
             {t.creditsTitle}
           </p>
-          {granted > 0 || remaining > 0 ? (
+          {benefitsLocked && granted > 0 ? (
+            // D25: month-1 credits are withheld (not granted, so they can't be
+            // wiped by the month-2 reset). Show the unlock condition rather than
+            // a confusing "0 of N used".
+            <p className="mt-2 flex items-start gap-2 text-sm" style={{ color: "var(--color-text-muted)" }}>
+              <Lock className="mt-0.5 size-4 shrink-0" aria-hidden />
+              <span>{interpolate(t.creditsLocked, { total: granted })}</span>
+            </p>
+          ) : granted > 0 || remaining > 0 ? (
             <>
               <p className="mt-1 font-extrabold tracking-[-0.03em]" style={{ fontSize: "2rem", color: "var(--color-text-primary)" }}>
                 {remaining}

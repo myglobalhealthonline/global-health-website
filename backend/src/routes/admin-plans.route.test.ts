@@ -120,6 +120,11 @@ describe("admin plan-management routes", () => {
       monthlyPriceCents: 2000,
       currencyCode: "eur",
       monthlyConsultationCredits: 1,
+      // Inactive: the B9 partial unique allows only ONE active plan per
+      // (country, tier) — these fixtures create many ESSENTIAL plans in the
+      // same country, so they stay inactive (none of these tests depend on
+      // catalogue visibility).
+      isActive: false,
     };
   }
 
@@ -174,6 +179,35 @@ describe("admin plan-management routes", () => {
       payload: planPayload(slug),
     });
     assert.equal(res.statusCode, 409);
+  });
+
+  it("rejects a second ACTIVE plan of the same (country, tier) → 409 (B9)", async (t) => {
+    if (!app) return t.skip();
+    const first = await app.inject({
+      method: "POST",
+      url: "/api/admin/plans",
+      cookies: superCookie,
+      payload: { ...planPayload(`tier-a-${uniq}`), isActive: true },
+    });
+    assert.equal(first.statusCode, 200, first.body);
+    createdPlanIds.push(first.json().data.plan.id as string);
+
+    const second = await app.inject({
+      method: "POST",
+      url: "/api/admin/plans",
+      cookies: superCookie,
+      payload: { ...planPayload(`tier-b-${uniq}`), isActive: true },
+    });
+    assert.equal(second.statusCode, 409, second.body);
+
+    // Tier caps: ESSENTIAL allows at most 1 credit (6.1).
+    const overCap = await app.inject({
+      method: "POST",
+      url: "/api/admin/plans",
+      cookies: superCookie,
+      payload: { ...planPayload(`tier-cap-${uniq}`), monthlyConsultationCredits: 2 },
+    });
+    assert.equal(overCap.statusCode, 400, overCap.body);
   });
 
   it("DELETE deactivates only (soft) — plan row survives with isActive=false", async (t) => {

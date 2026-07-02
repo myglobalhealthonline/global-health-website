@@ -25,6 +25,13 @@ export interface MakeFixtureOptions {
   wellnessBalance?: number;
   monthlyConsultationCredits?: number;
   wellnessCreditsPerMonth?: number;
+  /**
+   * Paid months before benefits unlock (D25). Defaults to 0 (immediate) so
+   * existing tests keep asserting month-1 grants; set to 2 to exercise the
+   * month-2 unlock rule. The real DB column defaults to 2 — the fixture is
+   * explicit to keep legacy tests isolated from the new default.
+   */
+  benefitsUnlockAfterPaidMonths?: number;
   status?: "INCOMPLETE" | "ACTIVE" | "PAST_DUE" | "CANCELED" | "PAUSED";
   paidMonthsCount?: number;
   stripeSubscriptionId?: string;
@@ -103,6 +110,7 @@ export async function makeSubscriptionFixture(
       currencyCode: currency.code,
       monthlyConsultationCredits: opts.monthlyConsultationCredits ?? 3,
       wellnessCreditsPerMonth: opts.wellnessCreditsPerMonth ?? 0,
+      benefitsUnlockAfterPaidMonths: opts.benefitsUnlockAfterPaidMonths ?? 0,
     },
   });
   const sub = await prisma.userSubscription.create({

@@ -8,6 +8,7 @@ const plan: PlanForSnapshot = {
   monthlyConsultationCredits: 3,
   wellnessCreditsPerMonth: 1,
   familyEnabled: false,
+  benefitsUnlockAfterPaidMonths: 2,
   consultationRules: [
     {
       serviceId: "gp",
@@ -49,6 +50,7 @@ describe("buildPlanSnapshot", () => {
     assert.equal(snap.snapshotVersion, 1);
     assert.equal(snap.monthlyConsultationCredits, 3);
     assert.equal(snap.wellnessCreditsPerMonth, 1);
+    assert.equal(snap.benefitsUnlockAfterPaidMonths, 2);
     assert.equal(snap.consultationRules.length, 1, "inactive consultation rule excluded");
     assert.equal(snap.consultationRules[0]?.serviceId, "gp");
     assert.equal(snap.healthTestRules.length, 1, "inactive health-test rule excluded");

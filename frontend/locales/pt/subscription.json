@@ -163,6 +163,7 @@
     "creditsRemainingThisMonth": "restantes este mês",
     "creditsUsed": "{used} de {total} usados",
     "creditsNone": "Sem créditos de consulta este mês.",
+    "creditsLocked": "Os seus {total} créditos mensais são desbloqueados após o seu 2.º pagamento.",
     "creditsHint": "Tem {count} créditos de consulta de medicina geral restantes este mês.",
     "creditsHintSingular": "Tem {count} crédito de consulta de medicina geral restante este mês.",
     "wellnessTitle": "Créditos de bem-estar",

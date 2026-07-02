@@ -46,9 +46,28 @@ export interface PlanSnapshot {
   monthlyConsultationCredits: number;
   wellnessCreditsPerMonth: number;
   familyEnabled: boolean;
+  /**
+   * Paid months before plan benefits (GP credits + specialist discounts) become
+   * usable/granted (D25 — default 2). Wellness is exempt. Optional in the type
+   * because snapshots captured before this field existed won't carry it; read
+   * it via `snapshotBenefitsUnlockMonths` which defaults missing → 0
+   * (grandfathers existing subscribers until their next renewal snapshot).
+   */
+  benefitsUnlockAfterPaidMonths?: number;
   consultationRules: SnapshotConsultationRule[];
   perkRules: SnapshotPerkRule[];
   healthTestRules: SnapshotHealthTestRule[];
+}
+
+/**
+ * Tolerant read of the plan-level benefit-unlock threshold. Legacy snapshots
+ * (captured before the field existed) return 0 = immediate, preserving the
+ * subscriber's current behavior until their next renewal re-snapshots (D25).
+ */
+export function snapshotBenefitsUnlockMonths(snapshot: PlanSnapshot): number {
+  return typeof snapshot.benefitsUnlockAfterPaidMonths === "number"
+    ? snapshot.benefitsUnlockAfterPaidMonths
+    : 0;
 }
 
 /** The live plan + rule rows needed to build a snapshot (subset of Prisma). */
@@ -58,6 +77,7 @@ export interface PlanForSnapshot {
   monthlyConsultationCredits: number;
   wellnessCreditsPerMonth: number;
   familyEnabled: boolean;
+  benefitsUnlockAfterPaidMonths: number;
   consultationRules: Array<{
     serviceId: string;
     isIncluded: boolean;
@@ -100,6 +120,7 @@ export function buildPlanSnapshot(
     monthlyConsultationCredits: plan.monthlyConsultationCredits,
     wellnessCreditsPerMonth: plan.wellnessCreditsPerMonth,
     familyEnabled: plan.familyEnabled,
+    benefitsUnlockAfterPaidMonths: plan.benefitsUnlockAfterPaidMonths,
     consultationRules: plan.consultationRules
       .filter((r) => r.isActive)
       .map((r) => ({

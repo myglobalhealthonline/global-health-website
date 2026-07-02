@@ -2,10 +2,11 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { syncPlanStripePrice } from "../billing/price-sync.service.js";
-import type {
-  AdminPlanCreateBody,
-  AdminPlanUpdateBody,
-  AdminPlansQuery,
+import {
+  TIER_LIMITS,
+  type AdminPlanCreateBody,
+  type AdminPlanUpdateBody,
+  type AdminPlansQuery,
 } from "../../validations/admin-plans.schema.js";
 
 export class PlanCountryNotFoundError extends Error {
@@ -35,6 +36,22 @@ export class PlanFamilyNotPremiumError extends Error {
   constructor() {
     super("familyEnabled is only allowed on PREMIUM plans");
     this.name = "PlanFamilyNotPremiumError";
+  }
+}
+
+/** A tier bound was exceeded (credits over the 1/2/3 cap) — B9. */
+export class PlanTierLimitError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "PlanTierLimitError";
+  }
+}
+
+/** A second ACTIVE plan of the same tier already exists in the country — B9. */
+export class PlanDuplicateTierError extends Error {
+  constructor() {
+    super("An active plan of this tier already exists for this country");
+    this.name = "PlanDuplicateTierError";
   }
 }
 
@@ -116,6 +133,9 @@ function planWriteData(input: AdminPlanCreateBody | AdminPlanUpdateBody) {
       wellnessCreditsPerMonth: input.wellnessCreditsPerMonth,
     }),
     ...(input.familyEnabled !== undefined && { familyEnabled: input.familyEnabled }),
+    ...(input.benefitsUnlockAfterPaidMonths !== undefined && {
+      benefitsUnlockAfterPaidMonths: input.benefitsUnlockAfterPaidMonths,
+    }),
     // VAT removed from these plans — always force EXEMPT, never persist a rate.
     vatMode: "EXEMPT" as const,
     vatRatePct: null,
@@ -129,6 +149,17 @@ function planWriteData(input: AdminPlanCreateBody | AdminPlanUpdateBody) {
  */
 export async function createAdminPlan(input: AdminPlanCreateBody): Promise<AdminPlanRecord> {
   await assertCountryExists(input.countryId);
+
+  // B9: at most one ACTIVE plan per (country, tier). Pre-check for a friendly
+  // 409; the partial unique index is the hard backstop against races.
+  if (input.isActive) {
+    const dupe = await prisma.pricingPlan.findFirst({
+      where: { countryId: input.countryId, planType: input.planType, isActive: true },
+      select: { id: true },
+    });
+    if (dupe) throw new PlanDuplicateTierError();
+  }
+
   let createdId: string;
   try {
     const plan = await prisma.pricingPlan.create({
@@ -155,6 +186,7 @@ export async function createAdminPlan(input: AdminPlanCreateBody): Promise<Admin
         // create schema refine already rejects familyEnabled=true here, this is
         // belt-and-suspenders mirroring the wellness guard).
         familyEnabled: input.planType === "PREMIUM" ? input.familyEnabled : false,
+        benefitsUnlockAfterPaidMonths: input.benefitsUnlockAfterPaidMonths,
         // VAT removed — always EXEMPT, no rate.
         vatMode: "EXEMPT",
         vatRatePct: null,
@@ -190,22 +222,53 @@ export async function updateAdminPlan(
 ): Promise<AdminPlanRecord | null> {
   const existing = await prisma.pricingPlan.findUnique({
     where: { id },
-    select: { id: true, monthlyPriceCents: true, currencyCode: true, planType: true },
+    select: { id: true, countryId: true, monthlyPriceCents: true, currencyCode: true, planType: true },
   });
   if (!existing) return null;
 
-  // Premium-only family guard (§ appointment-claim G4). planType is immutable
-  // and read from the row, so a forged body can't bypass this.
-  if (body.familyEnabled === true && existing.planType !== "PREMIUM") {
+  // Tier bounds (B8/B9). planType is immutable and read from the row, so a
+  // forged body can't lift the caps. Family already guarded above.
+  const limits = TIER_LIMITS[existing.planType];
+  if (body.familyEnabled === true && !limits.familyAllowed) {
     throw new PlanFamilyNotPremiumError();
+  }
+  if (
+    body.monthlyConsultationCredits !== undefined &&
+    body.monthlyConsultationCredits > limits.maxCredits
+  ) {
+    throw new PlanTierLimitError(
+      `monthlyConsultationCredits exceeds the ${existing.planType} tier cap (${limits.maxCredits})`,
+    );
+  }
+
+  // B9: block reactivating a plan when another active plan of the same tier
+  // already exists for the country.
+  if (body.isActive === true) {
+    const dupe = await prisma.pricingPlan.findFirst({
+      where: {
+        countryId: existing.countryId,
+        planType: existing.planType,
+        isActive: true,
+        id: { not: existing.id },
+      },
+      select: { id: true },
+    });
+    if (dupe) throw new PlanDuplicateTierError();
   }
 
   const priceChanged =
     (body.monthlyPriceCents !== undefined && body.monthlyPriceCents !== existing.monthlyPriceCents) ||
     (body.currencyCode !== undefined && body.currencyCode !== existing.currencyCode);
 
+  // B8: wellness is Premium-only on the UPDATE path too (create already forces
+  // it). Force 0 for non-Premium tiers regardless of what the body sent.
+  const data = planWriteData(body);
+  if (!limits.wellnessAllowed) {
+    data.wellnessCreditsPerMonth = 0;
+  }
+
   try {
-    await prisma.pricingPlan.update({ where: { id }, data: planWriteData(body) });
+    await prisma.pricingPlan.update({ where: { id }, data });
   } catch (error) {
     throw normalizeDbError(error, "Plans data is unavailable");
   }
