@@ -14,6 +14,7 @@ import {
 import type { ChatMessage } from "@/lib/api/consultation-chat-api";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
 import { Btn } from "@/components/portal-atoms";
+import { groupChatMessages } from "@/lib/chat-grouping";
 
 type ViewerRole = "PATIENT" | "DOCTOR";
 
@@ -28,6 +29,11 @@ type ConsultationChatProps = {
   /** Doctor-only: toggle chat open/closed. */
   onToggleLock?: (open: boolean) => Promise<{ chatLocked: boolean }>;
   pollIntervalMs?: number;
+  /** "panel" (default) renders its own card chrome + header — for inline
+   *  placement. "embedded" drops both for use inside a dialog (the lock
+   *  toggle still renders — thread it through the dialog title/footer if
+   *  a caller needs it visible while embedded). */
+  variant?: "panel" | "embedded";
 };
 
 function AttachmentPreview({
@@ -78,6 +84,7 @@ export function ConsultationChat({
   fileUploader,
   onToggleLock,
   pollIntervalMs = 10_000,
+  variant = "panel",
 }: ConsultationChatProps) {
   const [items, setItems] = useState<ChatMessage[]>([]);
   const [chatLocked, setChatLocked] = useState(initialChatLocked);
@@ -91,6 +98,7 @@ export function ConsultationChat({
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -149,12 +157,27 @@ export function ConsultationChat({
       setChatLocked(res.chatLocked);
       setPaymentRequired(res.paymentRequired);
       setDraft("");
+      if (textareaRef.current) textareaRef.current.style.height = "auto";
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to send message");
     } finally {
       setSending(false);
     }
+  }
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      e.currentTarget.form?.requestSubmit();
+    }
+  }
+
+  function onDraftChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setDraft(e.target.value);
+    const el = e.currentTarget;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
   }
 
   async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -196,46 +219,57 @@ export function ConsultationChat({
 
   const canSend =
     !paymentRequired && (viewerRole === "DOCTOR" || !chatLocked);
+  const grouped = groupChatMessages(items);
+  const panelClass = variant === "embedded" ? "gh-chat-panel-embedded" : "gh-chat-panel";
+  const lockToggle =
+    viewerRole === "DOCTOR" && onToggleLock && !paymentRequired ? (
+      <Btn
+        type="button"
+        variant={chatLocked ? "soft" : "secondary"}
+        size="sm"
+        onClick={handleToggleLock}
+        disabled={togglingLock}
+        title={chatLocked ? "Re-open chat for patient" : "Lock chat (patient cannot reply)"}
+        iconLeft={
+          chatLocked ? (
+            <Unlock className="size-3.5" aria-hidden />
+          ) : (
+            <Lock className="size-3.5" aria-hidden />
+          )
+        }
+        className="gh-chat-lock-button"
+      >
+        {chatLocked ? "Re-open" : "Lock"}
+      </Btn>
+    ) : null;
 
   return (
-    <div className="gh-chat-panel flex flex-col">
-      {/* Header */}
-      <header className="gh-chat-header flex items-center justify-between px-4 py-3">
-        <div>
-          <h3 className="text-sm font-bold" style={{ color: "var(--portal-text)" }}>
-            {viewerRole === "PATIENT" ? "Chat with your doctor" : "Patient chat"}
-          </h3>
-          <p className="text-xs" style={{ color: "var(--portal-muted)" }}>
-            {viewerRole === "PATIENT"
-              ? "Send messages or upload documents for your doctor to review."
-              : "Messages and files from the patient. You can lock or re-open the chat window."}
-          </p>
-        </div>
+    <div className={`${panelClass} flex flex-col`}>
+      {variant === "panel" ? (
+        <header className="gh-chat-header flex items-center justify-between px-4 py-3">
+          <div>
+            <h3 className="text-sm font-bold" style={{ color: "var(--portal-text)" }}>
+              {viewerRole === "PATIENT" ? "Chat with your doctor" : "Patient chat"}
+            </h3>
+            <p className="text-xs" style={{ color: "var(--portal-muted)" }}>
+              {viewerRole === "PATIENT"
+                ? "Send messages or upload documents for your doctor to review."
+                : "Messages and files from the patient. You can lock or re-open the chat window."}
+            </p>
+          </div>
 
-        <div className="flex items-center gap-2">
-          {loading && <Loader2 className="size-4 animate-spin" style={{ color: "var(--portal-muted)" }} aria-hidden />}
-          {viewerRole === "DOCTOR" && onToggleLock && !paymentRequired && (
-            <Btn
-              type="button"
-              variant={chatLocked ? "soft" : "secondary"}
-              size="sm"
-              onClick={handleToggleLock}
-              disabled={togglingLock}
-              title={chatLocked ? "Re-open chat for patient" : "Lock chat (patient cannot reply)"}
-              iconLeft={
-                chatLocked ? (
-                  <Unlock className="size-3.5" aria-hidden />
-                ) : (
-                  <Lock className="size-3.5" aria-hidden />
-                )
-              }
-              className="gh-chat-lock-button"
-            >
-              {chatLocked ? "Re-open" : "Lock"}
-            </Btn>
-          )}
-        </div>
-      </header>
+          <div className="flex items-center gap-2">
+            {loading && <Loader2 className="size-4 animate-spin" style={{ color: "var(--portal-muted)" }} aria-hidden />}
+            {lockToggle}
+          </div>
+        </header>
+      ) : (
+        lockToggle ? (
+          <div className="gh-chat-header gh-chat-header--embedded flex items-center justify-end px-4 py-2">
+            {lockToggle}
+          </div>
+        ) : null
+      )}
 
       {/* Payment required banner — takes priority over lock banner */}
       {paymentRequired && (
@@ -256,7 +290,7 @@ export function ConsultationChat({
       )}
 
       {/* Message list */}
-      <div className="gh-chat-body h-[400px] flex-1 overflow-y-auto px-4 py-3">
+      <div className="gh-chat-body flex-1 min-h-0 overflow-y-auto px-4 py-3">
         {error && (
           <p
             className="mb-3 rounded-md px-3 py-2 text-xs"
@@ -271,28 +305,29 @@ export function ConsultationChat({
         )}
 
         {!loading && items.length === 0 && (
-          <div className="gh-chat-empty rounded-lg px-4 py-5 text-center">
-            <Send className="mx-auto size-5" style={{ color: "var(--portal-muted)" }} aria-hidden />
-            <p className="mt-2 text-sm font-bold" style={{ color: "var(--portal-text)" }}>
-              No messages yet
-            </p>
-            <p className="mx-auto mt-1 max-w-sm text-xs" style={{ color: "var(--portal-muted)" }}>
+          <div className="gh-chat-empty flex items-center gap-3 rounded-lg px-4 py-3 text-left">
+            <Send className="size-4 shrink-0" style={{ color: "var(--portal-muted)" }} aria-hidden />
+            <p className="text-xs" style={{ color: "var(--portal-muted)" }}>
+              <span className="font-bold" style={{ color: "var(--portal-text)" }}>No messages yet.</span>{" "}
               {canSend
-                ? "Start the conversation below or attach a document for the patient record."
+                ? "Start the conversation below or attach a document."
                 : "The chat window is currently closed."}
             </p>
           </div>
         )}
 
-        <ul className="gh-chat-list space-y-2">
-          {items.map((m) => {
+        <ul className="gh-chat-list">
+          {grouped.map(({ message: m, grouped: isGrouped, last }) => {
             const own = m.authorRole === viewerRole;
             return (
-              <li key={m.id} className={`flex ${own ? "justify-end" : "justify-start"}`}>
+              <li
+                key={m.id}
+                className={`flex ${own ? "justify-end" : "justify-start"} ${isGrouped ? "gh-chat-list__item--grouped" : ""}`}
+              >
                 <div
-                  className={`gh-chat-bubble px-3 py-2 text-sm ${
+                  className={`gh-chat-bubble group px-3 py-2 text-sm ${
                     own ? "gh-chat-bubble-own" : "gh-chat-bubble-other"
-                  }`}
+                  } ${isGrouped ? "gh-chat-bubble--grouped" : ""}`}
                 >
                   {m.downloadUrl || m.fileName ? (
                     <AttachmentPreview
@@ -305,7 +340,11 @@ export function ConsultationChat({
                   {m.body && (
                     <p className="whitespace-pre-wrap">{m.body}</p>
                   )}
-                  <p className="mt-1 text-[10px] opacity-80">
+                  <p
+                    className={`gh-chat-bubble__time mt-1 text-[10px] opacity-80 ${
+                      last ? "" : "gh-chat-bubble__time--hover-only"
+                    }`}
+                  >
                     {formatAppDateTimeShort(m.createdAt)}
                   </p>
                 </div>
@@ -347,7 +386,7 @@ export function ConsultationChat({
 
       {/* Compose area */}
       {canSend ? (
-        <form onSubmit={onSend} className="gh-chat-compose flex items-center gap-2 p-3">
+        <form onSubmit={onSend} className="gh-chat-compose flex items-end gap-2 p-3">
           <input
             ref={fileRef}
             type="file"
@@ -365,13 +404,15 @@ export function ConsultationChat({
           >
             <Paperclip className="size-4" aria-hidden />
           </button>
-          <input
-            type="text"
+          <textarea
+            ref={textareaRef}
+            rows={1}
             value={draft}
-            onChange={(e) => setDraft(e.target.value)}
+            onChange={onDraftChange}
+            onKeyDown={onKeyDown}
             placeholder="Type a message…"
             maxLength={2000}
-            className="gh-input min-w-0 flex-1"
+            className="gh-input gh-chat-textarea min-w-0 flex-1"
           />
           <Btn
             type="submit"

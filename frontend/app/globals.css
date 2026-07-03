@@ -2652,6 +2652,13 @@ a.gh-stat-card:hover {
   padding: 20px;
 }
 
+.gh-portal-dialog__body--flush {
+  padding: 0;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .gh-portal-dialog__footer {
   display: flex;
   align-items: center;
@@ -5279,13 +5286,30 @@ a.gh-stat-card:hover {
   min-width: 0;
 }
 
+.gh-chat-panel,
+.gh-chat-panel-embedded {
+  height: 60vh;
+  max-height: 560px;
+  min-height: 320px;
+}
+
 .gh-chat-panel {
   overflow: hidden;
+}
+
+.gh-chat-panel-embedded {
+  background: transparent !important;
 }
 
 .gh-chat-header {
   border-bottom: 1px solid var(--portal-line, var(--color-border)) !important;
   background: var(--portal-surface, #fff) !important;
+}
+
+.gh-chat-header--embedded {
+  border-bottom: 1px solid var(--portal-line, var(--color-border));
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
 }
 
 .gh-chat-compose,
@@ -5299,11 +5323,32 @@ a.gh-stat-card:hover {
   background: var(--portal-well, #f2f4ee) !important;
 }
 
+.gh-chat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gh-chat-list__item--grouped {
+  margin-top: -6px;
+}
+
 .gh-chat-bubble {
   border-radius: 14px !important;
   box-shadow: none !important;
   max-width: 72% !important;
   animation: gh-chat-bubble-in 200ms ease-out;
+}
+
+/* Grouped = consecutive run from the same author within 5min (see
+ * lib/chat-grouping.ts) — flatten the tail corner so the run reads as
+ * one block instead of a stack of separately-tailed bubbles. */
+.gh-chat-bubble--grouped.gh-chat-bubble-own {
+  border-top-right-radius: 4px !important;
+}
+
+.gh-chat-bubble--grouped.gh-chat-bubble-other {
+  border-top-left-radius: 4px !important;
 }
 
 .gh-chat-bubble-own {
@@ -5328,6 +5373,22 @@ a.gh-stat-card:hover {
   color: var(--portal-text, #263b34) !important;
 }
 
+/* Non-last bubble in a grouped run: timestamp stays out of the way until
+ * hover, so a fast back-and-forth doesn't read as a wall of tiny dates. */
+.gh-chat-bubble__time--hover-only {
+  height: 0;
+  margin: 0 !important;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+
+.gh-chat-bubble.group:hover .gh-chat-bubble__time--hover-only {
+  height: auto;
+  margin-top: 4px !important;
+  opacity: 0.8;
+}
+
 @keyframes gh-chat-bubble-in {
   from {
     opacity: 0;
@@ -5343,6 +5404,14 @@ a.gh-stat-card:hover {
   .gh-chat-bubble {
     animation: none;
   }
+}
+
+.gh-chat-textarea {
+  resize: none;
+  max-height: 120px;
+  line-height: 1.4;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
 }
 
 /* Internal/system note — DESIGN.md §5.17: dashed neutral chip, centered,
@@ -5381,8 +5450,7 @@ a.gh-stat-card:hover {
 .gh-chat-empty {
   border: 1.5px dashed var(--portal-line-strong);
   border-radius: var(--portal-radius-lg, 14px);
-  background: var(--portal-well, rgba(255, 255, 255, 0.68));
-  padding: 20px;
+  background: var(--portal-surface, #fff);
 }
 
 .gh-chat-attach,

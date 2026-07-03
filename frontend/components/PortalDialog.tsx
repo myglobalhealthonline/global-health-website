@@ -19,6 +19,7 @@ export function PortalDialog({
   danger = false,
   width = "sm",
   footer,
+  noBodyPadding = false,
   children,
 }: {
   open: boolean;
@@ -28,6 +29,9 @@ export function PortalDialog({
   danger?: boolean;
   width?: PortalDialogWidth;
   footer?: ReactNode;
+  /** Edge-to-edge body for content that supplies its own padding/scroll
+   *  (e.g. an embedded chat thread). */
+  noBodyPadding?: boolean;
   children: ReactNode;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -86,7 +90,9 @@ export function PortalDialog({
             <X className="size-4" aria-hidden />
           </IconBtn>
         </div>
-        <div className="gh-portal-dialog__body">{children}</div>
+        <div className={`gh-portal-dialog__body${noBodyPadding ? " gh-portal-dialog__body--flush" : ""}`}>
+          {children}
+        </div>
         {footer ? <div className="gh-portal-dialog__footer">{footer}</div> : null}
       </div>
     </div>

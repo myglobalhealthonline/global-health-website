@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { AlertCircle, CalendarDays, ArrowRight, ClipboardList, CreditCard, Video, Clock, MapPin, MessageCircle } from "lucide-react";
 import type { AccountAppointment } from "@/lib/api/account-appointments-api";
+import { PortalDialog } from "@/components/PortalDialog";
 import { ChatThread } from "@/components/chat/ChatThread";
 import { fetchPatientMessages, postPatientMessage } from "@/lib/api/chat-api";
 import { ConsultationChat } from "@/components/chat/ConsultationChat";
@@ -219,21 +220,20 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
             </div>
           ) : null}
 
-          {/* Admin chat + doctor chat toggles */}
+          {/* Admin chat + doctor chat — each opens in its own drawer dialog
+              rather than expanding inline, so a long booking list doesn't
+              get pushed around by an open thread. */}
           <div className="gh-patient-booking-actions mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
             <button
               type="button"
-              onClick={() =>
-                setOpenChatId((current) => {
-                  const next = current === item.id ? null : item.id;
-                  if (next) setOpenConsultChatId(null);
-                  return next;
-                })
-              }
+              onClick={() => {
+                setOpenConsultChatId(null);
+                setOpenChatId(item.id);
+              }}
               className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-emerald-700 hover:bg-[var(--portal-well)] sm:w-auto"
             >
               <MessageCircle className="size-4" aria-hidden />
-              {openChatId === item.id ? "Hide clinic messages" : "Message the clinic"}
+              Message the clinic
             </button>
 
             {requiresPayment(item) ? (
@@ -247,43 +247,50 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
             ) : (
               <button
                 type="button"
-                onClick={() =>
-                  setOpenConsultChatId((current) => {
-                    const next = current === item.id ? null : item.id;
-                    if (next) setOpenChatId(null);
-                    return next;
-                  })
-                }
+                onClick={() => {
+                  setOpenChatId(null);
+                  setOpenConsultChatId(item.id);
+                }}
                 className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-emerald-700 hover:bg-[var(--portal-well)] sm:w-auto"
               >
                 <MessageCircle className="size-4" aria-hidden />
-                {openConsultChatId === item.id ? "Hide doctor chat" : "Chat with your doctor"}
+                Chat with your doctor
               </button>
             )}
           </div>
 
-          {openChatId === item.id ? (
-            <div className="mt-3">
-              <ChatThread
-                appointmentId={item.id}
-                viewerRole="PATIENT"
-                fetcher={fetchPatientMessages}
-                poster={postPatientMessage}
-              />
-            </div>
-          ) : null}
+          <PortalDialog
+            open={openChatId === item.id}
+            onClose={() => setOpenChatId(null)}
+            title="Message the clinic"
+            width="sm"
+            noBodyPadding
+          >
+            <ChatThread
+              appointmentId={item.id}
+              viewerRole="PATIENT"
+              fetcher={fetchPatientMessages}
+              poster={postPatientMessage}
+              variant="embedded"
+            />
+          </PortalDialog>
 
-          {openConsultChatId === item.id && !requiresPayment(item) ? (
-            <div className="mt-3">
-              <ConsultationChat
-                appointmentId={item.id}
-                viewerRole="PATIENT"
-                fetcher={fetchPatientChat}
-                poster={postPatientChatMessage}
-                fileUploader={uploadPatientChatFile}
-              />
-            </div>
-          ) : null}
+          <PortalDialog
+            open={openConsultChatId === item.id && !requiresPayment(item)}
+            onClose={() => setOpenConsultChatId(null)}
+            title="Chat with your doctor"
+            width="sm"
+            noBodyPadding
+          >
+            <ConsultationChat
+              appointmentId={item.id}
+              viewerRole="PATIENT"
+              fetcher={fetchPatientChat}
+              poster={postPatientChatMessage}
+              fileUploader={uploadPatientChatFile}
+              variant="embedded"
+            />
+          </PortalDialog>
         </article>
       ))}
     </div>
