@@ -5299,8 +5299,10 @@ a.gh-stat-card:hover {
   box-shadow: var(--portal-shadow, var(--shadow-soft)) !important;
 }
 
-.gh-calendar-grid {
-  min-width: 700px;
+@media (min-width: 768px) {
+  .gh-calendar-grid {
+    min-width: 700px;
+  }
 }
 
 .gh-calendar-day {
