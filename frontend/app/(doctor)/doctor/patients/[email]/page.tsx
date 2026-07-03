@@ -91,6 +91,7 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
           {appointments.length === 0 ? (
             <AdminEmptyState
               className="gh-doctor-empty-state mt-4"
+              assetSrc="/images/portal/obsidian/empty-queue.svg"
               title="No appointments yet"
               description="When this patient books with you, consultation history will appear here."
             />

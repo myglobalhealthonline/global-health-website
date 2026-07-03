@@ -94,10 +94,13 @@ export default async function DoctorOverviewPage() {
       : "");
 
   // "Now" instrument (DESIGN.md §6.1) — is the next appointment already
-  // underway? Open list already excludes CANCELLED/COMPLETED, so a
-  // started-but-still-open row reads as live.
+  // underway? Open list already excludes CANCELLED/COMPLETED; the live
+  // window cap keeps stale never-finalized rows from reading live forever.
+  const LIVE_WINDOW_MS = 90 * 60 * 1000;
   const isLive = Boolean(
-    nextAppointment?.scheduledAt && new Date(nextAppointment.scheduledAt) <= now,
+    nextAppointment?.scheduledAt &&
+      new Date(nextAppointment.scheduledAt) <= now &&
+      now.getTime() <= new Date(nextAppointment.scheduledAt).getTime() + LIVE_WINDOW_MS,
   );
 
   return (
@@ -221,6 +224,7 @@ export default async function DoctorOverviewPage() {
               <AdminEmptyState
                 className="gh-doctor-empty-state"
                 icon={<Calendar className="size-5" aria-hidden />}
+                assetSrc="/images/portal/obsidian/empty-queue.svg"
                 title="No open appointments today"
                 description="Your schedule is clear for now. Review the full appointment queue or add availability for future bookings."
                 action={
@@ -292,6 +296,7 @@ export default async function DoctorOverviewPage() {
               <AdminEmptyState
                 className="gh-doctor-empty-state"
                 icon={<Bell className="size-5" aria-hidden />}
+                assetSrc="/images/portal/obsidian/empty-notifications.svg"
                 title="No unread notifications"
                 description="New appointment assignments, document activity, and internal messages will appear here."
               />
@@ -368,32 +373,27 @@ function QuickActionCard({
   return (
     <Link
       href={href}
-      className="gh-doctor-quick-card block transition-all duration-150 hover:-translate-y-[1px]"
+      className="gh-doctor-quick-card block"
       style={{
-        background: "var(--portal-surface)",
-        border: "1px solid var(--portal-line)",
-        borderRadius: "var(--portal-radius)",
-        boxShadow: "var(--portal-shadow)",
-        padding: 20,
+        padding: "18px 20px",
         textDecoration: "none",
         color: "inherit",
       }}
     >
       <div className="flex items-center gap-4">
         <span
-          className="inline-flex items-center justify-center"
+          className="gh-doctor-quick-card__tile inline-flex items-center justify-center"
           style={{
-            width: 36,
-            height: 36,
-            borderRadius: "var(--portal-radius-sm)",
-            background: "var(--portal-well)",
+            width: 40,
+            height: 40,
+            borderRadius: "var(--portal-radius)",
             color: "var(--portal-accent-text)",
           }}
         >
           {icon}
         </span>
-        <div>
-          <p className="text-sm font-bold text-[var(--portal-text)]">{label}</p>
+        <div className="min-w-0">
+          <p className="gh-doctor-quick-card__label text-sm font-bold text-[var(--portal-text)]">{label}</p>
           <p className="text-xs text-[var(--portal-muted)]">{hint}</p>
         </div>
       </div>

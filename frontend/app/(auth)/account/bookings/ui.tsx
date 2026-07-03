@@ -138,6 +138,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
       <AdminEmptyState
         className="mt-6"
         icon={<ClipboardList className="size-6" aria-hidden />}
+        assetSrc="/images/portal/obsidian/empty-calendar.svg"
         title={i18n?.bookings.noBookings ?? "No bookings yet"}
         description={
           i18n?.bookings.noBookingsBody ??

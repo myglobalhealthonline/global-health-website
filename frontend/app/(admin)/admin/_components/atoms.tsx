@@ -326,12 +326,11 @@ export function StatCard({
           {label}
         </p>
         <span
-          className="inline-flex items-center justify-center"
+          className="gh-stat-card__icon-tile inline-flex items-center justify-center"
           style={{
             width: 40,
             height: 40,
             borderRadius: "var(--portal-radius)",
-            background: "var(--portal-well)",
             color: tileGlyphColor,
           }}
         >
@@ -350,13 +349,13 @@ export function StatCard({
 
   if (href) {
     return (
-      <Link href={href} className="gh-stat-card block" style={{ padding: 18, textDecoration: "none", color: "inherit" }}>
+      <Link href={href} className="gh-stat-card block" style={{ padding: 20, textDecoration: "none", color: "inherit" }}>
         {inner}
       </Link>
     );
   }
   return (
-    <AdminCard padding={18} className="gh-stat-card">
+    <AdminCard padding={20} className="gh-stat-card">
       {inner}
     </AdminCard>
   );
@@ -416,6 +415,7 @@ export function Pill({
         background: t.bg,
         color: t.fg,
         border: `1px solid ${t.bd}`,
+        boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${t.dot ?? "var(--portal-muted)"} 18%, transparent)`,
       }}
     >
       {withDot && t.dot ? (
@@ -426,7 +426,10 @@ export function Pill({
             height: 5,
             borderRadius: 999,
             background: t.dot,
-            boxShadow: tone === "live" ? "0 0 0 2px var(--portal-signal-glow)" : "none",
+            boxShadow:
+              tone === "live"
+                ? "0 0 0 2px var(--portal-signal-glow)"
+                : `0 0 0 3px color-mix(in srgb, ${t.dot} 25%, transparent)`,
           }}
         />
       ) : null}

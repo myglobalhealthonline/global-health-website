@@ -128,7 +128,7 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
               </p>
             ) : grantsResult.data.grants.length === 0 ? (
               <AdminEmptyState
-                assetSrc="/images/portal/generated/admin-content-management-accent.png"
+                assetSrc="/images/portal/obsidian/empty-payments.svg"
                 title="No pending perk approvals"
                 description="Manual approval perks will appear here when subscribers meet the configured rule and require admin review."
               />
@@ -188,7 +188,7 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
               </p>
             ) : subsResult.data.items.length === 0 ? (
               <AdminEmptyState
-                assetSrc="/images/portal/generated/admin-content-management-accent.png"
+                assetSrc="/images/portal/obsidian/empty-payments.svg"
                 title="No subscriptions match this filter"
                 description="Choose a different status filter to review active, paused, canceled, or incomplete subscriptions."
               />

@@ -5,6 +5,7 @@ import { appointmentStatusLabel } from "@/lib/api/appointment-status-labels";
 import {
   AdminEmptyState,
   AdminSummaryStrip,
+  Btn,
   PageHeader,
   Pill,
 } from "@/components/portal-atoms";
@@ -13,15 +14,17 @@ import { AppointmentCard, type AppointmentCardTone } from "@/components/Appointm
 import { formatAppTime } from "@/lib/format-datetime";
 
 // Same-shape "in progress now" check as the CommandBand instrument on
-// /doctor (DESIGN.md §6.1) — scheduled time has passed and the row is
-// still open (not finalized to COMPLETED/CANCELLED).
+// /doctor (DESIGN.md §6.1) — scheduled time has passed, the row is still
+// open (not finalized to COMPLETED/CANCELLED), and we're still inside the
+// live window. Without the window cap, every stale never-finalized row
+// reads "Live now" forever.
+const LIVE_WINDOW_MS = 90 * 60 * 1000;
+
 function isAppointmentLive(a: Pick<DoctorAppointment, "scheduledAt" | "status">): boolean {
-  return Boolean(
-    a.scheduledAt &&
-      new Date(a.scheduledAt) <= new Date() &&
-      a.status !== "COMPLETED" &&
-      a.status !== "CANCELLED",
-  );
+  if (!a.scheduledAt || a.status === "COMPLETED" || a.status === "CANCELLED") return false;
+  const start = new Date(a.scheduledAt).getTime();
+  const now = Date.now();
+  return start <= now && now <= start + LIVE_WINDOW_MS;
 }
 
 function statusToneForAppointmentCard(status: string): AppointmentCardTone {
@@ -214,6 +217,7 @@ export default async function DoctorAppointmentsPage({
         <AdminEmptyState
           className="gh-doctor-empty-state"
           icon={<SearchX className="size-5" aria-hidden />}
+          assetSrc="/images/portal/obsidian/empty-queue.svg"
           title="No appointments match these filters"
           description="Try widening the date range or clearing status filters. New assigned consultations appear here as soon as they are scheduled."
           action={
@@ -223,14 +227,14 @@ export default async function DoctorAppointmentsPage({
           }
         />
       ) : (
-        <div className="gh-card gh-doctor-table-card p-0 overflow-hidden">
+        <div className="gh-card gh-card-jewel gh-doctor-table-card p-0 overflow-hidden">
           <div className="hidden md:grid gap-2 p-3">
             {appointments.map((a: DoctorAppointment) => {
               const live = isAppointmentLive(a);
               return (
                 <AppointmentCard
                   key={a.id}
-                  href={`/doctor/appointments/${a.id}`}
+                  href={a.meetingUrl ? undefined : `/doctor/appointments/${a.id}`}
                   time={a.scheduledAt ? formatAppTime(a.scheduledAt) : "—"}
                   timeMeta={
                     a.scheduledAt
@@ -251,15 +255,21 @@ export default async function DoctorAppointmentsPage({
                   }
                   action={
                     a.meetingUrl ? (
-                      <a
-                        href={a.meetingUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-1 rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-800"
-                      >
-                        <Video className="size-3.5" aria-hidden /> Join
-                      </a>
+                      <span className="inline-flex items-center gap-2">
+                        <Btn
+                          href={a.meetingUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          variant="primary"
+                          size="sm"
+                          iconLeft={<Video className="size-3.5" aria-hidden />}
+                        >
+                          Join
+                        </Btn>
+                        <Btn href={`/doctor/appointments/${a.id}`} variant="secondary" size="sm">
+                          Open
+                        </Btn>
+                      </span>
                     ) : (
                       <ChevronRight className="size-4 text-[var(--portal-muted)]" aria-hidden />
                     )

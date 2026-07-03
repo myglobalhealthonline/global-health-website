@@ -237,6 +237,7 @@ export function DoctorAvailabilityUI({
               <AdminEmptyState
                 className="gh-doctor-empty-state"
                 icon={<CalendarClock className="size-5" aria-hidden />}
+                assetSrc="/images/portal/obsidian/empty-calendar.svg"
                 title="No generated slots yet"
                 description="Add a weekly window to generate bookable slots. Patients only see slots that remain open."
               />
