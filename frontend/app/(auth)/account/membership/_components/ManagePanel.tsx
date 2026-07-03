@@ -14,6 +14,7 @@ import {
 import { formatAppDate } from "@/lib/format-datetime";
 import { interpolate } from "@/lib/subscription/format";
 import { AdminCard, Btn, Pill, type PillTone } from "@/components/portal-atoms";
+import { PortalDialog } from "@/components/PortalDialog";
 
 export interface PlanOption {
   id: string;
@@ -68,6 +69,8 @@ export function ManagePanel(props: ManagePanelProps) {
   const [busy, setBusy] = useState<null | "portal" | "cancel" | "change" | "cancelChange">(null);
   const [notice, setNotice] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<string>("");
+  const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
+  const [confirmChangeOpen, setConfirmChangeOpen] = useState(false);
 
   const meta = statusMeta(props.status, t);
   const canCancel =
@@ -144,8 +147,12 @@ export function ManagePanel(props: ManagePanelProps) {
     setNotice({ kind: "error", text: res.ok ? "" : res.message });
   }
 
-  async function doCancel() {
-    if (!window.confirm(t.cancelConfirm)) return;
+  function doCancel() {
+    setConfirmCancelOpen(true);
+  }
+
+  async function confirmCancel() {
+    setConfirmCancelOpen(false);
     setBusy("cancel");
     setNotice(null);
     const res = await cancelSubscription();
@@ -159,16 +166,16 @@ export function ManagePanel(props: ManagePanelProps) {
     }
   }
 
-  async function doChange() {
+  function doChange() {
     if (!selectedPlan) return;
-    const opt = props.planOptions.find((p) => p.id === selectedPlan);
     // Confirm the deferred change up-front, showing the exact effective date —
     // the next billing date — so it's clear nothing changes (or is charged) today.
-    const confirmMsg = interpolate(t.changeConfirm, {
-      plan: opt?.name ?? "",
-      date: props.nextBillingLabel ?? "",
-    });
-    if (!window.confirm(confirmMsg)) return;
+    setConfirmChangeOpen(true);
+  }
+
+  async function confirmChange() {
+    setConfirmChangeOpen(false);
+    if (!selectedPlan) return;
     setBusy("change");
     setNotice(null);
     const res = await changePlan(selectedPlan);
@@ -182,6 +189,12 @@ export function ManagePanel(props: ManagePanelProps) {
       setNotice({ kind: "error", text: res.message });
     }
   }
+
+  const selectedPlanOption = props.planOptions.find((p) => p.id === selectedPlan);
+  const changeConfirmMsg = interpolate(t.changeConfirm, {
+    plan: selectedPlanOption?.name ?? "",
+    date: props.nextBillingLabel ?? "",
+  });
 
   async function doCancelChange() {
     setBusy("cancelChange");
@@ -366,6 +379,48 @@ export function ManagePanel(props: ManagePanelProps) {
           {t.change}
         </Link>
       </div>
+
+      <PortalDialog
+        open={confirmCancelOpen}
+        onClose={() => setConfirmCancelOpen(false)}
+        title={t.cancel}
+        danger
+        footer={
+          <>
+            <Btn variant="ghost" onClick={() => setConfirmCancelOpen(false)}>
+              Back
+            </Btn>
+            <Btn variant="danger" onClick={() => void confirmCancel()}>
+              {t.cancel}
+            </Btn>
+          </>
+        }
+      >
+        <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
+          {t.cancelConfirm}
+        </p>
+      </PortalDialog>
+
+      <PortalDialog
+        open={confirmChangeOpen}
+        onClose={() => setConfirmChangeOpen(false)}
+        title={t.change}
+        danger
+        footer={
+          <>
+            <Btn variant="ghost" onClick={() => setConfirmChangeOpen(false)}>
+              Back
+            </Btn>
+            <Btn variant="danger" onClick={() => void confirmChange()}>
+              {t.change}
+            </Btn>
+          </>
+        }
+      >
+        <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
+          {changeConfirmMsg}
+        </p>
+      </PortalDialog>
     </div>
   );
 }

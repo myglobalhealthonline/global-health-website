@@ -109,7 +109,7 @@ export function RewardsPanel(props: RewardsPanelProps) {
               <div className="flex min-w-0 items-start gap-3">
                 <span
                   className="inline-flex size-10 items-center justify-center rounded-[12px]"
-                  style={{ background: "linear-gradient(135deg, var(--portal-accent) 0%, var(--portal-mint) 100%)", color: "var(--portal-signal-text)" }}
+                  style={{ background: "var(--portal-well)", color: "var(--portal-accent-text)" }}
                 >
                   <Sparkles className="size-5" aria-hidden />
                 </span>

@@ -2369,6 +2369,22 @@ a.gh-stat-card:hover {
   min-height: 40px;
 }
 
+/* Patient touch targets — DESIGN.md §14 accessibility gate #4: every
+ * interactive element on Patient surfaces must be ≥44px. Admin stays
+ * intentionally dense (32-40px, [data-density="dense"]) and Doctor keeps
+ * its default sizing, so this is scoped to [data-portal="patient"] only
+ * rather than changing the shared Btn/IconBtn atom defaults. !important
+ * is required because atoms.tsx sets height via inline style, which
+ * otherwise beats any external stylesheet rule regardless of specificity. */
+[data-portal="patient"] .gh-btn {
+  min-height: 44px !important;
+}
+
+[data-portal="patient"] .gh-icon-btn {
+  min-height: 44px !important;
+  min-width: 44px !important;
+}
+
 .gh-portal-shell .gh-btn-primary,
 .gh-admin-main button[type="submit"]:not([class*="ghost"]):not([class*="soft"]):not(.gh-admin-toggle):not(.gh-admin-status-toggle) {
   background: var(--portal-primary);
@@ -3604,6 +3620,24 @@ a.gh-stat-card:hover {
 .gh-portal-mobile-card--info::before { background: var(--portal-info); }
 .gh-portal-mobile-card--brand::before { background: var(--portal-primary); }
 
+/* Live override (DESIGN.md §5.20) — lime edge + halo while a consultation
+ * is actively in progress, wins over the `tone` prop's edge color. */
+.gh-portal-mobile-card--live {
+  box-shadow: 0 0 0 1px var(--portal-signal-glow);
+}
+
+.gh-portal-mobile-card--live::before {
+  background: var(--portal-signal);
+  box-shadow: 0 0 12px var(--portal-signal-glow);
+  animation: gh-agenda-now-breathe 3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-portal-mobile-card--live::before {
+    animation: none;
+  }
+}
+
 .gh-portal-mobile-card__title-row {
   display: flex;
   align-items: flex-start;
@@ -3682,6 +3716,81 @@ a.gh-stat-card:hover {
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
+}
+
+/* DocumentRow — DESIGN.md §5.19, new shared primitive. Row content only;
+ * callers own the surrounding table/list wrapper. */
+.gh-document-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 8px 0;
+}
+
+.gh-document-row--consumer {
+  min-height: 52px;
+  padding: 12px 0;
+}
+
+.gh-document-row__icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--portal-radius-sm);
+  background: var(--portal-well);
+  color: var(--portal-accent-text);
+}
+
+.gh-document-row--consumer .gh-document-row__icon {
+  width: 44px;
+  height: 44px;
+}
+
+.gh-document-row__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.gh-document-row__title {
+  overflow: hidden;
+  color: var(--portal-text);
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gh-document-row__meta {
+  overflow: hidden;
+  color: var(--portal-muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gh-document-row__pill {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.gh-document-row__actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+}
+
+.gh-document-row--consumer .gh-document-row__actions > * {
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .gh-admin-scope-banner {
@@ -7153,5 +7262,131 @@ a.gh-stat-card:hover {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* AppointmentCard — DESIGN.md §5.20, new shared primitive
+ * (components/AppointmentCard.tsx). Desktop row: time block ·
+ * person+service · status pill+action, 3px status-tone left edge. `live`
+ * swaps the edge + a halo glow for the lime signal treatment while a
+ * consultation is actively in progress — the one animated state on this
+ * recipe, mirroring the agenda "now" tick breathe in §5.18. Hidden below
+ * the 760px table breakpoint where PortalMobileCard takes over. */
+.gh-appointment-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(84px, auto) minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--portal-line);
+  border-radius: var(--portal-radius-lg);
+  background: var(--portal-surface);
+  padding: 14px 18px 14px 21px;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 160ms, transform 160ms;
+}
+
+a.gh-appointment-card:hover {
+  box-shadow: 0 10px 24px rgba(20, 55, 43, 0.08);
+  transform: translateY(-1px);
+}
+
+.gh-appointment-card + .gh-appointment-card {
+  margin-top: 8px;
+}
+
+.gh-appointment-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: var(--portal-radius-lg) 0 0 var(--portal-radius-lg);
+  background: var(--portal-line-strong);
+}
+
+.gh-appointment-card--success::before { background: var(--portal-success); }
+.gh-appointment-card--warning::before { background: var(--portal-warning); }
+.gh-appointment-card--danger::before { background: var(--portal-danger); }
+.gh-appointment-card--info::before { background: var(--portal-info); }
+.gh-appointment-card--brand::before { background: var(--portal-primary); }
+
+.gh-appointment-card--live {
+  box-shadow: 0 0 0 1px var(--portal-signal-glow);
+}
+
+.gh-appointment-card--live::before {
+  background: var(--portal-signal);
+  box-shadow: 0 0 12px var(--portal-signal-glow);
+  animation: gh-agenda-now-breathe 3s ease-in-out infinite;
+}
+
+.gh-appointment-card__time {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.gh-appointment-card__time-value {
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--portal-text);
+  white-space: nowrap;
+}
+
+.gh-appointment-card__time-meta {
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--portal-muted);
+  white-space: nowrap;
+}
+
+.gh-appointment-card__person {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.gh-appointment-card__person-name {
+  overflow: hidden;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--portal-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gh-appointment-card__service {
+  overflow: hidden;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--portal-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gh-appointment-card__status {
+  flex-shrink: 0;
+}
+
+.gh-appointment-card__action {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 760px) {
+  .gh-appointment-card {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-appointment-card--live::before {
+    animation: none;
   }
 }

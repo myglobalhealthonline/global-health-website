@@ -229,18 +229,21 @@ export default async function AccountOverviewPage() {
       ) : null}
 
       {/* ── Trustpilot review reminder ────────────────────────────── */}
+      {/* Trustpilot green (#00b67a) is the third-party brand's own color,
+          not a design-system token — scoped as a local CSS var rather than
+          forced into --portal-accent, which would misrepresent the brand. */}
       {trustpilot.showCta && trustpilot.trustpilotUrl ? (
-        <div className="mt-6">
-          <AdminCard style={{ borderLeft: "3px solid #00b67a" }}>
+        <div className="mt-6" style={{ ["--trustpilot-green" as string]: "#00b67a" }}>
+          <AdminCard style={{ borderLeft: "3px solid var(--trustpilot-green)" }}>
             <div className="gh-patient-alert-row flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <Star
                   className="size-5 shrink-0"
-                  style={{ color: "#00b67a" }}
+                  style={{ color: "var(--trustpilot-green)" }}
                   aria-hidden
                 />
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "#00b67a" }}>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "var(--trustpilot-green)" }}>
                     Share your experience
                   </p>
                   <p className="mt-0.5 text-sm font-medium text-[var(--portal-text)]">

@@ -587,7 +587,7 @@ export default async function AdminEditServicePage({
                     width: 18,
                     height: 18,
                     borderRadius: "50%",
-                    background: "#fff",
+                    background: "var(--portal-surface)",
                     boxShadow: "0 1px 3px rgba(0,0,0,0.20)",
                   }}
                 />

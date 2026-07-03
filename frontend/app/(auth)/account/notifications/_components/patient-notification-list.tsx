@@ -76,7 +76,7 @@ export function PatientNotificationList({ initial }: { initial: NotificationItem
             type="button"
             onClick={markAll}
             disabled={busy}
-            className="inline-flex items-center gap-1.5 rounded-[var(--radius-card-sm)] border border-[var(--portal-line)] px-3 py-1.5 text-sm font-semibold transition hover:border-[var(--portal-line-strong)] disabled:opacity-60"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-[var(--radius-card-sm)] border border-[var(--portal-line)] px-3 py-1.5 text-sm font-semibold transition hover:border-[var(--portal-line-strong)] disabled:opacity-60"
             style={{ color: "var(--portal-text)" }}
           >
             <Check className="size-4" aria-hidden />

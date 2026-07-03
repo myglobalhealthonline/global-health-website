@@ -5,18 +5,15 @@ import { getActiveCountry, scopedCountryCode } from "@/lib/admin/admin-scope";
 import { FlagBadge } from "../_components/flag-badge";
 import { ScopeBanner } from "../_components/scope-banner";
 import { PortalMobileCard, type PortalMobileCardTone } from "@/components/PortalMobileCard";
+import { AppointmentCard, type AppointmentCardTone } from "@/components/AppointmentCard";
+import { formatAppTime } from "@/lib/format-datetime";
 import {
   AdminCard,
-  AdminTable,
   Btn,
   IconBtn,
   PageHeader,
   Pill,
   type PillTone,
-  Td,
-  Th,
-  Thead,
-  Tr,
 } from "../_components/atoms";
 
 export const dynamic = "force-dynamic";
@@ -105,6 +102,26 @@ function statusToneForCard(status: string): PortalMobileCardTone {
   if (status === "CONTACTED") return "info";
   if (status === "UNDER_REVIEW") return "warning";
   return "neutral";
+}
+
+function statusToneForAppointmentCard(status: string): AppointmentCardTone {
+  if (status === "COMPLETED") return "success";
+  if (status === "CANCELLED") return "danger";
+  if (status === "CONTACTED") return "info";
+  if (status === "UNDER_REVIEW") return "warning";
+  return "neutral";
+}
+
+// Same "in progress now" shape as the Doctor CommandBand instrument and
+// AppointmentCard on /doctor/appointments (DESIGN.md §6.1, §5.20):
+// scheduled time has passed and the row hasn't been finalized yet.
+function isAppointmentLive(a: { scheduledAt: string | null; status: string }): boolean {
+  return Boolean(
+    a.scheduledAt &&
+      new Date(a.scheduledAt) <= new Date() &&
+      a.status !== "COMPLETED" &&
+      a.status !== "CANCELLED",
+  );
 }
 
 type PageProps = {
@@ -275,126 +292,99 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
           </div>
         ) : (
           <>
-            <div className="gh-admin-appointment-table-wrap overflow-x-auto">
-              <AdminTable>
-                <Thead>
-                  <Th>Patient</Th>
-                  <Th>Contact</Th>
-                  <Th>Country</Th>
-                  <Th>Consultation</Th>
-                  <Th>Doctor</Th>
-                  <Th>Status</Th>
-                  <Th>Created</Th>
-                  <Th>Notes</Th>
-                  <Th align="right" className="w-20">
-                    Detail
-                  </Th>
-                </Thead>
-                <tbody>
-                  {items.map((appointment) => (
-                    <Tr key={appointment.id}>
-                      <Td>
-                        <span className="font-bold text-[var(--color-text-primary)]">
-                          {appointment.fullName}
+            <div className="hidden md:grid gap-2 p-3">
+              {items.map((appointment) => {
+                const live = isAppointmentLive(appointment);
+                return (
+                  <AppointmentCard
+                    key={appointment.id}
+                    href={`/admin/appointments/${appointment.id}`}
+                    time={appointment.scheduledAt ? formatAppTime(appointment.scheduledAt) : "—"}
+                    timeMeta={
+                      appointment.scheduledAt
+                        ? new Date(appointment.scheduledAt).toLocaleDateString("en-GB", {
+                            month: "short",
+                            day: "2-digit",
+                          })
+                        : `Created ${formatDate(appointment.createdAt)}`
+                    }
+                    person={appointment.fullName}
+                    service={
+                      <span className="inline-flex min-w-0 items-center gap-1.5">
+                        <FlagBadge code={appointment.country} size={12} />
+                        <span className="truncate">
+                          {appointment.consultationType} · {appointment.doctorName ?? "Unassigned"}
                         </span>
-                      </Td>
-                      <Td>
-                        <div className="text-[13px] text-[var(--color-text-body)]">
-                          {appointment.email}
-                        </div>
-                        <div className="text-[12px] text-[var(--color-text-muted)]">
-                          {appointment.phone ?? "No phone"}
-                        </div>
-                      </Td>
-                      <Td>
-                        <span className="inline-flex items-center gap-2">
-                          <FlagBadge code={appointment.country} size={14} />
-                          <span className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                            {appointment.country}
-                          </span>
-                        </span>
-                      </Td>
-                      <Td>
-                        <span className="text-[13px] text-[var(--color-text-muted)]">
-                          {appointment.consultationType}
-                        </span>
-                      </Td>
-                      <Td>
-                        <span className="text-[13px] text-[var(--color-text-body)]">
-                          {appointment.doctorName ?? "Unassigned"}
-                        </span>
-                      </Td>
-                      <Td>
-                        <Pill tone={statusToneFor(appointment.status)}>
-                          {statusLabel(appointment.status)}
-                        </Pill>
-                      </Td>
-                      <Td>
-                        <span className="text-[12px] text-[var(--color-text-muted)]">
-                          {formatDate(appointment.createdAt)}
-                        </span>
-                      </Td>
-                      <Td>
-                        <span className="block max-w-[18rem] truncate text-[13px] text-[var(--color-text-muted)]">
-                          {appointment.notesPreview ?? "—"}
-                        </span>
-                      </Td>
-                      <Td align="right">
-                        <IconBtn
-                          ariaLabel={`Open ${appointment.fullName}`}
-                          href={`/admin/appointments/${appointment.id}`}
-                        >
-                          <ExternalLink className="size-3.5" aria-hidden />
-                        </IconBtn>
-                      </Td>
-                    </Tr>
-                  ))}
-                </tbody>
-              </AdminTable>
+                      </span>
+                    }
+                    tone={statusToneForAppointmentCard(appointment.status)}
+                    live={live}
+                    statusPill={
+                      <Pill tone={live ? "live" : statusToneFor(appointment.status)} withDot>
+                        {live ? "Live now" : statusLabel(appointment.status)}
+                      </Pill>
+                    }
+                    action={
+                      <IconBtn
+                        ariaLabel={`Open ${appointment.fullName}`}
+                        href={`/admin/appointments/${appointment.id}`}
+                      >
+                        <ExternalLink className="size-3.5" aria-hidden />
+                      </IconBtn>
+                    }
+                  />
+                );
+              })}
             </div>
 
             <div className="gh-admin-appointment-mobile-list">
-              {items.map((appointment) => (
-                <PortalMobileCard
-                  key={appointment.id}
-                  tone={statusToneForCard(appointment.status)}
-                  title={appointment.fullName}
-                  subtitle={appointment.email}
-                  statusPill={
-                    <Pill tone={statusToneFor(appointment.status)}>{statusLabel(appointment.status)}</Pill>
-                  }
-                  meta={[
-                    {
-                      label: "Country",
-                      value: (
-                        <span className="inline-flex items-center gap-2">
-                          <FlagBadge code={appointment.country} size={14} />
-                          <span>{appointment.country.toUpperCase()}</span>
-                        </span>
-                      ),
-                    },
-                    { label: "Consultation", value: appointment.consultationType },
-                    { label: "Doctor", value: appointment.doctorName ?? "Unassigned" },
-                    { label: "Created", value: formatDate(appointment.createdAt) },
-                    {
-                      label: "Notes",
-                      value: (
-                        <span className="block max-w-[14rem] truncate">
-                          {appointment.notesPreview ?? "No notes"}
-                        </span>
-                      ),
-                    },
-                  ]}
-                  actions={
-                    <IconBtn
-                      ariaLabel={`Open ${appointment.fullName}`}
-                      href={`/admin/appointments/${appointment.id}`}
-                    >
-                      <ExternalLink className="size-3.5" aria-hidden />
-                    </IconBtn>
-                  }
-                />
-              ))}
+              {items.map((appointment) => {
+                const live = isAppointmentLive(appointment);
+                return (
+                  <PortalMobileCard
+                    key={appointment.id}
+                    tone={statusToneForCard(appointment.status)}
+                    live={live}
+                    title={appointment.fullName}
+                    subtitle={appointment.email}
+                    statusPill={
+                      <Pill tone={live ? "live" : statusToneFor(appointment.status)}>
+                        {live ? "Live now" : statusLabel(appointment.status)}
+                      </Pill>
+                    }
+                    meta={[
+                      {
+                        label: "Country",
+                        value: (
+                          <span className="inline-flex items-center gap-2">
+                            <FlagBadge code={appointment.country} size={14} />
+                            <span>{appointment.country.toUpperCase()}</span>
+                          </span>
+                        ),
+                      },
+                      { label: "Consultation", value: appointment.consultationType },
+                      { label: "Doctor", value: appointment.doctorName ?? "Unassigned" },
+                      { label: "Created", value: formatDate(appointment.createdAt) },
+                      {
+                        label: "Notes",
+                        value: (
+                          <span className="block max-w-[14rem] truncate">
+                            {appointment.notesPreview ?? "No notes"}
+                          </span>
+                        ),
+                      },
+                    ]}
+                    actions={
+                      <IconBtn
+                        ariaLabel={`Open ${appointment.fullName}`}
+                        href={`/admin/appointments/${appointment.id}`}
+                      >
+                        <ExternalLink className="size-3.5" aria-hidden />
+                      </IconBtn>
+                    }
+                  />
+                );
+              })}
             </div>
           </>
         )}

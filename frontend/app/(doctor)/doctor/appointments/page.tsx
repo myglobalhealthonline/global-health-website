@@ -9,6 +9,26 @@ import {
   Pill,
 } from "@/components/portal-atoms";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { AppointmentCard, type AppointmentCardTone } from "@/components/AppointmentCard";
+import { formatAppTime } from "@/lib/format-datetime";
+
+// Same-shape "in progress now" check as the CommandBand instrument on
+// /doctor (DESIGN.md §6.1) — scheduled time has passed and the row is
+// still open (not finalized to COMPLETED/CANCELLED).
+function isAppointmentLive(a: Pick<DoctorAppointment, "scheduledAt" | "status">): boolean {
+  return Boolean(
+    a.scheduledAt &&
+      new Date(a.scheduledAt) <= new Date() &&
+      a.status !== "COMPLETED" &&
+      a.status !== "CANCELLED",
+  );
+}
+
+function statusToneForAppointmentCard(status: string): AppointmentCardTone {
+  if (status === "COMPLETED") return "success";
+  if (status === "CANCELLED") return "danger";
+  return "neutral";
+}
 
 export const dynamic = "force-dynamic";
 
@@ -204,122 +224,104 @@ export default async function DoctorAppointmentsPage({
         />
       ) : (
         <div className="gh-card gh-doctor-table-card p-0 overflow-hidden">
-          <div className="hidden md:block gh-doctor-table-wrap overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-[var(--portal-well)] text-left text-xs uppercase tracking-wider text-[var(--portal-muted)]">
-              <tr>
-                <th className="px-4 py-3 font-semibold">Patient</th>
-                <th className="px-4 py-3 font-semibold">Type</th>
-                <th className="px-4 py-3 font-semibold">Scheduled</th>
-                <th className="px-4 py-3 font-semibold">Status</th>
-                <th className="px-4 py-3 font-semibold">Payment</th>
-                <th className="px-4 py-3 font-semibold text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--portal-line)]">
-              {appointments.map((a: DoctorAppointment) => (
-                <tr key={a.id}>
-                  <td className="px-4 py-3">
-                    <p className="font-semibold text-[var(--portal-text)]">
-                      {a.fullName}
-                    </p>
-                    <p className="text-xs text-[var(--portal-muted)]">{a.email}</p>
-                    {a.phone ? (
-                      <p className="text-xs text-[var(--portal-muted)]">{a.phone}</p>
-                    ) : null}
-                  </td>
-                  <td className="px-4 py-3 capitalize">{a.consultationType}</td>
-                  <td className="px-4 py-3">
-                    {a.scheduledAt
-                      ? new Date(a.scheduledAt).toLocaleString(undefined, {
+          <div className="hidden md:grid gap-2 p-3">
+            {appointments.map((a: DoctorAppointment) => {
+              const live = isAppointmentLive(a);
+              return (
+                <AppointmentCard
+                  key={a.id}
+                  href={`/doctor/appointments/${a.id}`}
+                  time={a.scheduledAt ? formatAppTime(a.scheduledAt) : "—"}
+                  timeMeta={
+                    a.scheduledAt
+                      ? new Date(a.scheduledAt).toLocaleDateString(undefined, {
                           month: "short",
                           day: "2-digit",
-                          hour: "2-digit",
-                          minute: "2-digit",
                         })
-                      : "—"}
-                  </td>
-                  <td className="px-4 py-3 text-xs">
-                    <Pill tone={a.status === "COMPLETED" ? "active" : a.status === "CANCELLED" ? "inactive" : "pending"} withDot>
-                      {appointmentStatusLabel(a.status)}
+                      : "Unscheduled"
+                  }
+                  person={a.fullName}
+                  service={<span className="capitalize">{a.consultationType}</span>}
+                  tone={statusToneForAppointmentCard(a.status)}
+                  live={live}
+                  statusPill={
+                    <Pill tone={live ? "live" : a.status === "COMPLETED" ? "active" : a.status === "CANCELLED" ? "inactive" : "pending"} withDot>
+                      {live ? "Live now" : appointmentStatusLabel(a.status)}
                     </Pill>
-                  </td>
-                  <td className="px-4 py-3 text-xs">{a.paymentStatus}</td>
-                  <td className="px-4 py-3 text-right">
-                    <div className="inline-flex items-center gap-2">
+                  }
+                  action={
+                    a.meetingUrl ? (
+                      <a
+                        href={a.meetingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-1 rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-800"
+                      >
+                        <Video className="size-3.5" aria-hidden /> Join
+                      </a>
+                    ) : (
+                      <ChevronRight className="size-4 text-[var(--portal-muted)]" aria-hidden />
+                    )
+                  }
+                />
+              );
+            })}
+          </div>
+          <div className="grid gap-3 p-3 md:hidden">
+            {appointments.map((a) => {
+              const live = isAppointmentLive(a);
+              return (
+                <PortalMobileCard
+                  key={a.id}
+                  title={a.fullName}
+                  subtitle={a.email}
+                  statusPill={
+                    <Pill tone={live ? "live" : a.status === "COMPLETED" ? "active" : a.status === "CANCELLED" ? "inactive" : "pending"} withDot>
+                      {live ? "Live now" : appointmentStatusLabel(a.status)}
+                    </Pill>
+                  }
+                  tone={a.status === "COMPLETED" ? "success" : a.status === "CANCELLED" ? "danger" : "neutral"}
+                  live={live}
+                  meta={[
+                    { label: "Type", value: <span className="capitalize">{a.consultationType}</span> },
+                    {
+                      label: "Scheduled",
+                      value: a.scheduledAt
+                        ? new Date(a.scheduledAt).toLocaleString(undefined, {
+                            month: "short",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "Unscheduled",
+                    },
+                    { label: "Payment", value: a.paymentStatus },
+                    { label: "Meeting", value: a.meetingUrl ? "Ready" : "Not set" },
+                  ]}
+                  actions={
+                    <>
                       {a.meetingUrl ? (
                         <a
                           href={a.meetingUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-800"
+                          className="gh-btn gh-btn-primary text-sm"
                         >
-                          <Video className="size-3.5" aria-hidden /> Join
+                          <Video className="size-3.5" aria-hidden /> Join session
                         </a>
                       ) : null}
                       <Link
                         href={`/doctor/appointments/${a.id}`}
-                        className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1.5 text-xs font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
+                        className="gh-btn gh-btn-soft text-sm"
                       >
-                        Open <ChevronRight className="size-3.5" />
+                        <CalendarDays className="size-3.5" aria-hidden /> Open workspace
                       </Link>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
-          <div className="grid gap-3 p-3 md:hidden">
-            {appointments.map((a) => (
-              <PortalMobileCard
-                key={a.id}
-                title={a.fullName}
-                subtitle={a.email}
-                statusPill={
-                  <Pill tone={a.status === "COMPLETED" ? "active" : a.status === "CANCELLED" ? "inactive" : "pending"} withDot>
-                    {appointmentStatusLabel(a.status)}
-                  </Pill>
-                }
-                tone={a.status === "COMPLETED" ? "success" : a.status === "CANCELLED" ? "danger" : "neutral"}
-                meta={[
-                  { label: "Type", value: <span className="capitalize">{a.consultationType}</span> },
-                  {
-                    label: "Scheduled",
-                    value: a.scheduledAt
-                      ? new Date(a.scheduledAt).toLocaleString(undefined, {
-                          month: "short",
-                          day: "2-digit",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })
-                      : "Unscheduled",
-                  },
-                  { label: "Payment", value: a.paymentStatus },
-                  { label: "Meeting", value: a.meetingUrl ? "Ready" : "Not set" },
-                ]}
-                actions={
-                  <>
-                    {a.meetingUrl ? (
-                      <a
-                        href={a.meetingUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="gh-btn gh-btn-primary text-sm"
-                      >
-                        <Video className="size-3.5" aria-hidden /> Join session
-                      </a>
-                    ) : null}
-                    <Link
-                      href={`/doctor/appointments/${a.id}`}
-                      className="gh-btn gh-btn-soft text-sm"
-                    >
-                      <CalendarDays className="size-3.5" aria-hidden /> Open workspace
-                    </Link>
-                  </>
-                }
-              />
-            ))}
+                    </>
+                  }
+                />
+              );
+            })}
           </div>
           {result.data.pagination.totalPages > 1 ? (
             <div className="border-t border-[var(--portal-line)] px-4 py-3 text-xs text-[var(--portal-muted)]">
