@@ -577,7 +577,8 @@ do not invent new meanings.
 - New messages rise 6px + fade 200ms. No typing-simulation effects.
 - Consumers: `ChatThread` (Admin+Patient), `ConsultationChat`
   (Doctor+Patient), `InternalMessagesThread` (Admin+Doctor) — restyle the
-  core once, click through all five mount points.
+  core once, click through all six mount points (each consumer mounts on
+  both sides of its pairing).
 
 ### 5.18 Calendar
 
