@@ -351,16 +351,10 @@ export function SiteHeader({
             />
           </Link>
 
-          <Link
-            href={bookHref}
-            aria-label="Book an appointment"
-            className="gh-header-bookCtaMobile gh-focus-on-dark inline-flex min-h-11 items-center justify-center gap-1 rounded-full bg-[var(--color-brand-accent)] px-4 py-2.5 text-sm font-extrabold tracking-[-0.01em] text-[#0a1f14] shadow-[0_4px_16px_rgba(176,241,34,0.22)] transition-transform duration-200 active:scale-[0.97] motion-reduce:transition-none xl:hidden"
-          >
-            {navigation.navBookShort}
-            <ArrowUpRight className="size-3.5 text-[#0a1f14]" strokeWidth={2.5} aria-hidden />
-          </Link>
+          {/* Below xl, booking is reached via the drawer's own sticky Book
+              CTA (see MobileNav) — no duplicate pill in the header bar. */}
 
-          {/* Mobile + tablet drawer trigger — shown below lg (incl. iPad). */}
+          {/* Mobile + tablet drawer trigger — shown below xl (incl. iPad). */}
           <div className="xl:hidden">
             <MobileNav
               siteName={siteName}

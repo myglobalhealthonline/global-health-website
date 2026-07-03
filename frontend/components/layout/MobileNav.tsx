@@ -152,7 +152,7 @@ export function MobileNav({
       <Dialog.Trigger asChild>
         <button
           type="button"
-          className="inline-flex size-11 items-center justify-center rounded-full border border-[var(--color-border)] bg-white text-[var(--color-text-primary)] xl:hidden"
+          className="gh-focus-on-dark inline-flex size-11 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] text-white/85 transition-colors duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white xl:hidden"
           aria-label="Open menu"
         >
           <Menu className="size-5" aria-hidden />
@@ -314,7 +314,7 @@ export function MobileNav({
             </div>
           </div>
 
-          <div className="fixed bottom-0 left-0 right-0 border-t border-[var(--color-border)] bg-white/95 p-4 backdrop-blur-md">
+          <div className="fixed bottom-0 left-0 right-0 border-t border-[var(--color-border)] p-4">
             <Dialog.Close asChild>
               <Link href={bookHref} className="gh-btn gh-btn-primary flex w-full text-base">
                 {navigation.navBookAppointment}
