@@ -1602,11 +1602,6 @@ img {
   border-radius: var(--portal-radius-sm);
 }
 
-.gh-portal-tabs {
-  scrollbar-width: thin;
-  scrollbar-color: var(--portal-line-strong) transparent;
-}
-
 /* Portal system v4 "Obsidian Ivory": forest-black glass chrome, gallery-ivory
  * content, lime voltage. Token reference: docs/portal-redesign/DESIGN.md §3.
  * Preserves pre-existing var names consumed with a fallback elsewhere in this
@@ -6964,7 +6959,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   max-width: 100%;
   overflow-x: auto;
   overscroll-behavior-x: contain;
-  scrollbar-width: thin;
   padding-bottom: 2px;
 }
 
@@ -7182,7 +7176,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   max-width: 100%;
   overflow-x: auto;
   overscroll-behavior-x: contain;
-  scrollbar-width: thin;
   padding-bottom: 2px;
 }
 
@@ -7414,7 +7407,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 .gh-doctor-appointment-tablist,
 .gh-doctor-doc-modal-tabs {
   overscroll-behavior-x: contain;
-  scrollbar-width: thin;
 }
 
 /* Calm mode — DESIGN.md §6.3/strategy Doctor plan: while a consultation
@@ -7627,7 +7619,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 
 .gh-patient-tabs {
   overscroll-behavior-x: contain;
-  scrollbar-width: thin;
 }
 
 .gh-patient-medical-empty {
@@ -7704,7 +7695,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 .gh-patient-table-wrap {
   max-width: 100%;
   overscroll-behavior-x: contain;
-  scrollbar-width: thin;
 }
 
 .gh-patient-list-row,
