@@ -4,10 +4,14 @@
  * sidebar nav). Default OS scrollbars render with a near-white track
  * that fights the forest-green sidebar; this slim transparent + lime
  * thumb blends in. Apply via `className="gh-dark-scroll"`. */
-/* WebKit pseudos only — setting the standard `scrollbar-width`/`-color`
- * in Chromium hands the bar to the OS overlay (invisible until scrolled)
- * and suppresses this always-visible custom bar. Firefox falls back to
- * its default visible scrollbar. */
+/* WebKit pseudos — setting the standard `scrollbar-width`/`-color` in
+ * Chromium hands the bar to the OS overlay (invisible until scrolled)
+ * and suppresses this always-visible custom bar, so they're gated
+ * behind `@supports not selector(::-webkit-scrollbar)` below: Firefox
+ * (no ::-webkit-scrollbar support) gets its native thin/colored theming
+ * API, Chromium skips that block entirely and uses the pseudo-elements
+ * here instead. Both browsers end up with the same always-visible lime
+ * thumb. */
 .gh-dark-scroll::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -25,6 +29,12 @@
 }
 .gh-dark-scroll::-webkit-scrollbar-corner {
   background: transparent;
+}
+@supports not selector(::-webkit-scrollbar) {
+  .gh-dark-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(200, 230, 160, 0.55) rgba(255, 255, 255, 0.05);
+  }
 }
 
 :root {
@@ -8052,10 +8062,11 @@ a.gh-appointment-card:hover {
   text-decoration-color: var(--portal-mint);
 }
 
-/* WebKit pseudos only: any non-initial `scrollbar-width`/`scrollbar-color`
- * makes Chromium ignore the custom pseudo styling below and hands the bar
- * to the Win11 overlay (invisible until scrolled). Firefox keeps its
- * default visible scrollbar. */
+/* WebKit pseudos — any non-initial `scrollbar-width`/`scrollbar-color`
+ * makes Chromium ignore the custom pseudo styling below and hands the
+ * bar to the Win11 overlay (invisible until scrolled), so they're gated
+ * behind `@supports not selector(::-webkit-scrollbar)`: Firefox gets its
+ * native theming API, Chromium uses the pseudo-elements here instead. */
 .gh-portal-shell *:not(.gh-dark-scroll)::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -8068,4 +8079,11 @@ a.gh-appointment-card:hover {
 
 .gh-portal-shell *:not(.gh-dark-scroll)::-webkit-scrollbar-thumb:hover {
   background: var(--lux-scrollbar-thumb-hover);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .gh-portal-shell *:not(.gh-dark-scroll) {
+    scrollbar-width: thin;
+    scrollbar-color: var(--lux-scrollbar-thumb) transparent;
+  }
 }
