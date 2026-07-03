@@ -116,9 +116,12 @@ export function SiteFooter({
   // to the static seed list so the footer works on pages that don't
   // pass the prop (e.g. storybook, older layouts).
   const activeCountries = countries ?? staticCountries;
+  // Prefer the slug carried on the country data itself — the client-side
+  // slug registry proxy may not be warmed on hydration for admin-added
+  // countries, which previously produced `/undefined/<lang>` hrefs.
   const clinicsLinks = activeCountries.map((c) => ({
     label: c.name,
-    href: `/${COUNTRY_CODE_TO_SLUG[c.code]}/${c.defaultLocale ?? "en"}`,
+    href: `/${c.slug || COUNTRY_CODE_TO_SLUG[c.code] || c.code.toLowerCase()}/${c.defaultLocale ?? "en"}`,
   }));
 
   const accountLinks = [
@@ -266,7 +269,7 @@ export function SiteFooter({
                   const isExternal =
                     item.external === true ||
                     /^(https?:|mailto:|tel:)/i.test(item.href);
-                  const linkClass = "gh-footer-navLink focus-visible:outline-none";
+                  const linkClass = "gh-footer-navLink gh-focus-on-dark";
                   const newTab = item.external === true;
                   return (
                     <li key={item.label + item.href}>
@@ -308,7 +311,7 @@ export function SiteFooter({
           <span className="flex gap-3">
             <Link
               href="/privacy"
-              className="gh-footer-legalLink focus-visible:outline-none"
+              className="gh-footer-legalLink gh-focus-on-dark"
             >
               {navigation.footerPrivacyLink}
             </Link>

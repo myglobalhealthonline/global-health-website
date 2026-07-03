@@ -46,7 +46,9 @@ function PatientUploadForm() {
   if (error && !info) {
     return (
       <div className="gh-card mx-auto max-w-lg p-8">
-        <p className="text-sm text-red-700">{error}</p>
+        <p role="alert" className="gh-status-error rounded-[var(--radius-card-sm)] px-3 py-2 text-sm">
+          {error}
+        </p>
       </div>
     );
   }
@@ -63,7 +65,9 @@ function PatientUploadForm() {
         {info.fullName ? `For ${info.fullName}` : info.email} — PDF or images, max 10 MB.
       </p>
       {success ? (
-        <p className="mt-4 text-sm font-semibold text-emerald-800">{success}</p>
+        <p role="status" className="gh-status-success mt-4 rounded-[var(--radius-card-sm)] px-3 py-2 text-sm font-semibold">
+          {success}
+        </p>
       ) : (
         <form className="mt-6" onSubmit={submit}>
           <input
@@ -71,9 +75,13 @@ function PatientUploadForm() {
             type="file"
             accept=".pdf,image/jpeg,image/png,image/webp"
             required
-            className="block w-full text-sm"
+            className="block w-full cursor-pointer rounded-[var(--radius-card-sm)] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-background-soft)] p-4 text-sm text-[var(--color-text-body)] file:mr-4 file:cursor-pointer file:rounded-full file:border-0 file:bg-[var(--color-brand-primary)] file:px-4 file:py-2.5 file:text-sm file:font-bold file:text-white"
           />
-          {error ? <p className="mt-3 text-sm text-red-700">{error}</p> : null}
+          {error ? (
+            <p role="alert" className="gh-status-error mt-3 rounded-[var(--radius-card-sm)] px-3 py-2 text-sm">
+              {error}
+            </p>
+          ) : null}
           <button
             type="submit"
             disabled={pending}

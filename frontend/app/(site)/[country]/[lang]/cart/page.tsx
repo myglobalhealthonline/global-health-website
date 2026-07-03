@@ -170,7 +170,14 @@ export default function CartPage() {
         <GH2FlowHeader title={t.title} activeStep={1} steps={steps} />
         <section className="bg-[var(--color-background-soft)] px-5 py-12">
           <div className="mx-auto max-w-5xl">
-            <p className="gh-body-sm">{t.loading}</p>
+            <div className="gh-card flex items-center gap-3 p-6" role="status" aria-live="polite">
+              <Clock
+                className="size-5 shrink-0 animate-pulse motion-reduce:animate-none"
+                style={{ color: "var(--color-brand-primary)" }}
+                aria-hidden
+              />
+              <p className="gh-body-sm m-0">{t.loading}</p>
+            </div>
           </div>
         </section>
       </>
@@ -273,7 +280,7 @@ export default function CartPage() {
                     currency={cart.currencyCode}
                     t={t}
                     coverageLine={coverageLines[item.id]}
-                    onSelectBenefit={(sel) => void onSelectBenefit(item.id, sel)}
+                    onSelectBenefit={(sel) => onSelectBenefit(item.id, sel)}
                     onIncrease={() => void update(item.id, item.quantity + 1)}
                     onDecrease={() =>
                       item.quantity > 1 && void update(item.id, item.quantity - 1)
@@ -412,7 +419,7 @@ function CartItemRow({
   item: CartItem;
   currency: string;
   coverageLine?: CartCoverageLine;
-  onSelectBenefit: (selection: BenefitSelection) => void;
+  onSelectBenefit: (selection: BenefitSelection) => void | Promise<void>;
   onIncrease: () => void;
   onDecrease: () => void;
   onRemove: () => void;
@@ -429,6 +436,9 @@ function CartItemRow({
   // real choice (more than just "pay normally"). Driven by the server preview.
   const options = coverageLine?.eligibleSelections ?? [];
   const showSelector = isConsult && options.length > 1;
+  // Pending guard: while a benefit PATCH is in flight the options are
+  // disabled + dimmed so rapid taps can't queue conflicting changes.
+  const [benefitPending, setBenefitPending] = useState(false);
 
   return (
     <li className="flex gap-4 p-5 sm:gap-5">
@@ -524,8 +534,16 @@ function CartItemRow({
                     type="button"
                     role="radio"
                     aria-checked={active}
-                    onClick={() => onSelectBenefit(opt)}
-                    className="rounded-full px-3 py-1 text-[12px] font-semibold transition-colors"
+                    disabled={benefitPending}
+                    onClick={() => {
+                      if (benefitPending) return;
+                      const result = onSelectBenefit(opt);
+                      if (result && typeof result.then === "function") {
+                        setBenefitPending(true);
+                        void result.finally(() => setBenefitPending(false));
+                      }
+                    }}
+                    className="rounded-full px-3 py-1 text-[12px] font-semibold transition-colors disabled:cursor-wait disabled:opacity-60"
                     style={
                       active
                         ? { background: "var(--color-brand-primary)", color: "#fff" }

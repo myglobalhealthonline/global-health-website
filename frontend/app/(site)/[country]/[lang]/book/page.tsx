@@ -854,13 +854,13 @@ function ServiceChoiceCard({
           <div className="ml-auto flex shrink-0 items-center gap-2">
             <Link
               href={viewHref}
-              className="inline-flex h-9 items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-bold text-[var(--color-brand-primary)] transition-colors hover:border-[var(--color-brand-primary)]/40 hover:bg-[var(--color-background-soft)]"
+              className="gh2-btn-compact gh2-btn-compact-secondary"
             >
               View
             </Link>
             <Link
               href={href}
-              className="inline-flex h-9 items-center justify-center gap-1 rounded-full bg-[var(--color-brand-primary)] px-4 text-sm font-bold text-white transition-[filter] hover:brightness-110"
+              className="gh2-btn-compact gh2-btn-compact-primary"
             >
               {bp.continue}
               <ArrowRight className="size-3.5 shrink-0" aria-hidden />

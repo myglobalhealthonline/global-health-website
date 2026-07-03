@@ -149,7 +149,8 @@
   /* Spacing — fluid block tokens. Drive every section + card inner
    * padding from these instead of hand-coded px values, so the whole
    * page rhythm can be retuned from one place. */
-  --space-section: clamp(64px, 8vw, 112px);
+  --space-section: clamp(72px, 10vw, 144px);
+  --space-section-sm: clamp(56px, 7vw, 96px);
   --space-section-tight: clamp(40px, 5vw, 64px);
   --space-stack: clamp(16px, 1.5vw, 24px);
   --space-inset: clamp(20px, 3vw, 32px);
@@ -361,6 +362,9 @@ img {
 .gh-section {
   padding-block: var(--space-section);
 }
+.gh-section-sm {
+  padding-block: var(--space-section-sm);
+}
 .gh-section-tight {
   padding-block: var(--space-section-tight);
 }
@@ -564,7 +568,7 @@ img {
 }
 
 .gh-header-bookCtaMobile {
-  min-height: 40px;
+  min-height: 44px;
   text-decoration: none;
 }
 
@@ -675,7 +679,9 @@ img {
 }
 
 .gh-newsletter-statusError {
-  color: rgba(255, 180, 180, 0.9);
+  /* Readable error tier on the dark footer chrome (was 0.9-alpha pale pink). */
+  color: #ffc9c9;
+  font-weight: 600;
 }
 
 .gh-footer-brandLink {
@@ -6288,14 +6294,10 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   border: 1px solid var(--color-border);
 }
 
-/* Premium editorial section spacing */
-.gh-section {
-  padding-block: clamp(72px, 10vw, 144px);
-}
-
-.gh-section-sm {
-  padding-block: clamp(56px, 7vw, 96px);
-}
+/* Premium editorial section spacing — canonical definitions live near
+ * the top of this file and are token-driven (--space-section /
+ * --space-section-sm). The duplicate literal definitions that used to
+ * live here silently overrode the tokens; removed. */
 
 .gh-container {
   width: 100%;
@@ -6775,8 +6777,104 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   transition: background-color 200ms ease-out, border-color 200ms ease-out;
 }
 .gh2-btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+/* ── Public CTA extensions ─────────────────────────────────────────────
+ * Shared classes for the public website only (never portal shells).
+ * Hierarchy: gh2-btn-lime (page primary) > gh2-btn-ghost (page secondary
+ * on dark) > gh2-btn-outline (page/card secondary on light) >
+ * gh2-btn-card-* (card footer actions, 48px) > gh2-btn-compact-* (dense
+ * booking-selection actions, 44px minimum for mobile tap targets) >
+ * gh2-pill-filter (filter chips). All inherit the global :focus-visible
+ * dual ring — do not add focus-visible:outline-none on consumers. */
+.gh2-btn-compact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 180ms ease-out, border-color 180ms ease-out,
+    filter 180ms ease-out;
+}
+.gh2-btn-compact-primary {
+  background: var(--color-brand-primary);
+  color: #fff;
+}
+.gh2-btn-compact-primary:hover {
+  filter: brightness(1.1);
+}
+.gh2-btn-compact-secondary {
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-brand-primary);
+}
+.gh2-btn-compact-secondary:hover {
+  border-color: color-mix(in srgb, var(--color-brand-primary) 40%, transparent);
+  background: var(--color-background-soft);
+}
+/* Secondary on light surfaces — outline that fills on hover. */
+.gh2-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-brand-primary);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 180ms ease-out, border-color 180ms ease-out;
+}
+.gh2-btn-outline:hover {
+  border-color: color-mix(in srgb, var(--color-brand-primary) 40%, transparent);
+  background: var(--color-background-soft);
+}
+/* Filter pill pair — selected = forest fill, unselected = quiet outline. */
+.gh2-pill-filter {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 150ms ease-out, border-color 150ms ease-out,
+    color 150ms ease-out;
+}
+.gh2-pill-filter:hover {
+  border-color: color-mix(in srgb, var(--color-brand-primary) 40%, transparent);
+}
+.gh2-pill-filter[aria-pressed="true"],
+.gh2-pill-filter[data-selected="true"] {
+  background: var(--color-brand-primary);
+  border-color: var(--color-brand-primary);
+  color: #fff;
+}
+/* Focus ring variant for controls sitting on dark glass chrome, where
+ * the default forest outline is invisible. Use INSTEAD of removing the
+ * outline — never pair with focus-visible:outline-none elsewhere. */
+.gh-focus-on-dark:focus-visible {
+  outline: 2px solid var(--color-brand-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(3, 31, 24, 0.55);
 }
 
 /* Dark service card — lift + lime border bloom on hover. */

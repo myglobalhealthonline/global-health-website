@@ -52,7 +52,7 @@ export function FAQSection({ title = "FAQs", items }: FAQSectionProps) {
                 borderBottom: "1px solid rgba(255,255,255,0.08)",
               }}
             >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 md:py-6">
+              <summary className="gh-focus-on-dark flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 rounded-md py-5 md:py-6">
                 <span
                   className="text-base font-semibold leading-snug transition-colors duration-200 group-hover:text-[var(--color-brand-accent)] motion-reduce:transition-none"
                   style={{ color: "rgba(255,255,255,0.88)" }}
@@ -74,7 +74,7 @@ export function FAQSection({ title = "FAQs", items }: FAQSectionProps) {
               </summary>
               <p
                 className="pb-6 text-sm leading-relaxed"
-                style={{ color: "rgba(255,255,255,0.52)", maxWidth: "62ch" }}
+                style={{ color: "rgba(255,255,255,0.78)", maxWidth: "62ch" }}
               >
                 {item.answer}
               </p>

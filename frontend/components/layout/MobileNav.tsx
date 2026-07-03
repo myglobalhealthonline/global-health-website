@@ -152,7 +152,7 @@ export function MobileNav({
       <Dialog.Trigger asChild>
         <button
           type="button"
-          className="inline-flex rounded-full border border-[var(--color-border)] bg-white p-2.5 text-[var(--color-text-primary)] lg:hidden"
+          className="inline-flex size-11 items-center justify-center rounded-full border border-[var(--color-border)] bg-white text-[var(--color-text-primary)] xl:hidden"
           aria-label="Open menu"
         >
           <Menu className="size-5" aria-hidden />
@@ -161,7 +161,7 @@ export function MobileNav({
 
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" />
-        <Dialog.Content className="fixed inset-x-0 top-0 z-50 flex max-h-[100dvh] flex-col bg-white shadow-[var(--shadow-elevated)] lg:hidden">
+        <Dialog.Content className="fixed inset-x-0 top-0 z-50 flex max-h-[100dvh] flex-col bg-white shadow-[var(--shadow-elevated)] xl:hidden">
           <Dialog.Title className="sr-only">{navigation.navHome} navigation</Dialog.Title>
           <Dialog.Description className="sr-only">
             Switch country, change language, and book a consultation.

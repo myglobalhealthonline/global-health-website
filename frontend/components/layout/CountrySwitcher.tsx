@@ -88,8 +88,8 @@ export function CountrySwitcher({
         aria-haspopup="menu"
         aria-expanded={open}
         data-open={open}
-        className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 data-[open=true]:border-white/30 data-[open=true]:bg-white/10"
-        style={{ minHeight: 40 }}
+        className="gh-focus-on-dark inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white data-[open=true]:border-white/30 data-[open=true]:bg-white/10"
+        style={{ minHeight: 44 }}
       >
         {active ? <Flag code={active.code} size="sm" /> : null}
         <span>{active ? active.name : "Choose country"}</span>
@@ -107,6 +107,8 @@ export function CountrySwitcher({
           className="absolute right-0 z-50 mt-2 overflow-hidden"
           style={{
             minWidth: 220,
+            maxHeight: "min(calc(100vh - 120px), 320px)",
+            overflowY: "auto",
             background: "var(--color-background-page)",
             border: "1px solid var(--color-border)",
             borderRadius: 12,
@@ -116,7 +118,10 @@ export function CountrySwitcher({
           <ul className="m-0 list-none p-1">
             {countries.map((c) => {
               const isActive = c.code === activeCountryCode;
-              const slug = COUNTRY_CODE_TO_SLUG[c.code];
+              // Prefer the slug on the country data itself; the client-side
+              // registry proxy may not be warm for admin-added countries.
+              const slug =
+                c.slug || COUNTRY_CODE_TO_SLUG[c.code] || c.code.toLowerCase();
               // Keep the visitor's current language when the target
               // country supports it; otherwise fall back to the target
               // country's default locale. This makes country switching

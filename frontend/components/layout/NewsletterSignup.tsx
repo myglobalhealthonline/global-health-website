@@ -79,6 +79,8 @@ export function NewsletterSignup({ countryCode, locale, i18n }: Props) {
               required
               maxLength={254}
               disabled={status === "loading"}
+              aria-invalid={status === "error" || undefined}
+              aria-describedby={message ? "gh-newsletter-status" : undefined}
               className="gh-newsletter-input"
             />
           </div>
@@ -88,10 +90,14 @@ export function NewsletterSignup({ countryCode, locale, i18n }: Props) {
         </button>
       </form>
       {message && status === "ok" ? (
-        <p className="gh-newsletter-status gh-newsletter-statusOk">{message}</p>
+        <p id="gh-newsletter-status" role="status" className="gh-newsletter-status gh-newsletter-statusOk">
+          {message}
+        </p>
       ) : null}
       {message && status === "error" ? (
-        <p className="gh-newsletter-status gh-newsletter-statusError">{message}</p>
+        <p id="gh-newsletter-status" role="alert" className="gh-newsletter-status gh-newsletter-statusError">
+          {message}
+        </p>
       ) : null}
     </div>
   );

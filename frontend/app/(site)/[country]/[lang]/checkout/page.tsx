@@ -155,14 +155,48 @@ export default function CheckoutPage() {
         <GH2FlowHeader title={t.title} activeStep={2} steps={steps} />
         <section className="bg-[var(--color-background-soft)] px-5 py-12">
           <div className="mx-auto max-w-5xl">
-            <p className="gh-body-sm">{t.loading}</p>
+            <div
+              className="gh-card flex items-center gap-3 p-6"
+              role="status"
+              aria-live="polite"
+            >
+              <Loader2
+                className="size-5 shrink-0 animate-spin motion-reduce:animate-none"
+                style={{ color: "var(--color-brand-primary)" }}
+                aria-hidden
+              />
+              <p className="gh-body-sm m-0">{t.loading}</p>
+            </div>
           </div>
         </section>
       </>
     );
   }
 
-  if (cart.items.length === 0) return null;
+  if (cart.items.length === 0) {
+    // The redirect effect above sends the user back to the cart; render an
+    // explicit empty state instead of a blank frame in case the redirect is
+    // slow or missed (e.g. backend/cart preview unavailable).
+    return (
+      <>
+        <GH2FlowHeader title={t.title} activeStep={2} steps={steps} />
+        <section className="bg-[var(--color-background-soft)] px-5 py-12">
+          <div className="mx-auto max-w-5xl">
+            <div className="gh-card p-8 text-center">
+              <h2 className="gh-h3">{common.cartPage.emptyTitle}</h2>
+              <p className="gh-body-sm mt-2">{common.cartPage.emptyBody}</p>
+              <Link
+                href={countrySlug && lang ? `/${countrySlug}/${lang}` : "/"}
+                className="gh2-btn-lime mt-6 inline-flex justify-center"
+              >
+                {common.cartPage.startShopping}
+              </Link>
+            </div>
+          </div>
+        </section>
+      </>
+    );
+  }
 
   const shippingCents = cart.items.reduce(
     (s, i) => s + (i.shippingCents ?? 0) * i.quantity,
@@ -328,10 +362,34 @@ export default function CheckoutPage() {
               ) : null}
 
               {error ? (
-                <p className="gh-status-error mt-5 rounded-[var(--radius-card-sm)] px-3 py-2 text-sm">
+                <p
+                  role="alert"
+                  className="gh-status-error mt-5 rounded-[var(--radius-card-sm)] px-3 py-2 text-sm"
+                >
                   {error}
                 </p>
               ) : null}
+
+              {/* Mobile-only total recap: on small screens the order summary
+                  aside renders below this form, so the buyer would otherwise
+                  reach "Pay securely" without the final amount in view. */}
+              <div
+                className="mt-6 flex items-baseline justify-between rounded-[var(--radius-card-sm)] border px-4 py-3 lg:hidden"
+                style={{
+                  borderColor: "var(--color-border)",
+                  background: "var(--color-background-soft)",
+                }}
+              >
+                <span className="text-sm font-bold" style={{ color: "var(--color-text-primary)" }}>
+                  {t.total}
+                </span>
+                <span
+                  className="text-lg font-extrabold tracking-[-0.02em] [font-variant-numeric:tabular-nums]"
+                  style={{ color: "var(--color-text-primary)" }}
+                >
+                  {formatPrice(payableTotal, cart.currencyCode)}
+                </span>
+              </div>
 
               <button
                 type="submit"
