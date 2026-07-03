@@ -3291,8 +3291,8 @@ a.gh-stat-card:hover {
 
 .gh-admin-status-toggle-off .gh-admin-status-toggle__track {
   justify-content: flex-start;
-  background: #d9e3dd;
-  box-shadow: inset 0 0 0 1px rgba(29, 75, 54, 0.08);
+  background: var(--lux-well-fill);
+  box-shadow: var(--lux-inset-well);
 }
 
 .gh-admin-status-toggle__thumb {
@@ -3300,8 +3300,8 @@ a.gh-stat-card:hover {
   width: 16px;
   height: 16px;
   border-radius: 999px;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(29, 75, 54, 0.22);
+  background: var(--portal-bg);
+  box-shadow: var(--lux-elev-press);
 }
 
 .gh-admin-status-toggle__label {
@@ -3431,9 +3431,9 @@ a.gh-stat-card:hover {
 
 .gh-admin-service-tab[aria-selected="true"],
 .gh-admin-service-kind-tab--active {
-  background: #ffffff !important;
-  color: #184633 !important;
-  box-shadow: 0 8px 18px rgba(30, 66, 51, 0.08) !important;
+  background: var(--lux-well-fill) !important;
+  color: var(--portal-primary) !important;
+  box-shadow: var(--lux-elev-press) !important;
 }
 
 .gh-admin-service-links {
@@ -4364,7 +4364,7 @@ a.gh-stat-card:hover {
 }
 
 .gh-admin-media-dropzone--preview {
-  background: #ffffff !important;
+  background: var(--lux-card-fill) !important;
 }
 
 .gh-admin-media-empty {
@@ -4611,8 +4611,8 @@ a.gh-stat-card:hover {
 
 .gh-admin-slot-day--active,
 .gh-admin-slot-time--active {
-  background: #184633 !important;
-  border-color: #184633 !important;
+  background: var(--lux-forest-duotone) !important;
+  border-color: var(--portal-primary) !important;
 }
 
 .gh-admin-slot-times {
@@ -5010,8 +5010,8 @@ a.gh-stat-card:hover {
 }
 
 .gh-admin-health-tab[aria-selected="true"] {
-  background: #184633 !important;
-  color: #ffffff !important;
+  background: var(--lux-forest-duotone) !important;
+  color: var(--portal-bg) !important;
 }
 
 .gh-admin-health-active-row {
@@ -5316,8 +5316,8 @@ a.gh-stat-card:hover {
 }
 
 .gh-admin-disclaimer-tab[aria-selected="true"] {
-  background: #184633 !important;
-  color: #ffffff !important;
+  background: var(--lux-forest-duotone) !important;
+  color: var(--portal-bg) !important;
 }
 
 .gh-admin-disclaimer-panel textarea,
@@ -5618,8 +5618,8 @@ a.gh-stat-card:hover {
 }
 
 .gh-admin-specialty-tab[aria-selected="true"] {
-  background: #184633 !important;
-  color: #ffffff !important;
+  background: var(--lux-forest-duotone) !important;
+  color: var(--portal-bg) !important;
 }
 
 .gh-admin-specialty-order-list > div,
@@ -6036,7 +6036,7 @@ a.gh-stat-card:hover {
 .gh-chat-empty {
   border: 1.5px dashed var(--portal-line-strong);
   border-radius: var(--portal-radius-lg, 14px);
-  background: var(--portal-surface, #fff);
+  background: var(--lux-card-fill);
 }
 
 .gh-chat-attach,
@@ -7262,7 +7262,7 @@ a.gh-stat-card:hover {
 }
 
 .gh-doctor-review-row {
-  background: linear-gradient(180deg, #fff, rgba(247, 250, 247, 0.76));
+  background: var(--lux-card-fill);
 }
 
 .gh-doctor-review-actions .gh-btn {
