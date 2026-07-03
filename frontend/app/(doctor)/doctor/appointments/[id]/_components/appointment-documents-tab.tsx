@@ -176,7 +176,7 @@ export function AppointmentDocumentsTab({
   return (
     <div className="gh-doctor-documents-tab mt-4 grid gap-4">
       <div className="gh-doctor-documents-toolbar flex flex-wrap items-center justify-between gap-3">
-        <p className="text-[13px] text-[var(--color-text-muted)]">
+        <p className="text-[13px] text-[var(--portal-muted)]">
           Generated PDFs and uploaded files for this appointment ({docCount} total).
         </p>
         <button
@@ -220,10 +220,10 @@ export function AppointmentDocumentsTab({
       />
 
       {loadingGenerated ? (
-        <p className="text-[13px] text-[var(--color-text-muted)]">Loading generated documents…</p>
+        <p className="text-[13px] text-[var(--portal-muted)]">Loading generated documents…</p>
       ) : generatedHistory.length === 0 ? (
         <HistorySection title="Generated documents" count={0} defaultOpen={false}>
-          <p className="px-4 py-3 text-[13px] text-[var(--color-text-muted)]">
+          <p className="px-4 py-3 text-[13px] text-[var(--portal-muted)]">
             No sent PDFs yet. Use <strong>Generate documents</strong> to create exams, prescriptions, or
             absence certificates — drafts appear in Review &amp; send until emailed.
           </p>
@@ -251,7 +251,7 @@ export function AppointmentDocumentsTab({
 
       <HistorySection title="Uploaded files" count={uploads.length} defaultOpen={false}>
         {uploads.length === 0 ? (
-          <p className="px-4 py-3 text-[13px] text-[var(--color-text-muted)]">
+          <p className="px-4 py-3 text-[13px] text-[var(--portal-muted)]">
             No uploaded files yet.
           </p>
         ) : (

@@ -149,25 +149,25 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
   return (
     <section className="gh-patient-profile-section mt-6">
       <header className="mb-3">
-        <h3 className="flex items-center gap-2 text-xl font-bold text-[var(--color-text-primary)]">
+        <h3 className="flex items-center gap-2 text-xl font-bold text-[var(--portal-text)]">
           <HeartPulse
-            className="size-5 text-[var(--color-brand-primary)]"
+            className="size-5 text-[var(--portal-primary)]"
             aria-hidden
           />
           {i18n.medicalTitle}
         </h3>
-        <p className="text-sm text-[var(--color-text-muted)]">
+        <p className="text-sm text-[var(--portal-muted)]">
           {i18n.medicalSubtitle}
         </p>
       </header>
 
       {!loaded ? (
         <div className="gh-patient-empty-state gh-card p-6">
-          <div className="h-4 w-44 rounded bg-[var(--color-background-soft)]" />
+          <div className="h-4 w-44 rounded bg-[var(--portal-well)]" />
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            <div className="h-12 rounded-lg bg-[var(--color-background-soft)]" />
-            <div className="h-12 rounded-lg bg-[var(--color-background-soft)]" />
-            <div className="h-12 rounded-lg bg-[var(--color-background-soft)]" />
+            <div className="h-12 rounded-lg bg-[var(--portal-well)]" />
+            <div className="h-12 rounded-lg bg-[var(--portal-well)]" />
+            <div className="h-12 rounded-lg bg-[var(--portal-well)]" />
           </div>
         </div>
       ) : (
@@ -298,7 +298,7 @@ function TextField({
         maxLength={maxLength}
         className="gh-input mt-1 min-w-0"
       />
-      {hint ? <p className="mt-1 text-xs text-[var(--color-text-muted)]">{hint}</p> : null}
+      {hint ? <p className="mt-1 text-xs text-[var(--portal-muted)]">{hint}</p> : null}
     </label>
   );
 }

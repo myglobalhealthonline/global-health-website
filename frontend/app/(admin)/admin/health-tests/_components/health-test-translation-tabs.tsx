@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PortalTabs } from "@/components/PortalTabs";
 
 export type HealthTestTranslationInitial = {
   locale: string;
@@ -93,28 +94,15 @@ export function HealthTestTranslationTabs({
         </p>
       </header>
 
-      <div role="tablist" className="gh-admin-health-tablist">
-        {locales.map((l) => {
-          const isActive = l.code === active;
-          return (
-            <button
-              key={l.code}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => setActive(l.code)}
-              className={`gh-admin-health-tab ${
-                isActive
-                  ? "bg-[var(--color-brand-primary)] text-white"
-                  : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-              }`}
-            >
-              {localeLabel(l.code)}
-              {l.isDefault ? " · default" : ""}
-            </button>
-          );
-        })}
-      </div>
+      <PortalTabs
+        ariaLabel="Health test translations"
+        value={active}
+        onChange={setActive}
+        items={locales.map((l) => ({
+          value: l.code,
+          label: `${localeLabel(l.code)}${l.isDefault ? " · default" : ""}`,
+        }))}
+      />
 
       {locales.map((l) => {
         const v = valuesFor(l.code);

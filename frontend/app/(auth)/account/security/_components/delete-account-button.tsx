@@ -114,12 +114,12 @@ function DeleteAccountModal({
         aria-modal="true"
         aria-labelledby="delete-account-title"
         aria-describedby="delete-account-desc"
-          className="gh-patient-delete-modal fixed left-1/2 top-1/2 z-50 max-h-[calc(100vh-2rem)] w-[min(calc(100%-2rem),28rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-[var(--color-border)] bg-white p-6 shadow-xl"
+          className="gh-patient-delete-modal fixed left-1/2 top-1/2 z-50 max-h-[calc(100vh-2rem)] w-[min(calc(100%-2rem),28rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-[var(--portal-line)] bg-white p-6 shadow-xl"
       >
-        <h2 id="delete-account-title" className="text-base font-bold text-[var(--color-text-primary)]">
+        <h2 id="delete-account-title" className="text-base font-bold text-[var(--portal-text)]">
           {i18n.deleteAccountTitle}
         </h2>
-        <p id="delete-account-desc" className="mt-2 text-sm text-[var(--color-text-muted)]">
+        <p id="delete-account-desc" className="mt-2 text-sm text-[var(--portal-muted)]">
           {i18n.deleteWarning}
         </p>
           <div className="gh-patient-form-actions mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -127,7 +127,7 @@ function DeleteAccountModal({
             type="button"
             onClick={onCancel}
             disabled={confirming}
-            className="rounded-md border border-[var(--color-border-strong)] px-4 py-2 text-sm font-semibold text-[var(--color-text-body)] hover:bg-[var(--color-background-soft)] disabled:opacity-60"
+            className="rounded-md border border-[var(--portal-line-strong)] px-4 py-2 text-sm font-semibold text-[var(--portal-text-2)] hover:bg-[var(--portal-well)] disabled:opacity-60"
           >
             {i18n.cancel}
           </button>

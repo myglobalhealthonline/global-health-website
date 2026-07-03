@@ -18,9 +18,8 @@ import {
 import {
   AdminCard,
   AdminEmptyState,
-  AdminSummaryStrip,
   Btn,
-  PageHeader,
+  CommandBand,
   SectionHeader,
   StatCard,
 } from "@/components/portal-atoms";
@@ -41,7 +40,7 @@ export default async function DoctorOverviewPage() {
           {result.message}
         </p>
         {result.status === 403 ? (
-          <p className="mt-3 text-sm text-[var(--color-text-muted)]">
+          <p className="mt-3 text-sm text-[var(--portal-muted)]">
             Your account isn&apos;t linked to a doctor profile yet. Ask an
             admin to set it under <span className="font-mono">/admin/users</span>.
           </p>
@@ -94,54 +93,51 @@ export default async function DoctorOverviewPage() {
       ? ` + ${doctor.additionalCountries.map((c) => c.country.name).join(", ")}`
       : "");
 
+  // "Now" instrument (DESIGN.md §6.1) — is the next appointment already
+  // underway? Open list already excludes CANCELLED/COMPLETED, so a
+  // started-but-still-open row reads as live.
+  const isLive = Boolean(
+    nextAppointment?.scheduledAt && new Date(nextAppointment.scheduledAt) <= now,
+  );
+
   return (
     <>
-      <PageHeader
-        eyebrow="Doctor workspace"
-        title={doctor.fullName}
-        description={subtitle}
-        actions={
-          <>
-            <Btn href="/doctor/calendar" variant="soft" size="sm">
+      <CommandBand
+        context={isLive ? "Consultation live" : "Next consultation"}
+        title={nextAppointment ? nextAppointment.fullName : "No consults today"}
+        chip={subtitle}
+        metrics={[
+          {
+            label: "Time",
+            value: nextAppointment?.scheduledAt ? formatAppTime(nextAppointment.scheduledAt) : "—",
+            signal: Boolean(nextAppointment),
+            live: isLive ? "Live now" : undefined,
+          },
+          { label: "Today", value: stats.todayCount },
+          { label: "This week", value: stats.weekCount },
+        ]}
+        action={
+          <div className="flex flex-wrap items-center gap-2.5">
+            {nextAppointment?.meetingUrl ? (
+              <Btn
+                href={nextAppointment.meetingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="primary"
+                size="sm"
+                iconLeft={<Video className="size-3.5" aria-hidden />}
+              >
+                Join
+              </Btn>
+            ) : null}
+            <Btn href="/doctor/calendar" variant="on-chrome" size="sm">
               Calendar
             </Btn>
-            <Btn href="/doctor/availability" variant="secondary" size="sm">
+            <Btn href="/doctor/availability" variant="on-chrome" size="sm">
               Availability
             </Btn>
-          </>
+          </div>
         }
-      />
-
-      <AdminSummaryStrip
-        className="mb-4"
-        items={[
-          {
-            label: "Next appointment",
-            value: nextAppointment?.scheduledAt
-              ? formatAppTime(nextAppointment.scheduledAt)
-              : "Clear",
-            hint: nextAppointment?.fullName ?? "No open consults today",
-            tone: nextAppointment ? "brand" : "success",
-          },
-          {
-            label: "Needs link",
-            value: missingMeetingLink.length,
-            hint: "Within 24 hours",
-            tone: missingMeetingLink.length > 0 ? "warning" : "neutral",
-          },
-          {
-            label: "Unread",
-            value: unreadNotifs.length,
-            hint: "Notifications",
-            tone: unreadNotifs.length > 0 ? "warning" : "neutral",
-          },
-          {
-            label: "Markets",
-            value: 1 + doctor.additionalCountries.length,
-            hint: doctor.country.name,
-            tone: "neutral",
-          },
-        ]}
       />
 
       {/* ── Stat tiles ─────────────────────────────────────────────── */}
@@ -172,16 +168,16 @@ export default async function DoctorOverviewPage() {
       {missingMeetingLink.length > 0 ? (
         <div className="gh-doctor-alert-stack mt-6">
           <AdminCard
-            style={{ borderLeft: "3px solid var(--color-status-warning-text)" }}
+            style={{ borderLeft: "3px solid var(--portal-warning-text)" }}
           >
             <div className="gh-doctor-alert-row flex items-start gap-3">
               <AlertTriangle
                 className="size-5 shrink-0"
-                style={{ color: "var(--color-status-warning-text)" }}
+                style={{ color: "var(--portal-warning-text)" }}
                 aria-hidden
               />
               <div className="min-w-0 flex-1">
-                <p className="text-[14px] font-bold text-[var(--color-text-primary)]">
+                <p className="text-[14px] font-bold text-[var(--portal-text)]">
                   {missingMeetingLink.length} appointment
                   {missingMeetingLink.length === 1 ? "" : "s"} within 24h
                   without a meeting link
@@ -192,15 +188,15 @@ export default async function DoctorOverviewPage() {
                       key={a.id}
                       className="gh-doctor-alert-list-row flex items-center justify-between gap-2 text-[13px]"
                     >
-                      <span className="truncate text-[var(--color-text-primary)]">
+                      <span className="truncate text-[var(--portal-text)]">
                         {a.fullName}
-                        <span className="ml-2 text-[var(--color-text-muted)]">
+                        <span className="ml-2 text-[var(--portal-muted)]">
                           {a.scheduledAt ? formatAppTime(a.scheduledAt) : ""}
                         </span>
                       </span>
                       <Link
                         href={`/doctor/appointments/${a.id}`}
-                        className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+                        className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
                       >
                         Add link <ChevronRight className="size-3" />
                       </Link>
@@ -239,18 +235,18 @@ export default async function DoctorOverviewPage() {
                 }
               />
             ) : (
-              <ul className="gh-doctor-schedule-list divide-y divide-[var(--color-border)]">
+              <ul className="gh-doctor-schedule-list divide-y divide-[var(--portal-line)]">
                 {todayAppointments.slice(0, 8).map((a) => (
                   <li
                     key={a.id}
                     className="gh-doctor-schedule-row flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
                   >
                     <div className="min-w-0">
-                      <p className="text-[14px] font-semibold text-[var(--color-text-primary)]">
+                      <p className="text-[14px] font-semibold text-[var(--portal-text)]">
                         {a.scheduledAt ? formatAppTime(a.scheduledAt) : "Unscheduled"}{" "}
                         · {a.fullName}
                       </p>
-                      <p className="text-[12px] text-[var(--color-text-muted)]">
+                      <p className="text-[12px] text-[var(--portal-muted)]">
                         {a.consultationType} · {a.status}
                       </p>
                     </div>
@@ -303,18 +299,18 @@ export default async function DoctorOverviewPage() {
               <ul className="gh-doctor-notification-mini-list grid gap-3">
                 {unreadNotifs.slice(0, 6).map((n) => (
                   <li key={n.id} className="text-[13px]">
-                    <p className="font-semibold text-[var(--color-text-primary)]">
+                    <p className="font-semibold text-[var(--portal-text)]">
                       {n.type.replace(/_/g, " ").toLowerCase()}
                     </p>
                     {n.payload?.snippet ? (
-                      <p className="line-clamp-2 text-[12px] text-[var(--color-text-muted)]">
+                      <p className="line-clamp-2 text-[12px] text-[var(--portal-muted)]">
                         {n.payload.snippet}
                       </p>
                     ) : null}
                     {n.payload?.appointmentId ? (
                       <Link
                         href={`/doctor/appointments/${n.payload.appointmentId}`}
-                        className="text-[11.5px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+                        className="text-[11.5px] font-semibold text-[var(--portal-primary)] hover:underline"
                       >
                         Open →
                       </Link>
@@ -325,7 +321,7 @@ export default async function DoctorOverviewPage() {
             )}
             <Link
               href="/doctor/notifications"
-              className="mt-4 inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+              className="mt-4 inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
             >
               See all <ChevronRight className="size-3" />
             </Link>
@@ -372,12 +368,12 @@ function QuickActionCard({
   return (
     <Link
       href={href}
-      className="gh-doctor-quick-card block transition-all duration-150 hover:-translate-y-[1px] hover:shadow-[var(--shadow-card-hover)]"
+      className="gh-doctor-quick-card block transition-all duration-150 hover:-translate-y-[1px]"
       style={{
-        background: "var(--color-background-page)",
-        border: "1px solid var(--color-border)",
-        borderRadius: 8,
-        boxShadow: "var(--shadow-soft)",
+        background: "var(--portal-surface)",
+        border: "1px solid var(--portal-line)",
+        borderRadius: "var(--portal-radius)",
+        boxShadow: "var(--portal-shadow)",
         padding: 20,
         textDecoration: "none",
         color: "inherit",
@@ -389,16 +385,16 @@ function QuickActionCard({
           style={{
             width: 36,
             height: 36,
-            borderRadius: 10,
-            background: "rgba(200,230,160,0.30)",
-            color: "var(--color-brand-primary)",
+            borderRadius: "var(--portal-radius-sm)",
+            background: "var(--portal-well)",
+            color: "var(--portal-accent-text)",
           }}
         >
           {icon}
         </span>
         <div>
-          <p className="text-sm font-bold text-[var(--color-text-primary)]">{label}</p>
-          <p className="text-xs text-[var(--color-text-muted)]">{hint}</p>
+          <p className="text-sm font-bold text-[var(--portal-text)]">{label}</p>
+          <p className="text-xs text-[var(--portal-muted)]">{hint}</p>
         </div>
       </div>
     </Link>

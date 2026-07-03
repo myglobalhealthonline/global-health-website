@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { formatAppDateTime } from "@/lib/format-datetime";
+import { Btn } from "@/components/portal-atoms";
 
 type InternalMessage = {
   id: string;
@@ -66,36 +67,21 @@ export function InternalMessagesThread({
     <div className="mt-3 grid gap-3">
       <ul className="grid gap-2">
         {items.length === 0 ? (
-          <li className="text-[13px] text-[var(--color-text-muted)]">
+          <li className="text-[13px]" style={{ color: "var(--portal-muted)" }}>
             No internal notes yet.
           </li>
         ) : (
-          items.map((m) => {
-            const mine = m.authorRole === currentRole;
-            return (
-              <li
-                key={m.id}
-                className={`rounded-md border px-3 py-2 text-[13px] ${
-                  mine
-                    ? "border-[var(--color-brand-primary)]/30 bg-[var(--color-brand-primary)]/5"
-                    : "border-[var(--color-border)] bg-white"
-                }`}
-              >
-                <div className="flex items-baseline justify-between gap-2">
-                  <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                    {m.authorRole === "DOCTOR" ? "Doctor" : "Admin"} ·{" "}
-                    {m.authorName}
-                  </span>
-                  <time className="text-[11px] text-[var(--color-text-muted)]">
-                    {formatAppDateTime(m.createdAt)}
-                  </time>
-                </div>
-                <p className="mt-1 whitespace-pre-wrap text-[var(--color-text-primary)]">
-                  {m.body}
-                </p>
-              </li>
-            );
-          })
+          items.map((m) => (
+            <li key={m.id} className="gh-chat-note">
+              <div className="gh-chat-note__meta flex items-baseline justify-between gap-2">
+                <span>
+                  {m.authorRole === "DOCTOR" ? "Doctor" : "Admin"} · {m.authorName}
+                </span>
+                <time>{formatAppDateTime(m.createdAt)}</time>
+              </div>
+              <p className="gh-chat-note__body">{m.body}</p>
+            </li>
+          ))
         )}
       </ul>
 
@@ -117,13 +103,9 @@ export function InternalMessagesThread({
           </p>
         ) : null}
         <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={pending || body.trim() === ""}
-            className="gh-btn gh-btn-primary"
-          >
-            {pending ? "Posting…" : "Post note"}
-          </button>
+          <Btn type="submit" variant="primary" disabled={pending || body.trim() === ""} loading={pending}>
+            Post note
+          </Btn>
         </div>
       </form>
     </div>

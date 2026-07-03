@@ -87,42 +87,42 @@ export function SubscribeForm(props: SubscribeFormProps) {
   return (
     <form onSubmit={onSubmit} className="gh-patient-subscribe-form grid gap-6">
       <div className="gh-patient-form-card gh-card p-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: "var(--color-text-muted)" }}>
+        <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: "var(--portal-muted)" }}>
           {props.planSummaryLabel}
         </p>
         <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
-          <h2 className="font-extrabold tracking-[-0.02em]" style={{ fontSize: "1.5rem", color: "var(--color-text-primary)" }}>
+          <h2 className="font-extrabold tracking-[-0.02em]" style={{ fontSize: "1.5rem", color: "var(--portal-text)" }}>
             {props.planName}
           </h2>
           <p className="flex items-baseline gap-1.5 whitespace-nowrap sm:justify-end">
-            <span className="font-extrabold" style={{ fontSize: "1.75rem", color: "var(--color-text-primary)" }}>
+            <span className="font-extrabold" style={{ fontSize: "1.75rem", color: "var(--portal-text)" }}>
               {props.priceLabel}
             </span>
-            <span className="text-sm" style={{ color: "var(--color-text-muted)" }}>
+            <span className="text-sm" style={{ color: "var(--portal-muted)" }}>
               {props.perMonth}
             </span>
           </p>
         </div>
-        <p className="mt-1 text-xs" style={{ color: "var(--color-text-muted)" }}>
+        <p className="mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
           {props.billedMonthly}
         </p>
 
-        <div className="my-5 h-px w-full" style={{ background: "var(--color-border)" }} />
+        <div className="my-5 h-px w-full" style={{ background: "var(--portal-line)" }} />
 
-        <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: "var(--color-text-muted)" }}>
+        <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: "var(--portal-muted)" }}>
           {props.whatYouGet}
         </p>
         <ul className="mt-3 flex flex-col gap-2.5">
           {props.features.map((line, i) => (
-            <li key={i} className="flex items-start gap-2.5 text-sm" style={{ color: "var(--color-text-primary)" }}>
-              <Check className="mt-0.5 size-4 shrink-0" strokeWidth={2.5} style={{ color: "var(--color-brand-primary)" }} aria-hidden />
+            <li key={i} className="flex items-start gap-2.5 text-sm" style={{ color: "var(--portal-text)" }}>
+              <Check className="mt-0.5 size-4 shrink-0" strokeWidth={2.5} style={{ color: "var(--portal-primary)" }} aria-hidden />
               <span>{line}</span>
             </li>
           ))}
         </ul>
       </div>
 
-      <label className="rounded-[14px] border border-[var(--color-border)] bg-[var(--color-background-panel)] p-4 text-sm shadow-[var(--shadow-soft)]" style={{ color: "var(--color-text-primary)" }}>
+      <label className="rounded-[14px] border border-[var(--portal-line)] bg-[var(--portal-surface-elevated)] p-4 text-sm shadow-[var(--portal-shadow)]" style={{ color: "var(--portal-text)" }}>
         <span className="flex items-start gap-3">
         <input
           type="checkbox"
@@ -131,7 +131,7 @@ export function SubscribeForm(props: SubscribeFormProps) {
             setConsented(e.target.checked);
             if (e.target.checked) setError(null);
           }}
-          className="mt-0.5 size-4 shrink-0 rounded border-[var(--color-border)]"
+          className="mt-0.5 size-4 shrink-0 rounded border-[var(--portal-line)]"
           aria-describedby="subscribe-terms-link"
         />
         <span>
@@ -140,7 +140,7 @@ export function SubscribeForm(props: SubscribeFormProps) {
             id="subscribe-terms-link"
             href={props.termsHref}
             className="font-semibold underline"
-            style={{ color: "var(--color-brand-primary)" }}
+            style={{ color: "var(--portal-primary)" }}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -151,7 +151,7 @@ export function SubscribeForm(props: SubscribeFormProps) {
       </label>
 
       {error ? (
-        <p className="rounded-md px-3 py-2 text-sm" style={{ background: "#FEE2E2", color: "#991B1B" }} role="alert">
+        <p className="rounded-md px-3 py-2 text-sm" style={{ background: "var(--portal-danger-soft)", color: "var(--portal-danger-text)" }} role="alert">
           {error}
         </p>
       ) : null}
@@ -170,7 +170,7 @@ export function SubscribeForm(props: SubscribeFormProps) {
           )}
           {submitting ? props.submittingLabel : props.submitLabel}
         </button>
-        <p className="mt-3 text-xs leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+        <p className="mt-3 text-xs leading-relaxed" style={{ color: "var(--portal-muted)" }}>
           {props.secureNote}
         </p>
       </div>

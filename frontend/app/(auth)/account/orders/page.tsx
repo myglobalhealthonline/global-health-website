@@ -74,14 +74,14 @@ export default async function AccountOrdersPage() {
               }
             />
           ) : (
-            <ul className="divide-y divide-[var(--color-border)]">
+            <ul className="divide-y divide-[var(--portal-line)]">
               {items.map((o) => (
                 <li
                   key={o.id}
                 className="gh-patient-list-row flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="font-mono text-xs text-[var(--color-text-muted)]">
+                    <p className="font-mono text-xs text-[var(--portal-muted)]">
                       #{formatOrderDisplayId(o)}
                     </p>
                     <p className="mt-1 flex flex-wrap items-center gap-2 text-sm">
@@ -90,16 +90,16 @@ export default async function AccountOrdersPage() {
                       ) : (
                         <Clock className="size-3.5 text-amber-700" aria-hidden />
                       )}
-                      <span className="font-semibold text-[var(--color-text-primary)]">
+                      <span className="font-semibold text-[var(--portal-text)]">
                         {o.itemCount === 1
                           ? a.orders.items.replace("{count}", String(o.itemCount))
                           : a.orders.itemsPlural.replace("{count}", String(o.itemCount))}
                       </span>
-                      <span className="text-[var(--color-text-muted)]">
+                      <span className="text-[var(--portal-muted)]">
                         · {formatAppDate(o.createdAt)}
                       </span>
                       <Pill tone={statusTone(o.status)}>{o.status.toLowerCase()}</Pill>
-                      <span className="font-semibold text-[var(--color-text-primary)]">
+                      <span className="font-semibold text-[var(--portal-text)]">
                         {formatPrice(o.totalCents, o.currencyCode)}
                       </span>
                     </p>

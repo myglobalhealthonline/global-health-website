@@ -5,6 +5,7 @@ import { MultiImageField } from "../../_components/multi-image-field";
 import { formatServicePriceInput } from "@/lib/admin/service-form-parse";
 import { SERVICE_KIND_META } from "@/lib/admin/service-kind";
 import { ServiceTranslationTabs } from "./service-translation-tabs";
+import { FormSection } from "@/components/FormSection";
 
 type Props = {
   countries: Pick<AdminCountryDto, "id" | "code" | "name">[];
@@ -57,41 +58,40 @@ export function ServiceFields({
   };
 
   return (
-    <div className="gh-admin-service-fields">
+    <div className="gh-admin-service-fields flex flex-col gap-5">
       <input type="hidden" name="kind" value={kind} />
 
-      {pinId && pinnedMeta ? (
-        <div>
-          <span className="gh-field-label">Country</span>
-          <p className="mt-1 text-[var(--color-text-primary)]">
-            {pinnedMeta.name} ({pinnedMeta.code})
-          </p>
-          <input type="hidden" name="countryId" value={pinId} />
-        </div>
-      ) : (
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Country</span>
-          <select
-            name="countryId"
-            className="gh-select min-w-0"
-            required
-            defaultValue={initial?.countryId ?? ""}
-          >
-            <option value="">Select country</option>
-            {countries.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name} ({c.code})
-              </option>
-            ))}
-          </select>
-        </label>
-      )}
+      <FormSection
+        title="Service"
+        description={`This record will publish under ${meta.label}.`}
+      >
+        {pinId && pinnedMeta ? (
+          <div>
+            <span className="gh-field-label">Country</span>
+            <p className="mt-1 text-[var(--color-text-primary)]">
+              {pinnedMeta.name} ({pinnedMeta.code})
+            </p>
+            <input type="hidden" name="countryId" value={pinId} />
+          </div>
+        ) : (
+          <label className="flex flex-col gap-2">
+            <span className="gh-field-label">Country</span>
+            <select
+              name="countryId"
+              className="gh-select min-w-0"
+              required
+              defaultValue={initial?.countryId ?? ""}
+            >
+              <option value="">Select country</option>
+              {countries.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name} ({c.code})
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
 
-      <div className="gh-admin-service-note">
-        This record will publish under <span className="font-semibold text-[var(--color-text-primary)]">{meta.label}</span>.
-      </div>
-
-      <div className="gh-admin-service-field-grid gh-admin-service-field-grid--two">
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Slug</span>
           <input
@@ -102,16 +102,18 @@ export function ServiceFields({
             placeholder="e.g. cardiology-consultation"
           />
         </label>
-      </div>
 
-      <ServiceTranslationTabs
-        locales={locales}
-        defaultLocale={defaultLocale}
-        initialTranslations={initial?.translations ?? []}
-        baseFallback={baseFallback}
-      />
+        <div className="gh-form-section__span-2">
+          <ServiceTranslationTabs
+            locales={locales}
+            defaultLocale={defaultLocale}
+            initialTranslations={initial?.translations ?? []}
+            baseFallback={baseFallback}
+          />
+        </div>
+      </FormSection>
 
-      <div className="gh-admin-service-field-grid gh-admin-service-field-grid--three">
+      <FormSection title="Pricing & media">
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Sort order</span>
           <input
@@ -145,9 +147,6 @@ export function ServiceFields({
             placeholder="45.00"
           />
         </label>
-      </div>
-
-      <div className="gh-admin-service-field-grid gh-admin-service-field-grid--two">
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Currency code</span>
           <input
@@ -177,28 +176,33 @@ export function ServiceFields({
             (no shipping). Set a value for prescription delivery.
           </span>
         </label>
-      </div>
 
-      <ManagedImageField
-        name="imagePath"
-        label="Hero image"
-        initialPath={initial?.assets[0]?.path ?? ""}
-        helperText={`Shown on the public ${meta.singularLabel.toLowerCase()} card and detail page.`}
-      />
+        <div className="gh-form-section__span-2">
+          <ManagedImageField
+            name="imagePath"
+            label="Hero image"
+            initialPath={initial?.assets[0]?.path ?? ""}
+            helperText={`Shown on the public ${meta.singularLabel.toLowerCase()} card and detail page.`}
+          />
+        </div>
 
-      <MultiImageField
-        name="galleryImagePaths"
-        label="Gallery images"
-        initialPaths={initial?.galleryImagePaths ?? []}
-        helperText="Optional additional images. Up to 12. Not yet rendered on the public listing — saved for a future detail page."
-        max={12}
-      />
+        <div className="gh-form-section__span-2">
+          <MultiImageField
+            name="galleryImagePaths"
+            label="Gallery images"
+            initialPaths={initial?.galleryImagePaths ?? []}
+            helperText="Optional additional images. Up to 12. Not yet rendered on the public listing — saved for a future detail page."
+            max={12}
+          />
+        </div>
+      </FormSection>
 
       {/* Doctor assignment — the public consult flow lists doctors filtered
           by this set. An empty set means the service has no bookable
           doctors, which the public page surfaces as "no slots available
           yet". */}
-      <fieldset className="gh-admin-service-doctors">
+      <FormSection title="Doctor assignment & status">
+      <fieldset className="gh-form-section__span-2 gh-admin-service-doctors">
         <legend className="gh-field-label">Assigned doctors</legend>
         {doctorOptions === null ? (
           <p className="text-[12px] text-[var(--color-text-muted)]">
@@ -279,7 +283,7 @@ export function ServiceFields({
 
       <input type="hidden" name="legacyPath" defaultValue={initial?.legacyPath ?? ""} />
 
-      <label className="gh-admin-service-active-row">
+      <label className="gh-form-section__span-2 gh-admin-service-active-row">
         <input
           type="checkbox"
           name="isActive"
@@ -288,6 +292,7 @@ export function ServiceFields({
         />
         Service active
       </label>
+      </FormSection>
     </div>
   );
 }

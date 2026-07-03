@@ -235,19 +235,19 @@ export function DocumentsReviewSendPanel({
           </p>
         ) : null}
         {success ? (
-          <p className="mb-3 text-[12.5px] font-semibold text-[var(--color-brand-primary)]">
+          <p className="mb-3 text-[12.5px] font-semibold text-[var(--portal-primary)]">
             {success}
           </p>
         ) : null}
 
         {queue.length === 0 ? (
-          <p className="text-[13px] text-[var(--color-text-muted)]">
+          <p className="text-[13px] text-[var(--portal-muted)]">
             No documents waiting. Generate an exams prescription, medicine prescription, or
             absence certificate, then return here to review and edit before sending.
           </p>
         ) : (
           <>
-            <p className="mb-3 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-3 text-[13px] text-[var(--portal-muted)]">
               Review and edit each PDF. Email send is available for exams and absence certificates
               only — medicine prescriptions are for your records and national portal submission.
             </p>
@@ -264,7 +264,7 @@ export function DocumentsReviewSendPanel({
                 </button>
               </div>
             ) : null}
-            <ul className="gh-doctor-review-list divide-y divide-[var(--color-border)] rounded-md border border-[var(--color-border)]">
+            <ul className="gh-doctor-review-list divide-y divide-[var(--portal-line)] rounded-md border border-[var(--portal-line)]">
               {queue.map((row) => {
                 const sendable = canEmailDocument(row.documentType);
                 return (
@@ -342,7 +342,7 @@ export function DocumentsReviewSendPanel({
                       <button
                         type="button"
                         onClick={() => remove(row.id)}
-                        className="p-1 text-[var(--color-text-muted)] hover:text-red-700"
+                        className="p-1 text-[var(--portal-muted)] hover:text-red-700"
                         aria-label="Delete"
                       >
                         <Trash2 className="size-4" />
@@ -356,18 +356,18 @@ export function DocumentsReviewSendPanel({
         )}
 
         {history.length > 0 ? (
-          <div className="mt-4 border-t border-[var(--color-border)] pt-4">
-            <h4 className="text-[13px] font-bold text-[var(--color-text-primary)]">
+          <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
+            <h4 className="text-[13px] font-bold text-[var(--portal-text)]">
               Already sent on this appointment
             </h4>
-            <ul className="mt-2 space-y-1 text-[13px] text-[var(--color-text-muted)]">
+            <ul className="mt-2 space-y-1 text-[13px] text-[var(--portal-muted)]">
               {history.map((row) => (
                 <li key={row.id} className="gh-doctor-review-history-row flex flex-wrap items-center gap-2">
                   <a
                     href={`/api/doctor/documents/generated/${row.id}/pdf`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-semibold text-[var(--color-brand-primary)] hover:underline"
+                    className="font-semibold text-[var(--portal-primary)] hover:underline"
                   >
                     {docRowLabel(row)} · {row.fileName}
                   </a>

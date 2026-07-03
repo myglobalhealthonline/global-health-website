@@ -33,7 +33,7 @@ export function ReceiptButton({ paymentId }: { paymentId: string }) {
 
   if (url === "unavailable") {
     return (
-      <span className="gh-patient-receipt-unavailable text-xs text-[var(--color-text-muted)]">Invoice not available</span>
+      <span className="gh-patient-receipt-unavailable text-xs text-[var(--portal-muted)]">Invoice not available</span>
     );
   }
 

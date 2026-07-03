@@ -115,17 +115,17 @@ export function AppointmentActions({
   }
 
   return (
-    <form onSubmit={save} className="mt-3 grid gap-4 rounded-lg border border-[var(--color-border)] bg-white/75 p-3 shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--color-border)] pb-3">
+    <form onSubmit={save} className="mt-3 grid gap-4 rounded-lg border border-[var(--portal-line)] bg-white/75 p-3 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--portal-line)] pb-3">
         <div>
-          <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+          <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
             Consultation controls
           </p>
-          <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+          <p className="mt-1 text-sm text-[var(--portal-muted)]">
             Update the slot, delivery mode, meeting link, and workflow status in one save.
           </p>
         </div>
-        <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-background-soft)] px-2.5 py-1 text-[11px] font-bold text-[var(--color-brand-primary)]">
+        <span className="inline-flex items-center gap-1 rounded-full bg-[var(--portal-well)] px-2.5 py-1 text-[11px] font-bold text-[var(--portal-primary)]">
           <Route className="size-3" aria-hidden />
           {STATUS_OPTIONS.find((option) => option.value === status)?.label ?? status}
         </span>
@@ -175,7 +175,7 @@ export function AppointmentActions({
           }
           maxLength={500}
         />
-        <span className="text-[11.5px] text-[var(--color-text-muted)]">
+        <span className="text-[11.5px] text-[var(--portal-muted)]">
           Google Meet, Zoom, Teams, Whereby, or Daily. The patient sees
           this on their account once you save.
         </span>
@@ -206,13 +206,13 @@ export function AppointmentActions({
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-[var(--color-background-soft)] px-3 py-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-[var(--portal-well)] px-3 py-2">
         {meetingUrl ? (
           <a
             href={meetingUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+            className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--portal-primary)] hover:underline"
           >
             <Video className="size-3.5" /> Test link
           </a>

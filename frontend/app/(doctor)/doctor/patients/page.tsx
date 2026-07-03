@@ -6,6 +6,7 @@ import {
   PageHeader,
   Pill,
 } from "@/components/portal-atoms";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -109,7 +110,7 @@ export default async function DoctorPatientsPage({
           </p>
         </div>
       ) : items.length === 0 ? (
-        <div className="gh-card gh-doctor-empty-state p-10 text-center text-sm text-[var(--color-text-muted)]">
+        <div className="gh-card gh-doctor-empty-state p-10 text-center text-sm text-[var(--portal-muted)]">
           {q
             ? "No patients match that search."
             : "No patients yet — your scheduled appointments will surface here."}
@@ -122,7 +123,7 @@ export default async function DoctorPatientsPage({
                 Doctors contact patients only through the in-app chat thread
                 on the appointment workspace. Admin keeps full PII under
                 /admin/users. */}
-            <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
+            <thead className="bg-[var(--portal-well)] text-left text-xs uppercase tracking-wider text-[var(--portal-muted)]">
               <tr>
                 <th className="px-4 py-3 font-semibold">Patient</th>
                 <th className="px-4 py-3 font-semibold">Country</th>
@@ -131,14 +132,14 @@ export default async function DoctorPatientsPage({
                 <th className="px-4 py-3 font-semibold text-right">Open</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--color-border)]">
+            <tbody className="divide-y divide-[var(--portal-line)]">
               {items.map((p) => (
                 <tr key={p.email}>
-                  <td className="px-4 py-3 font-semibold text-[var(--color-text-primary)]">
+                  <td className="px-4 py-3 font-semibold text-[var(--portal-text)]">
                     {p.fullName}
                   </td>
                   <td className="px-4 py-3 text-xs uppercase">{p.countryCode}</td>
-                  <td className="px-4 py-3 text-xs text-[var(--color-text-muted)]">
+                  <td className="px-4 py-3 text-xs text-[var(--portal-muted)]">
                     {new Date(p.firstSeen).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3 text-right font-semibold">
@@ -147,7 +148,7 @@ export default async function DoctorPatientsPage({
                   <td className="px-4 py-3 text-right">
                     <Link
                       href={`/doctor/patients/${encodeURIComponent(p.email)}`}
-                      className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] px-2.5 py-1.5 text-xs font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                      className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1.5 text-xs font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
                     >
                       Open <ChevronRight className="size-3.5" />
                     </Link>
@@ -159,42 +160,25 @@ export default async function DoctorPatientsPage({
           </div>
           <div className="grid gap-3 p-3 md:hidden">
             {items.map((p) => (
-              <article
+              <PortalMobileCard
                 key={p.email}
-                className="gh-doctor-mobile-card rounded-[10px] border border-[var(--color-border)] bg-white p-4"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-[var(--color-text-primary)]">
-                      {p.fullName}
-                    </p>
-                    <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                      First seen {new Date(p.firstSeen).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <Pill tone="brand">{p.countryCode}</Pill>
-                </div>
-                <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                  <div>
-                    <dt className="text-[var(--color-text-muted)]">Bookings</dt>
-                    <dd className="font-semibold text-[var(--color-text-primary)]">
-                      {p.appointmentCount}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[var(--color-text-muted)]">Record</dt>
-                    <dd className="font-semibold text-[var(--color-text-primary)]">
-                      History and documents
-                    </dd>
-                  </div>
-                </dl>
-                <Link
-                  href={`/doctor/patients/${encodeURIComponent(p.email)}`}
-                  className="gh-btn gh-btn-soft mt-4 w-full text-sm"
-                >
-                  Open patient record <ChevronRight className="size-3.5" />
-                </Link>
-              </article>
+                title={p.fullName}
+                subtitle={`First seen ${new Date(p.firstSeen).toLocaleDateString()}`}
+                statusPill={<Pill tone="brand">{p.countryCode}</Pill>}
+                tone="brand"
+                meta={[
+                  { label: "Bookings", value: p.appointmentCount },
+                  { label: "Record", value: "History and documents" },
+                ]}
+                actions={
+                  <Link
+                    href={`/doctor/patients/${encodeURIComponent(p.email)}`}
+                    className="gh-btn gh-btn-soft text-sm"
+                  >
+                    Open patient record <ChevronRight className="size-3.5" />
+                  </Link>
+                }
+              />
             ))}
           </div>
         </div>

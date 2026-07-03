@@ -86,19 +86,19 @@ export default async function AccountPrescriptionsPage() {
               {issued.map((p) => (
                 <li
                   key={p.id}
-                  className="gh-patient-prescription-card rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4"
+                  className="gh-patient-prescription-card rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-4"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <p className="text-[15px] font-bold text-[var(--color-text-primary)]">
+                      <p className="text-[15px] font-bold text-[var(--portal-text)]">
                         {p.drugName}
                         {p.dose ? (
-                          <span className="ml-2 font-normal text-[var(--color-text-muted)]">
+                          <span className="ml-2 font-normal text-[var(--portal-muted)]">
                             · {p.dose}
                           </span>
                         ) : null}
                       </p>
-                      <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                      <p className="mt-1 text-xs text-[var(--portal-muted)]">
                         {[
                           p.frequency,
                           p.durationDays != null
@@ -112,11 +112,11 @@ export default async function AccountPrescriptionsPage() {
                           .join(" · ") || "—"}
                       </p>
                       {p.instructions ? (
-                        <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--color-text-body)]">
+                        <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--portal-text-2)]">
                           {p.instructions}
                         </p>
                       ) : null}
-                      <p className="mt-2 text-[11px] text-[var(--color-text-muted)]">
+                      <p className="mt-2 text-[11px] text-[var(--portal-muted)]">
                         {a.prescriptions.issuedBy
                           .replace("{doctor}", p.doctorName)
                           .replace("{date}", formatAppDate(p.consultationSignedAt ?? p.createdAt))}
@@ -166,24 +166,24 @@ export default async function AccountPrescriptionsPage() {
               }
             />
           ) : (
-            <ul className="divide-y divide-[var(--color-border)]">
+            <ul className="divide-y divide-[var(--portal-line)]">
               {orders.map((o) => (
                 <li
                   key={o.appointmentId}
                   className="gh-patient-list-row flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-[var(--color-text-primary)]">
+                    <p className="text-sm font-medium text-[var(--portal-text)]">
                       {o.serviceName || o.consultationType}
                     </p>
-                    <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[var(--color-text-muted)]">
+                    <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[var(--portal-muted)]">
                       <span>{a.prescriptions.ordered.replace("{date}", formatAppDate(o.createdAt))}</span>
                       <span>· {o.countryCode.toUpperCase()}</span>
                       <PillBadge tone={paymentTone(o.paymentStatus)}>
                         {o.paymentStatus.toLowerCase()}
                       </PillBadge>
                       {o.amountCents != null ? (
-                        <span className="font-semibold text-[var(--color-text-primary)]">
+                        <span className="font-semibold text-[var(--portal-text)]">
                           {formatPrice(o.amountCents, o.currencyCode)}
                         </span>
                       ) : null}

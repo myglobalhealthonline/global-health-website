@@ -16,6 +16,15 @@ Companion audits (reference, verify against source before trusting):
 `admin-portal-audit.md`, `doctor-portal-audit.md`, `patient-portal-audit.md`,
 `shared-components-audit.md` (114 component rows), `verification-results.md`.
 
+> **STATUS (Phase 11 cleanup pass): the redesign this document was scoping
+> has since shipped.** `DESIGN.md` in this directory is now the binding,
+> current-state spec — treat it as authoritative over anything below that
+> conflicts. This file is kept as a **historical pre-redesign snapshot**:
+> useful for understanding what changed and why, not for what the code
+> looks like today. §6 and §7 specifically describe a "before" state that
+> no longer exists; each carries a resolved-status note pointing at what
+> shipped instead of being rewritten inline.
+
 ---
 
 ## 1. Executive summary
@@ -183,6 +192,19 @@ that is a mechanical rename to plan carefully, not a redesign.
 
 ## 6. Color and theme audit
 
+> **RESOLVED.** Every "Tokenize?" row below shipped as a `--portal-*`
+> token in `globals.css` `:root` (DESIGN.md §4). Sidebar fill is
+> `--portal-chrome`/`--portal-chrome-solid`; active nav item uses
+> `--portal-signal`/`--portal-accent` (role-scoped via `[data-portal]`),
+> not an inline `#D9F99D`; `Pill`'s `PILL_TONES` map (`atoms.tsx`) reads
+> `var(--portal-success-soft)`/`-warning-soft`/`-danger-soft`/`-primary-soft`
+> etc., the same tokens `.gh-badge-*` reads — the "two status palettes"
+> problem is closed. The legacy texture PNGs referenced in the table below
+> were deleted in the Phase 9/11 cleanup (superseded by CSS-only chrome
+> recipes and, where a photographic wash is still wanted, DESIGN.md §9's
+> asset list). Table kept as historical record of what was hardcoded
+> before.
+
 Where portal color/theme actually comes from.
 
 | File | Color / theme usage | Portal affected | Purpose | Tokenize? | Notes |
@@ -227,6 +249,25 @@ Note the mismatch: `--radius-card` is `20px` but portal cards force
 ---
 
 ## 7. Shared UI patterns that should be standardized later
+
+> **RESOLVED.** Every row whose "suggested future shared abstraction" names
+> a `Portal*` component has shipped: `PortalMobileCard`
+> (`components/PortalMobileCard.tsx`, 21 consumers), `FormSection`
+> (`components/FormSection.tsx`, 14 consumers), `PortalTabs`
+> (`components/PortalTabs.tsx`, 14 consumers), `PortalDialog`
+> (`components/PortalDialog.tsx`), `CommandBand` (`atoms.tsx`, dashboard
+> hero across all 3 portals), and skeletons were promoted to
+> `components/portal-skeletons.tsx` (with a re-export shim at the old
+> `admin/_components/skeletons.tsx` path so pre-existing imports still
+> resolve). The chat row (`ChatThread`/`ConsultationChat`/
+> `InternalMessagesThread`) got its shared bubble/composer core restyled in
+> place per DESIGN.md §5.17 rather than merged into one component — 3
+> components remain by design (different auth/lock/attachment semantics
+> per consumer), but they render from the same tokenized bubble CSS. Rows
+> not yet promoted to a shared component (`PortalFilterBar`,
+> `PortalSummaryStrip` generalization, unified order/payment card, unified
+> document card, unified appointment card) are genuinely still open —
+> treat those as real backlog, not resolved.
 
 | Pattern | Current files / components | Portals using it | Current inconsistency | Suggested future shared abstraction |
 |---|---|:--:|---|---|

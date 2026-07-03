@@ -55,8 +55,8 @@ export function ShareConsultationButton({
 
   if (disabled) {
     return (
-      <div className="rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2">
-        <p className="flex items-center gap-2 text-[12px] font-semibold text-[var(--color-text-muted)]">
+      <div className="rounded-md border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2">
+        <p className="flex items-center gap-2 text-[12px] font-semibold text-[var(--portal-muted)]">
           <Share2 className="size-3.5" aria-hidden />
           Sign the note to enable a 7-day share link.
         </p>
@@ -76,7 +76,7 @@ export function ShareConsultationButton({
         {pending ? "Generating…" : url ? "Generate another link" : "Share with colleague"}
       </button>
       {url ? (
-        <div className="flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] px-2 py-1">
+        <div className="flex items-center gap-2 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] px-2 py-1">
           <input
             readOnly
             value={url}
@@ -93,7 +93,7 @@ export function ShareConsultationButton({
                 /* noop */
               }
             }}
-            className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+            className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
           >
             <Copy className="size-3.5" />
             {copied ? "Copied" : "Copy"}

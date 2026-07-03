@@ -1,7 +1,7 @@
 import { ADMIN_BLOG_LOCALES, type AdminBlogDto } from "@/lib/admin/admin-api";
-import { AdminCard, SectionHeader } from "../../_components/atoms";
 import { ManagedImageField } from "../../_components/managed-image-field";
 import { HtmlBodyField } from "./html-body-field";
+import { FormSection } from "@/components/FormSection";
 
 type Props = {
   post?: AdminBlogDto | null;
@@ -18,13 +18,11 @@ const labelClass = "block text-[12px] font-semibold text-[var(--color-text-muted
 
 export function BlogFields({ post, isCreate, doctors = [] }: Props) {
   return (
-    <div className="gh-admin-blog-fields">
-      <AdminCard padding={0}>
-        <SectionHeader
-          title="Article"
-          description="Title, URL slug and the short summary shown on cards."
-        />
-        <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--two p-5">
+    <div className="gh-admin-blog-fields flex flex-col gap-5">
+      <FormSection
+        title="Article"
+        description="Title, URL slug and the short summary shown on cards."
+      >
           <label className={labelClass}>
             Title
             <input
@@ -79,15 +77,12 @@ export function BlogFields({ post, isCreate, doctors = [] }: Props) {
               className={inputClass}
             />
           </label>
-        </div>
-      </AdminCard>
+        </FormSection>
 
-      <AdminCard padding={0}>
-        <SectionHeader
-          title="Clinical attribution"
-          description="Link a registered doctor as the named author / clinical reviewer. Drives the Article author/reviewedBy Physician schema (E-E-A-T)."
-        />
-        <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--two p-5">
+      <FormSection
+        title="Clinical attribution"
+        description="Link a registered doctor as the named author / clinical reviewer. Drives the Article author/reviewedBy Physician schema (E-E-A-T)."
+      >
           <label className={labelClass}>
             Author doctor
             <select name="authorDoctorId" defaultValue={post?.authorDoctorId ?? ""} className={inputClass}>
@@ -110,15 +105,12 @@ export function BlogFields({ post, isCreate, doctors = [] }: Props) {
               ))}
             </select>
           </label>
-        </div>
-      </AdminCard>
+        </FormSection>
 
-      <AdminCard padding={0}>
-        <SectionHeader
-          title="Cover image"
-          description="Shown as the thumbnail on the blog card and at the top of the article."
-        />
-        <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--two p-5">
+      <FormSection
+        title="Cover image"
+        description="Shown as the thumbnail on the blog card and at the top of the article."
+      >
           <ManagedImageField
             name="coverImagePath"
             label="Cover image"
@@ -136,22 +128,19 @@ export function BlogFields({ post, isCreate, doctors = [] }: Props) {
               className={inputClass}
             />
           </label>
-        </div>
-      </AdminCard>
+        </FormSection>
 
-      <AdminCard padding={0}>
-        <SectionHeader
-          title="Body (HTML)"
-          description="Upload an .html file or paste article HTML. Sanitized on save."
-        />
-        <div className="p-5">
+      <FormSection
+        title="Body (HTML)"
+        description="Upload an .html file or paste article HTML. Sanitized on save."
+      >
           <HtmlBodyField name="body" initialValue={post?.body ?? ""} />
-        </div>
-      </AdminCard>
+        </FormSection>
 
-      <AdminCard padding={0}>
-        <SectionHeader title="SEO" description="Optional — falls back to title/excerpt." />
-        <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--two p-5">
+      <FormSection
+        title="SEO"
+        description="Optional — falls back to title/excerpt."
+      >
           <label className={labelClass}>
             SEO title
             <input
@@ -170,12 +159,12 @@ export function BlogFields({ post, isCreate, doctors = [] }: Props) {
               className={inputClass}
             />
           </label>
-        </div>
-      </AdminCard>
+        </FormSection>
 
-      <AdminCard padding={0}>
-        <SectionHeader title="Publish" description="Drafts stay hidden from the public blog." />
-        <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--three p-5">
+      <FormSection
+        title="Publish"
+        description="Drafts stay hidden from the public blog."
+      >
           <label className={labelClass}>
             Status
             <select name="status" defaultValue={post?.status ?? "DRAFT"} className={inputClass}>
@@ -202,8 +191,7 @@ export function BlogFields({ post, isCreate, doctors = [] }: Props) {
             />
             Active
           </label>
-        </div>
-      </AdminCard>
+      </FormSection>
     </div>
   );
 }

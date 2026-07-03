@@ -83,7 +83,7 @@ export function RewardsPanel(props: RewardsPanelProps) {
       {props.returnState === "ok" || confirmed ? (
         <div
           className="flex items-start gap-3 rounded-[12px] p-4 text-sm"
-          style={{ background: "#ECFDF5", color: "#166534", border: "1px solid #BBF7D0" }}
+          style={{ background: "var(--portal-success-soft)", color: "var(--portal-success-text)", border: "1px solid var(--portal-success)" }}
           role="status"
         >
           <CheckCircle2 className="mt-0.5 size-4 shrink-0" aria-hidden />
@@ -93,7 +93,7 @@ export function RewardsPanel(props: RewardsPanelProps) {
       {props.returnState === "cancelled" ? (
         <div
           className="rounded-[12px] p-4 text-sm"
-          style={{ background: "var(--color-background-soft)", color: "var(--color-text-body)", border: "1px solid var(--color-border)" }}
+          style={{ background: "var(--portal-well)", color: "var(--portal-text-2)", border: "1px solid var(--portal-line)" }}
           role="status"
         >
           {t.state.cancelled}
@@ -109,13 +109,13 @@ export function RewardsPanel(props: RewardsPanelProps) {
               <div className="flex min-w-0 items-start gap-3">
                 <span
                   className="inline-flex size-10 items-center justify-center rounded-[12px]"
-                  style={{ background: "linear-gradient(135deg, var(--color-accent) 0%, var(--color-brand-mint) 100%)", color: "#143B30" }}
+                  style={{ background: "linear-gradient(135deg, var(--portal-accent) 0%, var(--portal-mint) 100%)", color: "var(--portal-signal-text)" }}
                 >
                   <Sparkles className="size-5" aria-hidden />
                 </span>
                 <div>
-                  <p className="font-bold tracking-[-0.01em]" style={{ color: "var(--color-text-primary)" }}>{kit.name}</p>
-                  <p className="mt-0.5 text-xs" style={{ color: "var(--color-text-muted)" }}>
+                  <p className="font-bold tracking-[-0.01em]" style={{ color: "var(--portal-text)" }}>{kit.name}</p>
+                  <p className="mt-0.5 text-xs" style={{ color: "var(--portal-muted)" }}>
                     {interpolate(t.progressLabel, {
                       progress: Math.min(props.wellnessBalance, kit.requiredWellnessCredits),
                       required: kit.requiredWellnessCredits,
@@ -124,17 +124,17 @@ export function RewardsPanel(props: RewardsPanelProps) {
                 </div>
               </div>
               {kit.eligible ? (
-                <span className="text-xs font-bold" style={{ color: "var(--color-brand-primary)" }}>{t.eligible}</span>
+                <span className="text-xs font-bold" style={{ color: "var(--portal-primary)" }}>{t.eligible}</span>
               ) : null}
             </div>
 
             {/* Progress bar */}
-            <div className="mt-4 h-2 w-full overflow-hidden rounded-full" style={{ background: "var(--color-background-soft)" }}>
+            <div className="mt-4 h-2 w-full overflow-hidden rounded-full" style={{ background: "var(--portal-well)" }}>
               <div
                 className="h-full rounded-full"
                 style={{
                   width: `${pct}%`,
-                  background: kit.eligible ? "var(--color-brand-primary)" : "var(--color-brand-mint)",
+                  background: kit.eligible ? "var(--portal-primary)" : "var(--portal-mint)",
                 }}
                 role="progressbar"
                 aria-valuenow={pct}
@@ -151,7 +151,7 @@ export function RewardsPanel(props: RewardsPanelProps) {
                   </Btn>
                 ) : (
                   <form onSubmit={(e) => onRedeem(e, kit.healthTestId)} className="gh-patient-form-card grid gap-3">
-                    <p className="text-xs leading-relaxed" style={{ color: "var(--color-text-muted)" }}>{t.shippingNote}</p>
+                    <p className="text-xs leading-relaxed" style={{ color: "var(--portal-muted)" }}>{t.shippingNote}</p>
                     <div className="grid gap-3 sm:grid-cols-2">
                       <input name="shipName" required minLength={2} maxLength={120} defaultValue={props.prefillName} placeholder="Full name" className="gh-input sm:col-span-2" />
                       <input name="shipLine1" required minLength={2} maxLength={200} placeholder="Address line 1" className="gh-input sm:col-span-2" />
@@ -161,14 +161,14 @@ export function RewardsPanel(props: RewardsPanelProps) {
                       <input name="shipCountryCode" required minLength={2} maxLength={4} defaultValue={props.prefillCountry} placeholder="Country" className="gh-input" style={{ textTransform: "uppercase" }} />
                     </div>
                     {error ? (
-                      <p className="rounded-md px-3 py-2 text-sm" style={{ background: "#FEE2E2", color: "#991B1B" }} role="alert">{error}</p>
+                      <p className="rounded-md px-3 py-2 text-sm" style={{ background: "var(--portal-danger-soft)", color: "var(--portal-danger-text)" }} role="alert">{error}</p>
                     ) : null}
                     <div className="gh-patient-form-actions grid gap-2 sm:flex sm:items-center">
                       <button type="submit" disabled={submitting} className="gh-btn gh-btn-primary inline-flex justify-center disabled:opacity-60">
                         {submitting ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Gift className="size-4" aria-hidden />}
                         {submitting ? t.redeeming : interpolate(t.redeemCta, { count: kit.requiredWellnessCredits })}
                       </button>
-                      <button type="button" onClick={() => setOpenKit(null)} aria-label="Cancel redemption" className="inline-flex justify-center rounded-md border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-text-muted)] hover:bg-[var(--color-background-soft)]">
+                      <button type="button" onClick={() => setOpenKit(null)} aria-label="Cancel redemption" className="inline-flex justify-center rounded-md border border-[var(--portal-line)] px-4 py-2 text-sm font-semibold text-[var(--portal-muted)] hover:bg-[var(--portal-well)]">
                         ×
                       </button>
                     </div>
@@ -176,7 +176,7 @@ export function RewardsPanel(props: RewardsPanelProps) {
                 )}
               </div>
             ) : (
-              <p className="mt-4 flex items-center gap-2 text-sm" style={{ color: "var(--color-text-muted)" }}>
+              <p className="mt-4 flex items-center gap-2 text-sm" style={{ color: "var(--portal-muted)" }}>
                 <Lock className="size-4 shrink-0" aria-hidden />
                 {reasonText(kit, props.wellnessBalance, t)}
               </p>

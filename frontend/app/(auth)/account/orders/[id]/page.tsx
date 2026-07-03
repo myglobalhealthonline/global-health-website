@@ -33,7 +33,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
     <div className="gh-patient-page gh-patient-order-detail-page">
       <Link
         href="/account/orders"
-        className="mb-3 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-3 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
       >
         <ArrowLeft className="size-3.5" aria-hidden />
         {a.orders.backToOrders}
@@ -64,29 +64,29 @@ export default async function AccountOrderDetailPage({ params }: Props) {
         <AdminCard padding={0}>
           <SectionHeader title={a.orders.itemsSection} />
           <div className="p-5">
-            <ul className="divide-y divide-[var(--color-border)]">
+            <ul className="divide-y divide-[var(--portal-line)]">
               {order.items.map((i) => (
                 <li
                   key={i.id}
                   className="gh-patient-list-row grid gap-3 py-3 first:pt-0 last:pb-0 sm:grid-cols-[1fr_auto] sm:items-center"
                 >
                   <div className="min-w-0">
-                    <p className="font-semibold text-[var(--color-text-primary)]">
+                    <p className="font-semibold text-[var(--portal-text)]">
                       {i.name}
                     </p>
-                    <p className="text-xs text-[var(--color-text-muted)]">
+                    <p className="text-xs text-[var(--portal-muted)]">
                       {i.kind === "HEALTH_TEST" ? a.orders.healthTest : a.orders.onlinePrescription}
                       {" · "}
                       {formatPrice(i.unitPriceCents, order.currencyCode)} × {i.quantity}
                     </p>
                   </div>
-                  <p className="font-semibold text-[var(--color-text-primary)]">
+                  <p className="font-semibold text-[var(--portal-text)]">
                     {formatPrice(i.lineTotalCents, order.currencyCode)}
                   </p>
                 </li>
               ))}
             </ul>
-            <dl className="mt-4 space-y-2 border-t border-[var(--color-border)] pt-4 text-sm">
+            <dl className="mt-4 space-y-2 border-t border-[var(--portal-line)] pt-4 text-sm">
               <Row label={a.orders.subtotal} value={formatPrice(order.subtotalCents, order.currencyCode)} />
               <Row label={a.orders.shippingCost} value={formatPrice(order.shippingCents, order.currencyCode)} />
               <Row label={a.orders.total} value={formatPrice(order.totalCents, order.currencyCode)} bold />
@@ -97,7 +97,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
         <aside className="grid gap-4 self-start">
           <AdminCard padding={0}>
             <SectionHeader title={a.orders.shippingSection} />
-            <div className="p-5 text-sm text-[var(--color-text-primary)]">
+            <div className="p-5 text-sm text-[var(--portal-text)]">
               {order.ship.name ? (
                 <>
                   <p className="font-semibold">{order.ship.name}</p>
@@ -109,7 +109,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
                   <p>{order.ship.countryCode}</p>
                 </>
               ) : (
-                <p className="text-[var(--color-text-muted)]">{a.orders.noAddress}</p>
+                <p className="text-[var(--portal-muted)]">{a.orders.noAddress}</p>
               )}
             </div>
           </AdminCard>
@@ -118,9 +118,9 @@ export default async function AccountOrderDetailPage({ params }: Props) {
             <SectionHeader title={a.orders.contact} />
             <div className="p-5 text-sm">
               <p>{order.fullName}</p>
-              <p className="text-[var(--color-text-muted)]">{order.email}</p>
+              <p className="text-[var(--portal-muted)]">{order.email}</p>
               {order.phone ? (
-                <p className="text-[var(--color-text-muted)]">{order.phone}</p>
+                <p className="text-[var(--portal-muted)]">{order.phone}</p>
               ) : null}
             </div>
           </AdminCard>
@@ -129,25 +129,25 @@ export default async function AccountOrderDetailPage({ params }: Props) {
             <SectionHeader title={a.orders.payment} />
             <div className="p-5 text-sm">
               <p>
-                <span className="text-[var(--color-text-muted)]">{a.orders.statusLabel}:</span>{" "}
+                <span className="text-[var(--portal-muted)]">{a.orders.statusLabel}:</span>{" "}
                 <span className="font-semibold">{order.paymentStatus}</span>
               </p>
               {order.paidAt ? (
-                <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                <p className="mt-1 text-xs text-[var(--portal-muted)]">
                   {a.orders.paidOn.replace("{date}", formatAppDateTime(order.paidAt))}
                 </p>
               ) : null}
             </div>
           </AdminCard>
 
-          <AdminCard className="bg-[var(--color-background-soft)]">
+          <AdminCard className="bg-[var(--portal-well)]">
             <div className="flex items-start gap-3">
-              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-white text-[var(--color-brand-primary)]">
+              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-white text-[var(--portal-primary)]">
                 <PackageCheck className="size-5" aria-hidden />
               </span>
               <div>
-                <p className="text-sm font-semibold text-[var(--color-text-primary)]">Care order record</p>
-                <p className="mt-1 text-xs leading-relaxed text-[var(--color-text-muted)]">
+                <p className="text-sm font-semibold text-[var(--portal-text)]">Care order record</p>
+                <p className="mt-1 text-xs leading-relaxed text-[var(--portal-muted)]">
                   Keep this order with your prescriptions and medical files for follow-up conversations.
                 </p>
               </div>
@@ -162,8 +162,8 @@ export default async function AccountOrderDetailPage({ params }: Props) {
 function Row({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
   return (
     <div className="flex justify-between">
-      <dt className={bold ? "font-bold" : "text-[var(--color-text-muted)]"}>{label}</dt>
-      <dd className={bold ? "font-bold" : "font-semibold text-[var(--color-text-primary)]"}>
+      <dt className={bold ? "font-bold" : "text-[var(--portal-muted)]"}>{label}</dt>
+      <dd className={bold ? "font-bold" : "font-semibold text-[var(--portal-text)]"}>
         {value}
       </dd>
     </div>

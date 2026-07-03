@@ -30,7 +30,7 @@ function StatusBadge({ status }: { status: VerificationStatus }) {
 
 function Section({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
   return (
-    <AdminCard className="gh-admin-area-hero gh-admin-area-patients gh-admin-patient-section">
+    <AdminCard className="gh-admin-patient-section">
       <h2 className="mb-4 flex items-center gap-2 text-[15px] font-bold text-[var(--color-text-primary)]">
         <span className="text-[var(--color-accent)]">{icon}</span>
         {title}
@@ -42,7 +42,7 @@ function Section({ icon, title, children }: { icon: React.ReactNode; title: stri
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="gh-admin-area-hero gh-admin-area-patients gh-admin-patient-row flex items-start justify-between gap-4 border-b border-[var(--color-border)] py-2 last:border-0">
+    <div className="gh-admin-patient-row flex items-start justify-between gap-4 border-b border-[var(--color-border)] py-2 last:border-0">
       <span className="shrink-0 text-[13px] text-[var(--color-text-muted)]">{label}</span>
       <span className="text-right text-[13px] font-medium text-[var(--color-text-primary)]">{value ?? "—"}</span>
     </div>
@@ -98,7 +98,6 @@ export default async function AdminPatientDetailPage({ params }: PageProps) {
         <ArrowLeft className="size-3.5" /> Back to patients
       </Link>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-patients"
         eyebrow="Patient"
         title={profile.fullName ?? profile.email}
         description={profile.email}
@@ -113,7 +112,7 @@ export default async function AdminPatientDetailPage({ params }: PageProps) {
 
       {/* ── Overview ──────────────────────────────────────────────────── */}
       <Section icon={<Globe className="size-4" />} title="Patient overview">
-        <div className="gh-admin-area-hero gh-admin-area-patients gh-admin-patient-overview-grid grid gap-x-8 gap-y-0 sm:grid-cols-2">
+        <div className="gh-admin-patient-overview-grid grid gap-x-8 gap-y-0 sm:grid-cols-2">
           <div>
             <Row label="Global Health No." value={<code className="text-xs">{profile.globalHealthNumber ?? "—"}</code>} />
             <Row label="Full name" value={profile.fullName} />
@@ -139,7 +138,7 @@ export default async function AdminPatientDetailPage({ params }: PageProps) {
 
       {/* ── Verification ──────────────────────────────────────────────── */}
       <Section icon={<ShieldCheck className="size-4" />} title="Verification status">
-        <div className="gh-admin-area-hero gh-admin-area-patients gh-admin-patient-verification-grid grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="gh-admin-patient-verification-grid grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {(
             [
               { label: "ID document", status: profile.idVerificationStatus },
@@ -186,7 +185,7 @@ export default async function AdminPatientDetailPage({ params }: PageProps) {
       {/* ── GDPR Consents ─────────────────────────────────────────────── */}
       {consents.length > 0 ? (
         <Section icon={<ShieldCheck className="size-4" />} title="GDPR consents">
-          <div className="gh-admin-area-hero gh-admin-area-patients gh-admin-support-table-wrap overflow-x-auto">
+          <div className="gh-admin-support-table-wrap overflow-x-auto">
             <table className="gh-table">
               <thead>
                 <tr>
@@ -227,7 +226,7 @@ export default async function AdminPatientDetailPage({ params }: PageProps) {
         {accessLogs.length === 0 ? (
           <p className="text-sm text-[var(--color-text-muted)]">No access history available yet.</p>
         ) : (
-          <div className="gh-admin-area-hero gh-admin-area-patients gh-admin-support-table-wrap overflow-x-auto">
+          <div className="gh-admin-support-table-wrap overflow-x-auto">
             <table className="gh-table">
               <thead>
                 <tr>
@@ -259,7 +258,7 @@ export default async function AdminPatientDetailPage({ params }: PageProps) {
         {payments.length === 0 ? (
           <p className="text-sm text-[var(--color-text-muted)]">No payments found yet.</p>
         ) : (
-          <div className="gh-admin-area-hero gh-admin-area-patients gh-admin-support-table-wrap overflow-x-auto">
+          <div className="gh-admin-support-table-wrap overflow-x-auto">
             <table className="gh-table">
               <thead>
                 <tr>

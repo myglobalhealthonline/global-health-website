@@ -16,6 +16,7 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { readClientLocale } from "@/lib/i18n/get-client-locale";
 import { PhoneField } from "@/components/forms/phone-field";
 import { AdminSummaryStrip } from "@/components/portal-atoms";
+import { PortalTabs } from "@/components/PortalTabs";
 import type { LocaleCode } from "@/lib/i18n/types";
 
 type Tab = "personal" | "insurance" | "verification" | "nationality" | "privacy";
@@ -117,59 +118,48 @@ export default function AccountProfilePage() {
   return (
     <div className="gh-patient-page gh-patient-profile-page">
       <header className="gh-patient-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
           {a.profile.breadcrumb}
         </p>
         <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="flex items-center gap-2 text-2xl font-bold text-[var(--color-text-primary)]">
-            <UserRound className="size-6 text-[var(--color-brand-primary)]" aria-hidden />
+          <h2 className="flex items-center gap-2 text-2xl font-bold text-[var(--portal-text)]">
+            <UserRound className="size-6 text-[var(--portal-primary)]" aria-hidden />
             {a.profile.title}
           </h2>
           {ghn && (
             <span
-              className="rounded-md bg-[var(--color-background-soft)] px-3 py-1 font-mono text-sm font-semibold text-[var(--color-text-primary)]"
+              className="rounded-md bg-[var(--portal-well)] px-3 py-1 font-mono text-sm font-semibold text-[var(--portal-text)]"
               title="Global Health Number — your unique patient identifier"
             >
               {ghn}
             </span>
           )}
         </div>
-        <p className="text-sm text-[var(--color-text-muted)]">{a.profile.subtitle}</p>
+        <p className="text-sm text-[var(--portal-muted)]">{a.profile.subtitle}</p>
       </header>
 
       <AdminSummaryStrip className="mb-5" items={profileStatusItems} />
 
       {/* Tab navigation */}
-      <nav
-        className="gh-patient-tabs gh-portal-tabs mb-5 flex gap-1 overflow-x-auto rounded-lg bg-white/70 p-1 ring-1 ring-[var(--color-border)]"
-        aria-label="Profile sections"
-      >
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => setActiveTab(tab.id)}
-            className={`whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-              activeTab === tab.id
-                ? "bg-[var(--color-brand-primary)] text-white shadow-sm"
-                : "text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </nav>
+      <div className="mb-5">
+        <PortalTabs
+          ariaLabel="Profile sections"
+          value={activeTab}
+          onChange={(v) => setActiveTab(v as Tab)}
+          items={TABS.map((tab) => ({ value: tab.id, label: tab.label }))}
+        />
+      </div>
 
       {/* Personal tab */}
       {activeTab === "personal" && (
         <>
           {loading ? (
             <div className="gh-card p-6">
-              <div className="h-4 w-40 rounded bg-[var(--color-background-soft)]" />
+              <div className="h-4 w-40 rounded bg-[var(--portal-well)]" />
               <div className="mt-4 grid gap-3">
-                <div className="h-12 rounded-lg bg-[var(--color-background-soft)]" />
-                <div className="h-12 rounded-lg bg-[var(--color-background-soft)]" />
-                <div className="h-12 rounded-lg bg-[var(--color-background-soft)]" />
+                <div className="h-12 rounded-lg bg-[var(--portal-well)]" />
+                <div className="h-12 rounded-lg bg-[var(--portal-well)]" />
+                <div className="h-12 rounded-lg bg-[var(--portal-well)]" />
               </div>
             </div>
           ) : (
@@ -180,9 +170,9 @@ export default function AccountProfilePage() {
                   type="email"
                   value={user?.email ?? ""}
                   disabled
-                  className="gh-input mt-1 min-w-0 bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
+                  className="gh-input mt-1 min-w-0 bg-[var(--portal-well)] text-[var(--portal-muted)]"
                 />
-                <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                <p className="mt-1 text-xs text-[var(--portal-muted)]">
                   {a.profile.emailNote}
                 </p>
               </label>
@@ -209,7 +199,7 @@ export default function AccountProfilePage() {
                   placeholder={a.profile.phonePlaceholder}
                   className="mt-1 flex gap-2"
                 />
-                <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                <p className="mt-1 text-xs text-[var(--portal-muted)]">
                   {a.profile.phoneNote}
                 </p>
               </label>
@@ -223,7 +213,7 @@ export default function AccountProfilePage() {
                   max={new Date().toISOString().slice(0, 10)}
                   className="gh-input mt-1 min-w-0"
                 />
-                <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                <p className="mt-1 text-xs text-[var(--portal-muted)]">
                   {a.profile.dobNote}
                 </p>
               </label>

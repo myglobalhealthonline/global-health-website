@@ -27,6 +27,7 @@ import {
 import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import { SubscriptionHealthPanel } from "../_components/subscription-health-panel";
 import { AdminSubscriberLedger } from "../_components/subscriber-ledger";
+import { PortalMobileCard, type PortalMobileCardTone } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +37,13 @@ function statusTone(status: string): PillTone {
   if (status === "ACTIVE") return "active";
   if (status === "PAST_DUE" || status === "INCOMPLETE") return "pending";
   if (status === "CANCELED") return "inactive";
+  return "neutral";
+}
+
+function statusCardTone(status: string): PortalMobileCardTone {
+  if (status === "ACTIVE") return "success";
+  if (status === "PAST_DUE" || status === "INCOMPLETE") return "warning";
+  if (status === "CANCELED") return "danger";
   return "neutral";
 }
 
@@ -89,7 +97,6 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
   return (
     <>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-subscriptions"
         eyebrow="Subscriptions"
         title="Subscriptions"
         description="Subscriber list, manual credit adjustments, the perk-approval queue, and billing health."
@@ -102,14 +109,14 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
         <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">{sp.error}</p>
       ) : null}
 
-      <div className="gh-admin-area-hero gh-admin-area-subscriptions gh-admin-subscriptions flex flex-col gap-6">
+      <div className="gh-admin-subscriptions flex flex-col gap-6">
         <SubscriptionHealthPanel
           health={healthResult.ok ? healthResult.data : null}
           error={healthResult.ok ? undefined : healthResult.message}
         />
 
         {/* Perk-approval queue */}
-        <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-subscriptions gh-admin-subscription-approvals">
+        <AdminCard padding={0} className="gh-admin-subscription-approvals">
           <SectionHeader
             title="Pending perk approvals"
             description="Per-subscriber manual-approval queue (§36.13). Approving unlocks the perk for that subscriber only."
@@ -130,7 +137,7 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                 {grantsResult.data.grants.map((g) => (
                   <li
                     key={g.id}
-                    className="gh-admin-area-hero gh-admin-area-subscriptions gh-admin-subscription-approval-row flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-4 py-2.5 text-sm"
+                    className="gh-admin-subscription-approval-row flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-4 py-2.5 text-sm"
                   >
                     <div className="flex flex-wrap items-center gap-2">
                       <Pill tone="pending">{g.perkKey}</Pill>
@@ -155,12 +162,12 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
         </AdminCard>
 
         {/* Subscriptions list */}
-        <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-subscriptions gh-admin-subscription-list">
+        <AdminCard padding={0} className="gh-admin-subscription-list">
           <SectionHeader
             title="Subscriptions"
             description="Active and historical subscriptions. Adjust credits writes through the authoritative counter (audited)."
             right={
-              <form method="get" className="gh-admin-area-hero gh-admin-area-subscriptions gh-admin-subscription-filter flex items-center gap-2">
+              <form method="get" className="gh-admin-subscription-filter flex items-center gap-2">
                 <select name="status" className="gh-select" defaultValue={sp.status ?? ""}>
                   {STATUS_FILTERS.map((s) => (
                     <option key={s || "all"} value={s}>
@@ -211,7 +218,7 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                   ]}
                 />
               </div>
-              <div className="gh-admin-area-hero gh-admin-area-subscriptions gh-admin-plan-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
+              <div className="gh-admin-plan-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
               <AdminTable>
                 <Thead>
                   <Th>Subscriber</Th>
@@ -252,28 +259,25 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
               </div>
               <div className="gh-admin-mobile-list">
                 {subscriptions.map((sub) => (
-                  <article key={sub.id} className="gh-admin-mobile-card">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <h3 className="gh-admin-mobile-card-title">
-                          {sub.user.fullName ?? sub.user.email}
-                        </h3>
-                        <p className="gh-admin-mobile-card-meta break-all">
-                          {sub.user.email} - {sub.countryCode.toUpperCase()}
-                        </p>
-                      </div>
-                      <Pill tone={statusTone(sub.status)}>{sub.status}</Pill>
-                    </div>
-                    <div className="grid gap-1 text-[12px] text-[var(--color-text-muted)]">
-                      <span>{sub.plan.name}</span>
-                      <span>
-                        GP {balanceOf(sub.balances, "CONSULTATION")} / wellness{" "}
-                        {balanceOf(sub.balances, "WELLNESS")}
-                      </span>
-                      {sub.cancelAtPeriodEnd ? <Pill tone="draft">cancels at period end</Pill> : null}
-                    </div>
+                  <PortalMobileCard
+                    key={sub.id}
+                    tone={statusCardTone(sub.status)}
+                    title={sub.user.fullName ?? sub.user.email}
+                    subtitle={`${sub.user.email} - ${sub.countryCode.toUpperCase()}`}
+                    statusPill={<Pill tone={statusTone(sub.status)}>{sub.status}</Pill>}
+                    meta={[
+                      { label: "Plan", value: sub.plan.name },
+                      {
+                        label: "Balances",
+                        value: `GP ${balanceOf(sub.balances, "CONSULTATION")} / wellness ${balanceOf(sub.balances, "WELLNESS")}`,
+                      },
+                      ...(sub.cancelAtPeriodEnd
+                        ? [{ label: "Renewal", value: <Pill tone="draft">cancels at period end</Pill> }]
+                        : []),
+                    ]}
+                  >
                     <AdminSubscriberLedger subscriptionId={sub.id} />
-                  </article>
+                  </PortalMobileCard>
                 ))}
               </div>
               </>
@@ -285,7 +289,7 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
             holds the dedicated SUPER-scope permission (§4); the backend rejects
             the action regardless, but hiding keeps it out of normal admin flow. */}
         {subsResult.ok && subsResult.data.capabilities?.canAdjustCredits ? (
-          <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-subscriptions gh-admin-subscription-override">
+          <AdminCard padding={0} className="gh-admin-subscription-override">
             <SectionHeader
               title="Support override — manual balance adjustment"
               description="Elevated SUPER-admin action. Directly edits one subscriber's earned consultation or wellness balance. Routine credits come from plan rules and renewals — use this only for verified finance/support cases. Every change is audited and requires a written reason."
@@ -296,7 +300,7 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                   No subscribers in the current view to adjust. Filter the list above first.
                 </p>
               ) : (
-                <form action={adjustCreditsAction} className="gh-admin-area-hero gh-admin-area-subscriptions gh-admin-subscription-adjust-form flex flex-wrap items-end gap-3">
+                <form action={adjustCreditsAction} className="gh-admin-subscription-adjust-form flex flex-wrap items-end gap-3">
                   <input type="hidden" name="requestId" value={randomUUID()} />
                   <label className="flex flex-col gap-1 text-xs text-[var(--color-text-muted)]">
                     <span>Subscriber</span>

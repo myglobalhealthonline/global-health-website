@@ -88,12 +88,12 @@ export function PrescriptionsList({
     <div>
       {/* List of issued prescriptions */}
       {items.length === 0 ? (
-        <div className="mt-3 rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
-          <p className="flex items-center gap-2 text-sm font-bold text-[var(--color-text-primary)]">
-            <Pill className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
+        <div className="mt-3 rounded-lg border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] p-4">
+          <p className="flex items-center gap-2 text-sm font-bold text-[var(--portal-text)]">
+            <Pill className="size-4 text-[var(--portal-primary)]" aria-hidden />
             No prescriptions recorded
           </p>
-          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+          <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
             {consultationLocked
               ? "No prescriptions were issued during this consultation."
               : "Issue a prescription here when medication is part of the follow-up plan."}
@@ -104,19 +104,19 @@ export function PrescriptionsList({
           {items.map((p) => (
             <li
               key={p.id}
-              className="flex flex-wrap items-start justify-between gap-3 rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3"
+              className="flex flex-wrap items-start justify-between gap-3 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3"
             >
               <div className="min-w-0 flex-1">
-                <p className="text-[14px] font-semibold text-[var(--color-text-primary)]">
+                <p className="text-[14px] font-semibold text-[var(--portal-text)]">
                   <Pill className="mr-1.5 inline size-4" aria-hidden />
                   {p.drugName}
                   {p.dose ? (
-                    <span className="ml-2 text-[var(--color-text-muted)]">
+                    <span className="ml-2 text-[var(--portal-muted)]">
                       · {p.dose}
                     </span>
                   ) : null}
                 </p>
-                <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+                <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
                   {[
                     p.frequency,
                     p.durationDays != null ? `${p.durationDays} day(s)` : null,
@@ -128,7 +128,7 @@ export function PrescriptionsList({
                     .join(" · ") || "—"}
                 </p>
                 {p.instructions ? (
-                  <p className="mt-1 text-[12px] text-[var(--color-text-body)] whitespace-pre-wrap">
+                  <p className="mt-1 text-[12px] text-[var(--portal-text-2)] whitespace-pre-wrap">
                     {p.instructions}
                   </p>
                 ) : null}
@@ -138,7 +138,7 @@ export function PrescriptionsList({
                   type="button"
                   onClick={() => onDelete(p.id)}
                   disabled={busy}
-                  className="inline-flex items-center justify-center rounded-md p-1.5 text-[var(--color-status-error-text)] hover:bg-rose-50 disabled:opacity-60"
+                  className="inline-flex items-center justify-center rounded-md p-1.5 text-[var(--portal-danger-text)] hover:bg-rose-50 disabled:opacity-60"
                   aria-label={`Delete ${p.drugName}`}
                   title="Delete"
                 >
@@ -163,13 +163,13 @@ export function PrescriptionsList({
             <button
               type="button"
               onClick={() => setOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-1.5 text-[13px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+              className="inline-flex items-center gap-1.5 rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface)] px-3 py-1.5 text-[13px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
             >
               <Plus className="size-3.5" aria-hidden />
               Issue prescription
             </button>
           ) : (
-            <form onSubmit={onSubmit} className="grid gap-3 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] p-4">
+            <form onSubmit={onSubmit} className="grid gap-3 rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface)] p-4">
               <div className="grid gap-3 sm:grid-cols-2">
                 <label className="flex min-w-0 flex-col gap-1">
                   <span className="gh-field-label">

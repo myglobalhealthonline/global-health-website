@@ -7,6 +7,7 @@ import {
   PageHeader,
   Pill,
 } from "@/components/portal-atoms";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -185,7 +186,7 @@ export default async function DoctorInvoicesPage({
         <div className="gh-card gh-doctor-table-card p-0 overflow-hidden">
           <div className="hidden md:block gh-doctor-table-wrap overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
+            <thead className="bg-[var(--portal-well)] text-left text-xs uppercase tracking-wider text-[var(--portal-muted)]">
               <tr>
                 <th className="px-4 py-3 font-semibold">Patient</th>
                 <th className="px-4 py-3 font-semibold">When</th>
@@ -196,14 +197,14 @@ export default async function DoctorInvoicesPage({
                 <th className="px-4 py-3 font-semibold text-right">Open</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--color-border)]">
+            <tbody className="divide-y divide-[var(--portal-line)]">
               {invoices.map((row) => (
                 <tr key={row.id}>
                   <td className="px-4 py-3">
-                    <p className="font-semibold text-[var(--color-text-primary)]">
+                    <p className="font-semibold text-[var(--portal-text)]">
                       {row.fullName}
                     </p>
-                    <p className="text-xs text-[var(--color-text-muted)]">
+                    <p className="text-xs text-[var(--portal-muted)]">
                       {row.email}
                     </p>
                   </td>
@@ -225,7 +226,7 @@ export default async function DoctorInvoicesPage({
                     <span
                       className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.04em] ${
                         PAYMENT_TONE[row.paymentStatus] ??
-                        "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
+                        "bg-[var(--portal-well)] text-[var(--portal-muted)]"
                       }`}
                     >
                       {row.paymentStatus}
@@ -235,7 +236,7 @@ export default async function DoctorInvoicesPage({
                   <td className="px-4 py-3 text-right">
                     <Link
                       href={`/doctor/appointments/${row.id}`}
-                      className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] px-2.5 py-1.5 text-xs font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                      className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1.5 text-xs font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
                     >
                       Open <ChevronRight className="size-3.5" />
                     </Link>
@@ -246,51 +247,42 @@ export default async function DoctorInvoicesPage({
           </table>
           </div>
           <div className="grid gap-3 p-3 md:hidden">
-            {invoices.map((row) => (
-              <article
-                key={row.id}
-                className="gh-doctor-mobile-card rounded-[10px] border border-[var(--color-border)] bg-white p-4"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-[var(--color-text-primary)]">
-                      {row.fullName}
-                    </p>
-                    <p className="mt-1 text-xs capitalize text-[var(--color-text-muted)]">
-                      {row.consultationType}
-                    </p>
-                  </div>
-                  <Pill tone={paymentTone(row.paymentStatus)} withDot>
-                    {row.paymentStatus}
-                  </Pill>
-                </div>
-                <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                  <div>
-                    <dt className="text-[var(--color-text-muted)]">Amount</dt>
-                    <dd className="font-semibold text-[var(--color-text-primary)]">
-                      {fmtMoney(row.amountCents, row.currencyCode)}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[var(--color-text-muted)]">When</dt>
-                    <dd className="font-semibold text-[var(--color-text-primary)]">
-                      {row.scheduledAt
+            {invoices.map((row) => {
+              const tone = paymentTone(row.paymentStatus);
+              return (
+                <PortalMobileCard
+                  key={row.id}
+                  title={row.fullName}
+                  subtitle={<span className="capitalize">{row.consultationType}</span>}
+                  statusPill={
+                    <Pill tone={tone} withDot>
+                      {row.paymentStatus}
+                    </Pill>
+                  }
+                  tone={tone === "active" ? "success" : tone === "inactive" ? "danger" : tone === "pending" ? "warning" : "neutral"}
+                  meta={[
+                    { label: "Amount", value: fmtMoney(row.amountCents, row.currencyCode) },
+                    {
+                      label: "When",
+                      value: row.scheduledAt
                         ? new Date(row.scheduledAt).toLocaleDateString()
-                        : new Date(row.createdAt).toLocaleDateString()}
-                    </dd>
-                  </div>
-                </dl>
-                <Link
-                  href={`/doctor/appointments/${row.id}`}
-                  className="gh-btn gh-btn-soft mt-4 w-full text-sm"
-                >
-                  Open consultation <ChevronRight className="size-3.5" />
-                </Link>
-              </article>
-            ))}
+                        : new Date(row.createdAt).toLocaleDateString(),
+                    },
+                  ]}
+                  actions={
+                    <Link
+                      href={`/doctor/appointments/${row.id}`}
+                      className="gh-btn gh-btn-soft text-sm"
+                    >
+                      Open consultation <ChevronRight className="size-3.5" />
+                    </Link>
+                  }
+                />
+              );
+            })}
           </div>
           {result.data.pagination.totalPages > 1 ? (
-            <div className="border-t border-[var(--color-border)] px-4 py-3 text-xs text-[var(--color-text-muted)]">
+            <div className="border-t border-[var(--portal-line)] px-4 py-3 text-xs text-[var(--portal-muted)]">
               Page {result.data.pagination.page} of{" "}
               {result.data.pagination.totalPages} (
               {result.data.pagination.total} total)

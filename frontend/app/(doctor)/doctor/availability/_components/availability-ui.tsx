@@ -20,6 +20,7 @@ import {
   Pill,
   SectionHeader,
 } from "@/components/portal-atoms";
+import { FormSection } from "@/components/FormSection";
 
 const WEEKDAYS = [
   { value: 0, label: "Sun" },
@@ -235,7 +236,7 @@ export function DoctorAvailabilityUI({
               <div className="gh-doctor-slot-day-list grid gap-4">
                 {Array.from(slotsByDay.entries()).map(([day, daySlots]) => (
                   <div key={day}>
-                    <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
                       {day}
                     </p>
                     <div className="gh-doctor-slot-grid mt-2 flex flex-wrap gap-2">
@@ -316,20 +317,20 @@ export function DoctorAvailabilityUI({
                   {windows.map((w) => (
                     <li
                       key={w.id}
-                      className="gh-doctor-window-row flex items-center justify-between gap-3 rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2"
+                      className="gh-doctor-window-row flex items-center justify-between gap-3 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2"
                     >
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-[var(--color-text-primary)]">
+                        <p className="text-sm font-semibold text-[var(--portal-text)]">
                           {WEEKDAYS.find((d) => d.value === w.weekday)?.label ?? "—"}{" "}
                           · {minutesToTime(w.startMinute)}–
                           {minutesToTime(w.endMinute)}
                         </p>
-                        <p className="text-[11px] text-[var(--color-text-muted)]">
+                        <p className="text-[11px] text-[var(--portal-muted)]">
                           {w.slotDurationMinutes}-min slots
                           {!w.isActive ? " · paused" : ""}
                         </p>
                         {w.effectiveFrom || w.effectiveUntil ? (
-                          <p className="text-[10px] text-[var(--color-text-muted)]">
+                          <p className="text-[10px] text-[var(--portal-muted)]">
                             {w.effectiveFrom
                               ? `from ${new Date(w.effectiveFrom).toLocaleDateString("en-IE")}`
                               : "from always"}
@@ -361,12 +362,12 @@ export function DoctorAvailabilityUI({
             </div>
           </AdminCard>
 
-          <AdminCard padding={0} className="gh-doctor-panel">
-            <SectionHeader
-              title="Add window"
-              description={`A weekly recurring time band — times in ${countryTimeZone} (clinic time).`}
-            />
-            <form onSubmit={onAddWindow} className="gh-doctor-availability-form grid gap-3 p-5">
+          <FormSection
+            title="Add window"
+            description={`A weekly recurring time band — times in ${countryTimeZone} (clinic time).`}
+            className="gh-doctor-panel"
+          >
+            <form onSubmit={onAddWindow} className="gh-doctor-availability-form gh-form-section__span-2 grid gap-3">
               <label className="flex flex-col gap-1 text-sm">
                 <span className="gh-field-label">Day</span>
                 <select
@@ -437,7 +438,7 @@ export function DoctorAvailabilityUI({
                   />
                 </label>
               </div>
-              <p className="text-[11px] text-[var(--color-text-muted)]">
+              <p className="text-[11px] text-[var(--portal-muted)]">
                 Leave dates empty for an always-active recurring window. Use
                 them for holidays, vacations, or seasonal hours.
               </p>
@@ -446,7 +447,7 @@ export function DoctorAvailabilityUI({
                 {busy ? "Adding…" : "Add window"}
               </Btn>
             </form>
-          </AdminCard>
+          </FormSection>
 
           <AdminCard padding={0} className="gh-doctor-panel">
             <SectionHeader title="Legend" />
@@ -456,7 +457,7 @@ export function DoctorAvailabilityUI({
               <Legend tone="booked" label="Booked · patient claimed" />
               <Legend tone="held" label="Held · in someone's cart" />
             </ul>
-            <p className="px-5 pb-5 text-[11px] text-[var(--color-text-muted)]">
+            <p className="px-5 pb-5 text-[11px] text-[var(--portal-muted)]">
               Times shown in {countryTimeZone} (clinic time). Patients booking
               this clinic see the same times.
             </p>

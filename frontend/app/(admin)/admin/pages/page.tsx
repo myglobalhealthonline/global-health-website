@@ -24,6 +24,7 @@ import {
 } from "../_components/atoms";
 import { FlagBadge } from "../_components/flag-badge";
 import { ScopeBanner } from "../_components/scope-banner";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -69,7 +70,6 @@ export default async function AdminPagesListPage({
   return (
     <>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-cms"
         eyebrow={activeCountry ? `Country · ${activeCountry.name}` : "Global"}
         title="Pages"
         description="Manage country-scoped homepage, doctors index, general consultation, and specialist consultation content."
@@ -87,10 +87,10 @@ export default async function AdminPagesListPage({
 
       <ScopeBanner activeCountry={activeCountry} clearHref="/admin/pages" />
 
-      <AdminCard padding={16} className="gh-admin-area-hero gh-admin-area-cms gh-admin-pages-filters">
+      <AdminCard padding={16} className="gh-admin-pages-filters">
         <form
           action="/admin/pages"
-          className="gh-admin-area-hero gh-admin-area-cms gh-admin-support-filter-row flex flex-wrap items-end gap-3 px-2 py-1"
+          className="gh-admin-support-filter-row flex flex-wrap items-end gap-3 px-2 py-1"
           method="get"
         >
           <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
@@ -180,7 +180,7 @@ export default async function AdminPagesListPage({
             />
           </AdminCard>
         ) : (
-          <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-cms gh-admin-pages-list">
+          <AdminCard padding={0} className="gh-admin-pages-list">
             <div className="border-b border-[var(--color-border)] px-4 pt-4">
               <AdminSummaryStrip
                 items={[
@@ -205,7 +205,7 @@ export default async function AdminPagesListPage({
                 ]}
               />
             </div>
-            <div className="gh-admin-area-hero gh-admin-area-cms gh-admin-support-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
+            <div className="gh-admin-support-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
             <AdminTable>
               <Thead>
                 <Th>Country</Th>
@@ -250,35 +250,38 @@ export default async function AdminPagesListPage({
             </div>
             <div className="gh-admin-mobile-list">
               {pages.map((p: AdminPageDto) => (
-                <article key={p.id} className="gh-admin-mobile-card">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="gh-admin-mobile-card-title">{p.title}</h3>
-                      <p className="gh-admin-mobile-card-meta">
-                        {ADMIN_PAGE_KEY_LABELS[p.pageKey as AdminPageKey]} - {p.locale}
-                      </p>
-                    </div>
+                <PortalMobileCard
+                  key={p.id}
+                  tone={p.status === "PUBLISHED" ? "success" : "neutral"}
+                  title={p.title}
+                  subtitle={`${ADMIN_PAGE_KEY_LABELS[p.pageKey as AdminPageKey]} - ${p.locale}`}
+                  statusPill={
                     <Pill tone={p.status === "PUBLISHED" ? "published" : "draft"}>
                       {p.status}
                     </Pill>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2 text-[12px] text-[var(--color-text-muted)]">
-                    <FileText className="size-3" aria-hidden />
-                    {p.country ? (
-                      <span className="inline-flex items-center gap-2">
-                        <FlagBadge code={p.country.slug} />
-                        {p.country.name}
-                      </span>
-                    ) : (
-                      <span>Global page</span>
-                    )}
-                  </div>
-                  <div className="gh-admin-mobile-actions">
+                  }
+                  meta={[
+                    {
+                      label: "Scope",
+                      value: p.country ? (
+                        <span className="inline-flex items-center gap-1.5">
+                          <FlagBadge code={p.country.slug} />
+                          {p.country.name}
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5">
+                          <FileText className="size-3" aria-hidden />
+                          Global page
+                        </span>
+                      ),
+                    },
+                  ]}
+                  actions={
                     <IconBtn href={`/admin/pages/${p.id}/edit`} ariaLabel="Edit page">
                       <Edit3 className="size-4" />
                     </IconBtn>
-                  </div>
-                </article>
+                  }
+                />
               ))}
             </div>
           </AdminCard>

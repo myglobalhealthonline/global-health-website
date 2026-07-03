@@ -12,6 +12,7 @@ import {
 import { SERVICE_KIND_META } from "@/lib/admin/service-kind";
 import { FlagBadge } from "../_components/flag-badge";
 import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 import {
   AdminCard,
   AdminEmptyState,
@@ -150,7 +151,6 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
   return (
     <>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-doctors"
         eyebrow="Global"
         title="Doctors"
         description="Public clinician directory. Doctors are profiles only — patient-facing login is a separate portal."
@@ -419,36 +419,45 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                 .map((s) => s[0]?.toUpperCase() ?? "")
                 .join("");
               return (
-                <article key={d.id} className="gh-admin-mobile-card">
-                  <div className="flex min-w-0 items-start justify-between gap-3">
-                    <Link href={`/admin/doctors/${d.id}`} className="inline-flex min-w-0 items-center gap-3 no-underline">
-                      <span aria-hidden className="gh-admin-doctor-avatar inline-flex shrink-0 items-center justify-center text-white">
-                        {initials || "D"}
-                      </span>
-                      <span className="gh-admin-mobile-card__title">
-                        <strong>{d.fullName}</strong>
-                        <span>{d.title}</span>
-                      </span>
+                <PortalMobileCard
+                  key={d.id}
+                  tone={d.active ? "success" : "neutral"}
+                  leading={
+                    <span aria-hidden className="gh-admin-doctor-avatar inline-flex shrink-0 items-center justify-center text-white">
+                      {initials || "D"}
+                    </span>
+                  }
+                  title={
+                    <Link href={`/admin/doctors/${d.id}`} className="hover:underline">
+                      {d.fullName}
                     </Link>
+                  }
+                  subtitle={d.title}
+                  statusPill={
                     <Pill tone={d.active ? "published" : "inactive"}>
                       {d.active ? "Published" : "Suspended"}
                     </Pill>
-                  </div>
-                  <div className="gh-admin-mobile-meta">
-                    <span><em>Market</em><strong>{d.country.code.toUpperCase()}</strong></span>
-                    <span><em>Languages</em><strong>{d.languages?.join(", ") || "Not set"}</strong></span>
-                    <span><em>Type</em><strong>{doctorConsultationTypeLabels(d.assignedServices ?? [])}</strong></span>
-                    <span><em>Account</em><strong>{d.loginUser ? (d.loginUser.emailVerifiedAt ? "Active" : "Pending") : "None"}</strong></span>
-                  </div>
-                  <div className="gh-admin-mobile-actions">
-                    <IconBtn ariaLabel={`View ${d.fullName}`} href={`/admin/doctors/${d.id}`}>
-                      <Eye className="size-3.5" aria-hidden />
-                    </IconBtn>
-                    <IconBtn ariaLabel={`Edit ${d.fullName}`} href={`/admin/doctors/${d.id}/edit`}>
-                      <Edit3 className="size-3.5" aria-hidden />
-                    </IconBtn>
-                  </div>
-                </article>
+                  }
+                  meta={[
+                    { label: "Market", value: d.country.code.toUpperCase() },
+                    { label: "Languages", value: d.languages?.join(", ") || "Not set" },
+                    { label: "Type", value: doctorConsultationTypeLabels(d.assignedServices ?? []) },
+                    {
+                      label: "Account",
+                      value: d.loginUser ? (d.loginUser.emailVerifiedAt ? "Active" : "Pending") : "None",
+                    },
+                  ]}
+                  actions={
+                    <>
+                      <IconBtn ariaLabel={`View ${d.fullName}`} href={`/admin/doctors/${d.id}`}>
+                        <Eye className="size-3.5" aria-hidden />
+                      </IconBtn>
+                      <IconBtn ariaLabel={`Edit ${d.fullName}`} href={`/admin/doctors/${d.id}/edit`}>
+                        <Edit3 className="size-3.5" aria-hidden />
+                      </IconBtn>
+                    </>
+                  }
+                />
               );
             })}
           </div>

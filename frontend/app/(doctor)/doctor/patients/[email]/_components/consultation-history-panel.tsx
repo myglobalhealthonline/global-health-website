@@ -2,6 +2,8 @@
 
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { ChevronDown, ChevronRight, ClipboardList, Eye, FileSearch } from "lucide-react";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { DocumentMobileCard } from "@/app/(doctor)/doctor/_components/doctor-document-tables";
 
 type MedicalNoteRow = {
   id: string;
@@ -66,7 +68,7 @@ type HistoryData = {
 
 function SessionTypeBadge({ label }: { label: string }) {
   return (
-    <span className="inline-block max-w-[180px] truncate rounded-full bg-[var(--color-brand-mint-soft)] px-2 py-0.5 text-[11px] font-semibold text-[var(--color-brand-primary)]">
+    <span className="inline-block max-w-[180px] truncate rounded-full bg-[var(--portal-mint-soft)] px-2 py-0.5 text-[11px] font-semibold text-[var(--portal-primary)]">
       {label}
     </span>
   );
@@ -105,11 +107,11 @@ function HistorySection({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <section className="gh-doctor-history-section overflow-hidden rounded-md border border-[var(--color-border)]">
+    <section className="gh-doctor-history-section overflow-hidden rounded-md border border-[var(--portal-line)]">
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between gap-2 bg-[var(--color-brand-primary)] px-4 py-2.5 text-left text-sm font-bold text-white"
+        className="flex w-full items-center justify-between gap-2 bg-[var(--portal-primary)] px-4 py-2.5 text-left text-sm font-bold text-white"
       >
         <span className="flex items-center gap-2">
           {open ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
@@ -134,15 +136,15 @@ function DocTypeGroup({
   const [open, setOpen] = useState(true);
   if (rows.length === 0) return null;
   return (
-    <div className="gh-doctor-doc-group border-t border-[var(--color-border)]">
+    <div className="gh-doctor-doc-group border-t border-[var(--portal-line)]">
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] font-bold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+        className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] font-bold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
       >
         {open ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
         {title}
-        <span className="text-[var(--color-text-muted)]">({rows.length})</span>
+        <span className="text-[var(--portal-muted)]">({rows.length})</span>
       </button>
       {open ? <DocumentTable rows={rows} /> : null}
     </div>
@@ -150,23 +152,25 @@ function DocTypeGroup({
 }
 
 const TABLE_HEAD =
-  "text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]";
+  "text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]";
 
 function DocumentTable({ rows }: { rows: DocRow[] }) {
   return (
     <>
     <div className="grid gap-2 p-3 md:hidden">
       {rows.map((r) => (
-        <DocumentMobileRow
+        <DocumentMobileCard
           key={r.id}
-          title={r.fileName}
-          sessionDate={r.sessionDate}
-          sessionTime={r.sessionTime}
-          orderNumber={r.orderNumber}
-          consultationTypeLabel={r.consultationTypeLabel}
+          fileName={r.fileName}
           fileTypeLabel={r.fileTypeLabel}
-          uploadedBy={r.uploadedBy}
           viewUrl={r.pdfUrl}
+          session={{
+            sessionDate: r.sessionDate,
+            sessionTime: r.sessionTime,
+            orderNumber: r.orderNumber,
+            consultationTypeLabel: r.consultationTypeLabel,
+            uploadedBy: r.uploadedBy,
+          }}
         />
       ))}
     </div>
@@ -186,7 +190,7 @@ function DocumentTable({ rows }: { rows: DocRow[] }) {
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.id} className="border-t border-[var(--color-border)]">
+            <tr key={r.id} className="border-t border-[var(--portal-line)]">
               <td className="px-3 py-2.5 whitespace-nowrap">{r.sessionDate}</td>
               <td className="px-3 py-2.5 whitespace-nowrap">{r.sessionTime}</td>
               <td className="px-3 py-2.5">{r.orderNumber}</td>
@@ -203,7 +207,7 @@ function DocumentTable({ rows }: { rows: DocRow[] }) {
                   href={r.pdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] px-2.5 py-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)]"
+                  className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]"
                 >
                   <Eye className="size-3.5" aria-hidden />
                   View
@@ -223,16 +227,18 @@ function UploadsTable({ rows }: { rows: UploadRow[] }) {
     <>
     <div className="grid gap-2 p-3 md:hidden">
       {rows.map((u) => (
-        <DocumentMobileRow
+        <DocumentMobileCard
           key={u.id}
-          title={u.fileName}
-          sessionDate={u.sessionDate}
-          sessionTime={u.sessionTime}
-          orderNumber={u.orderNumber}
-          consultationTypeLabel={u.consultationTypeLabel}
+          fileName={u.fileName}
           fileTypeLabel={u.fileTypeLabel}
-          uploadedBy={u.uploadedBy}
           viewUrl={u.viewUrl}
+          session={{
+            sessionDate: u.sessionDate,
+            sessionTime: u.sessionTime,
+            orderNumber: u.orderNumber,
+            consultationTypeLabel: u.consultationTypeLabel,
+            uploadedBy: u.uploadedBy,
+          }}
         />
       ))}
     </div>
@@ -252,7 +258,7 @@ function UploadsTable({ rows }: { rows: UploadRow[] }) {
         </thead>
         <tbody>
           {rows.map((u) => (
-            <tr key={u.id} className="border-t border-[var(--color-border)]">
+            <tr key={u.id} className="border-t border-[var(--portal-line)]">
               <td className="px-3 py-2.5 whitespace-nowrap">{u.sessionDate}</td>
               <td className="px-3 py-2.5 whitespace-nowrap">{u.sessionTime}</td>
               <td className="px-3 py-2.5">{u.orderNumber}</td>
@@ -269,7 +275,7 @@ function UploadsTable({ rows }: { rows: UploadRow[] }) {
                   href={u.viewUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] px-2.5 py-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)]"
+                  className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]"
                 >
                   <Eye className="size-3.5" aria-hidden />
                   View
@@ -281,57 +287,6 @@ function UploadsTable({ rows }: { rows: UploadRow[] }) {
       </table>
     </div>
     </>
-  );
-}
-
-function DocumentMobileRow({
-  title,
-  sessionDate,
-  sessionTime,
-  orderNumber,
-  consultationTypeLabel,
-  fileTypeLabel,
-  uploadedBy,
-  viewUrl,
-}: {
-  title: string;
-  sessionDate: string;
-  sessionTime: string;
-  orderNumber: string;
-  consultationTypeLabel: string;
-  fileTypeLabel: string;
-  uploadedBy: string;
-  viewUrl: string;
-}) {
-  return (
-    <article className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="truncate text-[13px] font-bold text-[var(--color-text-primary)]">
-            {title}
-          </p>
-          <p className="mt-1 text-[11px] text-[var(--color-text-muted)]">
-            {sessionDate} at {sessionTime} · order {orderNumber}
-          </p>
-        </div>
-        <FileTypeBadge label={fileTypeLabel} />
-      </div>
-      <div className="mt-2 flex flex-wrap gap-2">
-        <SessionTypeBadge label={consultationTypeLabel} />
-        <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-[var(--color-text-muted)]">
-          {uploadedBy}
-        </span>
-      </div>
-      <a
-        href={viewUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-3 inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-2.5 py-1.5 text-[12px] font-semibold text-[var(--color-brand-primary)]"
-      >
-        <Eye className="size-3.5" aria-hidden />
-        View
-      </a>
-    </article>
   );
 }
 
@@ -356,11 +311,11 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
 
   if (loading) {
     return (
-      <div className="rounded-lg border border-[var(--color-border)] bg-white/75 p-4">
-        <div className="h-4 w-40 rounded bg-[var(--color-background-soft)]" />
+      <div className="rounded-lg border border-[var(--portal-line)] bg-white/75 p-4">
+        <div className="h-4 w-40 rounded bg-[var(--portal-well)]" />
         <div className="mt-3 grid gap-2">
-          <div className="h-16 rounded bg-[var(--color-background-soft)]" />
-          <div className="h-16 rounded bg-[var(--color-background-soft)]" />
+          <div className="h-16 rounded bg-[var(--portal-well)]" />
+          <div className="h-16 rounded bg-[var(--portal-well)]" />
         </div>
       </div>
     );
@@ -381,12 +336,12 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
 
   if (!hasAny) {
     return (
-      <div className="rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-5 text-center">
-        <FileSearch className="mx-auto size-7 text-[var(--color-text-muted)]" aria-hidden />
-        <p className="mt-2 text-sm font-bold text-[var(--color-text-primary)]">
+      <div className="rounded-lg border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] p-5 text-center">
+        <FileSearch className="mx-auto size-7 text-[var(--portal-muted)]" aria-hidden />
+        <p className="mt-2 text-sm font-bold text-[var(--portal-text)]">
           No consultation documents yet
         </p>
-        <p className="mx-auto mt-1 max-w-sm text-[12px] text-[var(--color-text-muted)]">
+        <p className="mx-auto mt-1 max-w-sm text-[12px] text-[var(--portal-muted)]">
           Notes, uploaded files, and generated documents will appear here after appointments are completed.
         </p>
       </div>
@@ -401,27 +356,26 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
         <HistorySection title="Medical notes" count={data.medicalNotes.length}>
           <div className="grid gap-2 p-3 md:hidden">
             {data.medicalNotes.map((n) => (
-              <article
+              <PortalMobileCard
                 key={n.id}
-                className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3"
-              >
-                <p className="flex items-center gap-2 text-[13px] font-bold text-[var(--color-text-primary)]">
-                  <ClipboardList className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
-                  {n.sessionDate} at {n.sessionTime}
-                </p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <SessionTypeBadge label={n.consultationTypeLabel} />
-                  <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-[var(--color-text-muted)]">
-                    {n.createdByName}
+                title={
+                  <span className="flex items-center gap-2">
+                    <ClipboardList className="size-4 shrink-0 text-[var(--portal-primary)]" aria-hidden />
+                    {n.sessionDate} at {n.sessionTime}
                   </span>
-                </div>
-                <p className="mt-2 text-[12px] text-[var(--color-text-muted)]">
+                }
+                meta={[
+                  { label: "Type", value: <SessionTypeBadge label={n.consultationTypeLabel} /> },
+                  { label: "Doctor", value: n.createdByName },
+                ]}
+              >
+                <p className="text-[12px] text-[var(--portal-muted)]">
                   {n.symptoms?.trim() || "No symptoms recorded"}
                 </p>
-                <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--color-text-primary)]">
+                <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--portal-text)]">
                   {n.content}
                 </p>
-              </article>
+              </PortalMobileCard>
             ))}
           </div>
           <div className="gh-doctor-table-wrap hidden overflow-x-auto md:block">
@@ -442,7 +396,7 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
                 {data.medicalNotes.map((n) => (
                   <Fragment key={n.id}>
                     <tr
-                      className="cursor-pointer border-t border-[var(--color-border)] hover:bg-[var(--color-background-soft)]"
+                      className="cursor-pointer border-t border-[var(--portal-line)] hover:bg-[var(--portal-well)]"
                       onClick={() =>
                         setExpandedNote(expandedNote === n.id ? null : n.id)
                       }
@@ -453,24 +407,24 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
                       <td className="px-3 py-2.5">
                         <SessionTypeBadge label={n.consultationTypeLabel} />
                       </td>
-                      <td className="max-w-[120px] truncate px-3 py-2.5 text-[var(--color-text-muted)]">
+                      <td className="max-w-[120px] truncate px-3 py-2.5 text-[var(--portal-muted)]">
                         {n.symptoms?.trim() || "—"}
                       </td>
                       <td className="px-3 py-2.5">{n.createdByName}</td>
-                      <td className="max-w-[160px] truncate px-3 py-2.5 text-[var(--color-text-muted)]">
+                      <td className="max-w-[160px] truncate px-3 py-2.5 text-[var(--portal-muted)]">
                         {n.content.slice(0, 80)}
                         {n.content.length > 80 ? "…" : ""}
                       </td>
                       <td className="px-3 py-2.5">
                         {expandedNote === n.id ? (
-                          <ChevronDown className="size-4 text-[var(--color-text-muted)]" />
+                          <ChevronDown className="size-4 text-[var(--portal-muted)]" />
                         ) : (
-                          <ChevronRight className="size-4 text-[var(--color-text-muted)]" />
+                          <ChevronRight className="size-4 text-[var(--portal-muted)]" />
                         )}
                       </td>
                     </tr>
                     {expandedNote === n.id ? (
-                      <tr className="border-t border-[var(--color-border)] bg-[var(--color-background-soft)]">
+                      <tr className="border-t border-[var(--portal-line)] bg-[var(--portal-well)]">
                         <td colSpan={8} className="px-4 py-3 whitespace-pre-wrap">
                           {n.content}
                         </td>

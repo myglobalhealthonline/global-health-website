@@ -60,21 +60,21 @@ export function FinalizeChecklist({
   }
 
   return (
-    <div className="mt-3 space-y-3 rounded-lg border border-[var(--color-border)] bg-white/75 p-3 shadow-sm">
+    <div className="mt-3 space-y-3 rounded-lg border border-[var(--portal-line)] bg-white/75 p-3 shadow-sm">
       <div className="flex items-start gap-2">
-        <span className="grid size-9 shrink-0 place-items-center rounded-md bg-[var(--color-brand-primary)] text-white">
+        <span className="grid size-9 shrink-0 place-items-center rounded-md bg-[var(--portal-primary)] text-white">
           <ClipboardCheck className="size-4" aria-hidden />
         </span>
         <div>
-          <p className="text-sm font-bold text-[var(--color-text-primary)]">
+          <p className="text-sm font-bold text-[var(--portal-text)]">
             Final consultation checklist
           </p>
-          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+          <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
             Confirm clinical notes and files before closing the appointment.
           </p>
         </div>
       </div>
-      <label className="flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2 text-sm">
+      <label className="flex items-center gap-2 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2 text-sm">
         <input
           type="checkbox"
           checked={notesUploaded}
@@ -82,7 +82,7 @@ export function FinalizeChecklist({
         />
         Consultation notes uploaded / complete
       </label>
-      <label className="flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2 text-sm">
+      <label className="flex items-center gap-2 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2 text-sm">
         <input
           type="checkbox"
           checked={filesUploaded}

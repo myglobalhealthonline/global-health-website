@@ -72,10 +72,10 @@ export function InsuranceTab() {
   if (!loaded) {
     return (
       <div className="gh-patient-empty-state gh-card p-6">
-        <div className="h-4 w-44 rounded bg-[var(--color-background-soft)]" />
+        <div className="h-4 w-44 rounded bg-[var(--portal-well)]" />
         <div className="mt-4 grid gap-3">
-          <div className="h-12 rounded-lg bg-[var(--color-background-soft)]" />
-          <div className="h-12 rounded-lg bg-[var(--color-background-soft)]" />
+          <div className="h-12 rounded-lg bg-[var(--portal-well)]" />
+          <div className="h-12 rounded-lg bg-[var(--portal-well)]" />
         </div>
       </div>
     );
@@ -87,10 +87,10 @@ export function InsuranceTab() {
     <section className="gh-patient-profile-tab space-y-4">
       <div className="gh-patient-form-card gh-card p-6">
         <header className="mb-4 flex items-center gap-2">
-          <ShieldCheck className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
+          <ShieldCheck className="size-5 text-[var(--portal-primary)]" aria-hidden />
           <div>
-            <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Insurance details</h3>
-            <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+            <h3 className="text-lg font-semibold text-[var(--portal-text)]">Insurance details</h3>
+            <p className="mt-1 text-sm text-[var(--portal-muted)]">
               Add policy details and a document so care teams can verify coverage.
             </p>
           </div>
@@ -137,15 +137,15 @@ export function InsuranceTab() {
               {badge.label}
             </span>
             {data?.hasDocument && (
-              <span className="text-xs text-[var(--color-text-muted)]">Document on file</span>
+              <span className="text-xs text-[var(--portal-muted)]">Document on file</span>
             )}
           </div>
         </header>
-        <p className="mb-3 text-sm text-[var(--color-text-muted)]">
+        <p className="mb-3 text-sm text-[var(--portal-muted)]">
           Upload your insurance card or policy document (PDF, JPG, PNG — max 10 MB).
           Admin will review and update your status.
         </p>
-        <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)] disabled:opacity-60">
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-[var(--portal-line)] px-4 py-2 text-sm font-medium text-[var(--portal-text)] hover:bg-[var(--portal-well)] disabled:opacity-60">
           <Upload aria-hidden className="size-4" />
           {uploadPending ? "Uploading…" : data?.hasDocument ? "Replace document" : "Upload document"}
           <input

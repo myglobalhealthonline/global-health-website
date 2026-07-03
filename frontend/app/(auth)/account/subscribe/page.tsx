@@ -55,7 +55,7 @@ export default async function SubscribeConfirmPage({
       <div className="gh-patient-page gh-patient-subscribe-page">
         <PageHeader title={t.title} description={t.subtitle} />
         <div className="gh-patient-empty-state gh-card max-w-xl p-8 text-center">
-          <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
+          <p className="text-sm" style={{ color: "var(--portal-muted)" }}>
             {t.missingPlan}
           </p>
           <Link href="/account" className="gh-btn gh-btn-primary mt-6 inline-flex justify-center">
