@@ -29,14 +29,14 @@ export function ScopeBanner({
           <span className="min-w-0">
             <span className="font-bold">Scope:</span>{" "}
             <span className="font-semibold">{activeCountry.name}</span>{" "}
-            <span className="text-[var(--color-text-muted)]">
+            <span className="text-[var(--portal-muted)]">
               · only items for this country are shown
             </span>
           </span>
         </span>
         <Link
           href={clearHref}
-          className="font-semibold text-[var(--color-brand-primary)] hover:underline"
+          className="font-semibold text-[var(--portal-primary)] hover:underline"
         >
           Show all countries
         </Link>
@@ -46,14 +46,14 @@ export function ScopeBanner({
   return (
     <div className="gh-admin-scope-banner gh-admin-scope-banner--empty mb-5">
       <span className="min-w-0">
-        <span className="font-semibold text-[var(--color-text-primary)]">
+        <span className="font-semibold text-[var(--portal-text)]">
           No country selected
         </span>{" "}
         · pick a country in the top-right to scope this page.
       </span>
       <Link
         href={emptyStateHref ?? "/admin"}
-        className="font-semibold text-[var(--color-brand-primary)] hover:underline"
+        className="font-semibold text-[var(--portal-primary)] hover:underline"
       >
         Pick a country
       </Link>
