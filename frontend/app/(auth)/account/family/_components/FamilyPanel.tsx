@@ -65,14 +65,14 @@ export function FamilyPanel({
   return (
     <div className="gh-patient-page gh-patient-family-page">
       <header className="gh-patient-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
           {t.breadcrumb}
         </p>
-        <h1 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--color-text-primary)]">
-          <Users className="size-6 text-[var(--color-brand-primary)]" aria-hidden />
+        <h1 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--portal-text)]">
+          <Users className="size-6 text-[var(--portal-primary)]" aria-hidden />
           {t.title}
         </h1>
-        <p className="text-sm text-[var(--color-text-muted)]">{t.subtitle}</p>
+        <p className="text-sm text-[var(--portal-muted)]">{t.subtitle}</p>
       </header>
 
       {!familyEligible ? (
@@ -109,19 +109,19 @@ export function FamilyPanel({
 
       {loading ? (
         <div className="gh-patient-empty-state mt-6 gh-card p-6">
-          <div className="h-4 w-44 rounded bg-[var(--color-background-soft)]" />
+          <div className="h-4 w-44 rounded bg-[var(--portal-well)]" />
           <div className="mt-4 grid gap-3">
-            <div className="h-20 rounded-lg bg-[var(--color-background-soft)]" />
-            <div className="h-20 rounded-lg bg-[var(--color-background-soft)]" />
+            <div className="h-20 rounded-lg bg-[var(--portal-well)]" />
+            <div className="h-20 rounded-lg bg-[var(--portal-well)]" />
           </div>
         </div>
       ) : items.length === 0 && !error ? (
         <div className="gh-patient-empty-state mt-6 gh-card flex flex-col items-center gap-2 p-10 text-center">
-          <span className="grid size-12 place-items-center rounded-full bg-[var(--color-background-soft)]">
-            <Users className="size-6 text-[var(--color-text-muted)]" aria-hidden />
+          <span className="grid size-12 place-items-center rounded-full bg-[var(--portal-well)]">
+            <Users className="size-6 text-[var(--portal-muted)]" aria-hidden />
           </span>
-          <p className="text-base font-bold text-[var(--color-text-primary)]">{t.emptyHeading}</p>
-          <p className="max-w-sm text-sm text-[var(--color-text-muted)]">{t.empty}</p>
+          <p className="text-base font-bold text-[var(--portal-text)]">{t.emptyHeading}</p>
+          <p className="max-w-sm text-sm text-[var(--portal-muted)]">{t.empty}</p>
         </div>
       ) : (
         <ul className="gh-patient-family-list mt-6 space-y-3">
@@ -146,10 +146,10 @@ function FamilyMetric({
   hint: string;
 }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-white/80 p-3">
-      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">{label}</p>
-      <p className="mt-1 text-lg font-extrabold text-[var(--color-text-primary)]">{value}</p>
-      <p className="mt-1 text-xs text-[var(--color-text-muted)]">{hint}</p>
+    <div className="rounded-lg border border-[var(--portal-line)] bg-white/80 p-3">
+      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">{label}</p>
+      <p className="mt-1 text-lg font-extrabold text-[var(--portal-text)]">{value}</p>
+      <p className="mt-1 text-xs text-[var(--portal-muted)]">{hint}</p>
     </div>
   );
 }
@@ -176,7 +176,7 @@ function AddMemberForm({ t, onAdded }: { t: FamilyCopy; onAdded: () => Promise<v
 
   return (
       <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-4 p-6">
-      <h2 className="text-sm font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+      <h2 className="text-sm font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
         {t.addHeading}
       </h2>
 
@@ -197,7 +197,7 @@ function AddMemberForm({ t, onAdded }: { t: FamilyCopy; onAdded: () => Promise<v
         <label className="block">
           <span className="gh-field-label">
             {t.relationship}{" "}
-            <span className="font-normal text-[var(--color-text-muted)]">({t.optional})</span>
+            <span className="font-normal text-[var(--portal-muted)]">({t.optional})</span>
           </span>
           <input
             type="text"
@@ -212,7 +212,7 @@ function AddMemberForm({ t, onAdded }: { t: FamilyCopy; onAdded: () => Promise<v
         <label className="block">
           <span className="gh-field-label">
             {t.dateOfBirth}{" "}
-            <span className="font-normal text-[var(--color-text-muted)]">({t.optional})</span>
+            <span className="font-normal text-[var(--portal-muted)]">({t.optional})</span>
           </span>
           <input
             type="date"
@@ -227,7 +227,7 @@ function AddMemberForm({ t, onAdded }: { t: FamilyCopy; onAdded: () => Promise<v
       <label className="block">
         <span className="gh-field-label">
           {t.email}{" "}
-          <span className="font-normal text-[var(--color-text-muted)]">({t.optional})</span>
+          <span className="font-normal text-[var(--portal-muted)]">({t.optional})</span>
         </span>
         <input
           type="email"
@@ -243,13 +243,13 @@ function AddMemberForm({ t, onAdded }: { t: FamilyCopy; onAdded: () => Promise<v
           type="checkbox"
           checked={form.canUseCredits ?? false}
           onChange={(e) => setForm((f) => ({ ...f, canUseCredits: e.target.checked }))}
-          className="mt-0.5 size-4 shrink-0 accent-[var(--color-brand-primary)]"
+          className="mt-0.5 size-4 shrink-0 accent-[var(--portal-primary)]"
         />
         <span className="flex flex-col">
-          <span className="text-sm font-semibold text-[var(--color-text-primary)]">
+          <span className="text-sm font-semibold text-[var(--portal-text)]">
             {t.canUseCredits}
           </span>
-          <span className="text-xs text-[var(--color-text-muted)]">
+          <span className="text-xs text-[var(--portal-muted)]">
             {t.canUseCreditsHelp}
           </span>
         </span>
@@ -354,15 +354,15 @@ function MemberDisplay({
     <div className="gh-patient-family-card gh-card p-4">
       <div className="gh-patient-family-card-header flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-sm font-bold text-[var(--color-text-primary)]">
+          <p className="truncate text-sm font-bold text-[var(--portal-text)]">
             {member.fullName}
           </p>
-          <p className="text-xs text-[var(--color-text-muted)]">
+          <p className="text-xs text-[var(--portal-muted)]">
             {member.relationship || t.noRelationship}
             {member.dateOfBirth ? ` · ${member.dateOfBirth.slice(0, 10)}` : ""}
           </p>
           {member.email ? (
-            <p className="truncate text-xs text-[var(--color-text-muted)]">{member.email}</p>
+            <p className="truncate text-xs text-[var(--portal-muted)]">{member.email}</p>
           ) : null}
         </div>
 
@@ -371,7 +371,7 @@ function MemberDisplay({
             type="button"
             onClick={onEdit}
             aria-label={`${t.edit} ${member.fullName}`}
-            className="rounded-md p-2 text-[var(--color-text-muted)] transition hover:bg-[var(--color-background-soft)] hover:text-[var(--color-text-primary)]"
+            className="rounded-md p-2 text-[var(--portal-muted)] transition hover:bg-[var(--portal-well)] hover:text-[var(--portal-text)]"
           >
             <Pencil className="size-4" aria-hidden />
           </button>
@@ -380,7 +380,7 @@ function MemberDisplay({
             onClick={onDelete}
             disabled={deleting}
             aria-label={`${t.remove} ${member.fullName}`}
-            className="rounded-md p-2 text-[var(--color-text-muted)] transition hover:bg-rose-50 hover:text-rose-700 disabled:opacity-60"
+            className="rounded-md p-2 text-[var(--portal-muted)] transition hover:bg-rose-50 hover:text-rose-700 disabled:opacity-60"
           >
             {deleting ? (
               <Loader2 className="size-4 animate-spin" aria-hidden />
@@ -391,18 +391,18 @@ function MemberDisplay({
         </div>
       </div>
 
-      <label className="mt-3 flex items-center gap-2 border-t border-[var(--color-border)] pt-3">
+      <label className="mt-3 flex items-center gap-2 border-t border-[var(--portal-line)] pt-3">
         <input
           type="checkbox"
           checked={member.canUseCredits}
           disabled={busyToggle}
           onChange={(e) => void onToggleCredits(e.target.checked)}
-          className="size-4 shrink-0 accent-[var(--color-brand-primary)] disabled:opacity-60"
+          className="size-4 shrink-0 accent-[var(--portal-primary)] disabled:opacity-60"
         />
-        <span className="text-xs font-semibold text-[var(--color-text-primary)]">
+        <span className="text-xs font-semibold text-[var(--portal-text)]">
           {member.canUseCredits ? t.benefitsOn : t.benefitsOff}
         </span>
-        <span className="text-xs text-[var(--color-text-muted)]">— {t.canUseCreditsHelp}</span>
+        <span className="text-xs text-[var(--portal-muted)]">— {t.canUseCreditsHelp}</span>
       </label>
 
       {msg ? (
@@ -501,13 +501,13 @@ function EditMemberForm({
           type="checkbox"
           checked={form.canUseCredits ?? false}
           onChange={(e) => setForm((f) => ({ ...f, canUseCredits: e.target.checked }))}
-          className="mt-0.5 size-4 shrink-0 accent-[var(--color-brand-primary)]"
+          className="mt-0.5 size-4 shrink-0 accent-[var(--portal-primary)]"
         />
         <span className="flex flex-col">
-          <span className="text-sm font-semibold text-[var(--color-text-primary)]">
+          <span className="text-sm font-semibold text-[var(--portal-text)]">
             {t.canUseCredits}
           </span>
-          <span className="text-xs text-[var(--color-text-muted)]">{t.canUseCreditsHelp}</span>
+          <span className="text-xs text-[var(--portal-muted)]">{t.canUseCreditsHelp}</span>
         </span>
       </label>
 
@@ -529,7 +529,7 @@ function EditMemberForm({
         <button
           type="button"
           onClick={onCancel}
-          className="inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-text-primary)] transition hover:bg-[var(--color-background-soft)]"
+          className="inline-flex items-center gap-2 rounded-md border border-[var(--portal-line)] px-4 py-2 text-sm font-semibold text-[var(--portal-text)] transition hover:bg-[var(--portal-well)]"
         >
           <X className="size-4" aria-hidden />
           {t.cancel}

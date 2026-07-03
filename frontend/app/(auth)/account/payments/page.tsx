@@ -66,14 +66,14 @@ export default async function AccountPaymentsPage() {
   return (
     <div className="gh-patient-page gh-patient-payments-page">
       <header className="gh-patient-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
           {a.payments.breadcrumb}
         </p>
-        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--color-text-primary)]">
-          <CreditCard className="size-6 text-[var(--color-brand-primary)]" aria-hidden />
+        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--portal-text)]">
+          <CreditCard className="size-6 text-[var(--portal-primary)]" aria-hidden />
           {a.payments.title}
         </h2>
-        <p className="text-sm text-[var(--color-text-muted)]">
+        <p className="text-sm text-[var(--portal-muted)]">
           {a.payments.subtitle}
         </p>
       </header>
@@ -99,10 +99,10 @@ export default async function AccountPaymentsPage() {
           <div className="inline-flex size-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
             <CreditCard aria-hidden className="size-6" />
           </div>
-          <h2 className="mt-4 text-lg font-bold text-[var(--color-text-primary)]">
+          <h2 className="mt-4 text-lg font-bold text-[var(--portal-text)]">
             {a.payments.noPayments}
           </h2>
-          <p className="mt-2 max-w-md text-sm text-[var(--color-text-muted)]">
+          <p className="mt-2 max-w-md text-sm text-[var(--portal-muted)]">
             {a.payments.noPaymentsBody}
           </p>
           <Link
@@ -120,18 +120,18 @@ export default async function AccountPaymentsPage() {
             {items.map((p) => (
               <article
                 key={p.id}
-                className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4"
+                className="rounded-lg border border-[var(--portal-line)] bg-[var(--portal-well)] p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="font-semibold text-[var(--color-text-primary)]">
+                    <p className="font-semibold text-[var(--portal-text)]">
                       {p.serviceName ?? p.consultationType}
                     </p>
-                    <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                    <p className="mt-1 text-xs text-[var(--portal-muted)]">
                       {formatAppDate(p.paidAt)} · {p.countryCode}
                     </p>
                     {p.doctorName ? (
-                      <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                      <p className="mt-1 text-xs text-[var(--portal-muted)]">
                         {/^dr\.?\s/i.test(p.doctorName) ? p.doctorName : `Dr. ${p.doctorName}`}
                       </p>
                     ) : null}
@@ -143,7 +143,7 @@ export default async function AccountPaymentsPage() {
                   </span>
                 </div>
                 <div className="mt-3 flex items-center justify-between gap-3">
-                  <p className="text-lg font-extrabold text-[var(--color-text-primary)]">
+                  <p className="text-lg font-extrabold text-[var(--portal-text)]">
                     {formatPrice(p.amountCents, p.currencyCode)}
                   </p>
                   <ReceiptButton paymentId={p.id} />
@@ -153,7 +153,7 @@ export default async function AccountPaymentsPage() {
           </div>
           <div className="gh-patient-table-wrap hidden overflow-x-auto md:block">
           <table className="w-full min-w-[760px] text-sm">
-            <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wide text-[var(--color-text-muted)]">
+            <thead className="bg-[var(--portal-well)] text-left text-xs uppercase tracking-wide text-[var(--portal-muted)]">
               <tr>
                 <th className="px-4 py-3 font-semibold">{a.payments.colDate}</th>
                 <th className="px-4 py-3 font-semibold">{a.payments.colConsultation}</th>
@@ -162,26 +162,26 @@ export default async function AccountPaymentsPage() {
                 <th className="px-4 py-3 text-right font-semibold">Receipt</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--color-border)]">
+            <tbody className="divide-y divide-[var(--portal-line)]">
               {items.map((p) => (
                 <tr key={p.id}>
-                  <td className="px-4 py-3 text-[var(--color-text-primary)]">
+                  <td className="px-4 py-3 text-[var(--portal-text)]">
                     {formatAppDate(p.paidAt)}
                   </td>
-                  <td className="px-4 py-3 text-[var(--color-text-primary)]">
+                  <td className="px-4 py-3 text-[var(--portal-text)]">
                     <span className="block font-semibold">
                       {p.serviceName ?? p.consultationType}
                     </span>
                     {p.doctorName && (
-                      <span className="block text-xs text-[var(--color-text-muted)]">
+                      <span className="block text-xs text-[var(--portal-muted)]">
                         {/^dr\.?\s/i.test(p.doctorName) ? p.doctorName : `Dr. ${p.doctorName}`}
                       </span>
                     )}
-                    <span className="block text-xs text-[var(--color-text-muted)]">
+                    <span className="block text-xs text-[var(--portal-muted)]">
                       {p.countryCode}
                     </span>
                   </td>
-                  <td className="px-4 py-3 font-semibold text-[var(--color-text-primary)]">
+                  <td className="px-4 py-3 font-semibold text-[var(--portal-text)]">
                     {formatPrice(p.amountCents, p.currencyCode)}
                   </td>
                   <td className="px-4 py-3">
@@ -204,7 +204,7 @@ export default async function AccountPaymentsPage() {
 
       {invoices.length > 0 ? (
         <section className="mt-8">
-          <h3 className="mb-3 text-sm font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+          <h3 className="mb-3 text-sm font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
             {inv.heading}
           </h3>
           <div className="gh-card overflow-hidden p-0">
@@ -214,15 +214,15 @@ export default async function AccountPaymentsPage() {
                 return (
                   <article
                     key={row.id}
-                    className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4"
+                    className="rounded-lg border border-[var(--portal-line)] bg-[var(--portal-well)] p-4"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="flex items-center gap-2 font-semibold text-[var(--color-text-primary)]">
-                          <ReceiptText className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
+                        <p className="flex items-center gap-2 font-semibold text-[var(--portal-text)]">
+                          <ReceiptText className="size-4 text-[var(--portal-primary)]" aria-hidden />
                           {inv.membershipPayment}
                         </p>
-                        <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                        <p className="mt-1 text-xs text-[var(--portal-muted)]">
                           {formatAppDate(row.periodStart ?? row.createdAt)}
                           {row.number ? ` · ${row.number}` : ""}
                         </p>
@@ -232,7 +232,7 @@ export default async function AccountPaymentsPage() {
                       </span>
                     </div>
                     <div className="mt-3 flex items-center justify-between gap-3">
-                      <p className="text-lg font-extrabold text-[var(--color-text-primary)]">
+                      <p className="text-lg font-extrabold text-[var(--portal-text)]">
                         {formatPrice(row.amountPaidCents, row.currency)}
                       </p>
                       {receiptUrl ? (
@@ -240,7 +240,7 @@ export default async function AccountPaymentsPage() {
                           href={receiptUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--color-brand-primary)]"
+                          className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--portal-primary)]"
                         >
                           {inv.viewInvoice}
                           <ExternalLink className="size-3.5" aria-hidden />
@@ -253,7 +253,7 @@ export default async function AccountPaymentsPage() {
             </div>
             <div className="gh-patient-table-wrap hidden overflow-x-auto md:block">
             <table className="w-full min-w-[760px] text-sm">
-              <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wide text-[var(--color-text-muted)]">
+              <thead className="bg-[var(--portal-well)] text-left text-xs uppercase tracking-wide text-[var(--portal-muted)]">
                 <tr>
                   <th className="px-4 py-3 font-semibold">{inv.colDate}</th>
                   <th className="px-4 py-3 font-semibold">{inv.colDescription}</th>
@@ -262,21 +262,21 @@ export default async function AccountPaymentsPage() {
                   <th className="px-4 py-3 text-right font-semibold">{inv.viewInvoice}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--color-border)]">
+              <tbody className="divide-y divide-[var(--portal-line)]">
                 {invoices.map((row) => {
                   const receiptUrl = row.hostedInvoiceUrl ?? row.pdfUrl;
                   return (
                     <tr key={row.id}>
-                      <td className="px-4 py-3 text-[var(--color-text-primary)]">
+                      <td className="px-4 py-3 text-[var(--portal-text)]">
                         {formatAppDate(row.periodStart ?? row.createdAt)}
                       </td>
-                      <td className="px-4 py-3 text-[var(--color-text-primary)]">
+                      <td className="px-4 py-3 text-[var(--portal-text)]">
                         <span className="block font-semibold">{inv.membershipPayment}</span>
                         {row.number ? (
-                          <span className="block text-xs text-[var(--color-text-muted)]">{row.number}</span>
+                          <span className="block text-xs text-[var(--portal-muted)]">{row.number}</span>
                         ) : null}
                       </td>
-                      <td className="px-4 py-3 font-semibold text-[var(--color-text-primary)]">
+                      <td className="px-4 py-3 font-semibold text-[var(--portal-text)]">
                         {formatPrice(row.amountPaidCents, row.currency)}
                       </td>
                       <td className="px-4 py-3">
@@ -290,13 +290,13 @@ export default async function AccountPaymentsPage() {
                             href={receiptUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-brand-primary)] hover:underline"
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--portal-primary)] hover:underline"
                           >
                             {inv.viewInvoice}
                             <ExternalLink className="size-3.5" aria-hidden />
                           </a>
                         ) : (
-                          <span className="text-xs text-[var(--color-text-muted)]">—</span>
+                          <span className="text-xs text-[var(--portal-muted)]">—</span>
                         )}
                       </td>
                     </tr>

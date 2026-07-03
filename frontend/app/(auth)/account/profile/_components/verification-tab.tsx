@@ -71,11 +71,11 @@ export function VerificationTab() {
   if (!loaded) {
     return (
       <div className="gh-patient-empty-state gh-card p-6">
-        <div className="h-4 w-40 rounded bg-[var(--color-background-soft)]" />
+        <div className="h-4 w-40 rounded bg-[var(--portal-well)]" />
         <div className="mt-4 grid gap-3">
-          <div className="h-14 rounded-lg bg-[var(--color-background-soft)]" />
-          <div className="h-14 rounded-lg bg-[var(--color-background-soft)]" />
-          <div className="h-14 rounded-lg bg-[var(--color-background-soft)]" />
+          <div className="h-14 rounded-lg bg-[var(--portal-well)]" />
+          <div className="h-14 rounded-lg bg-[var(--portal-well)]" />
+          <div className="h-14 rounded-lg bg-[var(--portal-well)]" />
         </div>
       </div>
     );
@@ -87,22 +87,22 @@ export function VerificationTab() {
     <section className="gh-patient-profile-tab space-y-4">
       <div className="gh-patient-form-card gh-card p-6">
         <header className="mb-4 flex items-center gap-2">
-          <BadgeCheck className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
+          <BadgeCheck className="size-5 text-[var(--portal-primary)]" aria-hidden />
           <div>
-            <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Verification status</h3>
-            <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+            <h3 className="text-lg font-semibold text-[var(--portal-text)]">Verification status</h3>
+            <p className="mt-1 text-sm text-[var(--portal-muted)]">
               Keep identity, insurance, email, and phone checks ready before appointments.
             </p>
           </div>
         </header>
 
-        <div className="divide-y divide-[var(--color-border)]">
+        <div className="divide-y divide-[var(--portal-line)]">
           {/* Email */}
           <div className="grid gap-2 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
             <div>
-              <p className="text-sm font-medium text-[var(--color-text-primary)]">Email</p>
+              <p className="text-sm font-medium text-[var(--portal-text)]">Email</p>
               {v?.emailVerifiedAt && (
-                <p className="mt-0.5 text-xs text-[var(--color-text-muted)]">
+                <p className="mt-0.5 text-xs text-[var(--portal-muted)]">
                   Verified {new Date(v.emailVerifiedAt).toLocaleDateString()}
                 </p>
               )}
@@ -113,9 +113,9 @@ export function VerificationTab() {
           {/* Phone */}
           <div className="grid gap-2 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
             <div>
-              <p className="text-sm font-medium text-[var(--color-text-primary)]">Phone</p>
+              <p className="text-sm font-medium text-[var(--portal-text)]">Phone</p>
               {v?.phoneVerifiedAt && (
-                <p className="mt-0.5 text-xs text-[var(--color-text-muted)]">
+                <p className="mt-0.5 text-xs text-[var(--portal-muted)]">
                   Verified {new Date(v.phoneVerifiedAt).toLocaleDateString()}
                 </p>
               )}
@@ -126,7 +126,7 @@ export function VerificationTab() {
           {/* Insurance */}
           <div className="grid gap-2 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
             <div>
-              <p className="text-sm font-medium text-[var(--color-text-primary)]">Insurance document</p>
+              <p className="text-sm font-medium text-[var(--portal-text)]">Insurance document</p>
             </div>
             <StatusBadge status={v?.insuranceDocumentStatus ?? "NOT_VERIFIED"} />
           </div>
@@ -135,14 +135,14 @@ export function VerificationTab() {
           <div className="py-3">
             <div className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-center">
               <div>
-                <p className="text-sm font-medium text-[var(--color-text-primary)]">Government ID</p>
+                <p className="text-sm font-medium text-[var(--portal-text)]">Government ID</p>
                 {v?.idDocumentType && (
-                  <p className="mt-0.5 text-xs text-[var(--color-text-muted)] capitalize">
+                  <p className="mt-0.5 text-xs text-[var(--portal-muted)] capitalize">
                     {v.idDocumentType.replace(/_/g, " ")}
                   </p>
                 )}
                 {v?.idVerificationReviewedAt && (
-                  <p className="mt-0.5 text-xs text-[var(--color-text-muted)]">
+                  <p className="mt-0.5 text-xs text-[var(--portal-muted)]">
                     Reviewed {new Date(v.idVerificationReviewedAt).toLocaleDateString()}
                   </p>
                 )}
@@ -169,11 +169,11 @@ export function VerificationTab() {
                     ))}
                   </select>
                 </div>
-                <p className="text-xs text-[var(--color-text-muted)]">
+                <p className="text-xs text-[var(--portal-muted)]">
                   Upload front side (and back if applicable). Max 10 MB per file. PDF, JPG, PNG.
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)] disabled:opacity-60">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-[var(--portal-line)] px-4 py-2 text-sm font-medium text-[var(--portal-text)] hover:bg-[var(--portal-well)] disabled:opacity-60">
                     <Upload aria-hidden className="size-4" />
                     {pending && uploadSide === "front" ? "Uploading…" : "Upload front"}
                     <input
@@ -185,7 +185,7 @@ export function VerificationTab() {
                       className="sr-only"
                     />
                   </label>
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)] disabled:opacity-60">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-[var(--portal-line)] px-4 py-2 text-sm font-medium text-[var(--portal-text)] hover:bg-[var(--portal-well)] disabled:opacity-60">
                     <Upload aria-hidden className="size-4" />
                     {pending && uploadSide === "back" ? "Uploading…" : "Upload back"}
                     <input

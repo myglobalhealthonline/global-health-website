@@ -104,10 +104,10 @@ export function GdprPreferencesTab() {
   if (!loaded) {
     return (
       <div className="gh-patient-empty-state gh-card p-6">
-        <div className="h-4 w-48 rounded bg-[var(--color-background-soft)]" />
+        <div className="h-4 w-48 rounded bg-[var(--portal-well)]" />
         <div className="mt-4 grid gap-3">
-          <div className="h-20 rounded-lg bg-[var(--color-background-soft)]" />
-          <div className="h-20 rounded-lg bg-[var(--color-background-soft)]" />
+          <div className="h-20 rounded-lg bg-[var(--portal-well)]" />
+          <div className="h-20 rounded-lg bg-[var(--portal-well)]" />
         </div>
       </div>
     );
@@ -115,7 +115,7 @@ export function GdprPreferencesTab() {
 
   return (
     <div className="gh-patient-profile-tab space-y-6">
-      <p className="text-sm text-[var(--color-text-muted)]">
+      <p className="text-sm text-[var(--portal-muted)]">
         Control how your medical data is used. Changes are logged for compliance.
       </p>
 
@@ -129,16 +129,16 @@ export function GdprPreferencesTab() {
                 <div className="gh-patient-consent-row flex items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-medium text-[var(--color-text-primary)]">{c.label}</p>
+                    <p className="font-medium text-[var(--portal-text)]">{c.label}</p>
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${status.cls}`}
                     >
                       {status.text}
                     </span>
                   </div>
-                  <p className="mt-1 text-sm text-[var(--color-text-muted)]">{c.description}</p>
+                  <p className="mt-1 text-sm text-[var(--portal-muted)]">{c.description}</p>
                   {c.lastUpdatedAt && (
-                    <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                    <p className="mt-1 text-xs text-[var(--portal-muted)]">
                       Last updated: {new Date(c.lastUpdatedAt).toLocaleDateString()}
                     </p>
                   )}
@@ -150,7 +150,7 @@ export function GdprPreferencesTab() {
                     className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors sm:flex-none ${
                       current === true
                         ? "bg-emerald-700 text-white"
-                        : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:bg-[var(--color-background-soft)]"
+                        : "border border-[var(--portal-line)] text-[var(--portal-muted)] hover:bg-[var(--portal-well)]"
                     }`}
                   >
                     Accept
@@ -161,7 +161,7 @@ export function GdprPreferencesTab() {
                     className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors sm:flex-none ${
                       current === false
                         ? "bg-rose-600 text-white"
-                        : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:bg-[var(--color-background-soft)]"
+                        : "border border-[var(--portal-line)] text-[var(--portal-muted)] hover:bg-[var(--portal-well)]"
                     }`}
                   >
                     Decline

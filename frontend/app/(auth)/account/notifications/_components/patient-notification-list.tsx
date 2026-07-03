@@ -55,13 +55,13 @@ export function PatientNotificationList({ initial }: { initial: NotificationItem
   if (items.length === 0) {
     return (
       <div className="gh-patient-empty-state gh-card flex flex-col items-center gap-2 p-10 text-center">
-        <span className="grid size-12 place-items-center rounded-full bg-[var(--color-background-soft)]">
-          <Bell className="size-6" style={{ color: "var(--color-text-muted)" }} aria-hidden />
+        <span className="grid size-12 place-items-center rounded-full bg-[var(--portal-well)]">
+          <Bell className="size-6" style={{ color: "var(--portal-muted)" }} aria-hidden />
         </span>
-        <p className="text-base font-bold" style={{ color: "var(--color-text-primary)" }}>
+        <p className="text-base font-bold" style={{ color: "var(--portal-text)" }}>
           No notifications yet
         </p>
-        <p className="max-w-sm text-sm" style={{ color: "var(--color-text-muted)" }}>
+        <p className="max-w-sm text-sm" style={{ color: "var(--portal-muted)" }}>
           Appointment updates, payment receipts, document alerts, and profile reminders will appear here.
         </p>
       </div>
@@ -76,8 +76,8 @@ export function PatientNotificationList({ initial }: { initial: NotificationItem
             type="button"
             onClick={markAll}
             disabled={busy}
-            className="inline-flex items-center gap-1.5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-3 py-1.5 text-sm font-semibold transition hover:border-[var(--color-border-strong)] disabled:opacity-60"
-            style={{ color: "var(--color-text-primary)" }}
+            className="inline-flex items-center gap-1.5 rounded-[var(--radius-card-sm)] border border-[var(--portal-line)] px-3 py-1.5 text-sm font-semibold transition hover:border-[var(--portal-line-strong)] disabled:opacity-60"
+            style={{ color: "var(--portal-text)" }}
           >
             <Check className="size-4" aria-hidden />
             Mark all read
@@ -85,7 +85,7 @@ export function PatientNotificationList({ initial }: { initial: NotificationItem
         </div>
       ) : null}
 
-      <ul className="gh-patient-notification-list gh-card divide-y overflow-hidden" style={{ borderColor: "var(--color-border)" }}>
+      <ul className="gh-patient-notification-list gh-card divide-y overflow-hidden" style={{ borderColor: "var(--portal-line)" }}>
         {items.map((n) => {
           const isUnread = !n.readAt;
           const href = n.payload?.href ?? null;
@@ -94,33 +94,33 @@ export function PatientNotificationList({ initial }: { initial: NotificationItem
               <span
                 aria-hidden
                 className="mt-1.5 size-2 shrink-0 rounded-full"
-                style={{ background: isUnread ? "var(--color-brand-accent)" : "transparent" }}
+                style={{ background: isUnread ? "var(--portal-signal)" : "transparent" }}
               />
               <span className="flex min-w-0 flex-col gap-0.5">
                 <span
                   className={`text-sm ${isUnread ? "font-bold" : "font-semibold"}`}
-                  style={{ color: isUnread ? "var(--color-text-primary)" : "var(--color-text-muted)" }}
+                  style={{ color: isUnread ? "var(--portal-text)" : "var(--portal-muted)" }}
                 >
                   {n.payload?.title ?? "Notification"}
                 </span>
                 {n.payload?.body ? (
-                  <span className="text-[13px]" style={{ color: "var(--color-text-muted)" }}>
+                  <span className="text-[13px]" style={{ color: "var(--portal-muted)" }}>
                     {n.payload.body}
                   </span>
                 ) : null}
-                <span className="text-[10px] uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
+                <span className="text-[10px] uppercase tracking-wider" style={{ color: "var(--portal-muted)" }}>
                   {timeAgo(n.createdAt)}
                 </span>
               </span>
             </span>
           );
           return (
-            <li key={n.id} style={{ borderColor: "var(--color-border)" }}>
+            <li key={n.id} style={{ borderColor: "var(--portal-line)" }}>
               {href ? (
                 <Link
                   href={href}
                   onClick={() => void markOne(n.id)}
-              className="gh-patient-notification-row block px-4 py-3.5 transition hover:bg-[var(--color-background-soft)]"
+              className="gh-patient-notification-row block px-4 py-3.5 transition hover:bg-[var(--portal-well)]"
                 >
                   {inner}
                 </Link>
@@ -128,7 +128,7 @@ export function PatientNotificationList({ initial }: { initial: NotificationItem
                 <button
                   type="button"
                   onClick={() => void markOne(n.id)}
-                className="gh-patient-notification-row block w-full px-4 py-3.5 text-left transition hover:bg-[var(--color-background-soft)]"
+                className="gh-patient-notification-row block w-full px-4 py-3.5 text-left transition hover:bg-[var(--portal-well)]"
                 >
                   {inner}
                 </button>

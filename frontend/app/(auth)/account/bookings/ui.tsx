@@ -105,14 +105,14 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
 
   if (items.length === 0) {
     return (
-      <div className="gh-patient-empty-state mt-8 flex flex-col items-center rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-panel)] px-6 py-12 text-center">
-        <span className="grid size-14 place-items-center rounded-full bg-[var(--color-background-soft)] text-[var(--color-brand-primary)]">
+      <div className="gh-patient-empty-state mt-8 flex flex-col items-center rounded-lg border border-dashed border-[var(--portal-line)] bg-[var(--portal-surface-elevated)] px-6 py-12 text-center">
+        <span className="grid size-14 place-items-center rounded-full bg-[var(--portal-well)] text-[var(--portal-primary)]">
           <ClipboardList className="size-7" aria-hidden />
         </span>
-        <p className="mt-4 text-base font-semibold text-[var(--color-text-primary)]">
+        <p className="mt-4 text-base font-semibold text-[var(--portal-text)]">
           {i18n?.bookings.noBookings ?? "No bookings yet"}
         </p>
-        <p className="mt-1 max-w-xs text-sm text-[var(--color-text-muted)]">
+        <p className="mt-1 max-w-xs text-sm text-[var(--portal-muted)]">
           {i18n?.bookings.noBookingsBody ?? "You have not made any booking requests. Start by booking your first consultation."}
         </p>
         {/* No country/lang context in /account — go through gate. */}
@@ -129,12 +129,12 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
       {items.map((item) => (
         <article
           key={item.id}
-          className="gh-patient-booking-card gh-card p-5 transition hover:shadow-[var(--shadow-card-hover)]"
+          className="gh-patient-booking-card gh-card p-5 transition hover:shadow-[var(--portal-shadow-hover)]"
         >
           <div className="gh-patient-booking-card-header flex flex-wrap items-start justify-between gap-3">
             <div className="flex items-center gap-2">
-              <CalendarDays className="size-4 text-[var(--color-text-muted)]" aria-hidden />
-              <span className="text-sm text-[var(--color-text-muted)]">{formatAppDateTime(item.createdAt)}</span>
+              <CalendarDays className="size-4 text-[var(--portal-muted)]" aria-hidden />
+              <span className="text-sm text-[var(--portal-muted)]">{formatAppDateTime(item.createdAt)}</span>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               {formatPaymentLabel(item.paymentStatus, item.amountCents, item.currencyCode, i18n) ? (
@@ -150,12 +150,12 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
 
           <div className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Country</p>
-              <p className="mt-0.5 font-medium text-[var(--color-text-primary)]">{item.countryCode.toUpperCase()}</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-muted)]">Country</p>
+              <p className="mt-0.5 font-medium text-[var(--portal-text)]">{item.countryCode.toUpperCase()}</p>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Consultation</p>
-              <p className="mt-0.5 font-medium text-[var(--color-text-primary)]">{item.consultationType}</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-[var(--portal-muted)]">Consultation</p>
+              <p className="mt-0.5 font-medium text-[var(--portal-text)]">{item.consultationType}</p>
             </div>
           </div>
 
@@ -213,9 +213,9 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
           ) : null}
 
           {item.notesPreview ? (
-            <div className="mt-3 rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] px-3 py-2">
-              <p className="text-xs font-semibold text-[var(--color-text-muted)]">Notes</p>
-              <p className="mt-0.5 text-sm text-[var(--color-text-body)]">{item.notesPreview}</p>
+            <div className="mt-3 rounded-[var(--radius-card-sm)] bg-[var(--portal-well)] px-3 py-2">
+              <p className="text-xs font-semibold text-[var(--portal-muted)]">Notes</p>
+              <p className="mt-0.5 text-sm text-[var(--portal-text-2)]">{item.notesPreview}</p>
             </div>
           ) : null}
 
@@ -226,7 +226,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
               onClick={() =>
                 setOpenChatId((current) => (current === item.id ? null : item.id))
               }
-              className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--color-border)] px-3 py-2 text-sm font-semibold text-emerald-700 hover:bg-[var(--color-background-soft)] sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-emerald-700 hover:bg-[var(--portal-well)] sm:w-auto"
             >
               <MessageCircle className="size-4" aria-hidden />
               {openChatId === item.id ? "Hide clinic messages" : "Message the clinic"}
@@ -246,7 +246,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
                 onClick={() =>
                   setOpenConsultChatId((current) => (current === item.id ? null : item.id))
                 }
-                className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--color-border)] px-3 py-2 text-sm font-semibold text-emerald-700 hover:bg-[var(--color-background-soft)] sm:w-auto"
+                className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-emerald-700 hover:bg-[var(--portal-well)] sm:w-auto"
               >
                 <MessageCircle className="size-4" aria-hidden />
                 {openConsultChatId === item.id ? "Hide doctor chat" : "Chat with your doctor"}

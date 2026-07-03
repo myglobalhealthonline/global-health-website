@@ -21,7 +21,7 @@ import {
   AdminCard,
   AdminSummaryStrip,
   Btn,
-  PageHeader,
+  CommandBand,
   Pill,
   SectionHeader,
   StatCard,
@@ -95,19 +95,50 @@ export default async function AccountOverviewPage() {
 
   return (
     <div className="gh-patient-page gh-patient-overview">
-      <PageHeader
-        eyebrow={a.dashboard.welcome}
+      <CommandBand
+        context={a.dashboard.welcome}
         title={user?.fullName || user?.email || "My account"}
-        description={
+        chip={
           ghn ? (
-            <span>
-              {a.dashboard.subtitle}{" "}
-              <code className="rounded bg-[var(--color-surface-raised)] px-1.5 py-0.5 text-xs font-bold">
-                {ghn}
-              </code>
-            </span>
+            <>
+              {a.dashboard.subtitle} <code>{ghn}</code>
+            </>
+          ) : undefined
+        }
+        metrics={
+          nextCall
+            ? [
+                {
+                  label: a.dashboard.nextConsultation,
+                  value: formatAppDateTime(nextCall.scheduledAt as string),
+                  signal: true,
+                },
+                { label: a.dashboard.openLabel, value: openCount },
+                { label: a.dashboard.thisWeek, value: upcomingWeek },
+              ]
+            : [{ label: a.dashboard.totalLabel, value: totalBookings }]
+        }
+        action={
+          nextCall?.meetingUrl ? (
+            <Btn
+              href={nextCall.meetingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="primary"
+              size="sm"
+              iconLeft={<Video className="size-3.5" aria-hidden />}
+            >
+              {a.dashboard.joinCall}
+            </Btn>
           ) : (
-            a.dashboard.subtitle
+            <Btn
+              href={bookHref}
+              variant="on-chrome"
+              size="sm"
+              iconLeft={<Stethoscope className="size-3.5" aria-hidden />}
+            >
+              {a.dashboard.bookCta}
+            </Btn>
           )
         }
       />
@@ -167,28 +198,28 @@ export default async function AccountOverviewPage() {
         <div className="mt-6">
           <Link
             href="/account/security"
-            className="block transition hover:shadow-[var(--shadow-card-hover)]"
+            className="block transition hover:shadow-[var(--portal-shadow-hover)]"
             style={{ textDecoration: "none", color: "inherit" }}
           >
             <AdminCard
-              style={{ borderLeft: "3px solid var(--color-status-warning-text)" }}
+              style={{ borderLeft: "3px solid var(--portal-warning-text)" }}
             >
               <div className="flex items-start gap-3">
                 <AlertCircle
                   className="size-5 shrink-0"
-                  style={{ color: "var(--color-status-warning-text)" }}
+                  style={{ color: "var(--portal-warning-text)" }}
                   aria-hidden
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold text-[var(--color-text-primary)]">
+                  <p className="text-sm font-bold text-[var(--portal-text)]">
                     {a.dashboard.verifyEmail}
                   </p>
-                  <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+                  <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
                     {a.dashboard.verifyEmailBody.replace("{email}", user.email)}
                   </p>
                 </div>
                 <ChevronRight
-                  className="size-5 shrink-0 text-[var(--color-text-muted)]"
+                  className="size-5 shrink-0 text-[var(--portal-muted)]"
                   aria-hidden
                 />
               </div>
@@ -212,7 +243,7 @@ export default async function AccountOverviewPage() {
                   <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "#00b67a" }}>
                     Share your experience
                   </p>
-                  <p className="mt-0.5 text-sm font-medium text-[var(--color-text-primary)]">
+                  <p className="mt-0.5 text-sm font-medium text-[var(--portal-text)]">
                     Your consultation is complete — leave us a review on Trustpilot
                   </p>
                 </div>
@@ -232,47 +263,6 @@ export default async function AccountOverviewPage() {
         </div>
       ) : null}
 
-      {/* ── Next scheduled call ────────────────────────────────────── */}
-      {nextCall ? (
-        <div className="mt-6">
-          <AdminCard style={{ borderLeft: "3px solid var(--color-brand-primary)" }}>
-            <div className="gh-patient-alert-row flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <Clock
-                  className="size-5 shrink-0 text-[var(--color-brand-primary)]"
-                  aria-hidden
-                />
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
-                    {a.dashboard.nextConsultation}
-                  </p>
-                  <p className="mt-0.5 text-sm font-medium text-[var(--color-text-primary)]">
-                    {formatAppDateTime(nextCall.scheduledAt as string)} ·{" "}
-                    {nextCall.consultationType}
-                  </p>
-                </div>
-              </div>
-              {nextCall.meetingUrl ? (
-                <Btn
-                  href={nextCall.meetingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  variant="primary"
-                  size="sm"
-                  iconLeft={<Video className="size-4" />}
-                >
-                  {a.dashboard.joinCall}
-                </Btn>
-              ) : (
-                <Btn href="/account/bookings" variant="secondary" size="sm">
-                  {a.dashboard.viewDetails}
-                </Btn>
-              )}
-            </div>
-          </AdminCard>
-        </div>
-      ) : null}
-
       {/* ── Subscription dashboard (renders nothing for non-subscribers) ── */}
       <SubscriptionDashboard locale={locale} />
 
@@ -284,7 +274,7 @@ export default async function AccountOverviewPage() {
             right={
               <Link
                 href="/account/bookings"
-                className="text-[13px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+                className="text-[13px] font-semibold text-[var(--portal-primary)] hover:underline"
               >
                 {a.dashboard.seeAll}
               </Link>
@@ -292,15 +282,15 @@ export default async function AccountOverviewPage() {
           />
           <div className="p-5">
             {recent.length === 0 ? (
-              <div className="flex flex-col items-center rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] px-6 py-10 text-center">
+              <div className="flex flex-col items-center rounded-md border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] px-6 py-10 text-center">
                 <CalendarDays
-                  className="size-8 text-[var(--color-border-strong)]"
+                  className="size-8 text-[var(--portal-line-strong)]"
                   aria-hidden
                 />
-                <p className="mt-3 text-sm font-semibold text-[var(--color-text-primary)]">
+                <p className="mt-3 text-sm font-semibold text-[var(--portal-text)]">
                   {a.dashboard.noBookings}
                 </p>
-                <p className="mt-1 max-w-xs text-xs text-[var(--color-text-muted)]">
+                <p className="mt-1 max-w-xs text-xs text-[var(--portal-muted)]">
                   {a.dashboard.noBookingsBody}
                 </p>
                 <Btn
@@ -313,20 +303,20 @@ export default async function AccountOverviewPage() {
                 </Btn>
               </div>
             ) : (
-              <ul className="divide-y divide-[var(--color-border)]">
+              <ul className="divide-y divide-[var(--portal-line)]">
                 {recent.map((b) => (
                   <li
                     key={b.id}
                     className="gh-patient-list-row flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
                   >
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-[var(--color-text-primary)]">
+                      <p className="text-sm font-medium text-[var(--portal-text)]">
                         {b.consultationType}{" "}
-                        <span className="text-[var(--color-text-muted)]">
+                        <span className="text-[var(--portal-muted)]">
                           · {b.countryCode.toUpperCase()}
                         </span>
                       </p>
-                      <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[var(--color-text-muted)]">
+                      <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[var(--portal-muted)]">
                         <span>{a.dashboard.booked.replace("{date}", formatAppDateTime(b.createdAt))}</span>
                         <Pill tone={statusTone(b.status)}>
                           {b.status.replace(/_/g, " ").toLowerCase()}
@@ -389,7 +379,7 @@ export default async function AccountOverviewPage() {
 
             <Link
               href={bookHref}
-              className="mt-4 flex items-center justify-between rounded-md bg-[var(--color-background-soft)] px-3 py-2.5 text-sm font-bold text-[var(--color-brand-primary)] hover:bg-[var(--color-background-page)]"
+              className="mt-4 flex items-center justify-between rounded-md bg-[var(--portal-well)] px-3 py-2.5 text-sm font-bold text-[var(--portal-primary)] hover:bg-[var(--portal-surface)]"
             >
               <span className="inline-flex items-center gap-2">
                 <Stethoscope className="size-4" aria-hidden />
@@ -426,20 +416,20 @@ function QuickLink({
   return (
     <Link
       href={href}
-      className="gh-patient-quick-link flex items-center justify-between gap-2 rounded-md px-3 py-2.5 transition-colors hover:bg-[var(--color-background-soft)]"
+      className="gh-patient-quick-link flex items-center justify-between gap-2 rounded-md px-3 py-2.5 transition-colors hover:bg-[var(--portal-well)]"
     >
       <span className="inline-flex items-center gap-2.5">
-        <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-background-soft)] text-[var(--color-brand-primary)]">
+        <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-[var(--portal-well)] text-[var(--portal-primary)]">
           {icon}
         </span>
         <span className="flex flex-col">
-          <span className="text-sm font-semibold text-[var(--color-text-primary)]">
+          <span className="text-sm font-semibold text-[var(--portal-text)]">
             {label}
           </span>
-          <span className="text-[11px] text-[var(--color-text-muted)]">{hint}</span>
+          <span className="text-[11px] text-[var(--portal-muted)]">{hint}</span>
         </span>
       </span>
-      <ChevronRight className="size-4 text-[var(--color-text-muted)]" aria-hidden />
+      <ChevronRight className="size-4 text-[var(--portal-muted)]" aria-hidden />
     </Link>
   );
 }

@@ -206,7 +206,7 @@ export function ManagePanel(props: ManagePanelProps) {
               ? { background: "#ECFDF5", color: "#166534", border: "1px solid #BBF7D0" }
               : banner.kind === "warn"
                 ? { background: "#FEF3C7", color: "#92400E", border: "1px solid #FDE68A" }
-                : { background: "var(--color-background-soft)", color: "var(--color-text-body)", border: "1px solid var(--color-border)" }
+                : { background: "var(--portal-well)", color: "var(--portal-text-2)", border: "1px solid var(--portal-line)" }
           }
           role="status"
         >
@@ -244,10 +244,10 @@ export function ManagePanel(props: ManagePanelProps) {
       <AdminCard>
         <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: "var(--color-text-muted)" }}>
+            <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: "var(--portal-muted)" }}>
               {t.currentPlan}
             </p>
-            <h2 className="mt-1 font-extrabold tracking-[-0.02em]" style={{ fontSize: "1.4rem", color: "var(--color-text-primary)" }}>
+            <h2 className="mt-1 font-extrabold tracking-[-0.02em]" style={{ fontSize: "1.4rem", color: "var(--portal-text)" }}>
               {props.planName}
             </h2>
           </div>
@@ -258,13 +258,13 @@ export function ManagePanel(props: ManagePanelProps) {
 
         <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2">
           <div>
-            <dt className="text-xs" style={{ color: "var(--color-text-muted)" }}>{t.monthlyPrice}</dt>
-            <dd className="mt-0.5 font-semibold" style={{ color: "var(--color-text-primary)" }}>{props.priceLabel}</dd>
+            <dt className="text-xs" style={{ color: "var(--portal-muted)" }}>{t.monthlyPrice}</dt>
+            <dd className="mt-0.5 font-semibold" style={{ color: "var(--portal-text)" }}>{props.priceLabel}</dd>
           </div>
           {props.nextBillingLabel ? (
             <div>
-              <dt className="text-xs" style={{ color: "var(--color-text-muted)" }}>{t.nextBilling}</dt>
-              <dd className="mt-0.5 font-semibold" style={{ color: "var(--color-text-primary)" }}>{props.nextBillingLabel}</dd>
+              <dt className="text-xs" style={{ color: "var(--portal-muted)" }}>{t.nextBilling}</dt>
+              <dd className="mt-0.5 font-semibold" style={{ color: "var(--portal-text)" }}>{props.nextBillingLabel}</dd>
             </div>
           ) : null}
         </dl>
@@ -277,9 +277,9 @@ export function ManagePanel(props: ManagePanelProps) {
         {props.pendingChangePlanName && props.pendingChangeDate ? (
           <div
             className="mt-4 rounded-[10px] p-3"
-            style={{ background: "var(--color-background-soft)", border: "1px solid var(--color-border)" }}
+            style={{ background: "var(--portal-well)", border: "1px solid var(--portal-line)" }}
           >
-            <p className="text-sm" style={{ color: "var(--color-text-body)" }}>
+            <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
               {interpolate(t.pendingChange, { plan: props.pendingChangePlanName, date: props.pendingChangeDate })}
             </p>
             <button
@@ -287,7 +287,7 @@ export function ManagePanel(props: ManagePanelProps) {
               onClick={doCancelChange}
               disabled={busy === "cancelChange"}
               className="mt-2 text-xs font-semibold underline disabled:opacity-60"
-              style={{ color: "var(--color-brand-primary)" }}
+              style={{ color: "var(--portal-primary)" }}
             >
               {busy === "cancelChange" ? t.cancelingChange : t.cancelChange}
             </button>
@@ -311,8 +311,8 @@ export function ManagePanel(props: ManagePanelProps) {
 
       {canChange ? (
         <AdminCard>
-          <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>{t.upgrade}</p>
-          <p className="mt-1 text-xs" style={{ color: "var(--color-text-muted)" }}>
+          <p className="text-sm font-semibold" style={{ color: "var(--portal-text)" }}>{t.upgrade}</p>
+          <p className="mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
             {props.nextBillingLabel
               ? interpolate(t.changeEffective, { date: props.nextBillingLabel })
               : t.changeNote}
@@ -362,7 +362,7 @@ export function ManagePanel(props: ManagePanelProps) {
             {busy === "cancel" ? t.canceling : t.cancel}
           </Btn>
         ) : null}
-        <Link href={props.pricingHref} className="inline-flex justify-center text-sm font-semibold underline sm:inline" style={{ color: "var(--color-brand-primary)" }}>
+        <Link href={props.pricingHref} className="inline-flex justify-center text-sm font-semibold underline sm:inline" style={{ color: "var(--portal-primary)" }}>
           {t.change}
         </Link>
       </div>
