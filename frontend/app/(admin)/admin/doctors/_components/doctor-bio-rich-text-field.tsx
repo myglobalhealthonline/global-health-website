@@ -12,6 +12,7 @@ import {
   Eraser,
   ChevronDown,
 } from "lucide-react";
+import { IconBtn } from "@/components/portal-atoms";
 
 type Props = {
   initialValue?: string | null;
@@ -114,30 +115,21 @@ export function DoctorBioRichTextField({ initialValue }: Props) {
     exec("fontSize", next);
   }
 
-  const toolbarBtn = (active: boolean) =>
-    `inline-flex h-8 items-center gap-1 rounded px-2.5 text-xs font-medium transition-colors ${
-      active
-        ? "bg-[var(--color-brand-primary)] text-white"
-        : "bg-white text-[var(--color-text-body)] hover:bg-[var(--color-background-soft)]"
-    } border border-[var(--color-border)]`;
+  const toolbarBtnClass = "inline-flex h-8 items-center gap-1 rounded border border-[var(--portal-line)] bg-[var(--portal-surface)] px-2.5 text-xs font-medium text-[var(--portal-text)] transition-colors hover:bg-[var(--portal-well)]";
 
-  const iconBtn = (active: boolean) =>
-    `inline-flex h-8 w-8 items-center justify-center rounded text-xs transition-colors ${
-      active
-        ? "bg-[var(--color-brand-primary)] text-white"
-        : "bg-white text-[var(--color-text-body)] hover:bg-[var(--color-background-soft)]"
-    } border border-[var(--color-border)]`;
+  const activeIconStyle = (active: boolean) =>
+    active ? { background: "var(--portal-mint-soft)", color: "var(--portal-mint-text)" } : undefined;
 
   return (
     <label className="flex flex-col gap-2">
       <span className="gh-field-label">Bio</span>
-      <div className="overflow-hidden rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white">
+      <div className="gh-admin-rich-text__frame overflow-hidden rounded-[var(--portal-radius)] border border-[var(--portal-line)] bg-[var(--portal-surface)]">
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-1.5 border-b border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2">
+        <div className="flex flex-wrap items-center gap-1.5 border-b border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2">
           {/* Font family */}
           <div className="relative">
             <select
-              className="h-8 appearance-none rounded border border-[var(--color-border)] bg-white pl-2.5 pr-7 text-xs text-[var(--color-text-primary)] outline-none"
+              className="h-8 appearance-none rounded border border-[var(--portal-line)] bg-[var(--portal-surface)] pl-2.5 pr-7 text-xs text-[var(--portal-text)] outline-none"
               value={font}
               onChange={(e) => applyFont(e.target.value)}
             >
@@ -145,13 +137,13 @@ export function DoctorBioRichTextField({ initialValue }: Props) {
                 <option key={f} value={f}>{f}</option>
               ))}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 size-3 -translate-y-1/2 text-[var(--color-text-muted)]" />
+            <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 size-3 -translate-y-1/2 text-[var(--portal-muted)]" />
           </div>
 
           {/* Font size */}
           <div className="relative">
             <select
-              className="h-8 appearance-none rounded border border-[var(--color-border)] bg-white pl-2.5 pr-7 text-xs text-[var(--color-text-primary)] outline-none"
+              className="h-8 appearance-none rounded border border-[var(--portal-line)] bg-[var(--portal-surface)] pl-2.5 pr-7 text-xs text-[var(--portal-text)] outline-none"
               value={size}
               onChange={(e) => applySize(e.target.value)}
             >
@@ -159,16 +151,16 @@ export function DoctorBioRichTextField({ initialValue }: Props) {
                 <option key={s.value} value={s.value}>{s.label}</option>
               ))}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 size-3 -translate-y-1/2 text-[var(--color-text-muted)]" />
-            <span className="pointer-events-none absolute -right-5 top-1/2 -translate-y-1/2 text-[10px] text-[var(--color-text-muted)]">pt</span>
+            <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 size-3 -translate-y-1/2 text-[var(--portal-muted)]" />
+            <span className="pointer-events-none absolute -right-5 top-1/2 -translate-y-1/2 text-[10px] text-[var(--portal-muted)]">pt</span>
           </div>
 
-          <div className="mx-1 h-5 w-px bg-[var(--color-border)]" />
+          <div className="mx-1 h-5 w-px bg-[var(--portal-line)]" />
 
           {/* Block type */}
           <div className="relative">
             <select
-              className="h-8 appearance-none rounded border border-[var(--color-border)] bg-white pl-2.5 pr-7 text-xs text-[var(--color-text-primary)] outline-none"
+              className="h-8 appearance-none rounded border border-[var(--portal-line)] bg-[var(--portal-surface)] pl-2.5 pr-7 text-xs text-[var(--portal-text)] outline-none"
               value={block}
               onChange={(e) => applyBlock(e.target.value)}
             >
@@ -176,44 +168,44 @@ export function DoctorBioRichTextField({ initialValue }: Props) {
               <option value="h2">Heading</option>
               <option value="h3">Subheading</option>
             </select>
-            <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 size-3 -translate-y-1/2 text-[var(--color-text-muted)]" />
+            <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 size-3 -translate-y-1/2 text-[var(--portal-muted)]" />
           </div>
 
-          <div className="mx-1 h-5 w-px bg-[var(--color-border)]" />
+          <div className="mx-1 h-5 w-px bg-[var(--portal-line)]" />
 
           {/* Formatting */}
-          <button type="button" className={iconBtn(activeFormats.has("bold"))} onMouseDown={keepEditorSelection} onClick={() => exec("bold")} title="Bold">
+          <IconBtn ariaLabel="Bold" style={activeIconStyle(activeFormats.has("bold"))} onMouseDown={keepEditorSelection} onClick={() => exec("bold")} title="Bold">
             <Bold className="size-3.5" />
-          </button>
-          <button type="button" className={iconBtn(activeFormats.has("italic"))} onMouseDown={keepEditorSelection} onClick={() => exec("italic")} title="Italic">
+          </IconBtn>
+          <IconBtn ariaLabel="Italic" style={activeIconStyle(activeFormats.has("italic"))} onMouseDown={keepEditorSelection} onClick={() => exec("italic")} title="Italic">
             <Italic className="size-3.5" />
-          </button>
-          <button type="button" className={iconBtn(activeFormats.has("underline"))} onMouseDown={keepEditorSelection} onClick={() => exec("underline")} title="Underline">
+          </IconBtn>
+          <IconBtn ariaLabel="Underline" style={activeIconStyle(activeFormats.has("underline"))} onMouseDown={keepEditorSelection} onClick={() => exec("underline")} title="Underline">
             <Underline className="size-3.5" />
-          </button>
+          </IconBtn>
 
-          <div className="mx-1 h-5 w-px bg-[var(--color-border)]" />
+          <div className="mx-1 h-5 w-px bg-[var(--portal-line)]" />
 
           {/* Lists */}
-          <button type="button" className={iconBtn(activeFormats.has("insertUnorderedList"))} onMouseDown={keepEditorSelection} onClick={() => exec("insertUnorderedList")} title="Bullet list">
+          <IconBtn ariaLabel="Bullet list" style={activeIconStyle(activeFormats.has("insertUnorderedList"))} onMouseDown={keepEditorSelection} onClick={() => exec("insertUnorderedList")} title="Bullet list">
             <List className="size-3.5" />
-          </button>
-          <button type="button" className={iconBtn(activeFormats.has("insertOrderedList"))} onMouseDown={keepEditorSelection} onClick={() => exec("insertOrderedList")} title="Numbered list">
+          </IconBtn>
+          <IconBtn ariaLabel="Numbered list" style={activeIconStyle(activeFormats.has("insertOrderedList"))} onMouseDown={keepEditorSelection} onClick={() => exec("insertOrderedList")} title="Numbered list">
             <ListOrdered className="size-3.5" />
-          </button>
+          </IconBtn>
 
-          <div className="mx-1 h-5 w-px bg-[var(--color-border)]" />
+          <div className="mx-1 h-5 w-px bg-[var(--portal-line)]" />
 
           {/* Color */}
-          <div className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-2 py-1">
-            <span className="text-[10px] text-[var(--color-text-muted)]">Color</span>
+          <div className="inline-flex items-center gap-1 rounded border border-[var(--portal-line)] bg-[var(--portal-surface)] px-2 py-1">
+            <span className="text-[10px] text-[var(--portal-muted)]">Color</span>
             {COLORS.map((c) => (
               <button
                 key={c.value}
                 type="button"
                 className={`h-4 w-4 rounded-sm border-2 transition-all ${
                   color === c.value
-                    ? "border-[var(--color-brand-primary)] scale-110"
+                    ? "border-[var(--portal-primary)] scale-110"
                     : "border-transparent hover:scale-105"
                 }`}
                 style={{ backgroundColor: c.value }}
@@ -227,16 +219,16 @@ export function DoctorBioRichTextField({ initialValue }: Props) {
             ))}
           </div>
 
-          <div className="mx-1 h-5 w-px bg-[var(--color-border)]" />
+          <div className="mx-1 h-5 w-px bg-[var(--portal-line)]" />
 
           {/* Undo / Redo / Clear */}
-          <button type="button" className={iconBtn(false)} onMouseDown={keepEditorSelection} onClick={() => exec("undo")} title="Undo">
+          <IconBtn ariaLabel="Undo" onMouseDown={keepEditorSelection} onClick={() => exec("undo")} title="Undo">
             <Undo className="size-3.5" />
-          </button>
-          <button type="button" className={iconBtn(false)} onMouseDown={keepEditorSelection} onClick={() => exec("redo")} title="Redo">
+          </IconBtn>
+          <IconBtn ariaLabel="Redo" onMouseDown={keepEditorSelection} onClick={() => exec("redo")} title="Redo">
             <Redo className="size-3.5" />
-          </button>
-          <button type="button" className={toolbarBtn(false)} onMouseDown={keepEditorSelection} onClick={() => exec("removeFormat")} title="Clear formatting">
+          </IconBtn>
+          <button type="button" className={toolbarBtnClass} onMouseDown={keepEditorSelection} onClick={() => exec("removeFormat")} title="Clear formatting">
             <Eraser className="size-3.5" />
             <span className="hidden sm:inline">Clear</span>
           </button>
@@ -248,7 +240,7 @@ export function DoctorBioRichTextField({ initialValue }: Props) {
           contentEditable
           suppressContentEditableWarning
           suppressHydrationWarning
-          className="gh-input min-h-[12rem] min-w-0 resize-y overflow-auto rounded-none border-0 bg-white p-4 leading-7 outline-none"
+          className="gh-input min-h-[12rem] min-w-0 resize-y overflow-auto rounded-none border-0 bg-[var(--portal-surface)] p-4 leading-7 outline-none"
           style={{
             /* Ensure lists render properly inside contentEditable */
             listStylePosition: "inside",
@@ -259,7 +251,7 @@ export function DoctorBioRichTextField({ initialValue }: Props) {
         />
       </div>
       <input ref={hiddenRef} type="hidden" name="bio" defaultValue={initialValue ?? ""} />
-      <span className="text-xs text-[var(--color-text-muted)]">
+      <span className="text-xs text-[var(--portal-muted)]">
         Select text then apply format. Supports heading, bold, italic, underline, color, bullet and numbered lists.
       </span>
     </label>

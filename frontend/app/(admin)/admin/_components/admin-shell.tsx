@@ -35,6 +35,7 @@ import {
   NotificationPopover,
   type NotificationPopoverItem,
 } from "@/components/NotificationPopover";
+import { Pill, Btn } from "@/components/portal-atoms";
 
 export type AdminShellUser = {
   fullName: string;
@@ -575,12 +576,12 @@ export function AdminShell({
                       className="fixed inset-0 z-30"
                     />
                     <div
-                      className="absolute right-0 top-[calc(100%+8px)] z-40 min-w-[224px] p-3"
+                      className="gh-portal-user-menu absolute right-0 top-[calc(100%+8px)] z-40 min-w-[224px] p-3"
                       style={{
                         borderRadius: "var(--portal-radius-xl)",
                         border: "1px solid var(--portal-line)",
                         background: "var(--portal-surface-elevated)",
-                        boxShadow: "var(--portal-shadow-modal)",
+                        boxShadow: "var(--portal-shadow-popover)",
                       }}
                     >
                       <div className="flex items-center gap-2.5 pb-3" style={{ borderBottom: "1px solid var(--portal-line)" }}>
@@ -597,9 +598,9 @@ export function AdminShell({
                           <p className="truncate text-xs" style={{ color: "var(--portal-muted)" }}>{user.email}</p>
                         </div>
                       </div>
-                      <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "var(--portal-primary)" }}>
-                        {user.role}
-                      </p>
+                      <div className="mt-2">
+                        <Pill tone="neutral">{user.role}</Pill>
+                      </div>
                       <nav className="mt-2 flex flex-col gap-0.5">
                         <Link
                           href="/"
@@ -611,13 +612,9 @@ export function AdminShell({
                         </Link>
                       </nav>
                       <form action={signOutAction} className="mt-2 pt-2" style={{ borderTop: "1px solid var(--portal-line)" }}>
-                        <button
-                          type="submit"
-                          className="w-full rounded-[var(--portal-radius)] px-3 py-2 text-sm font-semibold transition hover:bg-[var(--portal-well)]"
-                          style={{ border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
-                        >
+                        <Btn type="submit" variant="danger" size="sm" className="w-full justify-center">
                           Sign out
-                        </button>
+                        </Btn>
                       </form>
                     </div>
                   </>
@@ -745,7 +742,10 @@ function SidebarItem({
       </span>
       <span className="truncate">{label}</span>
       {badge && badge > 0 ? (
-        <span className="gh-portal-nav-item__badge ml-auto" aria-label={`${badge} pending`}>
+        <span
+          className="gh-portal-nav-item__badge gh-portal-nav-item__badge--live ml-auto"
+          aria-label={`${badge} pending`}
+        >
           {badge > 99 ? "99+" : badge}
         </span>
       ) : null}

@@ -2,7 +2,7 @@ import { CalendarRange } from "lucide-react";
 import { fetchAccountAppointments } from "@/lib/api/account-appointments-api";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { PatientCalendarUI } from "./ui";
-import { AdminSummaryStrip } from "@/components/portal-atoms";
+import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -43,18 +43,16 @@ export default async function AccountCalendarPage() {
 
   return (
     <div className="gh-patient-page gh-patient-calendar-page">
-      <header className="gh-patient-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
-          My schedule
-        </p>
-        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--portal-text)]">
-          <CalendarRange className="size-6 text-[var(--portal-primary)]" aria-hidden />
-          Calendar
-        </h2>
-        <p className="text-sm text-[var(--portal-muted)]">
-          Your scheduled consultations. Pick a day to see details and join links.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="My schedule"
+        title={
+          <span className="inline-flex items-center gap-2">
+            <CalendarRange className="size-6 text-[var(--portal-primary)]" aria-hidden />
+            Calendar
+          </span>
+        }
+        description="Your scheduled consultations. Pick a day to see details and join links."
+      />
 
       <AdminSummaryStrip
         className="mb-5"

@@ -9,9 +9,11 @@ import {
   purgeAdminDoctor,
   type AdminServiceKind,
 } from "@/lib/admin/admin-api";
+import { getActiveCountry, scopedCountryId } from "@/lib/admin/admin-scope";
 import { SERVICE_KIND_META } from "@/lib/admin/service-kind";
 import { FlagBadge } from "../_components/flag-badge";
 import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
+import { ScopeBanner } from "../_components/scope-banner";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
 import {
   AdminCard,
@@ -83,19 +85,23 @@ type PageProps = {
 
 export default async function AdminDoctorsPage({ searchParams }: PageProps) {
   const sp = searchParams ? await searchParams : {};
+
+  // Country scope (cookie) is the default countryId filter when the URL
+  // doesn't already specify one. Explicit URL filters always win.
+  const countriesResult = await fetchAdminCountries();
+  const countriesForScope = countriesResult.ok ? countriesResult.data.countries : [];
+  const activeCountry = await getActiveCountry(countriesForScope);
+
   const filters: Record<string, string | undefined> = {
     page: spRead(sp, "page"),
     pageSize: spRead(sp, "pageSize"),
-    countryId: spRead(sp, "countryId"),
+    countryId: scopedCountryId(spRead(sp, "countryId"), activeCountry),
     serviceKind: spRead(sp, "serviceKind"),
     isActive: spRead(sp, "isActive"),
     search: spRead(sp, "search"),
   };
 
-  const [listResult, countriesResult] = await Promise.all([
-    fetchAdminDoctors(filters),
-    fetchAdminCountries(),
-  ]);
+  const listResult = await fetchAdminDoctors(filters);
 
   if (!countriesResult.ok) {
     return (
@@ -165,6 +171,8 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
           </Btn>
         }
       />
+
+      <ScopeBanner activeCountry={activeCountry} clearHref="/admin/doctors" />
 
       {errorMessage ? (
         <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">

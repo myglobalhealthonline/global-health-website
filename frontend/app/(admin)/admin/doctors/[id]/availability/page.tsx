@@ -11,6 +11,7 @@ import {
 } from "@/lib/admin/admin-api";
 import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
+import { FormSection } from "@/components/FormSection";
 
 export const dynamic = "force-dynamic";
 
@@ -169,33 +170,21 @@ export default async function AdminDoctorAvailabilityPage({
       ) : null}
 
       <div className="gh-admin-doctor-detail-layout gh-admin-doctor-availability-layout grid gap-4">
-        <AdminCard>
-          <h3
-            className="m-0 text-[var(--color-text-primary)]"
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: 16,
-              fontWeight: 800,
-            }}
-          >
-            Weekly windows
-          </h3>
-          <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-            Times are in the doctor&apos;s country clinic timezone (set on the
-            Country page). The doctor portal and patients booking this clinic
-            see these same times.
-          </p>
+        <FormSection
+          title="Weekly windows"
+          description="Times are in the doctor's country clinic timezone (set on the Country page). The doctor portal and patients booking this clinic see these same times."
+        >
           {!availabilityResult.ok ? (
-            <p className="mt-4 gh-status-warning rounded-md border px-4 py-3 text-sm">
+            <p className="gh-form-section__span-2 mt-4 gh-status-warning rounded-md border px-4 py-3 text-sm">
               {availabilityResult.message}
             </p>
           ) : windows.length === 0 ? (
-            <p className="mt-4 text-[13px] text-[var(--color-text-muted)]">
+            <p className="gh-form-section__span-2 mt-4 text-[13px] text-[var(--color-text-muted)]">
               No availability windows yet. Add the doctor&apos;s first weekly
               window using the form to the right.
             </p>
           ) : (
-            <div className="gh-admin-doctor-availability-table-wrap mt-4 overflow-x-auto">
+            <div className="gh-admin-doctor-availability-table-wrap gh-form-section__span-2 mt-4 overflow-x-auto">
             <table className="gh-admin-doctor-availability-table w-full text-[13px]">
               <thead>
                 <tr className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
@@ -237,20 +226,10 @@ export default async function AdminDoctorAvailabilityPage({
             </table>
             </div>
           )}
-        </AdminCard>
+        </FormSection>
 
-        <AdminCard>
-          <h3
-            className="m-0 text-[var(--color-text-primary)]"
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: 16,
-              fontWeight: 800,
-            }}
-          >
-            Add window
-          </h3>
-          <form action={createAction} className="gh-admin-doctor-availability-form mt-3 grid gap-3">
+        <FormSection title="Add window">
+          <form action={createAction} className="gh-admin-doctor-availability-form gh-form-section__span-2 mt-3 grid gap-3">
             <label className="flex flex-col gap-1">
               <span className="gh-field-label">Day of week</span>
               <select name="weekday" defaultValue="1" required className="gh-select">
@@ -301,7 +280,7 @@ export default async function AdminDoctorAvailabilityPage({
               Add window
             </button>
           </form>
-        </AdminCard>
+        </FormSection>
       </div>
     </>
   );

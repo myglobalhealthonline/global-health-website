@@ -223,8 +223,14 @@ export default async function AdminDashboardPage() {
   return (
     <>
       <CommandBand
-        context={activeCountry ? `Scope · ${activeCountry.name}` : "Scope · All countries"}
+        context="Operations"
         title={`${greeting()}, ${firstName}`}
+        chip={
+          <>
+            <Globe2 className="size-3" aria-hidden />
+            {activeCountry ? activeCountry.name : "All countries"}
+          </>
+        }
         metrics={[
           { label: "Doctors live", value: doctorsActive },
           { label: "Bookings pending", value: pendingAppointments, signal: pendingAppointments > 0 },

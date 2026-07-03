@@ -10,6 +10,7 @@ import {
   type FamilyMember,
   type FamilyMemberInput,
 } from "@/lib/api/family-client";
+import { PageHeader } from "@/components/portal-atoms";
 
 type FamilyCopy = ReturnType<
   typeof import("@/lib/i18n/load-locale")["loadLocaleBundle"]
@@ -64,16 +65,16 @@ export function FamilyPanel({
 
   return (
     <div className="gh-patient-page gh-patient-family-page">
-      <header className="gh-patient-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
-          {t.breadcrumb}
-        </p>
-        <h1 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--portal-text)]">
-          <Users className="size-6 text-[var(--portal-primary)]" aria-hidden />
-          {t.title}
-        </h1>
-        <p className="text-sm text-[var(--portal-muted)]">{t.subtitle}</p>
-      </header>
+      <PageHeader
+        eyebrow={t.breadcrumb}
+        title={
+          <span className="inline-flex items-center gap-2">
+            <Users className="size-6 text-[var(--portal-primary)]" aria-hidden />
+            {t.title}
+          </span>
+        }
+        description={t.subtitle}
+      />
 
       {!familyEligible ? (
         <div className="mb-5 flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2.5 text-sm text-amber-900">

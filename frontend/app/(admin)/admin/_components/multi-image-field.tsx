@@ -130,7 +130,7 @@ export function MultiImageField({
     <div className="gh-admin-media-field">
       <div className="flex items-center justify-between">
         <span className="gh-field-label">{label}</span>
-        <span className="text-[11px] text-[var(--color-text-muted)]">
+        <span className="text-[11px] text-[var(--portal-muted)]">
           {paths.length} / {max}
         </span>
       </div>
@@ -146,16 +146,16 @@ export function MultiImageField({
           className="gh-admin-media-empty-button grid place-items-center"
           style={{
             minHeight: 140,
-            borderRadius: 12,
-            border: "1px dashed var(--color-border-strong)",
-            background: "var(--color-background-soft)",
-            color: "var(--color-text-muted)",
+            borderRadius: 14,
+            border: "1.5px dashed var(--portal-line-strong)",
+            background: "var(--portal-well)",
+            color: "var(--portal-muted)",
             cursor: "pointer",
           }}
         >
           <div className="flex flex-col items-center gap-1.5 px-4 py-6 text-center">
             <Upload aria-hidden className="size-5" />
-            <span className="text-[13px] font-semibold text-[var(--color-text-body)]">
+            <span className="text-[13px] font-semibold text-[var(--portal-text)]">
               Add an image
             </span>
             <span className="text-[11px]">
@@ -174,8 +174,8 @@ export function MultiImageField({
                 className="gh-admin-media-thumb relative overflow-hidden"
                 style={{
                   borderRadius: 12,
-                  border: "1px solid var(--color-border)",
-                  background: "var(--color-background-soft)",
+                  border: "1px solid var(--portal-line)",
+                  background: "var(--portal-well)",
                   aspectRatio: "4 / 3",
                 }}
               >
@@ -205,7 +205,7 @@ export function MultiImageField({
                   <button
                     type="button"
                     onClick={() => inputRefs.current[index]?.click()}
-                    className="grid h-full w-full place-items-center text-[12px] text-[var(--color-text-muted)]"
+                    className="grid h-full w-full place-items-center text-[12px] text-[var(--portal-muted)]"
                     style={{ cursor: busy ? "wait" : "pointer" }}
                   >
                     <span className="inline-flex items-center gap-1.5">
@@ -229,8 +229,8 @@ export function MultiImageField({
                       width: 28,
                       height: 28,
                       borderRadius: 999,
-                      background: "rgba(23, 61, 47, 0.82)",
-                      color: "#fff",
+                      background: "var(--portal-chrome-solid)",
+                      color: "var(--portal-chrome-text-active)",
                       border: "none",
                       display: "inline-flex",
                       alignItems: "center",
@@ -249,8 +249,8 @@ export function MultiImageField({
                       width: 28,
                       height: 28,
                       borderRadius: 999,
-                      background: "rgba(23, 61, 47, 0.82)",
-                      color: "#fff",
+                      background: "var(--portal-chrome-solid)",
+                      color: "var(--portal-chrome-text-active)",
                       border: "none",
                       display: "inline-flex",
                       alignItems: "center",
@@ -271,10 +271,10 @@ export function MultiImageField({
                 onClick={addSlot}
                 className="gh-admin-media-add-thumb grid h-full w-full place-items-center"
                 style={{
-                  borderRadius: 12,
-                  border: "1px dashed var(--color-border-strong)",
+                  borderRadius: 14,
+                  border: "1.5px dashed var(--portal-line-strong)",
                   background: "transparent",
-                  color: "var(--color-text-muted)",
+                  color: "var(--portal-muted)",
                   cursor: "pointer",
                   aspectRatio: "4 / 3",
                 }}
@@ -290,10 +290,10 @@ export function MultiImageField({
       )}
 
       {msg ? (
-        <p className="text-[12px] text-[var(--color-status-warning-text)]">{msg}</p>
+        <p className="text-[12px] text-[var(--portal-warning-text)]">{msg}</p>
       ) : null}
       {helperText ? (
-        <span className="text-[12px] text-[var(--color-text-muted)]">{helperText}</span>
+        <span className="text-[12px] text-[var(--portal-muted)]">{helperText}</span>
       ) : null}
     </div>
   );
