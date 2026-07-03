@@ -113,9 +113,22 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     : null;
   const servicesUsed =
     servicesRes && servicesRes.ok ? servicesRes.data.items : [];
+  // Calm mode — DESIGN.md §6.3/strategy Doctor plan: while a consultation
+  // is actively in progress (scheduled time has passed, not yet wrapped
+  // up), the form zone drops hover-lift chrome so nothing competes for
+  // attention with the actual consult.
+  const isLive = Boolean(
+    appointment.scheduledAt &&
+      new Date(appointment.scheduledAt) <= new Date() &&
+      appointment.status !== "COMPLETED" &&
+      appointment.status !== "CANCELLED" &&
+      !signed,
+  );
 
   return (
-    <div className="gh-doctor-appointment-workspace">
+    <div
+      className={`gh-doctor-appointment-workspace${isLive ? " gh-doctor-appointment-workspace--calm" : ""}`}
+    >
       <Link
         href="/doctor/appointments"
         className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
@@ -224,161 +237,63 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
         ]}
       />
 
+      {/* Two-zone workspace (DESIGN.md §6.3/strategy Doctor plan): left =
+          consultation form + checklist (tabs), right = persistent patient
+          context that stays visible across every tab, not just Overview. */}
+      <div className="gh-doctor-workspace-grid grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="min-w-0">
       <AppointmentTabs
         tabs={[
           {
             id: "overview",
             label: "Overview",
             panel: (
-              <div className="gh-doctor-appointment-overview grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-                <div className="grid gap-4">
-                  <FormSection
-                    title="Meeting & status"
-                    description="Paste the video link the patient will use, and move the appointment forward as you progress."
-                  >
-                    <div className="gh-form-section__span-2">
-                      <AppointmentActions
+              <div className="gh-doctor-appointment-overview grid gap-4">
+                <FormSection
+                  title="Meeting & status"
+                  description="Paste the video link the patient will use, and move the appointment forward as you progress."
+                >
+                  <div className="gh-form-section__span-2">
+                    <AppointmentActions
+                      appointmentId={appointment.id}
+                      initialMeetingUrl={appointment.meetingUrl}
+                      initialStatus={appointment.status}
+                      initialScheduledAt={appointment.scheduledAt}
+                      initialMode={consultationMode}
+                    />
+                    <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
+                      <h4 className="text-sm font-bold text-[var(--portal-text)]">
+                        Finalize
+                      </h4>
+                      <FinalizeChecklist
                         appointmentId={appointment.id}
-                        initialMeetingUrl={appointment.meetingUrl}
-                        initialStatus={appointment.status}
-                        initialScheduledAt={appointment.scheduledAt}
-                        initialMode={consultationMode}
+                        initialFinalized={appointment.finalized ?? false}
+                        initialNotesUploaded={appointment.notesUploaded ?? false}
+                        initialFilesUploaded={appointment.filesUploaded ?? false}
                       />
-                      <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
-                        <h4 className="text-sm font-bold text-[var(--portal-text)]">
-                          Finalize
-                        </h4>
-                        <FinalizeChecklist
-                          appointmentId={appointment.id}
-                          initialFinalized={appointment.finalized ?? false}
-                          initialNotesUploaded={appointment.notesUploaded ?? false}
-                          initialFilesUploaded={appointment.filesUploaded ?? false}
-                        />
-                      </div>
-                      <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
-                        <FollowUpButton appointmentId={appointment.id} />
-                      </div>
                     </div>
-                  </FormSection>
+                    <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
+                      <FollowUpButton appointmentId={appointment.id} />
+                    </div>
+                  </div>
+                </FormSection>
 
-                  <FormSection title="Consultation documents">
+                <FormSection title="Consultation documents">
+                  <div className="gh-form-section__span-2">
+                    <ConsultationDocumentsSection appointmentId={appointment.id} />
+                  </div>
+                </FormSection>
+
+                {appointment.countryCode.toLowerCase() === "br" ? (
+                  <FormSection title="Brazil consent">
                     <div className="gh-form-section__span-2">
-                      <ConsultationDocumentsSection appointmentId={appointment.id} />
+                      <BrazilConsentPanel
+                        appointmentId={appointment.id}
+                        countryCode={appointment.countryCode}
+                      />
                     </div>
                   </FormSection>
-
-                  {appointment.countryCode.toLowerCase() === "br" ? (
-                    <FormSection title="Brazil consent">
-                      <div className="gh-form-section__span-2">
-                        <BrazilConsentPanel
-                          appointmentId={appointment.id}
-                          countryCode={appointment.countryCode}
-                        />
-                      </div>
-                    </FormSection>
-                  ) : null}
-
-                  <FormSection title="Patient">
-                    <div className="gh-form-section__span-2">
-                      <dl className="grid gap-2 text-[13px]">
-                        {appointment.globalHealthNumber ? (
-                          <Row label="Global Health No." value={appointment.globalHealthNumber} />
-                        ) : null}
-                        <Row label="Email" value={appointment.email} />
-                        <Row label="Phone" value={appointment.phone ?? "—"} />
-                        <Row
-                          label="Date of birth"
-                          value={
-                            appointment.dateOfBirth
-                              ? new Date(appointment.dateOfBirth).toLocaleDateString()
-                              : "—"
-                          }
-                        />
-                        {appointment.consultationLanguageCode ? (
-                          <Row label="Consultation language" value={appointment.consultationLanguageCode.toUpperCase()} />
-                        ) : null}
-                        <Row label="Status" value={appointment.status} />
-                        <Row
-                          label="Booked"
-                          value={new Date(appointment.createdAt).toLocaleString()}
-                        />
-                      </dl>
-                      {appointment.notes ? (
-                        <div className="mt-4 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3 text-[13px]">
-                          <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
-                            Booking notes
-                          </p>
-                          <p className="mt-1 whitespace-pre-wrap text-[var(--portal-text)]">
-                            {appointment.notes}
-                          </p>
-                        </div>
-                      ) : null}
-                    </div>
-                  </FormSection>
-                </div>
-
-                <aside className="grid gap-4 self-start">
-                  {invoice ? (
-                    <FormSection title="Invoice" description="Read-only view. Admin issues + refunds.">
-                      <div className="gh-form-section__span-2">
-                        <dl className="grid gap-2 text-[13px]">
-                          <Row label="Status" value={invoice.paymentStatus} />
-                          <Row
-                            label="Booked amount"
-                            value={
-                              invoice.amountCents != null && invoice.currencyCode
-                                ? formatMoney(invoice.amountCents, invoice.currencyCode)
-                                : "—"
-                            }
-                          />
-                          {(() => {
-                            const buckets = Object.entries(
-                              invoice.lineTotalsByCurrency ?? {},
-                            ).filter(([, v]) => v > 0);
-                            if (buckets.length === 0) {
-                              return <Row label="Line total" value="—" />;
-                            }
-                            if (buckets.length === 1) {
-                              const [code, total] = buckets[0]!;
-                              return (
-                                <Row
-                                  label="Line total"
-                                  value={formatMoney(total, code === "—" ? "EUR" : code)}
-                                />
-                              );
-                            }
-                            return (
-                              <>
-                                {buckets.map(([code, total]) => (
-                                  <Row
-                                    key={code}
-                                    label={`Line total (${code})`}
-                                    value={formatMoney(total, code === "—" ? "EUR" : code)}
-                                  />
-                                ))}
-                              </>
-                            );
-                          })()}
-                          <Row
-                            label="Paid"
-                            value={
-                              invoice.paidAt
-                                ? new Date(invoice.paidAt).toLocaleString()
-                                : "—"
-                            }
-                          />
-                        </dl>
-                        <Link
-                          href={`/print/invoices/${appointment.id}`}
-                          target="_blank"
-                          className="mt-4 inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] px-3 py-2 text-[12.5px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
-                        >
-                          <Printer className="size-3.5" /> Print invoice
-                        </Link>
-                      </div>
-                    </FormSection>
-                  ) : null}
-                </aside>
+                ) : null}
               </div>
             ),
           },
@@ -640,6 +555,109 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           },
         ]}
       />
+      </div>
+
+      <aside className="gh-doctor-context-rail grid gap-4 self-start lg:sticky lg:top-4">
+        <FormSection title="Patient">
+          <div className="gh-form-section__span-2">
+            <dl className="grid gap-2 text-[13px]">
+              {appointment.globalHealthNumber ? (
+                <Row label="Global Health No." value={appointment.globalHealthNumber} />
+              ) : null}
+              <Row label="Email" value={appointment.email} />
+              <Row label="Phone" value={appointment.phone ?? "—"} />
+              <Row
+                label="Date of birth"
+                value={
+                  appointment.dateOfBirth
+                    ? new Date(appointment.dateOfBirth).toLocaleDateString()
+                    : "—"
+                }
+              />
+              {appointment.consultationLanguageCode ? (
+                <Row label="Consultation language" value={appointment.consultationLanguageCode.toUpperCase()} />
+              ) : null}
+              <Row label="Status" value={appointment.status} />
+              <Row
+                label="Booked"
+                value={new Date(appointment.createdAt).toLocaleString()}
+              />
+            </dl>
+            {appointment.notes ? (
+              <div className="mt-4 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3 text-[13px]">
+                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
+                  Booking notes
+                </p>
+                <p className="mt-1 whitespace-pre-wrap text-[var(--portal-text)]">
+                  {appointment.notes}
+                </p>
+              </div>
+            ) : null}
+          </div>
+        </FormSection>
+
+        {invoice ? (
+          <FormSection title="Invoice" description="Read-only view. Admin issues + refunds.">
+            <div className="gh-form-section__span-2">
+              <dl className="grid gap-2 text-[13px]">
+                <Row label="Status" value={invoice.paymentStatus} />
+                <Row
+                  label="Booked amount"
+                  value={
+                    invoice.amountCents != null && invoice.currencyCode
+                      ? formatMoney(invoice.amountCents, invoice.currencyCode)
+                      : "—"
+                  }
+                />
+                {(() => {
+                  const buckets = Object.entries(
+                    invoice.lineTotalsByCurrency ?? {},
+                  ).filter(([, v]) => v > 0);
+                  if (buckets.length === 0) {
+                    return <Row label="Line total" value="—" />;
+                  }
+                  if (buckets.length === 1) {
+                    const [code, total] = buckets[0]!;
+                    return (
+                      <Row
+                        label="Line total"
+                        value={formatMoney(total, code === "—" ? "EUR" : code)}
+                      />
+                    );
+                  }
+                  return (
+                    <>
+                      {buckets.map(([code, total]) => (
+                        <Row
+                          key={code}
+                          label={`Line total (${code})`}
+                          value={formatMoney(total, code === "—" ? "EUR" : code)}
+                        />
+                      ))}
+                    </>
+                  );
+                })()}
+                <Row
+                  label="Paid"
+                  value={
+                    invoice.paidAt
+                      ? new Date(invoice.paidAt).toLocaleString()
+                      : "—"
+                  }
+                />
+              </dl>
+              <Link
+                href={`/print/invoices/${appointment.id}`}
+                target="_blank"
+                className="mt-4 inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] px-3 py-2 text-[12.5px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
+              >
+                <Printer className="size-3.5" /> Print invoice
+              </Link>
+            </div>
+          </FormSection>
+        ) : null}
+      </aside>
+      </div>
     </div>
   );
 }

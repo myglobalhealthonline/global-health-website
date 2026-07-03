@@ -6756,6 +6756,27 @@ a.gh-stat-card:hover {
   scrollbar-width: thin;
 }
 
+/* Calm mode — DESIGN.md §6.3/strategy Doctor plan: while a consultation
+ * is live, the form zone drops hover-lift chrome and softens decorative
+ * accents so nothing competes for attention with the actual consult. */
+.gh-doctor-appointment-workspace--calm .gh-card:hover,
+.gh-doctor-appointment-workspace--calm .gh-admin-card:hover,
+.gh-doctor-appointment-workspace--calm .gh-card-interactive:hover {
+  transform: none !important;
+  box-shadow: var(--portal-shadow) !important;
+}
+
+.gh-doctor-appointment-workspace--calm .gh-portal-section-rule {
+  opacity: 0.45;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .gh-doctor-appointment-workspace--calm .gh-form-section,
+  .gh-doctor-appointment-workspace--calm .gh-admin-card {
+    transition: none;
+  }
+}
+
 .gh-doctor-appointment-tablist > button,
 .gh-doctor-doc-modal-tabs > button {
   white-space: nowrap;
