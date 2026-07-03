@@ -104,7 +104,7 @@ export function AdminSubscriberLedger({ subscriptionId }: { subscriptionId: stri
                   <span className="flex items-center gap-2">
                     <span
                       className="font-semibold [font-variant-numeric:tabular-nums]"
-                      style={{ color: entry.deltaCredits >= 0 ? "var(--color-brand-primary)" : "#b3261e" }}
+                      style={{ color: entry.deltaCredits >= 0 ? "var(--color-brand-primary)" : "var(--portal-danger-text)" }}
                     >
                       {entry.deltaCredits >= 0 ? `+${entry.deltaCredits}` : `−${Math.abs(entry.deltaCredits)}`}
                     </span>

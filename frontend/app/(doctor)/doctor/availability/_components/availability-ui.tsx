@@ -21,6 +21,7 @@ import {
   SectionHeader,
 } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
+import { PortalDialog } from "@/components/PortalDialog";
 
 const WEEKDAYS = [
   { value: 0, label: "Sun" },
@@ -63,6 +64,7 @@ export function DoctorAvailabilityUI({
   const [slots, setSlots] = useState(initialSlots);
   const [busy, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   // ── Add-window form state ───────────────────────────────────────
   const [weekday, setWeekday] = useState(1); // Mon
@@ -115,7 +117,13 @@ export function DoctorAvailabilityUI({
   }
 
   function onDeleteWindow(id: string) {
-    if (!window.confirm("Remove this weekly window? Future open slots derived from it will be cleared.")) return;
+    setDeleteTarget(id);
+  }
+
+  function confirmDeleteWindow() {
+    const id = deleteTarget;
+    if (!id) return;
+    setDeleteTarget(null);
     startTransition(async () => {
       const res = await deleteAvailabilityWindow(id);
       if (!res.ok) {
@@ -464,6 +472,27 @@ export function DoctorAvailabilityUI({
           </AdminCard>
         </aside>
       </div>
+
+      <PortalDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        title="Remove weekly window"
+        danger
+        footer={
+          <>
+            <Btn variant="ghost" onClick={() => setDeleteTarget(null)}>
+              Cancel
+            </Btn>
+            <Btn variant="danger" onClick={confirmDeleteWindow}>
+              Remove
+            </Btn>
+          </>
+        }
+      >
+        <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
+          Remove this weekly window? Future open slots derived from it will be cleared.
+        </p>
+      </PortalDialog>
     </>
   );
 }

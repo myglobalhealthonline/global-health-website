@@ -24,6 +24,7 @@ import {
   Tr,
 } from "../../../_components/atoms";
 import { FlagBadge } from "../../../_components/flag-badge";
+import { DocumentRow } from "@/components/DocumentRow";
 
 export const dynamic = "force-dynamic";
 
@@ -181,12 +182,10 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
               return (
                 <Tr key={type}>
                   <Td style={{ minWidth: 220 }}>
-                    <div className="flex items-center gap-2">
-                      <FileText className="size-3.5 shrink-0 text-[var(--color-text-muted)]" aria-hidden />
-                      <span className="text-[13px] font-medium text-[var(--color-text-primary)]">
-                        {DOCUMENT_TYPE_LABELS[type]}
-                      </span>
-                    </div>
+                    <DocumentRow
+                      icon={<FileText className="size-4" aria-hidden />}
+                      title={DOCUMENT_TYPE_LABELS[type]}
+                    />
                   </Td>
                   <Td>
                     {doc ? (

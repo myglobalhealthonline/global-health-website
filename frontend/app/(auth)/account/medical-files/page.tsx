@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 import { Download, FileText, FlaskConical, Stethoscope, Upload } from "lucide-react";
 import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
+import { DocumentRow } from "@/components/DocumentRow";
+import { PortalTabs, type PortalTabItem } from "@/components/PortalTabs";
 
 type Tab = "uploaded" | "results" | "exam-requests" | "prescriptions" | "consult-summaries";
 
@@ -81,31 +83,41 @@ function DocCard({ doc }: { doc: MedicalDoc }) {
   }
 
   return (
-    <div className="gh-patient-doc-card gh-card grid gap-4 p-4 sm:grid-cols-[1fr_auto] sm:items-start">
-      <div className="min-w-0 flex-1">
-        <p className="truncate font-medium text-[var(--portal-text)]">{doc.title}</p>
-        {doc.description && (
-          <p className="mt-0.5 truncate text-sm text-[var(--portal-muted)]">
-            {doc.description}
-          </p>
-        )}
-        <p className="mt-1 text-xs text-[var(--portal-muted)]">
-          {doc.fileName} · {formatBytes(doc.byteSize)} ·{" "}
-          {new Date(doc.createdAt).toLocaleDateString()}
-          {doc.uploadedByRole !== "PATIENT" && (
-            <span className="ml-1 capitalize">· from {doc.uploadedByRole.toLowerCase()}</span>
-          )}
-        </p>
-      </div>
-      <button
-        type="button"
-        onClick={onDownload}
-        disabled={downloading}
-        className="inline-flex w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-1.5 text-sm font-medium text-[var(--portal-text)] hover:bg-[var(--portal-well)] disabled:opacity-60 sm:w-auto"
-      >
-        <Download aria-hidden className="size-4" />
-        {downloading ? "Downloading…" : "Download"}
-      </button>
+    <div className="gh-patient-doc-card gh-card px-4 sm:px-5">
+      <DocumentRow
+        density="consumer"
+        icon={<FileText className="size-4" aria-hidden />}
+        title={
+          <>
+            {doc.title}
+            {doc.description ? (
+              <span className="block truncate text-[12px] font-normal text-[var(--portal-muted)]">
+                {doc.description}
+              </span>
+            ) : null}
+          </>
+        }
+        meta={
+          <>
+            {doc.fileName} · {formatBytes(doc.byteSize)} ·{" "}
+            {new Date(doc.createdAt).toLocaleDateString()}
+            {doc.uploadedByRole !== "PATIENT" && (
+              <span className="capitalize">· shared by {doc.uploadedByRole.toLowerCase()}</span>
+            )}
+          </>
+        }
+        actions={
+          <button
+            type="button"
+            onClick={onDownload}
+            disabled={downloading}
+            className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-1.5 text-sm font-medium text-[var(--portal-text)] hover:bg-[var(--portal-well)] disabled:opacity-60"
+          >
+            <Download aria-hidden className="size-4" />
+            {downloading ? "Downloading…" : "Download"}
+          </button>
+        }
+      />
     </div>
   );
 }
@@ -250,6 +262,16 @@ export default function MedicalFilesPage() {
     setAllDocs((prev) => [doc, ...prev]);
   }
 
+  const tabItems: PortalTabItem[] = TABS.map((tab) => ({
+    value: tab.id,
+    label: (
+      <span className="inline-flex items-center gap-1.5">
+        {tab.icon}
+        {tab.label}
+      </span>
+    ),
+  }));
+
   return (
     <div className="gh-patient-page gh-patient-medical-files-page">
       <PageHeader
@@ -273,26 +295,13 @@ export default function MedicalFilesPage() {
         ]}
       />
 
-      <nav
-        className="gh-patient-tabs mb-6 flex gap-1 overflow-x-auto rounded-lg bg-[var(--portal-well)] p-1"
-        aria-label="Medical file categories"
-      >
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => setActiveTab(tab.id)}
-            className={`inline-flex min-w-max items-center gap-1.5 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-              activeTab === tab.id
-                ? "bg-white text-[var(--portal-text)] shadow-sm"
-                : "text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
-            }`}
-          >
-            {tab.icon}
-            {tab.label}
-          </button>
-        ))}
-      </nav>
+      <PortalTabs
+        className="gh-patient-tabs mb-6"
+        ariaLabel="Medical file categories"
+        items={tabItems}
+        value={activeTab}
+        onChange={(value) => setActiveTab(value as Tab)}
+      />
 
       {activeTab === "uploaded" && (
         <div className="mb-6">

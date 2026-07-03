@@ -10,7 +10,8 @@ import {
   type FamilyMember,
   type FamilyMemberInput,
 } from "@/lib/api/family-client";
-import { PageHeader } from "@/components/portal-atoms";
+import { Btn, PageHeader } from "@/components/portal-atoms";
+import { PortalDialog } from "@/components/PortalDialog";
 
 type FamilyCopy = ReturnType<
   typeof import("@/lib/i18n/load-locale")["loadLocaleBundle"]
@@ -325,9 +326,14 @@ function MemberDisplay({
   const [deleting, setDeleting] = useState(false);
   const [busyToggle, setBusyToggle] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
-  async function onDelete() {
-    if (!window.confirm(t.confirmRemove)) return;
+  function onDelete() {
+    setConfirmOpen(true);
+  }
+
+  async function confirmDelete() {
+    setConfirmOpen(false);
     setDeleting(true);
     setMsg(null);
     const res = await removeFamilyMember(member.id);
@@ -411,6 +417,27 @@ function MemberDisplay({
           {msg}
         </p>
       ) : null}
+
+      <PortalDialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        title={`${t.remove} ${member.fullName}`}
+        danger
+        footer={
+          <>
+            <Btn variant="ghost" onClick={() => setConfirmOpen(false)}>
+              {t.cancel}
+            </Btn>
+            <Btn variant="danger" onClick={() => void confirmDelete()}>
+              {t.remove}
+            </Btn>
+          </>
+        }
+      >
+        <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
+          {t.confirmRemove}
+        </p>
+      </PortalDialog>
     </div>
   );
 }

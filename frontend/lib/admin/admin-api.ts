@@ -63,6 +63,8 @@ type AdminAppointmentsListPayload = {
     notesPreview: string | null;
     status: string;
     createdAt: string;
+    /** In-progress detection for the queue's live-halo state (AppointmentCard). */
+    scheduledAt: string | null;
     doctorId: string | null;
     doctorName: string | null;
   }>;

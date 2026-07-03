@@ -8,6 +8,8 @@ import {
   issuePrescription,
   type DoctorPrescription,
 } from "@/lib/api/doctor-prescriptions-client";
+import { PortalDialog } from "@/components/PortalDialog";
+import { Btn } from "@/components/portal-atoms";
 
 type Props = {
   appointmentId: string;
@@ -25,6 +27,7 @@ export function PrescriptionsList({
   const [open, setOpen] = useState(false);
   const [busy, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<DoctorPrescription | null>(null);
 
   // Form state
   const [drugName, setDrugName] = useState("");
@@ -71,15 +74,21 @@ export function PrescriptionsList({
     });
   }
 
-  async function onDelete(id: string) {
-    if (!window.confirm("Delete this prescription? This cannot be undone.")) return;
+  function onDelete(p: DoctorPrescription) {
+    setDeleteTarget(p);
+  }
+
+  function confirmDelete() {
+    const target = deleteTarget;
+    if (!target) return;
+    setDeleteTarget(null);
     startTransition(async () => {
-      const res = await deletePrescription(id);
+      const res = await deletePrescription(target.id);
       if (!res.ok) {
         setError(res.message);
         return;
       }
-      setItems((prev) => prev.filter((p) => p.id !== id));
+      setItems((prev) => prev.filter((p) => p.id !== target.id));
       router.refresh();
     });
   }
@@ -136,7 +145,7 @@ export function PrescriptionsList({
               {!consultationLocked ? (
                 <button
                   type="button"
-                  onClick={() => onDelete(p.id)}
+                  onClick={() => onDelete(p)}
                   disabled={busy}
                   className="inline-flex items-center justify-center rounded-md p-1.5 text-[var(--portal-danger-text)] hover:bg-rose-50 disabled:opacity-60"
                   aria-label={`Delete ${p.drugName}`}
@@ -270,6 +279,27 @@ export function PrescriptionsList({
           Consultation is signed — prescriptions are locked.
         </p>
       )}
+
+      <PortalDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        title="Delete prescription"
+        danger
+        footer={
+          <>
+            <Btn variant="ghost" onClick={() => setDeleteTarget(null)}>
+              Cancel
+            </Btn>
+            <Btn variant="danger" onClick={confirmDelete}>
+              Delete
+            </Btn>
+          </>
+        }
+      >
+        <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
+          Delete {deleteTarget?.drugName ?? "this prescription"}? This cannot be undone.
+        </p>
+      </PortalDialog>
     </div>
   );
 }

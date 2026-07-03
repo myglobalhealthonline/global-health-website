@@ -108,7 +108,7 @@ export function CountrySelect({
                 width: 22,
                 height: 16,
                 borderRadius: 2,
-                boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.10)",
+                boxShadow: "inset 0 0 0 1px var(--portal-line)",
                 flex: "0 0 22px",
               }}
             />
@@ -200,7 +200,7 @@ export function CountrySelect({
                           width: 22,
                           height: 16,
                           borderRadius: 2,
-                          boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.10)",
+                          boxShadow: "inset 0 0 0 1px var(--portal-line)",
                           flex: "0 0 22px",
                         }}
                       />

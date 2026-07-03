@@ -147,7 +147,7 @@ export function GdprPreferencesTab() {
                   <button
                     type="button"
                     onClick={() => toggle(c.consentType, true)}
-                    className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors sm:flex-none ${
+                    className={`flex-1 min-h-11 rounded-md px-3 py-1.5 text-sm font-medium transition-colors sm:flex-none ${
                       current === true
                         ? "bg-emerald-700 text-white"
                         : "border border-[var(--portal-line)] text-[var(--portal-muted)] hover:bg-[var(--portal-well)]"
@@ -158,7 +158,7 @@ export function GdprPreferencesTab() {
                   <button
                     type="button"
                     onClick={() => toggle(c.consentType, false)}
-                    className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors sm:flex-none ${
+                    className={`flex-1 min-h-11 rounded-md px-3 py-1.5 text-sm font-medium transition-colors sm:flex-none ${
                       current === false
                         ? "bg-rose-600 text-white"
                         : "border border-[var(--portal-line)] text-[var(--portal-muted)] hover:bg-[var(--portal-well)]"
@@ -187,7 +187,7 @@ export function GdprPreferencesTab() {
         type="button"
         onClick={onSave}
         disabled={saving}
-        className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+        className="inline-flex min-h-11 items-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
       >
         {saving ? "Saving…" : "Save preferences"}
       </button>
