@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
 import { fetchAdminAuditLog } from "@/lib/admin/admin-api";
 import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader } from "../_components/atoms";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -201,16 +202,11 @@ export default async function AdminAuditLogPage({
           <>
           <div className="gh-admin-mobile-list">
             {result.data.items.map((r) => (
-              <article key={r.id} className="gh-admin-mobile-card">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h3 className="gh-admin-mobile-card-title">
-                      {ACTION_LABEL[r.action] ?? r.action}
-                    </h3>
-                    <p className="gh-admin-mobile-card-meta">
-                      {new Date(r.createdAt).toLocaleString()}
-                    </p>
-                  </div>
+              <PortalMobileCard
+                key={r.id}
+                title={ACTION_LABEL[r.action] ?? r.action}
+                subtitle={new Date(r.createdAt).toLocaleString()}
+                statusPill={
                   <span
                     className={`gh-admin-ops-badge inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.04em] ${
                       ACTION_TONE[r.action] ??
@@ -219,20 +215,14 @@ export default async function AdminAuditLogPage({
                   >
                     {r.action}
                   </span>
-                </div>
-                <div className="grid gap-1 text-[12px] text-[var(--color-text-muted)]">
-                  <span>
-                    Actor: {r.actor ? `${r.actor.fullName} (${r.actor.email})` : "System"}
-                  </span>
-                  <span>
-                    Entity: <code>{r.entityType}</code>
-                  </span>
-                  <span className="break-all">
-                    ID: <code>{r.entityId}</code>
-                  </span>
-                  {r.ipAddress ? <span>IP: {r.ipAddress}</span> : null}
-                </div>
-              </article>
+                }
+                meta={[
+                  { label: "Actor", value: r.actor ? `${r.actor.fullName} (${r.actor.email})` : "System" },
+                  { label: "Entity", value: r.entityType },
+                  { label: "ID", value: <span className="break-all">{r.entityId}</span> },
+                  ...(r.ipAddress ? [{ label: "IP", value: r.ipAddress }] : []),
+                ]}
+              />
             ))}
           </div>
           <div className="gh-admin-ops-table-wrap gh-admin-deep-table-wrap overflow-hidden rounded-md border border-[var(--color-border)]">

@@ -24,6 +24,7 @@ export function PortalMobileCard({
   meta,
   actions,
   href,
+  children,
 }: {
   /** Optional avatar/icon rendered before the title block. */
   leading?: ReactNode;
@@ -38,6 +39,10 @@ export function PortalMobileCard({
   /** Makes the whole card a link (list → detail). Omit for an inline card
    *  that carries its own action buttons instead. */
   href?: string;
+  /** Full-width freeform content below meta/actions — for embedded
+   *  sub-components (e.g. an expandable ledger) that don't fit the
+   *  right-aligned actions row. */
+  children?: ReactNode;
 }) {
   const content = (
     <>
@@ -62,6 +67,7 @@ export function PortalMobileCard({
         </div>
       ) : null}
       {actions ? <div className="gh-portal-mobile-card__actions">{actions}</div> : null}
+      {children}
     </>
   );
 

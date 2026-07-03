@@ -27,6 +27,7 @@ import {
 import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import { SubscriptionHealthPanel } from "../_components/subscription-health-panel";
 import { AdminSubscriberLedger } from "../_components/subscriber-ledger";
+import { PortalMobileCard, type PortalMobileCardTone } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +37,13 @@ function statusTone(status: string): PillTone {
   if (status === "ACTIVE") return "active";
   if (status === "PAST_DUE" || status === "INCOMPLETE") return "pending";
   if (status === "CANCELED") return "inactive";
+  return "neutral";
+}
+
+function statusCardTone(status: string): PortalMobileCardTone {
+  if (status === "ACTIVE") return "success";
+  if (status === "PAST_DUE" || status === "INCOMPLETE") return "warning";
+  if (status === "CANCELED") return "danger";
   return "neutral";
 }
 
@@ -251,28 +259,25 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
               </div>
               <div className="gh-admin-mobile-list">
                 {subscriptions.map((sub) => (
-                  <article key={sub.id} className="gh-admin-mobile-card">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <h3 className="gh-admin-mobile-card-title">
-                          {sub.user.fullName ?? sub.user.email}
-                        </h3>
-                        <p className="gh-admin-mobile-card-meta break-all">
-                          {sub.user.email} - {sub.countryCode.toUpperCase()}
-                        </p>
-                      </div>
-                      <Pill tone={statusTone(sub.status)}>{sub.status}</Pill>
-                    </div>
-                    <div className="grid gap-1 text-[12px] text-[var(--color-text-muted)]">
-                      <span>{sub.plan.name}</span>
-                      <span>
-                        GP {balanceOf(sub.balances, "CONSULTATION")} / wellness{" "}
-                        {balanceOf(sub.balances, "WELLNESS")}
-                      </span>
-                      {sub.cancelAtPeriodEnd ? <Pill tone="draft">cancels at period end</Pill> : null}
-                    </div>
+                  <PortalMobileCard
+                    key={sub.id}
+                    tone={statusCardTone(sub.status)}
+                    title={sub.user.fullName ?? sub.user.email}
+                    subtitle={`${sub.user.email} - ${sub.countryCode.toUpperCase()}`}
+                    statusPill={<Pill tone={statusTone(sub.status)}>{sub.status}</Pill>}
+                    meta={[
+                      { label: "Plan", value: sub.plan.name },
+                      {
+                        label: "Balances",
+                        value: `GP ${balanceOf(sub.balances, "CONSULTATION")} / wellness ${balanceOf(sub.balances, "WELLNESS")}`,
+                      },
+                      ...(sub.cancelAtPeriodEnd
+                        ? [{ label: "Renewal", value: <Pill tone="draft">cancels at period end</Pill> }]
+                        : []),
+                    ]}
+                  >
                     <AdminSubscriberLedger subscriptionId={sub.id} />
-                  </article>
+                  </PortalMobileCard>
                 ))}
               </div>
               </>

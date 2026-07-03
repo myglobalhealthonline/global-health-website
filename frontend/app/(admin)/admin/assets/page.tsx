@@ -13,6 +13,7 @@ import {
 } from "@/lib/admin/admin-api";
 import { FlagBadge } from "../_components/flag-badge";
 import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 import {
   AdminCard,
   AdminEmptyState,
@@ -362,44 +363,34 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
         {items.length > 0 ? (
           <div className="gh-admin-mobile-list">
             {items.map((a) => (
-              <article key={a.id} className="gh-admin-mobile-card">
-                <div className="flex min-w-0 items-start gap-3">
-                  <PreviewCell item={a} />
-                  <div className="gh-admin-mobile-card__title">
-                    <strong>{a.key}</strong>
-                    <span>{a.path}</span>
-                  </div>
+              <PortalMobileCard
+                key={a.id}
+                tone={a.isActive ? "success" : "neutral"}
+                leading={<PreviewCell item={a} />}
+                title={a.key}
+                subtitle={a.path}
+                statusPill={
                   <Pill tone={a.isActive ? "published" : "draft"}>
                     {a.isActive ? "Active" : "Inactive"}
                   </Pill>
-                </div>
-                <div className="gh-admin-mobile-meta">
-                  <span>
-                    <em>Kind</em>
-                    <strong>{a.kind}</strong>
-                  </span>
-                  <span>
-                    <em>Country</em>
-                    <strong>{a.country?.code.toUpperCase() ?? "Global"}</strong>
-                  </span>
-                  <span>
-                    <em>Alt text</em>
-                    <strong>{a.altText ?? "Not set"}</strong>
-                  </span>
-                  <span>
-                    <em>Usage</em>
-                    <strong>{a.usageNote ?? "Unassigned"}</strong>
-                  </span>
-                </div>
-                <div className="gh-admin-mobile-actions">
-                  <IconBtn ariaLabel={`View ${a.key}`} href={`/admin/assets/${a.id}`}>
-                    <Eye className="size-3.5" aria-hidden />
-                  </IconBtn>
-                  <IconBtn ariaLabel={`Edit ${a.key}`} href={`/admin/assets/${a.id}/edit`}>
-                    <Edit3 className="size-3.5" aria-hidden />
-                  </IconBtn>
-                </div>
-              </article>
+                }
+                meta={[
+                  { label: "Kind", value: a.kind },
+                  { label: "Country", value: a.country?.code.toUpperCase() ?? "Global" },
+                  { label: "Alt text", value: a.altText ?? "Not set" },
+                  { label: "Usage", value: a.usageNote ?? "Unassigned" },
+                ]}
+                actions={
+                  <>
+                    <IconBtn ariaLabel={`View ${a.key}`} href={`/admin/assets/${a.id}`}>
+                      <Eye className="size-3.5" aria-hidden />
+                    </IconBtn>
+                    <IconBtn ariaLabel={`Edit ${a.key}`} href={`/admin/assets/${a.id}/edit`}>
+                      <Edit3 className="size-3.5" aria-hidden />
+                    </IconBtn>
+                  </>
+                }
+              />
             ))}
           </div>
         ) : null}

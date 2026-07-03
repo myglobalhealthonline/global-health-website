@@ -19,6 +19,7 @@ import {
   Tr,
 } from "../_components/atoms";
 import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -175,26 +176,29 @@ export default async function AdminPlansPage() {
           </div>
           <div className="gh-admin-mobile-list">
             {plans.map((plan) => (
-              <article key={plan.id} className="gh-admin-mobile-card">
-                <div className="flex min-w-0 items-start justify-between gap-3">
-                  <div className="gh-admin-mobile-card__title">
-                    <strong>{plan.name}</strong>
-                    <span>{plan.slug}</span>
-                  </div>
+              <PortalMobileCard
+                key={plan.id}
+                tone={plan.isActive ? "success" : "neutral"}
+                title={plan.name}
+                subtitle={plan.slug}
+                statusPill={
                   <Pill tone={plan.isActive ? "active" : "inactive"}>
                     {plan.isActive ? "Active" : "Inactive"}
                   </Pill>
-                </div>
-                <div className="gh-admin-mobile-meta">
-                  <span><em>Price</em><strong>{formatMoney(plan.monthlyPriceCents, plan.currencyCode)}</strong></span>
-                  <span><em>Credits</em><strong>{plan.monthlyConsultationCredits} / {plan.wellnessCreditsPerMonth}</strong></span>
-                  <span><em>Rules</em><strong>{plan._count.consultationRules + plan._count.perkRules + plan._count.healthTestRules}</strong></span>
-                  <span><em>Subscribers</em><strong>{plan._count.subscriptions}</strong></span>
-                </div>
-                <div className="gh-admin-mobile-actions">
+                }
+                meta={[
+                  { label: "Price", value: formatMoney(plan.monthlyPriceCents, plan.currencyCode) },
+                  { label: "Credits", value: `${plan.monthlyConsultationCredits} / ${plan.wellnessCreditsPerMonth}` },
+                  {
+                    label: "Rules",
+                    value: plan._count.consultationRules + plan._count.perkRules + plan._count.healthTestRules,
+                  },
+                  { label: "Subscribers", value: plan._count.subscriptions },
+                ]}
+                actions={
                   <Btn href={`/admin/plans/${plan.id}/edit`} variant="soft" size="sm">Edit plan</Btn>
-                </div>
-              </article>
+                }
+              />
             ))}
           </div>
         </AdminCard>

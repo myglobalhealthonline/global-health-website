@@ -24,6 +24,7 @@ import {
 } from "../_components/atoms";
 import { FlagBadge } from "../_components/flag-badge";
 import { ScopeBanner } from "../_components/scope-banner";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -249,35 +250,38 @@ export default async function AdminPagesListPage({
             </div>
             <div className="gh-admin-mobile-list">
               {pages.map((p: AdminPageDto) => (
-                <article key={p.id} className="gh-admin-mobile-card">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="gh-admin-mobile-card-title">{p.title}</h3>
-                      <p className="gh-admin-mobile-card-meta">
-                        {ADMIN_PAGE_KEY_LABELS[p.pageKey as AdminPageKey]} - {p.locale}
-                      </p>
-                    </div>
+                <PortalMobileCard
+                  key={p.id}
+                  tone={p.status === "PUBLISHED" ? "success" : "neutral"}
+                  title={p.title}
+                  subtitle={`${ADMIN_PAGE_KEY_LABELS[p.pageKey as AdminPageKey]} - ${p.locale}`}
+                  statusPill={
                     <Pill tone={p.status === "PUBLISHED" ? "published" : "draft"}>
                       {p.status}
                     </Pill>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2 text-[12px] text-[var(--color-text-muted)]">
-                    <FileText className="size-3" aria-hidden />
-                    {p.country ? (
-                      <span className="inline-flex items-center gap-2">
-                        <FlagBadge code={p.country.slug} />
-                        {p.country.name}
-                      </span>
-                    ) : (
-                      <span>Global page</span>
-                    )}
-                  </div>
-                  <div className="gh-admin-mobile-actions">
+                  }
+                  meta={[
+                    {
+                      label: "Scope",
+                      value: p.country ? (
+                        <span className="inline-flex items-center gap-1.5">
+                          <FlagBadge code={p.country.slug} />
+                          {p.country.name}
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5">
+                          <FileText className="size-3" aria-hidden />
+                          Global page
+                        </span>
+                      ),
+                    },
+                  ]}
+                  actions={
                     <IconBtn href={`/admin/pages/${p.id}/edit`} ariaLabel="Edit page">
                       <Edit3 className="size-4" />
                     </IconBtn>
-                  </div>
-                </article>
+                  }
+                />
               ))}
             </div>
           </AdminCard>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Search, UserRound } from "lucide-react";
 import { fetchAdminPatients, type AdminPatientSearchItem, type VerificationStatus } from "@/lib/admin/admin-api";
 import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader, Pill } from "../_components/atoms";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -166,38 +167,26 @@ export default async function AdminPatientsPage({
             </div>
             <div className="gh-admin-mobile-list">
               {items.map((p) => (
-                <article key={p.id} className="gh-admin-mobile-card">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="gh-admin-mobile-card-title">
-                        {p.fullName ?? p.email}
-                      </h3>
-                      <p className="gh-admin-mobile-card-meta break-all">{p.email}</p>
-                    </div>
-                    <StatusBadge status={p.idVerificationStatus} />
-                  </div>
-                  <div className="grid gap-2 text-[12px] text-[var(--color-text-muted)]">
-                    <span>
-                      GHN:{" "}
-                      <code className="text-[var(--color-text-primary)]">
-                        {p.globalHealthNumber ?? "-"}
-                      </code>
-                    </span>
-                    <span>Joined {new Date(p.createdAt).toLocaleDateString()}</span>
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      <StatusBadge status={p.emailVerificationStatus} />
-                      <StatusBadge status={p.phoneVerificationStatus} />
-                    </div>
-                  </div>
-                  <div className="gh-admin-mobile-actions">
+                <PortalMobileCard
+                  key={p.id}
+                  title={p.fullName ?? p.email}
+                  subtitle={p.email}
+                  statusPill={<StatusBadge status={p.idVerificationStatus} />}
+                  meta={[
+                    { label: "GHN", value: <code>{p.globalHealthNumber ?? "-"}</code> },
+                    { label: "Joined", value: new Date(p.createdAt).toLocaleDateString() },
+                    { label: "Email", value: <StatusBadge status={p.emailVerificationStatus} /> },
+                    { label: "Phone", value: <StatusBadge status={p.phoneVerificationStatus} /> },
+                  ]}
+                  actions={
                     <Link
                       href={`/admin/patients/${encodeURIComponent(p.email)}`}
                       className="gh-btn gh-btn-secondary text-sm"
                     >
                       View patient
                     </Link>
-                  </div>
-                </article>
+                  }
+                />
               ))}
             </div>
 

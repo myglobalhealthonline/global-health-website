@@ -6,6 +6,7 @@ import {
   fetchAdminAutomationOrders,
 } from "@/lib/admin/admin-api";
 import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader } from "../_components/atoms";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -295,23 +296,21 @@ export default async function AdminAutomationPage({
           ) : (
             <div className="gh-admin-mobile-list">
               {runs.map((row) => (
-                <article key={row.id} className="gh-admin-mobile-card">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="gh-admin-mobile-card-title">
-                        {row.orderNumber ?? "No order"}
-                      </h3>
-                      <p className="gh-admin-mobile-card-meta">{timeAgo(row.createdAt)}</p>
-                    </div>
-                    <StatusBadge status={row.status} />
-                  </div>
-                  <div className="grid gap-1 text-[12px] text-[var(--color-text-muted)]">
-                    <span>Channel: {row.channel ?? "-"}</span>
-                    <span>{row.summary ?? "No summary"}</span>
-                    {row.recipient ? <span className="break-all">To: {row.recipient}</span> : null}
-                    {row.error ? <span className="text-rose-700">{row.error}</span> : null}
-                  </div>
-                </article>
+                <PortalMobileCard
+                  key={row.id}
+                  tone={row.error ? "danger" : "neutral"}
+                  title={row.orderNumber ?? "No order"}
+                  subtitle={timeAgo(row.createdAt)}
+                  statusPill={<StatusBadge status={row.status} />}
+                  meta={[
+                    { label: "Channel", value: row.channel ?? "-" },
+                    { label: "Summary", value: row.summary ?? "No summary" },
+                    ...(row.recipient ? [{ label: "To", value: <span className="break-all">{row.recipient}</span> }] : []),
+                    ...(row.error
+                      ? [{ label: "Error", value: <span style={{ color: "var(--portal-danger-text)" }}>{row.error}</span> }]
+                      : []),
+                  ]}
+                />
               ))}
             </div>
           )}

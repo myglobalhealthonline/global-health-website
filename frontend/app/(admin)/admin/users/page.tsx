@@ -2,6 +2,7 @@ import Link from "next/link";
 import { UsersRound } from "lucide-react";
 import { fetchAdminUsers, type AdminUserDto } from "@/lib/admin/admin-api";
 import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader, Pill } from "../_components/atoms";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -172,31 +173,34 @@ export default async function AdminUsersPage({
           </div>
           <div className="gh-admin-mobile-list">
             {result.data.items.map((u: AdminUserDto) => (
-              <article key={u.id} className="gh-admin-mobile-card">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h3 className="gh-admin-mobile-card-title break-all">{u.email}</h3>
-                    <p className="gh-admin-mobile-card-meta">{u.fullName || "No name set"}</p>
-                  </div>
+              <PortalMobileCard
+                key={u.id}
+                tone={u.isActive ? "success" : "danger"}
+                title={<span className="break-all">{u.email}</span>}
+                subtitle={u.fullName || "No name set"}
+                statusPill={
                   <Pill tone={u.isActive ? "active" : "inactive"}>
                     {u.isActive ? "Active" : "Suspended"}
                   </Pill>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <Pill tone={u.role === "ADMIN" ? "published" : "neutral"}>{u.role}</Pill>
-                  <Pill tone={u.emailVerifiedAt ? "active" : "neutral"}>
-                    {u.emailVerifiedAt ? "Email verified" : "Email unverified"}
-                  </Pill>
-                </div>
-                <p className="gh-admin-mobile-card-meta">
-                  Created {new Date(u.createdAt).toLocaleDateString()}
-                </p>
-                <div className="gh-admin-mobile-actions">
+                }
+                meta={[
+                  { label: "Role", value: <Pill tone={u.role === "ADMIN" ? "published" : "neutral"}>{u.role}</Pill> },
+                  {
+                    label: "Email status",
+                    value: (
+                      <Pill tone={u.emailVerifiedAt ? "active" : "neutral"}>
+                        {u.emailVerifiedAt ? "Verified" : "Unverified"}
+                      </Pill>
+                    ),
+                  },
+                  { label: "Created", value: new Date(u.createdAt).toLocaleDateString() },
+                ]}
+                actions={
                   <Link href={`/admin/users/${u.id}`} className="gh-btn gh-btn-secondary text-sm">
                     Open user
                   </Link>
-                </div>
-              </article>
+                }
+              />
             ))}
           </div>
           </>

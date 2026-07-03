@@ -12,6 +12,7 @@ import { getActiveCountry, scopedCountryId } from "@/lib/admin/admin-scope";
 import { FlagBadge } from "../_components/flag-badge";
 import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import { ScopeBanner } from "../_components/scope-banner";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 import {
   AdminCard,
   AdminEmptyState,
@@ -314,31 +315,33 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
         {items.length > 0 ? (
           <div className="gh-admin-mobile-list">
             {items.map((item) => (
-              <article key={item.id} className="gh-admin-mobile-card">
-                <div className="flex min-w-0 items-start justify-between gap-3">
-                  <div className="gh-admin-mobile-card__title">
-                    <strong>{item.title}</strong>
-                    <span>{item.slug}</span>
-                  </div>
+              <PortalMobileCard
+                key={item.id}
+                tone={item.isActive ? "success" : "neutral"}
+                title={item.title}
+                subtitle={item.slug}
+                statusPill={
                   <Pill tone={item.isActive ? "published" : "draft"}>
                     {item.isActive ? "Active" : "Inactive"}
                   </Pill>
-                </div>
-                <div className="gh-admin-mobile-meta">
-                  <span><em>Country</em><strong>{item.country.code.toUpperCase()}</strong></span>
-                  <span><em>Price</em><strong>{formatMoney(item.priceCents, item.currencyCode)}</strong></span>
-                  <span><em>Sample</em><strong>{item.sampleType || "Not set"}</strong></span>
-                  <span><em>Results</em><strong>{item.resultsTimeline || "Not set"}</strong></span>
-                </div>
-                <div className="gh-admin-mobile-actions">
-                  <IconBtn ariaLabel={`View ${item.title}`} href={`/admin/health-tests/${item.id}`}>
-                    <Eye className="size-3.5" aria-hidden />
-                  </IconBtn>
-                  <IconBtn ariaLabel={`Edit ${item.title}`} href={`/admin/health-tests/${item.id}/edit`}>
-                    <Edit3 className="size-3.5" aria-hidden />
-                  </IconBtn>
-                </div>
-              </article>
+                }
+                meta={[
+                  { label: "Country", value: item.country.code.toUpperCase() },
+                  { label: "Price", value: formatMoney(item.priceCents, item.currencyCode) },
+                  { label: "Sample", value: item.sampleType || "Not set" },
+                  { label: "Results", value: item.resultsTimeline || "Not set" },
+                ]}
+                actions={
+                  <>
+                    <IconBtn ariaLabel={`View ${item.title}`} href={`/admin/health-tests/${item.id}`}>
+                      <Eye className="size-3.5" aria-hidden />
+                    </IconBtn>
+                    <IconBtn ariaLabel={`Edit ${item.title}`} href={`/admin/health-tests/${item.id}/edit`}>
+                      <Edit3 className="size-3.5" aria-hidden />
+                    </IconBtn>
+                  </>
+                }
+              />
             ))}
           </div>
         ) : null}

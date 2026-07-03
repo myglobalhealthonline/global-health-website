@@ -7,6 +7,7 @@ import {
   PageHeader,
   Pill,
 } from "../_components/atoms";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -119,29 +120,29 @@ export default async function AdminNewsletterPage() {
           </div>
           <div className="gh-admin-mobile-list">
             {result.items.map((s) => (
-              <article key={s.id} className="gh-admin-mobile-card">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h3 className="gh-admin-mobile-card-title break-all">{s.email}</h3>
-                    <p className="gh-admin-mobile-card-meta">{s.source ?? "No source"}</p>
-                  </div>
+              <PortalMobileCard
+                key={s.id}
+                tone={s.unsubscribedAt ? "neutral" : "success"}
+                title={<span className="break-all">{s.email}</span>}
+                subtitle={s.source ?? "No source"}
+                statusPill={
                   <Pill tone={s.unsubscribedAt ? "inactive" : "active"}>
                     {s.unsubscribedAt ? "Unsubscribed" : "Active"}
                   </Pill>
-                </div>
-                <div className="grid gap-1 text-[12px] text-[var(--color-text-muted)]">
-                  <span>Country: {s.countryCode ?? "-"}</span>
-                  <span>Locale: {s.locale ?? "-"}</span>
-                  <span>
-                    Signed up{" "}
-                    {new Date(s.createdAt).toLocaleDateString(undefined, {
+                }
+                meta={[
+                  { label: "Country", value: s.countryCode ?? "-" },
+                  { label: "Locale", value: s.locale ?? "-" },
+                  {
+                    label: "Signed up",
+                    value: new Date(s.createdAt).toLocaleDateString(undefined, {
                       year: "numeric",
                       month: "short",
                       day: "numeric",
-                    })}
-                  </span>
-                </div>
-              </article>
+                    }),
+                  },
+                ]}
+              />
             ))}
           </div>
         </AdminCard>

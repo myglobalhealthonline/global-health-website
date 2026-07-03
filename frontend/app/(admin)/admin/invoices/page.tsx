@@ -3,6 +3,7 @@ import { Receipt, ExternalLink } from "lucide-react";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { cookies } from "next/headers";
 import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader, Pill } from "@/components/portal-atoms";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
 import { FlagBadge } from "../_components/flag-badge";
@@ -194,38 +195,45 @@ export default async function AdminInvoicesPage({
         </div>
         <div className="gh-admin-mobile-list">
           {items.map((inv) => (
-            <article key={inv.id} className="gh-admin-mobile-card">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h3 className="gh-admin-mobile-card-title font-mono">{inv.invoiceNumber}</h3>
-                  <p className="gh-admin-mobile-card-meta">{inv.fullName}</p>
-                </div>
+            <PortalMobileCard
+              key={inv.id}
+              tone={inv.emailSentAt ? "success" : "warning"}
+              title={<span className="font-mono">{inv.invoiceNumber}</span>}
+              subtitle={inv.fullName}
+              statusPill={
                 <Pill tone={inv.emailSentAt ? "active" : "pending"}>
                   {inv.emailSentAt ? "Sent" : "Pending"}
                 </Pill>
-              </div>
-              <div className="grid gap-1 text-[12px] text-[var(--color-text-muted)]">
-                <span>{inv.email}</span>
-                <span>{formatPrice(inv.totalCents, inv.currencyCode)} · {formatAppDate(inv.generatedAt)}</span>
-                <span className="inline-flex items-center gap-2">
-                  <FlagBadge code={inv.countryCode} size={14} />
-                  {inv.countryCode.toUpperCase()}
-                </span>
-              </div>
-              <div className="gh-admin-mobile-actions">
-                <Link href={`/admin/orders/${inv.orderId}`} className="gh-btn gh-btn-ghost text-sm">
-                  Order
-                </Link>
-                <Link
-                  href={`/print/order-invoices/${inv.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="gh-btn gh-btn-secondary text-sm"
-                >
-                  View invoice
-                </Link>
-              </div>
-            </article>
+              }
+              meta={[
+                { label: "Email", value: inv.email },
+                { label: "Total", value: `${formatPrice(inv.totalCents, inv.currencyCode)} · ${formatAppDate(inv.generatedAt)}` },
+                {
+                  label: "Country",
+                  value: (
+                    <span className="inline-flex items-center gap-2">
+                      <FlagBadge code={inv.countryCode} size={14} />
+                      {inv.countryCode.toUpperCase()}
+                    </span>
+                  ),
+                },
+              ]}
+              actions={
+                <>
+                  <Link href={`/admin/orders/${inv.orderId}`} className="gh-btn gh-btn-ghost text-sm">
+                    Order
+                  </Link>
+                  <Link
+                    href={`/print/order-invoices/${inv.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="gh-btn gh-btn-secondary text-sm"
+                  >
+                    View invoice
+                  </Link>
+                </>
+              }
+            />
           ))}
         </div>
         </>
