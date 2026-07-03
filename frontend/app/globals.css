@@ -1863,11 +1863,38 @@ a.gh-stat-card:hover .gh-stat-card__underline {
   margin-bottom: var(--portal-section-gap);
   padding: clamp(20px, 2.4vw, 28px);
   border-radius: var(--portal-radius-xl);
-  border: 1px solid var(--portal-chrome-border);
-  background-color: var(--portal-chrome);
-  -webkit-backdrop-filter: blur(var(--portal-blur-chrome)) saturate(140%);
-  backdrop-filter: blur(var(--portal-blur-chrome)) saturate(140%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border: 1px solid transparent;
+  background-image: var(--lux-chrome-fill), var(--lux-chrome-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  -webkit-backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
+  backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
+  box-shadow: var(--lux-elev-chrome);
+}
+
+.gh-command-band::before,
+.gh-command-band::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.gh-command-band::before {
+  background: radial-gradient(600px 300px at 85% 0%, rgba(176, 241, 34, 0.10), transparent 65%);
+  animation: gh-command-band-aurora 30s ease-in-out infinite alternate;
+}
+
+.gh-command-band::after {
+  background: var(--lux-streak), var(--lux-seam-light);
+  background-repeat: no-repeat;
+  background-position: center, bottom;
+  background-size: 100% 100%, 100% 1px;
+}
+
+.gh-command-band > * {
+  position: relative;
+  z-index: 1;
 }
 
 @supports not (backdrop-filter: blur(1px)) {
@@ -1916,6 +1943,11 @@ a.gh-stat-card:hover .gh-stat-card__underline {
   gap: 32px;
 }
 
+.gh-command-band__metric + .gh-command-band__metric {
+  border-inline-start: 1px solid rgba(255, 255, 255, 0.07);
+  padding-inline-start: 32px;
+}
+
 @media (max-width: 760px) {
   .gh-command-band__metrics {
     grid-auto-flow: row;
@@ -1940,14 +1972,17 @@ a.gh-stat-card:hover .gh-stat-card__underline {
   font-family: var(--font-display);
   font-size: clamp(30px, 4vw, 56px);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   line-height: 1;
   font-variant-numeric: tabular-nums;
   color: var(--portal-chrome-text-active);
 }
 
 .gh-command-band__metric-value--signal {
-  color: var(--portal-signal);
+  background: var(--lux-numeral-live);
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 24px rgba(176, 241, 34, 0.25));
 }
 
 .gh-command-band__metric-value--signal::before {
@@ -2018,6 +2053,21 @@ a.gh-stat-card:hover .gh-stat-card__underline {
   }
 }
 
+@keyframes gh-command-band-aurora {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(24px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-command-band::before {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .gh-command-band__live-dot {
     animation: none;
@@ -2032,12 +2082,20 @@ a.gh-stat-card:hover .gh-stat-card__underline {
 /* Sidebar — dark glass chrome (DESIGN.md §5.1). Only L1 blurs. */
 .gh-portal-sidebar {
   overflow: hidden;
-  background-color: var(--portal-chrome);
-  -webkit-backdrop-filter: blur(var(--portal-blur-chrome)) saturate(140%);
-  backdrop-filter: blur(var(--portal-blur-chrome)) saturate(140%);
+  background: var(--lux-chrome-fill);
+  -webkit-backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
+  backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
   color: var(--portal-chrome-text);
   border-right: 1px solid var(--portal-chrome-border);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: var(--lux-elev-chrome);
+}
+
+.gh-portal-sidebar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--lux-streak);
 }
 
 /* Repurposed from the retired texture PNG: a 1px luminous lime seam on the
@@ -2074,30 +2132,69 @@ a.gh-stat-card:hover .gh-stat-card__underline {
 
 .gh-admin-sidebar-logo {
   min-height: 94px;
+  border-bottom: 1px solid var(--portal-chrome-border);
+}
+
+.gh-portal-label {
+  color: var(--portal-accent);
+  opacity: 0.9;
+}
+
+.gh-portal-sidebar-footer {
+  border-top: 1px solid var(--portal-chrome-border);
+  color: color-mix(in srgb, var(--portal-chrome-text-active) 55%, transparent);
+}
+
+.gh-portal-glyph {
+  width: 22px;
+  height: 22px;
+  border: 1px solid transparent;
+  background-image:
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--portal-accent) 10%, transparent), transparent 70%),
+    var(--lux-chrome-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+.gh-portal-glyph__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--portal-accent);
+}
+
+.gh-portal-user-pill {
+  border: 1px solid var(--portal-chrome-border);
+}
+
+.gh-portal-user-divider {
+  width: 1px;
+  height: 22px;
+  background: var(--portal-chrome-border);
+}
+
+.gh-portal-avatar {
+  background: var(--lux-forest-duotone);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 /* Topbar — dark glass strip; on scroll >8px the bottom border swaps for the
  * seam-light gradient (the ONE scroll-linked effect, DESIGN.md §5.2). */
 .gh-portal-topbar {
-  background-color: var(--portal-chrome);
-  -webkit-backdrop-filter: blur(var(--portal-blur-chrome)) saturate(140%);
-  backdrop-filter: blur(var(--portal-blur-chrome)) saturate(140%);
+  background: var(--lux-chrome-fill);
+  -webkit-backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
+  backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
   border-bottom: 1px solid var(--portal-chrome-border);
+  box-shadow: var(--lux-elev-chrome);
   transition: border-color 200ms ease-out;
 }
 
 .gh-portal-topbar--scrolled {
   border-bottom-color: transparent;
-  background-image: linear-gradient(
-    90deg,
-    transparent,
-    rgba(176, 241, 34, 0.45) 35%,
-    rgba(176, 241, 34, 0.1) 70%,
-    transparent
-  );
+  background-image: var(--lux-chrome-fill), var(--lux-seam-light);
   background-repeat: no-repeat;
-  background-position: bottom;
-  background-size: 100% 1px;
+  background-position: center, bottom;
+  background-size: 100% 100%, 100% 1px;
 }
 
 @supports not (backdrop-filter: blur(1px)) {
