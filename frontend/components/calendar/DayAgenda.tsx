@@ -42,6 +42,22 @@ type Props = {
   showDoctorName?: boolean;
 };
 
+function consultationBadgeClass(status: string): string {
+  if (status === "COMPLETED" || status === "PAID") return "gh-badge-success";
+  if (status === "CANCELLED" || status === "FAILED") return "gh-badge-error";
+  if (status === "CONTACTED" || status === "BOOKED") return "gh-badge-info";
+  if (status === "UNDER_REVIEW") return "gh-badge-warning";
+  return "gh-badge-neutral";
+}
+
+function humanizeStatus(status: string): string {
+  return status
+    .toLowerCase()
+    .split("_")
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+    .join(" ");
+}
+
 function slotToneStyle(status: string): CSSProperties {
   switch (status) {
     case "OPEN":
@@ -153,6 +169,9 @@ export function DayAgenda({
                               {item.meta.doctorName}
                             </span>
                           ) : null}
+                        </span>
+                        <span className={`gh-badge ${consultationBadgeClass(item.status)} shrink-0`}>
+                          {humanizeStatus(item.status)}
                         </span>
                         {item.meta?.meetingUrl ? (
                           <Video className="size-4 shrink-0" style={{ color: "var(--portal-success-text)" }} aria-hidden />

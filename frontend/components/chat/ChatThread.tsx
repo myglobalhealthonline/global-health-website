@@ -23,6 +23,9 @@ type ChatThreadProps = {
    *  placement. "embedded" drops both (the header text/subtitle is lost —
    *  pass it via a PortalDialog title instead) for use inside a dialog. */
   variant?: "panel" | "embedded";
+  /** When set, replaces the composer with a plain-language reason instead
+   *  of the input (DESIGN.md §7 states matrix — disabled chat composer). */
+  disabledReason?: string | null;
 };
 
 /**
@@ -40,6 +43,7 @@ export function ChatThread({
   poster,
   pollIntervalMs = 10_000,
   variant = "panel",
+  disabledReason = null,
 }: ChatThreadProps) {
   const [items, setItems] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState("");
@@ -188,29 +192,35 @@ export function ChatThread({
         <div ref={endRef} />
       </div>
 
-      <form onSubmit={onSubmit} className="gh-chat-compose flex items-end gap-2 p-3">
-        <textarea
-          ref={textareaRef}
-          rows={1}
-          value={draft}
-          onChange={onDraftChange}
-          onKeyDown={onKeyDown}
-          placeholder="Type a message…"
-          maxLength={2000}
-          className="gh-input gh-chat-textarea flex-1 min-w-0"
-        />
-        <Btn
-          type="submit"
-          variant="primary"
-          size="sm"
-          disabled={sending || draft.trim().length === 0}
-          loading={sending}
-          iconLeft={<Send className="size-4" aria-hidden />}
-          className="gh-chat-send"
-        >
-          Send
-        </Btn>
-      </form>
+      {disabledReason ? (
+        <div className="gh-chat-disabled px-4 py-3 text-center text-xs font-medium" style={{ color: "var(--portal-muted)" }}>
+          {disabledReason}
+        </div>
+      ) : (
+        <form onSubmit={onSubmit} className="gh-chat-compose flex items-end gap-2 p-3">
+          <textarea
+            ref={textareaRef}
+            rows={1}
+            value={draft}
+            onChange={onDraftChange}
+            onKeyDown={onKeyDown}
+            placeholder="Type a message…"
+            maxLength={2000}
+            className="gh-input gh-chat-textarea flex-1 min-w-0"
+          />
+          <Btn
+            type="submit"
+            variant="primary"
+            size="sm"
+            disabled={sending || draft.trim().length === 0}
+            loading={sending}
+            iconLeft={<Send className="size-4" aria-hidden />}
+            className="gh-chat-send"
+          >
+            Send
+          </Btn>
+        </form>
+      )}
     </div>
   );
 }
