@@ -370,32 +370,27 @@ function QuickActionCard({
   return (
     <Link
       href={href}
-      className="gh-doctor-quick-card block transition-all duration-150 hover:-translate-y-[1px]"
+      className="gh-doctor-quick-card block"
       style={{
-        background: "var(--portal-surface)",
-        border: "1px solid var(--portal-line)",
-        borderRadius: "var(--portal-radius)",
-        boxShadow: "var(--portal-shadow)",
-        padding: 20,
+        padding: "18px 20px",
         textDecoration: "none",
         color: "inherit",
       }}
     >
       <div className="flex items-center gap-4">
         <span
-          className="inline-flex items-center justify-center"
+          className="gh-doctor-quick-card__tile inline-flex items-center justify-center"
           style={{
-            width: 36,
-            height: 36,
-            borderRadius: "var(--portal-radius-sm)",
-            background: "var(--portal-well)",
+            width: 40,
+            height: 40,
+            borderRadius: "var(--portal-radius)",
             color: "var(--portal-accent-text)",
           }}
         >
           {icon}
         </span>
-        <div>
-          <p className="text-sm font-bold text-[var(--portal-text)]">{label}</p>
+        <div className="min-w-0">
+          <p className="gh-doctor-quick-card__label text-sm font-bold text-[var(--portal-text)]">{label}</p>
           <p className="text-xs text-[var(--portal-muted)]">{hint}</p>
         </div>
       </div>
