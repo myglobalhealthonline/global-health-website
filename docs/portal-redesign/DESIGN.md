@@ -1,5 +1,14 @@
 # DESIGN.md — Obsidian Ivory Portal Design System (binding spec)
 
+> **⚠ LUX LAYER EXISTS:** `docs/portal-redesign/LUX-VISUAL-PASS.md`
+> ("Liquid Lux") sits ON TOP of this file and **wins on any visual
+> conflict** — materials, shadows, gradients, glass, headers, icons,
+> numerals. Layer order: **LUX-VISUAL-PASS.md ▸ this file ▸ strategy doc
+> ▸ dependency map.** This file remains the authority for: tokens base,
+> behavior freeze, shells lockstep, green language, file ownership, a11y
+> gates, phase order, and everything LUX is silent on. If you are
+> implementing visuals, read LUX-VISUAL-PASS.md FIRST.
+>
 > **Audience:** any AI coding agent (or human) implementing the portal
 > redesign. This file is self-contained — an agent with only this file and
 > the dependency map can implement the design without inventing anything.
@@ -34,7 +43,10 @@
 1. Every color/radius/shadow/blur is `var(--portal-*)`. No inline hex in
    components, ever. Missing token → add it to the `.gh-portal-shell`
    block in `globals.css`.
-2. Only the chrome blurs. Content surfaces are opaque.
+2. Only the chrome blurs. Content surfaces are opaque. *(Amended by
+   LUX-VISUAL-PASS.md §2.3: content cards may use Material B "Ivory
+   Liquid Glass" blur within the stated blur budget; wells, rows,
+   inputs, pills, buttons stay opaque.)*
 3. Lime `#B0F122` is never body text on white/ivory and never a surface
    fill. Text-safe form is `--portal-signal-text` (`#4E6B10`).
 4. Surfaces are neutral. Green appears only as forest (action), mint
@@ -320,6 +332,12 @@ truncate with title attribute.
 ---
 
 ## §5. Component recipes (binding)
+
+> **Visual values below are the BASE layer.** LUX-VISUAL-PASS.md §5
+> upgrades the skins (materials, layered shadows, gradient borders,
+> gradient numerals, header modes) — where LUX defines a value, use LUX.
+> Anatomy, sizes, behavior, and semantics below remain binding either
+> way.
 
 ### 5.0 Shell canvas + plane
 
@@ -720,10 +738,11 @@ Every list surface MUST render its empty state. Every route group gets
 
 ## §9. Iconography, data-viz, imagery
 
-- **Icons:** existing icon usage stays; sizes 16 (inline) / 20 (nav,
-  buttons) / 24 (empty-state tiles); stroke-style consistent; color =
-  contextual text color, accent only when the icon IS the signal (live
-  dot, verified check).
+- **Icons:** library is `lucide-react` (confirmed dependency). Full
+  binding system — sizes, strokeWidths, opacity ladder, canonical
+  glyph map for ~35 concepts — lives in **LUX-VISUAL-PASS.md §6**; use
+  it. Base rule here: color = contextual text color via `currentColor`,
+  accent only when the icon IS the signal (live dot, verified check).
 - **Charts/telemetry (subscription health, reports):** series 1 = lime,
   series 2 = mint, series 3 = forest, remaining = grays; gridlines
   `--portal-line-soft`; axis labels 11px muted; numerals tabular; no 3D,
@@ -896,9 +915,12 @@ TYPE        band numeral 44–56 tabular · h1 clamp(24,2vw,34) · section 16 ·
 MOTION      120/200/280ms · transform+opacity only · one ambient max
 BLUR        chrome 28 · overlay 8 · nothing else
 SIGNATURE   CommandBand: dark glass panel, luminous numerals, one live tick — dashboards only
-NEVER       lime text on white · green surfaces · blur on content · new gradients · inline hex · pill actions
+LUX LAYER   LUX-VISUAL-PASS.md wins on visuals: 4 materials (Obsidian Liquid / Ivory Liquid Glass / Etched Well / Halo Elevated),
+            --lux-* tokens, 5-layer shadow stacks, gradient-border cards, gradient numerals, header modes, lucide icon system
+NEVER       lime text on white · green surfaces · blur outside the LUX budget · unsanctioned gradients · inline hex · pill actions
 ```
 
 *Written 2026-07-02, branch `Dev-hassaan`. Companion:
+`LUX-VISUAL-PASS.md` (visual upgrade layer — wins on visual conflict),
 `premium-portal-redesign-strategy.md` (rationale + per-route plans),
 `portal-shared-ui-dependency-map.md` (dependency truth).*
