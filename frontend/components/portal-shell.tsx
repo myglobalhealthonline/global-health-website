@@ -40,6 +40,14 @@ export type PortalNavItem = {
   badge?: number;
 };
 
+/** A labeled cluster of nav items. Each group renders its own eyebrow
+ *  (`SidebarSectionLabel`) above its items — mirrors the Global/Country
+ *  split in `AdminShell` so all three portals share one visual language. */
+export type PortalNavGroup = {
+  label: string;
+  items: PortalNavItem[];
+};
+
 type SignOutAction = () => Promise<void> | void;
 
 function initials(name: string, email: string): string {
@@ -87,9 +95,8 @@ function useBreadcrumbs(pathname: string, rootHref: string, rootLabel: string) {
 export function PortalShell({
   user,
   portalKey,
-  sections,
+  groups,
   portalLabel,
-  sectionLabel,
   rootHref,
   rootBreadcrumb,
   signOutAction,
@@ -104,11 +111,10 @@ export function PortalShell({
   user: PortalShellUser;
   /** Drives `data-portal` (role accent token) — "doctor" or "patient". */
   portalKey: "doctor" | "patient";
-  sections: PortalNavItem[];
+  /** Labeled nav groups, rendered top-to-bottom with an eyebrow each. */
+  groups: PortalNavGroup[];
   /** Mint eyebrow under logo (e.g., "Doctor portal"). */
   portalLabel: string;
-  /** "GLOBAL" / "Account" label above the nav list. */
-  sectionLabel: string;
   /** Home route — "/doctor" or "/account". */
   rootHref: string;
   /** First breadcrumb label (e.g., "Doctor", "Account"). */
@@ -195,23 +201,27 @@ export function PortalShell({
             </p>
           </div>
 
-          <nav className="gh-dark-scroll flex-1 overflow-y-auto">
-            <SidebarSectionLabel label={sectionLabel} />
-            <div className="px-3 pb-6 pt-1">
-              <div className="grid gap-0.5">
-                {sections.map((s) => (
-                  <SidebarItem
-                    key={s.href}
-                    href={s.href}
-                    icon={s.icon}
-                    label={s.label}
-                    badge={s.badge}
-                    active={isActive(s.href)}
-                    onNavigate={() => setNavOpen(false)}
-                  />
-                ))}
+          <nav className="gh-dark-scroll flex-1 overflow-y-auto pb-6">
+            {groups.map((group) => (
+              <div key={group.label}>
+                <SidebarSectionLabel label={group.label} />
+                <div className="px-3 pt-1">
+                  <div className="grid gap-0.5">
+                    {group.items.map((s) => (
+                      <SidebarItem
+                        key={s.href}
+                        href={s.href}
+                        icon={s.icon}
+                        label={s.label}
+                        badge={s.badge}
+                        active={isActive(s.href)}
+                        onNavigate={() => setNavOpen(false)}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
           </nav>
 
           <div

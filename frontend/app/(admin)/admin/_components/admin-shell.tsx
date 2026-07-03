@@ -10,17 +10,20 @@ import {
   CreditCard,
   FileText,
   Globe2,
+  HeartPulse,
   ImageIcon,
   Layers,
   LayoutDashboard,
   Mail,
   Menu,
   Newspaper,
+  ReceiptText,
   ShoppingBag,
   Stethoscope,
   Tags,
   UserRound,
   Users,
+  Workflow,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -54,8 +57,11 @@ const GLOBAL_ICONS: Record<string, LucideIcon> = {
   "/admin/doctors": UserRound,
   "/admin/assets": ImageIcon,
   "/admin/users": Users,
+  "/admin/patients": HeartPulse,
   "/admin/newsletter": Mail,
   "/admin/orders": ShoppingBag,
+  "/admin/invoices": ReceiptText,
+  "/admin/automation": Workflow,
   "/admin/pages": FileText,
   "/admin/services": Stethoscope,
   "/admin/blog": Newspaper,
@@ -73,11 +79,27 @@ const GLOBAL_HREFS = new Set([
   "/admin/specialties",
   "/admin/assets",
   "/admin/users",
+  "/admin/patients",
   "/admin/orders",
+  "/admin/invoices",
+  "/admin/automation",
   "/admin/newsletter",
   "/admin/subscriptions",
   "/admin/audit-log",
 ]);
+
+// Sub-groups within the Global section — related admin-wide links clustered
+// under labeled eyebrows so the (14-item) Global list stays scannable.
+// Ordering within each group follows the href order here. Any Global item
+// not listed falls into a trailing "More" group (see render) so nothing is
+// silently dropped.
+const GLOBAL_GROUPS: { label: string; hrefs: string[] }[] = [
+  { label: "Overview", hrefs: ["/admin", "/admin/calendar"] },
+  { label: "Catalog", hrefs: ["/admin/countries", "/admin/doctors", "/admin/assets", "/admin/blog"] },
+  { label: "People", hrefs: ["/admin/users", "/admin/patients"] },
+  { label: "Commerce", hrefs: ["/admin/orders", "/admin/invoices", "/admin/subscriptions"] },
+  { label: "System", hrefs: ["/admin/newsletter", "/admin/automation", "/admin/audit-log"] },
+];
 
 const COUNTRY_HREFS = new Set([
   "/admin/plans",
@@ -177,6 +199,30 @@ function partitionSections(
   return { global, country };
 }
 
+/** Bucket the flat Global list into labeled sub-groups per GLOBAL_GROUPS.
+ *  Item order inside a group follows the group's href order. Anything not
+ *  claimed by a group lands in a trailing "More" group so no item vanishes
+ *  if a new route is added to the layout but not to GLOBAL_GROUPS. */
+function bucketGlobalSections(global: Section[]): { label: string; items: Section[] }[] {
+  const byHref = new Map(global.map((s) => [s.href, s]));
+  const used = new Set<string>();
+  const groups: { label: string; items: Section[] }[] = [];
+  for (const g of GLOBAL_GROUPS) {
+    const items: Section[] = [];
+    for (const href of g.hrefs) {
+      const s = byHref.get(href);
+      if (s) {
+        items.push(s);
+        used.add(href);
+      }
+    }
+    if (items.length > 0) groups.push({ label: g.label, items });
+  }
+  const leftovers = global.filter((s) => !used.has(s.href));
+  if (leftovers.length > 0) groups.push({ label: "More", items: leftovers });
+  return groups;
+}
+
 function initials(name: string, email: string): string {
   if (name?.trim()) {
     return name
@@ -250,6 +296,10 @@ export function AdminShell({
     () => partitionSections(sections, activeCountry?.enabledFeatures),
     [sections, activeCountry?.enabledFeatures],
   );
+  const globalGroups = useMemo(
+    () => bucketGlobalSections(globalSections),
+    [globalSections],
+  );
   const countryScopeLabel = activeCountry ? activeCountry.name : "Country";
   const countryDimmed = !activeCountry;
 
@@ -312,26 +362,30 @@ export function AdminShell({
           </div>
 
           <nav className="gh-dark-scroll flex-1 overflow-y-auto">
-            {/* ── Global section ────────────────────────────────── */}
-            <SidebarSectionLabel label="Global" />
-            <div className="px-3 pt-1">
-              <div className="grid gap-0.5">
-                {globalSections.map((section) => {
-                  const Icon = GLOBAL_ICONS[section.href] ?? LayoutDashboard;
-                  return (
-                    <SidebarItem
-                      key={section.href}
-                      href={section.href}
-                      icon={<Icon className="size-4" aria-hidden />}
-                      label={section.label}
-                      active={isActive(section.href)}
-                      badge={navBadges?.[section.href]}
-                      onNavigate={() => setNavOpen(false)}
-                    />
-                  );
-                })}
+            {/* ── Global section — sub-grouped for scannability ──── */}
+            {globalGroups.map((group) => (
+              <div key={group.label}>
+                <SidebarSectionLabel label={group.label} />
+                <div className="px-3 pt-1">
+                  <div className="grid gap-0.5">
+                    {group.items.map((section) => {
+                      const Icon = GLOBAL_ICONS[section.href] ?? LayoutDashboard;
+                      return (
+                        <SidebarItem
+                          key={section.href}
+                          href={section.href}
+                          icon={<Icon className="size-4" aria-hidden />}
+                          label={section.label}
+                          active={isActive(section.href)}
+                          badge={navBadges?.[section.href]}
+                          onNavigate={() => setNavOpen(false)}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
 
             {/* ── Country-scoped section (dims when no country) ──── */}
             {countrySections.length > 0 ? (

@@ -20,7 +20,7 @@ import {
   fetchDoctorNotifications,
   fetchDoctorUnreadMessageCount,
 } from "@/lib/api/doctor-api";
-import { PortalShell, type PortalNavItem } from "@/components/portal-shell";
+import { PortalShell, type PortalNavItem, type PortalNavGroup } from "@/components/portal-shell";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 
 /**
@@ -96,32 +96,56 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
         }))
       : [{ href: "/doctor/profile", label: "Profile", icon: <UserCog className="size-4" aria-hidden /> }];
 
-  const sections: PortalNavItem[] = [
-    { href: "/doctor", label: "Overview", icon: <LayoutDashboard className="size-4" aria-hidden /> },
-    { href: "/doctor/appointments", label: "Appointments", icon: <Calendar className="size-4" aria-hidden />, badge: unreadMessages },
-    { href: "/doctor/calendar", label: "Calendar", icon: <CalendarRange className="size-4" aria-hidden /> },
-    { href: "/doctor/availability", label: "Availability", icon: <CalendarClock className="size-4" aria-hidden /> },
-    { href: "/doctor/services", label: "My Services", icon: <Stethoscope className="size-4" aria-hidden /> },
-    { href: "/doctor/patients", label: "Patients", icon: <Users className="size-4" aria-hidden /> },
-    { href: "/doctor/forms", label: "Forms", icon: <FileText className="size-4" aria-hidden /> },
-    { href: "/doctor/invoices", label: "Invoices", icon: <Receipt className="size-4" aria-hidden /> },
-    { href: "/doctor/reports", label: "Reports", icon: <BarChart3 className="size-4" aria-hidden /> },
+  const groups: PortalNavGroup[] = [
     {
-      href: "/doctor/notifications",
-      label: "Notifications",
-      icon: <Bell className="size-4" aria-hidden />,
-      badge: unreadCount,
+      label: "Overview",
+      items: [
+        { href: "/doctor", label: "Overview", icon: <LayoutDashboard className="size-4" aria-hidden /> },
+      ],
     },
-    ...profileItems,
+    {
+      label: "Schedule",
+      items: [
+        { href: "/doctor/appointments", label: "Appointments", icon: <Calendar className="size-4" aria-hidden />, badge: unreadMessages },
+        { href: "/doctor/calendar", label: "Calendar", icon: <CalendarRange className="size-4" aria-hidden /> },
+        { href: "/doctor/availability", label: "Availability", icon: <CalendarClock className="size-4" aria-hidden /> },
+      ],
+    },
+    {
+      label: "Practice",
+      items: [
+        { href: "/doctor/patients", label: "Patients", icon: <Users className="size-4" aria-hidden /> },
+        { href: "/doctor/services", label: "My Services", icon: <Stethoscope className="size-4" aria-hidden /> },
+        { href: "/doctor/forms", label: "Forms", icon: <FileText className="size-4" aria-hidden /> },
+      ],
+    },
+    {
+      label: "Finance",
+      items: [
+        { href: "/doctor/invoices", label: "Invoices", icon: <Receipt className="size-4" aria-hidden /> },
+        { href: "/doctor/reports", label: "Reports", icon: <BarChart3 className="size-4" aria-hidden /> },
+      ],
+    },
+    {
+      label: "Account",
+      items: [
+        {
+          href: "/doctor/notifications",
+          label: "Notifications",
+          icon: <Bell className="size-4" aria-hidden />,
+          badge: unreadCount,
+        },
+        ...profileItems,
+      ],
+    },
   ];
 
   return (
     <PortalShell
       user={{ fullName: user.fullName, email: user.email, role: user.role }}
       portalKey="doctor"
-      sections={sections}
+      groups={groups}
       portalLabel="Doctor portal"
-      sectionLabel="Global"
       rootHref="/doctor"
       rootBreadcrumb="Doctor"
       signOutAction={logoutAction}
