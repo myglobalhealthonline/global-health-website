@@ -108,7 +108,7 @@ export function NotificationPopover({
               borderRadius: "var(--portal-radius-xl)",
               border: "1px solid var(--portal-line)",
               background: "var(--portal-surface-elevated)",
-              boxShadow: "var(--portal-shadow-modal)",
+              boxShadow: "var(--portal-shadow-popover)",
             }}
           >
             <div
@@ -142,7 +142,10 @@ export function NotificationPopover({
                         <span
                           aria-hidden
                           className="mt-[6px] size-[5px] shrink-0 rounded-full"
-                          style={{ background: "var(--portal-signal)" }}
+                          style={{
+                            background: "var(--portal-signal)",
+                            boxShadow: "0 0 0 2px var(--portal-signal-glow)",
+                          }}
                         />
                       ) : (
                         <span aria-hidden className="mt-[6px] size-[5px] shrink-0" />

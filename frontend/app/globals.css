@@ -1661,6 +1661,7 @@ img {
   --portal-shadow: 0 1px 2px rgba(7, 18, 12, 0.05), 0 12px 32px rgba(7, 18, 12, 0.07);
   --portal-shadow-hover: 0 2px 4px rgba(7, 18, 12, 0.06), 0 18px 44px rgba(7, 18, 12, 0.11);
   --portal-shadow-modal: 0 24px 80px rgba(5, 12, 8, 0.45);
+  --portal-shadow-popover: 0 24px 80px rgba(5, 12, 8, 0.27); /* modal @60% strength — DESIGN.md §5.10 */
 
   /* ── geometry ───────────────────────────────────────────── */
   --portal-radius-sm: 8px;
@@ -1696,9 +1697,12 @@ img {
 }
 
 /* Eyebrow — .gh-eyebrow itself is shared with the public site (hard rule
- * #10); only the color is overridden here, scoped to the portal. */
+ * #10); color/size/weight are overridden here, scoped to the portal
+ * (DESIGN.md §5.4: 12px/800 vs the public site's 13px/500). */
 .gh-portal-shell .gh-eyebrow {
   color: var(--portal-accent-text);
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .gh-portal-eyebrow-dot {
@@ -2100,6 +2104,16 @@ a.gh-stat-card:hover .gh-stat-card__underline {
   color: var(--portal-chrome-text);
 }
 
+/* Live/unread badges (unread messages, notifications, pending approvals)
+ * — DESIGN.md §5.1: 5px signal dot + halo, not the neutral chrome chip.
+ * Keeps the count (useful) but swaps the neutral fill for the signal
+ * treatment used everywhere else "happening now" is communicated. */
+.gh-portal-nav-item__badge--live {
+  background: var(--portal-signal-soft);
+  color: var(--portal-signal-text);
+  box-shadow: 0 0 0 2px var(--portal-signal-glow);
+}
+
 .gh-portal-main {
   width: min(100%, var(--portal-main-max));
   max-width: var(--portal-main-max);
@@ -2214,6 +2228,76 @@ a.gh-stat-card:hover {
   min-width: 0;
 }
 
+/* Forms — DESIGN.md §5.11. Like .gh-btn/.gh-eyebrow, .gh-input/.gh-select/
+ * .gh-textarea are shared with the public site (hard rule #10), so the
+ * portal recipe is scoped to .gh-portal-shell rather than touching the
+ * base rule. This is the actual source of truth now; the descendant
+ * safety net below is redundant by construction (identical values, lower
+ * specificity) and kept only as defense-in-depth for anything that
+ * slips past the scoped selector. */
+.gh-portal-shell .gh-input,
+.gh-portal-shell .gh-select,
+.gh-portal-shell .gh-textarea,
+.gh-admin-main input,
+.gh-admin-main select,
+.gh-admin-main textarea {
+  min-width: 0;
+  border-radius: var(--portal-radius);
+  border-color: var(--portal-line);
+  background: var(--portal-well);
+  color: var(--portal-text);
+  font-size: 14px;
+  box-shadow: none;
+  transition: background-color 160ms ease-out, border-color 160ms ease-out, box-shadow 160ms ease-out;
+}
+
+.gh-portal-shell .gh-input,
+.gh-portal-shell .gh-select,
+.gh-admin-main input,
+.gh-admin-main select {
+  min-height: 44px;
+}
+
+.gh-portal-shell .gh-textarea,
+.gh-admin-main textarea {
+  min-height: 110px;
+}
+
+.gh-portal-shell .gh-input:focus-visible,
+.gh-portal-shell .gh-select:focus-visible,
+.gh-portal-shell .gh-textarea:focus-visible,
+.gh-admin-main input:focus-visible,
+.gh-admin-main select:focus-visible,
+.gh-admin-main textarea:focus-visible {
+  outline: none;
+  background: var(--portal-surface);
+  border-color: var(--portal-mint-text);
+  box-shadow: 0 0 0 3px var(--portal-focus);
+}
+
+.gh-portal-shell .gh-input:disabled,
+.gh-portal-shell .gh-select:disabled,
+.gh-portal-shell .gh-textarea:disabled,
+.gh-admin-main input:disabled,
+.gh-admin-main select:disabled,
+.gh-admin-main textarea:disabled {
+  background: var(--portal-well);
+  opacity: 0.6;
+}
+
+.gh-portal-shell .gh-input[aria-invalid="true"],
+.gh-portal-shell .gh-select[aria-invalid="true"],
+.gh-portal-shell .gh-textarea[aria-invalid="true"],
+.gh-admin-main input[aria-invalid="true"],
+.gh-admin-main select[aria-invalid="true"],
+.gh-admin-main textarea[aria-invalid="true"] {
+  border-color: var(--portal-danger);
+  box-shadow: 0 0 0 3px var(--portal-danger-soft);
+}
+
+/* Safety net — DESIGN.md §5.11: redundant with the scoped rule above
+ * (identical values), kept only so a raw <input> that somehow renders
+ * outside .gh-portal-shell but inside .gh-admin-main still gets styled. */
 .gh-admin-main :where(.gh-input, .gh-select, .gh-textarea, input, select, textarea) {
   min-width: 0;
   border-radius: var(--portal-radius) !important;
@@ -2686,6 +2770,32 @@ a.gh-stat-card:hover {
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+/* Notification popover / user menu — DESIGN.md §5.10: scale 0.96->1 +
+ * fade 200ms from the trigger origin. */
+.gh-notification-popover,
+.gh-portal-user-menu {
+  transform-origin: top right;
+  animation: gh-popover-in 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes gh-popover-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-notification-popover,
+  .gh-portal-user-menu {
+    animation: none;
   }
 }
 
@@ -3606,6 +3716,22 @@ a.gh-stat-card:hover {
 
 .gh-admin-country-picker-menu {
   overflow: hidden;
+  /* Radix renders this menu through a portal on <body>, OUTSIDE
+     .gh-portal-shell — so the scoped --portal-* vars don't cascade in and
+     the inline `background: var(--portal-surface-elevated)` resolved to
+     nothing (transparent). Re-declare the vars the menu + its items
+     reference so they resolve at the portal root. */
+  --portal-surface-elevated: #ffffff;
+  --portal-well: #f2f4ee;
+  --portal-line: rgba(16, 23, 19, 0.08);
+  --portal-text: #101713;
+  --portal-muted: #6d6d6d;
+  --portal-mint-soft: rgba(143, 176, 33, 0.12);
+  --portal-accent-text: #4e6b10;
+  --portal-radius-xl: 18px;
+  --portal-shadow-modal: 0 24px 80px rgba(5, 12, 8, 0.45);
+  /* Belt-and-braces: an explicit opaque fallback even if a var is missing. */
+  background: var(--portal-surface-elevated, #ffffff);
 }
 
 @media (max-width: 760px) {
@@ -4876,8 +5002,8 @@ a.gh-stat-card:hover {
 
 .gh-admin-plan-tab[aria-selected="true"],
 .gh-admin-plan-translation-tab[aria-selected="true"] {
-  background: #184633 !important;
-  color: #ffffff !important;
+  background: var(--portal-primary) !important;
+  color: var(--portal-bg) !important;
 }
 
 .gh-admin-plan-field-grid {
@@ -4895,6 +5021,14 @@ a.gh-stat-card:hover {
 .gh-admin-rich-text__frame {
   border-color: var(--portal-line, var(--color-border)) !important;
   border-radius: var(--portal-radius, 10px) !important;
+  transition: border-color 180ms ease-out, box-shadow 180ms ease-out;
+}
+
+/* Same focus shell as .gh-input — DESIGN.md §5.11: the rich-text editor
+ * chrome gets the same border/focus treatment as a plain field. */
+.gh-admin-rich-text__frame:focus-within {
+  border-color: var(--portal-mint-text) !important;
+  box-shadow: 0 0 0 3px var(--portal-focus);
 }
 
 .gh-admin-rich-text__toolbar {
