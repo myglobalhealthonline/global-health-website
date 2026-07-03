@@ -224,7 +224,11 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
             <button
               type="button"
               onClick={() =>
-                setOpenChatId((current) => (current === item.id ? null : item.id))
+                setOpenChatId((current) => {
+                  const next = current === item.id ? null : item.id;
+                  if (next) setOpenConsultChatId(null);
+                  return next;
+                })
               }
               className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-emerald-700 hover:bg-[var(--portal-well)] sm:w-auto"
             >
@@ -244,7 +248,11 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
               <button
                 type="button"
                 onClick={() =>
-                  setOpenConsultChatId((current) => (current === item.id ? null : item.id))
+                  setOpenConsultChatId((current) => {
+                    const next = current === item.id ? null : item.id;
+                    if (next) setOpenChatId(null);
+                    return next;
+                  })
                 }
                 className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-emerald-700 hover:bg-[var(--portal-well)] sm:w-auto"
               >
