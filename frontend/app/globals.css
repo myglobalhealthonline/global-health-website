@@ -1743,6 +1743,16 @@ img {
   --lux-chat-own-rim: inset 0 1px 0 rgba(255, 255, 255, 0.12);
   --lux-calendar-today-ring: 0 0 0 2px var(--portal-accent), 0 0 0 6px color-mix(in srgb, var(--portal-accent) 30%, transparent);
   --lux-mobile-edge: linear-gradient(180deg, var(--portal-accent), transparent);
+  --lux-header-aura: radial-gradient(520px 220px at 0% 0%, color-mix(in srgb, var(--portal-accent) 10%, transparent), transparent 68%);
+  --lux-header-aura-patient: radial-gradient(520px 220px at 0% 0%, color-mix(in srgb, var(--portal-signal) 9%, transparent), transparent 68%);
+  --lux-header-aura-doctor: radial-gradient(520px 220px at 0% 0%, color-mix(in srgb, var(--portal-accent) 6%, transparent), transparent 68%);
+  --lux-header-rule: linear-gradient(90deg, var(--portal-accent), transparent 72%);
+  --lux-status-edge-success: linear-gradient(180deg, var(--portal-success), transparent);
+  --lux-status-edge-warning: linear-gradient(180deg, var(--portal-warning), transparent);
+  --lux-status-edge-danger: linear-gradient(180deg, var(--portal-danger), transparent);
+  --lux-status-edge-info: linear-gradient(180deg, var(--portal-info), transparent);
+  --lux-status-edge-brand: linear-gradient(180deg, var(--portal-primary), transparent);
+  --lux-status-edge-live: linear-gradient(180deg, var(--portal-signal), transparent);
   --lux-specular: rgba(255, 255, 255, 0.95);
   --lux-streak: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.05) 45%, rgba(255, 255, 255, 0.015) 52%, transparent 60%);
   --lux-blur-card: 24px;
@@ -2346,13 +2356,47 @@ a.gh-stat-card:hover .gh-stat-card__underline {
  * this is only a safety net for raw <header> markup that skips the atom. */
 .gh-portal-page-header,
 .gh-admin-main > header:not(.gh-portal-page-header) {
+  position: relative;
+  isolation: isolate;
   min-height: 0;
   margin-bottom: 0;
-  padding: 0 0 var(--portal-section-gap) 0;
+  padding: 4px 0 var(--portal-section-gap) 0;
   border: none;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
+}
+
+.gh-portal-page-header::before,
+.gh-admin-main > header:not(.gh-portal-page-header)::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -18px -20px auto -20px;
+  height: 160px;
+  border-radius: var(--portal-radius-xl);
+  background: var(--lux-header-aura);
+  pointer-events: none;
+}
+
+[data-portal="patient"] .gh-portal-page-header::before {
+  background: var(--lux-header-aura-patient);
+}
+
+[data-portal="doctor"] .gh-portal-page-header::before {
+  background: var(--lux-header-aura-doctor);
+}
+
+.gh-portal-page-header::after,
+.gh-admin-main > header:not(.gh-portal-page-header)::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  bottom: 8px;
+  width: min(220px, 42vw);
+  height: 1px;
+  background: var(--lux-header-rule);
+  pointer-events: none;
 }
 
 .gh-admin-main > header:not(.gh-portal-page-header) h1,
@@ -2368,6 +2412,17 @@ a.gh-stat-card:hover .gh-stat-card__underline {
 .gh-admin-main > header:not(.gh-portal-page-header) p {
   color: var(--portal-text-2);
   max-width: 68ch;
+}
+
+.gh-portal-page-header h1,
+.gh-admin-main > header:not(.gh-portal-page-header) h1,
+.gh-admin-main > header:not(.gh-portal-page-header) h2 {
+  text-wrap: balance;
+}
+
+.gh-portal-page-header p,
+.gh-admin-main > header:not(.gh-portal-page-header) p {
+  text-wrap: pretty;
 }
 
 /* Cards — L3 recipe (DESIGN.md §5.5): white, radius 14, hairline border,
@@ -4004,6 +4059,7 @@ a.gh-stat-card:hover {
   gap: 10px;
   min-width: 0;
   padding: 8px 0;
+  border-bottom: 1px solid var(--portal-line-soft);
 }
 
 .gh-document-row--consumer {
@@ -4019,8 +4075,10 @@ a.gh-stat-card:hover {
   width: 32px;
   height: 32px;
   border-radius: var(--portal-radius-sm);
-  background: var(--portal-well);
+  border: 1px solid var(--portal-line-soft);
+  background: var(--lux-well-fill);
   color: var(--portal-accent-text);
+  box-shadow: var(--lux-inset-well);
 }
 
 .gh-document-row--consumer .gh-document-row__icon {
@@ -4069,6 +4127,10 @@ a.gh-stat-card:hover {
 .gh-document-row--consumer .gh-document-row__actions > * {
   min-width: 44px;
   min-height: 44px;
+}
+
+.gh-document-row:last-child {
+  border-bottom: 0;
 }
 
 .gh-admin-scope-banner {
@@ -7569,17 +7631,20 @@ a.gh-stat-card:hover {
   grid-template-columns: minmax(84px, auto) minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 16px;
-  border: 1px solid var(--portal-line);
+  border: 1px solid transparent;
   border-radius: var(--portal-radius-lg);
-  background: var(--portal-surface);
+  background-image: var(--lux-card-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
   padding: 14px 18px 14px 21px;
+  box-shadow: var(--lux-elev-press);
   text-decoration: none;
   color: inherit;
   transition: box-shadow 160ms, transform 160ms;
 }
 
 a.gh-appointment-card:hover {
-  box-shadow: 0 10px 24px rgba(20, 55, 43, 0.08);
+  box-shadow: var(--lux-elev-1);
   transform: translateY(-1px);
 }
 
@@ -7595,21 +7660,22 @@ a.gh-appointment-card:hover {
   bottom: 0;
   width: 3px;
   border-radius: var(--portal-radius-lg) 0 0 var(--portal-radius-lg);
-  background: var(--portal-line-strong);
+  background: var(--lux-mobile-edge);
+  box-shadow: 0 0 8px var(--portal-signal-glow);
 }
 
-.gh-appointment-card--success::before { background: var(--portal-success); }
-.gh-appointment-card--warning::before { background: var(--portal-warning); }
-.gh-appointment-card--danger::before { background: var(--portal-danger); }
-.gh-appointment-card--info::before { background: var(--portal-info); }
-.gh-appointment-card--brand::before { background: var(--portal-primary); }
+.gh-appointment-card--success::before { background: var(--lux-status-edge-success); }
+.gh-appointment-card--warning::before { background: var(--lux-status-edge-warning); }
+.gh-appointment-card--danger::before { background: var(--lux-status-edge-danger); }
+.gh-appointment-card--info::before { background: var(--lux-status-edge-info); }
+.gh-appointment-card--brand::before { background: var(--lux-status-edge-brand); }
 
 .gh-appointment-card--live {
-  box-shadow: 0 0 0 1px var(--portal-signal-glow);
+  box-shadow: var(--lux-elev-2);
 }
 
 .gh-appointment-card--live::before {
-  background: var(--portal-signal);
+  background: var(--lux-status-edge-live);
   box-shadow: 0 0 12px var(--portal-signal-glow);
   animation: gh-agenda-now-breathe 3s ease-in-out infinite;
 }
