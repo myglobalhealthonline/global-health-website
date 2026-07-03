@@ -94,10 +94,13 @@ export default async function DoctorOverviewPage() {
       : "");
 
   // "Now" instrument (DESIGN.md §6.1) — is the next appointment already
-  // underway? Open list already excludes CANCELLED/COMPLETED, so a
-  // started-but-still-open row reads as live.
+  // underway? Open list already excludes CANCELLED/COMPLETED; the live
+  // window cap keeps stale never-finalized rows from reading live forever.
+  const LIVE_WINDOW_MS = 90 * 60 * 1000;
   const isLive = Boolean(
-    nextAppointment?.scheduledAt && new Date(nextAppointment.scheduledAt) <= now,
+    nextAppointment?.scheduledAt &&
+      new Date(nextAppointment.scheduledAt) <= now &&
+      now.getTime() <= new Date(nextAppointment.scheduledAt).getTime() + LIVE_WINDOW_MS,
   );
 
   return (

@@ -60,7 +60,7 @@ export default async function AccountPrescriptionsPage() {
       ) : null}
 
       {/* ── Issued by your doctor (clinical) ────────────────────── */}
-      <AdminCard padding={0} className="mb-4">
+      <AdminCard padding={0} className="mb-4 gh-card-jewel">
         <SectionHeader
           title={
             <span className="inline-flex items-center gap-2">

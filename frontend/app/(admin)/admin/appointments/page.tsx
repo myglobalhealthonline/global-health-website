@@ -114,14 +114,15 @@ function statusToneForAppointmentCard(status: string): AppointmentCardTone {
 
 // Same "in progress now" shape as the Doctor CommandBand instrument and
 // AppointmentCard on /doctor/appointments (DESIGN.md §6.1, §5.20):
-// scheduled time has passed and the row hasn't been finalized yet.
+// scheduled time has passed, the row hasn't been finalized, and we're
+// still inside the live window — stale open rows must not glow forever.
+const LIVE_WINDOW_MS = 90 * 60 * 1000;
+
 function isAppointmentLive(a: { scheduledAt: string | null; status: string }): boolean {
-  return Boolean(
-    a.scheduledAt &&
-      new Date(a.scheduledAt) <= new Date() &&
-      a.status !== "COMPLETED" &&
-      a.status !== "CANCELLED",
-  );
+  if (!a.scheduledAt || a.status === "COMPLETED" || a.status === "CANCELLED") return false;
+  const start = new Date(a.scheduledAt).getTime();
+  const now = Date.now();
+  return start <= now && now <= start + LIVE_WINDOW_MS;
 }
 
 type PageProps = {

@@ -14,15 +14,17 @@ import { AppointmentCard, type AppointmentCardTone } from "@/components/Appointm
 import { formatAppTime } from "@/lib/format-datetime";
 
 // Same-shape "in progress now" check as the CommandBand instrument on
-// /doctor (DESIGN.md §6.1) — scheduled time has passed and the row is
-// still open (not finalized to COMPLETED/CANCELLED).
+// /doctor (DESIGN.md §6.1) — scheduled time has passed, the row is still
+// open (not finalized to COMPLETED/CANCELLED), and we're still inside the
+// live window. Without the window cap, every stale never-finalized row
+// reads "Live now" forever.
+const LIVE_WINDOW_MS = 90 * 60 * 1000;
+
 function isAppointmentLive(a: Pick<DoctorAppointment, "scheduledAt" | "status">): boolean {
-  return Boolean(
-    a.scheduledAt &&
-      new Date(a.scheduledAt) <= new Date() &&
-      a.status !== "COMPLETED" &&
-      a.status !== "CANCELLED",
-  );
+  if (!a.scheduledAt || a.status === "COMPLETED" || a.status === "CANCELLED") return false;
+  const start = new Date(a.scheduledAt).getTime();
+  const now = Date.now();
+  return start <= now && now <= start + LIVE_WINDOW_MS;
 }
 
 function statusToneForAppointmentCard(status: string): AppointmentCardTone {
@@ -225,7 +227,7 @@ export default async function DoctorAppointmentsPage({
           }
         />
       ) : (
-        <div className="gh-card gh-doctor-table-card p-0 overflow-hidden">
+        <div className="gh-card gh-card-jewel gh-doctor-table-card p-0 overflow-hidden">
           <div className="hidden md:grid gap-2 p-3">
             {appointments.map((a: DoctorAppointment) => {
               const live = isAppointmentLive(a);

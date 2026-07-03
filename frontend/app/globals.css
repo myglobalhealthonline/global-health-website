@@ -1775,7 +1775,9 @@ img {
   --lux-asset-header: url("/images/portal/obsidian/header-aura.webp");
   --lux-asset-band: url("/images/portal/obsidian/band-aurora.webp");
   --lux-asset-member: url("/images/portal/obsidian/membership-silk.png");
+  --lux-asset-card-silk: url("/images/portal/obsidian/card-silk.webp");
   --lux-asset-veil-light: linear-gradient(rgba(250, 251, 247, 0.70), rgba(250, 251, 247, 0.70));
+  --lux-asset-veil-silk: linear-gradient(rgba(250, 251, 247, 0.76), rgba(250, 251, 247, 0.76));
   --lux-asset-veil-plane: linear-gradient(rgba(250, 251, 247, 0.68), rgba(248, 250, 244, 0.68));
   --lux-asset-veil-dark: linear-gradient(rgba(7, 18, 12, 0.50), rgba(7, 18, 12, 0.50));
   --lux-asset-header-mask: linear-gradient(180deg, #000 60%, transparent);
@@ -2487,6 +2489,35 @@ a.gh-stat-card:hover .gh-stat-card__underline {
 .gh-stat-card.is-static {
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
+}
+
+/* §7.1 jewel card + §13 V2 — the ONE primary card on a band-less screen:
+ * accent corner bloom over card-silk.webp behind a 0.76 ivory veil
+ * (effective ≤0.24 ≤ the 0.25 cap), the whole layer masked to the top
+ * third. Decorative only; content stacks above it. */
+.gh-card-jewel {
+  position: relative;
+}
+
+.gh-card-jewel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image:
+    radial-gradient(320px 200px at 100% 0%, color-mix(in srgb, var(--portal-accent) 9%, transparent), transparent 70%),
+    var(--lux-asset-veil-silk),
+    var(--lux-asset-card-silk, none);
+  background-size: auto, auto, cover;
+  background-position: 0 0, 0 0, center top;
+  background-repeat: no-repeat;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.5) 22%, transparent 36%);
+  mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.5) 22%, transparent 36%);
+}
+
+.gh-card-jewel > * {
+  position: relative;
 }
 
 .gh-portal-main > :where(section, article, form, div, header, nav) {
@@ -8035,16 +8066,16 @@ a.gh-appointment-card:hover {
  * makes Chromium ignore the custom pseudo styling below and hands the bar
  * to the Win11 overlay (invisible until scrolled). Firefox keeps its
  * default visible scrollbar. */
-.gh-portal-shell *::-webkit-scrollbar {
+.gh-portal-shell *:not(.gh-dark-scroll)::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-.gh-portal-shell *::-webkit-scrollbar-thumb {
+.gh-portal-shell *:not(.gh-dark-scroll)::-webkit-scrollbar-thumb {
   border-radius: 999px;
   background: var(--lux-scrollbar-thumb);
 }
 
-.gh-portal-shell *::-webkit-scrollbar-thumb:hover {
+.gh-portal-shell *:not(.gh-dark-scroll)::-webkit-scrollbar-thumb:hover {
   background: var(--lux-scrollbar-thumb-hover);
 }
