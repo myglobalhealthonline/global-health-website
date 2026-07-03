@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { RichTextHtmlField } from "@/app/(admin)/admin/_components/rich-text-html-field";
+import { PortalTabs } from "@/components/PortalTabs";
 
 export type ServiceTranslationInitial = {
   locale: string;
@@ -97,28 +98,15 @@ export function ServiceTranslationTabs({
       </header>
 
       {/* Tab strip */}
-      <div role="tablist" className="gh-admin-service-tablist">
-        {locales.map((l) => {
-          const isActive = l.code === active;
-          return (
-            <button
-              key={l.code}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => setActive(l.code)}
-              className={`gh-admin-service-tab ${
-                isActive
-                  ? "bg-[var(--color-brand-primary)] text-white"
-                  : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-              }`}
-            >
-              {localeLabel(l.code)}
-              {l.isDefault ? " · default" : ""}
-            </button>
-          );
-        })}
-      </div>
+      <PortalTabs
+        ariaLabel="Service translations"
+        value={active}
+        onChange={setActive}
+        items={locales.map((l) => ({
+          value: l.code,
+          label: `${localeLabel(l.code)}${l.isDefault ? " · default" : ""}`,
+        }))}
+      />
 
       {locales.map((l) => {
         const v = valuesFor(l.code);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { PortalTabs } from "@/components/PortalTabs";
 
 export type PlanTab = { id: string; label: string; content: ReactNode };
 
@@ -17,30 +18,12 @@ export function PlanEditTabs({ tabs, defaultTabId }: { tabs: PlanTab[]; defaultT
 
   return (
     <div className="gh-admin-plan-tabs flex flex-col gap-5">
-      <div
-        role="tablist"
-        className="gh-admin-plan-tablist flex flex-wrap gap-1.5 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-1.5"
-      >
-        {tabs.map((t) => {
-          const on = t.id === active;
-          return (
-            <button
-              key={t.id}
-              type="button"
-              role="tab"
-              aria-selected={on}
-              onClick={() => setActive(t.id)}
-              className={`gh-admin-plan-tab rounded-[var(--radius-card-sm)] px-4 py-2 text-[13px] font-semibold transition-colors ${
-                on
-                  ? "bg-[var(--color-brand-primary)] text-white shadow-sm"
-                  : "text-[var(--color-text-muted)] hover:bg-[var(--color-background-page)] hover:text-[var(--color-text-primary)]"
-              }`}
-            >
-              {t.label}
-            </button>
-          );
-        })}
-      </div>
+      <PortalTabs
+        ariaLabel="Plan editor sections"
+        value={active}
+        onChange={setActive}
+        items={tabs.map((t) => ({ value: t.id, label: t.label }))}
+      />
 
       {tabs.map((t) => (
         <div key={t.id} role="tabpanel" hidden={t.id !== active} className="gh-admin-plan-panel">

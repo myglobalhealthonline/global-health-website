@@ -16,6 +16,7 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { readClientLocale } from "@/lib/i18n/get-client-locale";
 import { PhoneField } from "@/components/forms/phone-field";
 import { AdminSummaryStrip } from "@/components/portal-atoms";
+import { PortalTabs } from "@/components/PortalTabs";
 import type { LocaleCode } from "@/lib/i18n/types";
 
 type Tab = "personal" | "insurance" | "verification" | "nationality" | "privacy";
@@ -140,25 +141,14 @@ export default function AccountProfilePage() {
       <AdminSummaryStrip className="mb-5" items={profileStatusItems} />
 
       {/* Tab navigation */}
-      <nav
-        className="gh-patient-tabs gh-portal-tabs mb-5 flex gap-1 overflow-x-auto rounded-lg bg-white/70 p-1 ring-1 ring-[var(--color-border)]"
-        aria-label="Profile sections"
-      >
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => setActiveTab(tab.id)}
-            className={`whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-              activeTab === tab.id
-                ? "bg-[var(--color-brand-primary)] text-white shadow-sm"
-                : "text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </nav>
+      <div className="mb-5">
+        <PortalTabs
+          ariaLabel="Profile sections"
+          value={activeTab}
+          onChange={(v) => setActiveTab(v as Tab)}
+          items={TABS.map((tab) => ({ value: tab.id, label: tab.label }))}
+        />
+      </div>
 
       {/* Personal tab */}
       {activeTab === "personal" && (

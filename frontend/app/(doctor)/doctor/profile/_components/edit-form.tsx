@@ -9,6 +9,7 @@ import {
   LanguagePicker,
   canonicalizeLanguages,
 } from "@/components/forms/LanguagePicker";
+import { PortalTabs } from "@/components/PortalTabs";
 
 /**
  * Doctor self-edit profile form. Split into two independent forms so that
@@ -495,28 +496,15 @@ export function DoctorProfileEditForm({
                     non-default languages fall back to the default language.
                   </p>
                 </div>
-                <div role="tablist" className="gh-doctor-tabs flex flex-wrap gap-1.5">
-                  {localeTabs.map((locale) => {
-                    const selected = locale.code === activeBioLocale;
-                    return (
-                      <button
-                        key={locale.code}
-                        type="button"
-                        role="tab"
-                        aria-selected={selected}
-                        onClick={() => setActiveBioLocale(locale.code)}
-                        className={`rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
-                          selected
-                            ? "bg-[var(--color-brand-primary)] text-white"
-                            : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-                        }`}
-                      >
-                        {localeLabel(locale.code)}
-                        {locale.isDefault ? " - default" : ""}
-                      </button>
-                    );
-                  })}
-                </div>
+                <PortalTabs
+                  ariaLabel="Bio languages"
+                  value={activeBioLocale}
+                  onChange={setActiveBioLocale}
+                  items={localeTabs.map((locale) => ({
+                    value: locale.code,
+                    label: `${localeLabel(locale.code)}${locale.isDefault ? " - default" : ""}`,
+                  }))}
+                />
                 {localeTabs.map((locale) => (
                   <div
                     key={locale.code}

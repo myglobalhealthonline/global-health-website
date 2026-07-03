@@ -2539,6 +2539,32 @@ a.gh-stat-card:hover {
   box-shadow: 0 0 0 3px var(--portal-focus);
 }
 
+.gh-portal-tab__badge {
+  display: inline-flex;
+  min-width: 18px;
+  height: 16px;
+  margin-left: 6px;
+  padding: 0 4px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--portal-well);
+  color: var(--portal-text-2);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.gh-portal-tab[data-active] .gh-portal-tab__badge {
+  background: var(--portal-mint-soft);
+  color: var(--portal-mint-text);
+}
+
+.gh-portal-tab__badge--alert {
+  background: var(--portal-warning-soft);
+  color: var(--portal-warning-text);
+}
+
 /* FormSection — DESIGN.md §5.11. */
 .gh-form-section__grid {
   display: grid;

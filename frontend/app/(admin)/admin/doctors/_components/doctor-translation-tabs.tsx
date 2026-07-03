@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { RichTextHtmlField } from "../../_components/rich-text-html-field";
+import { PortalTabs } from "@/components/PortalTabs";
 
 export type DoctorTranslationInitial = {
   locale: string;
@@ -84,28 +85,15 @@ export function DoctorTranslationTabs({
         </p>
       </header>
 
-      <div role="tablist" className="gh-admin-doctor-tabs flex flex-wrap gap-1.5">
-        {locales.map((l) => {
-          const isActive = l.code === active;
-          return (
-            <button
-              key={l.code}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => setActive(l.code)}
-              className={`rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
-                isActive
-                  ? "bg-[var(--color-brand-primary)] text-white"
-                  : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-              }`}
-            >
-              {localeLabel(l.code)}
-              {l.isDefault ? " · default" : ""}
-            </button>
-          );
-        })}
-      </div>
+      <PortalTabs
+        ariaLabel="Doctor translations"
+        value={active}
+        onChange={setActive}
+        items={locales.map((l) => ({
+          value: l.code,
+          label: `${localeLabel(l.code)}${l.isDefault ? " · default" : ""}`,
+        }))}
+      />
 
       {locales.map((l) => {
         const v = valuesFor(l.code);

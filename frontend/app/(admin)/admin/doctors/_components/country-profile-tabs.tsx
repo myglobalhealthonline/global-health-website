@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { RichTextHtmlField } from "@/app/(admin)/admin/_components/rich-text-html-field";
 import type { AdminDoctorMarketDto } from "@/lib/admin/admin-api";
+import { PortalTabs } from "@/components/PortalTabs";
 
 /**
  * Per-country doctor profile editor. The profile is managed by country
@@ -139,27 +140,16 @@ function CountryForm({
       </div>
 
       {/* Language tabs */}
-      <div role="tablist" className="gh-admin-doctor-tabs mt-5 flex flex-wrap gap-1.5">
-        {localeTabs.map((locale) => {
-          const selected = locale.code === activeLocale;
-          return (
-            <button
-              key={locale.code}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              onClick={() => setActiveLocale(locale.code)}
-              className={`rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
-                selected
-                  ? "bg-[var(--color-brand-primary)] text-white"
-                  : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-              }`}
-            >
-              {localeLabel(locale.code)}
-              {locale.isDefault ? " · default" : ""}
-            </button>
-          );
-        })}
+      <div className="mt-5">
+        <PortalTabs
+          ariaLabel="Doctor profile languages"
+          value={activeLocale}
+          onChange={setActiveLocale}
+          items={localeTabs.map((locale) => ({
+            value: locale.code,
+            label: `${localeLabel(locale.code)}${locale.isDefault ? " · default" : ""}`,
+          }))}
+        />
       </div>
 
       {localeTabs.map((locale) => {
@@ -261,30 +251,22 @@ export function CountryProfileTabs({
   return (
     <div className="gh-admin-doctor-country-tabs grid gap-4">
       {multiCountry ? (
-        <div role="tablist" aria-label="Countries" className="gh-admin-doctor-tabs flex flex-wrap gap-2">
-          {markets.map((market) => {
-            const selected = market.countryId === activeMarket.countryId;
-            return (
-              <button
-                key={market.countryId}
-                type="button"
-                role="tab"
-                aria-selected={selected}
-                onClick={() => setActiveCountryId(market.countryId)}
-                className={`inline-flex items-center gap-2 rounded-md border px-4 py-2 text-[13.5px] font-semibold transition-colors ${
-                  selected
-                    ? "border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)]/[0.06] text-[var(--color-brand-primary)]"
-                    : "border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-                }`}
-              >
-                {market.country.name}
+        <PortalTabs
+          ariaLabel="Countries"
+          value={activeMarket.countryId}
+          onChange={setActiveCountryId}
+          items={markets.map((market) => ({
+            value: market.countryId,
+            label: (
+              <>
+                {market.country.name}{" "}
                 <span className="text-[11px] font-bold uppercase tracking-[0.06em] opacity-70">
                   {market.country.code}
                 </span>
-              </button>
-            );
-          })}
-        </div>
+              </>
+            ),
+          }))}
+        />
       ) : null}
 
       {/* Remount the form per active country so defaults refresh on switch. */}

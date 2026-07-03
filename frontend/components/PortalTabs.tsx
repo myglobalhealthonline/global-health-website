@@ -5,6 +5,10 @@ import { useRef, type KeyboardEvent, type ReactNode } from "react";
 export type PortalTabItem = {
   value: string;
   label: ReactNode;
+  /** Optional count/status badge (e.g. unread count, "pending"). */
+  badge?: ReactNode;
+  /** Signal tone for the badge — pending-send counts, alerts. */
+  badgeAlert?: boolean;
 };
 
 /**
@@ -65,6 +69,13 @@ export function PortalTabs({
             data-active={active || undefined}
           >
             {item.label}
+            {item.badge ? (
+              <span
+                className={`gh-portal-tab__badge${item.badgeAlert ? " gh-portal-tab__badge--alert" : ""}`}
+              >
+                {item.badge}
+              </span>
+            ) : null}
           </button>
         );
       })}
