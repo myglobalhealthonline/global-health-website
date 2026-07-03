@@ -5,6 +5,7 @@ import { appointmentStatusLabel } from "@/lib/api/appointment-status-labels";
 import {
   AdminEmptyState,
   AdminSummaryStrip,
+  Btn,
   PageHeader,
   Pill,
 } from "@/components/portal-atoms";
@@ -231,7 +232,7 @@ export default async function DoctorAppointmentsPage({
               return (
                 <AppointmentCard
                   key={a.id}
-                  href={`/doctor/appointments/${a.id}`}
+                  href={a.meetingUrl ? undefined : `/doctor/appointments/${a.id}`}
                   time={a.scheduledAt ? formatAppTime(a.scheduledAt) : "—"}
                   timeMeta={
                     a.scheduledAt
@@ -252,15 +253,21 @@ export default async function DoctorAppointmentsPage({
                   }
                   action={
                     a.meetingUrl ? (
-                      <a
-                        href={a.meetingUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-1 rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-800"
-                      >
-                        <Video className="size-3.5" aria-hidden /> Join
-                      </a>
+                      <span className="inline-flex items-center gap-2">
+                        <Btn
+                          href={a.meetingUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          variant="primary"
+                          size="sm"
+                          iconLeft={<Video className="size-3.5" aria-hidden />}
+                        >
+                          Join
+                        </Btn>
+                        <Btn href={`/doctor/appointments/${a.id}`} variant="secondary" size="sm">
+                          Open
+                        </Btn>
+                      </span>
                     ) : (
                       <ChevronRight className="size-4 text-[var(--portal-muted)]" aria-hidden />
                     )

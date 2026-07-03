@@ -7505,6 +7505,37 @@ a.gh-stat-card:hover {
   overflow: hidden;
 }
 
+/* Membership manage panel — the current-plan title row becomes the T2
+ * obsidian header band (Material A + lime-silk hairline + silk corner)
+ * by bleeding across the AdminCard's 24px padding. CSS-only; markup owns
+ * nothing but the class. */
+.gh-membership-manage-head {
+  position: relative;
+  overflow: hidden;
+  margin: -24px -24px 0;
+  padding: 20px 24px;
+  border-radius: calc(var(--portal-radius-lg) - 1px) calc(var(--portal-radius-lg) - 1px) 0 0;
+  background: var(--portal-chrome-solid);
+  border-bottom: 1px solid var(--portal-member);
+}
+
+.gh-membership-manage-head::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--lux-asset-member, none);
+  background-size: auto 100%;
+  background-position: right center;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+}
+
+.gh-membership-manage-head > * {
+  position: relative;
+  z-index: 1;
+}
+
 .gh-patient-membership-card__header::after {
   content: "";
   position: absolute;
