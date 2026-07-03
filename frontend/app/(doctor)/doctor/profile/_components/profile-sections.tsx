@@ -28,13 +28,13 @@ export function ProfileSections({
   return (
     <>
       <header className="gh-doctor-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
           Doctor
         </p>
-        <h2 className="mt-1 text-2xl font-bold text-[var(--color-text-primary)]">
+        <h2 className="mt-1 text-2xl font-bold text-[var(--portal-text)]">
           {activeCountryName ? `My profile — ${activeCountryName}` : "My profile"}
         </h2>
-        <p className="text-sm text-[var(--color-text-muted)]">
+        <p className="text-sm text-[var(--portal-muted)]">
           Edit your public profile. Country, slug, and registration data are
           admin-managed — ping support if anything there needs to change.
         </p>
@@ -76,7 +76,7 @@ export function ProfileSections({
           on, even though the values themselves stay admin-only. */}
       <section className="gh-card gh-doctor-practice-context mb-4 p-6">
         <h3
-          className="m-0 text-[var(--color-text-primary)]"
+          className="m-0 text-[var(--portal-text)]"
           style={{
             fontFamily: "var(--font-display)",
             fontSize: 16,
@@ -87,18 +87,18 @@ export function ProfileSections({
         </h3>
         <dl className="gh-doctor-context-grid mt-3 grid gap-3 sm:grid-cols-3">
           <div>
-            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
               Primary country
             </dt>
-            <dd className="mt-1 text-[14px] text-[var(--color-text-primary)]">
+            <dd className="mt-1 text-[14px] text-[var(--portal-text)]">
               {primaryCountry.name} ({primaryCountry.code.toUpperCase()})
             </dd>
           </div>
           <div>
-            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
               Also listed in
             </dt>
-            <dd className="mt-1 text-[14px] text-[var(--color-text-primary)]">
+            <dd className="mt-1 text-[14px] text-[var(--portal-text)]">
               {additional.length === 0
                 ? "—"
                 : additional
@@ -107,30 +107,30 @@ export function ProfileSections({
             </dd>
           </div>
           <div>
-            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
               URL slug
             </dt>
-            <dd className="mt-1 text-[14px] font-mono text-[var(--color-text-primary)]">
+            <dd className="mt-1 text-[14px] font-mono text-[var(--portal-text)]">
               /{primaryCountry.slug}/{primaryCountry.defaultLocale.toLowerCase()}/doctors/{doctor.slug}
             </dd>
           </div>
         </dl>
         <dl className="gh-doctor-context-grid mt-4 grid gap-3 sm:grid-cols-2">
           <div>
-            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
               Categories
             </dt>
-            <dd className="mt-1 text-[14px] text-[var(--color-text-primary)]">
+            <dd className="mt-1 text-[14px] text-[var(--portal-text)]">
               {specialties.length === 0
                 ? "None assigned"
                 : specialties.map((s) => s.name).join(", ")}
             </dd>
           </div>
           <div>
-            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
               Consultation types
             </dt>
-            <dd className="mt-1 text-[14px] text-[var(--color-text-primary)]">
+            <dd className="mt-1 text-[14px] text-[var(--portal-text)]">
               General · Specialist · Prescription · Follow-up
             </dd>
           </div>

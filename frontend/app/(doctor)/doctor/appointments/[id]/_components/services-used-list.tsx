@@ -44,12 +44,12 @@ export function ServicesUsedList({
 
   if (!consultationId) {
     return (
-      <div className="mt-3 rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
-        <p className="flex items-center gap-2 text-sm font-bold text-[var(--color-text-primary)]">
-          <ClipboardList className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
+      <div className="mt-3 rounded-lg border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] p-4">
+        <p className="flex items-center gap-2 text-sm font-bold text-[var(--portal-text)]">
+          <ClipboardList className="size-4 text-[var(--portal-primary)]" aria-hidden />
           Save the clinical note first
         </p>
-        <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+        <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
           Service line items attach to the consultation record after the first draft is saved.
         </p>
       </div>
@@ -123,12 +123,12 @@ export function ServicesUsedList({
   return (
     <div className="mt-4 grid gap-3">
       {items.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
-          <p className="flex items-center gap-2 text-sm font-bold text-[var(--color-text-primary)]">
-            <ClipboardList className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
+        <div className="rounded-lg border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] p-4">
+          <p className="flex items-center gap-2 text-sm font-bold text-[var(--portal-text)]">
+            <ClipboardList className="size-4 text-[var(--portal-primary)]" aria-hidden />
             No services logged yet
           </p>
-          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+          <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
             Add billable or clinical service lines used during this consultation.
           </p>
         </div>
@@ -136,7 +136,7 @@ export function ServicesUsedList({
         <div className="gh-doctor-table-wrap overflow-x-auto">
           <table className="w-full min-w-[620px] text-[13px]">
           <thead>
-            <tr className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+            <tr className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
               <th className="py-2 text-left">Item</th>
               <th className="py-2 text-right">Qty</th>
               <th className="py-2 text-right">Unit</th>
@@ -146,7 +146,7 @@ export function ServicesUsedList({
           </thead>
           <tbody>
             {items.map((r) => (
-              <tr key={r.id} className="border-t border-[var(--color-border)]">
+              <tr key={r.id} className="border-t border-[var(--portal-line)]">
                 <td className="py-2">
                   {r.service?.name ?? r.customLabel ?? "—"}
                 </td>
@@ -165,7 +165,7 @@ export function ServicesUsedList({
                     <button
                       type="button"
                       onClick={() => remove(r.id)}
-                      className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-status-error)]"
+                      className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
                       aria-label="Remove line"
                     >
                       <Trash2 className="size-3.5" />
@@ -175,7 +175,7 @@ export function ServicesUsedList({
               </tr>
             ))}
             {total > 0 ? (
-              <tr className="border-t border-[var(--color-border)]">
+              <tr className="border-t border-[var(--portal-line)]">
                 <td colSpan={3} className="py-2 text-right font-semibold">
                   Total
                 </td>

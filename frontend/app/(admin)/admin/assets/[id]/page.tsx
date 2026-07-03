@@ -90,7 +90,6 @@ export default async function AdminAssetDetailPage({
     return (
       <>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-assets"
           eyebrow="Global"
           title="Asset"
           actions={
@@ -121,7 +120,6 @@ export default async function AdminAssetDetailPage({
         <ArrowLeft className="size-3.5" /> Back to assets
       </Link>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-assets"
         eyebrow={
           a.country ? (
             <span className="inline-flex items-center gap-2">
@@ -157,12 +155,12 @@ export default async function AdminAssetDetailPage({
         </p>
       ) : null}
 
-      <div className="gh-admin-area-hero gh-admin-area-assets gh-admin-asset-layout">
+      <div className="gh-admin-asset-layout">
         <div className="grid gap-4">
           {showPreview ? (
             <AdminCard>
               <h3 style={cardTitleStyle}>Preview</h3>
-              <div className="gh-admin-area-hero gh-admin-area-assets gh-admin-asset-preview mt-3 rounded-md bg-[var(--color-background-soft)] p-4">
+              <div className="gh-admin-asset-preview mt-3 rounded-md bg-[var(--color-background-soft)] p-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={a.path}
@@ -178,7 +176,7 @@ export default async function AdminAssetDetailPage({
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Path + metadata. Files served via Railway Bucket when storage env vars are configured.
             </p>
-            <dl className="gh-admin-area-hero gh-admin-area-assets gh-admin-asset-detail-grid">
+            <dl className="gh-admin-asset-detail-grid">
               <FieldRow label="Key" value={a.key} mono />
               <FieldRow label="Kind" value={a.kind} />
               <FieldRow

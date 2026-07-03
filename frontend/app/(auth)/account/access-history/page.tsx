@@ -71,12 +71,12 @@ function LogRow({ entry }: { entry: AccessLogEntry }) {
     : null;
 
   return (
-    <div className="gh-patient-access-row grid gap-3 border-b border-[var(--color-border)] py-3 last:border-0 sm:grid-cols-[auto_1fr_auto] sm:items-start">
-      <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-background-soft)]">
-        <Shield className="size-4 text-[var(--color-text-muted)]" aria-hidden />
+    <div className="gh-patient-access-row grid gap-3 border-b border-[var(--portal-line)] py-3 last:border-0 sm:grid-cols-[auto_1fr_auto] sm:items-start">
+      <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--portal-well)]">
+        <Shield className="size-4 text-[var(--portal-muted)]" aria-hidden />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-sm text-[var(--color-text-primary)]">
+        <p className="text-sm text-[var(--portal-text)]">
           <span
             className={`mr-1.5 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${roleBadgeClass(entry.accessedByRole)}`}
           >
@@ -88,19 +88,19 @@ function LogRow({ entry }: { entry: AccessLogEntry }) {
           <span className="lowercase">your {resource}</span>
         </p>
         {entry.accessReason && (
-          <p className="mt-0.5 text-xs text-[var(--color-text-muted)]">
+          <p className="mt-0.5 text-xs text-[var(--portal-muted)]">
             Reason: {entry.accessReason}
           </p>
         )}
         {entry.relatedAppointmentId && (
-          <p className="mt-0.5 text-xs text-[var(--color-text-muted)]">
+          <p className="mt-0.5 text-xs text-[var(--portal-muted)]">
             Related to appointment
           </p>
         )}
       </div>
       <time
         dateTime={entry.createdAt}
-        className="text-xs text-[var(--color-text-muted)] sm:shrink-0"
+        className="text-xs text-[var(--portal-muted)] sm:shrink-0"
       >
         {new Date(entry.createdAt).toLocaleString()}
       </time>
@@ -136,34 +136,34 @@ export default function AccessHistoryPage() {
   return (
     <div className="gh-patient-page gh-patient-access-history-page">
       <header className="gh-patient-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
           Patient portal
         </p>
-        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--color-text-primary)]">
-          <History className="size-6 text-[var(--color-brand-primary)]" aria-hidden />
+        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--portal-text)]">
+          <History className="size-6 text-[var(--portal-primary)]" aria-hidden />
           Access history
         </h2>
-        <p className="text-sm text-[var(--color-text-muted)]">
+        <p className="text-sm text-[var(--portal-muted)]">
           A record of who accessed your medical information and when.
         </p>
       </header>
 
-      <div className="gh-patient-access-card gh-card divide-y divide-[var(--color-border)] p-0">
+      <div className="gh-patient-access-card gh-card divide-y divide-[var(--portal-line)] p-0">
         {!loaded ? (
           <div className="p-6">
-            <div className="h-4 w-40 rounded bg-[var(--color-background-soft)]" />
+            <div className="h-4 w-40 rounded bg-[var(--portal-well)]" />
             <div className="mt-4 grid gap-3">
-              <div className="h-16 rounded-lg bg-[var(--color-background-soft)]" />
-              <div className="h-16 rounded-lg bg-[var(--color-background-soft)]" />
+              <div className="h-16 rounded-lg bg-[var(--portal-well)]" />
+              <div className="h-16 rounded-lg bg-[var(--portal-well)]" />
             </div>
           </div>
         ) : logs.length === 0 ? (
           <div className="p-8 text-center">
-            <Shield className="mx-auto size-7 text-[var(--color-text-muted)]" aria-hidden />
-            <p className="mt-2 text-base font-bold text-[var(--color-text-primary)]">
+            <Shield className="mx-auto size-7 text-[var(--portal-muted)]" aria-hidden />
+            <p className="mt-2 text-base font-bold text-[var(--portal-text)]">
               No access events recorded yet
             </p>
-            <p className="mx-auto mt-1 max-w-sm text-sm text-[var(--color-text-muted)]">
+            <p className="mx-auto mt-1 max-w-sm text-sm text-[var(--portal-muted)]">
               When your medical information is viewed or updated, the event will appear here.
             </p>
           </div>
@@ -178,7 +178,7 @@ export default function AccessHistoryPage() {
 
       {pagination && pagination.pages > 1 && (
         <div className="mt-4 flex items-center justify-between text-sm">
-          <span className="text-[var(--color-text-muted)]">
+          <span className="text-[var(--portal-muted)]">
             {pagination.total} events · page {pagination.page} of {pagination.pages}
           </span>
           <div className="flex gap-2">
@@ -186,7 +186,7 @@ export default function AccessHistoryPage() {
               type="button"
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
-              className="rounded-md border border-[var(--color-border)] px-3 py-1.5 text-sm disabled:opacity-40"
+              className="rounded-md border border-[var(--portal-line)] px-3 py-1.5 text-sm disabled:opacity-40"
             >
               Previous
             </button>
@@ -194,7 +194,7 @@ export default function AccessHistoryPage() {
               type="button"
               disabled={page >= pagination.pages}
               onClick={() => setPage((p) => p + 1)}
-              className="rounded-md border border-[var(--color-border)] px-3 py-1.5 text-sm disabled:opacity-40"
+              className="rounded-md border border-[var(--portal-line)] px-3 py-1.5 text-sm disabled:opacity-40"
             >
               Next
             </button>

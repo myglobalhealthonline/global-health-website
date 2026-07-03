@@ -39,7 +39,6 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
     return (
       <>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-appointments"
           eyebrow="Operations"
           title="New manual booking"
           actions={
@@ -70,14 +69,13 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
           <ArrowLeft className="size-3.5" /> Back to queue
         </Link>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-appointments"
           eyebrow="Operations"
           title="New manual booking"
           description="Walk-in / phone-in booking. Choose a country first — services + doctors + clinics are scoped to that country."
         />
-        <AdminCard className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-country-card">
-          <div className="gh-admin-area-hero gh-admin-area-appointments gh-admin-country-choice">
-            <div className="gh-admin-area-hero gh-admin-area-appointments gh-admin-country-choice__intro">
+        <AdminCard className="gh-admin-appointment-country-card">
+          <div className="gh-admin-country-choice">
+            <div className="gh-admin-country-choice__intro">
               <span className="gh-icon-tile gh-icon-tile-lg">
                 <Globe2 className="size-5" aria-hidden />
               </span>
@@ -90,7 +88,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
                 </p>
               </div>
             </div>
-            <form method="get" className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-country-form">
+            <form method="get" className="gh-admin-appointment-country-form">
               <label className="flex min-w-0 flex-col gap-1.5">
                 <span className="gh-field-label">Country</span>
                 <select
@@ -127,7 +125,6 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
     return (
       <>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-appointments"
           eyebrow="Operations"
           title="New manual booking"
           actions={
@@ -285,7 +282,6 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
         <ArrowLeft className="size-3.5" /> Back to queue
       </Link>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-appointments"
         eyebrow="Operations"
         title="New manual booking"
         description="Fill in the patient's details — we create their portal account, send the branded reservation email (payment + portal access), and show recovery links for the admin."

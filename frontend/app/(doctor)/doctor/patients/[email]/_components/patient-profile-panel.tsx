@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { Link2 } from "lucide-react";
+import { FormSection } from "@/components/FormSection";
 
 type Profile = {
   weightKg: number | null;
@@ -146,11 +147,8 @@ export function PatientProfilePanel({ email }: { email: string }) {
   }
 
   return (
-    <section className="gh-card gh-doctor-patient-profile-panel p-6">
-      <h3 className="text-base font-bold text-[var(--color-text-primary)]">
-        Patient chart
-      </h3>
-
+    <FormSection title="Patient chart" className="gh-doctor-patient-profile-panel">
+      <div className="gh-form-section__span-2">
       {profile?.statusAlert ? (
         <div
           role="alert"
@@ -250,7 +248,7 @@ export function PatientProfilePanel({ email }: { email: string }) {
         </Section>
 
         <Section title="Clinical alerts (doctor-only)">
-          <p className="-mt-1 mb-2 text-[12px] text-[var(--color-text-muted)]">
+          <p className="-mt-1 mb-2 text-[12px] text-[var(--portal-muted)]">
             Renders as a banner on this chart. Never shown to the patient.
             Saves audit a PATIENT_ALERT_UPDATED row.
           </p>
@@ -289,14 +287,14 @@ export function PatientProfilePanel({ email }: { email: string }) {
             Save chart
           </button>
           {saveMsg ? (
-            <span className="text-[12px] text-[var(--color-text-muted)]">
+            <span className="text-[12px] text-[var(--portal-muted)]">
               {saveMsg}
             </span>
           ) : null}
         </div>
       </form>
 
-      <div className="gh-doctor-upload-link mt-5 border-t border-[var(--color-border)] pt-4">
+      <div className="gh-doctor-upload-link mt-5 border-t border-[var(--portal-line)] pt-4">
         <button
           type="button"
           disabled={pending}
@@ -306,12 +304,13 @@ export function PatientProfilePanel({ email }: { email: string }) {
           <Link2 className="size-3.5" aria-hidden /> Send upload link
         </button>
         {uploadMsg ? (
-          <p className="mt-2 text-sm text-[var(--color-text-muted)]">
+          <p className="mt-2 text-sm text-[var(--portal-muted)]">
             {uploadMsg}
           </p>
         ) : null}
       </div>
-    </section>
+      </div>
+    </FormSection>
   );
 }
 
@@ -324,7 +323,7 @@ function Section({
 }) {
   return (
     <section className="gh-doctor-chart-section">
-      <h4 className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+      <h4 className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
         {title}
       </h4>
       {children}
@@ -365,7 +364,7 @@ function Field({
         className="gh-input"
       />
       {hint ? (
-        <span className="text-[11px] text-[var(--color-text-muted)]">
+        <span className="text-[11px] text-[var(--portal-muted)]">
           {hint}
         </span>
       ) : null}

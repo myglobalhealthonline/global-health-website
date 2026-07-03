@@ -3,6 +3,7 @@ import { formatHealthTestPriceInput } from "@/lib/admin/health-test-form-parse";
 import { ManagedImageField } from "../../_components/managed-image-field";
 import { MultiImageField } from "../../_components/multi-image-field";
 import { HealthTestTranslationTabs } from "./health-test-translation-tabs";
+import { FormSection } from "@/components/FormSection";
 
 function formatStockInput(stock: number | null | undefined): string {
   if (stock === null || stock === undefined) return "";
@@ -43,7 +44,8 @@ export function HealthTestFields({
   };
 
   return (
-    <div className="gh-admin-health-fields">
+    <div className="gh-admin-health-fields flex flex-col gap-5">
+    <FormSection title="Health test">
       {pinId && pinnedMeta ? (
         <div>
           <span className="gh-field-label">Country</span>
@@ -71,86 +73,90 @@ export function HealthTestFields({
         <input name="slug" className="gh-input min-w-0 font-mono text-sm" required defaultValue={initial?.slug ?? ""} />
       </label>
 
-      <HealthTestTranslationTabs
-        locales={locales}
-        defaultLocale={defaultLocale}
-        initialTranslations={initial?.translations ?? []}
-        baseFallback={baseFallback}
-      />
-
-      <div className="gh-admin-health-field-grid gh-admin-health-field-grid--two">
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Price</span>
-          <input type="text" inputMode="decimal" name="price" className="gh-input min-w-0" defaultValue={formatHealthTestPriceInput(initial?.priceCents)} placeholder="84.00" />
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Currency</span>
-          <input name="currencyCode" className="gh-input min-w-0 uppercase" defaultValue={initial?.currencyCode ?? "EUR"} />
-        </label>
+      <div className="gh-form-section__span-2">
+        <HealthTestTranslationTabs
+          locales={locales}
+          defaultLocale={defaultLocale}
+          initialTranslations={initial?.translations ?? []}
+          baseFallback={baseFallback}
+        />
       </div>
 
-      <ManagedImageField
-        name="productImagePath"
-        label="Product image"
-        initialPath={initial?.productImagePath ?? ""}
-        helperText="Main image shown on the health-test card. Required."
-      />
+      <label className="flex flex-col gap-2">
+        <span className="gh-field-label">Price</span>
+        <input type="text" inputMode="decimal" name="price" className="gh-input min-w-0" defaultValue={formatHealthTestPriceInput(initial?.priceCents)} placeholder="84.00" />
+      </label>
+      <label className="flex flex-col gap-2">
+        <span className="gh-field-label">Currency</span>
+        <input name="currencyCode" className="gh-input min-w-0 uppercase" defaultValue={initial?.currencyCode ?? "EUR"} />
+      </label>
 
-      <MultiImageField
-        name="galleryImagePaths"
-        label="Gallery images"
-        initialPaths={initial?.galleryImagePaths ?? []}
-        helperText="Optional additional images. Up to 12. Not yet rendered on the public card — saved for a future per-test detail page."
-        max={12}
-      />
-
-      <div className="gh-admin-health-field-grid gh-admin-health-field-grid--three">
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Stock</span>
-          <input
-            type="number"
-            min={0}
-            step={1}
-            name="stock"
-            className="gh-input min-w-0"
-            defaultValue={formatStockInput(initial?.stock)}
-            placeholder="Leave blank for unlimited"
-          />
-          <span className="text-xs text-[var(--color-text-muted)]">
-            Blank = unlimited. 0 = sold out. 1–5 surfaces an &quot;Only N left&quot; badge on the public card.
-          </span>
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Shipping price</span>
-          <input
-            type="text"
-            inputMode="decimal"
-            name="shipping"
-            className="gh-input min-w-0"
-            defaultValue={formatShippingInput(initial?.shippingCents)}
-            placeholder="0.00"
-          />
-          <span className="text-xs text-[var(--color-text-muted)]">
-            Charged per kit at checkout. Leave blank for free shipping.
-          </span>
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Sort order</span>
-          <input
-            type="number"
-            min={0}
-            step={1}
-            name="sortOrder"
-            className="gh-input min-w-0"
-            defaultValue={initial?.sortOrder ?? 0}
-          />
-          <span className="text-xs text-[var(--color-text-muted)]">
-            Lower numbers appear first in the listing.
-          </span>
-        </label>
+      <div className="gh-form-section__span-2">
+        <ManagedImageField
+          name="productImagePath"
+          label="Product image"
+          initialPath={initial?.productImagePath ?? ""}
+          helperText="Main image shown on the health-test card. Required."
+        />
       </div>
 
-      <label className="gh-admin-health-active-row">
+      <div className="gh-form-section__span-2">
+        <MultiImageField
+          name="galleryImagePaths"
+          label="Gallery images"
+          initialPaths={initial?.galleryImagePaths ?? []}
+          helperText="Optional additional images. Up to 12. Not yet rendered on the public card — saved for a future per-test detail page."
+          max={12}
+        />
+      </div>
+    </FormSection>
+
+    <FormSection title="Inventory & ordering">
+      <label className="flex flex-col gap-2">
+        <span className="gh-field-label">Stock</span>
+        <input
+          type="number"
+          min={0}
+          step={1}
+          name="stock"
+          className="gh-input min-w-0"
+          defaultValue={formatStockInput(initial?.stock)}
+          placeholder="Leave blank for unlimited"
+        />
+        <span className="text-xs text-[var(--color-text-muted)]">
+          Blank = unlimited. 0 = sold out. 1–5 surfaces an &quot;Only N left&quot; badge on the public card.
+        </span>
+      </label>
+      <label className="flex flex-col gap-2">
+        <span className="gh-field-label">Shipping price</span>
+        <input
+          type="text"
+          inputMode="decimal"
+          name="shipping"
+          className="gh-input min-w-0"
+          defaultValue={formatShippingInput(initial?.shippingCents)}
+          placeholder="0.00"
+        />
+        <span className="text-xs text-[var(--color-text-muted)]">
+          Charged per kit at checkout. Leave blank for free shipping.
+        </span>
+      </label>
+      <label className="flex flex-col gap-2">
+        <span className="gh-field-label">Sort order</span>
+        <input
+          type="number"
+          min={0}
+          step={1}
+          name="sortOrder"
+          className="gh-input min-w-0"
+          defaultValue={initial?.sortOrder ?? 0}
+        />
+        <span className="text-xs text-[var(--color-text-muted)]">
+          Lower numbers appear first in the listing.
+        </span>
+      </label>
+
+      <label className="gh-form-section__span-2 gh-admin-health-active-row">
         <input type="checkbox" name="isActive" defaultChecked={initial?.isActive ?? true} className="h-4 w-4 rounded border-[var(--color-border)]" />
         Health test active
       </label>
@@ -160,6 +166,7 @@ export function HealthTestFields({
           are still omitted from the form — no per-test detail page
           renders them yet. PATCH is partial so the underlying columns
           stay put on edit. CREATE picks up the schema defaults. */}
+    </FormSection>
     </div>
   );
 }

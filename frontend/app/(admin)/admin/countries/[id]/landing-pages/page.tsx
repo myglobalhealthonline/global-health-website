@@ -116,7 +116,6 @@ export default async function CountryLandingPagesAdmin({ params, searchParams }:
       </Link>
 
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-countries"
         eyebrow={
           <span className="inline-flex items-center gap-2">
             <FlagBadge code={c.code} size={14} />
@@ -143,8 +142,8 @@ export default async function CountryLandingPagesAdmin({ params, searchParams }:
         </p>
       ) : null}
 
-      <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-landing-list overflow-hidden">
-        <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-table-wrap overflow-x-auto">
+      <AdminCard padding={0} className="gh-admin-country-landing-list overflow-hidden">
+        <div className="gh-admin-country-table-wrap overflow-x-auto">
         <AdminTable>
           <Thead>
             <Th>Slug</Th>
@@ -209,14 +208,14 @@ export default async function CountryLandingPagesAdmin({ params, searchParams }:
       </AdminCard>
 
       {editSlug !== null ? (
-        <AdminCard className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-editor mt-4">
+        <AdminCard className="gh-admin-country-editor mt-4">
           <h3
             className="m-0 text-[var(--color-text-primary)]"
             style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
           >
             {editPage ? "Edit" : "New"} landing page ({defaultLocale})
           </h3>
-          <form action={saveLandingAction} className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-editor-form mt-4 grid gap-4">
+          <form action={saveLandingAction} className="gh-admin-country-editor-form mt-4 grid gap-4">
             <div className="grid gap-4 sm:grid-cols-[1fr_120px]">
               <label className="flex flex-col gap-1">
                 <span className="gh-field-label">Slug</span>
@@ -272,7 +271,7 @@ export default async function CountryLandingPagesAdmin({ params, searchParams }:
               <input type="checkbox" name="isPublished" defaultChecked={editPage?.isPublished ?? false} className="size-4" />
               <span className="text-[13px] text-[var(--color-text-body)]">Published</span>
             </label>
-            <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-actions flex items-center gap-3">
+            <div className="gh-admin-country-actions flex items-center gap-3">
               <button type="submit" className="gh-btn gh-btn-primary">
                 Save landing page
               </button>

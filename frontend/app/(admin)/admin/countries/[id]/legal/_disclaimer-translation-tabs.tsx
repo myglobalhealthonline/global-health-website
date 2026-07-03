@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PortalTabs } from "@/components/PortalTabs";
 
 export type DisclaimerTranslationInitial = {
   locale: string;
@@ -66,28 +67,15 @@ export function DisclaimerTranslationTabs({
   return (
     <div className="gh-admin-disclaimer-tabs flex flex-col gap-4">
       {/* Tab strip */}
-      <div role="tablist" className="gh-admin-disclaimer-tablist flex flex-wrap gap-1.5">
-        {locales.map((l) => {
-          const isActive = l.code === active;
-          return (
-            <button
-              key={l.code}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => setActive(l.code)}
-              className={`gh-admin-disclaimer-tab rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
-                isActive
-                  ? "bg-[var(--color-brand-primary)] text-white"
-                  : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-              }`}
-            >
-              {localeLabel(l.code)}
-              {l.isDefault ? " · default" : ""}
-            </button>
-          );
-        })}
-      </div>
+      <PortalTabs
+        ariaLabel="Disclaimer translations"
+        value={active}
+        onChange={setActive}
+        items={locales.map((l) => ({
+          value: l.code,
+          label: `${localeLabel(l.code)}${l.isDefault ? " · default" : ""}`,
+        }))}
+      />
 
       {locales.map((l) => {
         const v = valuesFor(l.code);

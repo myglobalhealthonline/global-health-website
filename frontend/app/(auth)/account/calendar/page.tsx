@@ -44,14 +44,14 @@ export default async function AccountCalendarPage() {
   return (
     <div className="gh-patient-page gh-patient-calendar-page">
       <header className="gh-patient-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
           My schedule
         </p>
-        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--color-text-primary)]">
-          <CalendarRange className="size-6 text-[var(--color-brand-primary)]" aria-hidden />
+        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--portal-text)]">
+          <CalendarRange className="size-6 text-[var(--portal-primary)]" aria-hidden />
           Calendar
         </h2>
-        <p className="text-sm text-[var(--color-text-muted)]">
+        <p className="text-sm text-[var(--portal-muted)]">
           Your scheduled consultations. Pick a day to see details and join links.
         </p>
       </header>
@@ -69,8 +69,8 @@ export default async function AccountCalendarPage() {
       {history.ok ? (
         <PatientCalendarUI items={items} defaultTz={defaultTz} />
       ) : (
-        <div className="gh-patient-empty-state rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-panel)] px-5 py-4">
-          <p className="text-sm text-[var(--color-text-muted)]">{history.message}</p>
+        <div className="gh-patient-empty-state rounded-[var(--radius-card-sm)] border border-[var(--portal-line)] bg-[var(--portal-surface-elevated)] px-5 py-4">
+          <p className="text-sm text-[var(--portal-muted)]">{history.message}</p>
         </div>
       )}
     </div>

@@ -52,16 +52,16 @@ export function DocumentUploadForm({
   }
 
   return (
-    <div className="grid gap-3 rounded-lg border border-[var(--color-border)] bg-white/75 p-3 shadow-sm">
+    <div className="grid gap-3 rounded-lg border border-[var(--portal-line)] bg-white/75 p-3 shadow-sm">
       <div className="flex items-start gap-2">
-        <span className="grid size-9 shrink-0 place-items-center rounded-md bg-[var(--color-background-soft)] text-[var(--color-brand-primary)]">
+        <span className="grid size-9 shrink-0 place-items-center rounded-md bg-[var(--portal-well)] text-[var(--portal-primary)]">
           <FileUp className="size-4" aria-hidden />
         </span>
         <div>
-          <p className="text-sm font-bold text-[var(--color-text-primary)]">
+          <p className="text-sm font-bold text-[var(--portal-text)]">
             Upload appointment document
           </p>
-          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+          <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
             Add clinical files that should stay attached to this patient appointment.
           </p>
         </div>
@@ -77,7 +77,7 @@ export function DocumentUploadForm({
         />
       </label>
       <div
-        className="flex min-h-[100px] cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-6 text-center"
+        className="flex min-h-[100px] cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] px-4 py-6 text-center"
         onClick={() => fileInputRef.current?.click()}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click();
@@ -85,11 +85,11 @@ export function DocumentUploadForm({
         role="button"
         tabIndex={0}
       >
-        <Upload className="size-6 text-[var(--color-text-muted)]" aria-hidden />
-        <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">
+        <Upload className="size-6 text-[var(--portal-muted)]" aria-hidden />
+        <p className="text-[13px] font-semibold text-[var(--portal-text)]">
           Choose files (max 10MB)
         </p>
-        <p className="text-[11px] text-[var(--color-text-muted)]">PDF, JPEG, PNG, WebP, or AVIF</p>
+        <p className="text-[11px] text-[var(--portal-muted)]">PDF, JPEG, PNG, WebP, or AVIF</p>
       </div>
       <input
         ref={fileInputRef}

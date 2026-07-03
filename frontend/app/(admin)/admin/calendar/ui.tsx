@@ -31,6 +31,8 @@ type Props = {
 // the admin can switch to any curated zone to read the grid in.
 const DEFAULT_TZ = "Europe/Dublin";
 
+type SlotAgendaFilter = "reserved" | "all" | "open" | "booked" | "blocked";
+
 export function AdminCalendarUI({
   year,
   month,
@@ -45,11 +47,28 @@ export function AdminCalendarUI({
   const [tz, setTz] = useState<string>(DEFAULT_TZ);
   const [selectedDay, setSelectedDay] = useState<string>(() => todayKey(DEFAULT_TZ));
   const [activeItem, setActiveItem] = useState<CalendarItem | null>(null);
+  const [slotFilter, setSlotFilter] = useState<SlotAgendaFilter>("reserved");
 
   const tzList = useMemo(() => [...CURATED_TIME_ZONES] as string[], []);
 
   const itemsByDay = useMemo(() => groupItemsByLocalDay(items, tz), [items, tz]);
   const dayItems = selectedDay ? itemsByDay.get(selectedDay) ?? [] : [];
+  const agendaItems = dayItems.filter((i) => {
+    if (i.kind !== "slot") return true;
+    switch (slotFilter) {
+      case "all":
+        return true;
+      case "open":
+        return i.status === "OPEN";
+      case "booked":
+        return i.status === "BOOKED";
+      case "blocked":
+        return i.status === "BLOCKED";
+      case "reserved":
+      default:
+        return i.status !== "OPEN";
+    }
+  });
 
   function pushParams(next: Partial<{ ym: string; doctorId: string; type: string; country: string }>) {
     const params = new URLSearchParams();
@@ -117,6 +136,34 @@ export function AdminCalendarUI({
         <TimezoneSelect value={tz} options={tzList} onChange={setTz} />
       </div>
 
+      <div
+        className="gh-admin-calendar-legend flex flex-wrap items-center justify-between gap-3 text-xs"
+        style={{ color: "var(--portal-muted)" }}
+      >
+        <div className="flex flex-wrap items-center gap-3">
+          <LegendDot tone="var(--portal-success)" label="Open" />
+          <LegendDot tone="var(--portal-info)" label="Booked" />
+          <LegendDot tone="var(--portal-danger)" label="Blocked" />
+        </div>
+        <label
+          className="flex items-center gap-2 text-xs font-semibold"
+          style={{ color: "var(--portal-text-2)" }}
+        >
+          Agenda slots
+          <select
+            className="gh-select h-8 text-xs"
+            value={slotFilter}
+            onChange={(e) => setSlotFilter(e.target.value as SlotAgendaFilter)}
+          >
+            <option value="reserved">Booked &amp; blocked</option>
+            <option value="all">All (incl. available)</option>
+            <option value="open">Available only</option>
+            <option value="booked">Booked only</option>
+            <option value="blocked">Blocked only</option>
+          </select>
+        </label>
+      </div>
+
       <div className="gh-admin-calendar-grid grid gap-4 lg:grid-cols-[1fr_360px]">
         <MonthCalendar
           year={year}
@@ -140,9 +187,13 @@ export function AdminCalendarUI({
 
         <DayAgenda
           dayKey={selectedDay}
-          items={dayItems}
+          items={agendaItems}
           tz={tz}
-          emptyLabel="No consultations or slots on this day."
+          emptyLabel={
+            slotFilter === "all"
+              ? "No consultations or slots on this day."
+              : "Nothing matching this filter on this day. Try “All (incl. available)” in the Agenda slots dropdown."
+          }
           showDoctorName
           onSelectConsultation={setActiveItem}
         />
@@ -155,4 +206,13 @@ export function AdminCalendarUI({
 
 function monthTuple(ym: { year: number; month: number }): [number, number] {
   return [ym.year, ym.month];
+}
+
+function LegendDot({ tone, label }: { tone: string; label: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <span aria-hidden className="inline-block size-2 rounded-full" style={{ background: tone }} />
+      {label}
+    </span>
+  );
 }

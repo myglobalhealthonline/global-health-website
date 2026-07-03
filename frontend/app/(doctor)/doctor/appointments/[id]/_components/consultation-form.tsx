@@ -173,7 +173,7 @@ export function ConsultationForm({
       ) : null}
 
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[12px] text-[var(--color-text-muted)]">
+        <p className="text-[12px] text-[var(--portal-muted)]">
           {signed
             ? `Signed ${state.signedAt ? new Date(state.signedAt).toLocaleString() : ""}`
             : "Drafts are visible to you and admin until signed."}
@@ -227,7 +227,7 @@ function Field({
         rows={rows}
       />
       {helper ? (
-        <span className="text-[11.5px] text-[var(--color-text-muted)]">
+        <span className="text-[11.5px] text-[var(--portal-muted)]">
           {helper}
         </span>
       ) : null}

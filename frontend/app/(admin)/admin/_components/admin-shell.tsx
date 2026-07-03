@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -10,17 +10,20 @@ import {
   CreditCard,
   FileText,
   Globe2,
+  HeartPulse,
   ImageIcon,
   Layers,
   LayoutDashboard,
   Mail,
   Menu,
   Newspaper,
+  ReceiptText,
   ShoppingBag,
   Stethoscope,
   Tags,
   UserRound,
   Users,
+  Workflow,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -54,8 +57,11 @@ const GLOBAL_ICONS: Record<string, LucideIcon> = {
   "/admin/doctors": UserRound,
   "/admin/assets": ImageIcon,
   "/admin/users": Users,
+  "/admin/patients": HeartPulse,
   "/admin/newsletter": Mail,
   "/admin/orders": ShoppingBag,
+  "/admin/invoices": ReceiptText,
+  "/admin/automation": Workflow,
   "/admin/pages": FileText,
   "/admin/services": Stethoscope,
   "/admin/blog": Newspaper,
@@ -73,11 +79,27 @@ const GLOBAL_HREFS = new Set([
   "/admin/specialties",
   "/admin/assets",
   "/admin/users",
+  "/admin/patients",
   "/admin/orders",
+  "/admin/invoices",
+  "/admin/automation",
   "/admin/newsletter",
   "/admin/subscriptions",
   "/admin/audit-log",
 ]);
+
+// Sub-groups within the Global section — related admin-wide links clustered
+// under labeled eyebrows so the (14-item) Global list stays scannable.
+// Ordering within each group follows the href order here. Any Global item
+// not listed falls into a trailing "More" group (see render) so nothing is
+// silently dropped.
+const GLOBAL_GROUPS: { label: string; hrefs: string[] }[] = [
+  { label: "Overview", hrefs: ["/admin", "/admin/calendar"] },
+  { label: "Catalog", hrefs: ["/admin/countries", "/admin/doctors", "/admin/assets", "/admin/blog"] },
+  { label: "People", hrefs: ["/admin/users", "/admin/patients"] },
+  { label: "Commerce", hrefs: ["/admin/orders", "/admin/invoices", "/admin/subscriptions"] },
+  { label: "System", hrefs: ["/admin/newsletter", "/admin/automation", "/admin/audit-log"] },
+];
 
 const COUNTRY_HREFS = new Set([
   "/admin/plans",
@@ -124,18 +146,18 @@ const ORDER: Record<string, number> = {
   "/admin/newsletter": 7,
   "/admin/subscriptions": 7.5,
   "/admin/audit-log": 8,
+  // Country-scoped — by priority: controller → content → services →
+  // bookings → footer last (site chrome, lowest priority).
   "/admin/country-features": 0,
-  "/admin/country-home": 1,
-  "/admin/country-content": 2,
-  "/admin/footer": 3,
-  "/admin/pages": 4,
-  "/admin/services": 5,
-  "/admin/general-consultations": 6,
-  "/admin/specialist-consultations": 7,
-  "/admin/online-prescriptions": 8,
-  "/admin/health-tests": 9,
-  "/admin/plans": 9.5,
-  "/admin/appointments": 10,
+  "/admin/pages": 1,
+  "/admin/services": 2,
+  "/admin/general-consultations": 3,
+  "/admin/specialist-consultations": 4,
+  "/admin/online-prescriptions": 5,
+  "/admin/health-tests": 6,
+  "/admin/plans": 7,
+  "/admin/appointments": 8,
+  "/admin/footer": 9,
 };
 
 // Tighter labels — long phrases overflow the 260px sidebar.
@@ -175,6 +197,30 @@ function partitionSections(
   global.sort((a, b) => (ORDER[a.href] ?? 99) - (ORDER[b.href] ?? 99));
   country.sort((a, b) => (ORDER[a.href] ?? 99) - (ORDER[b.href] ?? 99));
   return { global, country };
+}
+
+/** Bucket the flat Global list into labeled sub-groups per GLOBAL_GROUPS.
+ *  Item order inside a group follows the group's href order. Anything not
+ *  claimed by a group lands in a trailing "More" group so no item vanishes
+ *  if a new route is added to the layout but not to GLOBAL_GROUPS. */
+function bucketGlobalSections(global: Section[]): { label: string; items: Section[] }[] {
+  const byHref = new Map(global.map((s) => [s.href, s]));
+  const used = new Set<string>();
+  const groups: { label: string; items: Section[] }[] = [];
+  for (const g of GLOBAL_GROUPS) {
+    const items: Section[] = [];
+    for (const href of g.hrefs) {
+      const s = byHref.get(href);
+      if (s) {
+        items.push(s);
+        used.add(href);
+      }
+    }
+    if (items.length > 0) groups.push({ label: g.label, items });
+  }
+  const leftovers = global.filter((s) => !used.has(s.href));
+  if (leftovers.length > 0) groups.push({ label: "More", items: leftovers });
+  return groups;
 }
 
 function initials(name: string, email: string): string {
@@ -243,14 +289,30 @@ export function AdminShell({
 }) {
   const [navOpen, setNavOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const breadcrumbs = useBreadcrumbs(pathname, countries);
   const { global: globalSections, country: countrySections } = useMemo(
     () => partitionSections(sections, activeCountry?.enabledFeatures),
     [sections, activeCountry?.enabledFeatures],
   );
+  const globalGroups = useMemo(
+    () => bucketGlobalSections(globalSections),
+    [globalSections],
+  );
   const countryScopeLabel = activeCountry ? activeCountry.name : "Country";
   const countryDimmed = !activeCountry;
+
+  // Topbar seam-light swap — the ONLY scroll-linked effect in the system
+  // (DESIGN.md §5.2). Purely presentational, one class toggle.
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 8);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   function isActive(href: string): boolean {
     if (href === "/admin") return pathname === "/admin";
@@ -258,7 +320,7 @@ export function AdminShell({
   }
 
   return (
-    <div className="gh-portal-shell min-h-screen bg-[var(--color-background-soft)]">
+    <div className="gh-portal-shell min-h-screen" data-portal="admin" data-density="dense">
       {/* Sidebar — fixed on every breakpoint so it stays put while the
           main column scrolls. On mobile it slides in/out via translate;
           on desktop it's always visible and the main column is offset by
@@ -273,7 +335,7 @@ export function AdminShell({
       ) : null}
 
       <aside
-        className={`gh-portal-sidebar fixed inset-y-0 left-0 z-40 flex w-[272px] max-w-[86vw] flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
+        className={`gh-portal-sidebar fixed inset-y-0 left-0 z-40 flex w-[var(--portal-sidebar-w)] max-w-[86vw] flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
           navOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
         }`}
       >
@@ -293,33 +355,37 @@ export function AdminShell({
             </Link>
             <p
               className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em]"
-              style={{ color: "var(--color-accent)" }}
+              style={{ color: "var(--portal-accent)", opacity: 0.9 }}
             >
               Super admin
             </p>
           </div>
 
           <nav className="gh-dark-scroll flex-1 overflow-y-auto">
-            {/* ── Global section ────────────────────────────────── */}
-            <SidebarSectionLabel label="Global" />
-            <div className="px-3 pt-1">
-              <div className="grid gap-0.5">
-                {globalSections.map((section) => {
-                  const Icon = GLOBAL_ICONS[section.href] ?? LayoutDashboard;
-                  return (
-                    <SidebarItem
-                      key={section.href}
-                      href={section.href}
-                      icon={<Icon className="size-4" aria-hidden />}
-                      label={section.label}
-                      active={isActive(section.href)}
-                      badge={navBadges?.[section.href]}
-                      onNavigate={() => setNavOpen(false)}
-                    />
-                  );
-                })}
+            {/* ── Global section — sub-grouped for scannability ──── */}
+            {globalGroups.map((group) => (
+              <div key={group.label}>
+                <SidebarSectionLabel label={group.label} />
+                <div className="px-3 pt-1">
+                  <div className="grid gap-0.5">
+                    {group.items.map((section) => {
+                      const Icon = GLOBAL_ICONS[section.href] ?? LayoutDashboard;
+                      return (
+                        <SidebarItem
+                          key={section.href}
+                          href={section.href}
+                          icon={<Icon className="size-4" aria-hidden />}
+                          label={section.label}
+                          active={isActive(section.href)}
+                          badge={navBadges?.[section.href]}
+                          onNavigate={() => setNavOpen(false)}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
 
             {/* ── Country-scoped section (dims when no country) ──── */}
             {countrySections.length > 0 ? (
@@ -378,9 +444,9 @@ export function AdminShell({
 
       {/* Main column — offset by sidebar width on desktop so content
           doesn't slide under the fixed sidebar. */}
-      <div className="flex min-h-screen min-w-0 flex-col lg:pl-[272px]">
+      <div className="flex min-h-screen min-w-0 flex-col lg:pl-[var(--portal-sidebar-w)]">
           <header
-            className="gh-portal-topbar sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between gap-3 border-b border-[var(--color-border)] px-4 sm:px-6"
+            className={`gh-portal-topbar${scrolled ? " gh-portal-topbar--scrolled" : ""} sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between gap-3 px-4 sm:px-6`}
           >
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <button
@@ -388,10 +454,31 @@ export function AdminShell({
                 onClick={() => setNavOpen((v) => !v)}
                 aria-label={navOpen ? "Close navigation" : "Open navigation"}
                 aria-expanded={navOpen}
-                className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-[var(--color-border)] text-[var(--color-text-primary)] lg:hidden"
+                className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-[var(--portal-chrome-border)] text-[var(--portal-chrome-text-active)] lg:hidden"
               >
                 {navOpen ? <X className="size-4" aria-hidden /> : <Menu className="size-4" aria-hidden />}
               </button>
+
+              {/* Portal glyph — DESIGN.md §5.2. */}
+              <span
+                aria-hidden
+                className="inline-flex shrink-0 items-center justify-center rounded-[6px]"
+                style={{
+                  width: 20,
+                  height: 20,
+                  background: "color-mix(in srgb, var(--portal-accent) 16%, transparent)",
+                }}
+              >
+                <span
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: 999,
+                    background: "var(--portal-accent)",
+                  }}
+                />
+              </span>
+
               <nav
                 aria-label="Breadcrumb"
                 className="flex min-w-0 items-center gap-1.5 overflow-hidden text-sm"
@@ -401,20 +488,21 @@ export function AdminShell({
                   return (
                     <span key={crumb.href} className="flex items-center gap-1.5">
                       {isLast ? (
-                        <span className="truncate font-bold text-[var(--color-text-primary)]">
+                        <span className="truncate font-bold text-[var(--portal-chrome-text-active)]">
                           {crumb.label}
                         </span>
                       ) : (
                         <Link
                           href={crumb.href}
-                          className="truncate font-medium text-[var(--color-text-muted)] transition hover:text-[var(--color-text-primary)]"
+                          className="truncate font-medium text-[var(--portal-chrome-text)] transition hover:text-[var(--portal-chrome-text-active)]"
                         >
                           {crumb.label}
                         </Link>
                       )}
                       {!isLast ? (
                         <ChevronRight
-                          className="size-3 shrink-0 text-[var(--color-text-muted)]"
+                          className="size-3 shrink-0 opacity-50"
+                          style={{ color: "var(--portal-chrome-text)" }}
                           aria-hidden
                         />
                       ) : null}
@@ -435,39 +523,48 @@ export function AdminShell({
                   </div>
                 ) : null}
 
-              {/* Notification bell — surfaces pending approval requests
-                  (doctor service selections awaiting review). */}
-              <NotificationPopover
-                items={notifications?.items ?? []}
-                unreadCount={notifications?.unreadCount ?? 0}
-                viewAllHref={
-                  notifications && notifications.unreadCount > 0
-                    ? "/admin/doctors"
-                    : null
-                }
-                emptyMessage="You're all caught up. New approval requests will appear here."
-              />
+              {/* Bell + user chip share one chrome pill (DESIGN.md §5.2). */}
+              <div
+                className="flex items-center rounded-full"
+                style={{ border: "1px solid var(--portal-chrome-border)" }}
+              >
+                {/* Notification bell — surfaces pending approval requests
+                    (doctor service selections awaiting review). */}
+                <NotificationPopover
+                  items={notifications?.items ?? []}
+                  unreadCount={notifications?.unreadCount ?? 0}
+                  viewAllHref={
+                    notifications && notifications.unreadCount > 0
+                      ? "/admin/doctors"
+                      : null
+                  }
+                  emptyMessage="You're all caught up. New approval requests will appear here."
+                />
 
-              {/* User menu */}
-              <div className="relative">
+                <span
+                  aria-hidden
+                  style={{ width: 1, height: 22, background: "var(--portal-chrome-border)" }}
+                />
+
+                {/* User menu */}
+                <div className="relative">
                 <button
                   type="button"
                   onClick={() => setUserMenuOpen((v) => !v)}
                   aria-expanded={userMenuOpen}
                   aria-haspopup="menu"
-                  className="inline-flex items-center gap-2 rounded-[999px] border border-[var(--color-border)] bg-[var(--color-background-page)] py-1 pl-1 pr-3 text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-border-strong)]"
-                  style={{ boxShadow: "var(--shadow-soft)" }}
+                  className="inline-flex items-center gap-2 rounded-full py-1 pl-1 pr-3 text-sm font-semibold text-[var(--portal-chrome-text-active)] transition hover:bg-white/5"
                 >
                   <span
                     className="inline-flex size-7 items-center justify-center rounded-full text-[11px] font-extrabold text-white"
-                    style={{ background: "var(--color-brand-primary)" }}
+                    style={{ background: "var(--portal-primary)" }}
                   >
                     {initials(user.fullName, user.email)}
                   </span>
                   <span className="hidden max-w-[140px] truncate md:inline">
                     {user.fullName || user.email.split("@")[0]}
                   </span>
-                  <ChevronDown className="size-3 text-[var(--color-text-muted)]" aria-hidden />
+                  <ChevronDown className="size-3 opacity-70" aria-hidden />
                 </button>
                 {userMenuOpen ? (
                   <>
@@ -478,39 +575,46 @@ export function AdminShell({
                       className="fixed inset-0 z-30"
                     />
                     <div
-                      className="absolute right-0 top-[calc(100%+8px)] z-40 min-w-[224px] rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-3"
-                      style={{ boxShadow: "var(--shadow-elevated)" }}
+                      className="absolute right-0 top-[calc(100%+8px)] z-40 min-w-[224px] p-3"
+                      style={{
+                        borderRadius: "var(--portal-radius-xl)",
+                        border: "1px solid var(--portal-line)",
+                        background: "var(--portal-surface-elevated)",
+                        boxShadow: "var(--portal-shadow-modal)",
+                      }}
                     >
-                      <div className="flex items-center gap-2.5 pb-3 border-b border-[var(--color-border)]">
+                      <div className="flex items-center gap-2.5 pb-3" style={{ borderBottom: "1px solid var(--portal-line)" }}>
                         <span
                           className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-[11px] font-extrabold text-white"
-                          style={{ background: "var(--color-brand-primary)" }}
+                          style={{ background: "var(--portal-primary)" }}
                         >
                           {initials(user.fullName, user.email)}
                         </span>
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-[var(--color-text-primary)]">
+                          <p className="truncate text-sm font-semibold" style={{ color: "var(--portal-text)" }}>
                             {user.fullName || user.email}
                           </p>
-                          <p className="truncate text-xs text-[var(--color-text-muted)]">{user.email}</p>
+                          <p className="truncate text-xs" style={{ color: "var(--portal-muted)" }}>{user.email}</p>
                         </div>
                       </div>
-                      <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
+                      <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: "var(--portal-primary)" }}>
                         {user.role}
                       </p>
                       <nav className="mt-2 flex flex-col gap-0.5">
                         <Link
                           href="/"
                           onClick={() => setUserMenuOpen(false)}
-                          className="rounded-md px-2 py-1.5 text-sm font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                          className="rounded-md px-2 py-1.5 text-sm font-semibold hover:bg-[var(--portal-well)]"
+                          style={{ color: "var(--portal-text)" }}
                         >
                           Main site
                         </Link>
                       </nav>
-                      <form action={signOutAction} className="mt-2 border-t border-[var(--color-border)] pt-2">
+                      <form action={signOutAction} className="mt-2 pt-2" style={{ borderTop: "1px solid var(--portal-line)" }}>
                         <button
                           type="submit"
-                          className="w-full rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2 text-sm font-semibold text-[var(--color-text-primary)] transition hover:bg-[var(--color-background-panel)] hover:border-[var(--color-border-strong)]"
+                          className="w-full rounded-[var(--portal-radius)] px-3 py-2 text-sm font-semibold transition hover:bg-[var(--portal-well)]"
+                          style={{ border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
                         >
                           Sign out
                         </button>
@@ -518,13 +622,19 @@ export function AdminShell({
                     </div>
                   </>
                 ) : null}
+                </div>
               </div>
             </div>
           </header>
 
-          {/* Mobile country picker row */}
+          {/* Mobile country picker row — chrome-toned bar so the
+              chrome-styled CountryPicker trigger (near-white text) stays
+              legible; a white bar here would nearly hide the text. */}
           {countries.length > 0 ? (
-            <div className="border-b border-[var(--color-border)] bg-white px-4 py-3 sm:hidden">
+            <div
+              className="px-4 py-3 sm:hidden"
+              style={{ background: "var(--portal-chrome-solid)", borderBottom: "1px solid var(--portal-chrome-border)" }}
+            >
               <CountryPicker
                 countries={countries}
                 current={activeCountry}
@@ -541,9 +651,9 @@ export function AdminShell({
         toastOptions={{
           classNames: {
             toast:
-              "rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm shadow-md",
-            title: "font-semibold text-[var(--color-text-primary)]",
-            description: "text-[var(--color-text-muted)]",
+              "rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface)] px-3 py-2 text-sm shadow-md",
+            title: "font-semibold text-[var(--portal-text)]",
+            description: "text-[var(--portal-muted)]",
           },
         }}
       />
@@ -579,7 +689,7 @@ function SidebarSectionLabel({
           width: 14,
           height: 2,
           borderRadius: 2,
-          background: "var(--color-brand-mint)",
+          background: "var(--portal-mint)",
         }}
       />
       <span>{label}</span>
@@ -622,38 +732,11 @@ function SidebarItem({
     <Link
       href={href}
       onClick={onNavigate}
-      className="relative flex w-full items-center gap-2.5"
-      style={{
-        padding: "9px 12px",
-        borderRadius: 8,
-        background: active ? "rgba(255,255,255,0.10)" : "transparent",
-        color: active ? "#D9F99D" : "rgba(255,255,255,0.80)",
-        fontSize: 13,
-        fontWeight: active ? 700 : 500,
-        textDecoration: "none",
-        transition: "background 240ms cubic-bezier(0.25, 1.1, 0.4, 1), color 240ms ease-out",
-      }}
-      onMouseEnter={(e) => {
-        if (!active) e.currentTarget.style.background = "rgba(255,255,255,0.06)";
-      }}
-      onMouseLeave={(e) => {
-        if (!active) e.currentTarget.style.background = "transparent";
-      }}
+      aria-current={active ? "page" : undefined}
+      className="gh-portal-nav-item"
     >
-      {/* Left accent bar on active item — subtle but clearer than the
-          background tint alone. */}
-      {active ? (
-        <span
-          aria-hidden
-          className="absolute left-0 top-1/2 -translate-y-1/2"
-          style={{
-            width: 3,
-            height: 18,
-            borderRadius: 2,
-            background: "var(--color-brand-mint)",
-          }}
-        />
-      ) : null}
+      {/* Left accent bar — CSS-driven, scales in on activation (§5.1). */}
+      <span aria-hidden className="gh-portal-nav-item__bar" />
       <span
         className="inline-flex shrink-0 justify-center"
         style={{ width: 16 }}
@@ -662,21 +745,7 @@ function SidebarItem({
       </span>
       <span className="truncate">{label}</span>
       {badge && badge > 0 ? (
-        <span
-          className="ml-auto inline-flex shrink-0 items-center justify-center"
-          aria-label={`${badge} pending`}
-          style={{
-            minWidth: 18,
-            height: 18,
-            padding: "0 6px",
-            borderRadius: 999,
-            fontSize: 11,
-            fontWeight: 800,
-            lineHeight: 1,
-            color: "#0a1f14",
-            background: "#D9F99D",
-          }}
-        >
+        <span className="gh-portal-nav-item__badge ml-auto" aria-label={`${badge} pending`}>
           {badge > 99 ? "99+" : badge}
         </span>
       ) : null}

@@ -194,10 +194,10 @@ export default async function DoctorReportsPage({
 function Tile({ label, value }: { label: string; value: string }) {
   return (
     <div className="gh-card gh-doctor-report-tile p-5">
-      <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+      <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
         {label}
       </p>
-      <p className="mt-2 text-2xl font-bold text-[var(--color-text-primary)]">
+      <p className="mt-2 text-2xl font-bold text-[var(--portal-text)]">
         {value}
       </p>
     </div>
@@ -218,7 +218,7 @@ function BreakdownTable({ rows }: { rows: { label: string; count: number }[] }) 
     <table className="gh-doctor-mini-table mt-4 w-full text-[13px]">
       <tbody>
         {rows.map((r) => (
-          <tr key={r.label} className="border-t border-[var(--color-border)]">
+          <tr key={r.label} className="border-t border-[var(--portal-line)]">
             <td className="py-2 capitalize">{r.label.toLowerCase().replace(/_/g, " ")}</td>
             <td className="py-2 text-right font-mono">{r.count}</td>
           </tr>

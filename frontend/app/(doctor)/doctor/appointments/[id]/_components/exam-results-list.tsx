@@ -122,16 +122,16 @@ export function ExamResultsList({
 
   return (
     <div className="mt-4 grid gap-4">
-      <form onSubmit={add} className="grid gap-3 rounded-lg border border-[var(--color-border)] bg-white/75 p-3 shadow-sm">
+      <form onSubmit={add} className="grid gap-3 rounded-lg border border-[var(--portal-line)] bg-white/75 p-3 shadow-sm">
         <div className="flex items-start gap-2">
-          <span className="grid size-9 shrink-0 place-items-center rounded-md bg-[var(--color-background-soft)] text-[var(--color-brand-primary)]">
+          <span className="grid size-9 shrink-0 place-items-center rounded-md bg-[var(--portal-well)] text-[var(--portal-primary)]">
             <ClipboardPlus className="size-4" aria-hidden />
           </span>
           <div>
-            <p className="text-sm font-bold text-[var(--color-text-primary)]">
+            <p className="text-sm font-bold text-[var(--portal-text)]">
               Exams and results
             </p>
-            <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+            <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
               Request a test or log a completed external result for this consultation.
             </p>
           </div>
@@ -215,12 +215,12 @@ export function ExamResultsList({
       </form>
 
       {items.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
-          <p className="flex items-center gap-2 text-sm font-bold text-[var(--color-text-primary)]">
-            <FlaskConical className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
+        <div className="rounded-lg border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] p-4">
+          <p className="flex items-center gap-2 text-sm font-bold text-[var(--portal-text)]">
+            <FlaskConical className="size-4 text-[var(--portal-primary)]" aria-hidden />
             No exams logged yet
           </p>
-          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+          <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
             Requested exams, lab links, and completed results will appear here.
           </p>
         </div>
@@ -229,11 +229,11 @@ export function ExamResultsList({
           {items.map((r) => (
             <li
               key={r.id}
-              className="gh-admin-card rounded-md border border-[var(--color-border)] p-3"
+              className="gh-admin-card rounded-md border border-[var(--portal-line)] p-3"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-[14px] font-semibold text-[var(--color-text-primary)]">
+                  <p className="text-[14px] font-semibold text-[var(--portal-text)]">
                     {r.testName}
                     <span
                       className={`ml-2 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] ${
@@ -245,7 +245,7 @@ export function ExamResultsList({
                       {r.status === "REQUESTED" ? "Pending" : "Completed"}
                     </span>
                   </p>
-                  <p className="text-[12px] text-[var(--color-text-muted)]">
+                  <p className="text-[12px] text-[var(--portal-muted)]">
                     {r.performedAt
                       ? new Date(r.performedAt).toLocaleDateString()
                       : "No date"}{" "}
@@ -258,7 +258,7 @@ export function ExamResultsList({
                       type="button"
                       onClick={() => markComplete(r.id)}
                       disabled={pending}
-                      className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] px-2 py-1 text-[12px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                      className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-[12px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
                     >
                       <Check className="size-3.5" /> Mark complete
                     </button>
@@ -266,7 +266,7 @@ export function ExamResultsList({
                   <button
                     type="button"
                     onClick={() => remove(r.id)}
-                    className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-status-error)]"
+                    className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
                     aria-label="Delete"
                   >
                     <Trash2 className="size-3.5" />
@@ -274,7 +274,7 @@ export function ExamResultsList({
                 </div>
               </div>
               {r.notes ? (
-                <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--color-text-primary)]">
+                <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--portal-text)]">
                   {r.notes}
                 </p>
               ) : null}
@@ -283,7 +283,7 @@ export function ExamResultsList({
                   href={r.externalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-2 inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+                  className="mt-2 inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--portal-primary)] hover:underline"
                 >
                   Open lab report <ExternalLink className="size-3" />
                 </a>

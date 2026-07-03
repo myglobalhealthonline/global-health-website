@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CalendarOff, CalendarPlus, Lock, Plus, Unlock } from "lucide-react";
 import { Btn } from "@/components/portal-atoms";
+import { FormSection } from "@/components/FormSection";
 import {
   bulkBlockSlots,
   createAvailabilityWindow,
@@ -301,7 +302,7 @@ export function DoctorCalendarUI({
     <div className="gh-doctor-calendar grid gap-4">
       {/* Toolbar */}
       <div className="gh-doctor-calendar-toolbar flex flex-wrap items-center justify-between gap-3">
-        <div className="gh-doctor-calendar-legend flex flex-wrap items-center gap-3 text-xs text-[var(--color-text-muted)]">
+        <div className="gh-doctor-calendar-legend flex flex-wrap items-center gap-3 text-xs text-[var(--portal-muted)]">
           <LegendDot className="bg-emerald-500" label="Open" />
           <LegendDot className="bg-rose-400" label="Blocked" />
           <LegendDot className="bg-blue-500" label="Booked" />
@@ -342,7 +343,7 @@ export function DoctorCalendarUI({
           {/* Day-level block controls */}
           {selectedDay ? (
             <div className="gh-doctor-calendar-day-card gh-card p-4">
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
                 {dayLabel(selectedDay)}
               </p>
               <div className="gh-doctor-calendar-day-actions mt-3 flex flex-wrap gap-2">
@@ -401,19 +402,23 @@ export function DoctorCalendarUI({
 
       <div className="gh-doctor-calendar-forms grid gap-4 lg:grid-cols-2">
         {/* Add availability over a date + time range */}
-        <div className="gh-doctor-calendar-form-card gh-card p-4">
-          <div className="flex items-center gap-2">
-            <CalendarPlus className="size-4 text-[var(--color-text-muted)]" aria-hidden />
-            <h3 className="text-sm font-bold text-[var(--color-text-primary)]">
+        <FormSection
+          title={
+            <span className="flex items-center gap-2">
+              <CalendarPlus className="size-4 text-[var(--portal-muted)]" aria-hidden />
               Add availability
-            </h3>
-          </div>
-          <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-            You&apos;re available on these dates, during these hours. Slots are
-            generated and shown on the website, sized to each consultation&apos;s
-            length. Times in {clinicTimezone} (clinic time).
-          </p>
-          <div className="mt-3 grid gap-3">
+            </span>
+          }
+          description={
+            <>
+              You&apos;re available on these dates, during these hours. Slots are
+              generated and shown on the website, sized to each consultation&apos;s
+              length. Times in {clinicTimezone} (clinic time).
+            </>
+          }
+          className="gh-doctor-calendar-form-card"
+        >
+          <div className="gh-form-section__span-2 grid gap-3">
             <div className="gh-doctor-calendar-date-grid grid grid-cols-2 gap-2">
               <label className="flex flex-col gap-1 text-sm">
                 <span className="gh-field-label">From date</span>
@@ -479,19 +484,20 @@ export function DoctorCalendarUI({
               Add availability
             </Btn>
           </div>
-        </div>
+        </FormSection>
 
         {/* Date + time range time off (vacation / leave) */}
-        <div className="gh-doctor-calendar-form-card gh-card p-4">
-          <div className="flex items-center gap-2">
-            <CalendarOff className="size-4 text-[var(--color-text-muted)]" aria-hidden />
-            <h3 className="text-sm font-bold text-[var(--color-text-primary)]">Time off</h3>
-          </div>
-          <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-            Block open slots across a date and time range — for holidays or
-            leave. Booked appointments are never touched. Times in {tz}.
-          </p>
-          <div className="mt-3 grid gap-3">
+        <FormSection
+          title={
+            <span className="flex items-center gap-2">
+              <CalendarOff className="size-4 text-[var(--portal-muted)]" aria-hidden />
+              Time off
+            </span>
+          }
+          description={`Block open slots across a date and time range — for holidays or leave. Booked appointments are never touched. Times in ${tz}.`}
+          className="gh-doctor-calendar-form-card"
+        >
+          <div className="gh-form-section__span-2 grid gap-3">
             <div className="gh-doctor-calendar-date-grid grid grid-cols-2 gap-2">
               <label className="flex flex-col gap-1 text-sm">
                 <span className="gh-field-label">From</span>
@@ -546,7 +552,7 @@ export function DoctorCalendarUI({
               </Btn>
             </div>
           </div>
-        </div>
+        </FormSection>
       </div>
 
       <EventDetailDialog item={activeItem} tz={tz} onClose={() => setActiveItem(null)} />

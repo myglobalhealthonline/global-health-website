@@ -83,13 +83,13 @@ function DocCard({ doc }: { doc: MedicalDoc }) {
   return (
     <div className="gh-patient-doc-card gh-card grid gap-4 p-4 sm:grid-cols-[1fr_auto] sm:items-start">
       <div className="min-w-0 flex-1">
-        <p className="truncate font-medium text-[var(--color-text-primary)]">{doc.title}</p>
+        <p className="truncate font-medium text-[var(--portal-text)]">{doc.title}</p>
         {doc.description && (
-          <p className="mt-0.5 truncate text-sm text-[var(--color-text-muted)]">
+          <p className="mt-0.5 truncate text-sm text-[var(--portal-muted)]">
             {doc.description}
           </p>
         )}
-        <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+        <p className="mt-1 text-xs text-[var(--portal-muted)]">
           {doc.fileName} · {formatBytes(doc.byteSize)} ·{" "}
           {new Date(doc.createdAt).toLocaleDateString()}
           {doc.uploadedByRole !== "PATIENT" && (
@@ -101,7 +101,7 @@ function DocCard({ doc }: { doc: MedicalDoc }) {
         type="button"
         onClick={onDownload}
         disabled={downloading}
-        className="inline-flex w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[var(--color-border)] px-3 py-1.5 text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)] disabled:opacity-60 sm:w-auto"
+        className="inline-flex w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-1.5 text-sm font-medium text-[var(--portal-text)] hover:bg-[var(--portal-well)] disabled:opacity-60 sm:w-auto"
       >
         <Download aria-hidden className="size-4" />
         {downloading ? "Downloading…" : "Download"}
@@ -153,7 +153,7 @@ function UploadForm({ onUploaded }: { onUploaded: (doc: MedicalDoc) => void }) {
 
   return (
     <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-3 p-5">
-      <h4 className="font-semibold text-[var(--color-text-primary)]">Upload a report</h4>
+      <h4 className="font-semibold text-[var(--portal-text)]">Upload a report</h4>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">
           <span className="gh-field-label">Title <span aria-hidden>*</span></span>
@@ -196,7 +196,7 @@ function UploadForm({ onUploaded }: { onUploaded: (doc: MedicalDoc) => void }) {
             required
             className="gh-input mt-1 min-w-0"
           />
-          <p className="mt-1 text-xs text-[var(--color-text-muted)]">PDF, JPG, PNG, WebP — max 10 MB</p>
+          <p className="mt-1 text-xs text-[var(--portal-muted)]">PDF, JPG, PNG, WebP — max 10 MB</p>
         </label>
       </div>
       {msg && (
@@ -253,14 +253,14 @@ export default function MedicalFilesPage() {
   return (
     <div className="gh-patient-page gh-patient-medical-files-page">
       <header className="gh-patient-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
           Patient portal
         </p>
-        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--color-text-primary)]">
-          <FileText className="size-6 text-[var(--color-brand-primary)]" aria-hidden />
+        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--portal-text)]">
+          <FileText className="size-6 text-[var(--portal-primary)]" aria-hidden />
           Medical files
         </h2>
-        <p className="text-sm text-[var(--color-text-muted)]">
+        <p className="text-sm text-[var(--portal-muted)]">
           Your uploaded reports and documents from doctors.
         </p>
       </header>
@@ -276,7 +276,7 @@ export default function MedicalFilesPage() {
       />
 
       <nav
-        className="gh-patient-tabs mb-6 flex gap-1 overflow-x-auto rounded-lg bg-[var(--color-background-soft)] p-1"
+        className="gh-patient-tabs mb-6 flex gap-1 overflow-x-auto rounded-lg bg-[var(--portal-well)] p-1"
         aria-label="Medical file categories"
       >
         {TABS.map((tab) => (
@@ -286,8 +286,8 @@ export default function MedicalFilesPage() {
             onClick={() => setActiveTab(tab.id)}
             className={`inline-flex min-w-max items-center gap-1.5 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors ${
               activeTab === tab.id
-                ? "bg-white text-[var(--color-text-primary)] shadow-sm"
-                : "text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+                ? "bg-white text-[var(--portal-text)] shadow-sm"
+                : "text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
             }`}
           >
             {tab.icon}
@@ -304,10 +304,10 @@ export default function MedicalFilesPage() {
 
       {!loaded ? (
         <div className="gh-patient-empty-state gh-card p-6">
-          <div className="h-4 w-36 rounded bg-[var(--color-background-soft)]" />
+          <div className="h-4 w-36 rounded bg-[var(--portal-well)]" />
           <div className="mt-4 grid gap-3">
-            <div className="h-20 rounded-lg bg-[var(--color-background-soft)]" />
-            <div className="h-20 rounded-lg bg-[var(--color-background-soft)]" />
+            <div className="h-20 rounded-lg bg-[var(--portal-well)]" />
+            <div className="h-20 rounded-lg bg-[var(--portal-well)]" />
           </div>
         </div>
       ) : filteredDocs.length === 0 ? (
@@ -321,10 +321,10 @@ export default function MedicalFilesPage() {
             className="gh-patient-medical-empty__image"
           />
           <div className="min-w-0">
-            <p className="font-semibold text-[var(--color-text-primary)]">
+            <p className="font-semibold text-[var(--portal-text)]">
               No {currentTabConfig?.label.toLowerCase() ?? "documents"} yet
             </p>
-            <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+            <p className="mt-1 text-sm text-[var(--portal-muted)]">
               Uploaded reports, prescriptions, requests, and summaries will appear here.
             </p>
           </div>

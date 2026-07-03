@@ -93,23 +93,23 @@ export default function AccountSecurityPage() {
   return (
     <div className="gh-patient-page gh-patient-security-page">
       <header className="gh-patient-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
           {a.security.breadcrumb}
         </p>
-        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--color-text-primary)]">
-          <ShieldCheck className="size-6 text-[var(--color-brand-primary)]" aria-hidden />
+        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--portal-text)]">
+          <ShieldCheck className="size-6 text-[var(--portal-primary)]" aria-hidden />
           {a.security.title}
         </h2>
-        <p className="text-sm text-[var(--color-text-muted)]">
+        <p className="text-sm text-[var(--portal-muted)]">
           {a.security.subtitle}
         </p>
       </header>
 
       {loading ? (
         <div className="gh-card grid gap-4 p-6">
-          <div className="h-4 w-40 animate-pulse rounded-full bg-[var(--color-background-soft)]" />
-          <div className="h-20 animate-pulse rounded-[14px] bg-[var(--color-background-soft)]" />
-          <div className="h-28 animate-pulse rounded-[14px] bg-[var(--color-background-soft)]" />
+          <div className="h-4 w-40 animate-pulse rounded-full bg-[var(--portal-well)]" />
+          <div className="h-20 animate-pulse rounded-[14px] bg-[var(--portal-well)]" />
+          <div className="h-28 animate-pulse rounded-[14px] bg-[var(--portal-well)]" />
           <span className="sr-only">{a.security.loading}</span>
         </div>
       ) : (
@@ -125,7 +125,7 @@ export default function AccountSecurityPage() {
             />
 
             {/* Email verification panel */}
-            <section className="gh-patient-security-card gh-admin-card rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
+            <section className="gh-patient-security-card gh-admin-card rounded-2xl border border-[var(--portal-line)] p-6 shadow-[var(--portal-shadow)]">
               <div className="flex items-start gap-3">
                 <span
                   className={`inline-flex size-9 shrink-0 items-center justify-center rounded-full ${
@@ -137,18 +137,18 @@ export default function AccountSecurityPage() {
                   <MailCheck className="size-5" aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-base font-bold text-[var(--color-text-primary)]">
+                  <h2 className="text-base font-bold text-[var(--portal-text)]">
                     {a.security.emailVerification}
                   </h2>
                   {verified ? (
-                    <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+                    <p className="mt-1 text-sm text-[var(--portal-muted)]">
                       <span className="font-semibold text-emerald-700">{a.security.verified}</span>{" "}
                       {a.security.verifiedOn}{" "}
                       {formatAppDate(user!.emailVerifiedAt!)}.
                     </p>
                   ) : (
                     <>
-                      <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+                      <p className="mt-1 text-sm text-[var(--portal-muted)]">
                         {a.security.unverifiedBody.replace("{email}", user?.email ?? "")}
                       </p>
                       <button
@@ -177,11 +177,11 @@ export default function AccountSecurityPage() {
             </section>
 
             {/* Privacy controls — GDPR data-export + account-delete */}
-            <section className="gh-patient-security-card mt-4 gh-admin-card rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
-              <h2 className="text-base font-bold text-[var(--color-text-primary)]">
+            <section className="gh-patient-security-card mt-4 gh-admin-card rounded-2xl border border-[var(--portal-line)] p-6 shadow-[var(--portal-shadow)]">
+              <h2 className="text-base font-bold text-[var(--portal-text)]">
                 {a.security.yourData}
               </h2>
-              <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+              <p className="mt-1 text-sm text-[var(--portal-muted)]">
                 {a.security.gdprBody}
               </p>
 
@@ -199,16 +199,16 @@ export default function AccountSecurityPage() {
             </section>
 
             {/* Change-password panel */}
-            <section className="gh-patient-security-card mt-4 gh-admin-card rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
+            <section className="gh-patient-security-card mt-4 gh-admin-card rounded-2xl border border-[var(--portal-line)] p-6 shadow-[var(--portal-shadow)]">
               <div className="flex items-start gap-3">
                 <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
                   <KeyRound className="size-5" aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-base font-bold text-[var(--color-text-primary)]">
+                  <h2 className="text-base font-bold text-[var(--portal-text)]">
                     {a.security.changePassword}
                   </h2>
-                  <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+                  <p className="mt-1 text-sm text-[var(--portal-muted)]">
                     {a.security.changePasswordBody}
                   </p>
 

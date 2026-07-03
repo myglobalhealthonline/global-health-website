@@ -211,7 +211,7 @@ export default async function AdminServicesPage({
 
       <ScopeBanner activeCountry={activeCountry} clearHref={basePath} />
 
-      <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-summary-strip">
+      <div className="gh-admin-service-summary-strip">
         <div>
           <span className="gh-field-label">Visible records</span>
           <strong>{items.length}</strong>
@@ -237,7 +237,7 @@ export default async function AdminServicesPage({
           the same control twice was redundant. */}
       {showKindTabs ? (
         <div
-          className="gh-admin-area-hero gh-admin-area-services gh-admin-service-kind-tabs mb-4 inline-flex items-center gap-1 border border-[var(--color-border)]"
+          className="gh-admin-service-kind-tabs mb-4 inline-flex items-center gap-1 border border-[var(--color-border)]"
           style={{
             padding: 4,
             background: "var(--color-background-soft)",
@@ -288,9 +288,9 @@ export default async function AdminServicesPage({
 
       {/* Filters */}
       <AdminCard padding={0} className="mb-4 overflow-hidden">
-        <form method="get" className="gh-admin-area-hero gh-admin-area-services gh-admin-service-filters px-5 py-4">
+        <form method="get" className="gh-admin-service-filters px-5 py-4">
           <input type="hidden" name="kind" value={kind} />
-          <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-filter-grid">
+          <div className="gh-admin-service-filter-grid">
             <label className="flex min-w-0 flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select
@@ -331,7 +331,7 @@ export default async function AdminServicesPage({
             </label>
           </div>
           <input type="hidden" name="page" value="1" />
-          <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-actions gh-admin-service-actions--filters mt-4">
+          <div className="gh-admin-service-actions gh-admin-service-actions--filters mt-4">
             <button type="submit" className="gh-btn gh-btn-primary" style={{ minHeight: 36 }}>
               Apply filters
             </button>
@@ -352,7 +352,7 @@ export default async function AdminServicesPage({
 
       {/* Table */}
       <AdminCard padding={0} className="overflow-hidden">
-        <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
+        <div className="gh-admin-service-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Title</Th>
@@ -405,7 +405,7 @@ export default async function AdminServicesPage({
                     </span>
                   </Td>
                   <Td>
-                    <form action={toggleServiceAction} className="gh-admin-area-hero gh-admin-area-services gh-admin-service-toggle-form inline-flex">
+                    <form action={toggleServiceAction} className="gh-admin-service-toggle-form inline-flex">
                       <input type="hidden" name="id" value={service.id} />
                       <input
                         type="hidden"
@@ -424,17 +424,17 @@ export default async function AdminServicesPage({
                             : "gh-admin-status-toggle-off"
                         }`}
                       >
-                        <span className="gh-admin-area-hero gh-admin-area-services gh-admin-status-toggle__track" aria-hidden>
-                          <span className="gh-admin-area-hero gh-admin-area-services gh-admin-status-toggle__thumb" />
+                        <span className="gh-admin-status-toggle__track" aria-hidden>
+                          <span className="gh-admin-status-toggle__thumb" />
                         </span>
-                        <span className="gh-admin-area-hero gh-admin-area-services gh-admin-status-toggle__label">
+                        <span className="gh-admin-status-toggle__label">
                           {service.isActive ? "Active" : "Inactive"}
                         </span>
                       </button>
                     </form>
                   </Td>
                   <Td align="right">
-                    <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-row-actions flex justify-end gap-1.5">
+                    <div className="gh-admin-service-row-actions flex justify-end gap-1.5">
                       <IconBtn
                         ariaLabel={`View ${service.name}`}
                         href={adminHrefForService(service)}
@@ -462,9 +462,9 @@ export default async function AdminServicesPage({
           </AdminTable>
         </div>
 
-        <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-mobile-list">
+        <div className="gh-admin-service-mobile-list">
           {items.map((service) => (
-            <article key={service.id} className="gh-admin-area-hero gh-admin-area-services gh-admin-service-mobile-card">
+            <article key={service.id} className="gh-admin-service-mobile-card">
               <div className="flex min-w-0 items-start justify-between gap-3">
                 <div className="min-w-0">
                   <h3 className="m-0 text-[15px] font-bold leading-snug text-[var(--color-text-primary)]">
@@ -478,7 +478,7 @@ export default async function AdminServicesPage({
                   {service.isActive ? "Active" : "Inactive"}
                 </Pill>
               </div>
-              <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-mobile-meta">
+              <div className="gh-admin-service-mobile-meta">
                 <span>
                   <em>Market</em>
                   <strong className="inline-flex items-center gap-2">
@@ -501,7 +501,7 @@ export default async function AdminServicesPage({
                   <strong>{service.sortOrder}</strong>
                 </span>
               </div>
-              <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-mobile-controls">
+              <div className="gh-admin-service-mobile-controls">
                 <form action={toggleServiceAction} className="inline-flex">
                   <input type="hidden" name="id" value={service.id} />
                   <input
@@ -521,15 +521,15 @@ export default async function AdminServicesPage({
                         : "gh-admin-status-toggle-off"
                     }`}
                   >
-                    <span className="gh-admin-area-hero gh-admin-area-services gh-admin-status-toggle__track" aria-hidden>
-                      <span className="gh-admin-area-hero gh-admin-area-services gh-admin-status-toggle__thumb" />
+                    <span className="gh-admin-status-toggle__track" aria-hidden>
+                      <span className="gh-admin-status-toggle__thumb" />
                     </span>
-                    <span className="gh-admin-area-hero gh-admin-area-services gh-admin-status-toggle__label">
+                    <span className="gh-admin-status-toggle__label">
                       {service.isActive ? "Active" : "Inactive"}
                     </span>
                   </button>
                 </form>
-                <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-row-actions flex justify-end gap-1.5">
+                <div className="gh-admin-service-row-actions flex justify-end gap-1.5">
                   <IconBtn
                     ariaLabel={`View ${service.name}`}
                     href={adminHrefForService(service)}

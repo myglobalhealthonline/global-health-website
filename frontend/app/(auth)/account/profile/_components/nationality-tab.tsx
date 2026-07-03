@@ -131,7 +131,7 @@ function SlotCard({
   return (
     <div className="gh-patient-form-card gh-card p-5">
       <div className="mb-4 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
-        <h4 className="font-semibold text-[var(--color-text-primary)]">Nationality {slot}</h4>
+        <h4 className="font-semibold text-[var(--portal-text)]">Nationality {slot}</h4>
         <div className="flex flex-wrap items-center gap-2 sm:justify-end">
           {badge && (
             <span className={`rounded-full px-3 py-1 text-xs font-medium ${badge.cls}`}>
@@ -217,11 +217,11 @@ function SlotCard({
       </form>
 
       {doc && (
-        <div className="mt-4 border-t border-[var(--color-border)] pt-4">
+        <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
           <p className="gh-field-label mb-2">Upload document photos</p>
-          <p className="mb-2 text-xs text-[var(--color-text-muted)]">PDF, JPG, PNG — max 10 MB.</p>
+          <p className="mb-2 text-xs text-[var(--portal-muted)]">PDF, JPG, PNG — max 10 MB.</p>
           <div className="grid gap-2 sm:flex sm:flex-wrap">
-            <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]">
+            <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-[var(--portal-line)] px-4 py-2 text-sm font-medium text-[var(--portal-text)] hover:bg-[var(--portal-well)]">
               <Upload aria-hidden className="size-4" />
               {uploadPending ? "Uploading…" : doc.frontFileKey ? "Replace front" : "Upload front"}
               <input
@@ -232,7 +232,7 @@ function SlotCard({
                 className="sr-only"
               />
             </label>
-            <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]">
+            <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-[var(--portal-line)] px-4 py-2 text-sm font-medium text-[var(--portal-text)] hover:bg-[var(--portal-well)]">
               <Upload aria-hidden className="size-4" />
               {uploadPending ? "Uploading…" : doc.backFileKey ? "Replace back" : "Upload back"}
               <input
@@ -288,10 +288,10 @@ export function NationalityTab() {
   if (!loaded) {
     return (
       <div className="gh-card grid gap-4 p-6">
-        <div className="h-5 w-44 animate-pulse rounded-full bg-[var(--color-background-soft)]" />
+        <div className="h-5 w-44 animate-pulse rounded-full bg-[var(--portal-well)]" />
         <div className="grid gap-3 sm:grid-cols-2">
-          <div className="h-28 animate-pulse rounded-[14px] bg-[var(--color-background-soft)]" />
-          <div className="h-28 animate-pulse rounded-[14px] bg-[var(--color-background-soft)]" />
+          <div className="h-28 animate-pulse rounded-[14px] bg-[var(--portal-well)]" />
+          <div className="h-28 animate-pulse rounded-[14px] bg-[var(--portal-well)]" />
         </div>
         <span className="sr-only">Loading nationality records</span>
       </div>
@@ -299,16 +299,16 @@ export function NationalityTab() {
   }
 
   if (!loaded) {
-    return <div className="gh-patient-empty-state gh-card p-6 text-sm text-[var(--color-text-muted)]">Loading…</div>;
+    return <div className="gh-patient-empty-state gh-card p-6 text-sm text-[var(--portal-muted)]">Loading…</div>;
   }
 
   return (
     <section className="gh-patient-profile-tab space-y-4">
       <div className="flex items-center gap-2">
-        <Globe className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
-        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Dual nationality</h3>
+        <Globe className="size-5 text-[var(--portal-primary)]" aria-hidden />
+        <h3 className="text-lg font-semibold text-[var(--portal-text)]">Dual nationality</h3>
       </div>
-      <p className="text-sm text-[var(--color-text-muted)]">
+      <p className="text-sm text-[var(--portal-muted)]">
         Register up to two nationalities. Document numbers are stored encrypted.
       </p>
 
@@ -317,13 +317,13 @@ export function NationalityTab() {
       {slot1 ? (
         <SlotCard slot={2} doc={slot2} onSaved={handleSaved} onDeleted={handleDeleted} />
       ) : (
-        <p className="text-xs text-[var(--color-text-muted)]">
+        <p className="text-xs text-[var(--portal-muted)]">
           Save Nationality 1 first to enable a second nationality.
         </p>
       )}
 
       {slot1 && slot2 && (
-        <p className="text-xs text-[var(--color-text-muted)]">
+        <p className="text-xs text-[var(--portal-muted)]">
           Maximum of two nationality documents reached.
         </p>
       )}

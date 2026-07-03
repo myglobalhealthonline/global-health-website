@@ -47,7 +47,6 @@ export default async function AdminNewBlogPage({ searchParams }: PageProps) {
         <ArrowLeft className="size-3.5" /> Back to blog
       </Link>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-content"
         eyebrow="Global"
         title="New blog post"
         description="Upload an .html file (or paste HTML), fill the details, set status to Published, and it appears on /blog."
@@ -59,9 +58,9 @@ export default async function AdminNewBlogPage({ searchParams }: PageProps) {
         </AdminCard>
       ) : null}
 
-      <form action={createBlogAction} className="gh-admin-area-hero gh-admin-area-content gh-admin-blog-form mt-6">
+      <form action={createBlogAction} className="gh-admin-blog-form mt-6">
         <BlogFields isCreate doctors={doctors} />
-        <div className="gh-admin-area-hero gh-admin-area-content gh-admin-blog-actions gh-admin-blog-actions--end">
+        <div className="gh-admin-blog-actions gh-admin-blog-actions--end">
           <Btn href="/admin/blog" variant="ghost" size="md">
             Cancel
           </Btn>

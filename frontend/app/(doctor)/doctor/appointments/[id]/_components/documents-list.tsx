@@ -119,15 +119,15 @@ export function DocumentsList({
       </div>
 
       {items.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-4 text-center">
+        <div className="rounded-lg border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] p-4 text-center">
           <FolderOpen
-            className="mx-auto size-6 text-[var(--color-text-muted)]"
+            className="mx-auto size-6 text-[var(--portal-muted)]"
             aria-hidden
           />
-          <p className="mt-2 text-sm font-bold text-[var(--color-text-primary)]">
+          <p className="mt-2 text-sm font-bold text-[var(--portal-text)]">
             No appointment documents yet
           </p>
-          <p className="mx-auto mt-1 max-w-sm text-[12px] text-[var(--color-text-muted)]">
+          <p className="mx-auto mt-1 max-w-sm text-[12px] text-[var(--portal-muted)]">
             Upload referrals, lab results, scans, or notes so the consultation record stays complete.
           </p>
         </div>
@@ -136,17 +136,17 @@ export function DocumentsList({
           {items.map((d) => (
             <li
               key={d.id}
-              className="grid gap-3 rounded-md border border-[var(--color-border)] bg-white p-3 sm:grid-cols-[auto_1fr_auto_auto] sm:items-center"
+              className="grid gap-3 rounded-md border border-[var(--portal-line)] bg-white p-3 sm:grid-cols-[auto_1fr_auto_auto] sm:items-center"
             >
               <FileText
-                className="size-5 shrink-0 text-[var(--color-text-muted)]"
+                className="size-5 shrink-0 text-[var(--portal-muted)]"
                 aria-hidden
               />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[13px] font-semibold text-[var(--color-text-primary)]">
+                <p className="truncate text-[13px] font-semibold text-[var(--portal-text)]">
                   {d.label}
                 </p>
-                <p className="text-[11.5px] text-[var(--color-text-muted)]">
+                <p className="text-[11.5px] text-[var(--portal-muted)]">
                   {d.mimetype} · {formatSize(d.byteSize)} ·{" "}
                   {new Date(d.createdAt).toLocaleString()}
                 </p>
@@ -155,14 +155,14 @@ export function DocumentsList({
                 href={d.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--color-border)] px-2 py-1 text-[12px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)] sm:w-auto"
+                className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-[12px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)] sm:w-auto"
               >
                 <Download className="size-3.5" /> Open
               </a>
               <button
                 type="button"
                 onClick={() => remove(d.id)}
-                className="inline-flex w-full items-center justify-center rounded-md border border-[var(--color-border)] px-2 py-1 text-[var(--color-text-muted)] hover:text-[var(--color-status-error)] sm:w-auto sm:border-0 sm:px-0"
+                className="inline-flex w-full items-center justify-center rounded-md border border-[var(--portal-line)] px-2 py-1 text-[var(--portal-muted)] hover:text-[var(--portal-danger)] sm:w-auto sm:border-0 sm:px-0"
                 aria-label="Delete document"
               >
                 <Trash2 className="size-3.5" />

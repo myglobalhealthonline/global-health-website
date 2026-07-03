@@ -4,8 +4,9 @@ import { redirect } from "next/navigation";
 import { Edit3, Eye, Globe2, Plus } from "lucide-react";
 import { fetchAdminCountries, purgeAdminCountry } from "@/lib/admin/admin-api";
 import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
-import { DeleteCountryButton } from "./_components/delete-country-button";
+import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import { FlagBadge } from "../_components/flag-badge";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 import {
   AdminCard,
   AdminEmptyState,
@@ -50,7 +51,6 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
     return (
       <>
         <PageHeader
-          className="gh-admin-area-hero gh-admin-area-countries"
           eyebrow="Global"
           title="Countries"
           description="Manage countries, locales, currencies, and key routes."
@@ -72,7 +72,6 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
   return (
     <>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-countries"
         eyebrow="Global"
         title="Countries"
         description="The axis of the platform. Each country has its own hero copy, currency, doctors, and services."
@@ -186,7 +185,10 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
                       </IconBtn>
                       <form action={deleteCountryAction} className="inline-flex">
                         <input type="hidden" name="id" value={c.id} />
-                        <DeleteCountryButton countryName={c.name} />
+                        <ConfirmDeleteButton
+                          message={`Delete ${c.name}? This deactivates the country and cannot be undone from this action.`}
+                          ariaLabel={`Delete ${c.name}`}
+                        />
                       </form>
                     </div>
                   </Td>
@@ -199,34 +201,34 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
         {rows.length > 0 ? (
           <div className="gh-admin-mobile-list">
             {rows.map((c) => (
-              <article key={c.id} className="gh-admin-mobile-card">
-                <div className="flex min-w-0 items-start justify-between gap-3">
-                  <span className="inline-flex min-w-0 items-center gap-2.5">
-                    <FlagBadge code={c.slug} size={20} />
-                    <span className="gh-admin-mobile-card__title">
-                      <strong>{c.name}</strong>
-                      <span>{c.legacyHomePath}</span>
-                    </span>
-                  </span>
+              <PortalMobileCard
+                key={c.id}
+                tone={c.isActive ? "success" : "neutral"}
+                leading={<FlagBadge code={c.slug} size={20} />}
+                title={c.name}
+                subtitle={c.legacyHomePath}
+                statusPill={
                   <Pill tone={c.isActive ? "published" : "inactive"}>
                     {c.isActive ? "Active" : "Inactive"}
                   </Pill>
-                </div>
-                <div className="gh-admin-mobile-meta">
-                  <span><em>Code</em><strong>{c.code.toUpperCase()}</strong></span>
-                  <span><em>Locale</em><strong>{c.defaultLocale}</strong></span>
-                  <span><em>Currency</em><strong>{c.currency.code}</strong></span>
-                  <span><em>Team route</em><strong>{c.teamPath}</strong></span>
-                </div>
-                <div className="gh-admin-mobile-actions">
-                  <IconBtn ariaLabel={`View ${c.name}`} href={`/admin/countries/${c.id}`}>
-                    <Eye className="size-3.5" aria-hidden />
-                  </IconBtn>
-                  <IconBtn ariaLabel={`Edit ${c.name}`} href={`/admin/countries/${c.id}/edit`}>
-                    <Edit3 className="size-3.5" aria-hidden />
-                  </IconBtn>
-                </div>
-              </article>
+                }
+                meta={[
+                  { label: "Code", value: c.code.toUpperCase() },
+                  { label: "Locale", value: c.defaultLocale },
+                  { label: "Currency", value: c.currency.code },
+                  { label: "Team route", value: c.teamPath },
+                ]}
+                actions={
+                  <>
+                    <IconBtn ariaLabel={`View ${c.name}`} href={`/admin/countries/${c.id}`}>
+                      <Eye className="size-3.5" aria-hidden />
+                    </IconBtn>
+                    <IconBtn ariaLabel={`Edit ${c.name}`} href={`/admin/countries/${c.id}/edit`}>
+                      <Edit3 className="size-3.5" aria-hidden />
+                    </IconBtn>
+                  </>
+                }
+              />
             ))}
           </div>
         ) : null}

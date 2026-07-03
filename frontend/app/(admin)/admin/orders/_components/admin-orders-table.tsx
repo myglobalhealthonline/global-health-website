@@ -19,6 +19,7 @@ import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
 import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { OrderMeetLinkDisplay } from "./order-meet-link-display";
+import { PortalMobileCard, type PortalMobileCardTone } from "@/components/PortalMobileCard";
 
 export type AdminOrderRow = {
   id: string;
@@ -69,6 +70,13 @@ function statusTone(status: string): PillTone {
   if (status === "FULFILLED") return "active";
   if (status === "CANCELLED" || status === "REFUNDED") return "inactive";
   if (status === "PENDING") return "pending";
+  return "neutral";
+}
+
+function statusCardTone(status: string): PortalMobileCardTone {
+  if (status === "PAID" || status === "FULFILLED") return "success";
+  if (status === "CANCELLED" || status === "REFUNDED") return "danger";
+  if (status === "PENDING") return "warning";
   return "neutral";
 }
 
@@ -284,29 +292,31 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
 
       <div className="gh-admin-mobile-list">
         {items.map((o) => (
-          <article key={o.id} className="gh-admin-mobile-card">
-            <div className="flex min-w-0 items-start justify-between gap-3">
-              <div className="gh-admin-mobile-card__title">
-                <Link href={`/admin/orders/${o.id}`} className="no-underline">
-                  #{formatOrderDisplayId(o)}
-                </Link>
-                <span>{o.fullName} · {o.email}</span>
-              </div>
-              <Pill tone={statusTone(o.status)}>{o.status.toLowerCase()}</Pill>
-            </div>
-            <div className="gh-admin-mobile-meta">
-              <span><em>Total</em><strong>{formatPrice(o.totalCents, o.currencyCode)}</strong></span>
-              <span><em>Country</em><strong>{o.countryCode.toUpperCase()}</strong></span>
-              <span><em>Items</em><strong>{o.itemCount}</strong></span>
-              <span><em>Created</em><strong>{formatAppDate(o.createdAt)}</strong></span>
-            </div>
-            <div className="gh-admin-mobile-actions">
-              {o.stripeCheckoutUrl ? <CopyLinkButton url={o.stripeCheckoutUrl} /> : null}
-              <IconBtn ariaLabel={`Open order ${o.id}`} href={`/admin/orders/${o.id}`}>
-                <ExternalLink className="size-3.5" aria-hidden />
-              </IconBtn>
-            </div>
-          </article>
+          <PortalMobileCard
+            key={o.id}
+            tone={statusCardTone(o.status)}
+            title={
+              <Link href={`/admin/orders/${o.id}`} className="no-underline">
+                #{formatOrderDisplayId(o)}
+              </Link>
+            }
+            subtitle={`${o.fullName} · ${o.email}`}
+            statusPill={<Pill tone={statusTone(o.status)}>{o.status.toLowerCase()}</Pill>}
+            meta={[
+              { label: "Total", value: formatPrice(o.totalCents, o.currencyCode) },
+              { label: "Country", value: o.countryCode.toUpperCase() },
+              { label: "Items", value: o.itemCount },
+              { label: "Created", value: formatAppDate(o.createdAt) },
+            ]}
+            actions={
+              <>
+                {o.stripeCheckoutUrl ? <CopyLinkButton url={o.stripeCheckoutUrl} /> : null}
+                <IconBtn ariaLabel={`Open order ${o.id}`} href={`/admin/orders/${o.id}`}>
+                  <ExternalLink className="size-3.5" aria-hidden />
+                </IconBtn>
+              </>
+            }
+          />
         ))}
       </div>
       </>

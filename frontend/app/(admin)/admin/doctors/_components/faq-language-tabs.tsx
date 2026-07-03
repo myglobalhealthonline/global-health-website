@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { AdminDoctorFaqsDto } from "@/lib/admin/admin-api";
+import { PortalTabs } from "@/components/PortalTabs";
 
 /**
  * Doctor-level FAQ editor with language tabs (one set per doctor, shown on
@@ -70,28 +71,15 @@ export function FaqLanguageTabs({
     <form action={saveFaqs} className="gh-admin-doctor-faq-form grid gap-4">
       <input type="hidden" name="locales" value={localeCsv} />
 
-      <div role="tablist" className="gh-admin-doctor-tabs flex flex-wrap gap-1.5">
-        {localeTabs.map((locale) => {
-          const selected = locale.code === activeLocale;
-          return (
-            <button
-              key={locale.code}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              onClick={() => setActiveLocale(locale.code)}
-              className={`rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
-                selected
-                  ? "bg-[var(--color-brand-primary)] text-white"
-                  : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-              }`}
-            >
-              {localeLabel(locale.code)}
-              {locale.isDefault ? " · default" : ""}
-            </button>
-          );
-        })}
-      </div>
+      <PortalTabs
+        ariaLabel="FAQ languages"
+        value={activeLocale}
+        onChange={setActiveLocale}
+        items={localeTabs.map((locale) => ({
+          value: locale.code,
+          label: `${localeLabel(locale.code)}${locale.isDefault ? " · default" : ""}`,
+        }))}
+      />
 
       {localeTabs.map((locale) => {
         const code = locale.code;

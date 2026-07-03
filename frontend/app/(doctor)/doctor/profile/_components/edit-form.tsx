@@ -9,6 +9,8 @@ import {
   LanguagePicker,
   canonicalizeLanguages,
 } from "@/components/forms/LanguagePicker";
+import { PortalTabs } from "@/components/PortalTabs";
+import { FormSection } from "@/components/FormSection";
 
 /**
  * Doctor self-edit profile form. Split into two independent forms so that
@@ -458,182 +460,160 @@ export function DoctorProfileEditForm({
         </section>
         {/* ── Public profile form ─────────────────── */}
         <form onSubmit={onSubmitProfile}>
-          <section className="gh-card gh-doctor-profile-form-card p-6">
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: 16,
-                fontWeight: 800,
-              }}
-            >
-              Public profile
-            </h3>
-            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-              {activeCountryName
+          <FormSection
+            title="Public profile"
+            description={
+              activeCountryName
                 ? `Patients see this on your ${activeCountryName} doctor card and profile page. Bio, registration, and payout details are saved per country.`
-                : "Patients see this on your doctor card and profile page."}
-            </p>
+                : "Patients see this on your doctor card and profile page."
+            }
+          >
+            <label className="flex flex-col gap-2">
+              <span className="gh-field-label">Full name</span>
+              <input
+                className="gh-input min-w-0"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                maxLength={200}
+                required
+              />
+            </label>
 
-            <div className="mt-4 flex flex-col gap-4">
-              <label className="flex flex-col gap-2">
-                <span className="gh-field-label">Full name</span>
-                <input
-                  className="gh-input min-w-0"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  maxLength={200}
-                  required
-                />
-              </label>
-
-              <div className="flex flex-col gap-3">
-                <div>
-                  <span className="gh-field-label">Bio by language</span>
-                  <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                    The public website reads these localized bios first. Blank
-                    non-default languages fall back to the default language.
-                  </p>
-                </div>
-                <div role="tablist" className="gh-doctor-tabs flex flex-wrap gap-1.5">
-                  {localeTabs.map((locale) => {
-                    const selected = locale.code === activeBioLocale;
-                    return (
-                      <button
-                        key={locale.code}
-                        type="button"
-                        role="tab"
-                        aria-selected={selected}
-                        onClick={() => setActiveBioLocale(locale.code)}
-                        className={`rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
-                          selected
-                            ? "bg-[var(--color-brand-primary)] text-white"
-                            : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-                        }`}
-                      >
-                        {localeLabel(locale.code)}
-                        {locale.isDefault ? " - default" : ""}
-                      </button>
-                    );
-                  })}
-                </div>
-                {localeTabs.map((locale) => (
-                  <div
-                    key={locale.code}
-                    role="tabpanel"
-                    hidden={locale.code !== activeBioLocale}
-                  >
-                    <RichTextHtmlField
-                      name={`bio_${locale.code}`}
-                      label={`${localeLabel(locale.code)} bio`}
-                      initialValue={initialBioForLocale(locale.code)}
-                      helperText={
-                        locale.isDefault
-                          ? "Default bio used when a translated bio is blank."
-                          : "Leave blank to use the default language bio."
-                      }
-                    />
-                  </div>
-                ))}
+            <div className="gh-form-section__span-2 flex flex-col gap-3">
+              <div>
+                <span className="gh-field-label">Bio by language</span>
+                <p className="mt-1 text-xs text-[var(--portal-muted)]">
+                  The public website reads these localized bios first. Blank
+                  non-default languages fall back to the default language.
+                </p>
               </div>
-
-              <label className="flex flex-col gap-2">
-                <span className="gh-field-label">Qualifications</span>
-                <textarea
-                  className="gh-input min-h-[8rem] min-w-0 resize-y"
-                  value={qualifications}
-                  onChange={(e) => setQualifications(e.target.value)}
-                  placeholder={"MB BCh BAO\nMRCPI\nFellowship in Cardiology"}
-                />
-                <span className="text-xs text-[var(--color-text-muted)]">
-                  One per line. Shown as a bullet list on your public profile.
-                </span>
-              </label>
-
-              <div className="flex flex-col gap-2">
-                <span className="gh-field-label">Languages</span>
-                <LanguagePicker selected={languages} onChange={setLanguages} />
-                <span className="text-xs text-[var(--color-text-muted)]">
-                  Pick from the list so languages stay consistent on your
-                  public profile + doctor cards.
-                </span>
-              </div>
-
-                <div className="gh-doctor-field-grid grid gap-4 sm:grid-cols-2">
-                <label className="flex flex-col gap-2">
-                  <span className="gh-field-label">WhatsApp number</span>
-                  <PhoneField
-                    key={initial.whatsappNumber}
-                    defaultValue={initial.whatsappNumber}
-                    onChange={setWhatsappNumber}
-                    className="flex min-w-0 gap-2"
+              <PortalTabs
+                ariaLabel="Bio languages"
+                value={activeBioLocale}
+                onChange={setActiveBioLocale}
+                items={localeTabs.map((locale) => ({
+                  value: locale.code,
+                  label: `${localeLabel(locale.code)}${locale.isDefault ? " - default" : ""}`,
+                }))}
+              />
+              {localeTabs.map((locale) => (
+                <div
+                  key={locale.code}
+                  role="tabpanel"
+                  hidden={locale.code !== activeBioLocale}
+                >
+                  <RichTextHtmlField
+                    name={`bio_${locale.code}`}
+                    label={`${localeLabel(locale.code)} bio`}
+                    initialValue={initialBioForLocale(locale.code)}
+                    helperText={
+                      locale.isDefault
+                        ? "Default bio used when a translated bio is blank."
+                        : "Leave blank to use the default language bio."
+                    }
                   />
-                  <span className="text-xs text-[var(--color-text-muted)]">
-                    Optional. Patients can message you directly when set.
-                  </span>
-                </label>
-              </div>
-
-              {activeMarket ? (
-                  <div className="gh-doctor-registration-card rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div>
-                      <span className="gh-field-label">
-                        {activeMarket.country.name} registration
-                      </span>
-                      <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                        Edits are sent for admin re-verification before being
-                        treated as verified.
-                      </p>
-                    </div>
-                    <span
-                      className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
-                        activeMarket.isVerified
-                          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                          : "border-[var(--color-border)] bg-[var(--color-background)] text-[var(--color-text-muted)]"
-                      }`}
-                    >
-                      {activeMarket.isVerified ? "Verified" : "Needs verification"}
-                    </span>
-                  </div>
-                    <div className="gh-doctor-field-grid mt-3 grid gap-3 sm:grid-cols-3">
-                    <label className="flex flex-col gap-2">
-                      <span className="gh-field-label">Registration body</span>
-                      <input
-                        className="gh-input min-w-0"
-                        value={chamberEntity}
-                        onChange={(e) => setChamberEntity(e.target.value)}
-                        maxLength={64}
-                        placeholder="IMC, OM, OMC"
-                      />
-                    </label>
-                    <label className="flex flex-col gap-2">
-                      <span className="gh-field-label">Registration number</span>
-                      <input
-                        className="gh-input min-w-0"
-                        value={registrationNumber}
-                        onChange={(e) => setRegistrationNumber(e.target.value)}
-                        maxLength={64}
-                      />
-                    </label>
-                    <label className="flex flex-col gap-2">
-                      <span className="gh-field-label">Division</span>
-                      <input
-                        className="gh-input min-w-0"
-                        value={registrationDivision}
-                        onChange={(e) => setRegistrationDivision(e.target.value)}
-                        maxLength={120}
-                        placeholder="General Division"
-                      />
-                    </label>
-                  </div>
                 </div>
-              ) : null}
+              ))}
             </div>
 
-            {profileMsg ? <MessageBanner msg={profileMsg} /> : null}
+            <label className="gh-form-section__span-2 flex flex-col gap-2">
+              <span className="gh-field-label">Qualifications</span>
+              <textarea
+                className="gh-input min-h-[8rem] min-w-0 resize-y"
+                value={qualifications}
+                onChange={(e) => setQualifications(e.target.value)}
+                placeholder={"MB BCh BAO\nMRCPI\nFellowship in Cardiology"}
+              />
+              <span className="text-xs text-[var(--portal-muted)]">
+                One per line. Shown as a bullet list on your public profile.
+              </span>
+            </label>
 
-            <div className="gh-doctor-form-actions mt-5 flex justify-end">
+            <div className="gh-form-section__span-2 flex flex-col gap-2">
+              <span className="gh-field-label">Languages</span>
+              <LanguagePicker selected={languages} onChange={setLanguages} />
+              <span className="text-xs text-[var(--portal-muted)]">
+                Pick from the list so languages stay consistent on your
+                public profile + doctor cards.
+              </span>
+            </div>
+
+            <label className="flex flex-col gap-2">
+              <span className="gh-field-label">WhatsApp number</span>
+              <PhoneField
+                key={initial.whatsappNumber}
+                defaultValue={initial.whatsappNumber}
+                onChange={setWhatsappNumber}
+                className="flex min-w-0 gap-2"
+              />
+              <span className="text-xs text-[var(--portal-muted)]">
+                Optional. Patients can message you directly when set.
+              </span>
+            </label>
+
+            {activeMarket ? (
+              <div className="gh-form-section__span-2 gh-doctor-registration-card rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <span className="gh-field-label">
+                      {activeMarket.country.name} registration
+                    </span>
+                    <p className="mt-1 text-xs text-[var(--portal-muted)]">
+                      Edits are sent for admin re-verification before being
+                      treated as verified.
+                    </p>
+                  </div>
+                  <span
+                    className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
+                      activeMarket.isVerified
+                        ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                        : "border-[var(--portal-line)] bg-[var(--portal-bg)] text-[var(--portal-muted)]"
+                    }`}
+                  >
+                    {activeMarket.isVerified ? "Verified" : "Needs verification"}
+                  </span>
+                </div>
+                <div className="gh-doctor-field-grid mt-3 grid gap-3 sm:grid-cols-3">
+                  <label className="flex flex-col gap-2">
+                    <span className="gh-field-label">Registration body</span>
+                    <input
+                      className="gh-input min-w-0"
+                      value={chamberEntity}
+                      onChange={(e) => setChamberEntity(e.target.value)}
+                      maxLength={64}
+                      placeholder="IMC, OM, OMC"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-2">
+                    <span className="gh-field-label">Registration number</span>
+                    <input
+                      className="gh-input min-w-0"
+                      value={registrationNumber}
+                      onChange={(e) => setRegistrationNumber(e.target.value)}
+                      maxLength={64}
+                    />
+                  </label>
+                  <label className="flex flex-col gap-2">
+                    <span className="gh-field-label">Division</span>
+                    <input
+                      className="gh-input min-w-0"
+                      value={registrationDivision}
+                      onChange={(e) => setRegistrationDivision(e.target.value)}
+                      maxLength={120}
+                      placeholder="General Division"
+                    />
+                  </label>
+                </div>
+              </div>
+            ) : null}
+
+            {profileMsg ? (
+              <div className="gh-form-section__span-2">
+                <MessageBanner msg={profileMsg} />
+              </div>
+            ) : null}
+
+            <div className="gh-form-section__span-2 gh-doctor-form-actions flex justify-end">
               <button
                 type="submit"
                 disabled={profilePending}
@@ -642,97 +622,90 @@ export function DoctorProfileEditForm({
                 {profilePending ? "Saving…" : "Save changes"}
               </button>
             </div>
-          </section>
+          </FormSection>
         </form>
 
         {/* ── Payout / bank details form ───────────── */}
         <form onSubmit={onSubmitPayout}>
-          <section className="gh-card gh-doctor-profile-form-card p-6">
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: 16,
-                fontWeight: 800,
-              }}
-            >
-              Payout details
-            </h3>
-            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-              {activeCountryName
-                ? `Your bank details for receiving payments in ${activeCountryName}.`
-                : "Your bank details for receiving payments."}{" "}
-              Private — never shown on your public profile. Your IBAN is stored
-              encrypted.
-            </p>
+          <FormSection
+            title="Payout details"
+            description={
+              <>
+                {activeCountryName
+                  ? `Your bank details for receiving payments in ${activeCountryName}.`
+                  : "Your bank details for receiving payments."}{" "}
+                Private — never shown on your public profile. Your IBAN is
+                stored encrypted.
+              </>
+            }
+          >
+            <label className="gh-form-section__span-2 flex flex-col gap-2">
+              <span className="gh-field-label">Account holder name</span>
+              <input
+                className="gh-input min-w-0"
+                value={bankAccountHolder}
+                onChange={(e) => setBankAccountHolder(e.target.value)}
+                maxLength={160}
+                placeholder="Name as it appears on the account"
+              />
+            </label>
 
-            <div className="mt-4 flex flex-col gap-4">
-              <label className="flex flex-col gap-2">
-                <span className="gh-field-label">Account holder name</span>
-                <input
-                  className="gh-input min-w-0"
-                  value={bankAccountHolder}
-                  onChange={(e) => setBankAccountHolder(e.target.value)}
-                  maxLength={160}
-                  placeholder="Name as it appears on the account"
-                />
-              </label>
+            <label className="gh-form-section__span-2 flex flex-col gap-2">
+              <span className="gh-field-label">IBAN</span>
+              <input
+                className="gh-input min-w-0 font-mono"
+                value={bankIban}
+                onChange={(e) => {
+                  setBankIban(e.target.value);
+                  setIbanFieldError(null);
+                }}
+                maxLength={42}
+                autoComplete="off"
+                spellCheck={false}
+                inputMode="text"
+                placeholder={
+                  activeMarketHasIban
+                    ? `On file: ${activeMarketIbanMasked} — leave blank to keep`
+                    : "IE29 AIBK 9311 5212 3456 78"
+                }
+              />
+              {ibanFieldError ? (
+                <span className="text-xs text-red-600">{ibanFieldError}</span>
+              ) : (
+                <span className="text-xs text-[var(--portal-muted)]">
+                  {activeMarketHasIban
+                    ? "An IBAN is on file. Type a new one only to replace it."
+                    : "Enter your full IBAN. It is stored encrypted and shown masked afterwards."}
+                </span>
+              )}
+            </label>
 
-              <label className="flex flex-col gap-2">
-                <span className="gh-field-label">IBAN</span>
-                <input
-                  className="gh-input min-w-0 font-mono"
-                  value={bankIban}
-                  onChange={(e) => {
-                    setBankIban(e.target.value);
-                    setIbanFieldError(null);
-                  }}
-                  maxLength={42}
-                  autoComplete="off"
-                  spellCheck={false}
-                  inputMode="text"
-                  placeholder={
-                    activeMarketHasIban
-                      ? `On file: ${activeMarketIbanMasked} — leave blank to keep`
-                      : "IE29 AIBK 9311 5212 3456 78"
-                  }
-                />
-                {ibanFieldError ? (
-                  <span className="text-xs text-red-600">{ibanFieldError}</span>
-                ) : (
-                  <span className="text-xs text-[var(--color-text-muted)]">
-                    {activeMarketHasIban
-                      ? "An IBAN is on file. Type a new one only to replace it."
-                      : "Enter your full IBAN. It is stored encrypted and shown masked afterwards."}
-                  </span>
-                )}
-              </label>
+            <label className="flex flex-col gap-2">
+              <span className="gh-field-label">BIC / SWIFT (optional)</span>
+              <input
+                className="gh-input min-w-0 font-mono"
+                value={bankBic}
+                onChange={(e) => {
+                  setBankBic(e.target.value);
+                  setBicFieldError(null);
+                }}
+                maxLength={16}
+                autoComplete="off"
+                spellCheck={false}
+                placeholder="AIBKIE2D"
+              />
+              {bicFieldError ? (
+                <span className="text-xs text-red-600">{bicFieldError}</span>
+              ) : null}
+            </label>
 
-                <div className="gh-doctor-field-grid grid gap-4 sm:grid-cols-2">
-                <label className="flex flex-col gap-2">
-                  <span className="gh-field-label">BIC / SWIFT (optional)</span>
-                  <input
-                    className="gh-input min-w-0 font-mono"
-                    value={bankBic}
-                    onChange={(e) => {
-                      setBankBic(e.target.value);
-                      setBicFieldError(null);
-                    }}
-                    maxLength={16}
-                    autoComplete="off"
-                    spellCheck={false}
-                    placeholder="AIBKIE2D"
-                  />
-                  {bicFieldError ? (
-                    <span className="text-xs text-red-600">{bicFieldError}</span>
-                  ) : null}
-                </label>
+            {payoutMsg ? (
+              <div className="gh-form-section__span-2">
+                <MessageBanner msg={payoutMsg} />
               </div>
-            </div>
+            ) : null}
 
-            {payoutMsg ? <MessageBanner msg={payoutMsg} /> : null}
-
-            <div className="gh-doctor-form-actions mt-5 flex justify-end">
+            <div className="gh-form-section__span-2 gh-doctor-form-actions flex justify-end">
               <button
                 type="submit"
                 disabled={payoutPending}
@@ -741,7 +714,7 @@ export function DoctorProfileEditForm({
                 {payoutPending ? "Saving…" : "Save payout details"}
               </button>
             </div>
-          </section>
+          </FormSection>
         </form>
       </div>
 
@@ -749,7 +722,7 @@ export function DoctorProfileEditForm({
       <aside className="gh-doctor-side-stack grid gap-4 self-start">
         <section className="gh-card gh-doctor-profile-photo-card p-6">
           <h3
-            className="m-0 text-[var(--color-text-primary)]"
+            className="m-0 text-[var(--portal-text)]"
             style={{
               fontFamily: "var(--font-display)",
               fontSize: 16,
@@ -758,15 +731,15 @@ export function DoctorProfileEditForm({
           >
             Profile photo
           </h3>
-          <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+          <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
             JPEG / PNG / WebP / AVIF, up to 5MB.
           </p>
           <div className="gh-doctor-profile-photo mt-3 flex flex-col items-center gap-3">
             <div
               className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full"
               style={{
-                background: "var(--color-background-soft)",
-                border: "1px solid var(--color-border)",
+                background: "var(--portal-well)",
+                border: "1px solid var(--portal-line)",
               }}
             >
               {photoPath ? (
@@ -781,7 +754,7 @@ export function DoctorProfileEditForm({
                   className="text-[28px] font-bold"
                   style={{
                     background:
-                      "linear-gradient(135deg, #1d4b36 0%, #b0f122 100%)",
+                      "linear-gradient(135deg, var(--portal-primary) 0%, var(--portal-signal) 100%)",
                     WebkitBackgroundClip: "text",
                     backgroundClip: "text",
                     color: "transparent",
@@ -842,7 +815,7 @@ export function DoctorProfileEditForm({
 
         <section className="gh-card gh-doctor-admin-note-card p-6">
           <h3
-            className="m-0 text-[var(--color-text-primary)]"
+            className="m-0 text-[var(--portal-text)]"
             style={{
               fontFamily: "var(--font-display)",
               fontSize: 16,
@@ -851,7 +824,7 @@ export function DoctorProfileEditForm({
           >
             Admin-managed
           </h3>
-          <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+          <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
             SEO fields, FAQ sections, country approvals, URL slug, and eligible
             specialties stay admin-managed to keep verification and routing
             consistent. Registration edits are reviewed by admin.
@@ -874,15 +847,15 @@ function ProfileInsight({
   helper: string;
 }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3">
-      <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-        <span className="text-[var(--color-brand-primary)]">{icon}</span>
+    <div className="rounded-lg border border-[var(--portal-line)] bg-[var(--portal-well)] p-3">
+      <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+        <span className="text-[var(--portal-primary)]">{icon}</span>
         {label}
       </p>
-      <p className="mt-2 text-lg font-extrabold text-[var(--color-text-primary)]">
+      <p className="mt-2 text-lg font-extrabold text-[var(--portal-text)]">
         {value}
       </p>
-      <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+      <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
         {helper}
       </p>
     </div>

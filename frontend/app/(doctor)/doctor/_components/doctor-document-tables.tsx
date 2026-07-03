@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Eye, FileText } from "lucide-react";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export type SessionMeta = {
   sessionDate: string;
@@ -13,7 +14,7 @@ export type SessionMeta = {
 
 export function SessionTypeBadge({ label }: { label: string }) {
   return (
-    <span className="inline-block max-w-[180px] truncate rounded-full bg-[var(--color-brand-mint-soft)] px-2 py-0.5 text-[11px] font-semibold text-[var(--color-brand-primary)]">
+    <span className="inline-block max-w-[180px] truncate rounded-full bg-[var(--portal-mint-soft)] px-2 py-0.5 text-[11px] font-semibold text-[var(--portal-primary)]">
       {label}
     </span>
   );
@@ -40,7 +41,7 @@ export function FileTypeBadge({ label }: { label: string }) {
 }
 
 const TABLE_HEAD =
-  "text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]";
+  "text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]";
 
 export function HistorySection({
   title,
@@ -72,12 +73,12 @@ export function HistorySection({
   return (
     <section
       id={id}
-      className="gh-doctor-history-section overflow-hidden rounded-md border border-[var(--color-border)]"
+      className="gh-doctor-history-section overflow-hidden rounded-md border border-[var(--portal-line)]"
     >
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between gap-2 bg-[var(--color-brand-primary)] px-4 py-2.5 text-left text-sm font-bold text-white"
+        className="flex w-full items-center justify-between gap-2 bg-[var(--portal-primary)] px-4 py-2.5 text-left text-sm font-bold text-white"
       >
         <span className="flex items-center gap-2">
           {open ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
@@ -131,7 +132,7 @@ export function GeneratedDocumentsTable({
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.id} className="border-t border-[var(--color-border)]">
+            <tr key={r.id} className="border-t border-[var(--portal-line)]">
               <td className="px-3 py-2.5 whitespace-nowrap">{session.sessionDate}</td>
               <td className="px-3 py-2.5 whitespace-nowrap">{session.sessionTime}</td>
               <td className="px-3 py-2.5">{session.orderNumber}</td>
@@ -148,7 +149,7 @@ export function GeneratedDocumentsTable({
                   href={r.pdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] px-2.5 py-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)]"
+                  className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]"
                 >
                   <Eye className="size-3.5" aria-hidden />
                   View
@@ -206,7 +207,7 @@ export function UploadedFilesTable({
         </thead>
         <tbody>
           {rows.map((u) => (
-            <tr key={u.id} className="border-t border-[var(--color-border)]">
+            <tr key={u.id} className="border-t border-[var(--portal-line)]">
               <td className="px-3 py-2.5 whitespace-nowrap">{session.sessionDate}</td>
               <td className="px-3 py-2.5 whitespace-nowrap">{session.sessionTime}</td>
               <td className="px-3 py-2.5">{session.orderNumber}</td>
@@ -223,7 +224,7 @@ export function UploadedFilesTable({
                   href={u.viewUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] px-2.5 py-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)]"
+                  className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]"
                 >
                   <Eye className="size-3.5" aria-hidden />
                   View
@@ -261,22 +262,22 @@ export function DocTypeGroup({
   const [open, setOpen] = useState(false);
   if (rows.length === 0) return null;
   return (
-    <div className="gh-doctor-doc-type-group border-t border-[var(--color-border)]">
+    <div className="gh-doctor-doc-type-group border-t border-[var(--portal-line)]">
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] font-bold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+        className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] font-bold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
       >
         {open ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
         {title}
-        <span className="text-[var(--color-text-muted)]">({rows.length})</span>
+        <span className="text-[var(--portal-muted)]">({rows.length})</span>
       </button>
       {open ? <GeneratedDocumentsTable rows={rows} session={session} /> : null}
     </div>
   );
 }
 
-function DocumentMobileCard({
+export function DocumentMobileCard({
   fileName,
   fileTypeLabel,
   viewUrl,
@@ -288,42 +289,31 @@ function DocumentMobileCard({
   session: SessionMeta;
 }) {
   return (
-    <article className="gh-doctor-document-row rounded-[10px] border border-[var(--color-border)] bg-white p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="flex items-center gap-2 truncate text-sm font-bold text-[var(--color-text-primary)]">
-            <FileText className="size-4 shrink-0 text-[var(--color-brand-primary)]" aria-hidden />
-            {fileName}
-          </p>
-          <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-            {session.sessionDate} at {session.sessionTime}
-          </p>
-        </div>
-        <FileTypeBadge label={fileTypeLabel} />
-      </div>
-      <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
-        <div>
-          <dt className="text-[var(--color-text-muted)]">Order</dt>
-          <dd className="font-semibold text-[var(--color-text-primary)]">
-            {session.orderNumber}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-[var(--color-text-muted)]">Uploaded by</dt>
-          <dd className="font-semibold text-[var(--color-text-primary)]">
-            {session.uploadedBy}
-          </dd>
-        </div>
-      </dl>
-      <a
-        href={viewUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="gh-btn gh-btn-soft mt-4 w-full text-sm"
-      >
-        <Eye className="size-3.5" aria-hidden />
-        View document
-      </a>
-    </article>
+    <PortalMobileCard
+      title={
+        <span className="flex items-center gap-2">
+          <FileText className="size-4 shrink-0 text-[var(--portal-primary)]" aria-hidden />
+          {fileName}
+        </span>
+      }
+      subtitle={`${session.sessionDate} at ${session.sessionTime}`}
+      statusPill={<FileTypeBadge label={fileTypeLabel} />}
+      meta={[
+        { label: "Type", value: <SessionTypeBadge label={session.consultationTypeLabel} /> },
+        { label: "Order", value: session.orderNumber },
+        { label: "Uploaded by", value: session.uploadedBy },
+      ]}
+      actions={
+        <a
+          href={viewUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="gh-btn gh-btn-soft text-sm"
+        >
+          <Eye className="size-3.5" aria-hidden />
+          View document
+        </a>
+      }
+    />
   );
 }

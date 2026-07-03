@@ -8,6 +8,7 @@ import {
   PageHeader,
   Pill,
 } from "@/components/portal-atoms";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -205,7 +206,7 @@ export default async function DoctorAppointmentsPage({
         <div className="gh-card gh-doctor-table-card p-0 overflow-hidden">
           <div className="hidden md:block gh-doctor-table-wrap overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
+            <thead className="bg-[var(--portal-well)] text-left text-xs uppercase tracking-wider text-[var(--portal-muted)]">
               <tr>
                 <th className="px-4 py-3 font-semibold">Patient</th>
                 <th className="px-4 py-3 font-semibold">Type</th>
@@ -215,16 +216,16 @@ export default async function DoctorAppointmentsPage({
                 <th className="px-4 py-3 font-semibold text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--color-border)]">
+            <tbody className="divide-y divide-[var(--portal-line)]">
               {appointments.map((a: DoctorAppointment) => (
                 <tr key={a.id}>
                   <td className="px-4 py-3">
-                    <p className="font-semibold text-[var(--color-text-primary)]">
+                    <p className="font-semibold text-[var(--portal-text)]">
                       {a.fullName}
                     </p>
-                    <p className="text-xs text-[var(--color-text-muted)]">{a.email}</p>
+                    <p className="text-xs text-[var(--portal-muted)]">{a.email}</p>
                     {a.phone ? (
-                      <p className="text-xs text-[var(--color-text-muted)]">{a.phone}</p>
+                      <p className="text-xs text-[var(--portal-muted)]">{a.phone}</p>
                     ) : null}
                   </td>
                   <td className="px-4 py-3 capitalize">{a.consultationType}</td>
@@ -258,7 +259,7 @@ export default async function DoctorAppointmentsPage({
                       ) : null}
                       <Link
                         href={`/doctor/appointments/${a.id}`}
-                        className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] px-2.5 py-1.5 text-xs font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                        className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1.5 text-xs font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
                       >
                         Open <ChevronRight className="size-3.5" />
                       </Link>
@@ -271,79 +272,57 @@ export default async function DoctorAppointmentsPage({
           </div>
           <div className="grid gap-3 p-3 md:hidden">
             {appointments.map((a) => (
-              <article
+              <PortalMobileCard
                 key={a.id}
-                className="gh-doctor-mobile-card rounded-[10px] border border-[var(--color-border)] bg-white p-4"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-[var(--color-text-primary)]">
-                      {a.fullName}
-                    </p>
-                    <p className="mt-0.5 truncate text-xs text-[var(--color-text-muted)]">
-                      {a.email}
-                    </p>
-                  </div>
+                title={a.fullName}
+                subtitle={a.email}
+                statusPill={
                   <Pill tone={a.status === "COMPLETED" ? "active" : a.status === "CANCELLED" ? "inactive" : "pending"} withDot>
                     {appointmentStatusLabel(a.status)}
                   </Pill>
-                </div>
-                <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                  <div>
-                    <dt className="text-[var(--color-text-muted)]">Type</dt>
-                    <dd className="font-semibold capitalize text-[var(--color-text-primary)]">
-                      {a.consultationType}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[var(--color-text-muted)]">Scheduled</dt>
-                    <dd className="font-semibold text-[var(--color-text-primary)]">
-                      {a.scheduledAt
-                        ? new Date(a.scheduledAt).toLocaleString(undefined, {
-                            month: "short",
-                            day: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })
-                        : "Unscheduled"}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[var(--color-text-muted)]">Payment</dt>
-                    <dd className="font-semibold text-[var(--color-text-primary)]">
-                      {a.paymentStatus}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[var(--color-text-muted)]">Meeting</dt>
-                    <dd className="font-semibold text-[var(--color-text-primary)]">
-                      {a.meetingUrl ? "Ready" : "Not set"}
-                    </dd>
-                  </div>
-                </dl>
-                <div className="mt-4 grid gap-2">
-                  {a.meetingUrl ? (
-                    <a
-                      href={a.meetingUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="gh-btn gh-btn-primary text-sm"
+                }
+                tone={a.status === "COMPLETED" ? "success" : a.status === "CANCELLED" ? "danger" : "neutral"}
+                meta={[
+                  { label: "Type", value: <span className="capitalize">{a.consultationType}</span> },
+                  {
+                    label: "Scheduled",
+                    value: a.scheduledAt
+                      ? new Date(a.scheduledAt).toLocaleString(undefined, {
+                          month: "short",
+                          day: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "Unscheduled",
+                  },
+                  { label: "Payment", value: a.paymentStatus },
+                  { label: "Meeting", value: a.meetingUrl ? "Ready" : "Not set" },
+                ]}
+                actions={
+                  <>
+                    {a.meetingUrl ? (
+                      <a
+                        href={a.meetingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="gh-btn gh-btn-primary text-sm"
+                      >
+                        <Video className="size-3.5" aria-hidden /> Join session
+                      </a>
+                    ) : null}
+                    <Link
+                      href={`/doctor/appointments/${a.id}`}
+                      className="gh-btn gh-btn-soft text-sm"
                     >
-                      <Video className="size-3.5" aria-hidden /> Join session
-                    </a>
-                  ) : null}
-                  <Link
-                    href={`/doctor/appointments/${a.id}`}
-                    className="gh-btn gh-btn-soft text-sm"
-                  >
-                    <CalendarDays className="size-3.5" aria-hidden /> Open workspace
-                  </Link>
-                </div>
-              </article>
+                      <CalendarDays className="size-3.5" aria-hidden /> Open workspace
+                    </Link>
+                  </>
+                }
+              />
             ))}
           </div>
           {result.data.pagination.totalPages > 1 ? (
-            <div className="border-t border-[var(--color-border)] px-4 py-3 text-xs text-[var(--color-text-muted)]">
+            <div className="border-t border-[var(--portal-line)] px-4 py-3 text-xs text-[var(--portal-muted)]">
               Page {result.data.pagination.page} of {result.data.pagination.totalPages} ({result.data.pagination.total} total)
             </div>
           ) : null}

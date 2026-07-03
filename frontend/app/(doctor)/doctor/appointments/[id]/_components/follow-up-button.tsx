@@ -79,9 +79,9 @@ export function FollowUpButton({ appointmentId }: { appointmentId: string }) {
   return (
     <form
       onSubmit={submit}
-      className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3"
+      className="rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3"
     >
-      <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+      <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
         New follow-up
       </p>
       <div className="mt-2 grid gap-2">

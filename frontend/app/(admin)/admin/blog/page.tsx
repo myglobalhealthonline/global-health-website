@@ -14,6 +14,7 @@ import {
   Thead,
   Tr,
 } from "../_components/atoms";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -59,7 +60,6 @@ export default async function AdminBlogListPage({
   return (
     <>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-content"
         eyebrow="Global"
         title="Blog"
         description="Upload and publish blog articles. Published posts appear on the public /blog."
@@ -71,7 +71,7 @@ export default async function AdminBlogListPage({
       />
 
       <AdminCard padding={16}>
-        <form action="/admin/blog" className="gh-admin-area-hero gh-admin-area-content gh-admin-blog-filters px-2 py-1" method="get">
+        <form action="/admin/blog" className="gh-admin-blog-filters px-2 py-1" method="get">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label text-[12px]">Search</span>
             <input
@@ -121,7 +121,7 @@ export default async function AdminBlogListPage({
               <option value="false">No translations</option>
             </select>
           </label>
-          <div className="gh-admin-area-hero gh-admin-area-content gh-admin-blog-actions pb-0.5">
+          <div className="gh-admin-blog-actions pb-0.5">
             <Btn type="submit" variant="secondary" size="sm">
               Apply
             </Btn>
@@ -132,7 +132,7 @@ export default async function AdminBlogListPage({
         </form>
       </AdminCard>
 
-      <div className="gh-admin-area-hero gh-admin-area-content gh-admin-blog-list mt-6">
+      <div className="gh-admin-blog-list mt-6">
         {!result.ok ? (
           <AdminCard>
             <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
@@ -178,7 +178,7 @@ export default async function AdminBlogListPage({
                 ]}
               />
             </div>
-            <div className="gh-admin-area-hero gh-admin-area-content gh-admin-blog-table-wrap gh-admin-deep-table-wrap">
+            <div className="gh-admin-blog-table-wrap gh-admin-deep-table-wrap">
             <AdminTable>
               <Thead>
                 <Th>Title</Th>
@@ -226,30 +226,35 @@ export default async function AdminBlogListPage({
             </div>
             <div className="gh-admin-mobile-list">
               {posts.map((p: AdminBlogDto) => (
-                <article key={p.id} className="gh-admin-mobile-card">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="gh-admin-mobile-card-title">{p.title}</h3>
-                      <p className="gh-admin-mobile-card-meta font-mono">{p.slug}</p>
-                    </div>
+                <PortalMobileCard
+                  key={p.id}
+                  tone={p.isActive && p.status === "PUBLISHED" ? "success" : "neutral"}
+                  title={p.title}
+                  subtitle={p.slug}
+                  statusPill={
                     <Pill tone={p.status === "PUBLISHED" ? "published" : "draft"}>
                       {p.isActive ? p.status : "INACTIVE"}
                     </Pill>
-                  </div>
-                  <div className="flex flex-wrap gap-2 text-[12px] text-[var(--color-text-muted)]">
-                    <span className="inline-flex items-center gap-1">
-                      <FileText className="size-3" aria-hidden />
-                      {p.category ?? "No category"}
-                    </span>
-                    <span>{p.locale}</span>
-                    <span>{p.translations.length} translations</span>
-                  </div>
-                  <div className="gh-admin-mobile-actions">
+                  }
+                  meta={[
+                    {
+                      label: "Category",
+                      value: (
+                        <span className="inline-flex items-center gap-1">
+                          <FileText className="size-3" aria-hidden />
+                          {p.category ?? "No category"}
+                        </span>
+                      ),
+                    },
+                    { label: "Locale", value: p.locale },
+                    { label: "Translations", value: p.translations.length },
+                  ]}
+                  actions={
                     <IconBtn href={`/admin/blog/${p.id}/edit`} ariaLabel="Edit post">
                       <Edit3 className="size-4" />
                     </IconBtn>
-                  </div>
-                </article>
+                  }
+                />
               ))}
             </div>
           </AdminCard>

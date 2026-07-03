@@ -2,6 +2,7 @@ import type { AdminCountryDto, AdminDoctorDto, AdminSpecialtyOptionDto } from "@
 import { LanguageMultiSelect } from "./language-multiselect";
 import { DoctorTranslationTabs } from "./doctor-translation-tabs";
 import { PhoneField } from "@/components/forms/phone-field";
+import { FormSection } from "@/components/FormSection";
 
 type Props = {
   countries: Pick<AdminCountryDto, "id" | "code" | "name">[];
@@ -49,7 +50,7 @@ export function DoctorFields({
           edit rights from /doctor/profile. */}
       <FormSection
         title="Routing & verification"
-        subtitle="Admin-managed only — affects public URLs, the doctor portal scoping, and verification copy."
+        description="Admin-managed only — affects public URLs, the doctor portal scoping, and verification copy."
       >
         {pinId && pinnedMeta ? (
           <div>
@@ -99,7 +100,7 @@ export function DoctorFields({
             `formData.getAll("specialtyIds")`. Drives the public doctor
             specialty tags + filter. Hidden on edit. */}
         {showSpecialties ? (
-        <fieldset className="gh-admin-doctor-specialty-fieldset flex flex-col gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
+        <fieldset className="gh-form-section__span-2 gh-admin-doctor-specialty-fieldset flex flex-col gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
           <legend className="px-1 text-sm font-semibold text-[var(--color-text-primary)]">
             Specialties
           </legend>
@@ -146,7 +147,7 @@ export function DoctorFields({
         </fieldset>
         ) : null}
 
-        <div className="gh-admin-doctor-field-grid grid gap-4 sm:grid-cols-2">
+        <div className="gh-form-section__span-2 gh-admin-doctor-field-grid grid gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
             <span className="gh-field-label">Registration number</span>
             <p className="text-xs text-[var(--color-text-muted)] rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2">
@@ -165,7 +166,7 @@ export function DoctorFields({
           </label>
         </div>
 
-        <p className="text-xs text-[var(--color-text-muted)]">
+        <p className="gh-form-section__span-2 text-xs text-[var(--color-text-muted)]">
           {showTranslationTabs ? (
             <>
               Professional title, bio and SEO are edited per language in the
@@ -179,7 +180,7 @@ export function DoctorFields({
           )}
         </p>
 
-        <label className="flex cursor-pointer items-center gap-2">
+        <label className="gh-form-section__span-2 flex cursor-pointer items-center gap-2">
           <input type="checkbox" name="active" defaultChecked={initial?.active ?? true} className="h-4 w-4 rounded border-[var(--color-border)]" />
           <span className="text-sm text-[var(--color-text-primary)]">Active (shown on public API when active)</span>
         </label>
@@ -190,7 +191,7 @@ export function DoctorFields({
           invite (see /doctor/profile). */}
       <FormSection
         title="Public profile (doctor self-managed)"
-        subtitle="Admin can pre-fill these to bootstrap a new doctor, but they own these fields after accepting the invite."
+        description="Admin can pre-fill these to bootstrap a new doctor, but they own these fields after accepting the invite."
       >
         <label className="flex flex-col gap-2 sm:max-w-md">
           <span className="gh-field-label">Full name</span>
@@ -201,12 +202,14 @@ export function DoctorFields({
         </label>
 
         {showTranslationTabs ? (
-          <DoctorTranslationTabs
-            locales={locales}
-            defaultLocale={defaultLocale}
-            initialTranslations={initial?.translations ?? []}
-            baseFallback={baseFallback}
-          />
+          <div className="gh-form-section__span-2">
+            <DoctorTranslationTabs
+              locales={locales}
+              defaultLocale={defaultLocale}
+              initialTranslations={initial?.translations ?? []}
+              baseFallback={baseFallback}
+            />
+          </div>
         ) : null}
 
         <label className="flex flex-col gap-2">
@@ -232,11 +235,13 @@ export function DoctorFields({
         {/* Languages — multi-select from the canonical list so the same
             language never shows two ways across the site. Full width
             because the search + chip picker is taller than a plain input. */}
-        <LanguageMultiSelect initial={initial?.languages ?? []} />
+        <div className="gh-form-section__span-2">
+          <LanguageMultiSelect initial={initial?.languages ?? []} />
+        </div>
 
         {/* Social media — optional. Empty value clears the link. Surfaced
             below the WhatsApp button on every public DoctorCard. */}
-        <div className="gh-admin-doctor-social-grid grid gap-4 sm:grid-cols-3">
+        <div className="gh-form-section__span-2 gh-admin-doctor-social-grid grid gap-4 sm:grid-cols-3">
           <label className="flex flex-col gap-2">
             <span className="gh-field-label">Instagram URL</span>
             <input
@@ -282,34 +287,5 @@ export function DoctorFields({
               below this fields block. */}
       </FormSection>
     </div>
-  );
-}
-
-function FormSection({
-  title,
-  subtitle,
-  children,
-}: {
-  title: string;
-  subtitle: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="gh-admin-doctor-form-section flex flex-col gap-5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-5">
-      <header>
-        <h3
-          className="m-0 text-[var(--color-text-primary)]"
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: 15,
-            fontWeight: 800,
-          }}
-        >
-          {title}
-        </h3>
-        <p className="mt-1 text-xs text-[var(--color-text-muted)]">{subtitle}</p>
-      </header>
-      <div className="flex flex-col gap-5">{children}</div>
-    </section>
   );
 }

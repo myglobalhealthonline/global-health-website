@@ -145,7 +145,6 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
   return (
     <>
       <PageHeader
-        className="gh-admin-area-hero gh-admin-area-appointments"
         eyebrow="Operations"
         title="Appointment queue"
         description="Internal review queue. Filters and pagination run on the server; status moves follow rules on the detail page."
@@ -167,8 +166,8 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
 
       {/* Filters */}
       <AdminCard padding={0} className="mb-4 overflow-hidden">
-        <form method="get" className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-filters px-5 py-4">
-          <div className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-filter-grid">
+        <form method="get" className="gh-admin-appointment-filters px-5 py-4">
+          <div className="gh-admin-appointment-filter-grid">
             <label className="flex min-w-0 flex-col gap-1.5">
               <span className="gh-field-label">Status</span>
               <select
@@ -235,7 +234,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
             </label>
           </div>
           <input type="hidden" name="page" value="1" />
-          <div className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-actions mt-4 flex flex-wrap items-center gap-3">
+          <div className="gh-admin-appointment-actions mt-4 flex flex-wrap items-center gap-3">
             <button type="submit" className="gh-btn gh-btn-primary min-h-9">
               Apply filters
             </button>
@@ -267,7 +266,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
           </div>
         ) : (
           <>
-            <div className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-table-wrap overflow-x-auto">
+            <div className="gh-admin-appointment-table-wrap overflow-x-auto">
               <AdminTable>
                 <Thead>
                   <Th>Patient</Th>
@@ -345,9 +344,9 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
               </AdminTable>
             </div>
 
-            <div className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-mobile-list">
+            <div className="gh-admin-appointment-mobile-list">
               {items.map((appointment) => (
-                <article key={appointment.id} className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-mobile-card">
+                <article key={appointment.id} className="gh-admin-appointment-mobile-card">
                   <div className="flex min-w-0 items-start justify-between gap-3">
                     <div className="min-w-0">
                       <h3 className="m-0 text-[15px] font-bold leading-snug text-[var(--color-text-primary)]">
@@ -359,7 +358,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
                     </div>
                     <Pill tone={statusToneFor(appointment.status)}>{statusLabel(appointment.status)}</Pill>
                   </div>
-                  <dl className="gh-admin-area-hero gh-admin-area-appointments gh-admin-appointment-mobile-meta">
+                  <dl className="gh-admin-appointment-mobile-meta">
                     <div>
                       <dt>Country</dt>
                       <dd>

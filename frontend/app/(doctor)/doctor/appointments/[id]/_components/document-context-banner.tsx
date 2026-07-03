@@ -43,8 +43,8 @@ export function DocumentContextBanner({ context }: { context: DocumentContext })
         </p>
       ) : null}
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3">
-          <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-brand-primary)]">
+        <div className="rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3">
+          <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-primary)]">
             <User className="size-3.5" aria-hidden />
             Patient (from records)
           </p>
@@ -58,12 +58,12 @@ export function DocumentContextBanner({ context }: { context: DocumentContext })
             <Row label="Consultation date" value={patient.consultationDate} />
             {patient.pharmacy ? <Row label="Pharmacy" value={patient.pharmacy} /> : null}
           </dl>
-          <p className="mt-2 text-[11px] text-[var(--color-text-muted)]">
+          <p className="mt-2 text-[11px] text-[var(--portal-muted)]">
             Filled automatically on every PDF — you only enter clinical content below.
           </p>
         </div>
-        <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3">
-          <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-brand-primary)]">
+        <div className="rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3">
+          <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-primary)]">
             <Stethoscope className="size-3.5" aria-hidden />
             Prescriber (from your profile)
           </p>
@@ -71,7 +71,7 @@ export function DocumentContextBanner({ context }: { context: DocumentContext })
             <Row label="Doctor" value={doctor.name} />
             <Row label="Registration" value={doctor.registrationLine} />
           </dl>
-          <p className="mt-2 text-[11px] text-[var(--color-text-muted)]">
+          <p className="mt-2 text-[11px] text-[var(--portal-muted)]">
             Template: {context.countryLabel} ({context.countryCode.toUpperCase()})
           </p>
         </div>
@@ -83,8 +83,8 @@ export function DocumentContextBanner({ context }: { context: DocumentContext })
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-[11px] font-semibold text-[var(--color-text-muted)]">{label}</dt>
-      <dd className="font-medium text-[var(--color-text-primary)]">{value}</dd>
+      <dt className="text-[11px] font-semibold text-[var(--portal-muted)]">{label}</dt>
+      <dd className="font-medium text-[var(--portal-text)]">{value}</dd>
     </div>
   );
 }

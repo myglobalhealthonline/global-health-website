@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { Send, Loader2 } from "lucide-react";
 import type { ChatMessage } from "@/lib/api/chat-api";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
+import { Btn } from "@/components/portal-atoms";
+import { groupChatMessages } from "@/lib/chat-grouping";
 
 type FetcherResult =
   | { ok: true; data: { items: ChatMessage[] } }
@@ -17,6 +19,10 @@ type ChatThreadProps = {
   poster: (appointmentId: string, body: string) => Promise<FetcherResult>;
   /** Polling interval in ms; 10s default keeps it lively without hammering. */
   pollIntervalMs?: number;
+  /** "panel" (default) renders its own card chrome + header — for inline
+   *  placement. "embedded" drops both (the header text/subtitle is lost —
+   *  pass it via a PortalDialog title instead) for use inside a dialog. */
+  variant?: "panel" | "embedded";
 };
 
 /**
@@ -33,6 +39,7 @@ export function ChatThread({
   fetcher,
   poster,
   pollIntervalMs = 10_000,
+  variant = "panel",
 }: ChatThreadProps) {
   const [items, setItems] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState("");
@@ -40,6 +47,7 @@ export function ChatThread({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   // Auto-scroll to the latest message whenever the thread grows.
   useEffect(() => {
@@ -92,66 +100,82 @@ export function ChatThread({
     if (res.ok) {
       setItems(res.data.items);
       setDraft("");
+      if (textareaRef.current) textareaRef.current.style.height = "auto";
       setError(null);
     } else {
       setError(res.message);
     }
   }
 
-  return (
-    <div className="gh-chat-panel flex h-[480px] flex-col rounded-xl border border-slate-200 bg-white shadow-sm">
-      <header className="gh-chat-header flex items-center justify-between border-b border-slate-100 px-4 py-3">
-        <div>
-          <h3 className="text-sm font-bold text-slate-900">Conversation</h3>
-          <p className="text-xs text-slate-500">
-            {viewerRole === "PATIENT"
-              ? "Message the clinic team about this booking."
-              : "Patient chat — replies show up in their account dashboard."}
-          </p>
-        </div>
-        {loading ? (
-          <Loader2 className="size-4 animate-spin text-slate-400" aria-hidden />
-        ) : null}
-      </header>
+  function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      e.currentTarget.form?.requestSubmit();
+    }
+  }
 
-      <div className="gh-chat-body flex-1 overflow-y-auto px-4 py-3">
+  function onDraftChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setDraft(e.target.value);
+    const el = e.currentTarget;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
+  }
+
+  const grouped = groupChatMessages(items);
+  const panelClass = variant === "embedded" ? "gh-chat-panel-embedded" : "gh-chat-panel";
+
+  return (
+    <div className={`${panelClass} flex flex-col`}>
+      {variant === "panel" ? (
+        <header className="gh-chat-header flex items-center justify-between px-4 py-3">
+          <div>
+            <h3 className="text-sm font-bold" style={{ color: "var(--portal-text)" }}>Conversation</h3>
+            <p className="text-xs" style={{ color: "var(--portal-muted)" }}>
+              {viewerRole === "PATIENT"
+                ? "Message the clinic team about this booking."
+                : "Patient chat — replies show up in their account dashboard."}
+            </p>
+          </div>
+          {loading ? (
+            <Loader2 className="size-4 animate-spin" style={{ color: "var(--portal-muted)" }} aria-hidden />
+          ) : null}
+        </header>
+      ) : null}
+
+      <div className="gh-chat-body flex-1 min-h-0 overflow-y-auto px-4 py-3">
         {error ? (
-          <p className="gh-chat-alert mb-3 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+          <p className="gh-chat-alert mb-3 rounded-md px-3 py-2 text-xs">
             {error}
           </p>
         ) : null}
 
         {!loading && items.length === 0 ? (
-          <div className="gh-chat-empty rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-center">
-            <Send className="mx-auto size-5 text-slate-400" aria-hidden />
-            <p className="mt-2 text-sm font-bold text-slate-800">
-              No messages yet
-            </p>
-            <p className="mx-auto mt-1 max-w-sm text-xs text-slate-500">
+          <div className="gh-chat-empty flex items-center gap-3 rounded-lg px-4 py-3 text-left">
+            <Send className="size-4 shrink-0" style={{ color: "var(--portal-muted)" }} aria-hidden />
+            <p className="text-xs" style={{ color: "var(--portal-muted)" }}>
+              <span className="font-bold" style={{ color: "var(--portal-text)" }}>No messages yet.</span>{" "}
               Start the conversation below.
             </p>
           </div>
         ) : null}
 
-        <ul className="gh-chat-list space-y-2">
-          {items.map((m) => {
+        <ul className="gh-chat-list">
+          {grouped.map(({ message: m, grouped: isGrouped, last }) => {
             const own = m.authorRole === viewerRole;
             return (
               <li
                 key={m.id}
-                className={`flex ${own ? "justify-end" : "justify-start"}`}
+                className={`flex ${own ? "justify-end" : "justify-start"} ${isGrouped ? "gh-chat-list__item--grouped" : ""}`}
               >
                 <div
-                  className={`gh-chat-bubble max-w-[80%] rounded-2xl px-3 py-2 text-sm ${
-                    own
-                      ? "gh-chat-bubble-own bg-emerald-700 text-white"
-                      : "gh-chat-bubble-other border border-slate-200 bg-slate-50 text-slate-800"
-                  }`}
+                  className={`gh-chat-bubble group px-3 py-2 text-sm ${
+                    own ? "gh-chat-bubble-own" : "gh-chat-bubble-other"
+                  } ${isGrouped ? "gh-chat-bubble--grouped" : ""}`}
                 >
                   <p className="whitespace-pre-wrap">{m.body}</p>
                   <p
-                    className={`mt-1 text-[10px] ${
-                      own ? "text-emerald-100" : "text-slate-500"
+                    className={`gh-chat-bubble__time mt-1 text-[10px] opacity-80 ${
+                      last ? "" : "gh-chat-bubble__time--hover-only"
                     }`}
                   >
                     {formatAppDateTimeShort(m.createdAt)}
@@ -164,26 +188,28 @@ export function ChatThread({
         <div ref={endRef} />
       </div>
 
-      <form
-        onSubmit={onSubmit}
-        className="gh-chat-compose flex items-center gap-2 border-t border-slate-100 p-3"
-      >
-        <input
-          type="text"
+      <form onSubmit={onSubmit} className="gh-chat-compose flex items-end gap-2 p-3">
+        <textarea
+          ref={textareaRef}
+          rows={1}
           value={draft}
-          onChange={(e) => setDraft(e.target.value)}
+          onChange={onDraftChange}
+          onKeyDown={onKeyDown}
           placeholder="Type a message…"
           maxLength={2000}
-          className="gh-input flex-1 min-w-0"
+          className="gh-input gh-chat-textarea flex-1 min-w-0"
         />
-        <button
+        <Btn
           type="submit"
+          variant="primary"
+          size="sm"
           disabled={sending || draft.trim().length === 0}
-          className="gh-chat-send inline-flex items-center gap-1.5 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+          loading={sending}
+          iconLeft={<Send className="size-4" aria-hidden />}
+          className="gh-chat-send"
         >
-          <Send className="size-4" aria-hidden />
-          {sending ? "…" : "Send"}
-        </button>
+          Send
+        </Btn>
       </form>
     </div>
   );
