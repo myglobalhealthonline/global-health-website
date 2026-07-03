@@ -164,6 +164,7 @@ export default async function DoctorInvoicesPage({
         <AdminEmptyState
           className="gh-doctor-empty-state"
           icon={status || from || to ? <SearchX className="size-5" aria-hidden /> : <Receipt className="size-5" aria-hidden />}
+          assetSrc={status || from || to ? undefined : "/images/portal/obsidian/empty-payments.svg"}
           title={status || from || to ? "No invoices match these filters" : "No invoices yet"}
           description={
             status || from || to

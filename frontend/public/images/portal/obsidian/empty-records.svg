@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 640" fill="none" role="presentation">
+  <defs>
+    <filter id="er-soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#07120C" flood-opacity="0.14"/>
+    </filter>
+    <filter id="er-soft2" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#07120C" flood-opacity="0.10"/>
+    </filter>
+    <linearGradient id="er-ivory" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#F5F8F0"/>
+    </linearGradient>
+    <linearGradient id="er-ivory2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FCFDF9"/>
+      <stop offset="1" stop-color="#EFF2EA"/>
+    </linearGradient>
+    <linearGradient id="er-lime" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#B0F122" stop-opacity="0"/>
+      <stop offset="0.35" stop-color="#B0F122"/>
+      <stop offset="0.75" stop-color="#B0F122"/>
+      <stop offset="1" stop-color="#B0F122" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <!-- back folder -->
+  <g filter="url(#er-soft2)">
+    <path d="M280 208 h130 l30 26 h240 a18 18 0 0 1 18 18 v196 a18 18 0 0 1 -18 18 H280 a18 18 0 0 1 -18 -18 V226 a18 18 0 0 1 18 -18 Z"
+      fill="url(#er-ivory2)" stroke="#1D4B36" stroke-opacity="0.55" stroke-width="1.5"/>
+  </g>
+  <!-- front folder -->
+  <g filter="url(#er-soft)">
+    <path d="M312 268 h146 l32 28 h236 a18 18 0 0 1 18 18 v160 a18 18 0 0 1 -18 18 H312 a18 18 0 0 1 -18 -18 V286 a18 18 0 0 1 18 -18 Z"
+      fill="url(#er-ivory)" stroke="#1D4B36" stroke-opacity="0.8" stroke-width="1.5"/>
+  </g>
+  <!-- lime pulse along the front folder top edge -->
+  <path d="M312 296 h146 l32 28 h236" stroke="url(#er-lime)" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- tone bands inside front folder -->
+  <rect x="344" y="356" width="300" height="10" rx="5" fill="#1D4B36" fill-opacity="0.10"/>
+  <rect x="344" y="380" width="220" height="10" rx="5" fill="#1D4B36" fill-opacity="0.07"/>
+  <!-- round badge resting on the corner -->
+  <g filter="url(#er-soft2)">
+    <circle cx="702" cy="446" r="34" fill="url(#er-ivory)" stroke="#1D4B36" stroke-opacity="0.7" stroke-width="1.5"/>
+    <circle cx="702" cy="446" r="20" fill="none" stroke="#8FB021" stroke-opacity="0.85" stroke-width="2"/>
+    <circle cx="702" cy="446" r="5" fill="#B0F122"/>
+  </g>
+</svg>

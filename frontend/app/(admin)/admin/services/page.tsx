@@ -549,7 +549,7 @@ export default async function AdminServicesPage({
 
         {items.length === 0 ? (
           <AdminEmptyState
-            assetSrc="/images/portal/generated/admin-content-management-accent.png"
+            assetSrc="/images/portal/obsidian/empty-content.svg"
             title="No services match these filters"
             description="Clear search, market, or status filters to review the full service catalog."
             action={

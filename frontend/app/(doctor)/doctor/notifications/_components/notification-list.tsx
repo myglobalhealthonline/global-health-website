@@ -53,6 +53,7 @@ export function NotificationListClient({
       <AdminEmptyState
         className="gh-doctor-empty-state"
         icon={<Bell className="size-5" aria-hidden />}
+        assetSrc="/images/portal/obsidian/empty-notifications.svg"
         title="No notifications yet"
         description="Appointment assignments, messages, signed consults, form submissions, and exam results will appear here."
       />

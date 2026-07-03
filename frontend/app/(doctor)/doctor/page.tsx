@@ -221,6 +221,7 @@ export default async function DoctorOverviewPage() {
               <AdminEmptyState
                 className="gh-doctor-empty-state"
                 icon={<Calendar className="size-5" aria-hidden />}
+                assetSrc="/images/portal/obsidian/empty-queue.svg"
                 title="No open appointments today"
                 description="Your schedule is clear for now. Review the full appointment queue or add availability for future bookings."
                 action={
@@ -292,6 +293,7 @@ export default async function DoctorOverviewPage() {
               <AdminEmptyState
                 className="gh-doctor-empty-state"
                 icon={<Bell className="size-5" aria-hidden />}
+                assetSrc="/images/portal/obsidian/empty-notifications.svg"
                 title="No unread notifications"
                 description="New appointment assignments, document activity, and internal messages will appear here."
               />

@@ -214,6 +214,7 @@ export default async function DoctorAppointmentsPage({
         <AdminEmptyState
           className="gh-doctor-empty-state"
           icon={<SearchX className="size-5" aria-hidden />}
+          assetSrc="/images/portal/obsidian/empty-queue.svg"
           title="No appointments match these filters"
           description="Try widening the date range or clearing status filters. New assigned consultations appear here as soon as they are scheduled."
           action={

@@ -142,7 +142,7 @@ export default async function AdminBlogListPage({
         ) : result.data.items.length === 0 ? (
           <AdminCard>
             <AdminEmptyState
-              assetSrc="/images/portal/generated/admin-content-management-accent.png"
+              assetSrc="/images/portal/obsidian/empty-content.svg"
               title="No blog posts match these filters"
               description="Create the first article or clear the current filters to review draft and published content."
               action={

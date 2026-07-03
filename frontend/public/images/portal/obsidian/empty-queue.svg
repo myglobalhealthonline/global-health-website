@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 640" fill="none" role="presentation">
+  <defs>
+    <filter id="eq-soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#07120C" flood-opacity="0.14"/>
+    </filter>
+    <filter id="eq-soft2" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#07120C" flood-opacity="0.10"/>
+    </filter>
+    <linearGradient id="eq-ivory" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#F5F8F0"/>
+    </linearGradient>
+    <radialGradient id="eq-lime" cx="0.5" cy="0.35" r="0.8">
+      <stop offset="0" stop-color="#CFEC81"/>
+      <stop offset="1" stop-color="#B0F122"/>
+    </radialGradient>
+  </defs>
+  <!-- schedule panel -->
+  <g filter="url(#eq-soft)">
+    <rect x="252" y="176" width="384" height="288" rx="22" fill="url(#eq-ivory)" stroke="#1D4B36" stroke-opacity="0.75" stroke-width="1.5"/>
+  </g>
+  <!-- grid of blank rounded tiles -->
+  <g stroke="#1D4B36" stroke-opacity="0.45" stroke-width="1.25" fill="none">
+    <rect x="284" y="212" width="96" height="60" rx="12"/>
+    <rect x="396" y="212" width="96" height="60" rx="12"/>
+    <rect x="508" y="212" width="96" height="60" rx="12"/>
+    <rect x="284" y="288" width="96" height="60" rx="12"/>
+    <rect x="508" y="288" width="96" height="60" rx="12"/>
+    <rect x="284" y="364" width="96" height="60" rx="12"/>
+    <rect x="396" y="364" width="96" height="60" rx="12"/>
+    <rect x="508" y="364" width="96" height="60" rx="12"/>
+  </g>
+  <!-- one tile softly filled with lime -->
+  <g filter="url(#eq-soft2)">
+    <rect x="396" y="288" width="96" height="60" rx="12" fill="url(#eq-lime)" fill-opacity="0.9"/>
+    <rect x="396" y="288" width="96" height="60" rx="12" fill="none" stroke="#8FB021" stroke-opacity="0.7" stroke-width="1.25"/>
+  </g>
+  <!-- abstract circular dial beside the panel, no numbers, no hands -->
+  <g filter="url(#eq-soft2)">
+    <circle cx="712" cy="392" r="58" fill="url(#eq-ivory)" stroke="#1D4B36" stroke-opacity="0.7" stroke-width="1.5"/>
+    <circle cx="712" cy="392" r="40" fill="none" stroke="#1D4B36" stroke-opacity="0.35" stroke-width="1.25"/>
+    <path d="M712 352 a40 40 0 0 1 34 19" stroke="#B0F122" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <circle cx="712" cy="392" r="4.5" fill="#1D4B36"/>
+  </g>
+</svg>

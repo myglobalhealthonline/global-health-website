@@ -49,7 +49,7 @@ export default async function AdminNewsletterPage() {
       ) : result.items.length === 0 ? (
         <AdminCard>
           <AdminEmptyState
-            assetSrc="/images/portal/generated/admin-content-management-accent.png"
+            assetSrc="/images/portal/obsidian/empty-content.svg"
             title="No newsletter subscribers yet"
             description="Subscribers from the public footer form will appear here with source, country, locale, and unsubscribe status."
           />
