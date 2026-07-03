@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Upload, X } from "lucide-react";
+import { Btn, IconBtn } from "@/components/portal-atoms";
 
 // SVG removed: backend rejects them (stored-XSS risk via <script>
 // inside an SVG that /api/media/* would echo back with the original
@@ -174,54 +175,31 @@ export function ManagedImageField({
                 gap: 6,
               }}
             >
-              <button
+              <Btn
                 type="button"
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.stopPropagation();
                   if (!busy) fileRef.current?.click();
                 }}
                 aria-label="Replace image"
                 disabled={busy}
-                style={{
-                  height: 30,
-                  padding: "0 12px",
-                  borderRadius: 999,
-                  background: "var(--portal-chrome-solid)",
-                  color: "var(--portal-chrome-text-active)",
-                  border: "none",
-                  fontSize: 12,
-                  fontWeight: 700,
-                  cursor: busy ? "wait" : "pointer",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 5,
-                }}
+                variant="on-chrome"
+                size="sm"
+                iconLeft={<Upload aria-hidden className="size-3.5" />}
+                style={{ height: 30, minHeight: 30, padding: "0 12px", background: "var(--portal-chrome-solid)" }}
               >
-                <Upload aria-hidden className="size-3.5" />
                 {busy ? "Uploading…" : "Replace"}
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
+              </Btn>
+              <IconBtn
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.stopPropagation();
                   clearImage();
                 }}
-                aria-label="Remove image"
-                style={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: 999,
-                  background: "var(--portal-chrome-solid)",
-                  color: "var(--portal-chrome-text-active)",
-                  border: "none",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                }}
+                ariaLabel="Remove image"
+                style={{ width: 30, height: 30, background: "var(--portal-chrome-solid)", color: "var(--portal-chrome-text-active)" }}
               >
                 <X aria-hidden className="size-3.5" />
-              </button>
+              </IconBtn>
             </div>
           </>
         ) : (
@@ -240,33 +218,20 @@ export function ManagedImageField({
               <p className="m-0 mt-1 text-[12px]">
                 {hint ?? "JPEG, PNG, WebP, GIF, AVIF · max 5 MB"}
               </p>
-              <button
+              <Btn
                 type="button"
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.stopPropagation();
                   if (!busy) fileRef.current?.click();
                 }}
                 disabled={busy}
-                style={{
-                  marginTop: 14,
-                  height: 36,
-                  padding: "0 18px",
-                  borderRadius: 999,
-                  background: "var(--portal-primary)",
-                  color: "var(--portal-bg)",
-                  border: "none",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: busy ? "wait" : "pointer",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  boxShadow: "var(--portal-shadow)",
-                }}
+                variant="primary"
+                size="sm"
+                iconLeft={<Upload aria-hidden className="size-3.5" />}
+                style={{ marginTop: 14 }}
               >
-                <Upload aria-hidden className="size-3.5" />
                 Browse files
-              </button>
+              </Btn>
             </div>
           </div>
         )}

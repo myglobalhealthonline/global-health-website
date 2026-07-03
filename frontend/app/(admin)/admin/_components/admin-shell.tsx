@@ -433,10 +433,10 @@ export function AdminShell({
           </nav>
 
           <div
-            className="px-5 py-4 text-[11px]"
+            className="px-5 py-4 text-[12px] font-bold uppercase tracking-[0.06em]"
             style={{
               borderTop: "1px solid rgba(255,255,255,0.08)",
-              color: "rgba(255,255,255,0.45)",
+              color: "rgba(255,255,255,0.55)",
             }}
           >
             v1.0 · medicine anytime anywhere

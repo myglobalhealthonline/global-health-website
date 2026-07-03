@@ -7,6 +7,7 @@ import {
   WEEKDAY_LABELS,
   monthLabel,
 } from "./calendar-utils";
+import { IconBtn } from "@/components/portal-atoms";
 
 type Props = {
   year: number;
@@ -66,24 +67,20 @@ export function MonthCalendar({
           >
             Today
           </button>
-          <button
-            type="button"
+          <IconBtn
             onClick={onPrevMonth}
-            aria-label="Previous month"
-            className="inline-flex size-8 items-center justify-center rounded-full transition hover:bg-[var(--portal-well)]"
-            style={{ border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
+            ariaLabel="Previous month"
+            style={{ width: 32, height: 32, border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
           >
             <ChevronLeft className="size-4" aria-hidden />
-          </button>
-          <button
-            type="button"
+          </IconBtn>
+          <IconBtn
             onClick={onNextMonth}
-            aria-label="Next month"
-            className="inline-flex size-8 items-center justify-center rounded-full transition hover:bg-[var(--portal-well)]"
-            style={{ border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
+            ariaLabel="Next month"
+            style={{ width: 32, height: 32, border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
           >
             <ChevronRight className="size-4" aria-hidden />
-          </button>
+          </IconBtn>
         </div>
       </div>
 

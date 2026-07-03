@@ -42,7 +42,7 @@ export function ReceiptButton({ paymentId }: { paymentId: string }) {
       type="button"
       onClick={onClick}
       disabled={fetching}
-      className="gh-patient-receipt-button inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:underline disabled:opacity-60"
+      className="gh-patient-receipt-button inline-flex min-h-11 items-center gap-1 px-3 text-xs font-semibold text-emerald-700 hover:underline disabled:opacity-60"
     >
       {fetching ? (
         "Loading…"

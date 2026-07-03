@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Eye, FileText } from "lucide-react";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { DocumentRow } from "@/components/DocumentRow";
 
 export type SessionMeta = {
   sessionDate: string;
@@ -139,7 +140,9 @@ export function GeneratedDocumentsTable({
               <td className="px-3 py-2.5">
                 <SessionTypeBadge label={session.consultationTypeLabel} />
               </td>
-              <td className="max-w-[200px] truncate px-3 py-2.5 font-medium">{r.fileName}</td>
+              <td className="max-w-[200px] px-3 py-2.5">
+                <DocumentRow icon={<FileText className="size-4" />} title={r.fileName} />
+              </td>
               <td className="px-3 py-2.5">
                 <FileTypeBadge label={r.fileTypeLabel} />
               </td>
@@ -214,7 +217,9 @@ export function UploadedFilesTable({
               <td className="px-3 py-2.5">
                 <SessionTypeBadge label={session.consultationTypeLabel} />
               </td>
-              <td className="max-w-[200px] truncate px-3 py-2.5 font-medium">{u.fileName}</td>
+              <td className="max-w-[200px] px-3 py-2.5">
+                <DocumentRow icon={<FileText className="size-4" />} title={u.fileName} />
+              </td>
               <td className="px-3 py-2.5">
                 <FileTypeBadge label={u.fileTypeLabel} />
               </td>
@@ -290,12 +295,8 @@ export function DocumentMobileCard({
 }) {
   return (
     <PortalMobileCard
-      title={
-        <span className="flex items-center gap-2">
-          <FileText className="size-4 shrink-0 text-[var(--portal-primary)]" aria-hidden />
-          {fileName}
-        </span>
-      }
+      leading={<span className="gh-document-row__icon"><FileText className="size-4" aria-hidden /></span>}
+      title={fileName}
       subtitle={`${session.sessionDate} at ${session.sessionTime}`}
       statusPill={<FileTypeBadge label={fileTypeLabel} />}
       meta={[

@@ -7,6 +7,7 @@ import { Check, ExternalLink, Loader2, X, Copy, Receipt } from "lucide-react";
 import {
   AdminEmptyState,
   AdminTable,
+  Btn,
   IconBtn,
   Pill,
   Td,
@@ -20,6 +21,7 @@ import { formatPrice } from "@/lib/format-currency";
 import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { OrderMeetLinkDisplay } from "./order-meet-link-display";
 import { PortalMobileCard, type PortalMobileCardTone } from "@/components/PortalMobileCard";
+import { PortalDialog } from "@/components/PortalDialog";
 
 export type AdminOrderRow = {
   id: string;
@@ -85,6 +87,9 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [pendingBulkStatus, setPendingBulkStatus] = useState<"FULFILLED" | "CANCELLED" | null>(
+    null,
+  );
 
   function toggle(id: string) {
     setSelected((prev) => {
@@ -100,21 +105,17 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
     else setSelected(new Set(items.map((o) => o.id)));
   }
 
-  async function bulkAction(status: "FULFILLED" | "CANCELLED") {
+  function bulkAction(status: "FULFILLED" | "CANCELLED") {
+    if (selected.size === 0) return;
+    setPendingBulkStatus(status);
+  }
+
+  function confirmBulkAction() {
+    const status = pendingBulkStatus;
+    if (!status) return;
     const ids = [...selected];
+    setPendingBulkStatus(null);
     if (ids.length === 0) return;
-    const verb = status === "FULFILLED" ? "Mark fulfilled" : "Cancel";
-    if (
-      !window.confirm(
-        `${verb} ${ids.length} order${ids.length === 1 ? "" : "s"}? ${
-          status === "CANCELLED"
-            ? "HELD consultation slots will be released. Issue Stripe refunds separately."
-            : ""
-        }`,
-      )
-    ) {
-      return;
-    }
     setError(null);
     startTransition(async () => {
       const res = await fetch(`/api/admin/orders/bulk`, {
@@ -132,6 +133,14 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
     });
   }
 
+  const bulkCount = selected.size;
+  const bulkVerb = pendingBulkStatus === "FULFILLED" ? "Mark fulfilled" : "Cancel";
+  const bulkBody = `${bulkVerb} ${bulkCount} order${bulkCount === 1 ? "" : "s"}? ${
+    pendingBulkStatus === "CANCELLED"
+      ? "HELD consultation slots will be released. Issue Stripe refunds separately."
+      : ""
+  }`;
+
   const allChecked = items.length > 0 && selected.size === items.length;
   const someChecked = selected.size > 0;
 
@@ -146,7 +155,7 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
           <div className="gh-admin-order-bulkbar-actions flex items-center gap-2">
             <button
               type="button"
-              onClick={() => void bulkAction("FULFILLED")}
+              onClick={() => bulkAction("FULFILLED")}
               disabled={pending}
               className="inline-flex items-center gap-1.5 rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-800 disabled:opacity-60"
             >
@@ -155,7 +164,7 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
             </button>
             <button
               type="button"
-              onClick={() => void bulkAction("CANCELLED")}
+              onClick={() => bulkAction("CANCELLED")}
               disabled={pending}
               className="inline-flex items-center gap-1.5 rounded-md border border-rose-300 px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-60"
             >
@@ -321,6 +330,27 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
       </div>
       </>
       )}
+
+      <PortalDialog
+        open={pendingBulkStatus !== null}
+        onClose={() => setPendingBulkStatus(null)}
+        title={bulkVerb}
+        danger
+        footer={
+          <>
+            <Btn variant="ghost" onClick={() => setPendingBulkStatus(null)}>
+              Cancel
+            </Btn>
+            <Btn variant="danger" onClick={confirmBulkAction}>
+              {bulkVerb}
+            </Btn>
+          </>
+        }
+      >
+        <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
+          {bulkBody}
+        </p>
+      </PortalDialog>
     </>
   );
 }

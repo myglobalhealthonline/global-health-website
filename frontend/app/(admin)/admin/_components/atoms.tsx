@@ -636,7 +636,7 @@ export function Toggle({
           height: knobSize,
           borderRadius: "50%",
           background: "var(--portal-surface)",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.20)",
+          boxShadow: "var(--portal-shadow)",
           transition: "left 180ms ease-out",
         }}
       />

@@ -21,6 +21,7 @@ export function PortalMobileCard({
   subtitle,
   statusPill,
   tone = "neutral",
+  live = false,
   meta,
   actions,
   href,
@@ -34,6 +35,10 @@ export function PortalMobileCard({
   statusPill?: ReactNode;
   /** Drives the 3px left edge color. */
   tone?: PortalMobileCardTone;
+  /** True while a consultation is actively in progress — overrides `tone`
+   *  with the lime signal edge + halo (DESIGN.md §5.20, mirrors
+   *  AppointmentCard's desktop `live` state). */
+  live?: boolean;
   meta?: PortalMobileCardMetaItem[];
   actions?: ReactNode;
   /** Makes the whole card a link (list → detail). Omit for an inline card
@@ -71,7 +76,9 @@ export function PortalMobileCard({
     </>
   );
 
-  const className = `gh-portal-mobile-card gh-portal-mobile-card--${tone}`;
+  const className = `gh-portal-mobile-card gh-portal-mobile-card--${tone}${
+    live ? " gh-portal-mobile-card--live" : ""
+  }`;
 
   if (href) {
     return (

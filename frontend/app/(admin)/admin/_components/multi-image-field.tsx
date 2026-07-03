@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Plus, Trash2, Upload } from "lucide-react";
+import { IconBtn } from "@/components/portal-atoms";
 
 // SVG removed: backend rejects them (stored-XSS risk via <script>
 // inside an SVG that /api/media/* would echo back with the original
@@ -220,46 +221,33 @@ export function MultiImageField({
                   className="gh-admin-media-actions absolute right-1.5 top-1.5 inline-flex gap-1"
                   style={{ pointerEvents: busy ? "none" : "auto" }}
                 >
-                  <button
-                    type="button"
+                  <IconBtn
                     onClick={() => inputRefs.current[index]?.click()}
-                    aria-label="Replace"
+                    ariaLabel="Replace"
                     title="Replace"
                     style={{
                       width: 28,
                       height: 28,
-                      borderRadius: 999,
                       background: "var(--portal-chrome-solid)",
                       color: "var(--portal-chrome-text-active)",
-                      border: "none",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      justifyContent: "center",
                       cursor: busy ? "wait" : "pointer",
                     }}
                   >
                     <Upload aria-hidden className="size-3.5" />
-                  </button>
-                  <button
-                    type="button"
+                  </IconBtn>
+                  <IconBtn
                     onClick={() => removeAt(index)}
-                    aria-label="Remove"
+                    ariaLabel="Remove"
                     title="Remove"
                     style={{
                       width: 28,
                       height: 28,
-                      borderRadius: 999,
                       background: "var(--portal-chrome-solid)",
                       color: "var(--portal-chrome-text-active)",
-                      border: "none",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      cursor: "pointer",
                     }}
                   >
                     <Trash2 aria-hidden className="size-3.5" />
-                  </button>
+                  </IconBtn>
                 </div>
               </li>
             );

@@ -3,6 +3,8 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Check, X, Loader2 } from "lucide-react";
+import { PortalDialog } from "@/components/PortalDialog";
+import { Btn } from "@/components/portal-atoms";
 
 type Props = { orderId: string; status: string };
 
@@ -10,11 +12,17 @@ export function AdminOrderActions({ orderId, status }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [confirmCancel, setConfirmCancel] = useState(false);
 
-  async function patchStatus(next: "FULFILLED" | "CANCELLED") {
-    if (next === "CANCELLED" && !window.confirm("Cancel this order? HELD slots will be released to OPEN. This cannot be undone here — issue a Stripe refund separately if already paid.")) {
+  function patchStatus(next: "FULFILLED" | "CANCELLED") {
+    if (next === "CANCELLED") {
+      setConfirmCancel(true);
       return;
     }
+    runPatch(next);
+  }
+
+  function runPatch(next: "FULFILLED" | "CANCELLED") {
     setError(null);
     startTransition(async () => {
       const res = await fetch(`/api/admin/orders/${orderId}`, {
@@ -31,13 +39,18 @@ export function AdminOrderActions({ orderId, status }: Props) {
     });
   }
 
+  function confirmCancelOrder() {
+    setConfirmCancel(false);
+    runPatch("CANCELLED");
+  }
+
   return (
     <div className="gh-admin-order-actions flex flex-col items-end gap-1">
       <div className="gh-admin-order-actions__buttons flex items-center gap-2">
         {status === "PAID" ? (
           <button
             type="button"
-            onClick={() => void patchStatus("FULFILLED")}
+            onClick={() => patchStatus("FULFILLED")}
             disabled={pending}
             className="inline-flex items-center gap-1.5 rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-800 disabled:opacity-60"
           >
@@ -47,7 +60,7 @@ export function AdminOrderActions({ orderId, status }: Props) {
         ) : null}
         <button
           type="button"
-          onClick={() => void patchStatus("CANCELLED")}
+          onClick={() => patchStatus("CANCELLED")}
           disabled={pending}
           className="inline-flex items-center gap-1.5 rounded-md border border-rose-300 px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-60"
         >
@@ -58,6 +71,27 @@ export function AdminOrderActions({ orderId, status }: Props) {
       {error ? (
         <p className="text-[11px] text-rose-700">{error}</p>
       ) : null}
+
+      <PortalDialog
+        open={confirmCancel}
+        onClose={() => setConfirmCancel(false)}
+        title="Cancel order"
+        danger
+        footer={
+          <>
+            <Btn variant="ghost" onClick={() => setConfirmCancel(false)}>
+              Keep order
+            </Btn>
+            <Btn variant="danger" onClick={confirmCancelOrder}>
+              Cancel order
+            </Btn>
+          </>
+        }
+      >
+        <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
+          Cancel this order? HELD slots will be released to OPEN. This cannot be undone here — issue a Stripe refund separately if already paid.
+        </p>
+      </PortalDialog>
     </div>
   );
 }

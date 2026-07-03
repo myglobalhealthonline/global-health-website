@@ -222,6 +222,9 @@ export type AdminAppointmentListItem = {
   notesPreview: string | null;
   status: string;
   createdAt: string;
+  /** Surfaced so the appointment queue can compute the "live" (in
+   *  progress) state without a second round-trip — see AppointmentCard. */
+  scheduledAt: string | null;
   doctorId: string | null;
   doctorName: string | null;
 };
@@ -473,6 +476,7 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
       notesPreview: row.notes ? row.notes.slice(0, 140) : null,
       status: row.status,
       createdAt: row.createdAt.toISOString(),
+      scheduledAt: row.scheduledAt ? row.scheduledAt.toISOString() : null,
       doctorId: row.doctorId,
       doctorName: row.doctorName,
     }));

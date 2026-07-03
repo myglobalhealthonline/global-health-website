@@ -91,8 +91,7 @@ const NAME_TO_ISO: Record<string, string> = {
   vietnam: "vn",
 };
 
-const FALLBACK_GRADIENT =
-  "linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-accent))";
+const FALLBACK_FILL = "var(--portal-primary, var(--color-brand-primary))";
 
 export function FlagBadge({
   code,
@@ -119,8 +118,8 @@ export function FlagBadge({
           width: Math.round(size * aspect),
           height: size,
           borderRadius: 3,
-          background: FALLBACK_GRADIENT,
-          boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.10)",
+          background: FALLBACK_FILL,
+          boxShadow: "inset 0 0 0 1px var(--portal-line)",
           flex: `0 0 ${Math.round(size * aspect)}px`,
         }}
       />
@@ -137,7 +136,7 @@ export function FlagBadge({
         width: Math.round(size * aspect),
         height: size,
         borderRadius: 3,
-        boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.10)",
+        boxShadow: "inset 0 0 0 1px var(--portal-line)",
         flex: `0 0 ${Math.round(size * aspect)}px`,
         backgroundSize: "cover",
         backgroundPosition: "center",
