@@ -7,6 +7,7 @@ import {
   PageHeader,
   Pill,
 } from "@/components/portal-atoms";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -246,48 +247,39 @@ export default async function DoctorInvoicesPage({
           </table>
           </div>
           <div className="grid gap-3 p-3 md:hidden">
-            {invoices.map((row) => (
-              <article
-                key={row.id}
-                className="gh-doctor-mobile-card rounded-[10px] border border-[var(--portal-line)] bg-white p-4"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-[var(--portal-text)]">
-                      {row.fullName}
-                    </p>
-                    <p className="mt-1 text-xs capitalize text-[var(--portal-muted)]">
-                      {row.consultationType}
-                    </p>
-                  </div>
-                  <Pill tone={paymentTone(row.paymentStatus)} withDot>
-                    {row.paymentStatus}
-                  </Pill>
-                </div>
-                <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                  <div>
-                    <dt className="text-[var(--portal-muted)]">Amount</dt>
-                    <dd className="font-semibold text-[var(--portal-text)]">
-                      {fmtMoney(row.amountCents, row.currencyCode)}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[var(--portal-muted)]">When</dt>
-                    <dd className="font-semibold text-[var(--portal-text)]">
-                      {row.scheduledAt
+            {invoices.map((row) => {
+              const tone = paymentTone(row.paymentStatus);
+              return (
+                <PortalMobileCard
+                  key={row.id}
+                  title={row.fullName}
+                  subtitle={<span className="capitalize">{row.consultationType}</span>}
+                  statusPill={
+                    <Pill tone={tone} withDot>
+                      {row.paymentStatus}
+                    </Pill>
+                  }
+                  tone={tone === "active" ? "success" : tone === "inactive" ? "danger" : tone === "pending" ? "warning" : "neutral"}
+                  meta={[
+                    { label: "Amount", value: fmtMoney(row.amountCents, row.currencyCode) },
+                    {
+                      label: "When",
+                      value: row.scheduledAt
                         ? new Date(row.scheduledAt).toLocaleDateString()
-                        : new Date(row.createdAt).toLocaleDateString()}
-                    </dd>
-                  </div>
-                </dl>
-                <Link
-                  href={`/doctor/appointments/${row.id}`}
-                  className="gh-btn gh-btn-soft mt-4 w-full text-sm"
-                >
-                  Open consultation <ChevronRight className="size-3.5" />
-                </Link>
-              </article>
-            ))}
+                        : new Date(row.createdAt).toLocaleDateString(),
+                    },
+                  ]}
+                  actions={
+                    <Link
+                      href={`/doctor/appointments/${row.id}`}
+                      className="gh-btn gh-btn-soft text-sm"
+                    >
+                      Open consultation <ChevronRight className="size-3.5" />
+                    </Link>
+                  }
+                />
+              );
+            })}
           </div>
           {result.data.pagination.totalPages > 1 ? (
             <div className="border-t border-[var(--portal-line)] px-4 py-3 text-xs text-[var(--portal-muted)]">

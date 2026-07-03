@@ -6,6 +6,7 @@ import {
   PageHeader,
   Pill,
 } from "@/components/portal-atoms";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -159,42 +160,25 @@ export default async function DoctorPatientsPage({
           </div>
           <div className="grid gap-3 p-3 md:hidden">
             {items.map((p) => (
-              <article
+              <PortalMobileCard
                 key={p.email}
-                className="gh-doctor-mobile-card rounded-[10px] border border-[var(--portal-line)] bg-white p-4"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-[var(--portal-text)]">
-                      {p.fullName}
-                    </p>
-                    <p className="mt-1 text-xs text-[var(--portal-muted)]">
-                      First seen {new Date(p.firstSeen).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <Pill tone="brand">{p.countryCode}</Pill>
-                </div>
-                <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                  <div>
-                    <dt className="text-[var(--portal-muted)]">Bookings</dt>
-                    <dd className="font-semibold text-[var(--portal-text)]">
-                      {p.appointmentCount}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[var(--portal-muted)]">Record</dt>
-                    <dd className="font-semibold text-[var(--portal-text)]">
-                      History and documents
-                    </dd>
-                  </div>
-                </dl>
-                <Link
-                  href={`/doctor/patients/${encodeURIComponent(p.email)}`}
-                  className="gh-btn gh-btn-soft mt-4 w-full text-sm"
-                >
-                  Open patient record <ChevronRight className="size-3.5" />
-                </Link>
-              </article>
+                title={p.fullName}
+                subtitle={`First seen ${new Date(p.firstSeen).toLocaleDateString()}`}
+                statusPill={<Pill tone="brand">{p.countryCode}</Pill>}
+                tone="brand"
+                meta={[
+                  { label: "Bookings", value: p.appointmentCount },
+                  { label: "Record", value: "History and documents" },
+                ]}
+                actions={
+                  <Link
+                    href={`/doctor/patients/${encodeURIComponent(p.email)}`}
+                    className="gh-btn gh-btn-soft text-sm"
+                  >
+                    Open patient record <ChevronRight className="size-3.5" />
+                  </Link>
+                }
+              />
             ))}
           </div>
         </div>

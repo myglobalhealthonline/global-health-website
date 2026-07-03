@@ -20,6 +20,7 @@ import {
   X,
 } from "lucide-react";
 import { type DocumentContext } from "./document-context-banner";
+import { PortalTabs } from "@/components/PortalTabs";
 
 export type ConsultationDocTabId = "overview" | "exams" | "medicine" | "absence" | "certificate";
 
@@ -404,21 +405,13 @@ export function ConsultationDocumentsModal({
           </button>
         </div>
 
-        <div className="gh-doctor-doc-modal-tabs flex shrink-0 gap-1 overflow-x-auto border-b border-[var(--portal-line)] bg-white px-3 py-2">
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => setTab(t.id)}
-              className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-semibold ${
-                tab === t.id
-                  ? "bg-[var(--portal-primary)] text-white"
-                  : "text-[var(--portal-muted)] hover:bg-[var(--portal-well)]"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
+        <div className="gh-doctor-doc-modal-tabs shrink-0 overflow-x-auto border-b border-[var(--portal-line)] bg-white px-3 py-1">
+          <PortalTabs
+            ariaLabel="Document type"
+            value={tab}
+            onChange={(v) => setTab(v as ConsultationDocTabId)}
+            items={TABS.map((t) => ({ value: t.id, label: t.label }))}
+          />
         </div>
 
         <div className="gh-doctor-doc-modal-body min-h-0 flex-1 overflow-y-auto bg-white p-4">

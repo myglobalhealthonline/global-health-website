@@ -8,6 +8,7 @@ import {
   PageHeader,
   Pill,
 } from "@/components/portal-atoms";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -271,75 +272,53 @@ export default async function DoctorAppointmentsPage({
           </div>
           <div className="grid gap-3 p-3 md:hidden">
             {appointments.map((a) => (
-              <article
+              <PortalMobileCard
                 key={a.id}
-                className="gh-doctor-mobile-card rounded-[10px] border border-[var(--portal-line)] bg-white p-4"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-[var(--portal-text)]">
-                      {a.fullName}
-                    </p>
-                    <p className="mt-0.5 truncate text-xs text-[var(--portal-muted)]">
-                      {a.email}
-                    </p>
-                  </div>
+                title={a.fullName}
+                subtitle={a.email}
+                statusPill={
                   <Pill tone={a.status === "COMPLETED" ? "active" : a.status === "CANCELLED" ? "inactive" : "pending"} withDot>
                     {appointmentStatusLabel(a.status)}
                   </Pill>
-                </div>
-                <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                  <div>
-                    <dt className="text-[var(--portal-muted)]">Type</dt>
-                    <dd className="font-semibold capitalize text-[var(--portal-text)]">
-                      {a.consultationType}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[var(--portal-muted)]">Scheduled</dt>
-                    <dd className="font-semibold text-[var(--portal-text)]">
-                      {a.scheduledAt
-                        ? new Date(a.scheduledAt).toLocaleString(undefined, {
-                            month: "short",
-                            day: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })
-                        : "Unscheduled"}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[var(--portal-muted)]">Payment</dt>
-                    <dd className="font-semibold text-[var(--portal-text)]">
-                      {a.paymentStatus}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[var(--portal-muted)]">Meeting</dt>
-                    <dd className="font-semibold text-[var(--portal-text)]">
-                      {a.meetingUrl ? "Ready" : "Not set"}
-                    </dd>
-                  </div>
-                </dl>
-                <div className="mt-4 grid gap-2">
-                  {a.meetingUrl ? (
-                    <a
-                      href={a.meetingUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="gh-btn gh-btn-primary text-sm"
+                }
+                tone={a.status === "COMPLETED" ? "success" : a.status === "CANCELLED" ? "danger" : "neutral"}
+                meta={[
+                  { label: "Type", value: <span className="capitalize">{a.consultationType}</span> },
+                  {
+                    label: "Scheduled",
+                    value: a.scheduledAt
+                      ? new Date(a.scheduledAt).toLocaleString(undefined, {
+                          month: "short",
+                          day: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "Unscheduled",
+                  },
+                  { label: "Payment", value: a.paymentStatus },
+                  { label: "Meeting", value: a.meetingUrl ? "Ready" : "Not set" },
+                ]}
+                actions={
+                  <>
+                    {a.meetingUrl ? (
+                      <a
+                        href={a.meetingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="gh-btn gh-btn-primary text-sm"
+                      >
+                        <Video className="size-3.5" aria-hidden /> Join session
+                      </a>
+                    ) : null}
+                    <Link
+                      href={`/doctor/appointments/${a.id}`}
+                      className="gh-btn gh-btn-soft text-sm"
                     >
-                      <Video className="size-3.5" aria-hidden /> Join session
-                    </a>
-                  ) : null}
-                  <Link
-                    href={`/doctor/appointments/${a.id}`}
-                    className="gh-btn gh-btn-soft text-sm"
-                  >
-                    <CalendarDays className="size-3.5" aria-hidden /> Open workspace
-                  </Link>
-                </div>
-              </article>
+                      <CalendarDays className="size-3.5" aria-hidden /> Open workspace
+                    </Link>
+                  </>
+                }
+              />
             ))}
           </div>
           {result.data.pagination.totalPages > 1 ? (

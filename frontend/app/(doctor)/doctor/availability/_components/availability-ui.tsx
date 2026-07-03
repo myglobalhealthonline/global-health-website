@@ -20,6 +20,7 @@ import {
   Pill,
   SectionHeader,
 } from "@/components/portal-atoms";
+import { FormSection } from "@/components/FormSection";
 
 const WEEKDAYS = [
   { value: 0, label: "Sun" },
@@ -361,12 +362,12 @@ export function DoctorAvailabilityUI({
             </div>
           </AdminCard>
 
-          <AdminCard padding={0} className="gh-doctor-panel">
-            <SectionHeader
-              title="Add window"
-              description={`A weekly recurring time band — times in ${countryTimeZone} (clinic time).`}
-            />
-            <form onSubmit={onAddWindow} className="gh-doctor-availability-form grid gap-3 p-5">
+          <FormSection
+            title="Add window"
+            description={`A weekly recurring time band — times in ${countryTimeZone} (clinic time).`}
+            className="gh-doctor-panel"
+          >
+            <form onSubmit={onAddWindow} className="gh-doctor-availability-form gh-form-section__span-2 grid gap-3">
               <label className="flex flex-col gap-1 text-sm">
                 <span className="gh-field-label">Day</span>
                 <select
@@ -446,7 +447,7 @@ export function DoctorAvailabilityUI({
                 {busy ? "Adding…" : "Add window"}
               </Btn>
             </form>
-          </AdminCard>
+          </FormSection>
 
           <AdminCard padding={0} className="gh-doctor-panel">
             <SectionHeader title="Legend" />

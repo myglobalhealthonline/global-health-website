@@ -2,6 +2,8 @@
 
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { ChevronDown, ChevronRight, ClipboardList, Eye, FileSearch } from "lucide-react";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { DocumentMobileCard } from "@/app/(doctor)/doctor/_components/doctor-document-tables";
 
 type MedicalNoteRow = {
   id: string;
@@ -157,16 +159,18 @@ function DocumentTable({ rows }: { rows: DocRow[] }) {
     <>
     <div className="grid gap-2 p-3 md:hidden">
       {rows.map((r) => (
-        <DocumentMobileRow
+        <DocumentMobileCard
           key={r.id}
-          title={r.fileName}
-          sessionDate={r.sessionDate}
-          sessionTime={r.sessionTime}
-          orderNumber={r.orderNumber}
-          consultationTypeLabel={r.consultationTypeLabel}
+          fileName={r.fileName}
           fileTypeLabel={r.fileTypeLabel}
-          uploadedBy={r.uploadedBy}
           viewUrl={r.pdfUrl}
+          session={{
+            sessionDate: r.sessionDate,
+            sessionTime: r.sessionTime,
+            orderNumber: r.orderNumber,
+            consultationTypeLabel: r.consultationTypeLabel,
+            uploadedBy: r.uploadedBy,
+          }}
         />
       ))}
     </div>
@@ -223,16 +227,18 @@ function UploadsTable({ rows }: { rows: UploadRow[] }) {
     <>
     <div className="grid gap-2 p-3 md:hidden">
       {rows.map((u) => (
-        <DocumentMobileRow
+        <DocumentMobileCard
           key={u.id}
-          title={u.fileName}
-          sessionDate={u.sessionDate}
-          sessionTime={u.sessionTime}
-          orderNumber={u.orderNumber}
-          consultationTypeLabel={u.consultationTypeLabel}
+          fileName={u.fileName}
           fileTypeLabel={u.fileTypeLabel}
-          uploadedBy={u.uploadedBy}
           viewUrl={u.viewUrl}
+          session={{
+            sessionDate: u.sessionDate,
+            sessionTime: u.sessionTime,
+            orderNumber: u.orderNumber,
+            consultationTypeLabel: u.consultationTypeLabel,
+            uploadedBy: u.uploadedBy,
+          }}
         />
       ))}
     </div>
@@ -281,57 +287,6 @@ function UploadsTable({ rows }: { rows: UploadRow[] }) {
       </table>
     </div>
     </>
-  );
-}
-
-function DocumentMobileRow({
-  title,
-  sessionDate,
-  sessionTime,
-  orderNumber,
-  consultationTypeLabel,
-  fileTypeLabel,
-  uploadedBy,
-  viewUrl,
-}: {
-  title: string;
-  sessionDate: string;
-  sessionTime: string;
-  orderNumber: string;
-  consultationTypeLabel: string;
-  fileTypeLabel: string;
-  uploadedBy: string;
-  viewUrl: string;
-}) {
-  return (
-    <article className="rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="truncate text-[13px] font-bold text-[var(--portal-text)]">
-            {title}
-          </p>
-          <p className="mt-1 text-[11px] text-[var(--portal-muted)]">
-            {sessionDate} at {sessionTime} · order {orderNumber}
-          </p>
-        </div>
-        <FileTypeBadge label={fileTypeLabel} />
-      </div>
-      <div className="mt-2 flex flex-wrap gap-2">
-        <SessionTypeBadge label={consultationTypeLabel} />
-        <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-[var(--portal-muted)]">
-          {uploadedBy}
-        </span>
-      </div>
-      <a
-        href={viewUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-3 inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] bg-white px-2.5 py-1.5 text-[12px] font-semibold text-[var(--portal-primary)]"
-      >
-        <Eye className="size-3.5" aria-hidden />
-        View
-      </a>
-    </article>
   );
 }
 
@@ -401,27 +356,26 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
         <HistorySection title="Medical notes" count={data.medicalNotes.length}>
           <div className="grid gap-2 p-3 md:hidden">
             {data.medicalNotes.map((n) => (
-              <article
+              <PortalMobileCard
                 key={n.id}
-                className="rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3"
-              >
-                <p className="flex items-center gap-2 text-[13px] font-bold text-[var(--portal-text)]">
-                  <ClipboardList className="size-4 text-[var(--portal-primary)]" aria-hidden />
-                  {n.sessionDate} at {n.sessionTime}
-                </p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <SessionTypeBadge label={n.consultationTypeLabel} />
-                  <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-[var(--portal-muted)]">
-                    {n.createdByName}
+                title={
+                  <span className="flex items-center gap-2">
+                    <ClipboardList className="size-4 shrink-0 text-[var(--portal-primary)]" aria-hidden />
+                    {n.sessionDate} at {n.sessionTime}
                   </span>
-                </div>
-                <p className="mt-2 text-[12px] text-[var(--portal-muted)]">
+                }
+                meta={[
+                  { label: "Type", value: <SessionTypeBadge label={n.consultationTypeLabel} /> },
+                  { label: "Doctor", value: n.createdByName },
+                ]}
+              >
+                <p className="text-[12px] text-[var(--portal-muted)]">
                   {n.symptoms?.trim() || "No symptoms recorded"}
                 </p>
                 <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--portal-text)]">
                   {n.content}
                 </p>
-              </article>
+              </PortalMobileCard>
             ))}
           </div>
           <div className="gh-doctor-table-wrap hidden overflow-x-auto md:block">

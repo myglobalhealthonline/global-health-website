@@ -6,6 +6,7 @@ import { FileText, Plus, Trash2 } from "lucide-react";
 import type { FormFieldDef, FormTemplateDto } from "@/lib/api/doctor-api";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
 import { AdminEmptyState } from "@/components/portal-atoms";
+import { FormSection } from "@/components/FormSection";
 
 /**
  * Form templates manager. Tiny inline builder — title + description +
@@ -144,13 +145,8 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
 
   return (
     <div className="gh-doctor-detail-grid gh-doctor-templates-layout grid gap-4">
-      <div className="gh-card gh-doctor-template-list p-6">
-        <h3
-          className="m-0 text-[var(--portal-text)]"
-          style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-        >
-          Your templates
-        </h3>
+      <FormSection title="Your templates" className="gh-doctor-template-list">
+        <div className="gh-form-section__span-2">
         {items.length === 0 ? (
           <AdminEmptyState
             className="gh-doctor-empty-state mt-4"
@@ -200,19 +196,16 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
             ))}
           </ul>
         )}
-      </div>
+        </div>
+      </FormSection>
 
-      <form onSubmit={create} className="gh-card gh-doctor-template-form p-6">
-        <h3
-          className="m-0 text-[var(--portal-text)]"
-          style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-        >
-          New template
-        </h3>
-        <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
-          Build a simple form. Pick choice for radio-style options.
-        </p>
-        <div className="mt-3 grid gap-3">
+      <FormSection
+        title="New template"
+        description="Build a simple form. Pick choice for radio-style options."
+        className="gh-doctor-template-form"
+      >
+        <form onSubmit={create} className="gh-form-section__span-2">
+        <div className="grid gap-3">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">Title</span>
             <input
@@ -319,7 +312,8 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
             {pending ? "Saving…" : "Create template"}
           </button>
         </div>
-      </form>
+        </form>
+      </FormSection>
     </div>
   );
 }

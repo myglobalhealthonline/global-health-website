@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { fetchDoctorPatientDetail } from "@/lib/api/doctor-api";
 import { AdminEmptyState, AdminSummaryStrip, PageHeader, Pill } from "@/components/portal-atoms";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 import { PatientProfilePanel } from "./_components/patient-profile-panel";
 import { ConsultationHistoryPanel } from "./_components/consultation-history-panel";
 
@@ -152,62 +153,52 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
             </div>
             <div className="mt-4 grid gap-3 md:hidden">
               {appointments.map((a) => (
-                <article
+                <PortalMobileCard
                   key={a.id}
-                  className="gh-doctor-mobile-card rounded-[10px] border border-[var(--portal-line)] bg-white p-4"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-bold capitalize text-[var(--portal-text)]">
-                        {a.consultationType}
-                      </p>
-                      <p className="mt-1 text-xs text-[var(--portal-muted)]">
-                        {a.scheduledAt
-                          ? new Date(a.scheduledAt).toLocaleString()
-                          : new Date(a.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
+                  title={<span className="capitalize">{a.consultationType}</span>}
+                  subtitle={
+                    a.scheduledAt
+                      ? new Date(a.scheduledAt).toLocaleString()
+                      : new Date(a.createdAt).toLocaleDateString()
+                  }
+                  statusPill={
                     <Pill tone={a.status === "COMPLETED" ? "active" : a.status === "CANCELLED" ? "inactive" : "pending"} withDot>
                       {a.status.replace(/_/g, " ")}
                     </Pill>
-                  </div>
-                  <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                    <div>
-                      <dt className="text-[var(--portal-muted)]">Payment</dt>
-                      <dd className="font-semibold text-[var(--portal-text)]">
-                        {a.paymentStatus}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-[var(--portal-muted)]">Consult</dt>
-                      <dd className="font-semibold text-[var(--portal-text)]">
-                        {a.consultation
-                          ? a.consultation.status === "SIGNED"
-                            ? "Signed"
-                            : "Draft"
-                          : "No note"}
-                      </dd>
-                    </div>
-                  </dl>
-                  <div className="mt-4 grid gap-2">
-                    {a.meetingUrl ? (
-                      <a
-                        href={a.meetingUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="gh-btn gh-btn-primary text-sm"
+                  }
+                  tone={a.status === "COMPLETED" ? "success" : a.status === "CANCELLED" ? "danger" : "neutral"}
+                  meta={[
+                    { label: "Payment", value: a.paymentStatus },
+                    {
+                      label: "Consult",
+                      value: a.consultation
+                        ? a.consultation.status === "SIGNED"
+                          ? "Signed"
+                          : "Draft"
+                        : "No note",
+                    },
+                  ]}
+                  actions={
+                    <>
+                      {a.meetingUrl ? (
+                        <a
+                          href={a.meetingUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="gh-btn gh-btn-primary text-sm"
+                        >
+                          <ExternalLink className="size-3" /> Join
+                        </a>
+                      ) : null}
+                      <Link
+                        href={`/doctor/appointments/${a.id}`}
+                        className="gh-btn gh-btn-soft text-sm"
                       >
-                        <ExternalLink className="size-3" /> Join
-                      </a>
-                    ) : null}
-                    <Link
-                      href={`/doctor/appointments/${a.id}`}
-                      className="gh-btn gh-btn-soft text-sm"
-                    >
-                      Open workspace <ChevronRight className="size-3" />
-                    </Link>
-                  </div>
-                </article>
+                        Open workspace <ChevronRight className="size-3" />
+                      </Link>
+                    </>
+                  }
+                />
               ))}
             </div>
             </>

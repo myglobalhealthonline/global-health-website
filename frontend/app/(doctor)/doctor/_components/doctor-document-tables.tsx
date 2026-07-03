@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Eye, FileText } from "lucide-react";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export type SessionMeta = {
   sessionDate: string;
@@ -276,7 +277,7 @@ export function DocTypeGroup({
   );
 }
 
-function DocumentMobileCard({
+export function DocumentMobileCard({
   fileName,
   fileTypeLabel,
   viewUrl,
@@ -288,42 +289,31 @@ function DocumentMobileCard({
   session: SessionMeta;
 }) {
   return (
-    <article className="gh-doctor-document-row rounded-[10px] border border-[var(--portal-line)] bg-white p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="flex items-center gap-2 truncate text-sm font-bold text-[var(--portal-text)]">
-            <FileText className="size-4 shrink-0 text-[var(--portal-primary)]" aria-hidden />
-            {fileName}
-          </p>
-          <p className="mt-1 text-xs text-[var(--portal-muted)]">
-            {session.sessionDate} at {session.sessionTime}
-          </p>
-        </div>
-        <FileTypeBadge label={fileTypeLabel} />
-      </div>
-      <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
-        <div>
-          <dt className="text-[var(--portal-muted)]">Order</dt>
-          <dd className="font-semibold text-[var(--portal-text)]">
-            {session.orderNumber}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-[var(--portal-muted)]">Uploaded by</dt>
-          <dd className="font-semibold text-[var(--portal-text)]">
-            {session.uploadedBy}
-          </dd>
-        </div>
-      </dl>
-      <a
-        href={viewUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="gh-btn gh-btn-soft mt-4 w-full text-sm"
-      >
-        <Eye className="size-3.5" aria-hidden />
-        View document
-      </a>
-    </article>
+    <PortalMobileCard
+      title={
+        <span className="flex items-center gap-2">
+          <FileText className="size-4 shrink-0 text-[var(--portal-primary)]" aria-hidden />
+          {fileName}
+        </span>
+      }
+      subtitle={`${session.sessionDate} at ${session.sessionTime}`}
+      statusPill={<FileTypeBadge label={fileTypeLabel} />}
+      meta={[
+        { label: "Type", value: <SessionTypeBadge label={session.consultationTypeLabel} /> },
+        { label: "Order", value: session.orderNumber },
+        { label: "Uploaded by", value: session.uploadedBy },
+      ]}
+      actions={
+        <a
+          href={viewUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="gh-btn gh-btn-soft text-sm"
+        >
+          <Eye className="size-3.5" aria-hidden />
+          View document
+        </a>
+      }
+    />
   );
 }

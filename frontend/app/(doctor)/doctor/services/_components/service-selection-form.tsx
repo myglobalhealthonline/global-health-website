@@ -294,7 +294,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
                   className={`grid size-5 shrink-0 place-items-center rounded-md border transition-colors ${
                     checked
                       ? "border-[var(--portal-primary)] bg-[var(--portal-primary)] text-white"
-                      : "border-[var(--portal-line)] bg-[var(--color-surface,white)]"
+                      : "border-[var(--portal-line)] bg-[var(--portal-surface,white)]"
                   }`}
                 >
                   {checked ? <Check className="size-3.5" strokeWidth={3} /> : null}

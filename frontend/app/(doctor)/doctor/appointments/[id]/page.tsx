@@ -33,6 +33,7 @@ import {
 } from "./_components/consultation-documents-section";
 import { BrazilConsentPanel } from "./_components/brazil-consent-panel";
 import { AdminSummaryStrip } from "@/components/portal-atoms";
+import { FormSection } from "@/components/FormSection";
 
 export const dynamic = "force-dynamic";
 
@@ -231,195 +232,151 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             panel: (
               <div className="gh-doctor-appointment-overview grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
                 <div className="grid gap-4">
-                  <section className="gh-card p-6">
-                    <h3
-                      className="m-0 text-[var(--portal-text)]"
-                      style={{
-                        fontFamily: "var(--font-display)",
-                        fontSize: 16,
-                        fontWeight: 800,
-                      }}
-                    >
-                      Meeting & status
-                    </h3>
-                    <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
-                      Paste the video link the patient will use, and move the
-                      appointment forward as you progress.
-                    </p>
-                    <AppointmentActions
-                      appointmentId={appointment.id}
-                      initialMeetingUrl={appointment.meetingUrl}
-                      initialStatus={appointment.status}
-                      initialScheduledAt={appointment.scheduledAt}
-                      initialMode={consultationMode}
-                    />
-                    <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
-                      <h4 className="text-sm font-bold text-[var(--portal-text)]">
-                        Finalize
-                      </h4>
-                      <FinalizeChecklist
+                  <FormSection
+                    title="Meeting & status"
+                    description="Paste the video link the patient will use, and move the appointment forward as you progress."
+                  >
+                    <div className="gh-form-section__span-2">
+                      <AppointmentActions
                         appointmentId={appointment.id}
-                        initialFinalized={appointment.finalized ?? false}
-                        initialNotesUploaded={appointment.notesUploaded ?? false}
-                        initialFilesUploaded={appointment.filesUploaded ?? false}
+                        initialMeetingUrl={appointment.meetingUrl}
+                        initialStatus={appointment.status}
+                        initialScheduledAt={appointment.scheduledAt}
+                        initialMode={consultationMode}
                       />
+                      <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
+                        <h4 className="text-sm font-bold text-[var(--portal-text)]">
+                          Finalize
+                        </h4>
+                        <FinalizeChecklist
+                          appointmentId={appointment.id}
+                          initialFinalized={appointment.finalized ?? false}
+                          initialNotesUploaded={appointment.notesUploaded ?? false}
+                          initialFilesUploaded={appointment.filesUploaded ?? false}
+                        />
+                      </div>
+                      <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
+                        <FollowUpButton appointmentId={appointment.id} />
+                      </div>
                     </div>
-                    <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
-                      <FollowUpButton appointmentId={appointment.id} />
-                    </div>
-                  </section>
+                  </FormSection>
 
-                  <section className="gh-card p-6">
-                    <h3
-                      className="m-0 text-[var(--portal-text)]"
-                      style={{
-                        fontFamily: "var(--font-display)",
-                        fontSize: 16,
-                        fontWeight: 800,
-                      }}
-                    >
-                      Consultation documents
-                    </h3>
-                    <ConsultationDocumentsSection appointmentId={appointment.id} />
-                  </section>
+                  <FormSection title="Consultation documents">
+                    <div className="gh-form-section__span-2">
+                      <ConsultationDocumentsSection appointmentId={appointment.id} />
+                    </div>
+                  </FormSection>
 
                   {appointment.countryCode.toLowerCase() === "br" ? (
-                    <section className="gh-card p-6">
-                      <h3
-                        className="m-0 text-[var(--portal-text)]"
-                        style={{
-                          fontFamily: "var(--font-display)",
-                          fontSize: 16,
-                          fontWeight: 800,
-                        }}
-                      >
-                        Brazil consent
-                      </h3>
-                      <BrazilConsentPanel
-                        appointmentId={appointment.id}
-                        countryCode={appointment.countryCode}
-                      />
-                    </section>
+                    <FormSection title="Brazil consent">
+                      <div className="gh-form-section__span-2">
+                        <BrazilConsentPanel
+                          appointmentId={appointment.id}
+                          countryCode={appointment.countryCode}
+                        />
+                      </div>
+                    </FormSection>
                   ) : null}
 
-                  <section className="gh-card p-6">
-                    <h3
-                      className="m-0 text-[var(--portal-text)]"
-                      style={{
-                        fontFamily: "var(--font-display)",
-                        fontSize: 16,
-                        fontWeight: 800,
-                      }}
-                    >
-                      Patient
-                    </h3>
-                    <dl className="mt-3 grid gap-2 text-[13px]">
-                      {appointment.globalHealthNumber ? (
-                        <Row label="Global Health No." value={appointment.globalHealthNumber} />
+                  <FormSection title="Patient">
+                    <div className="gh-form-section__span-2">
+                      <dl className="grid gap-2 text-[13px]">
+                        {appointment.globalHealthNumber ? (
+                          <Row label="Global Health No." value={appointment.globalHealthNumber} />
+                        ) : null}
+                        <Row label="Email" value={appointment.email} />
+                        <Row label="Phone" value={appointment.phone ?? "—"} />
+                        <Row
+                          label="Date of birth"
+                          value={
+                            appointment.dateOfBirth
+                              ? new Date(appointment.dateOfBirth).toLocaleDateString()
+                              : "—"
+                          }
+                        />
+                        {appointment.consultationLanguageCode ? (
+                          <Row label="Consultation language" value={appointment.consultationLanguageCode.toUpperCase()} />
+                        ) : null}
+                        <Row label="Status" value={appointment.status} />
+                        <Row
+                          label="Booked"
+                          value={new Date(appointment.createdAt).toLocaleString()}
+                        />
+                      </dl>
+                      {appointment.notes ? (
+                        <div className="mt-4 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3 text-[13px]">
+                          <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
+                            Booking notes
+                          </p>
+                          <p className="mt-1 whitespace-pre-wrap text-[var(--portal-text)]">
+                            {appointment.notes}
+                          </p>
+                        </div>
                       ) : null}
-                      <Row label="Email" value={appointment.email} />
-                      <Row label="Phone" value={appointment.phone ?? "—"} />
-                      <Row
-                        label="Date of birth"
-                        value={
-                          appointment.dateOfBirth
-                            ? new Date(appointment.dateOfBirth).toLocaleDateString()
-                            : "—"
-                        }
-                      />
-                      {appointment.consultationLanguageCode ? (
-                        <Row label="Consultation language" value={appointment.consultationLanguageCode.toUpperCase()} />
-                      ) : null}
-                      <Row label="Status" value={appointment.status} />
-                      <Row
-                        label="Booked"
-                        value={new Date(appointment.createdAt).toLocaleString()}
-                      />
-                    </dl>
-                    {appointment.notes ? (
-                      <div className="mt-4 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3 text-[13px]">
-                        <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
-                          Booking notes
-                        </p>
-                        <p className="mt-1 whitespace-pre-wrap text-[var(--portal-text)]">
-                          {appointment.notes}
-                        </p>
-                      </div>
-                    ) : null}
-                  </section>
+                    </div>
+                  </FormSection>
                 </div>
 
                 <aside className="grid gap-4 self-start">
                   {invoice ? (
-                    <section className="gh-card p-6">
-                      <h3
-                        className="m-0 text-[var(--portal-text)]"
-                        style={{
-                          fontFamily: "var(--font-display)",
-                          fontSize: 16,
-                          fontWeight: 800,
-                        }}
-                      >
-                        Invoice
-                      </h3>
-                      <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
-                        Read-only view. Admin issues + refunds.
-                      </p>
-                      <dl className="mt-3 grid gap-2 text-[13px]">
-                        <Row label="Status" value={invoice.paymentStatus} />
-                        <Row
-                          label="Booked amount"
-                          value={
-                            invoice.amountCents != null && invoice.currencyCode
-                              ? formatMoney(invoice.amountCents, invoice.currencyCode)
-                              : "—"
-                          }
-                        />
-                        {(() => {
-                          const buckets = Object.entries(
-                            invoice.lineTotalsByCurrency ?? {},
-                          ).filter(([, v]) => v > 0);
-                          if (buckets.length === 0) {
-                            return <Row label="Line total" value="—" />;
-                          }
-                          if (buckets.length === 1) {
-                            const [code, total] = buckets[0]!;
-                            return (
-                              <Row
-                                label="Line total"
-                                value={formatMoney(total, code === "—" ? "EUR" : code)}
-                              />
-                            );
-                          }
-                          return (
-                            <>
-                              {buckets.map(([code, total]) => (
+                    <FormSection title="Invoice" description="Read-only view. Admin issues + refunds.">
+                      <div className="gh-form-section__span-2">
+                        <dl className="grid gap-2 text-[13px]">
+                          <Row label="Status" value={invoice.paymentStatus} />
+                          <Row
+                            label="Booked amount"
+                            value={
+                              invoice.amountCents != null && invoice.currencyCode
+                                ? formatMoney(invoice.amountCents, invoice.currencyCode)
+                                : "—"
+                            }
+                          />
+                          {(() => {
+                            const buckets = Object.entries(
+                              invoice.lineTotalsByCurrency ?? {},
+                            ).filter(([, v]) => v > 0);
+                            if (buckets.length === 0) {
+                              return <Row label="Line total" value="—" />;
+                            }
+                            if (buckets.length === 1) {
+                              const [code, total] = buckets[0]!;
+                              return (
                                 <Row
-                                  key={code}
-                                  label={`Line total (${code})`}
+                                  label="Line total"
                                   value={formatMoney(total, code === "—" ? "EUR" : code)}
                                 />
-                              ))}
-                            </>
-                          );
-                        })()}
-                        <Row
-                          label="Paid"
-                          value={
-                            invoice.paidAt
-                              ? new Date(invoice.paidAt).toLocaleString()
-                              : "—"
-                          }
-                        />
-                      </dl>
-                      <Link
-                        href={`/print/invoices/${appointment.id}`}
-                        target="_blank"
-                        className="mt-4 inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] px-3 py-2 text-[12.5px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
-                      >
-                        <Printer className="size-3.5" /> Print invoice
-                      </Link>
-                    </section>
+                              );
+                            }
+                            return (
+                              <>
+                                {buckets.map(([code, total]) => (
+                                  <Row
+                                    key={code}
+                                    label={`Line total (${code})`}
+                                    value={formatMoney(total, code === "—" ? "EUR" : code)}
+                                  />
+                                ))}
+                              </>
+                            );
+                          })()}
+                          <Row
+                            label="Paid"
+                            value={
+                              invoice.paidAt
+                                ? new Date(invoice.paidAt).toLocaleString()
+                                : "—"
+                            }
+                          />
+                        </dl>
+                        <Link
+                          href={`/print/invoices/${appointment.id}`}
+                          target="_blank"
+                          className="mt-4 inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] px-3 py-2 text-[12.5px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
+                        >
+                          <Printer className="size-3.5" /> Print invoice
+                        </Link>
+                      </div>
+                    </FormSection>
                   ) : null}
                 </aside>
               </div>
@@ -430,108 +387,101 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             label: "Consultation",
             badge: signed ? "signed" : "draft",
             panel: (
-              <section className="gh-card p-6">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h3
-                    className="m-0 text-[var(--portal-text)]"
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: 16,
-                      fontWeight: 800,
-                    }}
-                  >
-                    Consultation note
-                  </h3>
-                  <ConsultationDocumentsTrigger appointmentId={appointment.id} />
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] ${
-                      signed
-                        ? "bg-[var(--portal-success-soft)] text-[var(--portal-success-text)]"
-                        : "bg-[var(--portal-well)] text-[var(--portal-muted)]"
-                    }`}
-                  >
-                    {signed ? "Signed" : "Draft"}
-                  </span>
-                </div>
-                <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
-                  SOAP format. Save anytime; sign when complete — signed notes
-                  are locked.
-                </p>
-                <ConsultationForm
-                  appointmentId={appointment.id}
-                  initial={
-                    consultation
-                      ? {
-                          chiefComplaint: consultation.chiefComplaint ?? "",
-                          subjective: consultation.subjective ?? "",
-                          objective: consultation.objective ?? "",
-                          assessment: consultation.assessment ?? "",
-                          plan: consultation.plan ?? "",
-                          status: consultation.status,
-                          signedAt: consultation.signedAt,
-                        }
-                      : {
-                          chiefComplaint: "",
-                          subjective: "",
-                          objective: "",
-                          assessment: "",
-                          plan: "",
-                          status: "DRAFT",
-                          signedAt: null,
-                        }
-                  }
-                />
-
-                <div className="mt-6 border-t border-[var(--portal-line)] pt-5">
-                  <h4
-                    className="m-0 text-[var(--portal-text)]"
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: 14,
-                      fontWeight: 800,
-                    }}
-                  >
-                    Services rendered
-                  </h4>
-                  <p className="mt-1 text-[12.5px] text-[var(--portal-muted)]">
-                    Log services performed during this consult — feeds the invoice.
-                  </p>
-                  <ServicesUsedList
-                    consultationId={consultation?.id ?? null}
-                    initialItems={servicesUsed}
-                    locked={signed}
+              <FormSection
+                title="Consultation note"
+                description="SOAP format. Save anytime; sign when complete — signed notes are locked."
+                right={
+                  <div className="flex items-center gap-2">
+                    <ConsultationDocumentsTrigger appointmentId={appointment.id} />
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] ${
+                        signed
+                          ? "bg-[var(--portal-success-soft)] text-[var(--portal-success-text)]"
+                          : "bg-[var(--portal-well)] text-[var(--portal-muted)]"
+                      }`}
+                    >
+                      {signed ? "Signed" : "Draft"}
+                    </span>
+                  </div>
+                }
+              >
+                <div className="gh-form-section__span-2">
+                  <ConsultationForm
+                    appointmentId={appointment.id}
+                    initial={
+                      consultation
+                        ? {
+                            chiefComplaint: consultation.chiefComplaint ?? "",
+                            subjective: consultation.subjective ?? "",
+                            objective: consultation.objective ?? "",
+                            assessment: consultation.assessment ?? "",
+                            plan: consultation.plan ?? "",
+                            status: consultation.status,
+                            signedAt: consultation.signedAt,
+                          }
+                        : {
+                            chiefComplaint: "",
+                            subjective: "",
+                            objective: "",
+                            assessment: "",
+                            plan: "",
+                            status: "DRAFT",
+                            signedAt: null,
+                          }
+                    }
                   />
-                </div>
 
-                <div className="mt-6 border-t border-[var(--portal-line)] pt-5">
-                  <h4
-                    className="m-0 text-[var(--portal-text)]"
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: 14,
-                      fontWeight: 800,
-                    }}
-                  >
-                    Share with a colleague
-                  </h4>
-                  <p className="mt-1 text-[12.5px] text-[var(--portal-muted)]">
-                    7-day signed link. Recipient sees the consult only — no
-                    portal access.
-                  </p>
-                  <div className="mt-2">
-                    {consultation ? (
-                      <ShareConsultationButton
-                        consultationId={consultation.id}
-                        disabled={!signed}
-                      />
-                    ) : (
-                      <p className="text-[12px] text-[var(--portal-muted)]">
-                        Save a draft first.
-                      </p>
-                    )}
+                  <div className="mt-6 border-t border-[var(--portal-line)] pt-5">
+                    <h4
+                      className="m-0 text-[var(--portal-text)]"
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontSize: 14,
+                        fontWeight: 800,
+                      }}
+                    >
+                      Services rendered
+                    </h4>
+                    <p className="mt-1 text-[12.5px] text-[var(--portal-muted)]">
+                      Log services performed during this consult — feeds the invoice.
+                    </p>
+                    <ServicesUsedList
+                      consultationId={consultation?.id ?? null}
+                      initialItems={servicesUsed}
+                      locked={signed}
+                    />
+                  </div>
+
+                  <div className="mt-6 border-t border-[var(--portal-line)] pt-5">
+                    <h4
+                      className="m-0 text-[var(--portal-text)]"
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontSize: 14,
+                        fontWeight: 800,
+                      }}
+                    >
+                      Share with a colleague
+                    </h4>
+                    <p className="mt-1 text-[12.5px] text-[var(--portal-muted)]">
+                      7-day signed link. Recipient sees the consult only — no
+                      portal access.
+                    </p>
+                    <div className="mt-2">
+                      {consultation ? (
+                        <ShareConsultationButton
+                          consultationId={consultation.id}
+                          disabled={!signed}
+                        />
+                      ) : (
+                        <p className="text-[12px] text-[var(--portal-muted)]">
+                          Save a draft first.
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </section>
+              </FormSection>
             ),
           },
           {
@@ -543,45 +493,27 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                 : null,
             panel: (
               <div className="grid gap-4">
-                <section className="gh-card p-6">
-                  <h3
-                    className="m-0 text-[var(--portal-text)]"
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: 16,
-                      fontWeight: 800,
-                    }}
-                  >
-                    Exam results
-                  </h3>
-                  <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
-                    Log lab / imaging results. Use the external link field to
-                    point at a partner-lab portal.
-                  </p>
-                  <ExamResultsList appointmentId={appointment.id} initialItems={exams} />
-                </section>
+                <FormSection
+                  title="Exam results"
+                  description="Log lab / imaging results. Use the external link field to point at a partner-lab portal."
+                >
+                  <div className="gh-form-section__span-2">
+                    <ExamResultsList appointmentId={appointment.id} initialItems={exams} />
+                  </div>
+                </FormSection>
 
-                <section className="gh-card p-6">
-                  <h3
-                    className="m-0 text-[var(--portal-text)]"
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: 16,
-                      fontWeight: 800,
-                    }}
-                  >
-                    Prescriptions
-                  </h3>
-                  <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
-                    Clinical scripts issued during this consultation. Lock when
-                    the consult is signed.
-                  </p>
-                  <PrescriptionsList
-                    appointmentId={appointment.id}
-                    initialItems={prescriptions}
-                    consultationLocked={signed}
-                  />
-                </section>
+                <FormSection
+                  title="Prescriptions"
+                  description="Clinical scripts issued during this consultation. Lock when the consult is signed."
+                >
+                  <div className="gh-form-section__span-2">
+                    <PrescriptionsList
+                      appointmentId={appointment.id}
+                      initialItems={prescriptions}
+                      consultationLocked={signed}
+                    />
+                  </div>
+                </FormSection>
               </div>
             ),
           },
@@ -591,82 +523,64 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             badge: submissions.length > 0 ? String(submissions.length) : null,
             panel: (
               <div className="grid gap-4">
-                <section className="gh-card p-6">
-                  <h3
-                    className="m-0 text-[var(--portal-text)]"
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: 16,
-                      fontWeight: 800,
-                    }}
-                  >
-                    Forms
-                  </h3>
-                  <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
-                    Fill an intake / consent / follow-up form on the
-                    patient&apos;s behalf. New submissions show below.
-                  </p>
-                  <FormFillSection appointmentId={appointment.id} templates={templates} />
-                </section>
+                <FormSection
+                  title="Forms"
+                  description="Fill an intake / consent / follow-up form on the patient's behalf. New submissions show below."
+                >
+                  <div className="gh-form-section__span-2">
+                    <FormFillSection appointmentId={appointment.id} templates={templates} />
+                  </div>
+                </FormSection>
 
                 {submissions.length > 0 ? (
-                  <section className="gh-card p-6">
-                    <h3
-                      className="m-0 text-[var(--portal-text)]"
-                      style={{
-                        fontFamily: "var(--font-display)",
-                        fontSize: 16,
-                        fontWeight: 800,
-                      }}
-                    >
-                      Form submissions
-                    </h3>
-                    <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
-                      Answers the patient (or admin on their behalf) filled
-                      in for this appointment.
-                    </p>
-                    <ul className="mt-3 grid gap-3">
-                      {submissions.map((s) => (
-                        <li
-                          key={s.id}
-                          className="gh-doctor-submission-card gh-admin-card rounded-md border border-[var(--portal-line)] p-3"
-                        >
-                          <div className="gh-doctor-submission-header flex items-baseline justify-between gap-3">
-                            <p className="text-[13px] font-semibold text-[var(--portal-text)]">
-                              {s.template.title}
+                  <FormSection
+                    title="Form submissions"
+                    description="Answers the patient (or admin on their behalf) filled in for this appointment."
+                  >
+                    <div className="gh-form-section__span-2">
+                      <ul className="grid gap-3">
+                        {submissions.map((s) => (
+                          <li
+                            key={s.id}
+                            className="gh-doctor-submission-card gh-admin-card rounded-md border border-[var(--portal-line)] p-3"
+                          >
+                            <div className="gh-doctor-submission-header flex items-baseline justify-between gap-3">
+                              <p className="text-[13px] font-semibold text-[var(--portal-text)]">
+                                {s.template.title}
+                              </p>
+                              <Link
+                                href={`/print/forms/${s.id}`}
+                                target="_blank"
+                                className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
+                              >
+                                <Printer className="size-3" /> Print
+                              </Link>
+                            </div>
+                            <p className="text-[11.5px] text-[var(--portal-muted)]">
+                              submitted {new Date(s.submittedAt).toLocaleString()}
                             </p>
-                            <Link
-                              href={`/print/forms/${s.id}`}
-                              target="_blank"
-                              className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
-                            >
-                              <Printer className="size-3" /> Print
-                            </Link>
-                          </div>
-                          <p className="text-[11.5px] text-[var(--portal-muted)]">
-                            submitted {new Date(s.submittedAt).toLocaleString()}
-                          </p>
-                          <dl className="mt-2 grid gap-1.5 text-[13px]">
-                            {(s.answers ?? []).map((a, i) => {
-                              const def = s.template.fields.find((f) => f.key === a.key);
-                              return (
-                                <div key={i} className="flex gap-2">
-                                  <dt className="min-w-[40%] text-[var(--portal-muted)]">
-                                    {def?.label ?? a.key}
-                                  </dt>
-                                  <dd className="text-[var(--portal-text)] whitespace-pre-wrap">
-                                    {a.value === null || a.value === ""
-                                      ? "—"
-                                      : String(a.value)}
-                                  </dd>
-                                </div>
-                              );
-                            })}
-                          </dl>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
+                            <dl className="mt-2 grid gap-1.5 text-[13px]">
+                              {(s.answers ?? []).map((a, i) => {
+                                const def = s.template.fields.find((f) => f.key === a.key);
+                                return (
+                                  <div key={i} className="flex gap-2">
+                                    <dt className="min-w-[40%] text-[var(--portal-muted)]">
+                                      {def?.label ?? a.key}
+                                    </dt>
+                                    <dd className="text-[var(--portal-text)] whitespace-pre-wrap">
+                                      {a.value === null || a.value === ""
+                                        ? "—"
+                                        : String(a.value)}
+                                    </dd>
+                                  </div>
+                                );
+                              })}
+                            </dl>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </FormSection>
                 ) : null}
               </div>
             ),
@@ -677,30 +591,21 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             badge: documentsTabBadge,
             badgeAlert: Boolean(documentsTabBadge),
             panel: (
-              <section className="gh-card p-6">
-                <h3
-                  className="m-0 text-[var(--portal-text)]"
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: 16,
-                    fontWeight: 800,
-                  }}
-                >
-                  Documents
-                </h3>
-                <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
-                  Generated consultation PDFs and files you attach to this
-                  appointment. Use View to open any document in the browser.
-                </p>
-                <AppointmentDocumentsTab
-                  appointmentId={appointment.id}
-                  scheduledAt={appointment.scheduledAt}
-                  createdAt={appointment.createdAt}
-                  consultationType={appointment.consultationType}
-                  doctorName={doctorName}
-                  initialUploads={documents}
-                />
-              </section>
+              <FormSection
+                title="Documents"
+                description="Generated consultation PDFs and files you attach to this appointment. Use View to open any document in the browser."
+              >
+                <div className="gh-form-section__span-2">
+                  <AppointmentDocumentsTab
+                    appointmentId={appointment.id}
+                    scheduledAt={appointment.scheduledAt}
+                    createdAt={appointment.createdAt}
+                    consultationType={appointment.consultationType}
+                    doctorName={doctorName}
+                    initialUploads={documents}
+                  />
+                </div>
+              </FormSection>
             ),
           },
           {
@@ -708,47 +613,28 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             label: "Messages",
             panel: (
               <div className="grid gap-4">
-                <section className="gh-card p-6">
-                  <h3
-                    className="m-0 text-[var(--portal-text)]"
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: 16,
-                      fontWeight: 800,
-                    }}
-                  >
-                    Patient chat
-                  </h3>
-                  <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
-                    Direct channel with the patient. Chat auto-locks 24h after
-                    the appointment completes — you can re-open it here.
-                  </p>
-                  <div className="mt-4">
+                <FormSection
+                  title="Patient chat"
+                  description="Direct channel with the patient. Chat auto-locks 24h after the appointment completes — you can re-open it here."
+                >
+                  <div className="gh-form-section__span-2">
                     <DoctorConsultationChatSection appointmentId={appointment.id} />
                   </div>
-                </section>
+                </FormSection>
 
-                <section className="gh-card p-6">
-                  <h3
-                    className="m-0 text-[var(--portal-text)]"
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: 16,
-                      fontWeight: 800,
-                    }}
-                  >
-                    Internal notes (doctor ↔ admin)
-                  </h3>
-                  <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
-                    Not patient-visible. Use for handoff context.
-                  </p>
-                  <InternalMessagesThread
-                    appointmentId={appointment.id}
-                    initialItems={messages}
-                    postEndpoint={`/api/doctor/appointments/${appointment.id}/internal-messages`}
-                    currentRole="DOCTOR"
-                  />
-                </section>
+                <FormSection
+                  title="Internal notes (doctor ↔ admin)"
+                  description="Not patient-visible. Use for handoff context."
+                >
+                  <div className="gh-form-section__span-2">
+                    <InternalMessagesThread
+                      appointmentId={appointment.id}
+                      initialItems={messages}
+                      postEndpoint={`/api/doctor/appointments/${appointment.id}/internal-messages`}
+                      currentRole="DOCTOR"
+                    />
+                  </div>
+                </FormSection>
               </div>
             ),
           },

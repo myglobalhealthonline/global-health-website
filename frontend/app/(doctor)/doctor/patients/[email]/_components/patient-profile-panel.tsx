@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { Link2 } from "lucide-react";
+import { FormSection } from "@/components/FormSection";
 
 type Profile = {
   weightKg: number | null;
@@ -146,11 +147,8 @@ export function PatientProfilePanel({ email }: { email: string }) {
   }
 
   return (
-    <section className="gh-card gh-doctor-patient-profile-panel p-6">
-      <h3 className="text-base font-bold text-[var(--portal-text)]">
-        Patient chart
-      </h3>
-
+    <FormSection title="Patient chart" className="gh-doctor-patient-profile-panel">
+      <div className="gh-form-section__span-2">
       {profile?.statusAlert ? (
         <div
           role="alert"
@@ -311,7 +309,8 @@ export function PatientProfilePanel({ email }: { email: string }) {
           </p>
         ) : null}
       </div>
-    </section>
+      </div>
+    </FormSection>
   );
 }
 
