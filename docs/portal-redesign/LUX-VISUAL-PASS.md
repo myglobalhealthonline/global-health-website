@@ -1,4 +1,4 @@
-# LUX-VISUAL-PASS.md — "Obsidian Ivory · Liquid Lux" (visual upgrade layer, v2 exhaustive)
+# LUX-VISUAL-PASS.md — "Obsidian Ivory · Liquid Lux" (visual upgrade layer, v3 picture-perfect)
 
 > **What this is:** a **visual-only upgrade pass** applied ON TOP of the
 > already-implemented Obsidian Ivory system. Structure, layout, UX, table
@@ -324,17 +324,60 @@ Material B in full. Plus:
 - Bottom edge: seam-light gradient always on.
 - Optional `band-aurora.webp` behind content @≤0.5.
 
-### 5.4 PageHeader + Eyebrow + SectionHeader
+### 5.4 Page headers — full lux treatment (was underspecified; now binding)
 
-- PageHeader stays transparent on the plane (no card). Upgrades:
-  - Eyebrow: 11px/800 +0.12em caps `--portal-accent-text`; 5px lime dot
-    with 3px halo @25%; 2px×64px hairline below:
-    `linear-gradient(90deg, var(--portal-accent), transparent)`.
-  - Title: pure ink `#0C120E`, −0.03em. Dashboard greeting only: final
-    word in `--portal-accent-text`.
-  - Description: `--portal-muted`, ≤68ch.
-  - Actions row (right): primary + secondary per §5.7.
-- SectionHeader (in cards): 16px/800 ink + gradient rule per §5.1.
+Two header modes exist. Neither is a plain transparent strip anymore.
+
+**Mode 1 — Standard PageHeader (list/form/settings pages):**
+
+- Still NOT a card (no border, no shadow) — it lives on the plane — but
+  it gets an **atmosphere**:
+  - **Header aura:** a `::before` layer behind the header zone,
+    `radial-gradient(720px 320px at 12% 0%, color-mix(in srgb, var(--portal-accent) 7%, transparent), transparent 70%)`
+    — a soft accent bloom rising behind the title from the top-left.
+    Optionally boosted by asset **H1 `header-aura.webp`** (§9) at ≤0.3
+    opacity, masked to the header zone, `aria-hidden`.
+  - **Anatomy (top → bottom, 12px gaps):**
+    1. Eyebrow row: 11px/800 +0.12em caps `--portal-accent-text` + 5px
+       lime dot with 3px halo @25%; 2px×64px hairline below the eyebrow:
+       `linear-gradient(90deg, var(--portal-accent), transparent)`.
+    2. Title row: title `clamp(24px,2vw,34px)/800 −0.03em` pure ink
+       `#0C120E`, left; actions cluster right (primary + secondary per
+       §5.7, 8px gap), vertically centered to the title.
+    3. Description: 13.5px `--portal-muted`, ≤68ch.
+    4. Optional meta row: neutral chips (§5.8) — counts, scope, market
+       flags — 8px gap.
+  - **Bottom seam:** the header zone closes with a 1px fade rule
+    `linear-gradient(90deg, var(--portal-line-strong), transparent 70%)`
+    + 24px breathing room before the first card — the page visibly has a
+    "masthead".
+  - Admin per-area accents (`gh-admin-area-hero`): express through the
+    aura + eyebrow + hairline color only. All raster washes stay dead.
+
+**Mode 2 — Identity header (detail pages: order `[id]`, doctor `[id]`,
+patient `[email]`, appointment `[id]`):**
+
+- The identity block becomes a **Material B card** (radius 14, standard
+  card recipe) placed under a slim Mode-1 header (eyebrow + breadcrumb
+  context only):
+  - Left: 40px avatar/initials tile (§5.20) or 40px kind icon tile
+    (Material C + accent ring).
+  - Center: name/title 18px/800 ink + meta line 12.5px muted (mono for
+    IDs/GHN) + neutral chips row (flags, credentials, counts).
+  - Right: status pill + key actions.
+  - The card may carry the screen's jewel corner-bloom when the page has
+    no band (§5.1 rule: max one jewel per screen).
+- Mobile (<760px): identity card stacks (tile+name row, then meta, then
+  actions full-width); Mode-1 actions collapse under the title.
+
+**Dashboard greeting (band pages):** the Command Band IS the header —
+no separate PageHeader above it. Greeting's final word in
+`--portal-accent-text` when rendered outside the band (Patient mobile
+fallback).
+
+**SectionHeader (in cards):** 16px/800 ink + gradient rule per §5.1;
+optional trailing count chip (§5.8); optional "view all" quiet link
+(§5.20) right-aligned.
 
 ### 5.5 Summary strip (`AdminSummaryStrip`)
 
@@ -722,24 +765,109 @@ Shared primitives carry the skin; Admin-specific jewel tuning (orders
 mini-band, telemetry strips) = later polish commit, not in this pass's
 acceptance.
 
+### 8.4 Picture-perfect screen targets (the final image, top to bottom)
+
+The agent implements recipes; these six descriptions are the *paintings*
+the recipes must add up to. After commit 6, each screen must match its
+description exactly.
+
+**T1 — Patient dashboard (`/account`, 1280px):**
+Dark forest frame visible around a softly glowing ivory plane (warm
+bloom top-right). First element: the Command Band — black liquid glass
+with a diagonal reflection streak, "Good morning, Sarah" with *Sarah* in
+deep olive, and on the right the next appointment date in a huge
+lime-gradient numeral with a soft glow, separated from two smaller ivory
+metrics by faint vertical hairlines. Below: three health-home chips as
+frosted glass mini-cards, each with a specular top edge and an accented
+icon tile. Then the subscription card cluster: glass cards with lit top
+borders and a mint kiss at the bottom corners; plan status pill glows
+faintly lime if active. Every hover lifts, brightens, and casts a lime
+underglow. Nothing is flat white; nothing is green-surfaced.
+
+**T2 — Patient membership (`/account/membership`):**
+Slim masthead header with accent aura. The plan card: obsidian glass
+header band with a pale lime-silk hairline under it and silk light in
+the corner, plan name in ivory; white glass body with a column of
+mint-checked benefit sentences; a single thin lime progress bar on an
+etched track. Manage actions hide behind a quiet disclosure; danger
+actions are soft, never loud.
+
+**T3 — Patient bookings (`/account/bookings`, 390px mobile):**
+Single column of glass mobile cards, each with a status-tone gradient
+edge on the left and a pill on the right; time in bold tabular figures;
+payment-needed card carries a warning-tone icon tile and ONE forest
+button. Press feedback: card gently compresses. Sticky bottom action bar
+on payment screens.
+
+**T4 — Doctor dashboard (`/doctor`, 1440px):**
+Calmer plane (fainter blooms). The "Now" band: black glass, next
+appointment time at 48px in lime gradient, patient name + service in
+ivory, one join button (`on-chrome` variant). If a consultation is live:
+the band's hairline shifts lime-heavy and a single live dot pulses twice
+then rests. Below: today's schedule as comfortable appointment cards —
+time blocks tabular, status edges glowing subtly — then two quiet stat
+cards with engraved ink-gradient numerals.
+
+**T5 — Doctor appointment detail (`[id]`, live consultation):**
+Slim header + identity card (patient tile, GHN in mono, status pill).
+Two zones: left, the consultation form on glass with etched input wells
+that rise white on focus — and, because the consult is live, NO hover
+physics anywhere in this zone; right, the patient context rail —
+document rows with kind-icon tiles, chat with forest-duotone own
+bubbles. Exactly one primary button on the whole page: finalize.
+
+**T6 — Any Admin list (e.g. `/admin/appointments`, inherits):**
+Masthead header with area-accent aura; summary strip of glass
+mini-cards; a glass table container with a sticky etched header row;
+rows that wash mint with a glowing accent bar on hover; money and IDs in
+tabular/mono sharpening to ink on hover; a designed empty state with a
+backing bloom when the queue is empty.
+
 ---
 
-## §9. Asset pack (generated backgrounds — optional but recommended)
+## §9. Asset pack — COMPLETE inventory with all generation prompts
 
-Under `frontend/public/images/portal/obsidian/`, all `aria-hidden`, empty
-`alt`; UI must look finished without them. Constraints in every prompt:
-no text, no letters, no numbers, no logos, no watermarks, no UI, no
-people, no medical gore.
+This section is self-contained — do not hunt prompts in other docs. All
+files under `frontend/public/images/portal/obsidian/`, all decorative
+(`aria-hidden`, empty `alt`). **The UI must look finished with zero
+images** — assets are polish, wired in the final commit.
 
-| # | File | Where | Opacity cap | Size |
-|---|---|---|---|---|
-| V1 | `plane-veil.webp` | ivory plane, above gradient blooms | 0.35 | 2560×1440 |
-| V2 | `card-silk.webp` | jewel cards only, masked top third | 0.25 | 1200×600 |
-| V3 | `band-aurora.webp` | Command Band inner backdrop | 0.5 | 1600×500 |
-| A1 | `canvas-aurora.webp` | canvas (existing slot) | 0.5 | 2560×1440 |
-| M1 | `membership-silk.png` | plan-card corner (existing slot) | 0.5 | 1200×480 |
+Constraints baked into EVERY prompt: no text, no letters, no numbers, no
+logos, no watermarks, no UI elements, no screens, no people, no medical
+gore, no needles/blood.
 
-**V1 — `plane-veil.webp`, 16:9, 2560×1440, opaque:**
+**13 assets. Required: A1, V1, H1, E1, E2. Optional: the rest.**
+
+| # | File | Used where | Req? | Opacity cap | Size | Transparent |
+|---|---|---|---|---|---|---|
+| A1 | `canvas-aurora.webp` | L0 canvas, above gradient | **Req** | 0.5 | 2560×1440 | no (dark) |
+| V1 | `plane-veil.webp` | ivory plane, above blooms | **Req** | 0.35 | 2560×1440 | no (light) |
+| H1 | `header-aura.webp` | behind PageHeader zone (§5.4), masked | **Req** | 0.3 | 2000×640 | no (light) |
+| V2 | `card-silk.webp` | jewel cards only, masked top third | Opt | 0.25 | 1200×600 | no (light) |
+| V3 | `band-aurora.webp` | Command Band inner backdrop | Opt | 0.5 | 1600×500 | no (dark) |
+| M1 | `membership-silk.png` | Patient plan-card band corner | Opt | 0.5 | 1200×480 | yes |
+| E1 | `empty-records.png` | `/account/medical-files`, prescriptions empty | **Req** | 1.0 | 960×640 | yes |
+| E2 | `empty-queue.png` | Doctor appointments/patients empty | **Req** | 1.0 | 960×640 | yes |
+| E3 | `empty-documents.png` | Doctor doc panels, Admin legal docs empty | Opt | 1.0 | 960×640 | yes |
+| E4 | `empty-payments.png` | Patient payments/orders, Admin invoices empty | Opt | 1.0 | 960×640 | yes |
+| E5 | `empty-content.png` | Admin blog/pages/newsletter empty | Opt | 1.0 | 960×640 | yes |
+| E6 | `empty-notifications.png` | notification lists empty | Opt | 1.0 | 960×640 | yes |
+| C1 | `empty-calendar.png` | empty month / no-events agenda | Opt | 1.0 | 960×640 | yes |
+
+### Prompts (copy-paste ready)
+
+**A1 — `canvas-aurora.webp` (required), 16:9, 2560×1440, opaque:**
+> Ultra-dark abstract background, near-black with a deep forest-green
+> undertone (#07120C), one soft luminous aurora bloom of electric
+> lime-green light (#B0F122) drifting in from the upper right corner and
+> dissolving before the center, a second much fainter olive-green
+> (#8FB021) glow at the lower left, extremely smooth out-of-focus
+> gradients, faint darker vignette in the lower corners, cinematic,
+> premium technology-company atmosphere, no grain, no stars, no shapes,
+> no text, no logos, no UI. Must stay dark enough for white text to be
+> readable anywhere on it.
+
+**V1 — `plane-veil.webp` (required), 16:9, 2560×1440, opaque:**
 > Extremely subtle light abstract background: warm ivory white base
 > (#FAFBF7) with two or three very soft out-of-focus blooms of pale
 > lime-green (#CFEC81) and gentle olive-green (#8FB021) light at very low
@@ -748,14 +876,23 @@ people, no medical gore.
 > shapes, no lines, no text, no logos. Must stay light enough that
 > near-black text remains perfectly readable anywhere on it.
 
-**V2 — `card-silk.webp`, 2:1, 1200×600, opaque (masked in-container):**
+**H1 — `header-aura.webp` (required), ~3:1, 2000×640, opaque:**
+> Very subtle wide horizontal light abstract banner: ivory white base
+> (#FAFBF7) with one soft asymmetric bloom of pale green light (#CFEC81
+> blended with a hint of olive #8FB021) rising from the lower left and
+> dissolving toward the right, like morning light on a gallery wall,
+> extremely low contrast, perfectly smooth, no grain, no shapes, no
+> lines, no text, no logos. Near-black text must remain perfectly
+> readable over every part of it.
+
+**V2 — `card-silk.webp` (optional), 2:1, 1200×600, opaque:**
 > Ultra-subtle abstract silk-light texture: soft white satin surface with
 > one diagonal band of slightly brighter light crossing it and the
 > faintest hint of pale green iridescence (#CFEC81) at the edges,
 > extremely low contrast, smooth and premium, like light on frosted
 > glass, no folds, no fabric weave, no text, no logos.
 
-**V3 — `band-aurora.webp`, 16:5, 1600×500, opaque:**
+**V3 — `band-aurora.webp` (optional), 16:5, 1600×500, opaque:**
 > Dark horizontal abstract banner: near-black deep forest green base
 > (#0C1A12) with one luminous aurora ribbon of electric lime-green
 > (#B0F122) light flowing from the right edge and dissolving before the
@@ -763,7 +900,86 @@ people, no medical gore.
 > smooth cinematic gradients, no stars, no grain, no shapes, no text, no
 > logos. Dark enough for white text everywhere.
 
-(A1 and M1 prompts live in the strategy doc — reuse verbatim.)
+**M1 — `membership-silk.png` (optional), 5:2, 1200×480, transparent:**
+> Subtle abstract luxury accent on a fully transparent background: soft
+> concentric arcs of pale lime-cream light (#E3F5B0) at low opacity
+> concentrated toward the right edge and fading to nothing, with one very
+> faint deeper olive-green thread woven through, extremely low contrast,
+> smooth, premium private-membership feeling, decorative corner accent
+> for a dark panel, no text, no logos, no hard edges, no sparkles.
+
+**E1 — `empty-records.png` (required), 3:2, 960×640, transparent:**
+> Minimal abstract illustration of organized personal health records at
+> rest: two overlapping matte ivory-white folder shapes with precise
+> hairline dark-green edges, one thin electric lime-green line tracing
+> the top folder's edge like a pulse, a small round badge shape resting
+> on the corner, floating on a fully transparent background, flat-3D
+> style with soft realistic shadows, premium minimal SaaS empty-state,
+> gallery-white and deep-forest-green palette with a single lime accent,
+> no text, no letters, no logos, no faces, no medical instruments.
+
+**E2 — `empty-queue.png` (required), 3:2, 960×640, transparent:**
+> Minimal abstract illustration of a calm empty schedule: a matte white
+> rounded panel with a precise grid of blank rounded tiles drawn in thin
+> deep-green hairlines, one tile softly filled with luminous lime-green,
+> a small abstract circular dial beside the panel without numbers or
+> hands, floating on a transparent background, soft realistic shadows,
+> premium minimal clinical SaaS empty-state, ivory / deep forest green /
+> single lime accent palette, no text, no numbers, no logos, no people.
+
+**E3 — `empty-documents.png` (optional), 3:2, 960×640, transparent:**
+> Minimal abstract illustration of documents at rest: three layered
+> matte white sheets with rounded corners and thin deep-green hairline
+> edges, slightly fanned, blank surfaces with faint gray tone bands
+> suggesting paragraphs without readable content, the top sheet edged
+> with a thin luminous lime-green highlight, floating on transparent
+> background, soft shadows, premium minimal SaaS empty state, no text,
+> no letters, no logos, no UI chrome.
+
+**E4 — `empty-payments.png` (optional), 3:2, 960×640, transparent:**
+> Minimal abstract illustration of finances at rest: one matte white
+> rounded rectangle suggesting a blank receipt with faint gray tone
+> bands, one smooth deep-forest-green disc beside it like an abstract
+> coin with a thin lime-green rim light, floating on transparent
+> background, precise hairline edges, soft shadows, premium
+> fintech-grade minimal empty state, no currency symbols, no numbers, no
+> text, no logos.
+
+**E5 — `empty-content.png` (optional), 3:2, 960×640, transparent:**
+> Minimal abstract illustration of editorial content at rest: a blank
+> matte white card with a soft gray image-placeholder rectangle and two
+> blank tone bands beneath, a second smaller deep-forest-green card
+> peeking from behind with a thin lime-green edge light, floating on
+> transparent background, precise hairlines, soft shadows, premium CMS
+> empty state, no text, no letters, no icons, no logos.
+
+**E6 — `empty-notifications.png` (optional), 3:2, 960×640, transparent:**
+> Minimal abstract illustration of a quiet inbox: a matte white rounded
+> bell-like shape drawn with soft geometry and a thin deep-green hairline
+> edge, one small lime-green dot floating beside it like a resting
+> signal, a faint white glass tray beneath, floating on a transparent
+> background, soft shadows, premium minimal SaaS empty-state, ivory /
+> forest / lime palette, no text, no numbers, no logos, no people.
+
+**C1 — `empty-calendar.png` (optional), 3:2, 960×640, transparent:**
+> Minimal abstract illustration of time at rest: a matte white rounded
+> grid of blank square tiles drawn with thin deep-green hairlines
+> suggesting a calendar month without numbers, one tile raised and
+> filled with luminous lime-green, one thin orbital curve passing behind
+> the grid in deep forest green, transparent background, soft shadows,
+> premium scheduling empty state, no text, no numbers, no logos.
+
+### Wiring rules
+
+- H1 masked with
+  `mask-image: linear-gradient(180deg, #000 60%, transparent)` so it
+  dissolves before content starts; per-portal tint comes from the CSS
+  aura on top, not from separate assets.
+- E-assets wire into existing `AdminEmptyState assetSrc` call sites; the
+  icon-tile fallback (§5.19) must remain for surfaces without an asset.
+- After wiring, retire remaining legacy PNG references and delete files
+  only when `rg "images/portal" frontend/` shows zero references to each
+  legacy file.
 
 ---
 
@@ -794,6 +1010,13 @@ Review each portal dashboard + one list + one detail screen:
       Material A/B/C/D).
 - [ ] Every card: specular top, gradient perimeter (lit top / mint-kiss
       bottom), ≥4-layer shadow, glass fill.
+- [ ] Every non-dashboard page has a masthead: eyebrow + hairline +
+      accent aura behind the title + bottom fade seam (§5.4 Mode 1);
+      detail pages show the identity card (Mode 2).
+- [ ] Each of the six §8.4 picture targets (T1–T6) matches its written
+      description when rendered.
+- [ ] With assets generated: A1/V1/H1 wired at their opacity caps;
+      without assets: pure-CSS rendering still passes every other item.
 - [ ] Stat numerals gradient-filled 40px+, micro-cap labels, icon tiles
       with accent rings.
 - [ ] Band: streak + inner aurora + gradient hero numeral + metric
@@ -862,6 +1085,8 @@ Implementation agent: work through this table; every row must end
 | sonner Toaster theme | §5.14 |
 | Links / dividers / avatars / scrollbars / selection / tooltips | §5.20 |
 | Icons everywhere | §6 |
+| PageHeader aura + identity headers (all detail routes) | §5.4 |
+| Asset wiring (A1/V1/H1 + E-set into `assetSrc` slots) | §9 |
 
 ---
 
@@ -902,13 +1127,17 @@ Implementation agent: work through this table; every row must end
   5. `feat(portals): lux chat/calendar/modals/toasts/mobile/micro` —
      §5.13–5.16, 5.18, 5.20, §6 icon pass.
   6. `feat(portals): patient + doctor role polish` — §8 + §5.17 domain
-     cards.
+     cards + §5.4 headers across routes.
+  7. `feat(portals): lux asset wiring` — §9 (ONLY after the user
+     generates assets; skip and note if assets absent — CSS-only must
+     already pass §11).
 - Validation per commit: `npm run lint`, `npx tsc --noEmit`,
   `npm run build`; render `/account` and `/doctor` at 390/768/1280/1920
   (Patient mobile first), `/admin` smoke, public `(site)` smoke if any
   shared `.gh-*` rule or `phone-field` was touched.
-- After commit 6: run the §11 acceptance list and the §12 inventory —
-  report both.
+- After commit 6 (and 7 when assets exist): run the §11 acceptance list,
+  the §12 inventory, and compare each §8.4 picture target — report all
+  three.
 
 ---
 
@@ -923,14 +1152,16 @@ Implementation agent: work through this table; every row must end
 > lockstep, ownership, and the green language; the dependency map governs
 > blast radius. This is a **visual-only skin pass**: no markup
 > restructuring, no prop changes, no behavior changes, no route changes.
-> Implement the six commits in LUX-VISUAL-PASS.md §14 in order. Patient
-> and Doctor portals are the priority; Admin inherits via shared
-> primitives. Every visual value must be a `--lux-*` or `--portal-*`
-> token; icons follow §6 (lucide-react only); when the spec is silent use
-> §13 decision defaults — never invent colors, sizes, or effects. After
-> the final commit, verify every row of the §12 component inventory and
-> every item of the §11 acceptance checklist, and report both lists with
-> pass/fail per item.
+> Implement the seven commits in LUX-VISUAL-PASS.md §14 in order (commit
+> 7 only if generated assets exist). Patient and Doctor portals are the
+> priority; Admin inherits via shared primitives. Every visual value must
+> be a `--lux-*` or `--portal-*` token; icons follow §6 (lucide-react
+> only); page headers follow §5.4 (Mode 1 masthead / Mode 2 identity
+> card); when the spec is silent use §13 decision defaults — never invent
+> colors, sizes, or effects. After the final commit, verify every row of
+> the §12 component inventory, every item of the §11 acceptance
+> checklist, and every §8.4 picture target (T1–T6), and report all three
+> lists with pass/fail per item.
 
 ---
 
