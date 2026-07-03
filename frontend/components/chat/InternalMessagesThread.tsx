@@ -85,7 +85,7 @@ export function InternalMessagesThread({
         )}
       </ul>
 
-      <form onSubmit={submit} className="grid gap-2">
+      <form onSubmit={submit} className="gh-chat-compose grid gap-2 p-3">
         <textarea
           className="gh-input min-h-[4rem] resize-y"
           value={body}
@@ -103,7 +103,7 @@ export function InternalMessagesThread({
           </p>
         ) : null}
         <div className="flex justify-end">
-          <Btn type="submit" variant="primary" disabled={pending || body.trim() === ""} loading={pending}>
+          <Btn type="submit" variant="primary" size="sm" disabled={pending || body.trim() === ""} loading={pending}>
             Post note
           </Btn>
         </div>
