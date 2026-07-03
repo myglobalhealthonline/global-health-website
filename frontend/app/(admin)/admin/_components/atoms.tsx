@@ -374,7 +374,8 @@ export type PillTone =
   | "active"
   | "inactive"
   | "brand"
-  | "live";
+  | "live"
+  | "info";
 
 /** One tone map feeding both Pill and raw `.gh-badge-*` usage (DESIGN.md
  *  §5.7) — existing semantics preserved: pending→warning, active/published→
@@ -389,6 +390,7 @@ const PILL_TONES: Record<PillTone, { bg: string; fg: string; bd: string; dot?: s
   inactive: { bg: "var(--portal-danger-soft)", fg: "var(--portal-danger-text)", bd: "transparent", dot: "var(--portal-danger)" },
   brand: { bg: "var(--portal-primary-soft)", fg: "var(--portal-primary)", bd: "transparent", dot: "var(--portal-primary)" },
   live: { bg: "var(--portal-signal-soft)", fg: "var(--portal-text-2)", bd: "transparent", dot: "var(--portal-signal)" },
+  info: { bg: "var(--portal-info-soft)", fg: "var(--portal-info-text)", bd: "transparent", dot: "var(--portal-info)" },
 };
 
 export function Pill({

@@ -142,8 +142,16 @@ export default async function AccountPaymentsPage() {
                     {statusLabel[p.status]}
                   </span>
                 </div>
+                {p.status === "REFUNDED" ? (
+                  <p className="mt-2 text-xs" style={{ color: "var(--portal-muted)" }}>
+                    This payment was refunded. It can take a few business days to appear on your statement.
+                  </p>
+                ) : null}
                 <div className="mt-3 flex items-center justify-between gap-3">
-                  <p className="text-lg font-extrabold text-[var(--portal-text)]">
+                  <p
+                    className="text-lg font-extrabold text-[var(--portal-text)]"
+                    style={{ fontVariantNumeric: "tabular-nums" }}
+                  >
                     {formatPrice(p.amountCents, p.currencyCode)}
                   </p>
                   <ReceiptButton paymentId={p.id} />
@@ -181,7 +189,10 @@ export default async function AccountPaymentsPage() {
                       {p.countryCode}
                     </span>
                   </td>
-                  <td className="px-4 py-3 font-semibold text-[var(--portal-text)]">
+                  <td
+                    className="px-4 py-3 font-semibold text-[var(--portal-text)]"
+                    style={{ fontVariantNumeric: "tabular-nums" }}
+                  >
                     {formatPrice(p.amountCents, p.currencyCode)}
                   </td>
                   <td className="px-4 py-3">
@@ -190,6 +201,11 @@ export default async function AccountPaymentsPage() {
                     >
                       {statusLabel[p.status]}
                     </span>
+                    {p.status === "REFUNDED" ? (
+                      <p className="mt-1 text-[11px]" style={{ color: "var(--portal-muted)" }}>
+                        Refunded — a few days to appear on your statement.
+                      </p>
+                    ) : null}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <ReceiptButton paymentId={p.id} />
@@ -232,7 +248,10 @@ export default async function AccountPaymentsPage() {
                       </span>
                     </div>
                     <div className="mt-3 flex items-center justify-between gap-3">
-                      <p className="text-lg font-extrabold text-[var(--portal-text)]">
+                      <p
+                        className="text-lg font-extrabold text-[var(--portal-text)]"
+                        style={{ fontVariantNumeric: "tabular-nums" }}
+                      >
                         {formatPrice(row.amountPaidCents, row.currency)}
                       </p>
                       {receiptUrl ? (
@@ -276,7 +295,10 @@ export default async function AccountPaymentsPage() {
                           <span className="block text-xs text-[var(--portal-muted)]">{row.number}</span>
                         ) : null}
                       </td>
-                      <td className="px-4 py-3 font-semibold text-[var(--portal-text)]">
+                      <td
+                        className="px-4 py-3 font-semibold text-[var(--portal-text)]"
+                        style={{ fontVariantNumeric: "tabular-nums" }}
+                      >
                         {formatPrice(row.amountPaidCents, row.currency)}
                       </td>
                       <td className="px-4 py-3">
