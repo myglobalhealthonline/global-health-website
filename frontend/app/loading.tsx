@@ -4,9 +4,18 @@ export default function Loading() {
       role="status"
       aria-busy="true"
       aria-label="Loading page"
-      className="flex min-h-[45vh] items-center justify-center"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-[var(--color-background-dark)]"
     >
-      <div className="size-10 animate-spin rounded-full border-4 border-[var(--color-border)] border-t-[var(--color-brand-primary)]" />
+      <div className="relative flex items-center justify-center">
+        <span className="absolute size-32 animate-ping rounded-full bg-[var(--color-accent)]/10" />
+        <span className="absolute size-32 animate-spin rounded-full border-2 border-white/10 border-t-[var(--color-accent)]" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logos/global-health-light.png"
+          alt="Global Health"
+          className="relative h-16 w-auto"
+        />
+      </div>
       <span className="sr-only">Loading...</span>
     </div>
   );
