@@ -754,7 +754,7 @@ export function DoctorProfileEditForm({
                   className="text-[28px] font-bold"
                   style={{
                     background:
-                      "linear-gradient(135deg, #1d4b36 0%, #b0f122 100%)",
+                      "linear-gradient(135deg, var(--portal-primary) 0%, var(--portal-signal) 100%)",
                     WebkitBackgroundClip: "text",
                     backgroundClip: "text",
                     color: "transparent",

@@ -83,7 +83,7 @@ export function RewardsPanel(props: RewardsPanelProps) {
       {props.returnState === "ok" || confirmed ? (
         <div
           className="flex items-start gap-3 rounded-[12px] p-4 text-sm"
-          style={{ background: "#ECFDF5", color: "#166534", border: "1px solid #BBF7D0" }}
+          style={{ background: "var(--portal-success-soft)", color: "var(--portal-success-text)", border: "1px solid var(--portal-success)" }}
           role="status"
         >
           <CheckCircle2 className="mt-0.5 size-4 shrink-0" aria-hidden />
@@ -109,7 +109,7 @@ export function RewardsPanel(props: RewardsPanelProps) {
               <div className="flex min-w-0 items-start gap-3">
                 <span
                   className="inline-flex size-10 items-center justify-center rounded-[12px]"
-                  style={{ background: "linear-gradient(135deg, var(--portal-accent) 0%, var(--portal-mint) 100%)", color: "#143B30" }}
+                  style={{ background: "linear-gradient(135deg, var(--portal-accent) 0%, var(--portal-mint) 100%)", color: "var(--portal-signal-text)" }}
                 >
                   <Sparkles className="size-5" aria-hidden />
                 </span>
@@ -161,7 +161,7 @@ export function RewardsPanel(props: RewardsPanelProps) {
                       <input name="shipCountryCode" required minLength={2} maxLength={4} defaultValue={props.prefillCountry} placeholder="Country" className="gh-input" style={{ textTransform: "uppercase" }} />
                     </div>
                     {error ? (
-                      <p className="rounded-md px-3 py-2 text-sm" style={{ background: "#FEE2E2", color: "#991B1B" }} role="alert">{error}</p>
+                      <p className="rounded-md px-3 py-2 text-sm" style={{ background: "var(--portal-danger-soft)", color: "var(--portal-danger-text)" }} role="alert">{error}</p>
                     ) : null}
                     <div className="gh-patient-form-actions grid gap-2 sm:flex sm:items-center">
                       <button type="submit" disabled={submitting} className="gh-btn gh-btn-primary inline-flex justify-center disabled:opacity-60">

@@ -387,7 +387,7 @@ const PILL_TONES: Record<PillTone, { bg: string; fg: string; bd: string; dot?: s
   pending: { bg: "var(--portal-warning-soft)", fg: "var(--portal-warning-text)", bd: "transparent", dot: "var(--portal-warning)" },
   active: { bg: "var(--portal-success-soft)", fg: "var(--portal-success-text)", bd: "transparent", dot: "var(--portal-success)" },
   inactive: { bg: "var(--portal-danger-soft)", fg: "var(--portal-danger-text)", bd: "transparent", dot: "var(--portal-danger)" },
-  brand: { bg: "rgba(29, 75, 54, 0.10)", fg: "var(--portal-primary)", bd: "transparent", dot: "var(--portal-primary)" },
+  brand: { bg: "var(--portal-primary-soft)", fg: "var(--portal-primary)", bd: "transparent", dot: "var(--portal-primary)" },
   live: { bg: "var(--portal-signal-soft)", fg: "var(--portal-text-2)", bd: "transparent", dot: "var(--portal-signal)" },
 };
 

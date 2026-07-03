@@ -203,9 +203,9 @@ export function ManagePanel(props: ManagePanelProps) {
           className="flex items-start gap-3 rounded-[12px] p-4 text-sm"
           style={
             banner.kind === "ok"
-              ? { background: "#ECFDF5", color: "#166534", border: "1px solid #BBF7D0" }
+              ? { background: "var(--portal-success-soft)", color: "var(--portal-success-text)", border: "1px solid var(--portal-success)" }
               : banner.kind === "warn"
-                ? { background: "#FEF3C7", color: "#92400E", border: "1px solid #FDE68A" }
+                ? { background: "var(--portal-warning-soft)", color: "var(--portal-warning-text)", border: "1px solid var(--portal-warning)" }
                 : { background: "var(--portal-well)", color: "var(--portal-text-2)", border: "1px solid var(--portal-line)" }
           }
           role="status"
@@ -270,7 +270,7 @@ export function ManagePanel(props: ManagePanelProps) {
         </dl>
 
         {props.cancelAtPeriodEnd && props.nextBillingLabel ? (
-          <p className="mt-4 text-sm" style={{ color: "#92400E" }}>
+          <p className="mt-4 text-sm" style={{ color: "var(--portal-warning-text)" }}>
             {interpolate(t.cancelAtPeriodEnd, { date: props.nextBillingLabel })}
           </p>
         ) : null}
@@ -300,8 +300,8 @@ export function ManagePanel(props: ManagePanelProps) {
           className="rounded-md px-3 py-2 text-sm"
           style={
             notice.kind === "ok"
-              ? { background: "#ECFDF5", color: "#166534" }
-              : { background: "#FEE2E2", color: "#991B1B" }
+              ? { background: "var(--portal-success-soft)", color: "var(--portal-success-text)" }
+              : { background: "var(--portal-danger-soft)", color: "var(--portal-danger-text)" }
           }
           role="status"
         >

@@ -1621,6 +1621,7 @@ img {
   /* ── action + accents (the green language) ─────────────── */
   --portal-primary: #1d4b36; /* forest — act */
   --portal-primary-hover: #163a29;
+  --portal-primary-soft: rgba(29, 75, 54, 0.1);
   --portal-mint: #8fb021; /* notice */
   --portal-mint-text: #5e7516; /* mint read as text on light */
   --portal-mint-soft: rgba(143, 176, 33, 0.12);

@@ -151,7 +151,7 @@ export function SubscribeForm(props: SubscribeFormProps) {
       </label>
 
       {error ? (
-        <p className="rounded-md px-3 py-2 text-sm" style={{ background: "#FEE2E2", color: "#991B1B" }} role="alert">
+        <p className="rounded-md px-3 py-2 text-sm" style={{ background: "var(--portal-danger-soft)", color: "var(--portal-danger-text)" }} role="alert">
           {error}
         </p>
       ) : null}
