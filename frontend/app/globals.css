@@ -1558,7 +1558,7 @@ img {
 }
 
 .gh-admin-row:hover > td:first-child {
-  box-shadow: inset 2px 0 0 0 var(--portal-accent);
+  box-shadow: inset 2px 0 0 0 var(--portal-accent), inset 4px 0 8px -6px var(--portal-signal-glow);
 }
 
 .gh-admin-row .gh-icon-btn {
@@ -2458,11 +2458,13 @@ a.gh-stat-card:hover {
   min-width: 0;
   border-radius: var(--portal-radius);
   border-color: var(--portal-line);
-  background: var(--portal-well);
+  background: var(--lux-well-fill);
   color: var(--portal-text);
   font-size: 14px;
-  box-shadow: none;
-  transition: background-color 160ms ease-out, border-color 160ms ease-out, box-shadow 160ms ease-out;
+  box-shadow:
+    inset 0 1px 2px rgba(16, 23, 19, 0.06),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.9);
+  transition: background-color 160ms ease-out, border-color 160ms ease-out, box-shadow 160ms ease-out, transform 160ms ease-out;
 }
 
 .gh-portal-shell .gh-input,
@@ -2486,7 +2488,8 @@ a.gh-stat-card:hover {
   outline: none;
   background: var(--portal-surface);
   border-color: var(--portal-mint-text);
-  box-shadow: 0 0 0 3px var(--portal-focus);
+  box-shadow: 0 0 0 3px var(--portal-focus), var(--lux-elev-press);
+  transform: translateY(-1px);
 }
 
 .gh-portal-shell .gh-input:disabled,
@@ -2516,18 +2519,21 @@ a.gh-stat-card:hover {
   min-width: 0;
   border-radius: var(--portal-radius) !important;
   border-color: var(--portal-line) !important;
-  background: var(--portal-well) !important;
+  background: var(--lux-well-fill) !important;
   color: var(--portal-text) !important;
   font-size: 14px !important;
-  box-shadow: none !important;
-  transition: background-color 160ms ease-out, border-color 160ms ease-out, box-shadow 160ms ease-out;
+  box-shadow:
+    inset 0 1px 2px rgba(16, 23, 19, 0.06),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.9) !important;
+  transition: background-color 160ms ease-out, border-color 160ms ease-out, box-shadow 160ms ease-out, transform 160ms ease-out;
 }
 
 .gh-admin-main :where(.gh-input, .gh-select, .gh-textarea, input, select, textarea):focus-visible {
   outline: none;
   background: var(--portal-surface) !important;
   border-color: var(--portal-mint-text) !important;
-  box-shadow: 0 0 0 3px var(--portal-focus) !important;
+  box-shadow: 0 0 0 3px var(--portal-focus), var(--lux-elev-press) !important;
+  transform: translateY(-1px);
 }
 
 .gh-admin-main :where(.gh-input, .gh-select, .gh-textarea, input, select, textarea):disabled {
@@ -2601,9 +2607,13 @@ a.gh-stat-card:hover {
 
 .gh-portal-shell .gh-btn-primary,
 .gh-admin-main button[type="submit"]:not([class*="ghost"]):not([class*="soft"]):not(.gh-admin-toggle):not(.gh-admin-status-toggle) {
-  background: var(--portal-primary);
+  background: var(--lux-forest-duotone);
   border-color: var(--portal-primary);
   color: var(--portal-bg);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 1px 2px rgba(7, 18, 12, 0.2);
 }
 
 .gh-portal-shell .gh-btn-primary:hover,
@@ -2615,14 +2625,17 @@ a.gh-stat-card:hover {
 
 .gh-portal-shell .gh-btn-secondary,
 .gh-portal-shell .gh-btn-outline {
-  background: var(--portal-surface);
-  border-color: var(--portal-line-strong);
+  border-color: transparent;
+  background-image: var(--lux-card-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
   color: var(--portal-text);
 }
 
 .gh-portal-shell .gh-btn-secondary:hover,
 .gh-portal-shell .gh-btn-outline:hover {
-  background: var(--portal-well);
+  background-image: var(--lux-card-fill), var(--lux-card-border-hover);
+  box-shadow: 0 2px 8px rgba(7, 18, 12, 0.06);
 }
 
 .gh-portal-shell .gh-btn-soft {
@@ -2768,18 +2781,18 @@ a.gh-stat-card:hover {
 }
 
 .gh-admin-main :where(thead) {
-  background: rgba(242, 246, 236, 0.92) !important;
+  background: color-mix(in srgb, var(--portal-well) 70%, transparent) !important;
 }
 
 .gh-admin-main :where(th) {
-  color: #46675b !important;
+  color: var(--portal-muted) !important;
   font-size: 10.5px !important;
   font-weight: 800 !important;
-  letter-spacing: 0.08em !important;
+  letter-spacing: 0.12em !important;
 }
 
 .gh-admin-main :where(td) {
-  color: #2d4039;
+  color: var(--portal-text-2);
 }
 
 .gh-admin-main :where(tbody tr) {
@@ -2787,7 +2800,7 @@ a.gh-stat-card:hover {
 }
 
 .gh-admin-main :where(tbody tr:hover) {
-  background: rgba(143, 176, 33, 0.055);
+  background: var(--portal-hover);
 }
 
 /* PortalTabs — DESIGN.md §5.12. Underline style: muted rest, ink active,
@@ -2839,6 +2852,7 @@ a.gh-stat-card:hover {
   bottom: -1px;
   height: 2px;
   background: var(--portal-accent);
+  box-shadow: 0 0 4px color-mix(in srgb, var(--portal-accent) 30%, transparent);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);

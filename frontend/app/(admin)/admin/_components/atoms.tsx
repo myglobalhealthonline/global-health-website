@@ -415,6 +415,7 @@ export function Pill({
         background: t.bg,
         color: t.fg,
         border: `1px solid ${t.bd}`,
+        boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${t.dot ?? "var(--portal-muted)"} 18%, transparent)`,
       }}
     >
       {withDot && t.dot ? (
@@ -425,7 +426,10 @@ export function Pill({
             height: 5,
             borderRadius: 999,
             background: t.dot,
-            boxShadow: tone === "live" ? "0 0 0 2px var(--portal-signal-glow)" : "none",
+            boxShadow:
+              tone === "live"
+                ? "0 0 0 2px var(--portal-signal-glow)"
+                : `0 0 0 3px color-mix(in srgb, ${t.dot} 25%, transparent)`,
           }}
         />
       ) : null}
