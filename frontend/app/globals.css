@@ -1704,11 +1704,13 @@ img {
   --lux-plane-edge: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 -12px 32px rgba(7, 18, 12, 0.18);
   --lux-seam-light: linear-gradient(90deg, transparent, rgba(176, 241, 34, 0.45) 35%, rgba(176, 241, 34, 0.10) 70%, transparent);
   --lux-card-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.66));
+  --lux-modal-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.86));
   --lux-card-border: linear-gradient(160deg, rgba(255, 255, 255, 0.95) 0%, rgba(16, 23, 19, 0.06) 38%, rgba(16, 23, 19, 0.10) 62%, rgba(143, 176, 33, 0.22) 100%);
   --lux-card-border-hover: linear-gradient(160deg, rgba(255, 255, 255, 1) 0%, rgba(16, 23, 19, 0.08) 38%, rgba(16, 23, 19, 0.12) 62%, rgba(176, 241, 34, 0.35) 100%);
   --lux-chrome-fill: linear-gradient(165deg, rgba(14, 28, 20, 0.86) 0%, rgba(7, 16, 11, 0.88) 60%, rgba(10, 22, 15, 0.86) 100%);
   --lux-chrome-border: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05) 30%, rgba(176, 241, 34, 0.28) 65%, rgba(255, 255, 255, 0.04));
   --lux-well-fill: linear-gradient(180deg, #eff2ea 0%, #f4f6f0 100%);
+  --lux-overlay-fill: rgba(7, 18, 12, 0.60);
   --lux-forest-duotone: linear-gradient(180deg, #226044 0%, #1d4b36 55%, #16382a 100%);
   --lux-elev-1:
     inset 0 1px 0 rgba(255, 255, 255, 0.95),
@@ -1737,6 +1739,10 @@ img {
     0 32px 96px rgba(5, 12, 8, 0.5),
     0 0 48px rgba(176, 241, 34, 0.06);
   --lux-elev-press: 0 0 0 1px rgba(16, 23, 19, 0.05), 0 1px 1px rgba(7, 18, 12, 0.06);
+  --lux-inset-well: inset 0 1px 2px rgba(16, 23, 19, 0.06), inset 0 -1px 0 rgba(255, 255, 255, 0.90);
+  --lux-chat-own-rim: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  --lux-calendar-today-ring: 0 0 0 2px var(--portal-accent), 0 0 0 6px color-mix(in srgb, var(--portal-accent) 30%, transparent);
+  --lux-mobile-edge: linear-gradient(180deg, var(--portal-accent), transparent);
   --lux-specular: rgba(255, 255, 255, 0.95);
   --lux-streak: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.05) 45%, rgba(255, 255, 255, 0.015) 52%, transparent 60%);
   --lux-blur-card: 24px;
@@ -2920,9 +2926,9 @@ a.gh-stat-card:hover {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: rgba(7, 18, 12, 0.55);
-  -webkit-backdrop-filter: blur(var(--portal-blur-overlay));
-  backdrop-filter: blur(var(--portal-blur-overlay));
+  background: var(--lux-overlay-fill);
+  -webkit-backdrop-filter: blur(var(--lux-blur-overlay));
+  backdrop-filter: blur(var(--lux-blur-overlay));
   animation: gh-dialog-fade 200ms ease-out;
 }
 
@@ -2930,9 +2936,12 @@ a.gh-stat-card:hover {
   width: 100%;
   max-height: min(88vh, 720px);
   overflow-y: auto;
+  border: 1px solid transparent;
   border-radius: var(--portal-radius-xl);
-  background: var(--portal-surface-elevated);
-  box-shadow: var(--portal-shadow-modal);
+  background-image: var(--lux-modal-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-modal);
   animation: gh-dialog-in 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -3021,6 +3030,12 @@ a.gh-stat-card:hover {
  * fade 200ms from the trigger origin. */
 .gh-notification-popover,
 .gh-portal-user-menu {
+  border: 1px solid transparent;
+  border-radius: var(--portal-radius-xl);
+  background-image: var(--lux-modal-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-modal);
   transform-origin: top right;
   animation: gh-popover-in 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -5673,10 +5688,12 @@ a.gh-stat-card:hover {
 .gh-agenda-panel,
 .gh-calendar-dialog,
 .gh-chat-panel {
-  border-color: var(--portal-line, var(--color-border)) !important;
+  border: 1px solid transparent !important;
   border-radius: var(--portal-radius-lg, 14px) !important;
-  background: var(--portal-surface, #fff) !important;
-  box-shadow: var(--portal-shadow, var(--shadow-soft)) !important;
+  background-image: var(--lux-card-fill), var(--lux-card-border) !important;
+  background-origin: border-box !important;
+  background-clip: padding-box, border-box !important;
+  box-shadow: var(--lux-elev-1) !important;
 }
 
 @media (min-width: 768px) {
@@ -5706,13 +5723,13 @@ a.gh-stat-card:hover {
  * day-number badge, not the whole cell (keeps the event count chips
  * legible). */
 .gh-calendar-day-number--today {
-  box-shadow: inset 0 0 0 2px var(--portal-accent, var(--color-brand-primary));
+  box-shadow: var(--lux-calendar-today-ring);
   color: var(--portal-text, inherit) !important;
   background: transparent !important;
 }
 
 .gh-calendar-day-number--selected {
-  background: var(--portal-primary, var(--color-brand-primary)) !important;
+  background: var(--lux-forest-duotone) !important;
   color: var(--portal-bg, #fff) !important;
   box-shadow: none;
 }
@@ -5802,12 +5819,12 @@ a.gh-stat-card:hover {
 }
 
 .gh-chat-panel-embedded {
-  background: transparent !important;
+  background-image: var(--lux-card-fill), var(--lux-card-border) !important;
 }
 
 .gh-chat-header {
   border-bottom: 1px solid var(--portal-line, var(--color-border)) !important;
-  background: var(--portal-surface, #fff) !important;
+  background: color-mix(in srgb, var(--portal-surface) 52%, transparent) !important;
 }
 
 .gh-chat-header--embedded {
@@ -5820,11 +5837,13 @@ a.gh-stat-card:hover {
 .gh-chat-pending-file,
 .gh-chat-disabled {
   border-top: 1px solid var(--portal-line, var(--color-border)) !important;
-  background: var(--portal-surface, #fff) !important;
+  background: var(--lux-well-fill) !important;
+  box-shadow: var(--lux-inset-well) !important;
 }
 
 .gh-chat-body {
-  background: var(--portal-well, #f2f4ee) !important;
+  background: var(--lux-well-fill) !important;
+  box-shadow: var(--lux-inset-well) !important;
 }
 
 .gh-chat-list {
@@ -5866,14 +5885,15 @@ a.gh-stat-card:hover {
 .gh-chat-bubble-own,
 .gh-chat-attachment-own,
 .gh-chat-send {
-  background: var(--portal-primary, #184633) !important;
+  background: var(--lux-forest-duotone) !important;
   color: var(--portal-bg, #fff) !important;
+  box-shadow: var(--lux-chat-own-rim) !important;
 }
 
 .gh-chat-bubble-other,
 .gh-chat-attachment-other {
   border-color: var(--portal-line, var(--color-border)) !important;
-  background: var(--portal-surface, #fff) !important;
+  background: color-mix(in srgb, var(--portal-surface) 90%, transparent) !important;
   color: var(--portal-text, #263b34) !important;
 }
 
@@ -7660,4 +7680,76 @@ a.gh-appointment-card:hover {
   .gh-appointment-card--live::before {
     animation: none;
   }
+}
+
+/* Liquid Lux commit 5: shared chat, calendar, dialog, mobile-card and micro-layer skins. */
+.gh-portal-shell ::selection {
+  background: var(--lux-selection);
+  color: var(--portal-text);
+}
+
+.gh-portal-shell :where(svg) {
+  opacity: var(--lux-icon-rest);
+}
+
+.gh-portal-shell :where(a:hover svg, button:hover svg, [aria-current="page"] svg) {
+  opacity: var(--lux-icon-active);
+}
+
+[data-sonner-toast] {
+  border: 1px solid transparent;
+  border-radius: var(--portal-radius-xl);
+  background-image: var(--lux-modal-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-modal);
+}
+
+.gh-chat-note,
+.gh-chat-alert,
+.gh-admin-mobile-card,
+.gh-admin-appointment-mobile-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.gh-admin-mobile-card::before,
+.gh-admin-appointment-mobile-card::before {
+  content: "";
+  position: absolute;
+  inset-block: 12px;
+  inset-inline-start: 0;
+  width: 3px;
+  border-radius: 0 999px 999px 0;
+  background: var(--lux-mobile-edge);
+  box-shadow: 0 0 8px var(--portal-signal-glow);
+  pointer-events: none;
+}
+
+.gh-portal-shell :where(a:not(.gh-btn):not(.gh-portal-nav-item)) {
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+.gh-portal-shell :where(a:not(.gh-btn):not(.gh-portal-nav-item)):hover {
+  text-decoration-color: var(--portal-mint);
+}
+
+.gh-portal-shell * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--lux-scrollbar-thumb) transparent;
+}
+
+.gh-portal-shell *::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.gh-portal-shell *::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--lux-scrollbar-thumb);
+}
+
+.gh-portal-shell *::-webkit-scrollbar-thumb:hover {
+  background: var(--lux-scrollbar-thumb-hover);
 }
