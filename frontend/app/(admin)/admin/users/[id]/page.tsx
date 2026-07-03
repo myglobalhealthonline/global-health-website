@@ -11,6 +11,7 @@ import {
 } from "@/lib/admin/admin-api";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
 import { PatientProfileEditor } from "../_components/patient-profile-editor";
+import { FormSection } from "@/components/FormSection";
 
 export const dynamic = "force-dynamic";
 
@@ -157,14 +158,8 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
 
       <div className="gh-admin-user-detail-layout grid gap-4">
         <div className="gh-admin-user-detail-main grid gap-4">
-          <AdminCard>
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-            >
-              Profile
-            </h3>
-            <dl className="gh-admin-user-facts mt-4 grid gap-4 sm:grid-cols-2">
+          <FormSection title="Profile">
+            <dl className="gh-admin-user-facts gh-form-section__span-2 mt-4 grid gap-4 sm:grid-cols-2">
               <Field label="Email" value={user.email} />
               <Field label="Full name" value={user.fullName} />
               <Field label="Phone" value={user.phone ?? "—"} />
@@ -174,7 +169,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
               <Field label="Created" value={new Date(user.createdAt).toLocaleString()} />
               <Field label="Updated" value={new Date(user.updatedAt).toLocaleString()} />
             </dl>
-          </AdminCard>
+          </FormSection>
 
           {user.role === "PATIENT" ? (
             <PatientProfileEditor
@@ -186,14 +181,8 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
         </div>
 
         <div className="gh-admin-user-detail-side grid gap-4 self-start">
-          <AdminCard>
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-            >
-              Status
-            </h3>
-            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+          <FormSection title="Status">
+            <p className="text-[13px] text-[var(--color-text-muted)]">
               Suspended users can&apos;t log in. Their bookings stay intact.
             </p>
             <form action={toggleActiveAction} className="mt-3">
@@ -204,16 +193,10 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
                 {user.isActive ? "Suspend account" : "Reactivate account"}
               </button>
             </form>
-          </AdminCard>
+          </FormSection>
 
-          <AdminCard>
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-            >
-              Role
-            </h3>
-            <form action={changeRoleAction} className="mt-3 flex flex-col gap-2">
+          <FormSection title="Role">
+            <form action={changeRoleAction} className="flex flex-col gap-2">
               <select name="role" defaultValue={user.role} className="gh-select">
                 <option value="PATIENT">PATIENT</option>
                 <option value="ADMIN">ADMIN</option>
@@ -223,20 +206,14 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
                 Update role
               </button>
             </form>
-          </AdminCard>
+          </FormSection>
 
           {/* Doctor profile link — only meaningful when role=DOCTOR.
               Free-text id input keeps the markup small; admin can copy
               the doctor id from /admin/doctors. A future iteration could
               swap this for a searchable dropdown of unlinked doctors. */}
-          <AdminCard>
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-            >
-              Doctor profile link
-            </h3>
-            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+          <FormSection title="Doctor profile link">
+            <p className="text-[13px] text-[var(--color-text-muted)]">
               {user.role === "DOCTOR"
                 ? "Paste the Doctor profile id (from /admin/doctors). One profile per user — re-link will fail if the target is already taken. Leave blank to unlink."
                 : "Set role=DOCTOR first, then link the user to a Doctor profile here."}
@@ -253,16 +230,10 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
                 {user.doctorId ? "Update link" : "Link doctor profile"}
               </button>
             </form>
-          </AdminCard>
+          </FormSection>
 
-          <AdminCard>
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-            >
-              Reset password
-            </h3>
-            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+          <FormSection title="Reset password">
+            <p className="text-[13px] text-[var(--color-text-muted)]">
               Admin override — sets a new password without an email token.
               Share via a secure channel.
             </p>
@@ -281,7 +252,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
                 Reset password
               </button>
             </form>
-          </AdminCard>
+          </FormSection>
         </div>
       </div>
     </>

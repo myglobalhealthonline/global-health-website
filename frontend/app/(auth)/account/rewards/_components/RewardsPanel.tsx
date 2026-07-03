@@ -128,13 +128,18 @@ export function RewardsPanel(props: RewardsPanelProps) {
               ) : null}
             </div>
 
-            {/* Progress bar */}
-            <div className="mt-4 h-2 w-full overflow-hidden rounded-full" style={{ background: "var(--portal-well)" }}>
+            {/* Progress bar — DESIGN.md §5.21: 6px, radius 999, well track,
+                signal fill. The ONLY progress bar recipe in the system. */}
+            <div
+              className="mt-4 w-full overflow-hidden"
+              style={{ height: 6, borderRadius: 999, background: "var(--portal-well)" }}
+            >
               <div
-                className="h-full rounded-full"
                 style={{
+                  height: "100%",
+                  borderRadius: 999,
                   width: `${pct}%`,
-                  background: kit.eligible ? "var(--portal-primary)" : "var(--portal-mint)",
+                  background: "var(--portal-signal)",
                 }}
                 role="progressbar"
                 aria-valuenow={pct}

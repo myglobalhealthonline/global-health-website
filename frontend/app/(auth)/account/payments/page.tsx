@@ -7,7 +7,8 @@ import { formatPrice } from "@/lib/format-currency";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { ReceiptButton } from "./_components/receipt-button";
-import { AdminSummaryStrip } from "@/components/portal-atoms";
+import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
 
@@ -65,18 +66,16 @@ export default async function AccountPaymentsPage() {
 
   return (
     <div className="gh-patient-page gh-patient-payments-page">
-      <header className="gh-patient-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
-          {a.payments.breadcrumb}
-        </p>
-        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--portal-text)]">
-          <CreditCard className="size-6 text-[var(--portal-primary)]" aria-hidden />
-          {a.payments.title}
-        </h2>
-        <p className="text-sm text-[var(--portal-muted)]">
-          {a.payments.subtitle}
-        </p>
-      </header>
+      <PageHeader
+        eyebrow={a.payments.breadcrumb}
+        title={
+          <span className="inline-flex items-center gap-2">
+            <CreditCard className="size-6 text-[var(--portal-primary)]" aria-hidden />
+            {a.payments.title}
+          </span>
+        }
+        description={a.payments.subtitle}
+      />
 
       <AdminSummaryStrip
         className="mb-5"
@@ -118,37 +117,45 @@ export default async function AccountPaymentsPage() {
         <div className="gh-card overflow-hidden p-0">
           <div className="grid gap-3 p-4 md:hidden">
             {items.map((p) => (
-              <article
+              <PortalMobileCard
                 key={p.id}
-                className="rounded-lg border border-[var(--portal-line)] bg-[var(--portal-well)] p-4"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="font-semibold text-[var(--portal-text)]">
-                      {p.serviceName ?? p.consultationType}
-                    </p>
-                    <p className="mt-1 text-xs text-[var(--portal-muted)]">
-                      {formatAppDate(p.paidAt)} · {p.countryCode}
-                    </p>
+                title={p.serviceName ?? p.consultationType}
+                subtitle={
+                  <>
+                    {formatAppDate(p.paidAt)} · {p.countryCode}
                     {p.doctorName ? (
-                      <p className="mt-1 text-xs text-[var(--portal-muted)]">
-                        {/^dr\.?\s/i.test(p.doctorName) ? p.doctorName : `Dr. ${p.doctorName}`}
-                      </p>
+                      <>
+                        {" "}
+                        · {/^dr\.?\s/i.test(p.doctorName) ? p.doctorName : `Dr. ${p.doctorName}`}
+                      </>
                     ) : null}
-                  </div>
+                  </>
+                }
+                statusPill={
                   <span
                     className={`inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_PILL[p.status]}`}
                   >
                     {statusLabel[p.status]}
                   </span>
-                </div>
-                <div className="mt-3 flex items-center justify-between gap-3">
-                  <p className="text-lg font-extrabold text-[var(--portal-text)]">
-                    {formatPrice(p.amountCents, p.currencyCode)}
+                }
+                meta={[
+                  {
+                    label: "Amount",
+                    value: (
+                      <span style={{ fontVariantNumeric: "tabular-nums" }}>
+                        {formatPrice(p.amountCents, p.currencyCode)}
+                      </span>
+                    ),
+                  },
+                ]}
+                actions={<ReceiptButton paymentId={p.id} />}
+              >
+                {p.status === "REFUNDED" ? (
+                  <p className="mt-2 text-xs" style={{ color: "var(--portal-muted)" }}>
+                    This payment was refunded. It can take a few business days to appear on your statement.
                   </p>
-                  <ReceiptButton paymentId={p.id} />
-                </div>
-              </article>
+                ) : null}
+              </PortalMobileCard>
             ))}
           </div>
           <div className="gh-patient-table-wrap hidden overflow-x-auto md:block">
@@ -181,7 +188,10 @@ export default async function AccountPaymentsPage() {
                       {p.countryCode}
                     </span>
                   </td>
-                  <td className="px-4 py-3 font-semibold text-[var(--portal-text)]">
+                  <td
+                    className="px-4 py-3 font-semibold text-[var(--portal-text)]"
+                    style={{ fontVariantNumeric: "tabular-nums" }}
+                  >
                     {formatPrice(p.amountCents, p.currencyCode)}
                   </td>
                   <td className="px-4 py-3">
@@ -190,6 +200,11 @@ export default async function AccountPaymentsPage() {
                     >
                       {statusLabel[p.status]}
                     </span>
+                    {p.status === "REFUNDED" ? (
+                      <p className="mt-1 text-[11px]" style={{ color: "var(--portal-muted)" }}>
+                        Refunded — a few days to appear on your statement.
+                      </p>
+                    ) : null}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <ReceiptButton paymentId={p.id} />
@@ -212,30 +227,33 @@ export default async function AccountPaymentsPage() {
               {invoices.map((row) => {
                 const receiptUrl = row.hostedInvoiceUrl ?? row.pdfUrl;
                 return (
-                  <article
+                  <PortalMobileCard
                     key={row.id}
-                    className="rounded-lg border border-[var(--portal-line)] bg-[var(--portal-well)] p-4"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="flex items-center gap-2 font-semibold text-[var(--portal-text)]">
-                          <ReceiptText className="size-4 text-[var(--portal-primary)]" aria-hidden />
-                          {inv.membershipPayment}
-                        </p>
-                        <p className="mt-1 text-xs text-[var(--portal-muted)]">
-                          {formatAppDate(row.periodStart ?? row.createdAt)}
-                          {row.number ? ` · ${row.number}` : ""}
-                        </p>
-                      </div>
+                    leading={<ReceiptText className="size-4 text-[var(--portal-primary)]" aria-hidden />}
+                    title={inv.membershipPayment}
+                    subtitle={
+                      <>
+                        {formatAppDate(row.periodStart ?? row.createdAt)}
+                        {row.number ? ` · ${row.number}` : ""}
+                      </>
+                    }
+                    statusPill={
                       <span className="inline-flex shrink-0 items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-800">
                         {invoiceStatusLabel(row.status)}
                       </span>
-                    </div>
-                    <div className="mt-3 flex items-center justify-between gap-3">
-                      <p className="text-lg font-extrabold text-[var(--portal-text)]">
-                        {formatPrice(row.amountPaidCents, row.currency)}
-                      </p>
-                      {receiptUrl ? (
+                    }
+                    meta={[
+                      {
+                        label: "Amount",
+                        value: (
+                          <span style={{ fontVariantNumeric: "tabular-nums" }}>
+                            {formatPrice(row.amountPaidCents, row.currency)}
+                          </span>
+                        ),
+                      },
+                    ]}
+                    actions={
+                      receiptUrl ? (
                         <a
                           href={receiptUrl}
                           target="_blank"
@@ -245,9 +263,9 @@ export default async function AccountPaymentsPage() {
                           {inv.viewInvoice}
                           <ExternalLink className="size-3.5" aria-hidden />
                         </a>
-                      ) : null}
-                    </div>
-                  </article>
+                      ) : null
+                    }
+                  />
                 );
               })}
             </div>
@@ -276,7 +294,10 @@ export default async function AccountPaymentsPage() {
                           <span className="block text-xs text-[var(--portal-muted)]">{row.number}</span>
                         ) : null}
                       </td>
-                      <td className="px-4 py-3 font-semibold text-[var(--portal-text)]">
+                      <td
+                        className="px-4 py-3 font-semibold text-[var(--portal-text)]"
+                        style={{ fontVariantNumeric: "tabular-nums" }}
+                      >
                         {formatPrice(row.amountPaidCents, row.currency)}
                       </td>
                       <td className="px-4 py-3">

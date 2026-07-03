@@ -19,6 +19,7 @@ import {
 import { FlagBadge } from "../_components/flag-badge";
 import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import { ScopeBanner } from "../_components/scope-banner";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 import {
   AdminCard,
   AdminEmptyState,
@@ -464,43 +465,34 @@ export default async function AdminServicesPage({
 
         <div className="gh-admin-service-mobile-list">
           {items.map((service) => (
-            <article key={service.id} className="gh-admin-service-mobile-card">
-              <div className="flex min-w-0 items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h3 className="m-0 text-[15px] font-bold leading-snug text-[var(--color-text-primary)]">
-                    {service.name}
-                  </h3>
-                  <p className="m-0 mt-1 break-words font-mono text-[11px] text-[var(--color-text-muted)]">
-                    {service.slug}
-                  </p>
-                </div>
+            <PortalMobileCard
+              key={service.id}
+              tone={service.isActive ? "success" : "neutral"}
+              title={service.name}
+              subtitle={<span className="font-mono">{service.slug}</span>}
+              statusPill={
                 <Pill tone={service.isActive ? "active" : "inactive"}>
                   {service.isActive ? "Active" : "Inactive"}
                 </Pill>
-              </div>
-              <div className="gh-admin-service-mobile-meta">
-                <span>
-                  <em>Market</em>
-                  <strong className="inline-flex items-center gap-2">
-                    <FlagBadge code={service.country.code} size={14} />
-                    {service.country.code.toUpperCase()}
-                  </strong>
-                </span>
-                <span>
-                  <em>Price</em>
-                  <strong>{formatMoney(service.basePriceCents, service.currencyCode)}</strong>
-                </span>
-                <span>
-                  <em>Duration</em>
-                  <strong>
-                    {service.durationMinutes != null ? `${service.durationMinutes} min` : "—"}
-                  </strong>
-                </span>
-                <span>
-                  <em>Order</em>
-                  <strong>{service.sortOrder}</strong>
-                </span>
-              </div>
+              }
+              meta={[
+                {
+                  label: "Market",
+                  value: (
+                    <span className="inline-flex items-center gap-2">
+                      <FlagBadge code={service.country.code} size={14} />
+                      {service.country.code.toUpperCase()}
+                    </span>
+                  ),
+                },
+                { label: "Price", value: formatMoney(service.basePriceCents, service.currencyCode) },
+                {
+                  label: "Duration",
+                  value: service.durationMinutes != null ? `${service.durationMinutes} min` : "—",
+                },
+                { label: "Order", value: service.sortOrder },
+              ]}
+            >
               <div className="gh-admin-service-mobile-controls">
                 <form action={toggleServiceAction} className="inline-flex">
                   <input type="hidden" name="id" value={service.id} />
@@ -551,7 +543,7 @@ export default async function AdminServicesPage({
                   </form>
                 </div>
               </div>
-            </article>
+            </PortalMobileCard>
           ))}
         </div>
 

@@ -30,6 +30,7 @@ import {
 import { Upload } from "lucide-react";
 import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 import { FlagBadge } from "../../../_components/flag-badge";
+import { FormSection } from "@/components/FormSection";
 
 export const dynamic = "force-dynamic";
 
@@ -456,16 +457,11 @@ export default async function AdminEditServicePage({
       <div className="gh-admin-service-layout">
         {/* Main column — form + internal links */}
         <div className="grid gap-4">
-        <AdminCard>
-          <h3
-            className="m-0 text-[var(--color-text-primary)]"
-            style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-          >
-            Basics
-          </h3>
-          <p className="mb-5 mt-1 text-[13px] text-[var(--color-text-muted)]">
-            Shown in lists and cards across the public site.
-          </p>
+        <FormSection
+          title="Basics"
+          description="Shown in lists and cards across the public site."
+        >
+          <div className="gh-form-section__span-2">
           <form action={updateServiceAction} className="gh-admin-service-form">
             <ServiceFields
               countries={countries}
@@ -488,19 +484,14 @@ export default async function AdminEditServicePage({
               </Link>
             </div>
           </form>
-        </AdminCard>
+          </div>
+        </FormSection>
 
-        <AdminCard>
-          <h3
-            className="m-0 text-[var(--color-text-primary)]"
-            style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-          >
-            Internal links
-          </h3>
-          <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
-            Contextual callout boxes to other services (SEO internal-linking). Up
-            to four show per page, ordered upgrade → entry → referral → complementary.
-          </p>
+        <FormSection
+          title="Internal links"
+          description="Contextual callout boxes to other services (SEO internal-linking). Up to four show per page, ordered upgrade → entry → referral → complementary."
+        >
+          <div className="gh-form-section__span-2">
           <ServiceLinksPanel
             defaultLocale={defaultLocale}
             locales={locales.map((l) => ({ code: l.code, isDefault: l.isDefault }))}
@@ -508,7 +499,8 @@ export default async function AdminEditServicePage({
             initial={initialLinks}
             action={saveServiceLinksAction}
           />
-        </AdminCard>
+          </div>
+        </FormSection>
         </div>
 
         {/* Right sidebar — cover image + visibility */}
@@ -517,13 +509,7 @@ export default async function AdminEditServicePage({
               ManagedImageField labelled "Hero image" inside the form on the
               left — showing two upload UIs would mean two form inputs with
               the same name and the data wouldn't round-trip. */}
-          <AdminCard className="gh-admin-service-side-card">
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-            >
-              Cover image preview
-            </h3>
+          <FormSection title="Cover image preview" className="gh-admin-service-side-card">
             {service.assets[0]?.path ? (
               <>
                 <div className="gh-admin-service-image-preview mt-3 overflow-hidden rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)]">
@@ -561,16 +547,10 @@ export default async function AdminEditServicePage({
                 </div>
               </div>
             )}
-          </AdminCard>
+          </FormSection>
 
           {/* Visibility card */}
-          <AdminCard className="gh-admin-service-side-card">
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-            >
-              Visibility
-            </h3>
+          <FormSection title="Visibility" className="gh-admin-service-side-card">
             <div
               className="gh-admin-service-visibility-row mt-3 flex items-center justify-between"
               style={{
@@ -616,16 +596,10 @@ export default async function AdminEditServicePage({
             <p className="text-[11px] text-[var(--color-text-muted)]">
               Toggle from the form&apos;s Active checkbox to switch.
             </p>
-          </AdminCard>
+          </FormSection>
 
           {/* Key facts card — duration / price / sort */}
-          <AdminCard className="gh-admin-service-side-card">
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-            >
-              Key facts
-            </h3>
+          <FormSection title="Key facts" className="gh-admin-service-side-card">
             <dl className="gh-admin-service-facts mt-3 grid gap-3">
               <div className="flex items-center justify-between">
                 <dt className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
@@ -654,7 +628,7 @@ export default async function AdminEditServicePage({
                 </dd>
               </div>
             </dl>
-          </AdminCard>
+          </FormSection>
 
           {supportsPeakPricing ? (
             <PeakPricingCard

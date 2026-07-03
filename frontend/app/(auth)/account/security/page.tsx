@@ -14,7 +14,8 @@ import { DeleteAccountButton } from "./_components/delete-account-button";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { readClientLocale } from "@/lib/i18n/get-client-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
-import { AdminSummaryStrip } from "@/components/portal-atoms";
+import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
+import { FormSection } from "@/components/FormSection";
 
 export default function AccountSecurityPage() {
   const [locale] = useState<LocaleCode>(() => readClientLocale());
@@ -92,18 +93,16 @@ export default function AccountSecurityPage() {
 
   return (
     <div className="gh-patient-page gh-patient-security-page">
-      <header className="gh-patient-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
-          {a.security.breadcrumb}
-        </p>
-        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--portal-text)]">
-          <ShieldCheck className="size-6 text-[var(--portal-primary)]" aria-hidden />
-          {a.security.title}
-        </h2>
-        <p className="text-sm text-[var(--portal-muted)]">
-          {a.security.subtitle}
-        </p>
-      </header>
+      <PageHeader
+        eyebrow={a.security.breadcrumb}
+        title={
+          <span className="flex items-center gap-2">
+            <ShieldCheck className="size-6 text-[var(--portal-primary)]" aria-hidden />
+            {a.security.title}
+          </span>
+        }
+        description={a.security.subtitle}
+      />
 
       {loading ? (
         <div className="gh-card grid gap-4 p-6">
@@ -125,8 +124,8 @@ export default function AccountSecurityPage() {
             />
 
             {/* Email verification panel */}
-            <section className="gh-patient-security-card gh-admin-card rounded-2xl border border-[var(--portal-line)] p-6 shadow-[var(--portal-shadow)]">
-              <div className="flex items-start gap-3">
+            <FormSection title={a.security.emailVerification}>
+              <div className="gh-form-section__span-2 flex items-start gap-3">
                 <span
                   className={`inline-flex size-9 shrink-0 items-center justify-center rounded-full ${
                     verified
@@ -137,18 +136,15 @@ export default function AccountSecurityPage() {
                   <MailCheck className="size-5" aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-base font-bold text-[var(--portal-text)]">
-                    {a.security.emailVerification}
-                  </h2>
                   {verified ? (
-                    <p className="mt-1 text-sm text-[var(--portal-muted)]">
+                    <p className="text-sm text-[var(--portal-muted)]">
                       <span className="font-semibold text-emerald-700">{a.security.verified}</span>{" "}
                       {a.security.verifiedOn}{" "}
                       {formatAppDate(user!.emailVerifiedAt!)}.
                     </p>
                   ) : (
                     <>
-                      <p className="mt-1 text-sm text-[var(--portal-muted)]">
+                      <p className="text-sm text-[var(--portal-muted)]">
                         {a.security.unverifiedBody.replace("{email}", user?.email ?? "")}
                       </p>
                       <button
@@ -174,18 +170,11 @@ export default function AccountSecurityPage() {
                   ) : null}
                 </div>
               </div>
-            </section>
+            </FormSection>
 
             {/* Privacy controls — GDPR data-export + account-delete */}
-            <section className="gh-patient-security-card mt-4 gh-admin-card rounded-2xl border border-[var(--portal-line)] p-6 shadow-[var(--portal-shadow)]">
-              <h2 className="text-base font-bold text-[var(--portal-text)]">
-                {a.security.yourData}
-              </h2>
-              <p className="mt-1 text-sm text-[var(--portal-muted)]">
-                {a.security.gdprBody}
-              </p>
-
-              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <FormSection title={a.security.yourData} description={a.security.gdprBody} className="mt-4">
+              <div className="gh-form-section__span-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <a
                   href={downloadOwnDataUrl()}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-emerald-700 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 sm:w-auto"
@@ -196,23 +185,16 @@ export default function AccountSecurityPage() {
 
                 <DeleteAccountButton i18n={a.security} />
               </div>
-            </section>
+            </FormSection>
 
             {/* Change-password panel */}
-            <section className="gh-patient-security-card mt-4 gh-admin-card rounded-2xl border border-[var(--portal-line)] p-6 shadow-[var(--portal-shadow)]">
-              <div className="flex items-start gap-3">
+            <FormSection title={a.security.changePassword} description={a.security.changePasswordBody} className="mt-4">
+              <div className="gh-form-section__span-2 flex items-start gap-3">
                 <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
                   <KeyRound className="size-5" aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-base font-bold text-[var(--portal-text)]">
-                    {a.security.changePassword}
-                  </h2>
-                  <p className="mt-1 text-sm text-[var(--portal-muted)]">
-                    {a.security.changePasswordBody}
-                  </p>
-
-                  <form onSubmit={onChangePassword} className="mt-4 space-y-3">
+                  <form onSubmit={onChangePassword} className="space-y-3">
                     <label className="block">
                       <span className="gh-field-label">{a.security.currentPassword}</span>
                       <input
@@ -275,8 +257,8 @@ export default function AccountSecurityPage() {
                   </form>
                 </div>
               </div>
-          </section>
-        </>
+            </FormSection>
+          </>
       )}
     </div>
   );

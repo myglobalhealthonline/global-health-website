@@ -146,15 +146,11 @@ export function ManagedImageField({
         } ${previewSrc ? "gh-admin-media-dropzone--preview" : ""}`}
         style={{
           minHeight: 180,
-          borderRadius: 12,
-          border: `1px dashed ${
-            dragOver
-              ? "var(--color-brand-primary)"
-              : "var(--color-border-strong)"
+          borderRadius: 14,
+          border: `1.5px dashed ${
+            dragOver ? "var(--portal-accent)" : "var(--portal-line-strong)"
           }`,
-          background: dragOver
-            ? "rgba(27,77,62,0.06)"
-            : "var(--color-background-soft)",
+          background: dragOver ? "var(--portal-signal-soft)" : "var(--portal-well)",
           cursor: previewSrc ? "default" : "pointer",
         }}
       >
@@ -190,8 +186,8 @@ export function ManagedImageField({
                   height: 30,
                   padding: "0 12px",
                   borderRadius: 999,
-                  background: "rgba(23, 61, 47, 0.82)",
-                  color: "#fff",
+                  background: "var(--portal-chrome-solid)",
+                  color: "var(--portal-chrome-text-active)",
                   border: "none",
                   fontSize: 12,
                   fontWeight: 700,
@@ -215,8 +211,8 @@ export function ManagedImageField({
                   width: 30,
                   height: 30,
                   borderRadius: 999,
-                  background: "rgba(23, 61, 47, 0.82)",
-                  color: "#fff",
+                  background: "var(--portal-chrome-solid)",
+                  color: "var(--portal-chrome-text-active)",
                   border: "none",
                   display: "inline-flex",
                   alignItems: "center",
@@ -231,13 +227,13 @@ export function ManagedImageField({
         ) : (
           <div
             className="gh-admin-media-empty grid place-items-center px-4 py-8 text-center"
-            style={{ color: "var(--color-text-muted)", minHeight: 180 }}
+            style={{ color: "var(--portal-muted)", minHeight: 180 }}
           >
             <div className="flex flex-col items-center">
               <Upload aria-hidden className="size-6" />
               <p
                 className="m-0 mt-2 text-[13px] font-semibold"
-                style={{ color: "var(--color-text-body)" }}
+                style={{ color: "var(--portal-text)" }}
               >
                 {busy ? "Uploading…" : "Drag & drop an image here"}
               </p>
@@ -256,8 +252,8 @@ export function ManagedImageField({
                   height: 36,
                   padding: "0 18px",
                   borderRadius: 999,
-                  background: "var(--color-brand-primary)",
-                  color: "#fff",
+                  background: "var(--portal-primary)",
+                  color: "var(--portal-bg)",
                   border: "none",
                   fontSize: 13,
                   fontWeight: 700,
@@ -265,7 +261,7 @@ export function ManagedImageField({
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 6,
-                  boxShadow: "var(--shadow-soft)",
+                  boxShadow: "var(--portal-shadow)",
                 }}
               >
                 <Upload aria-hidden className="size-3.5" />
@@ -277,7 +273,7 @@ export function ManagedImageField({
       </div>
 
       {/* Manual URL fallback (advanced — paste a URL or /api/media path) */}
-      <details className="text-[12px] text-[var(--color-text-muted)]">
+      <details className="text-[12px] text-[var(--portal-muted)]">
         <summary className="cursor-pointer select-none">Use a URL instead</summary>
         <input
           type="text"
@@ -298,10 +294,10 @@ export function ManagedImageField({
       />
 
       {msg ? (
-        <p className="text-[12px] text-[var(--color-status-warning-text)]">{msg}</p>
+        <p className="text-[12px]" style={{ color: "var(--portal-warning-text)" }}>{msg}</p>
       ) : null}
       {helperText ? (
-        <span className="text-[12px] text-[var(--color-text-muted)]">{helperText}</span>
+        <span className="text-[12px] text-[var(--portal-muted)]">{helperText}</span>
       ) : null}
     </div>
   );

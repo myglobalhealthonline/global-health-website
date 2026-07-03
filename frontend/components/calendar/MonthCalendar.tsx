@@ -92,11 +92,11 @@ export function MonthCalendar({
         className="grid grid-cols-7"
         style={{ borderBottom: "1px solid var(--portal-line)" }}
       >
-        {WEEKDAY_LABELS.map((d) => (
+        {WEEKDAY_LABELS.map((d, i) => (
           <div
             key={d}
             className="px-2 py-2 text-center text-[10px] font-bold uppercase tracking-[0.12em]"
-            style={{ color: "var(--portal-muted)" }}
+            style={{ color: "var(--portal-muted)", opacity: i >= 5 ? 0.6 : 1 }}
           >
             {d}
           </div>

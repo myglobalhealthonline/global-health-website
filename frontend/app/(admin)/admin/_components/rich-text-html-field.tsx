@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { Bold, Italic, Underline, List, ListOrdered, Undo, Redo, Eraser, ChevronDown } from "lucide-react";
+import { IconBtn } from "@/components/portal-atoms";
 
 type Props = {
   name: string;
@@ -237,21 +238,17 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
     rememberSelection();
   }
 
-  const iconBtn = (active: boolean) =>
-    `inline-flex h-8 w-8 items-center justify-center rounded text-xs transition-colors ${
-      active
-        ? "bg-[var(--color-brand-primary)] text-white"
-        : "bg-white text-[var(--color-text-body)] hover:bg-[var(--color-background-soft)]"
-    } border border-[var(--color-border)]`;
+  const activeIconStyle = (active: boolean) =>
+    active ? { background: "var(--portal-mint-soft)", color: "var(--portal-mint-text)" } : undefined;
 
   return (
     <div className="gh-admin-rich-text flex flex-col gap-2">
       <label htmlFor={editorId} className="gh-field-label">{label}</label>
-      <div className="gh-admin-rich-text__frame overflow-hidden rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white">
-        <div className="gh-admin-rich-text__toolbar flex flex-wrap items-center gap-1.5 border-b border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2">
+      <div className="gh-admin-rich-text__frame overflow-hidden rounded-[var(--portal-radius)] border border-[var(--portal-line)] bg-[var(--portal-surface)]">
+        <div className="gh-admin-rich-text__toolbar flex flex-wrap items-center gap-1.5 border-b border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2">
           <div className="relative">
             <select
-              className="h-8 appearance-none rounded border border-[var(--color-border)] bg-white pl-2.5 pr-7 text-xs text-[var(--color-text-primary)] outline-none"
+              className="h-8 appearance-none rounded border border-[var(--portal-line)] bg-[var(--portal-surface)] pl-2.5 pr-7 text-xs text-[var(--portal-text)] outline-none"
               value={font}
               onMouseDown={rememberSelection}
               onChange={(e) => {
@@ -263,11 +260,11 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
                 <option key={f} value={f}>{f}</option>
               ))}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 size-3 -translate-y-1/2 text-[var(--color-text-muted)]" />
+            <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 size-3 -translate-y-1/2 text-[var(--portal-muted)]" />
           </div>
           <div className="relative">
             <select
-              className="h-8 appearance-none rounded border border-[var(--color-border)] bg-white pl-2.5 pr-7 text-xs text-[var(--color-text-primary)] outline-none"
+              className="h-8 appearance-none rounded border border-[var(--portal-line)] bg-[var(--portal-surface)] pl-2.5 pr-7 text-xs text-[var(--portal-text)] outline-none"
               value={size}
               onMouseDown={rememberSelection}
               onChange={(e) => {
@@ -279,11 +276,11 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
                 <option key={s.value} value={s.value}>{s.label}</option>
               ))}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 size-3 -translate-y-1/2 text-[var(--color-text-muted)]" />
+            <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 size-3 -translate-y-1/2 text-[var(--portal-muted)]" />
           </div>
           <div className="relative">
             <select
-              className="h-8 appearance-none rounded border border-[var(--color-border)] bg-white pl-2.5 pr-7 text-xs text-[var(--color-text-primary)] outline-none"
+              className="h-8 appearance-none rounded border border-[var(--portal-line)] bg-[var(--portal-surface)] pl-2.5 pr-7 text-xs text-[var(--portal-text)] outline-none"
               value={block}
               onMouseDown={rememberSelection}
               onChange={(e) => {
@@ -295,29 +292,29 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
               <option value="h2">Heading</option>
               <option value="h3">Subheading</option>
             </select>
-            <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 size-3 -translate-y-1/2 text-[var(--color-text-muted)]" />
+            <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 size-3 -translate-y-1/2 text-[var(--portal-muted)]" />
           </div>
-          <button type="button" className={iconBtn(activeFormats.has("bold"))} onMouseDown={keepEditorSelection} onClick={() => exec("bold")} title="Bold">
+          <IconBtn ariaLabel="Bold" style={activeIconStyle(activeFormats.has("bold"))} onMouseDown={keepEditorSelection} onClick={() => exec("bold")} title="Bold">
             <Bold className="size-3.5" />
-          </button>
-          <button type="button" className={iconBtn(activeFormats.has("italic"))} onMouseDown={keepEditorSelection} onClick={() => exec("italic")} title="Italic">
+          </IconBtn>
+          <IconBtn ariaLabel="Italic" style={activeIconStyle(activeFormats.has("italic"))} onMouseDown={keepEditorSelection} onClick={() => exec("italic")} title="Italic">
             <Italic className="size-3.5" />
-          </button>
-          <button type="button" className={iconBtn(activeFormats.has("underline"))} onMouseDown={keepEditorSelection} onClick={() => exec("underline")} title="Underline">
+          </IconBtn>
+          <IconBtn ariaLabel="Underline" style={activeIconStyle(activeFormats.has("underline"))} onMouseDown={keepEditorSelection} onClick={() => exec("underline")} title="Underline">
             <Underline className="size-3.5" />
-          </button>
-          <button type="button" className={iconBtn(activeFormats.has("insertUnorderedList"))} onMouseDown={keepEditorSelection} onClick={() => exec("insertUnorderedList")} title="Bullets">
+          </IconBtn>
+          <IconBtn ariaLabel="Bullet list" style={activeIconStyle(activeFormats.has("insertUnorderedList"))} onMouseDown={keepEditorSelection} onClick={() => exec("insertUnorderedList")} title="Bullets">
             <List className="size-3.5" />
-          </button>
-          <button type="button" className={iconBtn(activeFormats.has("insertOrderedList"))} onMouseDown={keepEditorSelection} onClick={() => exec("insertOrderedList")} title="Numbered">
+          </IconBtn>
+          <IconBtn ariaLabel="Numbered list" style={activeIconStyle(activeFormats.has("insertOrderedList"))} onMouseDown={keepEditorSelection} onClick={() => exec("insertOrderedList")} title="Numbered">
             <ListOrdered className="size-3.5" />
-          </button>
-          <div className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-2 py-1">
+          </IconBtn>
+          <div className="inline-flex items-center gap-1 rounded border border-[var(--portal-line)] bg-[var(--portal-surface)] px-2 py-1">
             {COLORS.map((c) => (
               <button
                 key={c.value}
                 type="button"
-                className={`h-4 w-4 rounded-sm border-2 ${color === c.value ? "border-[var(--color-brand-primary)]" : "border-transparent"}`}
+                className={`h-4 w-4 rounded-sm border-2 ${color === c.value ? "border-[var(--portal-primary)]" : "border-transparent"}`}
                 style={{ backgroundColor: c.value }}
                 title={c.label}
                 onMouseDown={keepEditorSelection}
@@ -328,15 +325,15 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
               />
             ))}
           </div>
-          <button type="button" className={iconBtn(false)} onMouseDown={keepEditorSelection} onClick={() => exec("undo")} title="Undo">
+          <IconBtn ariaLabel="Undo" onMouseDown={keepEditorSelection} onClick={() => exec("undo")} title="Undo">
             <Undo className="size-3.5" />
-          </button>
-          <button type="button" className={iconBtn(false)} onMouseDown={keepEditorSelection} onClick={() => exec("redo")} title="Redo">
+          </IconBtn>
+          <IconBtn ariaLabel="Redo" onMouseDown={keepEditorSelection} onClick={() => exec("redo")} title="Redo">
             <Redo className="size-3.5" />
-          </button>
+          </IconBtn>
           <button
             type="button"
-            className="inline-flex h-8 items-center rounded border border-[var(--color-border)] bg-white px-2.5 text-xs font-medium text-[var(--color-text-body)] hover:bg-[var(--color-background-soft)]"
+            className="inline-flex h-8 items-center rounded border border-[var(--portal-line)] bg-[var(--portal-surface)] px-2.5 text-xs font-medium text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
             onMouseDown={keepEditorSelection}
             onClick={() => exec("removeFormat")}
             title="Clear formatting"
@@ -351,7 +348,7 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
           contentEditable
           suppressContentEditableWarning
           suppressHydrationWarning
-          className="gh-admin-rich-text__editor gh-input min-h-[14rem] min-w-0 resize-y overflow-auto rounded-none border-0 bg-white p-4 leading-7 outline-none"
+          className="gh-admin-rich-text__editor gh-input min-h-[14rem] min-w-0 resize-y overflow-auto rounded-none border-0 bg-[var(--portal-surface)] p-4 leading-7 outline-none"
           style={{ listStylePosition: "inside" }}
           onInput={() => {
             syncToHidden();
@@ -385,7 +382,7 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
         />
       </div>
       <input ref={hiddenRef} type="hidden" name={name} defaultValue={initialValue ?? ""} />
-      {helperText ? <span className="text-xs text-[var(--color-text-muted)]">{helperText}</span> : null}
+      {helperText ? <span className="text-xs text-[var(--portal-muted)]">{helperText}</span> : null}
     </div>
   );
 }

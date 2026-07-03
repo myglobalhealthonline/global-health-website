@@ -4,6 +4,7 @@ import { fetchAdminAppointments, fetchAdminCountries } from "@/lib/admin/admin-a
 import { getActiveCountry, scopedCountryCode } from "@/lib/admin/admin-scope";
 import { FlagBadge } from "../_components/flag-badge";
 import { ScopeBanner } from "../_components/scope-banner";
+import { PortalMobileCard, type PortalMobileCardTone } from "@/components/PortalMobileCard";
 import {
   AdminCard,
   AdminTable,
@@ -96,6 +97,14 @@ function statusToneFor(status: string): PillTone {
 
 function statusLabel(status: string) {
   return status.replace(/_/g, " ").toLowerCase();
+}
+
+function statusToneForCard(status: string): PortalMobileCardTone {
+  if (status === "COMPLETED") return "success";
+  if (status === "CANCELLED") return "danger";
+  if (status === "CONTACTED") return "info";
+  if (status === "UNDER_REVIEW") return "warning";
+  return "neutral";
 }
 
 type PageProps = {
@@ -346,51 +355,45 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
 
             <div className="gh-admin-appointment-mobile-list">
               {items.map((appointment) => (
-                <article key={appointment.id} className="gh-admin-appointment-mobile-card">
-                  <div className="flex min-w-0 items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="m-0 text-[15px] font-bold leading-snug text-[var(--color-text-primary)]">
-                        {appointment.fullName}
-                      </h3>
-                      <p className="m-0 mt-1 break-words text-[12px] text-[var(--color-text-muted)]">
-                        {appointment.email}
-                      </p>
-                    </div>
+                <PortalMobileCard
+                  key={appointment.id}
+                  tone={statusToneForCard(appointment.status)}
+                  title={appointment.fullName}
+                  subtitle={appointment.email}
+                  statusPill={
                     <Pill tone={statusToneFor(appointment.status)}>{statusLabel(appointment.status)}</Pill>
-                  </div>
-                  <dl className="gh-admin-appointment-mobile-meta">
-                    <div>
-                      <dt>Country</dt>
-                      <dd>
-                        <FlagBadge code={appointment.country} size={14} />
-                        <span>{appointment.country.toUpperCase()}</span>
-                      </dd>
-                    </div>
-                    <div>
-                      <dt>Consultation</dt>
-                      <dd>{appointment.consultationType}</dd>
-                    </div>
-                    <div>
-                      <dt>Doctor</dt>
-                      <dd>{appointment.doctorName ?? "Unassigned"}</dd>
-                    </div>
-                    <div>
-                      <dt>Created</dt>
-                      <dd>{formatDate(appointment.createdAt)}</dd>
-                    </div>
-                  </dl>
-                  <div className="flex items-center justify-between gap-3 border-t border-[var(--color-border)] pt-3">
-                    <p className="m-0 min-w-0 truncate text-[12px] text-[var(--color-text-muted)]">
-                      {appointment.notesPreview ?? "No notes"}
-                    </p>
+                  }
+                  meta={[
+                    {
+                      label: "Country",
+                      value: (
+                        <span className="inline-flex items-center gap-2">
+                          <FlagBadge code={appointment.country} size={14} />
+                          <span>{appointment.country.toUpperCase()}</span>
+                        </span>
+                      ),
+                    },
+                    { label: "Consultation", value: appointment.consultationType },
+                    { label: "Doctor", value: appointment.doctorName ?? "Unassigned" },
+                    { label: "Created", value: formatDate(appointment.createdAt) },
+                    {
+                      label: "Notes",
+                      value: (
+                        <span className="block max-w-[14rem] truncate">
+                          {appointment.notesPreview ?? "No notes"}
+                        </span>
+                      ),
+                    },
+                  ]}
+                  actions={
                     <IconBtn
                       ariaLabel={`Open ${appointment.fullName}`}
                       href={`/admin/appointments/${appointment.id}`}
                     >
                       <ExternalLink className="size-3.5" aria-hidden />
                     </IconBtn>
-                  </div>
-                </article>
+                  }
+                />
               ))}
             </div>
           </>

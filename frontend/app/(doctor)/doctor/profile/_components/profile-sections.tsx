@@ -1,5 +1,5 @@
 import type { DoctorMe } from "@/lib/api/doctor-api";
-import { AdminSummaryStrip } from "@/components/portal-atoms";
+import { PageHeader, AdminSummaryStrip } from "@/components/portal-atoms";
 import { DoctorProfileEditForm } from "./edit-form";
 
 type DoctorData = DoctorMe["doctor"];
@@ -27,18 +27,12 @@ export function ProfileSections({
 
   return (
     <>
-      <header className="gh-doctor-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
-          Doctor
-        </p>
-        <h2 className="mt-1 text-2xl font-bold text-[var(--portal-text)]">
-          {activeCountryName ? `My profile — ${activeCountryName}` : "My profile"}
-        </h2>
-        <p className="text-sm text-[var(--portal-muted)]">
-          Edit your public profile. Country, slug, and registration data are
-          admin-managed — ping support if anything there needs to change.
-        </p>
-      </header>
+      <PageHeader
+        className="mb-6"
+        eyebrow="Doctor"
+        title={activeCountryName ? `My profile — ${activeCountryName}` : "My profile"}
+        description="Edit your public profile. Country, slug, and registration data are admin-managed — ping support if anything there needs to change."
+      />
 
       <AdminSummaryStrip
         className="mb-4"

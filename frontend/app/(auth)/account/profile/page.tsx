@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Save, UserRound } from "lucide-react";
+import { AlertCircle, Save } from "lucide-react";
 import {
   fetchCurrentUser,
   patchCurrentUser,
@@ -15,8 +15,9 @@ import { GdprPreferencesTab } from "./_components/gdpr-tab";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { readClientLocale } from "@/lib/i18n/get-client-locale";
 import { PhoneField } from "@/components/forms/phone-field";
-import { AdminSummaryStrip } from "@/components/portal-atoms";
+import { AdminSummaryStrip, Btn, PageHeader } from "@/components/portal-atoms";
 import { PortalTabs } from "@/components/PortalTabs";
+import { FormSection } from "@/components/FormSection";
 import type { LocaleCode } from "@/lib/i18n/types";
 
 type Tab = "personal" | "insurance" | "verification" | "nationality" | "privacy";
@@ -74,6 +75,7 @@ export default function AccountProfilePage() {
   }, []);
 
   const a = loadLocaleBundle(locale).account;
+  const needsAttention = Boolean(user && !user.emailVerifiedAt) || !ghn;
   const profileStatusItems = [
     {
       label: "Email",
@@ -117,26 +119,44 @@ export default function AccountProfilePage() {
 
   return (
     <div className="gh-patient-page gh-patient-profile-page">
-      <header className="gh-patient-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
-          {a.profile.breadcrumb}
-        </p>
-        <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="flex items-center gap-2 text-2xl font-bold text-[var(--portal-text)]">
-            <UserRound className="size-6 text-[var(--portal-primary)]" aria-hidden />
-            {a.profile.title}
-          </h2>
-          {ghn && (
+      <PageHeader
+        eyebrow={a.profile.breadcrumb}
+        title={a.profile.title}
+        description={a.profile.subtitle}
+        actions={
+          ghn ? (
             <span
               className="rounded-md bg-[var(--portal-well)] px-3 py-1 font-mono text-sm font-semibold text-[var(--portal-text)]"
               title="Global Health Number — your unique patient identifier"
             >
               {ghn}
             </span>
-          )}
+          ) : undefined
+        }
+      />
+
+      {!loading && needsAttention ? (
+        <div
+          className="mb-5 flex items-start gap-2 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm"
+          style={{
+            borderColor: "var(--portal-warning)",
+            background: "var(--portal-warning-soft)",
+            color: "var(--portal-warning-text)",
+          }}
+        >
+          <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
+          <div>
+            <p className="font-semibold">Action needed</p>
+            <p className="text-xs">
+              {!user?.emailVerifiedAt && !ghn
+                ? "Verify your email and complete your profile to get your Global Health Number."
+                : !user?.emailVerifiedAt
+                  ? "Verify your email to unlock the full patient portal."
+                  : "Complete your profile to get your Global Health Number."}
+            </p>
+          </div>
         </div>
-        <p className="text-sm text-[var(--portal-muted)]">{a.profile.subtitle}</p>
-      </header>
+      ) : null}
 
       <AdminSummaryStrip className="mb-5" items={profileStatusItems} />
 
@@ -163,82 +183,88 @@ export default function AccountProfilePage() {
               </div>
             </div>
           ) : (
-            <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-4 p-6">
-              <label className="block">
-                <span className="gh-field-label">{a.profile.emailLabel}</span>
-                <input
-                  type="email"
-                  value={user?.email ?? ""}
-                  disabled
-                  className="gh-input mt-1 min-w-0 bg-[var(--portal-well)] text-[var(--portal-muted)]"
-                />
-                <p className="mt-1 text-xs text-[var(--portal-muted)]">
-                  {a.profile.emailNote}
-                </p>
-              </label>
+            <FormSection title={a.profile.title} description={a.profile.subtitle}>
+              <form onSubmit={onSubmit} className="gh-form-section__span-2 grid gap-4">
+                <label className="block">
+                  <span className="gh-field-label">{a.profile.emailLabel}</span>
+                  <input
+                    type="email"
+                    value={user?.email ?? ""}
+                    disabled
+                    className="gh-input mt-1 min-w-0 bg-[var(--portal-well)] text-[var(--portal-muted)]"
+                  />
+                  <p className="mt-1 text-xs text-[var(--portal-muted)]">
+                    {a.profile.emailNote}
+                  </p>
+                </label>
 
-              <label className="block">
-                <span className="gh-field-label">{a.profile.fullNameLabel}</span>
-                <input
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  required
-                  maxLength={120}
-                  className="gh-input mt-1 min-w-0"
-                />
-              </label>
+                <label className="block">
+                  <span className="gh-field-label">{a.profile.fullNameLabel}</span>
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required
+                    maxLength={120}
+                    className="gh-input mt-1 min-w-0"
+                  />
+                </label>
 
-              <label className="block">
-                <span className="gh-field-label">{a.profile.phoneLabel}</span>
-                <PhoneField
-                  key={user?.id ?? "anon"}
-                  name="phone"
-                  defaultValue={phone}
-                  onChange={setPhone}
-                  placeholder={a.profile.phonePlaceholder}
-                  className="mt-1 flex gap-2"
-                />
-                <p className="mt-1 text-xs text-[var(--portal-muted)]">
-                  {a.profile.phoneNote}
-                </p>
-              </label>
+                <label className="block">
+                  <span className="gh-field-label">{a.profile.phoneLabel}</span>
+                  <PhoneField
+                    key={user?.id ?? "anon"}
+                    name="phone"
+                    defaultValue={phone}
+                    onChange={setPhone}
+                    placeholder={a.profile.phonePlaceholder}
+                    className="mt-1 flex gap-2"
+                  />
+                  <p className="mt-1 text-xs text-[var(--portal-muted)]">
+                    {a.profile.phoneNote}
+                  </p>
+                </label>
 
-              <label className="block">
-                <span className="gh-field-label">{a.profile.dobLabel}</span>
-                <input
-                  type="date"
-                  value={dateOfBirth}
-                  onChange={(e) => setDateOfBirth(e.target.value)}
-                  max={new Date().toISOString().slice(0, 10)}
-                  className="gh-input mt-1 min-w-0"
-                />
-                <p className="mt-1 text-xs text-[var(--portal-muted)]">
-                  {a.profile.dobNote}
-                </p>
-              </label>
+                <label className="block">
+                  <span className="gh-field-label">{a.profile.dobLabel}</span>
+                  <input
+                    type="date"
+                    value={dateOfBirth}
+                    onChange={(e) => setDateOfBirth(e.target.value)}
+                    max={new Date().toISOString().slice(0, 10)}
+                    className="gh-input mt-1 min-w-0"
+                  />
+                  <p className="mt-1 text-xs text-[var(--portal-muted)]">
+                    {a.profile.dobNote}
+                  </p>
+                </label>
 
-              {msg ? (
-                <p
-                  className={`rounded-md px-3 py-2 text-sm ${
-                    msg.kind === "ok"
-                      ? "bg-emerald-50 text-emerald-800"
-                      : "bg-rose-50 text-rose-800"
-                  }`}
+                {msg ? (
+                  <p
+                    className="rounded-md px-3 py-2 text-sm"
+                    style={
+                      msg.kind === "ok"
+                        ? { background: "var(--portal-success-soft)", color: "var(--portal-success-text)" }
+                        : { background: "var(--portal-danger-soft)", color: "var(--portal-danger-text)" }
+                    }
+                  >
+                    {msg.text}
+                  </p>
+                ) : null}
+
+                <Btn
+                  type="submit"
+                  variant="primary"
+                  size="md"
+                  disabled={saving}
+                  loading={saving}
+                  iconLeft={<Save aria-hidden className="size-4" />}
+                  className="justify-self-start"
                 >
-                  {msg.text}
-                </p>
-              ) : null}
-
-              <button
-                type="submit"
-                disabled={saving}
-                className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
-              >
-                <Save aria-hidden className="size-4" />
-                {saving ? a.profile.saving : a.profile.saveChanges}
-              </button>
-            </form>
+                  {saving ? a.profile.saving : a.profile.saveChanges}
+                </Btn>
+              </form>
+            </FormSection>
           )}
           <PatientProfileSection i18n={a.profile} />
         </>

@@ -18,6 +18,7 @@ import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
 import { BlogFields } from "../../_components/blog-fields";
 import { parseBlogBody, validateBlogBody } from "../../_components/blog-form-parse";
+import { FormSection } from "@/components/FormSection";
 
 export const dynamic = "force-dynamic";
 
@@ -210,25 +211,19 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
       </form>
 
       {/* Translations section */}
-      <AdminCard className="mt-6">
-        <div className="gh-admin-blog-section-heading">
-          <Languages className="size-4 text-[var(--color-text-muted)]" aria-hidden />
-          <h3
-            className="m-0 text-[var(--color-text-primary)]"
-            style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-          >
+      <FormSection
+        className="mt-6"
+        title={
+          <span className="inline-flex items-center gap-2">
+            <Languages className="size-4 text-[var(--color-text-muted)]" aria-hidden />
             Translations
-          </h3>
-          {translations.length > 0 ? (
-            <Pill tone="brand">{translations.length}</Pill>
-          ) : null}
-        </div>
-        <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
-          Add locale-specific title, slug, and content for this post.
-        </p>
-
+          </span>
+        }
+        description="Add locale-specific title, slug, and content for this post."
+        right={translations.length > 0 ? <Pill tone="brand">{translations.length}</Pill> : null}
+      >
         {translations.length > 0 ? (
-          <div className="gh-admin-blog-translation-list mt-3">
+          <div className="gh-admin-blog-translation-list gh-form-section__span-2 mt-3">
             {translations.map((t) => (
               <div
                 key={t.locale}
@@ -264,7 +259,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
         ) : null}
 
         {editLocale ? (
-          <form action={saveTranslationAction} className="gh-admin-blog-translation-form mt-4">
+          <form action={saveTranslationAction} className="gh-admin-blog-translation-form gh-form-section__span-2 mt-4">
             <input type="hidden" name="locale" value={editLocale} />
             <h4 className="m-0 text-[14px] font-bold text-[var(--color-text-primary)]">
               {editTranslation ? "Edit" : "Add"} translation: {editLocale.toUpperCase()}
@@ -303,7 +298,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
             </div>
           </form>
         ) : (
-          <div className="mt-4">
+          <div className="gh-form-section__span-2 mt-4">
             <p className="mb-2 text-[12px] text-[var(--color-text-muted)]">
               Add a new locale (e.g. <code>fr</code>, <code>de</code>, <code>pt</code>):
             </p>
@@ -327,29 +322,23 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
             </form>
           </div>
         )}
-      </AdminCard>
+      </FormSection>
 
       {/* Countries multi-select */}
       {allCountries.length > 0 ? (
-        <AdminCard className="mt-4">
-          <div className="gh-admin-blog-section-heading">
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-            >
-              Country visibility
-            </h3>
+        <FormSection
+          className="mt-4"
+          title="Country visibility"
+          description="Which countries this post is visible in. Leaving all boxes unchecked makes the post global — it shows in every country."
+          right={
             <Pill tone={assignedCountryIds.size === 0 ? "brand" : "published"}>
               {assignedCountryIds.size === 0
                 ? "Global — all countries"
                 : `${assignedCountryIds.size} ${assignedCountryIds.size === 1 ? "country" : "countries"}`}
             </Pill>
-          </div>
-          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
-            Which countries this post is visible in. Leaving all boxes unchecked makes the post
-            global — it shows in every country.
-          </p>
-          <form action={saveCountriesAction} className="mt-4">
+          }
+        >
+          <form action={saveCountriesAction} className="gh-form-section__span-2 mt-4">
             <div className="gh-admin-blog-country-grid">
               {allCountries.map((c) => (
                 <label key={c.id} className="gh-admin-blog-country-option">
@@ -370,7 +359,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
               </button>
             </div>
           </form>
-        </AdminCard>
+        </FormSection>
       ) : null}
     </>
   );
