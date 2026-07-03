@@ -4,25 +4,24 @@
  * sidebar nav). Default OS scrollbars render with a near-white track
  * that fights the forest-green sidebar; this slim transparent + lime
  * thumb blends in. Apply via `className="gh-dark-scroll"`. */
+/* WebKit pseudos only — setting the standard `scrollbar-width`/`-color`
+ * in Chromium hands the bar to the OS overlay (invisible until scrolled)
+ * and suppresses this always-visible custom bar. Firefox falls back to
+ * its default visible scrollbar. */
 .gh-dark-scroll::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 .gh-dark-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-.gh-dark-scroll::-webkit-scrollbar-thumb {
-  background-color: rgba(200, 230, 160, 0.30);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 999px;
 }
-@supports (scrollbar-width: thin) {
-  .gh-dark-scroll {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(200, 230, 160, 0.35) transparent;
-  }
+.gh-dark-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(200, 230, 160, 0.45);
+  border-radius: 999px;
 }
 .gh-dark-scroll::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(200, 230, 160, 0.55);
+  background-color: rgba(200, 230, 160, 0.7);
 }
 .gh-dark-scroll::-webkit-scrollbar-corner {
   background: transparent;
@@ -2346,9 +2345,12 @@ a.gh-stat-card:hover .gh-stat-card__underline {
 }
 
 .gh-portal-main {
-  width: min(100%, var(--portal-main-max));
-  max-width: var(--portal-main-max);
-  margin-inline: auto;
+  /* Full-bleed work plane — fills everything right of the sidebar and
+   * below the topbar; the dark canvas only lives behind the chrome. */
+  width: 100%;
+  max-width: none;
+  flex: 1;
+  margin-inline: 0;
   padding: var(--portal-pad-y) var(--portal-pad-x);
   display: flex;
   flex-direction: column;
@@ -2362,7 +2364,7 @@ a.gh-stat-card:hover .gh-stat-card__underline {
   background-size: auto, auto, auto, auto, auto, cover;
   background-position: 0 0, 0 0, 0 0, 0 0, 0 0, center top;
   background-repeat: no-repeat;
-  border-radius: 18px 18px 0 0;
+  border-radius: 0;
   box-shadow: var(--lux-plane-edge);
 }
 
@@ -2372,22 +2374,6 @@ a.gh-stat-card:hover .gh-stat-card__underline {
 
 [data-portal="doctor"] .gh-portal-main {
   background-image: var(--lux-plane-bg-doctor), var(--lux-asset-veil-plane), var(--lux-asset-plane, none);
-}
-
-/* Visible dark canvas frame on the right + bottom of the ivory plane — the
- * two-world identity must survive a 1280px laptop, not just ultra-wide. */
-@media (min-width: 1024px) {
-  .gh-portal-main {
-    margin-right: 8px;
-    margin-bottom: 8px;
-  }
-}
-
-@media (min-width: 1280px) {
-  .gh-portal-main {
-    margin-right: clamp(16px, 1.4vw, 28px);
-    margin-bottom: clamp(16px, 1.4vw, 28px);
-  }
 }
 
 .gh-portal-main > .mx-auto[class*="max-w-"] {
@@ -8045,11 +8031,10 @@ a.gh-appointment-card:hover {
   text-decoration-color: var(--portal-mint);
 }
 
-.gh-portal-shell * {
-  scrollbar-width: thin;
-  scrollbar-color: var(--lux-scrollbar-thumb) transparent;
-}
-
+/* WebKit pseudos only: any non-initial `scrollbar-width`/`scrollbar-color`
+ * makes Chromium ignore the custom pseudo styling below and hands the bar
+ * to the Win11 overlay (invisible until scrolled). Firefox keeps its
+ * default visible scrollbar. */
 .gh-portal-shell *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
