@@ -1,5 +1,6 @@
 import type { AdminAssetDto, AdminAssetKind, AdminCountryDto } from "@/lib/admin/admin-api";
 import { AssetPathWithUpload } from "./asset-path-with-upload";
+import { FormSection } from "@/components/FormSection";
 
 type DoctorOption = { id: string; fullName: string; slug: string };
 
@@ -19,18 +20,10 @@ const KIND_OPTIONS: { value: AdminAssetKind; label: string }[] = [
 
 export function AssetFields({ countries, doctorOptions, initial }: Props) {
   return (
-    <div className="gh-admin-asset-fields">
-      <div className="gh-admin-asset-note">
-        <p className="font-medium text-[var(--color-text-primary)]">Paths & uploads</p>
-        <p className="mt-1">
-          Asset rows store a path or URL. When the API is connected to Railway Bucket (S3), use{" "}
-          <span className="font-medium text-[var(--color-text-primary)]">Upload image to bucket</span> to store the file
-          and fill a stable <code className="font-mono text-xs">https://</code> URL served via{" "}
-          <code className="font-mono text-xs">GET /api/media/…</code>. You can still paste local paths such as{" "}
-          <code className="font-mono text-xs">/images/…</code>.
-        </p>
-      </div>
-
+    <FormSection
+      title="Asset details"
+      description="Asset rows store a path or URL. When the API is connected to Railway Bucket (S3), use Upload image to bucket to store the file and fill a stable https:// URL served via GET /api/media/…. You can still paste local paths such as /images/…."
+    >
       <label className="flex flex-col gap-2">
         <span className="gh-field-label">Country (optional)</span>
         <select name="countryId" className="gh-select min-w-0" defaultValue={initial?.countryId ?? ""}>
@@ -58,35 +51,35 @@ export function AssetFields({ countries, doctorOptions, initial }: Props) {
         </span>
       </label>
 
-      <div className="gh-admin-asset-field-grid gh-admin-asset-field-grid--two">
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Kind</span>
-          <select
-            name="kind"
-            className="gh-select min-w-0"
-            required
-            defaultValue={initial?.kind ?? "IMAGE"}
-          >
-            {KIND_OPTIONS.map((k) => (
-              <option key={k.value} value={k.value}>
-                {k.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Key (unique per kind)</span>
-          <input
-            name="key"
-            className="gh-input min-w-0 font-mono text-sm"
-            required
-            defaultValue={initial?.key}
-            placeholder="e.g. homepage-hero"
-          />
-        </label>
-      </div>
+      <label className="flex flex-col gap-2">
+        <span className="gh-field-label">Kind</span>
+        <select
+          name="kind"
+          className="gh-select min-w-0"
+          required
+          defaultValue={initial?.kind ?? "IMAGE"}
+        >
+          {KIND_OPTIONS.map((k) => (
+            <option key={k.value} value={k.value}>
+              {k.label}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="flex flex-col gap-2">
+        <span className="gh-field-label">Key (unique per kind)</span>
+        <input
+          name="key"
+          className="gh-input min-w-0 font-mono text-sm"
+          required
+          defaultValue={initial?.key}
+          placeholder="e.g. homepage-hero"
+        />
+      </label>
 
-      <AssetPathWithUpload initialPath={initial?.path} />
+      <div className="gh-form-section__span-2">
+        <AssetPathWithUpload initialPath={initial?.path} />
+      </div>
 
       <label className="flex flex-col gap-2">
         <span className="gh-field-label">Alt text</span>
@@ -98,26 +91,24 @@ export function AssetFields({ countries, doctorOptions, initial }: Props) {
         />
       </label>
 
-      <div className="gh-admin-asset-field-grid gh-admin-asset-field-grid--two">
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Image title</span>
-          <input
-            name="title"
-            className="gh-input min-w-0"
-            defaultValue={initial?.title ?? ""}
-            placeholder="Short image title for SEO"
-          />
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Caption</span>
-          <input
-            name="caption"
-            className="gh-input min-w-0"
-            defaultValue={initial?.caption ?? ""}
-            placeholder="Optional visible/public caption"
-          />
-        </label>
-      </div>
+      <label className="flex flex-col gap-2">
+        <span className="gh-field-label">Image title</span>
+        <input
+          name="title"
+          className="gh-input min-w-0"
+          defaultValue={initial?.title ?? ""}
+          placeholder="Short image title for SEO"
+        />
+      </label>
+      <label className="flex flex-col gap-2">
+        <span className="gh-field-label">Caption</span>
+        <input
+          name="caption"
+          className="gh-input min-w-0"
+          defaultValue={initial?.caption ?? ""}
+          placeholder="Optional visible/public caption"
+        />
+      </label>
 
       <label className="flex flex-col gap-2">
         <span className="gh-field-label">Image description</span>
@@ -141,7 +132,7 @@ export function AssetFields({ countries, doctorOptions, initial }: Props) {
         />
       </label>
 
-      <label className="gh-admin-asset-active-row">
+      <label className="gh-form-section__span-2 gh-admin-asset-active-row">
         <input
           type="checkbox"
           name="isActive"
@@ -150,6 +141,6 @@ export function AssetFields({ countries, doctorOptions, initial }: Props) {
         />
         <span className="text-sm text-[var(--color-text-primary)]">Active (shown on public assets API when active)</span>
       </label>
-    </div>
+    </FormSection>
   );
 }

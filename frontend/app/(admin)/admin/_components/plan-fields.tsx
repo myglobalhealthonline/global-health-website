@@ -1,5 +1,6 @@
 import type { AdminPlanDetail, PlanType } from "@/lib/admin/plans-api";
 import { BenefitsUnlockField } from "./benefits-unlock-field";
+import { FormSection } from "@/components/FormSection";
 
 type CountryOpt = { id: string; code: string; name: string };
 
@@ -40,9 +41,9 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
   const isPremium = effectiveType === "PREMIUM";
 
   return (
-    <div className="gh-admin-plan-fields flex flex-col gap-6">
-      {/* Country + plan type: fixed facts shown as read-only chips. */}
-      <div className="gh-admin-plan-fixed-facts flex flex-wrap gap-x-10 gap-y-4">
+    <div className="gh-admin-plan-fields flex flex-col gap-5">
+      <FormSection title="Plan">
+        {/* Country + plan type: fixed facts shown as read-only chips. */}
         {pinId && pinned ? (
           <div>
             <span className="gh-field-label">Country</span>
@@ -51,7 +52,19 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
             </p>
             <input type="hidden" name="countryId" value={pinId} />
           </div>
-        ) : null}
+        ) : (
+          <label className="flex flex-col gap-2">
+            <span className="gh-field-label">Country</span>
+            <select name="countryId" className="gh-select min-w-0" required defaultValue="">
+              <option value="">Select country</option>
+              {countries.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name} ({c.code.toUpperCase()})
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
 
         <div>
           <span className="gh-field-label">Plan type</span>
@@ -61,23 +74,7 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
           <Help>Fixed — can&apos;t be changed after the plan is created.</Help>
           <input type="hidden" name="planType" value={effectiveType} />
         </div>
-      </div>
 
-      {!pinId ? (
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Country</span>
-          <select name="countryId" className="gh-select min-w-0" required defaultValue="">
-            <option value="">Select country</option>
-            {countries.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name} ({c.code.toUpperCase()})
-              </option>
-            ))}
-          </select>
-        </label>
-      ) : null}
-
-      <div className="gh-admin-plan-field-grid grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5">
           <span className="gh-field-label">Plan name</span>
           <input name="name" className="gh-input min-w-0" required defaultValue={initial?.name} placeholder="e.g. Essential Care" />
@@ -94,42 +91,42 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
           />
           <Help>Used in the web address. Lowercase, dashes-between-words. Leave as-is unless you know you need to change it.</Help>
         </label>
-      </div>
 
-      <label className="flex flex-col gap-1.5">
-        <span className="gh-field-label">Short description</span>
-        <input
-          name="shortDescription"
-          className="gh-input min-w-0"
-          defaultValue={initial?.shortDescription ?? ""}
-          placeholder="e.g. Affordable monthly access to online GP care."
-        />
-        <Help>One line shown under the title on the pricing card.</Help>
-      </label>
+        <label className="flex flex-col gap-1.5">
+          <span className="gh-field-label">Short description</span>
+          <input
+            name="shortDescription"
+            className="gh-input min-w-0"
+            defaultValue={initial?.shortDescription ?? ""}
+            placeholder="e.g. Affordable monthly access to online GP care."
+          />
+          <Help>One line shown under the title on the pricing card.</Help>
+        </label>
 
-      <label className="flex flex-col gap-1.5">
-        <span className="gh-field-label">Long description (optional)</span>
-        <textarea
-          name="longDescription"
-          className="gh-textarea min-w-0"
-          rows={3}
-          defaultValue={initial?.longDescription ?? ""}
-          placeholder="Optional. Most cards don't need this."
-        />
-      </label>
+        <label className="flex flex-col gap-1.5">
+          <span className="gh-field-label">Long description (optional)</span>
+          <textarea
+            name="longDescription"
+            className="gh-textarea min-w-0"
+            rows={3}
+            defaultValue={initial?.longDescription ?? ""}
+            placeholder="Optional. Most cards don't need this."
+          />
+        </label>
 
-      <label className="flex flex-col gap-1.5">
-        <span className="gh-field-label">Notes &amp; terms (optional)</span>
-        <textarea
-          name="notesTerms"
-          className="gh-textarea min-w-0"
-          rows={2}
-          defaultValue={initial?.notesTerms ?? ""}
-          placeholder="Optional small print shown under the card."
-        />
-      </label>
+        <label className="flex flex-col gap-1.5">
+          <span className="gh-field-label">Notes &amp; terms (optional)</span>
+          <textarea
+            name="notesTerms"
+            className="gh-textarea min-w-0"
+            rows={2}
+            defaultValue={initial?.notesTerms ?? ""}
+            placeholder="Optional small print shown under the card."
+          />
+        </label>
+      </FormSection>
 
-      <div className="gh-admin-plan-field-grid gh-admin-plan-field-grid--three grid gap-4 sm:grid-cols-3">
+      <FormSection title="Pricing & credits">
         <label className="flex flex-col gap-1.5">
           <span className="gh-field-label">Monthly price</span>
           <input
@@ -166,9 +163,7 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
           />
           <Help>Lower number shows first.</Help>
         </label>
-      </div>
 
-      <div className="gh-admin-plan-field-grid grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5">
           <span className="gh-field-label">GP visits included / month</span>
           <input
@@ -197,40 +192,40 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
           <input type="hidden" name="wellnessCreditsPerMonth" value="0" />
         )}
         <BenefitsUnlockField defaultValue={initial?.benefitsUnlockAfterPaidMonths ?? 2} />
-      </div>
 
-      <label className="flex flex-col gap-1.5">
-        <span className="gh-field-label">Badge (optional)</span>
-        <input
-          name="badgeLabel"
-          className="gh-input min-w-0"
-          defaultValue={initial?.badgeLabel ?? ""}
-          placeholder="e.g. Most popular"
-        />
-        <Help>Small ribbon shown on the card corner.</Help>
-      </label>
-
-      <div className="gh-admin-plan-checks flex flex-wrap gap-6 border-t border-[var(--color-border)] pt-5">
-        <label className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-primary)]">
-          <input type="checkbox" name="isFeatured" className="size-4" defaultChecked={initial?.isFeatured ?? false} />
-          Highlight this plan (recommended)
+        <label className="flex flex-col gap-1.5">
+          <span className="gh-field-label">Badge (optional)</span>
+          <input
+            name="badgeLabel"
+            className="gh-input min-w-0"
+            defaultValue={initial?.badgeLabel ?? ""}
+            placeholder="e.g. Most popular"
+          />
+          <Help>Small ribbon shown on the card corner.</Help>
         </label>
-        {isPremium ? (
-          <label
-            className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-primary)]"
-            title="Let family members share this plan's credits (Premium only)"
-          >
-            <input type="checkbox" name="familyEnabled" className="size-4" defaultChecked={initial?.familyEnabled ?? false} />
-            Allow family credit sharing
-          </label>
-        ) : null}
-        {initial ? (
+
+        <div className="gh-form-section__span-2 gh-admin-plan-checks flex flex-wrap gap-6 border-t border-[var(--color-border)] pt-5">
           <label className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-primary)]">
-            <input type="checkbox" name="isActive" className="size-4" defaultChecked={initial.isActive} />
-            Visible to customers
+            <input type="checkbox" name="isFeatured" className="size-4" defaultChecked={initial?.isFeatured ?? false} />
+            Highlight this plan (recommended)
           </label>
-        ) : null}
-      </div>
+          {isPremium ? (
+            <label
+              className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-primary)]"
+              title="Let family members share this plan's credits (Premium only)"
+            >
+              <input type="checkbox" name="familyEnabled" className="size-4" defaultChecked={initial?.familyEnabled ?? false} />
+              Allow family credit sharing
+            </label>
+          ) : null}
+          {initial ? (
+            <label className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-primary)]">
+              <input type="checkbox" name="isActive" className="size-4" defaultChecked={initial.isActive} />
+              Visible to customers
+            </label>
+          ) : null}
+        </div>
+      </FormSection>
     </div>
   );
 }
