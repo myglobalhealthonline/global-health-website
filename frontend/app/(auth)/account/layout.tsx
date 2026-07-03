@@ -109,10 +109,10 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       label: "Account",
       items: [
         { href: "/account/profile", label: a.nav.profile, icon: <UserRound className="size-4" aria-hidden /> },
-        { href: "/account/family", label: "Family members", icon: <Users className="size-4" aria-hidden /> },
-        { href: "/account/access-history", label: "Access history", icon: <History className="size-4" aria-hidden /> },
         { href: "/account/notifications", label: "Notifications", icon: <Bell className="size-4" aria-hidden />, badge: notifications?.unreadCount ?? 0 },
+        { href: "/account/family", label: "Family members", icon: <Users className="size-4" aria-hidden /> },
         { href: "/account/security", label: a.nav.security, icon: <ShieldCheck className="size-4" aria-hidden /> },
+        { href: "/account/access-history", label: "Access history", icon: <History className="size-4" aria-hidden /> },
       ],
     },
   ];

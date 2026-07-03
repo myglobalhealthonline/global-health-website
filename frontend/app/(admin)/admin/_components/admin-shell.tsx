@@ -146,18 +146,18 @@ const ORDER: Record<string, number> = {
   "/admin/newsletter": 7,
   "/admin/subscriptions": 7.5,
   "/admin/audit-log": 8,
+  // Country-scoped — by priority: controller → content → services →
+  // bookings → footer last (site chrome, lowest priority).
   "/admin/country-features": 0,
-  "/admin/country-home": 1,
-  "/admin/country-content": 2,
-  "/admin/footer": 3,
-  "/admin/pages": 4,
-  "/admin/services": 5,
-  "/admin/general-consultations": 6,
-  "/admin/specialist-consultations": 7,
-  "/admin/online-prescriptions": 8,
-  "/admin/health-tests": 9,
-  "/admin/plans": 9.5,
-  "/admin/appointments": 10,
+  "/admin/pages": 1,
+  "/admin/services": 2,
+  "/admin/general-consultations": 3,
+  "/admin/specialist-consultations": 4,
+  "/admin/online-prescriptions": 5,
+  "/admin/health-tests": 6,
+  "/admin/plans": 7,
+  "/admin/appointments": 8,
+  "/admin/footer": 9,
 };
 
 // Tighter labels — long phrases overflow the 260px sidebar.
