@@ -19,7 +19,7 @@ export function ConsultationDocumentsSection({
 
   return (
     <>
-      <p className="mt-3 text-[13px] leading-relaxed text-[var(--color-text-muted)]">
+      <p className="mt-3 text-[13px] leading-relaxed text-[var(--portal-muted)]">
         Generate exams, prescriptions, or absence certificates. Patient details and your
         registration are filled in automatically from records.
       </p>

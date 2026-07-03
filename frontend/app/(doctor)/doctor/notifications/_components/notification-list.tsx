@@ -61,60 +61,60 @@ export function NotificationListClient({
 
   return (
     <div className="gh-card gh-doctor-notification-list overflow-hidden p-0">
-      <div className="gh-doctor-list-toolbar flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3">
-        <p className="text-[12px] text-[var(--color-text-muted)]">
+      <div className="gh-doctor-list-toolbar flex items-center justify-between border-b border-[var(--portal-line)] px-4 py-3">
+        <p className="text-[12px] text-[var(--portal-muted)]">
           Newest first
         </p>
         <button
           type="button"
           onClick={markAll}
           disabled={pending}
-          className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+          className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
         >
           <CheckCheck className="size-3.5" /> Mark all read
         </button>
       </div>
-      <ul className="divide-y divide-[var(--color-border)]">
+      <ul className="divide-y divide-[var(--portal-line)]">
         {items.map((n) => {
           const unread = !n.readAt;
           return (
             <li
               key={n.id}
-              className={`gh-doctor-notification-row flex items-start gap-3 px-4 py-3 ${unread ? "bg-[var(--color-brand-primary)]/5" : ""}`}
+              className={`gh-doctor-notification-row flex items-start gap-3 px-4 py-3 ${unread ? "bg-[var(--portal-primary)]/5" : ""}`}
             >
               <span
                 className="mt-1 inline-block size-2 shrink-0 rounded-full"
                 style={{
                   background: unread
-                    ? "var(--color-brand-primary)"
+                    ? "var(--portal-primary)"
                     : "transparent",
                 }}
                 aria-hidden
               />
               <div className="min-w-0 flex-1">
                 <div className="gh-doctor-notification-title flex items-baseline justify-between gap-2">
-                  <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">
+                  <p className="text-[13px] font-semibold text-[var(--portal-text)]">
                     {n.label}
                     {n.byUserName ? (
-                      <span className="font-normal text-[var(--color-text-muted)]">
+                      <span className="font-normal text-[var(--portal-muted)]">
                         {" "}
                         · {n.byUserName}
                       </span>
                     ) : null}
                   </p>
-                  <time className="text-[11px] text-[var(--color-text-muted)]">
+                  <time className="text-[11px] text-[var(--portal-muted)]">
                     {formatAppDateTime(n.createdAt)}
                   </time>
                 </div>
                 {n.snippet ? (
-                  <p className="mt-1 line-clamp-2 text-[13px] text-[var(--color-text-muted)]">
+                  <p className="mt-1 line-clamp-2 text-[13px] text-[var(--portal-muted)]">
                     {n.snippet}
                   </p>
                 ) : null}
                 {n.appointmentId ? (
                   <Link
                     href={`/doctor/appointments/${n.appointmentId}`}
-                    className="mt-1 inline-block text-[12px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+                    className="mt-1 inline-block text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
                   >
                     Open appointment →
                   </Link>
@@ -125,7 +125,7 @@ export function NotificationListClient({
                   type="button"
                   onClick={() => markOne(n.id)}
                   disabled={pending}
-                  className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+                  className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
                   aria-label="Mark as read"
                 >
                   <Check className="size-3.5" />

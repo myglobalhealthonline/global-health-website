@@ -38,11 +38,11 @@ export function BrazilConsentPanel({
 
   if (countryCode.toLowerCase() !== "br") return null;
   if (submission === undefined) {
-    return <p className="text-sm text-[var(--color-text-muted)]">Loading…</p>;
+    return <p className="text-sm text-[var(--portal-muted)]">Loading…</p>;
   }
   if (!submission) {
     return (
-      <p className="text-sm text-[var(--color-text-muted)]">
+      <p className="text-sm text-[var(--portal-muted)]">
         No Brazil consent submission yet.
       </p>
     );
@@ -51,24 +51,24 @@ export function BrazilConsentPanel({
   return (
     <dl className="grid gap-2 text-sm">
       <div>
-        <dt className="text-[var(--color-text-muted)]">Payment</dt>
+        <dt className="text-[var(--portal-muted)]">Payment</dt>
         <dd className="font-semibold">{submission.paymentStatus}</dd>
       </div>
       <div>
-        <dt className="text-[var(--color-text-muted)]">Name</dt>
+        <dt className="text-[var(--portal-muted)]">Name</dt>
         <dd>{submission.fullName ?? "—"}</dd>
       </div>
       <div>
-        <dt className="text-[var(--color-text-muted)]">Email</dt>
+        <dt className="text-[var(--portal-muted)]">Email</dt>
         <dd>{submission.email ?? "—"}</dd>
       </div>
       <div>
-        <dt className="text-[var(--color-text-muted)]">Pharmacy</dt>
+        <dt className="text-[var(--portal-muted)]">Pharmacy</dt>
         <dd>{submission.pharmacy ?? "—"}</dd>
       </div>
       {submission.message ? (
         <div>
-          <dt className="text-[var(--color-text-muted)]">Message</dt>
+          <dt className="text-[var(--portal-muted)]">Message</dt>
           <dd>{submission.message}</dd>
         </div>
       ) : null}

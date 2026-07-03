@@ -461,7 +461,7 @@ export function DoctorProfileEditForm({
         <form onSubmit={onSubmitProfile}>
           <section className="gh-card gh-doctor-profile-form-card p-6">
             <h3
-              className="m-0 text-[var(--color-text-primary)]"
+              className="m-0 text-[var(--portal-text)]"
               style={{
                 fontFamily: "var(--font-display)",
                 fontSize: 16,
@@ -470,7 +470,7 @@ export function DoctorProfileEditForm({
             >
               Public profile
             </h3>
-            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
               {activeCountryName
                 ? `Patients see this on your ${activeCountryName} doctor card and profile page. Bio, registration, and payout details are saved per country.`
                 : "Patients see this on your doctor card and profile page."}
@@ -491,7 +491,7 @@ export function DoctorProfileEditForm({
               <div className="flex flex-col gap-3">
                 <div>
                   <span className="gh-field-label">Bio by language</span>
-                  <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                  <p className="mt-1 text-xs text-[var(--portal-muted)]">
                     The public website reads these localized bios first. Blank
                     non-default languages fall back to the default language.
                   </p>
@@ -533,7 +533,7 @@ export function DoctorProfileEditForm({
                   onChange={(e) => setQualifications(e.target.value)}
                   placeholder={"MB BCh BAO\nMRCPI\nFellowship in Cardiology"}
                 />
-                <span className="text-xs text-[var(--color-text-muted)]">
+                <span className="text-xs text-[var(--portal-muted)]">
                   One per line. Shown as a bullet list on your public profile.
                 </span>
               </label>
@@ -541,7 +541,7 @@ export function DoctorProfileEditForm({
               <div className="flex flex-col gap-2">
                 <span className="gh-field-label">Languages</span>
                 <LanguagePicker selected={languages} onChange={setLanguages} />
-                <span className="text-xs text-[var(--color-text-muted)]">
+                <span className="text-xs text-[var(--portal-muted)]">
                   Pick from the list so languages stay consistent on your
                   public profile + doctor cards.
                 </span>
@@ -556,20 +556,20 @@ export function DoctorProfileEditForm({
                     onChange={setWhatsappNumber}
                     className="flex min-w-0 gap-2"
                   />
-                  <span className="text-xs text-[var(--color-text-muted)]">
+                  <span className="text-xs text-[var(--portal-muted)]">
                     Optional. Patients can message you directly when set.
                   </span>
                 </label>
               </div>
 
               {activeMarket ? (
-                  <div className="gh-doctor-registration-card rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+                  <div className="gh-doctor-registration-card rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
                       <span className="gh-field-label">
                         {activeMarket.country.name} registration
                       </span>
-                      <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                      <p className="mt-1 text-xs text-[var(--portal-muted)]">
                         Edits are sent for admin re-verification before being
                         treated as verified.
                       </p>
@@ -578,7 +578,7 @@ export function DoctorProfileEditForm({
                       className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
                         activeMarket.isVerified
                           ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                          : "border-[var(--color-border)] bg-[var(--color-background)] text-[var(--color-text-muted)]"
+                          : "border-[var(--portal-line)] bg-[var(--portal-bg)] text-[var(--portal-muted)]"
                       }`}
                     >
                       {activeMarket.isVerified ? "Verified" : "Needs verification"}
@@ -637,7 +637,7 @@ export function DoctorProfileEditForm({
         <form onSubmit={onSubmitPayout}>
           <section className="gh-card gh-doctor-profile-form-card p-6">
             <h3
-              className="m-0 text-[var(--color-text-primary)]"
+              className="m-0 text-[var(--portal-text)]"
               style={{
                 fontFamily: "var(--font-display)",
                 fontSize: 16,
@@ -646,7 +646,7 @@ export function DoctorProfileEditForm({
             >
               Payout details
             </h3>
-            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
               {activeCountryName
                 ? `Your bank details for receiving payments in ${activeCountryName}.`
                 : "Your bank details for receiving payments."}{" "}
@@ -688,7 +688,7 @@ export function DoctorProfileEditForm({
                 {ibanFieldError ? (
                   <span className="text-xs text-red-600">{ibanFieldError}</span>
                 ) : (
-                  <span className="text-xs text-[var(--color-text-muted)]">
+                  <span className="text-xs text-[var(--portal-muted)]">
                     {activeMarketHasIban
                       ? "An IBAN is on file. Type a new one only to replace it."
                       : "Enter your full IBAN. It is stored encrypted and shown masked afterwards."}
@@ -737,7 +737,7 @@ export function DoctorProfileEditForm({
       <aside className="gh-doctor-side-stack grid gap-4 self-start">
         <section className="gh-card gh-doctor-profile-photo-card p-6">
           <h3
-            className="m-0 text-[var(--color-text-primary)]"
+            className="m-0 text-[var(--portal-text)]"
             style={{
               fontFamily: "var(--font-display)",
               fontSize: 16,
@@ -746,15 +746,15 @@ export function DoctorProfileEditForm({
           >
             Profile photo
           </h3>
-          <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+          <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
             JPEG / PNG / WebP / AVIF, up to 5MB.
           </p>
           <div className="gh-doctor-profile-photo mt-3 flex flex-col items-center gap-3">
             <div
               className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full"
               style={{
-                background: "var(--color-background-soft)",
-                border: "1px solid var(--color-border)",
+                background: "var(--portal-well)",
+                border: "1px solid var(--portal-line)",
               }}
             >
               {photoPath ? (
@@ -830,7 +830,7 @@ export function DoctorProfileEditForm({
 
         <section className="gh-card gh-doctor-admin-note-card p-6">
           <h3
-            className="m-0 text-[var(--color-text-primary)]"
+            className="m-0 text-[var(--portal-text)]"
             style={{
               fontFamily: "var(--font-display)",
               fontSize: 16,
@@ -839,7 +839,7 @@ export function DoctorProfileEditForm({
           >
             Admin-managed
           </h3>
-          <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+          <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
             SEO fields, FAQ sections, country approvals, URL slug, and eligible
             specialties stay admin-managed to keep verification and routing
             consistent. Registration edits are reviewed by admin.
@@ -862,15 +862,15 @@ function ProfileInsight({
   helper: string;
 }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3">
-      <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-        <span className="text-[var(--color-brand-primary)]">{icon}</span>
+    <div className="rounded-lg border border-[var(--portal-line)] bg-[var(--portal-well)] p-3">
+      <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+        <span className="text-[var(--portal-primary)]">{icon}</span>
         {label}
       </p>
-      <p className="mt-2 text-lg font-extrabold text-[var(--color-text-primary)]">
+      <p className="mt-2 text-lg font-extrabold text-[var(--portal-text)]">
         {value}
       </p>
-      <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+      <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
         {helper}
       </p>
     </div>

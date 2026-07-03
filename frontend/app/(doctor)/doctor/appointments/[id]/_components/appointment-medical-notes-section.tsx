@@ -17,7 +17,7 @@ type MedicalNoteRow = {
 };
 
 const TABLE_HEAD =
-  "text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]";
+  "text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]";
 
 export function AppointmentMedicalNotesSection({
   appointmentId,
@@ -95,7 +95,7 @@ export function AppointmentMedicalNotesSection({
 
   return (
     <HistorySection title="Medical notes" count={notes.length} defaultOpen>
-      <div className="border-b border-[var(--color-border)] p-4">
+      <div className="border-b border-[var(--portal-line)] p-4">
         <label className="flex flex-col gap-1">
           <span className="gh-field-label">Add medical note</span>
           <textarea
@@ -120,16 +120,16 @@ export function AppointmentMedicalNotesSection({
           </p>
         ) : null}
         {success ? (
-          <p className="mt-2 text-[12.5px] font-semibold text-[var(--color-brand-primary)]">
+          <p className="mt-2 text-[12.5px] font-semibold text-[var(--portal-primary)]">
             {success}
           </p>
         ) : null}
       </div>
 
       {loading ? (
-        <p className="px-4 py-3 text-[13px] text-[var(--color-text-muted)]">Loading notes…</p>
+        <p className="px-4 py-3 text-[13px] text-[var(--portal-muted)]">Loading notes…</p>
       ) : notes.length === 0 ? (
-        <p className="px-4 py-3 text-[13px] text-[var(--color-text-muted)]">
+        <p className="px-4 py-3 text-[13px] text-[var(--portal-muted)]">
           No medical notes yet for this appointment.
         </p>
       ) : (
@@ -150,7 +150,7 @@ export function AppointmentMedicalNotesSection({
               {notes.map((n) => (
                 <Fragment key={n.id}>
                   <tr
-                    className="cursor-pointer border-t border-[var(--color-border)] hover:bg-[var(--color-background-soft)]"
+                    className="cursor-pointer border-t border-[var(--portal-line)] hover:bg-[var(--portal-well)]"
                     onClick={() => setExpandedId(expandedId === n.id ? null : n.id)}
                   >
                     <td className="px-3 py-2.5 whitespace-nowrap">{session.sessionDate}</td>
@@ -160,20 +160,20 @@ export function AppointmentMedicalNotesSection({
                       <SessionTypeBadge label={session.consultationTypeLabel} />
                     </td>
                     <td className="px-3 py-2.5">{n.createdByName}</td>
-                    <td className="max-w-[200px] truncate px-3 py-2.5 text-[var(--color-text-muted)]">
+                    <td className="max-w-[200px] truncate px-3 py-2.5 text-[var(--portal-muted)]">
                       {n.content.slice(0, 80)}
                       {n.content.length > 80 ? "…" : ""}
                     </td>
                     <td className="px-3 py-2.5">
                       {expandedId === n.id ? (
-                        <ChevronDown className="size-4 text-[var(--color-text-muted)]" />
+                        <ChevronDown className="size-4 text-[var(--portal-muted)]" />
                       ) : (
-                        <ChevronRight className="size-4 text-[var(--color-text-muted)]" />
+                        <ChevronRight className="size-4 text-[var(--portal-muted)]" />
                       )}
                     </td>
                   </tr>
                   {expandedId === n.id ? (
-                    <tr className="border-t border-[var(--color-border)] bg-[var(--color-background-soft)]">
+                    <tr className="border-t border-[var(--portal-line)] bg-[var(--portal-well)]">
                       <td colSpan={7} className="px-4 py-3 whitespace-pre-wrap">
                         {n.content}
                       </td>

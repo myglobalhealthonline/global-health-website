@@ -17,7 +17,7 @@ export async function AllDocumentsCard({ email }: { email: string }) {
   if (!result.ok) {
     return (
       <section className="gh-card gh-doctor-all-documents-card p-6">
-        <h3 className="text-base font-bold text-[var(--color-text-primary)]">
+        <h3 className="text-base font-bold text-[var(--portal-text)]">
           All documents
         </h3>
         <p className="mt-2 text-[13px] text-rose-700">{result.message}</p>
@@ -30,21 +30,21 @@ export async function AllDocumentsCard({ email }: { email: string }) {
 
   return (
     <section className="gh-card gh-doctor-all-documents-card p-6">
-      <h3 className="text-base font-bold text-[var(--color-text-primary)]">
+      <h3 className="text-base font-bold text-[var(--portal-text)]">
         All documents
       </h3>
-      <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+      <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
         Every upload + generated PDF across this patient&apos;s appointments
         with you. Tap an appointment to open the workspace.
       </p>
 
       {isEmpty ? (
-        <div className="mt-4 rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-5 text-center">
-          <FileSearch className="mx-auto size-7 text-[var(--color-text-muted)]" aria-hidden />
-          <p className="mt-2 text-sm font-bold text-[var(--color-text-primary)]">
+        <div className="mt-4 rounded-lg border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] p-5 text-center">
+          <FileSearch className="mx-auto size-7 text-[var(--portal-muted)]" aria-hidden />
+          <p className="mt-2 text-sm font-bold text-[var(--portal-text)]">
             No documents on file
           </p>
-          <p className="mx-auto mt-1 max-w-sm text-[12px] text-[var(--color-text-muted)]">
+          <p className="mx-auto mt-1 max-w-sm text-[12px] text-[var(--portal-muted)]">
             Uploaded files and generated PDFs will collect here across this patient&apos;s appointments.
           </p>
         </div>
@@ -98,13 +98,13 @@ function Section({
 }) {
   return (
     <div className="gh-doctor-document-section">
-      <h4 className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+      <h4 className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
         {title}
       </h4>
       {rows.length === 0 ? (
-        <p className="text-[13px] text-[var(--color-text-muted)]">{empty}</p>
+        <p className="text-[13px] text-[var(--portal-muted)]">{empty}</p>
       ) : (
-        <ul className="gh-doctor-document-list divide-y divide-[var(--color-border)]">
+        <ul className="gh-doctor-document-list divide-y divide-[var(--portal-line)]">
           {rows.map((r) => (
             <li
               key={r.key}
@@ -112,27 +112,27 @@ function Section({
             >
               <div className="flex min-w-0 items-start gap-2">
                 <FileText
-                  className="size-4 shrink-0 text-[var(--color-text-muted)]"
+                  className="size-4 shrink-0 text-[var(--portal-muted)]"
                   aria-hidden
                 />
                 <div className="min-w-0">
-                  <p className="truncate text-[13px] font-semibold text-[var(--color-text-primary)]">
+                  <p className="truncate text-[13px] font-semibold text-[var(--portal-text)]">
                     {r.title}
                   </p>
-                  <p className="text-[11px] text-[var(--color-text-muted)]">
+                  <p className="text-[11px] text-[var(--portal-muted)]">
                     {r.meta} · {new Date(r.createdAt).toLocaleDateString()}
                   </p>
                 </div>
               </div>
               <div className="gh-doctor-document-actions flex shrink-0 flex-wrap items-center gap-2">
                 {r.badge ? (
-                  <span className="rounded-full bg-[var(--color-background-soft)] px-2 py-0.5 text-[11px] font-semibold text-[var(--color-text-muted)]">
+                  <span className="rounded-full bg-[var(--portal-well)] px-2 py-0.5 text-[11px] font-semibold text-[var(--portal-muted)]">
                     {r.badge}
                   </span>
                 ) : null}
                 <Link
                   href={`/doctor/appointments/${r.appointmentId}`}
-                  className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--color-border)] px-2 py-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)] sm:w-auto"
+                  className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)] sm:w-auto"
                 >
                   <Download className="size-3" aria-hidden /> Open
                 </Link>

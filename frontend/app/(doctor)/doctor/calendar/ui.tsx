@@ -301,7 +301,7 @@ export function DoctorCalendarUI({
     <div className="gh-doctor-calendar grid gap-4">
       {/* Toolbar */}
       <div className="gh-doctor-calendar-toolbar flex flex-wrap items-center justify-between gap-3">
-        <div className="gh-doctor-calendar-legend flex flex-wrap items-center gap-3 text-xs text-[var(--color-text-muted)]">
+        <div className="gh-doctor-calendar-legend flex flex-wrap items-center gap-3 text-xs text-[var(--portal-muted)]">
           <LegendDot className="bg-emerald-500" label="Open" />
           <LegendDot className="bg-rose-400" label="Blocked" />
           <LegendDot className="bg-blue-500" label="Booked" />
@@ -342,7 +342,7 @@ export function DoctorCalendarUI({
           {/* Day-level block controls */}
           {selectedDay ? (
             <div className="gh-doctor-calendar-day-card gh-card p-4">
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
                 {dayLabel(selectedDay)}
               </p>
               <div className="gh-doctor-calendar-day-actions mt-3 flex flex-wrap gap-2">
@@ -403,12 +403,12 @@ export function DoctorCalendarUI({
         {/* Add availability over a date + time range */}
         <div className="gh-doctor-calendar-form-card gh-card p-4">
           <div className="flex items-center gap-2">
-            <CalendarPlus className="size-4 text-[var(--color-text-muted)]" aria-hidden />
-            <h3 className="text-sm font-bold text-[var(--color-text-primary)]">
+            <CalendarPlus className="size-4 text-[var(--portal-muted)]" aria-hidden />
+            <h3 className="text-sm font-bold text-[var(--portal-text)]">
               Add availability
             </h3>
           </div>
-          <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+          <p className="mt-1 text-xs text-[var(--portal-muted)]">
             You&apos;re available on these dates, during these hours. Slots are
             generated and shown on the website, sized to each consultation&apos;s
             length. Times in {clinicTimezone} (clinic time).
@@ -484,10 +484,10 @@ export function DoctorCalendarUI({
         {/* Date + time range time off (vacation / leave) */}
         <div className="gh-doctor-calendar-form-card gh-card p-4">
           <div className="flex items-center gap-2">
-            <CalendarOff className="size-4 text-[var(--color-text-muted)]" aria-hidden />
-            <h3 className="text-sm font-bold text-[var(--color-text-primary)]">Time off</h3>
+            <CalendarOff className="size-4 text-[var(--portal-muted)]" aria-hidden />
+            <h3 className="text-sm font-bold text-[var(--portal-text)]">Time off</h3>
           </div>
-          <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+          <p className="mt-1 text-xs text-[var(--portal-muted)]">
             Block open slots across a date and time range — for holidays or
             leave. Booked appointments are never touched. Times in {tz}.
           </p>

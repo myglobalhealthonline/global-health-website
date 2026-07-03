@@ -73,11 +73,11 @@ export default async function DoctorNotificationsPage() {
         }))}
       />
 
-      <p className="mt-6 text-[12px] text-[var(--color-text-muted)]">
+      <p className="mt-6 text-[12px] text-[var(--portal-muted)]">
         See an appointment in the list? Open it from{" "}
         <Link
           href="/doctor/appointments"
-          className="font-semibold text-[var(--color-brand-primary)] underline-offset-2 hover:underline"
+          className="font-semibold text-[var(--portal-primary)] underline-offset-2 hover:underline"
         >
           My appointments
         </Link>

@@ -235,7 +235,7 @@ export function DoctorAvailabilityUI({
               <div className="gh-doctor-slot-day-list grid gap-4">
                 {Array.from(slotsByDay.entries()).map(([day, daySlots]) => (
                   <div key={day}>
-                    <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
                       {day}
                     </p>
                     <div className="gh-doctor-slot-grid mt-2 flex flex-wrap gap-2">
@@ -316,20 +316,20 @@ export function DoctorAvailabilityUI({
                   {windows.map((w) => (
                     <li
                       key={w.id}
-                      className="gh-doctor-window-row flex items-center justify-between gap-3 rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2"
+                      className="gh-doctor-window-row flex items-center justify-between gap-3 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2"
                     >
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-[var(--color-text-primary)]">
+                        <p className="text-sm font-semibold text-[var(--portal-text)]">
                           {WEEKDAYS.find((d) => d.value === w.weekday)?.label ?? "—"}{" "}
                           · {minutesToTime(w.startMinute)}–
                           {minutesToTime(w.endMinute)}
                         </p>
-                        <p className="text-[11px] text-[var(--color-text-muted)]">
+                        <p className="text-[11px] text-[var(--portal-muted)]">
                           {w.slotDurationMinutes}-min slots
                           {!w.isActive ? " · paused" : ""}
                         </p>
                         {w.effectiveFrom || w.effectiveUntil ? (
-                          <p className="text-[10px] text-[var(--color-text-muted)]">
+                          <p className="text-[10px] text-[var(--portal-muted)]">
                             {w.effectiveFrom
                               ? `from ${new Date(w.effectiveFrom).toLocaleDateString("en-IE")}`
                               : "from always"}
@@ -437,7 +437,7 @@ export function DoctorAvailabilityUI({
                   />
                 </label>
               </div>
-              <p className="text-[11px] text-[var(--color-text-muted)]">
+              <p className="text-[11px] text-[var(--portal-muted)]">
                 Leave dates empty for an always-active recurring window. Use
                 them for holidays, vacations, or seasonal hours.
               </p>
@@ -456,7 +456,7 @@ export function DoctorAvailabilityUI({
               <Legend tone="booked" label="Booked · patient claimed" />
               <Legend tone="held" label="Held · in someone's cart" />
             </ul>
-            <p className="px-5 pb-5 text-[11px] text-[var(--color-text-muted)]">
+            <p className="px-5 pb-5 text-[11px] text-[var(--portal-muted)]">
               Times shown in {countryTimeZone} (clinic time). Patients booking
               this clinic see the same times.
             </p>

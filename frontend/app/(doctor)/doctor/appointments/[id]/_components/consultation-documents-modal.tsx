@@ -380,16 +380,16 @@ export function ConsultationDocumentsModal({
         aria-label="Close dialog"
         onClick={onClose}
       />
-      <div className="gh-doctor-doc-modal-panel relative z-10 flex max-h-[min(92vh,900px)] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-[var(--color-border)] bg-white shadow-2xl">
-        <div className="gh-doctor-doc-modal-header flex shrink-0 items-center justify-between border-b border-[var(--color-border)] bg-white px-4 py-3">
+      <div className="gh-doctor-doc-modal-panel relative z-10 flex max-h-[min(92vh,900px)] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-[var(--portal-line)] bg-white shadow-2xl">
+        <div className="gh-doctor-doc-modal-header flex shrink-0 items-center justify-between border-b border-[var(--portal-line)] bg-white px-4 py-3">
           <div>
             <h2
               id="consultation-docs-title"
-              className="text-lg font-bold text-[var(--color-text-primary)]"
+              className="text-lg font-bold text-[var(--portal-text)]"
             >
               Consultation documents
             </h2>
-            <p className="text-xs text-[var(--color-text-muted)]">
+            <p className="text-xs text-[var(--portal-muted)]">
               Patient &amp; prescriber details are filled from records — enter clinical
               content only.
             </p>
@@ -397,14 +397,14 @@ export function ConsultationDocumentsModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md p-1 text-[var(--color-text-muted)] hover:bg-[var(--color-background-soft)]"
+            className="rounded-md p-1 text-[var(--portal-muted)] hover:bg-[var(--portal-well)]"
             aria-label="Close"
           >
             <X className="size-5" />
           </button>
         </div>
 
-        <div className="gh-doctor-doc-modal-tabs flex shrink-0 gap-1 overflow-x-auto border-b border-[var(--color-border)] bg-white px-3 py-2">
+        <div className="gh-doctor-doc-modal-tabs flex shrink-0 gap-1 overflow-x-auto border-b border-[var(--portal-line)] bg-white px-3 py-2">
           {TABS.map((t) => (
             <button
               key={t.id}
@@ -412,8 +412,8 @@ export function ConsultationDocumentsModal({
               onClick={() => setTab(t.id)}
               className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-semibold ${
                 tab === t.id
-                  ? "bg-[var(--color-brand-primary)] text-white"
-                  : "text-[var(--color-text-muted)] hover:bg-[var(--color-background-soft)]"
+                  ? "bg-[var(--portal-primary)] text-white"
+                  : "text-[var(--portal-muted)] hover:bg-[var(--portal-well)]"
               }`}
             >
               {t.label}
@@ -431,7 +431,7 @@ export function ConsultationDocumentsModal({
           ) : null}
 
           {contextLoading ? (
-            <p className="mb-4 flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+            <p className="mb-4 flex items-center gap-2 text-sm text-[var(--portal-muted)]">
               <Loader2 className="size-4 animate-spin" aria-hidden />
               Loading…
             </p>
@@ -453,7 +453,7 @@ export function ConsultationDocumentsModal({
           ) : null}
 
           {(tab === "exams" || tab === "medicine" || tab === "absence" || tab === "certificate") && !contextLoading ? (
-            <p className="mb-3 text-xs text-[var(--color-text-muted)]">
+            <p className="mb-3 text-xs text-[var(--portal-muted)]">
               Patient and prescriber details from records are applied to the PDF automatically
               — enter clinical content only.
             </p>
@@ -461,7 +461,7 @@ export function ConsultationDocumentsModal({
 
           {tab === "overview" ? (
             <div className="space-y-3">
-              <p className="text-sm text-[var(--color-text-muted)]">
+              <p className="text-sm text-[var(--portal-muted)]">
                 Choose a document type. Only the fields below need your input; name,
                 address, dates, and registration are applied automatically.
               </p>
@@ -491,7 +491,7 @@ export function ConsultationDocumentsModal({
                   onClick={() => setTab("certificate")}
                 />
               </div>
-              <p className="text-xs text-[var(--color-text-muted)]">
+              <p className="text-xs text-[var(--portal-muted)]">
                 Medical notes and Review &amp; send live on the Documents tab (not in this
                 dialog).
               </p>
@@ -503,7 +503,7 @@ export function ConsultationDocumentsModal({
               <label className="block text-sm font-semibold">
                 Examinations requested <span className="text-red-600">*</span>
               </label>
-              <p className="text-xs text-[var(--color-text-muted)]">One test per line</p>
+              <p className="text-xs text-[var(--portal-muted)]">One test per line</p>
               <textarea
                 value={exams}
                 onChange={(e) => setExams(e.target.value)}
@@ -537,7 +537,7 @@ export function ConsultationDocumentsModal({
 
           {tab === "medicine" ? (
             <div className="space-y-3">
-              <p className="text-sm text-[var(--color-text-muted)]">
+              <p className="text-sm text-[var(--portal-muted)]">
                 PDF for the patient record — review and send by email below, or submit via your
                 national health portal when required.
               </p>
@@ -558,7 +558,7 @@ export function ConsultationDocumentsModal({
               {meds.length < 7 ? (
                 <button
                   type="button"
-                  className="text-xs font-semibold text-[var(--color-brand-primary)]"
+                  className="text-xs font-semibold text-[var(--portal-primary)]"
                   onClick={() => setMeds([...meds, ""])}
                 >
                   + Add medication
@@ -643,7 +643,7 @@ export function ConsultationDocumentsModal({
 
           {tab === "certificate" ? (
             <div className="space-y-3">
-              <p className="text-xs text-[var(--color-text-muted)]">
+              <p className="text-xs text-[var(--portal-muted)]">
                 A QR code for authenticity verification is embedded automatically. Scan it to
                 confirm the certificate ID matches the one on the document.
               </p>
@@ -664,8 +664,8 @@ export function ConsultationDocumentsModal({
                   onClick={() => setCertDateMode("single")}
                   className={`rounded-md px-3 py-1.5 text-xs font-semibold ${
                     certDateMode === "single"
-                      ? "bg-[var(--color-brand-primary)] text-white"
-                      : "border border-[var(--color-border)] text-[var(--color-text-muted)]"
+                      ? "bg-[var(--portal-primary)] text-white"
+                      : "border border-[var(--portal-line)] text-[var(--portal-muted)]"
                   }`}
                 >
                   Single day
@@ -675,8 +675,8 @@ export function ConsultationDocumentsModal({
                   onClick={() => setCertDateMode("range")}
                   className={`rounded-md px-3 py-1.5 text-xs font-semibold ${
                     certDateMode === "range"
-                      ? "bg-[var(--color-brand-primary)] text-white"
-                      : "border border-[var(--color-border)] text-[var(--color-text-muted)]"
+                      ? "bg-[var(--portal-primary)] text-white"
+                      : "border border-[var(--portal-line)] text-[var(--portal-muted)]"
                   }`}
                 >
                   Date range
@@ -686,8 +686,8 @@ export function ConsultationDocumentsModal({
                   onClick={() => setCertDateMode("none")}
                   className={`rounded-md px-3 py-1.5 text-xs font-semibold ${
                     certDateMode === "none"
-                      ? "bg-[var(--color-brand-primary)] text-white"
-                      : "border border-[var(--color-border)] text-[var(--color-text-muted)]"
+                      ? "bg-[var(--portal-primary)] text-white"
+                      : "border border-[var(--portal-line)] text-[var(--portal-muted)]"
                   }`}
                 >
                   No date
@@ -777,16 +777,16 @@ function OverviewCard({
     <button
       type="button"
       onClick={onClick}
-      className="flex items-start justify-between gap-2 rounded-lg border border-[var(--color-border)] p-3 text-left hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)]"
+      className="flex items-start justify-between gap-2 rounded-lg border border-[var(--portal-line)] p-3 text-left hover:border-[var(--portal-primary)] hover:bg-[var(--portal-well)]"
     >
       <div>
-        <p className="flex items-center gap-1.5 text-sm font-bold text-[var(--color-text-primary)]">
-          <Icon className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
+        <p className="flex items-center gap-1.5 text-sm font-bold text-[var(--portal-text)]">
+          <Icon className="size-4 text-[var(--portal-primary)]" aria-hidden />
           {title}
         </p>
-        <p className="mt-1 text-xs text-[var(--color-text-muted)]">{description}</p>
+        <p className="mt-1 text-xs text-[var(--portal-muted)]">{description}</p>
       </div>
-      <ChevronRight className="mt-0.5 size-4 shrink-0 text-[var(--color-text-muted)]" aria-hidden />
+      <ChevronRight className="mt-0.5 size-4 shrink-0 text-[var(--portal-muted)]" aria-hidden />
     </button>
   );
 }

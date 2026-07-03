@@ -177,13 +177,13 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
     return (
       <div className="gh-card gh-doctor-empty-state p-8 text-center">
         <Stethoscope
-          className="mx-auto size-6 text-[var(--color-text-muted)]"
+          className="mx-auto size-6 text-[var(--portal-muted)]"
           aria-hidden
         />
-        <p className="mt-3 text-sm font-semibold text-[var(--color-text-primary)]">
+        <p className="mt-3 text-sm font-semibold text-[var(--portal-text)]">
           No services available yet
         </p>
-        <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+        <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
           Once services are configured for your country, they will appear here
           for you to request.
         </p>
@@ -194,19 +194,19 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
   return (
     <div className="gh-doctor-service-selection grid gap-5">
       {/* How it works */}
-      <div className="gh-doctor-service-explainer rounded-[var(--radius-card-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-background-soft)] px-5 py-4">
-        <p className="m-0 text-[13px] leading-relaxed text-[var(--color-text-muted)]">
+      <div className="gh-doctor-service-explainer rounded-[var(--radius-card-sm)] border border-[var(--portal-line-soft)] bg-[var(--portal-well)] px-5 py-4">
+        <p className="m-0 text-[13px] leading-relaxed text-[var(--portal-muted)]">
           Select the services you are qualified to provide and save your
           request.{" "}
           {approvalRequired ? (
             <>
               New selections are submitted to an administrator for approval —
-              <span className="font-semibold text-[var(--color-text-primary)]">
+              <span className="font-semibold text-[var(--portal-text)]">
                 {" "}
                 approved
               </span>{" "}
               services become bookable, others stay{" "}
-              <span className="font-semibold text-[var(--color-text-primary)]">
+              <span className="font-semibold text-[var(--portal-text)]">
                 rejected
               </span>
               .
@@ -284,8 +284,8 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
               onClick={() => toggle(service)}
               className={`gh-doctor-service-card group relative flex flex-col gap-3 rounded-[var(--radius-card-sm)] border p-4 text-left transition-all ${
                 checked
-                  ? "border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)]/[0.04] shadow-sm"
-                  : "border-[var(--color-border-subtle)] hover:border-[var(--color-brand-primary)]/40 hover:shadow-sm"
+                  ? "border-[var(--portal-primary)] bg-[var(--portal-primary)]/[0.04] shadow-sm"
+                  : "border-[var(--portal-line-soft)] hover:border-[var(--portal-primary)]/40 hover:shadow-sm"
               } ${isAdminLocked ? "cursor-not-allowed opacity-90" : "cursor-pointer"}`}
             >
               <div className="flex items-start justify-between gap-3">
@@ -293,8 +293,8 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
                   aria-hidden
                   className={`grid size-5 shrink-0 place-items-center rounded-md border transition-colors ${
                     checked
-                      ? "border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] text-white"
-                      : "border-[var(--color-border)] bg-[var(--color-surface,white)]"
+                      ? "border-[var(--portal-primary)] bg-[var(--portal-primary)] text-white"
+                      : "border-[var(--portal-line)] bg-[var(--color-surface,white)]"
                   }`}
                 >
                   {checked ? <Check className="size-3.5" strokeWidth={3} /> : null}
@@ -304,31 +304,31 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
                     {pill.label}
                   </Pill>
                 ) : (
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--portal-muted)]">
                     Not requested
                   </span>
                 )}
               </div>
 
               <div className="min-w-0">
-                <p className="m-0 text-[14.5px] font-semibold text-[var(--color-text-primary)]">
+                <p className="m-0 text-[14.5px] font-semibold text-[var(--portal-text)]">
                   {service.name}
                 </p>
                 {service.summary ? (
-                  <p className="mt-1 line-clamp-2 text-[13px] text-[var(--color-text-muted)]">
+                  <p className="mt-1 line-clamp-2 text-[13px] text-[var(--portal-muted)]">
                     {service.summary}
                   </p>
                 ) : null}
               </div>
 
-              <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-[var(--color-border-subtle)] pt-3 text-[12px] text-[var(--color-text-muted)]">
+              <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-[var(--portal-line-soft)] pt-3 text-[12px] text-[var(--portal-muted)]">
                 {service.durationMinutes != null ? (
                   <span className="inline-flex items-center gap-1">
                     <Clock className="size-3.5" aria-hidden />
                     {service.durationMinutes} min
                   </span>
                 ) : null}
-                <span className="font-mono font-semibold text-[var(--color-text-body)]">
+                <span className="font-mono font-semibold text-[var(--portal-text-2)]">
                   {formatPrice(service.basePriceCents, service.currencyCode)}
                 </span>
                 {isAdminLocked ? (
@@ -345,13 +345,13 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
 
       {/* Next steps: contact admin + documents */}
       {approvalRequired ? (
-        <div className="gh-doctor-service-next-step flex items-start gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-background-soft)] px-5 py-4">
+        <div className="gh-doctor-service-next-step flex items-start gap-3 rounded-[var(--radius-card-sm)] border border-[var(--portal-line-soft)] bg-[var(--portal-well)] px-5 py-4">
           <Mail
-            className="mt-0.5 size-4 shrink-0 text-[var(--color-brand-primary)]"
+            className="mt-0.5 size-4 shrink-0 text-[var(--portal-primary)]"
             aria-hidden
           />
-          <div className="text-[13px] leading-relaxed text-[var(--color-text-muted)]">
-            <p className="m-0 font-semibold text-[var(--color-text-primary)]">
+          <div className="text-[13px] leading-relaxed text-[var(--portal-muted)]">
+            <p className="m-0 font-semibold text-[var(--portal-text)]">
               After you save: contact the admin team
             </p>
             <p className="mt-1">
@@ -366,7 +366,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
 
       <div className="gh-doctor-form-actions flex items-center justify-end gap-3">
         {dirty ? (
-          <span className="text-[12.5px] text-[var(--color-text-muted)]">
+          <span className="text-[12.5px] text-[var(--portal-muted)]">
             Unsaved changes
           </span>
         ) : null}

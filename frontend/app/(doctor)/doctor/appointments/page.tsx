@@ -205,7 +205,7 @@ export default async function DoctorAppointmentsPage({
         <div className="gh-card gh-doctor-table-card p-0 overflow-hidden">
           <div className="hidden md:block gh-doctor-table-wrap overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
+            <thead className="bg-[var(--portal-well)] text-left text-xs uppercase tracking-wider text-[var(--portal-muted)]">
               <tr>
                 <th className="px-4 py-3 font-semibold">Patient</th>
                 <th className="px-4 py-3 font-semibold">Type</th>
@@ -215,16 +215,16 @@ export default async function DoctorAppointmentsPage({
                 <th className="px-4 py-3 font-semibold text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--color-border)]">
+            <tbody className="divide-y divide-[var(--portal-line)]">
               {appointments.map((a: DoctorAppointment) => (
                 <tr key={a.id}>
                   <td className="px-4 py-3">
-                    <p className="font-semibold text-[var(--color-text-primary)]">
+                    <p className="font-semibold text-[var(--portal-text)]">
                       {a.fullName}
                     </p>
-                    <p className="text-xs text-[var(--color-text-muted)]">{a.email}</p>
+                    <p className="text-xs text-[var(--portal-muted)]">{a.email}</p>
                     {a.phone ? (
-                      <p className="text-xs text-[var(--color-text-muted)]">{a.phone}</p>
+                      <p className="text-xs text-[var(--portal-muted)]">{a.phone}</p>
                     ) : null}
                   </td>
                   <td className="px-4 py-3 capitalize">{a.consultationType}</td>
@@ -258,7 +258,7 @@ export default async function DoctorAppointmentsPage({
                       ) : null}
                       <Link
                         href={`/doctor/appointments/${a.id}`}
-                        className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] px-2.5 py-1.5 text-xs font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                        className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1.5 text-xs font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
                       >
                         Open <ChevronRight className="size-3.5" />
                       </Link>
@@ -273,14 +273,14 @@ export default async function DoctorAppointmentsPage({
             {appointments.map((a) => (
               <article
                 key={a.id}
-                className="gh-doctor-mobile-card rounded-[10px] border border-[var(--color-border)] bg-white p-4"
+                className="gh-doctor-mobile-card rounded-[10px] border border-[var(--portal-line)] bg-white p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-[var(--color-text-primary)]">
+                    <p className="truncate text-sm font-bold text-[var(--portal-text)]">
                       {a.fullName}
                     </p>
-                    <p className="mt-0.5 truncate text-xs text-[var(--color-text-muted)]">
+                    <p className="mt-0.5 truncate text-xs text-[var(--portal-muted)]">
                       {a.email}
                     </p>
                   </div>
@@ -290,14 +290,14 @@ export default async function DoctorAppointmentsPage({
                 </div>
                 <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <dt className="text-[var(--color-text-muted)]">Type</dt>
-                    <dd className="font-semibold capitalize text-[var(--color-text-primary)]">
+                    <dt className="text-[var(--portal-muted)]">Type</dt>
+                    <dd className="font-semibold capitalize text-[var(--portal-text)]">
                       {a.consultationType}
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-[var(--color-text-muted)]">Scheduled</dt>
-                    <dd className="font-semibold text-[var(--color-text-primary)]">
+                    <dt className="text-[var(--portal-muted)]">Scheduled</dt>
+                    <dd className="font-semibold text-[var(--portal-text)]">
                       {a.scheduledAt
                         ? new Date(a.scheduledAt).toLocaleString(undefined, {
                             month: "short",
@@ -309,14 +309,14 @@ export default async function DoctorAppointmentsPage({
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-[var(--color-text-muted)]">Payment</dt>
-                    <dd className="font-semibold text-[var(--color-text-primary)]">
+                    <dt className="text-[var(--portal-muted)]">Payment</dt>
+                    <dd className="font-semibold text-[var(--portal-text)]">
                       {a.paymentStatus}
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-[var(--color-text-muted)]">Meeting</dt>
-                    <dd className="font-semibold text-[var(--color-text-primary)]">
+                    <dt className="text-[var(--portal-muted)]">Meeting</dt>
+                    <dd className="font-semibold text-[var(--portal-text)]">
                       {a.meetingUrl ? "Ready" : "Not set"}
                     </dd>
                   </div>
@@ -343,7 +343,7 @@ export default async function DoctorAppointmentsPage({
             ))}
           </div>
           {result.data.pagination.totalPages > 1 ? (
-            <div className="border-t border-[var(--color-border)] px-4 py-3 text-xs text-[var(--color-text-muted)]">
+            <div className="border-t border-[var(--portal-line)] px-4 py-3 text-xs text-[var(--portal-muted)]">
               Page {result.data.pagination.page} of {result.data.pagination.totalPages} ({result.data.pagination.total} total)
             </div>
           ) : null}

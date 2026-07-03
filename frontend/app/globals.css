@@ -6412,6 +6412,10 @@ a.gh-stat-card:hover {
   transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
 }
 
+.gh-doctor-quick-card:hover {
+  box-shadow: var(--portal-shadow-hover);
+}
+
 .gh-doctor-service-card:hover,
 .gh-doctor-template-row:hover,
 .gh-doctor-window-row:hover,

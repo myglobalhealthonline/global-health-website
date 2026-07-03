@@ -146,7 +146,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
     <div className="gh-doctor-detail-grid gh-doctor-templates-layout grid gap-4">
       <div className="gh-card gh-doctor-template-list p-6">
         <h3
-          className="m-0 text-[var(--color-text-primary)]"
+          className="m-0 text-[var(--portal-text)]"
           style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
         >
           Your templates
@@ -163,24 +163,24 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
             {items.map((t) => (
               <li
                 key={t.id}
-                className="gh-doctor-template-row rounded-md border border-[var(--color-border)] bg-white p-4"
+                className="gh-doctor-template-row rounded-md border border-[var(--portal-line)] bg-white p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-[14px] font-semibold text-[var(--color-text-primary)]">
+                    <p className="text-[14px] font-semibold text-[var(--portal-text)]">
                       {t.title}
                       {t.ownedBySelf ? null : (
-                        <span className="ml-2 rounded-full bg-[var(--color-background-soft)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                        <span className="ml-2 rounded-full bg-[var(--portal-well)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
                           Shared
                         </span>
                       )}
                     </p>
                     {t.description ? (
-                      <p className="text-[12.5px] text-[var(--color-text-muted)]">
+                      <p className="text-[12.5px] text-[var(--portal-muted)]">
                         {t.description}
                       </p>
                     ) : null}
-                    <p className="mt-1 text-[11.5px] text-[var(--color-text-muted)]">
+                    <p className="mt-1 text-[11.5px] text-[var(--portal-muted)]">
                       {t.fields.length} fields · updated{" "}
                       {formatAppDateTimeShort(t.updatedAt)}
                     </p>
@@ -189,7 +189,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
                     <button
                       type="button"
                       onClick={() => remove(t.id)}
-                      className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-status-error)]"
+                      className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
                       aria-label="Delete template"
                     >
                       <Trash2 className="size-3.5" />
@@ -204,12 +204,12 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
 
       <form onSubmit={create} className="gh-card gh-doctor-template-form p-6">
         <h3
-          className="m-0 text-[var(--color-text-primary)]"
+          className="m-0 text-[var(--portal-text)]"
           style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
         >
           New template
         </h3>
-        <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+        <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
           Build a simple form. Pick choice for radio-style options.
         </p>
         <div className="mt-3 grid gap-3">
@@ -236,17 +236,17 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
           {fields.map((f, i) => (
             <div
               key={i}
-              className="gh-doctor-template-field rounded-md border border-[var(--color-border)] p-3"
+              className="gh-doctor-template-field rounded-md border border-[var(--portal-line)] p-3"
             >
               <div className="flex items-start justify-between gap-2">
-                <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
                   Field {i + 1}
                 </p>
                 {fields.length > 1 ? (
                   <button
                     type="button"
                     onClick={() => removeField(i)}
-                    className="text-[11px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-status-error)]"
+                    className="text-[11px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
                   >
                     Remove
                   </button>
@@ -304,7 +304,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
           <button
             type="button"
             onClick={addField}
-            className="inline-flex items-center gap-1 self-start text-[13px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+            className="inline-flex items-center gap-1 self-start text-[13px] font-semibold text-[var(--portal-primary)] hover:underline"
           >
             <Plus className="size-3.5" /> Add field
           </button>

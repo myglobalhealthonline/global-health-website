@@ -78,7 +78,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
       <div className="gh-card p-6">
         <Link
           href="/doctor/appointments"
-          className="mb-3 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+          className="mb-3 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
         >
           <ArrowLeft className="size-3.5" /> Back to appointments
         </Link>
@@ -117,20 +117,20 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     <div className="gh-doctor-appointment-workspace">
       <Link
         href="/doctor/appointments"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
       >
         <ArrowLeft className="size-3.5" /> Back to appointments
       </Link>
 
       <header className="gh-doctor-appointment-header mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
             Appointment
           </p>
-          <h2 className="mt-1 text-2xl font-bold text-[var(--color-text-primary)]">
+          <h2 className="mt-1 text-2xl font-bold text-[var(--portal-text)]">
             {appointment.fullName}
           </h2>
-          <p className="text-sm text-[var(--color-text-muted)]">
+          <p className="text-sm text-[var(--portal-muted)]">
             {appointment.consultationType} ·{" "}
             {appointment.scheduledAt
               ? formatAppDualTz(
@@ -148,7 +148,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             <span
               className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] ${
                 consultationMode === "ONLINE"
-                  ? "bg-[var(--color-brand-primary)]/10 text-[var(--color-brand-primary)]"
+                  ? "bg-[var(--portal-primary)]/10 text-[var(--portal-primary)]"
                   : "bg-amber-100 text-amber-800"
               }`}
             >
@@ -233,7 +233,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                 <div className="grid gap-4">
                   <section className="gh-card p-6">
                     <h3
-                      className="m-0 text-[var(--color-text-primary)]"
+                      className="m-0 text-[var(--portal-text)]"
                       style={{
                         fontFamily: "var(--font-display)",
                         fontSize: 16,
@@ -242,7 +242,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                     >
                       Meeting & status
                     </h3>
-                    <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+                    <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
                       Paste the video link the patient will use, and move the
                       appointment forward as you progress.
                     </p>
@@ -253,8 +253,8 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       initialScheduledAt={appointment.scheduledAt}
                       initialMode={consultationMode}
                     />
-                    <div className="mt-4 border-t border-[var(--color-border)] pt-4">
-                      <h4 className="text-sm font-bold text-[var(--color-text-primary)]">
+                    <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
+                      <h4 className="text-sm font-bold text-[var(--portal-text)]">
                         Finalize
                       </h4>
                       <FinalizeChecklist
@@ -264,14 +264,14 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                         initialFilesUploaded={appointment.filesUploaded ?? false}
                       />
                     </div>
-                    <div className="mt-4 border-t border-[var(--color-border)] pt-4">
+                    <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
                       <FollowUpButton appointmentId={appointment.id} />
                     </div>
                   </section>
 
                   <section className="gh-card p-6">
                     <h3
-                      className="m-0 text-[var(--color-text-primary)]"
+                      className="m-0 text-[var(--portal-text)]"
                       style={{
                         fontFamily: "var(--font-display)",
                         fontSize: 16,
@@ -286,7 +286,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   {appointment.countryCode.toLowerCase() === "br" ? (
                     <section className="gh-card p-6">
                       <h3
-                        className="m-0 text-[var(--color-text-primary)]"
+                        className="m-0 text-[var(--portal-text)]"
                         style={{
                           fontFamily: "var(--font-display)",
                           fontSize: 16,
@@ -304,7 +304,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
 
                   <section className="gh-card p-6">
                     <h3
-                      className="m-0 text-[var(--color-text-primary)]"
+                      className="m-0 text-[var(--portal-text)]"
                       style={{
                         fontFamily: "var(--font-display)",
                         fontSize: 16,
@@ -337,11 +337,11 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       />
                     </dl>
                     {appointment.notes ? (
-                      <div className="mt-4 rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3 text-[13px]">
-                        <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+                      <div className="mt-4 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3 text-[13px]">
+                        <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
                           Booking notes
                         </p>
-                        <p className="mt-1 whitespace-pre-wrap text-[var(--color-text-primary)]">
+                        <p className="mt-1 whitespace-pre-wrap text-[var(--portal-text)]">
                           {appointment.notes}
                         </p>
                       </div>
@@ -353,7 +353,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   {invoice ? (
                     <section className="gh-card p-6">
                       <h3
-                        className="m-0 text-[var(--color-text-primary)]"
+                        className="m-0 text-[var(--portal-text)]"
                         style={{
                           fontFamily: "var(--font-display)",
                           fontSize: 16,
@@ -362,7 +362,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       >
                         Invoice
                       </h3>
-                      <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+                      <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
                         Read-only view. Admin issues + refunds.
                       </p>
                       <dl className="mt-3 grid gap-2 text-[13px]">
@@ -415,7 +415,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       <Link
                         href={`/print/invoices/${appointment.id}`}
                         target="_blank"
-                        className="mt-4 inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--color-border)] px-3 py-2 text-[12.5px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                        className="mt-4 inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] px-3 py-2 text-[12.5px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
                       >
                         <Printer className="size-3.5" /> Print invoice
                       </Link>
@@ -433,7 +433,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
               <section className="gh-card p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h3
-                    className="m-0 text-[var(--color-text-primary)]"
+                    className="m-0 text-[var(--portal-text)]"
                     style={{
                       fontFamily: "var(--font-display)",
                       fontSize: 16,
@@ -446,14 +446,14 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   <span
                     className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] ${
                       signed
-                        ? "bg-[var(--color-status-success-bg)] text-[var(--color-status-success-text)]"
-                        : "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
+                        ? "bg-[var(--portal-success-soft)] text-[var(--portal-success-text)]"
+                        : "bg-[var(--portal-well)] text-[var(--portal-muted)]"
                     }`}
                   >
                     {signed ? "Signed" : "Draft"}
                   </span>
                 </div>
-                <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+                <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
                   SOAP format. Save anytime; sign when complete — signed notes
                   are locked.
                 </p>
@@ -482,9 +482,9 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   }
                 />
 
-                <div className="mt-6 border-t border-[var(--color-border)] pt-5">
+                <div className="mt-6 border-t border-[var(--portal-line)] pt-5">
                   <h4
-                    className="m-0 text-[var(--color-text-primary)]"
+                    className="m-0 text-[var(--portal-text)]"
                     style={{
                       fontFamily: "var(--font-display)",
                       fontSize: 14,
@@ -493,7 +493,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   >
                     Services rendered
                   </h4>
-                  <p className="mt-1 text-[12.5px] text-[var(--color-text-muted)]">
+                  <p className="mt-1 text-[12.5px] text-[var(--portal-muted)]">
                     Log services performed during this consult — feeds the invoice.
                   </p>
                   <ServicesUsedList
@@ -503,9 +503,9 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   />
                 </div>
 
-                <div className="mt-6 border-t border-[var(--color-border)] pt-5">
+                <div className="mt-6 border-t border-[var(--portal-line)] pt-5">
                   <h4
-                    className="m-0 text-[var(--color-text-primary)]"
+                    className="m-0 text-[var(--portal-text)]"
                     style={{
                       fontFamily: "var(--font-display)",
                       fontSize: 14,
@@ -514,7 +514,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   >
                     Share with a colleague
                   </h4>
-                  <p className="mt-1 text-[12.5px] text-[var(--color-text-muted)]">
+                  <p className="mt-1 text-[12.5px] text-[var(--portal-muted)]">
                     7-day signed link. Recipient sees the consult only — no
                     portal access.
                   </p>
@@ -525,7 +525,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                         disabled={!signed}
                       />
                     ) : (
-                      <p className="text-[12px] text-[var(--color-text-muted)]">
+                      <p className="text-[12px] text-[var(--portal-muted)]">
                         Save a draft first.
                       </p>
                     )}
@@ -545,7 +545,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
               <div className="grid gap-4">
                 <section className="gh-card p-6">
                   <h3
-                    className="m-0 text-[var(--color-text-primary)]"
+                    className="m-0 text-[var(--portal-text)]"
                     style={{
                       fontFamily: "var(--font-display)",
                       fontSize: 16,
@@ -554,7 +554,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   >
                     Exam results
                   </h3>
-                  <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+                  <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
                     Log lab / imaging results. Use the external link field to
                     point at a partner-lab portal.
                   </p>
@@ -563,7 +563,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
 
                 <section className="gh-card p-6">
                   <h3
-                    className="m-0 text-[var(--color-text-primary)]"
+                    className="m-0 text-[var(--portal-text)]"
                     style={{
                       fontFamily: "var(--font-display)",
                       fontSize: 16,
@@ -572,7 +572,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   >
                     Prescriptions
                   </h3>
-                  <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+                  <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
                     Clinical scripts issued during this consultation. Lock when
                     the consult is signed.
                   </p>
@@ -593,7 +593,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
               <div className="grid gap-4">
                 <section className="gh-card p-6">
                   <h3
-                    className="m-0 text-[var(--color-text-primary)]"
+                    className="m-0 text-[var(--portal-text)]"
                     style={{
                       fontFamily: "var(--font-display)",
                       fontSize: 16,
@@ -602,7 +602,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   >
                     Forms
                   </h3>
-                  <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+                  <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
                     Fill an intake / consent / follow-up form on the
                     patient&apos;s behalf. New submissions show below.
                   </p>
@@ -612,7 +612,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                 {submissions.length > 0 ? (
                   <section className="gh-card p-6">
                     <h3
-                      className="m-0 text-[var(--color-text-primary)]"
+                      className="m-0 text-[var(--portal-text)]"
                       style={{
                         fontFamily: "var(--font-display)",
                         fontSize: 16,
@@ -621,7 +621,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                     >
                       Form submissions
                     </h3>
-                    <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+                    <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
                       Answers the patient (or admin on their behalf) filled
                       in for this appointment.
                     </p>
@@ -629,21 +629,21 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       {submissions.map((s) => (
                         <li
                           key={s.id}
-                          className="gh-doctor-submission-card gh-admin-card rounded-md border border-[var(--color-border)] p-3"
+                          className="gh-doctor-submission-card gh-admin-card rounded-md border border-[var(--portal-line)] p-3"
                         >
                           <div className="gh-doctor-submission-header flex items-baseline justify-between gap-3">
-                            <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">
+                            <p className="text-[13px] font-semibold text-[var(--portal-text)]">
                               {s.template.title}
                             </p>
                             <Link
                               href={`/print/forms/${s.id}`}
                               target="_blank"
-                              className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+                              className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
                             >
                               <Printer className="size-3" /> Print
                             </Link>
                           </div>
-                          <p className="text-[11.5px] text-[var(--color-text-muted)]">
+                          <p className="text-[11.5px] text-[var(--portal-muted)]">
                             submitted {new Date(s.submittedAt).toLocaleString()}
                           </p>
                           <dl className="mt-2 grid gap-1.5 text-[13px]">
@@ -651,10 +651,10 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                               const def = s.template.fields.find((f) => f.key === a.key);
                               return (
                                 <div key={i} className="flex gap-2">
-                                  <dt className="min-w-[40%] text-[var(--color-text-muted)]">
+                                  <dt className="min-w-[40%] text-[var(--portal-muted)]">
                                     {def?.label ?? a.key}
                                   </dt>
-                                  <dd className="text-[var(--color-text-primary)] whitespace-pre-wrap">
+                                  <dd className="text-[var(--portal-text)] whitespace-pre-wrap">
                                     {a.value === null || a.value === ""
                                       ? "—"
                                       : String(a.value)}
@@ -679,7 +679,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             panel: (
               <section className="gh-card p-6">
                 <h3
-                  className="m-0 text-[var(--color-text-primary)]"
+                  className="m-0 text-[var(--portal-text)]"
                   style={{
                     fontFamily: "var(--font-display)",
                     fontSize: 16,
@@ -688,7 +688,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                 >
                   Documents
                 </h3>
-                <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+                <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
                   Generated consultation PDFs and files you attach to this
                   appointment. Use View to open any document in the browser.
                 </p>
@@ -710,7 +710,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
               <div className="grid gap-4">
                 <section className="gh-card p-6">
                   <h3
-                    className="m-0 text-[var(--color-text-primary)]"
+                    className="m-0 text-[var(--portal-text)]"
                     style={{
                       fontFamily: "var(--font-display)",
                       fontSize: 16,
@@ -719,7 +719,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   >
                     Patient chat
                   </h3>
-                  <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+                  <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
                     Direct channel with the patient. Chat auto-locks 24h after
                     the appointment completes — you can re-open it here.
                   </p>
@@ -730,7 +730,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
 
                 <section className="gh-card p-6">
                   <h3
-                    className="m-0 text-[var(--color-text-primary)]"
+                    className="m-0 text-[var(--portal-text)]"
                     style={{
                       fontFamily: "var(--font-display)",
                       fontSize: 16,
@@ -739,7 +739,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   >
                     Internal notes (doctor ↔ admin)
                   </h3>
-                  <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+                  <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
                     Not patient-visible. Use for handoff context.
                   </p>
                   <InternalMessagesThread
@@ -772,11 +772,11 @@ function formatMoney(cents: number, code: string) {
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-3 border-b border-[var(--color-border)]/60 py-1">
-      <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+    <div className="flex items-baseline justify-between gap-3 border-b border-[var(--portal-line)]/60 py-1">
+      <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
         {label}
       </dt>
-      <dd className="text-right text-[var(--color-text-primary)]">{value}</dd>
+      <dd className="text-right text-[var(--portal-text)]">{value}</dd>
     </div>
   );
 }

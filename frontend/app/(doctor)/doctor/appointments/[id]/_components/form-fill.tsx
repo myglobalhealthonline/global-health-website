@@ -34,11 +34,11 @@ export function FormFillSection({
 
   if (activeTemplates.length === 0) {
     return (
-      <p className="text-[13px] text-[var(--color-text-muted)]">
+      <p className="text-[13px] text-[var(--portal-muted)]">
         No active form templates. Build one at{" "}
         <Link
           href="/doctor/forms"
-          className="font-semibold text-[var(--color-brand-primary)] hover:underline"
+          className="font-semibold text-[var(--portal-primary)] hover:underline"
         >
           /doctor/forms
         </Link>
@@ -114,9 +114,9 @@ export function FormFillSection({
       </label>
 
       {currentTemplate ? (
-        <div className="grid gap-3 rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3">
+        <div className="grid gap-3 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3">
           {currentTemplate.description ? (
-            <p className="text-[12.5px] text-[var(--color-text-muted)]">
+            <p className="text-[12.5px] text-[var(--portal-muted)]">
               {currentTemplate.description}
             </p>
           ) : null}
@@ -127,7 +127,7 @@ export function FormFillSection({
                 <span className="gh-field-label">
                   {field.label}
                   {field.required ? (
-                    <span className="ml-1 text-[var(--color-brand-primary)]">*</span>
+                    <span className="ml-1 text-[var(--portal-primary)]">*</span>
                   ) : null}
                 </span>
                 {field.type === "longtext" ? (
@@ -164,7 +164,7 @@ export function FormFillSection({
                   />
                 )}
                 {field.helper ? (
-                  <span className="text-[11.5px] text-[var(--color-text-muted)]">
+                  <span className="text-[11.5px] text-[var(--portal-muted)]">
                     {field.helper}
                   </span>
                 ) : null}
