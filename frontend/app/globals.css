@@ -1472,7 +1472,7 @@ img {
 .gh-portal-shell {
   position: relative;
   isolation: isolate;
-  background: var(--portal-canvas);
+  background: var(--lux-canvas-bg, var(--portal-canvas));
 }
 
 .gh-portal-shell::before {
@@ -1481,7 +1481,7 @@ img {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(1200px 800px at 82% -10%, rgba(176, 241, 34, 0.12), transparent 62%);
+  background: var(--lux-canvas-bloom, transparent);
 }
 
 .gh-portal-sidebar > * {
@@ -1677,6 +1677,79 @@ img {
   --portal-pad-x: clamp(14px, 2vw, 30px);
   --portal-pad-y: clamp(16px, 2vw, 28px);
   --portal-section-gap: clamp(14px, 1.6vw, 22px);
+
+  /* Liquid Lux materials and environment (DESIGN2.md §3/§4). */
+  --lux-canvas-bg:
+    radial-gradient(1400px 900px at 85% -12%, rgba(176, 241, 34, 0.16), transparent 60%),
+    radial-gradient(900px 700px at -10% 110%, rgba(143, 176, 33, 0.10), transparent 55%),
+    linear-gradient(170deg, #0a160f 0%, #07120c 45%, #081409 100%);
+  --lux-canvas-bloom:
+    radial-gradient(1100px 760px at 86% -12%, rgba(176, 241, 34, 0.12), transparent 62%),
+    radial-gradient(760px 560px at -8% 108%, rgba(143, 176, 33, 0.08), transparent 58%);
+  --lux-plane-bg:
+    radial-gradient(1200px 800px at 78% -8%, rgba(176, 241, 34, 0.07), transparent 55%),
+    radial-gradient(1000px 700px at 8% 30%, rgba(143, 176, 33, 0.05), transparent 60%),
+    radial-gradient(800px 600px at 92% 88%, rgba(29, 75, 54, 0.04), transparent 60%),
+    linear-gradient(180deg, #fcfdf9 0%, #f8faf4 55%, #f5f8f0 100%);
+  --lux-plane-bg-patient:
+    radial-gradient(1200px 800px at 78% -8%, rgba(207, 236, 129, 0.08), transparent 55%),
+    radial-gradient(1000px 700px at 8% 30%, rgba(143, 176, 33, 0.05), transparent 60%),
+    radial-gradient(800px 600px at 92% 88%, rgba(29, 75, 54, 0.04), transparent 60%),
+    linear-gradient(180deg, #fcfdf9 0%, #f8faf4 55%, #f5f8f0 100%);
+  --lux-plane-bg-doctor:
+    radial-gradient(1200px 800px at 78% -8%, rgba(176, 241, 34, 0.042), transparent 55%),
+    radial-gradient(1000px 700px at 8% 30%, rgba(143, 176, 33, 0.03), transparent 60%),
+    radial-gradient(800px 600px at 92% 88%, rgba(29, 75, 54, 0.024), transparent 60%),
+    linear-gradient(180deg, #fcfdf9 0%, #f8faf4 55%, #f5f8f0 100%);
+  --lux-plane-edge: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 -12px 32px rgba(7, 18, 12, 0.18);
+  --lux-seam-light: linear-gradient(90deg, transparent, rgba(176, 241, 34, 0.45) 35%, rgba(176, 241, 34, 0.10) 70%, transparent);
+  --lux-card-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.66));
+  --lux-card-border: linear-gradient(160deg, rgba(255, 255, 255, 0.95) 0%, rgba(16, 23, 19, 0.06) 38%, rgba(16, 23, 19, 0.10) 62%, rgba(143, 176, 33, 0.22) 100%);
+  --lux-card-border-hover: linear-gradient(160deg, rgba(255, 255, 255, 1) 0%, rgba(16, 23, 19, 0.08) 38%, rgba(16, 23, 19, 0.12) 62%, rgba(176, 241, 34, 0.35) 100%);
+  --lux-chrome-fill: linear-gradient(165deg, rgba(14, 28, 20, 0.86) 0%, rgba(7, 16, 11, 0.88) 60%, rgba(10, 22, 15, 0.86) 100%);
+  --lux-chrome-border: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05) 30%, rgba(176, 241, 34, 0.28) 65%, rgba(255, 255, 255, 0.04));
+  --lux-well-fill: linear-gradient(180deg, #eff2ea 0%, #f4f6f0 100%);
+  --lux-forest-duotone: linear-gradient(180deg, #226044 0%, #1d4b36 55%, #16382a 100%);
+  --lux-elev-1:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+    0 0 0 1px rgba(16, 23, 19, 0.03),
+    0 1px 1px rgba(7, 18, 12, 0.05),
+    0 2px 4px rgba(7, 18, 12, 0.04),
+    0 8px 16px rgba(7, 18, 12, 0.05),
+    0 24px 48px rgba(7, 18, 12, 0.07);
+  --lux-elev-2:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.45),
+    0 0 0 1px rgba(16, 23, 19, 0.04),
+    0 2px 4px rgba(7, 18, 12, 0.05),
+    0 12px 24px rgba(7, 18, 12, 0.07),
+    0 32px 64px rgba(7, 18, 12, 0.10),
+    0 8px 40px -8px var(--portal-signal-glow);
+  --lux-elev-chrome:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+    0 1px 2px rgba(4, 10, 7, 0.4),
+    0 16px 48px rgba(4, 10, 7, 0.45);
+  --lux-elev-modal:
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    0 0 0 1px rgba(16, 23, 19, 0.04),
+    0 32px 96px rgba(5, 12, 8, 0.5),
+    0 0 48px rgba(176, 241, 34, 0.06);
+  --lux-elev-press: 0 0 0 1px rgba(16, 23, 19, 0.05), 0 1px 1px rgba(7, 18, 12, 0.06);
+  --lux-specular: rgba(255, 255, 255, 0.95);
+  --lux-streak: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.05) 45%, rgba(255, 255, 255, 0.015) 52%, transparent 60%);
+  --lux-blur-card: 24px;
+  --lux-blur-chrome: 32px;
+  --lux-blur-overlay: 12px;
+  --lux-numeral-ink: linear-gradient(180deg, #101713 0%, #1d4b36 130%);
+  --lux-numeral-live: linear-gradient(180deg, #dfff7a 0%, #b0f122 70%);
+  --lux-icon-muted: 0.55;
+  --lux-icon-rest: 0.75;
+  --lux-icon-active: 1;
+  --lux-scrollbar-thumb: rgba(16, 23, 19, 0.18);
+  --lux-scrollbar-thumb-hover: rgba(16, 23, 19, 0.30);
+  --lux-selection: rgba(176, 241, 34, 0.35);
 }
 
 /* Role accent + density hooks — set on the shell root div by each shell
@@ -2123,8 +2196,17 @@ a.gh-stat-card:hover .gh-stat-card__underline {
   flex-direction: column;
   gap: var(--portal-section-gap);
   position: relative;
-  background: var(--portal-bg);
+  background: var(--lux-plane-bg);
   border-radius: 18px 18px 0 0;
+  box-shadow: var(--lux-plane-edge);
+}
+
+[data-portal="patient"] .gh-portal-main {
+  background: var(--lux-plane-bg-patient);
+}
+
+[data-portal="doctor"] .gh-portal-main {
+  background: var(--lux-plane-bg-doctor);
 }
 
 /* Visible dark canvas frame on the right + bottom of the ivory plane — the
