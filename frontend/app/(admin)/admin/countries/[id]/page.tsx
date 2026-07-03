@@ -17,6 +17,7 @@ import {
 import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
 import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
+import { FormSection } from "@/components/FormSection";
 
 export const dynamic = "force-dynamic";
 
@@ -171,17 +172,8 @@ export default async function AdminCountryDetailPage({
       <div className="gh-admin-country-detail-layout grid gap-4">
         {/* Main column */}
         <div className="gh-admin-country-detail-main grid gap-4">
-          <AdminCard>
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-            >
-              Identifiers
-            </h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
-              Used in URLs, billing, and DB joins.
-            </p>
-            <dl className="gh-admin-country-facts grid gap-4 sm:grid-cols-2">
+          <FormSection title="Identifiers" description="Used in URLs, billing, and DB joins.">
+            <dl className="gh-admin-country-facts gh-form-section__span-2 grid gap-4 sm:grid-cols-2">
               <Field label="Country code" value={c.code.toUpperCase()} mono />
               <Field label="URL slug" value={c.slug} mono />
               <Field label="Default locale" value={c.defaultLocale} />
@@ -194,19 +186,10 @@ export default async function AdminCountryDetailPage({
                 value={`${c.currency.code} (${c.currency.symbol})`}
               />
             </dl>
-          </AdminCard>
+          </FormSection>
 
-          <AdminCard>
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-            >
-              Public routes
-            </h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
-              Paths the public site uses to reach this country.
-            </p>
-            <ul className="gh-admin-country-route-list grid gap-2 font-mono text-[12.5px] text-[var(--color-text-body)]">
+          <FormSection title="Public routes" description="Paths the public site uses to reach this country.">
+            <ul className="gh-admin-country-route-list gh-form-section__span-2 grid gap-2 font-mono text-[12.5px] text-[var(--color-text-body)]">
               <li className="rounded-md bg-[var(--color-background-soft)] px-3 py-2">
                 {c.legacyHomePath}
               </li>
@@ -220,22 +203,13 @@ export default async function AdminCountryDetailPage({
                 {c.specialistConsultationPath}
               </li>
             </ul>
-          </AdminCard>
+          </FormSection>
 
-          <AdminCard>
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-            >
-              Domains
-            </h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
-              Hostnames mapped to this country.
-            </p>
+          <FormSection title="Domains" description="Hostnames mapped to this country.">
             {c.domains.length === 0 ? (
-              <p className="text-[13px] text-[var(--color-text-muted)]">None configured.</p>
+              <p className="gh-form-section__span-2 text-[13px] text-[var(--color-text-muted)]">None configured.</p>
             ) : (
-              <ul className="gh-admin-country-domain-list grid gap-2 font-mono text-[12.5px]">
+              <ul className="gh-admin-country-domain-list gh-form-section__span-2 grid gap-2 font-mono text-[12.5px]">
                 {c.domains.map((d) => (
                   <li
                     key={d.id}
@@ -247,21 +221,13 @@ export default async function AdminCountryDetailPage({
                 ))}
               </ul>
             )}
-          </AdminCard>
+          </FormSection>
 
           {/* Same-day GP quick-book config */}
-          <AdminCard>
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-            >
-              Same-day GP booking
-            </h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
-              The homepage timeslot-first flow auto-assigns a GP. Choose which
-              GENERAL service it books and (optionally) the priority doctor who
-              gets first refusal inside the 24-hour window.
-            </p>
+          <FormSection
+            title="Same-day GP booking"
+            description="The homepage timeslot-first flow auto-assigns a GP. Choose which GENERAL service it books and (optionally) the priority doctor who gets first refusal inside the 24-hour window."
+          >
             {!gp ? (
               <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
                 Could not load GP settings{gpSettingsRes.ok ? "" : `: ${gpSettingsRes.message}`}
@@ -272,7 +238,7 @@ export default async function AdminCountryDetailPage({
                 the same-day flow can run.
               </p>
             ) : (
-              <form action={saveGpSettingsAction} className="gh-admin-country-gp-form grid gap-4">
+              <form action={saveGpSettingsAction} className="gh-admin-country-gp-form gh-form-section__span-2 grid gap-4">
                 <label className="grid gap-1.5">
                   <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                     Same-day GP service
@@ -322,22 +288,12 @@ export default async function AdminCountryDetailPage({
                 </div>
               </form>
             )}
-          </AdminCard>
+          </FormSection>
         </div>
 
         {/* Sidebar */}
         <div className="gh-admin-country-detail-side grid gap-4 self-start">
-          <AdminCard>
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-            >
-              Visibility
-            </h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
-              Pull this country off the public site without losing data.
-            </p>
-
+          <FormSection title="Visibility" description="Pull this country off the public site without losing data.">
             {isActive ? (
               <form action={deactivateCountryAction}>
                 <p className="mb-3 text-[13px] text-[var(--color-text-muted)]">
@@ -352,16 +308,10 @@ export default async function AdminCountryDetailPage({
                 This country is inactive. Re-enable from Edit.
               </p>
             )}
-          </AdminCard>
+          </FormSection>
 
           {/* Stats card — counts of doctors, services, categories */}
-          <AdminCard>
-            <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-            >
-              Stats
-            </h3>
+          <FormSection title="Stats">
             <div className="gh-admin-country-stats mt-3 grid gap-1">
               {(
                 [
@@ -390,7 +340,7 @@ export default async function AdminCountryDetailPage({
                 </div>
               ))}
             </div>
-          </AdminCard>
+          </FormSection>
 
           <AdminCard>
             <h3

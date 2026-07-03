@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 import { Download, FileText, FlaskConical, Stethoscope, Upload } from "lucide-react";
-import { AdminSummaryStrip } from "@/components/portal-atoms";
+import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 
 type Tab = "uploaded" | "results" | "exam-requests" | "prescriptions" | "consult-summaries";
 
@@ -252,18 +252,16 @@ export default function MedicalFilesPage() {
 
   return (
     <div className="gh-patient-page gh-patient-medical-files-page">
-      <header className="gh-patient-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
-          Patient portal
-        </p>
-        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--portal-text)]">
-          <FileText className="size-6 text-[var(--portal-primary)]" aria-hidden />
-          Medical files
-        </h2>
-        <p className="text-sm text-[var(--portal-muted)]">
-          Your uploaded reports and documents from doctors.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Patient portal"
+        title={
+          <span className="inline-flex items-center gap-2">
+            <FileText className="size-6 text-[var(--portal-primary)]" aria-hidden />
+            Medical files
+          </span>
+        }
+        description="Your uploaded reports and documents from doctors."
+      />
 
       <AdminSummaryStrip
         className="mb-5"

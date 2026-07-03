@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { History, Shield } from "lucide-react";
+import { PageHeader } from "@/components/portal-atoms";
 
 type AccessLogEntry = {
   id: string;
@@ -135,18 +136,16 @@ export default function AccessHistoryPage() {
 
   return (
     <div className="gh-patient-page gh-patient-access-history-page">
-      <header className="gh-patient-page-header mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
-          Patient portal
-        </p>
-        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--portal-text)]">
-          <History className="size-6 text-[var(--portal-primary)]" aria-hidden />
-          Access history
-        </h2>
-        <p className="text-sm text-[var(--portal-muted)]">
-          A record of who accessed your medical information and when.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Patient portal"
+        title={
+          <span className="inline-flex items-center gap-2">
+            <History className="size-6 text-[var(--portal-primary)]" aria-hidden />
+            Access history
+          </span>
+        }
+        description="A record of who accessed your medical information and when."
+      />
 
       <div className="gh-patient-access-card gh-card divide-y divide-[var(--portal-line)] p-0">
         {!loaded ? (

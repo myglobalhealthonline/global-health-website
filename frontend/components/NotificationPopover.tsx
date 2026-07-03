@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Bell } from "lucide-react";
 import { formatAppDate } from "@/lib/format-datetime";
@@ -53,6 +53,7 @@ export function NotificationPopover({
   emptyMessage?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLUListElement | null>(null);
 
   // Close on Escape — keeps keyboard parity with the user menu next to it.
   useEffect(() => {
@@ -63,6 +64,24 @@ export function NotificationPopover({
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
+
+  // Arrow-key roving nav between rows — role="menu" implies this per the
+  // ARIA menu pattern; rows without an href aren't focusable and are
+  // skipped automatically since the query only picks up [role="menuitem"].
+  function onMenuKeyDown(e: React.KeyboardEvent<HTMLUListElement>) {
+    if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+    const menuItems = Array.from(
+      menuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [],
+    );
+    if (menuItems.length === 0) return;
+    e.preventDefault();
+    const currentIndex = menuItems.indexOf(document.activeElement as HTMLElement);
+    const nextIndex =
+      e.key === "ArrowDown"
+        ? (currentIndex + 1) % menuItems.length
+        : (currentIndex - 1 + menuItems.length) % menuItems.length;
+    menuItems[nextIndex]?.focus();
+  }
 
   const recent = items.slice(0, 5);
 
@@ -133,7 +152,11 @@ export function NotificationPopover({
                 {emptyMessage}
               </p>
             ) : (
-              <ul className="max-h-[360px] overflow-y-auto py-1">
+              <ul
+                ref={menuRef}
+                className="max-h-[360px] overflow-y-auto py-1"
+                onKeyDown={onMenuKeyDown}
+              >
                 {recent.map((n) => {
                   const unread = n.readAt === null;
                   const inner = (
@@ -179,6 +202,7 @@ export function NotificationPopover({
                       {n.href ? (
                         <Link
                           href={n.href}
+                          role="menuitem"
                           onClick={() => setOpen(false)}
                           className="gh-notification-popover__item block rounded-[var(--portal-radius-sm)] px-3 py-2 hover:bg-[var(--portal-well)]"
                           style={{
