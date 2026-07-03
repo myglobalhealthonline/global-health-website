@@ -5345,7 +5345,7 @@ a.gh-stat-card:hover {
 
 .gh-agenda-row:hover {
   background: var(--portal-hover) !important;
-  border-color: var(--portal-accent) !important;
+  border-color: var(--portal-line-strong) !important;
 }
 
 .gh-agenda-chip {
