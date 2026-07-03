@@ -344,7 +344,6 @@ export function AdminShell({
               padding 20 20 18, logo image filtered white, SUPER ADMIN eyebrow. */}
           <div
             className="gh-admin-sidebar-logo px-5 pb-[18px] pt-5"
-            style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
           >
             <Link href="/admin" className="inline-flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -355,8 +354,7 @@ export function AdminShell({
               />
             </Link>
             <p
-              className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em]"
-              style={{ color: "var(--portal-accent)", opacity: 0.9 }}
+              className="gh-portal-label mt-2 text-[10px] font-bold uppercase tracking-[0.22em]"
             >
               Super admin
             </p>
@@ -433,11 +431,7 @@ export function AdminShell({
           </nav>
 
           <div
-            className="px-5 py-4 text-[12px] font-bold uppercase tracking-[0.06em]"
-            style={{
-              borderTop: "1px solid rgba(255,255,255,0.08)",
-              color: "rgba(255,255,255,0.55)",
-            }}
+            className="gh-portal-sidebar-footer px-5 py-4 text-[12px] font-bold uppercase tracking-[0.06em]"
           >
             v1.0 · medicine anytime anywhere
           </div>
@@ -463,21 +457,9 @@ export function AdminShell({
               {/* Portal glyph — DESIGN.md §5.2. */}
               <span
                 aria-hidden
-                className="inline-flex shrink-0 items-center justify-center rounded-[6px]"
-                style={{
-                  width: 20,
-                  height: 20,
-                  background: "color-mix(in srgb, var(--portal-accent) 16%, transparent)",
-                }}
+                className="gh-portal-glyph inline-flex shrink-0 items-center justify-center rounded-[6px]"
               >
-                <span
-                  style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: 999,
-                    background: "var(--portal-accent)",
-                  }}
-                />
+                <span className="gh-portal-glyph__dot" />
               </span>
 
               <nav
@@ -526,8 +508,7 @@ export function AdminShell({
 
               {/* Bell + user chip share one chrome pill (DESIGN.md §5.2). */}
               <div
-                className="flex items-center rounded-full"
-                style={{ border: "1px solid var(--portal-chrome-border)" }}
+                className="gh-portal-user-pill flex items-center rounded-full"
               >
                 {/* Notification bell — surfaces pending approval requests
                     (doctor service selections awaiting review). */}
@@ -544,7 +525,7 @@ export function AdminShell({
 
                 <span
                   aria-hidden
-                  style={{ width: 1, height: 22, background: "var(--portal-chrome-border)" }}
+                  className="gh-portal-user-divider"
                 />
 
                 {/* User menu */}
@@ -557,8 +538,7 @@ export function AdminShell({
                   className="inline-flex items-center gap-2 rounded-full py-1 pl-1 pr-3 text-sm font-semibold text-[var(--portal-chrome-text-active)] transition hover:bg-white/5"
                 >
                   <span
-                    className="inline-flex size-7 items-center justify-center rounded-full text-[11px] font-extrabold text-white"
-                    style={{ background: "var(--portal-primary)" }}
+                    className="gh-portal-avatar inline-flex size-7 items-center justify-center rounded-[9px] text-[11px] font-extrabold text-white"
                   >
                     {initials(user.fullName, user.email)}
                   </span>
@@ -586,8 +566,7 @@ export function AdminShell({
                     >
                       <div className="flex items-center gap-2.5 pb-3" style={{ borderBottom: "1px solid var(--portal-line)" }}>
                         <span
-                          className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-[11px] font-extrabold text-white"
-                          style={{ background: "var(--portal-primary)" }}
+                          className="gh-portal-avatar inline-flex size-9 shrink-0 items-center justify-center rounded-[10px] text-[11px] font-extrabold text-white"
                         >
                           {initials(user.fullName, user.email)}
                         </span>

@@ -151,6 +151,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
           <AdminEmptyState
             className="gh-doctor-empty-state mt-4"
             icon={<FileText className="size-5" aria-hidden />}
+            assetSrc="/images/portal/obsidian/empty-documents.svg"
             title="No templates yet"
             description="Create your first intake, consent, or follow-up form from the builder. Templates become available inside appointment workspaces."
           />

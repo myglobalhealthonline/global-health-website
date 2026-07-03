@@ -60,7 +60,7 @@ export default async function AccountPrescriptionsPage() {
       ) : null}
 
       {/* ── Issued by your doctor (clinical) ────────────────────── */}
-      <AdminCard padding={0} className="mb-4">
+      <AdminCard padding={0} className="mb-4 gh-card-jewel">
         <SectionHeader
           title={
             <span className="inline-flex items-center gap-2">
@@ -73,6 +73,7 @@ export default async function AccountPrescriptionsPage() {
           {issued.length === 0 ? (
             <AdminEmptyState
               icon={<Pill className="size-6" aria-hidden />}
+              assetSrc="/images/portal/obsidian/empty-records.svg"
               title={a.prescriptions.noPrescriptions}
               description="Doctor-issued medications and follow-up instructions will appear here after a signed consultation."
               action={
@@ -157,6 +158,7 @@ export default async function AccountPrescriptionsPage() {
           {orders.length === 0 ? (
             <AdminEmptyState
               icon={<FileText className="size-6" aria-hidden />}
+              assetSrc="/images/portal/obsidian/empty-payments.svg"
               title={a.prescriptions.noOnlineOrders}
               description="Online prescription requests and payment status will be listed here."
               action={

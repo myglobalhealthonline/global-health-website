@@ -4,28 +4,37 @@
  * sidebar nav). Default OS scrollbars render with a near-white track
  * that fights the forest-green sidebar; this slim transparent + lime
  * thumb blends in. Apply via `className="gh-dark-scroll"`. */
+/* WebKit pseudos — setting the standard `scrollbar-width`/`-color` in
+ * Chromium hands the bar to the OS overlay (invisible until scrolled)
+ * and suppresses this always-visible custom bar, so they're gated
+ * behind `@supports not selector(::-webkit-scrollbar)` below: Firefox
+ * (no ::-webkit-scrollbar support) gets its native thin/colored theming
+ * API, Chromium skips that block entirely and uses the pseudo-elements
+ * here instead. Both browsers end up with the same always-visible lime
+ * thumb. */
 .gh-dark-scroll::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 .gh-dark-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-.gh-dark-scroll::-webkit-scrollbar-thumb {
-  background-color: rgba(200, 230, 160, 0.30);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 999px;
 }
-@supports (scrollbar-width: thin) {
-  .gh-dark-scroll {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(200, 230, 160, 0.35) transparent;
-  }
+.gh-dark-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(200, 230, 160, 0.45);
+  border-radius: 999px;
 }
 .gh-dark-scroll::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(200, 230, 160, 0.55);
+  background-color: rgba(200, 230, 160, 0.7);
 }
 .gh-dark-scroll::-webkit-scrollbar-corner {
   background: transparent;
+}
+@supports not selector(::-webkit-scrollbar) {
+  .gh-dark-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(200, 230, 160, 0.55) rgba(255, 255, 255, 0.05);
+  }
 }
 
 :root {
@@ -1472,7 +1481,7 @@ img {
 .gh-portal-shell {
   position: relative;
   isolation: isolate;
-  background: var(--portal-canvas);
+  background: var(--lux-canvas-bg, var(--portal-canvas));
 }
 
 .gh-portal-shell::before {
@@ -1481,7 +1490,22 @@ img {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(1200px 800px at 82% -10%, rgba(176, 241, 34, 0.12), transparent 62%);
+  background: var(--lux-canvas-bloom, transparent);
+}
+
+/* §13 A1 — canvas-aurora.webp above the CSS aurora, capped at 0.5 (§4.1).
+ * Paints over ::before in tree order; the CSS-only canvas stays the fallback. */
+.gh-portal-shell::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--lux-asset-canvas, none);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.5;
 }
 
 .gh-portal-sidebar > * {
@@ -1558,7 +1582,7 @@ img {
 }
 
 .gh-admin-row:hover > td:first-child {
-  box-shadow: inset 2px 0 0 0 var(--portal-accent);
+  box-shadow: inset 2px 0 0 0 var(--portal-accent), inset 4px 0 8px -6px var(--portal-signal-glow);
 }
 
 .gh-admin-row .gh-icon-btn {
@@ -1586,11 +1610,6 @@ img {
 
 .gh-admin-main :where([role="tab"], .gh-admin-nav-link) {
   border-radius: var(--portal-radius-sm);
-}
-
-.gh-portal-tabs {
-  scrollbar-width: thin;
-  scrollbar-color: var(--portal-line-strong) transparent;
 }
 
 /* Portal system v4 "Obsidian Ivory": forest-black glass chrome, gallery-ivory
@@ -1677,6 +1696,110 @@ img {
   --portal-pad-x: clamp(14px, 2vw, 30px);
   --portal-pad-y: clamp(16px, 2vw, 28px);
   --portal-section-gap: clamp(14px, 1.6vw, 22px);
+
+  /* Liquid Lux materials and environment (DESIGN2.md §3/§4). */
+  --lux-canvas-bg:
+    radial-gradient(1400px 900px at 85% -12%, rgba(176, 241, 34, 0.16), transparent 60%),
+    radial-gradient(900px 700px at -10% 110%, rgba(143, 176, 33, 0.10), transparent 55%),
+    linear-gradient(170deg, #0a160f 0%, #07120c 45%, #081409 100%);
+  --lux-canvas-bloom:
+    radial-gradient(1100px 760px at 86% -12%, rgba(176, 241, 34, 0.12), transparent 62%),
+    radial-gradient(760px 560px at -8% 108%, rgba(143, 176, 33, 0.08), transparent 58%);
+  --lux-plane-bg:
+    radial-gradient(1200px 800px at 78% -8%, rgba(176, 241, 34, 0.07), transparent 55%),
+    radial-gradient(1000px 700px at 8% 30%, rgba(143, 176, 33, 0.05), transparent 60%),
+    radial-gradient(800px 600px at 92% 88%, rgba(29, 75, 54, 0.04), transparent 60%),
+    linear-gradient(180deg, #fcfdf9 0%, #f8faf4 55%, #f5f8f0 100%);
+  --lux-plane-bg-patient:
+    radial-gradient(1200px 800px at 78% -8%, rgba(207, 236, 129, 0.08), transparent 55%),
+    radial-gradient(1000px 700px at 8% 30%, rgba(143, 176, 33, 0.05), transparent 60%),
+    radial-gradient(800px 600px at 92% 88%, rgba(29, 75, 54, 0.04), transparent 60%),
+    linear-gradient(180deg, #fcfdf9 0%, #f8faf4 55%, #f5f8f0 100%);
+  --lux-plane-bg-doctor:
+    radial-gradient(1200px 800px at 78% -8%, rgba(176, 241, 34, 0.042), transparent 55%),
+    radial-gradient(1000px 700px at 8% 30%, rgba(143, 176, 33, 0.03), transparent 60%),
+    radial-gradient(800px 600px at 92% 88%, rgba(29, 75, 54, 0.024), transparent 60%),
+    linear-gradient(180deg, #fcfdf9 0%, #f8faf4 55%, #f5f8f0 100%);
+  --lux-plane-edge: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 -12px 32px rgba(7, 18, 12, 0.18);
+  --lux-seam-light: linear-gradient(90deg, transparent, rgba(176, 241, 34, 0.45) 35%, rgba(176, 241, 34, 0.10) 70%, transparent);
+  --lux-card-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.66));
+  --lux-modal-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.86));
+  --lux-card-border: linear-gradient(160deg, rgba(255, 255, 255, 0.95) 0%, rgba(16, 23, 19, 0.06) 38%, rgba(16, 23, 19, 0.10) 62%, rgba(143, 176, 33, 0.22) 100%);
+  --lux-card-border-hover: linear-gradient(160deg, rgba(255, 255, 255, 1) 0%, rgba(16, 23, 19, 0.08) 38%, rgba(16, 23, 19, 0.12) 62%, rgba(176, 241, 34, 0.35) 100%);
+  --lux-chrome-fill: linear-gradient(165deg, rgba(14, 28, 20, 0.86) 0%, rgba(7, 16, 11, 0.88) 60%, rgba(10, 22, 15, 0.86) 100%);
+  --lux-chrome-border: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05) 30%, rgba(176, 241, 34, 0.28) 65%, rgba(255, 255, 255, 0.04));
+  --lux-well-fill: linear-gradient(180deg, #eff2ea 0%, #f4f6f0 100%);
+  --lux-overlay-fill: rgba(7, 18, 12, 0.60);
+  --lux-forest-duotone: linear-gradient(180deg, #226044 0%, #1d4b36 55%, #16382a 100%);
+  --lux-elev-1:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+    0 0 0 1px rgba(16, 23, 19, 0.03),
+    0 1px 1px rgba(7, 18, 12, 0.05),
+    0 2px 4px rgba(7, 18, 12, 0.04),
+    0 8px 16px rgba(7, 18, 12, 0.05),
+    0 24px 48px rgba(7, 18, 12, 0.07);
+  --lux-elev-2:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.45),
+    0 0 0 1px rgba(16, 23, 19, 0.04),
+    0 2px 4px rgba(7, 18, 12, 0.05),
+    0 12px 24px rgba(7, 18, 12, 0.07),
+    0 32px 64px rgba(7, 18, 12, 0.10),
+    0 8px 40px -8px var(--portal-signal-glow);
+  --lux-elev-chrome:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+    0 1px 2px rgba(4, 10, 7, 0.4),
+    0 16px 48px rgba(4, 10, 7, 0.45);
+  --lux-elev-modal:
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    0 0 0 1px rgba(16, 23, 19, 0.04),
+    0 32px 96px rgba(5, 12, 8, 0.5),
+    0 0 48px rgba(176, 241, 34, 0.06);
+  --lux-elev-press: 0 0 0 1px rgba(16, 23, 19, 0.05), 0 1px 1px rgba(7, 18, 12, 0.06);
+  --lux-inset-well: inset 0 1px 2px rgba(16, 23, 19, 0.06), inset 0 -1px 0 rgba(255, 255, 255, 0.90);
+  --lux-chat-own-rim: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  --lux-calendar-today-ring: 0 0 0 2px var(--portal-accent), 0 0 0 6px color-mix(in srgb, var(--portal-accent) 30%, transparent);
+  --lux-mobile-edge: linear-gradient(180deg, var(--portal-accent), transparent);
+  --lux-header-aura: radial-gradient(520px 220px at 0% 0%, color-mix(in srgb, var(--portal-accent) 10%, transparent), transparent 68%);
+  --lux-header-aura-patient: radial-gradient(520px 220px at 0% 0%, color-mix(in srgb, var(--portal-signal) 9%, transparent), transparent 68%);
+  --lux-header-aura-doctor: radial-gradient(520px 220px at 0% 0%, color-mix(in srgb, var(--portal-accent) 6%, transparent), transparent 68%);
+  --lux-header-rule: linear-gradient(90deg, var(--portal-accent), transparent 72%);
+  --lux-status-edge-success: linear-gradient(180deg, var(--portal-success), transparent);
+  --lux-status-edge-warning: linear-gradient(180deg, var(--portal-warning), transparent);
+  --lux-status-edge-danger: linear-gradient(180deg, var(--portal-danger), transparent);
+  --lux-status-edge-info: linear-gradient(180deg, var(--portal-info), transparent);
+  --lux-status-edge-brand: linear-gradient(180deg, var(--portal-primary), transparent);
+
+  /* Asset pack wiring (DESIGN2.md §13) — decorative raster layers only.
+   * Opacity caps live in the veil gradients: light veil 0.70 → image ≤0.30–0.35,
+   * dark veil 0.50 → image ≤0.5. UI must stay finished if any url() 404s. */
+  --lux-asset-canvas: url("/images/portal/obsidian/canvas-aurora.webp");
+  --lux-asset-plane: url("/images/portal/obsidian/plane-veil.webp");
+  --lux-asset-header: url("/images/portal/obsidian/header-aura.webp");
+  --lux-asset-band: url("/images/portal/obsidian/band-aurora.webp");
+  --lux-asset-member: url("/images/portal/obsidian/membership-silk.png");
+  --lux-asset-card-silk: url("/images/portal/obsidian/card-silk.webp");
+  --lux-asset-veil-light: linear-gradient(rgba(250, 251, 247, 0.70), rgba(250, 251, 247, 0.70));
+  --lux-asset-veil-silk: linear-gradient(rgba(250, 251, 247, 0.76), rgba(250, 251, 247, 0.76));
+  --lux-asset-veil-plane: linear-gradient(rgba(250, 251, 247, 0.68), rgba(248, 250, 244, 0.68));
+  --lux-asset-veil-dark: linear-gradient(rgba(7, 18, 12, 0.50), rgba(7, 18, 12, 0.50));
+  --lux-asset-header-mask: linear-gradient(180deg, #000 60%, transparent);
+  --lux-status-edge-live: linear-gradient(180deg, var(--portal-signal), transparent);
+  --lux-specular: rgba(255, 255, 255, 0.95);
+  --lux-streak: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.05) 45%, rgba(255, 255, 255, 0.015) 52%, transparent 60%);
+  --lux-blur-card: 24px;
+  --lux-blur-chrome: 32px;
+  --lux-blur-overlay: 12px;
+  --lux-numeral-ink: linear-gradient(178deg, #2c4d3c 0%, #101713 46%, #1d4b36 118%);
+  --lux-numeral-live: linear-gradient(180deg, #dfff7a 0%, #b0f122 70%);
+  --lux-icon-muted: 0.55;
+  --lux-icon-rest: 0.75;
+  --lux-icon-active: 1;
+  --lux-scrollbar-thumb: rgba(16, 23, 19, 0.18);
+  --lux-scrollbar-thumb-hover: rgba(16, 23, 19, 0.30);
+  --lux-selection: rgba(176, 241, 34, 0.35);
 }
 
 /* Role accent + density hooks — set on the shell root div by each shell
@@ -1725,7 +1848,8 @@ img {
   width: 3px;
   height: 16px;
   border-radius: 2px;
-  background: var(--portal-mint);
+  background: linear-gradient(180deg, var(--portal-signal), var(--portal-mint));
+  box-shadow: 0 0 6px color-mix(in srgb, var(--portal-signal) 20%, transparent);
 }
 
 /* AdminCard title underline sweep on interactive-card hover (DESIGN.md
@@ -1757,7 +1881,7 @@ img {
   bottom: 14px;
   width: 24px;
   height: 1.5px;
-  background: var(--portal-accent);
+  background: linear-gradient(90deg, var(--portal-accent), transparent);
   transition: width 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -1767,12 +1891,22 @@ a.gh-stat-card:hover .gh-stat-card__underline {
 
 .gh-stat-card__value {
   font-family: var(--font-display);
-  font-size: clamp(30px, 2.4vw, 36px);
+  font-size: clamp(42px, 3.2vw, 50px);
   font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1;
-  color: var(--portal-text);
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+  background: var(--lux-numeral-ink);
+  background-clip: text;
+  color: transparent;
   font-variant-numeric: tabular-nums;
+}
+
+/* Hint line sits on its own etched shelf under the numeral — gives the
+ * card a base line instead of text floating in white space. */
+.gh-stat-card__value ~ p {
+  margin-top: 12px;
+  padding-top: 9px;
+  border-top: 1px solid var(--portal-line-soft);
 }
 
 /* ── Command Band — the signature (DESIGN.md §5.3) ─────────────────── */
@@ -1787,11 +1921,44 @@ a.gh-stat-card:hover .gh-stat-card__underline {
   margin-bottom: var(--portal-section-gap);
   padding: clamp(20px, 2.4vw, 28px);
   border-radius: var(--portal-radius-xl);
-  border: 1px solid var(--portal-chrome-border);
-  background-color: var(--portal-chrome);
-  -webkit-backdrop-filter: blur(var(--portal-blur-chrome)) saturate(140%);
-  backdrop-filter: blur(var(--portal-blur-chrome)) saturate(140%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border: 1px solid transparent;
+  background-image: var(--lux-chrome-fill), var(--lux-chrome-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  -webkit-backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
+  backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
+  box-shadow: var(--lux-elev-chrome);
+}
+
+.gh-command-band::before,
+.gh-command-band::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.gh-command-band::before {
+  /* §13 V3 — band-aurora.webp under the CSS aurora, behind a 0.50 dark veil
+   * (≤0.5 cap). Bled 24px past both edges so the 30s drift never shows a seam. */
+  inset: 0 -24px;
+  background-image: radial-gradient(600px 300px at 85% 0%, rgba(176, 241, 34, 0.10), transparent 65%), var(--lux-asset-veil-dark), var(--lux-asset-band, none);
+  background-size: auto, auto, cover;
+  background-position: 0 0, 0 0, center;
+  background-repeat: no-repeat;
+  animation: gh-command-band-aurora 30s ease-in-out infinite alternate;
+}
+
+.gh-command-band::after {
+  background: var(--lux-streak), var(--lux-seam-light);
+  background-repeat: no-repeat;
+  background-position: center, bottom;
+  background-size: 100% 100%, 100% 1px;
+}
+
+.gh-command-band > * {
+  position: relative;
+  z-index: 1;
 }
 
 @supports not (backdrop-filter: blur(1px)) {
@@ -1840,6 +2007,11 @@ a.gh-stat-card:hover .gh-stat-card__underline {
   gap: 32px;
 }
 
+.gh-command-band__metric + .gh-command-band__metric {
+  border-inline-start: 1px solid rgba(255, 255, 255, 0.07);
+  padding-inline-start: 32px;
+}
+
 @media (max-width: 760px) {
   .gh-command-band__metrics {
     grid-auto-flow: row;
@@ -1864,14 +2036,17 @@ a.gh-stat-card:hover .gh-stat-card__underline {
   font-family: var(--font-display);
   font-size: clamp(30px, 4vw, 56px);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   line-height: 1;
   font-variant-numeric: tabular-nums;
   color: var(--portal-chrome-text-active);
 }
 
 .gh-command-band__metric-value--signal {
-  color: var(--portal-signal);
+  background: var(--lux-numeral-live);
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 24px rgba(176, 241, 34, 0.25));
 }
 
 .gh-command-band__metric-value--signal::before {
@@ -1942,6 +2117,21 @@ a.gh-stat-card:hover .gh-stat-card__underline {
   }
 }
 
+@keyframes gh-command-band-aurora {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(24px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-command-band::before {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .gh-command-band__live-dot {
     animation: none;
@@ -1956,12 +2146,20 @@ a.gh-stat-card:hover .gh-stat-card__underline {
 /* Sidebar — dark glass chrome (DESIGN.md §5.1). Only L1 blurs. */
 .gh-portal-sidebar {
   overflow: hidden;
-  background-color: var(--portal-chrome);
-  -webkit-backdrop-filter: blur(var(--portal-blur-chrome)) saturate(140%);
-  backdrop-filter: blur(var(--portal-blur-chrome)) saturate(140%);
+  background: var(--lux-chrome-fill);
+  -webkit-backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
+  backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
   color: var(--portal-chrome-text);
   border-right: 1px solid var(--portal-chrome-border);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: var(--lux-elev-chrome);
+}
+
+.gh-portal-sidebar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--lux-streak);
 }
 
 /* Repurposed from the retired texture PNG: a 1px luminous lime seam on the
@@ -1998,30 +2196,69 @@ a.gh-stat-card:hover .gh-stat-card__underline {
 
 .gh-admin-sidebar-logo {
   min-height: 94px;
+  border-bottom: 1px solid var(--portal-chrome-border);
+}
+
+.gh-portal-label {
+  color: var(--portal-accent);
+  opacity: 0.9;
+}
+
+.gh-portal-sidebar-footer {
+  border-top: 1px solid var(--portal-chrome-border);
+  color: color-mix(in srgb, var(--portal-chrome-text-active) 55%, transparent);
+}
+
+.gh-portal-glyph {
+  width: 22px;
+  height: 22px;
+  border: 1px solid transparent;
+  background-image:
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--portal-accent) 10%, transparent), transparent 70%),
+    var(--lux-chrome-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+.gh-portal-glyph__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--portal-accent);
+}
+
+.gh-portal-user-pill {
+  border: 1px solid var(--portal-chrome-border);
+}
+
+.gh-portal-user-divider {
+  width: 1px;
+  height: 22px;
+  background: var(--portal-chrome-border);
+}
+
+.gh-portal-avatar {
+  background: var(--lux-forest-duotone);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 /* Topbar — dark glass strip; on scroll >8px the bottom border swaps for the
  * seam-light gradient (the ONE scroll-linked effect, DESIGN.md §5.2). */
 .gh-portal-topbar {
-  background-color: var(--portal-chrome);
-  -webkit-backdrop-filter: blur(var(--portal-blur-chrome)) saturate(140%);
-  backdrop-filter: blur(var(--portal-blur-chrome)) saturate(140%);
+  background: var(--lux-chrome-fill);
+  -webkit-backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
+  backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
   border-bottom: 1px solid var(--portal-chrome-border);
+  box-shadow: var(--lux-elev-chrome);
   transition: border-color 200ms ease-out;
 }
 
 .gh-portal-topbar--scrolled {
   border-bottom-color: transparent;
-  background-image: linear-gradient(
-    90deg,
-    transparent,
-    rgba(176, 241, 34, 0.45) 35%,
-    rgba(176, 241, 34, 0.1) 70%,
-    transparent
-  );
+  background-image: var(--lux-chrome-fill), var(--lux-seam-light);
   background-repeat: no-repeat;
-  background-position: bottom;
-  background-size: 100% 1px;
+  background-position: center, bottom;
+  background-size: 100% 100%, 100% 1px;
 }
 
 @supports not (backdrop-filter: blur(1px)) {
@@ -2115,32 +2352,35 @@ a.gh-stat-card:hover .gh-stat-card__underline {
 }
 
 .gh-portal-main {
-  width: min(100%, var(--portal-main-max));
-  max-width: var(--portal-main-max);
-  margin-inline: auto;
+  /* Full-bleed work plane — fills everything right of the sidebar and
+   * below the topbar; the dark canvas only lives behind the chrome. */
+  width: 100%;
+  max-width: none;
+  flex: 1;
+  margin-inline: 0;
   padding: var(--portal-pad-y) var(--portal-pad-x);
   display: flex;
   flex-direction: column;
   gap: var(--portal-section-gap);
   position: relative;
-  background: var(--portal-bg);
-  border-radius: 18px 18px 0 0;
+  /* §13 V1 — plane-veil.webp under the CSS blooms, behind a 0.68 ivory veil
+   * (effective ≤0.35 cap). Longhand so the raster layer gets cover sizing
+   * while the gradient layers keep their intrinsic geometry. */
+  background-image: var(--lux-plane-bg), var(--lux-asset-veil-plane), var(--lux-asset-plane, none);
+  /* --lux-plane-bg expands to 4 gradient layers → 6 layers total. */
+  background-size: auto, auto, auto, auto, auto, cover;
+  background-position: 0 0, 0 0, 0 0, 0 0, 0 0, center top;
+  background-repeat: no-repeat;
+  border-radius: 0;
+  box-shadow: var(--lux-plane-edge);
 }
 
-/* Visible dark canvas frame on the right + bottom of the ivory plane — the
- * two-world identity must survive a 1280px laptop, not just ultra-wide. */
-@media (min-width: 1024px) {
-  .gh-portal-main {
-    margin-right: 8px;
-    margin-bottom: 8px;
-  }
+[data-portal="patient"] .gh-portal-main {
+  background-image: var(--lux-plane-bg-patient), var(--lux-asset-veil-plane), var(--lux-asset-plane, none);
 }
 
-@media (min-width: 1280px) {
-  .gh-portal-main {
-    margin-right: clamp(16px, 1.4vw, 28px);
-    margin-bottom: clamp(16px, 1.4vw, 28px);
-  }
+[data-portal="doctor"] .gh-portal-main {
+  background-image: var(--lux-plane-bg-doctor), var(--lux-asset-veil-plane), var(--lux-asset-plane, none);
 }
 
 .gh-portal-main > .mx-auto[class*="max-w-"] {
@@ -2158,13 +2398,54 @@ a.gh-stat-card:hover .gh-stat-card__underline {
  * this is only a safety net for raw <header> markup that skips the atom. */
 .gh-portal-page-header,
 .gh-admin-main > header:not(.gh-portal-page-header) {
+  position: relative;
+  isolation: isolate;
   min-height: 0;
   margin-bottom: 0;
-  padding: 0 0 var(--portal-section-gap) 0;
+  padding: 4px 0 var(--portal-section-gap) 0;
   border: none;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
+}
+
+.gh-portal-page-header::before,
+.gh-admin-main > header:not(.gh-portal-page-header)::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -18px -20px auto -20px;
+  height: 160px;
+  border-radius: var(--portal-radius-xl);
+  /* §13 H1 — header-aura.webp behind a 0.70 ivory veil (≤0.30 cap); the
+   * per-portal CSS aura tints on top. Whole zone masked to fade out. */
+  background-image: var(--lux-header-aura), var(--lux-asset-veil-light), var(--lux-asset-header, none);
+  background-size: auto, auto, cover;
+  background-position: 0 0, 0 0, left center;
+  background-repeat: no-repeat;
+  -webkit-mask-image: var(--lux-asset-header-mask);
+  mask-image: var(--lux-asset-header-mask);
+  pointer-events: none;
+}
+
+[data-portal="patient"] .gh-portal-page-header::before {
+  background-image: var(--lux-header-aura-patient), var(--lux-asset-veil-light), var(--lux-asset-header, none);
+}
+
+[data-portal="doctor"] .gh-portal-page-header::before {
+  background-image: var(--lux-header-aura-doctor), var(--lux-asset-veil-light), var(--lux-asset-header, none);
+}
+
+.gh-portal-page-header::after,
+.gh-admin-main > header:not(.gh-portal-page-header)::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  bottom: 8px;
+  width: min(220px, 42vw);
+  height: 1px;
+  background: var(--lux-header-rule);
+  pointer-events: none;
 }
 
 .gh-admin-main > header:not(.gh-portal-page-header) h1,
@@ -2182,15 +2463,66 @@ a.gh-stat-card:hover .gh-stat-card__underline {
   max-width: 68ch;
 }
 
+.gh-portal-page-header h1,
+.gh-admin-main > header:not(.gh-portal-page-header) h1,
+.gh-admin-main > header:not(.gh-portal-page-header) h2 {
+  text-wrap: balance;
+}
+
+.gh-portal-page-header p,
+.gh-admin-main > header:not(.gh-portal-page-header) p {
+  text-wrap: pretty;
+}
+
 /* Cards — L3 recipe (DESIGN.md §5.5): white, radius 14, hairline border,
  * rest/hover shadow tiers, inset top highlight. */
 .gh-admin-card,
 .gh-card,
 .gh-stat-card {
-  border: 1px solid var(--portal-line);
+  border: 1px solid transparent;
   border-radius: var(--portal-radius-lg);
-  background: var(--portal-surface);
-  box-shadow: var(--portal-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  background-image: var(--lux-card-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  -webkit-backdrop-filter: blur(var(--lux-blur-card)) saturate(140%);
+  backdrop-filter: blur(var(--lux-blur-card)) saturate(140%);
+  box-shadow: var(--lux-elev-1);
+}
+
+.gh-card.is-static,
+.gh-admin-card.is-static,
+.gh-stat-card.is-static {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* §7.1 jewel card + §13 V2 — the ONE primary card on a band-less screen:
+ * accent corner bloom over card-silk.webp behind a 0.76 ivory veil
+ * (effective ≤0.24 ≤ the 0.25 cap), the whole layer masked to the top
+ * third. Decorative only; content stacks above it. */
+.gh-card-jewel {
+  position: relative;
+}
+
+.gh-card-jewel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image:
+    radial-gradient(320px 200px at 100% 0%, color-mix(in srgb, var(--portal-accent) 9%, transparent), transparent 70%),
+    var(--lux-asset-veil-silk),
+    var(--lux-asset-card-silk, none);
+  background-size: auto, auto, cover;
+  background-position: 0 0, 0 0, center top;
+  background-repeat: no-repeat;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.5) 22%, transparent 36%);
+  mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.5) 22%, transparent 36%);
+}
+
+.gh-card-jewel > * {
+  position: relative;
 }
 
 .gh-portal-main > :where(section, article, form, div, header, nav) {
@@ -2209,19 +2541,80 @@ a.gh-stat-card:hover .gh-stat-card__underline {
  * (opt in via .gh-card-interactive, matching the atom's `href`/onClick use). */
 .gh-card-interactive:hover,
 a.gh-stat-card:hover {
-  border-color: var(--portal-line-strong);
-  box-shadow: var(--portal-shadow-hover), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  background-image: var(--lux-card-fill), var(--lux-card-border-hover);
+  box-shadow: var(--lux-elev-2);
   transform: translateY(-2px);
 }
 
 .gh-stat-card {
-  min-height: 128px;
+  position: relative;
+  overflow: hidden;
+  min-height: 124px;
+}
+
+/* Micro-cap label gets the sidebar section tick — one shared rhythm mark
+ * across chrome and cards. */
+.gh-stat-card > .relative > div > p {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.gh-stat-card > .relative > div > p::before {
+  content: "";
+  width: 14px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--portal-accent), transparent);
+}
+
+/* Lit corner behind the icon tile — the light source the tile ring reads
+ * against. Tight radial, icon-halo scale, never a card wash. */
+.gh-stat-card > .relative::before {
+  content: "";
+  position: absolute;
+  top: -28px;
+  right: -30px;
+  width: 190px;
+  height: 150px;
+  border-radius: 999px;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--portal-accent) 10%, transparent), transparent 72%);
+  pointer-events: none;
+}
+
+.gh-stat-card__icon-tile {
+  border: 1px solid var(--portal-line-soft);
+  background: var(--lux-well-fill);
+  box-shadow:
+    inset 0 1px 2px rgba(16, 23, 19, 0.06),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px color-mix(in srgb, var(--portal-accent) 40%, transparent),
+    0 0 18px color-mix(in srgb, var(--portal-accent) 16%, transparent);
+  transition: box-shadow 180ms ease;
+}
+
+a.gh-stat-card:hover .gh-stat-card__icon-tile {
+  box-shadow:
+    inset 0 1px 2px rgba(16, 23, 19, 0.06),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px color-mix(in srgb, var(--portal-accent) 55%, transparent),
+    0 0 24px color-mix(in srgb, var(--portal-accent) 28%, transparent);
+}
+
+.gh-stat-card::after {
+  content: "";
+  position: absolute;
+  inset-inline: 18px;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(143, 176, 33, 0.35), transparent);
+  pointer-events: none;
 }
 
 .gh-portal-section-header {
   padding: 15px 18px;
-  background: transparent;
-  border-bottom: 1px solid var(--portal-line);
+  background: color-mix(in srgb, var(--portal-surface) 50%, transparent);
+  border-bottom: 1px solid var(--portal-line-soft);
 }
 
 .gh-admin-main :where(.grid) {
@@ -2244,11 +2637,13 @@ a.gh-stat-card:hover {
   min-width: 0;
   border-radius: var(--portal-radius);
   border-color: var(--portal-line);
-  background: var(--portal-well);
+  background: var(--lux-well-fill);
   color: var(--portal-text);
   font-size: 14px;
-  box-shadow: none;
-  transition: background-color 160ms ease-out, border-color 160ms ease-out, box-shadow 160ms ease-out;
+  box-shadow:
+    inset 0 1px 2px rgba(16, 23, 19, 0.06),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.9);
+  transition: background-color 160ms ease-out, border-color 160ms ease-out, box-shadow 160ms ease-out, transform 160ms ease-out;
 }
 
 .gh-portal-shell .gh-input,
@@ -2272,7 +2667,8 @@ a.gh-stat-card:hover {
   outline: none;
   background: var(--portal-surface);
   border-color: var(--portal-mint-text);
-  box-shadow: 0 0 0 3px var(--portal-focus);
+  box-shadow: 0 0 0 3px var(--portal-focus), var(--lux-elev-press);
+  transform: translateY(-1px);
 }
 
 .gh-portal-shell .gh-input:disabled,
@@ -2302,18 +2698,21 @@ a.gh-stat-card:hover {
   min-width: 0;
   border-radius: var(--portal-radius) !important;
   border-color: var(--portal-line) !important;
-  background: var(--portal-well) !important;
+  background: var(--lux-well-fill) !important;
   color: var(--portal-text) !important;
   font-size: 14px !important;
-  box-shadow: none !important;
-  transition: background-color 160ms ease-out, border-color 160ms ease-out, box-shadow 160ms ease-out;
+  box-shadow:
+    inset 0 1px 2px rgba(16, 23, 19, 0.06),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.9) !important;
+  transition: background-color 160ms ease-out, border-color 160ms ease-out, box-shadow 160ms ease-out, transform 160ms ease-out;
 }
 
 .gh-admin-main :where(.gh-input, .gh-select, .gh-textarea, input, select, textarea):focus-visible {
   outline: none;
   background: var(--portal-surface) !important;
   border-color: var(--portal-mint-text) !important;
-  box-shadow: 0 0 0 3px var(--portal-focus) !important;
+  box-shadow: 0 0 0 3px var(--portal-focus), var(--lux-elev-press) !important;
+  transform: translateY(-1px);
 }
 
 .gh-admin-main :where(.gh-input, .gh-select, .gh-textarea, input, select, textarea):disabled {
@@ -2387,9 +2786,13 @@ a.gh-stat-card:hover {
 
 .gh-portal-shell .gh-btn-primary,
 .gh-admin-main button[type="submit"]:not([class*="ghost"]):not([class*="soft"]):not(.gh-admin-toggle):not(.gh-admin-status-toggle) {
-  background: var(--portal-primary);
+  background: var(--lux-forest-duotone);
   border-color: var(--portal-primary);
   color: var(--portal-bg);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 1px 2px rgba(7, 18, 12, 0.2);
 }
 
 .gh-portal-shell .gh-btn-primary:hover,
@@ -2401,14 +2804,17 @@ a.gh-stat-card:hover {
 
 .gh-portal-shell .gh-btn-secondary,
 .gh-portal-shell .gh-btn-outline {
-  background: var(--portal-surface);
-  border-color: var(--portal-line-strong);
+  border-color: transparent;
+  background-image: var(--lux-card-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
   color: var(--portal-text);
 }
 
 .gh-portal-shell .gh-btn-secondary:hover,
 .gh-portal-shell .gh-btn-outline:hover {
-  background: var(--portal-well);
+  background-image: var(--lux-card-fill), var(--lux-card-border-hover);
+  box-shadow: 0 2px 8px rgba(7, 18, 12, 0.06);
 }
 
 .gh-portal-shell .gh-btn-soft {
@@ -2554,18 +2960,18 @@ a.gh-stat-card:hover {
 }
 
 .gh-admin-main :where(thead) {
-  background: rgba(242, 246, 236, 0.92) !important;
+  background: color-mix(in srgb, var(--portal-well) 70%, transparent) !important;
 }
 
 .gh-admin-main :where(th) {
-  color: #46675b !important;
+  color: var(--portal-muted) !important;
   font-size: 10.5px !important;
   font-weight: 800 !important;
-  letter-spacing: 0.08em !important;
+  letter-spacing: 0.12em !important;
 }
 
 .gh-admin-main :where(td) {
-  color: #2d4039;
+  color: var(--portal-text-2);
 }
 
 .gh-admin-main :where(tbody tr) {
@@ -2573,7 +2979,7 @@ a.gh-stat-card:hover {
 }
 
 .gh-admin-main :where(tbody tr:hover) {
-  background: rgba(143, 176, 33, 0.055);
+  background: var(--portal-hover);
 }
 
 /* PortalTabs — DESIGN.md §5.12. Underline style: muted rest, ink active,
@@ -2625,6 +3031,7 @@ a.gh-stat-card:hover {
   bottom: -1px;
   height: 2px;
   background: var(--portal-accent);
+  box-shadow: 0 0 4px color-mix(in srgb, var(--portal-accent) 30%, transparent);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -2692,9 +3099,9 @@ a.gh-stat-card:hover {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: rgba(7, 18, 12, 0.55);
-  -webkit-backdrop-filter: blur(var(--portal-blur-overlay));
-  backdrop-filter: blur(var(--portal-blur-overlay));
+  background: var(--lux-overlay-fill);
+  -webkit-backdrop-filter: blur(var(--lux-blur-overlay));
+  backdrop-filter: blur(var(--lux-blur-overlay));
   animation: gh-dialog-fade 200ms ease-out;
 }
 
@@ -2702,9 +3109,12 @@ a.gh-stat-card:hover {
   width: 100%;
   max-height: min(88vh, 720px);
   overflow-y: auto;
+  border: 1px solid transparent;
   border-radius: var(--portal-radius-xl);
-  background: var(--portal-surface-elevated);
-  box-shadow: var(--portal-shadow-modal);
+  background-image: var(--lux-modal-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-modal);
   animation: gh-dialog-in 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -2793,6 +3203,12 @@ a.gh-stat-card:hover {
  * fade 200ms from the trigger origin. */
 .gh-notification-popover,
 .gh-portal-user-menu {
+  border: 1px solid transparent;
+  border-radius: var(--portal-radius-xl);
+  background-image: var(--lux-modal-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-modal);
   transform-origin: top right;
   animation: gh-popover-in 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -2993,8 +3409,8 @@ a.gh-stat-card:hover {
 
 .gh-admin-status-toggle-off .gh-admin-status-toggle__track {
   justify-content: flex-start;
-  background: #d9e3dd;
-  box-shadow: inset 0 0 0 1px rgba(29, 75, 54, 0.08);
+  background: var(--lux-well-fill);
+  box-shadow: var(--lux-inset-well);
 }
 
 .gh-admin-status-toggle__thumb {
@@ -3002,8 +3418,8 @@ a.gh-stat-card:hover {
   width: 16px;
   height: 16px;
   border-radius: 999px;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(29, 75, 54, 0.22);
+  background: var(--portal-bg);
+  box-shadow: var(--lux-elev-press);
 }
 
 .gh-admin-status-toggle__label {
@@ -3133,9 +3549,9 @@ a.gh-stat-card:hover {
 
 .gh-admin-service-tab[aria-selected="true"],
 .gh-admin-service-kind-tab--active {
-  background: #ffffff !important;
-  color: #184633 !important;
-  box-shadow: 0 8px 18px rgba(30, 66, 51, 0.08) !important;
+  background: var(--lux-well-fill) !important;
+  color: var(--portal-primary) !important;
+  box-shadow: var(--lux-elev-press) !important;
 }
 
 .gh-admin-service-links {
@@ -3475,23 +3891,39 @@ a.gh-stat-card:hover {
 
 .gh-admin-summary-item {
   min-width: 0;
-  border: 1px solid var(--portal-line);
-  border-radius: var(--portal-radius-lg);
-  background: var(--portal-surface);
-  box-shadow: var(--portal-shadow);
-  padding: 14px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background-image: var(--lux-card-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-1);
+  padding: 14px 16px;
 }
 
 .gh-admin-summary-item--brand {
-  border-color: color-mix(in srgb, var(--portal-primary) 20%, var(--portal-line));
+  --gh-summary-tone: var(--portal-primary);
 }
 
 .gh-admin-summary-item--success {
-  border-color: color-mix(in srgb, var(--portal-success) 24%, var(--portal-line));
+  --gh-summary-tone: var(--portal-success);
 }
 
 .gh-admin-summary-item--warning {
-  border-color: color-mix(in srgb, var(--portal-warning) 28%, var(--portal-line));
+  --gh-summary-tone: var(--portal-warning);
+}
+
+.gh-admin-summary-item::before {
+  content: "";
+  position: absolute;
+  inset-block: 12px;
+  inset-inline-start: 0;
+  width: 3px;
+  border-radius: 0 999px 999px 0;
+  background: linear-gradient(180deg, var(--gh-summary-tone, var(--portal-muted)), transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--gh-summary-tone, var(--portal-muted)) 35%, transparent);
+  pointer-events: none;
 }
 
 .gh-admin-summary-label,
@@ -3510,12 +3942,15 @@ a.gh-stat-card:hover {
 .gh-admin-summary-item strong {
   display: block;
   overflow: hidden;
-  margin-top: 6px;
-  color: var(--portal-text);
+  margin-top: 7px;
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 26px;
   font-weight: 800;
-  line-height: 1.05;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  background: var(--lux-numeral-ink);
+  background-clip: text;
+  color: transparent;
   font-variant-numeric: tabular-nums;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -3532,6 +3967,7 @@ a.gh-stat-card:hover {
 /* Empty state — DESIGN.md §5.15: illustration or 44px icon tile, centered
  * column, 48px vertical padding. Must render on every list surface. */
 .gh-admin-empty-state {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -3539,6 +3975,21 @@ a.gh-stat-card:hover {
   gap: 14px;
   padding: 48px 24px;
   text-align: center;
+}
+
+.gh-admin-empty-state::before {
+  content: "";
+  position: absolute;
+  width: min(280px, 70%);
+  height: 180px;
+  border-radius: 999px;
+  background: radial-gradient(closest-side, rgba(143, 176, 33, 0.06), transparent);
+  pointer-events: none;
+}
+
+.gh-admin-empty-state > * {
+  position: relative;
+  z-index: 1;
 }
 
 .gh-admin-empty-state__asset {
@@ -3553,8 +4004,12 @@ a.gh-stat-card:hover {
   justify-content: center;
   width: 44px;
   height: 44px;
+  border: 1px solid var(--portal-line-soft);
   border-radius: var(--portal-radius);
-  background: var(--portal-well);
+  background: var(--lux-well-fill);
+  box-shadow:
+    inset 0 1px 2px rgba(16, 23, 19, 0.06),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.9);
   color: var(--portal-accent-text);
 }
 
@@ -3726,6 +4181,7 @@ a.gh-stat-card:hover {
   gap: 10px;
   min-width: 0;
   padding: 8px 0;
+  border-bottom: 1px solid var(--portal-line-soft);
 }
 
 .gh-document-row--consumer {
@@ -3741,8 +4197,10 @@ a.gh-stat-card:hover {
   width: 32px;
   height: 32px;
   border-radius: var(--portal-radius-sm);
-  background: var(--portal-well);
+  border: 1px solid var(--portal-line-soft);
+  background: var(--lux-well-fill);
   color: var(--portal-accent-text);
+  box-shadow: var(--lux-inset-well);
 }
 
 .gh-document-row--consumer .gh-document-row__icon {
@@ -3791,6 +4249,10 @@ a.gh-stat-card:hover {
 .gh-document-row--consumer .gh-document-row__actions > * {
   min-width: 44px;
   min-height: 44px;
+}
+
+.gh-document-row:last-child {
+  border-bottom: 0;
 }
 
 .gh-admin-scope-banner {
@@ -4024,7 +4486,7 @@ a.gh-stat-card:hover {
 }
 
 .gh-admin-media-dropzone--preview {
-  background: #ffffff !important;
+  background: var(--lux-card-fill) !important;
 }
 
 .gh-admin-media-empty {
@@ -4060,25 +4522,33 @@ a.gh-stat-card:hover {
   border-radius: var(--portal-radius-sm, 6px);
   background: linear-gradient(
     90deg,
-    var(--portal-well, #eff1ea) 25%,
-    rgba(255, 255, 255, 0.85) 37%,
-    var(--portal-well, #eff1ea) 63%
+    var(--portal-well) 22%,
+    color-mix(in srgb, var(--portal-mint) 15%, var(--portal-surface)) 38%,
+    var(--portal-well) 64%
   ) !important;
   background-size: 400% 100% !important;
+  border: 1px solid var(--portal-line-soft);
+  box-shadow:
+    inset 0 1px 2px rgba(16, 23, 19, 0.06),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.9);
   animation: gh-skeleton-sweep 1.6s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .gh-skeleton-bar {
     animation: none;
-    background: var(--portal-well, #eff1ea) !important;
+    background: var(--lux-well-fill) !important;
   }
 }
 
 .gh-skeleton-header,
 .gh-skeleton-section,
 .gh-skeleton-table {
-  border: 1px solid var(--portal-line, var(--color-border));
+  border: 1px solid transparent;
+  background-image: var(--lux-card-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-1);
 }
 
 @media (max-width: 760px) {
@@ -4263,8 +4733,8 @@ a.gh-stat-card:hover {
 
 .gh-admin-slot-day--active,
 .gh-admin-slot-time--active {
-  background: #184633 !important;
-  border-color: #184633 !important;
+  background: var(--lux-forest-duotone) !important;
+  border-color: var(--portal-primary) !important;
 }
 
 .gh-admin-slot-times {
@@ -4662,8 +5132,8 @@ a.gh-stat-card:hover {
 }
 
 .gh-admin-health-tab[aria-selected="true"] {
-  background: #184633 !important;
-  color: #ffffff !important;
+  background: var(--lux-forest-duotone) !important;
+  color: var(--portal-bg) !important;
 }
 
 .gh-admin-health-active-row {
@@ -4968,8 +5438,8 @@ a.gh-stat-card:hover {
 }
 
 .gh-admin-disclaimer-tab[aria-selected="true"] {
-  background: #184633 !important;
-  color: #ffffff !important;
+  background: var(--lux-forest-duotone) !important;
+  color: var(--portal-bg) !important;
 }
 
 .gh-admin-disclaimer-panel textarea,
@@ -5270,8 +5740,8 @@ a.gh-stat-card:hover {
 }
 
 .gh-admin-specialty-tab[aria-selected="true"] {
-  background: #184633 !important;
-  color: #ffffff !important;
+  background: var(--lux-forest-duotone) !important;
+  color: var(--portal-bg) !important;
 }
 
 .gh-admin-specialty-order-list > div,
@@ -5402,10 +5872,12 @@ a.gh-stat-card:hover {
 .gh-agenda-panel,
 .gh-calendar-dialog,
 .gh-chat-panel {
-  border-color: var(--portal-line, var(--color-border)) !important;
+  border: 1px solid transparent !important;
   border-radius: var(--portal-radius-lg, 14px) !important;
-  background: var(--portal-surface, #fff) !important;
-  box-shadow: var(--portal-shadow, var(--shadow-soft)) !important;
+  background-image: var(--lux-card-fill), var(--lux-card-border) !important;
+  background-origin: border-box !important;
+  background-clip: padding-box, border-box !important;
+  box-shadow: var(--lux-elev-1) !important;
 }
 
 @media (min-width: 768px) {
@@ -5435,13 +5907,13 @@ a.gh-stat-card:hover {
  * day-number badge, not the whole cell (keeps the event count chips
  * legible). */
 .gh-calendar-day-number--today {
-  box-shadow: inset 0 0 0 2px var(--portal-accent, var(--color-brand-primary));
+  box-shadow: var(--lux-calendar-today-ring);
   color: var(--portal-text, inherit) !important;
   background: transparent !important;
 }
 
 .gh-calendar-day-number--selected {
-  background: var(--portal-primary, var(--color-brand-primary)) !important;
+  background: var(--lux-forest-duotone) !important;
   color: var(--portal-bg, #fff) !important;
   box-shadow: none;
 }
@@ -5531,12 +6003,12 @@ a.gh-stat-card:hover {
 }
 
 .gh-chat-panel-embedded {
-  background: transparent !important;
+  background-image: var(--lux-card-fill), var(--lux-card-border) !important;
 }
 
 .gh-chat-header {
   border-bottom: 1px solid var(--portal-line, var(--color-border)) !important;
-  background: var(--portal-surface, #fff) !important;
+  background: color-mix(in srgb, var(--portal-surface) 52%, transparent) !important;
 }
 
 .gh-chat-header--embedded {
@@ -5549,11 +6021,13 @@ a.gh-stat-card:hover {
 .gh-chat-pending-file,
 .gh-chat-disabled {
   border-top: 1px solid var(--portal-line, var(--color-border)) !important;
-  background: var(--portal-surface, #fff) !important;
+  background: var(--lux-well-fill) !important;
+  box-shadow: var(--lux-inset-well) !important;
 }
 
 .gh-chat-body {
-  background: var(--portal-well, #f2f4ee) !important;
+  background: var(--lux-well-fill) !important;
+  box-shadow: var(--lux-inset-well) !important;
 }
 
 .gh-chat-list {
@@ -5595,14 +6069,15 @@ a.gh-stat-card:hover {
 .gh-chat-bubble-own,
 .gh-chat-attachment-own,
 .gh-chat-send {
-  background: var(--portal-primary, #184633) !important;
+  background: var(--lux-forest-duotone) !important;
   color: var(--portal-bg, #fff) !important;
+  box-shadow: var(--lux-chat-own-rim) !important;
 }
 
 .gh-chat-bubble-other,
 .gh-chat-attachment-other {
   border-color: var(--portal-line, var(--color-border)) !important;
-  background: var(--portal-surface, #fff) !important;
+  background: color-mix(in srgb, var(--portal-surface) 90%, transparent) !important;
   color: var(--portal-text, #263b34) !important;
 }
 
@@ -5683,7 +6158,7 @@ a.gh-stat-card:hover {
 .gh-chat-empty {
   border: 1.5px dashed var(--portal-line-strong);
   border-radius: var(--portal-radius-lg, 14px);
-  background: var(--portal-surface, #fff);
+  background: var(--lux-card-fill);
 }
 
 .gh-chat-attach,
@@ -6494,7 +6969,6 @@ a.gh-stat-card:hover {
   max-width: 100%;
   overflow-x: auto;
   overscroll-behavior-x: contain;
-  scrollbar-width: thin;
   padding-bottom: 2px;
 }
 
@@ -6712,7 +7186,6 @@ a.gh-stat-card:hover {
   max-width: 100%;
   overflow-x: auto;
   overscroll-behavior-x: contain;
-  scrollbar-width: thin;
   padding-bottom: 2px;
 }
 
@@ -6728,8 +7201,88 @@ a.gh-stat-card:hover {
   transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
 }
 
+/* Today's-schedule rows — status tick + hover wash so the list reads as
+ * instrument rows instead of loose text lines. */
+.gh-doctor-schedule-row {
+  position: relative;
+  padding-left: 14px;
+  border-radius: 8px;
+  transition: background-color 150ms ease;
+}
+
+.gh-doctor-schedule-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 3px;
+  border-radius: 999px;
+  background: var(--lux-status-edge-brand);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.gh-doctor-schedule-row:hover {
+  background-color: color-mix(in srgb, var(--portal-mint) 5%, transparent);
+}
+
+/* Quick-action cards — Material B glass with an accent-lit icon tile and
+ * a title underline sweep on hover; no more flat white shortcuts row. */
+.gh-doctor-quick-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: var(--portal-radius-lg);
+  background-image: var(--lux-card-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-1);
+}
+
 .gh-doctor-quick-card:hover {
-  box-shadow: var(--portal-shadow-hover);
+  background-image: var(--lux-card-fill), var(--lux-card-border-hover);
+  box-shadow: var(--lux-elev-2);
+  transform: translateY(-2px);
+}
+
+.gh-doctor-quick-card__tile {
+  border: 1px solid var(--portal-line-soft);
+  background: var(--lux-well-fill);
+  box-shadow:
+    inset 0 1px 2px rgba(16, 23, 19, 0.06),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px color-mix(in srgb, var(--portal-accent) 40%, transparent),
+    0 0 16px color-mix(in srgb, var(--portal-accent) 14%, transparent);
+  transition: box-shadow 180ms ease;
+}
+
+.gh-doctor-quick-card:hover .gh-doctor-quick-card__tile {
+  box-shadow:
+    inset 0 1px 2px rgba(16, 23, 19, 0.06),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px color-mix(in srgb, var(--portal-accent) 55%, transparent),
+    0 0 22px color-mix(in srgb, var(--portal-accent) 26%, transparent);
+}
+
+.gh-doctor-quick-card__label {
+  position: relative;
+  display: inline-block;
+}
+
+.gh-doctor-quick-card__label::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 0;
+  height: 1.5px;
+  background: linear-gradient(90deg, var(--portal-accent), transparent);
+  transition: width 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gh-doctor-quick-card:hover .gh-doctor-quick-card__label::after {
+  width: 100%;
 }
 
 .gh-doctor-service-card:hover,
@@ -6864,7 +7417,6 @@ a.gh-stat-card:hover {
 .gh-doctor-appointment-tablist,
 .gh-doctor-doc-modal-tabs {
   overscroll-behavior-x: contain;
-  scrollbar-width: thin;
 }
 
 /* Calm mode — DESIGN.md §6.3/strategy Doctor plan: while a consultation
@@ -6909,7 +7461,7 @@ a.gh-stat-card:hover {
 }
 
 .gh-doctor-review-row {
-  background: linear-gradient(180deg, #fff, rgba(247, 250, 247, 0.76));
+  background: var(--lux-card-fill);
 }
 
 .gh-doctor-review-actions .gh-btn {
@@ -7077,7 +7629,6 @@ a.gh-stat-card:hover {
 
 .gh-patient-tabs {
   overscroll-behavior-x: contain;
-  scrollbar-width: thin;
 }
 
 .gh-patient-medical-empty {
@@ -7092,9 +7643,59 @@ a.gh-stat-card:hover {
   width: 112px;
   height: 112px;
   border-radius: 8px;
-  object-fit: cover;
+  /* Transparent illustration (§13 E1) — contain, shadows baked into the asset. */
+  object-fit: contain;
   object-position: center;
-  box-shadow: 0 14px 32px rgba(20, 55, 43, 0.08);
+}
+
+/* §13 M1 — membership-silk.png corner accent on the plan-card chrome header,
+ * capped at 0.5. Transparent PNG over Material A; purely decorative. */
+.gh-patient-membership-card__header {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Membership manage panel — the current-plan title row becomes the T2
+ * obsidian header band (Material A + lime-silk hairline + silk corner)
+ * by bleeding across the AdminCard's 24px padding. CSS-only; markup owns
+ * nothing but the class. */
+.gh-membership-manage-head {
+  position: relative;
+  overflow: hidden;
+  margin: -24px -24px 0;
+  padding: 20px 24px;
+  border-radius: calc(var(--portal-radius-lg) - 1px) calc(var(--portal-radius-lg) - 1px) 0 0;
+  background: var(--portal-chrome-solid);
+  border-bottom: 1px solid var(--portal-member);
+}
+
+.gh-membership-manage-head::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--lux-asset-member, none);
+  background-size: auto 100%;
+  background-position: right center;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+}
+
+.gh-membership-manage-head > * {
+  position: relative;
+  z-index: 1;
+}
+
+.gh-patient-membership-card__header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--lux-asset-member, none);
+  background-size: auto 100%;
+  background-position: right center;
+  background-repeat: no-repeat;
+  opacity: 0.5;
 }
 
 .gh-patient-tabs > button {
@@ -7104,7 +7705,6 @@ a.gh-stat-card:hover {
 .gh-patient-table-wrap {
   max-width: 100%;
   overscroll-behavior-x: contain;
-  scrollbar-width: thin;
 }
 
 .gh-patient-list-row,
@@ -7278,22 +7878,26 @@ a.gh-stat-card:hover {
   grid-template-columns: minmax(84px, auto) minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 16px;
-  border: 1px solid var(--portal-line);
+  border: 1px solid transparent;
   border-radius: var(--portal-radius-lg);
-  background: var(--portal-surface);
+  background-image: var(--lux-card-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
   padding: 14px 18px 14px 21px;
+  box-shadow: var(--lux-elev-press);
   text-decoration: none;
   color: inherit;
   transition: box-shadow 160ms, transform 160ms;
 }
 
 a.gh-appointment-card:hover {
-  box-shadow: 0 10px 24px rgba(20, 55, 43, 0.08);
+  background-image: var(--lux-card-fill), var(--lux-card-border-hover);
+  box-shadow: var(--lux-elev-1);
   transform: translateY(-1px);
 }
 
 .gh-appointment-card + .gh-appointment-card {
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .gh-appointment-card::before {
@@ -7304,42 +7908,55 @@ a.gh-appointment-card:hover {
   bottom: 0;
   width: 3px;
   border-radius: var(--portal-radius-lg) 0 0 var(--portal-radius-lg);
-  background: var(--portal-line-strong);
+  background: var(--lux-mobile-edge);
+  box-shadow: 0 0 8px var(--portal-signal-glow);
 }
 
-.gh-appointment-card--success::before { background: var(--portal-success); }
-.gh-appointment-card--warning::before { background: var(--portal-warning); }
-.gh-appointment-card--danger::before { background: var(--portal-danger); }
-.gh-appointment-card--info::before { background: var(--portal-info); }
-.gh-appointment-card--brand::before { background: var(--portal-primary); }
+.gh-appointment-card--success::before { background: var(--lux-status-edge-success); }
+.gh-appointment-card--warning::before { background: var(--lux-status-edge-warning); }
+.gh-appointment-card--danger::before { background: var(--lux-status-edge-danger); }
+.gh-appointment-card--info::before { background: var(--lux-status-edge-info); }
+.gh-appointment-card--brand::before { background: var(--lux-status-edge-brand); }
 
 .gh-appointment-card--live {
-  box-shadow: 0 0 0 1px var(--portal-signal-glow);
+  box-shadow: var(--lux-elev-2);
 }
 
 .gh-appointment-card--live::before {
-  background: var(--portal-signal);
+  background: var(--lux-status-edge-live);
   box-shadow: 0 0 12px var(--portal-signal-glow);
   animation: gh-agenda-now-breathe 3s ease-in-out infinite;
 }
 
+/* Time block — etched well chip so the tabular time reads as an
+ * instrument readout instead of loose text. */
 .gh-appointment-card__time {
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  min-width: 68px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: var(--lux-well-fill);
+  box-shadow: var(--lux-inset-well);
 }
 
 .gh-appointment-card__time-value {
-  font-size: 15px;
+  font-size: 15.5px;
   font-weight: 800;
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
   color: var(--portal-text);
   white-space: nowrap;
 }
 
 .gh-appointment-card__time-meta {
-  margin-top: 2px;
-  font-size: 11px;
+  margin-top: 1px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--portal-muted);
   white-space: nowrap;
 }
@@ -7352,8 +7969,9 @@ a.gh-appointment-card:hover {
 
 .gh-appointment-card__person-name {
   overflow: hidden;
-  font-size: 13.5px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 750;
+  letter-spacing: -0.01em;
   color: var(--portal-text);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -7388,5 +8006,84 @@ a.gh-appointment-card:hover {
 @media (prefers-reduced-motion: reduce) {
   .gh-appointment-card--live::before {
     animation: none;
+  }
+}
+
+/* Liquid Lux commit 5: shared chat, calendar, dialog, mobile-card and micro-layer skins. */
+.gh-portal-shell ::selection {
+  background: var(--lux-selection);
+  color: var(--portal-text);
+}
+
+.gh-portal-shell :where(svg) {
+  opacity: var(--lux-icon-rest);
+}
+
+.gh-portal-shell :where(a:hover svg, button:hover svg, [aria-current="page"] svg) {
+  opacity: var(--lux-icon-active);
+}
+
+[data-sonner-toast] {
+  border: 1px solid transparent;
+  border-radius: var(--portal-radius-xl);
+  background-image: var(--lux-modal-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-modal);
+}
+
+.gh-chat-note,
+.gh-chat-alert,
+.gh-admin-mobile-card,
+.gh-admin-appointment-mobile-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.gh-admin-mobile-card::before,
+.gh-admin-appointment-mobile-card::before {
+  content: "";
+  position: absolute;
+  inset-block: 12px;
+  inset-inline-start: 0;
+  width: 3px;
+  border-radius: 0 999px 999px 0;
+  background: var(--lux-mobile-edge);
+  box-shadow: 0 0 8px var(--portal-signal-glow);
+  pointer-events: none;
+}
+
+.gh-portal-shell :where(a:not(.gh-btn):not(.gh-portal-nav-item)) {
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+.gh-portal-shell :where(a:not(.gh-btn):not(.gh-portal-nav-item)):hover {
+  text-decoration-color: var(--portal-mint);
+}
+
+/* WebKit pseudos — any non-initial `scrollbar-width`/`scrollbar-color`
+ * makes Chromium ignore the custom pseudo styling below and hands the
+ * bar to the Win11 overlay (invisible until scrolled), so they're gated
+ * behind `@supports not selector(::-webkit-scrollbar)`: Firefox gets its
+ * native theming API, Chromium uses the pseudo-elements here instead. */
+.gh-portal-shell *:not(.gh-dark-scroll)::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.gh-portal-shell *:not(.gh-dark-scroll)::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--lux-scrollbar-thumb);
+}
+
+.gh-portal-shell *:not(.gh-dark-scroll)::-webkit-scrollbar-thumb:hover {
+  background: var(--lux-scrollbar-thumb-hover);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .gh-portal-shell *:not(.gh-dark-scroll) {
+    scrollbar-width: thin;
+    scrollbar-color: var(--lux-scrollbar-thumb) transparent;
   }
 }

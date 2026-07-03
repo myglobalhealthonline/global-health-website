@@ -320,7 +320,7 @@ export default function MedicalFilesPage() {
       ) : filteredDocs.length === 0 ? (
         <div className="gh-patient-empty-state gh-patient-medical-empty gh-card p-6">
           <Image
-            src="/images/portal/generated/patient-record-empty-state.png"
+            src="/images/portal/obsidian/empty-records.svg"
             alt=""
             aria-hidden
             width={224}

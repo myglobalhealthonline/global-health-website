@@ -42,12 +42,13 @@ export function ServiceTimePicker({
 }: Props) {
   const router = useRouter();
   const [navigating, startNavigate] = useTransition();
+  const [now] = useState(() => Date.now());
 
   const tz = clinicTimezone ?? "Europe/Dublin";
   const tzLabel = tz.includes("/") ? tz.slice(tz.lastIndexOf("/") + 1).replace(/_/g, " ") : tz;
   const openSlots = useMemo(
-    () => slots.filter((slot) => new Date(slot.startAt).getTime() > Date.now()),
-    [slots],
+    () => slots.filter((slot) => new Date(slot.startAt).getTime() > now),
+    [slots, now],
   );
 
   const grouped = useMemo(() => {

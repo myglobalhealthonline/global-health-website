@@ -65,6 +65,7 @@ export default async function AccountOrdersPage() {
           {items.length === 0 ? (
             <AdminEmptyState
               icon={<ShoppingBag className="size-6" aria-hidden />}
+              assetSrc="/images/portal/obsidian/empty-payments.svg"
               title={a.orders.noOrders}
               description="Health tests, prescriptions, and checkout orders will appear here after purchase."
               action={

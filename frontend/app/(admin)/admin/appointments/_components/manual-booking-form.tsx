@@ -724,7 +724,7 @@ function SlotPicker({
   const daySlots = selectedDay ? grouped.get(selectedDay) ?? [] : [];
   return (
     <div className="gh-admin-slot-picker mt-3">
-      <div className="gh-admin-slot-days -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin]">
+      <div className="gh-admin-slot-days -mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
         {Array.from(grouped.entries()).map(([day, list]) => {
           const isActive = selectedDay === day;
           const date = list[0]?.startAt ? new Date(list[0]!.startAt) : null;
