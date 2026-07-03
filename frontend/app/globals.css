@@ -3424,79 +3424,9 @@ a.gh-stat-card:hover {
   display: none;
 }
 
-.gh-admin-mobile-card {
-  display: grid;
-  gap: 12px;
-  border: 1px solid rgba(29, 75, 54, 0.12);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 14px 30px rgba(20, 55, 43, 0.055);
-  padding: 14px;
-}
-
-.gh-admin-mobile-card__title {
-  min-width: 0;
-}
-
-.gh-admin-mobile-card__title strong,
-.gh-admin-mobile-card__title a {
-  display: block;
-  overflow: hidden;
-  color: var(--color-text-primary);
-  font-size: 14px;
-  font-weight: 800;
-  line-height: 1.25;
-  text-overflow: ellipsis;
-}
-
-.gh-admin-mobile-card__title span {
-  display: block;
-  overflow: hidden;
-  margin-top: 3px;
-  color: var(--color-text-muted);
-  font-size: 12px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.gh-admin-mobile-meta {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.gh-admin-mobile-meta span {
-  min-width: 0;
-  border: 1px solid rgba(29, 75, 54, 0.08);
-  border-radius: 8px;
-  background: rgba(247, 250, 243, 0.72);
-  padding: 8px;
-}
-
-.gh-admin-mobile-meta em {
-  display: block;
-  margin-bottom: 3px;
-  color: var(--color-text-muted);
-  font-size: 10px;
-  font-style: normal;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.gh-admin-mobile-meta strong {
-  display: block;
-  overflow: hidden;
-  color: var(--color-text-primary);
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1.25;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* PortalMobileCard — DESIGN.md §5.14, new shared primitive replacing the
- * per-page .gh-admin-mobile-card bodies above (migrated progressively). */
+/* PortalMobileCard — DESIGN.md §5.14, new shared primitive. Fully replaces
+ * the old .gh-admin-mobile-card/-meta/-actions recipe (removed — zero
+ * remaining consumers after the Admin mobile-card migration sweep). */
 .gh-portal-mobile-card {
   position: relative;
   display: grid;
@@ -3600,13 +3530,6 @@ a.gh-stat-card:hover {
 }
 
 .gh-portal-mobile-card__actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.gh-admin-mobile-actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
