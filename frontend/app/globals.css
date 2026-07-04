@@ -548,8 +548,8 @@ img {
    * Overrides the .gh-site-shell forest gradient (defined later, equal
    * specificity). */
   background: var(--gh-chrome);
-  backdrop-filter: blur(var(--gh-chrome-blur));
   -webkit-backdrop-filter: blur(var(--gh-chrome-blur));
+  backdrop-filter: blur(var(--gh-chrome-blur));
   border-top: var(--gh-chrome-border);
   box-shadow: var(--gh-chrome-shadow);
 }
@@ -2386,7 +2386,7 @@ a.gh-stat-card:hover .gh-stat-card__underline {
 
 .gh-portal-sidebar-footer {
   border-top: 1px solid var(--portal-chrome-border);
-  color: color-mix(in srgb, var(--portal-chrome-text-active) 55%, transparent);
+  color: rgba(233, 239, 233, 0.55);
 }
 
 .gh-portal-glyph {
@@ -2646,12 +2646,12 @@ a.gh-stat-card:hover .gh-stat-card__underline {
 .gh-portal-page-header h1,
 .gh-admin-main > header:not(.gh-portal-page-header) h1,
 .gh-admin-main > header:not(.gh-portal-page-header) h2 {
-  text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 .gh-portal-page-header p,
 .gh-admin-main > header:not(.gh-portal-page-header) p {
-  text-wrap: pretty;
+  overflow-wrap: break-word;
 }
 
 /* Cards — L3 recipe (DESIGN.md §5.5): white, radius 14, hairline border,
@@ -3029,7 +3029,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 
 .gh-portal-shell .gh-btn-danger {
   background: var(--portal-danger-soft);
-  border-color: color-mix(in srgb, var(--portal-danger) 40%, transparent);
+  border-color: rgba(188, 74, 66, 0.4);
   color: var(--portal-danger-text);
 }
 
@@ -3126,7 +3126,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 .gh-admin-main :where(.overflow-x-auto, .gh-admin-table-wrap) {
   max-width: 100%;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .gh-admin-main :where(table) {
@@ -3539,7 +3538,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 .gh-admin-main button.gh-admin-status-toggle[type="submit"] {
   display: inline-flex !important;
   width: auto !important;
-  min-height: auto !important;
+  min-height: unset !important;
   align-items: center !important;
   gap: 8px !important;
   justify-content: center !important;
@@ -3712,7 +3711,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   border-radius: var(--portal-radius);
   background: rgba(241, 245, 235, 0.88) !important;
   padding: 5px !important;
-  -webkit-overflow-scrolling: touch;
 }
 
 .gh-admin-service-tab,
@@ -4625,7 +4623,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   width: 32px !important;
   height: 32px !important;
   min-height: 32px !important;
-  border: 1px solid color-mix(in srgb, var(--portal-danger) 40%, transparent) !important;
+  border: 1px solid rgba(188, 74, 66, 0.4) !important;
   border-radius: var(--portal-radius-sm) !important;
   background: var(--portal-danger-soft) !important;
   color: var(--portal-danger-text) !important;
@@ -4635,7 +4633,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 
 .gh-confirm-delete-button:hover {
   background: color-mix(in srgb, var(--portal-danger) 16%, transparent) !important;
-  border-color: color-mix(in srgb, var(--portal-danger) 55%, transparent) !important;
+  border-color: rgba(188, 74, 66, 0.55) !important;
 }
 
 .gh-admin-scope-banner {
@@ -4888,7 +4886,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 
 .gh-admin-slot-days {
   scroll-snap-type: x proximity;
-  -webkit-overflow-scrolling: touch;
 }
 
 .gh-admin-slot-day,
@@ -5399,7 +5396,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 .gh-admin-ops-table-wrap {
   max-width: 100%;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .gh-admin-ops-table-wrap table {
@@ -5515,7 +5511,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 .gh-admin-country-table-wrap {
   max-width: 100%;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .gh-admin-country-table-wrap table {
@@ -5693,7 +5688,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 .gh-admin-plan-table-wrap {
   max-width: 100%;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .gh-admin-plan-table-wrap table {
@@ -5864,7 +5858,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 .gh-admin-support-table-wrap {
   max-width: 100%;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .gh-admin-support-table-wrap table {
@@ -5987,7 +5980,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 .gh-admin-order-table-wrap {
   max-width: 100%;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .gh-admin-order-table-wrap table {
@@ -6329,7 +6321,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 }
 
 .gh-chat-alert {
-  border: 1px solid color-mix(in srgb, var(--portal-warning) 30%, transparent) !important;
+  border: 1px solid rgba(176, 124, 26, 0.3) !important;
   border-radius: var(--portal-radius-sm, 8px) !important;
   background: var(--portal-warning-soft, rgba(255, 247, 225, 0.94)) !important;
   color: var(--portal-warning-text, #6c4b0d) !important;
@@ -6999,7 +6991,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   color: var(--color-brand-primary);
 }
 .gh2-btn-compact-secondary:hover {
-  border-color: color-mix(in srgb, var(--color-brand-primary) 40%, transparent);
+  border-color: rgba(29, 75, 54, 0.4);
   background: var(--color-background-soft);
 }
 /* Secondary on light surfaces — outline that fills on hover. */
@@ -7021,7 +7013,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   transition: background-color 180ms ease-out, border-color 180ms ease-out;
 }
 .gh2-btn-outline:hover {
-  border-color: color-mix(in srgb, var(--color-brand-primary) 40%, transparent);
+  border-color: rgba(29, 75, 54, 0.4);
   background: var(--color-background-soft);
 }
 /* Filter pill pair — selected = forest fill, unselected = quiet outline. */
@@ -7041,7 +7033,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
     color 150ms ease-out;
 }
 .gh2-pill-filter:hover {
-  border-color: color-mix(in srgb, var(--color-brand-primary) 40%, transparent);
+  border-color: rgba(29, 75, 54, 0.4);
 }
 .gh2-pill-filter[aria-pressed="true"],
 .gh2-pill-filter[data-selected="true"],
@@ -7513,7 +7505,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 }
 
 .gh-doctor-schedule-row:hover {
-  background-color: color-mix(in srgb, var(--portal-mint) 5%, transparent);
+  background-color: rgba(143, 176, 33, 0.05);
 }
 
 /* Quick-action cards — Material B glass with an accent-lit icon tile and
@@ -8375,4 +8367,160 @@ a.gh-appointment-card:hover {
     scrollbar-width: thin;
     scrollbar-color: var(--lux-scrollbar-thumb) transparent;
   }
+}
+
+/* Inline-style replacements for marketing pages and profile templates. */
+.gh-inline-clamp-section {
+  padding: clamp(56px, 7vw, 104px) 0;
+}
+
+.gh-inline-clamp-section-tight {
+  padding: clamp(28px, 4vw, 48px) 0;
+}
+
+.gh-inline-clamp-section-pricing {
+  padding: clamp(64px, 8vw, 120px) 0;
+}
+
+.gh-inline-clamp-section-cta {
+  padding: clamp(40px, 5vw, 64px) 0;
+}
+
+.gh-inline-split-hero {
+  background: #031f18;
+  height: calc(100svh - var(--header-height));
+  min-height: 620px;
+}
+
+.gh-inline-doctor-watermark {
+  font-size: clamp(5rem, 16vw, 14rem);
+  font-weight: 800;
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.042);
+  color: transparent;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  -webkit-user-select: none;
+  user-select: none;
+  white-space: nowrap;
+  padding-left: 4%;
+}
+
+.gh-inline-doctor-image-fallback {
+  z-index: 1;
+  background: linear-gradient(160deg, rgba(176, 241, 34, 0.08) 0%, rgba(3, 31, 24, 0.8) 100%);
+}
+
+.gh-inline-hero-overlay {
+  z-index: 2;
+  background: rgba(3, 31, 24, 0.22);
+  mix-blend-mode: multiply;
+}
+
+.gh-inline-service-vignette {
+  z-index: 2;
+  height: 50%;
+  background: linear-gradient(to top, rgba(3, 31, 24, 0.88) 0%, rgba(3, 31, 24, 0.32) 50%, transparent 100%);
+}
+
+.gh-inline-doctor-vignette {
+  z-index: 2;
+  height: 50%;
+  background: linear-gradient(to top, rgba(3, 31, 24, 0.92) 0%, rgba(3, 31, 24, 0.42) 50%, transparent 100%);
+}
+
+.gh-inline-service-bleed {
+  z-index: 2;
+  width: 44%;
+  background: linear-gradient(to right, transparent 0%, rgba(3, 31, 24, 0.6) 45%, rgba(3, 31, 24, 0.92) 75%, #031f18 100%);
+}
+
+.gh-inline-doctor-bleed {
+  z-index: 2;
+  width: 44%;
+  background: linear-gradient(to right, transparent 0%, rgba(3, 31, 24, 0.55) 42%, rgba(3, 31, 24, 0.9) 72%, #031f18 100%);
+}
+
+.gh-inline-mobile-name {
+  z-index: 3;
+}
+
+.gh-inline-panel-base {
+  background: #031f18;
+}
+
+.gh-inline-panel-depth {
+  background:
+    radial-gradient(circle at 88% 14%, rgba(22, 89, 64, 0.3), transparent 42%),
+    radial-gradient(circle at 12% 88%, rgba(2, 18, 13, 0.55), transparent 44%),
+    linear-gradient(135deg, #062b21 0%, #031f18 50%, #02140e 100%);
+}
+
+.gh-inline-service-grid {
+  background-image:
+    linear-gradient(rgba(176, 241, 34, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(176, 241, 34, 0.045) 1px, transparent 1px);
+  background-size: 52px 52px;
+  -webkit-mask-image: radial-gradient(130% 130% at 80% 18%, #000 0%, rgba(0, 0, 0, 0.4) 52%, transparent 88%);
+  mask-image: radial-gradient(130% 130% at 80% 18%, #000 0%, rgba(0, 0, 0, 0.4) 52%, transparent 88%);
+}
+
+.gh-inline-doctor-grid {
+  background-image:
+    linear-gradient(rgba(167, 243, 11, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(167, 243, 11, 0.045) 1px, transparent 1px);
+  background-size: 52px 52px;
+  -webkit-mask-image: radial-gradient(130% 130% at 80% 18%, #000 0%, rgba(0, 0, 0, 0.4) 52%, transparent 88%);
+  mask-image: radial-gradient(130% 130% at 80% 18%, #000 0%, rgba(0, 0, 0, 0.4) 52%, transparent 88%);
+}
+
+.gh-inline-panel-dots {
+  opacity: 0.55;
+  -webkit-mask-image: radial-gradient(700px 540px at 86% 12%, #000 0%, transparent 70%);
+  mask-image: radial-gradient(700px 540px at 86% 12%, #000 0%, transparent 70%);
+}
+
+.gh-inline-service-glow {
+  background:
+    radial-gradient(ellipse 560px 480px at 72% 64%, rgba(176, 241, 34, 0.1), transparent 62%),
+    radial-gradient(ellipse 640px 540px at 112% -8%, rgba(176, 241, 34, 0.11), transparent 60%);
+}
+
+.gh-inline-doctor-glow {
+  background:
+    radial-gradient(ellipse 560px 480px at 72% 64%, rgba(167, 243, 11, 0.1), transparent 62%),
+    radial-gradient(ellipse 640px 540px at 112% -8%, rgba(167, 243, 11, 0.11), transparent 60%);
+}
+
+.gh-inline-plus-large {
+  top: -2%;
+  right: 5%;
+  font-size: 190px;
+  color: rgba(176, 241, 34, 0.055);
+}
+
+.gh-inline-plus-small {
+  bottom: 8%;
+  right: 10%;
+  font-size: 78px;
+  color: rgba(176, 241, 34, 0.045);
+}
+
+.gh-inline-content-max {
+  max-width: 680px;
+}
+
+.gh-inline-forest-glass {
+  background: rgba(5, 34, 27, 0.78);
+  border: 1px solid rgba(176, 241, 34, 0.18);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.gh-inline-doctor-glass {
+  background: rgba(5, 34, 27, 0.78);
+  border: 1px solid rgba(167, 243, 11, 0.18);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }

@@ -1,7 +1,7 @@
 import type { CountryTrust } from "@/lib/content/get-country-trust";
 
 /**
- * Country medical-authority trust bar — a dark "regulatory ledger" that leads
+ * Country medical-authority trust bar - a dark "regulatory ledger" that leads
  * into the site footer (same forest gradient + medical pattern). Renders the
  * legally-required rows for the country: provider registration, doctor
  * registry, data-protection authority, clinical standards, complaints book and
@@ -28,7 +28,7 @@ const PHRASES: Record<string, Phrases> = {
   en: {
     eyebrow: "Regulated & verified care",
     doctorsRegistered: (r) => `All doctors registered with the ${r}`,
-    gdpr: (law, a) => `${law} compliant · supervised by the ${a}`,
+    gdpr: (law, a) => `${law} compliant - supervised by the ${a}`,
     standards: (a) => `Clinical standards aligned with ${a}`,
     verify: "Verify",
     emergencyTag: "Emergency",
@@ -42,24 +42,19 @@ const PHRASES: Record<string, Phrases> = {
   },
   pt: {
     eyebrow: "Cuidados regulados e verificados",
-    doctorsRegistered: (r) => `Médicos inscritos na ${r}`,
-    gdpr: (law, a) => `${law} conforme · supervisionado pela ${a}`,
-    standards: (a) => `Padrões clínicos alinhados com ${a}`,
+    doctorsRegistered: (r) => `Medicos inscritos na ${r}`,
+    gdpr: (law, a) => `${law} conforme - supervisionado pela ${a}`,
+    standards: (a) => `Padroes clinicos alinhados com ${a}`,
     verify: "Verificar",
-    emergencyTag: "Emergência",
-    emergencyFallback: (n) => `Em caso de emergência médica ligue ${n}.`,
-    kMedical: "Registo médico",
-    kData: "Proteção de dados",
-    kStandards: "Padrões clínicos",
-    kComplaints: "Reclamações",
+    emergencyTag: "Emergencia",
+    emergencyFallback: (n) => `Em caso de emergencia medica ligue ${n}.`,
+    kMedical: "Registo medico",
+    kData: "Protecao de dados",
+    kStandards: "Padroes clinicos",
+    kComplaints: "Reclamacoes",
     kProvider: "Registo do prestador",
   },
 };
-
-const ACCENT = "var(--color-brand-accent)"; // lime
-const HAIR = "rgba(255,255,255,0.12)";
-const MUTED = "rgba(255,255,255,0.50)";
-const INK = "rgba(255,255,255,0.92)";
 
 function labelOf(link: { abbreviation: string | null; name: string }): string {
   return link.abbreviation ?? link.name;
@@ -86,16 +81,23 @@ export function CountryTrustBar({
   const regulatorName = trust.regulator?.name ?? registry?.name ?? null;
   const regulatorUrl = trust.regulator?.url ?? registry?.url ?? null;
 
-  // Build the ledger rows from the trust payload (kicker + text + verify link).
   const rows: Array<{ kicker: string; text: string; url: string | null }> = [];
   if (regulatorName) {
     rows.push({ kicker: t.kMedical, text: t.doctorsRegistered(regulatorName), url: regulatorUrl });
   }
   if (dataAuthority) {
-    rows.push({ kicker: t.kData, text: t.gdpr(trust.dataProtectionLawName, labelOf(dataAuthority)), url: dataAuthority.url });
+    rows.push({
+      kicker: t.kData,
+      text: t.gdpr(trust.dataProtectionLawName, labelOf(dataAuthority)),
+      url: dataAuthority.url,
+    });
   }
   if (healthAuthorities.length > 0) {
-    rows.push({ kicker: t.kStandards, text: t.standards(healthAuthorities.map(labelOf).join(" · ")), url: null });
+    rows.push({
+      kicker: t.kStandards,
+      text: t.standards(healthAuthorities.map(labelOf).join(" - ")),
+      url: null,
+    });
   }
   if (complaints) {
     rows.push({ kicker: t.kComplaints, text: complaints.name, url: complaints.url });
@@ -104,38 +106,30 @@ export function CountryTrustBar({
   return (
     <aside
       aria-label={`${trust.country.name} medical authority trust signals`}
-      className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
-      style={{
-        background: "linear-gradient(180deg, #12342A 0%, #0F2E25 100%)",
-        borderTop: "1px solid rgba(255,255,255,0.08)",
-      }}
+      className="relative overflow-hidden border-t border-white/8 bg-[linear-gradient(180deg,#12342A_0%,#0F2E25_100%)] gh-medical-pattern gh-medical-pattern-dark"
     >
-      <div className="relative z-[1] mx-auto px-5 md:px-10" style={{ maxWidth: "var(--container-width)", paddingTop: "clamp(40px,5vw,64px)", paddingBottom: "clamp(40px,5vw,64px)" }}>
-        {/* Header */}
+      <div className="relative z-[1] mx-auto max-w-[var(--container-width)] px-5 py-[clamp(40px,5vw,64px)] md:px-10">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <span className="text-[11px] font-bold uppercase tracking-[0.22em]" style={{ color: ACCENT }}>
+          <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">
             {t.eyebrow}
           </span>
-          <span className="text-[11px] font-semibold uppercase tracking-[0.16em] tabular-nums" style={{ color: MUTED }}>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/50 tabular-nums">
             {trust.country.name}
           </span>
         </div>
 
-        {/* Provider registration — prominent (e.g. Portugal ERS E179287) */}
         {trust.providerRegistration?.number ? (
-          <div className="mt-6 border-t pt-5" style={{ borderColor: HAIR }}>
-            <span className="text-[10.5px] font-bold uppercase tracking-[0.18em]" style={{ color: MUTED }}>
+          <div className="mt-6 border-t border-white/12 pt-5">
+            <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-white/50">
               {t.kProvider}
             </span>
             <div className="mt-1.5 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-              <span className="text-[clamp(1.1rem,1.4vw+0.6rem,1.5rem)] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>
+              <span className="text-[clamp(1.1rem,1.4vw+0.6rem,1.5rem)] font-extrabold tracking-[-0.01em] text-white/92">
                 {trust.providerRegistration.label}
               </span>
-              {trust.providerRegistration.number ? (
-                <span className="font-extrabold tabular-nums" style={{ color: ACCENT, fontSize: "clamp(1.1rem,1.4vw+0.6rem,1.5rem)" }}>
-                  Nº {trust.providerRegistration.number}
-                </span>
-              ) : null}
+              <span className="text-[clamp(1.1rem,1.4vw+0.6rem,1.5rem)] font-extrabold text-[var(--color-brand-accent)] tabular-nums">
+                No {trust.providerRegistration.number}
+              </span>
               {trust.providerRegistration.url ? (
                 <VerifyLink href={trust.providerRegistration.url} label={t.verify} />
               ) : null}
@@ -143,15 +137,14 @@ export function CountryTrustBar({
           </div>
         ) : null}
 
-        {/* Ledger rows — open hairline rules, no boxes */}
         {rows.length > 0 ? (
           <div className="mt-2 grid gap-x-12 sm:grid-cols-2">
             {rows.map((row) => (
-              <div key={row.kicker} className="border-t py-4" style={{ borderColor: HAIR }}>
-                <span className="text-[10.5px] font-bold uppercase tracking-[0.18em]" style={{ color: MUTED }}>
+              <div key={row.kicker} className="border-t border-white/12 py-4">
+                <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-white/50">
                   {row.kicker}
                 </span>
-                <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[14px] leading-snug" style={{ color: INK }}>
+                <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[14px] leading-snug text-white/92">
                   <span>{row.text}</span>
                   {row.url ? <VerifyLink href={row.url} label={t.verify} /> : null}
                 </p>
@@ -160,18 +153,14 @@ export function CountryTrustBar({
           </div>
         ) : null}
 
-        {/* Emergency — distinct inset with lime rule */}
-        <div
-          className="mt-6 flex flex-col gap-1.5 rounded-r-lg py-3 pl-4 pr-4 sm:flex-row sm:items-center sm:gap-4"
-          style={{ borderLeft: `2px solid ${ACCENT}`, background: "rgba(0,0,0,0.20)" }}
-        >
-          <span className="shrink-0 text-[10.5px] font-bold uppercase tracking-[0.18em]" style={{ color: ACCENT }}>
+        <div className="mt-6 flex flex-col gap-1.5 rounded-r-lg border-l-2 border-l-[var(--color-brand-accent)] bg-black/20 py-3 pl-4 pr-4 sm:flex-row sm:items-center sm:gap-4">
+          <span className="shrink-0 text-[10.5px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]">
             {t.emergencyTag}
           </span>
-          <p className="text-[13.5px] leading-snug" style={{ color: INK }}>
+          <p className="text-[13.5px] leading-snug text-white/92">
             {trust.emergency.notice ?? t.emergencyFallback(trust.emergency.number)}
             {trust.emergency.nonEmergencyLine ? (
-              <span style={{ color: MUTED }}> · {trust.emergency.nonEmergencyLine}</span>
+              <span className="text-white/50"> - {trust.emergency.nonEmergencyLine}</span>
             ) : null}
           </p>
         </div>
@@ -186,10 +175,9 @@ function VerifyLink({ href, label }: { href: string; label: string }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 text-[12px] font-bold uppercase tracking-[0.08em] transition-opacity hover:opacity-75"
-      style={{ color: ACCENT }}
+      className="inline-flex items-center gap-1 text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-brand-accent)] transition-opacity hover:opacity-75"
     >
-      {label} ↗
+      {label} {"->"}
     </a>
   );
 }

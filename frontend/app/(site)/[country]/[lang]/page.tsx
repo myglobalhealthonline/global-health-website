@@ -14,6 +14,7 @@ import { StatsBand, type StatBandItem } from "@/components/sections/StatsBand";
 import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
+import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { countries } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
@@ -443,48 +444,33 @@ export default async function CountryLangHomePage({
       <TrustRibbon items={trustItems} theme="light" />
       <ServiceCatalog services={serviceCatalogItems} i18n={tServices.catalog} />
       <StatsBand items={statsItems} theme="light" i18n={t.statsBand} />
+      <DoctifyReviewsSection theme="ivory" variant="carousel" language={lang} />
       {/* ── Team section — featured card + full grid under one heading ── */}
-      <section
-        className="relative gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
-        style={{
-          borderTop: "1px solid rgba(255,255,255,0.06)",
-        }}
-      >
+      <section className="relative border-t border-white/6 gh2-section-forest gh-medical-pattern gh-medical-pattern-dark">
         <div
-          className="mx-auto px-5 md:px-10 gh-section"
-          style={{ maxWidth: "var(--container-width)" }}
+          className="gh-section mx-auto max-w-[var(--container-width)] px-5 md:px-10"
         >
           {/* Shared heading */}
           <div className="mb-12 md:mb-16">
             <div className="flex flex-wrap items-baseline justify-between gap-4">
               <span className="flex items-center gap-3">
-                <span
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 700,
-                    letterSpacing: "0.20em",
-                    textTransform: "uppercase",
-                    color: "var(--color-brand-accent)",
-                  }}
-                >
+                <span className="text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-accent)]">
                   {t.team.eyebrow}
                 </span>
               </span>
               <span
-                className="text-[11px] font-bold uppercase tracking-[0.14em] [font-variant-numeric:tabular-nums]"
-                style={{ color: "rgba(255,255,255,0.42)" }}
+                className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/42 [font-variant-numeric:tabular-nums]"
               >
                 {countryDoctors.length} {countryDoctors.length === 1 ? t.team.registeredSingular : t.team.registeredPlural}
               </span>
             </div>
             <h2
-              className="mt-3 max-w-[22ch] text-[length:var(--text-h1)] font-extrabold tracking-[-0.03em] leading-[1.02]"
-              style={{ color: "rgba(255,255,255,0.92)" }}
+              className="mt-3 max-w-[22ch] text-[length:var(--text-h1)] font-extrabold leading-[1.02] tracking-[-0.03em] text-white/92"
             >
               {t.team.headline}{" "}
-              <span style={{ color: "var(--color-brand-accent)" }}>{t.team.headlineAccent}</span>
+              <span className="text-[var(--color-brand-accent)]">{t.team.headlineAccent}</span>
             </h2>
-            <p className="mt-5 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
+            <p className="mt-5 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed text-white/65">
               {t.team.body}
             </p>
           </div>

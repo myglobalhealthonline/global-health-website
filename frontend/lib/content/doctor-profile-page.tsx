@@ -1,3 +1,4 @@
+import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CalendarClock } from "lucide-react";
@@ -365,6 +366,15 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
           </div>
         </section>
       ) : null}
+      <DoctifyReviewsSection
+        theme="forest"
+        variant="carousel"
+        language={lang}
+        eyebrow="Patient reviews"
+        headline="What patients say about"
+        headlineAccent="our doctors"
+        body="Independent, verified reviews collected by Doctify from patients treated by our clinicians."
+      />
       <StickyBookingCTA href={fallbackBookHref} label={dp.bookWithDoctor.replace("{name}", firstName ?? data.profile.name)} />
     </>
   );

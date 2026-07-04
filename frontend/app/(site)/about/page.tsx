@@ -4,6 +4,7 @@ import Image from "next/image";
 import { ArrowUpRight, ShieldCheck, Stethoscope, Globe2, Clock, BadgeCheck, Users } from "lucide-react";
 import { SITE_NAME } from "@/lib/constants";
 import { PageHero } from "@/components/sections/PageHero";
+import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -51,20 +52,18 @@ export default async function AboutPage() {
       />
 
       {/* LIGHT — three pillars */}
-      <section style={{ background: "var(--color-background-soft)", borderTop: "1px solid rgba(29,75,54,0.10)", padding: "clamp(64px,8vw,120px) 0" }}>
+      <section className="gh-inline-clamp-section-pricing border-t border-[rgba(29,75,54,0.10)] bg-[var(--color-background-soft)]">
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <p
-            className="gh-eyebrow"
-            style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.20em", textTransform: "uppercase", color: "var(--color-brand-primary)" }}
+            className="gh-eyebrow text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-primary)]"
           >
             {about.pillars_eyebrow}
           </p>
           <h2
-            className="mt-3 max-w-[20ch] font-extrabold tracking-[-0.03em] leading-[1.02]"
-            style={{ fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)", color: "var(--color-text-primary)" }}
+            className="mt-3 max-w-[20ch] text-[clamp(2rem,4vw+0.5rem,3.5rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-[var(--color-text-primary)]"
           >
             {about.pillars_headline_pre}{" "}
-            <span style={{ color: "#8FB021" }}>{about.pillars_headline_accent}</span>
+            <span className="text-[#8FB021]">{about.pillars_headline_accent}</span>
             {about.pillars_headline_post}
           </h2>
 
@@ -93,28 +92,21 @@ export default async function AboutPage() {
 
       {/* DARK — how we work */}
       <section
-        className="gh-medical-pattern gh-medical-pattern-dark"
-        style={{
-          background: "var(--color-background-dark)",
-          padding: "clamp(64px,8vw,120px) 0",
-          borderTop: "1px solid rgba(255,255,255,0.07)",
-        }}
+        className="gh-inline-clamp-section-pricing gh-medical-pattern gh-medical-pattern-dark border-t border-white/7 bg-[var(--color-background-dark)]"
       >
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
             <div>
               <p
-                className="text-[11px] font-bold uppercase tracking-[0.2em]"
-                style={{ color: "var(--color-brand-accent)" }}
+                className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-accent)]"
               >
                 {about.steps_eyebrow}
               </p>
               <h2
-                className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02] text-white"
-                style={{ fontSize: "clamp(1.75rem, 3vw + 0.5rem, 2.75rem)" }}
+                className="mt-4 text-[clamp(1.75rem,3vw+0.5rem,2.75rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-white"
               >
                 {about.steps_headline_pre}{" "}
-                <span style={{ color: "var(--color-brand-accent)" }}>{about.steps_headline_accent}</span>
+                <span className="text-[var(--color-brand-accent)]">{about.steps_headline_accent}</span>
                 {about.steps_headline_post}
               </h2>
             </div>
@@ -129,27 +121,24 @@ export default async function AboutPage() {
       </section>
 
       {/* LIGHT — coverage */}
-      <section style={{ background: "var(--color-background-soft)", borderTop: "1px solid rgba(29,75,54,0.10)", padding: "clamp(40px,5vw,64px) 0" }}>
+      <section className="gh-inline-clamp-section-cta border-t border-[rgba(29,75,54,0.10)] bg-[var(--color-background-soft)]">
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div>
               <p
-                className="gh-eyebrow"
-                style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.20em", textTransform: "uppercase", color: "var(--color-brand-primary)" }}
+                className="gh-eyebrow text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-primary)]"
               >
                 {about.coverage_eyebrow}
               </p>
               <h2
-                className="mt-3 max-w-[16ch] font-extrabold tracking-[-0.025em] leading-[1.05]"
-                style={{ fontSize: "clamp(1.75rem, 3vw + 0.5rem, 2.75rem)", color: "var(--color-text-primary)" }}
+                className="mt-3 max-w-[16ch] text-[clamp(1.75rem,3vw+0.5rem,2.75rem)] font-extrabold leading-[1.05] tracking-[-0.025em] text-[var(--color-text-primary)]"
               >
                 {about.coverage_headline}
               </h2>
             </div>
             <Link
               href="/"
-              className="gh-btn"
-              style={{ background: "var(--color-brand-accent)", color: "#0a1f14", borderColor: "var(--color-brand-accent)" }}
+              className="gh-btn border-[var(--color-brand-accent)] bg-[var(--color-brand-accent)] text-[#0a1f14]"
             >
               {about.coverage_cta}
               <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
@@ -165,16 +154,14 @@ export default async function AboutPage() {
             ].map((c) => (
               <li
                 key={c.code}
-                className="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-4 py-3"
-                style={{ border: "1px solid rgba(29,75,54,0.12)", background: "rgba(255,255,255,0.70)" }}
+                className="flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-[rgba(29,75,54,0.12)] bg-white/70 px-4 py-3"
               >
                 <span aria-hidden className={`fi fi-${c.code} inline-block text-xl leading-none`} />
-                <span className="font-semibold" style={{ color: "var(--color-text-primary)" }}>
+                <span className="font-semibold text-[var(--color-text-primary)]">
                   {c.name}
                 </span>
                 <Globe2
-                  className="ml-auto size-4"
-                  style={{ color: "rgba(29,75,54,0.35)" }}
+                  className="ml-auto size-4 text-[rgba(29,75,54,0.35)]"
                   strokeWidth={1.5}
                   aria-hidden
                 />
@@ -183,6 +170,15 @@ export default async function AboutPage() {
           </ul>
         </div>
       </section>
+
+      {/* Doctify — independent verified patient reviews, full grid */}
+      <DoctifyReviewsSection
+        theme="ivory"
+        variant="grid"
+        language={locale}
+        headline="Trusted by patients"
+        headlineAccent="across Europe"
+      />
     </section>
   );
 }
@@ -208,8 +204,7 @@ function AboutArchPanel({ locale }: { locale: { float1_title: string; float1_sub
 
       {/* Floating — Five countries */}
       <div
-        className="gh-glass-emerald gh-floaty absolute -right-6 top-[12%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
-        style={{ maxWidth: 232, animationDelay: "0s" }}
+        className="gh-glass-emerald gh-floaty absolute -right-6 top-[12%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0s]"
       >
         <Globe2 className="size-5 shrink-0 text-[var(--color-brand-accent)]" strokeWidth={1.75} aria-hidden />
         <span className="min-w-0">
@@ -220,12 +215,10 @@ function AboutArchPanel({ locale }: { locale: { float1_title: string; float1_sub
 
       {/* Floating — Verified doctors */}
       <div
-        className="gh-glass-emerald gh-floaty absolute -right-4 top-[56%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
-        style={{ maxWidth: 232, animationDelay: "1.4s" }}
+        className="gh-glass-emerald gh-floaty absolute -right-4 top-[56%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:1.4s]"
       >
         <span
-          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg text-[var(--color-brand-accent)]"
-          style={{ background: "rgba(176,241,34,0.12)" }}
+          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"
         >
           <BadgeCheck className="size-4" strokeWidth={2} aria-hidden />
         </span>
@@ -237,12 +230,10 @@ function AboutArchPanel({ locale }: { locale: { float1_title: string; float1_sub
 
       {/* Floating — No waiting rooms */}
       <div
-        className="gh-glass-emerald gh-floaty absolute -left-8 bottom-[5%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
-        style={{ maxWidth: 232, animationDelay: "0.7s" }}
+        className="gh-glass-emerald gh-floaty absolute -left-8 bottom-[5%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0.7s]"
       >
         <span
-          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg text-[var(--color-brand-accent)]"
-          style={{ background: "rgba(176,241,34,0.12)" }}
+          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"
         >
           <Users className="size-4" strokeWidth={2} aria-hidden />
         </span>
@@ -270,22 +261,20 @@ function Pillar({
     <article>
       <div className="flex items-center gap-3">
         <span
-          className="inline-flex size-10 items-center justify-center rounded-full"
-          style={{ background: "rgba(29,75,54,0.08)", border: "1px solid rgba(29,75,54,0.20)", color: "var(--color-brand-primary)" }}
+          className="inline-flex size-10 items-center justify-center rounded-full border border-[rgba(29,75,54,0.20)] bg-[rgba(29,75,54,0.08)] text-[var(--color-brand-primary)]"
         >
           {icon}
         </span>
         <span
-          className="text-xs font-bold uppercase tracking-[0.16em] [font-variant-numeric:tabular-nums]"
-          style={{ color: "var(--color-text-muted)" }}
+          className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-text-muted)] [font-variant-numeric:tabular-nums]"
         >
           {eyebrow}
         </span>
       </div>
-      <h3 className="mt-5 text-xl font-extrabold tracking-[-0.015em]" style={{ color: "var(--color-text-primary)" }}>
+      <h3 className="mt-5 text-xl font-extrabold tracking-[-0.015em] text-[var(--color-text-primary)]">
         {title}
       </h3>
-      <p className="mt-3 max-w-[42ch] text-[length:var(--text-body)] leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+      <p className="mt-3 max-w-[42ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-text-muted)]">
         {body}
       </p>
     </article>
@@ -303,25 +292,21 @@ function DarkStep({
 }) {
   return (
     <article
-      className="grid gap-5 sm:grid-cols-[auto_1fr] sm:gap-7 pt-8"
-      style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+      className="grid gap-5 border-t border-white/8 pt-8 sm:grid-cols-[auto_1fr] sm:gap-7"
     >
       <span
-        className="font-extrabold tracking-[-0.03em] [font-variant-numeric:tabular-nums]"
-        style={{ fontSize: "2rem", color: "var(--color-brand-accent)", lineHeight: 1 }}
+        className="text-[2rem] font-extrabold leading-none tracking-[-0.03em] text-[var(--color-brand-accent)] [font-variant-numeric:tabular-nums]"
       >
         {num}
       </span>
       <div>
         <h3
-          className="text-lg font-extrabold tracking-[-0.01em]"
-          style={{ color: "rgba(255,255,255,0.90)" }}
+          className="text-lg font-extrabold tracking-[-0.01em] text-white/90"
         >
           {title}
         </h3>
         <p
-          className="mt-2 max-w-[56ch] text-[length:var(--text-body)] leading-relaxed"
-          style={{ color: "rgba(255,255,255,0.70)" }}
+          className="mt-2 max-w-[56ch] text-[length:var(--text-body)] leading-relaxed text-white/70"
         >
           {body}
         </p>

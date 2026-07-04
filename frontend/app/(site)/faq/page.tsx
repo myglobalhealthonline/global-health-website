@@ -1,3 +1,4 @@
+import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
@@ -119,6 +120,15 @@ export default async function FAQPage() {
           </div>
         </div>
       </section>
+      <DoctifyReviewsSection
+        theme="ivory"
+        variant="grid"
+        language={locale}
+        eyebrow="Patient reviews"
+        headline="What our patients"
+        headlineAccent="are saying"
+        body="Read independent, verified reviews from real patients who have used Global Health services."
+      />
     </section>
   );
 }

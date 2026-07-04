@@ -1,3 +1,4 @@
+import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SITE_NAME } from "@/lib/constants";
@@ -66,6 +67,15 @@ export default async function BlogIndexPage() {
           )}
         </div>
       </section>
+      <DoctifyReviewsSection
+        theme="forest"
+        variant="carousel"
+        language="en"
+        eyebrow="Patient reviews"
+        headline="Trusted by thousands"
+        headlineAccent="of patients"
+        body="Independent, verified reviews collected by Doctify from patients treated by our clinicians."
+      />
     </>
   );
 }
