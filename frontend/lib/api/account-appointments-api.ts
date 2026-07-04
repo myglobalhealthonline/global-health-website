@@ -31,6 +31,8 @@ export type AccountAppointment = {
   /** Assigned doctor's full name (null until a doctor is assigned). Shown on
    *  the patient calendar so they know who they're meeting. */
   doctorName?: string | null;
+  /** Human-facing order reference (e.g. ORD-000001), null when unlinked. */
+  orderNumber?: string | null;
 };
 
 type ApiResult<T> =
@@ -117,6 +119,40 @@ export async function fetchAccountGhn(): Promise<string | null> {
     return json.ok ? (json.data?.profile?.globalHealthNumber ?? null) : null;
   } catch {
     return null;
+  }
+}
+
+export type AccountThreadUnread = {
+  appointmentId: string;
+  unreadClinic: number;
+  unreadDoctor: number;
+};
+
+/** Per-appointment unread counts (clinic + doctor threads) for the patient
+ *  Messages tab. Only appointments with at least one unread message appear. */
+export async function fetchAccountMessageUnread(): Promise<
+  Record<string, AccountThreadUnread>
+> {
+  const apiUrl = getBackendOrigin();
+  if (!apiUrl) return {};
+  const cookieHeader = await buildCookieHeader();
+  try {
+    const res = await fetch(`${apiUrl}/api/account/message-threads`, {
+      headers: cookieHeader ? { cookie: cookieHeader } : undefined,
+      cache: "no-store",
+    });
+    const json = (await res.json()) as {
+      ok?: boolean;
+      data?: { items?: AccountThreadUnread[] };
+    };
+    if (!json.ok || !json.data?.items) return {};
+    const map: Record<string, AccountThreadUnread> = {};
+    for (const item of json.data.items) {
+      map[item.appointmentId] = item;
+    }
+    return map;
+  } catch {
+    return {};
   }
 }
 

@@ -15,6 +15,7 @@ import {
 } from "../services/object-storage.js";
 import { sanitizeOriginalFilename } from "../utils/media-key.js";
 import { notifyDoctor, notifyUser } from "../modules/notifications/notify.service.js";
+import { mapAppointmentOrderNumbers } from "../modules/orders/appointment-order-number.js";
 
 /**
  * Patient ↔ doctor consultation chat per appointment.
@@ -503,7 +504,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
             appointmentId: appt.id,
             title: "New message from your doctor",
             body: body.data.body.slice(0, 140),
-            href: "/account/bookings",
+            href: `/account/messages?open=${appt.id}&channel=doctor`,
             channel: "doctor",
           }).catch((e) => app.log.error(e));
         }
@@ -583,7 +584,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
             appointmentId: appt.id,
             title: "New file from your doctor",
             body: safeName,
-            href: "/account/bookings",
+            href: `/account/messages?open=${appt.id}&channel=doctor`,
             channel: "doctor",
           }).catch((e) => app.log.error(e));
         }
@@ -718,17 +719,20 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
       });
 
       const ids = appts.map((a) => a.id);
-      const unread = ids.length
-        ? await prisma.consultationMessage.groupBy({
-            by: ["appointmentId"],
-            where: {
-              appointmentId: { in: ids },
-              authorRole: ChatAuthorRole.PATIENT,
-              readByDoctor: false,
-            },
-            _count: { _all: true },
-          })
-        : [];
+      const [unread, orderNumbers] = await Promise.all([
+        ids.length
+          ? prisma.consultationMessage.groupBy({
+              by: ["appointmentId"],
+              where: {
+                appointmentId: { in: ids },
+                authorRole: ChatAuthorRole.PATIENT,
+                readByDoctor: false,
+              },
+              _count: { _all: true },
+            })
+          : Promise.resolve([]),
+        mapAppointmentOrderNumbers(ids),
+      ]);
       const unreadMap = new Map(unread.map((u) => [u.appointmentId, u._count._all]));
 
       const items = appts.map((a) => {
@@ -738,6 +742,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
           : null;
         return {
           appointmentId: a.id,
+          orderNumber: orderNumbers.get(a.id) ?? null,
           patientName: a.user?.fullName ?? "Unknown patient",
           patientEmail: a.user?.email ?? null,
           consultationType: a.consultationType,

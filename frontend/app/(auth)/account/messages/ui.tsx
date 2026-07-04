@@ -1,8 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MessageCircle, Stethoscope, Search } from "lucide-react";
-import type { AccountAppointment } from "@/lib/api/account-appointments-api";
+import type {
+  AccountAppointment,
+  AccountThreadUnread,
+} from "@/lib/api/account-appointments-api";
 import { PortalDialog } from "@/components/PortalDialog";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
 import { AdminEmptyState, Pill } from "@/components/portal-atoms";
@@ -40,24 +43,60 @@ function formatStatus(status: string) {
 
 export function MessagesShell({
   items,
+  unreadById = {},
+  initialOpenId = null,
+  initialOpenChannel = "clinic",
   unavailableMessage,
 }: {
   items: AccountAppointment[];
+  unreadById?: Record<string, AccountThreadUnread>;
+  /** When arriving from a notification deep-link, auto-open this booking's
+   *  conversation on the requested channel. */
+  initialOpenId?: string | null;
+  initialOpenChannel?: "clinic" | "doctor";
   unavailableMessage?: string | null;
 }) {
-  const [openChatId, setOpenChatId] = useState<string | null>(null);
-  const [openConsultChatId, setOpenConsultChatId] = useState<string | null>(null);
+  const [openChatId, setOpenChatId] = useState<string | null>(
+    initialOpenId && initialOpenChannel === "clinic" ? initialOpenId : null,
+  );
+  const [openConsultChatId, setOpenConsultChatId] = useState<string | null>(
+    initialOpenId && initialOpenChannel === "doctor" ? initialOpenId : null,
+  );
   const [search, setSearch] = useState("");
 
-  const filtered = useMemo(() => {
+  // Re-open when the deep-link target changes (e.g. clicking a second
+  // notification without a full reload).
+  useEffect(() => {
+    if (!initialOpenId) return;
+    if (initialOpenChannel === "doctor") {
+      setOpenChatId(null);
+      setOpenConsultChatId(initialOpenId);
+    } else {
+      setOpenConsultChatId(null);
+      setOpenChatId(initialOpenId);
+    }
+  }, [initialOpenId, initialOpenChannel]);
+
+  // Unread threads float to the top; within each group keep newest first.
+  const ordered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter(
-      (i) =>
-        i.consultationType.toLowerCase().includes(q) ||
-        i.countryCode.toLowerCase().includes(q),
-    );
-  }, [items, search]);
+    const filtered = q
+      ? items.filter(
+          (i) =>
+            i.consultationType.toLowerCase().includes(q) ||
+            i.countryCode.toLowerCase().includes(q),
+        )
+      : items;
+    const unreadFor = (id: string) => {
+      const u = unreadById[id];
+      return u ? u.unreadClinic + u.unreadDoctor : 0;
+    };
+    return [...filtered].sort((a, b) => {
+      const diff = unreadFor(b.id) - unreadFor(a.id);
+      if (diff !== 0) return diff;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }, [items, search, unreadById]);
 
   if (unavailableMessage) {
     return (
@@ -83,7 +122,7 @@ export function MessagesShell({
         />
       </label>
 
-      {filtered.length === 0 ? (
+      {ordered.length === 0 ? (
         <AdminEmptyState
           icon={<MessageCircle className="size-6" aria-hidden />}
           title="No conversations"
@@ -91,16 +130,33 @@ export function MessagesShell({
         />
       ) : (
         <div className="grid gap-4">
-          {filtered.map((item) => {
+          {ordered.map((item) => {
             const doctorLocked = requiresPayment(item);
+            const u = unreadById[item.id];
+            const unreadClinic = u?.unreadClinic ?? 0;
+            const unreadDoctor = u?.unreadDoctor ?? 0;
+            const totalUnread = unreadClinic + unreadDoctor;
+
             return (
               <PortalMobileCard
                 key={item.id}
-                tone="neutral"
-                title={item.consultationType}
-                subtitle={formatAppDateTime(item.createdAt)}
+                tone={totalUnread > 0 ? "success" : "neutral"}
+                title={
+                  item.orderNumber
+                    ? `${item.orderNumber} · ${item.consultationType}`
+                    : item.consultationType
+                }
+                subtitle={`${item.fullName} · ${formatAppDateTime(item.createdAt)}`}
                 statusPill={
-                  <Pill tone={statusTone(item.status)}>{formatStatus(item.status)}</Pill>
+                  totalUnread > 0 ? (
+                    <Pill tone="brand">
+                      {totalUnread} new message{totalUnread === 1 ? "" : "s"}
+                    </Pill>
+                  ) : (
+                    <Pill tone={statusTone(item.status)}>
+                      {formatStatus(item.status)}
+                    </Pill>
+                  )
                 }
                 meta={[{ label: "Country", value: item.countryCode.toUpperCase() }]}
               >
@@ -111,10 +167,26 @@ export function MessagesShell({
                       setOpenConsultChatId(null);
                       setOpenChatId(item.id);
                     }}
-                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)] sm:w-auto"
+                    className="relative inline-flex w-full items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-sm font-semibold sm:w-auto"
+                    style={{
+                      borderColor:
+                        unreadClinic > 0
+                          ? "var(--portal-signal)"
+                          : "var(--portal-line)",
+                      color: "var(--portal-primary)",
+                      background:
+                        unreadClinic > 0
+                          ? "color-mix(in srgb, var(--portal-signal-soft) 45%, transparent)"
+                          : "transparent",
+                    }}
                   >
                     <MessageCircle className="size-4" aria-hidden />
                     Message the clinic
+                    {unreadClinic > 0 ? (
+                      <span className="ml-1 inline-flex min-w-[18px] items-center justify-center rounded-full bg-[var(--portal-signal)] px-1.5 text-[11px] font-bold text-white">
+                        {unreadClinic}
+                      </span>
+                    ) : null}
                   </button>
 
                   {doctorLocked ? (
@@ -137,10 +209,26 @@ export function MessagesShell({
                         setOpenChatId(null);
                         setOpenConsultChatId(item.id);
                       }}
-                      className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)] sm:w-auto"
+                      className="relative inline-flex w-full items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-sm font-semibold sm:w-auto"
+                      style={{
+                        borderColor:
+                          unreadDoctor > 0
+                            ? "var(--portal-signal)"
+                            : "var(--portal-line)",
+                        color: "var(--portal-primary)",
+                        background:
+                          unreadDoctor > 0
+                            ? "color-mix(in srgb, var(--portal-signal-soft) 45%, transparent)"
+                            : "transparent",
+                      }}
                     >
                       <Stethoscope className="size-4" aria-hidden />
                       Chat with your doctor
+                      {unreadDoctor > 0 ? (
+                        <span className="ml-1 inline-flex min-w-[18px] items-center justify-center rounded-full bg-[var(--portal-signal)] px-1.5 text-[11px] font-bold text-white">
+                          {unreadDoctor}
+                        </span>
+                      ) : null}
                     </button>
                   )}
                 </div>

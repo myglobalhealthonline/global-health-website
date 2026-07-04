@@ -132,6 +132,7 @@ export async function fetchDoctorUnreadMessageCount(): Promise<number> {
 
 export type DoctorMessageThread = {
   appointmentId: string;
+  orderNumber: string | null;
   patientName: string;
   patientEmail: string | null;
   consultationType: string;

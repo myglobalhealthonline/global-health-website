@@ -58,13 +58,18 @@ export default async function AdminMessagesPage() {
             return (
               <Link
                 key={t.appointmentId}
-                href={`/admin/appointments/${t.appointmentId}`}
+                href={`/admin/appointments/${t.appointmentId}#patient-chat`}
                 className="block"
               >
                 <AdminCard className="transition hover:border-[var(--color-brand-primary)]/40">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
+                        {t.orderNumber ? (
+                          <span className="rounded bg-[var(--color-background-soft)] px-1.5 py-0.5 font-mono text-[11px] font-semibold text-[var(--color-text-muted)]">
+                            {t.orderNumber}
+                          </span>
+                        ) : null}
                         <span className="text-[15px] font-bold text-[var(--color-text-primary)]">
                           {t.patientName}
                         </span>

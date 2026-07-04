@@ -528,14 +528,16 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             label: "Messages",
             panel: (
               <div className="grid gap-4">
-                <FormSection
-                  title="Patient chat"
-                  description="Direct channel with the patient. Chat auto-locks 24h after the appointment completes — you can re-open it here."
-                >
-                  <div className="gh-form-section__span-2">
-                    <DoctorConsultationChatSection appointmentId={appointment.id} />
-                  </div>
-                </FormSection>
+                <div id="patient-chat" className="scroll-mt-24">
+                  <FormSection
+                    title="Patient chat"
+                    description="Direct channel with the patient. Chat auto-locks 24h after the appointment completes — you can re-open it here."
+                  >
+                    <div className="gh-form-section__span-2">
+                      <DoctorConsultationChatSection appointmentId={appointment.id} />
+                    </div>
+                  </FormSection>
+                </div>
 
                 <FormSection
                   title="Internal notes (doctor ↔ admin)"

@@ -1449,6 +1449,7 @@ export async function markAllAdminNotificationsRead() {
 // ── Admin message inbox (patient ↔ admin threads) ──────────────────────
 export type AdminMessageThread = {
   appointmentId: string;
+  orderNumber: string | null;
   patientName: string;
   patientEmail: string | null;
   consultationType: string;

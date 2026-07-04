@@ -73,6 +73,21 @@ function paymentTone(status: string): PillTone {
   return "neutral";
 }
 
+// Map the raw consultationType ("general", "specialist", …) to a readable
+// label so cards don't just say "general".
+const CONSULT_LABELS: Record<string, string> = {
+  general: "GP consultation",
+  specialist: "Specialist consultation",
+  prescription: "Online prescription",
+  health_test: "Health test",
+  home_delivery: "Home delivery",
+};
+
+function consultLabel(type: string): string {
+  const key = type.toLowerCase().replace(/[\s-]+/g, "_");
+  return CONSULT_LABELS[key] ?? formatStatus(type);
+}
+
 function requiresPayment(item: AccountAppointment): boolean {
   if (!item.amountCents || item.amountCents <= 0) return false;
   return item.paymentStatus !== "PAID";
@@ -214,11 +229,24 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
               <PortalMobileCard
                 key={item.id}
                 tone={item.status === "COMPLETED" ? "success" : item.status === "CANCELLED" ? "danger" : "neutral"}
-                title={item.consultationType}
-                subtitle={formatAppDateTime(item.createdAt)}
+                title={
+                  item.orderNumber
+                    ? `${item.orderNumber} · ${consultLabel(item.consultationType)}`
+                    : consultLabel(item.consultationType)
+                }
+                subtitle={`Booked ${formatAppDateTime(item.createdAt)}`}
                 statusPill={<Pill tone={statusTone(item.status)}>{formatStatus(item.status)}</Pill>}
                 meta={[
+                  ...(item.orderNumber
+                    ? [{ label: "Order", value: <span className="font-mono">{item.orderNumber}</span> }]
+                    : []),
                   { label: "Country", value: item.countryCode.toUpperCase() },
+                  ...(item.doctorName
+                    ? [{ label: "Doctor", value: item.doctorName }]
+                    : []),
+                  ...(item.scheduledAt
+                    ? [{ label: "Scheduled", value: formatAppDateTime(item.scheduledAt, item.patientTimezone) }]
+                    : []),
                   ...(paymentLabel
                     ? [{ label: "Payment", value: <Pill tone={paymentTone(item.paymentStatus)}>{paymentLabel}</Pill> }]
                     : []),
