@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowUpRight, ShieldCheck, Stethoscope, Globe2, Clock, BadgeCheck, Users } from "lucide-react";
 import { SITE_NAME } from "@/lib/constants";
 import { PageHero } from "@/components/sections/PageHero";
+import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -49,6 +49,7 @@ export default async function AboutPage() {
           },
         ]}
         rightSlot={<AboutArchPanel locale={about} />}
+        mobileBgSrc="/images/stock/about.jpg"
       />
 
       {/* LIGHT — three pillars */}
@@ -185,22 +186,11 @@ export default async function AboutPage() {
 
 function AboutArchPanel({ locale }: { locale: { float1_title: string; float1_subtitle: string; float2_title: string; float2_subtitle: string; float3_title: string; float3_subtitle: string } }) {
   return (
-    <div className="relative mx-auto max-w-[440px]">
-      <div aria-hidden className="gh2-arch-frame" />
-      <div className="gh2-arch gh2-zoom relative aspect-[4/4.7] overflow-hidden border border-white/10 bg-white/[0.045]">
-        <Image
-          src="/images/stock/about.jpg"
-          alt="Telemedicine care team reviewing a secure digital health dashboard"
-          fill
-          priority
-          sizes="(min-width: 1024px) 440px, 100vw"
-          className="object-cover object-center"
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-[rgba(8,42,32,0.62)] via-transparent to-transparent"
-        />
-      </div>
+    <div className="relative mx-auto aspect-square w-full max-w-[600px]">
+      <HeroPlusImage
+        src="/images/stock/about.jpg"
+        alt="Telemedicine care team reviewing a secure digital health dashboard"
+      />
 
       {/* Floating — Five countries */}
       <div

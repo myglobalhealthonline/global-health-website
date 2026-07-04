@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import {
   ArrowUpRight,
   Users,
@@ -15,7 +16,7 @@ import {
  * Premium doctors-page hero (clinical-editorial gh2 system).
  *
  * Two-column composition: editorial type + dual CTA + trust-card row on
- * the left; arch-framed team portrait with overlapping glass info cards
+ * the left; plus-shaped team portrait with overlapping glass info cards
  * on the right. Deep forest-night canvas, single lime accent, dotted-grid
  * atmosphere + medical-plus pattern. Purpose-built for /[country]/[lang]/
  * doctors — NOT the shared PageHero (which other service pages reuse).
@@ -136,6 +137,30 @@ export function DoctorsHero({
       className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden text-white gh-hero-cap"
       style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
     >
+      {/* Mobile/tablet only — full-bleed portrait behind a dark-green tint,
+       *  replacing the plus mask (which is desktop-only, see aside below). */}
+      <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 lg:hidden">
+        <Image
+          src={heroImage.src}
+          alt=""
+          fill
+          priority={heroImage.priority}
+          sizes="100vw"
+          className="object-cover object-center"
+          unoptimized={
+            /^https?:\/\//i.test(heroImage.src) || heroImage.src.startsWith("/api/media/")
+          }
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(6,26,18,0.62) 0%, rgba(6,26,18,0.78) 55%, rgba(6,26,18,0.94) 100%)," +
+              "linear-gradient(90deg, rgba(6,26,18,0.88) 0%, rgba(6,26,18,0.55) 55%, rgba(6,26,18,0.35) 100%)",
+          }}
+        />
+      </div>
+
       {/* ── Atmosphere layers (behind content via .gh-medical-pattern-layer) ── */}
       <div
         aria-hidden
@@ -273,28 +298,10 @@ export function DoctorsHero({
             </ul>
           </div>
 
-          {/* ── RIGHT — arch portrait + floating info cards ──────────── */}
+          {/* ── RIGHT — plus-shaped portrait + floating info cards ───── */}
           <aside className="relative hidden lg:block">
-            <div className="relative mx-auto max-w-[440px]">
-              <div aria-hidden className="gh2-arch-frame" />
-              <div className="gh2-arch gh2-zoom relative aspect-[4/4.7] overflow-hidden border border-white/10 bg-white/[0.045]">
-                <Image
-                  src={heroImage.src}
-                  alt={heroImage.alt}
-                  fill
-                  priority={heroImage.priority}
-                  sizes="(min-width: 1024px) 440px, 100vw"
-                  className="object-cover object-center"
-                  unoptimized={
-                    /^https?:\/\//i.test(heroImage.src) ||
-                    heroImage.src.startsWith("/api/media/")
-                  }
-                />
-                <div
-                  aria-hidden
-                  className="absolute inset-0 bg-gradient-to-t from-[rgba(8,42,32,0.62)] via-transparent to-transparent"
-                />
-              </div>
+            <div className="relative mx-auto aspect-square w-full max-w-[620px]">
+              <HeroPlusImage src={heroImage.src} alt={heroImage.alt} />
 
               {/* Floating card — Available today (upper-right) */}
               <FloatingCard

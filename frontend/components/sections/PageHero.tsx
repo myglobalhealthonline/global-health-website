@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Flag } from "@/components/ui/Flag";
+import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 
 export type PageHeroProps = {
   countryCode?: string;
@@ -17,6 +18,11 @@ export type PageHeroProps = {
   secondaryHref?: string;
   rightSlot?: ReactNode;
   heroImage?: { src: string; alt: string; priority?: boolean };
+  /** Mobile/tablet-only full-bleed background photo (behind a dark-green
+   *  tint), shown instead of the desktop plus-mask. Falls back to
+   *  `heroImage.src` when omitted — set explicitly when the right column
+   *  is a custom `rightSlot` panel (its own image src isn't visible here). */
+  mobileBgSrc?: string;
   index?: string;
   watermark?: string;
   /** Optional icon trailing the secondary CTA label (immersive variant). */
@@ -41,6 +47,7 @@ export function PageHero({
   secondaryHref,
   rightSlot,
   heroImage,
+  mobileBgSrc,
   watermark,
   secondaryIcon,
   trustCards,
@@ -297,15 +304,39 @@ export function PageHero({
     );
   }
 
-  // Default variant — compact hero with arch-framed image in right slot
+  // Default variant — compact hero with plus-shaped image in right slot
   const hasRightColumn = Boolean(rightSlot || heroImage);
   const watermarkText = watermark ?? countryLabel ?? "";
+  const bgSrc = mobileBgSrc ?? heroImage?.src;
 
   return (
     <section
       className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden text-white gh-hero-cap"
       style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
     >
+      {/* Mobile/tablet only — full-bleed portrait behind a dark-green tint,
+       *  replacing the plus mask (which is desktop-only, see aside below). */}
+      {bgSrc ? (
+        <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 lg:hidden">
+          <Image
+            src={bgSrc}
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover object-center"
+            unoptimized={/^https?:\/\//i.test(bgSrc) || bgSrc.startsWith("/api/media/")}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(180deg, rgba(6,26,18,0.62) 0%, rgba(6,26,18,0.78) 55%, rgba(6,26,18,0.94) 100%)," +
+                "linear-gradient(90deg, rgba(6,26,18,0.88) 0%, rgba(6,26,18,0.55) 55%, rgba(6,26,18,0.35) 100%)",
+            }}
+          />
+        </div>
+      ) : null}
+
       <div
         aria-hidden
         className="gh2-watermark gh-medical-pattern-layer pointer-events-none -right-[0.06em] bottom-[-0.16em] select-none"
@@ -427,23 +458,8 @@ export function PageHero({
 
 function HeroImagePanel({ image }: { image: { src: string; alt: string; priority?: boolean } }) {
   return (
-    <div className="relative mx-auto max-w-[420px]">
-      <div aria-hidden className="gh2-arch-frame" />
-      <div className="gh2-arch gh2-zoom relative aspect-[4/4.8] overflow-hidden border border-white/10 bg-white/[0.045]">
-        <Image
-          src={image.src}
-          alt={image.alt}
-          fill
-          priority={image.priority}
-          sizes="(min-width: 1024px) 420px, 100vw"
-          className="object-cover"
-          unoptimized={/^https?:\/\//i.test(image.src) || image.src.startsWith("/api/media/")}
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-[rgba(15,46,37,0.58)] via-transparent to-transparent"
-        />
-      </div>
+    <div className="relative mx-auto aspect-square w-full max-w-[600px]">
+      <HeroPlusImage src={image.src} alt={image.alt} />
     </div>
   );
 }
