@@ -54,6 +54,12 @@
     "switchToThisPlan": "Switch to this plan",
     "viewDetails": "Plan details",
     "onlineOnlyNote": "Online/video consultations only — no in-person visits and no prescriptions.",
+    "trust_card1_title": "Licensed doctors",
+    "trust_card1_subtitle": "Registered locally",
+    "trust_card2_title": "Flexible plans",
+    "trust_card2_subtitle": "Cancel anytime",
+    "trust_card3_title": "Secure payments",
+    "trust_card3_subtitle": "Stripe protected",
     "empty": {
       "title": "Membership isn't available in {country} yet",
       "body": "Monthly plans haven't launched in your country. You can still book online consultations and home health tests in the meantime.",
