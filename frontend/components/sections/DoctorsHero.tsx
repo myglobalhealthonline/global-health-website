@@ -275,7 +275,7 @@ export function DoctorsHero({
 
           {/* ── RIGHT — plus-shaped portrait + floating info cards ───── */}
           <aside className="relative hidden lg:block">
-            <div className="relative mx-auto aspect-square w-full max-w-[520px]">
+            <div className="relative mx-auto aspect-square w-full max-w-[620px]">
               <HeroPlusImage src={heroImage.src} alt={heroImage.alt} />
 
               {/* Floating card — Available today (upper-right) */}

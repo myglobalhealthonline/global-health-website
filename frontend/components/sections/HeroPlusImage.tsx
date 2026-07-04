@@ -7,9 +7,11 @@ export type HeroPlusImageProps = {
 };
 
 /** Medical plus glyph: top arm + middle bar + bottom arm, one connected
- *  path. viewBox is 0-100 so the shape scales fluidly with its container. */
+ *  path. viewBox is 0-100 so the shape scales fluidly with its container.
+ *  Vertical and horizontal arms share the same 36-unit thickness (32-68)
+ *  so the plus reads as a true, evenly-weighted medical cross. */
 const PLUS_PATH =
-  "M38 2 Q38 0 40 0 H60 Q62 0 62 2 V32 H96 Q100 32 100 36 V64 Q100 68 96 68 H62 V98 Q62 100 60 100 H40 Q38 100 38 98 V68 H4 Q0 68 0 64 V36 Q0 32 4 32 H38 Z";
+  "M32 2 Q32 0 34 0 H66 Q68 0 68 2 V32 H96 Q100 32 100 36 V64 Q100 68 96 68 H68 V98 Q68 100 66 100 H34 Q32 100 32 98 V68 H4 Q0 68 0 64 V36 Q0 32 4 32 H32 Z";
 
 /**
  * Real medical plus-shaped image mask for hero portraits. The photo is

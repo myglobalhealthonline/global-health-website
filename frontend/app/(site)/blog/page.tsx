@@ -106,7 +106,7 @@ export default async function BlogIndexPage() {
 
 function BlogArchPanel({ articleCount }: { articleCount: number }) {
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[500px]">
+    <div className="relative mx-auto aspect-square w-full max-w-[600px]">
       <HeroPlusImage
         src="/images/stock/blog.png"
         alt="Medical team reviewing health articles and educational content"

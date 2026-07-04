@@ -303,7 +303,7 @@ export default async function PricingPage({
 
 function PlansArchPanel({ countryName }: { countryName: string }) {
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[500px]">
+    <div className="relative mx-auto aspect-square w-full max-w-[600px]">
       <HeroPlusImage
         src="/images/stock/plans.png"
         alt={`Doctor reviewing health subscription plans in ${countryName}`}

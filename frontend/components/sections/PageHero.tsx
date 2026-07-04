@@ -428,7 +428,7 @@ export function PageHero({
 
 function HeroImagePanel({ image }: { image: { src: string; alt: string; priority?: boolean } }) {
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[500px]">
+    <div className="relative mx-auto aspect-square w-full max-w-[600px]">
       <HeroPlusImage src={image.src} alt={image.alt} />
     </div>
   );
