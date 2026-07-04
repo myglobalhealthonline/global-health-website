@@ -195,9 +195,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
  *  link to the appointment too when a payload id is present. */
 function mapAdminNotification(n: AdminNotificationDto): NotificationPopoverItem {
   const p = n.payload ?? {};
-  // Deep-link straight to the patient chat card on the appointment page.
+  // Open the conversation in place inside the Messages inbox.
   const href = p.appointmentId
-    ? `/admin/appointments/${p.appointmentId}#patient-chat`
+    ? `/admin/messages?open=${p.appointmentId}`
     : "/admin/messages";
 
   if (n.type === "PATIENT_MESSAGE") {
