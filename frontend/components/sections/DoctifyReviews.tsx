@@ -68,21 +68,15 @@ export function DoctifyRatingStrip({
 
 /* ── Script-injected widgets (horizontal badge / carousel / grid) ── */
 
-export type DoctifyWidgetVariant = "horizontal" | "carousel" | "grid";
+export type DoctifyWidgetVariant = "horizontal" | "carousel" | "grid" | "micro";
 
 const VARIANT_QUERY: Record<DoctifyWidgetVariant, string> = {
+  micro: "type=micro-star-widget&layoutType=layoutI",
   horizontal: "type=horizontal-widget&layoutType=layoutXL",
   carousel:
     `type=carousel-widget&layoutType=layoutA&itemBackground=${ITEM_BG}&itemFrame=true`,
   grid:
     `type=grid-widget&layoutType=layoutA&itemBackground=${ITEM_BG}&itemFrame=true`,
-};
-
-/** Estimated minimum heights for each widget variant to prevent layout shift */
-const WIDGET_MIN_HEIGHT: Record<DoctifyWidgetVariant, number> = {
-  horizontal: 120,
-  carousel: 320,
-  grid: 400,
 };
 
 export function DoctifyWidget({
@@ -127,7 +121,14 @@ export function DoctifyWidget({
     };
   }, [id, variant, language, theme]);
 
-  const minHeightClass = variant === "horizontal" ? "min-h-[120px]" : variant === "grid" ? "min-h-[400px]" : "min-h-[320px]";
+  const minHeightClass =
+    variant === "micro"
+      ? "min-h-[48px]"
+      : variant === "horizontal"
+        ? "min-h-[120px]"
+        : variant === "grid"
+          ? "min-h-[400px]"
+          : "min-h-[320px]";
 
   return (
     <div

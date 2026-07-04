@@ -130,6 +130,8 @@ export function useLastCountry(
 function resolveLastCountry(slug: string, lang: string): LastCountry | null {
   const code = countryCodeFromSlug(slug);
   if (!code) return null;
-  if (COUNTRY_CODE_TO_SLUG[code] !== slug) return null;
+  // Accept the cookie slug even if it differs from the canonical seeded slug.
+  // Admin-added countries may not be in the seed registry yet, and the slug
+  // stored in the cookie is still a valid route segment.
   return { code, slug, lang };
 }

@@ -61,6 +61,7 @@ export async function buildDoctorProfileMetadata(
     Spain: "spain",
     Czechia: "czechia",
     Romania: "romania",
+    Brazil: "brazil",
   };
   const slug = routeCountrySlug ?? countryNameToSlug[data.profile.country] ?? "ireland";
   const routeLang = lang ?? "en";

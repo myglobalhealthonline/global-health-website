@@ -10,6 +10,7 @@ import { EMERGENCY_NOTICE } from "@/lib/constants";
 import type { SiteNavigationData } from "@/data/navigation";
 import type { CountryConfig } from "@/data/countries";
 import type { LocaleCode } from "@/lib/i18n/types";
+import { registerCountrySlugs } from "@/lib/routing/country-slug";
 import type { PublicCountryFooter } from "@/lib/content/get-country-footers";
 import type { CountryTrust } from "@/lib/content/get-country-trust";
 
@@ -47,6 +48,12 @@ export function SiteChrome({
   countries,
   currentLocale,
 }: Props) {
+  // Warm the client-side slug registry with the merged country list (including
+  // admin-added countries) so path parsing in the header switchers resolves
+  // correctly after client-side navigation. The registry is cold on the client
+  // even when it was warmed during SSR.
+  registerCountrySlugs(countries);
+
   const pathname = usePathname();
   const isGatewayHome = pathname === "/";
 

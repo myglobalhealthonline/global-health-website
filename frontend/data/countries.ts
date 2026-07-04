@@ -93,7 +93,11 @@ export const countries: CountryConfig[] = [
     specialistPath: "/specialty-sp",
   },
   {
-    code: "rm",
+    // Code MUST match the backend Country.code ("ro"). It was "rm" (legacy
+    // Wix-era alias) which made the slug registry map "romania" to a code
+    // the backend doesn't know — intermittent 404s / empty data / bounce
+    // back to the entry gate depending on which mapping won the race.
+    code: "ro",
     name: "Romania",
     label: "RO",
     slug: "romania",
@@ -103,6 +107,17 @@ export const countries: CountryConfig[] = [
     teamPath: "/romania-team",
     generalConsultationPath: "/general-consultation-rm",
     specialistPath: "/specialty-rm",
+  },  {
+    code: "br",
+    name: "Brazil",
+    label: "BR",
+    slug: "brazil",
+    defaultLocale: "pt",
+    supportedLocales: ["pt", "en", "es", "cs", "ro", "de"],
+    legacyHomePath: "/home-br",
+    teamPath: "/brazil-team",
+    generalConsultationPath: "/general-consultation-br",
+    specialistPath: "/specialty-br",
   },
 ];
 
