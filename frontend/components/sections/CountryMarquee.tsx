@@ -22,27 +22,16 @@ export function CountryMarquee({ countries }: { countries: MarqueeCountry[] }) {
   return (
     <section
       aria-label="Countries we serve"
-      className="relative overflow-hidden"
-      style={{
-        background: "var(--color-background-soft)",
-        borderTop: "1px solid rgba(29,75,54,0.10)",
-        borderBottom: "1px solid rgba(29,75,54,0.10)",
-      }}
+      className="relative overflow-hidden border-y border-[rgba(29,75,54,0.10)] bg-[var(--color-background-soft)]"
     >
       {/* Edge fade masks */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24"
-        style={{
-          background: "linear-gradient(90deg, var(--color-background-soft) 0%, transparent 100%)",
-        }}
+        className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 gh-marquee-fade-left"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24"
-        style={{
-          background: "linear-gradient(270deg, var(--color-background-soft) 0%, transparent 100%)",
-        }}
+        className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 gh-marquee-fade-right"
       />
 
       <div className="gh-marquee py-6 md:py-7">
@@ -51,27 +40,21 @@ export function CountryMarquee({ countries }: { countries: MarqueeCountry[] }) {
             <li key={`${c.code}-${i}`} className="inline-flex items-baseline gap-4">
               <Flag code={c.code as string} size="lg" className="self-center" />
               <span
-                className="font-extrabold tracking-[-0.03em]"
-                style={{
-                  fontSize: "clamp(1.25rem, 2.2vw + 0.4rem, 1.9rem)",
-                  color: "var(--color-text-primary)",
-                }}
+                className="font-extrabold tracking-[-0.03em] text-[var(--color-text-primary)] text-[clamp(1.25rem,2.2vw+0.4rem,1.9rem)]"
               >
                 {c.name}
               </span>
               <span
-                className="gh2-index"
-                style={{ color: "var(--color-brand-primary)" }}
+                className="gh2-index text-[var(--color-brand-primary)]"
               >
                 {String(c.doctorCount).padStart(2, "0")}
-                <span className="ml-1" style={{ color: "var(--color-text-muted)" }}>
+                <span className="ml-1 text-[var(--color-text-muted)]">
                   {c.doctorCount === 1 ? "doctor" : "doctors"}
                 </span>
               </span>
               <span
                 aria-hidden
-                className="ml-6 self-center text-[14px] font-light"
-                style={{ color: "rgba(29,75,54,0.30)" }}
+                className="ml-6 self-center text-[14px] font-light text-[rgba(29,75,54,0.30)]"
               >
                 ✚
               </span>

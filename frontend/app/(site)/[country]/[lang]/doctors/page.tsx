@@ -7,6 +7,7 @@ import { countries, getCountryByCode } from "@/data/countries";
 import { getCountryDoctors } from "@/lib/content/get-country-collections";
 import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-country-trust";
 import { VerifiedProfessionals } from "@/components/sections/VerifiedProfessionals";
+import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import {
@@ -310,6 +311,13 @@ export default async function CountryLangDoctorsPage({
         }
       />
       {countryTrust ? <VerifiedProfessionals trust={countryTrust} locale={lang} /> : null}
+      <DoctifyReviewsSection
+        theme="forest"
+        variant="carousel"
+        language={lang}
+        headline="What patients say about"
+        headlineAccent="our doctors"
+      />
       <RichBodySection html={page?.body} />
     </>
   );

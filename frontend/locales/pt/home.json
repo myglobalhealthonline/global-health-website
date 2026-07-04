@@ -40,7 +40,8 @@
     "licensedPlural": "Médicos licenciados",
     "markets": "Mercados europeus · Registado na UE",
     "gdpr": "Conformidade RGPD por defeito",
-    "slots": "Vagas sujeitas a disponibilidade"
+    "slots": "Vagas sujeitas a disponibilidade",
+    "languagesSpoken": "Idiomas de consulta"
   },
   "howItWorks": {
     "eyebrow": "Como funciona",

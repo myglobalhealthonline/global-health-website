@@ -1,3 +1,4 @@
+import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -264,6 +265,16 @@ export default async function CountryLangSpecialistConsultationPage({
 
       {/* 5 — Admin-edited rich body sits below the conversion path. */}
       <RichBodySection html={page?.body} theme="light" />
+
+      <DoctifyReviewsSection
+        theme="forest"
+        variant="carousel"
+        language={lang}
+        eyebrow="Patient reviews"
+        headline="Trusted by patients"
+        headlineAccent="across Europe"
+        body="Independent, verified reviews collected by Doctify from patients treated by our specialists."
+      />
 
       <FinalCTA primaryHref={ctaHref} secondaryHref={`/${slug}/${lang}/doctors`} />
       <StickyBookingCTA href={ctaHref} />

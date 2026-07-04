@@ -40,7 +40,8 @@
     "licensedPlural": "Médicos colegiados",
     "markets": "Mercados europeos · Registrado en la UE",
     "gdpr": "Conformidad RGPD por defecto",
-    "slots": "Plazas sujetas a disponibilidad"
+    "slots": "Plazas sujetas a disponibilidad",
+    "languagesSpoken": "Idiomas de consulta"
   },
   "howItWorks": {
     "eyebrow": "Cómo funciona",

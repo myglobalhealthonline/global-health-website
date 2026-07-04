@@ -34,6 +34,7 @@ import {
   medicalSpecialtyForService,
 } from "@/lib/seo/structured-data";
 import { FAQSection } from "@/components/sections/FAQSection";
+import { DoctifyWidget } from "@/components/sections/DoctifyReviews";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
 import { ServiceLinkedBody } from "@/components/sections/ServiceLinkedBody";
@@ -185,8 +186,7 @@ export default async function ServiceDetailPage({
 
       {/* ── Hero — full-viewport 50/50 split: image left, content + booking right ── */}
       <section
-        className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
-        style={{ background: "#031F18", height: "calc(100svh - var(--header-height))", minHeight: 620 }}
+        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
       >
         <div className="grid h-full lg:grid-cols-2">
 
@@ -197,143 +197,84 @@ export default async function ServiceDetailPage({
               <img
                 src={detail.imageSrc}
                 alt={detail.name}
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  objectPosition: "center top",
-                }}
+                className="absolute inset-0 h-full w-full object-cover object-top"
               />
             ) : (
               <div
-                className="absolute inset-0"
-                style={{ background: "linear-gradient(135deg, #0a2218 0%, #173528 100%)" }}
+                className="absolute inset-0 bg-[linear-gradient(135deg,#0a2218_0%,#173528_100%)]"
               />
             )}
             {/* Dark green wash — preserves skin tones, kills harsh hospital blues */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background: "rgba(3,31,24,0.22)",
-                mixBlendMode: "multiply",
-              }}
+              className="gh-inline-hero-overlay pointer-events-none absolute inset-0"
             />
             {/* Bottom vignette */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-x-0 bottom-0"
-              style={{
-                height: "50%",
-                background:
-                  "linear-gradient(to top, rgba(3,31,24,0.88) 0%, rgba(3,31,24,0.32) 50%, transparent 100%)",
-              }}
+              className="gh-inline-service-vignette pointer-events-none absolute inset-x-0 bottom-0"
             />
             {/* Right-edge bleed → seamless merge into content column */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-y-0 right-0 hidden lg:block"
-              style={{
-                width: "44%",
-                background:
-                  "linear-gradient(to right, transparent 0%, rgba(3,31,24,0.60) 45%, rgba(3,31,24,0.92) 75%, #031F18 100%)",
-              }}
+              className="gh-inline-service-bleed pointer-events-none absolute inset-y-0 right-0 hidden lg:block"
             />
           </div>
 
           {/* ── RIGHT — service content + booking panel ─────────────────────── */}
           <div
-            className="relative flex h-full flex-col justify-center overflow-y-auto px-8 py-6 md:px-12 lg:px-14 lg:py-8"
-            style={{ background: "#031F18" }}
+            className="gh-inline-panel-base relative flex h-full flex-col justify-center overflow-y-auto px-8 py-6 md:px-12 lg:px-14 lg:py-8"
           >
             {/* Atmospheric layers */}
             {/* 1 — gradient depth */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 z-0"
-              style={{
-                background:
-                  "radial-gradient(circle at 88% 14%, rgba(22,89,64,0.30), transparent 42%)," +
-                  "radial-gradient(circle at 12% 88%, rgba(2,18,13,0.55), transparent 44%)," +
-                  "linear-gradient(135deg, #062b21 0%, #031F18 50%, #02140e 100%)",
-              }}
+              className="gh-inline-panel-depth pointer-events-none absolute inset-0 z-0"
             />
             {/* 2 — technical lime grid */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 z-0"
-              style={{
-                backgroundImage:
-                  "linear-gradient(rgba(176,241,34,0.045) 1px, transparent 1px)," +
-                  "linear-gradient(90deg, rgba(176,241,34,0.045) 1px, transparent 1px)",
-                backgroundSize: "52px 52px",
-                maskImage:
-                  "radial-gradient(130% 130% at 80% 18%, #000 0%, rgba(0,0,0,0.40) 52%, transparent 88%)",
-                WebkitMaskImage:
-                  "radial-gradient(130% 130% at 80% 18%, #000 0%, rgba(0,0,0,0.40) 52%, transparent 88%)",
-              }}
+              className="gh-inline-service-grid pointer-events-none absolute inset-0 z-0"
             />
             {/* 3 — dot texture */}
             <div
               aria-hidden
-              className="gh-dot-grid pointer-events-none absolute inset-0 z-0"
-              style={{
-                opacity: 0.55,
-                maskImage:
-                  "radial-gradient(700px 540px at 86% 12%, #000 0%, transparent 70%)",
-                WebkitMaskImage:
-                  "radial-gradient(700px 540px at 86% 12%, #000 0%, transparent 70%)",
-              }}
+              className="gh-dot-grid gh-inline-panel-dots pointer-events-none absolute inset-0 z-0"
             />
             {/* 4 — lime ambient glow behind card */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 z-0"
-              style={{
-                background:
-                  "radial-gradient(ellipse 560px 480px at 72% 64%, rgba(176,241,34,0.10), transparent 62%)," +
-                  "radial-gradient(ellipse 640px 540px at 112% -8%, rgba(176,241,34,0.11), transparent 60%)",
-              }}
+              className="gh-inline-service-glow pointer-events-none absolute inset-0 z-0"
             />
             {/* 5 — faint medical plus symbols */}
             <span
               aria-hidden
-              className="pointer-events-none absolute z-0 select-none font-bold leading-none"
-              style={{ top: "-2%", right: "5%", fontSize: "190px", color: "rgba(176,241,34,0.055)" }}
+              className="gh-inline-plus-large pointer-events-none absolute z-0 select-none font-bold leading-none"
             >+</span>
             <span
               aria-hidden
-              className="pointer-events-none absolute z-0 select-none font-bold leading-none"
-              style={{ bottom: "8%", right: "10%", fontSize: "78px", color: "rgba(176,241,34,0.045)" }}
+              className="gh-inline-plus-small pointer-events-none absolute z-0 select-none font-bold leading-none"
             >+</span>
 
             {/* Content */}
-            <div className="relative z-10" style={{ maxWidth: 680 }}>
+            <div className="gh-inline-content-max relative z-10">
               {/* Back link */}
               <Link
                 href={back.href}
-                className="inline-flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-[0.18em] transition-colors hover:text-[var(--color-brand-accent)]"
-                style={{ color: "rgba(255,255,255,0.35)" }}
+                className="inline-flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-[0.18em] text-white/35 transition-colors hover:text-[var(--color-brand-accent)]"
               >
                 <ArrowLeft className="size-3.5" aria-hidden />
                 {back.label}
               </Link>
 
               {/* Eyebrow */}
-              <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.24em]" style={{ color: "var(--color-brand-accent)" }}>
+              <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.24em] text-[var(--color-brand-accent)]">
                 {detail.kind === "SPECIALIST" ? t.eyebrowSpecialist : t.eyebrowOnline}
               </p>
 
               {/* Title */}
               <h1
-                className="mt-2.5 font-extrabold leading-[1.02] tracking-[-0.038em]"
-                style={{
-                  fontSize: "clamp(1.9rem, 2.2vw + 0.9rem, 3.4rem)",
-                  color: "#F5FFF8",
-                  maxWidth: "16ch",
-                }}
+                className="mt-2.5 max-w-[16ch] text-[clamp(1.9rem,2.2vw+0.9rem,3.4rem)] font-extrabold leading-[1.02] tracking-[-0.038em] text-[#F5FFF8]"
               >
                 {heading}
               </h1>
@@ -341,16 +282,7 @@ export default async function ServiceDetailPage({
               {/* Lede */}
               {lede ? (
                 <p
-                  className="mt-3 leading-relaxed"
-                  style={{
-                    maxWidth: "46ch",
-                    fontSize: "clamp(0.9rem, 0.6vw + 0.65rem, 1.05rem)",
-                    color: "#B8C9C2",
-                    display: "-webkit-box",
-                    WebkitLineClamp: 3,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                  }}
+                  className="mt-3 line-clamp-3 max-w-[46ch] text-[clamp(0.9rem,0.6vw+0.65rem,1.05rem)] leading-relaxed text-[#B8C9C2]"
                 >
                   {lede}
                 </p>
@@ -358,8 +290,7 @@ export default async function ServiceDetailPage({
 
               {/* Trust row */}
               <div
-                className="mt-4 flex flex-wrap items-center gap-y-2 border-t pt-4"
-                style={{ borderColor: "rgba(255,255,255,0.10)" }}
+                className="mt-4 flex flex-wrap items-center gap-y-2 border-t border-white/10 pt-4"
               >
                 {[
                   { icon: ShieldCheck, label: t.trustRegistered.replace("{country}", config.name) },
@@ -370,17 +301,14 @@ export default async function ServiceDetailPage({
                     {i > 0 ? (
                       <span
                         aria-hidden
-                        className="mx-5 hidden h-4 w-px sm:block"
-                        style={{ background: "rgba(255,255,255,0.14)" }}
+                        className="mx-5 hidden h-4 w-px bg-white/14 sm:block"
                       />
                     ) : null}
                     <span
-                      className="inline-flex items-center gap-2 text-[13px] font-medium"
-                      style={{ color: "rgba(255,255,255,0.68)" }}
+                      className="inline-flex items-center gap-2 text-[13px] font-medium text-white/68"
                     >
                       <Icon
-                        className="size-4 shrink-0"
-                        style={{ color: "var(--color-brand-accent)" }}
+                        className="size-4 shrink-0 text-[var(--color-brand-accent)]"
                         strokeWidth={1.75}
                         aria-hidden
                       />
@@ -392,31 +320,23 @@ export default async function ServiceDetailPage({
 
               {/* ── Booking card ─────────────────────────────────────────────── */}
               <div
-                className="mt-4 rounded-[22px]"
-                style={{
-                  background: "rgba(5,34,27,0.78)",
-                  border: "1px solid rgba(176,241,34,0.18)",
-                  backdropFilter: "blur(20px)",
-                  WebkitBackdropFilter: "blur(20px)",
-                  boxShadow: "0 24px 64px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.06)",
-                }}
+                className="gh-inline-forest-glass mt-4 rounded-[22px]"
               >
                 <div className="p-5 md:p-6">
                   {/* Card label */}
-                  <p className="text-[11px] font-bold uppercase tracking-[0.24em]" style={{ color: "var(--color-brand-accent)" }}>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[var(--color-brand-accent)]">
                     {t.bookOnline}
                   </p>
 
                   {/* Price row */}
                   <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
                     <span
-                      className="font-extrabold tracking-[-0.04em] [font-variant-numeric:tabular-nums]"
-                      style={{ fontSize: "clamp(1.75rem,2.6vw,2.4rem)", color: "#F5FFF8" }}
+                      className="text-[clamp(1.75rem,2.6vw,2.4rem)] font-extrabold tracking-[-0.04em] text-[#F5FFF8] [font-variant-numeric:tabular-nums]"
                     >
                       {priceLabel ?? t.priceVaries}
                     </span>
                     {priceLabel ? (
-                      <span className="text-[14px] font-medium" style={{ color: "rgba(255,255,255,0.42)" }}>
+                      <span className="text-[14px] font-medium text-white/42">
                         {t.perConsultation}
                       </span>
                     ) : null}
@@ -424,8 +344,7 @@ export default async function ServiceDetailPage({
 
                   {/* Feature list */}
                   <ul
-                    className="mt-3 border-t"
-                    style={{ borderColor: "rgba(255,255,255,0.09)" }}
+                    className="mt-3 border-t border-white/9"
                   >
                     {[
                       detail.durationMinutes != null
@@ -439,21 +358,18 @@ export default async function ServiceDetailPage({
                       .map(({ icon: Icon, label }) => (
                         <li
                           key={label}
-                          className="flex items-center gap-3 border-b py-2.5"
-                          style={{ borderColor: "rgba(255,255,255,0.07)" }}
+                          className="flex items-center gap-3 border-b border-white/7 py-2.5"
                         >
                           <span
-                            className="inline-flex size-7 shrink-0 items-center justify-center rounded-[8px]"
-                            style={{ background: "rgba(176,241,34,0.13)", border: "1px solid rgba(176,241,34,0.18)" }}
+                            className="inline-flex size-7 shrink-0 items-center justify-center rounded-[8px] border border-[rgba(176,241,34,0.18)] bg-[rgba(176,241,34,0.13)]"
                           >
                             <Icon
-                              className="size-3.5"
-                              style={{ color: "var(--color-brand-accent)" }}
+                              className="size-3.5 text-[var(--color-brand-accent)]"
                               strokeWidth={1.75}
                               aria-hidden
                             />
                           </span>
-                          <span className="text-[13.5px] font-medium" style={{ color: "rgba(255,255,255,0.82)" }}>
+                          <span className="text-[13.5px] font-medium text-white/82">
                             {label}
                           </span>
                         </li>
@@ -463,14 +379,7 @@ export default async function ServiceDetailPage({
                   {/* CTA */}
                   <Link
                     href={bookHref}
-                    className="mt-4 flex w-full items-center justify-center gap-2.5 rounded-[12px] font-bold transition-all"
-                    style={{
-                      height: 52,
-                      background: "var(--color-brand-accent)",
-                      color: "#0a1f14",
-                      fontSize: "clamp(14px,1vw,16px)",
-                      boxShadow: "0 4px 12px rgba(176,241,34,0.14)",
-                    }}
+                    className="mt-4 flex h-[52px] w-full items-center justify-center gap-2.5 rounded-[12px] bg-[var(--color-brand-accent)] text-[clamp(14px,1vw,16px)] font-bold text-[#0a1f14] shadow-[0_4px_12px_rgba(176,241,34,0.14)] transition-all"
                   >
                     {bookLabel}
                     <ArrowRight className="size-4" strokeWidth={2.5} aria-hidden />
@@ -478,8 +387,7 @@ export default async function ServiceDetailPage({
 
                   {/* Secure checkout note */}
                   <p
-                    className="mt-3 flex items-center justify-center gap-1.5 text-center text-[11.5px]"
-                    style={{ color: "rgba(255,255,255,0.35)" }}
+                    className="mt-3 flex items-center justify-center gap-1.5 text-center text-[11.5px] text-white/35"
                   >
                     <Lock className="size-3" aria-hidden />
                     {t.secureCheckoutFooter}
@@ -494,20 +402,13 @@ export default async function ServiceDetailPage({
 
       {/* Admin-authored rich detail body */}
       {bodyHtml ? (
-        <section
-          style={{
-            background: "var(--color-background-soft)",
-            padding: "clamp(56px,7vw,104px) 0",
-            borderTop: "1px solid rgba(29,75,54,0.10)",
-          }}
-        >
+        <section className="gh-inline-clamp-section border-t border-[rgba(29,75,54,0.10)] bg-[var(--color-background-soft)]">
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em]" style={{ color: "var(--color-brand-primary)" }}>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-primary)]">
               {t.aboutService}
             </p>
             <div
-              className="gh2-card-ivory mt-8 max-w-prose p-6 md:p-8"
-              style={{ borderTop: "2px solid rgba(176,241,34,0.24)" }}
+              className="gh2-card-ivory mt-8 max-w-prose border-t-2 border-t-[rgba(176,241,34,0.24)] p-6 md:p-8"
             >
               {resolvedLinks.length > 0 ? (
                 <ServiceLinkedBody bodyHtml={bodyHtml} links={resolvedLinks} />
@@ -521,25 +422,18 @@ export default async function ServiceDetailPage({
 
       {/* Who you'll see — clinicians assigned to this service. */}
       {assignedDoctors.length > 0 ? (
-        <section
-          style={{
-            background: "var(--color-background-soft)",
-            padding: "clamp(56px,7vw,104px) 0",
-            borderTop: "1px solid rgba(29,75,54,0.10)",
-          }}
-        >
+        <section className="gh-inline-clamp-section border-t border-[rgba(29,75,54,0.10)] bg-[var(--color-background-soft)]">
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <header>
               <h2
-                className="max-w-[20ch] font-extrabold leading-[1.05] tracking-[-0.03em]"
-                style={{ fontSize: "clamp(1.9rem,3.5vw,2.8rem)", color: "var(--color-text-primary)" }}
+                className="max-w-[20ch] text-[clamp(1.9rem,3.5vw,2.8rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-[var(--color-text-primary)]"
               >
                 {(detail.kind === "SPECIALIST"
                   ? c.specialistPage.doctorsSectionTitle
                   : c.gpPage.doctorsSectionTitle
                 ).replace("{country}", config.name)}
               </h2>
-              <p className="mt-3 max-w-[58ch] text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+              <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-[var(--color-text-muted)]">
                 {detail.kind === "SPECIALIST"
                   ? c.specialistPage.doctorsSectionIntro
                   : c.gpPage.doctorsSectionIntro}
@@ -578,13 +472,15 @@ export default async function ServiceDetailPage({
         <FAQSection title={t.faqTitle} items={detail.faqs} />
       ) : null}
 
+      {/* Doctify social proof — compact verified-rating strip */}
+      <section className="border-t border-[var(--color-border)] bg-[var(--color-background-page)] gh-inline-clamp-section-tight">
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <DoctifyWidget variant="horizontal" language={lang} />
+        </div>
+      </section>
+
       {/* Short medical disclaimer — between FAQ and the closing booking CTA */}
-      <section
-        style={{
-          background: "var(--color-background-soft)",
-          padding: "clamp(28px,4vw,48px) 0",
-        }}
-      >
+      <section className="bg-[var(--color-background-soft)] gh-inline-clamp-section-tight">
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <MedicalDisclaimer variant="short" text={disclaimerText} />
         </div>
@@ -592,11 +488,7 @@ export default async function ServiceDetailPage({
 
       {/* Closing booking band — visual parity with FinalCTA (§14) */}
       <section
-        className="gh2-section-forest relative isolate overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
-        style={{
-          padding: "clamp(56px,7vw,96px) 0",
-          borderTop: "1px solid rgba(255,255,255,0.07)",
-        }}
+        className="gh-inline-clamp-section gh2-section-forest relative isolate overflow-hidden border-t border-white/7 gh-medical-pattern gh-medical-pattern-dark"
       >
         <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid items-end gap-8 lg:grid-cols-[1.6fr_1fr]">
@@ -607,12 +499,11 @@ export default async function ServiceDetailPage({
                 </span>
               </p>
               <h2
-                className="mt-5 font-extrabold leading-[1.0] tracking-[-0.035em]"
-                style={{ fontSize: "clamp(2rem,4vw,3.4rem)", color: "rgba(255,255,255,0.95)", maxWidth: "18ch" }}
+                className="mt-5 max-w-[18ch] text-[clamp(2rem,4vw,3.4rem)] font-extrabold leading-[1.0] tracking-[-0.035em] text-white/95"
               >
                 {t.bookHeading.replace("{service}", detail.name).replace("{country}", config.name)}
               </h2>
-              <p className="mt-4 max-w-[44ch] text-[15px] leading-relaxed" style={{ color: "var(--gh2-on-dark-muted)" }}>
+              <p className="mt-4 max-w-[44ch] text-[15px] leading-relaxed text-[var(--gh2-on-dark-muted)]">
                 {priceLabel ? t.fromPricePrefix.replace("{price}", priceLabel) : ""}
                 {t.liveAvailability}
               </p>

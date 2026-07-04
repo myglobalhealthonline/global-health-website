@@ -1,3 +1,4 @@
+import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import type { Metadata } from "next";
 import { SITE_NAME } from "@/lib/constants";
 import Image from "next/image";
@@ -132,6 +133,15 @@ export default async function ContactPage() {
           </div>
         </div>
       </section>
+      <DoctifyReviewsSection
+        theme="forest"
+        variant="carousel"
+        language={locale}
+        eyebrow="Patient reviews"
+        headline="Trusted by patients"
+        headlineAccent="worldwide"
+        body="Independent, verified reviews collected by Doctify from patients treated by our clinicians across Europe."
+      />
     </section>
   );
 }
