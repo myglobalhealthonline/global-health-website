@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import {
@@ -136,6 +137,30 @@ export function DoctorsHero({
       className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden text-white gh-hero-cap"
       style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
     >
+      {/* Mobile/tablet only — full-bleed portrait behind a dark-green tint,
+       *  replacing the plus mask (which is desktop-only, see aside below). */}
+      <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 lg:hidden">
+        <Image
+          src={heroImage.src}
+          alt=""
+          fill
+          priority={heroImage.priority}
+          sizes="100vw"
+          className="object-cover object-center"
+          unoptimized={
+            /^https?:\/\//i.test(heroImage.src) || heroImage.src.startsWith("/api/media/")
+          }
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(6,26,18,0.35) 0%, rgba(6,26,18,0.55) 55%, rgba(6,26,18,0.80) 100%)," +
+              "linear-gradient(90deg, rgba(6,26,18,0.72) 0%, rgba(6,26,18,0.30) 55%, rgba(6,26,18,0.15) 100%)",
+          }}
+        />
+      </div>
+
       {/* ── Atmosphere layers (behind content via .gh-medical-pattern-layer) ── */}
       <div
         aria-hidden

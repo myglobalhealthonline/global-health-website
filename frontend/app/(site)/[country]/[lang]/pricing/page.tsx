@@ -137,6 +137,7 @@ export default async function PricingPage({
         secondaryLabel={t.secondaryLabel}
         secondaryHref={`/${slug}/${lang}/doctors`}
         rightSlot={<PlansArchPanel countryName={config.name} />}
+        mobileBgSrc="/images/stock/plans.png"
         trustCards={[
           {
             icon: <Stethoscope className="size-[18px]" strokeWidth={2} aria-hidden />,

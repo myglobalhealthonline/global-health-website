@@ -50,6 +50,7 @@ export default async function ContactPage() {
           },
         ]}
         rightSlot={<ContactArchPanel locale={contact} />}
+        mobileBgSrc="/images/stock/contact.jpg"
       />
 
       {/* LIGHT — contact form + reach info */}

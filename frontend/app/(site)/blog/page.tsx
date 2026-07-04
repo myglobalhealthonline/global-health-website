@@ -30,6 +30,7 @@ export default async function BlogIndexPage() {
         secondaryLabel="Back to home"
         secondaryHref="/"
         rightSlot={<BlogArchPanel articleCount={ordered.length} />}
+        mobileBgSrc="/images/stock/blog.png"
         trustCards={[
           {
             icon: <Stethoscope className="size-[18px]" strokeWidth={2} aria-hidden />,

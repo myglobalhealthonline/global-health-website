@@ -49,6 +49,7 @@ export default async function AboutPage() {
           },
         ]}
         rightSlot={<AboutArchPanel locale={about} />}
+        mobileBgSrc="/images/stock/about.jpg"
       />
 
       {/* LIGHT — three pillars */}
