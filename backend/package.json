@@ -6,7 +6,7 @@
         "node": ">=22.0.0"
     },
     "scripts": {
-        "dev": "tsx watch src/server.ts",
+        "dev": "node --watch --import tsx src/server.ts",
         "postinstall": "prisma generate && node scripts/sync-docx-templates.mjs && node scripts/sync-alex-brush-font.mjs",
         "build": "tsc",
         "start": "prisma migrate deploy && node dist/server.js",

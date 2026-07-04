@@ -1,3 +1,4 @@
+import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -182,6 +183,16 @@ export default async function PrescriptionsPage({
           </div>
         </section>
       )}
+
+      <DoctifyReviewsSection
+        theme="ivory"
+        variant="grid"
+        language={lang}
+        eyebrow="Patient reviews"
+        headline="Trusted by patients"
+        headlineAccent="for prescriptions"
+        body="Independent, verified reviews collected by Doctify from patients who have used our prescription services."
+      />
 
       <FinalCTA primaryHref={bookHref} secondaryHref={fallbackHref} />
     </>

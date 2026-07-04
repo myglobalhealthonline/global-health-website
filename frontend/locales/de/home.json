@@ -40,7 +40,8 @@
     "licensedPlural": "Zugelassene Ärzte",
     "markets": "Europäische Märkte · EU-registriert",
     "gdpr": "DSGVO-konform als Standard",
-    "slots": "Termine je nach Verfügbarkeit"
+    "slots": "Termine je nach Verfügbarkeit",
+    "languagesSpoken": "Konsultationssprachen"
   },
   "howItWorks": {
     "eyebrow": "Wie es funktioniert",

@@ -45,21 +45,8 @@ export function FinalCTA({
           gh-section
         "
       >
-        {/* Top rule with index */}
-        <div
-          className="mb-12 flex items-center justify-between pt-6 md:mb-20"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
-        >
-          <span
-            className="text-[11px] font-bold tracking-[0.22em] uppercase"
-            style={{ color: "rgba(255,255,255,0.35)" }}
-          >
-            {i18n?.eyebrow ?? "Subject to availability"}
-          </span>
-        </div>
-
         {/* Main grid */}
-        <div className="grid items-end gap-12 lg:grid-cols-[1fr_1.25fr] lg:gap-20">
+        <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.25fr] lg:gap-20 min-h-[400px]">
           {/* Left — oversized "Live" stat with expanding ring */}
           <RevealOnScroll delay={0}>
             <div>
