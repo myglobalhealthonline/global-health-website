@@ -127,11 +127,12 @@ export function DoctifyWidget({
     };
   }, [id, variant, language, theme]);
 
+  const minHeightClass = variant === "horizontal" ? "min-h-[120px]" : variant === "grid" ? "min-h-[400px]" : "min-h-[320px]";
+
   return (
     <div
       id={id}
-      className={`doctify-widget-container relative w-full transition-opacity duration-500 ease-in-out ${className ?? ""} ${loaded ? "opacity-100" : "opacity-0"}`}
-      style={{ minHeight: WIDGET_MIN_HEIGHT[variant] }}
+      className={`doctify-widget-container relative w-full ${minHeightClass} transition-opacity duration-500 ease-in-out ${className ?? ""} ${loaded ? "opacity-100" : "opacity-0"}`}
     />
   );
 }

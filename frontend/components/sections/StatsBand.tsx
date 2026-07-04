@@ -1,16 +1,18 @@
 /**
  * Stats band — clinical editorial version.
- * Asymmetric split: indexed eyebrow + headline left, four open
- * editorial stat columns right (2×2), each sitting on its own
- * hairline rule. No boxes — the rules carry the structure.
+ * Asymmetric split: indexed eyebrow + headline left, four stat cards
+ * right (2×2), each with an icon, large numeral, and label. Cards sit
+ * on a warm ivory surface with subtle depth and consistent hairline rules.
  */
 
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
+import type { ReactNode } from "react";
 
 export type StatBandItem = {
   value: string;
   label: string;
   caption?: string;
+  icon?: ReactNode;
 };
 
 export type StatsBandI18n = {
@@ -29,7 +31,6 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
     <section
       className={isLight ? "" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"}
       style={{
-        // Warm off-white canvas on light; stat cards flip to white so they still read as cards.
         background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
         borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
         borderBottom: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
@@ -77,21 +78,56 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
           </div>
         </RevealOnScroll>
 
-        {/* Right — open editorial stat columns */}
+        {/* Right — stat cards (2×2) */}
         <RevealOnScroll
           stagger
           delay={120}
-          className="grid grid-cols-1 gap-x-12 gap-y-12 sm:grid-cols-2"
+          className="grid grid-cols-1 gap-5 sm:grid-cols-2"
         >
-          {items.slice(0, 4).map((it, i) => (
+          {items.slice(0, 4).map((it) => (
             <div
               key={`${it.label}-${it.value}`}
-              className={`flex flex-col gap-3 rounded-2xl p-6 ${isLight ? "gh2-card-ivory" : ""}`}
+              className="group relative flex flex-col gap-5 rounded-2xl p-7 transition-all duration-300 hover:-translate-y-1"
               style={{
-                background: isLight ? undefined : "rgba(255,255,255,0.05)",
-                borderTop: `2px solid ${i === 0 ? (isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)") : "transparent"}`,
+                background: isLight
+                  ? "#ffffff"
+                  : "rgba(255,255,255,0.04)",
+                border: isLight
+                  ? "1px solid rgba(29,75,54,0.12)"
+                  : "1px solid rgba(255,255,255,0.08)",
+                boxShadow: isLight
+                  ? "0 2px 8px rgba(29,75,54,0.06), 0 12px 32px rgba(29,75,54,0.04)"
+                  : "none",
               }}
             >
+              {/* Top accent hairline */}
+              <div
+                className="absolute inset-x-0 top-0 h-[3px] rounded-t-2xl opacity-100"
+                style={{
+                  background: isLight
+                    ? "linear-gradient(90deg, var(--color-brand-primary), rgba(29,75,54,0.2))"
+                    : "linear-gradient(90deg, var(--color-brand-accent), rgba(176,241,34,0.2))",
+                }}
+              />
+
+              {/* Icon */}
+              {it.icon ? (
+                <span
+                  className="inline-flex size-11 items-center justify-center rounded-xl"
+                  style={{
+                    background: isLight
+                      ? "rgba(29,75,54,0.08)"
+                      : "rgba(176,241,34,0.08)",
+                    color: isLight
+                      ? "var(--color-brand-primary)"
+                      : "var(--color-brand-accent)",
+                  }}
+                >
+                  {it.icon}
+                </span>
+              ) : null}
+
+              {/* Value */}
               <dd
                 className="font-extrabold leading-none tracking-[-0.045em] [font-variant-numeric:tabular-nums]"
                 style={{
@@ -101,18 +137,22 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
               >
                 {it.value}
               </dd>
+
+              {/* Label */}
               <dt
                 className="text-[11px] font-bold uppercase tracking-[0.18em]"
                 style={{ color: isLight ? "var(--color-text-primary)" : "rgba(255,255,255,0.60)" }}
               >
                 {it.label}
               </dt>
+
+              {/* Caption */}
               {it.caption ? (
                 <p
                   className="text-sm leading-snug"
                   style={{
                     color: isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.32)",
-                    maxWidth: "24ch",
+                    maxWidth: "28ch",
                   }}
                 >
                   {it.caption}

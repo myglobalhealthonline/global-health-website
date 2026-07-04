@@ -322,9 +322,9 @@ export function MobileNav({
             </div>
           </div>
 
-          <div className="fixed bottom-0 left-0 right-0 border-t border-[var(--color-border)] p-4">
+          <div className="fixed bottom-0 left-0 right-0 p-4">
             <Dialog.Close asChild>
-              <Link href={bookHref} className="gh-btn gh-btn-primary flex w-full text-base">
+              <Link href={bookHref} className="gh-btn gh-btn-primary flex w-full text-base shadow-[var(--shadow-elevated)]">
                 {navigation.navBookAppointment}
               </Link>
             </Dialog.Close>

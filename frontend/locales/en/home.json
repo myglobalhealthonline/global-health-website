@@ -40,7 +40,8 @@
     "licensedPlural": "Licensed doctors",
     "markets": "European markets · EU-registered",
     "gdpr": "Compliant by default",
-    "slots": "Slots subject to availability"
+    "slots": "Slots subject to availability",
+    "languagesSpoken": "Consultation languages"
   },
   "howItWorks": {
     "eyebrow": "How it works",

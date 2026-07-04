@@ -9,7 +9,9 @@ import {
 } from "@/components/sections/ServiceCatalog";
 import { DoctorCarousel, type DoctorCarouselItem } from "@/components/sections/DoctorCarousel";
 import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
-import { CountryMarquee, type MarqueeCountry } from "@/components/sections/CountryMarquee";
+import { TrustMarquee, type TrustMarqueeItem } from "@/components/sections/TrustMarquee";
+import { fetchPublicReviewConfig } from "@/lib/api/reviews-config";
+import { languageLabel as gpLanguageLabel } from "@/lib/content/languages";
 import { StatsBand, type StatBandItem } from "@/components/sections/StatsBand";
 import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
 import { FinalCTA } from "@/components/sections/FinalCTA";
@@ -52,6 +54,7 @@ import { localeDisplayName } from "@/lib/i18n/locale-display";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { SITE_NAME } from "@/lib/constants";
+import { Stethoscope, Globe2, ShieldCheck, Activity } from "lucide-react";
 
 type Params = { country: string; lang: string };
 
@@ -342,15 +345,61 @@ export default async function CountryLangHomePage({
     "english",
   );
 
-  // Marquee shows every country we cover with its live doctor count
-  // alongside the flag. Active doctors per country come from the
-  // pre-fetched allDoctors roster; falls back to 0 when a country has
-  // no roster yet (still useful — signals coverage).
-  const marqueeCountries: MarqueeCountry[] = countries.map((c) => ({
-    code: c.code,
-    name: c.name,
-    doctorCount: allDoctors.filter((d) => d.countryCode === c.code).length,
-  }));
+  // Trust marquee — country-specific proof points instead of the old
+  // cross-country coverage belt (a visitor in Ireland doesn't care how
+  // many doctors Portugal has). Doctify aggregate is optional: only shown
+  // when the admin has connected a Doctify clinic and a snapshot exists.
+  const reviewConfigResult = await fetchPublicReviewConfig().catch(() => null);
+  const doctifyAggregate =
+    reviewConfigResult && reviewConfigResult.ok
+      ? (reviewConfigResult.data.doctify.aggregate ?? null)
+      : null;
+  const gpLanguageNames = gpLanguages.languages
+    .slice(0, 4)
+    .map((l) => gpLanguageLabel(l));
+  const trustMarqueeItems: TrustMarqueeItem[] = [
+    ...(doctifyAggregate
+      ? [
+          {
+            icon: "star" as const,
+            value: `${doctifyAggregate.rating.toFixed(1)}★`,
+            label: `${doctifyAggregate.count} Doctify reviews`,
+          },
+        ]
+      : []),
+    {
+      icon: "doctor" as const,
+      value:
+        countryDoctors.length >= 10
+          ? `${Math.floor(countryDoctors.length / 10) * 10}+`
+          : String(countryDoctors.length),
+      label:
+        countryDoctors.length === 1 ? t.trust.licensedSingular : t.trust.licensedPlural,
+    },
+    ...(gpLanguages.configured
+      ? [
+          {
+            icon: "bolt" as const,
+            value: cc.homeCatalog.trustLive,
+            label: t.trust.slots,
+          },
+        ]
+      : []),
+    {
+      icon: (regulatorAbbrev ? "shield" : "lock") as "shield" | "lock",
+      value: regulatorAbbrev ?? "GDPR",
+      label: t.trust.gdpr,
+    },
+    ...(gpLanguageNames.length > 0
+      ? [
+          {
+            icon: "languages" as const,
+            value: gpLanguageNames.join(" · "),
+            label: t.trust.languagesSpoken,
+          },
+        ]
+      : []),
+  ];
 
   // Stats band — four concrete numbers, no marketing puffery. Pulled
   // from real catalogue data so they update as the platform grows.
@@ -363,21 +412,25 @@ export default async function CountryLangHomePage({
       value: String(totalDoctorsAcrossEurope),
       label: t.statsBand.stat1Label,
       caption: t.statsBand.stat1Caption,
+      icon: <Stethoscope className="size-5" strokeWidth={1.5} aria-hidden />,
     },
     {
       value: String(countries.length),
       label: t.statsBand.stat2Label,
       caption: t.statsBand.stat2Caption,
+      icon: <Globe2 className="size-5" strokeWidth={1.5} aria-hidden />,
     },
     {
       value: t.statsBand.stat3Value,
       label: t.statsBand.stat3Label,
       caption: t.statsBand.stat3Caption,
+      icon: <ShieldCheck className="size-5" strokeWidth={1.5} aria-hidden />,
     },
     {
       value: String(totalServicesAcrossEurope),
       label: t.statsBand.stat4Label,
       caption: t.statsBand.stat4Caption,
+      icon: <Activity className="size-5" strokeWidth={1.5} aria-hidden />,
     },
   ];
 
@@ -440,7 +493,7 @@ export default async function CountryLangHomePage({
         ctaLabel={page?.ctaLabel ?? null}
         i18n={t.countryHero}
       />
-      <CountryMarquee countries={marqueeCountries} />
+      <TrustMarquee items={trustMarqueeItems} />
       <RichBodySection html={page?.body} theme="light" />
       <TrustRibbon items={trustItems} theme="light" />
       <ServiceCatalog services={serviceCatalogItems} i18n={tServices.catalog} />

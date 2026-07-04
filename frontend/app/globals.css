@@ -443,7 +443,7 @@ img {
   overflow: hidden;
 }
 .gh-marquee-track {
-  animation: gh-marquee 45s linear infinite;
+  animation: gh-marquee 20s linear infinite;
   will-change: transform;
 }
 @keyframes gh-marquee {
@@ -455,6 +455,21 @@ img {
 }
 @media (prefers-reduced-motion: reduce) {
   .gh-marquee-track { animation: none; }
+}
+
+/* Marquee edge fade masks — gradient backgrounds that can't be expressed
+ * as Tailwind utility classes. */
+.gh-marquee-fade-left {
+  background: linear-gradient(90deg, var(--color-background-soft) 0%, transparent 100%);
+}
+.gh-marquee-fade-right {
+  background: linear-gradient(270deg, var(--color-background-soft) 0%, transparent 100%);
+}
+.gh-marquee-fade-left-dark {
+  background: linear-gradient(90deg, #12342A 0%, transparent 100%);
+}
+.gh-marquee-fade-right-dark {
+  background: linear-gradient(270deg, #0F2E25 0%, transparent 100%);
 }
 
 /* Hero composition — type column on the left, live-availability
