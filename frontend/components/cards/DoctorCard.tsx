@@ -129,32 +129,27 @@ export function DoctorCard({
   // green in both modes — only text/border tokens switch here.
   const cardVars = {
     "--dc-ink": dark ? "rgba(255,255,255,0.92)" : "var(--color-brand-primary)",
-    "--dc-muted": dark ? "rgba(255,255,255,0.55)" : "rgba(29,75,54,0.45)",
+    "--dc-muted": dark ? "rgba(255,255,255,0.72)" : "rgba(29,75,54,0.45)",
     "--dc-line": dark ? "rgba(255,255,255,0.22)" : "rgba(29,75,54,0.20)",
-    "--dc-icon-bg": dark ? "rgba(255,255,255,0.06)" : "rgba(29,75,54,0.07)",
+    "--dc-icon-bg": dark ? "rgba(255,255,255,0.08)" : "rgba(29,75,54,0.08)",
     "--dc-icon-line": dark ? "rgba(255,255,255,0.10)" : "rgba(29,75,54,0.10)",
     "--dc-hover": dark ? "rgba(255,255,255,0.08)" : "rgba(29,75,54,0.04)",
   } as CSSProperties;
 
+  // Static cards (no profileHref link-wrap) must not lift on hover — only
+  // apply gh2-card-hover when the card is actually clickable.
+  const lightHoverClass = profileHref ? "gh2-card-hover" : "";
+
   return (
     <article
       className={`
-        group relative flex h-full flex-col overflow-hidden ${dark ? "gh-glass-card" : "bg-white"}
-        transition-[transform,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
-        hover:-translate-y-[3px]
-        ${dark ? "" : "hover:border-[rgba(29,75,54,0.22)] hover:shadow-[var(--shadow-card-hover)]"}
+        group relative flex h-full flex-col overflow-hidden ${dark ? "gh2-glass-forest gh2-glass-hover" : `gh2-card-ivory ${lightHoverClass}`}
         motion-reduce:transition-none motion-reduce:hover:translate-y-0
         focus-within:ring-2 focus-within:ring-[var(--color-brand-primary)]/30
       `}
       style={{
         ...cardVars,
-        borderRadius: 24,
-        ...(dark
-          ? {}
-          : {
-              border: "1px solid rgba(29,75,54,0.10)",
-              boxShadow: "0 2px 8px rgba(15,46,37,0.06), 0 8px 28px rgba(15,46,37,0.07)",
-            }),
+        borderRadius: "var(--radius-card)",
       }}
     >
       {/* Whole-card overlay link — routes to profile. CTAs below sit
@@ -163,7 +158,7 @@ export function DoctorCard({
         <Link
           href={profileHref}
           aria-label={`View profile for ${name}`}
-          className="absolute inset-0 z-0 rounded-[24px] focus:outline-none"
+          className="absolute inset-0 z-0 rounded-[var(--radius-card)] focus:outline-none"
           tabIndex={-1}
         />
       ) : null}
@@ -176,7 +171,7 @@ export function DoctorCard({
         {hasImage ? (
           <Image
             src={src}
-            alt={imageAltText?.trim() || name}
+            alt={imageAltText?.trim() || (title ? `${name}, ${title}` : name)}
             title={imageTitle?.trim() || undefined}
             aria-describedby={
               imageCaption || imageDescription ? `${nameToInitials(name)}-image-seo` : undefined
@@ -365,15 +360,14 @@ export function DoctorCard({
             {profileHref ? (
               <Link
                 href={profileHref}
-                className="relative z-20 inline-flex h-9 flex-1 items-center justify-center rounded-full border border-[color:var(--dc-line)] px-4 text-sm font-bold text-[color:var(--dc-ink)] transition-colors hover:border-[var(--color-brand-primary)]/40 hover:bg-[var(--color-brand-primary)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
+                className="gh2-btn-compact gh2-btn-compact-secondary relative z-20 flex-1 border-[color:var(--dc-line)] text-[color:var(--dc-ink)]"
               >
                 {ctaLabel}
               </Link>
             ) : null}
             <Link
               href={bookHref}
-              className="relative z-20 inline-flex h-9 flex-1 items-center justify-center gap-1 rounded-full px-4 text-sm font-bold text-white transition-[filter] hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
-              style={{ background: "var(--color-brand-primary)" }}
+              className="gh2-btn-compact gh2-btn-compact-primary relative z-20 flex-1 gap-1"
             >
               {primaryLabel}
               <ArrowRight className="size-3.5 shrink-0" strokeWidth={1.8} aria-hidden />
@@ -385,14 +379,14 @@ export function DoctorCard({
             {bookHref ? (
               <Link
                 href={bookHref}
-                className="relative z-20 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full px-4 text-[13.5px] font-extrabold tracking-[-0.005em] text-white transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                className="relative z-20 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-4 text-[13.5px] font-extrabold tracking-[-0.005em] text-white transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                 style={{
                   background: "var(--color-brand-primary)",
                   boxShadow: "0 6px 18px rgba(29,75,54,0.25)",
                 }}
               >
                 <CalendarDays className="size-[15px] shrink-0" strokeWidth={1.8} aria-hidden />
-                {`Book with ${firstName}`}
+                {primaryLabel ?? bookLabel ?? `Book with ${firstName}`}
                 <ArrowRight
                   className="size-[15px] shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
                   strokeWidth={1.8}
@@ -403,7 +397,11 @@ export function DoctorCard({
             {profileHref ? (
               <Link
                 href={profileHref}
-                className="relative z-20 inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-full border-[1.5px] border-[color:var(--dc-line)] px-4 text-[13px] font-bold tracking-[-0.005em] text-[color:var(--dc-ink)] transition-[background-color,color,border-color] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
+                className={
+                  bookHref
+                    ? "relative z-20 inline-flex min-h-12 w-full items-center justify-center gap-1.5 rounded-full px-4 text-[13px] font-semibold tracking-[-0.005em] text-[color:var(--dc-ink)] transition-colors duration-200 hover:bg-[var(--dc-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
+                    : "relative z-20 inline-flex min-h-12 w-full items-center justify-center gap-1.5 rounded-full border-[1.5px] border-[color:var(--dc-line)] px-4 text-[13px] font-bold tracking-[-0.005em] text-[color:var(--dc-ink)] transition-[background-color,color,border-color] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
+                }
               >
                 {bookHref ? "View Profile" : ctaLabel}
                 <ArrowRight className="size-[14px] shrink-0" strokeWidth={1.8} aria-hidden />

@@ -43,7 +43,7 @@ export function CartIcon({
     <Link
       href={href}
       aria-label={`Cart (${count} item${count === 1 ? "" : "s"})`}
-      className={`relative inline-flex size-9 items-center justify-center rounded-full ${
+      className={`relative -mx-1 inline-flex size-11 items-center justify-center rounded-full ${
         isDark
           ? "text-white hover:bg-white/12"
           : "text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"

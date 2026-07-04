@@ -100,7 +100,7 @@ export default function FooterColumn({
                   {column.links.map((item) => (
                     <li key={item.label + item.href}>
                       <Link
-                        className="text-white/60 transition-colors hover:text-white"
+                        className="text-white/70 transition-colors hover:text-white"
                         href={item.href}
                       >
                         {item.label}
@@ -118,8 +118,8 @@ export default function FooterColumn({
               <ul className="mt-4 space-y-2.5 text-sm">
                 {contactInfo.map(({ icon: Icon, text }) => (
                   <li className="flex items-start gap-2.5" key={text}>
-                    <Icon className="mt-0.5 size-4 shrink-0 text-white/50" />
-                    <span className="text-white/60">{text}</span>
+                    <Icon className="mt-0.5 size-4 shrink-0 text-white/70" />
+                    <span className="text-white/70">{text}</span>
                   </li>
                 ))}
               </ul>
@@ -128,10 +128,10 @@ export default function FooterColumn({
         </div>
 
         <div className="mt-12 border-t border-white/10 pt-6 text-sm sm:flex sm:items-center sm:justify-between">
-          <p className="text-white/50" suppressHydrationWarning>
+          <p className="text-white/70" suppressHydrationWarning>
             © {new Date().getFullYear()} {siteName}. All rights reserved.
           </p>
-          <p className="mt-2 text-white/50 sm:mt-0">
+          <p className="mt-2 text-white/70 sm:mt-0">
             Global Health is a brand of Global Guest s.r.o
           </p>
         </div>

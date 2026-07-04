@@ -4,12 +4,7 @@ import { collectSetCookies, rewriteOutboundSetCookie } from "@/lib/server/set-co
 
 export const dynamic = "force-dynamic";
 
-const ALLOWED: Record<string, Set<string>> = {
-  GET: new Set(["", "download"].map(() => "*")),
-  POST: new Set(["*"]),
-};
-
-// Simpler: allowlist by pattern
+// Allowlist by pattern
 function isAllowed(method: string, segments: string[]): boolean {
   if (method === "GET") {
     // base list: []

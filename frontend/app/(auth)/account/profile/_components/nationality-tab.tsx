@@ -68,6 +68,8 @@ function SlotCard({
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
   useEffect(() => {
+    // Reset local edit state when a fresh `doc` snapshot arrives from the server.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setForm(doc ? docToForm(doc) : EMPTY_FORM);
   }, [doc]);
 

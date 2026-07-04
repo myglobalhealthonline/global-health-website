@@ -1,16 +1,14 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowUpRight, CheckCircle2, XCircle, Loader2, Stethoscope, ShieldCheck, BadgeCheck, Clock, Lock } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, XCircle, Loader2, Stethoscope, ShieldCheck, Clock, Lock } from "lucide-react";
 
 export function GH2SectionHeader({
-  index,
   eyebrow,
   headline,
   accent,
   body,
   dark = false,
 }: {
-  index: string;
   eyebrow: string;
   headline: string;
   accent: string;
@@ -43,7 +41,7 @@ export function GH2SectionHeader({
           className="mt-5 leading-relaxed"
           style={{
             fontSize: "var(--text-body-lg)",
-            color: dark ? "rgba(255,255,255,0.55)" : "var(--color-text-muted)",
+            color: dark ? "rgba(255,255,255,0.72)" : "var(--color-text-muted)",
             maxWidth: "42ch",
           }}
         >
@@ -94,7 +92,7 @@ export function GH2CompactHero({
         {backHref && backLabel ? (
           <Link
             href={backHref}
-            className="mb-8 inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/45 transition-colors hover:text-[var(--color-brand-accent)]"
+            className="gh-focus-on-dark mb-8 inline-flex min-h-11 items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/70 transition-colors hover:text-[var(--color-brand-accent)]"
           >
             {backLabel}
           </Link>
@@ -114,7 +112,7 @@ export function GH2CompactHero({
         {body ? (
           <p
             className="mt-5 max-w-[44ch] text-[length:var(--text-body-lg)] leading-relaxed"
-            style={{ color: "rgba(255,255,255,0.58)" }}
+            style={{ color: "rgba(255,255,255,0.75)" }}
           >
             {body}
           </p>
@@ -122,7 +120,7 @@ export function GH2CompactHero({
         {meta ? (
           <div
             className="mt-6 border-t pt-4"
-            style={{ borderColor: "rgba(255,255,255,0.10)", color: "rgba(255,255,255,0.55)" }}
+            style={{ borderColor: "rgba(255,255,255,0.10)", color: "rgba(255,255,255,0.70)" }}
           >
             {meta}
           </div>
@@ -162,7 +160,7 @@ export function GH2FlowHeader({
               {title}
             </h1>
             {subtitle ? (
-              <p className="mt-2 text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
+              <p className="mt-2 text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.72)" }}>
                 {subtitle}
               </p>
             ) : null}
@@ -222,6 +220,7 @@ export function GH2StatusPage({
 }) {
   const Icon = status === "success" ? CheckCircle2 : status === "loading" ? Loader2 : XCircle;
   const isSuccess = status === "success";
+  const isLoading = status === "loading";
   return (
     <section className="flex min-h-[calc(100dvh-var(--header-height))] items-center bg-[var(--color-background-soft)] px-5 py-16">
       <div className="mx-auto w-full max-w-[560px] rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-7 text-center shadow-[var(--shadow-card)] sm:p-10">
@@ -230,8 +229,19 @@ export function GH2StatusPage({
           style={{ background: isSuccess ? "var(--color-brand-accent)" : "var(--color-background-panel)", color: isSuccess ? "#0a1f14" : "var(--color-brand-primary)" }}
         >
           {isSuccess ? <span aria-hidden className="gh2-live-dot absolute -right-0.5 -top-0.5" /> : null}
-          <Icon className={`size-9 ${status === "loading" ? "animate-spin" : ""}`} aria-hidden />
+          <Icon className={`size-9 ${isLoading ? "animate-spin" : ""}`} aria-hidden />
         </span>
+        {/* Indeterminate progress bar — processing state only, CSS-only
+            animation, respects prefers-reduced-motion (spec §17). */}
+        {isLoading ? (
+          <span
+            aria-hidden
+            className="mx-auto mt-5 block h-1 w-40 overflow-hidden rounded-full"
+            style={{ background: "var(--color-background-panel)" }}
+          >
+            <span className="gh2-status-progress-bar motion-reduce:animate-none block h-full w-1/3 rounded-full" style={{ background: "var(--color-brand-primary)" }} />
+          </span>
+        ) : null}
         <h1 className="mt-6 text-[clamp(1.8rem,4vw,2.7rem)] font-extrabold leading-[1.05] tracking-[-0.035em] text-[var(--color-text-primary)]">
           {title}
         </h1>
@@ -239,7 +249,7 @@ export function GH2StatusPage({
           {body}
         </p>
         {reference ? (
-          <div className="mt-6 border-y border-[var(--color-border)] py-4 text-left gh2-index text-[var(--color-brand-primary)]">
+          <div className="mt-6 border-y border-[var(--color-border)] py-4 text-left">
             {reference}
           </div>
         ) : null}
@@ -271,7 +281,14 @@ export function GH2AuthShell({
   ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2" style={{ height: "100svh", overflow: "hidden" }}>
+    // min-height (not fixed height + overflow:hidden) so short viewports and
+    // zoomed text can scroll instead of trapping content off-screen. The left
+    // brand panel stays sticky-height via lg:min-h and its own layout.
+    <div className="grid grid-cols-1 lg:grid-cols-2" style={{ minHeight: "100svh" }}>
+      {/* Skip link — mirrors the public SiteChrome accessibility contract. */}
+      <a href="#main-content" className="gh-skip-link">
+        Skip to main content
+      </a>
 
       {/* ── LEFT — brand panel (desktop only) ──────────────────────── */}
       <aside
@@ -343,7 +360,8 @@ export function GH2AuthShell({
 
       {/* ── RIGHT — form panel ────────────────────────────────────── */}
       <main
-        className="relative flex flex-col items-center justify-center overflow-y-auto px-5 py-8 sm:py-10"
+        id="main-content"
+        className="relative flex flex-col items-center justify-center px-5 py-8 sm:py-10"
         style={{ background: "#F5F8F5" }}
       >
         <div className="w-full" style={{ maxWidth: 500 }}>
@@ -361,9 +379,11 @@ export function GH2AuthShell({
             </div>
           </div>
 
-          {/* Card */}
+          {/* Card — gh2-card-ivory surface (ivory gradient + soft shadow) with
+              the auth-shell's larger radius/padding kept as overrides. */}
           <div
-            style={{ background: "#fff", border: "1px solid #E6EDE7", borderRadius: 28, boxShadow: "0 24px 80px rgba(5,45,30,0.10), 0 2px 8px rgba(5,45,30,0.05)", padding: "clamp(36px,5vw,52px) clamp(28px,4vw,48px)" }}
+            className="gh2-card-ivory"
+            style={{ borderRadius: 28, padding: "clamp(36px,5vw,52px) clamp(28px,4vw,48px)" }}
           >
             {/* Badge */}
             <div style={{ display: "flex", justifyContent: "center", marginBottom: 24 }}>
@@ -387,7 +407,7 @@ export function GH2AuthShell({
                     role="tab"
                     aria-selected={activeTab === tab}
                     className="transition-colors duration-150"
-                    style={{ paddingBottom: 12, fontSize: 14, fontWeight: 700, marginBottom: -1, textDecoration: "none", color: activeTab === tab ? "#0E4A35" : "#9BB0A4", borderBottom: activeTab === tab ? "2px solid #0E4A35" : "2px solid transparent" }}
+                    style={{ display: "inline-flex", alignItems: "flex-end", minHeight: 44, paddingBottom: 12, fontSize: 14, fontWeight: 700, marginBottom: -1, textDecoration: "none", color: activeTab === tab ? "#0E4A35" : "#6E8B79", borderBottom: activeTab === tab ? "2px solid #0E4A35" : "2px solid transparent" }}
                   >
                     {tab === "login" ? "Sign in" : "Create account"}
                   </Link>

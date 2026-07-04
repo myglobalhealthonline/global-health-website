@@ -19,6 +19,7 @@ import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 import { parseSitePath, swapCountryInPath } from "@/lib/routing/path-rewrites";
 import { useCart } from "@/components/cart/CartContext";
 import { Flag } from "@/components/ui/Flag";
+import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
 
 export function CountrySwitcher({
   activeCountryCode,
@@ -31,6 +32,7 @@ export function CountrySwitcher({
   const { cart, clear } = useCart();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   // If the cart has items pinned to a specific country, switching to a
   // different country mid-flow would either silently mismatch pricing
@@ -62,8 +64,7 @@ export function CountrySwitcher({
       void clear();
     }
     setOpen(false);
-    // eslint-disable-next-line react-hooks/immutability -- hard navigation needs the locale cookie synced before reload.
-    globalThis.document.cookie = `gh_locale=${nextLang}; path=/; max-age=31536000; SameSite=Lax`;
+    setClientLocaleCookie(nextLang);
     globalThis.location.assign(nextHref);
   }
 
@@ -72,8 +73,18 @@ export function CountrySwitcher({
     function onClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    }
     document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKeyDown);
+    };
   }, [open]);
 
   const active = activeCountryCode
@@ -83,13 +94,14 @@ export function CountrySwitcher({
   return (
     <div ref={ref} className="relative">
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-haspopup="menu"
+        aria-haspopup="true"
         aria-expanded={open}
         data-open={open}
-        className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 data-[open=true]:border-white/30 data-[open=true]:bg-white/10"
-        style={{ minHeight: 40 }}
+        className="gh-focus-on-dark inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white data-[open=true]:border-white/30 data-[open=true]:bg-white/10"
+        style={{ minHeight: 44 }}
       >
         {active ? <Flag code={active.code} size="sm" /> : null}
         <span>{active ? active.name : "Choose country"}</span>
@@ -102,11 +114,12 @@ export function CountrySwitcher({
 
       {open ? (
         <div
-          role="menu"
           aria-label="Choose country"
           className="absolute right-0 z-50 mt-2 overflow-hidden"
           style={{
             minWidth: 220,
+            maxHeight: "min(calc(100vh - 120px), 320px)",
+            overflowY: "auto",
             background: "var(--color-background-page)",
             border: "1px solid var(--color-border)",
             borderRadius: 12,
@@ -116,7 +129,10 @@ export function CountrySwitcher({
           <ul className="m-0 list-none p-1">
             {countries.map((c) => {
               const isActive = c.code === activeCountryCode;
-              const slug = COUNTRY_CODE_TO_SLUG[c.code];
+              // Prefer the slug on the country data itself; the client-side
+              // registry proxy may not be warm for admin-added countries.
+              const slug =
+                c.slug || COUNTRY_CODE_TO_SLUG[c.code] || c.code.toLowerCase();
               // Keep the visitor's current language when the target
               // country supports it; otherwise fall back to the target
               // country's default locale. This makes country switching
@@ -144,10 +160,10 @@ export function CountrySwitcher({
                   <button
                     type="button"
                     onClick={() => handleSwitch(href, c.code, nextLang)}
-                    role="menuitem"
-                    className="flex w-full cursor-pointer items-center justify-between gap-3"
+                    className="flex w-full cursor-pointer items-center justify-between gap-3 focus-visible:outline-none focus-visible:bg-[var(--color-brand-mint-soft)]"
                     style={{
-                      padding: "9px 12px",
+                      minHeight: 44,
+                      padding: "10px 14px",
                       borderRadius: 8,
                       border: "none",
                       textAlign: "left",

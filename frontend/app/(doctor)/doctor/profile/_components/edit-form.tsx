@@ -133,8 +133,12 @@ export function DoctorProfileEditForm({
   const router = useRouter();
   const initialQualificationsText = initial.qualifications.join("\n");
   const initialLanguagesKey = initial.languages.join("\u0000");
+  // initialLanguagesKey is a content-stable proxy for initial.languages (whose
+  // array identity churns every render) — deliberately excluded to avoid
+  // recomputing on identity-only changes.
   const initialLanguages = useMemo(
     () => canonicalizeLanguages(initial.languages),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [initialLanguagesKey],
   );
   const marketOptions = initial.markets.length > 0 ? initial.markets : [];
@@ -171,6 +175,9 @@ export function DoctorProfileEditForm({
       tabs.unshift({ code: defaultLocale, isDefault: true });
     }
     return tabs.length > 0 ? tabs : [{ code: "EN", isDefault: true }];
+    // localeTabsKey is a content-stable proxy for supportedLocaleSource kept in
+    // the deps to document intent even though it isn't read in the body.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultLocale, supportedLocaleSource, localeTabsKey]);
 
   /* ── Profile form ─────────────────────────────────── */
@@ -214,6 +221,9 @@ export function DoctorProfileEditForm({
   const verifiedMarketCount = initial.markets.filter((market) => market.isVerified).length;
 
   useEffect(() => {
+    // Resets all local edit state when a fresh `initial` snapshot arrives
+    // (server refetch after save) — intentional sync, not derivable state.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFullName(initial.fullName);
     setQualifications(initialQualificationsText);
     setLanguages(initialLanguages);

@@ -103,7 +103,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
     <form onSubmit={onSubmit} className="grid gap-5" suppressHydrationWarning>
       {/* Email */}
       <div className="grid gap-2">
-        <label htmlFor="login-email" className="gh-field-label">
+        <label htmlFor="login-email" className="gh-field-label" data-required>
           {i18n.emailLabel}
         </label>
         <div className="relative">
@@ -118,6 +118,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
             style={{ paddingLeft: "2.75rem" }}
             placeholder={i18n.emailPlaceholder}
             required
+            aria-required="true"
             autoComplete="email"
           />
         </div>
@@ -126,7 +127,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
       {/* Password */}
       <div className="grid gap-2">
         <div className="flex items-center justify-between">
-          <label htmlFor="login-password" className="gh-field-label">
+          <label htmlFor="login-password" className="gh-field-label" data-required>
             {i18n.passwordLabel}
           </label>
           <Link
@@ -149,6 +150,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
             style={{ paddingLeft: "2.75rem" }}
             placeholder={i18n.passwordPlaceholder}
             required
+            aria-required="true"
             autoComplete="current-password"
           />
           <button
@@ -189,7 +191,8 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
           className={`rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm ${
             isError ? "gh-status-error" : "gh-status-success"
           }`}
-          role="status"
+          role={isError ? "alert" : "status"}
+          aria-live="polite"
         >
           {message}
         </p>

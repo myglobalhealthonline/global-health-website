@@ -167,7 +167,7 @@ export function DoctorTeamTemplate({
                     onClick={() => setPage((p) => Math.max(0, p - 1))}
                     disabled={safePage === 0}
                     aria-label="Previous page"
-                    className="inline-flex size-10 items-center justify-center rounded-full border transition-opacity"
+                    className="inline-flex size-11 items-center justify-center rounded-full border transition-opacity"
                     style={
                       safePage === 0
                         ? { opacity: 0.3, borderColor: "currentColor" }
@@ -186,7 +186,7 @@ export function DoctorTeamTemplate({
                     }
                     disabled={safePage === totalPages - 1}
                     aria-label="Next page"
-                    className="inline-flex size-10 items-center justify-center rounded-full border transition-opacity"
+                    className="inline-flex size-11 items-center justify-center rounded-full border transition-opacity"
                     style={
                       safePage === totalPages - 1
                         ? { opacity: 0.3, borderColor: "currentColor" }

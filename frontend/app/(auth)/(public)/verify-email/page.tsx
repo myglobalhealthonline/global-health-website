@@ -30,6 +30,9 @@ export default function VerifyEmailPage() {
   const ranRef = useRef(false);
 
   useEffect(() => {
+    // Cookie-derived locale must be read post-mount to avoid an SSR/client
+    // hydration mismatch (document.cookie is unavailable on the server).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocale(readClientLocale());
   }, []);
 
@@ -78,6 +81,7 @@ export default function VerifyEmailPage() {
       accent="account."
       body="Verification keeps patient records and booking updates tied to the right email address."
     >
+      <div aria-live="polite">
         {status === "pending" ? (
           <>
             <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">{t.title}</h1>
@@ -130,6 +134,7 @@ export default function VerifyEmailPage() {
             </Link>
           </>
         ) : null}
+      </div>
     </GH2AuthShell>
   );
 }

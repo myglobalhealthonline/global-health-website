@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -116,6 +116,7 @@ export function ConsultationBookingForm({
   const [me, setMe] = useState<AuthUser | null>(null);
   const [authLoaded, setAuthLoaded] = useState(false);
   const [bookingForOther, setBookingForOther] = useState(false);
+  const otherPatientSectionRef = useRef<HTMLDivElement>(null);
   // Approved dependents the logged-in patient can book for (Premium family
   // usage). Only those approved to use plan benefits (canUseCredits) appear.
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
@@ -206,6 +207,20 @@ export function ConsultationBookingForm({
       cancelled = true;
     };
   }, [meId, serviceId, slotPriceCents]);
+
+  // Scroll the newly revealed "patient being treated" section into view so the
+  // patient notices it appeared instead of scrolling past a section that grew
+  // above the fold. Guarded by prefers-reduced-motion (UI-only, no logic change).
+  useEffect(() => {
+    if (!bookingForOther || !otherPatientSectionRef.current) return;
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    otherPatientSectionRef.current.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "nearest",
+    });
+  }, [bookingForOther]);
 
   const approvedMembers = useMemo(
     () => familyMembers.filter((m) => m.canUseCredits),
@@ -458,7 +473,7 @@ export function ConsultationBookingForm({
         * (time) step. This details step never re-picks it; "Change time"
         * returns to the time step (same URL without ?slot=). */}
       {selectedSlot ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+        <div className="gh2-card-ivory flex flex-wrap items-center justify-between gap-3 p-4">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
               {i18n.selectedTime}
@@ -483,7 +498,7 @@ export function ConsultationBookingForm({
         * When bookingForOther, these fields remain the logged-in user's
         * contact/notification details. A separate sub-section collects
         * the actual patient (person being treated). */}
-      <fieldset className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 sm:p-6">
+      <fieldset className="gh2-card-ivory p-5 sm:p-6">
         <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
           {treatingOther ? "Your contact details" : i18n.patientDetails}
         </legend>
@@ -583,17 +598,9 @@ export function ConsultationBookingForm({
                     type="button"
                     role="radio"
                     aria-checked={active}
+                    data-selected={active}
                     onClick={() => setBenefitSelection(opt.selection)}
-                    className="rounded-full px-3 py-1 text-[12px] font-semibold transition-colors"
-                    style={
-                      active
-                        ? { background: "var(--color-brand-primary)", color: "#fff" }
-                        : {
-                            background: "var(--color-background-soft)",
-                            color: "var(--color-text-body)",
-                            border: "1px solid var(--color-border)",
-                          }
-                    }
+                    className="gh2-selectable rounded-full px-3 text-[12px] font-semibold"
                   >
                     {label} — {formatPriceRounded(opt.unitPriceCents, selectedSlot?.currencyCode ?? "EUR")}
                   </button>
@@ -606,13 +613,14 @@ export function ConsultationBookingForm({
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {!treatingOther ? (
             <label className="block">
-              <span className="text-xs font-semibold text-[var(--color-text-body)]">
+              <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required>
                 {i18n.patientFullName}
               </span>
               <input
                 type="text"
                 name="fullName"
                 required
+                aria-required="true"
                 minLength={2}
                 maxLength={120}
                 defaultValue={defaults.fullName}
@@ -621,13 +629,14 @@ export function ConsultationBookingForm({
             </label>
           ) : null}
           <label className={`block${treatingOther ? " sm:col-span-2" : ""}`}>
-            <span className="text-xs font-semibold text-[var(--color-text-body)]">
+            <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required>
               {treatingOther ? "Your email (for confirmation)" : i18n.email}
             </span>
             <input
               type="email"
               name="email"
               required
+              aria-required="true"
               defaultValue={defaults.email}
               className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
             />
@@ -674,19 +683,23 @@ export function ConsultationBookingForm({
           * Name is required; email + phone are optional (e.g. a child may
           * not have their own email or phone number). */}
         {bookingForOther ? (
-          <div className="mt-5 rounded-[var(--radius-card)] border border-[var(--color-brand-primary)]/20 bg-[var(--color-background-soft)] p-4">
+          <div
+            ref={otherPatientSectionRef}
+            className="mt-5 rounded-[var(--radius-card)] border border-[var(--color-brand-primary)]/20 bg-[var(--color-background-soft)] p-4 scroll-mt-24"
+          >
             <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-brand-primary)]">
               Patient being treated
             </p>
             <div className="mt-3 grid gap-4 sm:grid-cols-2">
               <label className="block sm:col-span-2">
-                <span className="text-xs font-semibold text-[var(--color-text-body)]">
+                <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required>
                   Patient full name
                 </span>
                 <input
                   type="text"
                   name="patientOtherName"
                   required
+                  aria-required="true"
                   minLength={2}
                   maxLength={120}
                   className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
@@ -767,6 +780,7 @@ export function ConsultationBookingForm({
             type="checkbox"
             name="consent"
             required
+            aria-required="true"
             className="mt-0.5 size-4 rounded border-[var(--color-border)]"
           />
           <span>
@@ -780,7 +794,7 @@ export function ConsultationBookingForm({
         * clinical record + any prescription dispatch has the address as
         * it stood at booking, even if the patient later edits their
         * profile. Country code is implicit from the URL slug. */}
-      <fieldset className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 sm:p-6">
+      <fieldset className="gh2-card-ivory p-5 sm:p-6">
         <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
           {i18n.patientAddress}
         </legend>
@@ -861,7 +875,7 @@ export function ConsultationBookingForm({
         * consent (gdprConsentPlatform) doesn't invalidate the clinical
         * record (gdprConsentClinic). Wording deliberately scopes each
         * one's purpose to make withdrawal scope unambiguous. */}
-      <fieldset className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 sm:p-6">
+      <fieldset className="gh2-card-ivory p-5 sm:p-6">
         <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
           {i18n.gdprConsent}
         </legend>
@@ -870,6 +884,7 @@ export function ConsultationBookingForm({
             type="checkbox"
             name="gdprConsentClinic"
             required
+            aria-required="true"
             className="mt-0.5 size-4 rounded border-[var(--color-border)]"
           />
           <span>{i18n.gdprClinicConsent}</span>
@@ -879,6 +894,7 @@ export function ConsultationBookingForm({
             type="checkbox"
             name="gdprConsentPlatform"
             required
+            aria-required="true"
             className="mt-0.5 size-4 rounded border-[var(--color-border)]"
           />
           <span>{i18n.gdprPlatformConsent}</span>

@@ -63,7 +63,7 @@ function TwoActions({
             ? {
                 background: "var(--color-brand-accent)",
                 color: "#0a1f14",
-                boxShadow: "0 8px 24px rgba(176,241,34,0.22)",
+                boxShadow: "0 8px 12px -2px rgba(176,241,34,0.14)",
               }
             : {
                 background: "var(--color-brand-primary)",
@@ -116,16 +116,10 @@ export function ServiceCard({
       return (
         <article
           className={cn(
-            "group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] gh2-card",
+            "group relative flex h-full flex-col overflow-hidden gh2-glass-forest gh2-glass-hover",
             "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
             className,
           )}
-          style={{
-            background: "rgba(255,255,255,0.045)",
-            border: "1px solid rgba(255,255,255,0.11)",
-            backdropFilter: "blur(18px)",
-            WebkitBackdropFilter: "blur(18px)",
-          }}
         >
           {overlay}
           {/* Photo */}
@@ -149,7 +143,7 @@ export function ServiceCard({
                 style={{
                   background: "var(--color-brand-accent)",
                   color: "#0a1f14",
-                  boxShadow: "0 2px 10px rgba(176,241,34,0.35)",
+                  boxShadow: "0 1px 5px rgba(176,241,34,0.14)",
                 }}
               >
                 <Tag className="size-3.5" aria-hidden />
@@ -180,7 +174,7 @@ export function ServiceCard({
             </h3>
             <p
               className="mt-2 text-sm leading-relaxed line-clamp-2"
-              style={{ color: "rgba(255,255,255,0.55)" }}
+              style={{ color: "rgba(255,255,255,0.72)" }}
             >
               {description}
             </p>
@@ -233,15 +227,9 @@ export function ServiceCard({
     return (
       <article
         className={cn(
-          "group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)]",
-          "transition-[transform,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
-          "hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0",
+          "group relative flex h-full flex-col overflow-hidden gh2-glass-forest gh2-glass-hover",
           className,
         )}
-        style={{
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.09)",
-        }}
       >
         {overlay}
         <div className="relative flex h-full flex-col p-6 sm:p-7">
@@ -253,17 +241,14 @@ export function ServiceCard({
           </h3>
           <p
             className="mt-2 flex-1 text-sm leading-relaxed"
-            style={{ color: "rgba(255,255,255,0.65)" }}
+            style={{ color: "rgba(255,255,255,0.72)" }}
           >
             {description}
           </p>
 
           <div className="mt-4 flex flex-wrap items-center gap-3">
             {duration ? (
-              <span
-                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
-                style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.70)" }}
-              >
+              <span className="gh2-meta-chip-dark gh2-meta-chip">
                 <Clock className="size-3.5" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
                 {duration}
               </span>
@@ -290,7 +275,7 @@ export function ServiceCard({
           ) : (
             <div
               className="mt-5 flex items-center gap-2 text-sm font-semibold transition-colors duration-200 group-hover:text-[var(--color-brand-accent)]"
-              style={{ color: "rgba(255,255,255,0.55)" }}
+              style={{ color: "rgba(255,255,255,0.72)" }}
             >
               <span>{learnLabel}</span>
               <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" aria-hidden />
@@ -305,7 +290,7 @@ export function ServiceCard({
   return (
     <article
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-[var(--shadow-card)] transition-all duration-200 hover:border-[var(--color-brand-primary)]/20 hover:shadow-[var(--shadow-card-hover)]",
+        "group relative flex h-full flex-col overflow-hidden gh2-card-ivory gh2-card-hover",
         className,
       )}
     >
@@ -329,7 +314,7 @@ export function ServiceCard({
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
           {duration ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-background-soft)] px-3 py-1 text-xs font-medium text-[var(--color-text-muted)]">
+            <span className="gh2-meta-chip">
               <Clock className="size-3.5 text-[var(--color-brand-primary)]" aria-hidden />
               {duration}
             </span>

@@ -60,8 +60,8 @@ export default async function ContactPage() {
                 {contact.reach_h2}
               </h2>
 
-              <ul className="mt-6 space-y-5">
-                <li className="flex items-start gap-3">
+              <ul className="mt-6 space-y-3">
+                <li className="gh2-trust-tile">
                   <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full" style={{ background: "rgba(29,75,54,0.08)", border: "1px solid rgba(29,75,54,0.20)" }}>
                     <Mail className="size-4" style={{ color: "var(--color-brand-primary)" }} strokeWidth={1.5} aria-hidden />
                   </span>
@@ -79,7 +79,7 @@ export default async function ContactPage() {
                   </div>
                 </li>
 
-                <li className="flex items-start gap-3">
+                <li className="gh2-trust-tile">
                   <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full" style={{ background: "rgba(29,75,54,0.08)", border: "1px solid rgba(29,75,54,0.20)" }}>
                     <Clock className="size-4" style={{ color: "var(--color-brand-primary)" }} strokeWidth={1.5} aria-hidden />
                   </span>

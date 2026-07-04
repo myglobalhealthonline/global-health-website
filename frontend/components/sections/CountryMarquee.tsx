@@ -24,9 +24,9 @@ export function CountryMarquee({ countries }: { countries: MarqueeCountry[] }) {
       aria-label="Countries we serve"
       className="relative overflow-hidden"
       style={{
-        background: "#0F2E25",
-        borderTop: "1px solid rgba(255,255,255,0.06)",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        background: "var(--color-background-soft)",
+        borderTop: "1px solid rgba(29,75,54,0.10)",
+        borderBottom: "1px solid rgba(29,75,54,0.10)",
       }}
     >
       {/* Edge fade masks */}
@@ -34,14 +34,14 @@ export function CountryMarquee({ countries }: { countries: MarqueeCountry[] }) {
         aria-hidden
         className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24"
         style={{
-          background: "linear-gradient(90deg, #0F2E25 0%, transparent 100%)",
+          background: "linear-gradient(90deg, var(--color-background-soft) 0%, transparent 100%)",
         }}
       />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24"
         style={{
-          background: "linear-gradient(270deg, #0F2E25 0%, transparent 100%)",
+          background: "linear-gradient(270deg, var(--color-background-soft) 0%, transparent 100%)",
         }}
       />
 
@@ -54,24 +54,24 @@ export function CountryMarquee({ countries }: { countries: MarqueeCountry[] }) {
                 className="font-extrabold tracking-[-0.03em]"
                 style={{
                   fontSize: "clamp(1.25rem, 2.2vw + 0.4rem, 1.9rem)",
-                  color: "rgba(255,255,255,0.82)",
+                  color: "var(--color-text-primary)",
                 }}
               >
                 {c.name}
               </span>
               <span
                 className="gh2-index"
-                style={{ color: "var(--color-brand-accent)" }}
+                style={{ color: "var(--color-brand-primary)" }}
               >
                 {String(c.doctorCount).padStart(2, "0")}
-                <span className="ml-1" style={{ color: "rgba(255,255,255,0.32)" }}>
+                <span className="ml-1" style={{ color: "var(--color-text-muted)" }}>
                   {c.doctorCount === 1 ? "doctor" : "doctors"}
                 </span>
               </span>
               <span
                 aria-hidden
                 className="ml-6 self-center text-[14px] font-light"
-                style={{ color: "rgba(176,241,34,0.30)" }}
+                style={{ color: "rgba(29,75,54,0.30)" }}
               >
                 ✚
               </span>

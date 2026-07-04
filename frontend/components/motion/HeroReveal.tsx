@@ -44,6 +44,7 @@ export function HeroReveal({
   useEffect(() => {
     // Respect OS-level reduced-motion: skip animation, just show content
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRevealed(true);
       return;
     }

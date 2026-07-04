@@ -116,9 +116,12 @@ export function SiteFooter({
   // to the static seed list so the footer works on pages that don't
   // pass the prop (e.g. storybook, older layouts).
   const activeCountries = countries ?? staticCountries;
+  // Prefer the slug carried on the country data itself — the client-side
+  // slug registry proxy may not be warmed on hydration for admin-added
+  // countries, which previously produced `/undefined/<lang>` hrefs.
   const clinicsLinks = activeCountries.map((c) => ({
     label: c.name,
-    href: `/${COUNTRY_CODE_TO_SLUG[c.code]}/${c.defaultLocale ?? "en"}`,
+    href: `/${c.slug || COUNTRY_CODE_TO_SLUG[c.code] || c.code.toLowerCase()}/${c.defaultLocale ?? "en"}`,
   }));
 
   const accountLinks = [
@@ -183,7 +186,7 @@ export function SiteFooter({
           <div>
             <Link
               href="/"
-              className="gh-footer-brandLink inline-flex items-center"
+              className="gh-footer-brandLink gh-focus-on-dark inline-flex items-center"
               aria-label={siteName || "Global Health"}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -198,14 +201,14 @@ export function SiteFooter({
             </p>
             <div className="gh-footer-contact mt-4 flex flex-col gap-1">
               {contactEmail ? (
-                <a href={`mailto:${contactEmail}`} className="gh-footer-contactLink">
+                <a href={`mailto:${contactEmail}`} className="gh-footer-contactLink gh-focus-on-dark">
                   {contactEmail}
                 </a>
               ) : null}
               {contactPhone ? (
                 <a
                   href={`tel:${contactPhone.replace(/[^0-9+]/g, "")}`}
-                  className="gh-footer-contactLink"
+                  className="gh-footer-contactLink gh-focus-on-dark"
                 >
                   {contactPhone}
                 </a>
@@ -256,7 +259,7 @@ export function SiteFooter({
                 />
                 {group.h}
               </p>
-              <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
+              <ul className="m-0 flex list-none flex-col gap-2 p-0">
                 {group.items.map((item) => {
                   // Admin custom links may set `external: true` for offsite
                   // URLs, mailto:, or tel:. Use a plain <a> in that case so
@@ -266,7 +269,7 @@ export function SiteFooter({
                   const isExternal =
                     item.external === true ||
                     /^(https?:|mailto:|tel:)/i.test(item.href);
-                  const linkClass = "gh-footer-navLink focus-visible:outline-none";
+                  const linkClass = "gh-footer-navLink gh-focus-on-dark";
                   const newTab = item.external === true;
                   return (
                     <li key={item.label + item.href}>
@@ -296,7 +299,7 @@ export function SiteFooter({
           {navigation.footerDisclaimer}
         </p>
         {regulatoryText && (
-          <p className="mt-3 max-w-[980px] text-xs leading-relaxed text-white/40">
+          <p className="mt-3 max-w-[980px] text-xs leading-relaxed text-white/60">
             {regulatoryText}
           </p>
         )}
@@ -308,7 +311,7 @@ export function SiteFooter({
           <span className="flex gap-3">
             <Link
               href="/privacy"
-              className="gh-footer-legalLink focus-visible:outline-none"
+              className="gh-footer-legalLink gh-focus-on-dark"
             >
               {navigation.footerPrivacyLink}
             </Link>

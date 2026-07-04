@@ -39,20 +39,6 @@ export type ServiceCatalogItem = {
   bookHref?: string;
 };
 
-/**
- * Forest-glass card surface — exact tokens from the hero "Available now"
- * card: forest-night #0F2E25 at 72%, 18px backdrop blur, 14%-white
- * hairline. Matches the `.gh-glass-card` class. Kept as an inline const
- * here because the featured tile spreads it with an extra `minHeight`.
- */
-const GLASS_CARD_STYLE = {
-  background: "rgba(255, 255, 255, 0.045)",
-  border: "1px solid rgba(255, 255, 255, 0.11)",
-  backdropFilter: "blur(18px)",
-  WebkitBackdropFilter: "blur(18px)",
-  boxShadow: "0 18px 50px rgba(0, 0, 0, 0.22)",
-} as const;
-
 const DEFAULT_ICONS: Record<ServiceTileType, ReactNode> = {
   general: <Stethoscope className="size-5" strokeWidth={1.5} aria-hidden />,
   specialist: <User className="size-5" strokeWidth={1.5} aria-hidden />,
@@ -144,9 +130,8 @@ export function ServiceCatalog({
   return (
     <section
       id="services"
-      className="scroll-mt-24 gh-medical-pattern gh-medical-pattern-dark"
+      className="scroll-mt-24 gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
       style={{
-        background: "linear-gradient(178deg, #12342A 0%, #0F2E25 100%)",
         padding: "clamp(64px,8vw,120px) 0",
       }}
     >
@@ -194,13 +179,14 @@ export function ServiceCatalog({
                       type="button"
                       onClick={() => handleFilter(f.id)}
                       aria-pressed={isActive}
-                      className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[length:var(--text-meta)] font-semibold transition-all duration-200 motion-reduce:transition-none"
+                      data-active={isActive || undefined}
+                      className="gh2-pill-filter items-center gap-2 text-[length:var(--text-meta)] font-semibold transition-all duration-200 motion-reduce:transition-none"
                       style={
                         isActive
                           ? {
-                              background: "var(--color-brand-accent)",
-                              color: "#0a1f14",
-                              border: "1px solid var(--color-brand-accent)",
+                              background: "var(--color-brand-primary)",
+                              color: "#ffffff",
+                              border: "1px solid var(--color-brand-primary)",
                             }
                           : {
                               background: "rgba(255,255,255,0.06)",
@@ -209,12 +195,19 @@ export function ServiceCatalog({
                             }
                       }
                     >
+                      {isActive ? (
+                        <span
+                          aria-hidden
+                          className="inline-block size-1.5 shrink-0 rounded-full"
+                          style={{ background: "var(--color-brand-accent)" }}
+                        />
+                      ) : null}
                       {f.label}
                       <span
                         className="inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold"
                         style={
                           isActive
-                            ? { background: "rgba(0,0,0,0.18)", color: "#0a1f14" }
+                            ? { background: "rgba(255,255,255,0.18)", color: "#ffffff" }
                             : { background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.70)" }
                         }
                       >
@@ -234,7 +227,7 @@ export function ServiceCatalog({
                   onClick={() => setPage((p) => Math.max(0, p - 1))}
                   disabled={page === 0}
                   aria-label={i18n.prevServices}
-                  className="inline-flex size-10 items-center justify-center rounded-full border transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="inline-flex size-11 items-center justify-center rounded-full border transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
                   style={{
                     background: page > 0 ? "var(--color-brand-accent)" : "transparent",
                     borderColor: page > 0 ? "var(--color-brand-accent)" : "rgba(255,255,255,0.20)",
@@ -254,7 +247,7 @@ export function ServiceCatalog({
                   onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                   disabled={page === totalPages - 1}
                   aria-label={i18n.nextServices}
-                  className="inline-flex size-10 items-center justify-center rounded-full border transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="inline-flex size-11 items-center justify-center rounded-full border transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
                   style={{
                     background: page < totalPages - 1 ? "var(--color-brand-accent)" : "transparent",
                     borderColor: page < totalPages - 1 ? "var(--color-brand-accent)" : "rgba(255,255,255,0.20)",
@@ -317,7 +310,7 @@ function TileActions({
         style={{
           background: "var(--color-brand-accent)",
           color: "#0a1f14",
-          boxShadow: "0 8px 24px rgba(176,241,34,0.22)",
+          boxShadow: "0 8px 12px -2px rgba(176,241,34,0.14)",
         }}
       >
         {bookLabel}
@@ -359,13 +352,12 @@ function ServiceTile({
         className={cn(
           "group relative overflow-hidden text-left",
           "rounded-[var(--radius-card)]",
-          "gh2-card gh2-zoom",
+          "gh2-card gh2-zoom gh2-glass-forest",
           "focus-visible:outline-none",
           "motion-reduce:transition-none",
           // Horizontal grid: image 40% | content 60% — only on desktop
           "grid grid-cols-1 lg:grid-cols-[2fr_3fr]",
         )}
-        style={GLASS_CARD_STYLE}
       >
         {overlay}
         {/* Image — aspect ratio on mobile/tablet, fills grid height on desktop */}
@@ -472,7 +464,7 @@ function ServiceTile({
                   w-full rounded-full px-5 py-3
                   text-[length:var(--text-meta)] font-semibold
                   transition-all duration-200
-                  group-hover:bg-[var(--color-brand-accent)]
+                  group-hover:border-[var(--color-brand-accent)]
                   motion-reduce:transition-none
                 "
                 style={{
@@ -480,11 +472,11 @@ function ServiceTile({
                   color: "rgba(255,255,255,0.70)",
                 }}
               >
-                <span className="group-hover:text-[#0a1f14] transition-colors duration-200">
+                <span className="group-hover:text-[var(--color-brand-accent)] transition-colors duration-200">
                   {s.type === "test" ? i18n.orderKit : i18n.bookConsultation}
                 </span>
                 <ArrowUpRight
-                  className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#0a1f14] motion-reduce:group-hover:translate-x-0"
+                  className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[var(--color-brand-accent)] motion-reduce:group-hover:translate-x-0"
                   strokeWidth={1.5}
                   aria-hidden
                 />
@@ -502,11 +494,10 @@ function ServiceTile({
       className={cn(
         "group relative flex h-full flex-col overflow-hidden text-left",
         "rounded-[var(--radius-card)]",
-        "gh2-card gh2-zoom",
+        "gh2-card gh2-zoom gh2-glass-forest",
         "focus-visible:outline-none",
         "motion-reduce:transition-none",
       )}
-      style={GLASS_CARD_STYLE}
     >
       {overlay}
       {/* Top: inset photo or icon tile */}
@@ -616,7 +607,7 @@ function ServiceTile({
                 w-full rounded-full px-4 py-2.5
                 text-[length:var(--text-meta)] font-semibold
                 transition-all duration-200
-                group-hover:bg-[var(--color-brand-accent)]
+                group-hover:border-[var(--color-brand-accent)]
                 motion-reduce:transition-none
               "
               style={{
@@ -624,11 +615,11 @@ function ServiceTile({
                 color: "rgba(255,255,255,0.70)",
               }}
             >
-              <span className="group-hover:text-[#0a1f14] transition-colors duration-200">
+              <span className="group-hover:text-[var(--color-brand-accent)] transition-colors duration-200">
                 {s.type === "test" ? i18n.orderKit : i18n.bookConsultation}
               </span>
               <ArrowUpRight
-                className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#0a1f14] motion-reduce:group-hover:translate-x-0"
+                className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[var(--color-brand-accent)] motion-reduce:group-hover:translate-x-0"
                 strokeWidth={1.5}
                 aria-hidden
               />

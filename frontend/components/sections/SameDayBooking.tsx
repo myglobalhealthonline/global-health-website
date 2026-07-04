@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, CalendarClock, Check, ChevronDown, Globe, Loader2 } from "lucide-react";
+import { AlertTriangle, ArrowRight, CalendarClock, Check, ChevronDown, Globe, Loader2, RotateCw } from "lucide-react";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
 import { formatPriceRounded } from "@/lib/format-currency";
 
@@ -162,10 +162,14 @@ export function SameDayBooking({
   const [loading, setLoading] = useState(false);
   const [selectedStart, setSelectedStart] = useState<string | null>(null);
   const [routing, startRouting] = useTransition();
+  // Distinguishes "fetch failed" from "fetch succeeded, no slots" so the UI can
+  // offer a retry instead of silently rendering the same empty state (spec §11).
+  const [fetchError, setFetchError] = useState(false);
 
   async function loadAvailability(code: string) {
     setSlots([]);
     setSelectedStart(null);
+    setFetchError(false);
     if (!code) return;
     setLoading(true);
     try {
@@ -183,6 +187,7 @@ export function SameDayBooking({
       setClinicTz(json.data?.clinicTimezone ?? "UTC");
     } catch {
       setSlots([]);
+      setFetchError(true);
     } finally {
       setLoading(false);
     }
@@ -196,6 +201,7 @@ export function SameDayBooking({
   // Auto-load the default language's times on mount so the panel shows
   // availability immediately instead of waiting for a language pick.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- kicks off the initial fetch; loadAvailability sets loading state before the request resolves
     if (defaultLanguage) void loadAvailability(defaultLanguage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -227,7 +233,7 @@ export function SameDayBooking({
     <div key={heading}>
       <p className="mb-2 flex items-baseline gap-2 text-[11px] font-bold uppercase tracking-[0.14em]">
         <span className="text-[var(--color-brand-accent)]">{heading}</span>
-        <span className="font-medium normal-case tracking-normal text-white/40">{group.label}</span>
+        <span className="font-medium normal-case tracking-normal text-white/70">{group.label}</span>
       </p>
       <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
         {group.slots.map((s) => {
@@ -237,14 +243,11 @@ export function SameDayBooking({
               key={s.startAt}
               type="button"
               onClick={() => setSelectedStart(s.startAt)}
-              className={
-                active
-                  ? "inline-flex flex-col items-center justify-center rounded-lg border-2 border-[var(--color-brand-accent)] bg-[var(--color-brand-accent)] px-2 py-1.5 text-[13.5px] font-bold text-[var(--color-background-dark)] [font-variant-numeric:tabular-nums]"
-                  : "inline-flex flex-col items-center justify-center rounded-lg border border-white/12 bg-white/[0.05] px-2 py-1.5 text-[13.5px] font-semibold text-white [font-variant-numeric:tabular-nums] transition-colors hover:border-[var(--color-brand-accent)] hover:bg-white/[0.1]"
-              }
+              aria-pressed={active}
+              className="gh2-selectable-dark inline-flex flex-col items-center justify-center rounded-lg px-2 py-1.5 text-[13.5px] font-semibold [font-variant-numeric:tabular-nums]"
             >
               <span>{formatAppTime(s.startAt, clinicTz)}</span>
-              <span className={`text-[11px] font-medium ${active ? "text-[var(--color-background-dark)]/80" : "text-white/50"}`}>
+              <span className={`text-[11px] font-medium ${active ? "text-[#0a1f1a]/80" : "text-white/70"}`}>
                 {formatPriceRounded(s.priceCents, s.currencyCode)}
               </span>
             </button>
@@ -326,12 +329,13 @@ export function SameDayBooking({
                       onLanguageChange(code);
                       setDropdownOpen(false);
                     }}
-                    className={`cursor-pointer px-5 py-2.5 text-[15px] font-semibold transition-colors duration-150 ${
+                    className={`flex cursor-pointer items-center gap-2 px-5 py-2.5 text-[15px] font-semibold transition-colors duration-150 ${
                       isSelected
                         ? "bg-[var(--color-brand-accent)] text-[#0a1f1a]"
                         : "text-white hover:bg-white/[0.08]"
                     }`}
                   >
+                    {isSelected ? <Check className="size-4 shrink-0" aria-hidden /> : null}
                     {languageLabel(code)}
                   </li>
                 );
@@ -350,6 +354,19 @@ export function SameDayBooking({
             <Loader2 className="size-4 animate-spin" aria-hidden />
             {t.loading}
           </p>
+        ) : fetchError ? (
+          <div className="rounded-[16px] border border-[rgba(255,196,0,0.3)] bg-[rgba(255,196,0,0.08)] px-4 py-5 text-center">
+            <AlertTriangle className="mx-auto size-5 text-[var(--color-brand-accent)]" aria-hidden />
+            <p className="mt-2 text-[13px] font-semibold text-white">Couldn&apos;t load times.</p>
+            <button
+              type="button"
+              onClick={() => void loadAvailability(selectedLanguage)}
+              className="mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-full border border-[var(--color-brand-accent)]/50 px-4 text-[13px] font-semibold text-[var(--color-brand-accent)] transition-colors hover:bg-white/[0.06]"
+            >
+              <RotateCw className="size-3.5" aria-hidden />
+              Retry
+            </button>
+          </div>
         ) : !hasTwoDaySlots ? (
           <p className="py-5 text-center text-[13px] text-white/55">{t.noSlots}</p>
         ) : (

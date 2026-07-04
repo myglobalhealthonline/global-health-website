@@ -69,6 +69,11 @@
   --color-brand-accent:        #B0F122;
   --color-brand-accent-soft:   rgba(176, 241, 34, 0.55);  /* lime at 55% — hover/soft states */
 
+  /* Readable muted-on-dark tokens (spec §9) — text on .gh2-section-forest /
+   * .gh2-glass-forest surfaces without dropping below AA contrast. */
+  --gh2-on-dark-muted: rgba(255, 255, 255, 0.72);
+  --gh2-on-dark-faint: rgba(255, 255, 255, 0.60);
+
   /* Backgrounds */
   --color-background:       #FFFFFF; /* alias for --color-background-page */
   --color-background-page:  #FFFFFF;
@@ -127,7 +132,7 @@
   --medical-pattern-soft-opacity: 0.016;
 
   /* Fluid type — bigger, more confident display sizes. */
-  --text-display: clamp(3rem, 7vw + 1rem, 6rem);
+  --text-display: clamp(2.5rem, 7vw + 1rem, 6rem);
   --text-h1: clamp(2.25rem, 5vw + 0.5rem, 4.25rem);
   --text-h2: clamp(1.75rem, 3.5vw + 0.4rem, 3rem);
   --text-h3: clamp(1.25rem, 2vw + 0.3rem, 1.75rem);
@@ -149,7 +154,8 @@
   /* Spacing — fluid block tokens. Drive every section + card inner
    * padding from these instead of hand-coded px values, so the whole
    * page rhythm can be retuned from one place. */
-  --space-section: clamp(64px, 8vw, 112px);
+  --space-section: clamp(4rem, 3rem + 4vw, 7.5rem);
+  --space-section-sm: clamp(56px, 7vw, 96px);
   --space-section-tight: clamp(40px, 5vw, 64px);
   --space-stack: clamp(16px, 1.5vw, 24px);
   --space-inset: clamp(20px, 3vw, 32px);
@@ -168,6 +174,16 @@
   --gh-chrome-border: 1px solid rgba(167, 243, 11, 0.22);
   --gh-chrome-shadow: 0 18px 45px rgba(0, 0, 0, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Mobile header shrinks to reclaim viewport (spec §12/§16): 88px → 72px at
+ * ≤768px. All consumers (`margin-top: calc(-1 * var(--header-height))`,
+ * sticky offsets, `100svh - var(--header-height)`) read the custom property
+ * so they adapt automatically — no per-consumer media query needed. */
+@media (max-width: 768px) {
+  :root {
+    --header-height: 72px;
+  }
 }
 
 /* Reset & base */
@@ -223,7 +239,7 @@ summary {
      there — the white box-shadow guarantees contrast everywhere. */
   outline: 2px solid var(--color-brand-primary);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 1);
   border-radius: 2px;
 }
 
@@ -360,6 +376,9 @@ img {
  * topic that should breathe together. */
 .gh-section {
   padding-block: var(--space-section);
+}
+.gh-section-sm {
+  padding-block: var(--space-section-sm);
 }
 .gh-section-tight {
   padding-block: var(--space-section-tight);
@@ -564,7 +583,7 @@ img {
 }
 
 .gh-header-bookCtaMobile {
-  min-height: 40px;
+  min-height: 44px;
   text-decoration: none;
 }
 
@@ -608,6 +627,7 @@ img {
 
 .gh-newsletter-input {
   width: 100%;
+  min-height: 48px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 0.5rem;
   background: rgba(255, 255, 255, 0.1);
@@ -625,8 +645,15 @@ img {
   outline: none;
 }
 
+.gh-newsletter-input:focus-visible {
+  outline: 2px solid var(--color-brand-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(3, 31, 24, 0.85);
+}
+
 .gh-newsletter-submit {
   flex-shrink: 0;
+  min-height: 48px;
   border-radius: 0.5rem;
   background: #fff;
   padding: 0.5rem 1rem;
@@ -651,8 +678,9 @@ img {
 }
 
 .gh-newsletter-submit:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.6);
+  outline: 2px solid var(--color-brand-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(3, 31, 24, 0.85);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -675,7 +703,9 @@ img {
 }
 
 .gh-newsletter-statusError {
-  color: rgba(255, 180, 180, 0.9);
+  /* Readable error tier on the dark footer chrome (was 0.9-alpha pale pink). */
+  color: #ffc9c9;
+  font-weight: 600;
 }
 
 .gh-footer-brandLink {
@@ -861,7 +891,7 @@ img {
 }
 
 .gh-home-hero-title {
-  font-size: clamp(3rem, 7vw + 0.75rem, 6rem);
+  font-size: clamp(2.5rem, 8vw, 6rem);
   font-weight: 800;
   line-height: 0.94;
   letter-spacing: -0.045em;
@@ -1109,6 +1139,14 @@ img {
   font-size: 0.92rem;
   font-weight: 700;
   color: var(--color-text-primary);
+}
+
+/* Required-field marker (spec §11). Attribute selector only — additive,
+ * does not alter the base .gh-field-label rule shared with the portal
+ * (see the !important redeclaration further down this file). */
+.gh-field-label[data-required]::after {
+  content: " *";
+  color: var(--color-status-error);
 }
 
 .gh-link {
@@ -1439,6 +1477,148 @@ img {
   -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+}
+
+/* ── gh2 glass system (spec §7) — single source of truth for public-site
+ * card/panel surfaces. .gh-glass-card / .gh-glass-emerald stay in place
+ * unchanged for their existing consumers; new work adopts these. */
+.gh2-glass {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-card);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+/* Deep emerald variant — trust badges, floating hero cards. */
+.gh2-glass-deep {
+  background: rgba(8, 42, 32, 0.72);
+  border: 1px solid rgba(176, 241, 34, 0.16);
+  border-radius: var(--radius-card);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+}
+/* Frosted ivory glass — light panels over imagery (ServiceHero checklist family). */
+.gh2-glass-ivory {
+  background: rgba(245, 255, 248, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-card);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 22px 60px rgba(3, 31, 24, 0.28);
+}
+/* Interactive glass card hover — clickable cards ONLY. */
+.gh2-glass-hover { transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.gh2-glass-hover:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.22); box-shadow: 0 24px 60px rgba(0,0,0,0.3); }
+@media (prefers-reduced-motion: reduce) {
+  .gh2-glass-hover { transition: none; }
+  .gh2-glass-hover:hover { transform: none; }
+}
+
+/* ── gh2 forest-glass card system (spec §9) — below-hero redesign.
+ * Additive only; existing gh2-glass* / gh-glass-* classes untouched. */
+/* Canonical forest glass card — alias-consolidation of gh2-glass-deep. */
+.gh2-glass-forest {
+  background: linear-gradient(168deg, rgba(16, 52, 40, 0.78), rgba(9, 38, 29, 0.86));
+  border: 1px solid rgba(176, 241, 34, 0.14);
+  border-radius: var(--radius-card);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),   /* soft inner top highlight */
+    0 18px 40px -18px rgba(4, 24, 18, 0.55);   /* calm premium shadow */
+}
+/* Premium ivory card — replaces flat bg-white cards on light sections. */
+.gh2-card-ivory {
+  background: linear-gradient(172deg, #ffffff 0%, #fbfcf8 100%);
+  border: 1px solid rgba(29, 75, 54, 0.10);
+  border-radius: var(--radius-card);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 1px 2px rgba(16, 44, 34, 0.05),
+    0 12px 32px -16px rgba(16, 44, 34, 0.14);
+}
+.gh2-card-hover { transition: transform .25s var(--ease-out, ease), box-shadow .25s, border-color .25s; }
+.gh2-card-hover:hover {
+  transform: translateY(-3px);
+  border-color: rgba(29, 75, 54, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 2px 4px rgba(16,44,34,.06), 0 20px 44px -18px rgba(16,44,34,.20);
+}
+@media (prefers-reduced-motion: reduce) {
+  .gh2-card-hover, .gh2-card-hover:hover { transform: none; }
+}
+/* Section surfaces — explicit ivory/forest/soft bands, no inline ternaries. */
+.gh2-section-forest { background: linear-gradient(178deg, #12342A 0%, #0F2E25 100%); }
+.gh2-section-ivory  { background: var(--color-background-soft); }
+.gh2-section-soft   { background: var(--color-background); }
+/* Meta chip (light + dark) — price/duration/credential badges. */
+.gh2-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .3rem .65rem;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(29, 75, 54, .06);
+  border: 1px solid rgba(29, 75, 54, .10);
+  color: var(--color-text-primary);
+}
+.gh2-meta-chip-dark {
+  background: rgba(255, 255, 255, .07);
+  border-color: rgba(255, 255, 255, .14);
+  color: rgba(255, 255, 255, .88);
+}
+/* Trust tile — icon + text row for trust/legal rows. */
+.gh2-trust-tile {
+  display: flex;
+  gap: .75rem;
+  align-items: flex-start;
+  padding: .9rem 1rem;
+  border-radius: 14px;
+  background: rgba(29, 75, 54, .045);
+  border: 1px solid rgba(29, 75, 54, .08);
+}
+/* Status card — calm neutral empty/no-results state, not amber. */
+.gh2-status-card {
+  border: 1.5px dashed rgba(29, 75, 54, .22);
+  border-radius: var(--radius-card);
+  background: rgba(29, 75, 54, .03);
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+/* Scroll fade — right-edge mask for horizontal chip/pill scrollers. */
+.gh2-scroll-fade {
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 40px), transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 40px), transparent 100%);
+}
+
+/* ── gh2 selection pattern (spec §9) — booking pills/chips/cards. Border
+ * is always 2px so selected state never shifts layout; selected pairs
+ * fill + border + color, never color-alone. */
+.gh2-selectable {
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-card-sm);
+  background: var(--color-background-soft);
+  min-height: 44px;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+.gh2-selectable:hover { border-color: var(--color-brand-primary); }
+.gh2-selectable[aria-pressed="true"], .gh2-selectable[data-selected="true"], .gh2-selectable[aria-selected="true"] {
+  border-color: var(--color-brand-primary);
+  background: var(--color-brand-primary);
+  color: #fff;
+  /* Spec §9 — soft forest shadow reinforces selection, no lime fill. */
+  box-shadow: 0 10px 24px -12px rgba(29, 75, 54, 0.45);
+}
+.gh2-selectable:disabled { opacity: .45; cursor: not-allowed; text-decoration: line-through; }
+/* Dark-surface variant. */
+.gh2-selectable-dark { border: 2px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.85); }
+.gh2-selectable-dark[aria-pressed="true"], .gh2-selectable-dark[data-selected="true"] {
+  border-color: var(--color-brand-accent); background: var(--color-brand-accent); color: #0a1f1a;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gh2-selectable, .gh2-selectable-dark { transition: none; }
 }
 
 /* Admin icon button (table row actions) — DESIGN.md §5.8: 32px, radius 9,
@@ -6288,14 +6468,10 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   border: 1px solid var(--color-border);
 }
 
-/* Premium editorial section spacing */
-.gh-section {
-  padding-block: clamp(72px, 10vw, 144px);
-}
-
-.gh-section-sm {
-  padding-block: clamp(56px, 7vw, 96px);
-}
+/* Premium editorial section spacing — canonical definitions live near
+ * the top of this file and are token-driven (--space-section /
+ * --space-section-sm). The duplicate literal definitions that used to
+ * live here silently overrode the tokens; removed. */
 
 .gh-container {
   width: 100%;
@@ -6747,17 +6923,24 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   font-size: 15px;
   letter-spacing: -0.01em;
   text-decoration: none;
-  box-shadow: 0 8px 30px rgba(176, 241, 34, 0.22);
+  box-shadow: 0 4px 15px rgba(176, 241, 34, 0.14); /* gh2: glow reduced per spec §9 */
   transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 200ms ease-out, filter 200ms ease-out;
 }
 .gh2-btn-lime:hover {
   transform: translateY(-2px);
-  filter: brightness(1.06);
-  box-shadow: 0 14px 40px rgba(176, 241, 34, 0.32);
+  box-shadow: 0 7px 20px rgba(176, 241, 34, 0.14); /* gh2: glow reduced per spec §9 */
 }
 .gh2-btn-lime:active {
   transform: translateY(0) scale(0.98);
+}
+/* One elevation language on mobile: never dip below the 48px tap-target
+ * floor even if content wraps (spec §8 tier 1). */
+@media (max-width: 640px) {
+  .gh2-btn-lime {
+    min-height: 48px;
+    height: auto;
+  }
 }
 
 .gh2-btn-ghost {
@@ -6775,8 +6958,113 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   transition: background-color 200ms ease-out, border-color 200ms ease-out;
 }
 .gh2-btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+/* ── Public CTA extensions ─────────────────────────────────────────────
+ * Shared classes for the public website only (never portal shells).
+ * Hierarchy: gh2-btn-lime (page primary) > gh2-btn-ghost (page secondary
+ * on dark) > gh2-btn-outline (page/card secondary on light) >
+ * gh2-btn-card-* (card footer actions, 48px) > gh2-btn-compact-* (dense
+ * booking-selection actions, 48px minimum for mobile tap targets) >
+ * gh2-pill-filter (filter chips, 44px minimum). All inherit the global :focus-visible
+ * dual ring — do not add focus-visible:outline-none on consumers. */
+.gh2-btn-compact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 180ms ease-out, border-color 180ms ease-out,
+    filter 180ms ease-out;
+}
+.gh2-btn-compact-primary {
+  background: var(--color-brand-primary);
+  color: #fff;
+}
+.gh2-btn-compact-primary:hover {
+  filter: brightness(1.1);
+}
+.gh2-btn-compact-secondary {
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-brand-primary);
+}
+.gh2-btn-compact-secondary:hover {
+  border-color: color-mix(in srgb, var(--color-brand-primary) 40%, transparent);
+  background: var(--color-background-soft);
+}
+/* Secondary on light surfaces — outline that fills on hover. */
+.gh2-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-brand-primary);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 180ms ease-out, border-color 180ms ease-out;
+}
+.gh2-btn-outline:hover {
+  border-color: color-mix(in srgb, var(--color-brand-primary) 40%, transparent);
+  background: var(--color-background-soft);
+}
+/* Filter pill pair — selected = forest fill, unselected = quiet outline. */
+.gh2-pill-filter {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 2px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 150ms ease-out, border-color 150ms ease-out,
+    color 150ms ease-out;
+}
+.gh2-pill-filter:hover {
+  border-color: color-mix(in srgb, var(--color-brand-primary) 40%, transparent);
+}
+.gh2-pill-filter[aria-pressed="true"],
+.gh2-pill-filter[data-selected="true"],
+.gh2-pill-filter[data-active="true"] {
+  background: var(--color-brand-primary);
+  border-color: var(--color-brand-primary);
+  color: #fff;
+}
+/* Focus ring variant for controls sitting on dark glass chrome, where
+ * the default forest outline is invisible. Use INSTEAD of removing the
+ * outline — never pair with focus-visible:outline-none elsewhere. */
+.gh-focus-on-dark:focus-visible {
+  outline: 2px solid var(--color-brand-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(3, 31, 24, 0.85);
+}
+
+/* Light-menu dropdown items (country/language switchers) — explicit
+ * focus-visible background since these are plain <button> menuitems
+ * with inline styles, not the dark chrome focus recipe above. */
+.gh-switcher-item:focus-visible {
+  outline: none;
+  background: var(--color-brand-mint-soft) !important;
 }
 
 /* Dark service card — lift + lime border bloom on hover. */
@@ -6786,7 +7074,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 }
 .gh2-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(176, 241, 34, 0.35) !important;
+  border-color: rgba(176, 241, 34, 0.18) !important;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35) !important;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -6813,6 +7101,15 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   border-radius: 999px;
   background: var(--color-brand-accent);
   animation: gh2-ring 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+/* Indeterminate progress bar — checkout "confirming payment" state (spec §17). */
+@keyframes gh2-status-progress {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+.gh2-status-progress-bar {
+  animation: gh2-status-progress 1.4s ease-in-out infinite;
 }
 
 /* Editorial step rows (How it works) */
@@ -6866,19 +7163,11 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   .gh-floaty { animation: none; }
 }
 
-/* Hero accent glow — the lime headline word gets a soft bloom + a very
- * slow pulse so "actually" feels alive without distracting. */
-@keyframes gh-accent-pulse {
-  0%, 100% { text-shadow: 0 0 22px rgba(176, 241, 34, 0.30); }
-  50%      { text-shadow: 0 0 34px rgba(176, 241, 34, 0.50); }
-}
+/* Hero accent glow — the lime headline word gets a soft, static bloom.
+ * Spec §9: perpetual pulse removed (was distracting); glow kept static. */
 .gh-accent-glow {
   color: var(--color-brand-accent);
-  text-shadow: 0 0 24px rgba(176, 241, 34, 0.34);
-  animation: gh-accent-pulse 4.5s ease-in-out infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .gh-accent-glow { animation: none; }
+  text-shadow: 0 0 18px rgba(176, 241, 34, 0.20);
 }
 
 /* Hand-drawn underline for the hero accent word. */

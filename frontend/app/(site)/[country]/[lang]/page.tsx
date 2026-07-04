@@ -445,9 +445,8 @@ export default async function CountryLangHomePage({
       <StatsBand items={statsItems} theme="light" i18n={t.statsBand} />
       {/* ── Team section — featured card + full grid under one heading ── */}
       <section
-        className="relative gh-medical-pattern gh-medical-pattern-dark"
+        className="relative gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
         style={{
-          background: "linear-gradient(178deg, #12342A 0%, #0F2E25 100%)",
           borderTop: "1px solid rgba(255,255,255,0.06)",
         }}
       >

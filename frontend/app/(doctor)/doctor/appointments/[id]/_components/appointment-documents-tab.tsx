@@ -158,6 +158,8 @@ export function AppointmentDocumentsTab({
   }, [focusReviewSend]);
 
   useEffect(() => {
+    // Fetch-on-mount/dep-change — loadGenerated itself is the setState source.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadGenerated();
   }, [loadGenerated]);
 
