@@ -103,8 +103,12 @@ export function CountryTrustBar({
   const euLogo = authorityLogos.find((logo) =>
     logo.name.toLowerCase().includes("european union") || logo.name.toLowerCase().includes("eu care")
   );
+  const complaintsLogos = authorityLogos.filter(isComplaintsLogo);
   const standardsLogos = authorityLogos.filter(
-    (logo) => !isMedicalAuthorityLogo(logo) && !isDataAuthorityLogo(logo),
+    (logo) =>
+      !isMedicalAuthorityLogo(logo) &&
+      !isDataAuthorityLogo(logo) &&
+      !isComplaintsLogo(logo),
   );
 
   const rows: Array<{
@@ -138,7 +142,12 @@ export function CountryTrustBar({
     });
   }
   if (complaints) {
-    rows.push({ kicker: t.kComplaints, text: complaints.name, url: complaints.url, logos: [] });
+    rows.push({
+      kicker: t.kComplaints,
+      text: complaints.name,
+      url: complaints.url,
+      logos: complaintsLogos,
+    });
   }
 
   return (
@@ -303,6 +312,10 @@ function isDataAuthorityLogo(logo: CountryCertificationLogo): boolean {
     name.includes("european union") ||
     name.includes("eu care")
   );
+}
+
+function isComplaintsLogo(logo: CountryCertificationLogo): boolean {
+  return logo.name.toLowerCase().includes("reclamacoes");
 }
 
 function isMedicalAuthorityLogo(logo: CountryCertificationLogo): boolean {
