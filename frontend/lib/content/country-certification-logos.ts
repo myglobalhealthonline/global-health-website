@@ -192,6 +192,16 @@ const LOGOS_BY_COUNTRY: Record<string, CountryCertificationLogo[]> = {
   ],
   br: [
     {
+      name: "CFM",
+      alt: "Conselho Federal de Medicina",
+      src: "/logos/partners/cfm.png",
+      href: "https://portal.cfm.org.br/",
+      width: 260,
+      height: 92,
+      kind: "authority",
+      tone: "light",
+    },
+    {
       name: "LGPD",
       alt: "Lei Geral de Protecao de Dados",
       src: "/logos/partners/lgpd-logo.webp",
