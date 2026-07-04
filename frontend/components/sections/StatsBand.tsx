@@ -37,7 +37,7 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
       }}
     >
       <div
-        className="mx-auto grid items-start gap-14 px-5 md:px-10 lg:grid-cols-[1fr_1.35fr] lg:gap-20"
+        className="mx-auto grid items-center gap-14 px-5 md:px-10 lg:grid-cols-[1fr_1.35fr] lg:gap-20"
         style={{ maxWidth: "var(--container-width)" }}
       >
         {/* Left — headline */}

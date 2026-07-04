@@ -47,6 +47,7 @@ import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
 import { getGpLanguages } from "@/lib/content/get-gp-availability";
 import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-country-trust";
 import { VerifiedProfessionals } from "@/components/sections/VerifiedProfessionals";
+import { CountryCertificationLogos } from "@/components/sections/CountryCertificationLogos";
 import { localeDisplayName } from "@/lib/i18n/locale-display";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -525,7 +526,10 @@ export default async function CountryLangHomePage({
         </div>
       </section>
       {countryTrust ? (
-        <VerifiedProfessionals trust={countryTrust} locale={lang} />
+        <>
+          <VerifiedProfessionals trust={countryTrust} locale={lang} />
+          <CountryCertificationLogos trust={countryTrust} locale={lang} />
+        </>
       ) : null}
       <HowItWorksNarrative theme="light" i18n={t.howItWorks} />
       <FinalCTA primaryHref={bookHref} secondaryHref={doctorsHref} i18n={t.finalCta} />

@@ -295,15 +295,6 @@ export function SiteFooter({
           ))}
         </div>
 
-        <p className="gh-footer-disclaimer mt-12 max-w-[980px] text-sm leading-relaxed">
-          {navigation.footerDisclaimer}
-        </p>
-        {regulatoryText && (
-          <p className="mt-3 max-w-[980px] text-xs leading-relaxed text-white/60">
-            {regulatoryText}
-          </p>
-        )}
-
         <div className="gh-footer-copyrightBar flex flex-wrap justify-between gap-3">
           <span suppressHydrationWarning>
             {copyrightPrefix} · {navigation.footerCopyrightSuffix}

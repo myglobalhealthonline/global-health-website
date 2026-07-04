@@ -95,7 +95,7 @@ export default async function AboutPage() {
         className="gh-inline-clamp-section-pricing gh-medical-pattern gh-medical-pattern-dark border-t border-white/7 bg-[var(--color-background-dark)]"
       >
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-          <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
+          <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
             <div>
               <p
                 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-accent)]"

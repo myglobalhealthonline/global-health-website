@@ -79,10 +79,10 @@ const VARIANT_QUERY: Record<DoctifyWidgetVariant, string> = {
 };
 
 /** Estimated minimum heights for each widget variant to prevent layout shift */
-const WIDGET_MIN_HEIGHT_CLASS: Record<DoctifyWidgetVariant, string> = {
-  horizontal: "min-h-[120px]",
-  carousel: "min-h-[320px]",
-  grid: "min-h-[400px]",
+const WIDGET_MIN_HEIGHT: Record<DoctifyWidgetVariant, number> = {
+  horizontal: 120,
+  carousel: 320,
+  grid: 400,
 };
 
 export function DoctifyWidget({
@@ -130,7 +130,8 @@ export function DoctifyWidget({
   return (
     <div
       id={id}
-      className={`doctify-widget-container relative w-full transition-opacity duration-500 ease-in-out ${WIDGET_MIN_HEIGHT_CLASS[variant]} ${className ?? ""} ${loaded ? "opacity-100" : "opacity-0"}`}
+      className={`doctify-widget-container relative w-full transition-opacity duration-500 ease-in-out ${className ?? ""} ${loaded ? "opacity-100" : "opacity-0"}`}
+      style={{ minHeight: WIDGET_MIN_HEIGHT[variant] }}
     />
   );
 }
