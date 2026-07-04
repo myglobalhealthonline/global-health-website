@@ -14,6 +14,7 @@ import {
 } from "@/lib/admin/admin-api";
 import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
+import { FlagBadge } from "../../../_components/flag-badge";
 
 export const dynamic = "force-dynamic";
 
@@ -138,12 +139,159 @@ export default async function AdminDoctorServicesPage({
   const assignments = servicesResult.ok ? servicesResult.data.items : [];
   const assignedServiceIds = new Set(assignments.map((a) => a.serviceId));
 
-  const catalogResult = await fetchAdminServices({
-    countryId: doctor.countryId,
-    pageSize: "200",
+  // A doctor can provide services in more than one country — their primary
+  // country plus any active additional-country listings. Services are
+  // country-scoped, so we fetch the catalog per country and present the
+  // assign/assigned UI grouped by country.
+  const assignableCountries = [
+    { id: doctor.country.id, code: doctor.country.code, name: doctor.country.name },
+    ...doctor.additionalCountries
+      .filter((link) => link.active)
+      .map((link) => ({
+        id: link.country.id,
+        code: link.country.code,
+        name: link.country.name,
+      })),
+  ].filter(
+    (c, idx, arr) => arr.findIndex((other) => other.id === c.id) === idx,
+  );
+
+  const catalogResults = await Promise.all(
+    assignableCountries.map((c) =>
+      fetchAdminServices({ countryId: c.id, pageSize: "200" }),
+    ),
+  );
+
+  // serviceId → its country, used to bucket the assigned list by country.
+  const serviceCountryById = new Map<
+    string,
+    { id: string; code: string; name: string }
+  >();
+  // Per-country list of services not yet assigned to this doctor.
+  const unassignedByCountry = assignableCountries.map((country, idx) => {
+    const result = catalogResults[idx];
+    const items = result.ok ? result.data.items : [];
+    for (const item of items) {
+      serviceCountryById.set(item.id, item.country);
+    }
+    return {
+      country,
+      items: items.filter((s) => !assignedServiceIds.has(s.id)),
+    };
   });
-  const catalog = catalogResult.ok ? catalogResult.data.items : [];
-  const unassigned = catalog.filter((s) => !assignedServiceIds.has(s.id));
+
+  // Bucket assignments by their service's country, preserving the
+  // assignable-country order. Assignments whose country is no longer active
+  // (e.g. an additional market was disabled after assignment) fall into a
+  // trailing "Other markets" group so they stay manageable.
+  const assignmentGroups = new Map<
+    string,
+    { country: { id: string; code: string; name: string } | null; rows: typeof assignments }
+  >();
+  for (const country of assignableCountries) {
+    assignmentGroups.set(country.id, { country, rows: [] });
+  }
+  const otherAssignments: typeof assignments = [];
+  for (const row of assignments) {
+    const country = serviceCountryById.get(row.serviceId);
+    if (country && assignmentGroups.has(country.id)) {
+      assignmentGroups.get(country.id)!.rows.push(row);
+    } else if (country) {
+      const existing = assignmentGroups.get(country.id);
+      if (existing) existing.rows.push(row);
+      else assignmentGroups.set(country.id, { country, rows: [row] });
+    } else {
+      otherAssignments.push(row);
+    }
+  }
+  const renderedAssignmentGroups = [
+    ...Array.from(assignmentGroups.values()).filter((g) => g.rows.length > 0),
+    ...(otherAssignments.length > 0
+      ? [{ country: null, rows: otherAssignments }]
+      : []),
+  ];
+
+  const marketSummary =
+    assignableCountries.length > 1
+      ? `${doctor.country.name} +${assignableCountries.length - 1} more`
+      : doctor.country.name;
+
+  function renderAssignmentRow(row: AdminDoctorServiceAssignmentDto) {
+    return (
+      <li
+        key={row.id}
+        className="gh-admin-doctor-service-row rounded-[var(--radius-card-sm)] border border-[var(--color-border-subtle)] p-4"
+      >
+        <div className="gh-admin-doctor-service-row-inner flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="m-0 text-[15px] font-semibold text-[var(--color-text-primary)]">
+              {row.service.name}
+            </p>
+            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+              {KIND_LABELS[row.service.kind] ?? row.service.kind}
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Pill tone={statusTone(row.status)}>{row.status}</Pill>
+              <Pill tone="inactive">
+                {row.selectedBy === "doctor"
+                  ? "Doctor-selected"
+                  : "Admin-assigned"}
+              </Pill>
+              {!row.service.isActive ? (
+                <Pill tone="inactive">Service inactive</Pill>
+              ) : null}
+            </div>
+          </div>
+          <div className="gh-admin-doctor-service-actions flex flex-wrap gap-2">
+            {row.status === "pending" ? (
+              <>
+                <form action={statusAction}>
+                  <input type="hidden" name="serviceDoctorId" value={row.id} />
+                  <input type="hidden" name="status" value="active" />
+                  <Btn type="submit" variant="primary" size="sm">
+                    Approve
+                  </Btn>
+                </form>
+                <form action={statusAction}>
+                  <input type="hidden" name="serviceDoctorId" value={row.id} />
+                  <input type="hidden" name="status" value="rejected" />
+                  <Btn type="submit" variant="ghost" size="sm">
+                    Reject
+                  </Btn>
+                </form>
+              </>
+            ) : null}
+            {row.status === "active" ? (
+              <form action={statusAction}>
+                <input type="hidden" name="serviceDoctorId" value={row.id} />
+                <input type="hidden" name="status" value="disabled" />
+                <Btn type="submit" variant="ghost" size="sm">
+                  Disable
+                </Btn>
+              </form>
+            ) : null}
+            {row.status === "disabled" || row.status === "rejected" ? (
+              <form action={statusAction}>
+                <input type="hidden" name="serviceDoctorId" value={row.id} />
+                <input type="hidden" name="status" value="active" />
+                <Btn type="submit" variant="secondary" size="sm">
+                  Activate
+                </Btn>
+              </form>
+            ) : null}
+            <form action={removeAction}>
+              <input type="hidden" name="serviceDoctorId" value={row.id} />
+              <ConfirmDeleteButton
+                message={`Remove ${row.service.name} from this doctor?`}
+              >
+                Remove
+              </ConfirmDeleteButton>
+            </form>
+          </div>
+        </div>
+      </li>
+    );
+  }
 
   return (
     <>
@@ -155,7 +303,7 @@ export default async function AdminDoctorServicesPage({
       </Link>
 
       <PageHeader
-        eyebrow={doctor.country.name}
+        eyebrow={marketSummary}
         title={`Services — ${doctor.fullName}`}
         description="Review doctor-selected services, approve or reject pending requests, and manually assign or remove services."
         actions={
@@ -190,100 +338,26 @@ export default async function AdminDoctorServicesPage({
               No services assigned yet.
             </p>
           ) : (
-            <ul className="gh-admin-doctor-service-list mt-4 grid gap-3">
-              {assignments.map((row) => (
-                <li
-                  key={row.id}
-                  className="gh-admin-doctor-service-row rounded-[var(--radius-card-sm)] border border-[var(--color-border-subtle)] p-4"
-                >
-                  <div className="gh-admin-doctor-service-row-inner flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <p className="m-0 text-[15px] font-semibold text-[var(--color-text-primary)]">
-                        {row.service.name}
-                      </p>
-                      <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-                        {KIND_LABELS[row.service.kind] ?? row.service.kind}
-                      </p>
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        <Pill tone={statusTone(row.status)}>{row.status}</Pill>
-                        <Pill tone="inactive">
-                          {row.selectedBy === "doctor"
-                            ? "Doctor-selected"
-                            : "Admin-assigned"}
-                        </Pill>
-                        {!row.service.isActive ? (
-                          <Pill tone="inactive">Service inactive</Pill>
-                        ) : null}
-                      </div>
-                    </div>
-                    <div className="gh-admin-doctor-service-actions flex flex-wrap gap-2">
-                      {row.status === "pending" ? (
-                        <>
-                          <form action={statusAction}>
-                            <input
-                              type="hidden"
-                              name="serviceDoctorId"
-                              value={row.id}
-                            />
-                            <input type="hidden" name="status" value="active" />
-                            <Btn type="submit" variant="primary" size="sm">
-                              Approve
-                            </Btn>
-                          </form>
-                          <form action={statusAction}>
-                            <input
-                              type="hidden"
-                              name="serviceDoctorId"
-                              value={row.id}
-                            />
-                            <input type="hidden" name="status" value="rejected" />
-                            <Btn type="submit" variant="ghost" size="sm">
-                              Reject
-                            </Btn>
-                          </form>
-                        </>
-                      ) : null}
-                      {row.status === "active" ? (
-                        <form action={statusAction}>
-                          <input
-                            type="hidden"
-                            name="serviceDoctorId"
-                            value={row.id}
-                          />
-                          <input type="hidden" name="status" value="disabled" />
-                          <Btn type="submit" variant="ghost" size="sm">
-                            Disable
-                          </Btn>
-                        </form>
-                      ) : null}
-                      {row.status === "disabled" || row.status === "rejected" ? (
-                        <form action={statusAction}>
-                          <input
-                            type="hidden"
-                            name="serviceDoctorId"
-                            value={row.id}
-                          />
-                          <input type="hidden" name="status" value="active" />
-                          <Btn type="submit" variant="secondary" size="sm">
-                            Activate
-                          </Btn>
-                        </form>
-                      ) : null}
-                      <form action={removeAction}>
-                        <input
-                          type="hidden"
-                          name="serviceDoctorId"
-                          value={row.id}
-                        />
-                        <ConfirmDeleteButton message={`Remove ${row.service.name} from this doctor?`}>
-                          Remove
-                        </ConfirmDeleteButton>
-                      </form>
-                    </div>
+            <div className="mt-4 grid gap-5">
+              {renderedAssignmentGroups.map((group) => (
+                <div key={group.country?.id ?? "other"}>
+                  <div className="flex items-center gap-2 border-b border-[var(--color-border-subtle)] pb-2">
+                    {group.country ? (
+                      <FlagBadge code={group.country.code} size={14} />
+                    ) : null}
+                    <h4 className="m-0 text-[13px] font-bold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">
+                      {group.country ? group.country.name : "Other markets"}
+                    </h4>
+                    <span className="text-[12px] text-[var(--color-text-muted)]">
+                      ({group.rows.length})
+                    </span>
                   </div>
-                </li>
+                  <ul className="gh-admin-doctor-service-list mt-3 grid gap-3">
+                    {group.rows.map((row) => renderAssignmentRow(row))}
+                  </ul>
+                </div>
               ))}
-            </ul>
+            </div>
           )}
         </AdminCard>
 
@@ -292,36 +366,56 @@ export default async function AdminDoctorServicesPage({
             Manually assign service
           </h3>
           <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-            Admin assignments are active immediately. Health tests and other
-            service kinds can be assigned here too.
+            Admin assignments are active immediately. Pick a service under the
+            country it belongs to — this doctor serves{" "}
+            {assignableCountries.length === 1
+              ? "one market"
+              : `${assignableCountries.length} markets`}
+            .
           </p>
-          {unassigned.length === 0 ? (
-            <p className="mt-3 text-sm text-[var(--color-text-muted)]">
-              All country services are already assigned to this doctor.
-            </p>
-          ) : (
-            <form action={assignAction} className="gh-admin-doctor-assign-form mt-4 flex flex-wrap gap-3">
-              <select
-                name="serviceId"
-                required
-                aria-label="Service to assign"
-                className="gh-select min-w-[240px]"
-                defaultValue=""
-              >
-                <option value="" disabled>
-                  Select a service…
-                </option>
-                {unassigned.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name} ({KIND_LABELS[s.kind] ?? s.kind})
-                  </option>
-                ))}
-              </select>
-              <Btn type="submit" variant="primary">
-                Assign
-              </Btn>
-            </form>
-          )}
+          <div className="mt-4 grid gap-5">
+            {unassignedByCountry.map(({ country, items }) => (
+              <div key={country.id}>
+                <div className="flex items-center gap-2 border-b border-[var(--color-border-subtle)] pb-2">
+                  <FlagBadge code={country.code} size={14} />
+                  <h4 className="m-0 text-[13px] font-bold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">
+                    {country.name}
+                  </h4>
+                </div>
+                {items.length === 0 ? (
+                  <p className="mt-3 text-sm text-[var(--color-text-muted)]">
+                    All {country.name} services are already assigned to this
+                    doctor.
+                  </p>
+                ) : (
+                  <form
+                    action={assignAction}
+                    className="gh-admin-doctor-assign-form mt-3 flex flex-wrap gap-3"
+                  >
+                    <select
+                      name="serviceId"
+                      required
+                      aria-label={`Service to assign in ${country.name}`}
+                      className="gh-select min-w-[240px]"
+                      defaultValue=""
+                    >
+                      <option value="" disabled>
+                        Select a service…
+                      </option>
+                      {items.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name} ({KIND_LABELS[s.kind] ?? s.kind})
+                        </option>
+                      ))}
+                    </select>
+                    <Btn type="submit" variant="primary">
+                      Assign
+                    </Btn>
+                  </form>
+                )}
+              </div>
+            ))}
+          </div>
         </AdminCard>
       </div>
     </>

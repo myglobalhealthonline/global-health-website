@@ -65,20 +65,6 @@ function priceToCents(value: string): number {
   return Math.round(Number(raw) * 100);
 }
 
-function formatMoney(cents: number | null | undefined, currency: string | null | undefined) {
-  if (cents == null) return "Not set";
-  const code = currency?.trim().toUpperCase() || "EUR";
-  try {
-    return new Intl.NumberFormat("en", {
-      style: "currency",
-      currency: code,
-      maximumFractionDigits: 2,
-    }).format(cents / 100);
-  } catch {
-    return `${code} ${(cents / 100).toFixed(2)}`;
-  }
-}
-
 export default async function AdminEditServicePage({
   params,
   searchParams,
@@ -258,6 +244,50 @@ export default async function AdminEditServicePage({
     );
   }
 
+  // Quick inline price edit from the summary card at the top of the page —
+  // patches only basePriceCents + currencyCode so the admin doesn't have to
+  // open and re-submit the whole service form to change a price.
+  async function updatePriceAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+
+    const redirectError = (msg: string) =>
+      redirect(
+        `/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&error=${encodeURIComponent(msg)}`,
+      );
+
+    let basePriceCents: number | null;
+    let currencyCode: string | null;
+    try {
+      const raw = String(formData.get("basePrice") ?? "").trim();
+      basePriceCents = raw === "" ? null : priceToCents(raw);
+      const code = String(formData.get("currencyCode") ?? "").trim().toUpperCase();
+      currencyCode = code === "" ? null : code;
+    } catch (err) {
+      return redirectError(
+        err instanceof Error ? err.message : "Invalid price.",
+      );
+    }
+
+    const result = await patchAdminService(id, { basePriceCents, currencyCode });
+    if (!result.ok) {
+      return redirectError(result.message);
+    }
+
+    const saved = result.data.service;
+    if (saved.country?.code) {
+      revalidateTag(SITE_CACHE_TAGS.countryServices(saved.country.code), "max");
+    }
+    if (saved.slug) {
+      revalidateTag(SITE_CACHE_TAGS.serviceBySlug(saved.slug), "max");
+    }
+    revalidateTag(SITE_CACHE_TAGS.globalServices(), "max");
+
+    redirect(
+      `/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&success=${encodeURIComponent("Price updated")}`,
+    );
+  }
+
   async function updateServiceAction(formData: FormData) {
     "use server";
     await requireAdminAction();
@@ -433,8 +463,39 @@ export default async function AdminEditServicePage({
         </div>
         <div>
           <span className="gh-field-label">Starting price</span>
-          <strong>{formatMoney(service.basePriceCents, service.currencyCode)}</strong>
-          <span>{service.currencyCode ?? "No currency"}</span>
+          <form
+            action={updatePriceAction}
+            className="mt-1 flex flex-wrap items-center gap-2"
+          >
+            <input
+              type="text"
+              inputMode="decimal"
+              name="basePrice"
+              aria-label="Starting price"
+              defaultValue={
+                service.basePriceCents != null
+                  ? (service.basePriceCents / 100).toFixed(2)
+                  : ""
+              }
+              placeholder="45.00"
+              className="gh-input h-9 w-24 min-w-0"
+            />
+            <input
+              name="currencyCode"
+              aria-label="Currency code"
+              defaultValue={service.currencyCode ?? ""}
+              placeholder="EUR"
+              maxLength={8}
+              className="gh-input h-9 w-20 min-w-0 uppercase"
+            />
+            <button
+              type="submit"
+              className="gh-btn gh-btn-primary"
+              style={{ minHeight: 36 }}
+            >
+              Save
+            </button>
+          </form>
         </div>
         <div>
           <span className="gh-field-label">Assigned doctors</span>
