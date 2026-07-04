@@ -16,6 +16,7 @@ import { getBillingPort } from "./billing.factory.js";
  */
 export async function syncPlanStripePrice(
   planId: string,
+  opts: { force?: boolean } = {},
 ): Promise<{ stripeProductId: string; stripePriceId: string }> {
   const billing = getBillingPort();
   const plan = await prisma.pricingPlan.findUnique({ where: { id: planId } });
@@ -25,8 +26,10 @@ export async function syncPlanStripePrice(
 
   // 1. Ensure a Product exists for this plan. Treat any leftover fake-driver id
   //    (from before BILLING_DRIVER=stripe) as missing so we mint a real one.
+  //    `force` also discards the stored id — used when the current one turned
+  //    out to be stale/cross-account (resource_missing at checkout).
   let stripeProductId =
-    plan.stripeProductId && !plan.stripeProductId.includes("_fake_")
+    !opts.force && plan.stripeProductId && !plan.stripeProductId.includes("_fake_")
       ? plan.stripeProductId
       : null;
   if (!stripeProductId) {
@@ -47,7 +50,7 @@ export async function syncPlanStripePrice(
     // A fake-driver price never exists in real Stripe — force a re-create.
     !activePrice.stripePriceId.includes("_fake_");
 
-  if (amountMatches && stripeProductId === plan.stripeProductId) {
+  if (!opts.force && amountMatches && stripeProductId === plan.stripeProductId) {
     return { stripeProductId, stripePriceId: plan.stripePriceId! };
   }
 

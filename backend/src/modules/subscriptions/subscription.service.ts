@@ -1,6 +1,7 @@
 import { env } from "../../config/env.js";
 import { prisma } from "../../db/prisma.js";
 import { getBillingPort } from "../billing/billing.factory.js";
+import { isResourceMissing } from "../billing/billing.stripe.js";
 import { syncPlanStripePrice } from "../billing/price-sync.service.js";
 import { isSubscriptionsEnabled } from "./feature-gate.js";
 import { captureSnapshot } from "./plan-snapshot.service.js";
@@ -178,15 +179,37 @@ export async function startSubscription(
   await billing.cancelActiveSubscriptionsForCustomer(customer.customerId);
 
   const returnBase = input.returnTo ?? "/account";
-  const checkout = await billing.createSubscriptionCheckout({
-    customerId: customer.customerId,
-    priceId: stripePriceId,
+  const checkoutParams = {
     successUrl: `${siteBase()}${returnBase}?subscription=ok`,
     cancelUrl: `${siteBase()}${returnBase}?subscription=cancelled`,
     // VAT removed from subscription plans — never apply Stripe Tax (no tax line).
     automaticTax: false,
     metadata: { kind: "subscription", internalSubId: sub.id, userId: input.userId },
-  });
+  };
+
+  let checkout;
+  try {
+    checkout = await billing.createSubscriptionCheckout({
+      customerId: customer.customerId,
+      priceId: stripePriceId,
+      ...checkoutParams,
+    });
+  } catch (err) {
+    // Stale/cross-account Price id (created on a previously-configured Stripe
+    // account after a key swap) → Stripe 400 "No such price". Force a fresh
+    // Product+Price on the CURRENT account, persist it, and retry once.
+    if (!isResourceMissing(err)) throw err;
+    ({ stripePriceId } = await syncPlanStripePrice(plan.id, { force: true }));
+    await prisma.userSubscription.update({
+      where: { id: sub.id },
+      data: { stripePriceId },
+    });
+    checkout = await billing.createSubscriptionCheckout({
+      customerId: customer.customerId,
+      priceId: stripePriceId,
+      ...checkoutParams,
+    });
+  }
 
   return { checkoutUrl: checkout.url };
 }
