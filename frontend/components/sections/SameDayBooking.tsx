@@ -201,6 +201,7 @@ export function SameDayBooking({
   // Auto-load the default language's times on mount so the panel shows
   // availability immediately instead of waiting for a language pick.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- kicks off the initial fetch; loadAvailability sets loading state before the request resolves
     if (defaultLanguage) void loadAvailability(defaultLanguage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

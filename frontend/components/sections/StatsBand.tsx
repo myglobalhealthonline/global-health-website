@@ -29,8 +29,8 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
     <section
       className={isLight ? "" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"}
       style={{
-        // White canvas on light so the background-soft stat cards read as cards (spec §10).
-        background: isLight ? "var(--color-background)" : "var(--color-background-dark)",
+        // Warm off-white canvas on light; stat cards flip to white so they still read as cards.
+        background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
         borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
         borderBottom: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
         padding: "clamp(64px,8vw,120px) 0",
@@ -88,7 +88,7 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
               key={`${it.label}-${it.value}`}
               className="flex flex-col gap-3 rounded-2xl p-6"
               style={{
-                background: isLight ? "var(--color-background-soft)" : "rgba(255,255,255,0.05)",
+                background: isLight ? "var(--color-background)" : "rgba(255,255,255,0.05)",
                 borderTop: `2px solid ${i === 0 ? (isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)") : "transparent"}`,
               }}
             >

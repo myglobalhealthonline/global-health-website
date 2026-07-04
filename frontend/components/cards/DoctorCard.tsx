@@ -390,7 +390,7 @@ export function DoctorCard({
                 }}
               >
                 <CalendarDays className="size-[15px] shrink-0" strokeWidth={1.8} aria-hidden />
-                {`Book with ${firstName}`}
+                {primaryLabel ?? bookLabel ?? `Book with ${firstName}`}
                 <ArrowRight
                   className="size-[15px] shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
                   strokeWidth={1.8}

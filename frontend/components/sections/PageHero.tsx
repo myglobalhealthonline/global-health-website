@@ -41,7 +41,6 @@ export function PageHero({
   secondaryHref,
   rightSlot,
   heroImage,
-  index = "01",
   watermark,
   secondaryIcon,
   trustCards,

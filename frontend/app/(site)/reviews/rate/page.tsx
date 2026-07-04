@@ -32,6 +32,7 @@ function ReviewRateForm() {
 
   useEffect(() => {
     if (!token) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- token comes from the URL, only known post-mount
       setError("Invalid review link.");
       return;
     }

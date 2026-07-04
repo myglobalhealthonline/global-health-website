@@ -1,16 +1,14 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowUpRight, CheckCircle2, XCircle, Loader2, Stethoscope, ShieldCheck, BadgeCheck, Clock, Lock } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, XCircle, Loader2, Stethoscope, ShieldCheck, Clock, Lock } from "lucide-react";
 
 export function GH2SectionHeader({
-  index,
   eyebrow,
   headline,
   accent,
   body,
   dark = false,
 }: {
-  index: string;
   eyebrow: string;
   headline: string;
   accent: string;

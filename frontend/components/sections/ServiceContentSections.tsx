@@ -245,7 +245,7 @@ export function ProcessStepsSection({
         <SectionTitle theme={theme}>{title}</SectionTitle>
 
         <ol className="mt-10 grid gap-6 md:grid-cols-3">
-          {steps.map((step, i) => (
+          {steps.map((step) => (
             <li
               key={step.title}
               className="flex flex-col rounded-[var(--radius-card)] p-6"

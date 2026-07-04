@@ -35,6 +35,8 @@ export default function ResetPasswordPage() {
   const [locale, setLocale] = useState<LocaleCode>("en");
 
   useEffect(() => {
+    // Cookie is browser-only; reading it during SSR would mismatch hydration.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocale(readClientLocale());
   }, []);
 

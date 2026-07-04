@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, CalendarDays, CheckCircle2, Lock, ShieldCheck, Stethoscope, UserRound, Video } from "lucide-react";
-import { DoctorCard } from "@/components/cards/DoctorCard";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { countries, getCountryByCode } from "@/data/countries";
@@ -730,76 +729,6 @@ function ServicePicker({
         </div>
       )}
     </div>
-  );
-}
-
-function DoctorPicker({
-  country,
-  lang,
-  service,
-  doctors,
-  bp,
-}: {
-  country: string;
-  lang: string;
-  service: CountryServiceCard;
-  doctors: CountryDoctorCard[];
-  bp: BookT;
-}) {
-  if (doctors.length === 0) {
-    return (
-      <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 text-center shadow-[var(--shadow-card)]">
-        <p className="font-semibold text-[var(--color-text-primary)]">
-          {bp.noCliniciansAssigned}
-        </p>
-        <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-          {bp.browseAllOrChoose}
-        </p>
-        <div className="mt-5 flex flex-wrap justify-center gap-3">
-          <Link href={`/${country}/${lang}/doctors`} className="gh2-btn-lime">
-            {bp.browseDoctors}
-          </Link>
-          <Link
-            href={buildBookHref({ country, lang })}
-            className="rounded-full border border-[var(--color-border)] px-5 py-3 text-sm font-semibold text-[var(--color-brand-primary)]"
-          >
-            {bp.changeService}
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <ul className="grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 xl:grid-cols-3">
-      {doctors.map((doctor) => (
-        <li key={doctor.id}>
-          <DoctorCard
-            name={doctor.fullName}
-            title={doctor.title}
-            imcRegistration={doctor.imcRegistration}
-            medicalRegistrationUrl={doctor.medicalRegistrationUrl}
-            languages={doctor.languages}
-            whatsappNumber={doctor.whatsappNumber}
-            bio={doctor.bio ?? ""}
-            imageSrc={doctor.imageSrc ?? null}
-            imageAltText={doctor.imageAltText}
-            imageTitle={doctor.imageTitle}
-            imageCaption={doctor.imageCaption}
-            imageDescription={doctor.imageDescription}
-            href={`/${country}/${lang}/doctors/${doctor.slug}`}
-            bookingHref={buildBookHref({
-              country,
-              lang,
-              service: service.slug,
-              doctor: doctor.slug,
-            })}
-            primaryLabel={bp.continue}
-            ctaLabel="View"
-          />
-        </li>
-      ))}
-    </ul>
   );
 }
 
