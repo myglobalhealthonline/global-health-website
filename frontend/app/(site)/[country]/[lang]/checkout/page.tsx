@@ -238,50 +238,52 @@ export default function CheckoutPage() {
           </Link>
 
           <div className="mt-6 grid items-start gap-8 lg:grid-cols-[1fr_380px]">
-            <form
-              ref={formRef}
-              onSubmit={onSubmit}
-              className="gh-card p-6 sm:p-8"
-              style={{ boxShadow: "var(--shadow-card)" }}
-            >
-              <div>
-                <h2 className="gh-h3" style={{ fontSize: "1.2rem" }}>{t.payerContact}</h2>
-                <p className="gh-body-sm mt-1" style={{ fontSize: "0.8rem" }}>
-                  {t.payerNote}
-                </p>
-              </div>
-              <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                <Field
-                  name="fullName"
-                  label={t.fullName}
-                  required
-                  defaultValue={defaults.fullName}
-                  autoComplete="name"
-                />
-                <Field
-                  name="email"
-                  label={t.email}
-                  type="email"
-                  required
-                  autoComplete="email"
-                  defaultValue={defaults.email}
-                />
-                <label className="flex min-w-0 flex-col gap-1.5">
-                  <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
-                    {t.phoneOptional}
-                  </span>
-                  <PhoneField
-                    name="phone"
-                    defaultValue={defaults.phone}
-                    defaultDial={dialCodeForCountrySlug(countrySlug)}
+            <form ref={formRef} onSubmit={onSubmit} className="flex flex-col gap-5">
+              {/* Payer contact sub-panel */}
+              <fieldset
+                className="rounded-xl p-5"
+                style={{ border: "1px solid rgba(29,75,54,0.10)", background: "#fff" }}
+              >
+                <div>
+                  <h2 className="gh-h3" style={{ fontSize: "1.2rem" }}>{t.payerContact}</h2>
+                  <p className="gh-body-sm mt-1" style={{ fontSize: "0.8rem" }}>
+                    {t.payerNote}
+                  </p>
+                </div>
+                <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                  <Field
+                    name="fullName"
+                    label={t.fullName}
+                    required
+                    defaultValue={defaults.fullName}
+                    autoComplete="name"
                   />
-                </label>
-              </div>
+                  <Field
+                    name="email"
+                    label={t.email}
+                    type="email"
+                    required
+                    autoComplete="email"
+                    defaultValue={defaults.email}
+                  />
+                  <label className="flex min-w-0 flex-col gap-1.5">
+                    <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
+                      {t.phoneOptional}
+                    </span>
+                    <PhoneField
+                      name="phone"
+                      defaultValue={defaults.phone}
+                      defaultDial={dialCodeForCountrySlug(countrySlug)}
+                    />
+                  </label>
+                </div>
+              </fieldset>
 
+              {/* Consultations recap sub-panel */}
               {consultationLines.length > 0 ? (
-                <div
-                  className="mt-7 rounded-[var(--radius-card-sm)] border p-4 sm:p-5"
-                  style={{ borderColor: "var(--color-border)", background: "var(--color-background-soft)" }}
+                <fieldset
+                  className="rounded-xl p-5"
+                  style={{ border: "1px solid rgba(29,75,54,0.10)", background: "#fff" }}
                 >
                   <p
                     className="text-[11px] font-bold uppercase tracking-[0.14em]"
@@ -293,8 +295,8 @@ export default function CheckoutPage() {
                     {consultationLines.map((line) => (
                       <li
                         key={line.id}
-                        className="rounded-[10px] border bg-white px-3.5 py-3"
-                        style={{ borderColor: "var(--color-border)" }}
+                        className="rounded-[10px] border px-3.5 py-3"
+                        style={{ borderColor: "var(--color-border)", background: "var(--color-background-soft)" }}
                       >
                         <p className="text-sm font-bold" style={{ color: "var(--color-text-primary)" }}>
                           {line.name}
@@ -332,15 +334,16 @@ export default function CheckoutPage() {
                     </Link>
                     .
                   </p>
-                </div>
+                </fieldset>
               ) : null}
 
+              {/* Shipping sub-panel */}
               {needsShipping ? (
-                <>
-                  <div
-                    className="mt-8 border-t pt-7"
-                    style={{ borderColor: "var(--color-border)" }}
-                  >
+                <fieldset
+                  className="rounded-xl p-5"
+                  style={{ border: "1px solid rgba(29,75,54,0.10)", background: "#fff" }}
+                >
+                  <div>
                     <h2 className="gh-h3" style={{ fontSize: "1.2rem" }}>{t.shippingAddress}</h2>
                     <p className="gh-body-sm mt-1" style={{ fontSize: "0.8rem" }}>
                       {t.shippingNote}
@@ -361,13 +364,13 @@ export default function CheckoutPage() {
                     <Field name="shipCity" label={t.city} required />
                     <Field name="shipPostalCode" label={t.postalCode} required />
                   </div>
-                </>
+                </fieldset>
               ) : null}
 
               {error ? (
                 <p
                   role="alert"
-                  className="gh-status-error mt-5 rounded-[var(--radius-card-sm)] px-3 py-2 text-sm"
+                  className="gh-status-error rounded-[var(--radius-card-sm)] px-3 py-2 text-sm"
                 >
                   {error}
                 </p>
@@ -375,51 +378,42 @@ export default function CheckoutPage() {
 
               {/* Mobile-only total recap: on small screens the order summary
                   aside renders below this form, so the buyer would otherwise
-                  reach "Pay securely" without the final amount in view. */}
-              <div
-                className="mt-6 flex items-baseline justify-between rounded-[var(--radius-card-sm)] border px-4 py-3 lg:hidden"
-                style={{
-                  borderColor: "var(--color-border)",
-                  background: "var(--color-background-soft)",
-                }}
-              >
-                <span className="text-sm font-bold" style={{ color: "var(--color-text-primary)" }}>
+                  reach "Pay securely" without the final amount in view.
+                  De-emphasized (plain text row, no card/button language) so
+                  it reads as a recap, not a second CTA. */}
+              <div className="flex items-baseline justify-between px-1 lg:hidden">
+                <span className="text-sm font-semibold" style={{ color: "var(--color-text-muted)" }}>
                   {t.total}
                 </span>
                 <span
-                  className="text-lg font-extrabold tracking-[-0.02em] [font-variant-numeric:tabular-nums]"
+                  className="text-base font-bold tracking-[-0.02em] [font-variant-numeric:tabular-nums]"
                   style={{ color: "var(--color-text-primary)" }}
                 >
                   {formatPrice(payableTotal, cart.currencyCode)}
                 </span>
               </div>
 
-              <button
-                type="submit"
-                disabled={submitting}
-                className="gh2-btn-lime mt-7 w-full justify-center disabled:opacity-60 sm:w-auto"
-              >
-                {submitting ? (
-                  <Loader2 className="size-4 animate-spin" aria-hidden />
-                ) : (
-                  <Lock className="size-4" aria-hidden />
-                )}
-                {submitting ? t.redirecting : t.paySecurely.replace("{amount}", formatPrice(payableTotal, cart.currencyCode))}
-              </button>
-              <p
-                className="mt-3 flex items-center gap-1.5 text-xs"
-                style={{ color: "var(--color-text-muted)" }}
-              >
-                <ShieldCheck className="size-3.5 shrink-0" style={{ color: "var(--color-brand-primary)" }} aria-hidden />
-                {t.redirectNote}
-              </p>
+              <div>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="gh2-btn-lime w-full justify-center disabled:opacity-60 sm:w-auto"
+                >
+                  {submitting ? (
+                    <Loader2 className="size-4 animate-spin" aria-hidden />
+                  ) : (
+                    <Lock className="size-4" aria-hidden />
+                  )}
+                  {submitting ? t.redirecting : t.paySecurely.replace("{amount}", formatPrice(payableTotal, cart.currencyCode))}
+                </button>
+              </div>
             </form>
 
-            {/* Order summary */}
+            {/* Order summary — dark forest glass (spec §17), same treatment
+                as the cart summary aside. */}
             <aside
               id="checkout-order-summary"
-              className="gh-card self-start overflow-hidden lg:sticky lg:top-[calc(var(--header-height)+16px)]"
-              style={{ boxShadow: "var(--shadow-card)" }}
+              className="gh2-glass-forest self-start overflow-hidden lg:sticky lg:top-[calc(var(--header-height)+16px)]"
             >
               <div className="p-6">
                 {/* Read-only subscription coverage: which lines use a credit /
@@ -431,38 +425,40 @@ export default function CheckoutPage() {
                   plansHref={`${countrySlug && lang ? `/${countrySlug}/${lang}` : ""}/pricing?returnTo=${encodeURIComponent(returnTo)}`}
                   itemNames={Object.fromEntries(cart.items.map((i) => [i.id, i.name]))}
                 />
-                <h2 className="gh-h3" style={{ fontSize: "1.125rem" }}>{t.orderSummary}</h2>
-                <ul className="mt-4 divide-y" style={{ borderColor: "var(--color-border)" }}>
+                <h2 className="text-[1.125rem] font-bold tracking-[-0.01em]" style={{ color: "rgba(255,255,255,0.95)" }}>
+                  {t.orderSummary}
+                </h2>
+                <ul className="mt-4 divide-y" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
                   {cart.items.map((i) => {
                     const Icon = KIND_ICON[i.kind];
                     return (
                       <li key={i.id} className="flex gap-3 py-3 first:pt-0 last:pb-0">
                         <span
                           className="inline-flex size-9 shrink-0 items-center justify-center rounded-[10px]"
-                          style={{ background: "var(--color-brand-mint-dim)" }}
+                          style={{ background: "rgba(255,255,255,0.08)" }}
                           aria-hidden
                         >
-                          <Icon className="size-4" style={{ color: "var(--color-brand-primary)" }} strokeWidth={1.7} />
+                          <Icon className="size-4" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.7} />
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-start justify-between gap-3">
-                            <p className="text-sm font-semibold leading-snug" style={{ color: "var(--color-text-primary)" }}>
+                            <p className="text-sm font-semibold leading-snug" style={{ color: "rgba(255,255,255,0.92)" }}>
                               {i.name}
                               {i.quantity > 1 ? (
-                                <span className="font-normal" style={{ color: "var(--color-text-muted)" }}>
+                                <span className="font-normal" style={{ color: "var(--gh2-on-dark-muted)" }}>
                                   {" "}× {i.quantity}
                                 </span>
                               ) : null}
                             </p>
                             <p
                               className="text-sm font-bold [font-variant-numeric:tabular-nums]"
-                              style={{ color: "var(--color-text-primary)" }}
+                              style={{ color: "rgba(255,255,255,0.92)" }}
                             >
                               {formatPrice(i.lineTotalCents, cart.currencyCode)}
                             </p>
                           </div>
                           {i.slotStartAt ? (
-                            <p className="mt-0.5 text-xs" style={{ color: "var(--color-text-muted)" }}>
+                            <p className="mt-0.5 text-xs" style={{ color: "var(--gh2-on-dark-muted)" }}>
                               {i.doctorName ? `${i.doctorName} · ` : ""}
                               {formatAppDateTimeShort(i.slotStartAt)}
                             </p>
@@ -472,37 +468,37 @@ export default function CheckoutPage() {
                     );
                   })}
                 </ul>
-                <dl className="mt-4 space-y-2 border-t pt-4 text-sm" style={{ borderColor: "var(--color-border)" }}>
+                <dl className="mt-4 space-y-2 border-t pt-4 text-sm" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
                   <div className="flex justify-between">
-                    <dt style={{ color: "var(--color-text-muted)" }}>{t.subtotal}</dt>
-                    <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-text-primary)" }}>
+                    <dt style={{ color: "var(--gh2-on-dark-muted)" }}>{t.subtotal}</dt>
+                    <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "#fff" }}>
                       {formatPrice(cart.subtotalCents, cart.currencyCode)}
                     </dd>
                   </div>
                   {shippingCents > 0 ? (
                     <div className="flex justify-between">
-                      <dt style={{ color: "var(--color-text-muted)" }}>{t.shipping}</dt>
-                      <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-text-primary)" }}>
+                      <dt style={{ color: "var(--gh2-on-dark-muted)" }}>{t.shipping}</dt>
+                      <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "#fff" }}>
                         {formatPrice(shippingCents, cart.currencyCode)}
                       </dd>
                     </div>
                   ) : null}
                   {payableSaved > 0 ? (
                     <div className="flex justify-between">
-                      <dt style={{ color: "var(--color-brand-primary)" }}>{common.cartPage.planSavings}</dt>
-                      <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-brand-primary)" }}>
+                      <dt style={{ color: "var(--color-brand-accent)" }}>{common.cartPage.planSavings}</dt>
+                      <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-brand-accent)" }}>
                         −{formatPrice(payableSaved, cart.currencyCode)}
                       </dd>
                     </div>
                   ) : null}
                   <div
                     className="flex items-baseline justify-between border-t pt-3"
-                    style={{ borderColor: "var(--color-border)" }}
+                    style={{ borderColor: "rgba(255,255,255,0.12)" }}
                   >
-                    <dt className="text-base font-bold" style={{ color: "var(--color-text-primary)" }}>{t.total}</dt>
+                    <dt className="text-base font-bold" style={{ color: "rgba(255,255,255,0.92)" }}>{t.total}</dt>
                     <dd
                       className="text-xl font-extrabold tracking-[-0.02em] [font-variant-numeric:tabular-nums]"
-                      style={{ color: "var(--color-text-primary)" }}
+                      style={{ color: "var(--color-brand-accent)" }}
                     >
                       {formatPrice(payableTotal, cart.currencyCode)}
                     </dd>
@@ -510,18 +506,21 @@ export default function CheckoutPage() {
                 </dl>
               </div>
 
-              {/* Trust footer */}
+              {/* Consolidated trust strip — merges the old two trust-message
+                  styles (footer band + under-button redirect note) into one
+                  light-on-dark strip inside the glass summary (spec §17). */}
               <div
                 className="border-t px-6 py-4"
-                style={{ borderColor: "var(--color-border)", background: "var(--color-background-soft)" }}
+                style={{ borderColor: "rgba(255,255,255,0.12)" }}
               >
-                <ul className="space-y-2 text-[13px]" style={{ color: "var(--color-text-muted)" }}>
+                <ul className="space-y-2 text-[13px]" style={{ color: "var(--gh2-on-dark-muted)" }}>
                   {[
                     { icon: ShieldCheck, label: t.trustSecure },
                     { icon: Lock, label: t.trustEncrypted },
-                  ].map(({ icon: Icon, label }) => (
-                    <li key={label} className="flex items-center gap-2.5">
-                      <Icon className="size-4 shrink-0" style={{ color: "var(--color-brand-primary)" }} aria-hidden />
+                    { icon: Lock, label: t.redirectNote },
+                  ].map(({ icon: Icon, label }, idx) => (
+                    <li key={`${label}-${idx}`} className="flex items-center gap-2.5">
+                      <Icon className="size-4 shrink-0" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
                       {label}
                     </li>
                   ))}

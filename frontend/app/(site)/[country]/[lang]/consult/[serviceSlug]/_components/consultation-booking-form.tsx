@@ -473,7 +473,7 @@ export function ConsultationBookingForm({
         * (time) step. This details step never re-picks it; "Change time"
         * returns to the time step (same URL without ?slot=). */}
       {selectedSlot ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+        <div className="gh2-card-ivory flex flex-wrap items-center justify-between gap-3 p-4">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
               {i18n.selectedTime}
@@ -498,7 +498,7 @@ export function ConsultationBookingForm({
         * When bookingForOther, these fields remain the logged-in user's
         * contact/notification details. A separate sub-section collects
         * the actual patient (person being treated). */}
-      <fieldset className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 sm:p-6">
+      <fieldset className="gh2-card-ivory p-5 sm:p-6">
         <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
           {treatingOther ? "Your contact details" : i18n.patientDetails}
         </legend>
@@ -794,7 +794,7 @@ export function ConsultationBookingForm({
         * clinical record + any prescription dispatch has the address as
         * it stood at booking, even if the patient later edits their
         * profile. Country code is implicit from the URL slug. */}
-      <fieldset className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 sm:p-6">
+      <fieldset className="gh2-card-ivory p-5 sm:p-6">
         <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
           {i18n.patientAddress}
         </legend>
@@ -875,7 +875,7 @@ export function ConsultationBookingForm({
         * consent (gdprConsentPlatform) doesn't invalidate the clinical
         * record (gdprConsentClinic). Wording deliberately scopes each
         * one's purpose to make withdrawal scope unambiguous. */}
-      <fieldset className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 sm:p-6">
+      <fieldset className="gh2-card-ivory p-5 sm:p-6">
         <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
           {i18n.gdprConsent}
         </legend>

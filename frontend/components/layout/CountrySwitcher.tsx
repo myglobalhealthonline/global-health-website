@@ -32,6 +32,7 @@ export function CountrySwitcher({
   const { cart, clear } = useCart();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   // If the cart has items pinned to a specific country, switching to a
   // different country mid-flow would either silently mismatch pricing
@@ -72,8 +73,18 @@ export function CountrySwitcher({
     function onClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    }
     document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKeyDown);
+    };
   }, [open]);
 
   const active = activeCountryCode
@@ -83,9 +94,10 @@ export function CountrySwitcher({
   return (
     <div ref={ref} className="relative">
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-haspopup="menu"
+        aria-haspopup="true"
         aria-expanded={open}
         data-open={open}
         className="gh-focus-on-dark inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white data-[open=true]:border-white/30 data-[open=true]:bg-white/10"
@@ -102,7 +114,6 @@ export function CountrySwitcher({
 
       {open ? (
         <div
-          role="menu"
           aria-label="Choose country"
           className="absolute right-0 z-50 mt-2 overflow-hidden"
           style={{
@@ -149,7 +160,6 @@ export function CountrySwitcher({
                   <button
                     type="button"
                     onClick={() => handleSwitch(href, c.code, nextLang)}
-                    role="menuitem"
                     className="flex w-full cursor-pointer items-center justify-between gap-3 focus-visible:outline-none focus-visible:bg-[var(--color-brand-mint-soft)]"
                     style={{
                       minHeight: 44,

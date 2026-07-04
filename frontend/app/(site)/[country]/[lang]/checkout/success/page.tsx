@@ -79,34 +79,36 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
       reference={
         order ? (
           <div>
-            <p>{t.orderRef.replace("{id}", formatOrderDisplayId(order))}</p>
-            <ul className="mt-4 space-y-3 normal-case tracking-normal text-[13px] font-sans text-[var(--color-text-body)]">
+            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-muted)]">
+              {t.orderRef.replace("{id}", formatOrderDisplayId(order))}
+            </p>
+            <ul className="mt-4 space-y-3 text-[13px] text-[var(--color-text-body)]">
               {order.items.map((item) => (
                 <li key={item.id} className="flex justify-between gap-4">
                   <span>
                     {item.name} <span className="text-[var(--color-text-muted)]">x {item.quantity}</span>
                   </span>
-                  <span className="font-semibold text-[var(--color-text-primary)]">
+                  <span className="font-semibold [font-variant-numeric:tabular-nums] text-[var(--color-text-primary)]">
                     {formatPrice(item.lineTotalCents, order.currencyCode)}
                   </span>
                 </li>
               ))}
             </ul>
             {order.shippingCents > 0 ? (
-              <div className="mt-3 flex justify-between normal-case tracking-normal text-[13px] font-sans text-[var(--color-text-muted)]">
+              <div className="mt-3 flex justify-between text-[13px] text-[var(--color-text-muted)]">
                 <span>{t.shipping}</span>
-                <span>{formatPrice(order.shippingCents, order.currencyCode)}</span>
+                <span className="[font-variant-numeric:tabular-nums]">{formatPrice(order.shippingCents, order.currencyCode)}</span>
               </div>
             ) : null}
-            <div className="mt-4 flex justify-between border-t border-[var(--color-border)] pt-3 normal-case tracking-normal text-base font-sans text-[var(--color-text-primary)]">
+            <div className="mt-4 flex justify-between border-t border-[var(--color-border)] pt-3 text-base text-[var(--color-text-primary)]">
               <span className="font-bold">{t.totalPaid}</span>
-              <span className="font-bold">{formatPrice(order.totalCents, order.currencyCode)}</span>
+              <span className="font-bold [font-variant-numeric:tabular-nums]">{formatPrice(order.totalCents, order.currencyCode)}</span>
             </div>
           </div>
         ) : orderId ? (
           <p
             role="status"
-            className="gh-status-info normal-case tracking-normal font-sans rounded-[var(--radius-card-sm)] px-3 py-2.5 text-sm"
+            className="gh-status-info rounded-[var(--radius-card-sm)] px-3 py-2.5 text-sm"
           >
             {t.receiptError}
           </p>

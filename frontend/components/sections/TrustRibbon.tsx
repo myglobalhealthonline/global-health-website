@@ -51,9 +51,9 @@ export function TrustRibbon({ items, theme = "light" }: { items?: TrustRibbonIte
 
   return (
     <section
-      className={isLight ? "" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"}
+      className={isLight ? "gh2-section-ivory" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"}
       style={{
-        background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
+        background: isLight ? undefined : "var(--color-background-dark)",
         borderTop: isLight ? "2px solid rgba(176,241,34,0.24)" : undefined,
         borderBottom: `1px solid ${hairline}`,
         padding: "clamp(48px,6vw,88px) 0",
@@ -72,7 +72,7 @@ export function TrustRibbon({ items, theme = "light" }: { items?: TrustRibbonIte
                 key={`${it.v}-${it.l}`}
                 className={`flex flex-col gap-5 px-1 pt-8 lg:px-8 lg:pt-10 ${
                   i % 2 === 1 ? "border-l pl-6" : ""
-                } ${i === 2 ? "lg:border-l" : ""}`}
+                } ${i === 2 ? "lg:border-l" : ""} ${isLight ? "gh2-trust-tile" : ""}`}
                 style={{ borderColor: hairline }}
                 role="listitem"
               >

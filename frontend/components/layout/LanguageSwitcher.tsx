@@ -38,14 +38,25 @@ export function LanguageSwitcher({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
     function onClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    }
     document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKeyDown);
+    };
   }, [open]);
 
   if (availableLocales.length <= 1) return null;
@@ -72,9 +83,10 @@ export function LanguageSwitcher({
   return (
     <div ref={ref} className="relative">
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-haspopup="menu"
+        aria-haspopup="true"
         aria-expanded={open}
         data-open={open}
         className="gh-focus-on-dark inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white data-[open=true]:border-white/30 data-[open=true]:bg-white/10"
@@ -91,7 +103,6 @@ export function LanguageSwitcher({
 
       {open ? (
         <div
-          role="menu"
           aria-label="Choose language"
           className="absolute right-0 z-50 mt-2 overflow-hidden"
           style={{
@@ -132,7 +143,6 @@ export function LanguageSwitcher({
                   <li key={loc}>
                     <button
                       type="button"
-                      role="menuitem"
                       onClick={() => {
                         setClientLocaleCookie(loc);
                         setOpen(false);
@@ -159,7 +169,6 @@ export function LanguageSwitcher({
                 <li key={loc}>
                   <button
                     type="button"
-                    role="menuitem"
                     onClick={() => {
                       setClientLocaleCookie(loc);
                       setOpen(false);

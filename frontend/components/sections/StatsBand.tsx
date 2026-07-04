@@ -86,9 +86,9 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
           {items.slice(0, 4).map((it, i) => (
             <div
               key={`${it.label}-${it.value}`}
-              className="flex flex-col gap-3 rounded-2xl p-6"
+              className={`flex flex-col gap-3 rounded-2xl p-6 ${isLight ? "gh2-card-ivory" : ""}`}
               style={{
-                background: isLight ? "var(--color-background)" : "rgba(255,255,255,0.05)",
+                background: isLight ? undefined : "rgba(255,255,255,0.05)",
                 borderTop: `2px solid ${i === 0 ? (isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)") : "transparent"}`,
               }}
             >

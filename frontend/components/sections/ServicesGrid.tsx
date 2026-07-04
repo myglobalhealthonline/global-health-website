@@ -92,7 +92,7 @@ export function ServicesGrid({
     >
       <Container>
         {/* Header row */}
-        <div className="flex items-end justify-between gap-8 mb-12 lg:mb-14">
+        <div className="flex flex-wrap items-end justify-between gap-8 mb-12 lg:mb-14">
           {/* Left: eyebrow / title / intro */}
           <div>
             {eyebrow && (

@@ -215,7 +215,7 @@ export default async function CountryLangBookPage({
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.8fr)]">
             <aside className="lg:sticky lg:top-24 lg:self-start">
-              <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-5 shadow-[var(--shadow-card)]">
+              <div className="gh2-card-ivory p-5">
                 <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
                   {bp.bookingSteps}
                 </p>
@@ -230,10 +230,7 @@ export default async function CountryLangBookPage({
                     { icon: Video, label: c.serviceDetailPage.trustVideo },
                     { icon: Lock, label: c.serviceDetailPage.trustConfidential },
                   ].map(({ icon: Icon, label }) => (
-                    <li
-                      key={label}
-                      className="flex items-center gap-2.5 text-[13px] font-medium text-[var(--color-text-body)]"
-                    >
+                    <li key={label} className="gh2-trust-tile text-[13px] font-medium text-[var(--color-text-body)]">
                       <Icon className="size-4 shrink-0 text-[var(--color-brand-primary)]" aria-hidden />
                       {label}
                     </li>
@@ -345,7 +342,7 @@ async function GpBookingFlow({
       >
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           {!valid || !service || !slot ? (
-            <div className="mx-auto max-w-[640px] rounded-[var(--radius-card)] border border-[rgba(255,196,0,0.25)] bg-[rgba(255,196,0,0.08)] p-6 text-center">
+            <div className="gh2-status-card mx-auto max-w-[640px] text-center">
               <p className="font-semibold text-[var(--color-text-primary)]">
                 {bp.slotNoLongerOpen}
               </p>
@@ -359,7 +356,7 @@ async function GpBookingFlow({
           ) : (
             <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.8fr)]">
               <aside className="lg:sticky lg:top-24 lg:self-start">
-                <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-5 shadow-[var(--shadow-card)]">
+                <div className="gh2-card-ivory p-5">
                   <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
                     {bp.bookingSteps}
                   </p>
@@ -375,10 +372,7 @@ async function GpBookingFlow({
                       { icon: Video, label: c.serviceDetailPage.trustVideo },
                       { icon: Lock, label: c.serviceDetailPage.trustConfidential },
                     ].map(({ icon: Icon, label }) => (
-                      <li
-                        key={label}
-                        className="flex items-center gap-2.5 text-[13px] font-medium text-[var(--color-text-body)]"
-                      >
+                      <li key={label} className="gh2-trust-tile text-[13px] font-medium text-[var(--color-text-body)]">
                         <Icon className="size-4 shrink-0 text-[var(--color-brand-primary)]" aria-hidden />
                         {label}
                       </li>
@@ -393,7 +387,7 @@ async function GpBookingFlow({
                   title={bp.detailsTitle}
                   description={bp.detailsDesc}
                 />
-                <div className="mt-6 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
+                <div className="gh2-card-ivory mt-6 p-5 sm:p-6">
                   <ConsultationBookingForm
                     doctorId=""
                     doctorName={`A GP who speaks ${langName}`}
@@ -480,7 +474,7 @@ async function SelectedServiceFlow({
             description={bp.onlyAssigned}
           />
           {doctorsAtTime.length === 0 ? (
-            <div className="rounded-[var(--radius-card)] border border-[rgba(255,196,0,0.25)] bg-[rgba(255,196,0,0.08)] p-5 text-center">
+            <div className="gh2-status-card text-center">
               <CalendarDays className="mx-auto size-6 text-[var(--color-text-muted)]" aria-hidden />
               <p className="mt-3 font-semibold text-[var(--color-text-primary)]">{bp.slotNoLongerOpen}</p>
               <Link
@@ -517,7 +511,7 @@ async function SelectedServiceFlow({
     return (
       <div className="grid gap-6">
         <BookingSectionHeader eyebrow={bp.stepTime} title={bp.pickTime} description={bp.timesShown} />
-        <div className="min-w-0 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
+        <div className="gh2-card-ivory min-w-0 p-5 sm:p-6">
           <header className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border)] pb-5">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
@@ -535,7 +529,7 @@ async function SelectedServiceFlow({
             </Link>
           </header>
           {agg.slots.length === 0 ? (
-            <div className="mt-6 rounded-[var(--radius-card)] border border-[rgba(255,196,0,0.25)] bg-[rgba(255,196,0,0.08)] p-5 text-center">
+            <div className="gh2-status-card mt-6 text-center">
               <CalendarDays className="mx-auto size-6 text-[var(--color-text-muted)]" aria-hidden />
               <p className="mt-3 font-semibold text-[var(--color-text-primary)]">{bp.noOpenSlots}</p>
               <p className="mt-2 text-sm text-[var(--color-text-muted)]">
@@ -584,7 +578,7 @@ async function SelectedServiceFlow({
         title={slotConfirmed ? bp.detailsTitle : bp.pickTime}
         description={slotConfirmed ? bp.detailsDesc : bp.timesShown}
       />
-      <div className="min-w-0 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
+      <div className="gh2-card-ivory min-w-0 p-5 sm:p-6">
         <header className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border)] pb-5">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
@@ -612,7 +606,7 @@ async function SelectedServiceFlow({
         ) : null}
 
         {slots.length === 0 ? (
-          <div className="mt-6 rounded-[var(--radius-card)] border border-[rgba(255,196,0,0.25)] bg-[rgba(255,196,0,0.08)] p-5 text-center">
+          <div className="gh2-status-card mt-6 text-center">
             <CalendarDays className="mx-auto size-6 text-[var(--color-text-muted)]" aria-hidden />
             <p className="mt-3 font-semibold text-[var(--color-text-primary)]">
               {bp.noOpenSlots}
@@ -696,7 +690,7 @@ function ServicePicker({
         description={bp.servicesEnabledNote}
       />
       {services.length === 0 ? (
-        <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 text-center shadow-[var(--shadow-card)]">
+        <div className="gh2-status-card text-center">
           <p className="font-semibold text-[var(--color-text-primary)]">
             {allServicesCount === 0
               ? bp.noBookableServices
@@ -746,7 +740,7 @@ function ServiceChoiceCard({
   minSuffix: string;
 }) {
   return (
-    <div className="grid min-h-[220px] overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-[var(--shadow-card)]">
+    <div className="gh2-card-ivory gh2-card-hover grid min-h-[220px] overflow-hidden">
       {service.imageSrc ? (
         <div className="relative min-h-[150px] overflow-hidden">
           <Image
@@ -820,7 +814,13 @@ function StepIndicator({
   values: (string | null)[];
 }) {
   return (
-    <ol className="mt-5 grid gap-3">
+    <ol className="relative mt-5 grid gap-3">
+      {/* Vertical rail through the step dots — the single "you are here"
+        * signal (replaces the old per-label underline hack). */}
+      <span
+        aria-hidden
+        className="absolute left-4 top-4 bottom-4 w-px bg-[rgba(29,75,54,0.15)]"
+      />
       {STEPS.map((step) => {
         const complete = step.n < current;
         const active = step.n === current;
@@ -828,13 +828,13 @@ function StepIndicator({
         return (
           <li
             key={step.n}
-            className="flex items-start gap-3"
+            className="relative flex items-start gap-3"
             aria-current={active ? "step" : undefined}
           >
             <span
-              className={`mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+              className={`relative z-10 mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                 active
-                  ? "bg-[var(--color-brand-primary)] text-white"
+                  ? "bg-[var(--color-brand-primary)] text-white ring-4 ring-[rgba(29,75,54,0.16)]"
                   : complete
                     ? "bg-[rgba(29,75,54,0.6)] text-white"
                     : "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
@@ -846,7 +846,7 @@ function StepIndicator({
               <span
                 className={
                   active
-                    ? "relative inline-block w-fit text-sm font-bold text-[var(--color-text-primary)] after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:bg-[var(--color-brand-accent)] after:content-['']"
+                    ? "text-sm font-bold text-[var(--color-text-primary)]"
                     : complete
                       ? "text-sm font-semibold text-[rgba(29,75,54,0.6)]"
                       : "text-sm font-semibold text-[var(--color-text-muted)]"

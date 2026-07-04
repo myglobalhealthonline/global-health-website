@@ -49,7 +49,7 @@ export function FAQSection({ title = "FAQs", items }: FAQSectionProps) {
             return (
               <details
                 key={item.question}
-                className="group rounded-[14px] border border-white/10 bg-white/[0.04] px-5 transition-colors duration-200 [&[open]]:bg-white/[0.07] motion-reduce:transition-none md:px-6"
+                className="group rounded-[14px] border border-white/[0.12] bg-white/[0.06] px-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-colors duration-200 [&[open]]:bg-white/[0.09] motion-reduce:transition-none md:px-6"
               >
                 <summary
                   id={summaryId}

@@ -67,9 +67,16 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
     color: "#0a1f14",
     borderColor: "var(--color-brand-accent)",
   };
+  // Filter pills use a forest fill + white text when active (lime is reserved
+  // for a small accent dot), matching DoctorFilters' active-state dosage.
+  const filterActiveStyle = {
+    background: "var(--color-brand-primary)",
+    color: "#ffffff",
+    borderColor: "var(--color-brand-primary)",
+  };
   const ghostStyle = {
     background: "transparent",
-    color: "rgba(255,255,255,0.65)",
+    color: "var(--gh2-on-dark-muted)",
     borderColor: "rgba(255,255,255,0.20)",
   };
   const disabledStyle = {
@@ -86,16 +93,16 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
             <div className="flex gap-2 flex-wrap">
               <button
                 onClick={() => changeFilter("all")}
-                className="rounded-full border px-4 py-1.5 text-[13px] font-semibold transition-all duration-150"
-                style={filter === "all" ? activeStyle : ghostStyle}
+                className="gh-focus-on-dark rounded-full border px-4 py-1.5 text-[13px] font-semibold transition-all duration-150"
+                style={filter === "all" ? filterActiveStyle : ghostStyle}
               >
                 {i18n.filterAll}
               </button>
               {hasGP && (
                 <button
                   onClick={() => changeFilter("gp")}
-                  className="rounded-full border px-4 py-1.5 text-[13px] font-semibold transition-all duration-150"
-                  style={filter === "gp" ? activeStyle : ghostStyle}
+                  className="gh-focus-on-dark rounded-full border px-4 py-1.5 text-[13px] font-semibold transition-all duration-150"
+                  style={filter === "gp" ? filterActiveStyle : ghostStyle}
                 >
                   {i18n.filterGP}
                 </button>
@@ -103,8 +110,8 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
               {hasSpecialist && (
                 <button
                   onClick={() => changeFilter("specialist")}
-                  className="rounded-full border px-4 py-1.5 text-[13px] font-semibold transition-all duration-150"
-                  style={filter === "specialist" ? activeStyle : ghostStyle}
+                  className="gh-focus-on-dark rounded-full border px-4 py-1.5 text-[13px] font-semibold transition-all duration-150"
+                  style={filter === "specialist" ? filterActiveStyle : ghostStyle}
                 >
                   {i18n.filterSpecialist}
                 </button>
@@ -120,14 +127,15 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
                 disabled={safePage === 0}
                 aria-label="Previous"
-                className="size-11 rounded-full border inline-flex items-center justify-center transition-all duration-150 disabled:cursor-not-allowed"
+                className="gh-focus-on-dark size-11 rounded-full border inline-flex items-center justify-center transition-all duration-150 disabled:cursor-not-allowed"
                 style={safePage === 0 ? disabledStyle : activeStyle}
               >
                 <ChevronLeft size={18} aria-hidden />
               </button>
               <span
+                aria-live="polite"
                 className="text-[11px] font-bold tabular-nums"
-                style={{ color: "rgba(255,255,255,0.38)" }}
+                style={{ color: "var(--gh2-on-dark-muted)" }}
               >
                 {safePage + 1} / {totalPages}
               </span>
@@ -135,7 +143,7 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
                 onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                 disabled={safePage === totalPages - 1}
                 aria-label="Next"
-                className="size-11 rounded-full border inline-flex items-center justify-center transition-all duration-150 disabled:cursor-not-allowed"
+                className="gh-focus-on-dark size-11 rounded-full border inline-flex items-center justify-center transition-all duration-150 disabled:cursor-not-allowed"
                 style={safePage === totalPages - 1 ? disabledStyle : activeStyle}
               >
                 <ChevronRight size={18} aria-hidden />
@@ -159,7 +167,7 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
       {paged.length === 0 && filtered.length === 0 && (
         <p
           className="py-12 text-center text-sm"
-          style={{ color: "rgba(255,255,255,0.40)" }}
+          style={{ color: "var(--gh2-on-dark-muted)" }}
         >
           No doctors found.
         </p>

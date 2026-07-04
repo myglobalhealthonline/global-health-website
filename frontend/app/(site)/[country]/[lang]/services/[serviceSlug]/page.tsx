@@ -469,7 +469,7 @@ export default async function ServiceDetailPage({
                       background: "var(--color-brand-accent)",
                       color: "#0a1f14",
                       fontSize: "clamp(14px,1vw,16px)",
-                      boxShadow: "0 4px 24px rgba(176,241,34,0.28)",
+                      boxShadow: "0 4px 12px rgba(176,241,34,0.14)",
                     }}
                   >
                     {bookLabel}
@@ -505,13 +505,16 @@ export default async function ServiceDetailPage({
             <p className="text-[11px] font-bold uppercase tracking-[0.2em]" style={{ color: "var(--color-brand-primary)" }}>
               {t.aboutService}
             </p>
-            {resolvedLinks.length > 0 ? (
-              <div className="mt-8">
+            <div
+              className="gh2-card-ivory mt-8 max-w-prose p-6 md:p-8"
+              style={{ borderTop: "2px solid rgba(176,241,34,0.24)" }}
+            >
+              {resolvedLinks.length > 0 ? (
                 <ServiceLinkedBody bodyHtml={bodyHtml} links={resolvedLinks} />
-              </div>
-            ) : (
-              <div className="gh-article-body mt-8 max-w-[76ch]" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
-            )}
+              ) : (
+                <div className="gh-article-body" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
+              )}
+            </div>
           </div>
         </section>
       ) : null}
@@ -587,9 +590,9 @@ export default async function ServiceDetailPage({
         </div>
       </section>
 
-      {/* Closing booking band */}
+      {/* Closing booking band — visual parity with FinalCTA (§14) */}
       <section
-        className="gh2-hero relative isolate overflow-hidden"
+        className="gh2-section-forest relative isolate overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
         style={{
           padding: "clamp(56px,7vw,96px) 0",
           borderTop: "1px solid rgba(255,255,255,0.07)",
@@ -609,13 +612,13 @@ export default async function ServiceDetailPage({
               >
                 {t.bookHeading.replace("{service}", detail.name).replace("{country}", config.name)}
               </h2>
-              <p className="mt-4 max-w-[44ch] text-[15px] leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
+              <p className="mt-4 max-w-[44ch] text-[15px] leading-relaxed" style={{ color: "var(--gh2-on-dark-muted)" }}>
                 {priceLabel ? t.fromPricePrefix.replace("{price}", priceLabel) : ""}
                 {t.liveAvailability}
               </p>
             </div>
             <div className="flex lg:justify-end">
-              <Link href={bookHref} className="gh2-btn-lime">
+              <Link href={bookHref} className="gh2-btn-lime gh-focus-on-dark">
                 {bookLabel}
                 <ArrowRight className="size-4" aria-hidden />
               </Link>

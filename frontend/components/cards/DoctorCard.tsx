@@ -131,29 +131,25 @@ export function DoctorCard({
     "--dc-ink": dark ? "rgba(255,255,255,0.92)" : "var(--color-brand-primary)",
     "--dc-muted": dark ? "rgba(255,255,255,0.72)" : "rgba(29,75,54,0.45)",
     "--dc-line": dark ? "rgba(255,255,255,0.22)" : "rgba(29,75,54,0.20)",
-    "--dc-icon-bg": dark ? "rgba(255,255,255,0.06)" : "rgba(29,75,54,0.07)",
+    "--dc-icon-bg": dark ? "rgba(255,255,255,0.08)" : "rgba(29,75,54,0.08)",
     "--dc-icon-line": dark ? "rgba(255,255,255,0.10)" : "rgba(29,75,54,0.10)",
     "--dc-hover": dark ? "rgba(255,255,255,0.08)" : "rgba(29,75,54,0.04)",
   } as CSSProperties;
 
+  // Static cards (no profileHref link-wrap) must not lift on hover — only
+  // apply gh2-card-hover when the card is actually clickable.
+  const lightHoverClass = profileHref ? "gh2-card-hover" : "";
+
   return (
     <article
       className={`
-        group relative flex h-full flex-col overflow-hidden ${dark ? "gh2-glass gh2-glass-hover" : "bg-white"}
-        transition-[transform,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
-        ${dark ? "" : "hover:-translate-y-[3px] hover:border-[rgba(29,75,54,0.22)] hover:shadow-[var(--shadow-card-hover)]"}
+        group relative flex h-full flex-col overflow-hidden ${dark ? "gh2-glass-forest gh2-glass-hover" : `gh2-card-ivory ${lightHoverClass}`}
         motion-reduce:transition-none motion-reduce:hover:translate-y-0
         focus-within:ring-2 focus-within:ring-[var(--color-brand-primary)]/30
       `}
       style={{
         ...cardVars,
         borderRadius: "var(--radius-card)",
-        ...(dark
-          ? {}
-          : {
-              border: "1px solid rgba(29,75,54,0.10)",
-              boxShadow: "0 2px 8px rgba(15,46,37,0.06), 0 8px 28px rgba(15,46,37,0.07)",
-            }),
       }}
     >
       {/* Whole-card overlay link — routes to profile. CTAs below sit

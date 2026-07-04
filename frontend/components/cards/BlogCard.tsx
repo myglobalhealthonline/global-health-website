@@ -44,7 +44,7 @@ export function BlogCard({
 }: BlogCardProps) {
   const dateLabel = formatDate(publishedAt);
   return (
-    <article className="gh-card gh-card-hover flex h-full flex-col overflow-hidden p-0 sm:flex-row">
+    <article className="gh2-card-ivory gh2-card-hover flex h-full flex-col overflow-hidden p-0 sm:flex-row">
       {coverImageSrc ? (
         <Link
           href={href}

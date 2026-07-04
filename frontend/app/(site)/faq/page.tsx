@@ -79,9 +79,8 @@ export default async function FAQPage() {
       <FAQTabs groups={FAQ_GROUPS} />
 
       <section
-        className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
+        className="gh2-section-forest relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
         style={{
-          background: "var(--color-background-dark)",
           padding: "clamp(64px,8vw,96px) 0",
         }}
       >
@@ -112,8 +111,7 @@ export default async function FAQPage() {
             </div>
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-bold text-white transition-colors duration-200 hover:bg-white/10 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 lg:justify-self-end"
-              style={{ border: "1px solid rgba(255,255,255,0.22)" }}
+              className="gh2-btn-lime gh-focus-on-dark lg:justify-self-end"
             >
               {faq.stuck_cta}
               <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />

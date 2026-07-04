@@ -220,7 +220,7 @@ export function SiteHeader({
 
   return (
     <header
-      className="gh-header-sticky w-full"
+      className="gh-header-sticky w-full motion-reduce:!transition-none"
       style={{
         // Expanded: full-width glass bar in the shared --gh-chrome (same glass
         // recipe as the footer + the collapsed pill) — translucent + blur.
@@ -244,7 +244,7 @@ export function SiteHeader({
             glass, shadow) once the page scrolls. Height stays constant — only
             width / radius / surface change, so nothing reflows. */}
         <div
-          className="grid items-center grid-cols-[auto_minmax(0,1fr)_auto] gap-4 xl:gap-5 2xl:gap-6 px-4 md:px-6"
+          className="grid items-center grid-cols-[auto_minmax(0,1fr)_auto] gap-4 xl:gap-5 2xl:gap-6 px-4 md:px-6 motion-reduce:!transition-none"
           style={{
             maxWidth: scrolled ? 1360 : 1760,
             marginInline: "auto",
@@ -279,9 +279,9 @@ export function SiteHeader({
 
         {/* Section tabs — only inside a country. Desktop-only (lg+); tablet
             and below collapse into the MobileNav drawer. */}
-        <div className="gh-header-navCenter hidden min-w-0 justify-center xl:flex">
+        <nav aria-label="Sections" className="gh-header-navCenter hidden min-w-0 justify-center xl:flex">
           {sectionItems.length > 0 ? <SectionNav items={sectionItems} variant="dark" /> : null}
-        </div>
+        </nav>
 
         {/* Right — switchers + auth + CTA */}
         <div className="gh-header-actions flex items-center gap-2.5">

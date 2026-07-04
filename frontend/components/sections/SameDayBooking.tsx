@@ -233,7 +233,7 @@ export function SameDayBooking({
     <div key={heading}>
       <p className="mb-2 flex items-baseline gap-2 text-[11px] font-bold uppercase tracking-[0.14em]">
         <span className="text-[var(--color-brand-accent)]">{heading}</span>
-        <span className="font-medium normal-case tracking-normal text-white/40">{group.label}</span>
+        <span className="font-medium normal-case tracking-normal text-white/70">{group.label}</span>
       </p>
       <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
         {group.slots.map((s) => {
@@ -247,7 +247,7 @@ export function SameDayBooking({
               className="gh2-selectable-dark inline-flex flex-col items-center justify-center rounded-lg px-2 py-1.5 text-[13.5px] font-semibold [font-variant-numeric:tabular-nums]"
             >
               <span>{formatAppTime(s.startAt, clinicTz)}</span>
-              <span className={`text-[11px] font-medium ${active ? "text-[#0a1f1a]/80" : "text-white/50"}`}>
+              <span className={`text-[11px] font-medium ${active ? "text-[#0a1f1a]/80" : "text-white/70"}`}>
                 {formatPriceRounded(s.priceCents, s.currencyCode)}
               </span>
             </button>
