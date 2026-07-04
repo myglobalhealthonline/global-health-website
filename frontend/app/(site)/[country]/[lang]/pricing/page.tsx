@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { PageHero } from "@/components/sections/PageHero";
@@ -20,6 +21,7 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { interpolate } from "@/lib/subscription/format";
 import { PricingPlanCard } from "./_components/PricingPlanCard";
 import { DoctifyWidget } from "@/components/sections/DoctifyReviews";
+import { Stethoscope, Calendar, ShieldCheck, CreditCard, Zap, BadgeCheck } from "lucide-react";
 
 type Params = { country: string; lang: string };
 
@@ -134,6 +136,24 @@ export default async function PricingPage({
         ctaHref="#plans"
         secondaryLabel={t.secondaryLabel}
         secondaryHref={`/${slug}/${lang}/doctors`}
+        rightSlot={<PlansArchPanel countryName={config.name} />}
+        trustCards={[
+          {
+            icon: <Stethoscope className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: "Licensed doctors",
+            subtitle: "Registered locally",
+          },
+          {
+            icon: <Calendar className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: "Flexible plans",
+            subtitle: "Cancel anytime",
+          },
+          {
+            icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: "Secure payments",
+            subtitle: "Stripe protected",
+          },
+        ]}
       />
 
       <section
@@ -278,5 +298,68 @@ export default async function PricingPage({
         </div>
       </section>
     </>
+  );
+}
+
+function PlansArchPanel({ countryName }: { countryName: string }) {
+  return (
+    <div className="relative mx-auto max-w-[440px]">
+      <div aria-hidden className="gh2-arch-frame" />
+      <div className="gh2-arch gh2-zoom relative aspect-[4/4.7] overflow-hidden border border-white/10 bg-white/[0.045]">
+        <Image
+          src="/images/stock/plans.png"
+          alt={`Doctor reviewing health subscription plans in ${countryName}`}
+          fill
+          priority
+          sizes="(min-width: 1024px) 440px, 100vw"
+          className="object-cover object-center"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-t from-[rgba(8,42,32,0.62)] via-transparent to-transparent"
+        />
+      </div>
+
+      {/* Floating — Monthly care */}
+      <div
+        className="gh-glass-emerald gh-floaty absolute -right-6 top-[12%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0s]"
+      >
+        <Zap className="size-5 shrink-0 text-[var(--color-brand-accent)]" strokeWidth={1.75} aria-hidden />
+        <span className="min-w-0">
+          <span className="block text-[13px] font-bold leading-tight text-white">Monthly care</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">Renew or cancel anytime</span>
+        </span>
+      </div>
+
+      {/* Floating — Secure payments */}
+      <div
+        className="gh-glass-emerald gh-floaty absolute -right-4 top-[56%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:1.4s]"
+      >
+        <span
+          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"
+        >
+          <CreditCard className="size-4" strokeWidth={2} aria-hidden />
+        </span>
+        <span className="min-w-0">
+          <span className="block text-[13px] font-bold leading-tight text-white">Secure payments</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">Stripe protected</span>
+        </span>
+      </div>
+
+      {/* Floating — Licensed doctors */}
+      <div
+        className="gh-glass-emerald gh-floaty absolute -left-8 bottom-[5%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0.7s]"
+      >
+        <span
+          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"
+        >
+          <BadgeCheck className="size-4" strokeWidth={2} aria-hidden />
+        </span>
+        <span className="min-w-0">
+          <span className="block text-[13px] font-bold leading-tight text-white">Licensed doctors</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">Registered in {countryName}</span>
+        </span>
+      </div>
+    </div>
   );
 }

@@ -285,7 +285,9 @@ function isMedicalAuthorityLogo(logo: CountryCertificationLogo): boolean {
     name.includes("ordem") ||
     name.includes("medical chamber") ||
     name === "omc" ||
-    name === "cmr"
+    name === "cmr" ||
+    name === "cfm" ||
+    name.includes("conselho federal")
   );
 }
 
