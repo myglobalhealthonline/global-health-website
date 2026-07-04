@@ -10,6 +10,7 @@ type Copy = {
   eyebrow: string;
   heading: string;
   body: string;
+  partnersRow: string;
 };
 
 const COPY: Record<string, Copy> = {
@@ -17,11 +18,13 @@ const COPY: Record<string, Copy> = {
     eyebrow: "Operational partners",
     heading: "Partners supporting care in this market.",
     body: "These are the pharmacy, diagnostics and care partners connected to local service delivery.",
+    partnersRow: "Trusted partners",
   },
   pt: {
     eyebrow: "Parceiros operacionais",
     heading: "Parceiros que apoiam os cuidados neste mercado.",
     body: "Farmacias, diagnostico e parceiros clinicos ligados a prestacao local de servicos.",
+    partnersRow: "Parceiros de confianca",
   },
 };
 
@@ -32,13 +35,14 @@ export function CountryCertificationLogos({
   trust: CountryTrust;
   locale?: string;
 }) {
-  const logos = getCountryPartnerLogos(trust.country.code);
-  if (logos.length === 0) return null;
+  // Commercial partners ONLY. Regulatory / accreditation badges render in
+  // the "Regulated & verified care" trust bar above the footer — never mix
+  // the two in one row (brand guideline). Countries without partners skip
+  // this section entirely.
+  const partnerLogos = getCountryPartnerLogos(trust.country.code);
+  if (partnerLogos.length === 0) return null;
 
   const c = COPY[(locale ?? "en").toLowerCase()] ?? COPY.en;
-  
-  // Determine pattern based on first logo's tone
-  const firstLogoIsDark = logos[0]?.tone === "dark";
 
   return (
     <section
@@ -62,16 +66,41 @@ export function CountryCertificationLogos({
         </RevealOnScroll>
 
         <RevealOnScroll delay={130}>
-          <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {logos.map((logo, index) => (
-              <li key={`${trust.country.code}-${logo.name}`}>
-                <LogoLink logo={logo} index={index} firstLogoIsDark={firstLogoIsDark} />
-              </li>
-            ))}
-          </ul>
+          <LogoRow
+            label={c.partnersRow}
+            logos={partnerLogos}
+            countryCode={trust.country.code}
+          />
         </RevealOnScroll>
       </div>
     </section>
+  );
+}
+
+function LogoRow({
+  label,
+  logos,
+  countryCode,
+}: {
+  label: string;
+  logos: CountryCertificationLogo[];
+  countryCode: string;
+}) {
+  const firstLogoIsDark = logos[0]?.tone === "dark";
+  return (
+    <div className="mt-8">
+      <p className="flex items-center gap-3 text-[11px] font-extrabold uppercase tracking-[0.18em] text-white/55">
+        {label}
+        <span aria-hidden className="h-px flex-1 bg-white/12" />
+      </p>
+      <ul className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {logos.map((logo, index) => (
+          <li key={`${countryCode}-${logo.name}`}>
+            <LogoLink logo={logo} index={index} firstLogoIsDark={firstLogoIsDark} />
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 

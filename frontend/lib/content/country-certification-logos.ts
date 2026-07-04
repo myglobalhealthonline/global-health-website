@@ -176,7 +176,7 @@ const LOGOS_BY_COUNTRY: Record<string, CountryCertificationLogo[]> = {
       tone: "light",
     },
   ],
-  rm: [
+  ro: [
     {
       name: "CMR",
       alt: "Colegiul Medicilor din Romania",

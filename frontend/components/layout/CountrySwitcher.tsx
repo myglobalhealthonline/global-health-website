@@ -98,33 +98,23 @@ export function CountrySwitcher({
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="true"
-        aria-expanded={open}
+        aria-expanded={open ? "true" : "false"}
         data-open={open}
-        className="gh-focus-on-dark inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white data-[open=true]:border-white/30 data-[open=true]:bg-white/10"
-        style={{ minHeight: 44 }}
+        className="gh-focus-on-dark inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white data-[open=true]:border-white/30 data-[open=true]:bg-white/10"
       >
         {active ? <Flag code={active.code} size="sm" /> : null}
         <span>{active ? active.name : "Choose country"}</span>
         <ChevronDown
           aria-hidden
-          className="size-3 opacity-70 transition-transform duration-200 motion-reduce:transition-none"
-          style={{ transform: open ? "rotate(180deg)" : "none" }}
+          className="size-3 opacity-70 transition-transform duration-200 motion-reduce:transition-none data-[open=true]:rotate-180"
+          data-open={open}
         />
       </button>
 
       {open ? (
         <div
           aria-label="Choose country"
-          className="absolute right-0 z-50 mt-2 overflow-hidden"
-          style={{
-            minWidth: 220,
-            maxHeight: "min(calc(100vh - 120px), 320px)",
-            overflowY: "auto",
-            background: "var(--color-background-page)",
-            border: "1px solid var(--color-border)",
-            borderRadius: 12,
-            boxShadow: "var(--shadow-elevated)",
-          }}
+          className="absolute right-0 z-50 mt-2 min-w-[220px] max-h-[min(calc(100vh-120px),320px)] overflow-hidden overflow-y-auto rounded-xl border border-[var(--color-border)] bg-[var(--color-background-page)] shadow-[var(--shadow-elevated)]"
         >
           <ul className="m-0 list-none p-1">
             {countries.map((c) => {
@@ -160,20 +150,11 @@ export function CountrySwitcher({
                   <button
                     type="button"
                     onClick={() => handleSwitch(href, c.code, nextLang)}
-                    className="flex w-full cursor-pointer items-center justify-between gap-3 focus-visible:outline-none focus-visible:bg-[var(--color-brand-mint-soft)]"
-                    style={{
-                      minHeight: 44,
-                      padding: "10px 14px",
-                      borderRadius: 8,
-                      border: "none",
-                      textAlign: "left",
-                      background: isActive
-                        ? "var(--color-background-soft)"
-                        : "transparent",
-                      color: "var(--color-text-primary)",
-                      fontSize: 13,
-                      fontWeight: isActive ? 700 : 500,
-                    }}
+                    className={`flex min-h-[44px] w-full cursor-pointer items-center justify-between gap-3 rounded-lg border-none px-3.5 py-2.5 text-left text-[13px] text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:bg-[var(--color-brand-mint-soft)] ${
+                      isActive
+                        ? "bg-[var(--color-background-soft)] font-bold"
+                        : "bg-transparent font-medium"
+                    }`}
                   >
                     <span className="inline-flex items-center gap-2.5">
                       <Flag code={c.code} size="sm" />
