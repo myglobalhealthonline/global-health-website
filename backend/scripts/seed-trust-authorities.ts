@@ -54,6 +54,46 @@ const LEGAL_PROFILES: Record<string, LegalProfileSeed> = {
     emergencyNotice: "Em caso de emergência médica ligue 112.",
     nonEmergencyHealthLine: "SNS 24: 1414",
   },
+  cz: {
+    regulatorName: "Česká lékařská komora",
+    regulatorWebsite: "https://www.lkcr.cz",
+    medicalRegulatorUrl: "https://www.lkcr.cz",
+    dataProtectionAuthorityUrl: "https://www.uoou.cz",
+    dataProtectionLawName: "GDPR",
+    emergencyNumber: "112",
+    emergencyNotice:
+      "V případě zdravotní nouze okamžitě volejte 112. Online konzultace nejsou vhodné pro naléhavé případy.",
+  },
+  es: {
+    regulatorName: "Organización Médica Colegial de España",
+    regulatorWebsite: "https://www.cgcom.es",
+    medicalRegulatorUrl: "https://www.cgcom.es",
+    dataProtectionAuthorityUrl: "https://www.aepd.es",
+    dataProtectionLawName: "RGPD",
+    emergencyNumber: "112",
+    emergencyNotice:
+      "En caso de emergencia médica llame al 112 inmediatamente. Las consultas online no son adecuadas para emergencias.",
+  },
+  ro: {
+    regulatorName: "Colegiul Medicilor din România",
+    regulatorWebsite: "https://www.cmr.ro",
+    medicalRegulatorUrl: "https://www.cmr.ro",
+    dataProtectionAuthorityUrl: "https://www.dataprotection.ro",
+    dataProtectionLawName: "GDPR",
+    emergencyNumber: "112",
+    emergencyNotice:
+      "În caz de urgență medicală sunați imediat la 112. Consultațiile online nu sunt potrivite pentru urgențe.",
+  },
+  br: {
+    regulatorName: "Conselho Federal de Medicina",
+    regulatorWebsite: "https://portal.cfm.org.br",
+    medicalRegulatorUrl: "https://portal.cfm.org.br",
+    dataProtectionAuthorityUrl: "https://www.gov.br/anpd/pt-br",
+    dataProtectionLawName: "LGPD",
+    emergencyNumber: "192",
+    emergencyNotice:
+      "Em caso de emergência médica ligue 192 (SAMU) imediatamente. Consultas online não são adequadas para emergências.",
+  },
 };
 
 type AuthoritySeed = {
@@ -98,6 +138,25 @@ const AUTHORITY_LINKS: Record<string, AuthoritySeed[]> = {
     { name: "Portal do Utente", url: "https://www.utente.min-saude.pt", category: AuthorityCategory.CONSUMER_PROTECTION },
     { name: "SOS Voz Amiga", url: "https://www.sosvozamiga.org", category: AuthorityCategory.MENTAL_HEALTH, description: "Apoio emocional: 213 544 545." },
     { name: "Fundação Portuguesa de Cardiologia", url: "https://www.fpcardiologia.pt", category: AuthorityCategory.PROFESSIONAL_BODY },
+  ],
+  cz: [
+    { name: "Česká lékařská komora", abbreviation: "ČLK", url: "https://www.lkcr.cz", category: AuthorityCategory.MEDICAL_REGULATOR, description: "Povinná profesní komora všech lékařů působících v ČR.", showInFooter: true },
+    { name: "Státní ústav pro kontrolu léčiv", abbreviation: "SÚKL", url: "https://www.sukl.cz", category: AuthorityCategory.MEDICINES, description: "Autorizovaný poskytovatel eReceptu · Certifikát AMBSUKL216453413G (platný 2026–2028).", showInFooter: true },
+    { name: "Úřad pro ochranu osobních údajů", abbreviation: "ÚOOÚ", url: "https://www.uoou.cz", category: AuthorityCategory.DATA_PROTECTION, description: "Český dozorový úřad GDPR.", showInFooter: true },
+  ],
+  es: [
+    { name: "Organización Médica Colegial de España", abbreviation: "OMC", url: "https://www.cgcom.es", category: AuthorityCategory.MEDICAL_REGULATOR, description: "CGCOM coordina los 52 colegios médicos de España. Colegiación obligatoria para ejercer.", showInFooter: true },
+    { name: "Agencia Española de Protección de Datos", abbreviation: "AEPD", url: "https://www.aepd.es", category: AuthorityCategory.DATA_PROTECTION, description: "Autoridad de control del RGPD en España.", showInFooter: true },
+  ],
+  ro: [
+    { name: "Colegiul Medicilor din România", abbreviation: "CMR", url: "https://www.cmr.ro", category: AuthorityCategory.MEDICAL_REGULATOR, description: "Organism de autoreglementare obligatoriu pentru toți medicii din România.", showInFooter: true },
+    { name: "Registrul Medicilor", url: "https://regmed.cmr.ro", category: AuthorityCategory.DOCTOR_REGISTRY, description: "Registrul public al medicilor — verificați înregistrarea oricărui medic.", showInFooter: true },
+    { name: "Autoritatea Națională de Supraveghere a Prelucrării Datelor cu Caracter Personal", abbreviation: "ANSPDCP", url: "https://www.dataprotection.ro", category: AuthorityCategory.DATA_PROTECTION, description: "Autoritatea de supraveghere GDPR din România.", showInFooter: true },
+  ],
+  br: [
+    { name: "Conselho Federal de Medicina", abbreviation: "CFM", url: "https://portal.cfm.org.br", category: AuthorityCategory.MEDICAL_REGULATOR, description: "Telemedicina regulamentada pela Resolução CFM nº 2.314/2022.", showInFooter: true },
+    { name: "Conselho Regional de Medicina", abbreviation: "CRM", url: "https://portal.cfm.org.br/crms/", category: AuthorityCategory.DOCTOR_REGISTRY, description: "Todos os médicos registados no seu CRM regional.", showInFooter: true },
+    { name: "Autoridade Nacional de Proteção de Dados", abbreviation: "ANPD", url: "https://www.gov.br/anpd/pt-br", category: AuthorityCategory.DATA_PROTECTION, description: "Conformidade com a LGPD (Lei nº 13.709/2018).", showInFooter: true },
   ],
 };
 
