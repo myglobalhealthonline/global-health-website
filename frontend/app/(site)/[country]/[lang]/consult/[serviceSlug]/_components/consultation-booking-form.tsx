@@ -12,6 +12,7 @@ import { listFamilyMembers, type FamilyMember } from "@/lib/api/family-client";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { PhoneField } from "@/components/forms/phone-field";
+import { DobField, isoToDisplayDob } from "@/components/forms/dob-field";
 import { dialCodeForCountrySlug } from "@/lib/phone/dial-codes";
 import type { CommonLocale } from "@/lib/i18n/types";
 
@@ -248,15 +249,7 @@ export function ConsultationBookingForm({
   );
 
   const maxDob = new Date().toISOString().slice(0, 10);
-  const dobInputProps = {
-    type: "text",
-    inputMode: "numeric" as const,
-    placeholder: "YYYY-MM-DD",
-    pattern: "\\d{4}-\\d{2}-\\d{2}",
-    maxLength: 10,
-    title: "Use YYYY-MM-DD format",
-    autoComplete: "bday",
-  };
+  const maxDobDisplay = isoToDisplayDob(maxDob);
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -665,15 +658,13 @@ export function ConsultationBookingForm({
               <span className="text-xs font-semibold text-[var(--color-text-body)]">
                 {i18n.dateOfBirth}
               </span>
-              <input
+              <DobField
                 name="dateOfBirth"
                 defaultValue={defaults.dateOfBirth}
-                suppressHydrationWarning
-                {...dobInputProps}
                 className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
               />
               <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                Enter a date up to {maxDob}.
+                Enter a date up to {maxDobDisplay}.
               </p>
             </label>
           ) : null}
@@ -735,10 +726,8 @@ export function ConsultationBookingForm({
                   Date of birth{" "}
                   <span className="text-[11px] font-normal text-[var(--color-text-muted)]">(optional)</span>
                 </span>
-                <input
+                <DobField
                   name="patientOtherDob"
-                  suppressHydrationWarning
-                  {...dobInputProps}
                   className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
                 />
               </label>
