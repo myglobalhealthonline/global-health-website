@@ -330,8 +330,8 @@ export function PageHero({
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(180deg, rgba(6,26,18,0.35) 0%, rgba(6,26,18,0.55) 55%, rgba(6,26,18,0.80) 100%)," +
-                "linear-gradient(90deg, rgba(6,26,18,0.72) 0%, rgba(6,26,18,0.30) 55%, rgba(6,26,18,0.15) 100%)",
+                "linear-gradient(180deg, rgba(6,26,18,0.62) 0%, rgba(6,26,18,0.78) 55%, rgba(6,26,18,0.94) 100%)," +
+                "linear-gradient(90deg, rgba(6,26,18,0.88) 0%, rgba(6,26,18,0.55) 55%, rgba(6,26,18,0.35) 100%)",
             }}
           />
         </div>
