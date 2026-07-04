@@ -12,6 +12,19 @@ import type {
 } from "./billing.types.js";
 
 /**
+ * True when a Stripe error is a `resource_missing` (the referenced customer /
+ * price / product doesn't exist in the current account — typically a stale id
+ * from a previously-configured Stripe account after a key rotation / swap).
+ */
+export function isResourceMissing(err: unknown): boolean {
+  return (
+    typeof err === "object" &&
+    err !== null &&
+    (err as { code?: string }).code === "resource_missing"
+  );
+}
+
+/**
  * Real Stripe Subscriptions BillingPort.
  *
  * Implements the straightforward Product/Price/Customer/Checkout/Portal calls
@@ -61,7 +74,19 @@ export class StripeBillingPort implements BillingPort {
   ): Promise<{ customerId: string }> {
     const stripe = getStripeClient();
     if (input.existingCustomerId) {
-      return { customerId: input.existingCustomerId };
+      // Validate the stored id against the CURRENT account — a customer created
+      // on a previously-configured Stripe account no longer exists here (key
+      // rotated / account swapped) and would 400 ("No such customer") downstream.
+      // On resource_missing (or a deleted customer) fall through and mint a fresh
+      // one; the caller persists the returned id back onto the subscription row.
+      try {
+        const existing = await stripe.customers.retrieve(input.existingCustomerId);
+        if (!("deleted" in existing) || !existing.deleted) {
+          return { customerId: input.existingCustomerId };
+        }
+      } catch (err) {
+        if (!isResourceMissing(err)) throw err;
+      }
     }
     const customer = await stripe.customers.create({
       email: input.email,
@@ -94,11 +119,19 @@ export class StripeBillingPort implements BillingPort {
     customerId: string,
   ): Promise<{ canceled: number }> {
     const stripe = getStripeClient();
-    const existing = await stripe.subscriptions.list({
-      customer: customerId,
-      status: "all",
-      limit: 100,
-    });
+    let existing;
+    try {
+      existing = await stripe.subscriptions.list({
+        customer: customerId,
+        status: "all",
+        limit: 100,
+      });
+    } catch (err) {
+      // Customer doesn't exist on this account (stale cross-account id) — nothing
+      // to cancel. A fresh customer is minted upstream, so this is a no-op.
+      if (isResourceMissing(err)) return { canceled: 0 };
+      throw err;
+    }
     const cancelable = existing.data.filter((s) =>
       ["active", "trialing", "past_due", "incomplete", "unpaid"].includes(s.status),
     );
