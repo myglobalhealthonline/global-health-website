@@ -130,6 +130,26 @@ export async function fetchDoctorUnreadMessageCount(): Promise<number> {
   return result.ok && typeof result.data.unreadCount === "number" ? result.data.unreadCount : 0;
 }
 
+export type DoctorMessageThread = {
+  appointmentId: string;
+  patientName: string;
+  patientEmail: string | null;
+  consultationType: string;
+  countryCode: string;
+  lastMessage: {
+    body: string | null;
+    authorRole: "PATIENT" | "DOCTOR";
+    createdAt: string;
+  } | null;
+  unreadCount: number;
+};
+
+export async function fetchDoctorMessageThreads() {
+  return doctorRequest<{ items: DoctorMessageThread[] }>(
+    "/api/doctor/message-threads",
+  );
+}
+
 export async function fetchDoctorAppointments(query?: Record<string, string | undefined>) {
   const params = new URLSearchParams();
   if (query) {

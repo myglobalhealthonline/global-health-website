@@ -112,6 +112,13 @@ enum NotificationType {
   SUBSCRIPTION_PERK_UNLOCKED
   WELLNESS_CREDITS_EARNED
   KIT_REDEMPTION_CONFIRMED
+  // Patient-facing chat notifications. PATIENT_MESSAGE notifies the recipient
+  // staff side (admin for the clinic thread, doctor for the consult thread)
+  // when a patient sends a message. MESSAGE_REPLY notifies the patient when
+  // the clinic or their doctor replies. Payload carries appointmentId + a
+  // snippet (staff bell) or { title, body, href } (patient bell).
+  PATIENT_MESSAGE
+  MESSAGE_REPLY
 }
 
 /// Exam lifecycle.

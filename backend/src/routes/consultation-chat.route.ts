@@ -14,6 +14,7 @@ import {
   isMediaStorageConfigured,
 } from "../services/object-storage.js";
 import { sanitizeOriginalFilename } from "../utils/media-key.js";
+import { notifyDoctor, notifyUser } from "../modules/notifications/notify.service.js";
 
 /**
  * Patient ↔ doctor consultation chat per appointment.
@@ -166,6 +167,9 @@ const APPT_CHAT_SELECT = {
   chatReopenedByDoctor: true,
   amountCents: true,
   paymentStatus: true,
+  // Needed to route chat notifications to the other party.
+  userId: true,
+  doctorId: true,
 } as const;
 
 const consultationChatRoute: FastifyPluginAsync = async (app) => {
@@ -267,6 +271,17 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
           },
         });
 
+        // Surface on the doctor's bell. Best-effort.
+        if (appt.doctorId) {
+          notifyDoctor(appt.doctorId, "MESSAGE_REPLY", {
+            appointmentId: appt.id,
+            snippet: body.data.body.slice(0, 140),
+            byUserName: user.fullName,
+            byRole: "PATIENT",
+            channel: "doctor",
+          }).catch((e) => app.log.error(e));
+        }
+
         const items = await listMessages(appt.id, "patient");
         return okResponse({ items, chatLocked: false, paymentRequired: false });
       } catch (err) {
@@ -348,6 +363,16 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
             readByDoctor: false,
           },
         });
+
+        if (appt.doctorId) {
+          notifyDoctor(appt.doctorId, "MESSAGE_REPLY", {
+            appointmentId: appt.id,
+            snippet: `Sent a file: ${safeName}`,
+            byUserName: user.fullName,
+            byRole: "PATIENT",
+            channel: "doctor",
+          }).catch((e) => app.log.error(e));
+        }
 
         const items = await listMessages(appt.id, "patient");
         return okResponse({ items, chatLocked: false, paymentRequired: false, uploadedId: row.id });
@@ -472,6 +497,17 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
           },
         });
 
+        // Notify the patient's bell that their doctor replied.
+        if (appt.userId) {
+          notifyUser(appt.userId, "MESSAGE_REPLY", {
+            appointmentId: appt.id,
+            title: "New message from your doctor",
+            body: body.data.body.slice(0, 140),
+            href: "/account/bookings",
+            channel: "doctor",
+          }).catch((e) => app.log.error(e));
+        }
+
         const items = await listMessages(appt.id, "doctor");
         return okResponse({ items, chatLocked: isChatLocked(appt), paymentRequired: false });
       } catch (err) {
@@ -541,6 +577,16 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
             readByDoctor: true,
           },
         });
+
+        if (appt.userId) {
+          notifyUser(appt.userId, "MESSAGE_REPLY", {
+            appointmentId: appt.id,
+            title: "New file from your doctor",
+            body: safeName,
+            href: "/account/bookings",
+            channel: "doctor",
+          }).catch((e) => app.log.error(e));
+        }
 
         const items = await listMessages(appt.id, "doctor");
         return okResponse({ items, uploadedId: row.id });
@@ -642,6 +688,78 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(err);
       return reply.status(500).send(errorResponse("Could not fetch unread count"));
+    }
+  });
+
+  // ── Doctor: inbox — all consultation chat threads ────────────────
+  // Powers the doctor "Messages" tab: one row per of this doctor's
+  // appointments that has at least one chat message, with a per-thread
+  // unread (patient→doctor) count.
+  app.get("/api/doctor/message-threads", async (request, reply) => {
+    const auth = await verifyDoctorAccess(request);
+    if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+    try {
+      const appts = await prisma.appointment.findMany({
+        where: { doctorId: auth.doctorId, chatMessages: { some: {} } },
+        orderBy: { updatedAt: "desc" },
+        take: 100,
+        select: {
+          id: true,
+          consultationType: true,
+          countryCode: true,
+          createdAt: true,
+          user: { select: { fullName: true, email: true } },
+          chatMessages: {
+            orderBy: { createdAt: "desc" },
+            take: 1,
+            select: { body: true, fileName: true, authorRole: true, createdAt: true },
+          },
+        },
+      });
+
+      const ids = appts.map((a) => a.id);
+      const unread = ids.length
+        ? await prisma.consultationMessage.groupBy({
+            by: ["appointmentId"],
+            where: {
+              appointmentId: { in: ids },
+              authorRole: ChatAuthorRole.PATIENT,
+              readByDoctor: false,
+            },
+            _count: { _all: true },
+          })
+        : [];
+      const unreadMap = new Map(unread.map((u) => [u.appointmentId, u._count._all]));
+
+      const items = appts.map((a) => {
+        const last = a.chatMessages[0];
+        const lastBody = last
+          ? last.body ?? (last.fileName ? `File: ${last.fileName}` : "")
+          : null;
+        return {
+          appointmentId: a.id,
+          patientName: a.user?.fullName ?? "Unknown patient",
+          patientEmail: a.user?.email ?? null,
+          consultationType: a.consultationType,
+          countryCode: a.countryCode,
+          lastMessage: last
+            ? {
+                body: lastBody,
+                authorRole: last.authorRole,
+                createdAt: last.createdAt.toISOString(),
+              }
+            : null,
+          unreadCount: unreadMap.get(a.id) ?? 0,
+        };
+      });
+
+      return okResponse({ items });
+    } catch (err) {
+      if (err instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse((err as Error).message));
+      }
+      app.log.error(err);
+      return reply.status(500).send(errorResponse("Could not load message threads"));
     }
   });
 };

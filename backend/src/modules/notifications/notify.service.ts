@@ -1,11 +1,13 @@
+import type { NotificationType } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 
 /**
  * Lightweight notification writers. Routes call these after a
- * trigger event (internal message posted, appointment assigned)
- * instead of poking the Notification model directly. Centralising
- * here makes it cheap to swap the polling-based delivery for
- * push (WebSockets, web-push) later — only this module changes.
+ * trigger event (internal message posted, appointment assigned,
+ * patient/doctor chat message sent) instead of poking the
+ * Notification model directly. Centralising here makes it cheap to
+ * swap the polling-based delivery for push (WebSockets, web-push)
+ * later — only this module changes.
  *
  * All writes are best-effort: callers should `.catch()` and log.
  * A notification failure must NOT roll back the main mutation.
@@ -15,27 +17,22 @@ export type NotificationPayload = {
   appointmentId?: string;
   snippet?: string;
   byUserName?: string;
-  byRole?: "DOCTOR" | "ADMIN";
+  byRole?: "DOCTOR" | "ADMIN" | "PATIENT";
+  /** Which chat thread this notification refers to. */
+  channel?: "clinic" | "doctor";
+  /** Pre-localized fields for patient-facing bells (title/body/href). */
+  title?: string;
+  body?: string;
+  href?: string;
 };
 
 /**
- * Notify every admin (role=ADMIN, isActive=true). Used when a doctor
- * posts an internal message — admin team-inbox style. Cap to 20 admins
- * so unbounded fan-out can't happen.
+ * Notify every admin (role=ADMIN, isActive=true). Used for internal
+ * messages, clinical events, and now patient chat messages
+ * (PATIENT_MESSAGE). Cap to 20 admins so unbounded fan-out can't happen.
  */
 export async function notifyAdmins(
-  type:
-    | "APPOINTMENT_ASSIGNED"
-    | "APPOINTMENT_STATUS_CHANGED"
-    | "APPOINTMENT_RESCHEDULED"
-    | "APPOINTMENT_FOLLOWUP_BOOKED"
-    | "APPOINTMENT_REMINDER"
-    | "INTERNAL_MESSAGE"
-    | "CONSULT_SIGNED"
-    | "EXAM_LOGGED"
-    | "EXAM_REQUESTED"
-    | "FORM_SUBMITTED"
-    | "DOCUMENT_UPLOADED",
+  type: NotificationType,
   payload: NotificationPayload,
 ): Promise<void> {
   // Notifies at most 20 active admins. This is a safety cap, not a business
@@ -58,23 +55,13 @@ export async function notifyAdmins(
 
 /**
  * Notify the doctor user linked to `doctorId`. Used when an admin posts
- * an internal message or assigns the appointment. No-op when the
- * doctor profile has no login user attached yet.
+ * an internal message, assigns the appointment, or a patient sends a
+ * consultation chat message. No-op when the doctor profile has no login
+ * user attached yet.
  */
 export async function notifyDoctor(
   doctorProfileId: string,
-  type:
-    | "APPOINTMENT_ASSIGNED"
-    | "APPOINTMENT_STATUS_CHANGED"
-    | "APPOINTMENT_RESCHEDULED"
-    | "APPOINTMENT_FOLLOWUP_BOOKED"
-    | "APPOINTMENT_REMINDER"
-    | "INTERNAL_MESSAGE"
-    | "CONSULT_SIGNED"
-    | "EXAM_LOGGED"
-    | "EXAM_REQUESTED"
-    | "FORM_SUBMITTED"
-    | "DOCUMENT_UPLOADED",
+  type: NotificationType,
   payload: NotificationPayload,
 ): Promise<void> {
   const link = await prisma.user.findFirst({
@@ -84,5 +71,20 @@ export async function notifyDoctor(
   if (!link) return;
   await prisma.notification.create({
     data: { recipientUserId: link.id, type, payload },
+  });
+}
+
+/**
+ * Notify a specific user (by user id) — used for patient-facing bells
+ * (MESSAGE_REPLY when the clinic or a doctor replies). Payload should
+ * carry the pre-localized { title, body, href } the patient bell renders.
+ */
+export async function notifyUser(
+  recipientUserId: string,
+  type: NotificationType,
+  payload: NotificationPayload,
+): Promise<void> {
+  await prisma.notification.create({
+    data: { recipientUserId, type, payload },
   });
 }

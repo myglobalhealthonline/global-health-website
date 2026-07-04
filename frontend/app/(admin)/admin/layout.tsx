@@ -4,7 +4,9 @@ import { redirect } from "next/navigation";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import {
   fetchAdminCountries,
+  fetchAdminNotifications,
   fetchAdminPendingServiceRequests,
+  type AdminNotificationDto,
 } from "@/lib/admin/admin-api";
 import { AdminShell } from "./_components/admin-shell";
 import type { NotificationPopoverItem } from "@/components/NotificationPopover";
@@ -60,6 +62,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/assets", label: "Assets" },
     { href: "/admin/users", label: "Users" },
     { href: "/admin/patients", label: "Patients" },
+    { href: "/admin/messages", label: "Messages" },
     { href: "/admin/orders", label: "Orders" },
     { href: "/admin/automation", label: "Automation" },
     { href: "/admin/invoices", label: "Invoices" },
@@ -115,10 +118,32 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   // Scoped to the active country (matches the rest of the portal); global
   // when no country is selected. Best-effort: a failure leaves the shell
   // with an empty caught-up state.
+  // The admin bell merges two feeds:
+  //   1. Real Notification rows (patient chat messages, internal messages,
+  //      clinical events) from /api/admin/notifications.
+  //   2. Pending doctor service-approval requests (derived, not stored as
+  //      Notification rows) — kept so the existing approval flow stays
+  //      visible and the Doctors nav badge still works.
   let notifications:
     | { items: NotificationPopoverItem[]; unreadCount: number }
     | undefined;
   let navBadges: Record<string, number> | undefined;
+
+  const feedItems: NotificationPopoverItem[] = [];
+  let unreadTotal = 0;
+
+  try {
+    const notifRes = await fetchAdminNotifications();
+    if (notifRes.ok) {
+      unreadTotal += notifRes.data.unreadCount;
+      for (const n of notifRes.data.items.slice(0, 12)) {
+        feedItems.push(mapAdminNotification(n));
+      }
+    }
+  } catch {
+    // ignore — bell still shows service requests / empty state
+  }
+
   try {
     const res = await fetchAdminPendingServiceRequests(
       activeCountry ? { countryCode: activeCountry.code } : undefined,
@@ -126,20 +151,27 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     if (res.ok) {
       const { count, items } = res.data;
       navBadges = { "/admin/doctors": count };
-      notifications = {
-        unreadCount: count,
-        items: items.slice(0, 8).map((r) => ({
+      unreadTotal += count;
+      for (const r of items.slice(0, 8)) {
+        feedItems.push({
           id: r.id,
           title: `${r.doctorName} requested ${r.serviceName}`,
           body: `${serviceKindLabel(r.serviceKind)} · ${r.countryName} — awaiting approval`,
           href: `/admin/doctors/${r.doctorId}/services`,
           createdAt: r.createdAt,
           readAt: null,
-        })),
-      };
+        });
+      }
     }
   } catch {
-    // ignore — bell falls back to the empty state
+    // ignore — bell falls back to whatever notifications loaded
+  }
+
+  if (feedItems.length > 0 || unreadTotal > 0) {
+    feedItems.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+    notifications = { items: feedItems, unreadCount: unreadTotal };
   }
 
   return (
@@ -156,6 +188,57 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       {children}
     </AdminShell>
   );
+}
+
+/** Map a stored admin Notification row to a bell item. Patient chat messages
+ *  deep-link to the appointment (where the admin chat lives); other events
+ *  link to the appointment too when a payload id is present. */
+function mapAdminNotification(n: AdminNotificationDto): NotificationPopoverItem {
+  const p = n.payload ?? {};
+  const href = p.appointmentId
+    ? `/admin/appointments/${p.appointmentId}`
+    : "/admin/messages";
+
+  if (n.type === "PATIENT_MESSAGE") {
+    const who = p.byUserName ?? "A patient";
+    const channel = p.channel === "doctor" ? "doctor chat" : "clinic chat";
+    return {
+      id: n.id,
+      title: `${who} sent a message`,
+      body: p.snippet ?? `New message in ${channel}`,
+      href,
+      createdAt: n.createdAt,
+      readAt: n.readAt,
+    };
+  }
+
+  return {
+    id: n.id,
+    title: p.title ?? notificationTypeLabel(n.type),
+    body: p.body ?? p.snippet ?? null,
+    href,
+    createdAt: n.createdAt,
+    readAt: n.readAt,
+  };
+}
+
+function notificationTypeLabel(type: string): string {
+  switch (type) {
+    case "INTERNAL_MESSAGE":
+      return "New internal message";
+    case "APPOINTMENT_ASSIGNED":
+      return "Appointment assigned";
+    case "APPOINTMENT_STATUS_CHANGED":
+      return "Appointment status changed";
+    case "CONSULT_SIGNED":
+      return "Consultation signed";
+    case "DOCUMENT_UPLOADED":
+      return "Document uploaded";
+    case "FORM_SUBMITTED":
+      return "Form submitted";
+    default:
+      return "New notification";
+  }
 }
 
 function serviceKindLabel(kind: string): string {

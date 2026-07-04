@@ -1405,6 +1405,68 @@ export async function fetchAdminPendingServiceRequests(
   return adminRequest<AdminPendingServiceRequestsPayload>(path);
 }
 
+// ── Admin notifications (bell) ─────────────────────────────────────────
+export type AdminNotificationPayload = {
+  appointmentId?: string;
+  snippet?: string;
+  byUserName?: string;
+  byRole?: string;
+  channel?: "clinic" | "doctor";
+  title?: string;
+  body?: string;
+  href?: string;
+};
+
+export type AdminNotificationDto = {
+  id: string;
+  type: string;
+  payload: AdminNotificationPayload | null;
+  readAt: string | null;
+  createdAt: string;
+};
+
+export async function fetchAdminNotifications(onlyUnread = false) {
+  const qs = onlyUnread ? "?onlyUnread=1" : "";
+  return adminRequest<{ items: AdminNotificationDto[]; unreadCount: number }>(
+    `/api/admin/notifications${qs}`,
+  );
+}
+
+export async function markAdminNotificationRead(id: string) {
+  return adminRequest<{ updated: number }>(
+    `/api/admin/notifications/${id}/read`,
+    { method: "PATCH" },
+  );
+}
+
+export async function markAllAdminNotificationsRead() {
+  return adminRequest<{ updated: number }>(
+    "/api/admin/notifications/read-all",
+    { method: "POST" },
+  );
+}
+
+// ── Admin message inbox (patient ↔ admin threads) ──────────────────────
+export type AdminMessageThread = {
+  appointmentId: string;
+  patientName: string;
+  patientEmail: string | null;
+  consultationType: string;
+  countryCode: string;
+  lastMessage: {
+    body: string;
+    authorRole: "PATIENT" | "ADMIN";
+    createdAt: string;
+  } | null;
+  unreadCount: number;
+};
+
+export async function fetchAdminMessageThreads() {
+  return adminRequest<{ items: AdminMessageThread[] }>(
+    "/api/admin/message-threads",
+  );
+}
+
 export async function postAdminDoctor(body: unknown) {
   return adminRequest<AdminDoctorDetailPayload>("/api/admin/doctors", {
     method: "POST",
