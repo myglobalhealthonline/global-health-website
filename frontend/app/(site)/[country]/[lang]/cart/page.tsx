@@ -22,6 +22,7 @@ import {
   User,
 } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
+import { MobileOrderTotalBar } from "@/components/cart/MobileOrderTotalBar";
 import { PlanCoverage } from "@/components/cart/PlanCoverage";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { formatPrice } from "@/lib/format-currency";
@@ -222,7 +223,7 @@ export default function CartPage() {
   return (
     <>
       <GH2FlowHeader title={t.title} activeStep={1} steps={steps} />
-      <section className="bg-[var(--color-background-soft)] px-5 py-12 sm:py-16">
+      <section className="bg-[var(--color-background-soft)] px-5 pb-28 pt-12 sm:py-16 md:pb-16">
         <div className="mx-auto max-w-[var(--container-width)]">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
@@ -280,6 +281,7 @@ export default function CartPage() {
                     currency={cart.currencyCode}
                     t={t}
                     coverageLine={coverageLines[item.id]}
+                    benefitError={benefitError}
                     onSelectBenefit={(sel) => onSelectBenefit(item.id, sel)}
                     onIncrease={() => void update(item.id, item.quantity + 1)}
                     onDecrease={() =>
@@ -308,6 +310,7 @@ export default function CartPage() {
 
             {/* Summary */}
             <aside
+              id="cart-order-summary"
               className="gh-card self-start p-6 lg:sticky lg:top-[calc(var(--header-height)+16px)]"
               style={{ boxShadow: "var(--shadow-card)" }}
             >
@@ -318,11 +321,6 @@ export default function CartPage() {
                 itemNames={Object.fromEntries(cart.items.map((i) => [i.id, i.name]))}
                 refreshKey={coverageNonce}
               />
-              {benefitError ? (
-                <p className="mb-4 text-[13px] font-semibold" style={{ color: "var(--color-status-error)" }}>
-                  {benefitError}
-                </p>
-              ) : null}
               <h2 className="gh-h3" style={{ fontSize: "1.125rem" }}>{t.orderSummary}</h2>
               <dl className="mt-4 space-y-2.5 text-sm">
                 <div className="flex justify-between">
@@ -396,6 +394,13 @@ export default function CartPage() {
           </div>
         </div>
       </section>
+      <MobileOrderTotalBar
+        totalLabel={t.total}
+        formattedTotal={formatPrice(Math.max(0, total - payableSaved), cart.currencyCode)}
+        actionLabel={t.continueToCheckout}
+        onAction={() => router.push(checkoutHref)}
+        watchTargetId="cart-order-summary"
+      />
     </>
   );
 }
@@ -410,6 +415,7 @@ function CartItemRow({
   item,
   currency,
   coverageLine,
+  benefitError,
   onSelectBenefit,
   onIncrease,
   onDecrease,
@@ -419,6 +425,7 @@ function CartItemRow({
   item: CartItem;
   currency: string;
   coverageLine?: CartCoverageLine;
+  benefitError?: string | null;
   onSelectBenefit: (selection: BenefitSelection) => void | Promise<void>;
   onIncrease: () => void;
   onDecrease: () => void;
@@ -534,6 +541,7 @@ function CartItemRow({
                     type="button"
                     role="radio"
                     aria-checked={active}
+                    data-selected={active}
                     disabled={benefitPending}
                     onClick={() => {
                       if (benefitPending) return;
@@ -543,16 +551,7 @@ function CartItemRow({
                         void result.finally(() => setBenefitPending(false));
                       }
                     }}
-                    className="rounded-full px-3 py-1 text-[12px] font-semibold transition-colors disabled:cursor-wait disabled:opacity-60"
-                    style={
-                      active
-                        ? { background: "var(--color-brand-primary)", color: "#fff" }
-                        : {
-                            background: "var(--color-background-soft)",
-                            color: "var(--color-text-body)",
-                            border: "1px solid var(--color-border)",
-                          }
-                    }
+                    className="gh2-selectable rounded-full px-3 text-[12px] font-semibold disabled:cursor-wait"
                   >
                     {t[BENEFIT_LABEL[opt]]}
                   </button>
@@ -564,6 +563,11 @@ function CartItemRow({
                 {t.notEnoughCreditsHint}
               </p>
             ) : null}
+            {benefitError ? (
+              <p role="alert" className="mt-1.5 text-[11.5px] font-semibold" style={{ color: "var(--color-status-error)" }}>
+                {benefitError}
+              </p>
+            ) : null}
           </div>
         ) : null}
 
@@ -572,10 +576,10 @@ function CartItemRow({
             failure, so the styling shouldn't read as an error. */}
         {isConsult && countdown ? (
           <p
-            className="mt-2 inline-flex items-center gap-1 text-[11.5px] font-semibold"
+            className="mt-2 inline-flex items-center gap-1 whitespace-nowrap text-[11.5px] font-semibold [font-variant-numeric:tabular-nums]"
             style={{ color: "var(--color-status-warning-text)" }}
           >
-            <Clock className="size-3" aria-hidden />
+            <Clock className="size-3 shrink-0" aria-hidden />
             {countdown === "expired"
               ? t.holdReleased
               : t.slotReserved.replace("{time}", countdown)}
@@ -605,8 +609,9 @@ function CartItemRow({
                 type="button"
                 onClick={onDecrease}
                 disabled={item.quantity <= 1}
+                aria-disabled={item.quantity <= 1}
                 aria-label={t.decreaseQuantity}
-                className="inline-flex size-8 items-center justify-center rounded-full transition-colors hover:bg-[var(--color-background-soft)] disabled:opacity-30"
+                className="inline-flex size-11 items-center justify-center rounded-full transition-colors hover:bg-[var(--color-background-soft)] disabled:opacity-30"
                 style={{ color: "var(--color-text-body)" }}
               >
                 <Minus className="size-3.5" aria-hidden />
@@ -623,7 +628,7 @@ function CartItemRow({
                 disabled={atMax}
                 aria-label={t.increaseQuantity}
                 title={atMax ? t.maxPerItem.replace("{max}", String(CART_ITEM_MAX_QTY)) : undefined}
-                className="inline-flex size-8 items-center justify-center rounded-full transition-colors hover:bg-[var(--color-background-soft)] disabled:opacity-30"
+                className="inline-flex size-11 items-center justify-center rounded-full transition-colors hover:bg-[var(--color-background-soft)] disabled:opacity-30"
                 style={{ color: "var(--color-text-body)" }}
               >
                 <Plus className="size-3.5" aria-hidden />
@@ -635,10 +640,10 @@ function CartItemRow({
             type="button"
             onClick={onRemove}
             aria-label={t.removeAria.replace("{name}", item.name)}
-            className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold transition-colors hover:bg-[var(--color-status-error-bg)]"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold transition-colors hover:bg-[var(--color-status-error-bg)]"
             style={{ color: "var(--color-status-error)" }}
           >
-            <Trash2 className="size-3.5" aria-hidden />
+            <Trash2 className="size-3.5 shrink-0" aria-hidden />
             {t.remove}
           </button>
         </div>

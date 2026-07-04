@@ -63,21 +63,10 @@ export function DoctorFilters({
               <Link
                 key={opt.token}
                 href={opt.href}
-                aria-pressed={opt.active}
+                aria-current={opt.active ? "page" : undefined}
+                data-active={opt.active}
                 scroll={false}
-                className="inline-flex items-center rounded-full px-3 py-1.5 text-[12.5px] font-semibold transition-colors duration-200 motion-reduce:transition-none"
-                style={
-                  opt.active
-                    ? {
-                        background: "var(--color-brand-accent)",
-                        color: "#0a1f14",
-                      }
-                    : {
-                        background: "white",
-                        color: "var(--color-brand-primary)",
-                        border: "1px solid rgba(29,75,54,0.18)",
-                      }
-                }
+                className="gh2-pill-filter text-[12.5px]"
               >
                 {opt.label}
               </Link>

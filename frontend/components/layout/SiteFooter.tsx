@@ -186,7 +186,7 @@ export function SiteFooter({
           <div>
             <Link
               href="/"
-              className="gh-footer-brandLink inline-flex items-center"
+              className="gh-footer-brandLink gh-focus-on-dark inline-flex items-center"
               aria-label={siteName || "Global Health"}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -201,14 +201,14 @@ export function SiteFooter({
             </p>
             <div className="gh-footer-contact mt-4 flex flex-col gap-1">
               {contactEmail ? (
-                <a href={`mailto:${contactEmail}`} className="gh-footer-contactLink">
+                <a href={`mailto:${contactEmail}`} className="gh-footer-contactLink gh-focus-on-dark">
                   {contactEmail}
                 </a>
               ) : null}
               {contactPhone ? (
                 <a
                   href={`tel:${contactPhone.replace(/[^0-9+]/g, "")}`}
-                  className="gh-footer-contactLink"
+                  className="gh-footer-contactLink gh-focus-on-dark"
                 >
                   {contactPhone}
                 </a>
@@ -259,7 +259,7 @@ export function SiteFooter({
                 />
                 {group.h}
               </p>
-              <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
+              <ul className="m-0 flex list-none flex-col gap-2 p-0">
                 {group.items.map((item) => {
                   // Admin custom links may set `external: true` for offsite
                   // URLs, mailto:, or tel:. Use a plain <a> in that case so

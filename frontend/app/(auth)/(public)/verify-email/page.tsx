@@ -78,6 +78,7 @@ export default function VerifyEmailPage() {
       accent="account."
       body="Verification keeps patient records and booking updates tied to the right email address."
     >
+      <div aria-live="polite">
         {status === "pending" ? (
           <>
             <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">{t.title}</h1>
@@ -130,6 +131,7 @@ export default function VerifyEmailPage() {
             </Link>
           </>
         ) : null}
+      </div>
     </GH2AuthShell>
   );
 }

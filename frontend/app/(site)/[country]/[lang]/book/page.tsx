@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, CheckCircle2, Lock, ShieldCheck, Stethoscope, UserRound, Video } from "lucide-react";
+import { ArrowRight, CalendarDays, CheckCircle2, Lock, ShieldCheck, Stethoscope, UserRound, Video } from "lucide-react";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
@@ -481,8 +481,9 @@ async function SelectedServiceFlow({
             description={bp.onlyAssigned}
           />
           {doctorsAtTime.length === 0 ? (
-            <div className="rounded-[var(--radius-card)] border border-[rgba(255,196,0,0.25)] bg-[rgba(255,196,0,0.08)] p-5">
-              <p className="font-semibold text-[var(--color-text-primary)]">{bp.slotNoLongerOpen}</p>
+            <div className="rounded-[var(--radius-card)] border border-[rgba(255,196,0,0.25)] bg-[rgba(255,196,0,0.08)] p-5 text-center">
+              <CalendarDays className="mx-auto size-6 text-[var(--color-text-muted)]" aria-hidden />
+              <p className="mt-3 font-semibold text-[var(--color-text-primary)]">{bp.slotNoLongerOpen}</p>
               <Link
                 href={buildBookHref({ country, lang, service: service.slug })}
                 className="gh2-btn-lime mt-4"
@@ -535,11 +536,18 @@ async function SelectedServiceFlow({
             </Link>
           </header>
           {agg.slots.length === 0 ? (
-            <div className="mt-6 rounded-[var(--radius-card)] border border-[rgba(255,196,0,0.25)] bg-[rgba(255,196,0,0.08)] p-5">
-              <p className="font-semibold text-[var(--color-text-primary)]">{bp.noOpenSlots}</p>
+            <div className="mt-6 rounded-[var(--radius-card)] border border-[rgba(255,196,0,0.25)] bg-[rgba(255,196,0,0.08)] p-5 text-center">
+              <CalendarDays className="mx-auto size-6 text-[var(--color-text-muted)]" aria-hidden />
+              <p className="mt-3 font-semibold text-[var(--color-text-primary)]">{bp.noOpenSlots}</p>
               <p className="mt-2 text-sm text-[var(--color-text-muted)]">
                 {bp.checkBackClinician.replace("{service}", service.name)}
               </p>
+              <Link
+                href={buildBookHref({ country, lang })}
+                className="gh2-btn-lime mt-5"
+              >
+                {bp.changeService}
+              </Link>
             </div>
           ) : (
             <div className="mt-6">
@@ -605,8 +613,9 @@ async function SelectedServiceFlow({
         ) : null}
 
         {slots.length === 0 ? (
-          <div className="mt-6 rounded-[var(--radius-card)] border border-[rgba(255,196,0,0.25)] bg-[rgba(255,196,0,0.08)] p-5">
-            <p className="font-semibold text-[var(--color-text-primary)]">
+          <div className="mt-6 rounded-[var(--radius-card)] border border-[rgba(255,196,0,0.25)] bg-[rgba(255,196,0,0.08)] p-5 text-center">
+            <CalendarDays className="mx-auto size-6 text-[var(--color-text-muted)]" aria-hidden />
+            <p className="mt-3 font-semibold text-[var(--color-text-primary)]">
               {bp.noOpenSlots}
             </p>
             <p className="mt-2 text-sm text-[var(--color-text-muted)]">
@@ -888,25 +897,36 @@ function StepIndicator({
         const active = step.n === current;
         const value = values[step.n - 1] ?? null;
         return (
-          <li key={step.n} className="flex items-start gap-3">
+          <li
+            key={step.n}
+            className="flex items-start gap-3"
+            aria-current={active ? "step" : undefined}
+          >
             <span
               className={`mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                complete || active
+                active
                   ? "bg-[var(--color-brand-primary)] text-white"
-                  : "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
+                  : complete
+                    ? "bg-[rgba(29,75,54,0.6)] text-white"
+                    : "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
               }`}
             >
-              {complete ? <CheckCircle2 className="size-4" aria-hidden /> : step.n}
+              {complete ? <CheckCircle2 className="size-3.5" aria-hidden /> : step.n}
             </span>
             <span className="flex flex-col">
               <span
                 className={
                   active
-                    ? "text-sm font-bold text-[var(--color-text-primary)]"
-                    : "text-sm font-semibold text-[var(--color-text-muted)]"
+                    ? "relative inline-block w-fit text-sm font-bold text-[var(--color-text-primary)] after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:bg-[var(--color-brand-accent)] after:content-['']"
+                    : complete
+                      ? "text-sm font-semibold text-[rgba(29,75,54,0.6)]"
+                      : "text-sm font-semibold text-[var(--color-text-muted)]"
                 }
               >
                 {labels[step.n - 1]}
+                {active ? (
+                  <span className="sr-only"> — Step {step.n} of {STEPS.length}</span>
+                ) : null}
               </span>
               {value ? (
                 <span className="text-xs leading-snug text-[var(--color-text-muted)]">{value}</span>

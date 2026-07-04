@@ -48,7 +48,17 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
         <Suspense fallback={null}>
           <SyncOrderPaymentOnReturn skipIfSynced={false} />
         </Suspense>
-        <GH2StatusPage status="loading" title={t.processingTitle} body={t.processingBody}>
+        <GH2StatusPage
+          status="loading"
+          title={t.processingTitle}
+          body={
+            <>
+              {t.processingBody}
+              <br />
+              <span className="text-[13px] text-[var(--color-text-muted)]">Usually under 30 seconds.</span>
+            </>
+          }
+        >
           <Link href="/account/orders" className="gh2-btn-lime">
             {t.viewOrders}
           </Link>
@@ -94,7 +104,10 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
             </div>
           </div>
         ) : orderId ? (
-          <p className="normal-case tracking-normal font-sans text-sm text-[var(--color-status-warning-text)]">
+          <p
+            role="status"
+            className="gh-status-info normal-case tracking-normal font-sans rounded-[var(--radius-card-sm)] px-3 py-2.5 text-sm"
+          >
             {t.receiptError}
           </p>
         ) : null

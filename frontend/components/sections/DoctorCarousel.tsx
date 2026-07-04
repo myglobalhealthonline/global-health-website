@@ -120,7 +120,7 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
                 disabled={safePage === 0}
                 aria-label="Previous"
-                className="size-10 rounded-full border inline-flex items-center justify-center transition-all duration-150 disabled:cursor-not-allowed"
+                className="size-11 rounded-full border inline-flex items-center justify-center transition-all duration-150 disabled:cursor-not-allowed"
                 style={safePage === 0 ? disabledStyle : activeStyle}
               >
                 <ChevronLeft size={18} aria-hidden />
@@ -135,7 +135,7 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
                 onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                 disabled={safePage === totalPages - 1}
                 aria-label="Next"
-                className="size-10 rounded-full border inline-flex items-center justify-center transition-all duration-150 disabled:cursor-not-allowed"
+                className="size-11 rounded-full border inline-flex items-center justify-center transition-all duration-150 disabled:cursor-not-allowed"
                 style={safePage === totalPages - 1 ? disabledStyle : activeStyle}
               >
                 <ChevronRight size={18} aria-hidden />

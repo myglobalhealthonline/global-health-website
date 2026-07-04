@@ -36,6 +36,7 @@ import {
 } from "@/lib/routing/path-rewrites";
 import { localeDisplayName } from "@/lib/i18n/locale-display";
 import { Flag } from "@/components/ui/Flag";
+import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
 
 export function MobileNav({
   siteName,
@@ -66,8 +67,7 @@ export function MobileNav({
   // a stale cookie leaks the old language back into global pages.
   function switchTo(href: string, nextLang: string | null) {
     if (nextLang) {
-      // eslint-disable-next-line react-hooks/immutability -- hard navigation needs the locale cookie synced before reload.
-      globalThis.document.cookie = `gh_locale=${nextLang}; path=/; max-age=31536000; SameSite=Lax`;
+      setClientLocaleCookie(nextLang);
     }
     globalThis.location.assign(href);
   }
@@ -177,7 +177,7 @@ export function MobileNav({
                 className="h-10 w-auto max-w-[200px]"
               />
             </Link>
-            <Dialog.Close className="inline-flex rounded-full border border-[var(--color-border)] bg-white p-2 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-2">
+            <Dialog.Close className="inline-flex size-11 items-center justify-center rounded-full border border-[var(--color-border)] bg-white p-3 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-2">
               <span className="sr-only">{navigation.navCloseMenu}</span>
               <X className="size-5 text-[var(--color-text-primary)]" aria-hidden />
             </Dialog.Close>
@@ -195,7 +195,7 @@ export function MobileNav({
                       <Dialog.Close asChild>
                         <Link
                           href={item.href}
-                          className="block rounded-[14px] px-3 py-3 text-[17px] font-medium leading-snug text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                          className="flex min-h-[44px] items-center rounded-[14px] px-3 py-3.5 text-[17px] font-medium leading-snug text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                         >
                           {item.label}
                         </Link>
@@ -213,7 +213,12 @@ export function MobileNav({
               <ul className="flex flex-col gap-1">
                 {countries.map((c) => {
                   const isActive = c.code === activeCountryCode;
-                  const slug = COUNTRY_CODE_TO_SLUG[c.code];
+                  // Same fallback chain as SiteFooter.tsx clinicsLinks: prefer
+                  // the slug on the country data itself, then the registry,
+                  // then the code — avoids `/undefined/<lang>` hrefs when the
+                  // client-side slug registry proxy isn't warm yet.
+                  const slug =
+                    c.slug || COUNTRY_CODE_TO_SLUG[c.code] || c.code.toLowerCase();
                   // Keep the visitor's language when the target country
                   // supports it; otherwise the target's default.
                   const nextLang = (
@@ -231,7 +236,7 @@ export function MobileNav({
                         <button
                           type="button"
                           onClick={() => switchTo(href, nextLang)}
-                          className="flex w-full cursor-pointer items-center justify-between rounded-[14px] px-3 py-3 text-left text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                          className="flex min-h-[44px] w-full cursor-pointer items-center justify-between rounded-[14px] px-3 py-3.5 text-left text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                         >
                           <span className="inline-flex items-center gap-3">
                             <Flag code={c.code} size="md" />
@@ -252,7 +257,10 @@ export function MobileNav({
             </section>
 
             {activeCountry && activeCountry.supportedLocales.length > 1 ? (
-              <section className="mb-6">
+              // min-height reserves space for this section's own render so
+              // client-only `activeCountry` resolution doesn't pop the
+              // account/CTA block below it down after hydration.
+              <section className="mb-6" style={{ minHeight: 44 * activeCountry.supportedLocales.length + 32 }}>
                 <p className="mb-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
                   <Languages aria-hidden className="size-3.5" />
                   {navigation.navLanguage}
@@ -267,7 +275,7 @@ export function MobileNav({
                           <button
                             type="button"
                             onClick={() => switchTo(href, loc)}
-                            className="flex w-full cursor-pointer items-center justify-between rounded-[14px] px-3 py-3 text-left text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                            className="flex min-h-[44px] w-full cursor-pointer items-center justify-between rounded-[14px] px-3 py-3.5 text-left text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                           >
                             <span className="inline-flex items-center gap-2">
                               <span className="uppercase text-[var(--color-text-muted)] text-[14px]">
@@ -295,7 +303,7 @@ export function MobileNav({
                 <Dialog.Close asChild>
                   <Link
                     href={portalHref}
-                    className="flex items-center gap-3 rounded-[14px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                    className="flex min-h-[44px] items-center gap-3 rounded-[14px] px-3 py-3.5 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                   >
                     <User className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
                     {portalLabel}
@@ -305,7 +313,7 @@ export function MobileNav({
                 <Dialog.Close asChild>
                   <Link
                     href={navigation.headerAuthLink.href}
-                    className="rounded-[14px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                    className="flex min-h-[44px] items-center rounded-[14px] px-3 py-3.5 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                   >
                     {navigation.headerAuthLink.label}
                   </Link>

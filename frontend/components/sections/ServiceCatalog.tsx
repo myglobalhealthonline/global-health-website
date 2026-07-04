@@ -194,7 +194,8 @@ export function ServiceCatalog({
                       type="button"
                       onClick={() => handleFilter(f.id)}
                       aria-pressed={isActive}
-                      className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[length:var(--text-meta)] font-semibold transition-all duration-200 motion-reduce:transition-none"
+                      data-active={isActive || undefined}
+                      className="gh2-pill-filter items-center gap-2 text-[length:var(--text-meta)] font-semibold transition-all duration-200 motion-reduce:transition-none"
                       style={
                         isActive
                           ? {
@@ -234,7 +235,7 @@ export function ServiceCatalog({
                   onClick={() => setPage((p) => Math.max(0, p - 1))}
                   disabled={page === 0}
                   aria-label={i18n.prevServices}
-                  className="inline-flex size-10 items-center justify-center rounded-full border transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="inline-flex size-11 items-center justify-center rounded-full border transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
                   style={{
                     background: page > 0 ? "var(--color-brand-accent)" : "transparent",
                     borderColor: page > 0 ? "var(--color-brand-accent)" : "rgba(255,255,255,0.20)",
@@ -254,7 +255,7 @@ export function ServiceCatalog({
                   onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                   disabled={page === totalPages - 1}
                   aria-label={i18n.nextServices}
-                  className="inline-flex size-10 items-center justify-center rounded-full border transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="inline-flex size-11 items-center justify-center rounded-full border transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
                   style={{
                     background: page < totalPages - 1 ? "var(--color-brand-accent)" : "transparent",
                     borderColor: page < totalPages - 1 ? "var(--color-brand-accent)" : "rgba(255,255,255,0.20)",

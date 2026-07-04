@@ -54,6 +54,7 @@ export function TrustRibbon({ items, theme = "light" }: { items?: TrustRibbonIte
       className={isLight ? "" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"}
       style={{
         background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
+        borderTop: isLight ? "2px solid rgba(176,241,34,0.24)" : undefined,
         borderBottom: `1px solid ${hairline}`,
         padding: "clamp(48px,6vw,88px) 0",
       }}
@@ -77,7 +78,7 @@ export function TrustRibbon({ items, theme = "light" }: { items?: TrustRibbonIte
               >
                 <div className="flex items-center justify-between">
                   <span
-                    className="inline-flex size-11 items-center justify-center rounded-[14px]"
+                    className="inline-flex size-11 items-center justify-center rounded-xl"
                     style={{
                       background: isLight ? "rgba(143,176,33,0.14)" : "rgba(176,241,34,0.10)",
                       color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)",

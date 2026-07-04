@@ -104,18 +104,19 @@ export default function ResetPasswordPage() {
         <p className="mt-2 text-sm text-[var(--color-text-muted)]">{subhead}</p>
 
         {!token ? (
-          <p className="mt-6 rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-800">
+          <p className="mt-6 rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-800" role="alert" aria-live="polite">
             {t.noToken.replace("{kind}", isInvite ? t.inviteTokenKind : t.resetTokenKind)}
           </p>
         ) : (
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
             <label className="block">
-              <span className="gh-field-label">{t.newPasswordLabel}</span>
+              <span className="gh-field-label" data-required>{t.newPasswordLabel}</span>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                aria-required="true"
                 minLength={8}
                 maxLength={128}
                 className="gh-input mt-1 min-w-0"
@@ -123,12 +124,13 @@ export default function ResetPasswordPage() {
               />
             </label>
             <label className="block">
-              <span className="gh-field-label">{t.confirmPasswordLabel}</span>
+              <span className="gh-field-label" data-required>{t.confirmPasswordLabel}</span>
               <input
                 type="password"
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 required
+                aria-required="true"
                 minLength={8}
                 maxLength={128}
                 className="gh-input mt-1 min-w-0"
@@ -143,6 +145,8 @@ export default function ResetPasswordPage() {
                     ? "bg-emerald-50 text-emerald-800"
                     : "bg-rose-50 text-rose-800"
                 }`}
+                role={msg.kind === "err" ? "alert" : "status"}
+                aria-live="polite"
               >
                 {msg.text}
               </p>

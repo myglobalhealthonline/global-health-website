@@ -73,7 +73,7 @@ export function DoctorsSection({ title, intro, doctors, theme = "dark", bare = f
         onClick={() => setPage((p) => Math.max(0, p - 1))}
         disabled={safePage === 0}
         aria-label="Previous page"
-        className="size-10 rounded-full border inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+        className="size-11 rounded-full border inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
         style={safePage === 0 ? inactiveStyle : activeStyle}
       >
         <ChevronLeft size={18} aria-hidden />
@@ -88,7 +88,7 @@ export function DoctorsSection({ title, intro, doctors, theme = "dark", bare = f
         onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
         disabled={safePage === totalPages - 1}
         aria-label="Next page"
-        className="size-10 rounded-full border inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+        className="size-11 rounded-full border inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
         style={safePage === totalPages - 1 ? inactiveStyle : activeStyle}
       >
         <ChevronRight size={18} aria-hidden />

@@ -116,16 +116,10 @@ export function ServiceCard({
       return (
         <article
           className={cn(
-            "group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] gh2-card",
+            "group relative flex h-full flex-col overflow-hidden gh2-glass gh2-glass-hover",
             "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
             className,
           )}
-          style={{
-            background: "rgba(255,255,255,0.045)",
-            border: "1px solid rgba(255,255,255,0.11)",
-            backdropFilter: "blur(18px)",
-            WebkitBackdropFilter: "blur(18px)",
-          }}
         >
           {overlay}
           {/* Photo */}
@@ -180,7 +174,7 @@ export function ServiceCard({
             </h3>
             <p
               className="mt-2 text-sm leading-relaxed line-clamp-2"
-              style={{ color: "rgba(255,255,255,0.55)" }}
+              style={{ color: "rgba(255,255,255,0.72)" }}
             >
               {description}
             </p>
@@ -233,15 +227,9 @@ export function ServiceCard({
     return (
       <article
         className={cn(
-          "group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)]",
-          "transition-[transform,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
-          "hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0",
+          "group relative flex h-full flex-col overflow-hidden gh2-glass gh2-glass-hover",
           className,
         )}
-        style={{
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.09)",
-        }}
       >
         {overlay}
         <div className="relative flex h-full flex-col p-6 sm:p-7">
@@ -253,7 +241,7 @@ export function ServiceCard({
           </h3>
           <p
             className="mt-2 flex-1 text-sm leading-relaxed"
-            style={{ color: "rgba(255,255,255,0.65)" }}
+            style={{ color: "rgba(255,255,255,0.72)" }}
           >
             {description}
           </p>
@@ -290,7 +278,7 @@ export function ServiceCard({
           ) : (
             <div
               className="mt-5 flex items-center gap-2 text-sm font-semibold transition-colors duration-200 group-hover:text-[var(--color-brand-accent)]"
-              style={{ color: "rgba(255,255,255,0.55)" }}
+              style={{ color: "rgba(255,255,255,0.72)" }}
             >
               <span>{learnLabel}</span>
               <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" aria-hidden />

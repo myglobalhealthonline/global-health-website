@@ -111,7 +111,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
   return (
     <form onSubmit={onSubmit} className="grid gap-6" suppressHydrationWarning>
       <div className="grid gap-2">
-        <label htmlFor="register-name" className="gh-field-label">
+        <label htmlFor="register-name" className="gh-field-label" data-required>
           {i18n.fullNameLabel}
         </label>
         <input
@@ -121,12 +121,13 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
           className="gh-input"
           placeholder={i18n.fullNamePlaceholder}
           required
+          aria-required="true"
           autoComplete="name"
         />
       </div>
 
       <div className="grid gap-2">
-        <label htmlFor="register-email" className="gh-field-label">
+        <label htmlFor="register-email" className="gh-field-label" data-required>
           {i18n.emailLabel}
         </label>
         <input
@@ -136,6 +137,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
           className="gh-input"
           placeholder={i18n.emailPlaceholder}
           required
+          aria-required="true"
           autoComplete="email"
         />
       </div>
@@ -148,7 +150,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
       </div>
 
       <div className="grid gap-2">
-        <label htmlFor="register-password" className="gh-field-label">
+        <label htmlFor="register-password" className="gh-field-label" data-required>
           {i18n.passwordLabel}
         </label>
         <div className="relative">
@@ -159,6 +161,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
             className="gh-input pr-12"
             placeholder={i18n.passwordHint}
             required
+            aria-required="true"
             minLength={8}
             autoComplete="new-password"
           />
@@ -198,7 +201,8 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
           className={`rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm ${
             isError ? "gh-status-error" : "gh-status-success"
           }`}
-          role="status"
+          role={isError ? "alert" : "status"}
+          aria-live="polite"
         >
           {message}
         </p>

@@ -137,7 +137,7 @@ export function ServicesGrid({
                 onClick={() => setPage((p) => p - 1)}
                 disabled={page === 0}
                 aria-label="Previous page"
-                className="size-10 rounded-full inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                className="size-11 rounded-full inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
                 style={page === 0 ? arrowInactive : arrowActive}
               >
                 <ChevronLeft size={18} />
@@ -146,7 +146,7 @@ export function ServicesGrid({
                 onClick={() => setPage((p) => p + 1)}
                 disabled={page >= totalPages - 1}
                 aria-label="Next page"
-                className="size-10 rounded-full inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                className="size-11 rounded-full inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
                 style={page >= totalPages - 1 ? arrowInactive : arrowActive}
               >
                 <ChevronRight size={18} />

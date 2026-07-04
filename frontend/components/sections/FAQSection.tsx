@@ -42,44 +42,51 @@ export function FAQSection({ title = "FAQs", items }: FAQSectionProps) {
         </div>
 
         {/* Accordion */}
-        <div className="mx-auto max-w-3xl">
-          {items.map((item, i) => (
-            <details
-              key={item.question}
-              className="group"
-              style={{
-                borderTop: i === 0 ? "1px solid rgba(255,255,255,0.08)" : undefined,
-                borderBottom: "1px solid rgba(255,255,255,0.08)",
-              }}
-            >
-              <summary className="gh-focus-on-dark flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 rounded-md py-5 md:py-6">
-                <span
-                  className="text-base font-semibold leading-snug transition-colors duration-200 group-hover:text-[var(--color-brand-accent)] motion-reduce:transition-none"
-                  style={{ color: "rgba(255,255,255,0.88)" }}
-                >
-                  {item.question}
-                </span>
-                <span
-                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-full transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none"
-                  style={{
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.10)",
-                    color: "var(--color-brand-accent)",
-                  }}
-                >
-                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                    <path d="M7 1V13M1 7H13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-                  </svg>
-                </span>
-              </summary>
-              <p
-                className="pb-6 text-sm leading-relaxed"
-                style={{ color: "rgba(255,255,255,0.78)", maxWidth: "62ch" }}
+        <div className="mx-auto flex max-w-3xl flex-col gap-3">
+          {items.map((item, i) => {
+            const summaryId = `faq-summary-${i}`;
+            const answerId = `faq-answer-${i}`;
+            return (
+              <details
+                key={item.question}
+                className="group rounded-[14px] border border-white/10 bg-white/[0.04] px-5 transition-colors duration-200 [&[open]]:bg-white/[0.07] motion-reduce:transition-none md:px-6"
               >
-                {item.answer}
-              </p>
-            </details>
-          ))}
+                <summary
+                  id={summaryId}
+                  aria-controls={answerId}
+                  className="gh-focus-on-dark flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 rounded-md py-5 md:py-6"
+                >
+                  <span
+                    className="text-base font-semibold leading-snug transition-colors duration-200 group-hover:text-[var(--color-brand-accent)] motion-reduce:transition-none"
+                    style={{ color: "rgba(255,255,255,0.88)" }}
+                  >
+                    {item.question}
+                  </span>
+                  <span
+                    className="inline-flex size-8 shrink-0 items-center justify-center rounded-full transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none"
+                    style={{
+                      background: "rgba(255,255,255,0.05)",
+                      border: "1px solid rgba(255,255,255,0.10)",
+                      color: "var(--color-brand-accent)",
+                    }}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                      <path d="M7 1V13M1 7H13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                    </svg>
+                  </span>
+                </summary>
+                <p
+                  id={answerId}
+                  role="region"
+                  aria-labelledby={summaryId}
+                  className="pb-6 text-sm leading-relaxed"
+                  style={{ color: "rgba(255,255,255,0.78)", maxWidth: "62ch" }}
+                >
+                  {item.answer}
+                </p>
+              </details>
+            );
+          })}
         </div>
       </div>
     </section>

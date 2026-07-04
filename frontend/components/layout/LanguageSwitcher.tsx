@@ -21,10 +21,7 @@ import { ChevronDown, Languages, Check } from "lucide-react";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { localeDisplayName } from "@/lib/i18n/locale-display";
 import { swapLangInPath } from "@/lib/routing/path-rewrites";
-
-function setLocaleCookie(loc: LocaleCode) {
-  document.cookie = `gh_locale=${loc}; path=/; max-age=31536000; SameSite=Lax`;
-}
+import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
 
 export function LanguageSwitcher({
   currentLang,
@@ -54,7 +51,8 @@ export function LanguageSwitcher({
   if (availableLocales.length <= 1) return null;
 
   const itemStyle = (isActive: boolean): React.CSSProperties => ({
-    padding: "9px 12px",
+    minHeight: 44,
+    padding: "10px 14px",
     borderRadius: 8,
     textDecoration: "none",
     background: isActive ? "var(--color-background-soft)" : "transparent",
@@ -136,10 +134,11 @@ export function LanguageSwitcher({
                       type="button"
                       role="menuitem"
                       onClick={() => {
-                        setLocaleCookie(loc);
+                        setClientLocaleCookie(loc);
                         setOpen(false);
                         window.location.href = swapped;
                       }}
+                      className="gh-switcher-item"
                       style={itemStyle(isActive)}
                     >
                       {label}
@@ -162,10 +161,11 @@ export function LanguageSwitcher({
                     type="button"
                     role="menuitem"
                     onClick={() => {
-                      setLocaleCookie(loc);
+                      setClientLocaleCookie(loc);
                       setOpen(false);
                       router.refresh();
                     }}
+                    className="gh-switcher-item"
                     style={itemStyle(isActive)}
                   >
                     {label}

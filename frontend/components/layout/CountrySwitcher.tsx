@@ -19,6 +19,7 @@ import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 import { parseSitePath, swapCountryInPath } from "@/lib/routing/path-rewrites";
 import { useCart } from "@/components/cart/CartContext";
 import { Flag } from "@/components/ui/Flag";
+import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
 
 export function CountrySwitcher({
   activeCountryCode,
@@ -62,8 +63,7 @@ export function CountrySwitcher({
       void clear();
     }
     setOpen(false);
-    // eslint-disable-next-line react-hooks/immutability -- hard navigation needs the locale cookie synced before reload.
-    globalThis.document.cookie = `gh_locale=${nextLang}; path=/; max-age=31536000; SameSite=Lax`;
+    setClientLocaleCookie(nextLang);
     globalThis.location.assign(nextHref);
   }
 
@@ -150,9 +150,10 @@ export function CountrySwitcher({
                     type="button"
                     onClick={() => handleSwitch(href, c.code, nextLang)}
                     role="menuitem"
-                    className="flex w-full cursor-pointer items-center justify-between gap-3"
+                    className="flex w-full cursor-pointer items-center justify-between gap-3 focus-visible:outline-none focus-visible:bg-[var(--color-brand-mint-soft)]"
                     style={{
-                      padding: "9px 12px",
+                      minHeight: 44,
+                      padding: "10px 14px",
                       borderRadius: 8,
                       border: "none",
                       textAlign: "left",

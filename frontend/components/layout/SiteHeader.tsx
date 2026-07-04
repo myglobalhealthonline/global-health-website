@@ -143,8 +143,17 @@ export function SiteHeader({
   // condenses into a floating rounded pill once the page scrolls.
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    onScroll();
+    let ticking = false;
+    const apply = () => {
+      setScrolled(window.scrollY > 20);
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(apply);
+    };
+    apply();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -235,7 +244,7 @@ export function SiteHeader({
             glass, shadow) once the page scrolls. Height stays constant — only
             width / radius / surface change, so nothing reflows. */}
         <div
-          className="grid items-center grid-cols-[auto_1fr_auto] gap-4 md:gap-6 px-4 md:px-6"
+          className="grid items-center grid-cols-[auto_minmax(0,1fr)_auto] gap-4 xl:gap-5 2xl:gap-6 px-4 md:px-6"
           style={{
             maxWidth: scrolled ? 1360 : 1760,
             marginInline: "auto",
@@ -270,7 +279,7 @@ export function SiteHeader({
 
         {/* Section tabs — only inside a country. Desktop-only (lg+); tablet
             and below collapse into the MobileNav drawer. */}
-        <div className="gh-header-navCenter hidden xl:flex">
+        <div className="gh-header-navCenter hidden min-w-0 justify-center xl:flex">
           {sectionItems.length > 0 ? <SectionNav items={sectionItems} variant="dark" /> : null}
         </div>
 
@@ -294,7 +303,7 @@ export function SiteHeader({
           <Link
             href={authUser ? "/account/notifications" : "/login"}
             aria-label="Notifications"
-            className="gh-focus-on-dark relative -mx-1 hidden size-11 items-center justify-center rounded-full text-white/85 transition-colors duration-200 hover:bg-white/12 hover:text-white xl:inline-flex"
+            className="gh-focus-on-dark relative hidden size-11 items-center justify-center rounded-full text-white/85 transition-colors duration-200 hover:bg-white/12 hover:text-white xl:inline-flex"
           >
             <Bell className="size-4" strokeWidth={2} aria-hidden />
             <span
@@ -326,7 +335,7 @@ export function SiteHeader({
                   : "Your account"
               }
               title={authUser.email ?? undefined}
-              className="gh-focus-on-dark group -mx-1 hidden size-11 items-center justify-center rounded-full transition-transform duration-200 active:scale-95 xl:inline-flex"
+              className="gh-focus-on-dark group hidden size-11 items-center justify-center rounded-full transition-transform duration-200 active:scale-95 xl:inline-flex"
             >
               {/* 44px hit area; 36px visual circle so the tight lg header row
                   keeps its previous width. */}
@@ -341,7 +350,7 @@ export function SiteHeader({
           <Link
             href={bookHref}
             aria-label="Book an appointment"
-            className="gh-header-bookCta gh-focus-on-dark group hidden min-h-11 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-[var(--color-brand-accent)] pl-5 pr-4 py-3 text-sm font-extrabold tracking-[-0.01em] text-[#0a1f14] shadow-[0_4px_16px_rgba(176,241,34,0.22)] transition-[transform,box-shadow,filter] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-105 hover:shadow-[0_10px_30px_rgba(176,241,34,0.32)] active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 xl:inline-flex"
+            className="gh-header-bookCta gh-focus-on-dark group hidden min-h-12 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-[var(--color-brand-accent)] pl-5 pr-4 py-3 text-sm font-extrabold tracking-[-0.01em] text-[#0a1f14] shadow-[0_4px_16px_rgba(176,241,34,0.22)] transition-[transform,box-shadow,filter] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-105 hover:shadow-[0_10px_30px_rgba(176,241,34,0.32)] active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 xl:inline-flex"
           >
             {navigation.navBookAppointment}
             <ArrowUpRight

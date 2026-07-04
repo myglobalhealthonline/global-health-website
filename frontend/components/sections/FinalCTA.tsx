@@ -119,14 +119,14 @@ export function FinalCTA({
               <div className="mt-10 flex flex-wrap gap-3">
                 <Link
                   href={primaryHref}
-                  className="gh2-btn-lime focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]/60"
+                  className="gh2-btn-lime gh-focus-on-dark"
                 >
                   {i18n?.primaryCta ?? "Book Appointment"}
                   <ArrowUpRight className="size-4" strokeWidth={2} aria-hidden />
                 </Link>
                 <Link
                   href={secondaryHref}
-                  className="gh2-btn-ghost focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                  className="gh2-btn-ghost gh-focus-on-dark"
                 >
                   {i18n?.secondaryCta ?? "View doctors"}
                 </Link>

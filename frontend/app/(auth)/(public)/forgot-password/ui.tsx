@@ -42,7 +42,7 @@ export function ForgotPasswordForm({ i18n = DEFAULT_I18N }: { i18n?: ForgotPassw
   return (
     <form action={onSubmit} className="mt-7 grid gap-5">
       <div className="grid gap-2">
-        <label htmlFor="forgot-email" className="gh-field-label">
+        <label htmlFor="forgot-email" className="gh-field-label" data-required>
           {i18n.emailLabel}
         </label>
         <input
@@ -52,6 +52,7 @@ export function ForgotPasswordForm({ i18n = DEFAULT_I18N }: { i18n?: ForgotPassw
           className="gh-input"
           placeholder={i18n.emailPlaceholder}
           required
+          aria-required="true"
           autoComplete="email"
         />
       </div>
@@ -69,7 +70,8 @@ export function ForgotPasswordForm({ i18n = DEFAULT_I18N }: { i18n?: ForgotPassw
           className={`rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm ${
             isError ? "gh-status-error" : "gh-status-success"
           }`}
-          role="status"
+          role={isError ? "alert" : "status"}
+          aria-live="polite"
         >
           {message}
         </p>

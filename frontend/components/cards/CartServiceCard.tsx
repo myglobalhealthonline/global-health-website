@@ -85,16 +85,14 @@ export function CartServiceCard({
   if (hasImage) {
     return (
       <article
-        className="group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] gh2-card motion-reduce:transition-none"
-        style={{
-          background: "rgba(255,255,255,0.045)",
-          border: "1px solid rgba(255,255,255,0.11)",
-          backdropFilter: "blur(18px)",
-          WebkitBackdropFilter: "blur(18px)",
-        }}
+        className="group relative flex h-full flex-col overflow-hidden gh2-glass motion-reduce:transition-none"
+        data-soldout={soldOut || undefined}
       >
         {/* Product photo */}
-        <div className="relative overflow-hidden" style={{ aspectRatio: "16 / 10" }}>
+        <div
+          className={`relative overflow-hidden ${soldOut ? "opacity-60" : ""}`}
+          style={{ aspectRatio: "16 / 10" }}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={trimmed!}
@@ -109,7 +107,7 @@ export function CartServiceCard({
           {/* Price chip — top-right overlay */}
           {startingPrice ? (
             <span
-              className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold"
+              className={`absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold ${soldOut ? "line-through" : ""}`}
               style={{
                 background: "var(--color-brand-accent)",
                 color: "#0a1f14",
@@ -145,7 +143,7 @@ export function CartServiceCard({
           {description ? (
             <p
               className="mt-2 text-sm leading-relaxed line-clamp-2"
-              style={{ color: "rgba(255,255,255,0.55)" }}
+              style={{ color: "rgba(255,255,255,0.72)" }}
             >
               {description}
             </p>
@@ -218,14 +216,8 @@ export function CartServiceCard({
 
   // No image — glass card (matches ServiceCard dark no-image variant)
   return (
-    <article
-      className="group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)]"
-      style={{
-        background: "rgba(255,255,255,0.04)",
-        border: "1px solid rgba(255,255,255,0.09)",
-      }}
-    >
-      <div className="flex h-full flex-col p-6 sm:p-7">
+    <article className="group flex h-full flex-col overflow-hidden gh2-glass" data-soldout={soldOut || undefined}>
+      <div className={`flex h-full flex-col p-6 sm:p-7 ${soldOut ? "opacity-60" : ""}`}>
         <h3
           className="text-lg font-bold tracking-[-0.01em]"
           style={{ color: "rgba(255,255,255,0.88)" }}
@@ -235,7 +227,7 @@ export function CartServiceCard({
         {description ? (
           <p
             className="mt-2 flex-1 text-sm leading-relaxed line-clamp-3"
-            style={{ color: "rgba(255,255,255,0.65)" }}
+            style={{ color: "rgba(255,255,255,0.72)" }}
           >
             {description}
           </p>
@@ -247,7 +239,7 @@ export function CartServiceCard({
               c.type === "price" ? (
                 <span
                   key={c.label}
-                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${soldOut ? "line-through" : ""}`}
                   style={{
                     background: "rgba(176,241,34,0.12)",
                     color: "var(--color-brand-accent)",

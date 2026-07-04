@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -15,6 +15,7 @@ import {
   User,
 } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
+import { MobileOrderTotalBar } from "@/components/cart/MobileOrderTotalBar";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { startCheckout } from "@/lib/api/cart-client";
 import { getCartPreview } from "@/lib/api/me-subscription";
@@ -55,6 +56,7 @@ export default function CheckoutPage() {
   const { cart, loading } = useCart();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const [me, setMe] = useState<AuthUser | null>(null);
   const [authLoaded, setAuthLoaded] = useState(false);
   // Plan savings the subscriber selected — so the pay button + total match the
@@ -228,7 +230,7 @@ export default function CheckoutPage() {
         activeStep={2}
         steps={steps}
       />
-      <section className="bg-[var(--color-background-soft)] px-5 py-12 sm:py-16">
+      <section className="bg-[var(--color-background-soft)] px-5 pb-28 pt-12 sm:py-16 md:pb-16">
         <div className="mx-auto max-w-[var(--container-width)]">
           <Link href={cartHref} className="gh-link inline-flex items-center gap-1.5 text-sm">
             <ArrowLeft className="size-4" aria-hidden />
@@ -237,6 +239,7 @@ export default function CheckoutPage() {
 
           <div className="mt-6 grid items-start gap-8 lg:grid-cols-[1fr_380px]">
             <form
+              ref={formRef}
               onSubmit={onSubmit}
               className="gh-card p-6 sm:p-8"
               style={{ boxShadow: "var(--shadow-card)" }}
@@ -414,6 +417,7 @@ export default function CheckoutPage() {
 
             {/* Order summary */}
             <aside
+              id="checkout-order-summary"
               className="gh-card self-start overflow-hidden lg:sticky lg:top-[calc(var(--header-height)+16px)]"
               style={{ boxShadow: "var(--shadow-card)" }}
             >
@@ -527,6 +531,14 @@ export default function CheckoutPage() {
           </div>
         </div>
       </section>
+      <MobileOrderTotalBar
+        totalLabel={t.total}
+        formattedTotal={formatPrice(payableTotal, cart.currencyCode)}
+        actionLabel={submitting ? t.redirecting : t.paySecurely.replace("{amount}", formatPrice(payableTotal, cart.currencyCode))}
+        onAction={() => formRef.current?.requestSubmit()}
+        pending={submitting}
+        watchTargetId="checkout-order-summary"
+      />
     </>
   );
 }
