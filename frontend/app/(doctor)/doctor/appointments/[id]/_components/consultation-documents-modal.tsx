@@ -173,11 +173,15 @@ export function ConsultationDocumentsModal({
   }, [appointmentId]);
 
   useEffect(() => {
+    // Client-only mount flag to gate portal rendering until hydrated.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
   useEffect(() => {
     if (!open) return;
+    // Reset transient status + refetch context each time the modal opens.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setError(null);
     setSuccess(null);
     void loadContext();
@@ -229,6 +233,8 @@ export function ConsultationDocumentsModal({
 
   useEffect(() => {
     if (!open || editDraft || !context?.patient.pharmacy) return;
+    // Backfill pharmacy from patient context only if the field is still empty.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPharmacy((prev) => prev || context.patient.pharmacy || "");
   }, [open, editDraft, context?.patient.pharmacy]);
 

@@ -28,7 +28,6 @@ function toDatetimeLocalValue(iso: string | null): string {
 
 export async function UpdateAppointmentPanel({
   appointmentId,
-  orderId,
   countryCode,
   returnPath,
   error,

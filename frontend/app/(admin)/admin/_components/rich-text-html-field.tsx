@@ -14,9 +14,7 @@ type Props = {
 // execCommand is deprecated but no cross-browser contenteditable API replaces it.
 // Wrapper centralises the suppressed-deprecation surface area.
 // Track: https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand
-// eslint-disable-next-line @typescript-eslint/no-deprecated
 function execRichText(command: string, value?: string) {
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
   document.execCommand(command, false, value ?? "");
 }
 

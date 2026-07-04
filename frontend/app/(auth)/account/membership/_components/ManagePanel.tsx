@@ -94,6 +94,8 @@ export function ManagePanel(props: ManagePanelProps) {
 
   useEffect(() => {
     if (!shouldConfirm) {
+      // Sync confirm phase back to idle when the triggering prop clears.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setConfirmPhase("idle");
       return;
     }
