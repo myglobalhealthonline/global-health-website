@@ -6,6 +6,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import type { SafeUser } from "../modules/auth/auth.service.js";
+import { notifyAdmins, notifyUser } from "../modules/notifications/notify.service.js";
 
 /**
  * Patient ↔ admin chat thread per appointment.
@@ -159,6 +160,16 @@ const chatRoute: FastifyPluginAsync = async (app) => {
           },
         });
 
+        // Surface the message on the admin bell. Best-effort — never fail the
+        // send if the notification write errors.
+        notifyAdmins("PATIENT_MESSAGE", {
+          appointmentId: params.data.id,
+          snippet: body.data.body.slice(0, 140),
+          byUserName: user.fullName,
+          byRole: "PATIENT",
+          channel: "clinic",
+        }).catch((e) => app.log.error(e));
+
         const items = await listMessages(params.data.id);
         return okResponse({ items });
       } catch (err) {
@@ -286,7 +297,7 @@ const chatRoute: FastifyPluginAsync = async (app) => {
       try {
         const exists = await prisma.appointment.findUnique({
           where: { id: params.data.id },
-          select: { id: true },
+          select: { id: true, userId: true },
         });
         if (!exists) return reply.status(404).send(errorResponse("Appointment not found"));
 
@@ -301,6 +312,17 @@ const chatRoute: FastifyPluginAsync = async (app) => {
           },
         });
 
+        // Notify the patient's bell that the clinic replied.
+        if (exists.userId) {
+          notifyUser(exists.userId, "MESSAGE_REPLY", {
+            appointmentId: params.data.id,
+            title: "New message from the clinic",
+            body: body.data.body.slice(0, 140),
+            href: "/account/bookings",
+            channel: "clinic",
+          }).catch((e) => app.log.error(e));
+        }
+
         const items = await listMessages(params.data.id);
         return okResponse({ items });
       } catch (err) {
@@ -309,6 +331,90 @@ const chatRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(err);
         return reply.status(500).send(errorResponse("Could not send message"));
+      }
+    },
+  );
+
+  // ── Admin: inbox — all patient↔admin threads ─────────────────────
+  // Powers the admin "Messages" tab: one row per appointment that has at
+  // least one message, newest activity first, with a per-thread unread
+  // (patient→admin) count.
+  app.get(
+    "/api/admin/message-threads",
+    { config: { rateLimit: { max: 120, timeWindow: "1 minute" } } },
+    async (request, reply) => {
+      let user: SafeUser | null = null;
+      try {
+        user = await resolveOptionalAuthUser(request);
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Unexpected authentication error"));
+      }
+      if (!user) return reply.status(401).send(errorResponse("Not authenticated"));
+      if (user.role !== "ADMIN") return reply.status(403).send(errorResponse("Forbidden"));
+
+      try {
+        const appts = await prisma.appointment.findMany({
+          where: { messages: { some: {} } },
+          orderBy: { updatedAt: "desc" },
+          take: 100,
+          select: {
+            id: true,
+            consultationType: true,
+            countryCode: true,
+            createdAt: true,
+            user: { select: { fullName: true, email: true } },
+            messages: {
+              orderBy: { createdAt: "desc" },
+              take: 1,
+              select: { body: true, authorRole: true, createdAt: true },
+            },
+          },
+        });
+
+        const ids = appts.map((a) => a.id);
+        const unread = ids.length
+          ? await prisma.message.groupBy({
+              by: ["appointmentId"],
+              where: {
+                appointmentId: { in: ids },
+                authorRole: MessageAuthorRole.PATIENT,
+                readByAdmin: false,
+              },
+              _count: { _all: true },
+            })
+          : [];
+        const unreadMap = new Map(unread.map((u) => [u.appointmentId, u._count._all]));
+
+        const items = appts.map((a) => {
+          const last = a.messages[0];
+          return {
+            appointmentId: a.id,
+            patientName: a.user?.fullName ?? "Unknown patient",
+            patientEmail: a.user?.email ?? null,
+            consultationType: a.consultationType,
+            countryCode: a.countryCode,
+            lastMessage: last
+              ? {
+                  body: last.body,
+                  authorRole: last.authorRole,
+                  createdAt: last.createdAt.toISOString(),
+                }
+              : null,
+            unreadCount: unreadMap.get(a.id) ?? 0,
+          };
+        });
+
+        return okResponse({ items });
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Could not load message threads"));
       }
     },
   );

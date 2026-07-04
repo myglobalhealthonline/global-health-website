@@ -16,6 +16,7 @@ import {
   LayoutDashboard,
   Mail,
   Menu,
+  MessagesSquare,
   Newspaper,
   ReceiptText,
   ShoppingBag,
@@ -59,6 +60,7 @@ const GLOBAL_ICONS: Record<string, LucideIcon> = {
   "/admin/assets": ImageIcon,
   "/admin/users": Users,
   "/admin/patients": HeartPulse,
+  "/admin/messages": MessagesSquare,
   "/admin/newsletter": Mail,
   "/admin/orders": ShoppingBag,
   "/admin/invoices": ReceiptText,
@@ -81,6 +83,7 @@ const GLOBAL_HREFS = new Set([
   "/admin/assets",
   "/admin/users",
   "/admin/patients",
+  "/admin/messages",
   "/admin/orders",
   "/admin/invoices",
   "/admin/automation",
@@ -97,7 +100,7 @@ const GLOBAL_HREFS = new Set([
 const GLOBAL_GROUPS: { label: string; hrefs: string[] }[] = [
   { label: "Overview", hrefs: ["/admin", "/admin/calendar"] },
   { label: "Catalog", hrefs: ["/admin/countries", "/admin/doctors", "/admin/assets", "/admin/blog"] },
-  { label: "People", hrefs: ["/admin/users", "/admin/patients"] },
+  { label: "People", hrefs: ["/admin/users", "/admin/patients", "/admin/messages"] },
   { label: "Commerce", hrefs: ["/admin/orders", "/admin/invoices", "/admin/subscriptions"] },
   { label: "System", hrefs: ["/admin/newsletter", "/admin/automation", "/admin/audit-log"] },
 ];
@@ -515,12 +518,8 @@ export function AdminShell({
                 <NotificationPopover
                   items={notifications?.items ?? []}
                   unreadCount={notifications?.unreadCount ?? 0}
-                  viewAllHref={
-                    notifications && notifications.unreadCount > 0
-                      ? "/admin/doctors"
-                      : null
-                  }
-                  emptyMessage="You're all caught up. New approval requests will appear here."
+                  viewAllHref="/admin/messages"
+                  emptyMessage="You're all caught up. Patient messages and approval requests appear here."
                 />
 
                 <span

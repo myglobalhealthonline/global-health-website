@@ -11,6 +11,7 @@ import {
   Gift,
   History,
   LayoutDashboard,
+  MessagesSquare,
   PillBottle,
   ShieldCheck,
   ShoppingBag,
@@ -85,7 +86,8 @@ export default async function AccountLayout({ children }: { children: ReactNode 
     {
       label: "Care",
       items: [
-        { href: "/account/bookings", label: a.nav.myBookings, icon: <CalendarDays className="size-4" aria-hidden />, badge: unreadMessages },
+        { href: "/account/bookings", label: a.nav.myBookings, icon: <CalendarDays className="size-4" aria-hidden /> },
+        { href: "/account/messages", label: "Messages", icon: <MessagesSquare className="size-4" aria-hidden />, badge: unreadMessages },
         { href: "/account/calendar", label: "Calendar", icon: <CalendarRange className="size-4" aria-hidden /> },
         { href: "/account/prescriptions", label: a.nav.prescriptions, icon: <PillBottle className="size-4" aria-hidden /> },
         { href: "/account/medical-files", label: "Medical files", icon: <FileText className="size-4" aria-hidden /> },

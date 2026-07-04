@@ -9,6 +9,7 @@ import {
   CalendarRange,
   FileText,
   LayoutDashboard,
+  MessagesSquare,
   Receipt,
   Stethoscope,
   UserCog,
@@ -50,6 +51,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
   const NOTIF_TYPE_LABEL: Record<string, string> = {
     APPOINTMENT_ASSIGNED: "Appointment assigned",
     INTERNAL_MESSAGE: "Internal message",
+    PATIENT_MESSAGE: "New patient message",
     CONSULT_SIGNED: "Consultation signed",
     EXAM_LOGGED: "Exam result logged",
     FORM_SUBMITTED: "Form submitted",
@@ -106,7 +108,8 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     {
       label: "Schedule",
       items: [
-        { href: "/doctor/appointments", label: "Appointments", icon: <Calendar className="size-4" aria-hidden />, badge: unreadMessages },
+        { href: "/doctor/appointments", label: "Appointments", icon: <Calendar className="size-4" aria-hidden /> },
+        { href: "/doctor/messages", label: "Messages", icon: <MessagesSquare className="size-4" aria-hidden />, badge: unreadMessages },
         { href: "/doctor/calendar", label: "Calendar", icon: <CalendarRange className="size-4" aria-hidden /> },
         { href: "/doctor/availability", label: "Availability", icon: <CalendarClock className="size-4" aria-hidden /> },
       ],
