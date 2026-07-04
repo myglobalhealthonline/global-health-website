@@ -72,9 +72,19 @@ export default async function AccountOverviewPage() {
       new Date(a.scheduledAt).getTime() <= now + sevenDaysMs,
   ).length;
   const totalBookings = appointments.length;
-  const paidPayments = payments.filter((payment) => payment.status === "PAID").length;
-  const paymentActionCount = payments.filter((payment) =>
-    ["FAILED", "REQUIRES_ACTION", "UNPAID"].includes(payment.status),
+  // Paid / needs-action counts mirror the bookings screen, which reads the
+  // authoritative `Appointment.paymentStatus`. The separate Payment ledger
+  // (`fetchAccountPayments`) can be empty or lag for appointments marked paid
+  // outside Stripe (e.g. admin/manual bookings), which showed "0 paid" on the
+  // dashboard even though the bookings list said PAID. The Payment ledger is
+  // still used below for the "receipts on file" hint.
+  const paidPayments = appointments.filter(
+    (a) => a.paymentStatus === "PAID",
+  ).length;
+  const paymentActionCount = appointments.filter(
+    (a) =>
+      (a.amountCents ?? 0) > 0 &&
+      ["FAILED", "REQUIRES_ACTION", "UNPAID"].includes(a.paymentStatus),
   ).length;
 
   // ── Next scheduled call ────────────────────────────────────────────
