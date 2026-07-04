@@ -185,7 +185,7 @@ export default async function AboutPage() {
 
 function AboutArchPanel({ locale }: { locale: { float1_title: string; float1_subtitle: string; float2_title: string; float2_subtitle: string; float3_title: string; float3_subtitle: string } }) {
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[620px]">
+    <div className="relative mx-auto aspect-square w-full max-w-[500px]">
       <HeroPlusImage
         src="/images/stock/about.jpg"
         alt="Telemedicine care team reviewing a secure digital health dashboard"

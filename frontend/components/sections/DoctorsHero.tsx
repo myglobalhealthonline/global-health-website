@@ -14,9 +14,9 @@ import {
 /**
  * Premium doctors-page hero (clinical-editorial gh2 system).
  *
- * Stacked composition: editorial type + dual CTA + trust-card row on top;
- * plus-shaped team portrait with overlapping glass info cards centered
- * below. Deep forest-night canvas, single lime accent, dotted-grid
+ * Two-column composition: editorial type + dual CTA + trust-card row on
+ * the left; plus-shaped team portrait with overlapping glass info cards
+ * on the right. Deep forest-night canvas, single lime accent, dotted-grid
  * atmosphere + medical-plus pattern. Purpose-built for /[country]/[lang]/
  * doctors — NOT the shared PageHero (which other service pages reuse).
  *
@@ -161,7 +161,7 @@ export function DoctorsHero({
       {/* Lime bloom behind the portrait */}
       <div
         aria-hidden
-        className="gh-medical-pattern-layer pointer-events-none bottom-[-8%] left-1/2 hidden -translate-x-1/2 lg:block"
+        className="gh-medical-pattern-layer pointer-events-none right-[-6%] top-[6%] hidden lg:block"
         style={{
           width: 560,
           height: 560,
@@ -179,9 +179,9 @@ export function DoctorsHero({
           paddingBottom: "clamp(20px,3.5vw,40px)",
         }}
       >
-        <div className="flex flex-col items-center gap-12">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
           {/* ── LEFT — type, CTAs, trust cards ───────────────────────── */}
-          <div className="w-full max-w-[760px]">
+          <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">
               {eyebrow}
             </p>
@@ -273,9 +273,9 @@ export function DoctorsHero({
             </ul>
           </div>
 
-          {/* ── BELOW — plus-shaped portrait + floating info cards ───── */}
-          <aside className="relative flex w-full justify-center">
-            <div className="relative mx-auto aspect-square w-full max-w-[640px]">
+          {/* ── RIGHT — plus-shaped portrait + floating info cards ───── */}
+          <aside className="relative hidden lg:block">
+            <div className="relative mx-auto aspect-square w-full max-w-[520px]">
               <HeroPlusImage src={heroImage.src} alt={heroImage.alt} />
 
               {/* Floating card — Available today (upper-right) */}

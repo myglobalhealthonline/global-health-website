@@ -298,7 +298,7 @@ export function PageHero({
     );
   }
 
-  // Default variant — compact hero with plus-shaped image stacked under the text
+  // Default variant — compact hero with plus-shaped image in right slot
   const hasRightColumn = Boolean(rightSlot || heroImage);
   const watermarkText = watermark ?? countryLabel ?? "";
 
@@ -323,8 +323,8 @@ export function PageHero({
           paddingBottom: "clamp(20px,3.5vw,40px)",
         }}
       >
-        <div className={hasRightColumn ? "flex flex-col items-center gap-12" : ""}>
-          <div className={hasRightColumn ? "w-full max-w-[720px]" : ""}>
+        <div className={hasRightColumn ? "grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14" : ""}>
+          <div>
             {countryCode || countryLabel ? (
               <p className="flex flex-wrap items-center gap-3">
                 {countryCode ? <Flag code={countryCode} size="sm" /> : null}
@@ -416,7 +416,7 @@ export function PageHero({
           </div>
 
           {rightSlot || heroImage ? (
-            <aside className="relative flex w-full justify-center">
+            <aside className="relative hidden lg:block">
               {rightSlot ?? (heroImage ? <HeroImagePanel image={heroImage} /> : null)}
             </aside>
           ) : null}
@@ -428,7 +428,7 @@ export function PageHero({
 
 function HeroImagePanel({ image }: { image: { src: string; alt: string; priority?: boolean } }) {
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[620px]">
+    <div className="relative mx-auto aspect-square w-full max-w-[500px]">
       <HeroPlusImage src={image.src} alt={image.alt} />
     </div>
   );

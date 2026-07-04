@@ -148,7 +148,7 @@ export default async function ContactPage() {
 
 function ContactArchPanel({ locale }: { locale: { float1_title: string; float1_subtitle: string; float2_title: string; float2_subtitle: string; float3_title: string; float3_subtitle: string } }) {
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[620px]">
+    <div className="relative mx-auto aspect-square w-full max-w-[500px]">
       <HeroPlusImage
         src="/images/stock/contact.jpg"
         alt="Telehealth care coordinator supporting a patient through an online consultation platform"
