@@ -108,6 +108,16 @@ const LOGOS_BY_COUNTRY: Record<string, CountryCertificationLogo[]> = {
       tone: "light",
     },
     {
+      name: "Livro de Reclamacoes",
+      alt: "Livro de Reclamacoes Eletronico",
+      src: "/logos/partners/livro-de-reclamacoes.png",
+      href: "https://www.livroreclamacoes.pt/",
+      width: 1106,
+      height: 202,
+      kind: "authority",
+      tone: "light",
+    },
+    {
       name: "Medicare",
       alt: "Medicare Portugal",
       src: "/logos/partners/medicare-pt.svg",
