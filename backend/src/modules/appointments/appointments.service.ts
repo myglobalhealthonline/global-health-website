@@ -9,6 +9,7 @@ import {
   UnrecognizedAppointmentStatusError,
 } from "./appointment-status-transitions.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { mapAppointmentOrderNumbers } from "../orders/appointment-order-number.js";
 import {
   claimDoctorSlot,
   SlotAlreadyTakenError,
@@ -279,6 +280,10 @@ export type AccountAppointmentListItem = {
   /** Assigned doctor's full name (null when no doctor is assigned yet).
    *  Surfaced so the patient calendar can show who they're meeting. */
   doctorName: string | null;
+  /** Human-facing order reference (e.g. ORD-000001), null when the
+   *  appointment isn't linked to an order. Shown alongside the patient
+   *  name in the Messages inbox. */
+  orderNumber: string | null;
 };
 
 export type AccountAppointmentDetail = {
@@ -556,6 +561,8 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
       take: 200,
     });
 
+    const orderNumbers = await mapAppointmentOrderNumbers(rows.map((r) => r.id));
+
     return rows.map((row) => ({
       id: row.id,
       countryCode: row.countryCode,
@@ -578,6 +585,7 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
       locationAddress: row.locationAddress,
       patientTimezone: row.patientTimezone ?? null,
       doctorName: row.doctor?.fullName ?? null,
+      orderNumber: orderNumbers.get(row.id) ?? null,
     }));
   } catch (error) {
     throw normalizeDbError(error, "Appointments are temporarily unavailable");

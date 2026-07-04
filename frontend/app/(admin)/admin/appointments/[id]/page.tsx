@@ -481,14 +481,17 @@ export default async function AdminAppointmentDetailPage({
           </AdminCard>
 
           {/* Patient ↔ admin chat for this appointment. Polling-based;
-              only loads when this page is in view. */}
-          <AdminCard>
-            <h3 className="gh-admin-card-title">Patient chat</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
-              Pre-consult messages. The patient sees replies on /account/bookings.
-            </p>
-            <AdminAppointmentChat appointmentId={appointment.id} />
-          </AdminCard>
+              only loads when this page is in view. `id` is the deep-link
+              target for the notification bell. */}
+          <div id="patient-chat" className="scroll-mt-24">
+            <AdminCard>
+              <h3 className="gh-admin-card-title">Patient chat</h3>
+              <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+                Pre-consult messages. The patient sees replies in their Messages tab.
+              </p>
+              <AdminAppointmentChat appointmentId={appointment.id} />
+            </AdminCard>
+          </div>
 
           {/* Internal (doctor ↔ admin) per-appointment notes. NOT
               patient-visible. Same thread surface as on the doctor portal

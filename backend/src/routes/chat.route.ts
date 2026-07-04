@@ -1,12 +1,13 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
-import { MessageAuthorRole } from "@prisma/client";
+import { MessageAuthorRole, ChatAuthorRole } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import type { SafeUser } from "../modules/auth/auth.service.js";
 import { notifyAdmins, notifyUser } from "../modules/notifications/notify.service.js";
+import { mapAppointmentOrderNumbers } from "../modules/orders/appointment-order-number.js";
 
 /**
  * Patient ↔ admin chat thread per appointment.
@@ -216,6 +217,80 @@ const chatRoute: FastifyPluginAsync = async (app) => {
     },
   );
 
+  // ── Patient: per-appointment unread counts ───────────────────────
+  // Powers the patient "Messages" tab so each booking can show which of its
+  // two threads (clinic / doctor) has new messages. Returns one entry per
+  // appointment that currently has any unread message for this patient.
+  app.get(
+    "/api/account/message-threads",
+    { config: { rateLimit: { max: 120, timeWindow: "1 minute" } } },
+    async (request, reply) => {
+      let user: SafeUser | null = null;
+      try {
+        user = await resolveOptionalAuthUser(request);
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Unexpected authentication error"));
+      }
+      if (!user) return reply.status(401).send(errorResponse("Not authenticated"));
+
+      try {
+        const [clinic, doctor] = await Promise.all([
+          prisma.message.groupBy({
+            by: ["appointmentId"],
+            where: {
+              appointment: { userId: user.id },
+              authorRole: MessageAuthorRole.ADMIN,
+              readByPatient: false,
+            },
+            _count: { _all: true },
+          }),
+          prisma.consultationMessage.groupBy({
+            by: ["appointmentId"],
+            where: {
+              appointment: { userId: user.id },
+              authorRole: ChatAuthorRole.DOCTOR,
+              readByPatient: false,
+            },
+            _count: { _all: true },
+          }),
+        ]);
+
+        const map = new Map<
+          string,
+          { appointmentId: string; unreadClinic: number; unreadDoctor: number }
+        >();
+        for (const c of clinic) {
+          map.set(c.appointmentId, {
+            appointmentId: c.appointmentId,
+            unreadClinic: c._count._all,
+            unreadDoctor: 0,
+          });
+        }
+        for (const d of doctor) {
+          const entry = map.get(d.appointmentId) ?? {
+            appointmentId: d.appointmentId,
+            unreadClinic: 0,
+            unreadDoctor: 0,
+          };
+          entry.unreadDoctor = d._count._all;
+          map.set(d.appointmentId, entry);
+        }
+
+        return okResponse({ items: Array.from(map.values()) });
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Could not load unread counts"));
+      }
+    },
+  );
+
   // ── Admin surface ───────────────────────────────────────────────
   app.get(
     "/api/admin/appointments/:id/messages",
@@ -318,7 +393,7 @@ const chatRoute: FastifyPluginAsync = async (app) => {
             appointmentId: params.data.id,
             title: "New message from the clinic",
             body: body.data.body.slice(0, 140),
-            href: "/account/bookings",
+            href: `/account/messages?open=${params.data.id}&channel=clinic`,
             channel: "clinic",
           }).catch((e) => app.log.error(e));
         }
@@ -376,23 +451,27 @@ const chatRoute: FastifyPluginAsync = async (app) => {
         });
 
         const ids = appts.map((a) => a.id);
-        const unread = ids.length
-          ? await prisma.message.groupBy({
-              by: ["appointmentId"],
-              where: {
-                appointmentId: { in: ids },
-                authorRole: MessageAuthorRole.PATIENT,
-                readByAdmin: false,
-              },
-              _count: { _all: true },
-            })
-          : [];
+        const [unread, orderNumbers] = await Promise.all([
+          ids.length
+            ? prisma.message.groupBy({
+                by: ["appointmentId"],
+                where: {
+                  appointmentId: { in: ids },
+                  authorRole: MessageAuthorRole.PATIENT,
+                  readByAdmin: false,
+                },
+                _count: { _all: true },
+              })
+            : Promise.resolve([]),
+          mapAppointmentOrderNumbers(ids),
+        ]);
         const unreadMap = new Map(unread.map((u) => [u.appointmentId, u._count._all]));
 
         const items = appts.map((a) => {
           const last = a.messages[0];
           return {
             appointmentId: a.id,
+            orderNumber: orderNumbers.get(a.id) ?? null,
             patientName: a.user?.fullName ?? "Unknown patient",
             patientEmail: a.user?.email ?? null,
             consultationType: a.consultationType,

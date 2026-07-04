@@ -78,7 +78,9 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
         id: n.id,
         title: NOTIF_TYPE_LABEL[n.type] ?? n.type,
         body: n.payload?.snippet ?? null,
-        href: appointmentId ? `/doctor/appointments/${appointmentId}` : "/doctor/notifications",
+        href: appointmentId
+          ? `/doctor/appointments/${appointmentId}?tab=messages#patient-chat`
+          : "/doctor/notifications",
         createdAt: n.createdAt,
         readAt: n.readAt,
       };

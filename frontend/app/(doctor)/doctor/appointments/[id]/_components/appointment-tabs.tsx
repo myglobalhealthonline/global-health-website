@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import { useSearchParams } from "next/navigation";
 import { DOCTOR_FOCUS_REVIEW_SEND_EVENT } from "@/lib/doctor-appointment-ui";
 import { PortalTabs } from "@/components/PortalTabs";
 
@@ -33,11 +34,15 @@ export function AppointmentTabs({
   tabs: AppointmentTab[];
   initialTabId?: string;
 }) {
-  const [active, setActive] = useState<string>(
-    initialTabId && tabs.some((t) => t.id === initialTabId)
-      ? initialTabId
-      : tabs[0]?.id ?? "",
-  );
+  const searchParams = useSearchParams();
+  // Deep-link: `?tab=<id>` (e.g. from the notification bell) selects the
+  // starting tab, falling back to the `initialTabId` prop then the first tab.
+  const tabParam = searchParams.get("tab");
+  const [active, setActive] = useState<string>(() => {
+    if (tabParam && tabs.some((t) => t.id === tabParam)) return tabParam;
+    if (initialTabId && tabs.some((t) => t.id === initialTabId)) return initialTabId;
+    return tabs[0]?.id ?? "";
+  });
 
   useEffect(() => {
     const handler = () => {
@@ -48,6 +53,20 @@ export function AppointmentTabs({
     window.addEventListener(DOCTOR_FOCUS_REVIEW_SEND_EVENT, handler);
     return () => window.removeEventListener(DOCTOR_FOCUS_REVIEW_SEND_EVENT, handler);
   }, [tabs]);
+
+  // After activating a tab via `?tab=`, scroll to the URL hash target (e.g.
+  // `#patient-chat`) inside the now-visible panel.
+  useEffect(() => {
+    if (tabParam && tabs.some((t) => t.id === tabParam)) setActive(tabParam);
+    if (typeof window !== "undefined" && window.location.hash) {
+      const id = window.location.hash.slice(1);
+      // Wait a tick so the panel is un-hidden before scrolling.
+      const t = window.setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 150);
+      return () => window.clearTimeout(t);
+    }
+  }, [tabParam, tabs]);
 
   return (
     <div className="gh-doctor-appointment-tabs">
