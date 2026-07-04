@@ -91,7 +91,12 @@ export function CountryTrustBar({
     footerLinks.find((l) => l.category === "MEDICAL_REGULATOR") ??
     null;
   const dataAuthority = footerLinks.find((l) => l.category === "DATA_PROTECTION") ?? null;
-  const healthAuthorities = footerLinks.filter((l) => l.category === "HEALTH_AUTHORITY");
+  // MEDICINES regulators (SÚKL eRecept cert, INFARMED, HPRA) share the
+  // clinical-standards row — CZ has no HEALTH_AUTHORITY footer link, so
+  // without this the SÚKL certificate would never surface.
+  const healthAuthorities = footerLinks.filter(
+    (l) => l.category === "HEALTH_AUTHORITY" || l.category === "MEDICINES",
+  );
   const complaints = footerLinks.find((l) => l.category === "COMPLAINTS") ?? null;
   const authorityLogos = getCountryAuthorityLogos(trust.country.code);
 
