@@ -14,11 +14,11 @@
  * default locale when it doesn't support the detected one).
  */
 
-import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { ArrowRight, ShieldCheck, Lock, Globe2, FileCheck2, Search } from "lucide-react";
 import type { CountryConfig } from "@/data/countries";
 import { supportedLocaleCodes, type LocaleCode } from "@/lib/i18n/types";
+import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
 import { countrySlug, registerCountrySlugs } from "@/lib/routing/country-slug";
 import { Globe, type GlobeArc, type GlobeMarker } from "@/components/ui/cobe-globe";
 import styles from "./CountryEntryGate.module.css";
@@ -58,15 +58,10 @@ type EntryRevealProps = {
   children: ReactNode;
   delay?: number;
   className?: string;
-  style?: CSSProperties;
 };
 
-function HeroReveal({ children, className = "", style }: EntryRevealProps) {
-  return (
-    <div className={className} style={style}>
-      {children}
-    </div>
-  );
+function HeroReveal({ children, className = "" }: EntryRevealProps) {
+  return <div className={className}>{children}</div>;
 }
 
 // Legacy country codes do not all match ISO 3166-1 alpha-2 (`sp` for Spain,
@@ -111,7 +106,6 @@ function matchNavigatorLocale(): LocaleCode | null {
 }
 
 export function CountryEntryGate({ countries, countryMeta, detectedLocale, copy }: Props) {
-  const router = useRouter();
   const [countryQuery, setCountryQuery] = useState("");
 
   // Replay the slug registry so client slug helpers resolve admin-added codes.
@@ -140,8 +134,11 @@ export function CountryEntryGate({ countries, countryMeta, detectedLocale, copy 
         ? detectedLocale
         : country.defaultLocale ?? "en"
     ) as LocaleCode;
-    // Navigate directly to /{slug}/{lang} — ?lang= can mis-resolve with [lang].
-    router.push(`/${slug}/${lang}`);
+    // Hard navigation so the edge proxy re-runs and the server layout re-renders
+    // with the new x-gh-country / x-gh-locale headers. router.push would keep the
+    // shared layout stale and data may not refresh.
+    setClientLocaleCookie(lang);
+    globalThis.location.assign(`/${slug}/${lang}`);
   }
 
   const trust = [
@@ -298,8 +295,7 @@ export function CountryEntryGate({ countries, countryMeta, detectedLocale, copy 
                           <button
                             type="button"
                             onClick={() => enter(c)}
-                            className={`${styles.countryCard} ${styles.countryRow} flex text-left text-white`}
-                            style={{ width: "100%" }}
+                            className={`${styles.countryCard} ${styles.countryRow} flex w-full text-left text-white`}
                           >
                             <div className="flex min-w-0 flex-1 items-center gap-3">
                               <span className={`${styles.flagWrap} inline-flex items-center justify-center`}>

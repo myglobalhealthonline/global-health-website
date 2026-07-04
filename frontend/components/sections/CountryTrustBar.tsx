@@ -4,6 +4,7 @@ import {
   type CountryCertificationLogo,
 } from "@/lib/content/country-certification-logos";
 import type { CountryTrust } from "@/lib/content/get-country-trust";
+import { DoctifyWidget } from "@/components/sections/DoctifyReviews";
 
 /**
  * Country medical-authority trust bar. Contract:
@@ -27,6 +28,8 @@ type Phrases = {
   kStandards: string;
   kComplaints: string;
   kProvider: string;
+  kReviews: string;
+  reviewsText: string;
 };
 
 const PHRASES: Record<string, Phrases> = {
@@ -46,6 +49,8 @@ const PHRASES: Record<string, Phrases> = {
     kStandards: "Clinical standards",
     kComplaints: "Complaints",
     kProvider: "Provider registration",
+    kReviews: "Verified reviews",
+    reviewsText: "Recommended by patients on Doctify",
   },
   pt: {
     eyebrow: "Cuidados regulados e verificados",
@@ -62,6 +67,8 @@ const PHRASES: Record<string, Phrases> = {
     kStandards: "Padroes clinicos",
     kComplaints: "Reclamacoes",
     kProvider: "Registo do prestador",
+    kReviews: "Avaliacoes verificadas",
+    reviewsText: "Recomendado por doentes no Doctify",
   },
 };
 
@@ -212,6 +219,26 @@ export function CountryTrustBar({
                       </div>
                     </div>
                   ))}
+                  {/* Doctify verified-reviews badge — practice profile is
+                      Ireland-only; the micro star widget links to the live
+                      Doctify profile. */}
+                  {trust.country.code.toLowerCase() === "ie" ? (
+                    <div className="rounded-[20px] border border-[rgba(29,75,54,0.12)] bg-white/72 p-4 shadow-[0_10px_28px_rgba(29,75,54,0.07)] transition duration-300 hover:-translate-y-0.5 hover:bg-white">
+                      <div className="flex min-h-[112px] flex-col">
+                        <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[rgba(29,75,54,0.54)]">
+                          {t.kReviews}
+                        </span>
+                        <p className="mt-2 text-[14px] leading-snug text-[var(--color-text-primary)]">
+                          {t.reviewsText}
+                        </p>
+                        <DoctifyWidget
+                          variant="micro"
+                          language={locale ?? "en"}
+                          className="mt-auto"
+                        />
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               ) : null}
 

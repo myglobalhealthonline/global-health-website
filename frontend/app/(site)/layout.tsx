@@ -15,6 +15,7 @@ import {
 import { getSiteContext } from "@/lib/content/get-site-context";
 import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { getCountryByCode, type CountryCode } from "@/data/countries";
+import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import {
   organizationJsonLd,
   websiteJsonLd,
@@ -24,10 +25,18 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
   const requestHeaders = await headers();
   const cookieStore = await cookies();
 
+  const pathname = requestHeaders.get("x-gh-pathname") ?? "/";
   const headerCountry = requestHeaders.get("x-gh-country");
+
+  // The edge proxy only knows the seeded country list, so admin-added countries
+  // may resolve to the fallback (Ireland). Use the URL pathname as the source of
+  // truth whenever it contains a recognizable country slug.
+  const firstSegment = pathname.split("/").filter(Boolean)[0]?.toLowerCase();
+  const urlCountryCode = firstSegment ? countryCodeFromSlug(firstSegment) : null;
+  const resolvedCountryCode = urlCountryCode ?? headerCountry ?? null;
   const runtimeCountry =
-    headerCountry && getCountryByCode(headerCountry as CountryCode)
-      ? (headerCountry as CountryCode)
+    resolvedCountryCode && getCountryByCode(resolvedCountryCode as CountryCode)
+      ? (resolvedCountryCode as CountryCode)
       : undefined;
 
   // Role + email stamped by the edge proxy via local JWT decode — no backend
