@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { PageHero } from "@/components/sections/PageHero";
+import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import { countries, getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
@@ -303,22 +303,11 @@ export default async function PricingPage({
 
 function PlansArchPanel({ countryName }: { countryName: string }) {
   return (
-    <div className="relative mx-auto max-w-[440px]">
-      <div aria-hidden className="gh2-arch-frame" />
-      <div className="gh2-arch gh2-zoom relative aspect-[4/4.7] overflow-hidden border border-white/10 bg-white/[0.045]">
-        <Image
-          src="/images/stock/plans.png"
-          alt={`Doctor reviewing health subscription plans in ${countryName}`}
-          fill
-          priority
-          sizes="(min-width: 1024px) 440px, 100vw"
-          className="object-cover object-center"
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-[rgba(8,42,32,0.62)] via-transparent to-transparent"
-        />
-      </div>
+    <div className="relative mx-auto aspect-square w-full max-w-[620px]">
+      <HeroPlusImage
+        src="/images/stock/plans.png"
+        alt={`Doctor reviewing health subscription plans in ${countryName}`}
+      />
 
       {/* Floating — Monthly care */}
       <div

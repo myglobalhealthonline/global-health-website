@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import {
   ArrowUpRight,
   Users,
@@ -14,9 +14,9 @@ import {
 /**
  * Premium doctors-page hero (clinical-editorial gh2 system).
  *
- * Two-column composition: editorial type + dual CTA + trust-card row on
- * the left; arch-framed team portrait with overlapping glass info cards
- * on the right. Deep forest-night canvas, single lime accent, dotted-grid
+ * Stacked composition: editorial type + dual CTA + trust-card row on top;
+ * plus-shaped team portrait with overlapping glass info cards centered
+ * below. Deep forest-night canvas, single lime accent, dotted-grid
  * atmosphere + medical-plus pattern. Purpose-built for /[country]/[lang]/
  * doctors — NOT the shared PageHero (which other service pages reuse).
  *
@@ -161,7 +161,7 @@ export function DoctorsHero({
       {/* Lime bloom behind the portrait */}
       <div
         aria-hidden
-        className="gh-medical-pattern-layer pointer-events-none right-[-6%] top-[6%] hidden lg:block"
+        className="gh-medical-pattern-layer pointer-events-none bottom-[-8%] left-1/2 hidden -translate-x-1/2 lg:block"
         style={{
           width: 560,
           height: 560,
@@ -179,9 +179,9 @@ export function DoctorsHero({
           paddingBottom: "clamp(20px,3.5vw,40px)",
         }}
       >
-        <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+        <div className="flex flex-col items-center gap-12">
           {/* ── LEFT — type, CTAs, trust cards ───────────────────────── */}
-          <div>
+          <div className="w-full max-w-[760px]">
             <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">
               {eyebrow}
             </p>
@@ -273,28 +273,10 @@ export function DoctorsHero({
             </ul>
           </div>
 
-          {/* ── RIGHT — arch portrait + floating info cards ──────────── */}
-          <aside className="relative hidden lg:block">
-            <div className="relative mx-auto max-w-[440px]">
-              <div aria-hidden className="gh2-arch-frame" />
-              <div className="gh2-arch gh2-zoom relative aspect-[4/4.7] overflow-hidden border border-white/10 bg-white/[0.045]">
-                <Image
-                  src={heroImage.src}
-                  alt={heroImage.alt}
-                  fill
-                  priority={heroImage.priority}
-                  sizes="(min-width: 1024px) 440px, 100vw"
-                  className="object-cover object-center"
-                  unoptimized={
-                    /^https?:\/\//i.test(heroImage.src) ||
-                    heroImage.src.startsWith("/api/media/")
-                  }
-                />
-                <div
-                  aria-hidden
-                  className="absolute inset-0 bg-gradient-to-t from-[rgba(8,42,32,0.62)] via-transparent to-transparent"
-                />
-              </div>
+          {/* ── BELOW — plus-shaped portrait + floating info cards ───── */}
+          <aside className="relative flex w-full justify-center">
+            <div className="relative mx-auto aspect-square w-full max-w-[640px]">
+              <HeroPlusImage src={heroImage.src} alt={heroImage.alt} />
 
               {/* Floating card — Available today (upper-right) */}
               <FloatingCard

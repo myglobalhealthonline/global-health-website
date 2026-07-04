@@ -1,9 +1,9 @@
 import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import type { Metadata } from "next";
 import { SITE_NAME } from "@/lib/constants";
-import Image from "next/image";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { PageHero } from "@/components/sections/PageHero";
+import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import { Mail, Clock, AlertTriangle, ShieldCheck, BadgeCheck, MessageSquare } from "lucide-react";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -148,22 +148,11 @@ export default async function ContactPage() {
 
 function ContactArchPanel({ locale }: { locale: { float1_title: string; float1_subtitle: string; float2_title: string; float2_subtitle: string; float3_title: string; float3_subtitle: string } }) {
   return (
-    <div className="relative mx-auto max-w-[440px]">
-      <div aria-hidden className="gh2-arch-frame" />
-      <div className="gh2-arch gh2-zoom relative aspect-[4/4.7] overflow-hidden border border-white/10 bg-white/[0.045]">
-        <Image
-          src="/images/stock/contact.jpg"
-          alt="Telehealth care coordinator supporting a patient through an online consultation platform"
-          fill
-          priority
-          sizes="(min-width: 1024px) 440px, 100vw"
-          className="object-cover object-center"
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-[rgba(8,42,32,0.62)] via-transparent to-transparent"
-        />
-      </div>
+    <div className="relative mx-auto aspect-square w-full max-w-[620px]">
+      <HeroPlusImage
+        src="/images/stock/contact.jpg"
+        alt="Telehealth care coordinator supporting a patient through an online consultation platform"
+      />
 
       {/* Floating — 24h response */}
       <div

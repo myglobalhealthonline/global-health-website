@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Flag } from "@/components/ui/Flag";
+import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 
 export type PageHeroProps = {
   countryCode?: string;
@@ -297,7 +298,7 @@ export function PageHero({
     );
   }
 
-  // Default variant — compact hero with arch-framed image in right slot
+  // Default variant — compact hero with plus-shaped image stacked under the text
   const hasRightColumn = Boolean(rightSlot || heroImage);
   const watermarkText = watermark ?? countryLabel ?? "";
 
@@ -322,8 +323,8 @@ export function PageHero({
           paddingBottom: "clamp(20px,3.5vw,40px)",
         }}
       >
-        <div className={hasRightColumn ? "grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14" : ""}>
-          <div>
+        <div className={hasRightColumn ? "flex flex-col items-center gap-12" : ""}>
+          <div className={hasRightColumn ? "w-full max-w-[720px]" : ""}>
             {countryCode || countryLabel ? (
               <p className="flex flex-wrap items-center gap-3">
                 {countryCode ? <Flag code={countryCode} size="sm" /> : null}
@@ -415,7 +416,7 @@ export function PageHero({
           </div>
 
           {rightSlot || heroImage ? (
-            <aside className="relative hidden lg:block">
+            <aside className="relative flex w-full justify-center">
               {rightSlot ?? (heroImage ? <HeroImagePanel image={heroImage} /> : null)}
             </aside>
           ) : null}
@@ -427,23 +428,8 @@ export function PageHero({
 
 function HeroImagePanel({ image }: { image: { src: string; alt: string; priority?: boolean } }) {
   return (
-    <div className="relative mx-auto max-w-[420px]">
-      <div aria-hidden className="gh2-arch-frame" />
-      <div className="gh2-arch gh2-zoom relative aspect-[4/4.8] overflow-hidden border border-white/10 bg-white/[0.045]">
-        <Image
-          src={image.src}
-          alt={image.alt}
-          fill
-          priority={image.priority}
-          sizes="(min-width: 1024px) 420px, 100vw"
-          className="object-cover"
-          unoptimized={/^https?:\/\//i.test(image.src) || image.src.startsWith("/api/media/")}
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-[rgba(15,46,37,0.58)] via-transparent to-transparent"
-        />
-      </div>
+    <div className="relative mx-auto aspect-square w-full max-w-[620px]">
+      <HeroPlusImage src={image.src} alt={image.alt} />
     </div>
   );
 }
