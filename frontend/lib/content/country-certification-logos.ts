@@ -110,7 +110,9 @@ const LOGOS_BY_COUNTRY: Record<string, CountryCertificationLogo[]> = {
     {
       name: "Livro de Reclamacoes",
       alt: "Livro de Reclamacoes Eletronico",
-      src: "/logos/partners/livro-de-reclamacoes.png",
+      // "-red" suffix = cache-busted rename after tinting the original
+      // white-on-transparent asset red (#E30513).
+      src: "/logos/partners/livro-de-reclamacoes-red.png",
       href: "https://www.livroreclamacoes.pt/",
       width: 1106,
       height: 202,
@@ -138,6 +140,7 @@ const LOGOS_BY_COUNTRY: Record<string, CountryCertificationLogo[]> = {
       tone: "light",
     },
     EU_PRIVACY,
+    EU_FLAG,
   ],
   cz: [
     {
@@ -175,16 +178,7 @@ const LOGOS_BY_COUNTRY: Record<string, CountryCertificationLogo[]> = {
       tone: "light",
     },
     EU_PRIVACY,
-    {
-      name: "EU Care Framework",
-      alt: "European Union care framework badge",
-      src: "/logos/partners/eu-star.png",
-      href: "https://european-union.europa.eu/",
-      width: 180,
-      height: 180,
-      kind: "authority",
-      tone: "light",
-    },
+    EU_FLAG,
   ],
   ro: [
     {
