@@ -115,19 +115,12 @@ export function FeaturedDoctor({
   const line = dark ? "rgba(255,255,255,0.15)" : "rgba(29,75,54,0.18)";
   const iconAccent = dark ? "var(--color-brand-accent)" : "var(--color-brand-primary)";
 
-  const surfaceStyle: CSSProperties = dark
-    ? { borderRadius: "var(--radius-card)" }
-    : {
-        borderRadius: "var(--radius-card)",
-        background: "#ffffff",
-        border: "1px solid rgba(29,75,54,0.12)",
-        boxShadow: "var(--shadow-elevated)",
-      };
+  const surfaceStyle: CSSProperties = { borderRadius: "var(--radius-card)" };
 
   const card = (
     <>
       <div
-        className={`gh-featured-card overflow-hidden ${dark ? "gh-glass-card" : ""}`}
+        className={`gh-featured-card overflow-hidden ${dark ? "gh2-glass-forest" : "gh2-card-ivory"}`}
         style={surfaceStyle}
       >
         {/* Portrait */}
@@ -175,7 +168,7 @@ export function FeaturedDoctor({
             style={{
               background: "var(--color-brand-accent)",
               color: "#0a1f14",
-              boxShadow: "0 2px 10px rgba(176,241,34,0.35)",
+              boxShadow: "0 1px 5px rgba(176,241,34,0.14)",
             }}
           >
             <Sparkles className="size-3.5" strokeWidth={2} aria-hidden />
@@ -304,7 +297,7 @@ export function FeaturedDoctor({
                 style={{
                   background: "var(--color-brand-accent)",
                   color: "#0a1f14",
-                  boxShadow: "0 8px 24px rgba(176,241,34,0.25)",
+                  boxShadow: "0 8px 12px -2px rgba(176,241,34,0.14)",
                 }}
               >
                 Book with {firstName}

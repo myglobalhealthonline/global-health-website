@@ -32,6 +32,7 @@ function ReviewRateForm() {
 
   useEffect(() => {
     if (!token) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- token comes from the URL, only known post-mount
       setError("Invalid review link.");
       return;
     }
@@ -72,7 +73,7 @@ function ReviewRateForm() {
   }
   if (submitted && locale) {
     return (
-      <div className="gh-card mx-auto max-w-lg p-8 text-center">
+      <div className="gh-card mx-auto max-w-lg p-8 text-center" role="status">
         <h1 className="text-xl font-bold">{locale.thanks}</h1>
       </div>
     );
@@ -82,7 +83,11 @@ function ReviewRateForm() {
     <div className="gh-card mx-auto max-w-lg p-8">
       <h1 className="text-xl font-bold text-[var(--color-text-primary)]">{locale?.title}</h1>
       <p className="mt-2 text-sm text-[var(--color-text-muted)]">{locale?.intro}</p>
-      {error ? <p className="mt-4 text-sm text-red-700">{error}</p> : null}
+      {error ? (
+        <p role="alert" className="gh-status-error mt-4 rounded-[var(--radius-card-sm)] px-3 py-2 text-sm">
+          {error}
+        </p>
+      ) : null}
       <form className="mt-6 space-y-4" onSubmit={submit}>
         {RATING_KEYS.map((key) => (
           <label key={key} className="block text-sm">

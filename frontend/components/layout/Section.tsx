@@ -10,7 +10,9 @@ export function Section({ className, variant = "default", pattern = "none", ...p
   return (
     <section
       className={cn(
-        "py-12 sm:py-16 lg:py-24",
+        // Token-driven public section rhythm (see .gh-section-sm) instead
+        // of hardcoded py-* steps that drifted from --space-section.
+        "gh-section-sm",
         variant === "white" && "gh-section-white",
         variant === "soft" && "gh-section-soft",
         variant === "primary" && "gh-section-primary",

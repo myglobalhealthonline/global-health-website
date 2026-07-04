@@ -21,10 +21,7 @@ import { ChevronDown, Languages, Check } from "lucide-react";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { localeDisplayName } from "@/lib/i18n/locale-display";
 import { swapLangInPath } from "@/lib/routing/path-rewrites";
-
-function setLocaleCookie(loc: LocaleCode) {
-  document.cookie = `gh_locale=${loc}; path=/; max-age=31536000; SameSite=Lax`;
-}
+import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
 
 export function LanguageSwitcher({
   currentLang,
@@ -41,20 +38,32 @@ export function LanguageSwitcher({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
     function onClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    }
     document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKeyDown);
+    };
   }, [open]);
 
   if (availableLocales.length <= 1) return null;
 
   const itemStyle = (isActive: boolean): React.CSSProperties => ({
-    padding: "9px 12px",
+    minHeight: 44,
+    padding: "10px 14px",
     borderRadius: 8,
     textDecoration: "none",
     background: isActive ? "var(--color-background-soft)" : "transparent",
@@ -74,13 +83,14 @@ export function LanguageSwitcher({
   return (
     <div ref={ref} className="relative">
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-haspopup="menu"
+        aria-haspopup="true"
         aria-expanded={open}
         data-open={open}
-        className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 data-[open=true]:border-white/30 data-[open=true]:bg-white/10"
-        style={{ minHeight: 40 }}
+        className="gh-focus-on-dark inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white data-[open=true]:border-white/30 data-[open=true]:bg-white/10"
+        style={{ minHeight: 44 }}
       >
         <Languages aria-hidden className="size-3.5 opacity-80" />
         <span className="uppercase">{currentLang}</span>
@@ -93,11 +103,12 @@ export function LanguageSwitcher({
 
       {open ? (
         <div
-          role="menu"
           aria-label="Choose language"
           className="absolute right-0 z-50 mt-2 overflow-hidden"
           style={{
             minWidth: 200,
+            maxHeight: "min(calc(100vh - 120px), 320px)",
+            overflowY: "auto",
             background: "var(--color-background-page)",
             border: "1px solid var(--color-border)",
             borderRadius: 12,
@@ -132,12 +143,12 @@ export function LanguageSwitcher({
                   <li key={loc}>
                     <button
                       type="button"
-                      role="menuitem"
                       onClick={() => {
-                        setLocaleCookie(loc);
+                        setClientLocaleCookie(loc);
                         setOpen(false);
                         window.location.href = swapped;
                       }}
+                      className="gh-switcher-item"
                       style={itemStyle(isActive)}
                     >
                       {label}
@@ -158,12 +169,12 @@ export function LanguageSwitcher({
                 <li key={loc}>
                   <button
                     type="button"
-                    role="menuitem"
                     onClick={() => {
-                      setLocaleCookie(loc);
+                      setClientLocaleCookie(loc);
                       setOpen(false);
                       router.refresh();
                     }}
+                    className="gh-switcher-item"
                     style={itemStyle(isActive)}
                   >
                     {label}

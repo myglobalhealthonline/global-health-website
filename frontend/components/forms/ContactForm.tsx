@@ -61,7 +61,10 @@ export function ContactForm() {
 
   if (state === "success") {
     return (
-      <div className="gh-status-success flex flex-col items-center gap-4 rounded-[var(--radius-card)] px-6 py-10 text-center">
+      <div
+        role="status"
+        className="gh-status-success gh2-card-ivory flex flex-col items-center gap-4 rounded-[var(--radius-card)] px-6 py-10 text-center"
+      >
         <CheckCircle className="size-10" style={{ color: "var(--color-status-success-text)" }} aria-hidden />
         <h2 className="text-xl font-bold">Message sent!</h2>
         <p className="max-w-sm text-sm">
@@ -72,9 +75,12 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-5">
+    <form onSubmit={handleSubmit} noValidate className="gh2-card-ivory space-y-5 p-6">
       {state === "error" && (
-        <div className="gh-status-error flex items-start gap-3 rounded-[var(--radius-card-sm)] px-4 py-3 text-sm">
+        <div
+          role="alert"
+          className="gh-status-error flex items-start gap-3 rounded-[var(--radius-card-sm)] px-4 py-3 text-sm"
+        >
           <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
           {errorMessage}
         </div>
@@ -125,10 +131,11 @@ export function ContactForm() {
           required
           placeholder="Tell us what you need..."
           aria-invalid={Boolean(fieldErrors.message)}
+          aria-describedby={fieldErrors.message ? "message-error" : undefined}
           className="gh-textarea resize-y"
         />
         {fieldErrors.message && (
-          <p className="mt-1 text-xs" style={{ color: "var(--color-status-error-text)" }}>
+          <p id="message-error" className="mt-1 text-xs" style={{ color: "var(--color-status-error-text)" }}>
             {fieldErrors.message[0]}
           </p>
         )}
@@ -163,6 +170,7 @@ function Field({
   error?: string;
   required?: boolean;
 }) {
+  const errorId = `${name}-error`;
   return (
     <div>
       <label
@@ -180,10 +188,11 @@ function Field({
         placeholder={placeholder}
         required={required}
         aria-invalid={Boolean(error)}
+        aria-describedby={error ? errorId : undefined}
         className="gh-input"
       />
       {error && (
-        <p className="mt-1 text-xs" style={{ color: "var(--color-status-error-text)" }}>
+        <p id={errorId} className="mt-1 text-xs" style={{ color: "var(--color-status-error-text)" }}>
           {error}
         </p>
       )}

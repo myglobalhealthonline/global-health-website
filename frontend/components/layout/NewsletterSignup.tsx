@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail } from "lucide-react";
+import { Mail, Loader2 } from "lucide-react";
 import { apiRequest } from "@/lib/api/client";
 
 type NewsletterI18n = {
@@ -79,20 +79,37 @@ export function NewsletterSignup({ countryCode, locale, i18n }: Props) {
               required
               maxLength={254}
               disabled={status === "loading"}
+              aria-invalid={status === "error" || undefined}
+              aria-describedby={message ? "gh-newsletter-status" : undefined}
               className="gh-newsletter-input"
             />
           </div>
         </label>
-        <button type="submit" disabled={status === "loading"} className="gh-newsletter-submit">
-          {status === "loading" ? "…" : (i18n?.subscribe ?? "Subscribe")}
+        <button
+          type="submit"
+          disabled={status === "loading"}
+          aria-busy={status === "loading"}
+          className="gh-newsletter-submit"
+        >
+          {status === "loading" ? (
+            <Loader2 className="size-4 animate-spin" aria-hidden />
+          ) : (
+            (i18n?.subscribe ?? "Subscribe")
+          )}
         </button>
       </form>
-      {message && status === "ok" ? (
-        <p className="gh-newsletter-status gh-newsletter-statusOk">{message}</p>
-      ) : null}
-      {message && status === "error" ? (
-        <p className="gh-newsletter-status gh-newsletter-statusError">{message}</p>
-      ) : null}
+      <div aria-live="polite" role={status === "error" ? "alert" : undefined}>
+        {message && status === "ok" ? (
+          <p id="gh-newsletter-status" className="gh-newsletter-status gh-newsletter-statusOk">
+            {message}
+          </p>
+        ) : null}
+        {message && status === "error" ? (
+          <p id="gh-newsletter-status" className="gh-newsletter-status gh-newsletter-statusError">
+            {message}
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }

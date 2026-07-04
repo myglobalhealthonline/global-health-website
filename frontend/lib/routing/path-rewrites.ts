@@ -16,12 +16,17 @@ export type ParsedSitePath = {
   rest: string[]; // path segments after [lang]
 };
 
-const COUNTRY_SLUGS = new Set(Object.keys(COUNTRY_SLUG_TO_CODE));
 const KNOWN_LOCALES = new Set(["en", "pt", "es", "cs", "ro", "de"]);
 
 export function parseSitePath(pathname: string): ParsedSitePath {
   const segments = (pathname || "/").split("/").filter(Boolean);
-  const country = segments[0] && COUNTRY_SLUGS.has(segments[0]) ? segments[0] : null;
+  // Consult the live registry on every call (the proxy reflects runtime
+  // registrations) instead of snapshotting the slug set at module load,
+  // which missed admin-added countries and broke href generation.
+  const country =
+    segments[0] && segments[0].toLowerCase() in COUNTRY_SLUG_TO_CODE
+      ? segments[0]
+      : null;
   const lang =
     country && segments[1] && KNOWN_LOCALES.has(segments[1]) ? segments[1] : null;
   const rest = country && lang ? segments.slice(2) : [];

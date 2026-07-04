@@ -117,6 +117,7 @@ export function useLastCountry(
     ) {
       return;
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- cookie is browser-only; reconciling against the SSR seed can't happen during render
     setValue(resolved);
     // intentionally empty dep array — we want this once on mount; the
     // seed snapshot was captured at first render. Cookie rotations from

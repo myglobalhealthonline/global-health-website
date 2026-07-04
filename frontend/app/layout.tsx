@@ -57,6 +57,7 @@ fbq('init', '${META_PIXEL_ID}');
 fbq('track', 'PageView');`}
         </Script>
         <noscript>
+          {/* eslint-disable-next-line @next/next/no-img-element -- Meta Pixel noscript fallback; next/image can't render inside noscript */}
           <img
             height="1"
             width="1"

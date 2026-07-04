@@ -28,13 +28,16 @@ export type SectionNavItem = {
 };
 
 const PILL_BASE =
-  "group/navitem relative inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-bold whitespace-nowrap cursor-pointer outline-none transition-[color,background-color,border-color] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2";
+  "group/navitem relative inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 2xl:px-4 py-2.5 text-[13px] font-bold whitespace-nowrap cursor-pointer outline-none transition-[color,background-color,border-color] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2";
+
+const DARK_FOCUS_RING =
+  "focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F2E25]";
 
 function pillClass(active: boolean, dark: boolean): string {
   if (dark) {
     return active
-      ? `${PILL_BASE} border border-[color:rgba(176,241,34,0.34)] text-[var(--color-brand-accent)] bg-white/[0.07] focus-visible:ring-[color:rgba(176,241,34,0.45)]`
-      : `${PILL_BASE} border border-transparent text-white/65 hover:border-white/15 hover:text-white hover:bg-white/[0.07] focus-visible:ring-white/40`;
+      ? `${PILL_BASE} border border-[color:rgba(176,241,34,0.34)] text-[var(--color-brand-accent)] bg-white/[0.07] ${DARK_FOCUS_RING}`
+      : `${PILL_BASE} border border-transparent text-white/65 hover:border-white/15 hover:text-white hover:bg-white/[0.07] ${DARK_FOCUS_RING}`;
   }
   return active
     ? `${PILL_BASE} text-[var(--color-brand-primary)] bg-white shadow-[var(--shadow-soft)] focus-visible:ring-[color:rgba(29,75,54,0.3)]`
@@ -67,9 +70,9 @@ export function SectionNav({
   return (
     <nav
       aria-label="Section navigation"
-      className="hidden items-center md:flex"
+      className={`hidden items-center md:flex ${isDark ? "gap-1 2xl:gap-2" : ""}`}
       style={{
-        gap: isDark ? 2 : 4,
+        gap: isDark ? undefined : 4,
         // Dark variant rides directly on the header's glass pill — no
         // nested rail, so the links read as part of the capsule (only the
         // active tab shows its own pill). Light variant keeps the rail.

@@ -102,6 +102,8 @@ export function DocumentsReviewSendPanel({
   }, [appointmentId]);
 
   useEffect(() => {
+    // Fetch-on-mount/dep-change — load itself is the setState source.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void load();
   }, [load]);
 

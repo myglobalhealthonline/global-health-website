@@ -24,12 +24,12 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
   if (!items || items.length === 0) return null;
 
   const isLight = theme === "light";
-  const hairline = isLight ? "rgba(29,75,54,0.16)" : "rgba(255,255,255,0.10)";
 
   return (
     <section
       className={isLight ? "" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"}
       style={{
+        // Warm off-white canvas on light; stat cards flip to white so they still read as cards.
         background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
         borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
         borderBottom: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
@@ -86,8 +86,11 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
           {items.slice(0, 4).map((it, i) => (
             <div
               key={`${it.label}-${it.value}`}
-              className="flex flex-col gap-3 pt-6"
-              style={{ borderTop: `2px solid ${i === 0 ? (isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)") : hairline}` }}
+              className={`flex flex-col gap-3 rounded-2xl p-6 ${isLight ? "gh2-card-ivory" : ""}`}
+              style={{
+                background: isLight ? undefined : "rgba(255,255,255,0.05)",
+                borderTop: `2px solid ${i === 0 ? (isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)") : "transparent"}`,
+              }}
             >
               <dd
                 className="font-extrabold leading-none tracking-[-0.045em] [font-variant-numeric:tabular-nums]"

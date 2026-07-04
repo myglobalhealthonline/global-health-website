@@ -116,6 +116,8 @@ export default function AccessHistoryPage() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    // Reset loading flag for the new page before the fetch resolves.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoaded(false);
     void fetch(`/api/account/access-log?page=${page}&limit=20`, { credentials: "include" })
       .then((r) => r.json())

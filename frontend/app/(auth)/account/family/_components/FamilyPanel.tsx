@@ -61,6 +61,8 @@ export function FamilyPanel({
   }, []);
 
   useEffect(() => {
+    // Fetch-on-mount/refetch-on-dep-change — refetch itself is the setState source.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void refetch();
   }, [refetch]);
 

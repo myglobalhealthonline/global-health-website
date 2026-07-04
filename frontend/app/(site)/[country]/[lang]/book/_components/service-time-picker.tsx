@@ -2,7 +2,8 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import Link from "next/link";
+import { Calendar, Check, Loader2 } from "lucide-react";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { buildBookHref } from "@/lib/routing/book-href";
@@ -76,7 +77,18 @@ export function ServiceTimePicker({
   }
 
   if (openSlots.length === 0) {
-    return <p className="text-sm text-[var(--color-text-muted)]">{i18n.noOpenSlots}</p>;
+    return (
+      <div className="gh2-status-card text-center">
+        <Calendar className="mx-auto size-6 text-[var(--color-text-muted)]" aria-hidden />
+        <p className="mt-3 font-semibold text-[var(--color-text-primary)]">{i18n.noOpenSlots}</p>
+        <Link
+          href={buildBookHref({ country, lang })}
+          className="gh2-btn-lime mt-5 inline-flex"
+        >
+          Change service
+        </Link>
+      </div>
+    );
   }
 
   return (
@@ -97,7 +109,7 @@ export function ServiceTimePicker({
       <div
         role="tablist"
         aria-label="Available dates"
-        className="mt-3 -mx-1 flex min-w-0 max-w-full gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin]"
+        className="gh2-scroll-fade mt-3 -mx-1 flex min-w-0 max-w-full gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin]"
       >
         {Array.from(grouped.entries()).map(([day, daySlots]) => {
           const isActive = selectedDay === day;
@@ -114,12 +126,16 @@ export function ServiceTimePicker({
               aria-selected={isActive}
               onClick={() => setSelectedDay(day)}
               disabled={navigating}
+              data-selected={isActive}
               className={
                 isActive
-                  ? "flex shrink-0 flex-col items-center gap-0.5 rounded-2xl border-2 border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] text-white px-4 py-3 min-w-[68px] shadow-[var(--shadow-card)]"
-                  : "flex shrink-0 flex-col items-center gap-0.5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-body)] px-4 py-3 min-w-[68px] transition-[border-color,background-color,transform] duration-200 hover:border-[var(--color-border-strong)] hover:bg-[var(--color-background-soft)] active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60"
+                  ? "gh2-selectable relative flex shrink-0 flex-col items-center gap-0.5 rounded-2xl px-4 py-3 min-w-[68px] shadow-[var(--shadow-card)]"
+                  : "gh2-selectable flex shrink-0 flex-col items-center gap-0.5 rounded-2xl border-[rgba(29,75,54,.18)] bg-white px-4 py-3 min-w-[68px] text-[var(--color-text-body)] transition-transform duration-200 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60"
               }
             >
+              {isActive ? (
+                <Check className="absolute right-1.5 top-1.5 size-3.5 text-white" aria-hidden />
+              ) : null}
               <span className={isActive ? "text-[10px] font-bold uppercase tracking-[0.12em] text-white/80" : "text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]"}>
                 {weekday}
               </span>
@@ -146,7 +162,7 @@ export function ServiceTimePicker({
           <div
             role="tabpanel"
             aria-label={`Times on ${selectedDay}`}
-            className="mt-3 grid gap-2 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
+            className="mt-3 grid gap-2 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
           >
             {(grouped.get(selectedDay) ?? []).map((s) => (
               <button
@@ -154,7 +170,7 @@ export function ServiceTimePicker({
                 type="button"
                 onClick={() => chooseTime(s.startAt)}
                 disabled={navigating}
-                className="inline-flex flex-col items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-primary)] px-3 py-2.5 text-sm font-semibold [font-variant-numeric:tabular-nums] transition-[border-color,background-color,transform] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)] active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60"
+                className="gh2-selectable inline-flex flex-col items-center justify-center rounded-xl border-[rgba(29,75,54,.18)] bg-white px-3 py-2.5 text-sm font-semibold text-[var(--color-text-primary)] [font-variant-numeric:tabular-nums] transition-transform duration-200 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60"
               >
                 <span className="inline-flex items-center gap-1">
                   {navigating ? <Loader2 className="size-3 animate-spin" aria-hidden /> : null}
@@ -163,6 +179,15 @@ export function ServiceTimePicker({
                 {typeof s.priceCents === "number" ? (
                   <span className="mt-0.5 text-xs font-medium text-[var(--color-text-muted)]">
                     {formatPriceRounded(s.priceCents, s.currencyCode ?? "EUR")}
+                  </span>
+                ) : null}
+                {s.pricingType === "PEAK" ? (
+                  <span className="mt-0.5 rounded-full bg-[rgba(255,196,0,0.14)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                    Peak
+                  </span>
+                ) : s.pricingType === "OFF_PEAK" ? (
+                  <span className="mt-0.5 rounded-full bg-[rgba(29,75,54,0.08)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                    Off-peak
                   </span>
                 ) : null}
               </button>

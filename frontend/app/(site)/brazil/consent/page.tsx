@@ -26,6 +26,7 @@ function BrazilConsentForm() {
 
   useEffect(() => {
     if (!appointmentId || !token) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- params come from the URL, only known post-mount
       setError("This consent link is missing or invalid. Please use the link from your email.");
       setLoading(false);
       return;

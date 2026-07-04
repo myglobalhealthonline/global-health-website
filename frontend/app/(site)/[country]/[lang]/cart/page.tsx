@@ -22,6 +22,7 @@ import {
   User,
 } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
+import { MobileOrderTotalBar } from "@/components/cart/MobileOrderTotalBar";
 import { PlanCoverage } from "@/components/cart/PlanCoverage";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { formatPrice } from "@/lib/format-currency";
@@ -170,7 +171,14 @@ export default function CartPage() {
         <GH2FlowHeader title={t.title} activeStep={1} steps={steps} />
         <section className="bg-[var(--color-background-soft)] px-5 py-12">
           <div className="mx-auto max-w-5xl">
-            <p className="gh-body-sm">{t.loading}</p>
+            <div className="gh-card flex items-center gap-3 p-6" role="status" aria-live="polite">
+              <Clock
+                className="size-5 shrink-0 animate-pulse motion-reduce:animate-none"
+                style={{ color: "var(--color-brand-primary)" }}
+                aria-hidden
+              />
+              <p className="gh-body-sm m-0">{t.loading}</p>
+            </div>
           </div>
         </section>
       </>
@@ -215,7 +223,7 @@ export default function CartPage() {
   return (
     <>
       <GH2FlowHeader title={t.title} activeStep={1} steps={steps} />
-      <section className="bg-[var(--color-background-soft)] px-5 py-12 sm:py-16">
+      <section className="bg-[var(--color-background-soft)] px-5 pb-28 pt-12 sm:py-16 md:pb-16">
         <div className="mx-auto max-w-[var(--container-width)]">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
@@ -264,7 +272,7 @@ export default function CartPage() {
 
           <div className="mt-8 grid items-start gap-8 lg:grid-cols-[1fr_380px]">
             {/* Items */}
-            <div className="gh-card overflow-hidden">
+            <div className="gh2-card-ivory overflow-hidden">
               <ul className="divide-y" style={{ borderColor: "var(--color-border)" }}>
                 {cart.items.map((item) => (
                   <CartItemRow
@@ -273,7 +281,8 @@ export default function CartPage() {
                     currency={cart.currencyCode}
                     t={t}
                     coverageLine={coverageLines[item.id]}
-                    onSelectBenefit={(sel) => void onSelectBenefit(item.id, sel)}
+                    benefitError={benefitError}
+                    onSelectBenefit={(sel) => onSelectBenefit(item.id, sel)}
                     onIncrease={() => void update(item.id, item.quantity + 1)}
                     onDecrease={() =>
                       item.quantity > 1 && void update(item.id, item.quantity - 1)
@@ -299,10 +308,11 @@ export default function CartPage() {
               </div>
             </div>
 
-            {/* Summary */}
+            {/* Summary — dark forest glass, matches MobileOrderTotalBar's
+                established premium treatment (spec §17). */}
             <aside
-              className="gh-card self-start p-6 lg:sticky lg:top-[calc(var(--header-height)+16px)]"
-              style={{ boxShadow: "var(--shadow-card)" }}
+              id="cart-order-summary"
+              className="gh2-glass-forest self-start p-6 lg:sticky lg:top-[calc(var(--header-height)+16px)]"
             >
               <PlanCoverage
                 lang={lang}
@@ -311,27 +321,24 @@ export default function CartPage() {
                 itemNames={Object.fromEntries(cart.items.map((i) => [i.id, i.name]))}
                 refreshKey={coverageNonce}
               />
-              {benefitError ? (
-                <p className="mb-4 text-[13px] font-semibold" style={{ color: "var(--color-status-error)" }}>
-                  {benefitError}
-                </p>
-              ) : null}
-              <h2 className="gh-h3" style={{ fontSize: "1.125rem" }}>{t.orderSummary}</h2>
+              <h2 className="text-[1.125rem] font-bold tracking-[-0.01em]" style={{ color: "rgba(255,255,255,0.95)" }}>
+                {t.orderSummary}
+              </h2>
               <dl className="mt-4 space-y-2.5 text-sm">
                 <div className="flex justify-between">
-                  <dt style={{ color: "var(--color-text-muted)" }}>
+                  <dt style={{ color: "var(--gh2-on-dark-muted)" }}>
                     {t.subtotalItems
                       .replace("{count}", String(cart.itemCount))
                       .replace("{unit}", cart.itemCount === 1 ? t.itemSingular : t.itemPlural)}
                   </dt>
-                  <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-text-primary)" }}>
+                  <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "#fff" }}>
                     {formatPrice(cart.subtotalCents, cart.currencyCode)}
                   </dd>
                 </div>
                 {shippingCents > 0 ? (
                   <div className="flex justify-between">
-                    <dt style={{ color: "var(--color-text-muted)" }}>{t.shipping}</dt>
-                    <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-text-primary)" }}>
+                    <dt style={{ color: "var(--gh2-on-dark-muted)" }}>{t.shipping}</dt>
+                    <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "#fff" }}>
                       {formatPrice(shippingCents, cart.currencyCode)}
                     </dd>
                   </div>
@@ -341,20 +348,20 @@ export default function CartPage() {
                     Stripe will charge. */}
                 {payableSaved > 0 ? (
                   <div className="flex justify-between">
-                    <dt style={{ color: "var(--color-brand-primary)" }}>{t.planSavings}</dt>
-                    <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-brand-primary)" }}>
+                    <dt style={{ color: "var(--color-brand-accent)" }}>{t.planSavings}</dt>
+                    <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-brand-accent)" }}>
                       −{formatPrice(payableSaved, cart.currencyCode)}
                     </dd>
                   </div>
                 ) : null}
                 <div
                   className="flex items-baseline justify-between border-t pt-3"
-                  style={{ borderColor: "var(--color-border)" }}
+                  style={{ borderColor: "rgba(255,255,255,0.12)" }}
                 >
-                  <dt className="text-base font-bold" style={{ color: "var(--color-text-primary)" }}>{t.total}</dt>
+                  <dt className="text-base font-bold" style={{ color: "rgba(255,255,255,0.92)" }}>{t.total}</dt>
                   <dd
                     className="text-xl font-extrabold tracking-[-0.02em] [font-variant-numeric:tabular-nums]"
-                    style={{ color: "var(--color-text-primary)" }}
+                    style={{ color: "var(--color-brand-accent)" }}
                   >
                     {formatPrice(Math.max(0, total - payableSaved), cart.currencyCode)}
                   </dd>
@@ -369,10 +376,10 @@ export default function CartPage() {
                 <ArrowRight className="size-4" aria-hidden />
               </button>
 
-              {/* Trust rows */}
+              {/* Trust rows — light-on-dark, matches glass panel context. */}
               <ul
                 className="mt-5 space-y-2.5 border-t pt-5 text-[13px]"
-                style={{ borderColor: "var(--color-border)", color: "var(--color-text-muted)" }}
+                style={{ borderColor: "rgba(255,255,255,0.12)", color: "var(--gh2-on-dark-muted)" }}
               >
                 {[
                   { icon: ShieldCheck, label: t.trustSecure },
@@ -380,7 +387,7 @@ export default function CartPage() {
                   { icon: CalendarCheck, label: t.trustInstant },
                 ].map(({ icon: Icon, label }) => (
                   <li key={label} className="flex items-center gap-2.5">
-                    <Icon className="size-4 shrink-0" style={{ color: "var(--color-brand-primary)" }} aria-hidden />
+                    <Icon className="size-4 shrink-0" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
                     {label}
                   </li>
                 ))}
@@ -389,6 +396,13 @@ export default function CartPage() {
           </div>
         </div>
       </section>
+      <MobileOrderTotalBar
+        totalLabel={t.total}
+        formattedTotal={formatPrice(Math.max(0, total - payableSaved), cart.currencyCode)}
+        actionLabel={t.continueToCheckout}
+        onAction={() => router.push(checkoutHref)}
+        watchTargetId="cart-order-summary"
+      />
     </>
   );
 }
@@ -403,6 +417,7 @@ function CartItemRow({
   item,
   currency,
   coverageLine,
+  benefitError,
   onSelectBenefit,
   onIncrease,
   onDecrease,
@@ -412,7 +427,8 @@ function CartItemRow({
   item: CartItem;
   currency: string;
   coverageLine?: CartCoverageLine;
-  onSelectBenefit: (selection: BenefitSelection) => void;
+  benefitError?: string | null;
+  onSelectBenefit: (selection: BenefitSelection) => void | Promise<void>;
   onIncrease: () => void;
   onDecrease: () => void;
   onRemove: () => void;
@@ -422,6 +438,10 @@ function CartItemRow({
     item.kind === "GENERAL_CONSULTATION" ||
     item.kind === "SPECIALIST_CONSULTATION";
   const countdown = useCountdown(item.heldUntil);
+  // Visual-only urgency read off the existing countdown string (m:ss) — no
+  // timer logic changes. "expired" and anything ≥ 60s stays the calm amber.
+  const countdownUrgent =
+    countdown !== null && countdown !== "expired" && countdown.split(":")[0] === "0";
   const atMax = item.quantity >= CART_ITEM_MAX_QTY;
   const KindIcon = KIND_ICON[item.kind];
   const itemKindLabel = kindLabel(item.kind, t);
@@ -429,6 +449,9 @@ function CartItemRow({
   // real choice (more than just "pay normally"). Driven by the server preview.
   const options = coverageLine?.eligibleSelections ?? [];
   const showSelector = isConsult && options.length > 1;
+  // Pending guard: while a benefit PATCH is in flight the options are
+  // disabled + dimmed so rapid taps can't queue conflicting changes.
+  const [benefitPending, setBenefitPending] = useState(false);
 
   return (
     <li className="flex gap-4 p-5 sm:gap-5">
@@ -524,17 +547,17 @@ function CartItemRow({
                     type="button"
                     role="radio"
                     aria-checked={active}
-                    onClick={() => onSelectBenefit(opt)}
-                    className="rounded-full px-3 py-1 text-[12px] font-semibold transition-colors"
-                    style={
-                      active
-                        ? { background: "var(--color-brand-primary)", color: "#fff" }
-                        : {
-                            background: "var(--color-background-soft)",
-                            color: "var(--color-text-body)",
-                            border: "1px solid var(--color-border)",
-                          }
-                    }
+                    data-selected={active}
+                    disabled={benefitPending}
+                    onClick={() => {
+                      if (benefitPending) return;
+                      const result = onSelectBenefit(opt);
+                      if (result && typeof result.then === "function") {
+                        setBenefitPending(true);
+                        void result.finally(() => setBenefitPending(false));
+                      }
+                    }}
+                    className="gh2-selectable rounded-full px-3 text-[12px] font-semibold disabled:cursor-wait"
                   >
                     {t[BENEFIT_LABEL[opt]]}
                   </button>
@@ -546,6 +569,11 @@ function CartItemRow({
                 {t.notEnoughCreditsHint}
               </p>
             ) : null}
+            {benefitError ? (
+              <p role="alert" className="mt-1.5 text-[11.5px] font-semibold" style={{ color: "var(--color-status-error)" }}>
+                {benefitError}
+              </p>
+            ) : null}
           </div>
         ) : null}
 
@@ -554,10 +582,10 @@ function CartItemRow({
             failure, so the styling shouldn't read as an error. */}
         {isConsult && countdown ? (
           <p
-            className="mt-2 inline-flex items-center gap-1 text-[11.5px] font-semibold"
-            style={{ color: "var(--color-status-warning-text)" }}
+            className="mt-2 inline-flex items-center gap-1 whitespace-nowrap text-[11.5px] font-semibold [font-variant-numeric:tabular-nums]"
+            style={{ color: countdownUrgent ? "var(--color-status-error)" : "var(--color-status-warning-text)" }}
           >
-            <Clock className="size-3" aria-hidden />
+            <Clock className="size-3 shrink-0" aria-hidden />
             {countdown === "expired"
               ? t.holdReleased
               : t.slotReserved.replace("{time}", countdown)}
@@ -569,8 +597,9 @@ function CartItemRow({
           </p>
         ) : null}
 
-        {/* Bottom row: quantity controls + remove */}
-        <div className="mt-3 flex items-center justify-between gap-4">
+        {/* Bottom row: quantity/booking control + remove, one consistent
+            right-aligned cluster regardless of item kind (spec §17/§6). */}
+        <div className="mt-3 flex items-center justify-end gap-3">
           {isConsult ? (
             <span
               className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
@@ -587,8 +616,9 @@ function CartItemRow({
                 type="button"
                 onClick={onDecrease}
                 disabled={item.quantity <= 1}
+                aria-disabled={item.quantity <= 1}
                 aria-label={t.decreaseQuantity}
-                className="inline-flex size-8 items-center justify-center rounded-full transition-colors hover:bg-[var(--color-background-soft)] disabled:opacity-30"
+                className="inline-flex size-11 items-center justify-center rounded-full transition-colors hover:bg-[var(--color-background-soft)] disabled:opacity-30"
                 style={{ color: "var(--color-text-body)" }}
               >
                 <Minus className="size-3.5" aria-hidden />
@@ -605,7 +635,7 @@ function CartItemRow({
                 disabled={atMax}
                 aria-label={t.increaseQuantity}
                 title={atMax ? t.maxPerItem.replace("{max}", String(CART_ITEM_MAX_QTY)) : undefined}
-                className="inline-flex size-8 items-center justify-center rounded-full transition-colors hover:bg-[var(--color-background-soft)] disabled:opacity-30"
+                className="inline-flex size-11 items-center justify-center rounded-full transition-colors hover:bg-[var(--color-background-soft)] disabled:opacity-30"
                 style={{ color: "var(--color-text-body)" }}
               >
                 <Plus className="size-3.5" aria-hidden />
@@ -617,10 +647,10 @@ function CartItemRow({
             type="button"
             onClick={onRemove}
             aria-label={t.removeAria.replace("{name}", item.name)}
-            className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold transition-colors hover:bg-[var(--color-status-error-bg)]"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold transition-colors hover:bg-[var(--color-status-error-bg)]"
             style={{ color: "var(--color-status-error)" }}
           >
-            <Trash2 className="size-3.5" aria-hidden />
+            <Trash2 className="size-3.5 shrink-0" aria-hidden />
             {t.remove}
           </button>
         </div>
