@@ -9,16 +9,16 @@ import { errorResponse } from "./response.js";
  * MANAGE_SUBSCRIPTIONS — plan/billing management for the subscription admin
  * surfaces (plans, rules, perks, subscriber list, manual credit adjustments).
  *
- * This deployment has a SINGLE admin tier (roles: admin, doctor, patient — no
- * super-admin). `verifyAdminAccess` already proves the caller is an admin, so
- * every authenticated admin holds MANAGE_SUBSCRIPTIONS. There is intentionally
- * no `adminScope === SUPER` elevation: it would lock out the only admins, since
- * `adminScope` is provisioned only for the (unused) LOCAL_ADMIN role.
+ * `verifyAdminAccess` already proves the caller is ADMIN/SUPER_ADMIN/
+ * LOCAL_ADMIN, so every authenticated admin holds MANAGE_SUBSCRIPTIONS (can
+ * view the page, approve perks, resync). The one action carved out by role is
+ * the manual balance adjustment (money mutation) — that additionally
+ * requires `actorRole === "SUPER_ADMIN"`, checked by the route handler using
+ * the `actorRole` this function resolves.
  *
- * Sensitive money actions (manual balance adjustment) are NOT separated by a
- * non-existent super tier — they are protected by friction instead: a hidden
- * "Support override" panel, a mandatory written reason, a confirm step, and a
- * full audit row (§4).
+ * Sensitive money actions are further protected by friction on top of the
+ * role check: a hidden "Support override" panel, a mandatory written reason,
+ * a confirm step, and a full audit row (§4).
  *
  * On success the result carries the resolved admin actor so mutation handlers
  * can audit (§24) and stamp `adjustCredits.actorAdminId` without re-querying.

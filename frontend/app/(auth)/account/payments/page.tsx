@@ -7,10 +7,13 @@ import { formatPrice } from "@/lib/format-currency";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { ReceiptButton } from "./_components/receipt-button";
+import { PayNowButton } from "./_components/pay-now-button";
 import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
+
+const NEEDS_ACTION_STATUSES = new Set(["FAILED", "REQUIRES_ACTION", "UNPAID"]);
 
 const STATUS_PILL: Record<AccountPayment["status"], string> = {
   PAID: "bg-emerald-50 text-emerald-800 border border-emerald-200",
@@ -148,7 +151,13 @@ export default async function AccountPaymentsPage() {
                     ),
                   },
                 ]}
-                actions={<ReceiptButton paymentId={p.id} />}
+                actions={
+                  NEEDS_ACTION_STATUSES.has(p.status) ? (
+                    <PayNowButton appointmentId={p.appointmentId} />
+                  ) : (
+                    <ReceiptButton paymentId={p.id} />
+                  )
+                }
               >
                 {p.status === "REFUNDED" ? (
                   <p className="mt-2 text-xs" style={{ color: "var(--portal-muted)" }}>
@@ -207,7 +216,11 @@ export default async function AccountPaymentsPage() {
                     ) : null}
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <ReceiptButton paymentId={p.id} />
+                    {NEEDS_ACTION_STATUSES.has(p.status) ? (
+                      <PayNowButton appointmentId={p.appointmentId} />
+                    ) : (
+                      <ReceiptButton paymentId={p.id} />
+                    )}
                   </td>
                 </tr>
               ))}

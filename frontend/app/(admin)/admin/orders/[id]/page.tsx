@@ -17,6 +17,7 @@ import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { AdminOrderActions } from "./_components/order-actions";
 import { OrderMeetLinkDisplay } from "../_components/order-meet-link-display";
 import { UpdateAppointmentPanel } from "./_components/update-appointment-panel";
+import { AdminTrackingForm } from "./_components/tracking-form";
 
 export const dynamic = "force-dynamic";
 
@@ -50,6 +51,9 @@ type AdminOrder = {
   shipCountryCode: string | null;
   appointmentIds: string[];
   meetingUrl: string | null;
+  trackingNumber: string | null;
+  trackingCarrier: string | null;
+  trackingUrl: string | null;
   items: {
     id: string;
     kind: string;
@@ -256,6 +260,16 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
               />
             </AdminCard>
           ) : null}
+
+          <AdminCard padding={0}>
+            <SectionHeader title="Tracking" />
+            <AdminTrackingForm
+              orderId={order.id}
+              trackingNumber={order.trackingNumber}
+              trackingCarrier={order.trackingCarrier}
+              trackingUrl={order.trackingUrl}
+            />
+          </AdminCard>
 
           <AdminCard padding={0}>
             <SectionHeader title="Shipping" />

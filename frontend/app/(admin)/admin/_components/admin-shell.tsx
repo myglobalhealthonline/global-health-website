@@ -248,16 +248,28 @@ function humanizeSegment(seg: string, countries: CountryPickerOption[]): string 
   return decoded.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function useBreadcrumbs(pathname: string, countries: CountryPickerOption[]) {
+function useBreadcrumbs(
+  pathname: string,
+  countries: CountryPickerOption[],
+  activeCountry: CountryPickerOption | null,
+) {
   return useMemo(() => {
     if (!pathname.startsWith("/admin")) return [{ label: "Admin", href: "/admin" }];
     const segments = pathname.split("/").filter(Boolean);
     const crumbs: { label: string; href: string }[] = [];
     let acc = "";
+    // Country-scoped routes (e.g. /admin/pages) implicitly operate on the
+    // topbar-selected country rather than a country segment in the URL —
+    // surface that context in the trail so "Admin / Pages" doesn't read as
+    // global when it's actually scoped to whichever country is active.
+    const isCountryScoped = segments.length >= 2 && COUNTRY_HREFS.has(`/${segments[0]}/${segments[1]}`);
     for (let i = 0; i < segments.length; i++) {
       acc += `/${segments[i]}`;
       if (i === 0) {
         crumbs.push({ label: "Admin", href: "/admin" });
+        if (isCountryScoped && activeCountry) {
+          crumbs.push({ label: activeCountry.name, href: acc });
+        }
         continue;
       }
       const isCuid = segments[i].length === 25 && /^[a-z0-9]+$/i.test(segments[i]);
@@ -265,7 +277,7 @@ function useBreadcrumbs(pathname: string, countries: CountryPickerOption[]) {
       crumbs.push({ label, href: acc });
     }
     return crumbs;
-  }, [pathname, countries]);
+  }, [pathname, countries, activeCountry]);
 }
 
 export function AdminShell({
@@ -295,7 +307,11 @@ export function AdminShell({
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const breadcrumbs = useBreadcrumbs(pathname, countries);
+  const breadcrumbs = useBreadcrumbs(pathname, countries, activeCountry);
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const isOnCountryScopedRoute =
+    pathSegments.length >= 2 && COUNTRY_HREFS.has(`/${pathSegments[0]}/${pathSegments[1]}`);
+  const showNoCountryBanner = isOnCountryScopedRoute && !activeCountry;
   const { global: globalSections, country: countrySections } = useMemo(
     () => partitionSections(sections, activeCountry?.enabledFeatures),
     [sections, activeCountry?.enabledFeatures],
@@ -615,6 +631,17 @@ export function AdminShell({
                 current={activeCountry}
                 setCountryPreferenceAction={setCountryPreferenceAction}
               />
+            </div>
+          ) : null}
+
+          {showNoCountryBanner ? (
+            <div
+              className="gh-admin-no-country-banner mx-4 mt-4 flex flex-wrap items-center justify-between gap-2 rounded-[var(--radius-card-sm)] border border-[var(--color-status-warning-border,#e0b649)] bg-[var(--color-status-warning-bg,#fff8e1)] px-4 py-2.5 text-sm sm:mx-6"
+              role="status"
+            >
+              <span>
+                <strong>This section requires a country</strong> — pick one from the top bar to see its content.
+              </span>
             </div>
           ) : null}
 

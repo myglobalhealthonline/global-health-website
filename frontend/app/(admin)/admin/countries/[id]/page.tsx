@@ -359,9 +359,11 @@ export default async function AdminCountryDetailPage({
             </p>
             <form action={deleteCountryAction}>
               <ConfirmDeleteButton
-                message="Permanently delete this country and all its dependent admin content? This cannot be undone."
+                title={`Delete ${c.name}?`}
+                message={`Permanently delete ${c.name} and all its dependent admin content? This cannot be undone.`}
                 className="gh-btn gh-btn-danger w-full"
                 ariaLabel="Delete country permanently"
+                requireTypedConfirmation={c.slug}
               >
                 Delete permanently
               </ConfirmDeleteButton>

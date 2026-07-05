@@ -1,7 +1,12 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
 
+// Explicit allowlist of non-/api/auth paths this module is permitted to
+// call — same reasoning as the /api/auth/[...path] proxy's ROUTE_TABLE:
+// keep this file from silently growing into a general-purpose fetch helper.
+const EXTRA_ALLOWED_PATHS = new Set(["/api/account/security/sign-out-all"]);
+
 function resolveAuthFetchUrl(path: string): string | null {
-  if (!path.startsWith("/api/auth")) return null;
+  if (!path.startsWith("/api/auth") && !EXTRA_ALLOWED_PATHS.has(path)) return null;
   // Browser: same-origin Route Handler proxies to Fastify so the session cookie is scoped to the site host.
   if (typeof window !== "undefined") return path;
   if (!API_URL) return null;
@@ -51,9 +56,12 @@ export type AuthUser = {
    *  Checkout / fallback intake prefill from this so the patient
    *  doesn't retype it every booking. */
   dateOfBirth: string | null;
-  role: "PATIENT" | "ADMIN" | "DOCTOR";
+  role: "PATIENT" | "ADMIN" | "DOCTOR" | "LOCAL_ADMIN" | "SUPER_ADMIN";
   emailVerifiedAt: string | null;
   isActive: boolean;
+  /** Set when a GDPR deletion request is pending (30-day grace period).
+   *  ISO datetime or null. */
+  deletionScheduledAt: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -128,9 +136,22 @@ export async function confirmEmailWithToken(token: string) {
   });
 }
 
-/** GDPR: soft-delete the signed-in user's account. */
+/** GDPR: schedule the signed-in user's account for deletion after a 30-day
+ *  grace period. The account stays functional until then. */
 export async function deleteOwnAccount() {
-  return authRequest<{ deleted: true }>("/api/auth/me", { method: "DELETE" });
+  return authRequest<{ deletionScheduledAt: string }>("/api/auth/me", { method: "DELETE" });
+}
+
+/** Cancel a pending grace-period account deletion. */
+export async function cancelAccountDeletion() {
+  return authRequest<{ cancelled: true }>("/api/auth/me/cancel-deletion", { method: "POST" });
+}
+
+/** Sign out of all devices — bumps tokenVersion server-side and clears the
+ *  current session cookie, so the caller (this device included) is logged
+ *  out immediately. */
+export async function signOutAllDevices() {
+  return authRequest<{ signedOut: true }>("/api/account/security/sign-out-all", { method: "POST" });
 }
 
 /** GDPR: trigger a JSON download of everything we hold on the user. */

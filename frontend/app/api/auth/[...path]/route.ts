@@ -29,6 +29,7 @@ const ROUTE_TABLE: Record<string, Set<string>> = {
     "change-password",
     "verify-email",
     "resend-verification",
+    "me/cancel-deletion",
   ]),
   PATCH: new Set([
     "me",

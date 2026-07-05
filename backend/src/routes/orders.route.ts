@@ -72,9 +72,24 @@ const checkoutBodySchema = z.object({
 });
 
 const orderIdParamSchema = z.object({ id: z.string().min(1).max(120) });
-const adminPatchSchema = z.object({
-  status: z.enum([OrderStatus.FULFILLED, OrderStatus.CANCELLED, OrderStatus.PAID]),
-});
+// Status transition and tracking-field updates share this endpoint. Both are
+// optional so a tracking-only PATCH doesn't have to resend status, but at
+// least one of them must be present (checked below the parse).
+const adminPatchSchema = z
+  .object({
+    status: z.enum([OrderStatus.FULFILLED, OrderStatus.CANCELLED, OrderStatus.PAID]).optional(),
+    trackingNumber: z.string().trim().max(200).nullable().optional(),
+    trackingCarrier: z.string().trim().max(120).nullable().optional(),
+    trackingUrl: z.string().trim().url().max(500).nullable().optional().or(z.literal("")),
+  })
+  .refine(
+    (v) =>
+      v.status !== undefined ||
+      v.trackingNumber !== undefined ||
+      v.trackingCarrier !== undefined ||
+      v.trackingUrl !== undefined,
+    { message: "No fields to update" },
+  );
 
 async function resolveActiveCartForCheckout(
   request: FastifyRequest,
@@ -579,7 +594,15 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             quantity: i.quantity,
             unitPriceCents: i.unitPriceCents,
             lineTotalCents: i.lineTotalCents,
+            // Needed so the frontend "Reorder" button can call the same
+            // cart-add endpoint the product pages use — without these the
+            // order detail page has no product identity to re-add.
+            healthTestId: i.healthTestId,
+            serviceId: i.serviceId,
           })),
+          trackingNumber: order.trackingNumber,
+          trackingCarrier: order.trackingCarrier,
+          trackingUrl: order.trackingUrl,
           paidAt: order.paidAt?.toISOString() ?? null,
           createdAt: order.createdAt.toISOString(),
           updatedAt: order.updatedAt.toISOString(),
@@ -810,6 +833,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           })),
           appointmentIds: order.appointmentIds,
           meetingUrl,
+          trackingNumber: order.trackingNumber,
+          trackingCarrier: order.trackingCarrier,
+          trackingUrl: order.trackingUrl,
           paidAt: order.paidAt?.toISOString() ?? null,
           createdAt: order.createdAt.toISOString(),
           updatedAt: order.updatedAt.toISOString(),
@@ -981,7 +1007,12 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
 
         const order = await prisma.order.update({
           where: { id: params.data.id },
-          data: { status: body.data.status },
+          data: {
+            ...(body.data.status !== undefined ? { status: body.data.status } : {}),
+            ...(body.data.trackingNumber !== undefined ? { trackingNumber: body.data.trackingNumber || null } : {}),
+            ...(body.data.trackingCarrier !== undefined ? { trackingCarrier: body.data.trackingCarrier || null } : {}),
+            ...(body.data.trackingUrl !== undefined ? { trackingUrl: body.data.trackingUrl || null } : {}),
+          },
         });
 
         // Settle any subscription credit reservations on this order (B11/#16).
@@ -999,7 +1030,13 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             request.log.error({ err, orderId: order.id }, "Release order credit reservations failed");
           });
         }
-        return okResponse({ id: order.id, status: order.status });
+        return okResponse({
+          id: order.id,
+          status: order.status,
+          trackingNumber: order.trackingNumber,
+          trackingCarrier: order.trackingCarrier,
+          trackingUrl: order.trackingUrl,
+        });
       } catch (err) {
         if (err instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(err.message));

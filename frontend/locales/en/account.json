@@ -103,6 +103,13 @@
     "ordered": "Ordered {date}",
     "open": "Open"
   },
+  "medicalFiles": {
+    "breadcrumb": "Patient portal",
+    "title": "Medical files",
+    "subtitle": "Your uploaded reports and documents from doctors.",
+    "downloadAll": "Download all",
+    "downloadingAll": "Downloading…"
+  },
   "payments": {
     "breadcrumb": "Account",
     "title": "Payments",
@@ -188,12 +195,18 @@
     "passwordNoMatch": "New password and confirmation do not match.",
     "passwordTooShort": "New password must be at least 8 characters.",
     "passwordUpdated": "Password updated. Use the new one next time you sign in.",
-    "deleteWarning": "This permanently deletes your account. Your booking history is preserved for regulatory reasons but stripped of identifying details. This cannot be undone.",
-    "deleting": "Deleting…",
+    "deleteWarning": "This schedules your account for deletion in 30 days. You can keep using your account and cancel the request anytime before then from this page.",
+    "deleting": "Scheduling…",
     "deleteMyAccount": "Delete my account",
     "deleteAccountTitle": "Delete your account?",
     "cancel": "Cancel",
-    "deleteAccount": "Delete account"
+    "deleteAccount": "Schedule deletion",
+    "deletionScheduledBanner": "Your account is scheduled for deletion on {date}.",
+    "cancelDeletion": "Cancel deletion",
+    "cancellingDeletion": "Cancelling…",
+    "signOutAllDevices": "Sign out of all devices",
+    "signOutAllDevicesBody": "This ends every signed-in session, including this one — you'll need to log in again.",
+    "signingOutAll": "Signing out…"
   },
   "family": {
     "breadcrumb": "Account",

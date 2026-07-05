@@ -21,6 +21,9 @@ export async function fetchAdminAuditLog(query?: {
   entityType?: string;
   entityId?: string;
   actorUserId?: string;
+  /** Inclusive date-range filter on createdAt, `YYYY-MM-DD`. */
+  fromDate?: string;
+  toDate?: string;
 }) {
   const params = new URLSearchParams();
   if (query?.page) params.set("page", String(query.page));
@@ -29,6 +32,8 @@ export async function fetchAdminAuditLog(query?: {
   if (query?.entityType) params.set("entityType", query.entityType);
   if (query?.entityId) params.set("entityId", query.entityId);
   if (query?.actorUserId) params.set("actorUserId", query.actorUserId);
+  if (query?.fromDate) params.set("fromDate", query.fromDate);
+  if (query?.toDate) params.set("toDate", query.toDate);
   const qs = params.toString();
   return adminRequest<{
     items: AdminAuditLogRow[];

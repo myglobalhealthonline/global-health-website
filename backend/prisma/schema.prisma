@@ -1921,6 +1921,12 @@ model Order {
   invoice               Invoice?
   /// Stripe Checkout URL cached for admin copy-paste. Refreshed by resolveOrderPaymentUrl.
   stripeCheckoutUrl     String?
+  /// Shipment tracking — admin-entered for physical orders (health test kits,
+  /// prescription delivery). All nullable; the patient order page shows a
+  /// "Track shipment" section only when trackingNumber is set.
+  trackingNumber        String?
+  trackingCarrier       String?
+  trackingUrl           String?
   createdAt             DateTime    @default(now())
   updatedAt             DateTime    @updatedAt
 
@@ -2115,6 +2121,20 @@ model User {
   twoFactorVerifiedAt     DateTime?
   twoFactorEnabledAt      DateTime?
   medicalAccessRequests   MedicalAccessRequest[]   @relation("MedicalAccessRequestReviewer")
+  /// Bumped on "sign out of all devices". Embedded in every JWT at login;
+  /// verify rejects a token whose tokenVersion doesn't match this value, so
+  /// every previously-issued token (all devices) is invalidated at once.
+  tokenVersion            Int                      @default(0)
+  /// GDPR soft-delete grace period. Set to now()+30d when the patient
+  /// requests deletion; account stays fully functional until then and the
+  /// request can be cancelled by clearing this field. Login treats a past
+  /// deletionScheduledAt as inactive.
+  /// ponytail: needs a purge cron reading deletionScheduledAt < now to hard-
+  /// delete/scrub — no cron runner exists yet that's a good fit (the only
+  /// one in backend/src/lib/internal-scheduler.ts is subscription-specific
+  /// and lives in a module this feature doesn't belong to). Wire a new tick
+  /// into that scheduler when the purge is actually built.
+  deletionScheduledAt     DateTime?
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
 }

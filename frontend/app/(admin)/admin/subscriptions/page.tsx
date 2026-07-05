@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireAdminAction } from "@/lib/admin/require-admin-action";
+import { requireAdminAction, requireSuperAdminAction } from "@/lib/admin/require-admin-action";
 import {
   fetchAdminPerkGrants,
   fetchAdminSubscriptions,
@@ -24,7 +24,7 @@ import {
   Tr,
   type PillTone,
 } from "../_components/atoms";
-import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
+import { CreditAdjustForm } from "../_components/credit-adjust-form";
 import { SubscriptionHealthPanel } from "../_components/subscription-health-panel";
 import { AdminSubscriberLedger } from "../_components/subscriber-ledger";
 import { PortalMobileCard, type PortalMobileCardTone } from "@/components/PortalMobileCard";
@@ -50,6 +50,12 @@ function statusCardTone(status: string): PortalMobileCardTone {
 function balanceOf(balances: Array<{ kind: CreditKind; balance: number }>, kind: CreditKind): number {
   return balances.find((b) => b.kind === kind)?.balance ?? 0;
 }
+
+/** Fat-finger guard: plan credits top out at 3/month (Premium tier), so a
+ *  legitimate manual correction should never need to move a balance by more
+ *  than this in one submission. Mirrored in credit-adjust-form.tsx for the
+ *  client-side preview/disable — this is the authoritative server check. */
+const MAX_ABS_DELTA = 100;
 
 type PageProps = { searchParams?: Promise<{ status?: string; success?: string; error?: string }> };
 
@@ -78,13 +84,28 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
 
   async function adjustCreditsAction(formData: FormData) {
     "use server";
-    await requireAdminAction();
+    await requireSuperAdminAction();
     const subscriptionId = String(formData.get("subscriptionId") ?? "");
+    const delta = Number(formData.get("delta") ?? 0);
+    const note = String(formData.get("note") ?? "").trim();
+
+    if (!Number.isInteger(delta) || delta === 0) {
+      redirect(`/admin/subscriptions?error=${encodeURIComponent("Delta must be a non-zero whole number.")}`);
+    }
+    if (Math.abs(delta) > MAX_ABS_DELTA) {
+      redirect(
+        `/admin/subscriptions?error=${encodeURIComponent(`Delta cannot exceed ±${MAX_ABS_DELTA} in one adjustment.`)}`,
+      );
+    }
+    if (note.length < 8) {
+      redirect(`/admin/subscriptions?error=${encodeURIComponent("A reason of at least 8 characters is required.")}`);
+    }
+
     const body = {
       kind: String(formData.get("kind") ?? "CONSULTATION"),
-      delta: Number(formData.get("delta") ?? 0),
+      delta,
       reason: String(formData.get("reason") ?? "ADJUSTMENT"),
-      note: String(formData.get("note") ?? ""),
+      note,
       requestId: String(formData.get("requestId") ?? "") || randomUUID(),
     };
     const result = await postAdminAdjustCredits(subscriptionId, body);
@@ -251,6 +272,12 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                       <Td>
                         {balanceOf(sub.balances, "CONSULTATION")} / {balanceOf(sub.balances, "WELLNESS")}
                         <AdminSubscriberLedger subscriptionId={sub.id} />
+                        <a
+                          href={`/admin/audit-log?entityType=UserSubscription&entityId=${sub.id}`}
+                          className="mt-1 block text-[11px] font-semibold text-[var(--color-brand-primary)] underline-offset-2 hover:underline"
+                        >
+                          View audit trail
+                        </a>
                       </Td>
                     </Tr>
                   ))}
@@ -277,6 +304,12 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                     ]}
                   >
                     <AdminSubscriberLedger subscriptionId={sub.id} />
+                    <a
+                      href={`/admin/audit-log?entityType=UserSubscription&entityId=${sub.id}`}
+                      className="mt-1 block text-[11px] font-semibold text-[var(--color-brand-primary)] underline-offset-2 hover:underline"
+                    >
+                      View audit trail
+                    </a>
                   </PortalMobileCard>
                 ))}
               </div>
@@ -285,72 +318,37 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
           </div>
         </AdminCard>
 
-        {/* Support override — manual balance adjustment. Hidden unless the caller
-            holds the dedicated SUPER-scope permission (§4); the backend rejects
-            the action regardless, but hiding keeps it out of normal admin flow. */}
-        {subsResult.ok && subsResult.data.capabilities?.canAdjustCredits ? (
+        {/* Support override — manual balance adjustment. SUPER_ADMIN-only
+            (§4, money mutation); a plain ADMIN sees the form area with a
+            clear "requires super-admin" note instead of a live form. The
+            backend independently rejects the action regardless. */}
+        {subsResult.ok ? (
           <AdminCard padding={0} className="gh-admin-subscription-override">
             <SectionHeader
               title="Support override — manual balance adjustment"
               description="Elevated SUPER-admin action. Directly edits one subscriber's earned consultation or wellness balance. Routine credits come from plan rules and renewals — use this only for verified finance/support cases. Every change is audited and requires a written reason."
             />
             <div className="p-6">
-              {subsResult.data.items.length === 0 ? (
+              {!subsResult.data.capabilities?.canAdjustCredits ? (
+                <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+                  Requires super-admin. Your account can view subscriptions but cannot adjust balances.
+                </p>
+              ) : subsResult.data.items.length === 0 ? (
                 <p className="text-sm text-[var(--color-text-muted)]">
                   No subscribers in the current view to adjust. Filter the list above first.
                 </p>
               ) : (
-                <form action={adjustCreditsAction} className="gh-admin-subscription-adjust-form flex flex-wrap items-end gap-3">
-                  <input type="hidden" name="requestId" value={randomUUID()} />
-                  <label className="flex flex-col gap-1 text-xs text-[var(--color-text-muted)]">
-                    <span>Subscriber</span>
-                    <select name="subscriptionId" className="gh-select" required style={{ minWidth: 240 }}>
-                      {subsResult.data.items.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {(s.user.fullName ?? s.user.email)} — {s.plan.name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="flex flex-col gap-1 text-xs text-[var(--color-text-muted)]">
-                    <span>Kind</span>
-                    <select name="kind" className="gh-select" defaultValue="CONSULTATION" style={{ minWidth: 130 }}>
-                      <option value="CONSULTATION">Consultation</option>
-                      <option value="WELLNESS">Wellness</option>
-                    </select>
-                  </label>
-                  <label className="flex flex-col gap-1 text-xs text-[var(--color-text-muted)]">
-                    <span>Delta</span>
-                    <input name="delta" type="number" className="gh-input" style={{ width: 90 }} placeholder="±" required />
-                  </label>
-                  <label className="flex flex-col gap-1 text-xs text-[var(--color-text-muted)]">
-                    <span>Category</span>
-                    <select name="reason" className="gh-select" defaultValue="ADJUSTMENT" style={{ minWidth: 130 }}>
-                      <option value="ADJUSTMENT">Adjustment</option>
-                      <option value="CLAWBACK">Clawback</option>
-                    </select>
-                  </label>
-                  <label className="flex flex-col gap-1 text-xs text-[var(--color-text-muted)]" style={{ flex: "1 1 260px" }}>
-                    <span>Reason (required, audited)</span>
-                    <input
-                      name="note"
-                      type="text"
-                      className="gh-input"
-                      minLength={8}
-                      maxLength={500}
-                      required
-                      placeholder="Why is this adjustment being made?"
-                    />
-                  </label>
-                  <ConfirmDeleteButton
-                    message="Apply this manual balance adjustment? It writes an audited ledger entry and cannot be silently undone."
-                    className="gh-btn gh-btn-secondary"
-                    ariaLabel="Apply credit adjustment"
-                    style={{ minHeight: 36, padding: "0 14px" }}
-                  >
-                    Apply override
-                  </ConfirmDeleteButton>
-                </form>
+                <CreditAdjustForm
+                  action={adjustCreditsAction}
+                  subscribers={subsResult.data.items.map((s) => ({
+                    id: s.id,
+                    label: `${s.user.fullName ?? s.user.email} — ${s.plan.name}`,
+                    balances: {
+                      consultation: balanceOf(s.balances, "CONSULTATION"),
+                      wellness: balanceOf(s.balances, "WELLNESS"),
+                    },
+                  }))}
+                />
               )}
             </div>
           </AdminCard>

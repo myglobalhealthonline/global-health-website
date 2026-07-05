@@ -1,5 +1,6 @@
-import { FileText, Pill, ShoppingBag, ChevronRight } from "lucide-react";
+import { FileText, Pill, RefreshCw, ShoppingBag, ChevronRight } from "lucide-react";
 import { fetchPatientPrescriptions } from "@/lib/api/prescriptions-api";
+import { resolveBookConsultationHref } from "@/lib/api/last-booking-country";
 import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, PageHeader, Pill as PillBadge, SectionHeader } from "@/components/portal-atoms";
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDate } from "@/lib/format-datetime";
@@ -18,9 +19,10 @@ function paymentTone(status: string): PillTone {
 }
 
 export default async function AccountPrescriptionsPage() {
-  const [result, locale] = await Promise.all([
+  const [result, locale, bookHref] = await Promise.all([
     fetchPatientPrescriptions(),
     getPageLocale(),
+    resolveBookConsultationHref(),
   ]);
   const { account: a } = loadLocaleBundle(locale);
   const issued = result.ok ? result.data.issued : [];
@@ -123,14 +125,27 @@ export default async function AccountPrescriptionsPage() {
                           .replace("{date}", formatAppDate(p.consultationSignedAt ?? p.createdAt))}
                       </p>
                     </div>
-                    <Btn
-                      href="/account/bookings"
-                      variant="secondary"
-                      size="sm"
-                      iconRight={<ChevronRight className="size-3.5" />}
-                    >
-                      {a.prescriptions.viewBooking}
-                    </Btn>
+                    <div className="flex shrink-0 flex-col items-stretch gap-2 sm:flex-row">
+                      {p.refills > 0 ? (
+                        <Btn
+                          href={bookHref}
+                          variant="primary"
+                          size="sm"
+                          iconLeft={<RefreshCw className="size-3.5" />}
+                          title="Refills aren't one-click yet — this starts a new consultation booking so a doctor can approve the refill."
+                        >
+                          Refill
+                        </Btn>
+                      ) : null}
+                      <Btn
+                        href="/account/bookings"
+                        variant="secondary"
+                        size="sm"
+                        iconRight={<ChevronRight className="size-3.5" />}
+                      >
+                        {a.prescriptions.viewBooking}
+                      </Btn>
+                    </div>
                   </div>
                 </li>
               ))}

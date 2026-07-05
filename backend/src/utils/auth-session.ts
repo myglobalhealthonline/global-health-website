@@ -7,10 +7,17 @@ type AuthTokenPayload = {
   sub: string;
   role: UserRoleType;
   email: string;
+  /** Snapshot of User.tokenVersion at sign time. "Sign out of all devices"
+   *  bumps the DB value, so a caller that also checks the DB value against
+   *  this can invalidate every previously-issued token at once. Defaults to
+   *  0 (matches the column default) when the caller doesn't pass one — real
+   *  login/register/2FA paths always pass the real value; only tests rely
+   *  on the default. */
+  tokenVersion?: number;
 };
 
 export function signAuthToken(payload: AuthTokenPayload) {
-  return jwt.sign(payload, env.AUTH_JWT_SECRET, {
+  return jwt.sign({ ...payload, tokenVersion: payload.tokenVersion ?? 0 }, env.AUTH_JWT_SECRET, {
     expiresIn: env.AUTH_JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"],
     issuer: "global-health-backend",
     audience: "global-health-website",
@@ -35,7 +42,8 @@ export function verifyAuthToken(token: string): AuthTokenPayload | null {
     ) {
       return null;
     }
-    return { sub, role, email };
+    const tokenVersion = typeof decoded.tokenVersion === "number" ? decoded.tokenVersion : 0;
+    return { sub, role, email, tokenVersion };
   } catch {
     return null;
   }

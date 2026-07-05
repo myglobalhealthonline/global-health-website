@@ -48,9 +48,9 @@ export async function verifyDoctorAccess(
   try {
     const user = await prisma.user.findUnique({
       where: { id: payload.sub },
-      select: { id: true, email: true, isActive: true, role: true, doctorId: true },
+      select: { id: true, email: true, isActive: true, role: true, doctorId: true, tokenVersion: true },
     });
-    if (!user || !user.isActive) {
+    if (!user || !user.isActive || user.tokenVersion !== payload.tokenVersion) {
       return { ok: false, status: 401, message: "Not authenticated" };
     }
     if (!user.doctorId) {
@@ -142,9 +142,9 @@ export async function verifyClinicalReadAccess(
   try {
     const user = await prisma.user.findUnique({
       where: { id: payload.sub },
-      select: { id: true, email: true, isActive: true, role: true, doctorId: true },
+      select: { id: true, email: true, isActive: true, role: true, doctorId: true, tokenVersion: true },
     });
-    if (!user || !user.isActive) {
+    if (!user || !user.isActive || user.tokenVersion !== payload.tokenVersion) {
       return { ok: false, status: 401, message: "Not authenticated" };
     }
     if (user.role === "DOCTOR" && !user.doctorId) {

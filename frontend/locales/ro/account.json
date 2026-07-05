@@ -102,6 +102,13 @@
     "ordered": "Comandat {date}",
     "open": "Deschide"
   },
+  "medicalFiles": {
+    "breadcrumb": "Portalul pacientului",
+    "title": "Fișiere medicale",
+    "subtitle": "Rapoartele și documentele tale încărcate de medici.",
+    "downloadAll": "Descarcă tot",
+    "downloadingAll": "Se descarcă…"
+  },
   "payments": {
     "breadcrumb": "Cont",
     "title": "Plăți",
@@ -187,12 +194,18 @@
     "passwordNoMatch": "Parola nouă și confirmarea nu se potrivesc.",
     "passwordTooShort": "Parola nouă trebuie să aibă cel puțin 8 caractere.",
     "passwordUpdated": "Parolă actualizată. Folosește-o pe cea nouă data viitoare când te conectezi.",
-    "deleteWarning": "Aceasta șterge permanent contul tău. Istoricul rezervărilor este păstrat din motive de reglementare, dar fără date de identificare. Această acțiune nu poate fi anulată.",
-    "deleting": "Se șterge…",
+    "deleteWarning": "Contul tău va fi șters în 30 de zile. Poți continua să îl folosești și poți anula cererea oricând de pe această pagină.",
+    "deleting": "Se programează…",
     "deleteMyAccount": "Șterge contul meu",
     "deleteAccountTitle": "Ștergi contul?",
     "cancel": "Anulează",
-    "deleteAccount": "Șterge contul"
+    "deleteAccount": "Programează ștergerea",
+    "deletionScheduledBanner": "Your account is scheduled for deletion on {date}.",
+    "cancelDeletion": "Cancel deletion",
+    "cancellingDeletion": "Cancelling…",
+    "signOutAllDevices": "Sign out of all devices",
+    "signOutAllDevicesBody": "This ends every signed-in session, including this one — you'll need to log in again.",
+    "signingOutAll": "Signing out…"
   },
   "family": {
     "breadcrumb": "Cont",

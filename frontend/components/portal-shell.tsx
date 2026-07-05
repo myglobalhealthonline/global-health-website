@@ -269,7 +269,10 @@ export function PortalShell({
                   return (
                     <span key={crumb.href} className="flex items-center gap-1.5">
                       {isLast ? (
-                        <span className="truncate font-bold text-[var(--portal-chrome-text-active)]">
+                        <span
+                          aria-current="page"
+                          className="truncate font-bold text-[var(--portal-chrome-text-active)]"
+                        >
                           {crumb.label}
                         </span>
                       ) : (

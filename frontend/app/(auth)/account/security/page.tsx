@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ShieldCheck, KeyRound, MailCheck, Download } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ShieldCheck, KeyRound, MailCheck, Download, LogOut, Ban } from "lucide-react";
 import {
+  cancelAccountDeletion,
   changeCurrentPassword,
   downloadOwnDataUrl,
   fetchCurrentUser,
   resendVerificationEmail,
+  signOutAllDevices,
   type AuthUser,
 } from "@/lib/api/auth-api";
 import { formatAppDate } from "@/lib/format-datetime";
@@ -18,6 +21,7 @@ import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
 
 export default function AccountSecurityPage() {
+  const router = useRouter();
   const [locale] = useState<LocaleCode>(() => readClientLocale());
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -33,12 +37,24 @@ export default function AccountSecurityPage() {
   const [sendingVerify, setSendingVerify] = useState(false);
   const [verifyMsg, setVerifyMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
+  // Grace-period deletion + cancel state.
+  const [deletionScheduledAt, setDeletionScheduledAt] = useState<string | null>(null);
+  const [cancellingDeletion, setCancellingDeletion] = useState(false);
+  const [deletionMsg, setDeletionMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+
+  // Sign-out-all-devices state.
+  const [signingOutAll, setSigningOutAll] = useState(false);
+  const [signOutMsg, setSignOutMsg] = useState<string | null>(null);
+
   useEffect(() => {
     let cancelled = false;
     async function load() {
       const res = await fetchCurrentUser();
       if (cancelled) return;
-      if (res.ok) setUser(res.data.user);
+      if (res.ok) {
+        setUser(res.data.user);
+        setDeletionScheduledAt(res.data.user.deletionScheduledAt);
+      }
       setLoading(false);
     }
     void load();
@@ -48,6 +64,32 @@ export default function AccountSecurityPage() {
   }, []);
 
   const a = loadLocaleBundle(locale).account;
+
+  async function onCancelDeletion() {
+    setDeletionMsg(null);
+    setCancellingDeletion(true);
+    const res = await cancelAccountDeletion();
+    setCancellingDeletion(false);
+    if (res.ok) {
+      setDeletionScheduledAt(null);
+      setDeletionMsg({ kind: "ok", text: "Account deletion cancelled." });
+    } else {
+      setDeletionMsg({ kind: "err", text: res.message });
+    }
+  }
+
+  async function onSignOutAll() {
+    setSignOutMsg(null);
+    setSigningOutAll(true);
+    const res = await signOutAllDevices();
+    setSigningOutAll(false);
+    if (res.ok) {
+      router.replace("/login");
+      router.refresh();
+    } else {
+      setSignOutMsg(res.message);
+    }
+  }
 
   async function onChangePassword(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -103,6 +145,35 @@ export default function AccountSecurityPage() {
         }
         description={a.security.subtitle}
       />
+
+      {deletionScheduledAt ? (
+        <div className="gh-status-warning mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+          <span>
+            {a.security.deletionScheduledBanner.replace(
+              "{date}",
+              formatAppDate(deletionScheduledAt),
+            )}
+          </span>
+          <button
+            type="button"
+            onClick={() => void onCancelDeletion()}
+            disabled={cancellingDeletion}
+            className="inline-flex items-center gap-1.5 rounded-md border border-current px-3 py-1.5 text-xs font-semibold hover:opacity-80 disabled:opacity-60"
+          >
+            <Ban className="size-3.5" aria-hidden />
+            {cancellingDeletion ? a.security.cancellingDeletion : a.security.cancelDeletion}
+          </button>
+        </div>
+      ) : null}
+      {deletionMsg ? (
+        <p
+          className={`mb-5 rounded-md px-3 py-2 text-sm ${
+            deletionMsg.kind === "ok" ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"
+          }`}
+        >
+          {deletionMsg.text}
+        </p>
+      ) : null}
 
       {loading ? (
         <div className="gh-card grid gap-4 p-6">
@@ -183,7 +254,34 @@ export default function AccountSecurityPage() {
                   {a.security.downloadData}
                 </a>
 
-                <DeleteAccountButton i18n={a.security} />
+                <DeleteAccountButton
+                  i18n={a.security}
+                  onScheduled={setDeletionScheduledAt}
+                />
+              </div>
+            </FormSection>
+
+            {/* Sign out of all devices */}
+            <FormSection
+              title={a.security.signOutAllDevices}
+              description={a.security.signOutAllDevicesBody}
+              className="mt-4"
+            >
+              <div className="gh-form-section__span-2">
+                <button
+                  type="button"
+                  onClick={() => void onSignOutAll()}
+                  disabled={signingOutAll}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-rose-300 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-60 sm:w-auto"
+                >
+                  <LogOut className="size-4" aria-hidden />
+                  {signingOutAll ? a.security.signingOutAll : a.security.signOutAllDevices}
+                </button>
+                {signOutMsg ? (
+                  <p className="mt-3 rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-800">
+                    {signOutMsg}
+                  </p>
+                ) : null}
               </div>
             </FormSection>
 

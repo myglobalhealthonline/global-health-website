@@ -38,8 +38,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   if (!user) {
     redirect("/login?next=/admin");
   }
-  if (user.role !== "ADMIN") {
-    redirect("/account");
+  if (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
+    redirect("/unauthorized");
   }
 
   // Sidebar nav.

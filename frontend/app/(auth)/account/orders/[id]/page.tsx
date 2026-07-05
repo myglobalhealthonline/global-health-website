@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, PackageCheck } from "lucide-react";
+import { ArrowLeft, PackageCheck, Truck } from "lucide-react";
 import { fetchAccountOrder } from "@/lib/api/cart-server";
+import { ReorderButton } from "./_components/reorder-button";
 import { AdminCard, AdminSummaryStrip, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDateTime } from "@/lib/format-datetime";
@@ -62,7 +63,10 @@ export default async function AccountOrderDetailPage({ params }: Props) {
 
       <div className="gh-patient-detail-grid grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <AdminCard padding={0}>
-          <SectionHeader title={a.orders.itemsSection} />
+          <SectionHeader
+            title={a.orders.itemsSection}
+            right={<ReorderButton items={order.items} />}
+          />
           <div className="p-5">
             <ul className="divide-y divide-[var(--portal-line)]">
               {order.items.map((i) => (
@@ -95,6 +99,36 @@ export default async function AccountOrderDetailPage({ params }: Props) {
         </AdminCard>
 
         <aside className="grid gap-4 self-start">
+          {order.trackingNumber ? (
+            <AdminCard padding={0}>
+              <SectionHeader title="Track shipment" />
+              <div className="p-5 text-sm">
+                <div className="flex items-start gap-3">
+                  <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+                    <Truck className="size-5" aria-hidden />
+                  </span>
+                  <div className="min-w-0">
+                    {order.trackingCarrier ? (
+                      <p className="text-xs text-[var(--portal-muted)]">{order.trackingCarrier}</p>
+                    ) : null}
+                    {order.trackingUrl ? (
+                      <a
+                        href={order.trackingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold text-[var(--portal-primary)] underline-offset-2 hover:underline"
+                      >
+                        {order.trackingNumber}
+                      </a>
+                    ) : (
+                      <p className="font-semibold text-[var(--portal-text)]">{order.trackingNumber}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </AdminCard>
+          ) : null}
+
           <AdminCard padding={0}>
             <SectionHeader title={a.orders.shippingSection} />
             <div className="p-5 text-sm text-[var(--portal-text)]">

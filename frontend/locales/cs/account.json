@@ -102,6 +102,13 @@
     "ordered": "Objednáno {date}",
     "open": "Otevřít"
   },
+  "medicalFiles": {
+    "breadcrumb": "Pacientský portál",
+    "title": "Zdravotní dokumenty",
+    "subtitle": "Vaše nahrané zprávy a dokumenty od lékařů.",
+    "downloadAll": "Stáhnout vše",
+    "downloadingAll": "Stahuje se…"
+  },
   "payments": {
     "breadcrumb": "Účet",
     "title": "Platby",
@@ -187,12 +194,18 @@
     "passwordNoMatch": "Nové heslo a potvrzení se neshodují.",
     "passwordTooShort": "Nové heslo musí mít alespoň 8 znaků.",
     "passwordUpdated": "Heslo aktualizováno. Příště se přihlaste novým heslem.",
-    "deleteWarning": "Tímto trvale smažete svůj účet. Vaše historie rezervací je zachována z regulatorních důvodů, ale bez identifikačních údajů. Tuto akci nelze vrátit zpět.",
-    "deleting": "Mazání…",
+    "deleteWarning": "Váš účet bude smazán za 30 dní. Do té doby jej můžete dál používat a žádost o smazání kdykoli zrušit na této stránce.",
+    "deleting": "Plánování…",
     "deleteMyAccount": "Smazat můj účet",
     "deleteAccountTitle": "Smazat váš účet?",
     "cancel": "Zrušit",
-    "deleteAccount": "Smazat účet"
+    "deleteAccount": "Naplánovat smazání",
+    "deletionScheduledBanner": "Your account is scheduled for deletion on {date}.",
+    "cancelDeletion": "Cancel deletion",
+    "cancellingDeletion": "Cancelling…",
+    "signOutAllDevices": "Sign out of all devices",
+    "signOutAllDevicesBody": "This ends every signed-in session, including this one — you'll need to log in again.",
+    "signingOutAll": "Signing out…"
   },
   "family": {
     "breadcrumb": "Účet",

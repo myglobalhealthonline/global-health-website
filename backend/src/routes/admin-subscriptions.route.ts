@@ -40,17 +40,20 @@ function handleError(app: { log: { error: (e: unknown) => void } }, reply: Fasti
 
 const adminSubscriptionsRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/admin/subscriptions", async (request, reply) => {
-    if (!(await requireManageSubscriptions(request, reply))) return;
+    const auth = await requireManageSubscriptions(request, reply);
+    if (!auth) return;
     const query = adminSubscriptionsQuerySchema.safeParse(request.query);
     if (!query.success) {
       return reply.status(400).send(errorResponse("Invalid subscriptions query", query.error.flatten()));
     }
     try {
-      // Single admin tier: any admin who can load this page may use the manual
-      // adjustment override (the GET already required admin access). The flag is
-      // kept so the UI can gate the panel if tiers are introduced later.
+      // Manual balance adjustment is SUPER_ADMIN-only (money mutation) — a
+      // plain ADMIN can still view this page, they just don't get the form.
       const result = await listAdminSubscriptions(query.data);
-      return okResponse({ ...result, capabilities: { canAdjustCredits: true } });
+      return okResponse({
+        ...result,
+        capabilities: { canAdjustCredits: auth.actorRole === "SUPER_ADMIN" },
+      });
     } catch (error) {
       return handleError(app, reply, error);
     }
@@ -68,11 +71,15 @@ const adminSubscriptionsRoute: FastifyPluginAsync = async (app) => {
   });
 
   app.post("/api/admin/subscriptions/:id/adjust-credits", async (request, reply) => {
-    // Admin-gated (single tier). The "don't let admins freely edit balances"
-    // control is friction, not a role: a mandatory reason (note), a hidden
-    // override panel, a confirm step, and the audit row written below (§4).
+    // Money mutation — SUPER_ADMIN only (defense in depth for the frontend
+    // gate on capabilities.canAdjustCredits above). A mandatory reason
+    // (note), a hidden override panel, a confirm step, and the audit row
+    // written below are the additional friction controls (§4).
     const auth = await requireManageSubscriptions(request, reply);
     if (!auth) return;
+    if (auth.actorRole !== "SUPER_ADMIN") {
+      return reply.status(403).send(errorResponse("Super-admin access is required for credit adjustments"));
+    }
     const params = subscriptionIdParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid subscription id"));
     const body = adminAdjustCreditsBodySchema.safeParse(request.body);

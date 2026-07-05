@@ -14,7 +14,7 @@ import {
   TwoFactorTokenInvalidError,
   TwoFactorAlreadyEnabledError,
 } from "../modules/two-factor/two-factor.service.js";
-import { getSafeUserById } from "../modules/auth/auth.service.js";
+import { getSafeUserById, getUserTokenVersion } from "../modules/auth/auth.service.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { prisma } from "../db/prisma.js";
 
@@ -121,7 +121,8 @@ const auth2faRoute: FastifyPluginAsync = async (app) => {
           return reply.status(401).send(errorResponse("Account not found"));
         }
 
-        const sessionToken = signAuthToken({ sub: user.id, role: user.role, email: user.email });
+        const tokenVersion = await getUserTokenVersion(user.id);
+        const sessionToken = signAuthToken({ sub: user.id, role: user.role, email: user.email, tokenVersion });
         reply.setCookie(env.AUTH_COOKIE_NAME, sessionToken, authCookieOptions());
 
         recordAudit({

@@ -200,6 +200,32 @@ export function DoctorProfileEditForm({
     activeMarket?.division ?? "",
   );
 
+  // ponytail: snapshot-compare dirty tracking instead of a form-library
+  // abstraction — this page's ~10 useState fields don't warrant one.
+  // Bio (RichTextHtmlField) is uncontrolled/read-on-submit, so it's not
+  // included in the snapshot; upgrade path if that needs coverage too.
+  const initialProfileSnapshot = useRef(
+    JSON.stringify({
+      fullName: initial.fullName,
+      qualifications: initialQualificationsText,
+      languages: initialLanguages,
+      whatsappNumber: initial.whatsappNumber,
+      chamberEntity: activeMarket?.chamberEntity ?? "",
+      registrationNumber: activeMarket?.registrationNumber ?? "",
+      registrationDivision: activeMarket?.division ?? "",
+    }),
+  );
+  const isProfileDirty =
+    JSON.stringify({
+      fullName,
+      qualifications,
+      languages,
+      whatsappNumber,
+      chamberEntity,
+      registrationNumber,
+      registrationDivision,
+    }) !== initialProfileSnapshot.current;
+
   /* ── Payout form ──────────────────────────────────── */
   const [payoutPending, startPayoutTransition] = useTransition();
   const [payoutMsg, setPayoutMsg] = useState<Msg | null>(null);
@@ -210,6 +236,26 @@ export function DoctorProfileEditForm({
   const [bankIban, setBankIban] = useState("");
   const [bicFieldError, setBicFieldError] = useState<string | null>(null);
   const [ibanFieldError, setIbanFieldError] = useState<string | null>(null);
+
+  const initialPayoutSnapshot = useRef(
+    JSON.stringify({
+      bankAccountHolder: activeMarket?.bank.accountHolder ?? initial.bankAccountHolder,
+      bankBic: activeMarket?.bank.bic ?? initial.bankBic,
+      bankIban: "",
+    }),
+  );
+  const isPayoutDirty =
+    JSON.stringify({ bankAccountHolder, bankBic, bankIban }) !==
+    initialPayoutSnapshot.current;
+
+  useEffect(() => {
+    function onBeforeUnload(e: BeforeUnloadEvent) {
+      if (!isProfileDirty && !isPayoutDirty) return;
+      e.preventDefault();
+    }
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [isProfileDirty, isPayoutDirty]);
 
   /* ── Photo ────────────────────────────────────────── */
   const [photoPending, startPhotoTransition] = useTransition();
@@ -238,6 +284,23 @@ export function DoctorProfileEditForm({
     setActiveBioLocale(
       localeTabs.find((locale) => locale.isDefault)?.code ?? localeTabs[0].code,
     );
+    // Re-baseline dirty snapshots against the freshly synced values so a
+    // successful save (which triggers router.refresh() -> new `initial`)
+    // clears the dirty flag instead of comparing against stale state.
+    initialProfileSnapshot.current = JSON.stringify({
+      fullName: initial.fullName,
+      qualifications: initialQualificationsText,
+      languages: initialLanguages,
+      whatsappNumber: initial.whatsappNumber,
+      chamberEntity: activeMarket?.chamberEntity ?? "",
+      registrationNumber: activeMarket?.registrationNumber ?? "",
+      registrationDivision: activeMarket?.division ?? "",
+    });
+    initialPayoutSnapshot.current = JSON.stringify({
+      bankAccountHolder: activeMarket?.bank.accountHolder ?? initial.bankAccountHolder,
+      bankBic: activeMarket?.bank.bic ?? initial.bankBic,
+      bankIban: "",
+    });
   }, [
     initial.fullName,
     initialQualificationsText,

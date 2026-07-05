@@ -3,20 +3,23 @@ import { z } from "zod";
 import {
   AuthConflictError,
   AuthInvalidCredentialsError,
+  cancelAccountDeletion,
   changeUserPassword,
   claimGuestAppointmentsForUser,
   claimGuestOrdersForUser,
   consumeEmailVerificationToken,
   consumePasswordResetToken,
-  deleteOwnAccount,
   exportUserData,
   findUserByEmail,
   getSafeUserById,
+  getUserTokenVersion,
   issueEmailVerificationToken,
   issuePasswordResetToken,
   loginUser,
   patchUserProfile,
   registerPatient,
+  requestAccountDeletion,
+  signOutAllDevices,
 } from "../modules/auth/auth.service.js";
 import {
   sendEmailVerificationEmail,
@@ -47,7 +50,7 @@ const authRoute: FastifyPluginAsync = async (app) => {
     }
     try {
       const user = await registerPatient(body.data);
-      const token = signAuthToken({ sub: user.id, role: user.role, email: user.email });
+      const token = signAuthToken({ sub: user.id, role: user.role, email: user.email, tokenVersion: 0 });
       reply.setCookie(env.AUTH_COOKIE_NAME, token, authCookieOptions());
 
       // Claim any historic guest bookings made with the same email.
@@ -111,7 +114,12 @@ const authRoute: FastifyPluginAsync = async (app) => {
       }
 
       const { user } = result;
-      const token = signAuthToken({ sub: user.id, role: user.role, email: user.email });
+      const token = signAuthToken({
+        sub: user.id,
+        role: user.role,
+        email: user.email,
+        tokenVersion: result.tokenVersion,
+      });
       reply.setCookie(env.AUTH_COOKIE_NAME, token, authCookieOptions());
 
       // First login after a guest booking should attach the historic
@@ -321,10 +329,12 @@ const authRoute: FastifyPluginAsync = async (app) => {
       if (body.data.invite === true && result.isInvite) {
         const user = await getSafeUserById(result.userId);
         if (user && user.isActive) {
+          const tokenVersion = await getUserTokenVersion(user.id);
           const sessionToken = signAuthToken({
             sub: user.id,
             role: user.role,
             email: user.email,
+            tokenVersion,
           });
           reply.setCookie(env.AUTH_COOKIE_NAME, sessionToken, authCookieOptions());
           return okResponse(
@@ -443,19 +453,59 @@ const authRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  // GDPR: soft-delete the signed-in user's account. PII is scrubbed but
-  // booking history is preserved (regulatory / Stripe ledger). The
-  // session cookie is cleared on success.
+  // GDPR: schedule the signed-in user's account for deletion after a 30-day
+  // grace period. The account stays fully functional until then — no PII
+  // is scrubbed yet and the session is NOT cleared, so the patient can keep
+  // using the account or cancel the request from /account/security.
   app.delete("/api/auth/me", { preHandler: requireAuth }, async (request, reply) => {
     const payload = request.authUser!;
     try {
-      await deleteOwnAccount(payload.sub);
-      reply.clearCookie(env.AUTH_COOKIE_NAME, authCookieOptions());
-      return okResponse({ deleted: true }, "Account deleted");
+      const result = await requestAccountDeletion(payload.sub);
+      return okResponse(result, "Account deletion scheduled. You have 30 days to cancel.");
     } catch (error) {
-      return replyWithError(reply, app.log, error, "Could not delete account");
+      return replyWithError(reply, app.log, error, "Could not schedule account deletion");
     }
   });
+
+  // Cancel a pending grace-period deletion.
+  app.post(
+    "/api/auth/me/cancel-deletion",
+    { preHandler: requireAuth },
+    async (request, reply) => {
+      const payload = request.authUser!;
+      try {
+        await cancelAccountDeletion(payload.sub);
+        return okResponse({ cancelled: true }, "Account deletion cancelled");
+      } catch (error) {
+        return replyWithError(reply, app.log, error, "Could not cancel account deletion");
+      }
+    },
+  );
+
+  // Sign out of all devices: bumps tokenVersion so every previously-issued
+  // JWT (including this one) fails the tokenVersion check on its next
+  // request, then clears this request's own cookie so the caller is logged
+  // out immediately too, consistent with "all devices".
+  app.post(
+    "/api/account/security/sign-out-all",
+    {
+      preHandler: requireAuth,
+      config: { rateLimit: { max: 10, timeWindow: "1 hour" } },
+    },
+    async (request, reply) => {
+      const payload = request.authUser!;
+      if (payload.role !== "PATIENT") {
+        return reply.status(403).send(errorResponse("Patient access required"));
+      }
+      try {
+        await signOutAllDevices(payload.sub);
+        reply.clearCookie(env.AUTH_COOKIE_NAME, authCookieOptions());
+        return okResponse({ signedOut: true }, "Signed out of all devices");
+      } catch (error) {
+        return replyWithError(reply, app.log, error, "Could not sign out of all devices");
+      }
+    },
+  );
 };
 
 export default authRoute;
