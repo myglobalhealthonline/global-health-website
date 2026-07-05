@@ -63,7 +63,9 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  function getNextPath(role: "PATIENT" | "ADMIN" | "DOCTOR" | "LOCAL_ADMIN" | "SUPER_ADMIN") {
+  function getNextPath(
+    role: "PATIENT" | "ADMIN" | "DOCTOR" | "LOCAL_ADMIN" | "SUPER_ADMIN" | "CORPORATE_ADMIN",
+  ) {
     const next = searchParams.get("next");
     if (
       !next ||
@@ -73,6 +75,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
     ) {
       if (role === "ADMIN" || role === "SUPER_ADMIN" || role === "LOCAL_ADMIN") return "/admin";
       if (role === "DOCTOR") return "/doctor";
+      if (role === "CORPORATE_ADMIN") return "/corporate";
       return "/account";
     }
     return next;

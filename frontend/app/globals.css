@@ -2013,6 +2013,10 @@ img {
   --portal-member: #e3f5b0;
   --portal-member-text: #5e7516;
 }
+[data-portal="corporate"] {
+  --portal-accent: #9fd44a;
+  --portal-accent-text: #4e6b10;
+}
 
 /* Eyebrow — .gh-eyebrow itself is shared with the public site (hard rule
  * #10); color/size/weight are overridden here, scoped to the portal

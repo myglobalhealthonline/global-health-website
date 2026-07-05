@@ -269,6 +269,7 @@
   },
   "bookingForm": {
     "benefitHeading": "Aplicar o seu plano",
+    "corporateOffAtCheckout": "de desconto no pagamento",
     "benefitPayNormal": "Pagar normalmente",
     "benefitUseCredit": "Usar crédito do plano",
     "benefitUseDiscount": "Usar desconto do plano",
@@ -533,6 +534,7 @@
     "subtotalItems": "Subtotal ({count} {unit})",
     "shipping": "Envio",
     "planSavings": "Poupança do plano",    "total": "Total",
+    "corporateOff": "de desconto",
     "continueToCheckout": "Continuar para finalizar compra",
     "trustSecure": "Pagamento seguro com tecnologia Stripe",
     "trustNoStore": "Nunca guardamos os dados do seu cartão",
@@ -652,5 +654,28 @@
     "noForLanguage": "Não há médicos disponíveis para este serviço em {language} neste momento.",
     "chooseAnotherLanguage": "Escolha outro idioma ou volte a verificar mais tarde.",
     "showAllLanguages": "Mostrar todos os idiomas"
+  },
+  "cardVerify": {
+    "title": "Verificação de cartão corporativo",
+    "subtitle": "Autentique um cartão de benefícios corporativo da Global Health",
+    "step": "Verificar",
+    "valid": "Cartão válido",
+    "statusSuspended": "Cartão suspenso",
+    "statusExpired": "Cartão expirado",
+    "validBody": "Este cartão de benefícios corporativo está ativo e é autêntico.",
+    "inactiveBody": "Este cartão é autêntico mas já não concede benefícios corporativos.",
+    "cardNumber": "Número do cartão",
+    "member": "Membro",
+    "company": "Empresa",
+    "plan": "Plano",
+    "memberType": "Tipo de membro",
+    "employee": "Colaborador",
+    "beneficiary": "Beneficiário",
+    "status": "Estado",
+    "validRange": "Validade",
+    "matchNote": "Compare o número do cartão acima com o do cartão digital do membro.",
+    "notFound": "Cartão não encontrado",
+    "checkNumber": "Verifique se o número do cartão está correto.",
+    "couldNotVerify": "Não foi possível verificar o cartão"
   }
 }

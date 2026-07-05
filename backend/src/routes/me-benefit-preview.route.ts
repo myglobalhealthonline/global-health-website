@@ -4,6 +4,8 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { previewServiceBenefit } from "../modules/subscriptions/checkout-pricing.service.js";
+import { prisma } from "../db/prisma.js";
+import { resolveCorporateDiscount } from "../modules/corporate/corporate-benefit.service.js";
 
 /**
  * GET /api/me/benefit-preview?serviceId=&basePriceCents= — read-only benefit
@@ -34,7 +36,32 @@ const meBenefitPreviewRoute: FastifyPluginAsync = async (app) => {
         serviceId: parsed.data.serviceId,
         basePriceCents: parsed.data.basePriceCents,
       });
-      return okResponse(preview);
+      // Corporate benefit engine: attach the automatic member discount so
+      // the booking step can show "Corporate Standard −10%". Applies only
+      // when the plan preview isn't already benefit-pricing the line.
+      const service = await prisma.service.findUnique({
+        where: { id: parsed.data.serviceId },
+        select: { kind: true },
+      });
+      const corporate = service
+        ? await resolveCorporateDiscount({
+            userId: user.id,
+            serviceId: parsed.data.serviceId,
+            serviceKind: service.kind,
+            baseCents: parsed.data.basePriceCents,
+          })
+        : null;
+      return okResponse({
+        ...preview,
+        corporateDiscount: corporate
+          ? {
+              percent: corporate.discountPercent,
+              amountCents: corporate.discountCents,
+              companyName: corporate.companyName,
+              planName: corporate.planName,
+            }
+          : null,
+      });
     } catch (err) {
       if (err instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(err.message));

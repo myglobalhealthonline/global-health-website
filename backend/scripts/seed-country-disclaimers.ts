@@ -87,24 +87,11 @@ const DISCLAIMERS: Record<string, Disclaimer> = {
     ].join("\n\n"),
   },
 
-  // ── Czechia ── (praktický lékař · Česká lékařská komora · eNeschopenka via
-  //    ČSSZ — attending physician only · emergency 155/112, info line 1221) ──────
-  cz: {
-    fullDisclaimer: [
-      "All services in the Czech Republic are provided at praktický lékař (general practitioner) level by physicians registered with the Česká lékařská komora (Czech Medical Chamber), in accordance with applicable Czech healthcare regulations.",
-      "Our online doctors conduct medical assessments remotely and may provide treatment recommendations, prescriptions, referrals, or medical certificates only when clinically appropriate and at the doctor’s professional discretion.",
-      "Please note that our doctors do not routinely prescribe controlled substances (omamné a psychotropní látky) through online consultations; by law these require a paper “blue-stripe” prescription and cannot be issued electronically.",
-      "Employers may require confirmation of incapacity for work during sick leave. Depending on the nature of your condition and the outcome of the consultation, the doctor may or may not issue a certificate.",
-      "An electronic sick note (eNeschopenka) recognised by the Czech Social Security Administration (ČSSZ) may only be issued by the attending physician who has personally examined and is treating the patient. A certificate cannot be issued on request alone without a genuine clinical assessment. Patients requiring documentation for sickness benefit who cannot be assessed remotely should attend an in-person consultation.",
-      "To maintain safe and appropriate clinical standards, our doctors do not routinely issue backdated sick notes due to the absence of direct clinical assessment at the time of illness.",
-      "Online consultations are not suitable for medical emergencies. For non-urgent health advice you can contact the Ministry of Health information line on 1221. If you are experiencing a medical emergency, call 155 or 112, or attend your nearest emergency department immediately.",
-    ].join("\n\n"),
-    shortDisclaimer: [
-      "All services in the Czech Republic are provided at praktický lékař (GP) level by physicians registered with the Česká lékařská komora, in accordance with Czech healthcare regulations.",
-      "Prescriptions, referrals, and medical certificates may be issued only when clinically appropriate and at the doctor’s discretion. Our doctors do not routinely prescribe controlled substances through online consultations.",
-      "An eNeschopenka (electronic sick note) recognised by the ČSSZ may only be issued by the attending physician who has examined and is treating you, not on request alone. Backdated sick notes are not routinely issued.",
-    ].join("\n\n"),
-  },
+  // ── Czechia ── MOVED to scripts/import-czechia-disclaimer.ts (2026-07) ──────
+  // Superseded by the authentic bilingual disclaimer sourced from
+  // GlobalHealth_Disclaimer_CzechRepublic.docx. That script writes the CS-locale
+  // base columns (CZ's defaultLocale) directly plus an EN CountryDisclaimerTranslation
+  // — kept out of this map so the two scripts don't fight over the same row.
 
   // ── Romania ── (medic de familie · Colegiul Medicilor din România · concediu
   //    medical via CNAS — objective evaluation + CAS-contracted doctor) ──────────

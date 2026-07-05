@@ -269,6 +269,7 @@
   },
   "bookingForm": {
     "benefitHeading": "Aplicați planul",
+    "corporateOffAtCheckout": "reducere la plată",
     "benefitPayNormal": "Plătiți normal",
     "benefitUseCredit": "Folosiți creditul planului",
     "benefitUseDiscount": "Folosiți reducerea planului",
@@ -533,6 +534,7 @@
     "subtotalItems": "Subtotal ({count} {unit})",
     "shipping": "Livrare",
     "planSavings": "Economii cu planul",    "total": "Total",
+    "corporateOff": "reducere",
     "continueToCheckout": "Continuă către finalizare",
     "trustSecure": "Plată securizată oferită de Stripe",
     "trustNoStore": "Nu stocăm niciodată datele cardului tău",
@@ -652,5 +654,28 @@
     "noForLanguage": "Niciun medic nu este disponibil momentan pentru acest serviciu în {language}.",
     "chooseAnotherLanguage": "Te rugăm să alegi o altă limbă sau să verifici din nou mai târziu.",
     "showAllLanguages": "Arată toate limbile"
+  },
+  "cardVerify": {
+    "title": "Verificarea cardului corporativ",
+    "subtitle": "Autentificați un card corporativ de beneficii Global Health",
+    "step": "Verificare",
+    "valid": "Card valid",
+    "statusSuspended": "Card suspendat",
+    "statusExpired": "Card expirat",
+    "validBody": "Acest card corporativ de beneficii este activ și autentic.",
+    "inactiveBody": "Acest card este autentic, dar nu mai oferă beneficii corporative.",
+    "cardNumber": "Număr card",
+    "member": "Membru",
+    "company": "Companie",
+    "plan": "Plan",
+    "memberType": "Tip membru",
+    "employee": "Angajat",
+    "beneficiary": "Beneficiar",
+    "status": "Stare",
+    "validRange": "Valabilitate",
+    "matchNote": "Comparați numărul cardului de mai sus cu cel de pe cardul digital al membrului.",
+    "notFound": "Cardul nu a fost găsit",
+    "checkNumber": "Verificați dacă numărul cardului este corect.",
+    "couldNotVerify": "Cardul nu a putut fi verificat"
   }
 }

@@ -259,6 +259,7 @@ export type CommonLocale = {
   bookingForm: {
     /** Booking-step plan benefit selector (B6). */
     benefitHeading: string;
+    corporateOffAtCheckout: string;
     benefitPayNormal: string;
     benefitUseCredit: string;
     benefitUseDiscount: string;
@@ -499,6 +500,7 @@ export type CommonLocale = {
     pdfOnly: string;
   };
   cartPage: {
+    corporateOff: string;
     kindGeneral: string;
     kindSpecialist: string;
     kindTest: string;
@@ -650,5 +652,28 @@ export type CommonLocale = {
     noForLanguage: string;
     chooseAnotherLanguage: string;
     showAllLanguages: string;
+  };
+  cardVerify: {
+    title: string;
+    subtitle: string;
+    step: string;
+    valid: string;
+    statusSuspended: string;
+    statusExpired: string;
+    validBody: string;
+    inactiveBody: string;
+    cardNumber: string;
+    member: string;
+    company: string;
+    plan: string;
+    memberType: string;
+    employee: string;
+    beneficiary: string;
+    status: string;
+    validRange: string;
+    matchNote: string;
+    notFound: string;
+    checkNumber: string;
+    couldNotVerify: string;
   };
 };

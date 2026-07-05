@@ -17,7 +17,15 @@ export const dynamic = "force-dynamic";
 export default async function Page() {
   const [user, locale] = await Promise.all([getServerAuthUser(), getPageLocale()]);
   if (user) {
-    redirect(user.role === "ADMIN" ? "/admin" : user.role === "DOCTOR" ? "/doctor" : "/account");
+    redirect(
+      user.role === "ADMIN"
+        ? "/admin"
+        : user.role === "DOCTOR"
+          ? "/doctor"
+          : user.role === "CORPORATE_ADMIN"
+            ? "/corporate"
+            : "/account",
+    );
   }
   const { auth } = loadLocaleBundle(locale);
   const loginI18n = auth.login;

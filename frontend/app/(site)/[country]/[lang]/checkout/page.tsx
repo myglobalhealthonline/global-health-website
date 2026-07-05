@@ -18,7 +18,7 @@ import { useCart } from "@/components/cart/CartContext";
 import { MobileOrderTotalBar } from "@/components/cart/MobileOrderTotalBar";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { startCheckout } from "@/lib/api/cart-client";
-import { getCartPreview } from "@/lib/api/me-subscription";
+import { getCartPreview, type CartCoverageLine } from "@/lib/api/me-subscription";
 import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
 import { PhoneField } from "@/components/forms/phone-field";
 import { dialCodeForCountrySlug } from "@/lib/phone/dial-codes";
@@ -62,6 +62,7 @@ export default function CheckoutPage() {
   // Plan savings the subscriber selected — so the pay button + total match the
   // amount Stripe charges (server recomputes the same benefits) (B5).
   const [coverageSaved, setCoverageSaved] = useState(0);
+  const [coverageLines, setCoverageLines] = useState<CartCoverageLine[]>([]);
   // Payer contact was already collected on the consult Details step (or comes
   // from the signed-in account) — show it read-only by default instead of
   // re-asking, and only unlock the fields if the buyer explicitly wants to
@@ -86,7 +87,9 @@ export default function CheckoutPage() {
   useEffect(() => {
     let cancelled = false;
     void getCartPreview().then((res) => {
-      if (!cancelled) setCoverageSaved(res.ok ? res.data.totalSavedCents : 0);
+      if (cancelled) return;
+      setCoverageSaved(res.ok ? res.data.totalSavedCents : 0);
+      setCoverageLines(res.ok ? res.data.lines : []);
     });
     return () => {
       cancelled = true;
@@ -212,6 +215,16 @@ export default function CheckoutPage() {
   const total = cart.subtotalCents + shippingCents;
   const payableSaved = Math.min(Math.max(0, coverageSaved), cart.subtotalCents);
   const payableTotal = Math.max(0, total - payableSaved);
+  // Split the savings row: corporate-membership discount gets its own labeled
+  // line ("Corporate Standard (Acme) −10%"), plan benefits keep the generic
+  // "Plan savings" label. Amounts are display-only — the server recomputes.
+  const corporateDiscount =
+    coverageLines.find((l) => l.corporateDiscount)?.corporateDiscount ?? null;
+  const corporateSaved = Math.min(
+    coverageLines.reduce((s, l) => s + (l.corporateDiscount?.amountCents ?? 0), 0),
+    payableSaved,
+  );
+  const planSaved = payableSaved - corporateSaved;
   // Shipping address gate. HEALTH_TEST kits always ship physically.
   // Other kinds only need it when admin set a non-zero shipping fee.
   const needsShipping = cart.items.some(
@@ -540,11 +553,21 @@ export default function CheckoutPage() {
                       </dd>
                     </div>
                   ) : null}
-                  {payableSaved > 0 ? (
+                  {planSaved > 0 ? (
                     <div className="flex justify-between">
                       <dt style={{ color: "var(--color-brand-accent)" }}>{common.cartPage.planSavings}</dt>
                       <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-brand-accent)" }}>
-                        −{formatPrice(payableSaved, cart.currencyCode)}
+                        −{formatPrice(planSaved, cart.currencyCode)}
+                      </dd>
+                    </div>
+                  ) : null}
+                  {corporateSaved > 0 && corporateDiscount ? (
+                    <div className="flex justify-between gap-3">
+                      <dt style={{ color: "var(--color-brand-accent)" }}>
+                        {corporateDiscount.planName} ({corporateDiscount.companyName}) −{corporateDiscount.percent}%
+                      </dt>
+                      <dd className="shrink-0 font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-brand-accent)" }}>
+                        −{formatPrice(corporateSaved, cart.currencyCode)}
                       </dd>
                     </div>
                   ) : null}

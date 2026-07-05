@@ -139,6 +139,15 @@ export type CartCoverageReason =
   | "SERVICE_NOT_FAMILY_USABLE"
   | "MEMBER_NOT_ALLOWED";
 
+/** Corporate-membership discount attached to a preview line (plan doc §3.3).
+ *  Automatic — no selection; applied only when no plan benefit priced the line. */
+export interface CorporateDiscountInfo {
+  percent: number;
+  amountCents: number;
+  companyName: string;
+  planName: string;
+}
+
 export interface CartCoverageLine {
   itemId: string;
   serviceId: string | null;
@@ -147,6 +156,8 @@ export interface CartCoverageLine {
   finalUnitPriceCents: number;
   creditsUsed: number;
   savedCents: number;
+  /** Present when the member's corporate plan discounted this line. */
+  corporateDiscount?: CorporateDiscountInfo | null;
   /** The benefit currently selected on this line. */
   selection: BenefitSelection;
   /** Why this line resolved as it did (drives warning chips). */
@@ -190,6 +201,8 @@ export interface ServiceBenefitPreview {
   eligibleSelections: BenefitSelection[];
   options: ServiceBenefitOption[];
   basePriceCents: number;
+  /** Automatic corporate-membership discount for this service, if any. */
+  corporateDiscount?: CorporateDiscountInfo | null;
 }
 
 /** Per-service benefit preview for the booking step (B6). Guests get 401 →

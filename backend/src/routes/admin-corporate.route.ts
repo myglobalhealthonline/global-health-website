@@ -1,0 +1,479 @@
+import type { FastifyPluginAsync, FastifyRequest } from "fastify";
+import { z } from "zod";
+import { prisma } from "../db/prisma.js";
+import { resolveAdminSessionActor, verifyAdminAccess } from "../utils/admin-auth.js";
+import { errorResponse, okResponse } from "../utils/response.js";
+import {
+  issuePasswordResetToken,
+} from "../modules/auth/auth.service.js";
+import bcrypt from "bcryptjs";
+import { randomBytes } from "node:crypto";
+import { sendCorporateAdminInviteEmail } from "../modules/corporate/corporate-emails.js";
+import {
+  computeBillingSummary,
+} from "../modules/corporate/corporate-shared.js";
+import {
+  serializeBeneficiary,
+  serializeEmployee,
+  serializeRequest,
+} from "../modules/corporate/corporate-serializers.js";
+import { mintAndSendInvite } from "../modules/corporate/corporate-invite.service.js";
+import {
+  cancelCorporateRequest,
+  createCorporateRequest,
+} from "../modules/corporate/corporate-request.service.js";
+import {
+  activateEmployee,
+  setBeneficiaryStanding,
+  setEmployeeStanding,
+} from "../modules/corporate/corporate-status.service.js";
+
+/**
+ * Platform-admin corporate management. ADMIN/SUPER_ADMIN get full
+ * access; LOCAL_ADMIN is READ-ONLY and scoped to companies in their
+ * allowedCountryFolders (plan doc §6).
+ */
+
+type AdminActor = { userId: string; role: "ADMIN" | "SUPER_ADMIN" | "LOCAL_ADMIN" };
+
+async function requireWriteActor(request: FastifyRequest): Promise<AdminActor | null> {
+  const actor = resolveAdminSessionActor(request);
+  if (!actor) return null;
+  if (actor.role === "LOCAL_ADMIN") return null;
+  return actor;
+}
+
+async function localAdminCountryFilter(request: FastifyRequest): Promise<string[] | null> {
+  const actor = resolveAdminSessionActor(request);
+  if (!actor || actor.role !== "LOCAL_ADMIN") return null;
+  const user = await prisma.user.findUnique({
+    where: { id: actor.userId },
+    select: { allowedCountryFolders: true },
+  });
+  return user?.allowedCountryFolders ?? [];
+}
+
+const companyInputSchema = z.object({
+  name: z.string().trim().min(1).max(240),
+  registrationNumber: z.string().trim().max(120).optional(),
+  addressLine1: z.string().trim().max(240).optional(),
+  addressLine2: z.string().trim().max(240).optional(),
+  city: z.string().trim().max(120).optional(),
+  postalCode: z.string().trim().max(24).optional(),
+  countryCode: z.string().trim().min(2).max(2).toLowerCase(),
+  billingEmail: z.string().trim().email().max(320),
+  contactName: z.string().trim().min(1).max(240),
+  contactEmail: z.string().trim().email().max(320),
+  contactPhone: z.string().trim().max(40).optional(),
+  planSlug: z.string().trim().default("corporate-standard"),
+  preAssessmentDoctorId: z.string().trim().optional(),
+  contractEndAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  /** When set, immediately create + invite the CORPORATE_ADMIN login. */
+  adminEmail: z.string().trim().email().max(320).optional(),
+});
+
+const adminCorporateRoute: FastifyPluginAsync = async (app) => {
+  app.addHook("onRequest", async (request, reply) => {
+    const auth = await verifyAdminAccess(request);
+    if (!auth.ok) {
+      return reply.status(auth.status).send(errorResponse(auth.message));
+    }
+  });
+
+  /** Create (or replace) the CORPORATE_ADMIN login + send invite. */
+  async function inviteCompanyAdmin(companyId: string, email: string): Promise<void> {
+    const company = await prisma.corporateCompany.findUniqueOrThrow({
+      where: { id: companyId },
+    });
+    const lower = email.toLowerCase();
+    let user = await prisma.user.findUnique({ where: { email: lower } });
+    if (user && user.role !== "CORPORATE_ADMIN") {
+      throw new Error("That email already belongs to a non-corporate account");
+    }
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          email: lower,
+          // Unusable placeholder — the invite token flow sets the real one.
+          passwordHash: await bcrypt.hash(randomBytes(32).toString("hex"), 12),
+          fullName: company.contactName,
+          role: "CORPORATE_ADMIN",
+          mustChangePassword: false,
+        },
+      });
+    }
+    await prisma.corporateCompany.update({
+      where: { id: companyId },
+      data: { adminUserId: user.id },
+    });
+    const token = await issuePasswordResetToken(user.id, {
+      ttlMinutes: 7 * 24 * 60,
+      isInvite: true,
+    });
+    await sendCorporateAdminInviteEmail({
+      to: lower,
+      contactName: company.contactName,
+      companyName: company.name,
+      token,
+    });
+  }
+
+  // ── Plans + rules ──────────────────────────────────────────────────────
+  app.get("/api/admin/corporate/plans", async () => {
+    const plans = await prisma.corporatePlan.findMany({
+      include: { benefitRules: true, _count: { select: { companies: true } } },
+      orderBy: { createdAt: "asc" },
+    });
+    return okResponse({ plans });
+  });
+
+  app.patch("/api/admin/corporate/plans/:id", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    const schema = z.object({
+      name: z.string().trim().min(1).max(240).optional(),
+      annualPricePerEmployeeCents: z.number().int().min(0).optional(),
+      maxBeneficiariesPerEmployee: z.number().int().min(0).max(20).optional(),
+      isActive: z.boolean().optional(),
+    });
+    const parsed = schema.safeParse(request.body);
+    if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
+    const plan = await prisma.corporatePlan.update({ where: { id }, data: parsed.data });
+    return okResponse({ id: plan.id });
+  });
+
+  app.post("/api/admin/corporate/plans/:id/rules", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    const schema = z.object({
+      serviceKind: z.enum(["GENERAL", "SPECIALIST", "PRESCRIPTION", "HEALTH_TEST", "HOME_DELIVERY"]).nullable().optional(),
+      serviceId: z.string().nullable().optional(),
+      discountPercent: z.number().min(0).max(100),
+      appliesToBeneficiaries: z.boolean().default(true),
+      isActive: z.boolean().default(true),
+    });
+    const parsed = schema.safeParse(request.body);
+    if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
+    const rule = await prisma.corporateBenefitRule.create({
+      data: { corporatePlanId: id, ...parsed.data },
+    });
+    return okResponse({ id: rule.id });
+  });
+
+  app.patch("/api/admin/corporate/rules/:ruleId", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { ruleId } = request.params as { ruleId: string };
+    const schema = z.object({
+      discountPercent: z.number().min(0).max(100).optional(),
+      appliesToBeneficiaries: z.boolean().optional(),
+      isActive: z.boolean().optional(),
+    });
+    const parsed = schema.safeParse(request.body);
+    if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
+    await prisma.corporateBenefitRule.update({ where: { id: ruleId }, data: parsed.data });
+    return okResponse({ id: ruleId });
+  });
+
+  // ── Companies ──────────────────────────────────────────────────────────
+  app.get("/api/admin/corporate/companies", async (request) => {
+    const query = request.query as { query?: string; status?: string };
+    const localFolders = await localAdminCountryFilter(request);
+    const companies = await prisma.corporateCompany.findMany({
+      where: {
+        ...(localFolders ? { countryCode: { in: localFolders } } : {}),
+        ...(query.status ? { status: query.status as never } : {}),
+        ...(query.query ? { name: { contains: query.query, mode: "insensitive" } } : {}),
+      },
+      include: {
+        plan: { select: { name: true, annualPricePerEmployeeCents: true, currencyCode: true } },
+        _count: { select: { employees: true, beneficiaries: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    return okResponse({
+      companies: companies.map((c) => ({
+        id: c.id,
+        name: c.name,
+        countryCode: c.countryCode,
+        status: c.status,
+        planName: c.plan.name,
+        employeeCount: c._count.employees,
+        beneficiaryCount: c._count.beneficiaries,
+        hasAdminLogin: Boolean(c.adminUserId),
+        createdAt: c.createdAt.toISOString(),
+      })),
+    });
+  });
+
+  app.post("/api/admin/corporate/companies", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const parsed = companyInputSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.status(400).send(errorResponse("Invalid company details", parsed.error.flatten()));
+    }
+    const input = parsed.data;
+    const plan = await prisma.corporatePlan.findUnique({ where: { slug: input.planSlug } });
+    if (!plan) return reply.status(400).send(errorResponse("Corporate plan not found — run the seed first"));
+    const company = await prisma.corporateCompany.create({
+      data: {
+        name: input.name,
+        registrationNumber: input.registrationNumber || null,
+        addressLine1: input.addressLine1 || null,
+        addressLine2: input.addressLine2 || null,
+        city: input.city || null,
+        postalCode: input.postalCode || null,
+        countryCode: input.countryCode,
+        billingEmail: input.billingEmail,
+        contactName: input.contactName,
+        contactEmail: input.contactEmail,
+        contactPhone: input.contactPhone || null,
+        planId: plan.id,
+        preAssessmentDoctorId: input.preAssessmentDoctorId || null,
+        contractEndAt: input.contractEndAt ? new Date(`${input.contractEndAt}T23:59:59.000Z`) : null,
+      },
+    });
+    if (input.adminEmail) {
+      try {
+        await inviteCompanyAdmin(company.id, input.adminEmail);
+      } catch (error) {
+        return okResponse({
+          id: company.id,
+          adminInviteError: error instanceof Error ? error.message : "Admin invite failed",
+        });
+      }
+    }
+    return okResponse({ id: company.id });
+  });
+
+  app.get("/api/admin/corporate/companies/:id", async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const localFolders = await localAdminCountryFilter(request);
+    const company = await prisma.corporateCompany.findFirst({
+      where: { id, ...(localFolders ? { countryCode: { in: localFolders } } : {}) },
+      include: {
+        plan: true,
+        adminUser: { select: { email: true, emailVerifiedAt: true } },
+        preAssessmentDoctor: { select: { id: true, fullName: true } },
+      },
+    });
+    if (!company) return reply.status(404).send(errorResponse("Company not found"));
+    const billing = await computeBillingSummary(company);
+    return okResponse({
+      ...company,
+      contractStartAt: company.contractStartAt.toISOString().slice(0, 10),
+      contractEndAt: company.contractEndAt ? company.contractEndAt.toISOString().slice(0, 10) : null,
+      createdAt: company.createdAt.toISOString(),
+      updatedAt: company.updatedAt.toISOString(),
+      adminLogin: company.adminUser
+        ? { email: company.adminUser.email, active: Boolean(company.adminUser.emailVerifiedAt) }
+        : null,
+      billing,
+    });
+  });
+
+  app.patch("/api/admin/corporate/companies/:id", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    const schema = companyInputSchema.partial().extend({
+      status: z.enum(["ACTIVE", "SUSPENDED", "EXPIRED"]).optional(),
+      preAssessmentDoctorId: z.string().nullable().optional(),
+      contractEndAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
+    });
+    const parsed = schema.safeParse(request.body);
+    if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
+    const { planSlug, adminEmail, contractEndAt, ...rest } = parsed.data;
+    await prisma.corporateCompany.update({
+      where: { id },
+      data: {
+        ...rest,
+        ...(contractEndAt !== undefined
+          ? { contractEndAt: contractEndAt ? new Date(`${contractEndAt}T23:59:59.000Z`) : null }
+          : {}),
+      },
+    });
+    return okResponse({ id });
+  });
+
+  app.post("/api/admin/corporate/companies/:id/admin-invite", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    const schema = z.object({ email: z.string().trim().email().max(320) });
+    const parsed = schema.safeParse(request.body);
+    if (!parsed.success) return reply.status(400).send(errorResponse("Invalid email"));
+    try {
+      await inviteCompanyAdmin(id, parsed.data.email);
+    } catch (error) {
+      return reply
+        .status(409)
+        .send(errorResponse(error instanceof Error ? error.message : "Admin invite failed"));
+    }
+    return okResponse({ id });
+  });
+
+  // ── Employees + beneficiaries ──────────────────────────────────────────
+  app.get("/api/admin/corporate/companies/:id/employees", async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const localFolders = await localAdminCountryFilter(request);
+    if (localFolders) {
+      const scoped = await prisma.corporateCompany.findFirst({
+        where: { id, countryCode: { in: localFolders } },
+        select: { id: true },
+      });
+      if (!scoped) return reply.status(404).send(errorResponse("Company not found"));
+    }
+    const employees = await prisma.corporateEmployee.findMany({
+      where: { companyId: id },
+      include: { _count: { select: { beneficiaries: { where: { status: { not: "REMOVED" } } } } } },
+      orderBy: { createdAt: "desc" },
+    });
+    return okResponse({ employees: employees.map(serializeEmployee) });
+  });
+
+  app.post("/api/admin/corporate/companies/:id/employees", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    const schema = z.object({
+      firstName: z.string().trim().min(1).max(120),
+      lastName: z.string().trim().min(1).max(120),
+      email: z.string().trim().email().max(320),
+      phone: z.string().trim().max(40).optional(),
+      department: z.string().trim().max(120).optional(),
+      jobTitle: z.string().trim().max(120).optional(),
+    });
+    const parsed = schema.safeParse(request.body);
+    if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
+    const employee = await prisma.corporateEmployee.create({
+      data: {
+        companyId: id,
+        firstName: parsed.data.firstName,
+        lastName: parsed.data.lastName,
+        email: parsed.data.email.toLowerCase(),
+        phone: parsed.data.phone || null,
+        department: parsed.data.department || null,
+        jobTitle: parsed.data.jobTitle || null,
+      },
+    });
+    const status = await mintAndSendInvite({ type: "EMPLOYEE", memberId: employee.id });
+    return okResponse({ id: employee.id, status });
+  });
+
+  app.patch("/api/admin/corporate/employees/:id", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    const schema = z.object({
+      action: z.enum(["SUSPEND", "REACTIVATE", "REMOVE", "FORCE_ACTIVATE"]),
+    });
+    const parsed = schema.safeParse(request.body);
+    if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload"));
+    if (parsed.data.action === "FORCE_ACTIVATE") {
+      await activateEmployee(id);
+      return okResponse({ id });
+    }
+    const result = await setEmployeeStanding(id, parsed.data.action);
+    if (!result.ok) return reply.status(400).send(errorResponse(result.message ?? "Not allowed"));
+    return okResponse({ id });
+  });
+
+  app.post("/api/admin/corporate/employees/:id/resend-invite", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    const status = await mintAndSendInvite({ type: "EMPLOYEE", memberId: id, isReminder: true });
+    return okResponse({ id, status });
+  });
+
+  app.get("/api/admin/corporate/companies/:id/beneficiaries", async (request) => {
+    const { id } = request.params as { id: string };
+    const beneficiaries = await prisma.corporateBeneficiary.findMany({
+      where: { companyId: id },
+      orderBy: { createdAt: "desc" },
+    });
+    return okResponse({ beneficiaries: beneficiaries.map(serializeBeneficiary) });
+  });
+
+  app.patch("/api/admin/corporate/beneficiaries/:id", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    const schema = z.object({ action: z.enum(["SUSPEND", "REACTIVATE", "REMOVE"]) });
+    const parsed = schema.safeParse(request.body);
+    if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload"));
+    const result = await setBeneficiaryStanding(id, parsed.data.action);
+    if (!result.ok) return reply.status(400).send(errorResponse(result.message ?? "Not allowed"));
+    return okResponse({ id });
+  });
+
+  app.post("/api/admin/corporate/beneficiaries/:id/resend-invite", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    const status = await mintAndSendInvite({ type: "BENEFICIARY", memberId: id, isReminder: true });
+    return okResponse({ id, status });
+  });
+
+  // ── Requests ───────────────────────────────────────────────────────────
+  app.get("/api/admin/corporate/companies/:id/requests", async (request) => {
+    const { id } = request.params as { id: string };
+    const requests = await prisma.corporateServiceRequest.findMany({
+      where: { companyId: id },
+      include: { employee: { select: { firstName: true, lastName: true, email: true } } },
+      orderBy: { createdAt: "desc" },
+    });
+    return okResponse({ requests: requests.map(serializeRequest) });
+  });
+
+  app.post("/api/admin/corporate/companies/:id/requests", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    const schema = z.object({
+      employeeId: z.string().min(1),
+      type: z.enum(["ILLNESS_BENEFIT", "FIT_FOR_WORK"]),
+      reason: z.string().trim().max(2000).optional(),
+    });
+    const parsed = schema.safeParse(request.body);
+    if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
+    const actor = resolveAdminSessionActor(request);
+    const result = await createCorporateRequest({
+      companyId: id,
+      employeeId: parsed.data.employeeId,
+      type: parsed.data.type,
+      reason: parsed.data.reason,
+      requestedByUserId: actor?.userId ?? "admin-token",
+    });
+    if (!result.ok) return reply.status(result.status).send(errorResponse(result.message));
+    return okResponse({ requestId: result.requestId, status: result.status });
+  });
+
+  app.patch("/api/admin/corporate/requests/:id", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    const result = await cancelCorporateRequest({ requestId: id });
+    if (!result.ok) return reply.status(400).send(errorResponse(result.message ?? "Not allowed"));
+    return okResponse({ id });
+  });
+};
+
+export default adminCorporateRoute;
