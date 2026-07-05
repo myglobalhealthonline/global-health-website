@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { env } from "../config/env.js";
 
-export type UserRoleType = "PATIENT" | "ADMIN" | "DOCTOR" | "LOCAL_ADMIN" | "SUPER_ADMIN";
+export type UserRoleType = "PATIENT" | "ADMIN" | "DOCTOR" | "LOCAL_ADMIN" | "SUPER_ADMIN" | "CORPORATE_ADMIN";
 
 type AuthTokenPayload = {
   sub: string;
@@ -34,7 +34,7 @@ export function verifyAuthToken(token: string): AuthTokenPayload | null {
     const sub = decoded.sub;
     const role = decoded.role;
     const email = decoded.email;
-    const validRoles: UserRoleType[] = ["PATIENT", "ADMIN", "DOCTOR", "LOCAL_ADMIN", "SUPER_ADMIN"];
+    const validRoles: UserRoleType[] = ["PATIENT", "ADMIN", "DOCTOR", "LOCAL_ADMIN", "SUPER_ADMIN", "CORPORATE_ADMIN"];
     if (
       typeof sub !== "string" ||
       !validRoles.includes(role as UserRoleType) ||

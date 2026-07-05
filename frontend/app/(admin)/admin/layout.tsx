@@ -38,6 +38,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   if (!user) {
     redirect("/login?next=/admin");
   }
+  if (user.role === "CORPORATE_ADMIN") redirect("/corporate");
   if (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
     redirect("/unauthorized");
   }
@@ -68,6 +69,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/invoices", label: "Invoices" },
     { href: "/admin/newsletter", label: "Newsletter" },
     { href: "/admin/subscriptions", label: "Subscriptions" },
+    { href: "/admin/corporate", label: "Corporate" },
     { href: "/admin/audit-log", label: "Audit log" },
     // Country-scoped — "Pages" first as the visibility controller.
     // Three sidebar entries were removed as redundant:

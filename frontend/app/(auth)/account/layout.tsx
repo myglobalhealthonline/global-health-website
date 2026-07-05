@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import {
   BadgeCheck,
   Bell,
+  Briefcase,
   CalendarDays,
   CalendarRange,
   CreditCard,
@@ -25,6 +26,7 @@ import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 import { resolveBookConsultationHref } from "@/lib/api/last-booking-country";
 import { fetchPatientUnreadMessageCount } from "@/lib/api/account-appointments-api";
 import { getServerNotifications } from "@/lib/api/me-subscription-server";
+import { fetchMeCorporate } from "@/lib/corporate/corporate-api";
 import type { NotificationPopoverItem } from "@/components/NotificationPopover";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -41,6 +43,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   if (!user) redirect("/login?next=/account");
   if (user.role === "ADMIN") redirect("/admin");
   if (user.role === "DOCTOR") redirect("/doctor");
+  if (user.role === "CORPORATE_ADMIN") redirect("/corporate");
 
   async function logoutAction() {
     "use server";
@@ -53,12 +56,14 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   // `/` (the country picker) every time, forcing them to repick Ireland
   // / Portugal / etc. on every booking. Now we route them straight to
   // the country they last booked in.
-  const [bookHref, unreadMessages, locale, notifications] = await Promise.all([
+  const [bookHref, unreadMessages, locale, notifications, corporateResult] = await Promise.all([
     resolveBookConsultationHref(),
     fetchPatientUnreadMessageCount(),
     getPageLocale(),
     getServerNotifications(),
+    fetchMeCorporate(),
   ]);
+  const hasCorporateMembership = corporateResult.ok && corporateResult.data !== null;
   const { account: a } = loadLocaleBundle(locale);
 
   // Map in-app notification rows → bell items. Payload carries the already-
@@ -97,6 +102,9 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       label: "Membership",
       items: [
         { href: "/account/membership", label: "Membership", icon: <BadgeCheck className="size-4" aria-hidden /> },
+        ...(hasCorporateMembership
+          ? [{ href: "/account/corporate", label: "Corporate", icon: <Briefcase className="size-4" aria-hidden /> }]
+          : []),
         { href: "/account/rewards", label: "Rewards", icon: <Gift className="size-4" aria-hidden /> },
       ],
     },

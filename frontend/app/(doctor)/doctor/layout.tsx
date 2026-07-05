@@ -36,6 +36,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
   const user = await getServerAuthUser();
   if (!user) redirect("/login?next=/doctor");
   if (user.role === "ADMIN") redirect("/admin");
+  if (user.role === "CORPORATE_ADMIN") redirect("/corporate");
   if (user.role !== "DOCTOR") redirect("/unauthorized");
 
   async function logoutAction() {

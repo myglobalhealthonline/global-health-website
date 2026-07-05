@@ -56,7 +56,7 @@ export type AuthUser = {
    *  Checkout / fallback intake prefill from this so the patient
    *  doesn't retype it every booking. */
   dateOfBirth: string | null;
-  role: "PATIENT" | "ADMIN" | "DOCTOR" | "LOCAL_ADMIN" | "SUPER_ADMIN";
+  role: "PATIENT" | "ADMIN" | "DOCTOR" | "LOCAL_ADMIN" | "SUPER_ADMIN" | "CORPORATE_ADMIN";
   emailVerifiedAt: string | null;
   isActive: boolean;
   /** Set when a GDPR deletion request is pending (30-day grace period).

@@ -246,6 +246,11 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
 
         // Audit + notifications keyed off WHAT actually changed.
         if (body.data.status !== undefined && body.data.status !== appt.status) {
+          // Corporate lifecycle hook (pre-assessment activation / request
+          // completion). Fire-and-forget.
+          void import("../modules/corporate/corporate-status.service.js")
+            .then((m) => m.onCorporateAppointmentStatusChanged(updated.id, updated.status))
+            .catch(() => {});
           recordAudit({
             actorUserId: auth.userId,
             actorRole: "DOCTOR",

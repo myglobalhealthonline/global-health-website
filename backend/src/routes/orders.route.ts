@@ -27,6 +27,7 @@ import {
   releaseOrderCreditReservations,
   reserveAndPriceConsultations,
 } from "../modules/subscriptions/checkout-pricing.service.js";
+import { resolveCorporateDiscountsForItems } from "../modules/corporate/corporate-benefit.service.js";
 import { computeEffectivePrices } from "../modules/orders/effective-pricing.service.js";
 import {
   assertOrderCountryScope,
@@ -214,8 +215,32 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   { finalUnitPriceCents: number; creditCovered: boolean; reservationId?: string }
                 >(),
               };
+          // Corporate benefit engine (plan doc §3.3): automatic % discount
+          // for active corporate members on eligible lines the subscription
+          // plan did NOT already benefit-price. Recomputed server-side
+          // inside the tx — never trusted from the client. No stacking:
+          // plan benefit (credit/discount) wins, else corporate.
+          const corporateDiscounts = await resolveCorporateDiscountsForItems(tx, {
+            userId,
+            items: cart.items.map((i) => ({
+              id: i.id,
+              kind: i.kind,
+              serviceId: i.serviceId,
+              baseCents: effectiveUnitPrice(i),
+            })),
+          });
+          const corporateLineDiscount = (i: { id: string; unitPriceCents: number }): number => {
+            const planLine = planResult.lines.get(i.id);
+            const base = effectiveUnitPrice(i);
+            const planBenefitApplied = Boolean(
+              planLine && (planLine.creditCovered || planLine.finalUnitPriceCents < base),
+            );
+            if (planBenefitApplied) return 0;
+            return corporateDiscounts.get(i.id)?.discountCents ?? 0;
+          };
           const finalUnitPrice = (i: { id: string; unitPriceCents: number }) =>
-            planResult.lines.get(i.id)?.finalUnitPriceCents ?? effectiveUnitPrice(i);
+            (planResult.lines.get(i.id)?.finalUnitPriceCents ?? effectiveUnitPrice(i)) -
+            corporateLineDiscount(i);
           const subtotalCents = cart.items.reduce(
             (s, i) => s + finalUnitPrice(i) * i.quantity,
             0,
@@ -267,6 +292,13 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   // (which lines drew on a credit/discount, for which dependent).
                   benefitSelection: i.benefitSelection,
                   familyMemberId: i.familyMemberId,
+                  // Corporate discount audit trail (unitPriceCents above is
+                  // already discounted; these record how much + which company).
+                  corporateDiscountCents: corporateLineDiscount(i) > 0 ? corporateLineDiscount(i) : null,
+                  corporateCompanyId:
+                    corporateLineDiscount(i) > 0
+                      ? corporateDiscounts.get(i.id)?.companyId ?? null
+                      : null,
                   // Carry the new booking snapshot through to the order
                   // item; the payment webhook reads it to mint Appointment.
                   patientNationalIdNumber: i.patientNationalIdNumber,

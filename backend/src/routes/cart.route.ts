@@ -6,6 +6,7 @@ import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { assertCorporateServiceBookable } from "../modules/corporate/corporate-benefit.service.js";
 import { resolveDoctorTimeZone } from "../modules/doctor-availability/doctor-availability.service.js";
 import {
   computeSlotPrice,
@@ -738,6 +739,28 @@ const cartRoute: FastifyPluginAsync = async (app) => {
           });
           if (!svc || !svc.isActive) {
             return reply.status(404).send(errorResponse("Service not found"));
+          }
+          // Corporate-only services: server-side eligibility gate (plan
+          // doc §3.2). Guests and ineligible users get the same 404 as a
+          // nonexistent service — cart-add is the enforcement point that
+          // matters because it claims the slot.
+          if (svc.visibility !== "PUBLIC") {
+            let corporateUserId: string | null = null;
+            try {
+              const authed = await resolveOptionalAuthUser(request);
+              if (authed && authed.role === "PATIENT") corporateUserId = authed.id;
+            } catch {
+              // fall through — unauthenticated gets rejected below
+            }
+            const gate = await assertCorporateServiceBookable({
+              userId: corporateUserId,
+              serviceId: svc.id,
+              visibility: svc.visibility,
+              doctorId: doctorId ?? null,
+            });
+            if (!gate.ok) {
+              return reply.status(corporateUserId ? 403 : 404).send(errorResponse(gate.message));
+            }
           }
           // Sanity: kind must match service.kind
           const expectedKind =
