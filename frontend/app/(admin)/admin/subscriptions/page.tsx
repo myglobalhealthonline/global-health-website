@@ -7,6 +7,7 @@ import {
   fetchAdminSubscriptions,
   fetchSubscriptionHealth,
   postAdminAdjustCredits,
+  postAdminSubscriptionRefund,
   postAdminSubscriptionRegrant,
   postAdminSubscriptionResync,
   postApproveAdminPerkGrant,
@@ -27,6 +28,7 @@ import {
   type PillTone,
 } from "../_components/atoms";
 import { CreditAdjustForm } from "../_components/credit-adjust-form";
+import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import { SubscriptionHealthPanel } from "../_components/subscription-health-panel";
 import { AdminSubscriberLedger } from "../_components/subscriber-ledger";
 import { PortalMobileCard, type PortalMobileCardTone } from "@/components/PortalMobileCard";
@@ -115,6 +117,26 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
       `/admin/subscriptions?${
         result.ok
           ? `success=${encodeURIComponent("Period grant re-run (no-op if already granted).")}`
+          : `error=${encodeURIComponent(result.message)}`
+      }`,
+    );
+  }
+
+  async function refundAction(formData: FormData) {
+    "use server";
+    // Money mutation — same SUPER_ADMIN bar as adjust-credits; the backend
+    // independently enforces this too (defense in depth).
+    await requireSuperAdminAction();
+    const subscriptionId = String(formData.get("subscriptionId") ?? "");
+    if (!subscriptionId) return;
+    const result = await postAdminSubscriptionRefund(subscriptionId);
+    revalidatePath("/admin/subscriptions");
+    redirect(
+      `/admin/subscriptions?${
+        result.ok
+          ? `success=${encodeURIComponent(
+              `Refund issued. Clawed back ${result.data.consultationClawedBack} consultation / ${result.data.wellnessClawedBack} wellness credit(s).`,
+            )}`
           : `error=${encodeURIComponent(result.message)}`
       }`,
     );
@@ -337,6 +359,19 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                               Re-run period grant
                             </button>
                           </form>
+                          {subsResult.data.capabilities?.canAdjustCredits ? (
+                            <form action={refundAction}>
+                              <input type="hidden" name="subscriptionId" value={sub.id} />
+                              <ConfirmDeleteButton
+                                title="Issue refund?"
+                                message={`This refunds ${sub.user.fullName ?? sub.user.email}'s latest paid period at the provider, claws back unused consultation/wellness credits for that period, and cancels the subscription. This moves real money and cannot be undone from here. Denied if outside the 7-day window or a consultation credit was already used this period.`}
+                                className="text-[11px] font-semibold text-[var(--color-status-error-text)] underline-offset-2 hover:underline"
+                                ariaLabel="Issue refund"
+                              >
+                                Refund
+                              </ConfirmDeleteButton>
+                            </form>
+                          ) : null}
                         </div>
                       </Td>
                     </Tr>
@@ -389,6 +424,19 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                           Re-run period grant
                         </button>
                       </form>
+                      {subsResult.data.capabilities?.canAdjustCredits ? (
+                        <form action={refundAction}>
+                          <input type="hidden" name="subscriptionId" value={sub.id} />
+                          <ConfirmDeleteButton
+                            title="Issue refund?"
+                            message={`This refunds ${sub.user.fullName ?? sub.user.email}'s latest paid period at the provider, claws back unused consultation/wellness credits for that period, and cancels the subscription. This moves real money and cannot be undone from here. Denied if outside the 7-day window or a consultation credit was already used this period.`}
+                            className="text-[11px] font-semibold text-[var(--color-status-error-text)] underline-offset-2 hover:underline"
+                            ariaLabel="Issue refund"
+                          >
+                            Refund
+                          </ConfirmDeleteButton>
+                        </form>
+                      ) : null}
                     </div>
                   </PortalMobileCard>
                 ))}

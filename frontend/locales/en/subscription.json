@@ -122,6 +122,7 @@
       "incomplete": "We're waiting for your first payment to clear. This can take a moment.",
       "actionRequired": "Your bank needs to confirm this payment. Complete the verification to activate your membership.",
       "completePayment": "Complete payment verification",
+      "paused": "Your membership is paused and benefits are on hold. Resume billing from the billing portal below to restore your credits and discounts.",
       "confirming": "Confirming your payment… this usually takes only a few seconds.",
       "stillProcessing": "Payment received — activating your membership is taking a little longer than usual.",
       "refresh": "Refresh"

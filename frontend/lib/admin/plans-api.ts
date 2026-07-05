@@ -305,6 +305,17 @@ export async function postAdminSubscriptionRegrant(subscriptionId: string) {
   );
 }
 
+/** SUPER_ADMIN-only (§4, money mutation). No request body — the backend
+ *  refunds the subscriber's latest paid period and reconciles (claws back
+ *  unused credits, cancels). Denied outside the 7-day window or once a
+ *  consultation credit has been used this period (RefundError codes). */
+export async function postAdminSubscriptionRefund(subscriptionId: string) {
+  return adminRequest<{ reconciled: boolean; consultationClawedBack: number; wellnessClawedBack: number; policyViolation: boolean }>(
+    `/api/admin/subscriptions/${subscriptionId}/refund`,
+    { method: "POST" },
+  );
+}
+
 export type AdminCreditLedgerEntry = {
   kind: "CONSULTATION" | "WELLNESS";
   deltaCredits: number;
