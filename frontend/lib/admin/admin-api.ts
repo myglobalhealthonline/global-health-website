@@ -13,5 +13,6 @@ export * from "./admin-api/users";
 export * from "./admin-api/patients";
 export * from "./admin-api/health-tests";
 export * from "./admin-api/assets";
+export * from "./admin-api/media-orphaned";
 export * from "./admin-api/pages";
 export * from "./admin-api/blog";

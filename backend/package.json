@@ -12,7 +12,7 @@
         "start": "prisma migrate deploy && node dist/server.js",
         "typecheck": "tsc --noEmit",
         "lint": "eslint src --ext .ts",
-        "test": "node --import tsx --test \"src/**/*.test.ts\"",
+        "test": "node --import tsx --import ./src/test-guard.ts --test \"src/**/*.test.ts\"",
         "db:seed": "node --import tsx scripts/seed-test-accounts.ts",
         "db:seed:subscriptions": "node --import tsx scripts/seed-subscription-plans.ts",
         "db:generate": "prisma generate",
