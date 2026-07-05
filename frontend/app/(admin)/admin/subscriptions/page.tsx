@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { RefreshCw, RotateCw, Banknote } from "lucide-react";
 import { requireAdminAction, requireSuperAdminAction } from "@/lib/admin/require-admin-action";
 import {
   fetchAdminPerkGrants,
@@ -18,6 +19,7 @@ import {
   AdminEmptyState,
   AdminSummaryStrip,
   AdminTable,
+  IconBtn,
   PageHeader,
   Pill,
   SectionHeader,
@@ -77,6 +79,11 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
   const pastDueSubscriptions = subscriptions.filter((sub) =>
     ["PAST_DUE", "INCOMPLETE"].includes(sub.status),
   ).length;
+  const healthIssueCount = healthResult.ok
+    ? healthResult.data.drift.length +
+      healthResult.data.invariantAlerts.length +
+      healthResult.data.priceSyncFailures.length
+    : null;
 
   async function approveGrantAction(formData: FormData) {
     "use server";
@@ -191,58 +198,44 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
       ) : null}
 
       <div className="gh-admin-subscriptions flex flex-col gap-6">
-        <SubscriptionHealthPanel
-          health={healthResult.ok ? healthResult.data : null}
-          error={healthResult.ok ? undefined : healthResult.message}
+        {/* Page-level KPIs — the at-a-glance answer before any detail work.
+            Health/perk counts link the admin down to the relevant panel. */}
+        <AdminSummaryStrip
+          items={[
+            {
+              label: "Subscribers shown",
+              value: subscriptions.length,
+              hint: status ?? "All statuses",
+              tone: "brand",
+            },
+            {
+              label: "Active",
+              value: activeSubscriptions,
+              hint: "Current page",
+              tone: activeSubscriptions > 0 ? "success" : "neutral",
+            },
+            {
+              label: "Needs billing attention",
+              value: pastDueSubscriptions,
+              hint: "Past due or incomplete",
+              tone: pastDueSubscriptions > 0 ? "warning" : "success",
+            },
+            {
+              label: "Pending perk approvals",
+              value: grantsResult.ok ? grantsResult.data.grants.length : "—",
+              hint: "Manual queue below",
+              tone: grantsResult.ok && grantsResult.data.grants.length > 0 ? "warning" : "neutral",
+            },
+            {
+              label: "Health issues",
+              value: healthIssueCount ?? "—",
+              hint: "Reconciliation panel below",
+              tone: healthIssueCount && healthIssueCount > 0 ? "warning" : "success",
+            },
+          ]}
         />
 
-        {/* Perk-approval queue */}
-        <AdminCard padding={0} className="gh-admin-subscription-approvals">
-          <SectionHeader
-            title="Pending perk approvals"
-            description="Per-subscriber manual-approval queue (§36.13). Approving unlocks the perk for that subscriber only."
-          />
-          <div className="p-6">
-            {!grantsResult.ok ? (
-              <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
-                Could not load queue: {grantsResult.message}
-              </p>
-            ) : grantsResult.data.grants.length === 0 ? (
-              <AdminEmptyState
-                assetSrc="/images/portal/obsidian/empty-payments.svg"
-                title="No pending perk approvals"
-                description="Manual approval perks will appear here when subscribers meet the configured rule and require admin review."
-              />
-            ) : (
-              <ul className="flex flex-col gap-2">
-                {grantsResult.data.grants.map((g) => (
-                  <li
-                    key={g.id}
-                    className="gh-admin-subscription-approval-row flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-4 py-2.5 text-sm"
-                  >
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Pill tone="pending">{g.perkKey}</Pill>
-                      <span className="font-semibold text-[var(--color-text-primary)]">
-                        {g.subscription.user.fullName ?? g.subscription.user.email}
-                      </span>
-                      <span className="text-xs text-[var(--color-text-muted)]">
-                        {g.subscription.plan.name} · {g.subscription.paidMonthsCount} paid months
-                      </span>
-                    </div>
-                    <form action={approveGrantAction}>
-                      <input type="hidden" name="grantId" value={g.id} />
-                      <button type="submit" className="gh-btn gh-btn-primary" style={{ minHeight: 36, padding: "0 14px" }}>
-                        Approve
-                      </button>
-                    </form>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </AdminCard>
-
-        {/* Subscriptions list */}
+        {/* Subscriptions list — the primary content, first card on the page. */}
         <AdminCard padding={0} className="gh-admin-subscription-list">
           <SectionHeader
             title="Subscriptions"
@@ -275,30 +268,6 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
               />
             ) : (
               <>
-              <div className="border-b border-[var(--color-border)] px-4 pt-4">
-                <AdminSummaryStrip
-                  items={[
-                    {
-                      label: "Subscribers shown",
-                      value: subscriptions.length,
-                      hint: status ?? "All statuses",
-                      tone: "brand",
-                    },
-                    {
-                      label: "Active",
-                      value: activeSubscriptions,
-                      hint: "Current page",
-                      tone: activeSubscriptions > 0 ? "success" : "neutral",
-                    },
-                    {
-                      label: "Needs billing attention",
-                      value: pastDueSubscriptions,
-                      hint: "Past due or incomplete",
-                      tone: pastDueSubscriptions > 0 ? "warning" : "success",
-                    },
-                  ]}
-                />
-              </div>
               <div className="gh-admin-plan-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
               <AdminTable>
                 <Thead>
@@ -306,6 +275,7 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                   <Th>Plan</Th>
                   <Th>Status</Th>
                   <Th>Credits (GP / wellness)</Th>
+                  <Th align="right">Actions</Th>
                 </Thead>
                 <tbody>
                   {subsResult.data.items.map((sub) => (
@@ -330,34 +300,47 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                         ) : null}
                       </Td>
                       <Td>
-                        {balanceOf(sub.balances, "CONSULTATION")} / {balanceOf(sub.balances, "WELLNESS")}
-                        <AdminSubscriberLedger subscriptionId={sub.id} />
-                        <a
-                          href={`/admin/audit-log?entityType=UserSubscription&entityId=${sub.id}`}
-                          className="mt-1 block text-[11px] font-semibold text-[var(--color-brand-primary)] underline-offset-2 hover:underline"
-                        >
-                          View audit trail
-                        </a>
+                        <span className="font-semibold text-[var(--color-text-primary)]">
+                          {balanceOf(sub.balances, "CONSULTATION")} / {balanceOf(sub.balances, "WELLNESS")}
+                        </span>
+                        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+                          <AdminSubscriberLedger subscriptionId={sub.id} />
+                          <span aria-hidden className="text-[var(--color-text-muted)]">·</span>
+                          <a
+                            href={`/admin/audit-log?entityType=UserSubscription&entityId=${sub.id}`}
+                            className="text-[11px] font-semibold text-[var(--color-brand-primary)] underline-offset-2 hover:underline"
+                          >
+                            View audit trail
+                          </a>
+                        </div>
+                      </Td>
+                      <Td align="right">
                         {/* Ops repair actions (§6.4) — both safe: resync is a
-                            read-and-reconcile, regrant is period-idempotent. */}
-                        <div className="mt-1.5 flex gap-3">
+                            read-and-reconcile, regrant is period-idempotent.
+                            Refund is the only money-moving action, so it's the
+                            only one gated behind a confirm dialog. */}
+                        <div className="flex items-center justify-end gap-1">
                           <form action={resyncAction}>
                             <input type="hidden" name="subscriptionId" value={sub.id} />
-                            <button
+                            <IconBtn
                               type="submit"
-                              className="text-[11px] font-semibold text-[var(--color-text-muted)] underline-offset-2 hover:underline"
+                              ariaLabel="Resync from Stripe"
+                              title="Resync from Stripe"
+                              style={{ minHeight: 32, minWidth: 32 }}
                             >
-                              Resync from Stripe
-                            </button>
+                              <RefreshCw className="size-3.5" />
+                            </IconBtn>
                           </form>
                           <form action={regrantAction}>
                             <input type="hidden" name="subscriptionId" value={sub.id} />
-                            <button
+                            <IconBtn
                               type="submit"
-                              className="text-[11px] font-semibold text-[var(--color-text-muted)] underline-offset-2 hover:underline"
+                              ariaLabel="Re-run period grant"
+                              title="Re-run period grant"
+                              style={{ minHeight: 32, minWidth: 32 }}
                             >
-                              Re-run period grant
-                            </button>
+                              <RotateCw className="size-3.5" />
+                            </IconBtn>
                           </form>
                           {subsResult.data.capabilities?.canAdjustCredits ? (
                             <form action={refundAction}>
@@ -365,10 +348,9 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                               <ConfirmDeleteButton
                                 title="Issue refund?"
                                 message={`This refunds ${sub.user.fullName ?? sub.user.email}'s latest paid period at the provider, claws back unused consultation/wellness credits for that period, and cancels the subscription. This moves real money and cannot be undone from here. Denied if outside the 7-day window or a consultation credit was already used this period.`}
-                                className="text-[11px] font-semibold text-[var(--color-status-error-text)] underline-offset-2 hover:underline"
                                 ariaLabel="Issue refund"
                               >
-                                Refund
+                                <Banknote className="size-3.5" aria-hidden />
                               </ConfirmDeleteButton>
                             </form>
                           ) : null}
@@ -397,46 +379,54 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                         ? [{ label: "Renewal", value: <Pill tone="draft">cancels at period end</Pill> }]
                         : []),
                     ]}
-                  >
-                    <AdminSubscriberLedger subscriptionId={sub.id} />
-                    <a
-                      href={`/admin/audit-log?entityType=UserSubscription&entityId=${sub.id}`}
-                      className="mt-1 block text-[11px] font-semibold text-[var(--color-brand-primary)] underline-offset-2 hover:underline"
-                    >
-                      View audit trail
-                    </a>
-                    <div className="mt-1.5 flex gap-3">
-                      <form action={resyncAction}>
-                        <input type="hidden" name="subscriptionId" value={sub.id} />
-                        <button
-                          type="submit"
-                          className="text-[11px] font-semibold text-[var(--color-text-muted)] underline-offset-2 hover:underline"
-                        >
-                          Resync from Stripe
-                        </button>
-                      </form>
-                      <form action={regrantAction}>
-                        <input type="hidden" name="subscriptionId" value={sub.id} />
-                        <button
-                          type="submit"
-                          className="text-[11px] font-semibold text-[var(--color-text-muted)] underline-offset-2 hover:underline"
-                        >
-                          Re-run period grant
-                        </button>
-                      </form>
-                      {subsResult.data.capabilities?.canAdjustCredits ? (
-                        <form action={refundAction}>
+                    actions={
+                      <>
+                        <form action={resyncAction}>
                           <input type="hidden" name="subscriptionId" value={sub.id} />
-                          <ConfirmDeleteButton
-                            title="Issue refund?"
-                            message={`This refunds ${sub.user.fullName ?? sub.user.email}'s latest paid period at the provider, claws back unused consultation/wellness credits for that period, and cancels the subscription. This moves real money and cannot be undone from here. Denied if outside the 7-day window or a consultation credit was already used this period.`}
-                            className="text-[11px] font-semibold text-[var(--color-status-error-text)] underline-offset-2 hover:underline"
-                            ariaLabel="Issue refund"
+                          <IconBtn
+                            type="submit"
+                            ariaLabel="Resync from Stripe"
+                            title="Resync from Stripe"
+                            style={{ minHeight: 32, minWidth: 32 }}
                           >
-                            Refund
-                          </ConfirmDeleteButton>
+                            <RefreshCw className="size-3.5" />
+                          </IconBtn>
                         </form>
-                      ) : null}
+                        <form action={regrantAction}>
+                          <input type="hidden" name="subscriptionId" value={sub.id} />
+                          <IconBtn
+                            type="submit"
+                            ariaLabel="Re-run period grant"
+                            title="Re-run period grant"
+                            style={{ minHeight: 32, minWidth: 32 }}
+                          >
+                            <RotateCw className="size-3.5" />
+                          </IconBtn>
+                        </form>
+                        {subsResult.data.capabilities?.canAdjustCredits ? (
+                          <form action={refundAction}>
+                            <input type="hidden" name="subscriptionId" value={sub.id} />
+                            <ConfirmDeleteButton
+                              title="Issue refund?"
+                              message={`This refunds ${sub.user.fullName ?? sub.user.email}'s latest paid period at the provider, claws back unused consultation/wellness credits for that period, and cancels the subscription. This moves real money and cannot be undone from here. Denied if outside the 7-day window or a consultation credit was already used this period.`}
+                              ariaLabel="Issue refund"
+                            >
+                              <Banknote className="size-3.5" aria-hidden />
+                            </ConfirmDeleteButton>
+                          </form>
+                        ) : null}
+                      </>
+                    }
+                  >
+                    <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <AdminSubscriberLedger subscriptionId={sub.id} />
+                      <span aria-hidden className="text-[var(--color-text-muted)]">·</span>
+                      <a
+                        href={`/admin/audit-log?entityType=UserSubscription&entityId=${sub.id}`}
+                        className="text-[11px] font-semibold text-[var(--color-brand-primary)] underline-offset-2 hover:underline"
+                      >
+                        View audit trail
+                      </a>
                     </div>
                   </PortalMobileCard>
                 ))}
@@ -447,21 +437,67 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
         </AdminCard>
 
         {/* Support override — manual balance adjustment. SUPER_ADMIN-only
-            (§4, money mutation); a plain ADMIN sees the form area with a
-            clear "requires super-admin" note instead of a live form. The
+            (§4, money mutation); hidden entirely for plain ADMIN — the
             backend independently rejects the action regardless. */}
-        {subsResult.ok ? (
+        {/* Perk-approval queue — secondary workflow, after the main list. */}
+        <AdminCard padding={0} className="gh-admin-subscription-approvals">
+          <SectionHeader
+            title="Pending perk approvals"
+            description="Per-subscriber manual-approval queue (§36.13). Approving unlocks the perk for that subscriber only."
+          />
+          <div className="p-6">
+            {!grantsResult.ok ? (
+              <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+                Could not load queue: {grantsResult.message}
+              </p>
+            ) : grantsResult.data.grants.length === 0 ? (
+              <p className="text-sm text-[var(--color-text-muted)]">
+                No pending approvals. Manual-approval perks appear here when a subscriber meets the
+                configured rule and needs admin review.
+              </p>
+            ) : (
+              <ul className="flex flex-col gap-2">
+                {grantsResult.data.grants.map((g) => (
+                  <li
+                    key={g.id}
+                    className="gh-admin-subscription-approval-row flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-4 py-2.5 text-sm"
+                  >
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Pill tone="pending">{g.perkKey}</Pill>
+                      <span className="font-semibold text-[var(--color-text-primary)]">
+                        {g.subscription.user.fullName ?? g.subscription.user.email}
+                      </span>
+                      <span className="text-xs text-[var(--color-text-muted)]">
+                        {g.subscription.plan.name} · {g.subscription.paidMonthsCount} paid months
+                      </span>
+                    </div>
+                    <form action={approveGrantAction}>
+                      <input type="hidden" name="grantId" value={g.id} />
+                      <button type="submit" className="gh-btn gh-btn-primary" style={{ minHeight: 36, padding: "0 14px" }}>
+                        Approve
+                      </button>
+                    </form>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </AdminCard>
+
+        {/* Reconciliation diagnostics — ops detail, lives below the workflows. */}
+        <SubscriptionHealthPanel
+          health={healthResult.ok ? healthResult.data : null}
+          error={healthResult.ok ? undefined : healthResult.message}
+        />
+
+        {subsResult.ok && subsResult.data.capabilities?.canAdjustCredits ? (
           <AdminCard padding={0} className="gh-admin-subscription-override">
             <SectionHeader
               title="Support override — manual balance adjustment"
               description="Elevated SUPER-admin action. Directly edits one subscriber's earned consultation or wellness balance. Routine credits come from plan rules and renewals — use this only for verified finance/support cases. Every change is audited and requires a written reason."
             />
             <div className="p-6">
-              {!subsResult.data.capabilities?.canAdjustCredits ? (
-                <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
-                  Requires super-admin. Your account can view subscriptions but cannot adjust balances.
-                </p>
-              ) : subsResult.data.items.length === 0 ? (
+              {subsResult.data.items.length === 0 ? (
                 <p className="text-sm text-[var(--color-text-muted)]">
                   No subscribers in the current view to adjust. Filter the list above first.
                 </p>
