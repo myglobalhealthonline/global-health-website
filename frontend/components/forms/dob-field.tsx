@@ -61,6 +61,7 @@ export function DobField({
   // patient has already started typing.
   useEffect(() => {
     if (defaultValue) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- defaultValue arrives async from the profile fetch, only known post-mount
       setDisplay((cur) => (cur === "" ? isoToDisplayDob(defaultValue) : cur));
     }
   }, [defaultValue]);

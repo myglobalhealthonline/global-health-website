@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { syncOrderPayment } from "@/lib/api/payments-api";
 
 /** After Stripe redirect, sync payment when webhook did not reach the server. */
@@ -10,6 +10,7 @@ export function SyncOrderPaymentOnReturn({
 }: {
   skipIfSynced?: boolean;
 }) {
+  const router = useRouter();
   const params = useSearchParams();
   const synced = useRef(false);
   const orderId = params?.get("orderId")?.trim();
@@ -27,17 +28,28 @@ export function SyncOrderPaymentOnReturn({
         ...(orderId ? { orderId } : {}),
         ...(stripeSessionId ? { stripeSessionId } : {}),
       });
-      if (first.ok) return;
+      // Re-run the server component (re-fetches order + sync status) so the
+      // "Confirming payment..." spinner actually resolves into the success
+      // view once the sync lands — previously this returned with no
+      // follow-up, so the page never re-rendered and the spinner spun
+      // forever even though the payment had succeeded.
+      if (first.ok) {
+        router.refresh();
+        return;
+      }
       // Stripe may still be finalizing — retry once after a short delay.
       await new Promise((r) => setTimeout(r, 2000));
-      await syncOrderPayment({
+      const second = await syncOrderPayment({
         ...(orderId ? { orderId } : {}),
         ...(stripeSessionId ? { stripeSessionId } : {}),
       });
+      if (second.ok) {
+        router.refresh();
+      }
     };
 
     void run().catch(() => undefined);
-  }, [orderId, stripeSessionId, payment, skipIfSynced]);
+  }, [orderId, stripeSessionId, payment, skipIfSynced, router]);
 
   return null;
 }

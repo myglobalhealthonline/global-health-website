@@ -90,6 +90,10 @@ export type Cart = {
   /** Number of expired consultation reservations swept on the most
    *  recent server read. UI flashes a "slot expired" toast when > 0. */
   expiredHolds?: number;
+  /** Name + doctor of each item the sweep just removed. Same length as
+   *  `expiredHolds`. Lets the UI name the specific slot instead of a
+   *  bare count. */
+  expiredItems?: { name: string; doctorName: string | null }[];
 };
 
 /** Max units per non-consultation cart item. Matched in
@@ -122,6 +126,11 @@ export type OrderItem = {
   quantity: number;
   unitPriceCents: number;
   lineTotalCents: number;
+  /** Product identity for re-adding this line to the cart ("Reorder").
+   *  Null for consultation lines (kind GENERAL/SPECIALIST_CONSULTATION),
+   *  which can't be reordered — a new appointment slot must be booked. */
+  healthTestId: string | null;
+  serviceId: string | null;
 };
 
 export type OrderDetail = {
@@ -146,6 +155,9 @@ export type OrderDetail = {
     countryCode: string | null;
   };
   items: OrderItem[];
+  trackingNumber: string | null;
+  trackingCarrier: string | null;
+  trackingUrl: string | null;
   paidAt: string | null;
   createdAt: string;
   updatedAt: string;

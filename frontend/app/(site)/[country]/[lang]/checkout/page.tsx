@@ -62,6 +62,11 @@ export default function CheckoutPage() {
   // Plan savings the subscriber selected — so the pay button + total match the
   // amount Stripe charges (server recomputes the same benefits) (B5).
   const [coverageSaved, setCoverageSaved] = useState(0);
+  // Payer contact was already collected on the consult Details step (or comes
+  // from the signed-in account) — show it read-only by default instead of
+  // re-asking, and only unlock the fields if the buyer explicitly wants to
+  // pay with different contact details than the ones already on file.
+  const [editingContact, setEditingContact] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -239,44 +244,96 @@ export default function CheckoutPage() {
 
           <div className="mt-6 grid items-start gap-8 lg:grid-cols-[1fr_380px]">
             <form ref={formRef} onSubmit={onSubmit} className="flex flex-col gap-5">
-              {/* Payer contact sub-panel */}
+              {/* Payer contact sub-panel. Email/name were already given on the
+                  consult Details step (or come from the signed-in account) —
+                  show them read-only and only reveal the editable fields if
+                  the buyer explicitly asks to pay with different contact
+                  details. Guests with nothing on file (e.g. a products-only
+                  cart) get the editable form directly since there's nothing
+                  to recap. */}
               <fieldset
                 className="rounded-xl p-5"
                 style={{ border: "1px solid rgba(29,75,54,0.10)", background: "#fff" }}
               >
-                <div>
-                  <h2 className="gh-h3" style={{ fontSize: "1.2rem" }}>{t.payerContact}</h2>
-                  <p className="gh-body-sm mt-1" style={{ fontSize: "0.8rem" }}>
-                    {t.payerNote}
-                  </p>
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h2 className="gh-h3" style={{ fontSize: "1.2rem" }}>{t.payerContact}</h2>
+                    <p className="gh-body-sm mt-1" style={{ fontSize: "0.8rem" }}>
+                      {t.payerNote}
+                    </p>
+                  </div>
+                  {defaults.email && !editingContact ? (
+                    <button
+                      type="button"
+                      onClick={() => setEditingContact(true)}
+                      className="gh-link text-xs font-semibold whitespace-nowrap"
+                    >
+                      Use a different contact for this payment?
+                    </button>
+                  ) : null}
                 </div>
-                <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                  <Field
-                    name="fullName"
-                    label={t.fullName}
-                    required
-                    defaultValue={defaults.fullName}
-                    autoComplete="name"
-                  />
-                  <Field
-                    name="email"
-                    label={t.email}
-                    type="email"
-                    required
-                    autoComplete="email"
-                    defaultValue={defaults.email}
-                  />
-                  <label className="flex min-w-0 flex-col gap-1.5">
-                    <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
-                      {t.phoneOptional}
-                    </span>
-                    <PhoneField
-                      name="phone"
-                      defaultValue={defaults.phone}
-                      defaultDial={dialCodeForCountrySlug(countrySlug)}
+
+                {defaults.email && !editingContact ? (
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    <input type="hidden" name="fullName" value={defaults.fullName} />
+                    <input type="hidden" name="email" value={defaults.email} />
+                    <input type="hidden" name="phone" value={defaults.phone} />
+                    <div className="flex min-w-0 flex-col gap-1">
+                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
+                        {t.fullName}
+                      </span>
+                      <span className="text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>
+                        {defaults.fullName || "—"}
+                      </span>
+                    </div>
+                    <div className="flex min-w-0 flex-col gap-1">
+                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
+                        {t.email}
+                      </span>
+                      <span className="text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>
+                        {defaults.email}
+                      </span>
+                    </div>
+                    {defaults.phone ? (
+                      <div className="flex min-w-0 flex-col gap-1">
+                        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
+                          {t.phoneOptional}
+                        </span>
+                        <span className="text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>
+                          {defaults.phone}
+                        </span>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : (
+                  <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                    <Field
+                      name="fullName"
+                      label={t.fullName}
+                      required
+                      defaultValue={defaults.fullName}
+                      autoComplete="name"
                     />
-                  </label>
-                </div>
+                    <Field
+                      name="email"
+                      label={t.email}
+                      type="email"
+                      required
+                      autoComplete="email"
+                      defaultValue={defaults.email}
+                    />
+                    <label className="flex min-w-0 flex-col gap-1.5">
+                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
+                        {t.phoneOptional}
+                      </span>
+                      <PhoneField
+                        name="phone"
+                        defaultValue={defaults.phone}
+                        defaultDial={dialCodeForCountrySlug(countrySlug)}
+                      />
+                    </label>
+                  </div>
+                )}
               </fieldset>
 
               {/* Consultations recap sub-panel */}

@@ -5,6 +5,9 @@
 /.pnpm-store
 /.claude/worktrees
 
+# scratch (generated PDFs, one-off script output — never committable)
+/tmp
+
 # playwright e2e artifacts
 /test-results
 /playwright-report

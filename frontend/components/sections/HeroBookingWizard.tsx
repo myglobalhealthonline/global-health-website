@@ -153,6 +153,7 @@ export function HeroBookingWizard({
     ? doctor.serviceIds.map((id) => serviceById.get(id)).filter((s): s is WizardService => Boolean(s))
     : [];
   const slotsByDay = groupByDay(slots, clinicTz);
+  const stepLabel = step === 1 ? t.stepDoctor : step === 2 ? t.stepConsultation : t.stepTime;
 
   return (
     <div
@@ -164,6 +165,13 @@ export function HeroBookingWizard({
         backdropFilter: "blur(16px)",
       }}
     >
+      {/* Screen-reader-only step announcer — visible step/loading state is
+          conveyed by layout alone, so this is the only signal a screen
+          reader gets when the wizard advances or a slot fetch starts. */}
+      <span role="status" aria-live="polite" className="sr-only">
+        {loading ? t.loading : stepLabel}
+      </span>
+
       {/* Consultation image banner + step header */}
       <div className="relative h-[150px] w-full shrink-0">
         <Image
@@ -186,11 +194,13 @@ export function HeroBookingWizard({
             <CalendarClock className="size-4" strokeWidth={1.8} aria-hidden />
             {t.eyebrow}
           </span>
-          <span className="flex items-center gap-1.5">
+          {/* Purely decorative — aria-hidden, so aria-current has no
+              accessible-tree effect here. The step name is announced via
+              the sr-only live region above instead. */}
+          <span className="flex items-center gap-1.5" aria-hidden>
             {[1, 2, 3].map((n) => (
               <span
                 key={n}
-                aria-hidden
                 className="size-1.5 rounded-full transition-colors"
                 style={{ background: step >= n ? "var(--color-brand-accent)" : "rgba(255,255,255,0.3)" }}
               />

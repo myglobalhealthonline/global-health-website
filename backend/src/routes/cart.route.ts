@@ -190,6 +190,10 @@ type CartView = {
    *  reservations off this cart so the UI can show a "your slot
    *  expired" toast. */
   expiredHolds?: number;
+  /** Name + doctor of each item the sweep just removed, so the UI can
+   *  say "Dr. Okafor's consultation slot expired" instead of a bare
+   *  count. Same length as `expiredHolds`. */
+  expiredItems?: { name: string; doctorName: string | null }[];
 };
 
 const EMPTY_CART: CartView = {
@@ -206,14 +210,16 @@ const EMPTY_CART: CartView = {
  *  every read/write endpoint so the response shape stays uniform. */
 async function serializeFreshCart(
   cartId: string,
-  expiredHolds = 0,
+  expired: SweepResult = EMPTY_SWEEP,
 ): Promise<CartView> {
   const cart = await loadFullCart(cartId);
-  if (!cart) return { ...EMPTY_CART, expiredHolds };
+  if (!cart) {
+    return { ...EMPTY_CART, expiredHolds: expired.count, expiredItems: expired.items };
+  }
   // `cart.userId` is the binding for a logged-in patient's cart (null for a
   // guest cookie cart) — it scopes the family-name lookup to the owner.
   const enrich = await enrichConsultationLines(cart.items, cart.userId);
-  return serializeCart(cart, expiredHolds, enrich);
+  return serializeCart(cart, expired, enrich);
 }
 
 // ── Cart resolver ────────────────────────────────────────────────────
@@ -357,16 +363,23 @@ async function enrichConsultationLines(
   return { doctorById, slotById, familyById };
 }
 
+type SweepResult = {
+  count: number;
+  items: { name: string; doctorName: string | null }[];
+};
+const EMPTY_SWEEP: SweepResult = { count: 0, items: [] };
+
 /**
  * Sweep consultation cart items whose 10-minute hold has expired.
  * Releases the slot HELD→OPEN (so another patient can claim it) and
- * removes the cart item. Returns the count of removed items so the
- * caller can surface "your slot expired" to the UI.
+ * removes the cart item. Returns the count + name/doctor of each
+ * removed item so the caller can surface "Dr X's slot expired" rather
+ * than a bare count.
  *
  * Called at the start of every cart read/write so a stale hold can
  * never linger past 10 minutes — no separate cron needed.
  */
-async function sweepExpiredHolds(cartId: string): Promise<number> {
+async function sweepExpiredHolds(cartId: string): Promise<SweepResult> {
   const now = new Date();
   const expired = await prisma.cartItem.findMany({
     where: {
@@ -374,23 +387,39 @@ async function sweepExpiredHolds(cartId: string): Promise<number> {
       heldUntil: { lt: now },
       timeSlotId: { not: null },
     },
-    select: { id: true, timeSlotId: true },
+    select: { id: true, timeSlotId: true, name: true, doctorId: true },
   });
-  if (expired.length === 0) return 0;
+  if (expired.length === 0) return EMPTY_SWEEP;
 
   const slotIds = expired
     .map((i) => i.timeSlotId)
     .filter((id): id is string => Boolean(id));
   const itemIds = expired.map((i) => i.id);
+  const doctorIds = Array.from(
+    new Set(expired.map((i) => i.doctorId).filter((id): id is string => Boolean(id))),
+  );
 
-  await prisma.$transaction([
-    prisma.doctorTimeSlot.updateMany({
-      where: { id: { in: slotIds }, status: "HELD" },
-      data: { status: "OPEN" },
-    }),
-    prisma.cartItem.deleteMany({ where: { id: { in: itemIds } } }),
+  const [, doctors] = await Promise.all([
+    prisma.$transaction([
+      prisma.doctorTimeSlot.updateMany({
+        where: { id: { in: slotIds }, status: "HELD" },
+        data: { status: "OPEN" },
+      }),
+      prisma.cartItem.deleteMany({ where: { id: { in: itemIds } } }),
+    ]),
+    doctorIds.length
+      ? prisma.doctor.findMany({ where: { id: { in: doctorIds } }, select: { id: true, fullName: true } })
+      : Promise.resolve([] as { id: string; fullName: string }[]),
   ]);
-  return expired.length;
+  const doctorById = new Map(doctors.map((d) => [d.id, d.fullName]));
+
+  return {
+    count: expired.length,
+    items: expired.map((i) => ({
+      name: i.name,
+      doctorName: i.doctorId ? doctorById.get(i.doctorId) ?? null : null,
+    })),
+  };
 }
 
 /**
@@ -529,14 +558,16 @@ async function mergeCarts(sourceId: string, targetId: string) {
 
 function serializeCart(
   cart: Awaited<ReturnType<typeof loadFullCart>>,
-  expiredHolds = 0,
+  expired: SweepResult = EMPTY_SWEEP,
   enrich?: {
     doctorById: Map<string, string>;
     slotById: Map<string, Date>;
     familyById: Map<string, string>;
   },
 ): CartView {
-  if (!cart) return { ...EMPTY_CART, expiredHolds };
+  if (!cart) {
+    return { ...EMPTY_CART, expiredHolds: expired.count, expiredItems: expired.items };
+  }
   const items: CartItemView[] = cart.items.map((i) => {
     const isConsultationLine =
       i.kind === CartItemKind.GENERAL_CONSULTATION ||
@@ -586,7 +617,8 @@ function serializeCart(
     items,
     subtotalCents: items.reduce((sum, i) => sum + i.lineTotalCents, 0),
     itemCount: items.reduce((sum, i) => sum + i.quantity, 0),
-    expiredHolds,
+    expiredHolds: expired.count,
+    expiredItems: expired.items,
   };
 }
 
@@ -913,7 +945,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       }
 
       const expiredHolds = await sweepExpiredHolds(cart.id);
-      if (expiredHolds > 0) {
+      if (expiredHolds.count > 0) {
         const freshCart = await loadFullCart(cart.id);
         if (!freshCart) {
           return reply.status(404).send(errorResponse("Cart not found"));
@@ -1078,7 +1110,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
 
       // Sweep expired holds before mutating
       const expired = await sweepExpiredHolds(cart.id);
-      const sweptCart = expired > 0 ? await loadFullCart(cart.id) : cart;
+      const sweptCart = expired.count > 0 ? await loadFullCart(cart.id) : cart;
       if (!sweptCart) return reply.status(404).send(errorResponse("Cart not found"));
 
       const item = sweptCart.items.find((i) => i.id === params.data.itemId);
@@ -1142,7 +1174,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       if (!cart) return reply.status(404).send(errorResponse("Cart not found"));
 
       const expired = await sweepExpiredHolds(cart.id);
-      const sweptCart = expired > 0 ? await loadFullCart(cart.id) : cart;
+      const sweptCart = expired.count > 0 ? await loadFullCart(cart.id) : cart;
       if (!sweptCart) return reply.status(404).send(errorResponse("Cart not found"));
 
       const item = sweptCart.items.find((i) => i.id === params.data.itemId);

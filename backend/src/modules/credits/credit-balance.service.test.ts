@@ -193,6 +193,52 @@ describe("credit-balance money races", () => {
     }
   });
 
+  it("concurrent monthly grant for the same period never throws — one wins, one is a clean no-op (bug #7)", async (t) => {
+    if (skipIfNoDb()) return t.skip();
+    // Regression for a bug found in a prior review pass: invoice.paid and
+    // invoice.payment_succeeded can both fire for the same period and race
+    // grantMonthlyCredits. Both used to pass the `seen` idempotency gate
+    // before either committed, so the loser hit an uncaught unique-
+    // constraint violation on its period-keyed RESET_EXPIRE/MONTHLY_GRANT
+    // insert — surfaced up the stack as a false "critical" ops alert plus a
+    // wasted Stripe webhook retry, even though the unique constraint had
+    // already correctly prevented any double-grant.
+    const fx = await makeSubscriptionFixture(prisma, "grant-race", { consultationBalance: 2 });
+    try {
+      const periodStart = new Date("2026-08-01T00:00:00Z");
+      const grantOnce = () =>
+        prisma.$transaction(
+          (tx) =>
+            svc.grantMonthlyCredits(tx, {
+              userSubscriptionId: fx.subscriptionId,
+              userId: fx.userId,
+              periodStart,
+              consultationCredits: 5,
+              wellnessCredits: 0,
+            }),
+          { maxWait: 20_000, timeout: 20_000 },
+        );
+
+      const results = await Promise.all([grantOnce(), grantOnce()]);
+      assert.equal(
+        results.filter(Boolean).length,
+        1,
+        "exactly one concurrent call performs the grant; the other returns false, neither throws",
+      );
+      assert.equal(
+        await svc.getBalance(fx.subscriptionId, "CONSULTATION"),
+        5,
+        "granted exactly once — not double-applied",
+      );
+      const grants = await prisma.consultationCreditLedger.findMany({
+        where: { userSubscriptionId: fx.subscriptionId, reason: "MONTHLY_GRANT" },
+      });
+      assert.equal(grants.length, 1, "exactly one MONTHLY_GRANT ledger row, no duplicate");
+    } finally {
+      await fx.cleanup();
+    }
+  });
+
   it("concurrent wellness redemption at exact balance: only one succeeds", async (t) => {
     if (skipIfNoDb()) return t.skip();
     const fx = await makeSubscriptionFixture(prisma, "wellrace", { wellnessBalance: 6 });

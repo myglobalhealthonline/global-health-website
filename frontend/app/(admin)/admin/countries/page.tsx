@@ -186,8 +186,10 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
                       <form action={deleteCountryAction} className="inline-flex">
                         <input type="hidden" name="id" value={c.id} />
                         <ConfirmDeleteButton
+                          title={`Delete ${c.name}?`}
                           message={`Delete ${c.name}? This deactivates the country and cannot be undone from this action.`}
                           ariaLabel={`Delete ${c.name}`}
+                          requireTypedConfirmation={c.slug}
                         />
                       </form>
                     </div>

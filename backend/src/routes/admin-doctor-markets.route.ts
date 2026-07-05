@@ -8,8 +8,7 @@ import {
   listAdminDoctorMarkets,
   updateAdminDoctorMarket,
 } from "../modules/doctor-market-profiles/doctor-market-profiles.service.js";
-import { resolveOptionalAuthUser } from "../utils/request-auth.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import {
   adminDoctorMarketPatchBodySchema,
@@ -72,9 +71,9 @@ const adminDoctorMarketsRoute: FastifyPluginAsync = async (app) => {
         params.data.countryId,
         body.data,
       );
-      const actor = await resolveOptionalAuthUser(request);
+      const actor = resolveAdminSessionActor(request);
       recordAudit({
-        actorUserId: actor?.id ?? null,
+        actorUserId: actor?.userId ?? null,
         actorRole: actor?.role ?? "ADMIN",
         action: "DOCTOR_UPDATED",
         entityType: "Doctor",
@@ -118,9 +117,9 @@ const adminDoctorMarketsRoute: FastifyPluginAsync = async (app) => {
         );
         if (!bank) return reply.status(404).send(errorResponse("Doctor market not found"));
         if (query.data.reveal && bank.ibanSet) {
-          const actor = await resolveOptionalAuthUser(request);
+          const actor = resolveAdminSessionActor(request);
           recordAudit({
-            actorUserId: actor?.id ?? null,
+            actorUserId: actor?.userId ?? null,
             actorRole: actor?.role ?? "ADMIN",
             action: "DOCTOR_BANK_VIEWED",
             entityType: "Doctor",

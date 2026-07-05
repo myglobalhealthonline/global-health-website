@@ -15,7 +15,9 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: global_health
     ports:
-      - "5432:5432"
+      # Loopback-only — a default-credentials Postgres has no business being
+      # reachable from other hosts on the network (code review 2026-07-05).
+      - "127.0.0.1:5432:5432"
     volumes:
       - global_health_pg:/var/lib/postgresql/data
     healthcheck:

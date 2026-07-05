@@ -56,6 +56,20 @@ export default async function DoctorAppointmentsPage({
   const openOnly = pick(sp, "openOnly");
   const finalized = pick(sp, "finalized");
   const page = Number(pick(sp, "page") ?? "1") || 1;
+  const hasActiveFilters = Boolean(
+    status || search || from || to || consultationType || openOnly || finalized,
+  );
+  const activeFilterCount = [status, search, from, to, consultationType, openOnly, finalized].filter(
+    Boolean,
+  ).length;
+  // Same-URL link (not router.refresh — this is a server component page)
+  // to give the error state a working "Try again" that re-triggers the fetch.
+  const currentQuery = new URLSearchParams(
+    Object.entries(sp).flatMap(([k, v]) =>
+      typeof v === "string" ? [[k, v]] : [],
+    ),
+  ).toString();
+  const currentUrl = currentQuery ? `/doctor/appointments?${currentQuery}` : "/doctor/appointments";
 
   const result = await fetchDoctorAppointments({
     page: String(page),
@@ -120,8 +134,14 @@ export default async function DoctorAppointmentsPage({
         />
       ) : null}
 
-      <div className="gh-card gh-doctor-filter-card mb-4 p-4">
-        <form className="gh-doctor-filter-grid grid grid-cols-1 gap-3 sm:grid-cols-6">
+      <details className="gh-card gh-doctor-filter-card mb-4 p-4" open>
+        <summary className="flex cursor-pointer items-center gap-2 text-sm font-semibold sm:pointer-events-none sm:cursor-default">
+          <span>Filters</span>
+          {activeFilterCount > 0 ? (
+            <Pill tone="brand">{activeFilterCount} active</Pill>
+          ) : null}
+        </summary>
+        <form className="gh-doctor-filter-grid mt-3 grid grid-cols-1 gap-3 sm:grid-cols-6">
           <label className="flex flex-col gap-1 sm:col-span-2">
             <span className="gh-field-label">Search</span>
             <input
@@ -205,27 +225,40 @@ export default async function DoctorAppointmentsPage({
             </Link>
           </div>
         </form>
-      </div>
+      </details>
 
       {!result.ok ? (
         <div className="gh-card p-6">
           <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
             {result.message}
           </p>
+          <Link href={currentUrl} className="gh-btn gh-btn-soft text-sm mt-3 inline-flex">
+            Try again
+          </Link>
         </div>
       ) : appointments.length === 0 ? (
-        <AdminEmptyState
-          className="gh-doctor-empty-state"
-          icon={<SearchX className="size-5" aria-hidden />}
-          assetSrc="/images/portal/obsidian/empty-queue.svg"
-          title="No appointments match these filters"
-          description="Try widening the date range or clearing status filters. New assigned consultations appear here as soon as they are scheduled."
-          action={
-            <Link href="/doctor/appointments" className="gh-btn gh-btn-soft text-sm">
-              Clear filters
-            </Link>
-          }
-        />
+        hasActiveFilters ? (
+          <AdminEmptyState
+            className="gh-doctor-empty-state"
+            icon={<SearchX className="size-5" aria-hidden />}
+            assetSrc="/images/portal/obsidian/empty-queue.svg"
+            title="No appointments match these filters"
+            description="Try widening the date range or clearing status filters. New assigned consultations appear here as soon as they are scheduled."
+            action={
+              <Link href="/doctor/appointments" className="gh-btn gh-btn-soft text-sm">
+                Clear filters
+              </Link>
+            }
+          />
+        ) : (
+          <AdminEmptyState
+            className="gh-doctor-empty-state"
+            icon={<CalendarDays className="size-5" aria-hidden />}
+            assetSrc="/images/portal/obsidian/empty-queue.svg"
+            title="No appointments yet"
+            description="New assigned consultations will appear here as soon as they are scheduled."
+          />
+        )
       ) : (
         <div className="gh-card gh-card-jewel gh-doctor-table-card p-0 overflow-hidden">
           <div className="hidden md:grid gap-2 p-3">
@@ -271,7 +304,10 @@ export default async function DoctorAppointmentsPage({
                         </Btn>
                       </span>
                     ) : (
-                      <ChevronRight className="size-4 text-[var(--portal-muted)]" aria-hidden />
+                      <span className="inline-flex items-center gap-2 text-xs text-[var(--portal-muted)]">
+                        Meeting link not yet created
+                        <ChevronRight className="size-4" aria-hidden />
+                      </span>
                     )
                   }
                 />

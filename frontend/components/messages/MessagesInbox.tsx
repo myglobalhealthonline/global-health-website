@@ -66,6 +66,7 @@ export function MessagesInbox({
   );
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initialSelectedId comes from the URL/prop, only known post-mount
     if (initialSelectedId) setSelectedId(initialSelectedId);
   }, [initialSelectedId]);
 

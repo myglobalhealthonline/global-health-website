@@ -1,7 +1,19 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowRight, ClipboardList, CreditCard, Video, Clock, MapPin, MessageCircle, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  AlertTriangle,
+  ArrowRight,
+  ClipboardList,
+  CreditCard,
+  Video,
+  Clock,
+  MapPin,
+  MessageCircle,
+  Search,
+  XCircle,
+} from "lucide-react";
 import type { AccountAppointment } from "@/lib/api/account-appointments-api";
 import { PortalDialog } from "@/components/PortalDialog";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
@@ -15,8 +27,16 @@ import {
   postPatientMessage as postPatientChatMessage,
   uploadPatientChatFile,
 } from "@/lib/api/consultation-chat-api";
+import {
+  cancelAccountAppointment,
+  fetchAppointmentPaymentUrl,
+} from "@/lib/api/account-appointment-actions";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
+
+// Mirrors backend appointment-status-transitions.ts allowedTransitions —
+// only these statuses can still move to CANCELLED. Keep in sync.
+const CANCELLABLE_STATUSES = new Set(["REQUEST_RECEIVED", "UNDER_REVIEW", "CONTACTED"]);
 
 type BookingsI18n = {
   bookings: {
@@ -112,6 +132,7 @@ function formatPaymentLabel(
 }
 
 export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShellProps) {
+  const router = useRouter();
   // Only one chat thread is open at a time. Keeps polling load to one
   // background fetch every 10s regardless of how many bookings the
   // patient has in their history.
@@ -119,6 +140,37 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
   const [openConsultChatId, setOpenConsultChatId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
+  const [cancelTarget, setCancelTarget] = useState<AccountAppointment | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
+  const [payingId, setPayingId] = useState<string | null>(null);
+  const [payError, setPayError] = useState<string | null>(null);
+
+  async function onConfirmCancel() {
+    if (!cancelTarget) return;
+    setCancelling(true);
+    setCancelError(null);
+    const res = await cancelAccountAppointment(cancelTarget.id);
+    setCancelling(false);
+    if (res.ok) {
+      setCancelTarget(null);
+      router.refresh();
+    } else {
+      setCancelError(res.message);
+    }
+  }
+
+  async function onCompletePayment(appointmentId: string) {
+    setPayingId(appointmentId);
+    setPayError(null);
+    const res = await fetchAppointmentPaymentUrl(appointmentId);
+    setPayingId(null);
+    if (res.ok && res.data.url) {
+      window.location.href = res.data.url;
+    } else {
+      setPayError(!res.ok ? res.message : "Could not start payment.");
+    }
+  }
 
   // Client-side filter — the account appointments fetcher has no query
   // params today, so this filters the already-fetched history in the
@@ -135,6 +187,8 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
       );
     });
   }, [items, search, status]);
+
+  const unpaidItems = useMemo(() => items.filter(requiresPayment), [items]);
 
   if (unavailableMessage) {
     return (
@@ -215,6 +269,57 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
         ) : null}
       </div>
 
+      {payError ? (
+        <div
+          className="mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm"
+          style={{ borderColor: "var(--portal-danger)", background: "var(--portal-danger-soft)", color: "var(--portal-danger-text)" }}
+          role="alert"
+        >
+          {payError}
+        </div>
+      ) : null}
+
+      {unpaidItems.length > 0 ? (
+        <div
+          className="gh-patient-action-required mb-5 rounded-[var(--radius-card)] border-2 px-4 py-4"
+          style={{ borderColor: "var(--portal-warning)", background: "var(--portal-warning-soft)" }}
+        >
+          <div className="mb-3 flex items-center gap-2">
+            <AlertTriangle className="size-5 shrink-0" style={{ color: "var(--portal-warning-text)" }} aria-hidden />
+            <h2 className="text-sm font-bold uppercase tracking-wide" style={{ color: "var(--portal-warning-text)" }}>
+              Action required — {unpaidItems.length} {unpaidItems.length === 1 ? "booking needs" : "bookings need"} payment
+            </h2>
+          </div>
+          <div className="grid gap-2">
+            {unpaidItems.map((item) => (
+              <div
+                key={item.id}
+                className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] bg-white px-3 py-2.5"
+              >
+                <div>
+                  <p className="text-sm font-semibold" style={{ color: "var(--portal-text)" }}>
+                    {consultLabel(item.consultationType)}
+                  </p>
+                  <p className="text-xs" style={{ color: "var(--portal-muted)" }}>
+                    {formatPaymentLabel(item.paymentStatus, item.amountCents, item.currencyCode, i18n)}
+                  </p>
+                </div>
+                <Btn
+                  variant="primary"
+                  size="sm"
+                  disabled={payingId === item.id}
+                  loading={payingId === item.id}
+                  iconLeft={<CreditCard className="size-3.5" aria-hidden />}
+                  onClick={() => void onCompletePayment(item.id)}
+                >
+                  Complete payment
+                </Btn>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
       {filtered.length === 0 ? (
         <AdminEmptyState
           icon={<Search className="size-6" aria-hidden />}
@@ -252,22 +357,10 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
                     : []),
                 ]}
               >
-                {requiresPayment(item) ? (
-                  <div
-                    className="mt-3 flex items-start gap-2 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm"
-                    style={{
-                      borderColor: "var(--portal-warning)",
-                      background: "var(--portal-warning-soft)",
-                      color: "var(--portal-warning-text)",
-                    }}
-                  >
-                    <CreditCard className="mt-0.5 size-4 shrink-0" aria-hidden />
-                    <div>
-                      <p className="font-semibold">Payment needed</p>
-                      <p className="text-xs">Complete payment to unlock doctor chat and keep the appointment moving.</p>
-                    </div>
-                  </div>
-                ) : null}
+                {/* Payment-needed state now lives exclusively in the "Action
+                    required" banner at the top of the list (fix #3) — no
+                    duplicate inline warning here, just the disabled-chat
+                    pill further down. */}
 
                 {/* Scheduled-call band — appears only once admin sets the slot.
                     The whole row links to the Meet link if present so patients
@@ -367,6 +460,30 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
                       Chat with your doctor
                     </button>
                   )}
+
+                  {CANCELLABLE_STATUSES.has(item.status) ? (
+                    <>
+                      <a
+                        href={`/account/bookings/${item.id}/reschedule`}
+                        className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)] sm:w-auto"
+                      >
+                        <Clock className="size-4" aria-hidden />
+                        Reschedule
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCancelError(null);
+                          setCancelTarget(item);
+                        }}
+                        className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-sm font-semibold sm:w-auto"
+                        style={{ borderColor: "var(--portal-danger)", color: "var(--portal-danger-text)" }}
+                      >
+                        <XCircle className="size-4" aria-hidden />
+                        Cancel booking
+                      </button>
+                    </>
+                  ) : null}
                 </div>
 
                 <PortalDialog
@@ -406,6 +523,32 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
           })}
         </div>
       )}
+
+      <PortalDialog
+        open={cancelTarget !== null}
+        onClose={() => (cancelling ? null : setCancelTarget(null))}
+        title="Cancel booking"
+        danger
+        footer={
+          <>
+            <Btn variant="ghost" onClick={() => setCancelTarget(null)} disabled={cancelling}>
+              Keep booking
+            </Btn>
+            <Btn variant="danger" onClick={() => void onConfirmCancel()} disabled={cancelling} loading={cancelling}>
+              {cancelling ? "Cancelling…" : "Cancel booking"}
+            </Btn>
+          </>
+        }
+      >
+        <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
+          {cancelTarget ? `Cancel your ${consultLabel(cancelTarget.consultationType)} booking? This can't be undone.` : ""}
+        </p>
+        {cancelError ? (
+          <p className="mt-2 rounded-md bg-rose-50 px-3 py-2 text-xs text-rose-800" role="alert">
+            {cancelError}
+          </p>
+        ) : null}
+      </PortalDialog>
     </div>
   );
 }

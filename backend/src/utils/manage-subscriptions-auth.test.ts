@@ -46,4 +46,10 @@ describe("elevateToManageSubscriptions (single admin tier)", () => {
     assert.equal(result.ok, true);
     assert.equal(result.ok && result.actorUserId, "admin-9");
   });
+
+  it("denies a LOCAL_ADMIN session — subscription config is global-admin only", () => {
+    const result = elevate({ ok: true, method: "session" }, "LOCAL_ADMIN", "local-1");
+    assert.equal(result.ok, false);
+    assert.equal(!result.ok && result.status, 403);
+  });
 });

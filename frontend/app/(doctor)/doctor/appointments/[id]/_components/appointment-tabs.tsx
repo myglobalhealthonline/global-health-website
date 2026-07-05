@@ -57,6 +57,7 @@ export function AppointmentTabs({
   // After activating a tab via `?tab=`, scroll to the URL hash target (e.g.
   // `#patient-chat`) inside the now-visible panel.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- tabParam comes from the URL, only known post-mount
     if (tabParam && tabs.some((t) => t.id === tabParam)) setActive(tabParam);
     if (typeof window !== "undefined" && window.location.hash) {
       const id = window.location.hash.slice(1);

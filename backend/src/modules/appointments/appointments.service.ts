@@ -12,8 +12,22 @@ import { normalizeDbError } from "../shared/db-errors.js";
 import { mapAppointmentOrderNumbers } from "../orders/appointment-order-number.js";
 import {
   claimDoctorSlot,
+  releaseAppointmentSlot,
   SlotAlreadyTakenError,
 } from "../doctor-availability/doctor-availability.service.js";
+
+/**
+ * Thrown when a patient tries to reschedule onto a slot that belongs to a
+ * different doctor than the one already assigned to the appointment.
+ * Reschedule is "same doctor, new time" — swapping doctors goes through the
+ * normal cancel-and-rebook flow so a new ServiceDoctor assignment check runs.
+ */
+export class RescheduleDoctorMismatchError extends Error {
+  constructor() {
+    super("The selected time belongs to a different clinician. Please pick a slot from your current doctor's availability.");
+    this.name = "RescheduleDoctorMismatchError";
+  }
+}
 
 /**
  * Thrown when a patient tries to book a slot whose doctor isn't
@@ -632,6 +646,145 @@ export async function getAppointmentForUser(
   } catch (error) {
     throw normalizeDbError(error, "Appointments are temporarily unavailable");
   }
+}
+
+export class AppointmentNotOwnedError extends Error {
+  constructor() {
+    super("Appointment not found");
+    this.name = "AppointmentNotOwnedError";
+  }
+}
+
+/**
+ * Patient self-service cancel. Reuses the same validated status transition
+ * (`updateAppointmentStatus` → `assertValidStatusTransition`) and slot-release
+ * pattern already used by the doctor-side cancel/reschedule path
+ * (`doctor-actions.route.ts`) — no new cancellation logic, just a
+ * patient-owned entry point into it.
+ */
+export async function cancelAppointmentForPatient(
+  id: string,
+  userId: string,
+): Promise<AccountAppointmentDetail | null> {
+  const owned = await prisma.appointment.findFirst({
+    where: { id, userId },
+    select: { id: true, timeSlotId: true, status: true },
+  });
+  if (!owned) throw new AppointmentNotOwnedError();
+
+  if (owned.status === "CANCELLED") {
+    return getAppointmentForUser(id, userId);
+  }
+
+  assertValidStatusTransition(owned.status as AppointmentStatus, "CANCELLED");
+
+  if (owned.timeSlotId) {
+    await releaseAppointmentSlot(id).catch(() => undefined);
+  }
+
+  await updateAppointmentStatus(id, "CANCELLED");
+  return getAppointmentForUser(id, userId);
+}
+
+/**
+ * Minimal detail needed to drive the reschedule picker: which doctor is
+ * assigned (so the frontend fetches that doctor's availability) and the
+ * currently-held slot (so the picker can show "your current time").
+ */
+export async function getAppointmentForReschedule(
+  id: string,
+  userId: string,
+): Promise<{
+  id: string;
+  status: string;
+  doctorId: string | null;
+  doctorSlug: string | null;
+  countryCode: string;
+  timeSlotId: string | null;
+  scheduledAt: string | null;
+} | null> {
+  const row = await prisma.appointment.findFirst({
+    where: { id, userId },
+    select: {
+      id: true,
+      status: true,
+      doctorId: true,
+      countryCode: true,
+      timeSlotId: true,
+      scheduledAt: true,
+      doctor: { select: { slug: true } },
+    },
+  });
+  if (!row) return null;
+  return {
+    id: row.id,
+    status: row.status as string,
+    doctorId: row.doctorId,
+    doctorSlug: row.doctor?.slug ?? null,
+    countryCode: row.countryCode,
+    timeSlotId: row.timeSlotId,
+    scheduledAt: row.scheduledAt ? row.scheduledAt.toISOString() : null,
+  };
+}
+
+/**
+ * Patient self-service reschedule: swap the appointment onto a new OPEN
+ * slot belonging to the SAME doctor. Same status gate as cancel (only a
+ * request that hasn't reached a terminal state can move), plus the slot
+ * must not already be past its transition rules — but reschedule itself
+ * isn't a status change, so `assertValidStatusTransition` isn't invoked;
+ * we reuse `CANCELLED` as the reference transition purely to check the
+ * current status is still "live" (mirrors the cancel guard).
+ *
+ * Atomic: claim the new slot (OPEN -> BOOKED), release the old slot
+ * (BOOKED -> OPEN), and repoint the Appointment's timeSlotId/scheduledAt,
+ * all inside one `$transaction` so a race-loser can't leave the patient
+ * holding zero slots.
+ */
+export async function rescheduleAppointmentForPatient(
+  id: string,
+  userId: string,
+  newTimeSlotId: string,
+): Promise<AccountAppointmentDetail | null> {
+  const owned = await prisma.appointment.findFirst({
+    where: { id, userId },
+    select: { id: true, timeSlotId: true, status: true, doctorId: true },
+  });
+  if (!owned) throw new AppointmentNotOwnedError();
+
+  // Same "still live" gate as cancel: only a non-terminal status can be
+  // rescheduled. Terminal statuses (CANCELLED/COMPLETED) have no outgoing
+  // transitions at all, so probing against CANCELLED is a reliable stand-in
+  // for "is this appointment still active" without inventing a second matrix.
+  assertValidStatusTransition(owned.status as AppointmentStatus, "CANCELLED");
+
+  if (owned.timeSlotId === newTimeSlotId) {
+    // No-op reschedule onto the same slot — return current state as-is.
+    return getAppointmentForUser(id, userId);
+  }
+
+  await prisma.$transaction(async (tx) => {
+    const claimed = await claimDoctorSlot(tx, newTimeSlotId);
+    if (owned.doctorId && claimed.doctorId !== owned.doctorId) {
+      throw new RescheduleDoctorMismatchError();
+    }
+    await tx.appointment.update({
+      where: { id },
+      data: {
+        timeSlotId: newTimeSlotId,
+        scheduledAt: claimed.startAt,
+        doctorId: claimed.doctorId,
+      },
+    });
+    if (owned.timeSlotId) {
+      await tx.doctorTimeSlot.updateMany({
+        where: { id: owned.timeSlotId, status: "BOOKED" },
+        data: { status: "OPEN" },
+      });
+    }
+  });
+
+  return getAppointmentForUser(id, userId);
 }
 
 /**

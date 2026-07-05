@@ -51,6 +51,12 @@ describe("isBenefitEligible (§21/§36.7)", () => {
       false,
     );
   });
+  it("PAUSED → not eligible (webhook-only status, benefits on hold)", () => {
+    assert.equal(
+      isBenefitEligible({ status: "PAUSED", cancelAtPeriodEnd: false, currentPeriodEnd: future, now }),
+      false,
+    );
+  });
 });
 
 describe("isRedemptionEligible (D6=A, stricter)", () => {

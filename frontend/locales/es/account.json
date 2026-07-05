@@ -102,6 +102,13 @@
     "ordered": "Pedido el {date}",
     "open": "Abrir"
   },
+  "medicalFiles": {
+    "breadcrumb": "Portal del paciente",
+    "title": "Archivos médicos",
+    "subtitle": "Tus informes y documentos subidos por médicos.",
+    "downloadAll": "Descargar todo",
+    "downloadingAll": "Descargando…"
+  },
   "payments": {
     "breadcrumb": "Cuenta",
     "title": "Pagos",
@@ -187,12 +194,18 @@
     "passwordNoMatch": "La nueva contraseña y la confirmación no coinciden.",
     "passwordTooShort": "La nueva contraseña debe tener al menos 8 caracteres.",
     "passwordUpdated": "Contraseña actualizada. Usa la nueva la próxima vez que inicies sesión.",
-    "deleteWarning": "Esto elimina permanentemente tu cuenta. Tu historial de reservas se conserva por razones regulatorias, pero sin datos identificativos. Esta acción no se puede deshacer.",
-    "deleting": "Eliminando…",
+    "deleteWarning": "Tu cuenta se eliminará en 30 días. Puedes seguir usándola y cancelar la solicitud en cualquier momento desde esta página.",
+    "deleting": "Programando…",
     "deleteMyAccount": "Eliminar mi cuenta",
     "deleteAccountTitle": "¿Eliminar tu cuenta?",
     "cancel": "Cancelar",
-    "deleteAccount": "Eliminar cuenta"
+    "deleteAccount": "Programar eliminación",
+    "deletionScheduledBanner": "Your account is scheduled for deletion on {date}.",
+    "cancelDeletion": "Cancel deletion",
+    "cancellingDeletion": "Cancelling…",
+    "signOutAllDevices": "Sign out of all devices",
+    "signOutAllDevicesBody": "This ends every signed-in session, including this one — you'll need to log in again.",
+    "signingOutAll": "Signing out…"
   },
   "family": {
     "breadcrumb": "Cuenta",

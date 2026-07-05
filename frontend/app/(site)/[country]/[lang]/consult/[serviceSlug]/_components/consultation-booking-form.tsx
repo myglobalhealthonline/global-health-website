@@ -94,6 +94,17 @@ export function ConsultationBookingForm({
   const { add } = useCart();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
+
+  // Move focus to the error banner + scroll it into view whenever a
+  // validation/submit error appears, so screen-reader users and keyboard
+  // users notice it instead of the focus staying on a button that just
+  // silently failed to submit.
+  useEffect(() => {
+    if (!error || !errorRef.current) return;
+    errorRef.current.focus();
+    errorRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [error]);
 
   // Clinic timezone drives all slot display so the patient sees the same
   // wall-clock the clinic + doctor use. Falls back to the app default when a
@@ -105,11 +116,14 @@ export function ConsultationBookingForm({
 
   const nationalIdLabel = idLabelForCountrySlug(params?.country);
   // Slot is fixed on the details step — chosen on the previous (time) step and
-  // carried in the URL. Resolve it for the summary; never re-pick here.
-  const selectedSlot =
-    (initialSlotId ? slots.find((slot) => slot.id === initialSlotId) : undefined) ??
-    slots[0] ??
-    null;
+  // carried in the URL. Resolve it for the summary; never re-pick here. When
+  // an `initialSlotId` was supplied but isn't in `slots` (someone else took
+  // it, or it expired), `selectedSlot` must be null — NOT slots[0] — so the
+  // patient is never silently booked into a time they didn't choose.
+  const slotStale = Boolean(initialSlotId) && !slots.some((slot) => slot.id === initialSlotId);
+  const selectedSlot = initialSlotId
+    ? slots.find((slot) => slot.id === initialSlotId) ?? null
+    : slots[0] ?? null;
   const selectedSlotId = selectedSlot?.id ?? null;
 
   // Auth + prefill state. We render the form unconditionally so guests
@@ -429,12 +443,29 @@ export function ConsultationBookingForm({
       const country = params?.country ?? "";
       const lang = params?.lang ?? "";
       // `?added=1` is the cue for the cart page to flash a green
-      // "Added to cart" banner so the patient sees positive feedback
-      // — the cart icon badge alone isn't loud enough.
+      // "Added to cart" banner so the patient sees positive feedback —
+      // the cart icon badge alone isn't loud enough. `bDoctor`/`bWhen`/
+      // `bPrice` name what was just booked so the flash confirms the actual
+      // booking (not just "something was added") before the patient moves
+      // on to checkout. ponytail: query string, not sessionStorage — the
+      // details are short strings already in scope on this component.
+      const flashParams = new URLSearchParams({ added: "1", bDoctor: doctorName });
+      if (selectedSlot) {
+        flashParams.set(
+          "bWhen",
+          `${formatAppDate(selectedSlot.startAt, tz)} · ${formatAppTime(selectedSlot.startAt, tz)} (${tzLabel})`,
+        );
+        if (typeof selectedSlot.priceCents === "number") {
+          flashParams.set(
+            "bPrice",
+            formatPriceRounded(selectedSlot.priceCents, selectedSlot.currencyCode ?? "EUR"),
+          );
+        }
+      }
       const dest =
         country && lang
-          ? `/${country}/${lang}/cart?added=1`
-          : "/cart?added=1";
+          ? `/${country}/${lang}/cart?${flashParams.toString()}`
+          : `/cart?${flashParams.toString()}`;
       router.push(dest);
     });
   }
@@ -462,6 +493,29 @@ export function ConsultationBookingForm({
       onSubmit={onSubmit}
       className="mt-6 grid gap-6"
     >
+      {/* Stale slot — the ?slot= the patient confirmed on the previous step
+        * is no longer in the open `slots` list (someone else took it, or it
+        * expired). Never fall through to the details form with a silently
+        * substituted time: show a visible warning and send them back to
+        * pick another time instead. */}
+      {slotStale ? (
+        <div
+          role="alert"
+          className="gh2-card-ivory flex flex-wrap items-center justify-between gap-3 border-l-4 p-4"
+          style={{ borderLeftColor: "var(--color-status-warning-text)" }}
+        >
+          <p className="text-sm font-semibold text-[var(--color-text-primary)]">
+            That time is no longer available — pick another.
+          </p>
+          <Link
+            href={changeTimeHref}
+            className="gh2-btn-lime justify-center"
+          >
+            {i18n.changeTime}
+          </Link>
+        </div>
+      ) : null}
+
       {/* Selected time summary — the slot was confirmed on the previous
         * (time) step. This details step never re-picks it; "Change time"
         * returns to the time step (same URL without ?slot=). */}
@@ -892,7 +946,10 @@ export function ConsultationBookingForm({
 
       {error ? (
         <div
-          className="rounded-[var(--radius-card)] px-4 py-3 text-sm font-medium"
+          ref={errorRef}
+          role="alert"
+          tabIndex={-1}
+          className="rounded-[var(--radius-card)] px-4 py-3 text-sm font-medium focus:outline-none"
           style={{
             background: "rgba(239,68,68,0.08)",
             border: "1px solid rgba(239,68,68,0.25)",

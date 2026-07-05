@@ -19,3 +19,21 @@ export async function requireAdminAction(): Promise<void> {
     redirect("/login?next=/admin");
   }
 }
+
+/**
+ * Stricter variant for money-mutation actions (e.g. subscription credit
+ * adjustments) that must be SUPER_ADMIN-only. Deliberately separate from
+ * `requireAdminAction` above — that one must stay ADMIN-accessible for the
+ * rest of the admin surface. Redirects to /unauthorized (not /login) when
+ * a real admin lacks the super tier, since they ARE authenticated — they
+ * just lack this specific permission.
+ */
+export async function requireSuperAdminAction(): Promise<void> {
+  const user = await getServerAuthUser();
+  if (!user) {
+    redirect("/login?next=/admin");
+  }
+  if (user.role !== "SUPER_ADMIN") {
+    redirect("/unauthorized");
+  }
+}

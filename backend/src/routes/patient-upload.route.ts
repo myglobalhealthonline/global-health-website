@@ -21,6 +21,7 @@ import {
   sendDoctorPatientUploadNotificationEmail,
 } from "../lib/email/templates.js";
 import { sendWhatsAppText } from "../lib/whatsapp/wasender.js";
+import { verifySniffedMime } from "../utils/sniff-mime.js";
 
 const ALLOWED_MIME = new Set([
   "image/jpeg",
@@ -38,7 +39,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
     async (request, reply) => {
     const token = (request.query as { token?: string }).token?.trim();
     if (!token) return reply.status(400).send(errorResponse("token is required"));
-    const verified = verifyPatientUploadToken(token);
+    const verified = await verifyPatientUploadToken(token);
     if (!verified.ok) {
       return reply.status(400).send(errorResponse(verified.message));
     }
@@ -78,7 +79,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
       }
     }
 
-    const verified = verifyPatientUploadToken(token);
+    const verified = await verifyPatientUploadToken(token);
     if (!verified.ok) {
       return reply.status(400).send(errorResponse(verified.message));
     }
@@ -88,9 +89,11 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
     if (fileBuffer.length > MAX_BYTES) {
       return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
     }
-    if (!ALLOWED_MIME.has(mimetype)) {
-      return reply.status(400).send(errorResponse("File type not allowed"));
+    const sniffedMime = verifySniffedMime(fileBuffer, mimetype, ALLOWED_MIME);
+    if (!sniffedMime) {
+      return reply.status(400).send(errorResponse("File content does not match an allowed type"));
     }
+    mimetype = sniffedMime;
 
     try {
       await upsertPatientProfileByEmail({ email: verified.email });
@@ -225,7 +228,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
         return reply.status(404).send(errorResponse("Patient not found for this doctor"));
       }
 
-      const { token, expiresAt } = createPatientUploadToken({
+      const { token, expiresAt } = await createPatientUploadToken({
         email,
         appointmentId: hasAppt.id,
         doctorId: auth.doctorId,

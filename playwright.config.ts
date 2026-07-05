@@ -40,9 +40,15 @@ export default defineConfig({
   webServer: process.env.E2E_NO_WEBSERVER
     ? undefined
     : {
-        command: "pnpm --filter frontend dev",
+        // CI runs against a production build — dev mode skips the standalone
+        // output + prod caching behavior, so a prod-only regression could
+        // pass in CI while actually broken. Locally, keep `next dev` for
+        // fast iteration (and Playwright reuses an already-running one).
+        command: process.env.CI
+          ? "pnpm --filter frontend build && pnpm --filter frontend start"
+          : "pnpm --filter frontend dev",
         url: baseURL,
         reuseExistingServer: !process.env.CI,
-        timeout: 120_000,
+        timeout: process.env.CI ? 180_000 : 120_000,
       },
 });

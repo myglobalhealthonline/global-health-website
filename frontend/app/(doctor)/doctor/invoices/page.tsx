@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight, Receipt, SearchX } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronUp, Receipt, SearchX } from "lucide-react";
 import { fetchDoctorInvoicesList } from "@/lib/api/doctor-api";
 import {
   AdminEmptyState,
@@ -46,6 +46,62 @@ function paymentTone(status: string): "active" | "inactive" | "pending" | "neutr
   return "neutral";
 }
 
+type SortBy = "date" | "amount";
+type SortOrder = "asc" | "desc";
+
+function sortHref(
+  sp: SearchParams,
+  column: SortBy,
+  currentSortBy: SortBy,
+  currentSortOrder: SortOrder,
+): string {
+  const params = new URLSearchParams();
+  for (const [k, v] of Object.entries(sp)) {
+    if (k === "sortBy" || k === "sortOrder" || k === "page") continue;
+    if (typeof v === "string" && v.trim() !== "") params.set(k, v);
+  }
+  const nextOrder: SortOrder =
+    currentSortBy === column && currentSortOrder === "desc" ? "asc" : "desc";
+  params.set("sortBy", column);
+  params.set("sortOrder", nextOrder);
+  return `/doctor/invoices?${params.toString()}`;
+}
+
+function SortHeader({
+  column,
+  label,
+  currentSortBy,
+  currentSortOrder,
+  sp,
+  className,
+}: {
+  column: SortBy;
+  label: string;
+  currentSortBy: SortBy;
+  currentSortOrder: SortOrder;
+  sp: SearchParams;
+  className?: string;
+}) {
+  const active = currentSortBy === column;
+  return (
+    <th className={`px-4 py-3 font-semibold ${className ?? ""}`}>
+      <Link
+        href={sortHref(sp, column, currentSortBy, currentSortOrder)}
+        className="inline-flex items-center gap-1 hover:text-[var(--portal-text)]"
+      >
+        {label}
+        {active ? (
+          currentSortOrder === "asc" ? (
+            <ChevronUp className="size-3.5" aria-hidden />
+          ) : (
+            <ChevronDown className="size-3.5" aria-hidden />
+          )
+        ) : null}
+      </Link>
+    </th>
+  );
+}
+
 export default async function DoctorInvoicesPage({
   searchParams,
 }: {
@@ -56,10 +112,14 @@ export default async function DoctorInvoicesPage({
   const from = pick(sp, "from");
   const to = pick(sp, "to");
   const page = Number(pick(sp, "page") ?? "1") || 1;
+  const sortBy: SortBy = pick(sp, "sortBy") === "amount" ? "amount" : "date";
+  const sortOrder: SortOrder = pick(sp, "sortOrder") === "asc" ? "asc" : "desc";
 
   const result = await fetchDoctorInvoicesList({
     page: String(page),
     pageSize: "25",
+    sortBy,
+    sortOrder,
     ...(status ? { status } : {}),
     ...(from ? { from } : {}),
     ...(to ? { to } : {}),
@@ -190,11 +250,23 @@ export default async function DoctorInvoicesPage({
             <thead className="bg-[var(--portal-well)] text-left text-xs uppercase tracking-wider text-[var(--portal-muted)]">
               <tr>
                 <th className="px-4 py-3 font-semibold">Patient</th>
-                <th className="px-4 py-3 font-semibold">When</th>
-                <th className="px-4 py-3 font-semibold">Type</th>
-                <th className="px-4 py-3 font-semibold">Amount</th>
+                <SortHeader
+                  column="date"
+                  label="When"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  sp={sp}
+                />
+                <th className="hidden lg:table-cell px-4 py-3 font-semibold">Type</th>
+                <SortHeader
+                  column="amount"
+                  label="Amount"
+                  currentSortBy={sortBy}
+                  currentSortOrder={sortOrder}
+                  sp={sp}
+                />
                 <th className="px-4 py-3 font-semibold">Payment</th>
-                <th className="px-4 py-3 font-semibold">Status</th>
+                <th className="hidden lg:table-cell px-4 py-3 font-semibold">Status</th>
                 <th className="px-4 py-3 font-semibold text-right">Open</th>
               </tr>
             </thead>
@@ -219,7 +291,7 @@ export default async function DoctorInvoicesPage({
                         })
                       : new Date(row.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="px-4 py-3 text-xs capitalize">{row.consultationType}</td>
+                  <td className="hidden lg:table-cell px-4 py-3 text-xs capitalize">{row.consultationType}</td>
                   <td className="px-4 py-3 font-mono text-xs">
                     {fmtMoney(row.amountCents, row.currencyCode)}
                   </td>
@@ -233,7 +305,7 @@ export default async function DoctorInvoicesPage({
                       {row.paymentStatus}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs">{row.status}</td>
+                  <td className="hidden lg:table-cell px-4 py-3 text-xs">{row.status}</td>
                   <td className="px-4 py-3 text-right">
                     <Link
                       href={`/doctor/appointments/${row.id}`}

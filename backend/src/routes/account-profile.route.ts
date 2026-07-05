@@ -18,6 +18,7 @@ import {
   NationalityNotFoundError,
 } from "../services/patient-nationality.service.js";
 import { encryptPhi, decryptPhi } from "../lib/crypto/phi-crypto.js";
+import { verifySniffedMime } from "../utils/sniff-mime.js";
 import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 import {
   putObject,
@@ -251,9 +252,11 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
     if (fileBuffer.length > MAX_BYTES) {
       return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
     }
-    if (!ALLOWED_MIME.has(mimetype)) {
-      return reply.status(400).send(errorResponse("File type not allowed (PDF, JPG, PNG, WebP)"));
+    const sniffedMime = verifySniffedMime(fileBuffer, mimetype, ALLOWED_MIME);
+    if (!sniffedMime) {
+      return reply.status(400).send(errorResponse("File content does not match an allowed type (PDF, JPG, PNG, WebP)"));
     }
+    mimetype = sniffedMime;
 
     const ext = mimetype === "application/pdf" ? "pdf" : mimetype.split("/")[1];
     const storageKey = `patient-docs/${profile.id}/insurance/${randomUUID()}.${ext}`;
@@ -317,9 +320,11 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
     if (fileBuffer.length > MAX_BYTES) {
       return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
     }
-    if (!ALLOWED_MIME.has(mimetype)) {
-      return reply.status(400).send(errorResponse("File type not allowed"));
+    const sniffedMime = verifySniffedMime(fileBuffer, mimetype, ALLOWED_MIME);
+    if (!sniffedMime) {
+      return reply.status(400).send(errorResponse("File content does not match an allowed type"));
     }
+    mimetype = sniffedMime;
 
     const ext = mimetype === "application/pdf" ? "pdf" : mimetype.split("/")[1];
     const storageKey = `patient-docs/${profile.id}/id-document/${side}-${randomUUID()}.${ext}`;
@@ -492,9 +497,11 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
     if (fileBuffer.length > MAX_BYTES) {
       return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
     }
-    if (!ALLOWED_MIME.has(mimetype)) {
-      return reply.status(400).send(errorResponse("File type not allowed"));
+    const sniffedMime = verifySniffedMime(fileBuffer, mimetype, ALLOWED_MIME);
+    if (!sniffedMime) {
+      return reply.status(400).send(errorResponse("File content does not match an allowed type"));
     }
+    mimetype = sniffedMime;
 
     const ext = mimetype === "application/pdf" ? "pdf" : mimetype.split("/")[1];
     const storageKey = `patient-docs/${profile.id}/nationality-${slotRaw}/${side}-${randomUUID()}.${ext}`;

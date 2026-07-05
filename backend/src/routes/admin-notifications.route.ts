@@ -22,6 +22,13 @@ const listQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(50),
 });
 
+// Deliberately session-only (resolveOptionalAuthUser), not verifyAdminAccess
+// — this route filters by recipientUserId, which requires a real
+// session-bound user id. verifyAdminAccess also accepts the Bearer-token
+// admin fallback, which has no such id, so it can't be swapped in here.
+// The `role !== "ADMIN"` check below is what actually enforces the guard;
+// don't drop it in a future edit just because the resolver name says
+// "optional".
 async function requireAdminId(
   request: FastifyRequest,
   reply: FastifyReply,

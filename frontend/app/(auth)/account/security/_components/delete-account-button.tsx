@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { deleteOwnAccount } from "@/lib/api/auth-api";
 
@@ -16,19 +15,27 @@ type DeleteI18n = {
 
 const DEFAULT_I18N: DeleteI18n = {
   deleteWarning:
-    "This permanently deletes your account. Your booking history is preserved for regulatory reasons but stripped of identifying details. This cannot be undone.",
-  deleting: "Deleting…",
+    "This schedules your account for deletion in 30 days. You can keep using your account and cancel the request anytime before then from this page.",
+  deleting: "Scheduling…",
   deleteMyAccount: "Delete my account",
   deleteAccountTitle: "Delete your account?",
   cancel: "Cancel",
-  deleteAccount: "Delete account",
+  deleteAccount: "Schedule deletion",
 };
 
 /**
  * Inline confirmation for account deletion (replaces window.confirm — ISS-011).
+ * Grace-period deletion (30 days) — the account stays functional, so this no
+ * longer redirects away. `onScheduled` lets the parent page show the
+ * deletion banner immediately without a full reload.
  */
-export function DeleteAccountButton({ i18n = DEFAULT_I18N }: { i18n?: DeleteI18n }) {
-  const router = useRouter();
+export function DeleteAccountButton({
+  i18n = DEFAULT_I18N,
+  onScheduled,
+}: {
+  i18n?: DeleteI18n;
+  onScheduled?: (deletionScheduledAt: string) => void;
+}) {
   const [open, setOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteMsg, setDeleteMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(
@@ -42,8 +49,7 @@ export function DeleteAccountButton({ i18n = DEFAULT_I18N }: { i18n?: DeleteI18n
     setDeleting(false);
     if (res.ok) {
       setOpen(false);
-      router.replace("/");
-      router.refresh();
+      onScheduled?.(res.data.deletionScheduledAt);
     } else {
       setDeleteMsg({ kind: "err", text: res.message });
     }

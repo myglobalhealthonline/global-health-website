@@ -304,40 +304,57 @@ export async function grantMonthlyCredits(tx: Tx, input: MonthlyGrantInput): Pro
   });
   const priorBalance = prior?.balance ?? 0;
 
-  if (priorBalance !== 0) {
+  // Concurrent invoice.paid + invoice.payment_succeeded for the same period
+  // (code review 2026-07-05, bug #7) can both pass the `seen` gate above
+  // before either commits. Whichever loses hits a unique-constraint
+  // violation on RESET_EXPIRE's or MONTHLY_GRANT's period-keyed
+  // idempotencyKey — both throw before the wellness block below ever runs,
+  // and the CONSULTATION balance write two lines down is an absolute SET
+  // (not an increment), so a caught violation here always means "nothing
+  // this transaction wrote matters — the other one already applied the
+  // identical target state." Safe to treat exactly like the `seen` gate:
+  // return false instead of letting a benign race look like a real failure
+  // (previously surfaced as an uncaught P2002 → a false "critical" ops
+  // alert + a wasted Stripe webhook retry).
+  try {
+    if (priorBalance !== 0) {
+      await tx.consultationCreditLedger.create({
+        data: {
+          userSubscriptionId: input.userSubscriptionId,
+          userId: input.userId,
+          deltaCredits: -priorBalance,
+          reason: "RESET_EXPIRE",
+          billingPeriodStart: input.periodStart,
+          idempotencyKey: periodResetKey(input.userSubscriptionId, input.periodStart),
+        },
+      });
+    }
+
+    await tx.subscriptionCreditBalance.update({
+      where: {
+        userSubscriptionId_kind: {
+          userSubscriptionId: input.userSubscriptionId,
+          kind: "CONSULTATION",
+        },
+      },
+      data: { balance: input.consultationCredits },
+    });
+
     await tx.consultationCreditLedger.create({
       data: {
         userSubscriptionId: input.userSubscriptionId,
         userId: input.userId,
-        deltaCredits: -priorBalance,
-        reason: "RESET_EXPIRE",
+        deltaCredits: input.consultationCredits,
+        reason: "MONTHLY_GRANT",
+        balanceAfterHint: input.consultationCredits,
         billingPeriodStart: input.periodStart,
-        idempotencyKey: periodResetKey(input.userSubscriptionId, input.periodStart),
+        idempotencyKey: grantKey,
       },
     });
+  } catch (err) {
+    if (isUniqueViolation(err)) return false;
+    throw err;
   }
-
-  await tx.subscriptionCreditBalance.update({
-    where: {
-      userSubscriptionId_kind: {
-        userSubscriptionId: input.userSubscriptionId,
-        kind: "CONSULTATION",
-      },
-    },
-    data: { balance: input.consultationCredits },
-  });
-
-  await tx.consultationCreditLedger.create({
-    data: {
-      userSubscriptionId: input.userSubscriptionId,
-      userId: input.userId,
-      deltaCredits: input.consultationCredits,
-      reason: "MONTHLY_GRANT",
-      balanceAfterHint: input.consultationCredits,
-      billingPeriodStart: input.periodStart,
-      idempotencyKey: grantKey,
-    },
-  });
 
   // Wellness: additive, only when the snapshot grants it (Premium, D12).
   if (input.wellnessCredits > 0) {

@@ -131,6 +131,8 @@ const invoiceQuerySchema = z.object({
   status: z.enum(["UNPAID", "PENDING", "PAID", "REFUNDED", "FAILED"]).optional(),
   page: z.coerce.number().int().min(1).default(1),
   pageSize: z.coerce.number().int().min(1).max(100).default(25),
+  sortBy: z.enum(["date", "amount"]).default("date"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 
 const doctorActionsRoute: FastifyPluginAsync = async (app) => {
@@ -587,9 +589,11 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
     if (!q.success) {
       return reply.status(400).send(errorResponse("Invalid query", q.error.flatten()));
     }
-    const { from, to, status, page, pageSize } = q.data;
+    const { from, to, status, page, pageSize, sortBy, sortOrder } = q.data;
     const fromUtc = from ? new Date(`${from}T00:00:00.000Z`) : undefined;
     const toUtc = to ? new Date(`${to}T23:59:59.999Z`) : undefined;
+    const orderBy =
+      sortBy === "amount" ? { amountCents: sortOrder } : { createdAt: sortOrder };
     try {
       const where = {
         doctorId: auth.doctorId,
@@ -610,7 +614,7 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
         prisma.appointment.count({ where }),
         prisma.appointment.findMany({
           where,
-          orderBy: { createdAt: "desc" },
+          orderBy,
           skip: (page - 1) * pageSize,
           take: pageSize,
           select: {

@@ -27,6 +27,10 @@ export type SafeUser = {
    *  /account/change-password on first authenticated request. Cleared
    *  the moment the user changes the password themselves. */
   mustChangePassword: boolean;
+  /** Set when a GDPR deletion request is pending (30-day grace period).
+   *  ISO datetime or null. The account stays functional until this date;
+   *  the security page shows a cancellable banner while it's set. */
+  deletionScheduledAt: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -56,6 +60,7 @@ function toSafeUser(user: User): SafeUser {
     emailVerifiedAt: user.emailVerifiedAt ? user.emailVerifiedAt.toISOString() : null,
     isActive: user.isActive,
     mustChangePassword: user.mustChangePassword,
+    deletionScheduledAt: user.deletionScheduledAt ? user.deletionScheduledAt.toISOString() : null,
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt.toISOString(),
   };
@@ -179,11 +184,13 @@ export async function claimGuestOrdersForUser(
   }
 }
 
-export async function loginUser(input: LoginBody): Promise<{ user: SafeUser; twoFactorEnabled: boolean }> {
+export async function loginUser(
+  input: LoginBody,
+): Promise<{ user: SafeUser; twoFactorEnabled: boolean; tokenVersion: number }> {
   const email = input.email.toLowerCase();
   try {
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user || !user.isActive) {
+    if (!user || !user.isActive || isPastDeletionDate(user)) {
       throw new AuthInvalidCredentialsError();
     }
     const ok = await bcrypt.compare(input.password, user.passwordHash);
@@ -191,17 +198,33 @@ export async function loginUser(input: LoginBody): Promise<{ user: SafeUser; two
       throw new AuthInvalidCredentialsError();
     }
     const twoFactorEnabled = Boolean((user as Record<string, unknown>).twoFactorEnabled);
-    return { user: toSafeUser(user), twoFactorEnabled };
+    return { user: toSafeUser(user), twoFactorEnabled, tokenVersion: user.tokenVersion };
   } catch (error) {
     if (error instanceof AuthInvalidCredentialsError) throw error;
     throw normalizeDbError(error, "Authentication is temporarily unavailable");
   }
 }
 
+/** True once the account's grace-period deletion date has passed. Used to
+ *  treat a scheduled-but-not-yet-purged deletion as inactive, same as
+ *  `isActive: false`, without needing a cron job in this pass. */
+function isPastDeletionDate(user: Pick<User, "deletionScheduledAt">): boolean {
+  return Boolean(user.deletionScheduledAt && user.deletionScheduledAt.getTime() < Date.now());
+}
+
+/** Raw tokenVersion lookup for callers that mint a JWT outside the normal
+ *  login flow (e.g. the invite-accept path) and need it to embed in the
+ *  token. Defaults to 0 if the user is somehow gone by this point — the
+ *  session simply won't survive the very next tokenVersion bump. */
+export async function getUserTokenVersion(id: string): Promise<number> {
+  const user = await prisma.user.findUnique({ where: { id }, select: { tokenVersion: true } });
+  return user?.tokenVersion ?? 0;
+}
+
 export async function getSafeUserById(id: string) {
   try {
     const user = await prisma.user.findUnique({ where: { id } });
-    if (!user || !user.isActive) return null;
+    if (!user || !user.isActive || isPastDeletionDate(user)) return null;
     return toSafeUser(user);
   } catch (error) {
     throw normalizeDbError(error, "Authentication is temporarily unavailable");
@@ -247,47 +270,62 @@ export async function changeUserPassword(
   }
 }
 
-/**
- * Soft-delete the user's account: scrubs PII and flips `isActive` to false.
- * We don't hard-delete because Appointments must keep their audit trail
- * (Stripe ledger, admin records, regulatory). After delete the user can
- * no longer log in; their booking rows persist with the historic name/
- * email already on the row.
- */
-export async function deleteOwnAccount(id: string): Promise<void> {
+/** "Sign out of all devices": bump tokenVersion so every previously-issued
+ *  JWT (this device included) fails the tokenVersion check in requireAuth
+ *  on its next request. Returns the new version so the caller can decide
+ *  whether to also clear the current request's cookie. */
+export async function signOutAllDevices(id: string): Promise<number> {
   try {
-    const scrubbedEmail = `deleted-${id}@deleted.local`;
+    const updated = await prisma.user.update({
+      where: { id },
+      data: { tokenVersion: { increment: 1 } },
+      select: { tokenVersion: true },
+    });
+    return updated.tokenVersion;
+  } catch (error) {
+    throw normalizeDbError(error, "Could not sign out other devices");
+  }
+}
+
+const DELETION_GRACE_DAYS = 30;
+
+/**
+ * GDPR account deletion, grace-period version. Sets `deletionScheduledAt`
+ * to now+30d instead of scrubbing immediately — the account stays fully
+ * functional (login, bookings) until then, and the patient can cancel via
+ * `cancelAccountDeletion`.
+ *
+ * The actual PII scrub + hard-delete on expiry is NOT implemented here.
+ * ponytail: needs a purge cron reading deletionScheduledAt < now — no
+ * existing cron system is a natural fit for a one-off account purge (see
+ * the field comment on `User.deletionScheduledAt` in schema.prisma); wire
+ * it in when that job is actually built. Until then, expired accounts are
+ * simply treated as inactive (login blocked) by `isPastDeletionDate`
+ * without their data being removed.
+ */
+export async function requestAccountDeletion(id: string): Promise<{ deletionScheduledAt: string }> {
+  try {
+    const scheduledAt = new Date(Date.now() + DELETION_GRACE_DAYS * 24 * 60 * 60 * 1000);
     await prisma.user.update({
       where: { id },
-      data: {
-        isActive: false,
-        // Replace identifying fields with deterministic placeholders so a
-        // future re-registration with the original email can succeed.
-        email: scrubbedEmail,
-        fullName: "[deleted account]",
-        phone: null,
-        emailVerifiedAt: null,
-        // Re-randomise the password hash so any leaked plaintext is moot.
-        passwordHash: await bcrypt.hash(randomBytes(32).toString("hex"), 12),
-      },
+      data: { deletionScheduledAt: scheduledAt },
     });
-    // Detach the user from past Appointment rows — admin still sees the
-    // booking history but the link to the now-deleted user is broken.
-    await prisma.appointment.updateMany({
-      where: { userId: id },
-      data: { userId: null },
-    });
-    // Burn outstanding password-reset and email-verification tokens.
-    await prisma.passwordResetToken.updateMany({
-      where: { userId: id, usedAt: null },
-      data: { usedAt: new Date() },
-    });
-    await prisma.emailVerificationToken.updateMany({
-      where: { userId: id, usedAt: null },
-      data: { usedAt: new Date() },
+    return { deletionScheduledAt: scheduledAt.toISOString() };
+  } catch (error) {
+    throw normalizeDbError(error, "Could not schedule account deletion");
+  }
+}
+
+/** Cancel a pending grace-period deletion — clears the field, account is
+ *  unaffected (it was never deactivated). No-op if nothing was scheduled. */
+export async function cancelAccountDeletion(id: string): Promise<void> {
+  try {
+    await prisma.user.update({
+      where: { id },
+      data: { deletionScheduledAt: null },
     });
   } catch (error) {
-    throw normalizeDbError(error, "Could not delete account");
+    throw normalizeDbError(error, "Could not cancel account deletion");
   }
 }
 

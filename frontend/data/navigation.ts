@@ -5,15 +5,9 @@ import { countries as seedCountries } from "./countries";
 
 export type NavLink = { label: string; href: string };
 
-export type CountryClinicLinks = {
-  country: CountryConfig;
-  links: NavLink[];
-};
-
 export type FooterColumn = { heading: string; links: NavLink[] };
 
 export type SiteNavigationData = {
-  clinicsMenuByCountry: CountryClinicLinks[];
   clinicsOverviewLink: NavLink;
   aboutMenuLinks: NavLink[];
   headerUtilityLinks: NavLink[];
@@ -76,37 +70,10 @@ export type SiteNavigationData = {
   footerEuCompliant: string;
 };
 
-function clinicLinksForCountry(c: CountryConfig, copy: CommonLocale): NavLink[] {
-  const base: NavLink[] = [
-    { label: `${c.name} Home`, href: c.legacyHomePath },
-    { label: `${c.name} Team`, href: c.teamPath },
-    { label: copy.navigation.generalConsultation, href: c.generalConsultationPath },
-    { label: copy.navigation.specialistConsultation, href: c.specialistPath },
-  ];
-
-  if (c.code === "ie") {
-    return [
-      ...base,
-      { label: copy.navigation.onlinePrescription, href: "/online-prescription" },
-      { label: copy.navigation.homeDelivery, href: "/home-delivery" },
-      { label: copy.navigation.plansPricing, href: "/plans-pricing" },
-      { label: copy.navigation.healthTests, href: "/home-health-test" },
-      { label: copy.navigation.partnerClinics, href: "/partner-clinics" },
-    ];
-  }
-
-  return base;
-}
-
 export function buildSiteNavigationData(
   copy: CommonLocale,
   countries: CountryConfig[],
 ): SiteNavigationData {
-  const clinicsMenuByCountry: CountryClinicLinks[] = countries.map((country) => ({
-    country,
-    links: clinicLinksForCountry(country, copy),
-  }));
-
   // Phase 1: nav is country-first. Country/team links live in the Clinics
   // dropdown; About menu is intentionally light. Wix legacy items (gift card,
   // careers detail pages, etc.) are deferred for Phase 2+.
@@ -144,7 +111,6 @@ export function buildSiteNavigationData(
   ];
 
   return {
-    clinicsMenuByCountry,
     clinicsOverviewLink: { label: copy.navigation.viewAllClinics, href: "/#countries" },
     aboutMenuLinks,
     headerUtilityLinks,

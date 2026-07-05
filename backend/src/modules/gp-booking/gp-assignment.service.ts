@@ -5,8 +5,7 @@ import { computeSlotPrice, getServicePeakConfig } from "../pricing/peak-pricing.
 import {
   resolveGpSameDayService,
   getGpPriorityDoctorId,
-  readRotationCursor,
-  writeRotationCursor,
+  claimNextRotationCursor,
   type GpSameDayService,
 } from "./gp-config.service.js";
 
@@ -339,16 +338,12 @@ export async function resolveGpAssignment(args: {
       chosen = candidates[0];
       reason = "ONLY_AVAILABLE";
     } else {
-      // Fair round-robin across the candidate pool for this lane.
-      const cursor = await readRotationCursor(countryCode, service.id, languageCode);
+      // Fair round-robin across the candidate pool for this lane. Atomic
+      // claim-and-advance so two concurrent assignments never read the same
+      // cursor value (see gp-config.service.ts:claimNextRotationCursor).
+      const cursor = await claimNextRotationCursor(countryCode, service.id, languageCode);
       chosen = candidates[cursor % candidates.length];
       reason = "ROTATION";
-      await writeRotationCursor(
-        countryCode,
-        service.id,
-        languageCode,
-        (cursor + 1) % Number.MAX_SAFE_INTEGER,
-      );
     }
 
     // Audit row — keyed by slot id so the post-payment Appointment can
