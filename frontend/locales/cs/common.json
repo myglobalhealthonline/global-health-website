@@ -269,6 +269,7 @@
   },
   "bookingForm": {
     "benefitHeading": "Použít váš plán",
+    "corporateOffAtCheckout": "sleva při platbě",
     "benefitPayNormal": "Zaplatit běžně",
     "benefitUseCredit": "Použít kredit plánu",
     "benefitUseDiscount": "Použít slevu plánu",
@@ -533,6 +534,7 @@
     "subtotalItems": "Mezisoučet ({count} {unit})",
     "shipping": "Doprava",
     "planSavings": "Úspora s plánem",    "total": "Celkem",
+    "corporateOff": "sleva",
     "continueToCheckout": "Pokračovat k pokladně",
     "trustSecure": "Bezpečná platba zajištěná přes Stripe",
     "trustNoStore": "Nikdy neukládáme údaje o vaší kartě",
@@ -652,5 +654,28 @@
     "noForLanguage": "Pro tuto službu nejsou momentálně v jazyce {language} dostupní žádní lékaři.",
     "chooseAnotherLanguage": "Vyberte si prosím jiný jazyk nebo to zkuste později.",
     "showAllLanguages": "Zobrazit všechny jazyky"
+  },
+  "cardVerify": {
+    "title": "Ověření firemní karty",
+    "subtitle": "Ověřte pravost benefitní karty Global Health",
+    "step": "Ověření",
+    "valid": "Karta platná",
+    "statusSuspended": "Karta pozastavena",
+    "statusExpired": "Karta expirovala",
+    "validBody": "Tato firemní benefitní karta je aktivní a pravá.",
+    "inactiveBody": "Tato karta je pravá, ale již neposkytuje firemní benefity.",
+    "cardNumber": "Číslo karty",
+    "member": "Člen",
+    "company": "Společnost",
+    "plan": "Plán",
+    "memberType": "Typ člena",
+    "employee": "Zaměstnanec",
+    "beneficiary": "Rodinný příslušník",
+    "status": "Stav",
+    "validRange": "Platnost",
+    "matchNote": "Porovnejte číslo karty výše s číslem na digitální kartě člena.",
+    "notFound": "Karta nenalezena",
+    "checkNumber": "Zkontrolujte, zda je číslo karty správné.",
+    "couldNotVerify": "Kartu se nepodařilo ověřit"
   }
 }

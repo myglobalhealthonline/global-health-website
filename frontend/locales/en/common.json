@@ -269,6 +269,7 @@
   },
   "bookingForm": {
     "benefitHeading": "Apply your plan",
+    "corporateOffAtCheckout": "off at checkout",
     "benefitPayNormal": "Pay normally",
     "benefitUseCredit": "Use plan credit",
     "benefitUseDiscount": "Use plan discount",
@@ -533,6 +534,7 @@
     "subtotalItems": "Subtotal ({count} {unit})",
     "shipping": "Shipping",
     "planSavings": "Plan savings",    "total": "Total",
+    "corporateOff": "off",
     "continueToCheckout": "Continue to checkout",
     "trustSecure": "Secure checkout powered by Stripe",
     "trustNoStore": "We never store your card details",
@@ -652,5 +654,28 @@
     "noForLanguage": "No doctors are currently available for this service in {language}.",
     "chooseAnotherLanguage": "Please choose another language or check again later.",
     "showAllLanguages": "Show all languages"
+  },
+  "cardVerify": {
+    "title": "Corporate card verification",
+    "subtitle": "Authenticate a Global Health corporate benefit card",
+    "step": "Verify",
+    "valid": "Card valid",
+    "statusSuspended": "Card suspended",
+    "statusExpired": "Card expired",
+    "validBody": "This corporate benefit card is active and authentic.",
+    "inactiveBody": "This card is authentic but no longer grants corporate benefits.",
+    "cardNumber": "Card number",
+    "member": "Member",
+    "company": "Company",
+    "plan": "Plan",
+    "memberType": "Member type",
+    "employee": "Employee",
+    "beneficiary": "Beneficiary",
+    "status": "Status",
+    "validRange": "Valid",
+    "matchNote": "Match the card number above with the one on the member's digital card.",
+    "notFound": "Card not found",
+    "checkNumber": "Check that the card number is correct.",
+    "couldNotVerify": "Could not verify the card"
   }
 }

@@ -22,11 +22,44 @@ export type InviteInfo = {
   expiresAt: string;
 };
 
+export type InviteFormI18n = {
+  existingPassword: string;
+  createPassword: string;
+  existingNote: string;
+  showPassword: string;
+  hidePassword: string;
+  completeProfile: string;
+  dateOfBirth: string;
+  phone: string;
+  address: string;
+  city: string;
+  postalCode: string;
+  consents: string;
+  acceptTermsPrefix: string;
+  termsLink: string;
+  acceptPrivacyPrefix: string;
+  privacyLink: string;
+  healthConsent: string;
+  consentError: string;
+  activateError: string;
+  backendError: string;
+  activating: string;
+  activate: string;
+};
+
 /**
  * Invite accept form. POSTs to the same-origin proxy so the auth cookie
  * lands on the site host (backend auto-logs the member in on success).
  */
-export function CorporateInviteForm({ token, invite }: { token: string; invite: InviteInfo }) {
+export function CorporateInviteForm({
+  token,
+  invite,
+  i18n,
+}: {
+  token: string;
+  invite: InviteInfo;
+  i18n: InviteFormI18n;
+}) {
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -37,7 +70,7 @@ export function CorporateInviteForm({ token, invite }: { token: string; invite: 
     const formData = new FormData(event.currentTarget);
     const value = (key: string) => String(formData.get(key) ?? "").trim();
     if (!formData.get("terms") || !formData.get("privacy") || !formData.get("dataProcessing")) {
-      setMessage("Please accept all three consents to continue.");
+      setMessage(i18n.consentError);
       return;
     }
     setLoading(true);
@@ -64,14 +97,14 @@ export function CorporateInviteForm({ token, invite }: { token: string; invite: 
       );
       const json = (await response.json()) as { ok?: boolean; message?: string };
       if (!response.ok || !json.ok) {
-        setMessage(json.message ?? "Could not activate your membership. Try again.");
+        setMessage(json.message ?? i18n.activateError);
         setLoading(false);
         return;
       }
       router.replace("/account/corporate?welcome=1");
       router.refresh();
     } catch {
-      setMessage("Backend is unavailable — try again in a moment.");
+      setMessage(i18n.backendError);
       setLoading(false);
     }
   }
@@ -81,12 +114,11 @@ export function CorporateInviteForm({ token, invite }: { token: string; invite: 
       {/* Password */}
       <div className="grid gap-2">
         <label htmlFor="invite-password" className="gh-field-label" data-required>
-          {invite.existingAccount ? "Your account password" : "Create a password"}
+          {invite.existingAccount ? i18n.existingPassword : i18n.createPassword}
         </label>
         {invite.existingAccount ? (
           <p className="text-xs leading-relaxed" style={{ color: "#7A9A83" }}>
-            An account already exists for this email — enter its password to link your corporate
-            membership.
+            {i18n.existingNote}
           </p>
         ) : null}
         <div className="relative">
@@ -104,7 +136,7 @@ export function CorporateInviteForm({ token, invite }: { token: string; invite: 
             type="button"
             onClick={() => setShowPassword((v) => !v)}
             className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-[var(--color-text-muted)] transition-colors duration-150 hover:text-[var(--color-text-primary)]"
-            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-label={showPassword ? i18n.hidePassword : i18n.showPassword}
           >
             {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
           </button>
@@ -113,12 +145,12 @@ export function CorporateInviteForm({ token, invite }: { token: string; invite: 
 
       {/* Profile completion */}
       <fieldset className="grid gap-4 border-0 p-0">
-        <legend className="gh-field-label mb-1">Complete your profile</legend>
+        <legend className="gh-field-label mb-1">{i18n.completeProfile}</legend>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {!invite.prefill.hasDateOfBirth ? (
             <div className="grid gap-2">
               <label htmlFor="invite-dob" className="gh-field-label" data-required>
-                Date of birth
+                {i18n.dateOfBirth}
               </label>
               <input
                 id="invite-dob"
@@ -132,7 +164,7 @@ export function CorporateInviteForm({ token, invite }: { token: string; invite: 
           ) : null}
           <div className="grid gap-2">
             <label htmlFor="invite-phone" className="gh-field-label">
-              Phone
+              {i18n.phone}
             </label>
             <input
               id="invite-phone"
@@ -145,7 +177,7 @@ export function CorporateInviteForm({ token, invite }: { token: string; invite: 
           </div>
           <div className="grid gap-2 sm:col-span-2">
             <label htmlFor="invite-address" className="gh-field-label">
-              Address
+              {i18n.address}
             </label>
             <input
               id="invite-address"
@@ -157,7 +189,7 @@ export function CorporateInviteForm({ token, invite }: { token: string; invite: 
           </div>
           <div className="grid gap-2">
             <label htmlFor="invite-city" className="gh-field-label">
-              City
+              {i18n.city}
             </label>
             <input
               id="invite-city"
@@ -169,7 +201,7 @@ export function CorporateInviteForm({ token, invite }: { token: string; invite: 
           </div>
           <div className="grid gap-2">
             <label htmlFor="invite-postal" className="gh-field-label">
-              Postal code
+              {i18n.postalCode}
             </label>
             <input
               id="invite-postal"
@@ -185,32 +217,29 @@ export function CorporateInviteForm({ token, invite }: { token: string; invite: 
       {/* Consents — all three required */}
       <fieldset className="grid gap-2.5 border-0 p-0">
         <legend className="gh-field-label mb-1" data-required>
-          Consents
+          {i18n.consents}
         </legend>
         <label className="flex cursor-pointer items-start gap-2 text-[13px] leading-relaxed text-[var(--color-text-body)]">
           <input type="checkbox" name="terms" required className="mt-0.5 size-4" />
           <span>
-            I accept the{" "}
+            {i18n.acceptTermsPrefix}{" "}
             <Link href="/terms" target="_blank" className="font-semibold underline underline-offset-2">
-              Terms of Service
+              {i18n.termsLink}
             </Link>
           </span>
         </label>
         <label className="flex cursor-pointer items-start gap-2 text-[13px] leading-relaxed text-[var(--color-text-body)]">
           <input type="checkbox" name="privacy" required className="mt-0.5 size-4" />
           <span>
-            I accept the{" "}
+            {i18n.acceptPrivacyPrefix}{" "}
             <Link href="/privacy" target="_blank" className="font-semibold underline underline-offset-2">
-              Privacy Policy
+              {i18n.privacyLink}
             </Link>
           </span>
         </label>
         <label className="flex cursor-pointer items-start gap-2 text-[13px] leading-relaxed text-[var(--color-text-body)]">
           <input type="checkbox" name="dataProcessing" required className="mt-0.5 size-4" />
-          <span>
-            I consent to the processing of my health data for the delivery of care, as described in
-            the Privacy Policy.
-          </span>
+          <span>{i18n.healthConsent}</span>
         </label>
       </fieldset>
 
@@ -220,7 +249,7 @@ export function CorporateInviteForm({ token, invite }: { token: string; invite: 
         disabled={loading}
         style={{ width: "100%" }}
       >
-        {loading ? "Activating…" : "Activate membership"}
+        {loading ? i18n.activating : i18n.activate}
         {!loading && <ArrowRight className="ml-1.5 size-4 shrink-0" aria-hidden />}
       </button>
 

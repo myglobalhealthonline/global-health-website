@@ -654,7 +654,7 @@ function CartItemRow({
           >
             {coverageLine.corporateDiscount.planName} ({coverageLine.corporateDiscount.companyName})
             −{coverageLine.corporateDiscount.percent}% ·{" "}
-            {formatPrice(coverageLine.corporateDiscount.amountCents, currency)} off
+            {formatPrice(coverageLine.corporateDiscount.amountCents, currency)} {t.corporateOff}
           </p>
         ) : null}
 

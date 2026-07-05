@@ -26,6 +26,8 @@ import {
   memberStatusLabel,
   memberStatusTone,
 } from "@/app/(admin)/admin/corporate/_lib";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -88,13 +90,17 @@ const CARD_STATUS_STYLE: Record<string, string> = {
 };
 
 export default async function AccountCorporatePage({ searchParams }: PageProps) {
-  const sp = searchParams ? await searchParams : {};
-  const result = await fetchMeCorporate();
+  const [sp, result, locale] = await Promise.all([
+    searchParams ? searchParams : Promise.resolve({} as NonNullable<Awaited<PageProps["searchParams"]>>),
+    fetchMeCorporate(),
+    getPageLocale(),
+  ]);
+  const t = loadLocaleBundle(locale).account.corporate;
 
   if (!result.ok) {
     return (
       <>
-        <PageHeader eyebrow="Membership" title="Corporate benefits" />
+        <PageHeader eyebrow={t.eyebrow} title={t.title} />
         <AdminCard>
           <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">{result.message}</p>
         </AdminCard>
@@ -105,11 +111,11 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
   if (!membership) {
     return (
       <>
-        <PageHeader eyebrow="Membership" title="Corporate benefits" />
+        <PageHeader eyebrow={t.eyebrow} title={t.title} />
         <AdminEmptyState
           icon={<BadgeCheck className="size-8" aria-hidden />}
-          title="No corporate membership"
-          description="If your employer offers a corporate health plan, ask your company admin for an invitation."
+          title={t.noMembershipTitle}
+          description={t.noMembershipBody}
         />
       </>
     );
@@ -126,24 +132,25 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
 
   const checklist = onboarding
     ? [
-        { label: "Account created", done: true },
-        { label: "Profile complete (date of birth, address, phone)", done: onboarding.profileComplete, href: "/account/profile" },
+        { label: t.stepAccount, done: true },
+        { label: t.stepProfile, done: onboarding.profileComplete, href: "/account/profile", cta: t.completeProfile },
         {
-          label: "Pre-assessment consultation booked",
+          label: t.stepBook,
           done: onboarding.preAssessment.booked,
           href: onboarding.profileComplete ? onboarding.preAssessment.bookPath : null,
+          cta: t.bookNow,
         },
-        { label: "Pre-assessment completed — benefits active", done: onboarding.preAssessment.completed },
+        { label: t.stepDone, done: onboarding.preAssessment.completed },
       ]
     : [];
 
   return (
     <>
       <PageHeader
-        eyebrow="Membership"
-        title="Corporate benefits"
+        eyebrow={t.eyebrow}
+        title={t.title}
         description={`${membership.companyName} · ${membership.planName}${
-          isEmployee ? "" : " · beneficiary"
+          isEmployee ? "" : ` · ${t.beneficiary}`
         }`}
         actions={
           <Pill tone={memberStatusTone(membership.status)}>
@@ -154,8 +161,8 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
 
       {sp.welcome ? (
         <p className="gh-status-success mb-4 rounded-md border px-4 py-3 text-sm">
-          Welcome! Your corporate membership with {membership.companyName} is set up
-          {showChecklist ? " — finish the steps below to activate your benefits." : "."}
+          {t.welcome.replace("{company}", membership.companyName)}
+          {showChecklist ? t.welcomeFinish : "."}
         </p>
       ) : null}
       {sp.error ? (
@@ -166,8 +173,7 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
       ) : null}
       {!membership.companyLive ? (
         <p className="gh-status-warning mb-4 rounded-md border px-4 py-3 text-sm">
-          Your company&apos;s plan is currently inactive — corporate benefits are paused until it
-          is reactivated.
+          {t.inactiveNotice}
         </p>
       ) : null}
 
@@ -175,10 +181,7 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
         {/* Onboarding checklist */}
         {showChecklist ? (
           <AdminCard padding={0} className="overflow-hidden lg:col-span-2">
-            <SectionHeader
-              title="Activate your benefits"
-              description="Complete these steps to unlock your corporate discount and benefit card."
-            />
+            <SectionHeader title={t.checklistTitle} description={t.checklistDesc} />
             <ul className="m-0 list-none divide-y divide-[var(--color-border)] p-0">
               {checklist.map((step) => (
                 <li key={step.label} className="flex items-center gap-3 px-5 py-3.5">
@@ -196,9 +199,9 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
                   >
                     {step.label}
                   </span>
-                  {!step.done && step.href ? (
+                  {!step.done && step.href && step.cta ? (
                     <Btn href={step.href} variant="primary" size="sm" iconLeft={<CalendarCheck2 className="size-3.5" aria-hidden />}>
-                      {step.label.startsWith("Profile") ? "Complete profile" : "Book now"}
+                      {step.cta}
                     </Btn>
                   ) : null}
                 </li>
@@ -209,10 +212,7 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
 
         {/* Digital benefit card */}
         <AdminCard padding={0} className="overflow-hidden">
-          <SectionHeader
-            title="Digital benefit card"
-            description="Show this card (or its number) when asked to verify your corporate membership."
-          />
+          <SectionHeader title={t.cardTitle} description={t.cardDesc} />
           <div className="border-t border-[var(--color-border)] p-5">
             {card ? (
               <div
@@ -243,29 +243,26 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
                 </div>
                 <p className="mt-6 text-lg font-bold tracking-tight">{membership.companyName}</p>
                 <p className="text-sm text-white/70">
-                  {card.memberType === "EMPLOYEE" ? "Employee member" : "Beneficiary member"}
+                  {card.memberType === "EMPLOYEE" ? t.employeeMember : t.beneficiaryMember}
                 </p>
                 <p className="mt-5 font-mono text-xl tracking-[0.14em]">{card.cardNumber}</p>
                 <div className="mt-4 flex items-end justify-between gap-3 text-[11px] text-white/60">
                   <span>
-                    Valid {card.validFrom} → {card.validUntil}
+                    {t.valid} {card.validFrom} → {card.validUntil}
                   </span>
                   <span className="text-right">
-                    Verify at
+                    {t.verifyAt}
                     <br />
                     <span className="font-mono text-white/80">/card-verify/{card.cardNumber}</span>
                   </span>
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-[var(--color-text-muted)]">
-                Your benefit card is issued automatically once your membership is active.
-              </p>
+              <p className="text-sm text-[var(--color-text-muted)]">{t.cardPending}</p>
             )}
             {card && card.status !== "ACTIVE" ? (
               <p className="gh-status-warning mt-3 rounded-md border px-4 py-3 text-sm">
-                This card is {card.status.toLowerCase()} — corporate benefits are not currently
-                available. Contact your company admin.
+                {t.cardInactive}
               </p>
             ) : null}
           </div>
@@ -273,13 +270,10 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
 
         {/* Open requests */}
         <AdminCard padding={0} className="overflow-hidden">
-          <SectionHeader
-            title="Consultation requests"
-            description="Requests from your company that need you to book."
-          />
+          <SectionHeader title={t.requestsTitle} description={t.requestsDesc} />
           {openRequests.length === 0 ? (
             <p className="px-5 py-4 text-sm text-[var(--color-text-muted)]">
-              No open requests right now.
+              {t.requestsEmpty}
             </p>
           ) : (
             <ul className="m-0 list-none divide-y divide-[var(--color-border)] p-0">
@@ -290,8 +284,8 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
                       {request.label}
                     </p>
                     <p className="text-xs text-[var(--color-text-muted)]">
-                      Requested{" "}
-                      {new Date(request.createdAt).toLocaleDateString("en-IE", {
+                      {t.requested}{" "}
+                      {new Date(request.createdAt).toLocaleDateString(locale, {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
@@ -299,13 +293,13 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
                     </p>
                   </div>
                   {request.status === "BOOKED" ? (
-                    <Pill tone="info">Booked</Pill>
+                    <Pill tone="info">{t.booked}</Pill>
                   ) : request.bookPath ? (
                     <Btn href={request.bookPath} variant="primary" size="sm">
-                      Book now
+                      {t.bookNow}
                     </Btn>
                   ) : (
-                    <Pill tone="pending">Pending</Pill>
+                    <Pill tone="pending">{t.pending}</Pill>
                   )}
                 </li>
               ))}
@@ -317,8 +311,10 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
         {isEmployee ? (
           <AdminCard padding={0} className="overflow-hidden lg:col-span-2">
             <SectionHeader
-              title="Beneficiaries"
-              description={`Family members covered by your plan — ${beneficiaries.length} of ${maxBeneficiaries} used.`}
+              title={t.beneficiariesTitle}
+              description={t.beneficiariesUsage
+                .replace("{used}", String(beneficiaries.length))
+                .replace("{max}", String(maxBeneficiaries))}
             />
             {beneficiaries.length > 0 ? (
               <ul className="m-0 list-none divide-y divide-[var(--color-border)] border-t border-[var(--color-border)] p-0">
@@ -340,7 +336,7 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
                           <input type="hidden" name="beneficiaryId" value={b.id} />
                           <input type="hidden" name="action" value="RESEND" />
                           <Btn type="submit" variant="ghost" size="sm">
-                            Resend invite
+                            {t.resendInvite}
                           </Btn>
                         </form>
                       ) : null}
@@ -348,7 +344,7 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
                         <input type="hidden" name="beneficiaryId" value={b.id} />
                         <input type="hidden" name="action" value="REMOVE" />
                         <Btn type="submit" variant="danger" size="sm">
-                          Remove
+                          {t.remove}
                         </Btn>
                       </form>
                     </div>
@@ -360,55 +356,54 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
             {beneficiaries.length < maxBeneficiaries ? (
               <details className="border-t border-[var(--color-border)]">
                 <summary className="flex cursor-pointer list-none items-center gap-2 px-5 py-3.5 text-sm font-bold text-[var(--color-text-primary)] [&::-webkit-details-marker]:hidden">
-                  <UserPlus className="size-4" aria-hidden /> Add beneficiary
+                  <UserPlus className="size-4" aria-hidden /> {t.addBeneficiary}
                 </summary>
                 <form
                   action={addBeneficiaryAction}
                   className="grid grid-cols-1 gap-3 border-t border-[var(--color-border)] px-5 py-4 sm:grid-cols-3"
                 >
                   <label className="flex flex-col gap-1">
-                    <span className="gh-field-label">First name *</span>
+                    <span className="gh-field-label">{t.firstName} *</span>
                     <input name="firstName" required maxLength={120} className="gh-input" />
                   </label>
                   <label className="flex flex-col gap-1">
-                    <span className="gh-field-label">Last name *</span>
+                    <span className="gh-field-label">{t.lastName} *</span>
                     <input name="lastName" required maxLength={120} className="gh-input" />
                   </label>
                   <label className="flex flex-col gap-1">
-                    <span className="gh-field-label">Email *</span>
+                    <span className="gh-field-label">{t.email} *</span>
                     <input name="email" type="email" required maxLength={320} className="gh-input" />
                   </label>
                   <label className="flex flex-col gap-1">
-                    <span className="gh-field-label">Relationship *</span>
+                    <span className="gh-field-label">{t.relationship} *</span>
                     <select name="relationship" required defaultValue="" className="gh-select">
                       <option value="" disabled>
-                        Select…
+                        {t.select}
                       </option>
-                      <option value="Spouse">Spouse</option>
-                      <option value="Child">Child</option>
-                      <option value="Parent">Parent</option>
-                      <option value="Other">Other</option>
+                      <option value="Spouse">{t.spouse}</option>
+                      <option value="Child">{t.child}</option>
+                      <option value="Parent">{t.parent}</option>
+                      <option value="Other">{t.other}</option>
                     </select>
                   </label>
                   <label className="flex flex-col gap-1">
-                    <span className="gh-field-label">Phone (WhatsApp)</span>
+                    <span className="gh-field-label">{t.phoneWhatsApp}</span>
                     <input name="phone" maxLength={40} className="gh-input" />
                   </label>
                   <label className="flex flex-col gap-1">
-                    <span className="gh-field-label">Date of birth</span>
+                    <span className="gh-field-label">{t.dateOfBirth}</span>
                     <input name="dateOfBirth" type="date" className="gh-input" />
                   </label>
                   <div className="sm:col-span-3">
                     <Btn type="submit" variant="primary" size="sm">
-                      Add + send invite
+                      {t.addAndInvite}
                     </Btn>
                   </div>
                 </form>
               </details>
             ) : (
               <p className="border-t border-[var(--color-border)] px-5 py-3.5 text-sm text-[var(--color-text-muted)]">
-                You&apos;ve used all {maxBeneficiaries} beneficiary places. Remove one to add
-                another.
+                {t.maxReached.replace("{max}", String(maxBeneficiaries))}
               </p>
             )}
           </AdminCard>
@@ -416,10 +411,7 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
       </div>
 
       {isEmployee ? (
-        <p className="mt-4 text-xs text-[var(--color-text-muted)]">
-          Your employer sees onboarding status and counts only — never your consultations, medical
-          records, or your beneficiaries&apos; personal details.
-        </p>
+        <p className="mt-4 text-xs text-[var(--color-text-muted)]">{t.privacyNote}</p>
       ) : null}
     </>
   );

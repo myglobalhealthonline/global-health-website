@@ -672,7 +672,7 @@ export function ConsultationBookingForm({
           >
             {corporateDiscount.planName} −{corporateDiscount.percent}% ·{" "}
             {formatPriceRounded(corporateDiscount.amountCents, selectedSlot?.currencyCode ?? "EUR")}{" "}
-            off at checkout
+            {i18n.corporateOffAtCheckout}
           </p>
         ) : null}
 

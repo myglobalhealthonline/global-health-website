@@ -269,6 +269,7 @@
   },
   "bookingForm": {
     "benefitHeading": "Tarif anwenden",
+    "corporateOffAtCheckout": "Rabatt an der Kasse",
     "benefitPayNormal": "Normal bezahlen",
     "benefitUseCredit": "Tarif-Guthaben verwenden",
     "benefitUseDiscount": "Tarif-Rabatt verwenden",
@@ -533,6 +534,7 @@
     "subtotalItems": "Zwischensumme ({count} {unit})",
     "shipping": "Versand",
     "planSavings": "Plan-Ersparnis",    "total": "Gesamt",
+    "corporateOff": "Rabatt",
     "continueToCheckout": "Weiter zur Kasse",
     "trustSecure": "Sicherer Checkout powered by Stripe",
     "trustNoStore": "Wir speichern niemals Ihre Kartendaten",
@@ -652,5 +654,28 @@
     "noForLanguage": "Derzeit sind keine Ärzte für diesen Service in {language} verfügbar.",
     "chooseAnotherLanguage": "Bitte wählen Sie eine andere Sprache oder schauen Sie später wieder vorbei.",
     "showAllLanguages": "Alle Sprachen anzeigen"
+  },
+  "cardVerify": {
+    "title": "Firmenkarten-Prüfung",
+    "subtitle": "Echtheit einer Global-Health-Vorteilskarte prüfen",
+    "step": "Prüfen",
+    "valid": "Karte gültig",
+    "statusSuspended": "Karte gesperrt",
+    "statusExpired": "Karte abgelaufen",
+    "validBody": "Diese Firmen-Vorteilskarte ist aktiv und echt.",
+    "inactiveBody": "Diese Karte ist echt, gewährt aber keine Firmenvorteile mehr.",
+    "cardNumber": "Kartennummer",
+    "member": "Mitglied",
+    "company": "Unternehmen",
+    "plan": "Plan",
+    "memberType": "Mitgliedstyp",
+    "employee": "Mitarbeiter/in",
+    "beneficiary": "Angehörige/r",
+    "status": "Status",
+    "validRange": "Gültig",
+    "matchNote": "Vergleichen Sie die obige Kartennummer mit der auf der digitalen Karte des Mitglieds.",
+    "notFound": "Karte nicht gefunden",
+    "checkNumber": "Prüfen Sie, ob die Kartennummer korrekt ist.",
+    "couldNotVerify": "Karte konnte nicht geprüft werden"
   }
 }

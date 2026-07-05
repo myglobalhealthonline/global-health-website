@@ -103,7 +103,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       items: [
         { href: "/account/membership", label: "Membership", icon: <BadgeCheck className="size-4" aria-hidden /> },
         ...(hasCorporateMembership
-          ? [{ href: "/account/corporate", label: "Corporate", icon: <Briefcase className="size-4" aria-hidden /> }]
+          ? [{ href: "/account/corporate", label: a.nav.corporate, icon: <Briefcase className="size-4" aria-hidden /> }]
           : []),
         { href: "/account/rewards", label: "Rewards", icon: <Gift className="size-4" aria-hidden /> },
       ],

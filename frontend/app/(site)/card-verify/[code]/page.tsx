@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { ShieldCheck, ShieldX } from "lucide-react";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 
 export const metadata: Metadata = {
   title: "Corporate card verification",
@@ -24,9 +26,10 @@ type CardData = {
 
 async function fetchCard(
   code: string,
+  fallbackMessage: string,
 ): Promise<{ ok: true; data: CardData } | { ok: false; message: string }> {
   const backend = getBackendOrigin();
-  if (!backend) return { ok: false, message: "Service unavailable" };
+  if (!backend) return { ok: false, message: fallbackMessage };
   try {
     const res = await fetch(
       `${backend}/api/corporate/card-verify/${encodeURIComponent(code)}`,
@@ -38,12 +41,12 @@ async function fetchCard(
       // else (5xx) may carry internals that don't belong on a public page.
       return {
         ok: false,
-        message: res.status === 404 ? (json.message ?? "Card not found") : "Could not verify the card",
+        message: res.status === 404 ? (json.message ?? fallbackMessage) : fallbackMessage,
       };
     }
     return { ok: true, data: json.data };
   } catch {
-    return { ok: false, message: "Could not verify the card" };
+    return { ok: false, message: fallbackMessage };
   }
 }
 
@@ -53,16 +56,17 @@ export default async function CardVerifyPage({
   params: Promise<{ code: string }>;
 }) {
   const { code } = await params;
-  const result = await fetchCard(code);
+  const t = getCommonLocale(await getPageLocale()).cardVerify;
+  const result = await fetchCard(code, t.couldNotVerify);
   const isValid = result.ok && result.data.valid;
 
   return (
     <>
       <GH2FlowHeader
-        title="Corporate card verification"
-        subtitle="Authenticate a Global Health corporate benefit card"
+        title={t.title}
+        subtitle={t.subtitle}
         activeStep={1}
-        steps={["Verify"]}
+        steps={[t.step]}
       />
       <section className="bg-[var(--color-background-soft)] px-5 py-12 sm:py-16">
         <div className="mx-auto max-w-lg">
@@ -76,32 +80,32 @@ export default async function CardVerifyPage({
                 )}
                 <div>
                   <p className="text-lg font-bold text-[var(--color-text-primary)]">
-                    {isValid ? "Card valid" : `Card ${result.data.status.toLowerCase()}`}
+                    {isValid
+                      ? t.valid
+                      : result.data.status === "SUSPENDED"
+                        ? t.statusSuspended
+                        : t.statusExpired}
                   </p>
                   <p className="text-sm text-[var(--color-text-muted)]">
-                    {isValid
-                      ? "This corporate benefit card is active and authentic."
-                      : "This card is authentic but no longer grants corporate benefits."}
+                    {isValid ? t.validBody : t.inactiveBody}
                   </p>
                 </div>
               </div>
 
               <div className="space-y-3 text-sm">
-                <Row label="Card number" value={result.data.cardNumber} mono />
-                <Row label="Member" value={result.data.memberName} />
-                <Row label="Company" value={result.data.companyName} />
-                <Row label="Plan" value={result.data.planName} />
+                <Row label={t.cardNumber} value={result.data.cardNumber} mono />
+                <Row label={t.member} value={result.data.memberName} />
+                <Row label={t.company} value={result.data.companyName} />
+                <Row label={t.plan} value={result.data.planName} />
                 <Row
-                  label="Member type"
-                  value={result.data.memberType === "EMPLOYEE" ? "Employee" : "Beneficiary"}
+                  label={t.memberType}
+                  value={result.data.memberType === "EMPLOYEE" ? t.employee : t.beneficiary}
                 />
-                <Row label="Status" value={result.data.status} />
-                <Row label="Valid" value={`${result.data.validFrom} → ${result.data.validUntil}`} />
+                <Row label={t.status} value={result.data.status} />
+                <Row label={t.validRange} value={`${result.data.validFrom} → ${result.data.validUntil}`} />
               </div>
 
-              <p className="mt-6 text-xs text-[var(--color-text-muted)]">
-                Match the card number above with the one on the member&apos;s digital card.
-              </p>
+              <p className="mt-6 text-xs text-[var(--color-text-muted)]">{t.matchNote}</p>
             </div>
           ) : (
             <div className="gh-card p-8">
@@ -109,10 +113,10 @@ export default async function CardVerifyPage({
                 <ShieldX className="size-8 text-red-600" aria-hidden />
                 <div>
                   <p className="text-lg font-bold text-[var(--color-text-primary)]">
-                    Card not found
+                    {t.notFound}
                   </p>
                   <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-                    {result.message}. Check that the card number is correct.
+                    {result.message}. {t.checkNumber}
                   </p>
                 </div>
               </div>
