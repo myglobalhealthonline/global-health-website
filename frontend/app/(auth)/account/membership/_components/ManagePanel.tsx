@@ -42,6 +42,8 @@ export interface ManagePanelProps {
   pendingChangePlanName: string | null;
   pendingChangeDate: string | null;
   planOptions: PlanOption[];
+  /** Preselects the change-plan dropdown (from pricing "Switch to this plan"). */
+  initialPlanId?: string | null;
   returnState: string | null;
   pricingHref: string;
 }
@@ -68,7 +70,7 @@ export function ManagePanel(props: ManagePanelProps) {
   const router = useRouter();
   const [busy, setBusy] = useState<null | "portal" | "cancel" | "change" | "cancelChange">(null);
   const [notice, setNotice] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState<string>("");
+  const [selectedPlan, setSelectedPlan] = useState<string>(props.initialPlanId ?? "");
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
   const [confirmChangeOpen, setConfirmChangeOpen] = useState(false);
 
@@ -132,6 +134,7 @@ export function ManagePanel(props: ManagePanelProps) {
       return { kind: "info" as const, text: t.return.stillProcessing, action: "refresh" as const };
     if (props.status === "INCOMPLETE") return { kind: "info" as const, text: t.return.incomplete, action: "portal" as const };
     if (props.status === "PAST_DUE") return { kind: "warn" as const, text: t.return.actionRequired, action: "portal" as const };
+    if (props.status === "PAUSED") return { kind: "info" as const, text: t.return.paused, action: "portal" as const };
     if (props.returnState === "ok" && props.status === "ACTIVE") return { kind: "ok" as const, text: t.return.ok };
     if (props.returnState === "cancelled") return { kind: "info" as const, text: t.return.cancelled };
     return null;
@@ -241,7 +244,7 @@ export function ManagePanel(props: ManagePanelProps) {
                 className="mt-2 font-semibold underline"
                 disabled={busy === "portal"}
               >
-                {t.return.completePayment}
+                {props.status === "PAUSED" ? t.manageBilling : t.return.completePayment}
               </button>
             ) : "action" in banner && banner.action === "refresh" ? (
               <button

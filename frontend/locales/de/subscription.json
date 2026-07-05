@@ -116,6 +116,7 @@
       "incomplete": "Wir warten darauf, dass Ihre erste Zahlung verbucht wird. Das kann einen Moment dauern.",
       "actionRequired": "Ihre Bank muss diese Zahlung bestätigen. Schließen Sie die Verifizierung ab, um Ihre Mitgliedschaft zu aktivieren.",
       "completePayment": "Zahlungsverifizierung abschließen",
+      "paused": "Ihre Mitgliedschaft ist pausiert und die Vorteile sind ausgesetzt. Setzen Sie die Abrechnung über das Abrechnungsportal unten fort, um Ihre Guthaben und Rabatte wiederherzustellen.",
       "confirming": "Wir bestätigen Ihre Zahlung… das dauert normalerweise nur wenige Sekunden.",
       "stillProcessing": "Zahlung erhalten — die Aktivierung Ihrer Mitgliedschaft dauert etwas länger als üblich.",
       "refresh": "Aktualisieren"

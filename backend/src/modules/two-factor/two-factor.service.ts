@@ -54,7 +54,7 @@ export async function initiateTwoFactor(userId: string): Promise<{
   qrUri: string;
   backupCodes: string[];
 }> {
-  const user: any = await (prisma as any).user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { id: true, email: true, twoFactorEnabled: true },
   });
@@ -103,7 +103,7 @@ export async function confirmTwoFactor(
   const hashedBackupCodes = plaintextBackupCodes.map(hashBackupCode);
   const now = new Date();
 
-  await (prisma as any).user.update({
+  await prisma.user.update({
     where: { id: userId },
     data: {
       twoFactorEnabled: true,
@@ -142,7 +142,7 @@ export async function verifyTwoFactorLogin(
   userId: string,
   token: string,
 ): Promise<boolean> {
-  const user: any = await (prisma as any).user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
       id: true,
@@ -183,7 +183,7 @@ export async function verifyTwoFactorLogin(
   if (valid) {
     // Remove consumed backup code from stored set
     try {
-      await (prisma as any).user.update({
+      await prisma.user.update({
         where: { id: userId },
         data: { twoFactorBackupCodes: remaining },
       });
@@ -232,7 +232,7 @@ export async function disableTwoFactor(
   userId: string,
   currentPassword: string,
 ): Promise<void> {
-  const user: any = await (prisma as any).user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
       id: true,
@@ -259,7 +259,7 @@ export async function disableTwoFactor(
     throw err;
   }
 
-  await (prisma as any).user.update({
+  await prisma.user.update({
     where: { id: userId },
     data: {
       twoFactorEnabled: false,

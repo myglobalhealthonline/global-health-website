@@ -13,6 +13,7 @@ import { getActiveCountry, scopedCountryId } from "@/lib/admin/admin-scope";
 import { SERVICE_KIND_META } from "@/lib/admin/service-kind";
 import { FlagBadge } from "../_components/flag-badge";
 import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
+import { QueryToast } from "../_components/query-toast";
 import { ScopeBanner } from "../_components/scope-banner";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
 import {
@@ -139,8 +140,6 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
   ).length;
 
   const statusFilter = filters.isActive ?? "";
-  const successMessage = spRead(sp, "success");
-  const errorMessage = spRead(sp, "error");
 
   async function deleteDoctorAction(formData: FormData) {
     "use server";
@@ -173,17 +172,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
       />
 
       <ScopeBanner activeCountry={activeCountry} clearHref="/admin/doctors" />
-
-      {errorMessage ? (
-        <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
-          {errorMessage}
-        </p>
-      ) : null}
-      {successMessage ? (
-        <p className="gh-status-success mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
-          {successMessage}
-        </p>
-      ) : null}
+      <QueryToast />
 
       <AdminSummaryStrip
         items={[
@@ -404,8 +393,10 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                         <form action={deleteDoctorAction} className="inline-flex">
                           <input type="hidden" name="id" value={d.id} />
                           <ConfirmDeleteButton
-                            message={`Permanently delete doctor "${d.fullName}"? This cannot be undone.`}
+                            title={`Delete Dr. ${d.fullName}?`}
+                            message={`Permanently delete doctor "${d.fullName}"? This removes their profile and cannot be undone.`}
                             ariaLabel={`Delete ${d.fullName}`}
+                            requireTypedConfirmation={d.fullName}
                           />
                         </form>
                       </div>

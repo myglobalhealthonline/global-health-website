@@ -591,12 +591,23 @@ async function SelectedServiceFlow({
               {selectedDoctor.fullName} · {selectedDoctor.title}
             </p>
           </div>
-          <Link
-            href={buildBookHref({ country, lang })}
-            className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-soft)]"
-          >
-            {bp.changeService}
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            {/* Keeps the chosen service, drops the doctor — re-enters the
+              * TIME step where the patient can pick among all doctors
+              * assigned to this service (same path service-first users take). */}
+            <Link
+              href={buildBookHref({ country, lang, service: service.slug })}
+              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-soft)]"
+            >
+              Edit doctor
+            </Link>
+            <Link
+              href={buildBookHref({ country, lang })}
+              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-soft)]"
+            >
+              {bp.changeService}
+            </Link>
+          </div>
         </header>
 
         {slotStale ? (
@@ -689,6 +700,17 @@ function ServicePicker({
         }
         description={bp.servicesEnabledNote}
       />
+      {/* Escape hatch back to the homepage's same-day GP quick-book — once a
+        * patient lands on the full 4-step wizard there was previously no way
+        * back to that faster language+time-only path. */}
+      {!requestedDoctor ? (
+        <Link
+          href={`/${country}/${lang}#same-day-booking`}
+          className="gh-link inline-flex w-fit items-center gap-1.5 text-sm font-semibold"
+        >
+          Need a same-day GP instead?
+        </Link>
+      ) : null}
       {services.length === 0 ? (
         <div className="gh2-status-card text-center">
           <p className="font-semibold text-[var(--color-text-primary)]">

@@ -9,6 +9,12 @@ describe("phi-crypto", () => {
   before(async () => {
     // phi-crypto reads env.ts, which validates process.env on import — give
     // it the minimal required vars so the bare test environment doesn't throw.
+    // NODE_ENV is unset in this bare `node --test` process, so env.ts's Zod
+    // default resolves it to "production" — set it explicitly so the
+    // production-only boot guards (medical-access enforcement, billing
+    // driver, PHI key) don't fire against a test harness that isn't a real
+    // deployment.
+    process.env.NODE_ENV ??= "test";
     process.env.DATABASE_URL ??= "postgresql://u:p@localhost:5432/db";
     process.env.AUTH_JWT_SECRET ??= "test-only-auth-secret-min-32-characters-long";
     process.env.PHI_ENCRYPTION_KEY = "test-only-phi-key-at-least-16-chars";

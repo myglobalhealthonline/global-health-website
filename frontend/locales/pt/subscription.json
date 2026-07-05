@@ -116,6 +116,7 @@
       "incomplete": "Estamos a aguardar a confirmação do seu primeiro pagamento. Isto pode demorar um momento.",
       "actionRequired": "O seu banco precisa de confirmar este pagamento. Conclua a verificação para ativar a sua adesão.",
       "completePayment": "Concluir a verificação do pagamento",
+      "paused": "A sua adesão está em pausa e os benefícios estão suspensos. Retome a faturação no portal de faturação abaixo para restaurar os seus créditos e descontos.",
       "confirming": "A confirmar o seu pagamento… normalmente demora apenas alguns segundos.",
       "stillProcessing": "Pagamento recebido — a ativação da sua adesão está a demorar um pouco mais do que o habitual.",
       "refresh": "Atualizar"

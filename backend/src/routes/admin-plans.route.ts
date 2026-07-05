@@ -166,7 +166,7 @@ const adminPlansRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  app.post("/api/admin/plans/:id/reorder", async (request, reply) => {
+  app.post("/api/admin/plans/reorder", async (request, reply) => {
     const auth = await requireManageSubscriptions(request, reply);
     if (!auth) return;
     const body = planReorderBodySchema.safeParse(request.body);

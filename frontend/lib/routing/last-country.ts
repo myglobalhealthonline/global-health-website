@@ -24,10 +24,7 @@
 
 import { useEffect, useState } from "react";
 import type { CountryCode } from "@/data/countries";
-import {
-  COUNTRY_CODE_TO_SLUG,
-  countryCodeFromSlug,
-} from "@/lib/routing/country-slug";
+import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 
 export const LAST_COUNTRY_COOKIE = "gh-last-country";
 

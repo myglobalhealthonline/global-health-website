@@ -19,6 +19,7 @@ import {
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { notifyAdmins } from "../modules/notifications/notify.service.js";
+import { verifySniffedMime } from "../utils/sniff-mime.js";
 
 /**
  * Clinical document attachments per appointment.
@@ -123,8 +124,8 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
           .status(400)
           .send(errorResponse('Expected one file field named "file"'));
       }
-      const mimetype = file.mimetype ?? "";
-      if (!ALLOWED_MIME.has(mimetype)) {
+      const declaredMime = file.mimetype ?? "";
+      if (!ALLOWED_MIME.has(declaredMime)) {
         return reply
           .status(415)
           .send(errorResponse("Unsupported file type — use PDF / JPEG / PNG / WebP / AVIF"));
@@ -132,6 +133,12 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
       const buffer = await file.toBuffer();
       if (buffer.length > MAX_BYTES) {
         return reply.status(413).send(errorResponse("File too large (max 10MB)"));
+      }
+      const mimetype = verifySniffedMime(buffer, declaredMime, ALLOWED_MIME);
+      if (!mimetype) {
+        return reply
+          .status(415)
+          .send(errorResponse("File content does not match declared type"));
       }
       // The multipart field is named `file` but the form can also send
       // a sibling `label` field that we pick up off the parts iterator.
@@ -250,11 +257,12 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
             .send(errorResponse("Unable to read document"));
         }
         reply.header("Content-Type", obj.ContentType ?? doc.mimetype);
-        // Inline so the browser tries to render PDFs / images; attach
-        // a filename hint so "Save As" produces a sensible default.
+        // Force download rather than inline rendering — the stored MIME
+        // type is client-declared at upload time (not byte-sniffed), so
+        // inline rendering of a mislabeled file is a content-execution risk.
         reply.header(
           "Content-Disposition",
-          `inline; filename="${doc.label.replace(/"/g, "")}"`,
+          `attachment; filename="${doc.label.replace(/"/g, "")}"`,
         );
         reply.header("Cache-Control", "private, no-store");
         return reply.send(stream);

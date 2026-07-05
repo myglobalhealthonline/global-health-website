@@ -99,16 +99,19 @@ export async function buildApp() {
     },
   });
 
-  // Global rate limiter. `global: false` means each route is opt-in via
-  // route-level config; routes that don't opt-in are not limited. This
-  // keeps the admin/internal endpoints free of accidental 429s while
-  // capping the public-facing brute-force surface (login, forgot-password,
-  // booking submission, payment intent creation). IP is the default key;
-  // the X-Forwarded-For from Railway is trusted because we set trustProxy.
+  // Global rate limiter (SF: code review 2026-07-05). Previously `global:
+  // false` meant a route with no explicit `config.rateLimit` was entirely
+  // unlimited — safe today only because every sensitive route happens to
+  // opt in, but a new route ships unthrottled unless its author remembers
+  // to add one. `global: true` applies this generous default (300/min) to
+  // every route that hasn't set its own tighter override, so a forgotten
+  // rate limit degrades to "loose" instead of "none".
+  // Existing per-route configs (login 5/hour, etc.) are untouched — a
+  // route-level `config.rateLimit` always wins over this default.
   await app.register(rateLimit, {
-    global: false,
-    timeWindow: "15 minutes",
-    max: 100, // default ceiling used by per-route configs
+    global: true,
+    timeWindow: "1 minute",
+    max: 300,
     skipOnError: true, // never 500 because Redis is down etc.
   });
 

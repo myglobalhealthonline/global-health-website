@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
@@ -10,7 +10,6 @@ import {
   serializeProfile,
 } from "../modules/patient-profile/patient-profile.service.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
-import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import {
   listNationalityDocuments,
   adminUpdateNationalityVerification,
@@ -75,14 +74,14 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         if (!profile) {
           return reply.status(404).send(errorResponse("Patient profile not found"));
         }
-        const actor = await resolveOptionalAuthUser(request);
+        const actor = resolveAdminSessionActor(request);
         // Central guard: logs the access + enforces LOCAL_ADMIN folder scope
         // (in enforce mode) and raises alerts on out-of-scope reads. Shadow
         // mode logs only and never blocks.
         try {
           await guardMedicalRead(
             request,
-            { userId: actor?.id ?? "", role: actor?.role ?? "ADMIN" },
+            { userId: actor?.userId ?? "", role: actor?.role ?? "ADMIN" },
             {
               patientProfileId: profile.id,
               resourceType: "SENSITIVE_PROFILE",
@@ -131,12 +130,12 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
             ? { dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null }
             : {}),
         });
-        const actor = await resolveOptionalAuthUser(request);
+        const actor = resolveAdminSessionActor(request);
         // Always audit the edit. Record only the changed FIELD NAMES, never
         // the values — the values are PHI/PII and must not land in the audit
         // log. The alert-specific event below keeps its existing shape.
         recordAudit({
-          actorUserId: actor?.id ?? null,
+          actorUserId: actor?.userId ?? null,
           actorRole: actor?.role ?? "ADMIN",
           action: "PATIENT_PROFILE_UPDATED",
           entityType: "PatientProfile",
@@ -146,7 +145,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         }).catch(() => {});
         if (alertChanges.statusAlert || alertChanges.clinicAlert) {
           recordAudit({
-            actorUserId: actor?.id ?? null,
+            actorUserId: actor?.userId ?? null,
             actorRole: actor?.role ?? "ADMIN",
             action: "PATIENT_ALERT_UPDATED",
             entityType: "PatientProfile",
@@ -415,12 +414,12 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         });
         if (!profile) return reply.status(404).send(errorResponse("Patient not found"));
 
-        const actor = await resolveOptionalAuthUser(request);
+        const actor = resolveAdminSessionActor(request);
         const data: Record<string, unknown> = {};
         if (kind === "id") {
           data.idVerificationStatus = body.data.status;
           data.idVerificationAdminNotes = body.data.adminNotes ?? null;
-          data.idVerificationReviewedBy = actor?.id ?? null;
+          data.idVerificationReviewedBy = actor?.userId ?? null;
           data.idVerificationReviewedAt = new Date();
         } else if (kind === "phone") {
           data.phoneVerificationStatus = body.data.status;
@@ -449,7 +448,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         });
 
         recordAudit({
-          actorUserId: actor?.id ?? null,
+          actorUserId: actor?.userId ?? null,
           actorRole: actor?.role ?? "ADMIN",
           action: "PATIENT_PROFILE_UPDATED",
           entityType: "PatientProfile",
@@ -485,11 +484,11 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         if (!profile) return reply.status(404).send(errorResponse("Patient not found"));
 
         const docs = await listNationalityDocuments(profile.id);
-        const actor = await resolveOptionalAuthUser(request);
+        const actor = resolveAdminSessionActor(request);
         try {
           await guardMedicalRead(
             request,
-            { userId: actor?.id ?? "", role: actor?.role ?? "ADMIN" },
+            { userId: actor?.userId ?? "", role: actor?.role ?? "ADMIN" },
             { patientProfileId: profile.id, resourceType: "NATIONALITY_DOC", accessAction: "VIEWED" },
           );
         } catch (guardError) {
@@ -537,15 +536,15 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         });
         if (!profile) return reply.status(404).send(errorResponse("Patient not found"));
 
-        const actor = await resolveOptionalAuthUser(request);
+        const actor = resolveAdminSessionActor(request);
         const doc = await adminUpdateNationalityVerification(profile.id, slotRaw, {
           verificationStatus: body.data.verificationStatus,
           adminNotes: body.data.adminNotes,
-          reviewedByAdminId: actor?.id ?? null,
+          reviewedByAdminId: actor?.userId ?? null,
         });
 
         recordAudit({
-          actorUserId: actor?.id ?? null,
+          actorUserId: actor?.userId ?? null,
           actorRole: actor?.role ?? "ADMIN",
           action: "PATIENT_PROFILE_UPDATED",
           entityType: "PatientNationalityDocument",
@@ -585,11 +584,11 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       const key = side === "back" ? row?.idDocumentBackKey : row?.idDocumentKey;
       if (!key) return reply.status(404).send(errorResponse("Document not found"));
 
-      const actor = await resolveOptionalAuthUser(request);
+      const actor = resolveAdminSessionActor(request);
       try {
         await guardMedicalRead(
           request,
-          { userId: actor?.id ?? "", role: actor?.role ?? "ADMIN" },
+          { userId: actor?.userId ?? "", role: actor?.role ?? "ADMIN" },
           { patientProfileId: row!.id, resourceType: "ID_DOC", accessAction: "DOWNLOADED" },
         );
       } catch (guardError) {
@@ -628,11 +627,11 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       });
       if (!row?.insuranceDocumentKey) return reply.status(404).send(errorResponse("Document not found"));
 
-      const actor = await resolveOptionalAuthUser(request);
+      const actor = resolveAdminSessionActor(request);
       try {
         await guardMedicalRead(
           request,
-          { userId: actor?.id ?? "", role: actor?.role ?? "ADMIN" },
+          { userId: actor?.userId ?? "", role: actor?.role ?? "ADMIN" },
           { patientProfileId: row.id, resourceType: "INSURANCE_DOC", accessAction: "DOWNLOADED" },
         );
       } catch (guardError) {

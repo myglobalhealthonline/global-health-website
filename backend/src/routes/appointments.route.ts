@@ -12,6 +12,8 @@ import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { sendBookingConfirmationEmail } from "../lib/email/templates.js";
 import { isStripeConfigured } from "../lib/stripe/client.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
+import { computeSlotPrice, getServicePeakConfig } from "../modules/pricing/peak-pricing.service.js";
+import { resolveDoctorTimeZone } from "../modules/doctor-availability/doctor-availability.service.js";
 
 const appointmentsRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/appointments", {
@@ -149,12 +151,54 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
           });
           if (service) {
             amountCents = service.basePriceCents;
+            let priceCurrencyCode = service.currencyCode;
+
+            // Peak/off-peak recompute (code review 2026-07-05, bug #2) — every
+            // other booking surface (cart, checkout, admin manual booking)
+            // derives the charged price from the slot's clinic-local start
+            // time specifically as an anti-tamper measure; this direct-booking
+            // endpoint was stamping the flat base price regardless of the
+            // slot picked, letting a PEAK slot be booked at STANDARD price.
+            if (parsed.data.timeSlotId) {
+              try {
+                const bookedSlot = await prisma.appointment.findUnique({
+                  where: { id: created.id },
+                  select: { doctorId: true, scheduledAt: true },
+                });
+                if (
+                  bookedSlot?.doctorId &&
+                  bookedSlot.scheduledAt &&
+                  service.basePriceCents != null &&
+                  service.currencyCode
+                ) {
+                  const peakConfig = await getServicePeakConfig(service.id);
+                  if (peakConfig?.enabled) {
+                    const tz = await resolveDoctorTimeZone(bookedSlot.doctorId);
+                    const priced = computeSlotPrice({
+                      config: peakConfig,
+                      basePriceCents: service.basePriceCents,
+                      fallbackCurrency: service.currencyCode,
+                      slotStartUtc: bookedSlot.scheduledAt,
+                      clinicTimezone: tz,
+                    });
+                    amountCents = priced.unitPriceCents;
+                    priceCurrencyCode = priced.currencyCode;
+                  }
+                }
+              } catch (peakErr) {
+                app.log.warn(
+                  { err: peakErr, appointmentId: created.id },
+                  "Peak-pricing recompute failed; booking saved at base price",
+                );
+              }
+            }
+
             await prisma.appointment.update({
               where: { id: created.id },
               data: {
                 serviceId: service.id,
-                amountCents: service.basePriceCents,
-                currencyCode: service.currencyCode,
+                amountCents,
+                currencyCode: priceCurrencyCode,
               },
             });
           } else {

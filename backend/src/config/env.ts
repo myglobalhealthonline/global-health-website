@@ -229,6 +229,45 @@ const adminTokenFallbackEnabled =
 const medicalAccessEnforce =
   parsed.MEDICAL_ACCESS_ENFORCE === true || parsed.MEDICAL_ACCESS_ENFORCE === "true";
 
+// Hard-fail in production if the medical-access guard is still in shadow
+// mode. Shadow mode logs would-be denials but still serves PHI to the
+// caller — acceptable during the Wave-0 backfill, never acceptable once
+// this is a live production deployment.
+if (parsed.NODE_ENV === "production" && !medicalAccessEnforce) {
+  throw new Error(
+    "MEDICAL_ACCESS_ENFORCE must be true in production — shadow mode still serves PHI on a denied " +
+      "access. Confirm the 2FA/confidentiality/consent backfill is complete via the shadow-mode " +
+      "MedicalAccessLog audit trail, then set MEDICAL_ACCESS_ENFORCE=true.",
+  );
+}
+
+// Hard-fail in production if billing is not wired to real Stripe. The fake
+// billing port "succeeds" checkouts in-memory with no payment ever taken —
+// fine for dev/test, never acceptable if it silently ships to production
+// because STRIPE_SECRET_KEY was left unset.
+if (parsed.NODE_ENV === "production" && parsed.BILLING_DRIVER !== "stripe") {
+  throw new Error(
+    'BILLING_DRIVER must be "stripe" in production — refusing to boot on the in-memory fake billing port.',
+  );
+}
+if (
+  parsed.NODE_ENV === "production" &&
+  parsed.BILLING_DRIVER === "stripe" &&
+  !parsed.STRIPE_SECRET_KEY?.trim()
+) {
+  throw new Error("STRIPE_SECRET_KEY is required in production when BILLING_DRIVER=stripe.");
+}
+
+// Hard-fail in production if PHI encryption is unconfigured. Without this
+// key, encryptPhi() is a silent no-op and national ID / passport / tax ID
+// fields persist as plaintext with no warning.
+if (parsed.NODE_ENV === "production" && !parsed.PHI_ENCRYPTION_KEY?.trim()) {
+  throw new Error(
+    "PHI_ENCRYPTION_KEY is required in production — without it, sensitive PatientProfile ID fields " +
+      "are stored as plaintext. Set a key (min 16 chars) and run scripts/encrypt-phi-backfill.ts.",
+  );
+}
+
 export const env = {
   ...parsed,
   ADMIN_TOKEN_FALLBACK_ENABLED: adminTokenFallbackEnabled,

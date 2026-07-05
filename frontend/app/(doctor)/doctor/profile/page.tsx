@@ -1,5 +1,7 @@
-import { redirect } from "next/navigation";
+import Link from "next/link";
+import { Globe2 } from "lucide-react";
 import { fetchDoctorMe } from "@/lib/api/doctor-api";
+import { PageHeader } from "@/components/portal-atoms";
 import { ProfileSections, activeMarkets } from "./_components/profile-sections";
 
 export const dynamic = "force-dynamic";
@@ -18,13 +20,40 @@ export default async function DoctorProfilePage() {
   const { doctor } = result.data;
   const markets = activeMarkets(doctor);
 
-  // Multi-country doctors get a dedicated per-country page (and sidebar
-  // entry). Send them to their primary country's profile so the base
-  // URL never shows an ambiguous "which country?" editor.
+  // Multi-country doctors: show a country picker instead of silently
+  // redirecting to the "primary" market (a prior auto-redirect gave no
+  // explanation of why the doctor landed on one country's editor).
+  // Single-country doctors keep the direct editor — no picker needed.
   if (markets.length >= 2) {
-    const primary =
-      markets.find((m) => m.country.slug === doctor.country.slug) ?? markets[0];
-    redirect(`/doctor/profile/${primary.country.slug}`);
+    return (
+      <>
+        <PageHeader
+          className="mb-6"
+          eyebrow="Doctor"
+          title="My profile"
+          description="You practice in multiple countries. Choose which country's profile to edit — registration, bio, and payout details are saved per country."
+        />
+        <div className="grid gap-3 sm:grid-cols-2">
+          {markets.map((m) => (
+            <Link
+              key={m.countryId}
+              href={`/doctor/profile/${m.country.slug}`}
+              className="gh-card flex items-center gap-3 p-4 transition hover:bg-[var(--portal-well)]"
+            >
+              <Globe2 className="size-5 text-[var(--portal-primary)]" aria-hidden />
+              <span className="flex flex-col">
+                <span className="text-sm font-semibold text-[var(--portal-text)]">
+                  {m.country.name}
+                </span>
+                <span className="text-xs text-[var(--portal-muted)]">
+                  {m.country.slug === doctor.country.slug ? "Primary market" : "Additional market"}
+                </span>
+              </span>
+            </Link>
+          ))}
+        </div>
+      </>
+    );
   }
 
   return <ProfileSections doctor={doctor} activeMarket={markets[0] ?? null} />;

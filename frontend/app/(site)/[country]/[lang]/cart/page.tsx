@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import {
@@ -77,6 +77,9 @@ export default function CartPage() {
   const searchParams = useSearchParams();
   const { cart, loading, update, patchItem, remove, clear, refresh } = useCart();
   const [expiredFlash, setExpiredFlash] = useState(0);
+  const [expiredItemsFlash, setExpiredItemsFlash] = useState<
+    { name: string; doctorName: string | null }[]
+  >([]);
   // Per-line subscription coverage (eligible selections + the resolved price
   // reason) for the benefit selector. Fetched from the read-only preview;
   // `coverageNonce` also forces the PlanCoverage panel to re-fetch in sync.
@@ -94,12 +97,22 @@ export default function CartPage() {
     setCoverageSaved(res.ok ? res.data.totalSavedCents : 0);
   }, []);
   // `?added=1` arrives from the consult booking form so the patient
-  // gets explicit positive feedback after add-to-cart. Auto-clears
-  // after 4s and the URL is rewritten without the flag so a refresh
-  // doesn't re-trigger the flash.
+  // gets explicit positive feedback after add-to-cart. `bDoctor`/`bWhen`/
+  // `bPrice` (when present — consultation bookings only) name what was just
+  // booked so the flash confirms the actual booking, not just "something
+  // was added". Auto-clears after 4s and the URL is rewritten without the
+  // flags so a refresh doesn't re-trigger the flash.
   const [showAddedFlash, setShowAddedFlash] = useState(
     () => searchParams?.get("added") === "1",
   );
+  const [addedFlashDetail] = useState(() => {
+    if (searchParams?.get("added") !== "1") return null;
+    const doctor = searchParams.get("bDoctor");
+    const when = searchParams.get("bWhen");
+    const price = searchParams.get("bPrice");
+    if (!doctor && !when) return null;
+    return { doctor, when, price };
+  });
   useEffect(() => {
     if (!showAddedFlash) return;
     const timer = setTimeout(() => setShowAddedFlash(false), 4_000);
@@ -108,6 +121,9 @@ export default function CartPage() {
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
       url.searchParams.delete("added");
+      url.searchParams.delete("bDoctor");
+      url.searchParams.delete("bWhen");
+      url.searchParams.delete("bPrice");
       window.history.replaceState(null, "", url.toString());
     }
     return () => clearTimeout(timer);
@@ -127,11 +143,20 @@ export default function CartPage() {
   // `expiredFlash` but the cart.expiredHolds dep stays the same
   // until another sweep). The strict lint rule can't infer that —
   // disable rather than restructure.
+  const expiredFlashRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (cart.expiredHolds && cart.expiredHolds > 0) {
       setExpiredFlash(cart.expiredHolds); // eslint-disable-line react-hooks/set-state-in-effect
+      setExpiredItemsFlash(cart.expiredItems ?? []); // eslint-disable-line react-hooks/set-state-in-effect
     }
-  }, [cart.expiredHolds]);
+  }, [cart.expiredHolds, cart.expiredItems]);
+  // Scroll the expired-hold notice into view when it appears — it renders
+  // above the fold today, but this keeps it noticed even if the page grows.
+  useEffect(() => {
+    if (expiredFlash > 0) {
+      expiredFlashRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [expiredFlash]);
 
   // Auto-refresh while there are active consultation holds so the
   // countdown stays accurate and expired items get swept.
@@ -242,31 +267,75 @@ export default function CartPage() {
           {showAddedFlash ? (
             <div
               role="status"
-              className="gh-status-success mt-5 flex items-center gap-2 rounded-[var(--radius-card-sm)] px-3 py-2.5 text-sm font-semibold"
+              className="gh-status-success mt-5 flex flex-col gap-1 rounded-[var(--radius-card-sm)] px-3 py-2.5 text-sm"
             >
-              <CheckCircle2 className="size-4 shrink-0" aria-hidden />
-              <span>{t.addedToCart}</span>
+              <span className="flex items-center gap-2 font-semibold">
+                <CheckCircle2 className="size-4 shrink-0" aria-hidden />
+                {t.addedToCart}
+              </span>
+              {addedFlashDetail ? (
+                <span className="pl-6 font-normal">
+                  {[addedFlashDetail.doctor, addedFlashDetail.when, addedFlashDetail.price]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </span>
+              ) : null}
             </div>
           ) : null}
 
           {expiredFlash > 0 ? (
-            <div className="gh-status-warning mt-5 flex items-start gap-2 rounded-[var(--radius-card-sm)] px-3 py-2.5 text-sm">
-              <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
-              <span>
-                {(expiredFlash === 1 ? t.expiredSingular : t.expiredPlural).replace(
-                  "{count}",
-                  String(expiredFlash),
-                )}
-              </span>
-              <button
-                type="button"
-                onClick={() => setExpiredFlash(0)}
-                className="ml-auto rounded p-0.5 transition-colors hover:bg-black/5"
-                style={{ color: "var(--color-status-warning-text)" }}
-                aria-label={t.dismiss}
-              >
-                ×
-              </button>
+            <div
+              ref={expiredFlashRef}
+              role="alert"
+              className="gh-status-warning mt-5 flex flex-col gap-2 rounded-[var(--radius-card-sm)] px-3 py-2.5 text-sm"
+            >
+              <div className="flex flex-wrap items-start gap-2">
+                <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
+                <span className="flex-1">
+                  {(expiredFlash === 1 ? t.expiredSingular : t.expiredPlural).replace(
+                    "{count}",
+                    String(expiredFlash),
+                  )}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setExpiredFlash(0);
+                    setExpiredItemsFlash([]);
+                  }}
+                  className="rounded p-0.5 transition-colors hover:bg-black/5"
+                  style={{ color: "var(--color-status-warning-text)" }}
+                  aria-label={t.dismiss}
+                >
+                  ×
+                </button>
+              </div>
+              {expiredItemsFlash.length > 0 ? (
+                <ul className="flex flex-col gap-1.5 pl-6">
+                  {expiredItemsFlash.map((item, i) => (
+                    <li key={`${item.name}-${i}`} className="flex flex-wrap items-center gap-2">
+                      <span>
+                        {item.doctorName ? `${item.name} · ${item.doctorName}` : item.name}
+                      </span>
+                      <Link
+                        href={countryHome}
+                        className="rounded-full border border-current px-3 py-1 text-xs font-semibold transition-colors hover:bg-black/5"
+                        style={{ color: "var(--color-status-warning-text)" }}
+                      >
+                        Pick another time
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <Link
+                  href={countryHome}
+                  className="ml-6 self-start rounded-full border border-current px-3 py-1 text-xs font-semibold transition-colors hover:bg-black/5"
+                  style={{ color: "var(--color-status-warning-text)" }}
+                >
+                  Pick another time
+                </Link>
+              )}
             </div>
           ) : null}
 

@@ -442,6 +442,10 @@ export async function createManualBooking(
       subtotalCents: amountCents,
       totalCents: amountCents,
       appointmentIds: [appointmentId],
+      // Dual-write into the relational join table alongside the legacy
+      // array (Suggestion 8, code review 2026-07-05) — real FK integrity
+      // going forward.
+      orderAppointments: { create: { appointmentId } },
       items: {
         create: {
           kind: consultationCartKind(service.kind),

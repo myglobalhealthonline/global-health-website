@@ -116,6 +116,7 @@
       "incomplete": "Čekáme na potvrzení vaší první platby. Může to chvíli trvat.",
       "actionRequired": "Vaše banka musí tuto platbu potvrdit. Dokončete ověření, abyste aktivovali své členství.",
       "completePayment": "Dokončit ověření platby",
+      "paused": "Vaše členství je pozastaveno a výhody jsou dočasně neaktivní. Obnovte fakturaci v portálu pro fakturaci níže, abyste obnovili své kredity a slevy.",
       "confirming": "Potvrzujeme vaši platbu… obvykle to trvá jen několik sekund.",
       "stillProcessing": "Platba přijata — aktivace vašeho členství trvá o něco déle než obvykle.",
       "refresh": "Obnovit"

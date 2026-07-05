@@ -20,7 +20,7 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 import type { PublicPlan } from "@/data/pricing-plans";
 import { PricingPlanCard } from "@/app/(site)/[country]/[lang]/pricing/_components/PricingPlanCard";
-import { PlanFields } from "../../../_components/plan-fields";
+import { PlanFields, PLAN_TYPE_LABEL } from "../../../_components/plan-fields";
 import { PlanTranslationTabs } from "../../../_components/plan-translation-tabs";
 import { PlanEditTabs } from "../../../_components/plan-edit-tabs";
 import { AdminCard, Btn, PageHeader, Pill, SectionHeader } from "../../../_components/atoms";
@@ -36,12 +36,6 @@ const PERK_KEYS = [
   "HIGHER_DISCOUNT_TIER",
 ] as const;
 const UNLOCK_MODES = ["MONTH_1", "AFTER_PAID_MONTHS", "MANUAL_APPROVAL", "NOT_AVAILABLE"] as const;
-
-const PLAN_TYPE_LABEL: Record<string, string> = {
-  ESSENTIAL: "Essential Care",
-  COMPREHENSIVE: "Comprehensive Care",
-  PREMIUM: "Premium Wellness Care",
-};
 
 // Human-readable labels so the admin sees plain English, not raw enum keys.
 const PERK_LABELS: Record<string, string> = {

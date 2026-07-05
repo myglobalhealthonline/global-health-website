@@ -199,7 +199,7 @@ async function buildExamUploadArtifacts(input: {
     prescriptionNumber = sentCount + 1;
   }
 
-  const { token, expiresAt } = createPatientUploadToken({
+  const { token, expiresAt } = await createPatientUploadToken({
     email: input.patientEmail,
     appointmentId: input.appointmentId,
     doctorId: input.doctorId,
@@ -734,7 +734,7 @@ export async function sendGeneratedDocumentUploadLink(doctorId: string, document
   let expiresAt = doc.uploadTokenExpiresAt;
   const expired = !token || !expiresAt || expiresAt.getTime() < Date.now();
   if (expired) {
-    const minted = createPatientUploadToken({
+    const minted = await createPatientUploadToken({
       email: appt.email,
       appointmentId: appt.id,
       doctorId,

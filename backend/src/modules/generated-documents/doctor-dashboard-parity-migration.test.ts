@@ -13,9 +13,13 @@ import { describe, it } from "node:test";
  *   4. New FKs use ON DELETE SET NULL.
  */
 
+// Migration history was squashed into a single 0_init baseline on
+// 2026-07-05 (B2, code review) — the original incremental migration files
+// were archived, not deleted, specifically so structural tests like this
+// one keep working against the exact SQL that was actually applied.
 const MIGRATION_SQL_PATH = path.resolve(
   __dirname,
-  "../../../prisma/migrations/20260522010000_doctor_dashboard_parity_phase_1/migration.sql",
+  "../../../prisma/migrations-archive-2026-07-05/20260522010000_doctor_dashboard_parity_phase_1/migration.sql",
 );
 
 function readMigration(): string {

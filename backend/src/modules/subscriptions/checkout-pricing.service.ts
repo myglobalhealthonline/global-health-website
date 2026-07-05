@@ -530,16 +530,25 @@ export async function previewServiceBenefit(input: {
 
 export async function commitOrderCreditReservations(orderId: string): Promise<void> {
   const rows = await loadOrderReservations(orderId);
+  if (rows.length === 0) return;
+  // One transaction for the whole order (not one per line item) — each
+  // commit is independently idempotent, so this was never a correctness
+  // issue, just an avoidable N round-trips on the payment-confirmation
+  // hot path for multi-line carts.
+  await prisma.$transaction((tx) =>
+    Promise.all(
+      rows.map((row) =>
+        commitReservation(tx, {
+          userSubscriptionId: row.userSubscriptionId,
+          userId: row.userId,
+          kind: "CONSULTATION",
+          amount: Math.abs(row.deltaCredits),
+          reservationId: row.reservationId!,
+        }),
+      ),
+    ),
+  );
   for (const row of rows) {
-    await prisma.$transaction((tx) =>
-      commitReservation(tx, {
-        userSubscriptionId: row.userSubscriptionId,
-        userId: row.userId,
-        kind: "CONSULTATION",
-        amount: Math.abs(row.deltaCredits),
-        reservationId: row.reservationId!,
-      }),
-    );
     void recordAudit({
       action: "CONSULTATION_CREDIT_CONSUMED",
       entityType: "Order",
@@ -553,17 +562,20 @@ export async function commitOrderCreditReservations(orderId: string): Promise<vo
 /** Release all consultation reservations for an abandoned/expired order. */
 export async function releaseOrderCreditReservations(orderId: string): Promise<void> {
   const rows = await loadOrderReservations(orderId);
-  for (const row of rows) {
-    await prisma.$transaction((tx) =>
-      releaseReservation(tx, {
-        userSubscriptionId: row.userSubscriptionId,
-        userId: row.userId,
-        kind: "CONSULTATION",
-        amount: Math.abs(row.deltaCredits),
-        reservationId: row.reservationId!,
-      }),
-    );
-  }
+  if (rows.length === 0) return;
+  await prisma.$transaction((tx) =>
+    Promise.all(
+      rows.map((row) =>
+        releaseReservation(tx, {
+          userSubscriptionId: row.userSubscriptionId,
+          userId: row.userId,
+          kind: "CONSULTATION",
+          amount: Math.abs(row.deltaCredits),
+          reservationId: row.reservationId!,
+        }),
+      ),
+    ),
+  );
 }
 
 async function loadOrderReservations(orderId: string) {

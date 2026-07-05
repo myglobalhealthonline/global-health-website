@@ -9,7 +9,6 @@ export const routeInventory = {
     "/about",
     "/careers",
     "/gift-card",
-    "/plans-pricing",
     "/pricing-plans/list",
     "/online-prescription",
     "/home-delivery",

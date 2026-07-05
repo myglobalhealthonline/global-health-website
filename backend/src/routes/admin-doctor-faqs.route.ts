@@ -6,8 +6,7 @@ import {
   listAdminDoctorFaqs,
   replaceDoctorFaqs,
 } from "../modules/doctor-faqs/doctor-faqs.service.js";
-import { resolveOptionalAuthUser } from "../utils/request-auth.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import {
   doctorFaqIdParamsSchema,
@@ -53,9 +52,9 @@ const adminDoctorFaqsRoute: FastifyPluginAsync = async (app) => {
 
     try {
       const faqs = await replaceDoctorFaqs(params.data.doctorId, body.data);
-      const actor = await resolveOptionalAuthUser(request);
+      const actor = resolveAdminSessionActor(request);
       recordAudit({
-        actorUserId: actor?.id ?? null,
+        actorUserId: actor?.userId ?? null,
         actorRole: actor?.role ?? "ADMIN",
         action: "DOCTOR_UPDATED",
         entityType: "Doctor",

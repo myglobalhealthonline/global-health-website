@@ -7,8 +7,7 @@ import {
 } from "../modules/doctor-registrations/doctor-registrations.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
-import { resolveOptionalAuthUser } from "../utils/request-auth.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 /**
@@ -81,9 +80,9 @@ const adminDoctorRegistrationsRoute: FastifyPluginAsync = async (app) => {
           request.params.countryId,
           body.data,
         );
-        const actor = await resolveOptionalAuthUser(request);
+        const actor = resolveAdminSessionActor(request);
         recordAudit({
-          actorUserId: actor?.id ?? null,
+          actorUserId: actor?.userId ?? null,
           actorRole: actor?.role ?? "ADMIN",
           action: "DOCTOR_UPDATED",
           entityType: "Doctor",

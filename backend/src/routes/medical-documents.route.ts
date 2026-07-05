@@ -3,12 +3,12 @@ import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { requireAuth } from "../utils/require-auth.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { getObject, isMediaStorageConfigured, putObject, streamToNodeReadable } from "../services/object-storage.js";
 import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
-import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
+import { verifySniffedMime } from "../utils/sniff-mime.js";
 import {
   createMedicalDocument,
   getPatientAccessibleDocument,
@@ -138,11 +138,13 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
       if (fileBuffer.length > MEDICAL_DOC_MAX_BYTES) {
         return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
       }
-      if (!MEDICAL_DOC_ALLOWED_MIME.has(mimetype)) {
+      const sniffedMime = verifySniffedMime(fileBuffer, mimetype, MEDICAL_DOC_ALLOWED_MIME);
+      if (!sniffedMime) {
         return reply.status(400).send(
-          errorResponse("File type not allowed (PDF, JPG, PNG, WebP)"),
+          errorResponse("File content does not match an allowed type (PDF, JPG, PNG, WebP)"),
         );
       }
+      mimetype = sniffedMime;
       if (!VALID_DOCUMENT_TYPES.has(documentType)) documentType = "REPORT";
       if (!title.trim()) {
         return reply.status(400).send(errorResponse("Title is required"));
@@ -242,11 +244,11 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
         });
         if (!profile) return reply.status(404).send(errorResponse("Patient not found"));
 
-        const actor = await resolveOptionalAuthUser(request);
+        const actor = resolveAdminSessionActor(request);
         try {
           await guardMedicalRead(
             request,
-            { userId: actor?.id ?? "", role: actor?.role ?? "ADMIN" },
+            { userId: actor?.userId ?? "", role: actor?.role ?? "ADMIN" },
             { patientProfileId: profile.id, resourceType: "MEDICAL_DOC", accessAction: "VIEWED" },
           );
         } catch (guardError) {
@@ -276,11 +278,11 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
       });
       if (!doc) return reply.status(404).send(errorResponse("Document not found"));
 
-      const actor = await resolveOptionalAuthUser(request);
+      const actor = resolveAdminSessionActor(request);
       try {
         await guardMedicalRead(
           request,
-          { userId: actor?.id ?? "", role: actor?.role ?? "ADMIN" },
+          { userId: actor?.userId ?? "", role: actor?.role ?? "ADMIN" },
           { patientProfileId: doc.patientProfileId, resourceType: "MEDICAL_DOC", accessAction: "DOWNLOADED", resourceId: doc.id },
         );
       } catch (guardError) {
@@ -393,9 +395,11 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
       if (fileBuffer.length > MEDICAL_DOC_MAX_BYTES) {
         return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
       }
-      if (!MEDICAL_DOC_ALLOWED_MIME.has(mimetype)) {
-        return reply.status(400).send(errorResponse("File type not allowed"));
+      const sniffedMime = verifySniffedMime(fileBuffer, mimetype, MEDICAL_DOC_ALLOWED_MIME);
+      if (!sniffedMime) {
+        return reply.status(400).send(errorResponse("File content does not match an allowed type"));
       }
+      mimetype = sniffedMime;
       if (!VALID_DOCUMENT_TYPES.has(documentType)) documentType = "EXAM_RESULT";
       if (!title.trim()) {
         return reply.status(400).send(errorResponse("Title is required"));

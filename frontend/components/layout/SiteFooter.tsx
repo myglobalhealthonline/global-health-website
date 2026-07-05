@@ -295,6 +295,10 @@ export function SiteFooter({
           ))}
         </div>
 
+        {regulatoryText ? (
+          <p className="gh-footer-regulatory gh-body-sm text-white/60">{regulatoryText}</p>
+        ) : null}
+
         <div className="gh-footer-copyrightBar flex flex-wrap justify-between gap-3">
           <span suppressHydrationWarning>
             {copyrightPrefix} · {navigation.footerCopyrightSuffix}

@@ -1,16 +1,17 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
-import { BadgeCent, Plus } from "lucide-react";
+import { BadgeCent, Plus, ChevronUp, ChevronDown } from "lucide-react";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { fetchAdminCountries } from "@/lib/admin/admin-api";
 import { getActiveCountry } from "@/lib/admin/admin-scope";
-import { deleteAdminPlan, fetchAdminPlans } from "@/lib/admin/plans-api";
+import { deleteAdminPlan, fetchAdminPlans, postAdminPlanReorder } from "@/lib/admin/plans-api";
 import {
   AdminCard,
   AdminEmptyState,
   AdminSummaryStrip,
   AdminTable,
   Btn,
+  IconBtn,
   PageHeader,
   Pill,
   Td,
@@ -41,6 +42,34 @@ export default async function AdminPlansPage() {
   }
 
   const newHref = active ? `/admin/plans/new?countryId=${encodeURIComponent(active.id)}` : "/admin/plans/new";
+
+  // ponytail: reorder swaps this plan's displayOrder with its neighbor in the
+  // already-sorted, already-country-scoped list (see fetchAdminPlans orderBy
+  // in plans.service.ts) — no drag-and-drop lib, just two-item PATCH.
+  async function movePlanAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const id = String(formData.get("id") ?? "");
+    const direction = String(formData.get("direction") ?? "");
+    const countryId = String(formData.get("countryId") ?? "");
+    if (!id || (direction !== "up" && direction !== "down")) return;
+
+    const result = await fetchAdminPlans({ countryId, includeInactive: "true" });
+    if (!result.ok) return;
+    const list = result.data.plans;
+    const index = list.findIndex((p) => p.id === id);
+    if (index === -1) return;
+    const swapIndex = direction === "up" ? index - 1 : index + 1;
+    if (swapIndex < 0 || swapIndex >= list.length) return;
+
+    const current = list[index];
+    const neighbor = list[swapIndex];
+    await postAdminPlanReorder([
+      { id: current.id, displayOrder: neighbor.displayOrder },
+      { id: neighbor.id, displayOrder: current.displayOrder },
+    ]);
+    revalidatePath("/admin/plans");
+  }
 
   if (!active) {
     return (
@@ -112,10 +141,11 @@ export default async function AdminPlansPage() {
               <Th>What&apos;s set up</Th>
               <Th>Subscribers</Th>
               <Th>Status</Th>
+              <Th>Order</Th>
               <Th>Actions</Th>
             </Thead>
             <tbody>
-              {plans.map((plan) => (
+              {plans.map((plan, index) => (
                 <Tr key={plan.id}>
                   <Td>
                     <div className="flex flex-col">
@@ -149,6 +179,30 @@ export default async function AdminPlansPage() {
                     )}
                   </Td>
                   <Td>
+                    <div className="flex items-center gap-1">
+                      <form action={movePlanAction}>
+                        <input type="hidden" name="id" value={plan.id} />
+                        <input type="hidden" name="direction" value="up" />
+                        <input type="hidden" name="countryId" value={active.id} />
+                        <IconBtn type="submit" ariaLabel={`Move ${plan.name} up`} disabled={index === 0}>
+                          <ChevronUp className="size-4" />
+                        </IconBtn>
+                      </form>
+                      <form action={movePlanAction}>
+                        <input type="hidden" name="id" value={plan.id} />
+                        <input type="hidden" name="direction" value="down" />
+                        <input type="hidden" name="countryId" value={active.id} />
+                        <IconBtn
+                          type="submit"
+                          ariaLabel={`Move ${plan.name} down`}
+                          disabled={index === plans.length - 1}
+                        >
+                          <ChevronDown className="size-4" />
+                        </IconBtn>
+                      </form>
+                    </div>
+                  </Td>
+                  <Td>
                     <div className="gh-admin-plan-row-actions flex items-center gap-3">
                       <Link
                         href={`/admin/plans/${plan.id}/edit`}
@@ -175,7 +229,7 @@ export default async function AdminPlansPage() {
           </AdminTable>
           </div>
           <div className="gh-admin-mobile-list">
-            {plans.map((plan) => (
+            {plans.map((plan, index) => (
               <PortalMobileCard
                 key={plan.id}
                 tone={plan.isActive ? "success" : "neutral"}
@@ -196,7 +250,29 @@ export default async function AdminPlansPage() {
                   { label: "Subscribers", value: plan._count.subscriptions },
                 ]}
                 actions={
-                  <Btn href={`/admin/plans/${plan.id}/edit`} variant="soft" size="sm">Edit plan</Btn>
+                  <div className="flex items-center gap-2">
+                    <form action={movePlanAction}>
+                      <input type="hidden" name="id" value={plan.id} />
+                      <input type="hidden" name="direction" value="up" />
+                      <input type="hidden" name="countryId" value={active.id} />
+                      <IconBtn type="submit" ariaLabel={`Move ${plan.name} up`} disabled={index === 0}>
+                        <ChevronUp className="size-4" />
+                      </IconBtn>
+                    </form>
+                    <form action={movePlanAction}>
+                      <input type="hidden" name="id" value={plan.id} />
+                      <input type="hidden" name="direction" value="down" />
+                      <input type="hidden" name="countryId" value={active.id} />
+                      <IconBtn
+                        type="submit"
+                        ariaLabel={`Move ${plan.name} down`}
+                        disabled={index === plans.length - 1}
+                      >
+                        <ChevronDown className="size-4" />
+                      </IconBtn>
+                    </form>
+                    <Btn href={`/admin/plans/${plan.id}/edit`} variant="soft" size="sm">Edit plan</Btn>
+                  </div>
                 }
               />
             ))}

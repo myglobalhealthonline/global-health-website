@@ -20,10 +20,7 @@ import {
   commitRedemption,
   releaseRedemption,
 } from "../modules/subscriptions/redemption.service.js";
-import {
-  commitOrderCreditReservations,
-  releaseOrderCreditReservations,
-} from "../modules/subscriptions/checkout-pricing.service.js";
+import { releaseOrderCreditReservations } from "../modules/subscriptions/checkout-pricing.service.js";
 
 const createCheckoutBodySchema = z.object({
   appointmentId: z.string().trim().min(8).max(40),
@@ -381,17 +378,11 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
               app.log,
             );
 
-            if (result.alreadyPaid) {
-              return okResponse({ received: true, deduped: true });
-            }
-
-            // Commit any subscription credit reservations on this order — the
-            // charge succeeded, so RESERVED → CONSUMED (§36.3). Idempotent.
-            await commitOrderCreditReservations(orderId).catch((err) => {
-              app.log.error({ err, orderId }, "Commit order credit reservations failed");
-            });
-
-            return okResponse({ received: true });
+            // Credit-reservation commit now happens inside
+            // completeOrderPaymentFromCheckoutSession itself (on every call,
+            // not just the one that first marks PAID) — see that function's
+            // comment for the webhook-vs-sync-order race this closes.
+            return okResponse({ received: true, deduped: result.alreadyPaid || undefined });
           }
 
           // ── Appointment branch (legacy single-item booking) ─────

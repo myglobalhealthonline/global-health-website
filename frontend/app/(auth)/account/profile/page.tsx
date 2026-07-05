@@ -151,7 +151,7 @@ export default function AccountProfilePage() {
               {!user?.emailVerifiedAt && !ghn
                 ? "Verify your email and complete your profile to get your Global Health Number."
                 : !user?.emailVerifiedAt
-                  ? "Verify your email to unlock the full patient portal."
+                  ? "Verify your email so appointment and payment updates reach you."
                   : "Complete your profile to get your Global Health Number."}
             </p>
           </div>

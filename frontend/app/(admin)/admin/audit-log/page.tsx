@@ -13,6 +13,76 @@ function pick(sp: SearchParams, key: string): string | undefined {
   return typeof v === "string" && v.trim() !== "" ? v.trim() : undefined;
 }
 
+/**
+ * Renders a before/after or flag-map diff for the audit actions whose
+ * `metadata` already carries structured change data. Everything else
+ * falls back to a raw collapsible JSON block — see task report for why a
+ * true structured diff isn't available for every action yet.
+ */
+function AuditDiff({ metadata }: { metadata: unknown }) {
+  if (!metadata || typeof metadata !== "object") {
+    return <span className="text-[12px] text-[var(--color-text-muted)]">—</span>;
+  }
+  const m = metadata as Record<string, unknown>;
+
+  if (m.before && m.after && typeof m.before === "object" && typeof m.after === "object") {
+    const before = m.before as Record<string, unknown>;
+    const after = m.after as Record<string, unknown>;
+    const fields = Array.from(new Set([...Object.keys(before), ...Object.keys(after)])).filter(
+      (f) => JSON.stringify(before[f]) !== JSON.stringify(after[f]),
+    );
+    return (
+      <details>
+        <summary className="cursor-pointer text-[11px] font-semibold text-[var(--color-brand-primary)]">
+          View diff ({fields.length})
+        </summary>
+        <ul className="mt-1 space-y-0.5 text-[11px] text-[var(--color-text-muted)]">
+          {fields.map((f) => (
+            <li key={f}>
+              <span className="font-semibold text-[var(--color-text-primary)]">{f}</span>:{" "}
+              {String(before[f] ?? "—")} → {String(after[f] ?? "—")}
+            </li>
+          ))}
+        </ul>
+      </details>
+    );
+  }
+
+  if (m.changes && typeof m.changes === "object") {
+    const changed = Object.keys(m.changes as Record<string, unknown>).filter(
+      (f) => (m.changes as Record<string, unknown>)[f],
+    );
+    if (changed.length > 0) {
+      return (
+        <details>
+          <summary className="cursor-pointer text-[11px] font-semibold text-[var(--color-brand-primary)]">
+            View diff ({changed.length})
+          </summary>
+          <ul className="mt-1 space-y-0.5 text-[11px] text-[var(--color-text-muted)]">
+            {changed.map((f) => (
+              <li key={f}>
+                <span className="font-semibold text-[var(--color-text-primary)]">{f}</span> changed
+                {m[f] !== undefined ? <> → new value: {String(m[f])}</> : null}
+              </li>
+            ))}
+          </ul>
+        </details>
+      );
+    }
+  }
+
+  return (
+    <details>
+      <summary className="cursor-pointer text-[11px] font-semibold text-[var(--color-brand-primary)]">
+        Raw payload
+      </summary>
+      <pre className="m-0 mt-1 whitespace-pre-wrap break-all text-[11px] text-[var(--color-text-muted)]">
+        {JSON.stringify(metadata, null, 0)}
+      </pre>
+    </details>
+  );
+}
+
 const ACTION_LABEL: Record<string, string> = {
   CONSULT_SAVED: "Consultation saved",
   CONSULT_SIGNED: "Consultation signed",
@@ -64,6 +134,8 @@ export default async function AdminAuditLogPage({
   const entityType = pick(sp, "entityType");
   const entityId = pick(sp, "entityId");
   const actorUserId = pick(sp, "actorUserId");
+  const fromDate = pick(sp, "fromDate");
+  const toDate = pick(sp, "toDate");
   const page = Number(pick(sp, "page") ?? "1") || 1;
 
   const result = await fetchAdminAuditLog({
@@ -73,12 +145,25 @@ export default async function AdminAuditLogPage({
     entityType,
     entityId,
     actorUserId,
+    fromDate,
+    toDate,
   });
   const auditItems = result.ok ? result.data.items : [];
   const visibleFailures = auditItems.filter((r) => r.action === "LOGIN_FAILED").length;
   const visibleClinicalEvents = auditItems.filter((r) =>
     ["CONSULT_SAVED", "CONSULT_SIGNED", "EXAM_LOGGED", "FORM_SUBMITTED"].includes(r.action),
   ).length;
+
+  // Export uses the SAME active filters as the list view but no pagination —
+  // the backend returns every matching row (capped) as a CSV download.
+  const exportQs = new URLSearchParams();
+  if (action) exportQs.set("action", action);
+  if (entityType) exportQs.set("entityType", entityType);
+  if (entityId) exportQs.set("entityId", entityId);
+  if (actorUserId) exportQs.set("actorUserId", actorUserId);
+  if (fromDate) exportQs.set("fromDate", fromDate);
+  if (toDate) exportQs.set("toDate", toDate);
+  const exportHref = `/api/admin/audit-log/export${exportQs.toString() ? `?${exportQs.toString()}` : ""}`;
 
   return (
     <>
@@ -181,10 +266,21 @@ export default async function AdminAuditLogPage({
               className="gh-input font-mono text-xs"
             />
           </label>
-          <div className="sm:col-span-4">
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">From date</span>
+            <input type="date" name="fromDate" defaultValue={fromDate ?? ""} className="gh-input" />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">To date</span>
+            <input type="date" name="toDate" defaultValue={toDate ?? ""} className="gh-input" />
+          </label>
+          <div className="flex items-center gap-3 sm:col-span-4">
             <button type="submit" className="gh-btn gh-btn-primary text-sm">
               Apply
             </button>
+            <a href={exportHref} download className="gh-btn gh-btn-outline text-sm">
+              Export CSV
+            </a>
           </div>
         </form>
 
@@ -277,15 +373,7 @@ export default async function AdminAuditLogPage({
                       {r.ipAddress ?? "—"}
                     </td>
                     <td className="px-3 py-2">
-                      {r.metadata ? (
-                        <pre className="m-0 whitespace-pre-wrap break-all text-[11px] text-[var(--color-text-muted)]">
-                          {JSON.stringify(r.metadata, null, 0)}
-                        </pre>
-                      ) : (
-                        <span className="text-[12px] text-[var(--color-text-muted)]">
-                          —
-                        </span>
-                      )}
+                      <AuditDiff metadata={r.metadata} />
                     </td>
                   </tr>
                 ))}
@@ -300,6 +388,8 @@ export default async function AdminAuditLogPage({
                   if (entityType) qs.set("entityType", entityType);
                   if (entityId) qs.set("entityId", entityId);
                   if (actorUserId) qs.set("actorUserId", actorUserId);
+                  if (fromDate) qs.set("fromDate", fromDate);
+                  if (toDate) qs.set("toDate", toDate);
                   qs.set("page", String(p));
                   return `/admin/audit-log?${qs.toString()}`;
                 };

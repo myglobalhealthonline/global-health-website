@@ -82,6 +82,13 @@ const nextConfig: NextConfig = {
             source: "/api/media/:path*",
             destination: `${apiOrigin}/api/media/:path*`,
           },
+          // CSV export is a plain <a href> download link (not a fetch), so
+          // it needs to hit a same-origin URL to carry the admin session
+          // cookie automatically — proxy it to the backend like media above.
+          {
+            source: "/api/admin/audit-log/export",
+            destination: `${apiOrigin}/api/admin/audit-log/export`,
+          },
         ]
       : [];
 

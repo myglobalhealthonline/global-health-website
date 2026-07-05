@@ -17,7 +17,6 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { issuePasswordResetToken } from "../modules/auth/auth.service.js";
 import { sendDoctorInviteEmail } from "../lib/email/templates.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
-import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import {
   adminDoctorCreateBodySchema,
   adminDoctorUpdateBodySchema,
@@ -25,7 +24,7 @@ import {
   doctorIdParamsSchema,
   doctorInviteBodySchema,
 } from "../validations/admin-doctors.schema.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import {
   adminAssignServiceToDoctor,
@@ -134,9 +133,9 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
 
     try {
       const doctor = await createAdminDoctor(body.data);
-      const actor = await resolveOptionalAuthUser(request);
+      const actor = resolveAdminSessionActor(request);
       recordAudit({
-        actorUserId: actor?.id,
+        actorUserId: actor?.userId,
         actorRole: "ADMIN",
         action: "DOCTOR_CREATED",
         entityType: "Doctor",
@@ -171,9 +170,9 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
       const { doctor, countryChange } = result;
-      const actor = await resolveOptionalAuthUser(request);
+      const actor = resolveAdminSessionActor(request);
       recordAudit({
-        actorUserId: actor?.id,
+        actorUserId: actor?.userId,
         actorRole: "ADMIN",
         action: "DOCTOR_UPDATED",
         entityType: "Doctor",
@@ -206,9 +205,9 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
       if (!doctor) {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
-      const actor = await resolveOptionalAuthUser(request);
+      const actor = resolveAdminSessionActor(request);
       recordAudit({
-        actorUserId: actor?.id,
+        actorUserId: actor?.userId,
         actorRole: "ADMIN",
         action: "DOCTOR_DEACTIVATED",
         entityType: "Doctor",
@@ -347,9 +346,9 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
         );
       }
 
-      const actor = await resolveOptionalAuthUser(request);
+      const actor = resolveAdminSessionActor(request);
       recordAudit({
-        actorUserId: actor?.id ?? null,
+        actorUserId: actor?.userId ?? null,
         actorRole: actor?.role ?? "ADMIN",
         action: "DOCTOR_INVITED",
         entityType: "Doctor",
@@ -564,9 +563,9 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
       if (!deleted) {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
-      const actor = await resolveOptionalAuthUser(request);
+      const actor = resolveAdminSessionActor(request);
       recordAudit({
-        actorUserId: actor?.id,
+        actorUserId: actor?.userId,
         actorRole: "ADMIN",
         action: "DOCTOR_PURGED",
         entityType: "Doctor",

@@ -5,6 +5,8 @@ import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import type { SafeUser } from "../modules/auth/auth.service.js";
 import { getReceiptUrl } from "../services/stripe-receipt.service.js";
+import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.service.js";
+import { accountAppointmentIdParamSchema } from "../validations/account-appointments.schema.js";
 
 /**
  * Public-facing payment receipts list for the signed-in patient.
@@ -130,6 +132,60 @@ const accountPaymentsRoute: FastifyPluginAsync = async (app) => {
       } catch (error) {
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not fetch receipt"));
+      }
+    },
+  );
+
+  // ─── Resume payment (unpaid/failed appointment → live Stripe Checkout URL) ──
+  app.get<{ Params: { id: string } }>(
+    "/api/account/appointments/:id/payment-url",
+    async (request, reply) => {
+      let authUser: SafeUser | null = null;
+      try {
+        authUser = await resolveOptionalAuthUser(request);
+      } catch {
+        return reply.status(401).send(errorResponse("Not authenticated"));
+      }
+      if (!authUser) return reply.status(401).send(errorResponse("Not authenticated"));
+      if (authUser.role !== "PATIENT" && authUser.role !== "ADMIN") {
+        return reply.status(403).send(errorResponse("Forbidden"));
+      }
+
+      const params = accountAppointmentIdParamSchema.safeParse(request.params);
+      if (!params.success) {
+        return reply.status(400).send(errorResponse("Invalid appointment id", params.error.flatten()));
+      }
+
+      try {
+        // Ownership check happens on the appointment, not the order — an
+        // order can span appointments (family bookings), but a patient may
+        // only resume payment via an appointment they actually own.
+        const appointment = await prisma.appointment.findFirst({
+          where: { id: params.data.id, userId: authUser.id },
+          select: { id: true },
+        });
+        if (!appointment) return reply.status(404).send(errorResponse("Appointment not found"));
+
+        const orderItem = await prisma.orderItem.findFirst({
+          where: { appointmentId: appointment.id },
+          select: { orderId: true },
+        });
+        if (!orderItem) return reply.status(404).send(errorResponse("No order found for this appointment"));
+
+        // No override — let resolveOrderPaymentUrl check the live Stripe
+        // session itself (order.stripeCheckoutUrl is a cache snapshot that
+        // can go stale; only the pre-payment-reminder flow trusts it as an
+        // override because it re-resolves on its own schedule).
+        const url = await resolveOrderPaymentUrl(orderItem.orderId);
+        if (!url) return reply.status(502).send(errorResponse("Could not create a payment link"));
+        return okResponse({ url });
+      } catch (error) {
+        const normalized = normalizeDbError(error, "Could not resolve payment link");
+        if (normalized instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(normalized.message));
+        }
+        app.log.error(normalized);
+        return reply.status(500).send(errorResponse("Could not resolve payment link"));
       }
     },
   );
