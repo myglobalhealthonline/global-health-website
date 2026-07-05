@@ -164,12 +164,21 @@ export async function mergePatients(params: {
 
       // ── 2. Re-point FK references duplicate → primary ────────────────────
 
+      // Re-read userId fresh inside the transaction rather than trusting the
+      // pre-tx snapshot — an admin action editing the duplicate's userId in
+      // the narrow window between the snapshot read and this transaction
+      // could otherwise repoint appointments using a stale value.
+      const freshDuplicate = await tx.patientProfile.findUniqueOrThrow({
+        where: { id: duplicatePatientId },
+        select: { userId: true },
+      });
+
       // Appointment.userId — only re-point when the duplicate actually has a
       // userId. If userId is null/undefined, where: { userId: undefined }
       // would make Prisma ignore the filter and corrupt every appointment row.
-      if (duplicateSnapshot.userId) {
+      if (freshDuplicate.userId) {
         await tx.appointment.updateMany({
-          where: { userId: duplicateSnapshot.userId },
+          where: { userId: freshDuplicate.userId },
           data: { userId: primarySnapshot.userId ?? null },
         });
       }
@@ -239,6 +248,11 @@ export async function mergePatients(params: {
     });
 
     // ── 4. Audit both records (fire-and-forget) ────────────────────────────
+    // Same metadata key (relatedPatientId) on both sides, described from
+    // each record's own perspective via `role` — was two different key
+    // names (duplicatePatientId / mergedIntoPrimaryPatientId) for the same
+    // relationship, which made downstream audit-log queries fiddlier than
+    // necessary.
     await recordAudit({
       actorUserId: adminId,
       actorRole: "ADMIN",
@@ -246,7 +260,8 @@ export async function mergePatients(params: {
       entityType: "PatientProfile",
       entityId: primaryPatientId,
       metadata: {
-        duplicatePatientId,
+        role: "primary",
+        relatedPatientId: duplicatePatientId,
         reason,
       },
     });
@@ -257,7 +272,8 @@ export async function mergePatients(params: {
       entityType: "PatientProfile",
       entityId: duplicatePatientId,
       metadata: {
-        mergedIntoPrimaryPatientId: primaryPatientId,
+        role: "duplicate",
+        relatedPatientId: primaryPatientId,
         reason,
       },
     });

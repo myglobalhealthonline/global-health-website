@@ -9,10 +9,14 @@
 -- doesn't collide with a real slot in the same window.
 CREATE EXTENSION IF NOT EXISTS btree_gist;
 
+-- startAt/endAt are TIMESTAMP(3) (no timezone) — tstzrange() would need an
+-- implicit STABLE timezone() cast, which Postgres rejects in an index
+-- expression ("functions in index expression must be marked IMMUTABLE").
+-- tsrange() operates on plain timestamps and needs no such cast.
 ALTER TABLE "DoctorTimeSlot"
   ADD CONSTRAINT "no_overlapping_doctor_slots"
   EXCLUDE USING gist (
     "doctorId" WITH =,
-    tstzrange("startAt", "endAt") WITH &&
+    tsrange("startAt", "endAt") WITH &&
   )
   WHERE ("status" <> 'BLOCKED');

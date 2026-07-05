@@ -88,11 +88,13 @@ const authRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/auth/login", {
     // 10 attempts per 15min per IP. Stops credential-stuffing without
     // breaking the typo-then-retry path real users hit. Relaxed in dev for E2E/manual runs.
+    // skipOnError: false — unlike the global default, a limiter-store
+    // outage must not silently let credential-stuffing through unthrottled.
     config: {
       rateLimit:
         env.NODE_ENV === "development"
-          ? { max: 200, timeWindow: "15 minutes" }
-          : { max: 10, timeWindow: "15 minutes" },
+          ? { max: 200, timeWindow: "15 minutes", skipOnError: false }
+          : { max: 10, timeWindow: "15 minutes", skipOnError: false },
     },
   }, async (request, reply) => {
     const body = loginBodySchema.safeParse(request.body);
@@ -255,8 +257,9 @@ const authRoute: FastifyPluginAsync = async (app) => {
 
   app.post("/api/auth/forgot-password", {
     // 5/hour/IP — same cap as register; we don't want to burn the
-    // SendGrid quota or enumerate emails via timing.
-    config: { rateLimit: { max: 5, timeWindow: "1 hour" } },
+    // SendGrid quota or enumerate emails via timing. skipOnError: false —
+    // a limiter-store outage must not let this fall open.
+    config: { rateLimit: { max: 5, timeWindow: "1 hour", skipOnError: false } },
   }, async (request, reply) => {
     const body = forgotPasswordBodySchema.safeParse(request.body);
     if (!body.success) {
