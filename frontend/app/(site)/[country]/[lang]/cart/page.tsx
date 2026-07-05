@@ -646,6 +646,18 @@ function CartItemRow({
           </div>
         ) : null}
 
+        {/* Automatic corporate-membership discount (no selection needed). */}
+        {isConsult && coverageLine?.corporateDiscount ? (
+          <p
+            className="mt-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11.5px] font-semibold"
+            style={{ background: "var(--color-brand-mint-dim)", color: "var(--color-brand-primary)" }}
+          >
+            {coverageLine.corporateDiscount.planName} ({coverageLine.corporateDiscount.companyName})
+            −{coverageLine.corporateDiscount.percent}% ·{" "}
+            {formatPrice(coverageLine.corporateDiscount.amountCents, currency)} {t.corporateOff}
+          </p>
+        ) : null}
+
         {/* Consultation hold countdown. Expired uses amber too — it's
             an expected system state (10-minute hold lapsed), not a user
             failure, so the styling shouldn't read as an error. */}

@@ -49,6 +49,10 @@ enum UserRole {
   DOCTOR
   LOCAL_ADMIN  // country-scoped admin — accesses only allowedCountryFolders
   SUPER_ADMIN  // same as ADMIN; explicit superuser role
+  /// Company HR/admin for the private B2B corporate plan. Logs into
+  /// /corporate; scoped to the single CorporateCompany whose
+  /// `adminUserId` points at this user. No public/patient features.
+  CORPORATE_ADMIN
 }
 
 enum PageKey {
@@ -119,6 +123,10 @@ enum NotificationType {
   // snippet (staff bell) or { title, body, href } (patient bell).
   PATIENT_MESSAGE
   MESSAGE_REPLY
+  // Corporate plan (private B2B). Payload carries pre-localized
+  // { title, body, href } for the patient bell.
+  CORPORATE_REQUEST_CREATED // company requested an Illness-Benefit / Fit-for-Work consult for the employee
+  CORPORATE_MEMBERSHIP // membership activated / card issued / suspended / expired
 }
 
 /// Exam lifecycle.
@@ -491,6 +499,9 @@ model Doctor {
   confidentialityAgreements   DoctorConfidentialityAgreement[]
   /// Doctor-entered payout bank details (IBAN encrypted at rest). 1:1.
   bankAccount                 DoctorBankAccount?
+  /// Corporate companies whose employee pre-assessment consultations are
+  /// pinned to this doctor ("selected Doctor/Admin").
+  corporatePreAssessmentCompanies CorporateCompany[]
   createdAt                   DateTime              @default(now())
   updatedAt                   DateTime              @updatedAt
 
@@ -783,6 +794,13 @@ model Service {
   shippingCents         Int                   @default(0)
   editorialChecklist    Json?
   isActive              Boolean               @default(true)
+  /// Who may see/book this service. PUBLIC keeps today's behaviour.
+  /// CORPORATE_ONLY = corporate employee onboarding (pre-assessment);
+  /// CORPORATE_REQUEST_ONLY = bookable only against an open
+  /// CorporateServiceRequest; ADMIN_ONLY = internal. Every non-PUBLIC
+  /// value is excluded from public listings, slug lookups, sitemaps,
+  /// slot feeds, and cart-add is gated server-side.
+  visibility            ServiceVisibility     @default(PUBLIC)
   /// Additional product images. Empty by default. Hero image still lives
   /// on the related Asset row (kind=IMAGE, synced via syncOwnedImageAsset).
   galleryImagePaths     String[]              @default([])
@@ -816,6 +834,12 @@ model Service {
   targetLinks           ServiceLink[]         @relation("TargetLinks")
   /// Subscription plan rules that reference this service (§20).
   planConsultationRules PlanConsultationRule[]
+  /// Corporate benefit rules pinned to this exact service (rare — most
+  /// rules match by kind).
+  corporateBenefitRules CorporateBenefitRule[]
+  /// Corporate Illness-Benefit / Fit-for-Work requests that resolved to
+  /// this (corporate-request-only) service.
+  corporateServiceRequests CorporateServiceRequest[]
   createdAt             DateTime              @default(now())
   updatedAt             DateTime              @updatedAt
 
@@ -1420,6 +1444,11 @@ model Appointment {
   /// patient ↔ admin `messages` above. Open by default; auto-locks
   /// 24h after `consultationCompletedAt` unless doctor re-opens.
   chatMessages              ConsultationMessage[]
+  /// Corporate plan back-relations: set when this appointment is a
+  /// corporate employee's onboarding pre-assessment, or fulfils an
+  /// Illness-Benefit / Fit-for-Work CorporateServiceRequest.
+  corporateEmployeePreAssessment CorporateEmployee?
+  corporateServiceRequest        CorporateServiceRequest?
   /// Set when the appointment moves to COMPLETED status. Used to
   /// compute the 24h chat-window expiry on the consultation chat.
   consultationCompletedAt   DateTime?
@@ -2008,6 +2037,12 @@ model OrderItem {
   /// Per-line benefit choice copied from the CartItem at checkout — kept
   /// for audit (which lines used a credit/discount vs paid normally).
   benefitSelection         BenefitSelection @default(PAY_NORMAL)
+  /// Corporate plan audit trail — set when the corporate benefit engine
+  /// discounted this line at checkout (unitPriceCents is ALREADY the
+  /// discounted price; this records how much was taken off and for
+  /// which company, for reconciliation).
+  corporateDiscountCents   Int?
+  corporateCompanyId       String?
   /// Approved dependent this order line was booked for (Premium family
   /// usage). Copied from the CartItem at checkout for audit + portal.
   familyMemberId           String?
@@ -2135,6 +2170,12 @@ model User {
   /// and lives in a module this feature doesn't belong to). Wire a new tick
   /// into that scheduler when the purge is actually built.
   deletionScheduledAt     DateTime?
+  /// Corporate plan (private B2B) back-relations. A CORPORATE_ADMIN user
+  /// administers exactly one company; a PATIENT user may be linked as an
+  /// employee and/or beneficiary membership row after invite accept.
+  corporateCompanyAdmin   CorporateCompany?        @relation("CorporateCompanyAdmin")
+  corporateEmployees      CorporateEmployee[]
+  corporateBeneficiaries  CorporateBeneficiary[]
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
 }
@@ -3592,4 +3633,294 @@ model FamilyMember {
   orderItems       OrderItem[]
 
   @@index([primaryUserId])
+}
+
+// ---------------------------------------------------------------------------
+// Corporate Plan (private B2B) — docs/plans/corporate-plan-implementation.md
+// Companies buy the Corporate Standard plan (EUR 180/employee/year, offline
+// annual billing). Employees + up to 5 beneficiaries each get a digital
+// benefit card and a configurable % discount on eligible consultations.
+// Deliberately SEPARATE from the PricingPlan/UserSubscription engine —
+// that one is monthly-Stripe-billed, credit-based, per-user opt-in; this
+// one is company-billed, automatic, membership-derived.
+// ---------------------------------------------------------------------------
+
+/// Who may see/book a Service. Non-PUBLIC values are excluded from every
+/// public surface server-side (listings, slug lookup, slots, cart-add).
+enum ServiceVisibility {
+  PUBLIC
+  CORPORATE_ONLY          // corporate employee onboarding (pre-assessment)
+  CORPORATE_REQUEST_ONLY  // bookable only against an open CorporateServiceRequest
+  ADMIN_ONLY              // internal
+}
+
+enum CorporateCompanyStatus {
+  ACTIVE
+  SUSPENDED
+  EXPIRED
+}
+
+enum CorporateEmployeeStatus {
+  DRAFT
+  INVITED
+  INVITE_SENT
+  INVITE_FAILED
+  REGISTERED
+  PROFILE_INCOMPLETE
+  PROFILE_COMPLETE
+  PREASSESSMENT_PENDING
+  PREASSESSMENT_BOOKED
+  ACTIVE
+  SUSPENDED
+  REMOVED
+}
+
+enum CorporateBeneficiaryStatus {
+  INVITED
+  INVITE_SENT
+  INVITE_FAILED
+  REGISTERED
+  PROFILE_INCOMPLETE
+  ACTIVE
+  SUSPENDED
+  REMOVED
+}
+
+enum CorporateInviteType {
+  EMPLOYEE
+  BENEFICIARY
+}
+
+enum CorporateMemberType {
+  EMPLOYEE
+  BENEFICIARY
+}
+
+enum CorporateCardStatus {
+  ACTIVE
+  SUSPENDED
+  EXPIRED
+}
+
+enum CorporateRequestType {
+  ILLNESS_BENEFIT
+  FIT_FOR_WORK
+}
+
+enum CorporateRequestStatus {
+  REQUESTED
+  EMPLOYEE_NOTIFIED
+  BOOKED
+  COMPLETED
+  CANCELLED
+  EXPIRED
+}
+
+/// A private B2B plan (not shown anywhere on the public site). v1 seed:
+/// slug "corporate-standard", EUR 180/employee/year, max 5 beneficiaries.
+model CorporatePlan {
+  id                          String                 @id @default(cuid())
+  slug                        String                 @unique
+  name                        String
+  annualPricePerEmployeeCents Int
+  currencyCode                String                 @default("EUR")
+  maxBeneficiariesPerEmployee Int                    @default(5)
+  isActive                    Boolean                @default(true)
+  benefitRules                CorporateBenefitRule[]
+  companies                   CorporateCompany[]
+  createdAt                   DateTime               @default(now())
+  updatedAt                   DateTime               @updatedAt
+}
+
+/// Configurable discount rule. Matches by pinned serviceId (takes
+/// precedence) or by ServiceKind (GENERAL = GP consultations). v1 seed:
+/// { serviceKind: GENERAL, discountPercent: 10, appliesToBeneficiaries: true }.
+model CorporateBenefitRule {
+  id                     String        @id @default(cuid())
+  corporatePlanId        String
+  corporatePlan          CorporatePlan @relation(fields: [corporatePlanId], references: [id], onDelete: Cascade)
+  serviceKind            ServiceKind?
+  serviceId              String?
+  service                Service?      @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  discountPercent        Float
+  appliesToBeneficiaries Boolean       @default(true)
+  isActive               Boolean       @default(true)
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+
+  @@index([corporatePlanId, isActive])
+}
+
+model CorporateCompany {
+  id                    String                    @id @default(cuid())
+  name                  String
+  registrationNumber    String?
+  addressLine1          String?
+  addressLine2          String?
+  city                  String?
+  postalCode            String?
+  /// ISO-2 lowercase, same convention as Country.code / folders.
+  countryCode           String
+  billingEmail          String
+  contactName           String
+  contactEmail          String
+  contactPhone          String?
+  status                CorporateCompanyStatus    @default(ACTIVE)
+  planId                String
+  plan                  CorporatePlan             @relation(fields: [planId], references: [id])
+  /// The CORPORATE_ADMIN login for this company (1:1). SetNull keeps the
+  /// company when the login is deleted; admin re-invites a new one.
+  adminUserId           String?                   @unique
+  adminUser             User?                     @relation("CorporateCompanyAdmin", fields: [adminUserId], references: [id], onDelete: SetNull)
+  /// "Selected Doctor/Admin" — employee pre-assessments are pinned to
+  /// this doctor when set (server-enforced at booking time).
+  preAssessmentDoctorId String?
+  preAssessmentDoctor   Doctor?                   @relation(fields: [preAssessmentDoctorId], references: [id], onDelete: SetNull)
+  contractStartAt       DateTime                  @default(now())
+  /// null = open-ended. A past date kills discounts + cards (checked
+  /// live at pricing time; daily cron flips status to EXPIRED).
+  contractEndAt         DateTime?
+  employees             CorporateEmployee[]
+  beneficiaries         CorporateBeneficiary[]
+  serviceRequests       CorporateServiceRequest[]
+  createdAt             DateTime                  @default(now())
+  updatedAt             DateTime                  @updatedAt
+
+  @@index([countryCode, status])
+}
+
+model CorporateEmployee {
+  id                         String                    @id @default(cuid())
+  companyId                  String
+  company                    CorporateCompany          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  /// Linked at invite accept (existing account or freshly created one).
+  userId                     String?
+  user                       User?                     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  firstName                  String
+  lastName                   String
+  email                      String
+  phone                      String?
+  addressLine1               String?
+  addressLine2               String?
+  city                       String?
+  postalCode                 String?
+  dateOfBirth                DateTime?
+  employeeCode               String?
+  department                 String?
+  jobTitle                   String?
+  status                     CorporateEmployeeStatus   @default(DRAFT)
+  /// The onboarding pre-assessment appointment, once booked.
+  preAssessmentAppointmentId String?                   @unique
+  preAssessmentAppointment   Appointment?              @relation(fields: [preAssessmentAppointmentId], references: [id], onDelete: SetNull)
+  beneficiaries              CorporateBeneficiary[]
+  invites                    CorporateInvite[]
+  benefitCard                CorporateBenefitCard?
+  serviceRequests            CorporateServiceRequest[]
+  createdAt                  DateTime                  @default(now())
+  updatedAt                  DateTime                  @updatedAt
+
+  @@unique([companyId, email])
+  @@index([userId])
+  @@index([companyId, status])
+}
+
+model CorporateBeneficiary {
+  id           String                     @id @default(cuid())
+  employeeId   String
+  employee     CorporateEmployee          @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  companyId    String
+  company      CorporateCompany           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  userId       String?
+  user         User?                      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  firstName    String
+  lastName     String
+  email        String
+  phone        String?
+  relationship String
+  addressLine1 String?
+  city         String?
+  postalCode   String?
+  dateOfBirth  DateTime?
+  notes        String?
+  status       CorporateBeneficiaryStatus @default(INVITED)
+  invites      CorporateInvite[]
+  benefitCard  CorporateBenefitCard?
+  createdAt    DateTime                   @default(now())
+  updatedAt    DateTime                   @updatedAt
+
+  @@unique([employeeId, email])
+  @@index([userId])
+  @@index([companyId, status])
+}
+
+/// Secure invite. Raw token is 32 crypto-random bytes, NEVER stored —
+/// sha256 hash only (same posture as PasswordResetToken). 7-day expiry,
+/// single use, carries no PII.
+model CorporateInvite {
+  id             String                @id @default(cuid())
+  type           CorporateInviteType
+  tokenHash      String                @unique
+  employeeId     String?
+  employee       CorporateEmployee?    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  beneficiaryId  String?
+  beneficiary    CorporateBeneficiary? @relation(fields: [beneficiaryId], references: [id], onDelete: Cascade)
+  email          String
+  expiresAt      DateTime
+  usedAt         DateTime?
+  emailSentAt    DateTime?
+  whatsappSentAt DateTime?
+  lastSendError  String?
+  /// Set when the +3-day unused-invite reminder went out (cron dedup).
+  reminderSentAt DateTime?
+  createdAt      DateTime              @default(now())
+
+  @@index([employeeId])
+  @@index([beneficiaryId])
+}
+
+/// Digital benefit card. One per active employee / beneficiary. Verified
+/// publicly via GET /api/corporate/card-verify/:cardNumber.
+model CorporateBenefitCard {
+  id            String                @id @default(cuid())
+  cardNumber    String                @unique
+  memberType    CorporateMemberType
+  employeeId    String?               @unique
+  employee      CorporateEmployee?    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  beneficiaryId String?               @unique
+  beneficiary   CorporateBeneficiary? @relation(fields: [beneficiaryId], references: [id], onDelete: Cascade)
+  status        CorporateCardStatus   @default(ACTIVE)
+  validFrom     DateTime              @default(now())
+  validUntil    DateTime
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+}
+
+/// Illness-Benefit / Fit-for-Work request raised by the corporate admin
+/// (or platform admin) for a specific employee. The linked service is
+/// CORPORATE_REQUEST_ONLY, so the employee can only book it while an
+/// open request row exists.
+model CorporateServiceRequest {
+  id                String                 @id @default(cuid())
+  companyId         String
+  company           CorporateCompany       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  employeeId        String
+  employee          CorporateEmployee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  type              CorporateRequestType
+  serviceId         String
+  service           Service                @relation(fields: [serviceId], references: [id])
+  requestedByUserId String
+  reason            String?
+  status            CorporateRequestStatus @default(REQUESTED)
+  appointmentId     String?                @unique
+  appointment       Appointment?           @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  /// Default +60 days; daily cron flips overdue open requests to EXPIRED.
+  expiresAt         DateTime?
+  notifiedAt        DateTime?
+  completedAt       DateTime?
+  cancelledAt       DateTime?
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+
+  @@index([companyId, status])
+  @@index([employeeId, status])
 }

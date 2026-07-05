@@ -226,9 +226,11 @@ export type ListAdminServicesResult = {
 };
 
 export async function listServices() {
+  // Public catalogue — corporate/admin-only services are NEVER listed here
+  // (ServiceVisibility gate, corporate plan doc §3.2).
   try {
     return await prisma.service.findMany({
-      where: { isActive: true },
+      where: { isActive: true, visibility: "PUBLIC" },
       orderBy: [{ country: { name: "asc" } }, { kind: "asc" }, { sortOrder: "asc" }, { name: "asc" }],
       include: {
         country: true,
@@ -253,6 +255,8 @@ export async function listServicesByCountry(
     const rows = await prisma.service.findMany({
       where: {
         isActive: true,
+        // Corporate/admin-only services never appear on public country pages.
+        visibility: "PUBLIC",
         country: { code: countryCode, isActive: true },
         ...(kind ? { kind } : {}),
       },
@@ -824,12 +828,21 @@ export async function getPublicServiceBySlug(
   slug: string,
   countryCode?: string,
   locale?: LocaleCode,
+  opts?: {
+    /** Corporate booking flow: allow CORPORATE_ONLY / CORPORATE_REQUEST_ONLY
+     *  rows through. The ROUTE must verify the requester's corporate
+     *  eligibility before serving a non-PUBLIC service (plan doc §3.2). */
+    allowCorporate?: boolean;
+  },
 ) {
   try {
     const row = await prisma.service.findFirst({
       where: {
         slug,
         isActive: true,
+        visibility: opts?.allowCorporate
+          ? { in: ["PUBLIC", "CORPORATE_ONLY", "CORPORATE_REQUEST_ONLY"] }
+          : "PUBLIC",
         ...(countryCode ? { country: { code: countryCode, isActive: true } } : {}),
       },
       include: {

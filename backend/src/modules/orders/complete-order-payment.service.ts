@@ -411,9 +411,20 @@ async function fulfillPaidOrderFromCheckoutSession(
         skipDuplicates: true,
       });
     }
+    return appointmentIds;
   },
     { maxWait: 10_000, timeout: 30_000 },
-  );
+  ).then((appointmentIds: string[] | undefined) => {
+    if (!appointmentIds) return;
+    // Corporate lifecycle hook — link freshly-minted appointments to a
+    // pending pre-assessment / open corporate request (plan doc §2.1/§2.3).
+    // Fire-and-forget + idempotent, so webhook redelivery is harmless.
+    for (const appointmentId of appointmentIds) {
+      void import("../corporate/corporate-status.service.js")
+        .then((m) => m.onCorporateAppointmentCreated(appointmentId))
+        .catch(() => {});
+    }
+  });
 }
 
 function formatOrderMoney(currencyCode: string, cents: number): string {

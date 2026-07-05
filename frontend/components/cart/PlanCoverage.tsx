@@ -82,9 +82,11 @@ export function PlanCoverage({
 
   const v = state.view;
   const currency = v.currencyCode ?? "EUR";
+  const corporateLine = v.lines.find((l) => l.corporateDiscount);
 
-  // Logged-in but no active subscription → upsell.
-  if (!v.subscriptionId) {
+  // Logged-in but no active subscription → upsell. Corporate members are
+  // exempt — their automatic membership discount renders below instead.
+  if (!v.subscriptionId && !corporateLine) {
     return (
       <div className={shell} style={{ borderColor: "var(--color-border)" }}>
         <p className={headerRow}>
@@ -104,6 +106,12 @@ export function PlanCoverage({
   }
 
   const badge = (line: CartCoverageView["lines"][number]): { label: string; tone: string } => {
+    if (line.corporateDiscount) {
+      return {
+        label: `${line.corporateDiscount.planName} −${line.corporateDiscount.percent}%`,
+        tone: "var(--color-brand-primary)",
+      };
+    }
     if (line.mode === "CREDIT") return { label: t.included, tone: "var(--color-brand-primary)" };
     if (line.mode === "FIXED" || line.mode === "PERCENT")
       return { label: t.discounted, tone: "var(--color-brand-primary)" };
@@ -130,7 +138,7 @@ export function PlanCoverage({
       <p className={headerRow}>
         <Award className="size-4 shrink-0" style={iconStyle} aria-hidden />
         <span className="text-sm font-bold" style={{ color: "var(--color-text-primary)" }}>
-          {v.planName ?? t.title}
+          {v.planName ?? corporateLine?.corporateDiscount?.planName ?? t.title}
         </span>
       </p>
 

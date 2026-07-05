@@ -6,7 +6,11 @@ import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "@/components/cart/CartContext";
 import type { CartItemKind, BenefitSelection } from "@/lib/api/cart-types";
-import { getBenefitPreview, type ServiceBenefitOption } from "@/lib/api/me-subscription";
+import {
+  getBenefitPreview,
+  type CorporateDiscountInfo,
+  type ServiceBenefitOption,
+} from "@/lib/api/me-subscription";
 import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
 import { listFamilyMembers, type FamilyMember } from "@/lib/api/family-client";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
@@ -142,6 +146,7 @@ export function ConsultationBookingForm({
   // cheapest eligible option; written onto the line at add-to-cart.
   const [benefitOptions, setBenefitOptions] = useState<ServiceBenefitOption[]>([]);
   const [benefitSelection, setBenefitSelection] = useState<BenefitSelection>("PAY_NORMAL");
+  const [corporateDiscount, setCorporateDiscount] = useState<CorporateDiscountInfo | null>(null);
   // Saved profile (address + national ID) so we don't ask for it again (req #2).
   const [profile, setProfile] = useState<ProfileAddress | null>(null);
   const [profileLoaded, setProfileLoaded] = useState(false);
@@ -207,6 +212,7 @@ export function ConsultationBookingForm({
       if (cancelled || !res.ok) return;
       const opts = res.data.options;
       setBenefitOptions(opts);
+      setCorporateDiscount(res.data.corporateDiscount ?? null);
       if (opts.length > 1) {
         const best = [...opts].sort((a, b) =>
           a.unitPriceCents !== b.unitPriceCents
@@ -655,6 +661,19 @@ export function ConsultationBookingForm({
               })}
             </div>
           </div>
+        ) : null}
+
+        {/* Automatic corporate-membership discount — applied at checkout,
+          * shown here so the member knows the price they'll actually pay. */}
+        {me && !treatingOther && corporateDiscount && benefitSelection === "PAY_NORMAL" ? (
+          <p
+            className="mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-semibold"
+            style={{ background: "var(--color-brand-mint-dim)", color: "var(--color-brand-primary)" }}
+          >
+            {corporateDiscount.planName} −{corporateDiscount.percent}% ·{" "}
+            {formatPriceRounded(corporateDiscount.amountCents, selectedSlot?.currencyCode ?? "EUR")}{" "}
+            {i18n.corporateOffAtCheckout}
+          </p>
         ) : null}
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">

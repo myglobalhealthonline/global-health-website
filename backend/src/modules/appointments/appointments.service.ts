@@ -549,6 +549,14 @@ export async function updateAppointmentStatus(
         ...(status === "COMPLETED" ? { consultationCompletedAt: new Date() } : {}),
       },
     });
+    // Corporate lifecycle hook: COMPLETED pre-assessment activates the
+    // employee (+ benefit card); COMPLETED/CANCELLED request appointments
+    // update the CorporateServiceRequest. Fire-and-forget — corporate
+    // bookkeeping must never fail the status change itself. Dynamic import
+    // avoids a module cycle (corporate-status → emails → … → appointments).
+    void import("../corporate/corporate-status.service.js")
+      .then((m) => m.onCorporateAppointmentStatusChanged(id, status))
+      .catch(() => {});
     return getAppointmentById(id);
   } catch (error) {
     if (

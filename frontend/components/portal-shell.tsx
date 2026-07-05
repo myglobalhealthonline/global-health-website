@@ -110,8 +110,8 @@ export function PortalShell({
   children,
 }: {
   user: PortalShellUser;
-  /** Drives `data-portal` (role accent token) — "doctor" or "patient". */
-  portalKey: "doctor" | "patient";
+  /** Drives `data-portal` (role accent token) — "doctor", "patient" or "corporate". */
+  portalKey: "doctor" | "patient" | "corporate";
   /** Labeled nav groups, rendered top-to-bottom with an eyebrow each. */
   groups: PortalNavGroup[];
   /** Mint eyebrow under logo (e.g., "Doctor portal"). */
