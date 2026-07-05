@@ -7,3 +7,7 @@
 # Optional: pin the Dockerfile explicitly
 # [build]
 # dockerfilePath = "Dockerfile"
+
+[deploy]
+healthcheckPath = "/api/health"
+healthcheckTimeout = 100

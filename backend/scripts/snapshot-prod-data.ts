@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { writeFileSync, mkdirSync } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { prisma } from "../src/db/prisma.js";
 
@@ -10,7 +11,11 @@ import { prisma } from "../src/db/prisma.js";
  * Doctor / DoctorCountry / PatientProfile / Appointment / BookingSetting
  * / Clinic / Country / AuditLog.
  *
- * Writes to `backups/prod-data-<YYYY-MM-DD-HHMMSS>.json` (gitignored).
+ * Writes to `<SNAPSHOT_OUTPUT_DIR>/prod-data-<YYYY-MM-DD-HHMMSS>.json`.
+ * Defaults to a directory outside the repo (an unencrypted snapshot
+ * containing patient/doctor PII has no business sitting in a synced repo
+ * folder even gitignored — code review 2026-07-05, SF13). Set
+ * SNAPSHOT_OUTPUT_DIR to override.
  * Use as a "before" reference if you need to spot-check what changed
  * post-deploy.
  */
@@ -31,10 +36,8 @@ const TABLES = [
     .toISOString()
     .replace(/[:.]/g, "-")
     .slice(0, 19);
-  const outPath = path.resolve(
-    __dirname,
-    `../../backups/prod-data-${stamp}.json`,
-  );
+  const outDir = process.env.SNAPSHOT_OUTPUT_DIR?.trim() || path.join(os.tmpdir(), "gh-prod-snapshots");
+  const outPath = path.resolve(outDir, `prod-data-${stamp}.json`);
   mkdirSync(path.dirname(outPath), { recursive: true });
 
   const snapshot: Record<string, unknown[]> = {};

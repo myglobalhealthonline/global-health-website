@@ -9,6 +9,7 @@ import { getObject, isMediaStorageConfigured, putObject, streamToNodeReadable } 
 import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
+import { verifySniffedMime } from "../utils/sniff-mime.js";
 import {
   createMedicalDocument,
   getPatientAccessibleDocument,
@@ -138,11 +139,13 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
       if (fileBuffer.length > MEDICAL_DOC_MAX_BYTES) {
         return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
       }
-      if (!MEDICAL_DOC_ALLOWED_MIME.has(mimetype)) {
+      const sniffedMime = verifySniffedMime(fileBuffer, mimetype, MEDICAL_DOC_ALLOWED_MIME);
+      if (!sniffedMime) {
         return reply.status(400).send(
-          errorResponse("File type not allowed (PDF, JPG, PNG, WebP)"),
+          errorResponse("File content does not match an allowed type (PDF, JPG, PNG, WebP)"),
         );
       }
+      mimetype = sniffedMime;
       if (!VALID_DOCUMENT_TYPES.has(documentType)) documentType = "REPORT";
       if (!title.trim()) {
         return reply.status(400).send(errorResponse("Title is required"));
@@ -393,9 +396,11 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
       if (fileBuffer.length > MEDICAL_DOC_MAX_BYTES) {
         return reply.status(413).send(errorResponse("File too large (max 10 MB)"));
       }
-      if (!MEDICAL_DOC_ALLOWED_MIME.has(mimetype)) {
-        return reply.status(400).send(errorResponse("File type not allowed"));
+      const sniffedMime = verifySniffedMime(fileBuffer, mimetype, MEDICAL_DOC_ALLOWED_MIME);
+      if (!sniffedMime) {
+        return reply.status(400).send(errorResponse("File content does not match an allowed type"));
       }
+      mimetype = sniffedMime;
       if (!VALID_DOCUMENT_TYPES.has(documentType)) documentType = "EXAM_RESULT";
       if (!title.trim()) {
         return reply.status(400).send(errorResponse("Title is required"));

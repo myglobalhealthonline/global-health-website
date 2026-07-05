@@ -1,5 +1,7 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { getSetting, upsertSetting, deleteSetting } from "../settings/settings.service.js";
+import { normalizeDbError } from "../shared/db-errors.js";
 
 /**
  * Configuration + state for the same-day GP quick-book flow.
@@ -155,6 +157,9 @@ export async function readRotationCursor(
  * Not atomic with the read — two simultaneous assignments may land on the same
  * doctor, which only nudges fairness, never correctness (the atomic OPEN→HELD
  * slot claim in the cart still prevents any double-booking).
+ *
+ * @deprecated Prefer `claimNextRotationCursor`, which reads and advances the
+ * cursor in one atomic statement. Kept only for the admin/debug surface.
  */
 export async function writeRotationCursor(
   countryCode: string,
@@ -165,4 +170,44 @@ export async function writeRotationCursor(
   await upsertSetting(cursorKey(countryCode, serviceId, languageCode), {
     index: nextIndex,
   });
+}
+
+/**
+ * Atomically claim the current rotation cursor value and advance it, in one
+ * round trip. Two concurrent calls for the same lane are guaranteed distinct
+ * return values (no lost updates), unlike the read-then-write pair above.
+ *
+ * Returns the value to use for THIS assignment (`candidates[value %
+ * candidates.length]`); the stored cursor is left at `value + 1`.
+ */
+export async function claimNextRotationCursor(
+  countryCode: string,
+  serviceId: string,
+  languageCode: string,
+): Promise<number> {
+  const key = cursorKey(countryCode, serviceId, languageCode);
+  try {
+    // Ensure the row exists before the atomic increment below (a benign
+    // race between two first-ever callers is resolved by ON CONFLICT — at
+    // most one loses and both still see a valid row for the UPDATE).
+    await prisma.$executeRaw(Prisma.sql`
+      INSERT INTO "Setting" ("key", "value", "updatedAt")
+      VALUES (${key}, '{"index":0}'::jsonb, NOW())
+      ON CONFLICT ("key") DO NOTHING
+    `);
+    const rows = await prisma.$queryRaw<{ index: bigint }[]>(Prisma.sql`
+      UPDATE "Setting"
+      SET "value" = jsonb_set(
+            "value",
+            '{index}',
+            to_jsonb((COALESCE(("value"->>'index')::bigint, 0) + 1) % 9007199254740991)
+          ),
+          "updatedAt" = NOW()
+      WHERE "key" = ${key}
+      RETURNING (COALESCE(("value"->>'index')::bigint, 1) - 1) AS index
+    `);
+    return Number(rows[0]?.index ?? 0);
+  } catch (error) {
+    throw normalizeDbError(error, "Could not advance GP rotation cursor");
+  }
 }

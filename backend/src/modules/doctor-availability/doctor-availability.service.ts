@@ -209,6 +209,25 @@ export async function ensureSlotsForRange(
       skipDuplicates: true,
     });
   } catch (error) {
+    // A concurrent caller (e.g. a different service for the same doctor) may
+    // have created an overlapping slot between our in-process check above
+    // and this write — the DB-level exclusion constraint
+    // (no_overlapping_doctor_slots) catches what the in-memory `existing`
+    // array can't. Batch insert aborts entirely on one conflicting row, so
+    // fall back to inserting one at a time and drop just the row(s) that
+    // lost the race.
+    if (isExclusionViolation(error)) {
+      for (const row of generated) {
+        try {
+          await prisma.doctorTimeSlot.create({ data: row });
+        } catch (rowError) {
+          if (!isExclusionViolation(rowError)) {
+            throw normalizeDbError(rowError, "Slot generation unavailable");
+          }
+        }
+      }
+      return;
+    }
     throw normalizeDbError(error, "Slot generation unavailable");
   }
 }
@@ -256,6 +275,12 @@ export function intervalsOverlap(
   b: { startAt: Date; endAt: Date },
 ): boolean {
   return a.startAt < b.endAt && a.endAt > b.startAt;
+}
+
+/** Postgres exclusion-constraint violation (23P01) — not modeled in the Prisma schema. */
+function isExclusionViolation(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes("23P01") || message.toLowerCase().includes("exclusion constraint");
 }
 
 /**
@@ -362,6 +387,25 @@ export async function ensureServiceSlotsForRange(
       skipDuplicates: true,
     });
   } catch (error) {
+    // A concurrent caller (e.g. a different service for the same doctor) may
+    // have created an overlapping slot between our in-process check above
+    // and this write — the DB-level exclusion constraint
+    // (no_overlapping_doctor_slots) catches what the in-memory `existing`
+    // array can't. Batch insert aborts entirely on one conflicting row, so
+    // fall back to inserting one at a time and drop just the row(s) that
+    // lost the race.
+    if (isExclusionViolation(error)) {
+      for (const row of generated) {
+        try {
+          await prisma.doctorTimeSlot.create({ data: row });
+        } catch (rowError) {
+          if (!isExclusionViolation(rowError)) {
+            throw normalizeDbError(rowError, "Slot generation unavailable");
+          }
+        }
+      }
+      return;
+    }
     throw normalizeDbError(error, "Slot generation unavailable");
   }
 }

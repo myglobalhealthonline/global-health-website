@@ -7,6 +7,7 @@ import {
   orderIsPaidForMeet,
 } from "../admin-orders/generate-order-meet-link.service.js";
 import { stopPrePaymentFlowOnPaid } from "../automation/pre-payment-flow.service.js";
+import { emitOpsAlert } from "../subscriptions/ops/ops-alert.js";
 
 export type PaymentLog = {
   info: (obj: unknown, msg?: string) => void;
@@ -58,6 +59,12 @@ export async function completeOrderPaymentFromCheckoutSession(
     await fulfillPaidOrderFromCheckoutSession(orderId, session, log);
   } catch (err) {
     log.error({ err, orderId }, "Order marked PAID but fulfillment failed — reconcile manually");
+    await emitOpsAlert({
+      severity: "critical",
+      title: "Order marked PAID but fulfillment failed",
+      detail: err instanceof Error ? err.message : String(err),
+      context: { orderId, stripeEventId: opts.stripeEventId },
+    });
   }
 
   await ensureOrderPaidAutomations(orderId, log, { sendShopConfirmation: true });
@@ -479,10 +486,6 @@ export async function ensureOrderPaidAutomations(
         "../admin-orders/generate-order-meet-link.service.js"
       );
       await autoProvisionOrderMeetOnPaid(orderId, log);
-      const afterMeet = await prisma.order.findUnique({
-        where: { id: orderId },
-        select: { meetingUrl: true, postPaymentStage: true },
-      });
     } catch (meetErr) {
       log.warn({ err: meetErr, orderId }, "Order Meet auto-provision import failed");
     }

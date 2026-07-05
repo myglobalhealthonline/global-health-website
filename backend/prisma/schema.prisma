@@ -2003,7 +2003,11 @@ model OrderItem {
 model Payment {
   id                    String        @id @default(cuid())
   appointmentId         String
-  appointment           Appointment   @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  // Restrict, not Cascade: a Payment row is a financial/audit record (refund
+  // disputes, accounting, PHI audit trail) and must survive deletion of the
+  // Appointment it's attached to. Every other Appointment relation is
+  // SetNull; Payment was the one outlier (code review 2026-07-05, SF6).
+  appointment           Appointment   @relation(fields: [appointmentId], references: [id], onDelete: Restrict)
   stripeEventId         String        @unique
   stripeSessionId       String?
   stripePaymentIntentId String?
@@ -2293,6 +2297,30 @@ model Setting {
   key       String   @id
   value     Json
   updatedAt DateTime @updatedAt
+}
+
+/// Patient-upload magic-link tokens (SF5, code review 2026-07-05). Replaces
+/// a stateless 100-year HMAC-signed token with a DB-backed, short-lived,
+/// revocable one — only the hash of the bearer token is stored, so a DB
+/// leak alone can't be used to forge uploads.
+model PatientUploadLink {
+  id            String    @id @default(cuid())
+  /// SHA-256 hex digest of the bearer token — never store the raw token.
+  tokenHash     String    @unique
+  email         String
+  appointmentId String
+  doctorId      String
+  /// Set when the link is bound to one exams prescription (v3 layout).
+  documentId    String?
+  expiresAt     DateTime
+  /// Diagnostic only — last time the link was presented and accepted.
+  usedAt        DateTime?
+  /// Set when superseded by a freshly-minted link for the same scope, or by
+  /// a future manual-revoke action.
+  revokedAt     DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@index([email, appointmentId])
 }
 
 /// Audit trail for the same-day GP quick-book auto-assignment.
