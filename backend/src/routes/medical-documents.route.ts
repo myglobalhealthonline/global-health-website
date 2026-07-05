@@ -3,11 +3,10 @@ import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { requireAuth } from "../utils/require-auth.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { getObject, isMediaStorageConfigured, putObject, streamToNodeReadable } from "../services/object-storage.js";
 import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
-import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { verifySniffedMime } from "../utils/sniff-mime.js";
 import {
@@ -245,11 +244,11 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
         });
         if (!profile) return reply.status(404).send(errorResponse("Patient not found"));
 
-        const actor = await resolveOptionalAuthUser(request);
+        const actor = resolveAdminSessionActor(request);
         try {
           await guardMedicalRead(
             request,
-            { userId: actor?.id ?? "", role: actor?.role ?? "ADMIN" },
+            { userId: actor?.userId ?? "", role: actor?.role ?? "ADMIN" },
             { patientProfileId: profile.id, resourceType: "MEDICAL_DOC", accessAction: "VIEWED" },
           );
         } catch (guardError) {
@@ -279,11 +278,11 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
       });
       if (!doc) return reply.status(404).send(errorResponse("Document not found"));
 
-      const actor = await resolveOptionalAuthUser(request);
+      const actor = resolveAdminSessionActor(request);
       try {
         await guardMedicalRead(
           request,
-          { userId: actor?.id ?? "", role: actor?.role ?? "ADMIN" },
+          { userId: actor?.userId ?? "", role: actor?.role ?? "ADMIN" },
           { patientProfileId: doc.patientProfileId, resourceType: "MEDICAL_DOC", accessAction: "DOWNLOADED", resourceId: doc.id },
         );
       } catch (guardError) {

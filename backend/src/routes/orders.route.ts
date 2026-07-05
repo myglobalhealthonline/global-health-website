@@ -11,7 +11,7 @@ import { generateOrderNumber } from "../lib/order-number.js";
 import { buildPtStripeInvoiceData } from "../modules/invoices/pt-stripe-invoice-data.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import {
   ensurePaidOrderMeetLink,
@@ -28,6 +28,11 @@ import {
   reserveAndPriceConsultations,
 } from "../modules/subscriptions/checkout-pricing.service.js";
 import { computeEffectivePrices } from "../modules/orders/effective-pricing.service.js";
+import {
+  assertOrderCountryScope,
+  resolveOrderListCountryScope,
+} from "../utils/order-country-scope.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
 
 /**
  * Orders + checkout.
@@ -608,14 +613,36 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
     }
     const { limit, cursor, status, countryCode, q } = query.data;
 
+    // LOCAL_ADMIN folder scope (code review 2026-07-05, bug #4) — restrict
+    // the list to the admin's assigned countries. null means unscoped
+    // (ADMIN/SUPER_ADMIN); an empty array means a LOCAL_ADMIN with no
+    // assigned folders sees nothing (fail closed), not everything.
+    const scopedFolders = await resolveOrderListCountryScope(request);
+
+    // Combine the admin's explicit ?countryCode= filter with their scope:
+    // requesting a country outside scope must return zero rows, not the
+    // scope's full set (which would silently ignore the admin's filter) and
+    // not every country (which would leak out-of-scope orders).
+    let countryCodeFilter: string | { in: string[] } | undefined;
+    if (countryCode && scopedFolders) {
+      const requested = countryCode.toLowerCase();
+      countryCodeFilter = scopedFolders.includes(requested) ? requested : { in: [] };
+    } else if (countryCode) {
+      countryCodeFilter = countryCode.toLowerCase();
+    } else if (scopedFolders) {
+      countryCodeFilter = { in: scopedFolders };
+    }
+
     try {
       // Filters compose: status / countryCode are exact-match, `q`
       // searches across email + fullName + id (case-insensitive). Cursor
       // pagination off Order.id — stable because id is a cuid.
+      // countryCode is stored lowercase (see manual-booking.service.ts) —
+      // this filter previously uppercased it, silently matching nothing.
       const orders = await prisma.order.findMany({
         where: {
           ...(status ? { status } : {}),
-          ...(countryCode ? { countryCode: countryCode.toUpperCase() } : {}),
+          ...(countryCodeFilter !== undefined ? { countryCode: countryCodeFilter } : {}),
           ...(q
             ? {
                 OR: [
@@ -718,6 +745,11 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         });
         if (!order) return reply.status(404).send(errorResponse("Order not found"));
 
+        const scope = await assertOrderCountryScope(request, order.id, order.countryCode);
+        if (!scope.allowed) {
+          return reply.status(scope.status).send(errorResponse(scope.message));
+        }
+
         let meetingUrl = order.meetingUrl;
         if (
           orderNeedsAutoMeetLink({
@@ -809,10 +841,50 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       }
 
       try {
+        // LOCAL_ADMIN folder scope (code review 2026-07-05, bug #4) — a
+        // bulk request can name orders spanning multiple countries; silently
+        // applying it to all of them would let a LOCAL_ADMIN mutate orders
+        // outside their assigned folders. Restrict to in-scope ids and
+        // report what was excluded rather than failing the whole request or
+        // silently dropping ids with no signal.
+        const scopedFolders = await resolveOrderListCountryScope(request);
+        let targetIds = body.data.ids;
+        let skippedIds: string[] = [];
+        if (scopedFolders) {
+          const rows = await prisma.order.findMany({
+            where: { id: { in: body.data.ids } },
+            select: { id: true, countryCode: true },
+          });
+          const inScope = new Set(
+            rows.filter((r) => scopedFolders.includes(r.countryCode.toLowerCase())).map((r) => r.id),
+          );
+          skippedIds = body.data.ids.filter((id) => !inScope.has(id));
+          targetIds = body.data.ids.filter((id) => inScope.has(id));
+          if (skippedIds.length > 0) {
+            await recordAudit({
+              actorUserId: resolveAdminSessionActor(request)?.userId ?? null,
+              actorRole: "LOCAL_ADMIN",
+              action: "SECURITY_ALERT_CREATED",
+              entityType: "Order",
+              entityId: skippedIds.join(","),
+              metadata: {
+                reason: "LOCAL_ADMIN bulk order update excluded out-of-scope ids",
+                skippedIds,
+                allowedCountryFolders: scopedFolders,
+              },
+              request,
+            }).catch(() => {});
+          }
+        }
+
+        if (targetIds.length === 0) {
+          return okResponse({ count: 0, status: body.data.status, skippedIds });
+        }
+
         // For cancellations, release HELD slots from all selected orders
         if (body.data.status === OrderStatus.CANCELLED) {
           const orders = await prisma.order.findMany({
-            where: { id: { in: body.data.ids } },
+            where: { id: { in: targetIds } },
             include: { items: true },
           });
           const heldSlotIds = orders
@@ -827,14 +899,14 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         }
 
         const result = await prisma.order.updateMany({
-          where: { id: { in: body.data.ids } },
+          where: { id: { in: targetIds } },
           data: { status: body.data.status },
         });
 
         // Settle subscription credit reservations for each affected order,
         // mirroring the single-order PATCH (#17): CANCELLED releases, FULFILLED
         // commits. Idempotent + no-op without reservations.
-        for (const orderId of body.data.ids) {
+        for (const orderId of targetIds) {
           if (body.data.status === OrderStatus.CANCELLED) {
             await releaseOrderCreditReservations(orderId).catch((err) => {
               request.log.error({ err, orderId }, "Bulk release order credit reservations failed");
@@ -845,7 +917,11 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             });
           }
         }
-        return okResponse({ count: result.count, status: body.data.status });
+        return okResponse({
+          count: result.count,
+          status: body.data.status,
+          ...(skippedIds.length > 0 ? { skippedIds } : {}),
+        });
       } catch (err) {
         if (err instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(err.message));
@@ -871,6 +947,17 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       }
 
       try {
+        // LOCAL_ADMIN folder scope (code review 2026-07-05, bug #4).
+        const target = await prisma.order.findUnique({
+          where: { id: params.data.id },
+          select: { countryCode: true },
+        });
+        if (!target) return reply.status(404).send(errorResponse("Order not found"));
+        const scope = await assertOrderCountryScope(request, params.data.id, target.countryCode);
+        if (!scope.allowed) {
+          return reply.status(scope.status).send(errorResponse(scope.message));
+        }
+
         // If cancelling, release any HELD consultation slots back to OPEN
         // so other patients can claim them. Skip slots already BOOKED
         // (those are real appointments that need their own cancel flow).

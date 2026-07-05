@@ -5,8 +5,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 import { maskIban } from "../utils/iban.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
-import { resolveOptionalAuthUser } from "../utils/request-auth.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 /**
@@ -44,9 +43,9 @@ const adminDoctorBankRoute: FastifyPluginAsync = async (app) => {
         let iban: string | null = null;
         if (reveal && row?.ibanEncrypted) {
           iban = decryptPhi(row.ibanEncrypted);
-          const actor = await resolveOptionalAuthUser(request);
+          const actor = resolveAdminSessionActor(request);
           recordAudit({
-            actorUserId: actor?.id ?? null,
+            actorUserId: actor?.userId ?? null,
             actorRole: actor?.role ?? "ADMIN",
             action: "DOCTOR_BANK_VIEWED",
             entityType: "Doctor",

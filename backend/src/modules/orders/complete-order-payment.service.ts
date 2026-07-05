@@ -8,6 +8,7 @@ import {
 } from "../admin-orders/generate-order-meet-link.service.js";
 import { stopPrePaymentFlowOnPaid } from "../automation/pre-payment-flow.service.js";
 import { emitOpsAlert } from "../subscriptions/ops/ops-alert.js";
+import { commitOrderCreditReservations } from "../subscriptions/checkout-pricing.service.js";
 
 export type PaymentLog = {
   info: (obj: unknown, msg?: string) => void;
@@ -52,6 +53,15 @@ export async function completeOrderPaymentFromCheckoutSession(
 
   if (alreadyPaid) {
     await ensureOrderPaidAutomations(orderId, log);
+    // Still attempt the credit commit on every call, not just the one that
+    // first flipped PAID (bug found in a prior review pass: the
+    // webhook-vs-sync-order race meant whichever path ISN'T first to mark
+    // PAID would return alreadyPaid=true and skip the commit entirely,
+    // leaving the reservation stuck RESERVED forever with the credit
+    // already spent). Idempotent — a no-op once already committed — so
+    // retrying here on every redelivered webhook or sync-order call is
+    // also a self-heal if the original commit attempt silently failed.
+    await commitCreditsForPaidOrder(orderId, opts.stripeEventId, log);
     return { alreadyPaid: true, orderId };
   }
 
@@ -67,8 +77,33 @@ export async function completeOrderPaymentFromCheckoutSession(
     });
   }
 
+  await commitCreditsForPaidOrder(orderId, opts.stripeEventId, log);
   await ensureOrderPaidAutomations(orderId, log, { sendShopConfirmation: true });
   return { alreadyPaid: false, orderId };
+}
+
+/**
+ * Commit any subscription credit reservations on this order — the charge
+ * succeeded, so RESERVED -> CONSUMED (§36.3). Called from BOTH the webhook
+ * and sync-order paths via this single shared function so neither can skip
+ * it (see the caller's comment for the bug this closes).
+ */
+async function commitCreditsForPaidOrder(
+  orderId: string,
+  stripeEventId: string,
+  log: PaymentLog,
+): Promise<void> {
+  try {
+    await commitOrderCreditReservations(orderId);
+  } catch (err) {
+    log.error({ err, orderId }, "Commit order credit reservations failed");
+    await emitOpsAlert({
+      severity: "critical",
+      title: "Order paid but credit reservation commit failed",
+      detail: err instanceof Error ? err.message : String(err),
+      context: { orderId, stripeEventId },
+    });
+  }
 }
 
 /** Idempotent: records Stripe event + flips order to PAID. Never throws on fulfillment errors. */
