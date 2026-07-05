@@ -6,15 +6,15 @@ import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { fetchAdminCountries } from "@/lib/admin/admin-api";
 import { postAdminPlan } from "@/lib/admin/plans-api";
 import { parsePlanForm, type PlanType } from "@/lib/admin/plan-form-parse";
-import { PlanFields } from "../../_components/plan-fields";
+import { PlanFields, PLAN_TYPE_LABEL } from "../../_components/plan-fields";
 import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
 const PLAN_TYPES: { value: PlanType; label: string; blurb: string }[] = [
-  { value: "ESSENTIAL", label: "Essential Care", blurb: "1 GP credit / month. No wellness." },
-  { value: "COMPREHENSIVE", label: "Comprehensive Care", blurb: "2 GP credits / month. No wellness." },
-  { value: "PREMIUM", label: "Premium Wellness Care", blurb: "3 GP credits / month + wellness credits + health-kit redemption." },
+  { value: "ESSENTIAL", label: PLAN_TYPE_LABEL.ESSENTIAL, blurb: "1 GP credit / month. No wellness." },
+  { value: "COMPREHENSIVE", label: PLAN_TYPE_LABEL.COMPREHENSIVE, blurb: "2 GP credits / month. No wellness." },
+  { value: "PREMIUM", label: PLAN_TYPE_LABEL.PREMIUM, blurb: "3 GP credits / month + wellness credits + health-kit redemption." },
 ];
 
 type PageProps = { searchParams?: Promise<{ countryId?: string; planType?: string; error?: string }> };

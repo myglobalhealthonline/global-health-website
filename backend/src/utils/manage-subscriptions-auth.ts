@@ -9,12 +9,13 @@ import { errorResponse } from "./response.js";
  * MANAGE_SUBSCRIPTIONS — plan/billing management for the subscription admin
  * surfaces (plans, rules, perks, subscriber list, manual credit adjustments).
  *
- * `verifyAdminAccess` already proves the caller is ADMIN/SUPER_ADMIN/
- * LOCAL_ADMIN, so every authenticated admin holds MANAGE_SUBSCRIPTIONS (can
- * view the page, approve perks, resync). The one action carved out by role is
- * the manual balance adjustment (money mutation) — that additionally
- * requires `actorRole === "SUPER_ADMIN"`, checked by the route handler using
- * the `actorRole` this function resolves.
+ * `verifyAdminAccess` proves the caller is ADMIN/SUPER_ADMIN/LOCAL_ADMIN;
+ * MANAGE_SUBSCRIPTIONS is then granted to the GLOBAL admin tiers only —
+ * LOCAL_ADMIN (country-scoped ops role) is explicitly denied, since these
+ * surfaces span all countries (plan config, subscriber PII, resync/refund).
+ * Money mutations (balance adjustment, refund) additionally require
+ * `actorRole === "SUPER_ADMIN"`, checked by the route handler using the
+ * `actorRole` this function resolves.
  *
  * Sensitive money actions are further protected by friction on top of the
  * role check: a hidden "Support override" panel, a mandatory written reason,
@@ -42,6 +43,12 @@ export function elevateToManageSubscriptions(
   if (!base.ok) return base;
   if (base.method === "token_fallback") {
     return { ok: true, method: "token_fallback", actorUserId: null, actorRole: "ADMIN" };
+  }
+  // LOCAL_ADMIN is a country-scoped operational role (orders, patient support).
+  // Subscription plan/billing config is global — plans, rules, subscriber PII,
+  // resync/regrant/refund — so it stays with global admins only.
+  if (sessionRole === "LOCAL_ADMIN") {
+    return { ok: false, status: 403, message: MANAGE_SUBSCRIPTIONS_FORBIDDEN };
   }
   return { ok: true, method: "session", actorUserId, actorRole: sessionRole ?? "ADMIN" };
 }

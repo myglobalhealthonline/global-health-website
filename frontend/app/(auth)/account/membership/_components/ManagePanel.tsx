@@ -42,6 +42,8 @@ export interface ManagePanelProps {
   pendingChangePlanName: string | null;
   pendingChangeDate: string | null;
   planOptions: PlanOption[];
+  /** Preselects the change-plan dropdown (from pricing "Switch to this plan"). */
+  initialPlanId?: string | null;
   returnState: string | null;
   pricingHref: string;
 }
@@ -68,7 +70,7 @@ export function ManagePanel(props: ManagePanelProps) {
   const router = useRouter();
   const [busy, setBusy] = useState<null | "portal" | "cancel" | "change" | "cancelChange">(null);
   const [notice, setNotice] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState<string>("");
+  const [selectedPlan, setSelectedPlan] = useState<string>(props.initialPlanId ?? "");
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
   const [confirmChangeOpen, setConfirmChangeOpen] = useState(false);
 

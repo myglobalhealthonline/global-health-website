@@ -13,14 +13,14 @@ import { SubscriptionDashboard } from "../_components/SubscriptionDashboard";
 
 export const metadata: Metadata = { title: "Your membership", robots: { index: false } };
 
-type Search = { subscription?: string; redemption?: string };
+type Search = { subscription?: string; redemption?: string; plan?: string };
 
 export default async function MembershipPage({
   searchParams,
 }: {
   searchParams: Promise<Search>;
 }) {
-  const [{ subscription: returnState }, sub, locale] = await Promise.all([
+  const [{ subscription: returnState, plan: requestedPlanId }, sub, locale] = await Promise.all([
     searchParams,
     getServerSubscription(),
     getPageLocale(),
@@ -91,6 +91,9 @@ export default async function MembershipPage({
         pendingChangePlanName={sub.pendingChange?.planName ?? null}
         pendingChangeDate={pendingChangeDate}
         planOptions={planOptions}
+        // Pricing-page "Switch to this plan" carries ?plan= — preselect it in
+        // the change dropdown when it's a valid switch target.
+        initialPlanId={planOptions.some((p) => p.id === requestedPlanId) ? requestedPlanId! : null}
         returnState={returnState ?? null}
         pricingHref={pricingHref}
       />

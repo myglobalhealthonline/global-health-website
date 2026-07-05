@@ -189,7 +189,13 @@ export default async function PricingPage({
                   ctaHref={subscribeHref(plan.id, code, lang, isAuthenticated, returnTo)}
                   isCurrentPlan={plan.id === activePlanId}
                   hasActiveSub={hasActiveSub}
-                  manageHref="/account/membership"
+                  // "Switch to this plan" lands on the manage panel with the
+                  // target preselected; the current plan's card just manages.
+                  manageHref={
+                    plan.id === activePlanId
+                      ? "/account/membership"
+                      : `/account/membership?plan=${encodeURIComponent(plan.id)}`
+                  }
                 />
               ))}
             </div>

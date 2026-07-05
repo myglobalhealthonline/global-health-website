@@ -7,6 +7,8 @@ import {
   fetchAdminSubscriptions,
   fetchSubscriptionHealth,
   postAdminAdjustCredits,
+  postAdminSubscriptionRegrant,
+  postAdminSubscriptionResync,
   postApproveAdminPerkGrant,
   type CreditKind,
 } from "@/lib/admin/plans-api";
@@ -80,6 +82,42 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
     const grantId = String(formData.get("grantId") ?? "");
     if (grantId) await postApproveAdminPerkGrant(grantId);
     revalidatePath("/admin/subscriptions");
+  }
+
+  async function resyncAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const subscriptionId = String(formData.get("subscriptionId") ?? "");
+    if (!subscriptionId) return;
+    const result = await postAdminSubscriptionResync(subscriptionId);
+    revalidatePath("/admin/subscriptions");
+    redirect(
+      `/admin/subscriptions?${
+        result.ok
+          ? `success=${encodeURIComponent(
+              result.data.outcome === "DRIFT"
+                ? "Provider subscription not found — drift flagged."
+                : "Subscription resynced from provider.",
+            )}`
+          : `error=${encodeURIComponent(result.message)}`
+      }`,
+    );
+  }
+
+  async function regrantAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const subscriptionId = String(formData.get("subscriptionId") ?? "");
+    if (!subscriptionId) return;
+    const result = await postAdminSubscriptionRegrant(subscriptionId);
+    revalidatePath("/admin/subscriptions");
+    redirect(
+      `/admin/subscriptions?${
+        result.ok
+          ? `success=${encodeURIComponent("Period grant re-run (no-op if already granted).")}`
+          : `error=${encodeURIComponent(result.message)}`
+      }`,
+    );
   }
 
   async function adjustCreditsAction(formData: FormData) {
@@ -278,6 +316,28 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                         >
                           View audit trail
                         </a>
+                        {/* Ops repair actions (§6.4) — both safe: resync is a
+                            read-and-reconcile, regrant is period-idempotent. */}
+                        <div className="mt-1.5 flex gap-3">
+                          <form action={resyncAction}>
+                            <input type="hidden" name="subscriptionId" value={sub.id} />
+                            <button
+                              type="submit"
+                              className="text-[11px] font-semibold text-[var(--color-text-muted)] underline-offset-2 hover:underline"
+                            >
+                              Resync from Stripe
+                            </button>
+                          </form>
+                          <form action={regrantAction}>
+                            <input type="hidden" name="subscriptionId" value={sub.id} />
+                            <button
+                              type="submit"
+                              className="text-[11px] font-semibold text-[var(--color-text-muted)] underline-offset-2 hover:underline"
+                            >
+                              Re-run period grant
+                            </button>
+                          </form>
+                        </div>
                       </Td>
                     </Tr>
                   ))}
@@ -310,6 +370,26 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                     >
                       View audit trail
                     </a>
+                    <div className="mt-1.5 flex gap-3">
+                      <form action={resyncAction}>
+                        <input type="hidden" name="subscriptionId" value={sub.id} />
+                        <button
+                          type="submit"
+                          className="text-[11px] font-semibold text-[var(--color-text-muted)] underline-offset-2 hover:underline"
+                        >
+                          Resync from Stripe
+                        </button>
+                      </form>
+                      <form action={regrantAction}>
+                        <input type="hidden" name="subscriptionId" value={sub.id} />
+                        <button
+                          type="submit"
+                          className="text-[11px] font-semibold text-[var(--color-text-muted)] underline-offset-2 hover:underline"
+                        >
+                          Re-run period grant
+                        </button>
+                      </form>
+                    </div>
                   </PortalMobileCard>
                 ))}
               </div>

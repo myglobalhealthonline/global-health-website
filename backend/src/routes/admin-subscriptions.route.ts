@@ -172,6 +172,12 @@ const adminSubscriptionsRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/admin/subscriptions/:id/refund", async (request, reply) => {
     const auth = await requireManageSubscriptions(request, reply);
     if (!auth) return;
+    // Money mutation — same SUPER_ADMIN bar as adjust-credits (§4): a refund
+    // moves real money and claws back credits, so it must not sit below the
+    // balance-adjustment gate.
+    if (auth.actorRole !== "SUPER_ADMIN") {
+      return reply.status(403).send(errorResponse("Super-admin access is required for refunds"));
+    }
     const params = subscriptionIdParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid subscription id"));
     try {

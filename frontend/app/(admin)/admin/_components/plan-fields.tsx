@@ -13,7 +13,8 @@ type Props = {
   planType?: PlanType;
 };
 
-const PLAN_TYPE_LABEL: Record<PlanType, string> = {
+/** Single source of truth for tier display names across the admin surfaces. */
+export const PLAN_TYPE_LABEL: Record<PlanType, string> = {
   ESSENTIAL: "Essential Care",
   COMPREHENSIVE: "Comprehensive Care",
   PREMIUM: "Premium Wellness Care",

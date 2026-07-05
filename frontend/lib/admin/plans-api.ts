@@ -291,6 +291,20 @@ export async function postAdminAdjustCredits(subscriptionId: string, body: unkno
   );
 }
 
+export async function postAdminSubscriptionResync(subscriptionId: string) {
+  return adminRequest<{ outcome: "RESYNCED" | "DRIFT" | "NO_PROVIDER" }>(
+    `/api/admin/subscriptions/${subscriptionId}/resync`,
+    { method: "POST" },
+  );
+}
+
+export async function postAdminSubscriptionRegrant(subscriptionId: string) {
+  return adminRequest<{ outcome: "GRANTED" | "NOT_APPLICABLE"; reason?: string }>(
+    `/api/admin/subscriptions/${subscriptionId}/regrant-period`,
+    { method: "POST" },
+  );
+}
+
 export type AdminCreditLedgerEntry = {
   kind: "CONSULTATION" | "WELLNESS";
   deltaCredits: number;
