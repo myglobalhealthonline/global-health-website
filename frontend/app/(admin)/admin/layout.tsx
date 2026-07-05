@@ -61,7 +61,6 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/doctors", label: "Doctors" },
     { href: "/admin/blog", label: "Blog" },
     { href: "/admin/assets", label: "Assets" },
-    { href: "/admin/media/orphaned", label: "Orphaned images" },
     { href: "/admin/users", label: "Users" },
     { href: "/admin/patients", label: "Patients" },
     { href: "/admin/messages", label: "Messages" },

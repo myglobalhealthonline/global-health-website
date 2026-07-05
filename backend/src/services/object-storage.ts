@@ -1,7 +1,6 @@
 import {
   DeleteObjectCommand,
   GetObjectCommand,
-  ListObjectsV2Command,
   PutObjectCommand,
   type GetObjectCommandOutput,
   S3Client,
@@ -105,31 +104,6 @@ export async function putObject(key: string, body: Buffer, contentType: string):
   }
 
   throw new Error("Object storage is not configured");
-}
-
-/** List every key under `prefix` (S3 only — used by the admin orphaned-media
- *  picker for post-incident recovery; not needed in local/dev storage). */
-export async function listObjects(prefix: string): Promise<{ key: string; size: number; lastModified: Date | undefined }[]> {
-  if (!isObjectStorageConfigured()) return [];
-  const client = getClient();
-  const out: { key: string; size: number; lastModified: Date | undefined }[] = [];
-  let token: string | undefined;
-  do {
-    const resp = await client.send(
-      new ListObjectsV2Command({
-        Bucket: env.S3_BUCKET!,
-        Prefix: prefix,
-        ContinuationToken: token,
-        MaxKeys: 1000,
-      }),
-    );
-    for (const obj of resp.Contents ?? []) {
-      if (!obj.Key) continue;
-      out.push({ key: obj.Key, size: obj.Size ?? 0, lastModified: obj.LastModified });
-    }
-    token = resp.NextContinuationToken;
-  } while (token);
-  return out;
 }
 
 export async function deleteObject(key: string): Promise<void> {
