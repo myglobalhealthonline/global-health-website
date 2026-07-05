@@ -366,6 +366,16 @@ async function fulfillPaidOrderFromCheckoutSession(
       where: { id: orderId },
       data: { appointmentIds },
     });
+
+    // Dual-write into the relational join table alongside the legacy array
+    // (Suggestion 8, code review 2026-07-05). skipDuplicates keeps this
+    // idempotent — this function re-runs on Stripe webhook redelivery.
+    if (appointmentIds.length > 0) {
+      await tx.orderAppointment.createMany({
+        data: appointmentIds.map((appointmentId) => ({ orderId, appointmentId })),
+        skipDuplicates: true,
+      });
+    }
   },
     { maxWait: 10_000, timeout: 30_000 },
   );
