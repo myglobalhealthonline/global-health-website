@@ -47,9 +47,8 @@ export function CountryCertificationLogos({
   return (
     <section
       aria-label={`${trust.country.name} certification and partner logos`}
-      className="relative overflow-hidden bg-[radial-gradient(circle_at_10%_12%,rgba(176,241,34,0.18),transparent_30%),radial-gradient(circle_at_90%_0%,rgba(255,255,255,0.12),transparent_26%),linear-gradient(135deg,#08241a_0%,#123826_48%,#071f17_100%)] py-[clamp(44px,5vw,72px)]"
+      className="relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark py-[clamp(44px,5vw,72px)]"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(0deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:58px_58px] opacity-35" />
       <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <RevealOnScroll delay={0}>
           <div>

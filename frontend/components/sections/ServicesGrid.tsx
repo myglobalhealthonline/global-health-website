@@ -79,11 +79,10 @@ export function ServicesGrid({
 
   return (
     <section
-      className={isDark ? "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark" : ""}
+      className={isDark ? "relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark" : ""}
       style={
         isDark
           ? {
-              background: "var(--color-background-dark)",
               padding: "clamp(64px,8vw,120px) 0",
               borderTop: "1px solid rgba(255,255,255,0.07)",
             }

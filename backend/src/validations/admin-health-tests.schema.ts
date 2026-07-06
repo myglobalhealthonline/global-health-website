@@ -130,12 +130,21 @@ export const healthTestFaqIdParamsSchema = z.object({
   faqId: z.string().trim().min(1),
 });
 
+const healthTestFaqTranslationEntrySchema = z.object({
+  locale: localeCodeSchema,
+  question: z.string().trim().min(1).max(500),
+  answer: z.string().trim().min(1).max(5000),
+});
+
+export type HealthTestFaqTranslationInput = z.infer<typeof healthTestFaqTranslationEntrySchema>;
+
 export const healthTestFaqCreateBodySchema = z.object({
   question: z.string().trim().min(1).max(500),
   answer: z.string().trim().min(1).max(5000),
   sortOrder: z.coerce.number().int().min(0).max(9999).optional(),
   isVisible: z.boolean().optional(),
-});
+  translations: z.array(healthTestFaqTranslationEntrySchema).max(6).optional(),
+}).superRefine((value, ctx) => validateUniqueLocales(value.translations, ctx));
 
 export const healthTestFaqUpdateBodySchema = z
   .object({
@@ -143,7 +152,9 @@ export const healthTestFaqUpdateBodySchema = z
     answer: z.string().trim().min(1).max(5000).optional(),
     sortOrder: z.coerce.number().int().min(0).max(9999).optional(),
     isVisible: z.boolean().optional(),
+    translations: z.array(healthTestFaqTranslationEntrySchema).max(6).optional(),
   })
+  .superRefine((value, ctx) => validateUniqueLocales(value.translations, ctx))
   .refine((v) => Object.keys(v).length > 0, "No fields to update");
 
 export const healthTestFaqReorderBodySchema = z.object({

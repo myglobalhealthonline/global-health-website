@@ -493,7 +493,6 @@ export default async function CountryLangHomePage({
         ctaLabel={page?.ctaLabel ?? null}
         i18n={t.countryHero}
       />
-      <TrustMarquee items={trustMarqueeItems} />
       <RichBodySection html={page?.body} theme="light" />
       <TrustRibbon items={trustItems} theme="light" />
       <ServiceCatalog services={serviceCatalogItems} i18n={tServices.catalog} />

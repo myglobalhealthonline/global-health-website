@@ -1,5 +1,11 @@
 import { apiRequest } from "./client";
 
+export type AdminHealthTestFaqTranslation = {
+  locale: string;
+  question: string;
+  answer: string;
+};
+
 export type AdminHealthTestFaqDto = {
   id: string;
   healthTestId: string;
@@ -9,11 +15,17 @@ export type AdminHealthTestFaqDto = {
   isVisible: boolean;
   createdAt: string;
   updatedAt: string;
+  translations?: AdminHealthTestFaqTranslation[];
 };
 
 export async function createAdminHealthTestFaq(
   healthTestId: string,
-  body: { question: string; answer: string; isVisible?: boolean },
+  body: {
+    question: string;
+    answer: string;
+    isVisible?: boolean;
+    translations?: AdminHealthTestFaqTranslation[];
+  },
 ) {
   return apiRequest<{ faq: AdminHealthTestFaqDto }>(
     `/api/admin/health-tests/${encodeURIComponent(healthTestId)}/faqs`,
@@ -29,7 +41,13 @@ export async function createAdminHealthTestFaq(
 export async function updateAdminHealthTestFaq(
   healthTestId: string,
   faqId: string,
-  body: { question?: string; answer?: string; sortOrder?: number; isVisible?: boolean },
+  body: {
+    question?: string;
+    answer?: string;
+    sortOrder?: number;
+    isVisible?: boolean;
+    translations?: AdminHealthTestFaqTranslation[];
+  },
 ) {
   return apiRequest<{ faq: AdminHealthTestFaqDto }>(
     `/api/admin/health-tests/${encodeURIComponent(healthTestId)}/faqs/${encodeURIComponent(faqId)}`,

@@ -9,6 +9,10 @@ import type {
 import { normalizeDbError } from "../shared/db-errors.js";
 import { resolveTranslation } from "../shared/resolve-translation.js";
 import { assertLocaleSupported } from "../shared/locale-support.js";
+import {
+  healthTestFaqTranslationSelect,
+  mergeHealthTestFaqTranslation,
+} from "./health-test-faq.service.js";
 
 /** Scalar display fields a HealthTestTranslation overrides. Array/JSON
  *  fields stay on the base row for now (no public detail page yet). */
@@ -218,16 +222,30 @@ export async function getPublicHealthTestBySlug(
         faqs: {
           where: { isVisible: true },
           orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
-          select: { id: true, question: true, answer: true, sortOrder: true },
+          select: {
+            id: true,
+            question: true,
+            answer: true,
+            sortOrder: true,
+            translations: { select: healthTestFaqTranslationSelect },
+          },
         },
       },
     });
     if (!row) return null;
-    return mergeHealthTestTranslation(
-      row,
-      locale ?? row.country.defaultLocale,
-      row.country.defaultLocale,
-    );
+    const requestedLocale = locale ?? row.country.defaultLocale;
+    const faqs = row.faqs.map((faq) => {
+      const { resolvedLocale: _resolvedLocale, ...merged } = mergeHealthTestFaqTranslation(
+        faq,
+        requestedLocale,
+        row.country.defaultLocale,
+      );
+      return merged;
+    });
+    return {
+      ...mergeHealthTestTranslation(row, requestedLocale, row.country.defaultLocale),
+      faqs,
+    };
   } catch (error) {
     throw normalizeDbError(error, "Health test data is unavailable");
   }

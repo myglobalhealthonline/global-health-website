@@ -52,8 +52,8 @@ export default async function BlogIndexPage() {
 
       <section
         id="articles"
+        className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
         style={{
-          background: "var(--color-background-soft)",
           borderTop: "1px solid rgba(29,75,54,0.10)",
           padding: "clamp(64px,8vw,120px) 0",
         }}
@@ -75,7 +75,7 @@ export default async function BlogIndexPage() {
               </Link>
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 [&>*:first-child]:lg:col-span-2">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2 [&>*:first-child]:lg:col-span-2">
               {ordered.map((post) => (
                 <BlogCard
                   key={post.slug}
@@ -92,15 +92,6 @@ export default async function BlogIndexPage() {
           )}
         </div>
       </section>
-      <DoctifyReviewsSection
-        theme="forest"
-        variant="carousel"
-        language="en"
-        eyebrow="Patient reviews"
-        headline="Trusted by thousands"
-        headlineAccent="of patients"
-        body="Independent, verified reviews collected by Doctify from patients treated by our clinicians."
-      />
     </>
   );
 }

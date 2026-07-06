@@ -169,9 +169,8 @@ export default async function PrescriptionsPage({
         </div>
       ) : (
         <section
-          className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
+          className="relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
           style={{
-            background: "var(--color-background-dark)",
             padding: "clamp(48px,6vw,80px) 0",
             borderTop: "1px solid rgba(255,255,255,0.07)",
           }}

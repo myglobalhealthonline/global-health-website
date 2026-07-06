@@ -1,4 +1,5 @@
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
+import { BadgeCheck, SearchCheck, UserCheck } from "lucide-react";
 import type { CountryTrust } from "@/lib/content/get-country-trust";
 
 /**
@@ -77,7 +78,7 @@ export function VerifiedProfessionals({
   return (
     <section
       aria-labelledby="verified-professionals-heading"
-      className="border-y border-[rgba(29,75,54,0.10)] bg-[var(--color-background-soft)] py-[clamp(64px,8vw,120px)]"
+      className="relative overflow-hidden border-y border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel py-[clamp(64px,8vw,120px)]"
     >
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <div className="grid items-center gap-14 lg:grid-cols-[1fr_1.35fr] lg:gap-20">
@@ -115,28 +116,48 @@ export function VerifiedProfessionals({
           <RevealOnScroll
             stagger
             delay={120}
-            className="grid grid-cols-1 gap-x-12 gap-y-12 sm:grid-cols-3"
+            className="grid grid-cols-1 gap-5 sm:grid-cols-3"
           >
-            {c.points.map((point, index) => (
-              <div
-                key={point.title}
-                className={
-                  index === 0
-                    ? "flex flex-col gap-3 border-t-2 border-[var(--color-brand-primary)] pt-6"
-                    : "flex flex-col gap-3 border-t-2 border-[rgba(29,75,54,0.16)] pt-6"
-                }
-              >
-                <span className="text-[13px] font-bold tracking-[0.1em] text-[#8FB021] [font-variant-numeric:tabular-nums]">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <h3 className="text-[1rem] font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-                  {point.title}
-                </h3>
-                <p className="text-[14px] leading-relaxed text-[var(--color-text-muted)]">
-                  {point.body}
-                </p>
-              </div>
-            ))}
+            {c.points.map((point, index) => {
+              const Icon = [UserCheck, SearchCheck, BadgeCheck][index] ?? BadgeCheck;
+              return (
+                <div
+                  key={point.title}
+                  className="gh2-glass-forest gh2-glass-hover relative flex flex-col gap-4 overflow-hidden rounded-2xl p-6"
+                >
+                  {/* Top accent hairline — lime, matches StatsBand card language */}
+                  <div
+                    aria-hidden
+                    className="absolute inset-x-0 top-0 h-[3px]"
+                    style={{
+                      background:
+                        "linear-gradient(90deg, var(--color-brand-accent), rgba(176,241,34,0.2))",
+                    }}
+                  />
+                  <div className="flex items-center justify-between">
+                    <span
+                      className="inline-flex size-11 items-center justify-center rounded-xl"
+                      style={{
+                        background: "rgba(176,241,34,0.10)",
+                        border: "1px solid rgba(176,241,34,0.18)",
+                        color: "var(--color-brand-accent)",
+                      }}
+                    >
+                      <Icon className="size-[18px]" strokeWidth={1.6} aria-hidden />
+                    </span>
+                    <span className="text-[13px] font-bold tracking-[0.1em] text-[var(--color-brand-accent)] [font-variant-numeric:tabular-nums]">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+                  <h3 className="text-[1rem] font-extrabold tracking-[-0.01em] text-white/90">
+                    {point.title}
+                  </h3>
+                  <p className="text-[14px] leading-relaxed text-white/65">
+                    {point.body}
+                  </p>
+                </div>
+              );
+            })}
           </RevealOnScroll>
         </div>
       </div>

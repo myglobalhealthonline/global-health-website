@@ -159,12 +159,12 @@ export default async function PricingPage({
 
       <section
         id="plans"
-        className="scroll-mt-24 bg-[var(--color-background-soft)] gh-inline-clamp-section-pricing"
+        className="scroll-mt-24 gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-pricing"
       >
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="mx-auto max-w-2xl text-center">
             <p
-              className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-primary)]"
+              className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-accent)]"
             >
               {t.eyebrow}
             </p>
@@ -200,7 +200,7 @@ export default async function PricingPage({
               ))}
             </div>
           ) : (
-            <div className="mx-auto mt-14 max-w-xl rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-10 text-center">
+            <div className="mx-auto mt-14 max-w-xl rounded-[var(--radius-card)] border border-[var(--color-border)] gh2-glass-forest p-10 text-center">
               <h3
                 className="text-[1.4rem] font-bold tracking-[-0.02em] text-[var(--color-text-primary)]"
               >
@@ -223,34 +223,34 @@ export default async function PricingPage({
       </section>
 
       {/* Doctify social proof — verified patient ratings above the fold-out steps */}
-      <section className="border-t border-[var(--color-border)] bg-[var(--color-background-page)] gh-inline-clamp-section-tight">
+      <section className="border-t border-[var(--color-border)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <DoctifyWidget variant="horizontal" language={lang} />
         </div>
       </section>
 
       {/* How it works — 5-step onboarding overview (subscriptions are IE-only). */}
-      <section className="bg-[var(--color-background-page)] gh-inline-clamp-section-pricing">
+      <section className="gh2-section-forest gh-medical-pattern gh-medical-pattern-dark gh-inline-clamp-section-pricing">
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="mx-auto max-w-2xl text-center">
             <p
-              className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-primary)]"
+              className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-accent)]"
             >
               {hiw.eyebrow}
             </p>
             <h2
-              className="mt-3 text-[clamp(2rem,4vw+0.5rem,3.25rem)] font-extrabold leading-[1.04] tracking-[-0.03em] text-[var(--color-text-primary)]"
+              className="mt-3 text-[clamp(2rem,4vw+0.5rem,3.25rem)] font-extrabold leading-[1.04] tracking-[-0.03em] text-white"
             >
               {hiw.title}
             </h2>
-            <p className="mt-3 text-lg font-semibold text-[var(--color-brand-primary)]">
+            <p className="mt-3 text-lg font-semibold text-[var(--color-brand-accent)]">
               {hiw.subtitle}
             </p>
-            <p className="mt-4 text-base leading-relaxed text-[var(--color-text-muted)]">
+            <p className="mt-4 text-base leading-relaxed text-white/70">
               {hiw.lede}
             </p>
             <span
-              className="mt-6 inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-muted)]"
+              className="mt-6 inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white/70"
             >
               <span aria-hidden className="size-1.5 rounded-full bg-[var(--color-brand-accent)]" />
               {hiw.availability}
@@ -268,33 +268,33 @@ export default async function PricingPage({
                     <>
                       <span
                         aria-hidden
-                        className="absolute left-1/2 top-7 hidden h-px w-[calc(100%+1.5rem)] bg-[var(--color-border)] lg:block"
+                        className="absolute left-1/2 top-7 hidden h-px w-[calc(100%+1.5rem)] bg-white/15 lg:block"
                       />
                       <span
                         aria-hidden
-                        className="absolute left-1/2 top-14 -bottom-12 block w-px -translate-x-1/2 bg-[var(--color-border)] lg:hidden"
+                        className="absolute left-1/2 top-14 -bottom-12 block w-px -translate-x-1/2 bg-white/15 lg:hidden"
                       />
                     </>
                   ) : null}
 
                   <span
-                    className="relative z-10 flex size-14 items-center justify-center rounded-full bg-[linear-gradient(135deg,var(--color-brand-primary)_0%,#2A6B4E_100%)] text-base font-extrabold text-[var(--color-brand-accent)] shadow-[0_0_0_4px_var(--color-background-page),0_8px_18px_-8px_rgba(15,46,37,0.45)] transition-transform duration-300 group-hover:scale-110"
+                    className="relative z-10 flex size-14 items-center justify-center rounded-full bg-[linear-gradient(135deg,var(--color-brand-primary)_0%,#2A6B4E_100%)] text-base font-extrabold text-[var(--color-brand-accent)] shadow-[0_0_0_4px_#12342A,0_8px_18px_-8px_rgba(0,0,0,0.45)] transition-transform duration-300 group-hover:scale-110"
                   >
                     {String(i + 1).padStart(2, "0")}
                   </span>
 
                   <p
-                    className="mt-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]"
+                    className="mt-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]"
                   >
                     {interpolate(hiw.stepLabel, { n: i + 1 })}
                   </p>
                   <h3
-                    className="mt-2 text-[1.0625rem] font-bold leading-[1.3] tracking-[-0.01em] text-[var(--color-text-primary)]"
+                    className="mt-2 text-[1.0625rem] font-bold leading-[1.3] tracking-[-0.01em] text-white"
                   >
                     {step.title}
                   </h3>
                   <p
-                    className="mx-auto mt-2 max-w-[16rem] text-sm leading-relaxed text-[var(--color-text-muted)] lg:max-w-none"
+                    className="mx-auto mt-2 max-w-[16rem] text-sm leading-relaxed text-white/70 lg:max-w-none"
                   >
                     {step.body}
                   </p>

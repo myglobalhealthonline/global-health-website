@@ -5,10 +5,12 @@ import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import {
   deleteAdminHealthTest,
+  fetchAdminCountries,
   fetchAdminHealthTestById,
   fetchAdminHealthTestFaqs,
   purgeAdminHealthTest,
 } from "@/lib/admin/admin-api";
+import { resolveCountryLocaleTabs } from "@/lib/admin/service-form-parse";
 import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
 import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
@@ -47,9 +49,10 @@ export default async function AdminHealthTestDetailPage({
 }: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
-  const [result, faqsResult] = await Promise.all([
+  const [result, faqsResult, countriesResult] = await Promise.all([
     fetchAdminHealthTestById(id),
     fetchAdminHealthTestFaqs(id),
+    fetchAdminCountries(),
   ]);
 
   if (!result.ok) {
@@ -74,6 +77,10 @@ export default async function AdminHealthTestDetailPage({
   }
 
   const test = result.data.healthTest;
+  const testCountry = countriesResult.ok
+    ? countriesResult.data.countries.find((country) => country.id === test.countryId)
+    : undefined;
+  const { locales, defaultLocale } = resolveCountryLocaleTabs(testCountry);
 
   async function deactivateAction() {
     "use server";
@@ -226,6 +233,8 @@ export default async function AdminHealthTestDetailPage({
             <HealthTestFaqPanel
               healthTestId={test.id}
               initialFaqs={faqsResult.ok ? faqsResult.data.faqs : []}
+              locales={locales}
+              defaultLocale={defaultLocale}
             />
           </AdminCard>
         </div>

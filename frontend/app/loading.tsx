@@ -4,7 +4,7 @@ export default function Loading() {
       role="status"
       aria-busy="true"
       aria-label="Loading page"
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-[var(--color-background-dark)]"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 gh2-section-forest"
     >
       <div className="relative flex items-center justify-center">
         <span className="absolute size-32 animate-ping rounded-full bg-[var(--color-accent)]/10" />

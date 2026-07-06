@@ -12,7 +12,7 @@
   justify-content: space-between;
   padding: 48px 64px;
   color: #fff;
-  background: var(--color-background-dark);
+  background: linear-gradient(178deg, #12342A 0%, #0F2E25 100%);
 }
 
 .pattern {

@@ -1,5 +1,82 @@
+import type { LocaleCode, Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { resolveTranslation } from "../shared/resolve-translation.js";
+import { LocaleNotSupportedError } from "../shared/locale-support.js";
+import type { HealthTestFaqTranslationInput } from "../../validations/admin-health-tests.schema.js";
+
+const faqWithTranslationsSelect = {
+  id: true,
+  healthTestId: true,
+  question: true,
+  answer: true,
+  sortOrder: true,
+  isVisible: true,
+  createdAt: true,
+  updatedAt: true,
+  translations: { select: { locale: true, question: true, answer: true } },
+} satisfies Prisma.HealthTestFaqSelect;
+
+export const healthTestFaqTranslationSelect = {
+  locale: true,
+  question: true,
+  answer: true,
+} satisfies Prisma.HealthTestFaqTranslationSelect;
+
+type FaqDisplayBase = { question: string; answer: string };
+type FaqTranslationRow = FaqDisplayBase & { locale: LocaleCode };
+
+export function mergeHealthTestFaqTranslation<S extends FaqDisplayBase & { translations: FaqTranslationRow[] }>(
+  faq: S,
+  requested: LocaleCode,
+  defaultLocale: LocaleCode,
+): Omit<S, "translations"> & { resolvedLocale: LocaleCode } {
+  const { tr, resolvedLocale } = resolveTranslation(faq.translations, requested, defaultLocale);
+  const { translations: _translations, ...rest } = faq;
+  return {
+    ...rest,
+    question: tr?.question ?? faq.question,
+    answer: tr?.answer ?? faq.answer,
+    resolvedLocale,
+  };
+}
+
+async function assertFaqLocalesSupported(
+  countryId: string,
+  translations: HealthTestFaqTranslationInput[],
+): Promise<void> {
+  const [enabled, country] = await Promise.all([
+    prisma.countryLocale.findMany({ where: { countryId }, select: { locale: true } }),
+    prisma.country.findUnique({ where: { id: countryId }, select: { defaultLocale: true } }),
+  ]);
+  const allowed = new Set(enabled.map((row) => row.locale));
+  if (country?.defaultLocale) allowed.add(country.defaultLocale);
+  for (const entry of translations) {
+    if (!allowed.has(entry.locale)) throw new LocaleNotSupportedError();
+  }
+}
+
+async function runFaqTranslationOps(
+  client: Prisma.TransactionClient,
+  faqId: string,
+  translations: HealthTestFaqTranslationInput[],
+  sync: boolean,
+): Promise<void> {
+  await Promise.all(
+    translations.map((entry) =>
+      client.healthTestFaqTranslation.upsert({
+        where: { healthTestFaqId_locale: { healthTestFaqId: faqId, locale: entry.locale } },
+        create: { healthTestFaqId: faqId, locale: entry.locale, question: entry.question, answer: entry.answer },
+        update: { question: entry.question, answer: entry.answer },
+      }),
+    ),
+  );
+  if (sync) {
+    await client.healthTestFaqTranslation.deleteMany({
+      where: { healthTestFaqId: faqId, locale: { notIn: translations.map((t) => t.locale) } },
+    });
+  }
+}
 
 export class HealthTestFaqNotFoundError extends Error {
   constructor() {
@@ -32,17 +109,31 @@ export async function listHealthTestFaqs(healthTestId: string, visibleOnly = fal
         ...(visibleOnly ? { isVisible: true } : {}),
       },
       orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+      select: faqWithTranslationsSelect,
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "FAQ data is unavailable");
+  }
+}
+
+export async function listHealthTestFaqsForLocale(
+  healthTestId: string,
+  requested: LocaleCode,
+  defaultLocale: LocaleCode,
+) {
+  try {
+    const rows = await prisma.healthTestFaq.findMany({
+      where: { healthTestId, isVisible: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
       select: {
         id: true,
-        healthTestId: true,
         question: true,
         answer: true,
         sortOrder: true,
-        isVisible: true,
-        createdAt: true,
-        updatedAt: true,
+        translations: { select: healthTestFaqTranslationSelect },
       },
     });
+    return rows.map((row) => mergeHealthTestFaqTranslation(row, requested, defaultLocale));
   } catch (error) {
     throw normalizeDbError(error, "FAQ data is unavailable");
   }
@@ -50,38 +141,60 @@ export async function listHealthTestFaqs(healthTestId: string, visibleOnly = fal
 
 export async function createHealthTestFaq(
   healthTestId: string,
-  data: { question: string; answer: string; sortOrder?: number; isVisible?: boolean },
+  data: {
+    question: string;
+    answer: string;
+    sortOrder?: number;
+    isVisible?: boolean;
+    translations?: HealthTestFaqTranslationInput[];
+  },
 ) {
   try {
     const healthTest = await prisma.healthTest.findUnique({
       where: { id: healthTestId },
-      select: { id: true },
+      select: { id: true, countryId: true },
     });
     if (!healthTest) throw new HealthTestFaqHealthTestNotFoundError();
 
-    const count = await prisma.healthTestFaq.count({ where: { healthTestId } });
-    if (count >= MAX_FAQS_PER_HEALTH_TEST) throw new HealthTestFaqMaxLimitError();
+    if (data.translations) {
+      await assertFaqLocalesSupported(healthTest.countryId, data.translations);
+    }
 
-    const sortOrder =
-      data.sortOrder ??
-      ((await prisma.healthTestFaq.aggregate({
-        where: { healthTestId },
-        _max: { sortOrder: true },
-      }))._max.sortOrder ?? -1) + 1;
+    const faq = await prisma.$transaction(async (tx) => {
+      const count = await tx.healthTestFaq.count({ where: { healthTestId } });
+      if (count >= MAX_FAQS_PER_HEALTH_TEST) throw new HealthTestFaqMaxLimitError();
 
-    return await prisma.healthTestFaq.create({
-      data: {
-        healthTestId,
-        question: data.question,
-        answer: data.answer,
-        sortOrder,
-        isVisible: data.isVisible ?? true,
-      },
+      const sortOrder =
+        data.sortOrder ??
+        ((await tx.healthTestFaq.aggregate({
+          where: { healthTestId },
+          _max: { sortOrder: true },
+        }))._max.sortOrder ?? -1) + 1;
+
+      const created = await tx.healthTestFaq.create({
+        data: {
+          healthTestId,
+          question: data.question,
+          answer: data.answer,
+          sortOrder,
+          isVisible: data.isVisible ?? true,
+        },
+      });
+      if (data.translations && data.translations.length > 0) {
+        await runFaqTranslationOps(tx, created.id, data.translations, false);
+      }
+      return tx.healthTestFaq.findUniqueOrThrow({
+        where: { id: created.id },
+        select: faqWithTranslationsSelect,
+      });
     });
+
+    return faq;
   } catch (error) {
     if (
       error instanceof HealthTestFaqHealthTestNotFoundError ||
-      error instanceof HealthTestFaqMaxLimitError
+      error instanceof HealthTestFaqMaxLimitError ||
+      error instanceof LocaleNotSupportedError
     ) {
       throw error;
     }
@@ -91,21 +204,45 @@ export async function createHealthTestFaq(
 
 export async function updateHealthTestFaq(
   faqId: string,
-  data: { question?: string; answer?: string; sortOrder?: number; isVisible?: boolean },
+  data: {
+    question?: string;
+    answer?: string;
+    sortOrder?: number;
+    isVisible?: boolean;
+    translations?: HealthTestFaqTranslationInput[];
+  },
 ) {
   try {
     const faq = await prisma.healthTestFaq.findUnique({
       where: { id: faqId },
-      select: { id: true },
+      select: { id: true, healthTest: { select: { countryId: true } } },
     });
     if (!faq) throw new HealthTestFaqNotFoundError();
 
-    return await prisma.healthTestFaq.update({
-      where: { id: faqId },
-      data,
+    const { translations, ...rest } = data;
+    if (translations) {
+      await assertFaqLocalesSupported(faq.healthTest.countryId, translations);
+    }
+
+    const updated = await prisma.$transaction(async (tx) => {
+      await tx.healthTestFaq.update({
+        where: { id: faqId },
+        data: rest,
+      });
+      if (translations) {
+        await runFaqTranslationOps(tx, faqId, translations, true);
+      }
+      return tx.healthTestFaq.findUniqueOrThrow({
+        where: { id: faqId },
+        select: faqWithTranslationsSelect,
+      });
     });
+
+    return updated;
   } catch (error) {
-    if (error instanceof HealthTestFaqNotFoundError) throw error;
+    if (error instanceof HealthTestFaqNotFoundError || error instanceof LocaleNotSupportedError) {
+      throw error;
+    }
     throw normalizeDbError(error, "Failed to update FAQ");
   }
 }

@@ -35,6 +35,7 @@ import {
 } from "../validations/admin-health-tests.schema.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { LocaleNotSupportedError } from "../modules/shared/locale-support.js";
 
 function handleWriteError(
   app: { log: { error: (e: unknown) => void } },
@@ -207,6 +208,12 @@ const adminHealthTestsRoute: FastifyPluginAsync = async (app) => {
       if (error instanceof HealthTestFaqMaxLimitError) {
         return reply.status(422).send(errorResponse(error.message));
       }
+      if (error instanceof LocaleNotSupportedError) {
+        return reply.status(400).send(errorResponse(error.message));
+      }
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Unexpected FAQ error"));
     }
@@ -227,6 +234,12 @@ const adminHealthTestsRoute: FastifyPluginAsync = async (app) => {
     } catch (error) {
       if (error instanceof HealthTestFaqNotFoundError) {
         return reply.status(404).send(errorResponse(error.message));
+      }
+      if (error instanceof LocaleNotSupportedError) {
+        return reply.status(400).send(errorResponse(error.message));
+      }
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Unexpected FAQ error"));

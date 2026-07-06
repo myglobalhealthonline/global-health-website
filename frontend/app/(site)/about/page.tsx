@@ -93,7 +93,7 @@ export default async function AboutPage() {
 
       {/* DARK — how we work */}
       <section
-        className="gh-inline-clamp-section-pricing gh-medical-pattern gh-medical-pattern-dark border-t border-white/7 bg-[var(--color-background-dark)]"
+        className="gh-inline-clamp-section-pricing gh-medical-pattern gh-medical-pattern-dark border-t border-white/7 gh2-section-forest"
       >
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-20">

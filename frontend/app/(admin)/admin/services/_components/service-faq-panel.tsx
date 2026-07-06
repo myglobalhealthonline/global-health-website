@@ -3,43 +3,118 @@
 import { useState, useTransition } from "react";
 import {
   type AdminServiceFaqDto,
+  type AdminServiceFaqTranslation,
   createAdminServiceFaq,
   updateAdminServiceFaq,
   deleteAdminServiceFaq,
   reorderAdminServiceFaqs,
 } from "@/lib/api/admin-service-faq-api";
+import { PortalTabs } from "@/components/PortalTabs";
+
+type LocaleTab = { code: string; isDefault: boolean };
 
 type Props = {
   serviceId: string;
   initialFaqs: AdminServiceFaqDto[];
+  locales: LocaleTab[];
+  defaultLocale: string;
 };
 
+/** One locale's question/answer, keyed by uppercase locale code. */
+type LocaleTexts = Record<string, { question: string; answer: string }>;
+
 type FormState = {
-  question: string;
-  answer: string;
+  texts: LocaleTexts;
   isVisible: boolean;
 };
 
-const emptyForm: FormState = { question: "", answer: "", isVisible: true };
+function localeLabel(code: string): string {
+  const names: Record<string, string> = {
+    EN: "English",
+    PT: "Português",
+    ES: "Español",
+    CS: "Čeština",
+    RO: "Română",
+    DE: "Deutsch",
+  };
+  return names[code] ?? code;
+}
 
-export function ServiceFaqPanel({ serviceId, initialFaqs }: Props) {
+function emptyForm(locales: LocaleTab[]): FormState {
+  const texts: LocaleTexts = {};
+  for (const l of locales) texts[l.code] = { question: "", answer: "" };
+  return { texts, isVisible: true };
+}
+
+/** Base question/answer = default locale; translations[] = every locale
+ *  (including default) with non-empty text — mirrors parseTranslations()
+ *  in service-form-parse.ts. Backend now deletes any locale missing from
+ *  this array, so a half-filled tab (see findHalfFilledLocales) must be
+ *  blocked before this ever runs. */
+function formToBody(form: FormState, locales: LocaleTab[], defaultLocale: string) {
+  const upperDefault = defaultLocale.toUpperCase();
+  const base = form.texts[upperDefault] ?? { question: "", answer: "" };
+  const translations: AdminServiceFaqTranslation[] = locales
+    .map((l) => ({ locale: l.code, ...form.texts[l.code] }))
+    .filter((t) => t.question.trim() !== "" && t.answer.trim() !== "");
+  return {
+    question: base.question,
+    answer: base.answer,
+    isVisible: form.isVisible,
+    translations,
+  };
+}
+
+/** Non-default locale tabs where exactly one of question/answer is filled —
+ *  saving as-is would silently drop that text (backend now deletes any
+ *  locale missing from the translations array). */
+function findHalfFilledLocales(form: FormState, locales: LocaleTab[], defaultLocale: string): string[] {
+  const upperDefault = defaultLocale.toUpperCase();
+  return locales
+    .filter((l) => l.code !== upperDefault)
+    .filter((l) => {
+      const t = form.texts[l.code] ?? { question: "", answer: "" };
+      const hasQuestion = t.question.trim() !== "";
+      const hasAnswer = t.answer.trim() !== "";
+      return hasQuestion !== hasAnswer;
+    })
+    .map((l) => l.code);
+}
+
+function formFromFaq(faq: AdminServiceFaqDto, locales: LocaleTab[], defaultLocale: string): FormState {
+  const upperDefault = defaultLocale.toUpperCase();
+  const texts: LocaleTexts = {};
+  for (const l of locales) {
+    const tr = faq.translations?.find((t) => t.locale.toUpperCase() === l.code);
+    if (tr) {
+      texts[l.code] = { question: tr.question, answer: tr.answer };
+    } else if (l.code === upperDefault) {
+      texts[l.code] = { question: faq.question, answer: faq.answer };
+    } else {
+      texts[l.code] = { question: "", answer: "" };
+    }
+  }
+  return { texts, isVisible: faq.isVisible };
+}
+
+export function ServiceFaqPanel({ serviceId, initialFaqs, locales, defaultLocale }: Props) {
   const [faqs, setFaqs] = useState<AdminServiceFaqDto[]>(initialFaqs);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState<FormState>(emptyForm);
+  const [form, setForm] = useState<FormState>(() => emptyForm(locales));
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   function startEdit(faq: AdminServiceFaqDto) {
     setEditingId(faq.id);
-    setForm({ question: faq.question, answer: faq.answer, isVisible: faq.isVisible });
+    setForm(formFromFaq(faq, locales, defaultLocale));
     setShowAdd(false);
     setError(null);
   }
 
   function cancelEdit() {
     setEditingId(null);
-    setForm(emptyForm);
+    setForm(emptyForm(locales));
     setShowAdd(false);
     setError(null);
   }
@@ -47,13 +122,13 @@ export function ServiceFaqPanel({ serviceId, initialFaqs }: Props) {
   function handleAdd() {
     startTransition(async () => {
       setError(null);
-      const res = await createAdminServiceFaq(serviceId, form);
+      const res = await createAdminServiceFaq(serviceId, formToBody(form, locales, defaultLocale));
       if (!res.ok) {
         setError(res.message);
         return;
       }
       setFaqs((prev) => [...prev, res.data.faq]);
-      setForm(emptyForm);
+      setForm(emptyForm(locales));
       setShowAdd(false);
     });
   }
@@ -62,14 +137,18 @@ export function ServiceFaqPanel({ serviceId, initialFaqs }: Props) {
     if (!editingId) return;
     startTransition(async () => {
       setError(null);
-      const res = await updateAdminServiceFaq(serviceId, editingId, form);
+      const res = await updateAdminServiceFaq(
+        serviceId,
+        editingId,
+        formToBody(form, locales, defaultLocale),
+      );
       if (!res.ok) {
         setError(res.message);
         return;
       }
       setFaqs((prev) => prev.map((f) => (f.id === editingId ? res.data.faq : f)));
       setEditingId(null);
-      setForm(emptyForm);
+      setForm(emptyForm(locales));
     });
   }
 
@@ -146,7 +225,7 @@ export function ServiceFaqPanel({ serviceId, initialFaqs }: Props) {
             type="button"
             onClick={() => {
               setShowAdd(true);
-              setForm(emptyForm);
+              setForm(emptyForm(locales));
               setError(null);
             }}
             className="gh-btn gh-btn-primary text-xs"
@@ -172,6 +251,8 @@ export function ServiceFaqPanel({ serviceId, initialFaqs }: Props) {
           onCancel={cancelEdit}
           isPending={isPending}
           saveLabel="Add FAQ"
+          locales={locales}
+          defaultLocale={defaultLocale}
         />
       ) : null}
 
@@ -195,6 +276,8 @@ export function ServiceFaqPanel({ serviceId, initialFaqs }: Props) {
                 onCancel={cancelEdit}
                 isPending={isPending}
                 saveLabel="Save"
+                locales={locales}
+                defaultLocale={defaultLocale}
               />
             ) : (
               <div>
@@ -251,6 +334,11 @@ export function ServiceFaqPanel({ serviceId, initialFaqs }: Props) {
                 <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--color-text-body)]">
                   {faq.answer}
                 </p>
+                {faq.translations && faq.translations.length > 0 ? (
+                  <p className="mt-1 text-[11px] text-[var(--color-text-muted)]">
+                    Translated: {faq.translations.map((t) => localeLabel(t.locale.toUpperCase())).join(", ")}
+                  </p>
+                ) : null}
               </div>
             )}
           </li>
@@ -267,6 +355,8 @@ function FaqForm({
   onCancel,
   isPending,
   saveLabel,
+  locales,
+  defaultLocale,
 }: {
   form: FormState;
   onChange: (f: FormState) => void;
@@ -274,24 +364,57 @@ function FaqForm({
   onCancel: () => void;
   isPending: boolean;
   saveLabel: string;
+  locales: LocaleTab[];
+  defaultLocale: string;
 }) {
+  const upperDefault = defaultLocale.toUpperCase();
+  const [active, setActive] = useState(
+    locales.find((l) => l.code === upperDefault)?.code ?? locales[0]?.code ?? upperDefault,
+  );
+  const activeTexts = form.texts[active] ?? { question: "", answer: "" };
+  const isDefaultTab = active === upperDefault;
+
+  function setActiveTexts(next: { question: string; answer: string }) {
+    onChange({ ...form, texts: { ...form.texts, [active]: next } });
+  }
+
+  const halfFilledLocales = findHalfFilledLocales(form, locales, defaultLocale);
+  const canSave =
+    (form.texts[upperDefault]?.question.trim() ?? "") !== "" &&
+    (form.texts[upperDefault]?.answer.trim() ?? "") !== "" &&
+    halfFilledLocales.length === 0;
+
   return (
     <div className="gh-admin-service-faq-form">
+      {locales.length > 1 ? (
+        <PortalTabs
+          ariaLabel="FAQ translations"
+          value={active}
+          onChange={setActive}
+          items={locales.map((l) => ({
+            value: l.code,
+            label: `${localeLabel(l.code)}${l.isDefault ? " · default" : ""}`,
+          }))}
+        />
+      ) : null}
+
       <div>
         <label
           className="mb-1 block text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]"
           htmlFor="faq-question"
         >
-          Question
+          Question{isDefaultTab ? " *" : ""}
         </label>
         <input
           id="faq-question"
           type="text"
-          value={form.question}
-          onChange={(e) => onChange({ ...form, question: e.target.value })}
+          value={activeTexts.question}
+          onChange={(e) => setActiveTexts({ ...activeTexts, question: e.target.value })}
           maxLength={500}
           className="gh-input w-full"
-          placeholder="What is included in the consultation?"
+          placeholder={
+            isDefaultTab ? "What is included in the consultation?" : "Leave blank to use the default language"
+          }
         />
       </div>
       <div>
@@ -299,18 +422,24 @@ function FaqForm({
           className="mb-1 block text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]"
           htmlFor="faq-answer"
         >
-          Answer
+          Answer{isDefaultTab ? " *" : ""}
         </label>
         <textarea
           id="faq-answer"
-          value={form.answer}
-          onChange={(e) => onChange({ ...form, answer: e.target.value })}
+          value={activeTexts.answer}
+          onChange={(e) => setActiveTexts({ ...activeTexts, answer: e.target.value })}
           maxLength={5000}
           rows={4}
           className="gh-input w-full resize-y"
-          placeholder="The consultation includes..."
+          placeholder={isDefaultTab ? "The consultation includes..." : "Leave blank to use the default language"}
         />
       </div>
+      {halfFilledLocales.length > 0 ? (
+        <p className="text-[11px] text-[var(--color-status-warning-text)]">
+          {halfFilledLocales.map((c) => localeLabel(c)).join(", ")} {halfFilledLocales.length > 1 ? "have" : "has"}{" "}
+          only a question or answer filled in — fill in both or clear both before saving.
+        </p>
+      ) : null}
       <div className="gh-admin-service-active-row">
         <input
           id="faq-visible"
@@ -327,7 +456,7 @@ function FaqForm({
         <button
           type="button"
           onClick={onSave}
-          disabled={isPending || !form.question.trim() || !form.answer.trim()}
+          disabled={isPending || !canSave}
           className="gh-btn gh-btn-primary text-sm disabled:opacity-50"
         >
           {isPending ? "Saving…" : saveLabel}

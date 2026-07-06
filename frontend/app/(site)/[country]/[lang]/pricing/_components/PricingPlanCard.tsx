@@ -69,19 +69,16 @@ export function PricingPlanCard({
 
   return (
     <article
-      className="group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-background-page)] p-7 transition-all duration-300 focus-within:-translate-y-1 hover:-translate-y-1 lg:p-8"
+      className="group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] gh2-glass-forest p-7 transition-all duration-300 focus-within:-translate-y-1 hover:-translate-y-1 lg:p-8"
       style={{
         border: isCurrentPlan
-          ? "1.5px solid var(--color-brand-primary)"
+          ? "1.5px solid var(--color-brand-accent)"
           : featured
             ? "1.5px solid var(--color-brand-accent)"
-            : "1px solid var(--color-border)",
+            : "1px solid rgba(255,255,255,0.14)",
         boxShadow: featured || isCurrentPlan
-          ? "0 24px 50px -28px rgba(15,46,37,0.45)"
-          : "0 1px 2px rgba(15,46,37,0.04)",
-        backgroundImage: featured
-          ? "linear-gradient(180deg, rgba(176,241,34,0.07) 0%, rgba(176,241,34,0) 32%)"
-          : undefined,
+          ? "0 24px 50px -28px rgba(0,0,0,0.45), 0 0 0 1px rgba(176,241,34,0.10)"
+          : "0 1px 2px rgba(0,0,0,0.15)",
       }}
     >
       {/* Top accent bar — featured only */}
@@ -129,7 +126,7 @@ export function PricingPlanCard({
           fontSize: "clamp(1.2rem,1.1vw + 0.7rem,1.45rem)",
           lineHeight: 1.2,
           minHeight: "2.4em",
-          color: "var(--color-text-primary)",
+          color: "rgba(255,255,255,0.92)",
         }}
       >
         {plan.name}
@@ -138,11 +135,11 @@ export function PricingPlanCard({
       <p className="mt-3 flex items-baseline gap-1.5">
         <span
           className="font-extrabold tracking-[-0.04em]"
-          style={{ fontSize: "clamp(2.6rem,2vw + 1.8rem,3.25rem)", color: "var(--color-text-primary)" }}
+          style={{ fontSize: "clamp(2.6rem,2vw + 1.8rem,3.25rem)", color: "var(--color-brand-accent)" }}
         >
           {price}
         </span>
-        <span className="text-sm font-medium" style={{ color: "var(--color-text-muted)" }}>
+        <span className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.60)" }}>
           {t.perMonth}
         </span>
       </p>
@@ -150,25 +147,25 @@ export function PricingPlanCard({
       {/* Short description — reserve 2 lines so dividers align. */}
       <p
         className="mt-3 text-sm leading-relaxed"
-        style={{ color: "var(--color-text-muted)", minHeight: "2.8em" }}
+        style={{ color: "rgba(255,255,255,0.65)", minHeight: "2.8em" }}
       >
         {plan.shortDescription}
       </p>
 
-      <div className="my-6 h-px w-full" style={{ background: "var(--color-border)" }} />
+      <div className="my-6 h-px w-full" style={{ background: "rgba(255,255,255,0.10)" }} />
 
-      <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: "var(--color-text-muted)" }}>
+      <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: "rgba(255,255,255,0.55)" }}>
         {t.includesHeading}
       </p>
       <ul className="mt-4 flex flex-col gap-3.5">
         {features.map((line, i) => (
-          <li key={i} className="flex items-start gap-3 text-sm" style={{ color: "var(--color-text-primary)" }}>
+          <li key={i} className="flex items-start gap-3 text-sm" style={{ color: "rgba(255,255,255,0.85)" }}>
             <span
               aria-hidden
               className="mt-px flex size-5 shrink-0 items-center justify-center rounded-full"
-              style={{ background: "rgba(176,241,34,0.20)" }}
+              style={{ background: "rgba(176,241,34,0.15)" }}
             >
-              <Check className="size-3" strokeWidth={3.25} style={{ color: "var(--color-brand-primary)" }} />
+              <Check className="size-3" strokeWidth={3.25} style={{ color: "var(--color-brand-accent)" }} />
             </span>
             <span className="leading-snug">{line}</span>
           </li>
@@ -179,7 +176,7 @@ export function PricingPlanCard({
           counts keep their CTA aligned. */}
       <div className="mt-auto pt-7">
         {perkNote ? (
-          <p className="mb-5 text-xs leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+          <p className="mb-5 text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
             {perkNote}
           </p>
         ) : null}
@@ -201,7 +198,7 @@ export function PricingPlanCard({
             <Link
               href={manageHref}
               className="text-center text-xs font-semibold underline-offset-2 hover:underline"
-              style={{ color: "var(--color-brand-primary)" }}
+              style={{ color: "var(--color-brand-accent)" }}
             >
               {t.managePlan}
             </Link>

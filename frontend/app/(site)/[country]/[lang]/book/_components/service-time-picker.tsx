@@ -129,23 +129,23 @@ export function ServiceTimePicker({
               data-selected={isActive}
               className={
                 isActive
-                  ? "gh2-selectable relative flex shrink-0 flex-col items-center gap-0.5 rounded-2xl px-4 py-3 min-w-[68px] shadow-[var(--shadow-card)]"
-                  : "gh2-selectable flex shrink-0 flex-col items-center gap-0.5 rounded-2xl border-[rgba(29,75,54,.18)] bg-white px-4 py-3 min-w-[68px] text-[var(--color-text-body)] transition-transform duration-200 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60"
+                  ? "gh2-selectable-dark relative flex shrink-0 flex-col items-center gap-0.5 rounded-2xl px-4 py-3 min-w-[68px] shadow-[var(--shadow-card)]"
+                  : "gh2-selectable-dark flex shrink-0 flex-col items-center gap-0.5 rounded-2xl px-4 py-3 min-w-[68px] transition-transform duration-200 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60"
               }
             >
               {isActive ? (
-                <Check className="absolute right-1.5 top-1.5 size-3.5 text-white" aria-hidden />
+                <Check className="absolute right-1.5 top-1.5 size-3.5 text-[#0a1f1a]" aria-hidden />
               ) : null}
-              <span className={isActive ? "text-[10px] font-bold uppercase tracking-[0.12em] text-white/80" : "text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]"}>
+              <span className={isActive ? "text-[10px] font-bold uppercase tracking-[0.12em] text-[#0a1f1a]/70" : "text-[10px] font-bold uppercase tracking-[0.12em] text-white/55"}>
                 {weekday}
               </span>
-              <span className={isActive ? "text-2xl font-bold leading-none [font-variant-numeric:tabular-nums] text-white" : "text-2xl font-bold leading-none [font-variant-numeric:tabular-nums] text-[var(--color-text-primary)]"}>
+              <span className={isActive ? "text-2xl font-bold leading-none [font-variant-numeric:tabular-nums] text-[#0a1f1a]" : "text-2xl font-bold leading-none [font-variant-numeric:tabular-nums] text-white/90"}>
                 {dayNum}
               </span>
-              <span className={isActive ? "text-[10px] font-semibold uppercase tracking-[0.1em] text-white/70" : "text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]"}>
+              <span className={isActive ? "text-[10px] font-semibold uppercase tracking-[0.1em] text-[#0a1f1a]/70" : "text-[10px] font-semibold uppercase tracking-[0.1em] text-white/55"}>
                 {month}
               </span>
-              <span className={isActive ? "mt-1 text-[10px] font-semibold text-white/80" : "mt-1 text-[10px] font-semibold text-[var(--color-brand-primary)]"}>
+              <span className={isActive ? "mt-1 text-[10px] font-semibold text-[#0a1f1a]/80" : "mt-1 text-[10px] font-semibold text-[var(--color-brand-accent)]"}>
                 {daySlots.length} {daySlots.length === 1 ? i18n.slotSingular : i18n.slotPlural}
               </span>
             </button>
@@ -170,23 +170,23 @@ export function ServiceTimePicker({
                 type="button"
                 onClick={() => chooseTime(s.startAt)}
                 disabled={navigating}
-                className="gh2-selectable inline-flex flex-col items-center justify-center rounded-xl border-[rgba(29,75,54,.18)] bg-white px-3 py-2.5 text-sm font-semibold text-[var(--color-text-primary)] [font-variant-numeric:tabular-nums] transition-transform duration-200 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60"
+                className="gh2-selectable-dark inline-flex flex-col items-center justify-center rounded-xl px-3 py-2.5 text-sm font-semibold text-white/90 [font-variant-numeric:tabular-nums] transition-transform duration-200 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60"
               >
                 <span className="inline-flex items-center gap-1">
                   {navigating ? <Loader2 className="size-3 animate-spin" aria-hidden /> : null}
                   {formatAppTime(s.startAt, tz)}
                 </span>
                 {typeof s.priceCents === "number" ? (
-                  <span className="mt-0.5 text-xs font-medium text-[var(--color-text-muted)]">
+                  <span className="mt-0.5 text-xs font-medium text-white/55">
                     {formatPriceRounded(s.priceCents, s.currencyCode ?? "EUR")}
                   </span>
                 ) : null}
                 {s.pricingType === "PEAK" ? (
-                  <span className="mt-0.5 rounded-full bg-[rgba(255,196,0,0.14)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                  <span className="mt-0.5 rounded-full bg-[rgba(255,196,0,0.16)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-white/70">
                     Peak
                   </span>
                 ) : s.pricingType === "OFF_PEAK" ? (
-                  <span className="mt-0.5 rounded-full bg-[rgba(29,75,54,0.08)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                  <span className="mt-0.5 rounded-full bg-[rgba(176,241,34,0.10)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-[var(--color-brand-accent)]">
                     Off-peak
                   </span>
                 ) : null}

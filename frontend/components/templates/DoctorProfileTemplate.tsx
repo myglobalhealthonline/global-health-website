@@ -377,7 +377,7 @@ export function DoctorProfileTemplate({
       </section>
 
       {/* ── BODY — long-form bio + sticky booking ── */}
-      <section className="border-t border-[rgba(29,75,54,0.10)] bg-[var(--color-background-soft)] py-[clamp(56px,7vw,96px)]">
+      <section className="border-t border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel py-[clamp(56px,7vw,96px)]">
         <div className="gh-container grid gap-16 lg:grid-cols-[1.5fr_1fr] lg:gap-24">
           <article>
             <p
