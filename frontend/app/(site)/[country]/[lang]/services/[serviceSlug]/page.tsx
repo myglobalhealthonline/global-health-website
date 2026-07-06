@@ -408,7 +408,7 @@ export default async function ServiceDetailPage({
               {t.aboutService}
             </p>
             <div
-              className="gh2-card-ivory mt-8 max-w-prose border-t-2 border-t-[rgba(176,241,34,0.24)] p-6 md:p-8"
+              className="gh2-card-ivory mt-8 border-t-2 border-t-[rgba(176,241,34,0.24)] p-6 md:p-8"
             >
               {resolvedLinks.length > 0 ? (
                 <ServiceLinkedBody bodyHtml={bodyHtml} links={resolvedLinks} />
