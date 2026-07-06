@@ -85,7 +85,7 @@ const doctorReportsRoute: FastifyPluginAsync = async (app) => {
         signedCount,
         followUpCount,
         distinctPatientGroups,
-        revenueGroups,
+        paidAppointments,
       ] = await Promise.all([
           prisma.appointment.groupBy({
             by: ["status"],
@@ -116,30 +116,53 @@ const doctorReportsRoute: FastifyPluginAsync = async (app) => {
             by: ["email"],
             where: apptFilter,
           }),
-          // Revenue per currency via groupBy + _sum — bounded, instead of
-          // loading every paid payment row.
-          prisma.payment.groupBy({
-            by: ["currencyCode"],
+          // Doctor revenue = admin-set payout (ServiceDoctor.doctorAmountCents),
+          // NOT the patient's gross price. Fetch paid appointments for this
+          // doctor in range that reference a catalogue service; payouts are
+          // looked up + summed below.
+          prisma.appointment.findMany({
             where: {
-              appointment: {
-                doctorId: auth.doctorId,
-                ...(parsed.data.consultationType
-                  ? { consultationType: parsed.data.consultationType }
-                  : {}),
-              },
-              status: "PAID",
+              doctorId: auth.doctorId,
+              paymentStatus: "PAID",
               createdAt: range,
+              serviceId: { not: null },
+              ...(parsed.data.consultationType
+                ? { consultationType: parsed.data.consultationType }
+                : {}),
             },
-            _sum: { amountCents: true },
+            select: { serviceId: true, currencyCode: true },
           }),
         ]);
 
       const distinctPatients = distinctPatientGroups.length;
 
+      // Live lookup of the payout per (doctor, service), then sum by currency.
+      // Appointments whose service has no payout set are skipped.
+      const revenueServiceIds = Array.from(
+        new Set(
+          paidAppointments
+            .map((a) => a.serviceId)
+            .filter((id): id is string => !!id),
+        ),
+      );
+      const payoutByServiceId = new Map<string, number | null>();
+      if (revenueServiceIds.length > 0) {
+        const payouts = await prisma.serviceDoctor.findMany({
+          where: { doctorId: auth.doctorId, serviceId: { in: revenueServiceIds } },
+          select: { serviceId: true, doctorAmountCents: true },
+        });
+        for (const p of payouts) {
+          payoutByServiceId.set(p.serviceId, p.doctorAmountCents);
+        }
+      }
+
       const revenueByCurrency: Record<string, number> = {};
-      for (const g of revenueGroups) {
-        const key = g.currencyCode ?? "—";
-        revenueByCurrency[key] = g._sum.amountCents ?? 0;
+      for (const appt of paidAppointments) {
+        if (!appt.serviceId) continue;
+        const payout = payoutByServiceId.get(appt.serviceId);
+        if (payout == null) continue;
+        const key = appt.currencyCode ?? "—";
+        revenueByCurrency[key] = (revenueByCurrency[key] ?? 0) + payout;
       }
 
       return okResponse({

@@ -152,7 +152,14 @@ export async function patchAdminPatientProfile(
   );
 }
 
-export async function fetchAdminPatients(query: { ghn?: string; email?: string; page?: string; pageSize?: string }) {
+export async function fetchAdminPatients(query: {
+  ghn?: string;
+  email?: string;
+  phone?: string;
+  taxId?: string;
+  page?: string;
+  pageSize?: string;
+}) {
   const params = new URLSearchParams();
   for (const [k, v] of Object.entries(query)) {
     if (v !== undefined && v !== "") params.set(k, v);

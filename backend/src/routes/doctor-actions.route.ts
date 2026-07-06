@@ -632,15 +632,37 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
             paymentStatus: true,
             amountCents: true,
             currencyCode: true,
+            serviceId: true,
             paidAt: true,
             scheduledAt: true,
             createdAt: true,
           },
         }),
       ]);
+      // AMOUNT the doctor sees is the admin-set payout for (this doctor, the
+      // booked service) — NOT the patient's gross price. Live lookup: one query
+      // maps serviceId -> payout, so changing the payout auto-updates invoices.
+      const serviceIds = Array.from(
+        new Set(rows.map((r) => r.serviceId).filter((id): id is string => !!id)),
+      );
+      const payoutByServiceId = new Map<string, number | null>();
+      if (serviceIds.length > 0) {
+        const assignments = await prisma.serviceDoctor.findMany({
+          where: { doctorId: auth.doctorId, serviceId: { in: serviceIds } },
+          select: { serviceId: true, doctorAmountCents: true },
+        });
+        for (const a of assignments) {
+          payoutByServiceId.set(a.serviceId, a.doctorAmountCents);
+        }
+      }
       return okResponse({
         items: rows.map((r) => ({
           ...r,
+          // null = no assignment for this service, or a free-text booking
+          // (serviceId null) — the UI renders "Not set".
+          doctorAmountCents: r.serviceId
+            ? payoutByServiceId.get(r.serviceId) ?? null
+            : null,
           scheduledAt: r.scheduledAt?.toISOString() ?? null,
           paidAt: r.paidAt?.toISOString() ?? null,
           createdAt: r.createdAt.toISOString(),

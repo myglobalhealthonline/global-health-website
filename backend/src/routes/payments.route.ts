@@ -2,6 +2,7 @@ import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
 import { z } from "zod";
 import { OrderStatus, PaymentStatus } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
+import { releaseSlotsToBaseGrid } from "../modules/doctor-availability/doctor-availability.service.js";
 import {
   getStripeClient,
   isStripeConfigured,
@@ -454,20 +455,13 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                 const heldSlotIds = order.items
                   .map((i) => i.timeSlotId)
                   .filter((id): id is string => Boolean(id));
-                await prisma.$transaction([
-                  prisma.order.update({
-                    where: { id: orderId },
-                    data: { status: "CANCELLED" },
-                  }),
-                  ...(heldSlotIds.length > 0
-                    ? [
-                        prisma.doctorTimeSlot.updateMany({
-                          where: { id: { in: heldSlotIds }, status: "HELD" },
-                          data: { status: "OPEN" },
-                        }),
-                      ]
-                    : []),
-                ]);
+                await prisma.order.update({
+                  where: { id: orderId },
+                  data: { status: "CANCELLED" },
+                });
+                if (heldSlotIds.length > 0) {
+                  await releaseSlotsToBaseGrid(heldSlotIds);
+                }
                 // Release any subscription credit reservations on the
                 // abandoned order (RESERVED → RELEASED, credit restored).
                 await releaseOrderCreditReservations(orderId).catch((err) => {

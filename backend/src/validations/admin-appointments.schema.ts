@@ -179,6 +179,26 @@ export const adminAppointmentsQuerySchema = z.object({
     .max(120)
     .optional()
     .transform((value) => (value === undefined || value === "" ? undefined : value)),
+  /**
+   * Date/time range on the appointment's scheduled slot (falls back to
+   * createdAt when the row is still unscheduled). Accepts a plain date
+   * (`YYYY-MM-DD`) or an `<input type="datetime-local">` value
+   * (`YYYY-MM-DDTHH:mm`). Interpreted as UTC to match stored instants.
+   */
+  dateFrom: z.preprocess(
+    (value) => (value === "" || value === undefined || value === null ? undefined : value),
+    z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/, "dateFrom must be YYYY-MM-DD or YYYY-MM-DDTHH:mm")
+      .optional(),
+  ),
+  dateTo: z.preprocess(
+    (value) => (value === "" || value === undefined || value === null ? undefined : value),
+    z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/, "dateTo must be YYYY-MM-DD or YYYY-MM-DDTHH:mm")
+      .optional(),
+  ),
 });
 
 /**
@@ -223,6 +243,10 @@ export const createManualAppointmentBodySchema = z
     // claims it (OPEN → HELD) and derives scheduledAt from the slot — the
     // admin no longer types a free-text time.
     timeSlotId: z.string().trim().min(1).max(120),
+    // Consultation length in minutes. Defaults to the service's duration
+    // when omitted; the booking dialog can override it. Consumes consecutive
+    // base slots covering this span.
+    durationMinutes: z.number().int().min(5).max(240).optional(),
     consultationMode: z.enum(["ONLINE", "IN_PERSON"]).default("ONLINE"),
     clinicId: z.string().trim().min(1).max(60).optional().nullable(),
     locationAddress: z.string().trim().max(500).optional().nullable(),

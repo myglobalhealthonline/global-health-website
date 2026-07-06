@@ -7,11 +7,13 @@ import {
   adminAssignServiceToDoctor,
   adminRemoveDoctorService,
   approveRejectDoctorService,
+  updateDoctorServicePayout,
   fetchAdminDoctorById,
   fetchAdminDoctorServices,
   fetchAdminServices,
   type AdminDoctorServiceAssignmentDto,
 } from "@/lib/admin/admin-api";
+import { formatServicePriceInput } from "@/lib/admin/service-form-parse";
 import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
 import { FlagBadge } from "../../../_components/flag-badge";
@@ -119,6 +121,45 @@ export default async function AdminDoctorServicesPage({
     revalidatePath(`/admin/doctors/${id}`);
     redirect(
       `/admin/doctors/${id}/services?success=${encodeURIComponent("Assignment removed")}`,
+    );
+  }
+
+  async function amountAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const serviceDoctorId = String(formData.get("serviceDoctorId") ?? "");
+    if (!serviceDoctorId) {
+      redirect(
+        `/admin/doctors/${id}/services?error=${encodeURIComponent("Invalid assignment")}`,
+      );
+    }
+    const raw = String(formData.get("doctorAmount") ?? "").trim();
+    // Empty clears the payout (back to "Not set"); otherwise accept 45 / 45.00.
+    let doctorAmountCents: number | null;
+    if (raw === "") {
+      doctorAmountCents = null;
+    } else if (!/^\d+(?:\.\d{1,2})?$/.test(raw)) {
+      redirect(
+        `/admin/doctors/${id}/services?error=${encodeURIComponent("Payout must be a valid amount like 30 or 30.00")}`,
+      );
+      return;
+    } else {
+      doctorAmountCents = Math.round(Number(raw) * 100);
+    }
+    const res = await updateDoctorServicePayout(
+      id,
+      serviceDoctorId,
+      doctorAmountCents,
+    );
+    if (!res.ok) {
+      redirect(
+        `/admin/doctors/${id}/services?error=${encodeURIComponent(res.message)}`,
+      );
+    }
+    revalidatePath(`/admin/doctors/${id}/services`);
+    revalidatePath(`/admin/doctors/${id}`);
+    redirect(
+      `/admin/doctors/${id}/services?success=${encodeURIComponent("Payout updated")}`,
     );
   }
 
@@ -241,6 +282,28 @@ export default async function AdminDoctorServicesPage({
                 <Pill tone="inactive">Service inactive</Pill>
               ) : null}
             </div>
+            <form
+              action={amountAction}
+              className="mt-3 flex flex-wrap items-end gap-2"
+            >
+              <input type="hidden" name="serviceDoctorId" value={row.id} />
+              <label className="flex flex-col gap-1 text-[12px] font-semibold text-[var(--color-text-muted)]">
+                Doctor payout{" "}
+                {row.service.currencyCode ? `(${row.service.currencyCode})` : ""}
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  name="doctorAmount"
+                  defaultValue={formatServicePriceInput(row.doctorAmountCents)}
+                  placeholder="Not set"
+                  aria-label={`Payout to this doctor for ${row.service.name}`}
+                  className="gh-input w-32 font-mono"
+                />
+              </label>
+              <Btn type="submit" variant="secondary" size="sm">
+                Save payout
+              </Btn>
+            </form>
           </div>
           <div className="gh-admin-doctor-service-actions flex flex-wrap gap-2">
             {row.status === "pending" ? (

@@ -131,9 +131,13 @@ export type CreateManualAppointmentInput = {
   serviceId: string;
   /** Required — the assigned doctor whose open slot is being booked. */
   doctorId: string;
-  /** Required — id of the doctor's OPEN time slot to claim. The backend
-   *  derives scheduledAt from the slot's start time. */
+  /** Required — id of the first base time slot to claim. The backend
+   *  consumes consecutive base slots covering `durationMinutes` and derives
+   *  scheduledAt from the slot's start time. */
   timeSlotId: string;
+  /** Consultation length in minutes. Omit to use the service's duration;
+   *  the booking dialog can override it. */
+  durationMinutes?: number | null;
   consultationMode: "ONLINE" | "IN_PERSON";
   clinicId?: string | null;
   locationAddress?: string | null;

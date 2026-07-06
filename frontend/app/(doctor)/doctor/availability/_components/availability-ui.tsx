@@ -70,7 +70,7 @@ export function DoctorAvailabilityUI({
   const [weekday, setWeekday] = useState(1); // Mon
   const [startTime, setStartTime] = useState("09:00");
   const [endTime, setEndTime] = useState("17:00");
-  const [duration, setDuration] = useState(30);
+  const [duration, setDuration] = useState(15);
   // ISO date strings (YYYY-MM-DD). Empty = "always" / "forever".
   const [effectiveFromDate, setEffectiveFromDate] = useState("");
   const [effectiveUntilDate, setEffectiveUntilDate] = useState("");
@@ -335,7 +335,7 @@ export function DoctorAvailabilityUI({
                           {minutesToTime(w.endMinute)}
                         </p>
                         <p className="text-[11px] text-[var(--portal-muted)]">
-                          {w.slotDurationMinutes}-min slots
+                          {w.slotDurationMinutes}-min base grid
                           {!w.isActive ? " · paused" : ""}
                         </p>
                         {w.effectiveFrom || w.effectiveUntil ? (
@@ -412,7 +412,7 @@ export function DoctorAvailabilityUI({
                 </label>
               </div>
               <label className="flex flex-col gap-1 text-sm">
-                <span className="gh-field-label">Slot length</span>
+                <span className="gh-field-label">Base slot length (grid)</span>
                 <select
                   className="gh-select"
                   value={duration}
@@ -424,6 +424,10 @@ export function DoctorAvailabilityUI({
                     </option>
                   ))}
                 </select>
+                <span className="text-[12px] text-[var(--portal-muted)]">
+                  Consultations consume consecutive base slots to fit their
+                  real length. 15 fits 15/30/45-min consults.
+                </span>
               </label>
 
               {/* Optional effective range — leave blank for "always" */}

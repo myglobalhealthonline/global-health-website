@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { CalendarDays, ChevronRight, SearchX, Video } from "lucide-react";
 import { fetchDoctorAppointments, type DoctorAppointment } from "@/lib/api/doctor-api";
-import { appointmentStatusLabel } from "@/lib/api/appointment-status-labels";
+import {
+  doctorAppointmentView,
+  doctorAppointmentStatusLabel,
+  doctorAppointmentViewTone,
+} from "@/lib/api/appointment-status-labels";
 import {
   AdminEmptyState,
   AdminSummaryStrip,
@@ -48,7 +52,7 @@ export default async function DoctorAppointmentsPage({
   searchParams?: Promise<SearchParams>;
 }) {
   const sp = searchParams ? await searchParams : {};
-  const status = pick(sp, "status");
+  const view = pick(sp, "view");
   const search = pick(sp, "search");
   const from = pick(sp, "from");
   const to = pick(sp, "to");
@@ -57,9 +61,9 @@ export default async function DoctorAppointmentsPage({
   const finalized = pick(sp, "finalized");
   const page = Number(pick(sp, "page") ?? "1") || 1;
   const hasActiveFilters = Boolean(
-    status || search || from || to || consultationType || openOnly || finalized,
+    view || search || from || to || consultationType || openOnly || finalized,
   );
-  const activeFilterCount = [status, search, from, to, consultationType, openOnly, finalized].filter(
+  const activeFilterCount = [view, search, from, to, consultationType, openOnly, finalized].filter(
     Boolean,
   ).length;
   // Same-URL link (not router.refresh — this is a server component page)
@@ -74,7 +78,7 @@ export default async function DoctorAppointmentsPage({
   const result = await fetchDoctorAppointments({
     page: String(page),
     pageSize: "25",
-    ...(status ? { status } : {}),
+    ...(view ? { view } : {}),
     ...(search ? { search } : {}),
     ...(from ? { from } : {}),
     ...(to ? { to } : {}),
@@ -153,13 +157,12 @@ export default async function DoctorAppointmentsPage({
           </label>
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">Status</span>
-            <select name="status" defaultValue={status ?? ""} className="gh-select">
+            <select name="view" defaultValue={view ?? ""} className="gh-select">
               <option value="">Any</option>
-              <option value="REQUEST_RECEIVED">Created</option>
-              <option value="UNDER_REVIEW">Sent</option>
-              <option value="CONTACTED">Contacted</option>
-              <option value="COMPLETED">Concluded</option>
-              <option value="CANCELLED">Cancelled</option>
+              <option value="waiting_payment">Booked – waiting payment</option>
+              <option value="confirmed">Booking confirmed</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="concluded">Concluded</option>
             </select>
           </label>
           <label className="flex flex-col gap-1">
@@ -282,8 +285,11 @@ export default async function DoctorAppointmentsPage({
                   tone={statusToneForAppointmentCard(a.status)}
                   live={live}
                   statusPill={
-                    <Pill tone={live ? "live" : a.status === "COMPLETED" ? "active" : a.status === "CANCELLED" ? "inactive" : "pending"} withDot>
-                      {live ? "Live now" : appointmentStatusLabel(a.status)}
+                    <Pill
+                      tone={live ? "live" : doctorAppointmentViewTone(doctorAppointmentView(a.status, a.paymentStatus))}
+                      withDot
+                    >
+                      {live ? "Live now" : doctorAppointmentStatusLabel(a.status, a.paymentStatus)}
                     </Pill>
                   }
                   action={
@@ -323,8 +329,11 @@ export default async function DoctorAppointmentsPage({
                   title={a.fullName}
                   subtitle={a.email}
                   statusPill={
-                    <Pill tone={live ? "live" : a.status === "COMPLETED" ? "active" : a.status === "CANCELLED" ? "inactive" : "pending"} withDot>
-                      {live ? "Live now" : appointmentStatusLabel(a.status)}
+                    <Pill
+                      tone={live ? "live" : doctorAppointmentViewTone(doctorAppointmentView(a.status, a.paymentStatus))}
+                      withDot
+                    >
+                      {live ? "Live now" : doctorAppointmentStatusLabel(a.status, a.paymentStatus)}
                     </Pill>
                   }
                   tone={a.status === "COMPLETED" ? "success" : a.status === "CANCELLED" ? "danger" : "neutral"}

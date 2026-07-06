@@ -465,6 +465,10 @@ export type DoctorInvoiceRow = {
   status: string;
   paymentStatus: string;
   amountCents: number | null;
+  /** Admin-set payout to the doctor for this consultation, in cents.
+   *  Null = no payout set for the booked service (shows "Not set"). This is
+   *  the value the doctor sees as AMOUNT — not the patient's gross price. */
+  doctorAmountCents: number | null;
   currencyCode: string | null;
   paidAt: string | null;
   scheduledAt: string | null;
@@ -564,6 +568,9 @@ export type DoctorServiceAssignment = {
   status: "pending" | "active" | "rejected" | "disabled";
   selectedBy: "admin" | "doctor";
   isActive: boolean;
+  /** Admin-set payout to this doctor for this service, in cents. Read-only
+   *  for the doctor. Null = not set. */
+  doctorAmountCents: number | null;
 };
 
 export type DoctorSelectableService = {

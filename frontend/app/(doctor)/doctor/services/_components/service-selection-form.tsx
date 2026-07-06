@@ -331,6 +331,15 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
                 <span className="font-mono font-semibold text-[var(--portal-text-2)]">
                   {formatPrice(service.basePriceCents, service.currencyCode)}
                 </span>
+                <span className="inline-flex items-center gap-1 font-mono font-semibold text-[var(--portal-primary)]">
+                  Your fee:{" "}
+                  {service.assignment?.doctorAmountCents == null
+                    ? "Not set"
+                    : formatPrice(
+                        service.assignment.doctorAmountCents,
+                        service.currencyCode,
+                      )}
+                </span>
                 {isAdminLocked ? (
                   <span className="ml-auto inline-flex items-center gap-1">
                     <Lock className="size-3" aria-hidden />
