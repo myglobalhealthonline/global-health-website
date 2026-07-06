@@ -118,6 +118,11 @@ export type AdminHealthTestFaqDto = {
   isVisible: boolean;
   createdAt: string;
   updatedAt: string;
+  translations?: Array<{
+    locale: string;
+    question: string;
+    answer: string;
+  }>;
 };
 
 export async function fetchAdminHealthTestFaqs(healthTestId: string) {

@@ -2771,10 +2771,31 @@ model HealthTestFaq {
   sortOrder     Int         @default(0)
   isVisible     Boolean     @default(true)
   healthTest    HealthTest  @relation(fields: [healthTestId], references: [id], onDelete: Cascade)
+  /// Per-locale overrides; base question/answer stay on this row as the
+  /// country's default-locale copy, same pattern as ServiceFaq.
+  translations  HealthTestFaqTranslation[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
   @@index([healthTestId, isVisible, sortOrder])
+}
+
+/// Per-locale override of a HealthTestFaq's question/answer text. Base
+/// columns on HealthTestFaq hold the country's default-locale copy; a row
+/// here overrides for one other locale. sortOrder/isVisible remain on the
+/// base row because they are locale-independent.
+model HealthTestFaqTranslation {
+  id              String        @id @default(cuid())
+  healthTestFaqId String
+  locale          LocaleCode
+  question        String
+  answer          String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  healthTestFaq   HealthTestFaq @relation(fields: [healthTestFaqId], references: [id], onDelete: Cascade)
+
+  @@unique([healthTestFaqId, locale])
+  @@index([healthTestFaqId])
 }
 
 /// Patient nationality / identity documents. Max 2 per patient (slot 1 and slot 2).

@@ -56,6 +56,97 @@ const CORPORATE_SERVICES = [
   },
 ];
 
+const CORPORATE_SERVICE_LOCALIZATION: Record<
+  string,
+  Record<string, { name: string; summary: string }>
+> = {
+  es: {
+    "corporate-pre-assessment": {
+      name: "Consulta de preevaluación",
+      summary:
+        "Consulta inicial de incorporación corporativa con el médico asignado por Global Health para su empresa.",
+    },
+    "corporate-illness-benefit": {
+      name: "Consulta para prestación por enfermedad",
+      summary:
+        "Consulta solicitada por la empresa para valorar la elegibilidad de un empleado para la prestación por enfermedad.",
+    },
+    "corporate-fit-for-work": {
+      name: "Consulta de aptitud para el trabajo",
+      summary:
+        "Consulta solicitada por la empresa para valorar si un empleado está en condiciones de reincorporarse al trabajo.",
+    },
+  },
+  pt: {
+    "corporate-pre-assessment": {
+      name: "Consulta de pré-avaliação",
+      summary:
+        "Consulta inicial de integração corporativa com o médico da Global Health atribuído à sua empresa.",
+    },
+    "corporate-illness-benefit": {
+      name: "Avaliação para subsídio de doença",
+      summary:
+        "Consulta clínica solicitada pela empresa para avaliar a condição do colaborador e a elegibilidade para subsídio de doença.",
+    },
+    "corporate-fit-for-work": {
+      name: "Avaliação de aptidão para o trabalho",
+      summary:
+        "Consulta clínica solicitada pela empresa para confirmar se o colaborador está em condições de regressar ao trabalho com segurança.",
+    },
+  },
+  br: {
+    "corporate-pre-assessment": {
+      name: "Consulta de pré-avaliação",
+      summary:
+        "Consulta inicial de integração corporativa com o médico da Global Health designado para a sua empresa.",
+    },
+    "corporate-illness-benefit": {
+      name: "Avaliação para benefício por doença",
+      summary:
+        "Consulta clínica solicitada pela empresa para avaliar a condição do colaborador e a elegibilidade para benefício por doença.",
+    },
+    "corporate-fit-for-work": {
+      name: "Avaliação de aptidão para o trabalho",
+      summary:
+        "Consulta clínica solicitada pela empresa para confirmar se o colaborador está em condições de regressar ao trabalho com segurança.",
+    },
+  },
+  ro: {
+    "corporate-pre-assessment": {
+      name: "Consultație de preevaluare",
+      summary:
+        "Consultația inițială de integrare corporativă cu medicul Global Health desemnat companiei dumneavoastră.",
+    },
+    "corporate-illness-benefit": {
+      name: "Consultație pentru evaluarea indemnizației de boală",
+      summary:
+        "Consultație solicitată de companie pentru evaluarea eligibilității unui angajat pentru indemnizație de boală.",
+    },
+    "corporate-fit-for-work": {
+      name: "Consultație pentru aptitudinea de muncă",
+      summary:
+        "Consultație solicitată de companie pentru a evalua dacă un angajat este apt să revină la muncă.",
+    },
+  },
+  cz: {
+    "corporate-pre-assessment": {
+      name: "Vstupní lékařská konzultace",
+      summary:
+        "Úvodní firemní konzultace s lékařem Global Health přiděleným vaší společnosti.",
+    },
+    "corporate-illness-benefit": {
+      name: "Konzultace k nemocenské dávce",
+      summary:
+        "Konzultace vyžádaná zaměstnavatelem za účelem posouzení nároku zaměstnance na nemocenskou dávku.",
+    },
+    "corporate-fit-for-work": {
+      name: "Konzultace pracovní způsobilosti",
+      summary:
+        "Konzultace vyžádaná zaměstnavatelem k posouzení, zda je zaměstnanec způsobilý k návratu do práce.",
+    },
+  },
+};
+
 async function main() {
   const plan = await prisma.corporatePlan.upsert({
     where: { slug: "corporate-standard" },
@@ -102,20 +193,25 @@ async function main() {
 
   for (const country of countries) {
     for (const svc of CORPORATE_SERVICES) {
+      const localized = CORPORATE_SERVICE_LOCALIZATION[country.code]?.[svc.slug];
       await prisma.service.upsert({
         where: { countryId_slug: { countryId: country.id, slug: svc.slug } },
         create: {
           countryId: country.id,
           kind: "GENERAL",
           slug: svc.slug,
-          name: svc.name,
-          summary: svc.summary,
+          name: localized?.name ?? svc.name,
+          summary: localized?.summary ?? svc.summary,
           basePriceCents: 0,
           isActive: true,
           visibility: svc.visibility,
           sortOrder: 999,
         },
-        update: { visibility: svc.visibility }, // heal visibility drift only
+        update: {
+          visibility: svc.visibility,
+          name: localized?.name ?? svc.name,
+          summary: localized?.summary ?? svc.summary,
+        },
       });
     }
     console.log(`services ok: ${country.code} (${country.name})`);
