@@ -1,9 +1,8 @@
 "use client";
 
 import { type CSSProperties, useMemo } from "react";
-import { ChevronLeft, ChevronRight, Lock, User } from "lucide-react";
+import { ChevronLeft, ChevronRight, User } from "lucide-react";
 import { IconBtn } from "@/components/portal-atoms";
-import { formatAppTime } from "@/lib/format-datetime";
 import type { CalendarItem } from "./calendar-types";
 import {
   durationMinutes,
@@ -12,11 +11,12 @@ import {
   type WeekDay,
 } from "./calendar-utils";
 
-const HOUR_PX = 48; // row height per hour
+const HOUR_PX = 68; // row height per hour — roomy enough for 15-min slots
 const PX_PER_MIN = HOUR_PX / 60;
 const DEFAULT_START_HOUR = 7;
 const DEFAULT_END_HOUR = 20;
 const CONSULT_FALLBACK_MIN = 30; // consultations carry no end time
+const MIN_BLOCK_PX = 22; // never render a block shorter than this
 
 type Props = {
   /** Any calendar date inside the week to render ("YYYY-MM-DD"). */
@@ -61,10 +61,14 @@ function solidTone(tone: string): CSSProperties {
   };
 }
 
+// Deep slate for booked appointments — darker than --portal-info so the white
+// patient name reads with strong contrast.
+const BOOKED_FILL = "#33505b";
+
 function toneStyle(item: CalendarItem): CSSProperties {
   // Booked consultations are the thing an admin most needs to spot — solid fill.
   if (item.kind === "consultation") {
-    return solidTone("var(--portal-info)");
+    return solidTone(BOOKED_FILL);
   }
   switch (item.status) {
     case "OPEN":
@@ -77,15 +81,15 @@ function toneStyle(item: CalendarItem): CSSProperties {
     case "BLOCKED":
       return solidTone("var(--portal-danger)");
     case "BOOKED":
-      return solidTone("var(--portal-info)");
+      return solidTone(BOOKED_FILL);
     default: // HELD
       return solidTone("var(--portal-warning)");
   }
 }
 
+// 24-hour gutter label, matching the 24-hour block times below.
 function hourLabel(h: number): string {
-  const display = ((h + 11) % 12) + 1;
-  return `${display} ${h < 12 ? "AM" : "PM"}`;
+  return `${String(h).padStart(2, "0")}:00`;
 }
 
 /** Greedy lane packing so overlapping blocks sit side-by-side instead of
@@ -171,6 +175,19 @@ export function WeekCalendar({
       endHour: Math.min(24, Math.max(maxHour, minHour + 1)),
     };
   }, [weekDays, itemsByDay, tz]);
+
+  // Explicit 24-hour clock (en-GB, hour12:false) so every block reads the same
+  // — en-IE, used elsewhere, flips to AM/PM which looked inconsistent.
+  const fmtTime = useMemo(
+    () =>
+      new Intl.DateTimeFormat("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: tz,
+      }),
+    [tz],
+  );
 
   const hours = Array.from(
     { length: endHour - startHour },
@@ -307,20 +324,17 @@ export function WeekCalendar({
                   {positioned.map((p) => {
                     const laneWidth = 100 / p.lanes;
                     const top = (p.top - startHour * 60) * PX_PER_MIN;
-                    const height = Math.max(p.height * PX_PER_MIN - 2, 16);
+                    const height = Math.max(
+                      p.height * PX_PER_MIN - 2,
+                      MIN_BLOCK_PX,
+                    );
                     const bookable =
                       p.item.kind === "slot" &&
                       p.item.status === "OPEN" &&
                       new Date(p.item.startAt).getTime() > Date.now();
                     const isConsult = p.item.kind === "consultation";
-                    const label =
-                      isConsult
-                        ? p.item.meta?.patientName || p.item.title
-                        : p.item.status === "OPEN"
-                          ? "Open"
-                          : p.item.status === "BLOCKED"
-                            ? "Blocked"
-                            : p.item.status;
+                    const patientName =
+                      p.item.meta?.patientName || p.item.title;
                     const style: CSSProperties = {
                       position: "absolute",
                       top,
@@ -329,21 +343,25 @@ export function WeekCalendar({
                       width: `calc(${laneWidth}% - 4px)`,
                       ...toneStyle(p.item),
                     };
-                    const isBlocked =
-                      p.item.kind === "slot" && p.item.status === "BLOCKED";
-                    const LeadIcon = isConsult ? User : isBlocked ? Lock : null;
-                    const inner = (
+                    const time = fmtTime.format(new Date(p.item.startAt));
+                    // Booked block: patient NAME is the hero, kept inside the
+                    // block bounds (truncate + the block clips overflow). Open
+                    // and blocked slots show only the time — colour carries the
+                    // status (green = open, red = blocked), no text label.
+                    const inner = isConsult ? (
                       <>
-                        <span className="block truncate text-[11px] font-bold leading-tight">
-                          {formatAppTime(p.item.startAt, tz)}
+                        <span className="block truncate text-[10px] font-semibold leading-none opacity-90">
+                          {time}
                         </span>
-                        <span className="flex items-center gap-1 text-[11px] leading-tight">
-                          {LeadIcon ? (
-                            <LeadIcon className="size-3 shrink-0" aria-hidden />
-                          ) : null}
-                          <span className="truncate">{label}</span>
+                        <span className="mt-0.5 flex items-center gap-1 text-[12px] font-bold leading-tight">
+                          <User className="size-3.5 shrink-0" aria-hidden />
+                          <span className="truncate">{patientName}</span>
                         </span>
                       </>
+                    ) : (
+                      <span className="block truncate text-[11px] font-bold leading-tight">
+                        {time}
+                      </span>
                     );
                     // Doctor mode: click an OPEN/BLOCKED slot to toggle it.
                     const toggleable =
@@ -361,7 +379,7 @@ export function WeekCalendar({
                               ? "Click to block (mark busy)"
                               : "Click to re-open"
                           }
-                          className="gh-week-block rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
+                          className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
                           style={style}
                         >
                           {inner}
@@ -375,7 +393,7 @@ export function WeekCalendar({
                           type="button"
                           onClick={() => onSelectOpenSlot(p.item)}
                           title="Book this time"
-                          className="gh-week-block gh-week-block--open rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
+                          className="gh-week-block gh-week-block--open overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
                           style={style}
                         >
                           {inner}
@@ -389,7 +407,7 @@ export function WeekCalendar({
                           type="button"
                           onClick={() => onSelectConsultation(p.item)}
                           title={p.item.meta?.consultationType ?? p.item.title}
-                          className="gh-week-block rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
+                          className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
                           style={style}
                         >
                           {inner}
@@ -400,7 +418,7 @@ export function WeekCalendar({
                       <div
                         key={p.item.id}
                         title={p.item.meta?.blockReason ?? p.item.status}
-                        className="gh-week-block rounded-md border px-1.5 py-1"
+                        className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1"
                         style={style}
                       >
                         {inner}
