@@ -7136,6 +7136,30 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   border-color: var(--color-brand-primary);
   color: #fff;
 }
+/* Hide scrollbar on snap carousels — the arrows + swipe are the affordance. */
+.gh-scrollbar-none {
+  scrollbar-width: none;
+}
+.gh-scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+/* On-dark filter chips — scoped under .gh2-filters-dark (forest-glass
+ * filter panels). Lime active state mirrors the on-dark CTA dosage. */
+.gh2-filters-dark .gh2-pill-filter {
+  border-color: rgba(255, 255, 255, 0.20);
+  color: var(--gh2-on-dark-muted);
+}
+.gh2-filters-dark .gh2-pill-filter:hover {
+  border-color: rgba(176, 241, 34, 0.45);
+  color: rgba(255, 255, 255, 0.92);
+}
+.gh2-filters-dark .gh2-pill-filter[aria-pressed="true"],
+.gh2-filters-dark .gh2-pill-filter[data-selected="true"],
+.gh2-filters-dark .gh2-pill-filter[data-active="true"] {
+  background: var(--color-brand-accent);
+  border-color: var(--color-brand-accent);
+  color: #0a1f14;
+}
 /* Focus ring variant for controls sitting on dark glass chrome, where
  * the default forest outline is invisible. Use INSTEAD of removing the
  * outline — never pair with focus-visible:outline-none elsewhere. */

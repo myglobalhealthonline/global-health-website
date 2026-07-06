@@ -4,7 +4,7 @@ import { DoctorTeamTemplate } from "@/components/templates/DoctorTeamTemplate";
 import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { countries, getCountryByCode } from "@/data/countries";
-import { getCountryDoctors } from "@/lib/content/get-country-collections";
+import { getCountryDoctors, getCountryServices } from "@/lib/content/get-country-collections";
 import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-country-trust";
 import { VerifiedProfessionals } from "@/components/sections/VerifiedProfessionals";
 import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
@@ -32,7 +32,11 @@ import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 type Params = { country: string; lang: string };
-type SearchParams = { lang?: string | string[]; specialty?: string | string[] };
+type SearchParams = {
+  lang?: string | string[];
+  specialty?: string | string[];
+  type?: string | string[];
+};
 
 /** Stable slug for a specialty name so it survives in the URL filter
  *  param (e.g. "Cardiology" → "cardiology", "Women's Health" →
@@ -104,13 +108,18 @@ export default async function CountryLangDoctorsPage({
   // by slug. Accept `?lang=es,pt`, `?lang=es&lang=pt`, single value, etc.
   const filterLangs = parseMultiParam(sp?.lang).map((s) => languageKey(s));
   const filterSpecs = parseMultiParam(sp?.specialty).map((s) => specialtySlug(s));
+  const filterTypes = parseMultiParam(sp?.type)
+    .map((s) => s.toLowerCase())
+    .filter((s): s is "gp" | "specialist" => s === "gp" || s === "specialist");
 
   const { common } = loadLocaleBundle(lang as LocaleCode);
 
-  const [doctors, { record: rawPage, disabled: pageDisabled }, countryTrust] = await Promise.all([
+  const [doctors, { record: rawPage, disabled: pageDisabled }, countryTrust, generalServices, specialistServices] = await Promise.all([
     getCountryDoctors(code, lang),
     getPublicPage(code, "DOCTORS_INDEX", lang as PublicLocale),
     getCountryTrust(code),
+    getCountryServices(code, "GENERAL", lang),
+    getCountryServices(code, "SPECIALIST", lang),
   ]);
   const verifyUrl = doctorVerificationUrl(countryTrust) ?? undefined;
 
@@ -135,18 +144,34 @@ export default async function CountryLangDoctorsPage({
     ).entries(),
   ).sort((a, b) => a[1].localeCompare(b[1]));
 
+  // GP / Specialist chips — a doctor's type comes from which service kinds
+  // they're assigned to (same derivation as the homepage carousel).
+  const generalServiceIdSet = new Set(generalServices.map((s) => s.id));
+  const specialistServiceIdSet = new Set(specialistServices.map((s) => s.id));
+  function doctorTypes(d: (typeof doctors)[number]): Array<"gp" | "specialist"> {
+    const types: Array<"gp" | "specialist"> = [];
+    if (d.assignedServiceIds.some((id) => generalServiceIdSet.has(id))) types.push("gp");
+    if (d.assignedServiceIds.some((id) => specialistServiceIdSet.has(id))) types.push("specialist");
+    return types;
+  }
+  const hasGPDoctors = doctors.some((d) => doctorTypes(d).includes("gp"));
+  const hasSpecialistDoctors = doctors.some((d) => doctorTypes(d).includes("specialist"));
+
   // A doctor passes when it matches EVERY active filter group (AND across
   // groups) and ANY chip within a group (OR within a group).
   const filteredDoctors = doctors.filter((d) => {
     const docLangCodes = (d.languages ?? []).map(languageKey);
     const docSpecSlugs = (d.specialties ?? []).map(specialtySlug);
+    const docTypes = doctorTypes(d);
     const langOk =
       filterLangs.length === 0 ||
       filterLangs.some((code) => docLangCodes.includes(code));
     const specOk =
       filterSpecs.length === 0 ||
       filterSpecs.some((s) => docSpecSlugs.includes(s));
-    return langOk && specOk;
+    const typeOk =
+      filterTypes.length === 0 || filterTypes.some((t) => docTypes.includes(t));
+    return langOk && specOk && typeOk;
   });
 
   // Admin-chosen featured doctor → the spotlight card at the top. Pulled
@@ -181,26 +206,31 @@ export default async function CountryLangDoctorsPage({
   }));
 
   // Build a toggle href: flips one token in its param while preserving
-  // the OTHER active filter group. Keeps language + specialty filters
-  // independent so toggling a language doesn't wipe a specialty pick.
-  function toggleHref(
-    param: "lang" | "specialty",
-    token: string,
-    activeList: string[],
-    otherParam: "lang" | "specialty",
-    otherList: string[],
-  ): string {
-    const next = new Set(activeList);
-    if (next.has(token)) next.delete(token);
-    else next.add(token);
+  // every OTHER active filter group, so toggling a language doesn't wipe
+  // a specialty or type pick.
+  const activeByParam: Record<"lang" | "specialty" | "type", string[]> = {
+    lang: filterLangs,
+    specialty: filterSpecs,
+    type: filterTypes,
+  };
+  function toggleHref(param: "lang" | "specialty" | "type", token: string): string {
     const qs = new URLSearchParams();
-    if (next.size > 0) qs.set(param, Array.from(next).join(","));
-    if (otherList.length > 0) qs.set(otherParam, otherList.join(","));
+    for (const [key, list] of Object.entries(activeByParam) as Array<
+      ["lang" | "specialty" | "type", string[]]
+    >) {
+      const next = new Set(list);
+      if (key === param) {
+        if (next.has(token)) next.delete(token);
+        else next.add(token);
+      }
+      if (next.size > 0) qs.set(key, Array.from(next).join(","));
+    }
     const str = qs.toString();
     return `/${slug}/${lang}/doctors${str ? `?${str}` : ""}`;
   }
 
-  const hasActive = filterLangs.length > 0 || filterSpecs.length > 0;
+  const hasActive =
+    filterLangs.length > 0 || filterSpecs.length > 0 || filterTypes.length > 0;
 
   // Physician ItemList schema — one Physician node per registered doctor in
   // this country, built from the same data the cards render. This is the
@@ -233,12 +263,34 @@ export default async function CountryLangDoctorsPage({
 
   const filterGroups: FilterGroup[] = [
     {
+      // GP / Specialist — only rendered when the country actually has both
+      // types (a single-chip group is noise; empty options hide the group).
+      heading: common.doctors.filterType,
+      options:
+        hasGPDoctors && hasSpecialistDoctors
+          ? [
+              {
+                token: "gp",
+                label: common.doctors.filterTypeGP,
+                active: filterTypes.includes("gp"),
+                href: toggleHref("type", "gp"),
+              },
+              {
+                token: "specialist",
+                label: common.doctors.filterTypeSpecialist,
+                active: filterTypes.includes("specialist"),
+                href: toggleHref("type", "specialist"),
+              },
+            ]
+          : [],
+    },
+    {
       heading: common.doctors.filterSpeaks,
       options: langOptions.map(([codeKey, label]) => ({
         token: codeKey,
         label,
         active: filterLangs.includes(codeKey),
-        href: toggleHref("lang", codeKey, filterLangs, "specialty", filterSpecs),
+        href: toggleHref("lang", codeKey),
       })),
     },
     {
@@ -247,7 +299,7 @@ export default async function CountryLangDoctorsPage({
         token: specKey,
         label: name,
         active: filterSpecs.includes(specKey),
-        href: toggleHref("specialty", specKey, filterSpecs, "lang", filterLangs),
+        href: toggleHref("specialty", specKey),
       })),
     },
   ];
@@ -276,7 +328,6 @@ export default async function CountryLangDoctorsPage({
             <div key="featured-spotlight" className="mb-10">
               <FeaturedDoctor
                 standalone={false}
-                dark={false}
                 doctor={{
                   name: featured.fullName,
                   title: featured.title,
@@ -307,6 +358,7 @@ export default async function CountryLangDoctorsPage({
             clearHref={`/${slug}/${lang}/doctors`}
             hasActive={hasActive}
             clearLabel={common.doctors.clearFilters}
+            dark
           />
         }
       />

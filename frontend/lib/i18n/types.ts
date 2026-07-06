@@ -96,6 +96,9 @@ export type CommonLocale = {
     bottomCtaAccent: string;
     filterSpeaks: string;
     filterSpecialty: string;
+    filterType: string;
+    filterTypeGP: string;
+    filterTypeSpecialist: string;
     clearFilters: string;
     viewProfile: string;
     bookAppointment: string;

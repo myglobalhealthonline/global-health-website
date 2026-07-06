@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 
@@ -39,34 +39,51 @@ type DoctorCarouselProps = {
   };
 };
 
-const PAGE_SIZE = 3;
-
+/**
+ * Doctor slider — CSS scroll-snap track (swipe on touch, smooth arrow
+ * paging on desktop) instead of the old hard 3-card page swap. Arrows
+ * scroll one viewport at a time; a lime progress bar tracks position.
+ */
 export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
   const hasGP = doctors.some((d) => d.kind === "gp");
   const hasSpecialist = doctors.some((d) => d.kind === "specialist");
-  const showFilters = hasGP || hasSpecialist;
+  const showFilters = hasGP && hasSpecialist;
 
   const [filter, setFilter] = useState<"all" | "gp" | "specialist">("all");
-  const [page, setPage] = useState(0);
-
   const filtered =
     filter === "all" ? doctors : doctors.filter((d) => d.kind === filter);
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-  const safePage = Math.min(page, Math.max(0, totalPages - 1));
-  const paged = filtered.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
-  const showArrows = filtered.length > PAGE_SIZE;
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const syncScrollState = useCallback(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    const max = el.scrollWidth - el.clientWidth;
+    setCanPrev(el.scrollLeft > 8);
+    setCanNext(el.scrollLeft < max - 8);
+    setProgress(max > 0 ? el.scrollLeft / max : 1);
+  }, []);
+
+  useEffect(() => {
+    syncScrollState();
+    window.addEventListener("resize", syncScrollState);
+    return () => window.removeEventListener("resize", syncScrollState);
+  }, [syncScrollState, filtered.length]);
 
   function changeFilter(f: "all" | "gp" | "specialist") {
     setFilter(f);
-    setPage(0);
+    trackRef.current?.scrollTo({ left: 0 });
   }
 
-  const activeStyle = {
-    background: "var(--color-brand-accent)",
-    color: "#0a1f14",
-    borderColor: "var(--color-brand-accent)",
-  };
+  function scrollByViewport(dir: -1 | 1) {
+    const el = trackRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * el.clientWidth, behavior: "smooth" });
+  }
+
   // Filter pills use a forest fill + white text when active (lime is reserved
   // for a small accent dot), matching DoctorFilters' active-state dosage.
   const filterActiveStyle = {
@@ -79,11 +96,20 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
     color: "var(--gh2-on-dark-muted)",
     borderColor: "rgba(255,255,255,0.20)",
   };
-  const disabledStyle = {
-    background: "transparent",
-    color: "rgba(255,255,255,0.22)",
-    borderColor: "rgba(255,255,255,0.12)",
-  };
+  const arrowStyle = (enabled: boolean) =>
+    enabled
+      ? {
+          background: "var(--color-brand-accent)",
+          color: "#0a1f14",
+          borderColor: "var(--color-brand-accent)",
+        }
+      : {
+          background: "transparent",
+          color: "rgba(255,255,255,0.22)",
+          borderColor: "rgba(255,255,255,0.12)",
+        };
+
+  const showArrows = canPrev || canNext;
 
   return (
     <div>
@@ -91,31 +117,23 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           {showFilters ? (
             <div className="flex gap-2 flex-wrap">
-              <button
-                onClick={() => changeFilter("all")}
-                className="gh-focus-on-dark rounded-full border px-4 py-1.5 text-[13px] font-semibold transition-all duration-150"
-                style={filter === "all" ? filterActiveStyle : ghostStyle}
-              >
-                {i18n.filterAll}
-              </button>
-              {hasGP && (
+              {(
+                [
+                  ["all", i18n.filterAll],
+                  ["gp", i18n.filterGP],
+                  ["specialist", i18n.filterSpecialist],
+                ] as const
+              ).map(([key, label]) => (
                 <button
-                  onClick={() => changeFilter("gp")}
+                  key={key}
+                  onClick={() => changeFilter(key)}
+                  aria-pressed={filter === key}
                   className="gh-focus-on-dark rounded-full border px-4 py-1.5 text-[13px] font-semibold transition-all duration-150"
-                  style={filter === "gp" ? filterActiveStyle : ghostStyle}
+                  style={filter === key ? filterActiveStyle : ghostStyle}
                 >
-                  {i18n.filterGP}
+                  {label}
                 </button>
-              )}
-              {hasSpecialist && (
-                <button
-                  onClick={() => changeFilter("specialist")}
-                  className="gh-focus-on-dark rounded-full border px-4 py-1.5 text-[13px] font-semibold transition-all duration-150"
-                  style={filter === "specialist" ? filterActiveStyle : ghostStyle}
-                >
-                  {i18n.filterSpecialist}
-                </button>
-              )}
+              ))}
             </div>
           ) : (
             <span />
@@ -124,27 +142,34 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
           {showArrows && (
             <div className="flex items-center gap-3 shrink-0">
               <button
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
-                disabled={safePage === 0}
+                onClick={() => scrollByViewport(-1)}
+                disabled={!canPrev}
                 aria-label="Previous"
                 className="gh-focus-on-dark size-11 rounded-full border inline-flex items-center justify-center transition-all duration-150 disabled:cursor-not-allowed"
-                style={safePage === 0 ? disabledStyle : activeStyle}
+                style={arrowStyle(canPrev)}
               >
                 <ChevronLeft size={18} aria-hidden />
               </button>
-              <span
-                aria-live="polite"
-                className="text-[11px] font-bold tabular-nums"
-                style={{ color: "var(--gh2-on-dark-muted)" }}
+              {/* Progress bar — replaces the old "1 / 4" counter */}
+              <div
+                aria-hidden
+                className="h-[3px] w-20 overflow-hidden rounded-full"
+                style={{ background: "rgba(255,255,255,0.14)" }}
               >
-                {safePage + 1} / {totalPages}
-              </span>
+                <div
+                  className="h-full rounded-full transition-[width] duration-200"
+                  style={{
+                    background: "var(--color-brand-accent)",
+                    width: `${Math.round(Math.max(0.12, progress) * 100)}%`,
+                  }}
+                />
+              </div>
               <button
-                onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-                disabled={safePage === totalPages - 1}
+                onClick={() => scrollByViewport(1)}
+                disabled={!canNext}
                 aria-label="Next"
                 className="gh-focus-on-dark size-11 rounded-full border inline-flex items-center justify-center transition-all duration-150 disabled:cursor-not-allowed"
-                style={safePage === totalPages - 1 ? disabledStyle : activeStyle}
+                style={arrowStyle(canNext)}
               >
                 <ChevronRight size={18} aria-hidden />
               </button>
@@ -153,18 +178,24 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-        {paged.map((doctor) => (
-          <DoctorCard
+      <div
+        ref={trackRef}
+        onScroll={syncScrollState}
+        className="gh-scrollbar-none -mx-1 flex snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth px-1 pb-2"
+        role="list"
+      >
+        {filtered.map((doctor) => (
+          <div
             key={doctor.href ?? `${doctor.name}-${doctor.title}`}
-            {...doctor}
-            bookLabel={i18n.pickTime}
-            dark
-          />
+            role="listitem"
+            className="w-[86%] shrink-0 snap-start sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]"
+          >
+            <DoctorCard {...doctor} bookLabel={i18n.pickTime} dark />
+          </div>
         ))}
       </div>
 
-      {paged.length === 0 && filtered.length === 0 && (
+      {filtered.length === 0 && (
         <p
           className="py-12 text-center text-sm"
           style={{ color: "var(--gh2-on-dark-muted)" }}

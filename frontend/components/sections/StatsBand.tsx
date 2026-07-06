@@ -87,7 +87,7 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
           {items.slice(0, 4).map((it) => (
             <div
               key={`${it.label}-${it.value}`}
-              className={`group relative flex flex-col gap-5 overflow-hidden rounded-2xl p-7 ${
+              className={`group relative flex flex-col gap-5 rounded-2xl p-7 ${
                 isLight ? "gh2-card-ivory gh2-card-hover" : ""
               }`}
               style={

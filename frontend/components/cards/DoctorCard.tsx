@@ -131,8 +131,11 @@ export function DoctorCard({
     "--dc-ink": dark ? "rgba(255,255,255,0.92)" : "var(--color-brand-primary)",
     "--dc-muted": dark ? "rgba(255,255,255,0.72)" : "rgba(29,75,54,0.45)",
     "--dc-line": dark ? "rgba(255,255,255,0.22)" : "rgba(29,75,54,0.20)",
-    "--dc-icon-bg": dark ? "rgba(255,255,255,0.08)" : "rgba(29,75,54,0.08)",
-    "--dc-icon-line": dark ? "rgba(255,255,255,0.10)" : "rgba(29,75,54,0.10)",
+    // Dark variant mirrors FeaturedDoctor's lime accent dosage: lime-tinted
+    // icon tiles + lime icon strokes instead of flat white-on-forest.
+    "--dc-icon-bg": dark ? "rgba(176,241,34,0.10)" : "rgba(29,75,54,0.08)",
+    "--dc-icon-line": dark ? "rgba(176,241,34,0.18)" : "rgba(29,75,54,0.10)",
+    "--dc-icon-ink": dark ? "var(--color-brand-accent)" : "var(--color-brand-primary)",
     "--dc-hover": dark ? "rgba(255,255,255,0.08)" : "rgba(29,75,54,0.04)",
   } as CSSProperties;
 
@@ -218,11 +221,23 @@ export function DoctorCard({
         {title ? (
           <div className="absolute bottom-3 left-3">
             <span
-              className="inline-flex items-center rounded-full px-3 py-1.5 text-[12px] font-semibold text-white"
-              style={{
-                background: "var(--color-brand-primary)",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
-              }}
+              className="inline-flex items-center rounded-full px-3 py-1.5 text-[12px] font-semibold"
+              style={
+                dark
+                  ? {
+                      background: "rgba(10,31,20,0.72)",
+                      border: "1px solid rgba(176,241,34,0.28)",
+                      color: "var(--color-brand-accent)",
+                      backdropFilter: "blur(6px)",
+                      WebkitBackdropFilter: "blur(6px)",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
+                    }
+                  : {
+                      background: "var(--color-brand-primary)",
+                      color: "#ffffff",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
+                    }
+              }
             >
               {title}
             </span>
@@ -248,7 +263,7 @@ export function DoctorCard({
               <IconBox>
                 <ShieldCheck
                   className="size-[15px]"
-                  style={{ color: "var(--dc-ink)" }}
+                  style={{ color: "var(--dc-icon-ink)" }}
                   strokeWidth={1.6}
                   aria-hidden
                 />
@@ -292,7 +307,7 @@ export function DoctorCard({
               <IconBox>
                 <ShieldCheck
                   className="size-[15px]"
-                  style={{ color: "var(--dc-ink)" }}
+                  style={{ color: "var(--dc-icon-ink)" }}
                   strokeWidth={1.6}
                   aria-hidden
                 />
@@ -332,7 +347,7 @@ export function DoctorCard({
               <IconBox>
                 <Globe
                   className="size-[15px]"
-                  style={{ color: "var(--dc-ink)" }}
+                  style={{ color: "var(--dc-icon-ink)" }}
                   strokeWidth={1.6}
                   aria-hidden
                 />
@@ -381,11 +396,23 @@ export function DoctorCard({
             {bookHref ? (
               <Link
                 href={bookHref}
-                className="relative z-20 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-4 text-[13.5px] font-extrabold tracking-[-0.005em] text-white transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-                style={{
-                  background: "var(--color-brand-primary)",
-                  boxShadow: "0 6px 18px rgba(29,75,54,0.25)",
-                }}
+                className={`relative z-20 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-4 text-[13.5px] font-extrabold tracking-[-0.005em] transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
+                  dark
+                    ? "focus-visible:ring-[var(--color-brand-accent)]/40"
+                    : "text-white focus-visible:ring-[var(--color-brand-primary)]/40"
+                }`}
+                style={
+                  dark
+                    ? {
+                        background: "var(--color-brand-accent)",
+                        color: "#0a1f14",
+                        boxShadow: "0 8px 12px -2px rgba(176,241,34,0.14)",
+                      }
+                    : {
+                        background: "var(--color-brand-primary)",
+                        boxShadow: "0 6px 18px rgba(29,75,54,0.25)",
+                      }
+                }
               >
                 <CalendarDays className="size-[15px] shrink-0" strokeWidth={1.8} aria-hidden />
                 {primaryLabel ?? bookLabel ?? `Book with ${firstName}`}
