@@ -1,6 +1,15 @@
 import { randomUUID } from "node:crypto";
-import { Prisma, AppointmentStatus as PrismaAppointmentStatus } from "@prisma/client";
+import { Prisma, AppointmentStatus as PrismaAppointmentStatus, CartItemKind } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
+
+/** Order-line kinds that carry a doctor snapshot mirrored from the
+ *  appointment. Kept in sync on every doctor change so post-payment
+ *  reminders (which read `OrderItem.doctorId`) never target a stale
+ *  clinician. */
+const CONSULTATION_KINDS: CartItemKind[] = [
+  CartItemKind.GENERAL_CONSULTATION,
+  CartItemKind.SPECIALIST_CONSULTATION,
+];
 import type { BookingInput } from "../../validations/booking.schema.js";
 import type { AppointmentStatus } from "../../validations/admin-appointments.schema.js";
 import {
@@ -835,7 +844,19 @@ export async function scheduleAppointment(
     return getAppointmentById(id);
   }
   try {
-    await prisma.appointment.update({ where: { id }, data });
+    await prisma.$transaction(async (tx) => {
+      await tx.appointment.update({ where: { id }, data });
+      // Mirror the doctor onto the consultation order line(s) so the
+      // post-payment reminder cron — which resolves its recipient from
+      // `OrderItem.doctorId` — follows every reassignment instead of
+      // messaging the originally-booked doctor.
+      if (input.doctorId !== undefined) {
+        await tx.orderItem.updateMany({
+          where: { appointmentId: id, kind: { in: CONSULTATION_KINDS } },
+          data: { doctorId: input.doctorId },
+        });
+      }
+    });
     return getAppointmentById(id);
   } catch (error) {
     // P2025 = record to update not found — preserve the previous
