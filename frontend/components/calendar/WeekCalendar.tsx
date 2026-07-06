@@ -1,7 +1,7 @@
 "use client";
 
 import { type CSSProperties, useMemo } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Lock, User } from "lucide-react";
 import { IconBtn } from "@/components/portal-atoms";
 import { formatAppTime } from "@/lib/format-datetime";
 import type { CalendarItem } from "./calendar-types";
@@ -43,39 +43,39 @@ type PositionedItem = {
   lanes: number;
 };
 
+// A solid, elevated block — used for every OCCUPIED state (booked, held,
+// blocked) so it reads as a filled event, not empty space. `tone` is the base
+// hex; text goes white and a shadow lifts it above the pale OPEN slots.
+function solidTone(tone: string): CSSProperties {
+  return {
+    borderColor: tone,
+    background: tone,
+    color: "#fff",
+    boxShadow: "0 1px 4px rgba(16, 23, 19, 0.22)",
+    fontWeight: 600,
+    zIndex: 2,
+  };
+}
+
 function toneStyle(item: CalendarItem): CSSProperties {
+  // Booked consultations are the thing an admin most needs to spot — solid fill.
   if (item.kind === "consultation") {
-    return {
-      borderColor: "var(--portal-info)",
-      background: "var(--portal-info-soft)",
-      color: "var(--portal-info-text)",
-    };
+    return solidTone("var(--portal-info)");
   }
   switch (item.status) {
     case "OPEN":
+      // Available time recedes: pale, outline-forward, so booked blocks pop.
       return {
         borderColor: "var(--portal-success)",
         background: "var(--portal-success-soft)",
         color: "var(--portal-success-text)",
       };
     case "BLOCKED":
-      return {
-        borderColor: "var(--portal-danger)",
-        background: "var(--portal-danger-soft)",
-        color: "var(--portal-danger-text)",
-      };
+      return solidTone("var(--portal-danger)");
     case "BOOKED":
-      return {
-        borderColor: "var(--portal-info)",
-        background: "var(--portal-info-soft)",
-        color: "var(--portal-info-text)",
-      };
+      return solidTone("var(--portal-info)");
     default: // HELD
-      return {
-        borderColor: "var(--portal-warning)",
-        background: "var(--portal-warning-soft)",
-        color: "var(--portal-warning-text)",
-      };
+      return solidTone("var(--portal-warning)");
   }
 }
 
@@ -324,13 +324,19 @@ export function WeekCalendar({
                       width: `calc(${laneWidth}% - 4px)`,
                       ...toneStyle(p.item),
                     };
+                    const isBlocked =
+                      p.item.kind === "slot" && p.item.status === "BLOCKED";
+                    const LeadIcon = isConsult ? User : isBlocked ? Lock : null;
                     const inner = (
                       <>
                         <span className="block truncate text-[11px] font-bold leading-tight">
                           {formatAppTime(p.item.startAt, tz)}
                         </span>
-                        <span className="block truncate text-[11px] leading-tight">
-                          {label}
+                        <span className="flex items-center gap-1 text-[11px] leading-tight">
+                          {LeadIcon ? (
+                            <LeadIcon className="size-3 shrink-0" aria-hidden />
+                          ) : null}
+                          <span className="truncate">{label}</span>
                         </span>
                       </>
                     );
