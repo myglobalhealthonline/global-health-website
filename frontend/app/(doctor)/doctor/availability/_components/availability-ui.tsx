@@ -2,16 +2,17 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarClock, Lock, Plus, Trash2, Unlock } from "lucide-react";
+import { CalendarClock, Plus, Trash2 } from "lucide-react";
 import {
   createAvailabilityWindow,
   deleteAvailabilityWindow,
-  toggleSlotStatus,
 } from "@/lib/api/doctor-availability-client";
 import type {
   AvailabilityWindow,
   DoctorTimeSlotView,
 } from "@/lib/api/doctor-availability-types";
+import type { CalendarItem } from "@/components/calendar/calendar-types";
+import { DoctorAvailabilityWeekView } from "./availability-week-view";
 import {
   AdminCard,
   AdminEmptyState,
@@ -49,6 +50,10 @@ function timeToMinutes(t: string): number {
 type Props = {
   initialWindows: AvailabilityWindow[];
   initialSlots: DoctorTimeSlotView[];
+  /** Booked consultations (all scheduled appointments) for the week grid. */
+  consultations: CalendarItem[];
+  /** Any date inside the initial week ("YYYY-MM-DD"), clinic-local. */
+  initialWeekAnchor: string;
   /** Clinic timezone (Country.bookingSetting.timezone). Window minutes are
    *  wall-clock in this zone and concrete slots render in it. */
   countryTimeZone: string;
@@ -57,6 +62,8 @@ type Props = {
 export function DoctorAvailabilityUI({
   initialWindows,
   initialSlots,
+  consultations,
+  initialWeekAnchor,
   countryTimeZone,
 }: Props) {
   const router = useRouter();
@@ -137,41 +144,6 @@ export function DoctorAvailabilityUI({
     });
   }
 
-  function onToggleSlot(slot: DoctorTimeSlotView) {
-    if (slot.status !== "OPEN" && slot.status !== "BLOCKED") return; // BOOKED/HELD not editable
-    const next = slot.status === "OPEN" ? "BLOCKED" : "OPEN";
-    startTransition(async () => {
-      const res = await toggleSlotStatus(slot.id, next);
-      if (!res.ok) {
-        setError(res.message);
-        return;
-      }
-      setSlots((prev) =>
-        prev.map((s) =>
-          s.id === slot.id ? { ...s, status: res.data.status as DoctorTimeSlotView["status"] } : s,
-        ),
-      );
-    });
-  }
-
-  // ── Group slots by local date ───────────────────────────────────
-  const slotsByDay = useMemo(() => {
-    const map = new Map<string, DoctorTimeSlotView[]>();
-    for (const s of slots) {
-      const date = new Date(s.startAt);
-      const key = date.toLocaleDateString("en-IE", {
-        weekday: "short",
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        timeZone: countryTimeZone,
-      });
-      const list = map.get(key) ?? [];
-      list.push(s);
-      map.set(key, list);
-    }
-    return map;
-  }, [slots, countryTimeZone]);
   const slotCounts = useMemo(
     () =>
       slots.reduce(
@@ -226,83 +198,20 @@ export function DoctorAvailabilityUI({
       />
 
       <div className="gh-doctor-detail-grid gh-doctor-availability-grid grid gap-4 lg:grid-cols-[1fr_360px]">
-        {/* ── Concrete slots day grid ───────────────────────────── */}
+        {/* ── Week calendar (same grid as the admin availability page) ─── */}
         <AdminCard padding={0} className="gh-doctor-panel">
           <SectionHeader
-            title="Next 14 days"
-            description="Click an open slot to mark yourself busy. Click a blocked slot to re-open it. Booked slots can't be changed here — cancel the appointment first."
+            title="Week calendar"
+            description="Your booked appointments and open slots for the week. Click an open time to block it, a blocked time to re-open. Booked appointments are highlighted and locked here."
           />
           <div className="p-5">
-            {slotsByDay.size === 0 ? (
-              <AdminEmptyState
-                className="gh-doctor-empty-state"
-                icon={<CalendarClock className="size-5" aria-hidden />}
-                assetSrc="/images/portal/obsidian/empty-calendar.svg"
-                title="No generated slots yet"
-                description="Add a weekly window to generate bookable slots. Patients only see slots that remain open."
-              />
-            ) : (
-              <div className="gh-doctor-slot-day-list grid gap-4">
-                {Array.from(slotsByDay.entries()).map(([day, daySlots]) => (
-                  <div key={day}>
-                    <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
-                      {day}
-                    </p>
-                    <div className="gh-doctor-slot-grid mt-2 flex flex-wrap gap-2">
-                      {daySlots.map((s) => {
-                        const time = new Date(s.startAt).toLocaleTimeString(
-                          "en-IE",
-                          {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            timeZone: countryTimeZone,
-                          },
-                        );
-                        const interactive =
-                          s.status === "OPEN" || s.status === "BLOCKED";
-                        return (
-                          <button
-                            key={s.id}
-                            type="button"
-                            disabled={!interactive || busy}
-                            onClick={() => onToggleSlot(s)}
-                            title={
-                              s.status === "OPEN"
-                                ? "Click to mark busy"
-                                : s.status === "BLOCKED"
-                                  ? "Click to re-open"
-                                  : "Locked by appointment"
-                            }
-                            className={`gh-doctor-slot-chip inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12.5px] font-semibold transition disabled:cursor-not-allowed ${
-                              s.status === "OPEN"
-                                ? "border-emerald-200 bg-emerald-50 text-emerald-800 hover:border-emerald-400"
-                                : s.status === "BLOCKED"
-                                  ? "border-rose-300 bg-rose-50 text-rose-700 hover:border-rose-500"
-                                  : s.status === "BOOKED"
-                                    ? "border-blue-200 bg-blue-50 text-blue-800 opacity-80"
-                                    : "border-amber-200 bg-amber-50 text-amber-800 opacity-80"
-                            }`}
-                          >
-                            {s.status === "BLOCKED" ? (
-                              <Lock className="size-3" aria-hidden />
-                            ) : s.status === "OPEN" ? (
-                              <Unlock className="size-3" aria-hidden />
-                            ) : null}
-                            <span
-                              className={
-                                s.status === "BLOCKED" ? "line-through decoration-2" : ""
-                              }
-                            >
-                              {time}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <DoctorAvailabilityWeekView
+              initialSlots={initialSlots}
+              consultations={consultations}
+              clinicTz={countryTimeZone}
+              initialWeekAnchor={initialWeekAnchor}
+              onSlotsChange={setSlots}
+            />
           </div>
         </AdminCard>
 

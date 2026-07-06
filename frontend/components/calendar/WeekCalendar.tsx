@@ -30,6 +30,10 @@ type Props = {
   onSelectOpenSlot: (item: CalendarItem) => void;
   /** Fires when the admin clicks a booked consultation block. */
   onSelectConsultation: (item: CalendarItem) => void;
+  /** Doctor mode: when provided, clicking an OPEN or BLOCKED slot toggles it
+   *  (block / re-open) instead of opening the admin booking dialog. Omit for
+   *  the admin booking flow. */
+  onToggleSlot?: (item: CalendarItem) => void;
   onPrevWeek: () => void;
   onNextWeek: () => void;
   onToday: () => void;
@@ -141,6 +145,7 @@ export function WeekCalendar({
   todayKey,
   onSelectOpenSlot,
   onSelectConsultation,
+  onToggleSlot,
   onPrevWeek,
   onNextWeek,
   onToday,
@@ -340,6 +345,29 @@ export function WeekCalendar({
                         </span>
                       </>
                     );
+                    // Doctor mode: click an OPEN/BLOCKED slot to toggle it.
+                    const toggleable =
+                      onToggleSlot &&
+                      p.item.kind === "slot" &&
+                      (p.item.status === "OPEN" || p.item.status === "BLOCKED");
+                    if (toggleable) {
+                      return (
+                        <button
+                          key={p.item.id}
+                          type="button"
+                          onClick={() => onToggleSlot(p.item)}
+                          title={
+                            p.item.status === "OPEN"
+                              ? "Click to block (mark busy)"
+                              : "Click to re-open"
+                          }
+                          className="gh-week-block rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
+                          style={style}
+                        >
+                          {inner}
+                        </button>
+                      );
+                    }
                     if (bookable) {
                       return (
                         <button
