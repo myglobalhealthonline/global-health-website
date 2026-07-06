@@ -1,5 +1,6 @@
 import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { SITE_NAME } from "@/lib/constants";
 import { listBlogPosts } from "@/lib/content/get-public-blog";
 import { BlogCard } from "@/components/cards/BlogCard";

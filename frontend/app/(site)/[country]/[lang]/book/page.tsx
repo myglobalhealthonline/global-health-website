@@ -171,6 +171,27 @@ export default async function CountryLangBookPage({
   const stepLabels: string[] = doctorFirst
     ? [bp.stepDoctor, bp.stepService, bp.stepTime, bp.stepDetails]
     : [bp.stepService, bp.stepTime, bp.stepDoctor, bp.stepDetails];
+  // Back-nav hrefs per step — same targets the old per-card "Change
+  // service" / "Edit doctor" / "Change time" ghost buttons used, now
+  // surfaced as clickable rows in the sidebar instead (only completed
+  // steps get one; the current/future steps aren't reachable yet).
+  const stepHrefs: (string | null)[] = doctorFirst
+    ? [
+        buildBookHref({ country: slug, lang }),
+        requestedDoctor ? buildBookHref({ country: slug, lang, doctor: requestedDoctor.slug }) : null,
+        selectedService
+          ? buildBookHref({ country: slug, lang, doctor: requestedDoctor?.slug, service: selectedService.slug })
+          : null,
+        null,
+      ]
+    : [
+        buildBookHref({ country: slug, lang }),
+        selectedService ? buildBookHref({ country: slug, lang, service: selectedService.slug }) : null,
+        selectedService
+          ? buildBookHref({ country: slug, lang, service: selectedService.slug, at: atParam })
+          : null,
+        null,
+      ];
   let currentStep: number;
   if (doctorFirst) {
     const baseStep = !selectedService ? 2 : 3;
@@ -219,19 +240,31 @@ export default async function CountryLangBookPage({
                 <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]">
                   {bp.bookingSteps}
                 </p>
-                <StepIndicator current={currentStep} labels={stepLabels} values={stepValues} />
+                <StepIndicator current={currentStep} labels={stepLabels} values={stepValues} hrefs={stepHrefs} />
                 <p className="mt-5 text-sm leading-relaxed text-white/60">
                   {bp.availabilityNote}
                 </p>
-                {/* Trust signals — same platform facts as the service pages. */}
+                {/* Trust signals — same platform facts as the service pages,
+                    icon-tile treatment matches DoctorCard's dark variant. */}
                 <ul className="mt-5 grid gap-2.5 border-t border-white/10 pt-5">
                   {[
                     { icon: ShieldCheck, label: c.serviceDetailPage.trustRegistered.replace("{country}", config.name) },
                     { icon: Video, label: c.serviceDetailPage.trustVideo },
                     { icon: Lock, label: c.serviceDetailPage.trustConfidential },
                   ].map(({ icon: Icon, label }) => (
-                    <li key={label} className="gh2-trust-tile gh2-trust-tile-dark text-[13px] font-medium text-white/80">
-                      <Icon className="size-4 shrink-0 text-[var(--color-brand-accent)]" aria-hidden />
+                    <li
+                      key={label}
+                      className="gh2-trust-tile gh2-trust-tile-dark flex items-center gap-3 text-[13px] font-semibold text-white/85"
+                    >
+                      <span
+                        className="inline-flex size-8 shrink-0 items-center justify-center rounded-[10px]"
+                        style={{
+                          background: "rgba(176,241,34,0.10)",
+                          border: "1px solid rgba(176,241,34,0.18)",
+                        }}
+                      >
+                        <Icon className="size-4 shrink-0 text-[var(--color-brand-accent)]" aria-hidden />
+                      </span>
                       {label}
                     </li>
                   ))}
@@ -372,8 +405,19 @@ async function GpBookingFlow({
                       { icon: Video, label: c.serviceDetailPage.trustVideo },
                       { icon: Lock, label: c.serviceDetailPage.trustConfidential },
                     ].map(({ icon: Icon, label }) => (
-                      <li key={label} className="gh2-trust-tile gh2-trust-tile-dark text-[13px] font-medium text-white/80">
-                        <Icon className="size-4 shrink-0 text-[var(--color-brand-accent)]" aria-hidden />
+                      <li
+                        key={label}
+                        className="gh2-trust-tile gh2-trust-tile-dark flex items-center gap-3 text-[13px] font-semibold text-white/85"
+                      >
+                        <span
+                          className="inline-flex size-8 shrink-0 items-center justify-center rounded-[10px]"
+                          style={{
+                            background: "rgba(176,241,34,0.10)",
+                            border: "1px solid rgba(176,241,34,0.18)",
+                          }}
+                        >
+                          <Icon className="size-4 shrink-0 text-[var(--color-brand-accent)]" aria-hidden />
+                        </span>
                         {label}
                       </li>
                     ))}
@@ -485,23 +529,15 @@ async function SelectedServiceFlow({
               </Link>
             </div>
           ) : (
-            <>
-              <LanguageFilteredDoctors
-                country={country}
-                lang={lang}
-                service={service}
-                doctors={doctorsAtTime}
-                slotByDoctorId={slotByDoctorId}
-                at={at}
-                bp={bp}
-              />
-              <Link
-                href={buildBookHref({ country, lang, service: service.slug })}
-                className="justify-self-start rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
-              >
-                {bp.stepTime}
-              </Link>
-            </>
+            <LanguageFilteredDoctors
+              country={country}
+              lang={lang}
+              service={service}
+              doctors={doctorsAtTime}
+              slotByDoctorId={slotByDoctorId}
+              at={at}
+              bp={bp}
+            />
           )}
         </div>
       );
@@ -512,21 +548,13 @@ async function SelectedServiceFlow({
       <div className="grid gap-6">
         <BookingSectionHeader eyebrow={bp.stepTime} title={bp.pickTime} description={bp.timesShown} />
         <div className="gh2-glass-forest gh2-dark-content min-w-0 p-5 sm:p-6">
-          <header className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border)] pb-5">
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
-                {bp.selectedConsultation}
-              </p>
-              <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.025em] text-[var(--color-text-primary)]">
-                {service.name}
-              </h2>
-            </div>
-            <Link
-              href={buildBookHref({ country, lang })}
-              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
-            >
-              {bp.changeService}
-            </Link>
+          <header className="border-b border-[var(--color-border)] pb-5">
+            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-accent)]">
+              {bp.selectedConsultation}
+            </p>
+            <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.025em] text-[var(--color-text-primary)]">
+              {service.name}
+            </h2>
           </header>
           {agg.slots.length === 0 ? (
             <div className="gh2-status-card mt-6 text-center">
@@ -579,35 +607,16 @@ async function SelectedServiceFlow({
         description={slotConfirmed ? bp.detailsDesc : bp.timesShown}
       />
       <div className="gh2-glass-forest gh2-dark-content min-w-0 p-5 sm:p-6">
-        <header className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border)] pb-5">
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
-              {bp.selectedConsultation}
-            </p>
-            <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.025em] text-[var(--color-text-primary)]">
-              {service.name}
-            </h2>
-            <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-              {selectedDoctor.fullName} · {selectedDoctor.title}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {/* Keeps the chosen service, drops the doctor — re-enters the
-              * TIME step where the patient can pick among all doctors
-              * assigned to this service (same path service-first users take). */}
-            <Link
-              href={buildBookHref({ country, lang, service: service.slug })}
-              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
-            >
-              Edit doctor
-            </Link>
-            <Link
-              href={buildBookHref({ country, lang })}
-              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
-            >
-              {bp.changeService}
-            </Link>
-          </div>
+        <header className="border-b border-[var(--color-border)] pb-5">
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-accent)]">
+            {bp.selectedConsultation}
+          </p>
+          <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.025em] text-[var(--color-text-primary)]">
+            {service.name}
+          </h2>
+          <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+            {selectedDoctor.fullName} · {selectedDoctor.title}
+          </p>
         </header>
 
         {slotStale ? (
@@ -800,7 +809,7 @@ function ServiceChoiceCard({
           </p>
         ) : null}
         <div className="mt-auto flex items-center gap-2.5 pt-5">
-          <span className="text-sm font-semibold text-[var(--color-text-body)]">
+          <span className="text-sm font-semibold text-white/70">
             {service.basePriceCents != null
               ? formatPriceRounded(service.basePriceCents, service.currencyCode)
               : bp.priceVaries}
@@ -808,13 +817,13 @@ function ServiceChoiceCard({
           <div className="ml-auto flex shrink-0 items-center gap-2">
             <Link
               href={viewHref}
-              className="gh2-btn-compact gh2-btn-compact-secondary"
+              className="gh2-btn-compact gh2-btn-compact-secondary-dark"
             >
               View
             </Link>
             <Link
               href={href}
-              className="gh2-btn-compact gh2-btn-compact-primary"
+              className="gh2-btn-compact gh2-btn-compact-primary-dark"
             >
               {bp.continue}
               <ArrowRight className="size-3.5 shrink-0" aria-hidden />
@@ -830,10 +839,16 @@ function StepIndicator({
   current,
   labels,
   values,
+  hrefs,
 }: {
   current: number;
   labels: string[];
   values: (string | null)[];
+  /** Back-nav target per step. Only rendered as a link when the step is
+   *  complete (step.n < current) — current/future steps aren't reachable
+   *  yet. Replaces the old per-card "Change service" / "Edit doctor" /
+   *  "Change time" ghost buttons: back-navigation lives in one place. */
+  hrefs?: (string | null)[];
 }) {
   return (
     <ol className="relative mt-5 grid gap-3">
@@ -841,48 +856,67 @@ function StepIndicator({
         * signal (replaces the old per-label underline hack). */}
       <span
         aria-hidden
-        className="absolute left-4 top-4 bottom-4 w-px bg-[rgba(29,75,54,0.15)]"
+        className="absolute left-4 top-4 bottom-4 w-px bg-white/12"
       />
       {STEPS.map((step) => {
         const complete = step.n < current;
         const active = step.n === current;
         const value = values[step.n - 1] ?? null;
+        const href = complete ? (hrefs?.[step.n - 1] ?? null) : null;
+
+        const dot = (
+          <span
+            className={`relative z-10 mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+              active
+                ? "bg-[var(--color-brand-accent)] text-[#0a1f1a] ring-4 ring-[rgba(176,241,34,0.18)]"
+                : complete
+                  ? "bg-[rgba(176,241,34,0.14)] text-[var(--color-brand-accent)]"
+                  : "bg-white/5 text-white/45"
+            }`}
+          >
+            {complete ? <CheckCircle2 className="size-3.5" aria-hidden /> : step.n}
+          </span>
+        );
+
+        const label = (
+          <span className="flex flex-col">
+            <span
+              className={
+                active
+                  ? "text-sm font-bold text-white/92"
+                  : complete
+                    ? "text-sm font-semibold text-[var(--color-brand-accent)] group-hover:underline"
+                    : "text-sm font-semibold text-white/45"
+              }
+            >
+              {labels[step.n - 1]}
+              {active ? (
+                <span className="sr-only"> — Step {step.n} of {STEPS.length}</span>
+              ) : null}
+            </span>
+            {value ? (
+              <span className="text-xs leading-snug text-white/55">{value}</span>
+            ) : null}
+          </span>
+        );
+
         return (
           <li
             key={step.n}
-            className="relative flex items-start gap-3"
+            className="relative"
             aria-current={active ? "step" : undefined}
           >
-              <span
-              className={`relative z-10 mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                active
-                  ? "bg-[var(--color-brand-primary)] text-white ring-4 ring-[rgba(29,75,54,0.16)]"
-                  : complete
-                    ? "bg-[rgba(29,75,54,0.6)] text-white"
-                    : "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
-              }`}
-            >
-              {complete ? <CheckCircle2 className="size-3.5" aria-hidden /> : step.n}
-            </span>
-            <span className="flex flex-col">
-              <span
-                className={
-                  active
-                    ? "text-sm font-bold text-[var(--color-text-primary)]"
-                    : complete
-                      ? "text-sm font-semibold text-[rgba(29,75,54,0.6)]"
-                      : "text-sm font-semibold text-[var(--color-text-muted)]"
-                }
-              >
-                {labels[step.n - 1]}
-                {active ? (
-                  <span className="sr-only"> — Step {step.n} of {STEPS.length}</span>
-                ) : null}
-              </span>
-              {value ? (
-                <span className="text-xs leading-snug text-[var(--color-text-muted)]">{value}</span>
-              ) : null}
-            </span>
+            {href ? (
+              <Link href={href} className="group flex items-start gap-3">
+                {dot}
+                {label}
+              </Link>
+            ) : (
+              <div className="flex items-start gap-3">
+                {dot}
+                {label}
+              </div>
+            )}
           </li>
         );
       })}

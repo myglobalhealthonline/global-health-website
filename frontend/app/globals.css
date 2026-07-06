@@ -466,24 +466,68 @@ img {
  * ZERO specificity — the author's CSS always wins; these are only fallbacks
  * for un-styled markup. */
 .gh-article-body {
-  line-height: 1.7;
+  font-size: 16px;
+  line-height: 1.75;
   color: var(--color-text-body);
   overflow-wrap: break-word;
 }
 .gh-article-body :where(img, svg, video) {
   max-width: 100%;
   height: auto;
+  border-radius: 12px;
 }
 .gh-article-body :where(a):not([class]) {
   color: var(--color-brand-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 .gh-article-body :where(table) {
   max-width: 100%;
 }
-.gh-article-body :where(h1, h2, h3):not([class]) {
+/* Spacing scale — without this every heading/paragraph/list item sits
+ * flush against the next with no rhythm, reading as one dense wall of
+ * text regardless of the source HTML's structure. */
+.gh-article-body :where(h1, h2):not([class]) {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3vw, 30px);
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.2;
+  margin: 40px 0 16px;
+  color: var(--color-text-primary);
+}
+.gh-article-body :where(h3):not([class]) {
+  font-family: var(--font-display);
+  font-size: clamp(17px, 2vw, 21px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin: 30px 0 12px;
+  color: var(--color-text-primary);
+}
+.gh-article-body :where(h1, h2, h3):first-child {
+  margin-top: 0;
+}
+.gh-article-body :where(p):not([class]) { margin: 14px 0; }
+/* Tailwind preflight resets ul/ol to list-style:none — restore real
+ * markers here or every list silently reads as flush paragraphs.
+ * (force-touch for HMR) */
+.gh-article-body :where(ul):not([class]) { margin: 16px 0 16px 4px; padding: 0 0 0 20px; list-style: disc; }
+.gh-article-body :where(ol):not([class]) { margin: 16px 0 16px 4px; padding: 0 0 0 20px; list-style: decimal; }
+.gh-article-body :where(li):not([class]) { margin: 8px 0; padding-left: 4px; }
+.gh-article-body :where(li):not([class])::marker { color: var(--color-brand-accent); }
+.gh-article-body :where(strong):not([class]) { font-weight: 700; color: var(--color-text-primary); }
+.gh-article-body :where(blockquote):not([class]) {
+  margin: 20px 0;
+  padding: 4px 20px;
+  border-left: 3px solid rgba(176, 241, 34, 0.4);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+.gh-article-body :where(hr):not([class]) {
+  margin: 32px 0;
+  border: none;
+  border-top: 1px solid rgba(29, 75, 54, 0.12);
 }
 
 /* Sticky translucent site header. Replaces SiteHeader.tsx inline
@@ -1612,7 +1656,10 @@ img {
     var(--liquid-specular),                    /* lit top edge + lime under-rim */
     0 18px 40px -18px rgba(4, 24, 18, 0.55);   /* calm premium shadow */
 }
-/* Premium ivory card — replaces flat bg-white cards on light sections. */
+/* Premium ivory card — replaces flat bg-white cards on light sections.
+ * Also re-declares the ink tokens: when nested inside .gh2-dark-content
+ * (booking form panels on glass-forest cards) the dark overrides would
+ * otherwise cascade in and paint white text on the white card. */
 .gh2-card-ivory {
   background: linear-gradient(172deg, #ffffff 0%, #fbfcf8 100%);
   border: 1px solid rgba(29, 75, 54, 0.10);
@@ -1621,6 +1668,13 @@ img {
     inset 0 1px 0 rgba(255, 255, 255, 0.9),
     0 1px 2px rgba(16, 44, 34, 0.05),
     0 12px 32px -16px rgba(16, 44, 34, 0.14);
+  --color-text-primary: #1D4B36;
+  --color-text-body: #2D3B36;
+  --color-text-muted: #6D6D6D;
+  --color-border: #E4E7DD;
+  --color-border-strong: #C3CCB5;
+  --color-background-page: #FFFFFF;
+  --color-background-soft: #F6F8F1;
 }
 .gh2-card-hover { transition: transform .25s var(--ease-out, ease), box-shadow .25s, border-color .25s; }
 .gh2-card-hover:hover {
@@ -7142,6 +7196,25 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 .gh2-btn-compact-secondary:hover {
   border-color: rgba(29, 75, 54, 0.4);
   background: var(--color-background-soft);
+}
+/* Dark-card variants — for gh2-btn-compact-* rendered on a
+ * gh2-glass-forest / dark-content card, where the light-surface primary
+ * (forest fill) and secondary (forest border) both go near-invisible. */
+.gh2-btn-compact-primary-dark {
+  background: var(--color-brand-accent);
+  color: #0a1f14;
+}
+.gh2-btn-compact-primary-dark:hover {
+  filter: brightness(1.08);
+}
+.gh2-btn-compact-secondary-dark {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
+}
+.gh2-btn-compact-secondary-dark:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.06);
 }
 /* Secondary on light surfaces — outline that fills on hover. */
 .gh2-btn-outline {

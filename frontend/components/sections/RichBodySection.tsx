@@ -96,7 +96,9 @@ export function RichBodySection({
           color: rgba(255,255,255,0.88);
         }
         .gh-rich-body-dark p { margin: 14px 0; }
-        .gh-rich-body-dark ul, .gh-rich-body-dark ol { margin: 14px 0 14px 24px; padding: 0; }
+        .gh-rich-body-dark ul { margin: 14px 0 14px 4px; padding: 0 0 0 20px; list-style: disc; }
+        .gh-rich-body-dark ol { margin: 14px 0 14px 4px; padding: 0 0 0 20px; list-style: decimal; }
+        .gh-rich-body-dark li::marker { color: var(--color-brand-accent); }
         .gh-rich-body-dark li { margin: 8px 0; }
         .gh-rich-body-dark a {
           color: var(--color-brand-accent);
@@ -127,7 +129,9 @@ export function RichBodySection({
           color: var(--color-text-primary);
         }
         .gh-rich-body-light p { margin: 14px 0; }
-        .gh-rich-body-light ul, .gh-rich-body-light ol { margin: 14px 0 14px 24px; padding: 0; }
+        .gh-rich-body-light ul { margin: 14px 0 14px 4px; padding: 0 0 0 20px; list-style: disc; }
+        .gh-rich-body-light ol { margin: 14px 0 14px 4px; padding: 0 0 0 20px; list-style: decimal; }
+        .gh-rich-body-light li::marker { color: var(--color-brand-primary); }
         .gh-rich-body-light li { margin: 8px 0; }
         .gh-rich-body-light a {
           color: var(--color-brand-primary);

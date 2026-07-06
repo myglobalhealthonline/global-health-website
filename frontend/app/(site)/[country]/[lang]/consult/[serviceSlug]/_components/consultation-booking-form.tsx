@@ -551,10 +551,10 @@ export function ConsultationBookingForm({
         * When bookingForOther, these fields remain the logged-in user's
         * contact/notification details. A separate sub-section collects
         * the actual patient (person being treated). */}
-      <fieldset className="gh2-card-ivory p-5 sm:p-6">
-        <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+      <div role="group" className="gh2-card-ivory p-5 sm:p-6">
+        <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-brand-primary)]">
           {treatingOther ? "Your contact details" : i18n.patientDetails}
-        </legend>
+        </p>
 
         {/* Family-member targeting — book for an approved dependent and apply
           * the plan benefit. Shown only to logged-in patients with at least
@@ -849,17 +849,17 @@ export function ConsultationBookingForm({
             {i18n.consentStatement}
           </span>
         </label>
-      </fieldset>
+      </div>
 
       {/* 3. Patient address — required when the country's BookingSetting
         * has requireAddress on. Snapshotted onto the appointment so the
         * clinical record + any prescription dispatch has the address as
         * it stood at booking, even if the patient later edits their
         * profile. Country code is implicit from the URL slug. */}
-      <fieldset className="gh2-card-ivory p-5 sm:p-6">
-        <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+      <div role="group" className="gh2-card-ivory p-5 sm:p-6">
+        <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-brand-primary)]">
           {i18n.patientAddress}
-        </legend>
+        </p>
         <p className="mt-1 text-xs text-[var(--color-text-muted)]">
           {i18n.patientAddressNote}
         </p>
@@ -930,17 +930,17 @@ export function ConsultationBookingForm({
             {i18n.saveAddressToProfile}
           </label>
         ) : null}
-      </fieldset>
+      </div>
 
       {/* 4. GDPR — two independent required checkboxes per legal review.
         * Stored separately on Appointment so withdrawal of marketing
         * consent (gdprConsentPlatform) doesn't invalidate the clinical
         * record (gdprConsentClinic). Wording deliberately scopes each
         * one's purpose to make withdrawal scope unambiguous. */}
-      <fieldset className="gh2-card-ivory p-5 sm:p-6">
-        <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+      <div role="group" className="gh2-card-ivory p-5 sm:p-6">
+        <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-brand-primary)]">
           {i18n.gdprConsent}
-        </legend>
+        </p>
         <label className="mt-2 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
           <input
             type="checkbox"
@@ -961,7 +961,7 @@ export function ConsultationBookingForm({
           />
           <span>{i18n.gdprPlatformConsent}</span>
         </label>
-      </fieldset>
+      </div>
 
       {error ? (
         <div

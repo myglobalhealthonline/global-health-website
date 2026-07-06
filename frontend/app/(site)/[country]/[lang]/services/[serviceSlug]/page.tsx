@@ -460,6 +460,7 @@ export default async function ServiceDetailPage({
                       doctor: d.slug,
                     })}
                     ctaLabel={c.doctors.viewProfile}
+                    dark
                   />
                 </li>
               ))}

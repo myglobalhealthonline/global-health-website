@@ -377,14 +377,20 @@ export function DoctorCard({
             {profileHref ? (
               <Link
                 href={profileHref}
-                className="gh2-btn-compact gh2-btn-compact-secondary relative z-20 flex-1 border-[color:var(--dc-line)] text-[color:var(--dc-ink)]"
+                className={`gh2-btn-compact relative z-20 flex-1 ${
+                  dark
+                    ? "gh2-btn-compact-secondary-dark"
+                    : "gh2-btn-compact-secondary border-[color:var(--dc-line)] text-[color:var(--dc-ink)]"
+                }`}
               >
                 {ctaLabel}
               </Link>
             ) : null}
             <Link
               href={bookHref}
-              className="gh2-btn-compact gh2-btn-compact-primary relative z-20 flex-1 gap-1"
+              className={`gh2-btn-compact relative z-20 flex-1 gap-1 ${
+                dark ? "gh2-btn-compact-primary-dark" : "gh2-btn-compact-primary"
+              }`}
             >
               {primaryLabel}
               <ArrowRight className="size-3.5 shrink-0" strokeWidth={1.8} aria-hidden />
