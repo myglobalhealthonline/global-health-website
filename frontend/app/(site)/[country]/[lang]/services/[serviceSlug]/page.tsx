@@ -402,7 +402,7 @@ export default async function ServiceDetailPage({
 
       {/* Admin-authored rich detail body */}
       {bodyHtml ? (
-        <section className="gh-inline-clamp-section border-t border-[rgba(29,75,54,0.10)] bg-[var(--color-background-soft)]">
+        <section className="gh-inline-clamp-section border-t border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-primary)]">
               {t.aboutService}
@@ -422,7 +422,7 @@ export default async function ServiceDetailPage({
 
       {/* Who you'll see — clinicians assigned to this service. */}
       {assignedDoctors.length > 0 ? (
-        <section className="gh-inline-clamp-section border-t border-[rgba(29,75,54,0.10)] bg-[var(--color-background-soft)]">
+        <section className="gh-inline-clamp-section border-t border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <header>
               <h2
@@ -473,14 +473,14 @@ export default async function ServiceDetailPage({
       ) : null}
 
       {/* Doctify social proof — compact verified-rating strip */}
-      <section className="border-t border-[var(--color-border)] bg-[var(--color-background-page)] gh-inline-clamp-section-tight">
+      <section className="border-t border-[var(--color-border)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <DoctifyWidget variant="horizontal" language={lang} />
         </div>
       </section>
 
       {/* Short medical disclaimer — between FAQ and the closing booking CTA */}
-      <section className="bg-[var(--color-background-soft)] gh-inline-clamp-section-tight">
+      <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <MedicalDisclaimer variant="short" text={disclaimerText} />
         </div>

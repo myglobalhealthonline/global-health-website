@@ -89,7 +89,7 @@ export function DoctorTeamTemplate({
   const paged = doctors.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
 
   return (
-    <section style={{ background: "var(--color-background-soft)" }}>
+    <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
       <DoctorsHero
         countryName={countryName}
         eyebrow={`${countryName} · ${i18n?.theTeamBadge ?? "The team"}`}
