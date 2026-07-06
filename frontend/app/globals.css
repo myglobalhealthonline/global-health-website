@@ -1926,6 +1926,13 @@ img {
   --lux-well-fill: linear-gradient(180deg, #eff2ea 0%, #f4f6f0 100%);
   --lux-overlay-fill: rgba(7, 18, 12, 0.60);
   --lux-forest-duotone: linear-gradient(180deg, #226044 0%, #1d4b36 55%, #16382a 100%);
+  /* Hover state for --lux-forest-duotone, same stops darkened to
+     --portal-primary-hover's tone. Keeping this a gradient (not a flat
+     color) matters: .gh-btn only transitions background-color, so a
+     gradient->solid swap on hover drops the background-image layer
+     instantly while background-color fades in, flashing the white page
+     background underneath for a frame. Gradient->gradient avoids that. */
+  --lux-forest-duotone-hover: linear-gradient(180deg, #1c4f38 0%, #163a29 55%, #10281c 100%);
   --lux-elev-1:
     inset 0 1px 0 rgba(255, 255, 255, 0.95),
     inset 0 0 0 1px rgba(255, 255, 255, 0.35),
@@ -2996,9 +3003,17 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 
 .gh-portal-shell .gh-btn-primary:hover,
 .gh-admin-main button[type="submit"]:not([class*="ghost"]):not([class*="soft"]):not(.gh-admin-toggle):not(.gh-admin-status-toggle):hover {
-  background: var(--portal-primary-hover);
+  background: var(--lux-forest-duotone-hover);
   border-color: var(--portal-primary-hover);
-  box-shadow: 0 4px 16px var(--portal-signal-glow);
+  /* Same 3-layer structure as the rest state (inset highlight, inset
+     shade, outer shadow) — only the outer layer's spread/color changes.
+     Swapping to a single-layer box-shadow here made the transition jump
+     between mismatched layer counts, which some browsers can't
+     interpolate cleanly and paint as a brief white/blown-out flash. */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 4px 16px var(--portal-signal-glow);
 }
 
 .gh-portal-shell .gh-btn-secondary,
