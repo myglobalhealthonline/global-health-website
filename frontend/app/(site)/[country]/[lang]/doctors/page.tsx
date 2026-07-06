@@ -34,20 +34,8 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 type Params = { country: string; lang: string };
 type SearchParams = {
   lang?: string | string[];
-  specialty?: string | string[];
   type?: string | string[];
 };
-
-/** Stable slug for a specialty name so it survives in the URL filter
- *  param (e.g. "Cardiology" → "cardiology", "Women's Health" →
- *  "womens-health"). */
-function specialtySlug(name: string): string {
-  return name
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
 
 /** Parse a comma-or-repeat search param into a clean string[]. */
 function parseMultiParam(raw: string | string[] | undefined): string[] {
@@ -107,7 +95,6 @@ export default async function CountryLangDoctorsPage({
   // Active filters from the URL. Languages keyed by ISO code; specialties
   // by slug. Accept `?lang=es,pt`, `?lang=es&lang=pt`, single value, etc.
   const filterLangs = parseMultiParam(sp?.lang).map((s) => languageKey(s));
-  const filterSpecs = parseMultiParam(sp?.specialty).map((s) => specialtySlug(s));
   const filterTypes = parseMultiParam(sp?.type)
     .map((s) => s.toLowerCase())
     .filter((s): s is "gp" | "specialist" => s === "gp" || s === "specialist");
@@ -136,14 +123,6 @@ export default async function CountryLangDoctorsPage({
     ).entries(),
   ).sort((a, b) => a[1].localeCompare(b[1]));
 
-  const specOptions = Array.from(
-    new Map(
-      doctors
-        .flatMap((d) => d.specialties ?? [])
-        .map((name) => [specialtySlug(name), name] as const),
-    ).entries(),
-  ).sort((a, b) => a[1].localeCompare(b[1]));
-
   // GP / Specialist chips — a doctor's type comes from which service kinds
   // they're assigned to (same derivation as the homepage carousel).
   const generalServiceIdSet = new Set(generalServices.map((s) => s.id));
@@ -161,17 +140,13 @@ export default async function CountryLangDoctorsPage({
   // groups) and ANY chip within a group (OR within a group).
   const filteredDoctors = doctors.filter((d) => {
     const docLangCodes = (d.languages ?? []).map(languageKey);
-    const docSpecSlugs = (d.specialties ?? []).map(specialtySlug);
     const docTypes = doctorTypes(d);
     const langOk =
       filterLangs.length === 0 ||
       filterLangs.some((code) => docLangCodes.includes(code));
-    const specOk =
-      filterSpecs.length === 0 ||
-      filterSpecs.some((s) => docSpecSlugs.includes(s));
     const typeOk =
       filterTypes.length === 0 || filterTypes.some((t) => docTypes.includes(t));
-    return langOk && specOk && typeOk;
+    return langOk && typeOk;
   });
 
   // Admin-chosen featured doctor → the spotlight card at the top. Pulled
@@ -208,15 +183,14 @@ export default async function CountryLangDoctorsPage({
   // Build a toggle href: flips one token in its param while preserving
   // every OTHER active filter group, so toggling a language doesn't wipe
   // a specialty or type pick.
-  const activeByParam: Record<"lang" | "specialty" | "type", string[]> = {
+  const activeByParam: Record<"lang" | "type", string[]> = {
     lang: filterLangs,
-    specialty: filterSpecs,
     type: filterTypes,
   };
-  function toggleHref(param: "lang" | "specialty" | "type", token: string): string {
+  function toggleHref(param: "lang" | "type", token: string): string {
     const qs = new URLSearchParams();
     for (const [key, list] of Object.entries(activeByParam) as Array<
-      ["lang" | "specialty" | "type", string[]]
+      ["lang" | "type", string[]]
     >) {
       const next = new Set(list);
       if (key === param) {
@@ -229,8 +203,7 @@ export default async function CountryLangDoctorsPage({
     return `/${slug}/${lang}/doctors${str ? `?${str}` : ""}`;
   }
 
-  const hasActive =
-    filterLangs.length > 0 || filterSpecs.length > 0 || filterTypes.length > 0;
+  const hasActive = filterLangs.length > 0 || filterTypes.length > 0;
 
   // Physician ItemList schema — one Physician node per registered doctor in
   // this country, built from the same data the cards render. This is the
@@ -263,11 +236,12 @@ export default async function CountryLangDoctorsPage({
 
   const filterGroups: FilterGroup[] = [
     {
-      // GP / Specialist — only rendered when the country actually has both
-      // types (a single-chip group is noise; empty options hide the group).
+      // GP / Specialist — each chip only renders when the country actually
+      // has a doctor of that type, so a country with GPs only shows just
+      // "See a GP" instead of a dead-end "See a Specialist" chip.
       heading: common.doctors.filterType,
-      options:
-        hasGPDoctors && hasSpecialistDoctors
+      options: [
+        ...(hasGPDoctors
           ? [
               {
                 token: "gp",
@@ -275,6 +249,10 @@ export default async function CountryLangDoctorsPage({
                 active: filterTypes.includes("gp"),
                 href: toggleHref("type", "gp"),
               },
+            ]
+          : []),
+        ...(hasSpecialistDoctors
+          ? [
               {
                 token: "specialist",
                 label: common.doctors.filterTypeSpecialist,
@@ -282,7 +260,8 @@ export default async function CountryLangDoctorsPage({
                 href: toggleHref("type", "specialist"),
               },
             ]
-          : [],
+          : []),
+      ],
     },
     {
       heading: common.doctors.filterSpeaks,
@@ -291,15 +270,6 @@ export default async function CountryLangDoctorsPage({
         label,
         active: filterLangs.includes(codeKey),
         href: toggleHref("lang", codeKey),
-      })),
-    },
-    {
-      heading: common.doctors.filterSpecialty,
-      options: specOptions.map(([specKey, name]) => ({
-        token: specKey,
-        label: name,
-        active: filterSpecs.includes(specKey),
-        href: toggleHref("specialty", specKey),
       })),
     },
   ];
