@@ -8906,3 +8906,79 @@ a.gh-appointment-card:hover {
     transition: none;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+ * MOBILE / LOW-END DEVICE PERFORMANCE — touch devices only
+ * ═══════════════════════════════════════════════════════════════
+ * Stacked backdrop-filter layers exhaust GPU tile memory on Android
+ * (screen corruption / "matrix" artifacts, scroll jank, blank paints).
+ * On coarse-pointer devices every backdrop blur dies — including the
+ * Tailwind backdrop-blur-* utilities and inline styles — and the glass
+ * panes solidify using the same recipes as the no-support fallback
+ * above. Fills already run 0.66–0.92 opaque, so the visual delta is
+ * minimal; the compositing cost drops to zero. */
+@media (pointer: coarse) {
+  :root {
+    /* Chrome fill near-solid: unblurred 0.78 translucency reads muddy
+     * while content scrolls beneath the navbar/footer. */
+    --gh-chrome: rgba(4, 32, 24, 0.96);
+  }
+  * {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  /* Public glass → solid forest (same recipes as @supports-not block). */
+  .gh-glass-card,
+  .gh2-glass,
+  .gh-liquid {
+    background: linear-gradient(168deg, #123528, #0b2a20);
+  }
+  .gh2-glass-deep,
+  .gh2-glass-forest,
+  .gh-glass-emerald,
+  .gh-inline-forest-glass,
+  .gh-inline-doctor-glass {
+    background: linear-gradient(168deg, #0e3125, #08251c);
+  }
+  .gh2-glass-ivory,
+  .gh-liquid-light {
+    background: #f7fbf4;
+  }
+  .gh-home-hero-availabilityPanel {
+    background: #0d261e;
+  }
+  .gh-footer-shell {
+    background: #042018;
+  }
+  /* Portal lux chrome → solid (same as reduced-transparency fallback). */
+  .gh-command-band,
+  .gh-portal-sidebar,
+  .gh-portal-topbar {
+    background-color: var(--portal-chrome-solid);
+  }
+  /* Infinite decorative animations — constant repaint/compositor work
+   * for pure ambience. Functional motion (spinners, skeletons, dialog
+   * entries, marquee) stays. */
+  .gh-command-band::before {
+    animation: none;
+  }
+  .gh-floaty,
+  .animate-float,
+  .animate-pulse-glow {
+    animation: none;
+  }
+}
+
+/* Notification popover — on phones the panel is wider than the space
+ * left of the bell (anchored right-0 mid-topbar), so it clipped off the
+ * left viewport edge. Pin it to the viewport instead. */
+@media (max-width: 640px) {
+  .gh-notification-popover {
+    position: fixed !important;
+    left: 12px !important;
+    right: 12px !important;
+    top: 72px !important;
+    width: auto !important;
+    transform-origin: top center;
+  }
+}
