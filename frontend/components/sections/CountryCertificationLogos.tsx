@@ -47,19 +47,18 @@ export function CountryCertificationLogos({
   return (
     <section
       aria-label={`${trust.country.name} certification and partner logos`}
-      className="relative overflow-hidden bg-[radial-gradient(circle_at_10%_12%,rgba(176,241,34,0.18),transparent_30%),radial-gradient(circle_at_90%_0%,rgba(255,255,255,0.12),transparent_26%),linear-gradient(135deg,#08241a_0%,#123826_48%,#071f17_100%)] py-[clamp(44px,5vw,72px)]"
+      className="relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel py-[clamp(44px,5vw,72px)]"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(0deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:58px_58px] opacity-35" />
       <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <RevealOnScroll delay={0}>
           <div>
-            <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[var(--color-brand-primary)]">
               {c.eyebrow}
             </p>
-            <h2 className="mt-3 max-w-[18ch] text-[clamp(1.9rem,3vw,3.2rem)] font-extrabold leading-[0.98] tracking-[-0.04em] text-white">
+            <h2 className="mt-3 max-w-[18ch] text-[clamp(1.9rem,3vw,3.2rem)] font-extrabold leading-[0.98] tracking-[-0.04em] text-[var(--color-text-primary)]">
               {c.heading}
             </h2>
-            <p className="mt-4 max-w-[48ch] text-[15px] leading-relaxed text-white/70">
+            <p className="mt-4 max-w-[48ch] text-[15px] leading-relaxed text-[var(--color-text-muted)]">
               {c.body}
             </p>
           </div>
@@ -89,9 +88,9 @@ function LogoRow({
   const firstLogoIsDark = logos[0]?.tone === "dark";
   return (
     <div className="mt-8">
-      <p className="flex items-center gap-3 text-[11px] font-extrabold uppercase tracking-[0.18em] text-white/55">
+      <p className="flex items-center gap-3 text-[11px] font-extrabold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
         {label}
-        <span aria-hidden className="h-px flex-1 bg-white/12" />
+        <span aria-hidden className="h-px flex-1 bg-[rgba(29,75,54,0.12)]" />
       </p>
       <ul className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {logos.map((logo, index) => (

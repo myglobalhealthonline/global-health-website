@@ -583,7 +583,7 @@ export default async function CountryLangHomePage({
           <CountryCertificationLogos trust={countryTrust} locale={lang} />
         </>
       ) : null}
-      <HowItWorksNarrative theme="dark" i18n={t.howItWorks} />
+      <HowItWorksNarrative theme="light" i18n={t.howItWorks} />
       <FinalCTA primaryHref={bookHref} secondaryHref={doctorsHref} i18n={t.finalCta} />
       <StickyBookingCTA href={bookHref} />
     </>
