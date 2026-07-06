@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync, FastifyRequest } from "fastify";
-import type { LocaleCode } from "@prisma/client";
+import { LocaleCode } from "@prisma/client";
 import { listServices, listSpecialties, getPublicServiceBySlug } from "../modules/services/services.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -19,7 +19,15 @@ function optionalUserId(request: FastifyRequest): string | null {
 const slugParamsSchema = z.object({ slug: z.string().trim().min(1) });
 const countryQuerySchema = z.object({
   countryCode: z.string().trim().min(1).max(8).optional(),
-  locale: z.string().trim().min(1).max(8).optional(),
+  // .catch(undefined): an unknown locale falls back to the country default
+  // instead of failing the whole query parse (which would also silently
+  // drop countryCode and serve the wrong country's content).
+  locale: z
+    .preprocess(
+      (v) => (typeof v === "string" ? v.toUpperCase() : v),
+      z.nativeEnum(LocaleCode).optional(),
+    )
+    .catch(undefined),
 });
 
 const servicesRoute: FastifyPluginAsync = async (app) => {
@@ -65,7 +73,7 @@ const servicesRoute: FastifyPluginAsync = async (app) => {
       const service = await getPublicServiceBySlug(
         params.data.slug,
         countryCode,
-        locale as LocaleCode | undefined,
+        locale,
         { allowCorporate: Boolean(userId) },
       );
       if (!service) {
@@ -108,7 +116,7 @@ const servicesRoute: FastifyPluginAsync = async (app) => {
       const service = await getPublicServiceBySlug(
         params.data.slug,
         countryCode,
-        locale as LocaleCode | undefined,
+        locale,
       );
       if (!service) {
         return reply.status(404).send(errorResponse("Service not found"));

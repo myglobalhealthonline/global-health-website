@@ -48,7 +48,9 @@ function emptyForm(locales: LocaleTab[]): FormState {
 
 /** Base question/answer = default locale; translations[] = every locale
  *  (including default) with non-empty text — mirrors parseTranslations()
- *  in service-form-parse.ts. */
+ *  in service-form-parse.ts. Backend now deletes any locale missing from
+ *  this array, so a half-filled tab (see findHalfFilledLocales) must be
+ *  blocked before this ever runs. */
 function formToBody(form: FormState, locales: LocaleTab[], defaultLocale: string) {
   const upperDefault = defaultLocale.toUpperCase();
   const base = form.texts[upperDefault] ?? { question: "", answer: "" };
@@ -61,6 +63,22 @@ function formToBody(form: FormState, locales: LocaleTab[], defaultLocale: string
     isVisible: form.isVisible,
     translations,
   };
+}
+
+/** Non-default locale tabs where exactly one of question/answer is filled —
+ *  saving as-is would silently drop that text (backend now deletes any
+ *  locale missing from the translations array). */
+function findHalfFilledLocales(form: FormState, locales: LocaleTab[], defaultLocale: string): string[] {
+  const upperDefault = defaultLocale.toUpperCase();
+  return locales
+    .filter((l) => l.code !== upperDefault)
+    .filter((l) => {
+      const t = form.texts[l.code] ?? { question: "", answer: "" };
+      const hasQuestion = t.question.trim() !== "";
+      const hasAnswer = t.answer.trim() !== "";
+      return hasQuestion !== hasAnswer;
+    })
+    .map((l) => l.code);
 }
 
 function formFromFaq(faq: AdminServiceFaqDto, locales: LocaleTab[], defaultLocale: string): FormState {
@@ -360,9 +378,11 @@ function FaqForm({
     onChange({ ...form, texts: { ...form.texts, [active]: next } });
   }
 
+  const halfFilledLocales = findHalfFilledLocales(form, locales, defaultLocale);
   const canSave =
     (form.texts[upperDefault]?.question.trim() ?? "") !== "" &&
-    (form.texts[upperDefault]?.answer.trim() ?? "") !== "";
+    (form.texts[upperDefault]?.answer.trim() ?? "") !== "" &&
+    halfFilledLocales.length === 0;
 
   return (
     <div className="gh-admin-service-faq-form">
@@ -414,6 +434,12 @@ function FaqForm({
           placeholder={isDefaultTab ? "The consultation includes..." : "Leave blank to use the default language"}
         />
       </div>
+      {halfFilledLocales.length > 0 ? (
+        <p className="text-[11px] text-[var(--color-status-warning-text)]">
+          {halfFilledLocales.map((c) => localeLabel(c)).join(", ")} {halfFilledLocales.length > 1 ? "have" : "has"}{" "}
+          only a question or answer filled in — fill in both or clear both before saving.
+        </p>
+      ) : null}
       <div className="gh-admin-service-active-row">
         <input
           id="faq-visible"

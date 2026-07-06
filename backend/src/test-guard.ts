@@ -39,10 +39,20 @@ function isSafeDatabaseUrl(raw: string): boolean {
   return dbName.includes("test") || dbName.includes("shadow");
 }
 
+/** Best-effort hostname for the error message only — must never throw on a
+ *  malformed DATABASE_URL, or it'd mask the friendly refusal message below. */
+function safeHostname(raw: string): string {
+  try {
+    return new URL(raw).hostname;
+  } catch {
+    return "(unparseable)";
+  }
+}
+
 if (process.env.ALLOW_LIVE_DB_TESTS !== "1") {
   const raw = process.env.DATABASE_URL;
   if (!raw || !isSafeDatabaseUrl(raw)) {
-    const hint = raw ? new URL(raw).hostname : "(unset)";
+    const hint = raw ? safeHostname(raw) : "(unset)";
     console.error(
       `\n🛑 REFUSING TO RUN TESTS\n` +
         `DATABASE_URL host "${hint}" is not a recognized local/test database.\n` +
