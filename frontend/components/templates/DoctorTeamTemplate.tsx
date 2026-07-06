@@ -124,8 +124,8 @@ export function DoctorTeamTemplate({
         }}
       />
 
-      {/* GRID — forest-glass band (matches homepage team section), dark DoctorCards */}
-      <section id="doctor-grid" className="gh-section relative gh2-section-forest gh-medical-pattern gh-medical-pattern-dark" style={{ scrollMarginTop: "96px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      {/* GRID — light ivory band; dark liquid-glass DoctorCards float on it. */}
+      <section id="doctor-grid" className="gh-section" style={{ scrollMarginTop: "96px", background: "var(--color-background-soft)", borderTop: "1px solid rgba(29,75,54,0.10)" }}>
         <div className="gh-container">
           {/* Featured-doctor spotlight (admin-chosen) above the filters. */}
           {spotlight}
@@ -138,11 +138,11 @@ export function DoctorTeamTemplate({
             <div className="mx-auto max-w-[480px] text-center">
               <h2
                 className="gh-display text-[2rem]"
-                style={{ fontWeight: 800, color: "rgba(255,255,255,0.92)" }}
+                style={{ fontWeight: 800, color: "var(--color-text-primary)" }}
               >
                 {i18n?.onboardingTitle ?? "Onboarding clinicians."}
               </h2>
-              <p className="mt-4 text-[15px]" style={{ color: "var(--gh2-on-dark-muted)" }}>
+              <p className="mt-4 text-[15px]" style={{ color: "var(--color-text-muted)" }}>
                 {(i18n?.onboardingBodyTemplate ?? "Our {country} medical team is being verified. Check back soon — or book with our cross-border specialists.").replace("{country}", countryName)}
               </p>
               <Link
@@ -159,7 +159,7 @@ export function DoctorTeamTemplate({
                 <div className="mb-6 flex items-center justify-end gap-2">
                   <span
                     className="text-[11px] font-bold tabular-nums"
-                    style={{ color: "var(--gh2-on-dark-muted)" }}
+                    style={{ color: "var(--color-text-muted)" }}
                   >
                     {safePage + 1} / {totalPages}
                   </span>
@@ -167,14 +167,14 @@ export function DoctorTeamTemplate({
                     onClick={() => setPage((p) => Math.max(0, p - 1))}
                     disabled={safePage === 0}
                     aria-label="Previous page"
-                    className="gh-focus-on-dark inline-flex size-11 items-center justify-center rounded-full border transition-all duration-150 disabled:cursor-not-allowed"
+                    className="inline-flex size-11 items-center justify-center rounded-full border transition-all duration-150 disabled:cursor-not-allowed"
                     style={
                       safePage === 0
-                        ? { color: "rgba(255,255,255,0.22)", borderColor: "rgba(255,255,255,0.12)" }
+                        ? { opacity: 0.3, borderColor: "currentColor", color: "var(--color-text-muted)" }
                         : {
-                            background: "var(--color-brand-accent)",
-                            borderColor: "var(--color-brand-accent)",
-                            color: "#0a1f14",
+                            background: "var(--color-brand-primary)",
+                            borderColor: "var(--color-brand-primary)",
+                            color: "#fff",
                           }
                     }
                   >
@@ -186,14 +186,14 @@ export function DoctorTeamTemplate({
                     }
                     disabled={safePage === totalPages - 1}
                     aria-label="Next page"
-                    className="gh-focus-on-dark inline-flex size-11 items-center justify-center rounded-full border transition-all duration-150 disabled:cursor-not-allowed"
+                    className="inline-flex size-11 items-center justify-center rounded-full border transition-all duration-150 disabled:cursor-not-allowed"
                     style={
                       safePage === totalPages - 1
-                        ? { color: "rgba(255,255,255,0.22)", borderColor: "rgba(255,255,255,0.12)" }
+                        ? { opacity: 0.3, borderColor: "currentColor", color: "var(--color-text-muted)" }
                         : {
-                            background: "var(--color-brand-accent)",
-                            borderColor: "var(--color-brand-accent)",
-                            color: "#0a1f14",
+                            background: "var(--color-brand-primary)",
+                            borderColor: "var(--color-brand-primary)",
+                            color: "#fff",
                           }
                     }
                   >
@@ -201,7 +201,7 @@ export function DoctorTeamTemplate({
                   </button>
                 </div>
               )}
-              <ul className="grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+              <ul className="gh-doctors-grid-deep grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
                 {paged.map((d) => (
                   <li key={(d.href ?? "") + d.name}>
                     <DoctorCard

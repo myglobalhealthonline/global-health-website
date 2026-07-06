@@ -1610,6 +1610,18 @@ img {
     var(--liquid-specular),                    /* lit top edge + lime under-rim */
     0 18px 40px -18px rgba(4, 24, 18, 0.55);   /* calm premium shadow */
 }
+/* Doctors-directory grid — lighter, more translucent glass than the
+ * shared .gh2-glass-forest default: lower fill opacity + heavier blur so
+ * the ivory band behind genuinely reads through the card.
+ * Scoped to the grid wrapper only — doesn't touch homepage/other usages. */
+.gh-doctors-grid-deep .gh2-glass-forest {
+  background:
+    linear-gradient(168deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.01)),
+    linear-gradient(168deg, rgba(18, 58, 45, 0.80), rgba(10, 40, 31, 0.86));
+  border-color: rgba(176, 241, 34, 0.24);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  backdrop-filter: blur(28px) saturate(160%);
+}
 /* Premium ivory card — replaces flat bg-white cards on light sections. */
 .gh2-card-ivory {
   background: linear-gradient(172deg, #ffffff 0%, #fbfcf8 100%);
