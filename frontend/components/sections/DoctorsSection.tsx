@@ -116,9 +116,12 @@ export function DoctorsSection({ title, intro, doctors, theme = "dark", bare = f
 
   return (
     <section
-      className={isLight ? "" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"}
+      className={
+        isLight
+          ? "relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
+          : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
+      }
       style={{
-        background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
         padding: "clamp(64px,8vw,120px) 0",
         borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
       }}

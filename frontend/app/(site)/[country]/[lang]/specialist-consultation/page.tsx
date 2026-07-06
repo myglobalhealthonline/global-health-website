@@ -225,7 +225,7 @@ export default async function CountryLangSpecialistConsultationPage({
       />
 
       {page?.heroImageSrc ? (
-        <section style={{ background: "var(--color-background-dark)" }}>
+        <section className="gh2-section-forest gh-medical-pattern gh-medical-pattern-dark" style={{ padding: "clamp(64px,8vw,120px) 0" }}>
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 -mt-16 relative">
             <div className="overflow-hidden rounded-[var(--radius-card)]" style={{ border: "1px solid rgba(255,255,255,0.09)" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}

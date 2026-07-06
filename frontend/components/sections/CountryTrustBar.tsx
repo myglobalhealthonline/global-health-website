@@ -211,16 +211,16 @@ export function CountryTrustBar({
                   {rows.map((row) => (
                     <div
                       key={row.kicker}
-                      className="rounded-[20px] border border-[rgba(29,75,54,0.12)] bg-white/72 p-4 shadow-[0_10px_28px_rgba(29,75,54,0.07)] transition duration-300 hover:-translate-y-0.5 hover:bg-white"
+                      className="gh2-glass-forest gh2-glass-hover rounded-[20px] p-4"
                     >
                       <div className="flex min-h-[112px] gap-4">
                         <div className="min-w-0 flex-1">
-                          <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[rgba(29,75,54,0.54)]">
+                          <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-white/55">
                             {row.kicker}
                           </span>
-                          <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[14px] leading-snug text-[var(--color-text-primary)]">
+                          <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[14px] leading-snug text-white/90">
                             <span>{row.text}</span>
-                            {row.url ? <VerifyLink href={row.url} label={t.verify} /> : null}
+                            {row.url ? <VerifyLink href={row.url} label={t.verify} variant="dark" /> : null}
                           </p>
                         </div>
                         {row.logos.length > 0 ? (
@@ -237,12 +237,12 @@ export function CountryTrustBar({
                       Ireland-only; the micro star widget links to the live
                       Doctify profile. */}
                   {trust.country.code.toLowerCase() === "ie" ? (
-                    <div className="rounded-[20px] border border-[rgba(29,75,54,0.12)] bg-white/72 p-4 shadow-[0_10px_28px_rgba(29,75,54,0.07)] transition duration-300 hover:-translate-y-0.5 hover:bg-white">
+                    <div className="gh2-glass-forest gh2-glass-hover rounded-[20px] p-4">
                       <div className="flex min-h-[112px] flex-col">
-                        <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[rgba(29,75,54,0.54)]">
+                        <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-white/55">
                           {t.kReviews}
                         </span>
-                        <p className="mt-2 text-[14px] leading-snug text-[var(--color-text-primary)]">
+                        <p className="mt-2 text-[14px] leading-snug text-white/90">
                           {t.reviewsText}
                         </p>
                         <DoctifyWidget

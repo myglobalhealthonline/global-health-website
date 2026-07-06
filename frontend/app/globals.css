@@ -1599,28 +1599,18 @@ img {
  * Additive only; existing gh2-glass* / gh-glass-* classes untouched. */
 /* Canonical forest glass card — alias-consolidation of gh2-glass-deep. */
 .gh2-glass-forest {
-  background:
-    var(--liquid-fill-dark),
-    linear-gradient(168deg, rgba(16, 52, 40, 0.72), rgba(9, 38, 29, 0.82));
-  border: 1px solid rgba(176, 241, 34, 0.16);
+  /* Same material as the navbar/footer chrome — one glass recipe site-wide.
+   * Fill runs more opaque than --gh-chrome (0.78): the navbar always sits
+   * on dark content, cards often sit on ivory bands — at 0.78 the light
+   * band bleeds through and the card reads sage instead of navbar-dark. */
+  background: var(--liquid-fill-dark), rgba(4, 32, 24, 0.92);
+  border: var(--gh-chrome-border);
   border-radius: var(--radius-card);
-  -webkit-backdrop-filter: var(--liquid-filter);
-  backdrop-filter: var(--liquid-filter);
+  -webkit-backdrop-filter: var(--gh-chrome-filter);
+  backdrop-filter: var(--gh-chrome-filter);
   box-shadow:
     var(--liquid-specular),                    /* lit top edge + lime under-rim */
     0 18px 40px -18px rgba(4, 24, 18, 0.55);   /* calm premium shadow */
-}
-/* Doctors-directory grid — lighter, more translucent glass than the
- * shared .gh2-glass-forest default: lower fill opacity + heavier blur so
- * the ivory band behind genuinely reads through the card.
- * Scoped to the grid wrapper only — doesn't touch homepage/other usages. */
-.gh-doctors-grid-deep .gh2-glass-forest {
-  background:
-    linear-gradient(168deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.01)),
-    linear-gradient(168deg, rgba(18, 58, 45, 0.80), rgba(10, 40, 31, 0.86));
-  border-color: rgba(176, 241, 34, 0.24);
-  -webkit-backdrop-filter: blur(28px) saturate(160%);
-  backdrop-filter: blur(28px) saturate(160%);
 }
 /* Premium ivory card — replaces flat bg-white cards on light sections. */
 .gh2-card-ivory {
@@ -1643,7 +1633,10 @@ img {
 }
 /* Section surfaces — explicit ivory/forest/soft bands, no inline ternaries. */
 .gh2-section-forest { background: linear-gradient(178deg, #12342A 0%, #0F2E25 100%); }
-.gh2-section-ivory  { background: var(--color-background-soft); }
+/* Ivory band — warm top-lit gradient (same recipe as CountryTrustBar's
+ * "Licensed care" panel). Pair with gh-medical-pattern
+ * gh-medical-pattern-panel for the faint plus-grid texture. */
+.gh2-section-ivory  { background: linear-gradient(180deg, #fffdf1 0%, #f6f8f1 52%, #edf2e2 100%); }
 .gh2-section-soft   { background: var(--color-background); }
 /* Meta chip (light + dark) — price/duration/credential badges. */
 .gh2-meta-chip {
@@ -1670,8 +1663,26 @@ img {
   align-items: flex-start;
   padding: .9rem 1rem;
   border-radius: 14px;
-  background: rgba(29, 75, 54, .045);
-  border: 1px solid rgba(29, 75, 54, .08);
+  /* Ivory-card material (matches gh2-card-ivory) instead of the old
+   * flat gray fill — light sections stay warm, not template-gray. */
+  background: linear-gradient(172deg, #ffffff 0%, #fbfcf8 100%);
+  border: 1px solid rgba(29, 75, 54, 0.10);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 1px 2px rgba(16, 44, 34, 0.05),
+    0 10px 26px -14px rgba(16, 44, 34, 0.12);
+  transition: transform .25s var(--ease-out, ease), box-shadow .25s, border-color .25s;
+}
+.gh2-trust-tile:hover {
+  transform: translateY(-2px);
+  border-color: rgba(29, 75, 54, 0.20);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 2px 4px rgba(16, 44, 34, 0.06),
+    0 16px 36px -16px rgba(16, 44, 34, 0.18);
+}
+@media (prefers-reduced-motion: reduce) {
+  .gh2-trust-tile, .gh2-trust-tile:hover { transform: none; transition: none; }
 }
 /* Status card — calm neutral empty/no-results state, not amber. */
 .gh2-status-card {

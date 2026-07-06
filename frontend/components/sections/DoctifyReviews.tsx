@@ -163,7 +163,7 @@ export function DoctifyReviewsSection({
       className={
         dark
           ? "gh-inline-clamp-section border-t border-white/6 gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
-          : "gh-inline-clamp-section border-t border-[var(--color-border)] bg-[var(--color-background-soft)]"
+          : "gh-inline-clamp-section relative overflow-hidden border-t border-[var(--color-border)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
       }
     >
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">

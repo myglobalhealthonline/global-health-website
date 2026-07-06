@@ -125,7 +125,7 @@ export function DoctorTeamTemplate({
       />
 
       {/* GRID — light ivory band; dark liquid-glass DoctorCards float on it. */}
-      <section id="doctor-grid" className="gh-section" style={{ scrollMarginTop: "96px", background: "var(--color-background-soft)", borderTop: "1px solid rgba(29,75,54,0.10)" }}>
+      <section id="doctor-grid" className="gh-section relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel" style={{ scrollMarginTop: "96px", borderTop: "1px solid rgba(29,75,54,0.10)" }}>
         <div className="gh-container">
           {/* Featured-doctor spotlight (admin-chosen) above the filters. */}
           {spotlight}
@@ -201,7 +201,7 @@ export function DoctorTeamTemplate({
                   </button>
                 </div>
               )}
-              <ul className="gh-doctors-grid-deep grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+              <ul className="grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
                 {paged.map((d) => (
                   <li key={(d.href ?? "") + d.name}>
                     <DoctorCard
@@ -235,7 +235,7 @@ export function DoctorTeamTemplate({
       </section>
 
       {showBottomCta ? (
-        <section className="gh-section relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark" style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <section className="gh-section relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
           <div className="gh-container">
             <div className="grid items-center gap-10 lg:grid-cols-[1.6fr_1fr]">
               <h2

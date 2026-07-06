@@ -364,9 +364,8 @@ export function FeaturedDoctor({
   if (standalone) {
     return (
       <section
-        className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
+        className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
         style={{
-          background: "var(--color-background-dark)",
           borderTop: "1px solid rgba(255,255,255,0.06)",
           padding: "clamp(48px,7vw,96px) 0",
         }}

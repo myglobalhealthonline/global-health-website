@@ -32,8 +32,12 @@ export function RichBodySection({
 
   return (
     <section
+      className={
+        isLight
+          ? "relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
+          : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
+      }
       style={{
-        background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
         padding: "clamp(40px,5vw,64px) 0",
         borderTop: isLight
           ? "1px solid rgba(29,75,54,0.10)"

@@ -56,9 +56,12 @@ export function HowItWorksNarrative({
   return (
     <section
       id="how-it-works"
-      className={isLight ? "" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"}
+      className={
+        isLight
+          ? "relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
+          : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
+      }
       style={{
-        background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
         padding: "clamp(64px,8vw,120px) 0",
         borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
       }}
@@ -113,13 +116,15 @@ export function HowItWorksNarrative({
               className="gh2-step grid items-center gap-x-8 gap-y-4 rounded-xl px-2 py-9 md:grid-cols-[minmax(96px,140px)_1fr] md:px-6 md:py-12"
               style={{ borderTop: `1px solid ${hairline}` }}
             >
-              {/* Ghost numeral */}
+              {/* Ghost numeral — gradient ink so it reads designed, not faded */}
               <span
                 aria-hidden
-                className="select-none font-extrabold leading-none tracking-[-0.05em] [font-variant-numeric:tabular-nums]"
+                className="select-none bg-clip-text font-extrabold leading-none tracking-[-0.05em] text-transparent [font-variant-numeric:tabular-nums]"
                 style={{
                   fontSize: "clamp(3.25rem,7vw,5.5rem)",
-                  color: isLight ? "rgba(29,75,54,0.14)" : "rgba(176,241,34,0.22)",
+                  backgroundImage: isLight
+                    ? "linear-gradient(160deg, rgba(29,75,54,0.32), rgba(143,176,33,0.30))"
+                    : "linear-gradient(160deg, rgba(176,241,34,0.38), rgba(176,241,34,0.14))",
                 }}
               >
                 {s.n}
@@ -147,7 +152,6 @@ export function HowItWorksNarrative({
                   {s.lede}
                 </p>
               </div>
-
             </div>
           ))}
         </RevealOnScroll>

@@ -13,9 +13,8 @@ type FAQSectionProps = {
 export function FAQSection({ title = "FAQs", items }: FAQSectionProps) {
   return (
     <section
-      className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
+      className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
       style={{
-        background: "var(--color-background-dark)",
         padding: "clamp(64px,8vw,120px) 0",
         borderTop: "1px solid rgba(255,255,255,0.06)",
       }}
@@ -49,7 +48,7 @@ export function FAQSection({ title = "FAQs", items }: FAQSectionProps) {
             return (
               <details
                 key={item.question}
-                className="group rounded-[14px] border border-white/[0.12] bg-white/[0.06] px-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-colors duration-200 [&[open]]:bg-white/[0.09] motion-reduce:transition-none md:px-6"
+                className="group gh2-glass-forest gh2-glass-hover rounded-[14px] px-5 motion-reduce:transition-none md:px-6"
               >
                 <summary
                   id={summaryId}

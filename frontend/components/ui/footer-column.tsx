@@ -45,7 +45,7 @@ export default function FooterColumn({
   ];
 
   return (
-    <footer className="w-full bg-[var(--color-background-dark)]">
+    <footer className="w-full gh2-section-forest">
       <div className="mx-auto max-w-[var(--container-width)] px-5 pb-8 pt-16 sm:px-8 lg:px-12 lg:pt-20">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
           <div>

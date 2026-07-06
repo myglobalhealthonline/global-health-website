@@ -271,7 +271,7 @@ export default async function CountryLangGeneralConsultationPage({
       />
 
       {page?.heroImageSrc ? (
-        <section style={{ background: "var(--color-background-dark)" }}>
+        <section className="gh2-section-forest gh-medical-pattern gh-medical-pattern-dark" style={{ padding: "clamp(64px,8vw,120px) 0" }}>
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 -mt-16 relative">
             <div className="overflow-hidden rounded-[var(--radius-card)]" style={{ border: "1px solid rgba(255,255,255,0.09)" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -317,13 +317,15 @@ export default async function CountryLangGeneralConsultationPage({
         />
       ) : null}
 
-      {/* 5 — The clinicians behind the service. */}
+      {/* 5 — The clinicians behind the service. Dark band so the page keeps
+          a strict dark/light rhythm: services (dark) → who-for (ivory) →
+          doctors (dark) → why-choose (ivory) → FAQ (dark) → reviews (ivory). */}
       {doctorItems.length > 0 ? (
         <DoctorsSection
           title={gp.doctorsSectionTitle.replace("{country}", config.name)}
           intro={gp.doctorsSectionIntro}
           doctors={doctorItems}
-          theme="light"
+          theme="dark"
         />
       ) : null}
 
@@ -357,10 +359,8 @@ export default async function CountryLangGeneralConsultationPage({
 
       {gpShortDisclaimer ? (
         <section
-          style={{
-            background: "var(--color-background-soft)",
-            padding: "clamp(28px,4vw,48px) 0",
-          }}
+          className="relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
+          style={{ padding: "clamp(28px,4vw,48px) 0" }}
         >
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <MedicalDisclaimer variant="short" text={gpShortDisclaimer} />
