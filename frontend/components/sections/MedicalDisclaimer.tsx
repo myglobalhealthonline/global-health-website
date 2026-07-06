@@ -39,25 +39,24 @@ export function MedicalDisclaimer(props: MedicalDisclaimerProps) {
     return (
       <div
         role="note"
-        className="flex gap-3 rounded-[var(--radius-card)] p-4"
+        className="flex gap-3 rounded-[var(--radius-card)] p-4 gh2-glass-forest"
         style={{
-          background: "rgba(29,75,54,0.05)",
-          border: "1px solid rgba(29,75,54,0.16)",
+          border: "1px solid rgba(255,255,255,0.14)",
         }}
       >
         <ShieldAlert
           className="mt-0.5 size-4 shrink-0"
-          style={{ color: "var(--color-brand-primary)" }}
+          style={{ color: "var(--color-brand-accent)" }}
           aria-hidden
         />
         <div
           className="space-y-2 text-xs leading-relaxed"
-          style={{ color: "var(--color-text-muted)" }}
+          style={{ color: "rgba(255,255,255,0.72)" }}
         >
           {paragraphs.map((para, i) => (
             <p key={i}>
               {i === 0 ? (
-                <span className="font-semibold text-[var(--color-text-body)]">
+                <span className="font-semibold" style={{ color: "var(--color-brand-accent)" }}>
                   {props.title ?? "Medical disclaimer."}{" "}
                 </span>
               ) : null}
@@ -69,7 +68,7 @@ export function MedicalDisclaimer(props: MedicalDisclaimerProps) {
               <Link
                 href={props.link.href}
                 className="font-semibold underline underline-offset-2"
-                style={{ color: "var(--color-brand-primary)" }}
+                style={{ color: "var(--color-brand-accent)" }}
               >
                 {props.link.label}
               </Link>
@@ -85,30 +84,28 @@ export function MedicalDisclaimer(props: MedicalDisclaimerProps) {
   return (
     <section
       aria-label="Medical disclaimer"
+      className="gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
       style={{
-        background: "var(--color-background-soft)",
         padding: "clamp(40px,5vw,72px) 0",
-        borderTop: "1px solid rgba(29,75,54,0.10)",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
       }}
     >
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <div
-          className="rounded-[var(--radius-card)] p-6 sm:p-8 lg:p-10"
+          className="rounded-[var(--radius-card)] p-6 sm:p-8 lg:p-10 gh2-glass-forest"
           style={{
-            background: "var(--color-background-page)",
-            border: "1px solid rgba(29,75,54,0.18)",
-            boxShadow: "0 2px 16px rgba(29,75,54,0.06)",
+            border: "1px solid rgba(255,255,255,0.14)",
           }}
         >
           <div className="flex items-center gap-2.5">
             <ShieldAlert
               className="size-5"
-              style={{ color: "var(--color-brand-primary)" }}
+              style={{ color: "var(--color-brand-accent)" }}
               aria-hidden
             />
             <h2
               className="text-[11px] font-bold uppercase tracking-[0.18em]"
-              style={{ color: "var(--color-brand-primary)" }}
+              style={{ color: "var(--color-brand-accent)" }}
             >
               {title}
             </h2>
@@ -119,7 +116,7 @@ export function MedicalDisclaimer(props: MedicalDisclaimerProps) {
               <p
                 key={i}
                 className="text-sm leading-relaxed"
-                style={{ color: "var(--color-text-muted)", maxWidth: "78ch" }}
+                style={{ color: "rgba(255,255,255,0.72)", maxWidth: "78ch" }}
               >
                 {p}
               </p>

@@ -493,7 +493,6 @@ export default async function CountryLangHomePage({
         ctaLabel={page?.ctaLabel ?? null}
         i18n={t.countryHero}
       />
-      <TrustMarquee items={trustMarqueeItems} />
       <RichBodySection html={page?.body} theme="light" />
       <TrustRibbon items={trustItems} theme="light" />
       <ServiceCatalog services={serviceCatalogItems} i18n={tServices.catalog} />
@@ -584,7 +583,7 @@ export default async function CountryLangHomePage({
           <CountryCertificationLogos trust={countryTrust} locale={lang} />
         </>
       ) : null}
-      <HowItWorksNarrative theme="light" i18n={t.howItWorks} />
+      <HowItWorksNarrative theme="dark" i18n={t.howItWorks} />
       <FinalCTA primaryHref={bookHref} secondaryHref={doctorsHref} i18n={t.finalCta} />
       <StickyBookingCTA href={bookHref} />
     </>

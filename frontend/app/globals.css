@@ -6676,7 +6676,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 }
 
 .gh-section-dark {
-  background: var(--color-background-dark);
+  background: linear-gradient(178deg, #12342A 0%, #0F2E25 100%);
   color: var(--color-brand-secondary);
 }
 

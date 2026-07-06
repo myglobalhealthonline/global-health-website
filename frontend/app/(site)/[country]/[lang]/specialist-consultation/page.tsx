@@ -260,6 +260,7 @@ export default async function CountryLangSpecialistConsultationPage({
           intro={sp.doctorsSectionIntro}
           doctors={doctorItems}
           theme="light"
+          cardTheme="dark"
         />
       ) : null}
 

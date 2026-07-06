@@ -50,13 +50,13 @@ export function BlogCard({
           href={href}
           aria-hidden
           tabIndex={-1}
-          className="block shrink-0 sm:w-[38%] sm:max-w-[360px]"
+          className="block shrink-0 sm:w-[42%] sm:max-w-[400px]"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={coverImageSrc}
             alt={coverImageAlt ?? ""}
-            className="block h-48 w-full object-cover sm:h-full sm:min-h-[220px]"
+            className="block h-48 w-full object-cover sm:h-full sm:min-h-[240px]"
           />
         </Link>
       ) : null}
