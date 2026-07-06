@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 export class DatabaseUnavailableError extends Error {
   constructor(message = "Database is unavailable") {
     super(message);
@@ -42,6 +44,15 @@ export function classifyDatabaseConnectivityError(error: unknown): string {
 
 export function normalizeDbError(error: unknown, fallbackMessage: string) {
   if (error instanceof DatabaseUnavailableError) {
+    return error;
+  }
+
+  // Known Prisma request errors (constraint violations, not-found, etc.) are
+  // application-level failures, not connectivity issues — their messages
+  // often mention "table"/"relation" (e.g. a foreign-key constraint name),
+  // which would otherwise trip the substring match below and get
+  // misclassified as a 503 outage, discarding the real error code/meta.
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
     return error;
   }
 

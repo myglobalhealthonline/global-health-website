@@ -2,8 +2,23 @@ import type { LocaleCode, Prisma } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { normalizeDbError } from "../modules/shared/db-errors.js";
 import { resolveTranslation } from "../modules/shared/resolve-translation.js";
-import { assertLocaleSupported } from "../modules/shared/locale-support.js";
+import { LocaleNotSupportedError } from "../modules/shared/locale-support.js";
 import type { ServiceFaqTranslationInput } from "../validations/admin-services.schema.js";
+
+/** Base columns + translations, shared by every read/write path so a
+ *  create/update response always carries the same shape the admin list
+ *  and editor expect. */
+const faqWithTranslationsSelect = {
+  id: true,
+  serviceId: true,
+  question: true,
+  answer: true,
+  sortOrder: true,
+  isVisible: true,
+  createdAt: true,
+  updatedAt: true,
+  translations: { select: { locale: true, question: true, answer: true } },
+} satisfies Prisma.ServiceFaqSelect;
 
 export const faqTranslationSelect = {
   locale: true,
@@ -34,32 +49,46 @@ export function mergeFaqTranslation<S extends FaqDisplayBase & { translations: F
 
 /** Validate every locale in `translations` is enabled for the FAQ's country.
  *  Call BEFORE opening a transaction so a bad locale never leaves a
- *  half-written FAQ. */
+ *  half-written FAQ. One query for the country's enabled locales + one for
+ *  its defaultLocale, checked in-memory against every entry — avoids firing
+ *  a round trip per translation (up to 6 per request otherwise). */
 async function assertFaqLocalesSupported(
   countryId: string,
   translations: ServiceFaqTranslationInput[],
 ): Promise<void> {
-  await Promise.all(translations.map((entry) => assertLocaleSupported(countryId, entry.locale)));
+  const [enabled, country] = await Promise.all([
+    prisma.countryLocale.findMany({ where: { countryId }, select: { locale: true } }),
+    prisma.country.findUnique({ where: { id: countryId }, select: { defaultLocale: true } }),
+  ]);
+  const allowed = new Set(enabled.map((row) => row.locale));
+  if (country?.defaultLocale) allowed.add(country.defaultLocale);
+  for (const entry of translations) {
+    if (!allowed.has(entry.locale)) throw new LocaleNotSupportedError();
+  }
 }
 
 /** Run the upsert (+ optional delete-missing-locales) ops for one FAQ's
  *  translations, using the given Prisma client (pass the `tx` handle when
  *  called inside a $transaction). Sync semantics: provided locales are
  *  upserted, and if `sync` is true, any existing locale not in
- *  `translations` is deleted (empty array = delete all). */
+ *  `translations` is deleted (empty array = delete all). Upserts run
+ *  concurrently — they're independent per-locale rows, and serializing them
+ *  would needlessly extend the transaction's held-lock window. */
 async function runFaqTranslationOps(
   client: Prisma.TransactionClient,
   faqId: string,
   translations: ServiceFaqTranslationInput[],
   sync: boolean,
 ): Promise<void> {
-  for (const entry of translations) {
-    await client.serviceFaqTranslation.upsert({
-      where: { serviceFaqId_locale: { serviceFaqId: faqId, locale: entry.locale } },
-      create: { serviceFaqId: faqId, locale: entry.locale, question: entry.question, answer: entry.answer },
-      update: { question: entry.question, answer: entry.answer },
-    });
-  }
+  await Promise.all(
+    translations.map((entry) =>
+      client.serviceFaqTranslation.upsert({
+        where: { serviceFaqId_locale: { serviceFaqId: faqId, locale: entry.locale } },
+        create: { serviceFaqId: faqId, locale: entry.locale, question: entry.question, answer: entry.answer },
+        update: { question: entry.question, answer: entry.answer },
+      }),
+    ),
+  );
   if (sync) {
     await client.serviceFaqTranslation.deleteMany({
       where: { serviceFaqId: faqId, locale: { notIn: translations.map((t) => t.locale) } },
@@ -100,17 +129,7 @@ export async function listServiceFaqs(serviceId: string, visibleOnly = false) {
         ...(visibleOnly ? { isVisible: true } : {}),
       },
       orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
-      select: {
-        id: true,
-        serviceId: true,
-        question: true,
-        answer: true,
-        sortOrder: true,
-        isVisible: true,
-        createdAt: true,
-        updatedAt: true,
-        translations: { select: faqTranslationSelect },
-      },
+      select: faqWithTranslationsSelect,
     });
   } catch (error) {
     throw normalizeDbError(error, "FAQ data is unavailable");
@@ -159,26 +178,26 @@ export async function createServiceFaq(
     });
     if (!service) throw new ServiceFaqServiceNotFoundError();
 
-    const count = await prisma.serviceFaq.count({ where: { serviceId } });
-    if (count >= MAX_FAQS_PER_SERVICE) throw new ServiceFaqMaxLimitError();
-
-    // Default sortOrder to end of list
-    const sortOrder =
-      data.sortOrder ??
-      ((await prisma.serviceFaq.aggregate({
-        where: { serviceId },
-        _max: { sortOrder: true },
-      }))._max.sortOrder ?? -1) + 1;
-
     // Validate locales before opening the transaction so a bad locale never
     // leaves a FAQ row created without its translations.
     if (data.translations) {
       await assertFaqLocalesSupported(service.countryId, data.translations);
     }
 
-    // Interactive transaction: the translation rows need the created FAQ's
-    // id, so create + translation writes must share one transaction handle.
+    // Count + sortOrder + create all run inside one transaction so two
+    // concurrent creates for the same service can't both read the same
+    // count/max and land on a duplicate sortOrder or both slip past the cap.
     const faq = await prisma.$transaction(async (tx) => {
+      const count = await tx.serviceFaq.count({ where: { serviceId } });
+      if (count >= MAX_FAQS_PER_SERVICE) throw new ServiceFaqMaxLimitError();
+
+      const sortOrder =
+        data.sortOrder ??
+        ((await tx.serviceFaq.aggregate({
+          where: { serviceId },
+          _max: { sortOrder: true },
+        }))._max.sortOrder ?? -1) + 1;
+
       const created = await tx.serviceFaq.create({
         data: {
           serviceId,
@@ -191,7 +210,10 @@ export async function createServiceFaq(
       if (data.translations && data.translations.length > 0) {
         await runFaqTranslationOps(tx, created.id, data.translations, false);
       }
-      return created;
+      return tx.serviceFaq.findUniqueOrThrow({
+        where: { id: created.id },
+        select: faqWithTranslationsSelect,
+      });
     });
 
     return faq;
@@ -231,14 +253,17 @@ export async function updateServiceFaq(
     }
 
     const updated = await prisma.$transaction(async (tx) => {
-      const result = await tx.serviceFaq.update({
+      await tx.serviceFaq.update({
         where: { id: faqId },
         data: rest,
       });
       if (translations) {
         await runFaqTranslationOps(tx, faqId, translations, true);
       }
-      return result;
+      return tx.serviceFaq.findUniqueOrThrow({
+        where: { id: faqId },
+        select: faqWithTranslationsSelect,
+      });
     });
 
     return updated;
