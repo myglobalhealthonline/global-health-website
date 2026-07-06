@@ -210,28 +210,28 @@ export default async function CountryLangBookPage({
 
       <section
         id="booking"
-        className="scroll-mt-24 bg-[var(--color-background-soft)] py-[clamp(48px,6vw,88px)]"
+        className="scroll-mt-24 gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel py-[clamp(48px,6vw,88px)]"
       >
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.8fr)]">
             <aside className="lg:sticky lg:top-24 lg:self-start">
-              <div className="gh2-card-ivory p-5">
-                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
+              <div className="gh2-glass-forest gh2-dark-content p-5">
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]">
                   {bp.bookingSteps}
                 </p>
                 <StepIndicator current={currentStep} labels={stepLabels} values={stepValues} />
-                <p className="mt-5 text-sm leading-relaxed text-[var(--color-text-muted)]">
+                <p className="mt-5 text-sm leading-relaxed text-white/60">
                   {bp.availabilityNote}
                 </p>
                 {/* Trust signals — same platform facts as the service pages. */}
-                <ul className="mt-5 grid gap-2.5 border-t border-[var(--color-border)] pt-5">
+                <ul className="mt-5 grid gap-2.5 border-t border-white/10 pt-5">
                   {[
                     { icon: ShieldCheck, label: c.serviceDetailPage.trustRegistered.replace("{country}", config.name) },
                     { icon: Video, label: c.serviceDetailPage.trustVideo },
                     { icon: Lock, label: c.serviceDetailPage.trustConfidential },
                   ].map(({ icon: Icon, label }) => (
-                    <li key={label} className="gh2-trust-tile text-[13px] font-medium text-[var(--color-text-body)]">
-                      <Icon className="size-4 shrink-0 text-[var(--color-brand-primary)]" aria-hidden />
+                    <li key={label} className="gh2-trust-tile gh2-trust-tile-dark text-[13px] font-medium text-white/80">
+                      <Icon className="size-4 shrink-0 text-[var(--color-brand-accent)]" aria-hidden />
                       {label}
                     </li>
                   ))}
@@ -338,15 +338,15 @@ async function GpBookingFlow({
       />
       <section
         id="booking"
-        className="scroll-mt-24 bg-[var(--color-background-soft)] py-[clamp(48px,6vw,88px)]"
+        className="scroll-mt-24 gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel py-[clamp(48px,6vw,88px)]"
       >
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           {!valid || !service || !slot ? (
-            <div className="gh2-status-card mx-auto max-w-[640px] text-center">
-              <p className="font-semibold text-[var(--color-text-primary)]">
+            <div className="gh2-status-card gh2-status-card-dark mx-auto max-w-[640px] text-center">
+              <p className="font-semibold text-white">
                 {bp.slotNoLongerOpen}
               </p>
-              <p className="mt-2 text-sm text-[var(--color-text-muted)]">
+              <p className="mt-2 text-sm text-white/60">
                 {bp.checkBackClinician.replace("{service}", langName)}
               </p>
               <Link href={homeHref} className="gh2-btn-lime mt-5">
@@ -356,24 +356,24 @@ async function GpBookingFlow({
           ) : (
             <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.8fr)]">
               <aside className="lg:sticky lg:top-24 lg:self-start">
-                <div className="gh2-card-ivory p-5">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
+                <div className="gh2-glass-forest gh2-dark-content p-5">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]">
                     {bp.bookingSteps}
                   </p>
-                  <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-body)]">
+                  <p className="mt-3 text-sm leading-relaxed text-white/90">
                     {service.name} · {langName}
                   </p>
-                  <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-muted)]">
+                  <p className="mt-2 text-sm leading-relaxed text-white/60">
                     We’ll automatically assign an available GP who speaks {langName}.
                   </p>
-                  <ul className="mt-5 grid gap-2.5 border-t border-[var(--color-border)] pt-5">
+                  <ul className="mt-5 grid gap-2.5 border-t border-white/10 pt-5">
                     {[
                       { icon: ShieldCheck, label: c.serviceDetailPage.trustRegistered.replace("{country}", countryName) },
                       { icon: Video, label: c.serviceDetailPage.trustVideo },
                       { icon: Lock, label: c.serviceDetailPage.trustConfidential },
                     ].map(({ icon: Icon, label }) => (
-                      <li key={label} className="gh2-trust-tile text-[13px] font-medium text-[var(--color-text-body)]">
-                        <Icon className="size-4 shrink-0 text-[var(--color-brand-primary)]" aria-hidden />
+                      <li key={label} className="gh2-trust-tile gh2-trust-tile-dark text-[13px] font-medium text-white/80">
+                        <Icon className="size-4 shrink-0 text-[var(--color-brand-accent)]" aria-hidden />
                         {label}
                       </li>
                     ))}
@@ -387,7 +387,7 @@ async function GpBookingFlow({
                   title={bp.detailsTitle}
                   description={bp.detailsDesc}
                 />
-                <div className="gh2-card-ivory mt-6 p-5 sm:p-6">
+                <div className="gh2-glass-forest gh2-dark-content mt-6 p-5 sm:p-6">
                   <ConsultationBookingForm
                     doctorId=""
                     doctorName={`A GP who speaks ${langName}`}
@@ -497,7 +497,7 @@ async function SelectedServiceFlow({
               />
               <Link
                 href={buildBookHref({ country, lang, service: service.slug })}
-                className="justify-self-start rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-soft)]"
+                className="justify-self-start rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
               >
                 {bp.stepTime}
               </Link>
@@ -511,7 +511,7 @@ async function SelectedServiceFlow({
     return (
       <div className="grid gap-6">
         <BookingSectionHeader eyebrow={bp.stepTime} title={bp.pickTime} description={bp.timesShown} />
-        <div className="gh2-card-ivory min-w-0 p-5 sm:p-6">
+        <div className="gh2-glass-forest gh2-dark-content min-w-0 p-5 sm:p-6">
           <header className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border)] pb-5">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
@@ -523,7 +523,7 @@ async function SelectedServiceFlow({
             </div>
             <Link
               href={buildBookHref({ country, lang })}
-              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-soft)]"
+              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
             >
               {bp.changeService}
             </Link>
@@ -578,7 +578,7 @@ async function SelectedServiceFlow({
         title={slotConfirmed ? bp.detailsTitle : bp.pickTime}
         description={slotConfirmed ? bp.detailsDesc : bp.timesShown}
       />
-      <div className="gh2-card-ivory min-w-0 p-5 sm:p-6">
+      <div className="gh2-glass-forest gh2-dark-content min-w-0 p-5 sm:p-6">
         <header className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border)] pb-5">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
@@ -597,13 +597,13 @@ async function SelectedServiceFlow({
               * assigned to this service (same path service-first users take). */}
             <Link
               href={buildBookHref({ country, lang, service: service.slug })}
-              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-soft)]"
+              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
             >
               Edit doctor
             </Link>
             <Link
               href={buildBookHref({ country, lang })}
-              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-soft)]"
+              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
             >
               {bp.changeService}
             </Link>
@@ -712,13 +712,13 @@ function ServicePicker({
         </Link>
       ) : null}
       {services.length === 0 ? (
-        <div className="gh2-status-card text-center">
-          <p className="font-semibold text-[var(--color-text-primary)]">
+        <div className="gh2-status-card gh2-status-card-dark text-center">
+          <p className="font-semibold text-white">
             {allServicesCount === 0
               ? bp.noBookableServices
               : bp.clinicianNoServices}
           </p>
-          <p className="mt-2 text-sm text-[var(--color-text-muted)]">
+          <p className="mt-2 text-sm text-white/60">
             {bp.browseDirectory}
           </p>
           <Link href={`/${country}/${lang}/doctors`} className="gh2-btn-lime mt-5">
@@ -762,7 +762,7 @@ function ServiceChoiceCard({
   minSuffix: string;
 }) {
   return (
-    <div className="gh2-card-ivory gh2-card-hover grid min-h-[220px] overflow-hidden">
+    <div className="gh2-glass-forest gh2-dark-content gh2-card-hover grid min-h-[220px] overflow-hidden">
       {service.imageSrc ? (
         <div className="relative min-h-[150px] overflow-hidden">
           <Image
@@ -777,7 +777,7 @@ function ServiceChoiceCard({
       ) : null}
       <div className="flex h-full flex-col p-5">
         <div className="flex items-center justify-between gap-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-background-soft)] px-3 py-1 text-xs font-semibold text-[var(--color-brand-primary)]">
+          <span className="inline-flex items-center gap-1.5 rounded-full gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel px-3 py-1 text-xs font-semibold text-[var(--color-brand-primary)]">
             {service.kind === "SPECIALIST" ? (
               <UserRound className="size-3.5" aria-hidden />
             ) : (
@@ -853,7 +853,7 @@ function StepIndicator({
             className="relative flex items-start gap-3"
             aria-current={active ? "step" : undefined}
           >
-            <span
+              <span
               className={`relative z-10 mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                 active
                   ? "bg-[var(--color-brand-primary)] text-white ring-4 ring-[rgba(29,75,54,0.16)]"

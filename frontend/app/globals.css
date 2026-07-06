@@ -1691,10 +1691,42 @@ img {
   background: rgba(29, 75, 54, .03);
   padding: clamp(1.25rem, 3vw, 2rem);
 }
+.gh2-status-card-dark {
+  border-color: rgba(255, 255, 255, .20);
+  background: rgba(255, 255, 255, .06);
+}
+/* Trust tile dark variant */
+.gh2-trust-tile-dark {
+  background: rgba(255, 255, 255, .07);
+  border-color: rgba(255, 255, 255, .12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .06),
+    0 1px 2px rgba(0, 0, 0, .08),
+    0 10px 26px -14px rgba(0, 0, 0, .25);
+}
+.gh2-trust-tile-dark:hover {
+  border-color: rgba(255, 255, 255, .20);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .08),
+    0 2px 4px rgba(0, 0, 0, .10),
+    0 16px 36px -16px rgba(0, 0, 0, .30);
+}
 /* Scroll fade — right-edge mask for horizontal chip/pill scrollers. */
 .gh2-scroll-fade {
   -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 40px), transparent 100%);
   mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 40px), transparent 100%);
+}
+
+/* Dark theme override for content inside glass-forest cards on ivory sections.
+ * Replaces light-theme CSS variables with dark equivalents. */
+.gh2-dark-content {
+  --color-text-primary: #ffffff;
+  --color-text-body: rgba(255, 255, 255, 0.85);
+  --color-text-muted: rgba(255, 255, 255, 0.55);
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-border-strong: rgba(255, 255, 255, 0.20);
+  --color-background-page: rgba(255, 255, 255, 0.07);
+  --color-background-soft: rgba(255, 255, 255, 0.05);
 }
 
 /* ── gh2 selection pattern (spec §9) — booking pills/chips/cards. Border
