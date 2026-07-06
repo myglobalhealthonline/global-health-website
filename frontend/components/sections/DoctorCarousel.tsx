@@ -159,7 +159,7 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
             key={doctor.href ?? `${doctor.name}-${doctor.title}`}
             {...doctor}
             bookLabel={i18n.pickTime}
-            dark={false}
+            dark
           />
         ))}
       </div>

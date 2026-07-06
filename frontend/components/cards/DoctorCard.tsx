@@ -183,11 +183,13 @@ export function DoctorCard({
           />
         ) : (
           <div
-            className="flex h-full w-full items-center justify-center font-extrabold tracking-tight text-white"
+            className="flex h-full w-full items-center justify-center font-extrabold tracking-tight"
             style={{
-              background: "var(--color-brand-primary)",
-              fontSize: "clamp(48px,8vw,80px)",
-              letterSpacing: "-0.02em",
+              background:
+                "radial-gradient(120% 90% at 20% 0%, rgba(176,241,34,0.14), transparent 55%), linear-gradient(160deg, #1D4B36 0%, #0F2E25 100%)",
+              color: "rgba(255,255,255,0.88)",
+              fontSize: "clamp(40px,6vw,64px)",
+              letterSpacing: "0.04em",
             }}
             aria-hidden
           >
