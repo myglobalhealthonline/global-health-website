@@ -14,6 +14,7 @@ import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
 import { resolveTranslation } from "../shared/resolve-translation.js";
 import { assertLocaleSupported } from "../shared/locale-support.js";
 import { resolveServiceLinksForPage } from "../service-links/service-links.service.js";
+import { faqTranslationSelect, mergeFaqTranslation } from "../../services/service-faq.service.js";
 
 /** Display fields a ServiceTranslation can override, plus the locale key. */
 const serviceTranslationSelect = {
@@ -857,7 +858,13 @@ export async function getPublicServiceBySlug(
         faqs: {
           where: { isVisible: true },
           orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
-          select: { id: true, question: true, answer: true, sortOrder: true },
+          select: {
+            id: true,
+            question: true,
+            answer: true,
+            sortOrder: true,
+            translations: { select: faqTranslationSelect },
+          },
         },
         translations: { select: serviceTranslationSelect },
       },
@@ -868,13 +875,16 @@ export async function getPublicServiceBySlug(
       locale ?? row.country.defaultLocale,
       row.country.defaultLocale,
     );
+    const faqs = row.faqs.map((faq) =>
+      mergeFaqTranslation(faq, merged.resolvedLocale, row.country.defaultLocale),
+    );
     // Contextual internal-link callouts (locale-merged, capped at 4).
     const links = await resolveServiceLinksForPage(
       row.id,
       merged.resolvedLocale,
       row.country.defaultLocale,
     );
-    return { ...merged, links };
+    return { ...merged, faqs, links };
   } catch (error) {
     throw normalizeDbError(error, "Service data is unavailable");
   }

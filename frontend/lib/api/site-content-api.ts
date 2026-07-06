@@ -367,10 +367,13 @@ export type ServiceFaqItem = {
 export async function fetchServiceFaqs(
   serviceSlug: string,
   countryCode?: string,
+  locale?: string,
   timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
 ): Promise<ServiceFaqItem[]> {
   const params = new URLSearchParams();
   if (countryCode) params.set("countryCode", countryCode);
+  const upper = locale ? locale.toUpperCase() : undefined;
+  if (upper) params.set("locale", upper);
   const qs = params.toString();
   const url = `/api/services/${encodeURIComponent(serviceSlug)}/faqs${qs ? `?${qs}` : ""}`;
   const result = await apiRequest<{ faqs: ServiceFaqItem[] }>(url, {

@@ -1,7 +1,6 @@
 import type { FastifyPluginAsync, FastifyRequest } from "fastify";
 import type { LocaleCode } from "@prisma/client";
 import { listServices, listSpecialties, getPublicServiceBySlug } from "../modules/services/services.service.js";
-import { listServiceFaqs } from "../services/service-faq.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { z } from "zod";
@@ -103,14 +102,19 @@ const servicesRoute: FastifyPluginAsync = async (app) => {
     }
     const query = countryQuerySchema.safeParse(request.query);
     const countryCode = query.success ? query.data.countryCode : undefined;
+    const locale = query.success ? query.data.locale : undefined;
 
     try {
-      const service = await getPublicServiceBySlug(params.data.slug, countryCode);
+      const service = await getPublicServiceBySlug(
+        params.data.slug,
+        countryCode,
+        locale as LocaleCode | undefined,
+      );
       if (!service) {
         return reply.status(404).send(errorResponse("Service not found"));
       }
-      const faqs = await listServiceFaqs(service.id, true);
-      return okResponse({ faqs });
+      // service.faqs is already locale-merged by getPublicServiceBySlug.
+      return okResponse({ faqs: service.faqs });
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));
