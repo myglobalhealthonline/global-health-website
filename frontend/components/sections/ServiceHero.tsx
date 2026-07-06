@@ -387,35 +387,35 @@ export function ServiceHero({
           >
             <path
               d="M0,80 L0,40 C360,0 1080,0 1440,40 L1440,80 Z"
-              fill="var(--color-background-soft)"
+              fill="#12342A"
             />
           </svg>
-          <div style={{ background: "var(--color-background-soft)" }}>
+          <div className="gh2-section-forest">
             <div className="mx-auto max-w-[var(--container-width)] px-5 pb-7 pt-1 md:px-10">
               <ul className="grid grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-0">
                 {trustStats.map((stat, i) => (
                   <li
                     key={stat.title}
                     className={`flex items-start gap-3.5 sm:px-7 ${
-                      i > 0 ? "sm:border-l sm:border-[rgba(29,75,54,0.14)]" : ""
+                      i > 0 ? "sm:border-l sm:border-[rgba(255,255,255,0.12)]" : ""
                     }`}
                   >
                     <span
                       className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl"
-                      style={{ background: "rgba(29,75,54,0.08)", color: "#1D4B36" }}
+                      style={{ background: "rgba(255,255,255,0.08)", color: "var(--color-brand-accent)" }}
                     >
                       {stat.icon}
                     </span>
                     <span className="min-w-0">
                       <span
                         className="block text-[15px] font-bold leading-tight"
-                        style={{ color: "var(--color-text-primary)" }}
+                        style={{ color: "rgba(255,255,255,0.92)" }}
                       >
                         {stat.title}
                       </span>
                       <span
                         className="mt-1 block text-[13px] leading-snug"
-                        style={{ color: "var(--color-text-body)" }}
+                        style={{ color: "rgba(255,255,255,0.72)" }}
                       >
                         {stat.subtitle}
                       </span>

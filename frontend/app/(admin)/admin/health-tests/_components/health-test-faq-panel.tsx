@@ -3,43 +3,114 @@
 import { useState, useTransition } from "react";
 import {
   type AdminHealthTestFaqDto,
+  type AdminHealthTestFaqTranslation,
   createAdminHealthTestFaq,
   updateAdminHealthTestFaq,
   deleteAdminHealthTestFaq,
   reorderAdminHealthTestFaqs,
 } from "@/lib/api/admin-health-test-faq-api";
+import { PortalTabs } from "@/components/PortalTabs";
+
+type LocaleTab = { code: string; isDefault: boolean };
 
 type Props = {
   healthTestId: string;
   initialFaqs: AdminHealthTestFaqDto[];
+  locales: LocaleTab[];
+  defaultLocale: string;
 };
 
+type LocaleTexts = Record<string, { question: string; answer: string }>;
+
 type FormState = {
-  question: string;
-  answer: string;
+  texts: LocaleTexts;
   isVisible: boolean;
 };
 
-const emptyForm: FormState = { question: "", answer: "", isVisible: true };
+function localeLabel(code: string): string {
+  const names: Record<string, string> = {
+    EN: "English",
+    PT: "Portuguese",
+    ES: "Spanish",
+    CS: "Czech",
+    RO: "Romanian",
+    DE: "German",
+  };
+  return names[code] ?? code;
+}
 
-export function HealthTestFaqPanel({ healthTestId, initialFaqs }: Props) {
+function emptyForm(locales: LocaleTab[]): FormState {
+  const texts: LocaleTexts = {};
+  for (const locale of locales) texts[locale.code] = { question: "", answer: "" };
+  return { texts, isVisible: true };
+}
+
+function formToBody(form: FormState, locales: LocaleTab[], defaultLocale: string) {
+  const upperDefault = defaultLocale.toUpperCase();
+  const base = form.texts[upperDefault] ?? { question: "", answer: "" };
+  const translations: AdminHealthTestFaqTranslation[] = locales
+    .map((locale) => ({ locale: locale.code, ...form.texts[locale.code] }))
+    .filter((entry) => entry.question.trim() !== "" && entry.answer.trim() !== "");
+  return {
+    question: base.question,
+    answer: base.answer,
+    isVisible: form.isVisible,
+    translations,
+  };
+}
+
+function findHalfFilledLocales(form: FormState, locales: LocaleTab[], defaultLocale: string): string[] {
+  const upperDefault = defaultLocale.toUpperCase();
+  return locales
+    .filter((locale) => locale.code !== upperDefault)
+    .filter((locale) => {
+      const text = form.texts[locale.code] ?? { question: "", answer: "" };
+      const hasQuestion = text.question.trim() !== "";
+      const hasAnswer = text.answer.trim() !== "";
+      return hasQuestion !== hasAnswer;
+    })
+    .map((locale) => locale.code);
+}
+
+function formFromFaq(faq: AdminHealthTestFaqDto, locales: LocaleTab[], defaultLocale: string): FormState {
+  const upperDefault = defaultLocale.toUpperCase();
+  const texts: LocaleTexts = {};
+  for (const locale of locales) {
+    const tr = faq.translations?.find((entry) => entry.locale.toUpperCase() === locale.code);
+    if (tr) {
+      texts[locale.code] = { question: tr.question, answer: tr.answer };
+    } else if (locale.code === upperDefault) {
+      texts[locale.code] = { question: faq.question, answer: faq.answer };
+    } else {
+      texts[locale.code] = { question: "", answer: "" };
+    }
+  }
+  return { texts, isVisible: faq.isVisible };
+}
+
+export function HealthTestFaqPanel({
+  healthTestId,
+  initialFaqs,
+  locales,
+  defaultLocale,
+}: Props) {
   const [faqs, setFaqs] = useState<AdminHealthTestFaqDto[]>(initialFaqs);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState<FormState>(emptyForm);
+  const [form, setForm] = useState<FormState>(() => emptyForm(locales));
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   function startEdit(faq: AdminHealthTestFaqDto) {
     setEditingId(faq.id);
-    setForm({ question: faq.question, answer: faq.answer, isVisible: faq.isVisible });
+    setForm(formFromFaq(faq, locales, defaultLocale));
     setShowAdd(false);
     setError(null);
   }
 
   function cancelEdit() {
     setEditingId(null);
-    setForm(emptyForm);
+    setForm(emptyForm(locales));
     setShowAdd(false);
     setError(null);
   }
@@ -47,13 +118,16 @@ export function HealthTestFaqPanel({ healthTestId, initialFaqs }: Props) {
   function handleAdd() {
     startTransition(async () => {
       setError(null);
-      const res = await createAdminHealthTestFaq(healthTestId, form);
+      const res = await createAdminHealthTestFaq(
+        healthTestId,
+        formToBody(form, locales, defaultLocale),
+      );
       if (!res.ok) {
         setError(res.message);
         return;
       }
       setFaqs((prev) => [...prev, res.data.faq]);
-      setForm(emptyForm);
+      setForm(emptyForm(locales));
       setShowAdd(false);
     });
   }
@@ -62,14 +136,18 @@ export function HealthTestFaqPanel({ healthTestId, initialFaqs }: Props) {
     if (!editingId) return;
     startTransition(async () => {
       setError(null);
-      const res = await updateAdminHealthTestFaq(healthTestId, editingId, form);
+      const res = await updateAdminHealthTestFaq(
+        healthTestId,
+        editingId,
+        formToBody(form, locales, defaultLocale),
+      );
       if (!res.ok) {
         setError(res.message);
         return;
       }
-      setFaqs((prev) => prev.map((f) => (f.id === editingId ? res.data.faq : f)));
+      setFaqs((prev) => prev.map((faq) => (faq.id === editingId ? res.data.faq : faq)));
       setEditingId(null);
-      setForm(emptyForm);
+      setForm(emptyForm(locales));
     });
   }
 
@@ -83,7 +161,7 @@ export function HealthTestFaqPanel({ healthTestId, initialFaqs }: Props) {
         setError(res.message);
         return;
       }
-      setFaqs((prev) => prev.map((f) => (f.id === faq.id ? res.data.faq : f)));
+      setFaqs((prev) => prev.map((item) => (item.id === faq.id ? res.data.faq : item)));
     });
   }
 
@@ -96,7 +174,7 @@ export function HealthTestFaqPanel({ healthTestId, initialFaqs }: Props) {
         setError(res.message);
         return;
       }
-      setFaqs((prev) => prev.filter((f) => f.id !== faqId));
+      setFaqs((prev) => prev.filter((faq) => faq.id !== faqId));
     });
   }
 
@@ -104,7 +182,7 @@ export function HealthTestFaqPanel({ healthTestId, initialFaqs }: Props) {
     if (index === 0) return;
     const next = [...faqs];
     [next[index - 1], next[index]] = [next[index], next[index - 1]];
-    const orderedIds = next.map((f) => f.id);
+    const orderedIds = next.map((faq) => faq.id);
     startTransition(async () => {
       setError(null);
       const res = await reorderAdminHealthTestFaqs(healthTestId, orderedIds);
@@ -120,7 +198,7 @@ export function HealthTestFaqPanel({ healthTestId, initialFaqs }: Props) {
     if (index === faqs.length - 1) return;
     const next = [...faqs];
     [next[index], next[index + 1]] = [next[index + 1], next[index]];
-    const orderedIds = next.map((f) => f.id);
+    const orderedIds = next.map((faq) => faq.id);
     startTransition(async () => {
       setError(null);
       const res = await reorderAdminHealthTestFaqs(healthTestId, orderedIds);
@@ -146,7 +224,7 @@ export function HealthTestFaqPanel({ healthTestId, initialFaqs }: Props) {
             type="button"
             onClick={() => {
               setShowAdd(true);
-              setForm(emptyForm);
+              setForm(emptyForm(locales));
               setError(null);
             }}
             className="gh-btn gh-btn-primary text-xs"
@@ -171,6 +249,8 @@ export function HealthTestFaqPanel({ healthTestId, initialFaqs }: Props) {
           onCancel={cancelEdit}
           isPending={isPending}
           saveLabel="Add FAQ"
+          locales={locales}
+          defaultLocale={defaultLocale}
         />
       ) : null}
 
@@ -182,10 +262,7 @@ export function HealthTestFaqPanel({ healthTestId, initialFaqs }: Props) {
 
       <ul className="gh-admin-health-faq__list mt-3 space-y-3">
         {faqs.map((faq, idx) => (
-          <li
-            key={faq.id}
-            className="gh-admin-health-faq__item"
-          >
+          <li key={faq.id} className="gh-admin-health-faq__item">
             {editingId === faq.id ? (
               <FaqForm
                 form={form}
@@ -194,6 +271,8 @@ export function HealthTestFaqPanel({ healthTestId, initialFaqs }: Props) {
                 onCancel={cancelEdit}
                 isPending={isPending}
                 saveLabel="Save"
+                locales={locales}
+                defaultLocale={defaultLocale}
               />
             ) : (
               <div>
@@ -250,6 +329,11 @@ export function HealthTestFaqPanel({ healthTestId, initialFaqs }: Props) {
                 <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--color-text-body)]">
                   {faq.answer}
                 </p>
+                {faq.translations && faq.translations.length > 0 ? (
+                  <p className="mt-1 text-[11px] text-[var(--color-text-muted)]">
+                    Translated: {faq.translations.map((entry) => localeLabel(entry.locale.toUpperCase())).join(", ")}
+                  </p>
+                ) : null}
               </div>
             )}
           </li>
@@ -266,6 +350,8 @@ function FaqForm({
   onCancel,
   isPending,
   saveLabel,
+  locales,
+  defaultLocale,
 }: {
   form: FormState;
   onChange: (f: FormState) => void;
@@ -273,24 +359,55 @@ function FaqForm({
   onCancel: () => void;
   isPending: boolean;
   saveLabel: string;
+  locales: LocaleTab[];
+  defaultLocale: string;
 }) {
+  const upperDefault = defaultLocale.toUpperCase();
+  const [active, setActive] = useState(
+    locales.find((locale) => locale.code === upperDefault)?.code ?? locales[0]?.code ?? upperDefault,
+  );
+  const activeTexts = form.texts[active] ?? { question: "", answer: "" };
+  const isDefaultTab = active === upperDefault;
+
+  function setActiveTexts(next: { question: string; answer: string }) {
+    onChange({ ...form, texts: { ...form.texts, [active]: next } });
+  }
+
+  const halfFilledLocales = findHalfFilledLocales(form, locales, defaultLocale);
+  const canSave =
+    (form.texts[upperDefault]?.question.trim() ?? "") !== "" &&
+    (form.texts[upperDefault]?.answer.trim() ?? "") !== "" &&
+    halfFilledLocales.length === 0;
+
   return (
     <div className="gh-admin-health-faq-form">
+      {locales.length > 1 ? (
+        <PortalTabs
+          ariaLabel="FAQ translations"
+          value={active}
+          onChange={setActive}
+          items={locales.map((locale) => ({
+            value: locale.code,
+            label: `${localeLabel(locale.code)}${locale.isDefault ? " · default" : ""}`,
+          }))}
+        />
+      ) : null}
+
       <div>
         <label
           className="mb-1 block text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]"
           htmlFor="faq-question"
         >
-          Question
+          Question{isDefaultTab ? " *" : ""}
         </label>
         <input
           id="faq-question"
           type="text"
-          value={form.question}
-          onChange={(e) => onChange({ ...form, question: e.target.value })}
+          value={activeTexts.question}
+          onChange={(e) => setActiveTexts({ ...activeTexts, question: e.target.value })}
           maxLength={500}
           className="gh-input w-full"
-          placeholder="What is included in this test?"
+          placeholder={isDefaultTab ? "What is included in this test?" : "Leave blank to use the default language"}
         />
       </div>
       <div>
@@ -298,18 +415,24 @@ function FaqForm({
           className="mb-1 block text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]"
           htmlFor="faq-answer"
         >
-          Answer
+          Answer{isDefaultTab ? " *" : ""}
         </label>
         <textarea
           id="faq-answer"
-          value={form.answer}
-          onChange={(e) => onChange({ ...form, answer: e.target.value })}
+          value={activeTexts.answer}
+          onChange={(e) => setActiveTexts({ ...activeTexts, answer: e.target.value })}
           maxLength={5000}
           rows={4}
           className="gh-input w-full resize-y"
-          placeholder="This test includes..."
+          placeholder={isDefaultTab ? "This test includes..." : "Leave blank to use the default language"}
         />
       </div>
+      {halfFilledLocales.length > 0 ? (
+        <p className="text-[11px] text-[var(--color-status-warning-text)]">
+          {halfFilledLocales.map((code) => localeLabel(code)).join(", ")}{" "}
+          {halfFilledLocales.length > 1 ? "have" : "has"} only a question or answer filled in. Fill in both or clear both before saving.
+        </p>
+      ) : null}
       <div className="gh-admin-health-active-row">
         <input
           id="faq-visible"
@@ -326,10 +449,10 @@ function FaqForm({
         <button
           type="button"
           onClick={onSave}
-          disabled={isPending || !form.question.trim() || !form.answer.trim()}
+          disabled={isPending || !canSave}
           className="gh-btn gh-btn-primary text-sm disabled:opacity-50"
         >
-          {isPending ? "Saving…" : saveLabel}
+          {isPending ? "Saving..." : saveLabel}
         </button>
         <button
           type="button"

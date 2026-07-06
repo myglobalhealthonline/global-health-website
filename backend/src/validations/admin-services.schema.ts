@@ -253,12 +253,26 @@ export const serviceFaqIdParamsSchema = z.object({
   faqId: z.string().trim().min(1),
 });
 
-export const serviceFaqCreateBodySchema = z.object({
+/** Per-locale override of a FAQ's question/answer. Mirrors
+ *  serviceTranslationEntrySchema — the default-locale entry mirrors the
+ *  top-level question/answer, which still seed the ServiceFaq base columns. */
+const serviceFaqTranslationEntrySchema = z.object({
+  locale: localeCodeSchema,
   question: z.string().trim().min(1).max(500),
   answer: z.string().trim().min(1).max(5000),
-  sortOrder: z.coerce.number().int().min(0).max(9999).optional(),
-  isVisible: z.boolean().optional(),
 });
+
+export type ServiceFaqTranslationInput = z.infer<typeof serviceFaqTranslationEntrySchema>;
+
+export const serviceFaqCreateBodySchema = z
+  .object({
+    question: z.string().trim().min(1).max(500),
+    answer: z.string().trim().min(1).max(5000),
+    sortOrder: z.coerce.number().int().min(0).max(9999).optional(),
+    isVisible: z.boolean().optional(),
+    translations: z.array(serviceFaqTranslationEntrySchema).max(6).optional(),
+  })
+  .superRefine((value, ctx) => validateUniqueLocales(value.translations, ctx));
 
 export const serviceFaqUpdateBodySchema = z
   .object({
@@ -266,7 +280,9 @@ export const serviceFaqUpdateBodySchema = z
     answer: z.string().trim().min(1).max(5000).optional(),
     sortOrder: z.coerce.number().int().min(0).max(9999).optional(),
     isVisible: z.boolean().optional(),
+    translations: z.array(serviceFaqTranslationEntrySchema).max(6).optional(),
   })
+  .superRefine((value, ctx) => validateUniqueLocales(value.translations, ctx))
   .refine((v) => Object.keys(v).length > 0, "No fields to update");
 
 export const serviceFaqReorderBodySchema = z.object({

@@ -63,11 +63,12 @@ export function ContactForm() {
     return (
       <div
         role="status"
-        className="gh-status-success gh2-card-ivory flex flex-col items-center gap-4 rounded-[var(--radius-card)] px-6 py-10 text-center"
+        className="gh-status-success gh2-glass-forest flex flex-col items-center gap-4 rounded-[var(--radius-card)] px-6 py-10 text-center"
+        style={{ border: "1px solid rgba(255,255,255,0.14)" }}
       >
-        <CheckCircle className="size-10" style={{ color: "var(--color-status-success-text)" }} aria-hidden />
-        <h2 className="text-xl font-bold">Message sent!</h2>
-        <p className="max-w-sm text-sm">
+        <CheckCircle className="size-10" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
+        <h2 className="text-xl font-bold text-white">Message sent!</h2>
+        <p className="max-w-sm text-sm text-white/70">
           Thank you for reaching out. Our team will get back to you within 24 hours.
         </p>
       </div>
@@ -75,7 +76,7 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="gh2-card-ivory space-y-5 p-6">
+    <form onSubmit={handleSubmit} noValidate className="gh2-glass-forest space-y-5 p-6 sm:p-8" style={{ border: "1px solid rgba(255,255,255,0.14)", borderRadius: "var(--radius-card)" }}>
       {state === "error" && (
         <div
           role="alert"
@@ -120,9 +121,9 @@ export function ContactForm() {
         <label
           htmlFor="message"
           className="mb-1.5 block text-sm font-medium"
-          style={{ color: "var(--color-text-body)" }}
+          style={{ color: "rgba(255,255,255,0.85)" }}
         >
-          Message <span style={{ color: "var(--color-status-error)" }}>*</span>
+          Message <span style={{ color: "var(--color-brand-accent)" }}>*</span>
         </label>
         <textarea
           id="message"
@@ -133,9 +134,15 @@ export function ContactForm() {
           aria-invalid={Boolean(fieldErrors.message)}
           aria-describedby={fieldErrors.message ? "message-error" : undefined}
           className="gh-textarea resize-y"
+          style={{ 
+            background: "rgba(255,255,255,0.05)", 
+            border: "1px solid rgba(255,255,255,0.15)", 
+            color: "rgba(255,255,255,0.92)",
+            borderRadius: "var(--radius-card-sm)"
+          }}
         />
         {fieldErrors.message && (
-          <p id="message-error" className="mt-1 text-xs" style={{ color: "var(--color-status-error-text)" }}>
+          <p id="message-error" className="mt-1 text-xs" style={{ color: "var(--color-brand-accent)" }}>
             {fieldErrors.message[0]}
           </p>
         )}
@@ -176,9 +183,9 @@ function Field({
       <label
         htmlFor={name}
         className="mb-1.5 block text-sm font-medium"
-        style={{ color: "var(--color-text-body)" }}
+        style={{ color: "rgba(255,255,255,0.85)" }}
       >
-        {label} {required && <span style={{ color: "var(--color-status-error)" }}>*</span>}
+        {label} {required && <span style={{ color: "var(--color-brand-accent)" }}>*</span>}
       </label>
       <input
         id={name}
@@ -190,9 +197,15 @@ function Field({
         aria-invalid={Boolean(error)}
         aria-describedby={error ? errorId : undefined}
         className="gh-input"
+        style={{ 
+          background: "rgba(255,255,255,0.05)", 
+          border: "1px solid rgba(255,255,255,0.15)", 
+          color: "rgba(255,255,255,0.92)",
+          borderRadius: "var(--radius-card-sm)"
+        }}
       />
       {error && (
-        <p id={errorId} className="mt-1 text-xs" style={{ color: "var(--color-status-error-text)" }}>
+        <p id={errorId} className="mt-1 text-xs" style={{ color: "var(--color-brand-accent)" }}>
           {error}
         </p>
       )}

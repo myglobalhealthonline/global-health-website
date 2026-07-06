@@ -89,7 +89,7 @@ export function DoctorTeamTemplate({
   const paged = doctors.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
 
   return (
-    <section style={{ background: "var(--color-background-soft)" }}>
+    <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
       <DoctorsHero
         countryName={countryName}
         eyebrow={`${countryName} · ${i18n?.theTeamBadge ?? "The team"}`}
@@ -124,8 +124,8 @@ export function DoctorTeamTemplate({
         }}
       />
 
-      {/* GRID — light soft section, DoctorCard components */}
-      <section id="doctor-grid" className="gh-section" style={{ scrollMarginTop: "96px", background: "var(--color-background-soft)", borderTop: "1px solid rgba(29,75,54,0.10)" }}>
+      {/* GRID — light ivory band; dark liquid-glass DoctorCards float on it. */}
+      <section id="doctor-grid" className="gh-section relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel" style={{ scrollMarginTop: "96px", borderTop: "1px solid rgba(29,75,54,0.10)" }}>
         <div className="gh-container">
           {/* Featured-doctor spotlight (admin-chosen) above the filters. */}
           {spotlight}
@@ -167,14 +167,14 @@ export function DoctorTeamTemplate({
                     onClick={() => setPage((p) => Math.max(0, p - 1))}
                     disabled={safePage === 0}
                     aria-label="Previous page"
-                    className="inline-flex size-11 items-center justify-center rounded-full border transition-opacity"
+                    className="inline-flex size-11 items-center justify-center rounded-full border transition-all duration-150 disabled:cursor-not-allowed"
                     style={
                       safePage === 0
-                        ? { opacity: 0.3, borderColor: "currentColor" }
+                        ? { opacity: 0.3, borderColor: "currentColor", color: "var(--color-text-muted)" }
                         : {
-                            backgroundColor: "var(--color-brand-primary)",
+                            background: "var(--color-brand-primary)",
                             borderColor: "var(--color-brand-primary)",
-                            color: "white",
+                            color: "#fff",
                           }
                     }
                   >
@@ -186,14 +186,14 @@ export function DoctorTeamTemplate({
                     }
                     disabled={safePage === totalPages - 1}
                     aria-label="Next page"
-                    className="inline-flex size-11 items-center justify-center rounded-full border transition-opacity"
+                    className="inline-flex size-11 items-center justify-center rounded-full border transition-all duration-150 disabled:cursor-not-allowed"
                     style={
                       safePage === totalPages - 1
-                        ? { opacity: 0.3, borderColor: "currentColor" }
+                        ? { opacity: 0.3, borderColor: "currentColor", color: "var(--color-text-muted)" }
                         : {
-                            backgroundColor: "var(--color-brand-primary)",
+                            background: "var(--color-brand-primary)",
                             borderColor: "var(--color-brand-primary)",
-                            color: "white",
+                            color: "#fff",
                           }
                     }
                   >
@@ -224,6 +224,7 @@ export function DoctorTeamTemplate({
                       bookingHref={d.bookingHref ?? bookingHref}
                       ctaLabel={d.ctaLabel ?? "View profile"}
                       bookLabel={d.bookLabel}
+                      dark
                     />
                   </li>
                 ))}
@@ -234,7 +235,7 @@ export function DoctorTeamTemplate({
       </section>
 
       {showBottomCta ? (
-        <section className="gh-section relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark" style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <section className="gh-section relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
           <div className="gh-container">
             <div className="grid items-center gap-10 lg:grid-cols-[1.6fr_1fr]">
               <h2

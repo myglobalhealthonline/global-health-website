@@ -53,8 +53,8 @@ export default async function ContactPage() {
         mobileBgSrc="/images/stock/contact.jpg"
       />
 
-      {/* LIGHT — contact form + reach info */}
-      <section id="contact-form" style={{ background: "var(--color-background-soft)", borderTop: "1px solid rgba(29,75,54,0.10)" }}>
+      {/* IVORY — contact form + reach info */}
+      <section id="contact-form" className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel" style={{ borderTop: "1px solid rgba(29,75,54,0.10)" }}>
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 gh-section">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.6fr]">
             <aside>
@@ -63,33 +63,33 @@ export default async function ContactPage() {
               </h2>
 
               <ul className="mt-6 space-y-3">
-                <li className="gh2-trust-tile">
-                  <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full" style={{ background: "rgba(29,75,54,0.08)", border: "1px solid rgba(29,75,54,0.20)" }}>
-                    <Mail className="size-4" style={{ color: "var(--color-brand-primary)" }} strokeWidth={1.5} aria-hidden />
+                <li className="gh2-glass-forest" style={{ border: "1px solid rgba(255,255,255,0.14)", borderRadius: "var(--radius-card)", padding: "1rem" }}>
+                  <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full" style={{ background: "rgba(176,241,34,0.10)", border: "1px solid rgba(176,241,34,0.18)" }}>
+                    <Mail className="size-4" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.5} aria-hidden />
                   </span>
                   <div>
-                    <p className="text-[length:var(--text-meta)] font-semibold" style={{ color: "var(--color-text-primary)" }}>
+                    <p className="text-[length:var(--text-meta)] font-semibold" style={{ color: "rgba(255,255,255,0.92)" }}>
                       {contact.email_label}
                     </p>
                     <a
                       href="mailto:info@myglobalhealth.online"
                       className="text-sm hover:underline"
-                      style={{ color: "var(--color-brand-primary)" }}
+                      style={{ color: "var(--color-brand-accent)" }}
                     >
                       info@myglobalhealth.online
                     </a>
                   </div>
                 </li>
 
-                <li className="gh2-trust-tile">
-                  <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full" style={{ background: "rgba(29,75,54,0.08)", border: "1px solid rgba(29,75,54,0.20)" }}>
-                    <Clock className="size-4" style={{ color: "var(--color-brand-primary)" }} strokeWidth={1.5} aria-hidden />
+                <li className="gh2-glass-forest" style={{ border: "1px solid rgba(255,255,255,0.14)", borderRadius: "var(--radius-card)", padding: "1rem" }}>
+                  <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full" style={{ background: "rgba(176,241,34,0.10)", border: "1px solid rgba(176,241,34,0.18)" }}>
+                    <Clock className="size-4" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.5} aria-hidden />
                   </span>
                   <div>
-                    <p className="text-[length:var(--text-meta)] font-semibold" style={{ color: "var(--color-text-primary)" }}>
+                    <p className="text-[length:var(--text-meta)] font-semibold" style={{ color: "rgba(255,255,255,0.92)" }}>
                       {contact.response_label}
                     </p>
-                    <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
+                    <p className="text-sm" style={{ color: "rgba(255,255,255,0.65)" }}>
                       {contact.response_body}
                     </p>
                   </div>

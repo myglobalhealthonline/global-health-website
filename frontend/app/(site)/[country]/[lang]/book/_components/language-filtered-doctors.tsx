@@ -170,6 +170,7 @@ export function LanguageFilteredDoctors({
                 })}
                 primaryLabel={bp.continue}
                 ctaLabel="View"
+                dark
               />
             </li>
           ))}

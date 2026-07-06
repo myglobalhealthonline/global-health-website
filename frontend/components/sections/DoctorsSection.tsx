@@ -42,6 +42,8 @@ type DoctorsSectionProps = {
   intro?: string;
   doctors: DoctorItem[];
   theme?: "dark" | "light";
+  /** Force card appearance independently of section theme. */
+  cardTheme?: "dark" | "light";
   /** Render just the (optional pager +) grid with no section wrapper or
    *  header — for embedding inside a page's own section. */
   bare?: boolean;
@@ -49,8 +51,9 @@ type DoctorsSectionProps = {
 
 const PAGE_SIZE = 6;
 
-export function DoctorsSection({ title, intro, doctors, theme = "dark", bare = false }: DoctorsSectionProps) {
+export function DoctorsSection({ title, intro, doctors, theme = "dark", cardTheme, bare = false }: DoctorsSectionProps) {
   const isLight = theme === "light";
+  const isCardDark = cardTheme ? cardTheme === "dark" : !isLight;
   const [page, setPage] = useState(0);
 
   const totalPages = Math.ceil(doctors.length / PAGE_SIZE);
@@ -100,7 +103,7 @@ export function DoctorsSection({ title, intro, doctors, theme = "dark", bare = f
   const grid = (
     <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
       {paged.map((doctor) => (
-        <DoctorCard key={doctor.href ?? `${doctor.name}-${doctor.title}`} {...doctor} dark={!isLight} />
+        <DoctorCard key={doctor.href ?? `${doctor.name}-${doctor.title}`} {...doctor} dark={isCardDark} />
       ))}
     </div>
   );
@@ -116,9 +119,12 @@ export function DoctorsSection({ title, intro, doctors, theme = "dark", bare = f
 
   return (
     <section
-      className={isLight ? "" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"}
+      className={
+        isLight
+          ? "relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
+          : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
+      }
       style={{
-        background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
         padding: "clamp(64px,8vw,120px) 0",
         borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
       }}

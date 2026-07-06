@@ -256,7 +256,11 @@ function useBreadcrumbs(
   return useMemo(() => {
     if (!pathname.startsWith("/admin")) return [{ label: "Admin", href: "/admin" }];
     const segments = pathname.split("/").filter(Boolean);
-    const crumbs: { label: string; href: string }[] = [];
+    // href: null marks a passive context label with no distinct destination
+    // of its own (e.g. the topbar-selected country isn't a real URL segment)
+    // — rendered as plain text instead of a Link, so it doesn't duplicate
+    // the "Admin" crumb's target.
+    const crumbs: { label: string; href: string | null }[] = [];
     let acc = "";
     // Country-scoped routes (e.g. /admin/pages) implicitly operate on the
     // topbar-selected country rather than a country segment in the URL —
@@ -268,7 +272,7 @@ function useBreadcrumbs(
       if (i === 0) {
         crumbs.push({ label: "Admin", href: "/admin" });
         if (isCountryScoped && activeCountry) {
-          crumbs.push({ label: activeCountry.name, href: acc });
+          crumbs.push({ label: activeCountry.name, href: null });
         }
         continue;
       }
@@ -488,9 +492,15 @@ export function AdminShell({
                 {breadcrumbs.map((crumb, i) => {
                   const isLast = i === breadcrumbs.length - 1;
                   return (
-                    <span key={crumb.href} className="flex items-center gap-1.5">
-                      {isLast ? (
-                        <span className="truncate font-bold text-[var(--portal-chrome-text-active)]">
+                    <span key={`${crumb.href ?? "label"}-${i}`} className="flex items-center gap-1.5">
+                      {isLast || !crumb.href ? (
+                        <span
+                          className={
+                            isLast
+                              ? "truncate font-bold text-[var(--portal-chrome-text-active)]"
+                              : "truncate font-medium text-[var(--portal-chrome-text)]"
+                          }
+                        >
                           {crumb.label}
                         </span>
                       ) : (

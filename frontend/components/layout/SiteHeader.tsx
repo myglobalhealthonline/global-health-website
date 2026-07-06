@@ -144,8 +144,14 @@ export function SiteHeader({
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     let ticking = false;
+    // Hysteresis (enter >24px, exit <8px) instead of a single 20px trigger —
+    // a bare threshold flips back and forth on every scroll frame that
+    // hovers near it (momentum scroll, trackpad micro-movement), each flip
+    // re-firing the bar→pill morph (max-width/radius/backdrop-filter) and
+    // reading as a flicker right at the top of the page.
     const apply = () => {
-      setScrolled(window.scrollY > 20);
+      const y = window.scrollY;
+      setScrolled((prev) => (y > 24 ? true : y < 8 ? false : prev));
       ticking = false;
     };
     const onScroll = () => {

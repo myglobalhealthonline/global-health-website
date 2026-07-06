@@ -1,5 +1,11 @@
 import { apiRequest } from "./client";
 
+export type AdminServiceFaqTranslation = {
+  locale: string;
+  question: string;
+  answer: string;
+};
+
 export type AdminServiceFaqDto = {
   id: string;
   serviceId: string;
@@ -9,6 +15,7 @@ export type AdminServiceFaqDto = {
   isVisible: boolean;
   createdAt: string;
   updatedAt: string;
+  translations?: AdminServiceFaqTranslation[];
 };
 
 /**
@@ -18,7 +25,12 @@ export type AdminServiceFaqDto = {
  */
 export async function createAdminServiceFaq(
   serviceId: string,
-  body: { question: string; answer: string; isVisible?: boolean },
+  body: {
+    question: string;
+    answer: string;
+    isVisible?: boolean;
+    translations?: AdminServiceFaqTranslation[];
+  },
 ) {
   return apiRequest<{ faq: AdminServiceFaqDto }>(
     `/api/admin/services/${encodeURIComponent(serviceId)}/faqs`,
@@ -34,7 +46,13 @@ export async function createAdminServiceFaq(
 export async function updateAdminServiceFaq(
   serviceId: string,
   faqId: string,
-  body: { question?: string; answer?: string; sortOrder?: number; isVisible?: boolean },
+  body: {
+    question?: string;
+    answer?: string;
+    sortOrder?: number;
+    isVisible?: boolean;
+    translations?: AdminServiceFaqTranslation[];
+  },
 ) {
   return apiRequest<{ faq: AdminServiceFaqDto }>(
     `/api/admin/services/${encodeURIComponent(serviceId)}/faqs/${encodeURIComponent(faqId)}`,

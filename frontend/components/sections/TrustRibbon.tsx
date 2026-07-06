@@ -51,9 +51,8 @@ export function TrustRibbon({ items, theme = "light" }: { items?: TrustRibbonIte
 
   return (
     <section
-      className={isLight ? "gh2-section-ivory" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"}
+      className={isLight ? "relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"}
       style={{
-        background: isLight ? undefined : "var(--color-background-dark)",
         borderTop: isLight ? "2px solid rgba(176,241,34,0.24)" : undefined,
         borderBottom: `1px solid ${hairline}`,
         padding: "clamp(48px,6vw,88px) 0",
@@ -62,26 +61,31 @@ export function TrustRibbon({ items, theme = "light" }: { items?: TrustRibbonIte
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <RevealOnScroll
           stagger
-          className="grid grid-cols-2 lg:grid-cols-4"
-          style={{ borderTop: `1px solid ${hairline}` }}
+          className={isLight ? "grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-5" : "grid grid-cols-2 lg:grid-cols-4"}
         >
           {list.map((it, i) => {
             const Icon = ICONS[it.icon ?? inferIcon(it.l)];
             return (
               <div
                 key={`${it.v}-${it.l}`}
-                className={`flex flex-col gap-5 px-1 pt-8 lg:px-8 lg:pt-10 ${
-                  i % 2 === 1 ? "border-l pl-6" : ""
-                } ${i === 2 ? "lg:border-l" : ""} ${isLight ? "gh2-trust-tile" : ""}`}
-                style={{ borderColor: hairline }}
+                className={
+                  isLight
+                    ? // Light section → forest-glass tile matching the navbar chrome color.
+                      "gh2-glass-forest gh2-glass-hover flex flex-col gap-5 rounded-2xl p-6 lg:p-7"
+                    : `flex flex-col gap-5 px-1 pt-8 lg:px-8 lg:pt-10 ${
+                        i % 2 === 1 ? "border-l pl-6" : ""
+                      } ${i === 2 ? "lg:border-l" : ""}`
+                }
+                style={isLight ? undefined : { borderColor: hairline }}
                 role="listitem"
               >
                 <div className="flex items-center justify-between">
                   <span
                     className="inline-flex size-11 items-center justify-center rounded-xl"
                     style={{
-                      background: isLight ? "rgba(143,176,33,0.14)" : "rgba(176,241,34,0.10)",
-                      color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)",
+                      background: "rgba(176,241,34,0.10)",
+                      border: "1px solid rgba(176,241,34,0.18)",
+                      color: "var(--color-brand-accent)",
                     }}
                   >
                     <Icon className="size-[18px]" strokeWidth={1.6} aria-hidden />
@@ -92,14 +96,14 @@ export function TrustRibbon({ items, theme = "light" }: { items?: TrustRibbonIte
                     className="font-extrabold tracking-[-0.04em] leading-none [font-variant-numeric:tabular-nums]"
                     style={{
                       fontSize: "clamp(2rem,3.4vw,3rem)",
-                      color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)",
+                      color: "var(--color-brand-accent)",
                     }}
                   >
                     {it.v}
                   </p>
                   <p
                     className="mt-3 text-[11px] font-bold uppercase tracking-[0.14em]"
-                    style={{ color: isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.42)" }}
+                    style={{ color: isLight ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.42)" }}
                   >
                     {it.l}
                   </p>

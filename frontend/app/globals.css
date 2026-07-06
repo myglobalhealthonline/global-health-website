@@ -171,9 +171,63 @@
    * border var(--gh-chrome-border) and box-shadow var(--gh-chrome-shadow). */
   --gh-chrome: rgba(4, 32, 24, 0.78);
   --gh-chrome-blur: 18px;
+  /* Full liquid-glass filter for chrome surfaces — blur alone reads flat
+   * and grey; saturate() pulls colour *through* the pane and brightness()
+   * lifts it so it reads as lit glass, matching the portal lux recipe. */
+  --gh-chrome-filter: blur(var(--gh-chrome-blur)) saturate(170%) brightness(1.05);
   --gh-chrome-border: 1px solid rgba(167, 243, 11, 0.22);
   --gh-chrome-shadow: 0 18px 45px rgba(0, 0, 0, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 -1px 0 rgba(176, 241, 34, 0.05);
+
+  /* Missing token fixes — --color-text-secondary and --ease-out were
+   * referenced downstream but never declared (secondary text was silently
+   * inheriting; transitions fell back to linear-ish `ease`). */
+  --color-text-secondary: #46584F;   /* between body #2D3B36 and muted #6D6D6D, forest-toned */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);        /* premium decelerate */
+  --ease-liquid: cubic-bezier(0.34, 1.3, 0.42, 1);   /* soft overshoot for glass hovers */
+
+  /* ── Liquid glass tokens ──────────────────────────────────────
+   * One shared recipe so every frosted surface reads as the same
+   * physical material: heavy refraction (blur + saturate + brightness),
+   * a lit top edge (specular), a faint lime under-rim (caustic), and a
+   * diagonal sheen. Consumed by the upgraded gh/gh2 glass classes and
+   * the new .gh-liquid utilities at the end of this file. */
+  --liquid-filter: blur(22px) saturate(180%) brightness(1.06);
+  --liquid-filter-strong: blur(28px) saturate(200%) brightness(1.08);
+  --liquid-filter-light: blur(16px) saturate(160%);
+  /* Dark (forest) pane fill — translucent gradient, lighter at the lit
+   * top-left corner like real glass catching light. */
+  --liquid-fill-dark: linear-gradient(
+      152deg,
+      rgba(255, 255, 255, 0.10) 0%,
+      rgba(255, 255, 255, 0.03) 34%,
+      rgba(255, 255, 255, 0.00) 62%,
+      rgba(176, 241, 34, 0.03) 100%
+    );
+  --liquid-fill-light: linear-gradient(
+      152deg,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.42) 48%,
+      rgba(245, 255, 248, 0.55) 100%
+    );
+  /* Specular + caustic inset stack — pair on top of a drop shadow. */
+  --liquid-specular: inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 1px 0 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(176, 241, 34, 0.07);
+  --liquid-specular-light: inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(29, 75, 54, 0.05);
+  /* Diagonal sheen band — the "liquid" streak that sweeps on hover. */
+  --liquid-sheen: linear-gradient(
+      115deg,
+      transparent 32%,
+      rgba(255, 255, 255, 0.10) 46%,
+      rgba(255, 255, 255, 0.16) 50%,
+      rgba(255, 255, 255, 0.10) 54%,
+      transparent 68%
+    );
+  --liquid-edge: rgba(255, 255, 255, 0.16);
+  --liquid-edge-lime: rgba(176, 241, 34, 0.24);
 }
 
 /* Mobile header shrinks to reclaim viewport (spec §12/§16): 88px → 72px at
@@ -412,24 +466,68 @@ img {
  * ZERO specificity — the author's CSS always wins; these are only fallbacks
  * for un-styled markup. */
 .gh-article-body {
-  line-height: 1.7;
+  font-size: 16px;
+  line-height: 1.75;
   color: var(--color-text-body);
   overflow-wrap: break-word;
 }
 .gh-article-body :where(img, svg, video) {
   max-width: 100%;
   height: auto;
+  border-radius: 12px;
 }
 .gh-article-body :where(a):not([class]) {
   color: var(--color-brand-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 .gh-article-body :where(table) {
   max-width: 100%;
 }
-.gh-article-body :where(h1, h2, h3):not([class]) {
+/* Spacing scale — without this every heading/paragraph/list item sits
+ * flush against the next with no rhythm, reading as one dense wall of
+ * text regardless of the source HTML's structure. */
+.gh-article-body :where(h1, h2):not([class]) {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3vw, 30px);
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.2;
+  margin: 40px 0 16px;
+  color: var(--color-text-primary);
+}
+.gh-article-body :where(h3):not([class]) {
+  font-family: var(--font-display);
+  font-size: clamp(17px, 2vw, 21px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin: 30px 0 12px;
+  color: var(--color-text-primary);
+}
+.gh-article-body :where(h1, h2, h3):first-child {
+  margin-top: 0;
+}
+.gh-article-body :where(p):not([class]) { margin: 14px 0; }
+/* Tailwind preflight resets ul/ol to list-style:none — restore real
+ * markers here or every list silently reads as flush paragraphs.
+ * (force-touch for HMR) */
+.gh-article-body :where(ul):not([class]) { margin: 16px 0 16px 4px; padding: 0 0 0 20px; list-style: disc; }
+.gh-article-body :where(ol):not([class]) { margin: 16px 0 16px 4px; padding: 0 0 0 20px; list-style: decimal; }
+.gh-article-body :where(li):not([class]) { margin: 8px 0; padding-left: 4px; }
+.gh-article-body :where(li):not([class])::marker { color: var(--color-brand-accent); }
+.gh-article-body :where(strong):not([class]) { font-weight: 700; color: var(--color-text-primary); }
+.gh-article-body :where(blockquote):not([class]) {
+  margin: 20px 0;
+  padding: 4px 20px;
+  border-left: 3px solid rgba(176, 241, 34, 0.4);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+.gh-article-body :where(hr):not([class]) {
+  margin: 32px 0;
+  border: none;
+  border-top: 1px solid rgba(29, 75, 54, 0.12);
 }
 
 /* Sticky translucent site header. Replaces SiteHeader.tsx inline
@@ -563,8 +661,8 @@ img {
    * Overrides the .gh-site-shell forest gradient (defined later, equal
    * specificity). */
   background: var(--gh-chrome);
-  -webkit-backdrop-filter: blur(var(--gh-chrome-blur));
-  backdrop-filter: blur(var(--gh-chrome-blur));
+  -webkit-backdrop-filter: var(--gh-chrome-filter);
+  backdrop-filter: var(--gh-chrome-filter);
   border-top: var(--gh-chrome-border);
   box-shadow: var(--gh-chrome-shadow);
 }
@@ -929,12 +1027,12 @@ img {
 }
 
 .gh-home-hero-availabilityPanel {
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--liquid-edge);
   border-radius: 22px;
-  background: rgba(13, 38, 30, 0.8);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+  background: var(--liquid-fill-dark), rgba(13, 38, 30, 0.72);
+  -webkit-backdrop-filter: var(--liquid-filter-strong);
+  backdrop-filter: var(--liquid-filter-strong);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3), var(--liquid-specular);
   padding: 22px;
 }
 
@@ -1487,45 +1585,55 @@ img {
  * featured-doctor spotlight, and the dark doctor cards all read as the
  * same material as the hero card. */
 .gh-glass-card {
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+  background: var(--liquid-fill-dark), rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--liquid-edge);
+  -webkit-backdrop-filter: var(--liquid-filter);
+  backdrop-filter: var(--liquid-filter);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22), var(--liquid-specular);
 }
 
 /* ── gh2 glass system (spec §7) — single source of truth for public-site
  * card/panel surfaces. .gh-glass-card / .gh-glass-emerald stay in place
  * unchanged for their existing consumers; new work adopts these. */
 .gh2-glass {
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--liquid-fill-dark), rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--liquid-edge);
   border-radius: var(--radius-card);
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: var(--liquid-filter);
+  backdrop-filter: var(--liquid-filter);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22), var(--liquid-specular);
 }
 /* Deep emerald variant — trust badges, floating hero cards. */
 .gh2-glass-deep {
-  background: rgba(8, 42, 32, 0.72);
-  border: 1px solid rgba(176, 241, 34, 0.16);
+  background: var(--liquid-fill-dark), rgba(8, 42, 32, 0.66);
+  border: 1px solid var(--liquid-edge-lime);
   border-radius: var(--radius-card);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+  -webkit-backdrop-filter: var(--liquid-filter);
+  backdrop-filter: var(--liquid-filter);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28), var(--liquid-specular);
 }
 /* Frosted ivory glass — light panels over imagery (ServiceHero checklist family). */
 .gh2-glass-ivory {
-  background: rgba(245, 255, 248, 0.86);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: var(--liquid-fill-light), rgba(245, 255, 248, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.65);
   border-radius: var(--radius-card);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 22px 60px rgba(3, 31, 24, 0.28);
+  -webkit-backdrop-filter: var(--liquid-filter-light);
+  backdrop-filter: var(--liquid-filter-light);
+  box-shadow: 0 22px 60px rgba(3, 31, 24, 0.28), var(--liquid-specular-light);
 }
-/* Interactive glass card hover — clickable cards ONLY. */
-.gh2-glass-hover { transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
-.gh2-glass-hover:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.22); box-shadow: 0 24px 60px rgba(0,0,0,0.3); }
+/* Interactive glass card hover — clickable cards ONLY. Lift + brighten the
+ * pane edge and let a whisper of lime bleed through, like light refracting
+ * as the glass tilts. */
+.gh2-glass-hover { transition: transform .3s var(--ease-liquid), border-color .25s var(--ease-out), box-shadow .25s var(--ease-out); }
+.gh2-glass-hover:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(176, 241, 34, 0.10),
+    0 8px 32px -12px rgba(176, 241, 34, 0.18),
+    var(--liquid-specular);
+}
 @media (prefers-reduced-motion: reduce) {
   .gh2-glass-hover { transition: none; }
   .gh2-glass-hover:hover { transform: none; }
@@ -1535,16 +1643,23 @@ img {
  * Additive only; existing gh2-glass* / gh-glass-* classes untouched. */
 /* Canonical forest glass card — alias-consolidation of gh2-glass-deep. */
 .gh2-glass-forest {
-  background: linear-gradient(168deg, rgba(16, 52, 40, 0.78), rgba(9, 38, 29, 0.86));
-  border: 1px solid rgba(176, 241, 34, 0.14);
+  /* Same material as the navbar/footer chrome — one glass recipe site-wide.
+   * Fill runs more opaque than --gh-chrome (0.78): the navbar always sits
+   * on dark content, cards often sit on ivory bands — at 0.78 the light
+   * band bleeds through and the card reads sage instead of navbar-dark. */
+  background: var(--liquid-fill-dark), rgba(4, 32, 24, 0.92);
+  border: var(--gh-chrome-border);
   border-radius: var(--radius-card);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: var(--gh-chrome-filter);
+  backdrop-filter: var(--gh-chrome-filter);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),   /* soft inner top highlight */
+    var(--liquid-specular),                    /* lit top edge + lime under-rim */
     0 18px 40px -18px rgba(4, 24, 18, 0.55);   /* calm premium shadow */
 }
-/* Premium ivory card — replaces flat bg-white cards on light sections. */
+/* Premium ivory card — replaces flat bg-white cards on light sections.
+ * Also re-declares the ink tokens: when nested inside .gh2-dark-content
+ * (booking form panels on glass-forest cards) the dark overrides would
+ * otherwise cascade in and paint white text on the white card. */
 .gh2-card-ivory {
   background: linear-gradient(172deg, #ffffff 0%, #fbfcf8 100%);
   border: 1px solid rgba(29, 75, 54, 0.10);
@@ -1553,6 +1668,13 @@ img {
     inset 0 1px 0 rgba(255, 255, 255, 0.9),
     0 1px 2px rgba(16, 44, 34, 0.05),
     0 12px 32px -16px rgba(16, 44, 34, 0.14);
+  --color-text-primary: #1D4B36;
+  --color-text-body: #2D3B36;
+  --color-text-muted: #6D6D6D;
+  --color-border: #E4E7DD;
+  --color-border-strong: #C3CCB5;
+  --color-background-page: #FFFFFF;
+  --color-background-soft: #F6F8F1;
 }
 .gh2-card-hover { transition: transform .25s var(--ease-out, ease), box-shadow .25s, border-color .25s; }
 .gh2-card-hover:hover {
@@ -1565,7 +1687,10 @@ img {
 }
 /* Section surfaces — explicit ivory/forest/soft bands, no inline ternaries. */
 .gh2-section-forest { background: linear-gradient(178deg, #12342A 0%, #0F2E25 100%); }
-.gh2-section-ivory  { background: var(--color-background-soft); }
+/* Ivory band — warm top-lit gradient (same recipe as CountryTrustBar's
+ * "Licensed care" panel). Pair with gh-medical-pattern
+ * gh-medical-pattern-panel for the faint plus-grid texture. */
+.gh2-section-ivory  { background: linear-gradient(180deg, #fffdf1 0%, #f6f8f1 52%, #edf2e2 100%); }
 .gh2-section-soft   { background: var(--color-background); }
 /* Meta chip (light + dark) — price/duration/credential badges. */
 .gh2-meta-chip {
@@ -1592,8 +1717,26 @@ img {
   align-items: flex-start;
   padding: .9rem 1rem;
   border-radius: 14px;
-  background: rgba(29, 75, 54, .045);
-  border: 1px solid rgba(29, 75, 54, .08);
+  /* Ivory-card material (matches gh2-card-ivory) instead of the old
+   * flat gray fill — light sections stay warm, not template-gray. */
+  background: linear-gradient(172deg, #ffffff 0%, #fbfcf8 100%);
+  border: 1px solid rgba(29, 75, 54, 0.10);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 1px 2px rgba(16, 44, 34, 0.05),
+    0 10px 26px -14px rgba(16, 44, 34, 0.12);
+  transition: transform .25s var(--ease-out, ease), box-shadow .25s, border-color .25s;
+}
+.gh2-trust-tile:hover {
+  transform: translateY(-2px);
+  border-color: rgba(29, 75, 54, 0.20);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 2px 4px rgba(16, 44, 34, 0.06),
+    0 16px 36px -16px rgba(16, 44, 34, 0.18);
+}
+@media (prefers-reduced-motion: reduce) {
+  .gh2-trust-tile, .gh2-trust-tile:hover { transform: none; transition: none; }
 }
 /* Status card — calm neutral empty/no-results state, not amber. */
 .gh2-status-card {
@@ -1602,10 +1745,42 @@ img {
   background: rgba(29, 75, 54, .03);
   padding: clamp(1.25rem, 3vw, 2rem);
 }
+.gh2-status-card-dark {
+  border-color: rgba(255, 255, 255, .20);
+  background: rgba(255, 255, 255, .06);
+}
+/* Trust tile dark variant */
+.gh2-trust-tile-dark {
+  background: rgba(255, 255, 255, .07);
+  border-color: rgba(255, 255, 255, .12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .06),
+    0 1px 2px rgba(0, 0, 0, .08),
+    0 10px 26px -14px rgba(0, 0, 0, .25);
+}
+.gh2-trust-tile-dark:hover {
+  border-color: rgba(255, 255, 255, .20);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .08),
+    0 2px 4px rgba(0, 0, 0, .10),
+    0 16px 36px -16px rgba(0, 0, 0, .30);
+}
 /* Scroll fade — right-edge mask for horizontal chip/pill scrollers. */
 .gh2-scroll-fade {
   -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 40px), transparent 100%);
   mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 40px), transparent 100%);
+}
+
+/* Dark theme override for content inside glass-forest cards on ivory sections.
+ * Replaces light-theme CSS variables with dark equivalents. */
+.gh2-dark-content {
+  --color-text-primary: #ffffff;
+  --color-text-body: rgba(255, 255, 255, 0.85);
+  --color-text-muted: rgba(255, 255, 255, 0.55);
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-border-strong: rgba(255, 255, 255, 0.20);
+  --color-background-page: rgba(255, 255, 255, 0.07);
+  --color-background-soft: rgba(255, 255, 255, 0.05);
 }
 
 /* ── gh2 selection pattern (spec §9) — booking pills/chips/cards. Border
@@ -1926,6 +2101,13 @@ img {
   --lux-well-fill: linear-gradient(180deg, #eff2ea 0%, #f4f6f0 100%);
   --lux-overlay-fill: rgba(7, 18, 12, 0.60);
   --lux-forest-duotone: linear-gradient(180deg, #226044 0%, #1d4b36 55%, #16382a 100%);
+  /* Hover state for --lux-forest-duotone, same stops darkened to
+     --portal-primary-hover's tone. Keeping this a gradient (not a flat
+     color) matters: .gh-btn only transitions background-color, so a
+     gradient->solid swap on hover drops the background-image layer
+     instantly while background-color fades in, flashing the white page
+     background underneath for a frame. Gradient->gradient avoids that. */
+  --lux-forest-duotone-hover: linear-gradient(180deg, #1c4f38 0%, #163a29 55%, #10281c 100%);
   --lux-elev-1:
     inset 0 1px 0 rgba(255, 255, 255, 0.95),
     inset 0 0 0 1px rgba(255, 255, 255, 0.35),
@@ -2996,9 +3178,17 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 
 .gh-portal-shell .gh-btn-primary:hover,
 .gh-admin-main button[type="submit"]:not([class*="ghost"]):not([class*="soft"]):not(.gh-admin-toggle):not(.gh-admin-status-toggle):hover {
-  background: var(--portal-primary-hover);
+  background: var(--lux-forest-duotone-hover);
   border-color: var(--portal-primary-hover);
-  box-shadow: 0 4px 16px var(--portal-signal-glow);
+  /* Same 3-layer structure as the rest state (inset highlight, inset
+     shade, outer shadow) — only the outer layer's spread/color changes.
+     Swapping to a single-layer box-shadow here made the transition jump
+     between mismatched layer counts, which some browsers can't
+     interpolate cleanly and paint as a brief white/blown-out flash. */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 4px 16px var(--portal-signal-glow);
 }
 
 .gh-portal-shell .gh-btn-secondary,
@@ -6572,7 +6762,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 }
 
 .gh-section-dark {
-  background: var(--color-background-dark);
+  background: linear-gradient(178deg, #12342A 0%, #0F2E25 100%);
   color: var(--color-brand-secondary);
 }
 
@@ -7007,6 +7197,25 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   border-color: rgba(29, 75, 54, 0.4);
   background: var(--color-background-soft);
 }
+/* Dark-card variants — for gh2-btn-compact-* rendered on a
+ * gh2-glass-forest / dark-content card, where the light-surface primary
+ * (forest fill) and secondary (forest border) both go near-invisible. */
+.gh2-btn-compact-primary-dark {
+  background: var(--color-brand-accent);
+  color: #0a1f14;
+}
+.gh2-btn-compact-primary-dark:hover {
+  filter: brightness(1.08);
+}
+.gh2-btn-compact-secondary-dark {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
+}
+.gh2-btn-compact-secondary-dark:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+}
 /* Secondary on light surfaces — outline that fills on hover. */
 .gh2-btn-outline {
   display: inline-flex;
@@ -7054,6 +7263,30 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   background: var(--color-brand-primary);
   border-color: var(--color-brand-primary);
   color: #fff;
+}
+/* Hide scrollbar on snap carousels — the arrows + swipe are the affordance. */
+.gh-scrollbar-none {
+  scrollbar-width: none;
+}
+.gh-scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+/* On-dark filter chips — scoped under .gh2-filters-dark (forest-glass
+ * filter panels). Lime active state mirrors the on-dark CTA dosage. */
+.gh2-filters-dark .gh2-pill-filter {
+  border-color: rgba(255, 255, 255, 0.20);
+  color: var(--gh2-on-dark-muted);
+}
+.gh2-filters-dark .gh2-pill-filter:hover {
+  border-color: rgba(176, 241, 34, 0.45);
+  color: rgba(255, 255, 255, 0.92);
+}
+.gh2-filters-dark .gh2-pill-filter[aria-pressed="true"],
+.gh2-filters-dark .gh2-pill-filter[data-selected="true"],
+.gh2-filters-dark .gh2-pill-filter[data-active="true"] {
+  background: var(--color-brand-accent);
+  border-color: var(--color-brand-accent);
+  color: #0a1f14;
 }
 /* Focus ring variant for controls sitting on dark glass chrome, where
  * the default forest outline is invisible. Use INSTEAD of removing the
@@ -7139,11 +7372,11 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
  * doctors hero floating info cards + trust cards so they read as cut
  * from the same material as the section, with a faint lime hairline. */
 .gh-glass-emerald {
-  background: rgba(8, 42, 32, 0.72);
-  border: 1px solid rgba(176, 241, 34, 0.16);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.34);
+  background: var(--liquid-fill-dark), rgba(8, 42, 32, 0.66);
+  border: 1px solid var(--liquid-edge-lime);
+  -webkit-backdrop-filter: var(--liquid-filter);
+  backdrop-filter: var(--liquid-filter);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.34), var(--liquid-specular);
 }
 
 /* Dotted-grid atmosphere layer — faint tech dots, masked to fade out
@@ -8523,17 +8756,153 @@ a.gh-appointment-card:hover {
 }
 
 .gh-inline-forest-glass {
-  background: rgba(5, 34, 27, 0.78);
-  border: 1px solid rgba(176, 241, 34, 0.18);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  background: var(--liquid-fill-dark), rgba(5, 34, 27, 0.72);
+  border: 1px solid rgba(176, 241, 34, 0.20);
+  -webkit-backdrop-filter: var(--liquid-filter-strong);
+  backdrop-filter: var(--liquid-filter-strong);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.38), var(--liquid-specular);
 }
 
 .gh-inline-doctor-glass {
-  background: rgba(5, 34, 27, 0.78);
-  border: 1px solid rgba(167, 243, 11, 0.18);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  background: var(--liquid-fill-dark), rgba(5, 34, 27, 0.72);
+  border: 1px solid rgba(167, 243, 11, 0.20);
+  -webkit-backdrop-filter: var(--liquid-filter);
+  backdrop-filter: var(--liquid-filter);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24), var(--liquid-specular);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ * LIQUID GLASS LAYER — additive premium utilities
+ * ═══════════════════════════════════════════════════════════════
+ * A composable "liquid glass" material on top of the existing gh/gh2
+ * glass recipes (which now share the --liquid-* refraction tokens).
+ * Stack these on any element:
+ *
+ *   .gh-liquid          dark forest pane (default)
+ *   .gh-liquid-light    ivory pane for light imagery
+ *   .gh-liquid-sheen    diagonal light streak that sweeps on hover
+ *   .gh-liquid-ring     lensed gradient edge (replaces flat 1px border)
+ *
+ * NOTE: .gh-liquid-sheen owns ::after and .gh-liquid-ring owns ::before.
+ * Don't combine them with components that already define those pseudos
+ * (e.g. .gh-admin-mobile-card::before). */
+
+.gh-liquid {
+  position: relative;
+  background: var(--liquid-fill-dark), rgba(7, 36, 28, 0.66);
+  border: 1px solid var(--liquid-edge);
+  border-radius: var(--radius-card);
+  -webkit-backdrop-filter: var(--liquid-filter);
+  backdrop-filter: var(--liquid-filter);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.30), var(--liquid-specular);
+}
+
+.gh-liquid-light {
+  position: relative;
+  background: var(--liquid-fill-light), rgba(248, 252, 246, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: var(--radius-card);
+  -webkit-backdrop-filter: var(--liquid-filter-light);
+  backdrop-filter: var(--liquid-filter-light);
+  box-shadow: 0 20px 55px rgba(3, 31, 24, 0.22), var(--liquid-specular-light);
+}
+
+/* Lensed edge — a gradient ring painted in a masked ::before so the
+ * border itself looks lit from the top-left and caustic-lime at the
+ * bottom-right, like light bending through the pane's rim. */
+.gh-liquid-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    152deg,
+    rgba(255, 255, 255, 0.42) 0%,
+    rgba(255, 255, 255, 0.08) 32%,
+    rgba(255, 255, 255, 0.04) 60%,
+    rgba(176, 241, 34, 0.30) 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Sheen sweep — the liquid streak. Parked off-pane at rest; glides
+ * across on hover/focus. Pure paint, no layout cost. */
+.gh-liquid-sheen {
+  overflow: hidden;
+}
+.gh-liquid-sheen::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: var(--liquid-sheen);
+  background-size: 250% 100%;
+  background-position: 130% 0;
+  transition: background-position 0.9s var(--ease-out);
+  pointer-events: none;
+}
+.gh-liquid-sheen:hover::after,
+.gh-liquid-sheen:focus-visible::after {
+  background-position: -30% 0;
+}
+
+/* Interactive lift for liquid panes — pairs with .gh2-glass-hover
+ * semantics but tuned for the heavier material. */
+.gh-liquid-hover {
+  transition: transform 0.3s var(--ease-liquid), box-shadow 0.3s var(--ease-out),
+    border-color 0.25s var(--ease-out);
+}
+.gh-liquid-hover:hover {
+  transform: translateY(-3px) scale(1.004);
+  border-color: rgba(255, 255, 255, 0.26);
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.34),
+    0 10px 36px -14px rgba(176, 241, 34, 0.22),
+    var(--liquid-specular);
+}
+
+/* ── Fallback: no backdrop-filter support ─────────────────────
+ * The public-site glass previously had no fallback (only the portal
+ * lux system did) — translucent fills over busy imagery turn to mud
+ * without the blur. Solidify the panes instead. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .gh-glass-card,
+  .gh2-glass,
+  .gh-liquid {
+    background: linear-gradient(168deg, #123528, #0b2a20);
+  }
+  .gh2-glass-deep,
+  .gh2-glass-forest,
+  .gh-glass-emerald,
+  .gh-inline-forest-glass,
+  .gh-inline-doctor-glass {
+    background: linear-gradient(168deg, #0e3125, #08251c);
+  }
+  .gh2-glass-ivory,
+  .gh-liquid-light {
+    background: #f7fbf4;
+  }
+  .gh-home-hero-availabilityPanel {
+    background: #0d261e;
+  }
+  .gh-footer-shell {
+    background: #042018;
+  }
+}
+
+/* ── Reduced motion — sheen + lift stay parked. ─────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .gh-liquid-sheen::after {
+    transition: none;
+  }
+  .gh-liquid-hover,
+  .gh-liquid-hover:hover {
+    transform: none;
+    transition: none;
+  }
 }

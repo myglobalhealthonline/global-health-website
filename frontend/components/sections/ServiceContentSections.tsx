@@ -12,19 +12,20 @@ import { Check } from "lucide-react";
 
 type Theme = "light" | "soft" | "dark";
 
-const SURFACE: Record<Theme, string> = {
-  light: "var(--color-background-page)",
-  soft: "var(--color-background-soft)",
-  dark: "var(--color-background-dark)",
-};
-
 function isDark(theme: Theme) {
   return theme === "dark";
 }
 
+/* Light + soft both render the site-wide ivory band (warm gradient +
+ * faint plus-grid pattern) — flat white/gray section fills are gone. */
+function sectionClass(theme: Theme): string {
+  return isDark(theme)
+    ? "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
+    : "relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel";
+}
+
 function sectionStyle(theme: Theme): React.CSSProperties {
   return {
-    background: SURFACE[theme],
     padding: "clamp(56px,7vw,104px) 0",
     borderTop: isDark(theme)
       ? "1px solid rgba(255,255,255,0.06)"
@@ -74,7 +75,7 @@ export function ServiceIntro({
   theme?: Theme;
 }) {
   return (
-    <section className={isDark(theme) ? "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark" : ""} style={sectionStyle(theme)}>
+    <section className={sectionClass(theme)} style={sectionStyle(theme)}>
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
         <p
@@ -112,7 +113,7 @@ export function ChecklistSection({
 }) {
   const dark = isDark(theme);
   return (
-    <section className={isDark(theme) ? "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark" : ""} style={sectionStyle(theme)}>
+    <section className={sectionClass(theme)} style={sectionStyle(theme)}>
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
         <SectionTitle theme={theme}>{title}</SectionTitle>
@@ -183,7 +184,7 @@ export function WhyChooseSection({
 }) {
   const dark = isDark(theme);
   return (
-    <section className={isDark(theme) ? "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark" : ""} style={sectionStyle(theme)}>
+    <section className={sectionClass(theme)} style={sectionStyle(theme)}>
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
         <SectionTitle theme={theme}>{title}</SectionTitle>
@@ -192,14 +193,19 @@ export function WhyChooseSection({
           {items.map((item) => (
             <li
               key={item}
-              className="flex items-start gap-3 rounded-[var(--radius-card)] p-5"
-              style={{
-                background: dark ? "rgba(255,255,255,0.03)" : "var(--color-background-page)",
-                border: dark
-                  ? "1px solid rgba(255,255,255,0.08)"
-                  : "1px solid rgba(29,75,54,0.12)",
-                boxShadow: dark ? "none" : "0 1px 12px rgba(29,75,54,0.05)",
-              }}
+              className={
+                dark
+                  ? "flex items-start gap-3 rounded-[var(--radius-card)] p-5"
+                  : "gh2-glass-forest gh2-glass-hover flex items-start gap-3 rounded-[var(--radius-card)] p-5"
+              }
+              style={
+                dark
+                  ? {
+                      background: "rgba(255,255,255,0.03)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                    }
+                  : undefined
+              }
             >
               <span
                 className="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full"
@@ -212,7 +218,7 @@ export function WhyChooseSection({
               </span>
               <span
                 className="text-[15px] leading-relaxed"
-                style={{ color: dark ? "rgba(255,255,255,0.82)" : "var(--color-text-body)" }}
+                style={{ color: dark ? "rgba(255,255,255,0.82)" : "rgba(255,255,255,0.85)" }}
               >
                 {item}
               </span>
@@ -239,7 +245,7 @@ export function ProcessStepsSection({
 }) {
   const dark = isDark(theme);
   return (
-    <section className={isDark(theme) ? "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark" : ""} style={sectionStyle(theme)}>
+    <section className={sectionClass(theme)} style={sectionStyle(theme)}>
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
         <SectionTitle theme={theme}>{title}</SectionTitle>
@@ -294,7 +300,7 @@ export function ImportantInfoSection({
   theme?: Theme;
 }) {
   return (
-    <section className={isDark(theme) ? "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark" : ""} style={sectionStyle(theme)}>
+    <section className={sectionClass(theme)} style={sectionStyle(theme)}>
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <div
           className="rounded-[var(--radius-card)] p-6 sm:p-8 lg:p-10"

@@ -2726,17 +2726,39 @@ model ConsultationMessage {
 /// Per-service FAQ entries managed by admin. Distinct from the global country-scoped Faq model
 /// (which is for site-wide FAQ pages). ServiceFaq is for the FAQ section on each service detail page.
 model ServiceFaq {
-  id        String   @id @default(cuid())
-  serviceId String
-  question  String
-  answer    String
-  sortOrder Int      @default(0)
-  isVisible Boolean  @default(true)
-  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String                  @id @default(cuid())
+  serviceId    String
+  question     String
+  answer       String
+  sortOrder    Int                     @default(0)
+  isVisible    Boolean                 @default(true)
+  service      Service                 @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  /// Per-locale overrides; each field falls back to the base question/answer
+  /// above (base = the service's country defaultLocale), same pattern as
+  /// Service/ServiceTranslation.
+  translations ServiceFaqTranslation[]
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
 
   @@index([serviceId, isVisible, sortOrder])
+}
+
+/// Per-locale override of a ServiceFaq's question/answer text. Base columns
+/// on ServiceFaq hold the country's default-locale copy; a row here overrides
+/// for one other locale. sortOrder/isVisible stay on the base row — they are
+/// locale-independent (same FAQ item, same position, translated text only).
+model ServiceFaqTranslation {
+  id           String     @id @default(cuid())
+  serviceFaqId String
+  locale       LocaleCode
+  question     String
+  answer       String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  serviceFaq   ServiceFaq @relation(fields: [serviceFaqId], references: [id], onDelete: Cascade)
+
+  @@unique([serviceFaqId, locale])
+  @@index([serviceFaqId])
 }
 
 /// Per-health-test FAQ entries managed by admin. Mirrors ServiceFaq but scoped
@@ -2749,10 +2771,31 @@ model HealthTestFaq {
   sortOrder     Int         @default(0)
   isVisible     Boolean     @default(true)
   healthTest    HealthTest  @relation(fields: [healthTestId], references: [id], onDelete: Cascade)
+  /// Per-locale overrides; base question/answer stay on this row as the
+  /// country's default-locale copy, same pattern as ServiceFaq.
+  translations  HealthTestFaqTranslation[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
   @@index([healthTestId, isVisible, sortOrder])
+}
+
+/// Per-locale override of a HealthTestFaq's question/answer text. Base
+/// columns on HealthTestFaq hold the country's default-locale copy; a row
+/// here overrides for one other locale. sortOrder/isVisible remain on the
+/// base row because they are locale-independent.
+model HealthTestFaqTranslation {
+  id              String        @id @default(cuid())
+  healthTestFaqId String
+  locale          LocaleCode
+  question        String
+  answer          String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  healthTestFaq   HealthTestFaq @relation(fields: [healthTestFaqId], references: [id], onDelete: Cascade)
+
+  @@unique([healthTestFaqId, locale])
+  @@index([healthTestFaqId])
 }
 
 /// Patient nationality / identity documents. Max 2 per patient (slot 1 and slot 2).

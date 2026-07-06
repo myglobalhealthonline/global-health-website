@@ -5,10 +5,12 @@ import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import {
   deleteAdminService,
+  fetchAdminCountries,
   fetchAdminServiceById,
   fetchAdminServiceFaqs,
   purgeAdminService,
 } from "@/lib/admin/admin-api";
+import { resolveCountryLocaleTabs } from "@/lib/admin/service-form-parse";
 import { readServiceKind, SERVICE_KIND_META } from "@/lib/admin/service-kind";
 import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
@@ -76,9 +78,10 @@ export default async function AdminServiceDetailPage({
 }: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
-  const [result, faqsResult] = await Promise.all([
+  const [result, faqsResult, countriesResult] = await Promise.all([
     fetchAdminServiceById(id),
     fetchAdminServiceFaqs(id),
+    fetchAdminCountries(),
   ]);
 
   if (!result.ok) {
@@ -111,6 +114,10 @@ export default async function AdminServiceDetailPage({
   }
   const kind = readServiceKind(messages.kind, service.kind);
   const meta = SERVICE_KIND_META[kind];
+  const serviceCountry = countriesResult.ok
+    ? countriesResult.data.countries.find((c) => c.id === service.countryId)
+    : undefined;
+  const { locales, defaultLocale } = resolveCountryLocaleTabs(serviceCountry);
 
   async function deactivateServiceAction() {
     "use server";
@@ -255,6 +262,8 @@ export default async function AdminServiceDetailPage({
             <ServiceFaqPanel
               serviceId={id}
               initialFaqs={faqsResult.ok ? faqsResult.data.faqs : []}
+              locales={locales}
+              defaultLocale={defaultLocale}
             />
           </AdminCard>
         </div>

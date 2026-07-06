@@ -29,9 +29,12 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
 
   return (
     <section
-      className={isLight ? "" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"}
+      className={
+        isLight
+          ? "relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
+          : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
+      }
       style={{
-        background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
         borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
         borderBottom: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
         padding: "clamp(64px,8vw,120px) 0",
@@ -87,26 +90,24 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
           {items.slice(0, 4).map((it) => (
             <div
               key={`${it.label}-${it.value}`}
-              className="group relative flex flex-col gap-5 rounded-2xl p-7 transition-all duration-300 hover:-translate-y-1"
-              style={{
-                background: isLight
-                  ? "#ffffff"
-                  : "rgba(255,255,255,0.04)",
-                border: isLight
-                  ? "1px solid rgba(29,75,54,0.12)"
-                  : "1px solid rgba(255,255,255,0.08)",
-                boxShadow: isLight
-                  ? "0 2px 8px rgba(29,75,54,0.06), 0 12px 32px rgba(29,75,54,0.04)"
-                  : "none",
-              }}
+              className={`group relative flex flex-col gap-5 overflow-hidden rounded-2xl p-7 ${
+                isLight ? "gh2-glass-forest gh2-glass-hover" : ""
+              }`}
+              style={
+                isLight
+                  ? undefined
+                  : {
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                    }
+              }
             >
-              {/* Top accent hairline */}
+              {/* Top accent hairline — lime over the dark card in both themes */}
               <div
                 className="absolute inset-x-0 top-0 h-[3px] rounded-t-2xl opacity-100"
                 style={{
-                  background: isLight
-                    ? "linear-gradient(90deg, var(--color-brand-primary), rgba(29,75,54,0.2))"
-                    : "linear-gradient(90deg, var(--color-brand-accent), rgba(176,241,34,0.2))",
+                  background:
+                    "linear-gradient(90deg, var(--color-brand-accent), rgba(176,241,34,0.2))",
                 }}
               />
 
@@ -115,12 +116,9 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
                 <span
                   className="inline-flex size-11 items-center justify-center rounded-xl"
                   style={{
-                    background: isLight
-                      ? "rgba(29,75,54,0.08)"
-                      : "rgba(176,241,34,0.08)",
-                    color: isLight
-                      ? "var(--color-brand-primary)"
-                      : "var(--color-brand-accent)",
+                    background: "rgba(176,241,34,0.08)",
+                    border: "1px solid rgba(176,241,34,0.16)",
+                    color: "var(--color-brand-accent)",
                   }}
                 >
                   {it.icon}
@@ -132,7 +130,7 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
                 className="font-extrabold leading-none tracking-[-0.045em] [font-variant-numeric:tabular-nums]"
                 style={{
                   fontSize: "clamp(2.75rem,5.5vw,4.25rem)",
-                  color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)",
+                  color: "var(--color-brand-accent)",
                 }}
               >
                 {it.value}
@@ -141,7 +139,7 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
               {/* Label */}
               <dt
                 className="text-[11px] font-bold uppercase tracking-[0.18em]"
-                style={{ color: isLight ? "var(--color-text-primary)" : "rgba(255,255,255,0.60)" }}
+                style={{ color: isLight ? "rgba(255,255,255,0.80)" : "rgba(255,255,255,0.60)" }}
               >
                 {it.label}
               </dt>
@@ -151,7 +149,7 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
                 <p
                   className="text-sm leading-snug"
                   style={{
-                    color: isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.32)",
+                    color: isLight ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.32)",
                     maxWidth: "28ch",
                   }}
                 >

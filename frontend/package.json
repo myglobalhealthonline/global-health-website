@@ -9,7 +9,8 @@
     "build:analyze": "cross-env ANALYZE=true next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit",
+    "check:locales": "node scripts/check-locale-keys.mjs",
+    "typecheck": "node scripts/check-locale-keys.mjs && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"
   },

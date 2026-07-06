@@ -246,9 +246,8 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
       {hasServices ? (
         <section
           id="services"
-          className="scroll-mt-24 relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
+          className="scroll-mt-24 relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
           style={{
-            background: "var(--color-background-dark)",
             padding: "clamp(64px,8vw,120px) 0",
             borderTop: "1px solid rgba(255,255,255,0.07)",
           }}
@@ -307,9 +306,8 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
       ) : (
         <section
           id="services"
-          className="scroll-mt-24 relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
+          className="scroll-mt-24 relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
           style={{
-            background: "var(--color-background-dark)",
             padding: "clamp(48px,6vw,80px) 0",
             borderTop: "1px solid rgba(255,255,255,0.07)",
           }}
@@ -350,8 +348,8 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
       )}
       {doctorDisclaimerLead ? (
         <section
+          className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
           style={{
-            background: "var(--color-background-soft)",
             padding: "clamp(28px,4vw,48px) 0",
           }}
         >

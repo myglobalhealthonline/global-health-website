@@ -155,9 +155,8 @@ export default async function BlogPostPage({ params }: Props) {
 
       {/* Dark CTA block — matches luxury language of the rest of the site */}
       <section
-        className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
+        className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
         style={{
-          background: "var(--color-background-dark)",
           padding: "clamp(64px,8vw,100px) 0",
           borderTop: "1px solid rgba(255,255,255,0.07)",
         }}
