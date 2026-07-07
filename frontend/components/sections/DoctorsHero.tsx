@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
+import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
 import {
   ArrowUpRight,
   Users,
@@ -132,6 +133,13 @@ export function DoctorsHero({
     },
   ];
 
+  const titleFontSize = fitHeadingFontSize(`${titleLead} ${titleAccent} ${titleTrail ?? ""}`, {
+    minRem: 2,
+    maxRem: 4.2,
+    viewportTerm: "5vw",
+    idealChars: 24,
+  });
+
   return (
     <section
       className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden text-white gh-hero-cap"
@@ -217,7 +225,7 @@ export function DoctorsHero({
                 marginTop: 18,
                 maxWidth: "15ch",
                 lineHeight: 1,
-                fontSize: "clamp(2.4rem, 5vw, 4.2rem)",
+                fontSize: titleFontSize,
                 color: "rgba(255,255,255,0.95)",
               }}
             >

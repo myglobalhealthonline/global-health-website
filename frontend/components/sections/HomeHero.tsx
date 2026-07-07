@@ -5,6 +5,7 @@ import type { CountryCode } from "@/data/countries";
 import { Flag } from "@/components/ui/Flag";
 import { HeroReveal } from "@/components/motion/HeroReveal";
 import { SameDayBooking } from "@/components/sections/SameDayBooking";
+import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
 
 export type LiveDoctorItem = {
   name: string;
@@ -75,6 +76,15 @@ export function HomeHero({
   const unoptimizedHeroPhoto =
     /^https?:\/\//i.test(heroPhotoSrc) || heroPhotoSrc.startsWith("/api/media/");
 
+  const titleText =
+    displayHeroTitle ?? `${i18n?.titleMain ?? "Medicine Anytime"} ${i18n?.titleAccent ?? "Anywhere."}`;
+  const titleFontSize = fitHeadingFontSize(titleText, {
+    minRem: 2.25,
+    maxRem: 6,
+    viewportTerm: "8vw",
+    idealChars: 24,
+  });
+
   const trustItems = [
     { icon: ShieldCheck, label: `${i18n?.trustLicensed ?? "Licensed in"} ${countryName}` },
     { icon: Clock, label: i18n?.trustAvailability ?? "Live availability" },
@@ -134,7 +144,11 @@ export function HomeHero({
           </HeroReveal>
 
           <HeroReveal delay={130}>
-            <h1 id="hero-title" className="gh-home-hero-title max-w-[13ch] text-white">
+            <h1
+              id="hero-title"
+              className="gh-home-hero-title max-w-[13ch] text-white"
+              style={{ fontSize: titleFontSize }}
+            >
               {displayHeroTitle ? (
                 displayHeroTitle
               ) : (
