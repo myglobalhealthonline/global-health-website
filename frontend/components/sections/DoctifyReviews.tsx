@@ -17,6 +17,19 @@ import { useEffect, useId, useState } from "react";
 const TENANT = "athena-ie";
 const SLUG = "global-health-ireland";
 
+/** Doctify's widget scripts hijack the single global `window.onresize`
+ *  (a plain assignment, not `addEventListener`) to reposition/redraw their
+ *  carousel. If the container that handler was built for is gone — this
+ *  component unmounted, or React's dev-mode double-effect-invoke tore down
+ *  and rebuilt it — the stale closure still fires on the next resize and
+ *  throws reading properties off DOM nodes that no longer exist. Nothing
+ *  else in this app sets window.onresize, so clearing it here is safe and
+ *  kills the dangling-handler crash for good. */
+function cleanupDoctifyScript(script: HTMLScriptElement) {
+  script.remove();
+  window.onresize = null;
+}
+
 /** Soft ivory background color that matches the site's --color-background-soft */
 const ITEM_BG = "f6f8f1";
 
@@ -44,7 +57,7 @@ export function DoctifyRatingStrip({
     script.src = `https://www.doctify.com/wv2/doctify-widget-autoresize-plugin.js?tenantId=${TENANT}&widgetName=average-carousel-rating-widget&containerId=${id}`;
     script.async = true;
     document.body.appendChild(script);
-    return () => script.remove();
+    return () => cleanupDoctifyScript(script);
   }, [id]);
 
   const src =
@@ -115,7 +128,7 @@ export function DoctifyWidget({
     
     return () => {
       clearTimeout(timer);
-      script.remove();
+      cleanupDoctifyScript(script);
       const el = document.getElementById(id);
       if (el) el.innerHTML = "";
     };
@@ -230,7 +243,7 @@ export function DoctifyInlineRating({
     script.src = `https://www.doctify.com/wv2/doctify-widget-autoresize-plugin.js?tenantId=${TENANT}&widgetName=average-carousel-rating-widget&containerId=${id}`;
     script.async = true;
     document.body.appendChild(script);
-    return () => script.remove();
+    return () => cleanupDoctifyScript(script);
   }, [id]);
 
   const src =

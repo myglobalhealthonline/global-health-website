@@ -30,7 +30,7 @@ export default async function BlogIndexPage() {
         secondaryLabel="Back to home"
         secondaryHref="/"
         rightSlot={<BlogArchPanel articleCount={ordered.length} />}
-        mobileBgSrc="/images/stock/blog.png"
+        mobileBgSrc="/images/stock/blog.webp"
         trustCards={[
           {
             icon: <Stethoscope className="size-[18px]" strokeWidth={2} aria-hidden />,
@@ -100,7 +100,7 @@ function BlogArchPanel({ articleCount }: { articleCount: number }) {
   return (
     <div className="relative mx-auto aspect-square w-full max-w-[600px]">
       <HeroPlusImage
-        src="/images/stock/blog.png"
+        src="/images/stock/blog.webp"
         alt="Medical team reviewing health articles and educational content"
       />
 

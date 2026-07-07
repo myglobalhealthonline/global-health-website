@@ -34,6 +34,9 @@ jobs:
       - name: Lint (frontend + backend)
         run: pnpm lint
 
+      - name: Audit dependencies (workspace)
+        run: pnpm audit --audit-level=high
+
   # ── Backend Tests ─────────────────────────────────────────────────────────
   # Spins up a real Postgres instance so all 14 backend tests run —
   # including the two integration tests (auth audit hook, doctor-services)
@@ -133,3 +136,12 @@ jobs:
         # --frozen-lockfile fails if the standalone lockfile doesn't match
         # package.json, catching deploy-time failures in CI.
         run: pnpm install --frozen-lockfile --ignore-workspace --ignore-scripts
+
+      - name: Audit dependencies (standalone — this is what actually deploys)
+        working-directory: ${{ matrix.package }}
+        # The workspace root pnpm audit only sees the root lockfile. This is
+        # the lockfile Railway actually installs from, and it does NOT
+        # inherit root-level pnpm.overrides (--ignore-workspace) — it has its
+        # own override block in this package's own package.json. Audit it
+        # here directly rather than assuming the root check covers it.
+        run: pnpm audit --audit-level=high --ignore-workspace

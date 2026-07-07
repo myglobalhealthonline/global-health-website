@@ -12,7 +12,7 @@ export type CountryCertificationLogo = {
 const EU_PRIVACY: CountryCertificationLogo = {
   name: "EU GDPR",
   alt: "European Union GDPR data protection badge",
-  src: "/logos/partners/gdpr-green-gold.png",
+  src: "/logos/partners/gdpr-green-gold.webp",
   href: "https://commission.europa.eu/law/law-topic/data-protection_en",
   width: 240,
   height: 240,
@@ -198,7 +198,7 @@ const LOGOS_BY_COUNTRY: Record<string, CountryCertificationLogo[]> = {
     {
       name: "CFM",
       alt: "Conselho Federal de Medicina",
-      src: "/logos/partners/cfm.png",
+      src: "/logos/partners/cfm.webp",
       href: "https://portal.cfm.org.br/",
       width: 260,
       height: 92,

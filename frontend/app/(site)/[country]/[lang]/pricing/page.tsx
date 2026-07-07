@@ -137,7 +137,7 @@ export default async function PricingPage({
         secondaryLabel={t.secondaryLabel}
         secondaryHref={`/${slug}/${lang}/doctors`}
         rightSlot={<PlansArchPanel countryName={config.name} />}
-        mobileBgSrc="/images/stock/plans.png"
+        mobileBgSrc="/images/stock/plans.webp"
         trustCards={[
           {
             icon: <Stethoscope className="size-[18px]" strokeWidth={2} aria-hidden />,
@@ -312,7 +312,7 @@ function PlansArchPanel({ countryName }: { countryName: string }) {
   return (
     <div className="relative mx-auto aspect-square w-full max-w-[600px]">
       <HeroPlusImage
-        src="/images/stock/plans.png"
+        src="/images/stock/plans.webp"
         alt={`Doctor reviewing health subscription plans in ${countryName}`}
       />
 
