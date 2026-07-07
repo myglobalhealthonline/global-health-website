@@ -490,6 +490,8 @@ export type AdminDoctorServiceAssignmentDto = {
   selectedBy: "admin" | "doctor";
   isActive: boolean;
   sortOrder: number;
+  /** Admin-set payout for this doctor+service, in cents. Null = not set. */
+  doctorAmountCents: number | null;
   createdAt: string;
   updatedAt: string;
   service: {
@@ -513,10 +515,17 @@ export async function fetchAdminDoctorServices(doctorId: string) {
 export async function adminAssignServiceToDoctor(
   doctorId: string,
   serviceId: string,
+  doctorAmountCents?: number | null,
 ) {
   return adminRequest<{ assignment: AdminDoctorServiceAssignmentDto }>(
     `/api/admin/doctors/${doctorId}/services`,
-    { method: "POST", body: { serviceId } },
+    {
+      method: "POST",
+      body: {
+        serviceId,
+        ...(doctorAmountCents !== undefined ? { doctorAmountCents } : {}),
+      },
+    },
   );
 }
 
@@ -528,6 +537,18 @@ export async function approveRejectDoctorService(
   return adminRequest<{ assignment: AdminDoctorServiceAssignmentDto }>(
     `/api/admin/doctors/${doctorId}/services/${serviceDoctorId}`,
     { method: "PATCH", body: { status } },
+  );
+}
+
+/** Update only the admin-set doctor payout for an assignment (cents, or null to clear). */
+export async function updateDoctorServicePayout(
+  doctorId: string,
+  serviceDoctorId: string,
+  doctorAmountCents: number | null,
+) {
+  return adminRequest<{ assignment: AdminDoctorServiceAssignmentDto }>(
+    `/api/admin/doctors/${doctorId}/services/${serviceDoctorId}`,
+    { method: "PATCH", body: { doctorAmountCents } },
   );
 }
 

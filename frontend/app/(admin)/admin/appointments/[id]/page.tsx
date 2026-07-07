@@ -7,9 +7,11 @@ import { ArrowLeft } from "lucide-react";
 import {
   fetchAdminAppointmentById,
   fetchAdminClinicsByCountryCode,
+  fetchAdminDoctors,
   fetchAdminInternalMessages,
   patchAdminAppointmentSchedule,
   patchAdminAppointmentStatus,
+  patchAdminAppointmentUpdate,
 } from "@/lib/admin/admin-api";
 import { InternalMessagesThread } from "@/components/chat/InternalMessagesThread";
 import { AdminAppointmentChat } from "../_components/admin-appointment-chat";
@@ -258,6 +260,34 @@ export default async function AdminAppointmentDetailPage({
     redirect(`/admin/appointments/${id}?success=${encodeURIComponent(success)}`);
   }
 
+  // Reassign the booking to a different doctor. Routed through the
+  // /update endpoint (NOT /schedule) so it runs the full notification
+  // path: patient + new + previous doctor, each by email AND WhatsApp,
+  // and syncs OrderItem.doctorId so future reminders follow the change.
+  async function reassignDoctorAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+
+    const rawDoctor = String(formData.get("doctorId") ?? "").trim();
+    const changeReason = String(formData.get("changeReason") ?? "").trim();
+
+    const result = await patchAdminAppointmentUpdate(id, {
+      doctorId: rawDoctor === "" ? null : rawDoctor,
+      changeReason,
+    });
+    if (!result.ok) {
+      redirect(`/admin/appointments/${id}?error=${encodeURIComponent(result.message)}`);
+    }
+
+    revalidatePath("/admin/appointments");
+    revalidatePath(`/admin/appointments/${id}`);
+    let message = "Doctor reassigned. Patient and doctor notified by email + WhatsApp.";
+    if (result.data.meetingUrl) {
+      message += " New Meet link generated.";
+    }
+    redirect(`/admin/appointments/${id}?success=${encodeURIComponent(message)}`);
+  }
+
   if (!result.ok) {
     return (
       <>
@@ -291,6 +321,17 @@ export default async function AdminAppointmentDetailPage({
   const clinicOptions = clinicsResult && clinicsResult.ok
     ? clinicsResult.data.clinics
     : [];
+
+  // Doctors available in this appointment's country, for the reassign
+  // control. Filtered to active only — matches the orders-page panel.
+  const doctorsResult = await fetchAdminDoctors({
+    countryCode: appointment.country,
+    pageSize: "100",
+  });
+  const doctors =
+    doctorsResult.ok && doctorsResult.data.items
+      ? doctorsResult.data.items.filter((d) => d.active)
+      : [];
 
   return (
     <>
@@ -508,6 +549,61 @@ export default async function AdminAppointmentDetailPage({
               postEndpoint={`/api/admin/appointments/${appointment.id}/internal-messages`}
               currentRole="ADMIN"
             />
+          </AdminCard>
+
+          {/* Reassign the booking to a different doctor. Goes through the
+              /update endpoint so patient + new + previous doctor are all
+              notified (email + WhatsApp) and future reminders follow the
+              new doctor. */}
+          <AdminCard>
+            <h3 className="gh-admin-card-title">Assigned doctor</h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Reassign this booking if the original doctor is unavailable.
+              The patient and both doctors are notified by email + WhatsApp,
+              and all future reminders switch to the new doctor.
+            </p>
+
+            <form action={reassignDoctorAction} className="gh-admin-appointment-side-form">
+              <label className="flex flex-col gap-1.5">
+                <span className="gh-field-label">Doctor</span>
+                <select
+                  name="doctorId"
+                  className="gh-select"
+                  defaultValue={appointment.doctorId ?? ""}
+                >
+                  <option value="">Unassigned</option>
+                  {doctors.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.fullName}
+                    </option>
+                  ))}
+                </select>
+                {!doctorsResult.ok ? (
+                  <span className="text-[11px] text-[var(--color-text-muted)]">
+                    Could not load doctors: {doctorsResult.message}
+                  </span>
+                ) : null}
+              </label>
+
+              <label className="flex flex-col gap-1.5">
+                <span className="gh-field-label">
+                  Reason for change{" "}
+                  <span className="text-[var(--color-text-muted)]">(required)</span>
+                </span>
+                <textarea
+                  name="changeReason"
+                  className="gh-input min-h-[96px]"
+                  required
+                  minLength={10}
+                  maxLength={500}
+                  placeholder="Explain why the doctor is being changed (shown to patient and doctor)."
+                />
+              </label>
+
+              <button type="submit" className="gh-btn gh-btn-primary w-full">
+                Reassign &amp; notify
+              </button>
+            </form>
           </AdminCard>
 
           {/* Schedule the Google Meet call. Filling both fields and saving

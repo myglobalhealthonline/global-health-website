@@ -18,7 +18,11 @@ import {
   upsertPatientProfileByEmail,
 } from "../patient-profile/patient-profile.service.js";
 import { normalizeDbError } from "../shared/db-errors.js";
-import { resolveDoctorTimeZone } from "../doctor-availability/doctor-availability.service.js";
+import {
+  holdConsecutiveSlots,
+  resolveDoctorTimeZone,
+  SlotAlreadyTakenError,
+} from "../doctor-availability/doctor-availability.service.js";
 import {
   computeSlotPrice,
   getServicePeakConfig,
@@ -133,10 +137,14 @@ export type CreateManualBookingInput = {
   serviceId: string;
   /** Required — the assigned doctor whose open slot is being booked. */
   doctorId: string;
-  /** Required — id of the doctor's OPEN DoctorTimeSlot to claim. The
-   *  appointment's scheduledAt is derived from the slot's startAt; the
-   *  admin no longer types a free-text time. */
+  /** Required — id of the FIRST base DoctorTimeSlot to claim. The booking
+   *  consumes consecutive base slots covering `durationMinutes`; the
+   *  appointment's scheduledAt is derived from that slot's startAt. */
   timeSlotId: string;
+  /** Consultation length in minutes. Defaults to the service's
+   *  `durationMinutes`; the admin/doctor booking dialog can override it.
+   *  Rounded up to the window's base grid step when consumed. */
+  durationMinutes?: number | null;
   consultationMode: "ONLINE" | "IN_PERSON";
   clinicId?: string | null;
   locationAddress?: string | null;
@@ -274,32 +282,34 @@ export async function createManualBooking(
     }
   }
 
-  // Claim the chosen slot BEFORE any patient/order/email side-effect, so a
-  // stale or taken slot fails the whole booking cleanly. Atomic, mirrors the
-  // public cart claim: only an OPEN, future slot owned by this doctor flips
-  // to HELD; the payment webhook later flips HELD → BOOKED. A race-loser or
-  // a hand-crafted payload pointing at a foreign/past slot updates 0 rows.
-  const slotClaim = await prisma.doctorTimeSlot.updateMany({
-    where: {
-      id: input.timeSlotId,
-      doctorId: input.doctorId,
-      status: "OPEN",
-      startAt: { gt: new Date() },
-    },
-    data: { status: "HELD" },
-  });
-  if (slotClaim.count === 0) {
-    throw new SlotNotAvailableError();
-  }
-  const slot = await prisma.doctorTimeSlot.findUnique({
-    where: { id: input.timeSlotId },
-    select: { startAt: true },
-  });
-  if (!slot) {
-    throw new SlotNotAvailableError();
+  // Reserve the consultation's real length BEFORE any patient/order/email
+  // side-effect, so a stale/taken slot fails the whole booking cleanly.
+  // Base grid + consume: the picked slot is the FIRST base slot; we hold the
+  // consecutive base slots covering the consultation's duration (admin's
+  // override, else the service's duration) as ONE collapsed HELD row. The
+  // payment webhook later flips that row HELD → BOOKED. Any race-loser or a
+  // hand-crafted payload pointing at a foreign/past/taken slot fails here.
+  const bookingDuration = input.durationMinutes ?? service.durationMinutes;
+  let claimedSlot: { doctorId: string; startAt: Date; endAt: Date };
+  try {
+    claimedSlot = await prisma.$transaction(async (tx) => {
+      const held = await holdConsecutiveSlots(
+        tx,
+        input.timeSlotId,
+        bookingDuration,
+      );
+      // The slot must belong to the doctor this booking assigned.
+      if (held.doctorId !== input.doctorId) {
+        throw new SlotNotAvailableError();
+      }
+      return held;
+    });
+  } catch (err) {
+    if (err instanceof SlotAlreadyTakenError) throw new SlotNotAvailableError();
+    throw err;
   }
   // scheduledAt is the slot's UTC instant — no more free-text wall-clock.
-  const scheduledAt = slot.startAt;
+  const scheduledAt = claimedSlot.startAt;
 
   // Apply peak / off-peak pricing for the picked slot so the manual price
   // matches the public picker + checkout summary. Falls through to the base

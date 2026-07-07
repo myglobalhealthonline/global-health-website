@@ -5,13 +5,29 @@ import { redirect } from "next/navigation";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import {
   deleteAdminDoctorAvailability,
+  fetchAdminCalendar,
+  fetchAdminClinicsByCountryCode,
+  fetchAdminCountries,
   fetchAdminDoctorAvailability,
   fetchAdminDoctorById,
+  fetchAdminServices,
   postAdminDoctorAvailability,
+  postAdminManualBooking,
 } from "@/lib/admin/admin-api";
 import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
 import { FormSection } from "@/components/FormSection";
+import type { CalendarItem } from "@/components/calendar/calendar-types";
+import {
+  parseWeekAnchor,
+  weekRangeIso,
+} from "@/components/calendar/calendar-utils";
+import { dialCodeForCountry } from "@/lib/phone/dial-codes";
+import {
+  hasErrors,
+  validateManualBooking,
+} from "@/lib/admin/manual-booking-validation";
+import { AvailabilityWeek } from "./_components/availability-week";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +59,7 @@ function hhmmToMinutes(value: string): number {
 
 type PageProps = {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ success?: string; error?: string }>;
+  searchParams?: Promise<{ success?: string; error?: string; wk?: string }>;
 };
 
 export default async function AdminDoctorAvailabilityPage({
@@ -52,9 +68,10 @@ export default async function AdminDoctorAvailabilityPage({
 }: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
-  const [doctorResult, availabilityResult] = await Promise.all([
+  const [doctorResult, availabilityResult, countriesResult] = await Promise.all([
     fetchAdminDoctorById(id),
     fetchAdminDoctorAvailability(id),
+    fetchAdminCountries(),
   ]);
 
   async function createAction(formData: FormData) {
@@ -144,6 +161,156 @@ export default async function AdminDoctorAvailabilityPage({
   const { doctor } = doctorResult.data;
   const windows = availabilityResult.ok ? availabilityResult.data.items : [];
 
+  // ── Week calendar (booked consultations + open slots for this doctor) ──────
+  const countryCode = doctor.country.code;
+  const clinicTz =
+    (countriesResult.ok
+      ? countriesResult.data.countries.find((c) => c.code === countryCode)
+          ?.bookingSetting?.timezone
+      : null) ?? "Europe/Dublin";
+  const weekAnchor = parseWeekAnchor(messages.wk, clinicTz);
+  const { fromIso, toIso } = weekRangeIso(weekAnchor, clinicTz);
+
+  const [calendarResult, servicesResult, clinicsResult] = await Promise.all([
+    fetchAdminCalendar({ from: fromIso, to: toIso, doctorId: id }),
+    fetchAdminServices({ countryCode, pageSize: "100" }),
+    fetchAdminClinicsByCountryCode(countryCode),
+  ]);
+
+  // Same slots+consultations → CalendarItem mapping the admin calendar uses.
+  const calendarItems: CalendarItem[] = calendarResult.ok
+    ? [
+        ...calendarResult.data.consultations.map((c) => ({
+          id: `c-${c.id}`,
+          kind: "consultation" as const,
+          startAt: c.scheduledAt,
+          endAt: null,
+          status: c.status,
+          title: c.patientName,
+          meta: {
+            doctorName: c.doctorName,
+            patientName: c.patientName,
+            consultationType: c.consultationType,
+            meetingUrl: c.meetingUrl,
+            countryCode: c.countryCode,
+          },
+        })),
+        ...calendarResult.data.slots.map((s) => ({
+          id: `s-${s.id}`,
+          kind: "slot" as const,
+          startAt: s.startAt,
+          endAt: s.endAt,
+          status: s.status,
+          title: s.status,
+          meta: { doctorName: s.doctorName, blockReason: s.blockReason },
+        })),
+      ]
+    : [];
+
+  // Services this doctor is actually assigned to (the slim dialog inverts the
+  // manual-booking flow: doctor is fixed, so it drives the service list).
+  const assignedServiceIds = new Set(
+    doctor.assignedServices.map((a) => a.serviceId),
+  );
+  const services = servicesResult.ok
+    ? servicesResult.data.items
+        .filter((s) => s.isActive && assignedServiceIds.has(s.id))
+        .map((s) => ({
+          id: s.id,
+          name: s.name,
+          durationMinutes: s.durationMinutes,
+        }))
+    : [];
+  const clinics =
+    clinicsResult.ok && Array.isArray(clinicsResult.data.clinics)
+      ? clinicsResult.data.clinics.map((c) => ({
+          id: c.id,
+          name: c.name,
+          city: c.city ?? null,
+        }))
+      : [];
+
+  // Book directly from an OPEN slot. Doctor + slot are fixed by the calendar
+  // click; the backend claims the slot atomically (OPEN→HELD) and rejects a
+  // race with SlotNotAvailableError. Re-validated server-side as a hard guard.
+  async function bookAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+
+    const readStr = (key: string): string =>
+      (formData.get(key)?.toString() ?? "").trim();
+    const readOpt = (key: string): string | null => {
+      const v = readStr(key);
+      return v === "" ? null : v;
+    };
+
+    const back = (message: string, ok: boolean): never => {
+      const kind = ok ? "success" : "error";
+      redirect(
+        `/admin/doctors/${id}/availability?wk=${encodeURIComponent(
+          weekAnchor,
+        )}&${kind}=${encodeURIComponent(message)}`,
+      );
+    };
+
+    const consultationMode =
+      (readStr("consultationMode") as "ONLINE" | "IN_PERSON") || "ONLINE";
+    const serviceId = readStr("serviceId");
+    const doctorId = readStr("doctorId");
+    const timeSlotId = readStr("timeSlotId");
+    const durationRaw = Number(readStr("durationMinutes"));
+    const durationMinutes = Number.isFinite(durationRaw) && durationRaw > 0
+      ? durationRaw
+      : null;
+    const phone = readStr("phone");
+    const clinicId =
+      consultationMode === "IN_PERSON" ? readOpt("clinicId") : null;
+    const locationAddress =
+      consultationMode === "IN_PERSON" ? readOpt("locationAddress") : null;
+
+    const validation = validateManualBooking({
+      fullName: readStr("fullName"),
+      email: readStr("email"),
+      phone,
+      serviceId,
+      doctorId,
+      timeSlotId,
+      consultationMode,
+      clinicId: clinicId ?? "",
+      locationAddress: locationAddress ?? "",
+    });
+    if (hasErrors(validation)) {
+      back(
+        Object.values(validation)[0] ?? "Please complete all required fields.",
+        false,
+      );
+    }
+
+    const result = await postAdminManualBooking({
+      patient: {
+        email: readStr("email"),
+        fullName: readStr("fullName"),
+        phone,
+        dateOfBirth: readOpt("dateOfBirth"),
+      },
+      serviceId,
+      doctorId,
+      timeSlotId,
+      durationMinutes,
+      consultationMode,
+      clinicId,
+      locationAddress,
+      notes: readOpt("notes"),
+      countryCode: readStr("countryCode"),
+    });
+
+    if (!result.ok) {
+      back(result.message, false);
+    }
+    revalidatePath(`/admin/doctors/${id}/availability`);
+    back("Appointment booked — reservation email sent.", true);
+  }
+
   return (
     <>
       <Link
@@ -155,7 +322,7 @@ export default async function AdminDoctorAvailabilityPage({
       <PageHeader
         eyebrow="Doctor"
         title={`${doctor.fullName} · Availability`}
-        description="Weekly recurring windows. Patients booking from the doctor profile see open 30-minute slots in the next 14 days, claimed atomically on submit."
+        description="Week calendar of booked appointments and open slots — click an open time to book. Recurring weekly windows below generate the slots (clinic timezone)."
       />
 
       {messages.error ? (
@@ -169,7 +336,33 @@ export default async function AdminDoctorAvailabilityPage({
         </p>
       ) : null}
 
-      <div className="gh-admin-doctor-detail-layout gh-admin-doctor-availability-layout grid gap-4">
+      <FormSection
+        title="Week calendar"
+        description="Booked appointments and open slots for this doctor. Click a green (open) time to book directly — patient, service, and mode are filled in a quick dialog; the doctor and time come from the slot you clicked."
+      >
+        <div className="gh-form-section__span-2 mt-4">
+          {calendarResult.ok ? (
+            <AvailabilityWeek
+              doctorId={id}
+              doctorName={doctor.fullName}
+              countryCode={countryCode}
+              clinicTz={clinicTz}
+              weekAnchor={weekAnchor}
+              items={calendarItems}
+              services={services}
+              clinics={clinics}
+              defaultDialCode={dialCodeForCountry(countryCode)}
+              bookAction={bookAction}
+            />
+          ) : (
+            <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
+              {calendarResult.message}
+            </p>
+          )}
+        </div>
+      </FormSection>
+
+      <div className="gh-admin-doctor-detail-layout gh-admin-doctor-availability-layout mt-4 grid gap-4">
         <FormSection
           title="Weekly windows"
           description="Times are in the doctor's country clinic timezone (set on the Country page). The doctor portal and patients booking this clinic see these same times."
@@ -263,10 +456,10 @@ export default async function AdminDoctorAvailabilityPage({
               </label>
             </div>
             <label className="flex flex-col gap-1">
-              <span className="gh-field-label">Slot length (minutes)</span>
+              <span className="gh-field-label">Base slot length (grid)</span>
               <select
                 name="slotDurationMinutes"
-                defaultValue="30"
+                defaultValue="15"
                 className="gh-select"
               >
                 <option value="15">15</option>
@@ -275,6 +468,10 @@ export default async function AdminDoctorAvailabilityPage({
                 <option value="45">45</option>
                 <option value="60">60</option>
               </select>
+              <span className="text-[12px] text-[var(--color-text-muted)]">
+                Consultations consume consecutive base slots to fit their real
+                length. 15 fits 15/30/45-min consults.
+              </span>
             </label>
             <button type="submit" className="gh-btn gh-btn-primary w-full">
               Add window

@@ -196,11 +196,41 @@ describe("doctor-services.service", () => {
     const updated = await adminUpdateDoctorService(
       fixture.doctorId,
       pending!.id,
-      "active",
+      { status: "active" },
     );
     assert.ok(updated);
     assert.equal(updated!.status, "active");
     assert.equal(updated!.isActive, true);
+  });
+
+  it("admin can set and clear the per-doctor payout amount", async (t) => {
+    if (!fixture) {
+      t.skip(`DB offline: ${describeError(bootError)}`);
+      return;
+    }
+    const rows = await listAdminDoctorServices(fixture.doctorId);
+    const target = rows.find((r) => r.serviceId === fixture!.generalServiceId);
+    assert.ok(target, "assignment row should exist");
+    // Default is null (not set).
+    assert.equal(target!.doctorAmountCents, null);
+
+    const set = await adminUpdateDoctorService(fixture.doctorId, target!.id, {
+      doctorAmountCents: 3000,
+    });
+    assert.ok(set);
+    assert.equal(set!.doctorAmountCents, 3000);
+    // Status is untouched when only the amount is patched.
+    assert.equal(set!.status, target!.status);
+
+    // Doctor-facing selectable list surfaces the payout read-only.
+    const selectable = await listDoctorSelectableServices(fixture.doctorId);
+    const svc = selectable.items.find((s) => s.id === fixture!.generalServiceId);
+    assert.equal(svc?.assignment?.doctorAmountCents, 3000);
+
+    const cleared = await adminUpdateDoctorService(fixture.doctorId, target!.id, {
+      doctorAmountCents: null,
+    });
+    assert.equal(cleared!.doctorAmountCents, null);
   });
 
   it("admin can assign health test directly as active", async (t) => {

@@ -436,33 +436,59 @@ export async function listOpenSlotsForDoctorAndService(
 ): Promise<PublicSlot[]> {
   try {
     await releaseExpiredHeldSlots(doctorId);
-    await ensureServiceSlotsForRange(
-      doctorId,
-      serviceDurationMinutes,
-      fromUtc,
-      toUtc,
-    );
+    await ensureSlotsForRange(doctorId, fromUtc, toUtc);
+    // Fetch ALL slots (not just OPEN) so a BOOKED/BLOCKED/HELD slot correctly
+    // breaks a run — a consult can't start where it wouldn't fit before the
+    // next occupied slot.
     const rows = await prisma.doctorTimeSlot.findMany({
-      where: {
-        doctorId,
-        status: "OPEN",
-        startAt: { gte: fromUtc, lt: toUtc },
-      },
+      where: { doctorId, startAt: { gte: fromUtc, lt: toUtc } },
       orderBy: { startAt: "asc" },
-      select: { id: true, startAt: true, endAt: true },
+      select: { id: true, startAt: true, endAt: true, status: true },
     });
-    const minDuration = serviceDurationMinutes ?? 0;
-    return rows
-      .filter((r) => {
-        if (minDuration === 0) return true;
-        const minutes = Math.round((r.endAt.getTime() - r.startAt.getTime()) / 60000);
-        return minutes >= minDuration;
-      })
-      .map((r) => ({
-        id: r.id,
-        startAt: r.startAt.toISOString(),
-        endAt: r.endAt.toISOString(),
-      }));
+
+    const durMs = (serviceDurationMinutes ?? 0) * 60_000;
+    // No service duration → every OPEN base slot is a candidate as-is.
+    if (durMs <= 0) {
+      return rows
+        .filter((r) => r.status === "OPEN")
+        .map((r) => ({
+          id: r.id,
+          startAt: r.startAt.toISOString(),
+          endAt: r.endAt.toISOString(),
+        }));
+    }
+
+    // Sliding window: from each OPEN slot, greedily extend across contiguous
+    // OPEN base slots (startAt === previous endAt) until the run covers the
+    // service duration. Emit a candidate start (id = first base slot) with
+    // endAt = start + service duration (the true consultation length).
+    const out: PublicSlot[] = [];
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i].status !== "OPEN") continue;
+      const startMs = rows[i].startAt.getTime();
+      let coverEnd = rows[i].endAt.getTime();
+      let j = i;
+      while (coverEnd - startMs < durMs) {
+        const next = rows[j + 1];
+        if (
+          !next ||
+          next.status !== "OPEN" ||
+          next.startAt.getTime() !== rows[j].endAt.getTime()
+        ) {
+          break;
+        }
+        j += 1;
+        coverEnd = rows[j].endAt.getTime();
+      }
+      if (coverEnd - startMs >= durMs) {
+        out.push({
+          id: rows[i].id,
+          startAt: rows[i].startAt.toISOString(),
+          endAt: new Date(startMs + durMs).toISOString(),
+        });
+      }
+    }
+    return out;
   } catch (error) {
     throw normalizeDbError(error, "Doctor availability is unavailable");
   }
@@ -500,14 +526,167 @@ export async function claimDoctorSlot(
 }
 
 export async function releaseDoctorSlot(slotId: string): Promise<void> {
-  // Used by admin when an appointment is cancelled — return the slot to
-  // OPEN unless it was BLOCKED (admin manually held).
+  // Used by admin when an appointment is cancelled — return the slot's time
+  // to the base grid unless it was BLOCKED (admin manually held).
+  await releaseSlotsToBaseGrid([slotId]);
+}
+
+/**
+ * Consume a run of consecutive OPEN base slots for a booking of length
+ * `durationMinutes`, collapsing them into ONE slot of the true consultation
+ * length. Base grid + consume model (DESIGN: flexible consultation durations):
+ *
+ *   - The day is materialised as fixed base slots (e.g. 15 min). A 45-min
+ *     consult must occupy 45 min, so it consumes the three consecutive base
+ *     slots [09:00,09:15,09:30] and leaves a single [09:00,09:45) row.
+ *   - We EXTEND the first (start) slot's `endAt` to `start + D` and DELETE the
+ *     subsumed rows. Because the exclusion constraint uses half-open
+ *     `[start,end)` ranges, deleting the trailing rows BEFORE widening the
+ *     first means the widened range never overlaps a live row.
+ *   - The surviving row keeps the start slot's id, so `Appointment.timeSlotId`
+ *     stays 1:1 and every caller keeps passing a single slot id.
+ *
+ * `durationMinutes` is rounded UP to a whole number of base steps (a 20-min
+ * service on a 15-min grid books 30). Pass `finalStatus: "HELD"` for a cart
+ * reservation (the payment webhook later flips that one row HELD→BOOKED with
+ * no geometry change); `"BOOKED"` for a direct claim.
+ *
+ * Race-safe: rows are locked `FOR UPDATE` in ascending `startAt` order (a
+ * global lock order → deadlock-free). A concurrent claim over any shared row
+ * finds it gone or non-OPEN and fails validation → `SlotAlreadyTakenError`.
+ * The GiST exclusion constraint is the backstop.
+ *
+ * Must run inside the caller's `$transaction`.
+ */
+async function consumeConsecutiveSlots(
+  client: Prisma.TransactionClient,
+  startSlotId: string,
+  durationMinutes: number | null,
+  finalStatus: "BOOKED" | "HELD",
+): Promise<{ doctorId: string; startAt: Date; endAt: Date }> {
   try {
-    await prisma.$executeRaw(Prisma.sql`
-      UPDATE "DoctorTimeSlot"
-      SET "status" = 'OPEN', "updatedAt" = NOW()
-      WHERE "id" = ${slotId} AND "status" = 'BOOKED'
+    // 1. Lock the start slot; must be OPEN + future.
+    const startRows = await client.$queryRaw<
+      { id: string; doctorId: string; startAt: Date; endAt: Date; status: string }[]
+    >(Prisma.sql`
+      SELECT "id", "doctorId", "startAt", "endAt", "status"
+      FROM "DoctorTimeSlot"
+      WHERE "id" = ${startSlotId}
+      FOR UPDATE
     `);
+    const start = startRows[0];
+    if (!start || start.status !== "OPEN" || start.startAt <= new Date()) {
+      throw new SlotAlreadyTakenError();
+    }
+
+    const baseMs = start.endAt.getTime() - start.startAt.getTime();
+    // Round the requested duration up to a whole number of base steps.
+    const requestedMs = Math.max(0, (durationMinutes ?? 0) * 60_000);
+    const spanMs =
+      requestedMs <= baseMs ? baseMs : Math.ceil(requestedMs / baseMs) * baseMs;
+    const targetEnd = new Date(start.startAt.getTime() + spanMs);
+
+    // 2. Lock the whole run in start-order.
+    const run = await client.$queryRaw<
+      { id: string; startAt: Date; endAt: Date; status: string }[]
+    >(Prisma.sql`
+      SELECT "id", "startAt", "endAt", "status"
+      FROM "DoctorTimeSlot"
+      WHERE "doctorId" = ${start.doctorId}
+        AND "startAt" >= ${start.startAt}
+        AND "startAt" < ${targetEnd}
+      ORDER BY "startAt" ASC
+      FOR UPDATE
+    `);
+
+    // 3. Validate: contiguous, all OPEN, exactly tiling [start, targetEnd).
+    let prevEnd = start.startAt.getTime();
+    for (const r of run) {
+      if (r.status !== "OPEN") throw new SlotAlreadyTakenError();
+      if (r.startAt.getTime() !== prevEnd) throw new SlotAlreadyTakenError();
+      prevEnd = r.endAt.getTime();
+    }
+    if (prevEnd !== targetEnd.getTime()) {
+      // Not enough contiguous OPEN base slots (a booked/blocked slot or a
+      // window edge breaks the run before the consult fits).
+      throw new SlotAlreadyTakenError();
+    }
+
+    // 4. Delete subsumed rows FIRST, then widen + set status on the survivor.
+    const subsumed = run.filter((r) => r.id !== startSlotId).map((r) => r.id);
+    if (subsumed.length > 0) {
+      await client.$executeRaw(Prisma.sql`
+        DELETE FROM "DoctorTimeSlot" WHERE "id" IN (${Prisma.join(subsumed)})
+      `);
+    }
+    const updated = await client.$queryRaw<
+      { doctorId: string; startAt: Date; endAt: Date }[]
+    >(Prisma.sql`
+      UPDATE "DoctorTimeSlot"
+      SET "endAt" = ${targetEnd},
+          "status" = ${finalStatus}::"DoctorSlotStatus",
+          "updatedAt" = NOW()
+      WHERE "id" = ${startSlotId} AND "status" = 'OPEN'
+      RETURNING "doctorId", "startAt", "endAt"
+    `);
+    if (updated.length === 0) throw new SlotAlreadyTakenError();
+    return updated[0];
+  } catch (error) {
+    if (error instanceof SlotAlreadyTakenError) throw error;
+    if (isExclusionViolation(error)) throw new SlotAlreadyTakenError();
+    throw normalizeDbError(error, "Doctor slot is no longer available");
+  }
+}
+
+/** Book a run of base slots (OPEN → BOOKED) at the consultation's true length. */
+export async function claimConsecutiveSlots(
+  client: Prisma.TransactionClient,
+  startSlotId: string,
+  durationMinutes: number | null,
+): Promise<{ doctorId: string; startAt: Date; endAt: Date }> {
+  return consumeConsecutiveSlots(client, startSlotId, durationMinutes, "BOOKED");
+}
+
+/** Reserve a run of base slots (OPEN → HELD) for a cart/checkout hold. */
+export async function holdConsecutiveSlots(
+  client: Prisma.TransactionClient,
+  startSlotId: string,
+  durationMinutes: number | null,
+): Promise<{ doctorId: string; startAt: Date; endAt: Date }> {
+  return consumeConsecutiveSlots(client, startSlotId, durationMinutes, "HELD");
+}
+
+/**
+ * Return one or more consumed slots (HELD or BOOKED) to the base grid: delete
+ * the collapsed rows and re-materialise fresh base slots across the freed
+ * spans. Replaces the old "flip status back to OPEN" — a collapsed row is a
+ * single wide slot, so flipping it OPEN would leave a coarse slot that a later
+ * short consult would over-book. Idempotent + safe to call with ids that no
+ * longer exist or were BLOCKED (those are skipped).
+ */
+export async function releaseSlotsToBaseGrid(slotIds: string[]): Promise<void> {
+  if (slotIds.length === 0) return;
+  try {
+    const rows = await prisma.doctorTimeSlot.findMany({
+      where: { id: { in: slotIds }, status: { in: ["HELD", "BOOKED"] } },
+      select: { id: true, doctorId: true, startAt: true, endAt: true },
+    });
+    if (rows.length === 0) return;
+    await prisma.doctorTimeSlot.deleteMany({
+      where: { id: { in: rows.map((r) => r.id) } },
+    });
+    // Re-materialise base slots per doctor across the union of freed spans.
+    const spans = new Map<string, { from: Date; to: Date }>();
+    for (const r of rows) {
+      const cur = spans.get(r.doctorId);
+      spans.set(r.doctorId, {
+        from: cur && cur.from < r.startAt ? cur.from : r.startAt,
+        to: cur && cur.to > r.endAt ? cur.to : r.endAt,
+      });
+    }
+    for (const [doctorId, span] of spans) {
+      await ensureSlotsForRange(doctorId, span.from, span.to);
+    }
   } catch (error) {
     throw normalizeDbError(error, "Doctor slot release failed");
   }
@@ -524,13 +703,18 @@ export async function releaseDoctorSlot(slotId: string): Promise<void> {
  */
 export async function releaseExpiredHeldSlots(doctorId: string): Promise<void> {
   try {
-    await prisma.$executeRaw(Prisma.sql`
-      UPDATE "DoctorTimeSlot"
-      SET "status" = 'OPEN', "updatedAt" = NOW()
-      WHERE "doctorId" = ${doctorId}
-        AND "status" = 'HELD'
-        AND "updatedAt" < NOW() - INTERVAL '15 minutes'
-    `);
+    const stale = await prisma.doctorTimeSlot.findMany({
+      where: {
+        doctorId,
+        status: "HELD",
+        updatedAt: { lt: new Date(Date.now() - 15 * 60_000) },
+      },
+      select: { id: true },
+    });
+    if (stale.length === 0) return;
+    // Delete the collapsed HELD rows + re-materialise base slots so the freed
+    // time returns to the grid at base granularity, not as coarse rows.
+    await releaseSlotsToBaseGrid(stale.map((s) => s.id));
   } catch (error) {
     throw normalizeDbError(error, "Doctor availability is unavailable");
   }
@@ -558,16 +742,13 @@ export async function releaseAppointmentSlot(
     });
     if (!appt?.timeSlotId) return null;
     const slotId = appt.timeSlotId;
-    await prisma.$transaction([
-      prisma.appointment.update({
-        where: { id: appointmentId },
-        data: { timeSlotId: null },
-      }),
-      prisma.doctorTimeSlot.updateMany({
-        where: { id: slotId, status: "BOOKED" },
-        data: { status: "OPEN" },
-      }),
-    ]);
+    // Detach first so the 1:1 FK is clear, then return the booked slot's time
+    // to the base grid (delete the collapsed row + re-materialise base slots).
+    await prisma.appointment.update({
+      where: { id: appointmentId },
+      data: { timeSlotId: null },
+    });
+    await releaseSlotsToBaseGrid([slotId]);
     return slotId;
   } catch (error) {
     throw normalizeDbError(error, "Could not release booked slot");
@@ -624,7 +805,9 @@ export async function createAdminAvailability(
         weekday: input.weekday,
         startMinute: input.startMinute,
         endMinute: input.endMinute,
-        slotDurationMinutes: input.slotDurationMinutes ?? 30,
+        // Base grid step (default 15). Consultations consume consecutive base
+        // slots to fit their real length — see consumeConsecutiveSlots.
+        slotDurationMinutes: input.slotDurationMinutes ?? 15,
         effectiveFrom: input.effectiveFrom ?? null,
         effectiveUntil: input.effectiveUntil ?? null,
       },

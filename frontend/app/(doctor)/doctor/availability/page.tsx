@@ -1,12 +1,18 @@
 import { CalendarClock } from "lucide-react";
 import { fetchDoctorAvailability } from "@/lib/api/doctor-availability-server";
+import { fetchDoctorAppointments } from "@/lib/api/doctor-api";
 import { AdminCard, PageHeader } from "@/components/portal-atoms";
+import type { CalendarItem } from "@/components/calendar/calendar-types";
+import { todayKey } from "@/components/calendar/calendar-utils";
 import { DoctorAvailabilityUI } from "./_components/availability-ui";
 
 export const dynamic = "force-dynamic";
 
 export default async function DoctorAvailabilityPage() {
-  const result = await fetchDoctorAvailability(14);
+  const [result, appointments] = await Promise.all([
+    fetchDoctorAvailability(14),
+    fetchDoctorAppointments({ pageSize: "100" }),
+  ]);
 
   if (!result.ok) {
     return (
@@ -28,6 +34,28 @@ export default async function DoctorAvailabilityPage() {
     );
   }
 
+  const clinicTimezone = result.data.clinicTimezone;
+
+  // All scheduled consultations, placed on the week grid by local day.
+  const consultations: CalendarItem[] = (
+    appointments.ok ? appointments.data.items : []
+  )
+    .filter((a) => a.scheduledAt)
+    .map((a) => ({
+      id: a.id,
+      kind: "consultation" as const,
+      startAt: a.scheduledAt as string,
+      endAt: null,
+      status: a.status,
+      title: a.fullName,
+      meta: {
+        patientName: a.fullName,
+        consultationType: a.consultationType,
+        meetingUrl: a.meetingUrl,
+        countryCode: a.countryCode,
+      },
+    }));
+
   return (
     <>
       <PageHeader
@@ -43,7 +71,9 @@ export default async function DoctorAvailabilityPage() {
       <DoctorAvailabilityUI
         initialWindows={result.data.windows}
         initialSlots={result.data.slots}
-        countryTimeZone={result.data.clinicTimezone}
+        consultations={consultations}
+        initialWeekAnchor={todayKey(clinicTimezone)}
+        countryTimeZone={clinicTimezone}
       />
     </>
   );

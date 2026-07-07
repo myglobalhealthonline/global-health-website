@@ -18,6 +18,8 @@ export type DoctorServiceAssignmentDto = {
   status: ServiceDoctorStatus;
   selectedBy: ServiceDoctorSelectedBy;
   isActive: boolean;
+  /** Admin-set payout for this doctor+service, in cents. Null = not set. */
+  doctorAmountCents: number | null;
 };
 
 export type DoctorSelectableServiceDto = {
@@ -110,6 +112,7 @@ export async function listDoctorSelectableServices(doctorId: string): Promise<{
           status: true,
           selectedBy: true,
           isActive: true,
+          doctorAmountCents: true,
         },
       }),
     ]);
@@ -123,6 +126,7 @@ export async function listDoctorSelectableServices(doctorId: string): Promise<{
           status: a.status as ServiceDoctorStatus,
           selectedBy: a.selectedBy as ServiceDoctorSelectedBy,
           isActive: a.isActive,
+          doctorAmountCents: a.doctorAmountCents,
         },
       ]),
     );
@@ -324,6 +328,8 @@ export type AdminDoctorServiceRowDto = {
   selectedBy: ServiceDoctorSelectedBy;
   isActive: boolean;
   sortOrder: number;
+  /** Admin-set payout for this doctor+service, in cents. Null = not set. */
+  doctorAmountCents: number | null;
   createdAt: string;
   updatedAt: string;
   service: {
@@ -368,6 +374,7 @@ export async function listAdminDoctorServices(
       selectedBy: r.selectedBy as ServiceDoctorSelectedBy,
       isActive: r.isActive,
       sortOrder: r.sortOrder,
+      doctorAmountCents: r.doctorAmountCents,
       createdAt: r.createdAt.toISOString(),
       updatedAt: r.updatedAt.toISOString(),
       service: r.service,
@@ -380,6 +387,7 @@ export async function listAdminDoctorServices(
 export async function adminAssignServiceToDoctor(
   doctorId: string,
   serviceId: string,
+  doctorAmountCents?: number | null,
 ): Promise<AdminDoctorServiceRowDto | null> {
   try {
     const doctor = await prisma.doctor.findUnique({
@@ -412,11 +420,13 @@ export async function adminAssignServiceToDoctor(
         selectedBy: "admin",
         status: "active",
         isActive: true,
+        ...(doctorAmountCents !== undefined ? { doctorAmountCents } : {}),
       },
       update: {
         selectedBy: "admin",
         status: "active",
         isActive: true,
+        ...(doctorAmountCents !== undefined ? { doctorAmountCents } : {}),
       },
       include: {
         service: {
@@ -442,6 +452,7 @@ export async function adminAssignServiceToDoctor(
       selectedBy: row.selectedBy as ServiceDoctorSelectedBy,
       isActive: row.isActive,
       sortOrder: row.sortOrder,
+      doctorAmountCents: row.doctorAmountCents,
       createdAt: row.createdAt.toISOString(),
       updatedAt: row.updatedAt.toISOString(),
       service: row.service,
@@ -454,7 +465,10 @@ export async function adminAssignServiceToDoctor(
 export async function adminUpdateDoctorService(
   doctorId: string,
   serviceDoctorId: string,
-  status: ServiceDoctorStatus,
+  updates: {
+    status?: ServiceDoctorStatus;
+    doctorAmountCents?: number | null;
+  },
 ): Promise<AdminDoctorServiceRowDto | null> {
   try {
     const existing = await prisma.serviceDoctor.findFirst({
@@ -465,8 +479,12 @@ export async function adminUpdateDoctorService(
     const row = await prisma.serviceDoctor.update({
       where: { id: serviceDoctorId },
       data: {
-        status,
-        isActive: isActiveForStatus(status),
+        ...(updates.status !== undefined
+          ? { status: updates.status, isActive: isActiveForStatus(updates.status) }
+          : {}),
+        ...(updates.doctorAmountCents !== undefined
+          ? { doctorAmountCents: updates.doctorAmountCents }
+          : {}),
       },
       include: {
         service: {
@@ -492,6 +510,7 @@ export async function adminUpdateDoctorService(
       selectedBy: row.selectedBy as ServiceDoctorSelectedBy,
       isActive: row.isActive,
       sortOrder: row.sortOrder,
+      doctorAmountCents: row.doctorAmountCents,
       createdAt: row.createdAt.toISOString(),
       updatedAt: row.updatedAt.toISOString(),
       service: row.service,

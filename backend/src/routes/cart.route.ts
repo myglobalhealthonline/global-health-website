@@ -7,7 +7,12 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { assertCorporateServiceBookable } from "../modules/corporate/corporate-benefit.service.js";
-import { resolveDoctorTimeZone } from "../modules/doctor-availability/doctor-availability.service.js";
+import {
+  holdConsecutiveSlots,
+  releaseSlotsToBaseGrid,
+  resolveDoctorTimeZone,
+  SlotAlreadyTakenError,
+} from "../modules/doctor-availability/doctor-availability.service.js";
 import {
   computeSlotPrice,
   getServicePeakConfig,
@@ -400,14 +405,11 @@ async function sweepExpiredHolds(cartId: string): Promise<SweepResult> {
     new Set(expired.map((i) => i.doctorId).filter((id): id is string => Boolean(id))),
   );
 
+  // Return the held time back to the base grid (delete collapsed HELD rows +
+  // re-materialise base slots), then drop the cart items.
+  await releaseSlotsToBaseGrid(slotIds);
   const [, doctors] = await Promise.all([
-    prisma.$transaction([
-      prisma.doctorTimeSlot.updateMany({
-        where: { id: { in: slotIds }, status: "HELD" },
-        data: { status: "OPEN" },
-      }),
-      prisma.cartItem.deleteMany({ where: { id: { in: itemIds } } }),
-    ]),
+    prisma.cartItem.deleteMany({ where: { id: { in: itemIds } } }),
     doctorIds.length
       ? prisma.doctor.findMany({ where: { id: { in: doctorIds } }, select: { id: true, fullName: true } })
       : Promise.resolve([] as { id: string; fullName: string }[]),
@@ -438,19 +440,10 @@ async function releaseHeldSlotsForItems(
     .filter((id): id is string => typeof id === "string" && id.length > 0);
   const itemIds = items.map((i) => i.id);
   if (slotIds.length === 0 && itemIds.length === 0) return;
-  await prisma.$transaction([
-    ...(slotIds.length
-      ? [
-          prisma.doctorTimeSlot.updateMany({
-            where: { id: { in: slotIds }, status: "HELD" },
-            data: { status: "OPEN" },
-          }),
-        ]
-      : []),
-    ...(itemIds.length
-      ? [prisma.cartItem.deleteMany({ where: { id: { in: itemIds } } })]
-      : []),
-  ]);
+  if (slotIds.length) await releaseSlotsToBaseGrid(slotIds);
+  if (itemIds.length) {
+    await prisma.cartItem.deleteMany({ where: { id: { in: itemIds } } });
+  }
 }
 
 async function mergeCarts(sourceId: string, targetId: string) {
@@ -1030,18 +1023,34 @@ const cartRoute: FastifyPluginAsync = async (app) => {
         }
       }
 
-      // For consultation items: claim the slot OPEN → HELD atomically
-      // BEFORE creating the CartItem. If another patient grabbed it via
-      // the regular booking flow we bail and return 409.
+      // For consultation items: reserve the consultation's real length
+      // (base grid + consume) OPEN → HELD atomically BEFORE creating the
+      // CartItem. The picked slot is the first base slot; we hold the
+      // consecutive base slots covering the service duration as one collapsed
+      // HELD row. If another patient grabbed any of them we bail with 409.
       if (isConsultation && timeSlotId && doctorId) {
-        const claim = await prisma.doctorTimeSlot.updateMany({
-          where: { id: timeSlotId, doctorId, status: "OPEN" },
-          data: { status: "HELD" },
-        });
-        if (claim.count === 0) {
-          return reply
-            .status(409)
-            .send(errorResponse("That time slot is no longer available"));
+        const svc = serviceId
+          ? await prisma.service.findUnique({
+              where: { id: serviceId },
+              select: { durationMinutes: true },
+            })
+          : null;
+        try {
+          await prisma.$transaction(async (tx) => {
+            const held = await holdConsecutiveSlots(
+              tx,
+              timeSlotId,
+              svc?.durationMinutes ?? null,
+            );
+            if (held.doctorId !== doctorId) throw new SlotAlreadyTakenError();
+          });
+        } catch (err) {
+          if (err instanceof SlotAlreadyTakenError) {
+            return reply
+              .status(409)
+              .send(errorResponse("That time slot is no longer available"));
+          }
+          throw err;
         }
       }
 
@@ -1103,12 +1112,9 @@ const cartRoute: FastifyPluginAsync = async (app) => {
           },
         });
       } catch (err) {
-        // Rollback slot HELD if cart item creation failed
+        // Rollback the held run if cart item creation failed.
         if (isConsultation && timeSlotId) {
-          await prisma.doctorTimeSlot.updateMany({
-            where: { id: timeSlotId, status: "HELD" },
-            data: { status: "OPEN" },
-          });
+          await releaseSlotsToBaseGrid([timeSlotId]);
         }
         throw err;
       }
@@ -1208,12 +1214,9 @@ const cartRoute: FastifyPluginAsync = async (app) => {
 
       await prisma.cartItem.delete({ where: { id: item.id } });
 
-      // Release the slot HELD back to OPEN for consultation items
+      // Return the held run to the base grid for consultation items.
       if (item.timeSlotId) {
-        await prisma.doctorTimeSlot.updateMany({
-          where: { id: item.timeSlotId, status: "HELD" },
-          data: { status: "OPEN" },
-        });
+        await releaseSlotsToBaseGrid([item.timeSlotId]);
       }
 
       // If cart is now empty, clear country/currency stamps
@@ -1233,15 +1236,12 @@ const cartRoute: FastifyPluginAsync = async (app) => {
     const { cart } = await resolveActiveCart(request, reply);
     if (!cart) return okResponse(EMPTY_CART);
 
-    // Release all HELD slots back to OPEN before deleting cart items
+    // Return all held runs to the base grid before deleting cart items
     const heldSlotIds = cart.items
       .map((i) => i.timeSlotId)
       .filter((id): id is string => Boolean(id));
     if (heldSlotIds.length > 0) {
-      await prisma.doctorTimeSlot.updateMany({
-        where: { id: { in: heldSlotIds }, status: "HELD" },
-        data: { status: "OPEN" },
-      });
+      await releaseSlotsToBaseGrid(heldSlotIds);
     }
 
     await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });

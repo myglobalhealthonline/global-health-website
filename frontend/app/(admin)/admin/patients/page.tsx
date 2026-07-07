@@ -36,9 +36,11 @@ export default async function AdminPatientsPage({
   const sp = searchParams ? await searchParams : {};
   const ghn = readParam(sp, "ghn");
   const email = readParam(sp, "email");
+  const phone = readParam(sp, "phone");
+  const taxId = readParam(sp, "taxId");
   const page = Number(readParam(sp, "page") ?? "1") || 1;
 
-  const result = await fetchAdminPatients({ ghn, email, page: String(page), pageSize: "25" });
+  const result = await fetchAdminPatients({ ghn, email, phone, taxId, page: String(page), pageSize: "25" });
 
   const items: AdminPatientSearchItem[] = result?.ok ? result.data.items : [];
   const pagination = result?.ok ? result.data.pagination : null;
@@ -99,6 +101,24 @@ export default async function AdminPatientsPage({
               defaultValue={email ?? ""}
               placeholder="patient@email.com"
               className="gh-input w-64"
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">Phone number</span>
+            <input
+              name="phone"
+              defaultValue={phone ?? ""}
+              placeholder="+353 871234567"
+              className="gh-input w-52"
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">Fiscal number</span>
+            <input
+              name="taxId"
+              defaultValue={taxId ?? ""}
+              placeholder="NIF / PPS / CPF"
+              className="gh-input w-52"
             />
           </label>
           <button type="submit" className="gh-btn-primary flex items-center gap-1.5">
@@ -198,7 +218,7 @@ export default async function AdminPatientsPage({
                 <div className="flex gap-2">
                   {page > 1 ? (
                     <Link
-                      href={`/admin/patients?${new URLSearchParams({ ...(ghn ? { ghn } : {}), ...(email ? { email } : {}), page: String(page - 1) })}`}
+                      href={`/admin/patients?${new URLSearchParams({ ...(ghn ? { ghn } : {}), ...(email ? { email } : {}), ...(phone ? { phone } : {}), ...(taxId ? { taxId } : {}), page: String(page - 1) })}`}
                       className="gh-btn-ghost text-sm"
                     >
                       ← Prev
@@ -206,7 +226,7 @@ export default async function AdminPatientsPage({
                   ) : null}
                   {page < pagination.totalPages ? (
                     <Link
-                      href={`/admin/patients?${new URLSearchParams({ ...(ghn ? { ghn } : {}), ...(email ? { email } : {}), page: String(page + 1) })}`}
+                      href={`/admin/patients?${new URLSearchParams({ ...(ghn ? { ghn } : {}), ...(email ? { email } : {}), ...(phone ? { phone } : {}), ...(taxId ? { taxId } : {}), page: String(page + 1) })}`}
                       className="gh-btn-ghost text-sm"
                     >
                       Next →

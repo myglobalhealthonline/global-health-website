@@ -34,6 +34,7 @@ import {
   resolveOrderListCountryScope,
 } from "../utils/order-country-scope.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
+import { releaseSlotsToBaseGrid } from "../modules/doctor-availability/doctor-availability.service.js";
 
 /**
  * Orders + checkout.
@@ -949,10 +950,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             .flatMap((o) => o.items.map((i) => i.timeSlotId))
             .filter((id): id is string => Boolean(id));
           if (heldSlotIds.length > 0) {
-            await prisma.doctorTimeSlot.updateMany({
-              where: { id: { in: heldSlotIds }, status: "HELD" },
-              data: { status: "OPEN" },
-            });
+            await releaseSlotsToBaseGrid(heldSlotIds);
           }
         }
 
@@ -1029,10 +1027,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
               .map((i) => i.timeSlotId)
               .filter((id): id is string => Boolean(id));
             if (heldSlotIds.length > 0) {
-              await prisma.doctorTimeSlot.updateMany({
-                where: { id: { in: heldSlotIds }, status: "HELD" },
-                data: { status: "OPEN" },
-              });
+              await releaseSlotsToBaseGrid(heldSlotIds);
             }
           }
         }

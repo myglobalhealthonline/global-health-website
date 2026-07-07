@@ -125,10 +125,18 @@ export default async function DoctorInvoicesPage({
     ...(to ? { to } : {}),
   });
   const invoices = result.ok ? result.data.items : [];
-  const totalCents = invoices.reduce((sum, row) => sum + (row.amountCents ?? 0), 0);
+  // AMOUNT is the admin-set doctor payout, not the patient's gross price.
+  // Visible value sums only the payouts that have been set.
+  const totalCents = invoices.reduce(
+    (sum, row) => sum + (row.doctorAmountCents ?? 0),
+    0,
+  );
   const paidCount = invoices.filter((row) => row.paymentStatus === "PAID").length;
-  const attentionCount = invoices.filter((row) =>
-    ["UNPAID", "FAILED", "PENDING"].includes(row.paymentStatus),
+  // Needs attention = payment problems OR an unset payout (admin must set it).
+  const attentionCount = invoices.filter(
+    (row) =>
+      ["UNPAID", "FAILED", "PENDING"].includes(row.paymentStatus) ||
+      row.doctorAmountCents == null,
   ).length;
   const currencyCode = invoices.find((row) => row.currencyCode)?.currencyCode ?? "USD";
 
@@ -293,7 +301,9 @@ export default async function DoctorInvoicesPage({
                   </td>
                   <td className="hidden lg:table-cell px-4 py-3 text-xs capitalize">{row.consultationType}</td>
                   <td className="px-4 py-3 font-mono text-xs">
-                    {fmtMoney(row.amountCents, row.currencyCode)}
+                    {row.doctorAmountCents == null
+                      ? "Not set"
+                      : fmtMoney(row.doctorAmountCents, row.currencyCode)}
                   </td>
                   <td className="px-4 py-3 text-xs">
                     <span
@@ -334,7 +344,13 @@ export default async function DoctorInvoicesPage({
                   }
                   tone={tone === "active" ? "success" : tone === "inactive" ? "danger" : tone === "pending" ? "warning" : "neutral"}
                   meta={[
-                    { label: "Amount", value: fmtMoney(row.amountCents, row.currencyCode) },
+                    {
+                      label: "Amount",
+                      value:
+                        row.doctorAmountCents == null
+                          ? "Not set"
+                          : fmtMoney(row.doctorAmountCents, row.currencyCode),
+                    },
                     {
                       label: "When",
                       value: row.scheduledAt

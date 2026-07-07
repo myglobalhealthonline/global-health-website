@@ -1,6 +1,15 @@
 import { randomUUID } from "node:crypto";
-import { Prisma, AppointmentStatus as PrismaAppointmentStatus } from "@prisma/client";
+import { Prisma, AppointmentStatus as PrismaAppointmentStatus, CartItemKind } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
+
+/** Order-line kinds that carry a doctor snapshot mirrored from the
+ *  appointment. Kept in sync on every doctor change so post-payment
+ *  reminders (which read `OrderItem.doctorId`) never target a stale
+ *  clinician. */
+const CONSULTATION_KINDS: CartItemKind[] = [
+  CartItemKind.GENERAL_CONSULTATION,
+  CartItemKind.SPECIALIST_CONSULTATION,
+];
 import type { BookingInput } from "../../validations/booking.schema.js";
 import type { AppointmentStatus } from "../../validations/admin-appointments.schema.js";
 import {
@@ -11,8 +20,9 @@ import {
 import { normalizeDbError } from "../shared/db-errors.js";
 import { mapAppointmentOrderNumbers } from "../orders/appointment-order-number.js";
 import {
-  claimDoctorSlot,
+  claimConsecutiveSlots,
   releaseAppointmentSlot,
+  ensureSlotsForRange,
   SlotAlreadyTakenError,
 } from "../doctor-availability/doctor-availability.service.js";
 
@@ -109,7 +119,8 @@ export async function createAppointmentWithOptionalOwner(
     //     surface duration / price downstream.
     // Service is country-scoped, so the (slug, countryCode) tuple
     // resolves to one row.
-    let serviceForBooking: { id: string } | null = null;
+    let serviceForBooking: { id: string; durationMinutes: number | null } | null =
+      null;
     if (input.serviceSlug) {
       serviceForBooking = await prisma.service.findFirst({
         where: {
@@ -117,7 +128,7 @@ export async function createAppointmentWithOptionalOwner(
           isActive: true,
           country: { code: input.country, isActive: true },
         },
-        select: { id: true },
+        select: { id: true, durationMinutes: true },
       });
     }
 
@@ -130,7 +141,14 @@ export async function createAppointmentWithOptionalOwner(
     // NON-NULL on the Postgres side — omitting it would error.
     if (input.timeSlotId) {
       await prisma.$transaction(async (tx) => {
-        const claimed = await claimDoctorSlot(tx, input.timeSlotId as string);
+        // Consume the base slots the consultation needs (service duration →
+        // one true-length booked slot). Duration comes from the picked
+        // service; without one, a single base slot is claimed.
+        const claimed = await claimConsecutiveSlots(
+          tx,
+          input.timeSlotId as string,
+          serviceForBooking?.durationMinutes ?? null,
+        );
         // Assignment guard: if the patient supplied a service, verify
         // the slot's doctor is bookable for that service. Throw inside
         // the transaction so the slot claim rolls back to OPEN.
@@ -325,7 +343,24 @@ export type ListAppointmentsOptions = {
   /** Case-insensitive substring on the assigned doctor's full name (and
    *  linked login email). Excludes appointments with no doctor. */
   doctorName?: string;
+  /** Inclusive lower/upper bound on the appointment's scheduled slot
+   *  (falls back to createdAt when unscheduled). Accepts `YYYY-MM-DD` or
+   *  `YYYY-MM-DDTHH:mm`; interpreted as UTC. */
+  dateFrom?: string;
+  dateTo?: string;
 };
+
+/** Turn a `YYYY-MM-DD` / `YYYY-MM-DDTHH:mm` filter value into a UTC Date.
+ *  Bare dates snap to the start of day; the `end` flag snaps a bare date
+ *  to the last millisecond so `dateTo` is inclusive of the whole day. */
+function parseRangeBound(value: string | undefined, end: boolean): Date | undefined {
+  if (!value) return undefined;
+  const iso = value.includes("T")
+    ? `${value}:00.000Z`
+    : `${value}T${end ? "23:59:59.999" : "00:00:00.000"}Z`;
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? undefined : d;
+}
 
 export type ListAppointmentsResult = {
   items: AdminAppointmentListItem[];
@@ -426,6 +461,28 @@ function buildAppointmentWhereClause(options: ListAppointmentsOptions): Prisma.S
       LEFT JOIN "User" u2 ON u2."doctorId" = d2."id"
       WHERE strpos(lower(d2."fullName"), lower(${term})) > 0
          OR strpos(lower(coalesce(u2."email", '')), lower(${term})) > 0
+    )`);
+  }
+
+  // Date/time range. Match on the scheduled slot, or on createdAt when the
+  // row is still unscheduled — mirrors the doctor queue so a brand-new
+  // booking without a slot still falls inside its booking day.
+  const dateFrom = parseRangeBound(options.dateFrom, false);
+  const dateTo = parseRangeBound(options.dateTo, true);
+  if (dateFrom && dateTo) {
+    parts.push(Prisma.sql`(
+      (a."scheduledAt" IS NOT NULL AND a."scheduledAt" BETWEEN ${dateFrom} AND ${dateTo})
+      OR (a."scheduledAt" IS NULL AND a."createdAt" BETWEEN ${dateFrom} AND ${dateTo})
+    )`);
+  } else if (dateFrom) {
+    parts.push(Prisma.sql`(
+      (a."scheduledAt" IS NOT NULL AND a."scheduledAt" >= ${dateFrom})
+      OR (a."scheduledAt" IS NULL AND a."createdAt" >= ${dateFrom})
+    )`);
+  } else if (dateTo) {
+    parts.push(Prisma.sql`(
+      (a."scheduledAt" IS NOT NULL AND a."scheduledAt" <= ${dateTo})
+      OR (a."scheduledAt" IS NULL AND a."createdAt" <= ${dateTo})
     )`);
   }
 
@@ -771,8 +828,21 @@ export async function rescheduleAppointmentForPatient(
     return getAppointmentForUser(id, userId);
   }
 
+  // Preserve the consultation's length across the move: read the old booked
+  // slot's span so the new claim consumes the same number of minutes, and so
+  // we can re-materialise base slots over the freed span afterwards.
+  const oldSlot = owned.timeSlotId
+    ? await prisma.doctorTimeSlot.findUnique({
+        where: { id: owned.timeSlotId },
+        select: { startAt: true, endAt: true },
+      })
+    : null;
+  const preserveMinutes = oldSlot
+    ? Math.round((oldSlot.endAt.getTime() - oldSlot.startAt.getTime()) / 60_000)
+    : null;
+
   await prisma.$transaction(async (tx) => {
-    const claimed = await claimDoctorSlot(tx, newTimeSlotId);
+    const claimed = await claimConsecutiveSlots(tx, newTimeSlotId, preserveMinutes);
     if (owned.doctorId && claimed.doctorId !== owned.doctorId) {
       throw new RescheduleDoctorMismatchError();
     }
@@ -784,13 +854,16 @@ export async function rescheduleAppointmentForPatient(
         doctorId: claimed.doctorId,
       },
     });
+    // Old slot is now detached — delete the collapsed row; base slots are
+    // re-materialised over its span below (outside the txn).
     if (owned.timeSlotId) {
-      await tx.doctorTimeSlot.updateMany({
-        where: { id: owned.timeSlotId, status: "BOOKED" },
-        data: { status: "OPEN" },
-      });
+      await tx.doctorTimeSlot.deleteMany({ where: { id: owned.timeSlotId } });
     }
   });
+
+  if (oldSlot && owned.doctorId) {
+    await ensureSlotsForRange(owned.doctorId, oldSlot.startAt, oldSlot.endAt);
+  }
 
   return getAppointmentForUser(id, userId);
 }
@@ -835,7 +908,19 @@ export async function scheduleAppointment(
     return getAppointmentById(id);
   }
   try {
-    await prisma.appointment.update({ where: { id }, data });
+    await prisma.$transaction(async (tx) => {
+      await tx.appointment.update({ where: { id }, data });
+      // Mirror the doctor onto the consultation order line(s) so the
+      // post-payment reminder cron — which resolves its recipient from
+      // `OrderItem.doctorId` — follows every reassignment instead of
+      // messaging the originally-booked doctor.
+      if (input.doctorId !== undefined) {
+        await tx.orderItem.updateMany({
+          where: { appointmentId: id, kind: { in: CONSULTATION_KINDS } },
+          data: { doctorId: input.doctorId },
+        });
+      }
+    });
     return getAppointmentById(id);
   } catch (error) {
     // P2025 = record to update not found — preserve the previous

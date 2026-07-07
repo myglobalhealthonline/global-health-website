@@ -52,6 +52,9 @@ export function RevealOnScroll({
     const el = ref.current;
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Touch devices: never hide content behind the observer. On slow phones
+    // a fast scroll outruns IO + double-RAF and sections show up blank/late.
+    if (window.matchMedia("(pointer: coarse)").matches) return;
 
     const targets: HTMLElement[] = stagger
       ? (Array.from(el.children) as HTMLElement[])
