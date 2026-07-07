@@ -2918,6 +2918,20 @@ a.gh-stat-card:hover .gh-stat-card__underline {
   min-width: 0;
 }
 
+/* Belt-and-braces: the rules above reset intrinsic min-width on *direct*
+ * children, but a wide element several levels deep (a table, a long
+ * unbreakable value, a fixed-width panel) can still force its whole
+ * ancestor chain wider than the viewport on mobile, pushing the entire
+ * admin/portal page into horizontal scroll — edit panels then render
+ * with content clipped at both edges instead of stacked full-width.
+ * Clip at the content boundary; anything that needs its own horizontal
+ * scroll (e.g. a data table) still scrolls inside its own wrap div. */
+@media (max-width: 760px) {
+  .gh-portal-main {
+    overflow-x: hidden;
+  }
+}
+
 /* Interactive cards lift + gain a stronger border; static cards never move
  * (opt in via .gh-card-interactive, matching the atom's `href`/onClick use). */
 .gh-card-interactive:hover,
@@ -8893,6 +8907,11 @@ a.gh-appointment-card:hover {
   .gh-footer-shell {
     background: #042018;
   }
+  .gh-card-jewel::before {
+    background-image: none;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
 }
 
 /* ── Reduced motion — sheen + lift stay parked. ─────────────── */
@@ -8955,6 +8974,19 @@ a.gh-appointment-card:hover {
   .gh-portal-sidebar,
   .gh-portal-topbar {
     background-color: var(--portal-chrome-solid);
+  }
+  .gh-card-jewel::before {
+    background-image: none;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+  /* The mobile nav drawer slides in via `transform` while carrying a large
+   * `shadow-2xl` blur — animating a heavy box-shadow on a big fixed-position
+   * element is its own GPU-compositing cost independent of backdrop-filter,
+   * and was the other half of the Android "matrix" tearing during open/close.
+   * Drop the shadow on touch devices; the border already reads the edge. */
+  .gh-portal-sidebar {
+    box-shadow: none !important;
   }
   /* Infinite decorative animations — constant repaint/compositor work
    * for pure ambience. Functional motion (spinners, skeletons, dialog
