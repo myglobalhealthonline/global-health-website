@@ -142,14 +142,16 @@ export async function mergePatients(params: {
   const { primaryPatientId, duplicatePatientId, adminId, reason } = params;
 
   try {
-    // Pre-fetch both records for the JSON snapshot (outside tx — read-only,
-    // and we need them before the transaction modifies the duplicate).
-    const [primarySnapshot, duplicateSnapshot] = await Promise.all([
-      prisma.patientProfile.findUniqueOrThrow({ where: { id: primaryPatientId } }),
-      prisma.patientProfile.findUniqueOrThrow({ where: { id: duplicatePatientId } }),
-    ]);
-
     await prisma.$transaction(async (tx) => {
+      // Read the authoritative rows inside the transaction (not the outer
+      // `prisma` client) so the whole read-decide-write sequence is atomic —
+      // a snapshot read before the transaction opens could go stale between
+      // the read and these writes.
+      const [primarySnapshot, duplicateSnapshot] = await Promise.all([
+        tx.patientProfile.findUniqueOrThrow({ where: { id: primaryPatientId } }),
+        tx.patientProfile.findUniqueOrThrow({ where: { id: duplicatePatientId } }),
+      ]);
+
       // ── 1. Write the merge log with both snapshots ───────────────────────
       await tx.patientMergeLog.create({
         data: {
@@ -164,21 +166,12 @@ export async function mergePatients(params: {
 
       // ── 2. Re-point FK references duplicate → primary ────────────────────
 
-      // Re-read userId fresh inside the transaction rather than trusting the
-      // pre-tx snapshot — an admin action editing the duplicate's userId in
-      // the narrow window between the snapshot read and this transaction
-      // could otherwise repoint appointments using a stale value.
-      const freshDuplicate = await tx.patientProfile.findUniqueOrThrow({
-        where: { id: duplicatePatientId },
-        select: { userId: true },
-      });
-
       // Appointment.userId — only re-point when the duplicate actually has a
       // userId. If userId is null/undefined, where: { userId: undefined }
       // would make Prisma ignore the filter and corrupt every appointment row.
-      if (freshDuplicate.userId) {
+      if (duplicateSnapshot.userId) {
         await tx.appointment.updateMany({
-          where: { userId: freshDuplicate.userId },
+          where: { userId: duplicateSnapshot.userId },
           data: { userId: primarySnapshot.userId ?? null },
         });
       }

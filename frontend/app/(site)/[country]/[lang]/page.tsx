@@ -16,7 +16,6 @@ import { StatsBand, type StatBandItem } from "@/components/sections/StatsBand";
 import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
-import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { countries } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
@@ -55,6 +54,7 @@ import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { SITE_NAME } from "@/lib/constants";
 import { Stethoscope, Globe2, ShieldCheck, Activity } from "lucide-react";
+import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 
 type Params = { country: string; lang: string };
 

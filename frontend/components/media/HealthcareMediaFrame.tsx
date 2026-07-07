@@ -164,10 +164,12 @@ export function HealthcareMediaFrame({
           alt={alt}
           width={1600}
           height={900}
+          sizes="100vw"
           className={`h-auto w-full ${objectFit === "cover" ? "object-cover" : "object-contain"}`}
           priority={priority}
           unoptimized={
-            /^https?:\/\//i.test(src) || src.startsWith("/api/media/")
+            /^https?:\/\//i.test(src) &&
+            !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(src)
           }
         />
       </div>

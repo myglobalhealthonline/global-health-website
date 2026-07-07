@@ -14,6 +14,7 @@ import {
   isMediaStorageConfigured,
 } from "../services/object-storage.js";
 import { sanitizeOriginalFilename } from "../utils/media-key.js";
+import { verifySniffedMime } from "../utils/sniff-mime.js";
 import { notifyDoctor, notifyUser } from "../modules/notifications/notify.service.js";
 import { mapAppointmentOrderNumbers } from "../modules/orders/appointment-order-number.js";
 
@@ -336,14 +337,18 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
         const file = await request.file();
         if (!file) return reply.status(400).send(errorResponse('Expected a file field named "file"'));
 
-        const mimetype = file.mimetype ?? "";
-        if (!ALLOWED_MIME.has(mimetype)) {
+        const declaredMime = file.mimetype ?? "";
+        if (!ALLOWED_MIME.has(declaredMime)) {
           return reply.status(415).send(errorResponse("Unsupported file type — use PDF / JPEG / PNG / WebP"));
         }
 
         const buffer = await file.toBuffer();
         if (buffer.length > MAX_BYTES) {
           return reply.status(413).send(errorResponse("File too large (max 20 MB)"));
+        }
+        const mimetype = verifySniffedMime(buffer, declaredMime, ALLOWED_MIME);
+        if (!mimetype) {
+          return reply.status(400).send(errorResponse("File content does not match an allowed type"));
         }
 
         const safeName = sanitizeOriginalFilename(file.filename ?? "file");
@@ -550,14 +555,18 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
         const file = await request.file();
         if (!file) return reply.status(400).send(errorResponse('Expected a file field named "file"'));
 
-        const mimetype = file.mimetype ?? "";
-        if (!ALLOWED_MIME.has(mimetype)) {
+        const declaredMime = file.mimetype ?? "";
+        if (!ALLOWED_MIME.has(declaredMime)) {
           return reply.status(415).send(errorResponse("Unsupported file type"));
         }
 
         const buffer = await file.toBuffer();
         if (buffer.length > MAX_BYTES) {
           return reply.status(413).send(errorResponse("File too large (max 20 MB)"));
+        }
+        const mimetype = verifySniffedMime(buffer, declaredMime, ALLOWED_MIME);
+        if (!mimetype) {
+          return reply.status(400).send(errorResponse("File content does not match an allowed type"));
         }
 
         const safeName = sanitizeOriginalFilename(file.filename ?? "file");

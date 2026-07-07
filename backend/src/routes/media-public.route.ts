@@ -33,9 +33,8 @@ const mediaPublicRoute: FastifyPluginAsync = async (app) => {
     //   - `clinical/`       — clinical document attachments, served via the
     //                         auth-gated `/api/doctor/documents/:id/download`
     //                         endpoint which verifies ownership/admin.
-    //   - `patient-upload/`  — patient-uploaded medical documents. The key
-    //                         embeds the patient email, so it is guessable;
-    //                         these must be served through an auth-gated route.
+    //   - `patient-upload/`  — patient-uploaded medical documents; these must
+    //                         be served through an auth-gated route.
     if (PHI_PREFIXES.some((prefix) => key.startsWith(prefix))) {
       return reply.status(403).send(errorResponse("This document requires authentication"));
     }

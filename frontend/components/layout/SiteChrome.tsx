@@ -1,6 +1,3 @@
-"use client";
-
-import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -11,6 +8,7 @@ import type { SiteNavigationData } from "@/data/navigation";
 import type { CountryConfig } from "@/data/countries";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { registerCountrySlugs } from "@/lib/routing/country-slug";
+import type { ParsedSitePath } from "@/lib/routing/path-rewrites";
 import type { PublicCountryFooter } from "@/lib/content/get-country-footers";
 import type { CountryTrust } from "@/lib/content/get-country-trust";
 
@@ -33,6 +31,11 @@ type Props = {
   countries: CountryConfig[];
   /** Locale the server actually rendered this request in. */
   currentLocale?: LocaleCode;
+  /** Request pathname, parsed server-side (from `x-gh-pathname`). */
+  parsed: ParsedSitePath;
+  /** True on the gateway home ("/") — header/footer/trust bar are hidden
+   *  there, the page body owns the full-bleed country picker instead. */
+  isGatewayHome: boolean;
 };
 
 export function SiteChrome({
@@ -47,15 +50,14 @@ export function SiteChrome({
   initialLastCountry,
   countries,
   currentLocale,
+  parsed,
+  isGatewayHome,
 }: Props) {
   // Warm the client-side slug registry with the merged country list (including
   // admin-added countries) so path parsing in the header switchers resolves
   // correctly after client-side navigation. The registry is cold on the client
   // even when it was warmed during SSR.
   registerCountrySlugs(countries);
-
-  const pathname = usePathname();
-  const isGatewayHome = pathname === "/";
 
   return (
     <>
@@ -72,6 +74,7 @@ export function SiteChrome({
           initialLastCountry={initialLastCountry}
           countries={countries}
           currentLocale={currentLocale}
+          parsed={parsed}
         />
       )}
       <main id="main-content" className="grow">
@@ -99,6 +102,7 @@ export function SiteChrome({
           countryFeatures={countryFeatures}
           countryFooters={countryFooters}
           countries={countries}
+          parsed={parsed}
         />
       )}
     </>

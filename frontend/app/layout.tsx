@@ -7,9 +7,6 @@ import { getRootHtmlLang } from "@/lib/i18n/get-root-html-lang";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { CookieBanner } from "@/components/compliance/CookieBanner";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
-// SVG flags via the `flag-icons` package. Loaded at the root so both
-// public site + admin shell can render `<span class="fi fi-{iso2}">`.
-import "flag-icons/css/flag-icons.min.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -42,9 +39,15 @@ export default async function RootLayout({
       className="h-full antialiased"
       suppressHydrationWarning
     >
+      <head>
+        <link rel="preconnect" href="https://connect.facebook.net" />
+        <link rel="dns-prefetch" href="https://connect.facebook.net" />
+        <link rel="preconnect" href="https://www.doctify.com" />
+        <link rel="dns-prefetch" href="https://www.doctify.com" />
+      </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         {/* Meta Pixel Code */}
-        <Script id="meta-pixel" strategy="afterInteractive">
+        <Script id="meta-pixel" strategy="lazyOnload">
           {`!function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};

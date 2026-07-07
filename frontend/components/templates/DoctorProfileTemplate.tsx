@@ -90,7 +90,13 @@ export function DoctorProfileTemplate({
         <div className="grid h-full lg:grid-cols-2">
 
           {/* ── LEFT — full-bleed doctor portrait ── */}
-          <div className="relative h-full overflow-hidden">
+          {/* min-h floor is load-bearing below lg: the grid is single-column
+              there (no lg:grid-cols-2), so this row auto-sizes to content —
+              and its only children are absolutely-positioned, contributing
+              zero intrinsic height, so a bare h-full collapses to 0px and
+              the fill Image renders nothing. lg:h-full takes back over once
+              the real 2-column split gives this cell the section's height. */}
+          <div className="relative h-full min-h-[clamp(300px,60vw,560px)] overflow-hidden">
             {/* Oversized "Doctor" watermark behind portrait */}
             <div
               aria-hidden

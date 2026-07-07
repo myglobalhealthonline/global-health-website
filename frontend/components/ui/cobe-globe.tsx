@@ -71,8 +71,20 @@ export function Globe({
   const velocity = useRef({ phi: 0, theta: 0 });
   const phiOffsetRef = useRef(0);
   const thetaOffsetRef = useRef(0);
-  const isPausedRef = useRef(false);
+  // Independent pause reasons — dragging, off-screen, and tab-hidden can
+  // overlap (e.g. drag ends while the tab is still hidden), so a single
+  // boolean would let one reason's "resume" incorrectly cancel another's
+  // still-active pause.
+  const pauseFlags = useRef({ drag: false, offscreen: false, hidden: false });
+  const isPaused = useCallback(
+    () => pauseFlags.current.drag || pauseFlags.current.offscreen || pauseFlags.current.hidden,
+    [],
+  );
   const reducedMotionRef = useRef(false);
+  const lowPowerRef = useRef(false);
+  // Set by the render loop so init() can restart it (e.g. resuming from
+  // reduced-motion's single static frame) without a second effect dependency.
+  const requestRenderRef = useRef<(() => void) | null>(null);
 
   const cobeMarkers = useMemo(
     () =>
@@ -96,7 +108,11 @@ export function Globe({
 
   const handlePointerDown = useCallback((e: PointerEvent) => {
     pointerInteracting.current = { x: e.clientX, y: e.clientY };
-    isPausedRef.current = true;
+    pauseFlags.current.drag = true;
+    // Reduced-motion normally stops the rAF loop entirely between
+    // interactions (see the render loop below) — restart it so dragging
+    // still tracks the pointer smoothly. No-op once the loop is running.
+    requestRenderRef.current?.();
     if (canvasRef.current) canvasRef.current.style.cursor = "grabbing";
   }, []);
 
@@ -126,7 +142,7 @@ export function Globe({
       lastPointer.current = null;
     }
     pointerInteracting.current = null;
-    isPausedRef.current = false;
+    pauseFlags.current.drag = false;
     if (canvasRef.current) canvasRef.current.style.cursor = "grab";
   }, []);
 
@@ -141,6 +157,40 @@ export function Globe({
 
   useEffect(() => {
     reducedMotionRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Low-power signal: few CPU cores, or the browser's own data-saver mode.
+    // Any one of these drops the globe's map resolution (mapSamples) — the
+    // single most expensive setting cobe exposes — without touching its
+    // visual appearance on capable/desktop hardware.
+    const lowCores = (navigator.hardwareConcurrency ?? 8) <= 4;
+    const saveData = Boolean((navigator as { connection?: { saveData?: boolean } }).connection?.saveData);
+    lowPowerRef.current = lowCores || saveData || reducedMotionRef.current;
+  }, []);
+
+  // Pause the rAF loop when the globe scrolls off-screen or the tab is
+  // backgrounded — cobe has no built-in visibility awareness, so left alone
+  // it burns GPU/battery indefinitely on a hidden tab or a globe scrolled
+  // far out of view.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        pauseFlags.current.offscreen = !entries[0]?.isIntersecting;
+        if (!pauseFlags.current.offscreen) requestRenderRef.current?.();
+      },
+      { threshold: 0.01 },
+    );
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    function onVisibilityChange() {
+      pauseFlags.current.hidden = document.hidden;
+      if (!document.hidden) requestRenderRef.current?.();
+    }
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", onVisibilityChange);
   }, []);
 
   useEffect(() => {
@@ -163,12 +213,14 @@ export function Globe({
 
     let globe: ReturnType<typeof createGlobe> | null = null;
     let animationId = 0;
+    let loopRunning = false;
     let resizeObserver: ResizeObserver | null = null;
     let phi = initialPhi;
 
     function render() {
       if (!globe) return;
-      if (!isPausedRef.current && !reducedMotionRef.current) {
+      const paused = isPaused();
+      if (!paused && !reducedMotionRef.current) {
         phi += speed;
         if (Math.abs(velocity.current.phi) > 0.0001 || Math.abs(velocity.current.theta) > 0.0001) {
           phiOffsetRef.current += velocity.current.phi;
@@ -198,14 +250,38 @@ export function Globe({
         markers: cobeMarkers,
         arcs: cobeArcs,
       });
+
+      // Reduced-motion renders one static frame per resume (pointer drag,
+      // tab refocus, scroll back into view) instead of spinning forever —
+      // the pause-flag checks above already zeroed the rotation for this
+      // frame, so stopping here just stops repainting an unchanging globe.
+      // Fully paused (off-screen / hidden / mid-drag with nothing moving)
+      // also stops the loop; the pause/visibility/drag handlers above call
+      // requestRenderRef to wake it back up.
+      if (reducedMotionRef.current || paused) {
+        loopRunning = false;
+        return;
+      }
       animationId = window.requestAnimationFrame(render);
     }
+
+    function requestRender() {
+      if (loopRunning || !globe) return;
+      loopRunning = true;
+      animationId = window.requestAnimationFrame(render);
+    }
+    requestRenderRef.current = requestRender;
 
     function init() {
       if (globe || !canvasRef.current) return;
       const width = canvasRef.current.offsetWidth;
       if (width === 0) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // Map resolution is the single most expensive cobe setting — cut it
+      // to ~a third on low-power hardware / save-data / reduced-motion,
+      // full detail everywhere else. Everything else (colors, markers,
+      // arcs, scale) is untouched so the globe looks the same either way.
+      const effectiveMapSamples = lowPowerRef.current ? Math.min(mapSamples, 6000) : mapSamples;
       globe = createGlobe(canvas, {
         devicePixelRatio: dpr,
         width,
@@ -214,7 +290,7 @@ export function Globe({
         theta,
         dark,
         diffuse,
-        mapSamples,
+        mapSamples: effectiveMapSamples,
         mapBrightness,
         baseColor,
         markerColor,
@@ -227,7 +303,7 @@ export function Globe({
         arcHeight,
         scale,
       });
-      render();
+      requestRender();
       window.setTimeout(() => {
         canvas.style.opacity = "1";
       }, 120);
@@ -267,6 +343,7 @@ export function Globe({
     diffuse,
     glowColor,
     initialPhi,
+    isPaused,
     mapBrightness,
     mapSamples,
     markerColor,

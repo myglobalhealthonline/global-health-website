@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 
@@ -56,16 +62,26 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const rafPending = useRef(false);
 
   const syncScrollState = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
     const max = el.scrollWidth - el.clientWidth;
+    const progress = max > 0 ? el.scrollLeft / max : 1;
+    el.style.setProperty("--scroll-progress", String(progress));
     setCanPrev(el.scrollLeft > 8);
     setCanNext(el.scrollLeft < max - 8);
-    setProgress(max > 0 ? el.scrollLeft / max : 1);
   }, []);
+
+  const onScroll = useCallback(() => {
+    if (rafPending.current) return;
+    rafPending.current = true;
+    requestAnimationFrame(() => {
+      rafPending.current = false;
+      syncScrollState();
+    });
+  }, [syncScrollState]);
 
   useEffect(() => {
     syncScrollState();
@@ -160,7 +176,8 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
                   className="h-full rounded-full transition-[width] duration-200"
                   style={{
                     background: "var(--color-brand-accent)",
-                    width: `${Math.round(Math.max(0.12, progress) * 100)}%`,
+                    width:
+                      "calc(max(0.12, var(--scroll-progress, 0)) * 100%)",
                   }}
                 />
               </div>
@@ -180,8 +197,9 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
 
       <div
         ref={trackRef}
-        onScroll={syncScrollState}
+        onScroll={onScroll}
         className="gh-scrollbar-none -mx-1 flex snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth px-1 pb-2"
+        style={{ "--scroll-progress": 0 } as CSSProperties}
         role="list"
       >
         {filtered.map((doctor) => (

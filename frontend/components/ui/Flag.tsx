@@ -1,4 +1,7 @@
 import { cn } from "@/lib/utils/cn";
+// SVG flags via the `flag-icons` package. Scoped here (not the root
+// layout) so the stylesheet only loads on chunks that render a Flag.
+import "flag-icons/css/flag-icons.min.css";
 
 /**
  * Country flag atom. Replaces a 5-row `FLAG_CLASS` lookup that lived

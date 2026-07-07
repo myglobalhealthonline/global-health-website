@@ -1509,6 +1509,10 @@ model Appointment {
   @@index([email])
   @@index([doctorId])
   @@index([status, createdAt])
+  @@index([doctorId, scheduledAt])
+  @@index([countryCode, status, createdAt])
+  @@index([paymentStatus, createdAt])
+  @@index([userId, status, createdAt])
 }
 
 /// Persistent patient chart keyed by email (one row per patient identity).

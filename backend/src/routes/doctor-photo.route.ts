@@ -4,6 +4,7 @@ import { prisma } from "../db/prisma.js";
 import { env } from "../config/env.js";
 import { putObject, isMediaStorageConfigured } from "../services/object-storage.js";
 import { sanitizeOriginalFilename } from "../utils/media-key.js";
+import { verifySniffedMime } from "../utils/sniff-mime.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -63,8 +64,8 @@ const doctorPhotoRoute: FastifyPluginAsync = async (app) => {
         .status(400)
         .send(errorResponse('Expected one file field named "file"'));
     }
-    const mimetype = file.mimetype ?? "";
-    if (!ALLOWED_MIME.has(mimetype)) {
+    const declaredMime = file.mimetype ?? "";
+    if (!ALLOWED_MIME.has(declaredMime)) {
       return reply.status(415).send(errorResponse("Unsupported file type"));
     }
     const buffer = await file.toBuffer();
@@ -73,6 +74,10 @@ const doctorPhotoRoute: FastifyPluginAsync = async (app) => {
       return reply
         .status(413)
         .send(errorResponse("File too large (max 5MB)"));
+    }
+    const mimetype = verifySniffedMime(buffer, declaredMime, ALLOWED_MIME);
+    if (!mimetype) {
+      return reply.status(400).send(errorResponse("File content does not match an allowed type"));
     }
 
     const safeName = sanitizeOriginalFilename(file.filename ?? "doctor.png");

@@ -6,6 +6,16 @@ import { Flag } from "@/components/ui/Flag";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
 
+/** True only for an absolute URL whose host isn't in next.config.ts's
+ *  images.remotePatterns (images.unsplash.com / images.pexels.com are
+ *  allow-listed; /api/media/* is a same-origin rewrite, never absolute). */
+function isUnlistedRemote(src: string): boolean {
+  return (
+    /^https?:\/\//i.test(src) &&
+    !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(src)
+  );
+}
+
 export type PageHeroProps = {
   countryCode?: string;
   countryLabel?: string;
@@ -74,7 +84,7 @@ export function PageHero({
         style={{ background: "#0F2E25" }}
       >
         <div
-          className="grid lg:grid-cols-2"
+          className="grid lg:grid-cols-2 max-lg:!min-h-[min(calc(100svh-var(--header-height)),760px)]"
           style={{ minHeight: "min(calc(100svh - var(--header-height)), 940px)" }}
         >
 
@@ -91,10 +101,7 @@ export function PageHero({
                 priority={heroImage.priority}
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover object-center"
-                unoptimized={
-                  /^https?:\/\//i.test(heroImage.src) ||
-                  heroImage.src.startsWith("/api/media/")
-                }
+                unoptimized={isUnlistedRemote(heroImage.src)}
               />
             ) : (
               <div
@@ -140,10 +147,12 @@ export function PageHero({
                   "linear-gradient(135deg, #0a2a20 0%, #0F2E25 46%, #06201a 100%)",
               }}
             />
-            {/* 2 — technical grid (thin lime lines) */}
+            {/* 2 — technical grid (thin lime lines). Hidden below lg: masked
+                 background layers are the heaviest atmosphere here and add
+                 nothing readable at phone widths. */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 z-0"
+              className="pointer-events-none absolute inset-0 z-0 hidden lg:block"
               style={{
                 backgroundImage:
                   "linear-gradient(rgba(176,241,34,0.05) 1px, transparent 1px)," +
@@ -155,10 +164,11 @@ export function PageHero({
                   "radial-gradient(120% 120% at 80% 20%, #000 0%, rgba(0,0,0,0.45) 55%, transparent 90%)",
               }}
             />
-            {/* 3 — faint dotted texture on top of the grid */}
+            {/* 3 — faint dotted texture on top of the grid. Desktop-only,
+                 same reasoning as layer 2. */}
             <div
               aria-hidden
-              className="gh-dot-grid pointer-events-none absolute inset-0 z-0"
+              className="gh-dot-grid pointer-events-none absolute inset-0 z-0 hidden lg:block"
               style={{
                 opacity: 0.6,
                 maskImage:
@@ -178,10 +188,12 @@ export function PageHero({
                   "radial-gradient(ellipse 620px 520px at 112% -8%, rgba(176,241,34,0.12), transparent 62%)",
               }}
             />
-            {/* 5 — large faint medical plus symbols */}
+            {/* 5 — large faint medical plus symbols. Desktop-only watermark
+                 glyphs; at phone widths they're either clipped or crowd the
+                 headline for no readable benefit. */}
             <span
               aria-hidden
-              className="pointer-events-none absolute z-0 select-none font-bold leading-none"
+              className="pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block"
               style={{
                 top: "-2%",
                 right: "6%",
@@ -193,7 +205,7 @@ export function PageHero({
             </span>
             <span
               aria-hidden
-              className="pointer-events-none absolute z-0 select-none font-bold leading-none"
+              className="pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block"
               style={{
                 top: "34%",
                 right: "30%",
@@ -205,7 +217,7 @@ export function PageHero({
             </span>
             <span
               aria-hidden
-              className="pointer-events-none absolute z-0 select-none font-bold leading-none"
+              className="pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block"
               style={{
                 bottom: "8%",
                 right: "12%",
@@ -338,7 +350,7 @@ export function PageHero({
             fill
             sizes="100vw"
             className="object-cover object-center"
-            unoptimized={/^https?:\/\//i.test(bgSrc) || bgSrc.startsWith("/api/media/")}
+            unoptimized={isUnlistedRemote(bgSrc)}
           />
           <div
             className="absolute inset-0"
@@ -351,16 +363,18 @@ export function PageHero({
         </div>
       ) : null}
 
+      {/* Hidden below lg — huge outlined text over the mobile bg photo adds
+           visual noise without a legibility/brand payoff at phone widths. */}
       <div
         aria-hidden
-        className="gh2-watermark gh-medical-pattern-layer pointer-events-none -right-[0.06em] bottom-[-0.16em] select-none"
+        className="gh2-watermark gh-medical-pattern-layer pointer-events-none -right-[0.06em] bottom-[-0.16em] hidden select-none lg:block"
         style={{ fontSize: "clamp(5rem,14vw,13rem)" }}
       >
         {watermarkText}
       </div>
 
       <div
-        className="relative z-[1] mx-auto flex max-w-[var(--container-width)] flex-col justify-center px-5 md:px-10"
+        className="relative z-[1] mx-auto flex max-w-[var(--container-width)] flex-col justify-center px-5 md:px-10 max-lg:!min-h-[min(calc(100svh-var(--header-height)),760px)]"
         style={{
           minHeight: "calc(100svh - var(--header-height))",
           paddingTop: "clamp(20px,3.5vw,40px)",

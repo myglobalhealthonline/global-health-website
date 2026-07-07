@@ -15,7 +15,7 @@ import { getServerAuthUser } from "@/lib/api/server-auth";
  */
 export async function requireAdminAction(): Promise<void> {
   const user = await getServerAuthUser();
-  if (!user || user.role !== "ADMIN") {
+  if (!user || (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN")) {
     redirect("/login?next=/admin");
   }
 }

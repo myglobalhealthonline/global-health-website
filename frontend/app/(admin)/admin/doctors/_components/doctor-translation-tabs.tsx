@@ -1,8 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { RichTextHtmlField } from "../../_components/rich-text-html-field";
+import dynamic from "next/dynamic";
 import { PortalTabs } from "@/components/PortalTabs";
+
+const RichTextHtmlField = dynamic(
+  () => import("../../_components/rich-text-html-field").then((m) => m.RichTextHtmlField),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        aria-hidden
+        className="min-h-[17rem] w-full rounded-[var(--portal-radius)] border border-[var(--portal-line)] bg-[var(--portal-surface)]"
+      />
+    ),
+  },
+);
 
 export type DoctorTranslationInitial = {
   locale: string;

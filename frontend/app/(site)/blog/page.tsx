@@ -1,4 +1,3 @@
-import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SITE_NAME } from "@/lib/constants";
@@ -7,6 +6,7 @@ import { BlogCard } from "@/components/cards/BlogCard";
 import { PageHero } from "@/components/sections/PageHero";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import { Stethoscope, ShieldCheck, BookOpen } from "lucide-react";
+import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 
 export const metadata: Metadata = {
   title: `Health Blog | ${SITE_NAME}`,

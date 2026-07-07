@@ -339,7 +339,7 @@ export function HeroBookingWizard({
                           disabled={routing}
                           onClick={() => pickSlot(slot)}
                           title={isPeak ? "Peak time" : undefined}
-                          className="group/slot inline-flex min-w-[84px] flex-col items-center gap-0.5 rounded-lg border border-white/12 bg-white/[0.05] px-2.5 py-1.5 text-white transition-colors hover:border-[var(--color-brand-accent)] hover:bg-[var(--color-brand-accent)] hover:text-[var(--color-background-dark)] disabled:opacity-50"
+                          className="group/slot inline-flex min-h-11 min-w-[84px] flex-col items-center justify-center gap-0.5 rounded-lg border border-white/12 bg-white/[0.05] px-2.5 py-1.5 text-white transition-colors hover:border-[var(--color-brand-accent)] hover:bg-[var(--color-brand-accent)] hover:text-[var(--color-background-dark)] disabled:opacity-50"
                         >
                           <span className="inline-flex items-center gap-1 text-[13.5px] font-bold leading-none">
                             {fmtTime(slot.startAt, clinicTz)}
@@ -393,7 +393,7 @@ function StepHeader({ label, onBack, backLabel }: { label: string; onBack: () =>
         type="button"
         onClick={onBack}
         aria-label={backLabel}
-        className="inline-flex size-6 items-center justify-center rounded-full bg-white/[0.07] text-white hover:bg-white/[0.14]"
+        className="-m-2.5 inline-flex size-11 items-center justify-center rounded-full bg-white/[0.07] text-white hover:bg-white/[0.14]"
       >
         <ArrowLeft className="size-3.5" strokeWidth={1.8} aria-hidden />
       </button>

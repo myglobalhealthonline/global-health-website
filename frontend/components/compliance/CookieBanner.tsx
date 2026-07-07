@@ -60,6 +60,7 @@ export function CookieBanner() {
       aria-live="polite"
       aria-label={t.title}
       className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-2xl rounded-xl border border-slate-200 bg-white p-4 shadow-[0_10px_30px_rgba(15,46,37,0.18)] sm:p-5"
+      style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-slate-700">

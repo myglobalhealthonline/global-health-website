@@ -4,7 +4,7 @@ import {
   type CountryCertificationLogo,
 } from "@/lib/content/country-certification-logos";
 import type { CountryTrust } from "@/lib/content/get-country-trust";
-import { DoctifyWidget } from "@/components/sections/DoctifyReviews";
+import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
 
 /**
  * Country medical-authority trust bar. Contract:

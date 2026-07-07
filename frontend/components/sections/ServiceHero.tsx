@@ -29,6 +29,16 @@ import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
  * bars) so it needs no translation.
  */
 
+/** True only for an absolute URL whose host isn't in next.config.ts's
+ *  images.remotePatterns (images.unsplash.com / images.pexels.com are
+ *  allow-listed; /api/media/* is a same-origin rewrite, never absolute). */
+function isUnlistedRemote(src: string): boolean {
+  return (
+    /^https?:\/\//i.test(src) &&
+    !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(src)
+  );
+}
+
 type CtaLink = { label: string; href: string };
 type FeatureCard = { icon: ReactNode; title: string; subtitle: string };
 type Badge = { icon?: ReactNode; title: string; subtitle: string; accent?: string };
@@ -95,10 +105,7 @@ export function ServiceHero({
             priority={heroImage.priority}
             sizes="(min-width: 1024px) 50vw, 100vw"
             className="object-cover object-center"
-            unoptimized={
-              /^https?:\/\//i.test(heroImage.src) ||
-              heroImage.src.startsWith("/api/media/")
-            }
+            unoptimized={isUnlistedRemote(heroImage.src)}
           />
           {/* Brand green wash so the photo matches the emerald canvas */}
           <div
@@ -236,10 +243,11 @@ export function ServiceHero({
                 "linear-gradient(135deg, #062b21 0%, #031F18 46%, #02140e 100%)",
             }}
           />
-          {/* technical grid */}
+          {/* technical grid — desktop-only, heaviest atmosphere layer (masked
+               background) and not readable/needed at phone widths */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 z-0"
+            className="pointer-events-none absolute inset-0 z-0 hidden lg:block"
             style={{
               backgroundImage:
                 "linear-gradient(rgba(176,241,34,0.05) 1px, transparent 1px)," +
@@ -251,10 +259,10 @@ export function ServiceHero({
                 "radial-gradient(120% 120% at 80% 20%, #000 0%, rgba(0,0,0,0.45) 55%, transparent 90%)",
             }}
           />
-          {/* dotted texture */}
+          {/* dotted texture — desktop-only, same reasoning */}
           <div
             aria-hidden
-            className="gh-dot-grid pointer-events-none absolute inset-0 z-0"
+            className="gh-dot-grid pointer-events-none absolute inset-0 z-0 hidden lg:block"
             style={{
               opacity: 0.6,
               maskImage:
@@ -274,17 +282,17 @@ export function ServiceHero({
                 "radial-gradient(ellipse 620px 520px at 112% -8%, rgba(176,241,34,0.12), transparent 62%)",
             }}
           />
-          {/* faint medical plus symbols */}
+          {/* faint medical plus symbols — desktop-only watermark glyphs */}
           <span
             aria-hidden
-            className="pointer-events-none absolute z-0 select-none font-bold leading-none"
+            className="pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block"
             style={{ top: "-2%", right: "6%", fontSize: "180px", color: "rgba(176,241,34,0.06)" }}
           >
             +
           </span>
           <span
             aria-hidden
-            className="pointer-events-none absolute z-0 select-none font-bold leading-none"
+            className="pointer-events-none absolute z-0 hidden select-none font-bold leading-none lg:block"
             style={{ bottom: "10%", right: "12%", fontSize: "72px", color: "rgba(176,241,34,0.05)" }}
           >
             +

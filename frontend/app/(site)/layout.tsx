@@ -16,6 +16,7 @@ import { getSiteContext } from "@/lib/content/get-site-context";
 import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { getCountryByCode, type CountryCode } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
+import { parseSitePath } from "@/lib/routing/path-rewrites";
 import {
   organizationJsonLd,
   websiteJsonLd,
@@ -105,6 +106,13 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
     if (c.enabledFeatures) countryFeatures[c.code] = c.enabledFeatures;
   }
 
+  // SiteHeader/SiteFooter/SiteChrome are Server Components — they need the
+  // parsed pathname as a prop instead of calling usePathname() themselves.
+  // Safe to parse here: getPublicCountriesMerged() (above) already warmed
+  // the slug registry that parseSitePath's country-slug lookup relies on.
+  const parsed = parseSitePath(pathname);
+  const isGatewayHome = pathname === "/";
+
   // Per-country footer override (admin-managed). Only the active country's
   // row is fetched (in the Promise.all above) — SiteFooter doesn't render
   // footers for other countries, so requesting all 5 every layout render
@@ -130,6 +138,8 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
         initialLastCountry={initialLastCountry}
         countries={countriesMerged}
         currentLocale={currentLocale}
+        parsed={parsed}
+        isGatewayHome={isGatewayHome}
       >
         <JsonLd data={[organizationJsonLd(organizationSameAs), websiteJsonLd()]} />
         {children}

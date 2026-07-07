@@ -20,8 +20,8 @@ import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { interpolate } from "@/lib/subscription/format";
 import { PricingPlanCard } from "./_components/PricingPlanCard";
-import { DoctifyWidget } from "@/components/sections/DoctifyReviews";
 import { Stethoscope, Calendar, ShieldCheck, CreditCard, Zap, BadgeCheck } from "lucide-react";
+import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
 
 type Params = { country: string; lang: string };
 

@@ -34,12 +34,12 @@ import {
   medicalSpecialtyForService,
 } from "@/lib/seo/structured-data";
 import { FAQSection } from "@/components/sections/FAQSection";
-import { DoctifyWidget } from "@/components/sections/DoctifyReviews";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
 import { ServiceLinkedBody } from "@/components/sections/ServiceLinkedBody";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
 
 type Params = { country: string; lang: string; serviceSlug: string };
 

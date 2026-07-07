@@ -28,6 +28,16 @@ import {
  * defaults for real figures before launch.
  */
 
+/** True only for an absolute URL whose host isn't in next.config.ts's
+ *  images.remotePatterns (images.unsplash.com / images.pexels.com are
+ *  allow-listed; /api/media/* is a same-origin rewrite, never absolute). */
+function isUnlistedRemote(src: string): boolean {
+  return (
+    /^https?:\/\//i.test(src) &&
+    !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(src)
+  );
+}
+
 type CtaLink = { label: string; href: string };
 
 type InfoCard = {
@@ -155,9 +165,7 @@ export function DoctorsHero({
           priority={heroImage.priority}
           sizes="100vw"
           className="object-cover object-center"
-          unoptimized={
-            /^https?:\/\//i.test(heroImage.src) || heroImage.src.startsWith("/api/media/")
-          }
+          unoptimized={isUnlistedRemote(heroImage.src)}
         />
         <div
           className="absolute inset-0"
@@ -169,10 +177,12 @@ export function DoctorsHero({
         />
       </div>
 
-      {/* ── Atmosphere layers (behind content via .gh-medical-pattern-layer) ── */}
+      {/* ── Atmosphere layers (behind content via .gh-medical-pattern-layer).
+           Both hidden below lg — masked dot-grid + giant outlined watermark
+           are pure ambience with real paint cost, not needed on phones. ── */}
       <div
         aria-hidden
-        className="gh-medical-pattern-layer gh-dot-grid inset-0"
+        className="gh-medical-pattern-layer gh-dot-grid inset-0 hidden lg:block"
         style={{
           opacity: 0.5,
           maskImage:
@@ -183,7 +193,7 @@ export function DoctorsHero({
       />
       <div
         aria-hidden
-        className="gh2-watermark gh-medical-pattern-layer pointer-events-none -right-[0.06em] bottom-[-0.16em] select-none"
+        className="gh2-watermark gh-medical-pattern-layer pointer-events-none -right-[0.06em] bottom-[-0.16em] hidden select-none lg:block"
         style={{
           fontSize: "clamp(5rem,15vw,14rem)",
           WebkitTextStroke: "1.5px rgba(255,255,255,0.08)",
@@ -205,7 +215,7 @@ export function DoctorsHero({
       />
 
       <div
-        className="relative z-[1] mx-auto flex max-w-[var(--container-width)] flex-col justify-center px-5 md:px-10"
+        className="relative z-[1] mx-auto flex max-w-[var(--container-width)] flex-col justify-center px-5 md:px-10 max-lg:!min-h-[min(calc(100svh-var(--header-height)),760px)]"
         style={{
           minHeight: "calc(100svh - var(--header-height))",
           paddingTop: "clamp(20px,3.5vw,40px)",

@@ -28,6 +28,19 @@ export type DoctorAuthResult =
     }
   | { ok: false; status: 401 | 403; message: string };
 
+/** No-op (returns false) unless the operator opted `role` into
+ *  REQUIRE_2FA_FOR_ROLES — default empty, so this never fires today. */
+function require2faUnmet(role: string, twoFactorEnabled: boolean): boolean {
+  return env.REQUIRE_2FA_FOR_ROLES.has(role) && !twoFactorEnabled;
+}
+
+const TWO_FA_REQUIRED_RESULT = {
+  ok: false as const,
+  status: 403 as const,
+  message:
+    "Two-factor authentication is required for this role. Enroll TOTP in account security settings before continuing.",
+};
+
 export async function verifyDoctorAccess(
   request: FastifyRequest,
 ): Promise<DoctorAuthResult> {
@@ -48,10 +61,21 @@ export async function verifyDoctorAccess(
   try {
     const user = await prisma.user.findUnique({
       where: { id: payload.sub },
-      select: { id: true, email: true, isActive: true, role: true, doctorId: true, tokenVersion: true },
+      select: {
+        id: true,
+        email: true,
+        isActive: true,
+        role: true,
+        doctorId: true,
+        tokenVersion: true,
+        twoFactorEnabled: true,
+      },
     });
     if (!user || !user.isActive || user.tokenVersion !== payload.tokenVersion) {
       return { ok: false, status: 401, message: "Not authenticated" };
+    }
+    if (require2faUnmet(user.role, user.twoFactorEnabled)) {
+      return TWO_FA_REQUIRED_RESULT;
     }
     if (!user.doctorId) {
       return {
@@ -142,10 +166,21 @@ export async function verifyClinicalReadAccess(
   try {
     const user = await prisma.user.findUnique({
       where: { id: payload.sub },
-      select: { id: true, email: true, isActive: true, role: true, doctorId: true, tokenVersion: true },
+      select: {
+        id: true,
+        email: true,
+        isActive: true,
+        role: true,
+        doctorId: true,
+        tokenVersion: true,
+        twoFactorEnabled: true,
+      },
     });
     if (!user || !user.isActive || user.tokenVersion !== payload.tokenVersion) {
       return { ok: false, status: 401, message: "Not authenticated" };
+    }
+    if (require2faUnmet(user.role, user.twoFactorEnabled)) {
+      return TWO_FA_REQUIRED_RESULT;
     }
     if (user.role === "DOCTOR" && !user.doctorId) {
       return {

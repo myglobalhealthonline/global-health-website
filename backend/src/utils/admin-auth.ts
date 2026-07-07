@@ -1,5 +1,6 @@
 import { env } from "../config/env.js";
 import type { FastifyRequest } from "fastify";
+import { prisma } from "../db/prisma.js";
 import { evaluateAdminAccess, type AdminAccessResult } from "./admin-access-evaluator.js";
 import { verifyAuthToken } from "./auth-session.js";
 
@@ -11,12 +12,35 @@ export async function verifyAdminAccess(request: FastifyRequest): Promise<AdminA
   if (payload?.role) {
     sessionRole = payload.role;
   }
-  return evaluateAdminAccess({
+  const result = evaluateAdminAccess({
     sessionRole,
     authorizationHeader: request.headers.authorization,
     expectedToken: env.ADMIN_API_TOKEN,
     tokenFallbackEnabled: env.ADMIN_TOKEN_FALLBACK_ENABLED,
   });
+  // Gate is a no-op (zero DB cost) unless the operator opted the session's
+  // role into REQUIRE_2FA_FOR_ROLES — default empty, so this block never
+  // runs for any role today. Only applies to the session path: a
+  // token-fallback admin has no user row for 2FA to check.
+  if (
+    result.ok &&
+    result.method === "session" &&
+    payload &&
+    env.REQUIRE_2FA_FOR_ROLES.has(payload.role)
+  ) {
+    const user = await prisma.user.findUnique({
+      where: { id: payload.sub },
+      select: { twoFactorEnabled: true },
+    });
+    if (!user?.twoFactorEnabled) {
+      return {
+        ok: false,
+        status: 403,
+        message: "Two-factor authentication is required for this role. Enroll TOTP in account security settings before continuing.",
+      };
+    }
+  }
+  return result;
 }
 
 /**

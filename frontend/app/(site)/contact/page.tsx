@@ -1,4 +1,3 @@
-import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import type { Metadata } from "next";
 import { SITE_NAME } from "@/lib/constants";
 import { ContactForm } from "@/components/forms/ContactForm";
@@ -7,6 +6,7 @@ import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import { Mail, Clock, AlertTriangle, ShieldCheck, BadgeCheck, MessageSquare } from "lucide-react";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 
 export const metadata: Metadata = {
   title: `Contact us | ${SITE_NAME}`,

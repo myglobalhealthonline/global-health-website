@@ -70,7 +70,10 @@ const adminSubscriptionsRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  app.post("/api/admin/subscriptions/:id/adjust-credits", async (request, reply) => {
+  app.post(
+    "/api/admin/subscriptions/:id/adjust-credits",
+    { config: { rateLimit: { max: 10, timeWindow: "1 minute" } } },
+    async (request, reply) => {
     // Money mutation — SUPER_ADMIN only (defense in depth for the frontend
     // gate on capabilities.canAdjustCredits above). A mandatory reason
     // (note), a hidden override panel, a confirm step, and the audit row
@@ -123,7 +126,8 @@ const adminSubscriptionsRoute: FastifyPluginAsync = async (app) => {
     } catch (error) {
       return handleError(app, reply, error);
     }
-  });
+    },
+  );
 
   // Resync (§6.4): re-fetch the live provider subscription and monotonically
   // reconcile status/period into our row (reuses the webhook guard). Drift
@@ -169,7 +173,10 @@ const adminSubscriptionsRoute: FastifyPluginAsync = async (app) => {
   // Issue a refund (D17 guard runs first; reconciliation claws back unused
   // credits + cancels). reconcileRefund records the SUBSCRIPTION_REFUNDED audit
   // with the admin as actor.
-  app.post("/api/admin/subscriptions/:id/refund", async (request, reply) => {
+  app.post(
+    "/api/admin/subscriptions/:id/refund",
+    { config: { rateLimit: { max: 10, timeWindow: "1 minute" } } },
+    async (request, reply) => {
     const auth = await requireManageSubscriptions(request, reply);
     if (!auth) return;
     // Money mutation — same SUPER_ADMIN bar as adjust-credits (§4): a refund
@@ -189,7 +196,8 @@ const adminSubscriptionsRoute: FastifyPluginAsync = async (app) => {
     } catch (error) {
       return handleError(app, reply, error);
     }
-  });
+    },
+  );
 };
 
 export default adminSubscriptionsRoute;

@@ -75,19 +75,33 @@ async function tickDailyReminders(log: Logger) {
 }
 
 export function startInternalScheduler(log: Logger) {
+  // Default ON unless explicitly disabled: single-replica deployments (today's
+  // setup) need zero config, while horizontal scaling can set
+  // RUN_SCHEDULER=false on extra replicas to avoid duplicate cron work (no
+  // distributed lock exists yet).
+  if (process.env.RUN_SCHEDULER === "false") {
+    log.info("[cron] internal scheduler disabled via RUN_SCHEDULER=false");
+    return;
+  }
+
   setOpsAlertLogger({ warn: (m) => log.info(m), error: (m) => log.error(m) });
   log.info(
     "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h",
   );
 
-  // Run the safe ticks once on boot so a deploy doesn't wait a full interval.
-  // Renewal reminders are NOT run on boot (the 24h dedup window means a deploy
-  // mid-window could double-send) — they fire only on the daily interval, and
-  // POST /api/cron/subscriptions/daily remains the robust external trigger.
-  void tickPrePayment(log);
-  void tickPostPayment(log);
-  void tickSubscriptionOps(log);
-  void tickReconciliation(log);
+  // Random startup jitter so a rolling deploy's overlapping old/new processes
+  // don't fire their immediate boot ticks in lockstep.
+  const startupJitterMs = Math.random() * 5000;
+  setTimeout(() => {
+    // Run the safe ticks once on boot so a deploy doesn't wait a full interval.
+    // Renewal reminders are NOT run on boot (the 24h dedup window means a deploy
+    // mid-window could double-send) — they fire only on the daily interval, and
+    // POST /api/cron/subscriptions/daily remains the robust external trigger.
+    void tickPrePayment(log);
+    void tickPostPayment(log);
+    void tickSubscriptionOps(log);
+    void tickReconciliation(log);
+  }, startupJitterMs);
 
   setInterval(() => void tickPrePayment(log), PRE_PAYMENT_INTERVAL_MS);
   setInterval(() => void tickPostPayment(log), POST_PAYMENT_INTERVAL_MS);

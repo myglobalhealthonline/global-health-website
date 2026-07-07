@@ -421,47 +421,41 @@ function toAdminAppointment(record: AppointmentRecord): AdminAppointmentDetail {
   };
 }
 
-function buildAppointmentWhereClause(options: ListAppointmentsOptions): Prisma.Sql {
-  const parts: Prisma.Sql[] = [];
+function buildAppointmentWhereClause(options: ListAppointmentsOptions): Prisma.AppointmentWhereInput {
+  const where: Prisma.AppointmentWhereInput = {};
 
   if (options.status) {
-    // Compare as text so this is valid whether "status" is the enum
-    // ("AppointmentStatus") or still text during the conversion boot.
-    parts.push(Prisma.sql`a."status"::text = ${options.status}`);
+    where.status = options.status as PrismaAppointmentStatus;
   }
   if (options.countryCode) {
-    parts.push(Prisma.sql`a."countryCode" = ${options.countryCode}`);
+    where.countryCode = options.countryCode;
   }
   if (options.consultationType) {
-    parts.push(Prisma.sql`a."consultationType" = ${options.consultationType}`);
+    where.consultationType = options.consultationType;
   }
 
   const q = options.search?.trim();
   if (q && q.length > 0) {
     const term = q.slice(0, 120);
-    parts.push(Prisma.sql`(
-      strpos(lower(a."fullName"), lower(${term})) > 0
-      OR strpos(lower(a."email"), lower(${term})) > 0
-      OR strpos(lower(coalesce(a."phone", '')), lower(${term})) > 0
-    )`);
+    where.OR = [
+      { fullName: { contains: term, mode: "insensitive" } },
+      { email: { contains: term, mode: "insensitive" } },
+      { phone: { contains: term, mode: "insensitive" } },
+    ];
   }
 
-  // Doctor-name filter. Self-contained subquery on a."doctorId" (NOT the
-  // joined `d` alias) so the same WHERE works in both the COUNT query
-  // (no JOIN) and the SELECT query. Matches the doctor's full name and,
-  // when a login account is linked, their email. A NULL doctorId never
-  // satisfies `IN (...)`, so undoctored appointments drop out — exactly
-  // what "filter by doctor" means.
+  // Doctor-name filter. Relation filter on `doctor` (not a raw subquery) —
+  // a null doctorId never matches a relation filter, so undoctored
+  // appointments drop out exactly like the old `IN (...)` did.
   const dn = options.doctorName?.trim();
   if (dn && dn.length > 0) {
     const term = dn.slice(0, 120);
-    parts.push(Prisma.sql`a."doctorId" IN (
-      SELECT d2."id"
-      FROM "Doctor" d2
-      LEFT JOIN "User" u2 ON u2."doctorId" = d2."id"
-      WHERE strpos(lower(d2."fullName"), lower(${term})) > 0
-         OR strpos(lower(coalesce(u2."email", '')), lower(${term})) > 0
-    )`);
+    where.doctor = {
+      OR: [
+        { fullName: { contains: term, mode: "insensitive" } },
+        { loginUser: { email: { contains: term, mode: "insensitive" } } },
+      ],
+    };
   }
 
   // Date/time range. Match on the scheduled slot, or on createdAt when the
@@ -469,28 +463,26 @@ function buildAppointmentWhereClause(options: ListAppointmentsOptions): Prisma.S
   // booking without a slot still falls inside its booking day.
   const dateFrom = parseRangeBound(options.dateFrom, false);
   const dateTo = parseRangeBound(options.dateTo, true);
-  if (dateFrom && dateTo) {
-    parts.push(Prisma.sql`(
-      (a."scheduledAt" IS NOT NULL AND a."scheduledAt" BETWEEN ${dateFrom} AND ${dateTo})
-      OR (a."scheduledAt" IS NULL AND a."createdAt" BETWEEN ${dateFrom} AND ${dateTo})
-    )`);
-  } else if (dateFrom) {
-    parts.push(Prisma.sql`(
-      (a."scheduledAt" IS NOT NULL AND a."scheduledAt" >= ${dateFrom})
-      OR (a."scheduledAt" IS NULL AND a."createdAt" >= ${dateFrom})
-    )`);
-  } else if (dateTo) {
-    parts.push(Prisma.sql`(
-      (a."scheduledAt" IS NOT NULL AND a."scheduledAt" <= ${dateTo})
-      OR (a."scheduledAt" IS NULL AND a."createdAt" <= ${dateTo})
-    )`);
+  if (dateFrom || dateTo) {
+    const scheduledRange: Prisma.DateTimeFilter = {};
+    if (dateFrom) scheduledRange.gte = dateFrom;
+    if (dateTo) scheduledRange.lte = dateTo;
+    const createdRange: Prisma.DateTimeFilter = {};
+    if (dateFrom) createdRange.gte = dateFrom;
+    if (dateTo) createdRange.lte = dateTo;
+
+    where.AND = [
+      ...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []),
+      {
+        OR: [
+          { scheduledAt: { not: null, ...scheduledRange } },
+          { scheduledAt: null, createdAt: createdRange },
+        ],
+      },
+    ];
   }
 
-  if (parts.length === 0) {
-    return Prisma.sql``;
-  }
-
-  return Prisma.sql`WHERE ${Prisma.join(parts, " AND ")}`;
+  return where;
 }
 
 export async function listAppointments(options: ListAppointmentsOptions): Promise<ListAppointmentsResult> {
@@ -499,48 +491,36 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
   const where = buildAppointmentWhereClause(options);
 
   try {
-    const countRows = await prisma.$queryRaw<[{ count: bigint }]>(Prisma.sql`
-      SELECT COUNT(*)::bigint AS count
-      FROM "Appointment" a
-      ${where}
-    `);
-    const total = Number(countRows[0]?.count ?? 0n);
+    const total = await prisma.appointment.count({ where });
     const totalPages = total === 0 ? 0 : Math.ceil(total / pageSize);
     const effectivePage = totalPages === 0 ? page : Math.min(page, totalPages);
     const offset = (effectivePage - 1) * pageSize;
 
-    const rows = await prisma.$queryRaw<
-      Array<
-        AppointmentRecord & {
-          doctorId: string | null;
-          doctorName: string | null;
-        }
-      >
-    >(Prisma.sql`
-      SELECT
-        a."id",
-        a."countryCode",
-        a."consultationType",
-        a."fullName",
-        a."email",
-        a."phone",
-        a."notes",
-        a."status",
-        a."scheduledAt",
-        a."meetingUrl",
-        a."paymentStatus",
-        a."amountCents",
-        a."currencyCode",
-        a."createdAt",
-        a."updatedAt",
-        a."doctorId",
-        d."fullName" AS "doctorName"
-      FROM "Appointment" a
-      LEFT JOIN "Doctor" d ON d."id" = a."doctorId"
-      ${where}
-      ORDER BY a."createdAt" DESC
-      LIMIT ${pageSize} OFFSET ${offset}
-    `);
+    const rows = await prisma.appointment.findMany({
+      where,
+      select: {
+        id: true,
+        countryCode: true,
+        consultationType: true,
+        fullName: true,
+        email: true,
+        phone: true,
+        notes: true,
+        status: true,
+        scheduledAt: true,
+        meetingUrl: true,
+        paymentStatus: true,
+        amountCents: true,
+        currencyCode: true,
+        createdAt: true,
+        updatedAt: true,
+        doctorId: true,
+        doctor: { select: { fullName: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: pageSize,
+      skip: offset,
+    });
 
     const items = rows.map((row) => ({
       id: row.id,
@@ -550,11 +530,11 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
       email: row.email,
       phone: row.phone,
       notesPreview: row.notes ? row.notes.slice(0, 140) : null,
-      status: row.status,
+      status: row.status as string,
       createdAt: row.createdAt.toISOString(),
       scheduledAt: row.scheduledAt ? row.scheduledAt.toISOString() : null,
       doctorId: row.doctorId,
-      doctorName: row.doctorName,
+      doctorName: row.doctor?.fullName ?? null,
     }));
 
     return {

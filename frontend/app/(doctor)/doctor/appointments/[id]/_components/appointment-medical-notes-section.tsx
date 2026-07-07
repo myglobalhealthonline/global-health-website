@@ -7,6 +7,7 @@ import {
   parseDoctorApiJson,
 } from "@/lib/doctor-api-client";
 import { HistorySection, SessionTypeBadge, type SessionMeta } from "@/app/(doctor)/doctor/_components/doctor-document-tables";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 type MedicalNoteRow = {
   id: string;
@@ -135,7 +136,8 @@ export function AppointmentMedicalNotesSection({
           No medical notes yet for this appointment.
         </p>
       ) : (
-        <div className="overflow-x-auto">
+        <>
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[640px] text-[13px]">
             <thead>
               <tr className={TABLE_HEAD}>
@@ -186,6 +188,43 @@ export function AppointmentMedicalNotesSection({
             </tbody>
           </table>
         </div>
+        <div className="grid gap-3 p-3 md:hidden">
+          {notes.map((n) => (
+            <PortalMobileCard
+              key={n.id}
+              title={session.orderNumber}
+              subtitle={`${session.sessionDate} at ${session.sessionTime}`}
+              statusPill={<SessionTypeBadge label={session.consultationTypeLabel} />}
+              meta={[{ label: "Doctor", value: n.createdByName }]}
+              actions={
+                <button
+                  type="button"
+                  onClick={() => setExpandedId(expandedId === n.id ? null : n.id)}
+                  className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)]"
+                >
+                  {expandedId === n.id ? "Hide note" : "View note"}
+                  {expandedId === n.id ? (
+                    <ChevronDown className="size-3.5" />
+                  ) : (
+                    <ChevronRight className="size-3.5" />
+                  )}
+                </button>
+              }
+            >
+              {expandedId === n.id ? (
+                <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--portal-text)]">
+                  {n.content}
+                </p>
+              ) : (
+                <p className="mt-2 truncate text-[13px] text-[var(--portal-muted)]">
+                  {n.content.slice(0, 80)}
+                  {n.content.length > 80 ? "…" : ""}
+                </p>
+              )}
+            </PortalMobileCard>
+          ))}
+        </div>
+        </>
       )}
     </HistorySection>
   );

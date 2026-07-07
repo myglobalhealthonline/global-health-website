@@ -15,13 +15,28 @@
  */
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import dynamic from "next/dynamic";
 import { ArrowRight, ShieldCheck, Lock, Globe2, FileCheck2, Search } from "lucide-react";
 import type { CountryConfig } from "@/data/countries";
 import { supportedLocaleCodes, type LocaleCode } from "@/lib/i18n/types";
 import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
 import { countrySlug, registerCountrySlugs } from "@/lib/routing/country-slug";
-import { Globe, type GlobeArc, type GlobeMarker } from "@/components/ui/cobe-globe";
+import type { GlobeArc, GlobeMarker } from "@/components/ui/cobe-globe";
 import styles from "./CountryEntryGate.module.css";
+
+// WebGL/canvas — browser-only, no server-rendered fallback worth paying for.
+// Static circle placeholder holds the globe's aspect-square footprint so the
+// panel layout doesn't shift when the real canvas mounts.
+const Globe = dynamic(() => import("@/components/ui/cobe-globe").then((m) => m.Globe), {
+  ssr: false,
+  loading: () => (
+    <div
+      aria-hidden
+      className="aspect-square w-full rounded-full"
+      style={{ background: "radial-gradient(circle at 35% 32%, #143a2c, #08211b 72%)" }}
+    />
+  ),
+});
 
 export type EntryGateCopy = {
   eyebrow: string;

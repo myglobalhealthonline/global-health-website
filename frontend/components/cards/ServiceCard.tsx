@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CalendarDays, Clock, Tag, Stethoscope } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
@@ -124,11 +125,16 @@ export function ServiceCard({
           {overlay}
           {/* Photo */}
           <div className="relative overflow-hidden" style={{ aspectRatio: "16 / 10" }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={imageSrc}
               alt={title}
-              className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+              fill
+              sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
+              unoptimized={
+                /^https?:\/\//i.test(imageSrc) &&
+                !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(imageSrc)
+              }
+              className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             />
             {/* Bottom fade so the body edge reads clean */}
             <div
@@ -300,8 +306,14 @@ export function ServiceCard({
           className="relative w-full overflow-hidden"
           style={{ aspectRatio: "16 / 9", background: "var(--color-background-soft)" }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={imageSrc} alt={title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <Image
+            src={imageSrc}
+            alt={title}
+            fill
+            sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
+            unoptimized={/^https?:\/\//i.test(imageSrc) || imageSrc.startsWith("/api/media/")}
+            className="object-cover"
+          />
         </div>
       ) : null}
       <div className="relative flex h-full flex-col p-6 sm:p-7">

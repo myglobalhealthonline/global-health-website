@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ClipboardList, Plus, Trash2 } from "lucide-react";
 import type { ConsultationServiceLineDto } from "@/lib/api/doctor-api";
+import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 function formatPrice(cents: number | null, code: string | null) {
   if (cents == null) return "—";
@@ -133,7 +134,8 @@ export function ServicesUsedList({
           </p>
         </div>
       ) : (
-        <div className="gh-doctor-table-wrap overflow-x-auto">
+        <>
+        <div className="hidden gh-doctor-table-wrap overflow-x-auto md:block">
           <table className="w-full min-w-[620px] text-[13px]">
           <thead>
             <tr className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
@@ -188,6 +190,44 @@ export function ServicesUsedList({
           </tbody>
           </table>
         </div>
+        <div className="grid gap-3 md:hidden">
+          {items.map((r) => (
+            <PortalMobileCard
+              key={r.id}
+              title={r.service?.name ?? r.customLabel ?? "—"}
+              meta={[
+                { label: "Qty", value: r.quantity },
+                { label: "Unit", value: formatPrice(r.unitPriceCents, r.currencyCode) },
+                {
+                  label: "Line total",
+                  value: formatPrice(
+                    r.unitPriceCents != null ? r.unitPriceCents * r.quantity : null,
+                    r.currencyCode,
+                  ),
+                },
+              ]}
+              actions={
+                locked ? null : (
+                  <button
+                    type="button"
+                    onClick={() => remove(r.id)}
+                    className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
+                    aria-label="Remove line"
+                  >
+                    <Trash2 className="size-3.5" /> Remove
+                  </button>
+                )
+              }
+            />
+          ))}
+          {total > 0 ? (
+            <div className="flex items-center justify-between px-1 text-[13px] font-semibold">
+              <span>Total</span>
+              <span className="font-mono">{formatPrice(total, currency)}</span>
+            </div>
+          ) : null}
+        </div>
+        </>
       )}
 
       {locked ? null : (

@@ -7,7 +7,6 @@ import { countries, getCountryByCode } from "@/data/countries";
 import { getCountryDoctors, getCountryServices } from "@/lib/content/get-country-collections";
 import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-country-trust";
 import { VerifiedProfessionals } from "@/components/sections/VerifiedProfessionals";
-import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import {
@@ -30,6 +29,7 @@ import { languageKey, languageLabel } from "@/lib/content/languages";
 import { SITE_NAME } from "@/lib/constants";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 
 type Params = { country: string; lang: string };
 type SearchParams = {

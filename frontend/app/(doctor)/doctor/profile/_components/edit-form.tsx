@@ -204,7 +204,10 @@ export function DoctorProfileEditForm({
   // abstraction — this page's ~10 useState fields don't warrant one.
   // Bio (RichTextHtmlField) is uncontrolled/read-on-submit, so it's not
   // included in the snapshot; upgrade path if that needs coverage too.
-  const initialProfileSnapshot = useRef(
+  // useState (not useRef) so the dirty comparison below can read the
+  // snapshot during render — reading ref.current at render time is a
+  // react-hooks/refs violation since refs can change without a re-render.
+  const [initialProfileSnapshot, setInitialProfileSnapshot] = useState(() =>
     JSON.stringify({
       fullName: initial.fullName,
       qualifications: initialQualificationsText,
@@ -224,7 +227,7 @@ export function DoctorProfileEditForm({
       chamberEntity,
       registrationNumber,
       registrationDivision,
-    }) !== initialProfileSnapshot.current;
+    }) !== initialProfileSnapshot;
 
   /* ── Payout form ──────────────────────────────────── */
   const [payoutPending, startPayoutTransition] = useTransition();
@@ -237,7 +240,7 @@ export function DoctorProfileEditForm({
   const [bicFieldError, setBicFieldError] = useState<string | null>(null);
   const [ibanFieldError, setIbanFieldError] = useState<string | null>(null);
 
-  const initialPayoutSnapshot = useRef(
+  const [initialPayoutSnapshot, setInitialPayoutSnapshot] = useState(() =>
     JSON.stringify({
       bankAccountHolder: activeMarket?.bank.accountHolder ?? initial.bankAccountHolder,
       bankBic: activeMarket?.bank.bic ?? initial.bankBic,
@@ -246,7 +249,7 @@ export function DoctorProfileEditForm({
   );
   const isPayoutDirty =
     JSON.stringify({ bankAccountHolder, bankBic, bankIban }) !==
-    initialPayoutSnapshot.current;
+    initialPayoutSnapshot;
 
   useEffect(() => {
     function onBeforeUnload(e: BeforeUnloadEvent) {
@@ -287,20 +290,24 @@ export function DoctorProfileEditForm({
     // Re-baseline dirty snapshots against the freshly synced values so a
     // successful save (which triggers router.refresh() -> new `initial`)
     // clears the dirty flag instead of comparing against stale state.
-    initialProfileSnapshot.current = JSON.stringify({
-      fullName: initial.fullName,
-      qualifications: initialQualificationsText,
-      languages: initialLanguages,
-      whatsappNumber: initial.whatsappNumber,
-      chamberEntity: activeMarket?.chamberEntity ?? "",
-      registrationNumber: activeMarket?.registrationNumber ?? "",
-      registrationDivision: activeMarket?.division ?? "",
-    });
-    initialPayoutSnapshot.current = JSON.stringify({
-      bankAccountHolder: activeMarket?.bank.accountHolder ?? initial.bankAccountHolder,
-      bankBic: activeMarket?.bank.bic ?? initial.bankBic,
-      bankIban: "",
-    });
+    setInitialProfileSnapshot(
+      JSON.stringify({
+        fullName: initial.fullName,
+        qualifications: initialQualificationsText,
+        languages: initialLanguages,
+        whatsappNumber: initial.whatsappNumber,
+        chamberEntity: activeMarket?.chamberEntity ?? "",
+        registrationNumber: activeMarket?.registrationNumber ?? "",
+        registrationDivision: activeMarket?.division ?? "",
+      }),
+    );
+    setInitialPayoutSnapshot(
+      JSON.stringify({
+        bankAccountHolder: activeMarket?.bank.accountHolder ?? initial.bankAccountHolder,
+        bankBic: activeMarket?.bank.bic ?? initial.bankBic,
+        bankIban: "",
+      }),
+    );
   }, [
     initial.fullName,
     initialQualificationsText,

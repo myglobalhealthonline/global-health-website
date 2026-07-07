@@ -1,4 +1,3 @@
-import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CalendarClock } from "lucide-react";
@@ -28,6 +27,7 @@ import type { CountryTrust } from "@/lib/content/get-country-trust";
 import { formatPriceRounded } from "@/lib/format-currency";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 
 type DoctorProfileRouteParams = {
   doctorSlug: string;

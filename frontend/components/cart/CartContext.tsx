@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
@@ -96,11 +97,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (res.ok) setCart(res.data);
   }, []);
 
-  return (
-    <CartContext.Provider value={{ cart, loading, refresh, add, update, patchItem, remove, clear }}>
-      {children}
-    </CartContext.Provider>
+  const value = useMemo<CartContextValue>(
+    () => ({ cart, loading, refresh, add, update, patchItem, remove, clear }),
+    [cart, loading, refresh, add, update, patchItem, remove, clear],
   );
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
 export function useCart() {

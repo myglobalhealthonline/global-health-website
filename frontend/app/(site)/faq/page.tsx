@@ -1,4 +1,3 @@
-import { DoctifyReviewsSection } from "@/components/sections/DoctifyReviews";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
@@ -9,6 +8,7 @@ import { FAQTabs } from "@/components/sections/FAQTabs";
 import { faqJsonLd } from "@/lib/seo/structured-data";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 
 export const metadata: Metadata = {
   title: `FAQ | ${SITE_NAME}`,

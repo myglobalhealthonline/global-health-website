@@ -401,6 +401,15 @@ export async function assertMedicalAccess(
     if (!actor.twoFactorVerifiedAt) {
       result = { allowed: false, denyReason: "DOCTOR_2FA_REQUIRED" };
       await writeMedicalAccessLog(ctx, result, false);
+      // REQUIRE_2FA_FOR_ROLES (default empty — never true today) hard-rejects
+      // this specific deny even in MEDICAL_ACCESS_ENFORCE shadow mode, so a
+      // role deliberately opted in can't silently fall through unverified.
+      // Unset/empty flag => identical to the pre-existing denyDecision() path.
+      if (env.REQUIRE_2FA_FOR_ROLES.has(actor.role)) {
+        throw new MedicalAccessDeniedError(
+          "DOCTOR_2FA_REQUIRED: enroll and verify TOTP two-factor authentication before accessing medical records.",
+        );
+      }
       return denyDecision(result);
     }
 

@@ -5,8 +5,8 @@ import {
   type AdminPageDto,
 } from "@/lib/admin/admin-api";
 import { ManagedImageField } from "../../_components/managed-image-field";
-import { RichTextHtmlField } from "../../_components/rich-text-html-field";
 import { FormSection } from "@/components/FormSection";
+import { RichTextHtmlFieldLazy as RichTextHtmlField } from "../../_components/rich-text-html-field-lazy";
 
 type Props = {
   countries: AdminCountryDto[];

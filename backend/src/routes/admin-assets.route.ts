@@ -150,7 +150,11 @@ const adminAssetsRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  app.delete("/api/admin/assets/:id/purge", async (request, reply) => {
+  app.delete(
+    "/api/admin/assets/:id/purge",
+    // Hard delete — irreversible.
+    { config: { rateLimit: { max: 10, timeWindow: "1 minute" } } },
+    async (request, reply) => {
     const params = assetIdParamsSchema.safeParse(request.params);
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid asset id", params.error.flatten()));
@@ -165,7 +169,8 @@ const adminAssetsRoute: FastifyPluginAsync = async (app) => {
     } catch (error) {
       return handleAssetWriteError(app, reply, error);
     }
-  });
+    },
+  );
 };
 
 export default adminAssetsRoute;

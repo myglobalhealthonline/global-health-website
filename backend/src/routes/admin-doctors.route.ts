@@ -201,7 +201,10 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  app.delete("/api/admin/doctors/:id", async (request, reply) => {
+  app.delete(
+    "/api/admin/doctors/:id",
+    { config: { rateLimit: { max: 10, timeWindow: "1 minute" } } },
+    async (request, reply) => {
     const params = doctorIdParamsSchema.safeParse(request.params);
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid doctor id", params.error.flatten()));
@@ -225,7 +228,8 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
     } catch (error) {
       return handleDoctorWriteError(app, reply, error);
     }
-  });
+    },
+  );
 
   /**
    * Admin invites a doctor to the portal by email. Idempotent: re-running
@@ -238,7 +242,11 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
    *   - Otherwise we create-or-link the User to this Doctor and issue a
    *     7-day password-set token.
    */
-  app.post("/api/admin/doctors/:id/invite", async (request, reply) => {
+  app.post(
+    "/api/admin/doctors/:id/invite",
+    // Sends an email + mints a 7-day password-set token — throttle re-invite spam.
+    { config: { rateLimit: { max: 10, timeWindow: "1 minute" } } },
+    async (request, reply) => {
     const params = doctorIdParamsSchema.safeParse(request.params);
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid doctor id", params.error.flatten()));
@@ -396,7 +404,8 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not send invite"));
     }
-  });
+    },
+  );
 
   /**
    * Pending doctor-initiated service requests awaiting approval. Drives the
@@ -548,7 +557,11 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
     },
   );
 
-  app.delete("/api/admin/doctors/:id/purge", async (request, reply) => {
+  app.delete(
+    "/api/admin/doctors/:id/purge",
+    // Hard delete — irreversible.
+    { config: { rateLimit: { max: 10, timeWindow: "1 minute" } } },
+    async (request, reply) => {
     const params = doctorIdParamsSchema.safeParse(request.params);
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid doctor id", params.error.flatten()));
@@ -587,7 +600,8 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
     } catch (error) {
       return handleDoctorWriteError(app, reply, error);
     }
-  });
+    },
+  );
 };
 
 export default adminDoctorsRoute;

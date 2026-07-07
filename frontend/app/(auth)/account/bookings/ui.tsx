@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
@@ -145,6 +145,16 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
   const [cancelError, setCancelError] = useState<string | null>(null);
   const [payingId, setPayingId] = useState<string | null>(null);
   const [payError, setPayError] = useState<string | null>(null);
+  const [paymentRedirectUrl, setPaymentRedirectUrl] = useState<string | null>(null);
+
+  // Navigation is a side effect, not a render/handler-body concern — run it
+  // here so it fires exactly once per URL rather than inline during the
+  // click handler.
+  useEffect(() => {
+    if (paymentRedirectUrl) {
+      window.location.href = paymentRedirectUrl;
+    }
+  }, [paymentRedirectUrl]);
 
   async function onConfirmCancel() {
     if (!cancelTarget) return;
@@ -164,10 +174,12 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
     setPayingId(appointmentId);
     setPayError(null);
     const res = await fetchAppointmentPaymentUrl(appointmentId);
-    setPayingId(null);
     if (res.ok && res.data.url) {
-      window.location.href = res.data.url;
+      // payingId stays set (spinner keeps showing) through the redirect —
+      // the effect above performs the actual navigation.
+      setPaymentRedirectUrl(res.data.url);
     } else {
+      setPayingId(null);
       setPayError(!res.ok ? res.message : "Could not start payment.");
     }
   }

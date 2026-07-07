@@ -1,22 +1,23 @@
-"use client";
-
 /**
- * Public site footer. Country/lang aware via `usePathname()` — Care links
- * resolve to the active country/lang scope when the user is inside a country,
- * else they fall through to the entry gate at `/`.
+ * Public site footer. Country/lang aware via the request pathname parsed
+ * server-side by the owning (site)/layout.tsx — Care links resolve to the
+ * active country/lang scope when the user is inside a country, else they
+ * fall through to the entry gate at `/`.
  *
  * Care links resolve to the live public country pages that now exist:
  * consultations, prescriptions, tests, and doctors.
+ *
+ * Server Component: no `usePathname()` of its own — the parsed pathname
+ * comes in as a prop so this file doesn't force a client boundary.
  */
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { countries as staticCountries, type CountryConfig } from "@/data/countries";
 import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
 } from "@/lib/routing/country-slug";
-import { parseSitePath } from "@/lib/routing/path-rewrites";
+import type { ParsedSitePath } from "@/lib/routing/path-rewrites";
 import { buildBookHref } from "@/lib/routing/book-href";
 import type { PublicCountryFooter } from "@/lib/content/get-country-footers";
 import type { SiteNavigationData } from "@/data/navigation";
@@ -65,15 +66,16 @@ export function SiteFooter({
   countryFeatures,
   countryFooters,
   countries,
+  parsed,
 }: {
   siteName: string;
   navigation: SiteNavigationData;
   countryFeatures?: Record<string, string[] | undefined>;
   countryFooters?: Record<string, PublicCountryFooter | null>;
   countries?: CountryConfig[];
+  /** Request pathname, parsed server-side (from `x-gh-pathname`). */
+  parsed: ParsedSitePath;
 }) {
-  const pathname = usePathname() || "/";
-  const parsed = parseSitePath(pathname);
   const year = new Date().getFullYear();
 
   const careBase =

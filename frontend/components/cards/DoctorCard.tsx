@@ -111,7 +111,12 @@ export function DoctorCard({
   const trimmedImage = imageSrc?.trim();
   const hasImage = Boolean(trimmedImage);
   const src = trimmedImage ?? "";
-  const unoptimized = /^https?:\/\//i.test(src) || src.startsWith("/api/media/");
+  // /api/media/* is a same-origin rewrite and images.unsplash.com /
+  // images.pexels.com are allow-listed in next.config.ts remotePatterns —
+  // only a genuinely different remote host needs unoptimized.
+  const unoptimized =
+    /^https?:\/\//i.test(src) &&
+    !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(src);
   const initialsLabel = initials?.trim() || nameToInitials(name);
   // Doctor phone (WhatsApp) is clinic↔clinician contact only — never shown on
   // public cards (the public API no longer sends the number either).

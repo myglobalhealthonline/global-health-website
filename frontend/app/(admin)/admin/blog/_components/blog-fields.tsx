@@ -1,7 +1,7 @@
 import { ADMIN_BLOG_LOCALES, type AdminBlogDto } from "@/lib/admin/admin-api";
 import { ManagedImageField } from "../../_components/managed-image-field";
-import { HtmlBodyField } from "./html-body-field";
 import { FormSection } from "@/components/FormSection";
+import { HtmlBodyFieldLazy as HtmlBodyField } from "./html-body-field-lazy";
 
 type Props = {
   post?: AdminBlogDto | null;

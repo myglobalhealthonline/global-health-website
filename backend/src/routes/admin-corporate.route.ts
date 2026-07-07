@@ -53,6 +53,24 @@ async function localAdminCountryFilter(request: FastifyRequest): Promise<string[
   return user?.allowedCountryFolders ?? [];
 }
 
+const paginationQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(25),
+});
+
+const corporateListQuerySchema = paginationQuerySchema.extend({
+  query: z
+    .string()
+    .trim()
+    .max(120)
+    .optional()
+    .transform((v) => (v === "" || v === undefined ? undefined : v)),
+  status: z.preprocess(
+    (v) => (v === "" || v === undefined || v === null ? undefined : v),
+    z.string().trim().min(1).optional(),
+  ),
+});
+
 const companyInputSchema = z.object({
   name: z.string().trim().min(1).max(240),
   registrationNumber: z.string().trim().max(120).optional(),
@@ -119,6 +137,8 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
   }
 
   // ── Plans + rules ──────────────────────────────────────────────────────
+  // ponytail: unpaginated — plans are an admin-configured catalog (a
+  // handful of pricing tiers), not a growth table. Paginate if that changes.
   app.get("/api/admin/corporate/plans", async () => {
     const plans = await prisma.corporatePlan.findMany({
       include: { benefitRules: true, _count: { select: { companies: true } } },
@@ -181,33 +201,47 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
   });
 
   // ── Companies ──────────────────────────────────────────────────────────
-  app.get("/api/admin/corporate/companies", async (request) => {
-    const query = request.query as { query?: string; status?: string };
+  app.get("/api/admin/corporate/companies", async (request, reply) => {
+    const query = corporateListQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid companies query", query.error.flatten()));
+    }
+    const { page, pageSize, query: search, status } = query.data;
     const localFolders = await localAdminCountryFilter(request);
-    const companies = await prisma.corporateCompany.findMany({
-      where: {
-        ...(localFolders ? { countryCode: { in: localFolders } } : {}),
-        ...(query.status ? { status: query.status as never } : {}),
-        ...(query.query ? { name: { contains: query.query, mode: "insensitive" } } : {}),
-      },
-      include: {
-        plan: { select: { name: true, annualPricePerEmployeeCents: true, currencyCode: true } },
-        _count: { select: { employees: true, beneficiaries: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    const where = {
+      ...(localFolders ? { countryCode: { in: localFolders } } : {}),
+      ...(status ? { status: status as never } : {}),
+      ...(search ? { name: { contains: search, mode: "insensitive" as const } } : {}),
+    };
+    const [total, companies] = await prisma.$transaction([
+      prisma.corporateCompany.count({ where }),
+      prisma.corporateCompany.findMany({
+        where,
+        include: {
+          plan: { select: { name: true, annualPricePerEmployeeCents: true, currencyCode: true } },
+          _count: { select: { employees: true, beneficiaries: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
+    const items = companies.map((c) => ({
+      id: c.id,
+      name: c.name,
+      countryCode: c.countryCode,
+      status: c.status,
+      planName: c.plan.name,
+      employeeCount: c._count.employees,
+      beneficiaryCount: c._count.beneficiaries,
+      hasAdminLogin: Boolean(c.adminUserId),
+      createdAt: c.createdAt.toISOString(),
+    }));
     return okResponse({
-      companies: companies.map((c) => ({
-        id: c.id,
-        name: c.name,
-        countryCode: c.countryCode,
-        status: c.status,
-        planName: c.plan.name,
-        employeeCount: c._count.employees,
-        beneficiaryCount: c._count.beneficiaries,
-        hasAdminLogin: Boolean(c.adminUserId),
-        createdAt: c.createdAt.toISOString(),
-      })),
+      // Back-compat: existing callers read `.companies` directly.
+      companies: items,
+      items,
+      pagination: { page, pageSize, total, totalPages: total === 0 ? 0 : Math.ceil(total / pageSize) },
     });
   });
 
@@ -304,7 +338,10 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
     return okResponse({ id });
   });
 
-  app.post("/api/admin/corporate/companies/:id/admin-invite", async (request, reply) => {
+  app.post(
+    "/api/admin/corporate/companies/:id/admin-invite",
+    { config: { rateLimit: { max: 10, timeWindow: "1 minute" } } },
+    async (request, reply) => {
     if (!(await requireWriteActor(request))) {
       return reply.status(403).send(errorResponse("Read-only access"));
     }
@@ -320,11 +357,17 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
         .send(errorResponse(error instanceof Error ? error.message : "Admin invite failed"));
     }
     return okResponse({ id });
-  });
+    },
+  );
 
   // ── Employees + beneficiaries ──────────────────────────────────────────
   app.get("/api/admin/corporate/companies/:id/employees", async (request, reply) => {
     const { id } = request.params as { id: string };
+    const query = paginationQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid employees query", query.error.flatten()));
+    }
+    const { page, pageSize } = query.data;
     const localFolders = await localAdminCountryFilter(request);
     if (localFolders) {
       const scoped = await prisma.corporateCompany.findFirst({
@@ -333,12 +376,24 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
       });
       if (!scoped) return reply.status(404).send(errorResponse("Company not found"));
     }
-    const employees = await prisma.corporateEmployee.findMany({
-      where: { companyId: id },
-      include: { _count: { select: { beneficiaries: { where: { status: { not: "REMOVED" } } } } } },
-      orderBy: { createdAt: "desc" },
+    const where = { companyId: id };
+    const [total, employees] = await prisma.$transaction([
+      prisma.corporateEmployee.count({ where }),
+      prisma.corporateEmployee.findMany({
+        where,
+        include: { _count: { select: { beneficiaries: { where: { status: { not: "REMOVED" } } } } } },
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
+    const items = employees.map(serializeEmployee);
+    return okResponse({
+      // Back-compat: existing callers read `.employees` directly.
+      employees: items,
+      items,
+      pagination: { page, pageSize, total, totalPages: total === 0 ? 0 : Math.ceil(total / pageSize) },
     });
-    return okResponse({ employees: employees.map(serializeEmployee) });
   });
 
   app.post("/api/admin/corporate/companies/:id/employees", async (request, reply) => {
@@ -399,13 +454,30 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
     return okResponse({ id, status });
   });
 
-  app.get("/api/admin/corporate/companies/:id/beneficiaries", async (request) => {
+  app.get("/api/admin/corporate/companies/:id/beneficiaries", async (request, reply) => {
     const { id } = request.params as { id: string };
-    const beneficiaries = await prisma.corporateBeneficiary.findMany({
-      where: { companyId: id },
-      orderBy: { createdAt: "desc" },
+    const query = paginationQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid beneficiaries query", query.error.flatten()));
+    }
+    const { page, pageSize } = query.data;
+    const where = { companyId: id };
+    const [total, beneficiaries] = await prisma.$transaction([
+      prisma.corporateBeneficiary.count({ where }),
+      prisma.corporateBeneficiary.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
+    const items = beneficiaries.map(serializeBeneficiary);
+    return okResponse({
+      // Back-compat: existing callers read `.beneficiaries` directly.
+      beneficiaries: items,
+      items,
+      pagination: { page, pageSize, total, totalPages: total === 0 ? 0 : Math.ceil(total / pageSize) },
     });
-    return okResponse({ beneficiaries: beneficiaries.map(serializeBeneficiary) });
   });
 
   app.patch("/api/admin/corporate/beneficiaries/:id", async (request, reply) => {
@@ -431,14 +503,31 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
   });
 
   // ── Requests ───────────────────────────────────────────────────────────
-  app.get("/api/admin/corporate/companies/:id/requests", async (request) => {
+  app.get("/api/admin/corporate/companies/:id/requests", async (request, reply) => {
     const { id } = request.params as { id: string };
-    const requests = await prisma.corporateServiceRequest.findMany({
-      where: { companyId: id },
-      include: { employee: { select: { firstName: true, lastName: true, email: true } } },
-      orderBy: { createdAt: "desc" },
+    const query = paginationQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid requests query", query.error.flatten()));
+    }
+    const { page, pageSize } = query.data;
+    const where = { companyId: id };
+    const [total, requests] = await prisma.$transaction([
+      prisma.corporateServiceRequest.count({ where }),
+      prisma.corporateServiceRequest.findMany({
+        where,
+        include: { employee: { select: { firstName: true, lastName: true, email: true } } },
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
+    const items = requests.map(serializeRequest);
+    return okResponse({
+      // Back-compat: existing callers read `.requests` directly.
+      requests: items,
+      items,
+      pagination: { page, pageSize, total, totalPages: total === 0 ? 0 : Math.ceil(total / pageSize) },
     });
-    return okResponse({ requests: requests.map(serializeRequest) });
   });
 
   app.post("/api/admin/corporate/companies/:id/requests", async (request, reply) => {

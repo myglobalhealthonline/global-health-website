@@ -65,8 +65,13 @@ export function FeaturedDoctor({
   const trimmedImage = doctor.imageSrc?.trim();
   const hasImage = Boolean(trimmedImage);
   const src = trimmedImage ?? "";
+  // /api/media/* is a same-origin rewrite and images.unsplash.com /
+  // images.pexels.com are allow-listed in next.config.ts remotePatterns —
+  // only a genuinely different remote host needs unoptimized.
   const unoptimized =
-    hasImage && (/^https?:\/\//i.test(src) || src.startsWith("/api/media/"));
+    hasImage &&
+    /^https?:\/\//i.test(src) &&
+    !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(src);
   // Initials fallback instead of a generic stock face when a doctor has no
   // uploaded photo (matches DoctorCard behaviour).
   const initials =

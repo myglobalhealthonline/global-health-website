@@ -1,11 +1,33 @@
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { ArrowRight, ShieldCheck, Stethoscope, Clock } from "lucide-react";
 import type { CountryCode } from "@/data/countries";
 import { Flag } from "@/components/ui/Flag";
 import { HeroReveal } from "@/components/motion/HeroReveal";
-import { SameDayBooking } from "@/components/sections/SameDayBooking";
 import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
+
+// SameDayBooking renders real server-fetchable markup (slot grid, CTA) once
+// hydrated — keep SSR on so it isn't blank/no-index on first paint. Dynamic
+// import still code-splits its client JS (date-fns-style formatters, fetch
+// logic) out of the initial HomeHero bundle. Placeholder mirrors the panel's
+// rounded-glass shape + typical rendered height to avoid CLS.
+const SameDayBooking = dynamic(
+  () => import("@/components/sections/SameDayBooking").then((m) => m.SameDayBooking),
+  {
+    loading: () => (
+      <div
+        aria-hidden
+        className="w-full max-w-[900px] animate-pulse rounded-[26px] p-6 sm:p-8"
+        style={{
+          minHeight: 420,
+          background: "rgba(8, 33, 27, 0.82)",
+          border: "1px solid rgba(255,255,255,0.12)",
+        }}
+      />
+    ),
+  },
+);
 
 export type LiveDoctorItem = {
   name: string;
@@ -73,8 +95,10 @@ export function HomeHero({
   const doctorsForPanel = (liveDoctors ?? []).slice(0, 3);
   const showSameDay = Boolean(sameDay?.configured && sameDay.languages.length > 0);
   const heroPhotoSrc = normalizeHeroPhoto(heroImageSrc);
-  const unoptimizedHeroPhoto =
-    /^https?:\/\//i.test(heroPhotoSrc) || heroPhotoSrc.startsWith("/api/media/");
+  // /api/media/* is same-origin (rewritten) and images.unsplash.com /
+  // images.pexels.com are allow-listed in next.config.ts remotePatterns —
+  // only a genuinely different remote host needs unoptimized.
+  const unoptimizedHeroPhoto = isUnlistedRemote(heroPhotoSrc);
 
   const titleText =
     displayHeroTitle ?? `${i18n?.titleMain ?? "Medicine Anytime"} ${i18n?.titleAccent ?? "Anywhere."}`;
@@ -94,7 +118,7 @@ export function HomeHero({
   return (
     <section
       aria-labelledby="hero-title"
-      className="gh-home-hero-root gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden gh-hero-cap-full"
+      className="gh-home-hero-root gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden gh-hero-cap-full max-lg:!min-h-[min(calc(100svh-var(--header-height)),760px)]"
     >
       {/* ── Base layer: hero photo, full-bleed ── */}
       <div className="gh-home-hero-photoLayer gh-medical-pattern-layer absolute inset-0">
@@ -116,16 +140,18 @@ export function HomeHero({
         className="gh-home-hero-tintOverlay gh-medical-pattern-layer pointer-events-none absolute inset-0"
       />
 
-      {/* ── Watermark — sits above overlay, below content ── */}
+      {/* ── Watermark — sits above overlay, below content. Hidden below lg:
+           its clamp() font-size still reads huge on phone widths and is
+           pure atmosphere, not content. ── */}
       <div
         aria-hidden
-        className="gh-home-hero-watermark gh-medical-pattern-layer gh2-watermark pointer-events-none absolute bottom-[-0.06em] left-[-0.04em] select-none"
+        className="gh-home-hero-watermark gh-medical-pattern-layer gh2-watermark pointer-events-none absolute bottom-[-0.06em] left-[-0.04em] hidden select-none lg:block"
       >
         {countryName}
       </div>
 
       {/* ── Content ── */}
-      <div className="gh-home-hero-grid relative mx-auto grid max-w-[var(--container-width)] items-center gap-12 px-5 pb-14 pt-[calc(var(--header-height)+3.5rem)] md:px-10 lg:gap-16 lg:pb-16 lg:pt-[calc(var(--header-height)+4rem)]">
+      <div className="gh-home-hero-grid relative mx-auto grid max-w-[var(--container-width)] items-center gap-12 px-5 pb-14 pt-[calc(var(--header-height)+3.5rem)] md:px-10 lg:gap-16 lg:pb-16 lg:pt-[calc(var(--header-height)+4rem)] max-lg:!min-h-[min(calc(100svh-var(--header-height)),760px)]">
         {/* ── LEFT — text column ── */}
         <div className="flex max-w-[760px] flex-col py-10 lg:py-20">
           <HeroReveal delay={0}>
@@ -307,6 +333,16 @@ export function HomeHero({
   );
 }
 
+/** True only for an absolute URL whose host isn't in next.config.ts's
+ *  images.remotePatterns (images.unsplash.com / images.pexels.com are
+ *  allow-listed; /api/media/* is a same-origin rewrite, never absolute). */
+function isUnlistedRemote(src: string): boolean {
+  return (
+    /^https?:\/\//i.test(src) &&
+    !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(src)
+  );
+}
+
 function normalizeHeroPhoto(src?: string | null): string {
   const trimmed = src?.trim();
   if (!trimmed) return "/images/stock/home-hero.jpg";
@@ -330,7 +366,7 @@ function AvatarBubble({ name, imageSrc }: { name: string; imageSrc?: string | nu
           src={src}
           alt=""
           fill
-          unoptimized={/^https?:\/\//i.test(src) || src.startsWith("/api/media/")}
+          unoptimized={isUnlistedRemote(src)}
           className="object-cover object-top"
           sizes="40px"
         />

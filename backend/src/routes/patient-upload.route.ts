@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import type { FastifyPluginAsync } from "fastify";
-import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import {
   putObject,
@@ -96,7 +95,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
     mimetype = sniffedMime;
 
     try {
-      await upsertPatientProfileByEmail({ email: verified.email });
+      const { profile } = await upsertPatientProfileByEmail({ email: verified.email });
       // Token carries appointmentId + doctorId — bind upload to the exact
       // appointment the doctor minted the link for. Re-check the row still
       // exists and the email matches so a stale token can't slot files
@@ -114,7 +113,10 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
       }
 
       const safeName = sanitizeOriginalFilename(fileName);
-      const storageKey = `patient-upload/${verified.email}/${randomUUID()}-${safeName}`;
+      // ponytail: profile.id (cuid, non-PII) instead of raw email — email
+      // was leaking into S3 keys/logs/backups. Original filename still
+      // goes to the DB row (label/fileName below), never into the key.
+      const storageKey = `patient-upload/${profile.id}/${randomUUID()}-${safeName}`;
       await putObject(storageKey, fileBuffer, mimetype);
 
       // v3 tokens bind the upload to the exact exams prescription it answers —

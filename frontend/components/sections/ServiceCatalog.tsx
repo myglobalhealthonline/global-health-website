@@ -6,6 +6,7 @@
  */
 
 import { useState, type ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { currencySymbol } from "@/lib/format-currency";
 import {
@@ -364,11 +365,16 @@ function ServiceTile({
         <div className="relative overflow-hidden aspect-[16/10] lg:aspect-auto">
           {tileImageSrc ? (
             <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={tileImageSrc}
                 alt={`${s.title} telemedicine consultation`}
-                className="absolute inset-0 h-full w-full object-cover"
+                fill
+                sizes="(min-width:1024px) 40vw, 100vw"
+                unoptimized={
+                  /^https?:\/\//i.test(tileImageSrc) &&
+                  !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(tileImageSrc)
+                }
+                className="object-cover"
               />
               {/* Subtle right-edge fade into card body */}
               <div
@@ -507,11 +513,13 @@ function ServiceTile({
             className="relative overflow-hidden rounded-[14px]"
             style={{ height: 168 }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={tileImageSrc}
               alt={`${s.title} telemedicine consultation`}
-              className="block h-full w-full object-cover"
+              fill
+              sizes="(min-width:1024px) 33vw, (min-width:768px) 50vw, 100vw"
+              unoptimized={/^https?:\/\//i.test(tileImageSrc) || tileImageSrc.startsWith("/api/media/")}
+              className="object-cover"
             />
             <span
               className="absolute right-3 top-3 uppercase rounded-full px-2.5 py-1 text-[10px] font-bold tracking-[0.08em]"

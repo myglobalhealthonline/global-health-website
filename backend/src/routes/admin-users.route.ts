@@ -187,7 +187,11 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  app.patch("/api/admin/users/:id", async (request, reply) => {
+  app.patch(
+    "/api/admin/users/:id",
+    // Role changes / activation flips — tighter than the 300/min global default.
+    { config: { rateLimit: { max: 10, timeWindow: "1 minute" } } },
+    async (request, reply) => {
     const params = idParamSchema.safeParse(request.params);
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid user id"));
@@ -267,9 +271,13 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not update user"));
     }
-  });
+    },
+  );
 
-  app.post("/api/admin/users/:id/reset-password", async (request, reply) => {
+  app.post(
+    "/api/admin/users/:id/reset-password",
+    { config: { rateLimit: { max: 10, timeWindow: "1 minute" } } },
+    async (request, reply) => {
     const params = idParamSchema.safeParse(request.params);
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid user id"));
@@ -308,7 +316,8 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not reset password"));
     }
-  });
+    },
+  );
 };
 
 export default adminUsersRoute;

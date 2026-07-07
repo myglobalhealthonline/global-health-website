@@ -3128,6 +3128,14 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   min-height: 110px !important;
 }
 
+/* iOS Safari auto-zooms the viewport when a focused input's font-size is
+ * below 16px — breaks the login/register/checkout/consult/profile funnels
+ * on iPhone. No !important: the admin-portal rule above already forces its
+ * own 14px !important, so this only affects public-site inputs. */
+@media (max-width: 768px) {
+  input, select, textarea { font-size: 16px; }
+}
+
 /* Buttons — DESIGN.md §5.8. Radius/variants are scoped to .gh-portal-shell
  * so the shared .gh-btn-* class names keep serving the public site (hard
  * rule #10) — the descendant safety net (.gh-admin-main …) is portal-only

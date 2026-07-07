@@ -155,6 +155,14 @@ const envSchema = z.object({
    *  Without this key, duplicate-patient detection via hashed fields is disabled. */
   BLIND_INDEX_KEY: z.string().trim().min(32).optional(),
 
+  /** Comma-separated role names (e.g. "DOCTOR,ADMIN,SUPER_ADMIN,LOCAL_ADMIN")
+   *  that must have completed 2FA enrollment/verification to authenticate.
+   *  Default empty string / unset — OFF, byte-for-byte identical to today's
+   *  behaviour (2FA optional for every role). Roll out deliberately per role
+   *  once staff have had a chance to enroll TOTP; see admin-auth.ts /
+   *  doctor-auth.ts / medical-access-guard.ts for enforcement points. */
+  REQUIRE_2FA_FOR_ROLES: z.string().trim().optional(),
+
   /** Medical access guard enforcement mode.
    *  - unset / "false" (default): SHADOW mode — assertMedicalAccess logs every
    *    access + raises alerts on would-be-denials, but NEVER blocks. Lets the
@@ -225,6 +233,15 @@ const adminTokenFallbackEnabled =
     ? parsed.NODE_ENV === "development"
     : parsed.ADMIN_TOKEN_FALLBACK_ENABLED === true || parsed.ADMIN_TOKEN_FALLBACK_ENABLED === "true";
 
+// Default empty (2FA optional for everyone, today's behaviour). Parses to a
+// Set of role names for O(1) membership checks at the enforcement points.
+const require2faForRoles = new Set(
+  (parsed.REQUIRE_2FA_FOR_ROLES ?? "")
+    .split(",")
+    .map((r) => r.trim().toUpperCase())
+    .filter((r) => r.length > 0),
+);
+
 // Default OFF (shadow mode). Must be explicitly opted into with "true".
 const medicalAccessEnforce =
   parsed.MEDICAL_ACCESS_ENFORCE === true || parsed.MEDICAL_ACCESS_ENFORCE === "true";
@@ -268,8 +285,38 @@ if (parsed.NODE_ENV === "production" && !parsed.PHI_ENCRYPTION_KEY?.trim()) {
   );
 }
 
+// Hard-fail in production if the fake-billing test-activation escape hatch
+// is left on. The fake billing driver already refuses to activate in
+// production (see BILLING_DRIVER guard above), but this is defense-in-depth
+// against a misconfigured Railway var — never boot with a flag whose whole
+// purpose is bypassing real payment on a live customer deployment.
+if (
+  parsed.NODE_ENV === "production" &&
+  (parsed.ALLOW_TEST_SUBSCRIPTION_ACTIVATION === true ||
+    parsed.ALLOW_TEST_SUBSCRIPTION_ACTIVATION === "true")
+) {
+  throw new Error(
+    "ALLOW_TEST_SUBSCRIPTION_ACTIVATION must not be set in production — it lets a user self-grant a " +
+      "free subscription without paying. Remove this env var from Railway.",
+  );
+}
+
+// Hard-fail in production if the admin Bearer-token fallback is explicitly
+// enabled. It's meant for local/dev/staging convenience only; on a live
+// production deployment session-based admin auth must be the sole path.
+if (
+  parsed.NODE_ENV === "production" &&
+  (parsed.ADMIN_TOKEN_FALLBACK_ENABLED === true || parsed.ADMIN_TOKEN_FALLBACK_ENABLED === "true")
+) {
+  throw new Error(
+    "ADMIN_TOKEN_FALLBACK_ENABLED must not be true in production — session-based admin auth must be " +
+      "the sole path. Remove this env var from Railway.",
+  );
+}
+
 export const env = {
   ...parsed,
   ADMIN_TOKEN_FALLBACK_ENABLED: adminTokenFallbackEnabled,
   MEDICAL_ACCESS_ENFORCE: medicalAccessEnforce,
+  REQUIRE_2FA_FOR_ROLES: require2faForRoles,
 };
