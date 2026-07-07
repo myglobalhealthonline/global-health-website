@@ -7,8 +7,12 @@ import { PortalMobileCard } from "@/components/PortalMobileCard";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
 import { FlagBadge } from "../_components/flag-badge";
+import { InvoiceFilters, type InvoiceFilterValues } from "./_components/invoice-filters";
 
 export const dynamic = "force-dynamic";
+
+/** Filter keys forwarded verbatim to the backend list endpoint. */
+const FILTER_KEYS = ["q", "kind", "invoiceFrom", "invoiceTo", "consultFrom", "consultTo"] as const;
 
 type InvoiceRow = {
   id: string;
@@ -27,6 +31,7 @@ type InvoiceRow = {
 };
 
 async function fetchAdminInvoices(
+  filters: InvoiceFilterValues,
   cursor?: string,
 ): Promise<{ items: InvoiceRow[]; nextCursor: string | null }> {
   const backend = getBackendOrigin();
@@ -38,6 +43,10 @@ async function fetchAdminInvoices(
     .join("; ");
   const qs = new URLSearchParams({ limit: "50" });
   if (cursor) qs.set("cursor", cursor);
+  for (const key of FILTER_KEYS) {
+    const val = filters[key];
+    if (val) qs.set(key, val);
+  }
   try {
     const res = await fetch(`${backend}/api/admin/invoices?${qs.toString()}`, {
       headers: cookieHeader ? { cookie: cookieHeader } : undefined,
@@ -58,10 +67,34 @@ async function fetchAdminInvoices(
 export default async function AdminInvoicesPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ cursor?: string }>;
+  searchParams?: Promise<
+    { cursor?: string } & Partial<Record<(typeof FILTER_KEYS)[number], string>>
+  >;
 }) {
-  const { cursor } = searchParams ? await searchParams : {};
-  const { items, nextCursor } = await fetchAdminInvoices(cursor);
+  const sp = searchParams ? await searchParams : {};
+  const { cursor } = sp;
+  const filters: InvoiceFilterValues = {
+    q: sp.q,
+    kind: sp.kind,
+    invoiceFrom: sp.invoiceFrom,
+    invoiceTo: sp.invoiceTo,
+    consultFrom: sp.consultFrom,
+    consultTo: sp.consultTo,
+  };
+  const { items, nextCursor } = await fetchAdminInvoices(filters, cursor);
+
+  // Query string carrying the active filters (no cursor) so pagination keeps them.
+  const filterQs = new URLSearchParams();
+  for (const key of FILTER_KEYS) {
+    const val = filters[key];
+    if (val) filterQs.set(key, val);
+  }
+  const filterSuffix = filterQs.toString();
+  const hasActiveFilter = filterSuffix.length > 0;
+  const firstPageHref = filterSuffix ? `/admin/invoices?${filterSuffix}` : "/admin/invoices";
+  const nextPageHref = nextCursor
+    ? `/admin/invoices?${filterSuffix ? `${filterSuffix}&` : ""}cursor=${encodeURIComponent(nextCursor)}`
+    : null;
   const sentCount = items.filter((inv) => inv.emailSentAt).length;
   const totalCents = items.reduce((sum, inv) => sum + inv.totalCents, 0);
   const primaryCurrency = items[0]?.currencyCode ?? "EUR";
@@ -103,12 +136,23 @@ export default async function AdminInvoicesPage({
             ]}
           />
         </div>
+
+        <InvoiceFilters values={filters} />
+
         {items.length === 0 ? (
-          <AdminEmptyState
-            assetSrc="/images/portal/obsidian/empty-payments.svg"
-            title="No invoices yet"
-            description="Invoices are generated automatically after orders are paid. Once created, admins can open printable invoice records from here."
-          />
+          hasActiveFilter ? (
+            <AdminEmptyState
+              assetSrc="/images/portal/obsidian/empty-payments.svg"
+              title="No matching invoices"
+              description="No invoices match the current search or filters. Try widening the date range, clearing the consultation type, or checking the spelling of the search term."
+            />
+          ) : (
+            <AdminEmptyState
+              assetSrc="/images/portal/obsidian/empty-payments.svg"
+              title="No invoices yet"
+              description="Invoices are generated automatically after orders are paid. Once created, admins can open printable invoice records from here."
+            />
+          )
         ) : (
           <>
         <div className="gh-admin-ops-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
@@ -241,17 +285,14 @@ export default async function AdminInvoicesPage({
 
         <div className="gh-admin-ops-pagination flex items-center justify-between border-t border-[var(--color-border)] px-5 py-4 text-[13px]">
           {cursor ? (
-            <Link href="/admin/invoices" className="font-semibold underline">
+            <Link href={firstPageHref} className="font-semibold underline">
               ← First page
             </Link>
           ) : (
             <span />
           )}
-          {nextCursor ? (
-            <Link
-              href={`/admin/invoices?cursor=${encodeURIComponent(nextCursor)}`}
-              className="font-semibold underline"
-            >
+          {nextPageHref ? (
+            <Link href={nextPageHref} className="font-semibold underline">
               Next page →
             </Link>
           ) : (

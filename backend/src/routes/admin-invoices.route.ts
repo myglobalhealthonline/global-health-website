@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
+import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
@@ -16,10 +17,43 @@ import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.serv
 
 const idParamSchema = z.object({ invoiceId: z.string().min(1).max(120) });
 const orderIdParamSchema = z.object({ id: z.string().min(1).max(120) });
+
+/** Consultation / item kinds an admin can filter invoices by. */
+const CART_ITEM_KINDS = [
+  "HEALTH_TEST",
+  "PRESCRIPTION_SERVICE",
+  "GENERAL_CONSULTATION",
+  "SPECIALIST_CONSULTATION",
+] as const;
+
+/** Treat blank form fields (`?q=&kind=`) as absent rather than a validation error. */
+const blankToUndefined = (v: unknown) => (v === "" ? undefined : v);
+
 const listQuerySchema = z.object({
   cursor: z.string().min(1).max(120).optional(),
   limit: z.coerce.number().int().min(1).max(100).default(50),
+  /**
+   * Free-text search — matched (case-insensitive, substring) against invoice
+   * number, order number, and the patient name / email / phone / national-ID
+   * snapshots on the order and its line items.
+   */
+  q: z.preprocess(blankToUndefined, z.string().trim().min(1).max(160).optional()),
+  /** Consultation / item type filter. */
+  kind: z.preprocess(blankToUndefined, z.enum(CART_ITEM_KINDS).optional()),
+  /** Invoice-date (generatedAt) range, inclusive. */
+  invoiceFrom: z.preprocess(blankToUndefined, z.coerce.date().optional()),
+  invoiceTo: z.preprocess(blankToUndefined, z.coerce.date().optional()),
+  /** Consultation-date (appointment.scheduledAt) range, inclusive. */
+  consultFrom: z.preprocess(blankToUndefined, z.coerce.date().optional()),
+  consultTo: z.preprocess(blankToUndefined, z.coerce.date().optional()),
 });
+
+/** Push start/end of the given day so a plain `YYYY-MM-DD` covers the whole day. */
+function endOfDay(d: Date): Date {
+  const end = new Date(d);
+  end.setHours(23, 59, 59, 999);
+  return end;
+}
 
 const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
   // ── List all invoices ──────────────────────────────────────────────────────
@@ -31,10 +65,65 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
     if (!query.success) {
       return reply.status(400).send(errorResponse("Invalid query", query.error.flatten()));
     }
-    const { cursor, limit } = query.data;
+    const { cursor, limit, q, kind, invoiceFrom, invoiceTo, consultFrom, consultTo } =
+      query.data;
+
+    // Build the filter. Every clause is ANDed; the free-text `q` is an OR across
+    // the searchable columns on the invoice, its order, and its line items.
+    const and: Prisma.InvoiceWhereInput[] = [];
+
+    if (q) {
+      const contains = { contains: q, mode: "insensitive" as const };
+      and.push({
+        OR: [
+          { invoiceNumber: contains },
+          { order: { orderNumber: contains } },
+          { order: { fullName: contains } },
+          { order: { email: contains } },
+          { order: { phone: contains } },
+          { order: { items: { some: { patientFullName: contains } } } },
+          { order: { items: { some: { patientEmail: contains } } } },
+          { order: { items: { some: { patientPhone: contains } } } },
+          { order: { items: { some: { patientNationalIdNumber: contains } } } },
+        ],
+      });
+    }
+
+    if (kind) {
+      and.push({ order: { items: { some: { kind } } } });
+    }
+
+    if (invoiceFrom || invoiceTo) {
+      and.push({
+        generatedAt: {
+          ...(invoiceFrom ? { gte: invoiceFrom } : {}),
+          ...(invoiceTo ? { lte: endOfDay(invoiceTo) } : {}),
+        },
+      });
+    }
+
+    if (consultFrom || consultTo) {
+      and.push({
+        order: {
+          orderAppointments: {
+            some: {
+              appointment: {
+                scheduledAt: {
+                  ...(consultFrom ? { gte: consultFrom } : {}),
+                  ...(consultTo ? { lte: endOfDay(consultTo) } : {}),
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+
+    const where: Prisma.InvoiceWhereInput = and.length ? { AND: and } : {};
 
     try {
       const invoices = await prisma.invoice.findMany({
+        where,
         orderBy: { generatedAt: "desc" },
         take: limit + 1,
         ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
