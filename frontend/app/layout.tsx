@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { SITE_NAME } from "@/lib/constants";
 
-const META_PIXEL_ID = "902245482577430";
+const META_PIXEL_ID = "5455895281301269";
 import { getRootHtmlLang } from "@/lib/i18n/get-root-html-lang";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { CookieBanner } from "@/components/compliance/CookieBanner";
