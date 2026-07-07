@@ -32,7 +32,6 @@ import {
   type EditDraftDoc,
 } from "./consultation-documents-modal";
 import { DocumentUploadForm } from "./document-upload-form";
-import { AppointmentMedicalNotesSection } from "./appointment-medical-notes-section";
 
 type GeneratedDoc = {
   id: string;
@@ -213,12 +212,6 @@ export function AppointmentDocumentsTab({
         onEditDraft={handleEditDraft}
         open={reviewSendOpen}
         onOpenChange={setReviewSendOpen}
-      />
-
-      <AppointmentMedicalNotesSection
-        key={`notes-${panelsRefreshKey}`}
-        appointmentId={appointmentId}
-        session={session}
       />
 
       {loadingGenerated ? (

@@ -174,6 +174,9 @@ export type ProfileWriteFields = {
   familyHistory?: string[];
   socialHabits?: string[];
   surgeries?: string[];
+  usualMedication?: string[];
+  bloodPressureSystolic?: number | null;
+  bloodPressureDiastolic?: number | null;
   nationalIdNumber?: string | null;
   taxIdNumber?: string | null;
   passportNumber?: string | null;

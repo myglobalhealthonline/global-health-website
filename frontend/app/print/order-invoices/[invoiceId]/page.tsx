@@ -13,6 +13,9 @@ type Params = { invoiceId: string };
 const LABELS: Record<string, Record<string, string>> = {
   ie: {
     invoice: "Invoice",
+    receipt: "Receipt",
+    invoiceReceipt: "Invoice / Receipt",
+    unpaid: "UNPAID",
     invoiceRef: "Invoice reference",
     from: "From",
     billTo: "Billed to",
@@ -31,6 +34,9 @@ const LABELS: Record<string, Record<string, string>> = {
   },
   cz: {
     invoice: "Faktura",
+    receipt: "Účtenka",
+    invoiceReceipt: "Faktura / Účtenka",
+    unpaid: "NEZAPLACENO",
     invoiceRef: "Číslo faktury",
     from: "Od",
     billTo: "Fakturováno",
@@ -49,6 +55,9 @@ const LABELS: Record<string, Record<string, string>> = {
   },
   sp: {
     invoice: "Factura",
+    receipt: "Recibo",
+    invoiceReceipt: "Factura / Recibo",
+    unpaid: "NO PAGADO",
     invoiceRef: "Referencia de factura",
     from: "De",
     billTo: "Facturado a",
@@ -67,6 +76,9 @@ const LABELS: Record<string, Record<string, string>> = {
   },
   rm: {
     invoice: "Factură",
+    receipt: "Chitanță",
+    invoiceReceipt: "Factură / Chitanță",
+    unpaid: "NEACHITAT",
     invoiceRef: "Referință factură",
     from: "De la",
     billTo: "Facturat către",
@@ -109,6 +121,7 @@ type InvoiceDetail = {
     id: string;
     invoiceNumber: string;
     countryCode: string;
+    documentType: "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT";
     generatedAt: string;
     emailSentAt: string | null;
   };
@@ -189,6 +202,15 @@ export default async function PrintOrderInvoicePage({
     year: "numeric",
   });
 
+  // Document-type aware title + status badge (mirrors the PDF).
+  const docTitle =
+    invoice.documentType === "RECEIPT"
+      ? L.receipt
+      : invoice.documentType === "INVOICE_RECEIPT"
+        ? L.invoiceReceipt
+        : L.invoice;
+  const isUnpaid = invoice.documentType === "INVOICE";
+
   return (
     <main
       style={{
@@ -248,7 +270,7 @@ export default async function PrintOrderInvoicePage({
               fontWeight: 700,
             }}
           >
-            {L.invoice}
+            {docTitle}
           </p>
           <p
             style={{
@@ -268,14 +290,14 @@ export default async function PrintOrderInvoicePage({
               marginTop: 10,
               padding: "3px 10px",
               borderRadius: 999,
-              background: "#d1fae5",
-              color: "#065f46",
+              background: isUnpaid ? "#fef3c7" : "#d1fae5",
+              color: isUnpaid ? "#92400e" : "#065f46",
               fontSize: 11,
               fontWeight: 700,
               letterSpacing: "0.1em",
             }}
           >
-            {L.paid}
+            {isUnpaid ? L.unpaid : L.paid}
           </span>
         </div>
       </header>

@@ -29,6 +29,7 @@ import {
 } from "../pricing/peak-pricing.service.js";
 import { startPrePaymentFlow } from "../automation/pre-payment-flow.service.js";
 import { persistOrderPortalAccess } from "../automation/resolve-order-portal-access.service.js";
+import { createUnpaidInvoiceForOrder } from "../invoices/generate-invoice.service.js";
 
 /**
  * Admin walk-in / phone-in booking pipeline. The patient may or may
@@ -566,6 +567,17 @@ export async function createManualBooking(
       "[manual-booking] Pre-payment automation failed",
     );
   }
+
+  // Issue the unpaid invoice document for this manual/AI booking and email it to
+  // the patient (skips Portugal / prefixless countries internally). Fire-and-
+  // forget — an invoice/email failure must never roll back the booking. Its
+  // existence is later how the payment path knows to transition it to a RECEIPT.
+  void createUnpaidInvoiceForOrder(order.id).catch((err) => {
+    input.request?.log.warn(
+      { err, orderId: order.id },
+      "[manual-booking] Unpaid invoice issue failed",
+    );
+  });
 
   recordAudit({
     actorUserId: input.adminUserId ?? null,

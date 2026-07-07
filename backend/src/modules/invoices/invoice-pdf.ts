@@ -6,6 +6,10 @@ import { htmlToPdfBuffer } from "../generated-documents/html-document-renderer.j
 const INVOICE_LABELS: Record<string, Record<string, string>> = {
   ie: {
     invoice: "Invoice",
+    receipt: "Receipt",
+    invoiceReceipt: "Invoice / Receipt",
+    unpaid: "UNPAID",
+    amountDue: "Amount due",
     from: "From",
     billTo: "Billed to",
     description: "Description",
@@ -24,6 +28,10 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
   },
   cz: {
     invoice: "Faktura",
+    receipt: "Účtenka",
+    invoiceReceipt: "Faktura / Účtenka",
+    unpaid: "NEZAPLACENO",
+    amountDue: "K úhradě",
     from: "Od",
     billTo: "Fakturováno",
     description: "Popis",
@@ -42,6 +50,10 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
   },
   sp: {
     invoice: "Factura",
+    receipt: "Recibo",
+    invoiceReceipt: "Factura / Recibo",
+    unpaid: "NO PAGADO",
+    amountDue: "Importe pendiente",
     from: "De",
     billTo: "Facturado a",
     description: "Descripción",
@@ -60,6 +72,10 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
   },
   rm: {
     invoice: "Factură",
+    receipt: "Chitanță",
+    invoiceReceipt: "Factură / Chitanță",
+    unpaid: "NEACHITAT",
+    amountDue: "De plată",
     from: "De la",
     billTo: "Facturat către",
     description: "Descriere",
@@ -78,6 +94,10 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
   },
   pt: {
     invoice: "Fatura",
+    receipt: "Recibo",
+    invoiceReceipt: "Fatura / Recibo",
+    unpaid: "NÃO PAGO",
+    amountDue: "Valor em dívida",
     from: "De",
     billTo: "Faturado a",
     description: "Descrição",
@@ -102,10 +122,14 @@ function getL(countryCode: string) {
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
+export type InvoiceDocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT";
+
 export interface InvoicePdfData {
   invoiceNumber: string;
   invoiceDate: string; // ISO
   countryCode: string;
+  /** Drives the title + paid/unpaid badge. Defaults to INVOICE_RECEIPT. */
+  documentType: InvoiceDocumentType;
   order: {
     fullName: string;
     email: string;
@@ -158,6 +182,18 @@ function buildInvoiceHtml(data: InvoicePdfData): string {
   const L = getL(data.countryCode);
   const { order } = data;
   const cur = order.currencyCode;
+
+  // Document-type aware title + status badge.
+  const docTitle =
+    data.documentType === "RECEIPT"
+      ? L.receipt
+      : data.documentType === "INVOICE_RECEIPT"
+        ? L.invoiceReceipt
+        : L.invoice;
+  const isUnpaid = data.documentType === "INVOICE";
+  const badgeHtml = isUnpaid
+    ? `<div style="margin-top:10px;padding:3px 10px;background:#fef3c7;color:#92400e;font-size:11px;font-weight:700;display:inline-block;">${L.unpaid}</div>`
+    : `<div style="margin-top:10px;padding:3px 10px;background:#d1fae5;color:#065f46;font-size:11px;font-weight:700;display:inline-block;">${L.paid}</div>`;
 
   const itemRows = order.items
     .map(
@@ -213,7 +249,7 @@ function buildInvoiceHtml(data: InvoicePdfData): string {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>${esc(L.invoice)} ${esc(data.invoiceNumber)}</title>
+<title>${esc(docTitle)} ${esc(data.invoiceNumber)}</title>
 </head>
 <body style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#111111;max-width:700px;margin:0 auto;padding:32px;line-height:1.5;">
 
@@ -227,10 +263,10 @@ function buildInvoiceHtml(data: InvoicePdfData): string {
       </div>
     </td>
     <td style="vertical-align:top;text-align:right;padding-bottom:20px;">
-      <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#1B4D3E;font-weight:700;">${L.invoice}</div>
+      <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#1B4D3E;font-weight:700;">${esc(docTitle)}</div>
       <div style="font-size:24px;font-weight:800;color:#1B4D3E;margin-top:6px;">${esc(data.invoiceNumber)}</div>
       <div style="font-size:12px;color:#555555;margin-top:8px;">${fmtDate(data.invoiceDate)}</div>
-      <div style="margin-top:10px;padding:3px 10px;background:#d1fae5;color:#065f46;font-size:11px;font-weight:700;display:inline-block;">${L.paid}</div>
+      ${badgeHtml}
     </td>
   </tr>
 </table>
@@ -315,6 +351,7 @@ export async function buildInvoicePdfData(
   orderId: string,
   invoiceNumber: string,
   invoiceDate: string,
+  documentType: InvoiceDocumentType = "INVOICE_RECEIPT",
 ): Promise<InvoicePdfData | null> {
   const order = await prisma.order.findUnique({
     where: { id: orderId },
@@ -414,6 +451,7 @@ export async function buildInvoicePdfData(
     invoiceNumber,
     invoiceDate,
     countryCode: order.countryCode,
+    documentType,
     order: {
       fullName: order.fullName,
       email: order.email,

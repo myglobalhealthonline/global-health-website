@@ -13,6 +13,34 @@ type ProfileResponse = {
   addressPostalCode: string | null;
   addressCountryCode: string | null;
   preferredPharmacy: string | null;
+  // Health data (patient-editable clinical baseline).
+  weightKg: number | null;
+  heightM: number | null;
+  bmi: number | null;
+  allergies: string[];
+  chronicDiseases: string[];
+  familyHistory: string[];
+  usualMedication: string[];
+};
+
+/**
+ * Labels for the health-data section. Kept local (English) rather than
+ * threaded through the account i18n bundle so the section ships without
+ * touching all locale files — localize later by moving these into the
+ * `MedicalI18n` contract.
+ */
+const HEALTH_LABELS = {
+  title: "Health data",
+  subtitle:
+    "Your clinical baseline. Shown to doctors on your chart. BMI is calculated from height and weight.",
+  weight: "Weight (kg)",
+  height: "Height (m)",
+  bmi: "BMI (auto)",
+  allergies: "Allergies",
+  chronicDiseases: "Chronic diseases",
+  familyHistory: "Family history",
+  usualMedication: "Usual medication",
+  listHint: "Separate multiple entries with commas.",
 };
 
 type MedicalI18n = {
@@ -75,6 +103,13 @@ const EMPTY: ProfileResponse = {
   addressPostalCode: null,
   addressCountryCode: null,
   preferredPharmacy: null,
+  weightKg: null,
+  heightM: null,
+  bmi: null,
+  allergies: [],
+  chronicDiseases: [],
+  familyHistory: [],
+  usualMedication: [],
 };
 
 /**
@@ -116,12 +151,25 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMsg(null);
+    // Only send the fields this form owns. The GET response carries the
+    // full profile row (createdAt, globalHealthNumber, …); posting those
+    // back would trip the backend's .strict() schema.
     const payload: Partial<ProfileResponse> = {};
-    for (const key of Object.keys(values) as Array<keyof ProfileResponse>) {
+    const sink = payload as Record<string, unknown>;
+    for (const key of Object.keys(EMPTY) as Array<keyof ProfileResponse>) {
       const v = values[key];
-      const trimmed = typeof v === "string" ? v.trim() : v;
-      payload[key] = (trimmed === "" ? null : trimmed) as ProfileResponse[typeof key];
+      if (Array.isArray(v) || typeof v === "number") {
+        sink[key] = v;
+      } else {
+        const trimmed = typeof v === "string" ? v.trim() : v;
+        sink[key] = trimmed === "" ? null : trimmed;
+      }
     }
+    // BMI is derived, never hand-entered — recompute from the live values.
+    payload.bmi =
+      values.weightKg != null && values.heightM != null && values.heightM > 0
+        ? Math.round((values.weightKg / (values.heightM * values.heightM)) * 10) / 10
+        : null;
     startTransition(async () => {
       const res = await fetch("/api/account/profile", {
         method: "PATCH",
@@ -145,6 +193,11 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
       }
     });
   }
+
+  const liveBmi =
+    values.weightKg != null && values.heightM != null && values.heightM > 0
+      ? values.weightKg / (values.heightM * values.heightM)
+      : null;
 
   return (
     <section className="gh-patient-profile-section mt-6">
@@ -247,6 +300,91 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
             />
           </fieldset>
 
+          <fieldset className="border-t border-[var(--portal-line)] pt-5">
+            <legend className="gh-field-label mb-1 flex items-center gap-2 text-[var(--portal-text)]">
+              <HeartPulse
+                className="size-4 text-[var(--portal-primary)]"
+                aria-hidden
+              />
+              {HEALTH_LABELS.title}
+            </legend>
+            <p className="mb-3 text-xs text-[var(--portal-muted)]">
+              {HEALTH_LABELS.subtitle}
+            </p>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              <label className="block">
+                <span className="gh-field-label">{HEALTH_LABELS.weight}</span>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  value={values.weightKg != null ? String(values.weightKg) : ""}
+                  onChange={(e) =>
+                    update(
+                      "weightKg",
+                      e.target.value === "" ? null : Number(e.target.value),
+                    )
+                  }
+                  className="gh-input mt-1 min-w-0"
+                />
+              </label>
+              <label className="block">
+                <span className="gh-field-label">{HEALTH_LABELS.height}</span>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={values.heightM != null ? String(values.heightM) : ""}
+                  onChange={(e) =>
+                    update(
+                      "heightM",
+                      e.target.value === "" ? null : Number(e.target.value),
+                    )
+                  }
+                  className="gh-input mt-1 min-w-0"
+                />
+              </label>
+              <label className="block">
+                <span className="gh-field-label">{HEALTH_LABELS.bmi}</span>
+                <input
+                  type="text"
+                  readOnly
+                  disabled
+                  value={liveBmi != null ? liveBmi.toFixed(1) : "—"}
+                  className="gh-input mt-1 min-w-0 bg-[var(--portal-well)] text-[var(--portal-muted)]"
+                />
+              </label>
+            </div>
+
+            <div className="mt-3 grid gap-3">
+              <ListField
+                label={HEALTH_LABELS.allergies}
+                hint={HEALTH_LABELS.listHint}
+                value={values.allergies}
+                onChange={(next) => update("allergies", next)}
+              />
+              <ListField
+                label={HEALTH_LABELS.chronicDiseases}
+                hint={HEALTH_LABELS.listHint}
+                value={values.chronicDiseases}
+                onChange={(next) => update("chronicDiseases", next)}
+              />
+              <ListField
+                label={HEALTH_LABELS.usualMedication}
+                hint={HEALTH_LABELS.listHint}
+                value={values.usualMedication}
+                onChange={(next) => update("usualMedication", next)}
+              />
+              <ListField
+                label={HEALTH_LABELS.familyHistory}
+                hint={HEALTH_LABELS.listHint}
+                value={values.familyHistory}
+                onChange={(next) => update("familyHistory", next)}
+              />
+            </div>
+          </fieldset>
+
           {msg ? (
             <p
               className={`rounded-md px-3 py-2 text-sm ${
@@ -270,6 +408,56 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
         </form>
       )}
     </section>
+  );
+}
+
+/**
+ * Comma-separated text input bound to a `string[]`. Keeps a local raw
+ * string so the user can type commas/trailing spaces freely; only
+ * re-seeds from the parent value when it represents a genuinely
+ * different set (e.g. the async profile load), never on self-echo.
+ */
+function ListField({
+  label,
+  hint,
+  value,
+  onChange,
+}: {
+  label: string;
+  hint?: string;
+  value: string[];
+  onChange: (next: string[]) => void;
+}) {
+  const [raw, setRaw] = useState(value.join(", "));
+  useEffect(() => {
+    const parsed = raw
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (parsed.join(" ") !== value.join(" ")) {
+      setRaw(value.join(", "));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+  return (
+    <label className="block">
+      <span className="gh-field-label">{label}</span>
+      <input
+        type="text"
+        value={raw}
+        onChange={(e) => {
+          setRaw(e.target.value);
+          onChange(
+            e.target.value
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean),
+          );
+        }}
+        className="gh-input mt-1 min-w-0"
+      />
+      {hint ? <p className="mt-1 text-xs text-[var(--portal-muted)]">{hint}</p> : null}
+    </label>
   );
 }
 

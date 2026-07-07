@@ -13,9 +13,18 @@ const KIND_OPTIONS: { value: string; label: string }[] = [
   { value: "HEALTH_TEST", label: "Health test" },
 ];
 
+/** Fiscal document type — mirrors the backend `InvoiceDocumentType` enum. */
+const DOCUMENT_TYPE_OPTIONS: { value: string; label: string }[] = [
+  { value: "", label: "All documents" },
+  { value: "INVOICE", label: "Unpaid invoices" },
+  { value: "RECEIPT", label: "Receipts" },
+  { value: "INVOICE_RECEIPT", label: "Invoice / Receipts" },
+];
+
 export type InvoiceFilterValues = {
   q?: string;
   kind?: string;
+  documentType?: string;
   invoiceFrom?: string;
   invoiceTo?: string;
   consultFrom?: string;
@@ -34,6 +43,7 @@ export function InvoiceFilters({ values }: { values: InvoiceFilterValues }) {
   const hasActiveFilter = Boolean(
     values.q ||
       values.kind ||
+      values.documentType ||
       values.invoiceFrom ||
       values.invoiceTo ||
       values.consultFrom ||
@@ -45,7 +55,7 @@ export function InvoiceFilters({ values }: { values: InvoiceFilterValues }) {
     const data = new FormData(e.currentTarget);
     const params = new URLSearchParams();
     // Reset cursor on any new search — filters change the result set.
-    for (const key of ["q", "kind", "invoiceFrom", "invoiceTo", "consultFrom", "consultTo"]) {
+    for (const key of ["q", "kind", "documentType", "invoiceFrom", "invoiceTo", "consultFrom", "consultTo"]) {
       const val = (data.get(key) as string | null)?.trim();
       if (val) params.set(key, val);
     }
@@ -85,6 +95,24 @@ export function InvoiceFilters({ values }: { values: InvoiceFilterValues }) {
               className={`${fieldCls} pl-9`}
             />
           </div>
+        </div>
+
+        <div>
+          <label className={labelCls} htmlFor="inv-filter-documentType">
+            Document
+          </label>
+          <select
+            id="inv-filter-documentType"
+            name="documentType"
+            defaultValue={values.documentType ?? ""}
+            className={fieldCls}
+          >
+            {DOCUMENT_TYPE_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>

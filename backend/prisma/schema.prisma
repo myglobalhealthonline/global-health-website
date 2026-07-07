@@ -210,6 +210,7 @@ enum AuditAction {
   USER_ROLE_CHANGED
   USER_PASSWORD_RESET
   PATIENT_PROFILE_UPDATED
+  PATIENT_PROFILE_CREATED
   ENTITY_PURGED
   TWO_FACTOR_ENABLED
   TWO_FACTOR_DISABLED
@@ -1533,6 +1534,14 @@ model PatientProfile {
   familyHistory      String[]     @default([])
   socialHabits       String[]     @default([])
   surgeries          String[]     @default([])
+  /// Patient's regular/ongoing medications. One entry per drug (e.g.
+  /// "Metformin 850mg 2x/day"). Distinct from prescriptions issued per
+  /// consultation.
+  usualMedication    String[]     @default([])
+  /// Latest recorded arterial (blood) pressure, mmHg. Systolic over
+  /// diastolic. Null when never measured.
+  bloodPressureSystolic  Int?
+  bloodPressureDiastolic Int?
   medicalNotes       Json         @default("[]")
   /// National identity card / NIC / DNI / RG / CC — single field, label
   /// resolved per country in the UI layer (i18n).
@@ -3291,20 +3300,33 @@ model InvoiceCounter {
   @@map("invoice_counter")
 }
 
-/// Invoice generated from a paid Order. One invoice per order (Portugal excluded).
+/// Fiscal document tied to an Order. The type reflects how the booking was paid:
+///   INVOICE          — manual / AI-agent booking, issued unpaid; patient pays later.
+///   RECEIPT          — an INVOICE that has since been paid (same number, relabeled).
+///   INVOICE_RECEIPT  — direct website checkout, paid on issue; acts as both.
+enum InvoiceDocumentType {
+  INVOICE
+  RECEIPT
+  INVOICE_RECEIPT
+}
+
+/// Invoice/receipt tied to an Order. One row per order (Portugal excluded).
 /// invoiceNumber is the human-facing reference: IE-00001, CZ-00001, SP-00001, RO-00001.
+/// The same number is reused when an INVOICE transitions to a RECEIPT on payment.
 model Invoice {
-  id            String   @id @default(cuid())
-  invoiceNumber String   @unique
-  orderId       String   @unique
-  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  id            String              @id @default(cuid())
+  invoiceNumber String              @unique
+  orderId       String              @unique
+  order         Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
   countryCode   String
-  generatedAt   DateTime @default(now())
+  documentType  InvoiceDocumentType @default(INVOICE_RECEIPT)
+  generatedAt   DateTime            @default(now())
   emailSentAt   DateTime?
   emailSentTo   String?
 
   @@map("invoices")
   @@index([countryCode, generatedAt(sort: Desc)])
+  @@index([documentType, generatedAt(sort: Desc)])
 }
 
 /// Tracks which ensure-schema.ts patches have been applied to a database.

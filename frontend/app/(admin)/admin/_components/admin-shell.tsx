@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  BarChart3,
   CalendarRange,
   ChevronDown,
   ChevronRight,
@@ -65,6 +66,7 @@ const GLOBAL_ICONS: Record<string, LucideIcon> = {
   "/admin/orders": ShoppingBag,
   "/admin/invoices": ReceiptText,
   "/admin/automation": Workflow,
+  "/admin/reports": BarChart3,
   "/admin/pages": FileText,
   "/admin/services": Stethoscope,
   "/admin/blog": Newspaper,
@@ -89,6 +91,7 @@ const GLOBAL_HREFS = new Set([
   "/admin/automation",
   "/admin/newsletter",
   "/admin/subscriptions",
+  "/admin/reports",
   "/admin/audit-log",
 ]);
 
@@ -102,7 +105,7 @@ const GLOBAL_GROUPS: { label: string; hrefs: string[] }[] = [
   { label: "Catalog", hrefs: ["/admin/countries", "/admin/doctors", "/admin/assets", "/admin/blog"] },
   { label: "People", hrefs: ["/admin/users", "/admin/patients", "/admin/messages"] },
   { label: "Commerce", hrefs: ["/admin/orders", "/admin/invoices", "/admin/subscriptions"] },
-  { label: "System", hrefs: ["/admin/newsletter", "/admin/automation", "/admin/audit-log"] },
+  { label: "System", hrefs: ["/admin/reports", "/admin/newsletter", "/admin/automation", "/admin/audit-log"] },
 ];
 
 const COUNTRY_HREFS = new Set([
@@ -149,6 +152,7 @@ const ORDER: Record<string, number> = {
   "/admin/orders": 6,
   "/admin/newsletter": 7,
   "/admin/subscriptions": 7.5,
+  "/admin/reports": 7.8,
   "/admin/audit-log": 8,
   // Country-scoped — by priority: controller → content → services →
   // bookings → footer last (site chrome, lowest priority).

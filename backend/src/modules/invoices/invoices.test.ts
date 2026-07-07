@@ -165,6 +165,71 @@ describe("invoices", () => {
       await assert.doesNotReject(() => generateInvoiceMod.generateInvoiceForOrder("nonexistent-order-id"));
     });
 
+    it("transitions an existing unpaid INVOICE to a RECEIPT on payment (same number)", async (t) => {
+      if (skipIfNoDb()) return t.skip();
+      const order = await makeOrder("ie");
+      try {
+        const existing = await prisma.invoice.create({
+          data: {
+            invoiceNumber: `IE-UNPAID-${uniq}`,
+            orderId: order.id,
+            countryCode: "ie",
+            emailSentTo: order.email,
+            documentType: "INVOICE",
+          },
+        });
+        await generateInvoiceMod.generateInvoiceForOrder(order.id);
+        const invoices = await prisma.invoice.findMany({ where: { orderId: order.id } });
+        assert.equal(invoices.length, 1);
+        assert.equal(invoices[0].id, existing.id);
+        assert.equal(invoices[0].documentType, "RECEIPT");
+        assert.equal(invoices[0].invoiceNumber, `IE-UNPAID-${uniq}`);
+      } finally {
+        await prisma.invoice.deleteMany({ where: { orderId: order.id } });
+        await prisma.order.delete({ where: { id: order.id } });
+      }
+    });
+
+    it("creates a combined INVOICE_RECEIPT for a direct-website order (no prior invoice)", async (t) => {
+      if (skipIfNoDb()) return t.skip();
+      const order = await makeOrder("ie", { paymentStatus: "PAID", paidAt: new Date() });
+      try {
+        await generateInvoiceMod.generateInvoiceForOrder(order.id);
+        const invoices = await prisma.invoice.findMany({ where: { orderId: order.id } });
+        assert.equal(invoices.length, 1);
+        assert.equal(invoices[0].documentType, "INVOICE_RECEIPT");
+      } finally {
+        await prisma.invoice.deleteMany({ where: { orderId: order.id } });
+        await prisma.order.delete({ where: { id: order.id } });
+      }
+    });
+
+    it("createUnpaidInvoiceForOrder issues an unpaid INVOICE for a manual/AI booking", async (t) => {
+      if (skipIfNoDb()) return t.skip();
+      const order = await makeOrder("ie");
+      try {
+        await generateInvoiceMod.createUnpaidInvoiceForOrder(order.id);
+        const invoices = await prisma.invoice.findMany({ where: { orderId: order.id } });
+        assert.equal(invoices.length, 1);
+        assert.equal(invoices[0].documentType, "INVOICE");
+      } finally {
+        await prisma.invoice.deleteMany({ where: { orderId: order.id } });
+        await prisma.order.delete({ where: { id: order.id } });
+      }
+    });
+
+    it("createUnpaidInvoiceForOrder skips Portugal — no invoice row created", async (t) => {
+      if (skipIfNoDb()) return t.skip();
+      const order = await makeOrder("pt");
+      try {
+        await generateInvoiceMod.createUnpaidInvoiceForOrder(order.id);
+        const invoice = await prisma.invoice.findUnique({ where: { orderId: order.id } });
+        assert.equal(invoice, null);
+      } finally {
+        await prisma.order.delete({ where: { id: order.id } });
+      }
+    });
+
     it("cleans up fixtures", async (t) => {
       if (skipIfNoDb()) return t.skip();
       await prisma.country.deleteMany({ where: { id: countryId } });

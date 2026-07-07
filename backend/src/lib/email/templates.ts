@@ -522,6 +522,54 @@ const INVOICE_EMAIL_CTA: Record<string, string> = {
   rm: "Vizualizați factura",
 };
 
+export type InvoiceEmailDocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT";
+
+/** Per-document-type overrides. Falls back to the invoice (INVOICE_RECEIPT) copy above. */
+const RECEIPT_EMAIL_SUBJECT: Record<string, string> = {
+  ie: "Your receipt {invoiceNumber} — Global Health",
+  cz: "Vaše účtenka {invoiceNumber} — Global Health",
+  es: "Su recibo {invoiceNumber} — Global Health",
+  sp: "Su recibo {invoiceNumber} — Global Health",
+  rm: "Chitanța dvs. {invoiceNumber} — Global Health",
+};
+const RECEIPT_EMAIL_HEADING: Record<string, string> = {
+  ie: "Your receipt",
+  cz: "Vaše účtenka",
+  es: "Su recibo",
+  sp: "Su recibo",
+  rm: "Chitanța dvs.",
+};
+const RECEIPT_EMAIL_BODY: Record<string, string> = {
+  ie: "We have received your payment — thank you. Your receipt is ready to view and download below.",
+  cz: "Vaši platbu jsme obdrželi — děkujeme. Vaše účtenka je připravena k zobrazení a stažení níže.",
+  es: "Hemos recibido su pago — gracias. Su recibo está listo para ver y descargar a continuación.",
+  sp: "Hemos recibido su pago — gracias. Su recibo está listo para ver y descargar a continuación.",
+  rm: "Am primit plata dumneavoastră — vă mulțumim. Chitanța este gata de vizualizat și descărcat mai jos.",
+};
+const RECEIPT_EMAIL_CTA: Record<string, string> = {
+  ie: "View receipt",
+  cz: "Zobrazit účtenku",
+  es: "Ver recibo",
+  sp: "Ver recibo",
+  rm: "Vizualizați chitanța",
+};
+
+/** Unpaid invoice (manual / AI booking) — asks the patient to pay. */
+const UNPAID_INVOICE_EMAIL_SUBJECT: Record<string, string> = {
+  ie: "Your invoice {invoiceNumber} — payment required",
+  cz: "Vaše faktura {invoiceNumber} — vyžaduje platbu",
+  es: "Su factura {invoiceNumber} — pago pendiente",
+  sp: "Su factura {invoiceNumber} — pago pendiente",
+  rm: "Factura dvs. {invoiceNumber} — necesită plată",
+};
+const UNPAID_INVOICE_EMAIL_BODY: Record<string, string> = {
+  ie: "Your invoice is ready. Please click below to view it and complete your payment.",
+  cz: "Vaše faktura je připravena. Klikněte níže pro zobrazení a dokončení platby.",
+  es: "Su factura está lista. Haga clic abajo para verla y completar el pago.",
+  sp: "Su factura está lista. Haga clic abajo para verla y completar el pago.",
+  rm: "Factura dvs. este gata. Faceți clic mai jos pentru a o vizualiza și a finaliza plata.",
+};
+
 export async function sendInvoiceEmail(opts: {
   to: string;
   fullName: string;
@@ -529,14 +577,30 @@ export async function sendInvoiceEmail(opts: {
   invoiceUrl: string;
   countryCode: string;
   pdfBuffer?: Buffer;
+  /** Drives the wording. Defaults to the combined invoice/receipt copy. */
+  documentType?: InvoiceEmailDocumentType;
 }) {
   const cc = opts.countryCode.toLowerCase();
   const isSpanish = cc === "es" || cc === "sp";
-  const subjectTemplate = INVOICE_EMAIL_SUBJECT[cc] ?? INVOICE_EMAIL_SUBJECT.ie!;
+  const docType = opts.documentType ?? "INVOICE_RECEIPT";
+  const isReceipt = docType === "RECEIPT";
+  const isUnpaidInvoice = docType === "INVOICE";
+
+  const pick = (m: Record<string, string>) => m[cc] ?? m.ie!;
+  const subjectTemplate = isReceipt
+    ? pick(RECEIPT_EMAIL_SUBJECT)
+    : isUnpaidInvoice
+      ? pick(UNPAID_INVOICE_EMAIL_SUBJECT)
+      : pick(INVOICE_EMAIL_SUBJECT);
   const subject = subjectTemplate.replace("{invoiceNumber}", opts.invoiceNumber);
-  const heading = INVOICE_EMAIL_HEADING[cc] ?? INVOICE_EMAIL_HEADING.ie!;
-  const body = INVOICE_EMAIL_BODY[cc] ?? INVOICE_EMAIL_BODY.ie!;
-  const cta = INVOICE_EMAIL_CTA[cc] ?? INVOICE_EMAIL_CTA.ie!;
+  const heading = isReceipt ? pick(RECEIPT_EMAIL_HEADING) : pick(INVOICE_EMAIL_HEADING);
+  const body = isReceipt
+    ? pick(RECEIPT_EMAIL_BODY)
+    : isUnpaidInvoice
+      ? pick(UNPAID_INVOICE_EMAIL_BODY)
+      : pick(INVOICE_EMAIL_BODY);
+  const cta = isReceipt ? pick(RECEIPT_EMAIL_CTA) : pick(INVOICE_EMAIL_CTA);
+  const filenamePrefix = isReceipt ? "receipt" : "invoice";
 
   const { resolveEmailLogoUrl } = await import("./resolve-email-logo-url.js");
   const logoSrc = await resolveEmailLogoUrl();
@@ -645,7 +709,7 @@ export async function sendInvoiceEmail(opts: {
     attachments: opts.pdfBuffer
       ? [
           {
-            filename: `invoice-${opts.invoiceNumber}.pdf`,
+            filename: `${filenamePrefix}-${opts.invoiceNumber}.pdf`,
             content: opts.pdfBuffer,
             contentType: "application/pdf",
           },
