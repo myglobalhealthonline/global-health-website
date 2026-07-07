@@ -37,13 +37,28 @@ function getJwtSecretKey(): Uint8Array | null {
   return cachedSecretKey;
 }
 
-type SessionRole = "PATIENT" | "ADMIN" | "DOCTOR";
+type SessionRole =
+  | "PATIENT"
+  | "ADMIN"
+  | "DOCTOR"
+  | "LOCAL_ADMIN"
+  | "SUPER_ADMIN"
+  | "CORPORATE_ADMIN";
 type SessionLookup =
   | { kind: "ok"; role: SessionRole | null; email: string | null }
   | { kind: "misconfigured" };
 
+const SESSION_ROLES: SessionRole[] = [
+  "PATIENT",
+  "ADMIN",
+  "DOCTOR",
+  "LOCAL_ADMIN",
+  "SUPER_ADMIN",
+  "CORPORATE_ADMIN",
+];
+
 function isSessionRole(value: unknown): value is SessionRole {
-  return value === "PATIENT" || value === "ADMIN" || value === "DOCTOR";
+  return SESSION_ROLES.includes(value as SessionRole);
 }
 
 async function resolveSession(request: NextRequest): Promise<SessionLookup> {
@@ -114,7 +129,16 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname === "/account" || pathname.startsWith("/account/")) {
+  // Server Action invocations (sign-out, form submits, etc.) POST to the
+  // current page URL carrying a `next-action` header. A raw edge redirect
+  // here is not a valid Server Action response — the client action runtime
+  // can't parse it and throws, surfacing as the generic error boundary
+  // ("Something went wrong"). The action's own auth check + redirect() is
+  // the real source of truth, so skip the edge role-gate for these and let
+  // the request through.
+  const isServerAction = request.headers.has("next-action");
+
+  if (!isServerAction && (pathname === "/account" || pathname.startsWith("/account/"))) {
     const session = await resolveSession(request);
     if (session.kind === "misconfigured") return handleMisconfiguredSession(request, pathname);
     const role = session.role;
@@ -130,22 +154,23 @@ export async function proxy(request: NextRequest) {
       adminUrl.search = "";
       return NextResponse.redirect(adminUrl);
     }
-    if (role !== "PATIENT") {
+    if (role === null) {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/login";
       loginUrl.search = "";
       loginUrl.searchParams.set("next", normalizeNextPath(pathname));
       return NextResponse.redirect(loginUrl);
     }
+    // PATIENT, SUPER_ADMIN, LOCAL_ADMIN, CORPORATE_ADMIN: let the account
+    // layout's own server-side check decide (it further redirects
+    // CORPORATE_ADMIN to /corporate).
   }
 
-  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+  if (!isServerAction && (pathname === "/admin" || pathname.startsWith("/admin/"))) {
     const session = await resolveSession(request);
     if (session.kind === "misconfigured") return handleMisconfiguredSession(request, pathname);
     const role = session.role;
-    if (role === "ADMIN") {
-      // continue
-    } else if (role === "DOCTOR") {
+    if (role === "DOCTOR") {
       const doctorUrl = request.nextUrl.clone();
       doctorUrl.pathname = "/doctor";
       doctorUrl.search = "";
@@ -155,22 +180,22 @@ export async function proxy(request: NextRequest) {
       accountUrl.pathname = "/account";
       accountUrl.search = "";
       return NextResponse.redirect(accountUrl);
-    } else {
+    } else if (role === null) {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/login";
       loginUrl.search = "";
       loginUrl.searchParams.set("next", normalizeNextPath(pathname));
       return NextResponse.redirect(loginUrl);
     }
+    // ADMIN, SUPER_ADMIN, LOCAL_ADMIN, CORPORATE_ADMIN: let the admin
+    // layout's own server-side check decide.
   }
 
-  if (pathname === "/doctor" || pathname.startsWith("/doctor/")) {
+  if (!isServerAction && (pathname === "/doctor" || pathname.startsWith("/doctor/"))) {
     const session = await resolveSession(request);
     if (session.kind === "misconfigured") return handleMisconfiguredSession(request, pathname);
     const role = session.role;
-    if (role === "DOCTOR") {
-      // continue
-    } else if (role === "ADMIN") {
+    if (role === "ADMIN") {
       const adminUrl = request.nextUrl.clone();
       adminUrl.pathname = "/admin";
       adminUrl.search = "";
@@ -180,13 +205,15 @@ export async function proxy(request: NextRequest) {
       accountUrl.pathname = "/account";
       accountUrl.search = "";
       return NextResponse.redirect(accountUrl);
-    } else {
+    } else if (role === null) {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/login";
       loginUrl.search = "";
       loginUrl.searchParams.set("next", normalizeNextPath(pathname));
       return NextResponse.redirect(loginUrl);
     }
+    // DOCTOR, SUPER_ADMIN, LOCAL_ADMIN, CORPORATE_ADMIN: let the doctor
+    // layout's own server-side check decide.
   }
 
   const context = getRequestContext({
