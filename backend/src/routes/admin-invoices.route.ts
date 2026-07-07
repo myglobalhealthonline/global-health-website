@@ -6,6 +6,8 @@ import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.service.js";
+import { buildInvoicePdfData, renderInvoicePdfBuffer } from "../modules/invoices/invoice-pdf.js";
+import { resendInvoiceDocument } from "../modules/invoices/generate-invoice.service.js";
 
 /**
  * Admin invoice endpoints.
@@ -26,6 +28,9 @@ const CART_ITEM_KINDS = [
   "SPECIALIST_CONSULTATION",
 ] as const;
 
+/** Fiscal document types — must mirror the Prisma `InvoiceDocumentType` enum. */
+const INVOICE_DOCUMENT_TYPES = ["INVOICE", "RECEIPT", "INVOICE_RECEIPT"] as const;
+
 /** Treat blank form fields (`?q=&kind=`) as absent rather than a validation error. */
 const blankToUndefined = (v: unknown) => (v === "" ? undefined : v);
 
@@ -40,6 +45,8 @@ const listQuerySchema = z.object({
   q: z.preprocess(blankToUndefined, z.string().trim().min(1).max(160).optional()),
   /** Consultation / item type filter. */
   kind: z.preprocess(blankToUndefined, z.enum(CART_ITEM_KINDS).optional()),
+  /** Document-type filter: unpaid invoices, receipts, or combined invoice/receipts. */
+  documentType: z.preprocess(blankToUndefined, z.enum(INVOICE_DOCUMENT_TYPES).optional()),
   /** Invoice-date (generatedAt) range, inclusive. */
   invoiceFrom: z.preprocess(blankToUndefined, z.coerce.date().optional()),
   invoiceTo: z.preprocess(blankToUndefined, z.coerce.date().optional()),
@@ -65,7 +72,7 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
     if (!query.success) {
       return reply.status(400).send(errorResponse("Invalid query", query.error.flatten()));
     }
-    const { cursor, limit, q, kind, invoiceFrom, invoiceTo, consultFrom, consultTo } =
+    const { cursor, limit, q, kind, documentType, invoiceFrom, invoiceTo, consultFrom, consultTo } =
       query.data;
 
     // Build the filter. Every clause is ANDed; the free-text `q` is an OR across
@@ -91,6 +98,10 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
 
     if (kind) {
       and.push({ order: { items: { some: { kind } } } });
+    }
+
+    if (documentType) {
+      and.push({ documentType });
     }
 
     if (invoiceFrom || invoiceTo) {
@@ -151,6 +162,7 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
           id: inv.id,
           invoiceNumber: inv.invoiceNumber,
           countryCode: inv.countryCode,
+          documentType: inv.documentType,
           generatedAt: inv.generatedAt.toISOString(),
           emailSentAt: inv.emailSentAt?.toISOString() ?? null,
           emailSentTo: inv.emailSentTo,
@@ -309,6 +321,7 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
             id: invoice.id,
             invoiceNumber: invoice.invoiceNumber,
             countryCode: invoice.countryCode,
+            documentType: invoice.documentType,
             generatedAt: invoice.generatedAt.toISOString(),
             emailSentAt: invoice.emailSentAt?.toISOString() ?? null,
           },
@@ -344,6 +357,85 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(err);
         return reply.status(500).send(errorResponse("Could not load invoice"));
+      }
+    },
+  );
+
+  // ── Download the document PDF ──────────────────────────────────────────────
+  app.get<{ Params: { invoiceId: string } }>(
+    "/api/admin/invoices/:invoiceId/pdf",
+    async (request, reply) => {
+      const auth = await verifyAdminAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+
+      const params = idParamSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+
+      try {
+        const invoice = await prisma.invoice.findUnique({
+          where: { id: params.data.invoiceId },
+          select: {
+            invoiceNumber: true,
+            documentType: true,
+            generatedAt: true,
+            orderId: true,
+          },
+        });
+        if (!invoice) return reply.status(404).send(errorResponse("Invoice not found"));
+
+        const pdfData = await buildInvoicePdfData(
+          invoice.orderId,
+          invoice.invoiceNumber,
+          invoice.generatedAt.toISOString(),
+          invoice.documentType,
+        );
+        const pdfBuffer = pdfData ? await renderInvoicePdfBuffer(pdfData) : null;
+        if (!pdfBuffer) {
+          return reply.status(500).send(errorResponse("Could not render document PDF"));
+        }
+
+        const prefix = invoice.documentType === "RECEIPT" ? "receipt" : "invoice";
+        return reply
+          .header("Content-Type", "application/pdf")
+          .header(
+            "Content-Disposition",
+            `attachment; filename="${prefix}-${invoice.invoiceNumber}.pdf"`,
+          )
+          .send(pdfBuffer);
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Could not generate document PDF"));
+      }
+    },
+  );
+
+  // ── Resend the document email to the patient ───────────────────────────────
+  app.post<{ Params: { invoiceId: string } }>(
+    "/api/admin/invoices/:invoiceId/resend",
+    async (request, reply) => {
+      const auth = await verifyAdminAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+
+      const params = idParamSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+
+      try {
+        const sent = await resendInvoiceDocument(params.data.invoiceId, {
+          info: (obj, msg) => app.log.info(obj, msg),
+          warn: (obj, msg) => app.log.warn(obj, msg),
+          error: (obj, msg) => app.log.error(obj, msg),
+        });
+        if (!sent) return reply.status(404).send(errorResponse("Invoice not found"));
+        return okResponse({ resent: true });
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Could not resend document email"));
       }
     },
   );

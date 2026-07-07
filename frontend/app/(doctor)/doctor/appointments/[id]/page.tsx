@@ -11,7 +11,6 @@ import {
   fetchDoctorFormSubmissions,
   fetchDoctorFormTemplates,
   fetchDoctorInternalMessages,
-  fetchDoctorInvoice,
 } from "@/lib/api/doctor-api";
 import { ConsultationForm } from "./_components/consultation-form";
 import { ExamResultsList } from "./_components/exam-results-list";
@@ -54,7 +53,6 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     consultRes,
     examsRes,
     messagesRes,
-    invoiceRes,
     submissionsRes,
     templatesRes,
     documentsRes,
@@ -65,7 +63,6 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     fetchDoctorConsultation(id),
     fetchDoctorExams(id),
     fetchDoctorInternalMessages(id),
-    fetchDoctorInvoice(id),
     fetchDoctorFormSubmissions(id),
     fetchDoctorFormTemplates(),
     fetchDoctorDocuments(id),
@@ -93,7 +90,6 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   const { appointment, consultation } = consultRes.data;
   const exams = examsRes.ok ? examsRes.data.items : [];
   const messages = messagesRes.ok ? messagesRes.data.items : [];
-  const invoice = invoiceRes.ok ? invoiceRes.data.invoice : null;
   const submissions = submissionsRes.ok ? submissionsRes.data.items : [];
   const templates = templatesRes.ok ? templatesRes.data.items : [];
   const documents = documentsRes.ok ? documentsRes.data.items : [];
@@ -595,85 +591,26 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                 </p>
               </div>
             ) : null}
+            <Link
+              href={`/doctor/patients/${encodeURIComponent(appointment.email)}`}
+              className="gh-btn gh-btn-soft mt-4 inline-flex items-center gap-2 text-sm"
+            >
+              <ExternalLink className="size-3.5" aria-hidden /> Open patient chart
+            </Link>
+            <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
+              Edit health data: BMI, blood pressure, allergies, chronic
+              diseases, family history, social habits, usual medication.
+            </p>
           </div>
         </FormSection>
 
-        {invoice ? (
-          <FormSection title="Invoice" description="Read-only view. Admin issues + refunds.">
-            <div className="gh-form-section__span-2">
-              <dl className="grid gap-2 text-[13px]">
-                <Row label="Status" value={invoice.paymentStatus} />
-                <Row
-                  label="Booked amount"
-                  value={
-                    invoice.amountCents != null && invoice.currencyCode
-                      ? formatMoney(invoice.amountCents, invoice.currencyCode)
-                      : "—"
-                  }
-                />
-                {(() => {
-                  const buckets = Object.entries(
-                    invoice.lineTotalsByCurrency ?? {},
-                  ).filter(([, v]) => v > 0);
-                  if (buckets.length === 0) {
-                    return <Row label="Line total" value="—" />;
-                  }
-                  if (buckets.length === 1) {
-                    const [code, total] = buckets[0]!;
-                    return (
-                      <Row
-                        label="Line total"
-                        value={formatMoney(total, code === "—" ? "EUR" : code)}
-                      />
-                    );
-                  }
-                  return (
-                    <>
-                      {buckets.map(([code, total]) => (
-                        <Row
-                          key={code}
-                          label={`Line total (${code})`}
-                          value={formatMoney(total, code === "—" ? "EUR" : code)}
-                        />
-                      ))}
-                    </>
-                  );
-                })()}
-                <Row
-                  label="Paid"
-                  value={
-                    invoice.paidAt
-                      ? new Date(invoice.paidAt).toLocaleString()
-                      : "—"
-                  }
-                />
-              </dl>
-              <Link
-                href={`/print/invoices/${appointment.id}`}
-                target="_blank"
-                className="mt-4 inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] px-3 py-2 text-[12.5px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
-              >
-                <Printer className="size-3.5" /> Print invoice
-              </Link>
-            </div>
-          </FormSection>
-        ) : null}
+        {/* Patient billing/invoice is intentionally NOT shown to doctors —
+            they see only their own per-service payout under Finance →
+            Invoices. Admin owns patient invoicing. */}
       </aside>
       </div>
     </div>
   );
-}
-
-function formatMoney(cents: number, code: string) {
-  const v = cents / 100;
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: code,
-    }).format(v);
-  } catch {
-    return `${v.toFixed(2)} ${code}`;
-  }
 }
 
 function Row({ label, value }: { label: string; value: string }) {

@@ -1,6 +1,7 @@
 import { fetchDoctorReports } from "@/lib/api/doctor-api";
 import { AdminEmptyState, PageHeader, SectionHeader } from "@/components/portal-atoms";
 import { ReportsCsvButton } from "./_components/csv-button";
+import { DoctorReportExports } from "./_components/report-exports";
 
 export const dynamic = "force-dynamic";
 
@@ -121,6 +122,12 @@ export default async function DoctorReportsPage({
           </button>
         </div>
       </form>
+
+      <div className="mb-4">
+        <DoctorReportExports
+          filters={{ from, to, consultationType, paymentStatus, status }}
+        />
+      </div>
 
       {!result.ok ? (
         <div className="gh-card p-6">

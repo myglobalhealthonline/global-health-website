@@ -10,6 +10,13 @@ type Profile = {
   bmi: number | null;
   bloodType: string | null;
   allergies: string[];
+  chronicDiseases: string[];
+  familyHistory: string[];
+  socialHabits: string[];
+  surgeries: string[];
+  usualMedication: string[];
+  bloodPressureSystolic: number | null;
+  bloodPressureDiastolic: number | null;
   nationalIdNumber: string | null;
   taxIdNumber: string | null;
   passportNumber: string | null;
@@ -26,8 +33,16 @@ type Profile = {
 type PatchPayload = {
   weightKg?: number | null;
   heightM?: number | null;
+  bmi?: number | null;
   bloodType?: string | null;
   allergies?: string[];
+  chronicDiseases?: string[];
+  familyHistory?: string[];
+  socialHabits?: string[];
+  surgeries?: string[];
+  usualMedication?: string[];
+  bloodPressureSystolic?: number | null;
+  bloodPressureDiastolic?: number | null;
   nationalIdNumber?: string | null;
   taxIdNumber?: string | null;
   passportNumber?: string | null;
@@ -57,15 +72,38 @@ export function PatientProfilePanel({ email }: { email: string }) {
   const [pending, startTransition] = useTransition();
   const [uploadMsg, setUploadMsg] = useState<string | null>(null);
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
+  // Weight/height are controlled so BMI can recompute live as the doctor
+  // types (BMI itself is never posted — the server derives/stores it).
+  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
 
   useEffect(() => {
     fetch(`/api/doctor/patients/${encodeURIComponent(email)}/profile`)
       .then((r) => r.json())
       .then((json: { ok?: boolean; data?: { profile?: Profile | null } }) => {
-        if (json.ok && json.data?.profile) setProfile(json.data.profile);
+        if (json.ok && json.data?.profile) {
+          setProfile(json.data.profile);
+          setWeight(
+            json.data.profile.weightKg != null
+              ? String(json.data.profile.weightKg)
+              : "",
+          );
+          setHeight(
+            json.data.profile.heightM != null
+              ? String(json.data.profile.heightM)
+              : "",
+          );
+        }
       })
       .catch(() => {});
   }, [email]);
+
+  const w = Number(weight);
+  const h = Number(height);
+  const liveBmi =
+    Number.isFinite(w) && w > 0 && Number.isFinite(h) && h > 0
+      ? w / (h * h)
+      : null;
 
   function save(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -82,14 +120,29 @@ export function PatientProfilePanel({ email }: { email: string }) {
       const n = Number(raw);
       return Number.isFinite(n) ? n : null;
     };
-    const payload: PatchPayload = {
-      weightKg: num("weightKg"),
-      heightM: num("heightM"),
-      bloodType: text("bloodType"),
-      allergies: String(fd.get("allergies") ?? "")
+    const list = (key: string) =>
+      String(fd.get(key) ?? "")
         .split(",")
         .map((s) => s.trim())
-        .filter(Boolean),
+        .filter(Boolean);
+    const wKg = num("weightKg");
+    const hM = num("heightM");
+    const payload: PatchPayload = {
+      weightKg: wKg,
+      heightM: hM,
+      bmi:
+        wKg != null && hM != null && hM > 0
+          ? Math.round((wKg / (hM * hM)) * 10) / 10
+          : null,
+      bloodType: text("bloodType"),
+      allergies: list("allergies"),
+      chronicDiseases: list("chronicDiseases"),
+      familyHistory: list("familyHistory"),
+      socialHabits: list("socialHabits"),
+      surgeries: list("surgeries"),
+      usualMedication: list("usualMedication"),
+      bloodPressureSystolic: num("bloodPressureSystolic"),
+      bloodPressureDiastolic: num("bloodPressureDiastolic"),
       nationalIdNumber: text("nationalIdNumber"),
       taxIdNumber: text("taxIdNumber"),
       passportNumber: text("passportNumber"),
@@ -212,29 +265,64 @@ export function PatientProfilePanel({ email }: { email: string }) {
 
         <Section title="Vitals">
           <div className="gh-doctor-field-grid grid gap-3 sm:grid-cols-3">
-            <Field
-              name="weightKg"
-              label="Weight (kg)"
-              type="number"
-              step="0.1"
-              defaultValue={
-                profile?.weightKg != null ? String(profile.weightKg) : ""
-              }
-            />
-            <Field
-              name="heightM"
-              label="Height (m)"
-              type="number"
-              step="0.01"
-              defaultValue={
-                profile?.heightM != null ? String(profile.heightM) : ""
-              }
-            />
+            <label className="flex flex-col gap-1">
+              <span className="gh-field-label">Weight (kg)</span>
+              <input
+                name="weightKg"
+                type="number"
+                step="0.1"
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
+                className="gh-input"
+              />
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="gh-field-label">Height (m)</span>
+              <input
+                name="heightM"
+                type="number"
+                step="0.01"
+                value={height}
+                onChange={(e) => setHeight(e.target.value)}
+                className="gh-input"
+              />
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="gh-field-label">BMI (auto)</span>
+              <input
+                readOnly
+                disabled
+                value={liveBmi != null ? liveBmi.toFixed(1) : "—"}
+                className="gh-input bg-[var(--portal-well)] text-[var(--portal-muted)]"
+              />
+            </label>
+          </div>
+          <div className="gh-doctor-field-grid mt-3 grid gap-3 sm:grid-cols-3">
             <Field
               name="bloodType"
               label="Blood type"
               defaultValue={profile?.bloodType ?? ""}
               maxLength={8}
+            />
+            <Field
+              name="bloodPressureSystolic"
+              label="Arterial pressure — systolic (mmHg)"
+              type="number"
+              defaultValue={
+                profile?.bloodPressureSystolic != null
+                  ? String(profile.bloodPressureSystolic)
+                  : ""
+              }
+            />
+            <Field
+              name="bloodPressureDiastolic"
+              label="Arterial pressure — diastolic (mmHg)"
+              type="number"
+              defaultValue={
+                profile?.bloodPressureDiastolic != null
+                  ? String(profile.bloodPressureDiastolic)
+                  : ""
+              }
             />
           </div>
           <label className="mt-3 flex flex-col gap-1">
@@ -245,6 +333,53 @@ export function PatientProfilePanel({ email }: { email: string }) {
               className="gh-input"
             />
           </label>
+        </Section>
+
+        <Section title="Medical history">
+          <div className="grid gap-3">
+            <label className="flex flex-col gap-1">
+              <span className="gh-field-label">Chronic diseases (comma-separated)</span>
+              <input
+                name="chronicDiseases"
+                defaultValue={profile?.chronicDiseases?.join(", ") ?? ""}
+                className="gh-input"
+              />
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="gh-field-label">Usual medication (comma-separated)</span>
+              <input
+                name="usualMedication"
+                defaultValue={profile?.usualMedication?.join(", ") ?? ""}
+                className="gh-input"
+                placeholder="e.g. Metformin 850mg 2x/day, Ramipril 5mg"
+              />
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="gh-field-label">Family history (comma-separated)</span>
+              <input
+                name="familyHistory"
+                defaultValue={profile?.familyHistory?.join(", ") ?? ""}
+                className="gh-input"
+              />
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="gh-field-label">Social habits (comma-separated)</span>
+              <input
+                name="socialHabits"
+                defaultValue={profile?.socialHabits?.join(", ") ?? ""}
+                className="gh-input"
+                placeholder="e.g. Smoker 10/day, Alcohol occasional"
+              />
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="gh-field-label">Surgeries (comma-separated)</span>
+              <input
+                name="surgeries"
+                defaultValue={profile?.surgeries?.join(", ") ?? ""}
+                className="gh-input"
+              />
+            </label>
+          </div>
         </Section>
 
         <Section title="Clinical alerts (doctor-only)">

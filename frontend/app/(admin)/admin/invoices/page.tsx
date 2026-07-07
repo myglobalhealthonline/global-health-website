@@ -8,16 +8,28 @@ import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
 import { FlagBadge } from "../_components/flag-badge";
 import { InvoiceFilters, type InvoiceFilterValues } from "./_components/invoice-filters";
+import { InvoiceRowActions } from "./_components/invoice-row-actions";
 
 export const dynamic = "force-dynamic";
 
 /** Filter keys forwarded verbatim to the backend list endpoint. */
-const FILTER_KEYS = ["q", "kind", "invoiceFrom", "invoiceTo", "consultFrom", "consultTo"] as const;
+const FILTER_KEYS = [
+  "q",
+  "kind",
+  "documentType",
+  "invoiceFrom",
+  "invoiceTo",
+  "consultFrom",
+  "consultTo",
+] as const;
+
+type DocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT";
 
 type InvoiceRow = {
   id: string;
   invoiceNumber: string;
   countryCode: string;
+  documentType: DocumentType;
   generatedAt: string;
   emailSentAt: string | null;
   emailSentTo: string | null;
@@ -29,6 +41,24 @@ type InvoiceRow = {
   currencyCode: string;
   paymentStatus: string;
 };
+
+/** Label + colour tone for each fiscal document type. */
+const DOC_TYPE_META: Record<DocumentType, { label: string; className: string }> = {
+  INVOICE: { label: "Invoice · Unpaid", className: "bg-amber-100 text-amber-800" },
+  RECEIPT: { label: "Receipt", className: "bg-sky-100 text-sky-800" },
+  INVOICE_RECEIPT: { label: "Invoice / Receipt", className: "bg-emerald-100 text-emerald-800" },
+};
+
+function DocTypeBadge({ documentType }: { documentType: DocumentType }) {
+  const meta = DOC_TYPE_META[documentType] ?? DOC_TYPE_META.INVOICE_RECEIPT;
+  return (
+    <span
+      className={`gh-admin-ops-badge inline-block rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${meta.className}`}
+    >
+      {meta.label}
+    </span>
+  );
+}
 
 async function fetchAdminInvoices(
   filters: InvoiceFilterValues,
@@ -76,6 +106,7 @@ export default async function AdminInvoicesPage({
   const filters: InvoiceFilterValues = {
     q: sp.q,
     kind: sp.kind,
+    documentType: sp.documentType,
     invoiceFrom: sp.invoiceFrom,
     invoiceTo: sp.invoiceTo,
     consultFrom: sp.consultFrom,
@@ -107,8 +138,8 @@ export default async function AdminInvoicesPage({
             <Receipt className="size-3.5" aria-hidden /> Commerce
           </span>
         }
-        title="Invoices"
-        description="Auto-generated invoices for paid orders. Portugal orders are excluded. Click View to open the printable invoice."
+        title="Invoices & Receipts"
+        description="Unpaid invoices (manual / AI bookings), receipts once paid, and combined invoice/receipts for direct-website orders. Portugal is excluded. Download the PDF or resend it to the patient."
       />
 
       <AdminCard padding={0}>
@@ -160,6 +191,7 @@ export default async function AdminInvoicesPage({
             <thead>
               <tr className="border-b border-[var(--color-border)] text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                 <th className="px-4 py-3">Invoice #</th>
+                <th className="px-4 py-3">Type</th>
                 <th className="px-4 py-3">Order</th>
                 <th className="px-4 py-3">Patient</th>
                 <th className="px-4 py-3">Country</th>
@@ -179,6 +211,9 @@ export default async function AdminInvoicesPage({
                       <span className="font-mono text-[13px] font-bold text-[var(--color-text-primary)]">
                         {inv.invoiceNumber}
                       </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <DocTypeBadge documentType={inv.documentType} />
                     </td>
                     <td className="px-4 py-3">
                       <Link
@@ -221,16 +256,19 @@ export default async function AdminInvoicesPage({
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-right">
-                      <Link
-                        href={`/print/order-invoices/${inv.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="gh-admin-invoices-view-link inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-[11px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]"
-                      >
-                        <ExternalLink className="size-3" aria-hidden />
-                        View
-                      </Link>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Link
+                          href={`/print/order-invoices/${inv.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="gh-admin-invoices-view-link inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-[11px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]"
+                        >
+                          <ExternalLink className="size-3" aria-hidden />
+                          View
+                        </Link>
+                        <InvoiceRowActions invoiceId={inv.id} />
+                      </div>
                     </td>
                   </tr>
               ))}
@@ -250,6 +288,7 @@ export default async function AdminInvoicesPage({
                 </Pill>
               }
               meta={[
+                { label: "Document", value: <DocTypeBadge documentType={inv.documentType} /> },
                 { label: "Email", value: inv.email },
                 { label: "Total", value: `${formatPrice(inv.totalCents, inv.currencyCode)} · ${formatAppDate(inv.generatedAt)}` },
                 {
@@ -273,8 +312,9 @@ export default async function AdminInvoicesPage({
                     rel="noopener noreferrer"
                     className="gh-btn gh-btn-secondary text-sm"
                   >
-                    View invoice
+                    View
                   </Link>
+                  <InvoiceRowActions invoiceId={inv.id} variant="card" />
                 </>
               }
             />

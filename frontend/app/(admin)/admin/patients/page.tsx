@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Search, UserRound } from "lucide-react";
 import { fetchAdminPatients, type AdminPatientSearchItem, type VerificationStatus } from "@/lib/admin/admin-api";
-import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader, Pill } from "../_components/atoms";
+import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, PageHeader, Pill } from "../_components/atoms";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
 
 export const dynamic = "force-dynamic";
@@ -55,6 +55,11 @@ export default async function AdminPatientsPage({
         eyebrow="Global"
         title="Patients"
         description="All registered patients — filter by Global Health Number or email."
+        actions={
+          <Btn href="/admin/patients/new" variant="primary" iconLeft={<UserRound className="size-3.5" />}>
+            New patient
+          </Btn>
+        }
       />
 
       <AdminCard padding={0} className="gh-admin-patients-list">

@@ -52,6 +52,7 @@ const patientPatchSchema = z
     familyHistory: z.array(z.string().trim().max(200)).max(50).optional(),
     socialHabits: z.array(z.string().trim().max(200)).max(50).optional(),
     surgeries: z.array(z.string().trim().max(200)).max(50).optional(),
+    usualMedication: z.array(z.string().trim().max(200)).max(50).optional(),
     nationalIdNumber: stringField(64),
     taxIdNumber: stringField(64),
     passportNumber: stringField(64),

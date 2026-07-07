@@ -70,6 +70,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/newsletter", label: "Newsletter" },
     { href: "/admin/subscriptions", label: "Subscriptions" },
     { href: "/admin/corporate", label: "Corporate" },
+    { href: "/admin/reports", label: "Reports" },
     { href: "/admin/audit-log", label: "Audit log" },
     // Country-scoped — "Pages" first as the visibility controller.
     // Three sidebar entries were removed as redundant:

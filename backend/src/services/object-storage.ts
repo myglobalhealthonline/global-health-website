@@ -1,12 +1,13 @@
 import {
   DeleteObjectCommand,
   GetObjectCommand,
+  ListObjectsV2Command,
   PutObjectCommand,
   type GetObjectCommandOutput,
   S3Client,
 } from "@aws-sdk/client-s3";
 import { createReadStream } from "node:fs";
-import { access, mkdir, unlink, writeFile } from "node:fs/promises";
+import { access, mkdir, readdir, stat, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { env } from "../config/env.js";
@@ -127,6 +128,71 @@ export async function deleteObject(key: string): Promise<void> {
   }
   // No storage configured — no-op. Callers running without storage
   // have nothing to clean up.
+}
+
+export type StoredObject = {
+  key: string;
+  size: number;
+  lastModified: Date | null;
+};
+
+/** List every object under `prefix` (S3) or the mirrored local directory.
+ *  Used to enumerate a doctor's uploaded payout invoices without a DB row. */
+export async function listObjects(prefix: string): Promise<StoredObject[]> {
+  if (isObjectStorageConfigured()) {
+    const out: StoredObject[] = [];
+    let token: string | undefined;
+    do {
+      const res = await getClient().send(
+        new ListObjectsV2Command({
+          Bucket: env.S3_BUCKET!,
+          Prefix: prefix,
+          ContinuationToken: token,
+        }),
+      );
+      for (const obj of res.Contents ?? []) {
+        if (!obj.Key) continue;
+        out.push({
+          key: obj.Key,
+          size: obj.Size ?? 0,
+          lastModified: obj.LastModified ?? null,
+        });
+      }
+      token = res.IsTruncated ? res.NextContinuationToken : undefined;
+    } while (token);
+    return out;
+  }
+
+  if (isDevLocalMediaEnabled()) {
+    const root = localMediaRootResolved();
+    const base = safeLocalFilePath(prefix);
+    const out: StoredObject[] = [];
+    async function walk(dir: string): Promise<void> {
+      let entries: import("node:fs").Dirent[];
+      try {
+        entries = await readdir(dir, { withFileTypes: true });
+      } catch {
+        return; // directory doesn't exist yet — no uploads
+      }
+      for (const entry of entries) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          await walk(full);
+        } else {
+          const st = await stat(full);
+          out.push({
+            key: path.relative(root, full).split(path.sep).join("/"),
+            size: st.size,
+            lastModified: st.mtime,
+          });
+        }
+      }
+    }
+    await walk(base);
+    return out;
+  }
+
+  return [];
 }
 
 export async function getObject(key: string): Promise<GetObjectCommandOutput> {

@@ -72,14 +72,110 @@ const noopLog: PaymentLog = {
   error: () => {},
 };
 
+type InvoiceDocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT";
+
 /**
- * Generate an invoice for a paid order and email it to the patient.
- *
- * - Skips Portugal (countryCode === "pt") — no invoices issued there.
- * - Idempotent: if an invoice already exists for the order, returns early.
- * - Called from ensureOrderPaidAutomations after the order is marked PAID.
+ * Render the document PDF and email it to the patient, then stamp emailSentAt.
+ * Shared by every issue/transition path. PDF + email failures are non-fatal —
+ * the invoice row is the source of truth and must survive email trouble.
  */
-export async function generateInvoiceForOrder(
+async function renderAndSendInvoiceDoc(
+  opts: {
+    invoiceId: string;
+    orderId: string;
+    invoiceNumber: string;
+    invoiceDateIso: string;
+    email: string;
+    fullName: string;
+    countryCode: string;
+    documentType: InvoiceDocumentType;
+  },
+  log: PaymentLog,
+): Promise<void> {
+  let pdfBuffer: Buffer | undefined;
+  try {
+    const pdfData = await buildInvoicePdfData(
+      opts.orderId,
+      opts.invoiceNumber,
+      opts.invoiceDateIso,
+      opts.documentType,
+    );
+    if (pdfData) {
+      pdfBuffer = (await renderInvoicePdfBuffer(pdfData)) ?? undefined;
+    }
+  } catch (err) {
+    log.warn({ err, orderId: opts.orderId }, "Invoice PDF generation failed — sending link-only email");
+  }
+
+  const invoiceUrl = absoluteSiteUrl(`/print/order-invoices/${opts.invoiceId}`);
+  try {
+    await sendInvoiceEmail({
+      to: opts.email,
+      fullName: opts.fullName,
+      invoiceNumber: opts.invoiceNumber,
+      invoiceUrl,
+      countryCode: opts.countryCode.toLowerCase(),
+      pdfBuffer,
+      documentType: opts.documentType,
+    });
+    await prisma.invoice.update({
+      where: { id: opts.invoiceId },
+      data: { emailSentAt: new Date() },
+    });
+    log.info({ invoiceId: opts.invoiceId, documentType: opts.documentType }, "Invoice email sent");
+  } catch (err) {
+    log.warn({ err, invoiceId: opts.invoiceId }, "Invoice email failed — invoice still created");
+  }
+}
+
+/**
+ * Re-send the current fiscal document's email to the patient (admin action).
+ * Uses the row's existing documentType + number — no new number, no state
+ * change. Returns false if the invoice/order can't be found.
+ */
+export async function resendInvoiceDocument(
+  invoiceId: string,
+  log: PaymentLog = noopLog,
+): Promise<boolean> {
+  const invoice = await prisma.invoice.findUnique({
+    where: { id: invoiceId },
+    select: {
+      id: true,
+      invoiceNumber: true,
+      generatedAt: true,
+      documentType: true,
+      countryCode: true,
+      order: { select: { id: true, email: true, fullName: true } },
+    },
+  });
+  if (!invoice) return false;
+
+  await renderAndSendInvoiceDoc(
+    {
+      invoiceId: invoice.id,
+      orderId: invoice.order.id,
+      invoiceNumber: invoice.invoiceNumber,
+      invoiceDateIso: invoice.generatedAt.toISOString(),
+      email: invoice.order.email,
+      fullName: invoice.order.fullName,
+      countryCode: invoice.countryCode,
+      documentType: invoice.documentType as InvoiceDocumentType,
+    },
+    log,
+  );
+  return true;
+}
+
+/**
+ * Issue an UNPAID invoice for a manual / AI-agent booking and email it to the
+ * patient so they can pay. Called at booking-creation time (before payment).
+ *
+ * - Skips Portugal + prefixless countries (same rule as the paid path).
+ * - Idempotent: returns early if an invoice already exists for the order.
+ * - The presence of this row is later how generateInvoiceForOrder knows the
+ *   booking was manual/AI (→ transition to RECEIPT) rather than direct web.
+ */
+export async function createUnpaidInvoiceForOrder(
   orderId: string,
   log: PaymentLog = noopLog,
 ): Promise<void> {
@@ -95,22 +191,16 @@ export async function generateInvoiceForOrder(
   });
 
   if (!order) {
-    log.warn({ orderId }, "generateInvoiceForOrder: order not found");
+    log.warn({ orderId }, "createUnpaidInvoiceForOrder: order not found");
     return;
   }
-
-  // Portugal: no invoices.
   if (order.countryCode.toLowerCase() === "pt") return;
-
-  // Skip countries without a prefix (future-proofing).
   if (!invoicePrefix(order.countryCode)) {
     log.info({ orderId, countryCode: order.countryCode }, "No invoice prefix — skipping");
     return;
   }
-
-  // Idempotent: already generated.
   if (order.invoice) {
-    log.info({ orderId }, "Invoice already exists — skipping");
+    log.info({ orderId }, "Invoice already exists — skipping unpaid issue");
     return;
   }
 
@@ -128,44 +218,152 @@ export async function generateInvoiceForOrder(
       orderId: order.id,
       countryCode: order.countryCode.toLowerCase(),
       emailSentTo: order.email,
+      documentType: "INVOICE",
     },
   });
 
-  log.info({ orderId, invoiceNumber, invoiceId: invoice.id }, "Invoice created");
+  log.info({ orderId, invoiceNumber, invoiceId: invoice.id }, "Unpaid invoice created");
+
+  // No Make.com payment webhook here — nothing is paid yet.
+  await renderAndSendInvoiceDoc(
+    {
+      invoiceId: invoice.id,
+      orderId: order.id,
+      invoiceNumber,
+      invoiceDateIso: invoice.generatedAt.toISOString(),
+      email: order.email,
+      fullName: order.fullName,
+      countryCode: order.countryCode,
+      documentType: "INVOICE",
+    },
+    log,
+  );
+}
+
+/**
+ * Issue or finalise the fiscal document for a PAID order and email the patient.
+ *
+ * - Skips Portugal (countryCode === "pt") — no invoices issued there.
+ * - Manual/AI booking (an unpaid INVOICE row already exists) → transitions it to
+ *   a RECEIPT (same number) and emails the receipt.
+ * - Direct-website order (no invoice yet) → creates a combined INVOICE_RECEIPT.
+ * - Idempotent: an already-finalised RECEIPT / INVOICE_RECEIPT returns early.
+ * - Called from ensureOrderPaidAutomations after the order is marked PAID.
+ */
+export async function generateInvoiceForOrder(
+  orderId: string,
+  log: PaymentLog = noopLog,
+): Promise<void> {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    select: {
+      id: true,
+      email: true,
+      fullName: true,
+      countryCode: true,
+      invoice: {
+        select: {
+          id: true,
+          invoiceNumber: true,
+          generatedAt: true,
+          documentType: true,
+        },
+      },
+    },
+  });
+
+  if (!order) {
+    log.warn({ orderId }, "generateInvoiceForOrder: order not found");
+    return;
+  }
+
+  // Portugal: no invoices.
+  if (order.countryCode.toLowerCase() === "pt") return;
+
+  // Skip countries without a prefix (future-proofing).
+  if (!invoicePrefix(order.countryCode)) {
+    log.info({ orderId, countryCode: order.countryCode }, "No invoice prefix — skipping");
+    return;
+  }
+
+  // Manual/AI booking: an unpaid INVOICE was pre-issued at booking time.
+  if (order.invoice) {
+    if (order.invoice.documentType !== "INVOICE") {
+      // Already a RECEIPT or INVOICE_RECEIPT — idempotent no-op.
+      log.info({ orderId }, "Invoice already finalised — skipping");
+      return;
+    }
+
+    // Transition INVOICE → RECEIPT, keeping the same number.
+    await prisma.invoice.update({
+      where: { id: order.invoice.id },
+      data: { documentType: "RECEIPT" },
+    });
+    log.info(
+      { orderId, invoiceId: order.invoice.id, invoiceNumber: order.invoice.invoiceNumber },
+      "Invoice transitioned to receipt on payment",
+    );
+
+    // Fire-and-forget — webhook failure must never block the receipt.
+    sendPaymentWebhookToMake(orderId, order.invoice.id, order.invoice.invoiceNumber, log).catch(
+      (err) => {
+        log.warn({ err, orderId, invoiceNumber: order.invoice!.invoiceNumber }, "Make.com invoice webhook failed");
+      },
+    );
+
+    await renderAndSendInvoiceDoc(
+      {
+        invoiceId: order.invoice.id,
+        orderId: order.id,
+        invoiceNumber: order.invoice.invoiceNumber,
+        invoiceDateIso: order.invoice.generatedAt.toISOString(),
+        email: order.email,
+        fullName: order.fullName,
+        countryCode: order.countryCode,
+        documentType: "RECEIPT",
+      },
+      log,
+    );
+    return;
+  }
+
+  // Direct-website order paid at checkout → combined invoice/receipt.
+  let invoiceNumber: string;
+  try {
+    invoiceNumber = await generateInvoiceNumber(order.countryCode);
+  } catch (err) {
+    log.error({ err, orderId }, "Failed to generate invoice number");
+    return;
+  }
+
+  const invoice = await prisma.invoice.create({
+    data: {
+      invoiceNumber,
+      orderId: order.id,
+      countryCode: order.countryCode.toLowerCase(),
+      emailSentTo: order.email,
+      documentType: "INVOICE_RECEIPT",
+    },
+  });
+
+  log.info({ orderId, invoiceNumber, invoiceId: invoice.id }, "Invoice/receipt created");
 
   // Fire-and-forget — webhook failure must never block invoice creation.
   sendPaymentWebhookToMake(orderId, invoice.id, invoiceNumber, log).catch((err) => {
     log.warn({ err, orderId, invoiceNumber }, "Make.com invoice webhook failed");
   });
 
-  // Generate PDF to attach to the email (non-blocking failure).
-  let pdfBuffer: Buffer | undefined;
-  try {
-    const pdfData = await buildInvoicePdfData(orderId, invoiceNumber, invoice.generatedAt.toISOString());
-    if (pdfData) {
-      pdfBuffer = (await renderInvoicePdfBuffer(pdfData)) ?? undefined;
-    }
-  } catch (err) {
-    log.warn({ err, orderId }, "Invoice PDF generation failed — sending link-only email");
-  }
-
-  // Send email to patient.
-  const invoiceUrl = absoluteSiteUrl(`/print/order-invoices/${invoice.id}`);
-  try {
-    await sendInvoiceEmail({
-      to: order.email,
-      fullName: order.fullName,
+  await renderAndSendInvoiceDoc(
+    {
+      invoiceId: invoice.id,
+      orderId: order.id,
       invoiceNumber,
-      invoiceUrl,
-      countryCode: order.countryCode.toLowerCase(),
-      pdfBuffer,
-    });
-    await prisma.invoice.update({
-      where: { id: invoice.id },
-      data: { emailSentAt: new Date() },
-    });
-    log.info({ invoiceId: invoice.id }, "Invoice email sent");
-  } catch (err) {
-    log.warn({ err, invoiceId: invoice.id }, "Invoice email failed — invoice still created");
-  }
+      invoiceDateIso: invoice.generatedAt.toISOString(),
+      email: order.email,
+      fullName: order.fullName,
+      countryCode: order.countryCode,
+      documentType: "INVOICE_RECEIPT",
+    },
+    log,
+  );
 }

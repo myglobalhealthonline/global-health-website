@@ -20,6 +20,9 @@ export type AdminPatientProfileDto = {
   familyHistory: string[];
   socialHabits: string[];
   surgeries: string[];
+  usualMedication: string[];
+  bloodPressureSystolic: number | null;
+  bloodPressureDiastolic: number | null;
   nationalIdNumber: string | null;
   taxIdNumber: string | null;
   passportNumber: string | null;
@@ -131,6 +134,9 @@ export async function patchAdminPatientProfile(
       | "familyHistory"
       | "socialHabits"
       | "surgeries"
+      | "usualMedication"
+      | "bloodPressureSystolic"
+      | "bloodPressureDiastolic"
       | "nationalIdNumber"
       | "taxIdNumber"
       | "passportNumber"
@@ -149,6 +155,26 @@ export async function patchAdminPatientProfile(
   return adminRequest<{ profile: AdminPatientProfileDto | null }>(
     `/api/admin/patients/${encodeURIComponent(email)}/profile`,
     { method: "PATCH", body },
+  );
+}
+
+export async function postAdminPatient(body: {
+  email: string;
+  fullName: string;
+  phone?: string | null;
+  dateOfBirth?: string | null;
+  nationalIdNumber?: string | null;
+  taxIdNumber?: string | null;
+  passportNumber?: string | null;
+  addressLine1?: string | null;
+  addressLine2?: string | null;
+  addressCity?: string | null;
+  addressPostalCode?: string | null;
+  addressCountryCode?: string | null;
+}) {
+  return adminRequest<{ profile: AdminPatientProfileDto | null; inviteUrl: string }>(
+    "/api/admin/patients",
+    { method: "POST", body },
   );
 }
 

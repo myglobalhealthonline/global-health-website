@@ -1,14 +1,20 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
+import bcrypt from "bcryptjs";
+import { randomBytes } from "node:crypto";
 import { prisma } from "../db/prisma.js";
 import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
   applyPatientProfileUpdate,
+  upsertPatientProfileByEmail,
   PricingPlanCountryMismatchError,
   serializeProfile,
 } from "../modules/patient-profile/patient-profile.service.js";
+import { issuePasswordResetToken } from "../modules/auth/auth.service.js";
+import { absoluteSiteUrl } from "../lib/email/send-email.js";
+import { emailSchema, fullNameSchema } from "../validations/shared.schema.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import {
   listNationalityDocuments,
@@ -36,6 +42,9 @@ const adminPatchSchema = z
     familyHistory: z.array(z.string().trim().max(200)).max(50).optional(),
     socialHabits: z.array(z.string().trim().max(200)).max(50).optional(),
     surgeries: z.array(z.string().trim().max(200)).max(50).optional(),
+    usualMedication: z.array(z.string().trim().max(200)).max(50).optional(),
+    bloodPressureSystolic: z.number().int().positive().max(400).nullable().optional(),
+    bloodPressureDiastolic: z.number().int().positive().max(300).nullable().optional(),
     nationalIdNumber: stringField(64),
     taxIdNumber: stringField(64),
     passportNumber: stringField(64),
@@ -52,11 +61,144 @@ const adminPatchSchema = z
   .strict()
   .refine((d) => Object.keys(d).length > 0, { message: "Provide at least one field" });
 
+// Admin-initiated patient creation. email + fullName required; the rest of the
+// identity/address fields are optional and handled by applyPatientProfileUpdate
+// (same path as the manual-booking flow).
+const adminCreatePatientSchema = z
+  .object({
+    email: emailSchema,
+    fullName: fullNameSchema,
+    phone: stringField(40),
+    dateOfBirth: z.string().datetime().nullable().optional(),
+    nationalIdNumber: stringField(64),
+    taxIdNumber: stringField(64),
+    passportNumber: stringField(64),
+    addressLine1: stringField(200),
+    addressLine2: stringField(200),
+    addressCity: stringField(120),
+    addressPostalCode: stringField(32),
+    addressCountryCode: stringField(8),
+  })
+  .strict();
+
 const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
   app.addHook("onRequest", async (request, reply) => {
     const auth = await verifyAdminAccess(request);
     if (!auth.ok) {
       return reply.status(auth.status).send(errorResponse(auth.message));
+    }
+  });
+
+  // ─── Admin: create a new patient manually ──────────────────────────────────
+  // Mints a PATIENT User + PatientProfile (with GHN) from scratch, mirroring the
+  // manual-booking onboarding: a temp password is set with mustChangePassword,
+  // and a 7-day invite reset link is returned so the admin can hand the patient
+  // a one-click path to set their own password.
+  app.post("/api/admin/patients", async (request, reply) => {
+    const parsed = adminCreatePatientSchema.safeParse(request.body ?? {});
+    if (!parsed.success) {
+      return reply.status(400).send(errorResponse("Invalid patient", parsed.error.flatten()));
+    }
+    const email = parsed.data.email.trim().toLowerCase();
+    try {
+      // Reject if any account already owns this email — "create" must not
+      // silently edit an existing patient or collide with a doctor/admin login.
+      const existing = await prisma.user.findUnique({ where: { email }, select: { id: true } });
+      if (existing) {
+        return reply
+          .status(409)
+          .send(errorResponse("An account with that email already exists"));
+      }
+
+      const tempHash = await bcrypt.hash(randomBytes(12).toString("base64url"), 12);
+      const dob = parsed.data.dateOfBirth ? new Date(parsed.data.dateOfBirth) : null;
+
+      const { userId, profile: baseProfile } = await upsertPatientProfileByEmail(
+        {
+          email,
+          fullName: parsed.data.fullName,
+          phone: parsed.data.phone ?? null,
+          dateOfBirth: dob,
+        },
+        { passwordHashOverride: tempHash, mustChangePassword: true },
+      );
+      if (!userId) {
+        // Non-patient role owns the email (race with the pre-check above).
+        return reply
+          .status(409)
+          .send(errorResponse("An account with that email already exists"));
+      }
+
+      // Persist the optional identity/address fields via the shared write path
+      // (same validation + PHI encryption + blind-index handling as self-edit).
+      let profile: Awaited<ReturnType<typeof prisma.patientProfile.findUnique>> = baseProfile;
+      const idAddress = {
+        ...(parsed.data.nationalIdNumber !== undefined
+          ? { nationalIdNumber: parsed.data.nationalIdNumber?.trim() || null }
+          : {}),
+        ...(parsed.data.taxIdNumber !== undefined
+          ? { taxIdNumber: parsed.data.taxIdNumber?.trim() || null }
+          : {}),
+        ...(parsed.data.passportNumber !== undefined
+          ? { passportNumber: parsed.data.passportNumber?.trim() || null }
+          : {}),
+        ...(parsed.data.addressLine1 !== undefined
+          ? { addressLine1: parsed.data.addressLine1?.trim() || null }
+          : {}),
+        ...(parsed.data.addressLine2 !== undefined
+          ? { addressLine2: parsed.data.addressLine2?.trim() || null }
+          : {}),
+        ...(parsed.data.addressCity !== undefined
+          ? { addressCity: parsed.data.addressCity?.trim() || null }
+          : {}),
+        ...(parsed.data.addressPostalCode !== undefined
+          ? { addressPostalCode: parsed.data.addressPostalCode?.trim() || null }
+          : {}),
+        ...(parsed.data.addressCountryCode !== undefined
+          ? { addressCountryCode: parsed.data.addressCountryCode?.trim().toLowerCase() || null }
+          : {}),
+      };
+      if (Object.keys(idAddress).length > 0) {
+        const updated = await applyPatientProfileUpdate(email, idAddress, {
+          fallbackFullName: parsed.data.fullName,
+          fallbackPhone: parsed.data.phone ?? null,
+        });
+        profile = updated.profile;
+      }
+
+      const inviteToken = await issuePasswordResetToken(userId, {
+        ttlMinutes: 7 * 24 * 60,
+        isInvite: true,
+      });
+      const inviteUrl = absoluteSiteUrl(
+        `/reset-password?token=${encodeURIComponent(inviteToken)}&invite=1`,
+      );
+
+      const actor = resolveAdminSessionActor(request);
+      recordAudit({
+        actorUserId: actor?.userId ?? null,
+        actorRole: actor?.role ?? "ADMIN",
+        // No dedicated CREATED enum value exists; flag the create in metadata.
+        action: "PATIENT_PROFILE_UPDATED",
+        entityType: "PatientProfile",
+        entityId: profile?.id ?? email,
+        // Email only — never the PHI/PII field values.
+        metadata: { email, created: true },
+        request,
+      }).catch(() => {});
+
+      return reply
+        .status(201)
+        .send(okResponse({
+          profile: serializeProfile(profile, { includeAlerts: true }),
+          inviteUrl,
+        }));
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not create patient"));
     }
   });
 

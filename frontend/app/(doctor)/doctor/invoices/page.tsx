@@ -8,6 +8,7 @@ import {
   Pill,
 } from "@/components/portal-atoms";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { PayoutInvoicePanel } from "./_components/payout-invoice-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -145,8 +146,10 @@ export default async function DoctorInvoicesPage({
       <PageHeader
         eyebrow="Billing visibility"
         title="Invoices and payments"
-        description="Read-only billing context for your consultations. Unpaid, pending, and failed payments are highlighted so follow-up can happen before the next session."
+        description="Your consultations valued at the admin-set per-service payout. Download your monthly statement, upload your invoice, and track payment status."
       />
+
+      <PayoutInvoicePanel />
 
       {result.ok ? (
         <AdminSummaryStrip
