@@ -1019,6 +1019,10 @@ model ServiceDoctor {
   selectedBy String   @default("admin")
   /// pending = awaiting admin approval; active = bookable; rejected/disabled = not bookable.
   status     String   @default("active")
+  /// Amount the clinic pays THIS doctor for THIS service, in cents. Admin-set
+  /// only; the doctor sees it read-only. Null = not yet set (invoice shows
+  /// "Not set"). Currency follows the parent Service.currencyCode.
+  doctorAmountCents Int?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 

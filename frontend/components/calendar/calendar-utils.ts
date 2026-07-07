@@ -136,7 +136,7 @@ export function yearMonthParam(year: number, month: number): string {
 }
 
 /** Minutes `tz` is ahead of UTC at `date` (e.g. +60 for Europe/Lisbon in DST). */
-function tzOffsetMinutes(date: Date, tz: string): number {
+export function tzOffsetMinutes(date: Date, tz: string): number {
   const dtf = new Intl.DateTimeFormat("en-US", {
     timeZone: tz,
     hour12: false,
@@ -176,7 +176,7 @@ export function zonedLocalDateTimeToUtc(local: string, tz: string): string {
 }
 
 /** UTC instant of local midnight on `dayKey` in `tz`. */
-function zonedDayStartUtc(dayKey: string, tz: string): Date {
+export function zonedDayStartUtc(dayKey: string, tz: string): Date {
   const [y, m, d] = dayKey.split("-").map(Number);
   const guess = Date.UTC(y, m - 1, d, 0, 0, 0);
   const offset = tzOffsetMinutes(new Date(guess), tz);
@@ -205,4 +205,101 @@ export function zonedDayRangeUtc(
   );
   const to = zonedDayStartUtc(nextDayKey, tz);
   return { fromIso: from.toISOString(), toIso: to.toISOString() };
+}
+
+// ── Week-grid helpers ────────────────────────────────────────────────────────
+// The admin doctor-availability page renders a Google-Calendar-style week grid
+// (7 day columns × hour rows). Placement is by clinic-local wall-clock minutes,
+// so a slot lands on the right day + row regardless of DST.
+
+export type WeekDay = { key: string; weekday: string; dayNum: number };
+
+/** 0 = Sun … 6 = Sat for a calendar date (timezone-independent). */
+export function dayOfWeek(dayKey: string): number {
+  const [y, m, d] = dayKey.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+}
+
+/** Shift a "YYYY-MM-DD" key by whole days (calendar math, no timezone). */
+export function addDaysKey(dayKey: string, delta: number): string {
+  const [y, m, d] = dayKey.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d + delta));
+  return dayKeyOf(dt.getUTCFullYear(), dt.getUTCMonth() + 1, dt.getUTCDate());
+}
+
+/** Shift by whole weeks — used by the week nav (prev/next). */
+export function addWeeksKey(dayKey: string, delta: number): string {
+  return addDaysKey(dayKey, delta * 7);
+}
+
+/** Monday-first list of the 7 day cells for the week containing `anchorDayKey`. */
+export function weekDaysOf(anchorDayKey: string): WeekDay[] {
+  const mondayOffset = (dayOfWeek(anchorDayKey) + 6) % 7;
+  const monday = addDaysKey(anchorDayKey, -mondayOffset);
+  return WEEKDAY_LABELS.map((weekday, i) => {
+    const key = addDaysKey(monday, i);
+    return { key, weekday, dayNum: Number(key.split("-")[2]) };
+  });
+}
+
+/** ISO UTC window covering the clinic-local Mon→Sun week for `anchorDayKey`. */
+export function weekRangeIso(
+  anchorDayKey: string,
+  tz: string,
+): { fromIso: string; toIso: string } {
+  const days = weekDaysOf(anchorDayKey);
+  const from = zonedDayStartUtc(days[0].key, tz);
+  const to = zonedDayStartUtc(addDaysKey(days[6].key, 1), tz);
+  return { fromIso: from.toISOString(), toIso: to.toISOString() };
+}
+
+/** "23–29 June 2026" (or "30 Jun – 6 Jul 2026" across a month boundary). */
+export function weekLabel(anchorDayKey: string): string {
+  const days = weekDaysOf(anchorDayKey);
+  const first = days[0].key.split("-").map(Number);
+  const last = days[6].key.split("-").map(Number);
+  const sameMonth = first[1] === last[1] && first[0] === last[0];
+  const fmt = (parts: number[], withMonthYear: boolean) =>
+    new Intl.DateTimeFormat("en-IE", {
+      day: "numeric",
+      ...(withMonthYear ? { month: "short", year: "numeric" } : {}),
+      timeZone: "UTC",
+    }).format(new Date(Date.UTC(parts[0], parts[1] - 1, parts[2])));
+  return sameMonth
+    ? `${first[2]}–${fmt(last, true)}`
+    : `${fmt(first, true)} – ${fmt(last, true)}`;
+}
+
+/** Parse a "YYYY-MM-DD" week anchor from a search param; falls back to today
+ *  in `tz`. Any calendar date in the target week works as the anchor. */
+export function parseWeekAnchor(
+  value: string | null | undefined,
+  tz: string,
+): string {
+  if (value && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  return todayKey(tz);
+}
+
+/** Clinic-local minutes-since-midnight (0–1439) for an instant. DST-safe:
+ *  reads the wall clock directly in `tz` rather than doing offset arithmetic. */
+export function zonedMinutesOfDay(iso: string, tz: string): number {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return 0;
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: tz,
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(d);
+  const h = Number(parts.find((p) => p.type === "hour")?.value ?? "0");
+  const m = Number(parts.find((p) => p.type === "minute")?.value ?? "0");
+  return h * 60 + m;
+}
+
+/** Duration between two ISO instants in whole minutes (≥ 0). */
+export function durationMinutes(startIso: string, endIso: string): number {
+  const a = new Date(startIso).getTime();
+  const b = new Date(endIso).getTime();
+  if (Number.isNaN(a) || Number.isNaN(b)) return 0;
+  return Math.max(0, Math.round((b - a) / 60000));
 }

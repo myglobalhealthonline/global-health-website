@@ -69,6 +69,17 @@ const listAppointmentsQuerySchema = z.object({
       ])
       .optional(),
   ),
+  /**
+   * Doctor-portal lifecycle view — the plan exposes exactly four statuses
+   * (see appointment-status-labels.ts on the frontend). Maps to the
+   * internal enum + PaymentStatus:
+   *   waiting_payment → active & unpaid   confirmed → active & PAID
+   *   cancelled       → CANCELLED         concluded → COMPLETED
+   */
+  view: z.preprocess(
+    (v) => (v === "" || v === undefined || v === null ? undefined : v),
+    z.enum(["waiting_payment", "confirmed", "cancelled", "concluded"]).optional(),
+  ),
   search: z
     .string()
     .trim()
@@ -311,15 +322,32 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         .status(400)
         .send(errorResponse("Invalid query", query.error.flatten()));
     }
-    const { status, search, from, to, consultationType, finalized, openOnly, page, pageSize } =
+    const { status, view, search, from, to, consultationType, finalized, openOnly, page, pageSize } =
       query.data;
     const fromUtc = from ? new Date(`${from}T00:00:00.000Z`) : undefined;
     const toUtc = to ? new Date(`${to}T23:59:59.999Z`) : undefined;
     const openWindowStart = new Date(Date.now() - 30 * 60 * 60 * 1000);
+    // Four-status doctor view → (status, paymentStatus) constraints. Kept in
+    // an AND array so it composes with the openOnly/search/date clauses
+    // without clobbering their top-level `status` key.
+    const viewFilters: Prisma.AppointmentWhereInput[] = [];
+    if (view === "concluded") {
+      viewFilters.push({ status: "COMPLETED" });
+    } else if (view === "cancelled") {
+      viewFilters.push({ status: "CANCELLED" });
+    } else if (view === "confirmed") {
+      viewFilters.push({ status: { notIn: ["CANCELLED", "COMPLETED"] }, paymentStatus: "PAID" });
+    } else if (view === "waiting_payment") {
+      viewFilters.push({
+        status: { notIn: ["CANCELLED", "COMPLETED"] },
+        paymentStatus: { not: "PAID" },
+      });
+    }
     try {
       const where: Prisma.AppointmentWhereInput = {
         doctorId: auth.doctorId,
         ...(status ? { status } : {}),
+        ...(viewFilters.length ? { AND: viewFilters } : {}),
         ...(consultationType ? { consultationType } : {}),
         ...(finalized !== undefined ? { finalized } : {}),
         ...(openOnly

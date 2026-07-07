@@ -1,5 +1,6 @@
 import { CartItemKind, PrePaymentFlow } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
+import { releaseSlotsToBaseGrid } from "../doctor-availability/doctor-availability.service.js";
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import { resolveEmailLogoUrl } from "../../lib/email/resolve-email-logo-url.js";
 import { resolveOrderPaymentUrl } from "../orders/order-payment-url.service.js";
@@ -619,20 +620,13 @@ export async function cancelPrePaymentOrder(orderId: string) {
     .map((i) => i.timeSlotId)
     .filter((id): id is string => Boolean(id));
 
-  await prisma.$transaction([
-    prisma.order.update({
-      where: { id: orderId },
-      data: { status: "CANCELLED", paymentStatus: "FAILED" },
-    }),
-    ...(heldSlotIds.length
-      ? [
-          prisma.doctorTimeSlot.updateMany({
-            where: { id: { in: heldSlotIds }, status: "HELD" },
-            data: { status: "OPEN" },
-          }),
-        ]
-      : []),
-  ]);
+  await prisma.order.update({
+    where: { id: orderId },
+    data: { status: "CANCELLED", paymentStatus: "FAILED" },
+  });
+  if (heldSlotIds.length) {
+    await releaseSlotsToBaseGrid(heldSlotIds);
+  }
 }
 
 export async function stopPrePaymentFlowOnPaid(orderId: string) {

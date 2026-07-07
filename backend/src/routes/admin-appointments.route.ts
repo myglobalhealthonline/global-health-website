@@ -62,6 +62,8 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         consultationType: query.data.consultationType,
         search: query.data.search,
         doctorName: query.data.doctorName,
+        dateFrom: query.data.dateFrom,
+        dateTo: query.data.dateTo,
       });
       return okResponse(data);
     } catch (error) {
@@ -103,6 +105,7 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         serviceId: body.data.serviceId,
         doctorId: body.data.doctorId,
         timeSlotId: body.data.timeSlotId,
+        durationMinutes: body.data.durationMinutes ?? null,
         consultationMode: body.data.consultationMode,
         clinicId: body.data.clinicId ?? null,
         locationAddress: body.data.locationAddress ?? null,

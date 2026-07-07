@@ -301,24 +301,75 @@ export async function resolveGpAssignment(args: {
     if (eligible.length === 0) throw new GpNoDoctorError();
     const eligibleIds = eligible.map((d) => d.id);
 
-    // Candidates = eligible doctors with an OPEN slot exactly at this start
-    // time whose length covers the service duration. Deterministic order
-    // (doctorId) so the rotation cursor is stable across requests.
-    const minDuration = service.durationMinutes ?? 0;
+    // Candidates = eligible doctors with a run of consecutive OPEN base slots
+    // STARTING exactly at this time and covering the service duration (base
+    // grid + consume — a 30-min GP consult needs two 15-min base slots).
+    // Deterministic order (doctorId) so the rotation cursor is stable.
+    const durMs = (service.durationMinutes ?? 0) * 60_000;
+    const spanEnd = new Date(startAt.getTime() + Math.max(durMs, 1));
     const slotRows = await prisma.doctorTimeSlot.findMany({
       where: {
         doctorId: { in: eligibleIds },
-        startAt,
-        status: "OPEN",
+        startAt: { gte: startAt, lt: spanEnd },
       },
-      select: { id: true, doctorId: true, startAt: true, endAt: true },
-      orderBy: { doctorId: "asc" },
+      select: { id: true, doctorId: true, startAt: true, endAt: true, status: true },
+      orderBy: [{ doctorId: "asc" }, { startAt: "asc" }],
     });
-    const candidates = slotRows.filter((r) => {
-      if (minDuration === 0) return true;
-      const minutes = Math.round((r.endAt.getTime() - r.startAt.getTime()) / 60000);
-      return minutes >= minDuration;
-    });
+    const byDoctor = new Map<string, typeof slotRows>();
+    for (const r of slotRows) {
+      const list = byDoctor.get(r.doctorId) ?? [];
+      list.push(r);
+      byDoctor.set(r.doctorId, list);
+    }
+    const candidates: {
+      id: string;
+      doctorId: string;
+      startAt: Date;
+      endAt: Date;
+    }[] = [];
+    for (const doctorId of [...eligibleIds].sort()) {
+      const rows = byDoctor.get(doctorId) ?? [];
+      // Must have an OPEN base slot starting exactly at `startAt`.
+      if (
+        rows.length === 0 ||
+        rows[0].startAt.getTime() !== startAt.getTime() ||
+        rows[0].status !== "OPEN"
+      ) {
+        continue;
+      }
+      if (durMs <= 0) {
+        candidates.push({
+          id: rows[0].id,
+          doctorId,
+          startAt: rows[0].startAt,
+          endAt: rows[0].endAt,
+        });
+        continue;
+      }
+      // Greedily extend across contiguous OPEN base slots to cover the duration.
+      let coverEnd = rows[0].endAt.getTime();
+      let k = 0;
+      while (coverEnd - startAt.getTime() < durMs) {
+        const next = rows[k + 1];
+        if (
+          !next ||
+          next.status !== "OPEN" ||
+          next.startAt.getTime() !== rows[k].endAt.getTime()
+        ) {
+          break;
+        }
+        k += 1;
+        coverEnd = rows[k].endAt.getTime();
+      }
+      if (coverEnd - startAt.getTime() >= durMs) {
+        candidates.push({
+          id: rows[0].id,
+          doctorId,
+          startAt: rows[0].startAt,
+          endAt: new Date(startAt.getTime() + durMs),
+        });
+      }
+    }
     if (candidates.length === 0) throw new GpNoDoctorError();
 
     let chosen = candidates[0];

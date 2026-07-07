@@ -181,6 +181,8 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       .object({
         ghn: z.string().trim().optional(),
         email: z.string().trim().optional(),
+        phone: z.string().trim().max(32).optional(),
+        taxId: z.string().trim().max(64).optional(),
         page: z.coerce.number().int().min(1).default(1),
         pageSize: z.coerce.number().int().min(1).max(50).default(20),
       })
@@ -188,11 +190,17 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
     if (!query.success) {
       return reply.status(400).send(errorResponse("Invalid query", query.error.flatten()));
     }
-    const { ghn, email, page, pageSize } = query.data;
+    const { ghn, email, phone, taxId, page, pageSize } = query.data;
     try {
       const where: Record<string, unknown> = {};
       if (ghn) where.globalHealthNumber = { contains: ghn, mode: "insensitive" };
       if (email) where.email = { contains: email, mode: "insensitive" };
+      if (phone) where.phone = { contains: phone, mode: "insensitive" };
+      // Fiscal / tax ID (NIF/PPS/CPF). Substring match works while PHI
+      // encryption is off (the default). When PHI_ENCRYPTION_KEY is set the
+      // column holds AES ciphertext, so a DB substring match can't hit — a
+      // decrypt-then-scan search would be needed for that mode.
+      if (taxId) where.taxIdNumber = { contains: taxId, mode: "insensitive" };
 
       const [items, total] = await Promise.all([
         prisma.patientProfile.findMany({

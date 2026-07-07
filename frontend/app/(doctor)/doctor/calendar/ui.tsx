@@ -110,7 +110,7 @@ export function DoctorCalendarUI({
   const [addToDate, setAddToDate] = useState("");
   const [addStart, setAddStart] = useState("09:00");
   const [addEnd, setAddEnd] = useState("17:00");
-  const [addDuration, setAddDuration] = useState(30);
+  const [addDuration, setAddDuration] = useState(15);
 
   // Restore persisted display timezone (must be one the doctor is allowed).
   useEffect(() => {
@@ -459,7 +459,7 @@ export function DoctorCalendarUI({
                 />
               </label>
               <label className="flex flex-col gap-1 text-sm">
-                <span className="gh-field-label">Slot length</span>
+                <span className="gh-field-label">Base slot length (grid)</span>
                 <select
                   className="gh-select h-10"
                   value={addDuration}

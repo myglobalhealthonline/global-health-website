@@ -63,11 +63,18 @@ function handleDoctorWriteError(
 
 const adminDoctorServiceAssignBodySchema = z.object({
   serviceId: z.string().trim().min(1),
+  doctorAmountCents: z.number().int().min(0).nullable().optional(),
 });
 
-const adminDoctorServicePatchBodySchema = z.object({
-  status: z.enum(["pending", "active", "rejected", "disabled"]),
-});
+const adminDoctorServicePatchBodySchema = z
+  .object({
+    status: z.enum(["pending", "active", "rejected", "disabled"]).optional(),
+    doctorAmountCents: z.number().int().min(0).nullable().optional(),
+  })
+  .refine(
+    (b) => b.status !== undefined || b.doctorAmountCents !== undefined,
+    { message: "Provide a status and/or a payout amount to update" },
+  );
 
 const serviceDoctorIdParamsSchema = z.object({
   id: z.string().trim().min(1),
@@ -458,6 +465,7 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
       const row = await adminAssignServiceToDoctor(
         params.data.id,
         body.data.serviceId,
+        body.data.doctorAmountCents,
       );
       if (!row) {
         return reply
@@ -493,7 +501,10 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
         const row = await adminUpdateDoctorService(
           params.data.id,
           params.data.serviceDoctorId,
-          body.data.status as ServiceDoctorStatus,
+          {
+            status: body.data.status as ServiceDoctorStatus | undefined,
+            doctorAmountCents: body.data.doctorAmountCents,
+          },
         );
         if (!row) {
           return reply.status(404).send(errorResponse("Assignment not found"));

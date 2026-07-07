@@ -97,7 +97,9 @@ async function main() {
     const adminRows = await listAdminDoctorServices(doctor.id);
     const row = adminRows.find((r) => r.serviceId === general.id);
     if (!row) throw new Error("admin list missing assignment");
-    const approved = await adminUpdateDoctorService(doctor.id, row.id, "active");
+    const approved = await adminUpdateDoctorService(doctor.id, row.id, {
+      status: "active",
+    });
     console.log("✓ adminUpdateDoctorService (active)", {
       status: approved?.status,
       isActive: approved?.isActive,

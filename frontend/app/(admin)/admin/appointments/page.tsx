@@ -54,6 +54,8 @@ function buildFilterQuery(
     consultationType: spRead(sp, "consultationType"),
     search: spRead(sp, "search"),
     doctorName: spRead(sp, "doctorName"),
+    dateFrom: spRead(sp, "dateFrom"),
+    dateTo: spRead(sp, "dateTo"),
   };
 }
 
@@ -257,6 +259,24 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
                 placeholder="Doctor name or email"
                 className="gh-input min-w-0"
                 maxLength={120}
+              />
+            </label>
+            <label className="flex min-w-0 flex-col gap-1.5">
+              <span className="gh-field-label">Date &amp; time from</span>
+              <input
+                type="datetime-local"
+                name="dateFrom"
+                defaultValue={filters.dateFrom ?? ""}
+                className="gh-input min-w-0"
+              />
+            </label>
+            <label className="flex min-w-0 flex-col gap-1.5">
+              <span className="gh-field-label">Date &amp; time to</span>
+              <input
+                type="datetime-local"
+                name="dateTo"
+                defaultValue={filters.dateTo ?? ""}
+                className="gh-input min-w-0"
               />
             </label>
           </div>
