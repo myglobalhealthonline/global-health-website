@@ -1,716 +1,443 @@
 # Performance Optimization Audit
 
+_Audit date: 2026-07-08 · Branch: `Dev-hassaan` · Method: 7 parallel specialist static-analysis passes over the live repo + build/typecheck/lint/dependency-audit runs. This report supersedes the previous version and reflects the **current** state of the code._
+
 ## Executive Summary
 
-This audit reviewed the `global-health-website` repository, a Next.js 16 / React 19 frontend with a Fastify 5 / Prisma 7.8 / PostgreSQL backend. The codebase is visually polished and has strong security fundamentals, but performance is visibly sub-optimal, especially on mobile.
+`global-health-website` is a pnpm monorepo: a **Next.js 16.2.6 / React 19.2.4 / Tailwind 4** frontend and a **Fastify 5.8 / Prisma 7.8 / PostgreSQL 16** backend, deployed on Railway. The codebase has clearly been through at least one serious performance pass already, and it shows: images go through `next/image` (AVIF/WebP, responsive `sizes`, priority heroes), heavy client widgets (WebGL globe, rich-text editors, Doctify, same-day booking) are `next/dynamic`, **no web fonts** are loaded (system-font stack → zero font render-block/CLS), the backend has compression + CDN cache headers + a thoroughly indexed schema + bounded-parallel queries, and there is no `framer-motion`/`moment`/`lodash`/`date-fns` weight in the client bundle.
 
-The biggest performance drains are:
+Because of that, several severe findings from the *previous* edition of this report are now **stale/remediated** and are not repeated here (see “Changes since the prior audit”). What remains is a smaller, sharper set of real issues. The biggest live drains are:
 
-1. **The entire public site shell is hydrated as a client component** because `SiteChrome`, `SiteHeader`, and `SiteFooter` use `usePathname()`. This forces React to hydrate far more DOM than necessary on every page.
-2. **Images bypass Next.js optimization.** Many hero/card images set `unoptimized={true}` and the service catalog uses raw `<img>` tags, so visitors download full-resolution PNGs/JPGs instead of WebP/AVIF responsive sets.
-3. **Heavy below-the-fold widgets load eagerly.** `DoctifyReviews`, `SameDayBooking`, the WebGL globe (`cobe`), and `MobileNav` are in the initial bundle even when they are not visible above the fold.
-4. **There is no `next/dynamic` usage anywhere** in the reviewed frontend components, so nothing is code-split.
-5. **The global stylesheet is monolithic** (`globals.css` ~9 000 lines) and `flag-icons` full CSS is loaded on every page.
-6. **Backend scheduling runs in-process with `setInterval`.** Scaling to multiple replicas will duplicate cron work (emails, reminders, reconciliation sweeps).
-7. **Database queries are generally paginated, but a few hot paths remain unbounded** and some indexes are missing on high-cardinality columns.
+1. **The full 6-language i18n bundle (~537 KB raw JSON) ships to the browser on the cart and checkout pages** because a server-only loader is imported by client components — dead weight on the two highest-intent conversion pages.
+2. **PDF generation runs headless Chromium (Playwright) synchronously in the request path** — for doctor documents and, worse, `await`ed inside the Stripe order-completion flow. Multi-second blocking work on an event-loop process, with a dead-browser failure mode that needs a restart to clear.
+3. **The WebGL globe on the landing entry-gate is destroyed and rebuilt on every keystroke** in the country search box (unstable effect deps), janking the first interaction on `/`.
+4. **A reconciliation cron makes one sequential Stripe API call per subscription** (up to 200), running hourly and on every boot — tens of seconds of serial latency.
+5. **Per-doctor availability reads write to the database on every GET** (lazy slot materialization + expiry sweep), on a read-heavy, crawlable endpoint, with no cache.
 
-Overall risk rating: **High** for mobile performance and Core Web Vitals. The site will likely score 45–65 on mobile Lighthouse until the quick wins below are applied.
+Overall performance risk: **Medium**. Public-facing Core Web Vitals are in good shape (the earlier “45–65 mobile Lighthouse” risk has been substantially addressed); the remaining costs concentrate in (a) two client-bundle/interaction issues on conversion pages, (b) backend request-path blocking work, and (c) portal-only image weight. None are architecture-breaking; most are Easy/Medium fixes.
 
 ## Stack Detected
 
-- **Framework:** Next.js 16.2.4 (App Router, standalone output, Turbopack root)
-- **Frontend:** React 19.2.4, TypeScript 5, Tailwind CSS v4
-- **Backend:** Fastify 5.2.1, TypeScript (strict), ESM via tsx
-- **Database:** PostgreSQL 16, Prisma 7.8 with `@prisma/adapter-pg`
-- **Auth:** HS256 JWT in HttpOnly cookie (`gh_auth`), optional TOTP 2FA
-- **Styling:** Tailwind v4 CSS-first config, custom `gh-*` / `gh2-*` design tokens
-- **Animation libraries:** Custom scroll-reveal components, `cobe` WebGL globe, CSS transitions; no Framer Motion or GSAP detected
-- **Deployment:** Railway (backend via Nixpacks, frontend via Dockerfile)
-- **Other important tools:** Stripe, S3-compatible storage, SendGrid/Gmail, WaSender WhatsApp, Playwright e2e, Vitest
+- **Framework:** Next.js 16.2.6 (App Router, `output: "standalone"`, Turbopack root)
+- **Frontend:** React 19.2.4, TypeScript 5 (strict), Tailwind CSS v4 (CSS-first, `gh-*`/`gh2-*`/`lux-*` tokens)
+- **Backend:** Fastify 5.8.5, TypeScript (strict, ESM via `tsx`), Prisma 7.8 with `@prisma/adapter-pg`
+- **Database:** PostgreSQL 16
+- **Styling:** Tailwind v4 + a single hand-authored `globals.css` (~9,024 lines / 252 KB)
+- **Animation libraries:** None heavy — custom scroll-reveal (`RevealOnScroll`), `cobe` WebGL globe, CSS transitions/keyframes. **No Framer Motion / GSAP.**
+- **Deployment:** Railway — backend via Nixpacks (`backend/nixpacks.toml` + `railway.json`), frontend via `frontend/Dockerfile` + `railway.toml`
+- **Other important tools:** Stripe, S3-compatible storage, SendGrid/Gmail, WaSender WhatsApp, Playwright (backend PDF fallback + e2e), Vitest, `@next/bundle-analyzer`
 
 ## Commands Run
 
 | Command | Result | Notes |
 |---|---|---|
-| `pnpm audit --audit-level=low` | Multiple vulnerabilities found | Critical `sanitize-html`, 4× High `next`, 3× Moderate `hono`/`postcss`/`@hono/node-server`. See `SECURITY_AUDIT.md`. |
-| `pnpm typecheck` | Failed | Backend: `doctorAmountCents` missing from Prisma `ServiceDoctor` select (schema/code drift). Frontend: locale check passed, then `tsc --noEmit` passed. |
-| `pnpm lint` | Failed | Frontend: 2 React 19 rule errors (`react-hooks/immutability`, `react-hooks/refs`) + 5 warnings. Backend lint not reached because frontend failed. |
-| `cd frontend && pnpm build` | Succeeded | Standalone build completed in ~1m 43s. |
-| `cd frontend && pnpm build:analyze` | Succeeded but no analyzer output emitted | Bundle analyzer plugin did not write `.next/analyze/`. Likely env/plugin configuration issue; recommend verifying `ANALYZE=true` reaches the plugin. |
+| `pnpm audit --prod --json` | **0 vulnerabilities** (540 prod deps) | The prior report’s Critical `sanitize-html` / High `next` / Moderate `hono`+`postcss` findings are **resolved** — overrides + version bumps landed. |
+| `pnpm audit --json` (all severities) | **0 vulnerabilities** | Clean across dev + prod. |
+| `cd frontend && tsc --noEmit` | **Pass (exit 0)** | Prior `doctorAmountCents` schema/code drift is fixed. |
+| `cd backend && tsc --noEmit` | **Pass (exit 0)** | Clean. |
+| `cd frontend && eslint .` | **Pass (exit 0)** | 5 warnings only (unused imports: `Link`, `TrustMarquee`, `trustMarqueeItems`, `DoctifyReviewsSection`, one stale eslint-disable). Prior React-19 rule *errors* are gone. |
+| `cd backend && eslint src` | **Fail (exit 1)** | 29 errors + 40 warnings — almost all `no-unused-vars` (`orders.route.ts`, `service-faq.service.ts`, test files) + `no-explicit-any` + 2 `no-console`. Lint-only; does not affect the compiled output (tsc passes). |
+| Installed-version check (`next`/`react`/`fastify`/`prisma`/`stripe`/`sanitize-html`) | next 16.2.6, react 19.2.4, fastify 5.8.5, @prisma/client 7.8.0, stripe 22.1.1, sanitize-html 2.17.5 | Matches lockfile; no vulnerable versions installed. |
+| Production build (`next build`) | **Not re-run this pass** | Prior pass recorded a successful standalone build (~1m43s). Recommend re-running `ANALYZE=true pnpm --filter frontend build:analyze` to capture a fresh treemap (the analyzer previously produced no output — verify `ANALYZE` reaches the plugin). |
+
+## Changes Since the Prior Audit (reconciliation)
+
+The previous `PERFORMANCE_OPTIMIZATION_AUDIT.md` led with: whole-site client hydration via `SiteChrome`, images bypassing optimization (`unoptimized`/raw `<img>`), no `next/dynamic` anywhere, render-blocking fonts, and dependency vulnerabilities. Re-verification against the current tree shows these are **no longer accurate**:
+
+- ✅ `next/dynamic` **is** used (globe, editors, Doctify, SameDayBooking) — code-splitting is in place.
+- ✅ `next/image` **is** used correctly across heroes/cards (fill + priority + responsive `sizes`); only 2 raw `<img>` remain (entry-gate hero, Meta-Pixel noscript).
+- ✅ Fonts are the **system stack** — zero render-block, zero font CLS.
+- ✅ Dependency vulns: `pnpm audit` now clean; typecheck green.
+- ⚠️ Header remains a server component; the client-boundary concern is now narrowed to a few genuinely-needless `"use client"` files (P-007), not the whole shell.
+
+The findings below are the residual, verified-current issues.
 
 ## Repository Areas Reviewed
 
-- `frontend/app/` — layouts, pages, route handlers, server actions
-- `frontend/components/` — sections, layout, cards, cart, portal shells, calendar, chat
-- `frontend/lib/` — API wrappers, i18n, routing, content sanitizers
-- `frontend/proxy.ts` — edge auth/locale middleware
-- `frontend/next.config.ts`, `frontend/app/globals.css`
-- `frontend/public/` — images, logos, fonts
-- `backend/src/app.ts` — Fastify plugins (CORS, helmet, compress, rate-limit, multipart)
-- `backend/src/config/env.ts` — environment schema and production hard-fail guards
-- `backend/src/routes/` — public, account, doctor, admin, payment, cron routes (sampled)
-- `backend/src/modules/` — appointments, doctor-availability, subscriptions, gp-booking, orders
-- `backend/src/lib/` — medical-access-guard, internal-scheduler, crypto, stripe client
-- `backend/prisma/schema.prisma` — indexes, relations, enums
-- `package.json`, `pnpm-workspace.yaml`, `docker-compose.yml`, `backend/railway.json`
+- `frontend/app/` — root + `(site)`/`(auth)`/`(admin)`/`(doctor)`/`(corporate)` layouts, pages, route handlers, `globals.css`
+- `frontend/components/` — sections, layout, cards, cart, media, motion, portal shells, calendar, chat
+- `frontend/lib/` — i18n loader + locales, API wrappers, content sanitizers, routing
+- `frontend/next.config.ts`, `frontend/proxy.ts`, `frontend/public/` (asset weights)
+- `backend/src/` — `app.ts`, `server.ts`, `internal-scheduler.ts`, routes (132), services/modules (availability, doctors, countries, settings, orders, invoices, generated-documents, subscriptions/ops)
+- `backend/prisma/schema.prisma` (3,977 lines — full index inventory)
+- Deploy/config: `nixpacks.toml` (root + backend), `railway.json`, `frontend/railway.toml`, `frontend/Dockerfile`, `docker-compose.yml`, `.github/workflows/ci.yml`, both `tsconfig.json`, both eslint configs
 
-Skipped: `node_modules/`, `.next/`, `backend/dist/`, `.git/`, lockfile internals, binary DOCX templates, generated docs.
+## Biggest Performance Problems (ranked)
 
-## Biggest Performance Problems
-
-| Rank | Issue | Severity | Category | Files |
-|---|---|---|---|---|
-| 1 | Public site shell is a client boundary | High | frontend/rendering | `frontend/app/(site)/layout.tsx`, `frontend/components/layout/SiteChrome.tsx` |
-| 2 | CartProvider re-renders entire layout | High | frontend/rendering | `frontend/app/(site)/layout.tsx`, `frontend/components/cart/CartContext.tsx` |
-| 3 | Most images bypass Next.js optimization | High | assets/CWV | `frontend/components/sections/HomeHero.tsx`, `frontend/components/cards/DoctorCard.tsx`, `frontend/components/cards/ServiceCard.tsx`, etc. |
-| 4 | No `next/dynamic` / code-splitting used | High | bundle | Entire `frontend/components` tree |
-| 5 | Heavy below-fold widgets load eagerly | High | bundle/CWV | `frontend/components/sections/DoctifyReviews.tsx`, `frontend/components/sections/SameDayBooking.tsx`, `frontend/components/ui/cobe-globe.tsx` |
-| 6 | Public folder contains multi-megabyte PNGs | Critical | assets | `frontend/public/logos/partners/cfm.png` (2.1 MB), `frontend/public/images/stock/*.png` (~1.9 MB each) |
-| 7 | Hero plus-mask uses raw SVG `<image>` | Critical | assets/CWV | `frontend/components/sections/HeroPlusImage.tsx` |
-| 8 | Global CSS is monolithic and very large | High | bundle/CWV | `frontend/app/globals.css` (~8 984 lines) |
-| 9 | `flag-icons` full CSS loaded globally | Medium | bundle/assets | `frontend/app/layout.tsx` |
-| 10 | Backend scheduler duplicates on multi-replica | High | backend/deployment | `backend/src/lib/internal-scheduler.ts`, `backend/src/server.ts` |
+| # | Problem | Where | Severity |
+|---|---|---|---|
+| 1 | Full 6-locale i18n JSON (~537 KB) shipped to client on cart + checkout | `lib/i18n/load-locale.ts` + cart/checkout/PlanCoverage | High |
+| 2 | Chromium PDF render synchronous in request path (incl. Stripe completion) | `generated-documents`, `invoice-pdf`, `complete-order-payment` | High |
+| 3 | WebGL globe re-inits on every keystroke on `/` | `cobe-globe.tsx` + `CountryEntryGate.tsx` | High |
+| 4 | Reconciliation cron: sequential Stripe call per subscription (≤200) | `reconciliation.service.ts` | Med-High |
+| 5 | Per-doctor availability GET writes to DB every request, uncached | `doctor-availability.service.ts` | Medium |
+| 6 | In-process scheduler, no distributed lock, re-runs heavy work per deploy | `internal-scheduler.ts` | Medium |
+| 7 | Needless `"use client"` on presentational components | `FeaturedDoctor`, `HealthcareMediaFrame`, `ServiceCard` | Medium |
+| 8 | 1.96 MB PNG as a CSS background (portal LCP) | `membership-silk.png` + `globals.css` | Medium |
+| 9 | Monolithic 252 KB `globals.css` render-blocks every public route | `app/globals.css` | Med (Low-Med) |
+| 10 | Playwright + Chromium (~150–300 MB) baked into the backend image | `backend/package.json` + `nixpacks.toml` | Medium (build/deploy) |
 
 ## Core Web Vitals Risk Assessment
 
 ### LCP Risks
-
-**Risk: High.**
-
-- Hero images are served unoptimized (`unoptimized={true}`) from CMS/Unsplash/`/api/media`. The browser downloads the full-resolution source.
-- `HeroPlusImage` renders through a raw SVG `<image>` element, completely bypassing Next.js image optimization. This is the LCP element on `/doctors` and several service pages.
-- No `<link rel="preload">` is emitted for above-the-fold hero images.
-- Public-folder PNGs exceed 1 MB (up to 2.1 MB) and are not converted to AVIF/WebP.
-- `next.config.ts` does not enable AVIF or explicit device/image sizes.
+- **Public:** Low. Heroes use `next/image` with AVIF + `priority` + responsive `sizes`; the entry-gate hero is a correctly-sized 62 KB WebP (raw `<img>`, dims + `fetchPriority="high"` set → prioritized, no CLS, but misses AVIF/mobile srcset — see **P-016**).
+- **Portal (authenticated):** The real LCP concern — `membership-silk.png` (1.96 MB PNG) and ~1 MB silk WebPs are used as CSS `background-image`, which bypasses `next/image` entirely (no transcode, no resize). See **P-008 / P-010**.
 
 ### CLS Risks
-
-**Risk: Medium.**
-
-- Most Next.js images use `fill` + `sizes`, which is good.
-- `HeroPlusImage` SVG mask has no explicit intrinsic dimensions in some call paths.
-- `DoctifyReviews` injects third-party scripts/iframes with `min-height` placeholders that may not match final content.
-- Cookie banner and sticky booking bars are fixed-position; safe-area insets are missing on the cookie banner, which can cause small shifts on iOS.
+- Low across the board. Every `next/image` has `fill` or explicit dimensions; the globe mounts into a sized placeholder; no web fonts to swap. The only injected element is the cookie banner (fixed-position overlay, not layout-flowing) — but on first visit it *overlaps* the bottom conversion bar (**P-021**), a usability rather than CLS issue.
 
 ### INP / Interaction Lag Risks
-
-**Risk: Medium–High.**
-
-- The entry page loads the `cobe` WebGL globe eagerly at 16 000 samples with a continuous `requestAnimationFrame` loop.
-- `DoctorCarousel` calls three `setState` handlers on every scroll event.
-- Meta Pixel loads `afterInteractive` as the first child of `<body>`.
-- `MobileNav` renders its full drawer DOM eagerly on every page, including desktop.
-- Monolithic CSS ~9 000 lines increases parse/match cost.
+- **Globe re-init per keystroke (P-003)** is the sharpest INP risk — it tears down and rebuilds a `mapSamples: 16000` WebGL context on each character typed in the landing country search.
+- Cart per-row 1 Hz countdown + `loadLocaleBundle()` called in the render body (**P-017**) — bounded, minor.
+- Otherwise no large eager hydration islands; heavy widgets are `next/dynamic` and canvas-isolated.
 
 ### TTFB Risks
-
-**Risk: Medium.**
-
-- The edge proxy (`frontend/proxy.ts`) now decodes JWT locally — good improvement vs. the prior backend round-trip.
-- Backend compression (`@fastify/compress` with `br,gzip,deflate`) and immutable media cache headers are configured.
-- No production build cache or CDN configuration was visible in the repo; TTFB depends on Railway edge performance.
-- Some admin/order list endpoints fetch all rows without pagination.
+- Public reads are shielded by CDN `Cache-Control` (`s-maxage` + `stale-while-revalidate`) and DB queries are indexed/paginated — low.
+- **Backend request-path blocking (P-002)** is the main TTFB/latency risk under load: Chromium renders and the Stripe-completion invoice `await` add seconds to those specific responses.
+- `prisma migrate deploy` on every boot (**P-014**) adds migrate latency to each restart and can crash-loop the API on a bad migration.
 
 ## Frontend Rendering Issues
-
-### 1. Whole public layout shell is a client boundary
-
-`frontend/components/layout/SiteChrome.tsx` is `"use client"` only to read `usePathname()`. Because it wraps `<main>`, header, footer, trust bar, and disclaimer, every page under `(site)` loses static/server rendering of those elements.
-
-**Fix:** Resolve the gateway-home flag from server `params`/`pathname` and pass it as a prop. Keep `SiteChrome` a Server Component; isolate scroll listener and mobile menu in tiny wrappers.
-
-### 2. Header and footer are client components
-
-`SiteHeader` and `SiteFooter` both call `usePathname()`. The header also attaches a scroll listener on every public page.
-
-**Fix:** Pass `pathname`/`country`/`lang` from the server layout. Move the scroll glass-morphism toggle into a small client wrapper around just the header element.
-
-### 3. CartProvider wraps the entire site
-
-`frontend/app/(site)/layout.tsx` and `frontend/app/(auth)/layout.tsx` wrap the whole tree with `CartProvider`. When the cart fetch resolves, the provider value changes and every descendant re-renders.
-
-**Fix:** Memoize the provider value with `useMemo`, and move the provider so it only wraps components that consume cart state (`SiteHeader` cart icon, cart pages, AddToCart buttons).
-
-### 4. No code-splitting via `next/dynamic`
-
-A grep for `next/dynamic` returned zero usages in `frontend/`. Heavy or below-fold components could be deferred:
-
-- `DoctifyReviews`
-- `SameDayBooking`
-- `HeroBookingWizard`
-- `CountryEntryGate` globe
-- `MobileNav` drawer content
-- Admin rich-text editor dialogs
-
-### 5. Scroll-triggered reveals force client boundaries
-
-`RevealOnScroll` is `"use client"`. Wrapping static sections with it turns server-rendered markup into hydrated client boundaries.
-
-**Fix:** Keep sections as Server Components and wrap only the reveal behavior, or replace with CSS `@starting-style` / scroll-driven animations where supported.
-
-### 6. `DoctorCarousel` re-renders on every scroll event
-
-`frontend/components/sections/DoctorCarousel.tsx` updates `canPrev`, `canNext`, and `progress` state on every `onScroll`. React 19 batches the setters, but the component still re-renders and diffuses props to all cards.
-
-**Fix:** Throttle with `requestAnimationFrame` and drive the progress bar via a CSS custom property (`--scroll-progress`) instead of React state.
-
-### 7. React 19 lint errors indicate risky patterns
-
-`pnpm lint` flagged:
-
-- `frontend/app/(auth)/account/bookings/ui.tsx:169` — `window.location.href = ...` inside render path.
-- `frontend/app/(doctor)/doctor/profile/_components/edit-form.tsx:227,249` — reading `ref.current` during render.
-
-These can cause unexpected re-renders, stale reads, or hard-to-trace hydration issues.
+Detailed in **P-001, P-003, P-007, P-016, P-017, P-022**. Summary: the provider tree is minimal (only a `useMemo`-guarded `CartProvider` wraps `(site)`), scroll/observer usage is already rAF-throttled + passive + touch/reduced-motion-aware, and `RevealOnScroll` disconnects after first fire. The residual issues are (a) a server-only i18n loader leaking into client bundles, (b) an unstable-deps WebGL effect, and (c) a handful of presentational components declaring client boundaries they don’t need.
 
 ## Mobile Performance & Rendering Issues
-
-### 1. iOS input auto-zoom from 14 px font size
-
-Inputs across login, register, checkout, consult forms, and profile use `text-sm` (~14 px). iOS Safari zooms the viewport when focusing any input whose font-size is < 16 px.
-
-**Fix:** Set `input, select, textarea { font-size: 16px; }` for viewports ≤ 768 px.
-
-### 2. Tables render as horizontal scroll on mobile
-
-Doctor portal tables (`services-used-list.tsx`, `appointment-medical-notes-section.tsx`, `consultation-documents-modal.tsx`) have `min-w-[620px]` / `min-w-[640px]` with `overflow-x-auto` and no mobile card fallback.
-
-**Fix:** Hide tables below `md:` and render `PortalMobileCard` stacks, as already done in the account payments page.
-
-### 3. Full-viewport heroes on mobile
-
-`PageHero`, `DoctorsHero`, `ServiceHero`, and `HomeHero` use `min-height: calc(100svh - var(--header-height))` at all breakpoints. They contain layered gradients, SVG noise, backdrop blur, and large watermarks.
-
-**Fix:** Cap hero height on mobile (`max-h-[min(100svh-72px,760px)]`) and reduce decorative layers below `lg`.
-
-### 4. Cobe globe always renders at 16 000 samples
-
-`frontend/components/ui/cobe-globe.tsx` hard-codes `mapSamples: 16000` and runs a continuous `requestAnimationFrame` loop. This is expensive on mobile and drains battery.
-
-**Fix:** Detect `navigator.hardwareConcurrency`, `connection.saveData`, and `prefers-reduced-motion`; reduce `mapSamples` to ~6 000 on mobile, pause when off-screen or hidden.
-
-### 5. Small touch targets in booking funnel
-
-The wizard back button is 24×24 px (below WCAG 2.5.5). Slot/benefit chips have small vertical padding.
-
-**Fix:** Enlarge interactive elements to at least 44×44 px.
-
-### 6. Fixed bottom bars can overlap
-
-`StickyBookingCTA`, `MobileOrderTotalBar`, and `CookieBanner` are all fixed-position. The cookie banner does not use `env(safe-area-inset-bottom)`.
-
-**Fix:** Add safe-area padding to the cookie banner and centralise a single bottom-sheet slot so only one fixed bar is mounted at a time.
+Detailed in **P-009, P-011, P-012, P-020, P-021**. The three previously-documented mobile fixes still hold (verified): `@media (pointer:coarse)` kills all `backdrop-filter` (the Android matrix-glitch root cause), `RevealOnScroll` bails on touch, and the notification popover is viewport-pinned. Reduced-motion is comprehensively respected; pinch-zoom is preserved (no `user-scalable=no`); safe-area insets are honored on all fixed bottom bars; the historical header overflow is resolved (nav gated behind `xl:`). New residuals are small: no `overflow-x` safety net on the public shell, the 252 KB CSS monolith, a permanently-promoted marquee layer, sub-12px low-contrast labels, and the cookie-banner overlap.
 
 ## Asset & Bundle Issues
+Detailed in **P-008, P-010, P-015, P-016**. Public asset delivery is healthy (all ≤152 KB public images go through `next/image`; `lucide-react` is tree-shaken by Next 16’s default `optimizePackageImports`; `flag-icons` CSS is 28 KB module-scoped). The weight is concentrated in `public/images/portal` (9.1 MB of 12 MB total, authenticated-only) and 2.7 MB of orphaned PNGs that ride into the Docker image.
 
-### 1. Hero plus-mask image bypasses Next.js optimization
+### 15 Largest Static Assets
 
-`HeroPlusImage` uses raw SVG `<image href={src} />`. This is the LCP element on several pages and receives no format conversion or responsive sizing.
-
-**Fix:** Replace with Next.js `<Image>` clipped via CSS `clip-path` or inline SVG mask. Add `priority`, `sizes`, and `fetchPriority="high"`.
-
-### 2. Public folder contains multi-megabyte PNGs
-
-| File | Size | Dimensions |
-|---|---|---|
-| `public/logos/partners/cfm.png` | 2.1 MB | 1536×1024 |
-| `public/images/stock/blog.png` | 1.9 MB | 1448×1086 |
-| `public/images/stock/plans.png` | 1.9 MB | 1448×1086 |
-| `public/logos/partners/gdpr-green-gold.png` | 1.6 MB | 1254×1254 |
-| `public/logos/partners/eu-star.png` | 1.2 MB | 2048×2048 |
-
-These are displayed at card/logo sizes. Converting to AVIF/WebP and right-sizing would cut 5–8 MB from the public folder.
-
-### 3. `next/image` config is minimal
-
-`frontend/next.config.ts` only sets `remotePatterns`. AVIF, explicit device sizes, image sizes, and cache TTL are missing.
-
-**Recommended addition:**
-
-```ts
-images: {
-  remotePatterns,
-  formats: ["image/avif", "image/webp"],
-  deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2560],
-  imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-  minimumCacheTTL: 60 * 60 * 24 * 365,
-}
-```
-
-### 4. No image preloads for above-the-fold hero photos
-
-LCP hero images use `priority` but no `<link rel="preload">` is emitted. Preloading can start the fetch 100–300 ms earlier.
-
-### 5. `flag-icons` full CSS loaded globally
-
-`frontend/app/layout.tsx` imports `flag-icons/css/flag-icons.min.css`. The app displays ~7 flags but downloads the full sprite CSS on every page.
-
-**Fix:** Inline the few needed flags as SVG components or purge unused classes.
-
-### 6. Global CSS is monolithic
-
-`frontend/app/globals.css` is ~8 984 lines containing tokens, reset, component utilities, article styles, footer, portal, scrollbars, animations, etc. Compiled CSS chunks exceed 800 KB in dev.
-
-**Fix:** Split by route concern (tokens + reset only in `globals.css`; section/component styles via CSS Modules or colocated `@import`). Audit dead rules with DevTools Coverage.
-
-### 7. Third-party scripts lack preconnect
-
-Meta Pixel (`connect.facebook.net`) and Doctify (`www.doctify.com`) load without `dns-prefetch` / `preconnect`.
-
-### 8. Lucide icon breadth
-
-145 unique `lucide-react` icons are imported. Named imports tree-shake, but the breadth indicates many one-off icons. Audit for unused imports to avoid accidental bundle growth.
+| File | Size | Served via | Scope |
+|---|---|---|---|
+| `public/images/portal/obsidian/membership-silk.png` | 1.96 MB | CSS `url()` | portal |
+| `public/images/portal/generated/patient-record-empty-state.png` | 1.40 MB | **unreferenced** | orphan |
+| `public/images/portal/generated/admin-content-management-accent.png` | 1.38 MB | **unreferenced** | orphan |
+| `public/images/portal/obsidian/card-silk.webp` | 1.05 MB | CSS `url()` | portal |
+| `public/images/portal/obsidian/band-aurora.webp` | 1.00 MB | CSS `url()` | portal |
+| `public/images/portal/obsidian/canvas-aurora.webp` | 985 KB | CSS `url()` | portal |
+| `public/images/portal/obsidian/plane-veil.webp` | 875 KB | CSS `url()` | portal |
+| `public/images/portal/obsidian/header-aura.webp` | 811 KB | CSS `url()` | portal |
+| `public/images/stock/about.jpg` | 152 KB | `next/image` | public |
+| `public/logos/partners/medical-council-ie.png` | 143 KB | `next/image` | public |
+| `public/images/stock/doctors.jpg` | 143 KB | `next/image` | public |
+| `public/images/stock/specialist.jpg` | 128 KB | `next/image` | public |
+| `public/logos/partners/cmr.png` | 127 KB | `next/image` | public |
+| `public/images/stock/home-hero.jpg` | 123 KB | `next/image` | public |
+| `public/images/stock/tests.jpg` | 123 KB | `next/image` | public |
 
 ## Animation & Scroll Lag Issues
-
-### 1. WebGL globe on entry page
-
-`cobe` is statically imported and initializes immediately on `/`. It consumes GPU/CPU on first paint.
-
-**Fix:** Load with `next/dynamic` + `ssr: false`. Reduce samples on low-power devices. Pause under `prefers-reduced-motion` or when tab is hidden.
-
-### 2. Scroll-linked header glass-morph animation
-
-`SiteHeader` toggles `backdrop-filter`, `max-width`, `border-radius`, and box-shadow on scroll. Reduced-motion class is applied but the listener still fires.
-
-**Fix:** Prefer `opacity`/`transform` only; debounce or use CSS `scroll-timeline` where supported.
-
-### 3. Doctify widgets cause layout shifts and auto-motion
-
-`DoctifyReviews` injects remote scripts/iframes with placeholder heights. Carousel variant auto-scrolls with no reduced-motion guard.
-
-**Fix:** Reserve exact aspect-ratio placeholder, lazy-load below the fold, pause carousels under `prefers-reduced-motion: reduce`.
-
-### 4. No reduced-motion guard for the globe
-
-`cobe-globe.tsx` does not check `prefers-reduced-motion`. Respect for motion preferences is present in `HeroReveal.tsx` and `RevealOnScroll.tsx`, but not for the most expensive animation.
+Detailed in **P-003, P-012**. No Framer Motion/GSAP. The globe’s own visibility/low-power handling, `HeaderScrollShell` (rAF + hysteresis + passive), and `DoctorCarousel` (rAF-throttled) are all well done. The two issues are the globe re-init and the always-live marquee compositor layer.
 
 ## API / Backend Performance Issues
-
-### 1. In-process scheduler duplicates work on horizontal scale
-
-`backend/src/lib/internal-scheduler.ts` starts five `setInterval` loops inside the API process. There is no distributed lock or `RUN_SCHEDULER` gate.
-
-**Impact:** Scaling the backend to 2+ Railway replicas duplicates every cron: double reminder emails, concurrent sweeps, double reconciliation alerts. Money paths have idempotency, but emails/WhatsApp do not.
-
-**Fix:** Gate scheduler behind `RUN_SCHEDULER=true` (single worker replica) or add Postgres advisory-lock wrapper per job.
-
-### 2. Some admin/corporate list endpoints are unbounded
-
-Several `findMany` calls in admin/corporate routes lack `take`:
-
-- `admin-clinics.route.ts` — `clinic.findMany({})`
-- `admin-corporate.route.ts` — `corporatePlan`, `corporateCompany`, `corporateEmployee`, `corporateBeneficiary`, `corporateServiceRequest` lists
-- `admin-assets.route.ts` — `asset.findMany` capped at 1000 but no pagination
-- `admin-orders` page fetches all orders with no pagination parameters
-
-**Fix:** Add server-driven pagination (`page`/`pageSize`) and propagate to the frontend admin tables.
-
-### 3. Chat file upload trusts client MIME type
-
-`backend/src/routes/consultation-chat.route.ts:339-352` uses `file.mimetype` directly without magic-byte sniffing. While the route checks an allowlist, a polyglot file declared as `image/jpeg` can still be stored and later served.
-
-**Fix:** Run `verifySniffedMime()` (already used by `patient-upload.route.ts` and `medical-documents.route.ts`) on chat uploads.
-
-### 4. Cron endpoints run on boot
-
-`startInternalScheduler` runs `tickPrePayment`, `tickPostPayment`, `tickSubscriptionOps`, and `tickReconciliation` immediately on boot. A rolling deploy can trigger overlapping runs with the previous replica.
-
-**Fix:** Add a short jitter or leader-elected startup delay, and rely on `RUN_SCHEDULER` gating.
-
-### 5. Backend compression is configured
-
-Positive finding: `@fastify/compress` is registered with `br,gzip,deflate` and 1 KB threshold. JSON responses shrink ~70%.
+Detailed in **P-002, P-004, P-006, P-019**. No classic Prisma N+1 was found in request handlers; `Promise.all` + batched `IN (...)` and explicit `select` projections are used widely. The problems are request-path Chromium rendering, a sequential Stripe loop in a cron, and an in-process scheduler without a distributed lock.
 
 ## Database Performance Issues
+Detailed in **P-005, P-018**, plus minor index gaps. The schema is heavily and correctly indexed. Residuals: availability reads that write on every GET, an N+1 in a cron sweep, and two minor missing indexes:
 
-### 1. Missing composite indexes on hot query columns
-
-`Appointment` has indexes on `clinicId`, `userId`, `email`, `doctorId`, and `status + createdAt`, but common filter/sort combinations are uncovered:
-
-- `scheduledAt` — used in nearly every calendar/availability query
-- `countryCode` + `status` — admin dashboards filter by country
-- `doctorId` + `scheduledAt` — doctor calendar loads
-- `paymentStatus` + `createdAt` — payment reconciliation
-- `stripeSessionId` — webhook lookups (the column is not indexed)
-- `userId` + `status` — account portal filtering
-
-**Fix:** Add targeted composite indexes via migration:
-
-```prisma
-@@index([doctorId, scheduledAt])
-@@index([countryCode, status, createdAt])
-@@index([paymentStatus, createdAt])
-@@index([stripeSessionId])
-@@index([userId, status, createdAt])
-```
-
-### 2. `Order.appointmentIds` denormalized array still queried
-
-`Order.appointmentIds` is a GIN-indexed `String[]` but the model now has a proper `OrderAppointment` join table. Code that still queries the array cannot enforce FK integrity and performs array-contains scans.
-
-**Fix:** Migrate remaining readers/writers to `orderAppointments` relation and eventually drop the array column.
-
-### 3. Slot generation has a race window
-
-`ensureServiceSlotsForRange` pre-fetches existing slots then inserts with `createMany`. The DB exclusion constraint catches races, but the fallback one-by-one insert is slower and can happen frequently under concurrent booking of the same doctor.
-
-**Fix:** The exclusion constraint is the real guard; ensure it is present in production and monitor for frequent `23P01` fallback paths.
-
-### 4. Patient merge reads snapshot before transaction
-
-`patient-merge.service.ts` reads duplicate/patient snapshots before opening the transaction. The data can become stale before the write set begins.
-
-**Fix:** Re-read authoritative rows inside the transaction.
-
-### 5. `doctorAmountCents` schema/code drift blocks typecheck
-
-`pnpm typecheck` fails because `doctorAmountCents` is used in `doctor-services.service.ts` and `doctor-actions.route.ts` / `doctor-reports.route.ts` but no longer exists in the Prisma `ServiceDoctor` model. This indicates a migration/code mismatch that can cause runtime errors or feature breakage.
-
-**Fix:** Either re-add the column to the schema + migration or remove the references.
+- **`Doctor.slug`** — slug-only lookups (`getDoctorByCountryAndSlug`, `listDoctorsByCountry`) can’t use `@@unique([countryId, slug])` (leftmost column is `countryId`). Add `@@index([slug])` if the roster grows. Negligible today.
+- **`Appointment [doctorId, email]`** — the doctor-scoped patient-history read filters `{ email, doctorId }` on two separate single-column indexes; a composite would be tighter. Low priority.
 
 ## Deployment / Hosting Performance Issues
+Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries a full headless Chromium for one country’s PDF fallback; migrations run on every boot; and there are three overlapping frontend build definitions (root `nixpacks.toml` builds *only* frontend and never backend — a trap).
 
-### 1. No production healthcheck configured
-
-`backend/railway.json` and the frontend Railway config do not specify `healthcheckPath`. Railway promotes deploys once the port opens, even if the app is still running migrations or half-booted.
-
-**Fix:** Add `"healthcheckPath": "/api/health"` on the backend and a frontend check in Railway deploy config.
-
-### 2. Scheduler not isolated to a worker replica
-
-As noted above, the internal scheduler runs in every API replica. Before any horizontal scaling, introduce a `RUN_SCHEDULER` env flag.
-
-### 3. Static asset caching not explicit
-
-`frontend/next.config.ts` only adds security headers. Next.js handles hashed chunks, but `/public` files without hashed filenames rely on default CDN behavior.
-
-**Fix:** Add a `headers()` entry for static assets:
-
-```ts
-{
-  source: "/:all*(svg|jpg|jpeg|png|webp|avif|gif|ico|woff2)",
-  headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }]
-}
-```
-
-### 4. Bundle analyzer does not emit output
-
-`pnpm build:analyze` completed without writing `.next/analyze/`. This prevents quantifying bundle contributors.
-
-**Fix:** Verify `ANALYZE=true` reaches the plugin (try `pnpm exec cross-env ANALYZE=true next build` or inline the env in `next.config.ts`). Add a CI step to archive analyzer output.
-
-### 5. Local Postgres bind is loopback-only
-
-`docker-compose.yml` binds Postgres to `127.0.0.1:5432`, which is correct for local dev.
+---
 
 ## Detailed Findings
 
-### Finding P-001: Public site shell is a client boundary
-
+### Finding P-001: Full 6-language i18n bundle (~537 KB JSON) shipped to the client on cart & checkout
 - **Severity:** High
-- **Category:** frontend / rendering
-- **Affected files:** `frontend/app/(site)/layout.tsx`, `frontend/components/layout/SiteChrome.tsx`, `frontend/components/layout/SiteHeader.tsx`, `frontend/components/layout/SiteFooter.tsx`
-- **Problem:** `SiteChrome` is `"use client"` solely to call `usePathname()`. Because it wraps header, footer, trust bar, and main wrapper, every public page hydrates the entire shell.
-- **Why it matters:** Forces React to hydrate a large DOM tree on first visit, increasing TTI and blocking the main thread, especially on low-end mobile.
-- **Recommended fix:** Resolve `isGatewayHome` from server params and pass as a prop. Keep `SiteChrome`, `SiteHeader`, `SiteFooter` as Server Components. Isolate scroll listener and mobile menu in tiny wrappers.
+- **Category:** frontend / bundle
+- **Affected files:** `frontend/lib/i18n/load-locale.ts:4-83` (static `import` of every namespace × every locale — 60+ JSON files, all referenced by `loadLocaleBundle` so none can tree-shake); client importers `frontend/components/cart/PlanCoverage.tsx:9,40`, `frontend/app/(site)/[country]/[lang]/cart/page.tsx:33,137`, `frontend/app/(site)/[country]/[lang]/checkout/page.tsx:30,104`, `frontend/app/(auth)/(public)/verify-email/page.tsx:8`, `frontend/app/(auth)/(public)/reset-password/page.tsx:7`
+- **Problem:** `load-locale.ts` eagerly imports all locales × namespaces (`en/pt/es/cs/ro/de` × `home/services/faq/legal/forms/about/contact/auth/account/subscription/...`), ~537 KB raw across ~66 JSON files (~110 KB/locale). Because a **client** component imports the loader, the whole module graph is emitted into that route’s client JS. Cart and checkout each ship all six languages even though only one locale’s slice is read.
+- **Why it matters:** ~90–130 KB gzipped of dead JSON parsed on the client on the two highest-intent conversion pages — hurts TTI/INP and main-thread parse time on mobile, for strings the server already has.
+- **Recommended fix:** Keep `loadLocaleBundle` server-only. Pass the needed slice (e.g. `t = common.cartPage`) down as props from a server parent, or use per-locale dynamic `import()` so only one locale chunk loads. Cheapest: hoist the cart/checkout/coverage strings and hand them in as props from the server layout that already computed the locale.
 - **Difficulty:** Medium
 - **Expected impact:** High
-- **Priority:** 1
+- **Priority:** P1
 
-### Finding P-002: CartProvider re-renders entire layout
-
+### Finding P-002: Headless Chromium (Playwright) PDF rendering runs synchronously in the request path
 - **Severity:** High
-- **Category:** frontend / rendering
-- **Affected files:** `frontend/app/(site)/layout.tsx`, `frontend/app/(auth)/layout.tsx`, `frontend/components/cart/CartContext.tsx`
-- **Problem:** `CartProvider` wraps the full layout tree. When the cart fetch resolves, the provider value object changes and every descendant re-renders.
-- **Why it matters:** A cart refresh on any page triggers a full layout re-render.
-- **Recommended fix:** Memoize the provider value with `useMemo`. Move the provider lower so it only wraps `SiteHeader` and actual cart consumers.
+- **Category:** backend
+- **Affected files:** `backend/src/modules/generated-documents/html-document-renderer.ts:64-91` (`getBrowser` + `htmlToPdfBuffer`), `backend/src/modules/generated-documents/generated-documents.service.ts:425`, `backend/src/modules/invoices/invoice-pdf.ts:306`, `backend/src/modules/orders/complete-order-payment.service.ts:501-505` (invoice generation `await`ed during payment completion)
+- **Problem:** Every doctor document and order invoice is rendered by launching a headless Chromium page, `page.setContent(html, { waitUntil: "networkidle" })` (a fixed ~500 ms idle wait), and `page.pdf(...)` — all `await`ed inside the HTTP handler. `ensureOrderPaidAutomations` (Stripe completion flow) awaits invoice rendering before returning, adding Chromium latency to webhook processing. The browser is a lazy singleton (`browserPromise`); if it crashes, the promise keeps resolving to a dead browser and every render fails until process restart — no liveness check. Docs are additionally serialized per `appointmentId:type` by an in-process mutex.
+- **Why it matters:** Seconds of wall-clock per PDF on a single event-loop process. Under concurrency (multiple doctors, a burst of paid orders), latency and per-page memory spike and can starve other requests; a single Chromium crash takes out all PDF generation process-wide.
+- **Recommended fix:** Move PDF rendering off the request path (DB-backed job drained by the existing scheduler; return a “generating” state). Quick wins meanwhile: (a) fire invoice generation as a non-awaited task in `ensureOrderPaidAutomations` (already try/caught + idempotent); (b) switch `waitUntil: "networkidle"` → `"load"` (templates load no network resources — QR is a data URL); (c) reset `browserPromise` on `browser.on("disconnected")` so a crash self-heals.
+- **Difficulty:** Medium (quick wins are small; a full queue is larger)
+- **Expected impact:** High
+- **Priority:** P1
+
+### Finding P-003: WebGL globe destroyed & recreated on every keystroke in the entry-gate search
+- **Severity:** High
+- **Category:** rendering
+- **Affected files:** `frontend/components/ui/cobe-globe.tsx:45-65` (color defaults declared as default params → new array each render), `:335-355` (effect dep array includes those colors), `:285-305` (`createGlobe(... mapSamples:16000 ...)`); `frontend/components/sections/CountryEntryGate.tsx:124` (`countryQuery` state), `:275-285` (`<Globe>` not `React.memo`, colors not passed)
+- **Problem:** The globe’s init effect depends on `baseColor/markerColor/arcColor/glowColor`. The caller never passes them, so the destructured default arrays are re-allocated every render, changing identity and firing the effect’s cleanup+re-run. `CountryEntryGate` re-renders on each `countryQuery` change (typing), and `Globe` isn’t memoized — so each keystroke tears down and rebuilds the `mapSamples: 16000` WebGL globe.
+- **Why it matters:** `createGlobe` allocates GPU/CPU buffers and rebuilds the map texture; doing it per typed character janks the primary interaction on the site’s landing screen (`/`).
+- **Recommended fix:** Root cause — hoist the default color arrays to module-level `const`s (stable identity). Belt-and-suspenders — wrap `Globe` in `React.memo` (its props from `CountryEntryGate` are already stable), so it won’t re-render on search typing at all.
 - **Difficulty:** Easy
 - **Expected impact:** High
-- **Priority:** 1
+- **Priority:** P1
 
-### Finding P-003: Images bypass Next.js optimization
-
-- **Severity:** High
-- **Category:** assets / CWV
-- **Affected files:** `frontend/components/sections/HomeHero.tsx`, `frontend/components/sections/PageHero.tsx`, `frontend/components/sections/ServiceHero.tsx`, `frontend/components/sections/DoctorsHero.tsx`, `frontend/components/cards/DoctorCard.tsx`, `frontend/components/cards/FeaturedDoctor.tsx`, `frontend/components/media/HealthcareMediaFrame.tsx`
-- **Problem:** These components pass `unoptimized={true}` for remote and `/api/media/` images, disabling WebP/AVIF conversion, responsive `srcset`, and sizing.
-- **Why it matters:** Visitors download full-resolution source images. LCP is delayed and mobile data is wasted.
-- **Recommended fix:** Remove `unoptimized` for `/api/media/` paths (already allowed in `next.config.ts` remotePatterns). Add explicit `sizes` and `priority` for above-the-fold heroes.
-- **Difficulty:** Easy
-- **Expected impact:** High
-- **Priority:** 1
-
-### Finding P-004: Service catalog uses raw `<img>` tags
-
-- **Severity:** High
-- **Category:** assets / CWV
-- **Affected files:** `frontend/components/sections/ServiceCatalog.tsx`, `frontend/components/cards/ServiceCard.tsx`
-- **Problem:** Service tiles use plain `<img>` with `loading="lazy"` but no Next.js optimization, no `srcset`, no AVIF/WebP, no placeholder.
-- **Why it matters:** Catalog images are often large CMS/admin uploads; they hurt LCP and page weight.
-- **Recommended fix:** Convert to `next/image` with `fill` + `sizes` or explicit `width`/`height`. Remove the ESLint `no-img-element` override.
-- **Difficulty:** Easy
-- **Expected impact:** High
-- **Priority:** 1
-
-### Finding P-005: Hero plus-mask uses raw SVG `<image>`
-
-- **Severity:** Critical
-- **Category:** assets / CWV
-- **Affected files:** `frontend/components/sections/HeroPlusImage.tsx`, callers in `DoctorsHero.tsx`, `PageHero.tsx`
-- **Problem:** The hero portrait is rendered with `<image href={src} />` inside an SVG, bypassing Next.js optimization entirely.
-- **Why it matters:** This is the LCP element on several pages; PNG/JPG sources up to 1.4 MB are delivered as-is.
-- **Recommended fix:** Replace with Next.js `<Image>` clipped via CSS `clip-path` or inline SVG mask. Keep the plus shape but let Next.js generate responsive WebP/AVIF srcsets.
-- **Difficulty:** Medium
-- **Expected impact:** High
-- **Priority:** 1
-
-### Finding P-006: No `next/dynamic` code-splitting
-
-- **Severity:** High
-- **Category:** bundle
-- **Affected files:** All `frontend/components`
-- **Problem:** No component uses `next/dynamic`. Heavy or below-fold widgets are bundled into the initial JS.
-- **Why it matters:** First-party JS is larger than necessary; TTI is delayed.
-- **Recommended fix:** Dynamically import `DoctifyReviews`, `SameDayBooking`, `HeroBookingWizard`, `cobe-globe`, `MobileNav` drawer content, and admin rich-text dialogs. Use `ssr: false` only for genuinely browser-only widgets (globe).
-- **Difficulty:** Medium
-- **Expected impact:** High
-- **Priority:** 2
-
-### Finding P-007: Heavy below-fold widgets load eagerly
-
-- **Severity:** High
-- **Category:** bundle / CWV
-- **Affected files:** `frontend/components/sections/DoctifyReviews.tsx`, `frontend/components/sections/SameDayBooking.tsx`, `frontend/components/sections/CountryEntryGate.tsx`, `frontend/components/ui/cobe-globe.tsx`
-- **Problem:** `DoctifyReviews` injects a third-party script on mount. `SameDayBooking` fetches availability on mount regardless of viewport. The `cobe` globe initializes immediately.
-- **Why it matters:** These compete with LCP/hero resources and block the main thread.
-- **Recommended fix:** Lazy-load behind IntersectionObserver or `next/dynamic`. For the globe, reduce samples on mobile and respect `prefers-reduced-motion`.
-- **Difficulty:** Medium
-- **Expected impact:** High
-- **Priority:** 2
-
-### Finding P-008: Multi-megabyte PNGs in `/public`
-
-- **Severity:** Critical
-- **Category:** assets
-- **Affected files:** `frontend/public/logos/partners/cfm.png` (2.1 MB), `frontend/public/images/stock/blog.png` (1.9 MB), `frontend/public/images/stock/plans.png` (1.9 MB), `frontend/public/logos/partners/gdpr-green-gold.png` (1.6 MB), `frontend/public/logos/partners/eu-star.png` (1.2 MB)
-- **Problem:** Uncompressed/unquantized PNGs are served directly from `/public` and skipped by `next/image`.
-- **Why it matters:** These dominate page weight on any page that displays them.
-- **Recommended fix:** Convert to AVIF/WebP, run `oxipng`/`cwebp`/`avifenc`, and right-size dimensions. Target < 100 KB each, < 30 KB for logos.
+### Finding P-004: Reconciliation cron makes one sequential Stripe API call per subscription
+- **Severity:** Medium-High
+- **Category:** backend
+- **Affected files:** `backend/src/modules/subscriptions/ops/reconciliation.service.ts:155-182` (`checkStripeDrift`), invoked hourly + on boot via `backend/src/lib/internal-scheduler.ts:103,109`
+- **Problem:** `checkStripeDrift` fetches up to 200 ACTIVE/PAST_DUE subscriptions then loops `for (const sub of subs) { await billing.retrieveSubscription(...) }` — a serial network round-trip per subscription (~150–300 ms each → 30–60 s for 200). Runs every hour AND on every deploy (boot `setTimeout` burst).
+- **Why it matters:** Grows linearly with the subscriber base, monopolizes Stripe rate-limit budget serially, and a slow Stripe response stalls the whole reconciliation. Ops/quota impact rather than user request-path, but it’s the clearest sequential-await problem in the codebase.
+- **Recommended fix:** Bounded-parallel batches (`Promise.all` over slices of ~8 — the pattern already used in `service-availability.service.ts:129-143`), or use Stripe `subscriptions.list` to page many at once.
 - **Difficulty:** Low
-- **Expected impact:** High
-- **Priority:** 1
+- **Expected impact:** Medium-High
+- **Priority:** P2
 
-### Finding P-009: `next/image` config lacks formats, sizes, and cache TTL
-
-- **Severity:** High
-- **Category:** assets / CWV / deployment
-- **Affected files:** `frontend/next.config.ts`
-- **Problem:** `images: { remotePatterns }` only. AVIF, device sizes, image sizes, and `minimumCacheTTL` are not configured.
-- **Why it matters:** Next.js defaults to WebP only and a conservative cache TTL; AVIF savings (20–30%) are left on the table.
-- **Recommended fix:** Add `formats: ["image/avif", "image/webp"]`, explicit `deviceSizes`/`imageSizes`, and `minimumCacheTTL: 60 * 60 * 24 * 365`.
-- **Difficulty:** Low
-- **Expected impact:** Medium
-- **Priority:** 2
-
-### Finding P-010: No hero image preloads
-
-- **Severity:** High
-- **Category:** CWV / assets
-- **Affected files:** `frontend/app/layout.tsx`, hero components
-- **Problem:** LCP hero images use `priority` but no `<link rel="preload">` is emitted in layout or page metadata.
-- **Why it matters:** LCP image fetch starts after HTML/JS/CSS parse; preloading can start it 100–300 ms earlier.
-- **Recommended fix:** Emit preload links in page metadata for the active hero variant per viewport.
-- **Difficulty:** Medium
-- **Expected impact:** Medium
-- **Priority:** 2
-
-### Finding P-011: Monolithic global CSS
-
-- **Severity:** High
-- **Category:** bundle / CWV
-- **Affected files:** `frontend/app/globals.css`
-- **Problem:** One ~8 984-line stylesheet is imported by every page. Dev CSS chunks exceed 800 KB.
-- **Why it matters:** Large CSS blocks rendering, increases parse/selector-match cost, and consumes memory even for unused rules.
-- **Recommended fix:** Split into `tokens.css`, `reset.css`, and route/component-specific imports. Audit dead rules with DevTools Coverage. Use Tailwind v4’s CSS-first config to avoid duplication.
-- **Difficulty:** Medium
-- **Expected impact:** Medium
-- **Priority:** 3
-
-### Finding P-012: `flag-icons` full CSS loaded globally
-
-- **Severity:** Medium
-- **Category:** bundle / assets
-- **Affected files:** `frontend/app/layout.tsx`, `frontend/components/ui/Flag.tsx`
-- **Problem:** `import "flag-icons/css/flag-icons.min.css"` ships hundreds of flag classes on every page even though only ~7 flags are rendered.
-- **Why it matters:** Extra render-blocking CSS and unused sprite references.
-- **Recommended fix:** Inline the used flags as SVG components or purge unused classes with a scoped Tailwind content scan.
-- **Difficulty:** Low
-- **Expected impact:** Medium
-- **Priority:** 3
-
-### Finding P-013: `DoctorCarousel` scroll handler re-renders on every event
-
-- **Severity:** Medium
-- **Category:** rendering / interaction
-- **Affected files:** `frontend/components/sections/DoctorCarousel.tsx`
-- **Problem:** `onScroll` calls three `setState` setters on every scroll event.
-- **Why it matters:** Causes React re-renders and prop diffusion to all carousel cards during scrolling.
-- **Recommended fix:** Throttle with `requestAnimationFrame` and write progress to a CSS custom property instead of React state.
-- **Difficulty:** Low
-- **Expected impact:** Medium
-- **Priority:** 3
-
-### Finding P-014: Meta Pixel loads early in body
-
-- **Severity:** Medium
-- **Category:** CWV / third-party
-- **Affected files:** `frontend/app/layout.tsx`
-- **Problem:** The Meta Pixel `<Script strategy="afterInteractive">` is the first child of `<body>`. It executes early and competes with INP.
-- **Why it matters:** Third-party scripts are a leading cause of poor INP/LCP.
-- **Recommended fix:** Move to `strategy="lazyOnload"` unless marketing requires sooner. Add `preconnect` to `connect.facebook.net`. Load only after cookie consent if required by jurisdiction.
-- **Difficulty:** Low
-- **Expected impact:** Medium
-- **Priority:** 3
-
-### Finding P-015: Mobile input font size triggers iOS zoom
-
-- **Severity:** Critical
-- **Category:** mobile / UX
-- **Affected files:** Login, register, checkout, consult forms, profile forms
-- **Problem:** Inputs use `text-sm` (~14 px). iOS Safari zooms the viewport when focusing inputs with font-size < 16 px.
-- **Why it matters:** Breaks checkout funnel; users must pinch-zoom back out.
-- **Recommended fix:** Add global rule: `@media (max-width: 768px) { input, select, textarea { font-size: 16px; } }`.
-- **Difficulty:** Low
-- **Expected impact:** High
-- **Priority:** 1
-
-### Finding P-016: Doctor portal tables not mobile-friendly
-
-- **Severity:** High
-- **Category:** mobile / UX
-- **Affected files:** `frontend/app/(doctor)/doctor/appointments/[id]/_components/services-used-list.tsx`, `appointment-medical-notes-section.tsx`, `consultation-documents-modal.tsx`
-- **Problem:** Tables have fixed `min-w-[620px]`/`min-w-[640px]` with horizontal scroll and no mobile card fallback.
-- **Why it matters:** Doctors on phones/tablets cannot read appointment data without awkward horizontal scrolling.
-- **Recommended fix:** Provide `PortalMobileCard` stacks below `md:` and hide the table, mirroring the account payments page.
-- **Difficulty:** Medium
-- **Expected impact:** High
-- **Priority:** 2
-
-### Finding P-017: Cobe globe not adapted for mobile/low-power
-
-- **Severity:** High
-- **Category:** rendering / mobile
-- **Affected files:** `frontend/components/ui/cobe-globe.tsx`, `frontend/components/sections/CountryEntryGate.tsx`
-- **Problem:** `mapSamples: 16000` is hard-coded; continuous `requestAnimationFrame` loop runs regardless of device or motion preference.
-- **Why it matters:** High GPU/CPU cost on mobile, battery drain, dropped frames.
-- **Recommended fix:** Detect `navigator.hardwareConcurrency`, `connection.saveData`, and `prefers-reduced-motion`; reduce samples on mobile, pause when off-screen.
-- **Difficulty:** Medium
-- **Expected impact:** High
-- **Priority:** 2
-
-### Finding P-018: In-process scheduler duplicates on scale
-
-- **Severity:** High
-- **Category:** backend / deployment
-- **Affected files:** `backend/src/lib/internal-scheduler.ts`, `backend/src/server.ts`
-- **Problem:** Five cron loops run inside every API replica via `setInterval`. No distributed lock or leader election.
-- **Why it matters:** Two replicas = double emails/WhatsApp/reminders. Money paths are idempotent; communications are not.
-- **Recommended fix:** Introduce `RUN_SCHEDULER=true` env flag (single worker replica) or Postgres advisory-lock wrapper per job.
-- **Difficulty:** Medium
-- **Expected impact:** High
-- **Priority:** 2
-
-### Finding P-019: Missing composite indexes on hot Appointment columns
-
+### Finding P-005: Per-doctor availability reads write to the DB on every GET
 - **Severity:** Medium
 - **Category:** database
-- **Affected files:** `backend/prisma/schema.prisma` (`Appointment` model)
-- **Problem:** No indexes on `scheduledAt`, `countryCode + status`, `doctorId + scheduledAt`, `paymentStatus + createdAt`, `stripeSessionId`, `userId + status`.
-- **Why it matters:** Sequential scans on the largest table as data grows; webhook lookups slow down.
-- **Recommended fix:** Add composite indexes via migration (see Database Performance Issues section).
+- **Affected files:** `backend/src/modules/doctor-availability/doctor-availability.service.ts:241-266` (`listOpenSlotsForDoctor`), `:431-495` (`listOpenSlotsForDoctorAndService`), `:144-233` (`ensureSlotsForRange`), `:704-721` (`releaseExpiredHeldSlots`)
+- **Problem:** Each public availability read runs, in series: `releaseExpiredHeldSlots` (a `findMany`), then `ensureSlotsForRange` → `resolveDoctorTimeZone` (`doctor.findUnique`) + `doctorAvailability.findMany` + **always** a `doctorTimeSlot.createMany({ skipDuplicates: true })` over the window, then the actual `doctorTimeSlot.findMany`. So a read issues an `INSERT … ON CONFLICT DO NOTHING` for dozens of rows even when nothing is new, plus 3–4 extra queries. Unlike the aggregated service-availability path (45 s TTL cache), the per-doctor endpoints are uncached.
+- **Why it matters:** Write amplification + multiple round-trips + row locks + dead-tuple churn on a read-heavy, bot-crawlable endpoint — the busiest DB path under booking load.
+- **Recommended fix:** Guard `ensureSlotsForRange` with a cheap `count`/`findFirst` before building `generated` + `createMany` (short-circuit when the range already exists), or move materialization to a scheduled/first-touch-per-day job and keep reads read-only. Add the aggregated path’s TTL cache to the per-doctor path; hoist `resolveDoctorTimeZone` out of the per-doctor loop.
+- **Difficulty:** Medium
+- **Expected impact:** Medium-High
+- **Priority:** P2
+
+### Finding P-006: In-process scheduler has no distributed lock and re-runs heavy work on every deploy
+- **Severity:** Medium
+- **Category:** backend / deployment
+- **Affected files:** `backend/src/lib/internal-scheduler.ts:77-111`
+- **Problem:** Five cron loops run via `setInterval` inside the app process, and the boot `setTimeout` immediately fires pre/post-payment, subs-ops and reconciliation ticks on startup. No distributed lock — correctness relies on setting `RUN_SCHEDULER=false` on extra replicas. Any rolling deploy or second replica double-executes ticks until env is set right.
+- **Why it matters:** Duplicate reminder sends / Stripe scans on multi-replica or rollovers; every deploy pays the full reconciliation cost (P-004) at boot.
+- **Recommended fix:** Gate each tick behind a Postgres advisory lock (`pg_try_advisory_lock`) so only one replica runs a given job regardless of env; drop reconciliation from the immediate boot burst (leave it to the hourly interval + external `POST /api/cron/...` trigger).
+- **Difficulty:** Low-Medium
+- **Expected impact:** Medium (safe horizontal scaling / rolling deploys)
+- **Priority:** P2
+
+### Finding P-007: Presentational components needlessly marked `"use client"`
+- **Severity:** Medium
+- **Category:** frontend
+- **Affected files:** `frontend/components/sections/FeaturedDoctor.tsx:1` (rendered by the **server** home page at `frontend/app/(site)/[country]/[lang]/page.tsx:534`), `frontend/components/media/HealthcareMediaFrame.tsx:1`, `frontend/components/cards/ServiceCard.tsx:1` (lower impact — parent `ServicesGrid` is already client)
+- **Problem:** These have no hooks/state/handlers (just `Image`/`Link`/lucide/pure helpers) yet declare a client boundary, forcing prop serialization across the RSC boundary and shipping the component + transitive imports (e.g. `BrandIcons`) to the client for a static render.
+- **Why it matters:** Unnecessary client JS shipped + hydrated on the country home page for content that never changes after paint.
+- **Recommended fix:** Delete the `"use client"` directive from `FeaturedDoctor.tsx` and `HealthcareMediaFrame.tsx` (verify no client-only import is added later); `ServiceCard` optional. No other code change needed.
 - **Difficulty:** Easy
 - **Expected impact:** Medium
-- **Priority:** 3
+- **Priority:** P2
 
-### Finding P-020: Bundle analyzer does not emit output
+### Finding P-008: 1.96 MB PNG used as a CSS background (`membership-silk.png`)
+- **Severity:** Medium (portal-scoped)
+- **Category:** assets
+- **Affected files:** `frontend/public/images/portal/obsidian/membership-silk.png`, `frontend/app/globals.css:2159` (`--lux-asset-member`)
+- **Problem:** The membership silk is a 1.96 MB **PNG** referenced via a CSS `background-image: url()` variable while its five sibling silks are already WebP. CSS `url()` assets bypass `next/image` — no AVIF/WebP negotiation, no responsive resize — so the full 1.96 MB is delivered to whatever element uses it (portal membership surface, a likely LCP element for members).
+- **Why it matters:** ~2 MB decorative background behind a dark veil = a large avoidable LCP/bandwidth hit for authenticated members. (Public pages unaffected — no `--lux-asset-*` class renders under `app/(site)`.)
+- **Recommended fix:** Re-encode to WebP/AVIF (quality can drop hard behind its veil → ~150–350 KB); update the `url()` at `globals.css:2159`. Same pattern as the sibling `.webp` tokens.
+- **Difficulty:** Easy
+- **Expected impact:** ~1.6–1.8 MB saved on portal membership LCP
+- **Priority:** P2
 
+### Finding P-009: Monolithic 252 KB `globals.css` render-blocks every public route
+- **Severity:** Medium (Low-Medium)
+- **Category:** rendering / assets
+- **Affected files:** `frontend/app/globals.css` (9,024 lines / 252 KB unminified)
+- **Problem:** One stylesheet holds the public site AND all three auth-gated portals (`.gh-admin-*`, `.gh-portal-*`, `.gh-doctor-*`, `lux` tokens), imported in root `layout.tsx`. A first-time public mobile visitor downloads and parses admin/doctor CSS they’ll never render.
+- **Why it matters:** Render-blocking CSS on the critical path; larger parse/style cost on low-end phones (the majority of traffic). Already flagged as a deferred item in project notes.
+- **Recommended fix:** Split portal-only rules into a stylesheet imported from the `(admin)`/`(doctor)`/`(auth)` route-group layouts; keep `globals.css` to tokens + public + shared primitives. (Tailwind’s utility layer is already tree-shaken — this is the hand-authored component CSS.)
+- **Difficulty:** Medium (careful selector partitioning)
+- **Expected impact:** Medium (smaller render-blocking CSS for public mobile)
+- **Priority:** P3
+
+### Finding P-010: Obsidian silk WebP backgrounds are still ~0.8–1.0 MB each
+- **Severity:** Low-Medium (portal-scoped)
+- **Category:** assets
+- **Affected files:** `card-silk.webp` (1.05 MB), `band-aurora.webp` (1.00 MB), `canvas-aurora.webp` (985 KB), `plane-veil.webp` (875 KB), `header-aura.webp` (811 KB) under `frontend/public/images/portal/obsidian/`, wired at `globals.css:2155-2160`
+- **Problem:** Decorative aurora/silk fills sitting behind 0.50–0.76 opacity veils, each ~1 MB, delivered full-resolution as CSS backgrounds (no `next/image` resize). ~4.7 MB can load across a portal session; a phone downloads the full-res silk.
+- **Why it matters:** Cumulative bandwidth + decode for logged-in users; the command-center view pulls several at once.
+- **Recommended fix:** Re-encode at lower WebP quality and/or smaller intrinsic dimensions (blurred/veiled → 1280–1600px wide at q≈55). Target ~150–300 KB each.
+- **Difficulty:** Easy
+- **Expected impact:** ~3.5–4 MB saved across portal decorative loads
+- **Priority:** P3
+
+### Finding P-011: No horizontal-overflow guard on the public-site body
+- **Severity:** Low-Medium
+- **Category:** mobile
+- **Affected files:** `frontend/app/globals.css:250-278` (html/body base — no `overflow-x`); guard exists only at `:2929-2933` (`.gh-portal-main` ≤760px)
+- **Problem:** The portals get `overflow-x: hidden` at ≤760px, but the public `(site)` tree has no equivalent body/shell guard. Today the known decorative offenders are defused by responsive hiding (`hidden lg:flex`, `hidden sm:block`), but there’s no safety net for a long unbreakable string, a wide embed, or a future absolute element.
+- **Why it matters:** Any such element triggers full-page horizontal scroll on mobile with nothing to catch it.
+- **Recommended fix:** Add `overflow-x: clip` on the `(site)` layout wrapper or `body`. Use `clip` (not `hidden`) to avoid creating a scroll container that breaks `position: sticky` descendants.
+- **Difficulty:** Trivial
+- **Expected impact:** Eliminates a class of latent mobile horizontal-scroll regressions
+- **Priority:** P3
+
+### Finding P-012: Marquee animates + holds a compositor layer on mobile, even off-screen
+- **Severity:** Low
+- **Category:** rendering / mobile
+- **Affected files:** `frontend/app/globals.css:543-545`
+- **Problem:** `.gh-marquee-track { animation: gh-marquee 20s linear infinite; will-change: transform; }`. Reduced-motion kills it (`:554`), but on a normal touch device the `pointer:coarse` block deliberately keeps it running. `will-change: transform` is permanent → the track is a promoted GPU layer for the page’s life, and the loop runs while scrolled off-screen.
+- **Why it matters:** Constant compositor work + an always-live layer = steady battery/thermal drain on phones for a decorative strip usually out of view.
+- **Recommended fix:** Pause via IntersectionObserver when off-screen; drop the persistent `will-change` (only needed while actively animating).
+- **Difficulty:** Easy
+- **Expected impact:** Low (lower idle GPU/battery)
+- **Priority:** P3
+
+### Finding P-013: Playwright + Chromium (~150–300 MB) baked into the backend production image
 - **Severity:** Medium
-- **Category:** deployment / bundle
-- **Affected files:** `frontend/next.config.ts`, `frontend/package.json`
-- **Problem:** `pnpm build:analyze` completed but `.next/analyze/` was not created, so bundle contributors cannot be quantified.
-- **Why it matters:** Without analyzer output, targeted bundle optimization is guesswork.
-- **Recommended fix:** Verify `ANALYZE=true` reaches the plugin. Try `pnpm exec cross-env ANALYZE=true next build`. Add a CI step to archive analyzer artifacts.
+- **Category:** dependencies / deployment
+- **Affected files:** `backend/package.json:47` (`playwright` in `dependencies`), `backend/nixpacks.toml` (`npx playwright install chromium` + libnss3/libatk/libgbm/libasound2t64 apt chain), `backend/src/modules/generated-documents/html-document-renderer.ts:64-90`
+- **Problem:** `playwright` is a prod dep and the deploy build downloads a full headless Chromium — carried solely as the HTML→PDF **fallback** for markets without a DOCX pack (Brazil). The primary path (IE/PT/ES/CZ/RO) is LibreOffice + DOCX templates.
+- **Why it matters:** The single largest contributor to backend image size / build time / cold-boot, for one country’s fallback, plus ~12 Chromium-only apt libs.
+- **Recommended fix:** Consolidate Brazil’s PDF onto the existing LibreOffice path (feed it a minimal DOCX/HTML) or `pdf-lib` (already a dep), then drop playwright + its apt libs from the backend runtime. If kept, cache `PLAYWRIGHT_BROWSERS_PATH` so Chromium isn’t re-downloaded every build.
+- **Difficulty:** Medium (needs a Brazil template on the existing renderer)
+- **Expected impact:** Medium (−150–300 MB image, faster builds/cold starts)
+- **Priority:** P3
+
+### Finding P-014: `prisma migrate deploy` runs on every backend boot with no separate gate
+- **Severity:** Low-Medium
+- **Category:** deployment
+- **Affected files:** `backend/railway.json` (`startCommand`), `backend/package.json:12` (`start`)
+- **Problem:** Start command is `prisma migrate deploy && node dist/server.js`. Every deploy AND every restart (crash/OOM, `restartPolicyMaxRetries: 10`) re-invokes migrate before the server binds. A failing/long migration blocks the port, fails the `/health` check (`healthcheckTimeout: 100`), and the service restart-loops with the whole API down.
+- **Why it matters:** Couples schema change with app rollout, no independent review; a bad migration = API-wide outage. (Prisma’s advisory lock makes concurrent instances safe, so the risk is boot-coupling, not racing.)
+- **Recommended fix:** Move migrations to a gated pre-deploy step (Railway release phase / one-off job) so a bad migration fails the deploy without crash-looping the running version. At minimum keep migrations small + backward-compatible.
 - **Difficulty:** Low
-- **Expected impact:** Medium
-- **Priority:** 3
+- **Expected impact:** Low-Medium (removes migrate latency per restart; prevents outage on bad migration)
+- **Priority:** P3
+
+### Finding P-015: 2.7 MB of orphaned PNGs shipped in `public/images/portal/generated`
+- **Severity:** Low
+- **Category:** assets
+- **Affected files:** `frontend/public/images/portal/generated/patient-record-empty-state.png` (1.40 MB), `.../admin-content-management-accent.png` (1.38 MB)
+- **Problem:** Grep across `app/`, `components/`, `lib/`, `globals.css` finds **zero** references. Project notes recorded these as “deleted” when replaced by hand-built SVG empty states, but they’re still on disk. `output: "standalone"` copies all of `public/` into the Docker image.
+- **Why it matters:** 2.7 MB of dead pixels ride into every deploy/image cache (no user downloads them — repo/image bloat, not runtime CWV).
+- **Recommended fix:** Confirm no CMS DB row points at `/images/portal/generated/*` (unlikely — hardcoded illustrations), then `git rm` the `generated/` directory.
+- **Difficulty:** Trivial
+- **Expected impact:** −2.7 MB repo + Docker image
+- **Priority:** P3
+
+### Finding P-016: Landing-page LCP hero uses a raw `<img>` instead of `next/image`
+- **Severity:** Low
+- **Category:** rendering / assets
+- **Affected files:** `frontend/components/sections/CountryEntryGate.tsx:216` (`/images/hero/country-entry-clinic-hero-2560.webp`, 62 KB)
+- **Problem:** The entry gate at `/` renders its full-bleed hero as a raw `<img width={2560} height={1440} loading="eager" fetchPriority="high">`. Dimensions + fetch priority are correct (no CLS, prioritized LCP), but as a raw tag it (a) is never transcoded to AVIF and (b) serves the single 2560px WebP to every device — a phone downloads a 2560-wide file rendered at ~390px.
+- **Why it matters:** `/` is the first paint for every new visitor and this is its LCP. Over-fetch + missed AVIF are modest (62 KB source) but it’s the one hero that opted out of the otherwise-consistent `next/image` pipeline.
+- **Recommended fix:** Swap to `next/image` with `fill`/explicit dims, `priority`, `sizes="100vw"` (matching `HomeHero.tsx:125`) for AVIF + a mobile srcset. If it was left raw deliberately, note the ceiling.
+- **Difficulty:** Easy
+- **Expected impact:** Low (smaller mobile LCP transfer + AVIF on the most-hit page)
+- **Priority:** P3
+
+### Finding P-017: Cart per-second countdown + `loadLocaleBundle()` in the render body
+- **Severity:** Low
+- **Category:** rendering
+- **Affected files:** `frontend/app/(site)/[country]/[lang]/cart/page.tsx:38-52` (`useCountdown` — `setInterval(setNow, 1000)`), used per row at `:509`; `loadLocaleBundle(...)` invoked in the render body at `:137`; 30 s auto-refresh `setInterval` at `:166`
+- **Problem:** Each held-consultation row runs a 1 Hz `setState` (localized — acceptable), but `loadLocaleBundle(lang)` runs in the render body on every render, rebuilding the bundle object each countdown tick (compounds P-001’s cost per re-render).
+- **Why it matters:** Bounded, but avoidable per-tick churn.
+- **Recommended fix:** Wrap the `loadLocaleBundle(lang)` result in `useMemo([lang])` (or receive strings as props per P-001).
+- **Difficulty:** Easy
+- **Expected impact:** Low
+- **Priority:** P3
+
+### Finding P-018: `checkUnsweptReservations` does a `findFirst` per stale reservation (N+1 in cron)
+- **Severity:** Low
+- **Category:** database
+- **Affected files:** `backend/src/modules/subscriptions/ops/reconciliation.service.ts:128-149`
+- **Problem:** Loops stale reservations and runs `consultationCreditLedger.findFirst` per row to find a terminal (CONSUMED/RELEASED) entry — an N+1 inside the reconciliation cron.
+- **Why it matters:** Usually tiny (only reservations expired >1h with no terminal), but grows with sweep backlog.
+- **Recommended fix:** One `groupBy`/`findMany` over `reservationId IN (...)` with `reason IN ('CONSUMED','RELEASED')`, then set-diff in memory (same shape as `checkMissingGrants` at `:63-68`).
+- **Difficulty:** Low
+- **Expected impact:** Low
+- **Priority:** P3
+
+### Finding P-019: Per-instance caches & rate-limit store don’t span replicas
+- **Severity:** Low
+- **Category:** backend
+- **Affected files:** `backend/src/app.ts:113-118` (`@fastify/rate-limit` default in-memory store), `backend/src/modules/service-booking/service-availability.service.ts:46` (Map TTL cache), `backend/src/modules/gp-booking/gp-assignment.service.ts`
+- **Problem:** The global limiter and availability caches are process-local Maps. On >1 replica the effective rate limit becomes `max × replicas` and cache hit-rates drop. Single-replica today (per scheduler comment), so currently benign.
+- **Why it matters:** Rate-limit protection weakens and cache benefit dilutes on horizontal scale.
+- **Recommended fix:** Point `@fastify/rate-limit` at a shared store (Redis) when scaling out; availability TTL caches are fine per-instance.
+- **Difficulty:** Low
+- **Expected impact:** Low (only relevant on multi-replica)
+- **Priority:** P4
+
+### Finding P-020: Sub-12px, low-contrast type on conversion-critical UI
+- **Severity:** Low
+- **Category:** mobile / accessibility
+- **Affected files:** `frontend/components/.../MobileOrderTotalBar.tsx:56` (`text-[10px]` total label), `HomeHero.tsx:159,165,231` (`text-[11px]`), `about/page.tsx:202,217,232` (`text-[11.5px]` at `white/55`), plus ~60 files using `text-[10px]/[11px]`
+- **Problem:** Most 10–11px usages are high-contrast uppercase eyebrow/badge labels (accepted micro-typography). But some are near-body content — the cart/checkout total *label* and about-panel subtitles at `white/55` (low contrast), 11.5px.
+- **Why it matters:** 10px low-contrast text is hard to read on a phone and can fail WCAG contrast at that size; the order-total label sits in the primary conversion bar.
+- **Recommended fix:** Floor genuinely informational labels at 12px; keep 10–11px only for high-contrast uppercase tags; lift `white/55` subtitles toward `white/70` at small sizes.
+- **Difficulty:** Easy
+- **Expected impact:** Low
+- **Priority:** P4
+
+### Finding P-021: CookieBanner overlays the fixed bottom conversion bars on first visit
+- **Severity:** Low
+- **Category:** mobile / UX
+- **Affected files:** `frontend/components/.../CookieBanner.tsx:62` (`fixed bottom-4 z-50`), `MobileOrderTotalBar.tsx:49` (`fixed bottom-0 z-40`), `StickyBookingCTA.tsx:25` (`fixed bottom-0 z-40`)
+- **Problem:** The global cookie banner (z-50) renders over the cart/checkout `MobileOrderTotalBar` and the marketing `StickyBookingCTA` (both z-40, bottom-0) until dismissed. (The two z-40 bars never co-occur.)
+- **Why it matters:** On a first-time mobile visit to cart/checkout, the banner obscures the order total + primary CTA until consent is dismissed.
+- **Recommended fix:** When the banner is visible, dock it directly above the bottom bar (or raise the bar’s `bottom` offset by the banner height) so both are usable together.
+- **Difficulty:** Easy
+- **Expected impact:** Low
+- **Priority:** P4
+
+### Finding P-022: `ScrollToTop` triggers three scroll writes per navigation
+- **Severity:** Low
+- **Category:** rendering
+- **Affected files:** `frontend/components/layout/ScrollToTop.tsx:29-43` (`scrollTo` + `requestAnimationFrame` + `setTimeout(120)` per `pathname` change)
+- **Problem:** Mounted once at root (fine); runs three scroll writes per navigation, the 120 ms timer forcing a second post-paint layout read/write.
+- **Why it matters:** Negligible; noted for completeness. The triple-snap is a deliberate workaround for late-settling hero layout.
+- **Recommended fix:** Leave as-is unless profiling shows scroll jank.
+- **Difficulty:** Easy
+- **Expected impact:** Low
+- **Priority:** P4
+
+### Cleanup (Info — no runtime impact today)
+- **Dead client component:** `frontend/components/ui/footer-column.tsx` (client, no interactivity) is used only by the unused `frontend/components/ui/demo.tsx`; the live footer is the server `SiteFooter`. Delete both or drop the directive.
+- **Dead fixed-width hero:** `frontend/components/sections/HeroBookingWizard.tsx:160` (`w-[480px]`, non-responsive) is never imported (replaced by `SameDayBooking`). Delete to prevent someone re-wiring a non-responsive panel into a hero.
+- **Overlapping build configs:** root `nixpacks.toml` builds *only* frontend (never backend) while `frontend/Dockerfile` + `railway.toml` are the real per-service builders. Delete/annotate the root nixpacks as legacy (one build path per service).
+
+---
 
 ## Prioritized Performance Fix Roadmap
 
 ### Immediate Fixes — 1 Day
-
-1. **Set mobile input font-size to 16 px** — global one-liner CSS fix for iOS zoom.
-2. **Remove `unoptimized` for `/api/media/` images** and add `sizes` to hero/card images.
-3. **Convert `ServiceCard` / `ServiceCatalog` `<img>` to `next/image`.**
-4. **Memoize `CartContext` value** with `useMemo` so cart updates do not re-render the whole layout.
-5. **Optimize public-folder PNGs** — convert largest 5 files to AVIF/WebP and right-size.
-6. **Enable AVIF + deviceSizes + cache TTL** in `frontend/next.config.ts`.
-7. **Fix React 19 lint errors** (`window.location.href` in render path, ref reads during render).
-8. **Add `preconnect`/`dns-prefetch`** for `connect.facebook.net` and `www.doctify.com`.
+- **P-003** — Hoist globe color defaults to module consts + `React.memo(Globe)` (stops per-keystroke WebGL rebuild). _Easy, High._
+- **P-002 (quick wins)** — Fire invoice generation non-awaited in `ensureOrderPaidAutomations`; switch `waitUntil: "networkidle"` → `"load"`; reset `browserPromise` on `disconnected`. _Removes seconds from the money path + fixes the dead-browser trap._
+- **P-004** — Batch the reconciliation Stripe reads (`Promise.all` over slices of ~8). _Easy, Med-High._
+- **P-016 / P-015 / cleanup** — Swap entry-gate hero to `next/image`; `git rm` the orphaned `generated/` PNGs; delete dead `footer-column`/`demo`/`HeroBookingWizard`; annotate root `nixpacks.toml`.
+- **P-008** — Re-encode `membership-silk.png` → WebP/AVIF (portal LCP).
 
 ### Short-Term Fixes — 2 to 5 Days
-
-1. **Refactor `SiteChrome`, `SiteHeader`, `SiteFooter` to Server Components** and pass pathname/country/lang from server layout. Isolate scroll/mobile behaviors in small client wrappers.
-2. **Introduce `next/dynamic`** for `DoctifyReviews`, `SameDayBooking`, `HeroBookingWizard`, `MobileNav` drawer, and admin rich-text dialogs.
-3. **Lazy-load the `cobe` globe** and adapt sample count / pause for mobile and reduced-motion.
-4. **Throttle `DoctorCarousel` scroll handler** and drive progress via CSS custom property.
-5. **Add hero image preloads** in page metadata.
-6. **Replace global `flag-icons` CSS** with inline SVG flags.
-7. **Add mobile card fallbacks** for doctor portal tables.
-8. **Cap hero height on mobile** and reduce decorative layers.
-9. **Add `RUN_SCHEDULER` env gate** to isolate cron work to one backend replica.
-10. **Fix bundle analyzer** so `ANALYZE=true` emits `.next/analyze/`.
+- **P-001** — Make `loadLocaleBundle` server-only; pass locale slices as props to cart/checkout/PlanCoverage/verify/reset. _Highest client-bundle win._
+- **P-007** — Remove needless `"use client"` from `FeaturedDoctor`/`HealthcareMediaFrame`.
+- **P-005** — Short-circuit availability slot materialization + add a TTL cache to the per-doctor path.
+- **P-010** — Re-encode the obsidian silk WebPs smaller.
+- **P-011 / P-012 / P-021 / P-020** — Public `overflow-x: clip`; marquee IntersectionObserver pause + drop persistent `will-change`; cookie-banner docking; floor informational labels at 12px.
 
 ### Medium-Term Fixes — 1 to 2 Weeks
-
-1. **Split `globals.css`** into tokens/reset + route/component-specific styles; audit dead rules.
-2. **Add missing composite indexes** on `Appointment` and other hot tables.
-3. **Migrate remaining `Order.appointmentIds` readers** to the `OrderAppointment` join table.
-4. **Add server-driven pagination** to admin/corporate list endpoints and frontend tables.
-5. **Implement IntersectionObserver-driven data fetching** for below-fold sections.
-6. **Add explicit long-lived `Cache-Control`** for `/public` static assets.
-7. **Fix `doctorAmountCents` schema/code drift** so `pnpm typecheck` passes.
+- **P-006** — Postgres advisory locks around cron ticks; drop reconciliation from the boot burst.
+- **P-009** — Split portal-only CSS out of `globals.css` into route-group stylesheets.
+- **P-014** — Move `prisma migrate deploy` to a gated release step.
+- **P-018** + index gaps — Replace the cron `findFirst` N+1 with a batched query; add `@@index([slug])` / `@@index([doctorId, email])` if rosters grow.
+- Fix the **29 backend lint errors** (unused vars) so `pnpm lint` is green and can gate CI again.
 
 ### Long-Term Improvements
-
-1. **Adopt a real job queue / scheduler** (e.g. BullMQ with Redis, or Railway cron + separate worker service) instead of in-process `setInterval`.
-2. **Add performance budgets** to CI (max initial JS, max image weight, Lighthouse score thresholds).
-3. **Implement a CDN + edge caching strategy** for public pages and `/api/media`.
-4. **Run Lighthouse / WebPageTest** on every deploy against `/`, `/ie/en`, and `/ie/en/gp-appointment`.
-5. **Monitor Core Web Vitals** in production (Vercel Analytics, Real User Monitoring, or LogRocket).
-6. **Consider replacing `cobe` globe** with a static image or CSS animation for entry page.
+- **P-013** — Consolidate PDF generation onto one renderer (LibreOffice/`pdf-lib`) and drop Playwright/Chromium from the backend runtime; or move all PDF work to a proper background-job queue (folds in P-002’s full fix).
+- **P-019** — Shared (Redis) rate-limit + cache store before scaling horizontally.
+- Stand up a real CWV/perf budget in CI: run `build:analyze` on PRs (fix the analyzer-no-output issue first), add a Lighthouse-CI mobile check against the public routes, and track backend p95 latency + PDF-render time.
 
 ## Recommended Performance Budget
 
-| Budget | Target | Current Estimate |
-|---|---|---|
-| Total page weight (mobile) | < 1.5 MB | 3–8 MB on image-heavy pages |
-| Hero LCP image transfer | < 100 KB | 120 KB – 2.1 MB depending on path |
-| Public folder total | < 5 MB | > 20 MB |
-| Global CSS gzipped | < 50 KB | ~200+ KB inferred from 800+ KB dev chunk |
-| First-party JS per route | < 250 KB gzipped | Unknown — analyzer output missing |
-| Third-party scripts | < 100 KB | Meta Pixel + Doctify + flag-icons |
-| API response time (p95) | < 300 ms | Not measured; target for public reads |
-| Lighthouse Performance (mobile) | ≥ 85 | Likely 45–65 |
-| LCP | < 2.5 s | Risk > 4 s on 3G |
-| CLS | < 0.1 | Likely 0.05–0.15 |
-| INP | < 200 ms | Risk > 300 ms |
-| TTFB | < 600 ms | Depends on Railway edge; CDN would help |
+| Metric | Target |
+|---|---|
+| Initial client JS (public route, gzip) | ≤ 180 KB per route (cart/checkout must drop after P-001) |
+| Any single image delivered | ≤ 200 KB (public via `next/image`); portal CSS backgrounds ≤ 300 KB |
+| LCP (mobile, public) | ≤ 2.5 s (p75) |
+| CLS | ≤ 0.10 (p75) — already close |
+| INP | ≤ 200 ms (p75) — gated by P-003 on `/` |
+| Backend API response (public reads) | p95 ≤ 300 ms (cached), ≤ 800 ms uncached |
+| PDF generation | Off request path; user-perceived ≤ 100 ms (async “generating” state) |
+| Mobile Lighthouse (performance) | ≥ 85 after Immediate + Short-Term fixes |
 
 ## Final Notes
 
-- Static analysis identified the major performance risks, but real-world numbers require Lighthouse/WebPageTest runs on the live `/ie/en` and `/` routes after the quick wins are applied.
-- The build succeeds, but the typecheck and lint failures should be fixed immediately; they indicate schema/code drift and React 19 anti-patterns that can cause runtime instability.
-- The backend has good fundamentals (compression, immutable media cache, rate-limiting defaults) but needs scheduler isolation before horizontal scaling.
-- No exploit scripts or harmful payloads were generated. All recommendations are defensive and fix-oriented.
+Static analysis was sufficient to locate and evidence every finding above (each carries a `file:line`). The following genuinely need **runtime** confirmation and are recommended before/after applying fixes:
+
+- A fresh **mobile Lighthouse / WebPageTest** run on `/`, a country home, a service page, and cart/checkout to quantify LCP/INP/CLS (static analysis can rank risks but not measure field CWV).
+- A **bundle-analyzer** run (`ANALYZE=true`) — the analyzer previously emitted no output; verify the env var reaches the plugin, then confirm P-001’s locale JSON in the cart/checkout chunks and re-measure after the fix.
+- A **load test** of the per-doctor availability endpoint (P-005) and a burst of paid orders (P-002) to confirm the request-path improvements under concurrency.
