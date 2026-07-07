@@ -12,6 +12,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Flag } from "@/components/ui/Flag";
+import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
 
 /**
  * Reusable premium service-page hero (clinical-editorial gh2 system).
@@ -69,6 +70,13 @@ export function ServiceHero({
   trustStats,
   floatingChecklist = false,
 }: ServiceHeroProps) {
+  const titleFontSize = fitHeadingFontSize(`${titleLead} ${titleAccent} ${titleTrail ?? ""}`, {
+    minRem: 2,
+    maxRem: 4.25,
+    viewportTerm: "2.4vw + 1.9rem",
+    idealChars: 22,
+  });
+
   return (
     <section
       className="gh-medical-pattern gh-medical-pattern-dark relative isolate flex flex-col overflow-hidden lg:min-h-[calc(100svh-var(--header-height))] gh-hero-cap"
@@ -302,7 +310,7 @@ export function ServiceHero({
             <h1
               className="font-extrabold tracking-[-0.035em]"
               style={{
-                fontSize: "clamp(2.5rem, 2.4vw + 1.9rem, 4.25rem)",
+                fontSize: titleFontSize,
                 lineHeight: 1.0,
                 color: "#F5FFF8",
                 maxWidth: "14ch",

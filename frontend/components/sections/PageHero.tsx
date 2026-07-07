@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Flag } from "@/components/ui/Flag";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
+import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
 
 export type PageHeroProps = {
   countryCode?: string;
@@ -53,6 +54,19 @@ export function PageHero({
   trustCards,
   variant = "default",
 }: PageHeroProps) {
+  const titleFontSizeImmersive = fitHeadingFontSize(`${titleLead} ${titleAccent} ${titleTrail ?? ""}`, {
+    minRem: 2.25,
+    maxRem: 4.75,
+    viewportTerm: "3vw + 2rem",
+    idealChars: 20,
+  });
+  const titleFontSizeDefault = fitHeadingFontSize(`${titleLead} ${titleAccent} ${titleTrail ?? ""}`, {
+    minRem: 2,
+    maxRem: 4.2,
+    viewportTerm: "5vw",
+    idealChars: 22,
+  });
+
   if (variant === "immersive") {
     return (
       <section
@@ -221,7 +235,7 @@ export function PageHero({
               <h1
                 className="font-extrabold leading-[0.98] tracking-[-0.035em]"
                 style={{
-                  fontSize: "clamp(2.75rem, 3vw + 2rem, 4.75rem)",
+                  fontSize: titleFontSizeImmersive,
                   color: "rgba(255,255,255,0.96)",
                   maxWidth: "13ch",
                 }}
@@ -372,7 +386,7 @@ export function PageHero({
                 marginTop: countryCode || countryLabel ? 22 : 0,
                 maxWidth: hasRightColumn ? "16ch" : "18ch",
                 lineHeight: 1,
-                fontSize: "clamp(2.4rem, 5vw, 4.2rem)",
+                fontSize: titleFontSizeDefault,
                 color: "rgba(255,255,255,0.95)",
               }}
             >
