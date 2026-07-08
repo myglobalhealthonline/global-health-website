@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Check, ExternalLink, Loader2, X, Copy, Receipt } from "lucide-react";
+import { Check, ExternalLink, Loader2, X, Copy, Receipt, RotateCcw } from "lucide-react";
 import {
   AdminEmptyState,
   AdminTable,
@@ -90,6 +90,33 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
   const [pendingBulkStatus, setPendingBulkStatus] = useState<"FULFILLED" | "CANCELLED" | null>(
     null,
   );
+  const [pendingRefundId, setPendingRefundId] = useState<string | null>(null);
+
+  const canRefund = (o: AdminOrderRow) =>
+    o.paymentStatus === "PAID" && o.status !== "REFUNDED";
+
+  function confirmRefund() {
+    const id = pendingRefundId;
+    setPendingRefundId(null);
+    if (!id) return;
+    setError(null);
+    startTransition(async () => {
+      const res = await fetch(`/api/admin/orders/${id}/refund`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || !json?.ok) {
+        setError(json?.message ?? "Refund failed");
+        return;
+      }
+      router.refresh();
+    });
+  }
+
+  const refundOrder = pendingRefundId
+    ? items.find((o) => o.id === pendingRefundId) ?? null
+    : null;
 
   function toggle(id: string) {
     setSelected((prev) => {
@@ -217,7 +244,7 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
             <Th>Invoice</Th>
             <Th>Payment link</Th>
             <Th>Created</Th>
-            <Th align="right" style={{ width: 80 }}>
+            <Th align="right" style={{ width: 160 }}>
               {" "}
             </Th>
           </Thead>
@@ -289,9 +316,26 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                   </Td>
                   <Td>{formatAppDate(o.createdAt)}</Td>
                   <Td align="right">
-                    <IconBtn ariaLabel={`Open order ${o.id}`} href={`/admin/orders/${o.id}`}>
-                      <ExternalLink className="size-3.5" aria-hidden />
-                    </IconBtn>
+                    <div className="inline-flex items-center justify-end gap-2">
+                      {canRefund(o) ? (
+                        <button
+                          type="button"
+                          onClick={() => setPendingRefundId(o.id)}
+                          disabled={pending}
+                          className="inline-flex items-center gap-1 rounded-md border border-amber-300 px-2 py-1 text-[11px] font-semibold text-amber-700 hover:bg-amber-50 disabled:opacity-60"
+                        >
+                          {pending ? (
+                            <Loader2 className="size-3 animate-spin" aria-hidden />
+                          ) : (
+                            <RotateCcw className="size-3" aria-hidden />
+                          )}
+                          Refund
+                        </button>
+                      ) : null}
+                      <IconBtn ariaLabel={`Open order ${o.id}`} href={`/admin/orders/${o.id}`}>
+                        <ExternalLink className="size-3.5" aria-hidden />
+                      </IconBtn>
+                    </div>
                   </Td>
                 </Tr>
               ))}
@@ -320,6 +364,21 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
             actions={
               <>
                 {o.stripeCheckoutUrl ? <CopyLinkButton url={o.stripeCheckoutUrl} /> : null}
+                {canRefund(o) ? (
+                  <button
+                    type="button"
+                    onClick={() => setPendingRefundId(o.id)}
+                    disabled={pending}
+                    className="inline-flex items-center gap-1 rounded border border-amber-300 bg-white px-2 py-1 text-[11px] font-semibold text-amber-700 hover:bg-amber-50 disabled:opacity-60"
+                  >
+                    {pending ? (
+                      <Loader2 className="size-3 animate-spin" aria-hidden />
+                    ) : (
+                      <RotateCcw className="size-3" aria-hidden />
+                    )}
+                    Refund
+                  </button>
+                ) : null}
                 <IconBtn ariaLabel={`Open order ${o.id}`} href={`/admin/orders/${o.id}`}>
                   <ExternalLink className="size-3.5" aria-hidden />
                 </IconBtn>
@@ -349,6 +408,31 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
       >
         <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
           {bulkBody}
+        </p>
+      </PortalDialog>
+
+      <PortalDialog
+        open={pendingRefundId !== null}
+        onClose={() => setPendingRefundId(null)}
+        title="Refund order"
+        danger
+        footer={
+          <>
+            <Btn variant="ghost" onClick={() => setPendingRefundId(null)}>
+              Keep payment
+            </Btn>
+            <Btn variant="danger" onClick={confirmRefund}>
+              Refund now
+            </Btn>
+          </>
+        }
+      >
+        <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
+          Refund{" "}
+          {refundOrder
+            ? `${formatPrice(refundOrder.totalCents, refundOrder.currencyCode)} `
+            : "the full amount "}
+          to the customer via Stripe? The order is marked REFUNDED, and any HELD slots and reserved subscription credits are released. This cannot be undone.
         </p>
       </PortalDialog>
     </>
