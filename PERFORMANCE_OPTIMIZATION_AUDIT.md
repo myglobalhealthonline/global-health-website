@@ -245,7 +245,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** ~1.6–1.8 MB saved on portal membership LCP
 - **Priority:** P2
 
-### Finding P-009: Monolithic 252 KB `globals.css` render-blocks every public route
+### ✅ ~~Finding P-009: Monolithic 252 KB `globals.css` render-blocks every public route~~ — DONE 2026-07-08 (split: `globals.css` 9,037→5,116 lines / 152 KB public+shared; new `app/portal.css` 3,956 lines / 88 KB imported only by the (admin)/(doctor)/(auth)account/(corporate) layouts. Obsidian-Ivory token block deliberately kept in globals — its `.gh-card`/`.gh-btn` recipes are consumed by public pages. Browser-verified with real logins on all three portals + public home: portal.css absent on public routes, 361 admin / 43 doctor / 138+19 portal rules active where expected, zero console errors. Two-file rule documented in root CLAUDE.md.)
 - **Severity:** Medium (Low-Medium)
 - **Category:** rendering / assets
 - **Affected files:** `frontend/app/globals.css` (9,024 lines / 252 KB unminified)
