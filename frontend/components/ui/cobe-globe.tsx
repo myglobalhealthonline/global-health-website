@@ -1,17 +1,7 @@
 "use client";
 
-import { memo, useCallback, useEffect, useMemo, useRef, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, type CSSProperties } from "react";
 import createGlobe from "cobe";
-
-// Module-level so the default color arrays keep a stable identity across
-// renders. Declared inline as default params they were re-allocated every
-// render, changing the init effect's deps and destroying+recreating the
-// WebGL globe on every parent re-render (e.g. each keystroke in the
-// entry-gate country search).
-const DEFAULT_MARKER_COLOR: [number, number, number] = [0.69, 0.95, 0.13];
-const DEFAULT_BASE_COLOR: [number, number, number] = [0.08, 0.23, 0.18];
-const DEFAULT_ARC_COLOR: [number, number, number] = [0.69, 0.95, 0.13];
-const DEFAULT_GLOW_COLOR: [number, number, number] = [0.08, 0.22, 0.17];
 
 export type GlobeMarker = {
   id: string;
@@ -52,14 +42,14 @@ type AnchorStyle = CSSProperties & {
   positionAnchor?: string;
 };
 
-function GlobeBase({
+export function Globe({
   markers = [],
   arcs = [],
   className = "",
-  markerColor = DEFAULT_MARKER_COLOR,
-  baseColor = DEFAULT_BASE_COLOR,
-  arcColor = DEFAULT_ARC_COLOR,
-  glowColor = DEFAULT_GLOW_COLOR,
+  markerColor = [0.69, 0.95, 0.13],
+  baseColor = [0.08, 0.23, 0.18],
+  arcColor = [0.69, 0.95, 0.13],
+  glowColor = [0.08, 0.22, 0.17],
   dark = 0.92,
   mapBrightness = 5.8,
   markerSize = 0.045,
@@ -81,25 +71,8 @@ function GlobeBase({
   const velocity = useRef({ phi: 0, theta: 0 });
   const phiOffsetRef = useRef(0);
   const thetaOffsetRef = useRef(0);
-  // Independent pause reasons — dragging, off-screen, and tab-hidden can
-  // overlap (e.g. drag ends while the tab is still hidden), so a single
-  // boolean would let one reason's "resume" incorrectly cancel another's
-  // still-active pause.
-  const pauseFlags = useRef({ drag: false, offscreen: false, hidden: false });
-  const isPaused = useCallback(
-    () => pauseFlags.current.drag || pauseFlags.current.offscreen || pauseFlags.current.hidden,
-    [],
-  );
+  const isPausedRef = useRef(false);
   const reducedMotionRef = useRef(false);
-  const lowPowerRef = useRef(false);
-  // Set by the render loop so init() can restart it (e.g. resuming from
-  // reduced-motion's single static frame) without a second effect dependency.
-  const requestRenderRef = useRef<(() => void) | null>(null);
-  // cobe's update() takes mapSamples per-frame same as phi/theta — dropping
-  // resolution while dragging is just flipping a variable the render loop
-  // already reads, no WebGL instance recreation needed.
-  const setQualityRef = useRef<((low: boolean) => void) | null>(null);
-  const restoreQualityTimeout = useRef<number | undefined>(undefined);
 
   const cobeMarkers = useMemo(
     () =>
@@ -123,18 +96,7 @@ function GlobeBase({
 
   const handlePointerDown = useCallback((e: PointerEvent) => {
     pointerInteracting.current = { x: e.clientX, y: e.clientY };
-    pauseFlags.current.drag = true;
-    // Cancel any pending restore-to-full-quality from a previous drag so
-    // back-to-back drags don't fight a mid-drag quality swap.
-    if (restoreQualityTimeout.current !== undefined) {
-      window.clearTimeout(restoreQualityTimeout.current);
-      restoreQualityTimeout.current = undefined;
-    }
-    setQualityRef.current?.(true);
-    // Reduced-motion normally stops the rAF loop entirely between
-    // interactions (see the render loop below) — restart it so dragging
-    // still tracks the pointer smoothly. No-op once the loop is running.
-    requestRenderRef.current?.();
+    isPausedRef.current = true;
     if (canvasRef.current) canvasRef.current.style.cursor = "grabbing";
   }, []);
 
@@ -164,15 +126,8 @@ function GlobeBase({
       lastPointer.current = null;
     }
     pointerInteracting.current = null;
-    pauseFlags.current.drag = false;
+    isPausedRef.current = false;
     if (canvasRef.current) canvasRef.current.style.cursor = "grab";
-    // Debounced restore — a quick re-grab (common when someone nudges the
-    // globe a few times) cancels this via handlePointerDown instead of
-    // dropping back to full res just to cut it again a moment later.
-    restoreQualityTimeout.current = window.setTimeout(() => {
-      restoreQualityTimeout.current = undefined;
-      setQualityRef.current?.(false);
-    }, 350);
   }, []);
 
   useEffect(() => {
@@ -186,40 +141,6 @@ function GlobeBase({
 
   useEffect(() => {
     reducedMotionRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // Low-power signal: few CPU cores, or the browser's own data-saver mode.
-    // Any one of these drops the globe's map resolution (mapSamples) — the
-    // single most expensive setting cobe exposes — without touching its
-    // visual appearance on capable/desktop hardware.
-    const lowCores = (navigator.hardwareConcurrency ?? 8) <= 4;
-    const saveData = Boolean((navigator as { connection?: { saveData?: boolean } }).connection?.saveData);
-    lowPowerRef.current = lowCores || saveData || reducedMotionRef.current;
-  }, []);
-
-  // Pause the rAF loop when the globe scrolls off-screen or the tab is
-  // backgrounded — cobe has no built-in visibility awareness, so left alone
-  // it burns GPU/battery indefinitely on a hidden tab or a globe scrolled
-  // far out of view.
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container || typeof IntersectionObserver === "undefined") return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        pauseFlags.current.offscreen = !entries[0]?.isIntersecting;
-        if (!pauseFlags.current.offscreen) requestRenderRef.current?.();
-      },
-      { threshold: 0.01 },
-    );
-    observer.observe(container);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    function onVisibilityChange() {
-      pauseFlags.current.hidden = document.hidden;
-      if (!document.hidden) requestRenderRef.current?.();
-    }
-    document.addEventListener("visibilitychange", onVisibilityChange);
-    return () => document.removeEventListener("visibilitychange", onVisibilityChange);
   }, []);
 
   useEffect(() => {
@@ -242,22 +163,12 @@ function GlobeBase({
 
     let globe: ReturnType<typeof createGlobe> | null = null;
     let animationId = 0;
-    let loopRunning = false;
     let resizeObserver: ResizeObserver | null = null;
     let phi = initialPhi;
-    // Map resolution is the single most expensive cobe setting. Full detail
-    // normally; capped on low-power hardware/save-data/reduced-motion, and
-    // dropped further while actively dragging (see setQuality) — cobe's
-    // update() takes mapSamples per-frame, so this is just a variable flip,
-    // no WebGL instance recreation.
-    let fullMapSamples = mapSamples;
-    let currentMapSamples = mapSamples;
-    let isLowQuality = false;
 
     function render() {
       if (!globe) return;
-      const paused = isPaused();
-      if (!paused && !reducedMotionRef.current) {
+      if (!isPausedRef.current && !reducedMotionRef.current) {
         phi += speed;
         if (Math.abs(velocity.current.phi) > 0.0001 || Math.abs(velocity.current.theta) > 0.0001) {
           phiOffsetRef.current += velocity.current.phi;
@@ -280,7 +191,6 @@ function GlobeBase({
         theta: theta + thetaOffsetRef.current + dragOffset.current.theta,
         dark,
         mapBrightness,
-        mapSamples: currentMapSamples,
         markerColor,
         baseColor,
         arcColor,
@@ -288,52 +198,14 @@ function GlobeBase({
         markers: cobeMarkers,
         arcs: cobeArcs,
       });
-
-      // Reduced-motion renders one static frame per resume (pointer drag,
-      // tab refocus, scroll back into view) instead of spinning forever —
-      // the pause-flag checks above already zeroed the rotation for this
-      // frame, so stopping here just stops repainting an unchanging globe.
-      // Fully paused (off-screen / hidden / mid-drag with nothing moving)
-      // also stops the loop; the pause/visibility/drag handlers above call
-      // requestRenderRef to wake it back up.
-      if (reducedMotionRef.current || paused) {
-        loopRunning = false;
-        return;
-      }
       animationId = window.requestAnimationFrame(render);
     }
-
-    function requestRender() {
-      if (loopRunning || !globe) return;
-      loopRunning = true;
-      animationId = window.requestAnimationFrame(render);
-    }
-    requestRenderRef.current = requestRender;
-
-    // Drop mapSamples while actively dragging, restore once released — no
-    // WebGL recreation, just changes what the next update() call passes.
-    // No-op if already at the target tier (e.g. low-power devices where
-    // both tiers already match).
-    function setQuality(low: boolean) {
-      if (isLowQuality === low) return;
-      const dragMapSamples = Math.min(fullMapSamples, 3000);
-      if (dragMapSamples === fullMapSamples) return;
-      currentMapSamples = low ? dragMapSamples : fullMapSamples;
-      isLowQuality = low;
-      requestRender();
-    }
-    setQualityRef.current = setQuality;
 
     function init() {
       if (globe || !canvasRef.current) return;
       const width = canvasRef.current.offsetWidth;
       if (width === 0) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      // Cut resolution to ~a third on low-power hardware / save-data /
-      // reduced-motion, full detail everywhere else. Everything else
-      // (colors, markers, arcs, scale) is untouched either way.
-      fullMapSamples = lowPowerRef.current ? Math.min(mapSamples, 6000) : mapSamples;
-      currentMapSamples = fullMapSamples;
       globe = createGlobe(canvas, {
         devicePixelRatio: dpr,
         width,
@@ -342,7 +214,7 @@ function GlobeBase({
         theta,
         dark,
         diffuse,
-        mapSamples: fullMapSamples,
+        mapSamples,
         mapBrightness,
         baseColor,
         markerColor,
@@ -355,7 +227,7 @@ function GlobeBase({
         arcHeight,
         scale,
       });
-      requestRender();
+      render();
       window.setTimeout(() => {
         canvas.style.opacity = "1";
       }, 120);
@@ -376,11 +248,6 @@ function GlobeBase({
     return () => {
       resizeObserver?.disconnect();
       window.cancelAnimationFrame(animationId);
-      if (restoreQualityTimeout.current !== undefined) {
-        window.clearTimeout(restoreQualityTimeout.current);
-        restoreQualityTimeout.current = undefined;
-      }
-      setQualityRef.current = null;
       globe?.destroy();
       globe = null;
       canvas.removeEventListener("pointerdown", handlePointerDown);
@@ -400,7 +267,6 @@ function GlobeBase({
     diffuse,
     glowColor,
     initialPhi,
-    isPaused,
     mapBrightness,
     mapSamples,
     markerColor,
@@ -470,8 +336,3 @@ function GlobeBase({
     </div>
   );
 }
-
-// Memoized so typing in a parent (e.g. the entry-gate country search) doesn't
-// re-render the globe. All props from callers are stable (module-const colors,
-// memoized markers/arcs, numeric literals), so the default shallow compare holds.
-export const Globe = memo(GlobeBase);
