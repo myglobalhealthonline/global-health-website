@@ -6,6 +6,7 @@
  */
 
 import { Flag } from "@/components/ui/Flag";
+import { MarqueeTrack } from "@/components/sections/MarqueeTrack";
 import type { CountryCode } from "@/data/countries";
 
 export type MarqueeCountry = {
@@ -35,7 +36,7 @@ export function CountryMarquee({ countries }: { countries: MarqueeCountry[] }) {
       />
 
       <div className="gh-marquee py-6 md:py-7">
-        <ul className="gh-marquee-track flex shrink-0 items-center gap-12 md:gap-16 whitespace-nowrap pr-12 md:pr-16">
+        <MarqueeTrack>
           {items.map((c, i) => (
             <li key={`${c.code}-${i}`} className="inline-flex items-baseline gap-4">
               <Flag code={c.code as string} size="lg" className="self-center" />
@@ -60,7 +61,7 @@ export function CountryMarquee({ countries }: { countries: MarqueeCountry[] }) {
               </span>
             </li>
           ))}
-        </ul>
+        </MarqueeTrack>
       </div>
     </section>
   );

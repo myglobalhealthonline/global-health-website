@@ -14,8 +14,6 @@ import {
 import { encryptPhi } from "../lib/crypto/phi-crypto.js";
 import {
   ibanLast4,
-  isValidBic,
-  isValidIban,
   maskIban,
   normalizeIban,
 } from "../utils/iban.js";
@@ -107,36 +105,6 @@ const listAppointmentsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   pageSize: z.coerce.number().int().min(1).max(100).default(25),
 });
-
-const legacyProfilePatchBodySchema = z
-  .object({
-    fullName: z.string().trim().min(1).max(200).optional(),
-    bio: z.string().trim().max(12000).nullable().optional(),
-    qualifications: z.array(z.string().trim().min(1).max(200)).max(20).optional(),
-    languages: z.array(z.string().trim().min(1).max(64)).max(20).optional(),
-    whatsappNumber: z.string().trim().max(32).nullable().optional(),
-    // Payout bank details (doctor-managed). bankIban is only sent when the
-    // doctor types a new one — the client never receives the full IBAN back,
-    // so a blank field means "keep current" (omitted from the payload).
-    bankAccountHolder: z.string().trim().max(160).nullable().optional(),
-    bankBic: z
-      .string()
-      .trim()
-      .max(16)
-      .nullable()
-      .optional()
-      .refine((v) => v == null || v === "" || isValidBic(v), { message: "Invalid BIC/SWIFT" }),
-    bankIban: z
-      .string()
-      .trim()
-      .max(42)
-      .optional()
-      .refine((v) => v == null || v === "" || isValidIban(v), { message: "Invalid IBAN" }),
-  })
-  .strict()
-  .refine((d) => Object.keys(d).length > 0, {
-    message: "Provide at least one field to update",
-  });
 
 type DoctorProfileCountryLocales = {
   defaultLocale: LocaleCode;

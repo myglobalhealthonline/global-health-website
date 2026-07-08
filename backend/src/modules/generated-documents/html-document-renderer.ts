@@ -27,8 +27,13 @@ function loadSharedStyles(): string {
 
 function resolveTemplatePath(countryCode: string, templateFile: string): string {
   const code = countryCode.toLowerCase().trim();
-  const countryPath = path.join(TEMPLATES_ROOT, code, templateFile);
-  if (fs.existsSync(countryPath)) return countryPath;
+  // Guard against path traversal. `code` currently comes from a constrained
+  // DB country field, but validate defensively so a future caller that
+  // forwards a request value can't escape TEMPLATES_ROOT via "../".
+  if (/^[a-z]{2,8}$/.test(code)) {
+    const countryPath = path.join(TEMPLATES_ROOT, code, templateFile);
+    if (fs.existsSync(countryPath)) return countryPath;
+  }
   return path.join(TEMPLATES_ROOT, "_default", templateFile);
 }
 
@@ -66,10 +71,25 @@ let browserPromise: Promise<import("playwright").Browser> | null = null;
 async function getBrowser(): Promise<import("playwright").Browser> {
   if (!browserPromise) {
     const { chromium } = await import("playwright");
-    browserPromise = chromium.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    browserPromise = chromium
+      .launch({
+        headless: true,
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      })
+      .then((browser) => {
+        // Self-heal: if the browser crashes or is closed, clear the cached
+        // promise so the next render relaunches instead of forever failing
+        // against a dead singleton (previously required a process restart).
+        browser.on("disconnected", () => {
+          browserPromise = null;
+        });
+        return browser;
+      })
+      .catch((err) => {
+        // Don't cache a rejected launch — allow the next call to retry.
+        browserPromise = null;
+        throw err;
+      });
   }
   return browserPromise;
 }
@@ -78,7 +98,10 @@ export async function htmlToPdfBuffer(html: string): Promise<Buffer> {
   const browser = await getBrowser();
   const page = await browser.newPage();
   try {
-    await page.setContent(html, { waitUntil: "networkidle" });
+    // "load" not "networkidle": these templates fetch no network resources
+    // (styles are inlined, the QR is a data URL), so waiting for network
+    // idle only adds a fixed ~500ms of dead time per render.
+    await page.setContent(html, { waitUntil: "load" });
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,

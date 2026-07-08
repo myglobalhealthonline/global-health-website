@@ -60,9 +60,12 @@ const ALLOWED_TAGS = [
  * Permissive sanitizer for full, self-styled blog articles. Unlike
  * `sanitizeRichHtml`, this KEEPS `<style>` blocks, `class`/`id`, and all
  * inline styles + layout/structural tags so a designed HTML article renders
- * as authored. It is ONLY safe because the public site renders the result
- * inside an isolated Shadow DOM (`BlogHtml`) — which encapsulates the CSS —
- * and because we still strip every script vector here:
+ * as authored. It is ONLY safe because containment happens at the render
+ * site: the frontend wraps this HTML in `.gh-article-body` and
+ * `scope-blog-html.ts` rewrites every `<style>` into
+ * `@scope (.gh-article-body) { … }` (CSS scoping — NOT a Shadow DOM), plus
+ * the output is double-sanitized, and because we still strip every script
+ * vector here:
  *   - <script>, <iframe>, <object>, <embed>, <form>/<input>/<button>, <link>,
  *     <meta>, <base> are dropped (not in the allow-list).
  *   - on* event handlers and javascript:/data: URLs are dropped.

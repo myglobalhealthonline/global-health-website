@@ -1,5 +1,4 @@
 import { createHmac } from "node:crypto";
-import { env } from "../config/env.js";
 
 /**
  * HMAC-SHA256 blind indexes for deduplication on encrypted/sensitive fields.

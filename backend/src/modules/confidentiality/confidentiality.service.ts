@@ -43,7 +43,7 @@ type DoctorAgreementRow = {
 export async function getConfidentialityStatus(
   doctorId: string,
 ): Promise<AgreementStatus> {
-  const row = await (prisma as any).doctorConfidentialityAgreement.findFirst({
+  const row = await prisma.doctorConfidentialityAgreement.findFirst({
     where: { doctorId },
     orderBy: { acceptedAt: "desc" },
     select: {
@@ -79,7 +79,7 @@ export async function acceptConfidentialityAgreement(
   ipAddress: string | null,
   userAgent: string | null,
 ): Promise<void> {
-  await (prisma as any).doctorConfidentialityAgreement.create({
+  await prisma.doctorConfidentialityAgreement.create({
     data: {
       doctorId,
       agreementVersion: CURRENT_AGREEMENT_VERSION,
@@ -110,7 +110,7 @@ export async function acceptConfidentialityAgreement(
 export async function hasAcceptedCurrentAgreement(
   doctorId: string,
 ): Promise<boolean> {
-  const row = await (prisma as any).doctorConfidentialityAgreement.findFirst({
+  const row = await prisma.doctorConfidentialityAgreement.findFirst({
     where: {
       doctorId,
       agreementVersion: CURRENT_AGREEMENT_VERSION,
@@ -148,7 +148,7 @@ export async function listDoctorAgreementStatuses(): Promise<DoctorAgreementRow[
   // Fetch the most recent acceptance for each doctor in one query.
   // Prisma doesn't support DISTINCT ON, so we fetch all rows and
   // deduplicate in-process (bounded by the number of doctors).
-  const acceptances = await (prisma as any).doctorConfidentialityAgreement.findMany({
+  const acceptances = await prisma.doctorConfidentialityAgreement.findMany({
     where: { doctorId: { in: doctorIds } },
     orderBy: { acceptedAt: "desc" },
     select: {
@@ -161,7 +161,7 @@ export async function listDoctorAgreementStatuses(): Promise<DoctorAgreementRow[
   // Keep only the most recent row per doctor (rows are already sorted desc).
   const latestByDoctor = new Map<
     string,
-    { agreementVersion: string; acceptedAt: Date }
+    { agreementVersion: string; acceptedAt: Date | null }
   >();
   for (const row of acceptances) {
     if (!latestByDoctor.has(row.doctorId)) {

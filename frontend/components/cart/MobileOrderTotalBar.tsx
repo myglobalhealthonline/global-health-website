@@ -53,7 +53,7 @@ export function MobileOrderTotalBar({
       aria-hidden={hidden}
     >
       <div className="min-w-0">
-        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/60">{totalLabel}</p>
+        <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/60">{totalLabel}</p>
         <p className="text-lg font-extrabold tabular-nums leading-tight text-white">{formattedTotal}</p>
       </div>
       {href ? (

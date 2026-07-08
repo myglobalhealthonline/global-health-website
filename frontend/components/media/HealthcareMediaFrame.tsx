@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import { Stethoscope, HeartPulse, Package, MessageCircle, Cross } from "lucide-react";
 

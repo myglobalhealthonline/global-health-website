@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import { prisma } from "../db/prisma.js";
 import { env } from "../config/env.js";
+import { isValidCronSecret } from "../utils/cron-auth.js";
 import { sendAbandonedCartEmail } from "../lib/email/templates.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
@@ -30,7 +31,7 @@ const abandonedCartCronRoute: FastifyPluginAsync = async (app) => {
       app.log.error("CRON_SECRET is not set — refusing cron request");
       return reply.status(503).send(errorResponse("Cron endpoint is not configured"));
     }
-    if (provided !== expected) {
+    if (!isValidCronSecret(provided, expected)) {
       return reply.status(401).send(errorResponse("Invalid cron token"));
     }
 

@@ -199,7 +199,7 @@ function AboutArchPanel({ locale }: { locale: { float1_title: string; float1_sub
         <Globe2 className="size-5 shrink-0 text-[var(--color-brand-accent)]" strokeWidth={1.75} aria-hidden />
         <span className="min-w-0">
           <span className="block text-[13px] font-bold leading-tight text-white">{locale.float1_title}</span>
-          <span className="block text-[11.5px] leading-tight text-white/55">{locale.float1_subtitle}</span>
+          <span className="block text-[11.5px] leading-tight text-white/70">{locale.float1_subtitle}</span>
         </span>
       </div>
 
@@ -214,7 +214,7 @@ function AboutArchPanel({ locale }: { locale: { float1_title: string; float1_sub
         </span>
         <span className="min-w-0">
           <span className="block text-[13px] font-bold leading-tight text-white">{locale.float2_title}</span>
-          <span className="block text-[11.5px] leading-tight text-white/55">{locale.float2_subtitle}</span>
+          <span className="block text-[11.5px] leading-tight text-white/70">{locale.float2_subtitle}</span>
         </span>
       </div>
 
@@ -229,7 +229,7 @@ function AboutArchPanel({ locale }: { locale: { float1_title: string; float1_sub
         </span>
         <span className="min-w-0">
           <span className="block text-[13px] font-bold leading-tight text-white">{locale.float3_title}</span>
-          <span className="block text-[11.5px] leading-tight text-white/55">{locale.float3_subtitle}</span>
+          <span className="block text-[11.5px] leading-tight text-white/70">{locale.float3_subtitle}</span>
         </span>
       </div>
     </div>

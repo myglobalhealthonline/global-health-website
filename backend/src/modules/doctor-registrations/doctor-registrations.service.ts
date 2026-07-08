@@ -100,7 +100,7 @@ export async function upsertDoctorRegistration(
 
   const registrationNumber = normalizeString(input.registrationNumber, 64);
   const division = normalizeString(input.division, 120);
-  let chamberEntity =
+  const chamberEntity =
     normalizeString(input.chamberEntity, 64) ??
     (registrationNumber ? defaultChamberEntityForCountry(country.code) : null);
 

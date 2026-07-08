@@ -1,4 +1,4 @@
-import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
+import type { FastifyPluginAsync, FastifyRequest } from "fastify";
 import { z } from "zod";
 import { CartItemKind, OrderStatus } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
@@ -19,7 +19,6 @@ import {
   orderNeedsAutoMeetLink,
 } from "../modules/admin-orders/generate-order-meet-link.service.js";
 import { startPrePaymentFlow } from "../modules/automation/pre-payment-flow.service.js";
-import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.service.js";
 import { completeOrderPaymentFromCheckoutSession } from "../modules/orders/complete-order-payment.service.js";
 import {
   commitOrderCreditReservations,
@@ -329,7 +328,6 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           return { order: created, subtotalCents, totalCents };
         });
         const order = txResult.order;
-        const subtotalCents = txResult.subtotalCents;
         const totalCents = txResult.totalCents;
 
         // ── €0 fully-credit order → confirm without Stripe (§36.3) ────

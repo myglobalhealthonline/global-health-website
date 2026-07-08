@@ -48,7 +48,6 @@ async function fetchPlaceAggregate(placeId: string, apiKey: string): Promise<Agg
       },
     );
     if (!response.ok) {
-      // eslint-disable-next-line no-console
       console.warn(`[google-places] non-200 (${response.status}) for placeId=${placeId}`);
       return null;
     }
@@ -62,7 +61,6 @@ async function fetchPlaceAggregate(placeId: string, apiKey: string): Promise<Agg
       updatedAt: new Date().toISOString(),
     };
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.warn(`[google-places] fetch failed for placeId=${placeId}:`, (error as Error).message);
     return null;
   } finally {

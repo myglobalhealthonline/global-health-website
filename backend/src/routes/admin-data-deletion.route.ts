@@ -78,7 +78,7 @@ const adminDataDeletionRoute: FastifyPluginAsync = async (app) => {
         // Optionally execute anonymization immediately when approving.
         if (body.data.executeAnonymize && body.data.status === "APPROVED") {
           const { prisma } = await import("../db/prisma.js");
-          const req = await (prisma as any).dataDeletionRequest.findUnique({
+          const req = await prisma.dataDeletionRequest.findUnique({
             where: { id: request.params.id },
             select: { patientProfileId: true },
           });

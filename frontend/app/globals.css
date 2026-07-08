@@ -259,6 +259,10 @@ html {
 
 body {
   margin: 0;
+  /* Public horizontal-overflow guard (P-011). `clip` (not `hidden`) so it
+   * never becomes a scroll container and position:sticky keeps working;
+   * portals scroll inside their own .gh-portal-main, so body is safe. */
+  overflow-x: clip;
   /* Brand spec (Manual da Marca): Gilroy Regular for body, Gilroy
    * Black for display + emphasis. Gilroy is paid; Manrope is the
    * standard free substitute — same geometric humanist DNA, same
@@ -542,7 +546,14 @@ img {
 }
 .gh-marquee-track {
   animation: gh-marquee 20s linear infinite;
+}
+/* will-change only while the belt is on-screen (JS toggles .is-paused via
+ * IntersectionObserver) — avoids a permanent off-screen GPU layer. */
+.gh-marquee-track:not(.is-paused) {
   will-change: transform;
+}
+.gh-marquee-track.is-paused {
+  animation-play-state: paused;
 }
 @keyframes gh-marquee {
   from { transform: translateX(0); }
@@ -2156,7 +2167,7 @@ img {
   --lux-asset-plane: url("/images/portal/obsidian/plane-veil.webp");
   --lux-asset-header: url("/images/portal/obsidian/header-aura.webp");
   --lux-asset-band: url("/images/portal/obsidian/band-aurora.webp");
-  --lux-asset-member: url("/images/portal/obsidian/membership-silk.png");
+  --lux-asset-member: url("/images/portal/obsidian/membership-silk.webp");
   --lux-asset-card-silk: url("/images/portal/obsidian/card-silk.webp");
   --lux-asset-veil-light: linear-gradient(rgba(250, 251, 247, 0.70), rgba(250, 251, 247, 0.70));
   --lux-asset-veil-silk: linear-gradient(rgba(250, 251, 247, 0.76), rgba(250, 251, 247, 0.76));
@@ -8197,8 +8208,8 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   object-position: center;
 }
 
-/* §13 M1 — membership-silk.png corner accent on the plan-card chrome header,
- * capped at 0.5. Transparent PNG over Material A; purely decorative. */
+/* §13 M1 — membership-silk.webp corner accent on the plan-card chrome header,
+ * capped at 0.5. Transparent WEBP over Material A; purely decorative. */
 .gh-patient-membership-card__header {
   position: relative;
   overflow: hidden;

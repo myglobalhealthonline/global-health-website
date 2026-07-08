@@ -192,7 +192,7 @@ const auth2faRoute: FastifyPluginAsync = async (app) => {
     async (request, reply) => {
       const { sub } = request.authUser!;
       try {
-        const user = await (prisma as any).user.findUnique({
+        const user = await prisma.user.findUnique({
           where: { id: sub },
           select: { twoFactorEnabled: true, twoFactorEnabledAt: true },
         });

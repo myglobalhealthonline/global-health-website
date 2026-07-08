@@ -64,10 +64,14 @@ function buildAuditWhere(q: z.infer<typeof listQuerySchema>) {
   };
 }
 
-/** Escape a value for a CSV cell (RFC 4180: quote + double-up inner quotes). */
+/** Escape a value for a CSV cell (RFC 4180: quote + double-up inner quotes)
+ *  and neutralize formula injection: a cell beginning with = + - @ (or tab/CR)
+ *  is evaluated as a formula by Excel/Sheets even when quoted, so prefix it
+ *  with a single quote. actorUser.fullName / metadata are attacker-influenced. */
 function csvCell(value: unknown): string {
   const s = value === null || value === undefined ? "" : String(value);
-  return `"${s.replace(/"/g, '""')}"`;
+  const safe = /^[=+\-@\t\r]/.test(s) ? `'${s}` : s;
+  return `"${safe.replace(/"/g, '""')}"`;
 }
 
 /** Flatten a JSON metadata blob into a single readable "key: value; …" cell. */

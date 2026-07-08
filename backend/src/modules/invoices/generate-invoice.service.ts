@@ -13,7 +13,7 @@ async function sendPaymentWebhookToMake(
   orderId: string,
   invoiceId: string,
   invoiceNumber: string,
-  log: PaymentLog,
+  _log: PaymentLog,
 ): Promise<void> {
   const order = await prisma.order.findUnique({
     where: { id: orderId },

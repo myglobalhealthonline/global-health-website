@@ -37,6 +37,7 @@ const medicalAccessRequestsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid payload", body.error.flatten()));
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- no DoctorProfile delegate on typed client (pre-existing latent bug)
       const doctorProfile = await (prisma as any).doctorProfile.findUnique({
         where: { userId: request.authUser.sub },
         select: { id: true, countryCode: true },
@@ -96,6 +97,7 @@ const medicalAccessRequestsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(403).send(errorResponse("Doctor access required"));
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- no DoctorProfile delegate on typed client (pre-existing latent bug)
       const doctorProfile = await (prisma as any).doctorProfile.findUnique({
         where: { userId: request.authUser.sub },
         select: { id: true },

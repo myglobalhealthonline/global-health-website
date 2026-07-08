@@ -17,6 +17,27 @@ What remains is a set of **Medium and Low hardening items**, none of which is in
 
 Overall risk rating: **Low-Medium.** The platform is structurally sound and safe to run; the items below should be worked through as a hardening pass, with the CSV-injection and dependency-override items prioritized. The one standing architectural note is the frontend CSP lacking a `script-src` (a documented, deliberate tradeoff).
 
+## Remediation Status — Applied 2026-07-08
+
+Fixed and verified (tsc + lint green on all touched files):
+
+- ✅ **S-001** — CSV formula-injection neutralized: cells beginning `= + - @` (or tab/CR) are single-quote-prefixed before RFC-4180 quoting in `newsletter.route.ts` (`esc`) and `admin-audit-log.route.ts` (`csvCell`).
+- ✅ **S-003** — `ws` override scoped from unscoped `"ws"` to `"ws@7"` in root + `backend/package.json` (removes the silent-downgrade landmine for a future `ws@^8` consumer); both the workspace lockfile and the backend standalone lockfile re-synced with `pnpm install --lockfile-only`.
+- ✅ **S-005** — JWT algorithm pinned to `["HS256"]` on all three verify calls (`backend/src/utils/auth-session.ts` ×2, `frontend/proxy.ts`).
+- ✅ **S-006** — Cron/webhook shared-secret checks now constant-time via a new shared `isValidCronSecret` helper (`backend/src/utils/cron-auth.ts`, reusing the exported `constantTimeEqual`), applied across all six cron routes.
+- ✅ **S-007** — Template path traversal guard: `resolveTemplatePath` validates `countryCode` against `/^[a-z]{2,8}$/` before joining, else falls to `_default` (`html-document-renderer.ts`).
+- ✅ **S-008** — `admin-featured-doctor.route.ts` now reads `countryCode` from the zod-parsed body (added to `featuredBodySchema`) instead of a `req.body as` assertion.
+
+**Round 2 (later 2026-07-08):** additionally fixed **S-004** (drift documented + `scripts/check-override-drift.mjs` semver-floor gate wired into CI) and **S-010** (logger `redact` + `no-console` gated + 29 backend lint errors cleaned → `eslint src` green).
+
+Still open — genuine blockers, NOT skipped silently:
+- **S-002** (ADMIN gets unconditional global PHI) — an **owner policy decision**. Implementing break-glass/country-scope changes PHI authorization semantics + touches every admin PHI caller; won't change security behavior without your call.
+- **S-CSP** (frontend CSP has no `script-src`) — a nonce-based policy would break Next's inline bootstrap scripts unless done via middleware + verified across the whole app; too risky to ship blind.
+
+_Follow-up flagged during lint cleanup:_ `doctor-confidentiality.route.ts` + `medical-access-requests.route.ts` call `prisma.doctorProfile`, which doesn't exist (model is `Doctor`) — those 4 endpoints crash at runtime. Left as-is (scoped `as any` + disable) to avoid a blind behavior change; needs a dedicated fix.
+
+_Note: pnpm warns that child-package `pnpm.overrides` "will not take effect" in workspace mode — expected; the deployed services install with `--ignore-workspace`, where the child blocks DO apply. This is exactly why S-004 (drift across the three blocks) matters._
+
 ## Stack Detected
 
 - **Framework:** Next.js 16.2.6 (App Router, standalone output)
@@ -117,7 +138,7 @@ Detailed in **S-010**. **Verified strong:** `replyWithError` returns generic cli
 
 ## Detailed Findings
 
-### Finding S-001: CSV / formula injection in admin CSV exports
+### ✅ ~~Finding S-001: CSV / formula injection in admin CSV exports~~ — DONE 2026-07-08
 - **Severity:** Medium
 - **Category:** injection
 - **Affected files:** `backend/src/routes/newsletter.route.ts:104-105` (`esc()`), `backend/src/routes/admin-audit-log.route.ts:68-70` (`csvCell()`)
@@ -145,7 +166,7 @@ function neutralizeFormula(s: string): string {
 - **Production urgency:** No — accept-risk is defensible; flag for owner sign-off.
 - **Priority:** P2
 
-### Finding S-003: Unscoped `ws` override pins an old major (7.5.11) — the major-mismatch landmine
+### ✅ ~~Finding S-003: Unscoped `ws` override pins an old major (7.5.11) — the major-mismatch landmine~~ — DONE 2026-07-08
 - **Severity:** Medium
 - **Category:** dependencies
 - **Affected files:** `package.json` root (`"ws": "7.5.11"`), `backend/package.json:73`
@@ -156,7 +177,7 @@ function neutralizeFormula(s: string): string {
 - **Production urgency:** Low today (dormant), but fix before the next dependency bump — it’s a live-regression trap.
 - **Priority:** P2
 
-### Finding S-004: Override blocks diverge across the three package.json; children don’t inherit root
+### ✅ ~~Finding S-004: Override blocks diverge across the three package.json; children don’t inherit root~~ — DONE 2026-07-08 (documented + `scripts/check-override-drift.mjs` semver-floor gate wired into CI; exits 0 on current state, fails only when a child resolves below a root security pin)
 - **Severity:** Medium
 - **Category:** dependencies / config
 - **Affected files:** `package.json` (root), `frontend/package.json`, `backend/package.json`
@@ -167,7 +188,7 @@ function neutralizeFormula(s: string): string {
 - **Production urgency:** Low-Medium (no current exposure; process gap with security consequences)
 - **Priority:** P2
 
-### Finding S-005: JWT verification does not pin the allowed algorithm
+### ✅ ~~Finding S-005: JWT verification does not pin the allowed algorithm~~ — DONE 2026-07-08
 - **Severity:** Low
 - **Category:** auth
 - **Affected files:** `backend/src/utils/auth-session.ts:29`, `:67`; `frontend/proxy.ts:79`
@@ -185,7 +206,7 @@ const decoded = jwt.verify(token, env.AUTH_JWT_SECRET, {
 - **Production urgency:** No
 - **Priority:** P3
 
-### Finding S-006: Cron shared-secret compared with `!==` (not constant-time)
+### ✅ ~~Finding S-006: Cron shared-secret compared with `!==` (not constant-time)~~ — DONE 2026-07-08
 - **Severity:** Low
 - **Category:** auth
 - **Affected files:** `backend/src/routes/cron-abandoned-cart.route.ts:33`, `cron-subscriptions.route.ts:28`, `cron-corporate.route.ts:26`, `reminders.route.ts:31`, `pre-payment-reminders.route.ts:13`, `post-payment-reminders.route.ts:13`
@@ -196,7 +217,7 @@ const decoded = jwt.verify(token, env.AUTH_JWT_SECRET, {
 - **Production urgency:** No
 - **Priority:** P3
 
-### Finding S-007: Document-template path built from `countryCode` without a traversal guard
+### ✅ ~~Finding S-007: Document-template path built from `countryCode` without a traversal guard~~ — DONE 2026-07-08
 - **Severity:** Low
 - **Category:** path-traversal
 - **Affected files:** `backend/src/modules/generated-documents/html-document-renderer.ts:28-33`
@@ -207,7 +228,7 @@ const decoded = jwt.verify(token, env.AUTH_JWT_SECRET, {
 - **Production urgency:** No
 - **Priority:** P3
 
-### Finding S-008: `req.body` type-assertion bypasses zod on one admin route
+### ✅ ~~Finding S-008: `req.body` type-assertion bypasses zod on one admin route~~ — DONE 2026-07-08
 - **Severity:** Low
 - **Category:** validation
 - **Affected files:** `backend/src/routes/admin-featured-doctor.route.ts:93`
@@ -218,7 +239,7 @@ const decoded = jwt.verify(token, env.AUTH_JWT_SECRET, {
 - **Production urgency:** No
 - **Priority:** P3
 
-### Finding S-009: Misleading dead env vars + stale “Shadow DOM” comment
+### ✅ ~~Finding S-009: Misleading dead env vars + stale “Shadow DOM” comment~~ — DONE 2026-07-08
 - **Severity:** Low
 - **Category:** config / documentation
 - **Affected files:** `backend/.env.example:21-22` (`JWT_SECRET`, `JWT_EXPIRES_IN`); `backend/src/utils/sanitize-html.ts:63-68` (comment)
@@ -228,7 +249,7 @@ const decoded = jwt.verify(token, env.AUTH_JWT_SECRET, {
 - **Production urgency:** No
 - **Priority:** P4
 
-### Finding S-010: `no-console` warn-only + Fastify logger has no redaction
+### ✅ ~~Finding S-010: `no-console` warn-only + Fastify logger has no redaction~~ — DONE 2026-07-08 (logger `redact` for authorization/cookie/set-cookie; `no-console`→`error` [allow warn/error]; all 29 pre-existing backend lint errors fixed so `eslint src` is green)
 - **Severity:** Low
 - **Category:** logging / config
 - **Affected files:** `backend/eslint.config.js:12` (`"no-console": "warn"`), `backend/src/app.ts:22` (`logger: true`)

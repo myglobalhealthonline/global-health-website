@@ -45,7 +45,7 @@ export function evaluateAdminAccess(input: EvaluateAdminAccessInput): AdminAcces
 /** Length-agnostic constant-time string compare. `timingSafeEqual`
  *  throws on unequal lengths; we equalise via the longer of the two so
  *  the comparison itself doesn't short-circuit on length mismatch. */
-function constantTimeEqual(a: string, b: string): boolean {
+export function constantTimeEqual(a: string, b: string): boolean {
   const aBuf = Buffer.from(a, "utf8");
   const bBuf = Buffer.from(b, "utf8");
   if (aBuf.length !== bBuf.length) {

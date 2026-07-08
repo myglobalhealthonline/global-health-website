@@ -1,5 +1,3 @@
-"use client";
-
 /**
  * Featured doctor spotlight.
  *

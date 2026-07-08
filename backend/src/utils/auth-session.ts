@@ -29,6 +29,7 @@ export function verifyAuthToken(token: string): AuthTokenPayload | null {
     const decoded = jwt.verify(token, env.AUTH_JWT_SECRET, {
       issuer: "global-health-backend",
       audience: "global-health-website",
+      algorithms: ["HS256"], // pin: reject alg:none / alg-confusion
     });
     if (!decoded || typeof decoded !== "object") return null;
     const sub = decoded.sub;
@@ -67,6 +68,7 @@ export function verifyPending2faToken(token: string): { userId: string } | null 
     const decoded = jwt.verify(token, env.AUTH_JWT_SECRET, {
       issuer: "global-health-backend",
       audience: "global-health-website",
+      algorithms: ["HS256"], // pin: reject alg:none / alg-confusion
     });
     if (!decoded || typeof decoded !== "object") return null;
     const { sub, pending2fa } = decoded as Record<string, unknown>;

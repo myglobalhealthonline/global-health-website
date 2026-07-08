@@ -23,7 +23,7 @@ const adminAutomationRoute: FastifyPluginAsync = async (app) => {
     if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
   });
 
-  app.get("/api/admin/automation/catalog", async (_request, reply) => {
+  app.get("/api/admin/automation/catalog", async (_request, _reply) => {
     return okResponse({ items: AUTOMATION_CATALOG });
   });
 

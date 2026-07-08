@@ -434,13 +434,6 @@ function formatOrderMoney(currencyCode: string, cents: number): string {
   return `${symbol}${(cents / 100).toFixed(2)}`;
 }
 
-function orderHasConsultation(order: {
-  items: { kind: import("@prisma/client").CartItemKind }[];
-  appointmentIds: string[];
-}): boolean {
-  return orderHasConsultationItem(order.items) || order.appointmentIds.length > 0;
-}
-
 async function sendShopOrderConfirmationEmail(
   paidOrder: {
     email: string;
@@ -457,7 +450,7 @@ async function sendShopOrderConfirmationEmail(
     shipPostalCode: string | null;
     shipCountryCode: string | null;
   },
-  log: PaymentLog,
+  _log: PaymentLog,
 ) {
   const fmt = (cents: number) => formatOrderMoney(paidOrder.currencyCode, cents);
   await sendOrderConfirmationEmail({

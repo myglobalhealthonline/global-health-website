@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import { prisma } from "../db/prisma.js";
 import { env } from "../config/env.js";
+import { isValidCronSecret } from "../utils/cron-auth.js";
 import { sendAppointmentReminderEmail } from "../lib/email/templates.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { notifyDoctor } from "../modules/notifications/notify.service.js";
@@ -28,7 +29,7 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
       return reply.status(503).send(errorResponse("Reminder runner is not configured"));
     }
     const provided = request.headers["x-cron-secret"];
-    if (typeof provided !== "string" || provided !== env.CRON_SECRET) {
+    if (!isValidCronSecret(provided, env.CRON_SECRET)) {
       return reply.status(401).send(errorResponse("Not authorised"));
     }
 

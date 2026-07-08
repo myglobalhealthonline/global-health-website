@@ -392,7 +392,7 @@ export async function adminServicesReport(
 // ── Admin: patients (all) ────────────────────────────────────────────────────
 
 export async function adminPatientsReport(
-  filters: ReportFilters,
+  _filters: ReportFilters,
 ): Promise<ReportTable> {
   const rows = await prisma.patientProfile.findMany({
     take: ROW_LIMIT + 1,

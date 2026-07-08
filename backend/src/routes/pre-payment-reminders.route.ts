@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import { env } from "../config/env.js";
+import { isValidCronSecret } from "../utils/cron-auth.js";
 import { runPrePaymentReminderCron } from "../modules/automation/pre-payment-flow.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -10,7 +11,7 @@ const prePaymentRemindersRoute: FastifyPluginAsync = async (app) => {
       return reply.status(503).send(errorResponse("Pre-payment reminder runner is not configured"));
     }
     const provided = request.headers["x-cron-secret"];
-    if (typeof provided !== "string" || provided !== env.CRON_SECRET) {
+    if (!isValidCronSecret(provided, env.CRON_SECRET)) {
       return reply.status(401).send(errorResponse("Not authorised"));
     }
 

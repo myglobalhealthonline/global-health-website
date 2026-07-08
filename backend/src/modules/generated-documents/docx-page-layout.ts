@@ -139,7 +139,7 @@ export function fitPageHeightToContent(
   );
 
   const pageWidth = margins.pageWidth || 11909;
-  let updatedSect = sectPr
+  const updatedSect = sectPr
     .replace(
       /<w:pgSz[^/]*\/>/,
       `<w:pgSz w:w="${pageWidth}" w:h="${pageHeight}" w:orient="portrait"/>`,

@@ -15,7 +15,6 @@ const MUTED_COLOR = "4A4A4A";
 /** Calibri ships with Word/LibreOffice; renders consistently in PDF export. */
 const FONT = process.platform === "win32" ? "Calibri" : "Carlito";
 const SIZE_BODY = String(FONT_SIZE_BODY_HP); // 17pt
-const SIZE_SMALL = "32"; // 16pt
 const SIZE_SIGNATURE = "36"; // 18pt Alex Brush signature
 
 type RunOpts = { bold?: boolean; color?: string; size?: string; font?: string };
@@ -263,7 +262,6 @@ export function injectProfessionalLayout(
   const sigIdx = xml.indexOf(profile.signatureLeadIn);
   if (sigIdx < 0) return xml;
 
-  const sigStart = findParagraphStart(xml, sigIdx);
   const sectIdx = xml.indexOf("<w:sectPr");
 
   const patientXml = buildPatientTableXml(profile.prefix, data);

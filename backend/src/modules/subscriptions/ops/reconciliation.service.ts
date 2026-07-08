@@ -130,22 +130,24 @@ async function checkUnsweptReservations(now: Date): Promise<InvariantAlert[]> {
     where: { reason: "RESERVED", reservedUntil: { lt: new Date(now.getTime() - 60 * 60 * 1000) } },
     select: { reservationId: true, userSubscriptionId: true },
   });
-  const alerts: InvariantAlert[] = [];
-  for (const row of stale) {
-    if (!row.reservationId) continue;
-    const terminal = await prisma.consultationCreditLedger.findFirst({
-      where: { reservationId: row.reservationId, reason: { in: ["CONSUMED", "RELEASED"] } },
-      select: { id: true },
-    });
-    if (!terminal) {
-      alerts.push({
-        subscriptionId: row.userSubscriptionId,
-        kind: "unswept_reservation",
-        detail: `reservation ${row.reservationId} expired >1h ago with no terminal`,
-      });
-    }
-  }
-  return alerts;
+  const reservationIds = stale
+    .map((r) => r.reservationId)
+    .filter((id): id is string => id != null);
+  if (reservationIds.length === 0) return [];
+  // One query for all terminal (CONSUMED/RELEASED) entries, then set-diff in
+  // memory (mirrors checkMissingGrants) — replaces the per-reservation N+1.
+  const terminals = await prisma.consultationCreditLedger.findMany({
+    where: { reservationId: { in: reservationIds }, reason: { in: ["CONSUMED", "RELEASED"] } },
+    select: { reservationId: true },
+  });
+  const terminalSet = new Set(terminals.map((t) => t.reservationId));
+  return stale
+    .filter((row) => row.reservationId != null && !terminalSet.has(row.reservationId))
+    .map((row) => ({
+      subscriptionId: row.userSubscriptionId,
+      kind: "unswept_reservation",
+      detail: `reservation ${row.reservationId} expired >1h ago with no terminal`,
+    }));
 }
 
 /** Stripe ↔ DB status/period drift for ACTIVE/PAST_DUE subs (stripe driver). */
@@ -158,26 +160,48 @@ async function checkStripeDrift(): Promise<DriftEntry[]> {
     select: { id: true, status: true, stripeSubscriptionId: true, currentPeriodEnd: true },
   });
   const drift: DriftEntry[] = [];
-  for (const sub of subs) {
-    const live = await billing.retrieveSubscription(sub.stripeSubscriptionId!);
-    if (!live) {
-      drift.push({ subscriptionId: sub.id, field: "existence", db: sub.status, stripe: null });
-      continue;
-    }
-    if (live.status === "canceled" && sub.status !== "CANCELED") {
-      drift.push({ subscriptionId: sub.id, field: "status", db: sub.status, stripe: live.status });
-    }
-    // Period-end drift (§39): tolerate <1 min skew, flag real divergence.
-    const dbEnd = sub.currentPeriodEnd?.getTime() ?? null;
-    const liveEnd = live.currentPeriodEnd?.getTime() ?? null;
-    if (dbEnd != null && liveEnd != null && Math.abs(dbEnd - liveEnd) > 60_000) {
-      drift.push({
-        subscriptionId: sub.id,
-        field: "currentPeriodEnd",
-        db: sub.currentPeriodEnd?.toISOString() ?? null,
-        stripe: live.currentPeriodEnd?.toISOString() ?? null,
-      });
-    }
+  // Bounded-parallel (batches of 8) to cut wall-clock vs. one serial Stripe
+  // call per sub, while capping concurrent load on the Stripe API. Each item
+  // is fault-isolated: one failed retrieve must not abort the whole run.
+  const BATCH = 8;
+  for (let i = 0; i < subs.length; i += BATCH) {
+    const slice = subs.slice(i, i + BATCH);
+    const results = await Promise.all(
+      slice.map(async (sub): Promise<DriftEntry[]> => {
+        try {
+          const live = await billing.retrieveSubscription(sub.stripeSubscriptionId!);
+          if (!live) {
+            return [{ subscriptionId: sub.id, field: "existence", db: sub.status, stripe: null }];
+          }
+          const entries: DriftEntry[] = [];
+          if (live.status === "canceled" && sub.status !== "CANCELED") {
+            entries.push({
+              subscriptionId: sub.id,
+              field: "status",
+              db: sub.status,
+              stripe: live.status,
+            });
+          }
+          // Period-end drift (§39): tolerate <1 min skew, flag real divergence.
+          const dbEnd = sub.currentPeriodEnd?.getTime() ?? null;
+          const liveEnd = live.currentPeriodEnd?.getTime() ?? null;
+          if (dbEnd != null && liveEnd != null && Math.abs(dbEnd - liveEnd) > 60_000) {
+            entries.push({
+              subscriptionId: sub.id,
+              field: "currentPeriodEnd",
+              db: sub.currentPeriodEnd?.toISOString() ?? null,
+              stripe: live.currentPeriodEnd?.toISOString() ?? null,
+            });
+          }
+          return entries;
+        } catch {
+          // ponytail: skip a sub whose Stripe retrieve threw; one API error
+          // must not reject the batch or abort reconciliation.
+          return [];
+        }
+      }),
+    );
+    for (const entries of results) drift.push(...entries);
   }
   return drift;
 }

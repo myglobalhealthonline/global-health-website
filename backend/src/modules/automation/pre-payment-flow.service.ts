@@ -516,7 +516,7 @@ async function executeReminderStage(
 ) {
   const loaded = await loadOrderContext(orderId, paymentUrl);
   if (!loaded) return;
-  const { order, primary, doctor, lang, ctx, phoneHints, portal } = loaded;
+  const { order, primary, lang, ctx, phoneHints, portal } = loaded;
   const baseKey = automationBaseKey(flow);
   const stageKey = `${baseKey}_stage_${stage}`;
   const cancelStage = prePaymentCancelStage(flow);

@@ -79,6 +79,7 @@ async function resolveSession(request: NextRequest): Promise<SessionLookup> {
     const { payload } = await jwtVerify(token, key, {
       issuer: JWT_ISSUER,
       audience: JWT_AUDIENCE,
+      algorithms: ["HS256"], // pin: reject alg:none / alg-confusion
     });
     return {
       kind: "ok",

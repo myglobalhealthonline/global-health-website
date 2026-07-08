@@ -1,7 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, type CSSProperties } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, type CSSProperties } from "react";
 import createGlobe from "cobe";
+
+// Module-level so the default color arrays keep a stable identity across
+// renders. Declared inline as default params they were re-allocated every
+// render, changing the init effect's deps and destroying+recreating the
+// WebGL globe on every parent re-render (e.g. each keystroke in the
+// entry-gate country search).
+const DEFAULT_MARKER_COLOR: [number, number, number] = [0.69, 0.95, 0.13];
+const DEFAULT_BASE_COLOR: [number, number, number] = [0.08, 0.23, 0.18];
+const DEFAULT_ARC_COLOR: [number, number, number] = [0.69, 0.95, 0.13];
+const DEFAULT_GLOW_COLOR: [number, number, number] = [0.08, 0.22, 0.17];
 
 export type GlobeMarker = {
   id: string;
@@ -42,14 +52,14 @@ type AnchorStyle = CSSProperties & {
   positionAnchor?: string;
 };
 
-export function Globe({
+function GlobeBase({
   markers = [],
   arcs = [],
   className = "",
-  markerColor = [0.69, 0.95, 0.13],
-  baseColor = [0.08, 0.23, 0.18],
-  arcColor = [0.69, 0.95, 0.13],
-  glowColor = [0.08, 0.22, 0.17],
+  markerColor = DEFAULT_MARKER_COLOR,
+  baseColor = DEFAULT_BASE_COLOR,
+  arcColor = DEFAULT_ARC_COLOR,
+  glowColor = DEFAULT_GLOW_COLOR,
   dark = 0.92,
   mapBrightness = 5.8,
   markerSize = 0.045,
@@ -413,3 +423,8 @@ export function Globe({
     </div>
   );
 }
+
+// Memoized so typing in a parent (e.g. the entry-gate country search) doesn't
+// re-render the globe. All props from callers are stable (module-const colors,
+// memoized markers/arcs, numeric literals), so the default shallow compare holds.
+export const Globe = memo(GlobeBase);

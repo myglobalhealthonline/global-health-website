@@ -79,7 +79,6 @@ export async function findPotentialDuplicates(
         : null;
 
     // Build OR filter on whichever hashes we have.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const orClauses: Record<string, unknown>[] = [];
     if (emailHash) orClauses.push({ emailHash });
     if (phoneHash) orClauses.push({ phoneHash });

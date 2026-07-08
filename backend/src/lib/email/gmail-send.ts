@@ -1,5 +1,5 @@
 import { env } from "../../config/env.js";
-import type { SendEmailAttachment, SendEmailInput } from "./send-email.js";
+import type { SendEmailInput } from "./send-email.js";
 
 function gmailSendRefreshToken(): string | undefined {
   return (

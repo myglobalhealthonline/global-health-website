@@ -16,6 +16,19 @@ Because of that, several severe findings from the *previous* edition of this rep
 
 Overall performance risk: **Medium**. Public-facing Core Web Vitals are in good shape (the earlier “45–65 mobile Lighthouse” risk has been substantially addressed); the remaining costs concentrate in (a) two client-bundle/interaction issues on conversion pages, (b) backend request-path blocking work, and (c) portal-only image weight. None are architecture-breaking; most are Easy/Medium fixes.
 
+## Remediation Status — Applied 2026-07-08
+
+Fixed and verified (tsc + lint green on all touched files):
+
+- ✅ **P-003** — Globe color defaults hoisted to module consts + `Globe` wrapped in `React.memo` (`frontend/components/ui/cobe-globe.tsx`). Stops the per-keystroke WebGL teardown/rebuild on the landing `/` search.
+- ✅ **P-002 (partial)** — `waitUntil: "networkidle"` → `"load"` (~500 ms/render saved) and browser self-heal on `disconnected`/failed-launch (`backend/src/modules/generated-documents/html-document-renderer.ts`). _Deferred: moving PDF generation fully off the request path (queue) and the invoice fire-and-forget — the latter needs confirmation the payment-confirmation flow doesn’t read the invoice synchronously (money path)._
+- ✅ **P-015 + cleanup** — Removed 2.7 MB orphaned PNGs (`public/images/portal/generated/`) and dead components (`footer-column.tsx`, `demo.tsx`) via `git rm` (grep-confirmed unreferenced). _Note: `HeroBookingWizard.tsx` was also removed but **restored at the owner's request** — keep it._
+- ⏭️ **P-016** — Re-assessed as a non-issue: the entry-gate hero is a `<picture>` with AVIF + mobile-1080 art-directed sources; the raw `<img>` is only the fallback. No change made.
+
+**Round 2 (later 2026-07-08):** additionally fixed **P-004** (batched reconciliation Stripe reads), **P-006** (advisory-lock cron ticks), **P-007** (removed needless `"use client"`), **P-008 + P-010** (portal image re-encode, ~6.5 MB → ~0.15 MB), **P-011** (public `overflow-x: clip`), **P-012** (marquee off-screen pause), **P-017** (cart `useMemo`), **P-018** (cron N+1 → single query), **P-020** (contrast/size on conversion labels), **P-021** (cookie-banner dock), plus all 29 backend lint errors cleaned so `pnpm --filter backend lint` is green. **P-005** partially done (redundant-write guard).
+
+Still open — each needs a decision, runtime/load verification, or is deliberate (NOT blind-safe): **P-001** (i18n client bundle — refactor + per-locale browser verify), **P-002** (off-request-path PDF queue — latency wins already shipped), **P-005** (per-doctor TTL cache — load verify), **P-009** (globals.css split — visual verify all portals), **P-013** (drop Playwright — needs Brazil PDF template), **P-014** (migrate-on-boot — Railway infra decision), **P-019** (shared rate-limit store — needs Redis / multi-replica), **P-022** (deliberate), plus the two optional `@@index` additions (migration).
+
 ## Stack Detected
 
 - **Framework:** Next.js 16.2.6 (App Router, `output: "standalone"`, Turbopack root)
@@ -155,7 +168,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** High
 - **Priority:** P1
 
-### Finding P-002: Headless Chromium (Playwright) PDF rendering runs synchronously in the request path
+### 🟡 Finding P-002: Headless Chromium (Playwright) PDF rendering runs synchronously in the request path — PARTIAL (networkidle→load + self-heal DONE; off-request-path queue deferred)
 - **Severity:** High
 - **Category:** backend
 - **Affected files:** `backend/src/modules/generated-documents/html-document-renderer.ts:64-91` (`getBrowser` + `htmlToPdfBuffer`), `backend/src/modules/generated-documents/generated-documents.service.ts:425`, `backend/src/modules/invoices/invoice-pdf.ts:306`, `backend/src/modules/orders/complete-order-payment.service.ts:501-505` (invoice generation `await`ed during payment completion)
@@ -166,7 +179,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** High
 - **Priority:** P1
 
-### Finding P-003: WebGL globe destroyed & recreated on every keystroke in the entry-gate search
+### ✅ ~~Finding P-003: WebGL globe destroyed & recreated on every keystroke in the entry-gate search~~ — DONE 2026-07-08
 - **Severity:** High
 - **Category:** rendering
 - **Affected files:** `frontend/components/ui/cobe-globe.tsx:45-65` (color defaults declared as default params → new array each render), `:335-355` (effect dep array includes those colors), `:285-305` (`createGlobe(... mapSamples:16000 ...)`); `frontend/components/sections/CountryEntryGate.tsx:124` (`countryQuery` state), `:275-285` (`<Globe>` not `React.memo`, colors not passed)
@@ -177,7 +190,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** High
 - **Priority:** P1
 
-### Finding P-004: Reconciliation cron makes one sequential Stripe API call per subscription
+### ✅ ~~Finding P-004: Reconciliation cron makes one sequential Stripe API call per subscription~~ — DONE 2026-07-08 (batched ×8 w/ per-item fault isolation)
 - **Severity:** Medium-High
 - **Category:** backend
 - **Affected files:** `backend/src/modules/subscriptions/ops/reconciliation.service.ts:155-182` (`checkStripeDrift`), invoked hourly + on boot via `backend/src/lib/internal-scheduler.ts:103,109`
@@ -188,7 +201,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** Medium-High
 - **Priority:** P2
 
-### Finding P-005: Per-doctor availability reads write to the DB on every GET
+### 🟡 Finding P-005: Per-doctor availability reads write to the DB on every GET — PARTIAL 2026-07-08 (redundant `createMany` now guarded by a count check — behavior-preserving; per-doctor TTL cache still open, needs load verify)
 - **Severity:** Medium
 - **Category:** database
 - **Affected files:** `backend/src/modules/doctor-availability/doctor-availability.service.ts:241-266` (`listOpenSlotsForDoctor`), `:431-495` (`listOpenSlotsForDoctorAndService`), `:144-233` (`ensureSlotsForRange`), `:704-721` (`releaseExpiredHeldSlots`)
@@ -199,7 +212,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** Medium-High
 - **Priority:** P2
 
-### Finding P-006: In-process scheduler has no distributed lock and re-runs heavy work on every deploy
+### ✅ ~~Finding P-006: In-process scheduler has no distributed lock and re-runs heavy work on every deploy~~ — DONE 2026-07-08 (pg_try_advisory_lock per tick, fail-open, single-replica no-op)
 - **Severity:** Medium
 - **Category:** backend / deployment
 - **Affected files:** `backend/src/lib/internal-scheduler.ts:77-111`
@@ -210,7 +223,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** Medium (safe horizontal scaling / rolling deploys)
 - **Priority:** P2
 
-### Finding P-007: Presentational components needlessly marked `"use client"`
+### ✅ ~~Finding P-007: Presentational components needlessly marked `"use client"`~~ — DONE 2026-07-08 (FeaturedDoctor + HealthcareMediaFrame; ServiceCard left, parent already client)
 - **Severity:** Medium
 - **Category:** frontend
 - **Affected files:** `frontend/components/sections/FeaturedDoctor.tsx:1` (rendered by the **server** home page at `frontend/app/(site)/[country]/[lang]/page.tsx:534`), `frontend/components/media/HealthcareMediaFrame.tsx:1`, `frontend/components/cards/ServiceCard.tsx:1` (lower impact — parent `ServicesGrid` is already client)
@@ -221,7 +234,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** Medium
 - **Priority:** P2
 
-### Finding P-008: 1.96 MB PNG used as a CSS background (`membership-silk.png`)
+### ✅ ~~Finding P-008: 1.96 MB PNG used as a CSS background (`membership-silk.png`)~~ — DONE 2026-07-08 (→ WebP 127 KB, PNG git-rm'd, css url updated)
 - **Severity:** Medium (portal-scoped)
 - **Category:** assets
 - **Affected files:** `frontend/public/images/portal/obsidian/membership-silk.png`, `frontend/app/globals.css:2159` (`--lux-asset-member`)
@@ -243,7 +256,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** Medium (smaller render-blocking CSS for public mobile)
 - **Priority:** P3
 
-### Finding P-010: Obsidian silk WebP backgrounds are still ~0.8–1.0 MB each
+### ✅ ~~Finding P-010: Obsidian silk WebP backgrounds are still ~0.8–1.0 MB each~~ — DONE 2026-07-08 (re-encoded ≤1600px q55 → 2–6 KB each; ~4.7 MB saved)
 - **Severity:** Low-Medium (portal-scoped)
 - **Category:** assets
 - **Affected files:** `card-silk.webp` (1.05 MB), `band-aurora.webp` (1.00 MB), `canvas-aurora.webp` (985 KB), `plane-veil.webp` (875 KB), `header-aura.webp` (811 KB) under `frontend/public/images/portal/obsidian/`, wired at `globals.css:2155-2160`
@@ -254,7 +267,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** ~3.5–4 MB saved across portal decorative loads
 - **Priority:** P3
 
-### Finding P-011: No horizontal-overflow guard on the public-site body
+### ✅ ~~Finding P-011: No horizontal-overflow guard on the public-site body~~ — DONE 2026-07-08 (`overflow-x: clip` on body, globals.css:263)
 - **Severity:** Low-Medium
 - **Category:** mobile
 - **Affected files:** `frontend/app/globals.css:250-278` (html/body base — no `overflow-x`); guard exists only at `:2929-2933` (`.gh-portal-main` ≤760px)
@@ -265,7 +278,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** Eliminates a class of latent mobile horizontal-scroll regressions
 - **Priority:** P3
 
-### Finding P-012: Marquee animates + holds a compositor layer on mobile, even off-screen
+### ✅ ~~Finding P-012: Marquee animates + holds a compositor layer on mobile, even off-screen~~ — DONE 2026-07-08 (shared `MarqueeTrack` IntersectionObserver pause + `will-change` only while on-screen)
 - **Severity:** Low
 - **Category:** rendering / mobile
 - **Affected files:** `frontend/app/globals.css:543-545`
@@ -298,7 +311,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** Low-Medium (removes migrate latency per restart; prevents outage on bad migration)
 - **Priority:** P3
 
-### Finding P-015: 2.7 MB of orphaned PNGs shipped in `public/images/portal/generated`
+### ✅ ~~Finding P-015: 2.7 MB of orphaned PNGs shipped in `public/images/portal/generated`~~ — DONE 2026-07-08
 - **Severity:** Low
 - **Category:** assets
 - **Affected files:** `frontend/public/images/portal/generated/patient-record-empty-state.png` (1.40 MB), `.../admin-content-management-accent.png` (1.38 MB)
@@ -309,7 +322,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** −2.7 MB repo + Docker image
 - **Priority:** P3
 
-### Finding P-016: Landing-page LCP hero uses a raw `<img>` instead of `next/image`
+### ⏭️ ~~Finding P-016: Landing-page LCP hero uses a raw `<img>` instead of `next/image`~~ — N/A (hero is a `<picture>` with AVIF + mobile sources; no change needed)
 - **Severity:** Low
 - **Category:** rendering / assets
 - **Affected files:** `frontend/components/sections/CountryEntryGate.tsx:216` (`/images/hero/country-entry-clinic-hero-2560.webp`, 62 KB)
@@ -320,7 +333,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** Low (smaller mobile LCP transfer + AVIF on the most-hit page)
 - **Priority:** P3
 
-### Finding P-017: Cart per-second countdown + `loadLocaleBundle()` in the render body
+### ✅ ~~Finding P-017: Cart per-second countdown + `loadLocaleBundle()` in the render body~~ — DONE 2026-07-08 (useMemo([lang]))
 - **Severity:** Low
 - **Category:** rendering
 - **Affected files:** `frontend/app/(site)/[country]/[lang]/cart/page.tsx:38-52` (`useCountdown` — `setInterval(setNow, 1000)`), used per row at `:509`; `loadLocaleBundle(...)` invoked in the render body at `:137`; 30 s auto-refresh `setInterval` at `:166`
@@ -331,7 +344,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** Low
 - **Priority:** P3
 
-### Finding P-018: `checkUnsweptReservations` does a `findFirst` per stale reservation (N+1 in cron)
+### ✅ ~~Finding P-018: `checkUnsweptReservations` does a `findFirst` per stale reservation (N+1 in cron)~~ — DONE 2026-07-08 (single findMany + in-memory diff)
 - **Severity:** Low
 - **Category:** database
 - **Affected files:** `backend/src/modules/subscriptions/ops/reconciliation.service.ts:128-149`
@@ -353,7 +366,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** Low (only relevant on multi-replica)
 - **Priority:** P4
 
-### Finding P-020: Sub-12px, low-contrast type on conversion-critical UI
+### ✅ ~~Finding P-020: Sub-12px, low-contrast type on conversion-critical UI~~ — DONE 2026-07-08 (order-total label → text-xs; about subtitles `white/55`→`white/70`; HomeHero had no `white/55`)
 - **Severity:** Low
 - **Category:** mobile / accessibility
 - **Affected files:** `frontend/components/.../MobileOrderTotalBar.tsx:56` (`text-[10px]` total label), `HomeHero.tsx:159,165,231` (`text-[11px]`), `about/page.tsx:202,217,232` (`text-[11.5px]` at `white/55`), plus ~60 files using `text-[10px]/[11px]`
@@ -364,7 +377,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** Low
 - **Priority:** P4
 
-### Finding P-021: CookieBanner overlays the fixed bottom conversion bars on first visit
+### ✅ ~~Finding P-021: CookieBanner overlays the fixed bottom conversion bars on first visit~~ — DONE 2026-07-08 (`bottom-24 md:bottom-4`)
 - **Severity:** Low
 - **Category:** mobile / UX
 - **Affected files:** `frontend/components/.../CookieBanner.tsx:62` (`fixed bottom-4 z-50`), `MobileOrderTotalBar.tsx:49` (`fixed bottom-0 z-40`), `StickyBookingCTA.tsx:25` (`fixed bottom-0 z-40`)

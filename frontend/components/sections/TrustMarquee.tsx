@@ -14,6 +14,7 @@ import {
   Stethoscope,
   Zap,
 } from "lucide-react";
+import { MarqueeTrack } from "@/components/sections/MarqueeTrack";
 
 const ICONS = {
   star: Star,
@@ -55,7 +56,7 @@ export function TrustMarquee({ items }: { items: TrustMarqueeItem[] }) {
       />
 
       <div className="gh-marquee py-6 md:py-7">
-        <ul className="gh-marquee-track flex shrink-0 items-center gap-12 md:gap-16 whitespace-nowrap pr-12 md:pr-16">
+        <MarqueeTrack>
           {track.map((item, i) => {
             const Icon = ICONS[item.icon];
             return (
@@ -84,7 +85,7 @@ export function TrustMarquee({ items }: { items: TrustMarqueeItem[] }) {
               </li>
             );
           })}
-        </ul>
+        </MarqueeTrack>
       </div>
     </section>
   );

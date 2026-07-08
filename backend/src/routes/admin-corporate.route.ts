@@ -325,7 +325,7 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
     });
     const parsed = schema.safeParse(request.body);
     if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
-    const { planSlug, adminEmail, contractEndAt, ...rest } = parsed.data;
+    const { planSlug: _planSlug, adminEmail: _adminEmail, contractEndAt, ...rest } = parsed.data;
     await prisma.corporateCompany.update({
       where: { id },
       data: {

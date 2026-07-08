@@ -911,7 +911,9 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       }
 
       // Resolve cart
-      let { cart, userId, cookieToken } = await resolveActiveCart(request, reply);
+      const activeCart = await resolveActiveCart(request, reply);
+      const userId = activeCart.userId;
+      let cart = activeCart.cart;
 
       // Family-member targeting (Premium family usage). Only a logged-in
       // patient can book for an approved dependent, and the dependent MUST
@@ -951,7 +953,6 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             },
           });
           await setCartCookie(reply, newToken);
-          cookieToken = newToken;
           cart = await loadFullCart(newCart.id);
         }
       }

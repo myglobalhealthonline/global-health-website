@@ -34,6 +34,12 @@ jobs:
       - name: Lint (frontend + backend)
         run: pnpm lint
 
+      - name: Check pnpm.overrides drift (root vs frontend vs backend)
+        # Children deploy standalone (--ignore-workspace) and do NOT inherit the
+        # root overrides, so a security pin must be mirrored into every service
+        # that resolves the package. See docs/dependency-overrides.md.
+        run: node scripts/check-override-drift.mjs
+
       - name: Audit dependencies (workspace)
         run: pnpm audit --audit-level=high
 

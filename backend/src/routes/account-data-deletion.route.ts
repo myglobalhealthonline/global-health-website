@@ -74,7 +74,7 @@ const accountDataDeletionRoute: FastifyPluginAsync = async (app) => {
       if (!profile) return reply.status(404).send(errorResponse("Profile not found"));
 
       try {
-        const requests = await (prisma as any).dataDeletionRequest.findMany({
+        const requests = await prisma.dataDeletionRequest.findMany({
           where: { patientProfileId: profile.id },
           orderBy: { createdAt: "desc" },
           take: 20,

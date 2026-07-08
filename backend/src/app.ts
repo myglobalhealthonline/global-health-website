@@ -19,7 +19,11 @@ export async function buildApp() {
   // is enough to read the real client IP from X-Forwarded-For without
   // accepting arbitrary spoofed chains.
   const app = Fastify({
-    logger: true,
+    // Default logging (pino) plus redaction of auth-bearing headers so tokens
+    // and session cookies never land in logs.
+    logger: {
+      redact: ["req.headers.authorization", "req.headers.cookie", "res.headers['set-cookie']"],
+    },
     bodyLimit: 5 * 1024 * 1024,
     trustProxy: 1,
   });

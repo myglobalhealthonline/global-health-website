@@ -151,7 +151,6 @@ export async function listDeletionRequests(opts: {
   const limit = opts.limit ?? 50;
   const offset = opts.offset ?? 0;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: Record<string, unknown> = {};
   if (opts.status) {
     where.requestStatus = opts.status;
@@ -247,12 +246,8 @@ export async function anonymizePatient(params: {
         // because email is intentionally preserved (GHN-linked record).
         phoneHash: null,
         nameDobHash: null,
-        // Phase 2 column — cast via `as any` until migration is applied.
-        ...(true
-          ? ({
-              anonymizedAt: new Date(),
-            } as unknown as object)
-          : {}),
+        // Phase 2 column — cast until migration is applied.
+        ...({ anonymizedAt: new Date() } as unknown as object),
       },
     });
 

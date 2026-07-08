@@ -203,6 +203,17 @@ export async function ensureSlotsForRange(
 
   if (generated.length === 0) return;
 
+  // Skip the createMany round-trip + row locks on the hot read path when every
+  // generated slot already exists. Generation is deterministic for the range,
+  // so once the range holds at least as many slots as we'd generate, the
+  // skipDuplicates insert would be a pure no-op. `existing < generated.length`
+  // still runs the write after slots are consumed/collapsed or a new window
+  // widens the set.
+  const existing = await prisma.doctorTimeSlot.count({
+    where: { doctorId, startAt: { gte: fromUtc, lt: toUtc } },
+  });
+  if (existing >= generated.length) return;
+
   try {
     await prisma.doctorTimeSlot.createMany({
       data: generated,

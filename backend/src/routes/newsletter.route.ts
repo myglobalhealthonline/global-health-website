@@ -100,9 +100,15 @@ const newsletterRoute: FastifyPluginAsync = async (app) => {
         orderBy: { createdAt: "desc" },
       });
       // Minimal CSV — admin loads it in Excel/Numbers. Escape double quotes
-      // by doubling them per RFC 4180.
-      const esc = (v: string | null) =>
-        v === null ? "" : `"${v.replace(/"/g, '""')}"`;
+      // by doubling them per RFC 4180, AND neutralize formula-injection: a
+      // cell starting with = + - @ (or tab/CR) is evaluated by Excel/Sheets
+      // even when quoted, so prefix it with a single quote. Fields like
+      // source/countryCode/locale come from the public newsletter POST.
+      const esc = (v: string | null) => {
+        if (v === null) return "";
+        const safe = /^[=+\-@\t\r]/.test(v) ? `'${v}` : v;
+        return `"${safe.replace(/"/g, '""')}"`;
+      };
       const lines = ["email,countryCode,locale,source,unsubscribedAt,createdAt"];
       for (const r of rows) {
         lines.push(

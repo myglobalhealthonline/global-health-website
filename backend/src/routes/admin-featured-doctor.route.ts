@@ -23,7 +23,10 @@ import {
  * PUT  → set / clear. Setting one doctor featured replaces the previous
  *        one for that country (radio-style across the roster).
  */
-const featuredBodySchema = z.object({ featured: z.boolean() });
+const featuredBodySchema = z.object({
+  featured: z.boolean(),
+  countryCode: z.string().trim().max(8).optional(),
+});
 const idParam = z.string().trim().min(1).max(64);
 
 /** Returns primary country code + all additional country codes for a doctor. */
@@ -90,11 +93,8 @@ const adminFeaturedDoctorRoute: FastifyPluginAsync = async (app) => {
         const { primary, all } = await allCountryCodes(request.params.id);
         if (!primary) return reply.status(404).send(errorResponse("Doctor not found"));
 
-        const requestedCode = (request.body as Record<string, unknown>)?.countryCode;
-        const code =
-          requestedCode && typeof requestedCode === "string"
-            ? requestedCode.toLowerCase().trim()
-            : primary;
+        const requestedCode = parsed.data.countryCode;
+        const code = requestedCode ? requestedCode.toLowerCase() : primary;
 
         if (!all.map((c) => c.toLowerCase()).includes(code)) {
           return reply.status(400).send(errorResponse("Doctor is not listed in that country"));

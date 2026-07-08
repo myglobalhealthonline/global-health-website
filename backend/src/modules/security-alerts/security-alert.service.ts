@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, SecurityAlertStatus } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 
 // ---------------------------------------------------------------------------
@@ -63,7 +63,7 @@ export async function createSecurityAlert(
   try {
     // Dedupe check — one DB round-trip, bounded to today's rows.
     if (params.dedupeKey) {
-      const existing = await (prisma as any).securityAlert.findFirst({
+      const existing = await prisma.securityAlert.findFirst({
         where: {
           dedupeKey: params.dedupeKey,
           status: "OPEN",
@@ -77,7 +77,7 @@ export async function createSecurityAlert(
       }
     }
 
-    await (prisma as any).securityAlert.create({
+    await prisma.securityAlert.create({
       data: {
         severity: params.severity,
         alertType: params.alertType,
@@ -128,14 +128,14 @@ export async function listSecurityAlerts(
     ...(opts.countryFolder ? { countryFolder: opts.countryFolder } : {}),
   };
 
-  const [alerts, total] = await (prisma as any).$transaction([
-    (prisma as any).securityAlert.findMany({
+  const [alerts, total] = await prisma.$transaction([
+    prisma.securityAlert.findMany({
       where,
       orderBy: [{ severity: "asc" }, { createdAt: "desc" }],
       take: limit,
       skip: offset,
     }),
-    (prisma as any).securityAlert.count({ where }),
+    prisma.securityAlert.count({ where }),
   ]);
 
   return { alerts, total };
@@ -154,10 +154,10 @@ export async function updateAlertStatus(
   status: string,
   resolvedByAdminId?: string,
 ): Promise<void> {
-  await (prisma as any).securityAlert.update({
+  await prisma.securityAlert.update({
     where: { id: alertId },
     data: {
-      status,
+      status: status as SecurityAlertStatus,
       ...(resolvedByAdminId ? { resolvedByAdminId } : {}),
       ...(status === "RESOLVED" ? { resolvedAt: new Date() } : {}),
     },

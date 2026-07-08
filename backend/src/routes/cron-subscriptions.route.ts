@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 import { env } from "../config/env.js";
+import { isValidCronSecret } from "../utils/cron-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import {
   cancelAfterGrace,
@@ -25,7 +26,7 @@ const cronSubscriptionsRoute: FastifyPluginAsync = async (app) => {
       reply.status(503).send(errorResponse("Cron endpoint is not configured"));
       return false;
     }
-    if (provided !== expected) {
+    if (!isValidCronSecret(provided, expected)) {
       reply.status(401).send(errorResponse("Invalid cron token"));
       return false;
     }

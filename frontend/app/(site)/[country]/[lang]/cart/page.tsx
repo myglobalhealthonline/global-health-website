@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import {
@@ -134,7 +134,10 @@ export default function CartPage() {
   const lang = params?.lang ?? "";
   const countryHome = countrySlug && lang ? `/${countrySlug}/${lang}` : "/";
   const checkoutHref = countrySlug && lang ? `/${countrySlug}/${lang}/checkout` : "/checkout";
-  const t = loadLocaleBundle((lang || "en") as LocaleCode).common.cartPage;
+  const t = useMemo(
+    () => loadLocaleBundle((lang || "en") as LocaleCode).common.cartPage,
+    [lang],
+  );
   const steps = [t.stepCart, t.stepCheckout, t.stepPayment];
 
   // Show "slot expired" banner when server tells us it swept
