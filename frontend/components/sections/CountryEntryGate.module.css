@@ -237,6 +237,11 @@
   background:
     radial-gradient(circle at 50% 45%, rgba(176, 241, 34, 0.12), transparent 38%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0));
+  /* .selectPanel (ancestor) has backdrop-filter: blur(18px) — without its
+     own compositing layer, the globe canvas repainting every rAF frame
+     forces that blur to recompute every frame too, dropping frames and
+     making the pointer-release inertia glide look stuck instead of smooth. */
+  transform: translateZ(0);
 }
 
 .globeStage::after {
