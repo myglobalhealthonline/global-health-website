@@ -60,6 +60,31 @@ export type GuardMedicalReadArgs = {
  *     throw e;
  *   }
  */
+/** S-002 break-glass: resolve the access reason. Priority: explicit
+ *  `args.reason` from the route, then the `x-phi-reason` request header,
+ *  then the short-TTL `gh_phi_reason` cookie set by the admin UI reason
+ *  gate. The cookie path means plain `<a href>` document downloads carry
+ *  the reason too — no per-route threading needed. Values are decoded,
+ *  trimmed and capped before landing in MedicalAccessLog.accessReason. */
+function resolvePhiReason(
+  request: FastifyRequest,
+  explicit?: string,
+): string | undefined {
+  const header = request.headers["x-phi-reason"];
+  const cookie = (request.cookies as Record<string, string | undefined> | undefined)?.[
+    "gh_phi_reason"
+  ];
+  let raw = explicit ?? (typeof header === "string" ? header : undefined) ?? cookie;
+  if (!raw) return undefined;
+  try {
+    raw = decodeURIComponent(raw);
+  } catch {
+    // keep the raw value if it isn't valid percent-encoding
+  }
+  const trimmed = raw.trim().slice(0, 500);
+  return trimmed || undefined;
+}
+
 export async function guardMedicalRead(
   request: FastifyRequest,
   actor: GuardActor,
@@ -126,7 +151,7 @@ export async function guardMedicalRead(
       resourceId: args.resourceId ?? null,
       relatedAppointmentId: args.relatedAppointmentId ?? null,
     },
-    reason: args.reason,
+    reason: resolvePhiReason(request, args.reason),
     ipAddress,
     userAgent,
   });

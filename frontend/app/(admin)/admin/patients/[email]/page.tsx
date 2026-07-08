@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { ArrowLeft, ShieldCheck, FileText, CreditCard, History, Globe } from "lucide-react";
+import { PhiReasonGate } from "./_components/phi-reason-gate";
 import {
   fetchAdminPatientProfile,
   fetchAdminPatientNationality,
@@ -12,7 +14,10 @@ import { AdminCard, PageHeader, Pill } from "../../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
-type PageProps = { params: Promise<{ email: string }> };
+type PageProps = {
+  params: Promise<{ email: string }>;
+  searchParams: Promise<{ reasonError?: string }>;
+};
 
 function verificationTone(status: VerificationStatus): "active" | "inactive" | "pending" | "neutral" {
   switch (status) {
@@ -58,9 +63,27 @@ function fmtAmount(cents: number, currency: string) {
   return new Intl.NumberFormat("en-GB", { style: "currency", currency }).format(cents / 100);
 }
 
-export default async function AdminPatientDetailPage({ params }: PageProps) {
+export default async function AdminPatientDetailPage({ params, searchParams }: PageProps) {
   const { email: rawEmail } = await params;
+  const { reasonError } = await searchParams;
   const email = decodeURIComponent(rawEmail);
+
+  // S-002 break-glass: when ADMIN_PHI_REQUIRE_REASON is enabled (must be set
+  // on BOTH the frontend and backend services), require a documented reason
+  // before fetching any PHI. The reason lives in a 15-min httpOnly cookie
+  // that adminRequest forwards to the backend, where guardMedicalRead writes
+  // it to MedicalAccessLog.accessReason. Flag off (default) = no UX change.
+  if (process.env.ADMIN_PHI_REQUIRE_REASON === "true") {
+    const jar = await cookies();
+    if (!jar.get("gh_phi_reason")?.value?.trim()) {
+      return (
+        <PhiReasonGate
+          returnTo={`/admin/patients/${encodeURIComponent(email)}`}
+          showError={reasonError === "1"}
+        />
+      );
+    }
+  }
 
   const [profileRes, nationalityRes, consentsRes, accessLogRes, paymentsRes] = await Promise.all([
     fetchAdminPatientProfile(email),
