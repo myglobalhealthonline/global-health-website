@@ -118,6 +118,8 @@ const addItemBodySchema = z.object({
         .or(z.literal("")),
       gdprConsentClinic: z.literal(true).optional(),
       gdprConsentPlatform: z.literal(true).optional(),
+      /** Optional WhatsApp-updates opt-in — never required. */
+      whatsappConsent: z.boolean().optional(),
     })
     .optional(),
 });
@@ -1110,6 +1112,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
               patient?.gdprConsentPlatform === true
                 ? new Date()
                 : null,
+            patientWhatsappConsent: patient?.whatsappConsent === true,
           },
         });
       } catch (err) {

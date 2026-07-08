@@ -78,6 +78,9 @@ export type CartItemPatientInput = {
    *  the clinical record. */
   gdprConsentClinic: true;
   gdprConsentPlatform: true;
+  /** Optional opt-in to appointment updates + reminders via WhatsApp.
+   *  Never required — patient WhatsApp sends are skipped when absent. */
+  whatsappConsent?: boolean;
 };
 
 export type Cart = {

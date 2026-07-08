@@ -293,6 +293,7 @@ export type CommonLocale = {
     gdprConsent: string;
     gdprClinicConsent: string;
     gdprPlatformConsent: string;
+    whatsappConsent: string;
     addingToCart: string;
     continueToCart: string;
     noOpenSlots: string;

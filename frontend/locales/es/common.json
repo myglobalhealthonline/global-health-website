@@ -303,6 +303,7 @@
     "gdprConsent": "Consentimiento de uso de datos (RGPD)",
     "gdprClinicConsent": "Consiento en compartir mis datos personales y médicos con la clínica y el médico tratante para los fines de esta consulta.",
     "gdprPlatformConsent": "Consiento que la plataforma Global Health procese mis datos para la mejora del servicio, seguridad y comunicaciones de la plataforma.",
+    "whatsappConsent": "Recibir actualizaciones y recordatorios de la cita por WhatsApp (opcional)",
     "addingToCart": "Añadiendo al carrito…",
     "continueToCart": "Continuar al carrito",
     "noOpenSlots": "Sin plazas disponibles en los próximos 14 días para {doctor}.",

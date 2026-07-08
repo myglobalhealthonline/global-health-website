@@ -121,7 +121,22 @@ async function sendWhatsApp(
   message: string,
   summary: string,
   phoneHints?: PhoneNormalizeHints,
+  /** Pass `false` for patient sends when the booking lacks WhatsApp consent
+   *  — the send is skipped (GDPR). Doctor sends omit this entirely. */
+  patientConsent?: boolean,
 ) {
+  if (patientConsent === false) {
+    console.warn(`[automation] patient WhatsApp skipped — no consent (orderId=${orderId})`);
+    await createAutomationRun({
+      automationKey,
+      orderId,
+      channel: "whatsapp",
+      status: "SKIPPED",
+      summary: `${summary} (no WhatsApp consent)`,
+      executedAt: new Date(),
+    });
+    return;
+  }
   if (!to?.trim()) {
     await createAutomationRun({
       automationKey,
@@ -361,7 +376,7 @@ export async function sendAppointmentUpdateNotifications(
   const loaded = await loadUpdateContext(input);
   if (!loaded) return { sent: false };
 
-  const { order, lang, ctx, phoneHints } = loaded;
+  const { order, primary, lang, ctx, phoneHints } = loaded;
   const patientPhone = order.phone?.trim() || ctx.patientPhone;
 
   if (order.email?.trim()) {
@@ -385,6 +400,7 @@ export async function sendAppointmentUpdateNotifications(
       patientWhatsAppAppointmentUpdated(ctx, lang),
       "Patient WhatsApp — appointment updated",
       phoneHints,
+      primary.patientWhatsappConsent,
     );
   } else {
     await createAutomationRun({

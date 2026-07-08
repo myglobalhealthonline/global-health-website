@@ -183,7 +183,22 @@ async function sendWhatsApp(
   message: string,
   summary: string,
   phoneHints?: PhoneNormalizeHints,
+  /** Pass `false` for patient sends when the booking lacks WhatsApp consent
+   *  — the send is skipped (GDPR). Doctor sends omit this entirely. */
+  patientConsent?: boolean,
 ) {
+  if (patientConsent === false) {
+    console.warn(`[automation] patient WhatsApp skipped — no consent (orderId=${orderId})`);
+    await createAutomationRun({
+      automationKey,
+      orderId,
+      channel: "whatsapp",
+      status: "SKIPPED",
+      summary: `${summary} (no WhatsApp consent)`,
+      executedAt: new Date(),
+    });
+    return;
+  }
   if (!to?.trim()) {
     await createAutomationRun({
       automationKey,
@@ -364,6 +379,7 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
     appendPatientPortalWhatsApp(patientWhatsAppMeetingLink(ctx, lang), portal, lang),
     "Patient WhatsApp — meeting link",
     phoneHints,
+    primary.patientWhatsappConsent,
   );
 
   await sendPatientEmail(
@@ -448,7 +464,7 @@ export async function post_resendMeetingLinkWhatsApp(orderId: string) {
   if (loaded.order.paymentStatus !== "PAID" && loaded.order.status !== "PAID") return;
   if (!loaded.ctx.meetingLink) return;
 
-  const { order, doctorContact, lang, ctx, phoneHints, portal } = loaded;
+  const { order, primary, doctorContact, lang, ctx, phoneHints, portal } = loaded;
   const baseKey = "post_payment_meeting_link_resend";
 
   await sendWhatsApp(
@@ -458,6 +474,7 @@ export async function post_resendMeetingLinkWhatsApp(orderId: string) {
     appendPatientPortalWhatsApp(patientWhatsAppMeetingLink(ctx, lang), portal, lang),
     "Patient WhatsApp — meeting link (resend)",
     phoneHints,
+    primary.patientWhatsappConsent,
   );
 
   if (doctorContact?.whatsappNumber) {
@@ -493,7 +510,7 @@ export async function post_sendOneHourReminder(orderId: string) {
   if (loaded.order.postPaymentStage >= POST_PAYMENT_STAGE_ONE_HOUR) return;
   if (!loaded.ctx.meetingLink || !loaded.consultStart) return;
 
-  const { order, doctorContact, doctorEmail, lang, ctx, phoneHints, portal } = loaded;
+  const { order, primary, doctorContact, doctorEmail, lang, ctx, phoneHints, portal } = loaded;
   const baseKey = "post_payment_one_hour";
 
   await sendWhatsApp(
@@ -503,6 +520,7 @@ export async function post_sendOneHourReminder(orderId: string) {
     patientWhatsAppOneHourReminder(ctx, lang),
     "Patient WhatsApp — 1 hour reminder",
     phoneHints,
+    primary.patientWhatsappConsent,
   );
 
   await sendPatientEmail(
@@ -578,7 +596,7 @@ export async function post_sendFiveMinuteReminder(orderId: string) {
   if (loaded.order.postPaymentStage >= POST_PAYMENT_STAGE_SESSION_START) return;
   if (!loaded.ctx.meetingLink || !loaded.consultStart) return;
 
-  const { order, doctorContact, doctorEmail, lang, ctx, phoneHints, portal } = loaded;
+  const { order, primary, doctorContact, doctorEmail, lang, ctx, phoneHints, portal } = loaded;
   const baseKey = "post_payment_five_min";
 
   await sendWhatsApp(
@@ -588,6 +606,7 @@ export async function post_sendFiveMinuteReminder(orderId: string) {
     patientWhatsAppSessionStart(ctx, lang),
     "Patient WhatsApp — 5 minute reminder",
     phoneHints,
+    primary.patientWhatsappConsent,
   );
 
   await sendPatientEmail(

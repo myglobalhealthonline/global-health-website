@@ -16,6 +16,9 @@ export type BookingPayload = {
    */
   gdprConsentClinic: true;
   gdprConsentPlatform: true;
+  /** Optional opt-in to appointment updates + reminders via WhatsApp.
+   *  Never required — patient WhatsApp sends are skipped when absent. */
+  whatsappConsent?: boolean;
   /** When set, links the appointment to a catalogue Service so price +
    *  currency get copied onto the row, enabling Stripe Checkout. */
   serviceSlug?: string;

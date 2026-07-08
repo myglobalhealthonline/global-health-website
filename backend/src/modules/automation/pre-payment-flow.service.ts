@@ -301,7 +301,22 @@ async function sendWhatsApp(
   message: string,
   summary: string,
   phoneHints?: PhoneNormalizeHints,
+  /** Pass `false` for patient sends when the booking lacks WhatsApp consent
+   *  — the send is skipped (GDPR). Doctor sends omit this entirely. */
+  patientConsent?: boolean,
 ) {
+  if (patientConsent === false) {
+    console.warn(`[automation] patient WhatsApp skipped — no consent (orderId=${orderId})`);
+    await createAutomationRun({
+      automationKey,
+      orderId,
+      channel: "whatsapp",
+      status: "SKIPPED",
+      summary: `${summary} (no WhatsApp consent)`,
+      executedAt: new Date(),
+    });
+    return;
+  }
   if (!to?.trim()) {
     await createAutomationRun({
       automationKey,
@@ -484,6 +499,7 @@ export async function startPrePaymentFlow(
       appendPatientPortalWhatsApp(patientWhatsAppInitial(ctx, lang), portal, lang),
       "Patient WhatsApp — reservation",
       phoneHints,
+      primary.patientWhatsappConsent,
     );
     await sendPatientEmail(
       stageKey,
@@ -524,7 +540,7 @@ async function executeReminderStage(
 
   if (isFinal) {
     const msg = reminderMessage(ctx, lang, "cancelled");
-    await sendWhatsApp(stageKey, orderId, order.phone, msg.whatsapp, "Patient WhatsApp — reservation cancelled", phoneHints);
+    await sendWhatsApp(stageKey, orderId, order.phone, msg.whatsapp, "Patient WhatsApp — reservation cancelled", phoneHints, primary.patientWhatsappConsent);
     await sendPatientEmail(
       stageKey,
       orderId,
@@ -595,6 +611,7 @@ async function executeReminderStage(
     msg.whatsapp,
     `Patient WhatsApp — reminder ${stage}`,
     phoneHints,
+    primary.patientWhatsappConsent,
   );
   await sendPatientEmail(
     stageKey,
@@ -749,6 +766,7 @@ export async function resendPrePaymentInitialNotifications(orderId: string) {
     appendPatientPortalWhatsApp(patientWhatsAppInitial(ctx, lang), portal, lang),
     "Patient WhatsApp — reservation (resend)",
     phoneHints,
+    primary.patientWhatsappConsent,
   );
   await sendPatientEmail(
     `${baseKey}_patient_email`,

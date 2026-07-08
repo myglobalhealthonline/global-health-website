@@ -303,6 +303,7 @@
     "gdprConsent": "Consimțământ partajare date (GDPR)",
     "gdprClinicConsent": "Consimț la partajarea datelor mele personale și medicale cu clinica și medicul tratant în scopul acestei consultații.",
     "gdprPlatformConsent": "Consimț că platforma Global Health prelucrează datele mele pentru îmbunătățirea serviciului, securitate și comunicări de platformă.",
+    "whatsappConsent": "Primiți actualizări și mementouri despre programare prin WhatsApp (opțional)",
     "addingToCart": "Se adaugă în coș…",
     "continueToCart": "Continuă la coș",
     "noOpenSlots": "Nicio disponibilitate în următoarele 14 zile pentru {doctor}.",

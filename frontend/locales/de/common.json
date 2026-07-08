@@ -303,6 +303,7 @@
     "gdprConsent": "Einwilligung zur Datenweitergabe (DSGVO)",
     "gdprClinicConsent": "Ich stimme der Weitergabe meiner persönlichen und medizinischen Daten an die behandelnde Klinik und den Arzt für diese Konsultation zu.",
     "gdprPlatformConsent": "Ich stimme zu, dass die Global Health Plattform meine Daten für Serviceverbesserung, Sicherheit und Plattformkommunikation verarbeitet.",
+    "whatsappConsent": "Terminaktualisierungen und Erinnerungen per WhatsApp erhalten (optional)",
     "addingToCart": "Wird zum Warenkorb hinzugefügt…",
     "continueToCart": "Weiter zum Warenkorb",
     "noOpenSlots": "Keine freien Termine in den nächsten 14 Tagen für {doctor}.",

@@ -31,6 +31,11 @@ export const bookingSchema = z.object({
    */
   gdprConsentClinic: z.boolean().optional(),
   gdprConsentPlatform: z.boolean().optional(),
+  /**
+   * Optional opt-in to appointment updates + reminders via WhatsApp.
+   * Never required — patient WhatsApp sends are skipped when false/absent.
+   */
+  whatsappConsent: z.boolean().optional(),
   // Optional Service catalogue link. When set we resolve the slug to the
   // service row and copy its price/currency onto the appointment so the
   // Stripe Checkout session has everything it needs without a second look-up.

@@ -311,6 +311,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   patientGdprConsentClinic: i.patientGdprConsentClinic,
                   patientGdprConsentPlatform: i.patientGdprConsentPlatform,
                   patientGdprConsentedAt: i.patientGdprConsentedAt,
+                  patientWhatsappConsent: i.patientWhatsappConsent,
                 })),
               },
             },

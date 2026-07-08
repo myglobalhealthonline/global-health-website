@@ -334,6 +334,7 @@ async function fulfillPaidOrderFromCheckoutSession(
           gdprConsentClinic: item.patientGdprConsentClinic,
           gdprConsentPlatform: item.patientGdprConsentPlatform,
           gdprConsentedAt: item.patientGdprConsentedAt,
+          whatsappConsent: item.patientWhatsappConsent,
         },
       });
       await tx.orderItem.update({
