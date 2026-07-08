@@ -79,9 +79,22 @@ function getClient(): S3Client {
         accessKeyId: env.S3_ACCESS_KEY_ID!,
         secretAccessKey: env.S3_SECRET_ACCESS_KEY!,
       },
+      // Fail fast instead of the SDK's default 3-attempt exponential
+      // backoff — a mis-permissioned LIST would otherwise hang the request.
+      maxAttempts: 2,
     });
   }
   return client;
+}
+
+/** Reject after `ms` so a stuck S3 socket can't hang the whole request. */
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms),
+    ),
+  ]);
 }
 
 export async function putObject(key: string, body: Buffer, contentType: string): Promise<void> {
@@ -143,12 +156,16 @@ export async function listObjects(prefix: string): Promise<StoredObject[]> {
     const out: StoredObject[] = [];
     let token: string | undefined;
     do {
-      const res = await getClient().send(
-        new ListObjectsV2Command({
-          Bucket: env.S3_BUCKET!,
-          Prefix: prefix,
-          ContinuationToken: token,
-        }),
+      const res = await withTimeout(
+        getClient().send(
+          new ListObjectsV2Command({
+            Bucket: env.S3_BUCKET!,
+            Prefix: prefix,
+            ContinuationToken: token,
+          }),
+        ),
+        8000,
+        "S3 ListObjectsV2",
       );
       for (const obj of res.Contents ?? []) {
         if (!obj.Key) continue;
