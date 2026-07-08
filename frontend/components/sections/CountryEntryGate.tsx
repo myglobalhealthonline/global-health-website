@@ -61,8 +61,6 @@ export type EntryGateCopy = {
 
 type Props = {
   countries: CountryConfig[];
-  /** Per-country live doctor counts keyed by country code (e.g. "ie"). */
-  countryMeta?: Record<string, { doctors?: number }>;
   /** Browser-detected locale, resolved server-side. */
   detectedLocale: LocaleCode;
   /** Entry-gate copy already translated to `detectedLocale`. */
@@ -120,7 +118,7 @@ function matchNavigatorLocale(): LocaleCode | null {
   return null;
 }
 
-export function CountryEntryGate({ countries, countryMeta, detectedLocale, copy }: Props) {
+export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
   const [countryQuery, setCountryQuery] = useState("");
 
   // Replay the slug registry so client slug helpers resolve admin-added codes.
@@ -302,31 +300,21 @@ export function CountryEntryGate({ countries, countryMeta, detectedLocale, copy 
 
                   <div className={styles.countryScroller}>
                     {filteredCountries.map((c, i) => {
-                      const meta = countryMeta?.[c.code];
                       const flagCls = flagClassForCode(c.code);
-                      const count = meta?.doctors;
                       return (
                         <HeroReveal key={c.code} delay={i * 55 + 340}>
                           <button
                             type="button"
                             onClick={() => enter(c)}
-                            className={`${styles.countryCard} ${styles.countryRow} flex w-full text-left text-white`}
+                            className={`${styles.countryCard} ${styles.countryRow} flex w-full items-center text-left text-white`}
                           >
-                            <div className="flex min-w-0 flex-1 items-center gap-3">
+                            <div className="flex min-w-0 flex-1 items-center gap-2.5">
                               <span className={`${styles.flagWrap} inline-flex items-center justify-center`}>
                                 <span aria-hidden className={`${flagCls} ${styles.flagIcon} inline-block`} />
                               </span>
-                              <div className="min-w-0 flex-1">
-                                <p className={`${styles.countryName} text-white`}>{c.name}</p>
-                                {typeof count === "number" ? (
-                                  <p className={styles.cardMeta}>
-                                    <strong className={styles.cardMetaStrong}>{count}</strong>{" "}
-                                    {count === 1 ? copy.doctor : copy.doctors}
-                                  </p>
-                                ) : null}
-                              </div>
+                              <p className={`${styles.countryName} min-w-0 flex-1 truncate text-white`}>{c.name}</p>
                             </div>
-                            <div className={`${styles.cardFooter} flex items-center justify-between`}>
+                            <div className={`${styles.cardFooter} flex items-center gap-1.5`}>
                               <span className={styles.cardEnter}>
                                 {copy.continueTo.replace("{country}", c.name)}
                               </span>

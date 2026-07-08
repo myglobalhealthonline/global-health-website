@@ -370,10 +370,10 @@
 }
 
 .countryCard {
-  padding: 18px;
+  padding: 10px 14px;
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.13);
-  border-radius: 18px;
+  border-radius: 14px;
   cursor: pointer;
   font-family: inherit;
   transition:
@@ -384,7 +384,7 @@
 
 .countryRow {
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
 .countryCard:hover {
@@ -399,15 +399,15 @@
 }
 
 .flagWrap {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
   background: rgba(255, 255, 255, 0.1);
 }
 
 .flagIcon {
-  width: 28px;
-  height: 20px;
+  width: 20px;
+  height: 14px;
   border-radius: 3px;
   background-size: cover;
   background-position: center;
@@ -416,30 +416,16 @@
 .countryName {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 800;
   letter-spacing: -0.015em;
   line-height: 1.1;
 }
 
 .cardFooter {
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.countryRow .cardFooter {
-  min-width: 116px;
+  min-width: 0;
   padding-top: 0;
   border-top: 0;
-}
-
-.cardMeta {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.cardMetaStrong {
-  font-weight: 700;
 }
 
 .cardEnter {
@@ -570,17 +556,6 @@
 
   .countryScroller {
     max-height: min(330px, 46dvh);
-  }
-
-  .countryRow {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .countryRow .cardFooter {
-    min-width: 0;
-    padding-top: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
 }
 
