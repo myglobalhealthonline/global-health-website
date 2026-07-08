@@ -140,11 +140,71 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
   // ponytail: unpaginated — plans are an admin-configured catalog (a
   // handful of pricing tiers), not a growth table. Paginate if that changes.
   app.get("/api/admin/corporate/plans", async () => {
-    const plans = await prisma.corporatePlan.findMany({
-      include: { benefitRules: true, _count: { select: { companies: true } } },
-      orderBy: { createdAt: "asc" },
+    const [plans, serviceOptions] = await Promise.all([
+      prisma.corporatePlan.findMany({
+        include: {
+          benefitRules: true,
+          includedServices: {
+            include: { service: { select: { id: true, slug: true, name: true, visibility: true } } },
+            orderBy: { createdAt: "asc" },
+          },
+          _count: { select: { companies: true } },
+        },
+        orderBy: { createdAt: "asc" },
+      }),
+      // Assignment picker options — one entry per slug (Service rows are
+      // per-country duplicates of the same catalog slug).
+      prisma.service.findMany({
+        where: { isActive: true },
+        select: { slug: true, name: true, visibility: true },
+        distinct: ["slug"],
+        orderBy: { name: "asc" },
+      }),
+    ]);
+    return okResponse({ plans, serviceOptions });
+  });
+
+  /** Assign (or re-role) an included service on a plan. Picked by slug —
+   *  runtime resolution is slug + company country. */
+  app.post("/api/admin/corporate/plans/:id/services", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    const schema = z.object({
+      serviceSlug: z.string().trim().min(1).max(240),
+      role: z.enum(["INCLUDED", "PRE_ASSESSMENT", "ILLNESS_BENEFIT", "FIT_FOR_WORK"]).default("INCLUDED"),
     });
-    return okResponse({ plans });
+    const parsed = schema.safeParse(request.body);
+    if (!parsed.success) return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
+    const { serviceSlug, role } = parsed.data;
+    const service = await prisma.service.findFirst({
+      where: { slug: serviceSlug, isActive: true },
+      select: { id: true, visibility: true },
+    });
+    if (!service) return reply.status(404).send(errorResponse("Service not found"));
+    // Flow roles depend on the visibility gates the booking pipeline enforces.
+    if (role === "PRE_ASSESSMENT" && service.visibility !== "CORPORATE_ONLY") {
+      return reply.status(400).send(errorResponse("Pre-assessment must use a CORPORATE_ONLY service"));
+    }
+    if ((role === "ILLNESS_BENEFIT" || role === "FIT_FOR_WORK") && service.visibility !== "CORPORATE_REQUEST_ONLY") {
+      return reply.status(400).send(errorResponse("Request services must be CORPORATE_REQUEST_ONLY"));
+    }
+    const row = await prisma.corporatePlanService.upsert({
+      where: { corporatePlanId_serviceId: { corporatePlanId: id, serviceId: service.id } },
+      create: { corporatePlanId: id, serviceId: service.id, role },
+      update: { role },
+    });
+    return okResponse({ id: row.id });
+  });
+
+  app.delete("/api/admin/corporate/plan-services/:id", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    await prisma.corporatePlanService.delete({ where: { id } }).catch(() => undefined);
+    return okResponse({ id });
   });
 
   app.patch("/api/admin/corporate/plans/:id", async (request, reply) => {

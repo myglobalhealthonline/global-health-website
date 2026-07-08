@@ -97,6 +97,18 @@ export function ruleLabel(rule: {
   return `${rule.discountPercent}% off ${target} · ${beneficiaries}`;
 }
 
+/* CorporatePlanServiceRole enum (backend/prisma/schema.prisma). */
+export const PLAN_SERVICE_ROLE_LABELS: Record<string, string> = {
+  INCLUDED: "Included in plan",
+  PRE_ASSESSMENT: "Pre-assessment (onboarding)",
+  ILLNESS_BENEFIT: "Illness benefit request",
+  FIT_FOR_WORK: "Fit-for-work request",
+};
+
+export function planServiceRoleLabel(role: string): string {
+  return PLAN_SERVICE_ROLE_LABELS[role] ?? role;
+}
+
 export const REQUEST_TYPE_LABELS: Record<string, string> = {
   ILLNESS_BENEFIT: "Illness benefit",
   FIT_FOR_WORK: "Fit for work",

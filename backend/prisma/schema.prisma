@@ -841,6 +841,8 @@ model Service {
   /// Corporate benefit rules pinned to this exact service (rare — most
   /// rules match by kind).
   corporateBenefitRules CorporateBenefitRule[]
+  /// Corporate plans that list this service row as an included benefit.
+  corporatePlanServices CorporatePlanService[]
   /// Corporate Illness-Benefit / Fit-for-Work requests that resolved to
   /// this (corporate-request-only) service.
   corporateServiceRequests CorporateServiceRequest[]
@@ -3821,9 +3823,37 @@ model CorporatePlan {
   maxBeneficiariesPerEmployee Int                    @default(5)
   isActive                    Boolean                @default(true)
   benefitRules                CorporateBenefitRule[]
+  includedServices            CorporatePlanService[]
   companies                   CorporateCompany[]
   createdAt                   DateTime               @default(now())
   updatedAt                   DateTime               @updatedAt
+}
+
+/// What a plan-assigned service is FOR. PRE_ASSESSMENT / ILLNESS_BENEFIT /
+/// FIT_FOR_WORK drive the corporate flows (resolved by the assigned
+/// service's SLUG in the company's country, since Service rows are
+/// per-country); INCLUDED is a plain "part of the plan" listing.
+enum CorporatePlanServiceRole {
+  INCLUDED
+  PRE_ASSESSMENT
+  ILLNESS_BENEFIT
+  FIT_FOR_WORK
+}
+
+/// Admin-assigned service included in a corporate plan. The serviceId is a
+/// representative row (any country); runtime resolution goes slug + the
+/// company's countryCode.
+model CorporatePlanService {
+  id              String                   @id @default(cuid())
+  corporatePlanId String
+  corporatePlan   CorporatePlan            @relation(fields: [corporatePlanId], references: [id], onDelete: Cascade)
+  serviceId       String
+  service         Service                  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  role            CorporatePlanServiceRole @default(INCLUDED)
+  createdAt       DateTime                 @default(now())
+
+  @@unique([corporatePlanId, serviceId])
+  @@index([corporatePlanId])
 }
 
 /// Configurable discount rule. Matches by pinned serviceId (takes

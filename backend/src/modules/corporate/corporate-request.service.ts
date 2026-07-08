@@ -1,4 +1,4 @@
-import type { CorporateRequestType } from "@prisma/client";
+import type { CorporatePlanServiceRole, CorporateRequestType } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { sendWhatsAppText } from "../../lib/whatsapp/wasender.js";
 import {
@@ -18,9 +18,29 @@ export const REQUEST_TYPE_SERVICE_SLUG: Record<CorporateRequestType, string> = {
   FIT_FOR_WORK: "corporate-fit-for-work",
 };
 
+/**
+ * Slug of the service the plan assigns to a role (admin-configured on
+ * /admin/corporate), or null when the plan has no assignment — callers
+ * fall back to the seeded REQUEST_TYPE_SERVICE_SLUG defaults.
+ */
+export async function planServiceSlug(
+  corporatePlanId: string,
+  role: CorporatePlanServiceRole,
+): Promise<string | null> {
+  const row = await prisma.corporatePlanService.findFirst({
+    where: { corporatePlanId, role },
+    select: { service: { select: { slug: true } } },
+  });
+  return row?.service.slug ?? null;
+}
+
 /** Booking deep link for the employee (site is /{country}/{lang}/…). */
-export function requestBookPath(countryCode: string, type: CorporateRequestType): string {
-  return `/${countryCode.toLowerCase()}/en/book?service=${REQUEST_TYPE_SERVICE_SLUG[type]}`;
+export function requestBookPath(
+  countryCode: string,
+  type: CorporateRequestType,
+  serviceSlug?: string | null,
+): string {
+  return `/${countryCode.toLowerCase()}/en/book?service=${serviceSlug ?? REQUEST_TYPE_SERVICE_SLUG[type]}`;
 }
 
 export type CreateRequestResult =
@@ -48,9 +68,12 @@ export async function createCorporateRequest(opts: {
     return { ok: false, status: 400, message: "Requests can only be created for invited or active employees" };
   }
 
+  const slug =
+    (await planServiceSlug(employee.company.planId, opts.type)) ??
+    REQUEST_TYPE_SERVICE_SLUG[opts.type];
   const service = await prisma.service.findFirst({
     where: {
-      slug: REQUEST_TYPE_SERVICE_SLUG[opts.type],
+      slug,
       visibility: "CORPORATE_REQUEST_ONLY",
       isActive: true,
       country: { code: employee.company.countryCode },
@@ -91,7 +114,7 @@ export async function createCorporateRequest(opts: {
 
   // Notify the employee. Email success flips the status to
   // EMPLOYEE_NOTIFIED; failures leave it at REQUESTED for a later resend.
-  const bookPath = requestBookPath(employee.company.countryCode, opts.type);
+  const bookPath = requestBookPath(employee.company.countryCode, opts.type, slug);
   let notified = false;
   try {
     const result = await sendCorporateRequestEmail({

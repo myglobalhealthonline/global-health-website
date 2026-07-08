@@ -3,10 +3,13 @@ import { redirect } from "next/navigation";
 import { Building2, Plus } from "lucide-react";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import {
+  deleteCorporatePlanService,
   fetchCorporateCompanies,
   fetchCorporatePlans,
   patchCorporatePlan,
   patchCorporateRule,
+  postCorporatePlanService,
+  type CorporatePlanServiceRole,
 } from "@/lib/admin/admin-api/corporate";
 import {
   AdminCard,
@@ -21,7 +24,14 @@ import {
   Thead,
   Tr,
 } from "../_components/atoms";
-import { companyStatusLabel, companyStatusTone, formatCents, ruleLabel } from "./_lib";
+import {
+  PLAN_SERVICE_ROLE_LABELS,
+  companyStatusLabel,
+  companyStatusTone,
+  formatCents,
+  planServiceRoleLabel,
+  ruleLabel,
+} from "./_lib";
 
 export const dynamic = "force-dynamic";
 
@@ -68,6 +78,32 @@ async function updateRuleAction(formData: FormData) {
   }
   revalidatePath("/admin/corporate");
   redirect(`/admin/corporate?success=${encodeURIComponent("Benefit rule updated")}`);
+}
+
+async function addPlanServiceAction(formData: FormData) {
+  "use server";
+  await requireAdminAction();
+  const planId = String(formData.get("planId") ?? "").trim();
+  const serviceSlug = String(formData.get("serviceSlug") ?? "").trim();
+  const role = String(formData.get("role") ?? "INCLUDED") as CorporatePlanServiceRole;
+  if (!planId || !serviceSlug) {
+    redirect(`/admin/corporate?error=${encodeURIComponent("Pick a service to add")}`);
+  }
+  const result = await postCorporatePlanService(planId, { serviceSlug, role });
+  if (!result.ok) {
+    redirect(`/admin/corporate?error=${encodeURIComponent(result.message)}`);
+  }
+  revalidatePath("/admin/corporate");
+  redirect(`/admin/corporate?success=${encodeURIComponent("Service added to plan")}`);
+}
+
+async function removePlanServiceAction(formData: FormData) {
+  "use server";
+  await requireAdminAction();
+  const id = String(formData.get("planServiceId") ?? "").trim();
+  if (id) await deleteCorporatePlanService(id);
+  revalidatePath("/admin/corporate");
+  redirect(`/admin/corporate?success=${encodeURIComponent("Service removed from plan")}`);
 }
 
 export default async function AdminCorporatePage({ searchParams }: PageProps) {
@@ -165,6 +201,62 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
                   Currently {formatCents(plan.annualPricePerEmployeeCents, plan.currencyCode)} per
                   employee per year
                 </span>
+              </form>
+            </div>
+            <div className="border-t border-[var(--color-border)] px-5 py-4">
+              <p className="gh-field-label mb-3">Included services</p>
+              {plan.includedServices.length === 0 ? (
+                <p className="mb-3 text-sm text-[var(--color-text-muted)]">
+                  No services assigned yet — add the consultations this plan includes.
+                </p>
+              ) : (
+                <ul className="m-0 mb-4 flex list-none flex-col gap-2 p-0">
+                  {plan.includedServices.map((ps) => (
+                    <li key={ps.id} className="flex flex-wrap items-center gap-3">
+                      <span className="min-w-[18rem] text-sm font-semibold text-[var(--color-text-primary)]">
+                        {ps.service.name}
+                      </span>
+                      <Pill tone={ps.role === "INCLUDED" ? "neutral" : "info"}>
+                        {planServiceRoleLabel(ps.role)}
+                      </Pill>
+                      <form action={removePlanServiceAction}>
+                        <input type="hidden" name="planServiceId" value={ps.id} />
+                        <Btn type="submit" variant="ghost" size="sm">
+                          Remove
+                        </Btn>
+                      </form>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <form action={addPlanServiceAction} className="flex flex-wrap items-end gap-3">
+                <input type="hidden" name="planId" value={plan.id} />
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">Service</span>
+                  <select name="serviceSlug" className="gh-select w-72" required defaultValue="">
+                    <option value="" disabled>
+                      Choose a service…
+                    </option>
+                    {plansResult.data.serviceOptions.map((opt) => (
+                      <option key={opt.slug} value={opt.slug}>
+                        {opt.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">Role</span>
+                  <select name="role" className="gh-select w-56" defaultValue="INCLUDED">
+                    {Object.entries(PLAN_SERVICE_ROLE_LABELS).map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <Btn type="submit" variant="secondary" size="sm">
+                  Add service
+                </Btn>
               </form>
             </div>
             <div className="border-t border-[var(--color-border)] px-5 py-4">

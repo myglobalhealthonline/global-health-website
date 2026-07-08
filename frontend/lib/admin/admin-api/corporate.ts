@@ -39,6 +39,24 @@ export type CorporateBenefitRuleDto = {
   isActive: boolean;
 };
 
+export type CorporatePlanServiceRole =
+  | "INCLUDED"
+  | "PRE_ASSESSMENT"
+  | "ILLNESS_BENEFIT"
+  | "FIT_FOR_WORK";
+
+export type CorporatePlanServiceDto = {
+  id: string;
+  role: CorporatePlanServiceRole;
+  service: { id: string; slug: string; name: string; visibility: string };
+};
+
+export type CorporateServiceOptionDto = {
+  slug: string;
+  name: string;
+  visibility: string;
+};
+
 export type CorporatePlanDto = {
   id: string;
   slug: string;
@@ -48,6 +66,7 @@ export type CorporatePlanDto = {
   maxBeneficiariesPerEmployee: number;
   isActive: boolean;
   benefitRules: CorporateBenefitRuleDto[];
+  includedServices: CorporatePlanServiceDto[];
   _count: { companies: number };
 };
 
@@ -146,8 +165,27 @@ export type CorporateRequestDto = {
 // ── Plans + rules ────────────────────────────────────────────────────────────
 
 export const fetchCorporatePlans = cache(async () => {
-  return adminRequest<{ plans: CorporatePlanDto[] }>("/api/admin/corporate/plans");
+  return adminRequest<{
+    plans: CorporatePlanDto[];
+    serviceOptions: CorporateServiceOptionDto[];
+  }>("/api/admin/corporate/plans");
 });
+
+export async function postCorporatePlanService(
+  planId: string,
+  body: { serviceSlug: string; role: CorporatePlanServiceRole },
+) {
+  return adminRequest<{ id: string }>(`/api/admin/corporate/plans/${planId}/services`, {
+    method: "POST",
+    body,
+  });
+}
+
+export async function deleteCorporatePlanService(id: string) {
+  return adminRequest<{ id: string }>(`/api/admin/corporate/plan-services/${id}`, {
+    method: "DELETE",
+  });
+}
 
 export async function patchCorporatePlan(
   id: string,

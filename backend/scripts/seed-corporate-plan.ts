@@ -216,6 +216,26 @@ async function main() {
     }
     console.log(`services ok: ${country.code} (${country.name})`);
   }
+
+  // Link the three services to the plan (CorporatePlanService — powers the
+  // admin "Included services" list and the flow-role slug resolution).
+  const ROLE_BY_SLUG = {
+    "corporate-pre-assessment": "PRE_ASSESSMENT",
+    "corporate-illness-benefit": "ILLNESS_BENEFIT",
+    "corporate-fit-for-work": "FIT_FOR_WORK",
+  } as const;
+  for (const [slug, role] of Object.entries(ROLE_BY_SLUG)) {
+    const service = await prisma.service.findFirst({ where: { slug }, select: { id: true } });
+    if (!service) continue;
+    await prisma.corporatePlanService.upsert({
+      where: {
+        corporatePlanId_serviceId: { corporatePlanId: plan.id, serviceId: service.id },
+      },
+      create: { corporatePlanId: plan.id, serviceId: service.id, role },
+      update: {}, // never overwrite an admin-changed role
+    });
+    console.log(`plan service ok: ${slug} → ${role}`);
+  }
 }
 
 main()

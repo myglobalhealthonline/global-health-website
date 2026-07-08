@@ -16,6 +16,7 @@ import {
 import { mintAndSendInvite } from "../modules/corporate/corporate-invite.service.js";
 import {
   REQUEST_TYPE_LABEL,
+  planServiceSlug,
   requestBookPath,
 } from "../modules/corporate/corporate-request.service.js";
 
@@ -31,21 +32,26 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
     const employee = await getEmployeeMembershipForUser(userId);
 
     if (employee) {
-      const [card, openRequests, preAssessmentService] = await Promise.all([
+      const [card, openRequests, assignedPreAssessmentSlug] = await Promise.all([
         prisma.corporateBenefitCard.findUnique({ where: { employeeId: employee.id } }),
         prisma.corporateServiceRequest.findMany({
           where: { employeeId: employee.id, status: { in: ["REQUESTED", "EMPLOYEE_NOTIFIED", "BOOKED"] } },
           orderBy: { createdAt: "desc" },
+          include: { service: { select: { slug: true } } },
         }),
-        prisma.service.findFirst({
-          where: {
-            visibility: "CORPORATE_ONLY",
-            isActive: true,
-            country: { code: employee.company.countryCode },
-          },
-          select: { slug: true },
-        }),
+        planServiceSlug(employee.company.planId, "PRE_ASSESSMENT"),
       ]);
+      // Plan-assigned pre-assessment service first; fall back to any
+      // CORPORATE_ONLY service in the company's country (pre-assignment data).
+      const preAssessmentService = await prisma.service.findFirst({
+        where: {
+          ...(assignedPreAssessmentSlug ? { slug: assignedPreAssessmentSlug } : {}),
+          visibility: "CORPORATE_ONLY",
+          isActive: true,
+          country: { code: employee.company.countryCode },
+        },
+        select: { slug: true },
+      });
       const profileComplete = isEmployeeProfileComplete(employee);
       const bookPath = preAssessmentService
         ? `/${employee.company.countryCode.toLowerCase()}/en/book?service=${preAssessmentService.slug}${
@@ -77,7 +83,7 @@ const meCorporateRoute: FastifyPluginAsync = async (app) => {
           type: r.type,
           label: REQUEST_TYPE_LABEL[r.type],
           status: r.status,
-          bookPath: requestBookPath(employee.company.countryCode, r.type),
+          bookPath: requestBookPath(employee.company.countryCode, r.type, r.service.slug),
           createdAt: r.createdAt.toISOString(),
         })),
       });
