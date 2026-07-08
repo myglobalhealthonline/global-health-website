@@ -47,6 +47,7 @@
     "vitest": "^4.1.6"
   },
   "pnpm": {
+    "//": "S-004: this service deploys standalone with --ignore-workspace and does NOT inherit the root package.json overrides. Mirror every security pin here by hand — when the root adds/bumps a CVE pin, add it here too or this build ships unpatched. Prefer major-scoped keys (e.g. ws@7) so a floor never becomes a ceiling.",
     "overrides": {
       "sanitize-html": "^2.17.4",
       "postcss": "8.5.10",
