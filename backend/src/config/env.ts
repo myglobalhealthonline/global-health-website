@@ -175,6 +175,15 @@ const envSchema = z.object({
     .union([z.literal("true"), z.literal("false"), z.boolean()])
     .optional(),
 
+  /** Break-glass switch for plain ADMIN PHI access. Default FALSE — plain ADMIN
+   *  keeps unconditional access (today's behaviour). When "true", a plain ADMIN
+   *  must supply a break-glass reason (ctx.reason) to read a medical record; a
+   *  reasonless attempt is denied + logged. SUPER_ADMIN is always unconditional.
+   *  See lib/medical-access-guard.ts. */
+  ADMIN_PHI_REQUIRE_REASON: z
+    .union([z.literal("true"), z.literal("false"), z.boolean()])
+    .optional(),
+
   /** Full WaSender send-message URL (e.g. https://wasenderapi.com/api/send-message). */
   WA_API_URL: z.string().trim().url().optional(),
   /** Authorization header value — `Bearer <token>` or raw token. */
@@ -245,6 +254,11 @@ const require2faForRoles = new Set(
 // Default OFF (shadow mode). Must be explicitly opted into with "true".
 const medicalAccessEnforce =
   parsed.MEDICAL_ACCESS_ENFORCE === true || parsed.MEDICAL_ACCESS_ENFORCE === "true";
+
+// Default OFF — plain ADMIN keeps unconditional PHI access. When "true", the
+// medical-access guard requires a break-glass reason on the plain-ADMIN branch.
+const adminPhiRequireReason =
+  parsed.ADMIN_PHI_REQUIRE_REASON === true || parsed.ADMIN_PHI_REQUIRE_REASON === "true";
 
 // Hard-fail in production if the medical-access guard is still in shadow
 // mode. Shadow mode logs would-be denials but still serves PHI to the
@@ -318,5 +332,6 @@ export const env = {
   ...parsed,
   ADMIN_TOKEN_FALLBACK_ENABLED: adminTokenFallbackEnabled,
   MEDICAL_ACCESS_ENFORCE: medicalAccessEnforce,
+  ADMIN_PHI_REQUIRE_REASON: adminPhiRequireReason,
   REQUIRE_2FA_FOR_ROLES: require2faForRoles,
 };

@@ -157,7 +157,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 
 ## Detailed Findings
 
-### Finding P-001: Full 6-language i18n bundle (~537 KB JSON) shipped to the client on cart & checkout
+### ✅ ~~Finding P-001: Full 6-language i18n bundle (~537 KB JSON) shipped to the client on cart & checkout~~ — DONE 2026-07-08 (server pages compute slices → client children get props; `loadLocaleBundle` now server-only; build-verified locale JSON gone from cart/checkout/verify chunks. Follow-up: same pattern remains in 5 `account/*` client components.)
 - **Severity:** High
 - **Category:** frontend / bundle
 - **Affected files:** `frontend/lib/i18n/load-locale.ts:4-83` (static `import` of every namespace × every locale — 60+ JSON files, all referenced by `loadLocaleBundle` so none can tree-shake); client importers `frontend/components/cart/PlanCoverage.tsx:9,40`, `frontend/app/(site)/[country]/[lang]/cart/page.tsx:33,137`, `frontend/app/(site)/[country]/[lang]/checkout/page.tsx:30,104`, `frontend/app/(auth)/(public)/verify-email/page.tsx:8`, `frontend/app/(auth)/(public)/reset-password/page.tsx:7`
@@ -168,7 +168,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** High
 - **Priority:** P1
 
-### 🟡 Finding P-002: Headless Chromium (Playwright) PDF rendering runs synchronously in the request path — PARTIAL (networkidle→load + self-heal DONE; off-request-path queue deferred)
+### ✅ ~~Finding P-002: Headless Chromium (Playwright) PDF rendering runs synchronously in the request path~~ — DONE 2026-07-08 (networkidle→load + browser self-heal + invoice generation now fire-and-forget off the payment path, verified nothing reads the invoice synchronously. A dedicated durable job queue remains an optional future upgrade.)
 - **Severity:** High
 - **Category:** backend
 - **Affected files:** `backend/src/modules/generated-documents/html-document-renderer.ts:64-91` (`getBrowser` + `htmlToPdfBuffer`), `backend/src/modules/generated-documents/generated-documents.service.ts:425`, `backend/src/modules/invoices/invoice-pdf.ts:306`, `backend/src/modules/orders/complete-order-payment.service.ts:501-505` (invoice generation `await`ed during payment completion)
@@ -201,7 +201,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** Medium-High
 - **Priority:** P2
 
-### 🟡 Finding P-005: Per-doctor availability reads write to the DB on every GET — PARTIAL 2026-07-08 (redundant `createMany` now guarded by a count check — behavior-preserving; per-doctor TTL cache still open, needs load verify)
+### ✅ ~~Finding P-005: Per-doctor availability reads write to the DB on every GET~~ — DONE 2026-07-08 (redundant `createMany` guarded by a count check + a 45s Map TTL cache on both per-doctor read paths, mirroring the aggregated path; stale reads safe via the atomic slot-claim UPDATE)
 - **Severity:** Medium
 - **Category:** database
 - **Affected files:** `backend/src/modules/doctor-availability/doctor-availability.service.ts:241-266` (`listOpenSlotsForDoctor`), `:431-495` (`listOpenSlotsForDoctorAndService`), `:144-233` (`ensureSlotsForRange`), `:704-721` (`releaseExpiredHeldSlots`)
@@ -300,7 +300,7 @@ Detailed in **P-010, P-013, P-014**, plus config cleanup. Backend image carries 
 - **Expected impact:** Medium (−150–300 MB image, faster builds/cold starts)
 - **Priority:** P3
 
-### Finding P-014: `prisma migrate deploy` runs on every backend boot with no separate gate
+### ✅ ~~Finding P-014: `prisma migrate deploy` runs on every backend boot with no separate gate~~ — DONE 2026-07-08 (moved to Railway `deploy.preDeployCommand`; `startCommand`/`start` now just `node dist/server.js` — a bad migration fails the deploy without crash-looping the running version)
 - **Severity:** Low-Medium
 - **Category:** deployment
 - **Affected files:** `backend/railway.json` (`startCommand`), `backend/package.json:12` (`start`)

@@ -489,13 +489,15 @@ export async function ensureOrderPaidAutomations(
 ) {
   await stopPrePaymentFlowOnPaid(orderId).catch(() => undefined);
 
-  // Generate invoice (skips Portugal automatically; idempotent).
-  try {
-    const { generateInvoiceForOrder } = await import("../invoices/generate-invoice.service.js");
-    await generateInvoiceForOrder(orderId, log);
-  } catch (invoiceErr) {
-    log.warn({ err: invoiceErr, orderId }, "Invoice generation failed — order still paid");
-  }
+  // Generate invoice (skips Portugal automatically; idempotent). Fire-and-forget
+  // (P-002): nothing downstream in this flow reads the invoice, and the invoice
+  // email is sent inside generateInvoiceForOrder itself — so blocking the payment
+  // path on it is unnecessary. Failures are logged and never reject the caller.
+  void import("../invoices/generate-invoice.service.js")
+    .then(({ generateInvoiceForOrder }) => generateInvoiceForOrder(orderId, log))
+    .catch((invoiceErr) => {
+      log.warn({ err: invoiceErr, orderId }, "Invoice generation failed — order still paid");
+    });
 
   const paidOrder = await prisma.order.findUnique({
     where: { id: orderId },

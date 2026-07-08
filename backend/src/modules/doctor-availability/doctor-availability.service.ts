@@ -249,11 +249,38 @@ export type PublicSlot = {
   endAt: string;
 };
 
+/**
+ * Short in-memory TTL cache for the per-doctor slot reads — same rationale +
+ * TTL as the aggregated service-availability cache. Materialising N days of
+ * slots per doctor is the expensive part; repeat reads while a patient
+ * navigates the flow (and the aggregated path's fan-out) are served from
+ * memory. Reads only — writes (claim/hold/block) are never cached. Stale reads
+ * are safe: slot claim is an atomic race-safe UPDATE, so a shown-but-taken
+ * slot simply fails to claim. The range is bucketed to the TTL so callers
+ * passing a fresh `new Date()` each call still hit within the window.
+ */
+const SLOT_CACHE_TTL_MS = 45_000;
+type SlotCacheEntry = { expires: number; value: PublicSlot[] };
+const slotCache = new Map<string, SlotCacheEntry>();
+
+function slotCacheKey(
+  doctorId: string,
+  serviceDurationMinutes: number | null,
+  fromUtc: Date,
+  toUtc: Date,
+): string {
+  const bucket = (d: Date) => Math.floor(d.getTime() / SLOT_CACHE_TTL_MS);
+  return `${doctorId}:${serviceDurationMinutes ?? "base"}:${bucket(fromUtc)}:${bucket(toUtc)}`;
+}
+
 export async function listOpenSlotsForDoctor(
   doctorId: string,
   fromUtc: Date,
   toUtc: Date,
 ): Promise<PublicSlot[]> {
+  const cacheKey = slotCacheKey(doctorId, null, fromUtc, toUtc);
+  const cached = slotCache.get(cacheKey);
+  if (cached && cached.expires > Date.now()) return cached.value;
   try {
     await releaseExpiredHeldSlots(doctorId);
     await ensureSlotsForRange(doctorId, fromUtc, toUtc);
@@ -266,11 +293,13 @@ export async function listOpenSlotsForDoctor(
       orderBy: { startAt: "asc" },
       select: { id: true, startAt: true, endAt: true },
     });
-    return rows.map((r) => ({
+    const result = rows.map((r) => ({
       id: r.id,
       startAt: r.startAt.toISOString(),
       endAt: r.endAt.toISOString(),
     }));
+    slotCache.set(cacheKey, { expires: Date.now() + SLOT_CACHE_TTL_MS, value: result });
+    return result;
   } catch (error) {
     throw normalizeDbError(error, "Doctor availability is unavailable");
   }
@@ -445,6 +474,9 @@ export async function listOpenSlotsForDoctorAndService(
   fromUtc: Date,
   toUtc: Date,
 ): Promise<PublicSlot[]> {
+  const cacheKey = slotCacheKey(doctorId, serviceDurationMinutes, fromUtc, toUtc);
+  const cached = slotCache.get(cacheKey);
+  if (cached && cached.expires > Date.now()) return cached.value;
   try {
     await releaseExpiredHeldSlots(doctorId);
     await ensureSlotsForRange(doctorId, fromUtc, toUtc);
@@ -460,13 +492,15 @@ export async function listOpenSlotsForDoctorAndService(
     const durMs = (serviceDurationMinutes ?? 0) * 60_000;
     // No service duration → every OPEN base slot is a candidate as-is.
     if (durMs <= 0) {
-      return rows
+      const base = rows
         .filter((r) => r.status === "OPEN")
         .map((r) => ({
           id: r.id,
           startAt: r.startAt.toISOString(),
           endAt: r.endAt.toISOString(),
         }));
+      slotCache.set(cacheKey, { expires: Date.now() + SLOT_CACHE_TTL_MS, value: base });
+      return base;
     }
 
     // Sliding window: from each OPEN slot, greedily extend across contiguous
@@ -499,6 +533,7 @@ export async function listOpenSlotsForDoctorAndService(
         });
       }
     }
+    slotCache.set(cacheKey, { expires: Date.now() + SLOT_CACHE_TTL_MS, value: out });
     return out;
   } catch (error) {
     throw normalizeDbError(error, "Doctor availability is unavailable");

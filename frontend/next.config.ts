@@ -40,14 +40,15 @@ function mediaRemotePatterns(): NonNullable<NonNullable<NextConfig["images"]>["r
 const remotePatterns = mediaRemotePatterns();
 const apiOrigin = process.env.NEXT_PUBLIC_API_URL?.trim().replace(/\/+$/, "");
 
-// Baseline security headers applied to every response. A full script-src
-// CSP is intentionally NOT set here — Next.js injects inline bootstrap
-// scripts and the CMS renders inline <style>, so a strict policy would need
-// per-request nonces to avoid breaking the app. We ship the high-value,
-// no-breakage headers now: clickjacking protection (frame-ancestors +
-// X-Frame-Options), MIME sniffing off, HSTS, a tight referrer policy, and
-// a locked-down Permissions-Policy. A nonce-based script-src CSP is a
-// follow-up.
+// Baseline security headers applied to every response. The
+// Content-Security-Policy is intentionally NOT set here — it is emitted
+// per-request by the edge proxy (`proxy.ts`) so it can carry a nonce-based
+// script-src on the dynamically-rendered authenticated portals while keeping
+// the baseline (no-script-src) policy on the statically-generated public site.
+// Setting a CSP here too would emit a duplicate header. We ship the remaining
+// high-value, no-breakage headers: clickjacking protection (X-Frame-Options;
+// frame-ancestors lives in the proxy CSP), MIME sniffing off, HSTS, a tight
+// referrer policy, and a locked-down Permissions-Policy.
 const SECURITY_HEADERS = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
@@ -59,10 +60,6 @@ const SECURITY_HEADERS = [
   {
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
-  },
-  {
-    key: "Content-Security-Policy",
-    value: "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
   },
 ];
 

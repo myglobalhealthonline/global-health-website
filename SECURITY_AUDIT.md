@@ -155,7 +155,7 @@ function neutralizeFormula(s: string): string {
 - **Production urgency:** Not blocking (needs an admin to open the file), but ship in the next hardening pass — it’s a two-line fix.
 - **Priority:** P1 (highest of the residual set)
 
-### Finding S-002: `assertMedicalAccess` grants routine ADMIN unconditional global PHI access
+### 🟡 Finding S-002: `assertMedicalAccess` grants routine ADMIN unconditional global PHI access — MECHANISM SHIPPED 2026-07-08 (`ADMIN_PHI_REQUIRE_REASON` env flag, default **off** = byte-identical to today; when on, plain ADMIN needs a break-glass `reason`, SUPER_ADMIN stays unconditional). Owner decides whether to enable — the policy call itself is still yours.
 - **Severity:** Medium (policy / informational)
 - **Category:** authorization
 - **Affected files:** `backend/src/lib/medical-access-guard.ts:329-334`
@@ -260,7 +260,7 @@ const decoded = jwt.verify(token, env.AUTH_JWT_SECRET, {
 - **Production urgency:** Low
 - **Priority:** P4
 
-### Finding S-CSP: Frontend Content-Security-Policy lacks `script-src` (documented tradeoff)
+### 🟡 Finding S-CSP: Frontend Content-Security-Policy lacks `script-src` (documented tradeoff) — MECHANISM SHIPPED 2026-07-08 (nonce `script-src` implemented in `proxy.ts`, scoped to the always-dynamic auth portals; public site keeps the baseline CSP since it's statically generated. Behind `ENABLE_NONCE_CSP`, default **off** — verified public CSP unchanged via curl; enable after one logged-in portal hydration check in a production build.)
 - **Severity:** Low (hardening)
 - **Category:** headers
 - **Affected files:** `frontend/next.config.ts:51-67`

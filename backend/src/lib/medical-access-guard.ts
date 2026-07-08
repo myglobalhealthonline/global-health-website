@@ -327,6 +327,16 @@ export async function assertMedicalAccess(
   // 1. SUPER_ADMIN / ADMIN (global scope) — unconditional allow
   // ------------------------------------------------------------------
   if (actor.role === "SUPER_ADMIN" || actor.role === "ADMIN") {
+    // S-002: optional break-glass reason for PLAIN ADMIN. Default OFF — when
+    // env.ADMIN_PHI_REQUIRE_REASON is on, a plain ADMIN must supply ctx.reason
+    // to read a record; a reasonless attempt is denied + logged. SUPER_ADMIN is
+    // always unconditional. When the flag is off this branch is byte-identical
+    // to the previous behaviour.
+    if (actor.role === "ADMIN" && env.ADMIN_PHI_REQUIRE_REASON && !ctx.reason?.trim()) {
+      result = { allowed: false, denyReason: "ADMIN_BREAK_GLASS_REASON_REQUIRED" };
+      await writeMedicalAccessLog(ctx, result, false);
+      return denyDecision(result);
+    }
     result = { allowed: true, consentLevelUsed: "ADMIN_OVERRIDE" };
     isAbnormal = detectAbnormal(ctx, result);
     await writeMedicalAccessLog(ctx, result, isAbnormal);

@@ -507,6 +507,7 @@ model Doctor {
   updatedAt                   DateTime              @updatedAt
 
   @@unique([countryId, slug])
+  @@index([slug])
 }
 
 /// Doctor payout bank details. The doctor enters these in their own portal
@@ -1509,6 +1510,7 @@ model Appointment {
   @@index([userId])
   @@index([email])
   @@index([doctorId])
+  @@index([doctorId, email])
   @@index([status, createdAt])
   @@index([doctorId, scheduledAt])
   @@index([countryCode, status, createdAt])

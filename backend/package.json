@@ -9,7 +9,7 @@
         "dev": "node --watch --import tsx src/server.ts",
         "postinstall": "prisma generate && node scripts/sync-docx-templates.mjs && node scripts/sync-alex-brush-font.mjs",
         "build": "tsc",
-        "start": "prisma migrate deploy && node dist/server.js",
+        "start": "node dist/server.js",
         "typecheck": "tsc --noEmit",
         "lint": "eslint src --ext .ts",
         "test": "node --import tsx --import ./src/test-guard.ts --test \"src/**/*.test.ts\"",
@@ -64,6 +64,7 @@
         "typescript-eslint": "^8"
     },
     "pnpm": {
+        "//": "S-004: this service deploys standalone with --ignore-workspace and does NOT inherit the root package.json overrides. Mirror every security pin here by hand — when the root adds/bumps a CVE pin, add it here too or this build ships unpatched. Prefer major-scoped keys (e.g. ws@7) so a floor never becomes a ceiling.",
         "overrides": {
             "sanitize-html": "^2.17.4",
             "hono": "4.12.25",

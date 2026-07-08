@@ -6,8 +6,11 @@ import { Award, LogIn, Sparkles } from "lucide-react";
 import { getCartPreview, type CartCoverageView } from "@/lib/api/me-subscription";
 import { formatPrice } from "@/lib/format-currency";
 import { interpolate } from "@/lib/subscription/format";
-import { loadLocaleBundle } from "@/lib/i18n/load-locale";
-import type { LocaleCode } from "@/lib/i18n/types";
+
+/** The `subscription.coverage` locale slice, resolved server-side and passed
+ *  in as a prop so this client component no longer imports the all-locale
+ *  bundle (P-001). Type-only `import()` — erased at build, ships nothing. */
+export type PlanCoverageStrings = (typeof import("@/locales/en/subscription.json"))["coverage"];
 
 type CoverageState =
   | { kind: "loading" }
@@ -23,13 +26,13 @@ type CoverageState =
  * "subscribe & save" upsell. Nothing is reserved here.
  */
 export function PlanCoverage({
-  lang,
+  t,
   loginHref,
   plansHref,
   itemNames,
   refreshKey,
 }: {
-  lang: string;
+  t: PlanCoverageStrings;
   loginHref: string;
   plansHref: string;
   itemNames: Record<string, string>;
@@ -37,7 +40,6 @@ export function PlanCoverage({
    *  benefit selection) so the savings + per-line state stay in sync. */
   refreshKey?: number;
 }) {
-  const t = loadLocaleBundle((lang || "en") as LocaleCode).subscription.coverage;
   const [state, setState] = useState<CoverageState>({ kind: "loading" });
 
   useEffect(() => {
