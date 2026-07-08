@@ -140,26 +140,26 @@ export default async function DoctorReportsPage({
           <div className="gh-doctor-report-tile-grid mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <Tile
               label="Appointments"
-              value={String(result.data.appointments.total)}
+              value={String(result.data.appointments?.total ?? 0)}
             />
             <Tile
               label="Signed consults"
-              value={String(result.data.signedConsults)}
+              value={String(result.data.signedConsults ?? 0)}
             />
             <Tile
               label="Follow-ups"
-              value={String(result.data.followUps)}
+              value={String(result.data.followUps ?? 0)}
             />
             <Tile
               label="Distinct patients"
-              value={String(result.data.distinctPatients)}
+              value={String(result.data.distinctPatients ?? 0)}
             />
             <Tile
               label="Revenue (paid)"
               value={
-                Object.keys(result.data.revenueByCurrency).length === 0
+                Object.keys(result.data.revenueByCurrency ?? {}).length === 0
                   ? "—"
-                  : Object.entries(result.data.revenueByCurrency)
+                  : Object.entries(result.data.revenueByCurrency ?? {})
                       .map(([code, cents]) => fmtCurrency(cents, code))
                       .join(" + ")
               }
@@ -173,7 +173,7 @@ export default async function DoctorReportsPage({
                 description="Consultation lifecycle mix in the selected date range."
               />
               <BreakdownTable
-                rows={result.data.appointments.byStatus.map((r) => ({
+                rows={(result.data.appointments?.byStatus ?? []).map((r) => ({
                   label: r.status,
                   count: r.count,
                 }))}
@@ -185,7 +185,7 @@ export default async function DoctorReportsPage({
                 description="Clinical workload split by appointment category."
               />
               <BreakdownTable
-                rows={result.data.appointments.byConsultationType.map((r) => ({
+                rows={(result.data.appointments?.byConsultationType ?? []).map((r) => ({
                   label: r.consultationType,
                   count: r.count,
                 }))}
