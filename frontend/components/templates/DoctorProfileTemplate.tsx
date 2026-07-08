@@ -89,14 +89,8 @@ export function DoctorProfileTemplate({
       >
         <div className="grid h-full lg:grid-cols-2">
 
-          {/* ── LEFT — full-bleed doctor portrait ── */}
-          {/* min-h floor is load-bearing below lg: the grid is single-column
-              there (no lg:grid-cols-2), so this row auto-sizes to content —
-              and its only children are absolutely-positioned, contributing
-              zero intrinsic height, so a bare h-full collapses to 0px and
-              the fill Image renders nothing. lg:h-full takes back over once
-              the real 2-column split gives this cell the section's height. */}
-          <div className="relative h-full min-h-[clamp(300px,60vw,560px)] overflow-hidden">
+          {/* ── LEFT — full-bleed doctor portrait (desktop only) ── */}
+          <div className="relative hidden h-full overflow-hidden lg:block">
             {/* Oversized "Doctor" watermark behind portrait */}
             <div
               aria-hidden
@@ -154,24 +148,6 @@ export function DoctorProfileTemplate({
               aria-hidden
               className="gh-inline-doctor-bleed pointer-events-none absolute inset-y-0 right-0 hidden lg:block"
             />
-
-            {/* Mobile name overlay */}
-            {profileImageSrc ? (
-              <div
-                className="gh-inline-mobile-name absolute inset-x-0 bottom-0 px-6 pb-6 lg:hidden"
-              >
-                <p
-                  className="text-[12px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]"
-                >
-                  {profile.title}
-                </p>
-                <p
-                  className="mt-1 text-[1.35rem] font-extrabold tracking-[-0.02em] text-white/95"
-                >
-                  {profile.name}
-                </p>
-              </div>
-            ) : null}
           </div>
 
           {/* ── RIGHT — profile content ── */}

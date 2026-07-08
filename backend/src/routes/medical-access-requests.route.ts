@@ -37,11 +37,15 @@ const medicalAccessRequestsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid payload", body.error.flatten()));
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- no DoctorProfile delegate on typed client (pre-existing latent bug)
-      const doctorProfile = await (prisma as any).doctorProfile.findUnique({
-        where: { userId: request.authUser.sub },
-        select: { id: true, countryCode: true },
+      const user = await prisma.user.findUnique({
+        where: { id: request.authUser.sub },
+        select: {
+          doctorProfile: {
+            select: { id: true, country: { select: { code: true } } },
+          },
+        },
       });
+      const doctorProfile = user?.doctorProfile;
       if (!doctorProfile) {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
@@ -50,7 +54,7 @@ const medicalAccessRequestsRoute: FastifyPluginAsync = async (app) => {
         const result = await createAccessRequest({
           requestingDoctorId: doctorProfile.id,
           requestingUserId: request.authUser.sub,
-          requestingDoctorCountry: doctorProfile.countryCode ?? "UNKNOWN",
+          requestingDoctorCountry: doctorProfile.country?.code ?? "UNKNOWN",
           requestedAccessScope: "GLOBAL_NETWORK",
           patientProfileId: body.data.patientProfileId,
           reason: body.data.reason,
@@ -97,11 +101,11 @@ const medicalAccessRequestsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(403).send(errorResponse("Doctor access required"));
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- no DoctorProfile delegate on typed client (pre-existing latent bug)
-      const doctorProfile = await (prisma as any).doctorProfile.findUnique({
-        where: { userId: request.authUser.sub },
-        select: { id: true },
+      const user = await prisma.user.findUnique({
+        where: { id: request.authUser.sub },
+        select: { doctorProfile: { select: { id: true } } },
       });
+      const doctorProfile = user?.doctorProfile;
       if (!doctorProfile) {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
