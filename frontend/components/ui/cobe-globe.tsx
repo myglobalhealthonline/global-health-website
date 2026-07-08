@@ -95,10 +95,6 @@ function GlobeBase({
   // Set by the render loop so init() can restart it (e.g. resuming from
   // reduced-motion's single static frame) without a second effect dependency.
   const requestRenderRef = useRef<(() => void) | null>(null);
-  // cobe's update() takes mapSamples per-frame same as phi/theta — no
-  // instance recreation needed to change it while dragging.
-  const setQualityRef = useRef<((low: boolean) => void) | null>(null);
-  const restoreQualityTimeout = useRef<number | undefined>(undefined);
 
   const cobeMarkers = useMemo(
     () =>
@@ -123,13 +119,6 @@ function GlobeBase({
   const handlePointerDown = useCallback((e: PointerEvent) => {
     pointerInteracting.current = { x: e.clientX, y: e.clientY };
     pauseFlags.current.drag = true;
-    // Cancel any pending restore-to-full-quality from a previous drag so
-    // back-to-back drags don't fight a mid-drag quality swap.
-    if (restoreQualityTimeout.current !== undefined) {
-      window.clearTimeout(restoreQualityTimeout.current);
-      restoreQualityTimeout.current = undefined;
-    }
-    setQualityRef.current?.(true);
     // Reduced-motion normally stops the rAF loop entirely between
     // interactions (see the render loop below) — restart it so dragging
     // still tracks the pointer smoothly. No-op once the loop is running.
@@ -165,13 +154,6 @@ function GlobeBase({
     pointerInteracting.current = null;
     pauseFlags.current.drag = false;
     if (canvasRef.current) canvasRef.current.style.cursor = "grab";
-    // Debounced restore — a quick re-grab (common when someone nudges the
-    // globe a few times) cancels this via handlePointerDown instead of
-    // rebuilding at full res just to tear it down again a moment later.
-    restoreQualityTimeout.current = window.setTimeout(() => {
-      restoreQualityTimeout.current = undefined;
-      setQualityRef.current?.(false);
-    }, 350);
   }, []);
 
   useEffect(() => {
@@ -244,14 +226,6 @@ function GlobeBase({
     let loopRunning = false;
     let resizeObserver: ResizeObserver | null = null;
     let phi = initialPhi;
-    // Map resolution is the single most expensive cobe setting. Full detail
-    // normally; capped on low-power hardware/save-data/reduced-motion, and
-    // dropped further while actively dragging (see setQuality below) — cobe's
-    // update() takes mapSamples per-frame, so this is just a variable flip,
-    // no WebGL context recreation.
-    let fullMapSamples = mapSamples;
-    let currentMapSamples = mapSamples;
-    let isLowQuality = false;
 
     function render() {
       if (!globe) return;
@@ -279,7 +253,6 @@ function GlobeBase({
         theta: theta + thetaOffsetRef.current + dragOffset.current.theta,
         dark,
         mapBrightness,
-        mapSamples: currentMapSamples,
         markerColor,
         baseColor,
         arcColor,
@@ -309,30 +282,16 @@ function GlobeBase({
     }
     requestRenderRef.current = requestRender;
 
-    // Drop mapSamples while actively dragging, restore once released — no
-    // WebGL recreation, just changes what the next update() call passes.
-    // No-op if already at the target tier (e.g. low-power devices where
-    // both tiers already match).
-    function setQuality(low: boolean) {
-      if (isLowQuality === low) return;
-      const dragMapSamples = Math.min(fullMapSamples, 3000);
-      if (dragMapSamples === fullMapSamples) return;
-      currentMapSamples = low ? dragMapSamples : fullMapSamples;
-      isLowQuality = low;
-      requestRender();
-    }
-    setQualityRef.current = setQuality;
-
     function init() {
       if (globe || !canvasRef.current) return;
       const width = canvasRef.current.offsetWidth;
       if (width === 0) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      // Cut resolution to ~a third on low-power hardware / save-data /
-      // reduced-motion, full detail everywhere else. Everything else
-      // (colors, markers, arcs, scale) is untouched either way.
-      fullMapSamples = lowPowerRef.current ? Math.min(mapSamples, 6000) : mapSamples;
-      currentMapSamples = fullMapSamples;
+      // Map resolution is the single most expensive cobe setting — cut it
+      // to ~a third on low-power hardware / save-data / reduced-motion,
+      // full detail everywhere else. Everything else (colors, markers,
+      // arcs, scale) is untouched so the globe looks the same either way.
+      const effectiveMapSamples = lowPowerRef.current ? Math.min(mapSamples, 6000) : mapSamples;
       globe = createGlobe(canvas, {
         devicePixelRatio: dpr,
         width,
@@ -341,7 +300,7 @@ function GlobeBase({
         theta,
         dark,
         diffuse,
-        mapSamples: fullMapSamples,
+        mapSamples: effectiveMapSamples,
         mapBrightness,
         baseColor,
         markerColor,
@@ -375,11 +334,6 @@ function GlobeBase({
     return () => {
       resizeObserver?.disconnect();
       window.cancelAnimationFrame(animationId);
-      if (restoreQualityTimeout.current !== undefined) {
-        window.clearTimeout(restoreQualityTimeout.current);
-        restoreQualityTimeout.current = undefined;
-      }
-      setQualityRef.current = null;
       globe?.destroy();
       globe = null;
       canvas.removeEventListener("pointerdown", handlePointerDown);
