@@ -24,6 +24,7 @@ import {
   type NotificationPopoverItem,
 } from "@/components/NotificationPopover";
 import { Pill, Btn } from "@/components/portal-atoms";
+import { IdleLogout } from "@/components/IdleLogout";
 
 export type PortalShellUser = {
   fullName: string;
@@ -164,6 +165,7 @@ export function PortalShell({
 
   return (
     <div className="gh-portal-shell min-h-screen" data-portal={portalKey} data-density="comfortable">
+      <IdleLogout />
       {/* Mobile overlay */}
       {navOpen ? (
         <button

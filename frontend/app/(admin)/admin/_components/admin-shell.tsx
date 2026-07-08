@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { IdleLogout } from "@/components/IdleLogout";
 import {
   BarChart3,
   CalendarRange,
@@ -349,6 +350,7 @@ export function AdminShell({
 
   return (
     <div className="gh-portal-shell min-h-screen" data-portal="admin" data-density="dense">
+      <IdleLogout />
       {/* Sidebar — fixed on every breakpoint so it stays put while the
           main column scrolls. On mobile it slides in/out via translate;
           on desktop it's always visible and the main column is offset by
