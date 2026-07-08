@@ -1,4 +1,5 @@
 import "@/app/portal.css";
+import "flag-icons/css/flag-icons.min.css";
 import type { ReactNode } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
