@@ -500,6 +500,17 @@ export async function ensureOrderPaidAutomations(
       log.warn({ err: invoiceErr, orderId }, "Invoice generation failed — order still paid");
     });
 
+  // Portugal: generateInvoiceForOrder skips PT (invoicing is done via
+  // InvoiceExpress). Issue the PT legal InvoiceReceipt directly through the
+  // InvoiceExpress REST API instead. PT-only + live-Stripe-only + idempotent
+  // guards live inside issuePortugalInvoiceExpress; fire-and-forget so it never
+  // blocks the paid order.
+  void import("../invoices/pt-invoicexpress.service.js")
+    .then(({ issuePortugalInvoiceExpress }) => issuePortugalInvoiceExpress(orderId, log))
+    .catch((ptErr) => {
+      log.warn({ err: ptErr, orderId }, "PT InvoiceExpress issue failed — order still paid");
+    });
+
   const paidOrder = await prisma.order.findUnique({
     where: { id: orderId },
     include: { items: true },

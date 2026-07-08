@@ -1933,6 +1933,10 @@ model Order {
   stripeSessionId       String?     @unique
   stripePaymentIntentId String?     @unique
   stripeInvoiceId       String?     @unique
+  /// InvoiceExpress InvoiceReceipt id issued for a paid Portugal order (direct
+  /// REST issuance). Null for non-PT / not-yet-issued. Presence = idempotency
+  /// guard so webhook redelivery + sync fallback never double-issue.
+  invoiceExpressId      String?     @unique
   paidAt                DateTime?
   /// Shipping address — collected at checkout for product orders.
   shipName              String?

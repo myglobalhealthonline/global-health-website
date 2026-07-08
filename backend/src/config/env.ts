@@ -99,6 +99,13 @@ const envSchema = z.object({
   STRIPE_SECRET_KEY_CZ: optionalSecret,
   STRIPE_WEBHOOK_SECRET_CZ: optionalSecret,
 
+  /** Portugal InvoiceExpress — direct REST issuance of the legal InvoiceReceipt
+   *  when a PT order is paid on the LIVE Stripe account. Both must be set for the
+   *  issuer to fire; blank ("") is treated as unset. ACCOUNT is the subdomain
+   *  (e.g. "globalguestsro" → https://globalguestsro.app.invoicexpress.com). */
+  INVOICE_EXPRESS_API_KEY: optionalSecret,
+  INVOICE_EXPRESS_ACCOUNT: optionalSecret,
+
   /** Subscription billing provider. `fake` (default) = in-memory port, no
    *  Stripe keys needed (dev/test). `stripe` = real Stripe Subscriptions —
    *  only honoured when STRIPE_SECRET_KEY is also set, else falls back to

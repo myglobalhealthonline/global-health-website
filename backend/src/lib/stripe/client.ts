@@ -85,6 +85,20 @@ export function isStripeConfigured(countryCode?: string | null): boolean {
   return Boolean(accountConfig(resolveStripeAccount(countryCode)).secretKey);
 }
 
+/**
+ * True when the account handling this country is on a LIVE Stripe key
+ * (`sk_live_…`), i.e. real money — as opposed to a sandbox `sk_test_…` key.
+ *
+ * There is no `event.livemode` plumbed through the one-off payment path, so the
+ * secret-key prefix is the authoritative test-vs-live signal. Used to gate the
+ * Portugal InvoiceExpress issuer so a sandbox payment never issues a real legal
+ * invoice — it flips on automatically the moment a live PT key is configured.
+ */
+export function isStripeLiveMode(countryCode?: string | null): boolean {
+  const cfg = accountConfig(resolveStripeAccount(countryCode));
+  return Boolean(cfg.secretKey?.startsWith("sk_live_"));
+}
+
 export function isStripeWebhookConfigured(countryCode?: string | null): boolean {
   const cfg = accountConfig(resolveStripeAccount(countryCode));
   return Boolean(cfg.secretKey && cfg.webhookSecret);
