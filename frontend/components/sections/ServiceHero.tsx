@@ -92,10 +92,34 @@ export function ServiceHero({
       className="gh-medical-pattern gh-medical-pattern-dark relative isolate flex flex-col overflow-hidden lg:min-h-[calc(100svh-var(--header-height))] gh-hero-cap"
       style={{ background: "#031F18" }}
     >
-      <div className="grid lg:min-h-0 lg:flex-1 lg:grid-cols-2">
-        {/* ── LEFT — full-bleed healthcare image + floating cards ───────── */}
+      {/* Mobile/tablet only — full-bleed background image behind the text,
+       *  same treatment as DoctorsHero, so text sits in front of the photo
+       *  instead of stacking under it in its own block. */}
+      <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 lg:hidden">
+        <Image
+          src={heroImage.src}
+          alt=""
+          fill
+          priority={heroImage.priority}
+          sizes="100vw"
+          className="object-cover object-center"
+          unoptimized={isUnlistedRemote(heroImage.src)}
+        />
         <div
-          className="relative overflow-hidden"
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(3,31,24,0.62) 0%, rgba(3,31,24,0.78) 45%, rgba(3,31,24,0.96) 100%)," +
+              "linear-gradient(90deg, rgba(3,31,24,0.55) 0%, rgba(3,31,24,0.35) 55%, rgba(3,31,24,0.20) 100%)",
+          }}
+        />
+      </div>
+
+      <div className="relative grid lg:min-h-0 lg:flex-1 lg:grid-cols-2">
+        {/* ── LEFT — full-bleed healthcare image + floating cards (desktop only,
+             mobile uses the background layer above instead) ─────────────── */}
+        <div
+          className="relative hidden overflow-hidden lg:block"
           style={{ minHeight: "clamp(300px, 46vw, 900px)" }}
         >
           <Image
@@ -229,13 +253,13 @@ export function ServiceHero({
 
         {/* ── RIGHT — content over layered premium background ───────────── */}
         <div
-          className="relative isolate flex flex-col justify-center overflow-hidden px-8 py-12 md:px-12 lg:px-16 lg:py-10"
-          style={{ background: "#031F18" }}
+          className="relative isolate flex flex-col justify-center overflow-hidden bg-transparent px-8 py-12 md:px-12 lg:bg-[#031F18] lg:px-16 lg:py-10"
         >
-          {/* gradient depth + vignette */}
+          {/* gradient depth + vignette — desktop only; mobile shows the
+               full-bleed background photo instead (see layer above) */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 z-0"
+            className="pointer-events-none absolute inset-0 z-0 hidden lg:block"
             style={{
               background:
                 "radial-gradient(circle at 90% 12%, rgba(22,89,64,0.32), transparent 40%)," +

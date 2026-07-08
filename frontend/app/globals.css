@@ -8720,7 +8720,13 @@ a.gh-appointment-card:hover {
 }
 
 .gh-inline-panel-base {
-  background: #031f18;
+  background: transparent;
+}
+
+@media (min-width: 1024px) {
+  .gh-inline-panel-base {
+    background: #031f18;
+  }
 }
 
 .gh-inline-panel-depth {

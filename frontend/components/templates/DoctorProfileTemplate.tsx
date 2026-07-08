@@ -87,7 +87,35 @@ export function DoctorProfileTemplate({
       <section
         className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
       >
-        <div className="grid h-full lg:grid-cols-2">
+        {/* Mobile/tablet only — full-bleed tinted portrait behind the text,
+         *  same treatment as the team page hero: text sits in front of the
+         *  photo instead of the photo being hidden below lg. */}
+        {profileImageSrc ? (
+          <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 lg:hidden">
+            <Image
+              src={profileImageSrc}
+              alt=""
+              fill
+              sizes="100vw"
+              priority
+              className="object-cover object-top"
+              unoptimized={
+                /^https?:\/\//i.test(profileImageSrc) ||
+                profileImageSrc.startsWith("/api/media/")
+              }
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(3,31,24,0.62) 0%, rgba(3,31,24,0.78) 45%, rgba(3,31,24,0.96) 100%)," +
+                  "linear-gradient(90deg, rgba(3,31,24,0.55) 0%, rgba(3,31,24,0.35) 55%, rgba(3,31,24,0.20) 100%)",
+              }}
+            />
+          </div>
+        ) : null}
+
+        <div className="relative grid h-full lg:grid-cols-2">
 
           {/* ── LEFT — full-bleed doctor portrait (desktop only) ── */}
           <div className="relative hidden h-full overflow-hidden lg:block">
