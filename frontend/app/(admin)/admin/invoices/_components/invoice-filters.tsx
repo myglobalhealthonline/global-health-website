@@ -91,7 +91,7 @@ export function InvoiceFilters({ values }: { values: InvoiceFilterValues }) {
               name="q"
               type="text"
               defaultValue={values.q ?? ""}
-              placeholder="Patient name, email, phone, ID card, invoice # or order #"
+              placeholder="Name, email, phone, fiscal number (NIF), invoice # or order #"
               className={`${fieldCls} pl-9`}
             />
           </div>

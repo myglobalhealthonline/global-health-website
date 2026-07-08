@@ -39,8 +39,11 @@ const listQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(50),
   /**
    * Free-text search — matched (case-insensitive, substring) against invoice
-   * number, order number, and the patient name / email / phone / national-ID
-   * snapshots on the order and its line items.
+   * number, order number, patient name, email, phone, and fiscal / tax number
+   * (NIF, on the patient profile). Only guaranteed-present Order/Invoice/
+   * PatientProfile columns are searched — the OrderItem intake snapshots are
+   * NOT, since they are drift-prone on the live DB and 500 the whole search
+   * when a column is missing.
    */
   q: z.preprocess(blankToUndefined, z.string().trim().min(1).max(160).optional()),
   /** Consultation / item type filter. */
@@ -81,6 +84,23 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
 
     if (q) {
       const contains = { contains: q, mode: "insensitive" as const };
+
+      // Fiscal / tax number (NIF) lives on PatientProfile, keyed by email — no
+      // relation to Order/Invoice. Resolve matching profile emails first, then
+      // fold them into the OR as case-insensitive order-email matches.
+      let taxEmails: string[] = [];
+      try {
+        const taxMatches = await prisma.patientProfile.findMany({
+          where: { taxIdNumber: contains },
+          select: { email: true },
+          take: 200,
+        });
+        taxEmails = taxMatches.map((p) => p.email);
+      } catch (err) {
+        // Non-fatal: fiscal-number matching is best-effort, never break search.
+        app.log.warn({ err }, "invoice search: tax-id lookup failed");
+      }
+
       and.push({
         OR: [
           { invoiceNumber: contains },
@@ -88,10 +108,9 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
           { order: { fullName: contains } },
           { order: { email: contains } },
           { order: { phone: contains } },
-          { order: { items: { some: { patientFullName: contains } } } },
-          { order: { items: { some: { patientEmail: contains } } } },
-          { order: { items: { some: { patientPhone: contains } } } },
-          { order: { items: { some: { patientNationalIdNumber: contains } } } },
+          ...taxEmails.map((email) => ({
+            order: { email: { equals: email, mode: "insensitive" as const } },
+          })),
         ],
       });
     }

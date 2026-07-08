@@ -349,7 +349,10 @@ export function AdminShell({
   }
 
   return (
-    <div className="gh-portal-shell min-h-screen" data-portal="admin" data-density="dense">
+    // translate="no" — the portal is an English-only data tool; Chrome's
+    // auto-translate mutates text nodes under React and crashes hydration
+    // (insertBefore "not a child" errors). Opt the whole portal out.
+    <div className="gh-portal-shell min-h-screen notranslate" translate="no" data-portal="admin" data-density="dense">
       <IdleLogout />
       {/* Sidebar — fixed on every breakpoint so it stays put while the
           main column scrolls. On mobile it slides in/out via translate;

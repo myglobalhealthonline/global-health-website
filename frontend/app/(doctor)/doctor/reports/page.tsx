@@ -15,7 +15,10 @@ function pick(sp: SearchParams, key: string): string | undefined {
 function fmtCurrency(cents: number, code: string) {
   const value = cents / 100;
   try {
-    return new Intl.NumberFormat(undefined, {
+    // Pin the locale — `undefined` uses the runtime default, which differs
+    // between the Node server and a non-English browser, causing a
+    // hydration mismatch (React insertBefore crash) on this server component.
+    return new Intl.NumberFormat("en-GB", {
       style: "currency",
       currency: code === "—" ? "USD" : code,
     }).format(value);

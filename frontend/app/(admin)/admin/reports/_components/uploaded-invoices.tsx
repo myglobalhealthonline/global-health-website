@@ -106,7 +106,7 @@ export function AdminUploadedInvoices({
                   </td>
                   <td className="py-2 pr-4 text-xs">{fmtSize(it.size)}</td>
                   <td className="py-2 pr-4 text-xs">
-                    {it.uploadedAt ? new Date(it.uploadedAt).toLocaleDateString() : "—"}
+                    {it.uploadedAt ? new Date(it.uploadedAt).toLocaleDateString("en-GB") : "—"}
                   </td>
                   <td className="py-2 text-right">
                     <a

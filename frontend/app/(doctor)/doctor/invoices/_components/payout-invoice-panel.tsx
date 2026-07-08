@@ -210,7 +210,7 @@ export function PayoutInvoicePanel() {
                   <p className="truncate font-medium text-[var(--portal-text)]">{it.filename}</p>
                   <p className="text-xs text-[var(--portal-muted)]">
                     {it.period} · {fmtSize(it.size)}
-                    {it.uploadedAt ? ` · ${new Date(it.uploadedAt).toLocaleDateString()}` : ""}
+                    {it.uploadedAt ? ` · ${new Date(it.uploadedAt).toLocaleDateString("en-GB")}` : ""}
                   </p>
                 </div>
                 <a

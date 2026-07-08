@@ -163,8 +163,18 @@ export function PortalShell({
     return pathname === href || pathname.startsWith(`${href}/`);
   }
 
+  // Staff portals (doctor/corporate) are English-only data tools — opt them
+  // out of Chrome auto-translate, which mutates text nodes under React and
+  // crashes hydration (insertBefore "not a child"). Patients keep translation.
+  const noTranslate = portalKey !== "patient";
+
   return (
-    <div className="gh-portal-shell min-h-screen" data-portal={portalKey} data-density="comfortable">
+    <div
+      className={`gh-portal-shell min-h-screen${noTranslate ? " notranslate" : ""}`}
+      translate={noTranslate ? "no" : undefined}
+      data-portal={portalKey}
+      data-density="comfortable"
+    >
       <IdleLogout />
       {/* Mobile overlay */}
       {navOpen ? (
