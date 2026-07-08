@@ -8,6 +8,8 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     invoice: "Invoice",
     receipt: "Receipt",
     invoiceReceipt: "Invoice / Receipt",
+    creditNote: "Credit Note",
+    refunded: "REFUNDED",
     unpaid: "UNPAID",
     amountDue: "Amount due",
     from: "From",
@@ -30,6 +32,8 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     invoice: "Faktura",
     receipt: "Účtenka",
     invoiceReceipt: "Faktura / Účtenka",
+    creditNote: "Dobropis",
+    refunded: "VRÁCENO",
     unpaid: "NEZAPLACENO",
     amountDue: "K úhradě",
     from: "Od",
@@ -52,6 +56,8 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     invoice: "Factura",
     receipt: "Recibo",
     invoiceReceipt: "Factura / Recibo",
+    creditNote: "Nota de crédito",
+    refunded: "REEMBOLSADO",
     unpaid: "NO PAGADO",
     amountDue: "Importe pendiente",
     from: "De",
@@ -74,6 +80,8 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     invoice: "Factură",
     receipt: "Chitanță",
     invoiceReceipt: "Factură / Chitanță",
+    creditNote: "Notă de credit",
+    refunded: "RAMBURSAT",
     unpaid: "NEACHITAT",
     amountDue: "De plată",
     from: "De la",
@@ -96,6 +104,8 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     invoice: "Fatura",
     receipt: "Recibo",
     invoiceReceipt: "Fatura / Recibo",
+    creditNote: "Nota de crédito",
+    refunded: "REEMBOLSADO",
     unpaid: "NÃO PAGO",
     amountDue: "Valor em dívida",
     from: "De",
@@ -122,7 +132,7 @@ function getL(countryCode: string) {
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-export type InvoiceDocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT";
+export type InvoiceDocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT" | "CREDIT_NOTE";
 
 export interface InvoicePdfData {
   invoiceNumber: string;
@@ -184,16 +194,20 @@ function buildInvoiceHtml(data: InvoicePdfData): string {
   const cur = order.currencyCode;
 
   // Document-type aware title + status badge.
-  const docTitle =
-    data.documentType === "RECEIPT"
+  const isCreditNote = data.documentType === "CREDIT_NOTE";
+  const docTitle = isCreditNote
+    ? L.creditNote
+    : data.documentType === "RECEIPT"
       ? L.receipt
       : data.documentType === "INVOICE_RECEIPT"
         ? L.invoiceReceipt
         : L.invoice;
   const isUnpaid = data.documentType === "INVOICE";
-  const badgeHtml = isUnpaid
-    ? `<div style="margin-top:10px;padding:3px 10px;background:#fef3c7;color:#92400e;font-size:11px;font-weight:700;display:inline-block;">${L.unpaid}</div>`
-    : `<div style="margin-top:10px;padding:3px 10px;background:#d1fae5;color:#065f46;font-size:11px;font-weight:700;display:inline-block;">${L.paid}</div>`;
+  const badgeHtml = isCreditNote
+    ? `<div style="margin-top:10px;padding:3px 10px;background:#fee2e2;color:#991b1b;font-size:11px;font-weight:700;display:inline-block;">${L.refunded}</div>`
+    : isUnpaid
+      ? `<div style="margin-top:10px;padding:3px 10px;background:#fef3c7;color:#92400e;font-size:11px;font-weight:700;display:inline-block;">${L.unpaid}</div>`
+      : `<div style="margin-top:10px;padding:3px 10px;background:#d1fae5;color:#065f46;font-size:11px;font-weight:700;display:inline-block;">${L.paid}</div>`;
 
   const itemRows = order.items
     .map(

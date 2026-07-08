@@ -19,6 +19,7 @@ const DOCUMENT_TYPE_OPTIONS: { value: string; label: string }[] = [
   { value: "INVOICE", label: "Unpaid invoices" },
   { value: "RECEIPT", label: "Receipts" },
   { value: "INVOICE_RECEIPT", label: "Invoice / Receipts" },
+  { value: "CREDIT_NOTE", label: "Credit notes" },
 ];
 
 export type InvoiceFilterValues = {

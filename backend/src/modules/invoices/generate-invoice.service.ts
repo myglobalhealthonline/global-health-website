@@ -1,5 +1,5 @@
 import { prisma } from "../../db/prisma.js";
-import { invoicePrefix, generateInvoiceNumber } from "../../lib/invoice-number.js";
+import { invoicePrefix, generateInvoiceNumber, generateCreditNoteNumber } from "../../lib/invoice-number.js";
 import { sendInvoiceEmail } from "../../lib/email/templates.js";
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
@@ -72,7 +72,7 @@ const noopLog: PaymentLog = {
   error: () => {},
 };
 
-type InvoiceDocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT";
+type InvoiceDocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT" | "CREDIT_NOTE";
 
 /**
  * Render the document PDF and email it to the patient, then stamp emailSentAt.
@@ -186,7 +186,7 @@ export async function createUnpaidInvoiceForOrder(
       email: true,
       fullName: true,
       countryCode: true,
-      invoice: { select: { id: true } },
+      invoices: { where: { documentType: { not: "CREDIT_NOTE" } }, select: { id: true } },
     },
   });
 
@@ -199,7 +199,7 @@ export async function createUnpaidInvoiceForOrder(
     log.info({ orderId, countryCode: order.countryCode }, "No invoice prefix — skipping");
     return;
   }
-  if (order.invoice) {
+  if (order.invoices.length > 0) {
     log.info({ orderId }, "Invoice already exists — skipping unpaid issue");
     return;
   }
@@ -261,7 +261,8 @@ export async function generateInvoiceForOrder(
       email: true,
       fullName: true,
       countryCode: true,
-      invoice: {
+      invoices: {
+        where: { documentType: { not: "CREDIT_NOTE" } },
         select: {
           id: true,
           invoiceNumber: true,
@@ -287,8 +288,9 @@ export async function generateInvoiceForOrder(
   }
 
   // Manual/AI booking: an unpaid INVOICE was pre-issued at booking time.
-  if (order.invoice) {
-    if (order.invoice.documentType !== "INVOICE") {
+  const existing = order.invoices[0];
+  if (existing) {
+    if (existing.documentType !== "INVOICE") {
       // Already a RECEIPT or INVOICE_RECEIPT — idempotent no-op.
       log.info({ orderId }, "Invoice already finalised — skipping");
       return;
@@ -296,27 +298,27 @@ export async function generateInvoiceForOrder(
 
     // Transition INVOICE → RECEIPT, keeping the same number.
     await prisma.invoice.update({
-      where: { id: order.invoice.id },
+      where: { id: existing.id },
       data: { documentType: "RECEIPT" },
     });
     log.info(
-      { orderId, invoiceId: order.invoice.id, invoiceNumber: order.invoice.invoiceNumber },
+      { orderId, invoiceId: existing.id, invoiceNumber: existing.invoiceNumber },
       "Invoice transitioned to receipt on payment",
     );
 
     // Fire-and-forget — webhook failure must never block the receipt.
-    sendPaymentWebhookToMake(orderId, order.invoice.id, order.invoice.invoiceNumber, log).catch(
+    sendPaymentWebhookToMake(orderId, existing.id, existing.invoiceNumber, log).catch(
       (err) => {
-        log.warn({ err, orderId, invoiceNumber: order.invoice!.invoiceNumber }, "Make.com invoice webhook failed");
+        log.warn({ err, orderId, invoiceNumber: existing.invoiceNumber }, "Make.com invoice webhook failed");
       },
     );
 
     await renderAndSendInvoiceDoc(
       {
-        invoiceId: order.invoice.id,
+        invoiceId: existing.id,
         orderId: order.id,
-        invoiceNumber: order.invoice.invoiceNumber,
-        invoiceDateIso: order.invoice.generatedAt.toISOString(),
+        invoiceNumber: existing.invoiceNumber,
+        invoiceDateIso: existing.generatedAt.toISOString(),
         email: order.email,
         fullName: order.fullName,
         countryCode: order.countryCode,
@@ -366,4 +368,86 @@ export async function generateInvoiceForOrder(
     },
     log,
   );
+}
+
+/**
+ * Issue a CREDIT_NOTE for a refunded order and email it to the patient. The
+ * credit note reverses the order's paid fiscal document and reuses the exact
+ * invoice PDF template (title "Credit Note", red REFUNDED badge).
+ *
+ * - Skips Portugal (no Invoice rows there — PT lives in InvoiceExpress).
+ * - Skips prefixless countries (same rule as the invoice path).
+ * - Idempotent: returns the existing credit note if one was already issued.
+ * - Own numbering series: CN-IE-00001, CN-CZ-00001, …
+ */
+export async function generateCreditNoteForOrder(
+  orderId: string,
+  log: PaymentLog = noopLog,
+): Promise<{ invoiceId: string; invoiceNumber: string } | null> {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    select: {
+      id: true,
+      email: true,
+      fullName: true,
+      countryCode: true,
+      invoices: { where: { documentType: "CREDIT_NOTE" }, select: { id: true, invoiceNumber: true } },
+    },
+  });
+
+  if (!order) {
+    log.warn({ orderId }, "generateCreditNoteForOrder: order not found");
+    return null;
+  }
+
+  // Portugal: credit notes are handled via InvoiceExpress, not here.
+  if (order.countryCode.toLowerCase() === "pt") return null;
+
+  if (!invoicePrefix(order.countryCode)) {
+    log.info({ orderId, countryCode: order.countryCode }, "No invoice prefix — skipping credit note");
+    return null;
+  }
+
+  // Idempotent: a credit note already exists for this order.
+  const already = order.invoices[0];
+  if (already) {
+    log.info({ orderId, invoiceNumber: already.invoiceNumber }, "Credit note already issued — skipping");
+    return { invoiceId: already.id, invoiceNumber: already.invoiceNumber };
+  }
+
+  let creditNoteNumber: string;
+  try {
+    creditNoteNumber = await generateCreditNoteNumber(order.countryCode);
+  } catch (err) {
+    log.error({ err, orderId }, "Failed to generate credit note number");
+    return null;
+  }
+
+  const creditNote = await prisma.invoice.create({
+    data: {
+      invoiceNumber: creditNoteNumber,
+      orderId: order.id,
+      countryCode: order.countryCode.toLowerCase(),
+      emailSentTo: order.email,
+      documentType: "CREDIT_NOTE",
+    },
+  });
+
+  log.info({ orderId, creditNoteNumber, invoiceId: creditNote.id }, "Credit note created");
+
+  await renderAndSendInvoiceDoc(
+    {
+      invoiceId: creditNote.id,
+      orderId: order.id,
+      invoiceNumber: creditNoteNumber,
+      invoiceDateIso: creditNote.generatedAt.toISOString(),
+      email: order.email,
+      fullName: order.fullName,
+      countryCode: order.countryCode,
+      documentType: "CREDIT_NOTE",
+    },
+    log,
+  );
+
+  return { invoiceId: creditNote.id, invoiceNumber: creditNoteNumber };
 }

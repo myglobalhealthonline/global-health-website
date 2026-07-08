@@ -69,6 +69,15 @@ export const AUTOMATION_CATALOG: AutomationDefinition[] = [
     channels: ["email", "whatsapp"],
     maxStages: 1,
   },
+  {
+    key: "order_refund",
+    name: "Order refund",
+    flow: "Order refunded",
+    description:
+      "When an order is refunded (admin action or Stripe charge.refunded), the patient gets a credit note by email (non-Portugal) or a refund confirmation email (Portugal), plus a refund WhatsApp when consent was given. Fires once per order (idempotent across the admin endpoint and the webhook).",
+    channels: ["email", "whatsapp"],
+    maxStages: 1,
+  },
 ];
 
 export function catalogEntryForKey(key: string): AutomationDefinition | undefined {

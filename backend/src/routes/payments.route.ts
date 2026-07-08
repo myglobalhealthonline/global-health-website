@@ -22,6 +22,7 @@ import {
   releaseRedemption,
 } from "../modules/subscriptions/redemption.service.js";
 import { releaseOrderCreditReservations } from "../modules/subscriptions/checkout-pricing.service.js";
+import { sendOrderRefundNotifications } from "../modules/automation/refund-notifications.service.js";
 
 const createCheckoutBodySchema = z.object({
   appointmentId: z.string().trim().min(8).max(40),
@@ -565,6 +566,11 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                     status: OrderStatus.REFUNDED,
                     paymentStatus: PaymentStatus.REFUNDED,
                   },
+                });
+                // Credit note + refund email/WhatsApp. Idempotent + fire-and-forget
+                // (the admin refund endpoint may have already sent these).
+                void sendOrderRefundNotifications(order.id).catch((err) => {
+                  app.log.error({ err, orderId: order.id }, "Refund notifications failed");
                 });
               }
             }

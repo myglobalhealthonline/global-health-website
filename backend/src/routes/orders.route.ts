@@ -34,6 +34,7 @@ import {
 } from "../utils/order-country-scope.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { releaseSlotsToBaseGrid } from "../modules/doctor-availability/doctor-availability.service.js";
+import { sendOrderRefundNotifications } from "../modules/automation/refund-notifications.service.js";
 
 /**
  * Orders + checkout.
@@ -712,7 +713,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         orderBy: { createdAt: "desc" },
         include: {
           items: { select: { quantity: true, kind: true } },
-          invoice: { select: { id: true } },
+          invoices: { where: { documentType: { not: "CREDIT_NOTE" } }, select: { id: true }, take: 1 },
         },
         take: limit + 1,
         ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
@@ -767,7 +768,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           itemCount: o.items.reduce((s, i) => s + i.quantity, 0),
           meetingUrl: meetingUrlById.get(o.id) ?? o.meetingUrl,
           hasConsultation: orderHasConsultationItem(o.items),
-          invoiceId: o.invoice?.id ?? null,
+          invoiceId: o.invoices[0]?.id ?? null,
           stripeCheckoutUrl: o.stripeCheckoutUrl ?? null,
           paidAt: o.paidAt?.toISOString() ?? null,
           createdAt: o.createdAt.toISOString(),
@@ -1156,6 +1157,12 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             currencyCode: order.currencyCode,
             stripePaymentIntentId: order.stripePaymentIntentId,
           },
+        });
+
+        // Credit note + refund email/WhatsApp. Fire-and-forget + idempotent
+        // (the charge.refunded webhook calls the same fn; whichever runs first wins).
+        void sendOrderRefundNotifications(order.id).catch((err) => {
+          request.log.error({ err, orderId: order.id }, "Refund notifications failed");
         });
 
         return okResponse({ id: updated.id, status: updated.status });

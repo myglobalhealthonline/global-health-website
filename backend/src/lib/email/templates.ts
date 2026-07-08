@@ -522,7 +522,37 @@ const INVOICE_EMAIL_CTA: Record<string, string> = {
   rm: "Vizualizați factura",
 };
 
-export type InvoiceEmailDocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT";
+export type InvoiceEmailDocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT" | "CREDIT_NOTE";
+
+/** Credit note (refund) — reverses a paid document. */
+const CREDIT_NOTE_EMAIL_SUBJECT: Record<string, string> = {
+  ie: "Your credit note {invoiceNumber} — refund processed",
+  cz: "Váš dobropis {invoiceNumber} — vrácení peněz zpracováno",
+  es: "Su nota de crédito {invoiceNumber} — reembolso procesado",
+  sp: "Su nota de crédito {invoiceNumber} — reembolso procesado",
+  rm: "Nota dvs. de credit {invoiceNumber} — rambursare procesată",
+};
+const CREDIT_NOTE_EMAIL_HEADING: Record<string, string> = {
+  ie: "Your credit note",
+  cz: "Váš dobropis",
+  es: "Su nota de crédito",
+  sp: "Su nota de crédito",
+  rm: "Nota dvs. de credit",
+};
+const CREDIT_NOTE_EMAIL_BODY: Record<string, string> = {
+  ie: "Your refund has been processed. Your credit note is attached and available to view and download below.",
+  cz: "Vaše vrácení peněz bylo zpracováno. Váš dobropis je přiložen a k dispozici k zobrazení a stažení níže.",
+  es: "Su reembolso ha sido procesado. Su nota de crédito está adjunta y disponible para ver y descargar a continuación.",
+  sp: "Su reembolso ha sido procesado. Su nota de crédito está adjunta y disponible para ver y descargar a continuación.",
+  rm: "Rambursarea dvs. a fost procesată. Nota de credit este atașată și disponibilă pentru vizualizare și descărcare mai jos.",
+};
+const CREDIT_NOTE_EMAIL_CTA: Record<string, string> = {
+  ie: "View credit note",
+  cz: "Zobrazit dobropis",
+  es: "Ver nota de crédito",
+  sp: "Ver nota de crédito",
+  rm: "Vizualizați nota de credit",
+};
 
 /** Per-document-type overrides. Falls back to the invoice (INVOICE_RECEIPT) copy above. */
 const RECEIPT_EMAIL_SUBJECT: Record<string, string> = {
@@ -585,22 +615,35 @@ export async function sendInvoiceEmail(opts: {
   const docType = opts.documentType ?? "INVOICE_RECEIPT";
   const isReceipt = docType === "RECEIPT";
   const isUnpaidInvoice = docType === "INVOICE";
+  const isCreditNote = docType === "CREDIT_NOTE";
 
   const pick = (m: Record<string, string>) => m[cc] ?? m.ie!;
-  const subjectTemplate = isReceipt
-    ? pick(RECEIPT_EMAIL_SUBJECT)
-    : isUnpaidInvoice
-      ? pick(UNPAID_INVOICE_EMAIL_SUBJECT)
-      : pick(INVOICE_EMAIL_SUBJECT);
+  const subjectTemplate = isCreditNote
+    ? pick(CREDIT_NOTE_EMAIL_SUBJECT)
+    : isReceipt
+      ? pick(RECEIPT_EMAIL_SUBJECT)
+      : isUnpaidInvoice
+        ? pick(UNPAID_INVOICE_EMAIL_SUBJECT)
+        : pick(INVOICE_EMAIL_SUBJECT);
   const subject = subjectTemplate.replace("{invoiceNumber}", opts.invoiceNumber);
-  const heading = isReceipt ? pick(RECEIPT_EMAIL_HEADING) : pick(INVOICE_EMAIL_HEADING);
-  const body = isReceipt
-    ? pick(RECEIPT_EMAIL_BODY)
-    : isUnpaidInvoice
-      ? pick(UNPAID_INVOICE_EMAIL_BODY)
-      : pick(INVOICE_EMAIL_BODY);
-  const cta = isReceipt ? pick(RECEIPT_EMAIL_CTA) : pick(INVOICE_EMAIL_CTA);
-  const filenamePrefix = isReceipt ? "receipt" : "invoice";
+  const heading = isCreditNote
+    ? pick(CREDIT_NOTE_EMAIL_HEADING)
+    : isReceipt
+      ? pick(RECEIPT_EMAIL_HEADING)
+      : pick(INVOICE_EMAIL_HEADING);
+  const body = isCreditNote
+    ? pick(CREDIT_NOTE_EMAIL_BODY)
+    : isReceipt
+      ? pick(RECEIPT_EMAIL_BODY)
+      : isUnpaidInvoice
+        ? pick(UNPAID_INVOICE_EMAIL_BODY)
+        : pick(INVOICE_EMAIL_BODY);
+  const cta = isCreditNote
+    ? pick(CREDIT_NOTE_EMAIL_CTA)
+    : isReceipt
+      ? pick(RECEIPT_EMAIL_CTA)
+      : pick(INVOICE_EMAIL_CTA);
+  const filenamePrefix = isCreditNote ? "credit-note" : isReceipt ? "receipt" : "invoice";
 
   const { resolveEmailLogoUrl } = await import("./resolve-email-logo-url.js");
   const logoSrc = await resolveEmailLogoUrl();

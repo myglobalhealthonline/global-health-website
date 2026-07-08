@@ -23,7 +23,7 @@ const FILTER_KEYS = [
   "consultTo",
 ] as const;
 
-type DocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT";
+type DocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT" | "CREDIT_NOTE";
 
 type InvoiceRow = {
   id: string;
@@ -47,6 +47,7 @@ const DOC_TYPE_META: Record<DocumentType, { label: string; className: string }> 
   INVOICE: { label: "Invoice · Unpaid", className: "bg-amber-100 text-amber-800" },
   RECEIPT: { label: "Receipt", className: "bg-sky-100 text-sky-800" },
   INVOICE_RECEIPT: { label: "Invoice / Receipt", className: "bg-emerald-100 text-emerald-800" },
+  CREDIT_NOTE: { label: "Credit Note", className: "bg-rose-100 text-rose-800" },
 };
 
 function DocTypeBadge({ documentType }: { documentType: DocumentType }) {

@@ -119,7 +119,7 @@ describe("invoices", () => {
       const order = await makeOrder("pt");
       try {
         await generateInvoiceMod.generateInvoiceForOrder(order.id);
-        const invoice = await prisma.invoice.findUnique({ where: { orderId: order.id } });
+        const invoice = await prisma.invoice.findFirst({ where: { orderId: order.id } });
         assert.equal(invoice, null);
       } finally {
         await prisma.order.delete({ where: { id: order.id } });
@@ -131,7 +131,7 @@ describe("invoices", () => {
       const order = await makeOrder("zz-no-prefix");
       try {
         await generateInvoiceMod.generateInvoiceForOrder(order.id);
-        const invoice = await prisma.invoice.findUnique({ where: { orderId: order.id } });
+        const invoice = await prisma.invoice.findFirst({ where: { orderId: order.id } });
         assert.equal(invoice, null);
       } finally {
         await prisma.order.delete({ where: { id: order.id } });
@@ -223,7 +223,7 @@ describe("invoices", () => {
       const order = await makeOrder("pt");
       try {
         await generateInvoiceMod.createUnpaidInvoiceForOrder(order.id);
-        const invoice = await prisma.invoice.findUnique({ where: { orderId: order.id } });
+        const invoice = await prisma.invoice.findFirst({ where: { orderId: order.id } });
         assert.equal(invoice, null);
       } finally {
         await prisma.order.delete({ where: { id: order.id } });

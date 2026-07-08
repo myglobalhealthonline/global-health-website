@@ -29,7 +29,7 @@ const CART_ITEM_KINDS = [
 ] as const;
 
 /** Fiscal document types — must mirror the Prisma `InvoiceDocumentType` enum. */
-const INVOICE_DOCUMENT_TYPES = ["INVOICE", "RECEIPT", "INVOICE_RECEIPT"] as const;
+const INVOICE_DOCUMENT_TYPES = ["INVOICE", "RECEIPT", "INVOICE_RECEIPT", "CREDIT_NOTE"] as const;
 
 /** Treat blank form fields (`?q=&kind=`) as absent rather than a validation error. */
 const blankToUndefined = (v: unknown) => (v === "" ? undefined : v);
@@ -413,7 +413,12 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
           return reply.status(500).send(errorResponse("Could not render document PDF"));
         }
 
-        const prefix = invoice.documentType === "RECEIPT" ? "receipt" : "invoice";
+        const prefix =
+          invoice.documentType === "CREDIT_NOTE"
+            ? "credit-note"
+            : invoice.documentType === "RECEIPT"
+              ? "receipt"
+              : "invoice";
         return reply
           .header("Content-Type", "application/pdf")
           .header(

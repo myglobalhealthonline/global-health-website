@@ -15,6 +15,8 @@ const LABELS: Record<string, Record<string, string>> = {
     invoice: "Invoice",
     receipt: "Receipt",
     invoiceReceipt: "Invoice / Receipt",
+    creditNote: "Credit Note",
+    refunded: "REFUNDED",
     unpaid: "UNPAID",
     invoiceRef: "Invoice reference",
     from: "From",
@@ -36,6 +38,8 @@ const LABELS: Record<string, Record<string, string>> = {
     invoice: "Faktura",
     receipt: "Účtenka",
     invoiceReceipt: "Faktura / Účtenka",
+    creditNote: "Dobropis",
+    refunded: "VRÁCENO",
     unpaid: "NEZAPLACENO",
     invoiceRef: "Číslo faktury",
     from: "Od",
@@ -57,6 +61,8 @@ const LABELS: Record<string, Record<string, string>> = {
     invoice: "Factura",
     receipt: "Recibo",
     invoiceReceipt: "Factura / Recibo",
+    creditNote: "Nota de crédito",
+    refunded: "REEMBOLSADO",
     unpaid: "NO PAGADO",
     invoiceRef: "Referencia de factura",
     from: "De",
@@ -78,6 +84,8 @@ const LABELS: Record<string, Record<string, string>> = {
     invoice: "Factură",
     receipt: "Chitanță",
     invoiceReceipt: "Factură / Chitanță",
+    creditNote: "Notă de credit",
+    refunded: "RAMBURSAT",
     unpaid: "NEACHITAT",
     invoiceRef: "Referință factură",
     from: "De la",
@@ -121,7 +129,7 @@ type InvoiceDetail = {
     id: string;
     invoiceNumber: string;
     countryCode: string;
-    documentType: "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT";
+    documentType: "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT" | "CREDIT_NOTE";
     generatedAt: string;
     emailSentAt: string | null;
   };
@@ -203,8 +211,10 @@ export default async function PrintOrderInvoicePage({
   });
 
   // Document-type aware title + status badge (mirrors the PDF).
-  const docTitle =
-    invoice.documentType === "RECEIPT"
+  const isCreditNote = invoice.documentType === "CREDIT_NOTE";
+  const docTitle = isCreditNote
+    ? L.creditNote
+    : invoice.documentType === "RECEIPT"
       ? L.receipt
       : invoice.documentType === "INVOICE_RECEIPT"
         ? L.invoiceReceipt
@@ -290,14 +300,14 @@ export default async function PrintOrderInvoicePage({
               marginTop: 10,
               padding: "3px 10px",
               borderRadius: 999,
-              background: isUnpaid ? "#fef3c7" : "#d1fae5",
-              color: isUnpaid ? "#92400e" : "#065f46",
+              background: isCreditNote ? "#fee2e2" : isUnpaid ? "#fef3c7" : "#d1fae5",
+              color: isCreditNote ? "#991b1b" : isUnpaid ? "#92400e" : "#065f46",
               fontSize: 11,
               fontWeight: 700,
               letterSpacing: "0.1em",
             }}
           >
-            {isUnpaid ? L.unpaid : L.paid}
+            {isCreditNote ? L.refunded : isUnpaid ? L.unpaid : L.paid}
           </span>
         </div>
       </header>

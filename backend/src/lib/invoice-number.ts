@@ -32,12 +32,8 @@ function getPool(): Pool {
   return pool;
 }
 
-export async function generateInvoiceNumber(countryCode: string): Promise<string> {
-  const prefix = invoicePrefix(countryCode);
-  if (!prefix) {
-    throw new Error(`No invoice prefix for country: ${countryCode}`);
-  }
-
+/** Atomically bump a counter row (any key) and return the next sequence. */
+async function nextSeq(counterKey: string): Promise<number> {
   const client = await getPool().connect();
   try {
     await client.query("BEGIN");
@@ -46,7 +42,7 @@ export async function generateInvoiceNumber(countryCode: string): Promise<string
       `INSERT INTO "invoice_counter" ("countryCode", "last_seq")
        VALUES ($1, 0)
        ON CONFLICT ("countryCode") DO NOTHING`,
-      [countryCode.toLowerCase()],
+      [counterKey],
     );
 
     const result = await client.query<{ last_seq: string }>(
@@ -54,17 +50,38 @@ export async function generateInvoiceNumber(countryCode: string): Promise<string
        SET "last_seq" = "last_seq" + 1
        WHERE "countryCode" = $1
        RETURNING "last_seq"`,
-      [countryCode.toLowerCase()],
+      [counterKey],
     );
 
     await client.query("COMMIT");
-
-    const seq = Number(result.rows[0].last_seq);
-    return `${prefix}-${seq.toString().padStart(5, "0")}`;
+    return Number(result.rows[0].last_seq);
   } catch (err) {
     await client.query("ROLLBACK");
     throw err;
   } finally {
     client.release();
   }
+}
+
+export async function generateInvoiceNumber(countryCode: string): Promise<string> {
+  const prefix = invoicePrefix(countryCode);
+  if (!prefix) {
+    throw new Error(`No invoice prefix for country: ${countryCode}`);
+  }
+  const seq = await nextSeq(countryCode.toLowerCase());
+  return `${prefix}-${seq.toString().padStart(5, "0")}`;
+}
+
+/**
+ * Credit-note number generator. Uses its OWN per-country sequence (counter key
+ * `cn-{cc}`) so credit notes don't consume the invoice series, and prefixes
+ * with `CN-` for a legally distinct document series: CN-IE-00001, CN-CZ-00001.
+ */
+export async function generateCreditNoteNumber(countryCode: string): Promise<string> {
+  const prefix = invoicePrefix(countryCode);
+  if (!prefix) {
+    throw new Error(`No invoice prefix for country: ${countryCode}`);
+  }
+  const seq = await nextSeq(`cn-${countryCode.toLowerCase()}`);
+  return `CN-${prefix}-${seq.toString().padStart(5, "0")}`;
 }

@@ -1975,8 +1975,9 @@ model Order {
   /// Wellness-credit health-kit redemption fulfilled by this order, if any
   /// (a €0 kit line + postage in shippingCents — §11).
   healthTestRedemption  HealthTestRedemption?
-  /// Invoice generated for this order (null for Portugal or pre-invoice orders).
-  invoice               Invoice?
+  /// Fiscal documents for this order (empty for Portugal / pre-invoice orders).
+  /// Normally one invoice/receipt, plus a CREDIT_NOTE if the order was refunded.
+  invoices              Invoice[]
   /// Stripe Checkout URL cached for admin copy-paste. Refreshed by resolveOrderPaymentUrl.
   stripeCheckoutUrl     String?
   /// Shipment tracking — admin-entered for physical orders (health test kits,
@@ -3322,15 +3323,20 @@ enum InvoiceDocumentType {
   INVOICE
   RECEIPT
   INVOICE_RECEIPT
+  /// CREDIT_NOTE — issued on refund, reverses a paid INVOICE_RECEIPT/RECEIPT
+  /// (Portugal excluded; PT credit notes live in InvoiceExpress).
+  CREDIT_NOTE
 }
 
-/// Invoice/receipt tied to an Order. One row per order (Portugal excluded).
+/// Invoice/receipt tied to an Order (Portugal excluded).
 /// invoiceNumber is the human-facing reference: IE-00001, CZ-00001, SP-00001, RO-00001.
 /// The same number is reused when an INVOICE transitions to a RECEIPT on payment.
+/// An order normally has ONE fiscal document, plus at most one CREDIT_NOTE issued
+/// on refund — hence orderId is indexed, not unique.
 model Invoice {
   id            String              @id @default(cuid())
   invoiceNumber String              @unique
-  orderId       String              @unique
+  orderId       String
   order         Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
   countryCode   String
   documentType  InvoiceDocumentType @default(INVOICE_RECEIPT)
@@ -3339,6 +3345,7 @@ model Invoice {
   emailSentTo   String?
 
   @@map("invoices")
+  @@index([orderId])
   @@index([countryCode, generatedAt(sort: Desc)])
   @@index([documentType, generatedAt(sort: Desc)])
 }
