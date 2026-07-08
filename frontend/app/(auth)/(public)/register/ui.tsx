@@ -191,13 +191,26 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
         </p>
       </div>
 
-      <p className="rounded-xl px-4 py-2.5 text-[12px] leading-relaxed" style={{ background: "var(--color-background-soft)", color: "var(--color-text-muted)" }}>
-        By continuing, you agree to our{" "}
-        <Link href="/terms" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-accent)" }}>Terms</Link>
-        {" "}and{" "}
-        <Link href="/privacy" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-accent)" }}>Privacy Policy</Link>.
-        Your health data stays private.
-      </p>
+      <label
+        className="flex cursor-pointer items-start gap-2.5 rounded-xl px-4 py-3 text-[12px] leading-relaxed"
+        style={{ background: "var(--color-background-soft)", color: "var(--color-text-muted)" }}
+      >
+        <input
+          type="checkbox"
+          name="acceptTerms"
+          required
+          aria-required="true"
+          className="mt-0.5 size-4 shrink-0"
+          style={{ accentColor: "var(--color-brand-accent)" }}
+        />
+        <span>
+          By continuing, you agree to our{" "}
+          <Link href="/terms" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-accent)" }}>Terms</Link>
+          {" "}and{" "}
+          <Link href="/privacy" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-accent)" }}>Privacy Policy</Link>.
+          Your health data stays private.
+        </span>
+      </label>
 
       <div className="pt-3" style={{ borderTop: "1px solid var(--color-border)" }}>
         <button type="submit" className="gh2-btn-lime w-full justify-center disabled:opacity-60" disabled={loading} style={{ width: "100%" }}>
