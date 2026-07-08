@@ -108,6 +108,13 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
     order.status === "CANCELLED" ||
     order.status === "REFUNDED";
 
+  // A paid order with a live Stripe payment intent can always be refunded,
+  // even once it's reached a terminal state (e.g. FULFILLED then returned).
+  const canRefund =
+    order.paymentStatus === "PAID" &&
+    order.status !== "REFUNDED" &&
+    Boolean(order.stripePaymentIntentId);
+
   const hasConsultation = order.items.some(
     (i) => i.kind === "GENERAL_CONSULTATION" || i.kind === "SPECIALIST_CONSULTATION",
   );
@@ -139,7 +146,9 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
         actions={
           <div className="gh-admin-order-header-actions flex items-center gap-2">
             <Pill tone={statusTone(order.status)}>{order.status.toLowerCase()}</Pill>
-            {!isTerminal ? <AdminOrderActions orderId={order.id} status={order.status} /> : null}
+            {!isTerminal || canRefund ? (
+              <AdminOrderActions orderId={order.id} status={order.status} canRefund={canRefund} />
+            ) : null}
           </div>
         }
       />

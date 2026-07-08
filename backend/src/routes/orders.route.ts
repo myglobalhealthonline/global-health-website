@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync, FastifyRequest } from "fastify";
 import { z } from "zod";
-import { CartItemKind, OrderStatus } from "@prisma/client";
+import { CartItemKind, OrderStatus, PaymentStatus } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import {
   getStripeClient,
@@ -1069,6 +1069,102 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(err);
         return reply.status(500).send(errorResponse("Could not update order"));
+      }
+    },
+  );
+
+  // ── Admin: refund a paid order ─────────────────────────────────────
+  // Issues a Stripe refund against the order's payment intent, then flips the
+  // order to REFUNDED and releases any HELD slots + subscription credit
+  // reservations (mirrors the CANCELLED path). Idempotent against the
+  // `charge.refunded` webhook: whichever runs first sets REFUNDED, the other
+  // no-ops (webhook skips if already REFUNDED; this endpoint guards on PAID).
+  app.post<{ Params: { id: string } }>(
+    "/api/admin/orders/:id/refund",
+    async (request, reply) => {
+      const auth = await verifyAdminAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+
+      const params = orderIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+
+      try {
+        const order = await prisma.order.findUnique({
+          where: { id: params.data.id },
+          include: { items: true },
+        });
+        if (!order) return reply.status(404).send(errorResponse("Order not found"));
+
+        const scope = await assertOrderCountryScope(request, order.id, order.countryCode);
+        if (!scope.allowed) {
+          return reply.status(scope.status).send(errorResponse(scope.message));
+        }
+
+        // Idempotency: an already-refunded order is a success, not an error.
+        if (order.paymentStatus === PaymentStatus.REFUNDED || order.status === OrderStatus.REFUNDED) {
+          return okResponse({ id: order.id, status: OrderStatus.REFUNDED, alreadyRefunded: true });
+        }
+        if (order.paymentStatus !== PaymentStatus.PAID) {
+          return reply.status(409).send(errorResponse("Only a PAID order can be refunded"));
+        }
+        if (!order.stripePaymentIntentId) {
+          return reply.status(409).send(errorResponse("Order has no Stripe payment to refund"));
+        }
+        if (!isStripeConfigured(order.countryCode)) {
+          return reply.status(503).send(errorResponse("Stripe is not configured for this account"));
+        }
+
+        // Refund at the provider FIRST — only mutate the order once the money
+        // has actually been returned, so a provider failure leaves state intact.
+        try {
+          const stripe = getStripeClient(order.countryCode);
+          await stripe.refunds.create({ payment_intent: order.stripePaymentIntentId });
+        } catch (err) {
+          request.log.error({ err, orderId: order.id }, "Stripe refund failed");
+          const message = err instanceof Error ? err.message : "Provider refund failed";
+          return reply.status(502).send(errorResponse(message));
+        }
+
+        const updated = await prisma.order.update({
+          where: { id: order.id },
+          data: { status: OrderStatus.REFUNDED, paymentStatus: PaymentStatus.REFUNDED },
+        });
+
+        // Release HELD consultation slots and subscription credit reservations,
+        // mirroring the CANCELLED transition. Both idempotent / no-op when absent.
+        const heldSlotIds = order.items
+          .map((i) => i.timeSlotId)
+          .filter((id): id is string => Boolean(id));
+        if (heldSlotIds.length > 0) {
+          await releaseSlotsToBaseGrid(heldSlotIds).catch((err) => {
+            request.log.error({ err, orderId: order.id }, "Release slots on refund failed");
+          });
+        }
+        await releaseOrderCreditReservations(order.id).catch((err) => {
+          request.log.error({ err, orderId: order.id }, "Release order credit reservations on refund failed");
+        });
+
+        const actor = resolveAdminSessionActor(request);
+        void recordAudit({
+          action: "ORDER_REFUNDED",
+          entityType: "Order",
+          entityId: order.id,
+          actorUserId: actor?.userId ?? undefined,
+          actorRole: actor?.role ?? undefined,
+          metadata: {
+            amountCents: order.totalCents,
+            currencyCode: order.currencyCode,
+            stripePaymentIntentId: order.stripePaymentIntentId,
+          },
+        });
+
+        return okResponse({ id: updated.id, status: updated.status });
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Could not refund order"));
       }
     },
   );

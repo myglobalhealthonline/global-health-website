@@ -254,6 +254,8 @@ enum AuditAction {
   WELLNESS_CREDIT_REDEEMED
   WELLNESS_CREDIT_CLAWED_BACK
   HEALTH_TEST_REDEEMED
+  // --- Orders ---
+  ORDER_REFUNDED
 }
 
 enum CountryAccessModel {
