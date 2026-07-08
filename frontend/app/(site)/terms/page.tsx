@@ -24,11 +24,14 @@ export default async function TermsPage() {
         meta={<p className="gh2-index">{terms.lastUpdated}</p>}
       />
 
-      {/* Prose body — light for readability */}
-      <section
-        className="mx-auto max-w-3xl px-5 md:px-10"
-        style={{ padding: "clamp(48px,6vw,80px) 20px" }}
-      >
+      {/* Prose body — full-bleed ivory wrapper; body{} is dark forest
+          globally, so every section must supply its own background or
+          text reads dark-on-dark. Inner div keeps the readable measure. */}
+      <section className="gh2-section-ivory">
+        <div
+          className="mx-auto max-w-3xl px-5 md:px-10"
+          style={{ padding: "clamp(48px,6vw,80px) 20px" }}
+        >
         <div className="space-y-8 text-base leading-relaxed text-[var(--color-text-body)]">
           <section>
             <p>{terms.intro}</p>
@@ -121,6 +124,7 @@ export default async function TermsPage() {
               .
             </p>
           </section>
+        </div>
         </div>
       </section>
     </>
