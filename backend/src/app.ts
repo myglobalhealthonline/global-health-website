@@ -114,11 +114,29 @@ export async function buildApp() {
   // rate limit degrades to "loose" instead of "none".
   // Existing per-route configs (login 5/hour, etc.) are untouched — a
   // route-level `config.rateLimit` always wins over this default.
+  // Optional shared store: when REDIS_URL is set, back the limiter with Redis
+  // so throttling is global across replicas (P-019). Unset → in-process store
+  // (unchanged single-replica behaviour). enableOfflineQueue:false +
+  // skipOnError:true mean a Redis outage fails OPEN (requests allowed) rather
+  // than 500ing — the limiter is best-effort protection, not a hard dependency.
+  let rateLimitRedis: import("ioredis").Redis | undefined;
+  if (env.REDIS_URL) {
+    const { Redis } = await import("ioredis");
+    const client = new Redis(env.REDIS_URL, {
+      connectTimeout: 500,
+      maxRetriesPerRequest: 1,
+      enableOfflineQueue: false,
+      lazyConnect: false,
+    });
+    client.on("error", (err) => app.log.warn({ err }, "rate-limit Redis error (failing open)"));
+    rateLimitRedis = client;
+  }
   await app.register(rateLimit, {
     global: true,
     timeWindow: "1 minute",
     max: 300,
     skipOnError: true, // never 500 because Redis is down etc.
+    ...(rateLimitRedis ? { redis: rateLimitRedis } : {}),
   });
 
   // Raw-body parser scoped to the Stripe webhook only — signature

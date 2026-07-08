@@ -128,6 +128,12 @@ const envSchema = z.object({
    *  Generate with: openssl rand -base64 32. */
   CRON_SECRET: z.string().trim().min(16).optional(),
 
+  /** Optional Redis connection for a SHARED rate-limit store. Unset → the
+   *  limiter uses an in-process store (correct on a single replica; on N
+   *  replicas the effective limit becomes max×N). Set this when scaling out
+   *  horizontally so throttling is global. Example: redis://:pass@host:6379. */
+  REDIS_URL: z.string().url().optional(),
+
   /** Optional ops-alert webhook (Slack/Discord/generic). When set, money/ops
    *  reconciliation findings + subscription webhook failures POST a JSON
    *  {text,severity,...} here. Unset → alerts are logged only (§39). */
