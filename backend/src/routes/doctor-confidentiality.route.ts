@@ -20,10 +20,11 @@ const doctorConfidentialityRoute: FastifyPluginAsync = async (app) => {
       if (!request.authUser || request.authUser.role !== "DOCTOR") {
         return reply.status(403).send(errorResponse("Doctor access required"));
       }
-      const doctorProfile = await (prisma as any).doctorProfile.findUnique({
-        where: { userId: request.authUser.sub },
-        select: { id: true },
+      const user = await prisma.user.findUnique({
+        where: { id: request.authUser.sub },
+        select: { doctorProfile: { select: { id: true } } },
       });
+      const doctorProfile = user?.doctorProfile;
       if (!doctorProfile) {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
@@ -45,10 +46,11 @@ const doctorConfidentialityRoute: FastifyPluginAsync = async (app) => {
       if (!request.authUser || request.authUser.role !== "DOCTOR") {
         return reply.status(403).send(errorResponse("Doctor access required"));
       }
-      const doctorProfile = await (prisma as any).doctorProfile.findUnique({
-        where: { userId: request.authUser.sub },
-        select: { id: true },
+      const user = await prisma.user.findUnique({
+        where: { id: request.authUser.sub },
+        select: { doctorProfile: { select: { id: true } } },
       });
+      const doctorProfile = user?.doctorProfile;
       if (!doctorProfile) {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
