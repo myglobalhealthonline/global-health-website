@@ -670,7 +670,7 @@ function buildAdminDoctorWhere(query: AdminDoctorsQuery): Prisma.DoctorWhereInpu
     andClauses.push({
       OR: [
         { countryId: query.countryId },
-        { additionalCountries: { some: { countryId: query.countryId } } },
+        { additionalCountries: { some: { active: true, countryId: query.countryId } } },
       ],
     });
   }
@@ -678,7 +678,7 @@ function buildAdminDoctorWhere(query: AdminDoctorsQuery): Prisma.DoctorWhereInpu
     andClauses.push({
       OR: [
         { country: { code: query.countryCode } },
-        { additionalCountries: { some: { country: { code: query.countryCode } } } },
+        { additionalCountries: { some: { active: true, country: { code: query.countryCode } } } },
       ],
     });
   }

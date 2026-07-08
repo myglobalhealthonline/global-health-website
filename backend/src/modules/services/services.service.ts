@@ -613,7 +613,7 @@ async function syncServiceDoctorAssignments(
       id: { in: unique },
       OR: [
         { countryId: serviceCountryId },
-        { additionalCountries: { some: { countryId: serviceCountryId } } },
+        { additionalCountries: { some: { active: true, countryId: serviceCountryId } } },
       ],
     },
     select: { id: true },

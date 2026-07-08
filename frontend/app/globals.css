@@ -2899,6 +2899,15 @@ a.gh-stat-card:hover .gh-stat-card__underline {
 .gh-admin-card,
 .gh-card,
 .gh-stat-card {
+  /* Cards routinely sit inside a nested `grid gap-*` stack (main column of
+     a two-column page layout). As a grid item, min-width defaults to
+     `auto` — its min-content size, driven by whatever's inside (e.g. a
+     table with a hardcoded min-width) — so overflow-x-auto on a
+     descendant table wrapper does NOT stop the card itself from forcing
+     the grid track wider and bleeding into the next column. min-width:0
+     lets the card shrink to its track and pushes overflow down to the
+     table wrapper where it belongs. No-op outside grid/flex contexts. */
+  min-width: 0;
   border: 1px solid transparent;
   border-radius: var(--portal-radius-lg);
   background-image: var(--lux-card-fill), var(--lux-card-border);
@@ -3396,6 +3405,9 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 .gh-admin-main :where(.overflow-x-auto, .gh-admin-table-wrap) {
   max-width: 100%;
   overflow-x: auto;
+  /* See .gh-portal-tabs above — overflow-x alone computes overflow-y to
+     auto too, showing an unstyled native vertical scrollbar. */
+  overflow-y: hidden;
 }
 
 .gh-admin-main :where(table) {
@@ -3440,6 +3452,13 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   gap: 18px;
   max-width: 100%;
   overflow-x: auto;
+  /* Leaving overflow-y unset makes it compute to `auto` too (CSS spec:
+     an explicit overflow-x forces the other axis off `visible`), which
+     shows an unstyled native vertical scrollbar the instant content is a
+     pixel taller than the row — the sharp-cornered bar cutting into the
+     tabs/pills. This is a single-row strip; it never needs to scroll
+     vertically. */
+  overflow-y: hidden;
   border-bottom: 1px solid var(--portal-line);
   -webkit-mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
   mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
@@ -4226,6 +4245,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   border-collapse: collapse;
   display: block;
   overflow-x: auto;
+  overflow-y: hidden;
   white-space: nowrap;
 }
 

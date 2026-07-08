@@ -406,6 +406,17 @@ export default async function AdminEditDoctorPage({
               Use the Country dropdown in the main form to change the primary
               country. Tick additional countries to list this doctor there too.
             </p>
+            {/* Countries live in the sidebar but submit through the main
+                `doctor-edit-form` (via the checkboxes' `form` attribute
+                above) — this button just makes that save reachable without
+                scrolling back to the Profile card. */}
+            <button
+              type="submit"
+              form="doctor-edit-form"
+              className="gh-btn gh-btn-primary mt-4 w-full"
+            >
+              Save changes
+            </button>
           </AdminCard>
 
           <AdminCard>

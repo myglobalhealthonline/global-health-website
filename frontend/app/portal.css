@@ -17,6 +17,32 @@
  * stay in globals.css. When in doubt, a rule belongs in globals.css.
  * ========================================================================= */
 
+/* Horizontal-only scroll strips/table-wraps below — an explicit
+   overflow-x without a paired overflow-y computes the other axis to
+   `auto` too (CSS Overflow spec), so any of these rendering 1px taller
+   than expected gets an unstyled native vertical scrollbar cutting into
+   the row (same bug fixed on .gh-portal-tabs in globals.css). None of
+   these are ever meant to scroll vertically. */
+.gh-admin-service-tablist,
+.gh-admin-service-kind-tabs,
+.gh-admin-country-health .gh-admin-table-wrap,
+.gh-admin-blog-table-wrap,
+.gh-admin-health-tablist,
+.gh-admin-ops-table-wrap,
+.gh-admin-country-table-wrap,
+.gh-admin-disclaimer-tablist,
+.gh-admin-plan-table-wrap,
+.gh-admin-plan-tablist,
+.gh-admin-plan-translation-tablist,
+.gh-admin-rich-text__toolbar,
+.gh-admin-support-table-wrap,
+.gh-admin-specialty-tablist,
+.gh-admin-order-table-wrap,
+.gh-admin-doctor-tabs,
+.gh-doctor-tabs {
+  overflow-y: hidden;
+}
+
 /* Batch 3A: admin services route family */
 .gh-admin-service-mobile-list {
   display: none;
@@ -2998,7 +3024,12 @@
   }
 }
 
-@media (max-width: 1180px) {
+@media (max-width: 1400px) {
+  /* Same shortfall as .gh-doctor-detail-grid (see the 1400px block below):
+     1.65fr main column vs. a 300px-floor sidebar leaves the main column
+     narrower than the 920px-min availability/doctor table between ~1180
+     and ~1400px, forcing a cramped horizontal-scroll table right against
+     the sidebar card. Raised so that band always stacks. */
   .gh-admin-doctor-detail-layout {
     grid-template-columns: 1fr;
   }
@@ -3281,7 +3312,11 @@
   min-height: 38px;
 }
 
-@media (max-width: 1180px) {
+@media (max-width: 1400px) {
+  /* 1180px left col1 fighting for room against a 300px-min sidebar and a
+     760px-min table (gh-doctor-table-wrap) — the table crowded/crammed
+     against the sidebar card instead of collapsing to a clean 1-col
+     stack. Raised so that band always stacks. */
   .gh-doctor-detail-grid,
   .gh-doctor-overview-grid,
   .gh-doctor-availability-grid,

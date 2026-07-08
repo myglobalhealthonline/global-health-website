@@ -189,8 +189,8 @@ export async function updateAdminDoctorMarket(
     await assertLocales(countryId, input.translations?.map((entry) => entry.locale) ?? []);
     const updated = await prisma.$transaction(async (tx) => {
       const [doctor, country] = await Promise.all([
-        tx.doctor.findUnique({ where: { id: doctorId }, select: { id: true } }),
-        tx.country.findUnique({ where: { id: countryId }, select: { id: true } }),
+        tx.doctor.findUnique({ where: { id: doctorId }, select: { id: true, countryId: true } }),
+        tx.country.findUnique({ where: { id: countryId }, select: { id: true, defaultLocale: true } }),
       ]);
       if (!doctor || !country) {
         throw new DoctorMarketNotFoundError("Doctor or country not found");
@@ -250,6 +250,21 @@ export async function updateAdminDoctorMarket(
               seoKeywords: entry.seoKeywords,
             },
           });
+        }
+        // Mirror the primary country's default-locale title into the base
+        // Doctor row: admin list/detail views read Doctor.title directly
+        // and don't resolve per-country translations, so that column has
+        // to stay in sync with whatever the admin edits here.
+        if (doctor.countryId === countryId) {
+          const primaryEntry = input.translations.find(
+            (entry) => entry.locale === country.defaultLocale,
+          );
+          if (primaryEntry?.title) {
+            await tx.doctor.update({
+              where: { id: doctorId },
+              data: { title: primaryEntry.title },
+            });
+          }
         }
       }
 

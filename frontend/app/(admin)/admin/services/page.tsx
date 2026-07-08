@@ -361,6 +361,7 @@ export default async function AdminServicesPage({
               <Th>Country</Th>
               <Th align="right">Price</Th>
               <Th align="right">Duration</Th>
+              <Th align="right">Doctors</Th>
               <Th align="right">Order</Th>
               <Th>Active</Th>
               <Th align="right" style={{ width: 120 }}>
@@ -398,6 +399,11 @@ export default async function AdminServicesPage({
                       {service.durationMinutes != null
                         ? `${service.durationMinutes} min`
                         : "—"}
+                    </span>
+                  </Td>
+                  <Td align="right">
+                    <span className="font-bold text-[var(--color-text-primary)]">
+                      {service.assignedDoctors.filter((d) => d.isActive).length}
                     </span>
                   </Td>
                   <Td align="right">
@@ -489,6 +495,10 @@ export default async function AdminServicesPage({
                 {
                   label: "Duration",
                   value: service.durationMinutes != null ? `${service.durationMinutes} min` : "—",
+                },
+                {
+                  label: "Doctors",
+                  value: service.assignedDoctors.filter((d) => d.isActive).length,
                 },
                 { label: "Order", value: service.sortOrder },
               ]}
