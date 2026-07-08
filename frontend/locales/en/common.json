@@ -303,7 +303,7 @@
     "gdprConsent": "Data sharing consent (GDPR)",
     "gdprClinicConsent": "I consent to sharing my personal and medical data with the treating clinic and doctor for the purpose of this consultation.",
     "gdprPlatformConsent": "I consent to the Global Health platform processing my data for service improvement, security, and platform communications.",
-    "whatsappConsent": "Receive appointment updates and reminders via WhatsApp (optional)",
+    "whatsappConsent": "I don't want appointment updates via WhatsApp",
     "addingToCart": "Adding to cart…",
     "continueToCart": "Continue to cart",
     "noOpenSlots": "No open slots in the next 14 days for {doctor}.",

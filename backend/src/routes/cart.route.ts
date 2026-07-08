@@ -1112,7 +1112,8 @@ const cartRoute: FastifyPluginAsync = async (app) => {
               patient?.gdprConsentPlatform === true
                 ? new Date()
                 : null,
-            patientWhatsappConsent: patient?.whatsappConsent === true,
+            // Default-ON / opt-OUT: absence of the field = consent true.
+            patientWhatsappConsent: patient?.whatsappConsent !== false,
           },
         });
       } catch (err) {

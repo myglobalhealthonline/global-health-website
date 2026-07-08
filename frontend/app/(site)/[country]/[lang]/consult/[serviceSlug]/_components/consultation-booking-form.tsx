@@ -298,7 +298,7 @@ export function ConsultationBookingForm({
     const consent = form.get("consent") === "on";
     const gdprConsentClinic = form.get("gdprConsentClinic") === "on";
     const gdprConsentPlatform = form.get("gdprConsentPlatform") === "on";
-    const whatsappConsent = form.get("whatsappConsent") === "on";
+    const whatsappConsent = form.get("whatsappOptOut") !== "on";
 
     if (!selectedMember && !bookingForOther && fullName.length < 2) {
       setError(i18n.enterFullName);
@@ -963,13 +963,13 @@ export function ConsultationBookingForm({
           />
           <span>{i18n.gdprPlatformConsent}</span>
         </label>
-        {/* Optional WhatsApp-updates opt-in — deliberately NOT required.
-          * Patient WhatsApp notifications are skipped server-side unless
-          * this was ticked at booking (GDPR). */}
+        {/* WhatsApp updates are ON by default — this checkbox is an OPT-OUT
+          * (unchecked = consent). Ticking it sets whatsappConsent=false and
+          * patient WhatsApp notifications are skipped server-side. */}
         <label className="mt-3 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
           <input
             type="checkbox"
-            name="whatsappConsent"
+            name="whatsappOptOut"
             className="mt-0.5 size-4 rounded border-[var(--color-border)]"
           />
           <span>{i18n.whatsappConsent}</span>

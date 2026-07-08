@@ -176,6 +176,18 @@ const envSchema = z.object({
    *  doctor-auth.ts / medical-access-guard.ts for enforcement points. */
   REQUIRE_2FA_FOR_ROLES: z.string().trim().optional(),
 
+  /** Master compliance switch.
+   *  - "strict" (default): today's behavior — MEDICAL_ACCESS_ENFORCE /
+   *    ADMIN_PHI_REQUIRE_REASON keep their existing defaults, and production
+   *    REFUSES to boot while the medical-access guard is in shadow mode.
+   *  - "relaxed": MEDICAL_ACCESS_ENFORCE defaults to false (shadow: every
+   *    access decision is logged, nothing is blocked) AND the shadow-mode
+   *    production hard-fail below is SKIPPED; ADMIN_PHI_REQUIRE_REASON
+   *    defaults to false.
+   *  Explicit env vars ALWAYS override the master's defaults — e.g.
+   *  COMPLIANCE_MODE=relaxed + MEDICAL_ACCESS_ENFORCE=true → enforce on. */
+  COMPLIANCE_MODE: z.enum(["strict", "relaxed"]).default("strict"),
+
   /** Medical access guard enforcement mode.
    *  - unset / "false" (default): SHADOW mode — assertMedicalAccess logs every
    *    access + raises alerts on would-be-denials, but NEVER blocks. Lets the
@@ -264,11 +276,19 @@ const require2faForRoles = new Set(
     .filter((r) => r.length > 0),
 );
 
-// Default OFF (shadow mode). Must be explicitly opted into with "true".
+// Master compliance switch — see COMPLIANCE_MODE in the schema above.
+// "strict" = today's behavior; "relaxed" = shadow-mode guard allowed in
+// production (hard-fail below skipped) with both flags defaulting to false.
+// Explicit MEDICAL_ACCESS_ENFORCE / ADMIN_PHI_REQUIRE_REASON always win.
+const complianceMode = parsed.COMPLIANCE_MODE;
+
+// Default OFF (shadow mode) in both compliance modes. Must be explicitly
+// opted into with "true" — an explicit value overrides COMPLIANCE_MODE.
 const medicalAccessEnforce =
   parsed.MEDICAL_ACCESS_ENFORCE === true || parsed.MEDICAL_ACCESS_ENFORCE === "true";
 
-// Default OFF — plain ADMIN keeps unconditional PHI access. When "true", the
+// Default OFF in both compliance modes — plain ADMIN keeps unconditional PHI
+// access. When "true" (explicit value overrides COMPLIANCE_MODE), the
 // medical-access guard requires a break-glass reason on the plain-ADMIN branch.
 const adminPhiRequireReason =
   parsed.ADMIN_PHI_REQUIRE_REASON === true || parsed.ADMIN_PHI_REQUIRE_REASON === "true";
@@ -276,8 +296,10 @@ const adminPhiRequireReason =
 // Hard-fail in production if the medical-access guard is still in shadow
 // mode. Shadow mode logs would-be denials but still serves PHI to the
 // caller — acceptable during the Wave-0 backfill, never acceptable once
-// this is a live production deployment.
-if (parsed.NODE_ENV === "production" && !medicalAccessEnforce) {
+// this is a live production deployment. COMPLIANCE_MODE=relaxed skips this
+// check (and ONLY this check) — the deliberate "run shadow mode in prod"
+// escape hatch while the compliance backfill is in progress.
+if (complianceMode === "strict" && parsed.NODE_ENV === "production" && !medicalAccessEnforce) {
   throw new Error(
     "MEDICAL_ACCESS_ENFORCE must be true in production — shadow mode still serves PHI on a denied " +
       "access. Confirm the 2FA/confidentiality/consent backfill is complete via the shadow-mode " +

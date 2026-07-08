@@ -89,7 +89,8 @@ function buildBookingExtras(input: BookingInput) {
     gdprConsentClinic: input.gdprConsentClinic === true,
     gdprConsentPlatform: input.gdprConsentPlatform === true,
     gdprConsentedAt: bothConsents ? new Date() : null,
-    whatsappConsent: input.whatsappConsent === true,
+    // Default-ON / opt-OUT: absence of the field = consent true.
+    whatsappConsent: input.whatsappConsent !== false,
   };
 }
 

@@ -1505,8 +1505,8 @@ model Appointment {
   gdprConsentClinic         Boolean                   @default(false)
   gdprConsentPlatform       Boolean                   @default(false)
   gdprConsentedAt           DateTime?
-  /// Patient opted in to appointment updates via WhatsApp (captured at booking).
-  whatsappConsent           Boolean                   @default(false)
+  /// WhatsApp appointment updates — default ON; patient opts OUT at booking.
+  whatsappConsent           Boolean                   @default(true)
   createdAt                 DateTime                  @default(now())
   updatedAt                 DateTime                  @updatedAt
 
@@ -1908,8 +1908,8 @@ model CartItem {
   patientGdprConsentClinic   Boolean   @default(false)
   patientGdprConsentPlatform Boolean   @default(false)
   patientGdprConsentedAt     DateTime?
-  /// Patient opted in to appointment updates via WhatsApp (captured at booking).
-  patientWhatsappConsent     Boolean   @default(false)
+  /// WhatsApp appointment updates — default ON; patient opts OUT at booking.
+  patientWhatsappConsent     Boolean   @default(true)
   createdAt                DateTime     @default(now())
 
   @@index([heldUntil])
@@ -2091,8 +2091,8 @@ model OrderItem {
   patientGdprConsentClinic   Boolean   @default(false)
   patientGdprConsentPlatform Boolean   @default(false)
   patientGdprConsentedAt     DateTime?
-  /// Patient opted in to appointment updates via WhatsApp (captured at booking).
-  patientWhatsappConsent     Boolean   @default(false)
+  /// WhatsApp appointment updates — default ON; patient opts OUT at booking.
+  patientWhatsappConsent     Boolean   @default(true)
 
   @@index([orderId])
 }
