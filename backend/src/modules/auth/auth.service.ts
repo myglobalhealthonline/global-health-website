@@ -95,7 +95,7 @@ export async function registerPatient(input: RegisterBody) {
     // Create PatientProfile immediately with GHN so it is always present
     // from registration. upsert protects against the rare case where a
     // PatientProfile was pre-created (e.g. manual booking before signup).
-    await prisma.patientProfile.upsert({
+    const profile = await prisma.patientProfile.upsert({
       where: { email },
       create: {
         email,
@@ -122,6 +122,25 @@ export async function registerPatient(input: RegisterBody) {
           .catch(() => ({}))),
       },
     });
+
+    // Append-only audit record of terms/privacy acceptance at signup.
+    // Schema validation guarantees acceptTerms === true by this point.
+    await prisma.patientConsent
+      .create({
+        data: {
+          patientProfileId: profile.id,
+          globalHealthNumber: profile.globalHealthNumber,
+          consentType: "TERMS_PRIVACY",
+          consentValue: true,
+          source: "PATIENT_PORTAL",
+          changedByUserId: user.id,
+          changedByRole: UserRole.PATIENT,
+        },
+      })
+      .catch((err) => {
+        // Never fail registration over the audit row — log and continue.
+        console.error("Failed to record TERMS_PRIVACY consent", err);
+      });
 
     return toSafeUser(user);
   } catch (error) {

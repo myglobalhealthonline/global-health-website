@@ -92,6 +92,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
     const email = String(formData.get("email") ?? "").trim();
     const phone = String(formData.get("phone") ?? "").trim();
     const password = String(formData.get("password") ?? "");
+    const acceptTerms = formData.get("acceptTerms") === "on";
     // PhoneField submits "+<dial> <national>" (or "" when left blank).
     // Validate digit count before hitting the API — 7–15 digits per E.164.
     const phoneDigits = phone.replace(/[\s().-]/g, "");
@@ -103,7 +104,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
     setLoading(true);
     setMessage(null);
     setIsError(false);
-    const result = await registerUser({ fullName, email, phone, password });
+    const result = await registerUser({ fullName, email, phone, password, acceptTerms });
     if (result.ok) {
       setMessage("Account created. Redirecting to your account...");
       setLoading(false);

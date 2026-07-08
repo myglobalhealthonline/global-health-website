@@ -15,8 +15,19 @@ describe("auth validation", () => {
       password: "very-secure-password",
       fullName: "Patient Example",
       phone: "+3531234567",
+      acceptTerms: true,
     });
     assert.equal(result.success, true);
+  });
+
+  it("register rejects missing or false terms acceptance", () => {
+    const base = {
+      email: "patient@example.com",
+      password: "very-secure-password",
+      fullName: "Patient Example",
+    };
+    assert.equal(registerBodySchema.safeParse(base).success, false);
+    assert.equal(registerBodySchema.safeParse({ ...base, acceptTerms: false }).success, false);
   });
 
   it("register rejects short password", () => {

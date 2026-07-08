@@ -12,6 +12,8 @@ export const registerBodySchema = z.object({
     .max(32, "Phone is too long")
     .optional()
     .or(z.literal("")),
+  // Must be true — registration invalid without explicit terms acceptance.
+  acceptTerms: z.boolean().refine((v) => v === true, "You must accept the Terms and Privacy Policy"),
 });
 
 export type RegisterBody = z.infer<typeof registerBodySchema>;

@@ -71,6 +71,7 @@ export async function registerUser(input: {
   password: string;
   fullName: string;
   phone?: string;
+  acceptTerms: boolean;
 }) {
   return authRequest<{ user: AuthUser }>("/api/auth/register", {
     method: "POST",

@@ -24,7 +24,7 @@ function Register($email, $password, $fullName = "Throwaway Patient") {
   $s = New-Sess
   try {
     $r = Invoke-RestMethod -Uri "$Base/api/auth/register" -Method POST -ContentType "application/json" `
-      -Body (@{ email = $email; password = $password; fullName = $fullName; phone = "+353800000001" } | ConvertTo-Json) -WebSession $s
+      -Body (@{ email = $email; password = $password; fullName = $fullName; phone = "+353800000001"; acceptTerms = $true } | ConvertTo-Json) -WebSession $s
     if (-not $r.ok) { return $null }
     return @{ sess = $s; user = $r.data.user }
   } catch { return $null }
