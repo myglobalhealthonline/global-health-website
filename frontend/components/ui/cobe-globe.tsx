@@ -95,9 +95,8 @@ function GlobeBase({
   // Set by the render loop so init() can restart it (e.g. resuming from
   // reduced-motion's single static frame) without a second effect dependency.
   const requestRenderRef = useRef<(() => void) | null>(null);
-  // mapSamples can only be set at cobe instance creation, not per-frame — so
-  // dropping resolution while dragging means destroying + recreating the
-  // instance at the same phi/theta (no visual jump), not a per-frame tweak.
+  // cobe's update() takes mapSamples per-frame same as phi/theta — no
+  // instance recreation needed to change it while dragging.
   const setQualityRef = useRef<((low: boolean) => void) | null>(null);
   const restoreQualityTimeout = useRef<number | undefined>(undefined);
 
@@ -245,9 +244,13 @@ function GlobeBase({
     let loopRunning = false;
     let resizeObserver: ResizeObserver | null = null;
     let phi = initialPhi;
-    let width = 0;
-    let dpr = 1;
+    // Map resolution is the single most expensive cobe setting. Full detail
+    // normally; capped on low-power hardware/save-data/reduced-motion, and
+    // dropped further while actively dragging (see setQuality below) — cobe's
+    // update() takes mapSamples per-frame, so this is just a variable flip,
+    // no WebGL context recreation.
     let fullMapSamples = mapSamples;
+    let currentMapSamples = mapSamples;
     let isLowQuality = false;
 
     function render() {
@@ -276,6 +279,7 @@ function GlobeBase({
         theta: theta + thetaOffsetRef.current + dragOffset.current.theta,
         dark,
         mapBrightness,
+        mapSamples: currentMapSamples,
         markerColor,
         baseColor,
         arcColor,
@@ -305,16 +309,39 @@ function GlobeBase({
     }
     requestRenderRef.current = requestRender;
 
-    function createInstance(samples: number, atPhi: number, atTheta: number) {
-      return createGlobe(canvas, {
+    // Drop mapSamples while actively dragging, restore once released — no
+    // WebGL recreation, just changes what the next update() call passes.
+    // No-op if already at the target tier (e.g. low-power devices where
+    // both tiers already match).
+    function setQuality(low: boolean) {
+      if (isLowQuality === low) return;
+      const dragMapSamples = Math.min(fullMapSamples, 3000);
+      if (dragMapSamples === fullMapSamples) return;
+      currentMapSamples = low ? dragMapSamples : fullMapSamples;
+      isLowQuality = low;
+      requestRender();
+    }
+    setQualityRef.current = setQuality;
+
+    function init() {
+      if (globe || !canvasRef.current) return;
+      const width = canvasRef.current.offsetWidth;
+      if (width === 0) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // Cut resolution to ~a third on low-power hardware / save-data /
+      // reduced-motion, full detail everywhere else. Everything else
+      // (colors, markers, arcs, scale) is untouched either way.
+      fullMapSamples = lowPowerRef.current ? Math.min(mapSamples, 6000) : mapSamples;
+      currentMapSamples = fullMapSamples;
+      globe = createGlobe(canvas, {
         devicePixelRatio: dpr,
         width,
         height: width,
-        phi: atPhi,
-        theta: atTheta,
+        phi: initialPhi,
+        theta,
         dark,
         diffuse,
-        mapSamples: samples,
+        mapSamples: fullMapSamples,
         mapBrightness,
         baseColor,
         markerColor,
@@ -327,40 +354,6 @@ function GlobeBase({
         arcHeight,
         scale,
       });
-    }
-
-    // Rebuilds the cobe instance at a lower mapSamples while dragging (the
-    // single most expensive cobe setting, and the only one it won't let you
-    // change post-init) — same phi/theta so there's no visual jump — then
-    // rebuilds back at full quality once the drag settles. No-op if already
-    // at the target quality (e.g. low-power devices where both tiers match).
-    function setQuality(low: boolean) {
-      if (!globe || isLowQuality === low) return;
-      const dragMapSamples = Math.min(fullMapSamples, 3000);
-      // Already-low-power devices may have fullMapSamples at or below the
-      // drag tier — nothing to gain from a rebuild in that case.
-      if (dragMapSamples === fullMapSamples) return;
-      const target = low ? dragMapSamples : fullMapSamples;
-      const currentPhi = phi + phiOffsetRef.current + dragOffset.current.phi;
-      const currentTheta = theta + thetaOffsetRef.current + dragOffset.current.theta;
-      globe.destroy();
-      globe = createInstance(target, currentPhi, currentTheta);
-      isLowQuality = low;
-      requestRender();
-    }
-    setQualityRef.current = setQuality;
-
-    function init() {
-      if (globe || !canvasRef.current) return;
-      width = canvasRef.current.offsetWidth;
-      if (width === 0) return;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      // Map resolution is the single most expensive cobe setting — cut it
-      // to ~a third on low-power hardware / save-data / reduced-motion,
-      // full detail everywhere else. Everything else (colors, markers,
-      // arcs, scale) is untouched so the globe looks the same either way.
-      fullMapSamples = lowPowerRef.current ? Math.min(mapSamples, 6000) : mapSamples;
-      globe = createInstance(fullMapSamples, initialPhi, theta);
       requestRender();
       window.setTimeout(() => {
         canvas.style.opacity = "1";
