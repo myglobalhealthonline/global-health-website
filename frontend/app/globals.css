@@ -8708,10 +8708,6 @@ a.gh-appointment-card:hover {
   background: linear-gradient(to right, transparent 0%, rgba(3, 31, 24, 0.55) 42%, rgba(3, 31, 24, 0.9) 72%, #031f18 100%);
 }
 
-.gh-inline-mobile-name {
-  z-index: 3;
-}
-
 .gh-inline-panel-base {
   background: #031f18;
 }

@@ -154,24 +154,6 @@ export function DoctorProfileTemplate({
               aria-hidden
               className="gh-inline-doctor-bleed pointer-events-none absolute inset-y-0 right-0 hidden lg:block"
             />
-
-            {/* Mobile name overlay */}
-            {profileImageSrc ? (
-              <div
-                className="gh-inline-mobile-name absolute inset-x-0 bottom-0 px-6 pb-6 lg:hidden"
-              >
-                <p
-                  className="text-[12px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]"
-                >
-                  {profile.title}
-                </p>
-                <p
-                  className="mt-1 text-[1.35rem] font-extrabold tracking-[-0.02em] text-white/95"
-                >
-                  {profile.name}
-                </p>
-              </div>
-            ) : null}
           </div>
 
           {/* ── RIGHT — profile content ── */}
