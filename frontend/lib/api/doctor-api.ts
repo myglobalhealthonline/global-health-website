@@ -108,6 +108,27 @@ export async function fetchDoctorMe() {
   return doctorRequest<DoctorMe>("/api/doctor/me");
 }
 
+export type DoctorComplianceStatus = {
+  confidentialityAccepted: boolean;
+  twoFactorEnabled: boolean;
+};
+
+export async function fetchDoctorComplianceStatus() {
+  return doctorRequest<DoctorComplianceStatus>("/api/doctor/compliance-status");
+}
+
+export type DoctorConfidentialityAgreement = {
+  accepted: boolean;
+  acceptedAt: string | null;
+  agreementVersion: string;
+  currentVersion: string;
+  agreementText: string;
+};
+
+export async function fetchDoctorConfidentialityAgreement() {
+  return doctorRequest<DoctorConfidentialityAgreement>("/api/doctor/confidentiality-agreement");
+}
+
 export type DoctorAppointment = {
   id: string;
   fullName: string;

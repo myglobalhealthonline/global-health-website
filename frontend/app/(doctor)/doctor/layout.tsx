@@ -12,16 +12,20 @@ import {
   LayoutDashboard,
   MessagesSquare,
   Receipt,
+  ScrollText,
+  ShieldCheck,
   Stethoscope,
   UserCog,
   Users,
 } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import {
+  fetchDoctorComplianceStatus,
   fetchDoctorMe,
   fetchDoctorNotifications,
   fetchDoctorUnreadMessageCount,
 } from "@/lib/api/doctor-api";
+import { ComplianceBanner } from "./_components/compliance-banner";
 import { PortalShell, type PortalNavItem, type PortalNavGroup } from "@/components/portal-shell";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 
@@ -67,10 +71,11 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     createdAt: string;
     readAt: string | null;
   }[] = [];
-  const [notif, unreadMessages, me] = await Promise.all([
+  const [notif, unreadMessages, me, compliance] = await Promise.all([
     fetchDoctorNotifications(false),
     fetchDoctorUnreadMessageCount(),
     fetchDoctorMe(),
+    fetchDoctorComplianceStatus(),
   ]);
   if (notif.ok) {
     unreadCount = notif.data.unreadCount;
@@ -143,6 +148,8 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
           badge: unreadCount,
         },
         ...profileItems,
+        { href: "/doctor/security", label: "Security", icon: <ShieldCheck className="size-4" aria-hidden /> },
+        { href: "/doctor/confidentiality", label: "Confidentiality", icon: <ScrollText className="size-4" aria-hidden /> },
       ],
     },
   ];
@@ -161,6 +168,15 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
       notificationsUnreadCount={unreadCount}
       notificationsViewAllHref="/doctor/notifications"
       notificationsEmptyMessage="No notifications yet."
+      banner={
+        compliance.ok &&
+        (!compliance.data.confidentialityAccepted || !compliance.data.twoFactorEnabled) ? (
+          <ComplianceBanner
+            confidentialityAccepted={compliance.data.confidentialityAccepted}
+            twoFactorEnabled={compliance.data.twoFactorEnabled}
+          />
+        ) : null
+      }
     >
       {children}
     </PortalShell>

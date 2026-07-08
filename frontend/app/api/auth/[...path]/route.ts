@@ -19,8 +19,12 @@ const ROUTE_TABLE: Record<string, Set<string>> = {
   GET: new Set([
     "me",
     "me/export",
+    "2fa/status",
   ]),
   POST: new Set([
+    "2fa/setup",
+    "2fa/confirm",
+    "2fa/disable",
     "login",
     "logout",
     "register",

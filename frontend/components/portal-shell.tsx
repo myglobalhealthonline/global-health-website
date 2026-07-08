@@ -108,6 +108,7 @@ export function PortalShell({
   notificationsViewAllHref,
   notificationsEmptyMessage,
   logoHref,
+  banner,
   children,
 }: {
   user: PortalShellUser;
@@ -139,6 +140,9 @@ export function PortalShell({
    *  Patient portal passes the country homepage so clicking the logo
    *  takes the user back to e.g. /ie/en rather than /account. */
   logoHref?: string;
+  /** Optional banner rendered directly under the header, above the main
+   *  content (e.g. the doctor compliance nudge). */
+  banner?: ReactNode;
   children: ReactNode;
 }) {
   const [navOpen, setNavOpen] = useState(false);
@@ -414,6 +418,8 @@ export function PortalShell({
               </div>
             </div>
           </header>
+
+          {banner}
 
           <main className="gh-admin-main gh-portal-main min-w-0 flex-1">
             {children}

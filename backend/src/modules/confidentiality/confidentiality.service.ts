@@ -13,6 +13,31 @@ import { recordAudit } from "../audit/audit.service.js";
  */
 export const CURRENT_AGREEMENT_VERSION = "1.0.0";
 
+/**
+ * The agreement text shown to doctors before they accept. Keep in lockstep
+ * with CURRENT_AGREEMENT_VERSION — any edit here must bump the version so
+ * doctors are re-prompted.
+ */
+export const CURRENT_AGREEMENT_TEXT = `Doctor Confidentiality & Data Protection Agreement (v${"1.0.0"})
+
+As a practising clinician on the Global Health Network platform, I agree to the following terms governing access to patient records and protected health information (PHI):
+
+1. Confidentiality. I will treat all patient information — medical records, consultation notes, prescriptions, test results, messages, and identifying details — as strictly confidential, and will not disclose it to any third party except as required for the patient's care or by law.
+
+2. Access on a need-to-know basis. I will access patient records only for patients under my care and only to the extent required to deliver that care. I understand that all record access is logged and audited.
+
+3. Account security. I am responsible for keeping my login credentials secure. I will not share my account, will use two-factor authentication where available, and will notify the platform immediately if I suspect my account has been compromised.
+
+4. Data handling. I will not download, copy, photograph, or otherwise extract patient data outside the platform except where clinically necessary and permitted, and I will ensure any such data is stored securely and deleted when no longer required.
+
+5. Breach notification. I will report any suspected loss, theft, or unauthorised disclosure of patient data to the platform without undue delay.
+
+6. Regulatory compliance. I will comply with the data-protection and medical-confidentiality laws applicable in the countries where I practise through the platform (including GDPR where applicable) and with my professional body's codes of conduct.
+
+7. Duration. These obligations continue after my engagement with the platform ends, for as long as the information remains confidential.
+
+By accepting, I confirm I have read, understood, and agree to be bound by this agreement.`;
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------

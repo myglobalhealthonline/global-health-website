@@ -7,6 +7,8 @@ import {
   getConfidentialityStatus,
   acceptConfidentialityAgreement,
   listDoctorAgreementStatuses,
+  hasAcceptedCurrentAgreement,
+  CURRENT_AGREEMENT_TEXT,
 } from "../modules/confidentiality/confidentiality.service.js";
 import { prisma } from "../db/prisma.js";
 
@@ -30,9 +32,41 @@ const doctorConfidentialityRoute: FastifyPluginAsync = async (app) => {
       }
       try {
         const status = await getConfidentialityStatus(doctorProfile.id);
-        return okResponse(status);
+        return okResponse({ ...status, agreementText: CURRENT_AGREEMENT_TEXT });
       } catch (error) {
         return replyWithError(reply, app.log, error, "Could not read confidentiality status");
+      }
+    },
+  );
+
+  // ─── Doctor: compliance nudge status (confidentiality + 2FA) ─────────────
+
+  app.get(
+    "/api/doctor/compliance-status",
+    { preHandler: requireAuth },
+    async (request, reply) => {
+      if (!request.authUser || request.authUser.role !== "DOCTOR") {
+        return reply.status(403).send(errorResponse("Doctor access required"));
+      }
+      const user = await prisma.user.findUnique({
+        where: { id: request.authUser.sub },
+        select: {
+          twoFactorVerifiedAt: true,
+          doctorProfile: { select: { id: true } },
+        },
+      });
+      const doctorProfile = user?.doctorProfile;
+      if (!doctorProfile) {
+        return reply.status(404).send(errorResponse("Doctor profile not found"));
+      }
+      try {
+        const confidentialityAccepted = await hasAcceptedCurrentAgreement(doctorProfile.id);
+        return okResponse({
+          confidentialityAccepted,
+          twoFactorEnabled: user.twoFactorVerifiedAt !== null,
+        });
+      } catch (error) {
+        return replyWithError(reply, app.log, error, "Could not read compliance status");
       }
     },
   );

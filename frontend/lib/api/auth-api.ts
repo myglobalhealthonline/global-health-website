@@ -155,6 +155,43 @@ export async function signOutAllDevices() {
   return authRequest<{ signedOut: true }>("/api/account/security/sign-out-all", { method: "POST" });
 }
 
+// ─── Two-factor authentication (TOTP) ────────────────────────────────────
+
+export async function fetchTwoFactorStatus() {
+  return authRequest<{ twoFactorEnabled: boolean; twoFactorEnabledAt: string | null }>(
+    "/api/auth/2fa/status",
+  );
+}
+
+/** Step 1: generate a TOTP secret + otpauth URI + backup codes. Nothing is
+ *  persisted server-side until `confirmTwoFactor` succeeds. */
+export async function setupTwoFactor() {
+  return authRequest<{ secret: string; qrUri: string; backupCodes: string[] }>(
+    "/api/auth/2fa/setup",
+    { method: "POST" },
+  );
+}
+
+/** Step 2: verify a code from the authenticator app and enable 2FA. The
+ *  secret + backup codes round-trip from the setup response. */
+export async function confirmTwoFactor(input: {
+  token: string;
+  secret: string;
+  backupCodes: string[];
+}) {
+  return authRequest<{ enabled: true }>("/api/auth/2fa/confirm", {
+    method: "POST",
+    body: input,
+  });
+}
+
+export async function disableTwoFactor(input: { currentPassword: string }) {
+  return authRequest<{ disabled: true }>("/api/auth/2fa/disable", {
+    method: "POST",
+    body: input,
+  });
+}
+
 /** GDPR: trigger a JSON download of everything we hold on the user. */
 export function downloadOwnDataUrl(): string {
   // Same-origin Route Handler proxy honours the session cookie so the
