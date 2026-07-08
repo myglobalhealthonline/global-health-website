@@ -28,7 +28,7 @@ export default async function AdminReportsPage() {
       <PageHeader
         eyebrow="Analytics"
         title="Reports"
-        description="Export list reports as CSV or PDF — services provided by each doctor, the patient roster, and the appointment log. Pick a report, narrow it with the filters, then download."
+        description="Export list reports as Excel or PDF — services provided by each doctor, the patient roster, the appointment log, and per-doctor payout statements. Pick a report, narrow it with the filters, then download."
       />
 
       <AdminCard>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { FileSpreadsheet, FileText } from "lucide-react";
+import { FileSpreadsheet, FileText, Loader2 } from "lucide-react";
+import { fetchDownload } from "@/lib/download";
 
 /**
  * Admin (global) report download panel. Builds a same-origin
@@ -58,6 +59,8 @@ export function AdminReportExports({
   const [to, setTo] = useState("");
   const [status, setStatus] = useState("");
   const [paymentStatus, setPaymentStatus] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const showDoctor = dataset !== "patients";
   const showApptFilters = dataset === "appointments";
@@ -65,8 +68,9 @@ export function AdminReportExports({
   const doctorRequired = dataset === "payout";
   const blocked = doctorRequired && !doctorId;
 
-  function download(format: "excel" | "pdf") {
-    if (blocked) return;
+  async function download(format: "excel" | "pdf") {
+    if (blocked || busy) return;
+    setError(null);
     const params = new URLSearchParams();
     params.set("dataset", dataset);
     params.set("format", format);
@@ -80,7 +84,14 @@ export function AdminReportExports({
       if (status) params.set("status", status);
       if (paymentStatus) params.set("paymentStatus", paymentStatus);
     }
-    window.location.href = `/api/admin/reports/export?${params.toString()}`;
+    setBusy(true);
+    try {
+      await fetchDownload(`/api/admin/reports/export?${params.toString()}`);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Download failed");
+    } finally {
+      setBusy(false);
+    }
   }
 
   const activeNote = DATASETS.find((d) => d.value === dataset)?.note;
@@ -187,21 +198,22 @@ export function AdminReportExports({
         <button
           type="button"
           onClick={() => download("excel")}
-          disabled={blocked}
+          disabled={blocked || busy}
           className="gh-btn gh-btn-primary text-sm disabled:opacity-50"
         >
-          <FileSpreadsheet className="size-3.5" /> Export Excel
+          {busy ? <Loader2 className="size-3.5 animate-spin" /> : <FileSpreadsheet className="size-3.5" />} Export Excel
         </button>
         <button
           type="button"
           onClick={() => download("pdf")}
-          disabled={blocked}
+          disabled={blocked || busy}
           className="gh-btn gh-btn-outline text-sm disabled:opacity-50"
         >
-          <FileText className="size-3.5" /> Export PDF
+          {busy ? <Loader2 className="size-3.5 animate-spin" /> : <FileText className="size-3.5" />} Export PDF
         </button>
       </div>
 
+      {error ? <p className="text-xs text-rose-600">{error}</p> : null}
       {blocked ? (
         <p className="text-xs text-amber-600">Select a doctor to export a payout statement.</p>
       ) : null}

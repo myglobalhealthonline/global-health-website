@@ -9,6 +9,7 @@ import {
   Receipt,
   Upload,
 } from "lucide-react";
+import { fetchDownload } from "@/lib/download";
 
 /**
  * Doctor payout workflow, in one card:
@@ -81,10 +82,15 @@ export function PayoutInvoicePanel() {
     void refresh();
   }, []);
 
-  function statementHref(format: "excel" | "pdf"): string {
+  async function downloadStatement(format: "excel" | "pdf") {
+    setError(null);
     const { from, to } = monthRange(statementMonth);
     const params = new URLSearchParams({ dataset: "payout", format, from, to });
-    return `/api/doctor/reports/export?${params.toString()}`;
+    try {
+      await fetchDownload(`/api/doctor/reports/export?${params.toString()}`);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Download failed");
+    }
   }
 
   async function onUpload(e: React.FormEvent) {
@@ -146,12 +152,12 @@ export function PayoutInvoicePanel() {
               className="gh-input"
             />
           </label>
-          <a href={statementHref("excel")} className="gh-btn gh-btn-soft text-sm">
+          <button type="button" onClick={() => downloadStatement("excel")} className="gh-btn gh-btn-soft text-sm">
             <FileSpreadsheet className="size-3.5" /> Excel
-          </a>
-          <a href={statementHref("pdf")} className="gh-btn gh-btn-soft text-sm">
+          </button>
+          <button type="button" onClick={() => downloadStatement("pdf")} className="gh-btn gh-btn-soft text-sm">
             <FileText className="size-3.5" /> PDF
-          </a>
+          </button>
         </div>
       </div>
 
