@@ -92,6 +92,14 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
     const email = String(formData.get("email") ?? "").trim();
     const phone = String(formData.get("phone") ?? "").trim();
     const password = String(formData.get("password") ?? "");
+    // PhoneField submits "+<dial> <national>" (or "" when left blank).
+    // Validate digit count before hitting the API — 7–15 digits per E.164.
+    const phoneDigits = phone.replace(/[\s().-]/g, "");
+    if (phone && !/^\+\d{7,15}$/.test(phoneDigits)) {
+      setIsError(true);
+      setMessage("Enter a valid phone number (digits only, without the country code).");
+      return;
+    }
     setLoading(true);
     setMessage(null);
     setIsError(false);
@@ -109,7 +117,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-6" suppressHydrationWarning>
+    <form onSubmit={onSubmit} className="grid gap-4" suppressHydrationWarning>
       <div className="grid gap-2">
         <label htmlFor="register-name" className="gh-field-label" data-required>
           {i18n.fullNameLabel}
@@ -146,7 +154,10 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
         <label htmlFor="register-phone" className="gh-field-label">
           {i18n.phoneLabel} <span className="text-[var(--color-text-muted)]">{i18n.phoneOptional}</span>
         </label>
-        <PhoneField id="register-phone" name="phone" placeholder={i18n.phonePlaceholder} />
+        {/* Placeholder stays the PhoneField default national-number example
+            ("871234567") — the dial code lives in the select, so a "+353..."
+            placeholder here would invite double-entering the country code. */}
+        <PhoneField id="register-phone" name="phone" />
       </div>
 
       <div className="grid gap-2">
@@ -158,7 +169,8 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
             id="register-password"
             name="password"
             type={showPassword ? "text" : "password"}
-            className="gh-input pr-12"
+            className="gh-input"
+            style={{ paddingRight: "2.75rem" }}
             placeholder={i18n.passwordHint}
             required
             aria-required="true"
@@ -179,18 +191,15 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
         </p>
       </div>
 
-      <p className="rounded-xl px-4 py-3 text-[12px] leading-relaxed" style={{ background: "var(--color-background-soft)", color: "var(--color-text-muted)" }}>
+      <p className="rounded-xl px-4 py-2.5 text-[12px] leading-relaxed" style={{ background: "var(--color-background-soft)", color: "var(--color-text-muted)" }}>
         By continuing, you agree to our{" "}
-        <Link href="/terms" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-primary)" }}>Terms</Link>
+        <Link href="/terms" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-accent)" }}>Terms</Link>
         {" "}and{" "}
-        <Link href="/privacy" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-primary)" }}>Privacy Policy</Link>.
+        <Link href="/privacy" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-accent)" }}>Privacy Policy</Link>.
         Your health data stays private.
       </p>
 
-      <div
-        className="mt-2 pt-5"
-        style={{ borderTop: "1px solid var(--color-border)" }}
-      >
+      <div className="pt-3" style={{ borderTop: "1px solid var(--color-border)" }}>
         <button type="submit" className="gh2-btn-lime w-full justify-center disabled:opacity-60" disabled={loading} style={{ width: "100%" }}>
           {loading ? i18n.creating : i18n.createAccount}
         </button>

@@ -38,14 +38,14 @@ export default async function Page() {
       accent="confidence."
       body="Sign in to continue booking, reviewing consultations, and managing the clinical network."
     >
-      <div className="mb-6 text-center">
+      <div className="mb-5">
         <h1
           className="font-extrabold tracking-[-0.04em]"
-          style={{ fontSize: "clamp(1.75rem,3vw,2.25rem)", lineHeight: 1.1, color: "#0D3A28" } as React.CSSProperties}
+          style={{ fontSize: "clamp(1.55rem,2.2vw,1.9rem)", lineHeight: 1.1, color: "var(--color-text-primary)", textWrap: "balance" } as React.CSSProperties}
         >
           Welcome back
         </h1>
-        <p className="mt-2 text-sm leading-relaxed" style={{ color: "#7A9A83" }}>
+        <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
           Sign in to your Global Health account
         </p>
       </div>

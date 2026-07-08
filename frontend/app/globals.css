@@ -1696,6 +1696,25 @@ img {
   --color-background-page: #FFFFFF;
   --color-background-soft: #F6F8F1;
 }
+/* Auth shell — form fields sitting on a gh2-glass-forest card. Re-skins the
+ * shared gh-input/gh-select recipe (white fill) into dark glass; scoped to
+ * the auth card only so booking/admin forms are untouched. */
+.gh2-auth-glass .gh-input,
+.gh2-auth-glass .gh-select {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.92);
+}
+.gh2-auth-glass .gh-input::placeholder { color: rgba(255, 255, 255, 0.38); }
+/* The portal block below re-points .gh-field-label at --portal-text with
+ * !important; on the dark auth card that paints labels near-invisible. */
+.gh2-auth-glass .gh-field-label { color: var(--color-brand-accent) !important; }
+.gh2-auth-glass .gh-select option { color: #1D4B36; background: #ffffff; }
+.gh2-auth-glass .gh-input:focus,
+.gh2-auth-glass .gh-select:focus {
+  border-color: rgba(176, 241, 34, 0.65);
+  box-shadow: 0 0 0 3px rgba(176, 241, 34, 0.16);
+}
 .gh2-card-hover { transition: transform .25s var(--ease-out, ease), box-shadow .25s, border-color .25s; }
 .gh2-card-hover:hover {
   transform: translateY(-3px);

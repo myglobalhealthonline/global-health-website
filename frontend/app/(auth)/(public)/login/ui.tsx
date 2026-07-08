@@ -110,7 +110,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
           {i18n.emailLabel}
         </label>
         <div className="relative">
-          <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2" style={{ color: "#9BB0A4" }}>
+          <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2" style={{ color: "#3E8B63" }}>
             <Mail className="size-[17px]" aria-hidden />
           </span>
           <input
@@ -136,21 +136,21 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
           <Link
             href="/forgot-password"
             className="text-xs font-semibold underline-offset-4 hover:underline"
-            style={{ color: "var(--color-brand-primary)" }}
+            style={{ color: "var(--color-brand-accent)" }}
           >
             {i18n.forgotPassword}
           </Link>
         </div>
         <div className="relative">
-          <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2" style={{ color: "#9BB0A4" }}>
+          <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2" style={{ color: "#3E8B63" }}>
             <Lock className="size-[17px]" aria-hidden />
           </span>
           <input
             id="login-password"
             name="password"
             type={showPassword ? "text" : "password"}
-            className="gh-input pr-12"
-            style={{ paddingLeft: "2.75rem" }}
+            className="gh-input"
+            style={{ paddingLeft: "2.75rem", paddingRight: "2.75rem" }}
             placeholder={i18n.passwordPlaceholder}
             required
             aria-required="true"

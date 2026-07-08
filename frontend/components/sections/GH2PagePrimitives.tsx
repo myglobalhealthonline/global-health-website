@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowUpRight, CheckCircle2, XCircle, Loader2, Stethoscope, ShieldCheck, Clock, Lock } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, XCircle, Loader2, ShieldCheck, Clock, Lock } from "lucide-react";
 
 export function GH2SectionHeader({
   eyebrow,
@@ -276,7 +276,7 @@ export function GH2AuthShell({
 }) {
   const TRUST = [
     { v: "GDPR", l: "Privacy protected", icon: <ShieldCheck className="size-[15px]" aria-hidden /> },
-    { v: "JWT",  l: "Secure session",    icon: <Lock className="size-[15px]" aria-hidden /> },
+    { v: "E2E",  l: "Encrypted sessions", icon: <Lock className="size-[15px]" aria-hidden /> },
     { v: "24h",  l: "Response support",  icon: <Clock className="size-[15px]" aria-hidden /> },
   ];
 
@@ -295,6 +295,24 @@ export function GH2AuthShell({
         className="relative hidden overflow-hidden lg:flex lg:flex-col"
         style={{ background: "linear-gradient(155deg, #0C4A35 0%, #073526 38%, #062E22 65%, #041A12 100%)" }}
       >
+        {/* Clinic photo — green-tinted (forest overlay above it does the tint) */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundImage: "url('/images/stock/gp.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.65,
+            filter: "saturate(0.65)",
+          }}
+        />
+        {/* Forest tint over the photo */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{ background: "linear-gradient(155deg, rgba(12,74,53,0.55) 0%, rgba(7,53,38,0.72) 40%, rgba(4,26,18,0.92) 100%)" }}
+        />
         {/* Lime radial bloom — upper */}
         <div aria-hidden className="pointer-events-none absolute" style={{ left: "18%", top: "14%", width: 520, height: 520, background: "radial-gradient(circle, rgba(166,242,15,0.11) 0%, transparent 65%)", filter: "blur(24px)" }} />
         {/* Lime bloom — lower right */}
@@ -312,11 +330,13 @@ export function GH2AuthShell({
 
         <div className="relative z-10 flex flex-1 flex-col" style={{ padding: "clamp(40px,5vw,60px) clamp(36px,4.5vw,56px)" }}>
           {/* Logo */}
-          <Link href="/" className="inline-flex items-center gap-3" style={{ textDecoration: "none" }}>
-            <span style={{ display: "inline-flex", width: 42, height: 42, alignItems: "center", justifyContent: "center", borderRadius: "50%", background: "var(--color-brand-accent)", flexShrink: 0 }}>
-              <Stethoscope style={{ width: 20, height: 20, color: "#062E22" }} aria-hidden />
-            </span>
-            <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: "-0.02em", color: "#fff" }}>Global Health</span>
+          <Link href="/" className="inline-flex items-center" style={{ textDecoration: "none" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, same as SiteFooter */}
+            <img
+              src="/logos/global-health-light.png"
+              alt="Global Health"
+              style={{ height: 76, width: "auto" }}
+            />
           </Link>
 
           {/* Headline — flex-grows to center */}
@@ -342,61 +362,112 @@ export function GH2AuthShell({
             ) : null}
           </div>
 
-          {/* Trust cards — glassmorphism row */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10 }}>
-            {TRUST.map((card) => (
+          {/* Trust strip — one glass band, hairline-divided (editorial, not card grid) */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3,1fr)",
+              borderRadius: 18,
+              background: "rgba(255,255,255,0.045)",
+              border: "1px solid rgba(255,255,255,0.10)",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+              overflow: "hidden",
+            }}
+          >
+            {TRUST.map((card, i) => (
               <div
                 key={card.v}
-                style={{ padding: "14px 16px", borderRadius: 14, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.10)", backdropFilter: "blur(8px)" }}
+                style={{
+                  padding: "18px 20px",
+                  borderLeft: i > 0 ? "1px solid rgba(255,255,255,0.09)" : "none",
+                }}
               >
-                <div style={{ color: "var(--color-brand-accent)", marginBottom: 8 }}>{card.icon}</div>
-                <p style={{ fontSize: 14, fontWeight: 700, color: "rgba(255,255,255,0.90)", lineHeight: 1 }}>{card.v}</p>
-                <p style={{ fontSize: 11, color: "rgba(255,255,255,0.40)", marginTop: 4, lineHeight: 1.3 }}>{card.l}</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 7, color: "var(--color-brand-accent)" }}>
+                  {card.icon}
+                  <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: "-0.01em", color: "rgba(255,255,255,0.92)", lineHeight: 1 }}>{card.v}</span>
+                </div>
+                <p style={{ fontSize: 11.5, color: "rgba(255,255,255,0.48)", marginTop: 7, lineHeight: 1.35 }}>{card.l}</p>
               </div>
             ))}
+          </div>
+
+          {/* Bottom mono caption — gh2 editorial signature */}
+          <div
+            style={{
+              marginTop: 28,
+              paddingTop: 18,
+              borderTop: "1px solid rgba(255,255,255,0.08)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <span style={{ fontFamily: "var(--font-mono, ui-monospace, monospace)", fontSize: 10.5, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255,255,255,0.34)" }}>
+              Global Health Network
+            </span>
+            <span style={{ fontFamily: "var(--font-mono, ui-monospace, monospace)", fontSize: 10.5, letterSpacing: "0.16em", color: "rgba(255,255,255,0.34)" }}>
+              Secure access
+            </span>
           </div>
         </div>
       </aside>
 
-      {/* ── RIGHT — form panel ────────────────────────────────────── */}
+      {/* ── RIGHT — form panel (ivory, glass card) ────────────────── */}
       <main
         id="main-content"
-        className="relative flex flex-col items-center justify-center px-5 py-8 sm:py-10"
-        style={{ background: "#F5F8F5" }}
+        className="gh2-section-ivory relative flex flex-col overflow-hidden px-4 pb-6 pt-4 sm:px-6 lg:justify-center lg:py-6"
       >
-        <div className="w-full" style={{ maxWidth: 500 }}>
-          {/* Mobile brand strip */}
-          <div
-            className="mb-6 flex items-center gap-3 rounded-2xl lg:hidden"
-            style={{ background: "linear-gradient(135deg, #0C4A35, #062E22)", padding: "16px 20px" }}
-          >
-            <span style={{ display: "inline-flex", width: 36, height: 36, flexShrink: 0, alignItems: "center", justifyContent: "center", borderRadius: "50%", background: "var(--color-brand-accent)" }}>
-              <Stethoscope style={{ width: 17, height: 17, color: "#062E22" }} aria-hidden />
-            </span>
-            <div>
-              <p style={{ fontSize: 13, fontWeight: 800, color: "#fff", lineHeight: 1 }}>Global Health</p>
-              <p style={{ fontSize: 11, color: "rgba(166,242,15,0.78)", marginTop: 2 }}>{eyebrow}</p>
-            </div>
+        {/* Faint forest plus-grid texture */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            opacity: 0.07,
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231D4B36' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E\")",
+            backgroundSize: "28px",
+          }}
+        />
+
+        {/* Back link — floats top-right on desktop so the card can center full-height */}
+        <Link
+          href="/"
+          className="absolute right-6 top-4 z-20 hidden min-h-[44px] items-center gap-1.5 text-[13px] font-semibold underline-offset-4 hover:underline lg:inline-flex"
+          style={{ color: "#5E7B6B" }}
+        >
+          <ArrowUpRight className="size-3.5" aria-hidden style={{ transform: "rotate(-135deg)" }} />
+          Back to home
+        </Link>
+
+        <div className="relative z-10 mx-auto flex w-full flex-1 flex-col lg:block lg:flex-none" style={{ maxWidth: 460 }}>
+          {/* Top row — mobile logo + back link */}
+          <div className="mb-4 flex items-center justify-between lg:hidden">
+            <Link href="/" className="inline-flex items-center" style={{ textDecoration: "none" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, same as SiteFooter */}
+              <img src="/logos/global-health-dark.png" alt="Global Health" style={{ height: 56, width: "auto" }} />
+            </Link>
+            <Link
+              href="/"
+              className="inline-flex min-h-[44px] items-center gap-1.5 text-[13px] font-semibold underline-offset-4 hover:underline"
+              style={{ color: "#5E7B6B" }}
+            >
+              <ArrowUpRight className="size-3.5" aria-hidden style={{ transform: "rotate(-135deg)" }} />
+              Back to home
+            </Link>
           </div>
 
-          {/* Card — gh2-card-ivory surface (ivory gradient + soft shadow) with
-              the auth-shell's larger radius/padding kept as overrides. */}
+          {/* Card — gh2-glass-forest + gh2-dark-content flips the shared ink
+              tokens; gh2-auth-glass re-skins gh-input/gh-select to dark glass.
+              my-auto vertically centers on tall mobile viewports. */}
           <div
-            className="gh2-card-ivory"
-            style={{ borderRadius: 28, padding: "clamp(36px,5vw,52px) clamp(28px,4vw,48px)" }}
+            className="gh2-glass-forest gh2-dark-content gh2-auth-glass my-auto"
+            style={{ borderRadius: 24, padding: "clamp(22px,3vw,32px) clamp(18px,3vw,30px)" }}
           >
-            {/* Badge */}
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: 24 }}>
-              <div style={{ width: 60, height: 60, borderRadius: "50%", background: "#EBF9D4", border: "1.5px solid rgba(166,242,15,0.35)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(5,45,30,0.08)" }}>
-                <Stethoscope style={{ width: 26, height: 26, color: "#0E4A35" }} aria-hidden />
-              </div>
-            </div>
-
-            {/* Tab switcher */}
+            {/* Segmented tab switcher */}
             {activeTab ? (
               <div
-                className="mb-7 flex gap-6"
-                style={{ borderBottom: "1px solid #E8EDEA" }}
+                className="mb-5 grid grid-cols-2 gap-1"
+                style={{ padding: 4, borderRadius: 999, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)" }}
                 role="tablist"
                 aria-label="Authentication"
               >
@@ -406,8 +477,21 @@ export function GH2AuthShell({
                     href={tab === "login" ? "/login" : "/register"}
                     role="tab"
                     aria-selected={activeTab === tab}
-                    className="transition-colors duration-150"
-                    style={{ display: "inline-flex", alignItems: "flex-end", minHeight: 44, paddingBottom: 12, fontSize: 14, fontWeight: 700, marginBottom: -1, textDecoration: "none", color: activeTab === tab ? "#0E4A35" : "#6E8B79", borderBottom: activeTab === tab ? "2px solid #0E4A35" : "2px solid transparent" }}
+                    className="gh-focus-on-dark transition-all duration-200"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      minHeight: 44,
+                      borderRadius: 999,
+                      fontSize: 14,
+                      fontWeight: 700,
+                      letterSpacing: "-0.01em",
+                      textDecoration: "none",
+                      color: activeTab === tab ? "#0A1F14" : "rgba(255,255,255,0.62)",
+                      background: activeTab === tab ? "var(--color-brand-accent)" : "transparent",
+                      boxShadow: activeTab === tab ? "0 2px 10px rgba(176,241,34,0.22)" : "none",
+                    }}
                   >
                     {tab === "login" ? "Sign in" : "Create account"}
                   </Link>
@@ -417,15 +501,10 @@ export function GH2AuthShell({
 
             {children}
 
-            {/* Security note */}
-            <div style={{ marginTop: 22, textAlign: "center" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}>
-                <ShieldCheck style={{ width: 13, height: 13, color: "#8AA88D" }} aria-hidden />
-                <span style={{ fontSize: 12, color: "#7A9A83", fontWeight: 500 }}>Your data is encrypted and protected</span>
-              </div>
-              <p style={{ fontSize: 11, color: "#9BB8A0", marginTop: 3 }}>
-                We use industry-standard security to keep your information safe.
-              </p>
+            {/* Security note — single quiet line */}
+            <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.10)", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+              <ShieldCheck style={{ width: 13, height: 13, color: "rgba(166,242,15,0.75)", flexShrink: 0 }} aria-hidden />
+              <span style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", fontWeight: 500 }}>Encrypted end-to-end. Your health data stays private.</span>
             </div>
           </div>
         </div>

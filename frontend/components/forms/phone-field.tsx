@@ -110,7 +110,10 @@ export function PhoneField({
         disabled={disabled}
         aria-invalid={ariaInvalid}
         value={national}
-        onChange={(e) => update(dial, e.target.value)}
+        // National number only — strip non-digits and cap at 14 (E.164 allows
+        // up to 15 digits total including the dial code).
+        maxLength={14}
+        onChange={(e) => update(dial, e.target.value.replace(/\D/g, "").slice(0, 14))}
       />
     </div>
   );

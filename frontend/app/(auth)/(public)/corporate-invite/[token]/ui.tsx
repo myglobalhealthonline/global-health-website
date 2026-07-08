@@ -126,7 +126,8 @@ export function CorporateInviteForm({
             id="invite-password"
             name="password"
             type={showPassword ? "text" : "password"}
-            className="gh-input pr-12"
+            className="gh-input"
+            style={{ paddingRight: "2.75rem" }}
             minLength={invite.existingAccount ? 1 : 8}
             required
             aria-required="true"
