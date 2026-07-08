@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminReportsPage() {
   const [doctorsResult, countriesResult] = await Promise.all([
-    fetchAdminDoctors({ pageSize: "500" }),
+    fetchAdminDoctors({ pageSize: "250" }),
     fetchAdminCountries(),
   ]);
 

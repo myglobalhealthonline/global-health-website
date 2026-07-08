@@ -109,36 +109,10 @@ const nextConfig: NextConfig = {
             source: "/api/admin/invoices/:invoiceId/resend",
             destination: `${apiOrigin}/api/admin/invoices/:invoiceId/resend`,
           },
-          // Report list exports (CSV/PDF) are plain <a href> downloads, so
-          // they need same-origin URLs to carry the session cookie. Proxy
-          // both the admin (global) and doctor (self) export endpoints.
-          {
-            source: "/api/admin/reports/export",
-            destination: `${apiOrigin}/api/admin/reports/export`,
-          },
-          {
-            source: "/api/doctor/reports/export",
-            destination: `${apiOrigin}/api/doctor/reports/export`,
-          },
-          // Doctor payout-invoice slot: upload (POST fetch), list (GET fetch)
-          // and download (<a href>) all need same-origin so the session cookie
-          // rides along. One rewrite covers the collection, one the download.
-          {
-            source: "/api/doctor/payout-invoices",
-            destination: `${apiOrigin}/api/doctor/payout-invoices`,
-          },
-          {
-            source: "/api/doctor/payout-invoices/download",
-            destination: `${apiOrigin}/api/doctor/payout-invoices/download`,
-          },
-          {
-            source: "/api/admin/payout-invoices",
-            destination: `${apiOrigin}/api/admin/payout-invoices`,
-          },
-          {
-            source: "/api/admin/payout-invoices/download",
-            destination: `${apiOrigin}/api/admin/payout-invoices/download`,
-          },
+          // NOTE: report-export + payout-invoice endpoints are proxied by
+          // dedicated app/api route handlers (app/api/**/route.ts via
+          // forwardStream), NOT rewrites — so they work regardless of
+          // rewrite matching in a given deploy.
         ]
       : [];
 
