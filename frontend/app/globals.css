@@ -2101,18 +2101,18 @@ img {
    * canvas gradient now matches --lux-plane-bg's ivory base instead of a
    * dark fill — no more dark strip showing through around the content plane. */
   --lux-canvas-bg:
-    radial-gradient(1400px 900px at 85% -12%, rgba(176, 241, 34, 0.10), transparent 60%),
-    radial-gradient(900px 700px at -10% 110%, rgba(143, 176, 33, 0.06), transparent 55%),
-    linear-gradient(170deg, #fcfdf9 0%, #f8faf4 45%, #f5f8f0 100%);
+    radial-gradient(1400px 900px at 85% -12%, rgba(176, 241, 34, 0.16), transparent 60%),
+    radial-gradient(900px 700px at -10% 110%, rgba(143, 176, 33, 0.10), transparent 55%),
+    linear-gradient(170deg, #eef1e6 0%, #e6ebdc 45%, #dfe5d3 100%);
   --lux-canvas-bloom:
-    radial-gradient(1100px 760px at 86% -12%, rgba(176, 241, 34, 0.08), transparent 62%),
-    radial-gradient(760px 560px at -8% 108%, rgba(143, 176, 33, 0.05), transparent 58%);
+    radial-gradient(1100px 760px at 86% -12%, rgba(176, 241, 34, 0.13), transparent 62%),
+    radial-gradient(760px 560px at -8% 108%, rgba(143, 176, 33, 0.08), transparent 58%);
   --lux-seam-light: linear-gradient(90deg, transparent, rgba(176, 241, 34, 0.45) 35%, rgba(176, 241, 34, 0.10) 70%, transparent);
   --lux-card-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.66));
   --lux-modal-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.86));
   --lux-card-border: linear-gradient(160deg, rgba(255, 255, 255, 0.95) 0%, rgba(16, 23, 19, 0.06) 38%, rgba(16, 23, 19, 0.10) 62%, rgba(143, 176, 33, 0.22) 100%);
   --lux-card-border-hover: linear-gradient(160deg, rgba(255, 255, 255, 1) 0%, rgba(16, 23, 19, 0.08) 38%, rgba(16, 23, 19, 0.12) 62%, rgba(176, 241, 34, 0.35) 100%);
-  --lux-chrome-fill: linear-gradient(165deg, rgba(14, 28, 20, 0.86) 0%, rgba(7, 16, 11, 0.88) 60%, rgba(10, 22, 15, 0.86) 100%);
+  --lux-chrome-fill: linear-gradient(165deg, rgba(9, 20, 14, 0.92) 0%, rgba(4, 10, 7, 0.94) 60%, rgba(6, 15, 10, 0.92) 100%);
   --lux-chrome-border: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05) 30%, rgba(176, 241, 34, 0.28) 65%, rgba(255, 255, 255, 0.04));
   --lux-well-fill: linear-gradient(180deg, #eff2ea 0%, #f4f6f0 100%);
   --lux-overlay-fill: rgba(7, 18, 12, 0.60);
