@@ -164,6 +164,13 @@ export function CheckoutPageClient({
       setError(res.message);
       return;
     }
+    // Zero-total orders (fully covered by plan credit/discount) never get a
+    // Stripe session — the order is already complete, so go straight to the
+    // success page instead of assigning a null Stripe URL.
+    if (res.data.free || !res.data.url) {
+      window.location.assign(`${returnTo.replace(/\/checkout$/, "/checkout/success")}?orderId=${encodeURIComponent(res.data.orderId)}`);
+      return;
+    }
     window.location.assign(res.data.url);
   }
 

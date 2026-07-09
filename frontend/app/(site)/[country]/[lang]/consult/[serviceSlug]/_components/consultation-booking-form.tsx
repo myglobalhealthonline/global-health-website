@@ -52,6 +52,15 @@ type Props = {
    */
   autoAssign?: { country: string; language: string } | null;
   i18n: CommonLocale["bookingForm"];
+  /** Which patient-intake fields this country's `BookingSetting` requires
+   *  server-side — drives the required/optional label + attr so the form
+   *  never claims a field is optional when the server will 400 without it. */
+  bookingRequirements?: {
+    requirePhone: boolean;
+    requireDateOfBirth: boolean;
+    requireNationalId: boolean;
+    requireAddress: boolean;
+  };
 };
 
 /** Saved patient profile fields we prefill on the details step (req #2). */
@@ -92,7 +101,10 @@ export function ConsultationBookingForm({
   changeTimeHref,
   autoAssign,
   i18n,
+  bookingRequirements,
 }: Props) {
+  const requirePhone = bookingRequirements?.requirePhone ?? false;
+  const requireDob = bookingRequirements?.requireDateOfBirth ?? false;
   const router = useRouter();
   const params = useParams<{ country: string; lang: string }>();
   const { add } = useCart();
@@ -716,9 +728,15 @@ export function ConsultationBookingForm({
           </label>
           {!treatingOther ? (
             <label className="block">
-              <span className="text-xs font-semibold text-[var(--color-text-body)]">{i18n.phone}</span>
+              <span className="text-xs font-semibold text-[var(--color-text-body)]">
+                {i18n.phone}
+                {!requirePhone ? (
+                  <span className="text-[11px] font-normal text-[var(--color-text-muted)]"> (optional)</span>
+                ) : null}
+              </span>
               <PhoneField
                 name="phone"
+                required={requirePhone}
                 defaultValue={defaults.phone}
                 defaultDial={dialCodeForCountrySlug(params?.country)}
                 placeholder="871234567"
@@ -732,9 +750,14 @@ export function ConsultationBookingForm({
             <label className="block">
               <span className="text-xs font-semibold text-[var(--color-text-body)]">
                 {i18n.dateOfBirth}
+                {!requireDob ? (
+                  <span className="text-[11px] font-normal text-[var(--color-text-muted)]"> (optional)</span>
+                ) : null}
               </span>
               <DobField
                 name="dateOfBirth"
+                required={requireDob}
+                aria-required={requireDob}
                 defaultValue={defaults.dateOfBirth}
                 className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
               />
@@ -785,10 +808,13 @@ export function ConsultationBookingForm({
               <label className="block">
                 <span className="text-xs font-semibold text-[var(--color-text-body)]">
                   Patient phone{" "}
-                  <span className="text-[11px] font-normal text-[var(--color-text-muted)]">(optional)</span>
+                  {!requirePhone ? (
+                    <span className="text-[11px] font-normal text-[var(--color-text-muted)]">(optional)</span>
+                  ) : null}
                 </span>
                 <PhoneField
                   name="patientOtherPhone"
+                  required={requirePhone}
                   defaultDial={dialCodeForCountrySlug(params?.country)}
                   placeholder="871234567"
                   className="mt-1 flex gap-2"
@@ -799,10 +825,14 @@ export function ConsultationBookingForm({
               <label className="block">
                 <span className="text-xs font-semibold text-[var(--color-text-body)]">
                   Date of birth{" "}
-                  <span className="text-[11px] font-normal text-[var(--color-text-muted)]">(optional)</span>
+                  {!requireDob ? (
+                    <span className="text-[11px] font-normal text-[var(--color-text-muted)]">(optional)</span>
+                  ) : null}
                 </span>
                 <DobField
                   name="patientOtherDob"
+                  required={requireDob}
+                  aria-required={requireDob}
                   className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
                 />
               </label>

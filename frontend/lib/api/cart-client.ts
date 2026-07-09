@@ -98,10 +98,13 @@ export type CheckoutInput = {
 
 export async function startCheckout(
   input: CheckoutInput,
-): Promise<Result<{ orderId: string; url: string }>> {
-  return cartFetch<{ orderId: string; url: string }>("/api/cart/checkout", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(input),
-  });
+): Promise<Result<{ orderId: string; url: string | null; free?: boolean }>> {
+  return cartFetch<{ orderId: string; url: string | null; free?: boolean }>(
+    "/api/cart/checkout",
+    {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(input),
+    },
+  );
 }

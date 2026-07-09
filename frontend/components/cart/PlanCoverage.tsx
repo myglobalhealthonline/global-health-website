@@ -59,21 +59,31 @@ export function PlanCoverage({
 
   if (state.kind === "loading" || state.kind === "hidden") return null;
 
+  // Every call site mounts this inside a .gh2-glass-forest dark card (cart +
+  // checkout order summary) — colors are on-dark tokens, not the light-theme
+  // text vars (which read as near-invisible dark green on the near-black
+  // glass background).
   const shell = "mb-5 border-b pb-5";
   const headerRow = "flex items-center gap-2.5";
-  const iconStyle = { color: "var(--color-brand-primary)" } as const;
+  const iconStyle = { color: "var(--color-brand-accent)" } as const;
+  const onDarkPrimary = "rgba(255, 255, 255, 0.95)";
+  const onDarkBody = "rgba(255, 255, 255, 0.85)";
+  const onDarkMuted = "var(--gh2-on-dark-muted)";
+  const onDarkBorder = "rgba(255, 255, 255, 0.14)";
+  const onDarkWarn = "#FCD34D";
+  const pillBg = "rgba(255, 255, 255, 0.10)";
 
   if (state.kind === "guest") {
     return (
-      <div className={shell} style={{ borderColor: "var(--color-border)" }}>
-        <p className={headerRow} style={{ color: "var(--color-text-primary)" }}>
+      <div className={shell} style={{ borderColor: onDarkBorder }}>
+        <p className={headerRow} style={{ color: onDarkPrimary }}>
           <Sparkles className="size-4 shrink-0" style={iconStyle} aria-hidden />
           <span className="text-sm font-semibold">{t.guestPrompt}</span>
         </p>
         <Link
           href={loginHref}
           className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold underline"
-          style={{ color: "var(--color-brand-primary)" }}
+          style={{ color: "var(--color-brand-accent)" }}
         >
           <LogIn className="size-4" aria-hidden />
           {t.login}
@@ -90,16 +100,16 @@ export function PlanCoverage({
   // exempt — their automatic membership discount renders below instead.
   if (!v.subscriptionId && !corporateLine) {
     return (
-      <div className={shell} style={{ borderColor: "var(--color-border)" }}>
+      <div className={shell} style={{ borderColor: onDarkBorder }}>
         <p className={headerRow}>
           <Award className="size-4 shrink-0" style={iconStyle} aria-hidden />
-          <span className="text-sm font-bold" style={{ color: "var(--color-text-primary)" }}>{t.upsellTitle}</span>
+          <span className="text-sm font-bold" style={{ color: onDarkPrimary }}>{t.upsellTitle}</span>
         </p>
-        <p className="mt-1.5 text-[13px]" style={{ color: "var(--color-text-muted)" }}>{t.upsell}</p>
+        <p className="mt-1.5 text-[13px]" style={{ color: onDarkMuted }}>{t.upsell}</p>
         <Link
           href={plansHref}
           className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold underline"
-          style={{ color: "var(--color-brand-primary)" }}
+          style={{ color: "var(--color-brand-accent)" }}
         >
           {t.viewPlans}
         </Link>
@@ -111,41 +121,40 @@ export function PlanCoverage({
     if (line.corporateDiscount) {
       return {
         label: `${line.corporateDiscount.planName} −${line.corporateDiscount.percent}%`,
-        tone: "var(--color-brand-primary)",
+        tone: "var(--color-brand-accent)",
       };
     }
-    if (line.mode === "CREDIT") return { label: t.included, tone: "var(--color-brand-primary)" };
+    if (line.mode === "CREDIT") return { label: t.included, tone: "var(--color-brand-accent)" };
     if (line.mode === "FIXED" || line.mode === "PERCENT")
-      return { label: t.discounted, tone: "var(--color-brand-primary)" };
+      return { label: t.discounted, tone: "var(--color-brand-accent)" };
     // NORMAL / NOT_COVERED — explain WHY so the buyer can act (warning tone).
-    const warn = "var(--color-status-warning-text)";
     switch (line.reason) {
       case "LOCKED":
-        return { label: t.locked, tone: warn };
+        return { label: t.locked, tone: onDarkWarn };
       case "NOT_ENOUGH_CREDITS":
-        return { label: t.notEnoughCredits, tone: warn };
+        return { label: t.notEnoughCredits, tone: onDarkWarn };
       case "FAMILY_UNAVAILABLE":
       case "NOT_OWNED":
       case "FAMILY_NOT_ENABLED":
       case "SERVICE_NOT_FAMILY_USABLE":
       case "MEMBER_NOT_ALLOWED":
-        return { label: t.familyUnavailable, tone: warn };
+        return { label: t.familyUnavailable, tone: onDarkWarn };
       default:
-        return { label: t.notCovered, tone: "var(--color-text-muted)" };
+        return { label: t.notCovered, tone: onDarkMuted };
     }
   };
 
   return (
-    <div className={shell} style={{ borderColor: "var(--color-border)" }}>
+    <div className={shell} style={{ borderColor: onDarkBorder }}>
       <p className={headerRow}>
         <Award className="size-4 shrink-0" style={iconStyle} aria-hidden />
-        <span className="text-sm font-bold" style={{ color: "var(--color-text-primary)" }}>
+        <span className="text-sm font-bold" style={{ color: onDarkPrimary }}>
           {v.planName ?? corporateLine?.corporateDiscount?.planName ?? t.title}
         </span>
       </p>
 
       {v.totalSavedCents > 0 ? (
-        <p className="mt-1.5 text-[15px] font-extrabold tracking-[-0.01em]" style={{ color: "var(--color-brand-primary)" }}>
+        <p className="mt-1.5 text-[15px] font-extrabold tracking-[-0.01em]" style={{ color: "var(--color-brand-accent)" }}>
           {interpolate(t.youSave, { amount: formatPrice(v.totalSavedCents, currency) })}
         </p>
       ) : null}
@@ -155,19 +164,19 @@ export function PlanCoverage({
           const b = badge(line);
           return (
             <li key={line.itemId} className="flex items-center justify-between gap-3 text-[13px]">
-              <span className="min-w-0 truncate" style={{ color: "var(--color-text-body)" }}>
+              <span className="min-w-0 truncate" style={{ color: onDarkBody }}>
                 {itemNames[line.itemId] ?? "—"}
                 {line.familyMemberName ? (
-                  <span className="ml-1.5 text-[11px]" style={{ color: "var(--color-text-muted)" }}>
+                  <span className="ml-1.5 text-[11px]" style={{ color: onDarkMuted }}>
                     · {line.familyMemberName}
                   </span>
                 ) : null}
               </span>
               <span className="flex shrink-0 items-center gap-2">
-                <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: "var(--color-background-soft)", color: b.tone }}>
+                <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: pillBg, color: b.tone }}>
                   {b.label}
                 </span>
-                <span className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-text-primary)" }}>
+                <span className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: onDarkPrimary }}>
                   {line.finalUnitPriceCents === 0 ? formatPrice(0, currency) : formatPrice(line.finalUnitPriceCents, currency)}
                 </span>
               </span>
@@ -177,7 +186,7 @@ export function PlanCoverage({
       </ul>
 
       {v.consultationCreditsRemaining >= 0 && v.lines.some((l) => l.mode === "CREDIT") ? (
-        <p className="mt-3 border-t pt-3 text-[12px]" style={{ borderColor: "var(--color-border)", color: "var(--color-text-muted)" }}>
+        <p className="mt-3 border-t pt-3 text-[12px]" style={{ borderColor: onDarkBorder, color: onDarkMuted }}>
           {interpolate(t.creditsLeft, { count: v.consultationCreditsRemaining })}
         </p>
       ) : null}

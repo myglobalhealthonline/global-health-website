@@ -159,3 +159,47 @@ export const getPublicCountryByCode = cache(
     return list.find((c) => c.code === normalized) ?? null;
   },
 );
+
+export type PublicBookingRequirements = {
+  requirePhone: boolean;
+  requireDateOfBirth: boolean;
+  requireNationalId: boolean;
+  requireAddress: boolean;
+};
+
+/**
+ * Which patient-intake fields this country's booking flow requires
+ * server-side (`BookingSetting.require*`). The consultation booking form
+ * uses this to mark fields required (and label them accurately) instead of
+ * guessing — a mismatched "(optional)" label used to cause a submit that
+ * always 400s for countries requiring phone/DOB.
+ */
+export const getPublicBookingRequirements = cache(
+  async (code: string): Promise<PublicBookingRequirements> => {
+    const fallback: PublicBookingRequirements = {
+      requirePhone: false,
+      requireDateOfBirth: false,
+      requireNationalId: false,
+      requireAddress: false,
+    };
+    const res = await fetchCountries();
+    if (!res.ok || !Array.isArray(res.data)) return fallback;
+    const normalized = code.toLowerCase();
+    const row = res.data.find(
+      (r): r is Record<string, unknown> =>
+        !!r &&
+        typeof r === "object" &&
+        typeof (r as Record<string, unknown>).code === "string" &&
+        (r as Record<string, unknown>).code === normalized,
+    );
+    const bs = row?.bookingSetting;
+    if (!bs || typeof bs !== "object") return fallback;
+    const b = bs as Record<string, unknown>;
+    return {
+      requirePhone: b.requirePhone === true,
+      requireDateOfBirth: b.requireDateOfBirth === true,
+      requireNationalId: b.requireNationalId === true,
+      requireAddress: b.requireAddress === true,
+    };
+  },
+);
