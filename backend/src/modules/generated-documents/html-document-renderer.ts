@@ -3,6 +3,7 @@ import path from "node:path";
 import Handlebars from "handlebars";
 import type { GeneratedDocumentType } from "@prisma/client";
 import { TEMPLATE_FILE_BY_TYPE } from "./document-template-utils.js";
+import { pdfLogoDataUrl } from "../../lib/pdf/brand.js";
 
 function resolveTemplatesRoot(): string {
   const candidates = [
@@ -61,6 +62,7 @@ export function renderDocumentHtml(
   }
 
   return compiled({
+    logoDataUrl: pdfLogoDataUrl(),
     ...context,
     styles: loadSharedStyles(),
   });

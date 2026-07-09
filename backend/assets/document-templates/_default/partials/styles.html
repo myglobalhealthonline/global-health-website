@@ -1,93 +1,122 @@
 <style>
+  /* Global Health clinical document system — Variant K (approved 2026-07-09).
+     Tokens mirror src/lib/pdf/brand.ts. */
   @import url("https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap");
-  @page { size: A4; margin: 16mm 14mm; }
-  * { box-sizing: border-box; }
+  @page { size: A4; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: "Calibri", "Segoe UI", Arial, sans-serif;
-    font-size: 17pt;
-    line-height: 1.4;
-    color: #4a4a4a;
-    margin: 0;
-    padding: 0;
+    font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.55;
+    color: #26332D;
+    background: #FFFFFF;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    width: 210mm;
   }
-  .header {
-    border-bottom: 2px solid #1d4b36;
-    padding-bottom: 10px;
-    margin-bottom: 14px;
+  .serif { font-family: Georgia, "Times New Roman", serif; }
+
+  /* spine */
+  .spine { position: fixed; left: 0; top: 0; bottom: 0; width: 7mm; background: #0F2E25; }
+  .spine-caption {
+    position: fixed; left: 0; top: 0; width: 7mm; height: 297mm;
+    display: flex; align-items: flex-end; justify-content: center; padding-bottom: 12mm;
   }
-  .brand {
-    font-size: 9pt;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #1d4b36;
+  .spine-caption span {
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    font-size: 6pt; font-weight: 600; letter-spacing: 0.42em; text-transform: uppercase;
+    color: rgba(242, 245, 236, 0.75);
   }
-  h1 {
-    font-size: 17pt;
-    font-weight: 700;
-    margin: 6px 0 0;
-    color: #1d4b36;
-    font-family: "Calibri", "Segoe UI", Arial, sans-serif;
+  .page { position: relative; min-height: 297mm; padding: 12mm 16mm 46mm 24mm; }
+
+  .caps {
+    font-size: 6.6pt; font-weight: 600; letter-spacing: 0.28em;
+    text-transform: uppercase; color: #9AA49D;
   }
-  .patient-card {
-    border: 1.5px solid #1d4b36;
-    padding: 12px 14px;
-    margin: 12px 0 0;
-    background: #fafcfa;
+
+  /* topline + masthead */
+  .topline {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 0.5pt solid #C9CFC7; padding-bottom: 3.2mm;
   }
-  .patient-body-gap {
-    height: 2.8em;
-    margin: 0;
-    padding: 0;
+  .topline .caps { color: #1D4B36; }
+  .logo { height: 16mm; width: auto; }
+  .logo-text { font-size: 12pt; font-weight: 700; color: #1D4B36; letter-spacing: 0.04em; }
+
+  .masthead { margin-top: 8mm; }
+  .mast-title {
+    font-family: Georgia, "Times New Roman", serif; font-style: italic;
+    font-size: 25pt; line-height: 1.08; color: #0F2E25; letter-spacing: -0.01em;
   }
-  .field-row {
-    margin: 0 0 6px;
-    padding: 0;
-    line-height: 1.35;
-  }
-  .signature-block .field-row {
-    margin-bottom: 0;
-  }
-  .field-row:last-child { margin-bottom: 0; }
-  .field-label {
-    font-weight: 700;
-    color: #1d4b36;
-  }
-  .field-value { color: #4a4a4a; }
+  .mast-sub { margin-top: 3.4mm; display: flex; align-items: baseline; gap: 6mm; flex-wrap: wrap; }
+  .mast-no { font-size: 8.6pt; font-weight: 700; letter-spacing: 0.16em; color: #1D4B36; }
+  .mast-issued { font-size: 8.4pt; color: #66716A; }
+  .ecg { margin-top: 5.5mm; }
+
+  /* parties (patient / consultation / doctor) */
+  .parties { display: flex; gap: 10mm; margin-top: 8mm; }
+  .party { flex: 1; min-width: 0; }
+  .party .caps { display: block; margin-bottom: 1.8mm; }
+  .party .n { font-family: Georgia, "Times New Roman", serif; font-size: 12pt; color: #0F2E25; }
+  .party .l { font-size: 8.6pt; color: #66716A; margin-top: 0.9mm; }
+  .party .l b { color: #26332D; font-weight: 600; }
+
+  /* content */
   .section-title {
-    font-weight: 700;
-    font-size: 17pt;
-    color: #1d4b36;
-    margin: 0 0 8px;
-    padding-bottom: 4px;
-    border-bottom: 1px solid #d8e4dc;
+    margin-top: 9mm; padding-bottom: 1.8mm; border-bottom: 1pt solid #0F2E25;
+    font-size: 6.8pt; font-weight: 700; letter-spacing: 0.28em;
+    text-transform: uppercase; color: #1D4B36;
   }
-  .content-block { margin: 0 0 6px; }
-  .content-block li { margin: 4px 0; color: #4a4a4a; }
-  .signature-block {
-    margin-top: 2.8em;
-    padding-top: 0;
-    border-top: 1px solid #d0d0d0;
+  .statement { margin-top: 4mm; font-family: Georgia, "Times New Roman", serif; font-size: 11pt; color: #26332D; }
+  .field-row { margin-top: 2.2mm; font-size: 10pt; break-inside: avoid; }
+  .field-label { color: #66716A; }
+  .field-value { color: #0F2E25; font-weight: 600; }
+  .content-block { margin-top: 3.5mm; }
+  .content-block li {
+    list-style: none; font-family: Georgia, "Times New Roman", serif;
+    font-size: 11pt; color: #0F2E25;
+    padding: 2.6mm 0; border-bottom: 0.4pt solid #E4E7E0;
+    break-inside: avoid;
   }
-  .signature-line {
-    margin: 0;
-    color: #4a4a4a;
+  .body-block {
+    margin-top: 4mm; font-family: Georgia, "Times New Roman", serif;
+    font-size: 11pt; color: #26332D; white-space: pre-line;
+    orphans: 3; widows: 3;
   }
-  .sig-label { font-weight: 700; color: #1d4b36; }
+
+  /* signature */
+  .signature-block { margin-top: 12mm; display: flex; justify-content: space-between; align-items: flex-end; gap: 10mm; break-inside: avoid; }
+  .sig-left { flex: 1; max-width: 90mm; }
   .sig-name {
-    font-family: "Alex Brush", cursive;
-    font-size: 18pt;
-    color: #4a4a4a;
-    margin-left: 4px;
+    font-family: "Alex Brush", cursive; font-size: 21pt; color: #26332D;
+    padding: 0 2mm 1mm; display: block;
   }
-  .footer-gap {
-    height: 5.6em;
-    margin: 0;
-    padding: 0;
+  .sig-line { border-top: 0.75pt solid #0F2E25; padding-top: 1.6mm; }
+  .sig-printed { font-size: 9.5pt; font-weight: 700; color: #0F2E25; }
+  .sig-reg { font-size: 8.4pt; color: #66716A; margin-top: 0.5mm; }
+  .sig-date { font-size: 8.4pt; color: #66716A; margin-top: 0.5mm; }
+  .stamp-box {
+    width: 30mm; height: 26mm; border: 0.5pt dashed #C9CFC7;
+    display: flex; align-items: center; justify-content: center;
   }
-  .footer {
-    margin-top: 0;
-    font-size: 9pt;
-    color: #6d6d6d;
+  .stamp-box span { font-size: 6pt; letter-spacing: 0.2em; text-transform: uppercase; color: #C9CFC7; }
+
+  /* verification */
+  .verify {
+    margin-top: 9mm; padding-top: 4mm; border-top: 0.4pt solid #E4E7E0;
+    display: flex; align-items: center; gap: 6mm; break-inside: avoid;
   }
+  .verify img { width: 22mm; height: 22mm; }
+  .verify-id { font-size: 8.6pt; color: #26332D; }
+  .verify-id b { color: #0F2E25; letter-spacing: 0.04em; }
+  .verify-hint { font-size: 7.6pt; color: #9AA49D; margin-top: 0.6mm; }
+
+  /* footer (fixed — repeats on every printed page) */
+  .foot { position: fixed; left: 24mm; right: 16mm; bottom: 10mm; background: #FFFFFF; }
+  .foot-rule { border-top: 0.4pt solid #E4E7E0; margin-bottom: 2.6mm; }
+  .legal { font-size: 6.6pt; color: #9AA49D; line-height: 1.6; }
+  .confidential { font-size: 6.6pt; color: #66716A; line-height: 1.6; margin-top: 1mm; }
+  .fb { display: flex; justify-content: space-between; margin-top: 2.6mm; font-size: 6.8pt; }
+  .fb .b { font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: #1D4B36; }
+  .fb .t { color: #9AA49D; font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 8pt; }
 </style>
