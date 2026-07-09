@@ -47,7 +47,9 @@ export function AdminCalendarUI({
   const [tz, setTz] = useState<string>(DEFAULT_TZ);
   const [selectedDay, setSelectedDay] = useState<string>(() => todayKey(DEFAULT_TZ));
   const [activeItem, setActiveItem] = useState<CalendarItem | null>(null);
-  const [slotFilter, setSlotFilter] = useState<SlotAgendaFilter>("reserved");
+  // Default to "all" so open (bookable) slots — and their Book action — are
+  // visible as soon as a day is picked.
+  const [slotFilter, setSlotFilter] = useState<SlotAgendaFilter>("all");
 
   const tzList = useMemo(() => [...CURATED_TIME_ZONES] as string[], []);
 
@@ -196,6 +198,26 @@ export function AdminCalendarUI({
           }
           showDoctorName
           onSelectConsultation={setActiveItem}
+          renderSlotAction={(item) => {
+            // Only genuinely bookable inventory gets the deep link into the
+            // manual-booking form, prefilled with doctor + slot.
+            if (item.status !== "OPEN" || !item.meta?.doctorId || !item.meta?.countryCode) {
+              return null;
+            }
+            const params = new URLSearchParams({
+              countryCode: item.meta.countryCode,
+              doctorId: item.meta.doctorId,
+              slotId: item.id.replace(/^s-/, ""),
+            });
+            return (
+              <a
+                href={`/admin/appointments/new?${params.toString()}`}
+                className="ml-0.5 rounded-full border border-current px-1.5 text-[10px] font-bold uppercase tracking-wide hover:opacity-80"
+              >
+                Book
+              </a>
+            );
+          }}
         />
       </div>
 

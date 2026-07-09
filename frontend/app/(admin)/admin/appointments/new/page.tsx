@@ -26,13 +26,21 @@ import {
 export const dynamic = "force-dynamic";
 
 type PageProps = {
-  searchParams?: Promise<{ countryCode?: string; error?: string }>;
+  searchParams?: Promise<{
+    countryCode?: string;
+    error?: string;
+    doctorId?: string;
+    slotId?: string;
+  }>;
 };
 
 export default async function AdminCreateManualAppointmentPage({ searchParams }: PageProps) {
   const sp = searchParams ? await searchParams : {};
   const createError = sp.error;
   const countryCode = sp.countryCode?.trim().toLowerCase();
+  // Optional prefill from the admin calendar's "Book" action on an open slot.
+  const initialDoctorId = sp.doctorId?.trim() || undefined;
+  const initialSlotId = sp.slotId?.trim() || undefined;
 
   const countriesResult = await fetchAdminCountries();
   if (!countriesResult.ok) {
@@ -299,6 +307,8 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
       ) : null}
 
       <ManualBookingForm
+        initialDoctorId={initialDoctorId}
+        initialSlotId={initialSlotId}
         countryCode={countryCode}
         countryName={countryName}
         services={services}

@@ -183,6 +183,9 @@ export async function fetchAdminPatients(query: {
   email?: string;
   phone?: string;
   taxId?: string;
+  name?: string;
+  idNumber?: string;
+  plan?: string;
   page?: string;
   pageSize?: string;
 }) {
