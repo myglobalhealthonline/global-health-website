@@ -4,6 +4,8 @@ import Handlebars from "handlebars";
 import type { GeneratedDocumentType } from "@prisma/client";
 import { TEMPLATE_FILE_BY_TYPE } from "./document-template-utils.js";
 import { pdfLogoDataUrl } from "../../lib/pdf/brand.js";
+import { labelsForPrefix } from "./docx-template-labels.js";
+import { templatePrefixForCountry } from "./docx-template-profiles.js";
 
 function resolveTemplatesRoot(): string {
   const candidates = [
@@ -63,6 +65,7 @@ export function renderDocumentHtml(
 
   return compiled({
     logoDataUrl: pdfLogoDataUrl(),
+    L: labelsForPrefix(templatePrefixForCountry(countryCode) ?? "IR"),
     ...context,
     styles: loadSharedStyles(),
   });
