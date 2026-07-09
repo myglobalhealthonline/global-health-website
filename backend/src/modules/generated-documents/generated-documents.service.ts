@@ -23,6 +23,8 @@ import {
 import { getHealthPortalForCountry } from "./country-portals.js";
 import { renderDocxTemplatePdf, type DocxQrOptions } from "./docx-document-renderer.js";
 import { renderDocumentPdf } from "./html-document-renderer.js";
+import { labelsForPrefix } from "./docx-template-labels.js";
+import { templatePrefixForCountry } from "./docx-template-profiles.js";
 import { qrPngBuffer, qrDataUrl } from "./qr-code.js";
 import {
   buildPatientUploadUrl,
@@ -305,10 +307,19 @@ async function generateAppointmentDocumentUnlocked(input: {
   }
 
   const customLabel = input.fields?.customLabel?.trim();
+  // Localized document titles for the standard clinical types; custom/OTHER
+  // keep the doctor-supplied label.
+  const docLabels = labelsForPrefix(templatePrefixForCountry(appt.countryCode ?? "") ?? "IR");
   const title =
     input.documentType === "OTHER" && customLabel
       ? customLabel
-      : TITLES[input.documentType];
+      : input.documentType === "ABSENCE_CERTIFICATE"
+        ? docLabels.docTitleAbsence
+        : input.documentType === "EXAMS_PRESCRIPTION"
+          ? docLabels.docTitleExams
+          : input.documentType === "PRESCRIPTION"
+            ? docLabels.docTitlePrescription
+            : TITLES[input.documentType];
 
   // Absence certificates print a default confidentiality reason that names
   // the data-protection law. That name is per-country (GDPR, LGPD, …) and
@@ -417,12 +428,19 @@ async function generateAppointmentDocumentUnlocked(input: {
     }
   }
 
-  let pdfBuffer =
-    (await renderDocxTemplatePdf(appt.countryCode, input.documentType, templateData, qr)) ??
-    null;
-
-  if (!pdfBuffer) {
+  // HTML (Variant K design system) is the primary renderer; the legacy
+  // per-country DOCX/LibreOffice path remains as fallback only.
+  let pdfBuffer: Buffer | null = null;
+  try {
     pdfBuffer = await renderDocumentPdf(appt.countryCode, input.documentType, templateContext);
+  } catch {
+    pdfBuffer = null;
+  }
+
+  if (!pdfBuffer?.length) {
+    pdfBuffer =
+      (await renderDocxTemplatePdf(appt.countryCode, input.documentType, templateData, qr)) ??
+      null;
   }
 
   if (!pdfBuffer?.length) {
