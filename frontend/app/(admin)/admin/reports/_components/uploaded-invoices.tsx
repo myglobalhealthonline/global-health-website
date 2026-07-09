@@ -48,8 +48,10 @@ export function AdminUploadedInvoices({
   }
 
   useEffect(() => {
+    // Fetch-on-mount/param-change: setLoading inside refresh is the
+    // standard async-fetch pattern, not a cascading-render risk.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void refresh(doctorId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doctorId]);
 
   return (

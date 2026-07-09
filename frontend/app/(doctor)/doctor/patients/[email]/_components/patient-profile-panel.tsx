@@ -30,6 +30,40 @@ type Profile = {
   clinicAlert: string | null;
 };
 
+export type PatientProfileCopy = {
+  chartTitle: string;
+  planPharmacySection: string;
+  preferredPharmacy: string;
+  vitalsSection: string;
+  weightKg: string;
+  heightM: string;
+  bmiAuto: string;
+  bloodType: string;
+  bpSystolic: string;
+  bpDiastolic: string;
+  allergiesField: string;
+  medicalHistorySection: string;
+  chronicDiseasesField: string;
+  usualMedicationField: string;
+  usualMedicationPlaceholder: string;
+  familyHistoryField: string;
+  socialHabitsField: string;
+  socialHabitsPlaceholder: string;
+  surgeriesField: string;
+  clinicalAlertsSection: string;
+  clinicalAlertsDesc: string;
+  statusAlertField: string;
+  statusAlertPlaceholder: string;
+  clinicAlertField: string;
+  clinicAlertPlaceholder: string;
+  saveChart: string;
+  chartSaved: string;
+  chartSaveFailed: string;
+  sendUploadLink: string;
+  uploadLinkSent: string;
+  uploadLinkFailed: string;
+};
+
 type PatchPayload = {
   weightKg?: number | null;
   heightM?: number | null;
@@ -67,7 +101,13 @@ type PatchPayload = {
  *     PATIENT_ALERT_UPDATED row)
  *   - "Send upload link" CTA bridging to T7 patient-upload route
  */
-export function PatientProfilePanel({ email }: { email: string }) {
+export function PatientProfilePanel({
+  email,
+  strings: copy,
+}: {
+  email: string;
+  strings: PatientProfileCopy;
+}) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [pending, startTransition] = useTransition();
   const [uploadMsg, setUploadMsg] = useState<string | null>(null);
@@ -172,9 +212,9 @@ export function PatientProfilePanel({ email }: { email: string }) {
       };
       if (json.ok && json.data?.profile) {
         setProfile(json.data.profile);
-        setSaveMsg("Chart saved.");
+        setSaveMsg(copy.chartSaved);
       } else {
-        setSaveMsg(json.message ?? "Could not save chart.");
+        setSaveMsg(json.message ?? copy.chartSaveFailed);
       }
     });
   }
@@ -192,15 +232,15 @@ export function PatientProfilePanel({ email }: { email: string }) {
         data?: { link?: string };
       };
       if (!res.ok || !json.ok) {
-        setUploadMsg(json.message ?? "Could not send link");
+        setUploadMsg(json.message ?? copy.uploadLinkFailed);
         return;
       }
-      setUploadMsg("Upload link emailed to patient.");
+      setUploadMsg(copy.uploadLinkSent);
     });
   }
 
   return (
-    <FormSection title="Patient chart" className="gh-doctor-patient-profile-panel">
+    <FormSection title={copy.chartTitle} className="gh-doctor-patient-profile-panel">
       <div className="gh-form-section__span-2">
       {profile?.statusAlert ? (
         <div
@@ -254,19 +294,19 @@ export function PatientProfilePanel({ email }: { email: string }) {
           <input type="hidden" name="addressCountryCode" defaultValue={profile.addressCountryCode} />
         ) : null}
 
-        <Section title="Plan & pharmacy">
+        <Section title={copy.planPharmacySection}>
           <Field
             name="preferredPharmacy"
-            label="Preferred pharmacy"
+            label={copy.preferredPharmacy}
             defaultValue={profile?.preferredPharmacy ?? ""}
             maxLength={200}
           />
         </Section>
 
-        <Section title="Vitals">
+        <Section title={copy.vitalsSection}>
           <div className="gh-doctor-field-grid grid gap-3 sm:grid-cols-3">
             <label className="flex flex-col gap-1">
-              <span className="gh-field-label">Weight (kg)</span>
+              <span className="gh-field-label">{copy.weightKg}</span>
               <input
                 name="weightKg"
                 type="number"
@@ -277,7 +317,7 @@ export function PatientProfilePanel({ email }: { email: string }) {
               />
             </label>
             <label className="flex flex-col gap-1">
-              <span className="gh-field-label">Height (m)</span>
+              <span className="gh-field-label">{copy.heightM}</span>
               <input
                 name="heightM"
                 type="number"
@@ -288,7 +328,7 @@ export function PatientProfilePanel({ email }: { email: string }) {
               />
             </label>
             <label className="flex flex-col gap-1">
-              <span className="gh-field-label">BMI (auto)</span>
+              <span className="gh-field-label">{copy.bmiAuto}</span>
               <input
                 readOnly
                 disabled
@@ -300,13 +340,13 @@ export function PatientProfilePanel({ email }: { email: string }) {
           <div className="gh-doctor-field-grid mt-3 grid gap-3 sm:grid-cols-3">
             <Field
               name="bloodType"
-              label="Blood type"
+              label={copy.bloodType}
               defaultValue={profile?.bloodType ?? ""}
               maxLength={8}
             />
             <Field
               name="bloodPressureSystolic"
-              label="Arterial pressure — systolic (mmHg)"
+              label={copy.bpSystolic}
               type="number"
               defaultValue={
                 profile?.bloodPressureSystolic != null
@@ -316,7 +356,7 @@ export function PatientProfilePanel({ email }: { email: string }) {
             />
             <Field
               name="bloodPressureDiastolic"
-              label="Arterial pressure — diastolic (mmHg)"
+              label={copy.bpDiastolic}
               type="number"
               defaultValue={
                 profile?.bloodPressureDiastolic != null
@@ -326,7 +366,7 @@ export function PatientProfilePanel({ email }: { email: string }) {
             />
           </div>
           <label className="mt-3 flex flex-col gap-1">
-            <span className="gh-field-label">Allergies (comma-separated)</span>
+            <span className="gh-field-label">{copy.allergiesField}</span>
             <input
               name="allergies"
               defaultValue={profile?.allergies?.join(", ") ?? ""}
@@ -335,10 +375,10 @@ export function PatientProfilePanel({ email }: { email: string }) {
           </label>
         </Section>
 
-        <Section title="Medical history">
+        <Section title={copy.medicalHistorySection}>
           <div className="grid gap-3">
             <label className="flex flex-col gap-1">
-              <span className="gh-field-label">Chronic diseases (comma-separated)</span>
+              <span className="gh-field-label">{copy.chronicDiseasesField}</span>
               <input
                 name="chronicDiseases"
                 defaultValue={profile?.chronicDiseases?.join(", ") ?? ""}
@@ -346,16 +386,16 @@ export function PatientProfilePanel({ email }: { email: string }) {
               />
             </label>
             <label className="flex flex-col gap-1">
-              <span className="gh-field-label">Usual medication (comma-separated)</span>
+              <span className="gh-field-label">{copy.usualMedicationField}</span>
               <input
                 name="usualMedication"
                 defaultValue={profile?.usualMedication?.join(", ") ?? ""}
                 className="gh-input"
-                placeholder="e.g. Metformin 850mg 2x/day, Ramipril 5mg"
+                placeholder={copy.usualMedicationPlaceholder}
               />
             </label>
             <label className="flex flex-col gap-1">
-              <span className="gh-field-label">Family history (comma-separated)</span>
+              <span className="gh-field-label">{copy.familyHistoryField}</span>
               <input
                 name="familyHistory"
                 defaultValue={profile?.familyHistory?.join(", ") ?? ""}
@@ -363,16 +403,16 @@ export function PatientProfilePanel({ email }: { email: string }) {
               />
             </label>
             <label className="flex flex-col gap-1">
-              <span className="gh-field-label">Social habits (comma-separated)</span>
+              <span className="gh-field-label">{copy.socialHabitsField}</span>
               <input
                 name="socialHabits"
                 defaultValue={profile?.socialHabits?.join(", ") ?? ""}
                 className="gh-input"
-                placeholder="e.g. Smoker 10/day, Alcohol occasional"
+                placeholder={copy.socialHabitsPlaceholder}
               />
             </label>
             <label className="flex flex-col gap-1">
-              <span className="gh-field-label">Surgeries (comma-separated)</span>
+              <span className="gh-field-label">{copy.surgeriesField}</span>
               <input
                 name="surgeries"
                 defaultValue={profile?.surgeries?.join(", ") ?? ""}
@@ -382,32 +422,31 @@ export function PatientProfilePanel({ email }: { email: string }) {
           </div>
         </Section>
 
-        <Section title="Clinical alerts (doctor-only)">
+        <Section title={copy.clinicalAlertsSection}>
           <p className="-mt-1 mb-2 text-[12px] text-[var(--portal-muted)]">
-            Renders as a banner on this chart. Never shown to the patient.
-            Saves audit a PATIENT_ALERT_UPDATED row.
+            {copy.clinicalAlertsDesc}
           </p>
           <div className="grid gap-3">
             <label className="flex flex-col gap-1">
-              <span className="gh-field-label">Status alert (red)</span>
+              <span className="gh-field-label">{copy.statusAlertField}</span>
               <textarea
                 name="statusAlert"
                 rows={2}
                 maxLength={500}
                 defaultValue={profile?.statusAlert ?? ""}
                 className="gh-input"
-                placeholder="e.g. Severe penicillin allergy"
+                placeholder={copy.statusAlertPlaceholder}
               />
             </label>
             <label className="flex flex-col gap-1">
-              <span className="gh-field-label">Clinic alert (yellow)</span>
+              <span className="gh-field-label">{copy.clinicAlertField}</span>
               <textarea
                 name="clinicAlert"
                 rows={2}
                 maxLength={500}
                 defaultValue={profile?.clinicAlert ?? ""}
                 className="gh-input"
-                placeholder="e.g. Schedule mornings only"
+                placeholder={copy.clinicAlertPlaceholder}
               />
             </label>
           </div>
@@ -419,7 +458,7 @@ export function PatientProfilePanel({ email }: { email: string }) {
             disabled={pending}
             className="gh-btn gh-btn-soft text-sm"
           >
-            Save chart
+            {copy.saveChart}
           </button>
           {saveMsg ? (
             <span className="text-[12px] text-[var(--portal-muted)]">
@@ -436,7 +475,7 @@ export function PatientProfilePanel({ email }: { email: string }) {
           onClick={sendUploadLink}
           className="gh-btn gh-btn-primary text-sm"
         >
-          <Link2 className="size-3.5" aria-hidden /> Send upload link
+          <Link2 className="size-3.5" aria-hidden /> {copy.sendUploadLink}
         </button>
         {uploadMsg ? (
           <p className="mt-2 text-sm text-[var(--portal-muted)]">

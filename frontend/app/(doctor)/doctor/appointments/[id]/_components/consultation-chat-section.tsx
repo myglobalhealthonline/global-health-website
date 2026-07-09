@@ -8,19 +8,25 @@ import {
   toggleDoctorChatLock,
 } from "@/lib/api/consultation-chat-api";
 
-type Props = {
-  appointmentId: string;
+export type ConsultationChatCopy = {
+  title: string;
+  description: string;
 };
 
-export function DoctorConsultationChatSection({ appointmentId }: Props) {
+type Props = {
+  appointmentId: string;
+  copy: ConsultationChatCopy;
+};
+
+export function DoctorConsultationChatSection({ appointmentId, copy }: Props) {
   return (
     <section className="space-y-3">
       <div className="rounded-lg border border-[var(--portal-line)] bg-white/80 p-3 shadow-sm">
         <p className="text-sm font-bold text-[var(--portal-text)]">
-          Consultation messaging
+          {copy.title}
         </p>
         <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
-          Share appointment-specific instructions, files, and follow-up context with the patient.
+          {copy.description}
         </p>
       </div>
       <ConsultationChat

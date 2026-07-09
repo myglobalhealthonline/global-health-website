@@ -25,14 +25,41 @@ function formatPrice(cents: number | null, code: string | null) {
  * Consultation row) — when there's no consult id yet, this component
  * renders a hint instead.
  */
+export type ServicesUsedListCopy = {
+  saveNoteFirstTitle: string;
+  saveNoteFirstDescription: string;
+  labelRequired: string;
+  couldNotAdd: string;
+  couldNotDelete: string;
+  removeConfirm: string;
+  noServicesTitle: string;
+  noServicesDescription: string;
+  colItem: string;
+  colQty: string;
+  colUnit: string;
+  colLineTotal: string;
+  total: string;
+  removeAction: string;
+  removeAria: string;
+  labelPlaceholder: string;
+  quantityAria: string;
+  centsPlaceholder: string;
+  unitPriceAria: string;
+  currencyPlaceholder: string;
+  currencyAria: string;
+  addButton: string;
+};
+
 export function ServicesUsedList({
   consultationId,
   initialItems,
   locked,
+  copy,
 }: {
   consultationId: string | null;
   initialItems: ConsultationServiceLineDto[];
   locked: boolean;
+  copy: ServicesUsedListCopy;
 }) {
   const router = useRouter();
   const [items, setItems] = useState<ConsultationServiceLineDto[]>(initialItems);
@@ -48,10 +75,10 @@ export function ServicesUsedList({
       <div className="mt-3 rounded-lg border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] p-4">
         <p className="flex items-center gap-2 text-sm font-bold text-[var(--portal-text)]">
           <ClipboardList className="size-4 text-[var(--portal-primary)]" aria-hidden />
-          Save the clinical note first
+          {copy.saveNoteFirstTitle}
         </p>
         <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
-          Service line items attach to the consultation record after the first draft is saved.
+          {copy.saveNoteFirstDescription}
         </p>
       </div>
     );
@@ -61,7 +88,7 @@ export function ServicesUsedList({
     event.preventDefault();
     setError(null);
     if (customLabel.trim() === "") {
-      setError("Label is required.");
+      setError(copy.labelRequired);
       return;
     }
     startTransition(async () => {
@@ -85,7 +112,7 @@ export function ServicesUsedList({
         data?: { line?: ConsultationServiceLineDto };
       };
       if (!res.ok || !json.ok) {
-        setError(json.message ?? "Could not add.");
+        setError(json.message ?? copy.couldNotAdd);
         return;
       }
       if (json.data?.line) {
@@ -100,14 +127,14 @@ export function ServicesUsedList({
   }
 
   function remove(id: string) {
-    if (!confirm("Remove this line?")) return;
+    if (!confirm(copy.removeConfirm)) return;
     startTransition(async () => {
       const res = await fetch(`/api/doctor/consultation-services/${id}`, {
         method: "DELETE",
       });
       const json = (await res.json()) as { ok?: boolean; message?: string };
       if (!res.ok || !json.ok) {
-        setError(json.message ?? "Could not delete.");
+        setError(json.message ?? copy.couldNotDelete);
         return;
       }
       setItems((prev) => prev.filter((r) => r.id !== id));
@@ -127,10 +154,10 @@ export function ServicesUsedList({
         <div className="rounded-lg border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] p-4">
           <p className="flex items-center gap-2 text-sm font-bold text-[var(--portal-text)]">
             <ClipboardList className="size-4 text-[var(--portal-primary)]" aria-hidden />
-            No services logged yet
+            {copy.noServicesTitle}
           </p>
           <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
-            Add billable or clinical service lines used during this consultation.
+            {copy.noServicesDescription}
           </p>
         </div>
       ) : (
@@ -139,10 +166,10 @@ export function ServicesUsedList({
           <table className="w-full min-w-[620px] text-[13px]">
           <thead>
             <tr className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-              <th className="py-2 text-left">Item</th>
-              <th className="py-2 text-right">Qty</th>
-              <th className="py-2 text-right">Unit</th>
-              <th className="py-2 text-right">Line total</th>
+              <th className="py-2 text-left">{copy.colItem}</th>
+              <th className="py-2 text-right">{copy.colQty}</th>
+              <th className="py-2 text-right">{copy.colUnit}</th>
+              <th className="py-2 text-right">{copy.colLineTotal}</th>
               <th className="py-2" />
             </tr>
           </thead>
@@ -168,7 +195,7 @@ export function ServicesUsedList({
                       type="button"
                       onClick={() => remove(r.id)}
                       className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
-                      aria-label="Remove line"
+                      aria-label={copy.removeAria}
                     >
                       <Trash2 className="size-3.5" />
                     </button>
@@ -179,7 +206,7 @@ export function ServicesUsedList({
             {total > 0 ? (
               <tr className="border-t border-[var(--portal-line)]">
                 <td colSpan={3} className="py-2 text-right font-semibold">
-                  Total
+                  {copy.total}
                 </td>
                 <td className="py-2 text-right font-mono font-semibold">
                   {formatPrice(total, currency)}
@@ -212,9 +239,9 @@ export function ServicesUsedList({
                     type="button"
                     onClick={() => remove(r.id)}
                     className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
-                    aria-label="Remove line"
+                    aria-label={copy.removeAria}
                   >
-                    <Trash2 className="size-3.5" /> Remove
+                    <Trash2 className="size-3.5" /> {copy.removeAction}
                   </button>
                 )
               }
@@ -222,7 +249,7 @@ export function ServicesUsedList({
           ))}
           {total > 0 ? (
             <div className="flex items-center justify-between px-1 text-[13px] font-semibold">
-              <span>Total</span>
+              <span>{copy.total}</span>
               <span className="font-mono">{formatPrice(total, currency)}</span>
             </div>
           ) : null}
@@ -237,7 +264,7 @@ export function ServicesUsedList({
         >
           <input
             type="text"
-            placeholder="Label (e.g. ECG)"
+            placeholder={copy.labelPlaceholder}
             value={customLabel}
             onChange={(e) => setCustomLabel(e.target.value)}
             maxLength={200}
@@ -250,30 +277,30 @@ export function ServicesUsedList({
             value={quantity}
             onChange={(e) => setQuantity(Number(e.target.value))}
             className="gh-input"
-            aria-label="Quantity"
+            aria-label={copy.quantityAria}
           />
           <input
             type="number"
             min={0}
-            placeholder="Cents"
+            placeholder={copy.centsPlaceholder}
             value={unitPriceCents}
             onChange={(e) =>
               setUnitPriceCents(e.target.value === "" ? "" : Number(e.target.value))
             }
             className="gh-input"
-            aria-label="Unit price (cents)"
+            aria-label={copy.unitPriceAria}
           />
           <input
             type="text"
-            placeholder="EUR"
+            placeholder={copy.currencyPlaceholder}
             value={currencyCode}
             onChange={(e) => setCurrencyCode(e.target.value.toUpperCase())}
             maxLength={3}
             className="gh-input"
-            aria-label="Currency code"
+            aria-label={copy.currencyAria}
           />
           <button type="submit" disabled={pending} className="gh-btn gh-btn-primary">
-            <Plus className="size-3.5" /> Add
+            <Plus className="size-3.5" /> {copy.addButton}
           </button>
         </form>
       )}

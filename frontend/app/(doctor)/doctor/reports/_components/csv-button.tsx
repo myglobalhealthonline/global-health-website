@@ -8,7 +8,7 @@ import type { DoctorReportsDto } from "@/lib/api/doctor-api";
  * extra round-trip, no extra endpoint. Useful for ops handing the
  * numbers to billing / external accounting.
  */
-export function ReportsCsvButton({ data }: { data: DoctorReportsDto }) {
+export function ReportsCsvButton({ data, label }: { data: DoctorReportsDto; label: string }) {
   function buildCsv(): string {
     const lines: string[] = [];
     lines.push("section,key,value");
@@ -47,7 +47,7 @@ export function ReportsCsvButton({ data }: { data: DoctorReportsDto }) {
       onClick={download}
       className="gh-btn gh-btn-soft gh-doctor-csv-button text-sm"
     >
-      <Download className="size-3.5" /> Export CSV
+      <Download className="size-3.5" /> {label}
     </button>
   );
 }

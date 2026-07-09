@@ -31,6 +31,7 @@ import { fetchMeCorporate } from "@/lib/corporate/corporate-api";
 import type { NotificationPopoverItem } from "@/components/NotificationPopover";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { supportedLocaleCodes } from "@/lib/i18n/types";
 
 /**
  * Patient portal layout. Reuses `PortalShell` so admin / doctor / patient
@@ -65,7 +66,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
     fetchMeCorporate(),
   ]);
   const hasCorporateMembership = corporateResult.ok && corporateResult.data !== null;
-  const { account: a } = loadLocaleBundle(locale);
+  const { account: a, common } = loadLocaleBundle(locale);
 
   // Map in-app notification rows → bell items. Payload carries the already-
   // localized { title, body, href } written by the subscription dispatchers.
@@ -78,52 +79,50 @@ export default async function AccountLayout({ children }: { children: ReactNode 
     readAt: n.readAt,
   }));
 
-  // Grouped nav — related links clustered under labeled eyebrows. Group
-  // headers are hardcoded English for now (like the item labels below);
-  // they can move into locales/en/account.json under `nav.groups` later.
+  // Grouped nav — related links clustered under labeled eyebrows.
   const groups: PortalNavGroup[] = [
     {
-      label: "Overview",
+      label: a.nav.groupOverview,
       items: [
         { href: "/account", label: a.nav.overview, icon: <LayoutDashboard className="size-4" aria-hidden /> },
         { href: bookHref, label: a.nav.bookConsultation, icon: <Stethoscope className="size-4" aria-hidden /> },
       ],
     },
     {
-      label: "Care",
+      label: a.nav.groupCare,
       items: [
         { href: "/account/bookings", label: a.nav.myBookings, icon: <CalendarDays className="size-4" aria-hidden /> },
-        { href: "/account/messages", label: "Messages", icon: <MessagesSquare className="size-4" aria-hidden />, badge: unreadMessages },
-        { href: "/account/calendar", label: "Calendar", icon: <CalendarRange className="size-4" aria-hidden /> },
+        { href: "/account/messages", label: a.nav.messages, icon: <MessagesSquare className="size-4" aria-hidden />, badge: unreadMessages },
+        { href: "/account/calendar", label: a.nav.calendar, icon: <CalendarRange className="size-4" aria-hidden /> },
         { href: "/account/prescriptions", label: a.nav.prescriptions, icon: <PillBottle className="size-4" aria-hidden /> },
-        { href: "/account/medical-files", label: "Medical files", icon: <FileText className="size-4" aria-hidden /> },
+        { href: "/account/medical-files", label: a.nav.medicalFiles, icon: <FileText className="size-4" aria-hidden /> },
       ],
     },
     {
-      label: "Membership",
+      label: a.nav.groupMembership,
       items: [
-        { href: "/account/membership", label: "Membership", icon: <BadgeCheck className="size-4" aria-hidden /> },
+        { href: "/account/membership", label: a.nav.membership, icon: <BadgeCheck className="size-4" aria-hidden /> },
         ...(hasCorporateMembership
           ? [{ href: "/account/corporate", label: a.nav.corporate, icon: <Briefcase className="size-4" aria-hidden /> }]
           : []),
-        { href: "/account/rewards", label: "Rewards", icon: <Gift className="size-4" aria-hidden /> },
+        { href: "/account/rewards", label: a.nav.rewards, icon: <Gift className="size-4" aria-hidden /> },
       ],
     },
     {
-      label: "Billing",
+      label: a.nav.groupBilling,
       items: [
         { href: "/account/orders", label: a.nav.myOrders, icon: <ShoppingBag className="size-4" aria-hidden /> },
         { href: "/account/payments", label: a.nav.payments, icon: <CreditCard className="size-4" aria-hidden /> },
       ],
     },
     {
-      label: "Account",
+      label: a.nav.groupAccount,
       items: [
         { href: "/account/profile", label: a.nav.profile, icon: <UserRound className="size-4" aria-hidden /> },
-        { href: "/account/notifications", label: "Notifications", icon: <Bell className="size-4" aria-hidden />, badge: notifications?.unreadCount ?? 0 },
-        { href: "/account/family", label: "Family members", icon: <Users className="size-4" aria-hidden /> },
+        { href: "/account/notifications", label: a.nav.notifications, icon: <Bell className="size-4" aria-hidden />, badge: notifications?.unreadCount ?? 0 },
+        { href: "/account/family", label: a.nav.familyMembers, icon: <Users className="size-4" aria-hidden /> },
         { href: "/account/security", label: a.nav.security, icon: <ShieldCheck className="size-4" aria-hidden /> },
-        { href: "/account/access-history", label: "Access history", icon: <History className="size-4" aria-hidden /> },
+        { href: "/account/access-history", label: a.nav.accessHistory, icon: <History className="size-4" aria-hidden /> },
       ],
     },
   ];
@@ -146,6 +145,9 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       notifications={notificationItems}
       notificationsUnreadCount={notifications?.unreadCount ?? 0}
       notificationsViewAllHref="/account/notifications"
+      locale={locale}
+      availableLocales={[...supportedLocaleCodes]}
+      chrome={common.portalChrome}
     >
       {children}
     </PortalShell>

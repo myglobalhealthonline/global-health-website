@@ -33,6 +33,8 @@ import {
 import { BrazilConsentPanel } from "./_components/brazil-consent-panel";
 import { AdminSummaryStrip } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +51,15 @@ type PageProps = {
  */
 export default async function DoctorAppointmentDetailPage({ params }: PageProps) {
   const { id } = await params;
+  const locale = await getPageLocale();
+  const { doctor: d } = loadLocaleBundle(locale);
+  const statusValueText: Record<string, string> = {
+    REQUEST_RECEIVED: d.appointmentDetail.statusCreated,
+    UNDER_REVIEW: d.appointmentDetail.statusSent,
+    CONTACTED: d.appointmentDetail.statusContacted,
+    COMPLETED: d.appointmentDetail.statusConcluded,
+    CANCELLED: d.appointmentDetail.statusCancelled,
+  };
   const [
     consultRes,
     examsRes,
@@ -78,7 +89,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           href="/doctor/appointments"
           className="mb-3 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
         >
-          <ArrowLeft className="size-3.5" /> Back to appointments
+          <ArrowLeft className="size-3.5" /> {d.appointmentDetail.back}
         </Link>
         <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
           {consultRes.message}
@@ -94,7 +105,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   const templates = templatesRes.ok ? templatesRes.data.items : [];
   const documents = documentsRes.ok ? documentsRes.data.items : [];
   const pendingSendCount = generatedDocsRes.ok ? generatedDocsRes.data.queue.length : 0;
-  const doctorName = meRes.ok ? meRes.data.doctor.fullName : "Doctor";
+  const doctorName = meRes.ok ? meRes.data.doctor.fullName : d.portal.sectionLabel;
   const documentsTabBadge =
     pendingSendCount > 0 ? String(pendingSendCount) : null;
   const prescriptions = prescriptionsRes.ok ? prescriptionsRes.data.items : [];
@@ -109,6 +120,13 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     : null;
   const servicesUsed =
     servicesRes && servicesRes.ok ? servicesRes.data.items : [];
+  // Modal needs many more strings than the section/trigger blurb — merge
+  // the two JSON sections into one flat copy object shared by all three
+  // renderers of ConsultationDocumentsModal.
+  const consultationDocsCopy = {
+    ...d.consultationDocuments,
+    ...d.consultationDocumentsModal,
+  };
   // Calm mode — DESIGN.md §6.3/strategy Doctor plan: while a consultation
   // is actively in progress (scheduled time has passed, not yet wrapped
   // up), the form zone drops hover-lift chrome so nothing competes for
@@ -129,13 +147,13 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
         href="/doctor/appointments"
         className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
       >
-        <ArrowLeft className="size-3.5" /> Back to appointments
+        <ArrowLeft className="size-3.5" /> {d.appointmentDetail.back}
       </Link>
 
       <header className="gh-doctor-appointment-header mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
-            Appointment
+            {d.appointmentDetail.eyebrow}
           </p>
           <h2 className="mt-1 text-2xl font-bold text-[var(--portal-text)]">
             {appointment.fullName}
@@ -151,7 +169,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   appointment.clinicTimezone ?? null,
                   appointment.patientTimezone ?? null,
                 )
-              : "Not scheduled"}{" "}
+              : d.appointmentDetail.notScheduled}{" "}
             · {appointment.countryCode.toUpperCase()}
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -167,14 +185,14 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
               ) : (
                 <MapPin className="size-3" aria-hidden />
               )}
-              {consultationMode === "ONLINE" ? "Online" : "In person"}
+              {consultationMode === "ONLINE" ? d.appointmentDetail.online : d.appointmentDetail.inPerson}
             </span>
             {followUpFromId ? (
               <Link
                 href={`/doctor/appointments/${followUpFromId}`}
                 className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] text-violet-800 hover:underline"
               >
-                Follow-up of original →
+                {d.appointmentDetail.followUpOfOriginal}
               </Link>
             ) : null}
           </div>
@@ -187,7 +205,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
               rel="noopener noreferrer"
               className="gh-btn gh-btn-primary"
             >
-              <ExternalLink className="size-3.5" /> Join call
+              <ExternalLink className="size-3.5" /> {d.appointmentDetail.joinCall}
             </a>
           ) : null}
           <Link
@@ -195,7 +213,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             target="_blank"
             className="gh-btn gh-btn-soft"
           >
-            <Printer className="size-3.5" /> Print summary
+            <Printer className="size-3.5" /> {d.appointmentDetail.printSummary}
           </Link>
         </div>
       </header>
@@ -204,30 +222,30 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
         className="mb-4"
         items={[
           {
-            label: "Consultation note",
-            value: signed ? "Signed" : "Draft",
-            hint: signed ? "Locked clinical record" : "Can still be edited",
+            label: d.appointmentDetail.consultationNote,
+            value: signed ? d.common.signed : d.common.draft,
+            hint: signed ? d.appointmentDetail.signedHint : d.appointmentDetail.draftHint,
             tone: signed ? "success" : "warning",
           },
           {
-            label: "Documents",
+            label: d.appointmentDetail.documents,
             value: documents.length + pendingSendCount,
             hint:
               pendingSendCount > 0
-                ? `${pendingSendCount} waiting to send`
-                : "Uploads and generated PDFs",
+                ? d.appointmentDetail.waitingToSend.replace("{count}", String(pendingSendCount))
+                : d.appointmentDetail.documentsHint,
             tone: pendingSendCount > 0 ? "warning" : "neutral",
           },
           {
-            label: "Clinical items",
+            label: d.appointmentDetail.clinicalItems,
             value: exams.length + prescriptions.length,
-            hint: "Exam results and prescriptions",
+            hint: d.appointmentDetail.clinicalItemsHint,
             tone: exams.length + prescriptions.length > 0 ? "brand" : "neutral",
           },
           {
-            label: "Messages",
+            label: d.appointmentDetail.messages,
             value: messages.length,
-            hint: "Internal handoff notes",
+            hint: d.appointmentDetail.messagesHint,
             tone: messages.length > 0 ? "success" : "neutral",
           },
         ]}
@@ -239,15 +257,16 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
       <div className="gh-doctor-workspace-grid grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div className="min-w-0">
       <AppointmentTabs
+        ariaLabel={d.appointmentDetail.tabsAriaLabel}
         tabs={[
           {
             id: "overview",
-            label: "Overview",
+            label: d.appointmentDetail.tabOverview,
             panel: (
               <div className="gh-doctor-appointment-overview grid gap-4">
                 <FormSection
-                  title="Meeting & status"
-                  description="Paste the video link the patient will use, and move the appointment forward as you progress."
+                  title={d.appointmentDetail.meetingStatusTitle}
+                  description={d.appointmentDetail.meetingStatusDesc}
                 >
                   <div className="gh-form-section__span-2">
                     <AppointmentActions
@@ -256,36 +275,39 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       initialStatus={appointment.status}
                       initialScheduledAt={appointment.scheduledAt}
                       initialMode={consultationMode}
+                      copy={d.appointmentActions}
                     />
                     <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
                       <h4 className="text-sm font-bold text-[var(--portal-text)]">
-                        Finalize
+                        {d.appointmentDetail.finalize}
                       </h4>
                       <FinalizeChecklist
                         appointmentId={appointment.id}
                         initialFinalized={appointment.finalized ?? false}
                         initialNotesUploaded={appointment.notesUploaded ?? false}
                         initialFilesUploaded={appointment.filesUploaded ?? false}
+                        copy={d.finalizeChecklist}
                       />
                     </div>
                     <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
-                      <FollowUpButton appointmentId={appointment.id} />
+                      <FollowUpButton appointmentId={appointment.id} copy={d.followUpButton} />
                     </div>
                   </div>
                 </FormSection>
 
-                <FormSection title="Consultation documents">
+                <FormSection title={d.appointmentDetail.consultationDocuments}>
                   <div className="gh-form-section__span-2">
-                    <ConsultationDocumentsSection appointmentId={appointment.id} />
+                    <ConsultationDocumentsSection appointmentId={appointment.id} copy={consultationDocsCopy} />
                   </div>
                 </FormSection>
 
                 {appointment.countryCode.toLowerCase() === "br" ? (
-                  <FormSection title="Brazil consent">
+                  <FormSection title={d.appointmentDetail.brazilConsent}>
                     <div className="gh-form-section__span-2">
                       <BrazilConsentPanel
                         appointmentId={appointment.id}
                         countryCode={appointment.countryCode}
+                        copy={d.brazilConsent}
                       />
                     </div>
                   </FormSection>
@@ -295,15 +317,15 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           },
           {
             id: "consultation",
-            label: "Consultation",
-            badge: signed ? "signed" : "draft",
+            label: d.appointmentDetail.tabConsultation,
+            badge: signed ? d.common.signed : d.common.draft,
             panel: (
               <FormSection
-                title="Consultation note"
-                description="SOAP format. Save anytime; sign when complete — signed notes are locked."
+                title={d.appointmentDetail.consultationNote}
+                description={d.appointmentDetail.consultationNoteDesc}
                 right={
                   <div className="flex items-center gap-2">
-                    <ConsultationDocumentsTrigger appointmentId={appointment.id} />
+                    <ConsultationDocumentsTrigger appointmentId={appointment.id} copy={consultationDocsCopy} />
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] ${
                         signed
@@ -311,7 +333,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                           : "bg-[var(--portal-well)] text-[var(--portal-muted)]"
                       }`}
                     >
-                      {signed ? "Signed" : "Draft"}
+                      {signed ? d.common.signed : d.common.draft}
                     </span>
                   </div>
                 }
@@ -319,6 +341,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                 <div className="gh-form-section__span-2">
                   <ConsultationForm
                     appointmentId={appointment.id}
+                    copy={d.consultationForm}
                     initial={
                       consultation
                         ? {
@@ -351,15 +374,16 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                         fontWeight: 800,
                       }}
                     >
-                      Services rendered
+                      {d.appointmentDetail.servicesRendered}
                     </h4>
                     <p className="mt-1 text-[12.5px] text-[var(--portal-muted)]">
-                      Log services performed during this consult — feeds the invoice.
+                      {d.appointmentDetail.servicesRenderedDesc}
                     </p>
                     <ServicesUsedList
                       consultationId={consultation?.id ?? null}
                       initialItems={servicesUsed}
                       locked={signed}
+                      copy={d.servicesUsedList}
                     />
                   </div>
 
@@ -372,21 +396,21 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                         fontWeight: 800,
                       }}
                     >
-                      Share with a colleague
+                      {d.appointmentDetail.shareColleague}
                     </h4>
                     <p className="mt-1 text-[12.5px] text-[var(--portal-muted)]">
-                      7-day signed link. Recipient sees the consult only — no
-                      portal access.
+                      {d.appointmentDetail.shareColleagueDesc}
                     </p>
                     <div className="mt-2">
                       {consultation ? (
                         <ShareConsultationButton
                           consultationId={consultation.id}
                           disabled={!signed}
+                          copy={d.shareButton}
                         />
                       ) : (
                         <p className="text-[12px] text-[var(--portal-muted)]">
-                          Save a draft first.
+                          {d.appointmentDetail.saveDraftFirst}
                         </p>
                       )}
                     </div>
@@ -397,7 +421,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           },
           {
             id: "clinical",
-            label: "Clinical",
+            label: d.appointmentDetail.tabClinical,
             badge:
               exams.length + prescriptions.length > 0
                 ? String(exams.length + prescriptions.length)
@@ -405,23 +429,24 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             panel: (
               <div className="grid gap-4">
                 <FormSection
-                  title="Exam results"
-                  description="Log lab / imaging results. Use the external link field to point at a partner-lab portal."
+                  title={d.appointmentDetail.examResults}
+                  description={d.appointmentDetail.examResultsDesc}
                 >
                   <div className="gh-form-section__span-2">
-                    <ExamResultsList appointmentId={appointment.id} initialItems={exams} />
+                    <ExamResultsList appointmentId={appointment.id} initialItems={exams} copy={d.examResultsList} />
                   </div>
                 </FormSection>
 
                 <FormSection
-                  title="Prescriptions"
-                  description="Clinical scripts issued during this consultation. Lock when the consult is signed."
+                  title={d.appointmentDetail.prescriptions}
+                  description={d.appointmentDetail.prescriptionsDesc}
                 >
                   <div className="gh-form-section__span-2">
                     <PrescriptionsList
                       appointmentId={appointment.id}
                       initialItems={prescriptions}
                       consultationLocked={signed}
+                      copy={d.prescriptionsList}
                     />
                   </div>
                 </FormSection>
@@ -430,23 +455,23 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           },
           {
             id: "forms",
-            label: "Forms",
+            label: d.appointmentDetail.tabForms,
             badge: submissions.length > 0 ? String(submissions.length) : null,
             panel: (
               <div className="grid gap-4">
                 <FormSection
-                  title="Forms"
-                  description="Fill an intake / consent / follow-up form on the patient's behalf. New submissions show below."
+                  title={d.appointmentDetail.tabForms}
+                  description={d.appointmentDetail.formsDesc}
                 >
                   <div className="gh-form-section__span-2">
-                    <FormFillSection appointmentId={appointment.id} templates={templates} />
+                    <FormFillSection appointmentId={appointment.id} templates={templates} copy={d.formFill} />
                   </div>
                 </FormSection>
 
                 {submissions.length > 0 ? (
                   <FormSection
-                    title="Form submissions"
-                    description="Answers the patient (or admin on their behalf) filled in for this appointment."
+                    title={d.appointmentDetail.formSubmissions}
+                    description={d.appointmentDetail.formSubmissionsDesc}
                   >
                     <div className="gh-form-section__span-2">
                       <ul className="grid gap-3">
@@ -464,11 +489,14 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                                 target="_blank"
                                 className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
                               >
-                                <Printer className="size-3" /> Print
+                                <Printer className="size-3" /> {d.common.print}
                               </Link>
                             </div>
                             <p className="text-[11.5px] text-[var(--portal-muted)]">
-                              submitted {new Date(s.submittedAt).toLocaleString()}
+                              {d.appointmentDetail.submittedAt.replace(
+                                "{date}",
+                                new Date(s.submittedAt).toLocaleString(),
+                              )}
                             </p>
                             <dl className="mt-2 grid gap-1.5 text-[13px]">
                               {(s.answers ?? []).map((a, i) => {
@@ -498,13 +526,13 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           },
           {
             id: "documents",
-            label: "Documents",
+            label: d.appointmentDetail.tabDocuments,
             badge: documentsTabBadge,
             badgeAlert: Boolean(documentsTabBadge),
             panel: (
               <FormSection
-                title="Documents"
-                description="Generated consultation PDFs and files you attach to this appointment. Use View to open any document in the browser."
+                title={d.appointmentDetail.documents}
+                description={d.appointmentDetail.documentsDesc}
               >
                 <div className="gh-form-section__span-2">
                   <AppointmentDocumentsTab
@@ -514,6 +542,10 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                     consultationType={appointment.consultationType}
                     doctorName={doctorName}
                     initialUploads={documents}
+                    copy={d.appointmentDocumentsTab}
+                    modalCopy={consultationDocsCopy}
+                    uploadCopy={d.documentUploadForm}
+                    reviewCopy={d.documentsReviewSendPanel}
                   />
                 </div>
               </FormSection>
@@ -521,23 +553,23 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           },
           {
             id: "messages",
-            label: "Messages",
+            label: d.appointmentDetail.tabMessages,
             panel: (
               <div className="grid gap-4">
                 <div id="patient-chat" className="scroll-mt-24">
                   <FormSection
-                    title="Patient chat"
-                    description="Direct channel with the patient. Chat auto-locks 24h after the appointment completes — you can re-open it here."
+                    title={d.appointmentDetail.patientChat}
+                    description={d.appointmentDetail.patientChatDesc}
                   >
                     <div className="gh-form-section__span-2">
-                      <DoctorConsultationChatSection appointmentId={appointment.id} />
+                      <DoctorConsultationChatSection appointmentId={appointment.id} copy={d.consultationChat} />
                     </div>
                   </FormSection>
                 </div>
 
                 <FormSection
-                  title="Internal notes (doctor ↔ admin)"
-                  description="Not patient-visible. Use for handoff context."
+                  title={d.appointmentDetail.internalNotes}
+                  description={d.appointmentDetail.internalNotesDesc}
                 >
                   <div className="gh-form-section__span-2">
                     <InternalMessagesThread
@@ -556,16 +588,16 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
       </div>
 
       <aside className="gh-doctor-context-rail grid gap-4 self-start lg:sticky lg:top-4">
-        <FormSection title="Patient">
+        <FormSection title={d.appointmentDetail.patient}>
           <div className="gh-form-section__span-2">
             <dl className="grid gap-2 text-[13px]">
               {appointment.globalHealthNumber ? (
-                <Row label="Global Health No." value={appointment.globalHealthNumber} />
+                <Row label={d.appointmentDetail.ghn} value={appointment.globalHealthNumber} />
               ) : null}
-              <Row label="Email" value={appointment.email} />
-              <Row label="Phone" value={appointment.phone ?? "—"} />
+              <Row label={d.appointmentDetail.email} value={appointment.email} />
+              <Row label={d.appointmentDetail.phone} value={appointment.phone ?? "—"} />
               <Row
-                label="Date of birth"
+                label={d.common.dateOfBirth}
                 value={
                   appointment.dateOfBirth
                     ? new Date(appointment.dateOfBirth).toLocaleDateString()
@@ -573,18 +605,18 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                 }
               />
               {appointment.consultationLanguageCode ? (
-                <Row label="Consultation language" value={appointment.consultationLanguageCode.toUpperCase()} />
+                <Row label={d.appointmentDetail.consultationLanguage} value={appointment.consultationLanguageCode.toUpperCase()} />
               ) : null}
-              <Row label="Status" value={appointment.status} />
+              <Row label={d.appointmentDetail.statusLabel} value={statusValueText[appointment.status] ?? appointment.status} />
               <Row
-                label="Booked"
+                label={d.appointmentDetail.booked}
                 value={new Date(appointment.createdAt).toLocaleString()}
               />
             </dl>
             {appointment.notes ? (
               <div className="mt-4 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3 text-[13px]">
                 <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
-                  Booking notes
+                  {d.appointmentDetail.bookingNotes}
                 </p>
                 <p className="mt-1 whitespace-pre-wrap text-[var(--portal-text)]">
                   {appointment.notes}
@@ -595,11 +627,10 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
               href={`/doctor/patients/${encodeURIComponent(appointment.email)}`}
               className="gh-btn gh-btn-soft mt-4 inline-flex items-center gap-2 text-sm"
             >
-              <ExternalLink className="size-3.5" aria-hidden /> Open patient chart
+              <ExternalLink className="size-3.5" aria-hidden /> {d.appointmentDetail.openPatientChart}
             </Link>
             <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
-              Edit health data: BMI, blood pressure, allergies, chronic
-              diseases, family history, social habits, usual medication.
+              {d.appointmentDetail.editHealthDataHint}
             </p>
           </div>
         </FormSection>

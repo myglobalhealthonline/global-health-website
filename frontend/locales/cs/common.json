@@ -536,7 +536,8 @@
     "orderSummary": "Souhrn objednávky",
     "subtotalItems": "Mezisoučet ({count} {unit})",
     "shipping": "Doprava",
-    "planSavings": "Úspora s plánem",    "total": "Celkem",
+    "planSavings": "Úspora s plánem",
+    "total": "Celkem",
     "corporateOff": "sleva",
     "continueToCheckout": "Pokračovat k pokladně",
     "trustSecure": "Bezpečná platba zajištěná přes Stripe",
@@ -597,7 +598,8 @@
     "successTitle": "Platba přijata",
     "successBody": "Vaše objednávka je potvrzena. Doklad vám byl zaslán e-mailem.",
     "processingTitle": "Potvrzujeme vaši platbu…",
-    "processingBody": "Vaše platba se potvrzuje. Obvykle to trvá jen chvíli — tato stránka se automaticky aktualizuje.",    "orderRef": "ORDER #{id}",
+    "processingBody": "Vaše platba se potvrzuje. Obvykle to trvá jen chvíli — tato stránka se automaticky aktualizuje.",
+    "orderRef": "ORDER #{id}",
     "shipping": "Doprava",
     "totalPaid": "Celkem zaplaceno",
     "receiptError": "Doklad se nám nyní nepodařilo načíst. Vaše platba je potvrzena; podrobnosti objednávky najdete ve svém e-mailu.",
@@ -680,5 +682,14 @@
     "notFound": "Karta nenalezena",
     "checkNumber": "Zkontrolujte, zda je číslo karty správné.",
     "couldNotVerify": "Kartu se nepodařilo ověřit"
+  },
+  "portalChrome": {
+    "account": "Účet",
+    "mainSite": "Hlavní web",
+    "signOut": "Odhlásit se",
+    "closeNavigation": "Zavřít navigaci",
+    "openNavigation": "Otevřít navigaci",
+    "closeMenu": "Zavřít menu",
+    "allCaughtUp": "Vše je vyřízeno."
   }
 }

@@ -11,6 +11,7 @@ import {
 } from "@/components/forms/LanguagePicker";
 import { PortalTabs } from "@/components/PortalTabs";
 import { FormSection } from "@/components/FormSection";
+import type { ProfileStrings } from "./profile-sections";
 
 /**
  * Doctor self-edit profile form. Split into two independent forms so that
@@ -92,14 +93,14 @@ function MessageBanner({ msg }: { msg: Msg }) {
   );
 }
 
-function localeLabel(code: string): string {
+function localeLabel(code: string, strings: ProfileStrings): string {
   const labels: Record<string, string> = {
-    EN: "English",
-    PT: "Portuguese",
-    ES: "Spanish",
-    CS: "Czech",
-    RO: "Romanian",
-    DE: "German",
+    EN: strings.langEnglish,
+    PT: strings.langPortuguese,
+    ES: strings.langSpanish,
+    CS: strings.langCzech,
+    RO: strings.langRomanian,
+    DE: strings.langGerman,
   };
   return labels[code.toUpperCase()] ?? code.toUpperCase();
 }
@@ -107,28 +108,30 @@ function localeLabel(code: string): string {
 /** BIC: 6 letters + 2 alphanumeric + optional 3 alphanumeric (8 or 11 chars). */
 const BIC_RE = /^[A-Za-z]{6}[A-Za-z0-9]{2}([A-Za-z0-9]{3})?$/;
 
-function bicError(raw: string): string | null {
+function bicError(raw: string, strings: ProfileStrings): string | null {
   const v = raw.trim().replace(/\s/g, "");
   if (!v) return null;
-  return BIC_RE.test(v) ? null : "Must be 8 or 11 characters, e.g. AIBKIE2D";
+  return BIC_RE.test(v) ? null : strings.bicErrorMsg;
 }
 
-function ibanError(raw: string): string | null {
+function ibanError(raw: string, strings: ProfileStrings): string | null {
   const v = raw.trim().replace(/\s/g, "");
   if (!v) return null;
-  if (v.length < 15 || v.length > 34) return "IBAN must be 15–34 characters";
+  if (v.length < 15 || v.length > 34) return strings.ibanErrorLength;
   if (!/^[A-Za-z]{2}\d{2}[A-Za-z0-9]+$/.test(v))
-    return "Must start with 2-letter country code then digits";
+    return strings.ibanErrorFormat;
   return null;
 }
 
 export function DoctorProfileEditForm({
   initial,
   activeCountryId,
+  strings,
 }: {
   initial: Initial;
   /** Country whose profile this page edits. Resolved from the route. */
   activeCountryId: string | null;
+  strings: ProfileStrings;
 }) {
   const router = useRouter();
   const initialQualificationsText = initial.qualifications.join("\n");
@@ -340,7 +343,7 @@ export function DoctorProfileEditForm({
   function uploadPhoto(file: File) {
     setPhotoError(null);
     if (file.size > 5 * 1024 * 1024) {
-      setPhotoError("File too large (max 5MB).");
+      setPhotoError(strings.photoTooLarge);
       return;
     }
     startPhotoTransition(async () => {
@@ -357,27 +360,27 @@ export function DoctorProfileEditForm({
           data?: { path?: string };
         };
         if (!res.ok || !json.ok) {
-          setPhotoError(json.message ?? "Upload failed");
+          setPhotoError(json.message ?? strings.uploadFailed);
           return;
         }
         if (json.data?.path) setPhotoPath(json.data.path);
         router.refresh();
       } catch {
-        setPhotoError("Network error");
+        setPhotoError(strings.networkError);
       }
     });
   }
 
   function removePhoto() {
     setPhotoError(null);
-    if (!confirm("Remove your profile photo?")) return;
+    if (!confirm(strings.removePhotoConfirm)) return;
     startPhotoTransition(async () => {
       const res = await fetch("/api/doctor/profile/photo", {
         method: "DELETE",
       });
       const json = (await res.json()) as { ok?: boolean; message?: string };
       if (!res.ok || !json.ok) {
-        setPhotoError(json.message ?? "Could not remove");
+        setPhotoError(json.message ?? strings.removeFailed);
         return;
       }
       setPhotoPath(null);
@@ -424,7 +427,7 @@ export function DoctorProfileEditForm({
         if (!res.ok || !json.ok) {
           setProfileMsg({
             kind: "error",
-            text: json.message ?? "Could not save profile",
+            text: json.message ?? strings.saveProfileFailed,
           });
           return;
         }
@@ -444,7 +447,7 @@ export function DoctorProfileEditForm({
           if (!marketRes.ok || !marketJson.ok) {
             setProfileMsg({
               kind: "error",
-              text: marketJson.message ?? "Could not save country profile",
+              text: marketJson.message ?? strings.saveCountryProfileFailed,
             });
             return;
           }
@@ -452,12 +455,15 @@ export function DoctorProfileEditForm({
         setProfileMsg({
           kind: "success",
           text: activeMarket
-            ? `Profile and ${activeCountryName ?? "country"} details updated`
-            : json.message ?? "Profile updated",
+            ? strings.profileAndCountryUpdated.replace(
+                "{country}",
+                activeCountryName ?? strings.defaultDoctorProfile,
+              )
+            : json.message ?? strings.profileUpdated,
         });
         router.refresh();
       } catch {
-        setProfileMsg({ kind: "error", text: "Network error — try again" });
+        setProfileMsg({ kind: "error", text: strings.networkErrorRetry });
       }
     });
   }
@@ -467,13 +473,13 @@ export function DoctorProfileEditForm({
     event.preventDefault();
     setPayoutMsg(null);
     if (!activeMarket) {
-      setPayoutMsg({ kind: "error", text: "No active country is available" });
+      setPayoutMsg({ kind: "error", text: strings.noActiveCountry });
       return;
     }
 
     // Client-side validation before hitting the backend
-    const bErr = bicError(bankBic);
-    const iErr = ibanError(bankIban);
+    const bErr = bicError(bankBic, strings);
+    const iErr = ibanError(bankIban, strings);
     setBicFieldError(bErr);
     setIbanFieldError(iErr);
     if (bErr || iErr) return;
@@ -499,15 +505,15 @@ export function DoctorProfileEditForm({
         if (!res.ok || !json.ok) {
           setPayoutMsg({
             kind: "error",
-            text: json.message ?? "Could not save payout details",
+            text: json.message ?? strings.savePayoutFailed,
           });
           return;
         }
-        setPayoutMsg({ kind: "success", text: "Payout details saved" });
+        setPayoutMsg({ kind: "success", text: strings.payoutSaved });
         setBankIban("");
         router.refresh();
       } catch {
-        setPayoutMsg({ kind: "error", text: "Network error — try again" });
+        setPayoutMsg({ kind: "error", text: strings.networkErrorRetry });
       }
     });
   }
@@ -520,36 +526,40 @@ export function DoctorProfileEditForm({
           <div className="grid gap-3 sm:grid-cols-3">
             <ProfileInsight
               icon={<Globe2 className="size-4" aria-hidden />}
-              label="Markets"
+              label={strings.marketsLabel}
               value={String(initial.markets.length)}
-              helper={activeCountryName ? `Editing ${activeCountryName}` : "Default doctor profile"}
+              helper={
+                activeCountryName
+                  ? strings.editingCountry.replace("{country}", activeCountryName)
+                  : strings.defaultDoctorProfile
+              }
             />
             <ProfileInsight
               icon={<BadgeCheck className="size-4" aria-hidden />}
-              label="Verified"
+              label={strings.verified}
               value={`${verifiedMarketCount}/${initial.markets.length || 1}`}
-              helper="Country registration status"
+              helper={strings.countryRegistrationStatus}
             />
             <ProfileInsight
               icon={<Landmark className="size-4" aria-hidden />}
-              label="Payout"
-              value={activeMarketHasIban ? "On file" : "Missing"}
-              helper={activeCountryName ?? "Bank details"}
+              label={strings.payout}
+              value={activeMarketHasIban ? strings.onFile : strings.missing}
+              helper={activeCountryName ?? strings.bankDetails}
             />
           </div>
         </section>
         {/* ── Public profile form ─────────────────── */}
         <form onSubmit={onSubmitProfile}>
           <FormSection
-            title="Public profile"
+            title={strings.publicProfileSection}
             description={
               activeCountryName
-                ? `Patients see this on your ${activeCountryName} doctor card and profile page. Bio, registration, and payout details are saved per country.`
-                : "Patients see this on your doctor card and profile page."
+                ? strings.publicProfileDescCountry.replace("{country}", activeCountryName)
+                : strings.publicProfileDesc
             }
           >
             <label className="flex flex-col gap-2">
-              <span className="gh-field-label">Full name</span>
+              <span className="gh-field-label">{strings.fullName}</span>
               <input
                 className="gh-input min-w-0"
                 value={fullName}
@@ -561,10 +571,9 @@ export function DoctorProfileEditForm({
 
             <div className="gh-form-section__span-2 flex flex-col gap-3">
               <div>
-                <span className="gh-field-label">Bio by language</span>
+                <span className="gh-field-label">{strings.bioByLanguage}</span>
                 <p className="mt-1 text-xs text-[var(--portal-muted)]">
-                  The public website reads these localized bios first. Blank
-                  non-default languages fall back to the default language.
+                  {strings.bioByLanguageHint}
                 </p>
               </div>
               <PortalTabs
@@ -573,7 +582,7 @@ export function DoctorProfileEditForm({
                 onChange={setActiveBioLocale}
                 items={localeTabs.map((locale) => ({
                   value: locale.code,
-                  label: `${localeLabel(locale.code)}${locale.isDefault ? " - default" : ""}`,
+                  label: `${localeLabel(locale.code, strings)}${locale.isDefault ? strings.defaultSuffix : ""}`,
                 }))}
               />
               {localeTabs.map((locale) => (
@@ -584,12 +593,12 @@ export function DoctorProfileEditForm({
                 >
                   <RichTextHtmlField
                     name={`bio_${locale.code}`}
-                    label={`${localeLabel(locale.code)} bio`}
+                    label={strings.bioLabel.replace("{language}", localeLabel(locale.code, strings))}
                     initialValue={initialBioForLocale(locale.code)}
                     helperText={
                       locale.isDefault
-                        ? "Default bio used when a translated bio is blank."
-                        : "Leave blank to use the default language bio."
+                        ? strings.bioHelperDefault
+                        : strings.bioHelperNonDefault
                     }
                   />
                 </div>
@@ -597,29 +606,28 @@ export function DoctorProfileEditForm({
             </div>
 
             <label className="gh-form-section__span-2 flex flex-col gap-2">
-              <span className="gh-field-label">Qualifications</span>
+              <span className="gh-field-label">{strings.qualifications}</span>
               <textarea
                 className="gh-input min-h-[8rem] min-w-0 resize-y"
                 value={qualifications}
                 onChange={(e) => setQualifications(e.target.value)}
-                placeholder={"MB BCh BAO\nMRCPI\nFellowship in Cardiology"}
+                placeholder={strings.qualificationsPlaceholder}
               />
               <span className="text-xs text-[var(--portal-muted)]">
-                One per line. Shown as a bullet list on your public profile.
+                {strings.qualificationsHint}
               </span>
             </label>
 
             <div className="gh-form-section__span-2 flex flex-col gap-2">
-              <span className="gh-field-label">Languages</span>
+              <span className="gh-field-label">{strings.languagesLabel}</span>
               <LanguagePicker selected={languages} onChange={setLanguages} />
               <span className="text-xs text-[var(--portal-muted)]">
-                Pick from the list so languages stay consistent on your
-                public profile + doctor cards.
+                {strings.languagesHint}
               </span>
             </div>
 
             <label className="flex flex-col gap-2">
-              <span className="gh-field-label">WhatsApp number</span>
+              <span className="gh-field-label">{strings.whatsappNumber}</span>
               <PhoneField
                 key={initial.whatsappNumber}
                 defaultValue={initial.whatsappNumber}
@@ -627,7 +635,7 @@ export function DoctorProfileEditForm({
                 className="flex min-w-0 gap-2"
               />
               <span className="text-xs text-[var(--portal-muted)]">
-                Optional. Patients can message you directly when set.
+                {strings.whatsappHint}
               </span>
             </label>
 
@@ -636,11 +644,10 @@ export function DoctorProfileEditForm({
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
                     <span className="gh-field-label">
-                      {activeMarket.country.name} registration
+                      {strings.registrationTitle.replace("{country}", activeMarket.country.name)}
                     </span>
                     <p className="mt-1 text-xs text-[var(--portal-muted)]">
-                      Edits are sent for admin re-verification before being
-                      treated as verified.
+                      {strings.registrationEditsHint}
                     </p>
                   </div>
                   <span
@@ -650,22 +657,22 @@ export function DoctorProfileEditForm({
                         : "border-[var(--portal-line)] bg-[var(--portal-bg)] text-[var(--portal-muted)]"
                     }`}
                   >
-                    {activeMarket.isVerified ? "Verified" : "Needs verification"}
+                    {activeMarket.isVerified ? strings.verified : strings.needsVerification}
                   </span>
                 </div>
                 <div className="gh-doctor-field-grid mt-3 grid gap-3 sm:grid-cols-3">
                   <label className="flex flex-col gap-2">
-                    <span className="gh-field-label">Registration body</span>
+                    <span className="gh-field-label">{strings.registrationBody}</span>
                     <input
                       className="gh-input min-w-0"
                       value={chamberEntity}
                       onChange={(e) => setChamberEntity(e.target.value)}
                       maxLength={64}
-                      placeholder="IMC, OM, OMC"
+                      placeholder={strings.registrationBodyPlaceholder}
                     />
                   </label>
                   <label className="flex flex-col gap-2">
-                    <span className="gh-field-label">Registration number</span>
+                    <span className="gh-field-label">{strings.registrationNumber}</span>
                     <input
                       className="gh-input min-w-0"
                       value={registrationNumber}
@@ -674,13 +681,13 @@ export function DoctorProfileEditForm({
                     />
                   </label>
                   <label className="flex flex-col gap-2">
-                    <span className="gh-field-label">Division</span>
+                    <span className="gh-field-label">{strings.division}</span>
                     <input
                       className="gh-input min-w-0"
                       value={registrationDivision}
                       onChange={(e) => setRegistrationDivision(e.target.value)}
                       maxLength={120}
-                      placeholder="General Division"
+                      placeholder={strings.divisionPlaceholder}
                     />
                   </label>
                 </div>
@@ -699,7 +706,7 @@ export function DoctorProfileEditForm({
                 disabled={profilePending}
                 className="gh-btn gh-btn-primary"
               >
-                {profilePending ? "Saving…" : "Save changes"}
+                {profilePending ? strings.saving : strings.saveChanges}
               </button>
             </div>
           </FormSection>
@@ -708,30 +715,29 @@ export function DoctorProfileEditForm({
         {/* ── Payout / bank details form ───────────── */}
         <form onSubmit={onSubmitPayout}>
           <FormSection
-            title="Payout details"
+            title={strings.payoutDetailsSection}
             description={
               <>
                 {activeCountryName
-                  ? `Your bank details for receiving payments in ${activeCountryName}.`
-                  : "Your bank details for receiving payments."}{" "}
-                Private — never shown on your public profile. Your IBAN is
-                stored encrypted.
+                  ? strings.payoutDescCountry.replace("{country}", activeCountryName)
+                  : strings.payoutDesc}{" "}
+                {strings.payoutPrivateNote}
               </>
             }
           >
             <label className="gh-form-section__span-2 flex flex-col gap-2">
-              <span className="gh-field-label">Account holder name</span>
+              <span className="gh-field-label">{strings.accountHolderName}</span>
               <input
                 className="gh-input min-w-0"
                 value={bankAccountHolder}
                 onChange={(e) => setBankAccountHolder(e.target.value)}
                 maxLength={160}
-                placeholder="Name as it appears on the account"
+                placeholder={strings.accountHolderPlaceholder}
               />
             </label>
 
             <label className="gh-form-section__span-2 flex flex-col gap-2">
-              <span className="gh-field-label">IBAN</span>
+              <span className="gh-field-label">{strings.ibanLabel}</span>
               <input
                 className="gh-input min-w-0 font-mono"
                 value={bankIban}
@@ -745,8 +751,8 @@ export function DoctorProfileEditForm({
                 inputMode="text"
                 placeholder={
                   activeMarketHasIban
-                    ? `On file: ${activeMarketIbanMasked} — leave blank to keep`
-                    : "IE29 AIBK 9311 5212 3456 78"
+                    ? strings.ibanOnFilePlaceholder.replace("{masked}", activeMarketIbanMasked)
+                    : strings.ibanPlaceholder
                 }
               />
               {ibanFieldError ? (
@@ -754,14 +760,14 @@ export function DoctorProfileEditForm({
               ) : (
                 <span className="text-xs text-[var(--portal-muted)]">
                   {activeMarketHasIban
-                    ? "An IBAN is on file. Type a new one only to replace it."
-                    : "Enter your full IBAN. It is stored encrypted and shown masked afterwards."}
+                    ? strings.ibanOnFileHint
+                    : strings.ibanNewHint}
                 </span>
               )}
             </label>
 
             <label className="flex flex-col gap-2">
-              <span className="gh-field-label">BIC / SWIFT (optional)</span>
+              <span className="gh-field-label">{strings.bicLabel}</span>
               <input
                 className="gh-input min-w-0 font-mono"
                 value={bankBic}
@@ -772,7 +778,7 @@ export function DoctorProfileEditForm({
                 maxLength={16}
                 autoComplete="off"
                 spellCheck={false}
-                placeholder="AIBKIE2D"
+                placeholder={strings.bicPlaceholder}
               />
               {bicFieldError ? (
                 <span className="text-xs text-red-600">{bicFieldError}</span>
@@ -791,7 +797,7 @@ export function DoctorProfileEditForm({
                 disabled={payoutPending}
                 className="gh-btn gh-btn-primary"
               >
-                {payoutPending ? "Saving…" : "Save payout details"}
+                {payoutPending ? strings.saving : strings.savePayoutDetails}
               </button>
             </div>
           </FormSection>
@@ -809,10 +815,10 @@ export function DoctorProfileEditForm({
               fontWeight: 800,
             }}
           >
-            Profile photo
+            {strings.profilePhotoTitle}
           </h3>
           <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
-            JPEG / PNG / WebP / AVIF, up to 5MB.
+            {strings.profilePhotoHint}
           </p>
           <div className="gh-doctor-profile-photo mt-3 flex flex-col items-center gap-3">
             <div
@@ -865,10 +871,10 @@ export function DoctorProfileEditForm({
               >
                 <Upload className="size-3.5" />
                 {photoPending
-                  ? "Uploading…"
+                  ? strings.uploading
                   : photoPath
-                    ? "Replace photo"
-                    : "Upload photo"}
+                    ? strings.replacePhoto
+                    : strings.uploadPhoto}
               </button>
               {photoPath ? (
                 <button
@@ -877,7 +883,7 @@ export function DoctorProfileEditForm({
                   disabled={photoPending}
                   className="gh-btn gh-btn-soft w-full"
                 >
-                  <Trash2 className="size-3.5" /> Remove
+                  <Trash2 className="size-3.5" /> {strings.removePhoto}
                 </button>
               ) : null}
             </div>
@@ -898,12 +904,10 @@ export function DoctorProfileEditForm({
               fontWeight: 800,
             }}
           >
-            Admin-managed
+            {strings.adminManagedTitle}
           </h3>
           <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
-            SEO fields, FAQ sections, country approvals, URL slug, and eligible
-            specialties stay admin-managed to keep verification and routing
-            consistent. Registration edits are reviewed by admin.
+            {strings.adminManagedDesc}
           </p>
         </section>
       </aside>

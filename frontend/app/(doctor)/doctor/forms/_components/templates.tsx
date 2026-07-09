@@ -38,7 +38,19 @@ function emptyField(): DraftField {
   return { key: "", label: "", type: "text", required: false, optionsText: "", helper: "" };
 }
 
-export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] }) {
+// Type-only import (erased at build time) — no runtime locale-loading code
+// ships to the client bundle; the component only receives plain strings via props.
+// ponytail: cs/de/ro doctor.json are partial locale stubs (missing many keys), so the
+// exact per-locale union type doesn't structurally match; loosen to Record<string, string>.
+type FormsStrings = { [key: string]: string };
+
+export function FormTemplatesClient({
+  initial,
+  strings,
+}: {
+  initial: FormTemplateDto[];
+  strings: FormsStrings;
+}) {
   const router = useRouter();
   const [items, setItems] = useState(initial);
   const [pending, startTransition] = useTransition();
@@ -88,11 +100,11 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
     setError(null);
     const payloadFields = serialiseFields();
     if (title.trim() === "") {
-      setError("Title is required.");
+      setError(strings.titleRequired);
       return;
     }
     if (payloadFields.length === 0) {
-      setError("Add at least one field.");
+      setError(strings.fieldRequired);
       return;
     }
     startTransition(async () => {
@@ -111,7 +123,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
         data?: { template?: FormTemplateDto };
       };
       if (!res.ok || !json.ok) {
-        setError(json.message ?? "Could not save template.");
+        setError(json.message ?? strings.saveFailed);
         return;
       }
       if (json.data?.template) {
@@ -128,14 +140,14 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
   }
 
   function remove(id: string) {
-    if (!confirm("Delete this template?")) return;
+    if (!confirm(strings.deleteConfirm)) return;
     startTransition(async () => {
       const res = await fetch(`/api/doctor/form-templates/${id}`, {
         method: "DELETE",
       });
       const json = (await res.json()) as { ok?: boolean; message?: string };
       if (!res.ok || !json.ok) {
-        setError(json.message ?? "Could not delete.");
+        setError(json.message ?? strings.deleteFailed);
         return;
       }
       setItems((prev) => prev.filter((t) => t.id !== id));
@@ -145,15 +157,15 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
 
   return (
     <div className="gh-doctor-detail-grid gh-doctor-templates-layout grid gap-4">
-      <FormSection title="Your templates" className="gh-doctor-template-list">
+      <FormSection title={strings.yourTemplates} className="gh-doctor-template-list">
         <div className="gh-form-section__span-2">
         {items.length === 0 ? (
           <AdminEmptyState
             className="gh-doctor-empty-state mt-4"
             icon={<FileText className="size-5" aria-hidden />}
             assetSrc="/images/portal/obsidian/empty-documents.svg"
-            title="No templates yet"
-            description="Create your first intake, consent, or follow-up form from the builder. Templates become available inside appointment workspaces."
+            title={strings.emptyTitle}
+            description={strings.emptyDesc}
           />
         ) : (
           <ul className="gh-doctor-template-items mt-4 grid gap-3">
@@ -168,7 +180,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
                       {t.title}
                       {t.ownedBySelf ? null : (
                         <span className="ml-2 rounded-full bg-[var(--portal-well)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-                          Shared
+                          {strings.sharedBadge}
                         </span>
                       )}
                     </p>
@@ -178,8 +190,9 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
                       </p>
                     ) : null}
                     <p className="mt-1 text-[11.5px] text-[var(--portal-muted)]">
-                      {t.fields.length} fields · updated{" "}
-                      {formatAppDateTimeShort(t.updatedAt)}
+                      {strings.fieldsUpdated
+                        .replace("{count}", String(t.fields.length))
+                        .replace("{date}", formatAppDateTimeShort(t.updatedAt))}
                     </p>
                   </div>
                   {t.ownedBySelf ? (
@@ -187,7 +200,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
                       type="button"
                       onClick={() => remove(t.id)}
                       className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
-                      aria-label="Delete template"
+                      aria-label={strings.deleteTemplateAria}
                     >
                       <Trash2 className="size-3.5" />
                     </button>
@@ -201,14 +214,14 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
       </FormSection>
 
       <FormSection
-        title="New template"
-        description="Build a simple form. Pick choice for radio-style options."
+        title={strings.newTemplate}
+        description={strings.newTemplateDesc}
         className="gh-doctor-template-form"
       >
         <form onSubmit={create} className="gh-form-section__span-2">
         <div className="grid gap-3">
           <label className="flex flex-col gap-1">
-            <span className="gh-field-label">Title</span>
+            <span className="gh-field-label">{strings.titleField}</span>
             <input
               className="gh-input"
               value={title}
@@ -218,7 +231,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="gh-field-label">Description</span>
+            <span className="gh-field-label">{strings.descriptionField}</span>
             <textarea
               className="gh-input min-h-[3.5rem] resize-y"
               value={description}
@@ -234,7 +247,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
             >
               <div className="flex items-start justify-between gap-2">
                 <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-                  Field {i + 1}
+                  {strings.fieldN.replace("{n}", String(i + 1))}
                 </p>
                 {fields.length > 1 ? (
                   <button
@@ -242,13 +255,13 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
                     onClick={() => removeField(i)}
                     className="text-[11px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
                   >
-                    Remove
+                    {strings.removeField}
                   </button>
                 ) : null}
               </div>
               <div className="mt-2 grid gap-2">
                 <label className="flex flex-col gap-1">
-                  <span className="gh-field-label">Label</span>
+                  <span className="gh-field-label">{strings.labelField}</span>
                   <input
                     className="gh-input"
                     value={f.label}
@@ -258,7 +271,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
                   />
                 </label>
                 <label className="flex flex-col gap-1">
-                  <span className="gh-field-label">Type</span>
+                  <span className="gh-field-label">{strings.typeField}</span>
                   <select
                     className="gh-select"
                     value={f.type}
@@ -275,7 +288,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
                 </label>
                 {f.type === "choice" ? (
                   <label className="flex flex-col gap-1">
-                    <span className="gh-field-label">Options (one per line)</span>
+                    <span className="gh-field-label">{strings.optionsField}</span>
                     <textarea
                       className="gh-input min-h-[3.5rem] resize-y"
                       value={f.optionsText}
@@ -290,7 +303,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
                     onChange={(e) => updateField(i, { required: e.target.checked })}
                     className="size-4"
                   />
-                  Required
+                  {strings.requiredField}
                 </label>
               </div>
             </div>
@@ -300,7 +313,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
             onClick={addField}
             className="inline-flex items-center gap-1 self-start text-[13px] font-semibold text-[var(--portal-primary)] hover:underline"
           >
-            <Plus className="size-3.5" /> Add field
+            <Plus className="size-3.5" /> {strings.addField}
           </button>
 
           {error ? (
@@ -310,7 +323,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
           ) : null}
 
           <button type="submit" disabled={pending} className="gh-btn gh-btn-primary">
-            {pending ? "Saving…" : "Create template"}
+            {pending ? strings.saving : strings.createTemplate}
           </button>
         </div>
         </form>

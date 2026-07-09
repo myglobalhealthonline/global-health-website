@@ -24,6 +24,9 @@ import {
   StatCard,
 } from "@/components/portal-atoms";
 import { formatAppTime } from "@/lib/format-datetime";
+import { doctorAppointmentView } from "@/lib/api/appointment-status-labels";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +35,22 @@ function startOfDayUtc(d: Date): Date {
 }
 
 export default async function DoctorOverviewPage() {
+  const locale = await getPageLocale();
+  const { doctor: d } = loadLocaleBundle(locale);
+  const NOTIF_TYPE_LABEL: Record<string, string> = {
+    APPOINTMENT_ASSIGNED: d.notifications.appointmentAssigned,
+    INTERNAL_MESSAGE: d.notifications.internalMessage,
+    PATIENT_MESSAGE: d.notifications.patientMessage,
+    CONSULT_SIGNED: d.notifications.consultSigned,
+    EXAM_LOGGED: d.notifications.examLogged,
+    FORM_SUBMITTED: d.notifications.formSubmitted,
+  };
+  const viewStatusText: Record<string, string> = {
+    waiting_payment: d.appointments.statusWaitingPayment,
+    confirmed: d.appointments.statusConfirmed,
+    cancelled: d.appointments.statusCancelled,
+    concluded: d.appointments.statusConcluded,
+  };
   const result = await fetchDoctorMe();
   if (!result.ok) {
     return (
@@ -41,8 +60,7 @@ export default async function DoctorOverviewPage() {
         </p>
         {result.status === 403 ? (
           <p className="mt-3 text-sm text-[var(--portal-muted)]">
-            Your account isn&apos;t linked to a doctor profile yet. Ask an
-            admin to set it under <span className="font-mono">/admin/users</span>.
+            {d.dashboard.notLinked}
           </p>
         ) : null}
       </AdminCard>
@@ -106,18 +124,18 @@ export default async function DoctorOverviewPage() {
   return (
     <>
       <CommandBand
-        context={isLive ? "Consultation live" : "Next consultation"}
-        title={nextAppointment ? nextAppointment.fullName : "No consults today"}
+        context={isLive ? d.dashboard.consultationLive : d.dashboard.nextConsultation}
+        title={nextAppointment ? nextAppointment.fullName : d.dashboard.noConsultsToday}
         chip={subtitle}
         metrics={[
           {
-            label: "Time",
+            label: d.dashboard.time,
             value: nextAppointment?.scheduledAt ? formatAppTime(nextAppointment.scheduledAt) : "—",
             signal: Boolean(nextAppointment),
-            live: isLive ? "Live now" : undefined,
+            live: isLive ? d.common.liveNow : undefined,
           },
-          { label: "Today", value: stats.todayCount },
-          { label: "This week", value: stats.weekCount },
+          { label: d.dashboard.today, value: stats.todayCount },
+          { label: d.dashboard.thisWeek, value: stats.weekCount },
         ]}
         action={
           <div className="flex flex-wrap items-center gap-2.5">
@@ -130,14 +148,14 @@ export default async function DoctorOverviewPage() {
                 size="sm"
                 iconLeft={<Video className="size-3.5" aria-hidden />}
               >
-                Join
+                {d.common.join}
               </Btn>
             ) : null}
             <Btn href="/doctor/calendar" variant="on-chrome" size="sm">
-              Calendar
+              {d.dashboard.calendar}
             </Btn>
             <Btn href="/doctor/availability" variant="on-chrome" size="sm">
-              Availability
+              {d.dashboard.availability}
             </Btn>
           </div>
         }
@@ -147,22 +165,22 @@ export default async function DoctorOverviewPage() {
       <div className="gh-doctor-stat-grid grid gap-3 sm:grid-cols-[1fr_0.9fr_1.1fr]">
         <StatCard
           tone="brand"
-          label="Today"
+          label={d.dashboard.today}
           value={stats.todayCount}
-          hint="Scheduled appointments"
+          hint={d.dashboard.scheduledAppointments}
           icon={<Calendar className="size-5" aria-hidden />}
         />
         <StatCard
           tone="accent"
-          label="This week"
+          label={d.dashboard.thisWeek}
           value={stats.weekCount}
-          hint="Scheduled within 7 days"
+          hint={d.dashboard.scheduledWithin7Days}
           icon={<Calendar className="size-5" aria-hidden />}
         />
         <StatCard
-          label="Open"
+          label={d.dashboard.open}
           value={stats.totalActive}
-          hint="Not cancelled or completed"
+          hint={d.dashboard.notCancelledOrCompleted}
           icon={<Stethoscope className="size-5" aria-hidden />}
         />
       </div>
@@ -181,9 +199,12 @@ export default async function DoctorOverviewPage() {
               />
               <div className="min-w-0 flex-1">
                 <p className="text-[14px] font-bold text-[var(--portal-text)]">
-                  {missingMeetingLink.length} appointment
-                  {missingMeetingLink.length === 1 ? "" : "s"} within 24h
-                  without a meeting link
+                  {missingMeetingLink.length === 1
+                    ? d.dashboard.missingLinkOne
+                    : d.dashboard.missingLinkMany.replace(
+                        "{count}",
+                        String(missingMeetingLink.length),
+                      )}
                 </p>
                 <ul className="mt-2 grid gap-1">
                   {missingMeetingLink.slice(0, 5).map((a) => (
@@ -201,7 +222,7 @@ export default async function DoctorOverviewPage() {
                         href={`/doctor/appointments/${a.id}`}
                         className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
                       >
-                        Add link <ChevronRight className="size-3" />
+                        {d.dashboard.addLink} <ChevronRight className="size-3" />
                       </Link>
                     </li>
                   ))}
@@ -216,8 +237,8 @@ export default async function DoctorOverviewPage() {
       <div className="gh-doctor-overview-grid mt-5 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
         <AdminCard padding={0} className="gh-doctor-panel">
           <SectionHeader
-            title="Today's schedule"
-            description="Open or upcoming appointments scheduled today."
+            title={d.dashboard.todaysSchedule}
+            description={d.dashboard.todaysScheduleDesc}
           />
           <div className="p-5">
             {todayAppointments.length === 0 ? (
@@ -225,15 +246,15 @@ export default async function DoctorOverviewPage() {
                 className="gh-doctor-empty-state"
                 icon={<Calendar className="size-5" aria-hidden />}
                 assetSrc="/images/portal/obsidian/empty-queue.svg"
-                title="No open appointments today"
-                description="Your schedule is clear for now. Review the full appointment queue or add availability for future bookings."
+                title={d.dashboard.emptyTodayTitle}
+                description={d.dashboard.emptyTodayDesc}
                 action={
                   <div className="flex flex-wrap gap-2">
                     <Btn href="/doctor/appointments" variant="soft" size="sm">
-                      My appointments
+                      {d.dashboard.myAppointments}
                     </Btn>
                     <Btn href="/doctor/availability" variant="secondary" size="sm">
-                      Add availability
+                      {d.dashboard.addAvailability}
                     </Btn>
                   </div>
                 }
@@ -247,11 +268,11 @@ export default async function DoctorOverviewPage() {
                   >
                     <div className="min-w-0">
                       <p className="text-[14px] font-semibold text-[var(--portal-text)]">
-                        {a.scheduledAt ? formatAppTime(a.scheduledAt) : "Unscheduled"}{" "}
+                        {a.scheduledAt ? formatAppTime(a.scheduledAt) : d.common.unscheduled}{" "}
                         · {a.fullName}
                       </p>
                       <p className="text-[12px] text-[var(--portal-muted)]">
-                        {a.consultationType} · {a.status}
+                        {a.consultationType} · {viewStatusText[doctorAppointmentView(a.status, a.paymentStatus)]}
                       </p>
                     </div>
                     <div className="inline-flex items-center gap-2">
@@ -264,7 +285,7 @@ export default async function DoctorOverviewPage() {
                           rel="noopener noreferrer"
                           iconLeft={<Video className="size-3.5" />}
                         >
-                          Join
+                          {d.common.join}
                         </Btn>
                       ) : null}
                       <Btn
@@ -273,7 +294,7 @@ export default async function DoctorOverviewPage() {
                         size="sm"
                         iconRight={<ChevronRight className="size-3.5" />}
                       >
-                        Open
+                        {d.dashboard.open}
                       </Btn>
                     </div>
                   </li>
@@ -287,7 +308,7 @@ export default async function DoctorOverviewPage() {
           <SectionHeader
             title={
               <span className="inline-flex items-center gap-2">
-                <Bell className="size-4" aria-hidden /> Unread notifications
+                <Bell className="size-4" aria-hidden /> {d.dashboard.unreadNotifications}
               </span>
             }
           />
@@ -297,15 +318,15 @@ export default async function DoctorOverviewPage() {
                 className="gh-doctor-empty-state"
                 icon={<Bell className="size-5" aria-hidden />}
                 assetSrc="/images/portal/obsidian/empty-notifications.svg"
-                title="No unread notifications"
-                description="New appointment assignments, document activity, and internal messages will appear here."
+                title={d.dashboard.emptyNotifsTitle}
+                description={d.dashboard.emptyNotifsDesc}
               />
             ) : (
               <ul className="gh-doctor-notification-mini-list grid gap-3">
                 {unreadNotifs.slice(0, 6).map((n) => (
                   <li key={n.id} className="text-[13px]">
                     <p className="font-semibold text-[var(--portal-text)]">
-                      {n.type.replace(/_/g, " ").toLowerCase()}
+                      {NOTIF_TYPE_LABEL[n.type] ?? n.type.replace(/_/g, " ").toLowerCase()}
                     </p>
                     {n.payload?.snippet ? (
                       <p className="line-clamp-2 text-[12px] text-[var(--portal-muted)]">
@@ -317,7 +338,7 @@ export default async function DoctorOverviewPage() {
                         href={`/doctor/appointments/${n.payload.appointmentId}`}
                         className="text-[11.5px] font-semibold text-[var(--portal-primary)] hover:underline"
                       >
-                        Open →
+                        {d.dashboard.openArrow}
                       </Link>
                     ) : null}
                   </li>
@@ -328,7 +349,7 @@ export default async function DoctorOverviewPage() {
               href="/doctor/notifications"
               className="mt-4 inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
             >
-              See all <ChevronRight className="size-3" />
+              {d.common.seeAll} <ChevronRight className="size-3" />
             </Link>
           </div>
         </AdminCard>
@@ -339,20 +360,20 @@ export default async function DoctorOverviewPage() {
         <QuickActionCard
           href="/doctor/patients"
           icon={<Users className="size-5" aria-hidden />}
-          label="My patients"
-          hint="Search + history"
+          label={d.dashboard.myPatients}
+          hint={d.dashboard.patientsHint}
         />
         <QuickActionCard
           href="/doctor/forms"
           icon={<ClipboardList className="size-5" aria-hidden />}
-          label="Forms"
-          hint="Intake / pre-consult / follow-up"
+          label={d.dashboard.forms}
+          hint={d.dashboard.formsHint}
         />
         <QuickActionCard
           href="/doctor/invoices"
           icon={<FileText className="size-5" aria-hidden />}
-          label="Invoices"
-          hint="Payment status + history"
+          label={d.dashboard.invoices}
+          hint={d.dashboard.invoicesHint}
         />
       </div>
     </>

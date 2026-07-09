@@ -5,14 +5,18 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
 import { formatAppDate } from "@/lib/format-datetime";
 
+type ConfidentialityStrings = Record<string, string>;
+
 export function ConfidentialityForm({
   accepted,
   acceptedAt,
   agreementText,
+  strings: s,
 }: {
   accepted: boolean;
   acceptedAt: string | null;
   agreementText: string;
+  strings: ConfidentialityStrings;
 }) {
   const router = useRouter();
   const [checked, setChecked] = useState(false);
@@ -29,14 +33,14 @@ export function ConfidentialityForm({
       const res = await fetch("/api/doctor/confidentiality-agreement", { method: "POST" });
       const json = (await res.json()) as { ok?: boolean; message?: string };
       if (!res.ok || !json.ok) {
-        setError(json.message ?? "Could not record your acceptance. Please try again.");
+        setError(json.message ?? s.defaultError);
       } else {
         setJustAccepted(true);
         // Refresh server components so the compliance banner drops the item.
         router.refresh();
       }
     } catch {
-      setError("Backend is unavailable. Please try again.");
+      setError(s.backendUnavailable);
     } finally {
       setSubmitting(false);
     }
@@ -48,9 +52,13 @@ export function ConfidentialityForm({
         <p className="flex items-start gap-2 rounded-md bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
           <CheckCircle2 className="mt-0.5 size-4 shrink-0" aria-hidden />
           <span>
-            You accepted the current confidentiality agreement
-            {acceptedAt ? ` on ${formatAppDate(acceptedAt)}` : justAccepted ? " just now" : ""}.
-            No further action is needed.
+            {s.acceptedPrefix}
+            {acceptedAt
+              ? s.acceptedOn.replace("{date}", formatAppDate(acceptedAt))
+              : justAccepted
+                ? s.acceptedJustNow
+                : ""}
+            {s.acceptedSuffix}
           </span>
         </p>
       ) : null}
@@ -68,7 +76,7 @@ export function ConfidentialityForm({
               onChange={(e) => setChecked(e.target.checked)}
               className="mt-0.5 size-4 shrink-0 accent-emerald-700"
             />
-            <span>I have read and agree to the confidentiality agreement above.</span>
+            <span>{s.agreeCheckboxLabel}</span>
           </label>
 
           {error ? (
@@ -81,7 +89,7 @@ export function ConfidentialityForm({
             disabled={!checked || submitting}
             className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60 sm:w-auto"
           >
-            {submitting ? "Recording…" : "Accept agreement"}
+            {submitting ? s.recordingEllipsis : s.acceptAgreement}
           </button>
         </div>
       ) : null}

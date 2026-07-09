@@ -2,11 +2,15 @@ import Link from "next/link";
 import { Globe2 } from "lucide-react";
 import { fetchDoctorMe } from "@/lib/api/doctor-api";
 import { PageHeader } from "@/components/portal-atoms";
-import { ProfileSections, activeMarkets } from "./_components/profile-sections";
+import { ProfileSections, activeMarkets, type ProfileStrings } from "./_components/profile-sections";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
 export default async function DoctorProfilePage() {
+  const locale = await getPageLocale();
+  const { doctor: d } = loadLocaleBundle(locale);
   const result = await fetchDoctorMe();
   if (!result.ok) {
     return (
@@ -29,9 +33,9 @@ export default async function DoctorProfilePage() {
       <>
         <PageHeader
           className="mb-6"
-          eyebrow="Doctor"
-          title="My profile"
-          description="You practice in multiple countries. Choose which country's profile to edit — registration, bio, and payout details are saved per country."
+          eyebrow={d.profile.eyebrow}
+          title={d.profile.title}
+          description={d.profile.pickerDescription}
         />
         <div className="grid gap-3 sm:grid-cols-2">
           {markets.map((m) => (
@@ -46,7 +50,9 @@ export default async function DoctorProfilePage() {
                   {m.country.name}
                 </span>
                 <span className="text-xs text-[var(--portal-muted)]">
-                  {m.country.slug === doctor.country.slug ? "Primary market" : "Additional market"}
+                  {m.country.slug === doctor.country.slug
+                    ? d.profile.primaryMarket
+                    : d.profile.additionalMarket}
                 </span>
               </span>
             </Link>
@@ -56,5 +62,8 @@ export default async function DoctorProfilePage() {
     );
   }
 
-  return <ProfileSections doctor={doctor} activeMarket={markets[0] ?? null} />;
+  return (
+    // ponytail: cast — cs/ro/de doctor.json still lag en's profile keys (separate backfill task); drop cast once locales match
+    <ProfileSections doctor={doctor} activeMarket={markets[0] ?? null} strings={d.profile as ProfileStrings} />
+  );
 }

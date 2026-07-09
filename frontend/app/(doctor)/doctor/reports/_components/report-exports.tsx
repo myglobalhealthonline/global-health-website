@@ -12,16 +12,13 @@ import { fetchDownload } from "@/lib/download";
  */
 
 type Dataset = "payout" | "services" | "patients" | "appointments";
-
-const DATASETS: { value: Dataset; label: string; note: string }[] = [
-  { value: "payout", label: "Payout statement (last month)", note: "Consultations you provided, valued at your per-service payout, with a total. Basis for your invoice." },
-  { value: "services", label: "Services provided", note: "All services you're assigned to (ignores the date range)." },
-  { value: "patients", label: "Patients", note: "Distinct patients you've seen in the selected range." },
-  { value: "appointments", label: "Appointments", note: "Every appointment matching the filters above." },
-];
+type ReportsStrings = Record<string, string>;
 
 export function DoctorReportExports({
   filters,
+  strings: s,
+  excelLabel,
+  pdfLabel,
 }: {
   filters: {
     from?: string;
@@ -30,7 +27,16 @@ export function DoctorReportExports({
     paymentStatus?: string;
     status?: string;
   };
+  strings: ReportsStrings;
+  excelLabel: string;
+  pdfLabel: string;
 }) {
+  const DATASETS: { value: Dataset; label: string; note: string }[] = [
+    { value: "payout", label: s.datasetPayoutLabel, note: s.datasetPayoutNote },
+    { value: "services", label: s.datasetServicesLabel, note: s.datasetServicesNote },
+    { value: "patients", label: s.datasetPatientsLabel, note: s.datasetPatientsNote },
+    { value: "appointments", label: s.datasetAppointmentsLabel, note: s.datasetAppointmentsNote },
+  ];
   const [dataset, setDataset] = useState<Dataset>("payout");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +56,7 @@ export function DoctorReportExports({
     try {
       await fetchDownload(`/api/doctor/reports/export?${params.toString()}`);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Download failed");
+      setError(e instanceof Error ? e.message : s.downloadFailed);
     } finally {
       setBusy(false);
     }
@@ -60,30 +66,30 @@ export function DoctorReportExports({
 
   return (
     <section className="gh-card p-6">
-      <p className="gh-field-label">Download lists</p>
+      <p className="gh-field-label">{s.downloadListsTitle}</p>
       <p className="mt-1 text-sm text-[var(--portal-muted)]">
-        Export the full underlying rows — not just the totals above — as Excel or PDF.
+        {s.downloadListsDesc}
       </p>
       <div className="mt-4 flex flex-wrap items-end gap-3">
         <label className="flex flex-col gap-1">
-          <span className="gh-field-label">Report</span>
+          <span className="gh-field-label">{s.reportLabel}</span>
           <select
             value={dataset}
             onChange={(e) => setDataset(e.target.value as Dataset)}
             className="gh-select"
           >
-            {DATASETS.map((d) => (
-              <option key={d.value} value={d.value}>
-                {d.label}
+            {DATASETS.map((ds) => (
+              <option key={ds.value} value={ds.value}>
+                {ds.label}
               </option>
             ))}
           </select>
         </label>
         <button type="button" onClick={() => download("excel")} disabled={busy} className="gh-btn gh-btn-soft text-sm disabled:opacity-50">
-          {busy ? <Loader2 className="size-3.5 animate-spin" /> : <FileSpreadsheet className="size-3.5" />} Excel
+          {busy ? <Loader2 className="size-3.5 animate-spin" /> : <FileSpreadsheet className="size-3.5" />} {excelLabel}
         </button>
         <button type="button" onClick={() => download("pdf")} disabled={busy} className="gh-btn gh-btn-soft text-sm disabled:opacity-50">
-          {busy ? <Loader2 className="size-3.5 animate-spin" /> : <FileText className="size-3.5" />} PDF
+          {busy ? <Loader2 className="size-3.5 animate-spin" /> : <FileText className="size-3.5" />} {pdfLabel}
         </button>
       </div>
       {error ? <p className="mt-2 text-xs text-rose-600">{error}</p> : null}

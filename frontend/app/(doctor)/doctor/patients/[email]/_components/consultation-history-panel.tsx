@@ -53,6 +53,30 @@ type UploadRow = {
   viewUrl: string;
 };
 
+export type ConsultationHistoryCopy = {
+  historyLoadError: string;
+  historyEmptyTitle: string;
+  historyEmptyDesc: string;
+  medicalNotesTitle: string;
+  colSessionDate: string;
+  colTime: string;
+  colOrderNumber: string;
+  colSessionType: string;
+  colSymptoms: string;
+  colDoctor: string;
+  noSymptomsRecorded: string;
+  generatedDocumentsTitle: string;
+  examsPrescriptionsGroup: string;
+  absenceCertificatesGroup: string;
+  medicinePrescriptionsGroup: string;
+  otherGroup: string;
+  uploadedFilesTitle: string;
+  colFileName: string;
+  colFileType: string;
+  colUploadedBy: string;
+  colView: string;
+};
+
 type HistoryData = {
   medicalNotes: MedicalNoteRow[];
   generatedDocuments: {
@@ -129,9 +153,11 @@ function HistorySection({
 function DocTypeGroup({
   title,
   rows,
+  copy,
 }: {
   title: string;
   rows: DocRow[];
+  copy: ConsultationHistoryCopy;
 }) {
   const [open, setOpen] = useState(true);
   if (rows.length === 0) return null;
@@ -146,7 +172,7 @@ function DocTypeGroup({
         {title}
         <span className="text-[var(--portal-muted)]">({rows.length})</span>
       </button>
-      {open ? <DocumentTable rows={rows} /> : null}
+      {open ? <DocumentTable rows={rows} copy={copy} /> : null}
     </div>
   );
 }
@@ -154,7 +180,7 @@ function DocTypeGroup({
 const TABLE_HEAD =
   "text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]";
 
-function DocumentTable({ rows }: { rows: DocRow[] }) {
+function DocumentTable({ rows, copy }: { rows: DocRow[]; copy: ConsultationHistoryCopy }) {
   return (
     <>
     <div className="grid gap-2 p-3 md:hidden">
@@ -178,14 +204,14 @@ function DocumentTable({ rows }: { rows: DocRow[] }) {
       <table className="w-full min-w-[720px] text-[13px]">
         <thead>
           <tr className={TABLE_HEAD}>
-            <th className="px-3 py-2 text-left">Session date</th>
-            <th className="px-3 py-2 text-left">Time</th>
-            <th className="px-3 py-2 text-left">Order #</th>
-            <th className="px-3 py-2 text-left">Session type</th>
-            <th className="px-3 py-2 text-left">File name</th>
-            <th className="px-3 py-2 text-left">File type</th>
-            <th className="px-3 py-2 text-left">Uploaded by</th>
-            <th className="px-3 py-2 text-right">View</th>
+            <th className="px-3 py-2 text-left">{copy.colSessionDate}</th>
+            <th className="px-3 py-2 text-left">{copy.colTime}</th>
+            <th className="px-3 py-2 text-left">{copy.colOrderNumber}</th>
+            <th className="px-3 py-2 text-left">{copy.colSessionType}</th>
+            <th className="px-3 py-2 text-left">{copy.colFileName}</th>
+            <th className="px-3 py-2 text-left">{copy.colFileType}</th>
+            <th className="px-3 py-2 text-left">{copy.colUploadedBy}</th>
+            <th className="px-3 py-2 text-right">{copy.colView}</th>
           </tr>
         </thead>
         <tbody>
@@ -210,7 +236,7 @@ function DocumentTable({ rows }: { rows: DocRow[] }) {
                   className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]"
                 >
                   <Eye className="size-3.5" aria-hidden />
-                  View
+                  {copy.colView}
                 </a>
               </td>
             </tr>
@@ -222,7 +248,7 @@ function DocumentTable({ rows }: { rows: DocRow[] }) {
   );
 }
 
-function UploadsTable({ rows }: { rows: UploadRow[] }) {
+function UploadsTable({ rows, copy }: { rows: UploadRow[]; copy: ConsultationHistoryCopy }) {
   return (
     <>
     <div className="grid gap-2 p-3 md:hidden">
@@ -246,14 +272,14 @@ function UploadsTable({ rows }: { rows: UploadRow[] }) {
       <table className="w-full min-w-[720px] text-[13px]">
         <thead>
           <tr className={TABLE_HEAD}>
-            <th className="px-3 py-2 text-left">Session date</th>
-            <th className="px-3 py-2 text-left">Time</th>
-            <th className="px-3 py-2 text-left">Order #</th>
-            <th className="px-3 py-2 text-left">Session type</th>
-            <th className="px-3 py-2 text-left">File name</th>
-            <th className="px-3 py-2 text-left">File type</th>
-            <th className="px-3 py-2 text-left">Uploaded by</th>
-            <th className="px-3 py-2 text-right">View</th>
+            <th className="px-3 py-2 text-left">{copy.colSessionDate}</th>
+            <th className="px-3 py-2 text-left">{copy.colTime}</th>
+            <th className="px-3 py-2 text-left">{copy.colOrderNumber}</th>
+            <th className="px-3 py-2 text-left">{copy.colSessionType}</th>
+            <th className="px-3 py-2 text-left">{copy.colFileName}</th>
+            <th className="px-3 py-2 text-left">{copy.colFileType}</th>
+            <th className="px-3 py-2 text-left">{copy.colUploadedBy}</th>
+            <th className="px-3 py-2 text-right">{copy.colView}</th>
           </tr>
         </thead>
         <tbody>
@@ -278,7 +304,7 @@ function UploadsTable({ rows }: { rows: UploadRow[] }) {
                   className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]"
                 >
                   <Eye className="size-3.5" aria-hidden />
-                  View
+                  {copy.colView}
                 </a>
               </td>
             </tr>
@@ -290,7 +316,13 @@ function UploadsTable({ rows }: { rows: UploadRow[] }) {
   );
 }
 
-export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: string }) {
+export function ConsultationHistoryPanel({
+  patientEmail,
+  strings: copy,
+}: {
+  patientEmail: string;
+  strings: ConsultationHistoryCopy;
+}) {
   const [data, setData] = useState<HistoryData | null>(null);
   const [expandedNote, setExpandedNote] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -326,7 +358,7 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
   if (!data) {
     return (
       <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-        Could not load consultation history.
+        {copy.historyLoadError}
       </div>
     );
   }
@@ -341,10 +373,10 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
       <div className="rounded-lg border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] p-5 text-center">
         <FileSearch className="mx-auto size-7 text-[var(--portal-muted)]" aria-hidden />
         <p className="mt-2 text-sm font-bold text-[var(--portal-text)]">
-          No consultation documents yet
+          {copy.historyEmptyTitle}
         </p>
         <p className="mx-auto mt-1 max-w-sm text-[12px] text-[var(--portal-muted)]">
-          Notes, uploaded files, and generated documents will appear here after appointments are completed.
+          {copy.historyEmptyDesc}
         </p>
       </div>
     );
@@ -355,7 +387,7 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
   return (
     <div className="gh-doctor-consultation-history space-y-4">
       {data.medicalNotes.length > 0 ? (
-        <HistorySection title="Medical notes" count={data.medicalNotes.length}>
+        <HistorySection title={copy.medicalNotesTitle} count={data.medicalNotes.length}>
           <div className="grid gap-2 p-3 md:hidden">
             {data.medicalNotes.map((n) => (
               <PortalMobileCard
@@ -367,12 +399,12 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
                   </span>
                 }
                 meta={[
-                  { label: "Type", value: <SessionTypeBadge label={n.consultationTypeLabel} /> },
-                  { label: "Doctor", value: n.createdByName },
+                  { label: copy.colSessionType, value: <SessionTypeBadge label={n.consultationTypeLabel} /> },
+                  { label: copy.colDoctor, value: n.createdByName },
                 ]}
               >
                 <p className="text-[12px] text-[var(--portal-muted)]">
-                  {n.symptoms?.trim() || "No symptoms recorded"}
+                  {n.symptoms?.trim() || copy.noSymptomsRecorded}
                 </p>
                 <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--portal-text)]">
                   {n.content}
@@ -384,13 +416,13 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
             <table className="w-full min-w-[640px] text-[13px]">
               <thead>
                 <tr className={TABLE_HEAD}>
-                  <th className="px-3 py-2 text-left">Session date</th>
-                  <th className="px-3 py-2 text-left">Time</th>
-                  <th className="px-3 py-2 text-left">Order #</th>
-                  <th className="px-3 py-2 text-left">Session type</th>
-                  <th className="px-3 py-2 text-left">Symptoms</th>
-                  <th className="px-3 py-2 text-left">Doctor</th>
-                  <th className="px-3 py-2 text-left">Medical notes</th>
+                  <th className="px-3 py-2 text-left">{copy.colSessionDate}</th>
+                  <th className="px-3 py-2 text-left">{copy.colTime}</th>
+                  <th className="px-3 py-2 text-left">{copy.colOrderNumber}</th>
+                  <th className="px-3 py-2 text-left">{copy.colSessionType}</th>
+                  <th className="px-3 py-2 text-left">{copy.colSymptoms}</th>
+                  <th className="px-3 py-2 text-left">{copy.colDoctor}</th>
+                  <th className="px-3 py-2 text-left">{copy.medicalNotesTitle}</th>
                   <th className="px-3 py-2 w-8" />
                 </tr>
               </thead>
@@ -441,17 +473,17 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
       ) : null}
 
       {gen.total > 0 ? (
-        <HistorySection title="Generated documents" count={gen.total}>
-          <DocTypeGroup title="Exams prescriptions" rows={gen.examsPrescriptions} />
-          <DocTypeGroup title="Absence certificates" rows={gen.absenceCertificates} />
-          <DocTypeGroup title="Medicine prescriptions" rows={gen.medicinePrescriptions} />
-          <DocTypeGroup title="Other" rows={gen.other} />
+        <HistorySection title={copy.generatedDocumentsTitle} count={gen.total}>
+          <DocTypeGroup title={copy.examsPrescriptionsGroup} rows={gen.examsPrescriptions} copy={copy} />
+          <DocTypeGroup title={copy.absenceCertificatesGroup} rows={gen.absenceCertificates} copy={copy} />
+          <DocTypeGroup title={copy.medicinePrescriptionsGroup} rows={gen.medicinePrescriptions} copy={copy} />
+          <DocTypeGroup title={copy.otherGroup} rows={gen.other} copy={copy} />
         </HistorySection>
       ) : null}
 
       {data.uploadedFiles.length > 0 ? (
-        <HistorySection title="Uploaded files" count={data.uploadedFiles.length}>
-          <UploadsTable rows={data.uploadedFiles} />
+        <HistorySection title={copy.uploadedFilesTitle} count={data.uploadedFiles.length}>
+          <UploadsTable rows={data.uploadedFiles} copy={copy} />
         </HistorySection>
       ) : null}
     </div>

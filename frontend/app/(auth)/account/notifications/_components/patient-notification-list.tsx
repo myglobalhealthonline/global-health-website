@@ -11,15 +11,37 @@ import {
 } from "@/lib/api/me-subscription";
 import { formatAppDate } from "@/lib/format-datetime";
 
-function timeAgo(iso: string): string {
+type NotificationsI18n = {
+  markAllRead: string;
+  emptyTitle: string;
+  emptyBody: string;
+  fallbackTitle: string;
+  secondsAgo: string;
+  minutesAgo: string;
+  hoursAgo: string;
+  daysAgo: string;
+};
+
+const DEFAULT_I18N: NotificationsI18n = {
+  markAllRead: "Mark all read",
+  emptyTitle: "No notifications yet",
+  emptyBody: "Appointment updates, payment receipts, document alerts, and profile reminders will appear here.",
+  fallbackTitle: "Notification",
+  secondsAgo: "{n}s ago",
+  minutesAgo: "{n}m ago",
+  hoursAgo: "{n}h ago",
+  daysAgo: "{n}d ago",
+};
+
+function timeAgo(iso: string, i18n: NotificationsI18n): string {
   const seconds = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
-  if (seconds < 60) return `${seconds}s ago`;
+  if (seconds < 60) return i18n.secondsAgo.replace("{n}", String(seconds));
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 60) return i18n.minutesAgo.replace("{n}", String(minutes));
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return i18n.hoursAgo.replace("{n}", String(hours));
   const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}d ago`;
+  if (days < 7) return i18n.daysAgo.replace("{n}", String(days));
   return formatAppDate(iso);
 }
 
@@ -28,7 +50,13 @@ function timeAgo(iso: string): string {
  * supports "mark all read". Optimistic — the row dims immediately, then the API
  * call + router.refresh reconcile the server state (and the bell count).
  */
-export function PatientNotificationList({ initial }: { initial: NotificationItem[] }) {
+export function PatientNotificationList({
+  initial,
+  i18n = DEFAULT_I18N,
+}: {
+  initial: NotificationItem[];
+  i18n?: NotificationsI18n;
+}) {
   const router = useRouter();
   const [items, setItems] = useState<NotificationItem[]>(initial);
   const [busy, setBusy] = useState(false);
@@ -59,10 +87,10 @@ export function PatientNotificationList({ initial }: { initial: NotificationItem
           <Bell className="size-6" style={{ color: "var(--portal-muted)" }} aria-hidden />
         </span>
         <p className="text-base font-bold" style={{ color: "var(--portal-text)" }}>
-          No notifications yet
+          {i18n.emptyTitle}
         </p>
         <p className="max-w-sm text-sm" style={{ color: "var(--portal-muted)" }}>
-          Appointment updates, payment receipts, document alerts, and profile reminders will appear here.
+          {i18n.emptyBody}
         </p>
       </div>
     );
@@ -80,7 +108,7 @@ export function PatientNotificationList({ initial }: { initial: NotificationItem
             style={{ color: "var(--portal-text)" }}
           >
             <Check className="size-4" aria-hidden />
-            Mark all read
+            {i18n.markAllRead}
           </button>
         </div>
       ) : null}
@@ -101,7 +129,7 @@ export function PatientNotificationList({ initial }: { initial: NotificationItem
                   className={`text-sm ${isUnread ? "font-bold" : "font-semibold"}`}
                   style={{ color: isUnread ? "var(--portal-text)" : "var(--portal-muted)" }}
                 >
-                  {n.payload?.title ?? "Notification"}
+                  {n.payload?.title ?? i18n.fallbackTitle}
                 </span>
                 {n.payload?.body ? (
                   <span className="text-[13px]" style={{ color: "var(--portal-muted)" }}>
@@ -109,7 +137,7 @@ export function PatientNotificationList({ initial }: { initial: NotificationItem
                   </span>
                 ) : null}
                 <span className="text-[10px] uppercase tracking-wider" style={{ color: "var(--portal-muted)" }}>
-                  {timeAgo(n.createdAt)}
+                  {timeAgo(n.createdAt, i18n)}
                 </span>
               </span>
             </span>

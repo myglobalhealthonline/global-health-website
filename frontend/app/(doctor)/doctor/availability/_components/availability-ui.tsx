@@ -23,16 +23,8 @@ import {
 } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
 import { PortalDialog } from "@/components/PortalDialog";
-
-const WEEKDAYS = [
-  { value: 0, label: "Sun" },
-  { value: 1, label: "Mon" },
-  { value: 2, label: "Tue" },
-  { value: 3, label: "Wed" },
-  { value: 4, label: "Thu" },
-  { value: 5, label: "Fri" },
-  { value: 6, label: "Sat" },
-];
+type AvailabilityStrings = Record<string, string>;
+type CommonStrings = Record<string, string>;
 
 const SLOT_DURATIONS = [15, 20, 30, 45, 60];
 
@@ -57,6 +49,8 @@ type Props = {
   /** Clinic timezone (Country.bookingSetting.timezone). Window minutes are
    *  wall-clock in this zone and concrete slots render in it. */
   countryTimeZone: string;
+  strings: AvailabilityStrings;
+  common: CommonStrings;
 };
 
 export function DoctorAvailabilityUI({
@@ -65,8 +59,19 @@ export function DoctorAvailabilityUI({
   consultations,
   initialWeekAnchor,
   countryTimeZone,
+  strings: s,
+  common,
 }: Props) {
   const router = useRouter();
+  const WEEKDAYS = [
+    { value: 0, label: s.weekdaySun },
+    { value: 1, label: s.weekdayMon },
+    { value: 2, label: s.weekdayTue },
+    { value: 3, label: s.weekdayWed },
+    { value: 4, label: s.weekdayThu },
+    { value: 5, label: s.weekdayFri },
+    { value: 6, label: s.weekdaySat },
+  ];
   const [windows, setWindows] = useState(initialWindows);
   const [slots, setSlots] = useState(initialSlots);
   const [busy, startTransition] = useTransition();
@@ -88,7 +93,7 @@ export function DoctorAvailabilityUI({
     const startMin = timeToMinutes(startTime);
     const endMin = timeToMinutes(endTime);
     if (endMin <= startMin) {
-      setError("End time must be after start time");
+      setError(s.errorEndAfterStart);
       return;
     }
     if (
@@ -96,7 +101,7 @@ export function DoctorAvailabilityUI({
       effectiveUntilDate &&
       effectiveFromDate > effectiveUntilDate
     ) {
-      setError("End date must be on or after start date");
+      setError(s.errorEndDateAfterStart);
       return;
     }
     startTransition(async () => {
@@ -171,27 +176,27 @@ export function DoctorAvailabilityUI({
         className="mb-4"
         items={[
           {
-            label: "Weekly windows",
+            label: s.weeklyWindows,
             value: windows.length,
-            hint: "Recurring schedule rules",
+            hint: s.recurringScheduleRules,
             tone: windows.length > 0 ? "brand" : "warning",
           },
           {
-            label: "Open slots",
+            label: s.openSlots,
             value: slotCounts.open,
-            hint: `${slotCounts.total} generated`,
+            hint: s.slotsGenerated.replace("{count}", String(slotCounts.total)),
             tone: slotCounts.open > 0 ? "success" : "neutral",
           },
           {
-            label: "Booked",
+            label: s.booked,
             value: slotCounts.booked,
-            hint: "Patient claimed",
+            hint: s.patientClaimed,
             tone: slotCounts.booked > 0 ? "brand" : "neutral",
           },
           {
-            label: "Blocked",
+            label: s.blocked,
             value: slotCounts.blocked,
-            hint: "Marked unavailable",
+            hint: s.markedUnavailable,
             tone: slotCounts.blocked > 0 ? "warning" : "neutral",
           },
         ]}
@@ -201,8 +206,8 @@ export function DoctorAvailabilityUI({
         {/* ── Week calendar (same grid as the admin availability page) ─── */}
         <AdminCard padding={0} className="gh-doctor-panel">
           <SectionHeader
-            title="Week calendar"
-            description="Your booked appointments and open slots for the week. Click an open time to block it, a blocked time to re-open. Booked appointments are highlighted and locked here."
+            title={s.weekCalendarTitle}
+            description={s.weekCalendarDesc}
           />
           <div className="p-5">
             <DoctorAvailabilityWeekView
@@ -211,6 +216,7 @@ export function DoctorAvailabilityUI({
               clinicTz={countryTimeZone}
               initialWeekAnchor={initialWeekAnchor}
               onSlotsChange={setSlots}
+              strings={{ weekViewHelp: s.weekViewHelp }}
             />
           </div>
         </AdminCard>
@@ -219,16 +225,16 @@ export function DoctorAvailabilityUI({
         <aside className="gh-doctor-side-stack grid gap-4 self-start">
           <AdminCard padding={0} className="gh-doctor-panel">
             <SectionHeader
-              title="Weekly windows"
-              description="Recurring blocks the system uses to generate concrete slots."
+              title={s.weeklyWindows}
+              description={s.weeklyWindowsDesc}
             />
             <div className="p-5">
               {windows.length === 0 ? (
                 <AdminEmptyState
                   className="gh-doctor-empty-state"
                   icon={<CalendarClock className="size-5" aria-hidden />}
-                  title="No weekly windows"
-                  description="Create a recurring day and time band to generate public booking slots."
+                  title={s.noWindowsTitle}
+                  description={s.noWindowsDesc}
                 />
               ) : (
                 <ul className="gh-doctor-window-list grid gap-2">
@@ -244,30 +250,30 @@ export function DoctorAvailabilityUI({
                           {minutesToTime(w.endMinute)}
                         </p>
                         <p className="text-[11px] text-[var(--portal-muted)]">
-                          {w.slotDurationMinutes}-min base grid
-                          {!w.isActive ? " · paused" : ""}
+                          {s.baseGrid.replace("{duration}", String(w.slotDurationMinutes))}
+                          {!w.isActive ? s.paused : ""}
                         </p>
                         {w.effectiveFrom || w.effectiveUntil ? (
                           <p className="text-[10px] text-[var(--portal-muted)]">
                             {w.effectiveFrom
-                              ? `from ${new Date(w.effectiveFrom).toLocaleDateString("en-IE")}`
-                              : "from always"}
+                              ? s.fromDate.replace("{date}", new Date(w.effectiveFrom).toLocaleDateString("en-IE"))
+                              : s.fromAlways}
                             {" "}·{" "}
                             {w.effectiveUntil
-                              ? `until ${new Date(w.effectiveUntil).toLocaleDateString("en-IE")}`
-                              : "forever"}
+                              ? s.untilDate.replace("{date}", new Date(w.effectiveUntil).toLocaleDateString("en-IE"))
+                              : s.forever}
                           </p>
                         ) : null}
                       </div>
                       <div className="gh-doctor-window-actions flex items-center gap-2">
                         <Pill tone={w.isActive ? "active" : "neutral"}>
-                          {w.isActive ? "Active" : "Paused"}
+                          {w.isActive ? s.active : s.pausedPill}
                         </Pill>
                         <button
                           type="button"
                           onClick={() => onDeleteWindow(w.id)}
                           disabled={busy}
-                          aria-label="Delete window"
+                          aria-label={s.deleteWindow}
                           className="rounded-md p-1 text-rose-600 hover:bg-rose-50 disabled:opacity-60"
                         >
                           <Trash2 className="size-3.5" aria-hidden />
@@ -281,13 +287,13 @@ export function DoctorAvailabilityUI({
           </AdminCard>
 
           <FormSection
-            title="Add window"
-            description={`A weekly recurring time band — times in ${countryTimeZone} (clinic time).`}
+            title={s.addWindow}
+            description={s.addWindowDesc.replace("{tz}", countryTimeZone)}
             className="gh-doctor-panel"
           >
             <form onSubmit={onAddWindow} className="gh-doctor-availability-form gh-form-section__span-2 grid gap-3">
               <label className="flex flex-col gap-1 text-sm">
-                <span className="gh-field-label">Day</span>
+                <span className="gh-field-label">{s.day}</span>
                 <select
                   className="gh-select"
                   value={weekday}
@@ -302,7 +308,7 @@ export function DoctorAvailabilityUI({
               </label>
               <div className="gh-doctor-time-grid grid grid-cols-2 gap-2">
                 <label className="flex flex-col gap-1 text-sm">
-                  <span className="gh-field-label">From</span>
+                  <span className="gh-field-label">{common.from}</span>
                   <input
                     type="time"
                     value={startTime}
@@ -311,7 +317,7 @@ export function DoctorAvailabilityUI({
                   />
                 </label>
                 <label className="flex flex-col gap-1 text-sm">
-                  <span className="gh-field-label">To</span>
+                  <span className="gh-field-label">{common.to}</span>
                   <input
                     type="time"
                     value={endTime}
@@ -321,7 +327,7 @@ export function DoctorAvailabilityUI({
                 </label>
               </div>
               <label className="flex flex-col gap-1 text-sm">
-                <span className="gh-field-label">Base slot length (grid)</span>
+                <span className="gh-field-label">{s.baseSlotLength}</span>
                 <select
                   className="gh-select"
                   value={duration}
@@ -329,20 +335,19 @@ export function DoctorAvailabilityUI({
                 >
                   {SLOT_DURATIONS.map((d) => (
                     <option key={d} value={d}>
-                      {d} min
+                      {s.minutesShort.replace("{count}", String(d))}
                     </option>
                   ))}
                 </select>
                 <span className="text-[12px] text-[var(--portal-muted)]">
-                  Consultations consume consecutive base slots to fit their
-                  real length. 15 fits 15/30/45-min consults.
+                  {s.baseSlotHint}
                 </span>
               </label>
 
               {/* Optional effective range — leave blank for "always" */}
               <div className="gh-doctor-time-grid grid grid-cols-2 gap-2">
                 <label className="flex flex-col gap-1 text-sm">
-                  <span className="gh-field-label">Starts (optional)</span>
+                  <span className="gh-field-label">{s.startsOptional}</span>
                   <input
                     type="date"
                     value={effectiveFromDate}
@@ -351,7 +356,7 @@ export function DoctorAvailabilityUI({
                   />
                 </label>
                 <label className="flex flex-col gap-1 text-sm">
-                  <span className="gh-field-label">Ends (optional)</span>
+                  <span className="gh-field-label">{s.endsOptional}</span>
                   <input
                     type="date"
                     value={effectiveUntilDate}
@@ -361,27 +366,25 @@ export function DoctorAvailabilityUI({
                 </label>
               </div>
               <p className="text-[11px] text-[var(--portal-muted)]">
-                Leave dates empty for an always-active recurring window. Use
-                them for holidays, vacations, or seasonal hours.
+                {s.datesHint}
               </p>
 
               <Btn type="submit" variant="primary" size="sm" disabled={busy} iconLeft={<Plus className="size-3.5" />}>
-                {busy ? "Adding…" : "Add window"}
+                {busy ? s.adding : s.addWindow}
               </Btn>
             </form>
           </FormSection>
 
           <AdminCard padding={0} className="gh-doctor-panel">
-            <SectionHeader title="Legend" />
+            <SectionHeader title={s.legend} />
             <ul className="grid gap-2 p-5 text-[12px]">
-              <Legend tone="open" label="Open · available to patients" />
-              <Legend tone="blocked" label="Blocked · you marked busy" />
-              <Legend tone="booked" label="Booked · patient claimed" />
-              <Legend tone="held" label="Held · in someone's cart" />
+              <Legend tone="open" label={s.legendOpen} />
+              <Legend tone="blocked" label={s.legendBlocked} />
+              <Legend tone="booked" label={s.legendBooked} />
+              <Legend tone="held" label={s.legendHeld} />
             </ul>
             <p className="px-5 pb-5 text-[11px] text-[var(--portal-muted)]">
-              Times shown in {countryTimeZone} (clinic time). Patients booking
-              this clinic see the same times.
+              {s.timesShownIn.replace("{tz}", countryTimeZone)}
             </p>
           </AdminCard>
         </aside>
@@ -390,21 +393,21 @@ export function DoctorAvailabilityUI({
       <PortalDialog
         open={deleteTarget !== null}
         onClose={() => setDeleteTarget(null)}
-        title="Remove weekly window"
+        title={s.removeWindowTitle}
         danger
         footer={
           <>
             <Btn variant="ghost" onClick={() => setDeleteTarget(null)}>
-              Cancel
+              {s.cancel}
             </Btn>
             <Btn variant="danger" onClick={confirmDeleteWindow}>
-              Remove
+              {s.remove}
             </Btn>
           </>
         }
       >
         <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
-          Remove this weekly window? Future open slots derived from it will be cleared.
+          {s.removeWindowBody}
         </p>
       </PortalDialog>
     </>

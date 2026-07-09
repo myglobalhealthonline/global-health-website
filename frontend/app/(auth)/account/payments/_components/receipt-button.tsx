@@ -3,7 +3,21 @@
 import { useState, useTransition } from "react";
 import { ExternalLink, Receipt } from "lucide-react";
 
-export function ReceiptButton({ paymentId }: { paymentId: string }) {
+type ReceiptI18n = { loading: string; viewReceipt: string; receipt: string; receiptUnavailable: string };
+const DEFAULT_I18N: ReceiptI18n = {
+  loading: "Loading…",
+  viewReceipt: "View receipt",
+  receipt: "Receipt",
+  receiptUnavailable: "Invoice not available",
+};
+
+export function ReceiptButton({
+  paymentId,
+  i18n = DEFAULT_I18N,
+}: {
+  paymentId: string;
+  i18n?: ReceiptI18n;
+}) {
   const [url, setUrl] = useState<string | null | "unavailable">(null);
   const [fetching, startFetch] = useTransition();
 
@@ -33,7 +47,7 @@ export function ReceiptButton({ paymentId }: { paymentId: string }) {
 
   if (url === "unavailable") {
     return (
-      <span className="gh-patient-receipt-unavailable text-xs text-[var(--portal-muted)]">Invoice not available</span>
+      <span className="gh-patient-receipt-unavailable text-xs text-[var(--portal-muted)]">{i18n.receiptUnavailable}</span>
     );
   }
 
@@ -45,11 +59,11 @@ export function ReceiptButton({ paymentId }: { paymentId: string }) {
       className="gh-patient-receipt-button inline-flex min-h-11 items-center gap-1 px-3 text-xs font-semibold text-emerald-700 hover:underline disabled:opacity-60"
     >
       {fetching ? (
-        "Loading…"
+        i18n.loading
       ) : url ? (
-        <>View receipt <ExternalLink className="size-3" aria-hidden /></>
+        <>{i18n.viewReceipt} <ExternalLink className="size-3" aria-hidden /></>
       ) : (
-        <>Receipt <Receipt className="size-3" aria-hidden /></>
+        <>{i18n.receipt} <Receipt className="size-3" aria-hidden /></>
       )}
     </button>
   );

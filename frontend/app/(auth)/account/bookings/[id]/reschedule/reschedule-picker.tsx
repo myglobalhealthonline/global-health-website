@@ -13,11 +13,45 @@ type Slot = {
   endAt: string;
 };
 
+type RescheduleI18n = {
+  pickNewDate: string;
+  dayAvailable: string;
+  daysAvailable: string;
+  slotAvailable: string;
+  slotsAvailable: string;
+  timesOn: string;
+  current: string;
+  rescheduled: string;
+  takingYouBack: string;
+  noOpenTimesTitle: string;
+  noOpenTimesBody: string;
+  backToBookings: string;
+  availableDates: string;
+};
+
+const DEFAULT_I18N: RescheduleI18n = {
+  pickNewDate: "Pick a new date",
+  dayAvailable: "{count} day available",
+  daysAvailable: "{count} days available",
+  slotAvailable: "{count} slot",
+  slotsAvailable: "{count} slots",
+  timesOn: "Times on {day}",
+  current: "Current",
+  rescheduled: "Booking rescheduled",
+  takingYouBack: "Taking you back to your bookings…",
+  noOpenTimesTitle: "No open times right now",
+  noOpenTimesBody:
+    "Your clinician has no available slots in the next two weeks. Cancel this booking and rebook, or message the clinic to ask for a specific time.",
+  backToBookings: "Back to bookings",
+  availableDates: "Available dates",
+};
+
 type Props = {
   appointmentId: string;
   slots: Slot[];
   clinicTimezone: string;
   currentTimeSlotId: string | null;
+  i18n?: RescheduleI18n;
 };
 
 /**
@@ -29,7 +63,7 @@ type Props = {
  * would be more code than this, so it's a fresh small component instead of
  * an import.
  */
-export function ReschedulePicker({ appointmentId, slots, clinicTimezone, currentTimeSlotId }: Props) {
+export function ReschedulePicker({ appointmentId, slots, clinicTimezone, currentTimeSlotId, i18n = DEFAULT_I18N }: Props) {
   const router = useRouter();
   const [now] = useState(() => Date.now());
   const [submitting, startSubmit] = useTransition();
@@ -76,8 +110,8 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
     return (
       <div className="gh2-status-card text-center">
         <Check className="mx-auto size-6 text-[var(--color-brand-primary)]" aria-hidden />
-        <p className="mt-3 font-semibold text-[var(--color-text-primary)]">Booking rescheduled</p>
-        <p className="mt-1 text-sm text-[var(--color-text-muted)]">Taking you back to your bookings…</p>
+        <p className="mt-3 font-semibold text-[var(--color-text-primary)]">{i18n.rescheduled}</p>
+        <p className="mt-1 text-sm text-[var(--color-text-muted)]">{i18n.takingYouBack}</p>
       </div>
     );
   }
@@ -86,11 +120,11 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
     return (
       <AdminEmptyState
         icon={<Calendar className="size-6" aria-hidden />}
-        title="No open times right now"
-        description="Your clinician has no available slots in the next two weeks. Cancel this booking and rebook, or message the clinic to ask for a specific time."
+        title={i18n.noOpenTimesTitle}
+        description={i18n.noOpenTimesBody}
         action={
           <Btn href="/account/bookings" variant="ghost" size="sm">
-            Back to bookings
+            {i18n.backToBookings}
           </Btn>
         }
       />
@@ -111,16 +145,16 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
 
       <div className="flex items-baseline justify-between gap-3">
         <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
-          Pick a new date
+          {i18n.pickNewDate}
         </p>
         <p className="text-xs text-[var(--color-text-muted)]">
-          {grouped.size} {grouped.size === 1 ? "day" : "days"} available
+          {(grouped.size === 1 ? i18n.dayAvailable : i18n.daysAvailable).replace("{count}", String(grouped.size))}
         </p>
       </div>
 
       <div
         role="tablist"
-        aria-label="Available dates"
+        aria-label={i18n.availableDates}
         className="gh2-scroll-fade mt-3 -mx-1 flex min-w-0 max-w-full gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin]"
       >
         {Array.from(grouped.entries()).map(([day, daySlots]) => {
@@ -158,7 +192,7 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
                 {month}
               </span>
               <span className={isActive ? "mt-1 text-[10px] font-semibold text-white/80" : "mt-1 text-[10px] font-semibold text-[var(--color-brand-primary)]"}>
-                {daySlots.length} {daySlots.length === 1 ? "slot" : "slots"}
+                {(daySlots.length === 1 ? i18n.slotAvailable : i18n.slotsAvailable).replace("{count}", String(daySlots.length))}
               </span>
             </button>
           );
@@ -168,11 +202,11 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
       {selectedDay ? (
         <div className="mt-6 w-full overflow-hidden">
           <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
-            Times on {selectedDay}
+            {i18n.timesOn.replace("{day}", selectedDay)}
           </p>
           <div
             role="tabpanel"
-            aria-label={`Times on ${selectedDay}`}
+            aria-label={i18n.timesOn.replace("{day}", selectedDay)}
             className="mt-3 grid gap-2 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 w-full"
           >
             {(grouped.get(selectedDay) ?? []).map((s) => {
@@ -191,7 +225,7 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
                   </span>
                   {isCurrent ? (
                     <span className="rounded-full bg-[rgba(29,75,54,0.08)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                      Current
+                      {i18n.current}
                     </span>
                   ) : null}
                 </button>

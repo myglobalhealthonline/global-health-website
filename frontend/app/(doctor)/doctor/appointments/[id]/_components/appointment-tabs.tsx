@@ -30,9 +30,11 @@ export type AppointmentTab = {
 export function AppointmentTabs({
   tabs,
   initialTabId,
+  ariaLabel,
 }: {
   tabs: AppointmentTab[];
   initialTabId?: string;
+  ariaLabel?: string;
 }) {
   const searchParams = useSearchParams();
   // Deep-link: `?tab=<id>` (e.g. from the notification bell) selects the
@@ -73,7 +75,7 @@ export function AppointmentTabs({
     <div className="gh-doctor-appointment-tabs">
       <div className="sticky top-[58px] z-10 -mx-4 mb-4 bg-white/80 px-4 py-2 backdrop-blur-md sm:-mx-6 sm:px-6">
         <PortalTabs
-          ariaLabel="Appointment sections"
+          ariaLabel={ariaLabel ?? "Appointment sections"}
           value={active}
           onChange={setActive}
           items={tabs.map((tab) => ({

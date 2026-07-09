@@ -83,10 +83,10 @@ export default async function AccountPaymentsPage() {
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: "Receipts", value: String(receiptsCount), hint: "Payments and membership invoices" },
-          { label: "Paid", value: String(paidCount), hint: "Completed payment records" },
-          { label: "Needs action", value: String(actionCount), hint: "Failed, unpaid, or action required" },
-          { label: "Latest", value: lastPayment ? formatAppDate(lastPayment.paidAt) : "None yet", hint: "Most recent consultation payment" },
+          { label: a.payments.sumReceipts, value: String(receiptsCount), hint: a.payments.sumReceiptsHint },
+          { label: a.payments.sumPaid, value: String(paidCount), hint: a.payments.sumPaidHint },
+          { label: a.payments.sumNeedsAction, value: String(actionCount), hint: a.payments.sumNeedsActionHint },
+          { label: a.payments.sumLatest, value: lastPayment ? formatAppDate(lastPayment.paidAt) : a.payments.noneYet, hint: a.payments.sumLatestHint },
         ]}
       />
 
@@ -143,7 +143,7 @@ export default async function AccountPaymentsPage() {
                 }
                 meta={[
                   {
-                    label: "Amount",
+                    label: a.payments.colAmount,
                     value: (
                       <span style={{ fontVariantNumeric: "tabular-nums" }}>
                         {formatPrice(p.amountCents, p.currencyCode)}
@@ -153,15 +153,15 @@ export default async function AccountPaymentsPage() {
                 ]}
                 actions={
                   NEEDS_ACTION_STATUSES.has(p.status) ? (
-                    <PayNowButton appointmentId={p.appointmentId} />
+                    <PayNowButton appointmentId={p.appointmentId} i18n={a.payments} />
                   ) : (
-                    <ReceiptButton paymentId={p.id} />
+                    <ReceiptButton paymentId={p.id} i18n={a.payments} />
                   )
                 }
               >
                 {p.status === "REFUNDED" ? (
                   <p className="mt-2 text-xs" style={{ color: "var(--portal-muted)" }}>
-                    This payment was refunded. It can take a few business days to appear on your statement.
+                    {a.payments.refundedNote}
                   </p>
                 ) : null}
               </PortalMobileCard>
@@ -175,7 +175,7 @@ export default async function AccountPaymentsPage() {
                 <th className="px-4 py-3 font-semibold">{a.payments.colConsultation}</th>
                 <th className="px-4 py-3 font-semibold">{a.payments.colAmount}</th>
                 <th className="px-4 py-3 font-semibold">{a.payments.colStatus}</th>
-                <th className="px-4 py-3 text-right font-semibold">Receipt</th>
+                <th className="px-4 py-3 text-right font-semibold">{a.payments.colReceipt}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--portal-line)]">
@@ -211,7 +211,7 @@ export default async function AccountPaymentsPage() {
                     </span>
                     {p.status === "REFUNDED" ? (
                       <p className="mt-1 text-[11px]" style={{ color: "var(--portal-muted)" }}>
-                        Refunded — a few days to appear on your statement.
+                        {a.payments.refundedNoteShort}
                       </p>
                     ) : null}
                   </td>
@@ -257,7 +257,7 @@ export default async function AccountPaymentsPage() {
                     }
                     meta={[
                       {
-                        label: "Amount",
+                        label: a.payments.colAmount,
                         value: (
                           <span style={{ fontVariantNumeric: "tabular-nums" }}>
                             {formatPrice(row.amountPaidCents, row.currency)}

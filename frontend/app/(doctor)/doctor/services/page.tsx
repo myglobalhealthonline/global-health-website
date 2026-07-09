@@ -2,11 +2,14 @@ import { Stethoscope } from "lucide-react";
 import { fetchDoctorServices } from "@/lib/api/doctor-api";
 import { AdminCard, AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 import { DoctorServiceSelectionForm } from "./_components/service-selection-form";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
 export default async function DoctorServicesPage() {
-  const result = await fetchDoctorServices();
+  const [result, locale] = await Promise.all([fetchDoctorServices(), getPageLocale()]);
+  const { doctor: d } = loadLocaleBundle(locale);
 
   if (!result.ok) {
     return (
@@ -14,10 +17,10 @@ export default async function DoctorServicesPage() {
         <PageHeader
           eyebrow={
             <span className="inline-flex items-center gap-2">
-              <Stethoscope className="size-3.5" aria-hidden /> Practice
+              <Stethoscope className="size-3.5" aria-hidden /> {d.services.eyebrow}
             </span>
           }
-          title="My services"
+          title={d.services.title}
         />
         <AdminCard>
           <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
@@ -37,38 +40,38 @@ export default async function DoctorServicesPage() {
       <PageHeader
         eyebrow={
           <span className="inline-flex items-center gap-2">
-            <Stethoscope className="size-3.5" aria-hidden /> Practice
+            <Stethoscope className="size-3.5" aria-hidden /> {d.services.eyebrow}
           </span>
         }
-        title="My services"
-        description="Request the GP, specialist, and prescription services you are qualified to provide. New requests are reviewed by an administrator before patients can book them."
+        title={d.services.title}
+        description={d.services.description}
       />
 
       <AdminSummaryStrip
         className="mb-4"
         items={[
           {
-            label: "Selected",
+            label: d.services.selected,
             value: selected,
-            hint: "Requested or assigned",
+            hint: d.services.selectedHint,
             tone: selected > 0 ? "brand" : "warning",
           },
           {
-            label: "Bookable",
+            label: d.services.bookable,
             value: active,
-            hint: "Active services",
+            hint: d.services.bookableHint,
             tone: active > 0 ? "success" : "neutral",
           },
           {
-            label: "Awaiting approval",
+            label: d.services.awaitingApproval,
             value: pending,
-            hint: "Admin review",
+            hint: d.services.awaitingHint,
             tone: pending > 0 ? "warning" : "neutral",
           },
           {
-            label: "Markets",
+            label: d.services.markets,
             value: countries,
-            hint: "Service countries",
+            hint: d.services.marketsHint,
             tone: "neutral",
           },
         ]}
@@ -77,6 +80,8 @@ export default async function DoctorServicesPage() {
       <DoctorServiceSelectionForm
         approvalRequired={result.data.approvalRequired}
         items={result.data.items}
+        strings={d.services}
+        common={d.common}
       />
     </>
   );

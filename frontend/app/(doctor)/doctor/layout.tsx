@@ -28,6 +28,9 @@ import {
 import { ComplianceBanner } from "./_components/compliance-banner";
 import { PortalShell, type PortalNavItem, type PortalNavGroup } from "@/components/portal-shell";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { supportedLocaleCodes } from "@/lib/i18n/types";
 
 /**
  * Doctor portal layout. Reuses `PortalShell` so admin / doctor / patient
@@ -54,14 +57,6 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
   // Pull the full notification list (not onlyUnread) so the popover
   // can show both new + recently-read items. Doctor-only by this
   // point — earlier guards redirect every other role.
-  const NOTIF_TYPE_LABEL: Record<string, string> = {
-    APPOINTMENT_ASSIGNED: "Appointment assigned",
-    INTERNAL_MESSAGE: "Internal message",
-    PATIENT_MESSAGE: "New patient message",
-    CONSULT_SIGNED: "Consultation signed",
-    EXAM_LOGGED: "Exam result logged",
-    FORM_SUBMITTED: "Form submitted",
-  };
   let unreadCount = 0;
   let notifications: {
     id: string;
@@ -71,12 +66,22 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     createdAt: string;
     readAt: string | null;
   }[] = [];
-  const [notif, unreadMessages, me, compliance] = await Promise.all([
+  const [notif, unreadMessages, me, compliance, locale] = await Promise.all([
     fetchDoctorNotifications(false),
     fetchDoctorUnreadMessageCount(),
     fetchDoctorMe(),
     fetchDoctorComplianceStatus(),
+    getPageLocale(),
   ]);
+  const { doctor: d, common } = loadLocaleBundle(locale);
+  const NOTIF_TYPE_LABEL: Record<string, string> = {
+    APPOINTMENT_ASSIGNED: d.notifications.appointmentAssigned,
+    INTERNAL_MESSAGE: d.notifications.internalMessage,
+    PATIENT_MESSAGE: d.notifications.patientMessage,
+    CONSULT_SIGNED: d.notifications.consultSigned,
+    EXAM_LOGGED: d.notifications.examLogged,
+    FORM_SUBMITTED: d.notifications.formSubmitted,
+  };
   if (notif.ok) {
     unreadCount = notif.data.unreadCount;
     notifications = notif.data.items.slice(0, 10).map((n) => {
@@ -102,54 +107,54 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     activeMarkets.length >= 2
       ? activeMarkets.map((m) => ({
           href: `/doctor/profile/${m.country.slug}`,
-          label: `Profile (${m.country.name})`,
+          label: d.nav.profileCountry.replace("{country}", m.country.name),
           icon: <UserCog className="size-4" aria-hidden />,
         }))
-      : [{ href: "/doctor/profile", label: "Profile", icon: <UserCog className="size-4" aria-hidden /> }];
+      : [{ href: "/doctor/profile", label: d.nav.profile, icon: <UserCog className="size-4" aria-hidden /> }];
 
   const groups: PortalNavGroup[] = [
     {
-      label: "Overview",
+      label: d.nav.groupOverview,
       items: [
-        { href: "/doctor", label: "Overview", icon: <LayoutDashboard className="size-4" aria-hidden /> },
+        { href: "/doctor", label: d.nav.overview, icon: <LayoutDashboard className="size-4" aria-hidden /> },
       ],
     },
     {
-      label: "Schedule",
+      label: d.nav.groupSchedule,
       items: [
-        { href: "/doctor/appointments", label: "Appointments", icon: <Calendar className="size-4" aria-hidden /> },
-        { href: "/doctor/messages", label: "Messages", icon: <MessagesSquare className="size-4" aria-hidden />, badge: unreadMessages },
-        { href: "/doctor/calendar", label: "Calendar", icon: <CalendarRange className="size-4" aria-hidden /> },
-        { href: "/doctor/availability", label: "Availability", icon: <CalendarClock className="size-4" aria-hidden /> },
+        { href: "/doctor/appointments", label: d.nav.appointments, icon: <Calendar className="size-4" aria-hidden /> },
+        { href: "/doctor/messages", label: d.nav.messages, icon: <MessagesSquare className="size-4" aria-hidden />, badge: unreadMessages },
+        { href: "/doctor/calendar", label: d.nav.calendar, icon: <CalendarRange className="size-4" aria-hidden /> },
+        { href: "/doctor/availability", label: d.nav.availability, icon: <CalendarClock className="size-4" aria-hidden /> },
       ],
     },
     {
-      label: "Practice",
+      label: d.nav.groupPractice,
       items: [
-        { href: "/doctor/patients", label: "Patients", icon: <Users className="size-4" aria-hidden /> },
-        { href: "/doctor/services", label: "My Services", icon: <Stethoscope className="size-4" aria-hidden /> },
-        { href: "/doctor/forms", label: "Forms", icon: <FileText className="size-4" aria-hidden /> },
+        { href: "/doctor/patients", label: d.nav.patients, icon: <Users className="size-4" aria-hidden /> },
+        { href: "/doctor/services", label: d.nav.myServices, icon: <Stethoscope className="size-4" aria-hidden /> },
+        { href: "/doctor/forms", label: d.nav.forms, icon: <FileText className="size-4" aria-hidden /> },
       ],
     },
     {
-      label: "Finance",
+      label: d.nav.groupFinance,
       items: [
-        { href: "/doctor/invoices", label: "Invoices", icon: <Receipt className="size-4" aria-hidden /> },
-        { href: "/doctor/reports", label: "Reports", icon: <BarChart3 className="size-4" aria-hidden /> },
+        { href: "/doctor/invoices", label: d.nav.invoices, icon: <Receipt className="size-4" aria-hidden /> },
+        { href: "/doctor/reports", label: d.nav.reports, icon: <BarChart3 className="size-4" aria-hidden /> },
       ],
     },
     {
-      label: "Account",
+      label: d.nav.groupAccount,
       items: [
         {
           href: "/doctor/notifications",
-          label: "Notifications",
+          label: d.nav.notifications,
           icon: <Bell className="size-4" aria-hidden />,
           badge: unreadCount,
         },
         ...profileItems,
-        { href: "/doctor/security", label: "Security", icon: <ShieldCheck className="size-4" aria-hidden /> },
-        { href: "/doctor/confidentiality", label: "Confidentiality", icon: <ScrollText className="size-4" aria-hidden /> },
+        { href: "/doctor/security", label: d.nav.security, icon: <ShieldCheck className="size-4" aria-hidden /> },
+        { href: "/doctor/confidentiality", label: d.nav.confidentiality, icon: <ScrollText className="size-4" aria-hidden /> },
       ],
     },
   ];
@@ -159,21 +164,25 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
       user={{ fullName: user.fullName, email: user.email, role: user.role }}
       portalKey="doctor"
       groups={groups}
-      portalLabel="Doctor portal"
+      portalLabel={d.portal.label}
       rootHref="/doctor"
-      rootBreadcrumb="Doctor"
+      rootBreadcrumb={d.portal.sectionLabel}
       signOutAction={logoutAction}
       accountHref="/doctor/profile"
       notifications={notifications}
       notificationsUnreadCount={unreadCount}
       notificationsViewAllHref="/doctor/notifications"
-      notificationsEmptyMessage="No notifications yet."
+      notificationsEmptyMessage={d.notifications.emptyMessage}
+      locale={locale}
+      availableLocales={[...supportedLocaleCodes]}
+      chrome={common.portalChrome}
       banner={
         compliance.ok &&
         (!compliance.data.confidentialityAccepted || !compliance.data.twoFactorEnabled) ? (
           <ComplianceBanner
             confidentialityAccepted={compliance.data.confidentialityAccepted}
             twoFactorEnabled={compliance.data.twoFactorEnabled}
+            copy={d.complianceBanner}
           />
         ) : null
       }

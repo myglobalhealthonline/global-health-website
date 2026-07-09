@@ -1,6 +1,13 @@
 import Link from "next/link";
 import { FileSearch, FileText, Download } from "lucide-react";
 import { fetchDoctorPatientDocuments } from "@/lib/api/doctor-api";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+// ponytail: cs/de/ro doctor.json don't yet carry these newer patients.*
+// keys (only en/pt/es do); cast to the full (en) shape rather than
+// editing locale JSON, which is out of scope for this change.
+import type EnDoctorLocale from "@/locales/en/doctor.json";
+type PatientsCopy = typeof EnDoctorLocale.patients;
 
 /**
  * Server-rendered list of every clinical document this doctor shares
@@ -13,12 +20,15 @@ import { fetchDoctorPatientDocuments } from "@/lib/api/doctor-api";
  */
 export async function AllDocumentsCard({ email }: { email: string }) {
   const result = await fetchDoctorPatientDocuments(email);
+  const locale = await getPageLocale();
+  const { doctor: d } = loadLocaleBundle(locale);
+  const p = d.patients as unknown as PatientsCopy;
 
   if (!result.ok) {
     return (
       <section className="gh-card gh-doctor-all-documents-card p-6">
         <h3 className="text-base font-bold text-[var(--portal-text)]">
-          All documents
+          {p.allDocsTitle}
         </h3>
         <p className="mt-2 text-[13px] text-rose-700">{result.message}</p>
       </section>
@@ -31,28 +41,27 @@ export async function AllDocumentsCard({ email }: { email: string }) {
   return (
     <section className="gh-card gh-doctor-all-documents-card p-6">
       <h3 className="text-base font-bold text-[var(--portal-text)]">
-        All documents
+        {p.allDocsTitle}
       </h3>
       <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
-        Every upload + generated PDF across this patient&apos;s appointments
-        with you. Tap an appointment to open the workspace.
+        {p.allDocsDesc}
       </p>
 
       {isEmpty ? (
         <div className="mt-4 rounded-lg border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] p-5 text-center">
           <FileSearch className="mx-auto size-7 text-[var(--portal-muted)]" aria-hidden />
           <p className="mt-2 text-sm font-bold text-[var(--portal-text)]">
-            No documents on file
+            {p.allDocsEmptyTitle}
           </p>
           <p className="mx-auto mt-1 max-w-sm text-[12px] text-[var(--portal-muted)]">
-            Uploaded files and generated PDFs will collect here across this patient&apos;s appointments.
+            {p.allDocsEmptyDesc}
           </p>
         </div>
       ) : (
         <div className="gh-doctor-document-section-list mt-4 grid gap-4">
           <Section
-            title="Doctor uploads"
-            empty="No uploaded files."
+            title={p.doctorUploads}
+            empty={p.noUploadedFiles}
             rows={uploads.map((u) => ({
               key: u.id,
               title: u.label || u.fileName || "Upload",
@@ -61,18 +70,20 @@ export async function AllDocumentsCard({ email }: { email: string }) {
               createdAt: u.createdAt,
               badge: null,
             }))}
+            openLabel={d.common.open}
           />
           <Section
-            title="Generated PDFs"
-            empty="No generated PDFs."
+            title={p.generatedPdfs}
+            empty={p.noGeneratedPdfs}
             rows={generated.map((g) => ({
               key: g.id,
-              title: titleForGenerated(g),
+              title: titleForGenerated(g, p),
               meta: g.fileName,
               appointmentId: g.appointmentId,
               createdAt: g.createdAt,
-              badge: g.sentToPatient ? "Sent" : "Pending send",
+              badge: g.sentToPatient ? p.sent : p.pendingSend,
             }))}
+            openLabel={d.common.open}
           />
         </div>
       )}
@@ -84,6 +95,7 @@ function Section({
   title,
   empty,
   rows,
+  openLabel,
 }: {
   title: string;
   empty: string;
@@ -95,6 +107,7 @@ function Section({
     createdAt: string;
     badge: string | null;
   }>;
+  openLabel: string;
 }) {
   return (
     <div className="gh-doctor-document-section">
@@ -134,7 +147,7 @@ function Section({
                   href={`/doctor/appointments/${r.appointmentId}`}
                   className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)] sm:w-auto"
                 >
-                  <Download className="size-3" aria-hidden /> Open
+                  <Download className="size-3" aria-hidden /> {openLabel}
                 </Link>
               </div>
             </li>
@@ -145,21 +158,29 @@ function Section({
   );
 }
 
-function titleForGenerated(g: {
-  documentType: string;
-  metadata: unknown;
-}): string {
+function titleForGenerated(
+  g: {
+    documentType: string;
+    metadata: unknown;
+  },
+  copy: {
+    docTypeDocument: string;
+    docTypeAbsenceCertificate: string;
+    docTypeExamsPrescription: string;
+    docTypeMedicinePrescription: string;
+  },
+): string {
   if (g.documentType === "OTHER") {
     const meta = g.metadata as { customLabel?: unknown } | null;
     if (meta && typeof meta.customLabel === "string" && meta.customLabel.trim()) {
       return meta.customLabel.trim();
     }
-    return "Document";
+    return copy.docTypeDocument;
   }
   return {
-    ABSENCE_CERTIFICATE: "Medical absence certificate",
-    EXAMS_PRESCRIPTION: "Examinations prescription",
-    PRESCRIPTION: "Medical prescription",
+    ABSENCE_CERTIFICATE: copy.docTypeAbsenceCertificate,
+    EXAMS_PRESCRIPTION: copy.docTypeExamsPrescription,
+    PRESCRIPTION: copy.docTypeMedicinePrescription,
   }[g.documentType] ?? g.documentType;
 }
 

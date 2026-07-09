@@ -5,15 +5,30 @@ import { useRouter } from "next/navigation";
 import { FileUp, Upload } from "lucide-react";
 import type { DoctorDocumentDto } from "@/lib/api/doctor-api";
 
+export type DocumentUploadFormCopy = {
+  fileTooLarge: string;
+  uploadFailed: string;
+  title: string;
+  description: string;
+  labelField: string;
+  labelPlaceholder: string;
+  chooseFiles: string;
+  acceptedTypes: string;
+  uploading: string;
+  uploadFiles: string;
+};
+
 /**
  * Upload form for the appointment Documents tab (max 10MB PDF/images).
  */
 export function DocumentUploadForm({
   appointmentId,
   onUploaded,
+  copy,
 }: {
   appointmentId: string;
   onUploaded: (doc: DoctorDocumentDto) => void;
+  copy: DocumentUploadFormCopy;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -24,7 +39,7 @@ export function DocumentUploadForm({
   function upload(file: File) {
     setError(null);
     if (file.size > 10 * 1024 * 1024) {
-      setError("File too large (max 10MB).");
+      setError(copy.fileTooLarge);
       return;
     }
     startTransition(async () => {
@@ -42,7 +57,7 @@ export function DocumentUploadForm({
         data?: { document?: DoctorDocumentDto };
       };
       if (!res.ok || !json.ok || !json.data?.document) {
-        setError(json.message ?? "Upload failed");
+        setError(json.message ?? copy.uploadFailed);
         return;
       }
       onUploaded(json.data.document);
@@ -58,22 +73,18 @@ export function DocumentUploadForm({
           <FileUp className="size-4" aria-hidden />
         </span>
         <div>
-          <p className="text-sm font-bold text-[var(--portal-text)]">
-            Upload appointment document
-          </p>
-          <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
-            Add clinical files that should stay attached to this patient appointment.
-          </p>
+          <p className="text-sm font-bold text-[var(--portal-text)]">{copy.title}</p>
+          <p className="mt-1 text-[12px] text-[var(--portal-muted)]">{copy.description}</p>
         </div>
       </div>
       <label className="flex flex-col gap-1">
-        <span className="gh-field-label">File type / label</span>
+        <span className="gh-field-label">{copy.labelField}</span>
         <input
           className="gh-input"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           maxLength={200}
-          placeholder="e.g. Lab report, X-ray scan, Referral letter"
+          placeholder={copy.labelPlaceholder}
         />
       </label>
       <div
@@ -86,10 +97,8 @@ export function DocumentUploadForm({
         tabIndex={0}
       >
         <Upload className="size-6 text-[var(--portal-muted)]" aria-hidden />
-        <p className="text-[13px] font-semibold text-[var(--portal-text)]">
-          Choose files (max 10MB)
-        </p>
-        <p className="text-[11px] text-[var(--portal-muted)]">PDF, JPEG, PNG, WebP, or AVIF</p>
+        <p className="text-[13px] font-semibold text-[var(--portal-text)]">{copy.chooseFiles}</p>
+        <p className="text-[11px] text-[var(--portal-muted)]">{copy.acceptedTypes}</p>
       </div>
       <input
         ref={fileInputRef}
@@ -109,7 +118,7 @@ export function DocumentUploadForm({
         className="gh-btn gh-btn-primary w-full sm:w-auto"
       >
         <Upload className="size-3.5" />
-        {pending ? "Uploading…" : "Upload files"}
+        {pending ? copy.uploading : copy.uploadFiles}
       </button>
       {error ? (
         <p className="gh-status-warning rounded-md border px-3 py-2 text-[12.5px]">{error}</p>

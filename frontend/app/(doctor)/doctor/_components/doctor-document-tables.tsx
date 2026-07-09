@@ -44,6 +44,41 @@ export function FileTypeBadge({ label }: { label: string }) {
 const TABLE_HEAD =
   "text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]";
 
+export type DocumentTablesCopy = {
+  colSessionDate: string;
+  colTime: string;
+  colOrderNumber: string;
+  colSessionType: string;
+  colFileName: string;
+  colFileType: string;
+  colUploadedBy: string;
+  colView: string;
+  view: string;
+  viewDocument: string;
+  type: string;
+  order: string;
+  uploadedBy: string;
+};
+
+// ponytail: fallback keeps the sibling doctor/patients/[email] consumer
+// (out of this task's scope) compiling without a `copy` prop; that page
+// can wire real i18n copy in its own pass.
+const DEFAULT_DOCUMENT_TABLES_COPY: DocumentTablesCopy = {
+  colSessionDate: "Session date",
+  colTime: "Time",
+  colOrderNumber: "Order #",
+  colSessionType: "Session type",
+  colFileName: "File name",
+  colFileType: "File type",
+  colUploadedBy: "Uploaded by",
+  colView: "View",
+  view: "View",
+  viewDocument: "View document",
+  type: "Type",
+  order: "Order",
+  uploadedBy: "Uploaded by",
+};
+
 export function HistorySection({
   title,
   count,
@@ -111,9 +146,11 @@ export type GeneratedDocTableRow = {
 export function GeneratedDocumentsTable({
   rows,
   session,
+  copy = DEFAULT_DOCUMENT_TABLES_COPY,
 }: {
   rows: GeneratedDocTableRow[];
   session: SessionMeta;
+  copy?: DocumentTablesCopy;
 }) {
   return (
     <>
@@ -121,14 +158,14 @@ export function GeneratedDocumentsTable({
       <table className="w-full min-w-[720px] text-[13px]">
         <thead>
           <tr className={TABLE_HEAD}>
-            <th className="px-3 py-2 text-left">Session date</th>
-            <th className="px-3 py-2 text-left">Time</th>
-            <th className="px-3 py-2 text-left">Order #</th>
-            <th className="px-3 py-2 text-left">Session type</th>
-            <th className="px-3 py-2 text-left">File name</th>
-            <th className="px-3 py-2 text-left">File type</th>
-            <th className="px-3 py-2 text-left">Uploaded by</th>
-            <th className="px-3 py-2 text-right">View</th>
+            <th className="px-3 py-2 text-left">{copy.colSessionDate}</th>
+            <th className="px-3 py-2 text-left">{copy.colTime}</th>
+            <th className="px-3 py-2 text-left">{copy.colOrderNumber}</th>
+            <th className="px-3 py-2 text-left">{copy.colSessionType}</th>
+            <th className="px-3 py-2 text-left">{copy.colFileName}</th>
+            <th className="px-3 py-2 text-left">{copy.colFileType}</th>
+            <th className="px-3 py-2 text-left">{copy.colUploadedBy}</th>
+            <th className="px-3 py-2 text-right">{copy.colView}</th>
           </tr>
         </thead>
         <tbody>
@@ -155,7 +192,7 @@ export function GeneratedDocumentsTable({
                   className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]"
                 >
                   <Eye className="size-3.5" aria-hidden />
-                  View
+                  {copy.view}
                 </a>
               </td>
             </tr>
@@ -171,6 +208,7 @@ export function GeneratedDocumentsTable({
           fileTypeLabel={r.fileTypeLabel}
           viewUrl={r.pdfUrl}
           session={session}
+          copy={copy}
         />
       ))}
     </div>
@@ -188,9 +226,11 @@ export type UploadDocTableRow = {
 export function UploadedFilesTable({
   rows,
   session,
+  copy = DEFAULT_DOCUMENT_TABLES_COPY,
 }: {
   rows: UploadDocTableRow[];
   session: SessionMeta;
+  copy?: DocumentTablesCopy;
 }) {
   return (
     <>
@@ -198,14 +238,14 @@ export function UploadedFilesTable({
       <table className="w-full min-w-[720px] text-[13px]">
         <thead>
           <tr className={TABLE_HEAD}>
-            <th className="px-3 py-2 text-left">Session date</th>
-            <th className="px-3 py-2 text-left">Time</th>
-            <th className="px-3 py-2 text-left">Order #</th>
-            <th className="px-3 py-2 text-left">Session type</th>
-            <th className="px-3 py-2 text-left">File name</th>
-            <th className="px-3 py-2 text-left">File type</th>
-            <th className="px-3 py-2 text-left">Uploaded by</th>
-            <th className="px-3 py-2 text-right">View</th>
+            <th className="px-3 py-2 text-left">{copy.colSessionDate}</th>
+            <th className="px-3 py-2 text-left">{copy.colTime}</th>
+            <th className="px-3 py-2 text-left">{copy.colOrderNumber}</th>
+            <th className="px-3 py-2 text-left">{copy.colSessionType}</th>
+            <th className="px-3 py-2 text-left">{copy.colFileName}</th>
+            <th className="px-3 py-2 text-left">{copy.colFileType}</th>
+            <th className="px-3 py-2 text-left">{copy.colUploadedBy}</th>
+            <th className="px-3 py-2 text-right">{copy.colView}</th>
           </tr>
         </thead>
         <tbody>
@@ -232,7 +272,7 @@ export function UploadedFilesTable({
                   className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]"
                 >
                   <Eye className="size-3.5" aria-hidden />
-                  View
+                  {copy.view}
                 </a>
               </td>
             </tr>
@@ -248,6 +288,7 @@ export function UploadedFilesTable({
           fileTypeLabel={u.fileTypeLabel}
           viewUrl={u.viewUrl}
           session={session}
+          copy={copy}
         />
       ))}
     </div>
@@ -259,10 +300,12 @@ export function DocTypeGroup({
   title,
   rows,
   session,
+  copy = DEFAULT_DOCUMENT_TABLES_COPY,
 }: {
   title: string;
   rows: GeneratedDocTableRow[];
   session: SessionMeta;
+  copy?: DocumentTablesCopy;
 }) {
   const [open, setOpen] = useState(false);
   if (rows.length === 0) return null;
@@ -277,7 +320,7 @@ export function DocTypeGroup({
         {title}
         <span className="text-[var(--portal-muted)]">({rows.length})</span>
       </button>
-      {open ? <GeneratedDocumentsTable rows={rows} session={session} /> : null}
+      {open ? <GeneratedDocumentsTable rows={rows} session={session} copy={copy} /> : null}
     </div>
   );
 }
@@ -287,22 +330,24 @@ export function DocumentMobileCard({
   fileTypeLabel,
   viewUrl,
   session,
+  copy = DEFAULT_DOCUMENT_TABLES_COPY,
 }: {
   fileName: string;
   fileTypeLabel: string;
   viewUrl: string;
   session: SessionMeta;
+  copy?: DocumentTablesCopy;
 }) {
   return (
     <PortalMobileCard
       leading={<span className="gh-document-row__icon"><FileText className="size-4" aria-hidden /></span>}
       title={fileName}
-      subtitle={`${session.sessionDate} at ${session.sessionTime}`}
+      subtitle={`${session.sessionDate} · ${session.sessionTime}`}
       statusPill={<FileTypeBadge label={fileTypeLabel} />}
       meta={[
-        { label: "Type", value: <SessionTypeBadge label={session.consultationTypeLabel} /> },
-        { label: "Order", value: session.orderNumber },
-        { label: "Uploaded by", value: session.uploadedBy },
+        { label: copy.type, value: <SessionTypeBadge label={session.consultationTypeLabel} /> },
+        { label: copy.order, value: session.orderNumber },
+        { label: copy.uploadedBy, value: session.uploadedBy },
       ]}
       actions={
         <a
@@ -312,7 +357,7 @@ export function DocumentMobileCard({
           className="gh-btn gh-btn-soft text-sm"
         >
           <Eye className="size-3.5" aria-hidden />
-          View document
+          {copy.viewDocument}
         </a>
       }
     />

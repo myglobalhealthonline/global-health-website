@@ -13,6 +13,29 @@ type SoapState = {
   signedAt: string | null;
 };
 
+export type ConsultationFormCopy = {
+  fieldChiefComplaint: string;
+  fieldSubjective: string;
+  fieldSubjectiveHelper: string;
+  fieldObjective: string;
+  fieldObjectiveHelper: string;
+  fieldAssessment: string;
+  fieldAssessmentHelper: string;
+  fieldPlan: string;
+  fieldPlanHelper: string;
+  signConfirm: string;
+  couldNotSave: string;
+  saved: string;
+  networkError: string;
+  couldNotSign: string;
+  signed: string;
+  signedAt: string;
+  draftHint: string;
+  saving: string;
+  saveDraft: string;
+  saveAndSign: string;
+};
+
 /**
  * SOAP note editor + sign button. PATCH on save, POST on sign. The form
  * is read-only once `status === "SIGNED"` — server already rejects edits
@@ -22,9 +45,11 @@ type SoapState = {
 export function ConsultationForm({
   appointmentId,
   initial,
+  copy,
 }: {
   appointmentId: string;
   initial: SoapState;
+  copy: ConsultationFormCopy;
 }) {
   const router = useRouter();
   const [state, setState] = useState<SoapState>(initial);
@@ -63,7 +88,7 @@ export function ConsultationForm({
           data?: { consultation?: SoapState & { signedAt?: string | null } };
         };
         if (!res.ok || !json.ok) {
-          setMessage({ kind: "error", text: json.message ?? "Could not save" });
+          setMessage({ kind: "error", text: json.message ?? copy.couldNotSave });
           return;
         }
         if (json.data?.consultation) {
@@ -73,21 +98,17 @@ export function ConsultationForm({
             signedAt: json.data!.consultation!.signedAt ?? null,
           }));
         }
-        setMessage({ kind: "success", text: "Saved" });
+        setMessage({ kind: "success", text: copy.saved });
         router.refresh();
       } catch {
-        setMessage({ kind: "error", text: "Network error" });
+        setMessage({ kind: "error", text: copy.networkError });
       }
     });
   }
 
   function sign() {
     setMessage(null);
-    if (
-      !confirm(
-        "Sign this consultation? Once signed, the note is locked and can't be edited.",
-      )
-    ) {
+    if (!confirm(copy.signConfirm)) {
       return;
     }
     startTransition(async () => {
@@ -102,7 +123,7 @@ export function ConsultationForm({
           data?: { consultation?: SoapState & { signedAt?: string | null } };
         };
         if (!res.ok || !json.ok) {
-          setMessage({ kind: "error", text: json.message ?? "Could not sign" });
+          setMessage({ kind: "error", text: json.message ?? copy.couldNotSign });
           return;
         }
         if (json.data?.consultation) {
@@ -112,10 +133,10 @@ export function ConsultationForm({
             signedAt: json.data!.consultation!.signedAt ?? null,
           }));
         }
-        setMessage({ kind: "success", text: "Signed" });
+        setMessage({ kind: "success", text: copy.signed });
         router.refresh();
       } catch {
-        setMessage({ kind: "error", text: "Network error" });
+        setMessage({ kind: "error", text: copy.networkError });
       }
     });
   }
@@ -123,39 +144,39 @@ export function ConsultationForm({
   return (
     <div className="mt-4 grid gap-3">
       <Field
-        label="Chief complaint"
+        label={copy.fieldChiefComplaint}
         value={state.chiefComplaint}
         onChange={(v) => update("chiefComplaint", v)}
         disabled={signed}
         rows={2}
       />
       <Field
-        label="Subjective"
-        helper="What the patient reports — history, symptoms, context."
+        label={copy.fieldSubjective}
+        helper={copy.fieldSubjectiveHelper}
         value={state.subjective}
         onChange={(v) => update("subjective", v)}
         disabled={signed}
         rows={5}
       />
       <Field
-        label="Objective"
-        helper="Observable findings — vitals, exam, results reviewed."
+        label={copy.fieldObjective}
+        helper={copy.fieldObjectiveHelper}
         value={state.objective}
         onChange={(v) => update("objective", v)}
         disabled={signed}
         rows={5}
       />
       <Field
-        label="Assessment"
-        helper="Clinical impression / differential."
+        label={copy.fieldAssessment}
+        helper={copy.fieldAssessmentHelper}
         value={state.assessment}
         onChange={(v) => update("assessment", v)}
         disabled={signed}
         rows={4}
       />
       <Field
-        label="Plan"
-        helper="Prescriptions, follow-up, referrals."
+        label={copy.fieldPlan}
+        helper={copy.fieldPlanHelper}
         value={state.plan}
         onChange={(v) => update("plan", v)}
         disabled={signed}
@@ -175,8 +196,11 @@ export function ConsultationForm({
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
         <p className="text-[12px] text-[var(--portal-muted)]">
           {signed
-            ? `Signed ${state.signedAt ? new Date(state.signedAt).toLocaleString() : ""}`
-            : "Drafts are visible to you and admin until signed."}
+            ? copy.signedAt.replace(
+                "{date}",
+                state.signedAt ? new Date(state.signedAt).toLocaleString() : "",
+              )
+            : copy.draftHint}
         </p>
         <div className="flex gap-2">
           <button
@@ -185,7 +209,7 @@ export function ConsultationForm({
             disabled={pending || signed}
             className="gh-btn gh-btn-soft"
           >
-            {pending ? "Saving…" : "Save draft"}
+            {pending ? copy.saving : copy.saveDraft}
           </button>
           <button
             type="button"
@@ -193,7 +217,7 @@ export function ConsultationForm({
             disabled={pending || signed}
             className="gh-btn gh-btn-primary"
           >
-            {signed ? "Signed" : "Save & sign"}
+            {signed ? copy.signed : copy.saveAndSign}
           </button>
         </div>
       </div>
