@@ -58,11 +58,15 @@ export function ComplianceBanner({
   return (
     <div
       role="status"
-      className="mx-4 mt-4 flex items-start justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 lg:mx-6"
+      className="gh-admin-card mx-4 mt-4 flex items-start justify-between gap-3 px-4 py-3 text-sm lg:mx-6"
+      style={{
+        borderLeft: "3px solid var(--portal-warning)",
+        color: "var(--portal-warning-text)",
+      }}
     >
       <div className="min-w-0">
         <p className="font-semibold">{copy.title}</p>
-        <p className="mt-0.5">
+        <p className="mt-0.5" style={{ color: "var(--portal-text)" }}>
           {copy.description}
         </p>
         <ul className="mt-1.5 list-disc pl-5">
@@ -70,7 +74,8 @@ export function ComplianceBanner({
             <li>
               <Link
                 href="/doctor/confidentiality"
-                className="font-semibold underline underline-offset-2 hover:text-amber-900"
+                className="font-semibold underline underline-offset-2"
+                style={{ color: "var(--portal-warning-text)" }}
               >
                 {copy.acceptConfidentiality}
               </Link>
@@ -80,7 +85,8 @@ export function ComplianceBanner({
             <li>
               <Link
                 href="/doctor/security"
-                className="font-semibold underline underline-offset-2 hover:text-amber-900"
+                className="font-semibold underline underline-offset-2"
+                style={{ color: "var(--portal-warning-text)" }}
               >
                 {copy.enable2fa}
               </Link>
@@ -92,7 +98,8 @@ export function ComplianceBanner({
         type="button"
         onClick={dismiss}
         aria-label={copy.dismissAria}
-        className="shrink-0 rounded-md p-1 text-amber-700 hover:bg-amber-100"
+        className="shrink-0 rounded-md p-1 hover:bg-black/5"
+        style={{ color: "var(--portal-warning-text)" }}
       >
         <X className="size-4" aria-hidden />
       </button>
