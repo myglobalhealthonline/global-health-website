@@ -15,6 +15,30 @@ export type TemplateLabels = {
   from: string;
   to: string;
   reason: string;
+  // ── HTML (Variant K) template labels ──
+  patient: string;
+  consultation: string;
+  prescriber: string;
+  attendingDoctor: string;
+  clinicalDocument: string;
+  issued: string;
+  signed: string;
+  stamp: string;
+  id: string;
+  date: string;
+  certificateDetails: string;
+  documentSection: string;
+  certificateId: string;
+  documentId: string;
+  verifyHint: string;
+  uploadTitle: string;
+  uploadHint: string;
+  confidentialNote: string;
+  docTitleAbsence: string;
+  docTitleExams: string;
+  docTitlePrescription: string;
+  absenceCertifiesPre: string;
+  absenceCertifiesPost: string;
 };
 
 export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
@@ -34,6 +58,30 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     from: "From",
     to: "To",
     reason: "Reason",
+    patient: "Patient",
+    consultation: "Consultation",
+    prescriber: "Prescriber",
+    attendingDoctor: "Attending doctor",
+    clinicalDocument: "Clinical document",
+    issued: "Issued",
+    signed: "Signed",
+    stamp: "Stamp",
+    id: "ID",
+    date: "Date",
+    certificateDetails: "Certificate details",
+    documentSection: "Document",
+    certificateId: "Certificate ID",
+    documentId: "Document ID",
+    verifyHint: "Scan to verify authenticity at myglobalhealth.online",
+    uploadTitle: "Upload your results",
+    uploadHint: "Scan to securely upload examination results to Global Health",
+    confidentialNote:
+      "This document contains confidential medical information intended for the named patient only.",
+    docTitleAbsence: "Medical Absence Certificate",
+    docTitleExams: "Examinations Prescription",
+    docTitlePrescription: "Medical Prescription",
+    absenceCertifiesPre: "This certifies that",
+    absenceCertifiesPost: "is unfit for work or study for the period below.",
   },
   PT: {
     patientName: "Nome do paciente",
@@ -51,6 +99,30 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     from: "De",
     to: "Até",
     reason: "Motivo",
+    patient: "Paciente",
+    consultation: "Consulta",
+    prescriber: "Médico prescritor",
+    attendingDoctor: "Médico assistente",
+    clinicalDocument: "Documento clínico",
+    issued: "Emitido",
+    signed: "Assinado",
+    stamp: "Carimbo",
+    id: "ID",
+    date: "Data",
+    certificateDetails: "Detalhes do certificado",
+    documentSection: "Documento",
+    certificateId: "ID do certificado",
+    documentId: "ID do documento",
+    verifyHint: "Digitalize para verificar a autenticidade em myglobalhealth.online",
+    uploadTitle: "Envie os seus resultados",
+    uploadHint: "Digitalize para enviar com segurança os resultados dos exames à Global Health",
+    confidentialNote:
+      "Este documento contém informação médica confidencial destinada exclusivamente ao paciente indicado.",
+    docTitleAbsence: "Certificado de Incapacidade Médica",
+    docTitleExams: "Prescrição de Exames",
+    docTitlePrescription: "Receita Médica",
+    absenceCertifiesPre: "Certifica-se que",
+    absenceCertifiesPost: "se encontra incapacitado(a) para o trabalho ou estudo durante o período abaixo indicado.",
   },
   ES: {
     patientName: "Nombre del paciente",
@@ -68,6 +140,30 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     from: "Desde",
     to: "Hasta",
     reason: "Motivo",
+    patient: "Paciente",
+    consultation: "Consulta",
+    prescriber: "Médico prescriptor",
+    attendingDoctor: "Médico responsable",
+    clinicalDocument: "Documento clínico",
+    issued: "Emitido",
+    signed: "Firmado",
+    stamp: "Sello",
+    id: "ID",
+    date: "Fecha",
+    certificateDetails: "Detalles del certificado",
+    documentSection: "Documento",
+    certificateId: "ID del certificado",
+    documentId: "ID del documento",
+    verifyHint: "Escanee para verificar la autenticidad en myglobalhealth.online",
+    uploadTitle: "Suba sus resultados",
+    uploadHint: "Escanee para subir de forma segura los resultados de sus pruebas a Global Health",
+    confidentialNote:
+      "Este documento contiene información médica confidencial destinada únicamente al paciente indicado.",
+    docTitleAbsence: "Certificado de Baja Médica",
+    docTitleExams: "Prescripción de Pruebas",
+    docTitlePrescription: "Receta Médica",
+    absenceCertifiesPre: "Se certifica que",
+    absenceCertifiesPost: "no está en condiciones de trabajar o estudiar durante el período indicado a continuación.",
   },
   CZ: {
     patientName: "Jméno pacienta",
@@ -85,6 +181,30 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     from: "Od",
     to: "Do",
     reason: "Důvod",
+    patient: "Pacient",
+    consultation: "Konzultace",
+    prescriber: "Předepisující lékař",
+    attendingDoctor: "Ošetřující lékař",
+    clinicalDocument: "Klinický dokument",
+    issued: "Vystaveno",
+    signed: "Podepsáno",
+    stamp: "Razítko",
+    id: "ID",
+    date: "Datum",
+    certificateDetails: "Údaje o potvrzení",
+    documentSection: "Dokument",
+    certificateId: "ID potvrzení",
+    documentId: "ID dokumentu",
+    verifyHint: "Naskenujte pro ověření pravosti na myglobalhealth.online",
+    uploadTitle: "Nahrajte své výsledky",
+    uploadHint: "Naskenujte pro bezpečné nahrání výsledků vyšetření do Global Health",
+    confidentialNote:
+      "Tento dokument obsahuje důvěrné zdravotní informace určené výhradně uvedenému pacientovi.",
+    docTitleAbsence: "Potvrzení o pracovní neschopnosti",
+    docTitleExams: "Žádanka na vyšetření",
+    docTitlePrescription: "Lékařský předpis",
+    absenceCertifiesPre: "Potvrzuje se, že",
+    absenceCertifiesPost: "není schopen/schopna práce ani studia po níže uvedené období.",
   },
   RO: {
     patientName: "Numele pacientului",
@@ -102,6 +222,30 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     from: "De la",
     to: "Până la",
     reason: "Motiv",
+    patient: "Pacient",
+    consultation: "Consultație",
+    prescriber: "Medic prescriptor",
+    attendingDoctor: "Medic curant",
+    clinicalDocument: "Document clinic",
+    issued: "Emis",
+    signed: "Semnat",
+    stamp: "Ștampilă",
+    id: "ID",
+    date: "Data",
+    certificateDetails: "Detaliile certificatului",
+    documentSection: "Document",
+    certificateId: "ID certificat",
+    documentId: "ID document",
+    verifyHint: "Scanați pentru a verifica autenticitatea la myglobalhealth.online",
+    uploadTitle: "Încărcați rezultatele",
+    uploadHint: "Scanați pentru a încărca în siguranță rezultatele investigațiilor la Global Health",
+    confidentialNote:
+      "Acest document conține informații medicale confidențiale destinate exclusiv pacientului menționat.",
+    docTitleAbsence: "Certificat de Concediu Medical",
+    docTitleExams: "Bilet de Trimitere pentru Investigații",
+    docTitlePrescription: "Rețetă Medicală",
+    absenceCertifiesPre: "Se certifică faptul că",
+    absenceCertifiesPost: "este inapt(ă) de muncă sau studiu pentru perioada de mai jos.",
   },
 };
 

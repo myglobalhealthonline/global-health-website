@@ -1,3 +1,4 @@
+import { PDF_TOKENS as T, PDF_SANS, PDF_SERIF, pdfLogoDataUrl } from "../../lib/pdf/brand.js";
 import { htmlToPdfBuffer } from "../generated-documents/html-document-renderer.js";
 
 /**
@@ -124,6 +125,7 @@ function fmtGeneratedAt(iso: string): string {
 }
 
 export function buildReportHtml(table: ReportTable): string {
+  const logo = pdfLogoDataUrl();
   const head = table.columns
     .map(
       (c) =>
@@ -156,58 +158,68 @@ export function buildReportHtml(table: ReportTable): string {
 <meta charset="UTF-8">
 <title>${esc(table.title)}</title>
 <style>
-  * { box-sizing: border-box; }
+  @page { size: A4; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: Arial, Helvetica, sans-serif;
-    color: #111;
-    font-size: 11px;
-    margin: 0;
-    padding: 28px 32px;
-    line-height: 1.4;
+    font-family: ${PDF_SANS};
+    font-size: 8.5pt; line-height: 1.45; color: ${T.ink};
+    background: ${T.paper};
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    width: 210mm;
   }
-  .head {
-    border-bottom: 2px solid #1B4D3E;
-    padding-bottom: 12px;
-    margin-bottom: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
+  .spine { position: fixed; left: 0; top: 0; bottom: 0; width: 5mm; background: ${T.night}; }
+  .page { padding: 12mm 14mm 14mm 20mm; }
+  .topline {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 0.5pt solid ${T.hairlineDark}; padding-bottom: 3mm;
   }
-  .brand { font-size: 16px; font-weight: 800; color: #1B4D3E; }
-  h1 { font-size: 15px; margin: 4px 0 0; color: #111; }
-  .subtitle { font-size: 11px; color: #555; margin: 3px 0 0; }
-  .meta { font-size: 10px; color: #888; text-align: right; }
-  table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+  .logo { height: 12mm; width: auto; }
+  .logo-text { font-size: 11pt; font-weight: 700; color: ${T.forest}; letter-spacing: 0.04em; }
+  .topline .caps {
+    font-size: 6.4pt; font-weight: 600; letter-spacing: 0.28em;
+    text-transform: uppercase; color: ${T.forest};
+  }
+  .masthead { margin-top: 6mm; display: flex; justify-content: space-between; align-items: flex-end; }
+  .mast-title {
+    font-family: ${PDF_SERIF}; font-style: italic;
+    font-size: 18pt; line-height: 1.1; color: ${T.night}; letter-spacing: -0.01em;
+  }
+  .subtitle { font-size: 8.4pt; color: ${T.muted}; margin-top: 1.6mm; }
+  .meta { font-size: 7.6pt; color: ${T.faint}; text-align: right; white-space: nowrap; padding-left: 6mm; }
+  .rule { margin-top: 4mm; border-top: 1pt solid ${T.night}; }
+  table { width: 100%; border-collapse: collapse; margin-top: 4mm; }
   th {
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #555;
-    font-weight: 700;
-    border-bottom: 1.5px solid #1B4D3E;
-    padding: 6px 6px;
+    font-size: 6.4pt; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+    color: ${T.forest}; padding: 2mm 1.8mm 1.8mm;
+    border-bottom: 1pt solid ${T.night};
   }
-  td { padding: 5px 6px; border-bottom: 1px solid #eee; vertical-align: top; }
-  tr:nth-child(even) td { background: #fafafa; }
-  tr.total td { font-weight: 700; border-top: 1.5px solid #1B4D3E; background: #f0f4f2; }
-  .count { font-size: 10px; color: #666; margin: 12px 0 0; }
+  td { padding: 1.9mm 1.8mm; border-bottom: 0.4pt solid ${T.hairline}; vertical-align: top; font-variant-numeric: tabular-nums; }
+  tr.total td { font-weight: 700; color: ${T.night}; border-top: 1pt solid ${T.night}; border-bottom: none; }
+  .count { font-size: 7.6pt; color: ${T.faint}; margin-top: 4mm; }
 </style>
 </head>
 <body>
-  <div class="head">
-    <div>
-      <div class="brand">Global Health</div>
-      <h1>${esc(table.title)}</h1>
-      ${table.subtitle ? `<p class="subtitle">${esc(table.subtitle)}</p>` : ""}
+  <div class="spine"></div>
+  <div class="page">
+    <div class="topline">
+      ${logo ? `<img class="logo" src="${logo}" alt="Global Health" />` : `<span class="logo-text">Global Health</span>`}
+      <span class="caps">Report — ${esc(fmtGeneratedAt(table.generatedAt))}</span>
     </div>
-    <div class="meta">Generated ${esc(fmtGeneratedAt(table.generatedAt))}</div>
+    <div class="masthead">
+      <div>
+        <div class="mast-title">${esc(table.title)}</div>
+        ${table.subtitle ? `<p class="subtitle">${esc(table.subtitle)}</p>` : ""}
+      </div>
+      <div class="meta">${table.rows.length} row${table.rows.length === 1 ? "" : "s"}</div>
+    </div>
+    <div class="rule"></div>
+    <table>
+      <thead><tr>${head}</tr></thead>
+      <tbody>${body}</tbody>
+    </table>
+    <p class="count">Generated ${esc(fmtGeneratedAt(table.generatedAt))} · Global Health · myglobalhealth.online</p>
+    ${truncatedNote}
   </div>
-  <table>
-    <thead><tr>${head}</tr></thead>
-    <tbody>${body}</tbody>
-  </table>
-  <p class="count">${table.rows.length} row${table.rows.length === 1 ? "" : "s"}</p>
-  ${truncatedNote}
 </body>
 </html>`;
 }
