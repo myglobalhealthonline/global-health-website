@@ -1885,8 +1885,8 @@ img {
 }
 
 /* Portal redesign: admin, doctor, and patient share one compact work
- * surface. Obsidian Ivory — the canvas is forest-black with one lime
- * aurora bloom; the ivory work plane (.gh-portal-main) floats on top. */
+ * surface. Canvas and work plane are both ivory now (2026-07-10) — only
+ * the sidebar keeps its dark glass chrome (.gh-portal-sidebar, own token). */
 .gh-portal-shell {
   position: relative;
   isolation: isolate;
@@ -1902,20 +1902,9 @@ img {
   background: var(--lux-canvas-bloom, transparent);
 }
 
-/* §13 A1 — canvas-aurora.webp above the CSS aurora, capped at 0.5 (§4.1).
- * Paints over ::before in tree order; the CSS-only canvas stays the fallback. */
-.gh-portal-shell::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image: var(--lux-asset-canvas, none);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: 0.5;
-}
+/* Dark aurora photo asset (--lux-asset-canvas) retired with the ivory
+ * canvas — it was shot for the forest-black fill and would paint a dark
+ * blotch over ivory, so the ::after layer that painted it is gone. */
 
 .gh-portal-sidebar > * {
   position: relative;
@@ -2066,9 +2055,9 @@ img {
   --portal-success: #2f7d4e;
   --portal-success-text: #1f5b3d;
   --portal-success-soft: rgba(47, 125, 78, 0.12);
-  --portal-warning: #b07c1a;
-  --portal-warning-text: #7a5610;
-  --portal-warning-soft: rgba(176, 124, 26, 0.12);
+  --portal-warning: #b0f122;
+  --portal-warning-text: #4e6b10;
+  --portal-warning-soft: rgba(176, 241, 34, 0.14);
   --portal-danger: #bc4a42;
   --portal-danger-text: #8e332c;
   --portal-danger-soft: rgba(188, 74, 66, 0.1);
@@ -2106,30 +2095,18 @@ img {
   --portal-pad-y: clamp(16px, 2vw, 28px);
   --portal-section-gap: clamp(14px, 1.6vw, 22px);
 
-  /* Liquid Lux materials and environment (DESIGN2.md §3/§4). */
+  /* Liquid Lux materials and environment (DESIGN2.md §3/§4). Canvas was
+   * forest-black behind the sidebar/main seam; per user request (2026-07-10)
+   * it's ivory everywhere except the sidebar's own dark chrome, so the
+   * canvas gradient now matches --lux-plane-bg's ivory base instead of a
+   * dark fill — no more dark strip showing through around the content plane. */
   --lux-canvas-bg:
-    radial-gradient(1400px 900px at 85% -12%, rgba(176, 241, 34, 0.16), transparent 60%),
-    radial-gradient(900px 700px at -10% 110%, rgba(143, 176, 33, 0.10), transparent 55%),
-    linear-gradient(170deg, #0a160f 0%, #07120c 45%, #081409 100%);
+    radial-gradient(1400px 900px at 85% -12%, rgba(176, 241, 34, 0.10), transparent 60%),
+    radial-gradient(900px 700px at -10% 110%, rgba(143, 176, 33, 0.06), transparent 55%),
+    linear-gradient(170deg, #fcfdf9 0%, #f8faf4 45%, #f5f8f0 100%);
   --lux-canvas-bloom:
-    radial-gradient(1100px 760px at 86% -12%, rgba(176, 241, 34, 0.12), transparent 62%),
-    radial-gradient(760px 560px at -8% 108%, rgba(143, 176, 33, 0.08), transparent 58%);
-  --lux-plane-bg:
-    radial-gradient(1200px 800px at 78% -8%, rgba(176, 241, 34, 0.07), transparent 55%),
-    radial-gradient(1000px 700px at 8% 30%, rgba(143, 176, 33, 0.05), transparent 60%),
-    radial-gradient(800px 600px at 92% 88%, rgba(29, 75, 54, 0.04), transparent 60%),
-    linear-gradient(180deg, #fcfdf9 0%, #f8faf4 55%, #f5f8f0 100%);
-  --lux-plane-bg-patient:
-    radial-gradient(1200px 800px at 78% -8%, rgba(207, 236, 129, 0.08), transparent 55%),
-    radial-gradient(1000px 700px at 8% 30%, rgba(143, 176, 33, 0.05), transparent 60%),
-    radial-gradient(800px 600px at 92% 88%, rgba(29, 75, 54, 0.04), transparent 60%),
-    linear-gradient(180deg, #fcfdf9 0%, #f8faf4 55%, #f5f8f0 100%);
-  --lux-plane-bg-doctor:
-    radial-gradient(1200px 800px at 78% -8%, rgba(176, 241, 34, 0.042), transparent 55%),
-    radial-gradient(1000px 700px at 8% 30%, rgba(143, 176, 33, 0.03), transparent 60%),
-    radial-gradient(800px 600px at 92% 88%, rgba(29, 75, 54, 0.024), transparent 60%),
-    linear-gradient(180deg, #fcfdf9 0%, #f8faf4 55%, #f5f8f0 100%);
-  --lux-plane-edge: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 -12px 32px rgba(7, 18, 12, 0.18);
+    radial-gradient(1100px 760px at 86% -12%, rgba(176, 241, 34, 0.08), transparent 62%),
+    radial-gradient(760px 560px at -8% 108%, rgba(143, 176, 33, 0.05), transparent 58%);
   --lux-seam-light: linear-gradient(90deg, transparent, rgba(176, 241, 34, 0.45) 35%, rgba(176, 241, 34, 0.10) 70%, transparent);
   --lux-card-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.66));
   --lux-modal-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.86));
@@ -2191,15 +2168,12 @@ img {
   /* Asset pack wiring (DESIGN2.md §13) — decorative raster layers only.
    * Opacity caps live in the veil gradients: light veil 0.70 → image ≤0.30–0.35,
    * dark veil 0.50 → image ≤0.5. UI must stay finished if any url() 404s. */
-  --lux-asset-canvas: url("/images/portal/obsidian/canvas-aurora.webp");
-  --lux-asset-plane: url("/images/portal/obsidian/plane-veil.webp");
   --lux-asset-header: url("/images/portal/obsidian/header-aura.webp");
   --lux-asset-band: url("/images/portal/obsidian/band-aurora.webp");
   --lux-asset-member: url("/images/portal/obsidian/membership-silk.webp");
   --lux-asset-card-silk: url("/images/portal/obsidian/card-silk.webp");
   --lux-asset-veil-light: linear-gradient(rgba(250, 251, 247, 0.70), rgba(250, 251, 247, 0.70));
   --lux-asset-veil-silk: linear-gradient(rgba(250, 251, 247, 0.76), rgba(250, 251, 247, 0.76));
-  --lux-asset-veil-plane: linear-gradient(rgba(250, 251, 247, 0.68), rgba(248, 250, 244, 0.68));
   --lux-asset-veil-dark: linear-gradient(rgba(7, 18, 12, 0.50), rgba(7, 18, 12, 0.50));
   --lux-asset-header-mask: linear-gradient(180deg, #000 60%, transparent);
   --lux-status-edge-live: linear-gradient(180deg, var(--portal-signal), transparent);
@@ -2766,14 +2740,18 @@ a.gh-stat-card:hover .gh-stat-card__underline {
  * Keeps the count (useful) but swaps the neutral fill for the signal
  * treatment used everywhere else "happening now" is communicated. */
 .gh-portal-nav-item__badge--live {
-  background: var(--portal-signal-soft);
-  color: var(--portal-signal-text);
+  background: var(--portal-signal);
+  color: #0a160f;
   box-shadow: 0 0 0 2px var(--portal-signal-glow);
 }
 
 .gh-portal-main {
   /* Full-bleed work plane — fills everything right of the sidebar and
-   * below the topbar; the dark canvas only lives behind the chrome. */
+   * below the topbar. Canvas (.gh-portal-shell) is ivory now too, same
+   * base as this plane used to paint on its own, so the plane no longer
+   * carries its own background/edge-shadow (2026-07-10) — that was a
+   * "floating panel over dark canvas" effect; canvas + plane are one
+   * continuous ivory surface now, painted once by the shell. */
   width: 100%;
   max-width: none;
   flex: 1;
@@ -2783,24 +2761,7 @@ a.gh-stat-card:hover .gh-stat-card__underline {
   flex-direction: column;
   gap: var(--portal-section-gap);
   position: relative;
-  /* §13 V1 — plane-veil.webp under the CSS blooms, behind a 0.68 ivory veil
-   * (effective ≤0.35 cap). Longhand so the raster layer gets cover sizing
-   * while the gradient layers keep their intrinsic geometry. */
-  background-image: var(--lux-plane-bg), var(--lux-asset-veil-plane), var(--lux-asset-plane, none);
-  /* --lux-plane-bg expands to 4 gradient layers → 6 layers total. */
-  background-size: auto, auto, auto, auto, auto, cover;
-  background-position: 0 0, 0 0, 0 0, 0 0, 0 0, center top;
-  background-repeat: no-repeat;
   border-radius: 0;
-  box-shadow: var(--lux-plane-edge);
-}
-
-[data-portal="patient"] .gh-portal-main {
-  background-image: var(--lux-plane-bg-patient), var(--lux-asset-veil-plane), var(--lux-asset-plane, none);
-}
-
-[data-portal="doctor"] .gh-portal-main {
-  background-image: var(--lux-plane-bg-doctor), var(--lux-asset-veil-plane), var(--lux-asset-plane, none);
 }
 
 .gh-portal-main > .mx-auto[class*="max-w-"] {
