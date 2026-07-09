@@ -1,5 +1,6 @@
 import { prisma } from "../../db/prisma.js";
 import { htmlToPdfBuffer } from "../generated-documents/html-document-renderer.js";
+import { PDF_TOKENS as T, PDF_SANS, PDF_SERIF, pdfLogoDataUrl, pdfEcgRule } from "../../lib/pdf/brand.js";
 
 // ── i18n labels ───────────────────────────────────────────────────────────────
 
@@ -27,6 +28,18 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     consultationDate: "Consultation date",
     invoiceRef: "Invoice reference",
     legalFooter: "Healthcare services exempt from VAT under the Value-Added Tax Consolidation Act 2010, Section 61 and Schedule 1, Paragraph 23.\n\nTerms\nGlobal Health is a trading name registered under Global Guest. All transactions conducted under the Global Health brand are legally processed under the business registration and tax details of Global Guest.",
+    locale: "en-IE",
+    fiscalDocument: "Fiscal document",
+    issued: "Issued",
+    subtotal: "Subtotal",
+    vat: "VAT (0%)",
+    vatNote: "VAT exempt — healthcare services, VATCA 2010 s.61, Sch.1 ¶23",
+    shipping: "Shipping",
+    totalRefunded: "Total refunded",
+    settledInFull: "Settled in full",
+    refundIssued: "Refund issued",
+    quoteRef: "Please quote this reference in any correspondence.",
+    tagline: "Medicine Anytime Anywhere",
   },
   cz: {
     invoice: "Faktura",
@@ -50,6 +63,18 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     taxId: "DIČ",
     consultationDate: "Datum konzultace",
     invoiceRef: "Číslo faktury",
+    locale: "cs-CZ",
+    fiscalDocument: "Daňový doklad",
+    issued: "Vystaveno",
+    subtotal: "Mezisoučet",
+    vat: "DPH (0 %)",
+    vatNote: "Osvobozeno od DPH — zdravotní služby",
+    shipping: "Doprava",
+    totalRefunded: "Vráceno celkem",
+    settledInFull: "Uhrazeno v plné výši",
+    refundIssued: "Vráceno dne",
+    quoteRef: "Toto číslo prosím uvádějte při veškeré komunikaci.",
+    tagline: "Medicine Anytime Anywhere",
     legalFooter: "Osvobození od DPH\nZdravotní služby jsou osvobozeny od DPH v souladu se zákonem č. 235/2004 Sb., o dani z přidané hodnoty, § 58 (osvobození zdravotních služeb).\n\nPodmínky\nGlobal Health je obchodní značka společnosti Global Guest. Veškeré transakce prováděné pod značkou Global Health jsou právně zpracovávány v rámci obchodní registrace a daňových údajů společnosti Global Guest.\n\nGlobal Health je obchodní značkou společnosti Global Guest s.r.o., poskytovatele zdravotních služeb zapsaného v Národním registru poskytovatelů zdravotních služeb (NRPZS) pod registračním číslem 19071680.",
   },
   sp: {
@@ -74,6 +99,18 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     taxId: "NIF",
     consultationDate: "Fecha de consulta",
     invoiceRef: "Referencia de factura",
+    locale: "es-ES",
+    fiscalDocument: "Documento fiscal",
+    issued: "Emitida",
+    subtotal: "Subtotal",
+    vat: "IVA (0 %)",
+    vatNote: "Exento de IVA — servicios sanitarios",
+    shipping: "Envío",
+    totalRefunded: "Total reembolsado",
+    settledInFull: "Pagado en su totalidad",
+    refundIssued: "Reembolso emitido",
+    quoteRef: "Indique esta referencia en cualquier comunicación.",
+    tagline: "Medicine Anytime Anywhere",
     legalFooter: "Los servicios sanitarios están exentos de IVA de conformidad con la Ley de Consolidación del Impuesto sobre el Valor Añadido de 2010, Sección 61 y Anexo 1, Párrafo 23. El IVA no es aplicable, ya que el proveedor aún no está registrado a efectos de IVA en Irlanda, de acuerdo con la Ley de Consolidación del IVA de 2010.\n\nTérminos\nGlobal Health es un nombre comercial registrado bajo Global Guest. Todas las transacciones realizadas bajo la marca Global Health se procesan legalmente conforme al registro comercial y a los datos fiscales de Global Guest.",
   },
   rm: {
@@ -98,6 +135,18 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     taxId: "CUI",
     consultationDate: "Data consultației",
     invoiceRef: "Referință factură",
+    locale: "ro-RO",
+    fiscalDocument: "Document fiscal",
+    issued: "Emisă",
+    subtotal: "Subtotal",
+    vat: "TVA (0 %)",
+    vatNote: "Scutit de TVA — servicii medicale",
+    shipping: "Livrare",
+    totalRefunded: "Total rambursat",
+    settledInFull: "Achitat integral",
+    refundIssued: "Rambursare emisă",
+    quoteRef: "Vă rugăm să menționați această referință în orice corespondență.",
+    tagline: "Medicine Anytime Anywhere",
     legalFooter: "Serviciile de sănătate sunt scutite de TVA conform Legii consolidării TVA din 2010, Secțiunea 61 și Anexa 1, Paragraful 23. TVA-ul nu se aplică, deoarece furnizorul nu este încă înregistrat pentru TVA în Irlanda, conform Legii consolidării TVA din 2010.\n\nTermeni\nGlobal Health este un nume comercial înregistrat sub Global Guest. Toate tranzacțiile efectuate sub marca Global Health sunt procesate legal în baza înregistrării comerciale și a detaliilor fiscale ale Global Guest.",
   },
   pt: {
@@ -122,6 +171,18 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     taxId: "NIF",
     consultationDate: "Data da consulta",
     invoiceRef: "Referência da fatura",
+    locale: "pt-PT",
+    fiscalDocument: "Documento fiscal",
+    issued: "Emitida",
+    subtotal: "Subtotal",
+    vat: "IVA (0 %)",
+    vatNote: "Isento de IVA — serviços de saúde",
+    shipping: "Envio",
+    totalRefunded: "Total reembolsado",
+    settledInFull: "Pago na totalidade",
+    refundIssued: "Reembolso emitido",
+    quoteRef: "Indique esta referência em qualquer comunicação.",
+    tagline: "Medicine Anytime Anywhere",
     legalFooter: "Os serviços de saúde estão isentos de IVA nos termos da Lei de Consolidação do Imposto sobre o Valor Acrescentado de 2010, Secção 61 e Anexo 1, Parágrafo 23.\n\nCondições\nA Global Health é uma marca comercial registada sob a Global Guest. Todas as transações realizadas sob a marca Global Health são legalmente processadas ao abrigo do registo comercial e dos dados fiscais da Global Guest.\n\nA Global Health é uma marca comercial da Global Guest s.r.o., entidade prestadora de cuidados de saúde registada na Entidade Reguladora da Saúde (ERS) sob o número 179287.",
   },
 };
@@ -170,31 +231,33 @@ function esc(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function fmtMoney(cents: number, currency: string): string {
+function fmtMoney(cents: number, currency: string, locale = "en-IE"): string {
   try {
-    return new Intl.NumberFormat("en-GB", { style: "currency", currency }).format(cents / 100);
+    return new Intl.NumberFormat(locale, { style: "currency", currency }).format(cents / 100);
   } catch {
     return `${(cents / 100).toFixed(2)} ${currency}`;
   }
 }
 
-function fmtDate(iso: string, locale = "en-GB"): string {
+function fmtDate(iso: string, locale = "en-IE"): string {
   return new Date(iso).toLocaleDateString(locale, {
-    day: "2-digit",
+    day: "numeric",
     month: "long",
     year: "numeric",
   });
 }
 
-// ── HTML builder ──────────────────────────────────────────────────────────────
+// ── HTML builder — Variant K design (approved 2026-07-09) ───────────────────
 
-function buildInvoiceHtml(data: InvoicePdfData): string {
+export function buildInvoiceHtml(data: InvoicePdfData): string {
   const L = getL(data.countryCode);
+  const loc = L.locale ?? "en-IE";
   const { order } = data;
   const cur = order.currencyCode;
+  const logo = pdfLogoDataUrl();
 
-  // Document-type aware title + status badge.
   const isCreditNote = data.documentType === "CREDIT_NOTE";
+  const isUnpaid = data.documentType === "INVOICE";
   const docTitle = isCreditNote
     ? L.creditNote
     : data.documentType === "RECEIPT"
@@ -202,150 +265,190 @@ function buildInvoiceHtml(data: InvoicePdfData): string {
       : data.documentType === "INVOICE_RECEIPT"
         ? L.invoiceReceipt
         : L.invoice;
-  const isUnpaid = data.documentType === "INVOICE";
-  const badgeHtml = isCreditNote
-    ? `<div style="margin-top:10px;padding:3px 10px;background:#fee2e2;color:#991b1b;font-size:11px;font-weight:700;display:inline-block;">${L.refunded}</div>`
-    : isUnpaid
-      ? `<div style="margin-top:10px;padding:3px 10px;background:#fef3c7;color:#92400e;font-size:11px;font-weight:700;display:inline-block;">${L.unpaid}</div>`
-      : `<div style="margin-top:10px;padding:3px 10px;background:#d1fae5;color:#065f46;font-size:11px;font-weight:700;display:inline-block;">${L.paid}</div>`;
+  const statusLabel = isCreditNote ? L.refunded : isUnpaid ? L.unpaid : L.paid;
 
   const itemRows = order.items
     .map(
-      (i) => `
-    <tr>
-      <td style="padding:10px 0;border-bottom:1px solid #eeeeee;">${esc(i.name)}</td>
-      <td style="padding:10px 0;border-bottom:1px solid #eeeeee;text-align:center;">${i.quantity}</td>
-      <td style="padding:10px 0;border-bottom:1px solid #eeeeee;text-align:right;">${fmtMoney(i.unitPriceCents, cur)}</td>
-      <td style="padding:10px 0;border-bottom:1px solid #eeeeee;text-align:right;">${fmtMoney(i.lineTotalCents, cur)}</td>
-    </tr>`,
+      (i, idx) => `
+      <tr>
+        <td class="td idx">${String(idx + 1).padStart(2, "0")}</td>
+        <td class="td desc">${esc(i.name)}</td>
+        <td class="td num">${i.quantity}</td>
+        <td class="td num">${fmtMoney(i.unitPriceCents, cur, loc)}</td>
+        <td class="td num strong">${fmtMoney(i.lineTotalCents, cur, loc)}</td>
+      </tr>`,
     )
     .join("");
 
-  const shippingRow =
-    order.shippingCents > 0
-      ? `<tr>
-          <td colspan="3" style="padding:8px 0;text-align:right;color:#555555;font-size:12px;border-top:1px solid #dddddd;">Shipping</td>
-          <td style="padding:8px 0;text-align:right;color:#555555;font-size:12px;">${fmtMoney(order.shippingCents, cur)}</td>
-        </tr>`
-      : "";
-
-  const doctorBlock = data.doctor
-    ? `<div style="margin-bottom:28px;padding:12px 16px;background:#f4f7f5;border-left:3px solid #1B4D3E;">
-        <p style="margin:0 0 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:#555555;">${L.doctor}</p>
-        <p style="margin:0;font-weight:600;font-size:13px;">${esc(data.doctor.fullName)}</p>
-        ${
-          data.doctor.chamberEntity && data.doctor.registrationNumber
-            ? `<p style="margin:2px 0 0;font-size:12px;color:#555555;">${esc(data.doctor.chamberEntity)} · ${L.reg}: ${esc(data.doctor.registrationNumber)}</p>`
-            : data.doctor.registrationNumber
-              ? `<p style="margin:2px 0 0;font-size:12px;color:#555555;">${L.reg}: ${esc(data.doctor.registrationNumber)}</p>`
-              : ""
-        }
-      </div>`
-    : "";
-
-  const phoneRow = order.phone
-    ? `<p style="margin:2px 0 0;font-size:12px;color:#555555;">${esc(order.phone)}</p>`
-    : "";
-
-  const taxIdRow = order.taxIdNumber
-    ? `<p style="margin:2px 0 0;font-size:12px;color:#555555;">${L.taxId}: ${esc(order.taxIdNumber)}</p>`
-    : "";
-
-  const consultDateRow = order.consultationDate
-    ? `<p style="margin:2px 0 0;font-size:12px;color:#555555;">${L.consultationDate}: ${fmtDate(order.consultationDate)}</p>`
-    : "";
-
-  const paidAtStr = order.paidAt
-    ? ` · Paid ${new Date(order.paidAt).toLocaleDateString("en-GB")}`
-    : "";
+  const legalFooterHtml = L.legalFooter
+    .split("\n\n")
+    .map((para) => `<p style="margin:0 0 1.4mm;">${esc(para).replace(/\n/g, "<br>")}</p>`)
+    .join("");
 
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${loc.split("-")[0]}">
 <head>
 <meta charset="UTF-8">
 <title>${esc(docTitle)} ${esc(data.invoiceNumber)}</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: ${PDF_SANS}; font-size: 9.5pt; line-height: 1.5; color: ${T.ink};
+    background: ${T.paper}; -webkit-print-color-adjust: exact; print-color-adjust: exact; width: 210mm; }
+  .spine { position: fixed; left: 0; top: 0; bottom: 0; width: 7mm; background: ${T.night}; }
+  .spine-caption { position: fixed; left: 0; top: 0; width: 7mm; height: 297mm;
+    display: flex; align-items: flex-end; justify-content: center; padding-bottom: 12mm; }
+  .spine-caption span { writing-mode: vertical-rl; transform: rotate(180deg);
+    font-size: 6pt; font-weight: 600; letter-spacing: 0.42em; text-transform: uppercase;
+    color: rgba(242, 245, 236, 0.75); }
+  .page { position: relative; min-height: 297mm; padding: 13mm 16mm 50mm 24mm; }
+  .caps { font-size: 6.6pt; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: ${T.faint}; }
+
+  .topline { display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 0.5pt solid ${T.hairlineDark}; padding-bottom: 3.6mm; }
+  .topline .caps { color: ${T.forest}; }
+  .logo { height: 17mm; width: auto; }
+  .logo-text { font-size: 13pt; font-weight: 700; color: ${T.forest}; letter-spacing: 0.04em; }
+
+  .masthead { margin-top: 10mm; }
+  .mast-title { font-family: ${PDF_SERIF}; font-style: italic; font-size: 40pt; line-height: 1.02;
+    color: ${T.night}; letter-spacing: -0.015em; }
+  .mast-sub { margin-top: 4mm; display: flex; align-items: baseline; gap: 6mm; flex-wrap: wrap; }
+  .mast-no { font-size: 9pt; font-weight: 700; letter-spacing: 0.2em; color: ${T.forest}; }
+  .mast-issued { font-size: 8.6pt; color: ${T.muted}; }
+  .mast-status { font-size: 7pt; font-weight: 700; letter-spacing: 0.26em; text-transform: uppercase;
+    color: ${T.night}; border-bottom: 1.6pt solid ${T.lime}; padding-bottom: 0.8mm; }
+  .ecg { margin-top: 7mm; }
+
+  .parties { display: flex; gap: 11mm; margin-top: 9mm; }
+  .party { flex: 1; min-width: 0; }
+  .party .caps { display: block; margin-bottom: 2mm; }
+  .party .n { font-family: ${PDF_SERIF}; font-size: 12pt; color: ${T.night}; }
+  .party .l { font-size: 8.6pt; color: ${T.muted}; margin-top: 0.9mm; }
+  .party.dr .n { font-size: 11pt; }
+
+  .items { width: 100%; border-collapse: collapse; margin-top: 10mm; }
+  .items th { text-align: left; padding: 0 0 2.4mm;
+    font-size: 6.6pt; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: ${T.forest};
+    border-bottom: 1pt solid ${T.night}; }
+  .items th.num { text-align: right; }
+  .td { padding: 4.2mm 0; border-bottom: 0.4pt solid ${T.hairline}; }
+  .td.idx { width: 10mm; font-size: 8pt; color: ${T.faint}; font-variant-numeric: tabular-nums; }
+  .td.desc { font-family: ${PDF_SERIF}; font-size: 10.5pt; color: ${T.night}; padding-right: 8mm; }
+  .td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; font-size: 9.5pt; color: ${T.muted}; }
+  .td.strong { color: ${T.night}; }
+  .items th:nth-child(3), .td:nth-child(3) { width: 14mm; }
+  .items th:nth-child(4), .td:nth-child(4) { width: 30mm; }
+  .items th:nth-child(5), .td:nth-child(5) { width: 30mm; }
+
+  .settle { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8mm; }
+  .settle-left { font-size: 8.2pt; color: ${T.faint}; max-width: 66mm; }
+  .settle-left b { color: ${T.muted}; }
+  .totals { width: 84mm; }
+  .trow { display: flex; justify-content: space-between; padding: 1.5mm 0; font-size: 9pt; color: ${T.muted}; }
+  .trow .tv { font-variant-numeric: tabular-nums; color: ${T.ink}; }
+  .tnote { font-size: 6.8pt; color: ${T.faint}; text-align: right; padding: 0.4mm 0 2.6mm; }
+  .grand { border-top: 1pt solid ${T.night}; padding-top: 2.6mm;
+    display: flex; justify-content: space-between; align-items: baseline; }
+  .grand .gl { font-size: 6.8pt; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: ${T.forest}; }
+  .grand .gv { font-family: ${PDF_SERIF}; font-style: italic; font-size: 24pt; color: ${T.night}; letter-spacing: -0.01em; }
+  .settled { text-align: right; font-size: 8.2pt; color: ${T.muted}; margin-top: 1.6mm; }
+
+  .foot { position: absolute; left: 24mm; right: 16mm; bottom: 11mm; }
+  .foot-rule { border-top: 0.4pt solid ${T.hairline}; margin-bottom: 3mm; }
+  .legal { font-size: 6.6pt; color: ${T.faint}; line-height: 1.65; }
+  .fb { display: flex; justify-content: space-between; margin-top: 3mm; font-size: 6.8pt; }
+  .fb .b { font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: ${T.forest}; }
+  .fb .t { color: ${T.faint}; font-family: ${PDF_SERIF}; font-style: italic; font-size: 8pt; }
+</style>
 </head>
-<body style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#111111;max-width:700px;margin:0 auto;padding:32px;line-height:1.5;">
+<body>
+<div class="spine"></div>
+<div class="spine-caption"><span>Global Health</span></div>
+<div class="page">
 
-<!-- Header -->
-<table style="width:100%;border-collapse:collapse;border-bottom:2px solid #1B4D3E;margin-bottom:32px;">
-  <tr>
-    <td style="vertical-align:top;padding-bottom:20px;">
-      <div style="font-size:22px;font-weight:800;color:#1B4D3E;">Global Health</div>
-      <div style="font-size:11px;color:#555555;margin-top:8px;line-height:1.5;">
-        ${L.company}<br>${L.address}
-      </div>
-    </td>
-    <td style="vertical-align:top;text-align:right;padding-bottom:20px;">
-      <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#1B4D3E;font-weight:700;">${esc(docTitle)}</div>
-      <div style="font-size:24px;font-weight:800;color:#1B4D3E;margin-top:6px;">${esc(data.invoiceNumber)}</div>
-      <div style="font-size:12px;color:#555555;margin-top:8px;">${fmtDate(data.invoiceDate)}</div>
-      ${badgeHtml}
-    </td>
-  </tr>
-</table>
+  <div class="topline">
+    ${logo ? `<img class="logo" src="${logo}" alt="Global Health" />` : `<span class="logo-text">Global Health</span>`}
+    <span class="caps">${L.fiscalDocument} — ${esc(data.invoiceNumber)}</span>
+  </div>
 
-<!-- Billing parties -->
-<table style="width:100%;border-collapse:collapse;margin-bottom:32px;">
-  <tr>
-    <td style="width:50%;vertical-align:top;padding-right:16px;">
-      <p style="margin:0 0 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:#888888;">${L.from}</p>
-      <p style="margin:0;font-weight:700;font-size:14px;">Global Health</p>
-      <p style="margin:2px 0 0;font-size:12px;color:#555555;">${L.address}</p>
-      <p style="margin:2px 0 0;font-size:12px;color:#555555;">info@myglobalhealth.online</p>
-    </td>
-    <td style="width:50%;vertical-align:top;padding-left:16px;">
-      <p style="margin:0 0 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:#888888;">${L.billTo}</p>
-      <p style="margin:0;font-weight:700;font-size:14px;">${esc(order.fullName)}</p>
-      <p style="margin:2px 0 0;font-size:12px;color:#555555;">${esc(order.email)}</p>
-      ${phoneRow}${taxIdRow}${consultDateRow}
-    </td>
-  </tr>
-</table>
+  <div class="masthead">
+    <div class="mast-title">${esc(docTitle)}</div>
+    <div class="mast-sub">
+      <span class="mast-no">Nº ${esc(data.invoiceNumber)}</span>
+      <span class="mast-issued">${L.issued} ${fmtDate(data.invoiceDate, loc)}</span>
+      <span class="mast-status">${statusLabel}${!isUnpaid && order.paidAt ? ` · ${fmtDate(order.paidAt, loc)}` : ""}</span>
+    </div>
+    <div class="ecg">${pdfEcgRule()}</div>
+  </div>
 
-<!-- Doctor block -->
-${doctorBlock}
+  <div class="parties">
+    <div class="party">
+      <span class="caps">${L.from}</span>
+      <div class="n">Global Health</div>
+      ${L.company
+        .split("·")
+        .slice(1)
+        .map((part) => `<div class="l">${esc(part.trim())}</div>`)
+        .join("")}
+      <div class="l">${esc(L.address)}</div>
+      <div class="l">info@myglobalhealth.online</div>
+    </div>
+    <div class="party">
+      <span class="caps">${L.billTo}</span>
+      <div class="n">${esc(order.fullName)}</div>
+      <div class="l">${esc(order.email)}</div>
+      ${order.phone ? `<div class="l">${esc(order.phone)}</div>` : ""}
+      ${order.taxIdNumber ? `<div class="l">${L.taxId} ${esc(order.taxIdNumber)}</div>` : ""}
+    </div>
+    ${
+      data.doctor
+        ? `<div class="party dr">
+            <span class="caps">${L.doctor}</span>
+            <div class="n">${esc(data.doctor.fullName)}</div>
+            ${data.doctor.chamberEntity ? `<div class="l">${esc(data.doctor.chamberEntity)}</div>` : ""}
+            ${data.doctor.registrationNumber ? `<div class="l">${L.reg} ${esc(data.doctor.registrationNumber)}</div>` : ""}
+            ${order.consultationDate ? `<div class="l">${L.consultationDate}: ${fmtDate(order.consultationDate, loc)}</div>` : ""}
+          </div>`
+        : order.consultationDate
+          ? `<div class="party dr">
+              <span class="caps">${L.consultationDate}</span>
+              <div class="l" style="margin-top:2mm">${fmtDate(order.consultationDate, loc)}</div>
+            </div>`
+          : ""
+    }
+  </div>
 
-<!-- Line items -->
-<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:8px;">
-  <thead>
-    <tr style="border-bottom:2px solid #1B4D3E;">
-      <th style="text-align:left;padding:6px 0 8px;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#555555;font-weight:700;">${L.description}</th>
-      <th style="text-align:center;padding:6px 0 8px;width:50px;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#555555;font-weight:700;">${L.qty}</th>
-      <th style="text-align:right;padding:6px 0 8px;width:110px;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#555555;font-weight:700;">${L.unit}</th>
-      <th style="text-align:right;padding:6px 0 8px;width:110px;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#555555;font-weight:700;">${L.total}</th>
-    </tr>
-  </thead>
-  <tbody>${itemRows}</tbody>
-  <tfoot>
-    ${shippingRow}
-    <tr style="border-top:2px solid #1B4D3E;">
-      <td colspan="3" style="text-align:right;padding:12px 0;font-weight:700;font-size:14px;">${L.total}</td>
-      <td style="text-align:right;padding:12px 0;font-weight:800;font-size:16px;color:#1B4D3E;">${fmtMoney(order.totalCents, cur)}</td>
-    </tr>
-  </tfoot>
-</table>
+  <table class="items">
+    <thead><tr><th>Nº</th><th>${L.description}</th><th class="num">${L.qty}</th><th class="num">${L.unit}</th><th class="num">${L.total}</th></tr></thead>
+    <tbody>${itemRows}</tbody>
+  </table>
 
-<!-- Reference -->
-<p style="margin-top:24px;font-size:11px;color:#888888;">
-  ${L.invoiceRef}: <strong>${esc(data.invoiceNumber)}</strong>${paidAtStr}
-</p>
+  <div class="settle">
+    <div class="settle-left">${L.invoiceRef} <b>${esc(data.invoiceNumber)}</b> · ${L.quoteRef}</div>
+    <div class="totals">
+      <div class="trow"><span>${L.subtotal}</span><span class="tv">${fmtMoney(order.subtotalCents, cur, loc)}</span></div>
+      ${order.shippingCents > 0 ? `<div class="trow"><span>${L.shipping}</span><span class="tv">${fmtMoney(order.shippingCents, cur, loc)}</span></div>` : ""}
+      <div class="trow"><span>${L.vat}</span><span class="tv">${fmtMoney(0, cur, loc)}</span></div>
+      <div class="tnote">${esc(L.vatNote)}</div>
+      <div class="grand"><span class="gl">${isCreditNote ? L.totalRefunded : L.total}</span><span class="gv">${fmtMoney(order.totalCents, cur, loc)}</span></div>
+      ${
+        !isUnpaid && order.paidAt
+          ? `<div class="settled">${isCreditNote ? L.refundIssued : L.settledInFull} · ${fmtDate(order.paidAt, loc)}</div>`
+          : isUnpaid
+            ? `<div class="settled">${L.amountDue}: ${fmtMoney(order.totalCents, cur, loc)}</div>`
+            : ""
+      }
+    </div>
+  </div>
 
-<!-- Footer -->
-<div style="margin-top:48px;padding-top:16px;border-top:1px solid #e5e5e3;">
-  ${
-    L.legalFooter
-      ? `<div style="font-size:10px;color:#666666;line-height:1.6;margin-bottom:16px;">${
-          L.legalFooter
-            .split("\n\n")
-            .map((para) => `<p style="margin:0 0 8px;">${esc(para).replace(/\n/g, "<br>")}</p>`)
-            .join("")
-        }</div>`
-      : ""
-  }
-  <div style="font-size:11px;color:#888888;text-align:center;">Global Health · Medicine Anytime Anywhere</div>
+  <div class="foot">
+    <div class="foot-rule"></div>
+    <div class="legal">${legalFooterHtml}</div>
+    <div class="fb"><span class="b">Global Health</span><span class="t">${L.tagline} — myglobalhealth.online</span></div>
+  </div>
+
 </div>
-
 </body>
 </html>`;
 }

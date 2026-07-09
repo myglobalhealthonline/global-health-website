@@ -6,37 +6,79 @@
   {{{styles}}}
 </head>
 <body>
-  <div class="header">
-    <div class="brand">Global Health</div>
-    <h1>{{title}}</h1>
+  <div class="spine"></div>
+  <div class="spine-caption"><span>Global Health</span></div>
+  <div class="page">
+
+    <div class="topline">
+      {{#if logoDataUrl}}<img class="logo" src="{{logoDataUrl}}" alt="Global Health" />{{else}}<span class="logo-text">Global Health</span>{{/if}}
+      <span class="caps">Clinical document{{#if documentId}} — {{documentId}}{{/if}}</span>
+    </div>
+
+    <div class="masthead">
+      <div class="mast-title">{{title}}</div>
+      <div class="mast-sub">
+        {{#if documentId}}<span class="mast-no">Nº {{documentId}}</span>{{/if}}
+        {{#if currentDate}}<span class="mast-issued">Issued {{currentDate}}</span>{{/if}}
+      </div>
+      <div class="ecg"><svg viewBox="0 0 600 24" preserveAspectRatio="none" style="display:block;width:100%;height:6mm;"><path d="M0 12 H250 L262 12 L268 12 L274 4 L282 20 L288 12 L300 12 H600" fill="none" stroke="#0F2E25" stroke-width="1.2"/><path d="M262 12 L268 12 L274 4 L282 20 L288 12 L294 12" fill="none" stroke="#B0F122" stroke-width="1.6"/></svg></div>
+    </div>
+
+    <div class="parties">
+      <div class="party">
+        <span class="caps">Patient</span>
+        <div class="n">{{patientName}}</div>
+        {{#if patientIdLine}}<div class="l">ID — <b>{{patientIdLine}}</b></div>{{/if}}
+        {{#if birthDate}}<div class="l">Date of birth {{birthDate}}</div>{{/if}}
+        {{#if address}}<div class="l">{{address}}</div>{{/if}}
+      </div>
+      <div class="party">
+        <span class="caps">Consultation</span>
+        <div class="l" style="margin-top:2mm"><b>{{consultationDate}}</b></div>
+      </div>
+      <div class="party">
+        <span class="caps">Attending doctor</span>
+        <div class="n">{{doctorName}}</div>
+        {{#if registrationNumber}}<div class="l">Reg. {{registrationNumber}}</div>{{/if}}
+      </div>
+    </div>
+
+    <p class="statement">This certifies that <b>{{patientName}}</b> is unfit for work or study for the period below.</p>
+
+    <p class="section-title">Medical absence period</p>
+    {{#if startDate}}<p class="field-row"><span class="field-label">From</span> &nbsp; <span class="field-value">{{startDate}}</span></p>{{/if}}
+    {{#if endDate}}<p class="field-row"><span class="field-label">To</span> &nbsp; <span class="field-value">{{endDate}}</span></p>{{/if}}
+    {{#if reason}}<p class="field-row"><span class="field-label">Reason</span> &nbsp; <span class="field-value">{{reason}}</span></p>{{/if}}
+
+    <div class="signature-block">
+      <div class="sig-left">
+        <span class="sig-name">{{doctorName}}</span>
+        <div class="sig-line">
+          <div class="sig-printed">{{doctorName}}</div>
+          {{#if registrationNumber}}<div class="sig-reg">Registration No. {{registrationNumber}}</div>{{/if}}
+          {{#if currentDate}}<div class="sig-date">Signed {{currentDate}}</div>{{/if}}
+        </div>
+      </div>
+      <div class="stamp-box"><span>Stamp</span></div>
+    </div>
+
+    {{#if qrDataUrl}}
+    <div class="verify">
+      <img src="{{qrDataUrl}}" alt="Certificate verification QR" />
+      <div>
+        <div class="verify-id">Certificate ID <b>{{certificateId}}</b></div>
+        <div class="verify-hint">Scan to verify authenticity at myglobalhealth.online</div>
+      </div>
+    </div>
+    {{/if}}
+
+    <div class="foot">
+      <div class="foot-rule"></div>
+      {{#if countryLegalText}}<p class="legal">{{countryLegalText}}</p>{{/if}}
+      <p class="confidential">This document contains confidential medical information intended for the named patient only.</p>
+      <div class="fb"><span class="b">Global Health</span><span class="t">Medicine Anytime Anywhere — myglobalhealth.online</span></div>
+    </div>
+
   </div>
-  <p style="margin:0 0 12px;color:#4a4a4a;">This certifies that <span class="field-value">{{patientName}}</span> is unfit for work or study for the period below.</p>
-  <div class="patient-card">
-    {{#if patientIdLine}}<p class="field-row"><span class="field-label">ID:</span> <span class="field-value">{{patientIdLine}}</span></p>{{/if}}
-    {{#if birthDate}}<p class="field-row"><span class="field-label">Date of birth:</span> <span class="field-value">{{birthDate}}</span></p>{{/if}}
-    {{#if address}}<p class="field-row"><span class="field-label">Address:</span> <span class="field-value">{{address}}</span></p>{{/if}}
-    <p class="field-row"><span class="field-label">Consultation date:</span> <span class="field-value">{{consultationDate}}</span></p>
-  </div>
-  <div class="patient-body-gap" aria-hidden="true"></div>
-  <p class="section-title">Medical absence period</p>
-  {{#if startDate}}<p class="field-row"><span class="field-label">From:</span> <span class="field-value">{{startDate}}</span></p>{{/if}}
-  {{#if endDate}}<p class="field-row"><span class="field-label">To:</span> <span class="field-value">{{endDate}}</span></p>{{/if}}
-  {{#if reason}}<p class="field-row"><span class="field-label">Reason:</span> <span class="field-value">{{reason}}</span></p>{{/if}}
-  <div class="signature-block">
-    <p class="field-row"><span class="field-label">Doctor:</span> <span class="field-value">{{doctorName}}</span></p>
-    <p class="field-row"><span class="field-label">Registration:</span> <span class="field-value">{{registrationNumber}}</span></p>
-    <p class="signature-line"><span class="sig-label">Prescriber signature:</span><span class="sig-name">{{doctorName}}</span></p>
-  </div>
-  {{#if qrDataUrl}}
-  <div style="margin:0 0 8px;display:flex;flex-direction:column;align-items:center;gap:4px;">
-    <img src="{{qrDataUrl}}" style="width:100px;height:100px;" alt="Certificate QR" />
-    <p style="margin:0;font-size:10px;color:#1D4B36;">Certificate ID: <strong>{{certificateId}}</strong></p>
-    <p style="margin:0;font-size:9px;color:#4A4A4A;">Scan to verify authenticity at globalhealth.com</p>
-  </div>
-  {{/if}}
-  {{#if countryLegalText}}
-  <p style="margin:0 0 6px;font-size:8px;color:#4A4A4A;line-height:1.4;">{{countryLegalText}}</p>
-  {{/if}}
-  <div class="footer-gap" aria-hidden="true"></div>
 </body>
 </html>
