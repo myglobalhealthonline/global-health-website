@@ -4,6 +4,8 @@ import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { getDoctorAvailability } from "@/lib/content/get-doctor-availability";
 import { PageHeader, AdminEmptyState, Btn } from "@/components/portal-atoms";
 import { ReschedulePicker } from "./reschedule-picker";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -45,8 +47,10 @@ export default async function RescheduleAppointmentPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
+  const [{ id }, locale] = await Promise.all([params, getPageLocale()]);
   const appointment = await fetchAppointmentForReschedule(id);
+  const { account: a } = loadLocaleBundle(locale);
+  const r = a.reschedule;
 
   if (!appointment) {
     notFound();
@@ -55,15 +59,15 @@ export default async function RescheduleAppointmentPage({
   if (!RESCHEDULABLE_STATUSES.has(appointment.status)) {
     return (
       <div className="gh-patient-page">
-        <PageHeader eyebrow="Bookings" title="Reschedule booking" />
+        <PageHeader eyebrow={r.breadcrumb} title={r.title} />
         <AdminEmptyState
           className="mt-6"
           tone="danger"
-          title="This booking can't be rescheduled"
-          description="This appointment has already been completed or cancelled, so it no longer accepts a new time."
+          title={r.cantRescheduleTitle}
+          description={r.cantRescheduleBody}
           action={
             <Btn href="/account/bookings" variant="ghost" size="sm">
-              Back to bookings
+              {r.backToBookings}
             </Btn>
           }
         />
@@ -74,15 +78,15 @@ export default async function RescheduleAppointmentPage({
   if (!appointment.doctorSlug) {
     return (
       <div className="gh-patient-page">
-        <PageHeader eyebrow="Bookings" title="Reschedule booking" />
+        <PageHeader eyebrow={r.breadcrumb} title={r.title} />
         <AdminEmptyState
           className="mt-6"
           tone="danger"
-          title="No clinician assigned yet"
-          description="This request hasn't been matched with a clinician yet, so there's no availability to reschedule against. Message the clinic if you need a different time."
+          title={r.noClinicianTitle}
+          description={r.noClinicianBody}
           action={
             <Btn href="/account/bookings" variant="ghost" size="sm">
-              Back to bookings
+              {r.backToBookings}
             </Btn>
           }
         />
@@ -98,12 +102,12 @@ export default async function RescheduleAppointmentPage({
   return (
     <div className="gh-patient-page">
       <PageHeader
-        eyebrow="Bookings"
-        title="Reschedule booking"
-        description="Pick a new time with your current clinician. Your existing slot stays held until you confirm a new one."
+        eyebrow={r.breadcrumb}
+        title={r.title}
+        description={r.subtitle}
         actions={
           <Btn href="/account/bookings" variant="ghost" size="sm">
-            Cancel
+            {r.cancel}
           </Btn>
         }
       />
@@ -113,6 +117,7 @@ export default async function RescheduleAppointmentPage({
           slots={slots}
           clinicTimezone={clinicTimezone}
           currentTimeSlotId={appointment.timeSlotId}
+          i18n={r}
         />
       </div>
     </div>

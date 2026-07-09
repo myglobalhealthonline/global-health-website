@@ -27,13 +27,43 @@ const CONSENT_TYPES = [
   "MEDICAL_ACCESS_GLOBAL_NETWORK",
 ] as const;
 
-function statusLabel(val: boolean | null): { text: string; cls: string } {
-  if (val === null) return { text: "Not set", cls: "bg-slate-100 text-slate-600" };
-  if (val) return { text: "Accepted", cls: "bg-emerald-50 text-emerald-700" };
-  return { text: "Declined", cls: "bg-rose-50 text-rose-700" };
+type PrivacyI18n = {
+  intro: string;
+  statusNotSet: string;
+  statusAccepted: string;
+  statusDeclined: string;
+  lastUpdated: string;
+  accept: string;
+  decline: string;
+  noChanges: string;
+  saved: string;
+  saveFailed: string;
+  save: string;
+  saving: string;
+};
+
+const DEFAULT_I18N: PrivacyI18n = {
+  intro: "Control how your medical data is used. Changes are logged for compliance.",
+  statusNotSet: "Not set",
+  statusAccepted: "Accepted",
+  statusDeclined: "Declined",
+  lastUpdated: "Last updated: {date}",
+  accept: "Accept",
+  decline: "Decline",
+  noChanges: "No changes to save",
+  saved: "Privacy preferences saved",
+  saveFailed: "Could not save preferences",
+  save: "Save preferences",
+  saving: "Saving…",
+};
+
+function statusLabel(val: boolean | null, i18n: PrivacyI18n): { text: string; cls: string } {
+  if (val === null) return { text: i18n.statusNotSet, cls: "bg-slate-100 text-slate-600" };
+  if (val) return { text: i18n.statusAccepted, cls: "bg-emerald-50 text-emerald-700" };
+  return { text: i18n.statusDeclined, cls: "bg-rose-50 text-rose-700" };
 }
 
-export function GdprPreferencesTab() {
+export function GdprPreferencesTab({ i18n = DEFAULT_I18N }: { i18n?: PrivacyI18n }) {
   const [consents, setConsents] = useState<ConsentItem[]>([]);
   const [draft, setDraft] = useState<Draft>({});
   const [loaded, setLoaded] = useState(false);
@@ -71,7 +101,7 @@ export function GdprPreferencesTab() {
       }),
     );
     if (changes.length === 0) {
-      setMsg({ kind: "err", text: "No changes to save" });
+      setMsg({ kind: "err", text: i18n.noChanges });
       return;
     }
 
@@ -94,9 +124,9 @@ export function GdprPreferencesTab() {
           d[c.consentType] = c.consentValue;
         }
         setDraft(d);
-        setMsg({ kind: "ok", text: "Privacy preferences saved" });
+        setMsg({ kind: "ok", text: i18n.saved });
       } else {
-        setMsg({ kind: "err", text: json.message ?? "Could not save preferences" });
+        setMsg({ kind: "err", text: json.message ?? i18n.saveFailed });
       }
     });
   }
@@ -116,13 +146,13 @@ export function GdprPreferencesTab() {
   return (
     <div className="gh-patient-profile-tab space-y-6">
       <p className="text-sm text-[var(--portal-muted)]">
-        Control how your medical data is used. Changes are logged for compliance.
+        {i18n.intro}
       </p>
 
       <div className="space-y-3">
         {consents.map((c) => {
           const current = draft[c.consentType];
-          const status = statusLabel(c.consentValue);
+          const status = statusLabel(c.consentValue, i18n);
 
           return (
             <div key={c.consentType} className="gh-patient-consent-card gh-card p-4">
@@ -139,7 +169,7 @@ export function GdprPreferencesTab() {
                   <p className="mt-1 text-sm text-[var(--portal-muted)]">{c.description}</p>
                   {c.lastUpdatedAt && (
                     <p className="mt-1 text-xs text-[var(--portal-muted)]">
-                      Last updated: {new Date(c.lastUpdatedAt).toLocaleDateString()}
+                      {i18n.lastUpdated.replace("{date}", new Date(c.lastUpdatedAt).toLocaleDateString())}
                     </p>
                   )}
                 </div>
@@ -153,7 +183,7 @@ export function GdprPreferencesTab() {
                         : "border border-[var(--portal-line)] text-[var(--portal-muted)] hover:bg-[var(--portal-well)]"
                     }`}
                   >
-                    Accept
+                    {i18n.accept}
                   </button>
                   <button
                     type="button"
@@ -164,7 +194,7 @@ export function GdprPreferencesTab() {
                         : "border border-[var(--portal-line)] text-[var(--portal-muted)] hover:bg-[var(--portal-well)]"
                     }`}
                   >
-                    Decline
+                    {i18n.decline}
                   </button>
                 </div>
               </div>
@@ -189,7 +219,7 @@ export function GdprPreferencesTab() {
         disabled={saving}
         className="inline-flex min-h-11 items-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
       >
-        {saving ? "Saving…" : "Save preferences"}
+        {saving ? i18n.saving : i18n.save}
       </button>
     </div>
   );

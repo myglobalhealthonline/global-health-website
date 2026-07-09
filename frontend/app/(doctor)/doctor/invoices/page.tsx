@@ -8,7 +8,9 @@ import {
   Pill,
 } from "@/components/portal-atoms";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
-import { PayoutInvoicePanel } from "./_components/payout-invoice-panel";
+import { PayoutInvoicePanel, type InvoiceStrings } from "./_components/payout-invoice-panel";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -109,6 +111,8 @@ export default async function DoctorInvoicesPage({
   searchParams?: Promise<SearchParams>;
 }) {
   const sp = searchParams ? await searchParams : {};
+  const locale = await getPageLocale();
+  const { doctor: d } = loadLocaleBundle(locale);
   const status = pick(sp, "status");
   const from = pick(sp, "from");
   const to = pick(sp, "to");
@@ -144,39 +148,39 @@ export default async function DoctorInvoicesPage({
   return (
     <>
       <PageHeader
-        eyebrow="Billing visibility"
-        title="Invoices and payments"
-        description="Your consultations valued at the admin-set per-service payout. Download your monthly statement, upload your invoice, and track payment status."
+        eyebrow={d.invoices.eyebrow}
+        title={d.invoices.title}
+        description={d.invoices.description}
       />
 
-      <PayoutInvoicePanel />
+      <PayoutInvoicePanel strings={d.invoices as InvoiceStrings} />
 
       {result.ok ? (
         <AdminSummaryStrip
           className="mb-4"
           items={[
             {
-              label: "Visible invoices",
+              label: d.invoices.visibleInvoices,
               value: invoices.length,
-              hint: `${result.data.pagination.total} total`,
+              hint: d.common.totalHint.replace("{total}", String(result.data.pagination.total)),
               tone: "brand",
             },
             {
-              label: "Visible value",
+              label: d.invoices.visibleValue,
               value: fmtMoney(totalCents, currencyCode),
-              hint: "Current filtered page",
+              hint: d.invoices.currentPage,
               tone: "neutral",
             },
             {
-              label: "Paid",
+              label: d.invoices.paid,
               value: paidCount,
-              hint: "Settled consults",
+              hint: d.invoices.settled,
               tone: "success",
             },
             {
-              label: "Needs attention",
+              label: d.invoices.needsAttention,
               value: attentionCount,
-              hint: "Unpaid, pending, or failed",
+              hint: d.invoices.attentionHint,
               tone: attentionCount > 0 ? "warning" : "neutral",
             },
           ]}
@@ -186,18 +190,18 @@ export default async function DoctorInvoicesPage({
       <div className="gh-card gh-doctor-filter-card mb-4 p-4">
         <form className="gh-doctor-filter-grid grid grid-cols-1 gap-3 sm:grid-cols-5">
           <label className="flex flex-col gap-1">
-            <span className="gh-field-label">Status</span>
+            <span className="gh-field-label">{d.common.status}</span>
             <select name="status" defaultValue={status ?? ""} className="gh-select">
-              <option value="">Any</option>
-              <option value="UNPAID">Unpaid</option>
-              <option value="PENDING">Pending</option>
-              <option value="PAID">Paid</option>
-              <option value="REFUNDED">Refunded</option>
-              <option value="FAILED">Failed</option>
+              <option value="">{d.common.any}</option>
+              <option value="UNPAID">{d.invoices.statusUnpaid}</option>
+              <option value="PENDING">{d.invoices.statusPending}</option>
+              <option value="PAID">{d.invoices.statusPaid}</option>
+              <option value="REFUNDED">{d.invoices.statusRefunded}</option>
+              <option value="FAILED">{d.invoices.statusFailed}</option>
             </select>
           </label>
           <label className="flex flex-col gap-1">
-            <span className="gh-field-label">From</span>
+            <span className="gh-field-label">{d.common.from}</span>
             <input
               type="date"
               name="from"
@@ -206,7 +210,7 @@ export default async function DoctorInvoicesPage({
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="gh-field-label">To</span>
+            <span className="gh-field-label">{d.common.to}</span>
             <input
               type="date"
               name="to"
@@ -216,10 +220,10 @@ export default async function DoctorInvoicesPage({
           </label>
           <div className="gh-doctor-filter-actions sm:col-span-5 flex items-center gap-2">
             <button type="submit" className="gh-btn gh-btn-primary text-sm">
-              Apply
+              {d.common.apply}
             </button>
             <Link href="/doctor/invoices" className="gh-btn gh-btn-soft text-sm">
-              Reset
+              {d.common.reset}
             </Link>
           </div>
         </form>
@@ -236,20 +240,20 @@ export default async function DoctorInvoicesPage({
           className="gh-doctor-empty-state"
           icon={status || from || to ? <SearchX className="size-5" aria-hidden /> : <Receipt className="size-5" aria-hidden />}
           assetSrc={status || from || to ? undefined : "/images/portal/obsidian/empty-payments.svg"}
-          title={status || from || to ? "No invoices match these filters" : "No invoices yet"}
+          title={status || from || to ? d.invoices.emptyFilteredTitle : d.invoices.emptyTitle}
           description={
             status || from || to
-              ? "Clear the payment status or date range to review more billing records."
-              : "Invoices will appear here after consultations are booked and billing records are created."
+              ? d.invoices.emptyFilteredDesc
+              : d.invoices.emptyDesc
           }
           action={
             status || from || to ? (
               <Link href="/doctor/invoices" className="gh-btn gh-btn-soft text-sm">
-                Clear filters
+                {d.common.clearFilters}
               </Link>
             ) : (
               <Link href="/doctor/appointments" className="gh-btn gh-btn-primary text-sm">
-                View appointments
+                {d.invoices.viewAppointments}
               </Link>
             )
           }
@@ -260,25 +264,25 @@ export default async function DoctorInvoicesPage({
           <table className="w-full text-sm">
             <thead className="bg-[var(--portal-well)] text-left text-xs uppercase tracking-wider text-[var(--portal-muted)]">
               <tr>
-                <th className="px-4 py-3 font-semibold">Patient</th>
+                <th className="px-4 py-3 font-semibold">{d.invoices.colPatient}</th>
                 <SortHeader
                   column="date"
-                  label="When"
+                  label={d.invoices.colWhen}
                   currentSortBy={sortBy}
                   currentSortOrder={sortOrder}
                   sp={sp}
                 />
-                <th className="hidden lg:table-cell px-4 py-3 font-semibold">Type</th>
+                <th className="hidden lg:table-cell px-4 py-3 font-semibold">{d.invoices.colType}</th>
                 <SortHeader
                   column="amount"
-                  label="Amount"
+                  label={d.invoices.colAmount}
                   currentSortBy={sortBy}
                   currentSortOrder={sortOrder}
                   sp={sp}
                 />
-                <th className="px-4 py-3 font-semibold">Payment</th>
-                <th className="hidden lg:table-cell px-4 py-3 font-semibold">Status</th>
-                <th className="px-4 py-3 font-semibold text-right">Open</th>
+                <th className="px-4 py-3 font-semibold">{d.invoices.colPayment}</th>
+                <th className="hidden lg:table-cell px-4 py-3 font-semibold">{d.invoices.colStatus}</th>
+                <th className="px-4 py-3 font-semibold text-right">{d.invoices.colOpen}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--portal-line)]">
@@ -305,7 +309,7 @@ export default async function DoctorInvoicesPage({
                   <td className="hidden lg:table-cell px-4 py-3 text-xs capitalize">{row.consultationType}</td>
                   <td className="px-4 py-3 font-mono text-xs">
                     {row.doctorAmountCents == null
-                      ? "Not set"
+                      ? d.common.notSet
                       : fmtMoney(row.doctorAmountCents, row.currencyCode)}
                   </td>
                   <td className="px-4 py-3 text-xs">
@@ -324,7 +328,7 @@ export default async function DoctorInvoicesPage({
                       href={`/doctor/appointments/${row.id}`}
                       className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1.5 text-xs font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
                     >
-                      Open <ChevronRight className="size-3.5" />
+                      {d.common.open} <ChevronRight className="size-3.5" />
                     </Link>
                   </td>
                 </tr>
@@ -351,11 +355,11 @@ export default async function DoctorInvoicesPage({
                       label: "Amount",
                       value:
                         row.doctorAmountCents == null
-                          ? "Not set"
+                          ? d.common.notSet
                           : fmtMoney(row.doctorAmountCents, row.currencyCode),
                     },
                     {
-                      label: "When",
+                      label: d.invoices.colWhen,
                       value: row.scheduledAt
                         ? new Date(row.scheduledAt).toLocaleDateString()
                         : new Date(row.createdAt).toLocaleDateString(),
@@ -366,7 +370,7 @@ export default async function DoctorInvoicesPage({
                       href={`/doctor/appointments/${row.id}`}
                       className="gh-btn gh-btn-soft text-sm"
                     >
-                      Open consultation <ChevronRight className="size-3.5" />
+                      {d.invoices.openConsultation} <ChevronRight className="size-3.5" />
                     </Link>
                   }
                 />
@@ -375,9 +379,10 @@ export default async function DoctorInvoicesPage({
           </div>
           {result.data.pagination.totalPages > 1 ? (
             <div className="border-t border-[var(--portal-line)] px-4 py-3 text-xs text-[var(--portal-muted)]">
-              Page {result.data.pagination.page} of{" "}
-              {result.data.pagination.totalPages} (
-              {result.data.pagination.total} total)
+              {d.common.pagination
+                .replace("{page}", String(result.data.pagination.page))
+                .replace("{totalPages}", String(result.data.pagination.totalPages))
+                .replace("{total}", String(result.data.pagination.total))}
             </div>
           ) : null}
         </div>

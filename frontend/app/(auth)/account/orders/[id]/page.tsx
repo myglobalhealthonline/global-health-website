@@ -41,7 +41,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
       </Link>
 
       <PageHeader
-        eyebrow={`Order #${formatOrderDisplayId(order)}`}
+        eyebrow={a.orders.orderNumber.replace("{id}", formatOrderDisplayId(order))}
         title={
           <span className="inline-flex items-center gap-3">
             {formatPrice(order.totalCents, order.currencyCode)}
@@ -54,10 +54,10 @@ export default async function AccountOrderDetailPage({ params }: Props) {
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: "Order status", value: order.status.toLowerCase(), hint: "Fulfillment state" },
-          { label: "Payment", value: order.paymentStatus.toLowerCase(), hint: order.paidAt ? formatAppDateTime(order.paidAt) : "Awaiting confirmation" },
-          { label: "Items", value: String(order.items.length), hint: "Products in this order" },
-          { label: "Total", value: formatPrice(order.totalCents, order.currencyCode), hint: "Including shipping" },
+          { label: a.orders.sumStatus, value: order.status.toLowerCase(), hint: a.orders.sumStatusHint },
+          { label: a.orders.payment, value: order.paymentStatus.toLowerCase(), hint: order.paidAt ? formatAppDateTime(order.paidAt) : a.orders.awaitingConfirmation },
+          { label: a.orders.sumItems, value: String(order.items.length), hint: a.orders.sumItemsHint },
+          { label: a.orders.total, value: formatPrice(order.totalCents, order.currencyCode), hint: a.orders.inclShipping },
         ]}
       />
 
@@ -65,7 +65,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
         <AdminCard padding={0}>
           <SectionHeader
             title={a.orders.itemsSection}
-            right={<ReorderButton items={order.items} />}
+            right={<ReorderButton items={order.items} i18n={a.orders} />}
           />
           <div className="p-5">
             <ul className="divide-y divide-[var(--portal-line)]">
@@ -101,7 +101,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
         <aside className="grid gap-4 self-start">
           {order.trackingNumber ? (
             <AdminCard padding={0}>
-              <SectionHeader title="Track shipment" />
+              <SectionHeader title={a.orders.trackShipment} />
               <div className="p-5 text-sm">
                 <div className="flex items-start gap-3">
                   <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
@@ -180,9 +180,9 @@ export default async function AccountOrderDetailPage({ params }: Props) {
                 <PackageCheck className="size-5" aria-hidden />
               </span>
               <div>
-                <p className="text-sm font-semibold text-[var(--portal-text)]">Care order record</p>
+                <p className="text-sm font-semibold text-[var(--portal-text)]">{a.orders.careRecordTitle}</p>
                 <p className="mt-1 text-xs leading-relaxed text-[var(--portal-muted)]">
-                  Keep this order with your prescriptions and medical files for follow-up conversations.
+                  {a.orders.careRecordBody}
                 </p>
               </div>
             </div>

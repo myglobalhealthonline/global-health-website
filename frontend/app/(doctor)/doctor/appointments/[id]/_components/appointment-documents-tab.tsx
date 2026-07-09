@@ -2,7 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FileText } from "lucide-react";
-import { DocumentsReviewSendPanel, type ReviewQueueDoc } from "./documents-review-send-panel";
+import {
+  DocumentsReviewSendPanel,
+  type DocumentsReviewSendPanelCopy,
+  type ReviewQueueDoc,
+} from "./documents-review-send-panel";
 import type { DoctorDocumentDto } from "@/lib/api/doctor-api";
 import {
   doctorApiErrorMessage,
@@ -29,9 +33,27 @@ import {
   ConsultationDocumentsModal,
   tabForGeneratedDocumentType,
   type ConsultationDocTabId,
+  type ConsultationDocumentsModalCopy,
   type EditDraftDoc,
 } from "./consultation-documents-modal";
-import { DocumentUploadForm } from "./document-upload-form";
+import { DocumentUploadForm, type DocumentUploadFormCopy } from "./document-upload-form";
+
+export type AppointmentDocumentsTabCopy = {
+  summary: string;
+  generateDocuments: string;
+  loadError: string;
+  loading: string;
+  generatedDocumentsTitle: string;
+  emptyGeneratedPre: string;
+  emptyGeneratedPost: string;
+  typeExamsPrescriptions: string;
+  typeAbsenceCertificates: string;
+  typeMedicinePrescriptions: string;
+  typeOther: string;
+  uploadedFilesTitle: string;
+  noUploadedFiles: string;
+  uploadFilesTitle: string;
+};
 
 type GeneratedDoc = {
   id: string;
@@ -59,6 +81,10 @@ export function AppointmentDocumentsTab({
   consultationType,
   doctorName,
   initialUploads,
+  copy,
+  modalCopy,
+  uploadCopy,
+  reviewCopy,
 }: {
   appointmentId: string;
   scheduledAt: string | null;
@@ -66,6 +92,10 @@ export function AppointmentDocumentsTab({
   consultationType: string;
   doctorName: string;
   initialUploads: DoctorDocumentDto[];
+  copy: AppointmentDocumentsTabCopy;
+  modalCopy: ConsultationDocumentsModalCopy;
+  uploadCopy: DocumentUploadFormCopy;
+  reviewCopy: DocumentsReviewSendPanelCopy;
 }) {
   const [uploads, setUploads] = useState<DoctorDocumentDto[]>(initialUploads);
   const [generatedHistory, setGeneratedHistory] = useState<GeneratedDoc[]>([]);
@@ -101,19 +131,19 @@ export function AppointmentDocumentsTab({
       message?: string;
     }>(res);
     if (!json) {
-      setLoadError(doctorApiErrorMessage(res, null, "Could not load generated documents."));
+      setLoadError(doctorApiErrorMessage(res, null, copy.loadError));
       setLoadingGenerated(false);
       return;
     }
     if (!json.ok || !json.data) {
-      setLoadError(doctorApiErrorMessage(res, json, "Could not load generated documents."));
+      setLoadError(doctorApiErrorMessage(res, json, copy.loadError));
       setLoadingGenerated(false);
       return;
     }
     setGeneratedHistory(json.data.history ?? []);
     setGeneratedTotal(json.data.items?.length ?? 0);
     setLoadingGenerated(false);
-  }, [appointmentId]);
+  }, [appointmentId, copy.loadError]);
 
   const openDocumentsModal = useCallback(
     (tab: ConsultationDocTabId = "overview", draft: EditDraftDoc | null = null) => {
@@ -178,14 +208,14 @@ export function AppointmentDocumentsTab({
     <div className="gh-doctor-documents-tab mt-4 grid gap-4">
       <div className="gh-doctor-documents-toolbar flex flex-wrap items-center justify-between gap-3">
         <p className="text-[13px] text-[var(--portal-muted)]">
-          Generated PDFs and uploaded files for this appointment ({docCount} total).
+          {copy.summary.replace("{count}", String(docCount))}
         </p>
         <button
           type="button"
           onClick={() => openDocumentsModal()}
           className="gh-btn gh-btn-primary text-sm"
         >
-          <FileText className="size-3.5" aria-hidden /> Generate documents
+          <FileText className="size-3.5" aria-hidden /> {copy.generateDocuments}
         </button>
       </div>
 
@@ -199,6 +229,7 @@ export function AppointmentDocumentsTab({
         initialTab={modalTab}
         editDraft={editDraft}
         onDocumentsChange={refreshAll}
+        copy={modalCopy}
       />
 
       {loadError ? (
@@ -212,53 +243,59 @@ export function AppointmentDocumentsTab({
         onEditDraft={handleEditDraft}
         open={reviewSendOpen}
         onOpenChange={setReviewSendOpen}
+        copy={reviewCopy}
       />
 
       {loadingGenerated ? (
-        <p className="text-[13px] text-[var(--portal-muted)]">Loading generated documents…</p>
+        <p className="text-[13px] text-[var(--portal-muted)]">{copy.loading}</p>
       ) : generatedHistory.length === 0 ? (
-        <HistorySection title="Generated documents" count={0} defaultOpen={false}>
+        <HistorySection title={copy.generatedDocumentsTitle} count={0} defaultOpen={false}>
           <p className="px-4 py-3 text-[13px] text-[var(--portal-muted)]">
-            No sent PDFs yet. Use <strong>Generate documents</strong> to create exams, prescriptions, or
-            absence certificates — drafts appear in Review &amp; send until emailed.
+            {copy.emptyGeneratedPre} <strong>{copy.generateDocuments}</strong>{" "}
+            {copy.emptyGeneratedPost}
           </p>
         </HistorySection>
       ) : (
-        <HistorySection title="Generated documents" count={generatedHistory.length} defaultOpen={false}>
+        <HistorySection
+          title={copy.generatedDocumentsTitle}
+          count={generatedHistory.length}
+          defaultOpen={false}
+        >
           <DocTypeGroup
-            title="Exams prescriptions"
+            title={copy.typeExamsPrescriptions}
             rows={byType("EXAMS_PRESCRIPTION")}
             session={session}
           />
           <DocTypeGroup
-            title="Absence certificates"
+            title={copy.typeAbsenceCertificates}
             rows={byType("ABSENCE_CERTIFICATE")}
             session={session}
           />
           <DocTypeGroup
-            title="Medicine prescriptions"
+            title={copy.typeMedicinePrescriptions}
             rows={byType("PRESCRIPTION")}
             session={session}
           />
-          <DocTypeGroup title="Other" rows={byType("OTHER")} session={session} />
+          <DocTypeGroup title={copy.typeOther} rows={byType("OTHER")} session={session} />
         </HistorySection>
       )}
 
-      <HistorySection title="Uploaded files" count={uploads.length} defaultOpen={false}>
+      <HistorySection title={copy.uploadedFilesTitle} count={uploads.length} defaultOpen={false}>
         {uploads.length === 0 ? (
           <p className="px-4 py-3 text-[13px] text-[var(--portal-muted)]">
-            No uploaded files yet.
+            {copy.noUploadedFiles}
           </p>
         ) : (
           <UploadedFilesTable rows={uploadRows} session={session} />
         )}
       </HistorySection>
 
-      <HistorySection title="Upload files" count={undefined} defaultOpen>
+      <HistorySection title={copy.uploadFilesTitle} count={undefined} defaultOpen>
         <div className="p-4">
           <DocumentUploadForm
             appointmentId={appointmentId}
             onUploaded={(doc) => setUploads((prev) => [doc, ...prev])}
+            copy={uploadCopy}
           />
         </div>
       </HistorySection>

@@ -7,6 +7,8 @@ import {
   Pill,
 } from "@/components/portal-atoms";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +27,8 @@ export default async function DoctorPatientsPage({
   const sp = searchParams ? await searchParams : {};
   const q = pick(sp, "q")?.toLowerCase();
   const result = await fetchDoctorPatients();
+  const locale = await getPageLocale();
+  const { doctor: d } = loadLocaleBundle(locale);
 
   // Filter client-side (deduped patient list is bounded already — the
   // /api/doctor/patients endpoint caps source rows at 500). A
@@ -50,9 +54,9 @@ export default async function DoctorPatientsPage({
   return (
     <>
       <PageHeader
-        eyebrow="Patient records"
-        title="My patients"
-        description="Distinct patients who have booked with you. Contact details stay protected; use appointment workspaces for clinical chat and document review."
+        eyebrow={d.patients.eyebrow}
+        title={d.patients.title}
+        description={d.patients.description}
       />
 
       {result.ok ? (
@@ -60,21 +64,21 @@ export default async function DoctorPatientsPage({
           className="mb-4"
           items={[
             {
-              label: "Patients",
+              label: d.patients.statPatients,
               value: totalPatients,
-              hint: q ? `${items.length} matching search` : "Visible in your panel",
+              hint: q ? d.patients.matchingSearch.replace("{count}", String(items.length)) : d.patients.visiblePanel,
               tone: "brand",
             },
             {
-              label: "Bookings",
+              label: d.patients.statBookings,
               value: totalBookings,
-              hint: "Across patient history",
+              hint: d.patients.acrossHistory,
               tone: "neutral",
             },
             {
-              label: "Markets",
+              label: d.patients.statMarkets,
               value: countries,
-              hint: "Countries represented",
+              hint: d.patients.countriesRepresented,
               tone: "success",
             },
           ]}
@@ -84,20 +88,20 @@ export default async function DoctorPatientsPage({
       <div className="gh-card gh-doctor-filter-card mb-4 p-4">
         <form className="gh-doctor-filter-actions flex flex-wrap items-end gap-3">
           <label className="flex flex-col gap-1 sm:min-w-[260px]">
-            <span className="gh-field-label">Search</span>
+            <span className="gh-field-label">{d.common.search}</span>
             <input
               name="q"
               defaultValue={q ?? ""}
-              placeholder="Patient name"
+              placeholder={d.patients.searchPlaceholder}
               className="gh-input"
             />
           </label>
           <button type="submit" className="gh-btn gh-btn-primary text-sm">
-            Apply
+            {d.common.apply}
           </button>
           {q ? (
             <Link href="/doctor/patients" className="gh-btn gh-btn-soft text-sm">
-              Reset
+              {d.common.reset}
             </Link>
           ) : null}
         </form>
@@ -111,9 +115,7 @@ export default async function DoctorPatientsPage({
         </div>
       ) : items.length === 0 ? (
         <div className="gh-card gh-doctor-empty-state p-10 text-center text-sm text-[var(--portal-muted)]">
-          {q
-            ? "No patients match that search."
-            : "No patients yet — your scheduled appointments will surface here."}
+          {q ? d.patients.emptySearch : d.patients.emptyNone}
         </div>
       ) : (
         <div className="gh-card gh-doctor-table-card p-0 overflow-hidden">
@@ -125,11 +127,11 @@ export default async function DoctorPatientsPage({
                 /admin/users. */}
             <thead className="bg-[var(--portal-well)] text-left text-xs uppercase tracking-wider text-[var(--portal-muted)]">
               <tr>
-                <th className="px-4 py-3 font-semibold">Patient</th>
-                <th className="px-4 py-3 font-semibold">Country</th>
-                <th className="px-4 py-3 font-semibold">First seen</th>
-                <th className="px-4 py-3 font-semibold text-right">Bookings</th>
-                <th className="px-4 py-3 font-semibold text-right">Open</th>
+                <th className="px-4 py-3 font-semibold">{d.patients.colPatient}</th>
+                <th className="px-4 py-3 font-semibold">{d.common.country}</th>
+                <th className="px-4 py-3 font-semibold">{d.common.firstSeen}</th>
+                <th className="px-4 py-3 font-semibold text-right">{d.patients.colBookings}</th>
+                <th className="px-4 py-3 font-semibold text-right">{d.patients.colOpen}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--portal-line)]">
@@ -150,7 +152,7 @@ export default async function DoctorPatientsPage({
                       href={`/doctor/patients/${encodeURIComponent(p.email)}`}
                       className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1.5 text-xs font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
                     >
-                      Open <ChevronRight className="size-3.5" />
+                      {d.common.open} <ChevronRight className="size-3.5" />
                     </Link>
                   </td>
                 </tr>
@@ -163,19 +165,19 @@ export default async function DoctorPatientsPage({
               <PortalMobileCard
                 key={p.email}
                 title={p.fullName}
-                subtitle={`First seen ${new Date(p.firstSeen).toLocaleDateString()}`}
+                subtitle={d.patients.firstSeenAt.replace("{date}", new Date(p.firstSeen).toLocaleDateString())}
                 statusPill={<Pill tone="brand">{p.countryCode}</Pill>}
                 tone="brand"
                 meta={[
-                  { label: "Bookings", value: p.appointmentCount },
-                  { label: "Record", value: "History and documents" },
+                  { label: d.patients.colBookings, value: p.appointmentCount },
+                  { label: d.patients.record, value: d.patients.recordHint },
                 ]}
                 actions={
                   <Link
                     href={`/doctor/patients/${encodeURIComponent(p.email)}`}
                     className="gh-btn gh-btn-soft text-sm"
                   >
-                    Open patient record <ChevronRight className="size-3.5" />
+                    {d.patients.openRecord} <ChevronRight className="size-3.5" />
                   </Link>
                 }
               />

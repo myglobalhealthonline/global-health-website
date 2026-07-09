@@ -2,10 +2,14 @@ import { ScrollText } from "lucide-react";
 import { fetchDoctorConfidentialityAgreement } from "@/lib/api/doctor-api";
 import { PageHeader } from "@/components/portal-atoms";
 import { ConfidentialityForm } from "./_components/confidentiality-form";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
 export default async function DoctorConfidentialityPage() {
+  const locale = await getPageLocale();
+  const { doctor: d } = loadLocaleBundle(locale);
   const result = await fetchDoctorConfidentialityAgreement();
 
   if (!result.ok) {
@@ -19,20 +23,21 @@ export default async function DoctorConfidentialityPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Compliance"
+        eyebrow={d.confidentiality.eyebrow}
         title={
           <span className="flex items-center gap-2">
             <ScrollText className="size-6 text-[var(--portal-primary)]" aria-hidden />
-            Confidentiality agreement
+            {d.confidentiality.title}
           </span>
         }
-        description={`Version ${result.data.currentVersion}. Accepting this agreement is required before patient-record protections are enforced.`}
+        description={d.confidentiality.descriptionVersion.replace("{version}", String(result.data.currentVersion))}
       />
 
       <ConfidentialityForm
         accepted={result.data.accepted}
         acceptedAt={result.data.acceptedAt}
         agreementText={result.data.agreementText}
+        strings={d.confidentiality}
       />
     </>
   );

@@ -17,15 +17,65 @@ type MedicalNoteRow = {
   createdAt: string;
 };
 
+export type AppointmentMedicalNotesCopy = {
+  title: string;
+  addNoteLabel: string;
+  notePlaceholder: string;
+  saving: string;
+  saveNote: string;
+  noteRequired: string;
+  loadError: string;
+  saveError: string;
+  saveSuccess: string;
+  loading: string;
+  empty: string;
+  colSessionDate: string;
+  colTime: string;
+  colOrderNumber: string;
+  colSessionType: string;
+  colDoctor: string;
+  colMedicalNotes: string;
+  hideNote: string;
+  viewNote: string;
+};
+
+// ponytail: this component is currently unused within the appointment
+// workspace (no caller renders it) — copy stays optional with an English
+// fallback so it's safe if/when it gets wired up.
+const DEFAULT_COPY: AppointmentMedicalNotesCopy = {
+  title: "Medical notes",
+  addNoteLabel: "Add medical note",
+  notePlaceholder:
+    "Clinical notes for this session (not sent as PDF — stored in patient history)",
+  saving: "Saving…",
+  saveNote: "Save medical note",
+  noteRequired: "Enter a medical note.",
+  loadError: "Could not load medical notes.",
+  saveError: "Could not save medical note. Restart the backend if this persists.",
+  saveSuccess: "Medical note saved.",
+  loading: "Loading notes…",
+  empty: "No medical notes yet for this appointment.",
+  colSessionDate: "Session date",
+  colTime: "Time",
+  colOrderNumber: "Order #",
+  colSessionType: "Session type",
+  colDoctor: "Doctor",
+  colMedicalNotes: "Medical notes",
+  hideNote: "Hide note",
+  viewNote: "View note",
+};
+
 const TABLE_HEAD =
   "text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]";
 
 export function AppointmentMedicalNotesSection({
   appointmentId,
   session,
+  copy = DEFAULT_COPY,
 }: {
   appointmentId: string;
   session: SessionMeta;
+  copy?: AppointmentMedicalNotesCopy;
 }) {
   const [notes, setNotes] = useState<MedicalNoteRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,14 +98,14 @@ export function AppointmentMedicalNotesSection({
     }>(res);
     if (!json?.ok) {
       setError(
-        doctorApiErrorMessage(res, json, "Could not load medical notes."),
+        doctorApiErrorMessage(res, json, copy.loadError),
       );
       setNotes([]);
     } else if (json.data?.items) {
       setNotes(json.data.items);
     }
     setLoading(false);
-  }, [appointmentId]);
+  }, [appointmentId, copy.loadError]);
 
   useEffect(() => {
     // Fetch-on-mount/dep-change — load itself is the setState source.
@@ -67,7 +117,7 @@ export function AppointmentMedicalNotesSection({
     setError(null);
     setSuccess(null);
     if (!noteText.trim()) {
-      setError("Enter a medical note.");
+      setError(copy.noteRequired);
       return;
     }
     startTransition(async () => {
@@ -85,27 +135,27 @@ export function AppointmentMedicalNotesSection({
           doctorApiErrorMessage(
             res,
             json,
-            "Could not save medical note. Restart the backend if this persists.",
+            copy.saveError,
           ),
         );
         return;
       }
       setNoteText("");
-      setSuccess("Medical note saved.");
+      setSuccess(copy.saveSuccess);
       await load();
     });
   }
 
   return (
-    <HistorySection title="Medical notes" count={notes.length} defaultOpen>
+    <HistorySection title={copy.title} count={notes.length} defaultOpen>
       <div className="border-b border-[var(--portal-line)] p-4">
         <label className="flex flex-col gap-1">
-          <span className="gh-field-label">Add medical note</span>
+          <span className="gh-field-label">{copy.addNoteLabel}</span>
           <textarea
             className="gh-input min-h-[80px]"
             value={noteText}
             onChange={(e) => setNoteText(e.target.value)}
-            placeholder="Clinical notes for this session (not sent as PDF — stored in patient history)"
+            placeholder={copy.notePlaceholder}
             maxLength={50000}
           />
         </label>
@@ -115,7 +165,7 @@ export function AppointmentMedicalNotesSection({
           disabled={pending}
           className="gh-btn gh-btn-primary mt-2 text-sm"
         >
-          {pending ? "Saving…" : "Save medical note"}
+          {pending ? copy.saving : copy.saveNote}
         </button>
         {error ? (
           <p className="gh-status-warning mt-2 rounded-md border px-3 py-2 text-[12.5px]">
@@ -130,23 +180,21 @@ export function AppointmentMedicalNotesSection({
       </div>
 
       {loading ? (
-        <p className="px-4 py-3 text-[13px] text-[var(--portal-muted)]">Loading notes…</p>
+        <p className="px-4 py-3 text-[13px] text-[var(--portal-muted)]">{copy.loading}</p>
       ) : notes.length === 0 ? (
-        <p className="px-4 py-3 text-[13px] text-[var(--portal-muted)]">
-          No medical notes yet for this appointment.
-        </p>
+        <p className="px-4 py-3 text-[13px] text-[var(--portal-muted)]">{copy.empty}</p>
       ) : (
         <>
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[640px] text-[13px]">
             <thead>
               <tr className={TABLE_HEAD}>
-                <th className="px-3 py-2 text-left">Session date</th>
-                <th className="px-3 py-2 text-left">Time</th>
-                <th className="px-3 py-2 text-left">Order #</th>
-                <th className="px-3 py-2 text-left">Session type</th>
-                <th className="px-3 py-2 text-left">Doctor</th>
-                <th className="px-3 py-2 text-left">Medical notes</th>
+                <th className="px-3 py-2 text-left">{copy.colSessionDate}</th>
+                <th className="px-3 py-2 text-left">{copy.colTime}</th>
+                <th className="px-3 py-2 text-left">{copy.colOrderNumber}</th>
+                <th className="px-3 py-2 text-left">{copy.colSessionType}</th>
+                <th className="px-3 py-2 text-left">{copy.colDoctor}</th>
+                <th className="px-3 py-2 text-left">{copy.colMedicalNotes}</th>
                 <th className="px-3 py-2 w-8" />
               </tr>
             </thead>
@@ -202,7 +250,7 @@ export function AppointmentMedicalNotesSection({
                   onClick={() => setExpandedId(expandedId === n.id ? null : n.id)}
                   className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)]"
                 >
-                  {expandedId === n.id ? "Hide note" : "View note"}
+                  {expandedId === n.id ? copy.hideNote : copy.viewNote}
                   {expandedId === n.id ? (
                     <ChevronDown className="size-3.5" />
                   ) : (

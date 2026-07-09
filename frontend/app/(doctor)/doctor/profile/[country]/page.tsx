@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { fetchDoctorMe } from "@/lib/api/doctor-api";
-import { ProfileSections, activeMarkets } from "../_components/profile-sections";
+import { ProfileSections, activeMarkets, type ProfileStrings } from "../_components/profile-sections";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +12,8 @@ export default async function DoctorCountryProfilePage({
   params: Promise<{ country: string }>;
 }) {
   const { country } = await params;
+  const locale = await getPageLocale();
+  const { doctor: d } = loadLocaleBundle(locale);
   const result = await fetchDoctorMe();
   if (!result.ok) {
     return (
@@ -26,5 +30,6 @@ export default async function DoctorCountryProfilePage({
   );
   if (!market) notFound();
 
-  return <ProfileSections doctor={doctor} activeMarket={market} />;
+  // ponytail: cast — cs/ro/de doctor.json still lag en's profile keys (separate backfill task); drop cast once locales match
+  return <ProfileSections doctor={doctor} activeMarket={market} strings={d.profile as ProfileStrings} />;
 }

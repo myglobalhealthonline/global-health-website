@@ -60,6 +60,9 @@ function slotsToItems(slots: DoctorTimeSlotView[]): CalendarItem[] {
   }));
 }
 
+type CalendarStrings = Record<string, string>;
+type CommonStrings = Record<string, string>;
+
 type Props = {
   initialYear: number;
   initialMonth: number;
@@ -67,6 +70,11 @@ type Props = {
   consultations: CalendarItem[];
   clinicTimezone: string;
   availableTimezones: string[];
+  strings: CalendarStrings;
+  common: CommonStrings;
+  minutesShort: string;
+  errorEndAfterStart: string;
+  errorEndDateAfterStart: string;
 };
 
 export function DoctorCalendarUI({
@@ -76,6 +84,11 @@ export function DoctorCalendarUI({
   consultations,
   clinicTimezone,
   availableTimezones,
+  strings: s,
+  common,
+  minutesShort,
+  errorEndAfterStart,
+  errorEndDateAfterStart,
 }: Props) {
   const [tz, setTz] = useState(clinicTimezone);
   // Default view = the doctor's operating-country clinic zone; switcher also
@@ -214,17 +227,17 @@ export function DoctorCalendarUI({
 
   async function onRangeTimeOff(action: "BLOCK" | "UNBLOCK") {
     if (!offFrom || !offTo) {
-      setError("Pick a start and end date/time for the time off.");
+      setError(s.errorPickStartEnd);
       return;
     }
     if (offFrom >= offTo) {
-      setError("End must be after start.");
+      setError(s.errorEndMustBeAfterStart);
       return;
     }
     const fromUtc = zonedLocalDateTimeToUtc(offFrom, tz);
     const toUtc = zonedLocalDateTimeToUtc(offTo, tz);
     if (!fromUtc || !toUtc) {
-      setError("Invalid date/time.");
+      setError(s.errorInvalidDateTime);
       return;
     }
     setError(null);
@@ -252,22 +265,22 @@ export function DoctorCalendarUI({
   // each consultation type needs.
   async function onAddAvailability() {
     if (!addFromDate || !addToDate) {
-      setError("Pick a start and end date.");
+      setError(s.errorPickDates);
       return;
     }
     if (addFromDate > addToDate) {
-      setError("End date must be on or after start date.");
+      setError(errorEndDateAfterStart);
       return;
     }
     const startMin = timeToMinutes(addStart);
     const endMin = timeToMinutes(addEnd);
     if (endMin <= startMin) {
-      setError("End time must be after start time.");
+      setError(errorEndAfterStart);
       return;
     }
     const weekdays = weekdaysInRange(addFromDate, addToDate);
     if (weekdays.length === 0) {
-      setError("Invalid date range.");
+      setError(s.errorInvalidRange);
       return;
     }
     setError(null);
@@ -303,14 +316,14 @@ export function DoctorCalendarUI({
       {/* Toolbar */}
       <div className="gh-doctor-calendar-toolbar flex flex-wrap items-center justify-between gap-3">
         <div className="gh-doctor-calendar-legend flex flex-wrap items-center gap-3 text-xs text-[var(--portal-muted)]">
-          <LegendDot className="bg-emerald-500" label="Open" />
-          <LegendDot className="bg-rose-400" label="Blocked" />
-          <LegendDot className="bg-blue-500" label="Booked" />
+          <LegendDot className="bg-emerald-500" label={s.legendOpen} />
+          <LegendDot className="bg-rose-400" label={s.legendBlocked} />
+          <LegendDot className="bg-blue-500" label={s.legendBooked} />
           <span className="inline-flex items-center gap-1.5">
             <span className="inline-flex items-center rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-800">
               N
             </span>
-            Consultations
+            {s.legendConsultations}
           </span>
         </div>
         <TimezoneSelect value={tz} options={tzOptions} onChange={onChangeTz} />
@@ -355,7 +368,7 @@ export function DoctorCalendarUI({
                   onClick={() => onBlockDay("BLOCK")}
                   iconLeft={<Lock className="size-3.5" />}
                 >
-                  Block whole day
+                  {s.blockWholeDay}
                 </Btn>
                 <Btn
                   type="button"
@@ -365,7 +378,7 @@ export function DoctorCalendarUI({
                   onClick={() => onBlockDay("UNBLOCK")}
                   iconLeft={<Unlock className="size-3.5" />}
                 >
-                  Re-open day
+                  {s.reopenDay}
                 </Btn>
               </div>
             </div>
@@ -375,7 +388,7 @@ export function DoctorCalendarUI({
             dayKey={selectedDay}
             items={dayItems}
             tz={tz}
-            emptyLabel="No consultations or slots on this day."
+            emptyLabel={s.noItemsOnDay}
             onSelectConsultation={setActiveItem}
             renderSlotAction={(item) => {
               if (item.status !== "OPEN" && item.status !== "BLOCKED") return null;
@@ -385,7 +398,7 @@ export function DoctorCalendarUI({
                   type="button"
                   disabled={busy}
                   onClick={() => onToggleSlot(item)}
-                  title={isOpen ? "Block this slot" : "Re-open this slot"}
+                  title={isOpen ? s.blockSlotTitle : s.reopenSlotTitle}
                   className="ml-0.5 inline-flex items-center disabled:opacity-50"
                 >
                   {isOpen ? (
@@ -406,22 +419,16 @@ export function DoctorCalendarUI({
           title={
             <span className="flex items-center gap-2">
               <CalendarPlus className="size-4 text-[var(--portal-muted)]" aria-hidden />
-              Add availability
+              {s.addAvailabilityTitle}
             </span>
           }
-          description={
-            <>
-              You&apos;re available on these dates, during these hours. Slots are
-              generated and shown on the website, sized to each consultation&apos;s
-              length. Times in {clinicTimezone} (clinic time).
-            </>
-          }
+          description={s.addAvailabilityDesc.replace("{tz}", clinicTimezone)}
           className="gh-doctor-calendar-form-card"
         >
           <div className="gh-form-section__span-2 grid gap-3">
             <div className="gh-doctor-calendar-date-grid grid grid-cols-2 gap-2">
               <label className="flex flex-col gap-1 text-sm">
-                <span className="gh-field-label">From date</span>
+                <span className="gh-field-label">{s.fromDate}</span>
                 <input
                   type="date"
                   value={addFromDate}
@@ -430,7 +437,7 @@ export function DoctorCalendarUI({
                 />
               </label>
               <label className="flex flex-col gap-1 text-sm">
-                <span className="gh-field-label">To date</span>
+                <span className="gh-field-label">{s.toDate}</span>
                 <input
                   type="date"
                   value={addToDate}
@@ -441,7 +448,7 @@ export function DoctorCalendarUI({
             </div>
             <div className="gh-doctor-calendar-time-grid grid grid-cols-3 gap-2">
               <label className="flex flex-col gap-1 text-sm">
-                <span className="gh-field-label">From time</span>
+                <span className="gh-field-label">{s.fromTime}</span>
                 <input
                   type="time"
                   value={addStart}
@@ -450,7 +457,7 @@ export function DoctorCalendarUI({
                 />
               </label>
               <label className="flex flex-col gap-1 text-sm">
-                <span className="gh-field-label">To time</span>
+                <span className="gh-field-label">{s.toTime}</span>
                 <input
                   type="time"
                   value={addEnd}
@@ -459,7 +466,7 @@ export function DoctorCalendarUI({
                 />
               </label>
               <label className="flex flex-col gap-1 text-sm">
-                <span className="gh-field-label">Base slot length (grid)</span>
+                <span className="gh-field-label">{s.baseSlotLength}</span>
                 <select
                   className="gh-select h-10"
                   value={addDuration}
@@ -467,7 +474,7 @@ export function DoctorCalendarUI({
                 >
                   {SLOT_DURATIONS.map((d) => (
                     <option key={d} value={d}>
-                      {d} min
+                      {minutesShort.replace("{count}", String(d))}
                     </option>
                   ))}
                 </select>
@@ -481,7 +488,7 @@ export function DoctorCalendarUI({
               onClick={onAddAvailability}
               iconLeft={<Plus className="size-3.5" />}
             >
-              Add availability
+              {s.addAvailabilityButton}
             </Btn>
           </div>
         </FormSection>
@@ -491,16 +498,16 @@ export function DoctorCalendarUI({
           title={
             <span className="flex items-center gap-2">
               <CalendarOff className="size-4 text-[var(--portal-muted)]" aria-hidden />
-              Time off
+              {s.timeOffTitle}
             </span>
           }
-          description={`Block open slots across a date and time range — for holidays or leave. Booked appointments are never touched. Times in ${tz}.`}
+          description={s.timeOffDesc.replace("{tz}", tz)}
           className="gh-doctor-calendar-form-card"
         >
           <div className="gh-form-section__span-2 grid gap-3">
             <div className="gh-doctor-calendar-date-grid grid grid-cols-2 gap-2">
               <label className="flex flex-col gap-1 text-sm">
-                <span className="gh-field-label">From</span>
+                <span className="gh-field-label">{common.from}</span>
                 <input
                   type="datetime-local"
                   value={offFrom}
@@ -509,7 +516,7 @@ export function DoctorCalendarUI({
                 />
               </label>
               <label className="flex flex-col gap-1 text-sm">
-                <span className="gh-field-label">To</span>
+                <span className="gh-field-label">{common.to}</span>
                 <input
                   type="datetime-local"
                   value={offTo}
@@ -519,12 +526,12 @@ export function DoctorCalendarUI({
               </label>
             </div>
             <label className="flex flex-col gap-1 text-sm">
-              <span className="gh-field-label">Reason (optional)</span>
+              <span className="gh-field-label">{s.reasonOptional}</span>
               <input
                 type="text"
                 value={offReason}
                 maxLength={200}
-                placeholder="Holiday"
+                placeholder={s.reasonPlaceholder}
                 onChange={(e) => setOffReason(e.target.value)}
                 className="gh-input h-10"
               />
@@ -538,7 +545,7 @@ export function DoctorCalendarUI({
                 onClick={() => onRangeTimeOff("BLOCK")}
                 iconLeft={<Lock className="size-3.5" />}
               >
-                Block range
+                {s.blockRange}
               </Btn>
               <Btn
                 type="button"
@@ -548,7 +555,7 @@ export function DoctorCalendarUI({
                 onClick={() => onRangeTimeOff("UNBLOCK")}
                 iconLeft={<Unlock className="size-3.5" />}
               >
-                Re-open
+                {s.reopen}
               </Btn>
             </div>
           </div>

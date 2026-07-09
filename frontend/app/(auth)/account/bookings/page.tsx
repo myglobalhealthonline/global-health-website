@@ -75,7 +75,7 @@ export default async function AccountBookingsPage({ searchParams }: Props) {
             ? null
             : a.bookings.unavailable
         }
-        i18n={{ bookings: a.bookings, payments: a.payments }}
+        i18n={{ bookings: a.bookings, payments: a.payments, dashboard: a.dashboard, messages: a.messages }}
       />
     </div>
   );

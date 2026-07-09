@@ -5,10 +5,14 @@ import { AdminCard, PageHeader } from "@/components/portal-atoms";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { todayKey } from "@/components/calendar/calendar-utils";
 import { DoctorAvailabilityUI } from "./_components/availability-ui";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
 export default async function DoctorAvailabilityPage() {
+  const locale = await getPageLocale();
+  const { doctor: d } = loadLocaleBundle(locale);
   const [result, appointments] = await Promise.all([
     fetchDoctorAvailability(14),
     fetchDoctorAppointments({ pageSize: "100" }),
@@ -20,10 +24,10 @@ export default async function DoctorAvailabilityPage() {
         <PageHeader
           eyebrow={
             <span className="inline-flex items-center gap-2">
-              <CalendarClock className="size-3.5" aria-hidden /> Schedule
+              <CalendarClock className="size-3.5" aria-hidden /> {d.availability.eyebrow}
             </span>
           }
-          title="Availability"
+          title={d.availability.title}
         />
         <AdminCard>
           <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
@@ -61,11 +65,11 @@ export default async function DoctorAvailabilityPage() {
       <PageHeader
         eyebrow={
           <span className="inline-flex items-center gap-2">
-            <CalendarClock className="size-3.5" aria-hidden /> Schedule
+            <CalendarClock className="size-3.5" aria-hidden /> {d.availability.eyebrow}
           </span>
         }
-        title="Availability"
-        description="Manage your weekly hours and block individual time-slots when you're busy. Patients only see slots marked Open."
+        title={d.availability.title}
+        description={d.availability.description}
       />
 
       <DoctorAvailabilityUI
@@ -74,6 +78,8 @@ export default async function DoctorAvailabilityPage() {
         consultations={consultations}
         initialWeekAnchor={todayKey(clinicTimezone)}
         countryTimeZone={clinicTimezone}
+        strings={d.availability}
+        common={d.common}
       />
     </>
   );

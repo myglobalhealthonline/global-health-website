@@ -14,12 +14,47 @@ type ExamItem = {
   createdAt: string;
 };
 
+export type ExamResultsListCopy = {
+  title: string;
+  description: string;
+  testNameLabel: string;
+  testNamePlaceholder: string;
+  stateLabel: string;
+  requestedOption: string;
+  completedOption: string;
+  performedOnLabel: string;
+  externalLinkLabel: string;
+  externalLinkPlaceholder: string;
+  notesLabel: string;
+  notesPlaceholderRequested: string;
+  notesPlaceholderCompleted: string;
+  testNameRequired: string;
+  couldNotSave: string;
+  couldNotUpdate: string;
+  couldNotDelete: string;
+  deleteConfirm: string;
+  saving: string;
+  requestExam: string;
+  logResult: string;
+  noExamsTitle: string;
+  noExamsDescription: string;
+  pendingBadge: string;
+  completedBadge: string;
+  noDate: string;
+  loggedPrefix: string;
+  markComplete: string;
+  deleteAria: string;
+  openLabReport: string;
+};
+
 export function ExamResultsList({
   appointmentId,
   initialItems,
+  copy,
 }: {
   appointmentId: string;
   initialItems: ExamItem[];
+  copy: ExamResultsListCopy;
 }) {
   const router = useRouter();
   const [items, setItems] = useState<ExamItem[]>(initialItems);
@@ -37,7 +72,7 @@ export function ExamResultsList({
     event.preventDefault();
     setError(null);
     if (testName.trim() === "") {
-      setError("Test name is required.");
+      setError(copy.testNameRequired);
       return;
     }
     startTransition(async () => {
@@ -64,7 +99,7 @@ export function ExamResultsList({
         data?: { exam?: ExamItem };
       };
       if (!res.ok || !json.ok) {
-        setError(json.message ?? "Could not save result.");
+        setError(json.message ?? copy.couldNotSave);
         return;
       }
       if (json.data?.exam) {
@@ -94,7 +129,7 @@ export function ExamResultsList({
         data?: { exam?: ExamItem };
       };
       if (!res.ok || !json.ok) {
-        setError(json.message ?? "Could not update.");
+        setError(json.message ?? copy.couldNotUpdate);
         return;
       }
       if (json.data?.exam) {
@@ -107,12 +142,12 @@ export function ExamResultsList({
   }
 
   function remove(id: string) {
-    if (!confirm("Delete this exam entry?")) return;
+    if (!confirm(copy.deleteConfirm)) return;
     startTransition(async () => {
       const res = await fetch(`/api/doctor/exams/${id}`, { method: "DELETE" });
       const json = (await res.json()) as { ok?: boolean; message?: string };
       if (!res.ok || !json.ok) {
-        setError(json.message ?? "Could not delete.");
+        setError(json.message ?? copy.couldNotDelete);
         return;
       }
       setItems((prev) => prev.filter((r) => r.id !== id));
@@ -129,27 +164,27 @@ export function ExamResultsList({
           </span>
           <div>
             <p className="text-sm font-bold text-[var(--portal-text)]">
-              Exams and results
+              {copy.title}
             </p>
             <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
-              Request a test or log a completed external result for this consultation.
+              {copy.description}
             </p>
           </div>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="flex flex-col gap-1">
-            <span className="gh-field-label">Test name</span>
+            <span className="gh-field-label">{copy.testNameLabel}</span>
             <input
               className="gh-input"
               value={testName}
               onChange={(e) => setTestName(e.target.value)}
               maxLength={200}
-              placeholder="CBC, MRI shoulder, etc."
+              placeholder={copy.testNamePlaceholder}
               required
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="gh-field-label">State</span>
+            <span className="gh-field-label">{copy.stateLabel}</span>
             <select
               className="gh-select"
               value={createStatus}
@@ -157,14 +192,14 @@ export function ExamResultsList({
                 setCreateStatus(e.target.value as "REQUESTED" | "COMPLETED")
               }
             >
-              <option value="REQUESTED">Requested — result not in</option>
-              <option value="COMPLETED">Completed — logging result</option>
+              <option value="REQUESTED">{copy.requestedOption}</option>
+              <option value="COMPLETED">{copy.completedOption}</option>
             </select>
           </label>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="flex flex-col gap-1">
-            <span className="gh-field-label">Performed on</span>
+            <span className="gh-field-label">{copy.performedOnLabel}</span>
             <input
               type="date"
               className="gh-input"
@@ -174,18 +209,18 @@ export function ExamResultsList({
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="gh-field-label">External link (lab portal)</span>
+            <span className="gh-field-label">{copy.externalLinkLabel}</span>
             <input
               type="url"
               className="gh-input"
               value={externalUrl}
               onChange={(e) => setExternalUrl(e.target.value)}
-              placeholder="https://lab.example.com/report/123"
+              placeholder={copy.externalLinkPlaceholder}
             />
           </label>
         </div>
         <label className="flex flex-col gap-1">
-          <span className="gh-field-label">Interpretation / notes</span>
+          <span className="gh-field-label">{copy.notesLabel}</span>
           <textarea
             className="gh-input min-h-[6rem] resize-y"
             value={notes}
@@ -193,8 +228,8 @@ export function ExamResultsList({
             maxLength={8000}
             placeholder={
               createStatus === "REQUESTED"
-                ? "Instructions for the lab / patient, if any."
-                : "Findings, interpretation, follow-up needed."
+                ? copy.notesPlaceholderRequested
+                : copy.notesPlaceholderCompleted
             }
           />
         </label>
@@ -206,10 +241,10 @@ export function ExamResultsList({
         <div className="flex justify-end">
           <button type="submit" disabled={pending} className="gh-btn gh-btn-primary">
             {pending
-              ? "Saving…"
+              ? copy.saving
               : createStatus === "REQUESTED"
-                ? "Request exam"
-                : "Log result"}
+                ? copy.requestExam
+                : copy.logResult}
           </button>
         </div>
       </form>
@@ -218,10 +253,10 @@ export function ExamResultsList({
         <div className="rounded-lg border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] p-4">
           <p className="flex items-center gap-2 text-sm font-bold text-[var(--portal-text)]">
             <FlaskConical className="size-4 text-[var(--portal-primary)]" aria-hidden />
-            No exams logged yet
+            {copy.noExamsTitle}
           </p>
           <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
-            Requested exams, lab links, and completed results will appear here.
+            {copy.noExamsDescription}
           </p>
         </div>
       ) : (
@@ -242,14 +277,14 @@ export function ExamResultsList({
                           : "bg-emerald-100 text-emerald-800"
                       }`}
                     >
-                      {r.status === "REQUESTED" ? "Pending" : "Completed"}
+                      {r.status === "REQUESTED" ? copy.pendingBadge : copy.completedBadge}
                     </span>
                   </p>
                   <p className="text-[12px] text-[var(--portal-muted)]">
                     {r.performedAt
                       ? new Date(r.performedAt).toLocaleDateString()
-                      : "No date"}{" "}
-                    · logged {new Date(r.createdAt).toLocaleString()}
+                      : copy.noDate}{" "}
+                    · {copy.loggedPrefix} {new Date(r.createdAt).toLocaleString()}
                   </p>
                 </div>
                 <div className="inline-flex items-center gap-2">
@@ -260,14 +295,14 @@ export function ExamResultsList({
                       disabled={pending}
                       className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-[12px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
                     >
-                      <Check className="size-3.5" /> Mark complete
+                      <Check className="size-3.5" /> {copy.markComplete}
                     </button>
                   ) : null}
                   <button
                     type="button"
                     onClick={() => remove(r.id)}
                     className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
-                    aria-label="Delete"
+                    aria-label={copy.deleteAria}
                   >
                     <Trash2 className="size-3.5" />
                   </button>
@@ -285,7 +320,7 @@ export function ExamResultsList({
                   rel="noopener noreferrer"
                   className="mt-2 inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--portal-primary)] hover:underline"
                 >
-                  Open lab report <ExternalLink className="size-3" />
+                  {copy.openLabReport} <ExternalLink className="size-3" />
                 </a>
               ) : null}
             </li>

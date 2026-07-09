@@ -11,6 +11,39 @@ function formatSize(bytes: number): string {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
+export type DocumentsListCopy = {
+  fileTooLarge: string;
+  uploadFailed: string;
+  couldNotDelete: string;
+  deleteConfirm: string;
+  labelField: string;
+  labelPlaceholder: string;
+  uploading: string;
+  uploadDocument: string;
+  emptyTitle: string;
+  emptyDesc: string;
+  open: string;
+  deleteAria: string;
+};
+
+// ponytail: this component has no current caller in the codebase — copy
+// stays optional with an English fallback so it's safe if/when it gets used.
+const DEFAULT_COPY: DocumentsListCopy = {
+  fileTooLarge: "File too large (max 10MB).",
+  uploadFailed: "Upload failed",
+  couldNotDelete: "Could not delete",
+  deleteConfirm: "Delete this document? The file will be removed from storage.",
+  labelField: "Label (optional)",
+  labelPlaceholder: "e.g. Lab report, X-ray scan, Referral letter",
+  uploading: "Uploading…",
+  uploadDocument: "Upload document",
+  emptyTitle: "No appointment documents yet",
+  emptyDesc:
+    "Upload referrals, lab results, scans, or notes so the consultation record stays complete.",
+  open: "Open",
+  deleteAria: "Delete document",
+};
+
 /**
  * Attach + browse clinical documents for an appointment. Uses
  * multipart upload via the same-origin proxy that buffers the bytes
@@ -19,9 +52,11 @@ function formatSize(bytes: number): string {
 export function DocumentsList({
   appointmentId,
   initialItems,
+  copy = DEFAULT_COPY,
 }: {
   appointmentId: string;
   initialItems: DoctorDocumentDto[];
+  copy?: DocumentsListCopy;
 }) {
   const router = useRouter();
   const [items, setItems] = useState<DoctorDocumentDto[]>(initialItems);
@@ -33,7 +68,7 @@ export function DocumentsList({
   function upload(file: File) {
     setError(null);
     if (file.size > 10 * 1024 * 1024) {
-      setError("File too large (max 10MB).");
+      setError(copy.fileTooLarge);
       return;
     }
     startTransition(async () => {
@@ -51,7 +86,7 @@ export function DocumentsList({
         data?: { document?: DoctorDocumentDto };
       };
       if (!res.ok || !json.ok || !json.data?.document) {
-        setError(json.message ?? "Upload failed");
+        setError(json.message ?? copy.uploadFailed);
         return;
       }
       setItems((prev) => [json.data!.document!, ...prev]);
@@ -61,7 +96,7 @@ export function DocumentsList({
   }
 
   function remove(id: string) {
-    if (!confirm("Delete this document? The file will be removed from storage.")) {
+    if (!confirm(copy.deleteConfirm)) {
       return;
     }
     startTransition(async () => {
@@ -70,7 +105,7 @@ export function DocumentsList({
       });
       const json = (await res.json()) as { ok?: boolean; message?: string };
       if (!res.ok || !json.ok) {
-        setError(json.message ?? "Could not delete");
+        setError(json.message ?? copy.couldNotDelete);
         return;
       }
       setItems((prev) => prev.filter((r) => r.id !== id));
@@ -82,13 +117,13 @@ export function DocumentsList({
     <div className="mt-3 grid gap-4">
       <div className="grid gap-2">
         <label className="flex flex-col gap-1">
-          <span className="gh-field-label">Label (optional)</span>
+          <span className="gh-field-label">{copy.labelField}</span>
           <input
             className="gh-input"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
             maxLength={200}
-            placeholder="e.g. Lab report, X-ray scan, Referral letter"
+            placeholder={copy.labelPlaceholder}
           />
         </label>
         <input
@@ -109,7 +144,7 @@ export function DocumentsList({
           className="gh-btn gh-btn-soft"
         >
           <Upload className="size-3.5" />
-          {pending ? "Uploading…" : "Upload document"}
+          {pending ? copy.uploading : copy.uploadDocument}
         </button>
         {error ? (
           <p className="gh-status-warning rounded-md border px-3 py-2 text-[12.5px]">
@@ -124,11 +159,9 @@ export function DocumentsList({
             className="mx-auto size-6 text-[var(--portal-muted)]"
             aria-hidden
           />
-          <p className="mt-2 text-sm font-bold text-[var(--portal-text)]">
-            No appointment documents yet
-          </p>
+          <p className="mt-2 text-sm font-bold text-[var(--portal-text)]">{copy.emptyTitle}</p>
           <p className="mx-auto mt-1 max-w-sm text-[12px] text-[var(--portal-muted)]">
-            Upload referrals, lab results, scans, or notes so the consultation record stays complete.
+            {copy.emptyDesc}
           </p>
         </div>
       ) : (
@@ -157,13 +190,13 @@ export function DocumentsList({
                 rel="noopener noreferrer"
                 className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-[12px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)] sm:w-auto"
               >
-                <Download className="size-3.5" /> Open
+                <Download className="size-3.5" /> {copy.open}
               </a>
               <button
                 type="button"
                 onClick={() => remove(d.id)}
                 className="inline-flex w-full items-center justify-center rounded-md border border-[var(--portal-line)] px-2 py-1 text-[var(--portal-muted)] hover:text-[var(--portal-danger)] sm:w-auto sm:border-0 sm:px-0"
-                aria-label="Delete document"
+                aria-label={copy.deleteAria}
               >
                 <Trash2 className="size-3.5" />
               </button>

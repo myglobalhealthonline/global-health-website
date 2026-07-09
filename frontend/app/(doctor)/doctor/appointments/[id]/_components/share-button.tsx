@@ -8,12 +8,24 @@ import { Copy, Share2 } from "lucide-react";
  * fresh token + 7-day expiry, builds an absolute URL using the current
  * origin, and copies it to the clipboard.
  */
+export type ShareButtonCopy = {
+  signNoteHint: string;
+  generating: string;
+  generateAnother: string;
+  shareWithColleague: string;
+  copied: string;
+  copy: string;
+  couldNotCreate: string;
+};
+
 export function ShareConsultationButton({
   consultationId,
   disabled,
+  copy,
 }: {
   consultationId: string;
   disabled: boolean;
+  copy: ShareButtonCopy;
 }) {
   const [pending, startTransition] = useTransition();
   const [url, setUrl] = useState<string | null>(null);
@@ -38,7 +50,7 @@ export function ShareConsultationButton({
         data?: { shareLink?: { token: string; expiresAt: string } };
       };
       if (!res.ok || !json.ok || !json.data?.shareLink) {
-        setError(json.message ?? "Could not create share link");
+        setError(json.message ?? copy.couldNotCreate);
         return;
       }
       const built = `${window.location.origin}/share/consults/${json.data.shareLink.token}`;
@@ -58,7 +70,7 @@ export function ShareConsultationButton({
       <div className="rounded-md border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2">
         <p className="flex items-center gap-2 text-[12px] font-semibold text-[var(--portal-muted)]">
           <Share2 className="size-3.5" aria-hidden />
-          Sign the note to enable a 7-day share link.
+          {copy.signNoteHint}
         </p>
       </div>
     );
@@ -73,7 +85,7 @@ export function ShareConsultationButton({
         className="gh-btn gh-btn-soft"
       >
         <Share2 className="size-3.5" />
-        {pending ? "Generating…" : url ? "Generate another link" : "Share with colleague"}
+        {pending ? copy.generating : url ? copy.generateAnother : copy.shareWithColleague}
       </button>
       {url ? (
         <div className="flex items-center gap-2 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] px-2 py-1">
@@ -96,7 +108,7 @@ export function ShareConsultationButton({
             className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
           >
             <Copy className="size-3.5" />
-            {copied ? "Copied" : "Copy"}
+            {copied ? copy.copied : copy.copy}
           </button>
         </div>
       ) : null}

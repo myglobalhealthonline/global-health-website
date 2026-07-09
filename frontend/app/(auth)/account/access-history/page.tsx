@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { History, Shield } from "lucide-react";
 import { PageHeader } from "@/components/portal-atoms";
+import { readClientLocale } from "@/lib/i18n/get-client-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 type AccessLogEntry = {
   id: string;
@@ -23,34 +25,42 @@ type Pagination = {
   pages: number;
 };
 
-const ROLE_LABEL: Record<string, string> = {
-  PATIENT: "You",
-  DOCTOR: "Doctor",
-  ADMIN: "Admin",
-  SUPER_ADMIN: "Admin",
-  STAFF: "Staff",
-  SYSTEM: "System",
-};
+type AccessHistoryI18n = ReturnType<typeof loadLocaleBundle>["account"]["accessHistory"];
 
-const ACTION_LABEL: Record<string, string> = {
-  VIEW: "Viewed",
-  DOWNLOAD: "Downloaded",
-  UPLOAD: "Uploaded",
-  EDIT: "Updated",
-  DELETE: "Deleted",
-};
+function roleLabels(i18n: AccessHistoryI18n): Record<string, string> {
+  return {
+    PATIENT: i18n.roleYou,
+    DOCTOR: i18n.roleDoctor,
+    ADMIN: i18n.roleAdmin,
+    SUPER_ADMIN: i18n.roleAdmin,
+    STAFF: i18n.roleStaff,
+    SYSTEM: i18n.roleSystem,
+  };
+}
 
-const RESOURCE_LABEL: Record<string, string> = {
-  MedicalDocuments: "medical files list",
-  MedicalDocument: "medical document",
-  MEDICAL_DOC: "medical document",
-  PatientProfile: "profile",
-  SENSITIVE_PROFILE: "sensitive profile data",
-  ID_DOC: "ID document",
-  NATIONALITY_DOC: "nationality document",
-  INSURANCE_DOC: "insurance document",
-  InsuranceDocument: "insurance document",
-};
+function actionLabels(i18n: AccessHistoryI18n): Record<string, string> {
+  return {
+    VIEW: i18n.actionViewed,
+    DOWNLOAD: i18n.actionDownloaded,
+    UPLOAD: i18n.actionUploaded,
+    EDIT: i18n.actionUpdated,
+    DELETE: i18n.actionDeleted,
+  };
+}
+
+function resourceLabels(i18n: AccessHistoryI18n): Record<string, string> {
+  return {
+    MedicalDocuments: i18n.resourceMedicalDocuments,
+    MedicalDocument: i18n.resourceMedicalDocument,
+    MEDICAL_DOC: i18n.resourceMedicalDocument,
+    PatientProfile: i18n.resourcePatientProfile,
+    SENSITIVE_PROFILE: i18n.resourceSensitiveProfile,
+    ID_DOC: i18n.resourceIdDoc,
+    NATIONALITY_DOC: i18n.resourceNationalityDoc,
+    INSURANCE_DOC: i18n.resourceInsuranceDoc,
+    InsuranceDocument: i18n.resourceInsuranceDoc,
+  };
+}
 
 function roleBadgeClass(role: string): string {
   switch (role) {
@@ -63,10 +73,10 @@ function roleBadgeClass(role: string): string {
   }
 }
 
-function LogRow({ entry }: { entry: AccessLogEntry }) {
-  const role = ROLE_LABEL[entry.accessedByRole] ?? entry.accessedByRole;
-  const action = ACTION_LABEL[entry.accessAction] ?? entry.accessAction;
-  const resource = RESOURCE_LABEL[entry.accessedResourceType] ?? entry.accessedResourceType.toLowerCase().replace(/_/g, " ");
+function LogRow({ entry, i18n }: { entry: AccessLogEntry; i18n: AccessHistoryI18n }) {
+  const role = roleLabels(i18n)[entry.accessedByRole] ?? entry.accessedByRole;
+  const action = actionLabels(i18n)[entry.accessAction] ?? entry.accessAction;
+  const resource = resourceLabels(i18n)[entry.accessedResourceType] ?? entry.accessedResourceType.toLowerCase().replace(/_/g, " ");
   const byName = entry.accessedByName && entry.accessedByRole !== "PATIENT"
     ? entry.accessedByName
     : null;
@@ -86,16 +96,16 @@ function LogRow({ entry }: { entry: AccessLogEntry }) {
           {byName && <span className="mr-1 font-medium">{byName}</span>}
           <span className="lowercase">{action}</span>
           {" "}
-          <span className="lowercase">your {resource}</span>
+          <span className="lowercase">{resource}</span>
         </p>
         {entry.accessReason && (
           <p className="mt-0.5 text-xs text-[var(--portal-muted)]">
-            Reason: {entry.accessReason}
+            {i18n.reason}: {entry.accessReason}
           </p>
         )}
         {entry.relatedAppointmentId && (
           <p className="mt-0.5 text-xs text-[var(--portal-muted)]">
-            Related to appointment
+            {i18n.relatedAppointment}
           </p>
         )}
       </div>
@@ -110,6 +120,8 @@ function LogRow({ entry }: { entry: AccessLogEntry }) {
 }
 
 export default function AccessHistoryPage() {
+  const [locale] = useState(() => readClientLocale());
+  const i18n = loadLocaleBundle(locale).account.accessHistory;
   const [logs, setLogs] = useState<AccessLogEntry[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [page, setPage] = useState(1);
@@ -139,14 +151,14 @@ export default function AccessHistoryPage() {
   return (
     <div className="gh-patient-page gh-patient-access-history-page">
       <PageHeader
-        eyebrow="Patient portal"
+        eyebrow={i18n.breadcrumb}
         title={
           <span className="inline-flex items-center gap-2">
             <History className="size-6 text-[var(--portal-primary)]" aria-hidden />
-            Access history
+            {i18n.title}
           </span>
         }
-        description="A record of who accessed your medical information and when."
+        description={i18n.subtitle}
       />
 
       <div className="gh-patient-access-card gh-card divide-y divide-[var(--portal-line)] p-0">
@@ -162,16 +174,16 @@ export default function AccessHistoryPage() {
           <div className="p-8 text-center">
             <Shield className="mx-auto size-7 text-[var(--portal-muted)]" aria-hidden />
             <p className="mt-2 text-base font-bold text-[var(--portal-text)]">
-              No access events recorded yet
+              {i18n.emptyTitle}
             </p>
             <p className="mx-auto mt-1 max-w-sm text-sm text-[var(--portal-muted)]">
-              When your medical information is viewed or updated, the event will appear here.
+              {i18n.emptyBody}
             </p>
           </div>
         ) : (
           <div className="px-4">
             {logs.map((entry) => (
-              <LogRow key={entry.id} entry={entry} />
+              <LogRow key={entry.id} entry={entry} i18n={i18n} />
             ))}
           </div>
         )}
@@ -180,7 +192,10 @@ export default function AccessHistoryPage() {
       {pagination && pagination.pages > 1 && (
         <div className="mt-4 flex items-center justify-between text-sm">
           <span className="text-[var(--portal-muted)]">
-            {pagination.total} events · page {pagination.page} of {pagination.pages}
+            {i18n.eventsPage
+              .replace("{total}", String(pagination.total))
+              .replace("{page}", String(pagination.page))
+              .replace("{pages}", String(pagination.pages))}
           </span>
           <div className="flex gap-2">
             <button
@@ -189,7 +204,7 @@ export default function AccessHistoryPage() {
               onClick={() => setPage((p) => p - 1)}
               className="rounded-md border border-[var(--portal-line)] px-3 py-1.5 text-sm disabled:opacity-40"
             >
-              Previous
+              {i18n.previous}
             </button>
             <button
               type="button"
@@ -197,7 +212,7 @@ export default function AccessHistoryPage() {
               onClick={() => setPage((p) => p + 1)}
               className="rounded-md border border-[var(--portal-line)] px-3 py-1.5 text-sm disabled:opacity-40"
             >
-              Next
+              {i18n.next}
             </button>
           </div>
         </div>

@@ -22,25 +22,56 @@ function requiresPayment(item: AccountAppointment): boolean {
   return item.paymentStatus !== "PAID";
 }
 
-const CONSULT_LABELS: Record<string, string> = {
-  general: "GP consultation",
-  specialist: "Specialist consultation",
-  prescription: "Online prescription",
-  health_test: "Health test",
-  home_delivery: "Home delivery",
+const CONSULT_LABEL_KEYS: Record<string, keyof MessagesI18n> = {
+  general: "typeGeneral",
+  specialist: "typeSpecialist",
+  prescription: "typePrescription",
+  health_test: "typeHealthTest",
+  home_delivery: "typeHomeDelivery",
 };
-function consultLabel(type: string): string {
-  return CONSULT_LABELS[type.toLowerCase().replace(/[\s-]+/g, "_")] ?? type;
+function consultLabel(type: string, i18n: MessagesI18n): string {
+  const key = CONSULT_LABEL_KEYS[type.toLowerCase().replace(/[\s-]+/g, "_")];
+  return key ? i18n[key] : type;
 }
+
+type MessagesI18n = {
+  clinicTab: string;
+  doctorTab: string;
+  lockedTooltip: string;
+  lockedBody: string;
+  emptyTitle: string;
+  emptyBody: string;
+  typeGeneral: string;
+  typeSpecialist: string;
+  typePrescription: string;
+  typeHealthTest: string;
+  typeHomeDelivery: string;
+};
+
+const DEFAULT_I18N: MessagesI18n = {
+  clinicTab: "Clinic",
+  doctorTab: "Doctor",
+  lockedTooltip: "Complete payment to chat with your doctor",
+  lockedBody: "Complete payment to unlock chat with your doctor.",
+  emptyTitle: "No conversations",
+  emptyBody: "Once you have a booking you can message the clinic, and chat with your doctor after payment.",
+  typeGeneral: "GP consultation",
+  typeSpecialist: "Specialist consultation",
+  typePrescription: "Online prescription",
+  typeHealthTest: "Health test",
+  typeHomeDelivery: "Home delivery",
+};
 
 /** In-pane conversation for the patient: a Clinic / Doctor channel toggle over
  *  the two chat threads for one booking. */
 function PatientConversation({
   item,
   defaultChannel,
+  i18n,
 }: {
   item: AccountAppointment;
   defaultChannel: "clinic" | "doctor";
+  i18n: MessagesI18n;
 }) {
   const locked = requiresPayment(item);
   const [channel, setChannel] = useState<"clinic" | "doctor">(
@@ -59,18 +90,18 @@ function PatientConversation({
       <div className="mb-3 inline-flex gap-1 self-start rounded-full border border-[var(--portal-line)] p-1">
         <button type="button" className={tabBtn(channel === "clinic")} onClick={() => setChannel("clinic")}>
           <MessageCircle className="mr-1 inline size-3.5" aria-hidden />
-          Clinic
+          {i18n.clinicTab}
         </button>
         <button
           type="button"
           className={tabBtn(channel === "doctor")}
           onClick={() => !locked && setChannel("doctor")}
           disabled={locked}
-          title={locked ? "Complete payment to chat with your doctor" : undefined}
+          title={locked ? i18n.lockedTooltip : undefined}
           style={locked ? { opacity: 0.5, cursor: "not-allowed" } : undefined}
         >
           <Stethoscope className="mr-1 inline size-3.5" aria-hidden />
-          Doctor
+          {i18n.doctorTab}
         </button>
       </div>
 
@@ -85,7 +116,7 @@ function PatientConversation({
           />
         ) : locked ? (
           <p className="rounded-md border border-[var(--portal-warning)] bg-[var(--portal-warning-soft)] px-4 py-3 text-sm text-[var(--portal-warning-text)]">
-            Complete payment to unlock chat with your doctor.
+            {i18n.lockedBody}
           </p>
         ) : (
           <ConsultationChat
@@ -108,12 +139,14 @@ export function MessagesShell({
   initialOpenId = null,
   initialOpenChannel = "clinic",
   unavailableMessage,
+  i18n = DEFAULT_I18N,
 }: {
   items: AccountAppointment[];
   unreadById?: Record<string, AccountThreadUnread>;
   initialOpenId?: string | null;
   initialOpenChannel?: "clinic" | "doctor";
   unavailableMessage?: string | null;
+  i18n?: MessagesI18n;
 }) {
   if (unavailableMessage) {
     return (
@@ -131,7 +164,7 @@ export function MessagesShell({
       orderNumber: item.orderNumber ?? null,
       orderHref: "/account/bookings",
       name: item.fullName,
-      subtitle: `${consultLabel(item.consultationType)} · ${item.countryCode.toUpperCase()}`,
+      subtitle: `${consultLabel(item.consultationType, i18n)} · ${item.countryCode.toUpperCase()}`,
       preview: null,
       timestamp: item.createdAt,
       unreadCount: unread,
@@ -149,11 +182,12 @@ export function MessagesShell({
           <PatientConversation
             item={item}
             defaultChannel={thread.id === initialOpenId ? initialOpenChannel : "clinic"}
+            i18n={i18n}
           />
         );
       }}
-      emptyTitle="No conversations"
-      emptyDescription="Once you have a booking you can message the clinic, and chat with your doctor after payment."
+      emptyTitle={i18n.emptyTitle}
+      emptyDescription={i18n.emptyBody}
     />
   );
 }

@@ -3,6 +3,8 @@ import { fetchAccountAppointments } from "@/lib/api/account-appointments-api";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { PatientCalendarUI } from "./ui";
 import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +13,8 @@ function getRequestNowMs() {
 }
 
 export default async function AccountCalendarPage() {
-  const history = await fetchAccountAppointments();
+  const [history, locale] = await Promise.all([fetchAccountAppointments(), getPageLocale()]);
+  const { account: a } = loadLocaleBundle(locale);
   const items: CalendarItem[] = history.ok
     ? history.data.items
         .filter((a) => a.scheduledAt)
@@ -44,28 +47,28 @@ export default async function AccountCalendarPage() {
   return (
     <div className="gh-patient-page gh-patient-calendar-page">
       <PageHeader
-        eyebrow="My schedule"
+        eyebrow={a.calendar.eyebrow}
         title={
           <span className="inline-flex items-center gap-2">
             <CalendarRange className="size-6 text-[var(--portal-primary)]" aria-hidden />
-            Calendar
+            {a.calendar.title}
           </span>
         }
-        description="Your scheduled consultations. Pick a day to see details and join links."
+        description={a.calendar.subtitle}
       />
 
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: "Scheduled", value: String(items.length), hint: "Consultations on calendar" },
-          { label: "Upcoming", value: String(upcoming), hint: "Future appointments" },
-          { label: "Meet links", value: String(meetReady), hint: "Ready to join" },
-          { label: "Markets", value: String(countries), hint: "Countries represented" },
+          { label: a.calendar.sumScheduled, value: String(items.length), hint: a.calendar.sumScheduledHint },
+          { label: a.calendar.sumUpcoming, value: String(upcoming), hint: a.calendar.sumUpcomingHint },
+          { label: a.calendar.sumMeetLinks, value: String(meetReady), hint: a.calendar.sumMeetLinksHint },
+          { label: a.calendar.sumMarkets, value: String(countries), hint: a.calendar.sumMarketsHint },
         ]}
       />
 
       {history.ok ? (
-        <PatientCalendarUI items={items} defaultTz={defaultTz} />
+        <PatientCalendarUI items={items} defaultTz={defaultTz} emptyLabel={a.calendar.emptyDay} />
       ) : (
         <div className="gh-patient-empty-state rounded-[var(--radius-card-sm)] border border-[var(--portal-line)] bg-[var(--portal-surface-elevated)] px-5 py-4">
           <p className="text-sm text-[var(--portal-muted)]">{history.message}</p>

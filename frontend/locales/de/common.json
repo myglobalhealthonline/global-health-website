@@ -536,7 +536,8 @@
     "orderSummary": "Bestellübersicht",
     "subtotalItems": "Zwischensumme ({count} {unit})",
     "shipping": "Versand",
-    "planSavings": "Plan-Ersparnis",    "total": "Gesamt",
+    "planSavings": "Plan-Ersparnis",
+    "total": "Gesamt",
     "corporateOff": "Rabatt",
     "continueToCheckout": "Weiter zur Kasse",
     "trustSecure": "Sicherer Checkout powered by Stripe",
@@ -597,7 +598,8 @@
     "successTitle": "Zahlung erhalten",
     "successBody": "Ihre Bestellung ist bestätigt. Ein Beleg wurde Ihnen per E-Mail zugesendet.",
     "processingTitle": "Zahlung wird bestätigt…",
-    "processingBody": "Ihre Zahlung wird bestätigt. Das dauert in der Regel nur einen Moment — diese Seite wird automatisch aktualisiert.",    "orderRef": "ORDER #{id}",
+    "processingBody": "Ihre Zahlung wird bestätigt. Das dauert in der Regel nur einen Moment — diese Seite wird automatisch aktualisiert.",
+    "orderRef": "ORDER #{id}",
     "shipping": "Versand",
     "totalPaid": "Gesamt bezahlt",
     "receiptError": "Wir konnten den Beleg gerade nicht laden. Ihre Zahlung ist bestätigt; prüfen Sie Ihre E-Mails für die Bestelldetails.",
@@ -680,5 +682,14 @@
     "notFound": "Karte nicht gefunden",
     "checkNumber": "Prüfen Sie, ob die Kartennummer korrekt ist.",
     "couldNotVerify": "Karte konnte nicht geprüft werden"
+  },
+  "portalChrome": {
+    "account": "Konto",
+    "mainSite": "Hauptseite",
+    "signOut": "Abmelden",
+    "closeNavigation": "Navigation schließen",
+    "openNavigation": "Navigation öffnen",
+    "closeMenu": "Menü schließen",
+    "allCaughtUp": "Alles erledigt."
   }
 }

@@ -30,6 +30,77 @@ export type EditDraftDoc = {
   metadata?: Record<string, string> | null;
 };
 
+export type ConsultationDocumentsModalCopy = {
+  title: string;
+  subtitle: string;
+  closeAria: string;
+  closeDialogAria: string;
+  tabOverview: string;
+  tabExams: string;
+  tabMedicine: string;
+  tabAbsence: string;
+  tabCertificate: string;
+  editingDraftNotice: string;
+  loading: string;
+  loadContextError: string;
+  noDocxTemplate: string;
+  registrationMissingNotice: string;
+  fieldsAutoNotice: string;
+  overviewIntro: string;
+  cardExamsTitle: string;
+  cardExamsDesc: string;
+  cardMedicineTitle: string;
+  cardMedicineDesc: string;
+  cardAbsenceTitle: string;
+  cardAbsenceDesc: string;
+  cardCertificateTitle: string;
+  cardCertificateDesc: string;
+  overviewFooterNote: string;
+  examsLabel: string;
+  examsHint: string;
+  examsPlaceholder: string;
+  examsNotesLabel: string;
+  examsNotesPlaceholder: string;
+  generatePdf: string;
+  examsRequiredError: string;
+  medicineIntro: string;
+  medicationPlaceholderRequired: string;
+  medicationPlaceholder: string;
+  addMedication: string;
+  pharmacyLabel: string;
+  pharmacyPlaceholderFromBooking: string;
+  pharmacyPlaceholderDefault: string;
+  medicationRequiredError: string;
+  startDateLabel: string;
+  endDateLabel: string;
+  absenceReasonLabel: string;
+  absenceReasonPlaceholder: string;
+  endDateRequiredError: string;
+  certQrNotice: string;
+  certNameLabel: string;
+  certNamePlaceholder: string;
+  certDateTypeLabel: string;
+  certDateSingle: string;
+  certDateRange: string;
+  certDateNone: string;
+  certFromLabel: string;
+  certToLabel: string;
+  certReasonLabel: string;
+  certReasonPlaceholder: string;
+  certNameRequiredError: string;
+  certDateRequiredError: string;
+  certEndDateRequiredError: string;
+  generateFailed: string;
+  nationalPortalDefault: string;
+  prescriptionPortalSuccess: string;
+  prescriptionSuccessPdf: string;
+  prescriptionSuccessNoPdf: string;
+  otherDocSuccessPdf: string;
+  otherDocSuccessNoPdf: string;
+  genericSuccessPdf: string;
+  genericSuccessNoPdf: string;
+};
+
 export function tabForGeneratedDocumentType(documentType: string): ConsultationDocTabId {
   switch (documentType) {
     case "EXAMS_PRESCRIPTION":
@@ -103,14 +174,6 @@ function applyEditDraftToForm(
   }
 }
 
-const TABS: { id: ConsultationDocTabId; label: string }[] = [
-  { id: "overview", label: "Overview" },
-  { id: "exams", label: "Exams" },
-  { id: "medicine", label: "Prescription" },
-  { id: "absence", label: "Absence" },
-  { id: "certificate", label: "Certificate" },
-];
-
 export function ConsultationDocumentsModal({
   appointmentId,
   open,
@@ -118,6 +181,7 @@ export function ConsultationDocumentsModal({
   initialTab,
   editDraft,
   onDocumentsChange,
+  copy,
 }: {
   appointmentId: string;
   open: boolean;
@@ -126,7 +190,15 @@ export function ConsultationDocumentsModal({
   /** Pre-fill form fields when editing a draft from Review & send. */
   editDraft?: EditDraftDoc | null;
   onDocumentsChange?: () => void;
+  copy: ConsultationDocumentsModalCopy;
 }) {
+  const TABS: { id: ConsultationDocTabId; label: string }[] = [
+    { id: "overview", label: copy.tabOverview },
+    { id: "exams", label: copy.tabExams },
+    { id: "medicine", label: copy.tabMedicine },
+    { id: "absence", label: copy.tabAbsence },
+    { id: "certificate", label: copy.tabCertificate },
+  ];
   const [tab, setTab] = useState<ConsultationDocTabId>(initialTab ?? "overview");
   const [context, setContext] = useState<DocumentContext | null>(null);
   const [contextLoading, setContextLoading] = useState(false);
@@ -158,19 +230,19 @@ export function ConsultationDocumentsModal({
       );
       const json = await parseDoctorApiJson<{ ok?: boolean; data?: DocumentContext }>(res);
       if (!json) {
-        setError(doctorApiErrorMessage(res, null, "Could not load patient context."));
+        setError(doctorApiErrorMessage(res, null, copy.loadContextError));
         return;
       }
       if (json.ok && json.data) {
         setContext(json.data);
         setPharmacy((prev) => prev || json.data!.patient.pharmacy || "");
       } else {
-        setError(doctorApiErrorMessage(res, json, "Could not load patient context."));
+        setError(doctorApiErrorMessage(res, json, copy.loadContextError));
       }
     } finally {
       setContextLoading(false);
     }
-  }, [appointmentId]);
+  }, [appointmentId, copy.loadContextError]);
 
   useEffect(() => {
     // Client-only mount flag to gate portal rendering until hydrated.
@@ -274,7 +346,7 @@ export function ConsultationDocumentsModal({
         };
       }>(res);
       if (!res.ok || !json?.ok) {
-        setError(doctorApiErrorMessage(res, json, "Generate failed"));
+        setError(doctorApiErrorMessage(res, json, copy.generateFailed));
         return;
       }
       setEditingDocId(null);
@@ -292,30 +364,25 @@ export function ConsultationDocumentsModal({
       if (type === "PRESCRIPTION" && json.data?.healthPortalUrl) {
         setSuccess(
           pdfUrl
-            ? `PDF opened — review below, then submit via ${json.data.healthPortalLabel ?? "national portal"}.`
-            : "Document generated — review below when ready.",
+            ? copy.prescriptionPortalSuccess.replace(
+                "{portal}",
+                json.data.healthPortalLabel ?? copy.nationalPortalDefault,
+              )
+            : copy.prescriptionSuccessNoPdf,
         );
       } else if (type === "PRESCRIPTION") {
-        setSuccess(
-          pdfUrl
-            ? "PDF opened in a new tab — review below when ready."
-            : "Document generated — open Review & send below.",
-        );
+        setSuccess(pdfUrl ? copy.prescriptionSuccessPdf : copy.prescriptionSuccessNoPdf);
       } else if (type === "EXAMS_PRESCRIPTION" || type === "ABSENCE_CERTIFICATE" || type === "CUSTOM_CERTIFICATE") {
-        setSuccess(
-          pdfUrl
-            ? "PDF opened in a new tab — review and send below when ready."
-            : "Document generated — open Review & send below.",
-        );
+        setSuccess(pdfUrl ? copy.otherDocSuccessPdf : copy.otherDocSuccessNoPdf);
       } else {
-        setSuccess(pdfUrl ? "PDF generated and opened." : "Document generated.");
+        setSuccess(pdfUrl ? copy.genericSuccessPdf : copy.genericSuccessNoPdf);
       }
     });
   }
 
   function generateExams() {
     if (!exams.trim()) {
-      setError("Enter at least one examination.");
+      setError(copy.examsRequiredError);
       return;
     }
     void generate("EXAMS_PRESCRIPTION", {
@@ -331,7 +398,7 @@ export function ConsultationDocumentsModal({
       if (v) fields[`medication${i + 1}`] = v;
     });
     if (!fields.medication1) {
-      setError("Enter at least one medication.");
+      setError(copy.medicationRequiredError);
       return;
     }
     if (pharmacy.trim()) fields.pharmacy = pharmacy.trim();
@@ -340,7 +407,7 @@ export function ConsultationDocumentsModal({
 
   function generateAbsence() {
     if (!endDate.trim()) {
-      setError("End date is required.");
+      setError(copy.endDateRequiredError);
       return;
     }
     void generate("ABSENCE_CERTIFICATE", {
@@ -352,15 +419,15 @@ export function ConsultationDocumentsModal({
 
   function generateCertificate() {
     if (!certName.trim()) {
-      setError("Certificate name is required.");
+      setError(copy.certNameRequiredError);
       return;
     }
     if (certDateMode === "single" && !certSingleDate.trim()) {
-      setError("Date is required.");
+      setError(copy.certDateRequiredError);
       return;
     }
     if (certDateMode === "range" && !certEndDate.trim()) {
-      setError("End date is required.");
+      setError(copy.certEndDateRequiredError);
       return;
     }
     const fields: Record<string, string> = { certificateName: certName.trim() };
@@ -384,7 +451,7 @@ export function ConsultationDocumentsModal({
       <button
         type="button"
         className="absolute inset-0 bg-black/75"
-        aria-label="Close dialog"
+        aria-label={copy.closeDialogAria}
         onClick={onClose}
       />
       <div className="gh-doctor-doc-modal-panel relative z-10 flex max-h-[min(92vh,900px)] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-[var(--portal-line)] bg-white shadow-2xl">
@@ -394,18 +461,15 @@ export function ConsultationDocumentsModal({
               id="consultation-docs-title"
               className="text-lg font-bold text-[var(--portal-text)]"
             >
-              Consultation documents
+              {copy.title}
             </h2>
-            <p className="text-xs text-[var(--portal-muted)]">
-              Patient &amp; prescriber details are filled from records — enter clinical
-              content only.
-            </p>
+            <p className="text-xs text-[var(--portal-muted)]">{copy.subtitle}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="rounded-md p-1 text-[var(--portal-muted)] hover:bg-[var(--portal-well)]"
-            aria-label="Close"
+            aria-label={copy.closeAria}
           >
             <X className="size-5" />
           </button>
@@ -413,7 +477,7 @@ export function ConsultationDocumentsModal({
 
         <div className="gh-doctor-doc-modal-tabs shrink-0 overflow-x-auto border-b border-[var(--portal-line)] bg-white px-3 py-1">
           <PortalTabs
-            ariaLabel="Document type"
+            ariaLabel={copy.title}
             value={tab}
             onChange={(v) => setTab(v as ConsultationDocTabId)}
             items={TABS.map((t) => ({ value: t.id, label: t.label }))}
@@ -425,98 +489,87 @@ export function ConsultationDocumentsModal({
           {success ? <p className="mb-3 text-sm text-emerald-700">{success}</p> : null}
           {editingDocId ? (
             <p className="mb-3 rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-900">
-              Editing a draft — generate again to replace the PDF.
+              {copy.editingDraftNotice}
             </p>
           ) : null}
 
           {contextLoading ? (
             <p className="mb-4 flex items-center gap-2 text-sm text-[var(--portal-muted)]">
               <Loader2 className="size-4 animate-spin" aria-hidden />
-              Loading…
+              {copy.loading}
             </p>
           ) : context && tab === "overview" ? (
             <div className="mb-4 space-y-2">
               {!context.hasDocxTemplate ? (
                 <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
-                  Branded Word templates are not available for {context.countryLabel};
-                  PDFs use the HTML layout instead.
+                  {copy.noDocxTemplate.replace("{country}", context.countryLabel)}
                 </p>
               ) : null}
               {context.doctor.registrationMissing ? (
                 <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
-                  Add your {context.countryLabel} registration in your doctor profile so it
-                  appears on generated documents.
+                  {copy.registrationMissingNotice.replace("{country}", context.countryLabel)}
                 </p>
               ) : null}
             </div>
           ) : null}
 
           {(tab === "exams" || tab === "medicine" || tab === "absence" || tab === "certificate") && !contextLoading ? (
-            <p className="mb-3 text-xs text-[var(--portal-muted)]">
-              Patient and prescriber details from records are applied to the PDF automatically
-              — enter clinical content only.
-            </p>
+            <p className="mb-3 text-xs text-[var(--portal-muted)]">{copy.fieldsAutoNotice}</p>
           ) : null}
 
           {tab === "overview" ? (
             <div className="space-y-3">
-              <p className="text-sm text-[var(--portal-muted)]">
-                Choose a document type. Only the fields below need your input; name,
-                address, dates, and registration are applied automatically.
-              </p>
+              <p className="text-sm text-[var(--portal-muted)]">{copy.overviewIntro}</p>
               <div className="grid gap-2 sm:grid-cols-2">
                 <OverviewCard
                   icon={ClipboardList}
-                  title="Exams prescription"
-                  description="List tests or imaging — send from Documents tab after review."
+                  title={copy.cardExamsTitle}
+                  description={copy.cardExamsDesc}
                   onClick={() => setTab("exams")}
                 />
                 <OverviewCard
                   icon={Pill}
-                  title="Medicine prescription"
-                  description="Up to 7 lines — review and send, or submit via national portal."
+                  title={copy.cardMedicineTitle}
+                  description={copy.cardMedicineDesc}
                   onClick={() => setTab("medicine")}
                 />
                 <OverviewCard
                   icon={Stethoscope}
-                  title="Absence certificate"
-                  description="Unfit for work dates — send from Documents tab after review."
+                  title={copy.cardAbsenceTitle}
+                  description={copy.cardAbsenceDesc}
                   onClick={() => setTab("absence")}
                 />
                 <OverviewCard
                   icon={FileText}
-                  title="Custom certificate"
-                  description="Fully customisable certificate with QR authentication — set title, date, and reason."
+                  title={copy.cardCertificateTitle}
+                  description={copy.cardCertificateDesc}
                   onClick={() => setTab("certificate")}
                 />
               </div>
-              <p className="text-xs text-[var(--portal-muted)]">
-                Medical notes and Review &amp; send live on the Documents tab (not in this
-                dialog).
-              </p>
+              <p className="text-xs text-[var(--portal-muted)]">{copy.overviewFooterNote}</p>
             </div>
           ) : null}
 
           {tab === "exams" ? (
             <div className="space-y-3">
               <label className="block text-sm font-semibold">
-                Examinations requested <span className="text-red-600">*</span>
+                {copy.examsLabel} <span className="text-red-600">*</span>
               </label>
-              <p className="text-xs text-[var(--portal-muted)]">One test per line</p>
+              <p className="text-xs text-[var(--portal-muted)]">{copy.examsHint}</p>
               <textarea
                 value={exams}
                 onChange={(e) => setExams(e.target.value)}
                 rows={5}
                 className="gh-input w-full"
-                placeholder={"Full blood count\nChest X-Ray"}
+                placeholder={copy.examsPlaceholder}
               />
-              <label className="block text-sm font-semibold">Additional notes (optional)</label>
+              <label className="block text-sm font-semibold">{copy.examsNotesLabel}</label>
               <textarea
                 value={examsNotes}
                 onChange={(e) => setExamsNotes(e.target.value)}
                 rows={2}
                 className="gh-input w-full"
-                placeholder="e.g. Fasting from midnight"
+                placeholder={copy.examsNotesPlaceholder}
               />
               <button
                 type="button"
@@ -529,17 +582,14 @@ export function ConsultationDocumentsModal({
                 ) : (
                   <FileText className="size-3.5" aria-hidden />
                 )}
-                Generate PDF
+                {copy.generatePdf}
               </button>
             </div>
           ) : null}
 
           {tab === "medicine" ? (
             <div className="space-y-3">
-              <p className="text-sm text-[var(--portal-muted)]">
-                PDF for the patient record — review and send by email below, or submit via your
-                national health portal when required.
-              </p>
+              <p className="text-sm text-[var(--portal-muted)]">{copy.medicineIntro}</p>
               {meds.map((m, i) => (
                 <input
                   key={i}
@@ -550,7 +600,11 @@ export function ConsultationDocumentsModal({
                     next[i] = e.target.value;
                     setMeds(next);
                   }}
-                  placeholder={i === 0 ? "Medication 1 (required)" : `Medication ${i + 1}`}
+                  placeholder={
+                    i === 0
+                      ? copy.medicationPlaceholderRequired
+                      : copy.medicationPlaceholder.replace("{n}", String(i + 1))
+                  }
                   className="gh-input w-full"
                 />
               ))}
@@ -560,18 +614,21 @@ export function ConsultationDocumentsModal({
                   className="text-xs font-semibold text-[var(--portal-primary)]"
                   onClick={() => setMeds([...meds, ""])}
                 >
-                  + Add medication
+                  {copy.addMedication}
                 </button>
               ) : null}
-              <label className="block text-sm font-semibold">Pharmacy (optional)</label>
+              <label className="block text-sm font-semibold">{copy.pharmacyLabel}</label>
               <input
                 type="text"
                 value={pharmacy}
                 onChange={(e) => setPharmacy(e.target.value)}
                 placeholder={
                   context?.patient.pharmacy
-                    ? `From booking: ${context.patient.pharmacy}`
-                    : "Pharmacy name and location"
+                    ? copy.pharmacyPlaceholderFromBooking.replace(
+                        "{pharmacy}",
+                        context.patient.pharmacy,
+                      )
+                    : copy.pharmacyPlaceholderDefault
                 }
                 className="gh-input w-full"
               />
@@ -586,7 +643,7 @@ export function ConsultationDocumentsModal({
                 ) : (
                   <FileText className="size-3.5" aria-hidden />
                 )}
-                Generate PDF
+                {copy.generatePdf}
               </button>
             </div>
           ) : null}
@@ -595,7 +652,7 @@ export function ConsultationDocumentsModal({
             <div className="space-y-3">
               <div className="grid gap-2 sm:grid-cols-2">
                 <div>
-                  <label className="text-sm font-semibold">Start date</label>
+                  <label className="text-sm font-semibold">{copy.startDateLabel}</label>
                   <input
                     type="date"
                     value={startDate}
@@ -605,7 +662,7 @@ export function ConsultationDocumentsModal({
                 </div>
                 <div>
                   <label className="text-sm font-semibold">
-                    End date <span className="text-red-600">*</span>
+                    {copy.endDateLabel} <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="date"
@@ -616,12 +673,12 @@ export function ConsultationDocumentsModal({
                   />
                 </div>
               </div>
-              <label className="block text-sm font-semibold">Reason (optional)</label>
+              <label className="block text-sm font-semibold">{copy.absenceReasonLabel}</label>
               <input
                 type="text"
                 value={absenceReason}
                 onChange={(e) => setAbsenceReason(e.target.value)}
-                placeholder="Defaults to medical confidentiality if blank"
+                placeholder={copy.absenceReasonPlaceholder}
                 className="gh-input w-full"
               />
               <button
@@ -635,28 +692,25 @@ export function ConsultationDocumentsModal({
                 ) : (
                   <FileText className="size-3.5" aria-hidden />
                 )}
-                Generate PDF
+                {copy.generatePdf}
               </button>
             </div>
           ) : null}
 
           {tab === "certificate" ? (
             <div className="space-y-3">
-              <p className="text-xs text-[var(--portal-muted)]">
-                A QR code for authenticity verification is embedded automatically. Scan it to
-                confirm the certificate ID matches the one on the document.
-              </p>
+              <p className="text-xs text-[var(--portal-muted)]">{copy.certQrNotice}</p>
               <label className="block text-sm font-semibold">
-                Certificate name <span className="text-red-600">*</span>
+                {copy.certNameLabel} <span className="text-red-600">*</span>
               </label>
               <input
                 type="text"
                 value={certName}
                 onChange={(e) => setCertName(e.target.value)}
-                placeholder="e.g. Medical Certificate, Fitness Certificate"
+                placeholder={copy.certNamePlaceholder}
                 className="gh-input w-full"
               />
-              <label className="block text-sm font-semibold">Date type</label>
+              <label className="block text-sm font-semibold">{copy.certDateTypeLabel}</label>
               <div className="flex gap-2">
                 <button
                   type="button"
@@ -667,7 +721,7 @@ export function ConsultationDocumentsModal({
                       : "border border-[var(--portal-line)] text-[var(--portal-muted)]"
                   }`}
                 >
-                  Single day
+                  {copy.certDateSingle}
                 </button>
                 <button
                   type="button"
@@ -678,7 +732,7 @@ export function ConsultationDocumentsModal({
                       : "border border-[var(--portal-line)] text-[var(--portal-muted)]"
                   }`}
                 >
-                  Date range
+                  {copy.certDateRange}
                 </button>
                 <button
                   type="button"
@@ -689,13 +743,13 @@ export function ConsultationDocumentsModal({
                       : "border border-[var(--portal-line)] text-[var(--portal-muted)]"
                   }`}
                 >
-                  No date
+                  {copy.certDateNone}
                 </button>
               </div>
               {certDateMode === "single" ? (
                 <div>
                   <label className="text-sm font-semibold">
-                    From <span className="text-red-600">*</span>
+                    {copy.certFromLabel} <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="date"
@@ -708,7 +762,7 @@ export function ConsultationDocumentsModal({
               ) : certDateMode === "range" ? (
                 <div className="grid gap-2 sm:grid-cols-2">
                   <div>
-                    <label className="text-sm font-semibold">From</label>
+                    <label className="text-sm font-semibold">{copy.certFromLabel}</label>
                     <input
                       type="date"
                       value={certStartDate}
@@ -718,7 +772,7 @@ export function ConsultationDocumentsModal({
                   </div>
                   <div>
                     <label className="text-sm font-semibold">
-                      To <span className="text-red-600">*</span>
+                      {copy.certToLabel} <span className="text-red-600">*</span>
                     </label>
                     <input
                       type="date"
@@ -730,12 +784,12 @@ export function ConsultationDocumentsModal({
                   </div>
                 </div>
               ) : null}
-              <label className="block text-sm font-semibold">Reason (optional)</label>
+              <label className="block text-sm font-semibold">{copy.certReasonLabel}</label>
               <textarea
                 value={certReason}
                 onChange={(e) => setCertReason(e.target.value)}
                 rows={2}
-                placeholder="Purpose or reason for the certificate"
+                placeholder={copy.certReasonPlaceholder}
                 className="gh-input w-full"
               />
               <button
@@ -749,7 +803,7 @@ export function ConsultationDocumentsModal({
                 ) : (
                   <FileText className="size-3.5" aria-hidden />
                 )}
-                Generate PDF
+                {copy.generatePdf}
               </button>
             </div>
           ) : null}

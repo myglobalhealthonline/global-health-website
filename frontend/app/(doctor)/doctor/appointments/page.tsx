@@ -3,7 +3,6 @@ import { CalendarDays, ChevronRight, SearchX, Video } from "lucide-react";
 import { fetchDoctorAppointments, type DoctorAppointment } from "@/lib/api/doctor-api";
 import {
   doctorAppointmentView,
-  doctorAppointmentStatusLabel,
   doctorAppointmentViewTone,
 } from "@/lib/api/appointment-status-labels";
 import {
@@ -16,6 +15,8 @@ import {
 import { PortalMobileCard } from "@/components/PortalMobileCard";
 import { AppointmentCard, type AppointmentCardTone } from "@/components/AppointmentCard";
 import { formatAppTime } from "@/lib/format-datetime";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 // Same-shape "in progress now" check as the CommandBand instrument on
 // /doctor (DESIGN.md §6.1) — scheduled time has passed, the row is still
@@ -51,6 +52,14 @@ export default async function DoctorAppointmentsPage({
 }: {
   searchParams?: Promise<SearchParams>;
 }) {
+  const locale = await getPageLocale();
+  const { doctor: d } = loadLocaleBundle(locale);
+  const viewStatusText: Record<string, string> = {
+    waiting_payment: d.appointments.statusWaitingPayment,
+    confirmed: d.appointments.statusConfirmed,
+    cancelled: d.appointments.statusCancelled,
+    concluded: d.appointments.statusConcluded,
+  };
   const sp = searchParams ? await searchParams : {};
   const view = pick(sp, "view");
   const search = pick(sp, "search");
@@ -96,12 +105,12 @@ export default async function DoctorAppointmentsPage({
   return (
     <>
       <PageHeader
-        eyebrow="Consultation queue"
-        title="My appointments"
-        description="Review today's queue, find patient context quickly, and open the consultation workspace without scanning a wide table."
+        eyebrow={d.appointments.eyebrow}
+        title={d.appointments.title}
+        description={d.appointments.description}
         actions={
           <Link href="/doctor/calendar" className="gh-btn gh-btn-soft text-sm">
-            Calendar view
+            {d.appointments.calendarView}
           </Link>
         }
       />
@@ -111,27 +120,27 @@ export default async function DoctorAppointmentsPage({
           className="mb-4"
           items={[
             {
-              label: "Visible results",
+              label: d.appointments.visibleResults,
               value: appointments.length,
-              hint: `${result.data.pagination.total} total`,
+              hint: d.common.totalHint.replace("{total}", String(result.data.pagination.total)),
               tone: "brand",
             },
             {
-              label: "Open consults",
+              label: d.appointments.openConsults,
               value: openAppointments,
-              hint: "Need clinical attention",
+              hint: d.appointments.openConsultsHint,
               tone: openAppointments > 0 ? "warning" : "neutral",
             },
             {
-              label: "Meeting links",
+              label: d.appointments.meetingLinks,
               value: readyToJoin,
-              hint: "Ready to join",
+              hint: d.appointments.meetingLinksHint,
               tone: readyToJoin > 0 ? "success" : "neutral",
             },
             {
-              label: "Not finalized",
+              label: d.appointments.notFinalized,
               value: unfinalized,
-              hint: "Notes or documents pending",
+              hint: d.appointments.notFinalizedHint,
               tone: unfinalized > 0 ? "warning" : "neutral",
             },
           ]}
@@ -140,48 +149,48 @@ export default async function DoctorAppointmentsPage({
 
       <details className="gh-card gh-doctor-filter-card mb-4 p-4" open>
         <summary className="flex cursor-pointer items-center gap-2 text-sm font-semibold sm:pointer-events-none sm:cursor-default">
-          <span>Filters</span>
+          <span>{d.common.filters}</span>
           {activeFilterCount > 0 ? (
-            <Pill tone="brand">{activeFilterCount} active</Pill>
+            <Pill tone="brand">{d.common.activeCount.replace("{count}", String(activeFilterCount))}</Pill>
           ) : null}
         </summary>
         <form className="gh-doctor-filter-grid mt-3 grid grid-cols-1 gap-3 sm:grid-cols-6">
           <label className="flex flex-col gap-1 sm:col-span-2">
-            <span className="gh-field-label">Search</span>
+            <span className="gh-field-label">{d.common.search}</span>
             <input
               name="search"
               defaultValue={search ?? ""}
-              placeholder="Patient name or email"
+              placeholder={d.appointments.searchPlaceholder}
               className="gh-input"
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="gh-field-label">Status</span>
+            <span className="gh-field-label">{d.common.status}</span>
             <select name="view" defaultValue={view ?? ""} className="gh-select">
-              <option value="">Any</option>
-              <option value="waiting_payment">Booked – waiting payment</option>
-              <option value="confirmed">Booking confirmed</option>
-              <option value="cancelled">Cancelled</option>
-              <option value="concluded">Concluded</option>
+              <option value="">{d.common.any}</option>
+              <option value="waiting_payment">{d.appointments.statusWaitingPayment}</option>
+              <option value="confirmed">{d.appointments.statusConfirmed}</option>
+              <option value="cancelled">{d.appointments.statusCancelled}</option>
+              <option value="concluded">{d.appointments.statusConcluded}</option>
             </select>
           </label>
           <label className="flex flex-col gap-1">
-            <span className="gh-field-label">Type</span>
+            <span className="gh-field-label">{d.common.type}</span>
             <select
               name="consultationType"
               defaultValue={consultationType ?? ""}
               className="gh-select"
             >
-              <option value="">Any</option>
-              <option value="general">General</option>
-              <option value="specialist">Specialist</option>
-              <option value="prescription">Prescription</option>
-              <option value="health-test">Health test</option>
-              <option value="follow-up">Follow-up</option>
+              <option value="">{d.common.any}</option>
+              <option value="general">{d.appointments.typeGeneral}</option>
+              <option value="specialist">{d.appointments.typeSpecialist}</option>
+              <option value="prescription">{d.appointments.typePrescription}</option>
+              <option value="health-test">{d.appointments.typeHealthTest}</option>
+              <option value="follow-up">{d.appointments.typeFollowUp}</option>
             </select>
           </label>
           <label className="flex flex-col gap-1">
-            <span className="gh-field-label">From</span>
+            <span className="gh-field-label">{d.common.from}</span>
             <input
               type="date"
               name="from"
@@ -190,7 +199,7 @@ export default async function DoctorAppointmentsPage({
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="gh-field-label">To</span>
+            <span className="gh-field-label">{d.common.to}</span>
             <input
               type="date"
               name="to"
@@ -199,11 +208,11 @@ export default async function DoctorAppointmentsPage({
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="gh-field-label">Finalized</span>
+            <span className="gh-field-label">{d.appointments.finalized}</span>
             <select name="finalized" defaultValue={finalized ?? ""} className="gh-select">
-              <option value="">Any</option>
-              <option value="false">Open (not finalized)</option>
-              <option value="true">Finalized</option>
+              <option value="">{d.common.any}</option>
+              <option value="false">{d.appointments.finalizedOpen}</option>
+              <option value="true">{d.appointments.finalizedDone}</option>
             </select>
           </label>
           <label className="gh-doctor-check-row flex items-end gap-2 pb-2 sm:col-span-2">
@@ -214,17 +223,17 @@ export default async function DoctorAppointmentsPage({
               defaultChecked={openOnly === "true"}
               className="size-4"
             />
-            <span className="text-sm">Legacy open window (30h)</span>
+            <span className="text-sm">{d.appointments.legacyOpenWindow}</span>
           </label>
           <div className="gh-doctor-filter-actions sm:col-span-6 flex items-center gap-2">
             <button type="submit" className="gh-btn gh-btn-primary text-sm">
-              Apply
+              {d.common.apply}
             </button>
             <Link
               href="/doctor/appointments"
               className="gh-btn gh-btn-soft text-sm"
             >
-              Reset
+              {d.common.reset}
             </Link>
           </div>
         </form>
@@ -236,7 +245,7 @@ export default async function DoctorAppointmentsPage({
             {result.message}
           </p>
           <Link href={currentUrl} className="gh-btn gh-btn-soft text-sm mt-3 inline-flex">
-            Try again
+            {d.common.tryAgain}
           </Link>
         </div>
       ) : appointments.length === 0 ? (
@@ -245,11 +254,11 @@ export default async function DoctorAppointmentsPage({
             className="gh-doctor-empty-state"
             icon={<SearchX className="size-5" aria-hidden />}
             assetSrc="/images/portal/obsidian/empty-queue.svg"
-            title="No appointments match these filters"
-            description="Try widening the date range or clearing status filters. New assigned consultations appear here as soon as they are scheduled."
+            title={d.appointments.emptyFilteredTitle}
+            description={d.appointments.emptyFilteredDesc}
             action={
               <Link href="/doctor/appointments" className="gh-btn gh-btn-soft text-sm">
-                Clear filters
+                {d.common.clearFilters}
               </Link>
             }
           />
@@ -258,8 +267,8 @@ export default async function DoctorAppointmentsPage({
             className="gh-doctor-empty-state"
             icon={<CalendarDays className="size-5" aria-hidden />}
             assetSrc="/images/portal/obsidian/empty-queue.svg"
-            title="No appointments yet"
-            description="New assigned consultations will appear here as soon as they are scheduled."
+            title={d.appointments.emptyTitle}
+            description={d.appointments.emptyDesc}
           />
         )
       ) : (
@@ -278,7 +287,7 @@ export default async function DoctorAppointmentsPage({
                           month: "short",
                           day: "2-digit",
                         })
-                      : "Unscheduled"
+                      : d.common.unscheduled
                   }
                   person={a.fullName}
                   service={<span className="capitalize">{a.consultationType}</span>}
@@ -289,7 +298,7 @@ export default async function DoctorAppointmentsPage({
                       tone={live ? "live" : doctorAppointmentViewTone(doctorAppointmentView(a.status, a.paymentStatus))}
                       withDot
                     >
-                      {live ? "Live now" : doctorAppointmentStatusLabel(a.status, a.paymentStatus)}
+                      {live ? d.common.liveNow : viewStatusText[doctorAppointmentView(a.status, a.paymentStatus)]}
                     </Pill>
                   }
                   action={
@@ -303,15 +312,15 @@ export default async function DoctorAppointmentsPage({
                           size="sm"
                           iconLeft={<Video className="size-3.5" aria-hidden />}
                         >
-                          Join
+                          {d.common.join}
                         </Btn>
                         <Btn href={`/doctor/appointments/${a.id}`} variant="secondary" size="sm">
-                          Open
+                          {d.common.open}
                         </Btn>
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-2 text-xs text-[var(--portal-muted)]">
-                        Meeting link not yet created
+                        {d.appointments.meetingLinkNotCreated}
                         <ChevronRight className="size-4" aria-hidden />
                       </span>
                     )
@@ -333,15 +342,15 @@ export default async function DoctorAppointmentsPage({
                       tone={live ? "live" : doctorAppointmentViewTone(doctorAppointmentView(a.status, a.paymentStatus))}
                       withDot
                     >
-                      {live ? "Live now" : doctorAppointmentStatusLabel(a.status, a.paymentStatus)}
+                      {live ? d.common.liveNow : viewStatusText[doctorAppointmentView(a.status, a.paymentStatus)]}
                     </Pill>
                   }
                   tone={a.status === "COMPLETED" ? "success" : a.status === "CANCELLED" ? "danger" : "neutral"}
                   live={live}
                   meta={[
-                    { label: "Type", value: <span className="capitalize">{a.consultationType}</span> },
+                    { label: d.common.type, value: <span className="capitalize">{a.consultationType}</span> },
                     {
-                      label: "Scheduled",
+                      label: d.appointments.scheduled,
                       value: a.scheduledAt
                         ? new Date(a.scheduledAt).toLocaleString(undefined, {
                             month: "short",
@@ -349,10 +358,10 @@ export default async function DoctorAppointmentsPage({
                             hour: "2-digit",
                             minute: "2-digit",
                           })
-                        : "Unscheduled",
+                        : d.common.unscheduled,
                     },
-                    { label: "Payment", value: a.paymentStatus },
-                    { label: "Meeting", value: a.meetingUrl ? "Ready" : "Not set" },
+                    { label: d.common.payment, value: a.paymentStatus },
+                    { label: d.appointments.meeting, value: a.meetingUrl ? d.appointments.ready : d.common.notSet },
                   ]}
                   actions={
                     <>
@@ -363,14 +372,14 @@ export default async function DoctorAppointmentsPage({
                           rel="noopener noreferrer"
                           className="gh-btn gh-btn-primary text-sm"
                         >
-                          <Video className="size-3.5" aria-hidden /> Join session
+                          <Video className="size-3.5" aria-hidden /> {d.appointments.joinSession}
                         </a>
                       ) : null}
                       <Link
                         href={`/doctor/appointments/${a.id}`}
                         className="gh-btn gh-btn-soft text-sm"
                       >
-                        <CalendarDays className="size-3.5" aria-hidden /> Open workspace
+                        <CalendarDays className="size-3.5" aria-hidden /> {d.appointments.openWorkspace}
                       </Link>
                     </>
                   }
@@ -380,7 +389,10 @@ export default async function DoctorAppointmentsPage({
           </div>
           {result.data.pagination.totalPages > 1 ? (
             <div className="border-t border-[var(--portal-line)] px-4 py-3 text-xs text-[var(--portal-muted)]">
-              Page {result.data.pagination.page} of {result.data.pagination.totalPages} ({result.data.pagination.total} total)
+              {d.common.pagination
+                .replace("{page}", String(result.data.pagination.page))
+                .replace("{totalPages}", String(result.data.pagination.totalPages))
+                .replace("{total}", String(result.data.pagination.total))}
             </div>
           ) : null}
         </div>

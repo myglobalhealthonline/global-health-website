@@ -13,12 +13,26 @@ import type { FormTemplateDto } from "@/lib/api/doctor-api";
  * panel above. Once submitted, the form clears and the page refreshes
  * so the new row renders.
  */
+export type FormFillCopy = {
+  noTemplatesText: string;
+  templateLabel: string;
+  pickTemplateOption: string;
+  sharedSuffix: string;
+  pickTemplateError: string;
+  requiredFieldError: string;
+  couldNotSubmit: string;
+  submitting: string;
+  submitButton: string;
+};
+
 export function FormFillSection({
   appointmentId,
   templates,
+  copy,
 }: {
   appointmentId: string;
   templates: FormTemplateDto[];
+  copy: FormFillCopy;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -33,16 +47,17 @@ export function FormFillSection({
   const currentTemplate = activeTemplates.find((t) => t.id === templateId);
 
   if (activeTemplates.length === 0) {
+    const [prefix, suffix] = copy.noTemplatesText.split("{link}");
     return (
       <p className="text-[13px] text-[var(--portal-muted)]">
-        No active form templates. Build one at{" "}
+        {prefix}
         <Link
           href="/doctor/forms"
           className="font-semibold text-[var(--portal-primary)] hover:underline"
         >
           /doctor/forms
         </Link>
-        .
+        {suffix}
       </p>
     );
   }
@@ -55,7 +70,7 @@ export function FormFillSection({
     event.preventDefault();
     setError(null);
     if (!currentTemplate) {
-      setError("Pick a template.");
+      setError(copy.pickTemplateError);
       return;
     }
     const payloadAnswers: Array<{ key: string; value: string | null }> = [];
@@ -63,7 +78,7 @@ export function FormFillSection({
       const raw = answers[field.key] ?? "";
       const trimmed = raw.trim();
       if (field.required && trimmed === "") {
-        setError(`"${field.label}" is required.`);
+        setError(copy.requiredFieldError.replace("{field}", field.label));
         return;
       }
       payloadAnswers.push({ key: field.key, value: trimmed === "" ? null : trimmed });
@@ -82,7 +97,7 @@ export function FormFillSection({
       );
       const json = (await res.json()) as { ok?: boolean; message?: string };
       if (!res.ok || !json.ok) {
-        setError(json.message ?? "Could not submit");
+        setError(json.message ?? copy.couldNotSubmit);
         return;
       }
       setTemplateId("");
@@ -94,7 +109,7 @@ export function FormFillSection({
   return (
     <form onSubmit={submit} className="mt-3 grid gap-3">
       <label className="flex flex-col gap-1.5">
-        <span className="gh-field-label">Template</span>
+        <span className="gh-field-label">{copy.templateLabel}</span>
         <select
           className="gh-select"
           value={templateId}
@@ -103,11 +118,11 @@ export function FormFillSection({
             setAnswers({});
           }}
         >
-          <option value="">Pick a template…</option>
+          <option value="">{copy.pickTemplateOption}</option>
           {activeTemplates.map((t) => (
             <option key={t.id} value={t.id}>
               {t.title}
-              {t.ownedBySelf ? "" : " (shared)"}
+              {t.ownedBySelf ? "" : ` ${copy.sharedSuffix}`}
             </option>
           ))}
         </select>
@@ -187,7 +202,7 @@ export function FormFillSection({
           className="gh-btn gh-btn-primary"
         >
           <FilePlus2 className="size-3.5" />{" "}
-          {pending ? "Submitting…" : "Submit form"}
+          {pending ? copy.submitting : copy.submitButton}
         </button>
       </div>
     </form>
