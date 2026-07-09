@@ -6,7 +6,7 @@ import { ArrowRight, CalendarDays, CheckCircle2, Lock, ShieldCheck, Stethoscope,
 import { JsonLd } from "@/components/seo/JsonLd";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { countries, getCountryByCode } from "@/data/countries";
-import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
+import { getPublicCountryByCode, getPublicBookingRequirements } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import {
   getCountryDoctors,
@@ -99,6 +99,7 @@ export default async function CountryLangBookPage({
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const bf = c.bookingForm;
   const bp = c.bookPage;
+  const bookingRequirements = await getPublicBookingRequirements(code);
 
   // Same-day GP quick-book entry from the homepage: the patient already chose a
   // language + time; here they only fill details. The GP is auto-assigned at
@@ -118,6 +119,7 @@ export default async function CountryLangBookPage({
         c={c}
         bf={bf}
         bp={bp}
+        bookingRequirements={bookingRequirements}
       />
     );
   }
@@ -297,6 +299,7 @@ export default async function CountryLangBookPage({
                   itemKind={itemKind}
                   bf={bf}
                   bp={bp}
+                  bookingRequirements={bookingRequirements}
                 />
               )}
             </div>
@@ -343,6 +346,7 @@ async function GpBookingFlow({
   c,
   bf,
   bp,
+  bookingRequirements,
 }: {
   code: string;
   country: string;
@@ -353,6 +357,7 @@ async function GpBookingFlow({
   c: import("@/lib/i18n/types").CommonLocale;
   bf: import("@/lib/i18n/types").CommonLocale["bookingForm"];
   bp: BookT;
+  bookingRequirements: import("@/lib/content/get-public-countries").PublicBookingRequirements;
 }) {
   const { service, clinicTimezone, slots } = await getGpAvailability(code, language, 14);
   const slot = slots.find((s) => s.startAt === at) ?? null;
@@ -452,6 +457,7 @@ async function GpBookingFlow({
                     changeTimeHref={homeHref}
                     autoAssign={{ country: code, language }}
                     i18n={bf}
+                    bookingRequirements={bookingRequirements}
                   />
                 </div>
               </div>
@@ -475,6 +481,7 @@ async function SelectedServiceFlow({
   itemKind,
   bf,
   bp,
+  bookingRequirements,
 }: {
   code: string;
   country: string;
@@ -487,6 +494,7 @@ async function SelectedServiceFlow({
   itemKind: "GENERAL_CONSULTATION" | "SPECIALIST_CONSULTATION";
   bf: import("@/lib/i18n/types").CommonLocale["bookingForm"];
   bp: BookT;
+  bookingRequirements: import("@/lib/content/get-public-countries").PublicBookingRequirements;
 }) {
   const assignedDoctorIds = new Set(service.assignedDoctorIds);
   const serviceDoctors =
@@ -673,6 +681,7 @@ async function SelectedServiceFlow({
                     buildBookHref({ country, lang, service: service.slug, doctor: selectedDoctor.slug })
               }
               i18n={bf}
+              bookingRequirements={bookingRequirements}
             />
           </div>
         )}

@@ -328,7 +328,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           }
           await linkReservationsToOrderItems(tx, planResult.lines, cartToOrderItem);
           return { order: created, subtotalCents, totalCents };
-        });
+        }, { timeout: 15_000 });
         const order = txResult.order;
         const totalCents = txResult.totalCents;
 

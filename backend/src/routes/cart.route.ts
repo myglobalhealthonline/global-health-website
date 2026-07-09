@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
 import { z } from "zod";
-import { CartItemKind } from "@prisma/client";
+import { CartItemKind, Prisma } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
@@ -1120,6 +1120,16 @@ const cartRoute: FastifyPluginAsync = async (app) => {
         // Rollback the held run if cart item creation failed.
         if (isConsultation && timeSlotId) {
           await releaseSlotsToBaseGrid([timeSlotId]);
+        }
+        // Two concurrent requests (double-click, retry-after-validation-error)
+        // can both pass the slotTaken check above before either creates its
+        // CartItem — the DB's unique constraint on timeSlotId is the real
+        // guard. Surface that race as the same friendly 409 instead of a
+        // raw 500 Prisma error.
+        if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
+          return reply
+            .status(409)
+            .send(errorResponse("That time slot is no longer available"));
         }
         throw err;
       }

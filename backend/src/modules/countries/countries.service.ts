@@ -64,9 +64,20 @@ export async function listCountries() {
         countryLocales: {
           orderBy: { locale: "asc" },
         },
-        // Clinic timezone drives patient-facing slot display. Only the
-        // timezone is public; the booking-intake flags stay admin-only.
-        bookingSetting: { select: { timezone: true } },
+        // Clinic timezone drives patient-facing slot display. The intake
+        // requiredness flags are public too — the storefront booking form
+        // needs them to mark phone/DOB/address/national-ID as required (or
+        // not) instead of guessing, which previously caused a mismatch
+        // between the form's "(optional)" label and the server's 400.
+        bookingSetting: {
+          select: {
+            timezone: true,
+            requirePhone: true,
+            requireDateOfBirth: true,
+            requireNationalId: true,
+            requireAddress: true,
+          },
+        },
       },
     });
   } catch (error) {
