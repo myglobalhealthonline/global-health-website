@@ -38,6 +38,15 @@ export default async function AdminCalendarPage({ searchParams }: Props) {
   const consultations = calendar.ok ? calendar.data.consultations : [];
   const slots = calendar.ok ? calendar.data.slots : [];
 
+  // Doctor → primary-country map so an open slot can deep-link into the
+  // manual-booking form (which is country-scoped).
+  const doctorCountry = new Map<string, string>();
+  if (doctors.ok) {
+    for (const d of doctors.data.items) {
+      if (d.country?.code) doctorCountry.set(d.id, d.country.code);
+    }
+  }
+
   const items: CalendarItem[] = [
     ...consultations.map((c) => ({
       id: `c-${c.id}`,
@@ -61,7 +70,12 @@ export default async function AdminCalendarPage({ searchParams }: Props) {
       endAt: s.endAt,
       status: s.status,
       title: s.status,
-      meta: { doctorName: s.doctorName, blockReason: s.blockReason },
+      meta: {
+        doctorId: s.doctorId,
+        doctorName: s.doctorName,
+        blockReason: s.blockReason,
+        countryCode: doctorCountry.get(s.doctorId) ?? null,
+      },
     })),
   ];
 
@@ -97,7 +111,7 @@ export default async function AdminCalendarPage({ searchParams }: Props) {
           </span>
         }
         title="Calendar"
-        description="All doctors' availability and scheduled consultations. Filter by doctor, consultation type, or country. Read-only — manage slots from the doctor portal."
+        description="All doctors' availability and scheduled consultations. Filter by doctor, consultation type, or country. Click an open slot's Book action to start a manual booking."
       />
 
       {calendar.ok ? (

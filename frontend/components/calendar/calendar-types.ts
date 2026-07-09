@@ -19,6 +19,7 @@ export type CalendarItem = {
   /** Primary label rendered in the agenda row. */
   title: string;
   meta?: {
+    doctorId?: string | null;
     doctorName?: string | null;
     patientName?: string | null;
     consultationType?: string | null;

@@ -167,6 +167,79 @@ export async function resendInvoiceDocument(
 }
 
 /**
+ * Send the fiscal document to the patient over WhatsApp (admin action) as a
+ * message with the print-page link. Consent-gated the same way as the other
+ * patient WhatsApp sends. Returns a discriminated result so the route can
+ * surface "no consent"/"no phone" as a 4xx rather than a silent success.
+ */
+export async function resendInvoiceWhatsApp(
+  invoiceId: string,
+  log: PaymentLog = noopLog,
+): Promise<
+  | { ok: true }
+  | { ok: false; reason: "not_found" | "no_phone" | "no_consent" | "send_failed"; message: string }
+> {
+  const invoice = await prisma.invoice.findUnique({
+    where: { id: invoiceId },
+    select: {
+      id: true,
+      invoiceNumber: true,
+      documentType: true,
+      countryCode: true,
+      order: {
+        select: {
+          id: true,
+          fullName: true,
+          phone: true,
+          countryCode: true,
+          items: {
+            select: { patientWhatsappConsent: true, patientAddressCountryCode: true },
+            take: 1,
+          },
+        },
+      },
+    },
+  });
+  if (!invoice) return { ok: false, reason: "not_found", message: "Invoice not found" };
+
+  const item = invoice.order.items[0];
+  if (!item?.patientWhatsappConsent) {
+    return { ok: false, reason: "no_consent", message: "Patient has not consented to WhatsApp updates" };
+  }
+  if (!invoice.order.phone?.trim()) {
+    return { ok: false, reason: "no_phone", message: "Order has no patient phone number" };
+  }
+
+  const { sendWhatsAppText, formatWhatsAppSendError } = await import("../../lib/whatsapp/wasender.js");
+  const docLabel =
+    invoice.documentType === "RECEIPT"
+      ? "receipt"
+      : invoice.documentType === "CREDIT_NOTE"
+        ? "credit note"
+        : "invoice";
+  const invoiceUrl = absoluteSiteUrl(`/print/order-invoices/${invoice.id}`);
+  const result = await sendWhatsAppText({
+    to: invoice.order.phone,
+    message:
+      `Hi ${invoice.order.fullName}, here is your ${docLabel} #${invoice.invoiceNumber} from Global Health: ${invoiceUrl}` +
+      `\n\nReply here or reach us out at globalhealth@myglobalhealth.online`,
+    hints: {
+      orderCountryCode: invoice.order.countryCode,
+      patientAddressCountryCode: item.patientAddressCountryCode ?? null,
+    },
+  });
+  if (!result.ok || result.skipped) {
+    const message = result.skipped
+      ? "WhatsApp is not configured on this environment"
+      : formatWhatsAppSendError(result);
+    log.warn({ invoiceId, message }, "Invoice WhatsApp resend failed");
+    return { ok: false, reason: "send_failed", message };
+  }
+  log.info({ invoiceId }, "Invoice WhatsApp sent");
+  return { ok: true };
+}
+
+/**
  * Issue an UNPAID invoice for a manual / AI-agent booking and email it to the
  * patient so they can pay. Called at booking-creation time (before payment).
  *

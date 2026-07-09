@@ -69,6 +69,11 @@ type Props = {
   /** Server action that creates the booking. Runs only after the native
    *  submit proceeds — i.e. after client validation passes. */
   action: (formData: FormData) => void | Promise<void>;
+  /** Prefill from the admin calendar "Book" deep link: once the admin picks a
+   *  service this doctor covers, the doctor (and their clicked slot, if still
+   *  open) are auto-selected. */
+  initialDoctorId?: string;
+  initialSlotId?: string;
 };
 
 /**
@@ -91,6 +96,8 @@ export function ManualBookingForm({
   clinics,
   defaultDialCode,
   action,
+  initialDoctorId,
+  initialSlotId,
 }: Props) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -130,6 +137,9 @@ export function ManualBookingForm({
 
   const [errors, setErrors] = useState<ManualBookingErrors>({});
   const summaryRef = useRef<HTMLDivElement | null>(null);
+  // Slot clicked on the admin calendar — consumed on the first availability
+  // load that still contains it (it may have been booked in the meantime).
+  const pendingSlotRef = useRef<string | null>(initialSlotId ?? null);
 
   const selectedService = useMemo(
     () => services.find((s) => s.id === serviceId) ?? null,
@@ -152,9 +162,18 @@ export function ManualBookingForm({
   // don't trigger cascading setState-in-effect renders.
   function handleServiceChange(value: string) {
     setServiceId(value);
-    setDoctorId((cur) =>
-      cur && doctors.find((d) => d.id === cur)?.serviceIds.includes(value) ? cur : "",
-    );
+    setDoctorId((cur) => {
+      if (cur && doctors.find((d) => d.id === cur)?.serviceIds.includes(value)) return cur;
+      // Calendar deep link: auto-pick the clicked doctor once a service they
+      // cover is chosen.
+      if (
+        initialDoctorId &&
+        doctors.find((d) => d.id === initialDoctorId)?.serviceIds.includes(value)
+      ) {
+        return initialDoctorId;
+      }
+      return "";
+    });
     setSelectedSlotId("");
     setSelectedDay(null);
     setSlots([]);
@@ -194,10 +213,18 @@ export function ManualBookingForm({
         }
         const list = json.data.slots ?? [];
         setSlots(list);
-        setClinicTimezone(json.data.clinicTimezone ?? "Europe/Dublin");
-        setSelectedDay(
-          list.length ? formatAppDate(list[0]!.startAt, json.data.clinicTimezone) : null,
-        );
+        const tzVal = json.data.clinicTimezone ?? "Europe/Dublin";
+        setClinicTimezone(tzVal);
+        const pending = pendingSlotRef.current
+          ? list.find((s) => s.id === pendingSlotRef.current)
+          : undefined;
+        pendingSlotRef.current = null;
+        if (pending) {
+          setSelectedDay(formatAppDate(pending.startAt, tzVal));
+          setSelectedSlotId(pending.id);
+        } else {
+          setSelectedDay(list.length ? formatAppDate(list[0]!.startAt, tzVal) : null);
+        }
       } catch {
         if (controller.signal.aborted) return;
         setSlots([]);

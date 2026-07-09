@@ -7,7 +7,7 @@ import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.service.js";
 import { buildInvoicePdfData, renderInvoicePdfBuffer } from "../modules/invoices/invoice-pdf.js";
-import { resendInvoiceDocument } from "../modules/invoices/generate-invoice.service.js";
+import { resendInvoiceDocument, resendInvoiceWhatsApp } from "../modules/invoices/generate-invoice.service.js";
 
 /**
  * Admin invoice endpoints.
@@ -445,15 +445,28 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
 
       const params = idParamSchema.safeParse(request.params);
       if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+      const channel =
+        (request.body as { channel?: string } | null)?.channel === "whatsapp"
+          ? "whatsapp"
+          : "email";
 
       try {
-        const sent = await resendInvoiceDocument(params.data.invoiceId, {
-          info: (obj, msg) => app.log.info(obj, msg),
-          warn: (obj, msg) => app.log.warn(obj, msg),
-          error: (obj, msg) => app.log.error(obj, msg),
-        });
+        const routeLog = {
+          info: (obj: unknown, msg?: string) => app.log.info(obj as object, msg),
+          warn: (obj: unknown, msg?: string) => app.log.warn(obj as object, msg),
+          error: (obj: unknown, msg?: string) => app.log.error(obj as object, msg),
+        };
+        if (channel === "whatsapp") {
+          const result = await resendInvoiceWhatsApp(params.data.invoiceId, routeLog);
+          if (!result.ok) {
+            const status = result.reason === "not_found" ? 404 : result.reason === "send_failed" ? 502 : 409;
+            return reply.status(status).send(errorResponse(result.message));
+          }
+          return okResponse({ resent: true, channel });
+        }
+        const sent = await resendInvoiceDocument(params.data.invoiceId, routeLog);
         if (!sent) return reply.status(404).send(errorResponse("Invoice not found"));
-        return okResponse({ resent: true });
+        return okResponse({ resent: true, channel });
       } catch (err) {
         if (err instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(err.message));

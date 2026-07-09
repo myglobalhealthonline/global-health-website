@@ -38,9 +38,12 @@ export default async function AdminPatientsPage({
   const email = readParam(sp, "email");
   const phone = readParam(sp, "phone");
   const taxId = readParam(sp, "taxId");
+  const name = readParam(sp, "name");
+  const idNumber = readParam(sp, "idNumber");
+  const plan = readParam(sp, "plan");
   const page = Number(readParam(sp, "page") ?? "1") || 1;
 
-  const result = await fetchAdminPatients({ ghn, email, phone, taxId, page: String(page), pageSize: "25" });
+  const result = await fetchAdminPatients({ ghn, email, phone, taxId, name, idNumber, plan, page: String(page), pageSize: "25" });
 
   const items: AdminPatientSearchItem[] = result?.ok ? result.data.items : [];
   const pagination = result?.ok ? result.data.pagination : null;
@@ -54,7 +57,7 @@ export default async function AdminPatientsPage({
       <PageHeader
         eyebrow="Global"
         title="Patients"
-        description="All registered patients — filter by Global Health Number or email."
+        description="All registered patients — search by name, GHN, email, phone, fiscal number, ID card, or healthcare plan."
         actions={
           <Btn href="/admin/patients/new" variant="primary" iconLeft={<UserRound className="size-3.5" />}>
             New patient
@@ -123,6 +126,33 @@ export default async function AdminPatientsPage({
               name="taxId"
               defaultValue={taxId ?? ""}
               placeholder="NIF / PPS / CPF"
+              className="gh-input w-52"
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">Name</span>
+            <input
+              name="name"
+              defaultValue={name ?? ""}
+              placeholder="Patient name"
+              className="gh-input w-52"
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">ID card / passport</span>
+            <input
+              name="idNumber"
+              defaultValue={idNumber ?? ""}
+              placeholder="ID or passport number"
+              className="gh-input w-52"
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">Healthcare plan</span>
+            <input
+              name="plan"
+              defaultValue={plan ?? ""}
+              placeholder="Plan name"
               className="gh-input w-52"
             />
           </label>
@@ -223,7 +253,7 @@ export default async function AdminPatientsPage({
                 <div className="flex gap-2">
                   {page > 1 ? (
                     <Link
-                      href={`/admin/patients?${new URLSearchParams({ ...(ghn ? { ghn } : {}), ...(email ? { email } : {}), ...(phone ? { phone } : {}), ...(taxId ? { taxId } : {}), page: String(page - 1) })}`}
+                      href={`/admin/patients?${new URLSearchParams({ ...(ghn ? { ghn } : {}), ...(email ? { email } : {}), ...(phone ? { phone } : {}), ...(taxId ? { taxId } : {}), ...(name ? { name } : {}), ...(idNumber ? { idNumber } : {}), ...(plan ? { plan } : {}), page: String(page - 1) })}`}
                       className="gh-btn-ghost text-sm"
                     >
                       ← Prev
@@ -231,7 +261,7 @@ export default async function AdminPatientsPage({
                   ) : null}
                   {page < pagination.totalPages ? (
                     <Link
-                      href={`/admin/patients?${new URLSearchParams({ ...(ghn ? { ghn } : {}), ...(email ? { email } : {}), ...(phone ? { phone } : {}), ...(taxId ? { taxId } : {}), page: String(page + 1) })}`}
+                      href={`/admin/patients?${new URLSearchParams({ ...(ghn ? { ghn } : {}), ...(email ? { email } : {}), ...(phone ? { phone } : {}), ...(taxId ? { taxId } : {}), ...(name ? { name } : {}), ...(idNumber ? { idNumber } : {}), ...(plan ? { plan } : {}), page: String(page + 1) })}`}
                       className="gh-btn-ghost text-sm"
                     >
                       Next →
