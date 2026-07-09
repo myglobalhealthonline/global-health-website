@@ -4,18 +4,30 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarClock, Route, Save, Video } from "lucide-react";
 
-const STATUS_OPTIONS = [
-  { value: "REQUEST_RECEIVED", label: "Created" },
-  { value: "UNDER_REVIEW", label: "Sent" },
-  { value: "CONTACTED", label: "Contacted" },
-  { value: "COMPLETED", label: "Concluded" },
-  { value: "CANCELLED", label: "Cancelled" },
-];
-
-const MODE_OPTIONS = [
-  { value: "ONLINE", label: "Online (video)" },
-  { value: "IN_PERSON", label: "In person" },
-];
+export type AppointmentActionsCopy = {
+  statusCreated: string;
+  statusSent: string;
+  statusContacted: string;
+  statusConcluded: string;
+  statusCancelled: string;
+  modeOnline: string;
+  modeInPerson: string;
+  controlsTitle: string;
+  controlsDesc: string;
+  slotLabel: string;
+  deliveryLabel: string;
+  meetingUrlLabel: string;
+  meetingUrlPlaceholderInPerson: string;
+  meetingUrlPlaceholderOnline: string;
+  meetingUrlHint: string;
+  statusFieldLabel: string;
+  testLink: string;
+  save: string;
+  saving: string;
+  nothingToChange: string;
+  saved: string;
+  couldNotSave: string;
+};
 
 /**
  * Doctor-side appointment-actions card. Lets the doctor:
@@ -54,13 +66,26 @@ export function AppointmentActions({
   initialStatus,
   initialScheduledAt,
   initialMode,
+  copy,
 }: {
   appointmentId: string;
   initialMeetingUrl: string | null;
   initialStatus: string;
   initialScheduledAt: string | null;
   initialMode: "ONLINE" | "IN_PERSON";
+  copy: AppointmentActionsCopy;
 }) {
+  const STATUS_OPTIONS = [
+    { value: "REQUEST_RECEIVED", label: copy.statusCreated },
+    { value: "UNDER_REVIEW", label: copy.statusSent },
+    { value: "CONTACTED", label: copy.statusContacted },
+    { value: "COMPLETED", label: copy.statusConcluded },
+    { value: "CANCELLED", label: copy.statusCancelled },
+  ];
+  const MODE_OPTIONS = [
+    { value: "ONLINE", label: copy.modeOnline },
+    { value: "IN_PERSON", label: copy.modeInPerson },
+  ];
   const router = useRouter();
   const [meetingUrl, setMeetingUrl] = useState(initialMeetingUrl ?? "");
   const [status, setStatus] = useState(initialStatus);
@@ -95,7 +120,7 @@ export function AppointmentActions({
       payload.consultationMode = mode;
     }
     if (Object.keys(payload).length === 0) {
-      setMessage({ kind: "error", text: "Nothing to change." });
+      setMessage({ kind: "error", text: copy.nothingToChange });
       return;
     }
     startTransition(async () => {
@@ -106,10 +131,10 @@ export function AppointmentActions({
       });
       const json = (await res.json()) as { ok?: boolean; message?: string };
       if (!res.ok || !json.ok) {
-        setMessage({ kind: "error", text: json.message ?? "Could not save" });
+        setMessage({ kind: "error", text: json.message ?? copy.couldNotSave });
         return;
       }
-      setMessage({ kind: "success", text: "Saved" });
+      setMessage({ kind: "success", text: copy.saved });
       router.refresh();
     });
   }
@@ -119,10 +144,10 @@ export function AppointmentActions({
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--portal-line)] pb-3">
         <div>
           <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-            Consultation controls
+            {copy.controlsTitle}
           </p>
           <p className="mt-1 text-sm text-[var(--portal-muted)]">
-            Update the slot, delivery mode, meeting link, and workflow status in one save.
+            {copy.controlsDesc}
           </p>
         </div>
         <span className="inline-flex items-center gap-1 rounded-full bg-[var(--portal-well)] px-2.5 py-1 text-[11px] font-bold text-[var(--portal-primary)]">
@@ -134,7 +159,7 @@ export function AppointmentActions({
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5">
           <span className="gh-field-label inline-flex items-center gap-1">
-            <CalendarClock className="size-3.5" /> Slot (your local time)
+            <CalendarClock className="size-3.5" /> {copy.slotLabel}
           </span>
           <input
             type="datetime-local"
@@ -144,7 +169,7 @@ export function AppointmentActions({
           />
         </label>
         <label className="flex flex-col gap-1.5">
-          <span className="gh-field-label">Delivery</span>
+          <span className="gh-field-label">{copy.deliveryLabel}</span>
           <select
             className="gh-select"
             value={mode}
@@ -162,7 +187,7 @@ export function AppointmentActions({
       </div>
 
       <label className="flex flex-col gap-1.5">
-        <span className="gh-field-label">Meeting URL</span>
+        <span className="gh-field-label">{copy.meetingUrlLabel}</span>
         <input
           type="url"
           className="gh-input font-mono text-[12px]"
@@ -170,19 +195,18 @@ export function AppointmentActions({
           onChange={(e) => setMeetingUrl(e.target.value)}
           placeholder={
             mode === "IN_PERSON"
-              ? "Leave blank for in-person consults"
-              : "https://meet.google.com/abc-defg-hij"
+              ? copy.meetingUrlPlaceholderInPerson
+              : copy.meetingUrlPlaceholderOnline
           }
           maxLength={500}
         />
         <span className="text-[11.5px] text-[var(--portal-muted)]">
-          Google Meet, Zoom, Teams, Whereby, or Daily. The patient sees
-          this on their account once you save.
+          {copy.meetingUrlHint}
         </span>
       </label>
 
       <label className="flex flex-col gap-1.5">
-        <span className="gh-field-label">Appointment status</span>
+        <span className="gh-field-label">{copy.statusFieldLabel}</span>
         <select
           className="gh-select"
           value={status}
@@ -214,7 +238,7 @@ export function AppointmentActions({
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--portal-primary)] hover:underline"
           >
-            <Video className="size-3.5" /> Test link
+            <Video className="size-3.5" /> {copy.testLink}
           </a>
         ) : (
           <span />
@@ -224,7 +248,7 @@ export function AppointmentActions({
           disabled={pending}
           className="gh-btn gh-btn-primary"
         >
-          <Save className="size-3.5" /> {pending ? "Saving…" : "Save"}
+          <Save className="size-3.5" /> {pending ? copy.saving : copy.save}
         </button>
       </div>
     </form>

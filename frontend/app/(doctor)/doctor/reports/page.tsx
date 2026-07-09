@@ -2,6 +2,8 @@ import { fetchDoctorReports } from "@/lib/api/doctor-api";
 import { AdminEmptyState, PageHeader, SectionHeader } from "@/components/portal-atoms";
 import { ReportsCsvButton } from "./_components/csv-button";
 import { DoctorReportExports } from "./_components/report-exports";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +34,8 @@ export default async function DoctorReportsPage({
 }: {
   searchParams?: Promise<SearchParams>;
 }) {
+  const locale = await getPageLocale();
+  const { doctor: d } = loadLocaleBundle(locale);
   const sp = searchParams ? await searchParams : {};
   const from = pick(sp, "from");
   const to = pick(sp, "to");
@@ -49,15 +53,15 @@ export default async function DoctorReportsPage({
   return (
     <>
       <PageHeader
-        eyebrow="Practice analytics"
-        title="Reports"
-        description="Aggregated consultation, patient, follow-up, and paid revenue signals for your assigned appointments. Defaults to the last 30 days."
-        actions={result.ok ? <ReportsCsvButton data={result.data} /> : null}
+        eyebrow={d.reports.eyebrow}
+        title={d.reports.title}
+        description={d.reports.description}
+        actions={result.ok ? <ReportsCsvButton data={result.data} label={d.reports.exportCsv} /> : null}
       />
 
       <form className="gh-card gh-doctor-filter-card gh-doctor-filter-grid mb-4 grid gap-3 p-4 sm:grid-cols-5" method="get">
         <label className="flex flex-col gap-1">
-          <span className="gh-field-label">From</span>
+          <span className="gh-field-label">{d.common.from}</span>
           <input
             type="date"
             name="from"
@@ -66,7 +70,7 @@ export default async function DoctorReportsPage({
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="gh-field-label">To</span>
+          <span className="gh-field-label">{d.common.to}</span>
           <input
             type="date"
             name="to"
@@ -75,53 +79,53 @@ export default async function DoctorReportsPage({
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="gh-field-label">Type</span>
+          <span className="gh-field-label">{d.common.type}</span>
           <select
             name="consultationType"
             defaultValue={consultationType ?? ""}
             className="gh-select"
           >
-            <option value="">Any</option>
-            <option value="general">General</option>
-            <option value="specialist">Specialist</option>
-            <option value="prescription">Prescription</option>
-            <option value="health-test">Health test</option>
-            <option value="follow-up">Follow-up</option>
+            <option value="">{d.common.any}</option>
+            <option value="general">{d.appointments.typeGeneral}</option>
+            <option value="specialist">{d.appointments.typeSpecialist}</option>
+            <option value="prescription">{d.appointments.typePrescription}</option>
+            <option value="health-test">{d.appointments.typeHealthTest}</option>
+            <option value="follow-up">{d.appointments.typeFollowUp}</option>
           </select>
         </label>
         <label className="flex flex-col gap-1">
-          <span className="gh-field-label">Appt status</span>
+          <span className="gh-field-label">{d.reports.filterApptStatus}</span>
           <select
             name="status"
             defaultValue={status ?? ""}
             className="gh-select"
           >
-            <option value="">Any</option>
-            <option value="REQUEST_RECEIVED">Created</option>
-            <option value="UNDER_REVIEW">Under review</option>
-            <option value="CONTACTED">Contacted</option>
-            <option value="COMPLETED">Concluded</option>
-            <option value="CANCELLED">Cancelled</option>
+            <option value="">{d.common.any}</option>
+            <option value="REQUEST_RECEIVED">{d.reports.statusCreated}</option>
+            <option value="UNDER_REVIEW">{d.reports.statusUnderReview}</option>
+            <option value="CONTACTED">{d.reports.statusContacted}</option>
+            <option value="COMPLETED">{d.reports.statusConcluded}</option>
+            <option value="CANCELLED">{d.reports.statusCancelled}</option>
           </select>
         </label>
         <label className="flex flex-col gap-1">
-          <span className="gh-field-label">Payment</span>
+          <span className="gh-field-label">{d.reports.filterPayment}</span>
           <select
             name="paymentStatus"
             defaultValue={paymentStatus ?? ""}
             className="gh-select"
           >
-            <option value="">Any</option>
-            <option value="UNPAID">Unpaid</option>
-            <option value="PENDING">Pending</option>
-            <option value="PAID">Paid</option>
-            <option value="REFUNDED">Refunded</option>
-            <option value="FAILED">Failed</option>
+            <option value="">{d.common.any}</option>
+            <option value="UNPAID">{d.reports.paymentUnpaid}</option>
+            <option value="PENDING">{d.reports.paymentPending}</option>
+            <option value="PAID">{d.reports.paymentPaid}</option>
+            <option value="REFUNDED">{d.reports.paymentRefunded}</option>
+            <option value="FAILED">{d.reports.paymentFailed}</option>
           </select>
         </label>
         <div className="gh-doctor-filter-actions sm:col-span-5 flex flex-wrap items-center gap-2">
           <button type="submit" className="gh-btn gh-btn-primary text-sm">
-            Apply
+            {d.common.apply}
           </button>
         </div>
       </form>
@@ -129,6 +133,9 @@ export default async function DoctorReportsPage({
       <div className="mb-4">
         <DoctorReportExports
           filters={{ from, to, consultationType, paymentStatus, status }}
+          strings={d.reports}
+          excelLabel={d.invoices.excel}
+          pdfLabel={d.invoices.pdf}
         />
       </div>
 
@@ -142,23 +149,23 @@ export default async function DoctorReportsPage({
         <>
           <div className="gh-doctor-report-tile-grid mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <Tile
-              label="Appointments"
+              label={d.reports.tileAppointments}
               value={String(result.data.appointments?.total ?? 0)}
             />
             <Tile
-              label="Signed consults"
+              label={d.reports.tileSignedConsults}
               value={String(result.data.signedConsults ?? 0)}
             />
             <Tile
-              label="Follow-ups"
+              label={d.reports.tileFollowUps}
               value={String(result.data.followUps ?? 0)}
             />
             <Tile
-              label="Distinct patients"
+              label={d.reports.tileDistinctPatients}
               value={String(result.data.distinctPatients ?? 0)}
             />
             <Tile
-              label="Revenue (paid)"
+              label={d.reports.tileRevenuePaid}
               value={
                 Object.keys(result.data.revenueByCurrency ?? {}).length === 0
                   ? "—"
@@ -172,26 +179,30 @@ export default async function DoctorReportsPage({
           <div className="gh-doctor-report-grid grid gap-4 lg:grid-cols-2">
             <section className="gh-card gh-doctor-report-card p-6">
               <SectionHeader
-                title="By status"
-                description="Consultation lifecycle mix in the selected date range."
+                title={d.reports.byStatusTitle}
+                description={d.reports.byStatusDesc}
               />
               <BreakdownTable
                 rows={(result.data.appointments?.byStatus ?? []).map((r) => ({
                   label: r.status,
                   count: r.count,
                 }))}
+                emptyTitle={d.reports.emptyRangeTitle}
+                emptyDesc={d.reports.emptyRangeDesc}
               />
             </section>
             <section className="gh-card gh-doctor-report-card p-6">
               <SectionHeader
-                title="By consultation type"
-                description="Clinical workload split by appointment category."
+                title={d.reports.byTypeTitle}
+                description={d.reports.byTypeDesc}
               />
               <BreakdownTable
                 rows={(result.data.appointments?.byConsultationType ?? []).map((r) => ({
                   label: r.consultationType,
                   count: r.count,
                 }))}
+                emptyTitle={d.reports.emptyRangeTitle}
+                emptyDesc={d.reports.emptyRangeDesc}
               />
             </section>
           </div>
@@ -214,13 +225,21 @@ function Tile({ label, value }: { label: string; value: string }) {
   );
 }
 
-function BreakdownTable({ rows }: { rows: { label: string; count: number }[] }) {
+function BreakdownTable({
+  rows,
+  emptyTitle,
+  emptyDesc,
+}: {
+  rows: { label: string; count: number }[];
+  emptyTitle: string;
+  emptyDesc: string;
+}) {
   if (rows.length === 0) {
     return (
       <AdminEmptyState
         className="gh-doctor-empty-state mt-4"
-        title="Nothing in this range"
-        description="Change the date or status filters to review more report data."
+        title={emptyTitle}
+        description={emptyDesc}
       />
     );
   }

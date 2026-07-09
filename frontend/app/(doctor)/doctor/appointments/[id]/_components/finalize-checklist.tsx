@@ -4,16 +4,31 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, ClipboardCheck } from "lucide-react";
 
+export type FinalizeChecklistCopy = {
+  finalizedTitle: string;
+  finalizedDescription: string;
+  confirmBothItems: string;
+  title: string;
+  description: string;
+  notesUploadedLabel: string;
+  filesUploadedLabel: string;
+  finalizing: string;
+  finalizeButton: string;
+  couldNotFinalize: string;
+};
+
 export function FinalizeChecklist({
   appointmentId,
   initialFinalized,
   initialNotesUploaded,
   initialFilesUploaded,
+  copy,
 }: {
   appointmentId: string;
   initialFinalized: boolean;
   initialNotesUploaded: boolean;
   initialFilesUploaded: boolean;
+  copy: FinalizeChecklistCopy;
 }) {
   const router = useRouter();
   const [notesUploaded, setNotesUploaded] = useState(initialNotesUploaded);
@@ -26,10 +41,10 @@ export function FinalizeChecklist({
       <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50/80 p-3 text-sm font-semibold text-emerald-800">
         <p className="flex items-center gap-2">
           <CheckCircle2 className="size-4" aria-hidden />
-          Appointment finalized
+          {copy.finalizedTitle}
         </p>
         <p className="mt-1 text-[12px] font-medium text-emerald-700">
-          Notes and required documents were confirmed for this consultation.
+          {copy.finalizedDescription}
         </p>
       </div>
     );
@@ -38,7 +53,7 @@ export function FinalizeChecklist({
   function finalize() {
     setMessage(null);
     if (!notesUploaded || !filesUploaded) {
-      setMessage("Confirm both checklist items before finalizing.");
+      setMessage(copy.confirmBothItems);
       return;
     }
     startTransition(async () => {
@@ -52,7 +67,7 @@ export function FinalizeChecklist({
       );
       const json = (await res.json()) as { ok?: boolean; message?: string };
       if (!res.ok || !json.ok) {
-        setMessage(json.message ?? "Could not finalize");
+        setMessage(json.message ?? copy.couldNotFinalize);
         return;
       }
       router.refresh();
@@ -67,10 +82,10 @@ export function FinalizeChecklist({
         </span>
         <div>
           <p className="text-sm font-bold text-[var(--portal-text)]">
-            Final consultation checklist
+            {copy.title}
           </p>
           <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
-            Confirm clinical notes and files before closing the appointment.
+            {copy.description}
           </p>
         </div>
       </div>
@@ -80,7 +95,7 @@ export function FinalizeChecklist({
           checked={notesUploaded}
           onChange={(e) => setNotesUploaded(e.target.checked)}
         />
-        Consultation notes uploaded / complete
+        {copy.notesUploadedLabel}
       </label>
       <label className="flex items-center gap-2 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2 text-sm">
         <input
@@ -88,7 +103,7 @@ export function FinalizeChecklist({
           checked={filesUploaded}
           onChange={(e) => setFilesUploaded(e.target.checked)}
         />
-        Required files uploaded
+        {copy.filesUploadedLabel}
       </label>
       {message ? (
         <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
@@ -101,7 +116,7 @@ export function FinalizeChecklist({
         onClick={finalize}
         className="gh-btn gh-btn-primary text-sm"
       >
-        {pending ? "Finalizing…" : "Finalize appointment"}
+        {pending ? copy.finalizing : copy.finalizeButton}
       </button>
     </div>
   );

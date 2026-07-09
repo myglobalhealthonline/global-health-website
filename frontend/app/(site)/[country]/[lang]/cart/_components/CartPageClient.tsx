@@ -151,7 +151,7 @@ export function CartPageClient({
   useEffect(() => {
     if (cart.expiredHolds && cart.expiredHolds > 0) {
       setExpiredFlash(cart.expiredHolds); // eslint-disable-line react-hooks/set-state-in-effect
-      setExpiredItemsFlash(cart.expiredItems ?? []); // eslint-disable-line react-hooks/set-state-in-effect
+      setExpiredItemsFlash(cart.expiredItems ?? []);
     }
   }, [cart.expiredHolds, cart.expiredItems]);
   // Scroll the expired-hold notice into view when it appears — it renders

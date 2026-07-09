@@ -656,6 +656,15 @@ export type CommonLocale = {
     chooseAnotherLanguage: string;
     showAllLanguages: string;
   };
+  portalChrome: {
+    account: string;
+    mainSite: string;
+    signOut: string;
+    closeNavigation: string;
+    openNavigation: string;
+    closeMenu: string;
+    allCaughtUp: string;
+  };
   cardVerify: {
     title: string;
     subtitle: string;

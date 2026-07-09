@@ -44,12 +44,80 @@ function docRowLabel(row: ReviewQueueDoc): string {
   return row.prescriptionNumber != null ? `${base} #${row.prescriptionNumber}` : base;
 }
 
+export type DocumentsReviewSendPanelCopy = {
+  title: string;
+  noneWaiting: string;
+  reviewEditHint: string;
+  sending: string;
+  sendSelected: string;
+  review: string;
+  edit: string;
+  send: string;
+  finalize: string;
+  finalizeTitle: string;
+  sendUploadLink: string;
+  sendUploadLinkTitle: string;
+  deleteAria: string;
+  deleteConfirm: string;
+  alreadySentTitle: string;
+  sendFailed: string;
+  noDocumentsSent: string;
+  sentOneTo: string;
+  sentManyTo: string;
+  defaultPatient: string;
+  couldNotSendUploadLink: string;
+  uploadLinkSentWithWarnings: string;
+  uploadLinkSent: string;
+  noPhoneWarning: string;
+  whatsappWarning: string;
+  couldNotFinalize: string;
+  finalizedSuccess: string;
+};
+
+// ponytail: baked-in English default so the only current caller
+// (appointment-documents-tab.tsx, owned by a parallel agent) keeps working
+// without being edited here — swap for a required prop once that caller
+// passes doctor.documentsReviewSendPanel through.
+const DEFAULT_COPY: DocumentsReviewSendPanelCopy = {
+  title: "Review & send",
+  noneWaiting:
+    "No documents waiting. Generate an exams prescription, medicine prescription, or absence certificate, then return here to review and edit before sending.",
+  reviewEditHint:
+    "Review and edit each PDF. Email send is available for exams and absence certificates only — medicine prescriptions are for your records and national portal submission.",
+  sending: "Sending…",
+  sendSelected: "Send selected",
+  review: "Review",
+  edit: "Edit",
+  send: "Send",
+  finalize: "Finalize",
+  finalizeTitle: "Mark as finalized — moves to history",
+  sendUploadLink: "Send upload link",
+  sendUploadLinkTitle: "Email + WhatsApp the patient this prescription's upload link",
+  deleteAria: "Delete",
+  deleteConfirm: "Delete this draft document?",
+  alreadySentTitle: "Already sent on this appointment",
+  sendFailed:
+    "Send failed — check GMAIL_SEND_FROM and GMAIL_SEND_REFRESH_TOKEN in backend .env.",
+  noDocumentsSent: "No documents were sent. Configure email in backend .env.",
+  sentOneTo: "Sent 1 document to {email}.",
+  sentManyTo: "Sent {count} documents to {email}.",
+  defaultPatient: "patient",
+  couldNotSendUploadLink: "Could not send the upload link.",
+  uploadLinkSentWithWarnings: "Upload link sent, but some channels failed: {labels}.",
+  uploadLinkSent: "Upload link sent to {email} via email + WhatsApp.",
+  noPhoneWarning: "no phone on file",
+  whatsappWarning: "WhatsApp",
+  couldNotFinalize: "Could not finalize the prescription.",
+  finalizedSuccess: "Medicine prescription finalized and moved to history.",
+};
+
 export function DocumentsReviewSendPanel({
   appointmentId,
   onDocumentsChange,
   onEditDraft,
   open,
   onOpenChange,
+  copy = DEFAULT_COPY,
 }: {
   appointmentId: string;
   onDocumentsChange?: () => void;
@@ -57,6 +125,7 @@ export function DocumentsReviewSendPanel({
   onEditDraft: (doc: ReviewQueueDoc) => void;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  copy?: DocumentsReviewSendPanelCopy;
 }) {
   const [queue, setQueue] = useState<ReviewQueueDoc[]>([]);
   const [history, setHistory] = useState<ReviewQueueDoc[]>([]);
@@ -129,29 +198,23 @@ export function DocumentsReviewSendPanel({
         data?: { sentCount?: number; errors?: string[] };
       }>(res);
       if (!res.ok || !json?.ok) {
-        setError(
-          doctorApiErrorMessage(
-            res,
-            json,
-            "Send failed — check GMAIL_SEND_FROM and GMAIL_SEND_REFRESH_TOKEN in backend .env.",
-          ),
-        );
+        setError(doctorApiErrorMessage(res, json, copy.sendFailed));
         return;
       }
       const sent = json.data?.sentCount ?? 0;
       if (sent === 0) {
         setError(
-          json.data?.errors?.[0] ??
-            json.message ??
-            "No documents were sent. Configure email in backend .env.",
+          json.data?.errors?.[0] ?? json.message ?? copy.noDocumentsSent,
         );
         return;
       }
       setSelected(new Set());
       setSuccess(
         sent === 1
-          ? `Sent 1 document to ${patientEmail ?? "patient"}.`
-          : `Sent ${sent} documents to ${patientEmail ?? "patient"}.`,
+          ? copy.sentOneTo.replace("{email}", patientEmail ?? copy.defaultPatient)
+          : copy.sentManyTo
+              .replace("{count}", String(sent))
+              .replace("{email}", patientEmail ?? copy.defaultPatient),
       );
       await load();
       onDocumentsChange?.();
@@ -163,7 +226,7 @@ export function DocumentsReviewSendPanel({
   }
 
   function remove(id: string) {
-    if (!confirm("Delete this draft document?")) return;
+    if (!confirm(copy.deleteConfirm)) return;
     startTransition(async () => {
       await fetch(`/api/doctor/documents/generated/${id}`, { method: "DELETE" });
       await load();
@@ -185,20 +248,20 @@ export function DocumentsReviewSendPanel({
         data?: { deliveryWarnings?: string[] };
       }>(res);
       if (!res.ok || !json?.ok) {
-        setError(doctorApiErrorMessage(res, json, "Could not send the upload link."));
+        setError(doctorApiErrorMessage(res, json, copy.couldNotSendUploadLink));
         return;
       }
       const warnings = json.data?.deliveryWarnings ?? [];
       if (warnings.length > 0) {
         const labels = warnings
           .map((w) =>
-            w === "no-phone" ? "no phone on file" : w === "whatsapp" ? "WhatsApp" : w,
+            w === "no-phone" ? copy.noPhoneWarning : w === "whatsapp" ? copy.whatsappWarning : w,
           )
           .join(", ");
-        setSuccess(`Upload link sent, but some channels failed: ${labels}.`);
+        setSuccess(copy.uploadLinkSentWithWarnings.replace("{labels}", labels));
       } else {
         setSuccess(
-          `Upload link sent to ${patientEmail ?? "patient"} via email + WhatsApp.`,
+          copy.uploadLinkSent.replace("{email}", patientEmail ?? copy.defaultPatient),
         );
       }
     });
@@ -211,10 +274,10 @@ export function DocumentsReviewSendPanel({
       const res = await fetch(`/api/doctor/documents/generated/${id}/finalize`, { method: "POST" });
       const json = await parseDoctorApiJson<{ ok?: boolean; message?: string }>(res);
       if (!res.ok || !json?.ok) {
-        setError(doctorApiErrorMessage(res, json, "Could not finalize the prescription."));
+        setError(doctorApiErrorMessage(res, json, copy.couldNotFinalize));
         return;
       }
-      setSuccess("Medicine prescription finalized and moved to history.");
+      setSuccess(copy.finalizedSuccess);
       await load();
       onDocumentsChange?.();
     });
@@ -223,7 +286,7 @@ export function DocumentsReviewSendPanel({
   return (
     <HistorySection
       id="doctor-review-send-panel"
-      title="Review & send"
+      title={copy.title}
       count={queue.length > 0 ? queue.length : undefined}
       pendingDot
       defaultOpen={false}
@@ -244,14 +307,12 @@ export function DocumentsReviewSendPanel({
 
         {queue.length === 0 ? (
           <p className="text-[13px] text-[var(--portal-muted)]">
-            No documents waiting. Generate an exams prescription, medicine prescription, or
-            absence certificate, then return here to review and edit before sending.
+            {copy.noneWaiting}
           </p>
         ) : (
           <>
             <p className="mb-3 text-[13px] text-[var(--portal-muted)]">
-              Review and edit each PDF. Email send is available for exams and absence certificates
-              only — medicine prescriptions are for your records and national portal submission.
+              {copy.reviewEditHint}
             </p>
             {sendableQueue.length > 0 ? (
               <div className="gh-doctor-review-toolbar mb-3 flex justify-end">
@@ -262,7 +323,7 @@ export function DocumentsReviewSendPanel({
                   className="gh-btn gh-btn-primary text-sm"
                 >
                   <Send className="size-3.5" aria-hidden />
-                  {pending ? "Sending…" : "Send selected"}
+                  {pending ? copy.sending : copy.sendSelected}
                 </button>
               </div>
             ) : null}
@@ -300,14 +361,14 @@ export function DocumentsReviewSendPanel({
                         rel="noopener noreferrer"
                         className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
                       >
-                        <Eye className="size-3" aria-hidden /> Review
+                        <Eye className="size-3" aria-hidden /> {copy.review}
                       </a>
                       <button
                         type="button"
                         onClick={() => onEditDraft(row)}
                         className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
                       >
-                        <Pencil className="size-3" aria-hidden /> Edit
+                        <Pencil className="size-3" aria-hidden /> {copy.edit}
                       </button>
                       {sendable ? (
                         <button
@@ -316,7 +377,7 @@ export function DocumentsReviewSendPanel({
                           onClick={() => sendDocuments([row.id])}
                           className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
                         >
-                          <Send className="size-3" aria-hidden /> Send
+                          <Send className="size-3" aria-hidden /> {copy.send}
                         </button>
                       ) : null}
                       {canFinalize(row.documentType) ? (
@@ -325,9 +386,9 @@ export function DocumentsReviewSendPanel({
                           disabled={pending}
                           onClick={() => finalizeDocument(row.id)}
                           className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
-                          title="Mark as finalized — moves to history"
+                          title={copy.finalizeTitle}
                         >
-                          <Check className="size-3" aria-hidden /> Finalize
+                          <Check className="size-3" aria-hidden /> {copy.finalize}
                         </button>
                       ) : null}
                       {hasUploadLink(row.documentType) ? (
@@ -336,16 +397,16 @@ export function DocumentsReviewSendPanel({
                           disabled={pending}
                           onClick={() => sendUploadLink(row.id)}
                           className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
-                          title="Email + WhatsApp the patient this prescription's upload link"
+                          title={copy.sendUploadLinkTitle}
                         >
-                          <QrCode className="size-3" aria-hidden /> Send upload link
+                          <QrCode className="size-3" aria-hidden /> {copy.sendUploadLink}
                         </button>
                       ) : null}
                       <button
                         type="button"
                         onClick={() => remove(row.id)}
                         className="p-1 text-[var(--portal-muted)] hover:text-red-700"
-                        aria-label="Delete"
+                        aria-label={copy.deleteAria}
                       >
                         <Trash2 className="size-4" />
                       </button>
@@ -360,7 +421,7 @@ export function DocumentsReviewSendPanel({
         {history.length > 0 ? (
           <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
             <h4 className="text-[13px] font-bold text-[var(--portal-text)]">
-              Already sent on this appointment
+              {copy.alreadySentTitle}
             </h4>
             <ul className="mt-2 space-y-1 text-[13px] text-[var(--portal-muted)]">
               {history.map((row) => (
@@ -379,9 +440,9 @@ export function DocumentsReviewSendPanel({
                       disabled={pending}
                       onClick={() => sendUploadLink(row.id)}
                       className="gh-btn gh-btn-soft px-2 py-0.5 text-[11px]"
-                      title="Email + WhatsApp the patient this prescription's upload link"
+                      title={copy.sendUploadLinkTitle}
                     >
-                      <QrCode className="size-3" aria-hidden /> Send upload link
+                      <QrCode className="size-3" aria-hidden /> {copy.sendUploadLink}
                     </button>
                   ) : null}
                 </li>

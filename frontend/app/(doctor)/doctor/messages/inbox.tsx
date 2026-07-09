@@ -9,12 +9,16 @@ import {
 } from "@/lib/api/consultation-chat-api";
 import type { DoctorMessageThread } from "@/lib/api/doctor-api";
 
+type MessagesPageStrings = Record<string, string>;
+
 export function DoctorMessagesInbox({
   threads,
   initialSelectedId,
+  strings: s,
 }: {
   threads: DoctorMessageThread[];
   initialSelectedId?: string | null;
+  strings: MessagesPageStrings;
 }) {
   const items: InboxThread[] = threads.map((t) => ({
     id: t.appointmentId,
@@ -23,7 +27,7 @@ export function DoctorMessagesInbox({
     name: t.patientName,
     subtitle: `${t.countryCode} · ${t.consultationType}`,
     preview: t.lastMessage
-      ? `${t.lastMessage.authorRole === "PATIENT" ? "Patient: " : "You: "}${t.lastMessage.body ?? ""}`
+      ? `${t.lastMessage.authorRole === "PATIENT" ? s.patientPrefix : s.youPrefix}${t.lastMessage.body ?? ""}`
       : null,
     timestamp: t.lastMessage?.createdAt ?? null,
     unreadCount: t.unreadCount,
@@ -43,8 +47,8 @@ export function DoctorMessagesInbox({
           variant="embedded"
         />
       )}
-      emptyTitle="No patient messages yet"
-      emptyDescription="When a patient messages you from a paid booking, the conversation appears here."
+      emptyTitle={s.emptyTitle}
+      emptyDescription={s.emptyDescription}
     />
   );
 }

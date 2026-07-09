@@ -19,10 +19,18 @@ type NotificationItem = {
   createdAt: string;
 };
 
+// Type-only import (erased at build time) — no runtime locale-loading code
+// ships to the client bundle; the component only receives plain strings via props.
+// ponytail: cs/de/ro doctor.json are partial locale stubs (missing many keys), so the
+// exact per-locale union type doesn't structurally match; loosen to Record<string, string>.
+type NotificationsPageStrings = { [key: string]: string };
+
 export function NotificationListClient({
   initial,
+  strings,
 }: {
   initial: NotificationItem[];
+  strings: NotificationsPageStrings;
 }) {
   const router = useRouter();
   const [items, setItems] = useState<NotificationItem[]>(initial);
@@ -54,8 +62,8 @@ export function NotificationListClient({
         className="gh-doctor-empty-state"
         icon={<Bell className="size-5" aria-hidden />}
         assetSrc="/images/portal/obsidian/empty-notifications.svg"
-        title="No notifications yet"
-        description="Appointment assignments, messages, signed consults, form submissions, and exam results will appear here."
+        title={strings.emptyTitle}
+        description={strings.emptyDesc}
       />
     );
   }
@@ -64,7 +72,7 @@ export function NotificationListClient({
     <div className="gh-card gh-doctor-notification-list overflow-hidden p-0">
       <div className="gh-doctor-list-toolbar flex items-center justify-between border-b border-[var(--portal-line)] px-4 py-3">
         <p className="text-[12px] text-[var(--portal-muted)]">
-          Newest first
+          {strings.newestFirst}
         </p>
         <button
           type="button"
@@ -72,7 +80,7 @@ export function NotificationListClient({
           disabled={pending}
           className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
         >
-          <CheckCheck className="size-3.5" /> Mark all read
+          <CheckCheck className="size-3.5" /> {strings.markAllRead}
         </button>
       </div>
       <ul className="divide-y divide-[var(--portal-line)]">
@@ -117,7 +125,7 @@ export function NotificationListClient({
                     href={`/doctor/appointments/${n.appointmentId}`}
                     className="mt-1 inline-block text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
                   >
-                    Open appointment →
+                    {strings.openAppointment}
                   </Link>
                 ) : null}
               </div>
@@ -127,7 +135,7 @@ export function NotificationListClient({
                   onClick={() => markOne(n.id)}
                   disabled={pending}
                   className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
-                  aria-label="Mark as read"
+                  aria-label={strings.markAsRead}
                 >
                   <Check className="size-3.5" />
                 </button>

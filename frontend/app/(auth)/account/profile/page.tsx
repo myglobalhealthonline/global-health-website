@@ -22,14 +22,6 @@ import type { LocaleCode } from "@/lib/i18n/types";
 
 type Tab = "personal" | "insurance" | "verification" | "nationality" | "privacy";
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: "personal", label: "Personal" },
-  { id: "insurance", label: "Insurance" },
-  { id: "verification", label: "Verification" },
-  { id: "nationality", label: "Dual Nationality" },
-  { id: "privacy", label: "Privacy" },
-];
-
 export default function AccountProfilePage() {
   const [locale] = useState<LocaleCode>(() => readClientLocale());
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -75,27 +67,35 @@ export default function AccountProfilePage() {
   }, []);
 
   const a = loadLocaleBundle(locale).account;
+  const p = a.profile;
+  const TABS: { id: Tab; label: string }[] = [
+    { id: "personal", label: p.tabPersonal },
+    { id: "insurance", label: p.tabInsurance },
+    { id: "verification", label: p.tabVerification },
+    { id: "nationality", label: p.tabNationality },
+    { id: "privacy", label: p.tabPrivacy },
+  ];
   const needsAttention = Boolean(user && !user.emailVerifiedAt) || !ghn;
   const profileStatusItems = [
     {
-      label: "Email",
-      value: user?.emailVerifiedAt ? "Verified" : "Needs verification",
-      hint: user?.email ?? "Account email",
+      label: p.statusEmail,
+      value: user?.emailVerifiedAt ? p.statusVerified : p.statusNeedsVerification,
+      hint: user?.email ?? p.statusAccountEmail,
     },
     {
-      label: "Phone",
-      value: phone ? "Added" : "Missing",
-      hint: "Used for appointment updates",
+      label: p.statusPhone,
+      value: phone ? p.statusAdded : p.statusMissing,
+      hint: p.statusPhoneHint,
     },
     {
-      label: "Patient ID",
-      value: ghn ? "Active" : "Pending",
-      hint: "Global Health Number",
+      label: p.statusPatientId,
+      value: ghn ? p.statusActive : p.statusPending,
+      hint: p.statusPatientIdHint,
     },
     {
-      label: "Profile",
-      value: fullName ? "Started" : "Incomplete",
-      hint: "Personal and medical details",
+      label: p.statusProfile,
+      value: fullName ? p.statusStarted : p.statusIncomplete,
+      hint: p.statusProfileHint,
     },
   ];
 
@@ -127,7 +127,7 @@ export default function AccountProfilePage() {
           ghn ? (
             <span
               className="rounded-md bg-[var(--portal-well)] px-3 py-1 font-mono text-sm font-semibold text-[var(--portal-text)]"
-              title="Global Health Number — your unique patient identifier"
+              title={p.ghnTooltip}
             >
               {ghn}
             </span>
@@ -146,13 +146,13 @@ export default function AccountProfilePage() {
         >
           <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
           <div>
-            <p className="font-semibold">Action needed</p>
+            <p className="font-semibold">{p.actionNeeded}</p>
             <p className="text-xs">
               {!user?.emailVerifiedAt && !ghn
-                ? "Verify your email and complete your profile to get your Global Health Number."
+                ? p.actionVerifyAndComplete
                 : !user?.emailVerifiedAt
-                  ? "Verify your email so appointment and payment updates reach you."
-                  : "Complete your profile to get your Global Health Number."}
+                  ? p.actionVerifyEmail
+                  : p.actionCompleteProfile}
             </p>
           </div>
         </div>
@@ -163,7 +163,7 @@ export default function AccountProfilePage() {
       {/* Tab navigation */}
       <div className="mb-5">
         <PortalTabs
-          ariaLabel="Profile sections"
+          ariaLabel={p.tabsAria}
           value={activeTab}
           onChange={(v) => setActiveTab(v as Tab)}
           items={TABS.map((tab) => ({ value: tab.id, label: tab.label }))}
@@ -270,10 +270,52 @@ export default function AccountProfilePage() {
         </>
       )}
 
-      {activeTab === "insurance" && <InsuranceTab />}
-      {activeTab === "verification" && <VerificationTab />}
-      {activeTab === "nationality" && <NationalityTab />}
-      {activeTab === "privacy" && <GdprPreferencesTab />}
+      {activeTab === "insurance" && (
+        <InsuranceTab
+          i18n={{
+            ...a.insurance,
+            badgeNotVerified: a.profile.badgeNotVerified,
+            badgePending: a.profile.badgePending,
+            badgeVerified: a.profile.badgeVerified,
+            badgeRejected: a.profile.badgeRejected,
+          }}
+        />
+      )}
+      {activeTab === "verification" && (
+        <VerificationTab
+          i18n={{
+            ...a.verification,
+            badgeNotVerified: a.profile.badgeNotVerified,
+            badgePending: a.profile.badgePending,
+            badgeVerified: a.profile.badgeVerified,
+            badgeRejected: a.profile.badgeRejected,
+            docPassport: a.profile.docPassport,
+            docIdCard: a.profile.docIdCard,
+            docResidenceCard: a.profile.docResidenceCard,
+            docNicop: a.profile.docNicop,
+            docCnic: a.profile.docCnic,
+            docOther: a.profile.docOther,
+          }}
+        />
+      )}
+      {activeTab === "nationality" && (
+        <NationalityTab
+          i18n={{
+            ...a.nationality,
+            badgeNotVerified: a.profile.badgeNotVerified,
+            badgePending: a.profile.badgePending,
+            badgeVerified: a.profile.badgeVerified,
+            badgeRejected: a.profile.badgeRejected,
+            docPassport: a.profile.docPassport,
+            docIdCard: a.profile.docIdCard,
+            docResidenceCard: a.profile.docResidenceCard,
+            docNicop: a.profile.docNicop,
+            docCnic: a.profile.docCnic,
+            docOther: a.profile.docOther,
+          }}
+        />
+      )}
+      {activeTab === "privacy" && <GdprPreferencesTab i18n={a.privacy} />}
     </div>
   );
 }

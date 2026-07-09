@@ -23,26 +23,6 @@ type ProfileResponse = {
   usualMedication: string[];
 };
 
-/**
- * Labels for the health-data section. Kept local (English) rather than
- * threaded through the account i18n bundle so the section ships without
- * touching all locale files — localize later by moving these into the
- * `MedicalI18n` contract.
- */
-const HEALTH_LABELS = {
-  title: "Health data",
-  subtitle:
-    "Your clinical baseline. Shown to doctors on your chart. BMI is calculated from height and weight.",
-  weight: "Weight (kg)",
-  height: "Height (m)",
-  bmi: "BMI (auto)",
-  allergies: "Allergies",
-  chronicDiseases: "Chronic diseases",
-  familyHistory: "Family history",
-  usualMedication: "Usual medication",
-  listHint: "Separate multiple entries with commas.",
-};
-
 type MedicalI18n = {
   medicalTitle: string;
   medicalSubtitle: string;
@@ -66,6 +46,16 @@ type MedicalI18n = {
   medicalSaved: string;
   medicalSaveFailed: string;
   loading: string;
+  healthTitle: string;
+  healthSubtitle: string;
+  weightKg: string;
+  heightM: string;
+  bmiAuto: string;
+  allergies: string;
+  chronicDiseases: string;
+  familyHistory: string;
+  usualMedication: string;
+  listHint: string;
 };
 
 const DEFAULT_I18N: MedicalI18n = {
@@ -91,6 +81,17 @@ const DEFAULT_I18N: MedicalI18n = {
   medicalSaved: "Medical profile saved",
   medicalSaveFailed: "Could not save medical profile",
   loading: "Loading…",
+  healthTitle: "Health data",
+  healthSubtitle:
+    "Your clinical baseline. Shown to doctors on your chart. BMI is calculated from height and weight.",
+  weightKg: "Weight (kg)",
+  heightM: "Height (m)",
+  bmiAuto: "BMI (auto)",
+  allergies: "Allergies",
+  chronicDiseases: "Chronic diseases",
+  familyHistory: "Family history",
+  usualMedication: "Usual medication",
+  listHint: "Separate multiple entries with commas.",
 };
 
 const EMPTY: ProfileResponse = {
@@ -306,15 +307,15 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
                 className="size-4 text-[var(--portal-primary)]"
                 aria-hidden
               />
-              {HEALTH_LABELS.title}
+              {i18n.healthTitle}
             </legend>
             <p className="mb-3 text-xs text-[var(--portal-muted)]">
-              {HEALTH_LABELS.subtitle}
+              {i18n.healthSubtitle}
             </p>
 
             <div className="grid gap-3 sm:grid-cols-3">
               <label className="block">
-                <span className="gh-field-label">{HEALTH_LABELS.weight}</span>
+                <span className="gh-field-label">{i18n.weightKg}</span>
                 <input
                   type="number"
                   step="0.1"
@@ -330,7 +331,7 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
                 />
               </label>
               <label className="block">
-                <span className="gh-field-label">{HEALTH_LABELS.height}</span>
+                <span className="gh-field-label">{i18n.heightM}</span>
                 <input
                   type="number"
                   step="0.01"
@@ -346,7 +347,7 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
                 />
               </label>
               <label className="block">
-                <span className="gh-field-label">{HEALTH_LABELS.bmi}</span>
+                <span className="gh-field-label">{i18n.bmiAuto}</span>
                 <input
                   type="text"
                   readOnly
@@ -359,26 +360,26 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
 
             <div className="mt-3 grid gap-3">
               <ListField
-                label={HEALTH_LABELS.allergies}
-                hint={HEALTH_LABELS.listHint}
+                label={i18n.allergies}
+                hint={i18n.listHint}
                 value={values.allergies}
                 onChange={(next) => update("allergies", next)}
               />
               <ListField
-                label={HEALTH_LABELS.chronicDiseases}
-                hint={HEALTH_LABELS.listHint}
+                label={i18n.chronicDiseases}
+                hint={i18n.listHint}
                 value={values.chronicDiseases}
                 onChange={(next) => update("chronicDiseases", next)}
               />
               <ListField
-                label={HEALTH_LABELS.usualMedication}
-                hint={HEALTH_LABELS.listHint}
+                label={i18n.usualMedication}
+                hint={i18n.listHint}
                 value={values.usualMedication}
                 onChange={(next) => update("usualMedication", next)}
               />
               <ListField
-                label={HEALTH_LABELS.familyHistory}
-                hint={HEALTH_LABELS.listHint}
+                label={i18n.familyHistory}
+                hint={i18n.listHint}
                 value={values.familyHistory}
                 onChange={(next) => update("familyHistory", next)}
               />
@@ -435,6 +436,9 @@ function ListField({
       .map((s) => s.trim())
       .filter(Boolean);
     if (parsed.join(" ") !== value.join(" ")) {
+      // Sync local text state when the canonical prop changes externally
+      // (e.g. after save/reset) — intentional prop-to-state mirror.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRaw(value.join(", "));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

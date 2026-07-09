@@ -26,6 +26,7 @@ import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
 export function LanguageSwitcher({
   currentLang,
   availableLocales,
+  mode = "auto",
 }: {
   currentLang: LocaleCode;
   availableLocales: LocaleCode[];
@@ -33,6 +34,10 @@ export function LanguageSwitcher({
    *  currently consumed — the path-swap logic below already handles the
    *  global-page case. Kept in the prop type so callers still typecheck. */
   fallbackCountrySlug?: string;
+  /** "refresh" forces the cookie + router.refresh() branch for every
+   *  locale — used by the portals, whose routes (e.g. /doctor/profile/ie)
+   *  would otherwise be misdetected as [country]/[lang] pages. */
+  mode?: "auto" | "refresh";
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -122,8 +127,9 @@ export function LanguageSwitcher({
               const swapped = swapLangInPath(current, loc);
               // True when the path has a [country]/[lang] structure we can swap.
               const isCountryPage =
-                swapped !== current ||
-                /\/[a-z]{2,}\/[a-z]{2}(?:\/|$)/.test(current);
+                mode !== "refresh" &&
+                (swapped !== current ||
+                  /\/[a-z]{2,}\/[a-z]{2}(?:\/|$)/.test(current));
 
               const label = (
                 <span className="inline-flex items-center gap-2">

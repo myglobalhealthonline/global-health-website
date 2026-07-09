@@ -27,6 +27,7 @@ type Props = {
   /** Any date inside the initial week ("YYYY-MM-DD"), clinic-local. */
   initialWeekAnchor: string;
   onSlotsChange?: (slots: DoctorTimeSlotView[]) => void;
+  strings: { weekViewHelp: string };
 };
 
 function slotsToItems(slots: DoctorTimeSlotView[]): CalendarItem[] {
@@ -50,6 +51,7 @@ export function DoctorAvailabilityWeekView({
   clinicTz,
   initialWeekAnchor,
   onSlotsChange,
+  strings,
 }: Props) {
   const [tz, setTz] = useState(clinicTz);
   const [weekAnchor, setWeekAnchor] = useState(initialWeekAnchor);
@@ -110,9 +112,7 @@ export function DoctorAvailabilityWeekView({
     <div className="grid gap-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-[13px] text-[var(--portal-muted)]">
-          Click an <span className="font-semibold text-[var(--portal-success-text)]">open</span>{" "}
-          slot to mark yourself busy, or a blocked slot to re-open it. Booked
-          appointments stand out in colour and can&apos;t be changed here.
+          {strings.weekViewHelp}
         </p>
         <TimezoneSelect value={tz} options={tzOptions} onChange={setTz} />
       </div>

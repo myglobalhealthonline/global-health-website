@@ -6,10 +6,14 @@ import { monthGridRangeIso } from "@/components/calendar/calendar-utils";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import type { DoctorTimeSlotView } from "@/lib/api/doctor-availability-types";
 import { DoctorCalendarUI } from "./ui";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
 export default async function DoctorCalendarPage() {
+  const locale = await getPageLocale();
+  const { doctor: d } = loadLocaleBundle(locale);
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
@@ -26,10 +30,10 @@ export default async function DoctorCalendarPage() {
         <PageHeader
           eyebrow={
             <span className="inline-flex items-center gap-2">
-              <CalendarRange className="size-3.5" aria-hidden /> Schedule
+              <CalendarRange className="size-3.5" aria-hidden /> {d.calendar.eyebrowLabel}
             </span>
           }
-          title="Calendar"
+          title={d.calendar.title}
         />
         <AdminCard>
           <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
@@ -73,38 +77,38 @@ export default async function DoctorCalendarPage() {
       <PageHeader
         eyebrow={
           <span className="inline-flex items-center gap-2">
-            <CalendarRange className="size-3.5" aria-hidden /> Schedule
+            <CalendarRange className="size-3.5" aria-hidden /> {d.calendar.eyebrowLabel}
           </span>
         }
-        title="Calendar"
-        description="Your consultations and available slots in one view. Click a day to see its agenda, block individual slots, or set time off. Blocked slots disappear from the public booking page automatically."
+        title={d.calendar.title}
+        description={d.calendar.description}
       />
 
       <AdminSummaryStrip
         className="mb-4"
         items={[
           {
-            label: "Consultations",
+            label: d.calendar.statConsultations,
             value: consultations.length,
-            hint: "Scheduled appointments",
+            hint: d.calendar.statConsultationsHint,
             tone: consultations.length > 0 ? "brand" : "neutral",
           },
           {
-            label: "Open slots",
+            label: d.calendar.statOpenSlots,
             value: openSlots,
-            hint: "Bookable this range",
+            hint: d.calendar.statOpenSlotsHint,
             tone: openSlots > 0 ? "success" : "warning",
           },
           {
-            label: "Blocked slots",
+            label: d.calendar.statBlockedSlots,
             value: blockedSlots,
-            hint: "Unavailable",
+            hint: d.calendar.statBlockedSlotsHint,
             tone: blockedSlots > 0 ? "warning" : "neutral",
           },
           {
-            label: "Timezone",
+            label: d.calendar.statTimezone,
             value: clinicTimezone.split("/").pop()?.replace(/_/g, " ") ?? clinicTimezone,
-            hint: "Clinic default",
+            hint: d.calendar.statTimezoneHint,
             tone: "neutral",
           },
         ]}
@@ -117,6 +121,11 @@ export default async function DoctorCalendarPage() {
         consultations={consultations}
         clinicTimezone={clinicTimezone}
         availableTimezones={availableTimezones}
+        strings={d.calendar}
+        common={d.common}
+        minutesShort={d.availability.minutesShort}
+        errorEndAfterStart={d.availability.errorEndAfterStart}
+        errorEndDateAfterStart={d.availability.errorEndDateAfterStart}
       />
     </>
   );

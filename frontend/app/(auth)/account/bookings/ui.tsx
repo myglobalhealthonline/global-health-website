@@ -43,6 +43,41 @@ type BookingsI18n = {
     noBookings: string;
     noBookingsBody: string;
     bookOnline: string;
+    searchLabel: string;
+    searchPlaceholder: string;
+    statusLabel: string;
+    filterAll: string;
+    filterCreated: string;
+    filterSent: string;
+    filterContacted: string;
+    filterConcluded: string;
+    filterCancelled: string;
+    clearFilters: string;
+    actionRequiredOne: string;
+    actionRequiredMany: string;
+    completePayment: string;
+    noMatch: string;
+    noMatchBody: string;
+    paymentStartError: string;
+    unavailableTitle: string;
+    messageClinic: string;
+    doctorChatLocked: string;
+    chatWithDoctor: string;
+    rescheduleAction: string;
+    cancelBooking: string;
+    keepBooking: string;
+    cancelling: string;
+    cancelConfirm: string;
+    scheduledLabel: string;
+    timeTbc: string;
+    notesLabel: string;
+    whereLabel: string;
+    directionsLabel: string;
+    metaOrder: string;
+    metaCountry: string;
+    metaDoctor: string;
+    metaScheduled: string;
+    metaPayment: string;
   };
   payments: {
     statusPaid: string;
@@ -53,6 +88,76 @@ type BookingsI18n = {
     statusCanceled: string;
     statusUnpaid: string;
   };
+  dashboard: {
+    joinCall: string;
+  };
+  messages: {
+    typeGeneral: string;
+    typeSpecialist: string;
+    typePrescription: string;
+    typeHealthTest: string;
+    typeHomeDelivery: string;
+  };
+};
+
+const DEFAULT_BOOKINGS_I18N: BookingsI18n = {
+  bookings: {
+    noBookings: "No bookings yet",
+    noBookingsBody: "You have not made any booking requests. Start by booking your first consultation.",
+    bookOnline: "Book online",
+    searchLabel: "Search",
+    searchPlaceholder: "Consultation type, country, status…",
+    statusLabel: "Status",
+    filterAll: "All statuses",
+    filterCreated: "Created",
+    filterSent: "Sent",
+    filterContacted: "Contacted",
+    filterConcluded: "Concluded",
+    filterCancelled: "Cancelled",
+    clearFilters: "Clear filters",
+    actionRequiredOne: "Action required — 1 booking needs payment",
+    actionRequiredMany: "Action required — {count} bookings need payment",
+    completePayment: "Complete payment",
+    noMatch: "No bookings match",
+    noMatchBody: "Try a different search term or clear the status filter.",
+    paymentStartError: "Could not start payment.",
+    unavailableTitle: "Bookings unavailable",
+    messageClinic: "Message the clinic",
+    doctorChatLocked: "Doctor chat — complete payment to unlock",
+    chatWithDoctor: "Chat with your doctor",
+    rescheduleAction: "Reschedule",
+    cancelBooking: "Cancel booking",
+    keepBooking: "Keep booking",
+    cancelling: "Cancelling…",
+    cancelConfirm: "Cancel your {type} booking? This can't be undone.",
+    scheduledLabel: "Scheduled",
+    timeTbc: "Time to be confirmed",
+    notesLabel: "Notes",
+    whereLabel: "Where",
+    directionsLabel: "Directions",
+    metaOrder: "Order",
+    metaCountry: "Country",
+    metaDoctor: "Doctor",
+    metaScheduled: "Scheduled",
+    metaPayment: "Payment",
+  },
+  payments: {
+    statusPaid: "Paid",
+    statusProcessing: "Processing",
+    statusActionRequired: "Action required",
+    statusFailed: "Payment failed",
+    statusRefunded: "Refunded",
+    statusCanceled: "Cancelled",
+    statusUnpaid: "unpaid",
+  },
+  dashboard: { joinCall: "Join call" },
+  messages: {
+    typeGeneral: "GP consultation",
+    typeSpecialist: "Specialist consultation",
+    typePrescription: "Online prescription",
+    typeHealthTest: "Health test",
+    typeHomeDelivery: "Home delivery",
+  },
 };
 
 type BookingsShellProps = {
@@ -60,15 +165,6 @@ type BookingsShellProps = {
   unavailableMessage?: string | null;
   i18n?: BookingsI18n;
 };
-
-const STATUS_FILTERS = [
-  { value: "", label: "All statuses" },
-  { value: "REQUEST_RECEIVED", label: "Created" },
-  { value: "UNDER_REVIEW", label: "Sent" },
-  { value: "CONTACTED", label: "Contacted" },
-  { value: "COMPLETED", label: "Concluded" },
-  { value: "CANCELLED", label: "Cancelled" },
-];
 
 function formatStatus(status: string) {
   return status
@@ -95,17 +191,17 @@ function paymentTone(status: string): PillTone {
 
 // Map the raw consultationType ("general", "specialist", …) to a readable
 // label so cards don't just say "general".
-const CONSULT_LABELS: Record<string, string> = {
-  general: "GP consultation",
-  specialist: "Specialist consultation",
-  prescription: "Online prescription",
-  health_test: "Health test",
-  home_delivery: "Home delivery",
+const CONSULT_LABEL_KEYS: Record<string, keyof BookingsI18n["messages"]> = {
+  general: "typeGeneral",
+  specialist: "typeSpecialist",
+  prescription: "typePrescription",
+  health_test: "typeHealthTest",
+  home_delivery: "typeHomeDelivery",
 };
 
-function consultLabel(type: string): string {
-  const key = type.toLowerCase().replace(/[\s-]+/g, "_");
-  return CONSULT_LABELS[key] ?? formatStatus(type);
+function consultLabel(type: string, i18n: BookingsI18n): string {
+  const key = CONSULT_LABEL_KEYS[type.toLowerCase().replace(/[\s-]+/g, "_")];
+  return key ? i18n.messages[key] : formatStatus(type);
 }
 
 function requiresPayment(item: AccountAppointment): boolean {
@@ -117,21 +213,21 @@ function formatPaymentLabel(
   status: string,
   amountCents: number | null,
   currency: string | null,
-  i18n?: BookingsI18n,
+  i18n: BookingsI18n,
 ) {
   if (!amountCents) return null;
   const price = formatPrice(amountCents, currency);
-  const p = i18n?.payments;
-  if (status === "PAID") return `${p?.statusPaid ?? "Paid"} · ${price}`;
-  if (status === "PROCESSING") return `${p?.statusProcessing ?? "Processing"} · ${price}`;
-  if (status === "REQUIRES_ACTION") return `${p?.statusActionRequired ?? "Awaiting payment"} · ${price}`;
-  if (status === "FAILED") return `${p?.statusFailed ?? "Payment failed"} · ${price}`;
-  if (status === "REFUNDED") return `${p?.statusRefunded ?? "Refunded"} · ${price}`;
-  if (status === "CANCELED") return `${p?.statusCanceled ?? "Cancelled"} · ${price}`;
-  return `${price} ${p?.statusUnpaid ?? "unpaid"}`;
+  const p = i18n.payments;
+  if (status === "PAID") return `${p.statusPaid} · ${price}`;
+  if (status === "PROCESSING") return `${p.statusProcessing} · ${price}`;
+  if (status === "REQUIRES_ACTION") return `${p.statusActionRequired} · ${price}`;
+  if (status === "FAILED") return `${p.statusFailed} · ${price}`;
+  if (status === "REFUNDED") return `${p.statusRefunded} · ${price}`;
+  if (status === "CANCELED") return `${p.statusCanceled} · ${price}`;
+  return `${price} ${p.statusUnpaid}`;
 }
 
-export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShellProps) {
+export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKINGS_I18N }: BookingsShellProps) {
   const router = useRouter();
   // Only one chat thread is open at a time. Keeps polling load to one
   // background fetch every 10s regardless of how many bookings the
@@ -180,7 +276,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
       setPaymentRedirectUrl(res.data.url);
     } else {
       setPayingId(null);
-      setPayError(!res.ok ? res.message : "Could not start payment.");
+      setPayError(!res.ok ? res.message : i18n.bookings.paymentStartError);
     }
   }
 
@@ -202,13 +298,23 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
 
   const unpaidItems = useMemo(() => items.filter(requiresPayment), [items]);
 
+  const b = i18n.bookings;
+  const STATUS_FILTERS = [
+    { value: "", label: b.filterAll },
+    { value: "REQUEST_RECEIVED", label: b.filterCreated },
+    { value: "UNDER_REVIEW", label: b.filterSent },
+    { value: "CONTACTED", label: b.filterContacted },
+    { value: "COMPLETED", label: b.filterConcluded },
+    { value: "CANCELLED", label: b.filterCancelled },
+  ];
+
   if (unavailableMessage) {
     return (
       <AdminEmptyState
         className="mt-6"
         tone="danger"
         icon={<ClipboardList className="size-6" aria-hidden />}
-        title="Bookings unavailable"
+        title={b.unavailableTitle}
         description={unavailableMessage}
       />
     );
@@ -220,15 +326,12 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
         className="mt-6"
         icon={<ClipboardList className="size-6" aria-hidden />}
         assetSrc="/images/portal/obsidian/empty-calendar.svg"
-        title={i18n?.bookings.noBookings ?? "No bookings yet"}
-        description={
-          i18n?.bookings.noBookingsBody ??
-          "You have not made any booking requests. Start by booking your first consultation."
-        }
+        title={b.noBookings}
+        description={b.noBookingsBody}
         action={
           // No country/lang context in /account — go through the gate.
           <Btn href="/" variant="primary" size="sm" iconLeft={<ArrowRight className="size-3.5" aria-hidden />}>
-            {i18n?.bookings.bookOnline ?? "Book online"}
+            {b.bookOnline}
           </Btn>
         }
       />
@@ -239,7 +342,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
     <div className="mt-6">
       <div className="gh-patient-bookings-filters mb-4 flex flex-wrap items-end gap-3">
         <label className="flex min-w-0 flex-1 flex-col gap-1.5 sm:max-w-[280px]">
-          <span className="gh-field-label">Search</span>
+          <span className="gh-field-label">{b.searchLabel}</span>
           <div className="relative">
             <Search
               className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2"
@@ -250,13 +353,13 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Consultation type, country, status…"
+              placeholder={b.searchPlaceholder}
               className="gh-input min-w-0 pl-9"
             />
           </div>
         </label>
         <label className="flex min-w-0 flex-col gap-1.5">
-          <span className="gh-field-label">Status</span>
+          <span className="gh-field-label">{b.statusLabel}</span>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
@@ -276,7 +379,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
             }}
             className="text-[13px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
           >
-            Clear filters
+            {b.clearFilters}
           </button>
         ) : null}
       </div>
@@ -299,7 +402,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
           <div className="mb-3 flex items-center gap-2">
             <AlertTriangle className="size-5 shrink-0" style={{ color: "var(--portal-warning-text)" }} aria-hidden />
             <h2 className="text-sm font-bold uppercase tracking-wide" style={{ color: "var(--portal-warning-text)" }}>
-              Action required — {unpaidItems.length} {unpaidItems.length === 1 ? "booking needs" : "bookings need"} payment
+              {unpaidItems.length === 1 ? b.actionRequiredOne : b.actionRequiredMany.replace("{count}", String(unpaidItems.length))}
             </h2>
           </div>
           <div className="grid gap-2">
@@ -310,7 +413,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
               >
                 <div>
                   <p className="text-sm font-semibold" style={{ color: "var(--portal-text)" }}>
-                    {consultLabel(item.consultationType)}
+                    {consultLabel(item.consultationType, i18n)}
                   </p>
                   <p className="text-xs" style={{ color: "var(--portal-muted)" }}>
                     {formatPaymentLabel(item.paymentStatus, item.amountCents, item.currencyCode, i18n)}
@@ -324,7 +427,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
                   iconLeft={<CreditCard className="size-3.5" aria-hidden />}
                   onClick={() => void onCompletePayment(item.id)}
                 >
-                  Complete payment
+                  {b.completePayment}
                 </Btn>
               </div>
             ))}
@@ -335,8 +438,8 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
       {filtered.length === 0 ? (
         <AdminEmptyState
           icon={<Search className="size-6" aria-hidden />}
-          title="No bookings match"
-          description="Try a different search term or clear the status filter."
+          title={b.noMatch}
+          description={b.noMatchBody}
         />
       ) : (
         <div className="gh-patient-bookings-list grid gap-4">
@@ -348,24 +451,24 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
                 tone={item.status === "COMPLETED" ? "success" : item.status === "CANCELLED" ? "danger" : "neutral"}
                 title={
                   item.orderNumber
-                    ? `${item.orderNumber} · ${consultLabel(item.consultationType)}`
-                    : consultLabel(item.consultationType)
+                    ? `${item.orderNumber} · ${consultLabel(item.consultationType, i18n)}`
+                    : consultLabel(item.consultationType, i18n)
                 }
                 subtitle={`Booked ${formatAppDateTime(item.createdAt)}`}
                 statusPill={<Pill tone={statusTone(item.status)}>{formatStatus(item.status)}</Pill>}
                 meta={[
                   ...(item.orderNumber
-                    ? [{ label: "Order", value: <span className="font-mono">{item.orderNumber}</span> }]
+                    ? [{ label: b.metaOrder, value: <span className="font-mono">{item.orderNumber}</span> }]
                     : []),
-                  { label: "Country", value: item.countryCode.toUpperCase() },
+                  { label: b.metaCountry, value: item.countryCode.toUpperCase() },
                   ...(item.doctorName
-                    ? [{ label: "Doctor", value: item.doctorName }]
+                    ? [{ label: b.metaDoctor, value: item.doctorName }]
                     : []),
                   ...(item.scheduledAt
-                    ? [{ label: "Scheduled", value: formatAppDateTime(item.scheduledAt, item.patientTimezone) }]
+                    ? [{ label: b.metaScheduled, value: formatAppDateTime(item.scheduledAt, item.patientTimezone) }]
                     : []),
                   ...(paymentLabel
-                    ? [{ label: "Payment", value: <Pill tone={paymentTone(item.paymentStatus)}>{paymentLabel}</Pill> }]
+                    ? [{ label: b.metaPayment, value: <Pill tone={paymentTone(item.paymentStatus)}>{paymentLabel}</Pill> }]
                     : []),
                 ]}
               >
@@ -389,12 +492,12 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
                           className="text-xs font-semibold uppercase tracking-wider"
                           style={{ color: "var(--portal-success-text)" }}
                         >
-                          Scheduled
+                          {b.scheduledLabel}
                         </p>
                         <p className="mt-0.5 text-sm font-medium" style={{ color: "var(--portal-text)" }}>
                           {item.scheduledAt
                             ? formatAppDateTime(item.scheduledAt, item.patientTimezone)
-                            : "Time to be confirmed"}
+                            : b.timeTbc}
                         </p>
                       </div>
                     </div>
@@ -406,7 +509,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
                         className="gh-btn gh-btn-primary text-sm"
                       >
                         <Video className="size-4" aria-hidden />
-                        Join call
+                        {i18n.dashboard.joinCall}
                       </a>
                     ) : null}
                   </div>
@@ -420,12 +523,13 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
                     clinicName={item.clinicName ?? null}
                     clinicCity={item.clinicCity ?? null}
                     locationAddress={item.locationAddress ?? null}
+                    i18n={b}
                   />
                 ) : null}
 
                 {item.notesPreview ? (
                   <div className="mt-3 rounded-[var(--radius-card-sm)] bg-[var(--portal-well)] px-3 py-2">
-                    <p className="text-xs font-semibold text-[var(--portal-muted)]">Notes</p>
+                    <p className="text-xs font-semibold text-[var(--portal-muted)]">{b.notesLabel}</p>
                     <p className="mt-0.5 text-sm text-[var(--portal-text-2)]">{item.notesPreview}</p>
                   </div>
                 ) : null}
@@ -443,7 +547,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
                     className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)] sm:w-auto"
                   >
                     <MessageCircle className="size-4" aria-hidden />
-                    Message the clinic
+                    {b.messageClinic}
                   </button>
 
                   {requiresPayment(item) ? (
@@ -454,10 +558,10 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
                         background: "var(--portal-warning-soft)",
                         color: "var(--portal-warning-text)",
                       }}
-                      title="Complete payment to unlock chat with your doctor"
+                      title={b.doctorChatLocked}
                     >
                       <MessageCircle className="size-4" aria-hidden />
-                      Doctor chat — complete payment to unlock
+                      {b.doctorChatLocked}
                     </span>
                   ) : (
                     <button
@@ -469,7 +573,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
                       className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)] sm:w-auto"
                     >
                       <MessageCircle className="size-4" aria-hidden />
-                      Chat with your doctor
+                      {b.chatWithDoctor}
                     </button>
                   )}
 
@@ -480,7 +584,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
                         className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)] sm:w-auto"
                       >
                         <Clock className="size-4" aria-hidden />
-                        Reschedule
+                        {b.rescheduleAction}
                       </a>
                       <button
                         type="button"
@@ -492,7 +596,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
                         style={{ borderColor: "var(--portal-danger)", color: "var(--portal-danger-text)" }}
                       >
                         <XCircle className="size-4" aria-hidden />
-                        Cancel booking
+                        {b.cancelBooking}
                       </button>
                     </>
                   ) : null}
@@ -501,7 +605,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
                 <PortalDialog
                   open={openChatId === item.id}
                   onClose={() => setOpenChatId(null)}
-                  title="Message the clinic"
+                  title={b.messageClinic}
                   width="sm"
                   noBodyPadding
                 >
@@ -517,7 +621,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
                 <PortalDialog
                   open={openConsultChatId === item.id && !requiresPayment(item)}
                   onClose={() => setOpenConsultChatId(null)}
-                  title="Chat with your doctor"
+                  title={b.chatWithDoctor}
                   width="sm"
                   noBodyPadding
                 >
@@ -539,21 +643,21 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
       <PortalDialog
         open={cancelTarget !== null}
         onClose={() => (cancelling ? null : setCancelTarget(null))}
-        title="Cancel booking"
+        title={b.cancelBooking}
         danger
         footer={
           <>
             <Btn variant="ghost" onClick={() => setCancelTarget(null)} disabled={cancelling}>
-              Keep booking
+              {b.keepBooking}
             </Btn>
             <Btn variant="danger" onClick={() => void onConfirmCancel()} disabled={cancelling} loading={cancelling}>
-              {cancelling ? "Cancelling…" : "Cancel booking"}
+              {cancelling ? b.cancelling : b.cancelBooking}
             </Btn>
           </>
         }
       >
         <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
-          {cancelTarget ? `Cancel your ${consultLabel(cancelTarget.consultationType)} booking? This can't be undone.` : ""}
+          {cancelTarget ? b.cancelConfirm.replace("{type}", consultLabel(cancelTarget.consultationType, i18n)) : ""}
         </p>
         {cancelError ? (
           <p className="mt-2 rounded-md bg-rose-50 px-3 py-2 text-xs text-rose-800" role="alert">
@@ -569,10 +673,12 @@ function WhereBlock({
   clinicName,
   clinicCity,
   locationAddress,
+  i18n,
 }: {
   clinicName: string | null;
   clinicCity: string | null;
   locationAddress: string | null;
+  i18n: BookingsI18n["bookings"];
 }) {
   const primary = clinicName ?? locationAddress ?? "";
   const secondary = clinicName && clinicCity ? clinicCity : null;
@@ -596,7 +702,7 @@ function WhereBlock({
             className="text-xs font-semibold uppercase tracking-wider"
             style={{ color: "var(--portal-info-text)" }}
           >
-            Where
+            {i18n.whereLabel}
           </p>
           <p className="mt-0.5 text-sm font-medium" style={{ color: "var(--portal-text)" }}>{primary}</p>
           {secondary ? (
@@ -612,7 +718,7 @@ function WhereBlock({
           className="inline-flex items-center gap-1.5 text-sm font-semibold hover:underline"
           style={{ color: "var(--portal-info-text)" }}
         >
-          Directions <ArrowRight className="size-3.5" aria-hidden />
+          {i18n.directionsLabel} <ArrowRight className="size-3.5" aria-hidden />
         </a>
       ) : null}
     </div>

@@ -25,6 +25,8 @@ import {
 } from "@/components/NotificationPopover";
 import { Pill, Btn } from "@/components/portal-atoms";
 import { IdleLogout } from "@/components/IdleLogout";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import type { LocaleCode } from "@/lib/i18n/types";
 
 export type PortalShellUser = {
   fullName: string;
@@ -51,6 +53,29 @@ export type PortalNavGroup = {
 };
 
 type SignOutAction = () => Promise<void> | void;
+
+/** Shell chrome strings — localizable UI text that isn't nav data.
+ *  Optional with English defaults so callers that don't localize
+ *  (corporate portal) keep working untouched. */
+export type PortalShellChrome = {
+  account: string;
+  mainSite: string;
+  signOut: string;
+  closeNavigation: string;
+  openNavigation: string;
+  closeMenu: string;
+  allCaughtUp: string;
+};
+
+const DEFAULT_CHROME: PortalShellChrome = {
+  account: "Account",
+  mainSite: "Main site",
+  signOut: "Sign out",
+  closeNavigation: "Close navigation",
+  openNavigation: "Open navigation",
+  closeMenu: "Close menu",
+  allCaughtUp: "You're all caught up.",
+};
 
 function initials(name: string, email: string): string {
   if (name?.trim()) {
@@ -109,6 +134,9 @@ export function PortalShell({
   notificationsEmptyMessage,
   logoHref,
   banner,
+  locale,
+  availableLocales,
+  chrome,
   children,
 }: {
   user: PortalShellUser;
@@ -143,8 +171,15 @@ export function PortalShell({
   /** Optional banner rendered directly under the header, above the main
    *  content (e.g. the doctor compliance nudge). */
   banner?: ReactNode;
+  /** Current UI locale — with `availableLocales`, shows the topbar
+   *  language switcher. Omit both to hide it (corporate portal). */
+  locale?: LocaleCode;
+  availableLocales?: LocaleCode[];
+  /** Localized shell strings; defaults to English when omitted. */
+  chrome?: PortalShellChrome;
   children: ReactNode;
 }) {
+  const c = chrome ?? DEFAULT_CHROME;
   const [navOpen, setNavOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -184,7 +219,7 @@ export function PortalShell({
       {navOpen ? (
         <button
           type="button"
-          aria-label="Close navigation"
+          aria-label={c.closeNavigation}
           onClick={() => setNavOpen(false)}
           className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
         />
@@ -257,7 +292,7 @@ export function PortalShell({
               <button
                 type="button"
                 onClick={() => setNavOpen((v) => !v)}
-                aria-label={navOpen ? "Close navigation" : "Open navigation"}
+                aria-label={navOpen ? c.closeNavigation : c.openNavigation}
                 aria-expanded={navOpen}
                 className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-[var(--portal-chrome-border)] text-[var(--portal-chrome-text-active)] lg:hidden"
               >
@@ -313,6 +348,13 @@ export function PortalShell({
             </div>
 
             <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+              {locale && availableLocales ? (
+                <LanguageSwitcher
+                  currentLang={locale}
+                  availableLocales={availableLocales}
+                  mode="refresh"
+                />
+              ) : null}
               {/* Bell + user chip share one chrome pill (DESIGN.md §5.2). */}
               <div
                 className="gh-portal-user-pill flex items-center rounded-full"
@@ -321,9 +363,7 @@ export function PortalShell({
                   items={notifications ?? []}
                   unreadCount={notificationsUnreadCount}
                   viewAllHref={notificationsViewAllHref ?? null}
-                  emptyMessage={
-                    notificationsEmptyMessage ?? "You're all caught up."
-                  }
+                  emptyMessage={notificationsEmptyMessage ?? c.allCaughtUp}
                 />
 
                 <span
@@ -357,7 +397,7 @@ export function PortalShell({
                   <>
                     <button
                       type="button"
-                      aria-label="Close menu"
+                      aria-label={c.closeMenu}
                       onClick={() => setUserMenuOpen(false)}
                       className="fixed inset-0 z-30"
                     />
@@ -395,7 +435,7 @@ export function PortalShell({
                           className="rounded-md px-2 py-1.5 text-sm font-semibold hover:bg-[var(--portal-well)]"
                           style={{ color: "var(--portal-text)" }}
                         >
-                          Account
+                          {c.account}
                         </Link>
                         <Link
                           href="/"
@@ -403,12 +443,12 @@ export function PortalShell({
                           className="rounded-md px-2 py-1.5 text-sm font-semibold hover:bg-[var(--portal-well)]"
                           style={{ color: "var(--portal-text)" }}
                         >
-                          Main site
+                          {c.mainSite}
                         </Link>
                       </nav>
                       <form action={signOutAction} className="mt-2 pt-2" style={{ borderTop: "1px solid var(--portal-line)" }}>
                         <Btn type="submit" variant="danger" size="sm" className="w-full justify-center">
-                          Sign out
+                          {c.signOut}
                         </Btn>
                       </form>
                     </div>

@@ -536,7 +536,8 @@
     "orderSummary": "Order summary",
     "subtotalItems": "Subtotal ({count} {unit})",
     "shipping": "Shipping",
-    "planSavings": "Plan savings",    "total": "Total",
+    "planSavings": "Plan savings",
+    "total": "Total",
     "corporateOff": "off",
     "continueToCheckout": "Continue to checkout",
     "trustSecure": "Secure checkout powered by Stripe",
@@ -597,7 +598,8 @@
     "successTitle": "Payment received",
     "successBody": "Your order is confirmed. A receipt has been emailed to you.",
     "processingTitle": "Confirming your payment…",
-    "processingBody": "Your payment is being confirmed. This usually takes only a few moments — this page will update automatically.",    "orderRef": "ORDER #{id}",
+    "processingBody": "Your payment is being confirmed. This usually takes only a few moments — this page will update automatically.",
+    "orderRef": "ORDER #{id}",
     "shipping": "Shipping",
     "totalPaid": "Total paid",
     "receiptError": "We could not load the receipt right now. Your payment is confirmed; check your email for the order details.",
@@ -680,5 +682,14 @@
     "notFound": "Card not found",
     "checkNumber": "Check that the card number is correct.",
     "couldNotVerify": "Could not verify the card"
+  },
+  "portalChrome": {
+    "account": "Account",
+    "mainSite": "Main site",
+    "signOut": "Sign out",
+    "closeNavigation": "Close navigation",
+    "openNavigation": "Open navigation",
+    "closeMenu": "Close menu",
+    "allCaughtUp": "You're all caught up."
   }
 }

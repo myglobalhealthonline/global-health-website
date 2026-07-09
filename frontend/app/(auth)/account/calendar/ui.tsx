@@ -24,9 +24,11 @@ function browserTz(): string {
 export function PatientCalendarUI({
   items,
   defaultTz,
+  emptyLabel = "No consultations on this day.",
 }: {
   items: CalendarItem[];
   defaultTz: string | null;
+  emptyLabel?: string;
 }) {
   // Render in the patient's booking timezone when we captured one, else the
   // browser's current zone.
@@ -61,7 +63,7 @@ export function PatientCalendarUI({
         dayKey={selectedDay}
         items={dayItems}
         tz={tz}
-        emptyLabel="No consultations on this day."
+        emptyLabel={emptyLabel}
         showDoctorName
         onSelectConsultation={setActiveItem}
       />

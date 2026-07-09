@@ -1,9 +1,11 @@
 import type { DoctorMe } from "@/lib/api/doctor-api";
+import type enDoctor from "@/locales/en/doctor.json";
 import { PageHeader, AdminSummaryStrip } from "@/components/portal-atoms";
 import { DoctorProfileEditForm } from "./edit-form";
 
 type DoctorData = DoctorMe["doctor"];
 type Market = DoctorData["markets"][number];
+export type ProfileStrings = typeof enDoctor.profile;
 
 /**
  * Renders the doctor profile editor for one resolved country (market).
@@ -14,9 +16,11 @@ type Market = DoctorData["markets"][number];
 export function ProfileSections({
   doctor,
   activeMarket,
+  strings,
 }: {
   doctor: DoctorData;
   activeMarket: Market | null;
+  strings: ProfileStrings;
 }) {
   const primaryCountry = doctor.country;
   const additional = doctor.additionalCountries
@@ -29,36 +33,40 @@ export function ProfileSections({
     <>
       <PageHeader
         className="mb-6"
-        eyebrow="Doctor"
-        title={activeCountryName ? `My profile — ${activeCountryName}` : "My profile"}
-        description="Edit your public profile. Country, slug, and registration data are admin-managed — ping support if anything there needs to change."
+        eyebrow={strings.eyebrow}
+        title={
+          activeCountryName
+            ? strings.titleWithCountry.replace("{country}", activeCountryName)
+            : strings.title
+        }
+        description={strings.editDescription}
       />
 
       <AdminSummaryStrip
         className="mb-4"
         items={[
           {
-            label: "Primary country",
+            label: strings.primaryCountry,
             value: primaryCountry.code.toUpperCase(),
             hint: primaryCountry.name,
             tone: "brand",
           },
           {
-            label: "Markets",
+            label: strings.marketsLabel,
             value: 1 + additional.length,
-            hint: "Active country listings",
+            hint: strings.activeCountryListings,
             tone: "neutral",
           },
           {
-            label: "Categories",
+            label: strings.categories,
             value: specialties.length,
-            hint: specialties.length === 0 ? "Admin assignment needed" : "Approved specialties",
+            hint: specialties.length === 0 ? strings.adminAssignmentNeeded : strings.approvedSpecialties,
             tone: specialties.length > 0 ? "success" : "warning",
           },
           {
-            label: "Languages",
+            label: strings.languagesLabel,
             value: doctor.languages.length,
-            hint: "Patient-facing profile",
+            hint: strings.patientFacingProfile,
             tone: "neutral",
           },
         ]}
@@ -77,12 +85,12 @@ export function ProfileSections({
             fontWeight: 800,
           }}
         >
-          Practice context
+          {strings.practiceContext}
         </h3>
         <dl className="gh-doctor-context-grid mt-3 grid gap-3 sm:grid-cols-3">
           <div>
             <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-              Primary country
+              {strings.primaryCountry}
             </dt>
             <dd className="mt-1 text-[14px] text-[var(--portal-text)]">
               {primaryCountry.name} ({primaryCountry.code.toUpperCase()})
@@ -90,7 +98,7 @@ export function ProfileSections({
           </div>
           <div>
             <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-              Also listed in
+              {strings.alsoListedIn}
             </dt>
             <dd className="mt-1 text-[14px] text-[var(--portal-text)]">
               {additional.length === 0
@@ -102,7 +110,7 @@ export function ProfileSections({
           </div>
           <div>
             <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-              URL slug
+              {strings.urlSlug}
             </dt>
             <dd className="mt-1 text-[14px] font-mono text-[var(--portal-text)]">
               /{primaryCountry.slug}/{primaryCountry.defaultLocale.toLowerCase()}/doctors/{doctor.slug}
@@ -112,20 +120,20 @@ export function ProfileSections({
         <dl className="gh-doctor-context-grid mt-4 grid gap-3 sm:grid-cols-2">
           <div>
             <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-              Categories
+              {strings.categories}
             </dt>
             <dd className="mt-1 text-[14px] text-[var(--portal-text)]">
               {specialties.length === 0
-                ? "None assigned"
+                ? strings.noneAssigned
                 : specialties.map((s) => s.name).join(", ")}
             </dd>
           </div>
           <div>
             <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-              Consultation types
+              {strings.consultationTypes}
             </dt>
             <dd className="mt-1 text-[14px] text-[var(--portal-text)]">
-              General · Specialist · Prescription · Follow-up
+              {strings.consultationTypesValue}
             </dd>
           </div>
         </dl>
@@ -133,6 +141,7 @@ export function ProfileSections({
 
       <DoctorProfileEditForm
         activeCountryId={activeMarket?.countryId ?? null}
+        strings={strings}
         initial={{
           fullName: doctor.fullName,
           bio: doctor.bio ?? "",

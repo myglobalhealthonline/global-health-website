@@ -20,24 +20,33 @@ import type {
 } from "@/lib/api/doctor-api";
 
 type Kind = DoctorSelectableService["kind"];
+// Type-only import (erased at build time) — no runtime locale-loading code
+// ships to the client bundle; the component only receives plain strings via props.
+// ponytail: cs/de/ro doctor.json are partial locale stubs (missing many keys), so the
+// exact per-locale union type doesn't structurally match; loosen to Record<string, string>
+// here instead of touching load-locale.ts's locale-fallback merging (out of scope).
+type ServicesStrings = { [key: string]: string };
+type CommonStrings = { [key: string]: string };
 
-const KIND_META: Record<Kind, { label: string; short: string; icon: ReactNode }> = {
-  GENERAL: {
-    label: "GP consultations",
-    short: "GP",
-    icon: <Stethoscope className="size-4" aria-hidden />,
-  },
-  SPECIALIST: {
-    label: "Specialist consultations",
-    short: "Specialist",
-    icon: <Activity className="size-4" aria-hidden />,
-  },
-  PRESCRIPTION: {
-    label: "Prescriptions",
-    short: "Prescriptions",
-    icon: <FileText className="size-4" aria-hidden />,
-  },
-};
+function getKindMeta(strings: ServicesStrings): Record<Kind, { label: string; short: string; icon: ReactNode }> {
+  return {
+    GENERAL: {
+      label: strings.kindGeneral,
+      short: strings.kindGeneralShort,
+      icon: <Stethoscope className="size-4" aria-hidden />,
+    },
+    SPECIALIST: {
+      label: strings.kindSpecialist,
+      short: strings.kindSpecialistShort,
+      icon: <Activity className="size-4" aria-hidden />,
+    },
+    PRESCRIPTION: {
+      label: strings.kindPrescription,
+      short: strings.kindPrescriptionShort,
+      icon: <FileText className="size-4" aria-hidden />,
+    },
+  };
+}
 
 const KIND_ORDER: Kind[] = ["GENERAL", "SPECIALIST", "PRESCRIPTION"];
 
@@ -57,26 +66,30 @@ function formatPrice(cents: number | null, currency: string | null): string {
 type StatusTone = "active" | "pending" | "inactive";
 function statusPill(
   assignment: DoctorServiceAssignment | null,
+  strings: ServicesStrings,
 ): { tone: StatusTone; label: string } | null {
   if (!assignment) return null;
   switch (assignment.status) {
     case "active":
-      return { tone: "active", label: "Active" };
+      return { tone: "active", label: strings.statusActive };
     case "pending":
-      return { tone: "pending", label: "Awaiting approval" };
+      return { tone: "pending", label: strings.statusAwaiting };
     case "rejected":
-      return { tone: "inactive", label: "Rejected" };
+      return { tone: "inactive", label: strings.statusRejected };
     default:
-      return { tone: "inactive", label: "Disabled" };
+      return { tone: "inactive", label: strings.statusDisabled };
   }
 }
 
 type Props = {
   approvalRequired: boolean;
   items: DoctorSelectableService[];
+  strings: ServicesStrings;
+  common: CommonStrings;
 };
 
-export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
+export function DoctorServiceSelectionForm({ approvalRequired, items, strings, common }: Props) {
+  const KIND_META = useMemo(() => getKindMeta(strings), [strings]);
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<
@@ -154,19 +167,19 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
         if (!res.ok || !json.ok) {
           setMessage({
             kind: "error",
-            text: json.message ?? "Could not save service selections",
+            text: json.message ?? strings.saveFailed,
           });
           return;
         }
         setMessage({
           kind: "success",
           text: approvalRequired
-            ? "Request submitted. Your new services are awaiting admin approval — see the next steps below to get them approved faster."
-            : "Selections saved. Your services are now available for booking.",
+            ? strings.submittedApprovalMsg
+            : strings.submittedNoApprovalMsg,
         });
         router.refresh();
       } catch {
-        setMessage({ kind: "error", text: "Could not reach the server. Try again." });
+        setMessage({ kind: "error", text: strings.networkError });
       }
     });
   }
@@ -181,11 +194,10 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
           aria-hidden
         />
         <p className="mt-3 text-sm font-semibold text-[var(--portal-text)]">
-          No services available yet
+          {strings.emptyTitle}
         </p>
         <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
-          Once services are configured for your country, they will appear here
-          for you to request.
+          {strings.emptyDesc}
         </p>
       </div>
     );
@@ -196,25 +208,24 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
       {/* How it works */}
       <div className="gh-doctor-service-explainer rounded-[var(--radius-card-sm)] border border-[var(--portal-line-soft)] bg-[var(--portal-well)] px-5 py-4">
         <p className="m-0 text-[13px] leading-relaxed text-[var(--portal-muted)]">
-          Select the services you are qualified to provide and save your
-          request.{" "}
+          {strings.explainerIntro}{" "}
           {approvalRequired ? (
             <>
-              New selections are submitted to an administrator for approval —
+              {strings.explainerApprovalRequired}
               <span className="font-semibold text-[var(--portal-text)]">
                 {" "}
-                approved
+                {strings.explainerApproved}
               </span>{" "}
-              services become bookable, others stay{" "}
+              {strings.explainerBecomeBookable}{" "}
               <span className="font-semibold text-[var(--portal-text)]">
-                rejected
+                {strings.explainerRejected}
               </span>
               .
             </>
           ) : (
-            "Your selections become available for booking immediately."
+            strings.explainerNoApproval
           )}{" "}
-          Health tests are managed by admin and are not listed here.
+          {strings.explainerHealthTests}
         </p>
       </div>
 
@@ -231,7 +242,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
       {/* Country tabs (only when the doctor practices in 2+ countries) */}
       {multiCountry ? (
         <PortalTabs
-          ariaLabel="Countries"
+          ariaLabel={strings.countriesTabLabel}
           value={activeCountryId}
           onChange={setActiveCountryId}
           items={countries.map((country) => ({
@@ -251,7 +262,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
 
       {/* Tabs */}
       <PortalTabs
-        ariaLabel="Service categories"
+        ariaLabel={strings.categoriesTabLabel}
         value={activeGroup?.kind ?? activeTab}
         onChange={(v) => setActiveTab(v as Kind)}
         items={grouped.map(({ kind, services }) => ({
@@ -273,7 +284,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
             service.assignment?.selectedBy === "admin" &&
             service.assignment.status === "active";
           const checked = selected.has(service.id);
-          const pill = statusPill(service.assignment);
+          const pill = statusPill(service.assignment, strings);
           return (
             <button
               key={service.id}
@@ -305,7 +316,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
                   </Pill>
                 ) : (
                   <span className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--portal-muted)]">
-                    Not requested
+                    {strings.notRequested}
                   </span>
                 )}
               </div>
@@ -332,9 +343,9 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
                   {formatPrice(service.basePriceCents, service.currencyCode)}
                 </span>
                 <span className="inline-flex items-center gap-1 font-mono font-semibold text-[var(--portal-primary)]">
-                  Your fee:{" "}
+                  {strings.yourFee}{" "}
                   {service.assignment?.doctorAmountCents == null
-                    ? "Not set"
+                    ? common.notSet
                     : formatPrice(
                         service.assignment.doctorAmountCents,
                         service.currencyCode,
@@ -343,7 +354,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
                 {isAdminLocked ? (
                   <span className="ml-auto inline-flex items-center gap-1">
                     <Lock className="size-3" aria-hidden />
-                    Admin-assigned
+                    {strings.adminAssigned}
                   </span>
                 ) : null}
               </div>
@@ -361,13 +372,10 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
           />
           <div className="text-[13px] leading-relaxed text-[var(--portal-muted)]">
             <p className="m-0 font-semibold text-[var(--portal-text)]">
-              After you save: contact the admin team
+              {strings.nextStepsTitle}
             </p>
             <p className="mt-1">
-              Email your supporting documents — qualifications, certifications,
-              and registration proof — to the administrators so they can verify
-              your eligibility and approve your requested services. Requests are
-              not approved until documents are reviewed.
+              {strings.nextStepsDesc}
             </p>
           </div>
         </div>
@@ -376,7 +384,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
       <div className="gh-doctor-form-actions flex items-center justify-end gap-3">
         {dirty ? (
           <span className="text-[12.5px] text-[var(--portal-muted)]">
-            Unsaved changes
+            {strings.unsavedChanges}
           </span>
         ) : null}
         <button
@@ -385,7 +393,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
           disabled={pending || !dirty}
           className="gh-btn gh-btn-primary px-5 py-2.5 text-sm font-semibold disabled:opacity-60"
         >
-          {pending ? "Saving…" : "Save & submit request"}
+          {pending ? strings.saving : strings.saveAndSubmit}
         </button>
       </div>
     </div>

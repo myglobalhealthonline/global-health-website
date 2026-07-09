@@ -11,16 +11,47 @@ import {
 import { PortalDialog } from "@/components/PortalDialog";
 import { Btn } from "@/components/portal-atoms";
 
+export type PrescriptionsListCopy = {
+  noneTitle: string;
+  noneDescriptionLocked: string;
+  noneDescriptionUnlocked: string;
+  deleteAria: string;
+  deleteTitle: string;
+  drugRequired: string;
+  issuePrescription: string;
+  drugNameLabel: string;
+  drugNamePlaceholder: string;
+  doseLabel: string;
+  dosePlaceholder: string;
+  frequencyLabel: string;
+  frequencyPlaceholder: string;
+  durationLabel: string;
+  durationPlaceholder: string;
+  refillsLabel: string;
+  instructionsLabel: string;
+  instructionsPlaceholder: string;
+  issuing: string;
+  cancel: string;
+  lockedNotice: string;
+  durationDaysSuffix: string;
+  refillsSuffix: string;
+  deleteDialogTitle: string;
+  deleteDialogBody: string;
+  deleteDialogDefaultDrug: string;
+};
+
 type Props = {
   appointmentId: string;
   initialItems: DoctorPrescription[];
   consultationLocked: boolean;
+  copy: PrescriptionsListCopy;
 };
 
 export function PrescriptionsList({
   appointmentId,
   initialItems,
   consultationLocked,
+  copy,
 }: Props) {
   const router = useRouter();
   const [items, setItems] = useState<DoctorPrescription[]>(initialItems);
@@ -51,7 +82,7 @@ export function PrescriptionsList({
     e.preventDefault();
     setError(null);
     if (!drugName.trim()) {
-      setError("Drug name is required");
+      setError(copy.drugRequired);
       return;
     }
     startTransition(async () => {
@@ -100,12 +131,12 @@ export function PrescriptionsList({
         <div className="mt-3 rounded-lg border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] p-4">
           <p className="flex items-center gap-2 text-sm font-bold text-[var(--portal-text)]">
             <Pill className="size-4 text-[var(--portal-primary)]" aria-hidden />
-            No prescriptions recorded
+            {copy.noneTitle}
           </p>
           <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
             {consultationLocked
-              ? "No prescriptions were issued during this consultation."
-              : "Issue a prescription here when medication is part of the follow-up plan."}
+              ? copy.noneDescriptionLocked
+              : copy.noneDescriptionUnlocked}
           </p>
         </div>
       ) : (
@@ -128,9 +159,11 @@ export function PrescriptionsList({
                 <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
                   {[
                     p.frequency,
-                    p.durationDays != null ? `${p.durationDays} day(s)` : null,
+                    p.durationDays != null
+                      ? copy.durationDaysSuffix.replace("{n}", String(p.durationDays))
+                      : null,
                     p.refills > 0
-                      ? `${p.refills} refill${p.refills === 1 ? "" : "s"}`
+                      ? copy.refillsSuffix.replace("{n}", String(p.refills))
                       : null,
                   ]
                     .filter(Boolean)
@@ -148,8 +181,8 @@ export function PrescriptionsList({
                   onClick={() => onDelete(p)}
                   disabled={busy}
                   className="inline-flex items-center justify-center rounded-md p-1.5 text-[var(--portal-danger-text)] hover:bg-rose-50 disabled:opacity-60"
-                  aria-label={`Delete ${p.drugName}`}
-                  title="Delete"
+                  aria-label={copy.deleteAria.replace("{drug}", p.drugName)}
+                  title={copy.deleteTitle}
                 >
                   <Trash2 className="size-3.5" aria-hidden />
                 </button>
@@ -175,61 +208,61 @@ export function PrescriptionsList({
               className="inline-flex items-center gap-1.5 rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface)] px-3 py-1.5 text-[13px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
             >
               <Plus className="size-3.5" aria-hidden />
-              Issue prescription
+              {copy.issuePrescription}
             </button>
           ) : (
             <form onSubmit={onSubmit} className="grid gap-3 rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface)] p-4">
               <div className="grid gap-3 sm:grid-cols-2">
                 <label className="flex min-w-0 flex-col gap-1">
                   <span className="gh-field-label">
-                    Drug name <span className="text-rose-500">*</span>
+                    {copy.drugNameLabel} <span className="text-rose-500">*</span>
                   </span>
                   <input
                     type="text"
                     value={drugName}
                     onChange={(e) => setDrugName(e.target.value)}
-                    placeholder="e.g. Amoxicillin"
+                    placeholder={copy.drugNamePlaceholder}
                     maxLength={200}
                     className="gh-input"
                     required
                   />
                 </label>
                 <label className="flex min-w-0 flex-col gap-1">
-                  <span className="gh-field-label">Dose / strength</span>
+                  <span className="gh-field-label">{copy.doseLabel}</span>
                   <input
                     type="text"
                     value={dose}
                     onChange={(e) => setDose(e.target.value)}
-                    placeholder="e.g. 500 mg capsule"
+                    placeholder={copy.dosePlaceholder}
                     maxLength={120}
                     className="gh-input"
                   />
                 </label>
                 <label className="flex min-w-0 flex-col gap-1">
-                  <span className="gh-field-label">Frequency</span>
+                  <span className="gh-field-label">{copy.frequencyLabel}</span>
                   <input
                     type="text"
                     value={frequency}
                     onChange={(e) => setFrequency(e.target.value)}
-                    placeholder="e.g. 1 cap every 8h"
+                    placeholder={copy.frequencyPlaceholder}
                     maxLength={120}
                     className="gh-input"
                   />
                 </label>
                 <label className="flex min-w-0 flex-col gap-1">
-                  <span className="gh-field-label">Duration (days)</span>
+                  <span className="gh-field-label">{copy.durationLabel}</span>
                   <input
                     type="number"
                     min={1}
                     max={3650}
                     value={durationDays}
                     onChange={(e) => setDurationDays(e.target.value)}
-                    placeholder="e.g. 7"
+                    placeholder={copy.durationPlaceholder}
                     className="gh-input"
                   />
                 </label>
                 <label className="flex min-w-0 flex-col gap-1">
-                  <span className="gh-field-label">Refills</span>
+                  <span className="gh-field-label">{copy.refillsLabel}</span>
                   <input
                     type="number"
                     min={0}
@@ -241,13 +274,13 @@ export function PrescriptionsList({
                 </label>
               </div>
               <label className="flex min-w-0 flex-col gap-1">
-                <span className="gh-field-label">Instructions / notes</span>
+                <span className="gh-field-label">{copy.instructionsLabel}</span>
                 <textarea
                   value={instructions}
                   onChange={(e) => setInstructions(e.target.value)}
                   rows={3}
                   maxLength={2000}
-                  placeholder="e.g. Take with food. Avoid alcohol."
+                  placeholder={copy.instructionsPlaceholder}
                   className="gh-input"
                 />
               </label>
@@ -257,7 +290,7 @@ export function PrescriptionsList({
                   disabled={busy}
                   className="gh-btn gh-btn-primary text-sm disabled:opacity-60"
                 >
-                  {busy ? "Issuing…" : "Issue prescription"}
+                  {busy ? copy.issuing : copy.issuePrescription}
                 </button>
                 <button
                   type="button"
@@ -268,7 +301,7 @@ export function PrescriptionsList({
                   disabled={busy}
                   className="gh-btn gh-btn-soft text-sm disabled:opacity-60"
                 >
-                  Cancel
+                  {copy.cancel}
                 </button>
               </div>
             </form>
@@ -276,28 +309,31 @@ export function PrescriptionsList({
         </div>
       ) : (
         <p className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
-          Consultation is signed — prescriptions are locked.
+          {copy.lockedNotice}
         </p>
       )}
 
       <PortalDialog
         open={deleteTarget !== null}
         onClose={() => setDeleteTarget(null)}
-        title="Delete prescription"
+        title={copy.deleteDialogTitle}
         danger
         footer={
           <>
             <Btn variant="ghost" onClick={() => setDeleteTarget(null)}>
-              Cancel
+              {copy.cancel}
             </Btn>
             <Btn variant="danger" onClick={confirmDelete}>
-              Delete
+              {copy.deleteTitle}
             </Btn>
           </>
         }
       >
         <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
-          Delete {deleteTarget?.drugName ?? "this prescription"}? This cannot be undone.
+          {copy.deleteDialogBody.replace(
+            "{drug}",
+            deleteTarget?.drugName ?? copy.deleteDialogDefaultDrug,
+          )}
         </p>
       </PortalDialog>
     </div>

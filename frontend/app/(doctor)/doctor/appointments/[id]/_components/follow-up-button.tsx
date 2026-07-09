@@ -10,7 +10,29 @@ import { CalendarPlus } from "lucide-react";
  * can edit before submitting. Copies patient, country, doctor, and
  * delivery mode from the source row.
  */
-export function FollowUpButton({ appointmentId }: { appointmentId: string }) {
+export type FollowUpButtonCopy = {
+  bookFollowUp: string;
+  newFollowUpTitle: string;
+  whenLabel: string;
+  deliveryLabel: string;
+  onlineOption: string;
+  inPersonOption: string;
+  notesLabel: string;
+  notesPlaceholder: string;
+  invalidDateTime: string;
+  cancel: string;
+  creating: string;
+  createButton: string;
+  couldNotCreate: string;
+};
+
+export function FollowUpButton({
+  appointmentId,
+  copy,
+}: {
+  appointmentId: string;
+  copy: FollowUpButtonCopy;
+}) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [scheduledAtLocal, setScheduledAtLocal] = useState(() => {
@@ -31,7 +53,7 @@ export function FollowUpButton({ appointmentId }: { appointmentId: string }) {
     if (scheduledAtLocal) {
       const parsed = new Date(scheduledAtLocal);
       if (Number.isNaN(parsed.getTime())) {
-        setError("Invalid date/time.");
+        setError(copy.invalidDateTime);
         return;
       }
       iso = parsed.toISOString();
@@ -56,7 +78,7 @@ export function FollowUpButton({ appointmentId }: { appointmentId: string }) {
         data?: { appointment?: { id: string } };
       };
       if (!res.ok || !json.ok || !json.data?.appointment) {
-        setError(json.message ?? "Could not create follow-up");
+        setError(json.message ?? copy.couldNotCreate);
         return;
       }
       setOpen(false);
@@ -71,7 +93,7 @@ export function FollowUpButton({ appointmentId }: { appointmentId: string }) {
         onClick={() => setOpen(true)}
         className="gh-btn gh-btn-soft"
       >
-        <CalendarPlus className="size-3.5" /> Book follow-up
+        <CalendarPlus className="size-3.5" /> {copy.bookFollowUp}
       </button>
     );
   }
@@ -82,11 +104,11 @@ export function FollowUpButton({ appointmentId }: { appointmentId: string }) {
       className="rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3"
     >
       <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-        New follow-up
+        {copy.newFollowUpTitle}
       </p>
       <div className="mt-2 grid gap-2">
         <label className="flex flex-col gap-1">
-          <span className="gh-field-label">When</span>
+          <span className="gh-field-label">{copy.whenLabel}</span>
           <input
             type="datetime-local"
             className="gh-input"
@@ -95,23 +117,23 @@ export function FollowUpButton({ appointmentId }: { appointmentId: string }) {
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="gh-field-label">Delivery</span>
+          <span className="gh-field-label">{copy.deliveryLabel}</span>
           <select
             className="gh-select"
             value={mode}
             onChange={(e) => setMode(e.target.value as "ONLINE" | "IN_PERSON")}
           >
-            <option value="ONLINE">Online (video)</option>
-            <option value="IN_PERSON">In person</option>
+            <option value="ONLINE">{copy.onlineOption}</option>
+            <option value="IN_PERSON">{copy.inPersonOption}</option>
           </select>
         </label>
         <label className="flex flex-col gap-1">
-          <span className="gh-field-label">Notes (optional)</span>
+          <span className="gh-field-label">{copy.notesLabel}</span>
           <textarea
             className="gh-input min-h-[4rem] resize-y"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Reason for follow-up, instructions for patient…"
+            placeholder={copy.notesPlaceholder}
             maxLength={2000}
           />
         </label>
@@ -126,10 +148,10 @@ export function FollowUpButton({ appointmentId }: { appointmentId: string }) {
             onClick={() => setOpen(false)}
             className="gh-btn gh-btn-soft"
           >
-            Cancel
+            {copy.cancel}
           </button>
           <button type="submit" disabled={pending} className="gh-btn gh-btn-primary">
-            {pending ? "Creating…" : "Create follow-up"}
+            {pending ? copy.creating : copy.createButton}
           </button>
         </div>
       </div>

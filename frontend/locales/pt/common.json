@@ -536,7 +536,8 @@
     "orderSummary": "Resumo da encomenda",
     "subtotalItems": "Subtotal ({count} {unit})",
     "shipping": "Envio",
-    "planSavings": "Poupança do plano",    "total": "Total",
+    "planSavings": "Poupança do plano",
+    "total": "Total",
     "corporateOff": "de desconto",
     "continueToCheckout": "Continuar para finalizar compra",
     "trustSecure": "Pagamento seguro com tecnologia Stripe",
@@ -597,7 +598,8 @@
     "successTitle": "Pagamento recebido",
     "successBody": "A sua encomenda está confirmada. Foi-lhe enviado um recibo por email.",
     "processingTitle": "A confirmar o seu pagamento…",
-    "processingBody": "O seu pagamento está a ser confirmado. Normalmente demora apenas alguns momentos — esta página será atualizada automaticamente.",    "orderRef": "ORDER #{id}",
+    "processingBody": "O seu pagamento está a ser confirmado. Normalmente demora apenas alguns momentos — esta página será atualizada automaticamente.",
+    "orderRef": "ORDER #{id}",
     "shipping": "Envio",
     "totalPaid": "Total pago",
     "receiptError": "Não foi possível carregar o recibo neste momento. O seu pagamento está confirmado; verifique o seu email para os detalhes da encomenda.",
@@ -680,5 +682,14 @@
     "notFound": "Cartão não encontrado",
     "checkNumber": "Verifique se o número do cartão está correto.",
     "couldNotVerify": "Não foi possível verificar o cartão"
+  },
+  "portalChrome": {
+    "account": "Conta",
+    "mainSite": "Site principal",
+    "signOut": "Terminar sessão",
+    "closeNavigation": "Fechar navegação",
+    "openNavigation": "Abrir navegação",
+    "closeMenu": "Fechar menu",
+    "allCaughtUp": "Está tudo em dia."
   }
 }

@@ -64,6 +64,13 @@ import csAccount from "@/locales/cs/account.json";
 import roAccount from "@/locales/ro/account.json";
 import deAccount from "@/locales/de/account.json";
 
+import enDoctor from "@/locales/en/doctor.json";
+import ptDoctor from "@/locales/pt/doctor.json";
+import esDoctor from "@/locales/es/doctor.json";
+import csDoctor from "@/locales/cs/doctor.json";
+import roDoctor from "@/locales/ro/doctor.json";
+import deDoctor from "@/locales/de/doctor.json";
+
 import enSubscription from "@/locales/en/subscription.json";
 import ptSubscription from "@/locales/pt/subscription.json";
 import esSubscription from "@/locales/es/subscription.json";
@@ -81,6 +88,7 @@ const contactByLocale = { en: enContact, pt: ptContact, es: esContact, cs: csCon
 const authByLocale = { en: enAuth, pt: ptAuth, es: esAuth, cs: csAuth, ro: roAuth, de: deAuth } as const;
 const accountByLocale = { en: enAccount, pt: ptAccount, es: esAccount, cs: csAccount, ro: roAccount, de: deAccount } as const;
 const subscriptionByLocale = { en: enSubscription, pt: ptSubscription, es: esSubscription, cs: csSubscription, ro: roSubscription, de: deSubscription } as const;
+const doctorByLocale = { en: enDoctor, pt: ptDoctor, es: esDoctor, cs: csDoctor, ro: roDoctor, de: deDoctor } as const;
 
 export function loadLocaleBundle(locale: LocaleCode) {
   return {
@@ -95,5 +103,8 @@ export function loadLocaleBundle(locale: LocaleCode) {
     auth: authByLocale[locale] ?? authByLocale.en,
     account: accountByLocale[locale] ?? accountByLocale.en,
     subscription: subscriptionByLocale[locale] ?? subscriptionByLocale.en,
+    // en doctor.json is the schema source of truth; the translation
+    // workflow keeps the other locales key-complete, so type against en.
+    doctor: (doctorByLocale[locale] ?? doctorByLocale.en) as typeof enDoctor,
   };
 }

@@ -5,14 +5,23 @@ import { FileText } from "lucide-react";
 import {
   ConsultationDocumentsModal,
   type ConsultationDocTabId,
+  type ConsultationDocumentsModalCopy,
 } from "./consultation-documents-modal";
+
+export type ConsultationDocumentsCopy = ConsultationDocumentsModalCopy & {
+  sectionDesc: string;
+  openWorkspace: string;
+  generateDocuments: string;
+};
 
 export function ConsultationDocumentsSection({
   appointmentId,
   onDocumentsChange,
+  copy,
 }: {
   appointmentId: string;
   onDocumentsChange?: () => void;
+  copy: ConsultationDocumentsCopy;
 }) {
   const [open, setOpen] = useState(false);
   const [initialTab, setInitialTab] = useState<ConsultationDocTabId>("overview");
@@ -20,8 +29,7 @@ export function ConsultationDocumentsSection({
   return (
     <>
       <p className="mt-3 text-[13px] leading-relaxed text-[var(--portal-muted)]">
-        Generate exams, prescriptions, or absence certificates. Patient details and your
-        registration are filled in automatically from records.
+        {copy.sectionDesc}
       </p>
       <button
         type="button"
@@ -32,7 +40,7 @@ export function ConsultationDocumentsSection({
         className="gh-btn gh-btn-primary mt-4 w-full text-sm sm:w-auto"
       >
         <FileText className="size-3.5" aria-hidden />
-        Open document workspace
+        {copy.openWorkspace}
       </button>
       <ConsultationDocumentsModal
         appointmentId={appointmentId}
@@ -40,6 +48,7 @@ export function ConsultationDocumentsSection({
         onClose={() => setOpen(false)}
         initialTab={initialTab}
         onDocumentsChange={onDocumentsChange}
+        copy={copy}
       />
     </>
   );
@@ -50,10 +59,12 @@ export function ConsultationDocumentsTrigger({
   appointmentId,
   className,
   onDocumentsChange,
+  copy,
 }: {
   appointmentId: string;
   className?: string;
   onDocumentsChange?: () => void;
+  copy: ConsultationDocumentsCopy;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -64,7 +75,7 @@ export function ConsultationDocumentsTrigger({
         onClick={() => setOpen(true)}
         className={className ?? "gh-btn gh-btn-soft text-sm"}
       >
-        <FileText className="size-3.5" aria-hidden /> Generate documents
+        <FileText className="size-3.5" aria-hidden /> {copy.generateDocuments}
       </button>
       <ConsultationDocumentsModal
         appointmentId={appointmentId}
@@ -75,6 +86,7 @@ export function ConsultationDocumentsTrigger({
         }}
         initialTab="overview"
         onDocumentsChange={onDocumentsChange}
+        copy={copy}
       />
     </>
   );
