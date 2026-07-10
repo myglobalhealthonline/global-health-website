@@ -31,41 +31,54 @@ import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
  */
 const PUBLIC_FILE = /\.(.*)$/;
 
-// Content-Security-Policy.
+// Content-Security-Policy (S-010 — see SECURITY_AUDIT2.md, AUDIT2 workstream W6).
 //
-// Baseline (every public document): the existing clickjacking + object/base-uri
-// lockdown, intentionally with NO script-src. The public site is statically
-// generated (generateStaticParams across the whole (site) group), and a
-// per-request nonce is fundamentally incompatible with static rendering — Next
-// stamps nonces only during dynamic server rendering, so a build-time page's
-// scripts would carry no nonce and modern browsers (which ignore the
-// 'unsafe-inline' fallback once a nonce is present) would BLOCK all JS. So the
-// public site keeps the no-script-src policy.
+// Two policies, one per rendering mode, because a per-request nonce is
+// fundamentally incompatible with static output (Next stamps nonces only during
+// dynamic server rendering; a build-time page's scripts would carry no nonce and
+// modern browsers, which ignore 'unsafe-inline' once a nonce is present, would
+// BLOCK all JS):
 //
-// The authenticated portals (/account, /admin, /doctor, /corporate) always
-// render dynamically — their layouts read the auth cookie — so there we add a
-// real nonce-based script-src backstop against inline-script injection. Next
-// extracts the nonce from the request's CSP header and stamps it onto its own
-// bootstrap/hydration scripts automatically. (The Meta Pixel inline <Script>
-// in the root layout is NOT auto-nonced and will be CSP-blocked on these
-// routes — acceptable, and arguably desirable: no ad tracking on PHI portals.)
+//   • Public documents (the (site) group + login/register etc.): the enforcing
+//     baseline below — clickjacking + object/base-uri lockdown, NO script-src —
+//     PLUS a full report-only policy (default/script/style/img/font/connect/
+//     frame/form-action) shipped from `next.config.ts headers()`. Report-only so
+//     it can't break the (currently still dynamically-rendered — see P-001 notes
+//     on (site)/layout.tsx) public pages; it exists to gather the inline-script
+//     violations needed to derive hashes before enforcing.
+//
+//   • Authenticated portals (/account, /admin, /doctor, /corporate): these
+//     always render dynamically (their layouts read the auth cookie), so here we
+//     ship an ENFORCING nonce/'strict-dynamic' script policy. Next extracts the
+//     nonce from the request's CSP header and stamps it onto its own bootstrap/
+//     hydration scripts automatically. (The Meta Pixel inline <Script> is NOT
+//     auto-nonced and is CSP-blocked on these routes — desirable: no ad tracking
+//     on PHI portals.)
 const CSP_BASE = "frame-ancestors 'self'; object-src 'none'; base-uri 'self'";
 const NONCE_ROUTES = /^\/(account|admin|doctor|corporate)(\/|$)/;
-// The nonce script-src is OFF by default so this ships risk-free: with the flag
-// unset every route gets the exact baseline CSP that was in effect before (the
-// static policy that used to live in next.config.ts). The nonce path only
-// affects the always-dynamic authenticated portals and relies on Next stamping
-// the nonce onto its own scripts — verify one logged-in portal page hydrates
-// with no CSP console errors in a PRODUCTION build, then set ENABLE_NONCE_CSP=true.
-const NONCE_CSP_ENABLED = process.env.ENABLE_NONCE_CSP === "true";
+// Backend API / media origin — portal client fetches (`NEXT_PUBLIC_API_URL`) and
+// media <img> need to be reachable under connect-src / img-src. Empty on deploys
+// where the public env is unset (same-origin only), which is fine.
+const API_ORIGIN = process.env.NEXT_PUBLIC_API_URL?.trim().replace(/\/+$/, "") ?? "";
+// Enforcing nonce CSP is ON by default for the portals (W6). Kill switch:
+// set DISABLE_NONCE_CSP=true to fall back to the bare baseline if a portal page
+// is ever found to hydrate with CSP console errors in production. The public
+// site is unaffected either way (it never matches NONCE_ROUTES).
+const NONCE_CSP_ENABLED = process.env.DISABLE_NONCE_CSP !== "true";
 
 function nonceCsp(nonce: string): string {
+  const media = API_ORIGIN ? ` ${API_ORIGIN}` : "";
   return [
-    // 'unsafe-inline' is a legacy fallback only — browsers honoring the
-    // nonce/'strict-dynamic' ignore it. 'unsafe-eval' intentionally omitted.
+    "default-src 'self'",
+    // 'unsafe-inline' + https: are legacy fallbacks only — browsers honoring the
+    // nonce/'strict-dynamic' ignore them. 'unsafe-eval' intentionally omitted.
     `script-src 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'`,
     // CMS + Tailwind emit inline <style>; keep style-src permissive.
     "style-src 'self' 'unsafe-inline'",
+    `img-src 'self' data: blob:${media}`,
+    "font-src 'self' data:",
+    `connect-src 'self'${media}`,
+    `form-action 'self'${media}`,
     CSP_BASE,
   ].join("; ");
 }

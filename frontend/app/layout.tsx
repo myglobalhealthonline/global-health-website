@@ -24,12 +24,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const lang = await getRootHtmlLang();
+  // P-001: no cookies()/headers() here — see getRootHtmlLang() for why.
+  const lang = getRootHtmlLang();
   return (
     <html
       lang={lang}

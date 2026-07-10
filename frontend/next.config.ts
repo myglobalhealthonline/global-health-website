@@ -40,6 +40,52 @@ function mediaRemotePatterns(): NonNullable<NonNullable<NextConfig["images"]>["r
 const remotePatterns = mediaRemotePatterns();
 const apiOrigin = process.env.NEXT_PUBLIC_API_URL?.trim().replace(/\/+$/, "");
 
+// S-010 — public-site Content-Security-Policy (REPORT-ONLY).
+//
+// The enforcing baseline (frame-ancestors/object-src/base-uri) still ships
+// per-request from the edge proxy (`proxy.ts`), and the authenticated portals
+// get an enforcing nonce/strict-dynamic script policy there too. This header is
+// the second line of defence the audit asked for on the *public* pages: a full
+// directive set (default/script/style/img/font/connect/frame/form-action) built
+// from the hosts actually used on the public site — Doctify review widgets, the
+// Meta Pixel, the free stock-image hosts, and the backend API/media origin.
+// Derived from grep of the codebase, not guessed. See SECURITY_AUDIT2.md S-010.
+//
+// Shipped Report-Only on purpose. Public pages currently render dynamically
+// (P-001 static restoration is only partially done — see notes on
+// getRootHtmlLang() and (site)/layout.tsx), so Next's inline hydration
+// bootstrap and the Meta Pixel inline <Script> carry no per-request nonce — a
+// strict `script-src` would need stable hashes for those. Report-Only surfaces
+// exactly those inline scripts (and any stray third-party host) as browser-
+// console violations during a monitoring period WITHOUT breaking the site, so
+// the hashes can be derived before flipping to enforce. There is no
+// report-uri/report-to yet (no collector endpoint), so violations land in the
+// DevTools console only — that is the intended QA signal. DO NOT convert to
+// enforce (`Content-Security-Policy`) without that monitoring pass + hashing
+// Next's inline bootstrap. Scoped in `headers()` to exclude the auth portals
+// (they get the proxy's enforcing nonce policy instead — no double header).
+function publicCspReportOnly(): string {
+  const media = apiOrigin ? ` ${apiOrigin}` : "";
+  return [
+    "default-src 'self'",
+    // Doctify injects <script src> at runtime; Meta Pixel loads fbevents.js.
+    // Both external hosts — no 'unsafe-inline' so inline scripts get reported.
+    "script-src 'self' https://www.doctify.com https://connect.facebook.net",
+    // Tailwind + CMS emit inline <style>; keep permissive (style injection is
+    // low value to an attacker and blocking it would drown the report signal).
+    "style-src 'self' 'unsafe-inline'",
+    `img-src 'self' data: blob: https://www.doctify.com https://www.facebook.com https://images.unsplash.com https://images.pexels.com${media}`,
+    "font-src 'self' data:",
+    `connect-src 'self' https://www.doctify.com https://connect.facebook.net https://www.facebook.com${media}`,
+    // Doctify rating strips render in <iframe> from www.doctify.com.
+    "frame-src 'self' https://www.doctify.com",
+    "frame-ancestors 'self'",
+    "base-uri 'self'",
+    "object-src 'none'",
+    `form-action 'self'${media}`,
+  ].join("; ");
+}
+
 // Baseline security headers applied to every response. The
 // Content-Security-Policy is intentionally NOT set here — it is emitted
 // per-request by the edge proxy (`proxy.ts`) so it can carry a nonce-based
@@ -78,6 +124,19 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: "/:path*", headers: SECURITY_HEADERS },
+      // Report-only public CSP. Excludes the auth portals (/account, /admin,
+      // /doctor, /corporate) — those carry the proxy's enforcing nonce policy,
+      // and a report-only host-allowlist there would false-positive on every
+      // nonce'd Next script. Also skips /api and /_next asset noise.
+      {
+        source: "/((?!account|admin|doctor|corporate|api|_next).*)",
+        headers: [
+          {
+            key: "Content-Security-Policy-Report-Only",
+            value: publicCspReportOnly(),
+          },
+        ],
+      },
       {
         source: "/:all*(svg|jpg|jpeg|png|webp|avif|gif|ico|woff2)",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
