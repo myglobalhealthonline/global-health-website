@@ -119,17 +119,17 @@ export default async function ServiceDetailPage({
   const t = c.serviceDetailPage;
 
   // Country-specific short medical disclaimer (admin-authored, per country);
-  // falls back to the generic translated line when not set.
-  const { short: shortDisclaimer } = await getCountryDisclaimer(code, lang);
-  const disclaimerText = shortDisclaimer ?? t.disclaimer.replace("{country}", config.name);
-
-  // Clinicians assigned to this service — surfaced as a credibility strip
-  // ahead of the FAQs (mirrors the doctor-profile "services offered" link).
-  const [generals, specialists, allDoctors] = await Promise.all([
+  // falls back to the generic translated line when not set. Independent of
+  // the doctor/service reads below — started together instead of sequentially.
+  const [{ short: shortDisclaimer }, generals, specialists, allDoctors] = await Promise.all([
+    getCountryDisclaimer(code, lang),
+    // Clinicians assigned to this service — surfaced as a credibility strip
+    // ahead of the FAQs (mirrors the doctor-profile "services offered" link).
     getCountryServices(code, "GENERAL", lang),
     getCountryServices(code, "SPECIALIST", lang),
     getCountryDoctors(code, lang),
   ]);
+  const disclaimerText = shortDisclaimer ?? t.disclaimer.replace("{country}", config.name);
   const serviceCard =
     generals.find((s) => s.slug === serviceSlug) ??
     specialists.find((s) => s.slug === serviceSlug);

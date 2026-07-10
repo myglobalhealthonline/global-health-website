@@ -113,11 +113,15 @@ export default async function CountryLangGeneralConsultationPage({
   // Honor the per-country `general-consultations` toggle from /admin/country-features.
   const overlay = await getPublicCountryByCode(code);
   if (!isCountryFeatureEnabled(overlay, "general-consultations")) notFound();
-  const [{ record: rawPage, disabled: pageDisabled }, services, doctors] = await Promise.all([
-    getPublicPage(code, "GENERAL_CONSULTATION", lang as PublicLocale),
-    getCountryServices(code, "GENERAL", lang),
-    getCountryDoctors(code, lang),
-  ]);
+  // Independent of each other (and of `overlay`, already resolved above) —
+  // started together instead of awaited one after another.
+  const [{ record: rawPage, disabled: pageDisabled }, services, doctors, { short: gpShortDisclaimer }] =
+    await Promise.all([
+      getPublicPage(code, "GENERAL_CONSULTATION", lang as PublicLocale),
+      getCountryServices(code, "GENERAL", lang),
+      getCountryDoctors(code, lang),
+      getCountryDisclaimer(code, lang),
+    ]);
 
   const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
 
@@ -125,10 +129,6 @@ export default async function CountryLangGeneralConsultationPage({
   // reshapes the hero headline and adds the marketing / FAQ / disclaimer
   // sections below the doctor + service grids.
   const gpHub = getGpHubContent(code);
-
-  // Country-specific short medical disclaimer (admin-authored). Replaces the
-  // legacy Ireland-only hardcoded copy where set; falls back to it otherwise.
-  const { short: gpShortDisclaimer } = await getCountryDisclaimer(code, lang);
 
   // Provider-first defaults per Google Ads "restricted services" guidance.
   // Admin can override via the ContentPage row when localised copy lands.

@@ -8,13 +8,16 @@ import { getBackendOrigin } from "@/lib/server/backend-origin";
  * Unlike `forwardToBackend` (text-only), this:
  *   - forwards the query string (`request.nextUrl.search`),
  *   - preserves multipart uploads as raw bytes (file invoice upload), and
- *   - streams non-JSON responses (xls / pdf) as an ArrayBuffer with their
+ *   - streams non-JSON responses (xls / pdf) straight through with their
  *     Content-Disposition — so report downloads aren't corrupted by a
- *     text round-trip.
+ *     text round-trip and large files never get buffered whole in memory.
  *
  * Used by the report-export + payout-invoice endpoints so they never depend
  * on next.config rewrite matching in a given deploy.
  */
+/** Report/invoice exports can involve slower backend rendering than a plain JSON call. */
+const STREAM_TIMEOUT_MS = 30_000;
+
 export async function forwardStream(
   request: NextRequest,
   backendPath: string,
@@ -52,19 +55,22 @@ export async function forwardStream(
       headers,
       body: body as BodyInit | undefined,
       cache: "no-store",
+      signal: AbortSignal.timeout(STREAM_TIMEOUT_MS),
     });
-  } catch {
+  } catch (err) {
+    const timedOut = err instanceof Error && err.name === "TimeoutError";
     return NextResponse.json(
-      { ok: false, message: "Backend is unavailable" },
-      { status: 503 },
+      { ok: false, message: timedOut ? "Backend request timed out" : "Backend is unavailable" },
+      { status: timedOut ? 504 : 503 },
     );
   }
 
   const upstreamContentType = upstream.headers.get("content-type") ?? "application/json";
 
   if (!upstreamContentType.includes("application/json")) {
-    const buffer = await upstream.arrayBuffer();
-    const res = new NextResponse(buffer, {
+    // Binary payload (xls/pdf) — stream straight through instead of
+    // buffering the whole file into memory as an ArrayBuffer first.
+    const res = new NextResponse(upstream.body, {
       status: upstream.status,
       headers: {
         "content-type": upstreamContentType,

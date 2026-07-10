@@ -99,7 +99,9 @@ export default async function CountryLangBookPage({
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const bf = c.bookingForm;
   const bp = c.bookPage;
-  const bookingRequirements = await getPublicBookingRequirements(code);
+  // Started here, awaited where first needed below — lets the (independent)
+  // `overlay` fetch on the non-GP path start without waiting on this one.
+  const bookingRequirementsPromise = getPublicBookingRequirements(code);
 
   // Same-day GP quick-book entry from the homepage: the patient already chose a
   // language + time; here they only fill details. The GP is auto-assigned at
@@ -119,7 +121,7 @@ export default async function CountryLangBookPage({
         c={c}
         bf={bf}
         bp={bp}
-        bookingRequirements={bookingRequirements}
+        bookingRequirements={await bookingRequirementsPromise}
       />
     );
   }
@@ -133,7 +135,12 @@ export default async function CountryLangBookPage({
   // from a doctor-first one even once ?doctor= has been added.
   const atParam = firstParam(sp.at);
 
-  const overlay = await getPublicCountryByCode(code);
+  // Independent of `bookingRequirementsPromise` (both only need `code`) — run
+  // concurrently instead of waiting for bookingRequirements to settle first.
+  const [overlay, bookingRequirements] = await Promise.all([
+    getPublicCountryByCode(code),
+    bookingRequirementsPromise,
+  ]);
   const generalEnabled = isCountryFeatureEnabled(overlay, "general-consultations");
   const specialistEnabled = isCountryFeatureEnabled(overlay, "specialist-consultations");
 

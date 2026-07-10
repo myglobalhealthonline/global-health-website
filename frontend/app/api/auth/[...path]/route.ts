@@ -50,6 +50,9 @@ function isAllowed(method: string, segments: string[]): boolean {
   return set.has(key);
 }
 
+/** `me/export` can take longer than a plain auth call; everything else is quick. */
+const AUTH_PROXY_TIMEOUT_MS = 20_000;
+
 async function proxyAuth(request: NextRequest, segments: string[]) {
   const backend = getBackendOrigin();
   if (!backend) {
@@ -73,6 +76,7 @@ async function proxyAuth(request: NextRequest, segments: string[]) {
       ...(cookieHeader ? { cookie: cookieHeader } : {}),
     },
     cache: "no-store",
+    signal: AbortSignal.timeout(AUTH_PROXY_TIMEOUT_MS),
   };
 
   // GET + DELETE have no body. Everything else (POST + PATCH) forwards
@@ -83,10 +87,20 @@ async function proxyAuth(request: NextRequest, segments: string[]) {
     if (bodyText) init.body = bodyText;
   }
 
-  const upstream = await fetch(targetUrl, init);
-  const bodyText = await upstream.text();
+  let upstream: Response;
+  try {
+    upstream = await fetch(targetUrl, init);
+  } catch (err) {
+    const timedOut = err instanceof Error && err.name === "TimeoutError";
+    return NextResponse.json(
+      { ok: false, message: timedOut ? "Backend request timed out" : "Backend is unavailable" },
+      { status: timedOut ? 504 : 503 },
+    );
+  }
 
-  const res = new NextResponse(bodyText, {
+  // Stream the body through (covers /me/export, which can be a sizeable
+  // file) instead of buffering the full payload in the Next process first.
+  const res = new NextResponse(upstream.body, {
     status: upstream.status,
     headers: {
       "content-type": upstream.headers.get("content-type") ?? "application/json",
