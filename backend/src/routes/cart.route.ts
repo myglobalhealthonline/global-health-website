@@ -624,7 +624,10 @@ async function setCartCookie(reply: FastifyReply, token: string) {
     httpOnly: true,
     sameSite: "lax",
     maxAge: CART_COOKIE_MAX_AGE,
-    secure: process.env.NODE_ENV === "production",
+    // S-013: match the auth cookie's boundary — any non-genuine-local-dev
+    // environment (staging, preview) is HTTPS-reachable and must get a
+    // Secure cookie, not just NODE_ENV==="production".
+    secure: process.env.NODE_ENV !== "development",
   });
 }
 

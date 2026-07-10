@@ -73,9 +73,20 @@ async function proxyMe(request: NextRequest, segments: string[]) {
     if (bodyText) init.body = bodyText;
   }
 
-  const upstream = await fetch(targetUrl, init);
-  const bodyText = await upstream.text();
-  return new NextResponse(bodyText, {
+  // P-017: no upstream deadline previously — a hung backend fetch blocked
+  // this proxy indefinitely. Streams the body through (same pattern as
+  // /api/auth/[...path]) instead of buffering with .text() first.
+  let upstream: Response;
+  try {
+    upstream = await fetch(targetUrl, { ...init, signal: AbortSignal.timeout(20_000) });
+  } catch (err) {
+    const timedOut = err instanceof Error && err.name === "TimeoutError";
+    return NextResponse.json(
+      { ok: false, message: timedOut ? "Upstream request timed out" : "Upstream request failed" },
+      { status: timedOut ? 504 : 502 },
+    );
+  }
+  return new NextResponse(upstream.body, {
     status: upstream.status,
     headers: { "content-type": upstream.headers.get("content-type") ?? "application/json" },
   });
