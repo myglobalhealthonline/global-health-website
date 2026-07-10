@@ -1,0 +1,992 @@
+[
+  {
+    "source": "consulta-medica-online",
+    "target": "justificante-medico-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Justificante médico o certificado de baja?",
+    "body": "Si tu situación está relacionada con justificante médico o certificado de baja, nuestra Justificante Médico te ofrece la evaluación adecuada.",
+    "ctaLabel": "Justificante Médico",
+    "priority": 0
+  },
+  {
+    "source": "consulta-medica-online",
+    "target": "renovacion-tratamiento-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con renovación de tu tratamiento habitual?",
+    "body": "Para renovación de tu tratamiento habitual, consulta nuestra página de Renovación de Tratamiento — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Renovación de Tratamiento",
+    "priority": 1
+  },
+  {
+    "source": "consulta-medica-online",
+    "target": "control-peso-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Tu consulta es sobre control de peso con apoyo médico?",
+    "body": "Nuestra Control de Peso está pensada específicamente para control de peso con apoyo médico.",
+    "ctaLabel": "Control de Peso",
+    "priority": 2
+  },
+  {
+    "source": "consulta-medica-online",
+    "target": "salud-masculina-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Salud masculina y función sexual?",
+    "body": "Si tu situación está relacionada con salud masculina y función sexual, nuestra Salud Masculina te ofrece la evaluación adecuada.",
+    "ctaLabel": "Salud Masculina",
+    "priority": 3
+  },
+  {
+    "source": "consulta-medica-online",
+    "target": "salud-femenina-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con salud femenina y salud hormonal?",
+    "body": "Para salud femenina y salud hormonal, consulta nuestra página de Salud Femenina — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Salud Femenina",
+    "priority": 4
+  },
+  {
+    "source": "consulta-medica-online",
+    "target": "salud-mental-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Tu consulta es sobre apoyo de salud mental?",
+    "body": "Nuestra Salud Mental está pensada específicamente para apoyo de salud mental.",
+    "ctaLabel": "Salud Mental",
+    "priority": 5
+  },
+  {
+    "source": "consulta-medica-online",
+    "target": "consulta-piel-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Consulta de piel con médico de cabecera?",
+    "body": "Si tu situación está relacionada con consulta de piel con médico de cabecera, nuestra Consulta de Piel te ofrece la evaluación adecuada.",
+    "ctaLabel": "Consulta de Piel",
+    "priority": 6
+  },
+  {
+    "source": "consulta-medica-online",
+    "target": "segunda-opinion-medica",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con segunda opinión médica independiente?",
+    "body": "Para segunda opinión médica independiente, consulta nuestra página de Segunda Opinión Médica — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Segunda Opinión Médica",
+    "priority": 7
+  },
+  {
+    "source": "consulta-medica-online",
+    "target": "caida-cabello-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Tu consulta es sobre caída del cabello con base médica?",
+    "body": "Nuestra Caída del Cabello está pensada específicamente para caída del cabello con base médica.",
+    "ctaLabel": "Caída del Cabello",
+    "priority": 8
+  },
+  {
+    "source": "consulta-medica-online",
+    "target": "medicina-viaje-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Medicina de viaje antes de partir?",
+    "body": "Si tu situación está relacionada con medicina de viaje antes de partir, nuestra Medicina de Viaje te ofrece la evaluación adecuada.",
+    "ctaLabel": "Medicina de Viaje",
+    "priority": 9
+  },
+  {
+    "source": "consulta-medica-online",
+    "target": "musculoesqueletico-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con dolor musculoesquelético o lesión?",
+    "body": "Para dolor musculoesquelético o lesión, consulta nuestra página de Musculoesquelético — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Musculoesquelético",
+    "priority": 10
+  },
+  {
+    "source": "consulta-medica-online",
+    "target": "enfermedades-cronicas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Tu consulta es sobre seguimiento de enfermedades crónicas?",
+    "body": "Nuestra Enfermedades Crónicas está pensada específicamente para seguimiento de enfermedades crónicas.",
+    "ctaLabel": "Enfermedades Crónicas",
+    "priority": 11
+  },
+  {
+    "source": "consulta-medica-online",
+    "target": "derivaciones-pruebas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Derivaciones y solicitud de pruebas?",
+    "body": "Si tu situación está relacionada con derivaciones y solicitud de pruebas, nuestra Derivaciones y Pruebas te ofrece la evaluación adecuada.",
+    "ctaLabel": "Derivaciones y Pruebas",
+    "priority": 12
+  },
+  {
+    "source": "consulta-medica-online",
+    "target": "pediatria-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con consulta pediátrica para tu hijo?",
+    "body": "Para consulta pediátrica para tu hijo, consulta nuestra página de Pediatría — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Pediatría",
+    "priority": 13
+  },
+  {
+    "source": "consulta-medica-online",
+    "target": "dejar-de-fumar-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Tu consulta es sobre dejar de fumar con apoyo médico?",
+    "body": "Nuestra Dejar de Fumar está pensada específicamente para dejar de fumar con apoyo médico.",
+    "ctaLabel": "Dejar de Fumar",
+    "priority": 14
+  },
+  {
+    "source": "control-peso-online",
+    "target": "salud-femenina-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Desequilibrio hormonal que afecta al peso?",
+    "body": "Si tu situación está relacionada con desequilibrio hormonal que afecta al peso, nuestra Salud Femenina te ofrece la evaluación adecuada.",
+    "ctaLabel": "Salud Femenina",
+    "priority": 0
+  },
+  {
+    "source": "control-peso-online",
+    "target": "salud-masculina-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con déficit de testosterona y aumento de peso?",
+    "body": "Para déficit de testosterona y aumento de peso, consulta nuestra página de Salud Masculina — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Salud Masculina",
+    "priority": 1
+  },
+  {
+    "source": "control-peso-online",
+    "target": "caida-cabello-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Tu consulta es sobre caída del cabello de base hormonal o metabólica?",
+    "body": "Nuestra Caída del Cabello está pensada específicamente para caída del cabello de base hormonal o metabólica.",
+    "ctaLabel": "Caída del Cabello",
+    "priority": 2
+  },
+  {
+    "source": "control-peso-online",
+    "target": "enfermedades-cronicas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Enfermedades crónicas como diabetes o hipotiroidismo?",
+    "body": "Si tu situación está relacionada con enfermedades crónicas como diabetes o hipotiroidismo, nuestra Enfermedades Crónicas te ofrece la evaluación adecuada.",
+    "ctaLabel": "Enfermedades Crónicas",
+    "priority": 3
+  },
+  {
+    "source": "control-peso-online",
+    "target": "derivaciones-pruebas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con solicitar analíticas metabólicas?",
+    "body": "Para solicitar analíticas metabólicas, consulta nuestra página de Derivaciones y Pruebas — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Derivaciones y Pruebas",
+    "priority": 4
+  },
+  {
+    "source": "salud-femenina-online",
+    "target": "control-peso-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Control de peso con base hormonal?",
+    "body": "Si tu situación está relacionada con control de peso con base hormonal, nuestra Control de Peso te ofrece la evaluación adecuada.",
+    "ctaLabel": "Control de Peso",
+    "priority": 0
+  },
+  {
+    "source": "salud-femenina-online",
+    "target": "caida-cabello-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con caída del cabello hormonal en mujeres?",
+    "body": "Para caída del cabello hormonal en mujeres, consulta nuestra página de Caída del Cabello — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Caída del Cabello",
+    "priority": 1
+  },
+  {
+    "source": "salud-femenina-online",
+    "target": "enfermedades-cronicas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Tu consulta es sobre seguimiento de patología tiroidea?",
+    "body": "Nuestra Enfermedades Crónicas está pensada específicamente para seguimiento de patología tiroidea.",
+    "ctaLabel": "Enfermedades Crónicas",
+    "priority": 2
+  },
+  {
+    "source": "salud-femenina-online",
+    "target": "derivaciones-pruebas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Analíticas hormonales y de fertilidad?",
+    "body": "Si tu situación está relacionada con analíticas hormonales y de fertilidad, nuestra Derivaciones y Pruebas te ofrece la evaluación adecuada.",
+    "ctaLabel": "Derivaciones y Pruebas",
+    "priority": 3
+  },
+  {
+    "source": "salud-masculina-online",
+    "target": "control-peso-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Control de peso y déficit de testosterona?",
+    "body": "Si tu situación está relacionada con control de peso y déficit de testosterona, nuestra Control de Peso te ofrece la evaluación adecuada.",
+    "ctaLabel": "Control de Peso",
+    "priority": 0
+  },
+  {
+    "source": "salud-masculina-online",
+    "target": "caida-cabello-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con caída del cabello de base hormonal en hombres?",
+    "body": "Para caída del cabello de base hormonal en hombres, consulta nuestra página de Caída del Cabello — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Caída del Cabello",
+    "priority": 1
+  },
+  {
+    "source": "salud-masculina-online",
+    "target": "derivaciones-pruebas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Tu consulta es sobre solicitar panel de testosterona y perfil metabólico?",
+    "body": "Nuestra Derivaciones y Pruebas está pensada específicamente para solicitar panel de testosterona y perfil metabólico.",
+    "ctaLabel": "Derivaciones y Pruebas",
+    "priority": 2
+  },
+  {
+    "source": "caida-cabello-online",
+    "target": "salud-femenina-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Evaluación hormonal y metabólica completa?",
+    "body": "Si tu situación está relacionada con evaluación hormonal y metabólica completa, nuestra Salud Femenina te ofrece la evaluación adecuada.",
+    "ctaLabel": "Salud Femenina",
+    "priority": 0
+  },
+  {
+    "source": "caida-cabello-online",
+    "target": "salud-masculina-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con caída del cabello y déficit de testosterona?",
+    "body": "Para caída del cabello y déficit de testosterona, consulta nuestra página de Salud Masculina — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Salud Masculina",
+    "priority": 1
+  },
+  {
+    "source": "caida-cabello-online",
+    "target": "derivaciones-pruebas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Tu consulta es sobre analíticas de ferritina, tiroides y perfil hormonal?",
+    "body": "Nuestra Derivaciones y Pruebas está pensada específicamente para analíticas de ferritina, tiroides y perfil hormonal.",
+    "ctaLabel": "Derivaciones y Pruebas",
+    "priority": 2
+  },
+  {
+    "source": "enfermedades-cronicas-online",
+    "target": "control-peso-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Control de peso en diabetes e hipotiroidismo?",
+    "body": "Si tu situación está relacionada con control de peso en diabetes e hipotiroidismo, nuestra Control de Peso te ofrece la evaluación adecuada.",
+    "ctaLabel": "Control de Peso",
+    "priority": 0
+  },
+  {
+    "source": "enfermedades-cronicas-online",
+    "target": "derivaciones-pruebas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con analíticas de control y monitorización?",
+    "body": "Para analíticas de control y monitorización, consulta nuestra página de Derivaciones y Pruebas — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Derivaciones y Pruebas",
+    "priority": 1
+  },
+  {
+    "source": "derivaciones-pruebas-online",
+    "target": "control-peso-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Analíticas hormonales y metabólicas?",
+    "body": "Si tu situación está relacionada con analíticas hormonales y metabólicas, nuestra Control de Peso te ofrece la evaluación adecuada.",
+    "ctaLabel": "Control de Peso",
+    "priority": 0
+  },
+  {
+    "source": "salud-mental-online",
+    "target": "psiquiatra-online",
+    "type": "UPGRADE",
+    "heading": "¿Evaluación psiquiátrica especializada?",
+    "body": "Si tu situación está relacionada con evaluación psiquiátrica especializada, nuestra Psiquiatría Especialista te ofrece la evaluación adecuada.",
+    "ctaLabel": "Psiquiatría Especialista",
+    "priority": 0
+  },
+  {
+    "source": "salud-mental-online",
+    "target": "psicologo-online",
+    "type": "UPGRADE",
+    "heading": "¿Necesitas ayuda con apoyo psicológico y psicoterapia?",
+    "body": "Para apoyo psicológico y psicoterapia, consulta nuestra página de Psicología Clínica — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Psicología Clínica",
+    "priority": 1
+  },
+  {
+    "source": "salud-mental-online",
+    "target": "dejar-de-fumar-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Tu consulta es sobre apoyo para dejar de fumar?",
+    "body": "Nuestra Dejar de Fumar está pensada específicamente para apoyo para dejar de fumar.",
+    "ctaLabel": "Dejar de Fumar",
+    "priority": 2
+  },
+  {
+    "source": "psiquiatra-online",
+    "target": "psicologo-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Psicoterapia y apoyo psicológico?",
+    "body": "Si tu situación está relacionada con psicoterapia y apoyo psicológico, nuestra Psicología Clínica te ofrece la evaluación adecuada.",
+    "ctaLabel": "Psicología Clínica",
+    "priority": 0
+  },
+  {
+    "source": "psiquiatra-online",
+    "target": "salud-mental-online",
+    "type": "ENTRY",
+    "heading": "¿Necesitas ayuda con evaluación inicial de salud mental?",
+    "body": "Para evaluación inicial de salud mental, consulta nuestra página de Salud Mental — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Salud Mental",
+    "priority": 1
+  },
+  {
+    "source": "psicologo-online",
+    "target": "psiquiatra-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Evaluación psiquiátrica si se necesita medicación?",
+    "body": "Si tu situación está relacionada con evaluación psiquiátrica si se necesita medicación, nuestra Psiquiatría Especialista te ofrece la evaluación adecuada.",
+    "ctaLabel": "Psiquiatría Especialista",
+    "priority": 0
+  },
+  {
+    "source": "dejar-de-fumar-online",
+    "target": "salud-mental-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Apoyo de salud mental durante el proceso?",
+    "body": "Si tu situación está relacionada con apoyo de salud mental durante el proceso, nuestra Salud Mental te ofrece la evaluación adecuada.",
+    "ctaLabel": "Salud Mental",
+    "priority": 0
+  },
+  {
+    "source": "dejar-de-fumar-online",
+    "target": "consulta-medica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con evaluación del impacto del tabaco en la salud?",
+    "body": "Para evaluación del impacto del tabaco en la salud, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 1
+  },
+  {
+    "source": "salud-masculina-online",
+    "target": "salud-mental-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Salud mental en hombres?",
+    "body": "Si tu situación está relacionada con salud mental en hombres, nuestra Salud Mental te ofrece la evaluación adecuada.",
+    "ctaLabel": "Salud Mental",
+    "priority": 3
+  },
+  {
+    "source": "salud-femenina-online",
+    "target": "salud-mental-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con salud mental en mujeres y estado de ánimo posparto?",
+    "body": "Para salud mental en mujeres y estado de ánimo posparto, consulta nuestra página de Salud Mental — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Salud Mental",
+    "priority": 4
+  },
+  {
+    "source": "consulta-piel-online",
+    "target": "dermatologia-especialista-online",
+    "type": "UPGRADE",
+    "heading": "¿Acné grave o lesiones sospechosas?",
+    "body": "Si tu situación está relacionada con acné grave o lesiones sospechosas, nuestra Dermatología Especialista te ofrece la evaluación adecuada.",
+    "ctaLabel": "Dermatología Especialista",
+    "priority": 0
+  },
+  {
+    "source": "consulta-piel-online",
+    "target": "caida-cabello-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con caída del cabello y afecciones del cuero cabelludo?",
+    "body": "Para caída del cabello y afecciones del cuero cabelludo, consulta nuestra página de Caída del Cabello — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Caída del Cabello",
+    "priority": 1
+  },
+  {
+    "source": "dermatologia-especialista-online",
+    "target": "consulta-piel-online",
+    "type": "ENTRY",
+    "heading": "¿Consulta de piel con médico de cabecera para afecciones leves?",
+    "body": "Si tu situación está relacionada con consulta de piel con médico de cabecera para afecciones leves, nuestra Consulta de Piel te ofrece la evaluación adecuada.",
+    "ctaLabel": "Consulta de Piel",
+    "priority": 0
+  },
+  {
+    "source": "dermatologia-especialista-online",
+    "target": "caida-cabello-online",
+    "type": "ENTRY",
+    "heading": "¿Necesitas ayuda con caída del cabello de base dermatológica?",
+    "body": "Para caída del cabello de base dermatológica, consulta nuestra página de Caída del Cabello — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Caída del Cabello",
+    "priority": 1
+  },
+  {
+    "source": "caida-cabello-online",
+    "target": "consulta-piel-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Afecciones cutáneas del cuero cabelludo?",
+    "body": "Si tu situación está relacionada con afecciones cutáneas del cuero cabelludo, nuestra Consulta de Piel te ofrece la evaluación adecuada.",
+    "ctaLabel": "Consulta de Piel",
+    "priority": 3
+  },
+  {
+    "source": "caida-cabello-online",
+    "target": "dermatologia-especialista-online",
+    "type": "UPGRADE",
+    "heading": "¿Necesitas ayuda con alopecia cicatricial — derivación dermatológica especialista?",
+    "body": "Para alopecia cicatricial — derivación dermatológica especialista, consulta nuestra página de Dermatología Especialista — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Dermatología Especialista",
+    "priority": 4
+  },
+  {
+    "source": "salud-femenina-online",
+    "target": "dermatologia-especialista-online",
+    "type": "UPGRADE",
+    "heading": "¿Tu consulta es sobre acné hormonal — evaluación dermatológica especialista?",
+    "body": "Nuestra Dermatología Especialista está pensada específicamente para acné hormonal — evaluación dermatológica especialista.",
+    "ctaLabel": "Dermatología Especialista",
+    "priority": 5
+  },
+  {
+    "source": "enfermedades-cronicas-online",
+    "target": "cardiologo-online",
+    "type": "UPGRADE",
+    "heading": "¿Tu consulta es sobre evaluación cardiológica especializada?",
+    "body": "Nuestra Cardiología Especialista está pensada específicamente para evaluación cardiológica especializada.",
+    "ctaLabel": "Cardiología Especialista",
+    "priority": 2
+  },
+  {
+    "source": "enfermedades-cronicas-online",
+    "target": "dejar-de-fumar-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Dejar de fumar — impacto en salud cardiovascular?",
+    "body": "Si tu situación está relacionada con dejar de fumar — impacto en salud cardiovascular, nuestra Dejar de Fumar te ofrece la evaluación adecuada.",
+    "ctaLabel": "Dejar de Fumar",
+    "priority": 3
+  },
+  {
+    "source": "cardiologo-online",
+    "target": "enfermedades-cronicas-online",
+    "type": "ENTRY",
+    "heading": "¿Seguimiento de enfermedades cardiovasculares crónicas?",
+    "body": "Si tu situación está relacionada con seguimiento de enfermedades cardiovasculares crónicas, nuestra Enfermedades Crónicas te ofrece la evaluación adecuada.",
+    "ctaLabel": "Enfermedades Crónicas",
+    "priority": 0
+  },
+  {
+    "source": "cardiologo-online",
+    "target": "control-peso-online",
+    "type": "ENTRY",
+    "heading": "¿Necesitas ayuda con control de peso y riesgo cardiovascular?",
+    "body": "Para control de peso y riesgo cardiovascular, consulta nuestra página de Control de Peso — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Control de Peso",
+    "priority": 1
+  },
+  {
+    "source": "cardiologo-online",
+    "target": "dejar-de-fumar-online",
+    "type": "ENTRY",
+    "heading": "¿Tu consulta es sobre dejar de fumar — prioridad en enfermedad cardiovascular?",
+    "body": "Nuestra Dejar de Fumar está pensada específicamente para dejar de fumar — prioridad en enfermedad cardiovascular.",
+    "ctaLabel": "Dejar de Fumar",
+    "priority": 2
+  },
+  {
+    "source": "cardiologo-online",
+    "target": "derivaciones-pruebas-online",
+    "type": "ENTRY",
+    "heading": "¿Solicitar ECG, analíticas o pruebas cardiológicas?",
+    "body": "Si tu situación está relacionada con solicitar ECG, analíticas o pruebas cardiológicas, nuestra Derivaciones y Pruebas te ofrece la evaluación adecuada.",
+    "ctaLabel": "Derivaciones y Pruebas",
+    "priority": 3
+  },
+  {
+    "source": "control-peso-online",
+    "target": "cardiologo-online",
+    "type": "UPGRADE",
+    "heading": "¿Tu consulta es sobre riesgo cardiovascular y síndrome metabólico?",
+    "body": "Nuestra Cardiología Especialista está pensada específicamente para riesgo cardiovascular y síndrome metabólico.",
+    "ctaLabel": "Cardiología Especialista",
+    "priority": 5
+  },
+  {
+    "source": "dejar-de-fumar-online",
+    "target": "cardiologo-online",
+    "type": "UPGRADE",
+    "heading": "¿Tu consulta es sobre evaluación cardiovascular para fumadores?",
+    "body": "Nuestra Cardiología Especialista está pensada específicamente para evaluación cardiovascular para fumadores.",
+    "ctaLabel": "Cardiología Especialista",
+    "priority": 2
+  },
+  {
+    "source": "musculoesqueletico-online",
+    "target": "enfermedades-cronicas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Dolor crónico y enfermedades crónicas?",
+    "body": "Si tu situación está relacionada con dolor crónico y enfermedades crónicas, nuestra Enfermedades Crónicas te ofrece la evaluación adecuada.",
+    "ctaLabel": "Enfermedades Crónicas",
+    "priority": 0
+  },
+  {
+    "source": "derivaciones-pruebas-online",
+    "target": "cardiologo-online",
+    "type": "UPGRADE",
+    "heading": "¿Necesitas ayuda con analíticas cardiológicas y metabólicas?",
+    "body": "Para analíticas cardiológicas y metabólicas, consulta nuestra página de Cardiología Especialista — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Cardiología Especialista",
+    "priority": 1
+  },
+  {
+    "source": "neurologo-online",
+    "target": "salud-mental-online",
+    "type": "ENTRY",
+    "heading": "¿Evaluación de salud mental — ansiedad o depresión?",
+    "body": "Si tu situación está relacionada con evaluación de salud mental — ansiedad o depresión, nuestra Salud Mental te ofrece la evaluación adecuada.",
+    "ctaLabel": "Salud Mental",
+    "priority": 0
+  },
+  {
+    "source": "neurologo-online",
+    "target": "musculoesqueletico-online",
+    "type": "ENTRY",
+    "heading": "¿Necesitas ayuda con dolor musculoesquelético con componente neurológico?",
+    "body": "Para dolor musculoesquelético con componente neurológico, consulta nuestra página de Musculoesquelético — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Musculoesquelético",
+    "priority": 1
+  },
+  {
+    "source": "neurologo-online",
+    "target": "derivaciones-pruebas-online",
+    "type": "ENTRY",
+    "heading": "¿Tu consulta es sobre solicitar RMN cerebral o analíticas neurológicas?",
+    "body": "Nuestra Derivaciones y Pruebas está pensada específicamente para solicitar RMN cerebral o analíticas neurológicas.",
+    "ctaLabel": "Derivaciones y Pruebas",
+    "priority": 2
+  },
+  {
+    "source": "salud-mental-online",
+    "target": "neurologo-online",
+    "type": "UPGRADE",
+    "heading": "¿Síntomas neurológicos que pueden tener base psicológica?",
+    "body": "Si tu situación está relacionada con síntomas neurológicos que pueden tener base psicológica, nuestra Neurología Especialista te ofrece la evaluación adecuada.",
+    "ctaLabel": "Neurología Especialista",
+    "priority": 3
+  },
+  {
+    "source": "musculoesqueletico-online",
+    "target": "neurologo-online",
+    "type": "UPGRADE",
+    "heading": "¿Necesitas ayuda con dolor radicular y evaluación neurológica?",
+    "body": "Para dolor radicular y evaluación neurológica, consulta nuestra página de Neurología Especialista — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Neurología Especialista",
+    "priority": 1
+  },
+  {
+    "source": "derivaciones-pruebas-online",
+    "target": "neurologo-online",
+    "type": "UPGRADE",
+    "heading": "¿Tu consulta es sobre solicitar RMN cerebral o electromiograma?",
+    "body": "Nuestra Neurología Especialista está pensada específicamente para solicitar RMN cerebral o electromiograma.",
+    "ctaLabel": "Neurología Especialista",
+    "priority": 2
+  },
+  {
+    "source": "pediatria-online",
+    "target": "pediatra-especialista-online",
+    "type": "UPGRADE",
+    "heading": "¿Enfermedad crónica pediátrica o condición compleja?",
+    "body": "Si tu situación está relacionada con enfermedad crónica pediátrica o condición compleja, nuestra Pediatría Especialista te ofrece la evaluación adecuada.",
+    "ctaLabel": "Pediatría Especialista",
+    "priority": 0
+  },
+  {
+    "source": "pediatria-online",
+    "target": "psiquiatra-online",
+    "type": "UPGRADE",
+    "heading": "¿Necesitas ayuda con salud mental en adolescentes?",
+    "body": "Para salud mental en adolescentes, consulta nuestra página de Psiquiatría Especialista — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Psiquiatría Especialista",
+    "priority": 1
+  },
+  {
+    "source": "pediatra-especialista-online",
+    "target": "pediatria-online",
+    "type": "ENTRY",
+    "heading": "¿Consulta pediátrica aguda o no urgente?",
+    "body": "Si tu situación está relacionada con consulta pediátrica aguda o no urgente, nuestra Pediatría te ofrece la evaluación adecuada.",
+    "ctaLabel": "Pediatría",
+    "priority": 0
+  },
+  {
+    "source": "pediatra-especialista-online",
+    "target": "psiquiatra-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con salud mental compleja en adolescentes?",
+    "body": "Para salud mental compleja en adolescentes, consulta nuestra página de Psiquiatría Especialista — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Psiquiatría Especialista",
+    "priority": 1
+  },
+  {
+    "source": "pediatra-especialista-online",
+    "target": "psicologo-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Tu consulta es sobre apoyo psicológico para niños y adolescentes?",
+    "body": "Nuestra Psicología Clínica está pensada específicamente para apoyo psicológico para niños y adolescentes.",
+    "ctaLabel": "Psicología Clínica",
+    "priority": 2
+  },
+  {
+    "source": "psiquiatra-online",
+    "target": "pediatra-especialista-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Tu consulta es sobre salud mental en niños — evaluación pediátrica?",
+    "body": "Nuestra Pediatría Especialista está pensada específicamente para salud mental en niños — evaluación pediátrica.",
+    "ctaLabel": "Pediatría Especialista",
+    "priority": 2
+  },
+  {
+    "source": "psicologo-online",
+    "target": "pediatra-especialista-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con apoyo psicológico para adolescentes?",
+    "body": "Para apoyo psicológico para adolescentes, consulta nuestra página de Pediatría Especialista — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Pediatría Especialista",
+    "priority": 1
+  },
+  {
+    "source": "segunda-opinion-medica",
+    "target": "derivaciones-pruebas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Solicitar analíticas o pruebas de imagen?",
+    "body": "Si tu situación está relacionada con solicitar analíticas o pruebas de imagen, nuestra Derivaciones y Pruebas te ofrece la evaluación adecuada.",
+    "ctaLabel": "Derivaciones y Pruebas",
+    "priority": 0
+  },
+  {
+    "source": "segunda-opinion-medica",
+    "target": "cardiologo-online",
+    "type": "UPGRADE",
+    "heading": "¿Necesitas ayuda con segunda opinión cardiológica especializada?",
+    "body": "Para segunda opinión cardiológica especializada, consulta nuestra página de Cardiología Especialista — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Cardiología Especialista",
+    "priority": 1
+  },
+  {
+    "source": "segunda-opinion-medica",
+    "target": "neurologo-online",
+    "type": "UPGRADE",
+    "heading": "¿Tu consulta es sobre segunda opinión neurológica especializada?",
+    "body": "Nuestra Neurología Especialista está pensada específicamente para segunda opinión neurológica especializada.",
+    "ctaLabel": "Neurología Especialista",
+    "priority": 2
+  },
+  {
+    "source": "segunda-opinion-medica",
+    "target": "dermatologia-especialista-online",
+    "type": "UPGRADE",
+    "heading": "¿Segunda opinión dermatológica especializada?",
+    "body": "Si tu situación está relacionada con segunda opinión dermatológica especializada, nuestra Dermatología Especialista te ofrece la evaluación adecuada.",
+    "ctaLabel": "Dermatología Especialista",
+    "priority": 3
+  },
+  {
+    "source": "segunda-opinion-medica",
+    "target": "psiquiatra-online",
+    "type": "UPGRADE",
+    "heading": "¿Necesitas ayuda con segunda opinión psiquiátrica especializada?",
+    "body": "Para segunda opinión psiquiátrica especializada, consulta nuestra página de Psiquiatría Especialista — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Psiquiatría Especialista",
+    "priority": 4
+  },
+  {
+    "source": "segunda-opinion-medica",
+    "target": "pediatra-especialista-online",
+    "type": "UPGRADE",
+    "heading": "¿Tu consulta es sobre segunda opinión pediátrica especializada?",
+    "body": "Nuestra Pediatría Especialista está pensada específicamente para segunda opinión pediátrica especializada.",
+    "ctaLabel": "Pediatría Especialista",
+    "priority": 5
+  },
+  {
+    "source": "derivaciones-pruebas-online",
+    "target": "segunda-opinion-medica",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Segunda opinión sobre resultados recibidos?",
+    "body": "Si tu situación está relacionada con segunda opinión sobre resultados recibidos, nuestra Segunda Opinión Médica te ofrece la evaluación adecuada.",
+    "ctaLabel": "Segunda Opinión Médica",
+    "priority": 3
+  },
+  {
+    "source": "derivaciones-pruebas-online",
+    "target": "consulta-medica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con consulta médica general para evaluar síntomas?",
+    "body": "Para consulta médica general para evaluar síntomas, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 4
+  },
+  {
+    "source": "cardiologo-online",
+    "target": "segunda-opinion-medica",
+    "type": "ENTRY",
+    "heading": "¿Necesitas ayuda con segunda opinión cardiológica independiente?",
+    "body": "Para segunda opinión cardiológica independiente, consulta nuestra página de Segunda Opinión Médica — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Segunda Opinión Médica",
+    "priority": 4
+  },
+  {
+    "source": "neurologo-online",
+    "target": "segunda-opinion-medica",
+    "type": "ENTRY",
+    "heading": "¿Segunda opinión neurológica independiente?",
+    "body": "Si tu situación está relacionada con segunda opinión neurológica independiente, nuestra Segunda Opinión Médica te ofrece la evaluación adecuada.",
+    "ctaLabel": "Segunda Opinión Médica",
+    "priority": 3
+  },
+  {
+    "source": "dermatologia-especialista-online",
+    "target": "segunda-opinion-medica",
+    "type": "ENTRY",
+    "heading": "¿Tu consulta es sobre segunda opinión dermatológica independiente?",
+    "body": "Nuestra Segunda Opinión Médica está pensada específicamente para segunda opinión dermatológica independiente.",
+    "ctaLabel": "Segunda Opinión Médica",
+    "priority": 2
+  },
+  {
+    "source": "psiquiatra-online",
+    "target": "segunda-opinion-medica",
+    "type": "ENTRY",
+    "heading": "¿Segunda opinión psiquiátrica independiente?",
+    "body": "Si tu situación está relacionada con segunda opinión psiquiátrica independiente, nuestra Segunda Opinión Médica te ofrece la evaluación adecuada.",
+    "ctaLabel": "Segunda Opinión Médica",
+    "priority": 3
+  },
+  {
+    "source": "pediatra-especialista-online",
+    "target": "segunda-opinion-medica",
+    "type": "ENTRY",
+    "heading": "¿Segunda opinión pediátrica independiente?",
+    "body": "Si tu situación está relacionada con segunda opinión pediátrica independiente, nuestra Segunda Opinión Médica te ofrece la evaluación adecuada.",
+    "ctaLabel": "Segunda Opinión Médica",
+    "priority": 3
+  },
+  {
+    "source": "medicina-viaje-online",
+    "target": "enfermedades-cronicas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Gestión de enfermedades crónicas durante el viaje?",
+    "body": "Si tu situación está relacionada con gestión de enfermedades crónicas durante el viaje, nuestra Enfermedades Crónicas te ofrece la evaluación adecuada.",
+    "ctaLabel": "Enfermedades Crónicas",
+    "priority": 0
+  },
+  {
+    "source": "medicina-viaje-online",
+    "target": "consulta-medica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con fiebre u otros síntomas al regreso?",
+    "body": "Para fiebre u otros síntomas al regreso, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 1
+  },
+  {
+    "source": "control-peso-online",
+    "target": "dejar-de-fumar-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Dejar de fumar y control del peso?",
+    "body": "Si tu situación está relacionada con dejar de fumar y control del peso, nuestra Dejar de Fumar te ofrece la evaluación adecuada.",
+    "ctaLabel": "Dejar de Fumar",
+    "priority": 6
+  },
+  {
+    "source": "enfermedades-cronicas-online",
+    "target": "medicina-viaje-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con salud de viaje con enfermedad crónica?",
+    "body": "Para salud de viaje con enfermedad crónica, consulta nuestra página de Medicina de Viaje — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Medicina de Viaje",
+    "priority": 4
+  },
+  {
+    "source": "enfermedades-cronicas-online",
+    "target": "neurologo-online",
+    "type": "UPGRADE",
+    "heading": "¿Tu consulta es sobre evaluación neurológica especializada?",
+    "body": "Nuestra Neurología Especialista está pensada específicamente para evaluación neurológica especializada.",
+    "ctaLabel": "Neurología Especialista",
+    "priority": 5
+  },
+  {
+    "source": "neurologo-online",
+    "target": "enfermedades-cronicas-online",
+    "type": "ENTRY",
+    "heading": "¿Necesitas ayuda con seguimiento de enfermedades cardiovasculares y crónicas?",
+    "body": "Para seguimiento de enfermedades cardiovasculares y crónicas, consulta nuestra página de Enfermedades Crónicas — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Enfermedades Crónicas",
+    "priority": 4
+  },
+  {
+    "source": "justificante-medico-online",
+    "target": "consulta-medica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Consulta médica general con médico de cabecera?",
+    "body": "Si tu situación está relacionada con consulta médica general con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 0
+  },
+  {
+    "source": "renovacion-tratamiento-online",
+    "target": "consulta-medica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Consulta médica general con médico de cabecera?",
+    "body": "Si tu situación está relacionada con consulta médica general con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 0
+  },
+  {
+    "source": "control-peso-online",
+    "target": "consulta-medica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con consulta médica general con médico de cabecera?",
+    "body": "Para consulta médica general con médico de cabecera, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 7
+  },
+  {
+    "source": "salud-masculina-online",
+    "target": "consulta-medica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con consulta médica general con médico de cabecera?",
+    "body": "Para consulta médica general con médico de cabecera, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 4
+  },
+  {
+    "source": "salud-femenina-online",
+    "target": "consulta-medica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Consulta médica general con médico de cabecera?",
+    "body": "Si tu situación está relacionada con consulta médica general con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 6
+  },
+  {
+    "source": "salud-mental-online",
+    "target": "consulta-medica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Necesitas ayuda con consulta médica general con médico de cabecera?",
+    "body": "Para consulta médica general con médico de cabecera, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 4
+  },
+  {
+    "source": "consulta-piel-online",
+    "target": "consulta-medica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+    "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 2
+  },
+  {
+    "source": "segunda-opinion-medica",
+    "target": "consulta-medica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Consulta médica general con médico de cabecera?",
+    "body": "Si tu situación está relacionada con consulta médica general con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 6
+  },
+  {
+    "source": "caida-cabello-online",
+    "target": "consulta-medica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+    "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 5
+  },
+  {
+    "source": "musculoesqueletico-online",
+    "target": "consulta-medica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+    "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 2
+  },
+  {
+    "source": "enfermedades-cronicas-online",
+    "target": "consulta-medica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Consulta médica general con médico de cabecera?",
+    "body": "Si tu situación está relacionada con consulta médica general con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 6
+  },
+  {
+    "source": "pediatria-online",
+    "target": "consulta-medica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "¿Tu consulta es sobre consulta médica general con médico de cabecera?",
+    "body": "Nuestra Consulta Médica General está pensada específicamente para consulta médica general con médico de cabecera.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 2
+  },
+  {
+    "source": "dermatologia-especialista-online",
+    "target": "consulta-medica-online",
+    "type": "ENTRY",
+    "heading": "¿Evaluación inicial con médico de cabecera?",
+    "body": "Si tu situación está relacionada con evaluación inicial con médico de cabecera, nuestra Consulta Médica General te ofrece la evaluación adecuada.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 3
+  },
+  {
+    "source": "psiquiatra-online",
+    "target": "consulta-medica-online",
+    "type": "ENTRY",
+    "heading": "¿Necesitas ayuda con evaluación inicial con médico de cabecera?",
+    "body": "Para evaluación inicial con médico de cabecera, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 4
+  },
+  {
+    "source": "psicologo-online",
+    "target": "consulta-medica-online",
+    "type": "ENTRY",
+    "heading": "¿Tu consulta es sobre evaluación inicial con médico de cabecera?",
+    "body": "Nuestra Consulta Médica General está pensada específicamente para evaluación inicial con médico de cabecera.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 2
+  },
+  {
+    "source": "cardiologo-online",
+    "target": "consulta-medica-online",
+    "type": "ENTRY",
+    "heading": "¿Tu consulta es sobre evaluación inicial con médico de cabecera?",
+    "body": "Nuestra Consulta Médica General está pensada específicamente para evaluación inicial con médico de cabecera.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 5
+  },
+  {
+    "source": "neurologo-online",
+    "target": "consulta-medica-online",
+    "type": "ENTRY",
+    "heading": "¿Tu consulta es sobre evaluación inicial con médico de cabecera?",
+    "body": "Nuestra Consulta Médica General está pensada específicamente para evaluación inicial con médico de cabecera.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 5
+  },
+  {
+    "source": "pediatra-especialista-online",
+    "target": "consulta-medica-online",
+    "type": "ENTRY",
+    "heading": "¿Necesitas ayuda con evaluación inicial con médico de cabecera?",
+    "body": "Para evaluación inicial con médico de cabecera, consulta nuestra página de Consulta Médica General — evaluación clínica específica para tu caso.",
+    "ctaLabel": "Consulta Médica General",
+    "priority": 4
+  }
+]
