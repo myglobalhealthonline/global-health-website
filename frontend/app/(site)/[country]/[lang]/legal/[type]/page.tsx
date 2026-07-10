@@ -20,6 +20,13 @@ export const revalidate = 300;
 
 type Params = { country: string; lang: string; type: string };
 
+// ponytail: empty array opts the route into static generation without
+// prerendering any slug at build time (no backend call); real slugs render
+// on-demand and get cached via ISR.
+export function generateStaticParams() {
+  return [];
+}
+
 const DATE_FMT = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",
   month: "long",

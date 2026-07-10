@@ -18,7 +18,6 @@ type Props = {
   navigation: SiteNavigationData;
   brandLogo?: { src: string; alt: string };
   footerDecorImage?: { src: string; alt: string };
-  authUser?: { role: string; email?: string | null } | null;
   countryFeatures?: Record<string, string[] | undefined>;
   /** Per-country footer overrides keyed by lowercase country code.
    *  Missing or null entries fall back to the global defaults. */
@@ -43,7 +42,6 @@ export function SiteChrome({
   siteName,
   navigation,
   brandLogo,
-  authUser,
   countryFeatures,
   countryFooters,
   countryTrust,
@@ -69,7 +67,6 @@ export function SiteChrome({
           siteName={siteName}
           navigation={navigation}
           brandLogo={brandLogo}
-          authUser={authUser}
           countryFeatures={countryFeatures}
           initialLastCountry={initialLastCountry}
           countries={countries}

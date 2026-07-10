@@ -39,7 +39,8 @@ import { MobileNav } from "@/components/layout/MobileNav";
 import { CartIcon } from "@/components/cart/CartIcon";
 import { HeaderScrollShell } from "@/components/layout/HeaderScrollShell";
 import { RememberCountryOnMount } from "@/components/layout/RememberCountryOnMount";
-import { ArrowUpRight, Bell } from "lucide-react";
+import { HeaderAuthActions } from "@/components/layout/HeaderAuthActions";
+import { ArrowUpRight } from "lucide-react";
 
 function sectionNavForCountryLang(
   countrySlug: string,
@@ -103,13 +104,6 @@ function sectionNavForCountryLang(
   return items;
 }
 
-/** First letter of the user's email, uppercased — the avatar glyph.
- *  Falls back to a neutral dot when no email is available. */
-function initialFromEmail(email?: string | null): string {
-  const ch = email?.trim()?.[0];
-  return ch ? ch.toUpperCase() : "•";
-}
-
 /** Outside-a-country nav: no per-country service links. */
 function sectionNavGlobal(nav: SiteNavigationData): SectionNavItem[] {
   return [
@@ -125,7 +119,6 @@ export function SiteHeader({
   siteName,
   navigation,
   brandLogo,
-  authUser,
   countryFeatures,
   initialLastCountry,
   countries,
@@ -135,7 +128,6 @@ export function SiteHeader({
   siteName: string;
   navigation: SiteNavigationData;
   brandLogo?: { src: string; alt: string };
-  authUser?: { role: string; email?: string | null } | null;
   countryFeatures?: Record<string, string[] | undefined>;
   initialLastCountry?: { slug: string; lang: string } | null;
   countries: CountryConfig[];
@@ -246,52 +238,11 @@ export function SiteHeader({
 
         <CartIcon variant="dark" />
 
-        {/* Notifications — links to the account inbox (or sign-in). The
-            lime dot is the signature live-status accent. */}
-        <Link
-          href={authUser ? "/account/notifications" : "/login"}
-          aria-label="Notifications"
-          className="gh-focus-on-dark relative hidden size-11 items-center justify-center rounded-full text-white/85 transition-colors duration-200 hover:bg-white/12 hover:text-white xl:inline-flex"
-        >
-          <Bell className="size-4" strokeWidth={2} aria-hidden />
-          <span
-            aria-hidden
-            className="absolute right-2.5 top-2.5 size-2 rounded-full ring-2 ring-[color:var(--color-background-dark)]"
-            style={{ background: "var(--color-brand-accent)" }}
-          />
-        </Link>
-
-        {!authUser ? (
-          <Link
-            href="/login"
-            className="gh-header-authLink gh-focus-on-dark hidden whitespace-nowrap rounded-full px-2 text-sm font-semibold text-white/70 transition-colors hover:text-white active:opacity-80 xl:inline-flex"
-          >
-            {navigation.headerAuthLink.label}
-          </Link>
-        ) : (
-          <Link
-            href={
-              authUser.role === "ADMIN"
-                ? "/admin"
-                : authUser.role === "DOCTOR"
-                  ? "/doctor"
-                  : "/account"
-            }
-            aria-label={
-              authUser.email
-                ? `Your account (${authUser.email})`
-                : "Your account"
-            }
-            title={authUser.email ?? undefined}
-            className="gh-focus-on-dark group hidden size-11 items-center justify-center rounded-full transition-transform duration-200 active:scale-95 xl:inline-flex"
-          >
-            {/* 44px hit area; 36px visual circle so the tight lg header row
-                keeps its previous width. */}
-            <span className="inline-flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-[13px] font-extrabold leading-none text-white transition-[background-color,border-color] duration-200 group-hover:border-[var(--color-brand-accent)] group-hover:bg-white/[0.16]">
-              {initialFromEmail(authUser.email)}
-            </span>
-          </Link>
-        )}
+        {/* Notification bell + login/avatar — personalized from the
+            client-fetched session (see HeaderAuthActions/PublicAuthContext),
+            not a header/cookie read here, so this Server Component stays
+            static-friendly (P-001). */}
+        <HeaderAuthActions navigation={navigation} />
 
         {/* Primary CTA — gh2 lime pill: dark ink, lime glow, lift on
             hover, push on active. Mirrors the hero's gh2-btn-lime. */}
@@ -317,7 +268,6 @@ export function SiteHeader({
             siteName={siteName}
             navigation={navigation}
             brandLogo={brandLogo}
-            authUser={authUser}
             countryFeatures={countryFeatures}
             bookHref={bookHref}
             countries={countries}

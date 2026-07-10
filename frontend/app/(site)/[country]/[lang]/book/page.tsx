@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight, CalendarDays, CheckCircle2, Lock, ShieldCheck, Stethoscope, UserRound, Video } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
-import { countries, getCountryByCode } from "@/data/countries";
+import { getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode, getPublicBookingRequirements } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import {
@@ -19,10 +19,8 @@ import { getGpAvailability } from "@/lib/content/get-gp-availability";
 import { getServiceAggregatedAvailability } from "@/lib/content/get-service-availability";
 import { ServiceTimePicker } from "./_components/service-time-picker";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
-import {
-  COUNTRY_CODE_TO_SLUG,
-  countryCodeFromSlug,
-} from "@/lib/routing/country-slug";
+import { countryCodeFromSlug } from "@/lib/routing/country-slug";
+import { countryLangParams } from "@/lib/routing/static-params";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
@@ -55,10 +53,7 @@ const STEPS = [{ n: 1 }, { n: 2 }, { n: 3 }, { n: 4 }] as const;
 type BookT = import("@/lib/i18n/types").CommonLocale["bookPage"];
 
 export async function generateStaticParams(): Promise<Params[]> {
-  return countries.map((c) => ({
-    country: COUNTRY_CODE_TO_SLUG[c.code],
-    lang: (c.defaultLocale ?? "en").toLowerCase(),
-  }));
+  return countryLangParams();
 }
 
 export async function generateMetadata({

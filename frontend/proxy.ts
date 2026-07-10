@@ -375,6 +375,27 @@ export async function proxy(request: NextRequest) {
     },
   });
   response.headers.set("Content-Security-Policy", csp);
+
+  // P-001: bare, non-HttpOnly boolean hint for the public-site client auth
+  // island (PublicAuthContext) — lets the browser skip its /api/auth/me
+  // round-trip for the (majority) anonymous visitor without any I/O here,
+  // since `session` above was already resolved from a local JWT decode.
+  // Carries no sensitive data, just "a session looked valid at this edge
+  // check" — the real auth decision still happens against the httpOnly
+  // session cookie server-side. Left untouched when `resolveSession` itself
+  // is misconfigured (no verification key available) rather than guessing.
+  if (session.kind === "ok") {
+    if (session.role !== null) {
+      response.cookies.set("gh-auth-hint", "1", {
+        path: "/",
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      });
+    } else {
+      response.cookies.delete("gh-auth-hint");
+    }
+  }
+
   return response;
 }
 

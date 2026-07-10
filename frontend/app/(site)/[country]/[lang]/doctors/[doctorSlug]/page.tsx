@@ -5,6 +5,13 @@ import { isSupportedLocale } from "@/lib/content/get-public-page";
 
 type Params = { country: string; lang: string; doctorSlug: string };
 
+// ponytail: empty array opts the route into static generation without
+// prerendering any slug at build time (no backend call); real slugs render
+// on-demand and get cached via ISR.
+export function generateStaticParams() {
+  return [];
+}
+
 export async function generateMetadata({ params }: { params: Promise<Params> }) {
   const p = await params;
   const code = countryCodeFromSlug(p.country);

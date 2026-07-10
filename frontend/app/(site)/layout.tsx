@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { cookies, headers } from "next/headers";
 import { SiteChrome } from "@/components/layout/SiteChrome";
+import { PublicAuthProvider } from "@/components/layout/PublicAuthContext";
 import { CartProvider } from "@/components/cart/CartContext";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { MetaPixel } from "@/components/compliance/MetaPixel";
@@ -41,13 +42,12 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
       ? (resolvedCountryCode as CountryCode)
       : undefined;
 
-  // Role + email stamped by the edge proxy via local JWT decode — no backend
-  // round-trip. Email drives the header's personal avatar (initial only).
-  const roleHeader = requestHeaders.get("x-gh-role");
-  const emailHeader = requestHeaders.get("x-gh-email");
-  const authUser: { role: string; email: string | null } | null = roleHeader
-    ? { role: roleHeader, email: emailHeader }
-    : null;
+  // P-001: auth/avatar personalization used to be read here from
+  // `x-gh-role`/`x-gh-email` headers (edge JWT decode, no I/O) — but that
+  // server-side header read forced every public page to render dynamically,
+  // even the country routes with generateStaticParams(). It's now a
+  // client-fetched island (PublicAuthProvider, wrapped below) that hits
+  // `/api/auth/me` after the static shell paints.
 
   // runtimeCountry is known here, so the per-country footer fetch can run
   // in the same parallel batch instead of as an extra serial round-trip
@@ -126,26 +126,27 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
   }
 
   return (
-    <CartProvider>
-      <SiteChrome
-        siteName={common.site.name}
-        navigation={navigation}
-        brandLogo={brandLogo}
-        footerDecorImage={footerDecorImage}
-        authUser={authUser}
-        countryFeatures={countryFeatures}
-        countryFooters={countryFooters}
-        countryTrust={activeTrust}
-        initialLastCountry={initialLastCountry}
-        countries={countriesMerged}
-        currentLocale={currentLocale}
-        parsed={parsed}
-        isGatewayHome={isGatewayHome}
-      >
-        <JsonLd data={[organizationJsonLd(organizationSameAs), websiteJsonLd()]} />
-        <MetaPixel />
-        {children}
-      </SiteChrome>
-    </CartProvider>
+    <PublicAuthProvider>
+      <CartProvider>
+        <SiteChrome
+          siteName={common.site.name}
+          navigation={navigation}
+          brandLogo={brandLogo}
+          footerDecorImage={footerDecorImage}
+          countryFeatures={countryFeatures}
+          countryFooters={countryFooters}
+          countryTrust={activeTrust}
+          initialLastCountry={initialLastCountry}
+          countries={countriesMerged}
+          currentLocale={currentLocale}
+          parsed={parsed}
+          isGatewayHome={isGatewayHome}
+        >
+          <JsonLd data={[organizationJsonLd(organizationSameAs), websiteJsonLd()]} />
+          <MetaPixel />
+          {children}
+        </SiteChrome>
+      </CartProvider>
+    </PublicAuthProvider>
   );
 }

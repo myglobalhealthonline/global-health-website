@@ -1,19 +1,15 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { DoctorTeamTemplate } from "@/components/templates/DoctorTeamTemplate";
-import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { countries, getCountryByCode } from "@/data/countries";
+import { getCountryByCode } from "@/data/countries";
 import { getCountryDoctors, getCountryServices } from "@/lib/content/get-country-collections";
 import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-country-trust";
 import { VerifiedProfessionals } from "@/components/sections/VerifiedProfessionals";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
-import {
-  COUNTRY_CODE_TO_SLUG,
-  countryCodeFromSlug,
-} from "@/lib/routing/country-slug";
-import { buildBookHref } from "@/lib/routing/book-href";
+import { countryCodeFromSlug } from "@/lib/routing/country-slug";
+import { countryLangParams } from "@/lib/routing/static-params";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { breadcrumbJsonLd, physicianJsonLd } from "@/lib/seo/structured-data";
 import { resolveBrandTitle } from "@/lib/seo/page-seo";
@@ -24,31 +20,18 @@ import {
   type PublicLocale,
 } from "@/lib/content/get-public-page";
 import { RichBodySection } from "@/components/sections/RichBodySection";
-import { DoctorFilters, type FilterGroup } from "@/components/sections/DoctorFilters";
-import { languageKey, languageLabel } from "@/lib/content/languages";
 import { SITE_NAME } from "@/lib/constants";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
+import { buildDoctorDirectoryView, type DoctorDirectoryContext } from "@/lib/content/doctor-directory";
+import { DoctorDirectoryView } from "./_components/DoctorDirectoryView";
+import { DoctorsDirectoryClient } from "./_components/DoctorsDirectoryClient";
 
 type Params = { country: string; lang: string };
-type SearchParams = {
-  lang?: string | string[];
-  type?: string | string[];
-};
-
-/** Parse a comma-or-repeat search param into a clean string[]. */
-function parseMultiParam(raw: string | string[] | undefined): string[] {
-  return (Array.isArray(raw) ? raw.flatMap((v) => v.split(",")) : (raw ?? "").split(","))
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0);
-}
 
 export async function generateStaticParams(): Promise<Params[]> {
-  return countries.map((c) => ({
-    country: COUNTRY_CODE_TO_SLUG[c.code],
-    lang: (c.defaultLocale ?? "EN").toLowerCase(),
-  }));
+  return countryLangParams();
 }
 
 export async function generateMetadata({
@@ -77,12 +60,20 @@ export async function generateMetadata({
   };
 }
 
+/**
+ * Server component: fetches + renders the FULL, unfiltered doctor roster
+ * for the country. No `searchParams` read here — that's what makes this
+ * page eligible for static generation (P-001). The `?lang=`/`?type=`
+ * filter chips are applied client-side by `DoctorsDirectoryClient`, which
+ * needs `useSearchParams` and is therefore wrapped in `<Suspense>` below.
+ * The Suspense fallback renders the same unfiltered roster server-side, so
+ * the statically generated shell always ships real content (not a spinner)
+ * to crawlers and pre-hydration visitors.
+ */
 export default async function CountryLangDoctorsPage({
   params,
-  searchParams,
 }: {
   params: Promise<Params>;
-  searchParams?: Promise<SearchParams>;
 }) {
   const { country: slug, lang } = await params;
   const code = countryCodeFromSlug(slug);
@@ -91,13 +82,6 @@ export default async function CountryLangDoctorsPage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
   const overlay = await getPublicCountryByCode(code);
-  const sp = searchParams ? await searchParams : {};
-  // Active filters from the URL. Languages keyed by ISO code; specialties
-  // by slug. Accept `?lang=es,pt`, `?lang=es&lang=pt`, single value, etc.
-  const filterLangs = parseMultiParam(sp?.lang).map((s) => languageKey(s));
-  const filterTypes = parseMultiParam(sp?.type)
-    .map((s) => s.toLowerCase())
-    .filter((s): s is "gp" | "specialist" => s === "gp" || s === "specialist");
 
   const { common } = loadLocaleBundle(lang as LocaleCode);
 
@@ -112,103 +96,11 @@ export default async function CountryLangDoctorsPage({
 
   const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
 
-  // Distinct language codes + specialty slugs advertised by at least one
-  // doctor in this country — these drive the filter chips. Sorted by
-  // display label for a stable, readable order.
-  const langOptions = Array.from(
-    new Map(
-      doctors
-        .flatMap((d) => d.languages ?? [])
-        .map((token) => [languageKey(token), languageLabel(token)] as const),
-    ).entries(),
-  ).sort((a, b) => a[1].localeCompare(b[1]));
-
-  // GP / Specialist chips — a doctor's type comes from which service kinds
-  // they're assigned to (same derivation as the homepage carousel).
-  const generalServiceIdSet = new Set(generalServices.map((s) => s.id));
-  const specialistServiceIdSet = new Set(specialistServices.map((s) => s.id));
-  function doctorTypes(d: (typeof doctors)[number]): Array<"gp" | "specialist"> {
-    const types: Array<"gp" | "specialist"> = [];
-    if (d.assignedServiceIds.some((id) => generalServiceIdSet.has(id))) types.push("gp");
-    if (d.assignedServiceIds.some((id) => specialistServiceIdSet.has(id))) types.push("specialist");
-    return types;
-  }
-  const hasGPDoctors = doctors.some((d) => doctorTypes(d).includes("gp"));
-  const hasSpecialistDoctors = doctors.some((d) => doctorTypes(d).includes("specialist"));
-
-  // A doctor passes when it matches EVERY active filter group (AND across
-  // groups) and ANY chip within a group (OR within a group).
-  const filteredDoctors = doctors.filter((d) => {
-    const docLangCodes = (d.languages ?? []).map(languageKey);
-    const docTypes = doctorTypes(d);
-    const langOk =
-      filterLangs.length === 0 ||
-      filterLangs.some((code) => docLangCodes.includes(code));
-    const typeOk =
-      filterTypes.length === 0 || filterTypes.some((t) => docTypes.includes(t));
-    return langOk && typeOk;
-  });
-
-  // Admin-chosen featured doctor → the spotlight card at the top. Pulled
-  // out of the grid below so it isn't shown twice. Only spotlighted when
-  // it's part of the current (filtered) view; otherwise the grid just
-  // shows the matches.
-  const featured = filteredDoctors.find((d) => d.isFeatured) ?? null;
-  const gridDoctors = featured
-    ? filteredDoctors.filter((d) => d.id !== featured.id)
-    : filteredDoctors;
-
-  const doctorCards = gridDoctors.map((d) => ({
-    name: d.fullName,
-    title: d.title,
-    imcRegistration: d.imcRegistration,
-    registrationDivision: d.registrationDivision,
-    registrationVerified: d.registrationVerified,
-    credentials: d.credentials,
-    medicalRegistrationUrl: d.medicalRegistrationUrl,
-    verificationUrl: verifyUrl,
-    languages: d.languages,
-    whatsappNumber: d.whatsappNumber,
-    instagramUrl: d.instagramUrl,
-    facebookUrl: d.facebookUrl,
-    linkedinUrl: d.linkedinUrl,
-    bio: d.bio ?? `Licensed clinician available for online consultations in ${config.name}.`,
-    imageSrc: d.imageSrc,
-    href: `/${slug}/${lang}/doctors/${d.slug}`,
-    bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
-    ctaLabel: common.doctors.viewProfile,
-    bookLabel: common.doctors.pickTime,
-  }));
-
-  // Build a toggle href: flips one token in its param while preserving
-  // every OTHER active filter group, so toggling a language doesn't wipe
-  // a specialty or type pick.
-  const activeByParam: Record<"lang" | "type", string[]> = {
-    lang: filterLangs,
-    type: filterTypes,
-  };
-  function toggleHref(param: "lang" | "type", token: string): string {
-    const qs = new URLSearchParams();
-    for (const [key, list] of Object.entries(activeByParam) as Array<
-      ["lang" | "type", string[]]
-    >) {
-      const next = new Set(list);
-      if (key === param) {
-        if (next.has(token)) next.delete(token);
-        else next.add(token);
-      }
-      if (next.size > 0) qs.set(key, Array.from(next).join(","));
-    }
-    const str = qs.toString();
-    return `/${slug}/${lang}/doctors${str ? `?${str}` : ""}`;
-  }
-
-  const hasActive = filterLangs.length > 0 || filterTypes.length > 0;
-
   // Physician ItemList schema — one Physician node per registered doctor in
-  // this country, built from the same data the cards render. This is the
-  // E-E-A-T signal Google and AI models read to identify and cite named
-  // licensed practitioners. Regulator (recognizedBy) comes from country trust.
+  // this country (the FULL roster, independent of any client-side filter).
+  // This is the E-E-A-T signal Google and AI models read to identify and
+  // cite named licensed practitioners. Regulator (recognizedBy) comes from
+  // country trust.
   const schemaRegulator = countryTrust?.regulator?.name
     ? { name: countryTrust.regulator.name, url: countryTrust.regulator.url }
     : null;
@@ -234,45 +126,19 @@ export default async function CountryLangDoctorsPage({
     })),
   };
 
-  const filterGroups: FilterGroup[] = [
-    {
-      // GP / Specialist — each chip only renders when the country actually
-      // has a doctor of that type, so a country with GPs only shows just
-      // "See a GP" instead of a dead-end "See a Specialist" chip.
-      heading: common.doctors.filterType,
-      options: [
-        ...(hasGPDoctors
-          ? [
-              {
-                token: "gp",
-                label: common.doctors.filterTypeGP,
-                active: filterTypes.includes("gp"),
-                href: toggleHref("type", "gp"),
-              },
-            ]
-          : []),
-        ...(hasSpecialistDoctors
-          ? [
-              {
-                token: "specialist",
-                label: common.doctors.filterTypeSpecialist,
-                active: filterTypes.includes("specialist"),
-                href: toggleHref("type", "specialist"),
-              },
-            ]
-          : []),
-      ],
-    },
-    {
-      heading: common.doctors.filterSpeaks,
-      options: langOptions.map(([codeKey, label]) => ({
-        token: codeKey,
-        label,
-        active: filterLangs.includes(codeKey),
-        href: toggleHref("lang", codeKey),
-      })),
-    },
-  ];
+  const directoryCtx: DoctorDirectoryContext = {
+    countryName: config.name,
+    countrySlug: slug,
+    lang,
+    doctors,
+    generalServiceIds: generalServices.map((s) => s.id),
+    specialistServiceIds: specialistServices.map((s) => s.id),
+    verifyUrl,
+    i18n: common.doctors,
+  };
+  // Fallback = no filters active, i.e. the full roster — identical to what
+  // a direct visit to `/doctors` (no query string) renders anyway.
+  const unfilteredView = buildDoctorDirectoryView(directoryCtx, [], []);
 
   return (
     <>
@@ -286,52 +152,9 @@ export default async function CountryLangDoctorsPage({
           physicianItemListJsonLd,
         ]}
       />
-      <DoctorTeamTemplate
-        countryName={config.name}
-        doctors={doctorCards}
-        bookingHref={buildBookHref({ country: slug, lang })}
-        bookingLabel={common.doctors.bookAppointment}
-        i18n={common.doctors}
-        showBottomCta
-        spotlight={
-          featured ? (
-            <div key="featured-spotlight" className="mb-10">
-              <FeaturedDoctor
-                standalone={false}
-                doctor={{
-                  name: featured.fullName,
-                  title: featured.title,
-                  imcRegistration: featured.imcRegistration,
-                  registrationDivision: featured.registrationDivision,
-                  registrationVerified: featured.registrationVerified,
-                  medicalRegistrationUrl: featured.medicalRegistrationUrl,
-                  verificationUrl: verifyUrl,
-                  credentials: featured.credentials,
-                  languages: featured.languages,
-                  bio: featured.bio ?? "",
-                  imageSrc: featured.imageSrc ?? null,
-                  href: `/${slug}/${lang}/doctors/${featured.slug}`,
-                  bookingHref: buildBookHref({ country: slug, lang, doctor: featured.slug }),
-                  whatsappNumber: featured.whatsappNumber,
-                  instagramUrl: featured.instagramUrl,
-                  facebookUrl: featured.facebookUrl,
-                  linkedinUrl: featured.linkedinUrl,
-                }}
-              />
-            </div>
-          ) : null
-        }
-        filters={
-          <DoctorFilters
-            key="doctor-filters"
-            groups={filterGroups}
-            clearHref={`/${slug}/${lang}/doctors`}
-            hasActive={hasActive}
-            clearLabel={common.doctors.clearFilters}
-            dark
-          />
-        }
-      />
+      <Suspense fallback={<DoctorDirectoryView view={unfilteredView} />}>
+        <DoctorsDirectoryClient ctx={directoryCtx} />
+      </Suspense>
       {countryTrust ? <VerifiedProfessionals trust={countryTrust} locale={lang} /> : null}
       <DoctifyReviewsSection
         theme="forest"

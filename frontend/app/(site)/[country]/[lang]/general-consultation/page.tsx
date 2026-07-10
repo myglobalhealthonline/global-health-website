@@ -18,13 +18,11 @@ import {
 } from "@/components/sections/ServiceContentSections";
 import { getGpHubContent } from "@/lib/content/ireland-service-content";
 import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
-import { countries, getCountryByCode } from "@/data/countries";
+import { getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
-import {
-  COUNTRY_CODE_TO_SLUG,
-  countryCodeFromSlug,
-} from "@/lib/routing/country-slug";
+import { countryCodeFromSlug } from "@/lib/routing/country-slug";
+import { countryLangParams } from "@/lib/routing/static-params";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { resolveBrandTitle } from "@/lib/seo/page-seo";
@@ -48,10 +46,7 @@ import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components
 type Params = { country: string; lang: string };
 
 export async function generateStaticParams(): Promise<Params[]> {
-  return countries.map((c) => ({
-    country: COUNTRY_CODE_TO_SLUG[c.code],
-    lang: (c.defaultLocale ?? "EN").toLowerCase(),
-  }));
+  return countryLangParams();
 }
 
 export async function generateMetadata({

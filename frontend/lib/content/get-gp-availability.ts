@@ -44,7 +44,8 @@ export async function getGpLanguages(
   if (!backend) return empty;
   const url = `${backend}/api/public/gp-languages?country=${encodeURIComponent(countryCode)}`;
   try {
-    const res = await fetch(url, { cache: "no-store" });
+    // ponytail: 300s TTL, add a revalidateTag if admins complain about staleness
+    const res = await fetch(url, { next: { revalidate: 300 } });
     if (!res.ok) return empty;
     const json = (await res.json()) as {
       ok?: boolean;

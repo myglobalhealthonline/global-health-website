@@ -16,10 +16,8 @@ import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { countries } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
-import {
-  COUNTRY_CODE_TO_SLUG,
-  countryCodeFromSlug,
-} from "@/lib/routing/country-slug";
+import { countryCodeFromSlug } from "@/lib/routing/country-slug";
+import { countryLangParams } from "@/lib/routing/static-params";
 import { buildBookHref } from "@/lib/routing/book-href";
 import {
   breadcrumbJsonLd,
@@ -56,13 +54,7 @@ import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components
 type Params = { country: string; lang: string };
 
 export async function generateStaticParams(): Promise<Params[]> {
-  const out: Params[] = [];
-  for (const c of countries) {
-    const slug = COUNTRY_CODE_TO_SLUG[c.code];
-    const defaultLocale = c.defaultLocale?.toLowerCase() ?? "en";
-    out.push({ country: slug, lang: defaultLocale });
-  }
-  return out;
+  return countryLangParams();
 }
 
 export async function generateMetadata({

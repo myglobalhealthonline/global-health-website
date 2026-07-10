@@ -1522,6 +1522,20 @@ model Appointment {
   @@index([countryCode, status, createdAt])
   @@index([paymentStatus, createdAt])
   @@index([userId, status, createdAt])
+  /// P-012: real DB indexes are PARTIAL (WHERE reminderSentAt/doctorReminderSentAt
+  /// IS NULL AND status NOT IN (...)) — Prisma's schema DSL cannot express a
+  /// partial index, so these two entries only document the indexed column
+  /// (scheduledAt) and pin the name via `map` so `prisma migrate dev` diffing
+  /// doesn't flag them as unrelated. The actual WHERE clause lives in
+  /// prisma/migrations/20260710010000_p012_index_alignment/migration.sql —
+  /// hand-authored, never regenerate these via `migrate dev`.
+  @@index([scheduledAt], map: "Appointment_reminder_pending_idx")
+  @@index([scheduledAt], map: "Appointment_doctor_reminder_pending_idx")
+  /// P-012: real DB index is `GIN (email gin_trgm_ops)` (pg_trgm) to support
+  /// admin ILIKE '%x%' substring search — Prisma's schema DSL can't express
+  /// the trigram operator class, so this documents the column only. See the
+  /// same migration file as above.
+  @@index([email], map: "Appointment_email_trgm_idx")
 }
 
 /// Persistent patient chart keyed by email (one row per patient identity).
@@ -1651,6 +1665,20 @@ model PatientProfile {
 
   @@index([pricingPlanId])
   @@index([globalHealthNumber])
+  /// P-012: real DB indexes are `GIN (<col> gin_trgm_ops)` (pg_trgm) so admin
+  /// ILIKE '%x%' substring search on these PLAINTEXT-only fields can use a
+  /// bitmap index scan. Prisma's schema DSL can't express the trigram
+  /// operator class, so these only document the columns (name pinned via
+  /// `map` for migrate-dev diffing). Deliberately NOT added for
+  /// nationalIdNumber / taxIdNumber / passportNumber — those are
+  /// PHI_ENCRYPTED_FIELDS (src/lib/crypto/phi-crypto.ts); substring search
+  /// over their ciphertext can't work once PHI_ENCRYPTION_KEY is set, so a
+  /// trigram index there would be dead weight. See
+  /// prisma/migrations/20260710010000_p012_index_alignment/migration.sql.
+  @@index([email], map: "PatientProfile_email_trgm_idx")
+  @@index([fullName], map: "PatientProfile_fullName_trgm_idx")
+  @@index([phone], map: "PatientProfile_phone_trgm_idx")
+  @@index([globalHealthNumber], map: "PatientProfile_globalHealthNumber_trgm_idx")
 }
 
 model GeneratedDocument {
@@ -1999,6 +2027,13 @@ model Order {
   @@index([paymentDueAt, prePaymentFlow, prePaymentReminderStage])
   @@index([postPaymentStage, paymentStatus])
   @@index([appointmentIds], type: Gin, map: "Order_appointmentIds_gin_idx")
+  /// P-012: runPostPaymentReminderCron filters paymentStatus by EQUALITY and
+  /// postPaymentStage by RANGE — the reverse column order of the index
+  /// above, which can't serve paymentStatus as an Index Cond once
+  /// postPaymentStage (leading column) is a range. Additive, not a
+  /// replacement — the index above still serves callers that filter
+  /// postPaymentStage as the leading equality condition.
+  @@index([paymentStatus, postPaymentStage], map: "Order_paymentStatus_postPaymentStage_idx")
 }
 
 /// Relational join between Order and Appointment (code review 2026-07-05,
@@ -2315,6 +2350,12 @@ model BlogPost {
 
   @@unique([slug, locale, countryId])
   @@index([countryId, status, locale])
+  /// P-012: admin list (getAdminBlogPosts) always orders by updatedAt desc,
+  /// optionally filters by status.
+  @@index([status, updatedAt(sort: Desc)], map: "BlogPost_status_updatedAt_idx")
+  /// P-012: public list (getPublicBlogPosts / getPublicBlogPostBySlug)
+  /// filters status=PUBLISHED, isActive=true, orders by publishedAt desc.
+  @@index([status, isActive, publishedAt(sort: Desc)], map: "BlogPost_status_isActive_publishedAt_idx")
 }
 
 model BlogTranslation {

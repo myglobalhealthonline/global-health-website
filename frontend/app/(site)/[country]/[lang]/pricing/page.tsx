@@ -4,10 +4,11 @@ import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { PageHero } from "@/components/sections/PageHero";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
-import { countries, getCountryByCode } from "@/data/countries";
+import { getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
-import { COUNTRY_CODE_TO_SLUG, countryCodeFromSlug } from "@/lib/routing/country-slug";
+import { countryCodeFromSlug } from "@/lib/routing/country-slug";
+import { countryLangParams } from "@/lib/routing/static-params";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
@@ -26,10 +27,7 @@ import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/Doctif
 type Params = { country: string; lang: string };
 
 export async function generateStaticParams(): Promise<Params[]> {
-  return countries.map((c) => ({
-    country: COUNTRY_CODE_TO_SLUG[c.code],
-    lang: (c.defaultLocale ?? "EN").toLowerCase(),
-  }));
+  return countryLangParams();
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {

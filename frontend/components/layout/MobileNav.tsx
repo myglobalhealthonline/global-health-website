@@ -37,12 +37,12 @@ import {
 import { localeDisplayName } from "@/lib/i18n/locale-display";
 import { Flag } from "@/components/ui/Flag";
 import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
+import { usePublicAuth } from "@/components/layout/PublicAuthContext";
 
 export function MobileNav({
   siteName,
   navigation,
   brandLogo = DEFAULT_BRAND_LOGO,
-  authUser,
   countryFeatures,
   bookHref,
   countries,
@@ -50,11 +50,13 @@ export function MobileNav({
   siteName: string;
   navigation: SiteNavigationData;
   brandLogo?: { src: string; alt: string };
-  authUser?: { role: string } | null;
   countryFeatures?: Record<string, string[] | undefined>;
   bookHref: string;
   countries: CountryConfig[];
 }) {
+  // P-001: read from the client-fetched session instead of a server prop
+  // sourced from headers() — see PublicAuthContext.tsx.
+  const { user: authUser, loading: authLoading } = usePublicAuth();
   const pathname = usePathname() || "/";
   const parsed = parseSitePath(pathname);
   const activeCountryCode = parsed.country
@@ -299,7 +301,20 @@ export function MobileNav({
             ) : null}
 
             <div className="mt-2 flex flex-col gap-2 border-t border-[var(--color-border)] pt-6">
-              {authUser ? (
+              {authLoading ? (
+                // Hint present, session not resolved yet: optimistic generic
+                // portal link — self-corrects once /account/(admin|doctor)
+                // resolves the real role server-side.
+                <Dialog.Close asChild>
+                  <Link
+                    href="/account"
+                    className="flex min-h-[44px] items-center gap-3 rounded-[14px] px-3 py-3.5 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                  >
+                    <User className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
+                    {navigation.navAccountPortal}
+                  </Link>
+                </Dialog.Close>
+              ) : authUser ? (
                 <Dialog.Close asChild>
                   <Link
                     href={portalHref}
