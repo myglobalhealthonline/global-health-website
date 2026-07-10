@@ -15,7 +15,13 @@ type GlobalWithPrisma = typeof globalThis & {
 
 const g = globalThis as GlobalWithPrisma;
 
-const pool =
+// Exported (not just module-private) so callers that need a real dedicated
+// physical connection — e.g. the scheduler's session-level pg_advisory_lock,
+// which must live on one checked-out client for the lock's whole duration,
+// not a Prisma-managed transaction with its own timeout — can `pool.connect()`
+// directly instead of constructing a second competing Pool against the same
+// DATABASE_URL.
+export const pool =
   g.__prismaPool ??
   new Pool({
     connectionString: process.env.DATABASE_URL,

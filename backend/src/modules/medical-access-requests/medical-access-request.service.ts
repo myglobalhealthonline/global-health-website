@@ -34,19 +34,30 @@ export async function createAccessRequest(params: {
     });
 
     // S-008: PHI cross-country access request — audit write must not be
-    // silently swallowed.
-    await recordCriticalAudit({
-      actorUserId: params.requestingUserId,
-      actorRole: "DOCTOR",
-      action: "MEDICAL_ACCESS_REQUEST_CREATED",
-      entityType: "MedicalAccessRequest",
-      entityId: record.id,
-      metadata: {
-        patientProfileId: params.patientProfileId,
-        requestedAccessScope: params.requestedAccessScope,
-        requestingDoctorCountry: params.requestingDoctorCountry,
-      },
-    });
+    // silently swallowed. Wrapped in its own try/catch: the
+    // MedicalAccessRequest row above already committed, so an audit-write
+    // failure here must not propagate into the outer catch and 500 a
+    // request that actually succeeded (a client retry on that false 500
+    // would create a duplicate MedicalAccessRequest).
+    try {
+      await recordCriticalAudit({
+        actorUserId: params.requestingUserId,
+        actorRole: "DOCTOR",
+        action: "MEDICAL_ACCESS_REQUEST_CREATED",
+        entityType: "MedicalAccessRequest",
+        entityId: record.id,
+        metadata: {
+          patientProfileId: params.patientProfileId,
+          requestedAccessScope: params.requestedAccessScope,
+          requestingDoctorCountry: params.requestingDoctorCountry,
+        },
+      });
+    } catch (auditError) {
+      console.error(
+        "[medical-access-request] CRITICAL: MEDICAL_ACCESS_REQUEST_CREATED audit write failed",
+        { requestId: record.id, err: auditError instanceof Error ? auditError.message : auditError },
+      );
+    }
 
     return { requestId: record.id, status: "PENDING" };
   } catch (error) {

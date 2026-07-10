@@ -72,17 +72,28 @@ const shareLinksRoute: FastifyPluginAsync = async (app) => {
           },
         });
         // S-008: minting an unauthenticated PHI access token — audit write
-        // must not be silently swallowed. Fail closed: don't hand back a
-        // usable token if we can't prove it was minted.
-        await recordCriticalAudit({
-          actorUserId: auth.userId,
-          actorRole: "DOCTOR",
-          action: "SHARE_LINK_CREATED",
-          entityType: "ShareLink",
-          entityId: row.id,
-          metadata: { consultationId: consult.id, expiresAt: row.expiresAt.toISOString() },
-          request,
-        });
+        // must not be silently swallowed. Wrapped in its own try/catch: the
+        // ShareLink row (and its raw token, returned below) already
+        // committed, so an audit-write failure here must not propagate into
+        // the generic catch and 500 a request that actually succeeded — a
+        // client retry on that false 500 would mint a second ShareLink and
+        // orphan the first raw token (nobody would have received it).
+        try {
+          await recordCriticalAudit({
+            actorUserId: auth.userId,
+            actorRole: "DOCTOR",
+            action: "SHARE_LINK_CREATED",
+            entityType: "ShareLink",
+            entityId: row.id,
+            metadata: { consultationId: consult.id, expiresAt: row.expiresAt.toISOString() },
+            request,
+          });
+        } catch (auditError) {
+          app.log.error(
+            { err: auditError, shareLinkId: row.id },
+            "CRITICAL: SHARE_LINK_CREATED audit write failed",
+          );
+        }
         return reply.status(201).send(
           okResponse({
             shareLink: {

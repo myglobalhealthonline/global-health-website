@@ -1,4 +1,4 @@
-import { prisma } from "../db/prisma.js";
+import { pool } from "../db/prisma.js";
 import { runPrePaymentReminderCron } from "../modules/automation/pre-payment-flow.service.js";
 import { runPostPaymentReminderCron } from "../modules/automation/post-payment-flow.service.js";
 import {
@@ -33,41 +33,78 @@ const LOCK_RECONCILIATION = 4010004;
 const LOCK_DAILY_REMINDERS = 4010005;
 const LOCK_ACCOUNT_PURGE = 4010006;
 
-// Interactive-transaction timeout for a locked tick. Generous relative to the
-// shortest cron interval (5 min) because job bodies make outbound HTTP calls
-// (email/WhatsApp) between DB queries while the lock is held.
-const JOB_TX_TIMEOUT_MS = 5 * 60 * 1000;
-
+// SESSION-level advisory lock (pg_advisory_lock / pg_advisory_unlock) on a
+// single manually-checked-out `pg.Pool` client, NOT a Prisma-managed
+// transaction. A session-level lock's lifetime is tied to a real physical
+// connection, so it lasts exactly as long as the job body actually runs —
+// however long that turns out to be — with no artificial timeout to race.
+//
+// This replaces an earlier transaction-scoped (`pg_try_advisory_xact_lock`)
+// version that wrapped the whole job body in `prisma.$transaction(..., {
+// timeout: 5 * 60_000 })`. Job bodies call `sendWhatsAppText` per recipient,
+// which is globally serialized behind a 6s minimum gap plus 10s/20s retry
+// backoffs (wasender.ts) — a tick with enough reminders could run past the
+// transaction's 5-minute timeout. When that fired, Prisma rolled the
+// transaction back and freed the connection, but the still-running job body
+// wasn't actually cancelled — it kept executing (and kept sending WhatsApp
+// messages) detached from the now-released lock, while the NEXT tick could
+// already acquire that lock and start a fully concurrent duplicate run. A
+// session-level lock on a client the job body itself holds for its entire
+// duration closes that hole: nothing releases the lock out from under a
+// still-running job.
 async function withAdvisoryLock(
   key: number,
   fn: () => Promise<void>,
   opts: { failClosed: boolean },
 ): Promise<void> {
-  // pg_try_advisory_xact_lock is non-blocking AND transaction-scoped: Prisma's
-  // interactive $transaction pins one physical pooled connection for the whole
-  // callback, so the lock acquire (and its automatic release on commit/
-  // rollback) can never split across two different connections the way two
-  // separate $queryRaw calls could. No explicit unlock call needed.
+  let client: import("pg").PoolClient;
   try {
-    await prisma.$transaction(
-      async (tx) => {
-        const rows = await tx.$queryRaw<{ locked: boolean }[]>`SELECT pg_try_advisory_xact_lock(${key}) AS locked`;
-        if (rows?.[0]?.locked !== true) return; // another replica is running this tick
-        await fn();
-      },
-      { timeout: JOB_TX_TIMEOUT_MS },
-    );
+    client = await pool.connect();
   } catch {
-    // Lock/transaction machinery itself failed (DB blip, pool exhaustion —
-    // NOT a job-logic error, every tick already swallows those internally).
-    if (opts.failClosed) {
-      // Non-idempotent job (would double-send emails/WhatsApp on a concurrent
-      // duplicate run) — fail CLOSED: skip this tick rather than run unprotected.
-      return;
-    }
-    // Idempotent job (documented safe-to-retry / no-op-on-duplicate) — fail
-    // OPEN as before so a transient lock-query blip doesn't stall it.
+    // Couldn't even check out a connection to attempt the lock (pool
+    // exhaustion, DB blip) — same "can't attempt to lock" case as the query
+    // throwing below.
+    if (opts.failClosed) return;
     await fn();
+    return;
+  }
+
+  let locked: boolean;
+  try {
+    const result = await client.query<{ locked: boolean }>(
+      "SELECT pg_try_advisory_lock($1) AS locked",
+      [key],
+    );
+    locked = result.rows[0]?.locked === true;
+  } catch {
+    // Lock-acquisition query itself failed — we don't know if we hold the
+    // lock, so treat the connection as untrustworthy and destroy it rather
+    // than returning it to the pool.
+    client.release(true);
+    if (opts.failClosed) return;
+    await fn();
+    return;
+  }
+
+  if (!locked) {
+    // Another replica/process already holds this job's lock — nothing to do.
+    client.release();
+    return;
+  }
+
+  try {
+    await fn();
+  } finally {
+    try {
+      await client.query("SELECT pg_advisory_unlock($1)", [key]);
+      client.release();
+    } catch {
+      // Unlock failed for some reason (network blip, etc.) — never let a
+      // connection that might still be holding the lock go back into the
+      // pool for another caller to reuse. Destroy it instead; the lock dies
+      // with the connection either way (session-scoped).
+      client.release(true);
+    }
   }
 }
 
@@ -171,11 +208,12 @@ async function tickDailyReminders(log: Logger) {
 }
 
 async function tickAccountPurge(log: Logger) {
-  // Idempotent: candidates are `isActive:true && deletionScheduledAt < now`,
-  // and purging flips isActive to false — a purged row drops out of the
-  // candidate set, so a concurrent/duplicate run on the same row is a safe
-  // no-op (re-anonymizing already-anonymized scalar fields). No customer
-  // email/WhatsApp is sent. Fail OPEN.
+  // Idempotent: candidates are `deletionScheduledAt < now` regardless of
+  // isActive (so a row deactivated by an admin after requesting deletion
+  // still gets purged) — purgeOneAccount itself short-circuits a row whose
+  // User.email already matches the purge sentinel, so a concurrent/duplicate
+  // run on the same row is a safe no-op. No customer email/WhatsApp is sent.
+  // Fail OPEN.
   await withAdvisoryLock(
     LOCK_ACCOUNT_PURGE,
     async () => {

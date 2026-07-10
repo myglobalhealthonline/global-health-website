@@ -14,6 +14,8 @@ export async function forwardToBackend(
   request: NextRequest,
   backendPath: string,
   method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT",
+  /** Per-call override for routes whose backend op legitimately runs longer than a plain JSON proxy (e.g. document generation). */
+  timeoutMs: number = FORWARD_TIMEOUT_MS,
 ): Promise<NextResponse> {
   const backend = getBackendOrigin();
   if (!backend) {
@@ -32,7 +34,7 @@ export async function forwardToBackend(
       ...(cookie ? { cookie } : {}),
     },
     cache: "no-store",
-    signal: AbortSignal.timeout(FORWARD_TIMEOUT_MS),
+    signal: AbortSignal.timeout(timeoutMs),
   };
   if (method !== "GET" && method !== "DELETE") {
     const body = await request.text();

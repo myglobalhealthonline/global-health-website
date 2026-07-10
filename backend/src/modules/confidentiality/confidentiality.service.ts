@@ -116,18 +116,29 @@ export async function acceptConfidentialityAgreement(
 
   // S-008: this is the compliance evidence that gates PHI access
   // (assertMedicalAccess requires confidentialityAgreementAccepted) — audit
-  // write must not be silently swallowed.
-  await recordCriticalAudit({
-    actorUserId: null,
-    actorRole: "DOCTOR",
-    action: "CONFIDENTIALITY_AGREEMENT_ACCEPTED" as never,
-    entityType: "DoctorConfidentialityAgreement",
-    entityId: doctorId,
-    metadata: {
-      agreementVersion: CURRENT_AGREEMENT_VERSION,
-      ipAddress,
-    },
-  });
+  // write must not be silently swallowed. Wrapped in its own try/catch: the
+  // DoctorConfidentialityAgreement row above already committed, so an
+  // audit-write failure here must not propagate to the caller's catch and
+  // 500 a request that actually succeeded (a client retry on that false 500
+  // would create a duplicate acceptance row).
+  try {
+    await recordCriticalAudit({
+      actorUserId: null,
+      actorRole: "DOCTOR",
+      action: "CONFIDENTIALITY_AGREEMENT_ACCEPTED" as never,
+      entityType: "DoctorConfidentialityAgreement",
+      entityId: doctorId,
+      metadata: {
+        agreementVersion: CURRENT_AGREEMENT_VERSION,
+        ipAddress,
+      },
+    });
+  } catch (auditError) {
+    console.error(
+      "[confidentiality] CRITICAL: CONFIDENTIALITY_AGREEMENT_ACCEPTED audit write failed",
+      { doctorId, err: auditError instanceof Error ? auditError.message : auditError },
+    );
+  }
 }
 
 /**

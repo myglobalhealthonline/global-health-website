@@ -12,5 +12,7 @@ export async function POST(
     request,
     `/api/doctor/appointments/${encodeURIComponent(id)}/documents/generate`,
     "POST",
+    // LibreOffice conversion can take up to SOFFICE_CONVERT_TIMEOUT_MS (45s) on the backend — stay above that.
+    50_000,
   );
 }

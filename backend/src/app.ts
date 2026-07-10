@@ -74,7 +74,7 @@ export async function buildApp() {
       callback(isOriginAllowed(origin) ? null : new Error("CORS origin denied"), isOriginAllowed(origin));
     },
     credentials: true,
-    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   });
   await app.register(cookie);

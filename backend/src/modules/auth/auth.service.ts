@@ -385,13 +385,16 @@ export async function cancelAccountDeletion(id: string): Promise<void> {
 // risk here regardless of what else references the row.
 
 /** One batch tick: finds every account whose 30-day grace period has
- *  elapsed and purges it. `isActive: true` in the query doubles as the
- *  "not yet purged" marker — purging flips it to false, so a completed row
- *  drops out of the candidate set on its own and the tick is safe to run
- *  on a fixed interval without a separate "done" column. */
+ *  elapsed and purges it. Deliberately NOT filtered on `isActive: true` —
+ *  an admin can deactivate an account (a separate code path) after
+ *  deletion was requested but before a tick ever ran, which would
+ *  otherwise drop the row out of the candidate set forever. Safety
+ *  against re-processing an already-purged row lives in `purgeOneAccount`
+ *  itself (it short-circuits once `User.email` is already the purge
+ *  sentinel), so this query can stay a simple date filter. */
 export async function purgeExpiredAccountDeletions(): Promise<{ purged: number; failed: number }> {
   const candidates = await prisma.user.findMany({
-    where: { isActive: true, deletionScheduledAt: { lt: new Date() } },
+    where: { deletionScheduledAt: { lt: new Date() } },
     select: { id: true },
   });
 
@@ -415,6 +418,16 @@ export async function purgeExpiredAccountDeletions(): Promise<{ purged: number; 
 }
 
 async function purgeOneAccount(userId: string): Promise<void> {
+  const existingUser = await prisma.user.findUnique({ where: { id: userId }, select: { email: true } });
+  if (!existingUser) return;
+  // Defensive short-circuit against a query race: `purgeExpiredAccountDeletions`
+  // no longer filters on isActive, so the same row can legitimately appear as a
+  // candidate twice across ticks (e.g. a slow previous run still in flight).
+  // A row that's already anonymized has its email rewritten to this exact
+  // sentinel — skip it instead of re-purging (and re-writing PatientProfile's
+  // email to a second, different sentinel keyed by a possibly-changed id).
+  if (existingUser.email === `deleted-${userId}@deleted.invalid`) return;
+
   const patientProfile = await prisma.patientProfile.findUnique({
     where: { userId },
     select: { id: true, insuranceDocumentKey: true, idDocumentKey: true, idDocumentBackKey: true },
@@ -496,6 +509,16 @@ async function purgeOneAccount(userId: string): Promise<void> {
           phoneHash: null,
           nameDobHash: null,
           anonymizedAt: new Date(),
+          // Same sentinel pattern as User.email below, keyed by profile id
+          // since PatientProfile.email is a separate globally-unique column.
+          // Without this, `registerPatient`'s upsert-by-email would relink a
+          // stranger's new User to this deceased/anonymized profile — and
+          // everything FK'd to it (GlobalHealthNumber, MedicalDocument,
+          // Consultation, ...) — the moment they registered with the now-
+          // freed real address. emailHash (the blind index) must be cleared
+          // too or duplicate-detection could still resolve back to this row.
+          email: `deleted-${patientProfile.id}@deleted.invalid`,
+          emailHash: null,
         },
       });
     }

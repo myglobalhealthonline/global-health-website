@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { errorResponse } from "./response.js";
 
-const STATE_CHANGING_METHODS = new Set(["POST", "PATCH", "DELETE"]);
+const STATE_CHANGING_METHODS = new Set(["POST", "PATCH", "PUT", "DELETE"]);
 
 /**
  * S-013b: lightweight Origin / Sec-Fetch-Site check for state-changing

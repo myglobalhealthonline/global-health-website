@@ -146,20 +146,31 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
           },
         });
         // S-008: PHI clinical record — audit write must not be silently
-        // swallowed.
-        await recordCriticalAudit({
-          actorUserId: auth.userId,
-          actorRole: "DOCTOR",
-          action: "EXAM_LOGGED",
-          entityType: "ExamResult",
-          entityId: row.id,
-          metadata: {
-            appointmentId: appt.id,
-            testName: row.testName,
-            status: row.status,
-          },
-          request,
-        });
+        // swallowed. Wrapped in its own try/catch: the ExamResult row above
+        // already committed, so an audit-write failure here must not
+        // propagate into the generic catch below and 500 a request whose
+        // create actually succeeded (a client retry on that false 500
+        // would create a duplicate ExamResult).
+        try {
+          await recordCriticalAudit({
+            actorUserId: auth.userId,
+            actorRole: "DOCTOR",
+            action: "EXAM_LOGGED",
+            entityType: "ExamResult",
+            entityId: row.id,
+            metadata: {
+              appointmentId: appt.id,
+              testName: row.testName,
+              status: row.status,
+            },
+            request,
+          });
+        } catch (auditError) {
+          app.log.error(
+            { err: auditError, examResultId: row.id },
+            "CRITICAL: EXAM_LOGGED audit write failed",
+          );
+        }
         notifyAdmins(
           desiredStatus === "REQUESTED" ? "EXAM_REQUESTED" : "EXAM_LOGGED",
           {
