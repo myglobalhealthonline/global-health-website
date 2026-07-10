@@ -17,7 +17,7 @@ import {
   verifyDoctorAccess,
 } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
-import { recordAudit } from "../modules/audit/audit.service.js";
+import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { notifyAdmins } from "../modules/notifications/notify.service.js";
 import { verifySniffedMime } from "../utils/sniff-mime.js";
 import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
@@ -186,15 +186,29 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
             byteSize: buffer.length,
           },
         });
-        recordAudit({
-          actorUserId: auth.userId,
-          actorRole: "DOCTOR",
-          action: "DOCUMENT_UPLOADED",
-          entityType: "AppointmentDocument",
-          entityId: row.id,
-          metadata: { appointmentId: appt.id, label, byteSize: buffer.length },
-          request,
-        }).catch(() => {});
+        // S-008: PHI document upload — audit failure must be loud, but the
+        // enclosing catch below treats any thrown error here as "the DB
+        // write failed" and deletes the just-uploaded S3 object to avoid a
+        // leak. The upload + DB row already succeeded at this point, so an
+        // audit-write failure must NOT trigger that cleanup (it would
+        // delete a real file while its DB row stays behind). Log loudly at
+        // error level (alertable) instead of throwing into that catch.
+        try {
+          await recordCriticalAudit({
+            actorUserId: auth.userId,
+            actorRole: "DOCTOR",
+            action: "DOCUMENT_UPLOADED",
+            entityType: "AppointmentDocument",
+            entityId: row.id,
+            metadata: { appointmentId: appt.id, label, byteSize: buffer.length },
+            request,
+          });
+        } catch (auditError) {
+          app.log.error(
+            { err: auditError, documentId: row.id },
+            "CRITICAL: DOCUMENT_UPLOADED audit write failed",
+          );
+        }
         notifyAdmins("DOCUMENT_UPLOADED", {
           appointmentId: appt.id,
           snippet: `${appt.fullName} · ${label}`,
@@ -327,14 +341,19 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
           // gone, and a stray S3 blob is recoverable by ops if needed.
           app.log.warn({ err }, "Failed to delete object from storage");
         }
-        recordAudit({
+        // S-008: PHI document delete — audit write must not be silently
+        // swallowed. Safe to throw here: the storage-cleanup step above
+        // already ran in its own try/catch (best-effort), so a thrown
+        // audit failure only surfaces as a 500 on an already-completed
+        // delete, not a spurious cleanup action.
+        await recordCriticalAudit({
           actorUserId: auth.userId,
           actorRole: "DOCTOR",
           action: "DOCUMENT_DELETED",
           entityType: "AppointmentDocument",
           entityId: existing.id,
           request,
-        }).catch(() => {});
+        });
         return okResponse({ deleted: true });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {

@@ -1,8 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
-import { resolveOptionalAuthUser } from "../utils/request-auth.js";
+import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
@@ -161,10 +160,12 @@ const adminGpSettingsRoute: FastifyPluginAsync = async (app) => {
           await setGpPriorityDoctorId(code, parsed.data.priorityDoctorId);
         }
 
-        const actor = await resolveOptionalAuthUser(request);
+        // S-008: resolveAdminSessionActor resolves all admin-tier roles
+        // (resolveOptionalAuthUser silently dropped SUPER_ADMIN/LOCAL_ADMIN).
+        const actor = resolveAdminSessionActor(request);
         recordAudit({
-          actorUserId: actor?.id,
-          actorRole: "ADMIN",
+          actorUserId: actor?.userId ?? null,
+          actorRole: actor?.role ?? "ADMIN",
           action: "GP_SETTINGS_UPDATED",
           entityType: "Country",
           entityId: code,

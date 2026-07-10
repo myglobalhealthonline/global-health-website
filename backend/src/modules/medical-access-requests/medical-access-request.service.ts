@@ -1,39 +1,10 @@
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { recordCriticalAudit } from "../audit/audit.service.js";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const ACCESS_GRANT_DAYS = 30;
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-async function recordAudit(params: {
-  actorUserId?: string | null;
-  actorRole?: string | null;
-  action: string;
-  entityType: string;
-  entityId: string;
-  metadata?: Record<string, unknown>;
-  ipAddress?: string | null;
-}): Promise<void> {
-  try {
-    await (prisma as unknown as Record<string, unknown> & {
-      auditLog: { create: (args: unknown) => Promise<unknown> };
-    }).auditLog.create({
-      data: {
-        actorUserId: params.actorUserId ?? null,
-        actorRole: params.actorRole ?? null,
-        action: params.action as never,
-        entityType: params.entityType,
-        entityId: params.entityId,
-        metadata: params.metadata ?? null,
-        ipAddress: params.ipAddress ?? null,
-      },
-    });
-  } catch {
-    // Audit failures are fire-and-forget — never block the main path.
-  }
-}
 
 // ─── Public API ───────────────────────────────────────────────────────────────
 
@@ -62,7 +33,9 @@ export async function createAccessRequest(params: {
       select: { id: true },
     });
 
-    await recordAudit({
+    // S-008: PHI cross-country access request — audit write must not be
+    // silently swallowed.
+    await recordCriticalAudit({
       actorUserId: params.requestingUserId,
       actorRole: "DOCTOR",
       action: "MEDICAL_ACCESS_REQUEST_CREATED",
@@ -124,7 +97,9 @@ export async function respondToAccessRequest(params: {
       });
     }
 
-    await recordAudit({
+    // S-008: PHI access grant/deny decision — audit write must not be
+    // silently swallowed.
+    await recordCriticalAudit({
       actorUserId: null,
       actorRole: "PATIENT",
       action: params.approved ? "MEDICAL_ACCESS_REQUEST_APPROVED" : "MEDICAL_ACCESS_REQUEST_DENIED",

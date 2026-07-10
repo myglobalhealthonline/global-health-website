@@ -9,8 +9,8 @@ import {
   PricingPlanCountryMismatchError,
   serializeProfile,
 } from "../modules/patient-profile/patient-profile.service.js";
-import { recordAudit } from "../modules/audit/audit.service.js";
-import { resolveOptionalAuthUser } from "../utils/request-auth.js";
+import { recordCriticalAudit } from "../modules/audit/audit.service.js";
+import { resolveAuditActor } from "../utils/request-auth.js";
 import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 
 const stringField = (max: number) =>
@@ -176,9 +176,14 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
           { fallbackFullName: appt.fullName, fallbackPhone: appt.phone },
         );
         if (alertChanges.statusAlert || alertChanges.clinicAlert) {
-          const actor = await resolveOptionalAuthUser(request);
-          recordAudit({
-            actorUserId: actor?.id ?? null,
+          // S-008: resolveOptionalAuthUser only resolves PATIENT/ADMIN
+          // sessions and returns null for DOCTOR, which previously logged
+          // this PHI-adjacent alert change with a null actor whenever a
+          // doctor made it. resolveAuditActor reads the real (id, role)
+          // for every authenticated role.
+          const actor = resolveAuditActor(request);
+          await recordCriticalAudit({
+            actorUserId: actor?.userId ?? null,
             actorRole: actor?.role ?? "DOCTOR",
             action: "PATIENT_ALERT_UPDATED",
             entityType: "PatientProfile",
@@ -190,7 +195,7 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
               clinicAlert: profile?.clinicAlert ?? null,
             },
             request,
-          }).catch(() => {});
+          });
         }
         return okResponse({
           profile: serializeProfile(profile, { includeAlerts: true }),

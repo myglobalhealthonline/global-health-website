@@ -32,7 +32,7 @@ import {
   assertOrderCountryScope,
   resolveOrderListCountryScope,
 } from "../utils/order-country-scope.js";
-import { recordAudit } from "../modules/audit/audit.service.js";
+import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { releaseSlotsToBaseGrid } from "../modules/doctor-availability/doctor-availability.service.js";
 import { sendOrderRefundNotifications } from "../modules/automation/refund-notifications.service.js";
 
@@ -920,7 +920,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           skippedIds = body.data.ids.filter((id) => !inScope.has(id));
           targetIds = body.data.ids.filter((id) => inScope.has(id));
           if (skippedIds.length > 0) {
-            await recordAudit({
+            // S-008: security-relevant event (scope-violation attempt) —
+            // audit write must not be silently swallowed.
+            await recordCriticalAudit({
               actorUserId: resolveAdminSessionActor(request)?.userId ?? null,
               actorRole: "LOCAL_ADMIN",
               action: "SECURITY_ALERT_CREATED",
@@ -932,7 +934,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                 allowedCountryFolders: scopedFolders,
               },
               request,
-            }).catch(() => {});
+            });
           }
         }
 
@@ -1146,7 +1148,12 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         });
 
         const actor = resolveAdminSessionActor(request);
-        void recordAudit({
+        // S-008: money-movement audit — write must not be silently
+        // swallowed. The Stripe refund + order update above have already
+        // committed; a failure here surfaces as a 500 so ops knows the
+        // audit trail for this refund is missing, even though the refund
+        // itself succeeded.
+        await recordCriticalAudit({
           action: "ORDER_REFUNDED",
           entityType: "Order",
           entityId: order.id,

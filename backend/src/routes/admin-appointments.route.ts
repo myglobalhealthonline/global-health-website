@@ -11,10 +11,9 @@ import { releaseAppointmentSlot } from "../modules/doctor-availability/doctor-av
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { sendAppointmentScheduledEmail } from "../lib/email/templates.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { notifyDoctor } from "../modules/notifications/notify.service.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
-import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import {
   adminAppointmentsQuerySchema,
   appointmentIdParamsSchema,
@@ -95,8 +94,14 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
     // fallback has no User row, so we pass null and rely on the audit
     // metadata + actorRole + IP address for traceability. (AuditLog
     // FK rejects synthetic strings.)
-    const actor = await resolveOptionalAuthUser(request);
-    const adminUserId: string | null = actor?.role === "ADMIN" ? actor.id : null;
+    //
+    // S-008: previously used resolveOptionalAuthUser, which resolves only
+    // PATIENT/ADMIN and silently returned null (→ no adminUserId) for a
+    // real SUPER_ADMIN/LOCAL_ADMIN session. resolveAdminSessionActor
+    // resolves all three admin-tier roles directly from the JWT, so its
+    // result is never a PATIENT and needs no extra role check.
+    const actor = resolveAdminSessionActor(request);
+    const adminUserId: string | null = actor?.userId ?? null;
 
     try {
       const result = await createManualBooking({
@@ -393,8 +398,10 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
           : new Date(body.data.scheduledAt);
     const doctorIdInput = body.data.doctorId ?? undefined;
 
-    const actor = await resolveOptionalAuthUser(request);
-    const adminUserId: string | null = actor?.role === "ADMIN" ? actor.id : null;
+    // S-008: see the manual-booking handler above for why
+    // resolveAdminSessionActor replaces resolveOptionalAuthUser here.
+    const actor = resolveAdminSessionActor(request);
+    const adminUserId: string | null = actor?.userId ?? null;
 
     try {
       const result = await adminUpdateAppointment({
@@ -483,10 +490,12 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       // Audit + notify doctor on the status change (the doctor side of
       // the same mutation already does this; admin side was bypassing).
       if (before && before.status !== appointment.status) {
-        const actor = await resolveOptionalAuthUser(request);
+        // S-008: see the manual-booking handler above for why
+        // resolveAdminSessionActor replaces resolveOptionalAuthUser here.
+        const actor = resolveAdminSessionActor(request);
         recordAudit({
-          actorUserId: actor?.id ?? null,
-          actorRole: "ADMIN",
+          actorUserId: actor?.userId ?? null,
+          actorRole: actor?.role ?? "ADMIN",
           action: "APPOINTMENT_STATUS_CHANGED",
           entityType: "Appointment",
           entityId: appointment.id,

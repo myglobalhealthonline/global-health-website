@@ -7,7 +7,7 @@ import {
   verifyDoctorAccess,
 } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
-import { recordAudit } from "../modules/audit/audit.service.js";
+import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { notifyAdmins } from "../modules/notifications/notify.service.js";
 import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 
@@ -145,7 +145,9 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
             externalUrl: body.data.externalUrl ?? null,
           },
         });
-        recordAudit({
+        // S-008: PHI clinical record — audit write must not be silently
+        // swallowed.
+        await recordCriticalAudit({
           actorUserId: auth.userId,
           actorRole: "DOCTOR",
           action: "EXAM_LOGGED",
@@ -157,7 +159,7 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
             status: row.status,
           },
           request,
-        }).catch(() => {});
+        });
         notifyAdmins(
           desiredStatus === "REQUESTED" ? "EXAM_REQUESTED" : "EXAM_LOGGED",
           {
@@ -199,14 +201,16 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
           return reply.status(404).send(errorResponse("Exam result not found"));
         }
         await prisma.examResult.delete({ where: { id: existing.id } });
-        recordAudit({
+        // S-008: PHI clinical record — audit write must not be silently
+        // swallowed.
+        await recordCriticalAudit({
           actorUserId: auth.userId,
           actorRole: "DOCTOR",
           action: "EXAM_DELETED",
           entityType: "ExamResult",
           entityId: existing.id,
           request,
-        }).catch(() => {});
+        });
         return okResponse({ deleted: true });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
@@ -258,7 +262,9 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
           where: { id: existing.id },
           data,
         });
-        recordAudit({
+        // S-008: PHI clinical record — audit write must not be silently
+        // swallowed.
+        await recordCriticalAudit({
           actorUserId: auth.userId,
           actorRole: "DOCTOR",
           action: "EXAM_LOGGED",
@@ -270,7 +276,7 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
             status: row.status,
           },
           request,
-        }).catch(() => {});
+        });
         if (
           existing.status === "REQUESTED" &&
           row.status === "COMPLETED"

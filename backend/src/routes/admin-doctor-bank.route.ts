@@ -4,7 +4,7 @@ import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 import { maskIban } from "../utils/iban.js";
-import { recordAudit } from "../modules/audit/audit.service.js";
+import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
@@ -44,14 +44,17 @@ const adminDoctorBankRoute: FastifyPluginAsync = async (app) => {
         if (reveal && row?.ibanEncrypted) {
           iban = decryptPhi(row.ibanEncrypted);
           const actor = resolveAdminSessionActor(request);
-          recordAudit({
+          // S-008: full-IBAN reveal must be traceable — fail the reveal
+          // (not just log a warning) if the audit write itself fails,
+          // rather than returning un-audited PHI/financial data.
+          await recordCriticalAudit({
             actorUserId: actor?.userId ?? null,
             actorRole: actor?.role ?? "ADMIN",
             action: "DOCTOR_BANK_VIEWED",
             entityType: "Doctor",
             entityId: request.params.doctorId,
             request,
-          }).catch(() => {});
+          });
         }
 
         return okResponse({

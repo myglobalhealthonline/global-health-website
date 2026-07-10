@@ -5,7 +5,7 @@ import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
-import { recordAudit } from "../modules/audit/audit.service.js";
+import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 
 /**
  *   POST /api/doctor/consultations/:consultationId/share-link
@@ -71,7 +71,10 @@ const shareLinksRoute: FastifyPluginAsync = async (app) => {
             createdByUserId: auth.userId,
           },
         });
-        recordAudit({
+        // S-008: minting an unauthenticated PHI access token — audit write
+        // must not be silently swallowed. Fail closed: don't hand back a
+        // usable token if we can't prove it was minted.
+        await recordCriticalAudit({
           actorUserId: auth.userId,
           actorRole: "DOCTOR",
           action: "SHARE_LINK_CREATED",
@@ -79,7 +82,7 @@ const shareLinksRoute: FastifyPluginAsync = async (app) => {
           entityId: row.id,
           metadata: { consultationId: consult.id, expiresAt: row.expiresAt.toISOString() },
           request,
-        }).catch(() => {});
+        });
         return reply.status(201).send(
           okResponse({
             shareLink: {
@@ -118,14 +121,16 @@ const shareLinksRoute: FastifyPluginAsync = async (app) => {
           where: { id: existing.id },
           data: { revokedAt: new Date() },
         });
-        recordAudit({
+        // S-008: PHI access-token revocation — audit write must not be
+        // silently swallowed.
+        await recordCriticalAudit({
           actorUserId: auth.userId,
           actorRole: "DOCTOR",
           action: "SHARE_LINK_REVOKED",
           entityType: "ShareLink",
           entityId: existing.id,
           request,
-        }).catch(() => {});
+        });
         return okResponse({ revoked: true });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {

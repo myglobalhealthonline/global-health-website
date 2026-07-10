@@ -1,5 +1,5 @@
 import { prisma } from "../../db/prisma.js";
-import { recordAudit } from "../audit/audit.service.js";
+import { recordCriticalAudit } from "../audit/audit.service.js";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -114,7 +114,10 @@ export async function acceptConfidentialityAgreement(
     },
   });
 
-  recordAudit({
+  // S-008: this is the compliance evidence that gates PHI access
+  // (assertMedicalAccess requires confidentialityAgreementAccepted) — audit
+  // write must not be silently swallowed.
+  await recordCriticalAudit({
     actorUserId: null,
     actorRole: "DOCTOR",
     action: "CONFIDENTIALITY_AGREEMENT_ACCEPTED" as never,
@@ -124,7 +127,7 @@ export async function acceptConfidentialityAgreement(
       agreementVersion: CURRENT_AGREEMENT_VERSION,
       ipAddress,
     },
-  }).catch(() => {});
+  });
 }
 
 /**

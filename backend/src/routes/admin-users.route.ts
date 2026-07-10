@@ -5,8 +5,7 @@ import { UserRole } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError, normalizeDbError } from "../modules/shared/db-errors.js";
 import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
-import { recordAudit } from "../modules/audit/audit.service.js";
-import { resolveOptionalAuthUser } from "../utils/request-auth.js";
+import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 /**
@@ -302,11 +301,12 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
           updatedAt: true,
         },
       });
-      const actor = await resolveOptionalAuthUser(request);
       const roleChanged = body.data.role !== undefined && before?.role !== updated.role;
-      recordAudit({
-        actorUserId: actor?.id,
-        actorRole: "ADMIN",
+      // S-008: admin-user identity mutation (role change is a privilege
+      // change) — audit write must not be silently swallowed.
+      await recordCriticalAudit({
+        actorUserId: sessionActor?.userId ?? null,
+        actorRole: sessionActor?.role ?? "ADMIN",
         action: roleChanged ? "USER_ROLE_CHANGED" : "USER_UPDATED",
         entityType: "User",
         entityId: updated.id,
@@ -317,7 +317,7 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
           ...(body.data.doctorId !== undefined ? { doctorLinked: Boolean(updated.doctorId) } : {}),
         },
         request,
-      }).catch(() => {});
+      });
       return okResponse({
         user: { ...updated, updatedAt: updated.updatedAt.toISOString() },
       });
@@ -364,15 +364,16 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
         where: { userId: params.data.id, usedAt: null },
         data: { usedAt: new Date() },
       });
-      const actor = await resolveOptionalAuthUser(request);
-      recordAudit({
-        actorUserId: actor?.id,
-        actorRole: "ADMIN",
+      // S-008: admin-triggered password reset — audit write must not be
+      // silently swallowed.
+      await recordCriticalAudit({
+        actorUserId: sessionActor?.userId ?? null,
+        actorRole: sessionActor?.role ?? "ADMIN",
         action: "USER_PASSWORD_RESET",
         entityType: "User",
         entityId: params.data.id,
         request,
-      }).catch(() => {});
+      });
       return okResponse({ reset: true }, "Password updated");
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {

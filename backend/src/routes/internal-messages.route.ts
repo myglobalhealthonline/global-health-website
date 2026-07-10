@@ -2,9 +2,8 @@ import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
-import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import {
   notifyAdmins,
@@ -179,7 +178,15 @@ const internalMessagesRoute: FastifyPluginAsync = async (app) => {
       if (!admin.ok) return reply.status(admin.status).send(errorResponse(admin.message));
       // Admin auth doesn't expose the userId in the session helper —
       // pull it via the same cookie path used elsewhere.
-      const user = await resolveOptionalAuthUser(request);
+      //
+      // S-008: this used to call resolveOptionalAuthUser, which only
+      // resolves PATIENT/ADMIN sessions and returns null for
+      // SUPER_ADMIN/LOCAL_ADMIN — even though verifyAdminAccess above
+      // already confirmed the session is a valid admin-tier actor. That
+      // silently 401'd every SUPER_ADMIN/LOCAL_ADMIN attempt to post an
+      // internal message. resolveAdminSessionActor resolves all three
+      // admin-tier roles from the JWT directly.
+      const user = resolveAdminSessionActor(request);
       if (!user) {
         return reply.status(401).send(errorResponse("Not authenticated"));
       }
@@ -200,7 +207,10 @@ const internalMessagesRoute: FastifyPluginAsync = async (app) => {
         const row = await prisma.internalMessage.create({
           data: {
             appointmentId: appt.id,
-            authorUserId: user.id,
+            authorUserId: user.userId,
+            // Schema constrains authorRole to DOCTOR|ADMIN for display —
+            // SUPER_ADMIN/LOCAL_ADMIN still stamp as "ADMIN" here; the
+            // real role is preserved below in the audit row's actorRole.
             authorRole: "ADMIN",
             body: body.data.body,
           },
@@ -219,8 +229,8 @@ const internalMessagesRoute: FastifyPluginAsync = async (app) => {
           );
         }
         recordAudit({
-          actorUserId: user.id,
-          actorRole: "ADMIN",
+          actorUserId: user.userId,
+          actorRole: user.role,
           action: "INTERNAL_MESSAGE_POSTED",
           entityType: "InternalMessage",
           entityId: row.id,
