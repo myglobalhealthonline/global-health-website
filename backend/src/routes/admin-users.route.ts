@@ -8,6 +8,10 @@ import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth
 import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
+// Signals "would remove the last active SUPER_ADMIN" out of the transaction
+// below so the route can reply 409 instead of the generic 500 handler.
+class LastSuperAdminError extends Error {}
+
 /**
  * Admin patient + admin-user management.
  *
@@ -266,16 +270,6 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
         before.isActive &&
         ((body.data.role !== undefined && body.data.role !== "SUPER_ADMIN") ||
           body.data.isActive === false);
-      if (losingSuperAdmin) {
-        const otherActiveSuperAdmins = await prisma.user.count({
-          where: { role: "SUPER_ADMIN", isActive: true, id: { not: params.data.id } },
-        });
-        if (otherActiveSuperAdmins === 0) {
-          return reply
-            .status(409)
-            .send(errorResponse("Cannot remove the last active SUPER_ADMIN"));
-        }
-      }
       // Bump the target's tokenVersion whenever a privilege-affecting field
       // changes so any existing session of theirs is rejected on its very
       // next request instead of lingering until natural JWT expiry (S-004).
@@ -283,24 +277,39 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
         body.data.role !== undefined ||
         body.data.isActive !== undefined ||
         body.data.doctorId !== undefined;
-      const updated = await prisma.user.update({
-        where: { id: params.data.id },
-        data: {
-          ...(body.data.isActive !== undefined && { isActive: body.data.isActive }),
-          ...(body.data.role !== undefined && { role: body.data.role }),
-          ...(body.data.doctorId !== undefined && { doctorId: body.data.doctorId }),
-          ...(bumpTokenVersion && { tokenVersion: { increment: 1 } }),
-        },
-        select: {
-          id: true,
-          email: true,
-          fullName: true,
-          role: true,
-          isActive: true,
-          doctorId: true,
-          updatedAt: true,
-        },
-      });
+      // Count + update run in one SERIALIZABLE transaction so two concurrent
+      // demotions of different SUPER_ADMINs can't both pass the count check
+      // and leave zero active SUPER_ADMINs (ReadCommitted would still let
+      // both counts see the other admin as active; Serializable aborts one
+      // with P2034 instead).
+      const updated = await prisma.$transaction(async (tx) => {
+        if (losingSuperAdmin) {
+          const otherActiveSuperAdmins = await tx.user.count({
+            where: { role: "SUPER_ADMIN", isActive: true, id: { not: params.data.id } },
+          });
+          if (otherActiveSuperAdmins === 0) {
+            throw new LastSuperAdminError();
+          }
+        }
+        return tx.user.update({
+          where: { id: params.data.id },
+          data: {
+            ...(body.data.isActive !== undefined && { isActive: body.data.isActive }),
+            ...(body.data.role !== undefined && { role: body.data.role }),
+            ...(body.data.doctorId !== undefined && { doctorId: body.data.doctorId }),
+            ...(bumpTokenVersion && { tokenVersion: { increment: 1 } }),
+          },
+          select: {
+            id: true,
+            email: true,
+            fullName: true,
+            role: true,
+            isActive: true,
+            doctorId: true,
+            updatedAt: true,
+          },
+        });
+      }, { isolationLevel: "Serializable" });
       const roleChanged = body.data.role !== undefined && before?.role !== updated.role;
       // S-008: admin-user identity mutation (role change is a privilege
       // change) — audit write must not be silently swallowed.
@@ -322,6 +331,11 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
         user: { ...updated, updatedAt: updated.updatedAt.toISOString() },
       });
     } catch (error) {
+      if (error instanceof LastSuperAdminError) {
+        return reply
+          .status(409)
+          .send(errorResponse("Cannot remove the last active SUPER_ADMIN"));
+      }
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));
       }

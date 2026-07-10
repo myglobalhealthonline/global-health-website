@@ -79,6 +79,19 @@ export async function respondToAccessRequest(params: {
   try {
     const newStatus = params.approved ? "APPROVED" : "DENIED";
 
+    // Idempotency guard: a request already in a terminal status has already
+    // been processed (grant created if approved, audit written). Retrying
+    // must be a no-op — otherwise a client retry after a false 500 (e.g. the
+    // audit write below failing) would create a duplicate MedicalAccessGrant,
+    // since there's no unique constraint on accessRequestId.
+    const existing = await prisma.medicalAccessRequest.findUnique({
+      where: { id: params.requestId },
+      select: { status: true },
+    });
+    if (existing && existing.status !== "PENDING") {
+      return;
+    }
+
     const request = await prisma.medicalAccessRequest.update({
       where: { id: params.requestId },
       data: {
@@ -109,19 +122,30 @@ export async function respondToAccessRequest(params: {
     }
 
     // S-008: PHI access grant/deny decision — audit write must not be
-    // silently swallowed.
-    await recordCriticalAudit({
-      actorUserId: null,
-      actorRole: "PATIENT",
-      action: params.approved ? "MEDICAL_ACCESS_REQUEST_APPROVED" : "MEDICAL_ACCESS_REQUEST_DENIED",
-      entityType: "MedicalAccessRequest",
-      entityId: params.requestId,
-      metadata: {
-        patientProfileId: request.patientProfileId,
-        patientResponseIp: params.patientResponseIp ?? null,
-      },
-      ipAddress: params.patientResponseIp ?? null,
-    });
+    // silently swallowed. Wrapped in its own try/catch: the status
+    // update (and grant, if approved) above already committed, so an
+    // audit-write failure here must not propagate into the outer catch and
+    // 500 a request that actually succeeded (a client retry on that false
+    // 500 would create a duplicate MedicalAccessGrant).
+    try {
+      await recordCriticalAudit({
+        actorUserId: null,
+        actorRole: "PATIENT",
+        action: params.approved ? "MEDICAL_ACCESS_REQUEST_APPROVED" : "MEDICAL_ACCESS_REQUEST_DENIED",
+        entityType: "MedicalAccessRequest",
+        entityId: params.requestId,
+        metadata: {
+          patientProfileId: request.patientProfileId,
+          patientResponseIp: params.patientResponseIp ?? null,
+        },
+        ipAddress: params.patientResponseIp ?? null,
+      });
+    } catch (auditError) {
+      console.error(
+        "[medical-access-request] CRITICAL: MEDICAL_ACCESS_REQUEST_APPROVED/DENIED audit write failed",
+        { requestId: params.requestId, err: auditError instanceof Error ? auditError.message : auditError },
+      );
+    }
   } catch (error) {
     throw normalizeDbError(error, "Could not process access request response");
   }
