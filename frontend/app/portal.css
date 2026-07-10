@@ -3989,3 +3989,1597 @@ a.gh-appointment-card:hover {
     animation: none;
   }
 }
+
+/* ===== Migrated from app/globals.css (P-014 perf audit): portal-only
+ * gh-admin-, gh-portal- and gh-doctor- prefixed rule blocks that had no
+ * public-site usage, moved here so public routes stop paying for
+ * portal-only CSS. Their @media/@supports fallback blocks moved together
+ * with them. ===== */
+
+.gh-admin-nav-link {
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: var(--color-background-soft);
+  transition: background-color 180ms ease-out, color 180ms ease-out, border-color 180ms ease-out;
+}
+
+.gh-admin-nav-link:hover {
+  color: var(--color-text-primary);
+  background: var(--color-brand-secondary);
+  border-color: var(--color-border-strong);
+}
+.gh-admin-main table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.gh-admin-main thead tr {
+  background: var(--color-background-soft);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.gh-admin-main th {
+  white-space: nowrap;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 10px 16px;
+  text-align: left;
+}
+
+.gh-admin-main td {
+  padding: 14px 16px;
+  vertical-align: middle;
+  color: var(--color-text-body);
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 120ms ease-out;
+}
+
+.gh-admin-main tbody tr:hover td {
+  background: var(--color-background-soft);
+}
+.gh-admin-card-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--portal-text, var(--color-text-primary));
+}
+
+.gh-admin-detail-layout {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+
+@media (max-width: 1024px)  {
+  .gh-admin-detail-layout.gh-admin-appointment-workspace {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .gh-admin-detail-layout.gh-admin-appointment-workspace > .grid {
+    min-width: 0;
+  }
+}
+
+
+
+.gh-admin-pager-btn {
+  min-height: 36px;
+  padding: 0 14px;
+}
+
+.gh-admin-doctor-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-primary),
+    var(--color-accent)
+  );
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+}
+.gh-admin-section {
+  padding: 24px;
+}
+@media (min-width: 640px)  {
+  .gh-admin-section { padding: 32px; }
+}
+
+
+.gh-admin-sidebar-logo {
+  position: relative;
+  overflow: hidden;
+}
+.gh-admin-sidebar-logo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.035);
+  pointer-events: none;
+}
+.gh-portal-shell {
+  position: relative;
+  isolation: isolate;
+  background: var(--lux-canvas-bg, var(--portal-canvas));
+}
+
+.gh-portal-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--lux-canvas-bloom, transparent);
+}
+
+.gh-portal-sidebar > * {
+  position: relative;
+}
+
+.gh-portal-main {
+  width: 100%;
+  max-width: 1380px;
+  margin-inline: auto;
+}
+.gh-admin-main table {
+  font-size: 13.5px;
+}
+
+.gh-admin-main th {
+  padding: 13px 16px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--portal-muted);
+}
+
+.gh-admin-main td {
+  padding: 14px 16px;
+  color: var(--portal-text-2);
+}
+
+
+.gh-admin-table-wrap {
+  overflow: hidden;
+  border-radius: 0 0 var(--portal-radius-lg) var(--portal-radius-lg);
+}
+.gh-admin-table th:first-child,
+.gh-admin-table td:first-child {
+  padding-left: 20px;
+}
+
+
+.gh-admin-row {
+  position: relative;
+  border-top: 1px solid var(--portal-line-soft);
+  transition: background-color 120ms ease-out;
+}
+
+.gh-admin-table-wrap tr.gh-admin-row:first-child {
+  border-top: none;
+}
+
+[data-density="dense"] .gh-admin-row {
+  height: 44px;
+}
+
+[data-density="comfortable"] .gh-admin-row {
+  height: 52px;
+}
+
+.gh-admin-row:hover {
+  background: var(--portal-hover);
+}
+
+.gh-admin-row:hover > td:first-child {
+  box-shadow: inset 2px 0 0 0 var(--portal-accent), inset 4px 0 8px -6px var(--portal-signal-glow);
+}
+
+.gh-admin-row .gh-icon-btn {
+  opacity: 0.55;
+}
+
+.gh-admin-row:hover .gh-icon-btn {
+  opacity: 1;
+}
+
+.gh-admin-main :where(button:not(.gh-admin-toggle):not(.gh-admin-status-toggle), a[role="button"], .gh-icon-btn):active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.gh-admin-main :where([role="tab"], .gh-admin-nav-link) {
+  border-radius: var(--portal-radius-sm);
+}
+.gh-portal-shell {
+  /* ── worlds ─────────────────────────────────────────────── */
+  --portal-canvas: #07120c;
+  --portal-bg: #fafbf7; /* ivory work plane */
+  --portal-surface: #ffffff; /* L3 content card */
+  --portal-surface-elevated: #ffffff; /* L4 modal/menu */
+  --portal-well: #f2f4ee; /* form wells, mono blocks, icon tiles */
+  --portal-chrome: rgba(9, 20, 14, 0.8);
+  --portal-chrome-solid: #0c1a12; /* backdrop-filter fallback */
+  --portal-chrome-border: rgba(255, 255, 255, 0.08);
+  --portal-chrome-text: rgba(233, 239, 233, 0.86);
+  --portal-chrome-text-active: #e9efe9;
+
+  /* ── text (light surfaces) ──────────────────────────────── */
+  --portal-text: #101713;
+  --portal-text-2: #3c463f;
+  --portal-muted: #6d6d6d; /* brand gray */
+
+  /* ── action + accents (the green language) ─────────────── */
+  --portal-primary: #1d4b36; /* forest — act */
+  --portal-primary-hover: #163a29;
+  --portal-primary-soft: rgba(29, 75, 54, 0.1);
+  --portal-mint: #8fb021; /* notice */
+  --portal-mint-text: #5e7516; /* mint read as text on light */
+  --portal-mint-soft: rgba(143, 176, 33, 0.12);
+  --portal-signal: #b0f122; /* lime — alive/now */
+  --portal-signal-text: #4e6b10; /* lime read as text on light */
+  --portal-signal-soft: rgba(176, 241, 34, 0.14);
+  --portal-signal-glow: rgba(176, 241, 34, 0.3);
+
+  /* ── role accent (overridden per portal below) ───────────── */
+  --portal-accent: var(--portal-signal);
+  --portal-accent-text: var(--portal-signal-text);
+
+  /* ── status ─────────────────────────────────────────────── */
+  --portal-success: #2f7d4e;
+  --portal-success-text: #1f5b3d;
+  --portal-success-soft: rgba(47, 125, 78, 0.12);
+  --portal-warning: #b0f122;
+  --portal-warning-text: #4e6b10;
+  --portal-warning-soft: rgba(176, 241, 34, 0.14);
+  --portal-danger: #bc4a42;
+  --portal-danger-text: #8e332c;
+  --portal-danger-soft: rgba(188, 74, 66, 0.1);
+  --portal-info: #56707a;
+  --portal-info-text: #3f565f;
+  --portal-info-soft: rgba(86, 112, 122, 0.12);
+
+  /* ── lines + interaction ────────────────────────────────── */
+  --portal-line: rgba(16, 23, 19, 0.08);
+  --portal-line-strong: rgba(16, 23, 19, 0.16);
+  --portal-line-soft: rgba(16, 23, 19, 0.05);
+  --portal-hover: rgba(143, 176, 33, 0.08);
+  --portal-focus: rgba(143, 176, 33, 0.65);
+
+  /* ── depth ──────────────────────────────────────────────── */
+  --portal-blur-chrome: 28px;
+  --portal-blur-overlay: 8px;
+  --portal-shadow: 0 1px 2px rgba(7, 18, 12, 0.05), 0 12px 32px rgba(7, 18, 12, 0.07);
+  --portal-shadow-hover: 0 2px 4px rgba(7, 18, 12, 0.06), 0 18px 44px rgba(7, 18, 12, 0.11);
+  --portal-shadow-modal: 0 24px 80px rgba(5, 12, 8, 0.45);
+  --portal-shadow-popover: 0 24px 80px rgba(5, 12, 8, 0.27); /* modal @60% strength — DESIGN.md §5.10 */
+
+  /* ── geometry ───────────────────────────────────────────── */
+  --portal-radius-sm: 8px;
+  --portal-radius: 10px; /* buttons, inputs */
+  --portal-radius-lg: 14px; /* cards */
+  --portal-radius-xl: 18px; /* band, modals, popovers */
+  --portal-radius-pill: 999px; /* status pills only */
+
+  /* ── layout (unchanged from earlier portal system versions) ─ */
+  --portal-sidebar-w: 272px;
+  --portal-main-max: 1500px;
+  --portal-readable-max: 1180px;
+  --portal-pad-x: clamp(14px, 2vw, 30px);
+  --portal-pad-y: clamp(16px, 2vw, 28px);
+  --portal-section-gap: clamp(14px, 1.6vw, 22px);
+
+  /* Liquid Lux materials and environment (DESIGN2.md §3/§4). Canvas was
+   * forest-black behind the sidebar/main seam; per user request (2026-07-10)
+   * it's ivory everywhere except the sidebar's own dark chrome, so the
+   * canvas gradient now matches --lux-plane-bg's ivory base instead of a
+   * dark fill — no more dark strip showing through around the content plane. */
+  --lux-canvas-bg:
+    radial-gradient(1400px 900px at 85% -12%, rgba(176, 241, 34, 0.16), transparent 60%),
+    radial-gradient(900px 700px at -10% 110%, rgba(143, 176, 33, 0.10), transparent 55%),
+    linear-gradient(170deg, #eef1e6 0%, #e6ebdc 45%, #dfe5d3 100%);
+  --lux-canvas-bloom:
+    radial-gradient(1100px 760px at 86% -12%, rgba(176, 241, 34, 0.13), transparent 62%),
+    radial-gradient(760px 560px at -8% 108%, rgba(143, 176, 33, 0.08), transparent 58%);
+  --lux-seam-light: linear-gradient(90deg, transparent, rgba(176, 241, 34, 0.45) 35%, rgba(176, 241, 34, 0.10) 70%, transparent);
+  --lux-card-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.66));
+  --lux-modal-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.86));
+  --lux-card-border: linear-gradient(160deg, rgba(255, 255, 255, 0.95) 0%, rgba(16, 23, 19, 0.06) 38%, rgba(16, 23, 19, 0.10) 62%, rgba(143, 176, 33, 0.22) 100%);
+  --lux-card-border-hover: linear-gradient(160deg, rgba(255, 255, 255, 1) 0%, rgba(16, 23, 19, 0.08) 38%, rgba(16, 23, 19, 0.12) 62%, rgba(176, 241, 34, 0.35) 100%);
+  --lux-chrome-fill: linear-gradient(165deg, rgba(9, 20, 14, 0.92) 0%, rgba(4, 10, 7, 0.94) 60%, rgba(6, 15, 10, 0.92) 100%);
+  --lux-chrome-border: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05) 30%, rgba(176, 241, 34, 0.28) 65%, rgba(255, 255, 255, 0.04));
+  --lux-well-fill: linear-gradient(180deg, #eff2ea 0%, #f4f6f0 100%);
+  --lux-overlay-fill: rgba(7, 18, 12, 0.60);
+  --lux-forest-duotone: linear-gradient(180deg, #226044 0%, #1d4b36 55%, #16382a 100%);
+  /* Hover state for --lux-forest-duotone, same stops darkened to
+     --portal-primary-hover's tone. Keeping this a gradient (not a flat
+     color) matters: .gh-btn only transitions background-color, so a
+     gradient->solid swap on hover drops the background-image layer
+     instantly while background-color fades in, flashing the white page
+     background underneath for a frame. Gradient->gradient avoids that. */
+  --lux-forest-duotone-hover: linear-gradient(180deg, #1c4f38 0%, #163a29 55%, #10281c 100%);
+  --lux-elev-1:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+    0 0 0 1px rgba(16, 23, 19, 0.03),
+    0 1px 1px rgba(7, 18, 12, 0.05),
+    0 2px 4px rgba(7, 18, 12, 0.04),
+    0 8px 16px rgba(7, 18, 12, 0.05),
+    0 24px 48px rgba(7, 18, 12, 0.07);
+  --lux-elev-2:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.45),
+    0 0 0 1px rgba(16, 23, 19, 0.04),
+    0 2px 4px rgba(7, 18, 12, 0.05),
+    0 12px 24px rgba(7, 18, 12, 0.07),
+    0 32px 64px rgba(7, 18, 12, 0.10),
+    0 8px 40px -8px var(--portal-signal-glow);
+  --lux-elev-chrome:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+    0 1px 2px rgba(4, 10, 7, 0.4),
+    0 16px 48px rgba(4, 10, 7, 0.45);
+  --lux-elev-modal:
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    0 0 0 1px rgba(16, 23, 19, 0.04),
+    0 32px 96px rgba(5, 12, 8, 0.5),
+    0 0 48px rgba(176, 241, 34, 0.06);
+  --lux-elev-press: 0 0 0 1px rgba(16, 23, 19, 0.05), 0 1px 1px rgba(7, 18, 12, 0.06);
+  --lux-inset-well: inset 0 1px 2px rgba(16, 23, 19, 0.06), inset 0 -1px 0 rgba(255, 255, 255, 0.90);
+  --lux-chat-own-rim: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  --lux-calendar-today-ring: 0 0 0 2px var(--portal-accent), 0 0 0 6px color-mix(in srgb, var(--portal-accent) 30%, transparent);
+  --lux-mobile-edge: linear-gradient(180deg, var(--portal-accent), transparent);
+  --lux-header-aura: radial-gradient(520px 220px at 0% 0%, color-mix(in srgb, var(--portal-accent) 10%, transparent), transparent 68%);
+  --lux-header-aura-patient: radial-gradient(520px 220px at 0% 0%, color-mix(in srgb, var(--portal-signal) 9%, transparent), transparent 68%);
+  --lux-header-aura-doctor: radial-gradient(520px 220px at 0% 0%, color-mix(in srgb, var(--portal-accent) 6%, transparent), transparent 68%);
+  --lux-header-rule: linear-gradient(90deg, var(--portal-accent), transparent 72%);
+  --lux-status-edge-success: linear-gradient(180deg, var(--portal-success), transparent);
+  --lux-status-edge-warning: linear-gradient(180deg, var(--portal-warning), transparent);
+  --lux-status-edge-danger: linear-gradient(180deg, var(--portal-danger), transparent);
+  --lux-status-edge-info: linear-gradient(180deg, var(--portal-info), transparent);
+  --lux-status-edge-brand: linear-gradient(180deg, var(--portal-primary), transparent);
+
+  /* Asset pack wiring (DESIGN2.md §13) — decorative raster layers only.
+   * Opacity caps live in the veil gradients: light veil 0.70 → image ≤0.30–0.35,
+   * dark veil 0.50 → image ≤0.5. UI must stay finished if any url() 404s. */
+  --lux-asset-header: url("/images/portal/obsidian/header-aura.webp");
+  --lux-asset-band: url("/images/portal/obsidian/band-aurora.webp");
+  --lux-asset-member: url("/images/portal/obsidian/membership-silk.webp");
+  --lux-asset-card-silk: url("/images/portal/obsidian/card-silk.webp");
+  --lux-asset-veil-light: linear-gradient(rgba(250, 251, 247, 0.70), rgba(250, 251, 247, 0.70));
+  --lux-asset-veil-silk: linear-gradient(rgba(250, 251, 247, 0.76), rgba(250, 251, 247, 0.76));
+  --lux-asset-veil-dark: linear-gradient(rgba(7, 18, 12, 0.50), rgba(7, 18, 12, 0.50));
+  --lux-asset-header-mask: linear-gradient(180deg, #000 60%, transparent);
+  --lux-status-edge-live: linear-gradient(180deg, var(--portal-signal), transparent);
+  --lux-specular: rgba(255, 255, 255, 0.95);
+  --lux-streak: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.05) 45%, rgba(255, 255, 255, 0.015) 52%, transparent 60%);
+  --lux-blur-card: 24px;
+  --lux-blur-chrome: 32px;
+  --lux-blur-overlay: 12px;
+  --lux-numeral-ink: linear-gradient(178deg, #2c4d3c 0%, #101713 46%, #1d4b36 118%);
+  --lux-numeral-live: linear-gradient(180deg, #dfff7a 0%, #b0f122 70%);
+  --lux-icon-muted: 0.55;
+  --lux-icon-rest: 0.75;
+  --lux-icon-active: 1;
+  --lux-scrollbar-thumb: rgba(16, 23, 19, 0.18);
+  --lux-scrollbar-thumb-hover: rgba(16, 23, 19, 0.30);
+  --lux-selection: rgba(176, 241, 34, 0.35);
+}
+.gh-portal-shell .gh-eyebrow {
+  color: var(--portal-accent-text);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.gh-portal-eyebrow-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--portal-signal);
+  box-shadow: 0 0 0 3px var(--portal-signal-glow);
+}
+
+.gh-portal-eyebrow-hairline {
+  display: block;
+  width: 64px;
+  height: 2px;
+  margin-top: 8px;
+  background: linear-gradient(90deg, var(--portal-accent), transparent);
+}
+
+.gh-portal-section-rule {
+  width: 3px;
+  height: 16px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--portal-signal), var(--portal-mint));
+  box-shadow: 0 0 6px color-mix(in srgb, var(--portal-signal) 20%, transparent);
+}
+.gh-admin-card-title {
+  position: relative;
+  display: inline-block;
+}
+
+.gh-admin-card-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background: var(--portal-accent);
+  transition: width 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gh-card-interactive:hover .gh-admin-card-title::after {
+  width: 24px;
+}
+.gh-portal-sidebar {
+  overflow: hidden;
+  background: var(--lux-chrome-fill);
+  -webkit-backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
+  backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
+  color: var(--portal-chrome-text);
+  border-right: 1px solid var(--portal-chrome-border);
+  box-shadow: var(--lux-elev-chrome);
+}
+
+.gh-portal-sidebar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--lux-streak);
+}
+.gh-portal-sidebar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: auto;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(176, 241, 34, 0.45) 35%,
+    rgba(176, 241, 34, 0.1) 70%,
+    transparent
+  );
+}
+
+@supports not (backdrop-filter: blur(1px))  {
+  .gh-portal-sidebar {
+    background-color: var(--portal-chrome-solid);
+  }
+}
+
+
+
+@media (prefers-reduced-transparency: reduce)  {
+  .gh-portal-sidebar {
+    background-color: var(--portal-chrome-solid);
+  }
+}
+
+
+
+.gh-admin-sidebar-logo {
+  min-height: 94px;
+  border-bottom: 1px solid var(--portal-chrome-border);
+}
+
+.gh-portal-label {
+  color: var(--portal-accent);
+  opacity: 0.9;
+}
+
+.gh-portal-sidebar-footer {
+  border-top: 1px solid var(--portal-chrome-border);
+  color: rgba(233, 239, 233, 0.55);
+}
+
+.gh-portal-glyph {
+  width: 22px;
+  height: 22px;
+  border: 1px solid transparent;
+  background-image:
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--portal-accent) 10%, transparent), transparent 70%),
+    var(--lux-chrome-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+.gh-portal-glyph__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--portal-accent);
+}
+
+.gh-portal-user-pill {
+  border: 1px solid var(--portal-chrome-border);
+}
+
+.gh-portal-user-divider {
+  width: 1px;
+  height: 22px;
+  background: var(--portal-chrome-border);
+}
+
+.gh-portal-avatar {
+  background: var(--lux-forest-duotone);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+.gh-portal-topbar {
+  background: var(--lux-chrome-fill);
+  -webkit-backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
+  backdrop-filter: blur(var(--lux-blur-chrome)) saturate(160%);
+  border-bottom: 1px solid var(--portal-chrome-border);
+  box-shadow: var(--lux-elev-chrome);
+  transition: border-color 200ms ease-out;
+}
+
+.gh-portal-topbar--scrolled {
+  border-bottom-color: transparent;
+  background-image: var(--lux-chrome-fill), var(--lux-seam-light);
+  background-repeat: no-repeat;
+  background-position: center, bottom;
+  background-size: 100% 100%, 100% 1px;
+}
+
+@supports not (backdrop-filter: blur(1px))  {
+  .gh-portal-topbar {
+    background-color: var(--portal-chrome-solid);
+  }
+}
+
+
+
+@media (prefers-reduced-transparency: reduce)  {
+  .gh-portal-topbar {
+    background-color: var(--portal-chrome-solid);
+  }
+}
+
+
+.gh-portal-nav-item {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--portal-radius);
+  background: transparent;
+  color: var(--portal-chrome-text);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 200ms ease-out, color 200ms ease-out;
+}
+
+.gh-portal-nav-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--portal-chrome-text-active);
+}
+
+.gh-portal-nav-item:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--portal-focus);
+}
+
+.gh-portal-nav-item[aria-current="page"] {
+  background: var(--portal-signal-soft);
+  color: var(--portal-signal);
+  font-weight: 700;
+}
+
+.gh-portal-nav-item__bar {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 3px;
+  height: 18px;
+  border-radius: 2px;
+  background: var(--portal-signal);
+  box-shadow: 0 0 8px var(--portal-signal-glow);
+  opacity: 0;
+  transform: translateY(-50%) scaleY(0);
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1), opacity 200ms ease-out;
+  pointer-events: none;
+}
+
+.gh-portal-nav-item[aria-current="page"] .gh-portal-nav-item__bar {
+  opacity: 1;
+  transform: translateY(-50%) scaleY(1);
+}
+
+.gh-portal-nav-item__badge {
+  display: inline-flex;
+  min-width: 20px;
+  height: 18px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--portal-radius-pill);
+  padding: 0 6px;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--portal-chrome-text);
+}
+.gh-portal-nav-item__badge--live {
+  background: var(--portal-signal);
+  color: #0a160f;
+  box-shadow: 0 0 0 2px var(--portal-signal-glow);
+}
+
+.gh-portal-main {
+  /* Full-bleed work plane — fills everything right of the sidebar and
+   * below the topbar. Canvas (.gh-portal-shell) is ivory now too, same
+   * base as this plane used to paint on its own, so the plane no longer
+   * carries its own background/edge-shadow (2026-07-10) — that was a
+   * "floating panel over dark canvas" effect; canvas + plane are one
+   * continuous ivory surface now, painted once by the shell. */
+  width: 100%;
+  max-width: none;
+  flex: 1;
+  margin-inline: 0;
+  padding: var(--portal-pad-y) var(--portal-pad-x);
+  display: flex;
+  flex-direction: column;
+  gap: var(--portal-section-gap);
+  position: relative;
+  border-radius: 0;
+}
+
+.gh-portal-main > .mx-auto[class*="max-w-"] {
+  width: 100% !important;
+  max-width: var(--portal-readable-max) !important;
+}
+
+.gh-portal-main > .mx-auto[class*="max-w-2xl"],
+.gh-portal-main > .mx-auto[class*="max-w-3xl"] {
+  margin-inline: 0 !important;
+}
+.gh-portal-page-header,
+.gh-admin-main > header:not(.gh-portal-page-header) {
+  position: relative;
+  isolation: isolate;
+  min-height: 0;
+  margin-bottom: 0;
+  padding: 4px 0 var(--portal-section-gap) 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.gh-portal-page-header::before,
+.gh-admin-main > header:not(.gh-portal-page-header)::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -18px -20px auto -20px;
+  height: 160px;
+  border-radius: var(--portal-radius-xl);
+  /* §13 H1 — header-aura.webp behind a 0.70 ivory veil (≤0.30 cap); the
+   * per-portal CSS aura tints on top. Whole zone masked to fade out. */
+  background-image: var(--lux-header-aura), var(--lux-asset-veil-light), var(--lux-asset-header, none);
+  background-size: auto, auto, cover;
+  background-position: 0 0, 0 0, left center;
+  background-repeat: no-repeat;
+  -webkit-mask-image: var(--lux-asset-header-mask);
+  mask-image: var(--lux-asset-header-mask);
+  pointer-events: none;
+}
+
+[data-portal="patient"] .gh-portal-page-header::before {
+  background-image: var(--lux-header-aura-patient), var(--lux-asset-veil-light), var(--lux-asset-header, none);
+}
+
+[data-portal="doctor"] .gh-portal-page-header::before {
+  background-image: var(--lux-header-aura-doctor), var(--lux-asset-veil-light), var(--lux-asset-header, none);
+}
+
+.gh-portal-page-header::after,
+.gh-admin-main > header:not(.gh-portal-page-header)::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  bottom: 8px;
+  width: min(220px, 42vw);
+  height: 1px;
+  background: var(--lux-header-rule);
+  pointer-events: none;
+}
+
+.gh-admin-main > header:not(.gh-portal-page-header) h1,
+.gh-admin-main > header:not(.gh-portal-page-header) h2 {
+  max-width: 980px;
+  color: var(--portal-text);
+  font-size: clamp(24px, 2vw, 34px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.gh-admin-main > header:not(.gh-portal-page-header) p {
+  color: var(--portal-text-2);
+  max-width: 68ch;
+}
+
+.gh-portal-page-header h1,
+.gh-admin-main > header:not(.gh-portal-page-header) h1,
+.gh-admin-main > header:not(.gh-portal-page-header) h2 {
+  overflow-wrap: anywhere;
+}
+
+.gh-portal-page-header p,
+.gh-admin-main > header:not(.gh-portal-page-header) p {
+  overflow-wrap: break-word;
+}
+.gh-admin-card {
+  /* Cards routinely sit inside a nested `grid gap-*` stack (main column of
+     a two-column page layout). As a grid item, min-width defaults to
+     `auto` — its min-content size, driven by whatever's inside (e.g. a
+     table with a hardcoded min-width) — so overflow-x-auto on a
+     descendant table wrapper does NOT stop the card itself from forcing
+     the grid track wider and bleeding into the next column. min-width:0
+     lets the card shrink to its track and pushes overflow down to the
+     table wrapper where it belongs. No-op outside grid/flex contexts. */
+  min-width: 0;
+  border: 1px solid transparent;
+  border-radius: var(--portal-radius-lg);
+  background-image: var(--lux-card-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  -webkit-backdrop-filter: blur(var(--lux-blur-card)) saturate(140%);
+  backdrop-filter: blur(var(--lux-blur-card)) saturate(140%);
+  box-shadow: var(--lux-elev-1);
+}
+
+.gh-admin-card.is-static {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+
+.gh-portal-main > :where(section, article, form, div, header, nav) {
+  max-width: 100%;
+}
+
+.gh-portal-main > :where(.gh-admin-card, .gh-card, .gh-stat-card, .gh-portal-page-header) {
+  width: 100%;
+}
+
+.gh-portal-main > :where(.grid, .flex) {
+  min-width: 0;
+}
+@media (max-width: 760px)  {
+  .gh-portal-main {
+    overflow-x: hidden;
+  }
+}
+
+
+
+.gh-portal-section-header {
+  padding: 15px 18px;
+  background: color-mix(in srgb, var(--portal-surface) 50%, transparent);
+  border-bottom: 1px solid var(--portal-line-soft);
+}
+
+.gh-admin-main :where(.grid) {
+  min-width: 0;
+}
+.gh-portal-shell .gh-input,
+.gh-portal-shell .gh-select,
+.gh-portal-shell .gh-textarea,
+.gh-admin-main input,
+.gh-admin-main select,
+.gh-admin-main textarea {
+  min-width: 0;
+  border-radius: var(--portal-radius);
+  border-color: var(--portal-line);
+  background: var(--lux-well-fill);
+  color: var(--portal-text);
+  font-size: 14px;
+  box-shadow:
+    inset 0 1px 2px rgba(16, 23, 19, 0.06),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.9);
+  transition: background-color 160ms ease-out, border-color 160ms ease-out, box-shadow 160ms ease-out, transform 160ms ease-out;
+}
+
+.gh-portal-shell .gh-input,
+.gh-portal-shell .gh-select,
+.gh-admin-main input,
+.gh-admin-main select {
+  min-height: 44px;
+}
+
+.gh-portal-shell .gh-textarea,
+.gh-admin-main textarea {
+  min-height: 110px;
+}
+
+.gh-portal-shell .gh-input:focus-visible,
+.gh-portal-shell .gh-select:focus-visible,
+.gh-portal-shell .gh-textarea:focus-visible,
+.gh-admin-main input:focus-visible,
+.gh-admin-main select:focus-visible,
+.gh-admin-main textarea:focus-visible {
+  outline: none;
+  background: var(--portal-surface);
+  border-color: var(--portal-mint-text);
+  box-shadow: 0 0 0 3px var(--portal-focus), var(--lux-elev-press);
+  transform: translateY(-1px);
+}
+
+.gh-portal-shell .gh-input:disabled,
+.gh-portal-shell .gh-select:disabled,
+.gh-portal-shell .gh-textarea:disabled,
+.gh-admin-main input:disabled,
+.gh-admin-main select:disabled,
+.gh-admin-main textarea:disabled {
+  background: var(--portal-well);
+  opacity: 0.6;
+}
+
+.gh-portal-shell .gh-input[aria-invalid="true"],
+.gh-portal-shell .gh-select[aria-invalid="true"],
+.gh-portal-shell .gh-textarea[aria-invalid="true"],
+.gh-admin-main input[aria-invalid="true"],
+.gh-admin-main select[aria-invalid="true"],
+.gh-admin-main textarea[aria-invalid="true"] {
+  border-color: var(--portal-danger);
+  box-shadow: 0 0 0 3px var(--portal-danger-soft);
+}
+.gh-admin-main :where(.gh-input, .gh-select, .gh-textarea, input, select, textarea) {
+  min-width: 0;
+  border-radius: var(--portal-radius) !important;
+  border-color: var(--portal-line) !important;
+  background: var(--lux-well-fill) !important;
+  color: var(--portal-text) !important;
+  font-size: 14px !important;
+  box-shadow:
+    inset 0 1px 2px rgba(16, 23, 19, 0.06),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.9) !important;
+  transition: background-color 160ms ease-out, border-color 160ms ease-out, box-shadow 160ms ease-out, transform 160ms ease-out;
+}
+
+.gh-admin-main :where(.gh-input, .gh-select, .gh-textarea, input, select, textarea):focus-visible {
+  outline: none;
+  background: var(--portal-surface) !important;
+  border-color: var(--portal-mint-text) !important;
+  box-shadow: 0 0 0 3px var(--portal-focus), var(--lux-elev-press) !important;
+  transform: translateY(-1px);
+}
+
+.gh-admin-main :where(.gh-input, .gh-select, .gh-textarea, input, select, textarea):disabled {
+  background: var(--portal-well) !important;
+  opacity: 0.6;
+}
+
+.gh-admin-main :where(.gh-input, .gh-select, .gh-textarea, input, select, textarea)[aria-invalid="true"] {
+  border-color: var(--portal-danger) !important;
+  box-shadow: 0 0 0 3px var(--portal-danger-soft) !important;
+}
+
+.gh-admin-main :where(.gh-input, .gh-select, input, select) {
+  min-height: 44px !important;
+}
+
+.gh-admin-main :where(.gh-textarea, textarea) {
+  min-height: 110px !important;
+}
+.gh-portal-shell .gh-btn,
+.gh-admin-main :where(button[type="submit"]:not(.gh-admin-toggle):not(.gh-admin-status-toggle), a.gh-btn),
+.gh-admin-main :where(a[class*="rounded-md"], button[class*="rounded-md"]) {
+  border-radius: var(--portal-radius);
+  box-shadow: none;
+  transition:
+    transform 120ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 160ms ease-out,
+    background-color 160ms ease-out,
+    border-color 170ms ease-out,
+    color 160ms ease-out;
+}
+
+.gh-portal-shell .gh-btn:active {
+  transform: translateY(1px);
+}
+
+.gh-portal-shell .gh-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--portal-focus);
+}
+
+.gh-portal-shell .gh-btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.gh-admin-main :where(.gh-btn, button[type="submit"]:not(.gh-admin-toggle):not(.gh-admin-status-toggle)) {
+  min-height: 40px;
+}
+
+.gh-portal-shell .gh-btn-primary,
+.gh-admin-main button[type="submit"]:not([class*="ghost"]):not([class*="soft"]):not(.gh-admin-toggle):not(.gh-admin-status-toggle) {
+  background: var(--lux-forest-duotone);
+  border-color: var(--portal-primary);
+  color: var(--portal-bg);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 1px 2px rgba(7, 18, 12, 0.2);
+}
+
+.gh-portal-shell .gh-btn-primary:hover,
+.gh-admin-main button[type="submit"]:not([class*="ghost"]):not([class*="soft"]):not(.gh-admin-toggle):not(.gh-admin-status-toggle):hover {
+  background: var(--lux-forest-duotone-hover);
+  border-color: var(--portal-primary-hover);
+  /* Same 3-layer structure as the rest state (inset highlight, inset
+     shade, outer shadow) — only the outer layer's spread/color changes.
+     Swapping to a single-layer box-shadow here made the transition jump
+     between mismatched layer counts, which some browsers can't
+     interpolate cleanly and paint as a brief white/blown-out flash. */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 4px 16px var(--portal-signal-glow);
+}
+
+.gh-portal-shell .gh-btn-secondary,
+.gh-portal-shell .gh-btn-outline {
+  border-color: transparent;
+  background-image: var(--lux-card-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  color: var(--portal-text);
+}
+
+.gh-portal-shell .gh-btn-secondary:hover,
+.gh-portal-shell .gh-btn-outline:hover {
+  background-image: var(--lux-card-fill), var(--lux-card-border-hover);
+  box-shadow: 0 2px 8px rgba(7, 18, 12, 0.06);
+}
+
+.gh-portal-shell .gh-btn-soft {
+  background: var(--portal-mint-soft);
+  border-color: transparent;
+  color: var(--portal-mint-text);
+}
+
+.gh-portal-shell .gh-btn-soft:hover {
+  background: color-mix(in srgb, var(--portal-mint) 18%, transparent);
+}
+
+.gh-portal-shell .gh-btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--portal-text);
+}
+
+.gh-portal-shell .gh-btn-ghost:hover {
+  background: var(--portal-well);
+}
+
+.gh-portal-shell .gh-btn-accent {
+  background: var(--portal-signal-soft);
+  border-color: transparent;
+  color: var(--portal-accent-text);
+}
+
+.gh-portal-shell .gh-btn-accent:hover {
+  background: color-mix(in srgb, var(--portal-signal) 22%, transparent);
+}
+
+.gh-portal-shell .gh-btn-danger {
+  background: var(--portal-danger-soft);
+  border-color: rgba(188, 74, 66, 0.4);
+  color: var(--portal-danger-text);
+}
+
+.gh-portal-shell .gh-btn-danger:hover {
+  background: color-mix(in srgb, var(--portal-danger) 16%, transparent);
+}
+
+.gh-portal-shell .gh-btn-on-chrome {
+  background: transparent;
+  border-color: var(--portal-chrome-border);
+  color: var(--portal-chrome-text);
+}
+
+.gh-portal-shell .gh-btn-on-chrome:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--portal-chrome-text-active);
+}
+
+.gh-portal-shell .gh-btn__spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  opacity: 0.7;
+  animation: gh-btn-spin 700ms linear infinite;
+}
+
+.gh-portal-shell .gh-btn--success-pulse {
+  animation: gh-btn-success-pulse 900ms ease-out;
+}
+
+.gh-portal-shell .gh-badge,
+.gh-portal-shell .gh-pill,
+.gh-admin-main :where([class*="rounded-full"]) {
+  border-radius: var(--portal-radius-pill);
+}
+.gh-portal-shell .gh-badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.gh-portal-shell .gh-badge-success {
+  border-color: transparent;
+  background: var(--portal-success-soft);
+  color: var(--portal-success-text);
+}
+
+.gh-portal-shell .gh-badge-warning {
+  border-color: transparent;
+  background: var(--portal-warning-soft);
+  color: var(--portal-warning-text);
+}
+
+.gh-portal-shell .gh-badge-error {
+  border-color: transparent;
+  background: var(--portal-danger-soft);
+  color: var(--portal-danger-text);
+}
+
+.gh-portal-shell .gh-badge-info {
+  border-color: transparent;
+  background: var(--portal-info-soft);
+  color: var(--portal-info-text);
+}
+
+.gh-portal-shell .gh-badge-neutral {
+  border-color: transparent;
+  background: var(--portal-well);
+  color: var(--portal-text-2);
+}
+
+.gh-admin-main :where(.overflow-x-auto, .gh-admin-table-wrap) {
+  max-width: 100%;
+  overflow-x: auto;
+  /* See .gh-portal-tabs above — overflow-x alone computes overflow-y to
+     auto too, showing an unstyled native vertical scrollbar. */
+  overflow-y: hidden;
+}
+
+.gh-admin-main :where(table) {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.gh-admin-main :where(.overflow-x-auto table, .gh-admin-table-wrap table) {
+  min-width: 720px;
+}
+
+.gh-admin-main :where(thead) {
+  background: color-mix(in srgb, var(--portal-well) 70%, transparent) !important;
+}
+
+.gh-admin-main :where(th) {
+  color: var(--portal-muted) !important;
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.12em !important;
+}
+
+.gh-admin-main :where(td) {
+  color: var(--portal-text-2);
+}
+
+.gh-admin-main :where(tbody tr) {
+  transition: background-color 150ms ease-out;
+}
+
+.gh-admin-main :where(tbody tr:hover) {
+  background: var(--portal-hover);
+}
+.gh-portal-tabs,
+.gh-admin-main :where([role="tablist"]) {
+  display: flex;
+  gap: 18px;
+  max-width: 100%;
+  overflow-x: auto;
+  /* Leaving overflow-y unset makes it compute to `auto` too (CSS spec:
+     an explicit overflow-x forces the other axis off `visible`), which
+     shows an unstyled native vertical scrollbar the instant content is a
+     pixel taller than the row — the sharp-cornered bar cutting into the
+     tabs/pills. This is a single-row strip; it never needs to scroll
+     vertically. */
+  overflow-y: hidden;
+  border-bottom: 1px solid var(--portal-line);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
+  mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
+}
+
+.gh-admin-main :where([role="tab"], .gh-portal-tabs a, .gh-portal-tabs button) {
+  min-height: 34px;
+  white-space: nowrap;
+}
+
+.gh-portal-tab {
+  position: relative;
+  flex: 0 0 auto;
+  padding: 8px 2px;
+  border: none;
+  background: transparent;
+  color: var(--portal-muted);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 160ms ease-out;
+}
+
+.gh-portal-tab:hover {
+  color: var(--portal-text);
+}
+
+.gh-portal-tab[data-active] {
+  color: var(--portal-text);
+}
+
+.gh-portal-tab::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--portal-accent);
+  box-shadow: 0 0 4px color-mix(in srgb, var(--portal-accent) 30%, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gh-portal-tab[data-active]::after {
+  transform: scaleX(1);
+}
+
+.gh-portal-tab:focus-visible {
+  outline: none;
+  border-radius: 4px;
+  box-shadow: 0 0 0 3px var(--portal-focus);
+}
+
+.gh-portal-tab__badge {
+  display: inline-flex;
+  min-width: 18px;
+  height: 16px;
+  margin-left: 6px;
+  padding: 0 4px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--portal-well);
+  color: var(--portal-text-2);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.gh-portal-tab[data-active] .gh-portal-tab__badge {
+  background: var(--portal-mint-soft);
+  color: var(--portal-mint-text);
+}
+
+.gh-portal-tab__badge--alert {
+  background: var(--portal-warning-soft);
+  color: var(--portal-warning-text);
+}
+.gh-portal-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--lux-overlay-fill);
+  -webkit-backdrop-filter: blur(var(--lux-blur-overlay));
+  backdrop-filter: blur(var(--lux-blur-overlay));
+  animation: gh-dialog-fade 200ms ease-out;
+}
+
+.gh-portal-dialog {
+  width: 100%;
+  max-height: min(88vh, 720px);
+  overflow-y: auto;
+  border: 1px solid transparent;
+  border-radius: var(--portal-radius-xl);
+  background-image: var(--lux-modal-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-modal);
+  animation: gh-dialog-in 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gh-portal-dialog--sm {
+  max-width: 560px;
+}
+
+.gh-portal-dialog--lg {
+  max-width: 760px;
+}
+
+.gh-portal-dialog--full {
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+}
+
+.gh-portal-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--portal-line);
+}
+
+.gh-portal-dialog__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--portal-text);
+}
+
+.gh-portal-dialog__danger-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--portal-danger);
+}
+
+.gh-portal-dialog__body {
+  padding: 20px;
+}
+
+.gh-portal-dialog__body--flush {
+  padding: 0;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.gh-portal-dialog__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--portal-line);
+}
+.gh-portal-user-menu {
+  border: 1px solid transparent;
+  border-radius: var(--portal-radius-xl);
+  background-image: var(--lux-modal-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-modal);
+  transform-origin: top right;
+  animation: gh-popover-in 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+@media (prefers-reduced-motion: reduce)  {
+.gh-portal-user-menu {
+    animation: none;
+  }
+}
+
+
+
+@media (max-width: 640px)  {
+  .gh-portal-dialog-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .gh-portal-dialog {
+    max-width: 100% !important;
+    max-height: 88vh;
+    border-radius: var(--portal-radius-xl) var(--portal-radius-xl) 0 0;
+    animation: gh-dialog-sheet-in 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .gh-portal-dialog::before {
+    content: "";
+    display: block;
+    width: 36px;
+    height: 4px;
+    margin: 10px auto 0;
+    border-radius: 999px;
+    background: var(--portal-line-strong);
+  }
+}
+
+
+
+@media (prefers-reduced-motion: reduce)  {
+  .gh-portal-dialog-overlay,
+  .gh-portal-dialog {
+    animation: none;
+  }
+}
+
+
+.gh-admin-main :where([role="alert"]) {
+  border-radius: var(--portal-radius-sm) !important;
+  box-shadow: inset 3px 0 0 rgba(29, 75, 54, 0.18);
+}
+
+
+.gh-admin-main :where(.animate-spin) {
+  animation-duration: 900ms;
+}
+
+.gh-admin-main :where(.line-clamp-2, .truncate) {
+  min-width: 0;
+}
+
+@media (max-width: 640px)  {
+  .gh-portal-shell {
+    --portal-pad-x: 12px;
+    --portal-pad-y: 14px;
+    --portal-section-gap: 12px;
+  }
+
+  .gh-portal-topbar {
+    height: 60px !important;
+  }
+
+  .gh-portal-main {
+    padding: var(--portal-pad-y) var(--portal-pad-x) !important;
+  }
+
+  .gh-portal-page-header,
+  .gh-admin-main > header:not(.gh-portal-page-header) {
+    padding: 16px !important;
+  }
+
+  .gh-portal-page-header > div,
+  .gh-admin-main > header > div {
+    width: 100%;
+  }
+
+  .gh-portal-page-header .flex,
+  .gh-admin-main > header .flex {
+    max-width: 100%;
+  }
+
+  .gh-admin-main :where(.gh-btn) {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .gh-admin-main :where(form .gh-btn, form button[type="submit"]) {
+    width: 100%;
+  }
+
+  .gh-admin-main :where(.gh-admin-card, .gh-card) {
+    padding-inline: min(18px, 5vw);
+  }
+}
+
+
+.gh-admin-main button.gh-admin-toggle[type="submit"] {
+  min-height: unset !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: transparent !important;
+  flex: 0 0 auto !important;
+  background: none !important;
+}
+
+.gh-admin-main button.gh-admin-toggle[type="submit"]:hover {
+  background: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.gh-admin-main button.gh-admin-toggle[type="submit"][aria-checked="true"] {
+  background: var(--color-brand-primary) !important;
+}
+
+.gh-admin-main button.gh-admin-toggle[type="submit"][aria-checked="false"] {
+  background: var(--color-border-strong, var(--color-border)) !important;
+}
+
+.gh-admin-main button.gh-admin-status-toggle[type="submit"] {
+  display: inline-flex !important;
+  width: auto !important;
+  min-height: unset !important;
+  align-items: center !important;
+  gap: 8px !important;
+  justify-content: center !important;
+  padding: 3px 7px 3px 3px !important;
+  border: none !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--color-text-secondary) !important;
+  white-space: nowrap;
+}
+
+.gh-admin-main button.gh-admin-status-toggle[type="submit"]:hover {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.gh-admin-main button.gh-admin-status-toggle[type="submit"]:focus-visible,
+.gh-admin-main button.gh-admin-toggle[type="submit"]:focus-visible {
+  outline: 2px solid rgba(29, 75, 54, 0.34);
+  outline-offset: 3px;
+}
+
+.gh-admin-status-toggle__track {
+  display: inline-flex;
+  width: 36px;
+  height: 20px;
+  align-items: center;
+  border-radius: 999px;
+  padding: 2px;
+  flex: 0 0 auto;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  transition:
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.gh-admin-status-toggle-on .gh-admin-status-toggle__track {
+  justify-content: flex-end;
+  background: var(--color-brand-primary);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+    0 8px 18px rgba(29, 75, 54, 0.16);
+}
+
+.gh-admin-status-toggle-off .gh-admin-status-toggle__track {
+  justify-content: flex-start;
+  background: var(--lux-well-fill);
+  box-shadow: var(--lux-inset-well);
+}
+
+.gh-admin-status-toggle__thumb {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--portal-bg);
+  box-shadow: var(--lux-elev-press);
+}
+
+.gh-admin-status-toggle__label {
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.gh-admin-status-toggle-on .gh-admin-status-toggle__label {
+  color: var(--color-brand-primary);
+}
+
+.gh-admin-status-toggle-off .gh-admin-status-toggle__label {
+  color: #64776e;
+}
+.gh-doctor-card {
+  transition: background-color 160ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 160ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.gh-doctor-card:hover {
+  background: rgba(255, 255, 255, 0.09) !important;
+  border-color: rgba(255, 255, 255, 0.20) !important;
+  transform: translateY(-2px);
+}
+.gh-portal-shell ::selection {
+  background: var(--lux-selection);
+  color: var(--portal-text);
+}
+
+.gh-portal-shell :where(svg) {
+  opacity: var(--lux-icon-rest);
+}
+
+.gh-portal-shell :where(a:hover svg, button:hover svg, [aria-current="page"] svg) {
+  opacity: var(--lux-icon-active);
+}
+.gh-admin-mobile-card,
+.gh-admin-appointment-mobile-card {
+  position: relative;
+  overflow: hidden;
+}
+
+
+.gh-admin-mobile-card::before,
+.gh-admin-appointment-mobile-card::before {
+  content: "";
+  position: absolute;
+  inset-block: 12px;
+  inset-inline-start: 0;
+  width: 3px;
+  border-radius: 0 999px 999px 0;
+  background: var(--lux-mobile-edge);
+  box-shadow: 0 0 8px var(--portal-signal-glow);
+  pointer-events: none;
+}
+
+.gh-portal-shell :where(a:not(.gh-btn):not(.gh-portal-nav-item)) {
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+.gh-portal-shell :where(a:not(.gh-btn):not(.gh-portal-nav-item)):hover {
+  text-decoration-color: var(--portal-mint);
+}
+.gh-portal-shell *:not(.gh-dark-scroll)::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.gh-portal-shell *:not(.gh-dark-scroll)::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--lux-scrollbar-thumb);
+}
+
+.gh-portal-shell *:not(.gh-dark-scroll)::-webkit-scrollbar-thumb:hover {
+  background: var(--lux-scrollbar-thumb-hover);
+}
+
+@supports not selector(::-webkit-scrollbar)  {
+  .gh-portal-shell *:not(.gh-dark-scroll) {
+    scrollbar-width: thin;
+    scrollbar-color: var(--lux-scrollbar-thumb) transparent;
+  }
+}
+
+
+@media (pointer: coarse)  {
+.gh-portal-sidebar,
+.gh-portal-topbar {
+    background-color: var(--portal-chrome-solid);
+  }
+
+  .gh-portal-sidebar {
+    box-shadow: none !important;
+  }
+}
