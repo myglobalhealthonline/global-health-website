@@ -10,6 +10,7 @@ import {
   HealthTestCurrencyNotFoundError,
   listAdminHealthTests,
   purgeAdminHealthTest,
+  reorderAdminHealthTests,
   updateAdminHealthTest,
 } from "../modules/health-tests/health-tests.service.js";
 import {
@@ -33,6 +34,7 @@ import {
   healthTestFaqUpdateBodySchema,
   healthTestIdParamsSchema,
 } from "../validations/admin-health-tests.schema.js";
+import { bulkReorderBodySchema } from "../validations/admin-services.schema.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { LocaleNotSupportedError } from "../modules/shared/locale-support.js";
@@ -153,6 +155,23 @@ const adminHealthTestsRoute: FastifyPluginAsync = async (app) => {
       return okResponse({ healthTest }, "Health test deactivated");
     } catch (error) {
       return handleWriteError(app, reply, error);
+    }
+  });
+
+  app.patch("/api/admin/health-tests/reorder", async (request, reply) => {
+    const body = bulkReorderBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid reorder payload", body.error.flatten()));
+    }
+    try {
+      await reorderAdminHealthTests(body.data.items);
+      return okResponse({}, "Health tests reordered");
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not reorder health tests"));
     }
   });
 

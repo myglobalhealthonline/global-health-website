@@ -109,8 +109,8 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
   };
 }
 
-export const getPublicServicesNormalized = cache(async (): Promise<PublicServiceRecord[]> => {
-  const res = await fetchServices();
+export const getPublicServicesNormalized = cache(async (locale?: string): Promise<PublicServiceRecord[]> => {
+  const res = await fetchServices(locale);
   if (!res.ok) {
     logPublicContentFallback("services", res.message);
     return [];
@@ -124,13 +124,13 @@ export const getPublicServicesNormalized = cache(async (): Promise<PublicService
   return out;
 });
 
-export async function getPublicServicesForCountry(countryCode: CountryCode): Promise<PublicServiceRecord[]> {
-  const all = await getPublicServicesNormalized();
+export async function getPublicServicesForCountry(countryCode: CountryCode, locale?: string): Promise<PublicServiceRecord[]> {
+  const all = await getPublicServicesNormalized(locale);
   return all.filter((s) => s.countryCode === countryCode);
 }
 
-export async function getPublicServiceBySlug(countryCode: CountryCode, slug: string): Promise<PublicServiceRecord | null> {
-  const all = await getPublicServicesForCountry(countryCode);
+export async function getPublicServiceBySlug(countryCode: CountryCode, slug: string, locale?: string): Promise<PublicServiceRecord | null> {
+  const all = await getPublicServicesForCountry(countryCode, locale);
   return all.find((s) => s.slug === slug || s.legacyPath?.endsWith(`/${slug}`)) ?? null;
 }
 

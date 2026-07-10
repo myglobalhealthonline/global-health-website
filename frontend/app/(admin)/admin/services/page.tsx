@@ -2,11 +2,12 @@ import Link from "next/link";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Edit3, Eye, Plus } from "lucide-react";
+import { ChevronDown, ChevronUp, Edit3, Eye, Plus } from "lucide-react";
 import {
   fetchAdminCountries,
   fetchAdminServices,
   patchAdminService,
+  patchAdminServicesReorder,
   purgeAdminService,
 } from "@/lib/admin/admin-api";
 import { getActiveCountry, scopedCountryId } from "@/lib/admin/admin-scope";
@@ -178,6 +179,43 @@ export default async function AdminServicesPage({
       `${basePath}?success=${encodeURIComponent(next ? "Service activated" : "Service deactivated")}`,
     );
   }
+
+  // Minimal per-row snapshot for the move-up/down closure (keep the
+  // captured server-action payload small — same idea as `basePath`).
+  const rowOrder = items.map((s) => ({ id: s.id, countryId: s.countryId }));
+
+  async function moveRowAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const id = String(formData.get("id") ?? "").trim();
+    const direction = String(formData.get("direction") ?? "");
+    const qs = String(formData.get("_qs") ?? "");
+    const returnPath = qs ? `${basePath}?${qs}` : basePath;
+
+    const index = rowOrder.findIndex((r) => r.id === id);
+    const neighborIndex = direction === "up" ? index - 1 : index + 1;
+    const row = rowOrder[index];
+    const neighbor = rowOrder[neighborIndex];
+    if (!row || !neighbor || neighbor.countryId !== row.countryId) {
+      redirect(returnPath);
+    }
+
+    const subsequence = rowOrder.filter((r) => r.countryId === row.countryId);
+    const rowPos = subsequence.findIndex((r) => r.id === row.id);
+    const neighborPos = subsequence.findIndex((r) => r.id === neighbor.id);
+    [subsequence[rowPos], subsequence[neighborPos]] = [subsequence[neighborPos], subsequence[rowPos]];
+    const reorderItems = subsequence.map((r, i) => ({ id: r.id, sortOrder: (i + 1) * 10 }));
+
+    const result = await patchAdminServicesReorder(reorderItems);
+    if (!result.ok) {
+      redirect(`${returnPath}${returnPath.includes("?") ? "&" : "?"}error=${encodeURIComponent(result.message)}`);
+    }
+    revalidatePath("/admin/services");
+    revalidatePath(basePath);
+    redirect(returnPath);
+  }
+
+  const currentQs = buildServicesHref(basePath, filters, {}).split("?")[1] ?? "";
 
   return (
     <>
@@ -369,7 +407,12 @@ export default async function AdminServicesPage({
               </Th>
             </Thead>
             <tbody>
-              {items.map((service) => (
+              {items.map((service, index) => {
+                const prev = items[index - 1];
+                const next = items[index + 1];
+                const isFirstInCountry = !prev || prev.countryId !== service.countryId;
+                const isLastInCountry = !next || next.countryId !== service.countryId;
+                return (
                 <Tr key={service.id}>
                   <Td>
                     <span className="font-bold text-[var(--color-text-primary)]">
@@ -407,9 +450,34 @@ export default async function AdminServicesPage({
                     </span>
                   </Td>
                   <Td align="right">
-                    <span className="font-mono text-[12px] text-[var(--color-text-muted)]">
-                      {service.sortOrder}
-                    </span>
+                    <div className="flex items-center justify-end gap-1">
+                      <form action={moveRowAction} className="inline-flex">
+                        <input type="hidden" name="id" value={service.id} />
+                        <input type="hidden" name="direction" value="up" />
+                        <input type="hidden" name="_qs" value={currentQs} />
+                        <button
+                          type="submit"
+                          disabled={isFirstInCountry}
+                          aria-label={`Move ${service.name} up`}
+                          className="inline-flex items-center justify-center border-0 bg-transparent p-0.5 text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text-primary)] disabled:cursor-default disabled:opacity-35 disabled:hover:text-[var(--color-text-muted)]"
+                        >
+                          <ChevronUp className="size-3.5" aria-hidden />
+                        </button>
+                      </form>
+                      <form action={moveRowAction} className="inline-flex">
+                        <input type="hidden" name="id" value={service.id} />
+                        <input type="hidden" name="direction" value="down" />
+                        <input type="hidden" name="_qs" value={currentQs} />
+                        <button
+                          type="submit"
+                          disabled={isLastInCountry}
+                          aria-label={`Move ${service.name} down`}
+                          className="inline-flex items-center justify-center border-0 bg-transparent p-0.5 text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text-primary)] disabled:cursor-default disabled:opacity-35 disabled:hover:text-[var(--color-text-muted)]"
+                        >
+                          <ChevronDown className="size-3.5" aria-hidden />
+                        </button>
+                      </form>
+                    </div>
                   </Td>
                   <Td>
                     <form action={toggleServiceAction} className="gh-admin-service-toggle-form inline-flex">
@@ -464,7 +532,8 @@ export default async function AdminServicesPage({
                     </div>
                   </Td>
                 </Tr>
-              ))}
+                );
+              })}
             </tbody>
           </AdminTable>
         </div>
@@ -500,7 +569,6 @@ export default async function AdminServicesPage({
                   label: "Doctors",
                   value: service.assignedDoctors.filter((d) => d.isActive).length,
                 },
-                { label: "Order", value: service.sortOrder },
               ]}
             >
               <div className="gh-admin-service-mobile-controls">
@@ -602,7 +670,6 @@ export default async function AdminServicesPage({
           </nav>
         ) : null}
       </AdminCard>
-
     </>
   );
 }

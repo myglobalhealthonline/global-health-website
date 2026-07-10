@@ -109,6 +109,15 @@ export async function purgeAdminHealthTest(id: string) {
   });
 }
 
+export async function patchAdminHealthTestsReorder(
+  items: Array<{ id: string; sortOrder: number }>,
+) {
+  return adminRequest<Record<string, never>>("/api/admin/health-tests/reorder", {
+    method: "PATCH",
+    body: { items },
+  });
+}
+
 export type AdminHealthTestFaqDto = {
   id: string;
   healthTestId: string;

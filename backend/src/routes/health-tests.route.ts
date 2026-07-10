@@ -24,10 +24,13 @@ function applyPublicCache(reply: { header: (k: string, v: string) => void }) {
 }
 
 const healthTestsRoute: FastifyPluginAsync = async (app) => {
-  app.get("/api/health-tests", async (_, reply) => {
+  app.get("/api/health-tests", async (request, reply) => {
     applyPublicCache(reply);
+    const query = countryQuerySchema.safeParse(request.query);
     try {
-      const healthTests = await listHealthTests();
+      const healthTests = await listHealthTests(
+        query.success ? (query.data.locale as LocaleCode | undefined) : undefined,
+      );
       return okResponse(healthTests);
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {

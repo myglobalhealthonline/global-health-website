@@ -40,10 +40,11 @@ function applyPublicCache(reply: { header: (k: string, v: string) => void }) {
 }
 
 const servicesRoute: FastifyPluginAsync = async (app) => {
-  app.get("/api/specialties", async (_, reply) => {
+  app.get("/api/specialties", async (request, reply) => {
     applyPublicCache(reply);
+    const query = countryQuerySchema.safeParse(request.query);
     try {
-      const specialties = await listSpecialties();
+      const specialties = await listSpecialties(query.success ? query.data.locale : undefined);
       return okResponse(specialties);
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
@@ -55,10 +56,11 @@ const servicesRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  app.get("/api/services", async (_, reply) => {
+  app.get("/api/services", async (request, reply) => {
     applyPublicCache(reply);
+    const query = countryQuerySchema.safeParse(request.query);
     try {
-      const services = await listServices();
+      const services = await listServices(query.success ? query.data.locale : undefined);
       return okResponse(services);
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {

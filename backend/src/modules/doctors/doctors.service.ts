@@ -70,6 +70,44 @@ type DoctorFaqRow = {
   isActive: boolean;
 };
 
+const publicSpecialtyTranslationSelect = {
+  locale: true,
+  name: true,
+  cardSummary: true,
+} satisfies Prisma.SpecialtyTranslationSelect;
+
+type PublicSpecialtyRow = {
+  id: string;
+  slug: string;
+  name: string;
+  cardSummary: string | null;
+  active: boolean;
+  translations: Array<{
+    locale: LocaleCode;
+    name: string;
+    cardSummary: string | null;
+  }>;
+};
+
+function mergeDoctorSpecialties<T extends { specialty: PublicSpecialtyRow }>(
+  specialties: readonly T[],
+  requested: LocaleCode,
+  defaultLocale: LocaleCode,
+) {
+  return specialties.map(({ specialty, ...link }) => {
+    const { tr } = resolveTranslation(specialty.translations, requested, defaultLocale);
+    const { translations: _translations, ...base } = specialty;
+    return {
+      ...link,
+      specialty: {
+        ...base,
+        name: tr?.name ?? specialty.name,
+        cardSummary: tr?.cardSummary ?? specialty.cardSummary,
+      },
+    };
+  });
+}
+
 /**
  * Merge a doctor's base title/bio/SEO with the best translation for the
  * requested locale (requested -> default -> first -> base), field by field.
@@ -316,7 +354,9 @@ export async function listDoctors(locale?: LocaleCode) {
         country: true,
         specialties: {
           include: {
-            specialty: true,
+            specialty: {
+              include: { translations: { select: publicSpecialtyTranslationSelect } },
+            },
           },
         },
         assets: {
@@ -328,11 +368,18 @@ export async function listDoctors(locale?: LocaleCode) {
     });
     // Each doctor merges to the requested locale, falling back to their own
     // country's default locale (then base columns). Same id either way.
-    return rows.map((d) =>
-      stripPrivateContact(
-        mergeDoctorTranslation(d, locale ?? d.country.defaultLocale, d.country.defaultLocale),
-      ),
-    );
+    return rows.map((d) => {
+      const requestedLocale = locale ?? d.country.defaultLocale;
+      const merged = mergeDoctorTranslation(d, requestedLocale, d.country.defaultLocale);
+      return stripPrivateContact({
+        ...merged,
+        specialties: mergeDoctorSpecialties(
+          d.specialties,
+          requestedLocale,
+          d.country.defaultLocale,
+        ),
+      });
+    });
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }
@@ -378,7 +425,13 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
       take: PUBLIC_DOCTORS_LIST_CAP,
       include: {
         country: { select: { id: true, code: true, slug: true, name: true, defaultLocale: true } },
-        specialties: { include: { specialty: true } },
+        specialties: {
+          include: {
+            specialty: {
+              include: { translations: { select: publicSpecialtyTranslationSelect } },
+            },
+          },
+        },
         translations: { select: doctorTranslationSelect },
         faqs: {
           where: { isActive: true },
@@ -461,7 +514,16 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
         marketDefaultLocale,
       );
       return {
-        ...stripPrivateContact(overrideImcRegistrationFromCountry(marketMerged, countryCode)),
+        ...stripPrivateContact(
+          overrideImcRegistrationFromCountry({
+            ...marketMerged,
+            specialties: mergeDoctorSpecialties(
+              d.specialties,
+              requestedLocale,
+              marketDefaultLocale,
+            ),
+          }, countryCode),
+        ),
         faqs: resolveDoctorFaqs(d.faqs, requestedLocale, marketDefaultLocale),
         isFeatured: d.id === featuredId,
       };
@@ -569,7 +631,13 @@ export async function getDoctorByCountryAndSlug(
       },
       include: {
         country: { select: { id: true, code: true, slug: true, name: true, defaultLocale: true } },
-        specialties: { include: { specialty: true } },
+        specialties: {
+          include: {
+            specialty: {
+              include: { translations: { select: publicSpecialtyTranslationSelect } },
+            },
+          },
+        },
         translations: { select: doctorTranslationSelect },
         faqs: {
           where: { isActive: true },
@@ -655,8 +723,17 @@ export async function getDoctorByCountryAndSlug(
       requestedLocale,
       marketDefaultLocale,
     );
-    return {
-      ...stripPrivateContact(overrideImcRegistrationFromCountry(marketMerged, countryCode)),
+      return {
+        ...stripPrivateContact(
+          overrideImcRegistrationFromCountry({
+            ...marketMerged,
+            specialties: mergeDoctorSpecialties(
+              doctor.specialties,
+              requestedLocale,
+              marketDefaultLocale,
+            ),
+          }, countryCode),
+        ),
       faqs: resolveDoctorFaqs(doctor.faqs, requestedLocale, marketDefaultLocale),
     };
   } catch (error) {

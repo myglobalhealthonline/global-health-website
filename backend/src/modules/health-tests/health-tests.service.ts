@@ -160,13 +160,20 @@ function buildWhere(query: AdminHealthTestsQuery): Prisma.HealthTestWhereInput {
   return where;
 }
 
-export async function listHealthTests() {
+export async function listHealthTests(locale?: LocaleCode) {
   try {
     return await prisma.healthTest.findMany({
       where: { isActive: true },
       orderBy: [{ country: { name: "asc" } }, { sortOrder: "asc" }, { title: "asc" }],
-      include: { country: true },
-    });
+      include: {
+        country: true,
+        translations: { select: healthTestTranslationSelect },
+      },
+    }).then((rows) =>
+      rows.map((row) =>
+        mergeHealthTestTranslation(row, locale ?? row.country.defaultLocale, row.country.defaultLocale),
+      ),
+    );
   } catch (error) {
     throw normalizeDbError(error, "Health test data is unavailable");
   }
@@ -390,6 +397,21 @@ export async function disableAdminHealthTest(id: string): Promise<AdminHealthTes
     });
   } catch (error) {
     throw normalizeDbError(error, "Health test data is unavailable");
+  }
+}
+
+export async function reorderAdminHealthTests(
+  items: Array<{ id: string; sortOrder: number }>,
+): Promise<void> {
+  if (items.length === 0) return;
+  try {
+    await prisma.$transaction(
+      items.map(({ id, sortOrder }) =>
+        prisma.healthTest.update({ where: { id }, data: { sortOrder } }),
+      ),
+    );
+  } catch (error) {
+    throw normalizeDbError(error, "Could not reorder health tests");
   }
 }
 

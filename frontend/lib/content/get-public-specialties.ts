@@ -83,8 +83,8 @@ function normalizeSpecialty(row: unknown): PublicSpecialtyRecord | null {
   };
 }
 
-export const getPublicSpecialtiesNormalized = cache(async (): Promise<PublicSpecialtyRecord[]> => {
-  const res = await fetchSpecialties();
+export const getPublicSpecialtiesNormalized = cache(async (locale?: string): Promise<PublicSpecialtyRecord[]> => {
+  const res = await fetchSpecialties(locale);
   if (!res.ok) {
     logPublicContentFallback("specialties", res.message);
     return [];
@@ -98,7 +98,7 @@ export const getPublicSpecialtiesNormalized = cache(async (): Promise<PublicSpec
   return out;
 });
 
-export async function getPublicSpecialtiesForCountry(countryCode: CountryCode) {
-  const all = await getPublicSpecialtiesNormalized();
+export async function getPublicSpecialtiesForCountry(countryCode: CountryCode, locale?: string) {
+  const all = await getPublicSpecialtiesNormalized(locale);
   return all.filter((item) => item.countryCode === countryCode).sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name));
 }

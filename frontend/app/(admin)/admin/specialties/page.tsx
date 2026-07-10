@@ -25,6 +25,7 @@ import {
   postAdminSpecialty,
 } from "@/lib/admin/admin-api";
 import { FlagBadge } from "../_components/flag-badge";
+import { SortableOrderList } from "../_components/sortable-order-list";
 import {
   AdminCard,
   AdminTable,
@@ -135,20 +136,17 @@ export default async function AdminCategoriesMatrixPage({
   async function reorderSpecialtiesAction(formData: FormData) {
     "use server";
     await requireAdminAction();
-    const raw = String(formData.get("_reorderItems") ?? "");
-    let parsed: Array<{ id: string; sortOrder: number }>;
+    const raw = String(formData.get("_orderedIds") ?? "");
+    let ids: unknown;
     try {
-      parsed = JSON.parse(raw);
+      ids = JSON.parse(raw);
     } catch {
       redirect(`/admin/specialties?error=${encodeURIComponent("Invalid sort data")}`);
     }
-    const items = parsed.map((item) => ({
-      id: item.id,
-      sortOrder: Math.max(
-        0,
-        Math.min(9999, parseInt(String(formData.get(`order_${item.id}`) ?? item.sortOrder), 10) || 0),
-      ),
-    }));
+    if (!Array.isArray(ids) || !ids.every((id) => typeof id === "string")) {
+      redirect(`/admin/specialties?error=${encodeURIComponent("Invalid sort data")}`);
+    }
+    const items = (ids as string[]).map((id, index) => ({ id, sortOrder: (index + 1) * 10 }));
     const result = await patchAdminSpecialtiesReorder(items);
     if (!result.ok) {
       redirect(`/admin/specialties?error=${encodeURIComponent(result.message)}`);
@@ -394,31 +392,13 @@ export default async function AdminCategoriesMatrixPage({
 
         {sortCountry && sortSpecialties.length > 0 ? (
           <form action={reorderSpecialtiesAction} className="gh-admin-specialty-sort-form mt-5">
-            <input
-              type="hidden"
-              name="_reorderItems"
-              value={JSON.stringify(
-                sortSpecialties.map((s) => ({ id: s.id, sortOrder: s.sortOrder })),
-              )}
-            />
             <p className="mb-3 text-[13px] font-semibold text-[var(--color-text-body)]">
               {sortCountry.name}
             </p>
-            <div className="gh-admin-specialty-order-list grid gap-2">
-              {sortSpecialties.map((s) => (
-                <div key={s.id} className="flex items-center gap-3">
-                  <input
-                    type="number"
-                    name={`order_${s.id}`}
-                    defaultValue={s.sortOrder}
-                    min={0}
-                    max={9999}
-                    className="gh-input w-20 text-right font-mono text-[13px]"
-                  />
-                  <span className="text-[13px] text-[var(--color-text-body)]">{s.name}</span>
-                </div>
-              ))}
-            </div>
+            <SortableOrderList
+              key={sortSpecialties.map((s) => s.id).join(",")}
+              items={sortSpecialties.map((s) => ({ id: s.id, label: s.name }))}
+            />
             <div className="mt-4">
               <button type="submit" className="gh-btn gh-btn-primary">
                 Save order

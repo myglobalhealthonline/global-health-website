@@ -226,7 +226,7 @@ export type ListAdminServicesResult = {
   };
 };
 
-export async function listServices() {
+export async function listServices(locale?: LocaleCode) {
   // Public catalogue — corporate/admin-only services are NEVER listed here
   // (ServiceVisibility gate, corporate plan doc §3.2).
   try {
@@ -240,8 +240,13 @@ export async function listServices() {
           orderBy: { createdAt: "asc" },
           select: { id: true, kind: true, key: true, path: true, altText: true, usageNote: true },
         },
+        translations: { select: serviceTranslationSelect },
       },
-    });
+    }).then((rows) =>
+      rows.map((row) =>
+        mergeServiceTranslation(row, locale ?? row.country.defaultLocale, row.country.defaultLocale),
+      ),
+    );
   } catch (error) {
     throw normalizeDbError(error, "Services data is unavailable");
   }
@@ -316,7 +321,7 @@ export async function listSpecialtiesByCountry(countryCode: string, locale?: Loc
   }
 }
 
-export async function listSpecialties() {
+export async function listSpecialties(locale?: LocaleCode) {
   try {
     const items = await prisma.specialty.findMany({
       where: { active: true },
@@ -328,8 +333,13 @@ export async function listSpecialties() {
           orderBy: { createdAt: "asc" },
           select: { id: true, kind: true, key: true, path: true, altText: true, usageNote: true },
         },
+        translations: { select: specialtyTranslationSelect },
       },
-    });
+    }).then((rows) =>
+      rows.map((row) =>
+        mergeSpecialtyTranslation(row, locale ?? row.country.defaultLocale, row.country.defaultLocale),
+      ),
+    );
     return items;
   } catch (error) {
     throw normalizeDbError(error, "Specialties data is unavailable");

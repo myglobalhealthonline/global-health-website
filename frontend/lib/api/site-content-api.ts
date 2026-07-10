@@ -59,19 +59,21 @@ export async function fetchCountries(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS
   });
 }
 
-export async function fetchServices(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
-  return apiRequest<unknown[]>("/api/services", {
+export async function fetchServices(locale?: string, timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
+  const upper = toBackendLocale(locale);
+  return apiRequest<unknown[]>(upper ? `/api/services?locale=${upper}` : "/api/services", {
     timeoutMs,
     revalidate: REVALIDATE_SECONDS,
-    tags: [SITE_CACHE_TAGS.globalServices()],
+    tags: upper ? [SITE_CACHE_TAGS.globalServices(), `global:services:${upper}`] : [SITE_CACHE_TAGS.globalServices()],
   });
 }
 
-export async function fetchSpecialties(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
-  return apiRequest<unknown[]>("/api/specialties", {
+export async function fetchSpecialties(locale?: string, timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
+  const upper = toBackendLocale(locale);
+  return apiRequest<unknown[]>(upper ? `/api/specialties?locale=${upper}` : "/api/specialties", {
     timeoutMs,
     revalidate: REVALIDATE_SECONDS,
-    tags: [SITE_CACHE_TAGS.globalSpecialties()],
+    tags: upper ? [SITE_CACHE_TAGS.globalSpecialties(), `global:specialties:${upper}`] : [SITE_CACHE_TAGS.globalSpecialties()],
   });
 }
 
@@ -109,11 +111,12 @@ export async function fetchPricing(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) 
   });
 }
 
-export async function fetchHealthTests(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
-  return apiRequest<unknown[]>("/api/health-tests", {
+export async function fetchHealthTests(locale?: string, timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
+  const upper = toBackendLocale(locale);
+  return apiRequest<unknown[]>(upper ? `/api/health-tests?locale=${upper}` : "/api/health-tests", {
     timeoutMs,
     revalidate: REVALIDATE_SECONDS,
-    tags: [SITE_CACHE_TAGS.globalHealthTests()],
+    tags: upper ? [SITE_CACHE_TAGS.globalHealthTests(), `global:health-tests:${upper}`] : [SITE_CACHE_TAGS.globalHealthTests()],
   });
 }
 
