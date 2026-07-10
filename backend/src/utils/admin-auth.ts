@@ -18,21 +18,30 @@ export async function verifyAdminAccess(request: FastifyRequest): Promise<AdminA
     expectedToken: env.ADMIN_API_TOKEN,
     tokenFallbackEnabled: env.ADMIN_TOKEN_FALLBACK_ENABLED,
   });
-  // Gate is a no-op (zero DB cost) unless the operator opted the session's
-  // role into REQUIRE_2FA_FOR_ROLES — default empty, so this block never
-  // runs for any role today. Only applies to the session path: a
-  // token-fallback admin has no user row for 2FA to check.
-  if (
-    result.ok &&
-    result.method === "session" &&
-    payload &&
-    env.REQUIRE_2FA_FOR_ROLES.has(payload.role)
-  ) {
+  if (!result.ok) return result;
+
+  // S-004: a session-based admin cookie must be re-validated against
+  // CURRENT database state on every request, not just its own signature —
+  // otherwise a demoted, deactivated, or password/role-changed admin's
+  // still-signed cookie keeps working until it naturally expires. A
+  // token-fallback admin (dev/local only) has no user row to check.
+  if (result.method === "session" && payload) {
     const user = await prisma.user.findUnique({
       where: { id: payload.sub },
-      select: { twoFactorEnabled: true },
+      select: { role: true, isActive: true, tokenVersion: true, twoFactorEnabled: true },
     });
-    if (!user?.twoFactorEnabled) {
+    if (
+      !user ||
+      !user.isActive ||
+      user.tokenVersion !== payload.tokenVersion ||
+      (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN" && user.role !== "LOCAL_ADMIN")
+    ) {
+      return { ok: false, status: 401, message: "Session is no longer valid — please sign in again" };
+    }
+    // Gate is a no-op (zero DB cost above) unless the operator opted the
+    // role into REQUIRE_2FA_FOR_ROLES — default empty, so this never
+    // fires today. Uses the CURRENT DB role, not the JWT's role claim.
+    if (env.REQUIRE_2FA_FOR_ROLES.has(user.role) && !user.twoFactorEnabled) {
       return {
         ok: false,
         status: 403,

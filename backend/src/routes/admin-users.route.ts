@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { UserRole } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError, normalizeDbError } from "../modules/shared/db-errors.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -73,6 +73,15 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
     const auth = await verifyAdminAccess(request);
     if (!auth.ok) {
       return reply.status(auth.status).send(errorResponse(auth.message));
+    }
+    // S-003: this plugin is GLOBAL user administration (any user, any
+    // country, including role escalation to SUPER_ADMIN) — out of scope
+    // for a country-scoped LOCAL_ADMIN entirely, not just a matter of
+    // filtering rows. LOCAL_ADMIN's patient-facing surfaces are the
+    // country-scoped admin-patient-profile / admin-corporate routes.
+    const actor = resolveAdminSessionActor(request);
+    if (actor?.role === "LOCAL_ADMIN") {
+      return reply.status(403).send(errorResponse("Global user administration requires ADMIN or SUPER_ADMIN"));
     }
   });
 
@@ -202,6 +211,28 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
         .status(400)
         .send(errorResponse("Invalid update", body.error.flatten()));
     }
+    const sessionActor = resolveAdminSessionActor(request);
+    // S-003: role changes (including escalation to SUPER_ADMIN) and
+    // doctor-link changes are SUPER_ADMIN-only — a plain ADMIN keeps
+    // isActive toggling for ordinary support work.
+    if (
+      (body.data.role !== undefined || body.data.doctorId !== undefined) &&
+      sessionActor?.role !== "SUPER_ADMIN"
+    ) {
+      return reply
+        .status(403)
+        .send(errorResponse("Only SUPER_ADMIN can change a user's role or doctor link"));
+    }
+    // Self-protection: an admin acting on their own account can't change
+    // their own role or deactivate themselves through this endpoint —
+    // closes the "compromised session locks out real admins" and
+    // "accidental self-lockout" failure modes in one guard.
+    if (
+      sessionActor?.userId === params.data.id &&
+      (body.data.role !== undefined || body.data.isActive === false)
+    ) {
+      return reply.status(403).send(errorResponse("You cannot change your own role or deactivate your own account"));
+    }
     try {
       // If the admin is linking a Doctor, check the target isn't already
       // taken by a different user. Without this the unique constraint
@@ -226,14 +257,40 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
       }
       const before = await prisma.user.findUnique({
         where: { id: params.data.id },
-        select: { role: true },
+        select: { role: true, isActive: true },
       });
+      // Last-SUPER_ADMIN protection: refuse to demote or deactivate the
+      // only remaining active SUPER_ADMIN — that would leave nobody able
+      // to grant SUPER_ADMIN back.
+      const losingSuperAdmin =
+        before?.role === "SUPER_ADMIN" &&
+        before.isActive &&
+        ((body.data.role !== undefined && body.data.role !== "SUPER_ADMIN") ||
+          body.data.isActive === false);
+      if (losingSuperAdmin) {
+        const otherActiveSuperAdmins = await prisma.user.count({
+          where: { role: "SUPER_ADMIN", isActive: true, id: { not: params.data.id } },
+        });
+        if (otherActiveSuperAdmins === 0) {
+          return reply
+            .status(409)
+            .send(errorResponse("Cannot remove the last active SUPER_ADMIN"));
+        }
+      }
+      // Bump the target's tokenVersion whenever a privilege-affecting field
+      // changes so any existing session of theirs is rejected on its very
+      // next request instead of lingering until natural JWT expiry (S-004).
+      const bumpTokenVersion =
+        body.data.role !== undefined ||
+        body.data.isActive !== undefined ||
+        body.data.doctorId !== undefined;
       const updated = await prisma.user.update({
         where: { id: params.data.id },
         data: {
           ...(body.data.isActive !== undefined && { isActive: body.data.isActive }),
           ...(body.data.role !== undefined && { role: body.data.role }),
           ...(body.data.doctorId !== undefined && { doctorId: body.data.doctorId }),
+          ...(bumpTokenVersion && { tokenVersion: { increment: 1 } }),
         },
         select: {
           id: true,
@@ -288,11 +345,19 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
         .status(400)
         .send(errorResponse("Invalid password", body.error.flatten()));
     }
+    // S-003: forcibly setting another user's password is SUPER_ADMIN-only.
+    const sessionActor = resolveAdminSessionActor(request);
+    if (sessionActor?.role !== "SUPER_ADMIN") {
+      return reply.status(403).send(errorResponse("Only SUPER_ADMIN can reset another user's password"));
+    }
     try {
       const passwordHash = await bcrypt.hash(body.data.password, 12);
+      // tokenVersion bump (S-004): any session the target already holds is
+      // rejected on its next request instead of remaining valid — an
+      // admin-forced password reset must end existing sessions immediately.
       await prisma.user.update({
         where: { id: params.data.id },
-        data: { passwordHash },
+        data: { passwordHash, tokenVersion: { increment: 1 } },
       });
       // Burn outstanding reset tokens so they can't be replayed.
       await prisma.passwordResetToken.updateMany({
