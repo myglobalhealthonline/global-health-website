@@ -26,5 +26,29 @@ services:
       timeout: 5s
       retries: 5
 
+  # Isolated TEST database (audit plan 0.2) — separate service + port + volume
+  # so `pnpm --filter backend test` can never touch dev or live data.
+  # Usage: docker compose up -d postgres-test
+  # Test DATABASE_URL (satisfies test-guard's "test" db-name rule):
+  #   postgresql://postgres:postgres@127.0.0.1:5433/global_health_test
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: global-health-postgres-test
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: global_health_test
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - global_health_pg_test:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d global_health_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
   global_health_pg:
+  global_health_pg_test:

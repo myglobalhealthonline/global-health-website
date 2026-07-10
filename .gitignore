@@ -29,6 +29,7 @@
 /backend/.env
 /backend/.env.*
 !/backend/.env.example
+!/backend/.env.test
 
 # editor
 .vscode

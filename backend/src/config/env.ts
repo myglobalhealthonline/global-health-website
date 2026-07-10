@@ -175,6 +175,10 @@ const envSchema = z.object({
   BRAZIL_BOOKING_URL: z.string().trim().url().optional(),
   BRAZIL_CONSENT_NOTIFY_EMAIL: z.string().trim().email().optional(),
   BRAZIL_CONSENT_DOCTOR_PHONE: z.string().trim().optional(),
+  /** Dedicated HMAC secret for Brazil consent-link tokens (S-012 follow-up).
+   *  Optional: falls back to AUTH_JWT_SECRET; setting it invalidates
+   *  outstanding links, so flip deliberately. */
+  BRAZIL_CONSENT_LINK_SECRET: z.string().trim().min(32).optional(),
 
   PATIENT_UPLOAD_LINK_SECRET: z.string().trim().min(16).optional(),
 

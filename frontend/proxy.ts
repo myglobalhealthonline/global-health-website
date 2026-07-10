@@ -68,11 +68,13 @@ const NONCE_CSP_ENABLED = process.env.DISABLE_NONCE_CSP !== "true";
 
 function nonceCsp(nonce: string): string {
   const media = API_ORIGIN ? ` ${API_ORIGIN}` : "";
+  // React dev mode needs eval() for stack reconstruction; production never does.
+  const devEval = process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
   return [
     "default-src 'self'",
     // 'unsafe-inline' + https: are legacy fallbacks only — browsers honoring the
-    // nonce/'strict-dynamic' ignore them. 'unsafe-eval' intentionally omitted.
-    `script-src 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'`,
+    // nonce/'strict-dynamic' ignore them. 'unsafe-eval' intentionally omitted in prod.
+    `script-src 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'${devEval}`,
     // CMS + Tailwind emit inline <style>; keep style-src permissive.
     "style-src 'self' 'unsafe-inline'",
     `img-src 'self' data: blob:${media}`,

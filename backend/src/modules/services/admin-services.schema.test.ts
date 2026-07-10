@@ -73,17 +73,24 @@ describe("admin services validation", () => {
     assert.equal(result.success, true);
   });
 
-  it("requires specialty for specialist services", () => {
+  // Service.specialtyId and the SPECIALIST-requires-specialty rule were
+  // deliberately removed in 16eed2a2 ("replace service Category with GP/SP
+  // services manager") — specialist services now save exactly like GENERAL
+  // ones, category/specialty was dropped for services entirely (the
+  // Specialty table still exists, but only for doctor specialty tags /
+  // public filtering, unrelated to Service). No other layer (route/service)
+  // re-adds this check, so a SPECIALIST create with no specialtyId is valid.
+  it("allows specialist services without a specialty (category concept removed)", () => {
     const result = adminServiceCreateBodySchema.safeParse({
       countryId: "c1",
       kind: "SPECIALIST",
       slug: "cardiology-consultation",
       name: "Cardiology Consultation",
     });
-    assert.equal(result.success, false);
+    assert.equal(result.success, true);
   });
 
-  it("rejects specialty for non-specialist services", () => {
+  it("ignores an unknown specialtyId field for non-specialist services (stripped, not validated)", () => {
     const result = adminServiceCreateBodySchema.safeParse({
       countryId: "c1",
       kind: "GENERAL",
@@ -91,7 +98,7 @@ describe("admin services validation", () => {
       name: "Consultation",
       specialtyId: "sp1",
     });
-    assert.equal(result.success, false);
+    assert.equal(result.success, true);
   });
 
   it("query schema parses filters and pagination", () => {

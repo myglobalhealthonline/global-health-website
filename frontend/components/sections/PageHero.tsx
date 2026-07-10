@@ -348,6 +348,7 @@ export function PageHero({
             src={bgSrc}
             alt=""
             fill
+            priority
             sizes="100vw"
             className="object-cover object-center"
             unoptimized={isUnlistedRemote(bgSrc)}

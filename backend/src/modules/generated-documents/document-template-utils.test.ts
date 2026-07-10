@@ -32,7 +32,13 @@ describe("review queue and history", () => {
   });
 
   it("unsent prescription hidden from history", () => {
-    assert.equal(isVisibleInHistory("PRESCRIPTION", false), true);
+    // Deliberate behavior change in 986832ba (medicine prescription finalize
+    // flow): PRESCRIPTION no longer auto-visible in history to avoid the
+    // dual-display bug. It now requires finalize (sentToPatient=true) like
+    // every other document type. This assertion was left stale (still
+    // asserting `true`) when the source changed — restoring it to match the
+    // test name and the intended (safer) behavior.
+    assert.equal(isVisibleInHistory("PRESCRIPTION", false), false);
   });
 
   it("sent prescription visible in history", () => {

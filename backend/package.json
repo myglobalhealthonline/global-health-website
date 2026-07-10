@@ -20,7 +20,9 @@
         "db:deploy": "prisma migrate deploy",
         "db:studio": "prisma studio",
         "generate:docs": "node --import tsx scripts/generate-test-documents.mjs",
-        "test:automation": "node --import tsx scripts/test-automation-flow.ts"
+        "test:automation": "node --import tsx scripts/test-automation-flow.ts",
+        "test:db": "node --env-file=.env.test --import tsx --import ./src/test-guard.ts --test \"src/**/*.test.ts\"",
+        "test:db:setup": "docker compose -f ../docker-compose.yml up -d postgres-test && node --env-file=.env.test node_modules/prisma/build/index.js migrate deploy"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.1043.0",

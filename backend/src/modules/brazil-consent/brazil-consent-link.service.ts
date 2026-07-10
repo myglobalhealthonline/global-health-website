@@ -19,12 +19,17 @@ const TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days — consent can be pai
 const DEV_JWT_FALLBACK = "dev-only-change-this-auth-jwt-secret-min-32";
 
 function secret(): string {
-  if (env.NODE_ENV === "production" && env.AUTH_JWT_SECRET === DEV_JWT_FALLBACK) {
+  // Prefer the dedicated secret so this HMAC no longer shares key material with
+  // the auth JWTs (S-012 follow-up). Falls back to AUTH_JWT_SECRET so existing
+  // links stay valid until BRAZIL_CONSENT_LINK_SECRET is deliberately set —
+  // note: flipping it invalidates outstanding (30-day TTL) links.
+  const base = env.BRAZIL_CONSENT_LINK_SECRET ?? env.AUTH_JWT_SECRET;
+  if (env.NODE_ENV === "production" && base === DEV_JWT_FALLBACK) {
     throw new Error(
-      "Cannot sign Brazil consent tokens: AUTH_JWT_SECRET is the dev default.",
+      "Cannot sign Brazil consent tokens: secret is the dev default.",
     );
   }
-  return createHmac("sha256", env.AUTH_JWT_SECRET)
+  return createHmac("sha256", base)
     .update("brazil-consent-link/v1")
     .digest("base64url");
 }
