@@ -30,92 +30,141 @@ const LOCK_SUBSCRIPTION_OPS = 4010003;
 const LOCK_RECONCILIATION = 4010004;
 const LOCK_DAILY_REMINDERS = 4010005;
 
-async function withAdvisoryLock(key: number, fn: () => Promise<void>): Promise<void> {
-  // pg_try_advisory_lock is non-blocking; returns false if another replica holds it.
-  let acquired = false;
+// Interactive-transaction timeout for a locked tick. Generous relative to the
+// shortest cron interval (5 min) because job bodies make outbound HTTP calls
+// (email/WhatsApp) between DB queries while the lock is held.
+const JOB_TX_TIMEOUT_MS = 5 * 60 * 1000;
+
+async function withAdvisoryLock(
+  key: number,
+  fn: () => Promise<void>,
+  opts: { failClosed: boolean },
+): Promise<void> {
+  // pg_try_advisory_xact_lock is non-blocking AND transaction-scoped: Prisma's
+  // interactive $transaction pins one physical pooled connection for the whole
+  // callback, so the lock acquire (and its automatic release on commit/
+  // rollback) can never split across two different connections the way two
+  // separate $queryRaw calls could. No explicit unlock call needed.
   try {
-    const rows = await prisma.$queryRaw<{ locked: boolean }[]>`SELECT pg_try_advisory_lock(${key}) AS locked`;
-    acquired = rows?.[0]?.locked === true;
+    await prisma.$transaction(
+      async (tx) => {
+        const rows = await tx.$queryRaw<{ locked: boolean }[]>`SELECT pg_try_advisory_xact_lock(${key}) AS locked`;
+        if (rows?.[0]?.locked !== true) return; // another replica is running this tick
+        await fn();
+      },
+      { timeout: JOB_TX_TIMEOUT_MS },
+    );
   } catch {
-    // Lock query failed (e.g. DB blip) — FAIL OPEN so crons still run as they do today. Do NOT block on error.
-    acquired = true;
-  }
-  if (!acquired) return; // another replica is running this tick
-  try {
-    await fn();
-  } finally {
-    if (acquired) {
-      try {
-        await prisma.$queryRaw`SELECT pg_advisory_unlock(${key})`;
-      } catch {
-        /* best effort */
-      }
+    // Lock/transaction machinery itself failed (DB blip, pool exhaustion —
+    // NOT a job-logic error, every tick already swallows those internally).
+    if (opts.failClosed) {
+      // Non-idempotent job (would double-send emails/WhatsApp on a concurrent
+      // duplicate run) — fail CLOSED: skip this tick rather than run unprotected.
+      return;
     }
+    // Idempotent job (documented safe-to-retry / no-op-on-duplicate) — fail
+    // OPEN as before so a transient lock-query blip doesn't stall it.
+    await fn();
   }
 }
 
 async function tickPrePayment(log: Logger) {
-  await withAdvisoryLock(LOCK_PRE_PAYMENT, async () => {
-    try {
-      const r = await runPrePaymentReminderCron();
-      log.info(`[cron] pre-payment: candidates=${r.candidates} processed=${r.processed} sent=${r.sent}`);
-    } catch (err) {
-      log.error(`[cron] pre-payment error: ${err instanceof Error ? err.message : String(err)}`);
-    }
-  });
+  // Non-idempotent: sends patient/doctor email+WhatsApp per reminder stage,
+  // gated only by an in-loop DB read-then-write (no per-order row lock) — a
+  // concurrent duplicate run can re-send the same stage. Fail CLOSED.
+  await withAdvisoryLock(
+    LOCK_PRE_PAYMENT,
+    async () => {
+      try {
+        const r = await runPrePaymentReminderCron();
+        log.info(`[cron] pre-payment: candidates=${r.candidates} processed=${r.processed} sent=${r.sent}`);
+      } catch (err) {
+        log.error(`[cron] pre-payment error: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    },
+    { failClosed: true },
+  );
 }
 
 async function tickPostPayment(log: Logger) {
-  await withAdvisoryLock(LOCK_POST_PAYMENT, async () => {
-    try {
-      const r = await runPostPaymentReminderCron();
-      log.info(`[cron] post-payment: candidates=${r.candidates} meetingLink=${r.meetingLinkSent} 1h=${r.oneHourSent} 5min=${r.fiveMinSent}`);
-    } catch (err) {
-      log.error(`[cron] post-payment error: ${err instanceof Error ? err.message : String(err)}`);
-    }
-  });
+  // Non-idempotent: same stage-based email/WhatsApp send pattern as pre-payment.
+  // Fail CLOSED.
+  await withAdvisoryLock(
+    LOCK_POST_PAYMENT,
+    async () => {
+      try {
+        const r = await runPostPaymentReminderCron();
+        log.info(`[cron] post-payment: candidates=${r.candidates} meetingLink=${r.meetingLinkSent} 1h=${r.oneHourSent} 5min=${r.fiveMinSent}`);
+      } catch (err) {
+        log.error(`[cron] post-payment error: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    },
+    { failClosed: true },
+  );
 }
 
 async function tickSubscriptionOps(log: Logger) {
-  await withAdvisoryLock(LOCK_SUBSCRIPTION_OPS, async () => {
-    try {
-      const [sweep, grace] = await Promise.all([sweepExpiredReservations(), cancelAfterGrace()]);
-      log.info(
-        `[cron] subs-ops: released c=${sweep.consultationReleased} w=${sweep.wellnessReleased} canceledAfterGrace=${grace.canceled}`,
-      );
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      log.error(`[cron] subs-ops error: ${msg}`);
-      void emitOpsAlert({ severity: "critical", title: "Subscription ops sweep failed", detail: msg });
-    }
-  });
+  // Idempotent by design (sweep.service.ts): reservation release has a
+  // terminal-uniqueness guard (never double-frees a credit) and
+  // cancelAfterGrace is a plain updateMany with no customer email — a
+  // duplicate concurrent run is a safe no-op. Fail OPEN.
+  await withAdvisoryLock(
+    LOCK_SUBSCRIPTION_OPS,
+    async () => {
+      try {
+        const [sweep, grace] = await Promise.all([sweepExpiredReservations(), cancelAfterGrace()]);
+        log.info(
+          `[cron] subs-ops: released c=${sweep.consultationReleased} w=${sweep.wellnessReleased} canceledAfterGrace=${grace.canceled}`,
+        );
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        log.error(`[cron] subs-ops error: ${msg}`);
+        void emitOpsAlert({ severity: "critical", title: "Subscription ops sweep failed", detail: msg });
+      }
+    },
+    { failClosed: false },
+  );
 }
 
 async function tickReconciliation(log: Logger) {
-  await withAdvisoryLock(LOCK_RECONCILIATION, async () => {
-    try {
-      const report = await runReconciliation();
-      log.info(
-        `[cron] recon: drift=${report.drift.length} invariants=${report.invariantAlerts.length} priceSync=${report.priceSyncFailures.length}`,
-      );
-      await alertOnReconciliation(report);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      log.error(`[cron] recon error: ${msg}`);
-      void emitOpsAlert({ severity: "critical", title: "Subscription reconciliation failed", detail: msg });
-    }
-  });
+  // Read-only drift/invariant report + alert emission (reconciliation.service.ts
+  // is explicitly documented idempotent) — no money movement or customer
+  // messaging. Fail OPEN.
+  await withAdvisoryLock(
+    LOCK_RECONCILIATION,
+    async () => {
+      try {
+        const report = await runReconciliation();
+        log.info(
+          `[cron] recon: drift=${report.drift.length} invariants=${report.invariantAlerts.length} priceSync=${report.priceSyncFailures.length}`,
+        );
+        await alertOnReconciliation(report);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        log.error(`[cron] recon error: ${msg}`);
+        void emitOpsAlert({ severity: "critical", title: "Subscription reconciliation failed", detail: msg });
+      }
+    },
+    { failClosed: false },
+  );
 }
 
 async function tickDailyReminders(log: Logger) {
-  await withAdvisoryLock(LOCK_DAILY_REMINDERS, async () => {
-    try {
-      const { remindersSent } = await sendDueRenewalReminders();
-      log.info(`[cron] renewal-reminders: sent=${remindersSent}`);
-    } catch (err) {
-      log.error(`[cron] renewal-reminders error: ${err instanceof Error ? err.message : String(err)}`);
-    }
-  });
+  // Non-idempotent: sendDueRenewalReminders relies on running exactly once/day
+  // (24h-wide match window, no schema dedup field per sweep.service.ts) — a
+  // concurrent duplicate run emails the same subscriber twice. Fail CLOSED.
+  await withAdvisoryLock(
+    LOCK_DAILY_REMINDERS,
+    async () => {
+      try {
+        const { remindersSent } = await sendDueRenewalReminders();
+        log.info(`[cron] renewal-reminders: sent=${remindersSent}`);
+      } catch (err) {
+        log.error(`[cron] renewal-reminders error: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    },
+    { failClosed: true },
+  );
 }
 
 export function startInternalScheduler(log: Logger) {
