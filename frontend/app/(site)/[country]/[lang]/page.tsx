@@ -9,6 +9,9 @@ import {
 } from "@/components/sections/ServiceCatalog";
 import { DoctorCarousel, type DoctorCarouselItem } from "@/components/sections/DoctorCarousel";
 import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
+import { TrustMarquee, type TrustMarqueeItem } from "@/components/sections/TrustMarquee";
+import { fetchPublicReviewConfig } from "@/lib/api/reviews-config";
+import { languageLabel as gpLanguageLabel } from "@/lib/content/languages";
 import { StatsBand, type StatBandItem } from "@/components/sections/StatsBand";
 import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
 import { FinalCTA } from "@/components/sections/FinalCTA";
@@ -336,6 +339,62 @@ export default async function CountryLangHomePage({
     "english",
   );
 
+  // Trust marquee — country-specific proof points instead of the old
+  // cross-country coverage belt (a visitor in Ireland doesn't care how
+  // many doctors Portugal has). Doctify aggregate is optional: only shown
+  // when the admin has connected a Doctify clinic and a snapshot exists.
+  const reviewConfigResult = await fetchPublicReviewConfig().catch(() => null);
+  const doctifyAggregate =
+    reviewConfigResult && reviewConfigResult.ok
+      ? (reviewConfigResult.data.doctify.aggregate ?? null)
+      : null;
+  const gpLanguageNames = gpLanguages.languages
+    .slice(0, 4)
+    .map((l) => gpLanguageLabel(l));
+  const trustMarqueeItems: TrustMarqueeItem[] = [
+    ...(doctifyAggregate
+      ? [
+          {
+            icon: "star" as const,
+            value: `${doctifyAggregate.rating.toFixed(1)}★`,
+            label: `${doctifyAggregate.count} Doctify reviews`,
+          },
+        ]
+      : []),
+    {
+      icon: "doctor" as const,
+      value:
+        countryDoctors.length >= 10
+          ? `${Math.floor(countryDoctors.length / 10) * 10}+`
+          : String(countryDoctors.length),
+      label:
+        countryDoctors.length === 1 ? t.trust.licensedSingular : t.trust.licensedPlural,
+    },
+    ...(gpLanguages.configured
+      ? [
+          {
+            icon: "bolt" as const,
+            value: cc.homeCatalog.trustLive,
+            label: t.trust.slots,
+          },
+        ]
+      : []),
+    {
+      icon: (regulatorAbbrev ? "shield" : "lock") as "shield" | "lock",
+      value: regulatorAbbrev ?? "GDPR",
+      label: t.trust.gdpr,
+    },
+    ...(gpLanguageNames.length > 0
+      ? [
+          {
+            icon: "languages" as const,
+            value: gpLanguageNames.join(" · "),
+            label: t.trust.languagesSpoken,
+          },
+        ]
+      : []),
+  ];
+
   // Stats band — four concrete numbers, no marketing puffery. Pulled
   // from real catalogue data so they update as the platform grows.
   const totalServicesAcrossEurope =
@@ -428,6 +487,7 @@ export default async function CountryLangHomePage({
         ctaLabel={page?.ctaLabel ?? null}
         i18n={t.countryHero}
       />
+      <TrustMarquee items={trustMarqueeItems} />
       <RichBodySection html={page?.body} theme="light" />
       <TrustRibbon items={trustItems} theme="light" />
       <ServiceCatalog services={serviceCatalogItems} i18n={tServices.catalog} />
