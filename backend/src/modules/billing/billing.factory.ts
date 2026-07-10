@@ -19,12 +19,22 @@ let fakeSingleton: FakeBillingPort | null = null;
 let stripeSingleton: StripeBillingPort | null = null;
 
 export function getBillingPort(): BillingPort {
-  if (env.BILLING_DRIVER === "stripe" && isStripeConfigured()) {
+  if (isRealBillingDriver()) {
     stripeSingleton ??= new StripeBillingPort();
     return stripeSingleton;
   }
   fakeSingleton ??= new FakeBillingPort();
   return fakeSingleton;
+}
+
+/**
+ * True when the REAL Stripe port is active. The `_fake_`-id self-heal in
+ * price-sync only applies then: `price_fake_*`/`cus_fake_*` ids are stale
+ * leftovers for real Stripe, but perfectly valid while the fake driver is
+ * the active port (dev/test).
+ */
+export function isRealBillingDriver(): boolean {
+  return env.BILLING_DRIVER === "stripe" && isStripeConfigured();
 }
 
 /** Test-only: get the underlying fake (for seeding) — null if stripe is live. */

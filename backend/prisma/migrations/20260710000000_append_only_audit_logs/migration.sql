@@ -72,7 +72,33 @@ CREATE TRIGGER no_delete_audit_log
   BEFORE DELETE ON "AuditLog"
   FOR EACH ROW EXECUTE FUNCTION prevent_audit_delete();
 
+-- UPDATE needs its own function, not prevent_audit_delete():
+--   1. A BEFORE UPDATE trigger must RETURN NEW — returning OLD would make
+--      any GUC-permitted update silently write the old row back (no-op).
+--   2. AuditLog.actorUserId has ON DELETE SET NULL (schema.prisma): every
+--      User deletion (GDPR purge, admin user removal, test cleanup) fires
+--      an UPDATE that nulls actorUserId on that user's audit rows. That
+--      exact shape — actorUserId -> NULL, every other column unchanged —
+--      must stay allowed or user deletion breaks the moment this migration
+--      applies. Everything else stays blocked without the GUC.
+CREATE OR REPLACE FUNCTION prevent_audit_update() RETURNS trigger AS $$
+BEGIN
+  IF NEW."actorUserId" IS NULL
+     AND (to_jsonb(NEW) - 'actorUserId') = (to_jsonb(OLD) - 'actorUserId') THEN
+    RETURN NEW;  -- FK ON DELETE SET NULL from a User deletion
+  END IF;
+  IF current_setting('app.allow_log_delete', true) IS DISTINCT FROM 'on' THEN
+    RAISE EXCEPTION
+      'Mutation of % is not permitted (append-only audit table). '
+      'Set "SET LOCAL app.allow_log_delete = ''on'';" within a reviewed transaction to override.',
+      TG_TABLE_NAME
+      USING ERRCODE = 'restrict_violation';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 DROP TRIGGER IF EXISTS no_update_audit_log ON "AuditLog";
 CREATE TRIGGER no_update_audit_log
   BEFORE UPDATE ON "AuditLog"
-  FOR EACH ROW EXECUTE FUNCTION prevent_audit_delete();
+  FOR EACH ROW EXECUTE FUNCTION prevent_audit_update();

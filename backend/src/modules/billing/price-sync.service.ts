@@ -1,5 +1,5 @@
 import { prisma } from "../../db/prisma.js";
-import { getBillingPort } from "./billing.factory.js";
+import { getBillingPort, isRealBillingDriver } from "./billing.factory.js";
 
 /**
  * syncPlanStripePrice — the published contract Sprint 2's admin service calls
@@ -25,11 +25,16 @@ export async function syncPlanStripePrice(
   }
 
   // 1. Ensure a Product exists for this plan. Treat any leftover fake-driver id
-  //    (from before BILLING_DRIVER=stripe) as missing so we mint a real one.
-  //    `force` also discards the stored id — used when the current one turned
-  //    out to be stale/cross-account (resource_missing at checkout).
+  //    (from before BILLING_DRIVER=stripe) as missing so we mint a real one —
+  //    but only when the REAL driver is active; under the fake driver those
+  //    ids are the live ones and healing them would churn a new Price per
+  //    sync. `force` also discards the stored id — used when the current one
+  //    turned out to be stale/cross-account (resource_missing at checkout).
+  const healFakeIds = isRealBillingDriver();
   let stripeProductId =
-    !opts.force && plan.stripeProductId && !plan.stripeProductId.includes("_fake_")
+    !opts.force &&
+    plan.stripeProductId &&
+    !(healFakeIds && plan.stripeProductId.includes("_fake_"))
       ? plan.stripeProductId
       : null;
   if (!stripeProductId) {
@@ -47,8 +52,9 @@ export async function syncPlanStripePrice(
     activePrice.amountCents === plan.monthlyPriceCents &&
     activePrice.currency.toLowerCase() === plan.currencyCode.toLowerCase() &&
     plan.stripePriceId === activePrice.stripePriceId &&
-    // A fake-driver price never exists in real Stripe — force a re-create.
-    !activePrice.stripePriceId.includes("_fake_");
+    // A fake-driver price never exists in real Stripe — force a re-create
+    // (only when real Stripe is the active driver; see step 1).
+    !(healFakeIds && activePrice.stripePriceId.includes("_fake_"));
 
   if (!opts.force && amountMatches && stripeProductId === plan.stripeProductId) {
     return { stripeProductId, stripePriceId: plan.stripePriceId! };

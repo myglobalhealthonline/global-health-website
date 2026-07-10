@@ -4,6 +4,7 @@ import { config as loadEnv } from "dotenv";
 import { after, before, describe, it } from "node:test";
 import type { FastifyInstance } from "fastify";
 import type { PrismaClient } from "@prisma/client";
+import { deleteAuditLogs } from "../test-utils/audit-cleanup.js";
 
 loadEnv({ path: join(__dirname, "../..", ".env") });
 
@@ -101,7 +102,7 @@ describe("admin plan-management routes", () => {
 
   after(async () => {
     if (!app) return;
-    await prisma.auditLog.deleteMany({ where: { actorUserId: { in: [superAdminId, genericAdminId] } } });
+    await deleteAuditLogs(prisma, { actorUserId: { in: [superAdminId, genericAdminId] } });
     await prisma.pricingPlan.deleteMany({ where: { countryId: { in: [countryAId, countryBId] } } });
     await prisma.service.deleteMany({ where: { countryId: { in: [countryAId, countryBId] } } });
     await prisma.user.deleteMany({ where: { id: { in: [superAdminId, genericAdminId] } } });

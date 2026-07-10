@@ -4,6 +4,7 @@ import { join } from "node:path";
 import bcrypt from "bcryptjs";
 import { config as loadEnv } from "dotenv";
 import { before, describe, it } from "node:test";
+import { deleteAuditLogs } from "../../test-utils/audit-cleanup.js";
 
 loadEnv({ path: join(__dirname, "../../..", ".env") });
 
@@ -203,7 +204,7 @@ describe("two-factor", () => {
 
   it("cleans up fixtures", async (t) => {
     if (skipIfNoDb()) return t.skip();
-    await prisma.auditLog.deleteMany({ where: { entityId: userId } }).catch(() => {});
+    await deleteAuditLogs(prisma, { entityId: userId }).catch(() => {});
     await prisma.user.deleteMany({ where: { id: userId } });
   });
 });

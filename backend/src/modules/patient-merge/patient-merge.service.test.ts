@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { join } from "node:path";
 import { config as loadEnv } from "dotenv";
 import { before, describe, it } from "node:test";
+import { deleteMedicalAccessLogs } from "../../test-utils/audit-cleanup.js";
 
 loadEnv({ path: join(__dirname, "../../..", ".env") });
 
@@ -82,7 +83,9 @@ describe("patient-merge", () => {
       reason: "duplicate account (test)",
     });
 
-    const doc = await prisma.medicalDocument.findFirst({ where: { title: "Test doc" } });
+    const doc = await prisma.medicalDocument.findFirst({
+      where: { title: "Test doc", patientProfileId: { in: [primaryId, duplicateId] } },
+    });
     assert.equal(doc?.patientProfileId, primaryId, "MedicalDocument repointed to primary");
 
     const consent = await prisma.patientConsent.findFirst({
@@ -144,7 +147,7 @@ describe("patient-merge", () => {
 
   it("cleans up fixtures", async (t) => {
     if (skipIfNoDb()) return t.skip();
-    await prisma.medicalAccessLog.deleteMany({ where: { patientProfileId: { in: [primaryId, duplicateId] } } });
+    await deleteMedicalAccessLogs(prisma, { patientProfileId: { in: [primaryId, duplicateId] } });
     await prisma.patientConsent.deleteMany({ where: { patientProfileId: { in: [primaryId, duplicateId] } } });
     await prisma.medicalDocument.deleteMany({ where: { patientProfileId: { in: [primaryId, duplicateId] } } });
     await prisma.patientMergeLog.deleteMany({ where: { primaryPatientId: primaryId } });
