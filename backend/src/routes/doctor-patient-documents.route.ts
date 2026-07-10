@@ -4,6 +4,12 @@ import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 
+// ponytail: hard cap per collection — this aggregates a patient's WHOLE
+// history across every shared appointment, so unlike a per-appointment
+// list it can genuinely grow without bound over a multi-year relationship.
+// No "load older" UI exists yet, so bound it rather than build one.
+const LIST_CAP = 200;
+
 /**
  * Patient-wide document aggregator for the doctor portal. Mongo kept
  * every clinical doc (patient uploads, doctor-generated PDFs) inside a
@@ -55,6 +61,7 @@ const doctorPatientDocumentsRoute: FastifyPluginAsync = async (app) => {
           prisma.appointmentDocument.findMany({
             where: { appointmentId: { in: appointmentIds } },
             orderBy: { createdAt: "desc" },
+            take: LIST_CAP,
             select: {
               id: true,
               appointmentId: true,
@@ -68,6 +75,7 @@ const doctorPatientDocumentsRoute: FastifyPluginAsync = async (app) => {
           prisma.generatedDocument.findMany({
             where: { appointmentId: { in: appointmentIds } },
             orderBy: { createdAt: "desc" },
+            take: LIST_CAP,
             select: {
               id: true,
               appointmentId: true,

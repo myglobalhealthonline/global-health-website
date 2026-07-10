@@ -4,6 +4,11 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
+// ponytail: hard cap, not full page/pageSize — nothing renders a "load
+// older" UI for this list yet, and it's newest-first, so a cap just bounds
+// worst-case response size for a patient with a very long history.
+const LIST_CAP = 200;
+
 /**
  * Patient view of prescriptions:
  *
@@ -72,6 +77,7 @@ const accountPrescriptionsRoute: FastifyPluginAsync = async (app) => {
           },
         },
         orderBy: { createdAt: "desc" },
+        take: LIST_CAP,
         select: {
           id: true,
           drugName: true,
@@ -117,6 +123,7 @@ const accountPrescriptionsRoute: FastifyPluginAsync = async (app) => {
           ],
         },
         orderBy: { createdAt: "desc" },
+        take: LIST_CAP,
         select: {
           id: true,
           consultationType: true,

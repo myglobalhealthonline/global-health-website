@@ -34,6 +34,22 @@ const postBodySchema = z
   })
   .strict();
 
+// ponytail: hard cap on thread length — bounds worst case for a
+// long-running appointment, no "load older" UI exists for this yet.
+const LIST_CAP = 500;
+
+/** Latest `LIST_CAP` messages, restored to chronological (oldest-first)
+ *  display order after the DESC-capped fetch. */
+async function findRecentMessages(appointmentId: string) {
+  const rows = await prisma.internalMessage.findMany({
+    where: { appointmentId },
+    orderBy: { createdAt: "desc" },
+    take: LIST_CAP,
+    include: { author: { select: { fullName: true } } },
+  });
+  return rows.reverse();
+}
+
 function serializeMessage(row: {
   id: string;
   authorRole: "DOCTOR" | "ADMIN";
@@ -65,11 +81,7 @@ const internalMessagesRoute: FastifyPluginAsync = async (app) => {
         if (!appt) {
           return reply.status(404).send(errorResponse("Appointment not found"));
         }
-        const rows = await prisma.internalMessage.findMany({
-          where: { appointmentId: appt.id },
-          orderBy: { createdAt: "asc" },
-          include: { author: { select: { fullName: true } } },
-        });
+        const rows = await findRecentMessages(appt.id);
         return okResponse({ items: rows.map(serializeMessage) });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
@@ -154,11 +166,7 @@ const internalMessagesRoute: FastifyPluginAsync = async (app) => {
         if (!appt) {
           return reply.status(404).send(errorResponse("Appointment not found"));
         }
-        const rows = await prisma.internalMessage.findMany({
-          where: { appointmentId: appt.id },
-          orderBy: { createdAt: "asc" },
-          include: { author: { select: { fullName: true } } },
-        });
+        const rows = await findRecentMessages(appt.id);
         return okResponse({ items: rows.map(serializeMessage) });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {

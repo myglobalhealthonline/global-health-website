@@ -14,8 +14,18 @@ const countryQuerySchema = z.object({
   locale: z.string().trim().min(1).max(8).optional(),
 });
 
+/** Same short public-cache window used across the other stable-content
+ *  public GETs (blog, doctors, countries, country-scoped routes). */
+function applyPublicCache(reply: { header: (k: string, v: string) => void }) {
+  reply.header(
+    "Cache-Control",
+    "public, max-age=60, s-maxage=60, stale-while-revalidate=300",
+  );
+}
+
 const healthTestsRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/health-tests", async (_, reply) => {
+    applyPublicCache(reply);
     try {
       const healthTests = await listHealthTests();
       return okResponse(healthTests);
@@ -29,6 +39,7 @@ const healthTestsRoute: FastifyPluginAsync = async (app) => {
   });
 
   app.get("/api/health-tests/:slug", async (request, reply) => {
+    applyPublicCache(reply);
     const params = slugParamsSchema.safeParse(request.params);
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid slug"));

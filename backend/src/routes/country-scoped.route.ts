@@ -104,6 +104,21 @@ function applyPublicCache(reply: { header: (k: string, v: string) => void }) {
   );
 }
 
+/**
+ * Cache hint for slot-availability responses specifically. Booked slots must
+ * not stay advertised as open for long — a short cap (worst case max-age +
+ * SWR ≈ 25s) is enough to absorb the request bursts a single patient
+ * navigating the booking flow generates, without the 5-minute stale window
+ * `applyPublicCache` allows for genuinely stable content (doctors, services,
+ * specialties...).
+ */
+function applyAvailabilityCache(reply: { header: (k: string, v: string) => void }) {
+  reply.header(
+    "Cache-Control",
+    "public, max-age=10, s-maxage=10, stale-while-revalidate=15",
+  );
+}
+
 const countryScopedRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/countries/:countryCode/doctors", async (request, reply) => {
     applyPublicCache(reply);
@@ -257,7 +272,7 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
   app.get(
     "/api/services/:countryCode/:serviceSlug/doctors/:doctorSlug/availability",
     async (request, reply) => {
-      applyPublicCache(reply);
+      applyAvailabilityCache(reply);
       const params = serviceAvailabilityParamsSchema.safeParse(request.params);
       if (!params.success) {
         return reply
@@ -387,7 +402,7 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
   app.get(
     "/api/services/:countryCode/:serviceSlug/aggregated-availability",
     async (request, reply) => {
-      applyPublicCache(reply);
+      applyAvailabilityCache(reply);
       const params = z
         .object({
           countryCode: z.string().trim().min(1).max(8),

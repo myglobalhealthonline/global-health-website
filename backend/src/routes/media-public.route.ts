@@ -48,7 +48,14 @@ const mediaPublicRoute: FastifyPluginAsync = async (app) => {
 
       const contentType = obj.ContentType ?? "application/octet-stream";
       reply.header("Content-Type", contentType);
-      reply.header("Cache-Control", "public, max-age=31536000, immutable");
+      // NOT content-hashed — these keys are stable per doctor/blog-post and
+      // get overwritten in place on re-upload (see doctors.service.ts
+      // syncProfileImageAsset), so `immutable, max-age=1yr` would keep
+      // serving a stale image for a year. Short + revalidatable instead.
+      reply.header(
+        "Cache-Control",
+        "public, max-age=60, s-maxage=60, stale-while-revalidate=300",
+      );
       return reply.send(stream);
     } catch (error: unknown) {
       if (error instanceof NoSuchKey || error instanceof MediaObjectNotFoundError) {

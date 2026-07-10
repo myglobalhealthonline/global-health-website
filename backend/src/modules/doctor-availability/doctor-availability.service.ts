@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { TtlCache } from "../../lib/ttl-cache.js";
 import {
   calendarDayNumber,
   eachClinicLocalDay,
@@ -260,8 +261,11 @@ export type PublicSlot = {
  * passing a fresh `new Date()` each call still hit within the window.
  */
 const SLOT_CACHE_TTL_MS = 45_000;
-type SlotCacheEntry = { expires: number; value: PublicSlot[] };
-const slotCache = new Map<string, SlotCacheEntry>();
+// ponytail: cap total cached ranges so a long-lived process can't grow this
+// forever as more doctors/services/date-buckets get queried — oldest entry
+// evicts first once the cap is hit (see TtlCache).
+const SLOT_CACHE_MAX_ENTRIES = 2000;
+const slotCache = new TtlCache<PublicSlot[]>(SLOT_CACHE_MAX_ENTRIES);
 
 function slotCacheKey(
   doctorId: string,
@@ -280,7 +284,7 @@ export async function listOpenSlotsForDoctor(
 ): Promise<PublicSlot[]> {
   const cacheKey = slotCacheKey(doctorId, null, fromUtc, toUtc);
   const cached = slotCache.get(cacheKey);
-  if (cached && cached.expires > Date.now()) return cached.value;
+  if (cached) return cached;
   try {
     await releaseExpiredHeldSlots(doctorId);
     await ensureSlotsForRange(doctorId, fromUtc, toUtc);
@@ -298,7 +302,7 @@ export async function listOpenSlotsForDoctor(
       startAt: r.startAt.toISOString(),
       endAt: r.endAt.toISOString(),
     }));
-    slotCache.set(cacheKey, { expires: Date.now() + SLOT_CACHE_TTL_MS, value: result });
+    slotCache.set(cacheKey, result, SLOT_CACHE_TTL_MS);
     return result;
   } catch (error) {
     throw normalizeDbError(error, "Doctor availability is unavailable");
@@ -476,7 +480,7 @@ export async function listOpenSlotsForDoctorAndService(
 ): Promise<PublicSlot[]> {
   const cacheKey = slotCacheKey(doctorId, serviceDurationMinutes, fromUtc, toUtc);
   const cached = slotCache.get(cacheKey);
-  if (cached && cached.expires > Date.now()) return cached.value;
+  if (cached) return cached;
   try {
     await releaseExpiredHeldSlots(doctorId);
     await ensureSlotsForRange(doctorId, fromUtc, toUtc);
@@ -499,7 +503,7 @@ export async function listOpenSlotsForDoctorAndService(
           startAt: r.startAt.toISOString(),
           endAt: r.endAt.toISOString(),
         }));
-      slotCache.set(cacheKey, { expires: Date.now() + SLOT_CACHE_TTL_MS, value: base });
+      slotCache.set(cacheKey, base, SLOT_CACHE_TTL_MS);
       return base;
     }
 
@@ -533,7 +537,7 @@ export async function listOpenSlotsForDoctorAndService(
         });
       }
     }
-    slotCache.set(cacheKey, { expires: Date.now() + SLOT_CACHE_TTL_MS, value: out });
+    slotCache.set(cacheKey, out, SLOT_CACHE_TTL_MS);
     return out;
   } catch (error) {
     throw normalizeDbError(error, "Doctor availability is unavailable");

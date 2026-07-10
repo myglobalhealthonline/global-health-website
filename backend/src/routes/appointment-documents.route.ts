@@ -52,6 +52,10 @@ const ALLOWED_MIME = new Set([
 
 const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
 
+// ponytail: hard cap on the per-appointment document list — bounds worst
+// case, no "load older" UI exists for this yet.
+const LIST_CAP = 200;
+
 function buildDownloadPath(documentId: string): string {
   return `/api/doctor/documents/${encodeURIComponent(documentId)}/download`;
 }
@@ -91,6 +95,7 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
         const rows = await prisma.appointmentDocument.findMany({
           where: { appointmentId: appt.id },
           orderBy: { createdAt: "desc" },
+          take: LIST_CAP,
         });
         return okResponse({
           items: rows.map((r) => ({

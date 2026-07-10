@@ -470,6 +470,12 @@ const publicBlogSelect = {
   reviewerDoctor: { select: blogDoctorSelect },
 } satisfies Prisma.BlogPostSelect;
 
+// ponytail: hard cap, not full page/pageSize — the public blog index
+// currently renders the whole list client-side with no "load older" UI.
+// Newest-first order means the cap only ever trims the tail of old
+// content, never today's posts.
+const PUBLIC_BLOG_LIST_CAP = 300;
+
 export async function getPublicBlogPosts(locale?: LocaleCode): Promise<PublicBlogPost[]> {
   try {
     const rows = await prisma.blogPost.findMany({
@@ -479,6 +485,7 @@ export async function getPublicBlogPosts(locale?: LocaleCode): Promise<PublicBlo
         ...(locale ? { locale } : {}),
       },
       orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+      take: PUBLIC_BLOG_LIST_CAP,
       select: publicBlogSelect,
     });
     return rows.map(toPublicBlogPost);

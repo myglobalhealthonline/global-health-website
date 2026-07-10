@@ -62,6 +62,9 @@ const publicGpBookingRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Querystring: { country?: string; language?: string; days?: string } }>(
     "/api/public/gp-availability",
     async (request, reply) => {
+      // Booked slots must never be advertised as open by a stale cache —
+      // explicit no-store rather than relying on the absence of a header.
+      reply.header("Cache-Control", "no-store");
       const parsed = availabilityQuerySchema.safeParse(request.query);
       if (!parsed.success) {
         return reply.status(400).send(errorResponse("Invalid query", parsed.error.flatten()));

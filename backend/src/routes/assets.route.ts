@@ -5,6 +5,10 @@ import { errorResponse, okResponse } from "../utils/response.js";
 
 const assetsRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/assets", async (_, reply) => {
+    reply.header(
+      "Cache-Control",
+      "public, max-age=60, s-maxage=60, stale-while-revalidate=300",
+    );
     try {
       const assets = await listAssets();
       return okResponse(assets);

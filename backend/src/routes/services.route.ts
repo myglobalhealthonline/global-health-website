@@ -30,8 +30,18 @@ const countryQuerySchema = z.object({
     .catch(undefined),
 });
 
+/** Same short public-cache window used across the other stable-content
+ *  public GETs (blog, doctors, countries, country-scoped routes). */
+function applyPublicCache(reply: { header: (k: string, v: string) => void }) {
+  reply.header(
+    "Cache-Control",
+    "public, max-age=60, s-maxage=60, stale-while-revalidate=300",
+  );
+}
+
 const servicesRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/specialties", async (_, reply) => {
+    applyPublicCache(reply);
     try {
       const specialties = await listSpecialties();
       return okResponse(specialties);
@@ -46,6 +56,7 @@ const servicesRoute: FastifyPluginAsync = async (app) => {
   });
 
   app.get("/api/services", async (_, reply) => {
+    applyPublicCache(reply);
     try {
       const services = await listServices();
       return okResponse(services);
@@ -59,6 +70,12 @@ const servicesRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
+  // No shared Cache-Control here (unlike the other public GETs in this
+  // file): the response is auth-dependent (`allowCorporate`) — a
+  // CORPORATE_ONLY/CORPORATE_REQUEST_ONLY/ADMIN_ONLY service resolves
+  // differently for a signed-in corporate member vs. everyone else at the
+  // exact same URL, so a shared/public cache would leak one user's response
+  // to another.
   app.get("/api/services/:slug", async (request, reply) => {
     const params = slugParamsSchema.safeParse(request.params);
     if (!params.success) {
@@ -104,6 +121,7 @@ const servicesRoute: FastifyPluginAsync = async (app) => {
   });
 
   app.get("/api/services/:slug/faqs", async (request, reply) => {
+    applyPublicCache(reply);
     const params = slugParamsSchema.safeParse(request.params);
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid slug"));

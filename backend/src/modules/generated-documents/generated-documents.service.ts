@@ -62,12 +62,20 @@ async function withGenerateLock<T>(
     release = resolve;
   });
   const prev = slot.tail;
-  slot.tail = prev.then(() => gate, () => gate);
+  const myTail = prev.then(() => gate, () => gate);
+  slot.tail = myTail;
   await prev;
   try {
     return await fn();
   } finally {
     release();
+    // ponytail: drop the mutex entry once the queue drains so a long-lived
+    // process doesn't accumulate one Map key per appointment+doc-type
+    // forever. Only safe to delete when nobody queued behind us — if
+    // `slot.tail` still points at our own chained promise, we're last.
+    if (generateMutexByKey.get(key)?.tail === myTail) {
+      generateMutexByKey.delete(key);
+    }
   }
 }
 

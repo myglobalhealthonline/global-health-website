@@ -82,6 +82,21 @@ const nextConfig: NextConfig = {
         source: "/:all*(svg|jpg|jpeg|png|webp|avif|gif|ico|woff2)",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
+      // Overrides the rule above for the media proxy specifically: object
+      // keys here (e.g. `doctor-<id>-profile`) are stable but NOT
+      // content-hashed — admin re-uploads overwrite the same key/URL, so
+      // `immutable, max-age=1yr` would keep serving the old image for a
+      // year. Later entries win on a matching header key, so this must
+      // stay after the extension-based rule.
+      {
+        source: "/api/media/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=60, s-maxage=60, stale-while-revalidate=300",
+          },
+        ],
+      },
     ];
   },
   async rewrites() {

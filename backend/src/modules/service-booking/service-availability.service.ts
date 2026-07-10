@@ -1,5 +1,6 @@
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { TtlCache } from "../../lib/ttl-cache.js";
 import { listOpenSlotsForDoctorAndService } from "../doctor-availability/doctor-availability.service.js";
 import { computeSlotPrice, getServicePeakConfig } from "../pricing/peak-pricing.service.js";
 
@@ -42,8 +43,10 @@ export type ServiceAggregatedAvailability = {
   doctorsByStart: Record<string, ServiceAggDoctorRef[]>;
 };
 
-type CacheEntry = { expires: number; value: ServiceAggregatedAvailability };
-const cache = new Map<string, CacheEntry>();
+// ponytail: keyed by country:service:days — bounded by real catalog size,
+// cap just guards against unbounded growth in a long-lived process.
+const CACHE_MAX_ENTRIES = 2000;
+const cache = new TtlCache<ServiceAggregatedAvailability>(CACHE_MAX_ENTRIES);
 
 async function resolveCountryTimeZone(countryCode: string): Promise<string> {
   try {
@@ -66,7 +69,7 @@ export async function getServiceAggregatedAvailability(
   const clampedDays = Math.min(30, Math.max(1, days));
   const cacheKey = `${code}:${serviceSlug}:${clampedDays}`;
   const cached = cache.get(cacheKey);
-  if (cached && cached.expires > Date.now()) return cached.value;
+  if (cached) return cached;
 
   try {
     const clinicTimezone = await resolveCountryTimeZone(code);
@@ -88,7 +91,7 @@ export async function getServiceAggregatedAvailability(
       },
     });
     if (!service) {
-      cache.set(cacheKey, { expires: Date.now() + CACHE_TTL_MS, value: empty });
+      cache.set(cacheKey, empty, CACHE_TTL_MS);
       return empty;
     }
 
@@ -113,7 +116,7 @@ export async function getServiceAggregatedAvailability(
       doctorsByStart: {},
     };
     if (doctors.length === 0) {
-      cache.set(cacheKey, { expires: Date.now() + CACHE_TTL_MS, value: found });
+      cache.set(cacheKey, found, CACHE_TTL_MS);
       return found;
     }
 
@@ -174,7 +177,7 @@ export async function getServiceAggregatedAvailability(
       a.startAt < b.startAt ? -1 : a.startAt > b.startAt ? 1 : 0,
     );
     found.doctorsByStart = doctorsByStart;
-    cache.set(cacheKey, { expires: Date.now() + CACHE_TTL_MS, value: found });
+    cache.set(cacheKey, found, CACHE_TTL_MS);
     return found;
   } catch (error) {
     throw normalizeDbError(error, "Service availability is unavailable");

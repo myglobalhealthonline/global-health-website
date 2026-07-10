@@ -300,11 +300,18 @@ function doctorProfileImageKey(doctorId: string): string {
   return `doctor-${doctorId}-profile`;
 }
 
+// ponytail: hard cap, not full page/pageSize — the public doctor listings
+// currently render the whole roster with no "load older" UI, and the
+// roster is admin-curated (grows slowly), so a generous cap just bounds
+// worst-case response size without changing today's behavior.
+const PUBLIC_DOCTORS_LIST_CAP = 300;
+
 export async function listDoctors(locale?: LocaleCode) {
   try {
     const rows = await prisma.doctor.findMany({
       where: { active: true },
       orderBy: [{ country: { name: "asc" } }, { fullName: "asc" }],
+      take: PUBLIC_DOCTORS_LIST_CAP,
       include: {
         country: true,
         specialties: {
@@ -354,6 +361,7 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
         ],
       },
       orderBy: [{ fullName: "asc" }],
+      take: PUBLIC_DOCTORS_LIST_CAP,
       include: {
         country: { select: { id: true, code: true, slug: true, name: true, defaultLocale: true } },
         specialties: { include: { specialty: true } },

@@ -1,5 +1,6 @@
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { TtlCache } from "../../lib/ttl-cache.js";
 import { listOpenSlotsForDoctorAndService } from "../doctor-availability/doctor-availability.service.js";
 import { computeSlotPrice, getServicePeakConfig } from "../pricing/peak-pricing.service.js";
 import {
@@ -38,11 +39,13 @@ const START_BUFFER_MS = HOUR_MS;
  * without risking stale bookings — the cart-add still atomically re-claims the
  * slot, so a slot booked within the TTL just 409s and the patient retries.
  */
-type CacheEntry<T> = { expires: number; value: T };
 const AVAILABILITY_TTL_MS = 45_000;
 const LANGUAGES_TTL_MS = 5 * 60_000;
-const availabilityCache = new Map<string, CacheEntry<GpAvailabilityResult>>();
-const languagesCache = new Map<string, CacheEntry<{ configured: boolean; languages: string[] }>>();
+// ponytail: keyed by country[:language], so real growth is tiny — the cap
+// just guards against unbounded growth in a long-lived process.
+const CACHE_MAX_ENTRIES = 1000;
+const availabilityCache = new TtlCache<GpAvailabilityResult>(CACHE_MAX_ENTRIES);
+const languagesCache = new TtlCache<{ configured: boolean; languages: string[] }>(CACHE_MAX_ENTRIES);
 
 export type GpAvailabilitySlot = {
   /** ISO start (UTC). Distinct across the eligible doctor pool. */
@@ -126,7 +129,7 @@ async function resolveCountryTimeZone(countryCode: string): Promise<string> {
  * peak-pricing config exactly as the cart will charge.
  */
 function cacheAvailability(key: string, value: GpAvailabilityResult): GpAvailabilityResult {
-  availabilityCache.set(key, { expires: Date.now() + AVAILABILITY_TTL_MS, value });
+  availabilityCache.set(key, value, AVAILABILITY_TTL_MS);
   return value;
 }
 
@@ -139,7 +142,7 @@ export async function getGpAvailability(args: {
   const days = Math.min(30, Math.max(1, args.days));
   const cacheKey = `${countryCode.toLowerCase()}:${languageCode.toLowerCase()}:${days}`;
   const cached = availabilityCache.get(cacheKey);
-  if (cached && cached.expires > Date.now()) return cached.value;
+  if (cached) return cached;
   try {
     const clinicTimezone = await resolveCountryTimeZone(countryCode);
     const service = await resolveGpSameDayService(countryCode);
@@ -218,9 +221,9 @@ export async function getGpLanguages(countryCode: string): Promise<{
 }> {
   const cacheKey = countryCode.toLowerCase();
   const cached = languagesCache.get(cacheKey);
-  if (cached && cached.expires > Date.now()) return cached.value;
+  if (cached) return cached;
   const store = (value: { configured: boolean; languages: string[] }) => {
-    languagesCache.set(cacheKey, { expires: Date.now() + LANGUAGES_TTL_MS, value });
+    languagesCache.set(cacheKey, value, LANGUAGES_TTL_MS);
     return value;
   };
   try {

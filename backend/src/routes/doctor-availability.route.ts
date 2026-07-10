@@ -59,6 +59,9 @@ const doctorAvailabilityRoute: FastifyPluginAsync = async (app) => {
     Params: { countryCode: string; slug: string };
     Querystring: { days?: string };
   }>("/api/doctors/:countryCode/:slug/availability", async (request, reply) => {
+    // Booked slots must never be advertised as open by a stale cache —
+    // explicit no-store rather than relying on the absence of a header.
+    reply.header("Cache-Control", "no-store");
     const countryParse = countryCodeSchema.safeParse(request.params.countryCode);
     if (!countryParse.success) {
       return reply.status(400).send(errorResponse("Invalid country code"));
