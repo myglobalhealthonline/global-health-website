@@ -20,6 +20,7 @@ import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { notifyAdmins } from "../modules/notifications/notify.service.js";
 import { verifySniffedMime } from "../utils/sniff-mime.js";
+import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 
 /**
  * Clinical document attachments per appointment.
@@ -73,6 +74,19 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
         });
         if (!appt) {
           return reply.status(404).send(errorResponse("Appointment not found"));
+        }
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            appt.id,
+            { resourceType: "MEDICAL_DOC", accessAction: "VIEWED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          }
+          throw guardError;
         }
         const rows = await prisma.appointmentDocument.findMany({
           where: { appointmentId: appt.id },
@@ -238,6 +252,7 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
             mimetype: true,
             label: true,
             storageKey: true,
+            appointmentId: true,
           },
         });
         if (!doc) {
@@ -248,6 +263,19 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
         // workflows.
         if (auth.role === "DOCTOR" && doc.doctorId !== auth.doctorId) {
           return reply.status(403).send(errorResponse("Forbidden"));
+        }
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            doc.appointmentId,
+            { resourceType: "MEDICAL_DOC", accessAction: "DOWNLOADED", resourceId: doc.id },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          }
+          throw guardError;
         }
         const obj = await getObject(doc.storageKey);
         const stream = streamToNodeReadable(obj.Body);

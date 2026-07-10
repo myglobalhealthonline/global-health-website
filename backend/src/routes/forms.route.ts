@@ -9,6 +9,7 @@ import {
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { notifyAdmins } from "../modules/notifications/notify.service.js";
+import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 
 /**
  * Forms management — reusable templates the doctor builds for intake /
@@ -255,6 +256,19 @@ const formsRoute: FastifyPluginAsync = async (app) => {
         ) {
           return reply.status(404).send(errorResponse("Submission not found"));
         }
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            sub.appointment.id,
+            { resourceType: "MEDICAL_DOC", accessAction: "VIEWED", resourceId: sub.id },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          }
+          throw guardError;
+        }
         return okResponse({
           submission: {
             id: sub.id,
@@ -297,6 +311,19 @@ const formsRoute: FastifyPluginAsync = async (app) => {
         });
         if (!appt) {
           return reply.status(404).send(errorResponse("Appointment not found"));
+        }
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            appt.id,
+            { resourceType: "MEDICAL_DOC", accessAction: "VIEWED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          }
+          throw guardError;
         }
         const subs = await prisma.formSubmission.findMany({
           where: { appointmentId: appt.id },

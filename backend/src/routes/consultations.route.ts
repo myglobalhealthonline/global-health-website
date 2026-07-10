@@ -9,6 +9,7 @@ import {
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { notifyAdmins } from "../modules/notifications/notify.service.js";
+import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 
 /**
  * Clinical consultation endpoints, doctor-only.
@@ -140,6 +141,19 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
         );
         if (!appt) {
           return reply.status(404).send(errorResponse("Appointment not found"));
+        }
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            appt.id,
+            { resourceType: "CONSULT_NOTE", accessAction: "VIEWED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          }
+          throw guardError;
         }
         const [consultation, clinicTimezone, patientProfile] = await Promise.all([
           prisma.consultation.findUnique({ where: { appointmentId: appt.id } }),

@@ -4,6 +4,7 @@ import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { ensureConsultationDraft } from "../modules/consultations/ensure-consultation-draft.js";
 import { verifyDoctorAccess, verifyClinicalReadAccess } from "../utils/doctor-auth.js";
+import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 /**
@@ -72,6 +73,20 @@ const prescriptionsRoute: FastifyPluginAsync = async (app) => {
         });
         if (!appt) {
           return reply.status(404).send(errorResponse("Appointment not found"));
+        }
+
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            appt.id,
+            { resourceType: "PRESCRIPTION", accessAction: "VIEWED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          }
+          throw guardError;
         }
 
         const consultation = await prisma.consultation.findUnique({

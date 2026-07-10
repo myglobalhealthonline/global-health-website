@@ -2,6 +2,7 @@ import type { FastifyPluginAsync } from "fastify";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyClinicalReadAccess } from "../utils/doctor-auth.js";
+import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 /**
@@ -62,6 +63,19 @@ const doctorInvoicesRoute: FastifyPluginAsync = async (app) => {
         });
         if (!appt) {
           return reply.status(404).send(errorResponse("Appointment not found"));
+        }
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            appt.id,
+            { resourceType: "INSURANCE_DOC", accessAction: "VIEWED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          }
+          throw guardError;
         }
         const lines = (appt.consultation?.servicesUsed ?? []).map((r) => ({
           id: r.id,

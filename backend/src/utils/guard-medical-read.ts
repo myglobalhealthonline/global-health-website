@@ -120,11 +120,12 @@ export async function guardMedicalRead(
     select: { globalHealthNumber: true, countryFolderCode: true },
   });
 
-  const forwarded = request.headers["x-forwarded-for"];
-  const ipAddress =
-    (typeof forwarded === "string" ? forwarded.split(",")[0]?.trim() : null) ??
-    request.ip ??
-    null;
+  // S-015: use Fastify's trustProxy-normalized request.ip rather than
+  // manually parsing the raw X-Forwarded-For header — a direct/spoofed
+  // client can set that header to any value, poisoning audit attribution.
+  // request.ip is derived from the single trusted Railway proxy hop
+  // (see app.ts trustProxy config), matching audit.service.ts's approach.
+  const ipAddress = request.ip ?? null;
   const userAgent = request.headers["user-agent"] ?? null;
 
   return assertMedicalAccess({
@@ -154,5 +155,45 @@ export async function guardMedicalRead(
     reason: resolvePhiReason(request, args.reason),
     ipAddress,
     userAgent,
+  });
+}
+
+/**
+ * S-005: same as `guardMedicalRead`, but for the many clinical routes keyed
+ * by appointmentId rather than patientProfileId directly (prescriptions,
+ * consultations, exam results, forms, doctor invoices, appointment
+ * documents, consultation services). Resolves the PatientProfile behind the
+ * appointment (by userId, falling back to the appointment's email for guest
+ * bookings that were never claimed) and runs the central guard.
+ *
+ * Returns `null` when the appointment has no matching PatientProfile yet
+ * (e.g. a guest booking with no profile row) — callers should treat that as
+ * "nothing to authorize against" and proceed, matching the existing
+ * `if (profile) { guard }` pattern used elsewhere.
+ */
+export async function guardMedicalReadForAppointment(
+  request: FastifyRequest,
+  actor: GuardActor,
+  appointmentId: string,
+  args: Omit<GuardMedicalReadArgs, "patientProfileId" | "relatedAppointmentId">,
+): Promise<AccessResult | null> {
+  const appt = await prisma.appointment.findUnique({
+    where: { id: appointmentId },
+    select: { userId: true, email: true },
+  });
+  if (!appt) return null;
+
+  const profile = appt.userId
+    ? await prisma.patientProfile.findUnique({ where: { userId: appt.userId }, select: { id: true } })
+    : await prisma.patientProfile.findUnique({
+        where: { email: appt.email.toLowerCase() },
+        select: { id: true },
+      });
+  if (!profile) return null;
+
+  return guardMedicalRead(request, actor, {
+    ...args,
+    patientProfileId: profile.id,
+    relatedAppointmentId: appointmentId,
   });
 }

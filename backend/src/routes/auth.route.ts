@@ -53,15 +53,10 @@ const authRoute: FastifyPluginAsync = async (app) => {
       const token = signAuthToken({ sub: user.id, role: user.role, email: user.email, tokenVersion: 0 });
       reply.setCookie(env.AUTH_COOKIE_NAME, token, authCookieOptions());
 
-      // Claim any historic guest bookings made with the same email.
-      const claimed = await claimGuestAppointmentsForUser(user.id, user.email);
-      if (claimed > 0) {
-        app.log.info({ userId: user.id, claimed }, "Linked guest appointments on register");
-      }
-      const claimedOrders = await claimGuestOrdersForUser(user.id, user.email);
-      if (claimedOrders > 0) {
-        app.log.info({ userId: user.id, claimed: claimedOrders }, "Linked guest orders on register");
-      }
+      // Guest appointments/orders matching this email are claimed only after
+      // email ownership is proven — see consumeEmailVerificationToken (S-002).
+      // Claiming here, before verification, would let an attacker register a
+      // victim's email and immediately inherit the victim's bookings/orders.
 
       // Fire-and-forget verification email. Failures don't block signup —
       // user can request a new verification link later.
@@ -123,14 +118,20 @@ const authRoute: FastifyPluginAsync = async (app) => {
       reply.setCookie(env.AUTH_COOKIE_NAME, token, authCookieOptions());
 
       // First login after a guest booking should attach the historic
-      // appointment(s) to this account.
-      const claimed = await claimGuestAppointmentsForUser(user.id, user.email);
-      if (claimed > 0) {
-        app.log.info({ userId: user.id, claimed }, "Linked guest appointments on login");
-      }
-      const claimedOrders = await claimGuestOrdersForUser(user.id, user.email);
-      if (claimedOrders > 0) {
-        app.log.info({ userId: user.id, claimed: claimedOrders }, "Linked guest orders on login");
+      // appointment(s) to this account — but only once email ownership is
+      // proven. An unverified account (e.g. registered with someone else's
+      // email) must never claim records on login either, or S-002's fix at
+      // registration is trivially bypassed by logging in with the
+      // attacker's own known password.
+      if (user.emailVerifiedAt) {
+        const claimed = await claimGuestAppointmentsForUser(user.id, user.email);
+        if (claimed > 0) {
+          app.log.info({ userId: user.id, claimed }, "Linked guest appointments on login");
+        }
+        const claimedOrders = await claimGuestOrdersForUser(user.id, user.email);
+        if (claimedOrders > 0) {
+          app.log.info({ userId: user.id, claimed: claimedOrders }, "Linked guest orders on login");
+        }
       }
 
       recordAudit({
@@ -362,9 +363,15 @@ const authRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid verify-email payload", body.error.flatten()));
     }
     try {
-      const ok = await consumeEmailVerificationToken(body.data.token);
-      if (!ok) {
+      const result = await consumeEmailVerificationToken(body.data.token);
+      if (!result) {
         return reply.status(400).send(errorResponse("Verification link is invalid or expired"));
+      }
+      if (result.claimedAppointments > 0 || result.claimedOrders > 0) {
+        app.log.info(
+          { userId: result.userId, claimedAppointments: result.claimedAppointments, claimedOrders: result.claimedOrders },
+          "Linked guest appointments/orders on verified email",
+        );
       }
       return okResponse({ verified: true }, "Email verified");
     } catch (error) {

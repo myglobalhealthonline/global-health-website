@@ -8,6 +8,7 @@ import {
 } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
+import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 
 /**
  * Per-consultation services-rendered line items.
@@ -55,10 +56,23 @@ const consultationServicesRoute: FastifyPluginAsync = async (app) => {
               ? { doctorId: auth.doctorId }
               : {}),
           },
-          select: { id: true, status: true },
+          select: { id: true, status: true, appointmentId: true },
         });
         if (!consult) {
           return reply.status(404).send(errorResponse("Consultation not found"));
+        }
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            consult.appointmentId,
+            { resourceType: "CONSULT_NOTE", accessAction: "VIEWED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          }
+          throw guardError;
         }
         const items = await prisma.consultationService.findMany({
           where: { consultationId: consult.id },

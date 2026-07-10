@@ -5,16 +5,29 @@ import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
 import { buildInvoicePdfData, renderInvoicePdfBuffer } from "./invoice-pdf.js";
 
-const MAKE_INVOICE_WEBHOOK_URL =
-  process.env.MAKE_INVOICE_WEBHOOK_URL ??
-  "https://hook.eu1.make.com/vvts0d52468n9x2p3qgv2hgdi31dr6it";
+const MAKE_INVOICE_WEBHOOK_URL = process.env.MAKE_INVOICE_WEBHOOK_URL;
+const MAKE_INVOICE_WEBHOOK_ALLOWED_HOST = "hook.eu1.make.com";
 
 async function sendPaymentWebhookToMake(
   orderId: string,
   invoiceId: string,
   invoiceNumber: string,
-  _log: PaymentLog,
+  log: PaymentLog,
 ): Promise<void> {
+  if (!MAKE_INVOICE_WEBHOOK_URL) return;
+
+  let webhookHost: string;
+  try {
+    webhookHost = new URL(MAKE_INVOICE_WEBHOOK_URL).hostname;
+  } catch {
+    log.error({ orderId }, "MAKE_INVOICE_WEBHOOK_URL is not a valid URL; skipping webhook");
+    return;
+  }
+  if (webhookHost !== MAKE_INVOICE_WEBHOOK_ALLOWED_HOST) {
+    log.error({ orderId, webhookHost }, "MAKE_INVOICE_WEBHOOK_URL host is not allowlisted; skipping webhook");
+    return;
+  }
+
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     select: {
@@ -59,6 +72,7 @@ async function sendPaymentWebhookToMake(
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(8000),
   });
 
   if (!res.ok) {

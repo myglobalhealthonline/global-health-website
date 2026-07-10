@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { createHash, randomBytes } from "node:crypto";
-import { Prisma, UserRole, VerificationStatus, type User } from "@prisma/client";
+import { UserRole, VerificationStatus, type User } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import type { LoginBody, RegisterBody } from "../../validations/auth.schema.js";
@@ -514,32 +514,36 @@ export async function consumePasswordResetToken(
 ): Promise<ConsumeResetResult> {
   const tokenHash = hashToken(token);
   try {
+    // Atomic conditional claim (S-016): only one concurrent request can
+    // match usedAt: null, closing the read-then-write race the previous
+    // findUnique-then-update had.
+    const claim = await prisma.passwordResetToken.updateMany({
+      where: { tokenHash, usedAt: null, expiresAt: { gt: new Date() } },
+      data: { usedAt: new Date() },
+    });
+    if (claim.count === 0) return { ok: false };
+
     const row = await prisma.passwordResetToken.findUnique({ where: { tokenHash } });
     if (!row) return { ok: false };
-    if (row.usedAt) return { ok: false };
-    if (row.expiresAt.getTime() < Date.now()) return { ok: false };
 
     const passwordHash = await bcrypt.hash(newPassword, 12);
     // Invite tokens additionally flip emailVerifiedAt — the doctor just
     // proved control of the inbox by clicking the link, so we don't
     // need a separate verification step. Regular forgot-password
     // tokens leave verification state alone.
-    const updates: Prisma.PrismaPromise<unknown>[] = [
-      prisma.user.update({
-        where: { id: row.userId },
-        // Resetting the password via the email token always satisfies
-        // the must-change gate (the patient just proved control of
-        // the inbox AND chose their own password).
-        data: row.isInvite
-          ? { passwordHash, emailVerifiedAt: new Date(), mustChangePassword: false }
-          : { passwordHash, mustChangePassword: false },
-      }),
-      prisma.passwordResetToken.update({
-        where: { tokenHash },
-        data: { usedAt: new Date() },
-      }),
-    ];
-    await prisma.$transaction(updates);
+    //
+    // tokenVersion is bumped on every reset (S-004/S-016) so any cookie
+    // issued before the reset is rejected by requireAuth immediately,
+    // instead of remaining valid until it naturally expires.
+    await prisma.user.update({
+      where: { id: row.userId },
+      // Resetting the password via the email token always satisfies
+      // the must-change gate (the patient just proved control of
+      // the inbox AND chose their own password).
+      data: row.isInvite
+        ? { passwordHash, emailVerifiedAt: new Date(), mustChangePassword: false, tokenVersion: { increment: 1 } }
+        : { passwordHash, mustChangePassword: false, tokenVersion: { increment: 1 } },
+    });
     return { ok: true, userId: row.userId, isInvite: row.isInvite };
   } catch (error) {
     throw normalizeDbError(error, "Could not reset password");
@@ -561,26 +565,41 @@ export async function issueEmailVerificationToken(userId: string): Promise<strin
   return token;
 }
 
-/** Validate + consume an email-verification token; sets emailVerifiedAt. */
-export async function consumeEmailVerificationToken(token: string): Promise<boolean> {
+/**
+ * Validate + consume an email-verification token; sets emailVerifiedAt and
+ * claims any guest appointments/orders placed with this email BEFORE the
+ * account existed. Claiming only happens here — on registration itself the
+ * email is not yet proven owned by the caller, so no historical record may
+ * be attached or exposed until verification succeeds (see S-002).
+ *
+ * Token consumption is an atomic conditional `updateMany` (usedAt: null)
+ * rather than read-then-write, so two concurrent requests with the same
+ * token can't both pass the "not yet used" check (S-016).
+ */
+export async function consumeEmailVerificationToken(
+  token: string,
+): Promise<{ userId: string; email: string; claimedAppointments: number; claimedOrders: number } | null> {
   const tokenHash = hashToken(token);
   try {
-    const row = await prisma.emailVerificationToken.findUnique({ where: { tokenHash } });
-    if (!row) return false;
-    if (row.usedAt) return false;
-    if (row.expiresAt.getTime() < Date.now()) return false;
+    const claim = await prisma.emailVerificationToken.updateMany({
+      where: { tokenHash, usedAt: null, expiresAt: { gt: new Date() } },
+      data: { usedAt: new Date() },
+    });
+    if (claim.count === 0) return null;
 
-    await prisma.$transaction([
-      prisma.user.update({
-        where: { id: row.userId },
-        data: { emailVerifiedAt: new Date() },
-      }),
-      prisma.emailVerificationToken.update({
-        where: { tokenHash },
-        data: { usedAt: new Date() },
-      }),
-    ]);
-    return true;
+    const row = await prisma.emailVerificationToken.findUnique({ where: { tokenHash } });
+    if (!row) return null;
+
+    const user = await prisma.user.update({
+      where: { id: row.userId },
+      data: { emailVerifiedAt: new Date() },
+      select: { id: true, email: true },
+    });
+
+    const claimedAppointments = await claimGuestAppointmentsForUser(user.id, user.email);
+    const claimedOrders = await claimGuestOrdersForUser(user.id, user.email);
+
+    return { userId: user.id, email: user.email, claimedAppointments, claimedOrders };
   } catch (error) {
     throw normalizeDbError(error, "Could not verify email");
   }
