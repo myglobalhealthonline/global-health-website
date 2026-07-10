@@ -124,13 +124,12 @@ export default async function HealthTestDetailPage({
 
       {/* ── Hero — full-viewport 50/50 split: image left, content + product card right ── */}
       <section
-        className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
-        style={{ background: "#031F18", height: "calc(100svh - var(--header-height))", minHeight: 620 }}
+        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-visible lg:overflow-hidden"
       >
-        <div className="grid h-full lg:grid-cols-2">
+        <div className="grid h-auto grid-rows-[240px_auto] lg:h-full lg:grid-cols-2 lg:grid-rows-1">
 
           {/* ── LEFT — full-bleed test image ──────────────────────────── */}
-          <div className="relative h-full overflow-hidden">
+          <div className="relative h-full min-h-0 overflow-hidden">
             {detail.imageSrc ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -188,8 +187,7 @@ export default async function HealthTestDetailPage({
 
           {/* ── RIGHT — content + product card ──────────────────────── */}
           <div
-            className="relative flex h-full flex-col justify-center overflow-y-auto px-8 py-6 md:px-12 lg:px-14 lg:py-8"
-            style={{ background: "#031F18" }}
+            className="gh-inline-panel-base relative flex h-auto min-h-0 flex-col justify-center overflow-visible px-8 py-6 md:px-12 lg:h-full lg:overflow-y-auto lg:px-14 lg:py-8"
           >
             {/* 1 — gradient depth */}
             <div

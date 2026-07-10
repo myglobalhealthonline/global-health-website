@@ -25,6 +25,7 @@
  */
 
 import Link from "next/link";
+import Image from "next/image";
 import type { SiteNavigationData } from "@/data/navigation";
 import { type CountryCode, type CountryConfig } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
@@ -210,11 +211,17 @@ export function SiteHeader({
         className="gh-header-brandLink inline-flex shrink-0 min-w-max items-center"
         aria-label={siteName || "Global Health"}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={brandLogo?.src ?? "/logos/global-health-dark.png"}
           alt={brandLogo?.alt ?? siteName ?? "Global Health"}
+          width={404}
+          height={272}
+          priority
           className="h-12 w-auto md:h-14"
+          unoptimized={
+            /^https?:\/\//i.test(brandLogo?.src ?? "") &&
+            !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(brandLogo?.src ?? "")
+          }
         />
       </Link>
 

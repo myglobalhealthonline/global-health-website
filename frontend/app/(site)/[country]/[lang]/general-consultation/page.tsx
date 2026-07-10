@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { ServiceHero } from "@/components/sections/ServiceHero";
@@ -273,13 +274,20 @@ export default async function CountryLangGeneralConsultationPage({
       {page?.heroImageSrc ? (
         <section className="gh2-section-forest gh-medical-pattern gh-medical-pattern-dark" style={{ padding: "clamp(64px,8vw,120px) 0" }}>
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 -mt-16 relative">
-            <div className="overflow-hidden rounded-[var(--radius-card)]" style={{ border: "1px solid rgba(255,255,255,0.09)" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+            <div
+              className="relative w-full overflow-hidden rounded-[var(--radius-card)]"
+              style={{ border: "1px solid rgba(255,255,255,0.09)", aspectRatio: "2.2 / 1", maxHeight: 480 }}
+            >
+              <Image
                 src={page.heroImageSrc}
                 alt={heroTitle}
-                className="block w-full"
-                style={{ maxHeight: 480, objectFit: "cover" }}
+                fill
+                sizes="(min-width:1024px) 1024px, 100vw"
+                className="object-cover"
+                unoptimized={
+                  /^https?:\/\//i.test(page.heroImageSrc) &&
+                  !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(page.heroImageSrc)
+                }
               />
             </div>
           </div>

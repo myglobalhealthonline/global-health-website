@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 
 type BlogCardProps = {
@@ -50,13 +51,18 @@ export function BlogCard({
           href={href}
           aria-hidden
           tabIndex={-1}
-          className="block shrink-0 sm:w-[42%] sm:max-w-[400px]"
+          className="relative block h-48 w-full shrink-0 overflow-hidden sm:h-full sm:min-h-[240px] sm:w-[42%] sm:max-w-[400px]"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={coverImageSrc}
             alt={coverImageAlt ?? ""}
-            className="block h-48 w-full object-cover sm:h-full sm:min-h-[240px]"
+            fill
+            sizes="(min-width:640px) 400px, 100vw"
+            className="object-cover"
+            unoptimized={
+              /^https?:\/\//i.test(coverImageSrc) &&
+              !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(coverImageSrc)
+            }
           />
         </Link>
       ) : null}

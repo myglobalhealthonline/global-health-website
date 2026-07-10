@@ -186,12 +186,12 @@ export default async function ServiceDetailPage({
 
       {/* ── Hero — full-viewport 50/50 split: image left, content + booking right ── */}
       <section
-        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
+        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-visible lg:overflow-hidden"
       >
-        <div className="grid h-full lg:grid-cols-2">
+        <div className="grid h-auto grid-rows-[240px_auto] lg:h-full lg:grid-cols-2 lg:grid-rows-1">
 
           {/* ── LEFT — full-bleed service image ────────────────────────────── */}
-          <div className="relative h-full overflow-hidden">
+          <div className="relative h-full min-h-0 overflow-hidden">
             {detail.imageSrc ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -223,7 +223,7 @@ export default async function ServiceDetailPage({
 
           {/* ── RIGHT — service content + booking panel ─────────────────────── */}
           <div
-            className="gh-inline-panel-base relative flex h-full flex-col justify-center overflow-y-auto px-8 py-6 md:px-12 lg:px-14 lg:py-8"
+            className="gh-inline-panel-base relative flex h-auto min-h-0 flex-col justify-center overflow-visible px-8 py-6 md:px-12 lg:h-full lg:overflow-y-auto lg:px-14 lg:py-8"
           >
             {/* Atmospheric layers */}
             {/* 1 — gradient depth */}

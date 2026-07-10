@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Clock, User, Calendar, BadgeCheck } from "lucide-react";
 import { SITE_NAME } from "@/lib/constants";
 import { getBlogPost, type BlogDoctor } from "@/lib/content/get-public-blog";
@@ -127,13 +128,23 @@ export default async function BlogPostPage({ params }: Props) {
       {post.coverImageSrc ? (
         <div style={{ background: "var(--color-background-page)" }}>
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10" style={{ paddingTop: "clamp(32px,4vw,56px)" }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={post.coverImageSrc}
-              alt={post.coverImageAlt ?? post.title}
-              className="block w-full rounded-[var(--radius-card)] object-cover"
-              style={{ maxHeight: 460 }}
-            />
+            <div
+              className="relative w-full overflow-hidden rounded-[var(--radius-card)]"
+              style={{ aspectRatio: "2.4 / 1", maxHeight: 460 }}
+            >
+              <Image
+                src={post.coverImageSrc}
+                alt={post.coverImageAlt ?? post.title}
+                fill
+                priority
+                sizes="(min-width:1024px) 1024px, 100vw"
+                className="object-cover"
+                unoptimized={
+                  /^https?:\/\//i.test(post.coverImageSrc) &&
+                  !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(post.coverImageSrc)
+                }
+              />
+            </div>
           </div>
         </div>
       ) : null}

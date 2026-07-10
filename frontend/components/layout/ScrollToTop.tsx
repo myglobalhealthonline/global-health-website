@@ -1,17 +1,24 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 /**
- * Guarantees every page opens at the very top.
+ * Guarantees every page opens at the very top — for forward navigations.
  *
  * 1. Disables the browser's automatic scroll restoration, so a refresh
  *    never reopens a page mid-scroll (the default "auto" behaviour
  *    restored the previous offset and left the hero hidden under the
  *    sticky header).
- * 2. Snaps to the top on every route change — covers navbar links and
- *    any programmatic navigation.
+ * 2. Snaps to the top on every route change caused by a normal forward
+ *    navigation — navbar links and any programmatic navigation.
+ *
+ * Browser back/forward (`popstate`) is deliberately excluded from the
+ * forced snap: yanking the scroll position back to 0 on every pathname
+ * change fights the position the user (and the back/forward gesture)
+ * expects to land on. The `popstate` listener below flags the next
+ * pathname-change effect run as a known back/forward nav so it can skip
+ * the correction — see P-022 in PERFORMANCE_OPTIMIZATION_AUDIT2.md.
  *
  * Mounted once at the root so it applies to every page. In-page hash
  * links (e.g. "#doctor-grid") keep the same pathname, so anchor jumps
@@ -19,14 +26,25 @@ import { usePathname } from "next/navigation";
  */
 export function ScrollToTop() {
   const pathname = usePathname();
+  const isPopNav = useRef(false);
 
   useEffect(() => {
     if (typeof history !== "undefined" && "scrollRestoration" in history) {
       history.scrollRestoration = "manual";
     }
+    const onPopState = () => {
+      isPopNav.current = true;
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
   useEffect(() => {
+    if (isPopNav.current) {
+      // Known back/forward navigation — leave the scroll position alone.
+      isPopNav.current = false;
+      return;
+    }
     // Snap immediately, then re-correct after paint and once more shortly
     // after. Heavy pages (negative-margin hero, late-mounting globe
     // canvas / images) settle their layout over a few frames and would

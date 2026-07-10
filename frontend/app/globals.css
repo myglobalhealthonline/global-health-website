@@ -4750,8 +4750,14 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 
 .gh-inline-split-hero {
   background: #031f18;
-  height: calc(100svh - var(--header-height));
-  min-height: 620px;
+  height: auto;
+}
+
+@media (min-width: 1024px) {
+  .gh-inline-split-hero {
+    height: calc(100svh - var(--header-height));
+    min-height: 620px;
+  }
 }
 
 .gh-inline-doctor-watermark {
