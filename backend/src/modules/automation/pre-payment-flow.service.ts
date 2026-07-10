@@ -340,6 +340,7 @@ async function sendWhatsApp(
     to,
     message: message + WHATSAPP_CONTACT_FOOTER,
     hints: phoneHints,
+    patientConsent,
   });
   const jidMissing = result.message?.toLowerCase().includes("jid does not exist");
   if (!result.ok && !result.skipped) {

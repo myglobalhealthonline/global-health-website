@@ -156,7 +156,7 @@ async function sendWhatsApp(
     summary,
     status: "RUNNING",
   });
-  const result = await sendWhatsAppText({ to, message, hints: phoneHints });
+  const result = await sendWhatsAppText({ to, message, hints: phoneHints, patientConsent });
   const jidMissing = result.message?.toLowerCase().includes("jid does not exist");
   if (!result.ok && !result.skipped) {
     await finishAutomationRun(run.id, {

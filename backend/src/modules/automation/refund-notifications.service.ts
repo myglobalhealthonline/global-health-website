@@ -216,6 +216,7 @@ export async function sendOrderRefundNotifications(orderId: string): Promise<voi
     to: order.phone,
     message: refundWhatsAppMessage(lang, ctx) + WHATSAPP_CONTACT_FOOTER,
     hints,
+    patientConsent: consent,
   });
   if (!result.ok && !result.skipped) {
     await finishAutomationRun(run.id, {

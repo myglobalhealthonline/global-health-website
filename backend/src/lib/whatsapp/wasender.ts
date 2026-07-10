@@ -151,7 +151,20 @@ export async function sendWhatsAppText(opts: {
   /** @deprecated Prefer `hints.orderCountryCode`. */
   countryCode?: string | null;
   hints?: PhoneNormalizeHints;
+  /**
+   * S-026: pass `false` for any PATIENT-facing send when the booking lacks
+   * WhatsApp consent — the send is skipped centrally here rather than
+   * relying solely on each caller's own gate. Omit entirely for sends that
+   * are not consent-gated (doctor-facing notifications, staff numbers).
+   * Every caller-level consent guard should still stay in place; this is
+   * defense-in-depth so a future call site that forgets its own check
+   * can't silently export patient data anyway.
+   */
+  patientConsent?: boolean;
 }): Promise<SendWhatsAppResult> {
+  if (opts.patientConsent === false) {
+    return { ok: true, skipped: true, raw: opts.to, message: "Skipped — no WhatsApp consent" };
+  }
   const auth = resolveAuthHeader();
   if (!auth) {
     return { ok: true, skipped: true, raw: opts.to };
