@@ -1,23 +1,45 @@
 import type { ReactNode } from "react";
+import { notFound } from "next/navigation";
+import { SiteChrome } from "@/components/layout/SiteChrome";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
 import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
+import { getCountryFooter, type PublicCountryFooter } from "@/lib/content/get-country-footers";
+import { getCountryTrust } from "@/lib/content/get-country-trust";
+import { DEFAULT_BRAND_LOGO_LIGHT } from "@/lib/content/brand-logo";
+import {
+  resolveFooterCtaDecorAsset,
+  resolveSiteLogoAsset,
+} from "@/lib/content/merge-ireland-home-media";
+import { getSiteContext } from "@/lib/content/get-site-context";
+import { resolveLocale } from "@/lib/i18n/resolve-locale";
+import { getCountryByCode } from "@/data/countries";
+import { countryCodeFromSlug } from "@/lib/routing/country-slug";
+import { countryLangParams } from "@/lib/routing/static-params";
+import { organizationJsonLd, websiteJsonLd } from "@/lib/seo/structured-data";
 import { toHtmlLang } from "@/lib/i18n/get-root-html-lang";
 import { HtmlLangSync } from "@/components/layout/HtmlLangSync";
+import type { ParsedSitePath } from "@/lib/routing/path-rewrites";
 
 /**
- * Country/lang shell. Warms the slug↔code registry from live data
- * so the synchronous `countryCodeFromSlug` calls inside every page
- * handler resolve admin-added countries (whose codes + slugs aren't
- * in `data/countries.ts`) without each page having to remember to
- * await the merged loader.
+ * Country/lang chrome layout (P-001). Unlike the sibling `(global)` layout,
+ * this one takes country/locale from real route PARAMS, never
+ * headers()/cookies() — that's what makes every page under this subtree
+ * eligible for static generation. `generateStaticParams` below prerenders
+ * the known country x locale combinations at build time; anything else
+ * (an admin-added country, say) still resolves on demand and gets cached
+ * via ISR (`dynamicParams` defaults to true).
  *
- * The call is wrapped in `cache(...)` upstream so it deduplicates
- * across every page that lands under this layout.
- *
- * Also corrects `<html lang>` for this route (P-001): the root layout ships
- * a static "en" default so it never reads cookies()/headers(); this layout
- * DOES receive `lang` as a real route param, so it can fix the attribute
- * client-side without reintroducing a dynamic API dependency.
+ * Owns everything the old single `(site)/layout.tsx` used to compute from
+ * headers/cookies for the in-country case: SiteChrome (header/footer),
+ * per-country footer/trust data, and the org-scoped JSON-LD. Auth
+ * personalization, CartProvider, and MetaPixel live one level up in the
+ * pass-through `(site)/layout.tsx` — shared by this subtree and `(global)`.
  */
+export function generateStaticParams() {
+  return countryLangParams();
+}
+
 export default async function CountryLangLayout({
   children,
   params,
@@ -25,11 +47,71 @@ export default async function CountryLangLayout({
   children: ReactNode;
   params: Promise<{ country: string; lang: string }>;
 }) {
-  const [{ lang }] = await Promise.all([params, getPublicCountriesMerged()]);
+  const [{ country: slug, lang }] = await Promise.all([params, getPublicCountriesMerged()]);
+
+  const code = countryCodeFromSlug(slug);
+  if (!code) notFound();
+  const config = getCountryByCode(code);
+  if (!config) notFound();
+
+  const [{ common, navigation }, assets, countriesMerged, activeFooter, activeTrust] =
+    await Promise.all([
+      getSiteContext({ explicitCountryCode: code, explicitLocale: lang }),
+      getPublicAssetsNormalized(),
+      getPublicCountriesMerged(),
+      getCountryFooter(code),
+      getCountryTrust(code),
+    ]);
+
+  // Organization `sameAs` — this country's official authorities (IMC, ERS,
+  // OM, DPC, CNPD…). The E-E-A-T signal AI-search citation reads.
+  const organizationSameAs = activeTrust
+    ? activeTrust.authorityLinks.filter((l) => l.showInSchema).map((l) => l.url)
+    : [];
+
+  const brandLogo = resolveSiteLogoAsset(assets) ?? DEFAULT_BRAND_LOGO_LIGHT;
+  const footerDecorImage = resolveFooterCtaDecorAsset(assets);
+
+  const currentLocale = resolveLocale({
+    explicitLocale: lang,
+    countryDefaultLocale: config.defaultLocale,
+  });
+
+  // Build a code -> enabledFeatures map so SiteHeader/MobileNav can hide
+  // nav tabs the admin has disabled per-country via /admin/country-features.
+  const countryFeatures: Record<string, string[] | undefined> = {};
+  for (const c of countriesMerged) {
+    if (c.enabledFeatures) countryFeatures[c.code] = c.enabledFeatures;
+  }
+
+  const countryFooters: Record<string, PublicCountryFooter | null> = {
+    [code.toLowerCase()]: activeFooter,
+  };
+
+  // Real route params, not a header-parsed pathname — `rest` is unused by
+  // SiteHeader/SiteFooter (active-tab state is client-side in SectionNav).
+  const parsed: ParsedSitePath = { country: slug, lang, rest: [] };
+
   return (
     <>
       <HtmlLangSync lang={toHtmlLang(lang)} />
-      {children}
+      <SiteChrome
+        siteName={common.site.name}
+        navigation={navigation}
+        brandLogo={brandLogo}
+        footerDecorImage={footerDecorImage}
+        countryFeatures={countryFeatures}
+        countryFooters={countryFooters}
+        countryTrust={activeTrust}
+        initialLastCountry={null}
+        countries={countriesMerged}
+        currentLocale={currentLocale}
+        parsed={parsed}
+        isGatewayHome={false}
+      >
+        <JsonLd data={[organizationJsonLd(organizationSameAs), websiteJsonLd()]} />
+        {children}
+      </SiteChrome>
     </>
   );
 }
