@@ -349,8 +349,14 @@ export default async function CountryLangHomePage({
       ? (reviewConfigResult.data.doctify.aggregate ?? null)
       : null;
   const gpLanguageNames = gpLanguages.languages
-    .slice(0, 4)
+    .slice(0, 3)
     .map((l) => gpLanguageLabel(l));
+  const gpLanguagesSummary =
+    gpLanguageNames.length > 0
+      ? gpLanguages.languages.length > 3
+        ? `${gpLanguageNames.join(", ")} & More`
+        : gpLanguageNames.join(", ")
+      : "";
   const trustMarqueeItems: TrustMarqueeItem[] = [
     ...(doctifyAggregate
       ? [
@@ -388,7 +394,7 @@ export default async function CountryLangHomePage({
       ? [
           {
             icon: "languages" as const,
-            value: gpLanguageNames.join(" · "),
+            value: gpLanguagesSummary,
             label: t.trust.languagesSpoken,
           },
         ]
