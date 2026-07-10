@@ -101,6 +101,33 @@ export async function sendEmailVerificationEmail(opts: {
 }
 
 /**
+ * S-024: sent to an EXISTING account when someone attempts to register a
+ * new account with its email. Registration itself responds identically
+ * whether the email is new or already taken (no distinct conflict status),
+ * so this is the only signal the real owner gets that someone tried.
+ */
+export async function sendDuplicateRegistrationNoticeEmail(opts: {
+  to: string;
+  fullName: string;
+}) {
+  const loginLink = absoluteSiteUrl("/login");
+  const resetLink = absoluteSiteUrl("/forgot-password");
+  return sendEmail({
+    to: opts.to,
+    subject: "Someone tried to sign up with your email — Global Health",
+    text: `Hi ${opts.fullName},\n\nSomeone just tried to create a Global Health account using this email address. You already have an account, so nothing changed — no new account was created.\n\nIf this was you, sign in instead: ${loginLink}\nForgot your password? Reset it here: ${resetLink}\n\nIf you don't recognize this, no action is needed — your account is safe.\n\n— Global Health`,
+    html: wrapHtml(
+      "Someone tried to sign up with your email",
+      `<p>Hi ${escapeHtml(opts.fullName)},</p>
+       <p>Someone just tried to create a Global Health account using this email address. You already have an account, so nothing changed — no new account was created.</p>
+       <p style="margin:24px 0;"><a href="${loginLink}" style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">Sign in</a></p>
+       <p style="font-size:13px;color:#737373;">Forgot your password? <a href="${resetLink}">Reset it here</a>.</p>
+       <p>If you don't recognize this, no action is needed — your account is safe.</p>`,
+    ),
+  });
+}
+
+/**
  * Sent when admin schedules a call slot for the patient. The Meet link is
  * front-and-center; we also include the slot in the patient's local
  * timezone hint (the date is formatted in UTC + offset, and clients

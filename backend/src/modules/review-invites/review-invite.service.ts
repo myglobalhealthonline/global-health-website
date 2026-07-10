@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import { prisma } from "../../db/prisma.js";
 import { env } from "../../config/env.js";
 import { sendReviewInviteEmail } from "../../lib/email/templates.js";
@@ -10,6 +10,12 @@ const INVITE_TTL_DAYS = 14;
 function reviewUrl(token: string): string {
   const base = (env.PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
   return `${base}/reviews/rate?token=${encodeURIComponent(token)}`;
+}
+
+// S-009: only the SHA-256 hash is persisted — the raw token exists only in
+// the URL emailed/WhatsApp'd to the patient, never in the DB.
+function hashToken(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
 }
 
 export async function createReviewInviteForAppointment(appointmentId: string) {
@@ -36,7 +42,7 @@ export async function createReviewInviteForAppointment(appointmentId: string) {
 
   const invite = await prisma.reviewInvite.create({
     data: {
-      token,
+      tokenHash: hashToken(token),
       appointmentId: appt.id,
       customerName: appt.fullName,
       contactEmail: appt.email,
@@ -76,7 +82,7 @@ export async function createReviewInviteForAppointment(appointmentId: string) {
 
 export async function getReviewInviteByToken(token: string) {
   return prisma.reviewInvite.findUnique({
-    where: { token },
+    where: { tokenHash: hashToken(token) },
     include: {
       appointment: {
         select: { id: true, fullName: true, countryCode: true },
@@ -97,7 +103,7 @@ export async function submitReviewInvite(
     bookingExperience: number;
   },
 ) {
-  const invite = await prisma.reviewInvite.findUnique({ where: { token } });
+  const invite = await prisma.reviewInvite.findUnique({ where: { tokenHash: hashToken(token) } });
   if (!invite) return { ok: false as const, message: "Review not found" };
   if (invite.submittedAt) return { ok: false as const, message: "Review already submitted" };
   if (invite.expiresAt < new Date()) {

@@ -73,7 +73,10 @@ export async function registerUser(input: {
   phone?: string;
   acceptTerms: boolean;
 }) {
-  return authRequest<{ user: AuthUser }>("/api/auth/register", {
+  // user is null when the email was already registered — the backend
+  // returns the same shape/status either way (S-024, account-enumeration
+  // defense) and emails the existing account instead.
+  return authRequest<{ user: AuthUser | null }>("/api/auth/register", {
     method: "POST",
     body: input,
   });

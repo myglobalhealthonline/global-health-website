@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
+import { CorporateEmployeeStatus, CorporateRequestStatus } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { requireAuth } from "../utils/require-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -54,6 +55,19 @@ const companyPatchSchema = z.object({
   contactName: z.string().trim().min(1).max(240).optional(),
   contactEmail: z.string().trim().email().max(320).optional(),
   contactPhone: z.string().trim().max(40).nullable().optional(),
+});
+
+// S-024: bound the tenant-scoped list query params — an unvalidated
+// `status` cast straight into the Prisma `where` 500s on a garbage enum
+// value, and an unbounded `query` string increases search cost for no
+// benefit (the underlying list is already scoped to one company).
+const employeeListQuerySchema = z.object({
+  status: z.nativeEnum(CorporateEmployeeStatus).optional(),
+  query: z.string().trim().max(120).optional(),
+});
+
+const requestListQuerySchema = z.object({
+  status: z.nativeEnum(CorporateRequestStatus).optional(),
 });
 
 function parseDob(input: string | undefined): Date | null {
@@ -133,13 +147,17 @@ const corporateRoute: FastifyPluginAsync = async (app) => {
   });
 
   // ── Employees ──────────────────────────────────────────────────────────
-  app.get("/api/corporate/employees", async (request) => {
-    const query = request.query as { status?: string; query?: string };
+  app.get("/api/corporate/employees", async (request, reply) => {
+    const parsed = employeeListQuerySchema.safeParse(request.query);
+    if (!parsed.success) {
+      return reply.status(400).send(errorResponse("Invalid employees query", parsed.error.flatten()));
+    }
+    const query = parsed.data;
     const companyId = request.corporateCompany!.id;
     const employees = await prisma.corporateEmployee.findMany({
       where: {
         companyId,
-        ...(query.status ? { status: query.status as never } : {}),
+        ...(query.status ? { status: query.status } : {}),
         ...(query.query
           ? {
               OR: [
@@ -329,12 +347,16 @@ const corporateRoute: FastifyPluginAsync = async (app) => {
   });
 
   // ── Requests ───────────────────────────────────────────────────────────
-  app.get("/api/corporate/requests", async (request) => {
-    const query = request.query as { status?: string };
+  app.get("/api/corporate/requests", async (request, reply) => {
+    const parsed = requestListQuerySchema.safeParse(request.query);
+    if (!parsed.success) {
+      return reply.status(400).send(errorResponse("Invalid requests query", parsed.error.flatten()));
+    }
+    const query = parsed.data;
     const requests = await prisma.corporateServiceRequest.findMany({
       where: {
         companyId: request.corporateCompany!.id,
-        ...(query.status ? { status: query.status as never } : {}),
+        ...(query.status ? { status: query.status } : {}),
       },
       include: { employee: { select: { firstName: true, lastName: true, email: true } } },
       orderBy: { createdAt: "desc" },

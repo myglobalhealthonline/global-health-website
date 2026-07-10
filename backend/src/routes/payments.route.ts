@@ -194,7 +194,15 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
    * (local dev without `stripe listen`, or transient webhook failure).
    * Safe to call repeatedly — idempotent when already PAID.
    */
-  app.post("/api/payments/sync-order", async (request, reply) => {
+  app.post(
+    "/api/payments/sync-order",
+    // S-023: caller-controlled orderId/stripeSessionId trigger DB + Stripe
+    // work with no auth (this also serves guest checkouts, so it can't
+    // require a session). Tight, fail-closed per-IP cap instead — the
+    // legitimate flow calls this once or twice right after the Stripe
+    // redirect back.
+    { config: { rateLimit: { max: 10, timeWindow: "1 minute", skipOnError: false } } },
+    async (request, reply) => {
     if (!isStripeConfigured()) {
       return paymentsDisabled(reply);
     }
@@ -206,9 +214,12 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
       const result = body.data.orderId
         ? await syncOrderPaymentFromStripe(body.data.orderId, app.log)
         : await syncOrderPaymentFromStripeSession(body.data.stripeSessionId!, app.log);
-      if (!result.ok && result.code === "NOT_FOUND") {
-        return reply.status(404).send(errorResponse("Order not found"));
-      }
+      // S-023: fold the "order not found" case into the same 200 envelope
+      // as every other non-ok outcome (NO_SESSION, NOT_PAID, ...) instead
+      // of a distinct 404 — both frontend callers (SyncOrderPaymentOnReturn,
+      // account/bookings, checkout/success) only branch on result.ok/code,
+      // never on HTTP status, so this removes an ID-enumeration signal
+      // without changing behavior for real callers.
       return okResponse(result);
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
@@ -217,7 +228,8 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not sync order payment"));
     }
-  });
+    },
+  );
 
   /**
    * Stripe webhook receiver. Verifies the signature against

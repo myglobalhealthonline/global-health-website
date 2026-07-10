@@ -2,7 +2,6 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { registerUser } from "@/lib/api/auth-api";
 import { PhoneField } from "@/components/forms/phone-field";
@@ -62,28 +61,10 @@ export function RegisterFormFallback({ i18n = DEFAULT_I18N }: { i18n?: RegisterI
 }
 
 export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const [message, setMessage] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  function getNextPath() {
-    const next = searchParams.get("next");
-    // Same-origin only. Block protocol-relative `//evil.com` redirects
-    // — browsers resolve those against the current scheme and treat
-    // them as off-site, so a bare startsWith("/") check is insufficient.
-    if (
-      !next ||
-      !next.startsWith("/") ||
-      next.startsWith("//") ||
-      next.startsWith("/\\")
-    ) {
-      return "/account";
-    }
-    return next;
-  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -105,14 +86,19 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
     setMessage(null);
     setIsError(false);
     const result = await registerUser({ fullName, email, phone, password, acceptTerms });
+    setLoading(false);
     if (result.ok) {
-      setMessage("Account created. Redirecting to your account...");
-      setLoading(false);
-      router.replace(getNextPath());
-      router.refresh();
+      // S-024: the backend returns this identical shape/status whether the
+      // email was new or already registered. Auto-redirecting only when a
+      // session exists (result.data.user !== null) would leak that
+      // distinction right back through client-visible behavior — redirect
+      // vs. stay-and-show-a-message is as much a signal as a different
+      // HTTP status. Every registration attempt gets the same message and
+      // stays on this page; a genuinely new account still gets its
+      // session cookie and can navigate in once verified.
+      setMessage("Account created. Check your email to verify your account.");
       return;
     }
-    setLoading(false);
     setIsError(true);
     setMessage(result.message);
   }

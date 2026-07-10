@@ -49,6 +49,14 @@ export class AuthConflictError extends Error {
   }
 }
 
+/** Result of `registerPatient`. `kind: "exists"` is returned instead of
+ *  throwing (S-024) — the route folds it into the same response shape as
+ *  a fresh signup so a caller can't tell "email already registered" from
+ *  "account created" via a distinct status code. */
+export type RegisterResult =
+  | { kind: "created"; user: SafeUser }
+  | { kind: "exists" };
+
 function toSafeUser(user: User): SafeUser {
   return {
     id: user.id,
@@ -66,7 +74,7 @@ function toSafeUser(user: User): SafeUser {
   };
 }
 
-export async function registerPatient(input: RegisterBody) {
+export async function registerPatient(input: RegisterBody): Promise<RegisterResult> {
   const email = input.email.toLowerCase();
   const passwordHash = await bcrypt.hash(input.password, 12);
 
@@ -142,13 +150,30 @@ export async function registerPatient(input: RegisterBody) {
         console.error("Failed to record TERMS_PRIVACY consent", err);
       });
 
-    return toSafeUser(user);
+    return { kind: "created", user: toSafeUser(user) };
   } catch (error) {
     if (typeof error === "object" && error && "code" in error && (error as { code?: string }).code === "P2002") {
-      throw new AuthConflictError();
+      // S-024: an existing account must not surface as a distinct
+      // conflict — return the same shape a fresh signup does, and notify
+      // the real owner instead of the caller. Best-effort; never let a
+      // notice-email failure turn into a registration error.
+      notifyExistingAccountOfDuplicateRegistration(email).catch((err) => {
+        console.error("Failed to send duplicate-registration notice", err);
+      });
+      return { kind: "exists" };
     }
     throw normalizeDbError(error, "Authentication is temporarily unavailable");
   }
+}
+
+/** S-024: heads-up email to an existing account when someone attempts to
+ *  register with its email — used instead of revealing the conflict to
+ *  the caller (account-enumeration defense). Best-effort/fire-and-forget. */
+async function notifyExistingAccountOfDuplicateRegistration(email: string): Promise<void> {
+  const user = await findUserByEmail(email);
+  if (!user || !user.isActive) return;
+  const { sendDuplicateRegistrationNoticeEmail } = await import("../../lib/email/templates.js");
+  await sendDuplicateRegistrationNoticeEmail({ to: user.email, fullName: user.fullName });
 }
 
 /**

@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync, FastifyRequest } from "fastify";
 import { z } from "zod";
+import { CorporateCompanyStatus } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { resolveAdminSessionActor, verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -65,9 +66,11 @@ const corporateListQuerySchema = paginationQuerySchema.extend({
     .max(120)
     .optional()
     .transform((v) => (v === "" || v === undefined ? undefined : v)),
+  // S-024: validate against the real enum — a garbage value cast straight
+  // into the Prisma `where` previously 500'd instead of 400ing.
   status: z.preprocess(
     (v) => (v === "" || v === undefined || v === null ? undefined : v),
-    z.string().trim().min(1).optional(),
+    z.nativeEnum(CorporateCompanyStatus).optional(),
   ),
 });
 
@@ -270,7 +273,7 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
     const localFolders = await localAdminCountryFilter(request);
     const where = {
       ...(localFolders ? { countryCode: { in: localFolders } } : {}),
-      ...(status ? { status: status as never } : {}),
+      ...(status ? { status } : {}),
       ...(search ? { name: { contains: search, mode: "insensitive" as const } } : {}),
     };
     const [total, companies] = await prisma.$transaction([

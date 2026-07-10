@@ -75,7 +75,12 @@ const reviewInvitesRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  app.post("/api/internal/send-review-invite", async (request, reply) => {
+  app.post(
+    "/api/internal/send-review-invite",
+    // S-020: capability-token issuance — fail closed rather than falling
+    // back to the loose global default on a Redis outage.
+    { config: { rateLimit: { max: 60, timeWindow: "1 hour", skipOnError: false } } },
+    async (request, reply) => {
     const secret =
       request.headers["x-review-secret"] ??
       request.headers["x-cron-secret"];
@@ -102,7 +107,8 @@ const reviewInvitesRoute: FastifyPluginAsync = async (app) => {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not send review invite"));
     }
-  });
+    },
+  );
 };
 
 export default reviewInvitesRoute;

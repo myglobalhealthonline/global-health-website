@@ -259,13 +259,22 @@ export async function acceptInvite(input: AcceptInviteInput): Promise<AcceptInvi
     if (input.password.length < 8) {
       return { ok: false, status: 400, message: "Password must be at least 8 characters" };
     }
-    const safeUser = await registerPatient({
+    const registerResult = await registerPatient({
       fullName: `${member.firstName} ${member.lastName}`.trim(),
       email,
       password: input.password,
       phone: input.profile.phone ?? member.phone ?? undefined,
     } as Parameters<typeof registerPatient>[0]);
-    userId = safeUser.id;
+    // The `existing` lookup above already handles the normal case; this
+    // only fires on a genuine create-vs-create race.
+    if (registerResult.kind === "exists") {
+      return {
+        ok: false,
+        status: 409,
+        message: "That email is already registered — try signing in instead",
+      };
+    }
+    userId = registerResult.user.id;
     // The click proved control of the inbox.
     await prisma.user.update({
       where: { id: userId },

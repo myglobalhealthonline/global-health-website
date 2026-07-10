@@ -207,6 +207,9 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
 
   app.post<{ Params: { email: string } }>(
     "/api/doctor/patients/:email/upload-link",
+    // S-020: capability-token issuance — tighter, fail-closed limit so a
+    // Redis outage doesn't fall back to the loose global default.
+    { config: { rateLimit: { max: 20, timeWindow: "1 hour", skipOnError: false } } },
     async (request, reply) => {
       const auth = await verifyDoctorAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));

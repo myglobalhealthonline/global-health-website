@@ -98,9 +98,18 @@ export async function buildApp() {
     encodings: ["br", "gzip", "deflate"],
     threshold: 1024,
   });
+  // S-021: several upload routes (account-profile photo/document,
+  // appointment-documents, medical-documents, patient-upload,
+  // doctor-payout-invoices, admin-media-upload PDFs) validate their own
+  // buffered size against 10 MB and advertise that figure in their error
+  // messages, but this global fileSize ceiling used to be 5 MB — a 6-9 MB
+  // upload never reached those checks; @fastify/multipart's `toBuffer()`
+  // throws once the stream is truncated at the limit, so it 500'd instead
+  // of returning the documented 413. Raised to 10 MB so the enforced limit
+  // matches what every route already documents.
   await app.register(multipart, {
     limits: {
-      fileSize: 5 * 1024 * 1024,
+      fileSize: 10 * 1024 * 1024,
       files: 1,
     },
   });

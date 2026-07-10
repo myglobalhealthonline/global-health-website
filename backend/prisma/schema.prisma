@@ -1719,7 +1719,10 @@ model BrazilConsentSubmission {
 
 model ReviewInvite {
   id                    String       @id @default(cuid())
-  token                 String       @unique
+  /// SHA-256 hex digest of the bearer token — never store the raw token
+  /// (S-009). The raw token only ever exists in the URL emailed/WhatsApp'd
+  /// to the patient.
+  tokenHash             String       @unique
   appointmentId         String?
   orderNumber           String?
   customerName          String?
@@ -2662,7 +2665,10 @@ model ShareLink {
   id              String         @id @default(cuid())
   scope           ShareLinkScope
   consultationId  String?
-  token           String         @unique
+  /// SHA-256 hex digest of the bearer token — never store the raw token
+  /// (S-009). The raw token only ever exists in the URL handed to the
+  /// referring colleague.
+  tokenHash       String         @unique
   expiresAt       DateTime
   revokedAt       DateTime?
   createdByUserId String

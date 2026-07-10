@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
@@ -14,8 +14,14 @@ import { recordAudit } from "../modules/audit/audit.service.js";
  *
  * Doctor mints a signed URL for a SIGNED consultation so a referring
  * colleague can read it without an account. Token is 32 bytes of CSPRNG
- * hex; default expiry 7 days, capped at 90.
+ * hex; default expiry 7 days, capped at 90. Only the SHA-256 hash is
+ * persisted (S-009) — the raw token exists only in the URL handed to the
+ * doctor, never in the DB.
  */
+
+function hashToken(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
+}
 
 const createBodySchema = z
   .object({
@@ -26,6 +32,9 @@ const createBodySchema = z
 const shareLinksRoute: FastifyPluginAsync = async (app) => {
   app.post<{ Params: { consultationId: string } }>(
     "/api/doctor/consultations/:consultationId/share-link",
+    // S-020: capability-token issuance — tighter, fail-closed limit so a
+    // Redis outage doesn't fall back to the loose global default.
+    { config: { rateLimit: { max: 20, timeWindow: "1 hour", skipOnError: false } } },
     async (request, reply) => {
       const auth = await verifyDoctorAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
@@ -57,7 +66,7 @@ const shareLinksRoute: FastifyPluginAsync = async (app) => {
           data: {
             scope: "CONSULTATION",
             consultationId: consult.id,
-            token,
+            tokenHash: hashToken(token),
             expiresAt,
             createdByUserId: auth.userId,
           },
@@ -75,7 +84,8 @@ const shareLinksRoute: FastifyPluginAsync = async (app) => {
           okResponse({
             shareLink: {
               id: row.id,
-              token: row.token,
+              // Raw token — only ever returned here, never persisted (S-009).
+              token,
               expiresAt: row.expiresAt.toISOString(),
               createdAt: row.createdAt.toISOString(),
             },
@@ -135,7 +145,7 @@ const shareLinksRoute: FastifyPluginAsync = async (app) => {
       reply.header("Cache-Control", "private, no-store");
       try {
         const link = await prisma.shareLink.findUnique({
-          where: { token: request.params.token },
+          where: { tokenHash: hashToken(request.params.token) },
           include: {
             consultation: {
               include: {

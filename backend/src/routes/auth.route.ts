@@ -1,7 +1,6 @@
 ﻿import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import {
-  AuthConflictError,
   AuthInvalidCredentialsError,
   cancelAccountDeletion,
   changeUserPassword,
@@ -49,7 +48,17 @@ const authRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid registration payload", body.error.flatten()));
     }
     try {
-      const user = await registerPatient(body.data);
+      const result = await registerPatient(body.data);
+
+      // S-024: an already-registered email must not surface via a distinct
+      // status/response shape — same 200 envelope, no session, no PII of
+      // the existing account. registerPatient already fired a best-effort
+      // notice email to the real owner.
+      if (result.kind === "exists") {
+        return okResponse({ user: null }, "Account created");
+      }
+
+      const { user } = result;
       const token = signAuthToken({ sub: user.id, role: user.role, email: user.email, tokenVersion: 0 });
       reply.setCookie(env.AUTH_COOKIE_NAME, token, authCookieOptions());
 
@@ -76,9 +85,6 @@ const authRoute: FastifyPluginAsync = async (app) => {
 
       return okResponse({ user }, "Account created");
     } catch (error) {
-      if (error instanceof AuthConflictError) {
-        return reply.status(409).send(errorResponse(error.message));
-      }
       return replyWithError(reply, app.log, error, "Unexpected authentication error");
     }
   });
@@ -307,7 +313,9 @@ const authRoute: FastifyPluginAsync = async (app) => {
   });
 
   app.post("/api/auth/reset-password", {
-    config: { rateLimit: { max: 10, timeWindow: "1 hour" } },
+    // skipOnError: false (S-020) — this consumes the reset token, so a
+    // limiter-store outage must not let token-guessing through unthrottled.
+    config: { rateLimit: { max: 10, timeWindow: "1 hour", skipOnError: false } },
   }, async (request, reply) => {
     const body = resetPasswordBodySchema.safeParse(request.body);
     if (!body.success) {

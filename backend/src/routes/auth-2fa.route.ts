@@ -93,10 +93,12 @@ const auth2faRoute: FastifyPluginAsync = async (app) => {
     "/api/auth/2fa/verify-login",
     {
       config: {
+        // skipOnError: false (S-020) — TOTP/backup-code guessing must not
+        // fall open just because the limiter's Redis store is unavailable.
         rateLimit:
           env.NODE_ENV === "development"
-            ? { max: 200, timeWindow: "15 minutes" }
-            : { max: 10, timeWindow: "15 minutes" },
+            ? { max: 200, timeWindow: "15 minutes", skipOnError: false }
+            : { max: 10, timeWindow: "15 minutes", skipOnError: false },
       },
     },
     async (request, reply) => {

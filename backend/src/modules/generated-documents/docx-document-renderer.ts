@@ -36,6 +36,13 @@ export type DocxQrOptions = {
 
 const execFileAsync = promisify(execFile);
 
+// S-021: `execFile` has no default timeout — a hung/wedged LibreOffice
+// process (corrupt template, font-load deadlock) would otherwise pin a
+// worker's child-process slot forever. `timeout` sends SIGTERM once
+// exceeded; execFileAsync then rejects.
+const SOFFICE_VERSION_CHECK_TIMEOUT_MS = 5_000;
+const SOFFICE_CONVERT_TIMEOUT_MS = 45_000;
+
 function resolveDocxTemplatesRoot(): string {
   // Prefer repo Templates/ (source of truth: logos in header, borders in layout).
   const candidates = [
@@ -149,7 +156,7 @@ async function resolveSofficeBinary(): Promise<string | null> {
   ].filter((b): b is string => Boolean(b));
   for (const bin of candidates) {
     try {
-      await execFileAsync(bin, ["--version"]);
+      await execFileAsync(bin, ["--version"], { timeout: SOFFICE_VERSION_CHECK_TIMEOUT_MS });
       return bin;
     } catch {
       /* next */
@@ -174,7 +181,7 @@ async function convertDocxToPdfWithLibreOffice(docxBuffer: Buffer): Promise<Buff
     await execFileAsync(
       soffice,
       ["--headless", "--norestore", "--convert-to", "pdf", "--outdir", workDir, docxPath],
-      { env },
+      { env, timeout: SOFFICE_CONVERT_TIMEOUT_MS },
     );
     const pdfPath = path.join(workDir, "document.pdf");
     return await readFile(pdfPath);
