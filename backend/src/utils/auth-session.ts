@@ -16,38 +16,84 @@ type AuthTokenPayload = {
   tokenVersion?: number;
 };
 
+const JWT_ISSUER = "global-health-backend";
+const JWT_AUDIENCE = "global-health-website";
+
+// S-012: sign sessions with an RS256 PRIVATE key that only the backend holds, so
+// a frontend compromise (which only ever gets the PUBLIC key) can never mint
+// tokens. When the keypair is absent — local dev, or the brief pre-migration
+// window — fall back to signing HS256 with the legacy shared secret. Computed
+// once at module load.
+const SIGNING: { key: string; alg: jwt.Algorithm } = env.AUTH_JWT_PRIVATE_KEY
+  ? { key: env.AUTH_JWT_PRIVATE_KEY, alg: "RS256" }
+  : { key: env.AUTH_JWT_SECRET, alg: "HS256" };
+
+/**
+ * Verify a token this backend minted, trying the new RS256 public key first and
+ * falling back to the legacy HS256 shared secret. Returns the decoded payload or
+ * null; callers validate their own claims.
+ *
+ * TRANSITION (S-012, zero-downtime): sessions issued before asymmetric signing
+ * shipped are HS256-signed with AUTH_JWT_SECRET; every new login mints an RS256
+ * token. The fallback lets those old cookies keep working until they expire or the
+ * user re-authenticates — nobody is force-logged-out on deploy. Each branch PINS
+ * its own algorithm to its own key, so there is no RS256↔HS256 alg-confusion: the
+ * public key is only ever used as an RS256 verifier, never as an HMAC secret, and
+ * the shared secret is only ever used with HS256.
+ *
+ * FOLLOW-UP (S-012 HS256 removal): once every pre-deploy session has naturally
+ * rotated — one AUTH_JWT_EXPIRES_IN window (~1 week) after this reaches
+ * production — delete the HS256 branch below and remove AUTH_JWT_SECRET from
+ * env.ts + Railway. Do NOT automate this; it is a deliberate manual follow-up.
+ */
+function verifyWithRotation(token: string): jwt.JwtPayload | null {
+  const opts = { issuer: JWT_ISSUER, audience: JWT_AUDIENCE };
+  // Primary: RS256 via the public key.
+  if (env.AUTH_JWT_PUBLIC_KEY) {
+    try {
+      const decoded = jwt.verify(token, env.AUTH_JWT_PUBLIC_KEY, { ...opts, algorithms: ["RS256"] });
+      if (decoded && typeof decoded === "object") return decoded;
+    } catch {
+      // Not a valid RS256 token — try the legacy HS256 secret below.
+    }
+  }
+  // Fallback: legacy HS256 via the shared secret (TEMPORARY — see FOLLOW-UP above).
+  if (env.AUTH_JWT_SECRET) {
+    try {
+      const decoded = jwt.verify(token, env.AUTH_JWT_SECRET, { ...opts, algorithms: ["HS256"] });
+      if (decoded && typeof decoded === "object") return decoded;
+    } catch {
+      // Invalid under both keys.
+    }
+  }
+  return null;
+}
+
 export function signAuthToken(payload: AuthTokenPayload) {
-  return jwt.sign({ ...payload, tokenVersion: payload.tokenVersion ?? 0 }, env.AUTH_JWT_SECRET, {
+  return jwt.sign({ ...payload, tokenVersion: payload.tokenVersion ?? 0 }, SIGNING.key, {
+    algorithm: SIGNING.alg,
     expiresIn: env.AUTH_JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"],
-    issuer: "global-health-backend",
-    audience: "global-health-website",
+    issuer: JWT_ISSUER,
+    audience: JWT_AUDIENCE,
   });
 }
 
 export function verifyAuthToken(token: string): AuthTokenPayload | null {
-  try {
-    const decoded = jwt.verify(token, env.AUTH_JWT_SECRET, {
-      issuer: "global-health-backend",
-      audience: "global-health-website",
-      algorithms: ["HS256"], // pin: reject alg:none / alg-confusion
-    });
-    if (!decoded || typeof decoded !== "object") return null;
-    const sub = decoded.sub;
-    const role = decoded.role;
-    const email = decoded.email;
-    const validRoles: UserRoleType[] = ["PATIENT", "ADMIN", "DOCTOR", "LOCAL_ADMIN", "SUPER_ADMIN", "CORPORATE_ADMIN"];
-    if (
-      typeof sub !== "string" ||
-      !validRoles.includes(role as UserRoleType) ||
-      typeof email !== "string"
-    ) {
-      return null;
-    }
-    const tokenVersion = typeof decoded.tokenVersion === "number" ? decoded.tokenVersion : 0;
-    return { sub, role, email, tokenVersion };
-  } catch {
+  const decoded = verifyWithRotation(token);
+  if (!decoded) return null;
+  const sub = decoded.sub;
+  const role = decoded.role;
+  const email = decoded.email;
+  const validRoles: UserRoleType[] = ["PATIENT", "ADMIN", "DOCTOR", "LOCAL_ADMIN", "SUPER_ADMIN", "CORPORATE_ADMIN"];
+  if (
+    typeof sub !== "string" ||
+    !validRoles.includes(role as UserRoleType) ||
+    typeof email !== "string"
+  ) {
     return null;
   }
+  const tokenVersion = typeof decoded.tokenVersion === "number" ? decoded.tokenVersion : 0;
+  return { sub, role, email, tokenVersion };
 }
 
 // ─── Pending-2FA token ──────────────────────────────────────────────────────
@@ -56,38 +102,24 @@ export function verifyAuthToken(token: string): AuthTokenPayload | null {
 // issues a full auth cookie on TOTP success.
 
 export function signPending2faToken(userId: string): string {
-  return jwt.sign({ sub: userId, pending2fa: true }, env.AUTH_JWT_SECRET, {
+  return jwt.sign({ sub: userId, pending2fa: true }, SIGNING.key, {
+    algorithm: SIGNING.alg,
     expiresIn: "5m",
-    issuer: "global-health-backend",
-    audience: "global-health-website",
+    issuer: JWT_ISSUER,
+    audience: JWT_AUDIENCE,
   });
 }
 
 export function verifyPending2faToken(token: string): { userId: string } | null {
-  try {
-    const decoded = jwt.verify(token, env.AUTH_JWT_SECRET, {
-      issuer: "global-health-backend",
-      audience: "global-health-website",
-      algorithms: ["HS256"], // pin: reject alg:none / alg-confusion
-    });
-    if (!decoded || typeof decoded !== "object") return null;
-    const { sub, pending2fa } = decoded as Record<string, unknown>;
-    if (typeof sub !== "string" || pending2fa !== true) return null;
-    return { userId: sub };
-  } catch {
-    return null;
-  }
+  const decoded = verifyWithRotation(token);
+  if (!decoded) return null;
+  const { sub, pending2fa } = decoded as Record<string, unknown>;
+  if (typeof sub !== "string" || pending2fa !== true) return null;
+  return { userId: sub };
 }
 
 export function authCookieOptions() {
-  // S-013a: previously only "production" got Secure, so an HTTPS staging/
-  // preview deploy (NODE_ENV left at its non-development default) could
-  // issue the session cookie over plain HTTP. This repo already treats
-  // "anything that isn't genuine local dev" as internet-reachable and in
-  // need of the strict behavior — see app.ts's CORS allowlist, which
-  // applies the same NODE_ENV !== "development" boundary — so mirror it
-  // here instead of inventing a separate staging concept.
-  const secure = env.NODE_ENV !== "development";
+  const secure = env.NODE_ENV === "production";
   const domain = env.AUTH_COOKIE_DOMAIN?.trim();
   return {
     httpOnly: true,

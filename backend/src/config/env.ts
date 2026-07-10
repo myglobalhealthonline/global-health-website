@@ -28,6 +28,16 @@ const optionalSecret = z.preprocess(
   z.string().trim().min(1).optional(),
 );
 
+/** Optional PEM secret. Same empty→unset handling as optionalSecret, plus it
+ *  normalises literal "\n" escapes to real newlines so a multi-line PEM survives
+ *  being pasted into a single-line Railway or .env variable. */
+const optionalPem = z
+  .preprocess(
+    (v) => (v === "" || v === undefined ? undefined : v),
+    z.string().trim().min(1).optional(),
+  )
+  .transform((v) => (typeof v === "string" ? v.replace(/\\n/g, "\n") : v));
+
 const envSchema = z.object({
   // Railway (and a few other PaaS) export NODE_ENV as the empty string
   // when no value is set, which bypasses Zod's `.default()` (that only
@@ -49,11 +59,23 @@ const envSchema = z.object({
    // and refuse to boot in production if the secret is missing or
    // still the dev fallback). Prevents a misconfigured Railway service
    // from silently signing tokens with a known string.
+  // @deprecated (S-012) Legacy HS256 shared secret. Kept ONLY as the
+  // transitional verify-fallback for sessions issued before asymmetric signing
+  // shipped, and as the dev/pre-migration signing key when the RS256 keypair is
+  // absent. Remove it — and the HS256 fallback in auth-session.ts — one
+  // AUTH_JWT_EXPIRES_IN window after the keypair reaches production.
   AUTH_JWT_SECRET: z
     .string()
     .trim()
     .min(32, "AUTH_JWT_SECRET must be at least 32 characters")
     .default("dev-only-change-this-auth-jwt-secret-min-32"),
+  // S-012: asymmetric session-token signing (RS256). The BACKEND alone holds the
+  // private key and is the ONLY party that can MINT tokens; the frontend edge
+  // middleware receives ONLY AUTH_JWT_PUBLIC_KEY, so a frontend compromise can
+  // verify sessions but never forge them. PEM format (PKCS8 private / SPKI
+  // public). Both required together in production (hard-fail below).
+  AUTH_JWT_PRIVATE_KEY: optionalPem,
+  AUTH_JWT_PUBLIC_KEY: optionalPem,
   AUTH_COOKIE_NAME: z.string().trim().min(1).default("gh_auth"),
   AUTH_COOKIE_DOMAIN: z.string().trim().optional(),
   AUTH_JWT_EXPIRES_IN: z.string().trim().min(2).default("7d"),
@@ -239,6 +261,26 @@ const DEV_JWT_FALLBACK = "dev-only-change-this-auth-jwt-secret-min-32";
 if (parsed.NODE_ENV === "production" && parsed.AUTH_JWT_SECRET === DEV_JWT_FALLBACK) {
   throw new Error(
     "AUTH_JWT_SECRET is the dev default in production. Set a real value (openssl rand -base64 48).",
+  );
+}
+
+// S-012: require the RS256 keypair in production. The backend signs sessions with
+// the private key (only it can mint tokens); both services verify with the public
+// key. AUTH_JWT_SECRET may still be set alongside these — that is the valid
+// transition state (HS256 fallback for pre-deploy sessions) and does NOT satisfy
+// this check on its own. When the follow-up removes the HS256 fallback, the two
+// keys become the sole source of truth.
+if (
+  parsed.NODE_ENV === "production" &&
+  (!parsed.AUTH_JWT_PRIVATE_KEY || !parsed.AUTH_JWT_PUBLIC_KEY)
+) {
+  throw new Error(
+    "AUTH_JWT_PRIVATE_KEY and AUTH_JWT_PUBLIC_KEY are required in production (S-012 asymmetric " +
+      "session signing). Generate an RS256 keypair:\n" +
+      "  openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out jwt-private.pem\n" +
+      "  openssl pkey -in jwt-private.pem -pubout -out jwt-public.pem\n" +
+      "Set AUTH_JWT_PRIVATE_KEY (private PEM) on the BACKEND service only, and AUTH_JWT_PUBLIC_KEY " +
+      "(public PEM) on BOTH the backend and frontend services.",
   );
 }
 
