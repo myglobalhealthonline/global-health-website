@@ -99,6 +99,23 @@ async function getBrowser(): Promise<import("playwright").Browser> {
   return browserPromise;
 }
 
+/**
+ * Close the shared Chromium instance. Tests MUST call this in an `after`
+ * hook when they (transitively) render a PDF — the browser child process
+ * otherwise keeps the node:test worker alive until the runner's timeout.
+ * Safe to call when no browser was ever launched.
+ */
+export async function closeSharedBrowser(): Promise<void> {
+  const pending = browserPromise;
+  browserPromise = null;
+  if (pending) {
+    await pending.then(
+      (browser) => browser.close(),
+      () => undefined,
+    );
+  }
+}
+
 export async function htmlToPdfBuffer(html: string): Promise<Buffer> {
   const browser = await getBrowser();
   const page = await browser.newPage();

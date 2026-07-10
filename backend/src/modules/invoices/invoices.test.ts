@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { join } from "node:path";
 import { config as loadEnv } from "dotenv";
-import { before, describe, it } from "node:test";
+import { after, before, describe, it } from "node:test";
 
 loadEnv({ path: join(__dirname, "../../..", ".env") });
 
@@ -26,6 +26,13 @@ describe("invoices", () => {
     } catch (err) {
       bootError = err;
     }
+  });
+
+  after(async () => {
+    // PDF renders launch a shared Chromium; without closing it the browser
+    // child process keeps this test worker alive until the runner times out.
+    const renderer = await import("../generated-documents/html-document-renderer.js");
+    await renderer.closeSharedBrowser();
   });
 
   const skipIfNoDb = (): boolean => {
