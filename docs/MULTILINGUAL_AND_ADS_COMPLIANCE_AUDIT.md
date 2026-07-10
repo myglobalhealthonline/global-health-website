@@ -77,6 +77,23 @@ Official policy pages reviewed on 2026-07-10:
 
 The repository audit found no basis to declare the application legally compliant or ad-approval eligible. The restricted healthcare/telehealth and prescription surfaces must remain pending authorization/legal review.
 
+## Post-translation ads-policy scan (2026-07-11)
+
+After the bulk machine-translation run (4,530 fields drafted and applied: services, service FAQs, doctor profiles, health tests across IE/PT/ES/CZ/RO/BR), all draft source/draft pairs were scanned against Google Ads (Healthcare and medicines, Misrepresentation, Unreliable claims) and Meta (personal attributes, drugs) policy criteria — regex triage over multilingual stem lists for cure/guarantee/superlative/safety/credential/speed/personal-attribute/drug-brand terms, with every hit manually re-read in full context.
+
+**Result: no translation drift.** No draft added or strengthened any claim, credential, guarantee, price, or legal statement relative to its source. Doctor bios contain no invented qualifications or awards. Health-test drafts contain no diagnostic-certainty claims.
+
+**Inherited source-content items** (pre-existing in base content, now present in more locales; owner: ads/compliance, not translation):
+
+| Severity | Item | Location | Note |
+|---|---|---|---|
+| High | Affirmative STI cure claim: "Is syphilis curable? … curable with appropriate treatment with benzathine penicillin" | `saude-sexual-ist-online` FAQ, PT source now also EN/ES | Factually correct per Brazilian public-health guidance, but Google healthcare policy flags affirmative "curable" language; also an STI surface under Meta personal-health rules. Reword to cautious form or exclude page from ad destinations. |
+| Low-Med | "Lei 14.510/2022 garante validade nacional…" legal-guarantee sentence | ~15 Brazil service-FAQ slugs, now also EN/ES | Statute citation, accurate in Brazil; EN/ES readers may be outside the jurisdiction. Needs jurisdiction-scope wording check. |
+| Low-Med | Second-person condition phrasing ("your condition", "your case") | `doencas-cronicas`/`enfermedades-cronicas`/mental-health FAQ answers, now also EN | FAQ answer copy, not ad creative — acceptable on landing pages; do not reuse in Meta ad copy. |
+| Low | Prescription weight-loss drug brand names (Ozempic, Wegovy, Saxenda, Contrave) | `controle-peso-online` detailBody, PT source now also EN/ES | Long-form body only, never in SEO/hero/CTA fields; surrounded by prescription-required and contraindication caveats. Sanity-check before using page as a Google Ads destination. |
+
+Caveats: triage was keyword-stem based with manual context reads; subtle modality drift without a keyword match would need an LLM-judge back-translation pass. This does not change the overall pre-launch status above: restricted healthcare/telehealth surfaces still require platform authorization and legal review before any campaign.
+
 ## Recommended next steps
 
 1. Back up production content, then complete verified translations in batches with a post-import read-only audit after each batch.
