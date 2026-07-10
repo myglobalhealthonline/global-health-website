@@ -160,6 +160,22 @@ export async function buildApp() {
     },
   );
 
+  // S-014: authenticated/PHI JSON responses must never be cacheable by a
+  // shared intermediary or the browser disk cache. Only fills in the
+  // header when a route hasn't already set its own Cache-Control (several
+  // download/document routes already set a stricter or different policy
+  // and keep it). Scoped by path prefix to the account/admin/doctor/
+  // corporate surfaces — the same ones the audit named — rather than every
+  // route, so stable public content (services, countries, doctors list)
+  // keeps its existing cache behavior.
+  const NO_STORE_PATH_PREFIX = /^\/api\/(account|admin|doctor|corporate)\//;
+  app.addHook("onSend", async (request, reply, payload) => {
+    if (NO_STORE_PATH_PREFIX.test(request.url) && !reply.getHeader("cache-control")) {
+      reply.header("Cache-Control", "private, no-store");
+    }
+    return payload;
+  });
+
   // Auto-register every `*.route.ts` (or `*.route.js` in dist) under
   // `src/routes/`. Skips `*.test.ts` so the schema tests can sit
   // alongside the routes without trying to register themselves.
