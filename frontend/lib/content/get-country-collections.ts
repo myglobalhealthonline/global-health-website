@@ -258,17 +258,27 @@ function pickImagePath(row: unknown): string | undefined {
   return pickImage(row)?.src;
 }
 
-/** Services for a country, filtered by kind. Skips inactive rows. When a
+const SERVICE_KINDS: ReadonlySet<CountryServiceCard["kind"]> = new Set([
+  "GENERAL",
+  "SPECIALIST",
+  "PRESCRIPTION",
+  "HEALTH_TEST",
+  "HOME_DELIVERY",
+]);
+
+/** Services for a country. Pass a `kind` to filter server-side, or `undefined`
+ *  to fetch every kind in ONE query and partition in memory (the homepage does
+ *  this instead of three per-kind round-trips). Skips inactive rows. When a
  *  locale is passed the backend returns display fields merged to that
  *  language (falling back to the country default). */
 export const getCountryServices = cache(async (
   countryCode: string,
-  kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY",
+  kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY" | undefined,
   locale?: string,
 ): Promise<CountryServiceCard[]> => {
   const res = await fetchServicesByCountry(countryCode, kind, locale);
   if (!res.ok) {
-    logPublicContentFallback(`country-services:${countryCode}:${kind}`, res.message);
+    logPublicContentFallback(`country-services:${countryCode}:${kind ?? "all"}`, res.message);
     return [];
   }
   const out: CountryServiceCard[] = [];
@@ -287,13 +297,20 @@ export const getCountryServices = cache(async (
         if (typeof id === "string" && id.length > 0) assignedDoctorIds.push(id);
       }
     }
+    // Kind comes off the row (present on every service payload) so an
+    // all-kinds fetch (kind === undefined) still buckets correctly; fall
+    // back to the requested filter, then GENERAL, for older payloads.
+    const rowKind =
+      typeof r.kind === "string" && SERVICE_KINDS.has(r.kind as CountryServiceCard["kind"])
+        ? (r.kind as CountryServiceCard["kind"])
+        : undefined;
     const image = pickImage(row);
     out.push({
       id: r.id,
       slug: r.slug,
       name: r.name,
       summary: typeof r.summary === "string" ? r.summary : "",
-      kind,
+      kind: rowKind ?? kind ?? "GENERAL",
       durationMinutes: typeof r.durationMinutes === "number" ? r.durationMinutes : null,
       basePriceCents: typeof r.basePriceCents === "number" ? r.basePriceCents : null,
       currencyCode: typeof r.currencyCode === "string" ? r.currencyCode : null,

@@ -1,7 +1,10 @@
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { TtlCache } from "../../lib/ttl-cache.js";
-import { listOpenSlotsForDoctorAndService } from "../doctor-availability/doctor-availability.service.js";
+import {
+  listOpenSlotsForDoctorAndService,
+  releaseExpiredHeldSlotsForDoctors,
+} from "../doctor-availability/doctor-availability.service.js";
 import { computeSlotPrice, getServicePeakConfig } from "../pricing/peak-pricing.service.js";
 import {
   resolveGpSameDayService,
@@ -159,6 +162,11 @@ export async function getGpAvailability(args: {
     const fallbackCurrency = service.currencyCode;
     const basePriceCents = service.basePriceCents ?? 0;
 
+    // Release every eligible doctor's expired holds in ONE query before the
+    // per-doctor loop, instead of once per doctor inside it (P-005). Each slot
+    // read then skips its own release.
+    await releaseExpiredHeldSlotsForDoctors(eligible.map((d) => d.id));
+
     // Fetch each eligible doctor's open slots in parallel (each call also
     // materialises that doctor's slots for the range, the expensive part).
     // Chunked so we never open more than CONCURRENCY DB connections at once.
@@ -173,6 +181,7 @@ export async function getGpAvailability(args: {
             service.durationMinutes,
             fromUtc,
             toUtc,
+            { skipExpiredRelease: true },
           ),
         ),
       );

@@ -90,6 +90,17 @@ export async function fetchDoctors(
   });
 }
 
+/** Active-doctor headcount for the homepage stat (count projection, not the
+ *  full roster). Shares the global:doctors tag so an admin doctor edit busts
+ *  the count alongside the roster. */
+export async function fetchDoctorsCount(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
+  return apiRequest<{ count: number }>("/api/doctors/count", {
+    timeoutMs,
+    revalidate: REVALIDATE_SECONDS,
+    tags: [SITE_CACHE_TAGS.globalDoctors()],
+  });
+}
+
 export async function fetchPricing(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
   return apiRequest<unknown[]>("/api/pricing", {
     timeoutMs,

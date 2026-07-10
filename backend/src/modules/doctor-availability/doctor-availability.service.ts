@@ -477,12 +477,23 @@ export async function listOpenSlotsForDoctorAndService(
   serviceDurationMinutes: number | null,
   fromUtc: Date,
   toUtc: Date,
+  opts?: {
+    /**
+     * Skip this doctor's per-call expired-hold release. Set by the aggregated
+     * fan-out callers (service-first + GP quick-book) that release every
+     * eligible doctor's expired holds in ONE batched query up front, so the
+     * hot read path doesn't fire an O(doctors) release loop (P-005).
+     */
+    skipExpiredRelease?: boolean;
+  },
 ): Promise<PublicSlot[]> {
   const cacheKey = slotCacheKey(doctorId, serviceDurationMinutes, fromUtc, toUtc);
   const cached = slotCache.get(cacheKey);
   if (cached) return cached;
   try {
-    await releaseExpiredHeldSlots(doctorId);
+    if (!opts?.skipExpiredRelease) {
+      await releaseExpiredHeldSlots(doctorId);
+    }
     await ensureSlotsForRange(doctorId, fromUtc, toUtc);
     // Fetch ALL slots (not just OPEN) so a BOOKED/BLOCKED/HELD slot correctly
     // breaks a run — a consult can't start where it wouldn't fit before the
@@ -752,10 +763,27 @@ export async function releaseSlotsToBaseGrid(slotIds: string[]): Promise<void> {
  * in-progress 10-min checkout.
  */
 export async function releaseExpiredHeldSlots(doctorId: string): Promise<void> {
+  return releaseExpiredHeldSlotsForDoctors([doctorId]);
+}
+
+/**
+ * Batched form of `releaseExpiredHeldSlots`: sweep expired HELD slots for a
+ * SET of doctors in ONE query instead of one query per doctor. The aggregated
+ * availability readers (service-first + GP quick-book) call this once for the
+ * whole eligible pool before their per-doctor slot loop, turning an
+ * O(doctors) release fan-out into a single read (+ writes only for the rare
+ * doctors that actually hold a stale row). `releaseSlotsToBaseGrid` already
+ * groups the freed spans per doctor, so a mixed batch re-materialises each
+ * doctor's base grid exactly as the single-doctor path did.
+ */
+export async function releaseExpiredHeldSlotsForDoctors(
+  doctorIds: string[],
+): Promise<void> {
+  if (doctorIds.length === 0) return;
   try {
     const stale = await prisma.doctorTimeSlot.findMany({
       where: {
-        doctorId,
+        doctorId: { in: doctorIds },
         status: "HELD",
         updatedAt: { lt: new Date(Date.now() - 15 * 60_000) },
       },

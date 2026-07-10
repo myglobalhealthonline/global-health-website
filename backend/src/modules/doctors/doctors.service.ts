@@ -339,6 +339,20 @@ export async function listDoctors(locale?: LocaleCode) {
 }
 
 /**
+ * Count of active doctors across every market. Backs the homepage's
+ * "N doctors across Europe" stat — same `where` as `listDoctors` so the
+ * number matches the roster, without paying for the full payload + includes
+ * (and without the PUBLIC_DOCTORS_LIST_CAP undercounting `.length` would).
+ */
+export async function countActiveDoctors(): Promise<number> {
+  try {
+    return await prisma.doctor.count({ where: { active: true } });
+  } catch (error) {
+    throw normalizeDbError(error, "Doctors data is unavailable");
+  }
+}
+
+/**
  * Public roster for a country. Includes doctors whose *primary* country is
  * this one PLUS doctors linked in via the DoctorCountry join (active rows
  * only). Linked rows are deduped if the primary already matches.

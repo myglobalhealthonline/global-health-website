@@ -41,7 +41,7 @@ import {
   type CountryServiceCard,
 } from "@/lib/content/get-country-collections";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
-import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
+import { getPublicDoctorsCount } from "@/lib/content/get-public-doctors";
 import { getGpLanguages } from "@/lib/content/get-gp-availability";
 import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-country-trust";
 import { VerifiedProfessionals } from "@/components/sections/VerifiedProfessionals";
@@ -170,23 +170,27 @@ export default async function CountryLangHomePage({
   const [
     { record: rawPage, disabled: pageDisabled },
     countryDoctors,
-    generalServices,
-    specialistServices,
-    prescriptionServices,
-    allDoctors,
+    allCountryServices,
+    totalDoctorsAcrossEurope,
     countryTrust,
     gpLanguages,
   ] =
     await Promise.all([
       getPublicPage(code, "HOME", lang as PublicLocale),
       getCountryDoctors(code, lang),
-      getCountryServices(code, "GENERAL", lang),
-      getCountryServices(code, "SPECIALIST", lang),
-      getCountryServices(code, "PRESCRIPTION", lang),
-      getPublicDoctorsNormalized(lang),
+      // One query for every kind, partitioned in memory below — replaces the
+      // former three per-kind round-trips (each with its own country check).
+      getCountryServices(code, undefined, lang),
+      // Count projection, not the full global roster (was fetched only for
+      // its `.length`).
+      getPublicDoctorsCount(),
       getCountryTrust(code),
       getGpLanguages(code),
     ]);
+
+  const generalServices = allCountryServices.filter((s) => s.kind === "GENERAL");
+  const specialistServices = allCountryServices.filter((s) => s.kind === "SPECIALIST");
+  const prescriptionServices = allCountryServices.filter((s) => s.kind === "PRESCRIPTION");
 
   // Country regulator's public verification page (medicalcouncil.ie /
   // ordemdosmedicos.pt) — every doctor card links here so patients can
@@ -196,8 +200,6 @@ export default async function CountryLangHomePage({
   // Null out CMS content when the page entry is disabled or the "pages"
   // feature is toggled off — structural sections still render with defaults.
   const page = (pageDisabled || !isCountryFeatureEnabled(config, "pages")) ? null : rawPage;
-
-  const totalDoctorsAcrossEurope = allDoctors.length;
 
   const prescriptionsHref = `/${slug}/${lang}/prescriptions`;
   const catalogLabels = {

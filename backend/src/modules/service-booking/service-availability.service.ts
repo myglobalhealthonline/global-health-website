@@ -1,7 +1,10 @@
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { TtlCache } from "../../lib/ttl-cache.js";
-import { listOpenSlotsForDoctorAndService } from "../doctor-availability/doctor-availability.service.js";
+import {
+  listOpenSlotsForDoctorAndService,
+  releaseExpiredHeldSlotsForDoctors,
+} from "../doctor-availability/doctor-availability.service.js";
 import { computeSlotPrice, getServicePeakConfig } from "../pricing/peak-pricing.service.js";
 
 /**
@@ -126,6 +129,11 @@ export async function getServiceAggregatedAvailability(
     const basePriceCents = service.basePriceCents ?? 0;
     const fallbackCurrency = service.currencyCode ?? service.country.currency.code;
 
+    // Release every eligible doctor's expired holds in ONE query up front so
+    // the per-doctor loop below doesn't fan out into an O(doctors) release
+    // sweep (P-005). Each slot read then skips its own release.
+    await releaseExpiredHeldSlotsForDoctors(doctors.map((d) => d.id));
+
     // Fetch every assigned doctor's slots in bounded-parallel batches.
     const perDoctor: { doctor: { id: string; slug: string }; slots: { id: string; startAt: string; endAt: string }[] }[] =
       [];
@@ -139,6 +147,7 @@ export async function getServiceAggregatedAvailability(
             service.durationMinutes,
             now,
             toUtc,
+            { skipExpiredRelease: true },
           ),
         })),
       );

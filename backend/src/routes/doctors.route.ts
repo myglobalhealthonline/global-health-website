@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
-import { listDoctors } from "../modules/doctors/doctors.service.js";
+import { countActiveDoctors, listDoctors } from "../modules/doctors/doctors.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { localeCodeSchema } from "../validations/admin-countries.schema.js";
@@ -37,6 +37,28 @@ const doctorsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(503).send(errorResponse(error.message));
       }
 
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected doctors error"));
+    }
+  });
+
+  /**
+   * GET /api/doctors/count
+   * Active-doctor headcount for the homepage stat. A count projection so the
+   * cold homepage doesn't fetch the entire global roster just for `.length`.
+   */
+  app.get("/api/doctors/count", async (_request, reply) => {
+    reply.header(
+      "Cache-Control",
+      "public, max-age=60, s-maxage=60, stale-while-revalidate=300",
+    );
+    try {
+      const count = await countActiveDoctors();
+      return okResponse({ count });
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Unexpected doctors error"));
     }

@@ -1,5 +1,5 @@
 import type { CountryCode } from "@/data/countries";
-import { fetchDoctors } from "@/lib/api/site-content-api";
+import { fetchDoctors, fetchDoctorsCount } from "@/lib/api/site-content-api";
 import { cache } from "react";
 import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
 import { isKnownCountryCode } from "@/lib/content/merge-public-content";
@@ -251,6 +251,17 @@ export const getPublicDoctorsNormalized = cache(
     return out;
   },
 );
+
+/** Active-doctor headcount (count projection). Replaces fetching the full
+ *  roster just to read `.length` on the homepage. */
+export const getPublicDoctorsCount = cache(async (): Promise<number> => {
+  const res = await fetchDoctorsCount();
+  if (!res.ok) {
+    logPublicContentFallback("doctors:count", res.message);
+    return 0;
+  }
+  return typeof res.data.count === "number" ? res.data.count : 0;
+});
 
 export async function getPublicDoctorsForCountry(
   countryCode: CountryCode,
