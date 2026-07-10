@@ -1,7 +1,20 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, type CSSProperties } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, type CSSProperties } from "react";
 import createGlobe from "cobe";
+
+// P-003: hoisted module-level so every call that omits these props shares
+// one stable array reference. A default parameter (`markerColor = [...]`)
+// creates a NEW array literal on every render the caller omits the prop,
+// which fed the init effect's dependency array below and destroyed +
+// recreated the whole WebGL scene on every parent re-render (e.g. every
+// keystroke in a search box above the globe).
+const DEFAULT_MARKER_COLOR: [number, number, number] = [0.69, 0.95, 0.13];
+const DEFAULT_BASE_COLOR: [number, number, number] = [0.08, 0.23, 0.18];
+const DEFAULT_ARC_COLOR: [number, number, number] = [0.69, 0.95, 0.13];
+const DEFAULT_GLOW_COLOR: [number, number, number] = [0.08, 0.22, 0.17];
+const DEFAULT_MARKERS: GlobeMarker[] = [];
+const DEFAULT_ARCS: GlobeArc[] = [];
 
 export type GlobeMarker = {
   id: string;
@@ -42,14 +55,14 @@ type AnchorStyle = CSSProperties & {
   positionAnchor?: string;
 };
 
-export function Globe({
-  markers = [],
-  arcs = [],
+function GlobeImpl({
+  markers = DEFAULT_MARKERS,
+  arcs = DEFAULT_ARCS,
   className = "",
-  markerColor = [0.69, 0.95, 0.13],
-  baseColor = [0.08, 0.23, 0.18],
-  arcColor = [0.69, 0.95, 0.13],
-  glowColor = [0.08, 0.22, 0.17],
+  markerColor = DEFAULT_MARKER_COLOR,
+  baseColor = DEFAULT_BASE_COLOR,
+  arcColor = DEFAULT_ARC_COLOR,
+  glowColor = DEFAULT_GLOW_COLOR,
   dark = 0.92,
   mapBrightness = 5.8,
   markerSize = 0.045,
@@ -73,6 +86,14 @@ export function Globe({
   const thetaOffsetRef = useRef(0);
   const isPausedRef = useRef(false);
   const reducedMotionRef = useRef(false);
+  // P-003: the globe kept calling globe.update() (a full WebGL redraw) every
+  // animation frame even when hidden behind another tab or scrolled
+  // offscreen, and even when reduced-motion had already stopped rotation —
+  // wasting GPU/battery for a scene nothing was watching. isIntersectingRef
+  // + document.hidden gate the draw call itself in render() below; the rAF
+  // loop keeps running (a bare callback is effectively free) so resuming
+  // needs no separate wake-up wiring.
+  const isIntersectingRef = useRef(true);
 
   const cobeMarkers = useMemo(
     () =>
@@ -186,18 +207,28 @@ export function Globe({
         thetaOffsetRef.current += (thetaMax - thetaOffsetRef.current) * 0.1;
       }
 
-      globe.update({
-        phi: phi + phiOffsetRef.current + dragOffset.current.phi,
-        theta: theta + thetaOffsetRef.current + dragOffset.current.theta,
-        dark,
-        mapBrightness,
-        markerColor,
-        baseColor,
-        arcColor,
-        glowColor,
-        markers: cobeMarkers,
-        arcs: cobeArcs,
-      });
+      // Skip the actual WebGL draw (not the rAF loop itself, which stays
+      // primed so resuming needs no extra wiring) when: the tab is hidden,
+      // the globe is scrolled offscreen, or reduced-motion is on and
+      // nothing is being dragged — there is nothing new to show.
+      const shouldDraw =
+        !document.hidden &&
+        isIntersectingRef.current &&
+        (!reducedMotionRef.current || pointerInteracting.current !== null);
+      if (shouldDraw) {
+        globe.update({
+          phi: phi + phiOffsetRef.current + dragOffset.current.phi,
+          theta: theta + thetaOffsetRef.current + dragOffset.current.theta,
+          dark,
+          mapBrightness,
+          markerColor,
+          baseColor,
+          arcColor,
+          glowColor,
+          markers: cobeMarkers,
+          arcs: cobeArcs,
+        });
+      }
       animationId = window.requestAnimationFrame(render);
     }
 
@@ -245,7 +276,16 @@ export function Globe({
       resizeObserver.observe(container);
     }
 
+    const intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        isIntersectingRef.current = entries[0]?.isIntersecting ?? true;
+      },
+      { threshold: 0 },
+    );
+    intersectionObserver.observe(container);
+
     return () => {
+      intersectionObserver.disconnect();
       resizeObserver?.disconnect();
       window.cancelAnimationFrame(animationId);
       globe?.destroy();
@@ -336,3 +376,9 @@ export function Globe({
     </div>
   );
 }
+
+// P-003: memoized so a parent re-render (e.g. every keystroke in a search
+// box above the globe) that passes referentially-stable props doesn't even
+// re-run this component's body — the cheapest way to stop the init effect's
+// dependency array from churning.
+export const Globe = memo(GlobeImpl);
