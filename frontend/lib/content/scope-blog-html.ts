@@ -73,7 +73,37 @@ export function scopeBlogHtml(html: string): string {
 
   return sanitized.replace(
     /<style\b([^>]*)>([\s\S]*?)<\/style>/gi,
-    (_match, attrs: string, css: string) =>
-      `<style${attrs}>@scope (.${BLOG_SCOPE_CLASS}) {\n${css}\n}</style>`,
+    (_match, attrs: string, css: string) => {
+      const safeCss = hardenStyleBlockCss(css);
+      // Dangerous or unbalanced CSS is dropped whole rather than partially
+      // repaired — a half-fixed style block is how containment breaks.
+      if (safeCss === null) return "";
+      return `<style${attrs}>@scope (.${BLOG_SCOPE_CLASS}) {\n${safeCss}\n}</style>`;
+    },
   );
+}
+
+/**
+ * Stop-gap hardening of `<style>` block contents, applied before they're
+ * wrapped in `@scope`. This is regex-based, NOT a CSS parser — it only
+ * rejects the specific escape/tracking vectors called out in SECURITY_AUDIT2
+ * finding S-011:
+ *   - `@import` — would pull in an unscoped external stylesheet.
+ *   - `url(...)` / `expression(...)` — external resource loads used for
+ *     tracking pixels or (legacy IE) script execution.
+ *   - Unbalanced braces — the actual "close the @scope block early and run
+ *     unscoped CSS after it" containment escape. Comments are stripped first
+ *     so a `}` hidden inside `/* ... *\/` can't be used to fake balance.
+ * Returns null (meaning: drop the whole block) if any check trips, since a
+ * regex can't safely repair CSS it can't parse.
+ */
+function hardenStyleBlockCss(css: string): string | null {
+  const withoutComments = css.replace(/\/\*[\s\S]*?\*\//g, "");
+  if (/@import\b/i.test(withoutComments)) return null;
+  if (/url\s*\(/i.test(withoutComments)) return null;
+  if (/expression\s*\(/i.test(withoutComments)) return null;
+  const openCount = (withoutComments.match(/\{/g) ?? []).length;
+  const closeCount = (withoutComments.match(/\}/g) ?? []).length;
+  if (openCount !== closeCount) return null;
+  return withoutComments;
 }
