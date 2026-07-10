@@ -4,6 +4,7 @@ import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { MANUAL_BOOKING_COOKIE } from "@/lib/admin/manual-booking-cookie";
 import {
   fetchAdminAppointmentById,
   fetchAdminClinicsByCountryCode,
@@ -111,7 +112,7 @@ export default async function AdminAppointmentDetailPage({
   // cookie set by the create action (never from the URL).
   let manualBooking: ManualBookingRecovery | null = null;
   if (messages.manualBooked === "1") {
-    const raw = (await cookies()).get("gh_manual_booking")?.value;
+    const raw = (await cookies()).get(MANUAL_BOOKING_COOKIE)?.value;
     if (raw) {
       try {
         manualBooking = JSON.parse(raw) as ManualBookingRecovery;

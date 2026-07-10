@@ -3,6 +3,7 @@ import { cookies, headers } from "next/headers";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { CartProvider } from "@/components/cart/CartContext";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { MetaPixel } from "@/components/compliance/MetaPixel";
 import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
 import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
 import { getCountryFooter } from "@/lib/content/get-country-footers";
@@ -142,6 +143,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
         isGatewayHome={isGatewayHome}
       >
         <JsonLd data={[organizationJsonLd(organizationSameAs), websiteJsonLd()]} />
+        <MetaPixel />
         {children}
       </SiteChrome>
     </CartProvider>

@@ -5,8 +5,9 @@ import Link from "next/link";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { resolveLocale } from "@/lib/i18n/resolve-locale";
+import { COOKIE_CONSENT_STORAGE_KEY, COOKIE_CONSENT_EVENT } from "./cookie-consent";
 
-const STORAGE_KEY = "gh-cookie-consent";
+const STORAGE_KEY = COOKIE_CONSENT_STORAGE_KEY;
 
 function readClientLocale(): LocaleCode {
   try {
@@ -47,6 +48,7 @@ export function CookieBanner() {
     } catch {
       // ignored
     }
+    window.dispatchEvent(new Event(COOKIE_CONSENT_EVENT));
     setVisible(false);
   }
 

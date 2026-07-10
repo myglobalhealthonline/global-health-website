@@ -2,11 +2,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
-
-/** Short-lived httpOnly cookie that carries the manual-booking recovery
- *  details (temp password, invite + payment links) to the detail page,
- *  so these secrets never appear in the URL / server logs / history. */
-export const MANUAL_BOOKING_COOKIE = "gh_manual_booking";
+import { MANUAL_BOOKING_COOKIE } from "@/lib/admin/manual-booking-cookie";
 import { ArrowLeft, Globe2 } from "lucide-react";
 import {
   fetchAdminClinicsByCountryCode,
