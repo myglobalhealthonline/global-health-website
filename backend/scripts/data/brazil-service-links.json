@@ -1,0 +1,893 @@
+[
+  {
+    "source": "consulta-clinica-online",
+    "target": "atestado-medico-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Atestado médico com validade legal?",
+    "body": "Se a sua situação está relacionada a atestado médico com validade legal, nossa Atestado Médico oferece a avaliação adequada.",
+    "ctaLabel": "Atestado Médico",
+    "priority": 0
+  },
+  {
+    "source": "consulta-clinica-online",
+    "target": "renovacao-receita-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com renovar sua receita sem sair de casa?",
+    "body": "Para renovar sua receita sem sair de casa, consulte nossa página de Renovação de Receita — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Renovação de Receita",
+    "priority": 1
+  },
+  {
+    "source": "consulta-clinica-online",
+    "target": "saude-mental-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre saúde mental — ansiedade, depressão e burnout?",
+    "body": "Nossa Saúde Mental foi pensada especificamente para saúde mental — ansiedade, depressão e burnout.",
+    "ctaLabel": "Saúde Mental",
+    "priority": 2
+  },
+  {
+    "source": "consulta-clinica-online",
+    "target": "saude-da-mulher-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Saúde da mulher e anticoncepção?",
+    "body": "Se a sua situação está relacionada a saúde da mulher e anticoncepção, nossa Saúde da Mulher oferece a avaliação adequada.",
+    "ctaLabel": "Saúde da Mulher",
+    "priority": 3
+  },
+  {
+    "source": "consulta-clinica-online",
+    "target": "saude-do-homem-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com saúde do homem e saúde sexual masculina?",
+    "body": "Para saúde do homem e saúde sexual masculina, consulte nossa página de Saúde do Homem — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Saúde do Homem",
+    "priority": 4
+  },
+  {
+    "source": "consulta-clinica-online",
+    "target": "saude-viagem-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre saúde de viagem antes de partir?",
+    "body": "Nossa Saúde de Viagem foi pensada especificamente para saúde de viagem antes de partir.",
+    "ctaLabel": "Saúde de Viagem",
+    "priority": 5
+  },
+  {
+    "source": "consulta-clinica-online",
+    "target": "consulta-pele-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Consulta de pele por videochamada?",
+    "body": "Se a sua situação está relacionada a consulta de pele por videochamada, nossa Consulta de Pele oferece a avaliação adequada.",
+    "ctaLabel": "Consulta de Pele",
+    "priority": 6
+  },
+  {
+    "source": "consulta-clinica-online",
+    "target": "segunda-opiniao-medica",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com segunda opinião médica independente?",
+    "body": "Para segunda opinião médica independente, consulte nossa página de Segunda Opinião Médica — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Segunda Opinião Médica",
+    "priority": 7
+  },
+  {
+    "source": "consulta-clinica-online",
+    "target": "pediatria-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre consulta pediátrica para seu filho?",
+    "body": "Nossa Pediatria foi pensada especificamente para consulta pediátrica para seu filho.",
+    "ctaLabel": "Pediatria",
+    "priority": 8
+  },
+  {
+    "source": "consulta-clinica-online",
+    "target": "doencas-cronicas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Acompanhamento de doenças crônicas?",
+    "body": "Se a sua situação está relacionada a acompanhamento de doenças crônicas, nossa Doenças Crônicas oferece a avaliação adequada.",
+    "ctaLabel": "Doenças Crônicas",
+    "priority": 9
+  },
+  {
+    "source": "consulta-clinica-online",
+    "target": "queda-cabelo-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com queda de cabelo — avaliação e tratamento?",
+    "body": "Para queda de cabelo — avaliação e tratamento, consulte nossa página de Queda de Cabelo — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Queda de Cabelo",
+    "priority": 10
+  },
+  {
+    "source": "consulta-clinica-online",
+    "target": "musculoesqueletico-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre dor muscular e articular?",
+    "body": "Nossa Musculoesquelético foi pensada especificamente para dor muscular e articular.",
+    "ctaLabel": "Musculoesquelético",
+    "priority": 11
+  },
+  {
+    "source": "consulta-clinica-online",
+    "target": "solicitacao-exames-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Solicitar exames de sangue e imagem?",
+    "body": "Se a sua situação está relacionada a solicitar exames de sangue e imagem, nossa Solicitação de Exames oferece a avaliação adequada.",
+    "ctaLabel": "Solicitação de Exames",
+    "priority": 12
+  },
+  {
+    "source": "consulta-clinica-online",
+    "target": "controle-peso-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com controle de peso com avaliação médica?",
+    "body": "Para controle de peso com avaliação médica, consulte nossa página de Controle de Peso — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Controle de Peso",
+    "priority": 13
+  },
+  {
+    "source": "consulta-clinica-online",
+    "target": "parar-de-fumar-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre parar de fumar com apoio médico?",
+    "body": "Nossa Parar de Fumar foi pensada especificamente para parar de fumar com apoio médico.",
+    "ctaLabel": "Parar de Fumar",
+    "priority": 14
+  },
+  {
+    "source": "consulta-clinica-online",
+    "target": "saude-idoso-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Saúde do idoso e revisão de medicamentos?",
+    "body": "Se a sua situação está relacionada a saúde do idoso e revisão de medicamentos, nossa Saúde do Idoso oferece a avaliação adequada.",
+    "ctaLabel": "Saúde do Idoso",
+    "priority": 15
+  },
+  {
+    "source": "consulta-clinica-online",
+    "target": "saude-sexual-ist-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com saúde sexual e rastreamento de IST?",
+    "body": "Para saúde sexual e rastreamento de IST, consulte nossa página de Saúde Sexual e IST — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Saúde Sexual e IST",
+    "priority": 16
+  },
+  {
+    "source": "controle-peso-online",
+    "target": "saude-da-mulher-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Desequilíbrio hormonal como causa do ganho de peso?",
+    "body": "Se a sua situação está relacionada a desequilíbrio hormonal como causa do ganho de peso, nossa Saúde da Mulher oferece a avaliação adequada.",
+    "ctaLabel": "Saúde da Mulher",
+    "priority": 0
+  },
+  {
+    "source": "controle-peso-online",
+    "target": "saude-do-homem-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com déficit de testosterona e ganho de peso em homens?",
+    "body": "Para déficit de testosterona e ganho de peso em homens, consulte nossa página de Saúde do Homem — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Saúde do Homem",
+    "priority": 1
+  },
+  {
+    "source": "controle-peso-online",
+    "target": "queda-cabelo-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre queda de cabelo de base hormonal ou metabólica?",
+    "body": "Nossa Queda de Cabelo foi pensada especificamente para queda de cabelo de base hormonal ou metabólica.",
+    "ctaLabel": "Queda de Cabelo",
+    "priority": 2
+  },
+  {
+    "source": "controle-peso-online",
+    "target": "doencas-cronicas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Diabetes e hipotireoidismo como causas do sobrepeso?",
+    "body": "Se a sua situação está relacionada a diabetes e hipotireoidismo como causas do sobrepeso, nossa Doenças Crônicas oferece a avaliação adequada.",
+    "ctaLabel": "Doenças Crônicas",
+    "priority": 3
+  },
+  {
+    "source": "controle-peso-online",
+    "target": "solicitacao-exames-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com solicitar exames metabólicos e hormonais?",
+    "body": "Para solicitar exames metabólicos e hormonais, consulte nossa página de Solicitação de Exames — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Solicitação de Exames",
+    "priority": 4
+  },
+  {
+    "source": "saude-da-mulher-online",
+    "target": "controle-peso-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Controle de peso com base hormonal?",
+    "body": "Se a sua situação está relacionada a controle de peso com base hormonal, nossa Controle de Peso oferece a avaliação adequada.",
+    "ctaLabel": "Controle de Peso",
+    "priority": 0
+  },
+  {
+    "source": "saude-da-mulher-online",
+    "target": "queda-cabelo-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com queda de cabelo hormonal em mulheres?",
+    "body": "Para queda de cabelo hormonal em mulheres, consulte nossa página de Queda de Cabelo — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Queda de Cabelo",
+    "priority": 1
+  },
+  {
+    "source": "saude-da-mulher-online",
+    "target": "doencas-cronicas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre acompanhamento de hipotireoidismo e SOP?",
+    "body": "Nossa Doenças Crônicas foi pensada especificamente para acompanhamento de hipotireoidismo e SOP.",
+    "ctaLabel": "Doenças Crônicas",
+    "priority": 2
+  },
+  {
+    "source": "saude-da-mulher-online",
+    "target": "solicitacao-exames-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Solicitar exames hormonais e de fertilidade?",
+    "body": "Se a sua situação está relacionada a solicitar exames hormonais e de fertilidade, nossa Solicitação de Exames oferece a avaliação adequada.",
+    "ctaLabel": "Solicitação de Exames",
+    "priority": 3
+  },
+  {
+    "source": "saude-do-homem-online",
+    "target": "controle-peso-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Controle de peso e déficit de testosterona?",
+    "body": "Se a sua situação está relacionada a controle de peso e déficit de testosterona, nossa Controle de Peso oferece a avaliação adequada.",
+    "ctaLabel": "Controle de Peso",
+    "priority": 0
+  },
+  {
+    "source": "saude-do-homem-online",
+    "target": "queda-cabelo-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com queda de cabelo hormonal em homens?",
+    "body": "Para queda de cabelo hormonal em homens, consulte nossa página de Queda de Cabelo — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Queda de Cabelo",
+    "priority": 1
+  },
+  {
+    "source": "saude-do-homem-online",
+    "target": "solicitacao-exames-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre solicitar dosagem de testosterona e perfil metabólico?",
+    "body": "Nossa Solicitação de Exames foi pensada especificamente para solicitar dosagem de testosterona e perfil metabólico.",
+    "ctaLabel": "Solicitação de Exames",
+    "priority": 2
+  },
+  {
+    "source": "queda-cabelo-online",
+    "target": "saude-da-mulher-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Avaliação hormonal e metabólica completa?",
+    "body": "Se a sua situação está relacionada a avaliação hormonal e metabólica completa, nossa Saúde da Mulher oferece a avaliação adequada.",
+    "ctaLabel": "Saúde da Mulher",
+    "priority": 0
+  },
+  {
+    "source": "queda-cabelo-online",
+    "target": "saude-do-homem-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com déficit de testosterona e queda de cabelo?",
+    "body": "Para déficit de testosterona e queda de cabelo, consulte nossa página de Saúde do Homem — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Saúde do Homem",
+    "priority": 1
+  },
+  {
+    "source": "queda-cabelo-online",
+    "target": "solicitacao-exames-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre solicitar ferritina, TSH e perfil hormonal?",
+    "body": "Nossa Solicitação de Exames foi pensada especificamente para solicitar ferritina, TSH e perfil hormonal.",
+    "ctaLabel": "Solicitação de Exames",
+    "priority": 2
+  },
+  {
+    "source": "doencas-cronicas-online",
+    "target": "controle-peso-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Controle de peso em diabetes e hipotireoidismo?",
+    "body": "Se a sua situação está relacionada a controle de peso em diabetes e hipotireoidismo, nossa Controle de Peso oferece a avaliação adequada.",
+    "ctaLabel": "Controle de Peso",
+    "priority": 0
+  },
+  {
+    "source": "doencas-cronicas-online",
+    "target": "solicitacao-exames-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com solicitar exames de controle?",
+    "body": "Para solicitar exames de controle, consulte nossa página de Solicitação de Exames — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Solicitação de Exames",
+    "priority": 1
+  },
+  {
+    "source": "solicitacao-exames-online",
+    "target": "controle-peso-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Avaliação médica de controle de peso?",
+    "body": "Se a sua situação está relacionada a avaliação médica de controle de peso, nossa Controle de Peso oferece a avaliação adequada.",
+    "ctaLabel": "Controle de Peso",
+    "priority": 0
+  },
+  {
+    "source": "saude-mental-online",
+    "target": "saude-do-homem-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Saúde mental masculina — ansiedade e burnout em homens?",
+    "body": "Se a sua situação está relacionada a saúde mental masculina — ansiedade e burnout em homens, nossa Saúde do Homem oferece a avaliação adequada.",
+    "ctaLabel": "Saúde do Homem",
+    "priority": 0
+  },
+  {
+    "source": "saude-mental-online",
+    "target": "saude-da-mulher-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com saúde mental feminina e alterações de humor hormonal?",
+    "body": "Para saúde mental feminina e alterações de humor hormonal, consulte nossa página de Saúde da Mulher — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Saúde da Mulher",
+    "priority": 1
+  },
+  {
+    "source": "saude-mental-online",
+    "target": "parar-de-fumar-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre apoio para parar de fumar — componente emocional?",
+    "body": "Nossa Parar de Fumar foi pensada especificamente para apoio para parar de fumar — componente emocional.",
+    "ctaLabel": "Parar de Fumar",
+    "priority": 2
+  },
+  {
+    "source": "saude-mental-online",
+    "target": "saude-idoso-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Saúde mental no idoso — depressão e isolamento?",
+    "body": "Se a sua situação está relacionada a saúde mental no idoso — depressão e isolamento, nossa Saúde do Idoso oferece a avaliação adequada.",
+    "ctaLabel": "Saúde do Idoso",
+    "priority": 3
+  },
+  {
+    "source": "saude-do-homem-online",
+    "target": "saude-mental-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Saúde mental em homens?",
+    "body": "Se a sua situação está relacionada a saúde mental em homens, nossa Saúde Mental oferece a avaliação adequada.",
+    "ctaLabel": "Saúde Mental",
+    "priority": 3
+  },
+  {
+    "source": "saude-da-mulher-online",
+    "target": "saude-mental-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com saúde mental feminina e estado de ânimo pós-parto?",
+    "body": "Para saúde mental feminina e estado de ânimo pós-parto, consulte nossa página de Saúde Mental — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Saúde Mental",
+    "priority": 4
+  },
+  {
+    "source": "parar-de-fumar-online",
+    "target": "saude-mental-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Apoio de saúde mental durante a cessação tabágica?",
+    "body": "Se a sua situação está relacionada a apoio de saúde mental durante a cessação tabágica, nossa Saúde Mental oferece a avaliação adequada.",
+    "ctaLabel": "Saúde Mental",
+    "priority": 0
+  },
+  {
+    "source": "parar-de-fumar-online",
+    "target": "controle-peso-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com controle de peso ao parar de fumar?",
+    "body": "Para controle de peso ao parar de fumar, consulte nossa página de Controle de Peso — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Controle de Peso",
+    "priority": 1
+  },
+  {
+    "source": "controle-peso-online",
+    "target": "saude-mental-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre impacto emocional do ganho de peso?",
+    "body": "Nossa Saúde Mental foi pensada especificamente para impacto emocional do ganho de peso.",
+    "ctaLabel": "Saúde Mental",
+    "priority": 5
+  },
+  {
+    "source": "saude-idoso-online",
+    "target": "saude-mental-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Depressão no idoso — rastreamento e manejo?",
+    "body": "Se a sua situação está relacionada a depressão no idoso — rastreamento e manejo, nossa Saúde Mental oferece a avaliação adequada.",
+    "ctaLabel": "Saúde Mental",
+    "priority": 0
+  },
+  {
+    "source": "consulta-pele-online",
+    "target": "queda-cabelo-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Queda de cabelo e afecções do couro cabeludo?",
+    "body": "Se a sua situação está relacionada a queda de cabelo e afecções do couro cabeludo, nossa Queda de Cabelo oferece a avaliação adequada.",
+    "ctaLabel": "Queda de Cabelo",
+    "priority": 0
+  },
+  {
+    "source": "consulta-pele-online",
+    "target": "saude-da-mulher-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com acne hormonal em mulheres?",
+    "body": "Para acne hormonal em mulheres, consulte nossa página de Saúde da Mulher — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Saúde da Mulher",
+    "priority": 1
+  },
+  {
+    "source": "queda-cabelo-online",
+    "target": "consulta-pele-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Afecções de pele do couro cabeludo?",
+    "body": "Se a sua situação está relacionada a afecções de pele do couro cabeludo, nossa Consulta de Pele oferece a avaliação adequada.",
+    "ctaLabel": "Consulta de Pele",
+    "priority": 3
+  },
+  {
+    "source": "saude-da-mulher-online",
+    "target": "consulta-pele-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre acne hormonal — avaliação de pele?",
+    "body": "Nossa Consulta de Pele foi pensada especificamente para acne hormonal — avaliação de pele.",
+    "ctaLabel": "Consulta de Pele",
+    "priority": 5
+  },
+  {
+    "source": "doencas-cronicas-online",
+    "target": "parar-de-fumar-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre parar de fumar — impacto na saúde cardiovascular?",
+    "body": "Nossa Parar de Fumar foi pensada especificamente para parar de fumar — impacto na saúde cardiovascular.",
+    "ctaLabel": "Parar de Fumar",
+    "priority": 2
+  },
+  {
+    "source": "saude-do-homem-online",
+    "target": "doencas-cronicas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com avaliação de risco cardiovascular masculino?",
+    "body": "Para avaliação de risco cardiovascular masculino, consulte nossa página de Doenças Crônicas — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Doenças Crônicas",
+    "priority": 4
+  },
+  {
+    "source": "parar-de-fumar-online",
+    "target": "doencas-cronicas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre doenças crônicas e tabagismo?",
+    "body": "Nossa Doenças Crônicas foi pensada especificamente para doenças crônicas e tabagismo.",
+    "ctaLabel": "Doenças Crônicas",
+    "priority": 2
+  },
+  {
+    "source": "solicitacao-exames-online",
+    "target": "doencas-cronicas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com exames cardiometabólicos e de controle crônico?",
+    "body": "Para exames cardiometabólicos e de controle crônico, consulte nossa página de Doenças Crônicas — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Doenças Crônicas",
+    "priority": 1
+  },
+  {
+    "source": "saude-sexual-ist-online",
+    "target": "doencas-cronicas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Hepatites B e C — doenças crônicas transmitidas sexualmente?",
+    "body": "Se a sua situação está relacionada a hepatites B e C — doenças crônicas transmitidas sexualmente, nossa Doenças Crônicas oferece a avaliação adequada.",
+    "ctaLabel": "Doenças Crônicas",
+    "priority": 0
+  },
+  {
+    "source": "musculoesqueletico-online",
+    "target": "doencas-cronicas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Doenças crônicas como artrite e osteoporose?",
+    "body": "Se a sua situação está relacionada a doenças crônicas como artrite e osteoporose, nossa Doenças Crônicas oferece a avaliação adequada.",
+    "ctaLabel": "Doenças Crônicas",
+    "priority": 0
+  },
+  {
+    "source": "musculoesqueletico-online",
+    "target": "solicitacao-exames-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com solicitar raio-X ou ressonância magnética?",
+    "body": "Para solicitar raio-X ou ressonância magnética, consulte nossa página de Solicitação de Exames — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Solicitação de Exames",
+    "priority": 1
+  },
+  {
+    "source": "musculoesqueletico-online",
+    "target": "saude-idoso-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre dor musculoesquelética no idoso — quedas e fragilidade?",
+    "body": "Nossa Saúde do Idoso foi pensada especificamente para dor musculoesquelética no idoso — quedas e fragilidade.",
+    "ctaLabel": "Saúde do Idoso",
+    "priority": 2
+  },
+  {
+    "source": "doencas-cronicas-online",
+    "target": "musculoesqueletico-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Dor articular crónica e artrite?",
+    "body": "Se a sua situação está relacionada a dor articular crónica e artrite, nossa Musculoesquelético oferece a avaliação adequada.",
+    "ctaLabel": "Musculoesquelético",
+    "priority": 3
+  },
+  {
+    "source": "solicitacao-exames-online",
+    "target": "musculoesqueletico-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre solicitar raio-X ou ressonância para queixa musculoesquelética?",
+    "body": "Nossa Musculoesquelético foi pensada especificamente para solicitar raio-X ou ressonância para queixa musculoesquelética.",
+    "ctaLabel": "Musculoesquelético",
+    "priority": 2
+  },
+  {
+    "source": "saude-idoso-online",
+    "target": "musculoesqueletico-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com risco de quedas e avaliação musculoesquelética no idoso?",
+    "body": "Para risco de quedas e avaliação musculoesquelética no idoso, consulte nossa página de Musculoesquelético — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Musculoesquelético",
+    "priority": 1
+  },
+  {
+    "source": "saude-sexual-ist-online",
+    "target": "saude-da-mulher-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com anticoncepção e prevenção combinada?",
+    "body": "Para anticoncepção e prevenção combinada, consulte nossa página de Saúde da Mulher — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Saúde da Mulher",
+    "priority": 1
+  },
+  {
+    "source": "saude-sexual-ist-online",
+    "target": "saude-do-homem-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre saúde sexual masculina e rastreamento de IST em homens?",
+    "body": "Nossa Saúde do Homem foi pensada especificamente para saúde sexual masculina e rastreamento de IST em homens.",
+    "ctaLabel": "Saúde do Homem",
+    "priority": 2
+  },
+  {
+    "source": "saude-sexual-ist-online",
+    "target": "solicitacao-exames-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Solicitar painel completo de IST?",
+    "body": "Se a sua situação está relacionada a solicitar painel completo de IST, nossa Solicitação de Exames oferece a avaliação adequada.",
+    "ctaLabel": "Solicitação de Exames",
+    "priority": 3
+  },
+  {
+    "source": "saude-sexual-ist-online",
+    "target": "saude-viagem-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com saúde de viagem — IST em destinos de risco?",
+    "body": "Para saúde de viagem — IST em destinos de risco, consulte nossa página de Saúde de Viagem — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Saúde de Viagem",
+    "priority": 4
+  },
+  {
+    "source": "saude-da-mulher-online",
+    "target": "saude-sexual-ist-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Rastreamento de IST em mulheres?",
+    "body": "Se a sua situação está relacionada a rastreamento de IST em mulheres, nossa Saúde Sexual e IST oferece a avaliação adequada.",
+    "ctaLabel": "Saúde Sexual e IST",
+    "priority": 6
+  },
+  {
+    "source": "saude-do-homem-online",
+    "target": "saude-sexual-ist-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre rastreamento de IST em homens?",
+    "body": "Nossa Saúde Sexual e IST foi pensada especificamente para rastreamento de IST em homens.",
+    "ctaLabel": "Saúde Sexual e IST",
+    "priority": 5
+  },
+  {
+    "source": "solicitacao-exames-online",
+    "target": "saude-sexual-ist-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Solicitar painel de IST — HIV, sífilis, hepatites?",
+    "body": "Se a sua situação está relacionada a solicitar painel de IST — HIV, sífilis, hepatites, nossa Saúde Sexual e IST oferece a avaliação adequada.",
+    "ctaLabel": "Saúde Sexual e IST",
+    "priority": 3
+  },
+  {
+    "source": "saude-viagem-online",
+    "target": "saude-sexual-ist-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Rastreamento de IST após viagem de risco?",
+    "body": "Se a sua situação está relacionada a rastreamento de IST após viagem de risco, nossa Saúde Sexual e IST oferece a avaliação adequada.",
+    "ctaLabel": "Saúde Sexual e IST",
+    "priority": 0
+  },
+  {
+    "source": "solicitacao-exames-online",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com consulta clínica antes de solicitar exames?",
+    "body": "Para consulta clínica antes de solicitar exames, consulte nossa página de Consulta Clínica Online — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 4
+  },
+  {
+    "source": "solicitacao-exames-online",
+    "target": "segunda-opiniao-medica",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre segunda opinião sobre resultados recebidos?",
+    "body": "Nossa Segunda Opinião Médica foi pensada especificamente para segunda opinião sobre resultados recebidos.",
+    "ctaLabel": "Segunda Opinião Médica",
+    "priority": 5
+  },
+  {
+    "source": "segunda-opiniao-medica",
+    "target": "solicitacao-exames-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Solicitar exames para complementar a segunda opinião?",
+    "body": "Se a sua situação está relacionada a solicitar exames para complementar a segunda opinião, nossa Solicitação de Exames oferece a avaliação adequada.",
+    "ctaLabel": "Solicitação de Exames",
+    "priority": 0
+  },
+  {
+    "source": "segunda-opiniao-medica",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com consulta clínica para avaliação geral?",
+    "body": "Para consulta clínica para avaliação geral, consulte nossa página de Consulta Clínica Online — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 1
+  },
+  {
+    "source": "atestado-medico-online",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Consulta clínica geral com clínico geral?",
+    "body": "Se a sua situação está relacionada a consulta clínica geral com clínico geral, nossa Consulta Clínica Online oferece a avaliação adequada.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 0
+  },
+  {
+    "source": "saude-viagem-online",
+    "target": "doencas-cronicas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com acompanhamento de doenças crônicas durante a viagem?",
+    "body": "Para acompanhamento de doenças crônicas durante a viagem, consulte nossa página de Doenças Crônicas — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Doenças Crônicas",
+    "priority": 1
+  },
+  {
+    "source": "saude-viagem-online",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre consulta clínica para febre ao retorno de viagem?",
+    "body": "Nossa Consulta Clínica Online foi pensada especificamente para consulta clínica para febre ao retorno de viagem.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 2
+  },
+  {
+    "source": "saude-viagem-online",
+    "target": "pediatria-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Saúde de viagem para crianças?",
+    "body": "Se a sua situação está relacionada a saúde de viagem para crianças, nossa Pediatria oferece a avaliação adequada.",
+    "ctaLabel": "Pediatria",
+    "priority": 3
+  },
+  {
+    "source": "pediatria-online",
+    "target": "saude-viagem-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Saúde de viagem para crianças — vacinas e doenças tropicais?",
+    "body": "Se a sua situação está relacionada a saúde de viagem para crianças — vacinas e doenças tropicais, nossa Saúde de Viagem oferece a avaliação adequada.",
+    "ctaLabel": "Saúde de Viagem",
+    "priority": 0
+  },
+  {
+    "source": "doencas-cronicas-online",
+    "target": "saude-viagem-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com saúde de viagem com doença crônica?",
+    "body": "Para saúde de viagem com doença crônica, consulte nossa página de Saúde de Viagem — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Saúde de Viagem",
+    "priority": 4
+  },
+  {
+    "source": "pediatria-online",
+    "target": "saude-mental-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com saúde mental em crianças e adolescentes?",
+    "body": "Para saúde mental em crianças e adolescentes, consulte nossa página de Saúde Mental — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Saúde Mental",
+    "priority": 1
+  },
+  {
+    "source": "saude-idoso-online",
+    "target": "doencas-cronicas-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre acompanhamento de doenças crônicas no idoso?",
+    "body": "Nossa Doenças Crônicas foi pensada especificamente para acompanhamento de doenças crônicas no idoso.",
+    "ctaLabel": "Doenças Crônicas",
+    "priority": 2
+  },
+  {
+    "source": "saude-idoso-online",
+    "target": "solicitacao-exames-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Solicitar exames de check-up para idoso?",
+    "body": "Se a sua situação está relacionada a solicitar exames de check-up para idoso, nossa Solicitação de Exames oferece a avaliação adequada.",
+    "ctaLabel": "Solicitação de Exames",
+    "priority": 3
+  },
+  {
+    "source": "doencas-cronicas-online",
+    "target": "saude-idoso-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre doenças crônicas no idoso e polifarmácia?",
+    "body": "Nossa Saúde do Idoso foi pensada especificamente para doenças crônicas no idoso e polifarmácia.",
+    "ctaLabel": "Saúde do Idoso",
+    "priority": 5
+  },
+  {
+    "source": "atestado-medico-online",
+    "target": "musculoesqueletico-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com atestado por queixa musculoesquelética ou LER/DORT?",
+    "body": "Para atestado por queixa musculoesquelética ou LER/DORT, consulte nossa página de Musculoesquelético — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Musculoesquelético",
+    "priority": 1
+  },
+  {
+    "source": "atestado-medico-online",
+    "target": "saude-mental-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre atestado por afastamento de saúde mental?",
+    "body": "Nossa Saúde Mental foi pensada especificamente para atestado por afastamento de saúde mental.",
+    "ctaLabel": "Saúde Mental",
+    "priority": 2
+  },
+  {
+    "source": "musculoesqueletico-online",
+    "target": "atestado-medico-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Atestado médico por LER/DORT ou queixa ocupacional?",
+    "body": "Se a sua situação está relacionada a atestado médico por LER/DORT ou queixa ocupacional, nossa Atestado Médico oferece a avaliação adequada.",
+    "ctaLabel": "Atestado Médico",
+    "priority": 3
+  },
+  {
+    "source": "saude-mental-online",
+    "target": "atestado-medico-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com atestado médico por afastamento de saúde mental?",
+    "body": "Para atestado médico por afastamento de saúde mental, consulte nossa página de Atestado Médico — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Atestado Médico",
+    "priority": 4
+  },
+  {
+    "source": "renovacao-receita-online",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Consulta clínica geral para avaliação antes de renovar?",
+    "body": "Se a sua situação está relacionada a consulta clínica geral para avaliação antes de renovar, nossa Consulta Clínica Online oferece a avaliação adequada.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 0
+  },
+  {
+    "source": "saude-mental-online",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre consulta clínica online com clínico geral?",
+    "body": "Nossa Consulta Clínica Online foi pensada especificamente para consulta clínica online com clínico geral.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 5
+  },
+  {
+    "source": "saude-da-mulher-online",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com consulta clínica online com clínico geral?",
+    "body": "Para consulta clínica online com clínico geral, consulte nossa página de Consulta Clínica Online — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 7
+  },
+  {
+    "source": "saude-do-homem-online",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Consulta clínica online com clínico geral?",
+    "body": "Se a sua situação está relacionada a consulta clínica online com clínico geral, nossa Consulta Clínica Online oferece a avaliação adequada.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 6
+  },
+  {
+    "source": "consulta-pele-online",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre consulta clínica online com clínico geral?",
+    "body": "Nossa Consulta Clínica Online foi pensada especificamente para consulta clínica online com clínico geral.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 2
+  },
+  {
+    "source": "pediatria-online",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre consulta clínica online com clínico geral?",
+    "body": "Nossa Consulta Clínica Online foi pensada especificamente para consulta clínica online com clínico geral.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 2
+  },
+  {
+    "source": "doencas-cronicas-online",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Consulta clínica online com clínico geral?",
+    "body": "Se a sua situação está relacionada a consulta clínica online com clínico geral, nossa Consulta Clínica Online oferece a avaliação adequada.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 6
+  },
+  {
+    "source": "queda-cabelo-online",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com consulta clínica online com clínico geral?",
+    "body": "Para consulta clínica online com clínico geral, consulte nossa página de Consulta Clínica Online — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 4
+  },
+  {
+    "source": "musculoesqueletico-online",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com consulta clínica online com clínico geral?",
+    "body": "Para consulta clínica online com clínico geral, consulte nossa página de Consulta Clínica Online — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 4
+  },
+  {
+    "source": "controle-peso-online",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Consulta clínica online com clínico geral?",
+    "body": "Se a sua situação está relacionada a consulta clínica online com clínico geral, nossa Consulta Clínica Online oferece a avaliação adequada.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 6
+  },
+  {
+    "source": "parar-de-fumar-online",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Consulta clínica online com clínico geral?",
+    "body": "Se a sua situação está relacionada a consulta clínica online com clínico geral, nossa Consulta Clínica Online oferece a avaliação adequada.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 3
+  },
+  {
+    "source": "saude-idoso-online",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Precisa de ajuda com consulta clínica online com clínico geral?",
+    "body": "Para consulta clínica online com clínico geral, consulte nossa página de Consulta Clínica Online — avaliação clínica específica para o seu caso.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 4
+  },
+  {
+    "source": "saude-sexual-ist-online",
+    "target": "consulta-clinica-online",
+    "type": "COMPLEMENTARY",
+    "heading": "Sua consulta é sobre consulta clínica online com clínico geral?",
+    "body": "Nossa Consulta Clínica Online foi pensada especificamente para consulta clínica online com clínico geral.",
+    "ctaLabel": "Consulta Clínica Online",
+    "priority": 5
+  }
+]
