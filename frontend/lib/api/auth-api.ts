@@ -176,11 +176,14 @@ export async function setupTwoFactor() {
 }
 
 /** Step 2: verify a code from the authenticator app and enable 2FA. The
- *  secret + backup codes round-trip from the setup response. */
+ *  secret + backup codes round-trip from the setup response. Requires the
+ *  account's current password (S-007a) — an already-authenticated session
+ *  alone can't silently enroll a new 2FA secret. */
 export async function confirmTwoFactor(input: {
   token: string;
   secret: string;
   backupCodes: string[];
+  currentPassword: string;
 }) {
   return authRequest<{ enabled: true }>("/api/auth/2fa/confirm", {
     method: "POST",

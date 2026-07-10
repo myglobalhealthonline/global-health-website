@@ -10,6 +10,7 @@ import multipart from "@fastify/multipart";
 import rateLimit from "@fastify/rate-limit";
 import Fastify from "fastify";
 import { env } from "./config/env.js";
+import { buildOriginGuardHook } from "./utils/origin-guard.js";
 
 export async function buildApp() {
   // bodyLimit applies to non-multipart payloads. Aligned with the
@@ -45,6 +46,24 @@ export async function buildApp() {
   const isLocalhostOrigin = (origin: string): boolean =>
     /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin);
 
+  // Single source of truth for "is this origin allowed" — the CORS `origin`
+  // callback and the S-013 Origin-guard hook below both call this instead
+  // of keeping two allowlist checks that could drift apart.
+  const isOriginAllowed = (origin: string): boolean => {
+    // Local development tooling is always allowed.
+    if (isLocalhostOrigin(origin)) return true;
+    // When an allowlist is configured, enforce it in EVERY environment
+    // (prod, staging, preview) — not just production. This stops an
+    // internet-reachable non-prod deployment from accepting credentialed
+    // cross-origin requests from arbitrary sites.
+    if (allowedOrigins.length > 0) return allowedOrigins.includes(origin);
+    // No allowlist configured: allow-all only in genuine local dev.
+    // Any other environment (production, staging, preview) fails closed —
+    // an internet-reachable non-prod deploy with no allowlist must not
+    // accept credentialed cross-origin requests from arbitrary sites.
+    return env.NODE_ENV === "development";
+  };
+
   await app.register(cors, {
     origin: (origin, callback) => {
       // Same-origin / non-browser requests (no Origin header) are allowed.
@@ -52,34 +71,23 @@ export async function buildApp() {
         callback(null, true);
         return;
       }
-      // Local development tooling is always allowed.
-      if (isLocalhostOrigin(origin)) {
-        callback(null, true);
-        return;
-      }
-      // When an allowlist is configured, enforce it in EVERY environment
-      // (prod, staging, preview) — not just production. This stops an
-      // internet-reachable non-prod deployment from accepting credentialed
-      // cross-origin requests from arbitrary sites.
-      if (allowedOrigins.length > 0) {
-        callback(null, allowedOrigins.includes(origin));
-        return;
-      }
-      // No allowlist configured: allow-all only in genuine local dev.
-      // Any other environment (production, staging, preview) fails closed —
-      // an internet-reachable non-prod deploy with no allowlist must not
-      // accept credentialed cross-origin requests from arbitrary sites.
-      if (env.NODE_ENV === "development") {
-        callback(null, true);
-        return;
-      }
-      callback(new Error("CORS origin denied"), false);
+      callback(isOriginAllowed(origin) ? null : new Error("CORS origin denied"), isOriginAllowed(origin));
     },
     credentials: true,
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   });
   await app.register(cookie);
+
+  // S-013: reject cross-site state-changing requests that carry the auth
+  // cookie. Reuses the exact allowlist the CORS check above enforces.
+  app.addHook(
+    "onRequest",
+    buildOriginGuardHook({
+      cookieName: env.AUTH_COOKIE_NAME,
+      isAllowedOrigin: isOriginAllowed,
+    }),
+  );
   // Security headers. Frontend serves the rendered HTML; the API only
   // returns JSON/files, so we don't need a CSP here. Helmet's defaults
   // give us X-Content-Type-Options, X-DNS-Prefetch-Control, Referrer-

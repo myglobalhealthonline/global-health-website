@@ -44,3 +44,16 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 export const prisma = prismaClient;
+
+/**
+ * S-022: graceful shutdown needs to close both the Prisma engine AND the
+ * underlying `pg.Pool` — the pool is constructed and owned here (outside
+ * Prisma's driver-adapter lifecycle), so `prisma.$disconnect()` alone does
+ * not guarantee the pool's sockets are released. Idempotent-ish: a second
+ * call just gets rejected/no-ops by the underlying libs, which is fine for
+ * a process that's exiting anyway.
+ */
+export async function disconnectDb(): Promise<void> {
+  await prisma.$disconnect().catch(() => {});
+  await pool.end().catch(() => {});
+}

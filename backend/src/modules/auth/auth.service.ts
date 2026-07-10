@@ -9,6 +9,8 @@ import {
   computeEmailBlindIndex,
   computePhoneBlindIndex,
 } from "../../lib/blind-index.js";
+import { deleteObject } from "../../services/object-storage.js";
+import { recordAudit } from "../audit/audit.service.js";
 
 export type SafeUser = {
   id: string;
@@ -339,13 +341,11 @@ const DELETION_GRACE_DAYS = 30;
  * functional (login, bookings) until then, and the patient can cancel via
  * `cancelAccountDeletion`.
  *
- * The actual PII scrub + hard-delete on expiry is NOT implemented here.
- * ponytail: needs a purge cron reading deletionScheduledAt < now — no
- * existing cron system is a natural fit for a one-off account purge (see
- * the field comment on `User.deletionScheduledAt` in schema.prisma); wire
- * it in when that job is actually built. Until then, expired accounts are
- * simply treated as inactive (login blocked) by `isPastDeletionDate`
- * without their data being removed.
+ * The actual PII scrub on expiry is `purgeExpiredAccountDeletions` below,
+ * ticked from `backend/src/lib/internal-scheduler.ts`. Until a tick catches
+ * it, an expired-but-not-yet-purged account is already treated as inactive
+ * (login blocked) by `isPastDeletionDate`, so there's no window where a
+ * "should be deleted" account is still usable.
  */
 export async function requestAccountDeletion(id: string): Promise<{ deletionScheduledAt: string }> {
   try {
@@ -371,6 +371,164 @@ export async function cancelAccountDeletion(id: string): Promise<void> {
   } catch (error) {
     throw normalizeDbError(error, "Could not cancel account deletion");
   }
+}
+
+// ─── S-017: grace-period purge ─────────────────────────────────────────────
+//
+// Wired into backend/src/lib/internal-scheduler.ts (tickAccountPurge). Never
+// hard-deletes the User or PatientProfile row — Appointment/Order/Invoice/
+// AuditLog all FK to userId/patientProfileId and must survive for
+// financial/legal retention, so this only UPDATEs scalar PII columns
+// (same anonymize-not-delete shape as the already-shipped admin
+// `anonymizePatient` in modules/data-policy/country-data-policy.service.ts).
+// Because nothing is ever deleted from Postgres, there is no cascading-delete
+// risk here regardless of what else references the row.
+
+/** One batch tick: finds every account whose 30-day grace period has
+ *  elapsed and purges it. `isActive: true` in the query doubles as the
+ *  "not yet purged" marker — purging flips it to false, so a completed row
+ *  drops out of the candidate set on its own and the tick is safe to run
+ *  on a fixed interval without a separate "done" column. */
+export async function purgeExpiredAccountDeletions(): Promise<{ purged: number; failed: number }> {
+  const candidates = await prisma.user.findMany({
+    where: { isActive: true, deletionScheduledAt: { lt: new Date() } },
+    select: { id: true },
+  });
+
+  let purged = 0;
+  let failed = 0;
+  for (const { id: userId } of candidates) {
+    try {
+      await purgeOneAccount(userId);
+      purged++;
+    } catch (error) {
+      failed++;
+      // One bad row must not block the rest of the batch — it stays a
+      // candidate (isActive is untouched on failure) and retries next tick.
+      console.error(
+        `[account-purge] failed for user ${userId}:`,
+        error instanceof Error ? error.message : error,
+      );
+    }
+  }
+  return { purged, failed };
+}
+
+async function purgeOneAccount(userId: string): Promise<void> {
+  const patientProfile = await prisma.patientProfile.findUnique({
+    where: { userId },
+    select: { id: true, insuranceDocumentKey: true, idDocumentKey: true, idDocumentBackKey: true },
+  });
+
+  // Identity-verification uploads (insurance card, ID front/back, passport
+  // scans) belong to the account being deleted, so they're removed from
+  // object storage. Conservative and deliberate: clinical MedicalDocument
+  // files (consult reports, prescriptions, exam results — fileKey on the
+  // MedicalDocument model) are NOT touched here, same as the existing admin
+  // `anonymizePatient` path — those are legal/medical retention records tied
+  // to the GHN, not the login account, and untangling per-country retention
+  // rules for them is out of scope for this pass (see S-017 in
+  // SECURITY_AUDIT2.md: "jurisdiction/legal retention map" is future work).
+  const fileKeys: string[] = [];
+  if (patientProfile) {
+    if (patientProfile.insuranceDocumentKey) fileKeys.push(patientProfile.insuranceDocumentKey);
+    if (patientProfile.idDocumentKey) fileKeys.push(patientProfile.idDocumentKey);
+    if (patientProfile.idDocumentBackKey) fileKeys.push(patientProfile.idDocumentBackKey);
+    const nationalityDocs = await prisma.patientNationalityDocument.findMany({
+      where: { patientProfileId: patientProfile.id },
+      select: { frontFileKey: true, backFileKey: true },
+    });
+    for (const doc of nationalityDocs) {
+      if (doc.frontFileKey) fileKeys.push(doc.frontFileKey);
+      if (doc.backFileKey) fileKeys.push(doc.backFileKey);
+    }
+  }
+  // Delete files before the DB write: a crash mid-purge should leave the
+  // row still a candidate (safe to retry) rather than a DB row marked
+  // "purged" with orphaned files still sitting in the bucket.
+  for (const key of fileKeys) {
+    try {
+      await deleteObject(key);
+    } catch (error) {
+      // deleteObject already treats a missing key as a no-op; a real error
+      // here (permissions/network) shouldn't abort the whole account purge
+      // over one stuck file — log it and continue.
+      console.error(
+        `[account-purge] object-storage delete failed for ${key}:`,
+        error instanceof Error ? error.message : error,
+      );
+    }
+  }
+
+  // Unusable, unguessable replacement — belt-and-suspenders on top of
+  // isActive:false / deletionScheduledAt already blocking login everywhere
+  // (requireAuth, getSafeUserById).
+  const randomPasswordHash = await bcrypt.hash(randomBytes(32).toString("hex"), 12);
+  // Frees the real address for re-registration, same GDPR-deletion pattern
+  // most account systems use. Deliberately different from PatientProfile's
+  // anonymize path, which keeps `email` — that row's email is the GHN
+  // clinical-record identifier doctors rely on, not a login credential.
+  const anonymizedEmail = `deleted-${userId}@deleted.invalid`;
+
+  await prisma.$transaction(async (tx) => {
+    if (patientProfile) {
+      // Same field set as the admin-triggered anonymizePatient() — PII
+      // scrubbed, GHN + clinical relations (MedicalDocument, consents,
+      // access logs) preserved.
+      await tx.patientProfile.update({
+        where: { id: patientProfile.id },
+        data: {
+          fullName: null,
+          phone: null,
+          addressLine1: null,
+          addressLine2: null,
+          addressCity: null,
+          addressPostalCode: null,
+          nationalIdNumber: null,
+          taxIdNumber: null,
+          passportNumber: null,
+          idDocumentNumber: null,
+          idDocumentKey: null,
+          idDocumentBackKey: null,
+          insurancePolicyNumber: null,
+          insuranceDocumentKey: null,
+          preferredPharmacy: null,
+          phoneHash: null,
+          nameDobHash: null,
+          anonymizedAt: new Date(),
+        },
+      });
+    }
+
+    await tx.user.update({
+      where: { id: userId },
+      data: {
+        fullName: "Deleted user",
+        phone: null,
+        dateOfBirth: null,
+        email: anonymizedEmail,
+        passwordHash: randomPasswordHash,
+        isActive: false,
+        mustChangePassword: false,
+        twoFactorEnabled: false,
+        twoFactorSecret: null,
+        twoFactorBackupCodes: [],
+        tokenVersion: { increment: 1 },
+      },
+    });
+  });
+
+  await recordAudit({
+    actorRole: "SYSTEM",
+    action: "ENTITY_PURGED",
+    entityType: "User",
+    entityId: userId,
+    metadata: {
+      reason: "gdpr_deletion_grace_period_expired",
+      patientProfileId: patientProfile?.id ?? null,
+      objectsDeleted: fileKeys.length,
+    },
+  });
 }
 
 // GDPR export paging. We page in bounded batches (so a long-lived account

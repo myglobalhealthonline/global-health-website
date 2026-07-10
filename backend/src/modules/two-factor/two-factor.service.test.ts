@@ -109,18 +109,24 @@ describe("two-factor", () => {
     assert.equal(user.twoFactorSecret, null);
   });
 
+  it("confirmTwoFactor rejects the wrong password before even checking the token", async (t) => {
+    if (skipIfNoDb()) return t.skip();
+    await assert.rejects(() => svc.confirmTwoFactor(userId, "wrong-password", "000000", secret, backupCodes));
+  });
+
   it("confirmTwoFactor rejects an invalid token", async (t) => {
     if (skipIfNoDb()) return t.skip();
     await assert.rejects(
-      () => svc.confirmTwoFactor(userId, "000000", secret, backupCodes),
+      () => svc.confirmTwoFactor(userId, password, "000000", secret, backupCodes),
       /invalid or has expired/i,
     );
   });
 
-  it("confirmTwoFactor with a valid token enables 2FA and stores hashed backup codes only", async (t) => {
+  it("confirmTwoFactor with a valid token enables 2FA, stores hashed backup codes only, and bumps tokenVersion", async (t) => {
     if (skipIfNoDb()) return t.skip();
+    const before = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
     const token = computeCurrentTotp(secret);
-    await svc.confirmTwoFactor(userId, token, secret, backupCodes);
+    await svc.confirmTwoFactor(userId, password, token, secret, backupCodes);
 
     const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
     assert.equal(user.twoFactorEnabled, true);
@@ -130,6 +136,11 @@ describe("two-factor", () => {
     assert.ok(
       !user.twoFactorBackupCodes.includes(backupCodes[0]),
       "backup codes are hashed, not stored plaintext",
+    );
+    assert.equal(
+      user.tokenVersion,
+      before.tokenVersion + 1,
+      "tokenVersion bumped on enable so pre-enrollment sessions are invalidated (S-007b)",
     );
   });
 
@@ -169,13 +180,19 @@ describe("two-factor", () => {
     await assert.rejects(() => svc.disableTwoFactor(userId, "wrong-password"));
   });
 
-  it("disableTwoFactor with the correct password clears all 2FA fields", async (t) => {
+  it("disableTwoFactor with the correct password clears all 2FA fields and bumps tokenVersion", async (t) => {
     if (skipIfNoDb()) return t.skip();
+    const before = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
     await svc.disableTwoFactor(userId, password);
     const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
     assert.equal(user.twoFactorEnabled, false);
     assert.equal(user.twoFactorSecret, null);
     assert.equal(user.twoFactorBackupCodes.length, 0);
+    assert.equal(
+      user.tokenVersion,
+      before.tokenVersion + 1,
+      "tokenVersion bumped on disable so any other session loses authority too (S-007b)",
+    );
   });
 
   it("verifyTwoFactorLogin returns false once 2FA is disabled", async (t) => {

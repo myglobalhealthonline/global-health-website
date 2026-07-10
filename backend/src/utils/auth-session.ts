@@ -80,7 +80,14 @@ export function verifyPending2faToken(token: string): { userId: string } | null 
 }
 
 export function authCookieOptions() {
-  const secure = env.NODE_ENV === "production";
+  // S-013a: previously only "production" got Secure, so an HTTPS staging/
+  // preview deploy (NODE_ENV left at its non-development default) could
+  // issue the session cookie over plain HTTP. This repo already treats
+  // "anything that isn't genuine local dev" as internet-reachable and in
+  // need of the strict behavior — see app.ts's CORS allowlist, which
+  // applies the same NODE_ENV !== "development" boundary — so mirror it
+  // here instead of inventing a separate staging concept.
+  const secure = env.NODE_ENV !== "development";
   const domain = env.AUTH_COOKIE_DOMAIN?.trim();
   return {
     httpOnly: true,

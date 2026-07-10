@@ -6,7 +6,7 @@
   "deploy": {
     "preDeployCommand": "npx --no-install prisma migrate deploy",
     "startCommand": "node dist/server.js",
-    "healthcheckPath": "/health",
+    "healthcheckPath": "/ready",
     "healthcheckTimeout": 100,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10

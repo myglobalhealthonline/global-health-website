@@ -105,6 +105,11 @@ export async function putObject(key: string, body: Buffer, contentType: string):
         Key: key,
         Body: body,
         ContentType: contentType,
+        // S-018: encrypt at rest by default. AES256 (SSE-S3) needs no extra
+        // env/KMS config — every S3-compatible provider we target (Railway,
+        // Scaleway, MinIO, AWS) supports it. Swap to SSE-KMS if/when a
+        // dedicated KMS key env var is introduced.
+        ServerSideEncryption: "AES256",
       }),
     );
     return;

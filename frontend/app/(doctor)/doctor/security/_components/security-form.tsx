@@ -67,6 +67,7 @@ export function DoctorSecurityForm({
   const [setup, setSetup] = useState<{ secret: string; qrUri: string; backupCodes: string[] } | null>(null);
   const [settingUp, setSettingUp] = useState(false);
   const [code, setCode] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [confirming, setConfirming] = useState(false);
   const [msg, setMsg] = useState<Msg>(null);
 
@@ -115,6 +116,7 @@ export function DoctorSecurityForm({
       token: code.trim(),
       secret: setup.secret,
       backupCodes: setup.backupCodes,
+      currentPassword: confirmPassword,
     });
     setConfirming(false);
     if (res.ok) {
@@ -122,6 +124,7 @@ export function DoctorSecurityForm({
       setEnabledAt(new Date().toISOString());
       setSetup(null);
       setCode("");
+      setConfirmPassword("");
       setMsg({ kind: "ok", text: s.enabledSuccess });
       // Refresh server components so the compliance banner drops the item.
       router.refresh();
@@ -229,6 +232,17 @@ export function DoctorSecurityForm({
           <form onSubmit={onConfirm} className="max-w-sm space-y-3">
             <h2 className="text-sm font-semibold text-[var(--portal-ink)]">{s.step3Title}</h2>
             <label className="block">
+              <span className="gh-field-label">{s.currentPasswordLabel}</span>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+                className="gh-input mt-1 min-w-0"
+              />
+            </label>
+            <label className="block">
               <span className="gh-field-label">{s.sixDigitLabel}</span>
               <input
                 type="text"
@@ -254,7 +268,7 @@ export function DoctorSecurityForm({
             ) : null}
             <button
               type="submit"
-              disabled={confirming || code.length !== 6}
+              disabled={confirming || code.length !== 6 || confirmPassword.length === 0}
               className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
             >
               {confirming ? s.verifying : s.enable2faButton}

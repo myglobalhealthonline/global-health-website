@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import {
   generateTotpSecret,
@@ -6,10 +7,10 @@ import {
   verifyTotp,
   generateBackupCodes,
   hashBackupCode,
-  verifyBackupCode,
 } from "../../lib/totp.js";
 import { encryptPhi, decryptPhi } from "../../lib/crypto/phi-crypto.js";
 import { recordAudit } from "../audit/audit.service.js";
+import { AuthInvalidCredentialsError } from "../auth/auth.service.js";
 
 // ---------------------------------------------------------------------------
 // Error types
@@ -86,15 +87,41 @@ export async function initiateTwoFactor(userId: string): Promise<{
  * The plaintext secret and backup codes are never stored — only their
  * encrypted/hashed forms reach the database.
  *
+ * S-007a: requires the account's current password before persisting the new
+ * 2FA config — an already-authenticated (possibly stolen) session must not
+ * be able to silently enroll attacker-controlled 2FA. Throws
+ * `AuthInvalidCredentialsError` if the password doesn't match, so the
+ * caller maps it to the same 400 response `changeUserPassword`/
+ * `disableTwoFactor` already use.
+ *
  * Throws `TwoFactorTokenInvalidError` if the token doesn't verify so the
  * caller can prompt the user to re-scan and retry.
  */
 export async function confirmTwoFactor(
   userId: string,
+  currentPassword: string,
   token: string,
   plaintextSecret: string,
   plaintextBackupCodes: string[],
 ): Promise<void> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { passwordHash: true, isActive: true, twoFactorEnabled: true },
+  });
+
+  if (!user || !user.isActive) {
+    throw new TwoFactorNotConfiguredError();
+  }
+
+  if (user.twoFactorEnabled) {
+    throw new TwoFactorAlreadyEnabledError();
+  }
+
+  const passwordMatches = await bcrypt.compare(currentPassword, user.passwordHash);
+  if (!passwordMatches) {
+    throw new AuthInvalidCredentialsError();
+  }
+
   if (!verifyTotp(plaintextSecret, token)) {
     throw new TwoFactorTokenInvalidError();
   }
@@ -111,6 +138,10 @@ export async function confirmTwoFactor(
       twoFactorBackupCodes: hashedBackupCodes,
       twoFactorVerifiedAt: now,
       twoFactorEnabledAt: now,
+      // S-007b: bump tokenVersion so any other session issued before this
+      // enrollment (e.g. the attacker's, if this cookie was stolen) is
+      // rejected by requireAuth on its next request.
+      tokenVersion: { increment: 1 },
     },
   });
 
@@ -148,7 +179,6 @@ export async function verifyTwoFactorLogin(
       id: true,
       twoFactorEnabled: true,
       twoFactorSecret: true,
-      twoFactorBackupCodes: true,
     },
   });
 
@@ -173,24 +203,24 @@ export async function verifyTwoFactorLogin(
     return true;
   }
 
-  // --- Try backup codes ---
-  const storedHashes: string[] = Array.isArray(user.twoFactorBackupCodes)
-    ? (user.twoFactorBackupCodes as string[])
-    : [];
+  // --- Try backup code: atomic conditional removal (S-007c) ---
+  // A single UPDATE ... WHERE <hash> = ANY(...) is applied atomically by
+  // Postgres — two concurrent requests presenting the same backup code
+  // can't both succeed. The second evaluates its WHERE clause against the
+  // already-committed (hash-removed) row and affects zero rows. This
+  // replaces the previous read-then-write (TOCTOU) pattern.
+  const candidateHash = hashBackupCode(token);
+  const consumed = await prisma.$executeRaw(Prisma.sql`
+    UPDATE "User"
+    SET "twoFactorBackupCodes" = array_remove("twoFactorBackupCodes", ${candidateHash})
+    WHERE "id" = ${userId} AND ${candidateHash} = ANY("twoFactorBackupCodes")
+  `);
 
-  const { valid, remaining } = verifyBackupCode(token, storedHashes);
-
-  if (valid) {
-    // Remove consumed backup code from stored set
-    try {
-      await prisma.user.update({
-        where: { id: userId },
-        data: { twoFactorBackupCodes: remaining },
-      });
-    } catch {
-      // Non-fatal: the code was valid; let the login proceed. The duplicate
-      // protection comes from the timing window being short.
-    }
+  if (consumed > 0) {
+    const after = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { twoFactorBackupCodes: true },
+    });
 
     recordAudit({
       actorUserId: userId,
@@ -198,7 +228,10 @@ export async function verifyTwoFactorLogin(
       action: "TWO_FACTOR_VERIFIED" as never,
       entityType: "User",
       entityId: userId,
-      metadata: { method: "backup_code", remainingBackupCodes: remaining.length },
+      metadata: {
+        method: "backup_code",
+        remainingBackupCodes: after?.twoFactorBackupCodes.length ?? 0,
+      },
     }).catch(() => {});
 
     return true;
@@ -252,11 +285,9 @@ export async function disableTwoFactor(
 
   const passwordMatches = await bcrypt.compare(currentPassword, user.passwordHash);
   if (!passwordMatches) {
-    // Re-use the same error class pattern as auth.service for consistency.
-    // The calling route maps this to 400 "invalid password".
-    const err = new Error("Current password is incorrect");
-    err.name = "AuthInvalidCredentialsError";
-    throw err;
+    // Real class (not a name-tagged plain Error) so `instanceof` checks at
+    // the route layer work the same way they do for changeUserPassword.
+    throw new AuthInvalidCredentialsError();
   }
 
   await prisma.user.update({
@@ -267,6 +298,9 @@ export async function disableTwoFactor(
       twoFactorBackupCodes: [],
       twoFactorVerifiedAt: null,
       twoFactorEnabledAt: null,
+      // S-007b: bump tokenVersion — a stolen cookie that just disabled 2FA
+      // must not retain any of its old session authority either.
+      tokenVersion: { increment: 1 },
     },
   });
 

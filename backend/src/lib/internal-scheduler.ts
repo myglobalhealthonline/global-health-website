@@ -12,6 +12,7 @@ import {
   emitOpsAlert,
   setOpsAlertLogger,
 } from "../modules/subscriptions/ops/ops-alert.js";
+import { purgeExpiredAccountDeletions } from "../modules/auth/auth.service.js";
 
 type Logger = { info: (msg: string) => void; error: (msg: string) => void };
 
@@ -20,6 +21,7 @@ const POST_PAYMENT_INTERVAL_MS = 5 * 60 * 1000; // 5 min
 const SUBSCRIPTION_OPS_INTERVAL_MS = 5 * 60 * 1000; // 5 min — reservation sweep + cancel-after-grace
 const RECONCILIATION_INTERVAL_MS = 60 * 60 * 1000; // hourly — money/ops invariants (§39)
 const DAILY_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24h — renewal reminders (24h dedup window)
+const ACCOUNT_PURGE_INTERVAL_MS = 60 * 60 * 1000; // hourly — S-017 GDPR grace-period purge
 
 // Distinct advisory-lock keys, one per job, so only one replica runs a given
 // tick when horizontally scaled. Single-replica (today) always acquires → no
@@ -29,6 +31,7 @@ const LOCK_POST_PAYMENT = 4010002;
 const LOCK_SUBSCRIPTION_OPS = 4010003;
 const LOCK_RECONCILIATION = 4010004;
 const LOCK_DAILY_REMINDERS = 4010005;
+const LOCK_ACCOUNT_PURGE = 4010006;
 
 // Interactive-transaction timeout for a locked tick. Generous relative to the
 // shortest cron interval (5 min) because job bodies make outbound HTTP calls
@@ -167,38 +170,80 @@ async function tickDailyReminders(log: Logger) {
   );
 }
 
-export function startInternalScheduler(log: Logger) {
+async function tickAccountPurge(log: Logger) {
+  // Idempotent: candidates are `isActive:true && deletionScheduledAt < now`,
+  // and purging flips isActive to false — a purged row drops out of the
+  // candidate set, so a concurrent/duplicate run on the same row is a safe
+  // no-op (re-anonymizing already-anonymized scalar fields). No customer
+  // email/WhatsApp is sent. Fail OPEN.
+  await withAdvisoryLock(
+    LOCK_ACCOUNT_PURGE,
+    async () => {
+      try {
+        const { purged, failed } = await purgeExpiredAccountDeletions();
+        if (purged || failed) log.info(`[cron] account-purge: purged=${purged} failed=${failed}`);
+      } catch (err) {
+        log.error(`[cron] account-purge error: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    },
+    { failClosed: false },
+  );
+}
+
+/** No-op stop handle — returned when the scheduler never actually started
+ *  (RUN_SCHEDULER=false), so callers can unconditionally invoke the
+ *  returned function on shutdown without an extra null check. */
+const NOOP_STOP = () => {};
+
+/**
+ * Starts the cron scheduler and returns a `stop()` function that clears
+ * every timer (S-022). Node's `clearTimeout`/`clearInterval` operate on
+ * the same internal timer list, so a single `clearTimeout` call cancels
+ * either kind — no need to track which helper created which handle.
+ */
+export function startInternalScheduler(log: Logger): () => void {
   // Default ON unless explicitly disabled: single-replica deployments (today's
   // setup) need zero config, while horizontal scaling can set
   // RUN_SCHEDULER=false on extra replicas to avoid duplicate cron work (no
   // distributed lock exists yet).
   if (process.env.RUN_SCHEDULER === "false") {
     log.info("[cron] internal scheduler disabled via RUN_SCHEDULER=false");
-    return;
+    return NOOP_STOP;
   }
 
   setOpsAlertLogger({ warn: (m) => log.info(m), error: (m) => log.error(m) });
   log.info(
-    "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h",
+    "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h, account-purge 60m",
   );
+
+  const timers: NodeJS.Timeout[] = [];
 
   // Random startup jitter so a rolling deploy's overlapping old/new processes
   // don't fire their immediate boot ticks in lockstep.
   const startupJitterMs = Math.random() * 5000;
-  setTimeout(() => {
-    // Run the safe ticks once on boot so a deploy doesn't wait a full interval.
-    // Renewal reminders are NOT run on boot (the 24h dedup window means a deploy
-    // mid-window could double-send) — they fire only on the daily interval, and
-    // POST /api/cron/subscriptions/daily remains the robust external trigger.
-    void tickPrePayment(log);
-    void tickPostPayment(log);
-    void tickSubscriptionOps(log);
-    void tickReconciliation(log);
-  }, startupJitterMs);
+  timers.push(
+    setTimeout(() => {
+      // Run the safe ticks once on boot so a deploy doesn't wait a full interval.
+      // Renewal reminders are NOT run on boot (the 24h dedup window means a deploy
+      // mid-window could double-send) — they fire only on the daily interval, and
+      // POST /api/cron/subscriptions/daily remains the robust external trigger.
+      // Account purge IS safe on boot — idempotent, no dedup window.
+      void tickPrePayment(log);
+      void tickPostPayment(log);
+      void tickSubscriptionOps(log);
+      void tickReconciliation(log);
+      void tickAccountPurge(log);
+    }, startupJitterMs),
+  );
 
-  setInterval(() => void tickPrePayment(log), PRE_PAYMENT_INTERVAL_MS);
-  setInterval(() => void tickPostPayment(log), POST_PAYMENT_INTERVAL_MS);
-  setInterval(() => void tickSubscriptionOps(log), SUBSCRIPTION_OPS_INTERVAL_MS);
-  setInterval(() => void tickReconciliation(log), RECONCILIATION_INTERVAL_MS);
-  setInterval(() => void tickDailyReminders(log), DAILY_INTERVAL_MS);
+  timers.push(setInterval(() => void tickPrePayment(log), PRE_PAYMENT_INTERVAL_MS));
+  timers.push(setInterval(() => void tickPostPayment(log), POST_PAYMENT_INTERVAL_MS));
+  timers.push(setInterval(() => void tickSubscriptionOps(log), SUBSCRIPTION_OPS_INTERVAL_MS));
+  timers.push(setInterval(() => void tickAccountPurge(log), ACCOUNT_PURGE_INTERVAL_MS));
+  timers.push(setInterval(() => void tickReconciliation(log), RECONCILIATION_INTERVAL_MS));
+  timers.push(setInterval(() => void tickDailyReminders(log), DAILY_INTERVAL_MS));
+
+  return () => {
+    for (const t of timers) clearTimeout(t);
+  };
 }

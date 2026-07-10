@@ -14,7 +14,11 @@ import {
   TwoFactorTokenInvalidError,
   TwoFactorAlreadyEnabledError,
 } from "../modules/two-factor/two-factor.service.js";
-import { getSafeUserById, getUserTokenVersion } from "../modules/auth/auth.service.js";
+import {
+  getSafeUserById,
+  getUserTokenVersion,
+  AuthInvalidCredentialsError,
+} from "../modules/auth/auth.service.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { prisma } from "../db/prisma.js";
 
@@ -47,6 +51,9 @@ const auth2faRoute: FastifyPluginAsync = async (app) => {
     token: z.string().trim().length(6).regex(/^\d{6}$/, "TOTP code must be 6 digits"),
     secret: z.string().trim().min(16),
     backupCodes: z.array(z.string().trim().min(8)).min(1).max(20),
+    // S-007a: current password required to persist a new 2FA config on an
+    // already-authenticated session.
+    currentPassword: z.string().min(1),
   });
 
   app.post(
@@ -62,7 +69,13 @@ const auth2faRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid confirm payload", body.error.flatten()));
       }
       try {
-        await confirmTwoFactor(sub, body.data.token, body.data.secret, body.data.backupCodes);
+        await confirmTwoFactor(
+          sub,
+          body.data.currentPassword,
+          body.data.token,
+          body.data.secret,
+          body.data.backupCodes,
+        );
         recordAudit({
           actorUserId: sub,
           actorRole: request.authUser!.role,
@@ -76,6 +89,12 @@ const auth2faRoute: FastifyPluginAsync = async (app) => {
       } catch (error) {
         if (error instanceof TwoFactorTokenInvalidError) {
           return reply.status(400).send(errorResponse("Invalid or expired TOTP code"));
+        }
+        if (error instanceof AuthInvalidCredentialsError) {
+          return reply.status(400).send(errorResponse("Current password is incorrect"));
+        }
+        if (error instanceof TwoFactorAlreadyEnabledError) {
+          return reply.status(409).send(errorResponse("2FA is already enabled"));
         }
         return replyWithError(reply, app.log, error, "Could not confirm 2FA");
       }
@@ -180,6 +199,9 @@ const auth2faRoute: FastifyPluginAsync = async (app) => {
       } catch (error) {
         if (error instanceof TwoFactorNotConfiguredError) {
           return reply.status(400).send(errorResponse("2FA is not enabled on this account"));
+        }
+        if (error instanceof AuthInvalidCredentialsError) {
+          return reply.status(400).send(errorResponse("Current password is incorrect"));
         }
         return replyWithError(reply, app.log, error, "Could not disable 2FA");
       }
