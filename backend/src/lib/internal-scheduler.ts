@@ -13,6 +13,7 @@ import {
   setOpsAlertLogger,
 } from "../modules/subscriptions/ops/ops-alert.js";
 import { purgeExpiredAccountDeletions } from "../modules/auth/auth.service.js";
+import { runOutboxDispatch } from "../modules/outbox/outbox.js";
 
 type Logger = { info: (msg: string) => void; error: (msg: string) => void };
 
@@ -22,6 +23,7 @@ const SUBSCRIPTION_OPS_INTERVAL_MS = 5 * 60 * 1000; // 5 min — reservation swe
 const RECONCILIATION_INTERVAL_MS = 60 * 60 * 1000; // hourly — money/ops invariants (§39)
 const DAILY_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24h — renewal reminders (24h dedup window)
 const ACCOUNT_PURGE_INTERVAL_MS = 60 * 60 * 1000; // hourly — S-017 GDPR grace-period purge
+const OUTBOX_INTERVAL_MS = 30 * 1000; // 30s — drain durable post-payment side effects (P-006/P-007)
 
 // Distinct advisory-lock keys, one per job, so only one replica runs a given
 // tick when horizontally scaled. Single-replica (today) always acquires → no
@@ -32,6 +34,7 @@ const LOCK_SUBSCRIPTION_OPS = 4010003;
 const LOCK_RECONCILIATION = 4010004;
 const LOCK_DAILY_REMINDERS = 4010005;
 const LOCK_ACCOUNT_PURGE = 4010006;
+const LOCK_OUTBOX = 4010007;
 
 // SESSION-level advisory lock (pg_advisory_lock / pg_advisory_unlock) on a
 // single manually-checked-out `pg.Pool` client, NOT a Prisma-managed
@@ -228,6 +231,26 @@ async function tickAccountPurge(log: Logger) {
   );
 }
 
+async function tickOutboxDispatch(log: Logger) {
+  // Idempotent by construction: each row's dispatch is claimed via an atomic
+  // PENDING->PROCESSING updateMany inside runOutboxDispatch, so even a
+  // concurrent duplicate tick can't double-dispatch the same row. Fail OPEN.
+  await withAdvisoryLock(
+    LOCK_OUTBOX,
+    async () => {
+      try {
+        const r = await runOutboxDispatch(log);
+        if (r.processed > 0) {
+          log.info(`[cron] outbox: processed=${r.processed} sent=${r.sent} failed=${r.failed}`);
+        }
+      } catch (err) {
+        log.error(`[cron] outbox error: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    },
+    { failClosed: false },
+  );
+}
+
 /** No-op stop handle — returned when the scheduler never actually started
  *  (RUN_SCHEDULER=false), so callers can unconditionally invoke the
  *  returned function on shutdown without an extra null check. */
@@ -251,7 +274,7 @@ export function startInternalScheduler(log: Logger): () => void {
 
   setOpsAlertLogger({ warn: (m) => log.info(m), error: (m) => log.error(m) });
   log.info(
-    "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h, account-purge 60m",
+    "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h, account-purge 60m, outbox 30s",
   );
 
   const timers: NodeJS.Timeout[] = [];
@@ -271,6 +294,7 @@ export function startInternalScheduler(log: Logger): () => void {
       void tickSubscriptionOps(log);
       void tickReconciliation(log);
       void tickAccountPurge(log);
+      void tickOutboxDispatch(log);
     }, startupJitterMs),
   );
 
@@ -280,6 +304,7 @@ export function startInternalScheduler(log: Logger): () => void {
   timers.push(setInterval(() => void tickAccountPurge(log), ACCOUNT_PURGE_INTERVAL_MS));
   timers.push(setInterval(() => void tickReconciliation(log), RECONCILIATION_INTERVAL_MS));
   timers.push(setInterval(() => void tickDailyReminders(log), DAILY_INTERVAL_MS));
+  timers.push(setInterval(() => void tickOutboxDispatch(log), OUTBOX_INTERVAL_MS));
 
   return () => {
     for (const t of timers) clearTimeout(t);

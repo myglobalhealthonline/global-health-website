@@ -9,6 +9,7 @@ import {
 import { stopPrePaymentFlowOnPaid } from "../automation/pre-payment-flow.service.js";
 import { emitOpsAlert } from "../subscriptions/ops/ops-alert.js";
 import { commitOrderCreditReservations } from "../subscriptions/checkout-pricing.service.js";
+import { enqueueOrderPaidAutomations } from "../outbox/outbox.js";
 
 export type PaymentLog = {
   info: (obj: unknown, msg?: string) => void;
@@ -52,7 +53,14 @@ export async function completeOrderPaymentFromCheckoutSession(
   const { alreadyPaid } = await markOrderPaidFromStripeSession(orderId, session, opts, log);
 
   if (alreadyPaid) {
-    await ensureOrderPaidAutomations(orderId, log);
+    // Side effects now run via the durable outbox (P-007). The first-flip path
+    // wrote the row inside the mark-PAID transaction; here (webhook redelivery
+    // or sync of an already-PAID order) we idempotently self-heal — skipDuplicates
+    // makes this a no-op when the row already exists, but re-queues legacy orders
+    // paid before the outbox existed. Off the awaited critical path either way.
+    await enqueueOrderPaidAutomations(prisma, orderId, { sendShopConfirmation: false }).catch(
+      (err) => log.error({ err, orderId }, "Outbox enqueue (already-paid) failed"),
+    );
     // Still attempt the credit commit on every call, not just the one that
     // first flipped PAID (bug found in a prior review pass: the
     // webhook-vs-sync-order race meant whichever path ISN'T first to mark
@@ -78,7 +86,11 @@ export async function completeOrderPaymentFromCheckoutSession(
   }
 
   await commitCreditsForPaidOrder(orderId, opts.stripeEventId, log);
-  await ensureOrderPaidAutomations(orderId, log, { sendShopConfirmation: true });
+  // Post-payment side effects (Meet link, confirmation email/WhatsApp, invoice
+  // PDF) are NOT awaited here anymore. markOrderPaidFromStripeSession already
+  // wrote the outbox row inside the same transaction that flipped PAID, so the
+  // internal scheduler's tickOutboxDispatch drains them off the webhook path
+  // (P-006/P-007). This function returns as soon as the fast DB work is durable.
   return { alreadyPaid: false, orderId };
 }
 
@@ -148,6 +160,14 @@ async function markOrderPaidFromStripeSession(
     await tx.processedWebhookEvent.create({
       data: { stripeEventId: opts.stripeEventId, eventType: opts.eventType },
     });
+
+    // Durably record the post-payment side effects IN THE SAME COMMIT that flips
+    // PAID (P-007): the confirmation email/WhatsApp, Meet link, and invoice PDF
+    // are now guaranteed exactly-once and drained asynchronously by the
+    // scheduler, instead of extending this webhook's latency or being lost if a
+    // provider is unreachable at payment time. sendShopConfirmation mirrors the
+    // old first-flip behaviour (shop-only orders got the confirmation email).
+    await enqueueOrderPaidAutomations(tx, orderId, { sendShopConfirmation: true });
 
     return { alreadyPaid: false };
   });
@@ -580,7 +600,12 @@ export async function syncOrderPaymentFromStripe(
     return { ok: false, code: "STRIPE_NOT_CONFIGURED" };
   }
   if (order.paymentStatus === "PAID" || order.status === "PAID") {
-    await ensureOrderPaidAutomations(orderId, log);
+    // Already PAID (sync fallback / redelivery): self-heal via the outbox
+    // instead of running the side effects inline. Idempotent — no-op if the row
+    // already exists, re-queues legacy orders paid before the outbox existed.
+    await enqueueOrderPaidAutomations(prisma, orderId, { sendShopConfirmation: false }).catch(
+      (err) => log.error({ err, orderId }, "Outbox enqueue (sync already-paid) failed"),
+    );
     return { ok: true, code: "ALREADY_PAID" };
   }
   if (!order.stripeSessionId) {

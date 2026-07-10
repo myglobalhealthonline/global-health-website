@@ -2136,6 +2136,35 @@ model ProcessedWebhookEvent {
   createdAt     DateTime @default(now())
 }
 
+enum OutboxStatus {
+  PENDING
+  PROCESSING
+  SENT
+  FAILED
+}
+
+/// Durable outbox for post-transaction side effects (P-006/P-007). A row is
+/// written INSIDE the same DB transaction that flips an order to PAID, so the
+/// side effect (email/WhatsApp/Meet/invoice PDF) is recorded exactly once and
+/// no longer extends webhook latency or depends on the provider being reachable
+/// at payment time. Drained by the internal scheduler's tickOutboxDispatch:
+/// PENDING -> PROCESSING (atomic claim) -> SENT | back to PENDING with backoff |
+/// FAILED after max attempts.
+model Outbox {
+  id             String       @id @default(cuid())
+  kind           String
+  payload        Json
+  status         OutboxStatus @default(PENDING)
+  attempts       Int          @default(0)
+  lastError      String?
+  idempotencyKey String       @unique
+  createdAt      DateTime     @default(now())
+  lastAttemptAt  DateTime?
+  processedAt    DateTime?
+
+  @@index([status, createdAt])
+}
+
 model User {
   id                      String                   @id @default(cuid())
   email                   String                   @unique
