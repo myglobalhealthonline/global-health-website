@@ -3,6 +3,7 @@ import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
 import { z } from "zod";
 import { CartItemKind, Prisma } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
+import { env } from "../config/env.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -624,10 +625,10 @@ async function setCartCookie(reply: FastifyReply, token: string) {
     httpOnly: true,
     sameSite: "lax",
     maxAge: CART_COOKIE_MAX_AGE,
-    // S-013: match the auth cookie's boundary — any non-genuine-local-dev
+    // S-013a: match authCookieOptions()'s boundary — any non-genuine-local-dev
     // environment (staging, preview) is HTTPS-reachable and must get a
     // Secure cookie, not just NODE_ENV==="production".
-    secure: process.env.NODE_ENV !== "development",
+    secure: env.NODE_ENV !== "development",
   });
 }
 

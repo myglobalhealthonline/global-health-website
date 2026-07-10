@@ -3,6 +3,8 @@ import { getBackendOrigin } from "@/lib/server/backend-origin";
 
 export const dynamic = "force-dynamic";
 
+const ME_PROXY_TIMEOUT_MS = 20_000;
+
 /**
  * Same-origin proxy for the patient `/api/me/*` subscription surface (Sprint 3).
  * The `gh_auth` cookie is scoped to the site host, so the browser sends it on
@@ -78,12 +80,12 @@ async function proxyMe(request: NextRequest, segments: string[]) {
   // /api/auth/[...path]) instead of buffering with .text() first.
   let upstream: Response;
   try {
-    upstream = await fetch(targetUrl, { ...init, signal: AbortSignal.timeout(20_000) });
+    upstream = await fetch(targetUrl, { ...init, signal: AbortSignal.timeout(ME_PROXY_TIMEOUT_MS) });
   } catch (err) {
     const timedOut = err instanceof Error && err.name === "TimeoutError";
     return NextResponse.json(
       { ok: false, message: timedOut ? "Upstream request timed out" : "Upstream request failed" },
-      { status: timedOut ? 504 : 502 },
+      { status: timedOut ? 504 : 503 },
     );
   }
   return new NextResponse(upstream.body, {
