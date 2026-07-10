@@ -24,6 +24,7 @@ import {
 import { getObject, streamToNodeReadable } from "../services/object-storage.js";
 import { VerificationStatus } from "@prisma/client";
 import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 
 const stringField = (max: number) =>
   z.string().trim().max(max).nullable().optional();
@@ -451,9 +452,9 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         const email = profile.email?.trim().toLowerCase();
         if (!email) continue;
         profileByEmail.set(email, {
-          nationalIdNumber: profile.nationalIdNumber ?? null,
-          taxIdNumber: profile.taxIdNumber ?? null,
-          passportNumber: profile.passportNumber ?? null,
+          nationalIdNumber: decryptPhi(profile.nationalIdNumber),
+          taxIdNumber: decryptPhi(profile.taxIdNumber),
+          passportNumber: decryptPhi(profile.passportNumber),
           addressLine1: profile.addressLine1 ?? null,
           addressCity: profile.addressCity ?? null,
           addressCountryCode: profile.addressCountryCode ?? null,
