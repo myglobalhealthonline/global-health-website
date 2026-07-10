@@ -11,13 +11,6 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 type Params = { country: string; lang: string };
 
-// ponytail: empty array opts the route into static generation without
-// prerendering any slug at build time (no backend call); real slugs render
-// on-demand and get cached via ISR.
-export function generateStaticParams() {
-  return [];
-}
-
 // Static "last updated" stamp — bump when the terms copy changes.
 const LAST_UPDATED = "21 June 2026";
 

@@ -43,13 +43,6 @@ import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/Doctif
 
 type Params = { country: string; lang: string; serviceSlug: string };
 
-// ponytail: empty array opts the route into static generation without
-// prerendering any slug at build time (no backend call); real slugs render
-// on-demand and get cached via ISR.
-export function generateStaticParams() {
-  return [];
-}
-
 /** Admin copy may arrive as rich HTML — flatten to plain text for ledes. */
 function stripHtml(value: string | null): string | null {
   if (!value) return value;
