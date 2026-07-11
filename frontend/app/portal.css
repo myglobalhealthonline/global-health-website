@@ -2907,10 +2907,6 @@
   box-shadow: 0 12px 28px rgba(20, 55, 43, 0.07);
 }
 
-.gh-doctor-slot-chip {
-  min-height: 34px;
-}
-
 .gh-doctor-schedule-row,
 .gh-doctor-alert-list-row,
 .gh-doctor-notification-title,
@@ -3000,10 +2996,6 @@
     padding: 16px;
   }
 
-  .gh-doctor-slot-chip {
-    width: 100%;
-    justify-content: center;
-  }
 }
 
 /* Batch 4B/4C: doctor appointment workspace and calendar */
@@ -3027,7 +3019,6 @@
   border-color: rgba(29, 75, 54, 0.13);
 }
 
-.gh-doctor-appointment-tablist,
 .gh-doctor-doc-modal-tabs {
   overscroll-behavior-x: contain;
 }
@@ -3052,7 +3043,6 @@
   }
 }
 
-.gh-doctor-appointment-tablist > button,
 .gh-doctor-doc-modal-tabs > button {
   white-space: nowrap;
 }
@@ -3167,9 +3157,6 @@
     padding: 16px;
   }
 
-  .gh-doctor-appointment-tablist {
-    top: 52px;
-  }
 }
 
 /* Batch 5: patient/account portal pages and route components */
@@ -3188,7 +3175,6 @@
   width: 100%;
 }
 
-.gh-patient-page-header,
 .gh-patient-overview-grid,
 .gh-patient-detail-grid,
 .gh-patient-calendar,
@@ -3197,10 +3183,8 @@
 }
 
 .gh-patient-overview .gh-card,
-.gh-patient-booking-card,
 .gh-patient-doc-card,
 .gh-patient-form-card,
-.gh-patient-security-card,
 .gh-patient-family-card,
 .gh-patient-access-card,
 .gh-patient-notification-list,
@@ -3214,10 +3198,8 @@
   box-shadow: 0 18px 42px rgba(20, 55, 43, 0.06);
 }
 
-.gh-patient-booking-card,
 .gh-patient-doc-card,
 .gh-patient-form-card,
-.gh-patient-security-card,
 .gh-patient-family-card,
 .gh-patient-access-card,
 .gh-patient-notification-list,
@@ -3304,7 +3286,6 @@
 
 .gh-patient-list-row,
 .gh-patient-alert-row,
-.gh-patient-booking-card-header,
 .gh-patient-booking-band,
 .gh-patient-booking-actions,
 .gh-patient-doc-card,
@@ -3367,10 +3348,8 @@
 }
 
 @media (max-width: 768px) {
-  .gh-patient-page-header,
   .gh-patient-alert-row,
   .gh-patient-list-row,
-  .gh-patient-booking-card-header,
   .gh-patient-booking-band,
   .gh-patient-booking-actions,
   .gh-patient-doc-card,
@@ -3383,10 +3362,8 @@
     flex-direction: column;
   }
 
-  .gh-patient-page-header > *,
   .gh-patient-alert-row > *,
   .gh-patient-list-row > *,
-  .gh-patient-booking-card-header > *,
   .gh-patient-booking-band > *,
   .gh-patient-booking-actions > *,
   .gh-patient-doc-card > *,
@@ -3410,9 +3387,7 @@
 
 @media (max-width: 430px) {
   .gh-patient-form-card,
-  .gh-patient-booking-card,
   .gh-patient-doc-card,
-  .gh-patient-security-card,
   .gh-patient-family-card,
   .gh-patient-empty-state {
     padding: 16px;
@@ -3585,22 +3560,6 @@ a.gh-appointment-card:hover {
  * portal-only CSS. Their @media/@supports fallback blocks moved together
  * with them. ===== */
 
-.gh-admin-nav-link {
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  padding: 10px 14px;
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
-  background: var(--color-background-soft);
-  transition: background-color 180ms ease-out, color 180ms ease-out, border-color 180ms ease-out;
-}
-
-.gh-admin-nav-link:hover {
-  color: var(--color-text-primary);
-  background: var(--color-brand-secondary);
-  border-color: var(--color-border-strong);
-}
 .gh-admin-main table {
   width: 100%;
   border-collapse: collapse;
@@ -3676,12 +3635,6 @@ a.gh-appointment-card:hover {
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 13px;
-}
-.gh-admin-section {
-  padding: 24px;
-}
-@media (min-width: 640px)  {
-  .gh-admin-section { padding: 32px; }
 }
 
 
@@ -5317,17 +5270,6 @@ a.gh-appointment-card:hover {
 
 .gh-admin-status-toggle-off .gh-admin-status-toggle__label {
   color: #64776e;
-}
-.gh-doctor-card {
-  transition: background-color 160ms cubic-bezier(0.23, 1, 0.32, 1),
-    border-color 160ms cubic-bezier(0.23, 1, 0.32, 1),
-    transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.gh-doctor-card:hover {
-  background: rgba(255, 255, 255, 0.09) !important;
-  border-color: rgba(255, 255, 255, 0.20) !important;
-  transform: translateY(-2px);
 }
 .gh-portal-shell ::selection {
   background: var(--lux-selection);
