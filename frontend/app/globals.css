@@ -3143,7 +3143,7 @@ details[open] > .gh2-filter-trigger .gh2-filter-chevron {
   position: absolute;
   left: 0;
   top: calc(100% + 8px);
-  z-index: 20;
+  z-index: var(--z-dropdown);
   display: flex;
   min-width: 240px;
   max-width: min(360px, 90vw);
