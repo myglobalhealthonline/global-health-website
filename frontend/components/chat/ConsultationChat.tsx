@@ -61,7 +61,7 @@ function AttachmentPreview({
       ) : (
         <FileText className="size-4 shrink-0" aria-hidden />
       )}
-      <span className="max-w-[200px] truncate">{label}</span>
+      <span className="max-w-[200px] truncate" title={label}>{label}</span>
     </div>
   );
 
@@ -359,7 +359,7 @@ export function ConsultationChat({
       {pendingFile && (
         <div className="gh-chat-pending-file flex items-center gap-3 px-4 py-2">
           <FileText className="size-4 shrink-0" style={{ color: "var(--portal-muted)" }} aria-hidden />
-          <span className="min-w-0 flex-1 truncate text-sm" style={{ color: "var(--portal-text)" }}>
+          <span className="min-w-0 flex-1 truncate text-sm" style={{ color: "var(--portal-text)" }} title={pendingFile.name}>
             {pendingFile.name}
           </span>
           <button

@@ -262,10 +262,11 @@ export function ServiceFields({
                             ? "text-[var(--color-text-primary)]"
                             : "text-[var(--color-text-muted)] line-through"
                         }`}
+                        title={doc.fullName}
                       >
                         {doc.fullName}
                       </span>
-                      <span className="truncate text-portal-thead text-[var(--color-text-muted)]">
+                      <span className="truncate text-portal-thead text-[var(--color-text-muted)]" title={doc.title}>
                         {doc.title}
                         {doc.active ? "" : " · inactive"}
                       </span>

@@ -76,9 +76,9 @@ export function SortableOrderList({ items, inputName = "_orderedIds" }: Sortable
             <GripVertical className="size-4" />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="m-0 truncate text-portal-compact text-[var(--color-text-body)]">{item.label}</p>
+            <p className="m-0 truncate text-portal-compact text-[var(--color-text-body)]" title={item.label}>{item.label}</p>
             {item.meta ? (
-              <p className="m-0 truncate text-portal-thead text-[var(--color-text-muted)]">{item.meta}</p>
+              <p className="m-0 truncate text-portal-thead text-[var(--color-text-muted)]" title={item.meta}>{item.meta}</p>
             ) : null}
           </div>
           <div className="flex shrink-0 items-center gap-1">

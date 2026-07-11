@@ -278,7 +278,7 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
               {editDoc?.pdfPath ? (
                 <div className="mb-1 flex items-center gap-2 text-portal-meta text-[var(--color-text-muted)]">
                   <FileText className="size-3.5 shrink-0" aria-hidden />
-                  <span className="truncate font-mono">{editDoc.pdfPath}</span>
+                  <span className="truncate font-mono" title={editDoc.pdfPath}>{editDoc.pdfPath}</span>
                   <a
                     href={`/api/media/${editDoc.pdfPath.split("/").map(encodeURIComponent).join("/")}`}
                     target="_blank"

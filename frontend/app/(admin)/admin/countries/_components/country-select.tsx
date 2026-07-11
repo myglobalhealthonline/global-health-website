@@ -125,7 +125,7 @@ export function CountrySelect({
               }}
             />
           )}
-          <span className="truncate text-portal-body">
+          <span className="truncate text-portal-body" title={selected?.name}>
             {selected ? (
               <>
                 {selected.name}{" "}
@@ -204,7 +204,7 @@ export function CountrySelect({
                           flex: "0 0 22px",
                         }}
                       />
-                      <span className="flex-1 truncate">{c.name}</span>
+                      <span className="flex-1 truncate" title={c.name}>{c.name}</span>
                       <span className="text-portal-meta text-[var(--color-text-muted)]">
                         {c.iso.toUpperCase()}
                       </span>

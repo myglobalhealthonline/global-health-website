@@ -77,7 +77,7 @@ export function AdminAssetsTable({
       label: "Alt",
       priority: 3,
       render: (a) => (
-        <span className="block max-w-[12rem] truncate text-portal-compact text-[var(--color-text-muted)]">
+        <span className="block max-w-[12rem] truncate text-portal-compact text-[var(--color-text-muted)]" title={a.altText ?? undefined}>
           {a.altText ?? "—"}
         </span>
       ),
@@ -87,7 +87,7 @@ export function AdminAssetsTable({
       label: "Usage",
       priority: 3,
       render: (a) => (
-        <span className="block max-w-[14rem] truncate text-portal-compact text-[var(--color-text-muted)]">
+        <span className="block max-w-[14rem] truncate text-portal-compact text-[var(--color-text-muted)]" title={a.usageNote ?? undefined}>
           {a.usageNote ?? "—"}
         </span>
       ),

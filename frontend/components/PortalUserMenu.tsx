@@ -38,7 +38,7 @@ export function PortalUserMenu({
           <span className="gh-portal-avatar inline-flex size-7 items-center justify-center rounded-[9px] text-[11px] font-extrabold text-white">
             {initials(user.fullName, user.email)}
           </span>
-          <span className="hidden max-w-[140px] truncate md:inline">{user.fullName || user.email.split("@")[0]}</span>
+          <span className="hidden max-w-[140px] truncate md:inline" title={user.fullName || user.email}>{user.fullName || user.email.split("@")[0]}</span>
           <ChevronDown className="size-3 opacity-70" aria-hidden />
         </button>
       }
@@ -48,8 +48,8 @@ export function PortalUserMenu({
           {initials(user.fullName, user.email)}
         </span>
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-[var(--portal-text)]">{user.fullName || user.email}</p>
-          <p className="truncate text-xs text-[var(--portal-muted)]">{user.email}</p>
+          <p className="truncate text-sm font-semibold text-[var(--portal-text)]" title={user.fullName || user.email}>{user.fullName || user.email}</p>
+          <p className="truncate text-xs text-[var(--portal-muted)]" title={user.email}>{user.email}</p>
         </div>
       </div>
       <AppMenuSeparator className="block h-px bg-[var(--portal-line)]" />

@@ -142,7 +142,7 @@ export default async function CorporateDashboardPage() {
                 {recentRequests.map((r) => (
                   <li key={r.id} className="flex items-center gap-3 px-5 py-3">
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-[var(--color-text-primary)]">
+                      <p className="truncate text-sm font-semibold text-[var(--color-text-primary)]" title={r.employeeName ?? undefined}>
                         {r.employeeName ?? "Employee"}
                       </p>
                       <p className="text-xs text-[var(--color-text-muted)]">

@@ -389,7 +389,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
                       {
                         label: "Notes",
                         value: (
-                          <span className="block max-w-[14rem] truncate">
+                          <span className="block max-w-[14rem] truncate" title={appointment.notesPreview ?? undefined}>
                             {appointment.notesPreview ?? "No notes"}
                           </span>
                         ),

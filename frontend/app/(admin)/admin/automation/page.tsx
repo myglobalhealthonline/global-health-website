@@ -103,7 +103,7 @@ const automationRunFields: ColumnPriorityField<AdminAutomationRunRow>[] = [
     render: (row) => (
       <>
         {row.summary ?? "—"}
-        {row.recipient && <p className="mt-0.5 truncate text-portal-thead">→ {row.recipient}</p>}
+        {row.recipient && <p className="mt-0.5 truncate text-portal-thead" title={row.recipient}>→ {row.recipient}</p>}
       </>
     ),
   },
@@ -204,7 +204,7 @@ export default async function AdminAutomationPage({
                             {run.summary ?? "—"}
                           </p>
                           {run.recipient && (
-                            <p className="mt-0.5 truncate text-portal-thead text-[var(--color-text-muted)]">
+                            <p className="mt-0.5 truncate text-portal-thead text-[var(--color-text-muted)]" title={run.recipient}>
                               → {run.recipient}
                             </p>
                           )}
@@ -431,7 +431,7 @@ export default async function AdminAutomationPage({
                       </span>
                     )}
                   </div>
-                  <p className="mt-0.5 truncate text-portal-meta text-[var(--color-text-muted)]">
+                  <p className="mt-0.5 truncate text-portal-meta text-[var(--color-text-muted)]" title={[order.fullName, order.email].filter(Boolean).join(" · ")}>
                     {[order.fullName, order.email].filter(Boolean).join(" · ")}
                   </p>
                 </div>

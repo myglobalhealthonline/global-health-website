@@ -56,8 +56,8 @@ export function AdminCountriesTable({
       priority: 3,
       render: (c) => (
         <div className="max-w-[14rem]">
-          <div className="truncate font-mono text-portal-thead text-[var(--color-text-muted)]">{c.legacyHomePath}</div>
-          <div className="truncate font-mono text-portal-thead text-[var(--color-text-muted)] opacity-70">{c.teamPath}</div>
+          <div className="truncate font-mono text-portal-thead text-[var(--color-text-muted)]" title={c.legacyHomePath}>{c.legacyHomePath}</div>
+          <div className="truncate font-mono text-portal-thead text-[var(--color-text-muted)] opacity-70" title={c.teamPath}>{c.teamPath}</div>
         </div>
       ),
     },

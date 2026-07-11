@@ -336,7 +336,7 @@ export function ConsultationHistoryPanel({
       label: copy.colSymptoms,
       priority: 3,
       render: (n) => (
-        <span className="block max-w-[120px] truncate text-[var(--portal-muted)]">
+        <span className="block max-w-[120px] truncate text-[var(--portal-muted)]" title={n.symptoms?.trim() || undefined}>
           {n.symptoms?.trim() || copy.noSymptomsRecorded}
         </span>
       ),

@@ -37,7 +37,7 @@ const uploadedInvoiceFields: ColumnPriorityField<Item>[] = [
     key: "filename",
     label: "File",
     priority: 2,
-    render: (it) => <span className="block max-w-[220px] truncate">{it.filename}</span>,
+    render: (it) => <span className="block max-w-[220px] truncate" title={it.filename}>{it.filename}</span>,
   },
   { key: "size", label: "Size", priority: 3, render: (it) => fmtSize(it.size) },
   {

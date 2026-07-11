@@ -53,7 +53,7 @@ export function CountryPicker({
           style={{ border: "1px solid var(--portal-chrome-border)", color: "var(--portal-chrome-text-active)" }}
         >
           <FlagBadge code={current?.slug ?? "all"} size={16} />
-          <span className="min-w-0 truncate">{current?.name ?? "All countries"}</span>
+          <span className="min-w-0 truncate" title={current?.name ?? "All countries"}>{current?.name ?? "All countries"}</span>
           <ChevronDown className="size-3.5 opacity-70" aria-hidden />
         </button>
       </DropdownMenu.Trigger>

@@ -363,7 +363,7 @@ function MemberDisplay({
     <div className="gh-patient-family-card gh-card p-4">
       <div className="gh-patient-family-card-header flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-sm font-bold text-[var(--portal-text)]">
+          <p className="truncate text-sm font-bold text-[var(--portal-text)]" title={member.fullName}>
             {member.fullName}
           </p>
           <p className="text-xs text-[var(--portal-muted)]">

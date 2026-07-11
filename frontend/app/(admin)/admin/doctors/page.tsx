@@ -161,7 +161,7 @@ function doctorFields(
       label: "Languages",
       priority: 3,
       render: (d) => (
-        <span className="block max-w-[12rem] truncate text-portal-compact text-[var(--color-text-body)]">
+        <span className="block max-w-[12rem] truncate text-portal-compact text-[var(--color-text-body)]" title={d.languages && d.languages.length > 0 ? d.languages.join(", ") : undefined}>
           {d.languages && d.languages.length > 0 ? d.languages.join(", ") : "—"}
         </span>
       ),
@@ -171,7 +171,7 @@ function doctorFields(
       label: "Consultation type",
       priority: 3,
       render: (d) => (
-        <span className="block max-w-[12rem] truncate text-portal-compact text-[var(--color-text-muted)]">
+        <span className="block max-w-[12rem] truncate text-portal-compact text-[var(--color-text-muted)]" title={doctorConsultationTypeLabels(d.assignedServices ?? [])}>
           {doctorConsultationTypeLabels(d.assignedServices ?? [])}
         </span>
       ),

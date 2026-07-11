@@ -30,7 +30,7 @@ export function RequestsTable({
             {r.employeeName ?? "—"}
           </span>
           {r.reason ? (
-            <p className="max-w-[26rem] truncate text-xs text-[var(--color-text-muted)]">
+            <p className="max-w-[26rem] truncate text-xs text-[var(--color-text-muted)]" title={r.reason}>
               {r.reason}
             </p>
           ) : null}

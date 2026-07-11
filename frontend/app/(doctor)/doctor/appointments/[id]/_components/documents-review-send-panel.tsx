@@ -351,7 +351,7 @@ export function DocumentsReviewSendPanel({
                       ) : (
                         <span className="inline-block w-4 shrink-0" aria-hidden />
                       )}
-                      <span className="truncate">
+                      <span className="truncate" title={`${docRowLabel(row)} · ${row.fileName}`}>
                         {docRowLabel(row)} · {row.fileName}
                       </span>
                     </label>

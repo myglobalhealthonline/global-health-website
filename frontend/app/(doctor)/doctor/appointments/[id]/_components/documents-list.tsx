@@ -176,7 +176,7 @@ export function DocumentsList({
                 aria-hidden
               />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-portal-compact font-semibold text-[var(--portal-text)]">
+                <p className="truncate text-portal-compact font-semibold text-[var(--portal-text)]" title={d.label}>
                   {d.label}
                 </p>
                 <p className="text-[11.5px] text-[var(--portal-muted)]">

@@ -129,7 +129,7 @@ function Section({
                   aria-hidden
                 />
                 <div className="min-w-0">
-                  <p className="truncate text-portal-compact font-semibold text-[var(--portal-text)]">
+                  <p className="truncate text-portal-compact font-semibold text-[var(--portal-text)]" title={r.title}>
                     {r.title}
                   </p>
                   <p className="text-portal-thead text-[var(--portal-muted)]">
