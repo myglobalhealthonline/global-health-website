@@ -1870,36 +1870,6 @@
   background: rgba(255, 255, 255, 0.9);
 }
 
-.gh-admin-plan-tablist,
-.gh-admin-plan-translation-tablist {
-  max-width: 100%;
-  overflow-x: auto;
-  border-radius: var(--portal-radius);
-  background: rgba(241, 245, 235, 0.88) !important;
-  padding: 5px !important;
-}
-
-.gh-admin-plan-tab,
-.gh-admin-plan-translation-tab {
-  flex: 0 0 auto;
-  border-radius: 8px !important;
-  white-space: nowrap;
-}
-
-.gh-admin-plan-tab[aria-selected="true"],
-.gh-admin-plan-translation-tab[aria-selected="true"] {
-  background: var(--portal-primary) !important;
-  color: var(--portal-bg) !important;
-}
-
-.gh-admin-plan-field-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.gh-admin-plan-field-grid--three {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
 .gh-admin-plan-checks {
   align-items: flex-start;
 }
@@ -1944,12 +1914,6 @@
   min-width: 0;
 }
 
-@media (max-width: 1024px) {
-  .gh-admin-plan-field-grid--three {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 @media (max-width: 760px) {
   .gh-admin-plan-country-form,
   .gh-admin-plan-actions,
@@ -1959,11 +1923,6 @@
   .gh-admin-subscription-approval-row {
     align-items: stretch;
     flex-direction: column;
-  }
-
-  .gh-admin-plan-field-grid,
-  .gh-admin-plan-field-grid--three {
-    grid-template-columns: 1fr;
   }
 
   .gh-admin-plan-country-form :where(.gh-btn, button, select),
@@ -2052,26 +2011,6 @@
   padding: 14px;
 }
 
-.gh-admin-specialty-tablist {
-  max-width: 100%;
-  overflow-x: auto;
-  border-radius: var(--portal-radius);
-  background: rgba(241, 245, 235, 0.88);
-  padding: 5px;
-}
-
-.gh-admin-specialty-tab {
-  flex: 0 0 auto;
-  border-radius: 8px !important;
-  white-space: nowrap;
-}
-
-.gh-admin-specialty-tab[aria-selected="true"] {
-  background: var(--lux-forest-duotone) !important;
-  color: var(--portal-bg) !important;
-}
-
-.gh-admin-specialty-order-list > div,
 .gh-admin-patient-row {
   min-width: 0;
 }
