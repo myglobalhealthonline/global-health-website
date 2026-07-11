@@ -5217,6 +5217,10 @@ a.gh-appointment-card:hover {
   overflow-y: auto;
   border: 1px solid transparent;
   border-radius: var(--portal-radius-xl);
+  /* Solid opaque base UNDER the (translucent) lux gradient so page content
+     never bleeds through the panel — the modal fill + border gradient sit on
+     top of this for the glass edge, but the surface itself stays fully opaque. */
+  background-color: #ffffff;
   background-image: var(--lux-modal-fill), var(--lux-card-border);
   background-origin: border-box;
   background-clip: padding-box, border-box;
