@@ -44,10 +44,6 @@
 }
 
 /* Batch 3A: admin services route family */
-.gh-admin-service-mobile-list {
-  display: none;
-}
-
 .gh-admin-service-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.85fr);
@@ -282,10 +278,6 @@
 .gh-admin-service-faq__item,
 .gh-admin-service-faq-form {
   padding: 14px;
-}
-
-.gh-admin-service-table-wrap table {
-  min-width: 880px;
 }
 
 .gh-admin-service-toggle-form {
@@ -995,53 +987,11 @@
     margin-left: 0;
   }
 
-  .gh-admin-service-table-wrap {
-    display: none;
-  }
-
-  .gh-admin-service-mobile-list {
-    display: grid;
-    gap: 10px;
-    padding: 12px;
-  }
-
-  .gh-admin-service-mobile-card {
-    display: grid;
-    gap: 12px;
-    border: 1px solid rgba(29, 75, 54, 0.12);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.94);
-    padding: 14px;
-    box-shadow: 0 14px 28px rgba(20, 55, 43, 0.055);
-  }
-
-  .gh-admin-service-mobile-meta {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    color: var(--color-text-muted);
-    font-size: 12px;
-    font-weight: 700;
-  }
-
-  .gh-admin-service-mobile-controls {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-  }
-
   .gh-admin-service-actions :where(.gh-btn, button, a),
   .gh-admin-service-country-form :where(.gh-btn, button),
-  .gh-admin-service-faq__actions :where(.gh-btn, button),
-  .gh-admin-service-row-actions :where(.gh-btn, button, a) {
+  .gh-admin-service-faq__actions :where(.gh-btn, button) {
     width: 100%;
     justify-content: center;
-  }
-
-  .gh-admin-service-mobile-controls .gh-admin-service-row-actions :where(.gh-btn, button, a) {
-    width: 34px;
-    min-width: 34px;
   }
 }
 
@@ -5856,6 +5806,26 @@ a.gh-appointment-card:hover {
 
   .gh-admin-mobile-list,
   .gh-admin-appointment-mobile-list {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+  }
+}
+
+/* Orders table (D-01): trimmed to 5 cols, fits down to a 700px container —
+   narrower than the generic 960px band above (tuned for untrimmed tables).
+   Cancel the false-positive card-switch in the 700-960px band, then re-open
+   it at the table's own budget. */
+@container list (max-width: 960px) {
+  .gh-admin-order-mobile-list {
+    display: none;
+  }
+}
+@container list (max-width: 700px) {
+  .gh-admin-order-table-wrap {
+    display: none;
+  }
+  .gh-admin-order-mobile-list {
     display: grid;
     gap: 10px;
     padding: 12px;
