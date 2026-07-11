@@ -245,7 +245,7 @@ export function PatientProfilePanel({
       {profile?.statusAlert ? (
         <div
           role="alert"
-          className="mt-3 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-[13px] font-semibold text-red-800"
+          className="mt-3 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-portal-compact font-semibold text-red-800"
         >
           ⚠ {profile.statusAlert}
         </div>
@@ -253,7 +253,7 @@ export function PatientProfilePanel({
       {profile?.clinicAlert ? (
         <div
           role="status"
-          className="mt-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-[13px] text-amber-900"
+          className="mt-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-portal-compact text-amber-900"
         >
           ⓘ {profile.clinicAlert}
         </div>
@@ -423,7 +423,7 @@ export function PatientProfilePanel({
         </Section>
 
         <Section title={copy.clinicalAlertsSection}>
-          <p className="-mt-1 mb-2 text-[12px] text-[var(--portal-muted)]">
+          <p className="-mt-1 mb-2 text-portal-meta text-[var(--portal-muted)]">
             {copy.clinicalAlertsDesc}
           </p>
           <div className="grid gap-3">
@@ -461,7 +461,7 @@ export function PatientProfilePanel({
             {copy.saveChart}
           </button>
           {saveMsg ? (
-            <span className="text-[12px] text-[var(--portal-muted)]">
+            <span className="text-portal-meta text-[var(--portal-muted)]">
               {saveMsg}
             </span>
           ) : null}
@@ -497,7 +497,7 @@ function Section({
 }) {
   return (
     <section className="gh-doctor-chart-section">
-      <h4 className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+      <h4 className="mb-2 text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
         {title}
       </h4>
       {children}
@@ -538,7 +538,7 @@ function Field({
         className="gh-input"
       />
       {hint ? (
-        <span className="text-[11px] text-[var(--portal-muted)]">
+        <span className="text-portal-thead text-[var(--portal-muted)]">
           {hint}
         </span>
       ) : null}

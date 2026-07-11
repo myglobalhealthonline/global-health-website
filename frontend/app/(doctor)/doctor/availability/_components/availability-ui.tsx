@@ -249,12 +249,12 @@ export function DoctorAvailabilityUI({
                           · {minutesToTime(w.startMinute)}–
                           {minutesToTime(w.endMinute)}
                         </p>
-                        <p className="text-[11px] text-[var(--portal-muted)]">
+                        <p className="text-portal-thead text-[var(--portal-muted)]">
                           {s.baseGrid.replace("{duration}", String(w.slotDurationMinutes))}
                           {!w.isActive ? s.paused : ""}
                         </p>
                         {w.effectiveFrom || w.effectiveUntil ? (
-                          <p className="text-[10px] text-[var(--portal-muted)]">
+                          <p className="text-portal-micro text-[var(--portal-muted)]">
                             {w.effectiveFrom
                               ? s.fromDate.replace("{date}", new Date(w.effectiveFrom).toLocaleDateString("en-IE"))
                               : s.fromAlways}
@@ -339,7 +339,7 @@ export function DoctorAvailabilityUI({
                     </option>
                   ))}
                 </select>
-                <span className="text-[12px] text-[var(--portal-muted)]">
+                <span className="text-portal-meta text-[var(--portal-muted)]">
                   {s.baseSlotHint}
                 </span>
               </label>
@@ -365,7 +365,7 @@ export function DoctorAvailabilityUI({
                   />
                 </label>
               </div>
-              <p className="text-[11px] text-[var(--portal-muted)]">
+              <p className="text-portal-thead text-[var(--portal-muted)]">
                 {s.datesHint}
               </p>
 
@@ -377,13 +377,13 @@ export function DoctorAvailabilityUI({
 
           <AdminCard padding={0} className="gh-doctor-panel">
             <SectionHeader title={s.legend} />
-            <ul className="grid gap-2 p-5 text-[12px]">
+            <ul className="grid gap-2 p-5 text-portal-meta">
               <Legend tone="open" label={s.legendOpen} />
               <Legend tone="blocked" label={s.legendBlocked} />
               <Legend tone="booked" label={s.legendBooked} />
               <Legend tone="held" label={s.legendHeld} />
             </ul>
-            <p className="px-5 pb-5 text-[11px] text-[var(--portal-muted)]">
+            <p className="px-5 pb-5 text-portal-thead text-[var(--portal-muted)]">
               {s.timesShownIn.replace("{tz}", countryTimeZone)}
             </p>
           </AdminCard>

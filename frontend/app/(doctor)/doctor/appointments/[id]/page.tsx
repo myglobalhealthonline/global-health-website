@@ -87,7 +87,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
       <div className="gh-card p-6">
         <Link
           href="/doctor/appointments"
-          className="mb-3 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
+          className="mb-3 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
         >
           <ArrowLeft className="size-3.5" /> {d.appointmentDetail.back}
         </Link>
@@ -145,14 +145,14 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     >
       <Link
         href="/doctor/appointments"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
       >
         <ArrowLeft className="size-3.5" /> {d.appointmentDetail.back}
       </Link>
 
       <header className="gh-doctor-appointment-header mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
+          <p className="text-portal-thead font-bold uppercase tracking-[0.18em] text-[var(--portal-muted)]">
             {d.appointmentDetail.eyebrow}
           </p>
           <h2 className="mt-1 text-2xl font-bold text-[var(--portal-text)]">
@@ -174,7 +174,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <span
-              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] ${
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-portal-thead font-bold uppercase tracking-[0.08em] ${
                 consultationMode === "ONLINE"
                   ? "bg-[var(--portal-primary)]/10 text-[var(--portal-primary)]"
                   : "bg-amber-100 text-amber-800"
@@ -190,7 +190,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             {followUpFromId ? (
               <Link
                 href={`/doctor/appointments/${followUpFromId}`}
-                className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] text-violet-800 hover:underline"
+                className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2.5 py-0.5 text-portal-thead font-bold uppercase tracking-[0.08em] text-violet-800 hover:underline"
               >
                 {d.appointmentDetail.followUpOfOriginal}
               </Link>
@@ -327,7 +327,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   <div className="flex items-center gap-2">
                     <ConsultationDocumentsTrigger appointmentId={appointment.id} copy={consultationDocsCopy} />
                     <span
-                      className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] ${
+                      className={`rounded-full px-2.5 py-0.5 text-portal-thead font-bold uppercase tracking-[0.08em] ${
                         signed
                           ? "bg-[var(--portal-success-soft)] text-[var(--portal-success-text)]"
                           : "bg-[var(--portal-well)] text-[var(--portal-muted)]"
@@ -376,7 +376,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                     >
                       {d.appointmentDetail.servicesRendered}
                     </h4>
-                    <p className="mt-1 text-[12.5px] text-[var(--portal-muted)]">
+                    <p className="mt-1 text-portal-label text-[var(--portal-muted)]">
                       {d.appointmentDetail.servicesRenderedDesc}
                     </p>
                     <ServicesUsedList
@@ -398,7 +398,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                     >
                       {d.appointmentDetail.shareColleague}
                     </h4>
-                    <p className="mt-1 text-[12.5px] text-[var(--portal-muted)]">
+                    <p className="mt-1 text-portal-label text-[var(--portal-muted)]">
                       {d.appointmentDetail.shareColleagueDesc}
                     </p>
                     <div className="mt-2">
@@ -409,7 +409,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                           copy={d.shareButton}
                         />
                       ) : (
-                        <p className="text-[12px] text-[var(--portal-muted)]">
+                        <p className="text-portal-meta text-[var(--portal-muted)]">
                           {d.appointmentDetail.saveDraftFirst}
                         </p>
                       )}
@@ -481,13 +481,13 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                             className="gh-doctor-submission-card gh-admin-card rounded-md border border-[var(--portal-line)] p-3"
                           >
                             <div className="gh-doctor-submission-header flex items-baseline justify-between gap-3">
-                              <p className="text-[13px] font-semibold text-[var(--portal-text)]">
+                              <p className="text-portal-compact font-semibold text-[var(--portal-text)]">
                                 {s.template.title}
                               </p>
                               <Link
                                 href={`/print/forms/${s.id}`}
                                 target="_blank"
-                                className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
+                                className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-primary)] hover:underline"
                               >
                                 <Printer className="size-3" /> {d.common.print}
                               </Link>
@@ -498,7 +498,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                                 new Date(s.submittedAt).toLocaleString(),
                               )}
                             </p>
-                            <dl className="mt-2 grid gap-1.5 text-[13px]">
+                            <dl className="mt-2 grid gap-1.5 text-portal-compact">
                               {(s.answers ?? []).map((a, i) => {
                                 const def = s.template.fields.find((f) => f.key === a.key);
                                 return (
@@ -590,7 +590,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
       <aside className="gh-doctor-context-rail grid gap-4 self-start lg:sticky lg:top-4">
         <FormSection title={d.appointmentDetail.patient}>
           <div className="gh-form-section__span-2">
-            <dl className="grid gap-2 text-[13px]">
+            <dl className="grid gap-2 text-portal-compact">
               {appointment.globalHealthNumber ? (
                 <Row label={d.appointmentDetail.ghn} value={appointment.globalHealthNumber} />
               ) : null}
@@ -614,8 +614,8 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
               />
             </dl>
             {appointment.notes ? (
-              <div className="mt-4 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3 text-[13px]">
-                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
+              <div className="mt-4 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3 text-portal-compact">
+                <p className="text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
                   {d.appointmentDetail.bookingNotes}
                 </p>
                 <p className="mt-1 whitespace-pre-wrap text-[var(--portal-text)]">
@@ -629,7 +629,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             >
               <ExternalLink className="size-3.5" aria-hidden /> {d.appointmentDetail.openPatientChart}
             </Link>
-            <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
+            <p className="mt-1 text-portal-meta text-[var(--portal-muted)]">
               {d.appointmentDetail.editHealthDataHint}
             </p>
           </div>
@@ -647,7 +647,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline justify-between gap-3 border-b border-[var(--portal-line)]/60 py-1">
-      <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+      <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
         {label}
       </dt>
       <dd className="text-right text-[var(--portal-text)]">{value}</dd>

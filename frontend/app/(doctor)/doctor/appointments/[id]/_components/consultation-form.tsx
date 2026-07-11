@@ -194,7 +194,7 @@ export function ConsultationForm({
       ) : null}
 
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[12px] text-[var(--portal-muted)]">
+        <p className="text-portal-meta text-[var(--portal-muted)]">
           {signed
             ? copy.signedAt.replace(
                 "{date}",

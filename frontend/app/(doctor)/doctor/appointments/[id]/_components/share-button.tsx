@@ -68,7 +68,7 @@ export function ShareConsultationButton({
   if (disabled) {
     return (
       <div className="rounded-md border border-dashed border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2">
-        <p className="flex items-center gap-2 text-[12px] font-semibold text-[var(--portal-muted)]">
+        <p className="flex items-center gap-2 text-portal-meta font-semibold text-[var(--portal-muted)]">
           <Share2 className="size-3.5" aria-hidden />
           {copy.signNoteHint}
         </p>
@@ -92,7 +92,7 @@ export function ShareConsultationButton({
           <input
             readOnly
             value={url}
-            className="flex-1 bg-transparent text-[12px] font-mono outline-none"
+            className="flex-1 bg-transparent text-portal-meta font-mono outline-none"
             onClick={(e) => e.currentTarget.select()}
           />
           <button
@@ -105,7 +105,7 @@ export function ShareConsultationButton({
                 /* noop */
               }
             }}
-            className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
+            className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
           >
             <Copy className="size-3.5" />
             {copied ? copy.copied : copy.copy}
@@ -113,7 +113,7 @@ export function ShareConsultationButton({
         </div>
       ) : null}
       {error ? (
-        <p className="gh-status-warning rounded-md border px-3 py-1 text-[12.5px]">
+        <p className="gh-status-warning rounded-md border px-3 py-1 text-portal-label">
           {error}
         </p>
       ) : null}

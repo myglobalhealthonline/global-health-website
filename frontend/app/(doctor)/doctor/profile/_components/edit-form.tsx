@@ -651,7 +651,7 @@ export function DoctorProfileEditForm({
                     </p>
                   </div>
                   <span
-                    className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
+                    className={`rounded-full border px-2.5 py-1 text-portal-thead font-semibold ${
                       activeMarket.isVerified
                         ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                         : "border-[var(--portal-line)] bg-[var(--portal-bg)] text-[var(--portal-muted)]"
@@ -817,7 +817,7 @@ export function DoctorProfileEditForm({
           >
             {strings.profilePhotoTitle}
           </h3>
-          <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
+          <p className="mt-1 text-portal-compact text-[var(--portal-muted)]">
             {strings.profilePhotoHint}
           </p>
           <div className="gh-doctor-profile-photo mt-3 flex flex-col items-center gap-3">
@@ -888,7 +888,7 @@ export function DoctorProfileEditForm({
               ) : null}
             </div>
             {photoError ? (
-              <p className="gh-status-warning rounded-md border px-3 py-2 text-[12.5px]">
+              <p className="gh-status-warning rounded-md border px-3 py-2 text-portal-label">
                 {photoError}
               </p>
             ) : null}
@@ -906,7 +906,7 @@ export function DoctorProfileEditForm({
           >
             {strings.adminManagedTitle}
           </h3>
-          <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
+          <p className="mt-1 text-portal-compact text-[var(--portal-muted)]">
             {strings.adminManagedDesc}
           </p>
         </section>
@@ -928,14 +928,14 @@ function ProfileInsight({
 }) {
   return (
     <div className="rounded-lg border border-[var(--portal-line)] bg-[var(--portal-well)] p-3">
-      <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+      <p className="flex items-center gap-2 text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
         <span className="text-[var(--portal-primary)]">{icon}</span>
         {label}
       </p>
       <p className="mt-2 text-lg font-extrabold text-[var(--portal-text)]">
         {value}
       </p>
-      <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
+      <p className="mt-1 text-portal-meta text-[var(--portal-muted)]">
         {helper}
       </p>
     </div>

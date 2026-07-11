@@ -28,7 +28,7 @@ export function ConsultationDocumentsSection({
 
   return (
     <>
-      <p className="mt-3 text-[13px] leading-relaxed text-[var(--portal-muted)]">
+      <p className="mt-3 text-portal-compact leading-relaxed text-[var(--portal-muted)]">
         {copy.sectionDesc}
       </p>
       <button

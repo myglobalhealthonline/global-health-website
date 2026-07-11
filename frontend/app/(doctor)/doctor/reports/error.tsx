@@ -31,7 +31,7 @@ export default function DoctorReportsError({
           </p>
         ) : null}
         {error?.stack ? (
-          <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap rounded bg-white/60 p-2 text-[11px]">
+          <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap rounded bg-white/60 p-2 text-portal-thead">
             {error.stack}
           </pre>
         ) : null}

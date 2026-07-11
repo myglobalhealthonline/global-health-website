@@ -111,7 +111,7 @@ export function DoctorAvailabilityWeekView({
   return (
     <div className="grid gap-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-[13px] text-[var(--portal-muted)]">
+        <p className="text-portal-compact text-[var(--portal-muted)]">
           {strings.weekViewHelp}
         </p>
         <TimezoneSelect value={tz} options={tzOptions} onChange={setTz} />

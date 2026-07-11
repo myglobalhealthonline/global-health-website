@@ -320,7 +320,7 @@ export function DoctorCalendarUI({
           <LegendDot className="bg-rose-400" label={s.legendBlocked} />
           <LegendDot className="bg-blue-500" label={s.legendBooked} />
           <span className="inline-flex items-center gap-1.5">
-            <span className="inline-flex items-center rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-800">
+            <span className="inline-flex items-center rounded-full bg-emerald-100 px-1.5 py-0.5 text-portal-micro font-bold text-emerald-800">
               N
             </span>
             {s.legendConsultations}
@@ -356,7 +356,7 @@ export function DoctorCalendarUI({
           {/* Day-level block controls */}
           {selectedDay ? (
             <div className="gh-doctor-calendar-day-card gh-card p-4">
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
+              <p className="text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
                 {dayLabel(selectedDay)}
               </p>
               <div className="gh-doctor-calendar-day-actions mt-3 flex flex-wrap gap-2">

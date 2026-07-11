@@ -71,14 +71,14 @@ export function NotificationListClient({
   return (
     <div className="gh-card gh-doctor-notification-list overflow-hidden p-0">
       <div className="gh-doctor-list-toolbar flex items-center justify-between border-b border-[var(--portal-line)] px-4 py-3">
-        <p className="text-[12px] text-[var(--portal-muted)]">
+        <p className="text-portal-meta text-[var(--portal-muted)]">
           {strings.newestFirst}
         </p>
         <button
           type="button"
           onClick={markAll}
           disabled={pending}
-          className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
+          className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
         >
           <CheckCheck className="size-3.5" /> {strings.markAllRead}
         </button>
@@ -102,7 +102,7 @@ export function NotificationListClient({
               />
               <div className="min-w-0 flex-1">
                 <div className="gh-doctor-notification-title flex items-baseline justify-between gap-2">
-                  <p className="text-[13px] font-semibold text-[var(--portal-text)]">
+                  <p className="text-portal-compact font-semibold text-[var(--portal-text)]">
                     {n.label}
                     {n.byUserName ? (
                       <span className="font-normal text-[var(--portal-muted)]">
@@ -111,19 +111,19 @@ export function NotificationListClient({
                       </span>
                     ) : null}
                   </p>
-                  <time className="text-[11px] text-[var(--portal-muted)]">
+                  <time className="text-portal-thead text-[var(--portal-muted)]">
                     {formatAppDateTime(n.createdAt)}
                   </time>
                 </div>
                 {n.snippet ? (
-                  <p className="mt-1 line-clamp-2 text-[13px] text-[var(--portal-muted)]">
+                  <p className="mt-1 line-clamp-2 text-portal-compact text-[var(--portal-muted)]">
                     {n.snippet}
                   </p>
                 ) : null}
                 {n.appointmentId ? (
                   <Link
                     href={`/doctor/appointments/${n.appointmentId}`}
-                    className="mt-1 inline-block text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
+                    className="mt-1 inline-block text-portal-meta font-semibold text-[var(--portal-primary)] hover:underline"
                   >
                     {strings.openAppointment}
                   </Link>
@@ -134,7 +134,7 @@ export function NotificationListClient({
                   type="button"
                   onClick={() => markOne(n.id)}
                   disabled={pending}
-                  className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
+                  className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
                   aria-label={strings.markAsRead}
                 >
                   <Check className="size-3.5" />

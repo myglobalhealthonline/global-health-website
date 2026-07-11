@@ -196,7 +196,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items, strings, c
         <p className="mt-3 text-sm font-semibold text-[var(--portal-text)]">
           {strings.emptyTitle}
         </p>
-        <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
+        <p className="mt-1 text-portal-compact text-[var(--portal-muted)]">
           {strings.emptyDesc}
         </p>
       </div>
@@ -207,7 +207,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items, strings, c
     <div className="gh-doctor-service-selection grid gap-5">
       {/* How it works */}
       <div className="gh-doctor-service-explainer rounded-[var(--radius-card-sm)] border border-[var(--portal-line-soft)] bg-[var(--portal-well)] px-5 py-4">
-        <p className="m-0 text-[13px] leading-relaxed text-[var(--portal-muted)]">
+        <p className="m-0 text-portal-compact leading-relaxed text-[var(--portal-muted)]">
           {strings.explainerIntro}{" "}
           {approvalRequired ? (
             <>
@@ -250,7 +250,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items, strings, c
             label: (
               <>
                 {country.name}{" "}
-                <span className="text-[11px] font-bold uppercase tracking-[0.06em] opacity-70">
+                <span className="text-portal-thead font-bold uppercase tracking-[0.06em] opacity-70">
                   {country.code}
                 </span>
               </>
@@ -315,7 +315,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items, strings, c
                     {pill.label}
                   </Pill>
                 ) : (
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--portal-muted)]">
+                  <span className="text-portal-thead font-semibold uppercase tracking-[0.06em] text-[var(--portal-muted)]">
                     {strings.notRequested}
                   </span>
                 )}
@@ -326,13 +326,13 @@ export function DoctorServiceSelectionForm({ approvalRequired, items, strings, c
                   {service.name}
                 </p>
                 {service.summary ? (
-                  <p className="mt-1 line-clamp-2 text-[13px] text-[var(--portal-muted)]">
+                  <p className="mt-1 line-clamp-2 text-portal-compact text-[var(--portal-muted)]">
                     {service.summary}
                   </p>
                 ) : null}
               </div>
 
-              <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-[var(--portal-line-soft)] pt-3 text-[12px] text-[var(--portal-muted)]">
+              <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-[var(--portal-line-soft)] pt-3 text-portal-meta text-[var(--portal-muted)]">
                 {service.durationMinutes != null ? (
                   <span className="inline-flex items-center gap-1">
                     <Clock className="size-3.5" aria-hidden />
@@ -370,7 +370,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items, strings, c
             className="mt-0.5 size-4 shrink-0 text-[var(--portal-primary)]"
             aria-hidden
           />
-          <div className="text-[13px] leading-relaxed text-[var(--portal-muted)]">
+          <div className="text-portal-compact leading-relaxed text-[var(--portal-muted)]">
             <p className="m-0 font-semibold text-[var(--portal-text)]">
               {strings.nextStepsTitle}
             </p>
@@ -383,7 +383,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items, strings, c
 
       <div className="gh-doctor-form-actions flex items-center justify-end gap-3">
         {dirty ? (
-          <span className="text-[12.5px] text-[var(--portal-muted)]">
+          <span className="text-portal-label text-[var(--portal-muted)]">
             {strings.unsavedChanges}
           </span>
         ) : null}

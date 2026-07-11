@@ -76,7 +76,7 @@ export default async function DoctorNotificationsPage() {
         strings={d.notificationsPage}
       />
 
-      <p className="mt-6 text-[12px] text-[var(--portal-muted)]">
+      <p className="mt-6 text-portal-meta text-[var(--portal-muted)]">
         {d.notificationsPage.footerHint}{" "}
         <Link
           href="/doctor/appointments"

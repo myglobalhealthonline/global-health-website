@@ -91,7 +91,7 @@ type HistoryData = {
 
 function SessionTypeBadge({ label }: { label: string }) {
   return (
-    <span className="inline-block max-w-[180px] truncate rounded-full bg-[var(--portal-mint-soft)] px-2 py-0.5 text-[11px] font-semibold text-[var(--portal-primary)]">
+    <span className="inline-block max-w-[180px] truncate rounded-full bg-[var(--portal-mint-soft)] px-2 py-0.5 text-portal-thead font-semibold text-[var(--portal-primary)]">
       {label}
     </span>
   );
@@ -111,7 +111,7 @@ function FileTypeBadge({ label }: { label: string }) {
               ? "bg-blue-50 text-blue-800"
               : "bg-emerald-50 text-emerald-800";
   return (
-    <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold ${tone}`}>
+    <span className={`inline-block rounded-full px-2 py-0.5 text-portal-thead font-semibold ${tone}`}>
       {label}
     </span>
   );
@@ -140,7 +140,7 @@ function HistorySection({
           {open ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
           {title}
           {count !== undefined ? (
-            <span className="text-[12px] font-semibold opacity-90">({count})</span>
+            <span className="text-portal-meta font-semibold opacity-90">({count})</span>
           ) : null}
         </span>
       </button>
@@ -165,7 +165,7 @@ function DocTypeGroup({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] font-bold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
+        className="flex w-full items-center gap-2 px-3 py-2 text-left text-portal-compact font-bold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
       >
         {open ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
         {title}
@@ -182,7 +182,7 @@ function ViewLink({ href, label }: { href: string; label: string }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]"
+      className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-portal-meta font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]"
     >
       <Eye className="size-3.5" aria-hidden />
       {label}
@@ -317,7 +317,7 @@ export function ConsultationHistoryPanel({
         <p className="mt-2 text-sm font-bold text-[var(--portal-text)]">
           {copy.historyEmptyTitle}
         </p>
-        <p className="mx-auto mt-1 max-w-sm text-[12px] text-[var(--portal-muted)]">
+        <p className="mx-auto mt-1 max-w-sm text-portal-meta text-[var(--portal-muted)]">
           {copy.historyEmptyDesc}
         </p>
       </div>

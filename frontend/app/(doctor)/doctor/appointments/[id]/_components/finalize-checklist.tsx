@@ -43,7 +43,7 @@ export function FinalizeChecklist({
           <CheckCircle2 className="size-4" aria-hidden />
           {copy.finalizedTitle}
         </p>
-        <p className="mt-1 text-[12px] font-medium text-emerald-700">
+        <p className="mt-1 text-portal-meta font-medium text-emerald-700">
           {copy.finalizedDescription}
         </p>
       </div>
@@ -84,7 +84,7 @@ export function FinalizeChecklist({
           <p className="text-sm font-bold text-[var(--portal-text)]">
             {copy.title}
           </p>
-          <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
+          <p className="mt-1 text-portal-meta text-[var(--portal-muted)]">
             {copy.description}
           </p>
         </div>

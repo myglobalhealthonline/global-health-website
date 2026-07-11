@@ -176,16 +176,16 @@ export function FormTemplatesClient({
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-[14px] font-semibold text-[var(--portal-text)]">
+                    <p className="text-portal-body font-semibold text-[var(--portal-text)]">
                       {t.title}
                       {t.ownedBySelf ? null : (
-                        <span className="ml-2 rounded-full bg-[var(--portal-well)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+                        <span className="ml-2 rounded-full bg-[var(--portal-well)] px-2 py-0.5 text-portal-micro font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
                           {strings.sharedBadge}
                         </span>
                       )}
                     </p>
                     {t.description ? (
-                      <p className="text-[12.5px] text-[var(--portal-muted)]">
+                      <p className="text-portal-label text-[var(--portal-muted)]">
                         {t.description}
                       </p>
                     ) : null}
@@ -199,7 +199,7 @@ export function FormTemplatesClient({
                     <button
                       type="button"
                       onClick={() => remove(t.id)}
-                      className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
+                      className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
                       aria-label={strings.deleteTemplateAria}
                     >
                       <Trash2 className="size-3.5" />
@@ -246,14 +246,14 @@ export function FormTemplatesClient({
               className="gh-doctor-template-field rounded-md border border-[var(--portal-line)] p-3"
             >
               <div className="flex items-start justify-between gap-2">
-                <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+                <p className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
                   {strings.fieldN.replace("{n}", String(i + 1))}
                 </p>
                 {fields.length > 1 ? (
                   <button
                     type="button"
                     onClick={() => removeField(i)}
-                    className="text-[11px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
+                    className="text-portal-thead font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
                   >
                     {strings.removeField}
                   </button>
@@ -296,7 +296,7 @@ export function FormTemplatesClient({
                     />
                   </label>
                 ) : null}
-                <label className="flex items-center gap-2 text-[13px]">
+                <label className="flex items-center gap-2 text-portal-compact">
                   <input
                     type="checkbox"
                     checked={f.required}
@@ -311,13 +311,13 @@ export function FormTemplatesClient({
           <button
             type="button"
             onClick={addField}
-            className="inline-flex items-center gap-1 self-start text-[13px] font-semibold text-[var(--portal-primary)] hover:underline"
+            className="inline-flex items-center gap-1 self-start text-portal-compact font-semibold text-[var(--portal-primary)] hover:underline"
           >
             <Plus className="size-3.5" /> {strings.addField}
           </button>
 
           {error ? (
-            <p className="gh-status-warning rounded-md border px-3 py-2 text-[12.5px]">
+            <p className="gh-status-warning rounded-md border px-3 py-2 text-portal-label">
               {error}
             </p>
           ) : null}

@@ -143,14 +143,14 @@ export function AppointmentActions({
     <form onSubmit={save} className="mt-3 grid gap-4 rounded-lg border border-[var(--portal-line)] bg-white/75 p-3 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--portal-line)] pb-3">
         <div>
-          <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+          <p className="text-portal-meta font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
             {copy.controlsTitle}
           </p>
           <p className="mt-1 text-sm text-[var(--portal-muted)]">
             {copy.controlsDesc}
           </p>
         </div>
-        <span className="inline-flex items-center gap-1 rounded-full bg-[var(--portal-well)] px-2.5 py-1 text-[11px] font-bold text-[var(--portal-primary)]">
+        <span className="inline-flex items-center gap-1 rounded-full bg-[var(--portal-well)] px-2.5 py-1 text-portal-thead font-bold text-[var(--portal-primary)]">
           <Route className="size-3" aria-hidden />
           {STATUS_OPTIONS.find((option) => option.value === status)?.label ?? status}
         </span>
@@ -190,7 +190,7 @@ export function AppointmentActions({
         <span className="gh-field-label">{copy.meetingUrlLabel}</span>
         <input
           type="url"
-          className="gh-input font-mono text-[12px]"
+          className="gh-input font-mono text-portal-meta"
           value={meetingUrl}
           onChange={(e) => setMeetingUrl(e.target.value)}
           placeholder={
@@ -236,7 +236,7 @@ export function AppointmentActions({
             href={meetingUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--portal-primary)] hover:underline"
+            className="inline-flex items-center gap-1 text-portal-label font-semibold text-[var(--portal-primary)] hover:underline"
           >
             <Video className="size-3.5" /> {copy.testLink}
           </a>

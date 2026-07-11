@@ -77,7 +77,7 @@ export function ServicesUsedList({
           <ClipboardList className="size-4 text-[var(--portal-primary)]" aria-hidden />
           {copy.saveNoteFirstTitle}
         </p>
-        <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
+        <p className="mt-1 text-portal-meta text-[var(--portal-muted)]">
           {copy.saveNoteFirstDescription}
         </p>
       </div>
@@ -192,7 +192,7 @@ export function ServicesUsedList({
           <button
             type="button"
             onClick={() => remove(r.id)}
-            className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
+            className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
             aria-label={copy.removeAria}
           >
             <Trash2 className="size-3.5" />
@@ -209,7 +209,7 @@ export function ServicesUsedList({
             <ClipboardList className="size-4 text-[var(--portal-primary)]" aria-hidden />
             {copy.noServicesTitle}
           </p>
-          <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
+          <p className="mt-1 text-portal-meta text-[var(--portal-muted)]">
             {copy.noServicesDescription}
           </p>
         </div>
@@ -226,7 +226,7 @@ export function ServicesUsedList({
                     <button
                       type="button"
                       onClick={() => remove(r.id)}
-                      className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
+                      className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
                       aria-label={copy.removeAria}
                     >
                       <Trash2 className="size-3.5" /> {copy.removeAction}
@@ -235,7 +235,7 @@ export function ServicesUsedList({
             }
           />
           {total > 0 ? (
-            <div className="flex items-center justify-between px-1 text-[13px] font-semibold">
+            <div className="flex items-center justify-between px-1 text-portal-compact font-semibold">
               <span>{copy.total}</span>
               <span className="font-mono">{formatPrice(total, currency)}</span>
             </div>
@@ -291,7 +291,7 @@ export function ServicesUsedList({
         </form>
       )}
       {error ? (
-        <p className="gh-status-warning rounded-md border px-3 py-2 text-[12.5px]">
+        <p className="gh-status-warning rounded-md border px-3 py-2 text-portal-label">
           {error}
         </p>
       ) : null}

@@ -198,7 +198,7 @@ export default async function DoctorOverviewPage() {
                 aria-hidden
               />
               <div className="min-w-0 flex-1">
-                <p className="text-[14px] font-bold text-[var(--portal-text)]">
+                <p className="text-portal-body font-bold text-[var(--portal-text)]">
                   {missingMeetingLink.length === 1
                     ? d.dashboard.missingLinkOne
                     : d.dashboard.missingLinkMany.replace(
@@ -210,7 +210,7 @@ export default async function DoctorOverviewPage() {
                   {missingMeetingLink.slice(0, 5).map((a) => (
                     <li
                       key={a.id}
-                      className="gh-doctor-alert-list-row flex items-center justify-between gap-2 text-[13px]"
+                      className="gh-doctor-alert-list-row flex items-center justify-between gap-2 text-portal-compact"
                     >
                       <span className="truncate text-[var(--portal-text)]">
                         {a.fullName}
@@ -220,7 +220,7 @@ export default async function DoctorOverviewPage() {
                       </span>
                       <Link
                         href={`/doctor/appointments/${a.id}`}
-                        className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
+                        className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-primary)] hover:underline"
                       >
                         {d.dashboard.addLink} <ChevronRight className="size-3" />
                       </Link>
@@ -267,11 +267,11 @@ export default async function DoctorOverviewPage() {
                     className="gh-doctor-schedule-row flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
                   >
                     <div className="min-w-0">
-                      <p className="text-[14px] font-semibold text-[var(--portal-text)]">
+                      <p className="text-portal-body font-semibold text-[var(--portal-text)]">
                         {a.scheduledAt ? formatAppTime(a.scheduledAt) : d.common.unscheduled}{" "}
                         · {a.fullName}
                       </p>
-                      <p className="text-[12px] text-[var(--portal-muted)]">
+                      <p className="text-portal-meta text-[var(--portal-muted)]">
                         {a.consultationType} · {viewStatusText[doctorAppointmentView(a.status, a.paymentStatus)]}
                       </p>
                     </div>
@@ -324,12 +324,12 @@ export default async function DoctorOverviewPage() {
             ) : (
               <ul className="gh-doctor-notification-mini-list grid gap-3">
                 {unreadNotifs.slice(0, 6).map((n) => (
-                  <li key={n.id} className="text-[13px]">
+                  <li key={n.id} className="text-portal-compact">
                     <p className="font-semibold text-[var(--portal-text)]">
                       {NOTIF_TYPE_LABEL[n.type] ?? n.type.replace(/_/g, " ").toLowerCase()}
                     </p>
                     {n.payload?.snippet ? (
-                      <p className="line-clamp-2 text-[12px] text-[var(--portal-muted)]">
+                      <p className="line-clamp-2 text-portal-meta text-[var(--portal-muted)]">
                         {n.payload.snippet}
                       </p>
                     ) : null}
@@ -347,7 +347,7 @@ export default async function DoctorOverviewPage() {
             )}
             <Link
               href="/doctor/notifications"
-              className="mt-4 inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
+              className="mt-4 inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-primary)] hover:underline"
             >
               {d.common.seeAll} <ChevronRight className="size-3" />
             </Link>

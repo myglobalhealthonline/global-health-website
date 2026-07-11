@@ -16,7 +16,7 @@ export type SessionMeta = {
 
 export function SessionTypeBadge({ label }: { label: string }) {
   return (
-    <span className="inline-block max-w-[180px] truncate rounded-full bg-[var(--portal-mint-soft)] px-2 py-0.5 text-[11px] font-semibold text-[var(--portal-primary)]">
+    <span className="inline-block max-w-[180px] truncate rounded-full bg-[var(--portal-mint-soft)] px-2 py-0.5 text-portal-thead font-semibold text-[var(--portal-primary)]">
       {label}
     </span>
   );
@@ -36,7 +36,7 @@ export function FileTypeBadge({ label }: { label: string }) {
               ? "bg-blue-50 text-blue-800"
               : "bg-emerald-50 text-emerald-800";
   return (
-    <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold ${tone}`}>
+    <span className={`inline-block rounded-full px-2 py-0.5 text-portal-thead font-semibold ${tone}`}>
       {label}
     </span>
   );
@@ -119,13 +119,13 @@ export function HistorySection({
           {title}
           {pendingDot && count !== undefined && count > 0 ? (
             <span
-              className="inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-amber-400 px-1 text-[10px] font-extrabold leading-none text-[#0a281f]"
+              className="inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-amber-400 px-1 text-portal-micro font-extrabold leading-none text-[#0a281f]"
               aria-label={`${count} to send`}
             >
               {count}
             </span>
           ) : count !== undefined ? (
-            <span className="text-[12px] font-semibold opacity-90">({count})</span>
+            <span className="text-portal-meta font-semibold opacity-90">({count})</span>
           ) : null}
         </span>
       </button>
@@ -190,7 +190,7 @@ function DocumentTable<T extends AnyDocumentRow>({
 
 function DocumentViewLink({ href, label }: { href: string; label: string }) {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]">
+    <a href={href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-portal-meta font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]">
       <Eye className="size-3.5" aria-hidden />
       {label}
     </a>
@@ -246,7 +246,7 @@ export function DocTypeGroup({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] font-bold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
+        className="flex w-full items-center gap-2 px-3 py-2 text-left text-portal-compact font-bold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
       >
         {open ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
         {title}

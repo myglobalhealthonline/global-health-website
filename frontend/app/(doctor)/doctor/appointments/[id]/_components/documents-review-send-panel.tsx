@@ -296,23 +296,23 @@ export function DocumentsReviewSendPanel({
     >
       <div className="p-4">
         {error ? (
-          <p className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-[12.5px] text-red-800">
+          <p className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-portal-label text-red-800">
             {error}
           </p>
         ) : null}
         {success ? (
-          <p className="mb-3 text-[12.5px] font-semibold text-[var(--portal-primary)]">
+          <p className="mb-3 text-portal-label font-semibold text-[var(--portal-primary)]">
             {success}
           </p>
         ) : null}
 
         {queue.length === 0 ? (
-          <p className="text-[13px] text-[var(--portal-muted)]">
+          <p className="text-portal-compact text-[var(--portal-muted)]">
             {copy.noneWaiting}
           </p>
         ) : (
           <>
-            <p className="mb-3 text-[13px] text-[var(--portal-muted)]">
+            <p className="mb-3 text-portal-compact text-[var(--portal-muted)]">
               {copy.reviewEditHint}
             </p>
             {sendableQueue.length > 0 ? (
@@ -334,7 +334,7 @@ export function DocumentsReviewSendPanel({
                 return (
                   <li
                     key={row.id}
-                    className="gh-doctor-review-row flex flex-wrap items-center justify-between gap-2 px-3 py-2.5 text-[13px]"
+                    className="gh-doctor-review-row flex flex-wrap items-center justify-between gap-2 px-3 py-2.5 text-portal-compact"
                   >
                     <label className="flex min-w-0 flex-1 items-center gap-2">
                       {sendable ? (
@@ -360,14 +360,14 @@ export function DocumentsReviewSendPanel({
                         href={`/api/doctor/documents/generated/${row.id}/pdf`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
+                        className="gh-btn gh-btn-soft px-2 py-1 text-portal-thead"
                       >
                         <Eye className="size-3" aria-hidden /> {copy.review}
                       </a>
                       <button
                         type="button"
                         onClick={() => onEditDraft(row)}
-                        className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
+                        className="gh-btn gh-btn-soft px-2 py-1 text-portal-thead"
                       >
                         <Pencil className="size-3" aria-hidden /> {copy.edit}
                       </button>
@@ -376,7 +376,7 @@ export function DocumentsReviewSendPanel({
                           type="button"
                           disabled={pending}
                           onClick={() => sendDocuments([row.id])}
-                          className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
+                          className="gh-btn gh-btn-soft px-2 py-1 text-portal-thead"
                         >
                           <Send className="size-3" aria-hidden /> {copy.send}
                         </button>
@@ -386,7 +386,7 @@ export function DocumentsReviewSendPanel({
                           type="button"
                           disabled={pending}
                           onClick={() => finalizeDocument(row.id)}
-                          className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
+                          className="gh-btn gh-btn-soft px-2 py-1 text-portal-thead"
                           title={copy.finalizeTitle}
                         >
                           <Check className="size-3" aria-hidden /> {copy.finalize}
@@ -397,7 +397,7 @@ export function DocumentsReviewSendPanel({
                           type="button"
                           disabled={pending}
                           onClick={() => sendUploadLink(row.id)}
-                          className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
+                          className="gh-btn gh-btn-soft px-2 py-1 text-portal-thead"
                           title={copy.sendUploadLinkTitle}
                         >
                           <QrCode className="size-3" aria-hidden /> {copy.sendUploadLink}
@@ -418,15 +418,15 @@ export function DocumentsReviewSendPanel({
                           href={`/api/doctor/documents/generated/${row.id}/pdf`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
+                          className="gh-btn gh-btn-soft px-2 py-1 text-portal-thead"
                         >
                           <Eye className="size-3" aria-hidden /> {copy.review}
                         </a>
-                        <button type="button" onClick={() => onEditDraft(row)} className="gh-btn gh-btn-soft px-2 py-1 text-[11px]">
+                        <button type="button" onClick={() => onEditDraft(row)} className="gh-btn gh-btn-soft px-2 py-1 text-portal-thead">
                           <Pencil className="size-3" aria-hidden /> {copy.edit}
                         </button>
                         {sendable ? (
-                          <button type="button" disabled={pending} onClick={() => sendDocuments([row.id])} className="gh-btn gh-btn-soft px-2 py-1 text-[11px]">
+                          <button type="button" disabled={pending} onClick={() => sendDocuments([row.id])} className="gh-btn gh-btn-soft px-2 py-1 text-portal-thead">
                             <Send className="size-3" aria-hidden /> {copy.send}
                           </button>
                         ) : null}
@@ -446,10 +446,10 @@ export function DocumentsReviewSendPanel({
 
         {history.length > 0 ? (
           <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
-            <h4 className="text-[13px] font-bold text-[var(--portal-text)]">
+            <h4 className="text-portal-compact font-bold text-[var(--portal-text)]">
               {copy.alreadySentTitle}
             </h4>
-            <ul className="mt-2 space-y-1 text-[13px] text-[var(--portal-muted)]">
+            <ul className="mt-2 space-y-1 text-portal-compact text-[var(--portal-muted)]">
               {history.map((row) => (
                 <li key={row.id} className="gh-doctor-review-history-row flex flex-wrap items-center gap-2">
                   <a
@@ -465,7 +465,7 @@ export function DocumentsReviewSendPanel({
                       type="button"
                       disabled={pending}
                       onClick={() => sendUploadLink(row.id)}
-                      className="gh-btn gh-btn-soft px-2 py-0.5 text-[11px]"
+                      className="gh-btn gh-btn-soft px-2 py-0.5 text-portal-thead"
                       title={copy.sendUploadLinkTitle}
                     >
                       <QrCode className="size-3" aria-hidden /> {copy.sendUploadLink}

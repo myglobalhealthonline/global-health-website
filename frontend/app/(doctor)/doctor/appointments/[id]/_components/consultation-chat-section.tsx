@@ -25,7 +25,7 @@ export function DoctorConsultationChatSection({ appointmentId, copy }: Props) {
         <p className="text-sm font-bold text-[var(--portal-text)]">
           {copy.title}
         </p>
-        <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
+        <p className="mt-1 text-portal-meta text-[var(--portal-muted)]">
           {copy.description}
         </p>
       </div>

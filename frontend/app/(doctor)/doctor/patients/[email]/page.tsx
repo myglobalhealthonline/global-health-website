@@ -30,7 +30,7 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
       <div className="gh-card p-6">
         <Link
           href="/doctor/patients"
-          className="mb-3 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
+          className="mb-3 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
         >
           <ArrowLeft className="size-3.5" /> {d.patients.back}
         </Link>
@@ -47,7 +47,7 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
     <>
       <Link
         href="/doctor/patients"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
       >
         <ArrowLeft className="size-3.5" /> {d.patients.back}
       </Link>
@@ -94,7 +94,7 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
           >
             {d.patients.historyTitle}
           </h3>
-          <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
+          <p className="mt-1 text-portal-compact text-[var(--portal-muted)]">
             {d.patients.historyDesc}
           </p>
           {appointments.length === 0 ? (
@@ -107,9 +107,9 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
           ) : (
             <>
             <div className="hidden md:block gh-doctor-table-wrap mt-4 overflow-x-auto">
-            <table className="w-full text-[13px]">
+            <table className="w-full text-portal-compact">
               <thead>
-                <tr className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+                <tr className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
                   <th className="py-2 text-left">{d.patients.colWhen}</th>
                   <th className="py-2 text-left">{d.patients.colType}</th>
                   <th className="py-2 text-left">{d.patients.colStatus}</th>
@@ -127,9 +127,9 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
                         : new Date(a.createdAt).toLocaleDateString()}
                     </td>
                     <td className="py-2.5 capitalize">{a.consultationType}</td>
-                    <td className="py-2.5 text-[12px]">{a.status}</td>
-                    <td className="py-2.5 text-[12px]">{a.paymentStatus}</td>
-                    <td className="py-2.5 text-[12px]">
+                    <td className="py-2.5 text-portal-meta">{a.status}</td>
+                    <td className="py-2.5 text-portal-meta">{a.paymentStatus}</td>
+                    <td className="py-2.5 text-portal-meta">
                       {a.consultation
                         ? a.consultation.status === "SIGNED"
                           ? d.common.signed
@@ -143,14 +143,14 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
                             href={a.meetingUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
+                            className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-primary)] hover:underline"
                           >
                             <ExternalLink className="size-3" /> {d.common.join}
                           </a>
                         ) : null}
                         <Link
                           href={`/doctor/appointments/${a.id}`}
-                          className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-[12px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
+                          className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-portal-meta font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
                         >
                           {d.common.open} <ChevronRight className="size-3" />
                         </Link>
@@ -226,7 +226,7 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
           >
             {d.patients.consultHistoryTitle}
           </h3>
-          <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
+          <p className="mt-1 text-portal-compact text-[var(--portal-muted)]">
             {d.patients.consultHistoryDesc}
           </p>
           <div className="mt-4">
@@ -253,7 +253,7 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
             >
               {d.patients.summary}
             </h3>
-            <dl className="mt-3 grid gap-2 text-[13px]">
+            <dl className="mt-3 grid gap-2 text-portal-compact">
               <Row label={d.common.country} value={patient.countryCode.toUpperCase()} />
               <Row
                 label={d.common.dateOfBirth}
@@ -286,7 +286,7 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline justify-between gap-3 border-b border-[var(--portal-line)]/60 py-1">
-      <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+      <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
         {label}
       </dt>
       <dd className="text-right text-[var(--portal-text)]">{value}</dd>

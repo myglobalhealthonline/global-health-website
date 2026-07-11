@@ -89,18 +89,18 @@ export function ProfileSections({
         </h3>
         <dl className="gh-doctor-context-grid mt-3 grid gap-3 sm:grid-cols-3">
           <div>
-            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+            <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
               {strings.primaryCountry}
             </dt>
-            <dd className="mt-1 text-[14px] text-[var(--portal-text)]">
+            <dd className="mt-1 text-portal-body text-[var(--portal-text)]">
               {primaryCountry.name} ({primaryCountry.code.toUpperCase()})
             </dd>
           </div>
           <div>
-            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+            <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
               {strings.alsoListedIn}
             </dt>
-            <dd className="mt-1 text-[14px] text-[var(--portal-text)]">
+            <dd className="mt-1 text-portal-body text-[var(--portal-text)]">
               {additional.length === 0
                 ? "—"
                 : additional
@@ -109,30 +109,30 @@ export function ProfileSections({
             </dd>
           </div>
           <div>
-            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+            <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
               {strings.urlSlug}
             </dt>
-            <dd className="mt-1 text-[14px] font-mono text-[var(--portal-text)]">
+            <dd className="mt-1 text-portal-body font-mono text-[var(--portal-text)]">
               /{primaryCountry.slug}/{primaryCountry.defaultLocale.toLowerCase()}/doctors/{doctor.slug}
             </dd>
           </div>
         </dl>
         <dl className="gh-doctor-context-grid mt-4 grid gap-3 sm:grid-cols-2">
           <div>
-            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+            <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
               {strings.categories}
             </dt>
-            <dd className="mt-1 text-[14px] text-[var(--portal-text)]">
+            <dd className="mt-1 text-portal-body text-[var(--portal-text)]">
               {specialties.length === 0
                 ? strings.noneAssigned
                 : specialties.map((s) => s.name).join(", ")}
             </dd>
           </div>
           <div>
-            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+            <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
               {strings.consultationTypes}
             </dt>
-            <dd className="mt-1 text-[14px] text-[var(--portal-text)]">
+            <dd className="mt-1 text-portal-body text-[var(--portal-text)]">
               {strings.consultationTypesValue}
             </dd>
           </div>

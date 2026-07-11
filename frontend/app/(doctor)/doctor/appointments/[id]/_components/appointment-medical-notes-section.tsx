@@ -192,21 +192,21 @@ export function AppointmentMedicalNotesSection({
           {pending ? copy.saving : copy.saveNote}
         </button>
         {error ? (
-          <p className="gh-status-warning mt-2 rounded-md border px-3 py-2 text-[12.5px]">
+          <p className="gh-status-warning mt-2 rounded-md border px-3 py-2 text-portal-label">
             {error}
           </p>
         ) : null}
         {success ? (
-          <p className="mt-2 text-[12.5px] font-semibold text-[var(--portal-primary)]">
+          <p className="mt-2 text-portal-label font-semibold text-[var(--portal-primary)]">
             {success}
           </p>
         ) : null}
       </div>
 
       {loading ? (
-        <p className="px-4 py-3 text-[13px] text-[var(--portal-muted)]">{copy.loading}</p>
+        <p className="px-4 py-3 text-portal-compact text-[var(--portal-muted)]">{copy.loading}</p>
       ) : notes.length === 0 ? (
-        <p className="px-4 py-3 text-[13px] text-[var(--portal-muted)]">{copy.empty}</p>
+        <p className="px-4 py-3 text-portal-compact text-[var(--portal-muted)]">{copy.empty}</p>
       ) : (
         <ColumnPriorityTable
           fields={fields}
@@ -217,7 +217,7 @@ export function AppointmentMedicalNotesSection({
             <button
               type="button"
               onClick={() => setExpandedId(expandedId === n.id ? null : n.id)}
-              className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)]"
+              className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-primary)]"
             >
               {expandedId === n.id ? copy.hideNote : copy.viewNote}
               {expandedId === n.id ? (

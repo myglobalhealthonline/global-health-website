@@ -215,7 +215,7 @@ export default async function DoctorReportsPage({
 function Tile({ label, value }: { label: string; value: string }) {
   return (
     <div className="gh-card gh-doctor-report-tile p-5">
-      <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
+      <p className="text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
         {label}
       </p>
       <p className="mt-2 text-2xl font-bold text-[var(--portal-text)]">
@@ -244,7 +244,7 @@ function BreakdownTable({
     );
   }
   return (
-    <table className="gh-doctor-mini-table mt-4 w-full text-[13px]">
+    <table className="gh-doctor-mini-table mt-4 w-full text-portal-compact">
       <tbody>
         {rows.map((r) => (
           <tr key={r.label} className="border-t border-[var(--portal-line)]">
