@@ -164,7 +164,7 @@ export default async function AdminEditCountryPage({
           <div className="gh-admin-country-actions flex flex-wrap items-center justify-end gap-3 border-t border-[var(--color-border)] pt-6">
             <Link
               href={`/admin/countries/${id}`}
-              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="gh-btn gh-btn-ghost"
             >
               Cancel
             </Link>

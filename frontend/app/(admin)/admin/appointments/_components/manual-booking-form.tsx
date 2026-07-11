@@ -713,7 +713,7 @@ export function ManualBookingForm({
       <div className="gh-admin-appointment-actions justify-end border-t border-[var(--color-border)] pt-6">
         <Link
           href="/admin/appointments"
-          className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+          className="gh-btn gh-btn-ghost"
         >
           Cancel
         </Link>

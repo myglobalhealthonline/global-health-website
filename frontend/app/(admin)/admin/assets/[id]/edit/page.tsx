@@ -158,7 +158,7 @@ export default async function AdminEditAssetPage({
           <div className="gh-admin-asset-actions justify-end border-t border-[var(--color-border)] pt-6">
             <Link
               href={`/admin/assets/${id}`}
-              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="gh-btn gh-btn-ghost"
             >
               Cancel
             </Link>

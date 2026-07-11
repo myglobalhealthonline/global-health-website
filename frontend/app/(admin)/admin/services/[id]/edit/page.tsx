@@ -536,7 +536,7 @@ export default async function AdminEditServicePage({
             <div className="gh-admin-service-actions justify-end border-t border-[var(--color-border)] pt-6">
               <Link
                 href={`/admin/services/${id}?kind=${encodeURIComponent(kind)}`}
-                className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+                className="gh-btn gh-btn-ghost"
               >
                 Cancel
               </Link>

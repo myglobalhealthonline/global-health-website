@@ -303,7 +303,7 @@ export default async function AdminEditDoctorPage({
             <div className="gh-admin-doctor-form-actions gh-portal-sticky-actions flex flex-wrap justify-end gap-3 border-t border-[var(--portal-line)] pt-6">
               <Link
                 href={`/admin/doctors/${id}`}
-                className="text-portal-compact font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
+                className="gh-btn gh-btn-ghost"
               >
                 Cancel
               </Link>

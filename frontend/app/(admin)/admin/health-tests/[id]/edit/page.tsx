@@ -170,7 +170,7 @@ export default async function AdminEditHealthTestPage({
           <div className="gh-admin-health-actions justify-end border-t border-[var(--color-border)] pt-6">
             <Link
               href={`/admin/health-tests/${id}`}
-              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="gh-btn gh-btn-ghost"
             >
               Cancel
             </Link>

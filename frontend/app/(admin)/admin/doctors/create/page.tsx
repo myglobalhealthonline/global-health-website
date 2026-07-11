@@ -250,7 +250,7 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
           <div className="gh-admin-doctor-form-actions flex flex-wrap justify-end gap-3 border-t border-[var(--color-border)] pt-6">
             <Link
               href="/admin/doctors"
-              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="gh-btn gh-btn-ghost"
             >
               Cancel
             </Link>

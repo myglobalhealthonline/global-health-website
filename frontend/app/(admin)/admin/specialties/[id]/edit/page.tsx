@@ -220,7 +220,7 @@ export default async function AdminSpecialtyEditPage({
           <div className="gh-admin-support-actions flex flex-wrap justify-end gap-3 border-t border-[var(--color-border)] pt-6">
             <Link
               href="/admin/specialties"
-              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="gh-btn gh-btn-ghost"
             >
               Cancel
             </Link>

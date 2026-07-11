@@ -156,7 +156,7 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
           <div className="gh-admin-plan-actions flex flex-wrap items-center justify-end gap-3 border-t border-[var(--color-border)] pt-6">
             <Link
               href="/admin/plans"
-              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="gh-btn gh-btn-ghost"
             >
               Cancel
             </Link>
