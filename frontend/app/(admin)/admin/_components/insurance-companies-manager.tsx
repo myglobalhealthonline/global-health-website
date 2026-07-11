@@ -25,6 +25,7 @@ import {
   Tr,
 } from "./atoms";
 import { FlagBadge } from "./flag-badge";
+import { NotifyRecipientsField } from "./notify-recipients-field";
 
 type ManagerSearchParams = {
   success?: string;
@@ -156,10 +157,19 @@ export async function InsuranceCompaniesManager({
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean);
+    // Parse a euros amount to integer cents. Accepts "35", "35.00", "35,00"
+    // (comma decimal, common in pt-PT) and ignores stray spaces/symbols. Uses
+    // exact rounding via string so "35" is always 3500 cents, never 3499.
+    const eurosToCents = (raw: string): number | null => {
+      const cleaned = raw.trim().replace(/[^\d.,]/g, "").replace(",", ".");
+      if (cleaned === "") return null;
+      const n = Number(cleaned);
+      if (!Number.isFinite(n)) return null;
+      return Math.round(n * 100);
+    };
     const items = serviceIds.map((serviceId) => {
       const covered = formData.get(`covered_${serviceId}`) === "on";
-      const priceRaw = String(formData.get(`price_${serviceId}`) ?? "").trim();
-      const overridePriceCents = priceRaw === "" ? null : Math.round(Number(priceRaw) * 100);
+      const overridePriceCents = eurosToCents(String(formData.get(`price_${serviceId}`) ?? ""));
       return { serviceId, covered, overridePriceCents };
     });
     const result = await putAdminInsuranceCoverage(countryId, companyId, { items });
@@ -344,27 +354,23 @@ export async function InsuranceCompaniesManager({
                 their card before taking payment. These recipients get an email + WhatsApp with a link to
                 the order to verify. One per line (or comma-separated).
               </p>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <label className="flex flex-col gap-1">
-                  <span className="gh-field-label">Notify emails</span>
-                  <textarea
-                    name="notifyEmails"
-                    rows={3}
-                    defaultValue={(editCompany?.notifyEmails ?? []).join("\n")}
-                    placeholder="ops@clinic.com"
-                    className="gh-input resize-y font-mono text-[12px]"
-                  />
-                </label>
-                <label className="flex flex-col gap-1">
-                  <span className="gh-field-label">Notify WhatsApp numbers</span>
-                  <textarea
-                    name="notifyWhatsappNumbers"
-                    rows={3}
-                    defaultValue={(editCompany?.notifyWhatsappNumbers ?? []).join("\n")}
-                    placeholder="+351912345678"
-                    className="gh-input resize-y font-mono text-[12px]"
-                  />
-                </label>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <NotifyRecipientsField
+                  name="notifyEmails"
+                  label="Notify emails"
+                  placeholder="ops@clinic.com"
+                  initial={editCompany?.notifyEmails ?? []}
+                  type="email"
+                  inputMode="email"
+                />
+                <NotifyRecipientsField
+                  name="notifyWhatsappNumbers"
+                  label="Notify WhatsApp numbers"
+                  placeholder="+351912345678"
+                  initial={editCompany?.notifyWhatsappNumbers ?? []}
+                  type="tel"
+                  inputMode="tel"
+                />
               </div>
             </div>
             <label className="flex items-center gap-2">
@@ -444,11 +450,15 @@ export async function InsuranceCompaniesManager({
                         <Td>{formatMoney(s.basePriceCents, s.currencyCode)}</Td>
                         <Td>
                           {coverageCompany.pricingMode === "FIXED" ? (
+                            // Text + decimal inputMode (not type=number): a
+                            // numeric input formats/parses per browser locale
+                            // (pt-PT uses a comma decimal), which turned "35"
+                            // into 34.99. Plain text + server-side parse keeps
+                            // "35" euros = exactly 3500 cents.
                             <input
-                              type="number"
+                              type="text"
+                              inputMode="decimal"
                               name={`price_${s.serviceId}`}
-                              step="0.01"
-                              min={0}
                               defaultValue={centsToInput(s.overridePriceCents)}
                               placeholder="0.00"
                               className="gh-input max-w-[120px]"
