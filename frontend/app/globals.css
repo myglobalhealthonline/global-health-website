@@ -1045,10 +1045,31 @@ img {
 }
 
 .gh-home-hero-title {
-  font-size: clamp(2.5rem, 8vw, 6rem);
+  /* min(8vw, 11svh): width-driven size, height-capped so short viewports
+     (landscape phones, short laptops) don't get a headline that fills the
+     whole fold. Matches the inline size from fitHeadingFontSize(). */
+  font-size: clamp(2.5rem, min(8vw, 11svh), 6rem);
   font-weight: 800;
   line-height: 0.94;
   letter-spacing: -0.045em;
+}
+
+/* Short-viewport compact tier — home hero vertical rhythm compresses on
+   short screens so headline + lead + CTA fit the fold; content is never
+   clipped, page scroll remains the fallback. */
+@media (max-height: 720px) {
+  .gh-home-hero-grid {
+    padding-top: calc(var(--header-height) + 1.5rem);
+    padding-bottom: 2rem;
+    gap: 1.75rem;
+  }
+  .gh-home-hero-left {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  .gh-home-hero-left .mb-9 {
+    margin-bottom: 1.25rem;
+  }
 }
 
 .gh-home-hero-titleAccent {
@@ -2948,6 +2969,157 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   overscroll-behavior: contain;
 }
 
+/* ── AppSheet — shared side-drawer/bottom-sheet primitive ───────────────
+ * DRAWER_ARCHITECTURE_PLAN §1, RESPONSIVE_DESIGN_SYSTEM_PLAN §3.2/§4b/§4c.
+ * Structural mechanics (position/size/slots) live here since both scopes
+ * consume AppSheet; theme skins split per the CSS-split rule: portal skin
+ * (`--portal`) in portal.css, public gh2-glass skin (`--public`) below. */
+@keyframes gh-sheet-slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.gh-app-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-drawer-overlay);
+  animation: gh-dialog-fade 200ms ease-out;
+}
+
+.gh-app-sheet {
+  position: fixed;
+  z-index: var(--z-drawer);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  outline: none;
+}
+
+/* Side: right (desktop panel) */
+.gh-app-sheet--right {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  height: 100svh;
+  max-height: 100svh;
+  width: 100%;
+  animation: gh-sheet-slide-in-right 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Size variants — desktop widths, tablet min(80vw,size). */
+.gh-app-sheet--right.gh-app-sheet--sm { max-width: min(80vw, 420px); }
+.gh-app-sheet--right.gh-app-sheet--md { max-width: min(80vw, 520px); }
+.gh-app-sheet--right.gh-app-sheet--lg { max-width: min(80vw, 640px); }
+
+/* Side: bottom (filter sheets etc.) */
+.gh-app-sheet--bottom {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 100%;
+  max-height: min(88svh, 640px);
+  border-radius: 20px 20px 0 0;
+  animation: gh-dialog-sheet-in 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gh-app-sheet__header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px 14px;
+  flex-shrink: 0;
+}
+
+.gh-app-sheet__close {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.gh-app-sheet__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px 20px 20px;
+}
+
+.gh-app-sheet__footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+}
+
+/* Mobile: full-screen sheet, no side offset regardless of `side` prop. */
+@media (max-width: 640px) {
+  .gh-app-sheet--right {
+    max-width: 100% !important;
+    height: 100svh;
+    max-height: 100svh;
+    border-radius: 0;
+  }
+  .gh-app-sheet--bottom {
+    max-height: min(92svh, 100svh);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-app-sheet-overlay,
+  .gh-app-sheet--right,
+  .gh-app-sheet--bottom {
+    animation: none;
+  }
+}
+
+/* Public theme skin — gh2 forest/ivory glass per DESIGN.md. */
+.gh-app-sheet-overlay--public {
+  background: rgba(4, 20, 14, 0.6);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.gh-app-sheet--public {
+  background: var(--liquid-fill-dark), rgba(4, 32, 24, 0.94);
+  border: var(--gh-chrome-border);
+  -webkit-backdrop-filter: var(--gh-chrome-filter);
+  backdrop-filter: var(--gh-chrome-filter);
+  box-shadow: var(--liquid-specular), 0 18px 40px -18px rgba(4, 24, 18, 0.55);
+  color: #eef7ef;
+}
+
+.gh-app-sheet--public .gh-app-sheet__header {
+  border-bottom: 1px solid var(--liquid-edge);
+}
+
+.gh-app-sheet--public .gh-app-sheet__footer {
+  border-top: 1px solid var(--liquid-edge);
+}
+
+.gh-app-sheet--public .gh-app-sheet__close {
+  color: #eef7ef;
+}
+
+.gh-app-sheet--public .gh-app-sheet__close:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .gh2-btn-ghost {
   display: inline-flex;
   align-items: center;
@@ -3633,8 +3805,12 @@ details[open] > .gh2-filter-trigger .gh2-filter-chevron {
   .gh2-glass-forest,
   .gh-glass-emerald,
   .gh-inline-forest-glass,
-  .gh-inline-doctor-glass {
+  .gh-inline-doctor-glass,
+  .gh-app-sheet--public {
     background: linear-gradient(168deg, #0e3125, #08251c);
+  }
+  .gh-app-sheet-overlay--public {
+    background: rgba(4, 20, 14, 0.78);
   }
   .gh2-glass-ivory,
   .gh-liquid-light {
@@ -3695,8 +3871,12 @@ details[open] > .gh2-filter-trigger .gh2-filter-chevron {
   .gh2-glass-forest,
   .gh-glass-emerald,
   .gh-inline-forest-glass,
-  .gh-inline-doctor-glass {
+  .gh-inline-doctor-glass,
+  .gh-app-sheet--public {
     background: linear-gradient(168deg, #0e3125, #08251c);
+  }
+  .gh-app-sheet-overlay--public {
+    background: rgba(4, 20, 14, 0.78);
   }
   .gh2-glass-ivory,
   .gh-liquid-light {

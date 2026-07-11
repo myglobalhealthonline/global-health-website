@@ -5343,6 +5343,224 @@ a.gh-appointment-card:hover {
   }
 }
 
+/* ── AppSheet — portal skin (Obsidian Ivory · Liquid Lux) ────────────────
+ * DRAWER_ARCHITECTURE_PLAN §1: ivory panel, obsidian scrim, lux hairlines/
+ * radii/shadows — reads as a native portal surface, not a generic sheet.
+ * Structural mechanics live in globals.css (shared with the public theme). */
+.gh-app-sheet-overlay--portal {
+  background: var(--lux-overlay-fill);
+  -webkit-backdrop-filter: blur(var(--lux-blur-overlay));
+  backdrop-filter: blur(var(--lux-blur-overlay));
+}
+
+.gh-app-sheet--portal {
+  border: 1px solid transparent;
+  background-image: var(--lux-modal-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-modal);
+  color: var(--portal-text);
+}
+
+.gh-app-sheet--portal.gh-app-sheet--right {
+  border-radius: var(--portal-radius-xl) 0 0 var(--portal-radius-xl);
+}
+
+.gh-app-sheet--portal.gh-app-sheet--bottom {
+  border-radius: var(--portal-radius-xl) var(--portal-radius-xl) 0 0;
+}
+
+.gh-app-sheet--portal .gh-app-sheet__header {
+  border-bottom: 1px solid var(--portal-line);
+}
+
+.gh-app-sheet--portal .gh-app-sheet__footer {
+  border-top: 1px solid var(--portal-line);
+}
+
+.gh-app-sheet--portal .gh-app-sheet__close {
+  color: var(--portal-text);
+}
+
+.gh-app-sheet--portal .gh-app-sheet__close:hover {
+  background: var(--portal-well);
+}
+
+@media (max-width: 640px) {
+  .gh-app-sheet--portal.gh-app-sheet--right {
+    border-radius: var(--portal-radius-xl) var(--portal-radius-xl) 0 0;
+  }
+}
+
+/* RecordDetailsDrawer — content patterns inside an AppSheet (portal-only,
+ * DRAWER_ARCHITECTURE_PLAN §5). Eyebrow/title typography matches
+ * .gh-portal-dialog__title / DESIGN2.md portal card headers. */
+.gh-record-drawer__title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.gh-record-drawer__eyebrow {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--portal-muted);
+}
+
+.gh-record-drawer__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--portal-text);
+  overflow-wrap: anywhere;
+}
+
+.gh-record-drawer__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--portal-text-2);
+}
+
+.gh-record-drawer__sections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.gh-record-drawer__section-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--portal-muted);
+}
+
+.gh-record-drawer__section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gh-record-drawer__field {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  border-bottom: 1px solid var(--portal-line);
+  padding-bottom: 8px;
+  font-size: 13px;
+}
+
+.gh-record-drawer__field-label {
+  color: var(--portal-muted);
+  flex-shrink: 0;
+}
+
+.gh-record-drawer__field-value {
+  color: var(--portal-text);
+  font-weight: 600;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.gh-record-drawer__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gh-record-drawer__skeleton-line {
+  height: 14px;
+  border-radius: 999px;
+  background: var(--portal-well);
+}
+
+.gh-record-drawer__error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--portal-danger-text);
+}
+
+.gh-record-drawer__retry {
+  border-radius: var(--portal-radius-sm);
+  border: 1px solid var(--portal-line);
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ColumnPriorityTable — priority-driven column hiding (portal-only,
+ * RESPONSIVE_DESIGN_SYSTEM_PLAN §3.2/§4). Card mode already replaces the
+ * table below 760px / list-container 960px via the existing
+ * .gh-admin-mobile-list / @container list rules above. */
+@media (max-width: 1279px) {
+  .gh-cpt-p4 {
+    display: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .gh-cpt-p3 {
+    display: none;
+  }
+}
+
+/* ResponsiveFilterBar — recipe wrapper on .gh-admin-appointment-filter-grid
+ * (RESPONSIVE_DESIGN_SYSTEM_PLAN §5). */
+.gh-rfb__search {
+  grid-column: 1 / -1;
+}
+
+.gh-rfb__trigger {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.gh-rfb__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--portal-primary);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 800;
+}
+
+.gh-rfb__sheet-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@media (max-width: 760px) {
+  .gh-rfb__desktop-controls {
+    display: none;
+  }
+  .gh-rfb__trigger {
+    display: inline-flex;
+    grid-column: 1 / -1;
+  }
+}
+
 
 .gh-admin-main :where([role="alert"]) {
   border-radius: var(--portal-radius-sm) !important;
@@ -5587,6 +5805,14 @@ a.gh-appointment-card:hover {
 
   .gh-portal-sidebar {
     box-shadow: none !important;
+  }
+
+  /* AppSheet portal skin — stacked blur (scrim + panel) is the exact
+     GPU-tile pattern that corrupts on Android; solidify both layers. */
+  .gh-app-sheet-overlay--portal {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: rgba(9, 15, 12, 0.72);
   }
 }
 
