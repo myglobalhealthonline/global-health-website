@@ -2592,7 +2592,7 @@
 
 .gh-chat-panel,
 .gh-chat-panel-embedded {
-  height: 60vh;
+  height: 60svh;
   max-height: 560px;
   min-height: 320px;
 }
@@ -3540,7 +3540,7 @@
   }
 
   .gh-doctor-doc-modal-panel {
-    max-height: calc(100vh - 20px);
+    max-height: calc(100svh - 20px);
     border-radius: 10px;
   }
 
@@ -5602,6 +5602,24 @@ a.gh-appointment-card:hover {
   .gh-admin-appointment-mobile-list {
     display: grid;
     gap: 10px;
+    padding: 12px;
+  }
+}
+
+@media (max-height: 720px) {
+  .gh-portal-topbar {
+    min-height: 56px;
+  }
+
+  .gh-portal-dialog__header,
+  .gh-portal-dialog__body,
+  .gh-portal-dialog__footer {
+    padding-block: 14px;
+  }
+}
+
+@media (max-height: 568px) {
+  .gh-portal-dialog-overlay {
     padding: 12px;
   }
 }
