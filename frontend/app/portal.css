@@ -5200,7 +5200,7 @@ a.gh-appointment-card:hover {
 .gh-portal-dialog-overlay {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: var(--z-modal-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5212,8 +5212,10 @@ a.gh-appointment-card:hover {
 }
 
 .gh-portal-dialog {
+  position: relative;
+  z-index: var(--z-modal);
   width: 100%;
-  max-height: min(88vh, 720px);
+  max-height: min(88svh, 720px);
   overflow-y: auto;
   border: 1px solid transparent;
   border-radius: var(--portal-radius-xl);
@@ -5271,7 +5273,7 @@ a.gh-appointment-card:hover {
 
 .gh-portal-dialog__body--flush {
   padding: 0;
-  max-height: 70vh;
+  max-height: 70svh;
   display: flex;
   flex-direction: column;
 }
@@ -5312,7 +5314,7 @@ a.gh-appointment-card:hover {
 
   .gh-portal-dialog {
     max-width: 100% !important;
-    max-height: 88vh;
+    max-height: 88svh;
     border-radius: var(--portal-radius-xl) var(--portal-radius-xl) 0 0;
     animation: gh-dialog-sheet-in 280ms cubic-bezier(0.22, 1, 0.36, 1);
   }

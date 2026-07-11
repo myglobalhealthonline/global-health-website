@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { IconBtn } from "@/components/portal-atoms";
 
@@ -63,15 +64,18 @@ export function PortalDialog({
       }
     }
     document.addEventListener("keydown", onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
       returnFocusRef.current?.focus();
     };
   }, [open, onClose]);
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div className="gh-portal-dialog-overlay" role="presentation" onClick={onClose}>
       <div
         ref={panelRef}
@@ -95,6 +99,7 @@ export function PortalDialog({
         </div>
         {footer ? <div className="gh-portal-dialog__footer">{footer}</div> : null}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
