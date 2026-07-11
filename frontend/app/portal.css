@@ -2410,7 +2410,7 @@
 }
 
 .gh-admin-order-table-wrap table {
-  min-width: 1180px;
+  min-width: 960px;
 }
 
 .gh-admin-order-bulkbar,
@@ -4135,6 +4135,11 @@ a.gh-appointment-card:hover {
   font-size: 13.5px;
 }
 
+.gh-admin-main {
+  container-type: inline-size;
+  container-name: list;
+}
+
 .gh-admin-main th {
   padding: 13px 16px;
   font-size: 11px;
@@ -5077,9 +5082,8 @@ a.gh-appointment-card:hover {
   font-variant-numeric: tabular-nums;
 }
 
-.gh-admin-main :where(.overflow-x-auto table, .gh-admin-table-wrap table) {
-  min-width: 720px;
-}
+/* Each list declares its own column budget. Do not reintroduce a blanket
+   min-width here: it forces simple tables to scroll on tablet-sized portals. */
 
 .gh-admin-main :where(thead) {
   background: color-mix(in srgb, var(--portal-well) 70%, transparent) !important;
@@ -5583,5 +5587,21 @@ a.gh-appointment-card:hover {
 
   .gh-portal-sidebar {
     box-shadow: none !important;
+  }
+}
+
+/* Container-aware list fallback: the available main-column width, rather than
+   the viewport, decides when established portal card lists replace tables. */
+@container list (max-width: 760px) {
+  .gh-admin-deep-table-wrap,
+  .gh-admin-appointment-table-wrap {
+    display: none;
+  }
+
+  .gh-admin-mobile-list,
+  .gh-admin-appointment-mobile-list {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
   }
 }
