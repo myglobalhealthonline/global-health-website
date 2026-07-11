@@ -1,20 +1,8 @@
 import { Edit3, FileText, Languages, Plus } from "lucide-react";
 import { fetchAdminBlogPosts, fetchAdminCountries, type AdminBlogDto } from "@/lib/admin/admin-api";
-import {
-  AdminCard,
-  AdminEmptyState,
-  AdminSummaryStrip,
-  AdminTable,
-  Btn,
-  IconBtn,
-  PageHeader,
-  Pill,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "../_components/atoms";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, IconBtn, PageHeader, Pill } from "../_components/atoms";
+import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
+import { ResponsiveFilterBar } from "@/components/ResponsiveFilterBar";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +22,90 @@ const DATE_FMT = new Intl.DateTimeFormat("en-GB", {
   month: "short",
   year: "numeric",
 });
+
+function BlogPostsTable({ posts }: { posts: AdminBlogDto[] }) {
+  const fields: ColumnPriorityField<AdminBlogDto>[] = [
+    {
+      key: "title",
+      label: "Title",
+      priority: 1,
+      render: (p) => (
+        <>
+          <span className="line-clamp-1 max-w-[280px] font-semibold">{p.title}</span>
+          <span className="block font-mono text-[11px] text-[var(--color-text-muted)]">{p.slug}</span>
+        </>
+      ),
+    },
+    {
+      key: "category",
+      label: "Category",
+      priority: 2,
+      render: (p) => (
+        <span className="inline-flex items-center gap-1">
+          <FileText className="size-3" aria-hidden />
+          {p.category ?? "No category"}
+        </span>
+      ),
+    },
+    { key: "lang", label: "Lang", priority: 2, render: (p) => p.locale },
+    {
+      key: "translations",
+      label: "Translations",
+      priority: 3,
+      render: (p) =>
+        p.translations.length > 0 ? (
+          <span className="inline-flex items-center gap-1 text-[12px] text-[var(--color-text-muted)]">
+            <Languages className="size-3" aria-hidden />
+            {p.translations.length}
+          </span>
+        ) : (
+          <span className="text-[12px] text-[var(--color-text-muted)]">—</span>
+        ),
+    },
+    {
+      key: "status",
+      label: "Status",
+      priority: 1,
+      render: (p) => (
+        <Pill tone={p.status === "PUBLISHED" ? "published" : "draft"}>
+          {p.isActive ? p.status : "INACTIVE"}
+        </Pill>
+      ),
+    },
+    {
+      key: "published",
+      label: "Published",
+      priority: 3,
+      render: (p) => (p.publishedAt ? DATE_FMT.format(new Date(p.publishedAt)) : "—"),
+    },
+    {
+      key: "actions",
+      label: "Actions",
+      priority: 1,
+      align: "right",
+      desktopOnly: true,
+      render: (p) => (
+        <IconBtn href={`/admin/blog/${p.id}/edit`} ariaLabel="Edit post">
+          <Edit3 className="size-4" />
+        </IconBtn>
+      ),
+    },
+  ];
+
+  return (
+    <ColumnPriorityTable
+      fields={fields}
+      rows={posts}
+      getRowKey={(p) => p.id}
+      cardTone={(p) => (p.isActive && p.status === "PUBLISHED" ? "success" : "neutral")}
+      cardActions={(p) => (
+        <IconBtn href={`/admin/blog/${p.id}/edit`} ariaLabel="Edit post">
+          <Edit3 className="size-4" />
+        </IconBtn>
+      )}
+    />
+  );
+}
 
 export default async function AdminBlogListPage({
   searchParams,
@@ -71,56 +143,61 @@ export default async function AdminBlogListPage({
       />
 
       <AdminCard padding={16}>
-        <form action="/admin/blog" className="gh-admin-blog-filters px-2 py-1" method="get">
-          <label className="flex flex-col gap-1">
-            <span className="gh-field-label text-[12px]">Search</span>
-            <input
-              name="search"
-              defaultValue={filters.search ?? ""}
-              placeholder="Title, slug or category"
-              className="gh-input min-w-[180px]"
-            />
-          </label>
-          <label className="flex flex-col gap-1">
-            <span className="gh-field-label text-[12px]">Status</span>
-            <select name="status" defaultValue={filters.status ?? ""} className="gh-select min-w-[140px]">
-              <option value="">Any status</option>
-              <option value="PUBLISHED">Published</option>
-              <option value="DRAFT">Draft</option>
-            </select>
-          </label>
-          <label className="flex flex-col gap-1">
-            <span className="gh-field-label text-[12px]">Country</span>
-            <select name="countryId" defaultValue={filters.countryId ?? ""} className="gh-select min-w-[150px]">
-              <option value="">Any country</option>
-              {countries.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex flex-col gap-1">
-            <span className="gh-field-label text-[12px]">Author</span>
-            <input
-              name="authorDisplayName"
-              defaultValue={filters.authorDisplayName ?? ""}
-              placeholder="Author name"
-              className="gh-input min-w-[140px]"
-            />
-          </label>
-          <label className="flex flex-col gap-1">
-            <span className="gh-field-label text-[12px]">Translations</span>
-            <select
-              name="hasTranslation"
-              defaultValue={filters.hasTranslation ?? ""}
-              className="gh-select min-w-[150px]"
-            >
-              <option value="">Any</option>
-              <option value="true">Has translations</option>
-              <option value="false">No translations</option>
-            </select>
-          </label>
+        <form action="/admin/blog" className="flex flex-col gap-3 px-2 py-1" method="get">
+          <ResponsiveFilterBar
+            search={
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label text-[12px]">Search</span>
+                <input
+                  name="search"
+                  defaultValue={filters.search ?? ""}
+                  placeholder="Title, slug or category"
+                  className="gh-input min-w-0"
+                />
+              </label>
+            }
+          >
+            <label className="flex min-w-0 flex-col gap-1">
+              <span className="gh-field-label text-[12px]">Status</span>
+              <select name="status" defaultValue={filters.status ?? ""} className="gh-select min-w-0">
+                <option value="">Any status</option>
+                <option value="PUBLISHED">Published</option>
+                <option value="DRAFT">Draft</option>
+              </select>
+            </label>
+            <label className="flex min-w-0 flex-col gap-1">
+              <span className="gh-field-label text-[12px]">Country</span>
+              <select name="countryId" defaultValue={filters.countryId ?? ""} className="gh-select min-w-0">
+                <option value="">Any country</option>
+                {countries.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex min-w-0 flex-col gap-1">
+              <span className="gh-field-label text-[12px]">Author</span>
+              <input
+                name="authorDisplayName"
+                defaultValue={filters.authorDisplayName ?? ""}
+                placeholder="Author name"
+                className="gh-input min-w-0"
+              />
+            </label>
+            <label className="flex min-w-0 flex-col gap-1">
+              <span className="gh-field-label text-[12px]">Translations</span>
+              <select
+                name="hasTranslation"
+                defaultValue={filters.hasTranslation ?? ""}
+                className="gh-select min-w-0"
+              >
+                <option value="">Any</option>
+                <option value="true">Has translations</option>
+                <option value="false">No translations</option>
+              </select>
+            </label>
+          </ResponsiveFilterBar>
           <div className="gh-admin-blog-actions pb-0.5">
             <Btn type="submit" variant="secondary" size="sm">
               Apply
@@ -178,85 +255,7 @@ export default async function AdminBlogListPage({
                 ]}
               />
             </div>
-            <div className="gh-admin-blog-table-wrap gh-admin-deep-table-wrap">
-            <AdminTable>
-              <Thead>
-                <Th>Title</Th>
-                <Th>Category</Th>
-                <Th>Lang</Th>
-                <Th>Translations</Th>
-                <Th>Status</Th>
-                <Th>Published</Th>
-                <Th align="right">Actions</Th>
-              </Thead>
-              <tbody>
-                {result.data.items.map((p: AdminBlogDto) => (
-                  <Tr key={p.id}>
-                    <Td style={{ minWidth: 240 }}>
-                      <span className="line-clamp-1 max-w-[280px] font-semibold">{p.title}</span>
-                      <span className="block font-mono text-[11px] text-[var(--color-text-muted)]">{p.slug}</span>
-                    </Td>
-                    <Td>{p.category ?? "—"}</Td>
-                    <Td>{p.locale}</Td>
-                    <Td>
-                      {p.translations.length > 0 ? (
-                        <span className="inline-flex items-center gap-1 text-[12px] text-[var(--color-text-muted)]">
-                          <Languages className="size-3" aria-hidden />
-                          {p.translations.length}
-                        </span>
-                      ) : (
-                        <span className="text-[12px] text-[var(--color-text-muted)]">—</span>
-                      )}
-                    </Td>
-                    <Td>
-                      <Pill tone={p.status === "PUBLISHED" ? "published" : "draft"}>
-                        {p.isActive ? p.status : "INACTIVE"}
-                      </Pill>
-                    </Td>
-                    <Td>{p.publishedAt ? DATE_FMT.format(new Date(p.publishedAt)) : "—"}</Td>
-                    <Td align="right">
-                      <IconBtn href={`/admin/blog/${p.id}/edit`} ariaLabel="Edit post">
-                        <Edit3 className="size-4" />
-                      </IconBtn>
-                    </Td>
-                  </Tr>
-                ))}
-              </tbody>
-            </AdminTable>
-            </div>
-            <div className="gh-admin-mobile-list">
-              {posts.map((p: AdminBlogDto) => (
-                <PortalMobileCard
-                  key={p.id}
-                  tone={p.isActive && p.status === "PUBLISHED" ? "success" : "neutral"}
-                  title={p.title}
-                  subtitle={p.slug}
-                  statusPill={
-                    <Pill tone={p.status === "PUBLISHED" ? "published" : "draft"}>
-                      {p.isActive ? p.status : "INACTIVE"}
-                    </Pill>
-                  }
-                  meta={[
-                    {
-                      label: "Category",
-                      value: (
-                        <span className="inline-flex items-center gap-1">
-                          <FileText className="size-3" aria-hidden />
-                          {p.category ?? "No category"}
-                        </span>
-                      ),
-                    },
-                    { label: "Locale", value: p.locale },
-                    { label: "Translations", value: p.translations.length },
-                  ]}
-                  actions={
-                    <IconBtn href={`/admin/blog/${p.id}/edit`} ariaLabel="Edit post">
-                      <Edit3 className="size-4" />
-                    </IconBtn>
-                  }
-                />
-              ))}
-            </div>
+            <BlogPostsTable posts={result.data.items} />
           </AdminCard>
         )}
       </div>
