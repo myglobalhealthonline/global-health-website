@@ -238,7 +238,7 @@ export default async function AdminCategoriesMatrixPage({
       ) : null}
 
       <AdminCard padding={0} className="gh-admin-specialties-list overflow-hidden">
-        <div className="gh-admin-support-table-wrap overflow-x-auto">
+        <div className="gh-admin-support-table-wrap gh-admin-specialty-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Category</Th>
