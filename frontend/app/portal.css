@@ -26,19 +26,12 @@
 .gh-admin-service-tablist,
 .gh-admin-service-kind-tabs,
 .gh-admin-country-health .gh-admin-table-wrap,
-.gh-admin-health-tablist,
 .gh-admin-ops-table-wrap,
 .gh-admin-country-table-wrap,
-.gh-admin-disclaimer-tablist,
 .gh-admin-plan-table-wrap,
-.gh-admin-plan-tablist,
-.gh-admin-plan-translation-tablist,
 .gh-admin-rich-text__toolbar,
 .gh-admin-support-table-wrap,
-.gh-admin-specialty-tablist,
-.gh-admin-order-table-wrap,
-.gh-admin-doctor-tabs,
-.gh-doctor-tabs {
+.gh-admin-order-table-wrap {
   overflow-y: hidden;
 }
 
@@ -87,20 +80,11 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-.gh-admin-service-note,
 .gh-admin-service-helper {
   border: 1px solid rgba(29, 75, 54, 0.12);
   border-radius: var(--portal-radius-sm);
   background: rgba(241, 245, 235, 0.72);
   color: var(--portal-muted, var(--color-text-muted));
-}
-
-.gh-admin-service-note {
-  padding: 12px 14px;
-  font-size: 13px;
-}
-
-.gh-admin-service-helper {
   margin: 0;
   padding: 10px 12px;
   font-size: 12px;
@@ -304,50 +288,6 @@
   display: none;
 }
 
-.gh-admin-appointment-mobile-card {
-  border: 1px solid rgba(29, 75, 54, 0.12);
-  border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(250, 252, 247, 0.94));
-  box-shadow: 0 10px 24px rgba(24, 70, 51, 0.07);
-  padding: 14px;
-}
-
-.gh-admin-appointment-mobile-meta {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin: 12px 0;
-}
-
-.gh-admin-appointment-mobile-meta div {
-  min-width: 0;
-}
-
-.gh-admin-appointment-mobile-meta dt,
-.gh-admin-service-mobile-meta em {
-  display: block;
-  margin-bottom: 3px;
-  color: var(--color-text-muted);
-  font-size: 10px;
-  font-style: normal;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.gh-admin-appointment-mobile-meta dd {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: 6px;
-  margin: 0;
-  color: var(--color-text-primary);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.35;
-}
-
 .gh-admin-country-choice {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 0.72fr);
@@ -415,24 +355,6 @@
   margin-top: 4px;
   color: var(--color-text-muted);
   font-size: 12px;
-}
-
-.gh-admin-service-mobile-meta span {
-  min-width: 0;
-  border: 1px solid rgba(29, 75, 54, 0.08);
-  border-radius: 8px;
-  background: rgba(247, 250, 243, 0.72);
-  padding: 8px;
-}
-
-.gh-admin-service-mobile-meta strong {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  color: var(--color-text-primary);
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1.25;
 }
 
 .gh-admin-service-side-card {
@@ -932,14 +854,6 @@
     width: 100%;
   }
 
-  .gh-admin-service-mobile-card {
-    gap: 10px;
-  }
-
-  .gh-admin-service-mobile-meta {
-    gap: 7px;
-  }
-
   .gh-admin-service-doctor-grid {
     max-height: 280px;
   }
@@ -1312,7 +1226,6 @@
 }
 
 .gh-admin-asset-filter-grid,
-.gh-admin-asset-field-grid,
 .gh-admin-asset-detail-grid {
   display: grid;
   min-width: 0;
@@ -1323,13 +1236,11 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-.gh-admin-asset-field-grid--two,
 .gh-admin-asset-detail-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .gh-admin-asset-form,
-.gh-admin-asset-fields,
 .gh-admin-asset-path-field {
   display: flex;
   min-width: 0;
@@ -1357,18 +1268,11 @@
   margin-left: auto;
 }
 
-.gh-admin-asset-note,
 .gh-admin-asset-active-row,
 .gh-admin-asset-preview {
   border-radius: var(--portal-radius);
   border: 1px solid var(--portal-line, var(--color-border));
   background: rgba(241, 245, 235, 0.66);
-}
-
-.gh-admin-asset-note {
-  padding: 12px 14px;
-  font-size: 13px;
-  color: var(--portal-muted, var(--color-text-muted));
 }
 
 .gh-admin-asset-active-row {
@@ -1400,7 +1304,6 @@
 
 @media (max-width: 760px) {
   .gh-admin-asset-filter-grid,
-  .gh-admin-asset-field-grid--two,
   .gh-admin-asset-detail-grid,
   .gh-admin-asset-country-form {
     grid-template-columns: 1fr;
@@ -1437,7 +1340,6 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.gh-admin-blog-field-grid--three,
 .gh-admin-blog-country-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -1495,13 +1397,6 @@
   padding: 10px 12px;
 }
 
-.gh-admin-blog-section-heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-}
-
 .gh-admin-blog-country-option {
   display: inline-flex;
   align-items: center;
@@ -1511,20 +1406,13 @@
 }
 
 @media (max-width: 1180px) {
-  .gh-admin-blog-filters {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .gh-admin-blog-field-grid--three,
   .gh-admin-blog-country-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 760px) {
-  .gh-admin-blog-filters,
   .gh-admin-blog-field-grid--two,
-  .gh-admin-blog-field-grid--three,
   .gh-admin-blog-country-grid {
     grid-template-columns: 1fr;
   }
@@ -1773,15 +1661,6 @@
   min-width: 0;
 }
 
-.gh-admin-calendar-grid {
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
-  align-items: start;
-}
-
-.gh-admin-calendar-grid > * {
-  min-width: 0;
-}
-
 .gh-admin-loading-state {
   width: 100%;
 }
@@ -1793,10 +1672,6 @@
 @media (max-width: 1024px) {
   .gh-admin-ops-filter-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .gh-admin-calendar-grid {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -3307,10 +3182,6 @@
     padding: 16px;
   }
 
-  .gh-doctor-slot-grid {
-    gap: 8px;
-  }
-
   .gh-doctor-slot-chip {
     width: 100%;
     justify-content: center;
@@ -3347,8 +3218,7 @@
  * is live, the form zone drops hover-lift chrome and softens decorative
  * accents so nothing competes for attention with the actual consult. */
 .gh-doctor-appointment-workspace--calm .gh-card:hover,
-.gh-doctor-appointment-workspace--calm .gh-admin-card:hover,
-.gh-doctor-appointment-workspace--calm .gh-card-interactive:hover {
+.gh-doctor-appointment-workspace--calm .gh-admin-card:hover {
   transform: none !important;
   box-shadow: var(--portal-shadow) !important;
 }
@@ -4332,9 +4202,6 @@ a.gh-appointment-card:hover {
   transition: width 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.gh-card-interactive:hover .gh-admin-card-title::after {
-  width: 24px;
-}
 .gh-portal-sidebar {
   overflow: hidden;
   background: var(--lux-chrome-fill);
@@ -5656,15 +5523,12 @@ a.gh-appointment-card:hover {
 .gh-portal-shell :where(a:hover svg, button:hover svg, [aria-current="page"] svg) {
   opacity: var(--lux-icon-active);
 }
-.gh-admin-mobile-card,
-.gh-admin-appointment-mobile-card {
+.gh-admin-mobile-card {
   position: relative;
   overflow: hidden;
 }
 
-
-.gh-admin-mobile-card::before,
-.gh-admin-appointment-mobile-card::before {
+.gh-admin-mobile-card::before {
   content: "";
   position: absolute;
   inset-block: 12px;
