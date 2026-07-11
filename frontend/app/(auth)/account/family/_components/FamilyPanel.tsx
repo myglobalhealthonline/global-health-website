@@ -371,7 +371,12 @@ function MemberDisplay({
             {member.dateOfBirth ? ` · ${member.dateOfBirth.slice(0, 10)}` : ""}
           </p>
           {member.email ? (
-            <p className="truncate text-xs text-[var(--portal-muted)]">{member.email}</p>
+            <p
+              title={member.email}
+              className="break-words text-xs text-[var(--portal-muted)] [overflow-wrap:anywhere]"
+            >
+              {member.email}
+            </p>
           ) : null}
         </div>
 
