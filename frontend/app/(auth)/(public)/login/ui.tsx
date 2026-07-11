@@ -103,7 +103,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-5" suppressHydrationWarning>
+    <form onSubmit={onSubmit} method="post" className="grid gap-5" suppressHydrationWarning>
       {/* Email */}
       <div className="grid gap-2">
         <label htmlFor="login-email" className="gh-field-label" data-required>
