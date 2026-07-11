@@ -21,43 +21,18 @@ type Props = {
   onToday: () => void;
 };
 
-const MAX_CHIPS = 3;
-
-function chipTone(item: CalendarItem): { bg: string; text: string; dot: string } {
-  if (item.kind === "consultation") {
-    return {
-      bg: "var(--portal-info-soft, rgba(51, 80, 91, 0.14))",
-      text: "var(--portal-info-text)",
-      dot: "var(--portal-info)",
-    };
+function summarize(items: CalendarItem[] | undefined) {
+  let consults = 0;
+  let open = 0;
+  let blocked = 0;
+  let booked = 0;
+  for (const it of items ?? []) {
+    if (it.kind === "consultation") consults += 1;
+    else if (it.status === "OPEN") open += 1;
+    else if (it.status === "BLOCKED") blocked += 1;
+    else if (it.status === "BOOKED" || it.status === "HELD") booked += 1;
   }
-  switch (item.status) {
-    case "OPEN":
-      return {
-        bg: "var(--portal-success-soft)",
-        text: "var(--portal-success-text)",
-        dot: "var(--portal-success)",
-      };
-    case "BLOCKED":
-      return {
-        bg: "var(--portal-danger-soft, rgba(190, 60, 60, 0.14))",
-        text: "var(--portal-danger-text)",
-        dot: "var(--portal-danger)",
-      };
-    default: // BOOKED / HELD
-      return {
-        bg: "var(--portal-info-soft, rgba(51, 80, 91, 0.14))",
-        text: "var(--portal-info-text)",
-        dot: "var(--portal-info)",
-      };
-  }
-}
-
-function chipLabel(item: CalendarItem): string {
-  if (item.kind === "consultation") return item.meta?.patientName || item.title;
-  if (item.status === "OPEN") return "Open";
-  if (item.status === "BLOCKED") return item.meta?.blockReason || "Blocked";
-  return item.meta?.doctorName || item.status;
+  return { consults, open, blocked, booked };
 }
 
 export function MonthCalendar({
@@ -132,8 +107,7 @@ export function MonthCalendar({
           const isToday = cell.key === todayKey;
           const isSelected = cell.key === selectedDay;
           const hasAny = items.length > 0;
-          const visible = items.slice(0, MAX_CHIPS);
-          const overflow = items.length - visible.length;
+          const { consults, open, blocked, booked } = summarize(items);
           return (
             <button
               key={cell.key}
@@ -162,31 +136,40 @@ export function MonthCalendar({
               </span>
 
               {hasAny ? (
-                <span className="mt-auto flex w-full flex-col gap-0.5">
-                  {visible.map((item) => {
-                    const tone = chipTone(item);
-                    return (
-                      <span
-                        key={item.id}
-                        title={`${chipLabel(item)} · ${item.title}`}
-                        className="flex max-w-full items-center gap-1 truncate rounded-[4px] px-1 py-[1px] text-[10px] font-semibold leading-tight"
-                        style={{ background: tone.bg, color: tone.text }}
-                      >
-                        <span
-                          aria-hidden
-                          className="size-1.5 shrink-0 rounded-full"
-                          style={{ background: tone.dot }}
-                        />
-                        <span className="truncate">{chipLabel(item)}</span>
-                      </span>
-                    );
-                  })}
-                  {overflow > 0 ? (
+                <span className="mt-auto flex w-full flex-wrap gap-1">
+                  {consults > 0 ? (
                     <span
-                      className="px-1 text-[10px] font-bold"
-                      style={{ color: "var(--portal-muted)" }}
+                      className="inline-flex max-w-full items-center truncate rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none"
+                      style={{ background: "var(--portal-success-soft)", color: "var(--portal-success-text)" }}
                     >
-                      +{overflow} more
+                      {consults} consult{consults > 1 ? "s" : ""}
+                    </span>
+                  ) : null}
+                  {booked > 0 ? (
+                    <span
+                      className="inline-flex items-center gap-0.5 text-[10px] font-semibold"
+                      style={{ color: "var(--portal-info-text)" }}
+                    >
+                      <span className="size-1.5 rounded-full" style={{ background: "var(--portal-info)" }} />
+                      {booked}
+                    </span>
+                  ) : null}
+                  {open > 0 ? (
+                    <span
+                      className="inline-flex items-center gap-0.5 text-[10px] font-semibold"
+                      style={{ color: "var(--portal-success-text)" }}
+                    >
+                      <span className="size-1.5 rounded-full" style={{ background: "var(--portal-success)" }} />
+                      {open}
+                    </span>
+                  ) : null}
+                  {blocked > 0 ? (
+                    <span
+                      className="inline-flex items-center gap-0.5 text-[10px] font-semibold"
+                      style={{ color: "var(--portal-danger-text)" }}
+                    >
+                      <span className="size-1.5 rounded-full" style={{ background: "var(--portal-danger)" }} />
+                      {blocked}
                     </span>
                   ) : null}
                 </span>
