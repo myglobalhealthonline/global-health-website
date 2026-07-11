@@ -321,7 +321,7 @@ export default async function AdminAuditLogPage({
               />
             ))}
           </div>
-          <div className="gh-admin-ops-table-wrap gh-admin-deep-table-wrap overflow-hidden rounded-md border border-[var(--color-border)]">
+          <div className="gh-admin-ops-table-wrap gh-admin-deep-table-wrap overflow-x-auto rounded-md border border-[var(--color-border)]">
             <table className="w-full text-[13px]">
               <thead className="bg-[var(--color-background-soft)] text-left text-[11px] uppercase tracking-wider text-[var(--color-text-muted)]">
                 <tr>

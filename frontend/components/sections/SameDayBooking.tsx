@@ -274,7 +274,7 @@ export function SameDayBooking({
 
   return (
     <div
-      className={`gh-sameday relative flex w-full max-w-[900px] flex-col overflow-hidden rounded-[26px] p-6 sm:p-8 ${className ?? ""}`}
+      className={`gh-sameday relative flex w-full max-w-[900px] flex-col rounded-[26px] p-6 sm:p-8 ${className ?? ""}`}
       style={{
         background: "rgba(8, 33, 27, 0.82)",
         border: "1px solid rgba(255,255,255,0.12)",
