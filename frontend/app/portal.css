@@ -1460,10 +1460,6 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.gh-admin-health-field-grid--three {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
 .gh-admin-health-form,
 .gh-admin-health-fields,
 .gh-admin-health-panel {
@@ -1510,31 +1506,6 @@
   padding: 18px;
 }
 
-.gh-admin-health-tablist {
-  display: flex;
-  max-width: 100%;
-  gap: 6px;
-  overflow-x: auto;
-  border-radius: var(--portal-radius);
-  background: rgba(241, 245, 235, 0.88);
-  padding: 5px;
-}
-
-.gh-admin-health-tab {
-  min-height: 32px !important;
-  flex: 0 0 auto;
-  border-radius: 8px !important;
-  padding: 7px 12px !important;
-  font-size: 12.5px !important;
-  font-weight: 800 !important;
-  white-space: nowrap;
-}
-
-.gh-admin-health-tab[aria-selected="true"] {
-  background: var(--lux-forest-duotone) !important;
-  color: var(--portal-bg) !important;
-}
-
 .gh-admin-health-active-row {
   display: inline-flex;
   align-items: center;
@@ -1578,7 +1549,6 @@
 @media (max-width: 760px) {
   .gh-admin-health-filter-grid,
   .gh-admin-health-field-grid--two,
-  .gh-admin-health-field-grid--three,
   .gh-admin-health-detail-grid,
   .gh-admin-health-country-form {
     grid-template-columns: 1fr;
@@ -1748,7 +1718,6 @@
   min-width: 0;
 }
 
-.gh-admin-country-fieldset,
 .gh-admin-authority-row,
 .gh-admin-country-route-list > li,
 .gh-admin-country-domain-list > li {
@@ -1757,23 +1726,12 @@
   background: rgba(255, 255, 255, 0.9);
 }
 
-.gh-admin-country-fieldset,
 .gh-admin-authority-row {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.62);
 }
 
-.gh-admin-country-locale-grid,
-.gh-admin-country-check-row {
+.gh-admin-country-locale-grid {
   min-width: 0;
-}
-
-.gh-admin-country-check-row {
-  align-items: flex-start;
-}
-
-.gh-admin-country-check-row input[type="checkbox"] {
-  margin-top: 2px;
-  flex: 0 0 auto;
 }
 
 .gh-admin-country-select {
@@ -1814,25 +1772,6 @@
   grid-template-columns: 1fr;
 }
 
-.gh-admin-disclaimer-tablist {
-  max-width: 100%;
-  overflow-x: auto;
-  border-radius: var(--portal-radius);
-  background: rgba(241, 245, 235, 0.88);
-  padding: 5px;
-}
-
-.gh-admin-disclaimer-tab {
-  flex: 0 0 auto;
-  border-radius: 8px !important;
-  white-space: nowrap;
-}
-
-.gh-admin-disclaimer-tab[aria-selected="true"] {
-  background: var(--lux-forest-duotone) !important;
-  color: var(--portal-bg) !important;
-}
-
 .gh-admin-disclaimer-panel textarea,
 .gh-admin-country-editor-form textarea,
 .gh-admin-country-legal-form textarea {
@@ -1847,10 +1786,6 @@
 .gh-admin-country-feature-summary,
 .gh-admin-country-features {
   min-width: 0;
-}
-
-.gh-admin-country-feature-row td {
-  vertical-align: top;
 }
 
 @media (max-width: 1180px) {
@@ -1883,11 +1818,6 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-  }
-
-  .gh-admin-country-check-row {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
   }
 
   .gh-admin-country-select__menu {
