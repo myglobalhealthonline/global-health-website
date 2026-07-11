@@ -35,9 +35,9 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
   // CONSULTATION PROCESS (video call, prescription, telemedicine).
   // Keep that bias when editing.
   "/": {
-    title: "Global Health · Licensed clinicians across Europe",
+    title: "Global Health · Licensed physicians in your country",
     description:
-      "Meet licensed doctors and specialists practising in Ireland, Portugal, Spain, Czechia and Romania. Multilingual care, in-country registration, transparent profiles.",
+      "Meet licensed doctors and specialists online, in your country. Same-day appointments, multilingual care, transparent registration profiles. GDPR compliant.",
     keywords: [
       "licensed doctors Europe",
       "medical specialists",
