@@ -267,7 +267,7 @@ export function PatientProfileEditor({
           </div>
         </section>
 
-        <div>
+        <div className="flex justify-end">
           <button type="submit" className="gh-btn gh-btn-primary">
             Save patient profile
           </button>

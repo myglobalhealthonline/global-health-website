@@ -197,16 +197,16 @@ export default async function AdminSpecialtyNewPage({ searchParams }: PageProps)
             Active
           </label>
 
-          <div className="gh-admin-support-actions flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
-            <button type="submit" className="gh-btn gh-btn-primary">
-              Create category
-            </button>
+          <div className="gh-admin-support-actions flex flex-wrap justify-end gap-3 border-t border-[var(--color-border)] pt-6">
             <Link
               href="/admin/specialties"
               className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Cancel
             </Link>
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Create category
+            </button>
           </div>
         </form>
       </AdminCard>

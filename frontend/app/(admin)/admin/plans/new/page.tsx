@@ -153,16 +153,16 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
       <AdminCard>
         <form action={createPlanAction} className="gh-admin-plan-form flex flex-col gap-8">
           <PlanFields countries={countries} pinnedCountryId={countryId} planType={planType} />
-          <div className="gh-admin-plan-actions flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
-            <button type="submit" className="gh-btn gh-btn-primary">
-              Create plan
-            </button>
+          <div className="gh-admin-plan-actions flex flex-wrap items-center justify-end gap-3 border-t border-[var(--color-border)] pt-6">
             <Link
               href="/admin/plans"
               className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Cancel
             </Link>
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Create plan
+            </button>
           </div>
         </form>
       </AdminCard>

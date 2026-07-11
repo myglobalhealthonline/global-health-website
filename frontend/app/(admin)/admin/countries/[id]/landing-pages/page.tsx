@@ -271,13 +271,13 @@ export default async function CountryLandingPagesAdmin({ params, searchParams }:
               <input type="checkbox" name="isPublished" defaultChecked={editPage?.isPublished ?? false} className="size-4" />
               <span className="text-portal-compact text-[var(--color-text-body)]">Published</span>
             </label>
-            <div className="gh-admin-country-actions flex items-center gap-3">
-              <button type="submit" className="gh-btn gh-btn-primary">
-                Save landing page
-              </button>
+            <div className="gh-admin-country-actions flex items-center justify-end gap-3">
               <Link href={`/admin/countries/${id}/landing-pages`} className="gh-btn gh-btn-soft">
                 Cancel
               </Link>
+              <button type="submit" className="gh-btn gh-btn-primary">
+                Save landing page
+              </button>
             </div>
           </form>
         </AdminCard>

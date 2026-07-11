@@ -375,7 +375,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                 <SectionHeader title="Basics & price" description="Name, monthly price, and what's included each month. Saving updates billing automatically." />
           <form action={updatePlanAction} className="flex flex-col gap-8 p-6">
             <PlanFields countries={countries} initial={plan} pinnedCountryId={plan.countryId} />
-            <div className="border-t border-[var(--color-border)] pt-6">
+            <div className="flex justify-end border-t border-[var(--color-border)] pt-6">
               <button type="submit" className="gh-btn gh-btn-primary">
                 Save plan
               </button>
@@ -681,7 +681,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                 features: defaultPlanFeatures(plan),
               }}
             />
-            <div className="border-t border-[var(--color-border)] pt-6">
+            <div className="flex justify-end border-t border-[var(--color-border)] pt-6">
               <button type="submit" className="gh-btn gh-btn-primary">
                 Save translations
               </button>

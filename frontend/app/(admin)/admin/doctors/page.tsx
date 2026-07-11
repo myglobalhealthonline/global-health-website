@@ -93,32 +93,6 @@ function doctorFields(
       ),
     },
     {
-      key: "actions",
-      label: "Actions",
-      priority: 1,
-      align: "right",
-      desktopOnly: true,
-      render: (d) => (
-        <div className="gh-admin-doctor-row-actions flex justify-end gap-1.5">
-          <IconBtn ariaLabel={`View ${d.fullName}`} href={`/admin/doctors/${d.id}`}>
-            <Eye className="size-3.5" aria-hidden />
-          </IconBtn>
-          <IconBtn ariaLabel={`Edit ${d.fullName}`} href={`/admin/doctors/${d.id}/edit`}>
-            <Edit3 className="size-3.5" aria-hidden />
-          </IconBtn>
-          <form action={deleteDoctorAction} className="inline-flex">
-            <input type="hidden" name="id" value={d.id} />
-            <ConfirmDeleteButton
-              title={`Delete Dr. ${d.fullName}?`}
-              message={`Permanently delete doctor "${d.fullName}"? This removes their profile and cannot be undone.`}
-              ariaLabel={`Delete ${d.fullName}`}
-              requireTypedConfirmation={d.fullName}
-            />
-          </form>
-        </div>
-      ),
-    },
-    {
       key: "practicingIn",
       label: "Practicing in",
       priority: 2,
@@ -174,6 +148,32 @@ function doctorFields(
         <span className="block max-w-[12rem] truncate text-portal-compact text-[var(--color-text-muted)]" title={doctorConsultationTypeLabels(d.assignedServices ?? [])}>
           {doctorConsultationTypeLabels(d.assignedServices ?? [])}
         </span>
+      ),
+    },
+    {
+      key: "actions",
+      label: "Actions",
+      priority: 1,
+      align: "right",
+      desktopOnly: true,
+      render: (d) => (
+        <div className="gh-admin-doctor-row-actions flex justify-end gap-1.5">
+          <IconBtn ariaLabel={`View ${d.fullName}`} href={`/admin/doctors/${d.id}`}>
+            <Eye className="size-3.5" aria-hidden />
+          </IconBtn>
+          <IconBtn ariaLabel={`Edit ${d.fullName}`} href={`/admin/doctors/${d.id}/edit`}>
+            <Edit3 className="size-3.5" aria-hidden />
+          </IconBtn>
+          <form action={deleteDoctorAction} className="inline-flex">
+            <input type="hidden" name="id" value={d.id} />
+            <ConfirmDeleteButton
+              title={`Delete Dr. ${d.fullName}?`}
+              message={`Permanently delete doctor "${d.fullName}"? This removes their profile and cannot be undone.`}
+              ariaLabel={`Delete ${d.fullName}`}
+              requireTypedConfirmation={d.fullName}
+            />
+          </form>
+        </div>
       ),
     },
   ];

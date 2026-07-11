@@ -309,16 +309,16 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
               />
               <span className="text-portal-compact text-[var(--color-text-body)]">Published</span>
             </label>
-            <div className="gh-admin-country-actions flex items-center gap-3">
-              <button type="submit" className="gh-btn gh-btn-primary">
-                Save document
-              </button>
+            <div className="gh-admin-country-actions flex items-center justify-end gap-3">
               <Link
                 href={`/admin/countries/${id}/legal-documents`}
                 className="gh-btn gh-btn-soft"
               >
                 Cancel
               </Link>
+              <button type="submit" className="gh-btn gh-btn-primary">
+                Save document
+              </button>
             </div>
           </form>
         </AdminCard>

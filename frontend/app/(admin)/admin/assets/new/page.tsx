@@ -177,16 +177,16 @@ export default async function AdminNewAssetPage({ searchParams }: PageProps) {
       <AdminCard>
         <form action={createAssetAction} className="gh-admin-asset-form">
           <AssetFields countries={countries} doctorOptions={doctorOptions} />
-          <div className="gh-admin-asset-actions border-t border-[var(--color-border)] pt-6">
-            <button type="submit" className="gh-btn gh-btn-primary">
-              Create asset
-            </button>
+          <div className="gh-admin-asset-actions justify-end border-t border-[var(--color-border)] pt-6">
             <Link
               href="/admin/assets"
               className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Cancel
             </Link>
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Create asset
+            </button>
           </div>
         </form>
       </AdminCard>

@@ -292,9 +292,9 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
                 <input type="text" name="tr_seoDesc" defaultValue={editTranslation?.seoDesc ?? ""} className="gh-input" />
               </label>
             </div>
-            <div className="gh-admin-blog-actions">
-              <button type="submit" className="gh-btn gh-btn-primary">Save translation</button>
+            <div className="gh-admin-blog-actions gh-admin-blog-actions--end">
               <Link href={`/admin/blog/${id}/edit`} className="gh-btn gh-btn-soft">Cancel</Link>
+              <button type="submit" className="gh-btn gh-btn-primary">Save translation</button>
             </div>
           </form>
         ) : (

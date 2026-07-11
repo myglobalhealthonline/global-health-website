@@ -300,16 +300,16 @@ export default async function AdminEditDoctorPage({
               showTranslationTabs={false}
               showSpecialties={false}
             />
-            <div className="gh-admin-doctor-form-actions gh-portal-sticky-actions flex flex-wrap gap-3 border-t border-[var(--portal-line)] pt-6">
-              <button type="submit" className="gh-btn gh-btn-primary">
-                Save changes
-              </button>
+            <div className="gh-admin-doctor-form-actions gh-portal-sticky-actions flex flex-wrap justify-end gap-3 border-t border-[var(--portal-line)] pt-6">
               <Link
                 href={`/admin/doctors/${id}`}
                 className="text-portal-compact font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
               >
                 Cancel
               </Link>
+              <button type="submit" className="gh-btn gh-btn-primary">
+                Save changes
+              </button>
             </div>
           </form>
           </AdminCard>

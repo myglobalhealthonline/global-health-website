@@ -178,17 +178,17 @@ export default async function AdminCreatePatientPage({ searchParams }: PageProps
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
-              <button type="submit" className="gh-btn gh-btn-primary flex items-center gap-1.5">
-                <UserRound className="size-3.5" aria-hidden />
-                Create patient
-              </button>
+            <div className="flex flex-wrap items-center justify-end gap-3 border-t border-[var(--color-border)] pt-6">
               <Link
                 href="/admin/patients"
                 className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
               >
                 Cancel
               </Link>
+              <button type="submit" className="gh-btn gh-btn-primary flex items-center gap-1.5">
+                <UserRound className="size-3.5" aria-hidden />
+                Create patient
+              </button>
             </div>
           </form>
         </AdminCard>
