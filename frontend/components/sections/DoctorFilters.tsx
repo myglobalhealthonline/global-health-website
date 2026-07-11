@@ -55,7 +55,7 @@ export function DoctorFilters({
 
   return (
     <div
-      className={`relative z-30 mb-8 flex flex-wrap items-center gap-2.5 ${
+      className={`relative z-[var(--z-raised)] mb-8 flex flex-wrap items-center gap-2.5 ${
         dark ? "gh2-glass-forest gh2-filters-dark px-4 py-2.5" : ""
       }`}
     >
