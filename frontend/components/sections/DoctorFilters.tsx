@@ -1,18 +1,24 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { ChevronDown, SlidersHorizontal, X } from "lucide-react";
+import { AppMenu, AppMenuItem } from "@/components/AppMenu";
+import { AppSheet } from "@/components/AppSheet";
 
 /**
  * Doctor directory filter bar (sits at the top of the DoctorTeamTemplate
  * grid section).
  *
- * Pure presentational + SSR-friendly: every chip is an `<a>`/<Link>
- * whose href the page computed from the current search params, so
- * filtering works without client JS and the URL stays shareable. The
- * page owns all the option/active/href logic; this component only
- * styles it.
+ * Each chip is still an `<a>`/<Link> whose href the page computed from the
+ * current search params, so filtering is a plain navigation — no client
+ * state to keep in sync, URL stays shareable. The page owns all the
+ * option/active/href logic; this component only styles + positions it.
  *
- * Each group renders as a native `<details>` dropdown (no JS needed to
- * open/close) instead of an always-expanded chip panel.
+ * Desktop: each group opens in a portalled AppMenu (Radix DropdownMenu) —
+ * collision-aware, single-panel-open, outside-click/Escape, focus restore
+ * all come from Radix. Mobile (<768px): a single "Filters" trigger opens
+ * every group inside a bottom AppSheet.
  */
 export type FilterOption = {
   /** Stable token (language code / specialty slug) — used for the key. */
@@ -44,6 +50,7 @@ export function DoctorFilters({
   /** Forest-glass panel + on-dark chips — for dark grid sections. */
   dark?: boolean;
 }) {
+  const [mobileOpen, setMobileOpen] = useState(false);
   const visibleGroups = groups.filter((g) => g.options.length > 0);
   if (visibleGroups.length === 0) return null;
 
@@ -52,6 +59,22 @@ export function DoctorFilters({
     (n, g) => n + g.options.filter((o) => o.active).length,
     0,
   );
+
+  const clearControl = hasActive ? (
+    <Link
+      href={clearHref}
+      scroll={false}
+      className="inline-flex min-h-11 items-center gap-1.5 rounded-full border px-3.5 text-[12px] font-semibold transition-colors duration-150"
+      style={
+        dark
+          ? { borderColor: "rgba(255,255,255,0.20)", color: "var(--gh2-on-dark-muted)" }
+          : { borderColor: "rgba(29,75,54,0.20)", color: "var(--color-text-muted)" }
+      }
+    >
+      <X className="size-3.5" strokeWidth={2} aria-hidden />
+      {clearLabel ?? "Clear all filters"}
+    </Link>
+  ) : null;
 
   return (
     <div
@@ -72,50 +95,96 @@ export function DoctorFilters({
         ) : null}
       </span>
 
-      {visibleGroups.map((group) => {
-        const groupActiveCount = group.options.filter((o) => o.active).length;
-        return (
-          <details key={group.heading} className="gh2-filter-dropdown relative">
-            <summary className="gh2-filter-trigger">
-              {group.heading}
-              {groupActiveCount > 0 ? (
-                <span className="gh2-filter-count tabular-nums">· {groupActiveCount}</span>
-              ) : null}
-              <ChevronDown className="gh2-filter-chevron size-3.5 opacity-70" strokeWidth={2} aria-hidden />
-            </summary>
-            <div className="gh2-filter-panel">
+      {/* Desktop: one portalled AppMenu per group. */}
+      <div className="hidden md:contents">
+        {visibleGroups.map((group) => {
+          const groupActiveCount = group.options.filter((o) => o.active).length;
+          return (
+            <AppMenu
+              key={group.heading}
+              align="start"
+              contentClassName={`gh2-filter-menu-content${dark ? " gh2-filter-menu-content--dark" : ""}`}
+              trigger={
+                <button type="button" className="gh2-filter-trigger">
+                  {group.heading}
+                  {groupActiveCount > 0 ? (
+                    <span className="gh2-filter-count tabular-nums">· {groupActiveCount}</span>
+                  ) : null}
+                  <ChevronDown className="gh2-filter-chevron size-3.5 opacity-70" strokeWidth={2} aria-hidden />
+                </button>
+              }
+            >
               {group.options.map((opt) => (
-                <Link
-                  key={opt.token}
-                  href={opt.href}
-                  aria-current={opt.active ? "page" : undefined}
-                  data-active={opt.active}
-                  scroll={false}
-                  className="gh2-pill-filter text-[12.5px]"
-                >
-                  {opt.label}
-                </Link>
+                <AppMenuItem key={opt.token} asChild onSelect={(e) => e.preventDefault()}>
+                  <Link
+                    href={opt.href}
+                    aria-current={opt.active ? "page" : undefined}
+                    data-active={opt.active}
+                    scroll={false}
+                    className="gh2-pill-filter text-[12.5px]"
+                  >
+                    {opt.label}
+                  </Link>
+                </AppMenuItem>
               ))}
-            </div>
-          </details>
-        );
-      })}
+            </AppMenu>
+          );
+        })}
+        {clearControl}
+      </div>
 
-      {hasActive ? (
-        <Link
-          href={clearHref}
-          scroll={false}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-full border px-3.5 text-[12px] font-semibold transition-colors duration-150"
-          style={
-            dark
-              ? { borderColor: "rgba(255,255,255,0.20)", color: "var(--gh2-on-dark-muted)" }
-              : { borderColor: "rgba(29,75,54,0.20)", color: "var(--color-text-muted)" }
-          }
-        >
-          <X className="size-3.5" strokeWidth={2} aria-hidden />
-          {clearLabel ?? "Clear all filters"}
-        </Link>
-      ) : null}
+      {/* Mobile: single trigger opening every group in a bottom sheet. */}
+      <button
+        type="button"
+        className="gh2-filter-trigger md:hidden"
+        onClick={() => setMobileOpen(true)}
+      >
+        Filters
+        {activeCount > 0 ? <span className="gh2-filter-count tabular-nums">· {activeCount}</span> : null}
+      </button>
+      <AppSheet
+        open={mobileOpen}
+        onOpenChange={setMobileOpen}
+        side="bottom"
+        size="sm"
+        theme="public"
+        ariaLabel="Filters"
+        header={<h2 className="gh2-filter-sheet-title">Filters</h2>}
+        footer={
+          <div className="flex items-center justify-between gap-3">
+            {clearControl}
+            <button
+              type="button"
+              className="gh2-btn-compact gh2-btn-compact-primary"
+              onClick={() => setMobileOpen(false)}
+            >
+              Show results
+            </button>
+          </div>
+        }
+      >
+        <div className="flex flex-col gap-5">
+          {visibleGroups.map((group) => (
+            <div key={group.heading}>
+              <p className="gh2-filter-sheet-heading">{group.heading}</p>
+              <div className="flex flex-wrap gap-2">
+                {group.options.map((opt) => (
+                  <Link
+                    key={opt.token}
+                    href={opt.href}
+                    aria-current={opt.active ? "page" : undefined}
+                    data-active={opt.active}
+                    scroll={false}
+                    className="gh2-pill-filter text-[12.5px]"
+                  >
+                    {opt.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </AppSheet>
     </div>
   );
 }
