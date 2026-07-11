@@ -2137,7 +2137,6 @@
  * gradient — §10.4 bans new gradients beyond the four sanctioned ones). */
 .gh-calendar-panel,
 .gh-agenda-panel,
-.gh-calendar-dialog,
 .gh-chat-panel {
   border: 1px solid transparent !important;
   border-radius: var(--portal-radius-lg, 14px) !important;
@@ -2487,22 +2486,6 @@
   }
 }
 
-.gh-icon-circle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-tile);
-  background: var(--color-accent-soft);
-  color: var(--color-brand-primary);
-}
-.gh-icon-circle-lg {
-  width: 56px;
-  height: 56px;
-  border-radius: 18px;
-}
-
 /* ── Status pills (admin lists) ─────────────────────────────── */
 /* Status pills — 11px caps, 0.04em tracking, weight 700.
    Matches ADMIN_DESIGN_BRIEF.md "Status pills" + Atoms.jsx Pill. */
@@ -2595,7 +2578,6 @@
   min-width: 0;
 }
 
-.gh-admin-doctor-form-section,
 .gh-admin-doctor-country-form,
 .gh-admin-doctor-credential-row,
 .gh-admin-doctor-registration-row,
@@ -2606,10 +2588,6 @@
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(247, 250, 247, 0.74)),
     var(--color-background-soft);
-}
-
-.gh-admin-doctor-form-section {
-  padding: clamp(16px, 2vw, 22px);
 }
 
 .gh-admin-doctor-specialty-option,
@@ -2623,17 +2601,6 @@
 .gh-admin-doctor-service-row:hover {
   border-color: rgba(29, 75, 54, 0.24);
   background: rgba(247, 250, 247, 0.88);
-}
-
-.gh-admin-doctor-tabs {
-  max-width: 100%;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  padding-bottom: 2px;
-}
-
-.gh-admin-doctor-tabs > button {
-  white-space: nowrap;
 }
 
 .gh-admin-doctor-tab-panel,
@@ -2753,7 +2720,6 @@
 }
 
 @media (max-width: 430px) {
-  .gh-admin-doctor-form-section,
   .gh-admin-doctor-country-form,
   .gh-admin-doctor-credential-row,
   .gh-admin-doctor-registration-row,
@@ -2774,7 +2740,6 @@
 .gh-doctor-table-card,
 .gh-doctor-empty-state,
 .gh-doctor-practice-context,
-.gh-doctor-profile-form-card,
 .gh-doctor-profile-photo-card,
 .gh-doctor-admin-note-card,
 .gh-doctor-template-list,
@@ -2805,10 +2770,6 @@
 .gh-doctor-patient-detail-layout > *,
 .gh-doctor-templates-layout > * {
   min-width: 0;
-}
-
-.gh-doctor-page-header {
-  max-width: min(100%, var(--portal-readable-max));
 }
 
 .gh-doctor-stat-grid,
@@ -2844,17 +2805,6 @@
 .gh-doctor-mini-table td {
   padding-top: 8px;
   padding-bottom: 8px;
-}
-
-.gh-doctor-tabs {
-  max-width: 100%;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  padding-bottom: 2px;
-}
-
-.gh-doctor-tabs > button {
-  white-space: nowrap;
 }
 
 .gh-doctor-quick-card,
@@ -3037,7 +2987,6 @@
 @media (max-width: 430px) {
   .gh-doctor-filter-card,
   .gh-doctor-practice-context,
-  .gh-doctor-profile-form-card,
   .gh-doctor-profile-photo-card,
   .gh-doctor-admin-note-card,
   .gh-doctor-template-list,
