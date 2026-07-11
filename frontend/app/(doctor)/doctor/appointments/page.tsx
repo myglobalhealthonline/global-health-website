@@ -154,7 +154,7 @@ export default async function DoctorAppointmentsPage({
             <Pill tone="brand">{d.common.activeCount.replace("{count}", String(activeFilterCount))}</Pill>
           ) : null}
         </summary>
-        <form className="gh-doctor-filter-grid mt-3 grid grid-cols-1 gap-3 sm:grid-cols-6">
+        <form className="gh-doctor-filter-grid mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
           <label className="flex flex-col gap-1 sm:col-span-2">
             <span className="gh-field-label">{d.common.search}</span>
             <input
@@ -225,7 +225,7 @@ export default async function DoctorAppointmentsPage({
             />
             <span className="text-sm">{d.appointments.legacyOpenWindow}</span>
           </label>
-          <div className="gh-doctor-filter-actions sm:col-span-6 flex items-center gap-2">
+          <div className="gh-doctor-filter-actions sm:col-span-2 lg:col-span-6 flex items-center gap-2">
             <button type="submit" className="gh-btn gh-btn-primary text-sm">
               {d.common.apply}
             </button>

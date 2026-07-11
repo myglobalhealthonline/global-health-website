@@ -229,7 +229,7 @@ export default async function DoctorInvoicesPage({
       ) : null}
 
       <div className="gh-card gh-doctor-filter-card mb-4 p-4">
-        <form className="gh-doctor-filter-grid grid grid-cols-1 gap-3 sm:grid-cols-5">
+        <form className="gh-doctor-filter-grid grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">{d.common.status}</span>
             <select name="status" defaultValue={status ?? ""} className="gh-select">
@@ -259,7 +259,7 @@ export default async function DoctorInvoicesPage({
               className="gh-input"
             />
           </label>
-          <div className="gh-doctor-filter-actions sm:col-span-5 flex items-center gap-2">
+          <div className="gh-doctor-filter-actions sm:col-span-2 lg:col-span-5 flex items-center gap-2">
             <button type="submit" className="gh-btn gh-btn-primary text-sm">
               {d.common.apply}
             </button>
