@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Eye, FileText } from "lucide-react";
+import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
 import { DocumentRow } from "@/components/DocumentRow";
 
@@ -40,9 +41,6 @@ export function FileTypeBadge({ label }: { label: string }) {
     </span>
   );
 }
-
-const TABLE_HEAD =
-  "text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]";
 
 export type DocumentTablesCopy = {
   colSessionDate: string;
@@ -143,6 +141,62 @@ export type GeneratedDocTableRow = {
   pdfUrl: string;
 };
 
+type AnyDocumentRow = GeneratedDocTableRow | UploadDocTableRow;
+
+function DocumentTable<T extends AnyDocumentRow>({
+  rows,
+  session,
+  copy,
+  getViewUrl,
+}: {
+  rows: T[];
+  session: SessionMeta;
+  copy: DocumentTablesCopy;
+  getViewUrl: (row: T) => string;
+}) {
+  const fields: ColumnPriorityField<T>[] = [
+    { key: "sessionDate", label: copy.colSessionDate, priority: 2, render: () => <span className="whitespace-nowrap">{session.sessionDate}</span> },
+    { key: "time", label: copy.colTime, priority: 3, render: () => <span className="whitespace-nowrap">{session.sessionTime}</span> },
+    { key: "order", label: copy.colOrderNumber, priority: 3, render: () => session.orderNumber },
+    { key: "sessionType", label: copy.colSessionType, priority: 4, render: () => <SessionTypeBadge label={session.consultationTypeLabel} /> },
+    {
+      key: "fileName",
+      label: copy.colFileName,
+      priority: 1,
+      cardPrimary: true,
+      render: (row) => <div className="max-w-[200px]"><DocumentRow icon={<FileText className="size-4" />} title={row.fileName} /></div>,
+    },
+    { key: "fileType", label: copy.colFileType, priority: 2, render: (row) => <FileTypeBadge label={row.fileTypeLabel} /> },
+    { key: "uploadedBy", label: copy.colUploadedBy, priority: 4, render: () => session.uploadedBy },
+    {
+      key: "view",
+      label: copy.colView,
+      priority: 2,
+      align: "right",
+      desktopOnly: true,
+      render: (row) => <DocumentViewLink href={getViewUrl(row)} label={copy.view} />,
+    },
+  ];
+
+  return (
+    <ColumnPriorityTable
+      fields={fields}
+      rows={rows}
+      getRowKey={(row) => row.id}
+      cardActions={(row) => <DocumentViewLink href={getViewUrl(row)} label={copy.viewDocument} />}
+    />
+  );
+}
+
+function DocumentViewLink({ href, label }: { href: string; label: string }) {
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]">
+      <Eye className="size-3.5" aria-hidden />
+      {label}
+    </a>
+  );
+}
+
 export function GeneratedDocumentsTable({
   rows,
   session,
@@ -152,68 +206,7 @@ export function GeneratedDocumentsTable({
   session: SessionMeta;
   copy?: DocumentTablesCopy;
 }) {
-  return (
-    <>
-    <div className="hidden md:block gh-doctor-table-wrap overflow-x-auto">
-      <table className="w-full min-w-[720px] text-[13px]">
-        <thead>
-          <tr className={TABLE_HEAD}>
-            <th className="px-3 py-2 text-left">{copy.colSessionDate}</th>
-            <th className="px-3 py-2 text-left">{copy.colTime}</th>
-            <th className="px-3 py-2 text-left">{copy.colOrderNumber}</th>
-            <th className="px-3 py-2 text-left">{copy.colSessionType}</th>
-            <th className="px-3 py-2 text-left">{copy.colFileName}</th>
-            <th className="px-3 py-2 text-left">{copy.colFileType}</th>
-            <th className="px-3 py-2 text-left">{copy.colUploadedBy}</th>
-            <th className="px-3 py-2 text-right">{copy.colView}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.id} className="border-t border-[var(--portal-line)]">
-              <td className="px-3 py-2.5 whitespace-nowrap">{session.sessionDate}</td>
-              <td className="px-3 py-2.5 whitespace-nowrap">{session.sessionTime}</td>
-              <td className="px-3 py-2.5">{session.orderNumber}</td>
-              <td className="px-3 py-2.5">
-                <SessionTypeBadge label={session.consultationTypeLabel} />
-              </td>
-              <td className="max-w-[200px] px-3 py-2.5">
-                <DocumentRow icon={<FileText className="size-4" />} title={r.fileName} />
-              </td>
-              <td className="px-3 py-2.5">
-                <FileTypeBadge label={r.fileTypeLabel} />
-              </td>
-              <td className="px-3 py-2.5">{session.uploadedBy}</td>
-              <td className="px-3 py-2.5 text-right">
-                <a
-                  href={r.pdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]"
-                >
-                  <Eye className="size-3.5" aria-hidden />
-                  {copy.view}
-                </a>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-    <div className="grid gap-3 p-3 md:hidden">
-      {rows.map((r) => (
-        <DocumentMobileCard
-          key={r.id}
-          fileName={r.fileName}
-          fileTypeLabel={r.fileTypeLabel}
-          viewUrl={r.pdfUrl}
-          session={session}
-          copy={copy}
-        />
-      ))}
-    </div>
-    </>
-  );
+  return <DocumentTable rows={rows} session={session} copy={copy} getViewUrl={(row) => row.pdfUrl} />;
 }
 
 export type UploadDocTableRow = {
@@ -232,68 +225,7 @@ export function UploadedFilesTable({
   session: SessionMeta;
   copy?: DocumentTablesCopy;
 }) {
-  return (
-    <>
-    <div className="hidden md:block gh-doctor-table-wrap overflow-x-auto">
-      <table className="w-full min-w-[720px] text-[13px]">
-        <thead>
-          <tr className={TABLE_HEAD}>
-            <th className="px-3 py-2 text-left">{copy.colSessionDate}</th>
-            <th className="px-3 py-2 text-left">{copy.colTime}</th>
-            <th className="px-3 py-2 text-left">{copy.colOrderNumber}</th>
-            <th className="px-3 py-2 text-left">{copy.colSessionType}</th>
-            <th className="px-3 py-2 text-left">{copy.colFileName}</th>
-            <th className="px-3 py-2 text-left">{copy.colFileType}</th>
-            <th className="px-3 py-2 text-left">{copy.colUploadedBy}</th>
-            <th className="px-3 py-2 text-right">{copy.colView}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((u) => (
-            <tr key={u.id} className="border-t border-[var(--portal-line)]">
-              <td className="px-3 py-2.5 whitespace-nowrap">{session.sessionDate}</td>
-              <td className="px-3 py-2.5 whitespace-nowrap">{session.sessionTime}</td>
-              <td className="px-3 py-2.5">{session.orderNumber}</td>
-              <td className="px-3 py-2.5">
-                <SessionTypeBadge label={session.consultationTypeLabel} />
-              </td>
-              <td className="max-w-[200px] px-3 py-2.5">
-                <DocumentRow icon={<FileText className="size-4" />} title={u.fileName} />
-              </td>
-              <td className="px-3 py-2.5">
-                <FileTypeBadge label={u.fileTypeLabel} />
-              </td>
-              <td className="px-3 py-2.5">{session.uploadedBy}</td>
-              <td className="px-3 py-2.5 text-right">
-                <a
-                  href={u.viewUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]"
-                >
-                  <Eye className="size-3.5" aria-hidden />
-                  {copy.view}
-                </a>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-    <div className="grid gap-3 p-3 md:hidden">
-      {rows.map((u) => (
-        <DocumentMobileCard
-          key={u.id}
-          fileName={u.fileName}
-          fileTypeLabel={u.fileTypeLabel}
-          viewUrl={u.viewUrl}
-          session={session}
-          copy={copy}
-        />
-      ))}
-    </div>
-    </>
-  );
+  return <DocumentTable rows={rows} session={session} copy={copy} getViewUrl={(row) => row.viewUrl} />;
 }
 
 export function DocTypeGroup({
