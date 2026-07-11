@@ -193,6 +193,8 @@ export default async function AdminDoctorAvailabilityPage({
             consultationType: c.consultationType,
             meetingUrl: c.meetingUrl,
             countryCode: c.countryCode,
+            orderId: c.orderId ?? null,
+            orderNumber: c.orderNumber ?? null,
           },
         })),
         ...calendarResult.data.slots.map((s) => ({

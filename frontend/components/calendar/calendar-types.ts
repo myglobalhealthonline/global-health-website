@@ -28,5 +28,8 @@ export type CalendarItem = {
     blockReason?: string | null;
     /** IANA tz the patient booked in — lets the dialog show their local time. */
     patientTimezone?: string | null;
+    /** Order this consultation belongs to (admin surfaces only → order link). */
+    orderId?: string | null;
+    orderNumber?: string | null;
   };
 };

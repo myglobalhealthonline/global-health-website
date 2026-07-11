@@ -734,6 +734,47 @@ export async function cancelAppointmentForPatient(
 }
 
 /**
+ * Cancel every consultation appointment attached to an order (used when the
+ * order is CANCELLED or REFUNDED). For each non-terminal appointment: release
+ * its slot back to the base grid, then flip status → CANCELLED. Idempotent and
+ * best-effort — a single appointment failing never blocks the others. Cancelled
+ * appointments drop off the admin + doctor calendars (both exclude CANCELLED).
+ */
+export async function cancelOrderAppointments(orderId: string): Promise<void> {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    select: {
+      appointmentIds: true,
+      orderAppointments: { select: { appointmentId: true } },
+      items: { select: { appointmentId: true } },
+    },
+  });
+  if (!order) return;
+
+  const ids = new Set<string>();
+  for (const id of order.appointmentIds) if (id) ids.add(id);
+  for (const oa of order.orderAppointments) if (oa.appointmentId) ids.add(oa.appointmentId);
+  for (const it of order.items) if (it.appointmentId) ids.add(it.appointmentId);
+
+  for (const id of ids) {
+    try {
+      const appt = await prisma.appointment.findUnique({
+        where: { id },
+        select: { status: true, timeSlotId: true },
+      });
+      if (!appt) continue;
+      if (appt.status === "CANCELLED" || appt.status === "COMPLETED") continue;
+      if (appt.timeSlotId) {
+        await releaseAppointmentSlot(id).catch(() => undefined);
+      }
+      await updateAppointmentStatus(id, "CANCELLED");
+    } catch {
+      // best-effort per appointment
+    }
+  }
+}
+
+/**
  * Minimal detail needed to drive the reschedule picker: which doctor is
  * assigned (so the frontend fetches that doctor's availability) and the
  * currently-held slot (so the picker can show "your current time").

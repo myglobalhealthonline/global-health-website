@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Video } from "lucide-react";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import type { CalendarItem } from "./calendar-types";
@@ -85,6 +86,22 @@ export function EventDetailDialog({ item, tz, onClose, paramKey }: Props) {
               label="Country"
               value={item.meta?.countryCode?.toUpperCase()}
             />
+            {item.meta?.orderId ? (
+              <RecordDetailsField
+                label="Order"
+                value={
+                  <Link
+                    href={`/admin/orders/${item.meta.orderId}`}
+                    className="font-semibold underline decoration-dotted underline-offset-2"
+                    style={{ color: "var(--portal-accent, #1B4D3E)" }}
+                  >
+                    {item.meta.orderNumber
+                      ? `#${item.meta.orderNumber}`
+                      : `#${item.meta.orderId.slice(-8).toUpperCase()}`}
+                  </Link>
+                }
+              />
+            ) : null}
           </RecordDetailsSection>
 
           <RecordDetailsSection title="Timing">

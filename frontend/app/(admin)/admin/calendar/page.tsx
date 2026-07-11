@@ -61,6 +61,8 @@ export default async function AdminCalendarPage({ searchParams }: Props) {
         consultationType: c.consultationType,
         meetingUrl: c.meetingUrl,
         countryCode: c.countryCode,
+        orderId: c.orderId ?? null,
+        orderNumber: c.orderNumber ?? null,
       },
     })),
     ...slots.map((s) => ({
