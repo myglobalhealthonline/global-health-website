@@ -1,4 +1,4 @@
-import { fetchNewsletterSubscribers } from "@/lib/admin/admin-api";
+import { fetchNewsletterSubscribers, type NewsletterSubscriberDto } from "@/lib/admin/admin-api";
 import {
   AdminCard,
   AdminEmptyState,
@@ -7,7 +7,15 @@ import {
   PageHeader,
   Pill,
 } from "../_components/atoms";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
+
+function fmtDate(iso: string) {
+  return new Date(iso).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
 
 export const dynamic = "force-dynamic";
 
@@ -80,73 +88,57 @@ export default async function AdminNewsletterPage() {
               ]}
             />
           </div>
-          <div className="gh-admin-ops-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
-          <table className="w-full min-w-[760px] text-sm">
-            <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
-              <tr>
-                <th className="px-4 py-3 font-semibold">Email</th>
-                <th className="px-4 py-3 font-semibold">Country</th>
-                <th className="px-4 py-3 font-semibold">Locale</th>
-                <th className="px-4 py-3 font-semibold">Source</th>
-                <th className="px-4 py-3 font-semibold">Signed up</th>
-                <th className="px-4 py-3 font-semibold">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--color-border)]">
-              {result.items.map((s) => (
-                <tr key={s.id} className="gh-admin-newsletter-row">
-                  <td className="px-4 py-2 font-semibold text-[var(--color-text-primary)]">{s.email}</td>
-                  <td className="px-4 py-2">{s.countryCode ?? "—"}</td>
-                  <td className="px-4 py-2">{s.locale ?? "—"}</td>
-                  <td className="px-4 py-2">{s.source ?? "—"}</td>
-                  <td className="px-4 py-2">
-                    {new Date(s.createdAt).toLocaleDateString(undefined, {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </td>
-                  <td className="px-4 py-2">
-                    {s.unsubscribedAt ? (
-                      <span className="gh-admin-ops-badge inline-block rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold uppercase text-rose-700">Unsubscribed</span>
-                    ) : (
-                      <span className="gh-admin-ops-badge inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-800">Active</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
-          <div className="gh-admin-mobile-list">
-            {result.items.map((s) => (
-              <PortalMobileCard
-                key={s.id}
-                tone={s.unsubscribedAt ? "neutral" : "success"}
-                title={<span className="break-all">{s.email}</span>}
-                subtitle={s.source ?? "No source"}
-                statusPill={
-                  <Pill tone={s.unsubscribedAt ? "inactive" : "active"}>
-                    {s.unsubscribedAt ? "Unsubscribed" : "Active"}
-                  </Pill>
-                }
-                meta={[
-                  { label: "Country", value: s.countryCode ?? "-" },
-                  { label: "Locale", value: s.locale ?? "-" },
-                  {
-                    label: "Signed up",
-                    value: new Date(s.createdAt).toLocaleDateString(undefined, {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    }),
-                  },
-                ]}
-              />
-            ))}
-          </div>
+          <ColumnPriorityTable<NewsletterSubscriberDto>
+            fields={newsletterFields}
+            rows={result.items}
+            getRowKey={(s) => s.id}
+            cardTone={(s) => (s.unsubscribedAt ? "neutral" : "success")}
+          />
         </AdminCard>
       )}
     </>
   );
 }
+
+const newsletterFields: ColumnPriorityField<NewsletterSubscriberDto>[] = [
+  {
+    key: "email",
+    label: "Email",
+    priority: 1,
+    render: (s) => <span className="break-all font-semibold text-[var(--color-text-primary)]">{s.email}</span>,
+  },
+  {
+    key: "status",
+    label: "Status",
+    priority: 1,
+    render: (s) => (
+      <Pill tone={s.unsubscribedAt ? "inactive" : "active"}>
+        {s.unsubscribedAt ? "Unsubscribed" : "Active"}
+      </Pill>
+    ),
+  },
+  {
+    key: "countryCode",
+    label: "Country",
+    priority: 2,
+    render: (s) => s.countryCode ?? "—",
+  },
+  {
+    key: "createdAt",
+    label: "Signed up",
+    priority: 2,
+    render: (s) => fmtDate(s.createdAt),
+  },
+  {
+    key: "source",
+    label: "Source",
+    priority: 3,
+    render: (s) => s.source ?? "—",
+  },
+  {
+    key: "locale",
+    label: "Locale",
+    priority: 3,
+    render: (s) => s.locale ?? "—",
+  },
+];
