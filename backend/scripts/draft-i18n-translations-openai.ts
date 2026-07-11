@@ -6,13 +6,14 @@ import { prisma } from "../src/db/prisma.js";
 const LOCALES = ["EN", "PT", "ES", "CS", "RO", "DE"] as const;
 type Locale = (typeof LOCALES)[number];
 
-const ENTITIES = ["services", "service-faqs", "doctors", "health-tests", "health-test-faqs"] as const;
+const ENTITIES = ["services", "service-faqs", "doctors", "doctor-markets", "health-tests", "health-test-faqs"] as const;
 type EntityFlag = (typeof ENTITIES)[number];
 
 const TRANS_ENTITY_NAME: Record<EntityFlag, string> = {
   services: "ServiceTranslation",
   "service-faqs": "ServiceFaqTranslation",
   doctors: "DoctorTranslation",
+  "doctor-markets": "DoctorMarketTranslation",
   "health-tests": "HealthTestTranslation",
   "health-test-faqs": "HealthTestFaqTranslation",
 };
@@ -21,6 +22,7 @@ const ENTITY_FIELDS: Record<EntityFlag, readonly string[]> = {
   services: ["name", "summary", "seoTitle", "seoDescription", "heroTitle", "heroDescription", "detailBody", "ctaLabel"],
   "service-faqs": ["question", "answer"],
   doctors: ["title", "bio", "seoTitle", "seoDescription"],
+  "doctor-markets": ["title", "bio", "seoTitle", "seoDescription"],
   "health-tests": ["title", "shortDescription", "sampleType", "resultsTimeline", "heroButtonLabel", "detailIntro", "whatThisTestCovers", "whyGetTested", "seoTitle", "seoDescription"],
   "health-test-faqs": ["question", "answer"],
 };
@@ -308,6 +310,43 @@ async function collectDoctorJobs(completed: Set<string>): Promise<Job[]> {
   return buildJobs(leaves, ENTITY_FIELDS.doctors, completed, new Set());
 }
 
+// DoctorMarketTranslation has no base row of its own — the market's
+// default-locale translation row (if authored) is the source-of-truth per
+// field, falling back to the parent Doctor's base column when that field
+// wasn't authored for the market yet.
+async function collectDoctorMarketJobs(completed: Set<string>): Promise<Job[]> {
+  const doctorCountries = await prisma.doctorCountry.findMany({
+    where: { active: true, doctor: { active: true } },
+    orderBy: { id: "asc" },
+    select: {
+      id: true,
+      doctor: { select: { slug: true, title: true, bio: true, seoTitle: true, seoDescription: true } },
+      country: { select: { code: true, defaultLocale: true, countryLocales: { select: { locale: true } } } },
+      translations: { select: { locale: true, title: true, bio: true, seoTitle: true, seoDescription: true } },
+    },
+  });
+  const leaves: Leaf[] = doctorCountries.map((market) => {
+    const defaultLocale = market.country.defaultLocale as Locale;
+    const defaultRow = market.translations.find((row) => row.locale === defaultLocale) as Record<string, string | null> | undefined;
+    const doctorBase = market.doctor as unknown as Record<string, string | null>;
+    const base: Record<string, string | null> = {};
+    for (const field of ENTITY_FIELDS["doctor-markets"]) {
+      const marketValue = defaultRow?.[field];
+      base[field] = isMeaningful(marketValue) ? marketValue! : doctorBase[field];
+    }
+    return {
+      id: market.id,
+      slug: `${market.country.code}/${market.doctor.slug}`,
+      countryCode: market.country.code,
+      sourceLocale: defaultLocale,
+      targetLocales: countryTargets(market.country),
+      base,
+      translations: rowsByLocale(market.translations) as unknown as Map<Locale, Record<string, string | null>>,
+    };
+  });
+  return buildJobs(leaves, ENTITY_FIELDS["doctor-markets"], completed, new Set());
+}
+
 async function collectHealthTestJobs(completed: Set<string>): Promise<Job[]> {
   const tests = await prisma.healthTest.findMany({
     orderBy: { slug: "asc" },
@@ -370,6 +409,7 @@ async function collectJobs(completed: Set<string>, legacyCompleted: Set<string>)
     case "services": return collectServiceJobs(completed, legacyCompleted);
     case "service-faqs": return collectServiceFaqJobs(completed, legacyCompleted);
     case "doctors": return collectDoctorJobs(completed);
+    case "doctor-markets": return collectDoctorMarketJobs(completed);
     case "health-tests": return collectHealthTestJobs(completed);
     case "health-test-faqs": return collectHealthTestFaqJobs(completed);
   }

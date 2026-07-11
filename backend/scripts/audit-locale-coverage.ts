@@ -111,6 +111,43 @@ async function main() {
   console.log(`Doctors missing >=1 profile translation: ${doctorsMissingTranslation} / ${doctors.length}`);
   console.log(`Doctors with FAQs but missing >=1 enabled locale (direct-locale model): ${doctorsMissingFaqLocale} / ${doctors.length}`);
 
+  // ---- Doctor market profiles (DoctorCountry + DoctorMarketTranslation) ----
+  const doctorCountries = await prisma.doctorCountry.findMany({
+    where: { active: true, doctor: { active: true } },
+    select: {
+      id: true,
+      doctor: { select: { slug: true } },
+      country: { select: { code: true, defaultLocale: true } },
+      translations: { select: { locale: true, title: true, bio: true } },
+    },
+  });
+
+  function isMeaningful(value: string | null | undefined): boolean {
+    if (!value?.trim()) return false;
+    return value.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, "").trim().length > 0;
+  }
+
+  console.log(`\n=== Doctor market profiles: ${doctorCountries.length} total ===`);
+  let marketsMissing = 0;
+  const marketGapDetail: string[] = [];
+  for (const market of doctorCountries) {
+    const enabled = enabledLocalesByCountry.get(market.country.code) ?? ALL_LOCALES;
+    const byLocale = new Map(market.translations.map((t) => [t.locale, t]));
+    const missing = enabled.filter((l) => {
+      if (l === market.country.defaultLocale) return false;
+      const row = byLocale.get(l as any);
+      return !isMeaningful(row?.title) || !isMeaningful(row?.bio);
+    });
+    if (missing.length) {
+      marketsMissing++;
+      marketGapDetail.push(`  [DoctorMarket] ${market.country.code}/${market.doctor.slug} missing bio/title: ${missing.join(",")}`);
+    }
+  }
+  console.log(`Doctor market profiles missing >=1 enabled-locale bio/title: ${marketsMissing} / ${doctorCountries.length}`);
+  console.log("Detail (first 40):");
+  for (const line of marketGapDetail.slice(0, 40)) console.log(line);
+  if (marketGapDetail.length > 40) console.log(`  ...and ${marketGapDetail.length - 40} more`);
+
   // ---- HealthTest + HealthTestTranslation + HealthTestFaq ----
   const tests = await prisma.healthTest.findMany({
     select: {

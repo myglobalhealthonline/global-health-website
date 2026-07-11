@@ -7,7 +7,7 @@ import { prisma } from "../src/db/prisma.js";
 // are currently missing/empty on the target row — never overwrites a meaningful
 // existing value. See CLAUDE.md-adjacent docs/I18N_TRANSLATION_HANDOFF.md for context.
 
-type EntityFlag = "services" | "service-faqs" | "doctors" | "health-tests" | "health-test-faqs";
+type EntityFlag = "services" | "service-faqs" | "doctors" | "doctor-markets" | "health-tests" | "health-test-faqs";
 
 type EntityConfig = {
   parentIdField: string;
@@ -43,6 +43,15 @@ const ENTITY_CONFIG: Record<EntityFlag, EntityConfig> = {
     parentModel: "doctor",
     translationModel: "doctorTranslation",
     uniqueName: "doctorId_locale",
+    requiredFields: ["title"],
+    arrayFields: [],
+    allowedFields: ["title", "bio", "seoTitle", "seoDescription"],
+  },
+  "doctor-markets": {
+    parentIdField: "doctorCountryId",
+    parentModel: "doctorCountry",
+    translationModel: "doctorMarketTranslation",
+    uniqueName: "doctorCountryId_locale",
     requiredFields: ["title"],
     arrayFields: [],
     allowedFields: ["title", "bio", "seoTitle", "seoDescription"],
@@ -114,6 +123,7 @@ const ENTITY_ALIASES: Record<string, EntityFlag> = {
   services: "services", ServiceTranslation: "services",
   "service-faqs": "service-faqs", ServiceFaqTranslation: "service-faqs",
   doctors: "doctors", DoctorTranslation: "doctors",
+  "doctor-markets": "doctor-markets", DoctorMarketTranslation: "doctor-markets",
   "health-tests": "health-tests", HealthTestTranslation: "health-tests",
   "health-test-faqs": "health-test-faqs", HealthTestFaqTranslation: "health-test-faqs",
 };
