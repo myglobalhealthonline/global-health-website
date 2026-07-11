@@ -224,7 +224,7 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
                     <span className="truncate">{formatAppTime(s.startAt, tz)}</span>
                   </span>
                   {isCurrent ? (
-                    <span className="rounded-full bg-[rgba(29,75,54,0.08)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                    <span className="rounded-full bg-[rgba(29,75,54,0.08)] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                       {i18n.current}
                     </span>
                   ) : null}
