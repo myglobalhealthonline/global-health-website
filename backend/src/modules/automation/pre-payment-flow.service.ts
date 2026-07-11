@@ -23,6 +23,7 @@ import {
 import {
   detectAutomationLanguage,
   formatDeadline,
+  prefixServiceName,
   pendingAppointmentDateLabel,
   patientEmailSubject,
   patientWhatsAppInitial,
@@ -41,6 +42,11 @@ import {
 } from "./resolve-order-portal-access.service.js";
 
 const MS_HOUR = 60 * 60 * 1000;
+const MS_MIN = 60 * 1000;
+/** Books this close to the consultation → give a short 5-min pay window instead
+ *  of the normal 1h, so an urgent last-minute booking isn't cancelled on the
+ *  spot for "non-payment" before the patient can pay. */
+const URGENT_BOOKING_HOURS = 2;
 const CONSULTATION_KINDS: CartItemKind[] = [
   CartItemKind.GENERAL_CONSULTATION,
   CartItemKind.SPECIALIST_CONSULTATION,
@@ -83,11 +89,15 @@ export function computePrePaymentPlan(input: {
       : Number.POSITIVE_INFINITY;
 
   if (hoursUntilConsult <= 48) {
+    // Urgent last-minute booking (≤2h out): a 1h-before deadline would already
+    // be in the past at booking time, cancelling the order immediately. Shrink
+    // the lead to 5 minutes before the consultation so the patient can still pay.
+    const leadMs = hoursUntilConsult <= URGENT_BOOKING_HOURS ? 5 * MS_MIN : 1 * MS_HOUR;
     return {
       flow: PrePaymentFlow.WITHIN_48H,
       paymentDueAt:
         consultAt != null
-          ? new Date(consultAt.getTime() - 1 * MS_HOUR)
+          ? new Date(consultAt.getTime() - leadMs)
           : new Date(bookedAt.getTime() + 1 * MS_HOUR),
     };
   }
@@ -219,7 +229,7 @@ async function loadOrderContext(orderId: string, paymentUrl: string | null) {
     patientName: patientFullName,
     patientFirstName: firstName,
     patientLastName: lastName,
-    serviceName: primary.name,
+    serviceName: prefixServiceName(primary.name, order.countryCode),
     doctorName: doctor
       ? formatDoctorForPatientNotification(doctor.fullName, doctor.title)
       : "Assigned doctor",

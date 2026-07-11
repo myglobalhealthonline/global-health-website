@@ -55,6 +55,31 @@ export function detectAutomationLanguage(input: {
   return "en";
 }
 
+/** Country → service-name prefix shown in patient messages (IE-, SP-, CZ-, PT-, RO-). */
+const SERVICE_PREFIX_BY_COUNTRY: Record<string, string> = {
+  ie: "IE",
+  es: "SP",
+  sp: "SP",
+  cz: "CZ",
+  pt: "PT",
+  ro: "RO",
+  rm: "RO",
+};
+
+/**
+ * Prefix a service name with its country code for patient-facing messages
+ * (e.g. "General Consultation" → "IE - General Consultation"). Idempotent —
+ * leaves an already-prefixed name untouched; unknown countries pass through.
+ */
+export function prefixServiceName(serviceName: string, countryCode?: string | null): string {
+  const name = serviceName.trim();
+  const prefix = SERVICE_PREFIX_BY_COUNTRY[(countryCode ?? "").trim().toLowerCase()];
+  if (!prefix) return name;
+  // Already carries a 2-letter prefix (any country) → don't double-prefix.
+  if (/^[A-Za-z]{2}\s*[-–]\s*/.test(name)) return name;
+  return `${prefix} - ${name}`;
+}
+
 export type PrePaymentMessageContext = {
   patientName: string;
   patientFirstName: string;
@@ -466,10 +491,16 @@ export function formatDeadline(
             ? "es-ES"
             : "en-GB";
   try {
+    // Explicit components (not dateStyle/timeStyle) so we can append
+    // timeZoneName — the message must show which timezone the time is in.
     return new Intl.DateTimeFormat(locale, {
-      dateStyle: "medium",
-      timeStyle: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
       timeZone: timeZone ?? "UTC",
+      timeZoneName: "short",
     }).format(date);
   } catch {
     return date.toUTCString();
