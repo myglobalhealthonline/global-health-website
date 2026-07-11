@@ -162,8 +162,8 @@ export function MobileNav({
       </Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" />
-        <Dialog.Content className="fixed inset-x-0 top-0 z-50 flex max-h-[100dvh] flex-col bg-white shadow-[var(--shadow-elevated)] xl:hidden">
+        <Dialog.Overlay className="fixed inset-0 z-[var(--z-drawer-overlay)] bg-black/50 backdrop-blur-sm" />
+        <Dialog.Content className="fixed inset-x-0 top-0 z-[var(--z-drawer)] flex max-h-[100dvh] flex-col bg-white shadow-[var(--shadow-elevated)] xl:hidden">
           <Dialog.Title className="sr-only">{navigation.navHome} navigation</Dialog.Title>
           <Dialog.Description className="sr-only">
             Switch country, change language, and book a consultation.

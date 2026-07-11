@@ -118,11 +118,11 @@ export function NotificationPopover({
             type="button"
             aria-label="Close notifications"
             onClick={() => setOpen(false)}
-            className="fixed inset-0 z-30"
+            className="fixed inset-0 z-[calc(var(--z-dropdown)-1)]"
           />
           <div
             role="menu"
-            className="gh-notification-popover absolute right-0 top-[calc(100%+8px)] z-40 w-[min(360px,calc(100vw-32px))] p-2"
+            className="gh-notification-popover absolute right-0 top-[calc(100%+8px)] z-[var(--z-dropdown)] w-[min(360px,calc(100vw-32px))] p-2"
             style={{
               borderRadius: "var(--portal-radius-xl)",
               border: "1px solid var(--portal-line)",

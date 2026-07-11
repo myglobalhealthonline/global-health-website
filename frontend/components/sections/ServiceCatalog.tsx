@@ -297,7 +297,7 @@ function TileActions({
   bookLabel: string;
 }) {
   return (
-    <div className="relative z-10 mt-4 flex gap-2.5">
+    <div className="relative z-[var(--z-raised)] mt-4 flex gap-2.5">
       <Link
         href={detailHref}
         className="inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-full border border-white/25 bg-white/[0.06] px-3 text-[13px] font-bold tracking-[-0.005em] whitespace-nowrap text-white/90 transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)] focus-visible:outline-none"
@@ -341,7 +341,7 @@ function ServiceTile({
     <Link
       href={overlayHref}
       aria-label={twoButton ? `Learn more: ${s.title}` : s.title}
-      className="absolute inset-0 z-[1] rounded-[var(--radius-card)] focus:outline-none"
+      className="absolute inset-0 z-[var(--z-base)] rounded-[var(--radius-card)] focus:outline-none"
       tabIndex={twoButton ? -1 : 0}
     />
   );

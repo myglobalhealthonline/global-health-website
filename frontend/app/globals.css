@@ -160,13 +160,28 @@
   --section-padding-y-sm: 64px;
   --header-height: 88px;
 
+  /* Shared layering bands. Overlay roles use these values instead of ad-hoc
+   * Tailwind steps so portals can escape header and shell stacking contexts. */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-header: 200;
+  --z-fixed-bar: 250;
+  --z-dropdown: 300;
+  --z-drawer-overlay: 400;
+  --z-drawer: 410;
+  --z-modal-overlay: 500;
+  --z-modal: 510;
+  --z-toast: 600;
+  --z-skip-link: 700;
+
   /* Spacing — fluid block tokens. Drive every section + card inner
    * padding from these instead of hand-coded px values, so the whole
    * page rhythm can be retuned from one place. */
-  --space-section: clamp(4rem, 3rem + 4vw, 7.5rem);
+  --space-section: clamp(4rem, calc(2.5rem + 3vw + 2svh), 7.5rem);
   --space-section-sm: clamp(56px, 7vw, 96px);
   --space-section-tight: clamp(40px, 5vw, 64px);
-  --space-stack: clamp(16px, 1.5vw, 24px);
+  --space-stack: clamp(16px, calc(0.5rem + 1vw + 1svh), 24px);
   --space-inset: clamp(20px, 3vw, 32px);
 
   /* Radius alias — kept as a separate name from --radius-card-sm so
@@ -669,7 +684,7 @@ img {
 .gh-header-sticky {
   position: sticky;
   top: 0;
-  z-index: 40;
+  z-index: var(--z-header);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 

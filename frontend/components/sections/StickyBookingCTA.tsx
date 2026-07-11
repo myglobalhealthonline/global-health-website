@@ -22,7 +22,7 @@ export function StickyBookingCTA({
   if (pathname && HIDDEN_ON.some((seg) => pathname.includes(seg))) return null;
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] md:hidden">
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[var(--z-fixed-bar)] px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] md:hidden">
       {/* Floating pill — mirrors the navbar's gh-header-bookCta recipe
           exactly (same bg/ink/shadow), no bar/container behind it. */}
       <Link

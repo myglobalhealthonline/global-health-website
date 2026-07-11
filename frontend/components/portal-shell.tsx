@@ -221,7 +221,7 @@ export function PortalShell({
           type="button"
           aria-label={c.closeNavigation}
           onClick={() => setNavOpen(false)}
-          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-[calc(var(--z-header)-1)] bg-black/40 backdrop-blur-sm lg:hidden"
         />
       ) : null}
 
@@ -229,7 +229,7 @@ export function PortalShell({
           translate; on desktop the main column gets `lg:pl-[260px]`
           so content doesn't slide under it. */}
       <aside
-        className={`gh-portal-sidebar fixed inset-y-0 left-0 z-40 flex w-[var(--portal-sidebar-w)] max-w-[86vw] flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
+        className={`gh-portal-sidebar fixed inset-y-0 left-0 z-[var(--z-header)] flex w-[var(--portal-sidebar-w)] max-w-[86vw] flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
           navOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
         }`}
       >
@@ -286,7 +286,7 @@ export function PortalShell({
       <div className="flex min-h-screen min-w-0 flex-col lg:pl-[var(--portal-sidebar-w)]">
           {/* Top header — sticky dark glass over scrolling content. */}
           <header
-            className={`gh-portal-topbar${scrolled ? " gh-portal-topbar--scrolled" : ""} sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between gap-3 px-4 sm:px-6`}
+            className={`gh-portal-topbar${scrolled ? " gh-portal-topbar--scrolled" : ""} sticky top-0 z-[var(--z-header)] flex h-16 shrink-0 items-center justify-between gap-3 px-4 sm:px-6`}
           >
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <button
@@ -399,10 +399,10 @@ export function PortalShell({
                       type="button"
                       aria-label={c.closeMenu}
                       onClick={() => setUserMenuOpen(false)}
-                      className="fixed inset-0 z-30"
+                      className="fixed inset-0 z-[calc(var(--z-dropdown)-1)]"
                     />
                     <div
-                      className="gh-portal-user-menu absolute right-0 top-[calc(100%+8px)] z-40 min-w-[224px] p-3"
+                      className="gh-portal-user-menu absolute right-0 top-[calc(100%+8px)] z-[var(--z-dropdown)] min-w-[224px] p-3"
                       style={{
                         borderRadius: "var(--portal-radius-xl)",
                         border: "1px solid var(--portal-line)",
