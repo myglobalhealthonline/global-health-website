@@ -291,7 +291,7 @@ export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
                   <KeyRound className="size-5" aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <form onSubmit={onChangePassword} className="space-y-3">
+                  <form onSubmit={onChangePassword} method="post" className="space-y-3">
                     <label className="block">
                       <span className="gh-field-label">{a.security.currentPassword}</span>
                       <input

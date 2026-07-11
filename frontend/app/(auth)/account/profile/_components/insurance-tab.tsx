@@ -141,7 +141,7 @@ export function InsuranceTab({ i18n = DEFAULT_I18N }: { i18n?: InsuranceI18n }) 
             </p>
           </div>
         </header>
-        <form onSubmit={onSave} className="space-y-4">
+        <form onSubmit={onSave} method="post" className="space-y-4">
           <label className="block">
             <span className="gh-field-label">{i18n.providerName}</span>
             <input

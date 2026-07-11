@@ -191,7 +191,7 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
             </div>
           ) : (
             <FormSection title={a.profile.title} description={a.profile.subtitle}>
-              <form onSubmit={onSubmit} className="gh-form-section__span-2 grid gap-4">
+              <form onSubmit={onSubmit} method="post" className="gh-form-section__span-2 grid gap-4">
                 <label className="block">
                   <span className="gh-field-label">{a.profile.emailLabel}</span>
                   <input

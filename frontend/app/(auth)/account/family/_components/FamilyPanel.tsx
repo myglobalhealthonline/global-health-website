@@ -179,7 +179,7 @@ function AddMemberForm({ t, onAdded }: { t: FamilyCopy; onAdded: () => Promise<v
   }
 
   return (
-      <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-4 p-6">
+      <form onSubmit={onSubmit} method="post" className="gh-patient-form-card gh-card space-y-4 p-6">
       <h2 className="text-sm font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
         {t.addHeading}
       </h2>
@@ -485,7 +485,7 @@ function EditMemberForm({
   }
 
   return (
-      <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-4 p-4">
+      <form onSubmit={onSubmit} method="post" className="gh-patient-form-card gh-card space-y-4 p-4">
       <label className="block">
         <span className="gh-field-label">{t.fullName}</span>
         <input

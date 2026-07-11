@@ -225,7 +225,7 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
           </div>
         </div>
       ) : (
-      <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-5 p-6">
+      <form onSubmit={onSubmit} method="post" className="gh-patient-form-card gh-card space-y-5 p-6">
           <fieldset className="grid gap-3 sm:grid-cols-3">
             <legend className="gh-field-label mb-1 sm:col-span-3">
               {i18n.identityNumbers}

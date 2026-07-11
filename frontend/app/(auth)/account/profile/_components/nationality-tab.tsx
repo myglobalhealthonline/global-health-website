@@ -238,7 +238,7 @@ function SlotCard({
         </p>
       )}
 
-      <form onSubmit={onSave} className="space-y-3">
+      <form onSubmit={onSave} method="post" className="space-y-3">
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block">
             <span className="gh-field-label">{i18n.country}</span>

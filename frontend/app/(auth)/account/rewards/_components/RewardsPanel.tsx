@@ -155,7 +155,7 @@ export function RewardsPanel(props: RewardsPanelProps) {
                     {interpolate(t.redeemCta, { count: kit.requiredWellnessCredits })}
                   </Btn>
                 ) : (
-                  <form onSubmit={(e) => onRedeem(e, kit.healthTestId)} className="gh-patient-form-card grid gap-3">
+                  <form onSubmit={(e) => onRedeem(e, kit.healthTestId)} method="post" className="gh-patient-form-card grid gap-3">
                     <p className="text-xs leading-relaxed" style={{ color: "var(--portal-muted)" }}>{t.shippingNote}</p>
                     <div className="grid gap-3 sm:grid-cols-2">
                       <input name="shipName" required minLength={2} maxLength={120} defaultValue={props.prefillName} placeholder="Full name" className="gh-input sm:col-span-2" />

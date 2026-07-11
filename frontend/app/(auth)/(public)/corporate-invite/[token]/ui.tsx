@@ -110,7 +110,7 @@ export function CorporateInviteForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-5">
+    <form onSubmit={onSubmit} method="post" className="grid gap-5">
       {/* Password */}
       <div className="grid gap-2">
         <label htmlFor="invite-password" className="gh-field-label" data-required>

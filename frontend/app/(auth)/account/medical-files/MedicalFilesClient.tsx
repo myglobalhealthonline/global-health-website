@@ -168,7 +168,7 @@ function UploadForm({ onUploaded }: { onUploaded: (doc: MedicalDoc) => void }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-3 p-5">
+    <form onSubmit={onSubmit} method="post" className="gh-patient-form-card gh-card space-y-3 p-5">
       <h4 className="font-semibold text-[var(--portal-text)]">Upload a report</h4>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">
