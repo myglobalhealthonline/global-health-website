@@ -54,7 +54,7 @@ export default async function DoctorCalendarPage() {
 
   // All scheduled consultations (placed by day client-side, any month).
   const consultations: CalendarItem[] = (appointments.ok ? appointments.data.items : [])
-    .filter((a) => a.scheduledAt)
+    .filter((a) => a.scheduledAt && a.status !== "CANCELLED")
     .map((a) => ({
       id: a.id,
       kind: "consultation" as const,

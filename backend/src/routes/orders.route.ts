@@ -35,6 +35,7 @@ import {
 import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { releaseSlotsToBaseGrid } from "../modules/doctor-availability/doctor-availability.service.js";
 import { sendOrderRefundNotifications } from "../modules/automation/refund-notifications.service.js";
+import { cancelOrderAppointments } from "../modules/appointments/appointments.service.js";
 
 /**
  * Orders + checkout.
@@ -1058,6 +1059,11 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           await releaseOrderCreditReservations(order.id).catch((err) => {
             request.log.error({ err, orderId: order.id }, "Release order credit reservations failed");
           });
+          // Cancel the order's consultation appointments (releases BOOKED slots
+          // and drops the events off the admin + doctor calendars).
+          await cancelOrderAppointments(order.id).catch((err) => {
+            request.log.error({ err, orderId: order.id }, "Cancel order appointments failed");
+          });
         }
         return okResponse({
           id: order.id,
@@ -1145,6 +1151,11 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         }
         await releaseOrderCreditReservations(order.id).catch((err) => {
           request.log.error({ err, orderId: order.id }, "Release order credit reservations on refund failed");
+        });
+        // Refund also cancels the consultation: cancel the appointments, which
+        // releases their BOOKED slots and removes the admin + doctor calendar events.
+        await cancelOrderAppointments(order.id).catch((err) => {
+          request.log.error({ err, orderId: order.id }, "Cancel order appointments on refund failed");
         });
 
         const actor = resolveAdminSessionActor(request);

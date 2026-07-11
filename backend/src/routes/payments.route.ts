@@ -23,6 +23,7 @@ import {
 } from "../modules/subscriptions/redemption.service.js";
 import { releaseOrderCreditReservations } from "../modules/subscriptions/checkout-pricing.service.js";
 import { sendOrderRefundNotifications } from "../modules/automation/refund-notifications.service.js";
+import { cancelOrderAppointments } from "../modules/appointments/appointments.service.js";
 
 const createCheckoutBodySchema = z.object({
   appointmentId: z.string().trim().min(8).max(40),
@@ -578,6 +579,11 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                     status: OrderStatus.REFUNDED,
                     paymentStatus: PaymentStatus.REFUNDED,
                   },
+                });
+                // Cancel the consultation appointments (release slots + drop
+                // calendar events). Idempotent — no-op if already cancelled.
+                await cancelOrderAppointments(order.id).catch((err) => {
+                  app.log.error({ err, orderId: order.id }, "Cancel order appointments on refund failed");
                 });
                 // Credit note + refund email/WhatsApp. Idempotent + fire-and-forget
                 // (the admin refund endpoint may have already sent these).

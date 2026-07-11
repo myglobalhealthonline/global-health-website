@@ -87,6 +87,8 @@ export type AdminCalendarConsultation = {
   scheduledAt: string;
   meetingUrl: string | null;
   countryCode: string;
+  orderId: string | null;
+  orderNumber: string | null;
 };
 
 export type AdminCalendarPayload = {

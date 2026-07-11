@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { IconBtn } from "@/components/portal-atoms";
 
@@ -36,6 +37,11 @@ export function PortalDialog({
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
+  // Portal to <body> so the fixed overlay escapes any ancestor stacking context
+  // (lux glass cards use backdrop-filter/transform, which would otherwise trap it
+  // behind sibling cards). Mount-gated to stay SSR-safe.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!open) return;
@@ -69,9 +75,9 @@ export function PortalDialog({
     };
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!open || !mounted) return null;
 
-  return (
+  return createPortal(
     <div className="gh-portal-dialog-overlay" role="presentation" onClick={onClose}>
       <div
         ref={panelRef}
@@ -95,6 +101,7 @@ export function PortalDialog({
         </div>
         {footer ? <div className="gh-portal-dialog__footer">{footer}</div> : null}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

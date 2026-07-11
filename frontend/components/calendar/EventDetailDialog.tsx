@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { Video } from "lucide-react";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import type { CalendarItem } from "./calendar-types";
@@ -47,6 +48,19 @@ export function EventDetailDialog({ item, tz, onClose }: Props) {
             {item.meta?.patientName ? <Row label="Patient">{item.meta.patientName}</Row> : null}
             {item.meta?.countryCode ? (
               <Row label="Country">{item.meta.countryCode.toUpperCase()}</Row>
+            ) : null}
+            {item.meta?.orderId ? (
+              <Row label="Order">
+                <Link
+                  href={`/admin/orders/${item.meta.orderId}`}
+                  className="font-semibold underline decoration-dotted underline-offset-2"
+                  style={{ color: "var(--portal-accent, #1B4D3E)" }}
+                >
+                  {item.meta.orderNumber
+                    ? `#${item.meta.orderNumber}`
+                    : `#${item.meta.orderId.slice(-8).toUpperCase()}`}
+                </Link>
+              </Row>
             ) : null}
             <Row label="Status">
               <span className={`gh-badge ${statusBadgeClass(item.status)}`}>

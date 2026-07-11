@@ -1,6 +1,7 @@
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { ensureSlotsForRange } from "../doctor-availability/doctor-availability.service.js";
+import { mapAppointmentOrders } from "../orders/appointment-order-number.js";
 
 /**
  * Admin cross-doctor calendar.
@@ -94,6 +95,8 @@ export async function getAdminCalendar(
       prisma.appointment.findMany({
         where: {
           scheduledAt: { gte: fromUtc, lt: toUtc },
+          // Cancelled consultations drop off the calendar (slot already freed).
+          status: { not: "CANCELLED" },
           ...(doctorId ? { doctorId } : {}),
           ...(consultationType ? { consultationType } : {}),
           ...(countryCode ? { countryCode } : {}),
@@ -114,6 +117,10 @@ export async function getAdminCalendar(
       }),
     ]);
 
+    const orderMap = await mapAppointmentOrders(
+      apptRows.filter((a) => a.scheduledAt).map((a) => a.id),
+    );
+
     return {
       slots: slotRows.map((s) => ({
         id: s.id,
@@ -124,9 +131,9 @@ export async function getAdminCalendar(
         status: s.status,
         blockReason: s.blockReason,
       })),
-      consultations: apptRows
-        .filter((a) => a.scheduledAt)
-        .map((a) => ({
+      consultations: (() => {
+        const scheduled = apptRows.filter((a) => a.scheduledAt);
+        return scheduled.map((a) => ({
           id: a.id,
           doctorId: a.doctorId ?? null,
           doctorName: a.doctor?.fullName ?? null,
@@ -136,7 +143,10 @@ export async function getAdminCalendar(
           scheduledAt: a.scheduledAt!.toISOString(),
           meetingUrl: a.meetingUrl,
           countryCode: a.countryCode,
-        })),
+          orderId: orderMap.get(a.id)?.orderId ?? null,
+          orderNumber: orderMap.get(a.id)?.orderNumber ?? null,
+        }));
+      })(),
     };
   } catch (error) {
     throw normalizeDbError(error, "Calendar is temporarily unavailable");
