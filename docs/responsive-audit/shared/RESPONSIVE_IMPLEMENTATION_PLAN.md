@@ -16,7 +16,7 @@ npx playwright test  # where browser assertions are added (Phase 0 harness)
 
 ## Phase 0 — Baseline & Reproduction
 
-- Record current behavior: screenshot matrix at 320/390/768/1024/1440/1920 + 200% zoom for: homepage, /doctors, /pricing, cart+checkout, /book, login; /admin/orders, /admin/patients, /admin/audit-log, /corporate/employees, /doctor/calendar, /account/bookings, one PortalDialog open, NotificationPopover open.
+- Record current behavior: screenshot matrix at 320/390/768/1024/1440/1920 + **heights 568/667/720/800/900 (incl. landscape 667×375, 812×375, 896×414)** + 200% zoom for: homepage, /doctors, /pricing, cart+checkout, /book, login; /admin/orders, /admin/patients, /admin/audit-log, /corporate/employees, /doctor/calendar, /account/bookings, one PortalDialog open, NotificationPopover open.
 - Run the pending runtime verifications from both overlay inventories (SameDayBooking listbox, DoctorFilters right-edge, Z-C1 popover/sidebar, sonner-vs-modal, delete-account Tab-escape, audit-log clip) — promote/demote Unverified findings accordingly.
 - Add automated overflow assertion (page-level only, allow-listed intentional scrollers — slot strips, WeekCalendar, marquees, audit-log wrapper post-fix, PortalTabs):
   `document.documentElement.scrollWidth <= clientWidth`
@@ -37,6 +37,7 @@ npx playwright test  # where browser assertions are added (Phase 0 harness)
 4. Container fixes: availability grid `minmax(0,1fr)` (P-14); corporate requests `flex-wrap` (:149); remove corporate redundant nested scroll wrapper (:238). **S**
 5. Portal table foundation (P-01): remove blanket 720px rule (portal.css:5066-5082); set per-table min-widths from real column budgets; orders forced 1180px (portal.css:2412-2414) reduced after D-01 column trim in Phase 3 — interim cap 960px with column priority `lg:table-cell` gating of Meet/Payment links. Raise/replace the 760px card switch: container query on the list region (`@container list (max-width: <table-budget>)` → card mode). **L** — this closes the 761–1023px gap product-wide.
 6. Establish drawer layering tokens (no drawer yet).
+7. **Height-axis foundations** (design-system §4b): extend `--space-section`/`--space-stack` with an `svh` component; migrate full-height `vh` → `svh`/`dvh` (PortalDialog `88vh` cap, chat panel `60vh`, any hero min-heights); add the two height tiers (`max-height:720px` compact, `max-height:568px` minimum) as shared rules in globals.css/portal.css. No global scaling; reflow + vertical scroll as final fallback; nothing clipped or hidden. **M**
 - Files: globals.css, portal.css, PortalDialog.tsx, SameDayBooking.tsx, audit-log/page.tsx, availability-ui.tsx, requests/page.tsx, employees/page.tsx, ~15 tsx files for z class swaps.
 - Deps: Phase 0 assertions to prove no regression. Risk: **Medium** (z remap touches everything visually — mitigated by mechanical mapping + screenshot diff). Backend: no. Design approval: no.
 - Validation: full screenshot diff vs baseline; overlay assertions pass; Radix-parity checklist on PortalDialog.
@@ -44,6 +45,7 @@ npx playwright test  # where browser assertions are added (Phase 0 harness)
 
 ## Phase 2 — Shared Responsive Primitives
 
+- **Theme fidelity gate (design-system §4c)**: every primitive below is styled to DESIGN.md (public, gh2 forest/ivory glass) or DESIGN2.md (portal, Obsidian Ivory lux) using existing atoms/tokens before its first route ships — visual sign-off required; no unstyled Radix defaults, no generic sheet look. Menus/panels cap height to `svh` remaining-viewport and scroll internally (§4b.6).
 - `AppMenu` (Radix DropdownMenu/Popover wrapper, portalled, `--z-dropdown`, collision defaults). Migrate first consumers: NotificationPopover, user-menu (dedupe portal-shell/admin-shell copies), admin country-picker (token only). **M**
 - `AppSheet` + `RecordDetailsDrawer` (drawer plan §5), incl. skeleton/error/empty slots, URL binding, dirty-guard. **L**
 - `AppDialog`: PortalDialog rename/absorb; migrate delete-account modal (adds trap/restore — P-07) and consultation-documents-modal (fold createPortal one-off). **M**
@@ -64,6 +66,7 @@ Order chosen by workflow criticality (healthcare/corporate/payments + broken men
 5. /admin/invoices drawer D-03 (payments workflow). **M**
 6. /admin/users D-02 ships as the Phase 2 pilot (already done here if sequencing allows).
 7. Website i18n text hazards: header CTA/StickyBookingCTA/SectionNav nowrap, PricingPlanCard clamp, HomeHero 13ch, ServiceCatalog CTAs. **S**
+8. Height-axis pass on flagship screens: heroes/booking wizard/checkout at 568–720px heights — apply compact tier, `svh` media caps (WS-23 image band → `clamp(180px,30svh,280px)`), verify no clipped CTAs in landscape (667×375, 812×375). **M**
 - Deps: Phase 2 primitives. Risk: Medium-High (flagship workflows) — per-route PRs, screenshot+assertion gates, drawer coexistence rules (drawer plan §6). Backend: no. Design approval: order/employee drawer content layout.
 - Validation per route: action-parity checklist, deep-link/back-button, 320–1920 matrix, 200% zoom, keyboard-only pass.
 
@@ -91,6 +94,7 @@ Migrate route-by-route to ColumnPriorityTable + priority classification (invento
 - Calendar tap targets ≥44px hit area on pointer:coarse (Month/Week day cells); `.gh-icon-btn` hit-area padding on coarse. **M** — **needs design approval** (DESIGN.md §5.8 says 32px).
 - VerifiedProfessionals copy → i18n system (content task, coordinate translations). **S**
 - Modals at 320px/zoom sweep (PortalDialog consumers) with assertions. **S**
+- Height-axis sweep, remaining routes: portals + secondary website pages at 568/667/720/800px — compact/minimum tiers applied, all modals/drawers ≤ `88svh` with internal scroll, header compresses below 720px height, no content clipped or hidden anywhere, vertical scroll as final fallback. **M**
 - Doctor filter grids `sm:grid-cols-5/6` → `sm:grid-cols-2 lg:grid-cols-N` (P-12). **S**
 - Risk: Low-Medium. Backend: no.
 

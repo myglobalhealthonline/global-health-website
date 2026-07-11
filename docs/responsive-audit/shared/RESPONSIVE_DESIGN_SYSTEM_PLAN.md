@@ -211,6 +211,40 @@ Constraints honored: server components/pagination/permissions/query params prese
 
 ---
 
+## 4b. Viewport-HEIGHT responsiveness (dual-axis requirement)
+
+The entire application must respond to **both viewport width and viewport height**. Scope: typography, headings, paragraphs, buttons, inputs, images, cards, navigation, modals, tables, spacing, margins, padding, gaps, and section heights.
+
+Hard rules:
+- **Never** globally scale or zoom the application (`zoom:`, `transform:scale()` on shells — banned, same as the width axis).
+- **Never** clip or hide content to fit a short viewport. Reflow first; **vertical scrolling is the final fallback and is always allowed**.
+- Components reduce spacing and dimensions on shorter screens without becoming unusably small — floors apply (type floors §2.2, 44px touch targets, min tap/row heights).
+
+Mechanics:
+1. **Text**: sensible `clamp()` values only, `rem`-bounded, wrapping preserved, readable at every size. Public scale already fluid (globals.css:144-155); where a hero/display size should also track height, use `min(clamp(...width-driven...), Xsvh)`-style caps — never a height-driven shrink below the token floor.
+2. **Fluid space tokens gain a height component**: `--space-section` / `--space-stack` (globals.css:166-169) extended to factor `svh` (e.g. `clamp(min, calc(4vw + 2svh), max)`), so section padding, stack gaps and card padding compress on short screens (landscape phones 568–720px tall, small laptops 768–800px) before any content is lost.
+3. **Section heights**: no fixed `vh` hero/section heights that assume tall screens. Use `min-height: min(Xsvh, fixed-cap)` + internal reflow; heroes must fully render at 568px height with scroll takeover beyond.
+4. **`svh`/`dvh` over `vh`** for anything full-height (mobile dynamic toolbars): MobileNav already correct (`max-h-[100dvh]`); apply the same to entry gate, auth shell (`minHeight:100svh` already correct — GH2PagePrimitives), drawers, sheets.
+5. **Modals/drawers/sheets**: `max-height: min(88svh, cap)` + internal scroll + sticky header/footer (PortalDialog already does `min(88vh,720px)` — migrate `vh`→`svh`; AppSheet inherits the rule). A modal must never exceed the visible viewport at any height ≥ 480px.
+6. **Navigation**: header height compresses on short viewports (reduced padding tier below ~720px height); dropdown/menu panels cap `max-height` to remaining viewport (`max-h-[min(calc(100svh-<offset>),cap)]` — pattern already proven in CountrySwitcher) and scroll internally.
+7. **Tables/lists**: row density is width-driven (container queries); height affects only sticky-header + internal scroll caps for embedded scroll regions (chat panel `60vh/560px` cap portal.css:2593-2602 → `svh`).
+8. **Images/media**: `max-height` caps tied to `svh` on hero/detail media bands (e.g. the 240px fixed band WS-23 becomes `clamp(180px, 30svh, 280px)`); `object-fit: cover` retained; never crop meaningful content — prefer smaller presentation box.
+9. **Height breakpoints**: use sparingly, as tiers not per-component one-offs: `@media (max-height: 720px)` = compact tier (reduced section padding, tighter card padding, smaller display type within clamp range), `@media (max-height: 568px)` = minimum tier (all optional decorative spacing collapses). Precedent exists: CountryEntryGate height-tuned media queries (`(min-width:1024px) and (max-height:940px)`).
+10. **Landscape mobile** (short + wide) must pass the same matrix: 667×375, 812×375, 896×414 — no clipped CTAs, no unreachable content, scroll available.
+
+Verification: every route in the matrix is additionally tested at heights 568/667/720/800/900px (implementation plan Phase 0); acceptance = zero content clipped or hidden, all primary actions reachable, scroll takes over past the compact tier.
+
+## 4c. Visual quality mandate for new primitives
+
+Everything new this plan introduces (RecordDetailsDrawer/AppSheet, AppMenu, AppDialog, ColumnPriorityTable, ResponsiveFilterBar, mobile cards, filter sheets) must look native to the existing design systems — premium, not bolted-on:
+
+- **Portal surfaces** follow DESIGN2.md (Obsidian Ivory · Liquid Lux) — lux tokens, existing card/pill/button atoms (`portal-atoms`), the established radii/borders/shadows, `.gh-portal-*` chrome language. Drawer = ivory panel, obsidian scrim, lux hairlines, same header/eyebrow typography as portal cards; NOT a generic white shadcn sheet.
+- **Public surfaces** follow DESIGN.md + gh2 system (forest/ivory/obsidian glass) — filter sheets and menus reuse `gh2-glass-*` treatments, existing focus/hover states, and join both backdrop-filter fallback blocks per the CSS-split rule.
+- Reuse before invent: existing atoms (Btn, Pill, IconBtn, AdminEmptyState, portal-skeletons, PortalMobileCard tones) are the vocabulary; new primitives compose them.
+- Motion: entrance/exit transitions consistent with existing dialog/sheet animations (portal.css bottom-sheet slide), honoring the existing `prefers-reduced-motion` blanket.
+- No template look: no uniform default-styled card grids, no unstyled Radix defaults shipped; every primitive styled to spec before its first route ships.
+- Gate: each new primitive gets a visual sign-off against DESIGN.md/DESIGN2.md before route rollout (implementation plan Phase 2 validation).
+
 ## 5. Filter-toolbar behavior at narrow widths
 
 Canonical pattern = `.gh-admin-appointment-filter-grid` (portal.css:1247-1357): CSS grid `repeat(4,minmax(0,1fr))` → 2 → 1 column collapse. Rules:

@@ -5,6 +5,8 @@ Audit date: 2026-07-11 · Status: PROPOSAL. Every drawer here is **additive**: n
 ## 1. Shared drawer principles
 
 - One primitive: **`RecordDetailsDrawer`** built on the shared `AppSheet` (Radix Dialog side-variant; see `../shared/RESPONSIVE_DESIGN_SYSTEM_PLAN.md` §3.2). Same primitive later serves website filter sheets — no parallel implementations.
+- **Theme fidelity (design-system §4c)**: the drawer is styled to DESIGN2.md Obsidian Ivory · Liquid Lux — ivory panel, obsidian scrim, lux hairlines/radii/shadows, portal eyebrow/title typography, existing `portal-atoms` (Btn/Pill/IconBtn) for all controls, existing skeleton/empty-state components for its states. It must read as a native portal surface, not a generic sheet. Public-site filter-sheet variant uses gh2 forest/ivory glass per DESIGN.md and joins both backdrop-filter fallback blocks. Visual sign-off against the design docs before first route ships.
+- **Height responsiveness (design-system §4b)**: panel `max-height: 100svh` mobile / `min(88svh, cap)` where inset; sticky header + footer, body scrolls internally; safe at 568px height and landscape phones; never clips content — scroll is the fallback.
 - Layering: overlay `--z-drawer-overlay` (400), panel `--z-drawer` (410) — above sticky headers/dropdowns, below modals/toasts.
 - Desktop: right-side panel, width variants sm 420 / md 520 / lg 640px; list stays visible; background inert (modal); focus moves in on open, returns to trigger row on close.
 - Tablet: `min(80vw, lg)` — never leaves an unusable list sliver.
