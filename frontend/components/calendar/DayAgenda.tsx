@@ -40,6 +40,9 @@ type Props = {
   renderSlotAction?: (item: CalendarItem) => ReactNode;
   /** Show the doctor name on each row (admin/patient views). */
   showDoctorName?: boolean;
+  /** Skip the internal date header — for hosts (day drawer) that already
+   *  render the date as their own title. */
+  hideHeader?: boolean;
 };
 
 function consultationBadgeClass(status: string): string {
@@ -79,6 +82,7 @@ export function DayAgenda({
   onSelectConsultation,
   renderSlotAction,
   showDoctorName,
+  hideHeader = false,
 }: Props) {
   const consultations = items.filter((i) => i.kind === "consultation");
   const slots = items.filter((i) => i.kind === "slot");
@@ -87,6 +91,9 @@ export function DayAgenda({
 
   return (
     <div className="gh-agenda-panel gh-card flex h-full flex-col p-0">
+      {/* hideHeader: hosts like the admin day drawer already show the date
+          as the sheet title — skip the duplicate header row there. */}
+      {hideHeader ? null : (
       <div
         className="flex items-center gap-2 px-4 py-3"
         style={{ borderBottom: "1px solid var(--portal-line)" }}
@@ -103,6 +110,7 @@ export function DayAgenda({
           </span>
         ) : null}
       </div>
+      )}
 
       <div className="flex-1 overflow-y-auto p-4">
         {!dayKey ? (

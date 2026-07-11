@@ -5904,3 +5904,9 @@ a.gh-appointment-card:hover {
     transition: none;
   }
 }
+
+/* Adjacent-month day cells — super light: date number and event chips both
+ * fade hard so the current month reads as the only "real" content. */
+.gh-calendar-day-outside > * {
+  opacity: 0.3;
+}
