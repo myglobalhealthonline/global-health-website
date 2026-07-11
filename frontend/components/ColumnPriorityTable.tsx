@@ -19,6 +19,8 @@ export type ColumnPriorityField<T> = {
    *  card's meta list (e.g. an inline multi-button action cell that's
    *  replaced by `cardActions` below 760px, D-04). */
   desktopOnly?: boolean;
+  /** Selects the primary title rendered in the mobile card. */
+  cardPrimary?: boolean;
   align?: "left" | "right" | "center";
 };
 
@@ -107,7 +109,9 @@ export function ColumnPriorityTable<T>({
 
       <div className="gh-admin-mobile-list gh-cpt-mobile-list">
         {rows.map((row) => {
-          const [primary, ...rest] = cardFields;
+          const primaryIndex = cardFields.findIndex((field) => field.cardPrimary);
+          const primary = primaryIndex === -1 ? cardFields[0] : cardFields[primaryIndex];
+          const rest = cardFields.filter((field) => field !== primary);
           return (
             <PortalMobileCard
               key={getRowKey(row)}
