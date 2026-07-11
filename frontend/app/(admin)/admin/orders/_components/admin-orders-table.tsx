@@ -240,9 +240,9 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
             <Th>Items</Th>
             <Th align="right">Total</Th>
             <Th>Status</Th>
-            <Th>Meet link</Th>
+            <Th className="hidden lg:table-cell">Meet link</Th>
             <Th>Invoice</Th>
-            <Th>Payment link</Th>
+            <Th className="hidden lg:table-cell">Payment link</Th>
             <Th>Created</Th>
             <Th align="right" style={{ width: 160 }}>
               {" "}
@@ -285,7 +285,7 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                   <Td>
                     <Pill tone={statusTone(o.status)}>{o.status.toLowerCase()}</Pill>
                   </Td>
-                  <Td>
+                  <Td className="hidden lg:table-cell">
                     <OrderMeetLinkDisplay
                       meetingUrl={o.meetingUrl ?? null}
                       hasConsultation={o.hasConsultation ?? false}
@@ -307,7 +307,7 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                       <span className="text-[11px] text-[var(--color-text-muted)]">—</span>
                     )}
                   </Td>
-                  <Td>
+                  <Td className="hidden lg:table-cell">
                     {o.stripeCheckoutUrl ? (
                       <CopyLinkButton url={o.stripeCheckoutUrl} />
                     ) : (

@@ -496,14 +496,17 @@ export function Th({
 export function Td({
   children,
   align = "left",
+  className,
   style = {},
 }: {
   children?: ReactNode;
   align?: "left" | "right" | "center";
+  className?: string;
   style?: CSSProperties;
 }) {
   return (
     <td
+      className={className}
       style={{
         padding: "14px 16px",
         textAlign: align,
