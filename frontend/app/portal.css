@@ -5590,6 +5590,34 @@ a.gh-appointment-card:hover {
   }
 }
 
+/* AppMenu portal skin — elevated ivory liquid surface, with Radix handling
+   the portal, collision and keyboard mechanics. */
+.gh-portal-menu-content {
+  border: 1px solid transparent;
+  border-radius: var(--portal-radius-xl);
+  background-image: var(--lux-modal-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-modal);
+  color: var(--portal-text);
+}
+
+.gh-portal-menu-item {
+  display: block;
+  border-radius: var(--portal-radius-sm);
+  padding: 6px 8px;
+  color: var(--portal-text);
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+}
+
+.gh-portal-menu-item:hover,
+.gh-portal-menu-item:focus-visible,
+.gh-portal-menu-item[data-highlighted] {
+  background: var(--portal-well);
+}
+
 /* Container-aware list fallback: the available main-column width, rather than
    the viewport, decides when established portal card lists replace tables. */
 @container list (max-width: 960px) {

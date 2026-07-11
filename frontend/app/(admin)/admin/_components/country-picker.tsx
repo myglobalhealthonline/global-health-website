@@ -61,7 +61,7 @@ export function CountryPicker({
         <DropdownMenu.Content
           align="end"
           sideOffset={6}
-          className="gh-admin-country-picker-menu z-[var(--z-dropdown)] min-w-[240px] p-1.5"
+          className="gh-app-menu-content gh-portal-menu-content gh-admin-country-picker-menu z-[var(--z-dropdown)] min-w-[240px] p-1.5"
           style={{
             borderRadius: "var(--portal-radius-xl)",
             border: "1px solid var(--portal-line)",
@@ -81,7 +81,7 @@ export function CountryPicker({
               <DropdownMenu.Item
                 key={c.id}
                 onSelect={() => select(c.slug)}
-                className="gh-admin-country-picker-item flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-semibold outline-none hover:bg-[var(--portal-well)]"
+                className="gh-admin-country-picker-item flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-semibold outline-none data-[highlighted]:bg-[var(--portal-well)] focus-visible:ring-2 focus-visible:ring-[var(--portal-signal)]"
                 style={active ? { background: "var(--portal-mint-soft)", color: "var(--portal-accent-text)" } : { color: "var(--portal-text)" }}
               >
                 <FlagBadge code={c.slug} size={16} />
