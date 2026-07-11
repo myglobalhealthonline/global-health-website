@@ -149,12 +149,12 @@ export default async function AdminPagesListPage({
           method="get"
         >
           <ResponsiveFilterBar>
-            <label className="flex min-w-0 flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
+            <label className="flex min-w-0 flex-col text-portal-meta font-semibold text-[var(--color-text-muted)]">
               Country
               <select
                 name="countryId"
                 defaultValue={filters.countryId ?? ""}
-                className="mt-1 min-w-0 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+                className="mt-1 min-w-0 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-portal-body text-[var(--color-text-primary)]"
               >
                 <option value="">All countries</option>
                 {countries.map((c) => (
@@ -164,12 +164,12 @@ export default async function AdminPagesListPage({
                 ))}
               </select>
             </label>
-            <label className="flex min-w-0 flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
+            <label className="flex min-w-0 flex-col text-portal-meta font-semibold text-[var(--color-text-muted)]">
               Page type
               <select
                 name="pageKey"
                 defaultValue={filters.pageKey ?? ""}
-                className="mt-1 min-w-0 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+                className="mt-1 min-w-0 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-portal-body text-[var(--color-text-primary)]"
               >
                 <option value="">All page types</option>
                 {ADMIN_PAGE_KEYS.map((k) => (
@@ -179,12 +179,12 @@ export default async function AdminPagesListPage({
                 ))}
               </select>
             </label>
-            <label className="flex min-w-0 flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
+            <label className="flex min-w-0 flex-col text-portal-meta font-semibold text-[var(--color-text-muted)]">
               Locale
               <select
                 name="locale"
                 defaultValue={filters.locale ?? ""}
-                className="mt-1 min-w-0 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+                className="mt-1 min-w-0 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-portal-body text-[var(--color-text-primary)]"
               >
                 <option value="">All locales</option>
                 {["EN", "PT", "ES", "CS", "RO", "DE"].map((l) => (
@@ -194,12 +194,12 @@ export default async function AdminPagesListPage({
                 ))}
               </select>
             </label>
-            <label className="flex min-w-0 flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
+            <label className="flex min-w-0 flex-col text-portal-meta font-semibold text-[var(--color-text-muted)]">
               Status
               <select
                 name="status"
                 defaultValue={filters.status ?? ""}
-                className="mt-1 min-w-0 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+                className="mt-1 min-w-0 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-portal-body text-[var(--color-text-primary)]"
               >
                 <option value="">Any status</option>
                 <option value="PUBLISHED">Published</option>

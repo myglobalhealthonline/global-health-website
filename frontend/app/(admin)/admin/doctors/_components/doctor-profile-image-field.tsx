@@ -320,7 +320,7 @@ export function DoctorProfileImageField({
         <p className="text-xs text-[var(--color-status-warning-text)]">{msg}</p>
       ) : null}
 
-      <span className="text-[11px] text-[var(--color-text-muted)]">
+      <span className="text-portal-thead text-[var(--color-text-muted)]">
         JPEG / PNG / WebP · max 5 MB. Click the tile or drop a file to upload.
       </span>
     </div>

@@ -429,7 +429,7 @@ export default async function AdminEditServicePage({
     <>
       <Link
         href={`/admin/services/${id}?kind=${encodeURIComponent(kind)}`}
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to {service.name}
       </Link>
@@ -539,7 +539,7 @@ export default async function AdminEditServicePage({
               </button>
               <Link
                 href={`/admin/services/${id}?kind=${encodeURIComponent(kind)}`}
-                className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+                className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
               >
                 Cancel
               </Link>
@@ -582,13 +582,13 @@ export default async function AdminEditServicePage({
                     style={{ aspectRatio: "4 / 3", objectFit: "cover" }}
                   />
                 </div>
-                <p className="mt-2 text-[11px] text-[var(--color-text-muted)]">
+                <p className="mt-2 text-portal-thead text-[var(--color-text-muted)]">
                   Change the image via the “Hero image” field in the form.
                 </p>
               </>
             ) : (
               <div
-                className="gh-admin-service-image-empty mt-3 grid place-items-center text-center text-[12px] text-[var(--color-text-muted)]"
+                className="gh-admin-service-image-empty mt-3 grid place-items-center text-center text-portal-meta text-[var(--color-text-muted)]"
                 style={{
                   aspectRatio: "4 / 3",
                   borderRadius: 12,
@@ -620,10 +620,10 @@ export default async function AdminEditServicePage({
               }}
             >
               <div>
-                <p className="m-0 text-[13px] font-bold text-[var(--color-text-primary)]">
+                <p className="m-0 text-portal-compact font-bold text-[var(--color-text-primary)]">
                   Active
                 </p>
-                <p className="m-0 text-[12px] text-[var(--color-text-muted)]">
+                <p className="m-0 text-portal-meta text-[var(--color-text-muted)]">
                   Listed on the public site
                 </p>
               </div>
@@ -654,7 +654,7 @@ export default async function AdminEditServicePage({
                 />
               </span>
             </div>
-            <p className="text-[11px] text-[var(--color-text-muted)]">
+            <p className="text-portal-thead text-[var(--color-text-muted)]">
               Toggle from the form&apos;s Active checkbox to switch.
             </p>
           </FormSection>
@@ -663,28 +663,28 @@ export default async function AdminEditServicePage({
           <FormSection title="Key facts" className="gh-admin-service-side-card">
             <dl className="gh-admin-service-facts mt-3 grid gap-3">
               <div className="flex items-center justify-between">
-                <dt className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                <dt className="text-portal-meta uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                   Duration
                 </dt>
-                <dd className="text-[13px] font-bold text-[var(--color-text-primary)]">
+                <dd className="text-portal-compact font-bold text-[var(--color-text-primary)]">
                   {service.durationMinutes != null
                     ? `${service.durationMinutes} min`
                     : "—"}
                 </dd>
               </div>
               <div className="flex items-center justify-between">
-                <dt className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                <dt className="text-portal-meta uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                   Sort order
                 </dt>
-                <dd className="text-[13px] font-bold text-[var(--color-text-primary)]">
+                <dd className="text-portal-compact font-bold text-[var(--color-text-primary)]">
                   {service.sortOrder}
                 </dd>
               </div>
               <div className="flex items-center justify-between">
-                <dt className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                <dt className="text-portal-meta uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                   Currency
                 </dt>
-                <dd className="font-mono text-[13px] text-[var(--color-text-primary)]">
+                <dd className="font-mono text-portal-compact text-[var(--color-text-primary)]">
                   {service.currencyCode ?? "—"}
                 </dd>
               </div>

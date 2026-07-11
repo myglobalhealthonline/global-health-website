@@ -59,11 +59,11 @@ function FieldRow({
 }) {
   return (
     <div className={full ? "sm:col-span-2" : ""}>
-      <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+      <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
         {label}
       </dt>
       <dd
-        className="mt-1 text-[14px] text-[var(--color-text-primary)]"
+        className="mt-1 text-portal-body text-[var(--color-text-primary)]"
         style={mono ? { fontFamily: "ui-monospace, monospace", fontSize: 12.5 } : undefined}
       >
         {value}
@@ -154,7 +154,7 @@ export default async function AdminServiceDetailPage({
     <>
       <Link
         href={meta.listHref}
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to {meta.label.toLowerCase()}
       </Link>
@@ -197,7 +197,7 @@ export default async function AdminServiceDetailPage({
         <div className="grid gap-4">
           <AdminCard>
             <h3 style={cardTitleStyle}>Basics</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Identifiers and pricing.
             </p>
             <dl className="gh-admin-service-details">
@@ -234,21 +234,21 @@ export default async function AdminServiceDetailPage({
 
           <AdminCard>
             <h3 style={cardTitleStyle}>Summary</h3>
-            <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed text-[var(--color-text-body)]">
+            <p className="mt-3 whitespace-pre-wrap text-portal-body leading-relaxed text-[var(--color-text-body)]">
               {service.summary ?? "—"}
             </p>
           </AdminCard>
 
           <AdminCard>
             <h3 style={cardTitleStyle}>Hero description</h3>
-            <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed text-[var(--color-text-body)]">
+            <p className="mt-3 whitespace-pre-wrap text-portal-body leading-relaxed text-[var(--color-text-body)]">
               {service.heroDescription ?? "—"}
             </p>
           </AdminCard>
 
           <AdminCard>
             <h3 style={cardTitleStyle}>Detail body</h3>
-            <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed text-[var(--color-text-body)]">
+            <p className="mt-3 whitespace-pre-wrap text-portal-body leading-relaxed text-[var(--color-text-body)]">
               {service.detailBody
                 ? service.detailBody
                     .replace(/<[^>]*>/g, " ")
@@ -271,7 +271,7 @@ export default async function AdminServiceDetailPage({
         <div className="grid gap-4 self-start">
           <AdminCard>
             <h3 style={cardTitleStyle}>Visibility</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Soft-deactivate hides this record from the public services API and card listings.
             </p>
             {service.isActive ? (
@@ -281,7 +281,7 @@ export default async function AdminServiceDetailPage({
                 </button>
               </form>
             ) : (
-              <p className="text-[13px] text-[var(--color-text-muted)]">
+              <p className="text-portal-compact text-[var(--color-text-muted)]">
                 This {meta.singularLabel.toLowerCase()} is inactive. Re-enable from Edit.
               </p>
             )}
@@ -296,7 +296,7 @@ export default async function AdminServiceDetailPage({
             >
               Danger zone
             </h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Permanent delete removes this record instead of hiding it.
             </p>
             <form action={deleteServiceAction}>

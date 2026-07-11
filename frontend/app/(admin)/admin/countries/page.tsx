@@ -94,7 +94,7 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
       <AdminCard padding={0} className="gh-admin-country-list overflow-hidden">
         {/* Toolbar */}
         <div className="gh-admin-country-toolbar flex items-center gap-3 border-b border-[var(--color-border)] px-5 py-3.5">
-          <span className="text-[13px] text-[var(--color-text-muted)]">
+          <span className="text-portal-compact text-[var(--color-text-muted)]">
             {rows.length} countries · {publishedCount} active
           </span>
         </div>

@@ -81,7 +81,7 @@ export default async function AdminSpecialtyNewPage({ searchParams }: PageProps)
     <>
       <Link
         href="/admin/specialties"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to categories
       </Link>
@@ -135,7 +135,7 @@ export default async function AdminSpecialtyNewPage({ searchParams }: PageProps)
               />
             </label>
           </div>
-          <p className="-mt-2 text-[12px] text-[var(--color-text-muted)]">
+          <p className="-mt-2 text-portal-meta text-[var(--color-text-muted)]">
             Slug must be lowercase and use hyphens only.
           </p>
 
@@ -147,7 +147,7 @@ export default async function AdminSpecialtyNewPage({ searchParams }: PageProps)
               placeholder="Short description shown on the public specialty card"
             />
           </label>
-          <p className="-mt-2 text-[12px] text-[var(--color-text-muted)]">
+          <p className="-mt-2 text-portal-meta text-[var(--color-text-muted)]">
             Enter the default language here. Add other languages after creating,
             from the category&apos;s edit page.
           </p>
@@ -180,7 +180,7 @@ export default async function AdminSpecialtyNewPage({ searchParams }: PageProps)
             </label>
           </div>
 
-          <p className="text-[12px] text-[var(--color-text-muted)]">
+          <p className="text-portal-meta text-[var(--color-text-muted)]">
             The card links automatically to the first active service under this category. Edit
             consultation time and price in{" "}
             <Link
@@ -192,7 +192,7 @@ export default async function AdminSpecialtyNewPage({ searchParams }: PageProps)
             .
           </p>
 
-          <label className="flex items-center gap-2 text-[13px] text-[var(--color-text-primary)]">
+          <label className="flex items-center gap-2 text-portal-compact text-[var(--color-text-primary)]">
             <input type="checkbox" name="active" defaultChecked className="h-4 w-4" />
             Active
           </label>
@@ -203,7 +203,7 @@ export default async function AdminSpecialtyNewPage({ searchParams }: PageProps)
             </button>
             <Link
               href="/admin/specialties"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Cancel
             </Link>

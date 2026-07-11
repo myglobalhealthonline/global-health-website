@@ -48,7 +48,7 @@ export function AdminServicesTable({
       key: "slug",
       label: "Slug",
       priority: 3,
-      render: (s) => <span className="font-mono text-[11px] text-[var(--color-text-muted)]">{s.slug}</span>,
+      render: (s) => <span className="font-mono text-portal-thead text-[var(--color-text-muted)]">{s.slug}</span>,
     },
     {
       key: "country",
@@ -57,7 +57,7 @@ export function AdminServicesTable({
       render: (s) => (
         <span className="inline-flex items-center gap-2">
           <FlagBadge code={s.country.code} size={14} />
-          <span className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+          <span className="text-portal-meta uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
             {s.country.code}
           </span>
         </span>

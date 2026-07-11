@@ -134,7 +134,7 @@ export function DoctorFields({
                       <span className="block font-medium text-[var(--color-text-primary)]">
                         {s.name}
                       </span>
-                      <span className="block text-[11px] text-[var(--color-text-muted)]">
+                      <span className="block text-portal-thead text-[var(--color-text-muted)]">
                         {s.slug}
                         {!s.active ? " · inactive" : ""}
                       </span>

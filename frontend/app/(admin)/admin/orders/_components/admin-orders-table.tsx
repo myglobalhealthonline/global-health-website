@@ -60,7 +60,7 @@ function CopyLinkButton({ url }: { url: string }) {
       type="button"
       onClick={handleCopy}
       title="Copy payment link"
-      className="gh-admin-order-copy-link inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-2 py-1 text-[11px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)] transition-colors"
+      className="gh-admin-order-copy-link inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-2 py-1 text-portal-thead font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)] transition-colors"
     >
       {copied ? (
         <Check className="size-3 text-emerald-600" aria-hidden />
@@ -312,7 +312,7 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                           type="button"
                           onClick={() => setPendingRefundId(o.id)}
                           disabled={pending}
-                          className="inline-flex items-center gap-1 rounded-md border border-amber-300 px-2 py-1 text-[11px] font-semibold text-amber-700 hover:bg-amber-50 disabled:opacity-60"
+                          className="inline-flex items-center gap-1 rounded-md border border-amber-300 px-2 py-1 text-portal-thead font-semibold text-amber-700 hover:bg-amber-50 disabled:opacity-60"
                         >
                           {pending ? (
                             <Loader2 className="size-3 animate-spin" aria-hidden />
@@ -362,7 +362,7 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                     type="button"
                     onClick={() => setPendingRefundId(o.id)}
                     disabled={pending}
-                    className="inline-flex items-center gap-1 rounded border border-amber-300 bg-white px-2 py-1 text-[11px] font-semibold text-amber-700 hover:bg-amber-50 disabled:opacity-60"
+                    className="inline-flex items-center gap-1 rounded border border-amber-300 bg-white px-2 py-1 text-portal-thead font-semibold text-amber-700 hover:bg-amber-50 disabled:opacity-60"
                   >
                     {pending ? (
                       <Loader2 className="size-3 animate-spin" aria-hidden />

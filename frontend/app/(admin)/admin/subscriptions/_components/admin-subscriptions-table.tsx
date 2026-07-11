@@ -238,7 +238,7 @@ export function AdminSubscriptionsTable({
               />
               <a
                 href={`/admin/audit-log?entityType=UserSubscription&entityId=${quickViewSub.id}`}
-                className="text-[11px] font-semibold text-[var(--color-brand-primary)] underline-offset-2 hover:underline"
+                className="text-portal-thead font-semibold text-[var(--color-brand-primary)] underline-offset-2 hover:underline"
               >
                 View audit trail
               </a>

@@ -336,7 +336,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
     <>
       <Link
         href="/admin/plans"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to plans
       </Link>
@@ -428,7 +428,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                       <input type="hidden" name="serviceId" value={rule.serviceId} />
                       <ConfirmDeleteButton
                         message={`Remove the rule for "${rule.service.name}"? This deletes it from the plan.`}
-                        className="text-[13px] font-semibold text-[var(--color-status-error-text)] hover:underline"
+                        className="text-portal-compact font-semibold text-[var(--color-status-error-text)] hover:underline"
                       >
                         Remove
                       </ConfirmDeleteButton>
@@ -437,7 +437,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                 ))}
               </ul>
             )}
-            <p className="mb-4 rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] px-4 py-3 text-[13px] text-[var(--color-text-body)]">
+            <p className="mb-4 rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] px-4 py-3 text-portal-compact text-[var(--color-text-body)]">
               <span className="font-semibold">Add or update a visit:</span> 1) pick the service, 2) choose what members pay,
               3) (optional) set when it unlocks. Re-adding the same service updates it.
             </p>
@@ -537,7 +537,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                       <input type="hidden" name="perkKey" value={perk.perkKey} />
                       <ConfirmDeleteButton
                         message={`Remove the "${PERK_LABELS[perk.perkKey] ?? perk.perkKey}" perk rule?`}
-                        className="text-[13px] font-semibold text-[var(--color-status-error-text)] hover:underline"
+                        className="text-portal-compact font-semibold text-[var(--color-status-error-text)] hover:underline"
                       >
                         Remove
                       </ConfirmDeleteButton>
@@ -613,7 +613,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                       <input type="hidden" name="healthTestId" value={rule.healthTestId} />
                       <ConfirmDeleteButton
                         message={`Remove the redemption rule for "${rule.healthTest.title}"? This deletes it from the plan.`}
-                        className="text-[13px] font-semibold text-[var(--color-status-error-text)] hover:underline"
+                        className="text-portal-compact font-semibold text-[var(--color-status-error-text)] hover:underline"
                       >
                         Remove
                       </ConfirmDeleteButton>

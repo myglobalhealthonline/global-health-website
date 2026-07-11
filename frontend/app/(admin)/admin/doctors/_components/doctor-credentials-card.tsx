@@ -94,7 +94,7 @@ export function DoctorCredentialsCard({
   return (
     <AdminCard className="gh-admin-doctor-credentials-card">
       <h3 style={cardTitleStyle}>Credentials</h3>
-      <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+      <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
         Confirmed professional credentials beyond the council registration (e.g.
         FRCP, MICGP). Each shows on the profile and in the doctor&apos;s schema as
         recognised by its issuing body. Only add verified credentials.
@@ -132,7 +132,7 @@ export function DoctorCredentialsCard({
         action={addCredential}
         className="gh-admin-doctor-credential-row gh-admin-doctor-credential-add rounded-md border border-dashed border-[var(--color-border)] p-3"
       >
-        <p className="mb-2 text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+        <p className="mb-2 text-portal-meta font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
           Add credential
         </p>
         <CredentialFields row={null} associatedCountries={associatedCountries} />

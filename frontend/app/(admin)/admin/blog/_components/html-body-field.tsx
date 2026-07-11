@@ -104,7 +104,7 @@ export function HtmlBodyField({ name, initialValue }: Props) {
         <button
           type="button"
           onClick={() => htmlInputRef.current?.click()}
-          className="gh-btn gh-btn-soft text-[13px]"
+          className="gh-btn gh-btn-soft text-portal-compact"
         >
           Upload .html file
         </button>
@@ -119,7 +119,7 @@ export function HtmlBodyField({ name, initialValue }: Props) {
           type="button"
           disabled={imgBusy}
           onClick={() => imageInputRef.current?.click()}
-          className="gh-btn gh-btn-soft text-[13px] disabled:opacity-60"
+          className="gh-btn gh-btn-soft text-portal-compact disabled:opacity-60"
         >
           {imgBusy ? "Uploading…" : "Upload image"}
         </button>
@@ -131,12 +131,12 @@ export function HtmlBodyField({ name, initialValue }: Props) {
           onChange={handleImageFile}
         />
         {fileName ? (
-          <span className="text-[12px] text-[var(--color-text-muted)]">Loaded: {fileName}</span>
+          <span className="text-portal-meta text-[var(--color-text-muted)]">Loaded: {fileName}</span>
         ) : null}
         <button
           type="button"
           onClick={() => setShowPreview((v) => !v)}
-          className="gh-btn gh-btn-soft gh-admin-html-editor-preview-toggle text-[13px]"
+          className="gh-btn gh-btn-soft gh-admin-html-editor-preview-toggle text-portal-compact"
         >
           {showPreview ? "Hide preview" : "Preview"}
         </button>
@@ -150,12 +150,12 @@ export function HtmlBodyField({ name, initialValue }: Props) {
         rows={18}
         spellCheck={false}
         placeholder="Paste your article HTML here, upload a .html file, or use 'Upload image' to insert pictures. Allowed: headings, paragraphs, lists, links, images, tables, blockquotes."
-        className="gh-admin-html-editor-textarea w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 font-mono text-[13px] leading-relaxed text-[var(--color-text-primary)]"
+        className="gh-admin-html-editor-textarea w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 font-mono text-portal-compact leading-relaxed text-[var(--color-text-primary)]"
       />
       {msg ? (
-        <p className="text-[12px] text-[var(--color-status-warning-text)]">{msg}</p>
+        <p className="text-portal-meta text-[var(--color-status-warning-text)]">{msg}</p>
       ) : null}
-      <p className="text-[12px] text-[var(--color-text-muted)]">
+      <p className="text-portal-meta text-[var(--color-text-muted)]">
         HTML is sanitized on save — scripts, iframes and event handlers are
         removed automatically.
       </p>

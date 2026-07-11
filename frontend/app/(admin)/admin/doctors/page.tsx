@@ -78,8 +78,8 @@ function doctorFields(
             {doctorInitials(d.fullName) || "·"}
           </span>
           <div className="text-left">
-            <p className="m-0 text-[14px] font-bold text-[var(--color-text-primary)]">{d.fullName}</p>
-            <p className="m-0 font-mono text-[11px] text-[var(--color-text-muted)]">/{d.slug}</p>
+            <p className="m-0 text-portal-body font-bold text-[var(--color-text-primary)]">{d.fullName}</p>
+            <p className="m-0 font-mono text-portal-thead text-[var(--color-text-muted)]">/{d.slug}</p>
           </div>
         </Link>
       ),
@@ -154,14 +154,14 @@ function doctorFields(
       key: "title",
       label: "Title",
       priority: 3,
-      render: (d) => <span className="text-[13px] text-[var(--color-text-body)]">{d.title}</span>,
+      render: (d) => <span className="text-portal-compact text-[var(--color-text-body)]">{d.title}</span>,
     },
     {
       key: "languages",
       label: "Languages",
       priority: 3,
       render: (d) => (
-        <span className="block max-w-[12rem] truncate text-[13px] text-[var(--color-text-body)]">
+        <span className="block max-w-[12rem] truncate text-portal-compact text-[var(--color-text-body)]">
           {d.languages && d.languages.length > 0 ? d.languages.join(", ") : "—"}
         </span>
       ),
@@ -171,7 +171,7 @@ function doctorFields(
       label: "Consultation type",
       priority: 3,
       render: (d) => (
-        <span className="block max-w-[12rem] truncate text-[13px] text-[var(--color-text-muted)]">
+        <span className="block max-w-[12rem] truncate text-portal-compact text-[var(--color-text-muted)]">
           {doctorConsultationTypeLabels(d.assignedServices ?? [])}
         </span>
       ),
@@ -370,11 +370,11 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
             </button>
             <Link
               href="/admin/doctors"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Clear filters
             </Link>
-            <span className="ml-auto text-[12px] text-[var(--color-text-muted)]">
+            <span className="ml-auto text-portal-meta text-[var(--color-text-muted)]">
               {total === 0
                 ? "No profiles match filters."
                 : `Showing ${items.length} of ${total} profiles.`}
@@ -414,7 +414,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
         ) : null}
 
         {totalPages > 1 ? (
-          <nav className="gh-admin-doctor-pagination flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3 text-[13px]">
+          <nav className="gh-admin-doctor-pagination flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3 text-portal-compact">
             <div className="text-[var(--color-text-muted)]">
               Page {page} of {totalPages} · {pageSize} per page
             </div>
@@ -423,7 +423,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                 href={buildDoctorsHref(filters, {
                   page: String(Math.max(1, page - 1)),
                 })}
-                className={`gh-btn gh-btn-soft gh-admin-pager-btn text-[13px] ${
+                className={`gh-btn gh-btn-soft gh-admin-pager-btn text-portal-compact ${
                   page <= 1 ? "pointer-events-none opacity-40" : ""
                 }`}
               >
@@ -433,7 +433,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                 href={buildDoctorsHref(filters, {
                   page: String(Math.min(totalPages, page + 1)),
                 })}
-                className={`gh-btn gh-btn-primary gh-admin-pager-btn text-[13px] ${
+                className={`gh-btn gh-btn-primary gh-admin-pager-btn text-portal-compact ${
                   page >= totalPages ? "pointer-events-none opacity-40" : ""
                 }`}
               >

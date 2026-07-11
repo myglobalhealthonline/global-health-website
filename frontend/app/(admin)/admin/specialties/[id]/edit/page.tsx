@@ -111,7 +111,7 @@ export default async function AdminSpecialtyEditPage({
     <>
       <Link
         href="/admin/specialties"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to categories
       </Link>
@@ -159,7 +159,7 @@ export default async function AdminSpecialtyEditPage({
               required
             />
           </label>
-          <p className="-mt-2 text-[12px] text-[var(--color-text-muted)]">
+          <p className="-mt-2 text-portal-meta text-[var(--color-text-muted)]">
             Slug must be lowercase and use hyphens only.
           </p>
 
@@ -200,14 +200,14 @@ export default async function AdminSpecialtyEditPage({
             </label>
           </div>
 
-          <p className="text-[12px] text-[var(--color-text-muted)]">
+          <p className="text-portal-meta text-[var(--color-text-muted)]">
             Card target resolves automatically from this category&apos;s active services.{" "}
             <span className="font-bold">Resolved service:</span>{" "}
             {s.primaryService?.name ?? "None yet"} ·{" "}
             <span className="font-bold">Theme:</span> {s.cardThemeColor ?? "Default"}
           </p>
 
-          <label className="flex items-center gap-2 text-[13px] text-[var(--color-text-primary)]">
+          <label className="flex items-center gap-2 text-portal-compact text-[var(--color-text-primary)]">
             <input
               type="checkbox"
               name="active"
@@ -223,7 +223,7 @@ export default async function AdminSpecialtyEditPage({
             </button>
             <Link
               href="/admin/specialties"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Cancel
             </Link>

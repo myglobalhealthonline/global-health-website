@@ -69,7 +69,7 @@ export default async function AdminCreatePatientPage({ searchParams }: PageProps
     <>
       <Link
         href="/admin/patients"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to patients
       </Link>
@@ -89,14 +89,14 @@ export default async function AdminCreatePatientPage({ searchParams }: PageProps
           <p className="text-[15px] font-bold text-[var(--color-text-primary)]">
             Patient created
           </p>
-          <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+          <p className="mt-1 text-portal-compact text-[var(--color-text-muted)]">
             Account for <span className="font-semibold">{createdEmail}</span> is ready. Share the
             invite link below so they can set their password (valid 7 days).
           </p>
           {inviteUrl ? (
             <div className="mt-3 flex flex-col gap-1">
               <span className="gh-field-label">Invite link</span>
-              <input readOnly value={inviteUrl} className="gh-input w-full font-mono text-[12px]" />
+              <input readOnly value={inviteUrl} className="gh-input w-full font-mono text-portal-meta" />
             </div>
           ) : null}
           <div className="mt-4 flex flex-wrap gap-3">
@@ -139,7 +139,7 @@ export default async function AdminCreatePatientPage({ searchParams }: PageProps
             </div>
 
             <div>
-              <p className="mb-3 text-[13px] font-semibold text-[var(--color-text-muted)]">
+              <p className="mb-3 text-portal-compact font-semibold text-[var(--color-text-muted)]">
                 Identity &amp; address (optional)
               </p>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -185,7 +185,7 @@ export default async function AdminCreatePatientPage({ searchParams }: PageProps
               </button>
               <Link
                 href="/admin/patients"
-                className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+                className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
               >
                 Cancel
               </Link>

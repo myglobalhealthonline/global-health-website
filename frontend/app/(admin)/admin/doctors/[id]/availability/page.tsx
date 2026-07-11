@@ -315,7 +315,7 @@ export default async function AdminDoctorAvailabilityPage({
     <>
       <Link
         href={`/admin/doctors/${id}`}
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to doctor
       </Link>
@@ -372,15 +372,15 @@ export default async function AdminDoctorAvailabilityPage({
               {availabilityResult.message}
             </p>
           ) : windows.length === 0 ? (
-            <p className="gh-form-section__span-2 mt-4 text-[13px] text-[var(--color-text-muted)]">
+            <p className="gh-form-section__span-2 mt-4 text-portal-compact text-[var(--color-text-muted)]">
               No availability windows yet. Add the doctor&apos;s first weekly
               window using the form to the right.
             </p>
           ) : (
             <div className="gh-admin-doctor-availability-table-wrap gh-form-section__span-2 mt-4 overflow-x-auto">
-            <table className="gh-admin-doctor-availability-table w-full text-[13px]">
+            <table className="gh-admin-doctor-availability-table w-full text-portal-compact">
               <thead>
-                <tr className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                <tr className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                   <th className="py-2 text-left">Day</th>
                   <th className="py-2 text-left">From</th>
                   <th className="py-2 text-left">To</th>
@@ -406,7 +406,7 @@ export default async function AdminDoctorAvailabilityPage({
                         <input type="hidden" name="availabilityId" value={row.id} />
                         <ConfirmDeleteButton
                           message="Remove this availability window? Any open slots derived from it will be unbookable."
-                          className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-status-error)]"
+                          className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-status-error)]"
                           ariaLabel="Delete availability window"
                         >
                           <Trash2 className="size-3.5" aria-hidden /> Remove
@@ -468,7 +468,7 @@ export default async function AdminDoctorAvailabilityPage({
                 <option value="45">45</option>
                 <option value="60">60</option>
               </select>
-              <span className="text-[12px] text-[var(--color-text-muted)]">
+              <span className="text-portal-meta text-[var(--color-text-muted)]">
                 Consultations consume consecutive base slots to fit their real
                 length. 15 fits 15/30/45-min consults.
               </span>

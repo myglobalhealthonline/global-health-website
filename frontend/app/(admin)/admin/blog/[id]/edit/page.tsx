@@ -152,7 +152,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
     <>
       <Link
         href="/admin/blog"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to blog
       </Link>
@@ -230,15 +230,15 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
                 className="gh-admin-blog-translation-row"
               >
                 <div>
-                  <span className="inline-block font-mono text-[12px] font-bold text-[var(--color-text-primary)]">
+                  <span className="inline-block font-mono text-portal-meta font-bold text-[var(--color-text-primary)]">
                     {t.locale.toUpperCase()}
                   </span>
-                  <span className="ml-2 text-[13px] text-[var(--color-text-body)]">{t.title}</span>
+                  <span className="ml-2 text-portal-compact text-[var(--color-text-body)]">{t.title}</span>
                 </div>
                 <div className="gh-admin-blog-actions">
                   <Link
                     href={`/admin/blog/${id}/edit?editLocale=${t.locale}`}
-                    className="gh-btn gh-btn-soft text-[12px]"
+                    className="gh-btn gh-btn-soft text-portal-meta"
                   >
                     Edit
                   </Link>
@@ -246,7 +246,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
                     <input type="hidden" name="locale" value={t.locale} />
                     <button
                       type="submit"
-                      className="gh-btn gh-btn-danger text-[12px]"
+                      className="gh-btn gh-btn-danger text-portal-meta"
                       aria-label={`Delete ${t.locale} translation`}
                     >
                       <Trash2 className="size-3" aria-hidden />
@@ -261,7 +261,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
         {editLocale ? (
           <form action={saveTranslationAction} className="gh-admin-blog-translation-form gh-form-section__span-2 mt-4">
             <input type="hidden" name="locale" value={editLocale} />
-            <h4 className="m-0 text-[14px] font-bold text-[var(--color-text-primary)]">
+            <h4 className="m-0 text-portal-body font-bold text-[var(--color-text-primary)]">
               {editTranslation ? "Edit" : "Add"} translation: {editLocale.toUpperCase()}
             </h4>
             <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--two">
@@ -280,7 +280,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
             </label>
             <label className="flex flex-col gap-1">
               <span className="gh-field-label">Content (HTML)</span>
-              <textarea name="tr_content" rows={12} defaultValue={editTranslation?.content ?? ""} className="gh-input resize-y font-mono text-[12px]" />
+              <textarea name="tr_content" rows={12} defaultValue={editTranslation?.content ?? ""} className="gh-input resize-y font-mono text-portal-meta" />
             </label>
             <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--two">
               <label className="flex flex-col gap-1">
@@ -299,7 +299,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
           </form>
         ) : (
           <div className="gh-form-section__span-2 mt-4">
-            <p className="mb-2 text-[12px] text-[var(--color-text-muted)]">
+            <p className="mb-2 text-portal-meta text-[var(--color-text-muted)]">
               Add a new locale (e.g. <code>fr</code>, <code>de</code>, <code>pt</code>):
             </p>
             {/* Plain GET form — submitting reloads this page with ?editLocale=<value>,

@@ -70,7 +70,7 @@ export function CountryPicker({
           }}
         >
           <div
-            className="px-2.5 pb-1.5 pt-1 text-[10px] font-bold uppercase tracking-[0.12em]"
+            className="px-2.5 pb-1.5 pt-1 text-portal-micro font-bold uppercase tracking-[0.12em]"
             style={{ color: "var(--portal-muted)" }}
           >
             Admin market scope

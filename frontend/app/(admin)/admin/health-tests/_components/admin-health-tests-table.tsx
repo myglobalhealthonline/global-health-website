@@ -41,7 +41,7 @@ export function AdminHealthTestsTable({
       key: "slug",
       label: "Slug",
       priority: 3,
-      render: (t) => <span className="font-mono text-[11px] text-[var(--color-text-muted)]">{t.slug}</span>,
+      render: (t) => <span className="font-mono text-portal-thead text-[var(--color-text-muted)]">{t.slug}</span>,
     },
     {
       key: "country",
@@ -50,7 +50,7 @@ export function AdminHealthTestsTable({
       render: (t) => (
         <span className="inline-flex items-center gap-2">
           <FlagBadge code={t.country.code} size={14} />
-          <span className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+          <span className="text-portal-meta uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
             {t.country.code}
           </span>
         </span>
@@ -72,7 +72,7 @@ export function AdminHealthTestsTable({
       label: "Sample / results",
       priority: 2,
       render: (t) => (
-        <span className="text-[13px] text-[var(--color-text-muted)]">
+        <span className="text-portal-compact text-[var(--color-text-muted)]">
           {[t.sampleType, t.resultsTimeline].filter(Boolean).join(" · ") || "—"}
         </span>
       ),

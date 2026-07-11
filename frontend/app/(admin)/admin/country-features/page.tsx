@@ -246,10 +246,10 @@ export default async function AdminCountryFeaturesPage({ searchParams }: PagePro
         <div className="flex items-center gap-3 px-1 py-1">
           <FlagBadge code={activeCountry.code} size={20} />
           <div className="min-w-0 flex-1">
-            <p className="m-0 text-[14px] font-bold text-[var(--color-text-primary)]">
+            <p className="m-0 text-portal-body font-bold text-[var(--color-text-primary)]">
               {activeCountry.name}
             </p>
-            <p className="m-0 text-[12px] text-[var(--color-text-muted)]">
+            <p className="m-0 text-portal-meta text-[var(--color-text-muted)]">
               {enabledCount} of {FEATURE_META.length} pages enabled
             </p>
           </div>
@@ -298,17 +298,17 @@ export default async function AdminCountryFeaturesPage({ searchParams }: PagePro
                           <Icon className="size-4" aria-hidden />
                         </span>
                         <div className="min-w-0">
-                          <p className="m-0 whitespace-nowrap text-[14px] font-bold text-[var(--color-text-primary)]">
+                          <p className="m-0 whitespace-nowrap text-portal-body font-bold text-[var(--color-text-primary)]">
                             {feature.label}
                           </p>
-                          <p className="m-0 whitespace-nowrap font-mono text-[11px] text-[var(--color-text-muted)]">
+                          <p className="m-0 whitespace-nowrap font-mono text-portal-thead text-[var(--color-text-muted)]">
                             {feature.href}
                           </p>
                         </div>
                       </div>
                     </Td>
                     <Td>
-                      <span className="text-[13px] text-[var(--color-text-muted)]">
+                      <span className="text-portal-compact text-[var(--color-text-muted)]">
                         {feature.description}
                       </span>
                     </Td>
@@ -335,7 +335,7 @@ export default async function AdminCountryFeaturesPage({ searchParams }: PagePro
         </div>
       </AdminCard>
 
-      <p className="mt-6 text-[12px] text-[var(--color-text-muted)]">
+      <p className="mt-6 text-portal-meta text-[var(--color-text-muted)]">
         Hiding a page only removes it from the sidebar — its public URL still
         responds. Visit the country edit page to deactivate the market entirely.
       </p>

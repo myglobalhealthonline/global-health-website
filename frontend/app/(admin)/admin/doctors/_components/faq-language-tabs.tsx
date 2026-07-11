@@ -86,7 +86,7 @@ export function FaqLanguageTabs({
         const rows = faqsFor(code);
         return (
           <div key={code} role="tabpanel" hidden={code !== activeLocale} className="gh-admin-doctor-tab-panel grid gap-2">
-            <p className="m-0 text-[12px] text-[var(--color-text-muted)]">
+            <p className="m-0 text-portal-meta text-[var(--color-text-muted)]">
               Leave a row blank to drop it. Up to {FAQ_SLOTS} per language.
             </p>
             {Array.from({ length: FAQ_SLOTS }, (_, index) => {
@@ -126,7 +126,7 @@ export function FaqLanguageTabs({
                     className="gh-input"
                     aria-label="FAQ sort order"
                   />
-                  <label className="inline-flex items-center gap-1 text-[12px]">
+                  <label className="inline-flex items-center gap-1 text-portal-meta">
                     <input
                       name={`faq_${code}_${index}_isActive`}
                       type="checkbox"

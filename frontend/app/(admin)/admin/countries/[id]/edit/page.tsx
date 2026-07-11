@@ -134,7 +134,7 @@ export default async function AdminEditCountryPage({
     <>
       <Link
         href={`/admin/countries/${id}`}
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to {country.name}
       </Link>
@@ -167,7 +167,7 @@ export default async function AdminEditCountryPage({
             </button>
             <Link
               href={`/admin/countries/${id}`}
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Cancel
             </Link>

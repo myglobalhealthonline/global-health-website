@@ -372,7 +372,7 @@ export function AdminShell({
               />
             </Link>
             <p
-              className="gh-portal-label mt-2 text-[10px] font-bold uppercase tracking-[0.22em]"
+              className="gh-portal-label mt-2 text-portal-micro font-bold uppercase tracking-[0.22em]"
             >
               Super admin
             </p>
@@ -449,7 +449,7 @@ export function AdminShell({
           </nav>
 
           <div
-            className="gh-portal-sidebar-footer px-5 py-4 text-[12px] font-bold uppercase tracking-[0.06em]"
+            className="gh-portal-sidebar-footer px-5 py-4 text-portal-meta font-bold uppercase tracking-[0.06em]"
           >
             v1.0 · medicine anytime anywhere
           </div>

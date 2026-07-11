@@ -75,14 +75,14 @@ export function DoctorRegistrationsCard({
   return (
     <AdminCard className="gh-admin-doctor-registrations-card">
       <h3 style={cardTitleStyle}>Medical registrations</h3>
-      <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+      <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
         Per-country credentials printed on prescription PDFs. One row per
         country the doctor practices in (chamber abbreviation + license
         number). Verified credentials render without a warning badge.
       </p>
 
       {ordered.length === 0 ? (
-        <p className="text-[13px] text-[var(--color-text-muted)]">
+        <p className="text-portal-compact text-[var(--color-text-muted)]">
           No country links yet. Add the doctor to a country roster on the
           edit page to enable registrations.
         </p>
@@ -99,26 +99,26 @@ export function DoctorRegistrationsCard({
                 <input type="hidden" name="countryId" value={country.id} />
                 <div className="gh-admin-doctor-registration-header mb-2 flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                    <span className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                       {country.code}
                     </span>
-                    <span className="text-[14px] font-semibold text-[var(--color-text-primary)]">
+                    <span className="text-portal-body font-semibold text-[var(--color-text-primary)]">
                       {country.name}
                     </span>
                   </div>
                   {row?.isVerified ? (
-                    <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-emerald-700">
+                    <span className="inline-flex items-center gap-1 text-portal-meta font-semibold text-emerald-700">
                       <CheckCircle2 className="size-3.5" aria-hidden />
                       Verified
                       {row.verifiedAt ? (
-                        <span className="text-[11px] font-normal text-[var(--color-text-muted)]">
+                        <span className="text-portal-thead font-normal text-[var(--color-text-muted)]">
                           ·{" "}
                           {new Date(row.verifiedAt).toLocaleDateString()}
                         </span>
                       ) : null}
                     </span>
                   ) : (
-                    <span className="text-[11px] text-[var(--color-text-muted)]">
+                    <span className="text-portal-thead text-[var(--color-text-muted)]">
                       Not verified
                     </span>
                   )}
@@ -156,7 +156,7 @@ export function DoctorRegistrationsCard({
                       className="gh-input"
                     />
                   </label>
-                  <label className="inline-flex items-center gap-2 pb-2 text-[13px]">
+                  <label className="inline-flex items-center gap-2 pb-2 text-portal-compact">
                     <input
                       type="checkbox"
                       name="isVerified"

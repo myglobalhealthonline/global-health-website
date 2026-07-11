@@ -346,10 +346,10 @@ export default async function AdminDashboardPage() {
               <span className="gh-icon-tile gh-icon-tile-lg mb-2">
                 <FileText className="size-5" aria-hidden />
               </span>
-              <p className="text-[13px] font-medium text-[var(--color-text-primary)]">
+              <p className="text-portal-compact font-medium text-[var(--color-text-primary)]">
                 No activity yet
               </p>
-              <p className="max-w-xs text-[12px] text-[var(--color-text-muted)]">
+              <p className="max-w-xs text-portal-meta text-[var(--color-text-muted)]">
                 New booking requests and content edits will appear here.
               </p>
             </div>
@@ -380,7 +380,7 @@ export default async function AdminDashboardPage() {
                       />
                     )}
                     <div className="min-w-0 flex-1">
-                      <p className="m-0 truncate text-[13px] text-[var(--color-text-body)]">
+                      <p className="m-0 truncate text-portal-compact text-[var(--color-text-body)]">
                         <strong className="font-bold text-[var(--color-text-primary)]">
                           {row.primary}
                         </strong>{" "}
@@ -393,7 +393,7 @@ export default async function AdminDashboardPage() {
                     <Pill tone={row.kind === "booking" ? "pending" : "neutral"}>
                       {row.kind}
                     </Pill>
-                    <span className="ml-2 shrink-0 whitespace-nowrap text-[12px] text-[var(--color-text-muted)]">
+                    <span className="ml-2 shrink-0 whitespace-nowrap text-portal-meta text-[var(--color-text-muted)]">
                       {timeAgo(row.timestamp)}
                     </span>
                   </li>
@@ -438,10 +438,10 @@ export default async function AdminDashboardPage() {
                     <Icon className="size-4" aria-hidden />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="m-0 text-[13px] font-bold" style={{ color: "var(--portal-text)" }}>
+                    <p className="m-0 text-portal-compact font-bold" style={{ color: "var(--portal-text)" }}>
                       {a.label}
                     </p>
-                    <p className="m-0 mt-0.5 text-[12px]" style={{ color: "var(--portal-muted)" }}>
+                    <p className="m-0 mt-0.5 text-portal-meta" style={{ color: "var(--portal-muted)" }}>
                       {a.sub}
                     </p>
                   </div>
@@ -510,7 +510,7 @@ export default async function AdminDashboardPage() {
                     <Td align="right">
                       <Link
                         href={`/admin/pages?countryId=${row.country.id}`}
-                        className="text-[13px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+                        className="text-portal-compact font-semibold text-[var(--color-brand-primary)] hover:underline"
                       >
                         Open
                       </Link>

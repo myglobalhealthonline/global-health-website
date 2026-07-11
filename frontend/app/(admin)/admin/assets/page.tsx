@@ -226,11 +226,11 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
             </button>
             <Link
               href="/admin/assets"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Clear filters
             </Link>
-            <span className="ml-auto text-[12px] text-[var(--color-text-muted)]">
+            <span className="ml-auto text-portal-meta text-[var(--color-text-muted)]">
               {total === 0
                 ? "No assets match filters."
                 : `Showing ${items.length} of ${total}.`}
@@ -244,7 +244,7 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
         <AdminAssetsTable items={items} deleteAssetAction={deleteAssetAction} />
 
         {totalPages > 1 ? (
-          <nav className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3 text-[13px]">
+          <nav className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3 text-portal-compact">
             <div className="text-[var(--color-text-muted)]">
               Page {page} of {totalPages} · {pageSize} per page
             </div>
@@ -253,7 +253,7 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
                 href={buildAssetsHref(filters, {
                   page: String(Math.max(1, page - 1)),
                 })}
-                className={`gh-btn gh-btn-soft text-[13px] ${
+                className={`gh-btn gh-btn-soft text-portal-compact ${
                   page <= 1 ? "pointer-events-none opacity-40" : ""
                 }`}
                 style={{ minHeight: 36, padding: "0 14px" }}
@@ -264,7 +264,7 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
                 href={buildAssetsHref(filters, {
                   page: String(Math.min(totalPages, page + 1)),
                 })}
-                className={`gh-btn gh-btn-primary text-[13px] ${
+                className={`gh-btn gh-btn-primary text-portal-compact ${
                   page >= totalPages ? "pointer-events-none opacity-40" : ""
                 }`}
                 style={{ minHeight: 36, padding: "0 14px" }}

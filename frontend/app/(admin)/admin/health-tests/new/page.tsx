@@ -148,7 +148,7 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
     <>
       <Link
         href="/admin/health-tests"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to health tests
       </Link>
@@ -183,7 +183,7 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
             </button>
             <Link
               href="/admin/health-tests"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Cancel
             </Link>

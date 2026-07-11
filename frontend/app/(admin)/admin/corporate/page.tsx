@@ -197,7 +197,7 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
                 <Btn type="submit" variant="secondary" size="sm">
                   Save plan
                 </Btn>
-                <span className="text-[12px] text-[var(--color-text-muted)]">
+                <span className="text-portal-meta text-[var(--color-text-muted)]">
                   Currently {formatCents(plan.annualPricePerEmployeeCents, plan.currencyCode)} per
                   employee per year
                 </span>
@@ -278,7 +278,7 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
                           {ruleLabel(rule)}
                         </span>
                         {!rule.isActive ? <Pill tone="inactive">Inactive</Pill> : null}
-                        <label className="inline-flex items-center gap-1.5 text-[13px] text-[var(--color-text-muted)]">
+                        <label className="inline-flex items-center gap-1.5 text-portal-compact text-[var(--color-text-muted)]">
                           Discount %
                           <input
                             type="number"
@@ -291,7 +291,7 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
                             required
                           />
                         </label>
-                        <label className="inline-flex items-center gap-1.5 text-[13px] text-[var(--color-text-muted)]">
+                        <label className="inline-flex items-center gap-1.5 text-portal-compact text-[var(--color-text-muted)]">
                           <input
                             type="checkbox"
                             name="appliesToBeneficiaries"
@@ -334,7 +334,7 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
             </Btn>
           </form>
           {companiesResult.ok ? (
-            <span className="ml-auto text-[13px] text-[var(--color-text-muted)]">
+            <span className="ml-auto text-portal-compact text-[var(--color-text-muted)]">
               {companiesResult.data.companies.length} companies
             </span>
           ) : null}
@@ -380,7 +380,7 @@ export default async function AdminCorporatePage({ searchParams }: PageProps) {
                       </a>
                     </Td>
                     <Td>
-                      <span className="font-mono text-[12px]">{c.countryCode.toUpperCase()}</span>
+                      <span className="font-mono text-portal-meta">{c.countryCode.toUpperCase()}</span>
                     </Td>
                     <Td>{c.planName}</Td>
                     <Td>

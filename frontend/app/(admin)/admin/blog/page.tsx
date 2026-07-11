@@ -32,7 +32,7 @@ function BlogPostsTable({ posts }: { posts: AdminBlogDto[] }) {
       render: (p) => (
         <>
           <span className="line-clamp-1 max-w-[280px] font-semibold">{p.title}</span>
-          <span className="block font-mono text-[11px] text-[var(--color-text-muted)]">{p.slug}</span>
+          <span className="block font-mono text-portal-thead text-[var(--color-text-muted)]">{p.slug}</span>
         </>
       ),
     },
@@ -54,12 +54,12 @@ function BlogPostsTable({ posts }: { posts: AdminBlogDto[] }) {
       priority: 3,
       render: (p) =>
         p.translations.length > 0 ? (
-          <span className="inline-flex items-center gap-1 text-[12px] text-[var(--color-text-muted)]">
+          <span className="inline-flex items-center gap-1 text-portal-meta text-[var(--color-text-muted)]">
             <Languages className="size-3" aria-hidden />
             {p.translations.length}
           </span>
         ) : (
-          <span className="text-[12px] text-[var(--color-text-muted)]">—</span>
+          <span className="text-portal-meta text-[var(--color-text-muted)]">—</span>
         ),
     },
     {
@@ -147,7 +147,7 @@ export default async function AdminBlogListPage({
           <ResponsiveFilterBar
             search={
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label text-[12px]">Search</span>
+                <span className="gh-field-label text-portal-meta">Search</span>
                 <input
                   name="search"
                   defaultValue={filters.search ?? ""}
@@ -158,7 +158,7 @@ export default async function AdminBlogListPage({
             }
           >
             <label className="flex min-w-0 flex-col gap-1">
-              <span className="gh-field-label text-[12px]">Status</span>
+              <span className="gh-field-label text-portal-meta">Status</span>
               <select name="status" defaultValue={filters.status ?? ""} className="gh-select min-w-0">
                 <option value="">Any status</option>
                 <option value="PUBLISHED">Published</option>
@@ -166,7 +166,7 @@ export default async function AdminBlogListPage({
               </select>
             </label>
             <label className="flex min-w-0 flex-col gap-1">
-              <span className="gh-field-label text-[12px]">Country</span>
+              <span className="gh-field-label text-portal-meta">Country</span>
               <select name="countryId" defaultValue={filters.countryId ?? ""} className="gh-select min-w-0">
                 <option value="">Any country</option>
                 {countries.map((c) => (
@@ -177,7 +177,7 @@ export default async function AdminBlogListPage({
               </select>
             </label>
             <label className="flex min-w-0 flex-col gap-1">
-              <span className="gh-field-label text-[12px]">Author</span>
+              <span className="gh-field-label text-portal-meta">Author</span>
               <input
                 name="authorDisplayName"
                 defaultValue={filters.authorDisplayName ?? ""}
@@ -186,7 +186,7 @@ export default async function AdminBlogListPage({
               />
             </label>
             <label className="flex min-w-0 flex-col gap-1">
-              <span className="gh-field-label text-[12px]">Translations</span>
+              <span className="gh-field-label text-portal-meta">Translations</span>
               <select
                 name="hasTranslation"
                 defaultValue={filters.hasTranslation ?? ""}

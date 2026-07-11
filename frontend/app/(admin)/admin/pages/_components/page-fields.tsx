@@ -16,10 +16,10 @@ type Props = {
 };
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]";
+  "mt-1 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-portal-body text-[var(--color-text-primary)]";
 
 const labelClass =
-  "block text-[12px] font-semibold text-[var(--color-text-muted)]";
+  "block text-portal-meta font-semibold text-[var(--color-text-muted)]";
 
 export function PageFields({ countries, page, defaultCountryId, isCreate }: Props) {
   const selectedCountryId = page?.countryId ?? defaultCountryId ?? countries[0]?.id ?? "";
@@ -82,7 +82,7 @@ export function PageFields({ countries, page, defaultCountryId, isCreate }: Prop
             </select>
           </label>
         {!isCreate ? (
-          <p className="gh-form-section__span-2 text-[12px]" style={{ color: "var(--portal-muted)" }}>
+          <p className="gh-form-section__span-2 text-portal-meta" style={{ color: "var(--portal-muted)" }}>
             Scope is locked after creation. To move a page to a different country/locale, create a new page and disable the old one.
           </p>
         ) : null}
@@ -181,7 +181,7 @@ export function PageFields({ countries, page, defaultCountryId, isCreate }: Prop
               defaultValue={page?.seoTitle ?? ""}
               className={inputClass}
             />
-            <span className="mt-1 text-[11px] text-[var(--color-text-muted)]">
+            <span className="mt-1 text-portal-thead text-[var(--color-text-muted)]">
               Recommended ~60 characters. Used as the browser tab title and search-result headline.
             </span>
           </label>
@@ -194,7 +194,7 @@ export function PageFields({ countries, page, defaultCountryId, isCreate }: Prop
               defaultValue={page?.seoDescription ?? ""}
               className={inputClass}
             />
-            <span className="mt-1 text-[11px] text-[var(--color-text-muted)]">
+            <span className="mt-1 text-portal-thead text-[var(--color-text-muted)]">
               Recommended ~155 characters. Shown under the title in search results.
             </span>
           </label>
@@ -220,7 +220,7 @@ export function PageFields({ countries, page, defaultCountryId, isCreate }: Prop
               <option value="PUBLISHED">Published</option>
             </select>
           </label>
-          <label className="mt-6 inline-flex items-center gap-2 text-[14px] text-[var(--color-text-primary)]">
+          <label className="mt-6 inline-flex items-center gap-2 text-portal-body text-[var(--color-text-primary)]">
             <input
               type="checkbox"
               name="isActive"

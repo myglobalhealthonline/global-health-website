@@ -171,7 +171,7 @@ export function ServiceLinksPanel({
               key={code}
               type="button"
               onClick={() => setActiveLocale(code)}
-              className="gh-btn gh-admin-service-tab px-3 py-1 text-[12px] font-semibold"
+              className="gh-btn gh-admin-service-tab px-3 py-1 text-portal-meta font-semibold"
               aria-pressed={activeLocale === code}
               style={
                 activeLocale === code

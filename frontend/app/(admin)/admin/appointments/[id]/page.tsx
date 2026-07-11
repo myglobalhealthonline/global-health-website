@@ -75,10 +75,10 @@ function FieldRow({
 }) {
   return (
     <div className={full ? "gh-admin-appointment-field-row sm:col-span-2" : "gh-admin-appointment-field-row"}>
-      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+      <p className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
         {label}
       </p>
-      <p className="mt-1 text-[14px] text-[var(--color-text-primary)]">{value}</p>
+      <p className="mt-1 text-portal-body text-[var(--color-text-primary)]">{value}</p>
     </div>
   );
 }
@@ -338,7 +338,7 @@ export default async function AdminAppointmentDetailPage({
     <>
       <Link
         href="/admin/appointments"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to queue
       </Link>
@@ -377,7 +377,7 @@ export default async function AdminAppointmentDetailPage({
               ? " Pre-payment automation started (WhatsApp + reservation email)."
               : " Automation failed — copy the details below and share manually."}
           </p>
-          <dl className="mt-2 grid gap-1 text-[13px] text-[var(--color-text-body)]">
+          <dl className="mt-2 grid gap-1 text-portal-compact text-[var(--color-text-body)]">
             {manualBooking.tempPassword ? (
               <div>
                 <dt className="inline font-semibold">Temp password:</dt>{" "}
@@ -427,7 +427,7 @@ export default async function AdminAppointmentDetailPage({
         <div className="grid gap-4">
           <AdminCard>
             <h3 className="gh-admin-card-title">Patient details</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Contact info captured at booking.
             </p>
             <div className="gh-admin-appointment-detail-grid">
@@ -481,7 +481,7 @@ export default async function AdminAppointmentDetailPage({
 
           <AdminCard>
             <h3 className="gh-admin-card-title">Notes</h3>
-            <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed text-[var(--color-text-body)]">
+            <p className="mt-3 whitespace-pre-wrap text-portal-body leading-relaxed text-[var(--color-text-body)]">
               {appointment.notes ?? "No notes provided."}
             </p>
           </AdminCard>
@@ -490,7 +490,7 @@ export default async function AdminAppointmentDetailPage({
         <div className="grid gap-4 self-start">
           <AdminCard>
             <h3 className="gh-admin-card-title">Status</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               {terminal
                 ? "This booking request is closed. Status updates are disabled."
                 : canUpdate
@@ -528,7 +528,7 @@ export default async function AdminAppointmentDetailPage({
           <div id="patient-chat" className="scroll-mt-24">
             <AdminCard>
               <h3 className="gh-admin-card-title">Patient chat</h3>
-              <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
                 Pre-consult messages. The patient sees replies in their Messages tab.
               </p>
               <AdminAppointmentChat appointmentId={appointment.id} />
@@ -540,7 +540,7 @@ export default async function AdminAppointmentDetailPage({
               at /doctor/appointments/[id]. */}
           <AdminCard>
             <h3 className="gh-admin-card-title">Internal notes (doctor ↔ admin)</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Handoff context between you and the doctor. Hidden from the
               patient.
             </p>
@@ -558,7 +558,7 @@ export default async function AdminAppointmentDetailPage({
               new doctor. */}
           <AdminCard>
             <h3 className="gh-admin-card-title">Assigned doctor</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Reassign this booking if the original doctor is unavailable.
               The patient and both doctors are notified by email + WhatsApp,
               and all future reminders switch to the new doctor.
@@ -580,7 +580,7 @@ export default async function AdminAppointmentDetailPage({
                   ))}
                 </select>
                 {!doctorsResult.ok ? (
-                  <span className="text-[11px] text-[var(--color-text-muted)]">
+                  <span className="text-portal-thead text-[var(--color-text-muted)]">
                     Could not load doctors: {doctorsResult.message}
                   </span>
                 ) : null}
@@ -611,7 +611,7 @@ export default async function AdminAppointmentDetailPage({
               emails the patient with the link via SendGrid. */}
           <AdminCard>
             <h3 className="gh-admin-card-title">Schedule call</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Set the slot and paste the Google Meet (or Zoom/Teams/Whereby/Daily)
               link. Saving emails the patient with the link.
             </p>
@@ -631,7 +631,7 @@ export default async function AdminAppointmentDetailPage({
                   name="scheduledAt"
                   initialIso={appointment.scheduledAt}
                 />
-                <span className="text-[11px] text-[var(--color-text-muted)]">
+                <span className="text-portal-thead text-[var(--color-text-muted)]">
                   Leave blank to clear.
                 </span>
               </label>
@@ -646,7 +646,7 @@ export default async function AdminAppointmentDetailPage({
                   defaultValue={appointment.meetingUrl ?? ""}
                   maxLength={500}
                 />
-                <span className="text-[11px] text-[var(--color-text-muted)]">
+                <span className="text-portal-thead text-[var(--color-text-muted)]">
                   Allowed hosts: meet.google.com, zoom.us, teams.microsoft.com,
                   whereby.com, daily.co.
                 </span>
@@ -662,7 +662,7 @@ export default async function AdminAppointmentDetailPage({
                   <option value="ONLINE">Online (video call)</option>
                   <option value="IN_PERSON">In person (at a clinic)</option>
                 </select>
-                <span className="text-[11px] text-[var(--color-text-muted)]">
+                <span className="text-portal-thead text-[var(--color-text-muted)]">
                   In-person hides the Meet link + shows a venue picker. Save
                   the form once to switch modes, then re-open to see the picker.
                 </span>
@@ -670,7 +670,7 @@ export default async function AdminAppointmentDetailPage({
 
               {isInPerson ? (
                 <fieldset className="gh-admin-appointment-venue">
-                  <legend className="px-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                  <legend className="px-1 text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                     Where (in-person)
                   </legend>
                   <label className="flex flex-col gap-1.5">
@@ -695,7 +695,7 @@ export default async function AdminAppointmentDetailPage({
                       ))}
                       <option value="__custom__">Other (custom address)…</option>
                     </select>
-                    <span className="text-[11px] text-[var(--color-text-muted)]">
+                    <span className="text-portal-thead text-[var(--color-text-muted)]">
                       Pick from {appointment.country.toUpperCase()} clinics, or
                       switch to a free-text address below.
                     </span>

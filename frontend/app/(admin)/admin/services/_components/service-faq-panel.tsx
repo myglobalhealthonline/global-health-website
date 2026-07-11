@@ -216,7 +216,7 @@ export function ServiceFaqPanel({ serviceId, initialFaqs, locales, defaultLocale
       <div className="gh-admin-service-faq__header mb-3 flex items-center justify-between">
         <h3 className="gh-admin-card-title">
           FAQs{" "}
-          <span className="ml-1.5 text-[13px] font-normal text-[var(--color-text-muted)]">
+          <span className="ml-1.5 text-portal-compact font-normal text-[var(--color-text-muted)]">
             ({faqs.length})
           </span>
         </h3>
@@ -257,7 +257,7 @@ export function ServiceFaqPanel({ serviceId, initialFaqs, locales, defaultLocale
       ) : null}
 
       {faqs.length === 0 && !showAdd ? (
-        <p className="text-[13px] text-[var(--color-text-muted)]">
+        <p className="text-portal-compact text-[var(--color-text-muted)]">
           No FAQs yet. Click &ldquo;+ Add FAQ&rdquo; to create one.
         </p>
       ) : null}
@@ -282,7 +282,7 @@ export function ServiceFaqPanel({ serviceId, initialFaqs, locales, defaultLocale
             ) : (
               <div>
                 <div className="gh-admin-service-faq__row">
-                  <p className="text-[14px] font-semibold text-[var(--color-text-primary)]">
+                  <p className="text-portal-body font-semibold text-[var(--color-text-primary)]">
                     {faq.question}
                   </p>
                   <div className="gh-admin-service-faq__actions">
@@ -331,11 +331,11 @@ export function ServiceFaqPanel({ serviceId, initialFaqs, locales, defaultLocale
                     </button>
                   </div>
                 </div>
-                <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--color-text-body)]">
+                <p className="mt-2 whitespace-pre-wrap text-portal-compact text-[var(--color-text-body)]">
                   {faq.answer}
                 </p>
                 {faq.translations && faq.translations.length > 0 ? (
-                  <p className="mt-1 text-[11px] text-[var(--color-text-muted)]">
+                  <p className="mt-1 text-portal-thead text-[var(--color-text-muted)]">
                     Translated: {faq.translations.map((t) => localeLabel(t.locale.toUpperCase())).join(", ")}
                   </p>
                 ) : null}
@@ -400,7 +400,7 @@ function FaqForm({
 
       <div>
         <label
-          className="mb-1 block text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]"
+          className="mb-1 block text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]"
           htmlFor="faq-question"
         >
           Question{isDefaultTab ? " *" : ""}
@@ -419,7 +419,7 @@ function FaqForm({
       </div>
       <div>
         <label
-          className="mb-1 block text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]"
+          className="mb-1 block text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]"
           htmlFor="faq-answer"
         >
           Answer{isDefaultTab ? " *" : ""}
@@ -435,7 +435,7 @@ function FaqForm({
         />
       </div>
       {halfFilledLocales.length > 0 ? (
-        <p className="text-[11px] text-[var(--color-status-warning-text)]">
+        <p className="text-portal-thead text-[var(--color-status-warning-text)]">
           {halfFilledLocales.map((c) => localeLabel(c)).join(", ")} {halfFilledLocales.length > 1 ? "have" : "has"}{" "}
           only a question or answer filled in — fill in both or clear both before saving.
         </p>
@@ -448,7 +448,7 @@ function FaqForm({
           onChange={(e) => onChange({ ...form, isVisible: e.target.checked })}
           className="size-4 rounded"
         />
-        <label htmlFor="faq-visible" className="text-[13px] text-[var(--color-text-body)]">
+        <label htmlFor="faq-visible" className="text-portal-compact text-[var(--color-text-body)]">
           Visible on public service page
         </label>
       </div>

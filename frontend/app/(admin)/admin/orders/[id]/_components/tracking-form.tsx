@@ -77,7 +77,7 @@ export function AdminTrackingForm({ orderId, trackingNumber, trackingCarrier, tr
           maxLength={500}
         />
       </label>
-      {error ? <p className="text-[11px] text-rose-700">{error}</p> : null}
+      {error ? <p className="text-portal-thead text-rose-700">{error}</p> : null}
       <button
         type="submit"
         disabled={pending}

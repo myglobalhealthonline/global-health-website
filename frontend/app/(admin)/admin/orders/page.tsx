@@ -31,7 +31,7 @@ export default async function AdminOrdersPage({
       <AdminCard padding={0} className="gh-admin-orders-page">
         <div className="p-5">
           <AdminOrdersTable items={items} />
-          <div className="gh-admin-order-pagination mt-4 flex items-center justify-between text-[13px]">
+          <div className="gh-admin-order-pagination mt-4 flex items-center justify-between text-portal-compact">
             {cursor ? (
               <Link href="/admin/orders" className="font-semibold underline">
                 ← First page

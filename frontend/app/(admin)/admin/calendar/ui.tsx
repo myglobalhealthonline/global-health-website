@@ -250,7 +250,7 @@ export function AdminCalendarUI({
             return (
               <a
                 href={`/admin/appointments/new?${params.toString()}`}
-                className="ml-0.5 rounded-full border border-current px-1.5 text-[10px] font-bold uppercase tracking-wide hover:opacity-80"
+                className="ml-0.5 rounded-full border border-current px-1.5 text-portal-micro font-bold uppercase tracking-wide hover:opacity-80"
               >
                 Book
               </a>

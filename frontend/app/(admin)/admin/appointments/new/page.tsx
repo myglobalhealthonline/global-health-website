@@ -68,7 +68,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
       <>
         <Link
           href="/admin/appointments"
-          className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+          className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
         >
           <ArrowLeft className="size-3.5" /> Back to queue
         </Link>
@@ -87,7 +87,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
                 <h2 className="m-0 text-[17px] font-bold text-[var(--color-text-primary)]">
                   Start with country scope
                 </h2>
-                <p className="m-0 mt-1 text-[13px] leading-relaxed text-[var(--color-text-muted)]">
+                <p className="m-0 mt-1 text-portal-compact leading-relaxed text-[var(--color-text-muted)]">
                   Services, doctors, clinics, phone defaults, and payment currency are loaded from the selected market.
                 </p>
               </div>
@@ -281,7 +281,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
     <>
       <Link
         href="/admin/appointments"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to queue
       </Link>

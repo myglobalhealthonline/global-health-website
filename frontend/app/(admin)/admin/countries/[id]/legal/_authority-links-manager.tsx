@@ -107,7 +107,7 @@ export function AuthorityLinksManager({
   return (
     <AdminCard className="gh-admin-authority-links">
       <h3 style={cardTitleStyle}>Authority links</h3>
-      <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+      <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
         Official regulators / authorities for this market. “In footer” adds the
         link to the mandatory footer trust bar; “In schema” includes it in the
         page JSON-LD <code>sameAs</code>.
@@ -140,13 +140,13 @@ export function AuthorityLinksManager({
           ))}
         </div>
       ) : (
-        <p className="mb-4 text-[13px] text-[var(--color-text-muted)]">
+        <p className="mb-4 text-portal-compact text-[var(--color-text-muted)]">
           No authority links yet.
         </p>
       )}
 
       <form action={addLink} className="gh-admin-authority-row gh-admin-authority-row--new rounded-md border border-dashed border-[var(--color-border)] p-3">
-        <p className="mb-2 text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+        <p className="mb-2 text-portal-meta font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
           Add authority link
         </p>
         <LinkFields row={null} />
@@ -201,11 +201,11 @@ function LinkFields({ row }: { row: AdminAuthorityLinkDto | null }) {
         <span className="gh-field-label">Description</span>
         <input type="text" name="description" maxLength={500} defaultValue={row?.description ?? ""} className="gh-input" />
       </label>
-      <label className="inline-flex items-center gap-2 text-[13px]">
+      <label className="inline-flex items-center gap-2 text-portal-compact">
         <input type="checkbox" name="showInFooter" defaultChecked={row?.showInFooter ?? false} />
         In footer
       </label>
-      <label className="inline-flex items-center gap-2 text-[13px]">
+      <label className="inline-flex items-center gap-2 text-portal-compact">
         <input type="checkbox" name="showInSchema" defaultChecked={row?.showInSchema ?? true} />
         In schema
       </label>

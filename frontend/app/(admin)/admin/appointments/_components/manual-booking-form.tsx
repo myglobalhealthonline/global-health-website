@@ -349,7 +349,7 @@ export function ManualBookingForm({
 
       <AdminCard>
         <h2 className="text-[15px] font-bold text-[var(--color-text-primary)]">Patient</h2>
-        <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+        <p className="mt-1 text-portal-meta text-[var(--color-text-muted)]">
           Existing accounts with this email are reused; otherwise a new patient User is created with a
           unique temporary password.
         </p>
@@ -390,13 +390,13 @@ export function ManualBookingForm({
             {showPatientMenu && (lookupLoading || patientOptions.length > 0) ? (
               <div className="gh-admin-manual-patient-menu absolute left-0 right-0 top-[calc(100%+4px)] z-20 max-h-64 overflow-auto rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] shadow-lg">
                 {lookupLoading ? (
-                  <div className="flex items-center gap-2 px-3 py-2 text-[12px] text-[var(--color-text-muted)]">
+                  <div className="flex items-center gap-2 px-3 py-2 text-portal-meta text-[var(--color-text-muted)]">
                     <Loader2 className="size-3.5 animate-spin" aria-hidden /> Searching existing
                     patients…
                   </div>
                 ) : (
                   <>
-                    <p className="border-b border-[var(--color-border)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                    <p className="border-b border-[var(--color-border)] px-3 py-1.5 text-portal-thead font-semibold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                       {patientOptions.length} matching patient
                       {patientOptions.length === 1 ? "" : "s"} — pick one to prefill
                     </p>
@@ -409,11 +409,11 @@ export function ManualBookingForm({
                         onClick={() => selectPatient(p)}
                         className="flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left hover:bg-[var(--color-brand-primary)]/10"
                       >
-                        <span className="text-[13px] font-semibold text-[var(--color-text-primary)]">
+                        <span className="text-portal-compact font-semibold text-[var(--color-text-primary)]">
                           {p.fullName}
                         </span>
-                        <span className="text-[12px] text-[var(--color-text-muted)]">{p.email}</span>
-                        <span className="text-[12px] text-[var(--color-text-muted)]">
+                        <span className="text-portal-meta text-[var(--color-text-muted)]">{p.email}</span>
+                        <span className="text-portal-meta text-[var(--color-text-muted)]">
                           {[
                             p.dateOfBirth ? `DOB ${p.dateOfBirth}` : null,
                             p.phone,
@@ -458,7 +458,7 @@ export function ManualBookingForm({
                 aria-invalid={Boolean(errors.phone)}
               />
             </div>
-            <span className="text-[12px] text-[var(--color-text-muted)]">
+            <span className="text-portal-meta text-[var(--color-text-muted)]">
               Saved as <span className="font-mono">{combinedPhone || `+${dialCode} …`}</span>
             </span>
             {errors.phone ? <FieldError msg={errors.phone} /> : null}
@@ -546,7 +546,7 @@ export function ManualBookingForm({
               ))}
             </select>
             {services.length === 0 ? (
-              <span className="text-[12px] text-[var(--color-text-muted)]">
+              <span className="text-portal-meta text-[var(--color-text-muted)]">
                 No active services for this country.
               </span>
             ) : null}
@@ -572,7 +572,7 @@ export function ManualBookingForm({
                 </option>
               ))}
             </select>
-            <span className="text-[12px] text-[var(--color-text-muted)]">
+            <span className="text-portal-meta text-[var(--color-text-muted)]">
               Only doctors assigned to the selected service are listed.
             </span>
             {errors.doctorId ? <FieldError msg={errors.doctorId} /> : null}
@@ -611,7 +611,7 @@ export function ManualBookingForm({
                     </option>
                   ))}
                 </select>
-                <span className="text-[12px] text-[var(--color-text-muted)]">
+                <span className="text-portal-meta text-[var(--color-text-muted)]">
                   Or use the free-text address. Provide one or the other, not both.
                 </span>
               </label>
@@ -647,26 +647,26 @@ export function ManualBookingForm({
           <div className="flex items-baseline justify-between gap-3">
             <span className="gh-field-label">Time slot *</span>
             {slots.length > 0 ? (
-              <span className="text-[12px] text-[var(--color-text-muted)]">
+              <span className="text-portal-meta text-[var(--color-text-muted)]">
                 {countryName} clinic time
               </span>
             ) : null}
           </div>
 
           {!serviceId || !doctorId ? (
-            <p className="mt-2 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mt-2 text-portal-compact text-[var(--color-text-muted)]">
               Choose a service and doctor to load open slots.
             </p>
           ) : slotsLoading ? (
-            <p className="mt-2 inline-flex items-center gap-2 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mt-2 inline-flex items-center gap-2 text-portal-compact text-[var(--color-text-muted)]">
               <Loader2 className="size-3.5 animate-spin" aria-hidden /> Loading availability…
             </p>
           ) : slotsError ? (
-            <p className="gh-status-warning mt-2 rounded-[var(--radius-card-sm)] border px-3 py-2 text-[13px]">
+            <p className="gh-status-warning mt-2 rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
               {slotsError}
             </p>
           ) : slots.length === 0 ? (
-            <p className="mt-2 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mt-2 text-portal-compact text-[var(--color-text-muted)]">
               No open slots for this doctor and service in the next 21 days.
             </p>
           ) : (
@@ -689,7 +689,7 @@ export function ManualBookingForm({
           ) : null}
         </div>
 
-        <p className="mt-4 text-[12px] text-[var(--color-text-muted)]">
+        <p className="mt-4 text-portal-meta text-[var(--color-text-muted)]">
           The patient&apos;s email will include a Stripe payment link AND a set-password invite — they
           can set their own password or sign in immediately with a unique temporary password.
         </p>
@@ -714,7 +714,7 @@ export function ManualBookingForm({
         <SubmitButton />
         <Link
           href="/admin/appointments"
-          className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+          className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
         >
           Cancel
         </Link>
@@ -776,13 +776,13 @@ function SlotPicker({
                   : "gh-admin-slot-day flex shrink-0 flex-col items-center gap-0.5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-page)] px-4 py-2.5 text-[var(--color-text-body)] min-w-[64px] hover:border-[var(--color-border-strong)]"
               }
             >
-              <span className="text-[10px] font-bold uppercase tracking-[0.12em] opacity-80">
+              <span className="text-portal-micro font-bold uppercase tracking-[0.12em] opacity-80">
                 {weekday}
               </span>
               <span className="text-xl font-bold leading-none [font-variant-numeric:tabular-nums]">
                 {dayNum}
               </span>
-              <span className="text-[10px] font-semibold uppercase tracking-[0.1em] opacity-70">
+              <span className="text-portal-micro font-semibold uppercase tracking-[0.1em] opacity-70">
                 {month}
               </span>
             </button>
@@ -829,7 +829,7 @@ function SlotPicker({
 
 function FieldError({ msg }: { msg: string }) {
   return (
-    <span className="text-[12px] font-medium text-[var(--color-status-danger,#dc2626)]">{msg}</span>
+    <span className="text-portal-meta font-medium text-[var(--color-status-danger,#dc2626)]">{msg}</span>
   );
 }
 

@@ -127,7 +127,7 @@ export default async function AdminEditAssetPage({
     <>
       <Link
         href={`/admin/assets/${id}`}
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to {asset.key}
       </Link>
@@ -161,7 +161,7 @@ export default async function AdminEditAssetPage({
             </button>
             <Link
               href={`/admin/assets/${id}`}
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Cancel
             </Link>

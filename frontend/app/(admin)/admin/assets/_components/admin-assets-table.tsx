@@ -43,7 +43,7 @@ export function AdminAssetsTable({
       label: "Key",
       priority: 1,
       render: (a) => (
-        <span className="font-mono text-[11px] text-[var(--color-text-primary)]">{a.key}</span>
+        <span className="font-mono text-portal-thead text-[var(--color-text-primary)]">{a.key}</span>
       ),
     },
     {
@@ -51,7 +51,7 @@ export function AdminAssetsTable({
       label: "Kind",
       priority: 2,
       render: (a) => (
-        <span className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+        <span className="text-portal-meta uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
           {a.kind}
         </span>
       ),
@@ -64,7 +64,7 @@ export function AdminAssetsTable({
         a.country ? (
           <span className="inline-flex items-center gap-2">
             <FlagBadge code={a.country.code} size={14} />
-            <span className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+            <span className="text-portal-meta uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
               {a.country.code}
             </span>
           </span>
@@ -77,7 +77,7 @@ export function AdminAssetsTable({
       label: "Alt",
       priority: 3,
       render: (a) => (
-        <span className="block max-w-[12rem] truncate text-[13px] text-[var(--color-text-muted)]">
+        <span className="block max-w-[12rem] truncate text-portal-compact text-[var(--color-text-muted)]">
           {a.altText ?? "—"}
         </span>
       ),
@@ -87,7 +87,7 @@ export function AdminAssetsTable({
       label: "Usage",
       priority: 3,
       render: (a) => (
-        <span className="block max-w-[14rem] truncate text-[13px] text-[var(--color-text-muted)]">
+        <span className="block max-w-[14rem] truncate text-portal-compact text-[var(--color-text-muted)]">
           {a.usageNote ?? "—"}
         </span>
       ),

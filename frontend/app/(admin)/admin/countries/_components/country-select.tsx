@@ -125,7 +125,7 @@ export function CountrySelect({
               }}
             />
           )}
-          <span className="truncate text-[14px]">
+          <span className="truncate text-portal-body">
             {selected ? (
               <>
                 {selected.name}{" "}
@@ -170,7 +170,7 @@ export function CountrySelect({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search country or ISO code…"
-                className="gh-input w-full min-w-0 pl-8 text-[14px]"
+                className="gh-input w-full min-w-0 pl-8 text-portal-body"
               />
             </div>
           </div>
@@ -190,7 +190,7 @@ export function CountrySelect({
                     <button
                       type="button"
                       onClick={() => pick(c)}
-                      className="gh-admin-country-select__item flex w-full items-center gap-2.5 px-3 py-2 text-left text-[14px] hover:bg-[var(--color-background-soft)]"
+                      className="gh-admin-country-select__item flex w-full items-center gap-2.5 px-3 py-2 text-left text-portal-body hover:bg-[var(--color-background-soft)]"
                     >
                       <span
                         aria-hidden
@@ -205,7 +205,7 @@ export function CountrySelect({
                         }}
                       />
                       <span className="flex-1 truncate">{c.name}</span>
-                      <span className="text-[12px] text-[var(--color-text-muted)]">
+                      <span className="text-portal-meta text-[var(--color-text-muted)]">
                         {c.iso.toUpperCase()}
                       </span>
                       {isPicked ? (

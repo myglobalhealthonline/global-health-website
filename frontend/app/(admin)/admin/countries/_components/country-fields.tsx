@@ -61,7 +61,7 @@ export function CountryFields({ currencies, initial }: Props) {
         <div className="gh-form-section__span-2 flex flex-col gap-2">
           <span className="gh-field-label">Country</span>
           <CountrySelect initialIso={initial?.code} />
-          <span className="text-[12px]" style={{ color: "var(--portal-muted)" }}>
+          <span className="text-portal-meta" style={{ color: "var(--portal-muted)" }}>
             Pick from the world list — flag + name. ISO code and URL slug
             fill in automatically.
           </span>
@@ -131,7 +131,7 @@ export function CountryFields({ currencies, initial }: Props) {
               </label>
             ))}
           </div>
-          <p className="mt-2 text-[12px]" style={{ color: "var(--portal-muted)" }}>
+          <p className="mt-2 text-portal-meta" style={{ color: "var(--portal-muted)" }}>
             The default locale must be one of the supported locales.
           </p>
         </div>
@@ -174,7 +174,7 @@ export function CountryFields({ currencies, initial }: Props) {
             className="h-4 w-4 rounded border-[var(--color-border)]"
           />
           Require date of birth at booking
-          <span className="text-[11px]" style={{ color: "var(--portal-muted)" }}>
+          <span className="text-portal-thead" style={{ color: "var(--portal-muted)" }}>
             (UI field not yet on the public form — flip on once DOB is collected)
           </span>
         </label>
@@ -201,7 +201,7 @@ export function CountryFields({ currencies, initial }: Props) {
               ))}
             </optgroup>
           </select>
-          <span className="text-[11px]" style={{ color: "var(--portal-muted)" }}>
+          <span className="text-portal-thead" style={{ color: "var(--portal-muted)" }}>
             Clinic timezone for this country. Drives the booking slot times
             shown to doctors and patients, and reminder scheduling math.
           </span>

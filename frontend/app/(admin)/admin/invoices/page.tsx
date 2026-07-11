@@ -148,7 +148,7 @@ export default async function AdminInvoicesPage({
           <AdminInvoicesTable items={items} />
         )}
 
-        <div className="gh-admin-ops-pagination flex items-center justify-between border-t border-[var(--color-border)] px-5 py-4 text-[13px]">
+        <div className="gh-admin-ops-pagination flex items-center justify-between border-t border-[var(--color-border)] px-5 py-4 text-portal-compact">
           {cursor ? (
             <Link href={firstPageHref} className="font-semibold underline">
               ← First page

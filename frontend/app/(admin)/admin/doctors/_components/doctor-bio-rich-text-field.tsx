@@ -150,7 +150,7 @@ export function DoctorBioRichTextField({ initialValue }: Props) {
               ))}
             </select>
             <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 size-3 -translate-y-1/2 text-[var(--portal-muted)]" />
-            <span className="pointer-events-none absolute -right-5 top-1/2 -translate-y-1/2 text-[10px] text-[var(--portal-muted)]">pt</span>
+            <span className="pointer-events-none absolute -right-5 top-1/2 -translate-y-1/2 text-portal-micro text-[var(--portal-muted)]">pt</span>
           </div>
 
           <div className="mx-1 h-5 w-px bg-[var(--portal-line)]" />
@@ -196,7 +196,7 @@ export function DoctorBioRichTextField({ initialValue }: Props) {
 
           {/* Color */}
           <div className="inline-flex items-center gap-1 rounded border border-[var(--portal-line)] bg-[var(--portal-surface)] px-2 py-1">
-            <span className="text-[10px] text-[var(--portal-muted)]">Color</span>
+            <span className="text-portal-micro text-[var(--portal-muted)]">Color</span>
             {COLORS.map((c) => (
               <button
                 key={c.value}

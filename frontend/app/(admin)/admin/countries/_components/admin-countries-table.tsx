@@ -30,7 +30,7 @@ export function AdminCountriesTable({
       key: "code",
       label: "Code",
       priority: 2,
-      render: (c) => <span className="font-mono text-[12px] text-[var(--color-text-body)]">{c.code.toUpperCase()}</span>,
+      render: (c) => <span className="font-mono text-portal-meta text-[var(--color-text-body)]">{c.code.toUpperCase()}</span>,
     },
     {
       key: "locale",
@@ -42,7 +42,7 @@ export function AdminCountriesTable({
       key: "currency",
       label: "Currency",
       priority: 2,
-      render: (c) => <span className="font-mono text-[12px] text-[var(--color-text-body)]">{c.currency.code}</span>,
+      render: (c) => <span className="font-mono text-portal-meta text-[var(--color-text-body)]">{c.currency.code}</span>,
     },
     {
       key: "status",
@@ -56,8 +56,8 @@ export function AdminCountriesTable({
       priority: 3,
       render: (c) => (
         <div className="max-w-[14rem]">
-          <div className="truncate font-mono text-[11px] text-[var(--color-text-muted)]">{c.legacyHomePath}</div>
-          <div className="truncate font-mono text-[11px] text-[var(--color-text-muted)] opacity-70">{c.teamPath}</div>
+          <div className="truncate font-mono text-portal-thead text-[var(--color-text-muted)]">{c.legacyHomePath}</div>
+          <div className="truncate font-mono text-portal-thead text-[var(--color-text-muted)] opacity-70">{c.teamPath}</div>
         </div>
       ),
     },

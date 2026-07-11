@@ -22,13 +22,13 @@ export function PhiReasonGate({
           <ShieldAlert className="size-5 text-[var(--color-accent)]" aria-hidden />
           Reason required to view this medical record
         </h1>
-        <p className="mt-2 text-[13px] leading-relaxed text-[var(--color-text-muted)]">
+        <p className="mt-2 text-portal-compact leading-relaxed text-[var(--color-text-muted)]">
           Access to patient health information requires a documented reason
           (break-glass). Your reason is stored in the medical access log with
           your name, and is valid for 15 minutes.
         </p>
         {showError ? (
-          <p className="mt-3 text-[13px] font-semibold text-red-600">
+          <p className="mt-3 text-portal-compact font-semibold text-red-600">
             Please enter a reason between 5 and 300 characters.
           </p>
         ) : null}
@@ -36,7 +36,7 @@ export function PhiReasonGate({
           <input type="hidden" name="next" value={returnTo} />
           <label
             htmlFor="phi-reason"
-            className="text-[13px] font-semibold text-[var(--color-text-primary)]"
+            className="text-portal-compact font-semibold text-[var(--color-text-primary)]"
           >
             Reason for access
           </label>
@@ -48,11 +48,11 @@ export function PhiReasonGate({
             maxLength={300}
             rows={3}
             placeholder='e.g. "Verifying ID documents for booking #1042" or "Patient support call — updating contact details"'
-            className="w-full rounded-md border border-[var(--color-border)] bg-transparent p-2.5 text-[13px] text-[var(--color-text-primary)] outline-none focus:border-[var(--color-accent)]"
+            className="w-full rounded-md border border-[var(--color-border)] bg-transparent p-2.5 text-portal-compact text-[var(--color-text-primary)] outline-none focus:border-[var(--color-accent)]"
           />
           <button
             type="submit"
-            className="justify-self-start rounded-md bg-[var(--color-accent)] px-4 py-2 text-[13px] font-bold text-white"
+            className="justify-self-start rounded-md bg-[var(--color-accent)] px-4 py-2 text-portal-compact font-bold text-white"
           >
             Confirm and view record
           </button>

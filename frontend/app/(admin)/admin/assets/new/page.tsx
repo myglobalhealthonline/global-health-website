@@ -87,7 +87,7 @@ export default async function AdminNewAssetPage({ searchParams }: PageProps) {
             </button>
             <Link
               href="/admin/assets/new?scope=global"
-              className="text-[13px] font-semibold text-[var(--color-brand-primary)] underline underline-offset-2 hover:opacity-80"
+              className="text-portal-compact font-semibold text-[var(--color-brand-primary)] underline underline-offset-2 hover:opacity-80"
             >
               Global asset (no country)
             </Link>
@@ -149,7 +149,7 @@ export default async function AdminNewAssetPage({ searchParams }: PageProps) {
     <>
       <Link
         href="/admin/assets"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to assets
       </Link>
@@ -183,7 +183,7 @@ export default async function AdminNewAssetPage({ searchParams }: PageProps) {
             </button>
             <Link
               href="/admin/assets"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Cancel
             </Link>

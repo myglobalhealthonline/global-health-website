@@ -64,7 +64,7 @@ export function PageHeader({
         </h1>
         {description ? (
           <p
-            className="mt-2 text-[14px] leading-relaxed"
+            className="mt-2 text-portal-body leading-relaxed"
             style={{ color: "var(--portal-text-2)", maxWidth: "68ch" }}
           >
             {description}
@@ -122,7 +122,7 @@ export function SectionHeader({
           </h3>
         </div>
         {description ? (
-          <p className="mt-1 pl-[14px] text-[12px]" style={{ color: "var(--portal-muted)" }}>
+          <p className="mt-1 pl-[14px] text-portal-meta" style={{ color: "var(--portal-muted)" }}>
             {description}
           </p>
         ) : null}
@@ -340,7 +340,7 @@ export function StatCard({
       </div>
       <p className="gh-stat-card__value relative m-0 mt-3">{value}</p>
       {hint ? (
-        <p className="m-0 mt-1.5 text-[12px] font-medium" style={{ color: "var(--portal-muted)" }}>
+        <p className="m-0 mt-1.5 text-portal-meta font-medium" style={{ color: "var(--portal-muted)" }}>
           {hint}
         </p>
       ) : null}

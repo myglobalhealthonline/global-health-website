@@ -197,7 +197,7 @@ export function BookSlotDialog({
           <span className="font-semibold text-[var(--color-text-primary)]">
             {formatAppDate(slot.startAt, clinicTz)} · {formatAppTime(slot.startAt, clinicTz)}
           </span>
-          <span className="ml-1 text-[12px] text-[var(--color-text-muted)]">(clinic time)</span>
+          <span className="ml-1 text-portal-meta text-[var(--color-text-muted)]">(clinic time)</span>
         </div>
 
         {noServices ? (
@@ -244,7 +244,7 @@ export function BookSlotDialog({
             {showPatientMenu && (lookupLoading || patientOptions.length > 0) ? (
               <div className="absolute left-0 right-0 top-[calc(100%+4px)] z-20 max-h-56 overflow-auto rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] shadow-lg">
                 {lookupLoading ? (
-                  <div className="flex items-center gap-2 px-3 py-2 text-[12px] text-[var(--color-text-muted)]">
+                  <div className="flex items-center gap-2 px-3 py-2 text-portal-meta text-[var(--color-text-muted)]">
                     <Loader2 className="size-3.5 animate-spin" aria-hidden /> Searching…
                   </div>
                 ) : (
@@ -256,10 +256,10 @@ export function BookSlotDialog({
                       onClick={() => selectPatient(p)}
                       className="flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left hover:bg-[var(--color-brand-primary)]/10"
                     >
-                      <span className="text-[13px] font-semibold text-[var(--color-text-primary)]">
+                      <span className="text-portal-compact font-semibold text-[var(--color-text-primary)]">
                         {p.fullName}
                       </span>
-                      <span className="text-[12px] text-[var(--color-text-muted)]">
+                      <span className="text-portal-meta text-[var(--color-text-muted)]">
                         {[p.email, p.dateOfBirth ? `DOB ${p.dateOfBirth}` : null, p.phone]
                           .filter(Boolean)
                           .join(" · ")}
@@ -350,7 +350,7 @@ export function BookSlotDialog({
                 </option>
               ))}
             </select>
-            <span className="text-[12px] text-[var(--color-text-muted)]">
+            <span className="text-portal-meta text-[var(--color-text-muted)]">
               Blocks {duration} min ({Math.ceil(duration / 15)} × 15-min slot
               {Math.ceil(duration / 15) === 1 ? "" : "s"}).
             </span>
@@ -455,5 +455,5 @@ function snapDuration(minutes: number | null | undefined): number {
 }
 
 function FieldError({ msg }: { msg: string }) {
-  return <span className="text-[12px] font-semibold text-[var(--color-status-error)]">{msg}</span>;
+  return <span className="text-portal-meta font-semibold text-[var(--color-status-error)]">{msg}</span>;
 }

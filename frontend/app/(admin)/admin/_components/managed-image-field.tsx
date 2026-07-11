@@ -210,12 +210,12 @@ export function ManagedImageField({
             <div className="flex flex-col items-center">
               <Upload aria-hidden className="size-6" />
               <p
-                className="m-0 mt-2 text-[13px] font-semibold"
+                className="m-0 mt-2 text-portal-compact font-semibold"
                 style={{ color: "var(--portal-text)" }}
               >
                 {busy ? "Uploading…" : "Drag & drop an image here"}
               </p>
-              <p className="m-0 mt-1 text-[12px]">
+              <p className="m-0 mt-1 text-portal-meta">
                 {hint ?? "JPEG, PNG, WebP, GIF, AVIF · max 5 MB"}
               </p>
               <Btn
@@ -238,7 +238,7 @@ export function ManagedImageField({
       </div>
 
       {/* Manual URL fallback (advanced — paste a URL or /api/media path) */}
-      <details className="text-[12px] text-[var(--portal-muted)]">
+      <details className="text-portal-meta text-[var(--portal-muted)]">
         <summary className="cursor-pointer select-none">Use a URL instead</summary>
         <input
           type="text"
@@ -259,10 +259,10 @@ export function ManagedImageField({
       />
 
       {msg ? (
-        <p className="text-[12px]" style={{ color: "var(--portal-warning-text)" }}>{msg}</p>
+        <p className="text-portal-meta" style={{ color: "var(--portal-warning-text)" }}>{msg}</p>
       ) : null}
       {helperText ? (
-        <span className="text-[12px] text-[var(--portal-muted)]">{helperText}</span>
+        <span className="text-portal-meta text-[var(--portal-muted)]">{helperText}</span>
       ) : null}
     </div>
   );

@@ -124,7 +124,7 @@ export default async function AdminNewCountryPage({ searchParams }: PageProps) {
             </button>
             <Link
               href="/admin/countries"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Cancel
             </Link>

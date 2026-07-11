@@ -100,7 +100,7 @@ export function AdminOrderActions({ orderId, status, canRefund = false }: Props)
         ) : null}
       </div>
       {error ? (
-        <p className="text-[11px] text-rose-700">{error}</p>
+        <p className="text-portal-thead text-rose-700">{error}</p>
       ) : null}
 
       <PortalDialog

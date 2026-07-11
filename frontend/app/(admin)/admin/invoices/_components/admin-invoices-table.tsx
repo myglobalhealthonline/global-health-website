@@ -46,7 +46,7 @@ function DocTypeBadge({ documentType }: { documentType: DocumentType }) {
   const meta = DOC_TYPE_META[documentType] ?? DOC_TYPE_META.INVOICE_RECEIPT;
   return (
     <span
-      className={`gh-admin-ops-badge inline-block rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${meta.className}`}
+      className={`gh-admin-ops-badge inline-block rounded-full px-2 py-0.5 text-portal-micro font-bold uppercase ${meta.className}`}
     >
       {meta.label}
     </span>
@@ -55,11 +55,11 @@ function DocTypeBadge({ documentType }: { documentType: DocumentType }) {
 
 function EmailedPill({ emailSentAt }: { emailSentAt: string | null }) {
   return emailSentAt ? (
-    <span className="gh-admin-ops-badge inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-800">
+    <span className="gh-admin-ops-badge inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-portal-micro font-bold uppercase text-emerald-800">
       Sent
     </span>
   ) : (
-    <span className="gh-admin-ops-badge inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-800">
+    <span className="gh-admin-ops-badge inline-block rounded-full bg-amber-100 px-2 py-0.5 text-portal-micro font-bold uppercase text-amber-800">
       Pending
     </span>
   );
@@ -109,13 +109,13 @@ export function AdminInvoicesTable({ items }: { items: InvoiceRow[] }) {
                   className="gh-admin-invoices-row cursor-pointer"
                 >
                   <Td>
-                    <span className="font-mono text-[13px] font-bold text-[var(--color-text-primary)]">
+                    <span className="font-mono text-portal-compact font-bold text-[var(--color-text-primary)]">
                       {inv.invoiceNumber}
                     </span>
                   </Td>
                   <Td>
                     <p className="font-semibold text-[var(--color-text-primary)]">{inv.fullName}</p>
-                    <p className="text-[11px] text-[var(--color-text-muted)]">{inv.email}</p>
+                    <p className="text-portal-thead text-[var(--color-text-muted)]">{inv.email}</p>
                   </Td>
                   <Td align="right">
                     <span className="font-semibold text-[var(--color-text-primary)]">
@@ -131,7 +131,7 @@ export function AdminInvoicesTable({ items }: { items: InvoiceRow[] }) {
                         href={`/print/order-invoices/${inv.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="gh-admin-invoices-view-link inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-[11px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]"
+                        className="gh-admin-invoices-view-link inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-portal-thead font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]"
                       >
                         <ExternalLink className="size-3" aria-hidden />
                         View

@@ -191,7 +191,7 @@ export default async function AdminNewCorporateCompanyPage({ searchParams }: Pag
             <label className="flex flex-col gap-1">
               <span className="gh-field-label">Corporate-admin email</span>
               <input type="email" name="adminEmail" maxLength={320} className="gh-input" />
-              <span className="text-[12px] text-[var(--color-text-muted)]">
+              <span className="text-portal-meta text-[var(--color-text-muted)]">
                 Optional — sends a portal invite to this address immediately.
               </span>
             </label>
@@ -203,7 +203,7 @@ export default async function AdminNewCorporateCompanyPage({ searchParams }: Pag
             </Btn>
             <Link
               href="/admin/corporate"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Cancel
             </Link>

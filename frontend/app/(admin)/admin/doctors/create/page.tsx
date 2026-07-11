@@ -213,7 +213,7 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
     <>
       <Link
         href="/admin/doctors"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to doctors
       </Link>
@@ -253,7 +253,7 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
             </button>
             <Link
               href="/admin/doctors"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Cancel
             </Link>

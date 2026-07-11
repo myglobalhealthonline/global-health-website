@@ -58,7 +58,7 @@ export function AdminPlansTable({
       label: "What's set up",
       priority: 3,
       render: (plan) => (
-        <span className="text-[13px] text-[var(--color-text-muted)]">
+        <span className="text-portal-compact text-[var(--color-text-muted)]">
           {plan._count.consultationRules} visits · {plan._count.perkRules} perks
           {plan._count.healthTestRules > 0 ? ` · ${plan._count.healthTestRules} kits` : ""}
         </span>
@@ -114,7 +114,7 @@ export function AdminPlansTable({
         <div className="gh-admin-plan-row-actions flex items-center gap-3">
           <Link
             href={`/admin/plans/${plan.id}/edit`}
-            className="text-[13px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+            className="text-portal-compact font-semibold text-[var(--color-brand-primary)] hover:underline"
           >
             Edit
           </Link>
@@ -123,7 +123,7 @@ export function AdminPlansTable({
               <input type="hidden" name="id" value={plan.id} />
               <ConfirmDeleteButton
                 message={`Deactivate "${plan.name}"? Existing subscribers keep their plan; it just hides from new signups.`}
-                className="text-[13px] font-semibold text-[var(--color-status-error-text)] hover:underline"
+                className="text-portal-compact font-semibold text-[var(--color-status-error-text)] hover:underline"
               >
                 Deactivate
               </ConfirmDeleteButton>

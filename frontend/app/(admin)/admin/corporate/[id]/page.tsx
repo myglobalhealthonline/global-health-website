@@ -283,7 +283,7 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
             key={t}
             href={`/admin/corporate/${id}?tab=${t}`}
             aria-current={tab === t ? "page" : undefined}
-            className={`rounded-full px-3.5 py-1.5 text-[13px] font-bold capitalize transition-colors ${
+            className={`rounded-full px-3.5 py-1.5 text-portal-compact font-bold capitalize transition-colors ${
               tab === t
                 ? "bg-[var(--color-text-primary)] text-[var(--color-surface)]"
                 : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
@@ -401,7 +401,7 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
                   defaultValue={company.contractEndAt?.slice(0, 10) ?? ""}
                   className="gh-input"
                 />
-                <span className="text-[12px] text-[var(--color-text-muted)]">
+                <span className="text-portal-meta text-[var(--color-text-muted)]">
                   Leave empty for open-ended. Past date stops all discounts + cards.
                 </span>
               </label>
@@ -865,7 +865,7 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
                 Save
               </Btn>
               {!company.preAssessmentDoctorId ? (
-                <span className="text-[12px] text-[var(--color-text-muted)]">
+                <span className="text-portal-meta text-[var(--color-text-muted)]">
                   ⚠ No doctor pinned — employees can book with any GP offering the pre-assessment.
                 </span>
               ) : null}

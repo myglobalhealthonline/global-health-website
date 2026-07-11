@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+/* Phase 7 role type tokens — portal fixed-px scale (DESIGN2 §6.1 / responsive
+ * design-system plan §2.2). Utility names: text-portal-micro … text-portal-body.
+ * Values are exact matches for the spec'd roles; swapping an arbitrary
+ * text-[Npx] for the same-valued role class is a zero-visual-change move.
+ * Public scale stays on the existing --text-* clamp vars — never cross scales. */
+@theme {
+  --text-portal-micro: 10px;   /* caption/micro — uppercase micro-badges, 10px hard floor */
+  --text-portal-thead: 11px;   /* table header caps + eyebrow (10.5–11 band) */
+  --text-portal-meta: 12px;    /* helper/meta */
+  --text-portal-label: 12.5px; /* form labels, mono data */
+  --text-portal-compact: 13px; /* body-compact, button sm */
+  --text-portal-cell: 13.5px;  /* table cell */
+  --text-portal-body: 14px;    /* body */
+}
+
 /* Two-file CSS architecture (P-009): this file loads on EVERY route via
  * app/layout.tsx and holds all public-site styles plus anything shared with
  * the portals (Obsidian Ivory shell + --portal- and --lux- tokens, .gh-card/

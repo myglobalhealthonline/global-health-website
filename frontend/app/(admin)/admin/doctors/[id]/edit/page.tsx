@@ -234,7 +234,7 @@ export default async function AdminEditDoctorPage({
     <>
       <Link
         href={`/admin/doctors/${id}`}
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to {doctor.fullName}
       </Link>
@@ -279,7 +279,7 @@ export default async function AdminEditDoctorPage({
           >
             Profile
           </h3>
-          <p className="mb-5 mt-1 text-[13px] text-[var(--color-text-muted)]">
+          <p className="mb-5 mt-1 text-portal-compact text-[var(--color-text-muted)]">
             Public-facing profile shown on the country team page.
           </p>
           {/* `id` is referenced by the Practicing-in checkboxes in the
@@ -306,7 +306,7 @@ export default async function AdminEditDoctorPage({
               </button>
               <Link
                 href={`/admin/doctors/${id}`}
-                className="text-[13px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
+                className="text-portal-compact font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
               >
                 Cancel
               </Link>
@@ -330,7 +330,7 @@ export default async function AdminEditDoctorPage({
             >
               Profile photo
             </h3>
-            <p className="mb-3 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-3 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               800×800 recommended. Upload or drop an image — saves with the
               rest of the form.
             </p>
@@ -356,7 +356,7 @@ export default async function AdminEditDoctorPage({
             >
               Practicing in
             </h3>
-            <p className="mb-2 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-2 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Tick any additional countries to list this doctor there. To change
               the primary country, use the Country dropdown in the main form.
             </p>
@@ -374,10 +374,10 @@ export default async function AdminEditDoctorPage({
                 >
                   <FlagBadge code={c.code} size={16} />
                   <div className="flex-1">
-                    <p className="m-0 text-[13px] font-bold text-[var(--color-text-primary)]">
+                    <p className="m-0 text-portal-compact font-bold text-[var(--color-text-primary)]">
                       {c.name}
                     </p>
-                    <p className="m-0 text-[12px] text-[var(--color-text-muted)]">
+                    <p className="m-0 text-portal-meta text-[var(--color-text-muted)]">
                       {isPrimary
                         ? "Primary — change via Country field"
                         : checked
@@ -402,7 +402,7 @@ export default async function AdminEditDoctorPage({
                 </label>
               );
             })}
-            <p className="mt-3 text-[11px] text-[var(--color-text-muted)]">
+            <p className="mt-3 text-portal-thead text-[var(--color-text-muted)]">
               Use the Country dropdown in the main form to change the primary
               country. Tick additional countries to list this doctor there too.
             </p>
@@ -426,7 +426,7 @@ export default async function AdminEditDoctorPage({
             >
               Permissions
             </h3>
-            <p className="mb-3 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-3 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Extra capabilities granted to this doctor&apos;s portal account.
               Admins always bypass these flags.
             </p>
@@ -439,10 +439,10 @@ export default async function AdminEditDoctorPage({
                 className="mt-0.5 h-5 w-5 rounded border-[var(--color-border)] accent-[var(--color-brand-primary)]"
               />
               <div className="flex-1">
-                <p className="m-0 text-[13px] font-bold text-[var(--color-text-primary)]">
+                <p className="m-0 text-portal-compact font-bold text-[var(--color-text-primary)]">
                   Can create manual appointments
                 </p>
-                <p className="m-0 text-[12px] text-[var(--color-text-muted)]">
+                <p className="m-0 text-portal-meta text-[var(--color-text-muted)]">
                   When on, the doctor sees a &ldquo;New appointment&rdquo;
                   action in their portal and can book on behalf of patients
                   without going through the public flow.

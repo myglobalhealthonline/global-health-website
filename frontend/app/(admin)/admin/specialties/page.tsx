@@ -297,10 +297,10 @@ export default async function AdminCategoriesMatrixPage({
                             )}
                           </span>
                           <div className="min-w-0">
-                            <p className="m-0 whitespace-nowrap text-[14px] font-bold text-[var(--color-text-primary)]">
+                            <p className="m-0 whitespace-nowrap text-portal-body font-bold text-[var(--color-text-primary)]">
                               {row.name}
                             </p>
-                            <p className="m-0 whitespace-nowrap font-mono text-[11px] text-[var(--color-text-muted)]">
+                            <p className="m-0 whitespace-nowrap font-mono text-portal-thead text-[var(--color-text-muted)]">
                               /{row.slug}
                             </p>
                           </div>
@@ -339,7 +339,7 @@ export default async function AdminCategoriesMatrixPage({
                         );
                       })}
                       <Td align="right">
-                        <span className="text-[12px] text-[var(--color-text-muted)]">
+                        <span className="text-portal-meta text-[var(--color-text-muted)]">
                           {inUse} / {countries.length}
                         </span>
                       </Td>
@@ -366,7 +366,7 @@ export default async function AdminCategoriesMatrixPage({
       {/* Sort-order editor — pick a country to manage per-country specialty order */}
       <AdminCard className="gh-admin-specialty-sort mt-6">
         <h3 className="text-[15px] font-bold text-[var(--color-text-primary)]">Sort order</h3>
-        <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+        <p className="mt-1 text-portal-meta text-[var(--color-text-muted)]">
           Choose a country to set the display order of its categories. Lower number = appears first.
         </p>
         <form method="get" className="gh-admin-support-filter-row mt-3 flex flex-wrap items-end gap-3">
@@ -392,7 +392,7 @@ export default async function AdminCategoriesMatrixPage({
 
         {sortCountry && sortSpecialties.length > 0 ? (
           <form action={reorderSpecialtiesAction} className="gh-admin-specialty-sort-form mt-5">
-            <p className="mb-3 text-[13px] font-semibold text-[var(--color-text-body)]">
+            <p className="mb-3 text-portal-compact font-semibold text-[var(--color-text-body)]">
               {sortCountry.name}
             </p>
             <SortableOrderList
@@ -406,13 +406,13 @@ export default async function AdminCategoriesMatrixPage({
             </div>
           </form>
         ) : sortCountry && sortSpecialties.length === 0 ? (
-          <p className="mt-3 text-[13px] text-[var(--color-text-muted)]">
+          <p className="mt-3 text-portal-compact text-[var(--color-text-muted)]">
             No categories enabled for {sortCountry.name} yet.
           </p>
         ) : null}
       </AdminCard>
 
-      <p className="mt-6 text-[12px] text-[var(--color-text-muted)]">
+      <p className="mt-6 text-portal-meta text-[var(--color-text-muted)]">
         Categories without a service yet won&apos;t appear on the public site. Add a specialist consultation under{" "}
         <Link
           href="/admin/specialist-consultations"
