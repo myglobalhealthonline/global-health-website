@@ -4,9 +4,8 @@ import { fetchDoctorPatients } from "@/lib/api/doctor-api";
 import {
   AdminSummaryStrip,
   PageHeader,
-  Pill,
 } from "@/components/portal-atoms";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -44,6 +43,52 @@ export default async function DoctorPatientsPage({
       ? result.data.items.filter((p) => p.fullName.toLowerCase().includes(q))
       : result.data.items;
   const totalPatients = result.ok ? result.data.items.length : 0;
+  const fields: ColumnPriorityField<(typeof items)[number]>[] = [
+    {
+      key: "patient",
+      label: d.patients.colPatient,
+      priority: 1,
+      render: (p) => <span className="font-semibold text-[var(--portal-text)]">{p.fullName}</span>,
+    },
+    {
+      key: "country",
+      label: d.common.country,
+      priority: 2,
+      render: (p) => <span className="text-xs uppercase">{p.countryCode}</span>,
+    },
+    {
+      key: "firstSeen",
+      label: d.common.firstSeen,
+      priority: 2,
+      render: (p) => (
+        <span className="text-xs text-[var(--portal-muted)]">
+          {new Date(p.firstSeen).toLocaleDateString()}
+        </span>
+      ),
+    },
+    {
+      key: "bookings",
+      label: d.patients.colBookings,
+      priority: 2,
+      align: "right",
+      render: (p) => <span className="font-semibold">{p.appointmentCount}</span>,
+    },
+    {
+      key: "open",
+      label: d.patients.colOpen,
+      priority: 2,
+      align: "right",
+      desktopOnly: true,
+      render: (p) => (
+        <Link
+          href={`/doctor/patients/${encodeURIComponent(p.email)}`}
+          className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1.5 text-xs font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
+        >
+          {d.common.open} <ChevronRight className="size-3.5" />
+        </Link>
+      ),
+    },
+  ];
   const totalBookings = result.ok
     ? result.data.items.reduce((sum, patient) => sum + patient.appointmentCount, 0)
     : 0;
@@ -119,70 +164,21 @@ export default async function DoctorPatientsPage({
         </div>
       ) : (
         <div className="gh-card gh-doctor-table-card p-0 overflow-hidden">
-          <div className="hidden md:block gh-doctor-table-wrap overflow-x-auto">
-          <table className="w-full text-sm">
-            {/* Email + phone columns intentionally removed (GDPR/privacy).
-                Doctors contact patients only through the in-app chat thread
-                on the appointment workspace. Admin keeps full PII under
-                /admin/users. */}
-            <thead className="bg-[var(--portal-well)] text-left text-xs uppercase tracking-wider text-[var(--portal-muted)]">
-              <tr>
-                <th className="px-4 py-3 font-semibold">{d.patients.colPatient}</th>
-                <th className="px-4 py-3 font-semibold">{d.common.country}</th>
-                <th className="px-4 py-3 font-semibold">{d.common.firstSeen}</th>
-                <th className="px-4 py-3 font-semibold text-right">{d.patients.colBookings}</th>
-                <th className="px-4 py-3 font-semibold text-right">{d.patients.colOpen}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--portal-line)]">
-              {items.map((p) => (
-                <tr key={p.email}>
-                  <td className="px-4 py-3 font-semibold text-[var(--portal-text)]">
-                    {p.fullName}
-                  </td>
-                  <td className="px-4 py-3 text-xs uppercase">{p.countryCode}</td>
-                  <td className="px-4 py-3 text-xs text-[var(--portal-muted)]">
-                    {new Date(p.firstSeen).toLocaleDateString()}
-                  </td>
-                  <td className="px-4 py-3 text-right font-semibold">
-                    {p.appointmentCount}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <Link
-                      href={`/doctor/patients/${encodeURIComponent(p.email)}`}
-                      className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1.5 text-xs font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
-                    >
-                      {d.common.open} <ChevronRight className="size-3.5" />
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
-          <div className="grid gap-3 p-3 md:hidden">
-            {items.map((p) => (
-              <PortalMobileCard
-                key={p.email}
-                title={p.fullName}
-                subtitle={d.patients.firstSeenAt.replace("{date}", new Date(p.firstSeen).toLocaleDateString())}
-                statusPill={<Pill tone="brand">{p.countryCode}</Pill>}
-                tone="brand"
-                meta={[
-                  { label: d.patients.colBookings, value: p.appointmentCount },
-                  { label: d.patients.record, value: d.patients.recordHint },
-                ]}
-                actions={
-                  <Link
-                    href={`/doctor/patients/${encodeURIComponent(p.email)}`}
-                    className="gh-btn gh-btn-soft text-sm"
-                  >
-                    {d.patients.openRecord} <ChevronRight className="size-3.5" />
-                  </Link>
-                }
-              />
-            ))}
-          </div>
+          {/* Email and phone remain excluded from this doctor-scoped list. */}
+          <ColumnPriorityTable
+            fields={fields}
+            rows={items}
+            getRowKey={(p) => p.email}
+            cardTone={() => "brand"}
+            cardActions={(p) => (
+              <Link
+                href={`/doctor/patients/${encodeURIComponent(p.email)}`}
+                className="gh-btn gh-btn-soft text-sm"
+              >
+                {d.patients.openRecord} <ChevronRight className="size-3.5" />
+              </Link>
+            )}
+          />
         </div>
       )}
     </>
