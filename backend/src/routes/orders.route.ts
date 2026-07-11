@@ -770,7 +770,15 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           meetingUrl: meetingUrlById.get(o.id) ?? o.meetingUrl,
           hasConsultation: orderHasConsultationItem(o.items),
           invoiceId: o.invoices[0]?.id ?? null,
-          stripeCheckoutUrl: o.stripeCheckoutUrl ?? null,
+          // Suppress the pay link once the order is no longer payable
+          // (cancelled / refunded / already paid).
+          stripeCheckoutUrl:
+            o.status === OrderStatus.CANCELLED ||
+            o.status === OrderStatus.REFUNDED ||
+            o.paymentStatus === PaymentStatus.PAID ||
+            o.paymentStatus === PaymentStatus.REFUNDED
+              ? null
+              : o.stripeCheckoutUrl ?? null,
           paidAt: o.paidAt?.toISOString() ?? null,
           createdAt: o.createdAt.toISOString(),
         })),
@@ -1064,6 +1072,19 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           await cancelOrderAppointments(order.id).catch((err) => {
             request.log.error({ err, orderId: order.id }, "Cancel order appointments failed");
           });
+          // Kill the payment link: expire the open Stripe checkout session so an
+          // already-copied link stops working for an unpaid cancelled order.
+          if (
+            order.stripeSessionId &&
+            order.paymentStatus !== PaymentStatus.PAID &&
+            isStripeConfigured(order.countryCode)
+          ) {
+            try {
+              await getStripeClient(order.countryCode).checkout.sessions.expire(order.stripeSessionId);
+            } catch (err) {
+              request.log.warn({ err, orderId: order.id }, "Expire checkout session on cancel failed");
+            }
+          }
         }
         return okResponse({
           id: order.id,

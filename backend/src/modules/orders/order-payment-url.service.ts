@@ -33,6 +33,18 @@ export async function resolveOrderPaymentUrl(
   });
   if (!order || order.items.length === 0) return "";
 
+  // A cancelled / refunded / already-paid order is not payable — never hand back
+  // (or mint) a checkout link for it. Guards the admin "copy link", the patient
+  // pay page, and the pre-payment reminders in one place.
+  if (
+    order.status === "CANCELLED" ||
+    order.status === "REFUNDED" ||
+    order.paymentStatus === "PAID" ||
+    order.paymentStatus === "REFUNDED"
+  ) {
+    return "";
+  }
+
   const stripe = getStripeClient(order.countryCode);
 
   if (order.stripeSessionId) {
