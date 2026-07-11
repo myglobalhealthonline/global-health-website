@@ -24,6 +24,7 @@ import {
 import { releaseOrderCreditReservations } from "../modules/subscriptions/checkout-pricing.service.js";
 import { sendOrderRefundNotifications } from "../modules/automation/refund-notifications.service.js";
 import { cancelOrderAppointments } from "../modules/appointments/appointments.service.js";
+import { sendPrePaymentCancelledNotifications } from "../modules/automation/pre-payment-flow.service.js";
 
 const createCheckoutBodySchema = z.object({
   appointmentId: z.string().trim().min(8).max(40),
@@ -471,7 +472,7 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                   .filter((id): id is string => Boolean(id));
                 await prisma.order.update({
                   where: { id: orderId },
-                  data: { status: "CANCELLED" },
+                  data: { status: "CANCELLED", paymentStatus: PaymentStatus.FAILED },
                 });
                 if (heldSlotIds.length > 0) {
                   await releaseSlotsToBaseGrid(heldSlotIds);
@@ -480,6 +481,17 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                 // abandoned order (RESERVED → RELEASED, credit restored).
                 await releaseOrderCreditReservations(orderId).catch((err) => {
                   app.log.error({ err, orderId }, "Release order credit reservations failed");
+                });
+                // Cancel the consultation appointment(s) — release BOOKED slots
+                // + drop the events off the admin/doctor calendars.
+                await cancelOrderAppointments(orderId).catch((err) => {
+                  app.log.error({ err, orderId }, "Cancel appointments on session expiry failed");
+                });
+                // Notify the patient (+ doctor) that the unpaid reservation was
+                // cancelled — the SAME cancelled message the deadline sweep sends,
+                // so a silent session-expiry cancel never happens again.
+                await sendPrePaymentCancelledNotifications(orderId).catch((err) => {
+                  app.log.error({ err, orderId }, "Cancelled notification on session expiry failed");
                 });
               }
             }
