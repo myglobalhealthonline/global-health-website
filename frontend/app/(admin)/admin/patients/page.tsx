@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Search, UserRound } from "lucide-react";
-import { fetchAdminPatients, type AdminPatientSearchItem, type VerificationStatus } from "@/lib/admin/admin-api";
-import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, PageHeader, Pill } from "../_components/atoms";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { fetchAdminPatients, type AdminPatientSearchItem } from "@/lib/admin/admin-api";
+import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, PageHeader } from "../_components/atoms";
+import { AdminPatientsTable } from "./_components/admin-patients-table";
 
 export const dynamic = "force-dynamic";
 
@@ -12,20 +12,6 @@ function readParam(sp: SearchParams, key: string): string | undefined {
   const v = sp[key];
   if (typeof v === "string" && v.trim() !== "") return v.trim();
   return undefined;
-}
-
-function verificationTone(status: VerificationStatus): "active" | "inactive" | "pending" | "neutral" {
-  switch (status) {
-    case "VERIFIED": return "active";
-    case "REJECTED": return "inactive";
-    case "PENDING": return "pending";
-    default: return "neutral";
-  }
-}
-
-function StatusBadge({ status }: { status: VerificationStatus }) {
-  const label = status === "NOT_VERIFIED" ? "Not verified" : status.charAt(0) + status.slice(1).toLowerCase();
-  return <Pill tone={verificationTone(status)}>{label}</Pill>;
 }
 
 export default async function AdminPatientsPage({
@@ -174,76 +160,7 @@ export default async function AdminPatientsPage({
           />
         ) : (
           <>
-            <div className="gh-admin-support-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
-              <table className="gh-table">
-                <thead>
-                  <tr>
-                    <th>Patient</th>
-                    <th>GHN</th>
-                    <th>ID</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Joined</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((p) => (
-                    <tr key={p.id}>
-                      <td>
-                        <div className="font-medium text-[var(--color-text-primary)]">
-                          {p.fullName ?? "—"}
-                        </div>
-                        <div className="text-xs text-[var(--color-text-muted)]">{p.email}</div>
-                      </td>
-                      <td>
-                        <code className="rounded bg-[var(--color-surface-raised)] px-1.5 py-0.5 text-xs">
-                          {p.globalHealthNumber ?? "—"}
-                        </code>
-                      </td>
-                      <td><StatusBadge status={p.idVerificationStatus} /></td>
-                      <td><StatusBadge status={p.emailVerificationStatus} /></td>
-                      <td><StatusBadge status={p.phoneVerificationStatus} /></td>
-                      <td className="text-[var(--color-text-muted)]">
-                        {new Date(p.createdAt).toLocaleDateString()}
-                      </td>
-                      <td>
-                        <Link
-                          href={`/admin/patients/${encodeURIComponent(p.email)}`}
-                          className="gh-link text-sm font-medium"
-                        >
-                          View →
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="gh-admin-mobile-list">
-              {items.map((p) => (
-                <PortalMobileCard
-                  key={p.id}
-                  title={p.fullName ?? p.email}
-                  subtitle={p.email}
-                  statusPill={<StatusBadge status={p.idVerificationStatus} />}
-                  meta={[
-                    { label: "GHN", value: <code>{p.globalHealthNumber ?? "-"}</code> },
-                    { label: "Joined", value: new Date(p.createdAt).toLocaleDateString() },
-                    { label: "Email", value: <StatusBadge status={p.emailVerificationStatus} /> },
-                    { label: "Phone", value: <StatusBadge status={p.phoneVerificationStatus} /> },
-                  ]}
-                  actions={
-                    <Link
-                      href={`/admin/patients/${encodeURIComponent(p.email)}`}
-                      className="gh-btn gh-btn-secondary text-sm"
-                    >
-                      View patient
-                    </Link>
-                  }
-                />
-              ))}
-            </div>
+            <AdminPatientsTable items={items} />
 
             {pagination && pagination.totalPages > 1 ? (
               <div className="gh-admin-support-pagination flex items-center justify-between border-t border-[var(--color-border)] px-4 py-3">
