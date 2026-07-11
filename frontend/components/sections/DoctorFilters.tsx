@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ChevronDown, SlidersHorizontal, X } from "lucide-react";
+import * as Dialog from "@radix-ui/react-dialog";
 import { AppMenu, AppMenuItem } from "@/components/AppMenu";
 import { AppSheet } from "@/components/AppSheet";
 
@@ -103,7 +104,7 @@ export function DoctorFilters({
             <AppMenu
               key={group.heading}
               align="start"
-              contentClassName={`gh2-filter-menu-content${dark ? " gh2-filter-menu-content--dark" : ""}`}
+              contentClassName={`gh2-filter-menu-content${dark ? " gh2-filter-menu-content--dark gh2-filters-dark" : ""}`}
               trigger={
                 <button type="button" className="gh2-filter-trigger">
                   {group.heading}
@@ -149,7 +150,11 @@ export function DoctorFilters({
         size="sm"
         theme="public"
         ariaLabel="Filters"
-        header={<h2 className="gh2-filter-sheet-title">Filters</h2>}
+        header={
+          <Dialog.Title asChild>
+            <h2 className="gh2-filter-sheet-title">Filters</h2>
+          </Dialog.Title>
+        }
         footer={
           <div className="flex items-center justify-between gap-3">
             {clearControl}

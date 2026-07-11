@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { SlidersHorizontal } from "lucide-react";
+import * as Dialog from "@radix-ui/react-dialog";
 import { AppSheet } from "@/components/AppSheet";
 
 /**
@@ -57,7 +58,11 @@ export function ResponsiveFilterBar({
             side="bottom"
             size="sm"
             ariaLabel="Filters"
-            header={<h2 className="gh-record-drawer__title">Filters</h2>}
+            header={
+              <Dialog.Title asChild>
+                <h2 className="gh-record-drawer__title">Filters</h2>
+              </Dialog.Title>
+            }
             footer={
               <button
                 type="button"

@@ -244,7 +244,7 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
         />
       ) : (
         <>
-      <div className="gh-admin-order-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
+      <div className="gh-admin-order-table-wrap overflow-x-auto">
         <AdminTable>
           <Thead>
             <Th style={{ width: 36 }}>
@@ -336,7 +336,7 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
         </AdminTable>
       </div>
 
-      <div className="gh-admin-mobile-list">
+      <div className="gh-admin-mobile-list gh-admin-order-mobile-list">
         {items.map((o) => (
           <PortalMobileCard
             key={o.id}

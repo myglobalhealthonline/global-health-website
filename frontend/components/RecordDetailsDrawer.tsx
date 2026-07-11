@@ -2,6 +2,7 @@
 
 import { useCallback, useState, type ReactNode } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import * as Dialog from "@radix-ui/react-dialog";
 import { AppSheet, type AppSheetSize, type AppSheetTheme } from "@/components/AppSheet";
 
 /**
@@ -94,7 +95,9 @@ export function RecordDetailsDrawer({
       header={
         <div className="gh-record-drawer__title-block">
           {eyebrow ? <span className="gh-record-drawer__eyebrow">{eyebrow}</span> : null}
-          <h2 className="gh-record-drawer__title">{title}</h2>
+          <Dialog.Title asChild>
+            <h2 className="gh-record-drawer__title">{title}</h2>
+          </Dialog.Title>
           {summary ? <div className="gh-record-drawer__summary">{summary}</div> : null}
         </div>
       }

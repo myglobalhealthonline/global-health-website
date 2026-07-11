@@ -2218,6 +2218,14 @@
   min-width: 860px;
 }
 
+/* Categories matrix (specialties) has a dynamic column per country, so a
+ * fixed min-width fights the natural table width instead of letting it
+ * shrink — drop the forced floor here only (Pattern A: no card split, just
+ * let the table size itself and rely on the wrap's overflow-x). */
+.gh-admin-specialty-table-wrap table {
+  min-width: 0;
+}
+
 .gh-admin-user-detail-layout {
   grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.85fr);
   align-items: start;
@@ -4135,7 +4143,13 @@ a.gh-appointment-card:hover {
 .gh-admin-main :where([role="tab"], .gh-admin-nav-link) {
   border-radius: var(--portal-radius-sm);
 }
-.gh-portal-shell {
+/* :root added alongside .gh-portal-shell so these tokens reach content that
+ * Radix/React portals mount directly on <body> (AppSheet, AppMenu, dialogs) —
+ * body sits outside .gh-portal-shell's DOM subtree so scoped custom
+ * properties don't cascade to it otherwise (same class of bug documented on
+ * .gh-admin-country-picker-menu below). portal.css only loads on portal
+ * route groups, so :root here can't leak into the public site. */
+:root, .gh-portal-shell {
   /* ── worlds ─────────────────────────────────────────────── */
   --portal-canvas: #07120c;
   --portal-bg: #fafbf7; /* ivory work plane */
