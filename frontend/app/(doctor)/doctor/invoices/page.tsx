@@ -7,7 +7,7 @@ import {
   PageHeader,
   Pill,
 } from "@/components/portal-atoms";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 import { PayoutInvoicePanel, type InvoiceStrings } from "./_components/payout-invoice-panel";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -33,14 +33,6 @@ function fmtMoney(cents: number | null, code: string | null) {
     return `${v.toFixed(2)} ${code ?? ""}`;
   }
 }
-
-const PAYMENT_TONE: Record<string, string> = {
-  PAID: "bg-emerald-100 text-emerald-800",
-  PENDING: "bg-amber-100 text-amber-800",
-  UNPAID: "bg-rose-100 text-rose-800",
-  REFUNDED: "bg-slate-100 text-slate-700",
-  FAILED: "bg-rose-100 text-rose-800",
-};
 
 function paymentTone(status: string): "active" | "inactive" | "pending" | "neutral" {
   if (status === "PAID") return "active";
@@ -76,32 +68,28 @@ function SortHeader({
   currentSortBy,
   currentSortOrder,
   sp,
-  className,
 }: {
   column: SortBy;
   label: string;
   currentSortBy: SortBy;
   currentSortOrder: SortOrder;
   sp: SearchParams;
-  className?: string;
 }) {
   const active = currentSortBy === column;
   return (
-    <th className={`px-4 py-3 font-semibold ${className ?? ""}`}>
-      <Link
-        href={sortHref(sp, column, currentSortBy, currentSortOrder)}
-        className="inline-flex items-center gap-1 hover:text-[var(--portal-text)]"
-      >
-        {label}
-        {active ? (
-          currentSortOrder === "asc" ? (
-            <ChevronUp className="size-3.5" aria-hidden />
-          ) : (
-            <ChevronDown className="size-3.5" aria-hidden />
-          )
-        ) : null}
-      </Link>
-    </th>
+    <Link
+      href={sortHref(sp, column, currentSortBy, currentSortOrder)}
+      className="inline-flex items-center gap-1 hover:text-[var(--portal-text)]"
+    >
+      {label}
+      {active ? (
+        currentSortOrder === "asc" ? (
+          <ChevronUp className="size-3.5" aria-hidden />
+        ) : (
+          <ChevronDown className="size-3.5" aria-hidden />
+        )
+      ) : null}
+    </Link>
   );
 }
 
@@ -144,6 +132,59 @@ export default async function DoctorInvoicesPage({
       row.doctorAmountCents == null,
   ).length;
   const currencyCode = invoices.find((row) => row.currencyCode)?.currencyCode ?? "USD";
+  const fields: ColumnPriorityField<(typeof invoices)[number]>[] = [
+    {
+      key: "patient",
+      label: d.invoices.colPatient,
+      priority: 1,
+      render: (row) => (
+        <>
+          <p className="font-semibold text-[var(--portal-text)]">{row.fullName}</p>
+          <p className="text-xs text-[var(--portal-muted)]">{row.email}</p>
+        </>
+      ),
+    },
+    {
+      key: "when",
+      label: <SortHeader column="date" label={d.invoices.colWhen} currentSortBy={sortBy} currentSortOrder={sortOrder} sp={sp} />,
+      cardLabel: d.invoices.colWhen,
+      priority: 2,
+      render: (row) => (
+        <span className="text-xs">
+          {row.scheduledAt
+            ? new Date(row.scheduledAt).toLocaleString(undefined, { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" })
+            : new Date(row.createdAt).toLocaleDateString()}
+        </span>
+      ),
+    },
+    { key: "type", label: d.invoices.colType, priority: 3, render: (row) => <span className="text-xs capitalize">{row.consultationType}</span> },
+    {
+      key: "amount",
+      label: <SortHeader column="amount" label={d.invoices.colAmount} currentSortBy={sortBy} currentSortOrder={sortOrder} sp={sp} />,
+      cardLabel: d.invoices.colAmount,
+      priority: 2,
+      render: (row) => <span className="font-mono text-xs">{row.doctorAmountCents == null ? d.common.notSet : fmtMoney(row.doctorAmountCents, row.currencyCode)}</span>,
+    },
+    {
+      key: "payment",
+      label: d.invoices.colPayment,
+      priority: 2,
+      render: (row) => <Pill tone={paymentTone(row.paymentStatus)} withDot>{row.paymentStatus}</Pill>,
+    },
+    { key: "status", label: d.invoices.colStatus, priority: 3, render: (row) => <span className="text-xs">{row.status}</span> },
+    {
+      key: "open",
+      label: d.invoices.colOpen,
+      priority: 2,
+      align: "right",
+      desktopOnly: true,
+      render: (row) => (
+        <Link href={`/doctor/appointments/${row.id}`} className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1.5 text-xs font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]">
+          {d.common.open} <ChevronRight className="size-3.5" />
+        </Link>
+      ),
+    },
+  ];
 
   return (
     <>
@@ -260,123 +301,20 @@ export default async function DoctorInvoicesPage({
         />
       ) : (
         <div className="gh-card gh-doctor-table-card p-0 overflow-hidden">
-          <div className="hidden md:block gh-doctor-table-wrap overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-[var(--portal-well)] text-left text-xs uppercase tracking-wider text-[var(--portal-muted)]">
-              <tr>
-                <th className="px-4 py-3 font-semibold">{d.invoices.colPatient}</th>
-                <SortHeader
-                  column="date"
-                  label={d.invoices.colWhen}
-                  currentSortBy={sortBy}
-                  currentSortOrder={sortOrder}
-                  sp={sp}
-                />
-                <th className="hidden lg:table-cell px-4 py-3 font-semibold">{d.invoices.colType}</th>
-                <SortHeader
-                  column="amount"
-                  label={d.invoices.colAmount}
-                  currentSortBy={sortBy}
-                  currentSortOrder={sortOrder}
-                  sp={sp}
-                />
-                <th className="px-4 py-3 font-semibold">{d.invoices.colPayment}</th>
-                <th className="hidden lg:table-cell px-4 py-3 font-semibold">{d.invoices.colStatus}</th>
-                <th className="px-4 py-3 font-semibold text-right">{d.invoices.colOpen}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--portal-line)]">
-              {invoices.map((row) => (
-                <tr key={row.id}>
-                  <td className="px-4 py-3">
-                    <p className="font-semibold text-[var(--portal-text)]">
-                      {row.fullName}
-                    </p>
-                    <p className="text-xs text-[var(--portal-muted)]">
-                      {row.email}
-                    </p>
-                  </td>
-                  <td className="px-4 py-3 text-xs">
-                    {row.scheduledAt
-                      ? new Date(row.scheduledAt).toLocaleString(undefined, {
-                          month: "short",
-                          day: "2-digit",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })
-                      : new Date(row.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="hidden lg:table-cell px-4 py-3 text-xs capitalize">{row.consultationType}</td>
-                  <td className="px-4 py-3 font-mono text-xs">
-                    {row.doctorAmountCents == null
-                      ? d.common.notSet
-                      : fmtMoney(row.doctorAmountCents, row.currencyCode)}
-                  </td>
-                  <td className="px-4 py-3 text-xs">
-                    <span
-                      className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.04em] ${
-                        PAYMENT_TONE[row.paymentStatus] ??
-                        "bg-[var(--portal-well)] text-[var(--portal-muted)]"
-                      }`}
-                    >
-                      {row.paymentStatus}
-                    </span>
-                  </td>
-                  <td className="hidden lg:table-cell px-4 py-3 text-xs">{row.status}</td>
-                  <td className="px-4 py-3 text-right">
-                    <Link
-                      href={`/doctor/appointments/${row.id}`}
-                      className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1.5 text-xs font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
-                    >
-                      {d.common.open} <ChevronRight className="size-3.5" />
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
-          <div className="grid gap-3 p-3 md:hidden">
-            {invoices.map((row) => {
+          <ColumnPriorityTable
+            fields={fields}
+            rows={invoices}
+            getRowKey={(row) => row.id}
+            cardTone={(row) => {
               const tone = paymentTone(row.paymentStatus);
-              return (
-                <PortalMobileCard
-                  key={row.id}
-                  title={row.fullName}
-                  subtitle={<span className="capitalize">{row.consultationType}</span>}
-                  statusPill={
-                    <Pill tone={tone} withDot>
-                      {row.paymentStatus}
-                    </Pill>
-                  }
-                  tone={tone === "active" ? "success" : tone === "inactive" ? "danger" : tone === "pending" ? "warning" : "neutral"}
-                  meta={[
-                    {
-                      label: "Amount",
-                      value:
-                        row.doctorAmountCents == null
-                          ? d.common.notSet
-                          : fmtMoney(row.doctorAmountCents, row.currencyCode),
-                    },
-                    {
-                      label: d.invoices.colWhen,
-                      value: row.scheduledAt
-                        ? new Date(row.scheduledAt).toLocaleDateString()
-                        : new Date(row.createdAt).toLocaleDateString(),
-                    },
-                  ]}
-                  actions={
-                    <Link
-                      href={`/doctor/appointments/${row.id}`}
-                      className="gh-btn gh-btn-soft text-sm"
-                    >
-                      {d.invoices.openConsultation} <ChevronRight className="size-3.5" />
-                    </Link>
-                  }
-                />
-              );
-            })}
-          </div>
+              return tone === "active" ? "success" : tone === "inactive" ? "danger" : tone === "pending" ? "warning" : "neutral";
+            }}
+            cardActions={(row) => (
+              <Link href={`/doctor/appointments/${row.id}`} className="gh-btn gh-btn-soft text-sm">
+                {d.invoices.openConsultation} <ChevronRight className="size-3.5" />
+              </Link>
+            )}
+          />
           {result.data.pagination.totalPages > 1 ? (
             <div className="border-t border-[var(--portal-line)] px-4 py-3 text-xs text-[var(--portal-muted)]">
               {d.common.pagination
