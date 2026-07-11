@@ -5592,7 +5592,7 @@ a.gh-appointment-card:hover {
 
 /* Container-aware list fallback: the available main-column width, rather than
    the viewport, decides when established portal card lists replace tables. */
-@container list (max-width: 760px) {
+@container list (max-width: 960px) {
   .gh-admin-deep-table-wrap,
   .gh-admin-appointment-table-wrap {
     display: none;
