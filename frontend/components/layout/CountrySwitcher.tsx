@@ -11,7 +11,7 @@
  * switcher renders it automatically.
  */
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { ChevronDown, Check } from "lucide-react";
 import { type CountryCode, type CountryConfig } from "@/data/countries";
@@ -20,6 +20,7 @@ import { parseSitePath, swapCountryInPath } from "@/lib/routing/path-rewrites";
 import { useCart } from "@/components/cart/CartContext";
 import { Flag } from "@/components/ui/Flag";
 import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
+import { AppMenu, AppMenuItem } from "@/components/AppMenu";
 
 export function CountrySwitcher({
   activeCountryCode,
@@ -31,8 +32,6 @@ export function CountrySwitcher({
   const pathname = usePathname();
   const { cart, clear } = useCart();
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
 
   // If the cart has items pinned to a specific country, switching to a
   // different country mid-flow would either silently mismatch pricing
@@ -68,111 +67,88 @@ export function CountrySwitcher({
     globalThis.location.assign(nextHref);
   }
 
-  useEffect(() => {
-    if (!open) return;
-    function onClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    }
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        setOpen(false);
-        triggerRef.current?.focus();
-      }
-    }
-    document.addEventListener("mousedown", onClick);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", onClick);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open]);
-
   const active = activeCountryCode
     ? countries.find((c) => c.code === activeCountryCode) ?? null
     : null;
 
   return (
-    <div ref={ref} className="relative">
-      <button
-        ref={triggerRef}
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-haspopup="true"
-        aria-expanded={open ? "true" : "false"}
-        data-open={open}
-        className="gh-focus-on-dark inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-full border-none bg-transparent px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:text-white data-[open=true]:text-white"
-      >
-        {active ? <Flag code={active.code} size="sm" /> : null}
-        <span>{active ? active.name : "Choose country"}</span>
-        <ChevronDown
-          aria-hidden
-          className="size-3 opacity-70 transition-transform duration-200 motion-reduce:transition-none data-[open=true]:rotate-180"
+    <AppMenu
+      onOpenChange={setOpen}
+      contentClassName="gh2-glass-ivory min-w-[220px] rounded-xl p-1 text-[var(--color-text-primary)]"
+      trigger={
+        <button
+          type="button"
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : "false"}
           data-open={open}
-        />
-      </button>
-
-      {open ? (
-        <div
-          aria-label="Choose country"
-          className="absolute right-0 z-[var(--z-dropdown)] mt-2 min-w-[220px] max-h-[min(calc(100svh-120px),320px)] overflow-hidden overflow-y-auto rounded-xl border border-[var(--color-border)] bg-[var(--color-background-page)] shadow-[var(--shadow-elevated)]"
+          className="gh-focus-on-dark inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-full border-none bg-transparent px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:text-white data-[open=true]:text-white"
         >
-          <ul className="m-0 list-none p-1">
-            {countries.map((c) => {
-              const isActive = c.code === activeCountryCode;
+          {active ? <Flag code={active.code} size="sm" /> : null}
+          <span>{active ? active.name : "Choose country"}</span>
+          <ChevronDown
+            aria-hidden
+            className="size-3 opacity-70 transition-transform duration-200 motion-reduce:transition-none data-[open=true]:rotate-180"
+            data-open={open}
+          />
+        </button>
+      }
+    >
+      <ul aria-label="Choose country" className="m-0 list-none">
+        {countries.map((c) => {
+          const isActive = c.code === activeCountryCode;
               // Prefer the slug on the country data itself; the client-side
               // registry proxy may not be warm for admin-added countries.
-              const slug =
-                c.slug || COUNTRY_CODE_TO_SLUG[c.code] || c.code.toLowerCase();
+          const slug =
+            c.slug || COUNTRY_CODE_TO_SLUG[c.code] || c.code.toLowerCase();
               // Keep the visitor's current language when the target
               // country supports it; otherwise fall back to the target
               // country's default locale. This makes country switching
               // language-stable instead of silently resetting the
               // visitor's choice on every switch.
-              const current = pathname || "/";
-              const currentLang = parseSitePath(current).lang;
-              const nextLang = (
-                currentLang &&
-                (c.supportedLocales as string[]).includes(currentLang)
-                  ? currentLang
-                  : c.defaultLocale
-              ).toLowerCase();
+          const current = pathname || "/";
+          const currentLang = parseSitePath(current).lang;
+          const nextLang = (
+            currentLang &&
+            (c.supportedLocales as string[]).includes(currentLang)
+              ? currentLang
+              : c.defaultLocale
+          ).toLowerCase();
               // On country-scoped paths (/{country}/{lang}/...) swap
               // the country segment in place. On global paths
               // (/about, /blog, /faq, /contact, /) there's nothing to
               // swap — route straight to the country home.
               // swapCountryInPath returns the input unchanged on global
               // paths, so detect that and route to the country home.
-              const swapped = swapCountryInPath(current, slug, nextLang);
-              const href =
-                swapped === current ? `/${slug}/${nextLang}` : swapped;
-              return (
-                <li key={c.code}>
-                  <button
-                    type="button"
-                    onClick={() => handleSwitch(href, c.code, nextLang)}
-                    className={`flex min-h-[44px] w-full cursor-pointer items-center justify-between gap-3 rounded-lg border-none px-3.5 py-2.5 text-left text-[13px] text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:bg-[var(--color-brand-mint-soft)] ${
-                      isActive
-                        ? "bg-[var(--color-background-soft)] font-bold"
-                        : "bg-transparent font-medium"
-                    }`}
-                  >
-                    <span className="inline-flex items-center gap-2.5">
-                      <Flag code={c.code} size="sm" />
-                      <span>{c.name}</span>
-                    </span>
-                    {isActive ? (
-                      <Check
-                        aria-hidden
-                        className="size-3.5 text-[var(--color-brand-primary)]"
-                      />
-                    ) : null}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ) : null}
-    </div>
+          const swapped = swapCountryInPath(current, slug, nextLang);
+          const href = swapped === current ? `/${slug}/${nextLang}` : swapped;
+          return (
+            <li key={c.code}>
+              <AppMenuItem asChild>
+                <button
+                  type="button"
+                  onClick={() => handleSwitch(href, c.code, nextLang)}
+                  className={`flex min-h-[44px] w-full cursor-pointer items-center justify-between gap-3 rounded-lg border-none px-3.5 py-2.5 text-left text-[13px] text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:bg-[var(--color-brand-mint-soft)] ${
+                    isActive
+                      ? "bg-[var(--color-background-soft)] font-bold"
+                      : "bg-transparent font-medium"
+                  }`}
+                >
+                  <span className="inline-flex items-center gap-2.5">
+                    <Flag code={c.code} size="sm" />
+                    <span>{c.name}</span>
+                  </span>
+                  {isActive ? (
+                    <Check
+                      aria-hidden
+                      className="size-3.5 text-[var(--color-brand-primary)]"
+                    />
+                  ) : null}
+                </button>
+              </AppMenuItem>
+            </li>
+          );
+        })}
+      </ul>
+    </AppMenu>
   );
 }

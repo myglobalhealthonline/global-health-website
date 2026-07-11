@@ -15,13 +15,14 @@
  * No component edits required.
  */
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ChevronDown, Languages, Check } from "lucide-react";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { localeDisplayName } from "@/lib/i18n/locale-display";
 import { swapLangInPath } from "@/lib/routing/path-rewrites";
 import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
+import { AppMenu, AppMenuItem } from "@/components/AppMenu";
 
 export function LanguageSwitcher({
   currentLang,
@@ -42,27 +43,6 @@ export function LanguageSwitcher({
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    function onClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    }
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        setOpen(false);
-        triggerRef.current?.focus();
-      }
-    }
-    document.addEventListener("mousedown", onClick);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", onClick);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open]);
 
   if (availableLocales.length <= 1) return null;
 
@@ -86,42 +66,30 @@ export function LanguageSwitcher({
   });
 
   return (
-    <div ref={ref} className="relative">
-      <button
-        ref={triggerRef}
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-haspopup="true"
-        aria-expanded={open}
-        data-open={open}
-        className="gh-focus-on-dark inline-flex cursor-pointer items-center gap-1.5 rounded-full border-none bg-transparent px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:text-white data-[open=true]:text-white"
-        style={{ minHeight: 44 }}
-      >
-        <Languages aria-hidden className="size-3.5 opacity-80" />
-        <span className="uppercase">{currentLang}</span>
-        <ChevronDown
-          aria-hidden
-          className="size-3 opacity-70 transition-transform duration-200 motion-reduce:transition-none"
-          style={{ transform: open ? "rotate(180deg)" : "none" }}
-        />
-      </button>
-
-      {open ? (
-        <div
-          aria-label="Choose language"
-          className="absolute right-0 z-[var(--z-dropdown)] mt-2 overflow-hidden"
-          style={{
-            minWidth: 200,
-            maxHeight: "min(calc(100vh - 120px), 320px)",
-            overflowY: "auto",
-            background: "var(--color-background-page)",
-            border: "1px solid var(--color-border)",
-            borderRadius: 12,
-            boxShadow: "var(--shadow-elevated)",
-          }}
+    <AppMenu
+      onOpenChange={setOpen}
+      contentClassName="gh2-glass-ivory min-w-[200px] rounded-xl p-1 text-[var(--color-text-primary)]"
+      trigger={
+        <button
+          type="button"
+          aria-haspopup="true"
+          aria-expanded={open}
+          data-open={open}
+          className="gh-focus-on-dark inline-flex cursor-pointer items-center gap-1.5 rounded-full border-none bg-transparent px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:text-white data-[open=true]:text-white"
+          style={{ minHeight: 44 }}
         >
-          <ul className="m-0 list-none p-1">
-            {availableLocales.map((loc) => {
+          <Languages aria-hidden className="size-3.5 opacity-80" />
+          <span className="uppercase">{currentLang}</span>
+          <ChevronDown
+            aria-hidden
+            className="size-3 opacity-70 transition-transform duration-200 motion-reduce:transition-none"
+            style={{ transform: open ? "rotate(180deg)" : "none" }}
+          />
+        </button>
+      }
+    >
+      <ul aria-label="Choose language" className="m-0 list-none">
+        {availableLocales.map((loc) => {
               const isActive = loc === currentLang;
               const current = pathname || "/";
               const swapped = swapLangInPath(current, loc);
@@ -147,7 +115,8 @@ export function LanguageSwitcher({
                 // x-gh-locale header stamped by the middleware.
                 return (
                   <li key={loc}>
-                    <button
+                    <AppMenuItem asChild>
+                      <button
                       type="button"
                       onClick={() => {
                         setClientLocaleCookie(loc);
@@ -164,7 +133,8 @@ export function LanguageSwitcher({
                           className="size-3.5 text-[var(--color-brand-primary)]"
                         />
                       ) : null}
-                    </button>
+                      </button>
+                    </AppMenuItem>
                   </li>
                 );
               }
@@ -173,7 +143,8 @@ export function LanguageSwitcher({
               // re-renders the same page in the chosen language.
               return (
                 <li key={loc}>
-                  <button
+                  <AppMenuItem asChild>
+                    <button
                     type="button"
                     onClick={() => {
                       setClientLocaleCookie(loc);
@@ -190,13 +161,12 @@ export function LanguageSwitcher({
                         className="size-3.5 text-[var(--color-brand-primary)]"
                       />
                     ) : null}
-                  </button>
+                    </button>
+                  </AppMenuItem>
                 </li>
               );
-            })}
-          </ul>
-        </div>
-      ) : null}
-    </div>
+        })}
+      </ul>
+    </AppMenu>
   );
 }
