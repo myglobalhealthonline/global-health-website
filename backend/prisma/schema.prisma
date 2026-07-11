@@ -1021,6 +1021,11 @@ model InsuranceCompany {
   discountPercent Int?
   isActive        Boolean                    @default(true)
   sortOrder       Int                        @default(0)
+  /// Admin recipients notified (email + WhatsApp) when an insurance order for
+  /// this company comes in and needs manual card verification. Each entry in
+  /// notifyWhatsappNumbers is a stored E.164 number.
+  notifyEmails          String[]             @default([])
+  notifyWhatsappNumbers String[]             @default([])
   coverages       InsuranceServiceCoverage[]
   createdAt       DateTime                   @default(now())
   updatedAt       DateTime                   @updatedAt
@@ -2040,6 +2045,17 @@ model Order {
   totalCents            Int
   status                OrderStatus @default(PENDING)
   paymentStatus         PaymentStatus @default(UNPAID)
+  /// Insurance card manual-verification state. Null = ordinary (non-insurance)
+  /// order. PENDING = booked with insurance, awaiting admin card verification
+  /// (no Stripe session yet, slot reserved). VERIFIED = admin confirmed the
+  /// card → patient sent a payment link at the insurance price. REJECTED =
+  /// card could not be verified → order re-priced to standard, patient sent a
+  /// payment link at the normal price. See insurance-verification.service.
+  insuranceVerificationStatus VerificationStatus?
+  /// The insurance company selected for this order (mirror of the single
+  /// consultation line's company). Null for non-insurance orders. Drives the
+  /// admin-notify recipient lookup + the admin verification UI.
+  insuranceCompanyId    String?
   stripeSessionId       String?     @unique
   stripePaymentIntentId String?     @unique
   stripeInvoiceId       String?     @unique

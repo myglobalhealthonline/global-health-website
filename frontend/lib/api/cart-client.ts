@@ -103,8 +103,8 @@ export type CheckoutInput = {
 
 export async function startCheckout(
   input: CheckoutInput,
-): Promise<Result<{ orderId: string; url: string | null; free?: boolean }>> {
-  return cartFetch<{ orderId: string; url: string | null; free?: boolean }>(
+): Promise<Result<{ orderId: string; url: string | null; free?: boolean; insurancePendingVerification?: boolean }>> {
+  return cartFetch<{ orderId: string; url: string | null; free?: boolean; insurancePendingVerification?: boolean }>(
     "/api/cart/checkout",
     {
       method: "POST",

@@ -107,12 +107,20 @@ export async function InsuranceCompaniesManager({
     if (pricingMode === "PERCENT" && percentRaw === "") {
       redirect(`${base}?error=${encodeURIComponent("A discount % is required for percentage companies")}`);
     }
+    // Notify recipients — one per line in each textarea. Split, trim, drop blanks.
+    const splitLines = (raw: string) =>
+      raw
+        .split(/[\n,]/)
+        .map((s) => s.trim())
+        .filter(Boolean);
     const body = {
       name,
       pricingMode,
       discountPercent: pricingMode === "PERCENT" ? Math.round(Number(percentRaw) || 0) : null,
       isActive: formData.get("isActive") === "on",
       sortOrder: Number(formData.get("sortOrder") ?? 0) || 0,
+      notifyEmails: splitLines(String(formData.get("notifyEmails") ?? "")),
+      notifyWhatsappNumbers: splitLines(String(formData.get("notifyWhatsappNumbers") ?? "")),
     };
     const result = companyId
       ? await updateAdminInsuranceCompany(countryId, companyId, body)
@@ -327,6 +335,38 @@ export async function InsuranceCompaniesManager({
               Fixed: set a new price per service on the &ldquo;Manage services&rdquo; screen. Percentage:
               the discount % applies automatically to every covered service&apos;s base price.
             </p>
+            <div className="mt-2 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
+              <p className="m-0 text-[13px] font-semibold text-[var(--color-text-primary)]">
+                Notify admin
+              </p>
+              <p className="mt-1 mb-3 text-[12px] text-[var(--color-text-muted)]">
+                When a patient books with this company we hold the slot and wait for a human to verify
+                their card before taking payment. These recipients get an email + WhatsApp with a link to
+                the order to verify. One per line (or comma-separated).
+              </p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">Notify emails</span>
+                  <textarea
+                    name="notifyEmails"
+                    rows={3}
+                    defaultValue={(editCompany?.notifyEmails ?? []).join("\n")}
+                    placeholder="ops@clinic.com"
+                    className="gh-input resize-y font-mono text-[12px]"
+                  />
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">Notify WhatsApp numbers</span>
+                  <textarea
+                    name="notifyWhatsappNumbers"
+                    rows={3}
+                    defaultValue={(editCompany?.notifyWhatsappNumbers ?? []).join("\n")}
+                    placeholder="+351912345678"
+                    className="gh-input resize-y font-mono text-[12px]"
+                  />
+                </label>
+              </div>
+            </div>
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"

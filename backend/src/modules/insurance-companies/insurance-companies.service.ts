@@ -2,6 +2,7 @@ import { InsurancePricingMode } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { resolveInsurancePrice } from "../pricing/insurance-pricing.service.js";
+import { normalizePhoneToE164 } from "../../lib/whatsapp/normalize-phone.js";
 
 export type InsuranceCompanyInput = {
   name: string;
@@ -9,6 +10,9 @@ export type InsuranceCompanyInput = {
   discountPercent?: number | null;
   isActive?: boolean;
   sortOrder?: number;
+  /** Admin-notify recipients — raw (unnormalized) emails + phone numbers. */
+  notifyEmails?: string[];
+  notifyWhatsappNumbers?: string[];
 };
 
 const COMPANY_SELECT = {
@@ -19,7 +23,34 @@ const COMPANY_SELECT = {
   discountPercent: true,
   isActive: true,
   sortOrder: true,
+  notifyEmails: true,
+  notifyWhatsappNumbers: true,
 } as const;
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** Trim + lowercase + dedupe valid emails. */
+function sanitizeEmails(raw: string[] | undefined): string[] {
+  if (!raw) return [];
+  const seen = new Set<string>();
+  for (const e of raw) {
+    const v = e.trim().toLowerCase();
+    if (v && EMAIL_RE.test(v)) seen.add(v);
+  }
+  return [...seen];
+}
+
+/** Normalize to E.164 (using the country as a hint for bare-local numbers),
+ *  drop anything that can't be parsed, dedupe. */
+function sanitizeWhatsapps(raw: string[] | undefined, countryCode: string | null): string[] {
+  if (!raw) return [];
+  const seen = new Set<string>();
+  for (const p of raw) {
+    const e164 = normalizePhoneToE164(p, countryCode ? { orderCountryCode: countryCode } : undefined);
+    if (e164) seen.add(e164);
+  }
+  return [...seen];
+}
 
 /** Normalize a company's pricing fields: PERCENT keeps its percent, FIXED drops it. */
 function normalizePricing(mode: InsurancePricingMode, discountPercent?: number | null) {
@@ -41,7 +72,10 @@ export async function listInsuranceCompanies(countryId: string) {
 }
 
 export async function createInsuranceCompany(countryId: string, input: InsuranceCompanyInput) {
-  const country = await prisma.country.findUnique({ where: { id: countryId }, select: { id: true } });
+  const country = await prisma.country.findUnique({
+    where: { id: countryId },
+    select: { id: true, code: true },
+  });
   if (!country) return null;
   try {
     return await prisma.insuranceCompany.create({
@@ -51,6 +85,8 @@ export async function createInsuranceCompany(countryId: string, input: Insurance
         ...normalizePricing(input.pricingMode, input.discountPercent),
         isActive: input.isActive ?? true,
         sortOrder: input.sortOrder ?? 0,
+        notifyEmails: sanitizeEmails(input.notifyEmails),
+        notifyWhatsappNumbers: sanitizeWhatsapps(input.notifyWhatsappNumbers, country.code),
       },
       select: COMPANY_SELECT,
     });
@@ -62,7 +98,7 @@ export async function createInsuranceCompany(countryId: string, input: Insurance
 export async function updateInsuranceCompany(id: string, input: Partial<InsuranceCompanyInput>) {
   const existing = await prisma.insuranceCompany.findUnique({
     where: { id },
-    select: { id: true, pricingMode: true },
+    select: { id: true, pricingMode: true, country: { select: { code: true } } },
   });
   if (!existing) return null;
   // If the mode changes, re-normalize the percent for the NEW mode.
@@ -79,6 +115,10 @@ export async function updateInsuranceCompany(id: string, input: Partial<Insuranc
         ...pricing,
         ...(input.isActive !== undefined && { isActive: input.isActive }),
         ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
+        ...(input.notifyEmails !== undefined && { notifyEmails: sanitizeEmails(input.notifyEmails) }),
+        ...(input.notifyWhatsappNumbers !== undefined && {
+          notifyWhatsappNumbers: sanitizeWhatsapps(input.notifyWhatsappNumbers, existing.country.code),
+        }),
       },
       select: COMPANY_SELECT,
     });

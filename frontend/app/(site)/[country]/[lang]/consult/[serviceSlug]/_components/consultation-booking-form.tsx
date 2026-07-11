@@ -932,7 +932,9 @@ export function ConsultationBookingForm({
                   className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
                 />
                 <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                  Your insurance price applies once you enter your card number.
+                  Your insurance price applies once you enter your card number. We&rsquo;ll reserve
+                  your time and verify your card before taking payment — you&rsquo;ll get a secure
+                  payment link by email &amp; WhatsApp once it&rsquo;s verified.
                 </p>
               </label>
             ) : null}

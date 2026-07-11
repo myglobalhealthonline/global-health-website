@@ -263,6 +263,9 @@ export type AdminInsuranceCompanyDto = {
   discountPercent: number | null;
   isActive: boolean;
   sortOrder: number;
+  /** Admin recipients notified when an insurance order needs card verification. */
+  notifyEmails: string[];
+  notifyWhatsappNumbers: string[];
   /** Number of services this company covers (present on the list endpoint). */
   _count?: { coverages: number };
 };

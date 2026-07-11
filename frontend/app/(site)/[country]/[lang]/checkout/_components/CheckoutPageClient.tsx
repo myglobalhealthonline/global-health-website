@@ -66,6 +66,8 @@ export function CheckoutPageClient({
   const { cart, loading } = useCart();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Insurance orders don't pay here — the card is verified by an admin first.
+  const [insurancePending, setInsurancePending] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const [me, setMe] = useState<AuthUser | null>(null);
   const [authLoaded, setAuthLoaded] = useState(false);
@@ -136,10 +138,12 @@ export function CheckoutPageClient({
   }, [me, consultationPatient]);
 
   useEffect(() => {
-    if (!loading && cart.items.length === 0) {
+    // Don't bounce to the cart after an insurance checkout clears it — the
+    // pending-verification panel must stay on screen.
+    if (!loading && cart.items.length === 0 && !insurancePending) {
       router.replace(cartHref);
     }
-  }, [loading, cart.items.length, router, cartHref]);
+  }, [loading, cart.items.length, router, cartHref, insurancePending]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -162,6 +166,13 @@ export function CheckoutPageClient({
     if (!res.ok) {
       setSubmitting(false);
       setError(res.message);
+      return;
+    }
+    // Insurance order — no payment now. The card is verified by an admin, who
+    // then sends a payment link by email + WhatsApp. Show a pending panel.
+    if (res.data.insurancePendingVerification) {
+      setSubmitting(false);
+      setInsurancePending(true);
       return;
     }
     // Zero-total orders (fully covered by plan credit/discount) never get a
@@ -191,6 +202,32 @@ export function CheckoutPageClient({
                 aria-hidden
               />
               <p className="gh-body-sm m-0">{t.loading}</p>
+            </div>
+          </div>
+        </section>
+      </>
+    );
+  }
+
+  // Insurance pending-verification confirmation. Checked BEFORE the empty-cart
+  // guard because the cart is cleared once the pending order is created.
+  if (insurancePending) {
+    return (
+      <>
+        <GH2FlowHeader title={t.title} activeStep={2} steps={steps} />
+        <section className="bg-[var(--color-background-soft)] px-5 py-12">
+          <div className="mx-auto max-w-2xl">
+            <div className="gh-card p-8 text-center">
+              <h2 className="gh-h3">We&rsquo;re verifying your insurance</h2>
+              <p className="gh-body-sm mt-3">
+                Thanks — your booking is reserved. Our team will verify your insurance card
+                and email &amp; WhatsApp you a secure payment link to confirm your appointment.
+                If we can&rsquo;t verify the card, we&rsquo;ll send you a link to book the same
+                time at the standard price. No payment is taken until then.
+              </p>
+              <Link href={`/${params?.country}/${params?.lang}`} className="gh2-btn-lime mt-6 inline-flex">
+                Back to home
+              </Link>
             </div>
           </div>
         </section>

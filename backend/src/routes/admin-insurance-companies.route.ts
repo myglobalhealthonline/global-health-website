@@ -30,6 +30,9 @@ const pricingModeValues = Object.values(InsurancePricingMode) as [
   ...InsurancePricingMode[],
 ];
 
+const notifyEmails = z.array(z.string().trim().max(200)).max(20).optional();
+const notifyWhatsappNumbers = z.array(z.string().trim().max(40)).max(20).optional();
+
 const createSchema = z
   .object({
     name: z.string().trim().min(1).max(200),
@@ -37,6 +40,8 @@ const createSchema = z
     discountPercent: z.number().int().min(0).max(100).nullable().optional(),
     isActive: z.boolean().optional(),
     sortOrder: z.number().int().min(0).max(9999).optional(),
+    notifyEmails,
+    notifyWhatsappNumbers,
   })
   .strict()
   // PERCENT companies must carry a percent; FIXED companies must not.
@@ -52,6 +57,8 @@ const updateSchema = z
     discountPercent: z.number().int().min(0).max(100).nullable().optional(),
     isActive: z.boolean().optional(),
     sortOrder: z.number().int().min(0).max(9999).optional(),
+    notifyEmails,
+    notifyWhatsappNumbers,
   })
   .strict();
 

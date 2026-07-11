@@ -499,7 +499,22 @@ async function mergeCarts(sourceId: string, targetId: string) {
   // never dupe-merge — each booked slot is its own line. Products
   // (HEALTH_TEST, PRESCRIPTION_SERVICE) dupe-merge by underlying id,
   // capped at CART_ITEM_MAX_QTY (matches /items POST).
+  // Preserve the "insurance is booked alone" invariant across a guest→user
+  // merge. If the target already holds items of the other kind, skip moving the
+  // conflicting source item (and release its held slot) rather than build a
+  // mixed cart. Checkout also refuses a mixed cart, so this only affects UX.
+  const targetHasInsurance = target.items.some((t) => t.insuranceCompanyId);
+  const targetHasOther = target.items.some((t) => !t.insuranceCompanyId);
+
   for (const item of source.items) {
+    const itemIsInsurance = Boolean(item.insuranceCompanyId);
+    if ((itemIsInsurance && targetHasOther) || (!itemIsInsurance && targetHasInsurance)) {
+      if (item.timeSlotId) {
+        await releaseSlotsToBaseGrid([item.timeSlotId]);
+      }
+      continue;
+    }
+
     const isConsultation =
       item.kind === "GENERAL_CONSULTATION" ||
       item.kind === "SPECIALIST_CONSULTATION";
@@ -1025,6 +1040,29 @@ const cartRoute: FastifyPluginAsync = async (app) => {
               { conflict: "country_mismatch", currentCountry: cart.countryCode },
             ),
           );
+      }
+
+      // Insurance is booked ALONE. An insurance consultation goes through a
+      // manual card-verification flow (no instant checkout), so it can't share
+      // a cart with pay-now items — and a cart that already holds an insurance
+      // line can't take anything else. Either direction is a 409 asking the
+      // patient to clear the cart first.
+      const cartHasInsurance = cart.items.some((i) => i.insuranceCompanyId);
+      if (insuranceCompanyIdValue && cart.items.length > 0) {
+        return reply.status(409).send(
+          errorResponse(
+            "An insurance consultation must be booked on its own. Clear your cart first, then add the insurance booking.",
+            { conflict: "insurance_must_be_alone" },
+          ),
+        );
+      }
+      if (cartHasInsurance) {
+        return reply.status(409).send(
+          errorResponse(
+            "Your cart has an insurance consultation awaiting verification. Check out or clear it before adding other items.",
+            { conflict: "cart_has_insurance" },
+          ),
+        );
       }
 
       // Stamp country/currency on first item

@@ -37,6 +37,8 @@ import { releaseSlotsToBaseGrid } from "../modules/doctor-availability/doctor-av
 import { sendOrderRefundNotifications } from "../modules/automation/refund-notifications.service.js";
 import { cancelOrderAppointments } from "../modules/appointments/appointments.service.js";
 import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.service.js";
+import { notifyAdminsOfInsuranceOrder, applyInsuranceVerificationDecision } from "../modules/insurance-verification/insurance-verification.service.js";
+import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 
 /**
  * Orders + checkout.
@@ -146,6 +148,20 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         });
         if (!cart || cart.items.length === 0) {
           return reply.status(400).send(errorResponse("Cart is empty"));
+        }
+
+        // Insurance is booked ALONE (enforced at add-to-cart). Re-check here
+        // BEFORE creating the order so a mixed cart — e.g. one produced by a
+        // guest→user cart merge — can never enter the insurance flow (which
+        // skips Stripe) with non-insurance items riding along. Reject early so
+        // no orphan order/slot is created.
+        const cartInsuranceCount = cart.items.filter((i) => i.insuranceCompanyId).length;
+        if (cartInsuranceCount > 0 && cartInsuranceCount !== cart.items.length) {
+          return reply.status(400).send(
+            errorResponse(
+              "An insurance consultation must be booked on its own. Please remove the other items and try again.",
+            ),
+          );
         }
 
         // Anti-manipulation gate: re-derive the price of every consultation
@@ -383,6 +399,51 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             data: { countryCode: "", currencyCode: "", abandonedEmailSentAt: null },
           });
           return okResponse({ orderId: order.id, url: null, free: true });
+        }
+
+        // ── Insurance order → manual card verification (no instant Stripe) ──
+        // A cart holding an insurance consultation is booked ALONE (enforced at
+        // add-to-cart), so the whole order is that single insurance line. Don't
+        // charge now: reserve the slot, park the order in PENDING verification,
+        // and alert the company's admins to verify the card. The patient is
+        // charged only after an admin verifies (insurance price) or rejects
+        // (standard price) — see insurance-verification.service.
+        const insuranceItem = order.items.find((i) => i.insuranceCompanyId);
+        if (insuranceItem) {
+          // Firmly reserve the slot(s): HELD auto-releases after ~15 min, so
+          // commit HELD→BOOKED for the whole verification window. No appointment
+          // is minted yet — that happens on payment like any cart consultation.
+          const slotIds = order.items
+            .map((i) => i.timeSlotId)
+            .filter((x): x is string => Boolean(x));
+          if (slotIds.length > 0) {
+            await prisma.doctorTimeSlot.updateMany({
+              where: { id: { in: slotIds }, status: { in: ["HELD", "OPEN"] } },
+              data: { status: "BOOKED" },
+            });
+          }
+          await prisma.order.update({
+            where: { id: order.id },
+            data: {
+              insuranceVerificationStatus: "PENDING",
+              insuranceCompanyId: insuranceItem.insuranceCompanyId,
+              paymentStatus: "UNPAID",
+            },
+          });
+          void notifyAdminsOfInsuranceOrder(order.id, app.log).catch((err) => {
+            app.log.warn({ err, orderId: order.id }, "Insurance admin-notify failed");
+          });
+          // Clear the cart (items moved to the order).
+          await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
+          await prisma.cart.update({
+            where: { id: cart.id },
+            data: { countryCode: "", currencyCode: "", abandonedEmailSentAt: null },
+          });
+          return okResponse({
+            orderId: order.id,
+            url: null,
+            insurancePendingVerification: true,
+          });
         }
 
         // Paid order → Stripe is required from here on.
@@ -880,6 +941,42 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           meetingUrl = fresh?.meetingUrl ?? meetingUrl;
         }
 
+        // Insurance verification block: surface the status + the DECRYPTED card
+        // number so the admin can verify it against the insurer. Only present
+        // for insurance orders (verificationStatus != null).
+        let insurance: {
+          verificationStatus: string;
+          companyId: string | null;
+          companyName: string | null;
+          policyNumber: string | null;
+          insurancePriceCents: number | null;
+        } | null = null;
+        if (order.insuranceVerificationStatus) {
+          const insItem = order.items.find((i) => i.insuranceCompanyId) ?? null;
+          const companyId = order.insuranceCompanyId ?? insItem?.insuranceCompanyId ?? null;
+          const company = companyId
+            ? await prisma.insuranceCompany.findUnique({
+                where: { id: companyId },
+                select: { name: true },
+              })
+            : null;
+          let policyNumber: string | null = null;
+          if (insItem?.insurancePolicyNumber) {
+            try {
+              policyNumber = decryptPhi(insItem.insurancePolicyNumber);
+            } catch {
+              policyNumber = null;
+            }
+          }
+          insurance = {
+            verificationStatus: order.insuranceVerificationStatus,
+            companyId,
+            companyName: company?.name ?? null,
+            policyNumber,
+            insurancePriceCents: insItem?.insurancePriceCents ?? null,
+          };
+        }
+
         // Project to a DTO instead of returning the raw Prisma row.
         // The raw row contains `stripeSessionId` + `stripePaymentIntentId`
         // which the admin UI doesn't need and which have no business
@@ -889,6 +986,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           orderNumber: order.orderNumber,
           status: order.status,
           paymentStatus: order.paymentStatus,
+          insurance,
           countryCode: order.countryCode,
           currencyCode: order.currencyCode,
           subtotalCents: order.subtotalCents,
@@ -934,6 +1032,57 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(err);
         return reply.status(500).send(errorResponse("Could not load order"));
+      }
+    },
+  );
+
+  // ── Admin: insurance card verification decision ────────────────────
+  // Verified → keep the insurance price + send the patient a payment link.
+  // Rejected → re-price to the standard price (same doctor + slot) + send the
+  // patient a "card not verified" payment link. Both then run the normal
+  // pre-payment → pay → meet-link flow.
+  app.patch<{ Params: { id: string } }>(
+    "/api/admin/orders/:id/insurance-verification",
+    async (request, reply) => {
+      const auth = await verifyAdminAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+
+      const params = orderIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+
+      const body = z
+        .object({ decision: z.enum(["VERIFIED", "REJECTED"]) })
+        .safeParse(request.body ?? {});
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid decision", body.error.flatten()));
+      }
+
+      try {
+        const order = await prisma.order.findUnique({
+          where: { id: params.data.id },
+          select: { id: true, countryCode: true },
+        });
+        if (!order) return reply.status(404).send(errorResponse("Order not found"));
+        const scope = await assertOrderCountryScope(request, order.id, order.countryCode);
+        if (!scope.allowed) {
+          return reply.status(scope.status).send(errorResponse(scope.message));
+        }
+
+        const result = await applyInsuranceVerificationDecision(
+          params.data.id,
+          body.data.decision,
+          request.log,
+        );
+        if (!result.ok) {
+          return reply.status(409).send(errorResponse(result.message ?? "Could not apply decision"));
+        }
+        return okResponse({ ok: true, decision: body.data.decision });
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Could not apply insurance decision"));
       }
     },
   );
