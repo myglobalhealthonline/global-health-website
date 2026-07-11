@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
-import { Check, ExternalLink, Loader2, X, Copy, Receipt, RotateCcw } from "lucide-react";
+import { Check, ExternalLink, Eye, Loader2, X, Copy, Receipt, RotateCcw } from "lucide-react";
 import {
   AdminEmptyState,
   AdminTable,
@@ -22,6 +22,11 @@ import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { OrderMeetLinkDisplay } from "./order-meet-link-display";
 import { PortalMobileCard, type PortalMobileCardTone } from "@/components/PortalMobileCard";
 import { PortalDialog } from "@/components/PortalDialog";
+import {
+  RecordDetailsDrawer,
+  RecordDetailsSection,
+  RecordDetailsField,
+} from "@/components/RecordDetailsDrawer";
 
 export type AdminOrderRow = {
   id: string;
@@ -84,7 +89,12 @@ function statusCardTone(status: string): PortalMobileCardTone {
 
 export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [quickViewId, setQuickViewId] = useState<string | null>(
+    () => searchParams.get("order"),
+  );
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [pendingBulkStatus, setPendingBulkStatus] = useState<"FULFILLED" | "CANCELLED" | null>(
@@ -117,6 +127,17 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
   const refundOrder = pendingRefundId
     ? items.find((o) => o.id === pendingRefundId) ?? null
     : null;
+
+  const quickViewOrder = quickViewId
+    ? items.find((o) => o.id === quickViewId) ?? null
+    : null;
+
+  function openQuickView(id: string) {
+    setQuickViewId(id);
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("order", id);
+    router.replace(`${pathname}?${next.toString()}`, { scroll: false });
+  }
 
   function toggle(id: string) {
     setSelected((prev) => {
@@ -236,22 +257,21 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
             </Th>
             <Th>Order</Th>
             <Th>Customer</Th>
-            <Th>Country</Th>
-            <Th>Items</Th>
             <Th align="right">Total</Th>
             <Th>Status</Th>
-            <Th className="hidden lg:table-cell">Meet link</Th>
-            <Th>Invoice</Th>
-            <Th className="hidden lg:table-cell">Payment link</Th>
             <Th>Created</Th>
-            <Th align="right" style={{ width: 160 }}>
+            <Th align="right" style={{ width: 190 }}>
               {" "}
             </Th>
           </Thead>
           <tbody>
             {items.map((o) => (
-                <Tr key={o.id}>
-                  <Td>
+                <Tr
+                  key={o.id}
+                  onClick={() => openQuickView(o.id)}
+                  className="gh-admin-order-row cursor-pointer"
+                >
+                  <Td onClick={(e) => e.stopPropagation()}>
                     <input
                       type="checkbox"
                       checked={selected.has(o.id)}
@@ -262,6 +282,7 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                   <Td>
                     <Link
                       href={`/admin/orders/${o.id}`}
+                      onClick={(e) => e.stopPropagation()}
                       className="font-mono text-xs text-[var(--color-brand-primary)] hover:underline"
                     >
                       #{formatOrderDisplayId(o)}
@@ -275,8 +296,6 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                       {o.email}
                     </span>
                   </Td>
-                  <Td>{o.countryCode.toUpperCase()}</Td>
-                  <Td>{o.itemCount}</Td>
                   <Td align="right">
                     <span className="font-semibold text-[var(--color-text-primary)]">
                       {formatPrice(o.totalCents, o.currencyCode)}
@@ -285,37 +304,8 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                   <Td>
                     <Pill tone={statusTone(o.status)}>{o.status.toLowerCase()}</Pill>
                   </Td>
-                  <Td className="hidden lg:table-cell">
-                    <OrderMeetLinkDisplay
-                      meetingUrl={o.meetingUrl ?? null}
-                      hasConsultation={o.hasConsultation ?? false}
-                      variant="cell"
-                    />
-                  </Td>
-                  <Td>
-                    {o.invoiceId ? (
-                      <Link
-                        href={`/print/order-invoices/${o.invoiceId}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--color-brand-primary)] hover:underline"
-                      >
-                        <Receipt className="size-3" aria-hidden />
-                        View
-                      </Link>
-                    ) : (
-                      <span className="text-[11px] text-[var(--color-text-muted)]">—</span>
-                    )}
-                  </Td>
-                  <Td className="hidden lg:table-cell">
-                    {o.stripeCheckoutUrl ? (
-                      <CopyLinkButton url={o.stripeCheckoutUrl} />
-                    ) : (
-                      <span className="text-[11px] text-[var(--color-text-muted)]">—</span>
-                    )}
-                  </Td>
                   <Td>{formatAppDate(o.createdAt)}</Td>
-                  <Td align="right">
+                  <Td align="right" onClick={(e) => e.stopPropagation()}>
                     <div className="inline-flex items-center justify-end gap-2">
                       {canRefund(o) ? (
                         <button
@@ -332,6 +322,9 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                           Refund
                         </button>
                       ) : null}
+                      <IconBtn ariaLabel={`Quick view order ${o.id}`} onClick={() => openQuickView(o.id)}>
+                        <Eye className="size-3.5" aria-hidden />
+                      </IconBtn>
                       <IconBtn ariaLabel={`Open order ${o.id}`} href={`/admin/orders/${o.id}`}>
                         <ExternalLink className="size-3.5" aria-hidden />
                       </IconBtn>
@@ -435,6 +428,100 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
           to the customer via Stripe? The order is marked REFUNDED, and any HELD slots and reserved subscription credits are released. This cannot be undone.
         </p>
       </PortalDialog>
+
+      <RecordDetailsDrawer
+        open={quickViewOrder !== null}
+        onOpenChange={(next) => {
+          if (!next) setQuickViewId(null);
+        }}
+        paramKey="order"
+        paramValue={quickViewOrder?.id}
+        title={quickViewOrder ? `Order #${formatOrderDisplayId(quickViewOrder)}` : ""}
+        summary={
+          quickViewOrder ? (
+            <div className="gh-order-drawer-summary flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
+              <span className="font-semibold text-[var(--portal-text)]">
+                {quickViewOrder.fullName}
+              </span>
+              <span>{formatPrice(quickViewOrder.totalCents, quickViewOrder.currencyCode)}</span>
+              <Pill tone={statusTone(quickViewOrder.status)}>
+                {quickViewOrder.status.toLowerCase()}
+              </Pill>
+              <span>{formatAppDate(quickViewOrder.createdAt)}</span>
+            </div>
+          ) : null
+        }
+        footer={
+          quickViewOrder ? (
+            <>
+              <Btn variant="ghost" onClick={() => setQuickViewId(null)}>
+                Close
+              </Btn>
+              <Link href={`/admin/orders/${quickViewOrder.id}`}>
+                <Btn variant="primary">Open full order</Btn>
+              </Link>
+            </>
+          ) : null
+        }
+      >
+        {quickViewOrder ? (
+          <>
+            <RecordDetailsSection title="Items">
+              <RecordDetailsField
+                label="Country"
+                value={quickViewOrder.countryCode.toUpperCase()}
+              />
+              <RecordDetailsField label="Item count" value={quickViewOrder.itemCount} />
+            </RecordDetailsSection>
+
+            <RecordDetailsSection title="Payment">
+              <RecordDetailsField
+                label="Payment status"
+                value={quickViewOrder.paymentStatus.toLowerCase()}
+              />
+              <RecordDetailsField
+                label="Paid at"
+                value={quickViewOrder.paidAt ? formatAppDate(quickViewOrder.paidAt) : null}
+              />
+              {quickViewOrder.stripeCheckoutUrl ? (
+                <CopyLinkButton url={quickViewOrder.stripeCheckoutUrl} />
+              ) : null}
+            </RecordDetailsSection>
+
+            <RecordDetailsSection title="Meeting">
+              <OrderMeetLinkDisplay
+                meetingUrl={quickViewOrder.meetingUrl ?? null}
+                hasConsultation={quickViewOrder.hasConsultation ?? false}
+                variant="panel"
+              />
+            </RecordDetailsSection>
+
+            <RecordDetailsSection title="Invoice">
+              {quickViewOrder.invoiceId ? (
+                <Link
+                  href={`/print/order-invoices/${quickViewOrder.invoiceId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-brand-primary)] hover:underline"
+                >
+                  <Receipt className="size-3.5" aria-hidden />
+                  Download invoice
+                </Link>
+              ) : (
+                <RecordDetailsField label="Invoice" value={null} />
+              )}
+            </RecordDetailsSection>
+
+            <RecordDetailsSection title="Timestamps">
+              <RecordDetailsField label="Created" value={formatAppDate(quickViewOrder.createdAt)} />
+              <RecordDetailsField
+                label="Paid"
+                value={quickViewOrder.paidAt ? formatAppDate(quickViewOrder.paidAt) : null}
+              />
+            </RecordDetailsSection>
+          </>
+        ) : null}
+      </RecordDetailsDrawer>
     </>
   );
 }

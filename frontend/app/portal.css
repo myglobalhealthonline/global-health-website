@@ -2410,7 +2410,9 @@
 }
 
 .gh-admin-order-table-wrap table {
-  min-width: 960px;
+  /* Pattern B trim: checkbox + Order/Customer/Total/Status/Created + actions
+     (Country/Items/Meet/Invoice/Payment moved to the D-01 quick-view drawer). */
+  min-width: 700px;
 }
 
 .gh-admin-order-bulkbar,

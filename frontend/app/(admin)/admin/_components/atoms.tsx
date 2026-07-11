@@ -14,6 +14,7 @@ import type {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
   CSSProperties,
+  MouseEvent,
   ReactNode,
 } from "react";
 
@@ -498,15 +499,18 @@ export function Td({
   align = "left",
   className,
   style = {},
+  onClick,
 }: {
   children?: ReactNode;
   align?: "left" | "right" | "center";
   className?: string;
   style?: CSSProperties;
+  onClick?: (e: MouseEvent<HTMLTableCellElement>) => void;
 }) {
   return (
     <td
       className={className}
+      onClick={onClick}
       style={{
         padding: "14px 16px",
         textAlign: align,
@@ -521,8 +525,20 @@ export function Td({
   );
 }
 
-export function Tr({ children }: { children: ReactNode }) {
-  return <tr className="gh-admin-row">{children}</tr>;
+export function Tr({
+  children,
+  className,
+  onClick,
+}: {
+  children: ReactNode;
+  className?: string;
+  onClick?: (e: MouseEvent<HTMLTableRowElement>) => void;
+}) {
+  return (
+    <tr className={className ? `gh-admin-row ${className}` : "gh-admin-row"} onClick={onClick}>
+      {children}
+    </tr>
+  );
 }
 
 /* ─────────────────────────────────────────────────────────────
