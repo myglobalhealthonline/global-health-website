@@ -138,6 +138,13 @@ export async function deleteInsuranceCompany(id: string): Promise<boolean> {
   }
 }
 
+export type CoverageDoctorRow = {
+  doctorId: string;
+  name: string;
+  /** This company's per-service payout for this doctor (null = not set). */
+  amountCents: number | null;
+};
+
 export type CoverageServiceRow = {
   serviceId: string;
   name: string;
@@ -147,6 +154,10 @@ export type CoverageServiceRow = {
   overridePriceCents: number | null;
   /** Resolved insurance price for display (FIXED override or PERCENT-computed). */
   insurancePriceCents: number | null;
+  /** Doctors assigned to this service + their insurance payout for this company.
+   *  Admin sets the payout the doctor earns when the service is booked under
+   *  this insurer (separate from the standard ServiceDoctor payout). */
+  doctors: CoverageDoctorRow[];
 };
 
 /**
@@ -165,7 +176,7 @@ export async function listCountryServicesWithCoverage(
   });
   if (!company) return null;
   try {
-    const [services, coverages] = await Promise.all([
+    const [services, coverages, assignments, payouts] = await Promise.all([
       prisma.service.findMany({
         where: { countryId, isActive: true },
         orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
@@ -181,8 +192,34 @@ export async function listCountryServicesWithCoverage(
         where: { insuranceCompanyId: companyId },
         select: { serviceId: true, overridePriceCents: true },
       }),
+      // Active doctor assignments for this country's services (drives which
+      // doctors show under each covered service in the payout editor).
+      prisma.serviceDoctor.findMany({
+        where: {
+          isActive: true,
+          status: "active",
+          service: { countryId },
+          doctor: { active: true },
+        },
+        orderBy: { sortOrder: "asc" },
+        select: { serviceId: true, doctor: { select: { id: true, fullName: true } } },
+      }),
+      prisma.serviceDoctorInsurancePayout.findMany({
+        where: { insuranceCompanyId: companyId },
+        select: { serviceId: true, doctorId: true, doctorAmountCents: true },
+      }),
     ]);
     const coverageByServiceId = new Map(coverages.map((c) => [c.serviceId, c]));
+    // Group assignments by service; index payouts by service:doctor.
+    const doctorsByServiceId = new Map<string, { id: string; fullName: string }[]>();
+    for (const a of assignments) {
+      const list = doctorsByServiceId.get(a.serviceId) ?? [];
+      list.push(a.doctor);
+      doctorsByServiceId.set(a.serviceId, list);
+    }
+    const payoutByKey = new Map(
+      payouts.map((p) => [`${p.serviceId}:${p.doctorId}`, p.doctorAmountCents]),
+    );
     const rows: CoverageServiceRow[] = services.map((svc) => {
       const cov = coverageByServiceId.get(svc.id);
       const covered = cov !== undefined;
@@ -194,6 +231,11 @@ export async function listCountryServicesWithCoverage(
               coverage: { overridePriceCents: cov?.overridePriceCents ?? null },
             })
           : null;
+      const doctors: CoverageDoctorRow[] = (doctorsByServiceId.get(svc.id) ?? []).map((d) => ({
+        doctorId: d.id,
+        name: d.fullName,
+        amountCents: payoutByKey.get(`${svc.id}:${d.id}`) ?? null,
+      }));
       return {
         serviceId: svc.id,
         name: svc.name,
@@ -202,6 +244,7 @@ export async function listCountryServicesWithCoverage(
         covered,
         overridePriceCents: cov?.overridePriceCents ?? null,
         insurancePriceCents,
+        doctors,
       };
     });
     return {
@@ -220,6 +263,8 @@ export type CoverageInputItem = {
   covered: boolean;
   /** FIXED companies only — the admin-typed price. Ignored for PERCENT. */
   overridePriceCents?: number | null;
+  /** Per-doctor insurance payout for this service (null clears/leaves unset). */
+  doctorPayouts?: { doctorId: string; amountCents: number | null }[];
 };
 
 /**
@@ -261,6 +306,13 @@ export async function setCompanyCoverage(
           ...(serviceIds.length > 0 ? { serviceId: { notIn: serviceIds } } : {}),
         },
       });
+      // Drop insurance payouts for services no longer covered.
+      await tx.serviceDoctorInsurancePayout.deleteMany({
+        where: {
+          insuranceCompanyId: companyId,
+          ...(serviceIds.length > 0 ? { serviceId: { notIn: serviceIds } } : {}),
+        },
+      });
       for (const item of covered) {
         const overridePriceCents = isFixed ? item.overridePriceCents ?? null : null;
         await tx.insuranceServiceCoverage.upsert({
@@ -273,6 +325,49 @@ export async function setCompanyCoverage(
           create: { insuranceCompanyId: companyId, serviceId: item.serviceId, overridePriceCents },
           update: { overridePriceCents },
         });
+        // When the form submitted a doctor list for this service (rendered only
+        // for covered services with assigned doctors), it is authoritative:
+        // drop any payout row for a doctor NO LONGER in that list — e.g. a
+        // doctor since removed from the service — so no orphan payout lingers.
+        const submitted = item.doctorPayouts;
+        if (submitted && submitted.length > 0) {
+          await tx.serviceDoctorInsurancePayout.deleteMany({
+            where: {
+              insuranceCompanyId: companyId,
+              serviceId: item.serviceId,
+              doctorId: { notIn: submitted.map((p) => p.doctorId) },
+            },
+          });
+        }
+        // Per-doctor insurance payout: upsert a set amount, delete when cleared.
+        for (const p of item.doctorPayouts ?? []) {
+          if (p.amountCents == null) {
+            await tx.serviceDoctorInsurancePayout.deleteMany({
+              where: {
+                insuranceCompanyId: companyId,
+                serviceId: item.serviceId,
+                doctorId: p.doctorId,
+              },
+            });
+          } else {
+            await tx.serviceDoctorInsurancePayout.upsert({
+              where: {
+                insuranceCompanyId_serviceId_doctorId: {
+                  insuranceCompanyId: companyId,
+                  serviceId: item.serviceId,
+                  doctorId: p.doctorId,
+                },
+              },
+              create: {
+                insuranceCompanyId: companyId,
+                serviceId: item.serviceId,
+                doctorId: p.doctorId,
+                doctorAmountCents: p.amountCents,
+              },
+              update: { doctorAmountCents: p.amountCents },
+            });
+          }
+        }
       }
     });
     return true;

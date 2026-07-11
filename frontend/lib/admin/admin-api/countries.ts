@@ -270,6 +270,12 @@ export type AdminInsuranceCompanyDto = {
   _count?: { coverages: number };
 };
 
+export type AdminCoverageDoctorDto = {
+  doctorId: string;
+  name: string;
+  amountCents: number | null;
+};
+
 export type AdminCoverageServiceDto = {
   serviceId: string;
   name: string;
@@ -278,6 +284,7 @@ export type AdminCoverageServiceDto = {
   covered: boolean;
   overridePriceCents: number | null;
   insurancePriceCents: number | null;
+  doctors: AdminCoverageDoctorDto[];
 };
 
 export type AdminCoverageDto = {

@@ -170,7 +170,17 @@ export async function InsuranceCompaniesManager({
     const items = serviceIds.map((serviceId) => {
       const covered = formData.get(`covered_${serviceId}`) === "on";
       const overridePriceCents = eurosToCents(String(formData.get(`price_${serviceId}`) ?? ""));
-      return { serviceId, covered, overridePriceCents };
+      // Per-doctor insurance payouts. The doctor id list for this service rides
+      // on a hidden field; each doctor has a `dp_<serviceId>_<doctorId>` input.
+      const doctorIds = String(formData.get(`doctorIds_${serviceId}`) ?? "")
+        .split(",")
+        .map((d) => d.trim())
+        .filter(Boolean);
+      const doctorPayouts = doctorIds.map((doctorId) => ({
+        doctorId,
+        amountCents: eurosToCents(String(formData.get(`dp_${serviceId}_${doctorId}`) ?? "")),
+      }));
+      return { serviceId, covered, overridePriceCents, doctorPayouts };
     });
     const result = await putAdminInsuranceCoverage(countryId, companyId, { items });
     if (!result.ok) {
@@ -476,7 +486,63 @@ export async function InsuranceCompaniesManager({
                 </tbody>
               </AdminTable>
             </div>
-            <div className="flex items-center gap-3">
+
+            {/* Per-doctor insurance payouts. Only doctors assigned to a covered
+              * service appear; the amount here is what the doctor is paid when
+              * the service is booked under THIS insurer (instead of their
+              * standard per-service payout). */}
+            {(() => {
+              const covered = coverageRes.data.services.filter(
+                (s) => s.covered && s.doctors.length > 0,
+              );
+              if (covered.length === 0) return null;
+              return (
+                <div className="mt-6 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
+                  <p className="m-0 text-[13px] font-semibold text-[var(--color-text-primary)]">
+                    Doctor payouts under {coverageCompany.name}
+                  </p>
+                  <p className="mt-1 mb-3 text-[12px] text-[var(--color-text-muted)]">
+                    Amount each doctor is paid when they deliver the service under {coverageCompany.name}
+                    &nbsp;(replaces their standard payout for insurance bookings). Leave blank for
+                    &ldquo;not set&rdquo;. Save the covered services above first to see newly-added doctors.
+                  </p>
+                  <div className="grid gap-4">
+                    {covered.map((s) => (
+                      <div key={s.serviceId}>
+                        <input
+                          type="hidden"
+                          name={`doctorIds_${s.serviceId}`}
+                          value={s.doctors.map((d) => d.doctorId).join(",")}
+                        />
+                        <p className="m-0 text-[12px] font-semibold text-[var(--color-text-body)]">
+                          {s.name}
+                        </p>
+                        <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                          {s.doctors.map((d) => (
+                            <label key={d.doctorId} className="flex items-center gap-2">
+                              <span className="flex-1 text-[13px] text-[var(--color-text-body)]">
+                                {d.name}
+                              </span>
+                              <input
+                                type="text"
+                                inputMode="decimal"
+                                name={`dp_${s.serviceId}_${d.doctorId}`}
+                                defaultValue={centsToInput(d.amountCents)}
+                                placeholder="0.00"
+                                className="gh-input max-w-[120px]"
+                                aria-label={`${coverageCompany.name} payout for ${d.name} on ${s.name}`}
+                              />
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+
+            <div className="mt-4 flex items-center gap-3">
               <button type="submit" className="gh-btn gh-btn-primary">
                 Save coverage
               </button>

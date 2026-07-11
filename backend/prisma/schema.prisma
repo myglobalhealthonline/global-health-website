@@ -461,6 +461,7 @@ model Doctor {
   /// catalogue services the doctor is bookable for. Public consult flow
   /// uses this join to filter doctor cards by selected service.
   assignedServices            ServiceDoctor[]
+  insuranceDoctorPayouts      ServiceDoctorInsurancePayout[]
   /// Recurring weekly windows the doctor publishes for patient booking.
   /// Concrete slots are derived from these into `DoctorTimeSlot` rows.
   availabilities              DoctorAvailability[]
@@ -819,6 +820,7 @@ model Service {
   /// Inverse of `ServiceDoctor.serviceId`. Admin-controlled M:N — which
   /// doctors are bookable for this service.
   assignedDoctors       ServiceDoctor[]
+  insuranceDoctorPayouts ServiceDoctorInsurancePayout[]
   appointments          Appointment[]
   /// Per-consultation services-rendered line items. Doctor logs which
   /// catalogue services they performed during the consult; admin uses
@@ -1027,6 +1029,7 @@ model InsuranceCompany {
   notifyEmails          String[]             @default([])
   notifyWhatsappNumbers String[]             @default([])
   coverages       InsuranceServiceCoverage[]
+  doctorPayouts   ServiceDoctorInsurancePayout[]
   createdAt       DateTime                   @default(now())
   updatedAt       DateTime                   @updatedAt
 
@@ -1105,6 +1108,32 @@ model ServiceDoctor {
   @@index([doctorId, isActive])
   @@index([serviceId, isActive, sortOrder])
   @@index([doctorId, status])
+}
+
+/// Per-(insurance company, service, doctor) doctor payout. Separate from the
+/// standard ServiceDoctor.doctorAmountCents: when a consultation is booked
+/// UNDER an insurance company, the doctor is paid this amount instead of the
+/// standard per-service payout. Only meaningful for a doctor assigned to a
+/// service the company covers. Keyed on the three ids directly (NOT via
+/// ServiceDoctor) so re-syncing service↔doctor assignments never cascade-wipes
+/// a payout. Null amount = not set (the payout statement shows "Not set").
+model ServiceDoctorInsurancePayout {
+  id                 String           @id @default(cuid())
+  insuranceCompanyId String
+  company            InsuranceCompany @relation(fields: [insuranceCompanyId], references: [id], onDelete: Cascade)
+  serviceId          String
+  service            Service          @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  doctorId           String
+  doctor             Doctor           @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  /// Amount the clinic pays this doctor for this service when booked under this
+  /// insurer, in cents. Currency follows the parent Service.currencyCode.
+  doctorAmountCents  Int?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@unique([insuranceCompanyId, serviceId, doctorId])
+  @@index([serviceId, doctorId])
+  @@index([insuranceCompanyId])
 }
 
 model PricingPlan {

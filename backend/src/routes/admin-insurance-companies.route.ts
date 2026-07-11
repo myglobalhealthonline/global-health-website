@@ -70,6 +70,15 @@ const coverageSchema = z
           serviceId: z.string().trim().min(1).max(64),
           covered: z.boolean(),
           overridePriceCents: z.number().int().min(0).max(100_000_000).nullable().optional(),
+          doctorPayouts: z
+            .array(
+              z.object({
+                doctorId: z.string().trim().min(1).max(64),
+                amountCents: z.number().int().min(0).max(100_000_000).nullable(),
+              }),
+            )
+            .max(500)
+            .optional(),
         }),
       )
       .max(1000),
