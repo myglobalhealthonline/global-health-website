@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ClipboardList, Plus, Trash2 } from "lucide-react";
 import type { ConsultationServiceLineDto } from "@/lib/api/doctor-api";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 
 function formatPrice(cents: number | null, code: string | null) {
   if (cents == null) return "—";
@@ -148,6 +148,59 @@ export function ServicesUsedList({
   }, 0);
   const currency = items.find((r) => r.currencyCode)?.currencyCode ?? null;
 
+  const fields: ColumnPriorityField<ConsultationServiceLineDto>[] = [
+    {
+      key: "item",
+      label: copy.colItem,
+      priority: 1,
+      cardPrimary: true,
+      render: (r) => r.service?.name ?? r.customLabel ?? "—",
+    },
+    {
+      key: "qty",
+      label: copy.colQty,
+      priority: 2,
+      align: "right",
+      render: (r) => <span className="font-mono">{r.quantity}</span>,
+    },
+    {
+      key: "unit",
+      label: copy.colUnit,
+      priority: 3,
+      align: "right",
+      render: (r) => <span className="font-mono">{formatPrice(r.unitPriceCents, r.currencyCode)}</span>,
+    },
+    {
+      key: "lineTotal",
+      label: copy.colLineTotal,
+      priority: 2,
+      align: "right",
+      render: (r) => (
+        <span className="font-mono">
+          {formatPrice(r.unitPriceCents != null ? r.unitPriceCents * r.quantity : null, r.currencyCode)}
+        </span>
+      ),
+    },
+    {
+      key: "remove",
+      label: "",
+      priority: 2,
+      align: "right",
+      desktopOnly: true,
+      render: (r) =>
+        locked ? null : (
+          <button
+            type="button"
+            onClick={() => remove(r.id)}
+            className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
+            aria-label={copy.removeAria}
+          >
+            <Trash2 className="size-3.5" />
+          </button>
+        ),
+    },
+  ];
+
   return (
     <div className="mt-4 grid gap-3">
       {items.length === 0 ? (
@@ -162,98 +215,31 @@ export function ServicesUsedList({
         </div>
       ) : (
         <>
-        <div className="hidden gh-doctor-table-wrap overflow-x-auto md:block">
-          <table className="w-full min-w-[620px] text-[13px]">
-          <thead>
-            <tr className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-              <th className="py-2 text-left">{copy.colItem}</th>
-              <th className="py-2 text-right">{copy.colQty}</th>
-              <th className="py-2 text-right">{copy.colUnit}</th>
-              <th className="py-2 text-right">{copy.colLineTotal}</th>
-              <th className="py-2" />
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((r) => (
-              <tr key={r.id} className="border-t border-[var(--portal-line)]">
-                <td className="py-2">
-                  {r.service?.name ?? r.customLabel ?? "—"}
-                </td>
-                <td className="py-2 text-right font-mono">{r.quantity}</td>
-                <td className="py-2 text-right font-mono">
-                  {formatPrice(r.unitPriceCents, r.currencyCode)}
-                </td>
-                <td className="py-2 text-right font-mono">
-                  {formatPrice(
-                    r.unitPriceCents != null ? r.unitPriceCents * r.quantity : null,
-                    r.currencyCode,
-                  )}
-                </td>
-                <td className="py-2 text-right">
-                  {locked ? null : (
+          <ColumnPriorityTable
+            fields={fields}
+            rows={items}
+            getRowKey={(r) => r.id}
+            cardActions={
+              locked
+                ? undefined
+                : (r) => (
                     <button
                       type="button"
                       onClick={() => remove(r.id)}
                       className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
                       aria-label={copy.removeAria}
                     >
-                      <Trash2 className="size-3.5" />
+                      <Trash2 className="size-3.5" /> {copy.removeAction}
                     </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-            {total > 0 ? (
-              <tr className="border-t border-[var(--portal-line)]">
-                <td colSpan={3} className="py-2 text-right font-semibold">
-                  {copy.total}
-                </td>
-                <td className="py-2 text-right font-mono font-semibold">
-                  {formatPrice(total, currency)}
-                </td>
-                <td />
-              </tr>
-            ) : null}
-          </tbody>
-          </table>
-        </div>
-        <div className="grid gap-3 md:hidden">
-          {items.map((r) => (
-            <PortalMobileCard
-              key={r.id}
-              title={r.service?.name ?? r.customLabel ?? "—"}
-              meta={[
-                { label: "Qty", value: r.quantity },
-                { label: "Unit", value: formatPrice(r.unitPriceCents, r.currencyCode) },
-                {
-                  label: "Line total",
-                  value: formatPrice(
-                    r.unitPriceCents != null ? r.unitPriceCents * r.quantity : null,
-                    r.currencyCode,
-                  ),
-                },
-              ]}
-              actions={
-                locked ? null : (
-                  <button
-                    type="button"
-                    onClick={() => remove(r.id)}
-                    className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
-                    aria-label={copy.removeAria}
-                  >
-                    <Trash2 className="size-3.5" /> {copy.removeAction}
-                  </button>
-                )
-              }
-            />
-          ))}
+                  )
+            }
+          />
           {total > 0 ? (
             <div className="flex items-center justify-between px-1 text-[13px] font-semibold">
               <span>{copy.total}</span>
               <span className="font-mono">{formatPrice(total, currency)}</span>
             </div>
           ) : null}
-        </div>
         </>
       )}
 
