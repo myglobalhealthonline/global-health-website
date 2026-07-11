@@ -268,7 +268,7 @@ export default async function AdminCountryFeaturesPage({ searchParams }: PagePro
       ) : null}
 
       <AdminCard padding={0} className="gh-admin-country-features overflow-hidden">
-        <div className="gh-admin-country-table-wrap overflow-x-auto">
+        <div className="gh-admin-country-table-wrap gh-admin-country-feature-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Page</Th>

@@ -1871,6 +1871,13 @@
   min-width: 820px;
 }
 
+/* Country-features (sidebar toggle) table is only 3 columns — the shared
+ * 820px floor above forces needless horizontal scroll well before the
+ * table actually needs it (Pattern A: no card split, just let it shrink). */
+.gh-admin-country-feature-table-wrap table {
+  min-width: 0;
+}
+
 .gh-admin-country-row-actions,
 .gh-admin-country-actions,
 .gh-admin-country-toolbar {
