@@ -1751,6 +1751,15 @@ img {
   mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 40px), transparent 100%);
 }
 
+/* Public FAQ tabs use the same bilateral edge fade as PortalTabs. It keeps
+ * the strip horizontally scrollable while making overflow discoverable. */
+.gh-faq-tabs {
+  max-width: 100%;
+  overflow-y: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
+  mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
+}
+
 /* Dark theme override for content inside glass-forest cards on ivory sections.
  * Replaces light-theme CSS variables with dark equivalents. */
 .gh2-dark-content {
