@@ -3,7 +3,7 @@ import { prisma } from "../../db/prisma.js";
 import { releaseSlotsToBaseGrid } from "../doctor-availability/doctor-availability.service.js";
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import { resolveEmailLogoUrl } from "../../lib/email/resolve-email-logo-url.js";
-import { resolveOrderPaymentUrl } from "../orders/order-payment-url.service.js";
+import { resolveOrderPaymentUrl, orderPayShortLink } from "../orders/order-payment-url.service.js";
 import { sendAutomationEmail } from "./send-automation-notification.js";
 import { sendWhatsAppText, formatWhatsAppSendError } from "../../lib/whatsapp/wasender.js";
 import { resolveDoctorContact } from "../../lib/whatsapp/resolve-doctor-contact.js";
@@ -210,7 +210,11 @@ async function loadOrderContext(orderId: string, paymentUrl: string | null) {
   const deadline = order.paymentDueAt ?? new Date();
   const patientFullName = resolvePatientFullName(order.fullName, primary.patientFullName);
   const { firstName, lastName } = splitPatientName(patientFullName);
+  // Resolve to confirm the order is still payable, but hand the SHORT branded
+  // link to messages (the raw Stripe URL is ~200 chars and looks broken in
+  // WhatsApp). The short link re-resolves the live session at click time.
   const resolvedPaymentLink = await resolveOrderPaymentUrl(orderId, paymentUrl);
+  const messagePaymentLink = resolvedPaymentLink ? orderPayShortLink(orderId) : "";
   const ctx: PrePaymentMessageContext = {
     patientName: patientFullName,
     patientFirstName: firstName,
@@ -222,7 +226,7 @@ async function loadOrderContext(orderId: string, paymentUrl: string | null) {
     appointmentDate: appointmentStart
       ? formatDeadline(appointmentStart, primary.patientTimezone, lang)
       : pendingAppointmentDateLabel(lang),
-    paymentLink: resolvedPaymentLink,
+    paymentLink: messagePaymentLink,
     deadline: formatDeadline(deadline, primary.patientTimezone, lang),
     orderNumber: formatOrderDisplayId({ id: order.id, orderNumber: order.orderNumber }),
     totalLabel: formatOrderTotal(order.totalCents, order.currencyCode),

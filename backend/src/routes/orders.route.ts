@@ -36,6 +36,7 @@ import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { releaseSlotsToBaseGrid } from "../modules/doctor-availability/doctor-availability.service.js";
 import { sendOrderRefundNotifications } from "../modules/automation/refund-notifications.service.js";
 import { cancelOrderAppointments } from "../modules/appointments/appointments.service.js";
+import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.service.js";
 
 /**
  * Orders + checkout.
@@ -569,6 +570,27 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(err);
         return reply.status(500).send(errorResponse("Could not load order"));
+      }
+    },
+  );
+
+  // ── Public short pay-link resolver ─────────────────────────────────
+  // Backs the branded `${SITE}/pay/:id` short link sent over WhatsApp/email.
+  // Unauthenticated (keyed on the unguessable order CUID). Returns the live
+  // Stripe Checkout URL, or `payable: false` when the order is no longer
+  // payable (resolveOrderPaymentUrl returns "" for cancelled/paid). The
+  // frontend `/pay/:id` route issues the browser redirect.
+  app.get<{ Params: { id: string } }>(
+    "/api/orders/:id/pay-url",
+    async (request, reply) => {
+      const params = orderIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+      try {
+        const url = await resolveOrderPaymentUrl(params.data.id);
+        return okResponse({ url: url || null, payable: Boolean(url) });
+      } catch (err) {
+        app.log.error({ err, orderId: params.data.id }, "pay-url resolve failed");
+        return okResponse({ url: null, payable: false });
       }
     },
   );
