@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { CreditCard, ExternalLink, ReceiptText } from "lucide-react";
+import { CreditCard, ExternalLink } from "lucide-react";
 import { fetchAccountPayments, type AccountPayment } from "@/lib/api/account-payments-api";
 import { getServerInvoices } from "@/lib/api/me-subscription-server";
+import type { SubscriptionInvoiceView } from "@/lib/api/me-subscription";
 import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
@@ -9,7 +10,7 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { ReceiptButton } from "./_components/receipt-button";
 import { PayNowButton } from "./_components/pay-now-button";
 import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 
 export const dynamic = "force-dynamic";
 
@@ -61,11 +62,159 @@ export default async function AccountPaymentsPage() {
     CANCELED: a.payments.statusCanceled,
     UNPAID: a.payments.statusUnpaid,
   };
-  const paidCount = items.filter((item) => item.status === "PAID").length + invoices.filter((row) => (row.status ?? "").toLowerCase() === "paid").length;
-  const actionCount = items.filter((item) => item.status === "FAILED" || item.status === "REQUIRES_ACTION" || item.status === "UNPAID").length;
+  const paidCount =
+    items.filter((item) => item.status === "PAID").length +
+    invoices.filter((row) => (row.status ?? "").toLowerCase() === "paid").length;
+  const actionCount = items.filter(
+    (item) => item.status === "FAILED" || item.status === "REQUIRES_ACTION" || item.status === "UNPAID",
+  ).length;
   const receiptsCount = items.length + invoices.length;
   const lastPayment = [...items]
     .sort((aItem, bItem) => new Date(bItem.paidAt).getTime() - new Date(aItem.paidAt).getTime())[0];
+
+  const paymentFields: ColumnPriorityField<AccountPayment>[] = [
+    {
+      key: "date",
+      label: a.payments.colDate,
+      priority: 2,
+      render: (payment) => formatAppDate(payment.paidAt),
+    },
+    {
+      key: "consultation",
+      label: a.payments.colConsultation,
+      priority: 1,
+      cardPrimary: true,
+      render: (payment) => (
+        <>
+          <span className="block font-semibold text-[var(--portal-text)]">
+            {payment.serviceName ?? payment.consultationType}
+          </span>
+          {payment.doctorName ? (
+            <span className="block text-xs text-[var(--portal-muted)]">
+              {/^dr\.?\s/i.test(payment.doctorName)
+                ? payment.doctorName
+                : `Dr. ${payment.doctorName}`}
+            </span>
+          ) : null}
+          <span className="block text-xs text-[var(--portal-muted)]">{payment.countryCode}</span>
+        </>
+      ),
+    },
+    {
+      key: "amount",
+      label: a.payments.colAmount,
+      priority: 2,
+      render: (payment) => (
+        <span
+          className="font-semibold text-[var(--portal-text)]"
+          style={{ fontVariantNumeric: "tabular-nums" }}
+        >
+          {formatPrice(payment.amountCents, payment.currencyCode)}
+        </span>
+      ),
+    },
+    {
+      key: "status",
+      label: a.payments.colStatus,
+      priority: 2,
+      render: (payment) => (
+        <>
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_PILL[payment.status]}`}
+          >
+            {statusLabel[payment.status]}
+          </span>
+          {payment.status === "REFUNDED" ? (
+            <p className="mt-1 text-[11px] text-[var(--portal-muted)]">
+              {a.payments.refundedNote}
+            </p>
+          ) : null}
+        </>
+      ),
+    },
+    {
+      key: "receipt",
+      label: a.payments.colReceipt,
+      priority: 2,
+      align: "right",
+      desktopOnly: true,
+      render: (payment) =>
+        NEEDS_ACTION_STATUSES.has(payment.status) ? (
+          <PayNowButton appointmentId={payment.appointmentId} i18n={a.payments} />
+        ) : (
+          <ReceiptButton paymentId={payment.id} i18n={a.payments} />
+        ),
+    },
+  ];
+
+  const invoiceFields: ColumnPriorityField<SubscriptionInvoiceView>[] = [
+    {
+      key: "date",
+      label: inv.colDate,
+      priority: 2,
+      render: (invoice) => formatAppDate(invoice.periodStart ?? invoice.createdAt),
+    },
+    {
+      key: "description",
+      label: inv.colDescription,
+      priority: 1,
+      cardPrimary: true,
+      render: (invoice) => (
+        <>
+          <span className="block font-semibold text-[var(--portal-text)]">{inv.membershipPayment}</span>
+          {invoice.number ? (
+            <span className="block text-xs text-[var(--portal-muted)]">{invoice.number}</span>
+          ) : null}
+        </>
+      ),
+    },
+    {
+      key: "amount",
+      label: inv.colAmount,
+      priority: 2,
+      render: (invoice) => (
+        <span
+          className="font-semibold text-[var(--portal-text)]"
+          style={{ fontVariantNumeric: "tabular-nums" }}
+        >
+          {formatPrice(invoice.amountPaidCents, invoice.currency)}
+        </span>
+      ),
+    },
+    {
+      key: "status",
+      label: inv.colStatus,
+      priority: 2,
+      render: (invoice) => (
+        <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-800">
+          {invoiceStatusLabel(invoice.status)}
+        </span>
+      ),
+    },
+    {
+      key: "invoice",
+      label: inv.viewInvoice,
+      priority: 2,
+      align: "right",
+      desktopOnly: true,
+      render: (invoice) => {
+        const receiptUrl = invoice.hostedInvoiceUrl ?? invoice.pdfUrl;
+        return receiptUrl ? (
+          <a
+            href={receiptUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--portal-primary)] hover:underline"
+          >
+            {inv.viewInvoice}
+            <ExternalLink className="size-3.5" aria-hidden />
+          </a>
+        ) : (
+          <span className="text-xs text-[var(--portal-muted)]">—</span>
+        );
+      },
+    },
+  ];
 
   return (
     <div className="gh-patient-page gh-patient-payments-page">
@@ -101,12 +250,8 @@ export default async function AccountPaymentsPage() {
           <div className="inline-flex size-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
             <CreditCard aria-hidden className="size-6" />
           </div>
-          <h2 className="mt-4 text-lg font-bold text-[var(--portal-text)]">
-            {a.payments.noPayments}
-          </h2>
-          <p className="mt-2 max-w-md text-sm text-[var(--portal-muted)]">
-            {a.payments.noPaymentsBody}
-          </p>
+          <h2 className="mt-4 text-lg font-bold text-[var(--portal-text)]">{a.payments.noPayments}</h2>
+          <p className="mt-2 max-w-md text-sm text-[var(--portal-muted)]">{a.payments.noPaymentsBody}</p>
           <Link
             href="/account/bookings"
             className="mt-5 inline-flex items-center rounded-md border border-emerald-700 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"
@@ -118,115 +263,18 @@ export default async function AccountPaymentsPage() {
 
       {items.length > 0 ? (
         <div className="gh-card overflow-hidden p-0">
-          <div className="grid gap-3 p-4 md:hidden">
-            {items.map((p) => (
-              <PortalMobileCard
-                key={p.id}
-                title={p.serviceName ?? p.consultationType}
-                subtitle={
-                  <>
-                    {formatAppDate(p.paidAt)} · {p.countryCode}
-                    {p.doctorName ? (
-                      <>
-                        {" "}
-                        · {/^dr\.?\s/i.test(p.doctorName) ? p.doctorName : `Dr. ${p.doctorName}`}
-                      </>
-                    ) : null}
-                  </>
-                }
-                statusPill={
-                  <span
-                    className={`inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_PILL[p.status]}`}
-                  >
-                    {statusLabel[p.status]}
-                  </span>
-                }
-                meta={[
-                  {
-                    label: a.payments.colAmount,
-                    value: (
-                      <span style={{ fontVariantNumeric: "tabular-nums" }}>
-                        {formatPrice(p.amountCents, p.currencyCode)}
-                      </span>
-                    ),
-                  },
-                ]}
-                actions={
-                  NEEDS_ACTION_STATUSES.has(p.status) ? (
-                    <PayNowButton appointmentId={p.appointmentId} i18n={a.payments} />
-                  ) : (
-                    <ReceiptButton paymentId={p.id} i18n={a.payments} />
-                  )
-                }
-              >
-                {p.status === "REFUNDED" ? (
-                  <p className="mt-2 text-xs" style={{ color: "var(--portal-muted)" }}>
-                    {a.payments.refundedNote}
-                  </p>
-                ) : null}
-              </PortalMobileCard>
-            ))}
-          </div>
-          <div className="gh-patient-table-wrap hidden overflow-x-auto md:block">
-          <table className="w-full min-w-[760px] text-sm">
-            <thead className="bg-[var(--portal-well)] text-left text-xs uppercase tracking-wide text-[var(--portal-muted)]">
-              <tr>
-                <th className="px-4 py-3 font-semibold">{a.payments.colDate}</th>
-                <th className="px-4 py-3 font-semibold">{a.payments.colConsultation}</th>
-                <th className="px-4 py-3 font-semibold">{a.payments.colAmount}</th>
-                <th className="px-4 py-3 font-semibold">{a.payments.colStatus}</th>
-                <th className="px-4 py-3 text-right font-semibold">{a.payments.colReceipt}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--portal-line)]">
-              {items.map((p) => (
-                <tr key={p.id}>
-                  <td className="px-4 py-3 text-[var(--portal-text)]">
-                    {formatAppDate(p.paidAt)}
-                  </td>
-                  <td className="px-4 py-3 text-[var(--portal-text)]">
-                    <span className="block font-semibold">
-                      {p.serviceName ?? p.consultationType}
-                    </span>
-                    {p.doctorName && (
-                      <span className="block text-xs text-[var(--portal-muted)]">
-                        {/^dr\.?\s/i.test(p.doctorName) ? p.doctorName : `Dr. ${p.doctorName}`}
-                      </span>
-                    )}
-                    <span className="block text-xs text-[var(--portal-muted)]">
-                      {p.countryCode}
-                    </span>
-                  </td>
-                  <td
-                    className="px-4 py-3 font-semibold text-[var(--portal-text)]"
-                    style={{ fontVariantNumeric: "tabular-nums" }}
-                  >
-                    {formatPrice(p.amountCents, p.currencyCode)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_PILL[p.status]}`}
-                    >
-                      {statusLabel[p.status]}
-                    </span>
-                    {p.status === "REFUNDED" ? (
-                      <p className="mt-1 text-[11px]" style={{ color: "var(--portal-muted)" }}>
-                        {a.payments.refundedNoteShort}
-                      </p>
-                    ) : null}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    {NEEDS_ACTION_STATUSES.has(p.status) ? (
-                      <PayNowButton appointmentId={p.appointmentId} />
-                    ) : (
-                      <ReceiptButton paymentId={p.id} />
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
+          <ColumnPriorityTable
+            fields={paymentFields}
+            rows={items}
+            getRowKey={(payment) => payment.id}
+            cardActions={(payment) =>
+              NEEDS_ACTION_STATUSES.has(payment.status) ? (
+                <PayNowButton appointmentId={payment.appointmentId} i18n={a.payments} />
+              ) : (
+                <ReceiptButton paymentId={payment.id} i18n={a.payments} />
+              )
+            }
+          />
         </div>
       ) : null}
 
@@ -236,109 +284,25 @@ export default async function AccountPaymentsPage() {
             {inv.heading}
           </h3>
           <div className="gh-card overflow-hidden p-0">
-            <div className="grid gap-3 p-4 md:hidden">
-              {invoices.map((row) => {
-                const receiptUrl = row.hostedInvoiceUrl ?? row.pdfUrl;
-                return (
-                  <PortalMobileCard
-                    key={row.id}
-                    leading={<ReceiptText className="size-4 text-[var(--portal-primary)]" aria-hidden />}
-                    title={inv.membershipPayment}
-                    subtitle={
-                      <>
-                        {formatAppDate(row.periodStart ?? row.createdAt)}
-                        {row.number ? ` · ${row.number}` : ""}
-                      </>
-                    }
-                    statusPill={
-                      <span className="inline-flex shrink-0 items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-800">
-                        {invoiceStatusLabel(row.status)}
-                      </span>
-                    }
-                    meta={[
-                      {
-                        label: a.payments.colAmount,
-                        value: (
-                          <span style={{ fontVariantNumeric: "tabular-nums" }}>
-                            {formatPrice(row.amountPaidCents, row.currency)}
-                          </span>
-                        ),
-                      },
-                    ]}
-                    actions={
-                      receiptUrl ? (
-                        <a
-                          href={receiptUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--portal-primary)]"
-                        >
-                          {inv.viewInvoice}
-                          <ExternalLink className="size-3.5" aria-hidden />
-                        </a>
-                      ) : null
-                    }
-                  />
-                );
-              })}
-            </div>
-            <div className="gh-patient-table-wrap hidden overflow-x-auto md:block">
-            <table className="w-full min-w-[760px] text-sm">
-              <thead className="bg-[var(--portal-well)] text-left text-xs uppercase tracking-wide text-[var(--portal-muted)]">
-                <tr>
-                  <th className="px-4 py-3 font-semibold">{inv.colDate}</th>
-                  <th className="px-4 py-3 font-semibold">{inv.colDescription}</th>
-                  <th className="px-4 py-3 font-semibold">{inv.colAmount}</th>
-                  <th className="px-4 py-3 font-semibold">{inv.colStatus}</th>
-                  <th className="px-4 py-3 text-right font-semibold">{inv.viewInvoice}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--portal-line)]">
-                {invoices.map((row) => {
-                  const receiptUrl = row.hostedInvoiceUrl ?? row.pdfUrl;
-                  return (
-                    <tr key={row.id}>
-                      <td className="px-4 py-3 text-[var(--portal-text)]">
-                        {formatAppDate(row.periodStart ?? row.createdAt)}
-                      </td>
-                      <td className="px-4 py-3 text-[var(--portal-text)]">
-                        <span className="block font-semibold">{inv.membershipPayment}</span>
-                        {row.number ? (
-                          <span className="block text-xs text-[var(--portal-muted)]">{row.number}</span>
-                        ) : null}
-                      </td>
-                      <td
-                        className="px-4 py-3 font-semibold text-[var(--portal-text)]"
-                        style={{ fontVariantNumeric: "tabular-nums" }}
-                      >
-                        {formatPrice(row.amountPaidCents, row.currency)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-800">
-                          {invoiceStatusLabel(row.status)}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        {receiptUrl ? (
-                          <a
-                            href={receiptUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--portal-primary)] hover:underline"
-                          >
-                            {inv.viewInvoice}
-                            <ExternalLink className="size-3.5" aria-hidden />
-                          </a>
-                        ) : (
-                          <span className="text-xs text-[var(--portal-muted)]">—</span>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            </div>
+            <ColumnPriorityTable
+              fields={invoiceFields}
+              rows={invoices}
+              getRowKey={(invoice) => invoice.id}
+              cardActions={(invoice) => {
+                const receiptUrl = invoice.hostedInvoiceUrl ?? invoice.pdfUrl;
+                return receiptUrl ? (
+                  <a
+                    href={receiptUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--portal-primary)]"
+                  >
+                    {inv.viewInvoice}
+                    <ExternalLink className="size-3.5" aria-hidden />
+                  </a>
+                ) : null;
+              }}
+            />
           </div>
         </section>
       ) : null}
