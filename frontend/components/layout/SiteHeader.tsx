@@ -185,6 +185,12 @@ export function SiteHeader({
       ? sectionNavForCountryLang(effectiveCountrySlug, effectiveLang, activeFeatures, navigation)
       : sectionNavGlobal(navigation);
 
+  // 1024–1279px intermediate band: conversion links only (Doctors + Plans);
+  // everything else stays in the drawer.
+  const lgItems = sectionItems.filter(
+    (i) => i.label === navigation.navDoctors || i.label === navigation.navPlans,
+  );
+
   // Cart-first booking: the header "Book" CTA opens the guided /book page
   // (service → doctor → time → details in one flow). Outside a country we
   // drop them on the global landing — the country gate resolves before
@@ -217,10 +223,13 @@ export function SiteHeader({
         />
       </Link>
 
-      {/* Section tabs — only inside a country. Desktop-only (lg+); tablet
-          and below collapse into the MobileNav drawer. */}
+      {/* Section tabs — full set at xl+; 1024–1279px shows only the
+          conversion pair (Doctors / Plans), rest lives in the drawer. */}
       <nav aria-label="Sections" className="gh-header-navCenter hidden min-w-0 justify-center xl:flex">
         {sectionItems.length > 0 ? <SectionNav items={sectionItems} variant="dark" /> : null}
+      </nav>
+      <nav aria-label="Sections" className="gh-header-navCenter hidden min-w-0 justify-center lg:flex xl:hidden">
+        {lgItems.length > 0 ? <SectionNav items={lgItems} variant="dark" /> : null}
       </nav>
 
       {/* Right — switchers + auth + CTA */}
@@ -249,7 +258,7 @@ export function SiteHeader({
         <Link
           href={bookHref}
           aria-label="Book an appointment"
-          className="gh-header-bookCta gh-focus-on-dark group hidden min-h-12 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[var(--color-brand-accent)] pl-5 pr-4 py-3 text-sm font-extrabold tracking-[-0.01em] text-[#0a1f14] shadow-[0_4px_16px_rgba(176,241,34,0.22)] transition-[transform,box-shadow,filter] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-105 hover:shadow-[0_10px_30px_rgba(176,241,34,0.32)] active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 xl:inline-flex"
+          className="gh-header-bookCta gh-focus-on-dark group hidden min-h-12 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[var(--color-brand-accent)] pl-5 pr-4 py-3 text-sm font-extrabold tracking-[-0.01em] text-[#0a1f14] shadow-[0_4px_16px_rgba(176,241,34,0.22)] transition-[transform,box-shadow,filter] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-105 hover:shadow-[0_10px_30px_rgba(176,241,34,0.32)] active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 lg:inline-flex"
         >
           {navigation.navBookAppointment}
           <ArrowUpRight
@@ -259,7 +268,7 @@ export function SiteHeader({
           />
         </Link>
 
-        {/* Below xl, booking is reached via the drawer's own sticky Book
+        {/* Below lg, booking is reached via the drawer's own sticky Book
             CTA (see MobileNav) — no duplicate pill in the header bar. */}
 
         {/* Mobile + tablet drawer trigger — shown below xl (incl. iPad). */}

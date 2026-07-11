@@ -1819,6 +1819,22 @@ img {
 .gh-icon-btn:active {
   transform: translateY(1px);
 }
+/* Coarse pointers: keep the 32px visual (§5.8) but guarantee a ≥44px hit
+ * area via an invisible centered overlay. */
+@media (pointer: coarse) {
+  .gh-icon-btn {
+    position: relative;
+  }
+  .gh-icon-btn::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+}
 
 /* Admin sidebar logo — radial glow behind the wordmark to give the
  * brand block atmosphere instead of sitting flat on the dark surface. */
