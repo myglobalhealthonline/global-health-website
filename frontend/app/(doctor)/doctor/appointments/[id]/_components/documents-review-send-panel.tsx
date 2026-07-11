@@ -430,7 +430,7 @@ export function DocumentsReviewSendPanel({
                             <Send className="size-3" aria-hidden /> {copy.send}
                           </button>
                         ) : null}
-                        <AppMenu trigger={<button type="button" aria-label="More document actions" className="gh-btn gh-btn-soft px-2 py-1"><MoreVertical className="size-3.5" aria-hidden /></button>}>
+                        <AppMenu contentClassName="gh-portal-menu-content min-w-[180px] p-1.5" trigger={<button type="button" aria-label="More document actions" className="gh-btn gh-btn-soft px-2 py-1"><MoreVertical className="size-3.5" aria-hidden /></button>}>
                           {canFinalize(row.documentType) ? <AppMenuItem asChild><button type="button" disabled={pending} className="gh-portal-menu-item" onClick={() => finalizeDocument(row.id)}>{copy.finalize}</button></AppMenuItem> : null}
                           {hasUploadLink(row.documentType) ? <AppMenuItem asChild><button type="button" disabled={pending} className="gh-portal-menu-item" onClick={() => sendUploadLink(row.id)}>{copy.sendUploadLink}</button></AppMenuItem> : null}
                           <AppMenuItem asChild><button type="button" className="gh-portal-menu-item text-red-700" onClick={() => remove(row.id)}>{copy.deleteAria}</button></AppMenuItem>
