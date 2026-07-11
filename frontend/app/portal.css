@@ -1404,10 +1404,6 @@
   padding-bottom: 10px;
 }
 
-.gh-admin-asset-table-wrap table {
-  min-width: 980px;
-}
-
 .gh-admin-asset-preview {
   overflow: hidden;
 }
