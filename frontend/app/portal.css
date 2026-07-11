@@ -5060,6 +5060,14 @@ a.gh-appointment-card:hover {
 .gh-admin-main :where(tbody tr:hover) {
   background: var(--portal-hover);
 }
+/* Edge-fade scroll affordance for horizontally-scrollable tables/strips
+   outside the tab strip above (D-xx: bare overflow-x-auto gives no visual
+   hint that there's more content off-screen). */
+.gh-hscroll-fade {
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
+  mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
+}
+
 .gh-portal-tabs,
 .gh-admin-main :where([role="tablist"]) {
   display: flex;

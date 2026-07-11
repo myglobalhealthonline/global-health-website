@@ -155,7 +155,7 @@ export function BulkUploadForm({ action }: { action: BulkAction }) {
           ) : null}
 
           {parsed ? (
-            <div className="mt-4 overflow-x-auto">
+            <div className="mt-4 overflow-x-auto gh-hscroll-fade">
               <table className="w-full text-sm">
                 <thead className="text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
                   <tr>
