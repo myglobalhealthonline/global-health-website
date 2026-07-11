@@ -329,8 +329,8 @@ export default async function AdminAuditLogPage({
                   <th className="px-3 py-2 font-semibold">Action</th>
                   <th className="px-3 py-2 font-semibold">Actor</th>
                   <th className="px-3 py-2 font-semibold">Entity</th>
-                  <th className="px-3 py-2 font-semibold">IP</th>
-                  <th className="px-3 py-2 font-semibold">Metadata</th>
+                  <th className="px-3 py-2 font-semibold gh-cpt-p3">IP</th>
+                  <th className="px-3 py-2 font-semibold gh-cpt-p3">Metadata</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-border)]">
@@ -369,10 +369,10 @@ export default async function AdminAuditLogPage({
                       <p className="text-[var(--color-text-primary)]">{r.entityType}</p>
                       <p className="text-[var(--color-text-muted)]">{r.entityId}</p>
                     </td>
-                    <td className="px-3 py-2 font-mono text-[11px] text-[var(--color-text-muted)]">
+                    <td className="px-3 py-2 font-mono text-[11px] text-[var(--color-text-muted)] gh-cpt-p3">
                       {r.ipAddress ?? "—"}
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-3 py-2 gh-cpt-p3">
                       <AuditDiff metadata={r.metadata} />
                     </td>
                   </tr>
