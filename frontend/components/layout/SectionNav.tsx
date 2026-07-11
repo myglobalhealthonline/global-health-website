@@ -28,7 +28,7 @@ export type SectionNavItem = {
 };
 
 const PILL_BASE =
-  "group/navitem relative inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 2xl:px-4 py-2.5 text-[13px] font-bold whitespace-nowrap cursor-pointer outline-none transition-[color,background-color,border-color] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2";
+  "group/navitem relative inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 2xl:px-4 py-2.5 text-[13px] font-bold cursor-pointer outline-none transition-[color,background-color,border-color] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2";
 
 const DARK_FOCUS_RING =
   "focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F2E25]";

@@ -5,7 +5,7 @@ import { ArrowRight, ShieldCheck, Stethoscope, Clock } from "lucide-react";
 import type { CountryCode } from "@/data/countries";
 import { Flag } from "@/components/ui/Flag";
 import { HeroReveal } from "@/components/motion/HeroReveal";
-import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
+import { fitHeadingFontSize, IDEAL_HEADING_CHARS } from "@/lib/text/fit-heading-size";
 
 // SameDayBooking renders real server-fetchable markup (slot grid, CTA) once
 // hydrated — keep SSR on so it isn't blank/no-index on first paint. Dynamic
@@ -106,7 +106,7 @@ export function HomeHero({
     minRem: 2.25,
     maxRem: 6,
     viewportTerm: "8vw",
-    idealChars: 24,
+    idealChars: IDEAL_HEADING_CHARS,
   });
 
   const trustItems = [
@@ -153,7 +153,7 @@ export function HomeHero({
       {/* ── Content ── */}
       <div className="gh-home-hero-grid relative mx-auto grid max-w-[var(--container-width)] items-center gap-12 px-5 pb-14 pt-[calc(var(--header-height)+3.5rem)] md:px-10 lg:gap-16 lg:pb-16 lg:pt-[calc(var(--header-height)+4rem)] max-lg:!min-h-[min(calc(100svh-var(--header-height)),760px)]">
         {/* ── LEFT — text column ── */}
-        <div className="flex max-w-[760px] flex-col py-10 lg:py-20">
+        <div className="gh-home-hero-left flex max-w-[760px] flex-col py-10 lg:py-20">
           <HeroReveal delay={0}>
             <div className="mb-9 flex flex-wrap items-center gap-3">
               <span className="gh-home-hero-countryBadge inline-flex items-center gap-2.5 rounded-full py-1.5 pl-2 pr-4 text-[11px] font-bold uppercase tracking-[0.18em] text-white/85">
@@ -172,8 +172,8 @@ export function HomeHero({
           <HeroReveal delay={130}>
             <h1
               id="hero-title"
-              className="gh-home-hero-title max-w-[13ch] text-white"
-              style={{ fontSize: titleFontSize }}
+              className="gh-home-hero-title text-white"
+              style={{ fontSize: titleFontSize, maxWidth: `${IDEAL_HEADING_CHARS}ch` }}
             >
               {displayHeroTitle ? (
                 displayHeroTitle
