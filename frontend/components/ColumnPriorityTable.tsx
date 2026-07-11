@@ -1,10 +1,13 @@
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import { AdminTable, Thead, Th, Td, Tr } from "@/components/portal-atoms";
 import { PortalMobileCard, type PortalMobileCardTone } from "@/components/PortalMobileCard";
 
 export type ColumnPriorityField<T> = {
   key: string;
-  label: string;
+  /** Desktop-table header. This may be an interactive sortable header. */
+  label: ReactNode;
+  /** Plain-text label used in the mobile card meta list when `label` is JSX. */
+  cardLabel?: string;
   /** 1/2 = always visible; 3 hides below 1024px; 4 hides below 1280px
    *  (RESPONSIVE_DESIGN_SYSTEM_PLAN §3.2 config model). */
   priority: 1 | 2 | 3 | 4;
@@ -36,6 +39,7 @@ export function ColumnPriorityTable<T>({
   cardTone,
   emptyState,
   cardActions,
+  renderExpandedRow,
 }: {
   fields: ColumnPriorityField<T>[];
   rows: T[];
@@ -47,6 +51,9 @@ export function ColumnPriorityTable<T>({
   /** Overrides the mobile card's default trailing "View" button (e.g. a
    *  kebab menu replacing a desktop-only multi-button action cell). */
   cardActions?: (row: T) => ReactNode;
+  /** Optional second table row for in-place detail. The row data remains in
+   *  the caller's existing payload; no drawer/query is introduced. */
+  renderExpandedRow?: (row: T, columnCount: number) => ReactNode;
 }) {
   const tableFields = fields.filter((f) => !f.drawerOnly);
   const cardFields = tableFields.filter((f) => !f.desktopOnly);
@@ -69,27 +76,30 @@ export function ColumnPriorityTable<T>({
           </Thead>
           <tbody>
             {rows.map((row) => (
-              <Tr key={getRowKey(row)}>
-                {tableFields.map((f, i) => (
-                  <Td
-                    key={f.key}
-                    align={f.align}
-                    className={f.priority >= 3 ? `gh-cpt-p${f.priority}` : undefined}
-                    style={
-                      onRowClick && i === 0
-                        ? { cursor: "pointer" }
-                        : undefined
-                    }
-                  >
-                    <span
-                      onClick={onRowClick ? () => onRowClick(row) : undefined}
-                      style={onRowClick ? { cursor: "pointer", display: "block" } : undefined}
+              <Fragment key={getRowKey(row)}>
+                <Tr>
+                  {tableFields.map((f, i) => (
+                    <Td
+                      key={f.key}
+                      align={f.align}
+                      className={f.priority >= 3 ? `gh-cpt-p${f.priority}` : undefined}
+                      style={
+                        onRowClick && i === 0
+                          ? { cursor: "pointer" }
+                          : undefined
+                      }
                     >
-                      {f.render(row)}
-                    </span>
-                  </Td>
-                ))}
-              </Tr>
+                      <span
+                        onClick={onRowClick ? () => onRowClick(row) : undefined}
+                        style={onRowClick ? { cursor: "pointer", display: "block" } : undefined}
+                      >
+                        {f.render(row)}
+                      </span>
+                    </Td>
+                  ))}
+                </Tr>
+                {renderExpandedRow ? renderExpandedRow(row, tableFields.length) : null}
+              </Fragment>
             ))}
           </tbody>
         </AdminTable>
@@ -103,7 +113,10 @@ export function ColumnPriorityTable<T>({
               key={getRowKey(row)}
               title={primary ? primary.render(row) : null}
               tone={cardTone ? cardTone(row) : "neutral"}
-              meta={rest.map((f) => ({ label: f.label, value: f.render(row) }))}
+              meta={rest.map((f) => ({
+                label: f.cardLabel ?? (typeof f.label === "string" ? f.label : f.key),
+                value: f.render(row),
+              }))}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
               actions={
                 cardActions
