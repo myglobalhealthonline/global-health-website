@@ -26,6 +26,7 @@ export function PortalMobileCard({
   actions,
   href,
   children,
+  onClick,
 }: {
   /** Optional avatar/icon rendered before the title block. */
   leading?: ReactNode;
@@ -48,6 +49,9 @@ export function PortalMobileCard({
    *  sub-components (e.g. an expandable ledger) that don't fit the
    *  right-aligned actions row. */
   children?: ReactNode;
+  /** Makes the card body clickable (e.g. open a drawer) when there's no
+   *  `href`. Ignored if `href` is set. */
+  onClick?: () => void;
 }) {
   const content = (
     <>
@@ -85,6 +89,25 @@ export function PortalMobileCard({
       <Link href={href} className={className}>
         {content}
       </Link>
+    );
+  }
+  if (onClick) {
+    return (
+      <div
+        className={className}
+        onClick={onClick}
+        role="button"
+        tabIndex={0}
+        style={{ cursor: "pointer" }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onClick();
+          }
+        }}
+      >
+        {content}
+      </div>
     );
   }
   return <div className={className}>{content}</div>;

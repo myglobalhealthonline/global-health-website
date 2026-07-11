@@ -12,6 +12,10 @@ export type ColumnPriorityField<T> = {
   /** Field is dropped from the table/card entirely — surfaced only inside
    *  a RecordDetailsDrawer opened from the row (not rendered here). */
   drawerOnly?: boolean;
+  /** Field renders in the desktop table only — dropped from the mobile
+   *  card's meta list (e.g. an inline multi-button action cell that's
+   *  replaced by `cardActions` below 760px, D-04). */
+  desktopOnly?: boolean;
   align?: "left" | "right" | "center";
 };
 
@@ -31,6 +35,7 @@ export function ColumnPriorityTable<T>({
   onRowClick,
   cardTone,
   emptyState,
+  cardActions,
 }: {
   fields: ColumnPriorityField<T>[];
   rows: T[];
@@ -39,8 +44,12 @@ export function ColumnPriorityTable<T>({
   /** Optional per-row tone for the mobile card's status edge. */
   cardTone?: (row: T) => PortalMobileCardTone;
   emptyState?: ReactNode;
+  /** Overrides the mobile card's default trailing "View" button (e.g. a
+   *  kebab menu replacing a desktop-only multi-button action cell). */
+  cardActions?: (row: T) => ReactNode;
 }) {
   const tableFields = fields.filter((f) => !f.drawerOnly);
+  const cardFields = tableFields.filter((f) => !f.desktopOnly);
   if (rows.length === 0 && emptyState) return <>{emptyState}</>;
 
   return (
@@ -88,23 +97,28 @@ export function ColumnPriorityTable<T>({
 
       <div className="gh-admin-mobile-list gh-cpt-mobile-list">
         {rows.map((row) => {
-          const [primary, ...rest] = tableFields;
+          const [primary, ...rest] = cardFields;
           return (
             <PortalMobileCard
               key={getRowKey(row)}
               title={primary ? primary.render(row) : null}
               tone={cardTone ? cardTone(row) : "neutral"}
               meta={rest.map((f) => ({ label: f.label, value: f.render(row) }))}
+              onClick={onRowClick ? () => onRowClick(row) : undefined}
               actions={
-                onRowClick ? (
-                  <button
-                    type="button"
-                    className="gh-btn gh-btn-soft"
-                    onClick={() => onRowClick(row)}
-                  >
-                    View
-                  </button>
-                ) : undefined
+                cardActions
+                  ? cardActions(row)
+                  : onRowClick
+                    ? (
+                        <button
+                          type="button"
+                          className="gh-btn gh-btn-soft"
+                          onClick={() => onRowClick(row)}
+                        >
+                          View
+                        </button>
+                      )
+                    : undefined
               }
             />
           );

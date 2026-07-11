@@ -1,34 +1,30 @@
-import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { UserPlus, Users } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import {
+  fetchCorporateEmployeeById,
   fetchCorporateEmployees,
   patchCorporateEmployee,
   postCorporateEmployee,
   postCorporateEmployeesBulk,
   resendCorporateEmployeeInvite,
+  type CorporateEmployeeDetailDto,
   type CorporateEmployeeInput,
 } from "@/lib/corporate/corporate-api";
-import {
-  AdminCard,
-  AdminEmptyState,
-  AdminTable,
-  Btn,
-  PageHeader,
-  Pill,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "@/components/portal-atoms";
-import { memberStatusLabel, memberStatusTone } from "@/app/(admin)/admin/corporate/_lib";
+import { AdminCard, Btn, PageHeader } from "@/components/portal-atoms";
 import { BulkUploadForm } from "./bulk-upload-form";
+import { EmployeesTable } from "./employees-table";
 
 export const dynamic = "force-dynamic";
 
 type PageProps = {
-  searchParams?: Promise<{ query?: string; status?: string; success?: string; error?: string }>;
+  searchParams?: Promise<{
+    query?: string;
+    status?: string;
+    success?: string;
+    error?: string;
+    employee?: string;
+  }>;
 };
 
 function back(params: Record<string, string>) {
@@ -100,7 +96,11 @@ async function bulkUploadAction(employees: CorporateEmployeeInput[]) {
   return { ok: true as const, results: result.data.results };
 }
 
-const INVITE_STATUSES = ["DRAFT", "INVITED", "INVITE_SENT", "INVITE_FAILED"];
+async function getEmployeeDetail(id: string): Promise<CorporateEmployeeDetailDto | null> {
+  "use server";
+  const result = await fetchCorporateEmployeeById(id);
+  return result.ok ? result.data : null;
+}
 
 export default async function CorporateEmployeesPage({ searchParams }: PageProps) {
   const sp = searchParams ? await searchParams : {};
@@ -199,7 +199,7 @@ export default async function CorporateEmployeesPage({ searchParams }: PageProps
               name="query"
               placeholder="Search employees…"
               defaultValue={sp.query ?? ""}
-              className="gh-input w-56"
+              className="gh-input w-full sm:max-w-xs"
             />
             <select name="status" defaultValue={sp.status ?? ""} className="gh-select">
               <option value="">All statuses</option>
@@ -228,85 +228,12 @@ export default async function CorporateEmployeesPage({ searchParams }: PageProps
           <p className="gh-status-warning m-5 rounded-md border px-4 py-3 text-sm">
             Could not load employees: {result.message}
           </p>
-        ) : result.data.employees.length === 0 ? (
-          <AdminEmptyState
-            icon={<Users className="size-8" aria-hidden />}
-            title="No employees yet"
-            description="Add employees one by one or paste a list — each gets an invite to join your corporate plan."
-          />
         ) : (
-          <AdminTable>
-              <Thead>
-                <Th>Name</Th>
-                <Th>Email</Th>
-                <Th>Department</Th>
-                <Th>Status</Th>
-                <Th align="right">Beneficiaries</Th>
-                <Th align="right">Actions</Th>
-              </Thead>
-              <tbody>
-                {result.data.employees.map((e) => (
-                  <Tr key={e.id}>
-                    <Td>
-                      <Link
-                        href={`/corporate/employees/${e.id}`}
-                        className="font-bold text-[var(--color-text-primary)] hover:underline"
-                      >
-                        {e.firstName} {e.lastName}
-                      </Link>
-                      {e.jobTitle ? (
-                        <p className="text-xs text-[var(--color-text-muted)]">{e.jobTitle}</p>
-                      ) : null}
-                    </Td>
-                    <Td>{e.email}</Td>
-                    <Td>{e.department ?? "—"}</Td>
-                    <Td>
-                      <Pill tone={memberStatusTone(e.status)}>{memberStatusLabel(e.status)}</Pill>
-                    </Td>
-                    <Td align="right">{e.beneficiaryCount}</Td>
-                    <Td align="right">
-                      <div className="flex flex-wrap items-center justify-end gap-1.5">
-                        {INVITE_STATUSES.includes(e.status) ? (
-                          <form action={employeeRowAction}>
-                            <input type="hidden" name="employeeId" value={e.id} />
-                            <input type="hidden" name="action" value="RESEND" />
-                            <Btn type="submit" variant="ghost" size="sm">
-                              Resend invite
-                            </Btn>
-                          </form>
-                        ) : null}
-                        {e.status === "SUSPENDED" ? (
-                          <form action={employeeRowAction}>
-                            <input type="hidden" name="employeeId" value={e.id} />
-                            <input type="hidden" name="action" value="REACTIVATE" />
-                            <Btn type="submit" variant="ghost" size="sm">
-                              Reactivate
-                            </Btn>
-                          </form>
-                        ) : e.status !== "REMOVED" ? (
-                          <form action={employeeRowAction}>
-                            <input type="hidden" name="employeeId" value={e.id} />
-                            <input type="hidden" name="action" value="SUSPEND" />
-                            <Btn type="submit" variant="ghost" size="sm">
-                              Suspend
-                            </Btn>
-                          </form>
-                        ) : null}
-                        {e.status !== "REMOVED" ? (
-                          <form action={employeeRowAction}>
-                            <input type="hidden" name="employeeId" value={e.id} />
-                            <input type="hidden" name="action" value="REMOVE" />
-                            <Btn type="submit" variant="danger" size="sm">
-                              Remove
-                            </Btn>
-                          </form>
-                        ) : null}
-                      </div>
-                    </Td>
-                  </Tr>
-                ))}
-              </tbody>
-          </AdminTable>
+          <EmployeesTable
+            employees={result.data.employees}
+            employeeRowAction={employeeRowAction}
+            getEmployeeDetail={getEmployeeDetail}
+          />
         )}
       </AdminCard>
     </>
