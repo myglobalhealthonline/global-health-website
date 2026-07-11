@@ -4,9 +4,10 @@ import {
   fetchAdminAutomationCatalog,
   fetchAdminAutomationRuns,
   fetchAdminAutomationOrders,
+  type AdminAutomationRunRow,
 } from "@/lib/admin/admin-api";
 import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader } from "../_components/atoms";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 
 export const dynamic = "force-dynamic";
 
@@ -54,6 +55,59 @@ function timeAgo(iso: string): string {
   if (h < 24) return `${h}h ago`;
   return `${Math.floor(h / 24)}d ago`;
 }
+
+const automationRunFields: ColumnPriorityField<AdminAutomationRunRow>[] = [
+  {
+    key: "createdAt",
+    label: "When",
+    priority: 1,
+    render: (row) => <span className="whitespace-nowrap">{timeAgo(row.createdAt)}</span>,
+  },
+  {
+    key: "order",
+    label: "Order",
+    priority: 1,
+    render: (row) =>
+      row.orderId ? (
+        <Link
+          href={`/admin/automation?orderId=${encodeURIComponent(row.orderId)}`}
+          className="font-semibold text-[var(--color-brand-primary)] hover:underline"
+        >
+          {row.orderNumber}
+        </Link>
+      ) : (
+        "—"
+      ),
+  },
+  {
+    key: "status",
+    label: "Status",
+    priority: 1,
+    render: (row) => (
+      <>
+        <StatusBadge status={row.status} />
+        {row.error && <p className="mt-1 max-w-[200px] text-[11px] text-rose-700">{row.error}</p>}
+      </>
+    ),
+  },
+  {
+    key: "channel",
+    label: "Channel",
+    priority: 2,
+    render: (row) => <span className="capitalize">{row.channel ?? "—"}</span>,
+  },
+  {
+    key: "summary",
+    label: "Summary",
+    priority: 3,
+    render: (row) => (
+      <>
+        {row.summary ?? "—"}
+        {row.recipient && <p className="mt-0.5 truncate text-[11px]">→ {row.recipient}</p>}
+      </>
+    ),
+  },
+];
 
 export default async function AdminAutomationPage({
   searchParams,
@@ -232,61 +286,6 @@ export default async function AdminAutomationPage({
               ]}
             />
           </div>
-          <div className="gh-admin-ops-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
-            <table className="w-full min-w-[860px] text-[13px]">
-              <thead>
-                <tr className="border-b border-[var(--color-border)] text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                  <th className="px-4 py-2">When</th>
-                  <th className="px-4 py-2">Order</th>
-                  <th className="px-4 py-2">Channel</th>
-                  <th className="px-4 py-2">Status</th>
-                  <th className="px-4 py-2">Summary</th>
-                </tr>
-              </thead>
-              <tbody>
-                {runs.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-[var(--color-text-muted)]">
-                      No runs yet for this automation.
-                    </td>
-                  </tr>
-                ) : (
-                  runs.map((row) => (
-                    <tr key={row.id} className="border-b border-[var(--color-border)] align-top">
-                      <td className="whitespace-nowrap px-4 py-3 text-[var(--color-text-muted)]">
-                        {timeAgo(row.createdAt)}
-                      </td>
-                      <td className="px-4 py-3">
-                        {row.orderId ? (
-                          <Link
-                            href={`/admin/automation?orderId=${encodeURIComponent(row.orderId)}`}
-                            className="font-semibold text-[var(--color-brand-primary)] hover:underline"
-                          >
-                            {row.orderNumber}
-                          </Link>
-                        ) : (
-                          "—"
-                        )}
-                      </td>
-                      <td className="px-4 py-3 capitalize">{row.channel ?? "—"}</td>
-                      <td className="px-4 py-3">
-                        <StatusBadge status={row.status} />
-                        {row.error && (
-                          <p className="mt-1 max-w-[200px] text-[11px] text-rose-700">{row.error}</p>
-                        )}
-                      </td>
-                      <td className="max-w-[260px] px-4 py-3 text-[var(--color-text-muted)]">
-                        {row.summary ?? "—"}
-                        {row.recipient && (
-                          <p className="mt-0.5 truncate text-[11px]">→ {row.recipient}</p>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
           {runs.length === 0 ? (
             <AdminEmptyState
               icon={<Zap className="size-8" aria-hidden />}
@@ -294,25 +293,12 @@ export default async function AdminAutomationPage({
               description="Runs will appear here once orders trigger this automation key."
             />
           ) : (
-            <div className="gh-admin-mobile-list">
-              {runs.map((row) => (
-                <PortalMobileCard
-                  key={row.id}
-                  tone={row.error ? "danger" : "neutral"}
-                  title={row.orderNumber ?? "No order"}
-                  subtitle={timeAgo(row.createdAt)}
-                  statusPill={<StatusBadge status={row.status} />}
-                  meta={[
-                    { label: "Channel", value: row.channel ?? "-" },
-                    { label: "Summary", value: row.summary ?? "No summary" },
-                    ...(row.recipient ? [{ label: "To", value: <span className="break-all">{row.recipient}</span> }] : []),
-                    ...(row.error
-                      ? [{ label: "Error", value: <span style={{ color: "var(--portal-danger-text)" }}>{row.error}</span> }]
-                      : []),
-                  ]}
-                />
-              ))}
-            </div>
+            <ColumnPriorityTable<AdminAutomationRunRow>
+              fields={automationRunFields}
+              rows={runs}
+              getRowKey={(row) => row.id}
+              cardTone={(row) => (row.error ? "danger" : "neutral")}
+            />
           )}
           <div className="gh-admin-ops-pagination flex items-center justify-between px-5 py-4 text-[13px]">
             {page > 1 ? (
