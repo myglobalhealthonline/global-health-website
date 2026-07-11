@@ -8,23 +8,11 @@ import {
   type AdminPageKey,
 } from "@/lib/admin/admin-api";
 import { getActiveCountry, scopedCountryId } from "@/lib/admin/admin-scope";
-import {
-  AdminCard,
-  AdminEmptyState,
-  AdminSummaryStrip,
-  AdminTable,
-  Btn,
-  IconBtn,
-  PageHeader,
-  Pill,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "../_components/atoms";
+import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, IconBtn, PageHeader, Pill } from "../_components/atoms";
 import { FlagBadge } from "../_components/flag-badge";
 import { ScopeBanner } from "../_components/scope-banner";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
+import { ResponsiveFilterBar } from "@/components/ResponsiveFilterBar";
 
 export const dynamic = "force-dynamic";
 
@@ -38,6 +26,73 @@ function spRead(
 }
 
 type SearchParams = Record<string, string | string[] | undefined>;
+
+function PagesTable({ pages }: { pages: AdminPageDto[] }) {
+  const fields: ColumnPriorityField<AdminPageDto>[] = [
+    {
+      key: "title",
+      label: "Title",
+      priority: 1,
+      render: (p) => <span className="line-clamp-1 max-w-[320px]">{p.title}</span>,
+    },
+    {
+      key: "country",
+      label: "Country",
+      priority: 2,
+      render: (p) =>
+        p.country ? (
+          <span className="inline-flex items-center gap-2">
+            <FlagBadge code={p.country.slug} />
+            <span>{p.country.name}</span>
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 text-[var(--color-text-muted)]">
+            <FileText className="size-3" aria-hidden />
+            Global
+          </span>
+        ),
+    },
+    {
+      key: "pageKey",
+      label: "Page type",
+      priority: 2,
+      render: (p) => ADMIN_PAGE_KEY_LABELS[p.pageKey as AdminPageKey],
+    },
+    { key: "locale", label: "Locale", priority: 3, render: (p) => p.locale },
+    {
+      key: "status",
+      label: "Status",
+      priority: 1,
+      render: (p) => <Pill tone={p.status === "PUBLISHED" ? "published" : "draft"}>{p.status}</Pill>,
+    },
+    {
+      key: "actions",
+      label: "Actions",
+      priority: 1,
+      align: "right",
+      desktopOnly: true,
+      render: (p) => (
+        <IconBtn href={`/admin/pages/${p.id}/edit`} ariaLabel="Edit page">
+          <Edit3 className="size-4" />
+        </IconBtn>
+      ),
+    },
+  ];
+
+  return (
+    <ColumnPriorityTable
+      fields={fields}
+      rows={pages}
+      getRowKey={(p) => p.id}
+      cardTone={(p) => (p.status === "PUBLISHED" ? "success" : "neutral")}
+      cardActions={(p) => (
+        <IconBtn href={`/admin/pages/${p.id}/edit`} ariaLabel="Edit page">
+          <Edit3 className="size-4" />
+        </IconBtn>
+      )}
+    />
+  );
+}
 
 export default async function AdminPagesListPage({
   searchParams,
@@ -90,72 +145,76 @@ export default async function AdminPagesListPage({
       <AdminCard padding={16} className="gh-admin-pages-filters">
         <form
           action="/admin/pages"
-          className="gh-admin-support-filter-row flex flex-wrap items-end gap-3 px-2 py-1"
+          className="flex flex-col gap-3 px-2 py-1"
           method="get"
         >
-          <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
-            Country
-            <select
-              name="countryId"
-              defaultValue={filters.countryId ?? ""}
-              className="mt-1 min-w-[180px] rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
-            >
-              <option value="">All countries</option>
-              {countries.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
-            Page type
-            <select
-              name="pageKey"
-              defaultValue={filters.pageKey ?? ""}
-              className="mt-1 min-w-[180px] rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
-            >
-              <option value="">All page types</option>
-              {ADMIN_PAGE_KEYS.map((k) => (
-                <option key={k} value={k}>
-                  {ADMIN_PAGE_KEY_LABELS[k]}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
-            Locale
-            <select
-              name="locale"
-              defaultValue={filters.locale ?? ""}
-              className="mt-1 min-w-[120px] rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
-            >
-              <option value="">All locales</option>
-              {["EN", "PT", "ES", "CS", "RO", "DE"].map((l) => (
-                <option key={l} value={l}>
-                  {l}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
-            Status
-            <select
-              name="status"
-              defaultValue={filters.status ?? ""}
-              className="mt-1 min-w-[120px] rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
-            >
-              <option value="">Any status</option>
-              <option value="PUBLISHED">Published</option>
-              <option value="DRAFT">Draft</option>
-            </select>
-          </label>
-          <Btn type="submit" variant="secondary" size="sm">
-            Apply
-          </Btn>
-          <Btn href="/admin/pages" variant="ghost" size="sm">
-            Clear
-          </Btn>
+          <ResponsiveFilterBar>
+            <label className="flex min-w-0 flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
+              Country
+              <select
+                name="countryId"
+                defaultValue={filters.countryId ?? ""}
+                className="mt-1 min-w-0 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+              >
+                <option value="">All countries</option>
+                {countries.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex min-w-0 flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
+              Page type
+              <select
+                name="pageKey"
+                defaultValue={filters.pageKey ?? ""}
+                className="mt-1 min-w-0 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+              >
+                <option value="">All page types</option>
+                {ADMIN_PAGE_KEYS.map((k) => (
+                  <option key={k} value={k}>
+                    {ADMIN_PAGE_KEY_LABELS[k]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex min-w-0 flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
+              Locale
+              <select
+                name="locale"
+                defaultValue={filters.locale ?? ""}
+                className="mt-1 min-w-0 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+              >
+                <option value="">All locales</option>
+                {["EN", "PT", "ES", "CS", "RO", "DE"].map((l) => (
+                  <option key={l} value={l}>
+                    {l}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex min-w-0 flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
+              Status
+              <select
+                name="status"
+                defaultValue={filters.status ?? ""}
+                className="mt-1 min-w-0 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+              >
+                <option value="">Any status</option>
+                <option value="PUBLISHED">Published</option>
+                <option value="DRAFT">Draft</option>
+              </select>
+            </label>
+          </ResponsiveFilterBar>
+          <div className="flex flex-wrap gap-3">
+            <Btn type="submit" variant="secondary" size="sm">
+              Apply
+            </Btn>
+            <Btn href="/admin/pages" variant="ghost" size="sm">
+              Clear
+            </Btn>
+          </div>
         </form>
       </AdminCard>
 
@@ -205,85 +264,7 @@ export default async function AdminPagesListPage({
                 ]}
               />
             </div>
-            <div className="gh-admin-support-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
-            <AdminTable>
-              <Thead>
-                <Th>Country</Th>
-                <Th>Page type</Th>
-                <Th>Locale</Th>
-                <Th>Title</Th>
-                <Th>Status</Th>
-                <Th align="right">Actions</Th>
-              </Thead>
-              <tbody>
-                {pagesResult.data.items.map((p: AdminPageDto) => (
-                  <Tr key={p.id}>
-                    <Td>
-                      {p.country ? (
-                        <span className="inline-flex items-center gap-2">
-                          <FlagBadge code={p.country.slug} />
-                          <span>{p.country.name}</span>
-                        </span>
-                      ) : (
-                        <span className="text-[var(--color-text-muted)]">—</span>
-                      )}
-                    </Td>
-                    <Td>{ADMIN_PAGE_KEY_LABELS[p.pageKey as AdminPageKey]}</Td>
-                    <Td>{p.locale}</Td>
-                    <Td>
-                      <span className="line-clamp-1 max-w-[320px]">{p.title}</span>
-                    </Td>
-                    <Td>
-                      <Pill tone={p.status === "PUBLISHED" ? "published" : "draft"}>
-                        {p.status}
-                      </Pill>
-                    </Td>
-                    <Td align="right">
-                      <IconBtn href={`/admin/pages/${p.id}/edit`} ariaLabel="Edit page">
-                        <Edit3 className="size-4" />
-                      </IconBtn>
-                    </Td>
-                  </Tr>
-                ))}
-              </tbody>
-            </AdminTable>
-            </div>
-            <div className="gh-admin-mobile-list">
-              {pages.map((p: AdminPageDto) => (
-                <PortalMobileCard
-                  key={p.id}
-                  tone={p.status === "PUBLISHED" ? "success" : "neutral"}
-                  title={p.title}
-                  subtitle={`${ADMIN_PAGE_KEY_LABELS[p.pageKey as AdminPageKey]} - ${p.locale}`}
-                  statusPill={
-                    <Pill tone={p.status === "PUBLISHED" ? "published" : "draft"}>
-                      {p.status}
-                    </Pill>
-                  }
-                  meta={[
-                    {
-                      label: "Scope",
-                      value: p.country ? (
-                        <span className="inline-flex items-center gap-1.5">
-                          <FlagBadge code={p.country.slug} />
-                          {p.country.name}
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5">
-                          <FileText className="size-3" aria-hidden />
-                          Global page
-                        </span>
-                      ),
-                    },
-                  ]}
-                  actions={
-                    <IconBtn href={`/admin/pages/${p.id}/edit`} ariaLabel="Edit page">
-                      <Edit3 className="size-4" />
-                    </IconBtn>
-                  }
-                />
-              ))}
-            </div>
+            <PagesTable pages={pagesResult.data.items} />
           </AdminCard>
         )}
       </div>
