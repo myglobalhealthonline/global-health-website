@@ -4597,6 +4597,11 @@ a.gh-appointment-card:hover {
   gap: var(--portal-section-gap);
   position: relative;
   border-radius: 0;
+  /* Page-header aura (::before, inset -20px) pokes past the viewport once
+   * --portal-pad-x drops below 20px — clip the decorative bleed so no page
+   * gains a 4-5px horizontal scroll. Tables scroll inside their own
+   * overflow-x-auto wrappers, so nothing legitimate is clipped. */
+  overflow-x: clip;
 }
 
 .gh-portal-main > .mx-auto[class*="max-w-"] {
@@ -5824,6 +5829,27 @@ a.gh-appointment-card:hover {
     display: none;
   }
   .gh-admin-order-mobile-list {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+  }
+}
+
+/* ColumnPriorityTable (Phase 4): its tables are already column-trimmed
+   (P3 cols hide < 1024px viewport), so they fit down to a ~760px container —
+   the generic 960px band above would flip 1280px laptops (content ≈ 957px)
+   into card mode. Cancel the generic card-switch in the 760–960px band, then
+   swap table → cards at the trimmed tables' own budget. */
+@container list (max-width: 960px) {
+  .gh-cpt-mobile-list {
+    display: none;
+  }
+}
+@container list (max-width: 760px) {
+  .gh-cpt-table-wrap {
+    display: none;
+  }
+  .gh-cpt-mobile-list {
     display: grid;
     gap: 10px;
     padding: 12px;

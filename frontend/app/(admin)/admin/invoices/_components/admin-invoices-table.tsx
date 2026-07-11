@@ -87,7 +87,7 @@ export function AdminInvoicesTable({ items }: { items: InvoiceRow[] }) {
   return (
     <>
       <div
-        className="gh-admin-ops-table-wrap gh-admin-deep-table-wrap overflow-x-auto"
+        className="gh-admin-ops-table-wrap gh-cpt-table-wrap overflow-x-auto"
         style={{ minWidth: 0 }}
       >
         <div style={{ minWidth: 600 }}>
@@ -145,7 +145,7 @@ export function AdminInvoicesTable({ items }: { items: InvoiceRow[] }) {
         </div>
       </div>
 
-      <div className="gh-admin-mobile-list">
+      <div className="gh-admin-mobile-list gh-cpt-mobile-list">
         {items.map((inv) => (
           <PortalMobileCard
             key={inv.id}
