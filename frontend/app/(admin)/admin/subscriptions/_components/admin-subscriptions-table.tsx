@@ -113,7 +113,7 @@ export function AdminSubscriptionsTable({
 
   return (
     <>
-      <div className="gh-admin-plan-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
+      <div className="gh-admin-plan-table-wrap gh-cpt-table-wrap overflow-x-auto">
         <AdminTable>
           <Thead>
             <Th>Subscriber</Th>
@@ -161,7 +161,7 @@ export function AdminSubscriptionsTable({
         </AdminTable>
       </div>
 
-      <div className="gh-admin-mobile-list">
+      <div className="gh-admin-mobile-list gh-cpt-mobile-list">
         {items.map((sub) => (
           <PortalMobileCard
             key={sub.id}
