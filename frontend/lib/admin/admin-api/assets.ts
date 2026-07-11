@@ -1,7 +1,8 @@
 import { cache } from "react";
 import { adminRequest } from "./core";
+import type { AdminAssetKind } from "../asset-preview";
 
-export type AdminAssetKind = "IMAGE" | "ICON" | "LOGO" | "BADGE" | "SOCIAL";
+export { adminAssetPreviewable, type AdminAssetKind } from "../asset-preview";
 
 export type AdminAssetDto = {
   id: string;
@@ -78,9 +79,4 @@ export async function purgeAdminAsset(id: string) {
   return adminRequest<Record<string, never>>(`/api/admin/assets/${id}/purge`, {
     method: "DELETE",
   });
-}
-
-export function adminAssetPreviewable(kind: AdminAssetKind, path: string): boolean {
-  if (kind !== "IMAGE" && kind !== "LOGO") return false;
-  return path.startsWith("/") || path.startsWith("https://");
 }

@@ -5,11 +5,8 @@ import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/Colu
 import { AdminEmptyState, Btn, IconBtn, Pill } from "../../_components/atoms";
 import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
 import { FlagBadge } from "../../_components/flag-badge";
-import {
-  adminAssetPreviewable,
-  type AdminAssetDto,
-  type AdminAssetKind,
-} from "@/lib/admin/admin-api";
+import type { AdminAssetDto } from "@/lib/admin/admin-api";
+import { adminAssetPreviewable, type AdminAssetKind } from "@/lib/admin/asset-preview";
 
 function PreviewCell({ item }: { item: AdminAssetDto }) {
   const ok = adminAssetPreviewable(item.kind as AdminAssetKind, item.path);
