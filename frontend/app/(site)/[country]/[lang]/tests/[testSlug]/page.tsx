@@ -126,7 +126,7 @@ export default async function HealthTestDetailPage({
       <section
         className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-visible lg:overflow-hidden"
       >
-        <div className="grid h-auto grid-rows-[240px_auto] lg:h-full lg:grid-cols-2 lg:grid-rows-1">
+        <div className="grid h-auto grid-rows-[clamp(180px,30svh,280px)_auto] lg:h-full lg:grid-cols-2 lg:grid-rows-1">
 
           {/* ── LEFT — full-bleed test image ──────────────────────────── */}
           <div className="relative h-full min-h-0 overflow-hidden">
