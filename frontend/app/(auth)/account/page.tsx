@@ -224,7 +224,7 @@ export default async function AccountOverviewPage() {
                   <p className="text-sm font-bold text-[var(--portal-text)]">
                     {a.dashboard.verifyEmail}
                   </p>
-                  <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
+                  <p className="mt-1 text-portal-compact text-[var(--portal-muted)]">
                     {a.dashboard.verifyEmailBody.replace("{email}", user.email)}
                   </p>
                 </div>
@@ -253,7 +253,7 @@ export default async function AccountOverviewPage() {
                   aria-hidden
                 />
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "var(--trustpilot-green)" }}>
+                  <p className="text-portal-thead font-bold uppercase tracking-[0.18em]" style={{ color: "var(--trustpilot-green)" }}>
                     Share your experience
                   </p>
                   <p className="mt-0.5 text-sm font-medium text-[var(--portal-text)]">
@@ -287,7 +287,7 @@ export default async function AccountOverviewPage() {
             right={
               <Link
                 href="/account/bookings"
-                className="text-[13px] font-semibold text-[var(--portal-primary)] hover:underline"
+                className="text-portal-compact font-semibold text-[var(--portal-primary)] hover:underline"
               >
                 {a.dashboard.seeAll}
               </Link>
@@ -439,7 +439,7 @@ function QuickLink({
           <span className="text-sm font-semibold text-[var(--portal-text)]">
             {label}
           </span>
-          <span className="text-[11px] text-[var(--portal-muted)]">{hint}</span>
+          <span className="text-portal-thead text-[var(--portal-muted)]">{hint}</span>
         </span>
       </span>
       <ChevronRight className="size-4 text-[var(--portal-muted)]" aria-hidden />

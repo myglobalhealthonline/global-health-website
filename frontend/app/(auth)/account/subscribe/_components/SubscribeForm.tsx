@@ -87,7 +87,7 @@ export function SubscribeForm(props: SubscribeFormProps) {
   return (
     <form onSubmit={onSubmit} className="gh-patient-subscribe-form grid gap-6">
       <div className="gh-patient-form-card gh-card p-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: "var(--portal-muted)" }}>
+        <p className="text-portal-thead font-bold uppercase tracking-[0.16em]" style={{ color: "var(--portal-muted)" }}>
           {props.planSummaryLabel}
         </p>
         <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
@@ -109,7 +109,7 @@ export function SubscribeForm(props: SubscribeFormProps) {
 
         <div className="my-5 h-px w-full" style={{ background: "var(--portal-line)" }} />
 
-        <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: "var(--portal-muted)" }}>
+        <p className="text-portal-thead font-bold uppercase tracking-[0.16em]" style={{ color: "var(--portal-muted)" }}>
           {props.whatYouGet}
         </p>
         <ul className="mt-3 flex flex-col gap-2.5">

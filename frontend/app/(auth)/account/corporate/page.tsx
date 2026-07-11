@@ -229,11 +229,11 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
                   style={{ background: "radial-gradient(circle, #b0f122 0%, transparent 70%)" }}
                 />
                 <div className="flex items-start justify-between gap-3">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-lime-200/80">
+                  <p className="text-portal-thead font-bold uppercase tracking-[0.18em] text-lime-200/80">
                     Global Health · {membership.planName}
                   </p>
                   <span
-                    className={`text-[11px] font-bold uppercase tracking-[0.12em] ${
+                    className={`text-portal-thead font-bold uppercase tracking-[0.12em] ${
                       CARD_STATUS_STYLE[card.status] ?? "text-white/70"
                     }`}
                   >
@@ -245,7 +245,7 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
                   {card.memberType === "EMPLOYEE" ? t.employeeMember : t.beneficiaryMember}
                 </p>
                 <p className="mt-5 font-mono text-xl tracking-[0.14em]">{card.cardNumber}</p>
-                <div className="mt-4 flex items-end justify-between gap-3 text-[11px] text-white/60">
+                <div className="mt-4 flex items-end justify-between gap-3 text-portal-thead text-white/60">
                   <span>
                     {t.valid} {card.validFrom} → {card.validUntil}
                   </span>

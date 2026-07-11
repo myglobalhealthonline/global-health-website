@@ -98,7 +98,7 @@ export async function SubscriptionDashboard({
   return (
     <section className="gh-patient-subscription-dashboard mt-6">
       {embedded ? null : (
-        <h2 className="mb-3 text-[13px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
+        <h2 className="mb-3 text-portal-compact font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
           {t.heading}
         </h2>
       )}
@@ -133,7 +133,7 @@ export async function SubscriptionDashboard({
             <Pill tone={statusTone} withDot>{statusLabel}</Pill>
           </div>
           <div className="p-5" style={{ background: "var(--portal-surface)" }}>
-            <p className="text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
+            <p className="text-portal-thead font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
               {t.planCardTitle}
             </p>
             <p className="mt-1 font-extrabold tracking-[-0.02em]" style={{ fontSize: "1.25rem", color: "var(--portal-text)" }}>
@@ -173,7 +173,7 @@ export async function SubscriptionDashboard({
               <Stethoscope className="size-5" aria-hidden />
             </span>
           </div>
-          <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
+          <p className="mt-4 text-portal-thead font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
             {t.creditsTitle}
           </p>
           {benefitsLocked ? (
@@ -227,7 +227,7 @@ export async function SubscriptionDashboard({
               <Sparkles className="size-5" aria-hidden />
             </span>
           </div>
-          <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
+          <p className="mt-4 text-portal-thead font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
             {t.wellnessTitle}
           </p>
           {hasWellness ? (
@@ -271,7 +271,7 @@ export async function SubscriptionDashboard({
         <AdminCard className="mt-4">
           <div className="flex items-center gap-2.5">
             <CreditCard className="size-4" style={{ color: "var(--portal-primary)" }} aria-hidden />
-            <p className="text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
+            <p className="text-portal-thead font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
               {t.perksTitle}
             </p>
           </div>
@@ -317,7 +317,7 @@ export async function SubscriptionDashboard({
         <AdminCard className="mt-4">
           <div className="flex items-center gap-2.5">
             <CreditCard className="size-4" style={{ color: "var(--portal-primary)" }} aria-hidden />
-            <p className="text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
+            <p className="text-portal-thead font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
               {t.activityTitle}
             </p>
           </div>

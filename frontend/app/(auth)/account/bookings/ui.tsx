@@ -377,7 +377,7 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
               setSearch("");
               setStatus("");
             }}
-            className="text-[13px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
+            className="text-portal-compact font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
           >
             {b.clearFilters}
           </button>

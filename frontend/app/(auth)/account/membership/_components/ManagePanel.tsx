@@ -262,7 +262,7 @@ export function ManagePanel(props: ManagePanelProps) {
       <AdminCard>
         <div className="gh-membership-manage-head grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: "var(--portal-member)" }}>
+            <p className="text-portal-thead font-bold uppercase tracking-[0.16em]" style={{ color: "var(--portal-member)" }}>
               {t.currentPlan}
             </p>
             <h2 className="mt-1 font-extrabold tracking-[-0.02em]" style={{ fontSize: "1.4rem", color: "var(--portal-chrome-text-active)" }}>

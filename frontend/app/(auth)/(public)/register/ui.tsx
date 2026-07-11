@@ -179,7 +179,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
       </div>
 
       <label
-        className="flex cursor-pointer items-start gap-2.5 rounded-xl px-4 py-3 text-[12px] leading-relaxed"
+        className="flex cursor-pointer items-start gap-2.5 rounded-xl px-4 py-3 text-portal-meta leading-relaxed"
         style={{ background: "var(--color-background-soft)", color: "var(--color-text-muted)" }}
       >
         <input

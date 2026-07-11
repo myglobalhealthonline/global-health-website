@@ -151,7 +151,7 @@ function FamilyMetric({
 }) {
   return (
     <div className="rounded-lg border border-[var(--portal-line)] bg-white/80 p-3">
-      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">{label}</p>
+      <p className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">{label}</p>
       <p className="mt-1 text-lg font-extrabold text-[var(--portal-text)]">{value}</p>
       <p className="mt-1 text-xs text-[var(--portal-muted)]">{hint}</p>
     </div>

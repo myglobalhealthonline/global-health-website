@@ -125,7 +125,7 @@ export default async function AccountPaymentsPage() {
             {statusLabel[payment.status]}
           </span>
           {payment.status === "REFUNDED" ? (
-            <p className="mt-1 text-[11px] text-[var(--portal-muted)]">
+            <p className="mt-1 text-portal-thead text-[var(--portal-muted)]">
               {a.payments.refundedNote}
             </p>
           ) : null}

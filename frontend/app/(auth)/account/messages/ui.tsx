@@ -79,7 +79,7 @@ function PatientConversation({
   );
 
   const tabBtn = (active: boolean) =>
-    `rounded-full px-3 py-1.5 text-[13px] font-semibold transition ${
+    `rounded-full px-3 py-1.5 text-portal-compact font-semibold transition ${
       active
         ? "bg-[var(--portal-signal)] text-white"
         : "text-[var(--portal-muted)] hover:bg-[var(--portal-well)]"

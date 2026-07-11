@@ -95,7 +95,7 @@ function DocCard({ doc }: { doc: MedicalDoc }) {
           <>
             {doc.title}
             {doc.description ? (
-              <span className="block truncate text-[12px] font-normal text-[var(--portal-muted)]">
+              <span className="block truncate text-portal-meta font-normal text-[var(--portal-muted)]">
                 {doc.description}
               </span>
             ) : null}

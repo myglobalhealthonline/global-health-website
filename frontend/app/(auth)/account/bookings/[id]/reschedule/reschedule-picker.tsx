@@ -144,7 +144,7 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
       ) : null}
 
       <div className="flex items-baseline justify-between gap-3">
-        <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+        <p className="text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
           {i18n.pickNewDate}
         </p>
         <p className="text-xs text-[var(--color-text-muted)]">
@@ -182,16 +182,16 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
               {isActive ? (
                 <Check className="absolute right-1.5 top-1.5 size-3.5 text-white" aria-hidden />
               ) : null}
-              <span className={isActive ? "text-[10px] font-bold uppercase tracking-[0.12em] text-white/80" : "text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]"}>
+              <span className={isActive ? "text-portal-micro font-bold uppercase tracking-[0.12em] text-white/80" : "text-portal-micro font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]"}>
                 {weekday}
               </span>
               <span className={isActive ? "text-2xl font-bold leading-none [font-variant-numeric:tabular-nums] text-white" : "text-2xl font-bold leading-none [font-variant-numeric:tabular-nums] text-[var(--color-text-primary)]"}>
                 {dayNum}
               </span>
-              <span className={isActive ? "text-[10px] font-semibold uppercase tracking-[0.1em] text-white/70" : "text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]"}>
+              <span className={isActive ? "text-portal-micro font-semibold uppercase tracking-[0.1em] text-white/70" : "text-portal-micro font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]"}>
                 {month}
               </span>
-              <span className={isActive ? "mt-1 text-[10px] font-semibold text-white/80" : "mt-1 text-[10px] font-semibold text-[var(--color-brand-primary)]"}>
+              <span className={isActive ? "mt-1 text-portal-micro font-semibold text-white/80" : "mt-1 text-portal-micro font-semibold text-[var(--color-brand-primary)]"}>
                 {(daySlots.length === 1 ? i18n.slotAvailable : i18n.slotsAvailable).replace("{count}", String(daySlots.length))}
               </span>
             </button>
@@ -201,7 +201,7 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
 
       {selectedDay ? (
         <div className="mt-6 w-full overflow-hidden">
-          <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+          <p className="text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
             {i18n.timesOn.replace("{day}", selectedDay)}
           </p>
           <div
@@ -224,7 +224,7 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
                     <span className="truncate">{formatAppTime(s.startAt, tz)}</span>
                   </span>
                   {isCurrent ? (
-                    <span className="rounded-full bg-[rgba(29,75,54,0.08)] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                    <span className="rounded-full bg-[rgba(29,75,54,0.08)] px-1.5 py-0.5 text-portal-micro font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                       {i18n.current}
                     </span>
                   ) : null}

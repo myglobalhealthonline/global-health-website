@@ -115,11 +115,11 @@ export default async function AccountPrescriptionsPage() {
                           .join(" · ") || "—"}
                       </p>
                       {p.instructions ? (
-                        <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--portal-text-2)]">
+                        <p className="mt-2 whitespace-pre-wrap text-portal-compact text-[var(--portal-text-2)]">
                           {p.instructions}
                         </p>
                       ) : null}
-                      <p className="mt-2 text-[11px] text-[var(--portal-muted)]">
+                      <p className="mt-2 text-portal-thead text-[var(--portal-muted)]">
                         {a.prescriptions.issuedBy
                           .replace("{doctor}", p.doctorName)
                           .replace("{date}", formatAppDate(p.consultationSignedAt ?? p.createdAt))}
