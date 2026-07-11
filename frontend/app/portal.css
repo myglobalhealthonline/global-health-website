@@ -26,7 +26,6 @@
 .gh-admin-service-tablist,
 .gh-admin-service-kind-tabs,
 .gh-admin-country-health .gh-admin-table-wrap,
-.gh-admin-blog-table-wrap,
 .gh-admin-health-tablist,
 .gh-admin-ops-table-wrap,
 .gh-admin-country-table-wrap,
@@ -1451,17 +1450,11 @@
 }
 
 /* Batch 3F: admin blog/content editor route family */
-.gh-admin-blog-filters,
 .gh-admin-blog-field-grid,
 .gh-admin-blog-country-grid {
   display: grid;
   min-width: 0;
   gap: 14px;
-}
-
-.gh-admin-blog-filters {
-  grid-template-columns: repeat(5, minmax(140px, 1fr)) auto;
-  align-items: end;
 }
 
 .gh-admin-blog-field-grid--two {
@@ -1497,14 +1490,6 @@
 
 .gh-admin-html-editor-preview-toggle {
   margin-left: auto;
-}
-
-.gh-admin-blog-table-wrap {
-  overflow-x: auto;
-}
-
-.gh-admin-blog-table-wrap table {
-  min-width: 920px;
 }
 
 .gh-admin-html-editor-textarea {
@@ -1641,10 +1626,6 @@
 
 .gh-admin-health-actions > span {
   margin-left: auto;
-}
-
-.gh-admin-health-table-wrap table {
-  min-width: 940px;
 }
 
 .gh-admin-health-translations,
