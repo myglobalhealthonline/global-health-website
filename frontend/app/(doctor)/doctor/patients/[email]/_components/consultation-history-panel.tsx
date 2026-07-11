@@ -1,9 +1,8 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useState } from "react";
-import { ChevronDown, ChevronRight, ClipboardList, Eye, FileSearch } from "lucide-react";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
-import { DocumentMobileCard } from "@/app/(doctor)/doctor/_components/doctor-document-tables";
+import { useCallback, useEffect, useState } from "react";
+import { ChevronDown, ChevronRight, Eye, FileSearch } from "lucide-react";
+import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 
 type MedicalNoteRow = {
   id: string;
@@ -177,143 +176,86 @@ function DocTypeGroup({
   );
 }
 
-const TABLE_HEAD =
-  "text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]";
-
-function DocumentTable({ rows, copy }: { rows: DocRow[]; copy: ConsultationHistoryCopy }) {
+function ViewLink({ href, label }: { href: string; label: string }) {
   return (
-    <>
-    <div className="grid gap-2 p-3 md:hidden">
-      {rows.map((r) => (
-        <DocumentMobileCard
-          key={r.id}
-          fileName={r.fileName}
-          fileTypeLabel={r.fileTypeLabel}
-          viewUrl={r.pdfUrl}
-          session={{
-            sessionDate: r.sessionDate,
-            sessionTime: r.sessionTime,
-            orderNumber: r.orderNumber,
-            consultationTypeLabel: r.consultationTypeLabel,
-            uploadedBy: r.uploadedBy,
-          }}
-        />
-      ))}
-    </div>
-    <div className="gh-doctor-table-wrap hidden overflow-x-auto md:block">
-      <table className="w-full min-w-[720px] text-[13px]">
-        <thead>
-          <tr className={TABLE_HEAD}>
-            <th className="px-3 py-2 text-left">{copy.colSessionDate}</th>
-            <th className="px-3 py-2 text-left">{copy.colTime}</th>
-            <th className="px-3 py-2 text-left">{copy.colOrderNumber}</th>
-            <th className="px-3 py-2 text-left">{copy.colSessionType}</th>
-            <th className="px-3 py-2 text-left">{copy.colFileName}</th>
-            <th className="px-3 py-2 text-left">{copy.colFileType}</th>
-            <th className="px-3 py-2 text-left">{copy.colUploadedBy}</th>
-            <th className="px-3 py-2 text-right">{copy.colView}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.id} className="border-t border-[var(--portal-line)]">
-              <td className="px-3 py-2.5 whitespace-nowrap">{r.sessionDate}</td>
-              <td className="px-3 py-2.5 whitespace-nowrap">{r.sessionTime}</td>
-              <td className="px-3 py-2.5">{r.orderNumber}</td>
-              <td className="px-3 py-2.5">
-                <SessionTypeBadge label={r.consultationTypeLabel} />
-              </td>
-              <td className="max-w-[200px] truncate px-3 py-2.5 font-medium">{r.fileName}</td>
-              <td className="px-3 py-2.5">
-                <FileTypeBadge label={r.fileTypeLabel} />
-              </td>
-              <td className="px-3 py-2.5">{r.uploadedBy}</td>
-              <td className="px-3 py-2.5 text-right">
-                <a
-                  href={r.pdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]"
-                >
-                  <Eye className="size-3.5" aria-hidden />
-                  {copy.colView}
-                </a>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-    </>
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]"
+    >
+      <Eye className="size-3.5" aria-hidden />
+      {label}
+    </a>
   );
 }
 
-function UploadsTable({ rows, copy }: { rows: UploadRow[]; copy: ConsultationHistoryCopy }) {
+type DocLikeRow = {
+  id: string;
+  sessionDate: string;
+  sessionTime: string;
+  orderNumber: string;
+  consultationTypeLabel: string;
+  fileName: string;
+  fileTypeLabel: string;
+  uploadedBy: string;
+};
+
+// Shared by DocumentTable (generated docs) and UploadsTable — identical
+// 8-column layout, only the view-link target differs (pdfUrl vs viewUrl).
+function DocumentsTable<T extends DocLikeRow>({
+  rows,
+  copy,
+  getViewUrl,
+}: {
+  rows: T[];
+  copy: ConsultationHistoryCopy;
+  getViewUrl: (row: T) => string;
+}) {
+  const fields: ColumnPriorityField<T>[] = [
+    { key: "sessionDate", label: copy.colSessionDate, priority: 1, render: (r) => <span className="whitespace-nowrap">{r.sessionDate}</span> },
+    { key: "time", label: copy.colTime, priority: 3, render: (r) => <span className="whitespace-nowrap">{r.sessionTime}</span> },
+    { key: "order", label: copy.colOrderNumber, priority: 3, render: (r) => r.orderNumber },
+    { key: "sessionType", label: copy.colSessionType, priority: 2, render: (r) => <SessionTypeBadge label={r.consultationTypeLabel} /> },
+    {
+      key: "fileName",
+      label: copy.colFileName,
+      priority: 1,
+      cardPrimary: true,
+      render: (r) => (
+        <span className="block max-w-[200px] truncate font-medium" title={r.fileName}>
+          {r.fileName}
+        </span>
+      ),
+    },
+    { key: "fileType", label: copy.colFileType, priority: 2, render: (r) => <FileTypeBadge label={r.fileTypeLabel} /> },
+    { key: "uploadedBy", label: copy.colUploadedBy, priority: 4, render: (r) => r.uploadedBy },
+    {
+      key: "view",
+      label: copy.colView,
+      priority: 2,
+      align: "right",
+      desktopOnly: true,
+      render: (r) => <ViewLink href={getViewUrl(r)} label={copy.colView} />,
+    },
+  ];
+
   return (
-    <>
-    <div className="grid gap-2 p-3 md:hidden">
-      {rows.map((u) => (
-        <DocumentMobileCard
-          key={u.id}
-          fileName={u.fileName}
-          fileTypeLabel={u.fileTypeLabel}
-          viewUrl={u.viewUrl}
-          session={{
-            sessionDate: u.sessionDate,
-            sessionTime: u.sessionTime,
-            orderNumber: u.orderNumber,
-            consultationTypeLabel: u.consultationTypeLabel,
-            uploadedBy: u.uploadedBy,
-          }}
-        />
-      ))}
-    </div>
-    <div className="gh-doctor-table-wrap hidden overflow-x-auto md:block">
-      <table className="w-full min-w-[720px] text-[13px]">
-        <thead>
-          <tr className={TABLE_HEAD}>
-            <th className="px-3 py-2 text-left">{copy.colSessionDate}</th>
-            <th className="px-3 py-2 text-left">{copy.colTime}</th>
-            <th className="px-3 py-2 text-left">{copy.colOrderNumber}</th>
-            <th className="px-3 py-2 text-left">{copy.colSessionType}</th>
-            <th className="px-3 py-2 text-left">{copy.colFileName}</th>
-            <th className="px-3 py-2 text-left">{copy.colFileType}</th>
-            <th className="px-3 py-2 text-left">{copy.colUploadedBy}</th>
-            <th className="px-3 py-2 text-right">{copy.colView}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((u) => (
-            <tr key={u.id} className="border-t border-[var(--portal-line)]">
-              <td className="px-3 py-2.5 whitespace-nowrap">{u.sessionDate}</td>
-              <td className="px-3 py-2.5 whitespace-nowrap">{u.sessionTime}</td>
-              <td className="px-3 py-2.5">{u.orderNumber}</td>
-              <td className="px-3 py-2.5">
-                <SessionTypeBadge label={u.consultationTypeLabel} />
-              </td>
-              <td className="max-w-[200px] truncate px-3 py-2.5 font-medium">{u.fileName}</td>
-              <td className="px-3 py-2.5">
-                <FileTypeBadge label={u.fileTypeLabel} />
-              </td>
-              <td className="px-3 py-2.5">{u.uploadedBy}</td>
-              <td className="px-3 py-2.5 text-right">
-                <a
-                  href={u.viewUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2.5 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)]"
-                >
-                  <Eye className="size-3.5" aria-hidden />
-                  {copy.colView}
-                </a>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-    </>
+    <ColumnPriorityTable
+      fields={fields}
+      rows={rows}
+      getRowKey={(r) => r.id}
+      cardActions={(r) => <ViewLink href={getViewUrl(r)} label={copy.colView} />}
+    />
   );
+}
+
+function DocumentTable({ rows, copy }: { rows: DocRow[]; copy: ConsultationHistoryCopy }) {
+  return <DocumentsTable rows={rows} copy={copy} getViewUrl={(r) => r.pdfUrl} />;
+}
+
+function UploadsTable({ rows, copy }: { rows: UploadRow[]; copy: ConsultationHistoryCopy }) {
+  return <DocumentsTable rows={rows} copy={copy} getViewUrl={(r) => r.viewUrl} />;
 }
 
 export function ConsultationHistoryPanel({
@@ -384,91 +326,62 @@ export function ConsultationHistoryPanel({
 
   const gen = data.generatedDocuments;
 
+  const medicalNoteFields: ColumnPriorityField<MedicalNoteRow>[] = [
+    { key: "sessionDate", label: copy.colSessionDate, priority: 1, render: (n) => <span className="whitespace-nowrap">{n.sessionDate}</span> },
+    { key: "time", label: copy.colTime, priority: 3, render: (n) => <span className="whitespace-nowrap">{n.sessionTime}</span> },
+    { key: "order", label: copy.colOrderNumber, priority: 3, render: (n) => n.orderNumber },
+    { key: "sessionType", label: copy.colSessionType, priority: 2, render: (n) => <SessionTypeBadge label={n.consultationTypeLabel} /> },
+    {
+      key: "symptoms",
+      label: copy.colSymptoms,
+      priority: 3,
+      render: (n) => (
+        <span className="block max-w-[120px] truncate text-[var(--portal-muted)]">
+          {n.symptoms?.trim() || copy.noSymptomsRecorded}
+        </span>
+      ),
+    },
+    { key: "doctor", label: copy.colDoctor, priority: 4, render: (n) => n.createdByName },
+    {
+      key: "note",
+      label: copy.medicalNotesTitle,
+      priority: 1,
+      cardPrimary: true,
+      render: (n) =>
+        expandedNote === n.id ? (
+          <span className="flex items-center gap-2 whitespace-pre-wrap text-[var(--portal-text)]">
+            <ChevronDown className="size-3.5 shrink-0 text-[var(--portal-muted)]" />
+            {n.content}
+          </span>
+        ) : (
+          <span className="flex max-w-[160px] items-center gap-2 truncate text-[var(--portal-muted)]">
+            <ChevronRight className="size-3.5 shrink-0" />
+            {n.content.slice(0, 80)}
+            {n.content.length > 80 ? "…" : ""}
+          </span>
+        ),
+    },
+  ];
+
   return (
     <div className="gh-doctor-consultation-history space-y-4">
       {data.medicalNotes.length > 0 ? (
         <HistorySection title={copy.medicalNotesTitle} count={data.medicalNotes.length}>
-          <div className="grid gap-2 p-3 md:hidden">
-            {data.medicalNotes.map((n) => (
-              <PortalMobileCard
-                key={n.id}
-                title={
-                  <span className="flex items-center gap-2">
-                    <ClipboardList className="size-4 shrink-0 text-[var(--portal-primary)]" aria-hidden />
-                    {n.sessionDate} at {n.sessionTime}
-                  </span>
-                }
-                meta={[
-                  { label: copy.colSessionType, value: <SessionTypeBadge label={n.consultationTypeLabel} /> },
-                  { label: copy.colDoctor, value: n.createdByName },
-                ]}
-              >
-                <p className="text-[12px] text-[var(--portal-muted)]">
-                  {n.symptoms?.trim() || copy.noSymptomsRecorded}
-                </p>
-                <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--portal-text)]">
-                  {n.content}
-                </p>
-              </PortalMobileCard>
-            ))}
-          </div>
-          <div className="gh-doctor-table-wrap hidden overflow-x-auto md:block">
-            <table className="w-full min-w-[640px] text-[13px]">
-              <thead>
-                <tr className={TABLE_HEAD}>
-                  <th className="px-3 py-2 text-left">{copy.colSessionDate}</th>
-                  <th className="px-3 py-2 text-left">{copy.colTime}</th>
-                  <th className="px-3 py-2 text-left">{copy.colOrderNumber}</th>
-                  <th className="px-3 py-2 text-left">{copy.colSessionType}</th>
-                  <th className="px-3 py-2 text-left">{copy.colSymptoms}</th>
-                  <th className="px-3 py-2 text-left">{copy.colDoctor}</th>
-                  <th className="px-3 py-2 text-left">{copy.medicalNotesTitle}</th>
-                  <th className="px-3 py-2 w-8" />
+          <ColumnPriorityTable
+            fields={medicalNoteFields}
+            rows={data.medicalNotes}
+            getRowKey={(n) => n.id}
+            onRowClick={(n) => setExpandedNote(expandedNote === n.id ? null : n.id)}
+            renderExpandedRow={(n, columnCount) =>
+              expandedNote === n.id ? (
+                <tr className="border-t border-[var(--portal-line)] bg-[var(--portal-well)]">
+                  <td colSpan={columnCount} className="px-4 py-3 whitespace-pre-wrap">
+                    {n.content}
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {data.medicalNotes.map((n) => (
-                  <Fragment key={n.id}>
-                    <tr
-                      className="cursor-pointer border-t border-[var(--portal-line)] hover:bg-[var(--portal-well)]"
-                      onClick={() =>
-                        setExpandedNote(expandedNote === n.id ? null : n.id)
-                      }
-                    >
-                      <td className="px-3 py-2.5 whitespace-nowrap">{n.sessionDate}</td>
-                      <td className="px-3 py-2.5 whitespace-nowrap">{n.sessionTime}</td>
-                      <td className="px-3 py-2.5">{n.orderNumber}</td>
-                      <td className="px-3 py-2.5">
-                        <SessionTypeBadge label={n.consultationTypeLabel} />
-                      </td>
-                      <td className="max-w-[120px] truncate px-3 py-2.5 text-[var(--portal-muted)]">
-                        {n.symptoms?.trim() || "—"}
-                      </td>
-                      <td className="px-3 py-2.5">{n.createdByName}</td>
-                      <td className="max-w-[160px] truncate px-3 py-2.5 text-[var(--portal-muted)]">
-                        {n.content.slice(0, 80)}
-                        {n.content.length > 80 ? "…" : ""}
-                      </td>
-                      <td className="px-3 py-2.5">
-                        {expandedNote === n.id ? (
-                          <ChevronDown className="size-4 text-[var(--portal-muted)]" />
-                        ) : (
-                          <ChevronRight className="size-4 text-[var(--portal-muted)]" />
-                        )}
-                      </td>
-                    </tr>
-                    {expandedNote === n.id ? (
-                      <tr className="border-t border-[var(--portal-line)] bg-[var(--portal-well)]">
-                        <td colSpan={8} className="px-4 py-3 whitespace-pre-wrap">
-                          {n.content}
-                        </td>
-                      </tr>
-                    ) : null}
-                  </Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ) : null
+            }
+          />
         </HistorySection>
       ) : null}
 
