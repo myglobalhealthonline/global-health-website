@@ -114,7 +114,7 @@ export function CountrySwitcher({
       {open ? (
         <div
           aria-label="Choose country"
-          className="absolute right-0 z-50 mt-2 min-w-[220px] max-h-[min(calc(100vh-120px),320px)] overflow-hidden overflow-y-auto rounded-xl border border-[var(--color-border)] bg-[var(--color-background-page)] shadow-[var(--shadow-elevated)]"
+          className="absolute right-0 z-[var(--z-dropdown)] mt-2 min-w-[220px] max-h-[min(calc(100svh-120px),320px)] overflow-hidden overflow-y-auto rounded-xl border border-[var(--color-border)] bg-[var(--color-background-page)] shadow-[var(--shadow-elevated)]"
         >
           <ul className="m-0 list-none p-1">
             {countries.map((c) => {

@@ -61,7 +61,7 @@ export function CountryPicker({
         <DropdownMenu.Content
           align="end"
           sideOffset={6}
-          className="gh-admin-country-picker-menu z-50 min-w-[240px] p-1.5"
+          className="gh-admin-country-picker-menu z-[var(--z-dropdown)] min-w-[240px] p-1.5"
           style={{
             borderRadius: "var(--portal-radius-xl)",
             border: "1px solid var(--portal-line)",

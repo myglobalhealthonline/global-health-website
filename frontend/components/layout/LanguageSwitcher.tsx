@@ -109,7 +109,7 @@ export function LanguageSwitcher({
       {open ? (
         <div
           aria-label="Choose language"
-          className="absolute right-0 z-50 mt-2 overflow-hidden"
+          className="absolute right-0 z-[var(--z-dropdown)] mt-2 overflow-hidden"
           style={{
             minWidth: 200,
             maxHeight: "min(calc(100vh - 120px), 320px)",

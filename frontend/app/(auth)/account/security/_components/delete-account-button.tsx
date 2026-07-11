@@ -112,7 +112,7 @@ function DeleteAccountModal({
       <button
         type="button"
         aria-label="Close dialog"
-        className="fixed inset-0 z-40 bg-black/40"
+        className="fixed inset-0 z-[var(--z-modal-overlay)] bg-black/40"
         onClick={onCancel}
       />
       <div
@@ -120,7 +120,7 @@ function DeleteAccountModal({
         aria-modal="true"
         aria-labelledby="delete-account-title"
         aria-describedby="delete-account-desc"
-          className="gh-patient-delete-modal fixed left-1/2 top-1/2 z-50 max-h-[calc(100vh-2rem)] w-[min(calc(100%-2rem),28rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-[var(--portal-line)] bg-white p-6 shadow-xl"
+          className="gh-patient-delete-modal fixed left-1/2 top-1/2 z-[var(--z-modal)] max-h-[calc(100svh-2rem)] w-[min(calc(100%-2rem),28rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-[var(--portal-line)] bg-white p-6 shadow-xl"
       >
         <h2 id="delete-account-title" className="text-base font-bold text-[var(--portal-text)]">
           {i18n.deleteAccountTitle}

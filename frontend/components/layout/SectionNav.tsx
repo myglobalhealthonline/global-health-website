@@ -110,8 +110,8 @@ export function SectionNav({
                   align="start"
                   className={
                     isDark
-                      ? "gh2-glass-forest gh2-filters-dark z-50 min-w-[280px] p-2 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
-                      : "z-50 min-w-[280px] rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-page)] p-2 shadow-[var(--shadow-elevated)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+                      ? "gh2-glass-forest gh2-filters-dark z-[var(--z-dropdown)] min-w-[280px] p-2 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+                      : "z-[var(--z-dropdown)] min-w-[280px] rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-page)] p-2 shadow-[var(--shadow-elevated)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
                   }
                 >
                   {item.children.map((c) => (
