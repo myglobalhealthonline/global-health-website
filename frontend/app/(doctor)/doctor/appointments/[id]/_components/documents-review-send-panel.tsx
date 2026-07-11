@@ -1,13 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
-import { Check, Eye, Pencil, QrCode, Send, Trash2 } from "lucide-react";
+import { Check, Eye, MoreVertical, Pencil, QrCode, Send, Trash2 } from "lucide-react";
 import {
   doctorApiErrorMessage,
   parseDoctorApiJson,
 } from "@/lib/doctor-api-client";
 import { HistorySection } from "@/app/(doctor)/doctor/_components/doctor-document-tables";
 import { GENERATED_DOCUMENT_TYPE_LABELS } from "@/lib/doctor-session-display";
+import { AppMenu, AppMenuItem } from "@/components/AppMenu";
 
 export type ReviewQueueDoc = {
   id: string;
@@ -354,7 +355,7 @@ export function DocumentsReviewSendPanel({
                         {docRowLabel(row)} · {row.fileName}
                       </span>
                     </label>
-                    <div className="gh-doctor-review-actions flex shrink-0 flex-wrap items-center gap-1">
+                    <div className="gh-doctor-review-actions hidden shrink-0 flex-wrap items-center gap-1 md:flex">
                       <a
                         href={`/api/doctor/documents/generated/${row.id}/pdf`}
                         target="_blank"
@@ -410,6 +411,31 @@ export function DocumentsReviewSendPanel({
                       >
                         <Trash2 className="size-4" />
                       </button>
+                    </div>
+                    <div className="md:hidden">
+                      <div className="flex items-center gap-1">
+                        <a
+                          href={`/api/doctor/documents/generated/${row.id}/pdf`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
+                        >
+                          <Eye className="size-3" aria-hidden /> {copy.review}
+                        </a>
+                        <button type="button" onClick={() => onEditDraft(row)} className="gh-btn gh-btn-soft px-2 py-1 text-[11px]">
+                          <Pencil className="size-3" aria-hidden /> {copy.edit}
+                        </button>
+                        {sendable ? (
+                          <button type="button" disabled={pending} onClick={() => sendDocuments([row.id])} className="gh-btn gh-btn-soft px-2 py-1 text-[11px]">
+                            <Send className="size-3" aria-hidden /> {copy.send}
+                          </button>
+                        ) : null}
+                        <AppMenu trigger={<button type="button" aria-label="More document actions" className="gh-btn gh-btn-soft px-2 py-1"><MoreVertical className="size-3.5" aria-hidden /></button>}>
+                          {canFinalize(row.documentType) ? <AppMenuItem asChild><button type="button" disabled={pending} className="gh-portal-menu-item" onClick={() => finalizeDocument(row.id)}>{copy.finalize}</button></AppMenuItem> : null}
+                          {hasUploadLink(row.documentType) ? <AppMenuItem asChild><button type="button" disabled={pending} className="gh-portal-menu-item" onClick={() => sendUploadLink(row.id)}>{copy.sendUploadLink}</button></AppMenuItem> : null}
+                          <AppMenuItem asChild><button type="button" className="gh-portal-menu-item text-red-700" onClick={() => remove(row.id)}>{copy.deleteAria}</button></AppMenuItem>
+                        </AppMenu>
+                      </div>
                     </div>
                   </li>
                 );
