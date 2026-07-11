@@ -1,16 +1,21 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { Video } from "lucide-react";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import type { CalendarItem } from "./calendar-types";
-import { PortalDialog } from "@/components/PortalDialog";
+import {
+  RecordDetailsDrawer,
+  RecordDetailsSection,
+  RecordDetailsField,
+} from "@/components/RecordDetailsDrawer";
 
 type Props = {
   item: CalendarItem | null;
   /** Timezone the times are rendered in (viewer's zone). */
   tz: string;
   onClose: () => void;
+  /** Optional URL binding — pass e.g. "event" to sync `?event=<id>` (admin calendar only). */
+  paramKey?: string;
 };
 
 function statusBadgeClass(status: string): string {
@@ -29,66 +34,88 @@ function humanize(status: string): string {
     .join(" ");
 }
 
-export function EventDetailDialog({ item, tz, onClose }: Props) {
+export function EventDetailDialog({ item, tz, onClose, paramKey }: Props) {
   const meetingUrl = item?.meta?.meetingUrl ?? null;
 
   return (
-    <PortalDialog open={item !== null} onClose={onClose} title={item?.title ?? ""} width="sm">
+    <RecordDetailsDrawer
+      open={item !== null}
+      onOpenChange={(next) => {
+        if (!next) onClose();
+      }}
+      paramKey={paramKey}
+      paramValue={item?.id}
+      size="sm"
+      title={item?.title ?? ""}
+      eyebrow={item?.meta?.consultationType ?? "Consultation"}
+      summary={
+        item ? (
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className={`gh-badge ${statusBadgeClass(item.status)}`}>
+              {humanize(item.status)}
+            </span>
+            <span style={{ color: "var(--portal-muted)" }}>
+              {formatAppDateTime(item.startAt, tz)}
+              {item.endAt ? ` – ${formatAppDateTime(item.endAt, tz)}` : ""}
+            </span>
+            {item.meta?.doctorName ? (
+              <span style={{ color: "var(--portal-muted)" }}>· {item.meta.doctorName}</span>
+            ) : null}
+          </div>
+        ) : null
+      }
+      footer={
+        <div className="flex w-full items-center justify-end gap-2">
+          <button type="button" className="gh-btn gh-btn-ghost" onClick={onClose}>
+            Close
+          </button>
+        </div>
+      }
+    >
       {item ? (
         <>
-          <p className="gh-eyebrow mb-3">{item.meta?.consultationType ?? "Consultation"}</p>
+          <RecordDetailsSection title="Appointment">
+            <RecordDetailsField
+              label="Type"
+              value={item.meta?.consultationType ?? undefined}
+            />
+            <RecordDetailsField label="Doctor" value={item.meta?.doctorName ?? undefined} />
+            <RecordDetailsField label="Patient" value={item.meta?.patientName ?? undefined} />
+            <RecordDetailsField
+              label="Country"
+              value={item.meta?.countryCode?.toUpperCase()}
+            />
+          </RecordDetailsSection>
 
-          <dl
-            className="grid gap-3 rounded-[var(--portal-radius)] p-3 text-sm"
-            style={{ border: "1px solid var(--portal-line)", background: "var(--portal-well)" }}
-          >
-            <Row label="When">{formatAppDateTime(item.startAt, tz)}</Row>
-            {item.meta?.doctorName ? <Row label="Doctor">{item.meta.doctorName}</Row> : null}
-            {item.meta?.patientName ? <Row label="Patient">{item.meta.patientName}</Row> : null}
-            {item.meta?.countryCode ? (
-              <Row label="Country">{item.meta.countryCode.toUpperCase()}</Row>
-            ) : null}
-            <Row label="Status">
-              <span className={`gh-badge ${statusBadgeClass(item.status)}`}>
-                {humanize(item.status)}
-              </span>
-            </Row>
-          </dl>
+          <RecordDetailsSection title="Timing">
+            <RecordDetailsField label="Start" value={formatAppDateTime(item.startAt, tz)} />
+            <RecordDetailsField
+              label="End"
+              value={item.endAt ? formatAppDateTime(item.endAt, tz) : undefined}
+            />
+            <RecordDetailsField label="Timezone" value={tz} />
+          </RecordDetailsSection>
 
-          {meetingUrl ? (
-            <a
-              href={meetingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="gh-btn gh-btn-primary mt-5 flex w-full items-center justify-center gap-2"
-              style={{ minHeight: 44 }}
-            >
-              <Video className="size-4" aria-hidden />
-              Join video call
-            </a>
-          ) : (
-            <p
-              className="mt-5 rounded-[var(--portal-radius-sm)] px-3 py-2.5 text-center text-xs"
-              style={{ background: "var(--portal-well)", color: "var(--portal-muted)" }}
-            >
-              Join link will appear here once the call is scheduled.
-            </p>
-          )}
+          <RecordDetailsSection title="Links">
+            {meetingUrl ? (
+              <a
+                href={meetingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="gh-btn gh-btn-primary flex w-full items-center justify-center gap-2"
+                style={{ minHeight: 44 }}
+              >
+                <Video className="size-4" aria-hidden />
+                Join video call
+              </a>
+            ) : (
+              <p className="text-xs" style={{ color: "var(--portal-muted)" }}>
+                Join link will appear here once the call is scheduled.
+              </p>
+            )}
+          </RecordDetailsSection>
         </>
       ) : null}
-    </PortalDialog>
-  );
-}
-
-function Row({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className="grid gap-1 sm:grid-cols-[110px_1fr] sm:items-center">
-      <dt className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--portal-muted)" }}>
-        {label}
-      </dt>
-      <dd className="font-medium sm:text-right" style={{ color: "var(--portal-text)" }}>
-        {children}
-      </dd>
-    </div>
+    </RecordDetailsDrawer>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { MonthCalendar } from "@/components/calendar/MonthCalendar";
 import { DayAgenda } from "@/components/calendar/DayAgenda";
@@ -44,9 +44,20 @@ export function AdminCalendarUI({
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [tz, setTz] = useState<string>(DEFAULT_TZ);
   const [selectedDay, setSelectedDay] = useState<string>(() => todayKey(DEFAULT_TZ));
-  const [activeItem, setActiveItem] = useState<CalendarItem | null>(null);
+  const [activeItem, setActiveItem] = useState<CalendarItem | null>(() => {
+    const eventId = searchParams.get("event");
+    return eventId ? items.find((i) => i.id === eventId) ?? null : null;
+  });
+
+  function openEvent(item: CalendarItem) {
+    setActiveItem(item);
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("event", item.id);
+    router.replace(`${pathname}?${next.toString()}`, { scroll: false });
+  }
   // Default to "all" so open (bookable) slots — and their Book action — are
   // visible as soon as a day is picked.
   const [slotFilter, setSlotFilter] = useState<SlotAgendaFilter>("all");
@@ -197,7 +208,7 @@ export function AdminCalendarUI({
               : "Nothing matching this filter on this day. Try “All (incl. available)” in the Agenda slots dropdown."
           }
           showDoctorName
-          onSelectConsultation={setActiveItem}
+          onSelectConsultation={openEvent}
           renderSlotAction={(item) => {
             // Only genuinely bookable inventory gets the deep link into the
             // manual-booking form, prefilled with doctor + slot.
@@ -221,7 +232,12 @@ export function AdminCalendarUI({
         />
       </div>
 
-      <EventDetailDialog item={activeItem} tz={tz} onClose={() => setActiveItem(null)} />
+      <EventDetailDialog
+        item={activeItem}
+        tz={tz}
+        paramKey="event"
+        onClose={() => setActiveItem(null)}
+      />
     </div>
   );
 }

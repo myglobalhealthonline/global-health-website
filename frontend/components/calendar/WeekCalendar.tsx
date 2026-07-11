@@ -1,6 +1,6 @@
 "use client";
 
-import { type CSSProperties, useMemo } from "react";
+import { type CSSProperties, useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, User } from "lucide-react";
 import { IconBtn } from "@/components/portal-atoms";
 import type { CalendarItem } from "./calendar-types";
@@ -85,6 +85,30 @@ function toneStyle(item: CalendarItem): CSSProperties {
     default: // HELD
       return solidTone("var(--portal-warning)");
   }
+}
+
+/** Minutes-since-midnight "now", ticking every 30s in the given tz — used for
+ *  the current-time indicator line. Null on the server (no flash of a wrong
+ *  line before hydration). */
+function useNowMinutes(tz: string): number | null {
+  const [minutes, setMinutes] = useState<number | null>(null);
+  useEffect(() => {
+    function tick() {
+      const parts = new Intl.DateTimeFormat("en-GB", {
+        timeZone: tz,
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
+      }).formatToParts(new Date());
+      const h = Number(parts.find((p) => p.type === "hour")?.value ?? 0);
+      const m = Number(parts.find((p) => p.type === "minute")?.value ?? 0);
+      setMinutes(h * 60 + m);
+    }
+    tick();
+    const id = setInterval(tick, 30_000);
+    return () => clearInterval(id);
+  }, [tz]);
+  return minutes;
 }
 
 // 24-hour gutter label, matching the 24-hour block times below.
@@ -194,6 +218,9 @@ export function WeekCalendar({
     (_, i) => startHour + i,
   );
   const bodyHeight = (endHour - startHour) * HOUR_PX;
+  const nowMinutes = useNowMinutes(tz);
+  const nowTop =
+    nowMinutes !== null ? (nowMinutes - startHour * 60) * PX_PER_MIN : null;
 
   return (
     <div className="gh-calendar-panel gh-card overflow-hidden p-0">
@@ -233,9 +260,9 @@ export function WeekCalendar({
 
       <div className="overflow-x-auto">
         <div className="gh-week-grid" style={{ minWidth: 720 }}>
-          {/* Day header row */}
+          {/* Day header row — sticky while the hour grid scrolls */}
           <div
-            className="grid"
+            className="gh-week-header-row grid"
             style={{
               gridTemplateColumns: "56px repeat(7, minmax(0, 1fr))",
               borderBottom: "1px solid var(--portal-line)",
@@ -297,15 +324,22 @@ export function WeekCalendar({
             {/* One positioned column per day */}
             {weekDays.map((d) => {
               const positioned = perDay.get(d.key) ?? [];
+              const isTodayCol = d.key === todayKey;
               return (
                 <div
                   key={d.key}
+                  className={isTodayCol ? "gh-week-day-col--today" : undefined}
                   style={{
                     position: "relative",
                     height: bodyHeight,
                     borderLeft: "1px solid var(--portal-line)",
                   }}
                 >
+                  {isTodayCol && nowTop !== null && nowTop >= 0 && nowTop <= bodyHeight ? (
+                    <div className="gh-week-now-line" style={{ top: nowTop }}>
+                      <span className="gh-week-now-dot" aria-hidden />
+                    </div>
+                  ) : null}
                   {/* Hour gridlines */}
                   {hours.map((h, i) => (
                     <div

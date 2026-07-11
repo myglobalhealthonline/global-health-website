@@ -5847,3 +5847,60 @@ a.gh-appointment-card:hover {
     padding: 12px;
   }
 }
+
+/* Calendar upgrade (admin/doctor/patient shared calendar components) —
+ * Google-ergonomics, Obsidian Ivory tone. Today = filled accent circle
+ * (was ring-only) so it reads at a glance next to the selected-day fill. */
+.gh-calendar-day-number--today {
+  background: var(--portal-accent) !important;
+  color: var(--portal-bg, #08110c) !important;
+  box-shadow: var(--lux-calendar-today-ring);
+}
+
+/* Coarse-pointer day cells: known 24-28px tap-target audit finding — pad the
+ * hit area up to the ≥44px minimum without changing the visual cell size. */
+@media (pointer: coarse) {
+  .gh-calendar-day--tappable {
+    min-height: 44px;
+    padding-block: 6px;
+  }
+}
+
+/* Week grid — sticky day-header row, current-time indicator, today column
+ * tint. Horizontal scroll below 720px is intentional (dense hour grid). */
+.gh-week-header-row {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--portal-surface);
+}
+
+.gh-week-day-col--today {
+  background: var(--portal-mint-soft);
+}
+
+.gh-week-now-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 2px solid var(--portal-accent);
+  z-index: 4;
+  pointer-events: none;
+}
+
+.gh-week-now-dot {
+  position: absolute;
+  left: -4px;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--portal-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-week-now-line {
+    transition: none;
+  }
+}

@@ -21,18 +21,43 @@ type Props = {
   onToday: () => void;
 };
 
-function summarize(items: CalendarItem[] | undefined) {
-  let consults = 0;
-  let open = 0;
-  let blocked = 0;
-  let booked = 0;
-  for (const it of items ?? []) {
-    if (it.kind === "consultation") consults += 1;
-    else if (it.status === "OPEN") open += 1;
-    else if (it.status === "BLOCKED") blocked += 1;
-    else if (it.status === "BOOKED" || it.status === "HELD") booked += 1;
+const MAX_CHIPS = 3;
+
+function chipTone(item: CalendarItem): { bg: string; text: string; dot: string } {
+  if (item.kind === "consultation") {
+    return {
+      bg: "var(--portal-info-soft, rgba(51, 80, 91, 0.14))",
+      text: "var(--portal-info-text)",
+      dot: "var(--portal-info)",
+    };
   }
-  return { consults, open, blocked, booked };
+  switch (item.status) {
+    case "OPEN":
+      return {
+        bg: "var(--portal-success-soft)",
+        text: "var(--portal-success-text)",
+        dot: "var(--portal-success)",
+      };
+    case "BLOCKED":
+      return {
+        bg: "var(--portal-danger-soft, rgba(190, 60, 60, 0.14))",
+        text: "var(--portal-danger-text)",
+        dot: "var(--portal-danger)",
+      };
+    default: // BOOKED / HELD
+      return {
+        bg: "var(--portal-info-soft, rgba(51, 80, 91, 0.14))",
+        text: "var(--portal-info-text)",
+        dot: "var(--portal-info)",
+      };
+  }
+}
+
+function chipLabel(item: CalendarItem): string {
+  if (item.kind === "consultation") return item.meta?.patientName || item.title;
+  if (item.status === "OPEN") return "Open";
+  if (item.status === "BLOCKED") return item.meta?.blockReason || "Blocked";
+  return item.meta?.doctorName || item.status;
 }
 
 export function MonthCalendar({
@@ -103,17 +128,18 @@ export function MonthCalendar({
       {/* Day grid */}
       <div className="gh-calendar-grid grid grid-cols-7 overflow-hidden">
         {cells.map((cell) => {
-          const items = itemsByDay.get(cell.key);
-          const { consults, open, blocked, booked } = summarize(items);
+          const items = itemsByDay.get(cell.key) ?? [];
           const isToday = cell.key === todayKey;
           const isSelected = cell.key === selectedDay;
-          const hasAny = (items?.length ?? 0) > 0;
+          const hasAny = items.length > 0;
+          const visible = items.slice(0, MAX_CHIPS);
+          const overflow = items.length - visible.length;
           return (
             <button
               key={cell.key}
               type="button"
               onClick={() => onSelectDay(cell.key)}
-              className={`gh-calendar-day relative flex min-h-[68px] flex-col items-start gap-1 p-1 text-left transition sm:min-h-[92px] sm:p-1.5 ${
+              className={`gh-calendar-day gh-calendar-day--tappable relative flex min-h-[68px] flex-col items-start gap-1 p-1 text-left transition sm:min-h-[92px] sm:p-1.5 ${
                 cell.inMonth ? "" : "gh-calendar-day-outside"
               } ${isSelected ? "gh-calendar-day-selected" : ""}`}
               style={{
@@ -136,40 +162,31 @@ export function MonthCalendar({
               </span>
 
               {hasAny ? (
-                <span className="mt-auto flex w-full flex-wrap gap-1">
-                  {consults > 0 ? (
+                <span className="mt-auto flex w-full flex-col gap-0.5">
+                  {visible.map((item) => {
+                    const tone = chipTone(item);
+                    return (
+                      <span
+                        key={item.id}
+                        title={`${chipLabel(item)} · ${item.title}`}
+                        className="flex max-w-full items-center gap-1 truncate rounded-[4px] px-1 py-[1px] text-[10px] font-semibold leading-tight"
+                        style={{ background: tone.bg, color: tone.text }}
+                      >
+                        <span
+                          aria-hidden
+                          className="size-1.5 shrink-0 rounded-full"
+                          style={{ background: tone.dot }}
+                        />
+                        <span className="truncate">{chipLabel(item)}</span>
+                      </span>
+                    );
+                  })}
+                  {overflow > 0 ? (
                     <span
-                      className="inline-flex max-w-full items-center truncate rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none"
-                      style={{ background: "var(--portal-success-soft)", color: "var(--portal-success-text)" }}
+                      className="px-1 text-[10px] font-bold"
+                      style={{ color: "var(--portal-muted)" }}
                     >
-                      {consults} consult{consults > 1 ? "s" : ""}
-                    </span>
-                  ) : null}
-                  {booked > 0 ? (
-                    <span
-                      className="inline-flex items-center gap-0.5 text-[10px] font-semibold"
-                      style={{ color: "var(--portal-info-text)" }}
-                    >
-                      <span className="size-1.5 rounded-full" style={{ background: "var(--portal-info)" }} />
-                      {booked}
-                    </span>
-                  ) : null}
-                  {open > 0 ? (
-                    <span
-                      className="inline-flex items-center gap-0.5 text-[10px] font-semibold"
-                      style={{ color: "var(--portal-success-text)" }}
-                    >
-                      <span className="size-1.5 rounded-full" style={{ background: "var(--portal-success)" }} />
-                      {open}
-                    </span>
-                  ) : null}
-                  {blocked > 0 ? (
-                    <span
-                      className="inline-flex items-center gap-0.5 text-[10px] font-semibold"
-                      style={{ color: "var(--portal-danger-text)" }}
-                    >
-                      <span className="size-1.5 rounded-full" style={{ background: "var(--portal-danger)" }} />
-                      {blocked}
+                      +{overflow} more
                     </span>
                   ) : null}
                 </span>
