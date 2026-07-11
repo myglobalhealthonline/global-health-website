@@ -35,10 +35,14 @@ const DoctifyWidgetImpl = dynamic(
  */
 function useNearViewport(rootMargin = "300px") {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [near, setNear] = useState(() => typeof IntersectionObserver === "undefined");
+  const [near, setNear] = useState(false);
 
   useEffect(() => {
     if (near) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setNear(true);
+      return;
+    }
     const el = ref.current;
     if (!el) return;
     const observer = new IntersectionObserver(

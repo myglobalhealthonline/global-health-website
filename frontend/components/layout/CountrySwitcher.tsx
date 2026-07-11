@@ -100,7 +100,7 @@ export function CountrySwitcher({
         aria-haspopup="true"
         aria-expanded={open ? "true" : "false"}
         data-open={open}
-        className="gh-focus-on-dark inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white data-[open=true]:border-white/30 data-[open=true]:bg-white/10"
+        className="gh-focus-on-dark inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-full border-none bg-transparent px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:text-white data-[open=true]:text-white"
       >
         {active ? <Flag code={active.code} size="sm" /> : null}
         <span>{active ? active.name : "Choose country"}</span>

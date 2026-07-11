@@ -864,6 +864,12 @@ img {
 .gh-footer-contactLink {
   color: inherit;
   text-decoration: none;
+  transition: color 200ms ease-out;
+}
+
+.gh-footer-contactLink:hover,
+.gh-footer-contactLink:focus-visible {
+  color: var(--color-brand-accent);
 }
 
 .gh-footer-groupHeading {
@@ -887,7 +893,7 @@ img {
 
 .gh-footer-navLink:hover,
 .gh-footer-navLink:focus-visible {
-  color: #fff;
+  color: var(--color-brand-accent);
   transform: translateX(2px);
 }
 
@@ -958,7 +964,7 @@ img {
 
 .gh-footer-legalLink:hover,
 .gh-footer-legalLink:focus-visible {
-  color: #fff;
+  color: var(--color-brand-accent);
 }
 
 .gh-footer-watermark {
@@ -3052,6 +3058,85 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   background: var(--color-brand-accent);
   border-color: var(--color-brand-accent);
   color: #0a1f14;
+}
+/* Compact dropdown filter trigger (DoctorFilters) — native <details>/
+ * <summary>, no JS required to open/close. Replaces the old
+ * always-expanded chip panel with a slim row of pill dropdowns. */
+.gh2-filter-trigger {
+  display: inline-flex;
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: none;
+  background: var(--color-background-soft);
+  color: var(--color-text-primary);
+  font-size: 12.5px;
+  font-weight: 700;
+  outline: none;
+  transition: background-color 150ms ease-out, color 150ms ease-out;
+}
+.gh2-filter-trigger:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+.gh2-filters-dark .gh2-filter-trigger:focus-visible {
+  outline: 2px solid var(--color-brand-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(3, 31, 24, 0.85);
+}
+.gh2-filter-trigger::-webkit-details-marker {
+  display: none;
+}
+.gh2-filter-trigger:hover {
+  background: var(--color-background-panel);
+}
+.gh2-filter-chevron {
+  transition: transform 200ms ease-out;
+}
+details[open] > .gh2-filter-trigger .gh2-filter-chevron {
+  transform: rotate(180deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .gh2-filter-chevron {
+    transition: none;
+  }
+}
+.gh2-filter-count {
+  color: var(--color-brand-primary);
+}
+.gh2-filter-panel {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  z-index: 20;
+  display: flex;
+  min-width: 240px;
+  max-width: min(360px, 90vw);
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  border-radius: var(--radius-card-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-background-page);
+  box-shadow: var(--shadow-elevated);
+}
+.gh2-filters-dark .gh2-filter-trigger {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.92);
+}
+.gh2-filters-dark .gh2-filter-trigger:hover {
+  background: rgba(176, 241, 34, 0.14);
+}
+.gh2-filters-dark .gh2-filter-count {
+  color: var(--color-brand-accent);
+}
+.gh2-filters-dark .gh2-filter-panel {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: #0f2e25;
 }
 /* Focus ring variant for controls sitting on dark glass chrome, where
  * the default forest outline is invisible. Use INSTEAD of removing the
