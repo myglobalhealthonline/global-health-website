@@ -373,7 +373,6 @@ img {
 
 /* Typography */
 /* Eyebrow — the brand's signature label. ALL-CAPS, wide tracking, bold, always brand-colored. */
-.gh-heading-eyebrow,
 .gh-eyebrow {
   font-size: 11px;
   font-weight: 700;
@@ -401,28 +400,6 @@ img {
   color: var(--color-text-primary);
 }
 
-.gh-display-em {
-  font-style: italic;
-  font-weight: 500;
-  color: var(--color-brand-primary);
-}
-
-/* Big sans display alternative — for bolder, more modern sections. */
-.gh-display-sans {
-  font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 1.02;
-  color: var(--color-text-primary);
-}
-
-.gh-h1 {
-  font-size: var(--text-h1);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: var(--color-text-primary);
-}
-
 .gh-h2 {
   font-size: var(--text-h2);
   font-weight: 800;
@@ -436,12 +413,6 @@ img {
   font-weight: 700;
   line-height: 1.25;
   color: var(--color-text-primary);
-}
-
-.gh-body-lg {
-  font-size: var(--text-body-lg);
-  line-height: 1.6;
-  color: var(--color-text-body);
 }
 
 .gh-body {
@@ -468,17 +439,12 @@ img {
 }
 
 /* Section block-padding driven by --space-section (fluid 64→112px).
- * Replaces inline `padding: 112px 0` + ad-hoc Tailwind `py-12`. Use
- * .gh-section-tight (fluid 40→64px) between sub-sections of one
- * topic that should breathe together. */
+ * Replaces inline `padding: 112px 0` + ad-hoc Tailwind `py-12`. */
 .gh-section {
   padding-block: var(--space-section);
 }
 .gh-section-sm {
   padding-block: var(--space-section-sm);
-}
-.gh-section-tight {
-  padding-block: var(--space-section-tight);
 }
 
 /* Canonical card grid. One source of truth for the mobile→tablet→
@@ -620,59 +586,6 @@ img {
   background: linear-gradient(270deg, #0F2E25 0%, transparent 100%);
 }
 
-/* Hero composition — type column on the left, live-availability
- * panel on the right at lg+. Stacks below 1024px so the panel
- * doesn't squeeze the headline on tablets. Asymmetric ratio (1.15fr
- * to 1fr) gives the type more breathing room than a 50/50 split. */
-.gh-hero-split {
-  grid-template-columns: 1fr;
-}
-@media (min-width: 1024px) {
-  .gh-hero-split { grid-template-columns: 1.15fr 1fr; }
-}
-
-/* Hero headline — fluid scale up to a confident desktop size. */
-.gh-hero-title {
-  font-size: clamp(2.5rem, 5.5vw + 0.5rem, 5.5rem);
-  line-height: 0.98;
-}
-
-/* Hero accent — highlighter band underneath a single phrase. Single
- * solid lime block; no gradient. Sits behind the text via box-shadow
- * inset so it tracks the type baseline at every viewport. */
-.gh-hero-accent {
-  background-image: linear-gradient(
-    180deg,
-    transparent 0,
-    transparent 62%,
-    var(--color-accent) 62%,
-    var(--color-accent) 92%,
-    transparent 92%
-  );
-  padding-inline: 0.08em;
-}
-
-/* Paper-texture grain that warms the otherwise sterile white canvas.
- * Tuned so it's invisible at a glance but visible enough to feel
- * tactile when the eye rests on a large empty zone. */
-.gh-hero-grain {
-  opacity: 0.06;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.06  0 0 0 0 0.18  0 0 0 0 0.14  0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 280px 280px;
-  mix-blend-mode: multiply;
-}
-
-/* Hero bottom grid — kept as alias for any consumer that still
- * references it. (HomeHero no longer needs it after the rewrite.) */
-.gh-hero-bottom {
-  display: grid;
-  gap: var(--space-stack);
-  grid-template-columns: 1fr;
-}
-@media (min-width: 900px) {
-  .gh-hero-bottom { grid-template-columns: 1.1fr 1fr; }
-}
-
 /* Pulse dot — used by the live-doctor live indicator. Honours
  * prefers-reduced-motion via @keyframes gh-pulse fallback below. */
 @keyframes gh-pulse {
@@ -741,11 +654,6 @@ img {
 }
 
 .gh-header-bookCta {
-  min-height: 44px;
-  text-decoration: none;
-}
-
-.gh-header-bookCtaMobile {
   min-height: 44px;
   text-decoration: none;
 }
@@ -972,10 +880,6 @@ img {
   .gh-footer-socialLink:hover {
     transform: none;
   }
-}
-
-.gh-footer-disclaimer {
-  color: rgba(255, 255, 255, 0.58);
 }
 
 .gh-footer-copyrightBar {
@@ -1221,18 +1125,6 @@ img {
   color: var(--color-brand-secondary);
 }
 
-/* Lime accent — for rare moments where Forest would feel heavy. */
-.gh-btn-accent {
-  background: var(--color-brand-accent);
-  color: var(--color-text-primary);
-  border-color: var(--color-brand-accent);
-}
-
-.gh-btn-accent:hover {
-  background: var(--color-brand-accent-soft);
-  border-color: var(--color-brand-accent-soft);
-}
-
 .gh-btn-soft {
   background: var(--color-background-soft);
   color: var(--color-brand-primary);
@@ -1252,29 +1144,6 @@ img {
 
 .gh-btn-danger:hover {
   background: var(--color-status-error-border);
-}
-
-.gh-btn-ghost-dark {
-  background: var(--color-brand-secondary);
-  color: var(--color-brand-primary);
-  border: none;
-}
-
-.gh-btn-ghost-dark:hover {
-  background: var(--color-background-soft);
-}
-
-.gh-link-arrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--color-brand-primary);
-}
-
-.gh-link-arrow:hover {
-  color: var(--color-brand-primary-hover);
 }
 
 /* Forms */
@@ -1386,22 +1255,6 @@ img {
   border-top: 1px solid var(--color-border);
 }
 
-/* Kicker */
-.gh-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border-radius: 999px;
-  background: var(--color-brand-secondary);
-  padding: 6px 14px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--color-brand-primary);
-  box-shadow: var(--shadow-soft);
-}
-
 /* Status utilities */
 .gh-status-error {
   border: 1px solid var(--color-status-error-border);
@@ -1423,51 +1276,6 @@ img {
   background: var(--color-status-info-bg);
   color: var(--color-status-info-text);
 }
-
-/* ── Admin page header pattern ──────────────────────────────── */
-/* Eyebrow → H1 (28–32px) → description → right-aligned actions */
-.gh-page-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-.gh-page-header-content { min-width: 0; }
-.gh-page-header-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-.gh-page-title {
-  font-size: clamp(1.5rem, 2vw + 0.5rem, 2rem);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: var(--color-text-primary);
-  margin-top: 4px;
-}
-.gh-page-description {
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--color-text-muted);
-  margin-top: 4px;
-  max-width: 52ch;
-}
-
-/* Booking / marketing hero radial blooms */
-.gh-booking-hero-bloom {
-  background:
-    radial-gradient(900px 480px at 90% -10%, rgba(176, 241, 34, 0.18), transparent 60%),
-    radial-gradient(800px 460px at -10% 110%, rgba(29, 75, 54, 0.08), transparent 60%);
-}
-
-/* Admin appointment detail */
-
-/* ── Admin card section wrapper ─────────────────────────────── */
 
 /* Badges */
 .gh-badge {
@@ -1519,11 +1327,6 @@ img {
   background: var(--color-accent-soft);
   color: var(--color-brand-primary);
   flex-shrink: 0;
-}
-.gh-icon-tile-sm {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
 }
 .gh-icon-tile-lg {
   width: 48px;
