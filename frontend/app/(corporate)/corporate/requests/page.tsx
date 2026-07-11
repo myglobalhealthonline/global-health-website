@@ -146,7 +146,7 @@ export default async function CorporateRequestsPage({ searchParams }: PageProps)
       {/* List */}
       <AdminCard padding={0} className="overflow-hidden">
         <div className="flex flex-wrap items-center gap-3 border-b border-[var(--color-border)] px-5 py-3.5">
-          <form method="get" className="flex items-center gap-2">
+          <form method="get" className="flex flex-wrap items-center gap-2">
             <select name="status" defaultValue={sp.status ?? ""} className="gh-select">
               <option value="">All statuses</option>
               <option value="REQUESTED">Requested</option>

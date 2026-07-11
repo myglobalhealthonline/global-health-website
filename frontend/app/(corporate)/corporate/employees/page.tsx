@@ -235,8 +235,7 @@ export default async function CorporateEmployeesPage({ searchParams }: PageProps
             description="Add employees one by one or paste a list — each gets an invite to join your corporate plan."
           />
         ) : (
-          <div className="overflow-x-auto">
-            <AdminTable>
+          <AdminTable>
               <Thead>
                 <Th>Name</Th>
                 <Th>Email</Th>
@@ -307,8 +306,7 @@ export default async function CorporateEmployeesPage({ searchParams }: PageProps
                   </Tr>
                 ))}
               </tbody>
-            </AdminTable>
-          </div>
+          </AdminTable>
         )}
       </AdminCard>
     </>

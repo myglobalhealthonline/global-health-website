@@ -202,7 +202,7 @@ export function DoctorAvailabilityUI({
         ]}
       />
 
-      <div className="gh-doctor-detail-grid gh-doctor-availability-grid grid gap-4 lg:grid-cols-[1fr_360px]">
+      <div className="gh-doctor-detail-grid gh-doctor-availability-grid grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
         {/* ── Week calendar (same grid as the admin availability page) ─── */}
         <AdminCard padding={0} className="gh-doctor-panel">
           <SectionHeader
