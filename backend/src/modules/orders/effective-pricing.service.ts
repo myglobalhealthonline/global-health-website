@@ -4,6 +4,7 @@ import {
   computeSlotPrice,
   getServicePeakConfig,
 } from "../pricing/peak-pricing.service.js";
+import { loadValidatedInsurancePrice } from "../pricing/insurance-pricing.service.js";
 
 export interface EffectivePriceItem {
   id: string;
@@ -11,6 +12,9 @@ export interface EffectivePriceItem {
   serviceId: string | null;
   doctorId: string | null;
   timeSlotId: string | null;
+  /** Selected insurance company id (consultation lines). When set + valid for
+   * the service, the negotiated insurance price replaces the peak/base price. */
+  insuranceCompanyId?: string | null;
 }
 
 const CONSULTATION_KINDS = new Set(["GENERAL_CONSULTATION", "SPECIALIST_CONSULTATION"]);
@@ -58,6 +62,20 @@ export async function computeEffectivePrices(
         slotStartUtc: slot.startAt,
         clinicTimezone: tz,
       });
+      // Insurance wins over peak: a negotiated insurance price is a flat
+      // per-service rate independent of time-of-day. Validated server-side
+      // (coverage row must exist, company active + same country) so a forged
+      // company id falls through to the peak/base price, never cheaper.
+      if (i.insuranceCompanyId) {
+        const insurancePrice = await loadValidatedInsurancePrice(
+          i.serviceId,
+          i.insuranceCompanyId,
+        );
+        if (insurancePrice != null) {
+          out.set(i.id, insurancePrice);
+          return;
+        }
+      }
       out.set(i.id, priced.unitPriceCents);
     }),
   );

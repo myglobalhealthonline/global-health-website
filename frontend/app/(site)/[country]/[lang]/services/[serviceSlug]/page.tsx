@@ -83,8 +83,13 @@ export async function generateMetadata({
   // absolute to bypass the layout's "%s · Global Health" template. Otherwise
   // fall back to the bare service name and let the template add the brand.
   const title = detail.seoTitle ?? detail.name;
-  const description =
+  const baseDescription =
     detail.seoDescription ?? detail.summary ?? `Learn about ${detail.name} and book a consultation.`;
+  // Append the auto insurance line to the meta description when companies cover
+  // this service, capped so the description stays a sensible length for SERPs.
+  const description = detail.insuranceSeoLine
+    ? `${baseDescription} ${detail.insuranceSeoLine}`.slice(0, 320)
+    : baseDescription;
   const url = `${getSiteUrl()}/${country}/${lang}/services/${serviceSlug}`;
   return {
     title: detail.seoTitle ? { absolute: title } : title,
@@ -285,6 +290,15 @@ export default async function ServiceDetailPage({
                   className="mt-3 line-clamp-3 max-w-[46ch] text-[clamp(0.9rem,0.6vw+0.65rem,1.05rem)] leading-relaxed text-[#B8C9C2]"
                 >
                   {lede}
+                </p>
+              ) : null}
+
+              {/* Insurance availability — auto-generated when companies cover
+                * this service ("We also have … for this service."). SEO-friendly
+                * and updates automatically as coverage changes in admin. */}
+              {detail.insuranceSeoLine ? (
+                <p className="mt-3 max-w-[46ch] text-[clamp(0.85rem,0.5vw+0.65rem,1rem)] font-semibold leading-relaxed text-[#8FE3B0]">
+                  {detail.insuranceSeoLine}
                 </p>
               ) : null}
 

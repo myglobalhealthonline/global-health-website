@@ -18,6 +18,8 @@ import {
   computeSlotPrice,
   getServicePeakConfig,
 } from "../modules/pricing/peak-pricing.service.js";
+import { loadValidatedInsurancePrice } from "../modules/pricing/insurance-pricing.service.js";
+import { encryptPhi } from "../lib/crypto/phi-crypto.js";
 
 /**
  * Shopping cart for orderable items.
@@ -86,6 +88,14 @@ const addItemBodySchema = z.object({
    * set this.
    */
   familyMemberId: z.string().min(1).max(120).optional(),
+  /**
+   * Insurance-company selection (consultation lines). When set, the server
+   * validates the company covers this service and snapshots the negotiated
+   * insurance price onto the cart line. `insurancePolicyNumber` is the
+   * patient's card/policy number, stored encrypted (phi:v1: envelope).
+   */
+  insuranceCompanyId: z.string().min(1).max(120).optional(),
+  insurancePolicyNumber: z.string().trim().max(120).optional().or(z.literal("")),
   /**
    * Patient intake snapshot. REQUIRED for consultation kinds (the cart
    * route below enforces presence + consent). Ignored for product
@@ -546,6 +556,15 @@ async function mergeCarts(sourceId: string, targetId: string) {
           // authenticated ownership check, so a crafted/foreign id could ride
           // in. The owner can re-select an approved dependent on the cart page.
           familyMemberId: null,
+          // Insurance snapshot — carry it so the merged line keeps its
+          // negotiated price at checkout. Without insuranceCompanyId the
+          // checkout recompute would fall back to peak/base and charge a
+          // different amount than the patient was shown. Re-validated
+          // server-side at checkout, so a stale/forged company just reverts to
+          // the base price (never cheaper).
+          insuranceCompanyId: item.insuranceCompanyId,
+          insurancePolicyNumber: item.insurancePolicyNumber,
+          insurancePriceCents: item.insurancePriceCents,
         },
       });
     }
@@ -657,9 +676,11 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       if (!body.success) {
         return reply.status(400).send(errorResponse("Invalid item", body.error.flatten()));
       }
-      const { kind, healthTestId, serviceId, quantity, timeSlotId, doctorId, patient, benefitSelection, familyMemberId } =
+      const { kind, healthTestId, serviceId, quantity, timeSlotId, doctorId, patient, benefitSelection, familyMemberId, insuranceCompanyId, insurancePolicyNumber } =
         body.data;
       const qty = quantity ?? 1;
+      const insuranceCompanyIdValue = insuranceCompanyId?.trim() || null;
+      const insurancePolicyValue = insurancePolicyNumber?.trim() || null;
 
       // Consultation kinds require the patient intake snapshot up
       // front — the consult page collects it before add-to-cart so
@@ -840,6 +861,24 @@ const cartRoute: FastifyPluginAsync = async (app) => {
                 clinicTimezone: tz,
               });
               unitPriceCents = priced.unitPriceCents;
+            }
+
+            // Insurance-company selection: validate the company covers this
+            // service (active + same country) and snapshot the negotiated
+            // price. Insurance wins over peak. A company that doesn't cover the
+            // service is a hard 400 — never silently fall back to a price the
+            // patient wasn't shown.
+            if (insuranceCompanyIdValue) {
+              const insurancePrice = await loadValidatedInsurancePrice(
+                svc.id,
+                insuranceCompanyIdValue,
+              );
+              if (insurancePrice == null) {
+                return reply
+                  .status(400)
+                  .send(errorResponse("Selected insurance company does not cover this service."));
+              }
+              unitPriceCents = insurancePrice;
             }
 
             if (settings) {
@@ -1118,6 +1157,16 @@ const cartRoute: FastifyPluginAsync = async (app) => {
                 : null,
             // Default-ON / opt-OUT: absence of the field = consent true.
             patientWhatsappConsent: patient?.whatsappConsent !== false,
+            // Insurance snapshot (consultation-only). unitPriceCents above is
+            // already the validated insurance price when a company is selected.
+            // The policy/card number is stored encrypted (phi:v1: envelope),
+            // same as PatientProfile.insurancePolicyNumber.
+            insuranceCompanyId: isConsultation ? insuranceCompanyIdValue : null,
+            insurancePolicyNumber:
+              isConsultation && insuranceCompanyIdValue && insurancePolicyValue
+                ? encryptPhi(insurancePolicyValue)
+                : null,
+            insurancePriceCents: isConsultation && insuranceCompanyIdValue ? unitPriceCents : null,
           },
         });
       } catch (err) {

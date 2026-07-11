@@ -38,10 +38,14 @@ const meCartPreviewRoute: FastifyPluginAsync = async (app) => {
       if (!cart || cart.items.length === 0) return okResponse(empty);
 
       const peakPriceByItemId = await computeEffectivePrices(cart.items);
+      // Insurance-priced lines are excluded from the plan + corporate engines
+      // here exactly as they are at checkout (orders.route) — the negotiated
+      // insurance price is final. They're folded back into the totals below.
+      const benefitItems = cart.items.filter((i) => !i.insuranceCompanyId);
       const coverage = await previewConsultationPricing({
         userId: user.id,
         countryCode: cart.countryCode,
-        items: cart.items.map((i) => ({
+        items: benefitItems.map((i) => ({
           id: i.id,
           kind: i.kind,
           serviceId: i.serviceId,
@@ -56,7 +60,7 @@ const meCartPreviewRoute: FastifyPluginAsync = async (app) => {
       // NOT benefit-price. Display-only; checkout recomputes.
       const corporateDiscounts = await resolveCorporateDiscountsForItems(prisma, {
         userId: user.id,
-        items: cart.items.map((i) => ({
+        items: benefitItems.map((i) => ({
           id: i.id,
           kind: i.kind,
           serviceId: i.serviceId,
@@ -119,11 +123,35 @@ const meCartPreviewRoute: FastifyPluginAsync = async (app) => {
           },
         });
       }
+      // Fold insurance-priced lines back in at their negotiated price with no
+      // plan/corporate saving, so the preview total matches what checkout charges.
+      let insuranceBaseCents = 0;
+      for (const item of cart.items) {
+        if (!item.insuranceCompanyId) continue;
+        const priceCents = peakPriceByItemId.get(item.id) ?? item.unitPriceCents;
+        insuranceBaseCents += priceCents;
+        linesWithCorporate.push({
+          itemId: item.id,
+          serviceId: item.serviceId,
+          mode: "NOT_COVERED" as const,
+          basePriceCents: priceCents,
+          finalUnitPriceCents: priceCents,
+          creditsUsed: 0,
+          savedCents: 0,
+          selection: "PAY_NORMAL" as const,
+          reason: "NOT_COVERED" as const,
+          eligibleSelections: ["PAY_NORMAL" as const],
+          familyMemberId: null,
+          familyMemberName: null,
+          corporateDiscount: null,
+        });
+      }
       return okResponse({
         ...coverage,
         lines: linesWithCorporate,
-        totalBaseCents: coverage.totalBaseCents + extraBaseCents,
-        totalFinalCents: coverage.totalFinalCents - savedOnCoverageLines + extraFinalCents,
+        totalBaseCents: coverage.totalBaseCents + extraBaseCents + insuranceBaseCents,
+        totalFinalCents:
+          coverage.totalFinalCents - savedOnCoverageLines + extraFinalCents + insuranceBaseCents,
         totalSavedCents: coverage.totalSavedCents + savedOnCoverageLines + savedOnExtraLines,
         currencyCode: cart.currencyCode,
       });

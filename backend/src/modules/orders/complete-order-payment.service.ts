@@ -355,6 +355,11 @@ async function fulfillPaidOrderFromCheckoutSession(
           gdprConsentPlatform: item.patientGdprConsentPlatform,
           gdprConsentedAt: item.patientGdprConsentedAt,
           whatsappConsent: item.patientWhatsappConsent,
+          // Insurance snapshot for the clinical record (amountCents above
+          // already carries the charged insurance price). Policy number stays
+          // in its encrypted phi:v1: envelope — copied verbatim, not decrypted.
+          insuranceCompanyId: item.insuranceCompanyId,
+          insurancePolicyNumber: item.insurancePolicyNumber,
         },
       });
       await tx.orderItem.update({

@@ -15,6 +15,61 @@ import { resolveTranslation } from "../shared/resolve-translation.js";
 import { assertLocaleSupported } from "../shared/locale-support.js";
 import { resolveServiceLinksForPage } from "../service-links/service-links.service.js";
 import { faqTranslationSelect, mergeFaqTranslation } from "../../services/service-faq.service.js";
+import {
+  resolveInsurancePrice,
+  type InsuranceCompanyPricing,
+} from "../pricing/insurance-pricing.service.js";
+
+/** One insurance option surfaced to the public service payload / booking form. */
+export type InsuranceOption = {
+  companyId: string;
+  name: string;
+  insurancePriceCents: number;
+};
+
+/** Raw coverage row shape read alongside a service (company + override). */
+type CoverageWithCompany = {
+  overridePriceCents: number | null;
+  company: { id: string; name: string } & InsuranceCompanyPricing;
+};
+
+/**
+ * Resolve the public insurance options for a service: one entry per active
+ * company that covers it, priced via `resolveInsurancePrice` (FIXED override or
+ * PERCENT-computed). Options that can't be priced (misconfigured) are dropped.
+ */
+export function buildInsuranceOptions(
+  basePriceCents: number | null,
+  coverages: CoverageWithCompany[],
+): InsuranceOption[] {
+  if (basePriceCents == null) return [];
+  const out: InsuranceOption[] = [];
+  for (const cov of coverages) {
+    const price = resolveInsurancePrice({
+      basePriceCents,
+      company: cov.company,
+      coverage: { overridePriceCents: cov.overridePriceCents },
+    });
+    if (price == null) continue;
+    out.push({ companyId: cov.company.id, name: cov.company.name, insurancePriceCents: price });
+  }
+  return out;
+}
+
+/**
+ * Build the auto SEO line for a covered service, e.g.
+ *   "We also have MediCare and SafeHealth for this service."
+ * Returns null when the service has no insurance companies. English-only for
+ * now (mirrors other server-derived marketing strings).
+ */
+export function buildInsuranceSeoLine(names: string[]): string | null {
+  if (names.length === 0) return null;
+  let list: string;
+  if (names.length === 1) list = names[0];
+  else if (names.length === 2) list = `${names[0]} and ${names[1]}`;
+  else list = `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+  return `We also have ${list} for this service.`;
+}
 
 /** Display fields a ServiceTranslation can override, plus the locale key. */
 const serviceTranslationSelect = {
@@ -285,13 +340,34 @@ export async function listServicesByCountry(
           select: { doctorId: true },
         },
         translations: { select: serviceTranslationSelect },
+        insuranceCoverages: {
+          where: { company: { isActive: true } },
+          orderBy: [{ company: { sortOrder: "asc" } }, { company: { name: "asc" } }],
+          select: {
+            overridePriceCents: true,
+            company: {
+              select: { id: true, name: true, pricingMode: true, discountPercent: true },
+            },
+          },
+        },
       },
     });
     // Merge each row to the requested locale (falling back to the
     // country default + base columns). Same Service.id either way.
-    return rows.map((row) =>
-      mergeServiceTranslation(row, locale ?? row.country.defaultLocale, row.country.defaultLocale),
-    );
+    return rows.map((row) => {
+      const merged = mergeServiceTranslation(
+        row,
+        locale ?? row.country.defaultLocale,
+        row.country.defaultLocale,
+      );
+      const insuranceOptions = buildInsuranceOptions(row.basePriceCents, row.insuranceCoverages);
+      const { insuranceCoverages: _insuranceCoverages, ...mergedRest } = merged;
+      return {
+        ...mergedRest,
+        insuranceOptions,
+        insuranceSeoLine: buildInsuranceSeoLine(insuranceOptions.map((o) => o.name)),
+      };
+    });
   } catch (error) {
     throw normalizeDbError(error, "Services data is unavailable");
   }
@@ -877,6 +953,16 @@ export async function getPublicServiceBySlug(
           },
         },
         translations: { select: serviceTranslationSelect },
+        insuranceCoverages: {
+          where: { company: { isActive: true } },
+          orderBy: [{ company: { sortOrder: "asc" } }, { company: { name: "asc" } }],
+          select: {
+            overridePriceCents: true,
+            company: {
+              select: { id: true, name: true, pricingMode: true, discountPercent: true },
+            },
+          },
+        },
       },
     });
     if (!row) return null;
@@ -894,7 +980,16 @@ export async function getPublicServiceBySlug(
       merged.resolvedLocale,
       row.country.defaultLocale,
     );
-    return { ...merged, faqs, links };
+    const insuranceOptions = buildInsuranceOptions(row.basePriceCents, row.insuranceCoverages);
+    // Strip the raw coverage rows — only the resolved options/SEO line ship.
+    const { insuranceCoverages: _insuranceCoverages, ...mergedRest } = merged;
+    return {
+      ...mergedRest,
+      faqs,
+      links,
+      insuranceOptions,
+      insuranceSeoLine: buildInsuranceSeoLine(insuranceOptions.map((o) => o.name)),
+    };
   } catch (error) {
     throw normalizeDbError(error, "Service data is unavailable");
   }

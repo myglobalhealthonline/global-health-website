@@ -251,6 +251,79 @@ export async function deleteAdminAuthorityLink(countryId: string, linkId: string
   );
 }
 
+// ── InsuranceCompany ─────────────────────────────────────────────────────────
+
+export type InsurancePricingMode = "FIXED" | "PERCENT";
+
+export type AdminInsuranceCompanyDto = {
+  id: string;
+  countryId: string;
+  name: string;
+  pricingMode: InsurancePricingMode;
+  discountPercent: number | null;
+  isActive: boolean;
+  sortOrder: number;
+  /** Number of services this company covers (present on the list endpoint). */
+  _count?: { coverages: number };
+};
+
+export type AdminCoverageServiceDto = {
+  serviceId: string;
+  name: string;
+  basePriceCents: number | null;
+  currencyCode: string | null;
+  covered: boolean;
+  overridePriceCents: number | null;
+  insurancePriceCents: number | null;
+};
+
+export type AdminCoverageDto = {
+  companyId: string;
+  pricingMode: InsurancePricingMode;
+  discountPercent: number | null;
+  services: AdminCoverageServiceDto[];
+};
+
+export async function fetchAdminInsuranceCompanies(countryId: string) {
+  return adminRequest<{ insuranceCompanies: AdminInsuranceCompanyDto[] }>(
+    `/api/admin/countries/${countryId}/insurance-companies`,
+  );
+}
+
+export async function createAdminInsuranceCompany(countryId: string, body: unknown) {
+  return adminRequest<{ insuranceCompany: AdminInsuranceCompanyDto }>(
+    `/api/admin/countries/${countryId}/insurance-companies`,
+    { method: "POST", body },
+  );
+}
+
+export async function updateAdminInsuranceCompany(countryId: string, companyId: string, body: unknown) {
+  return adminRequest<{ insuranceCompany: AdminInsuranceCompanyDto }>(
+    `/api/admin/countries/${countryId}/insurance-companies/${companyId}`,
+    { method: "PATCH", body },
+  );
+}
+
+export async function deleteAdminInsuranceCompany(countryId: string, companyId: string) {
+  return adminRequest<{ deleted: boolean }>(
+    `/api/admin/countries/${countryId}/insurance-companies/${companyId}`,
+    { method: "DELETE" },
+  );
+}
+
+export async function fetchAdminInsuranceCoverage(countryId: string, companyId: string) {
+  return adminRequest<AdminCoverageDto>(
+    `/api/admin/countries/${countryId}/insurance-companies/${companyId}/coverage`,
+  );
+}
+
+export async function putAdminInsuranceCoverage(countryId: string, companyId: string, body: unknown) {
+  return adminRequest<{ saved: boolean }>(
+    `/api/admin/countries/${countryId}/insurance-companies/${companyId}/coverage`,
+    { method: "PUT", body },
+  );
+}
+
 // ── CountryLegalDocument ─────────────────────────────────────────────────────
 
 export type LegalDocumentType =

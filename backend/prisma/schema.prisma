@@ -367,6 +367,10 @@ model Country {
   authorityLinks             CountryAuthorityLink[]
   /// SEO landing pages (condition / audience marketing pages) for this market.
   seoLandingPages            SeoLandingPage[]
+  /// Insurance companies registered for this market. Each covers a chosen
+  /// set of this country's services at a negotiated price (fixed or a
+  /// percentage discount). See InsuranceCompany.
+  insuranceCompanies         InsuranceCompany[]
   createdAt                  DateTime             @default(now())
   updatedAt                  DateTime             @updatedAt
 }
@@ -830,6 +834,9 @@ model Service {
   /// peak price and slots outside it the off-peak price; otherwise the
   /// flat basePriceCents applies. See ServicePeakPricing.
   peakPricing           ServicePeakPricing?
+  /// Insurance-company coverage rows for this service (which companies
+  /// cover it + the negotiated per-service price). See InsuranceServiceCoverage.
+  insuranceCoverages    InsuranceServiceCoverage[]
   /// Admin-managed FAQ entries for this service's public detail page.
   faqs                  ServiceFaq[]
   /// Contextual internal-link callouts shown ON this page (upgrade/entry/etc).
@@ -986,6 +993,60 @@ model ServicePeakWindow {
   createdAt   DateTime           @default(now())
 
   @@index([pricingId])
+}
+
+/// How an insurance company prices the services it covers. Chosen once when
+/// the company is set up and applied to every covered service:
+///  - FIXED   → admin types an explicit new price per covered service
+///              (InsuranceServiceCoverage.overridePriceCents).
+///  - PERCENT → a single discount % off the service's basePriceCents,
+///              applied automatically to every covered service.
+enum InsurancePricingMode {
+  FIXED
+  PERCENT
+}
+
+/// An insurance company registered for a single country. Patients booking a
+/// covered service can select the company in the booking form; the negotiated
+/// insurance price then becomes the amount charged at checkout. The pricing
+/// mode is fixed at setup and shared by every service the company covers.
+model InsuranceCompany {
+  id              String                     @id @default(cuid())
+  countryId       String
+  country         Country                    @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  name            String
+  pricingMode     InsurancePricingMode
+  /// PERCENT mode only: whole-number discount 0..100 applied to basePriceCents.
+  /// Null for FIXED companies (per-service prices live on the coverage rows).
+  discountPercent Int?
+  isActive        Boolean                    @default(true)
+  sortOrder       Int                        @default(0)
+  coverages       InsuranceServiceCoverage[]
+  createdAt       DateTime                   @default(now())
+  updatedAt       DateTime                   @updatedAt
+
+  @@unique([countryId, name])
+  @@index([countryId, isActive])
+}
+
+/// Join row: an insurance company covers a specific service. Existence of the
+/// row is what makes the company selectable for that service in the booking
+/// form (and drives the "We also have …" SEO line on the service page).
+model InsuranceServiceCoverage {
+  id                 String           @id @default(cuid())
+  insuranceCompanyId String
+  company            InsuranceCompany @relation(fields: [insuranceCompanyId], references: [id], onDelete: Cascade)
+  serviceId          String
+  service            Service          @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  /// FIXED companies: the admin-typed negotiated price for this service.
+  /// PERCENT companies: null — the price is derived from basePriceCents at
+  /// read time so it tracks base-price changes automatically.
+  overridePriceCents Int?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@unique([insuranceCompanyId, serviceId])
+  @@index([serviceId])
 }
 
 /// Per-locale display content for a Service. One stable Service record per
@@ -1509,6 +1570,12 @@ model Appointment {
   gdprConsentedAt           DateTime?
   /// WhatsApp appointment updates — default ON; patient opts OUT at booking.
   whatsappConsent           Boolean                   @default(true)
+  /// Insurance selection snapshot for the clinical record — copied from the
+  /// OrderItem when the appointment is minted. Bare company id (no relation);
+  /// policy/card number as an encrypted `phi:v1:` envelope. The charged amount
+  /// already lives on `amountCents`, so these are record-keeping only.
+  insuranceCompanyId        String?
+  insurancePolicyNumber     String?
   createdAt                 DateTime                  @default(now())
   updatedAt                 DateTime                  @updatedAt
 
@@ -1943,6 +2010,14 @@ model CartItem {
   patientGdprConsentedAt     DateTime?
   /// WhatsApp appointment updates — default ON; patient opts OUT at booking.
   patientWhatsappConsent     Boolean   @default(true)
+  /// Insurance-company selection snapshot (consultation lines only). When set,
+  /// `unitPriceCents` above is the insurance price. Bare id like
+  /// `corporateCompanyId` — no relation. The policy/card number is stored as
+  /// an encrypted `phi:v1:` envelope. `insurancePriceCents` is an audit copy
+  /// of the resolved insurance price; checkout re-derives the charged amount.
+  insuranceCompanyId         String?
+  insurancePolicyNumber      String?
+  insurancePriceCents        Int?
   createdAt                DateTime     @default(now())
 
   @@index([heldUntil])
@@ -2133,6 +2208,13 @@ model OrderItem {
   patientGdprConsentedAt     DateTime?
   /// WhatsApp appointment updates — default ON; patient opts OUT at booking.
   patientWhatsappConsent     Boolean   @default(true)
+  /// Insurance selection snapshot copied from the CartItem at checkout. When
+  /// set, `unitPriceCents` above is the insurance price (server-recomputed).
+  /// Bare id like `corporateCompanyId`; policy number is an encrypted
+  /// `phi:v1:` envelope; `insurancePriceCents` is an audit copy.
+  insuranceCompanyId         String?
+  insurancePolicyNumber      String?
+  insurancePriceCents        Int?
 
   @@index([orderId])
 }

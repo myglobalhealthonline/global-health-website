@@ -37,6 +37,16 @@ export type CountryServiceCard = {
   /** Doctor IDs bookable for this service. Empty array = no assignment
    *  yet; the public consult flow will show "no doctors available". */
   assignedDoctorIds: string[];
+  /** Insurance companies that cover this service + the negotiated price the
+   *  patient pays if they select that company at booking. Empty = none. */
+  insuranceOptions: InsuranceOption[];
+};
+
+/** One selectable insurance company for a covered service (public payload). */
+export type InsuranceOption = {
+  companyId: string;
+  name: string;
+  insurancePriceCents: number;
 };
 
 export type CountryHealthTestCard = {
@@ -122,6 +132,10 @@ export type CountryServiceDetail = {
   gallery: string[];
   faqs: ServiceFaq[];
   links: ServiceLinkItem[];
+  /** Insurance companies covering this service + their negotiated prices. */
+  insuranceOptions: InsuranceOption[];
+  /** Auto SEO line ("We also have … for this service.") or null when none. */
+  insuranceSeoLine: string | null;
 };
 
 export type HealthTestFaqItem = { id: string; question: string; answer: string };
@@ -320,10 +334,29 @@ export const getCountryServices = cache(async (
       ...(image?.caption ? { imageCaption: image.caption } : {}),
       ...(image?.description ? { imageDescription: image.description } : {}),
       assignedDoctorIds,
+      insuranceOptions: parseInsuranceOptions(r.insuranceOptions),
     });
   }
   return out;
 });
+
+/** Defensively parse the server's `insuranceOptions` array off a raw payload. */
+function parseInsuranceOptions(raw: unknown): InsuranceOption[] {
+  if (!Array.isArray(raw)) return [];
+  const out: InsuranceOption[] = [];
+  for (const o of raw) {
+    if (!o || typeof o !== "object") continue;
+    const { companyId, name, insurancePriceCents } = o as Record<string, unknown>;
+    if (
+      typeof companyId === "string" &&
+      typeof name === "string" &&
+      typeof insurancePriceCents === "number"
+    ) {
+      out.push({ companyId, name, insurancePriceCents });
+    }
+  }
+  return out;
+}
 
 /** Specialties (categories) for a country. */
 export const getCountrySpecialties = cache(async (
@@ -591,6 +624,8 @@ export const getCountryServiceDetail = cache(async (
     gallery: resolveGallery(r.galleryImagePaths),
     faqs: readFaqs(r.faqs),
     links: readServiceLinks(r.links),
+    insuranceOptions: parseInsuranceOptions(r.insuranceOptions),
+    insuranceSeoLine: typeof r.insuranceSeoLine === "string" ? r.insuranceSeoLine : null,
   };
 });
 

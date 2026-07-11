@@ -201,14 +201,19 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             ? await reserveAndPriceConsultations(tx, {
                 userId,
                 countryCode: cart.countryCode,
-                items: cart.items.map((i) => ({
-                  id: i.id,
-                  kind: i.kind,
-                  serviceId: i.serviceId,
-                  unitPriceCents: effectiveUnitPrice(i),
-                  benefitSelection: i.benefitSelection,
-                  familyMemberId: i.familyMemberId,
-                })),
+                // Insurance-priced lines are excluded from the subscription
+                // engine: the negotiated insurance price is final and must not
+                // consume a plan credit or stack a plan discount (§ no-overlap).
+                items: cart.items
+                  .filter((i) => !i.insuranceCompanyId)
+                  .map((i) => ({
+                    id: i.id,
+                    kind: i.kind,
+                    serviceId: i.serviceId,
+                    unitPriceCents: effectiveUnitPrice(i),
+                    benefitSelection: i.benefitSelection,
+                    familyMemberId: i.familyMemberId,
+                  })),
                 peakPriceByItemId: effectivePriceByItemId,
               })
             : {
@@ -225,14 +230,20 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           // plan benefit (credit/discount) wins, else corporate.
           const corporateDiscounts = await resolveCorporateDiscountsForItems(tx, {
             userId,
-            items: cart.items.map((i) => ({
-              id: i.id,
-              kind: i.kind,
-              serviceId: i.serviceId,
-              baseCents: effectiveUnitPrice(i),
-            })),
+            // Same exclusion as the subscription engine — insurance price wins.
+            items: cart.items
+              .filter((i) => !i.insuranceCompanyId)
+              .map((i) => ({
+                id: i.id,
+                kind: i.kind,
+                serviceId: i.serviceId,
+                baseCents: effectiveUnitPrice(i),
+              })),
           });
-          const corporateLineDiscount = (i: { id: string; unitPriceCents: number }): number => {
+          const corporateLineDiscount = (
+            i: { id: string; unitPriceCents: number; insuranceCompanyId?: string | null },
+          ): number => {
+            if (i.insuranceCompanyId) return 0;
             const planLine = planResult.lines.get(i.id);
             const base = effectiveUnitPrice(i);
             const planBenefitApplied = Boolean(
@@ -241,9 +252,15 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             if (planBenefitApplied) return 0;
             return corporateDiscounts.get(i.id)?.discountCents ?? 0;
           };
-          const finalUnitPrice = (i: { id: string; unitPriceCents: number }) =>
-            (planResult.lines.get(i.id)?.finalUnitPriceCents ?? effectiveUnitPrice(i)) -
-            corporateLineDiscount(i);
+          const finalUnitPrice = (
+            i: { id: string; unitPriceCents: number; insuranceCompanyId?: string | null },
+          ) =>
+            // Insurance lines: the validated insurance price (effectiveUnitPrice)
+            // is final, no plan/corporate layer applies.
+            i.insuranceCompanyId
+              ? effectiveUnitPrice(i)
+              : (planResult.lines.get(i.id)?.finalUnitPriceCents ?? effectiveUnitPrice(i)) -
+                corporateLineDiscount(i);
           const subtotalCents = cart.items.reduce(
             (s, i) => s + finalUnitPrice(i) * i.quantity,
             0,
@@ -315,6 +332,13 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   patientGdprConsentPlatform: i.patientGdprConsentPlatform,
                   patientGdprConsentedAt: i.patientGdprConsentedAt,
                   patientWhatsappConsent: i.patientWhatsappConsent,
+                  // Insurance snapshot carried to the order line. unitPriceCents
+                  // above already reflects the insurance price for these lines;
+                  // these columns record the company + encrypted policy + the
+                  // resolved price for audit / the appointment-mint webhook.
+                  insuranceCompanyId: i.insuranceCompanyId,
+                  insurancePolicyNumber: i.insurancePolicyNumber,
+                  insurancePriceCents: i.insuranceCompanyId ? finalUnitPrice(i) : null,
                 })),
               },
             },

@@ -44,6 +44,11 @@ export type AddItemInput = {
   benefitSelection?: BenefitSelection;
   /** Approved dependent to book for (Premium family usage). */
   familyMemberId?: string;
+  /** Insurance company the patient selected for this covered service. The
+   *  server validates coverage + re-derives the negotiated price. */
+  insuranceCompanyId?: string;
+  /** The patient's insurance card / policy number (stored encrypted). */
+  insurancePolicyNumber?: string;
 };
 
 export async function addToCart(input: AddItemInput): Promise<Result<Cart>> {

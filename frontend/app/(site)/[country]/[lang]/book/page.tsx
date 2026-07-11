@@ -684,6 +684,7 @@ async function SelectedServiceFlow({
               }
               i18n={bf}
               bookingRequirements={bookingRequirements}
+              insuranceOptions={service.insuranceOptions}
             />
           </div>
         )}
