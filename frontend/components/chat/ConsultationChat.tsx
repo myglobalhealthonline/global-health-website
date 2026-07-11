@@ -341,7 +341,7 @@ export function ConsultationChat({
                     <p className="whitespace-pre-wrap">{m.body}</p>
                   )}
                   <p
-                    className={`gh-chat-bubble__time mt-1 text-[10px] opacity-80 ${
+                    className={`gh-chat-bubble__time mt-1 text-portal-micro opacity-80 ${
                       last ? "" : "gh-chat-bubble__time--hover-only"
                     }`}
                   >

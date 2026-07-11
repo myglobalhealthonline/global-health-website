@@ -122,7 +122,7 @@ export function DayAgenda({
             <p className="mt-2 text-sm font-bold" style={{ color: "var(--portal-text)" }}>
               Select a day
             </p>
-            <p className="mx-auto mt-1 max-w-xs text-[12px]" style={{ color: "var(--portal-muted)" }}>
+            <p className="mx-auto mt-1 max-w-xs text-portal-meta" style={{ color: "var(--portal-muted)" }}>
               Consultations and availability slots for the selected day will appear here.
             </p>
           </div>
@@ -135,7 +135,7 @@ export function DayAgenda({
             <p className="mt-2 text-sm font-bold" style={{ color: "var(--portal-text)" }}>
               {emptyLabel}
             </p>
-            <p className="mx-auto mt-1 max-w-xs text-[12px]" style={{ color: "var(--portal-muted)" }}>
+            <p className="mx-auto mt-1 max-w-xs text-portal-meta" style={{ color: "var(--portal-muted)" }}>
               Add availability or open another day to review appointments.
             </p>
           </div>
@@ -143,7 +143,7 @@ export function DayAgenda({
           <div className="grid gap-4">
             {consultations.length > 0 ? (
               <div>
-                <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.12em]" style={{ color: "var(--portal-muted)" }}>
+                <p className="mb-2 text-portal-thead font-bold uppercase tracking-[0.12em]" style={{ color: "var(--portal-muted)" }}>
                   Consultations
                 </p>
                 <ul className="grid gap-2">
@@ -193,7 +193,7 @@ export function DayAgenda({
 
             {slots.length > 0 ? (
               <div>
-                <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.12em]" style={{ color: "var(--portal-muted)" }}>
+                <p className="mb-2 text-portal-thead font-bold uppercase tracking-[0.12em]" style={{ color: "var(--portal-muted)" }}>
                   Slots
                 </p>
                 <div className="flex flex-wrap gap-2">

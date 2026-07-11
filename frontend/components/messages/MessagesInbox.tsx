@@ -147,14 +147,14 @@ export function MessagesInbox({
                   <span className="flex items-center gap-2">
                     {t.orderNumber ? (
                       <span
-                        className="rounded px-1.5 py-0.5 font-mono text-[11px] font-semibold"
+                        className="rounded px-1.5 py-0.5 font-mono text-portal-thead font-semibold"
                         style={{ background: surfaceSoft, color: muted }}
                       >
                         {t.orderNumber}
                       </span>
                     ) : null}
                     <span
-                      className="min-w-0 flex-1 truncate text-[14px] font-bold"
+                      className="min-w-0 flex-1 truncate text-portal-body font-bold"
                       style={{ color: text }}
                     >
                       {t.name}
@@ -162,7 +162,7 @@ export function MessagesInbox({
                     {t.tag}
                     {unread > 0 ? (
                       <span
-                        className="inline-flex min-w-[18px] items-center justify-center rounded-full px-1.5 text-[11px] font-bold text-white"
+                        className="inline-flex min-w-[18px] items-center justify-center rounded-full px-1.5 text-portal-thead font-bold text-white"
                         style={{ background: signal }}
                       >
                         {unread}
@@ -171,7 +171,7 @@ export function MessagesInbox({
                   </span>
                   {t.preview ? (
                     <span
-                      className="truncate text-[12.5px]"
+                      className="truncate text-portal-label"
                       style={{
                         color: muted,
                         fontWeight: unread > 0 ? 600 : 400,
@@ -220,7 +220,7 @@ export function MessagesInbox({
               {selected.orderNumber ? (
                 <Link
                   href={selected.orderHref}
-                  className="rounded px-1.5 py-0.5 font-mono text-[12px] font-bold underline-offset-2 hover:underline"
+                  className="rounded px-1.5 py-0.5 font-mono text-portal-meta font-bold underline-offset-2 hover:underline"
                   style={{ background: surfaceSoft, color: signal }}
                   title="Open the appointment"
                 >
@@ -231,7 +231,7 @@ export function MessagesInbox({
                 {selected.name}
               </span>
               {selected.subtitle ? (
-                <span className="text-[12px]" style={{ color: muted }}>
+                <span className="text-portal-meta" style={{ color: muted }}>
                   {selected.subtitle}
                 </span>
               ) : null}

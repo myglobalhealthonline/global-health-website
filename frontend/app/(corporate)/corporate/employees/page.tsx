@@ -218,7 +218,7 @@ export default async function CorporateEmployeesPage({ searchParams }: PageProps
             </Btn>
           </form>
           {result.ok ? (
-            <span className="ml-auto text-[13px] text-[var(--color-text-muted)]">
+            <span className="ml-auto text-portal-compact text-[var(--color-text-muted)]">
               {result.data.employees.length} employees
             </span>
           ) : null}

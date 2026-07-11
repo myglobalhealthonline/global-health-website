@@ -278,7 +278,7 @@ export function WeekCalendar({
                   style={{ borderLeft: "1px solid var(--portal-line)" }}
                 >
                   <div
-                    className="text-[10px] font-bold uppercase tracking-[0.12em]"
+                    className="text-portal-micro font-bold uppercase tracking-[0.12em]"
                     style={{ color: "var(--portal-muted)" }}
                   >
                     {d.weekday}
@@ -308,7 +308,7 @@ export function WeekCalendar({
               {hours.map((h, i) => (
                 <div
                   key={h}
-                  className="pr-2 text-right text-[10px] font-semibold"
+                  className="pr-2 text-right text-portal-micro font-semibold"
                   style={{
                     position: "absolute",
                     top: i * HOUR_PX - 6,
@@ -384,16 +384,16 @@ export function WeekCalendar({
                     // status (green = open, red = blocked), no text label.
                     const inner = isConsult ? (
                       <>
-                        <span className="block truncate text-[10px] font-semibold leading-none opacity-90">
+                        <span className="block truncate text-portal-micro font-semibold leading-none opacity-90">
                           {time}
                         </span>
-                        <span className="mt-0.5 flex items-center gap-1 text-[12px] font-bold leading-tight">
+                        <span className="mt-0.5 flex items-center gap-1 text-portal-meta font-bold leading-tight">
                           <User className="size-3.5 shrink-0" aria-hidden />
                           <span className="truncate">{patientName}</span>
                         </span>
                       </>
                     ) : (
-                      <span className="block truncate text-[11px] font-bold leading-tight">
+                      <span className="block truncate text-portal-thead font-bold leading-tight">
                         {time}
                       </span>
                     );

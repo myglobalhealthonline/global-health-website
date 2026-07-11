@@ -92,7 +92,7 @@ export function MonthCalendar({
         {WEEKDAY_LABELS.map((d, i) => (
           <div
             key={d}
-            className="px-2 py-2 text-center text-[10px] font-bold uppercase tracking-[0.12em]"
+            className="px-2 py-2 text-center text-portal-micro font-bold uppercase tracking-[0.12em]"
             style={{ color: "var(--portal-muted)", opacity: i >= 5 ? 0.6 : 1 }}
           >
             {d}
@@ -139,7 +139,7 @@ export function MonthCalendar({
                 <span className="mt-auto flex w-full flex-wrap gap-1">
                   {consults > 0 ? (
                     <span
-                      className="inline-flex max-w-full items-center truncate rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none"
+                      className="inline-flex max-w-full items-center truncate rounded-full px-1.5 py-0.5 text-portal-micro font-bold leading-none"
                       style={{ background: "var(--portal-success-soft)", color: "var(--portal-success-text)" }}
                     >
                       {consults} consult{consults > 1 ? "s" : ""}
@@ -147,7 +147,7 @@ export function MonthCalendar({
                   ) : null}
                   {booked > 0 ? (
                     <span
-                      className="inline-flex items-center gap-0.5 text-[10px] font-semibold"
+                      className="inline-flex items-center gap-0.5 text-portal-micro font-semibold"
                       style={{ color: "var(--portal-info-text)" }}
                     >
                       <span className="size-1.5 rounded-full" style={{ background: "var(--portal-info)" }} />
@@ -156,7 +156,7 @@ export function MonthCalendar({
                   ) : null}
                   {open > 0 ? (
                     <span
-                      className="inline-flex items-center gap-0.5 text-[10px] font-semibold"
+                      className="inline-flex items-center gap-0.5 text-portal-micro font-semibold"
                       style={{ color: "var(--portal-success-text)" }}
                     >
                       <span className="size-1.5 rounded-full" style={{ background: "var(--portal-success)" }} />
@@ -165,7 +165,7 @@ export function MonthCalendar({
                   ) : null}
                   {blocked > 0 ? (
                     <span
-                      className="inline-flex items-center gap-0.5 text-[10px] font-semibold"
+                      className="inline-flex items-center gap-0.5 text-portal-micro font-semibold"
                       style={{ color: "var(--portal-danger-text)" }}
                     >
                       <span className="size-1.5 rounded-full" style={{ background: "var(--portal-danger)" }} />
