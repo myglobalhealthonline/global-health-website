@@ -1,26 +1,11 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
-import { Edit3, Eye, Globe2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { fetchAdminCountries, purgeAdminCountry } from "@/lib/admin/admin-api";
 import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
-import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
-import { FlagBadge } from "../_components/flag-badge";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
-import {
-  AdminCard,
-  AdminEmptyState,
-  AdminSummaryStrip,
-  AdminTable,
-  Btn,
-  IconBtn,
-  PageHeader,
-  Pill,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "../_components/atoms";
+import { AdminCard, AdminSummaryStrip, Btn, PageHeader } from "../_components/atoms";
+import { AdminCountriesTable } from "./_components/admin-countries-table";
 
 export const dynamic = "force-dynamic";
 
@@ -115,134 +100,7 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
         </div>
 
         {/* Table */}
-        <div className="gh-admin-country-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
-          <AdminTable>
-            <Thead>
-              <Th>Country</Th>
-              <Th>Code</Th>
-              <Th>Locale</Th>
-              <Th>Currency</Th>
-              <Th>Status</Th>
-              <Th>Key routes</Th>
-              <Th align="right" style={{ width: 120 }}>
-                Actions
-              </Th>
-            </Thead>
-            <tbody>
-              {rows.map((c) => (
-                <Tr key={c.id}>
-                  <Td>
-                    <span className="inline-flex items-center gap-2.5">
-                      <FlagBadge code={c.slug} size={18} />
-                      <span className="font-bold text-[var(--color-text-primary)]">
-                        {c.name}
-                      </span>
-                    </span>
-                  </Td>
-                  <Td>
-                    <span className="font-mono text-[12px] text-[var(--color-text-body)]">
-                      {c.code.toUpperCase()}
-                    </span>
-                  </Td>
-                  <Td>
-                    <span className="text-[var(--color-text-muted)]">
-                      {c.defaultLocale}
-                    </span>
-                  </Td>
-                  <Td>
-                    <span className="font-mono text-[12px] text-[var(--color-text-body)]">
-                      {c.currency.code}
-                    </span>
-                  </Td>
-                  <Td>
-                    <Pill tone={c.isActive ? "published" : "inactive"}>
-                      {c.isActive ? "Active" : "Inactive"}
-                    </Pill>
-                  </Td>
-                  <Td>
-                    <div className="max-w-[14rem]">
-                      <div className="truncate font-mono text-[11px] text-[var(--color-text-muted)]">
-                        {c.legacyHomePath}
-                      </div>
-                      <div className="truncate font-mono text-[11px] text-[var(--color-text-muted)] opacity-70">
-                        {c.teamPath}
-                      </div>
-                    </div>
-                  </Td>
-                  <Td align="right">
-                    <div className="gh-admin-country-row-actions flex justify-end gap-1.5">
-                      <IconBtn
-                        ariaLabel={`View ${c.name}`}
-                        href={`/admin/countries/${c.id}`}
-                      >
-                        <Eye className="size-3.5" aria-hidden />
-                      </IconBtn>
-                      <IconBtn
-                        ariaLabel={`Edit ${c.name}`}
-                        href={`/admin/countries/${c.id}/edit`}
-                      >
-                        <Edit3 className="size-3.5" aria-hidden />
-                      </IconBtn>
-                      <form action={deleteCountryAction} className="inline-flex">
-                        <input type="hidden" name="id" value={c.id} />
-                        <ConfirmDeleteButton
-                          title={`Delete ${c.name}?`}
-                          message={`Delete ${c.name}? This deactivates the country and cannot be undone from this action.`}
-                          ariaLabel={`Delete ${c.name}`}
-                          requireTypedConfirmation={c.slug}
-                        />
-                      </form>
-                    </div>
-                  </Td>
-                </Tr>
-              ))}
-            </tbody>
-          </AdminTable>
-        </div>
-
-        {rows.length > 0 ? (
-          <div className="gh-admin-mobile-list">
-            {rows.map((c) => (
-              <PortalMobileCard
-                key={c.id}
-                tone={c.isActive ? "success" : "neutral"}
-                leading={<FlagBadge code={c.slug} size={20} />}
-                title={c.name}
-                subtitle={c.legacyHomePath}
-                statusPill={
-                  <Pill tone={c.isActive ? "published" : "inactive"}>
-                    {c.isActive ? "Active" : "Inactive"}
-                  </Pill>
-                }
-                meta={[
-                  { label: "Code", value: c.code.toUpperCase() },
-                  { label: "Locale", value: c.defaultLocale },
-                  { label: "Currency", value: c.currency.code },
-                  { label: "Team route", value: c.teamPath },
-                ]}
-                actions={
-                  <>
-                    <IconBtn ariaLabel={`View ${c.name}`} href={`/admin/countries/${c.id}`}>
-                      <Eye className="size-3.5" aria-hidden />
-                    </IconBtn>
-                    <IconBtn ariaLabel={`Edit ${c.name}`} href={`/admin/countries/${c.id}/edit`}>
-                      <Edit3 className="size-3.5" aria-hidden />
-                    </IconBtn>
-                  </>
-                }
-              />
-            ))}
-          </div>
-        ) : null}
-
-        {rows.length === 0 ? (
-          <AdminEmptyState
-            icon={<Globe2 className="size-8" aria-hidden />}
-            title="No markets configured"
-            description="Create a country to unlock localized services, doctors, legal pages, currencies, and booking routes."
-            action={<Btn href="/admin/countries/new" variant="soft" size="sm">Add country</Btn>}
-          />
-        ) : null}
+        <AdminCountriesTable rows={rows} deleteCountryAction={deleteCountryAction} />
       </AdminCard>
     </>
   );
