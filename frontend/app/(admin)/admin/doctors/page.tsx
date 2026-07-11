@@ -7,6 +7,7 @@ import {
   fetchAdminCountries,
   fetchAdminDoctors,
   purgeAdminDoctor,
+  type AdminDoctorDto,
   type AdminServiceKind,
 } from "@/lib/admin/admin-api";
 import { getActiveCountry, scopedCountryId } from "@/lib/admin/admin-scope";
@@ -15,20 +16,15 @@ import { FlagBadge } from "../_components/flag-badge";
 import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import { QueryToast } from "../_components/query-toast";
 import { ScopeBanner } from "../_components/scope-banner";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { IconBtn } from "@/components/portal-atoms";
+import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 import {
   AdminCard,
   AdminEmptyState,
   AdminSummaryStrip,
-  AdminTable,
   Btn,
-  IconBtn,
   PageHeader,
   Pill,
-  Td,
-  Th,
-  Thead,
-  Tr,
 } from "../_components/atoms";
 
 export const dynamic = "force-dynamic";
@@ -54,6 +50,133 @@ function doctorConsultationTypeLabels(
   return kinds
     .map((kind) => SERVICE_KIND_META[kind].shortLabel)
     .join(", ");
+}
+
+function doctorInitials(fullName: string): string {
+  return fullName
+    .replace(/^Dr\.?\s+/i, "")
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((s) => s[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+function doctorFields(
+  deleteDoctorAction: (formData: FormData) => void | Promise<void>,
+): ColumnPriorityField<AdminDoctorDto>[] {
+  return [
+    {
+      key: "doctor",
+      label: "Doctor",
+      priority: 1,
+      render: (d) => (
+        <Link href={`/admin/doctors/${d.id}`} className="inline-flex items-center gap-3 no-underline">
+          <span
+            aria-hidden
+            className="gh-admin-doctor-avatar inline-flex shrink-0 items-center justify-center text-white"
+          >
+            {doctorInitials(d.fullName) || "·"}
+          </span>
+          <div className="text-left">
+            <p className="m-0 text-[14px] font-bold text-[var(--color-text-primary)]">{d.fullName}</p>
+            <p className="m-0 font-mono text-[11px] text-[var(--color-text-muted)]">/{d.slug}</p>
+          </div>
+        </Link>
+      ),
+    },
+    {
+      key: "status",
+      label: "Status",
+      priority: 1,
+      render: (d) => (
+        <Pill tone={d.active ? "published" : "inactive"}>{d.active ? "Published" : "Suspended"}</Pill>
+      ),
+    },
+    {
+      key: "actions",
+      label: "Actions",
+      priority: 1,
+      align: "right",
+      desktopOnly: true,
+      render: (d) => (
+        <div className="gh-admin-doctor-row-actions flex justify-end gap-1.5">
+          <IconBtn ariaLabel={`View ${d.fullName}`} href={`/admin/doctors/${d.id}`}>
+            <Eye className="size-3.5" aria-hidden />
+          </IconBtn>
+          <IconBtn ariaLabel={`Edit ${d.fullName}`} href={`/admin/doctors/${d.id}/edit`}>
+            <Edit3 className="size-3.5" aria-hidden />
+          </IconBtn>
+          <form action={deleteDoctorAction} className="inline-flex">
+            <input type="hidden" name="id" value={d.id} />
+            <ConfirmDeleteButton
+              title={`Delete Dr. ${d.fullName}?`}
+              message={`Permanently delete doctor "${d.fullName}"? This removes their profile and cannot be undone.`}
+              ariaLabel={`Delete ${d.fullName}`}
+              requireTypedConfirmation={d.fullName}
+            />
+          </form>
+        </div>
+      ),
+    },
+    {
+      key: "practicingIn",
+      label: "Practicing in",
+      priority: 2,
+      render: (d) => {
+        const flags: Array<{ code: string; name: string; isPrimary: boolean }> = [
+          { code: d.country.code, name: d.country.name, isPrimary: true },
+          ...d.additionalCountries
+            .filter((link) => link.active && link.countryId !== d.countryId)
+            .map((link) => ({ code: link.country.code, name: link.country.name, isPrimary: false })),
+        ];
+        return (
+          <span className="inline-flex items-center gap-1.5">
+            {flags.map((f) => (
+              <span key={f.code} title={f.isPrimary ? `${f.name} · primary` : f.name} className="inline-flex">
+                <FlagBadge code={f.code} size={18} />
+              </span>
+            ))}
+          </span>
+        );
+      },
+    },
+    {
+      key: "account",
+      label: "Account",
+      priority: 2,
+      render: (d) => {
+        if (!d.loginUser) return <Pill tone="neutral">No account</Pill>;
+        if (!d.loginUser.emailVerifiedAt) return <Pill tone="pending">Pending</Pill>;
+        return <Pill tone="active">Active</Pill>;
+      },
+    },
+    {
+      key: "title",
+      label: "Title",
+      priority: 3,
+      render: (d) => <span className="text-[13px] text-[var(--color-text-body)]">{d.title}</span>,
+    },
+    {
+      key: "languages",
+      label: "Languages",
+      priority: 3,
+      render: (d) => (
+        <span className="block max-w-[12rem] truncate text-[13px] text-[var(--color-text-body)]">
+          {d.languages && d.languages.length > 0 ? d.languages.join(", ") : "—"}
+        </span>
+      ),
+    },
+    {
+      key: "consultationType",
+      label: "Consultation type",
+      priority: 3,
+      render: (d) => (
+        <span className="block max-w-[12rem] truncate text-[13px] text-[var(--color-text-muted)]">
+          {doctorConsultationTypeLabels(d.assignedServices ?? [])}
+        </span>
+      ),
+    },
+  ];
 }
 
 function buildDoctorsHref(
@@ -262,204 +385,23 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
 
       {/* Table card */}
       <AdminCard padding={0} className="gh-admin-doctor-table-card overflow-hidden">
-        <div className="gh-admin-doctor-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
-          <AdminTable>
-            <Thead>
-              <Th>Doctor</Th>
-              <Th>Title</Th>
-              <Th>Practicing in</Th>
-              <Th>Languages</Th>
-              <Th>Consultation type</Th>
-              <Th>Account</Th>
-              <Th>Status</Th>
-              <Th align="right" className="w-[120px]">
-                Actions
-              </Th>
-            </Thead>
-            <tbody>
-              {items.map((d) => {
-                const initials = d.fullName
-                  .replace(/^Dr\.?\s+/i, "")
-                  .split(/\s+/)
-                  .slice(0, 2)
-                  .map((s) => s[0]?.toUpperCase() ?? "")
-                  .join("");
-                return (
-                  <Tr key={d.id}>
-                    <Td>
-                      <Link
-                        href={`/admin/doctors/${d.id}`}
-                        className="inline-flex items-center gap-3 no-underline"
-                      >
-                        <span
-                          aria-hidden
-                            className="gh-admin-doctor-avatar inline-flex shrink-0 items-center justify-center text-white"
-                        >
-                          {initials || "·"}
-                        </span>
-                        <div className="text-left">
-                          <p className="m-0 text-[14px] font-bold text-[var(--color-text-primary)]">
-                            {d.fullName}
-                          </p>
-                          <p className="m-0 font-mono text-[11px] text-[var(--color-text-muted)]">
-                            /{d.slug}
-                          </p>
-                        </div>
-                      </Link>
-                    </Td>
-                    <Td>
-                      <span className="text-[13px] text-[var(--color-text-body)]">
-                        {d.title}
-                      </span>
-                    </Td>
-                    <Td>
-                      {/* Flag-only column. Primary country first, then any
-                          extra DoctorCountry links (active rows only).
-                          Hover each flag to see the country name. */}
-                      {(() => {
-                        const flags: Array<{ code: string; name: string; isPrimary: boolean }> = [
-                          {
-                            code: d.country.code,
-                            name: d.country.name,
-                            isPrimary: true,
-                          },
-                          ...d.additionalCountries
-                            .filter((link) => link.active && link.countryId !== d.countryId)
-                            .map((link) => ({
-                              code: link.country.code,
-                              name: link.country.name,
-                              isPrimary: false,
-                            })),
-                        ];
-                        return (
-                          <span className="inline-flex items-center gap-1.5">
-                            {flags.map((f) => (
-                              <span
-                                key={f.code}
-                                title={f.isPrimary ? `${f.name} · primary` : f.name}
-                                className="inline-flex"
-                              >
-                                <FlagBadge code={f.code} size={18} />
-                              </span>
-                            ))}
-                          </span>
-                        );
-                      })()}
-                    </Td>
-                    <Td>
-                      <span className="block max-w-[12rem] truncate text-[13px] text-[var(--color-text-body)]">
-                        {d.languages && d.languages.length > 0
-                          ? d.languages.join(", ")
-                          : "—"}
-                      </span>
-                    </Td>
-                    <Td>
-                      <span className="block max-w-[12rem] truncate text-[13px] text-[var(--color-text-muted)]">
-                        {doctorConsultationTypeLabels(d.assignedServices ?? [])}
-                      </span>
-                    </Td>
-                    <Td>
-                      {(() => {
-                        if (!d.loginUser) {
-                          return (
-                            <Pill tone="neutral">No account</Pill>
-                          );
-                        }
-                        if (!d.loginUser.emailVerifiedAt) {
-                          return <Pill tone="pending">Pending</Pill>;
-                        }
-                        return <Pill tone="active">Active</Pill>;
-                      })()}
-                    </Td>
-                    <Td>
-                      <Pill tone={d.active ? "published" : "inactive"}>
-                        {d.active ? "Published" : "Suspended"}
-                      </Pill>
-                    </Td>
-                    <Td align="right">
-                      <div className="gh-admin-doctor-row-actions flex justify-end gap-1.5">
-                        <IconBtn
-                          ariaLabel={`View ${d.fullName}`}
-                          href={`/admin/doctors/${d.id}`}
-                        >
-                          <Eye className="size-3.5" aria-hidden />
-                        </IconBtn>
-                        <IconBtn
-                          ariaLabel={`Edit ${d.fullName}`}
-                          href={`/admin/doctors/${d.id}/edit`}
-                        >
-                          <Edit3 className="size-3.5" aria-hidden />
-                        </IconBtn>
-                        <form action={deleteDoctorAction} className="inline-flex">
-                          <input type="hidden" name="id" value={d.id} />
-                          <ConfirmDeleteButton
-                            title={`Delete Dr. ${d.fullName}?`}
-                            message={`Permanently delete doctor "${d.fullName}"? This removes their profile and cannot be undone.`}
-                            ariaLabel={`Delete ${d.fullName}`}
-                            requireTypedConfirmation={d.fullName}
-                          />
-                        </form>
-                      </div>
-                    </Td>
-                  </Tr>
-                );
-              })}
-            </tbody>
-          </AdminTable>
-        </div>
-
         {items.length > 0 ? (
-          <div className="gh-admin-mobile-list">
-            {items.map((d) => {
-              const initials = d.fullName
-                .replace(/^Dr\.?\s+/i, "")
-                .split(/\s+/)
-                .slice(0, 2)
-                .map((s) => s[0]?.toUpperCase() ?? "")
-                .join("");
-              return (
-                <PortalMobileCard
-                  key={d.id}
-                  tone={d.active ? "success" : "neutral"}
-                  leading={
-                    <span aria-hidden className="gh-admin-doctor-avatar inline-flex shrink-0 items-center justify-center text-white">
-                      {initials || "D"}
-                    </span>
-                  }
-                  title={
-                    <Link href={`/admin/doctors/${d.id}`} className="hover:underline">
-                      {d.fullName}
-                    </Link>
-                  }
-                  subtitle={d.title}
-                  statusPill={
-                    <Pill tone={d.active ? "published" : "inactive"}>
-                      {d.active ? "Published" : "Suspended"}
-                    </Pill>
-                  }
-                  meta={[
-                    { label: "Market", value: d.country.code.toUpperCase() },
-                    { label: "Languages", value: d.languages?.join(", ") || "Not set" },
-                    { label: "Type", value: doctorConsultationTypeLabels(d.assignedServices ?? []) },
-                    {
-                      label: "Account",
-                      value: d.loginUser ? (d.loginUser.emailVerifiedAt ? "Active" : "Pending") : "None",
-                    },
-                  ]}
-                  actions={
-                    <>
-                      <IconBtn ariaLabel={`View ${d.fullName}`} href={`/admin/doctors/${d.id}`}>
-                        <Eye className="size-3.5" aria-hidden />
-                      </IconBtn>
-                      <IconBtn ariaLabel={`Edit ${d.fullName}`} href={`/admin/doctors/${d.id}/edit`}>
-                        <Edit3 className="size-3.5" aria-hidden />
-                      </IconBtn>
-                    </>
-                  }
-                />
-              );
-            })}
-          </div>
+          <ColumnPriorityTable<AdminDoctorDto>
+            fields={doctorFields(deleteDoctorAction)}
+            rows={items}
+            getRowKey={(d) => d.id}
+            cardTone={(d) => (d.active ? "success" : "neutral")}
+            cardActions={(d) => (
+              <>
+                <IconBtn ariaLabel={`View ${d.fullName}`} href={`/admin/doctors/${d.id}`}>
+                  <Eye className="size-3.5" aria-hidden />
+                </IconBtn>
+                <IconBtn ariaLabel={`Edit ${d.fullName}`} href={`/admin/doctors/${d.id}/edit`}>
+                  <Edit3 className="size-3.5" aria-hidden />
+                </IconBtn>
+              </>
+            )}
+          />
         ) : null}
 
         {items.length === 0 ? (

@@ -2855,7 +2855,6 @@
   min-width: 0;
 }
 
-.gh-admin-doctor-table-wrap table,
 .gh-admin-doctor-availability-table {
   min-width: 920px;
 }
@@ -3007,7 +3006,6 @@
     justify-content: flex-start;
   }
 
-  .gh-admin-doctor-table-wrap,
   .gh-admin-doctor-availability-table-wrap {
     margin-left: -16px;
     margin-right: -16px;
