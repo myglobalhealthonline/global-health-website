@@ -208,14 +208,14 @@ export function HomeHero({
             <div className="mt-11 flex flex-wrap items-center gap-4">
               <Link
                 href={bookHref}
-                className="gh2-btn-lime focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]/60 motion-reduce:transition-none"
+                className="gh2-btn-lime gh-focus-on-dark motion-reduce:transition-none"
               >
                 {displayCtaLabel}
                 <ArrowRight className="size-4" strokeWidth={2} aria-hidden />
               </Link>
               <Link
                 href="#services"
-                className="gh2-btn-ghost focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 motion-reduce:transition-none"
+                className="gh2-btn-ghost gh-focus-on-dark motion-reduce:transition-none"
               >
                 {i18n?.secondary ?? "Browse services"}
               </Link>

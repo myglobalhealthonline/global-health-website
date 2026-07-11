@@ -92,7 +92,7 @@ export function ShareConsultationButton({
           <input
             readOnly
             value={url}
-            className="flex-1 bg-transparent text-portal-meta font-mono outline-none"
+            className="flex-1 bg-transparent text-portal-meta font-mono outline-none focus-visible:ring-2 focus-visible:ring-[var(--portal-focus)] rounded-sm"
             onClick={(e) => e.currentTarget.select()}
           />
           <button

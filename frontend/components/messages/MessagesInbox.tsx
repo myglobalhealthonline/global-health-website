@@ -122,7 +122,7 @@ export function MessagesInbox({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search"
-            className="w-full rounded-full border py-2 pl-9 pr-3 text-sm focus:outline-none"
+            className="w-full rounded-full border py-2 pl-9 pr-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--portal-focus)]"
             style={{ borderColor: line, background: surface, color: text }}
           />
         </label>

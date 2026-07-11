@@ -341,7 +341,7 @@ function ServiceTile({
     <Link
       href={overlayHref}
       aria-label={twoButton ? `Learn more: ${s.title}` : s.title}
-      className="absolute inset-0 z-[var(--z-base)] rounded-[var(--radius-card)] focus:outline-none"
+      className="absolute inset-0 z-[var(--z-base)] rounded-[var(--radius-card)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]"
       tabIndex={twoButton ? -1 : 0}
     />
   );
