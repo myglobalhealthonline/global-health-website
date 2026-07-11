@@ -9,7 +9,7 @@ import { DEFAULT_BOOK_CTA_LABEL } from "@/lib/constants";
  * booking funnel itself plus the cart/checkout flow. Self-guarding so it
  * stays correct even if a caller mounts it on one of these pages.
  */
-const HIDDEN_ON = ["/book", "/cart", "/checkout"];
+const HIDDEN_PATH_SEGMENTS = new Set(["book", "cart", "checkout"]);
 
 export function StickyBookingCTA({
   href,
@@ -19,7 +19,11 @@ export function StickyBookingCTA({
   label?: string;
 }) {
   const pathname = usePathname();
-  if (pathname && HIDDEN_ON.some((seg) => pathname.includes(seg))) return null;
+  const shouldHide = pathname
+    ?.split("/")
+    .some((segment) => HIDDEN_PATH_SEGMENTS.has(segment));
+
+  if (shouldHide) return null;
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[var(--z-fixed-bar)] px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] md:hidden">
