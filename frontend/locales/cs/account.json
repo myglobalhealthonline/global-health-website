@@ -143,6 +143,8 @@
     "sumStatusHint": "Stav vyřízení",
     "sumItems": "Položky",
     "awaitingConfirmation": "Čeká na potvrzení",
+    "paymentFailedHint": "Platba se nezdařila — zkuste to prosím znovu",
+    "paymentCancelledHint": "Objednávka zrušena — platba není potřeba",
     "sumItemsHint": "Produkty v této objednávce",
     "inclShipping": "Včetně dopravy",
     "trackShipment": "Sledovat zásilku",
@@ -150,7 +152,12 @@
     "careRecordBody": "Uchovejte tuto objednávku spolu s předpisy a zdravotními soubory pro navazující konzultace.",
     "reorder": "Objednat znovu",
     "reorderAdding": "Přidávání do košíku…",
-    "reorderError": "Nepodařilo se přidat všechny položky do košíku."
+    "reorderError": "Nepodařilo se přidat všechny položky do košíku.",
+    "paymentActionTitle": "Payment needed",
+    "paymentActionBody": "This order hasn't been paid yet. Complete payment to finish processing it.",
+    "completePayment": "Complete payment",
+    "completePaymentLoading": "Loading…",
+    "completePaymentError": "Couldn't start payment — try again."
   },
   "prescriptions": {
     "breadcrumb": "Účet",
@@ -244,6 +251,7 @@
     "refundedNote": "Tato platba byla vrácena. Na výpisu se může objevit až za několik pracovních dnů.",
     "refundedNoteShort": "Vráceno — na výpisu se objeví za několik dnů.",
     "payNow": "Dokončit platbu",
+    "payNowError": "Couldn't start payment — try again.",
     "loading": "Načítání…",
     "receipt": "Doklad",
     "viewReceipt": "Zobrazit doklad",
@@ -639,7 +647,11 @@
     "takingYouBack": "Vracíme vás zpět na vaše rezervace…",
     "noOpenTimesTitle": "Momentálně nejsou k dispozici žádné volné termíny",
     "noOpenTimesBody": "Váš lékař nemá v příštích dvou týdnech žádné volné termíny. Zrušte tuto rezervaci a rezervujte znovu, nebo kontaktujte kliniku a požádejte o konkrétní čas.",
-    "availableDates": "Dostupná data"
+    "availableDates": "Dostupná data",
+    "newTime": "Nový čas",
+    "confirmReschedule": "Potvrdit přeplánování",
+    "cancelSelection": "Zrušit",
+    "confirming": "Přeplánovává se…"
   },
   "accessHistory": {
     "breadcrumb": "Portál pacienta",

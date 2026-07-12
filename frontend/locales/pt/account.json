@@ -143,6 +143,8 @@
     "sumStatusHint": "Estado de entrega",
     "sumItems": "Itens",
     "awaitingConfirmation": "A aguardar confirmação",
+    "paymentFailedHint": "O pagamento falhou — tente novamente",
+    "paymentCancelledHint": "Encomenda cancelada — não é necessário pagamento",
     "sumItemsHint": "Produtos nesta encomenda",
     "inclShipping": "Inclui envio",
     "trackShipment": "Acompanhar envio",
@@ -150,7 +152,12 @@
     "careRecordBody": "Guarde esta encomenda junto das suas prescrições e ficheiros médicos para conversas de acompanhamento.",
     "reorder": "Encomendar novamente",
     "reorderAdding": "A adicionar ao carrinho…",
-    "reorderError": "Não foi possível adicionar todos os artigos ao carrinho."
+    "reorderError": "Não foi possível adicionar todos os artigos ao carrinho.",
+    "paymentActionTitle": "Payment needed",
+    "paymentActionBody": "This order hasn't been paid yet. Complete payment to finish processing it.",
+    "completePayment": "Complete payment",
+    "completePaymentLoading": "Loading…",
+    "completePaymentError": "Couldn't start payment — try again."
   },
   "prescriptions": {
     "breadcrumb": "Conta",
@@ -244,6 +251,7 @@
     "refundedNote": "Este pagamento foi reembolsado. Pode demorar alguns dias úteis a aparecer no seu extrato.",
     "refundedNoteShort": "Reembolsado — alguns dias até aparecer no seu extrato.",
     "payNow": "Concluir pagamento",
+    "payNowError": "Couldn't start payment — try again.",
     "loading": "A carregar…",
     "receipt": "Recibo",
     "viewReceipt": "Ver recibo",
@@ -639,7 +647,11 @@
     "takingYouBack": "A regressar às suas marcações…",
     "noOpenTimesTitle": "Sem horários disponíveis de momento",
     "noOpenTimesBody": "O seu médico não tem horários disponíveis nas próximas duas semanas. Cancele esta marcação e volte a marcar, ou contacte a clínica para pedir um horário específico.",
-    "availableDates": "Datas disponíveis"
+    "availableDates": "Datas disponíveis",
+    "newTime": "Novo horário",
+    "confirmReschedule": "Confirmar reagendamento",
+    "cancelSelection": "Cancelar",
+    "confirming": "A reagendar…"
   },
   "accessHistory": {
     "breadcrumb": "Portal do paciente",

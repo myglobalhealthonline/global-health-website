@@ -35,8 +35,42 @@ function humanize(status: string): string {
     .join(" ");
 }
 
+// ponytail: role-agnostic join gating — same statuses cover patient
+// consultations (REQUEST_RECEIVED/UNDER_REVIEW/CONTACTED/COMPLETED/CANCELLED)
+// and admin/doctor slot items (OPEN/HELD/BOOKED/BLOCKED); both mean
+// "confirmed" / "cancelled-or-unavailable" in their own vocabulary.
+const CONFIRMED_STATUSES = new Set(["CONTACTED", "BOOKED"]);
+const ENDED_STATUSES = new Set(["COMPLETED"]);
+const CANCELLED_STATUSES = new Set(["CANCELLED", "BLOCKED"]);
+const JOIN_WINDOW_BEFORE_MS = 15 * 60 * 1000;
+/** Fallback call length when the item carries no `endAt` (consultations don't). */
+const DEFAULT_DURATION_MS = 60 * 60 * 1000;
+
+type JoinState =
+  | { kind: "ready" }
+  | { kind: "no-link" }
+  | { kind: "unconfirmed" }
+  | { kind: "cancelled" }
+  | { kind: "ended" }
+  | { kind: "too-early"; opensAt: Date };
+
+function getJoinState(item: CalendarItem, now: Date): JoinState {
+  if (!item.meta?.meetingUrl) return { kind: "no-link" };
+  if (CANCELLED_STATUSES.has(item.status)) return { kind: "cancelled" };
+  if (ENDED_STATUSES.has(item.status)) return { kind: "ended" };
+  if (!CONFIRMED_STATUSES.has(item.status)) return { kind: "unconfirmed" };
+
+  const start = new Date(item.startAt);
+  const end = item.endAt ? new Date(item.endAt) : new Date(start.getTime() + DEFAULT_DURATION_MS);
+  const opensAt = new Date(start.getTime() - JOIN_WINDOW_BEFORE_MS);
+  if (now < opensAt) return { kind: "too-early", opensAt };
+  if (now > end) return { kind: "ended" };
+  return { kind: "ready" };
+}
+
 export function EventDetailDialog({ item, tz, onClose, paramKey }: Props) {
   const meetingUrl = item?.meta?.meetingUrl ?? null;
+  const joinState = item ? getJoinState(item, new Date()) : null;
 
   return (
     <RecordDetailsDrawer
@@ -114,7 +148,7 @@ export function EventDetailDialog({ item, tz, onClose, paramKey }: Props) {
           </RecordDetailsSection>
 
           <RecordDetailsSection title="Links">
-            {meetingUrl ? (
+            {joinState?.kind === "ready" && meetingUrl ? (
               <a
                 href={meetingUrl}
                 target="_blank"
@@ -127,7 +161,15 @@ export function EventDetailDialog({ item, tz, onClose, paramKey }: Props) {
               </a>
             ) : (
               <p className="text-xs" style={{ color: "var(--portal-muted)" }}>
-                Join link will appear here once the call is scheduled.
+                {joinState?.kind === "unconfirmed"
+                  ? "This request hasn't been confirmed yet."
+                  : joinState?.kind === "cancelled"
+                    ? "This consultation was cancelled."
+                    : joinState?.kind === "ended"
+                      ? "This consultation has ended."
+                      : joinState?.kind === "too-early"
+                        ? `The join link opens at ${formatAppDateTime(joinState.opensAt.toISOString(), tz)}.`
+                        : "Join link will appear here once the call is scheduled."}
               </p>
             )}
           </RecordDetailsSection>

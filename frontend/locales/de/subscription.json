@@ -119,6 +119,8 @@
       "paused": "Ihre Mitgliedschaft ist pausiert und die Vorteile sind ausgesetzt. Setzen Sie die Abrechnung über das Abrechnungsportal unten fort, um Ihre Guthaben und Rabatte wiederherzustellen.",
       "confirming": "Wir bestätigen Ihre Zahlung… das dauert normalerweise nur wenige Sekunden.",
       "stillProcessing": "Zahlung erhalten — die Aktivierung Ihrer Mitgliedschaft dauert etwas länger als üblich.",
+"alreadyActive": "You already have an active membership — manage it below.",
+      "dismiss": "Dismiss",
       "refresh": "Aktualisieren"
     }
   },
@@ -226,7 +228,8 @@
     "status_paid": "Bezahlt",
     "status_open": "Offen",
     "status_void": "Storniert",
-    "status_uncollectible": "Unbezahlt"
+    "status_uncollectible": "Unbezahlt",
+    "status_processing": "In Bearbeitung"
   },
   "legal": {
     "eyebrow": "Rechtliches",

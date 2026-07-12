@@ -142,6 +142,8 @@
     "sumStatus": "Order status",
     "sumStatusHint": "Fulfillment state",
     "awaitingConfirmation": "Awaiting confirmation",
+    "paymentFailedHint": "Payment failed — please try again",
+    "paymentCancelledHint": "Order cancelled — no payment needed",
     "sumItems": "Items",
     "sumItemsHint": "Products in this order",
     "inclShipping": "Including shipping",
@@ -150,7 +152,12 @@
     "careRecordBody": "Keep this order with your prescriptions and medical files for follow-up conversations.",
     "reorder": "Reorder",
     "reorderAdding": "Adding to cart…",
-    "reorderError": "Could not add every item to your cart."
+    "reorderError": "Could not add every item to your cart.",
+    "paymentActionTitle": "Payment needed",
+    "paymentActionBody": "This order hasn't been paid yet. Complete payment to finish processing it.",
+    "completePayment": "Complete payment",
+    "completePaymentLoading": "Loading…",
+    "completePaymentError": "Couldn't start payment — try again."
   },
   "prescriptions": {
     "breadcrumb": "Account",
@@ -244,6 +251,7 @@
     "refundedNote": "This payment was refunded. It can take a few business days to appear on your statement.",
     "refundedNoteShort": "Refunded — a few days to appear on your statement.",
     "payNow": "Complete payment",
+    "payNowError": "Couldn't start payment — try again.",
     "loading": "Loading…",
     "receipt": "Receipt",
     "viewReceipt": "View receipt",
@@ -639,7 +647,11 @@
     "takingYouBack": "Taking you back to your bookings…",
     "noOpenTimesTitle": "No open times right now",
     "noOpenTimesBody": "Your clinician has no available slots in the next two weeks. Cancel this booking and rebook, or message the clinic to ask for a specific time.",
-    "availableDates": "Available dates"
+    "availableDates": "Available dates",
+    "newTime": "New time",
+    "confirmReschedule": "Confirm reschedule",
+    "cancelSelection": "Cancel",
+    "confirming": "Rescheduling…"
   },
   "accessHistory": {
     "breadcrumb": "Patient portal",

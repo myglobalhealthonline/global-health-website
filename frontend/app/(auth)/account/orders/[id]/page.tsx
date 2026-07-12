@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, PackageCheck, Truck } from "lucide-react";
 import { fetchAccountOrder } from "@/lib/api/cart-server";
 import { ReorderButton } from "./_components/reorder-button";
+import { CompletePaymentButton } from "./_components/complete-payment-button";
 import { AdminCard, AdminSummaryStrip, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDateTime } from "@/lib/format-datetime";
@@ -23,12 +24,37 @@ function statusTone(status: string): PillTone {
   return "neutral";
 }
 
+/** Payment stat-card hint — status-specific instead of a blanket "awaiting
+ *  confirmation" for every non-paid state (was contradicting a FAILED/
+ *  CANCELLED value shown right above it). */
+function paymentHint(
+  order: { paymentStatus: string; paidAt: string | null; status: string },
+  a: { orders: { awaitingConfirmation: string; paymentFailedHint: string; paymentCancelledHint: string } },
+): string {
+  if (order.paidAt) return formatAppDateTime(order.paidAt);
+  if (order.status === "CANCELLED") return a.orders.paymentCancelledHint;
+  if (order.paymentStatus === "FAILED") return a.orders.paymentFailedHint;
+  return a.orders.awaitingConfirmation;
+}
+
 export default async function AccountOrderDetailPage({ params }: Props) {
   const [{ id }, locale] = await Promise.all([params, getPageLocale()]);
   const res = await fetchAccountOrder(id);
   if (!res.ok) notFound();
   const order = res.data;
   const { account: a } = loadLocaleBundle(locale);
+
+  // 15-001: the only interactive element on this page used to be "Reorder"
+  // (which starts a brand-new cart) — an unpaid order had no path to
+  // actually finish paying for itself. Any status short of PAID/REFUNDED on
+  // a non-cancelled, non-refunded order still needs a payment action
+  // (PENDING/FAILED/UNPAID all qualify); resolveOrderPaymentUrl on the
+  // backend is the final authority and returns no URL if it disagrees.
+  const needsPayment =
+    order.paymentStatus !== "PAID" &&
+    order.paymentStatus !== "REFUNDED" &&
+    order.status !== "CANCELLED" &&
+    order.status !== "REFUNDED";
 
   return (
     <div className="gh-patient-page gh-patient-order-detail-page">
@@ -43,19 +69,32 @@ export default async function AccountOrderDetailPage({ params }: Props) {
       <PageHeader
         eyebrow={a.orders.orderNumber.replace("{id}", formatOrderDisplayId(order))}
         title={
-          <span className="inline-flex items-center gap-3">
-            {formatPrice(order.totalCents, order.currencyCode)}
+          <span
+            className="inline-flex items-center gap-3"
+            aria-label={`${formatPrice(order.totalCents, order.currencyCode)}, ${order.status.toLowerCase()}`}
+          >
+            <span aria-hidden="true">{formatPrice(order.totalCents, order.currencyCode)}</span>
             <Pill tone={statusTone(order.status)}>{order.status.toLowerCase()}</Pill>
           </span>
         }
         description={a.orders.placedOn.replace("{date}", formatAppDateTime(order.createdAt))}
       />
 
+      {needsPayment ? (
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-md border border-amber-300 bg-amber-50 px-4 py-3">
+          <div>
+            <p className="text-sm font-semibold text-amber-900">{a.orders.paymentActionTitle}</p>
+            <p className="text-xs text-amber-800">{a.orders.paymentActionBody}</p>
+          </div>
+          <CompletePaymentButton orderId={order.id} i18n={a.orders} />
+        </div>
+      ) : null}
+
       <AdminSummaryStrip
         className="mb-5"
         items={[
           { label: a.orders.sumStatus, value: order.status.toLowerCase(), hint: a.orders.sumStatusHint },
-          { label: a.orders.payment, value: order.paymentStatus.toLowerCase(), hint: order.paidAt ? formatAppDateTime(order.paidAt) : a.orders.awaitingConfirmation },
+          { label: a.orders.payment, value: order.paymentStatus.toLowerCase(), hint: paymentHint(order, a) },
           { label: a.orders.sumItems, value: String(order.items.length), hint: a.orders.sumItemsHint },
           { label: a.orders.total, value: formatPrice(order.totalCents, order.currencyCode), hint: a.orders.inclShipping },
         ]}

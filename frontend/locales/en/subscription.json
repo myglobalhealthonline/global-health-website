@@ -125,6 +125,8 @@
       "paused": "Your membership is paused and benefits are on hold. Resume billing from the billing portal below to restore your credits and discounts.",
       "confirming": "Confirming your payment… this usually takes only a few seconds.",
       "stillProcessing": "Payment received — activating your membership is taking a little longer than usual.",
+      "alreadyActive": "You already have an active membership — manage it below.",
+      "dismiss": "Dismiss",
       "refresh": "Refresh"
     }
   },
@@ -232,7 +234,8 @@
     "status_paid": "Paid",
     "status_open": "Open",
     "status_void": "Void",
-    "status_uncollectible": "Unpaid"
+    "status_uncollectible": "Unpaid",
+    "status_processing": "Processing"
   },
   "legal": {
     "eyebrow": "Legal",

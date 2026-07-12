@@ -3520,8 +3520,7 @@
   .gh-patient-family-card-header,
   .gh-patient-notification-toolbar,
   .gh-patient-consent-row,
-  .gh-patient-form-actions,
-  .gh-patient-access-row {
+  .gh-patient-form-actions {
     align-items: stretch;
     flex-direction: column;
   }
@@ -3534,8 +3533,7 @@
   .gh-patient-family-card-header > *,
   .gh-patient-notification-toolbar > *,
   .gh-patient-consent-row > *,
-  .gh-patient-form-actions > *,
-  .gh-patient-access-row > * {
+  .gh-patient-form-actions > * {
     width: 100%;
   }
 
@@ -5463,7 +5461,12 @@ a.gh-appointment-card:hover {
     max-width: 100%;
   }
 
-  .gh-admin-main :where(form .gh-btn, form button[type="submit"]) {
+  /* :not(.gh-chat-send) — chat composers (ConsultationChat/ChatThread/
+     InternalMessagesThread) are a flex row, not a stacked admin form; this
+     rule was forcing the Send button to width:100%, which (as flex-basis)
+     crushed the sibling textarea down to ~0 and wrapped the placeholder
+     one character per line. */
+  .gh-admin-main :where(form .gh-btn, form button[type="submit"]):not(.gh-chat-send) {
     width: 100%;
   }
 

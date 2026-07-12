@@ -9,6 +9,7 @@ import {
   type InsuranceData,
   type VerificationStatus,
 } from "@/lib/api/account-profile-api";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type InsuranceI18n = {
   title: string;
@@ -67,6 +68,7 @@ export function InsuranceTab({ i18n = DEFAULT_I18N }: { i18n?: InsuranceI18n }) 
   const [data, setData] = useState<InsuranceData | null>(null);
   const [providerName, setProviderName] = useState("");
   const [policyNumber, setPolicyNumber] = useState("");
+  const [initial, setInitial] = useState({ providerName: "", policyNumber: "" });
   const [loaded, setLoaded] = useState(false);
   const [savePending, startSave] = useTransition();
   const [uploadPending, startUpload] = useTransition();
@@ -76,12 +78,19 @@ export function InsuranceTab({ i18n = DEFAULT_I18N }: { i18n?: InsuranceI18n }) 
     void fetchInsurance().then((res) => {
       if (res.ok) {
         setData(res.data.insurance);
-        setProviderName(res.data.insurance.insuranceProviderName ?? "");
-        setPolicyNumber(res.data.insurance.insurancePolicyNumber ?? "");
+        const loaded = {
+          providerName: res.data.insurance.insuranceProviderName ?? "",
+          policyNumber: res.data.insurance.insurancePolicyNumber ?? "",
+        };
+        setProviderName(loaded.providerName);
+        setPolicyNumber(loaded.policyNumber);
+        setInitial(loaded);
       }
       setLoaded(true);
     });
   }, []);
+
+  useUnsavedChanges(loaded && (providerName !== initial.providerName || policyNumber !== initial.policyNumber));
 
   function onSave(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -92,6 +101,7 @@ export function InsuranceTab({ i18n = DEFAULT_I18N }: { i18n?: InsuranceI18n }) 
         insurancePolicyNumber: policyNumber.trim() || null,
       });
       if (res.ok) {
+        setInitial({ providerName, policyNumber });
         setMsg({ kind: "ok", text: i18n.saved });
       } else {
         setMsg({ kind: "err", text: res.message });

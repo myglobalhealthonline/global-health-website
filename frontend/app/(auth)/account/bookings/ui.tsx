@@ -289,9 +289,12 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
       if (status && item.status !== status) return false;
       if (!term) return true;
       return (
+        consultLabel(item.consultationType, i18n).toLowerCase().includes(term) ||
         item.consultationType.toLowerCase().includes(term) ||
         item.countryCode.toLowerCase().includes(term) ||
-        formatStatus(item.status).toLowerCase().includes(term)
+        formatStatus(item.status).toLowerCase().includes(term) ||
+        (item.doctorName ?? "").toLowerCase().includes(term) ||
+        (item.orderNumber ?? "").toLowerCase().includes(term)
       );
     });
   }, [items, search, status]);

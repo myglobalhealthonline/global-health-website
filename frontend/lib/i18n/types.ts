@@ -664,6 +664,10 @@ export type CommonLocale = {
     openNavigation: string;
     closeMenu: string;
     allCaughtUp: string;
+    unsavedChangesTitle: string;
+    unsavedChangesBody: string;
+    unsavedChangesKeepEditing: string;
+    unsavedChangesDiscard: string;
   };
   cardVerify: {
     title: string;

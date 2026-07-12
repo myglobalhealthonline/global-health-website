@@ -1,5 +1,6 @@
 import { CheckCircle2, Clock, ShoppingBag, ChevronRight } from "lucide-react";
 import { fetchAccountOrders } from "@/lib/api/cart-server";
+import { CompletePaymentButton } from "./[id]/_components/complete-payment-button";
 import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDate } from "@/lib/format-datetime";
@@ -105,14 +106,22 @@ export default async function AccountOrdersPage() {
                       </span>
                     </p>
                   </div>
-                  <Btn
-                    href={`/account/orders/${o.id}`}
-                    variant="secondary"
-                    size="sm"
-                    iconRight={<ChevronRight className="size-3.5" />}
-                  >
-                    {a.orders.open}
-                  </Btn>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {o.paymentStatus !== "PAID" &&
+                    o.paymentStatus !== "REFUNDED" &&
+                    o.status !== "CANCELLED" &&
+                    o.status !== "REFUNDED" ? (
+                      <CompletePaymentButton orderId={o.id} i18n={a.orders} size="sm" />
+                    ) : null}
+                    <Btn
+                      href={`/account/orders/${o.id}`}
+                      variant="secondary"
+                      size="sm"
+                      iconRight={<ChevronRight className="size-3.5" />}
+                    >
+                      {a.orders.open}
+                    </Btn>
+                  </div>
                 </li>
               ))}
             </ul>

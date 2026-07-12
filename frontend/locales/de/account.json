@@ -143,6 +143,8 @@
     "sumStatusHint": "Erfüllungsstatus",
     "sumItems": "Artikel",
     "awaitingConfirmation": "Warten auf Bestätigung",
+    "paymentFailedHint": "Zahlung fehlgeschlagen — bitte erneut versuchen",
+    "paymentCancelledHint": "Bestellung storniert — keine Zahlung erforderlich",
     "sumItemsHint": "Produkte in dieser Bestellung",
     "inclShipping": "Inklusive Versand",
     "trackShipment": "Sendung verfolgen",
@@ -150,7 +152,12 @@
     "careRecordBody": "Bewahre diese Bestellung mit deinen Rezepten und medizinischen Unterlagen für Folgegespräche auf.",
     "reorder": "Erneut bestellen",
     "reorderAdding": "Wird zum Warenkorb hinzugefügt…",
-    "reorderError": "Nicht alle Artikel konnten dem Warenkorb hinzugefügt werden."
+    "reorderError": "Nicht alle Artikel konnten dem Warenkorb hinzugefügt werden.",
+    "paymentActionTitle": "Payment needed",
+    "paymentActionBody": "This order hasn't been paid yet. Complete payment to finish processing it.",
+    "completePayment": "Complete payment",
+    "completePaymentLoading": "Loading…",
+    "completePaymentError": "Couldn't start payment — try again."
   },
   "prescriptions": {
     "breadcrumb": "Konto",
@@ -244,6 +251,7 @@
     "refundedNote": "Diese Zahlung wurde erstattet. Es kann einige Werktage dauern, bis sie auf deinem Kontoauszug erscheint.",
     "refundedNoteShort": "Erstattet — erscheint in wenigen Tagen auf deinem Kontoauszug.",
     "payNow": "Zahlung abschließen",
+    "payNowError": "Couldn't start payment — try again.",
     "loading": "Wird geladen…",
     "receipt": "Beleg",
     "viewReceipt": "Beleg ansehen",
@@ -639,7 +647,11 @@
     "takingYouBack": "Du wirst zu deinen Buchungen zurückgeleitet…",
     "noOpenTimesTitle": "Aktuell keine freien Termine",
     "noOpenTimesBody": "Dein Arzt hat in den nächsten zwei Wochen keine freien Termine. Storniere diese Buchung und buche neu, oder kontaktiere die Klinik für einen bestimmten Termin.",
-    "availableDates": "Verfügbare Termine"
+    "availableDates": "Verfügbare Termine",
+    "newTime": "Neuer Termin",
+    "confirmReschedule": "Umbuchung bestätigen",
+    "cancelSelection": "Abbrechen",
+    "confirming": "Wird umgebucht…"
   },
   "accessHistory": {
     "breadcrumb": "Patientenportal",

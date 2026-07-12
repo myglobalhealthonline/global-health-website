@@ -690,6 +690,10 @@
     "closeNavigation": "Navigation schließen",
     "openNavigation": "Navigation öffnen",
     "closeMenu": "Menü schließen",
-    "allCaughtUp": "Alles erledigt."
+    "allCaughtUp": "Alles erledigt.",
+    "unsavedChangesTitle": "Unsaved changes",
+    "unsavedChangesBody": "You have unsaved changes on this page. If you leave now, they'll be lost.",
+    "unsavedChangesKeepEditing": "Keep editing",
+    "unsavedChangesDiscard": "Discard changes"
   }
 }

@@ -119,6 +119,8 @@
       "paused": "Vaše členství je pozastaveno a výhody jsou dočasně neaktivní. Obnovte fakturaci v portálu pro fakturaci níže, abyste obnovili své kredity a slevy.",
       "confirming": "Potvrzujeme vaši platbu… obvykle to trvá jen několik sekund.",
       "stillProcessing": "Platba přijata — aktivace vašeho členství trvá o něco déle než obvykle.",
+"alreadyActive": "You already have an active membership — manage it below.",
+      "dismiss": "Dismiss",
       "refresh": "Obnovit"
     }
   },
@@ -226,7 +228,8 @@
     "status_paid": "Zaplaceno",
     "status_open": "Otevřeno",
     "status_void": "Stornováno",
-    "status_uncollectible": "Nezaplaceno"
+    "status_uncollectible": "Nezaplaceno",
+    "status_processing": "Zpracovává se"
   },
   "legal": {
     "eyebrow": "Právní informace",

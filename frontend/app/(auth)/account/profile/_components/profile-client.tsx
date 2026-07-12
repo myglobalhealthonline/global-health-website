@@ -25,6 +25,7 @@ import { PhoneField } from "@/components/forms/phone-field";
 import { AdminSummaryStrip, Btn, PageHeader } from "@/components/portal-atoms";
 import { PortalTabs, PortalTabPanel } from "@/components/PortalTabs";
 import { FormSection } from "@/components/FormSection";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type Tab = "personal" | "insurance" | "verification" | "nationality" | "privacy";
 
@@ -48,6 +49,7 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("personal");
+  const [initialContact, setInitialContact] = useState({ fullName: "", phone: "", dateOfBirth: "" });
 
   useEffect(() => {
     let cancelled = false;
@@ -64,9 +66,15 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
       if (cancelled) return;
       if (authRes.ok) {
         setUser(authRes.data.user);
-        setFullName(authRes.data.user.fullName ?? "");
-        setPhone(authRes.data.user.phone ?? "");
-        setDateOfBirth(authRes.data.user.dateOfBirth?.slice(0, 10) ?? "");
+        const loaded = {
+          fullName: authRes.data.user.fullName ?? "",
+          phone: authRes.data.user.phone ?? "",
+          dateOfBirth: authRes.data.user.dateOfBirth?.slice(0, 10) ?? "",
+        };
+        setFullName(loaded.fullName);
+        setPhone(loaded.phone);
+        setDateOfBirth(loaded.dateOfBirth);
+        setInitialContact(loaded);
       } else {
         setMsg({ kind: "err", text: authRes.message });
       }
@@ -90,6 +98,12 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
     { id: "nationality", label: p.tabNationality, icon: <Flag aria-hidden /> },
     { id: "privacy", label: p.tabPrivacy, icon: <FileCheck2 aria-hidden /> },
   ];
+  const contactDirty =
+    fullName !== initialContact.fullName ||
+    phone !== initialContact.phone ||
+    dateOfBirth !== initialContact.dateOfBirth;
+  useUnsavedChanges(contactDirty);
+
   const needsAttention = Boolean(user && !user.emailVerifiedAt) || !ghn;
   const profileStatusItems = [
     {
@@ -132,6 +146,7 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
     setSaving(false);
     if (res.ok) {
       setUser(res.data.user);
+      setInitialContact({ fullName, phone, dateOfBirth });
       setMsg({ kind: "ok", text: a.profile.saved });
     } else {
       setMsg({ kind: "err", text: res.message });

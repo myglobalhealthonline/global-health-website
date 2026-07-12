@@ -32,6 +32,7 @@ import type { NotificationPopoverItem } from "@/components/NotificationPopover";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { supportedLocaleCodes } from "@/lib/i18n/types";
+import { UnsavedChangesGuard } from "@/components/UnsavedChangesGuard";
 
 /**
  * Patient portal layout. Reuses `PortalShell` so admin / doctor / patient
@@ -150,6 +151,14 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       chrome={common.portalChrome}
     >
       {children}
+      <UnsavedChangesGuard
+        i18n={{
+          title: common.portalChrome.unsavedChangesTitle,
+          body: common.portalChrome.unsavedChangesBody,
+          keepEditing: common.portalChrome.unsavedChangesKeepEditing,
+          discard: common.portalChrome.unsavedChangesDiscard,
+        }}
+      />
     </PortalShell>
   );
 }

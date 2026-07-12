@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AlertCircle, CheckCircle2, CreditCard, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, CreditCard, Loader2, X } from "lucide-react";
 import {
   cancelScheduledChange,
   cancelSubscription,
@@ -73,6 +73,7 @@ export function ManagePanel(props: ManagePanelProps) {
   const [selectedPlan, setSelectedPlan] = useState<string>(props.initialPlanId ?? "");
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
   const [confirmChangeOpen, setConfirmChangeOpen] = useState(false);
+  const [alreadyActiveDismissed, setAlreadyActiveDismissed] = useState(false);
 
   const meta = statusMeta(props.status, t);
   const canCancel =
@@ -137,6 +138,8 @@ export function ManagePanel(props: ManagePanelProps) {
     if (props.status === "PAUSED") return { kind: "info" as const, text: t.return.paused, action: "portal" as const };
     if (props.returnState === "ok" && props.status === "ACTIVE") return { kind: "ok" as const, text: t.return.ok };
     if (props.returnState === "cancelled") return { kind: "info" as const, text: t.return.cancelled };
+    if (props.returnState === "already-active" && !alreadyActiveDismissed)
+      return { kind: "info" as const, text: t.return.alreadyActive, dismissible: true as const };
     return null;
   })();
 
@@ -235,7 +238,7 @@ export function ManagePanel(props: ManagePanelProps) {
           ) : (
             <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
           )}
-          <div>
+          <div className="flex-1">
             <p>{banner.text}</p>
             {"action" in banner && banner.action === "portal" ? (
               <button
@@ -256,6 +259,16 @@ export function ManagePanel(props: ManagePanelProps) {
               </button>
             ) : null}
           </div>
+          {"dismissible" in banner && banner.dismissible ? (
+            <button
+              type="button"
+              onClick={() => setAlreadyActiveDismissed(true)}
+              className="shrink-0 rounded-full p-1 opacity-70 hover:opacity-100"
+              aria-label={t.return.dismiss}
+            >
+              <X className="size-4" aria-hidden />
+            </button>
+          ) : null}
         </div>
       ) : null}
 

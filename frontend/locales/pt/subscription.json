@@ -119,6 +119,8 @@
       "paused": "A sua adesão está em pausa e os benefícios estão suspensos. Retome a faturação no portal de faturação abaixo para restaurar os seus créditos e descontos.",
       "confirming": "A confirmar o seu pagamento… normalmente demora apenas alguns segundos.",
       "stillProcessing": "Pagamento recebido — a ativação da sua adesão está a demorar um pouco mais do que o habitual.",
+"alreadyActive": "You already have an active membership — manage it below.",
+      "dismiss": "Dismiss",
       "refresh": "Atualizar"
     }
   },
@@ -226,7 +228,8 @@
     "status_paid": "Paga",
     "status_open": "Em aberto",
     "status_void": "Anulada",
-    "status_uncollectible": "Não paga"
+    "status_uncollectible": "Não paga",
+    "status_processing": "Em processamento"
   },
   "legal": {
     "eyebrow": "Aspetos legais",

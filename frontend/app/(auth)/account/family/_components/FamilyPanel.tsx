@@ -12,6 +12,7 @@ import {
 } from "@/lib/api/family-client";
 import { Btn, PageHeader } from "@/components/portal-atoms";
 import { PortalDialog } from "@/components/PortalDialog";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type FamilyCopy = ReturnType<
   typeof import("@/lib/i18n/load-locale")["loadLocaleBundle"]
@@ -162,6 +163,8 @@ function AddMemberForm({ t, onAdded }: { t: FamilyCopy; onAdded: () => Promise<v
   const [form, setForm] = useState<FamilyMemberInput>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+
+  useUnsavedChanges(JSON.stringify(form) !== JSON.stringify(emptyForm));
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -460,15 +463,18 @@ function EditMemberForm({
   onDone: () => Promise<void>;
   onCancel: () => void;
 }) {
-  const [form, setForm] = useState<FamilyMemberInput>({
+  const initialEditForm: FamilyMemberInput = {
     fullName: member.fullName,
     relationship: member.relationship ?? "",
     dateOfBirth: member.dateOfBirth ? member.dateOfBirth.slice(0, 10) : "",
     email: member.email ?? "",
     canUseCredits: member.canUseCredits,
-  });
+  };
+  const [form, setForm] = useState<FamilyMemberInput>(initialEditForm);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+
+  useUnsavedChanges(JSON.stringify(form) !== JSON.stringify(initialEditForm));
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

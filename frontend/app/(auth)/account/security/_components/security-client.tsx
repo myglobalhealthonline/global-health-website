@@ -17,6 +17,7 @@ import { DeleteAccountButton } from "./delete-account-button";
 import type { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 export type SecurityI18n = ReturnType<typeof loadLocaleBundle>["account"]["security"];
 
@@ -131,6 +132,7 @@ export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
   }
 
   const verified = Boolean(user?.emailVerifiedAt);
+  useUnsavedChanges(Boolean(currentPassword || newPassword || confirmPassword));
 
   return (
     <div className="gh-patient-page gh-patient-security-page">

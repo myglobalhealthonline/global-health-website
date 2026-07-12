@@ -690,6 +690,10 @@
     "closeNavigation": "Închide navigarea",
     "openNavigation": "Deschide navigarea",
     "closeMenu": "Închide meniul",
-    "allCaughtUp": "Ești la zi."
+    "allCaughtUp": "Ești la zi.",
+    "unsavedChangesTitle": "Unsaved changes",
+    "unsavedChangesBody": "You have unsaved changes on this page. If you leave now, they'll be lost.",
+    "unsavedChangesKeepEditing": "Keep editing",
+    "unsavedChangesDiscard": "Discard changes"
   }
 }

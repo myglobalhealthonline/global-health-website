@@ -143,6 +143,8 @@
     "sumStatusHint": "Stadiul livrării",
     "sumItems": "Articole",
     "awaitingConfirmation": "În așteptarea confirmării",
+    "paymentFailedHint": "Plata a eșuat — încercați din nou",
+    "paymentCancelledHint": "Comandă anulată — nu este necesară plata",
     "sumItemsHint": "Produse în această comandă",
     "inclShipping": "Inclusiv livrarea",
     "trackShipment": "Urmărește livrarea",
@@ -150,7 +152,12 @@
     "careRecordBody": "Păstrează această comandă împreună cu rețetele și fișierele tale medicale pentru discuții ulterioare.",
     "reorder": "Recomandă din nou",
     "reorderAdding": "Se adaugă în coș…",
-    "reorderError": "Nu s-au putut adăuga toate articolele în coș."
+    "reorderError": "Nu s-au putut adăuga toate articolele în coș.",
+    "paymentActionTitle": "Payment needed",
+    "paymentActionBody": "This order hasn't been paid yet. Complete payment to finish processing it.",
+    "completePayment": "Complete payment",
+    "completePaymentLoading": "Loading…",
+    "completePaymentError": "Couldn't start payment — try again."
   },
   "prescriptions": {
     "breadcrumb": "Cont",
@@ -244,6 +251,7 @@
     "refundedNote": "Această plată a fost rambursată. Poate dura câteva zile lucrătoare până apare pe extras.",
     "refundedNoteShort": "Rambursat — apare pe extras în câteva zile.",
     "payNow": "Finalizează plata",
+    "payNowError": "Couldn't start payment — try again.",
     "loading": "Se încarcă…",
     "receipt": "Chitanță",
     "viewReceipt": "Vezi chitanța",
@@ -639,7 +647,11 @@
     "takingYouBack": "Te ducem înapoi la rezervările tale…",
     "noOpenTimesTitle": "Momentan nu există ore libere",
     "noOpenTimesBody": "Medicul tău nu are ore disponibile în următoarele două săptămâni. Anulează această rezervare și rezervă din nou, sau contactează clinica pentru a cere o oră anume.",
-    "availableDates": "Date disponibile"
+    "availableDates": "Date disponibile",
+    "newTime": "Ora nouă",
+    "confirmReschedule": "Confirmă reprogramarea",
+    "cancelSelection": "Anulează",
+    "confirming": "Se reprogramează…"
   },
   "accessHistory": {
     "breadcrumb": "Portal pacient",

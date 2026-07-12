@@ -26,6 +26,23 @@ const STATUS_PILL: Record<AccountPayment["status"], string> = {
   UNPAID: "bg-slate-100 text-slate-600 border border-slate-200",
 };
 
+// Membership invoice status -> pill tone (mirrors STATUS_PILL above for consultation
+// payments). Unmapped/null Stripe status falls back to an info tone, never blank.
+const INVOICE_STATUS_PILL: Record<string, string> = {
+  paid: "bg-emerald-50 text-emerald-800 border border-emerald-200",
+  open: "bg-amber-50 text-amber-800 border border-amber-200",
+  void: "bg-slate-100 text-slate-700 border border-slate-200",
+  uncollectible: "bg-rose-50 text-rose-800 border border-rose-200",
+};
+const INVOICE_STATUS_FALLBACK_PILL = "bg-sky-50 text-sky-800 border border-sky-200";
+
+function titleCase(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[_-]+/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export default async function AccountPaymentsPage() {
   const [result, invoicesData, locale] = await Promise.all([
     fetchAccountPayments(),
@@ -49,9 +66,15 @@ export default async function AccountPaymentsPage() {
       case "uncollectible":
         return inv.status_uncollectible;
       default:
-        return status ?? "";
+        // Unknown/unfinalized Stripe status (or null): never render a blank pill.
+        // Known-but-unmapped strings get a readable fallback; missing status gets
+        // the explicit "processing" copy.
+        return status ? titleCase(status) : inv.status_processing;
     }
   };
+
+  const invoiceStatusTone = (status: string | null): string =>
+    INVOICE_STATUS_PILL[(status ?? "").toLowerCase()] ?? INVOICE_STATUS_FALLBACK_PILL;
 
   const statusLabel: Record<AccountPayment["status"], string> = {
     PAID: a.payments.statusPaid,
@@ -186,7 +209,9 @@ export default async function AccountPaymentsPage() {
       label: inv.colStatus,
       priority: 2,
       render: (invoice) => (
-        <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-800">
+        <span
+          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${invoiceStatusTone(invoice.status)}`}
+        >
           {invoiceStatusLabel(invoice.status)}
         </span>
       ),

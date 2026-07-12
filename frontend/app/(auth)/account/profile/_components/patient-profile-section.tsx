@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { HeartPulse, Save } from "lucide-react";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type ProfileResponse = {
   nationalIdNumber: string | null;
@@ -124,6 +125,7 @@ const EMPTY: ProfileResponse = {
  */
 export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI18n }) {
   const [values, setValues] = useState<ProfileResponse>(EMPTY);
+  const [initial, setInitial] = useState<ProfileResponse>(EMPTY);
   const [loaded, setLoaded] = useState(false);
   const [pending, startTransition] = useTransition();
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(
@@ -135,12 +137,16 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
       .then((r) => r.json())
       .then((json: { ok?: boolean; data?: { profile?: ProfileResponse | null } }) => {
         if (json.ok && json.data?.profile) {
-          setValues({ ...EMPTY, ...json.data.profile });
+          const loaded = { ...EMPTY, ...json.data.profile };
+          setValues(loaded);
+          setInitial(loaded);
         }
       })
       .catch(() => {})
       .finally(() => setLoaded(true));
   }, []);
+
+  useUnsavedChanges(loaded && JSON.stringify(values) !== JSON.stringify(initial));
 
   function update<K extends keyof ProfileResponse>(
     key: K,
@@ -184,7 +190,13 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
         data?: { profile?: ProfileResponse | null };
       };
       if (json.ok) {
-        if (json.data?.profile) setValues({ ...EMPTY, ...json.data.profile });
+        if (json.data?.profile) {
+          const saved = { ...EMPTY, ...json.data.profile };
+          setValues(saved);
+          setInitial(saved);
+        } else {
+          setInitial(values);
+        }
         setMsg({ kind: "ok", text: i18n.medicalSaved });
       } else {
         setMsg({

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type ConsentItem = {
   consentType: string;
@@ -86,6 +87,10 @@ export function GdprPreferencesTab({ i18n = DEFAULT_I18N }: { i18n?: PrivacyI18n
       .catch(() => {})
       .finally(() => setLoaded(true));
   }, []);
+
+  const savedDraft: Draft = {};
+  for (const c of consents) savedDraft[c.consentType] = c.consentValue;
+  useUnsavedChanges(loaded && JSON.stringify(draft) !== JSON.stringify(savedDraft));
 
   function toggle(type: string, value: boolean) {
     setDraft((prev) => ({ ...prev, [type]: value }));

@@ -119,6 +119,8 @@
       "paused": "Su membresía está pausada y los beneficios están en espera. Reanude la facturación desde el portal de facturación de abajo para restaurar sus créditos y descuentos.",
       "confirming": "Confirmando su pago… normalmente solo tarda unos segundos.",
       "stillProcessing": "Pago recibido: la activación de su membresía está tardando un poco más de lo habitual.",
+"alreadyActive": "You already have an active membership — manage it below.",
+      "dismiss": "Dismiss",
       "refresh": "Actualizar"
     }
   },
@@ -226,7 +228,8 @@
     "status_paid": "Pagada",
     "status_open": "Pendiente",
     "status_void": "Anulada",
-    "status_uncollectible": "Sin pagar"
+    "status_uncollectible": "Sin pagar",
+    "status_processing": "En proceso"
   },
   "legal": {
     "eyebrow": "Aspectos legales",

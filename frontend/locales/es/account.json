@@ -143,6 +143,8 @@
     "sumStatusHint": "Estado de entrega",
     "sumItems": "Artículos",
     "awaitingConfirmation": "Pendiente de confirmación",
+    "paymentFailedHint": "El pago ha fallado — inténtalo de nuevo",
+    "paymentCancelledHint": "Pedido cancelado — no se requiere pago",
     "sumItemsHint": "Productos en este pedido",
     "inclShipping": "Incluye envío",
     "trackShipment": "Seguir envío",
@@ -150,7 +152,12 @@
     "careRecordBody": "Guarda este pedido junto con tus recetas y archivos médicos para conversaciones de seguimiento.",
     "reorder": "Volver a pedir",
     "reorderAdding": "Añadiendo al carrito…",
-    "reorderError": "No se pudieron añadir todos los artículos al carrito."
+    "reorderError": "No se pudieron añadir todos los artículos al carrito.",
+    "paymentActionTitle": "Payment needed",
+    "paymentActionBody": "This order hasn't been paid yet. Complete payment to finish processing it.",
+    "completePayment": "Complete payment",
+    "completePaymentLoading": "Loading…",
+    "completePaymentError": "Couldn't start payment — try again."
   },
   "prescriptions": {
     "breadcrumb": "Cuenta",
@@ -244,6 +251,7 @@
     "refundedNote": "Este pago fue reembolsado. Puede tardar unos días hábiles en aparecer en tu extracto.",
     "refundedNoteShort": "Reembolsado — unos días hasta aparecer en tu extracto.",
     "payNow": "Completar pago",
+    "payNowError": "Couldn't start payment — try again.",
     "loading": "Cargando…",
     "receipt": "Recibo",
     "viewReceipt": "Ver recibo",
@@ -639,7 +647,11 @@
     "takingYouBack": "Volviendo a tus reservas…",
     "noOpenTimesTitle": "No hay horarios disponibles ahora mismo",
     "noOpenTimesBody": "Tu médico no tiene horarios disponibles en las próximas dos semanas. Cancela esta reserva y vuelve a reservar, o contacta a la clínica para pedir un horario específico.",
-    "availableDates": "Fechas disponibles"
+    "availableDates": "Fechas disponibles",
+    "newTime": "Nueva hora",
+    "confirmReschedule": "Confirmar reprogramación",
+    "cancelSelection": "Cancelar",
+    "confirming": "Reprogramando…"
   },
   "accessHistory": {
     "breadcrumb": "Portal del paciente",

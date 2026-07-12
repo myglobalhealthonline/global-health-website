@@ -10,6 +10,7 @@ import {
   type NationalityDoc,
   type VerificationStatus,
 } from "@/lib/api/account-profile-api";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type NationalityI18n = {
   title: string;
@@ -154,6 +155,9 @@ function SlotCard({
   function update(key: keyof SlotFormState, val: string) {
     setForm((f) => ({ ...f, [key]: val }));
   }
+
+  const baseline = doc ? docToForm(doc) : EMPTY_FORM;
+  useUnsavedChanges(JSON.stringify(form) !== JSON.stringify(baseline));
 
   function onSave(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
