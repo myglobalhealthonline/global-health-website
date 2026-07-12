@@ -2259,9 +2259,11 @@
 
 .gh-chat-panel,
 .gh-chat-panel-embedded {
-  height: 60svh;
-  max-height: 560px;
-  min-height: 320px;
+  /* Scales with viewport instead of forcing a fixed 320px floor — on a
+     500-600px-tall viewport (RC8) a hard floor could push the composer
+     below the fold. The internal .gh-chat-body (flex:1 min-height:0) is
+     the actual scroll owner, so the panel itself can shrink safely. */
+  height: clamp(220px, 60svh, 560px);
 }
 
 .gh-chat-panel {
@@ -3002,6 +3004,45 @@
 .gh-doctor-appointment-workspace,
 .gh-doctor-calendar {
   min-width: 0;
+}
+
+/* Appointment workspace two-region layout (C1-C3, TASK §1). Left = tabs,
+ * right = persistent patient-context rail. Rail is a Patient tab below
+ * `lg` instead (hidden here, shown via #gh-tab-patient); never a floating
+ * card stacked above the tab strip. */
+.gh-doctor-workspace-grid {
+  min-width: 0;
+}
+
+.gh-doctor-context-rail {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .gh-doctor-context-rail {
+    display: grid;
+    gap: 16px;
+    align-self: start;
+    min-width: 0;
+  }
+
+  /* The rail already carries the Patient info at this width — the
+   * duplicate "Patient" tab button (kept in the tabs array so `?tab=`
+   * deep links + narrow widths still work) is redundant here. */
+  .gh-doctor-appointment-tabs #gh-tab-patient {
+    display: none;
+  }
+}
+
+/* Sticky only with enough vertical room (TASK §1: "never overlaps header/
+ * tabs/footer"). Short viewports keep the rail in normal flow so it can
+ * never collide with the sticky tab strip above it. */
+@media (min-width: 1024px) and (min-height: 700px) {
+  .gh-doctor-context-rail {
+    position: sticky;
+    top: calc(var(--portal-topbar-h) + 16px);
+    z-index: var(--z-sticky);
+  }
 }
 
 .gh-doctor-appointment-workspace .gh-card,

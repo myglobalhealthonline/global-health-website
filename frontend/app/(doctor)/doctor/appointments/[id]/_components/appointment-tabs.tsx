@@ -3,7 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
 import { DOCTOR_FOCUS_REVIEW_SEND_EVENT } from "@/lib/doctor-appointment-ui";
-import { PortalTabs } from "@/components/PortalTabs";
+import { PortalTabs, PortalTabPanel } from "@/components/PortalTabs";
 
 /**
  * Tab strip for the doctor appointment workspace.
@@ -56,11 +56,11 @@ export function AppointmentTabs({
     return () => window.removeEventListener(DOCTOR_FOCUS_REVIEW_SEND_EVENT, handler);
   }, [tabs]);
 
-  // After activating a tab via `?tab=`, scroll to the URL hash target (e.g.
-  // `#patient-chat`) inside the now-visible panel.
+  // Scroll to a URL hash target (e.g. `#patient-chat`) inside whichever
+  // panel `?tab=` activated. Tab *selection* itself is now owned by
+  // PortalTabs' `syncParam` (reads `?tab=` on mount, keeps it in sync on
+  // click) — this effect only handles the leftover in-panel scroll.
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- tabParam comes from the URL, only known post-mount
-    if (tabParam && tabs.some((t) => t.id === tabParam)) setActive(tabParam);
     if (typeof window !== "undefined" && window.location.hash) {
       const id = window.location.hash.slice(1);
       // Wait a tick so the panel is un-hidden before scrolling.
@@ -69,35 +69,31 @@ export function AppointmentTabs({
       }, 150);
       return () => window.clearTimeout(t);
     }
-  }, [tabParam, tabs]);
+  }, []);
 
   return (
     <div className="gh-doctor-appointment-tabs">
-      <div className="sticky top-[58px] z-10 -mx-4 mb-4 bg-white/80 px-4 py-2 backdrop-blur-md sm:-mx-6 sm:px-6">
-        <PortalTabs
-          ariaLabel={ariaLabel ?? "Appointment sections"}
-          value={active}
-          onChange={setActive}
-          items={tabs.map((tab) => ({
-            value: tab.id,
-            label: tab.label,
-            badge: tab.badge,
-            badgeAlert: tab.badgeAlert,
-          }))}
-        />
-      </div>
+      <PortalTabs
+        ariaLabel={ariaLabel ?? "Appointment sections"}
+        value={active}
+        onChange={setActive}
+        sticky
+        syncParam="tab"
+        items={tabs.map((tab) => ({
+          value: tab.id,
+          label: tab.label,
+          badge: tab.badge,
+          badgeAlert: tab.badgeAlert,
+        }))}
+      />
 
-      {tabs.map((tab) => (
-        <div
-          key={tab.id}
-          role="tabpanel"
-          id={`gh-tabpanel-${tab.id}`}
-          aria-labelledby={`gh-tab-${tab.id}`}
-          hidden={tab.id !== active}
-        >
-          {tab.panel}
-        </div>
-      ))}
+      <div className="mt-4 grid gap-4">
+        {tabs.map((tab) => (
+          <PortalTabPanel key={tab.id} value={tab.id} activeValue={active}>
+            {tab.panel}
+          </PortalTabPanel>
+        ))}
+      </div>
     </div>
   );
 }

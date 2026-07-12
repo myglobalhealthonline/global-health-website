@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 import { CalendarOff, CalendarPlus, Lock, Plus, Unlock } from "lucide-react";
 import { Btn } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
@@ -16,6 +17,7 @@ import { MonthCalendar } from "@/components/calendar/MonthCalendar";
 import { DayAgenda } from "@/components/calendar/DayAgenda";
 import { EventDetailDialog } from "@/components/calendar/EventDetailDialog";
 import { TimezoneSelect } from "@/components/calendar/TimezoneSelect";
+import { AppSheet } from "@/components/AppSheet";
 import { CURATED_TIME_ZONES } from "@/lib/timezones";
 import {
   addMonths,
@@ -108,9 +110,22 @@ export function DoctorCalendarUI({
   const [ym, setYm] = useState({ year: initialYear, month: initialMonth });
   const [slots, setSlots] = useState<DoctorTimeSlotView[]>(initialSlots);
   const [selectedDay, setSelectedDay] = useState<string>(() => todayKey(clinicTimezone));
+  const [daySheetOpen, setDaySheetOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<CalendarItem | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  function openDay(key: string) {
+    setSelectedDay(key);
+    setDaySheetOpen(true);
+  }
+
+  function openEvent(item: CalendarItem) {
+    // Event dialog replaces the day sheet — no stacked overlays (matches
+    // admin calendar composition).
+    setDaySheetOpen(false);
+    setActiveItem(item);
+  }
 
   // Range time-off form (datetime-local — date + time)
   const [offFrom, setOffFrom] = useState("");
@@ -335,83 +350,92 @@ export function DoctorCalendarUI({
         </div>
       ) : null}
 
-      <div className="gh-doctor-calendar-main grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <MonthCalendar
-          year={ym.year}
-          month={ym.month}
-          itemsByDay={itemsByDay}
-          selectedDay={selectedDay}
-          todayKey={todayKey(tz)}
-          onSelectDay={setSelectedDay}
-          onPrevMonth={() => setYm((p) => addMonths(p.year, p.month, -1))}
-          onNextMonth={() => setYm((p) => addMonths(p.year, p.month, 1))}
-          onToday={() => {
-            const d = new Date();
-            setYm({ year: d.getFullYear(), month: d.getMonth() + 1 });
-            setSelectedDay(todayKey(tz));
+      <MonthCalendar
+        year={ym.year}
+        month={ym.month}
+        itemsByDay={itemsByDay}
+        selectedDay={selectedDay}
+        todayKey={todayKey(tz)}
+        onSelectDay={openDay}
+        onPrevMonth={() => setYm((p) => addMonths(p.year, p.month, -1))}
+        onNextMonth={() => setYm((p) => addMonths(p.year, p.month, 1))}
+        onToday={() => {
+          const d = new Date();
+          setYm({ year: d.getFullYear(), month: d.getMonth() + 1 });
+          setSelectedDay(todayKey(tz));
+        }}
+      />
+
+      {/* Day agenda — lux sheet, same composition as the admin calendar's
+          day drawer (RC7: doctor previously rendered this inline in a fixed
+          sidebar, which clipped/overflowed at short viewport heights). */}
+      <AppSheet
+        open={daySheetOpen}
+        onOpenChange={setDaySheetOpen}
+        size="md"
+        theme="portal"
+        header={
+          <div className="gh-record-drawer__title-block">
+            <span className="gh-record-drawer__eyebrow">{s.dayAgendaEyebrow ?? "Day agenda"}</span>
+            <Dialog.Title asChild>
+              <h2 className="gh-record-drawer__title">
+                {selectedDay ? dayLabel(selectedDay) : ""}
+              </h2>
+            </Dialog.Title>
+          </div>
+        }
+      >
+        <div className="gh-doctor-calendar-day-actions mb-3 flex flex-wrap gap-2">
+          <Btn
+            type="button"
+            size="sm"
+            variant="soft"
+            disabled={busy || !dayHasOpen}
+            onClick={() => onBlockDay("BLOCK")}
+            iconLeft={<Lock className="size-3.5" />}
+          >
+            {s.blockWholeDay}
+          </Btn>
+          <Btn
+            type="button"
+            size="sm"
+            variant="ghost"
+            disabled={busy || !dayHasBlocked}
+            onClick={() => onBlockDay("UNBLOCK")}
+            iconLeft={<Unlock className="size-3.5" />}
+          >
+            {s.reopenDay}
+          </Btn>
+        </div>
+
+        <DayAgenda
+          dayKey={selectedDay}
+          items={dayItems}
+          tz={tz}
+          hideHeader
+          emptyLabel={s.noItemsOnDay}
+          onSelectConsultation={openEvent}
+          renderSlotAction={(item) => {
+            if (item.status !== "OPEN" && item.status !== "BLOCKED") return null;
+            const isOpen = item.status === "OPEN";
+            return (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => onToggleSlot(item)}
+                title={isOpen ? s.blockSlotTitle : s.reopenSlotTitle}
+                className="ml-0.5 inline-flex items-center disabled:opacity-50"
+              >
+                {isOpen ? (
+                  <Lock className="size-3" aria-hidden />
+                ) : (
+                  <Unlock className="size-3" aria-hidden />
+                )}
+              </button>
+            );
           }}
         />
-
-        <div className="gh-doctor-calendar-side grid gap-4 self-start">
-          {/* Day-level block controls */}
-          {selectedDay ? (
-            <div className="gh-doctor-calendar-day-card gh-card p-4">
-              <p className="text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
-                {dayLabel(selectedDay)}
-              </p>
-              <div className="gh-doctor-calendar-day-actions mt-3 flex flex-wrap gap-2">
-                <Btn
-                  type="button"
-                  size="sm"
-                  variant="soft"
-                  disabled={busy || !dayHasOpen}
-                  onClick={() => onBlockDay("BLOCK")}
-                  iconLeft={<Lock className="size-3.5" />}
-                >
-                  {s.blockWholeDay}
-                </Btn>
-                <Btn
-                  type="button"
-                  size="sm"
-                  variant="ghost"
-                  disabled={busy || !dayHasBlocked}
-                  onClick={() => onBlockDay("UNBLOCK")}
-                  iconLeft={<Unlock className="size-3.5" />}
-                >
-                  {s.reopenDay}
-                </Btn>
-              </div>
-            </div>
-          ) : null}
-
-          <DayAgenda
-            dayKey={selectedDay}
-            items={dayItems}
-            tz={tz}
-            emptyLabel={s.noItemsOnDay}
-            onSelectConsultation={setActiveItem}
-            renderSlotAction={(item) => {
-              if (item.status !== "OPEN" && item.status !== "BLOCKED") return null;
-              const isOpen = item.status === "OPEN";
-              return (
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => onToggleSlot(item)}
-                  title={isOpen ? s.blockSlotTitle : s.reopenSlotTitle}
-                  className="ml-0.5 inline-flex items-center disabled:opacity-50"
-                >
-                  {isOpen ? (
-                    <Lock className="size-3" aria-hidden />
-                  ) : (
-                    <Unlock className="size-3" aria-hidden />
-                  )}
-                </button>
-              );
-            }}
-          />
-        </div>
-      </div>
+      </AppSheet>
 
       <div className="gh-doctor-calendar-forms grid gap-4 lg:grid-cols-2">
         {/* Add availability over a date + time range */}

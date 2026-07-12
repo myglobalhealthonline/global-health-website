@@ -31,6 +31,7 @@ import {
   ConsultationDocumentsTrigger,
 } from "./_components/consultation-documents-section";
 import { BrazilConsentPanel } from "./_components/brazil-consent-panel";
+import { PatientContextPanel } from "./_components/patient-context-panel";
 import { AdminSummaryStrip } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
@@ -126,6 +127,20 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   const consultationDocsCopy = {
     ...d.consultationDocuments,
     ...d.consultationDocumentsModal,
+  };
+  // Shared by both renderers of the patient-context card (>=lg rail, <lg tab).
+  const patientContextCopy = {
+    patient: d.appointmentDetail.patient,
+    ghn: d.appointmentDetail.ghn,
+    email: d.appointmentDetail.email,
+    phone: d.appointmentDetail.phone,
+    dateOfBirth: d.common.dateOfBirth,
+    consultationLanguage: d.appointmentDetail.consultationLanguage,
+    statusLabel: d.appointmentDetail.statusLabel,
+    booked: d.appointmentDetail.booked,
+    bookingNotes: d.appointmentDetail.bookingNotes,
+    openPatientChart: d.appointmentDetail.openPatientChart,
+    editHealthDataHint: d.appointmentDetail.editHealthDataHint,
   };
   // Calm mode — DESIGN.md §6.3/strategy Doctor plan: while a consultation
   // is actively in progress (scheduled time has passed, not yet wrapped
@@ -277,18 +292,18 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       initialMode={consultationMode}
                       copy={d.appointmentActions}
                     />
-                    <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
-                      <h4 className="text-sm font-bold text-[var(--portal-text)]">
-                        {d.appointmentDetail.finalize}
-                      </h4>
-                      <FinalizeChecklist
-                        appointmentId={appointment.id}
-                        initialFinalized={appointment.finalized ?? false}
-                        initialNotesUploaded={appointment.notesUploaded ?? false}
-                        initialFilesUploaded={appointment.filesUploaded ?? false}
-                        copy={d.finalizeChecklist}
-                      />
-                    </div>
+                  </div>
+                </FormSection>
+
+                <FormSection title={d.appointmentDetail.finalize}>
+                  <div className="gh-form-section__span-2">
+                    <FinalizeChecklist
+                      appointmentId={appointment.id}
+                      initialFinalized={appointment.finalized ?? false}
+                      initialNotesUploaded={appointment.notesUploaded ?? false}
+                      initialFilesUploaded={appointment.filesUploaded ?? false}
+                      copy={d.finalizeChecklist}
+                    />
                     <div className="mt-4 border-t border-[var(--portal-line)] pt-4">
                       <FollowUpButton appointmentId={appointment.id} copy={d.followUpButton} />
                     </div>
@@ -583,74 +598,35 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
               </div>
             ),
           },
+          {
+            // Sub-lg fallback for the patient-context rail (C1-C3, TASK §1):
+            // never a floating card above the tabs — a dedicated tab instead.
+            // Hidden at >=lg via CSS since the rail already shows this content.
+            id: "patient",
+            label: d.appointmentDetail.patient,
+            panel: (
+              <PatientContextPanel
+                appointment={appointment}
+                statusText={statusValueText[appointment.status] ?? appointment.status}
+                copy={patientContextCopy}
+              />
+            ),
+          },
         ]}
       />
       </div>
 
-      <aside className="gh-doctor-context-rail grid gap-4 self-start lg:sticky lg:top-4">
-        <FormSection title={d.appointmentDetail.patient}>
-          <div className="gh-form-section__span-2">
-            <dl className="grid gap-2 text-portal-compact">
-              {appointment.globalHealthNumber ? (
-                <Row label={d.appointmentDetail.ghn} value={appointment.globalHealthNumber} />
-              ) : null}
-              <Row label={d.appointmentDetail.email} value={appointment.email} />
-              <Row label={d.appointmentDetail.phone} value={appointment.phone ?? "—"} />
-              <Row
-                label={d.common.dateOfBirth}
-                value={
-                  appointment.dateOfBirth
-                    ? new Date(appointment.dateOfBirth).toLocaleDateString()
-                    : "—"
-                }
-              />
-              {appointment.consultationLanguageCode ? (
-                <Row label={d.appointmentDetail.consultationLanguage} value={appointment.consultationLanguageCode.toUpperCase()} />
-              ) : null}
-              <Row label={d.appointmentDetail.statusLabel} value={statusValueText[appointment.status] ?? appointment.status} />
-              <Row
-                label={d.appointmentDetail.booked}
-                value={new Date(appointment.createdAt).toLocaleString()}
-              />
-            </dl>
-            {appointment.notes ? (
-              <div className="mt-4 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3 text-portal-compact">
-                <p className="text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
-                  {d.appointmentDetail.bookingNotes}
-                </p>
-                <p className="mt-1 whitespace-pre-wrap text-[var(--portal-text)]">
-                  {appointment.notes}
-                </p>
-              </div>
-            ) : null}
-            <Link
-              href={`/doctor/patients/${encodeURIComponent(appointment.email)}`}
-              className="gh-btn gh-btn-soft mt-4 inline-flex items-center gap-2 text-sm"
-            >
-              <ExternalLink className="size-3.5" aria-hidden /> {d.appointmentDetail.openPatientChart}
-            </Link>
-            <p className="mt-1 text-portal-meta text-[var(--portal-muted)]">
-              {d.appointmentDetail.editHealthDataHint}
-            </p>
-          </div>
-        </FormSection>
-
+      <aside className="gh-doctor-context-rail">
+        <PatientContextPanel
+          appointment={appointment}
+          statusText={statusValueText[appointment.status] ?? appointment.status}
+          copy={patientContextCopy}
+        />
         {/* Patient billing/invoice is intentionally NOT shown to doctors —
             they see only their own per-service payout under Finance →
             Invoices. Admin owns patient invoicing. */}
       </aside>
       </div>
-    </div>
-  );
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-baseline justify-between gap-3 border-b border-[var(--portal-line)]/60 py-1">
-      <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-        {label}
-      </dt>
-      <dd className="text-right text-[var(--portal-text)]">{value}</dd>
     </div>
   );
 }
