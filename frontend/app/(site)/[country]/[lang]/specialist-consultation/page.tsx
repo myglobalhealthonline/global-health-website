@@ -12,8 +12,6 @@ import { FAQSection } from "@/components/sections/FAQSection";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import {
   ChecklistSection,
-  ImportantInfoSection,
-  ProcessStepsSection,
   ServiceIntro,
   WhyChooseSection,
 } from "@/components/sections/ServiceContentSections";
@@ -41,7 +39,7 @@ import { formatPriceRounded } from "@/lib/format-currency";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
-import { getCountryLegal } from "@/lib/content/get-country-legal";
+import { getCountryDisclaimer, getCountryLegal } from "@/lib/content/get-country-legal";
 import { getServiceHubContent } from "@/lib/content/service-hub-content";
 import { selectSpecialistDoctors } from "@/lib/content/specialist-doctor-selection";
 
@@ -112,11 +110,13 @@ export default async function CountryLangSpecialistConsultationPage({
     services,
     doctors,
     legal,
+    { short: specialistShortDisclaimer },
   ] = await Promise.all([
     getPublicPage(code, "SPECIALIST_CONSULTATION", lang as PublicLocale),
     getCountryServices(code, "SPECIALIST", lang),
     getCountryDoctors(code, lang),
     getCountryLegal(code),
+    getCountryDisclaimer(code, lang),
   ]);
 
   const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
@@ -126,7 +126,7 @@ export default async function CountryLangSpecialistConsultationPage({
     locale: lang,
     serviceNames: services.map((service) => service.name),
   });
-  const heroSubtitle = page?.heroSubtitle ?? hub.overview.body;
+  const heroSubtitle = page?.heroSubtitle ?? sp.heroSubtitle.replace("{country}", config.name);
 
   // Specialist service cards — auto from Service rows where kind=SPECIALIST.
   // Each card links to the booking form WITH `?service=<slug>` so the
@@ -220,43 +220,50 @@ export default async function CountryLangSpecialistConsultationPage({
           alt: `Specialist available for an online consultation in ${config.name}`,
           priority: true,
         }}
+        badge={{
+          title: sp.hero.feature1Title,
+          subtitle: sp.hero.feature2Title.replace("{country}", config.name),
+          accent: sp.hero.feature3Title,
+        }}
         featureCards={[
           {
             icon: <Stethoscope className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: `${services.length} · ${sp.specialistConsultationsTitle}`,
-            subtitle: hub.commonReasons?.intro ?? hub.overview.body,
+            title: sp.hero.feature1Title,
+            subtitle: sp.hero.feature1Subtitle,
           },
           {
             icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: `${eligibleDoctors.length} · ${sp.doctorsSectionTitle.replace("{country}", config.name)}`,
-            subtitle: hub.process.steps[1].body,
+            title: sp.hero.feature2Title.replace("{country}", config.name),
+            subtitle: sp.hero.feature2Subtitle.replace("{country}", config.name),
           },
           {
             icon: <Lock className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: hub.process.steps[3].title,
-            subtitle: hub.process.steps[3].body,
+            title: sp.hero.feature3Title,
+            subtitle: sp.hero.feature3Subtitle,
           },
         ]}
         trustStats={[
           {
             icon: <ShieldCheck className="size-5" strokeWidth={2} aria-hidden />,
-            title: hub.overview.title,
-            subtitle: hub.overview.body,
+            title: sp.hero.stat1Title.replace("{country}", config.name),
+            subtitle: sp.hero.stat1Subtitle.replace("{country}", config.name),
           },
           {
             icon: <Stethoscope className="size-5" strokeWidth={2} aria-hidden />,
-            title: hub.process.title,
-            subtitle: hub.process.steps[0].body,
+            title: sp.hero.stat2Title.replace("{country}", config.name),
+            subtitle: sp.hero.stat2Subtitle.replace("{country}", config.name),
           },
           {
             icon: <Lock className="size-5" strokeWidth={2} aria-hidden />,
-            title: hub.whyChoose.title,
-            subtitle: hub.whyChoose.items[1],
+            title: sp.hero.stat3Title.replace("{country}", config.name),
+            subtitle: sp.hero.stat3Subtitle.replace("{country}", config.name),
           },
         ]}
       />
 
-      <ServiceIntro eyebrow={hub.overview.eyebrow} body={hub.overview.body} theme="light" />
+      {serviceItems.length > 0 ? (
+        <ServiceIntro body={hub.overview.body} theme="light" />
+      ) : null}
 
       {/* 1 — The product: specialist consultations straight after the hero. */}
       {serviceItems.length > 0 ? (
@@ -272,38 +279,25 @@ export default async function CountryLangSpecialistConsultationPage({
       ) : null}
 
       <ChecklistSection {...hub.whoFor} theme="light" />
-      {hub.commonReasons ? <ChecklistSection {...hub.commonReasons} theme="soft" /> : null}
-      <ProcessStepsSection {...hub.process} theme="dark" />
 
       {/* The clinicians behind the service. */}
       {doctorItems.length > 0 ? (
         <DoctorsSection
           title={`${doctorItems.length} · ${sp.doctorsSectionTitle.replace("{country}", config.name)}`}
-          intro={hub.process.steps[1].body}
+          intro={sp.doctorsSectionIntro}
           doctors={doctorItems}
-          theme="light"
-          cardTheme="dark"
+          theme="dark"
         />
-      ) : (
-        <section className="gh2-section-ivory" style={{ padding: "clamp(64px,8vw,120px) 0" }}>
-          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-primary)]">{hub.process.steps[1].title}</p>
-            <h2 className="mt-4 text-3xl font-extrabold tracking-[-0.03em] text-[var(--color-text-primary)]">{hub.emptyState.title}</h2>
-            <p className="mt-4 max-w-[62ch] leading-relaxed text-[var(--color-text-muted)]">{hub.emptyState.body}</p>
-          </div>
-        </section>
-      )}
+      ) : null}
 
       <WhyChooseSection title={hub.whyChoose.title} items={hub.whyChoose.items} theme="soft" />
-      <ImportantInfoSection {...hub.importantInformation} theme="light" />
 
-      {/* 5 — Admin-edited rich body sits below the conversion path. */}
       <RichBodySection html={page?.body} theme="light" />
 
       <FAQSection title={c.extra.consultFaqTitle} items={hub.faq} />
 
       <DoctifyReviewsSection
-        theme="forest"
+        theme="ivory"
         variant="carousel"
         language={lang}
         eyebrow={hub.whyChoose.eyebrow}
@@ -316,26 +310,29 @@ export default async function CountryLangSpecialistConsultationPage({
         primaryHref={ctaHref}
         secondaryHref={`/${slug}/${lang}/doctors`}
         i18n={{
-          eyebrow: hub.process.eyebrow,
+          eyebrow: sp.specialtyAreas,
           liveLabel: config.name,
-          calendarLine: hasEligibleDoctor
-            ? hub.process.steps[1].body
-            : hub.emptyState.body,
-          headlinePre: hub.process.steps[0].title,
-          headlineAccent: hub.process.steps[1].title,
-          headlinePost: "",
-          body: hub.process.steps[2].body,
+          calendarLine: sp.specialistConsultationsIntro,
+          headlinePre: sp.heroLead,
+          headlineAccent: sp.heroAccent,
+          headlinePost: sp.heroTrail,
+          body: heroSubtitle,
           primaryCta: ctaLabel,
           secondaryCta: sp.secondaryLabel,
         }}
       />
       <StickyBookingCTA href={ctaHref} label={ctaLabel} />
-      <MedicalDisclaimer
-        paragraphs={[
-          ...hub.importantInformation.paragraphs.slice(0, 3),
-          ...(legal?.profile?.emergencyNotice ? [legal.profile.emergencyNotice] : []),
-        ]}
-      />
+      <section
+        className="relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
+        style={{ padding: "clamp(28px,4vw,48px) 0" }}
+      >
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <MedicalDisclaimer
+            variant="short"
+            text={specialistShortDisclaimer ?? hub.importantInformation.paragraphs[0]}
+          />
+        </div>
+      </section>
     </>
   );
 }

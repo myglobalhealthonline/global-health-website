@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ShieldCheck, Clock, MapPin, Lock } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { ServiceHero } from "@/components/sections/ServiceHero";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
@@ -30,14 +29,13 @@ import { FAQSection } from "@/components/sections/FAQSection";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import {
   ChecklistSection,
-  ImportantInfoSection,
-  ProcessStepsSection,
   ServiceIntro,
   WhyChooseSection,
 } from "@/components/sections/ServiceContentSections";
-import { getCountryLegal } from "@/lib/content/get-country-legal";
+import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
 import { getServiceHubContent } from "@/lib/content/service-hub-content";
 import { resolveBrandTitle } from "@/lib/seo/page-seo";
+import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 
 type Params = { country: string; lang: string };
 
@@ -95,11 +93,11 @@ export default async function HealthTestsPage({
   const [
     items,
     { record: rawPage, disabled: pageDisabled },
-    legal,
+    { short: testsShortDisclaimer },
   ] = await Promise.all([
     getCountryHealthTests(code, lang),
     getPublicPage(code, "HEALTH_TESTS", lang as PublicLocale),
-    getCountryLegal(code),
+    getCountryDisclaimer(code, lang),
   ]);
 
   const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
@@ -112,7 +110,7 @@ export default async function HealthTestsPage({
     locale: lang,
     serviceNames: items.map((item) => item.title),
   });
-  const heroSubtitle = page?.heroSubtitle ?? hub.overview.body;
+  const heroSubtitle = page?.heroSubtitle ?? t.heroSubtitle.replace("{country}", config.name);
 
   return (
     <>
@@ -137,10 +135,10 @@ export default async function HealthTestsPage({
 
       <ServiceHero
         countryCode={config.code}
-        countryLabel={`${config.name} · ${t.watermark}`}
-        titleLead={page?.heroTitle ?? hub.overview.title}
-        titleAccent=""
-        titleTrail={undefined}
+        countryLabel={t.countryLabel.replace("{country}", config.name)}
+        titleLead={page?.heroTitle ?? t.titleLead}
+        titleAccent={page?.heroTitle ? "" : t.titleAccent}
+        titleTrail={page?.heroTitle ? undefined : t.titleTrail}
         lede={heroSubtitle}
         primaryCta={{ label: page?.ctaLabel ?? t.ctaLabel, href: page?.ctaHref ?? bookHref }}
         secondaryCta={{
@@ -152,56 +150,48 @@ export default async function HealthTestsPage({
           alt: hub.overview.title,
           priority: true,
         }}
+        badge={{
+          title: t.hero.feature1Title,
+          subtitle: t.hero.feature2Title,
+          accent: t.hero.feature3Title.replace("{country}", config.name),
+        }}
         featureCards={[
           {
             icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: hub.process.steps[0].title,
-            subtitle: hub.process.steps[0].body,
+            title: t.hero.feature1Title,
+            subtitle: t.hero.feature1Subtitle,
           },
           {
             icon: <Clock className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: hub.process.steps[1].title,
-            subtitle: hub.process.steps[1].body,
+            title: t.hero.feature2Title,
+            subtitle: t.hero.feature2Subtitle,
           },
           {
             icon: <MapPin className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: hub.process.steps[2].title,
-            subtitle: hub.process.steps[2].body,
+            title: t.hero.feature3Title.replace("{country}", config.name),
+            subtitle: t.hero.feature3Subtitle.replace("{country}", config.name),
           },
         ]}
         trustStats={[
           {
             icon: <ShieldCheck className="size-5" strokeWidth={2} aria-hidden />,
-            title: t.availableHeading
-              .replace("{count}", String(items.length))
-              .replace("{unit}", items.length === 1 ? t.testSingular : t.testPlural),
-            subtitle: hub.overview.body,
+            title: t.hero.stat1Title,
+            subtitle: t.hero.stat1Subtitle,
           },
           {
             icon: <Clock className="size-5" strokeWidth={2} aria-hidden />,
-            title: hub.secondaryProcess?.title ?? hub.process.title,
-            subtitle: hub.secondaryProcess?.steps[0].body ?? hub.process.steps[0].body,
+            title: t.hero.stat2Title,
+            subtitle: t.hero.stat2Subtitle,
           },
           {
             icon: <Lock className="size-5" strokeWidth={2} aria-hidden />,
-            title: hub.whyChoose.title,
-            subtitle: hub.whyChoose.items[1],
+            title: t.hero.stat3Title,
+            subtitle: t.hero.stat3Subtitle,
           },
         ]}
       />
 
-      {/* Trust signals immediately under the hero, then straight into
-          the product grid — supporting copy moves below the offer. */}
-      <TrustRibbon
-        items={[
-          { v: String(items.length), l: items.length === 1 ? t.testSingular : t.testPlural, icon: "sparkles" },
-          { v: hub.overview.eyebrow, l: hub.overview.title, icon: "doctor" },
-          { v: hub.secondaryProcess?.eyebrow ?? hub.process.eyebrow, l: hub.secondaryProcess?.title ?? hub.process.title, icon: "shield" },
-          { v: hub.whyChoose.eyebrow, l: hub.whyChoose.title, icon: "lock" },
-        ]}
-      />
-
-      <ServiceIntro eyebrow={hub.overview.eyebrow} body={hub.overview.body} theme="light" />
+      <ServiceIntro body={hub.overview.body} theme="light" />
 
       {items.length > 0 ? (
         <section
@@ -274,40 +264,49 @@ export default async function HealthTestsPage({
       )}
 
       <ChecklistSection {...hub.whoFor} theme="light" />
-      <ProcessStepsSection {...hub.process} theme="dark" />
-      {hub.secondaryProcess ? <ProcessStepsSection {...hub.secondaryProcess} theme="light" /> : null}
-      {hub.results ? <ImportantInfoSection {...hub.results} theme="soft" /> : null}
-      <WhyChooseSection title={hub.whyChoose.title} items={hub.whyChoose.items} theme="light" />
-      <ImportantInfoSection {...hub.importantInformation} theme="soft" />
+      <WhyChooseSection title={hub.whyChoose.title} items={hub.whyChoose.items} theme="soft" />
 
-      {/* Admin-edited rich body from ContentPage (HEALTH_TESTS). */}
       <RichBodySection html={page?.body} theme="light" />
 
       <FAQSection title={t.watermark} items={hub.faq} />
 
-      <MedicalDisclaimer
-        paragraphs={[
-          ...hub.importantInformation.paragraphs.slice(0, 3),
-          ...(legal?.profile?.emergencyNotice ? [legal.profile.emergencyNotice] : []),
-        ]}
+      <DoctifyReviewsSection
+        theme="ivory"
+        variant="carousel"
+        language={lang}
+        eyebrow="Patient reviews"
+        headline="Trusted by patients"
+        headlineAccent="across Europe"
+        body="Independent, verified reviews collected by Doctify from patients treated by our clinicians."
       />
 
       <FinalCTA
         primaryHref={bookHref}
         secondaryHref={`/${slug}/${lang}`}
         i18n={{
-          eyebrow: hub.process.eyebrow,
+          eyebrow: t.reviewedEyebrow,
           liveLabel: config.name,
-          calendarLine: hub.overview.body,
-          headlinePre: hub.process.steps[0].title,
-          headlineAccent: hub.process.steps[1].title,
-          headlinePost: "",
-          body: hub.results?.paragraphs[0] ?? hub.process.steps[2].body,
+          calendarLine: heroSubtitle,
+          headlinePre: t.titleLead,
+          headlineAccent: t.titleAccent,
+          headlinePost: t.titleTrail,
+          body: hub.overview.body,
           primaryCta: t.ctaLabel,
           secondaryCta: t.secondaryLabel,
         }}
       />
       <StickyBookingCTA href={bookHref} label={t.ctaLabel} />
+      <section
+        className="relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
+        style={{ padding: "clamp(28px,4vw,48px) 0" }}
+      >
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <MedicalDisclaimer
+            variant="short"
+            text={testsShortDisclaimer ?? hub.importantInformation.paragraphs[0]}
+          />
+        </div>
+      </section>
     </>
   );
 }

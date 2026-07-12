@@ -83,7 +83,6 @@ export function ServiceIntro({
           style={{
             fontSize: "clamp(1.15rem, 1vw + 0.9rem, 1.5rem)",
             color: isDark(theme) ? "rgba(255,255,255,0.78)" : "var(--color-text-body)",
-            maxWidth: "62ch",
             fontWeight: 500,
           }}
         >
