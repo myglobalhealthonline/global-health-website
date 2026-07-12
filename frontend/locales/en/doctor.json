@@ -681,7 +681,8 @@
     "description": "Required before patient-record protections are enforced — takes about 5 minutes.",
     "acceptConfidentiality": "Accept the confidentiality agreement",
     "enable2fa": "Enable two-factor authentication",
-    "dismissAria": "Dismiss compliance reminder"
+    "dismissAria": "Dismiss compliance reminder",
+    "dismissCaption": "Dismissed reminders return next session until complete."
   },
   "documentTables": {
     "colSessionDate": "Session date",

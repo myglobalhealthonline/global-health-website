@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { ArrowLeft, Cake, CalendarCheck, ChevronRight, ExternalLink, FileCheck, Globe } from "lucide-react";
 import { fetchDoctorPatientDetail } from "@/lib/api/doctor-api";
 import { AdminEmptyState, AdminSummaryStrip, PageHeader, Pill } from "@/components/portal-atoms";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
@@ -69,18 +69,21 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
             value: patient.countryCode.toUpperCase(),
             hint: d.patients.bookingMarket,
             tone: "brand",
+            icon: <Globe className="size-4" aria-hidden />,
           },
           {
             label: d.patients.appointments,
             value: patient.appointmentCount,
             hint: d.patients.withYou,
             tone: "neutral",
+            icon: <CalendarCheck className="size-4" aria-hidden />,
           },
           {
             label: d.patients.signedConsults,
             value: patient.signedConsultCount,
             hint: d.patients.lockedNotes,
             tone: patient.signedConsultCount > 0 ? "success" : "neutral",
+            icon: <FileCheck className="size-4" aria-hidden />,
           },
           {
             label: d.common.dateOfBirth,
@@ -89,6 +92,7 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
               : "—",
             hint: d.patients.recordEyebrow,
             tone: "neutral",
+            icon: <Cake className="size-4" aria-hidden />,
           },
         ]}
       />

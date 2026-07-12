@@ -681,7 +681,8 @@
     "description": "Vyžadováno před vynucením ochrany záznamů pacientů — zabere přibližně 5 minut.",
     "acceptConfidentiality": "Přijmout dohodu o mlčenlivosti",
     "enable2fa": "Povolit dvoufaktorové ověřování",
-    "dismissAria": "Zavřít připomenutí dodržování předpisů"
+    "dismissAria": "Zavřít připomenutí dodržování předpisů",
+    "dismissCaption": "Zavřená připomenutí se vrátí příští relaci, dokud nebudou dokončena."
   },
   "documentTables": {
     "colSessionDate": "Datum sezení",

@@ -681,7 +681,8 @@
     "description": "Necesar înainte ca protecțiile fișelor pacienților să fie aplicate — durează aproximativ 5 minute.",
     "acceptConfidentiality": "Acceptați acordul de confidențialitate",
     "enable2fa": "Activați autentificarea în doi factori",
-    "dismissAria": "Închide memento-ul de conformitate"
+    "dismissAria": "Închide memento-ul de conformitate",
+    "dismissCaption": "Mementourile închise revin la sesiunea următoare până la finalizare."
   },
   "documentTables": {
     "colSessionDate": "Data ședinței",

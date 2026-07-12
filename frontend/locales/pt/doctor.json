@@ -681,7 +681,8 @@
     "description": "Necessário antes de as proteções dos registos de pacientes serem aplicadas — demora cerca de 5 minutos.",
     "acceptConfidentiality": "Aceitar o acordo de confidencialidade",
     "enable2fa": "Ativar a autenticação de dois fatores",
-    "dismissAria": "Dispensar lembrete de conformidade"
+    "dismissAria": "Dispensar lembrete de conformidade",
+    "dismissCaption": "Os lembretes dispensados regressam na próxima sessão até ficarem concluídos."
   },
   "documentTables": {
     "colSessionDate": "Data da sessão",

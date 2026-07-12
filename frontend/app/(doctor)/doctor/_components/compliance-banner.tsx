@@ -18,6 +18,9 @@ export type ComplianceBannerCopy = {
   acceptConfidentiality: string;
   enable2fa: string;
   dismissAria: string;
+  /** Clarifies dismiss is session-only (01-004). Optional so older copy
+   *  bundles without this key don't break the type. */
+  dismissCaption?: string;
 };
 
 export function ComplianceBanner({
@@ -93,6 +96,11 @@ export function ComplianceBanner({
             </li>
           ) : null}
         </ul>
+        {copy.dismissCaption ? (
+          <p className="mt-1.5 text-portal-meta" style={{ color: "var(--portal-muted)" }}>
+            {copy.dismissCaption}
+          </p>
+        ) : null}
       </div>
       <button
         type="button"

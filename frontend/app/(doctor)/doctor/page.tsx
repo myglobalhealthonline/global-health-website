@@ -4,6 +4,8 @@ import {
   AlertTriangle,
   Bell,
   Calendar,
+  CalendarClock,
+  CalendarRange,
   ChevronRight,
   ClipboardList,
   FileText,
@@ -24,7 +26,7 @@ import {
   SectionHeader,
   StatCard,
 } from "@/components/portal-atoms";
-import { formatAppTime } from "@/lib/format-datetime";
+import { formatAppDateTimeShort, formatAppTime } from "@/lib/format-datetime";
 import { doctorAppointmentView } from "@/lib/api/appointment-status-labels";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -183,14 +185,14 @@ export default async function DoctorOverviewPage() {
           label={d.dashboard.today}
           value={stats.todayCount}
           hint={d.dashboard.scheduledAppointments}
-          icon={<Calendar className="size-5" aria-hidden />}
+          icon={<CalendarClock className="size-5" aria-hidden />}
         />
         <StatCard
           tone="accent"
           label={d.dashboard.thisWeek}
           value={stats.weekCount}
           hint={d.dashboard.scheduledWithin7Days}
-          icon={<Calendar className="size-5" aria-hidden />}
+          icon={<CalendarRange className="size-5" aria-hidden />}
         />
         <StatCard
           tone={stats.totalActive > 0 ? "warning" : "neutral"}
@@ -256,6 +258,7 @@ export default async function DoctorOverviewPage() {
           <SectionHeader
             title={d.dashboard.todaysSchedule}
             description={d.dashboard.todaysScheduleDesc}
+            flat
           />
           <div className="p-5">
             {todayAppointments.length === 0 ? (
@@ -328,6 +331,7 @@ export default async function DoctorOverviewPage() {
                 <Bell className="size-4" aria-hidden /> {d.dashboard.unreadNotifications}
               </span>
             }
+            flat
           />
           <div className="p-5">
             {unreadNotifs.length === 0 ? (
@@ -342,8 +346,11 @@ export default async function DoctorOverviewPage() {
               <ul className="gh-doctor-notification-mini-list grid gap-3">
                 {unreadNotifs.slice(0, 6).map((n) => (
                   <li key={n.id} className="text-portal-compact">
-                    <p className="font-semibold text-[var(--portal-text)]">
-                      {NOTIF_TYPE_LABEL[n.type] ?? n.type.replace(/_/g, " ").toLowerCase()}
+                    <p className="flex items-baseline justify-between gap-2 font-semibold text-[var(--portal-text)]">
+                      <span>{NOTIF_TYPE_LABEL[n.type] ?? n.type.replace(/_/g, " ").toLowerCase()}</span>
+                      <span className="shrink-0 text-portal-meta font-medium text-[var(--portal-muted)]">
+                        {formatAppDateTimeShort(n.createdAt)}
+                      </span>
                     </p>
                     {n.payload?.snippet ? (
                       <p className="line-clamp-2 text-portal-meta text-[var(--portal-muted)]">

@@ -681,7 +681,8 @@
     "description": "Necesario antes de que se apliquen las protecciones de los registros de pacientes — lleva unos 5 minutos.",
     "acceptConfidentiality": "Aceptar el acuerdo de confidencialidad",
     "enable2fa": "Activar la autenticación de dos factores",
-    "dismissAria": "Descartar recordatorio de cumplimiento"
+    "dismissAria": "Descartar recordatorio de cumplimiento",
+    "dismissCaption": "Los recordatorios descartados vuelven a aparecer en la próxima sesión hasta completarse."
   },
   "documentTables": {
     "colSessionDate": "Fecha de sesión",

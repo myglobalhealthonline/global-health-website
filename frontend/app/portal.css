@@ -4625,6 +4625,13 @@ a.gh-appointment-card:hover {
   border-bottom: 1px solid var(--portal-line-soft);
 }
 
+/* Opt-in flat variant (audit 11-001): drop the tinted background so the
+ * header doesn't read as a second "section start" surface stacked on
+ * top of the parent card's own top edge — keep only the bottom rule. */
+.gh-portal-section-header--flat {
+  background: transparent;
+}
+
 /* A section header is a full-width surface inside many portal cards. Give its
  * exposed top edge the same radius as the shell; otherwise its background
  * paints square corners over the card, as on the doctor dashboard panels. */

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { CalendarCheck, ChevronRight, Globe, Users } from "lucide-react";
 import { fetchDoctorPatients } from "@/lib/api/doctor-api";
 import {
   AdminSummaryStrip,
@@ -138,18 +138,21 @@ export default async function DoctorPatientsPage({
               value: totalPatients,
               hint: q ? d.patients.matchingSearch.replace("{count}", String(items.length)) : d.patients.visiblePanel,
               tone: "brand",
+              icon: <Users className="size-4" aria-hidden />,
             },
             {
               label: d.patients.statBookings,
               value: totalBookings,
               hint: d.patients.acrossHistory,
               tone: "neutral",
+              icon: <CalendarCheck className="size-4" aria-hidden />,
             },
             {
               label: d.patients.statMarkets,
               value: countries,
               hint: d.patients.countriesRepresented,
               tone: "success",
+              icon: <Globe className="size-4" aria-hidden />,
             },
           ]}
         />

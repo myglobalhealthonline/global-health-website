@@ -681,7 +681,8 @@
     "description": "Erforderlich, bevor der Schutz von Patientenakten durchgesetzt wird — dauert etwa 5 Minuten.",
     "acceptConfidentiality": "Vertraulichkeitsvereinbarung akzeptieren",
     "enable2fa": "Zwei-Faktor-Authentifizierung aktivieren",
-    "dismissAria": "Compliance-Erinnerung ausblenden"
+    "dismissAria": "Compliance-Erinnerung ausblenden",
+    "dismissCaption": "Ausgeblendete Erinnerungen erscheinen in der nächsten Sitzung erneut, bis sie erledigt sind."
   },
   "documentTables": {
     "colSessionDate": "Sitzungsdatum",

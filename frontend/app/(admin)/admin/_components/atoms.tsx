@@ -111,6 +111,7 @@ export function SectionHeader({
   description,
   right,
   as: Heading = "h3",
+  flat = false,
 }: {
   title: ReactNode;
   description?: ReactNode;
@@ -119,9 +120,17 @@ export function SectionHeader({
    *  "h2" when this renders directly under the page's h1 with nothing
    *  between, to keep the heading outline unbroken. */
   as?: "h2" | "h3" | "h4";
+  /** Drops the header's own tinted background, leaving only the bottom
+   *  rule, so it doesn't double up with the parent card's top edge as a
+   *  second "section start" cue (audit 11-001). Opt-in — default
+   *  rendering is unchanged for every other consumer. */
+  flat?: boolean;
 }) {
   return (
-    <div className="gh-portal-section-header flex items-start justify-between gap-4 px-5 py-4">
+    <div
+      className={`gh-portal-section-header${flat ? " gh-portal-section-header--flat" : ""} flex items-start justify-between gap-4 px-5 py-4`}
+    >
+
       <div className="min-w-0">
         <div className="flex items-center gap-2.5">
           <span aria-hidden className="gh-portal-section-rule" />
