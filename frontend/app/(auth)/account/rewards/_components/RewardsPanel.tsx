@@ -168,13 +168,13 @@ export function RewardsPanel(props: RewardsPanelProps) {
                     {error ? (
                       <p className="rounded-md px-3 py-2 text-sm" style={{ background: "var(--portal-danger-soft)", color: "var(--portal-danger-text)" }} role="alert">{error}</p>
                     ) : null}
-                    <div className="gh-patient-form-actions grid gap-2 sm:flex sm:items-center">
+                    <div className="gh-patient-form-actions grid gap-2 sm:flex sm:items-center sm:justify-end">
+                      <button type="button" onClick={() => setOpenKit(null)} aria-label="Cancel redemption" className="inline-flex justify-center rounded-md border border-[var(--portal-line)] px-4 py-2 text-sm font-semibold text-[var(--portal-muted)] hover:bg-[var(--portal-well)]">
+                        ×
+                      </button>
                       <button type="submit" disabled={submitting} className="gh-btn gh-btn-primary inline-flex justify-center disabled:opacity-60">
                         {submitting ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Gift className="size-4" aria-hidden />}
                         {submitting ? t.redeeming : interpolate(t.redeemCta, { count: kit.requiredWellnessCredits })}
-                      </button>
-                      <button type="button" onClick={() => setOpenKit(null)} aria-label="Cancel redemption" className="inline-flex justify-center rounded-md border border-[var(--portal-line)] px-4 py-2 text-sm font-semibold text-[var(--portal-muted)] hover:bg-[var(--portal-well)]">
-                        ×
                       </button>
                     </div>
                   </form>

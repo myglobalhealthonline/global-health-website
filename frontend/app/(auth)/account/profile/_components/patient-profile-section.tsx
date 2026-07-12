@@ -420,14 +420,16 @@ export function PatientProfileSection({
             </p>
           ) : null}
 
-          <button
-            type="submit"
-            disabled={pending}
-            className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
-          >
-            <Save className="size-4" aria-hidden />
-            {pending ? i18n.savingMedical : i18n.saveMedicalProfile}
-          </button>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={pending}
+              className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+            >
+              <Save className="size-4" aria-hidden />
+              {pending ? i18n.savingMedical : i18n.saveMedicalProfile}
+            </button>
+          </div>
         </form>
       )}
     </section>

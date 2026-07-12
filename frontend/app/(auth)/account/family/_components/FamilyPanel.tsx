@@ -268,18 +268,20 @@ function AddMemberForm({ t, onAdded }: { t: FamilyCopy; onAdded: () => Promise<v
         </p>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={submitting || form.fullName.trim() === ""}
-        className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
-      >
-        {submitting ? (
-          <Loader2 className="size-4 animate-spin" aria-hidden />
-        ) : (
-          <Plus className="size-4" aria-hidden />
-        )}
-        {submitting ? t.adding : t.add}
-      </button>
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          disabled={submitting || form.fullName.trim() === ""}
+          className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+        >
+          {submitting ? (
+            <Loader2 className="size-4 animate-spin" aria-hidden />
+          ) : (
+            <Plus className="size-4" aria-hidden />
+          )}
+          {submitting ? t.adding : t.add}
+        </button>
+      </div>
     </form>
   );
 }
@@ -558,15 +560,7 @@ function EditMemberForm({
         </p>
       ) : null}
 
-      <div className="flex items-center gap-2">
-        <button
-          type="submit"
-          disabled={saving || form.fullName.trim() === ""}
-          className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
-        >
-          {saving ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
-          {saving ? t.saving : t.save}
-        </button>
+      <div className="flex items-center justify-end gap-2">
         <button
           type="button"
           onClick={onCancel}
@@ -574,6 +568,14 @@ function EditMemberForm({
         >
           <X className="size-4" aria-hidden />
           {t.cancel}
+        </button>
+        <button
+          type="submit"
+          disabled={saving || form.fullName.trim() === ""}
+          className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+        >
+          {saving ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
+          {saving ? t.saving : t.save}
         </button>
       </div>
     </form>

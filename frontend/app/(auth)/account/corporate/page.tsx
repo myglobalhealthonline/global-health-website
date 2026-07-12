@@ -393,7 +393,7 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
                     <span className="gh-field-label">{t.dateOfBirth}</span>
                     <input name="dateOfBirth" type="date" className="gh-input" />
                   </label>
-                  <div className="sm:col-span-3">
+                  <div className="flex justify-end sm:col-span-3">
                     <Btn type="submit" variant="primary" size="sm">
                       {t.addAndInvite}
                     </Btn>

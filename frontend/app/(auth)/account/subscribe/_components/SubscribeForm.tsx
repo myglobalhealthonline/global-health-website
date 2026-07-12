@@ -156,7 +156,7 @@ export function SubscribeForm(props: SubscribeFormProps) {
         </p>
       ) : null}
 
-      <div>
+      <div className="flex justify-end">
         <button
           type="submit"
           disabled={submitting || !consented}

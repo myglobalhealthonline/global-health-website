@@ -224,6 +224,7 @@ function UploadForm({ onUploaded }: { onUploaded: (doc: MedicalDoc) => void }) {
           {msg.text}
         </p>
       )}
+      <div className="flex justify-end">
       <button
         type="submit"
         disabled={pending || !file || !title.trim()}
@@ -232,6 +233,7 @@ function UploadForm({ onUploaded }: { onUploaded: (doc: MedicalDoc) => void }) {
         <Upload aria-hidden className="size-4" />
         {pending ? "Uploading…" : "Upload"}
       </button>
+      </div>
     </form>
   );
 }

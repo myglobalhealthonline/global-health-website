@@ -298,14 +298,16 @@ function SlotCard({
           </label>
         </div>
 
-        <button
-          type="submit"
-          disabled={savePending}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60 sm:w-auto"
-        >
-          <Save aria-hidden className="size-4" />
-          {savePending ? i18n.saving : i18n.saveSlot.replace("{n}", String(slot))}
-        </button>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={savePending}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60 sm:w-auto"
+          >
+            <Save aria-hidden className="size-4" />
+            {savePending ? i18n.saving : i18n.saveSlot.replace("{n}", String(slot))}
+          </button>
+        </div>
       </form>
 
       {doc && (

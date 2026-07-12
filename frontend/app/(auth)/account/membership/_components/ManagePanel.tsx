@@ -374,7 +374,7 @@ export function ManagePanel(props: ManagePanelProps) {
         </AdminCard>
       ) : null}
 
-      <div className="gh-patient-form-actions grid gap-3 sm:flex sm:flex-wrap sm:items-center">
+      <div className="gh-patient-form-actions grid gap-3 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
         <Btn
           variant="soft"
           onClick={openPortal}

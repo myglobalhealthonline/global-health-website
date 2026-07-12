@@ -226,14 +226,16 @@ export function GdprPreferencesTab({
         </p>
       )}
 
-      <button
-        type="button"
-        onClick={onSave}
-        disabled={saving}
-        className="inline-flex min-h-11 items-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
-      >
-        {saving ? i18n.saving : i18n.save}
-      </button>
+      <div className="flex justify-end">
+        <button
+          type="button"
+          onClick={onSave}
+          disabled={saving}
+          className="inline-flex min-h-11 items-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+        >
+          {saving ? i18n.saving : i18n.save}
+        </button>
+      </div>
     </div>
   );
 }

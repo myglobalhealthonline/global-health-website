@@ -346,13 +346,15 @@ export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
                       </p>
                     ) : null}
 
-                    <button
-                      type="submit"
-                      disabled={savingPwd}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60 sm:w-auto"
-                    >
-                      {savingPwd ? a.security.updating : a.security.updatePassword}
-                    </button>
+                    <div className="flex justify-end">
+                      <button
+                        type="submit"
+                        disabled={savingPwd}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60 sm:w-auto"
+                      >
+                        {savingPwd ? a.security.updating : a.security.updatePassword}
+                      </button>
+                    </div>
                   </form>
                 </div>
               </div>

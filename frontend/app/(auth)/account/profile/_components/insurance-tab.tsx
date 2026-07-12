@@ -184,14 +184,16 @@ export function InsuranceTab({
               className="gh-input mt-1 min-w-0"
             />
           </label>
-          <button
-            type="submit"
-            disabled={savePending}
-            className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
-          >
-            <Save aria-hidden className="size-4" />
-            {savePending ? i18n.saving : i18n.save}
-          </button>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={savePending}
+              className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+            >
+              <Save aria-hidden className="size-4" />
+              {savePending ? i18n.saving : i18n.save}
+            </button>
+          </div>
         </form>
       </div>
 

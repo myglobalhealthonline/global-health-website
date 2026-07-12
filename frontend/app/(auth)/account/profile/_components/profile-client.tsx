@@ -329,7 +329,7 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
                   disabled={saving}
                   loading={saving}
                   iconLeft={<Save aria-hidden className="size-4" />}
-                  className="justify-self-start"
+                  className="justify-self-end"
                 >
                   {saving ? a.profile.saving : a.profile.saveChanges}
                 </Btn>
