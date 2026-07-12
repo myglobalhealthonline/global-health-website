@@ -15,6 +15,7 @@ import { formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
 import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { AdminOrderActions } from "./_components/order-actions";
+import { InsuranceVerifyPanel } from "./_components/insurance-verify-panel";
 import { OrderMeetLinkDisplay } from "../_components/order-meet-link-display";
 import { UpdateAppointmentPanel } from "./_components/update-appointment-panel";
 import { AdminTrackingForm } from "./_components/tracking-form";
@@ -54,6 +55,13 @@ type AdminOrder = {
   trackingNumber: string | null;
   trackingCarrier: string | null;
   trackingUrl: string | null;
+  insurance: {
+    verificationStatus: string;
+    companyId: string | null;
+    companyName: string | null;
+    policyNumber: string | null;
+    insurancePriceCents: number | null;
+  } | null;
   items: {
     id: string;
     kind: string;
@@ -175,6 +183,16 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
           },
         ]}
       />
+
+      {order.insurance ? (
+        <div className="mb-4">
+          <InsuranceVerifyPanel
+            orderId={order.id}
+            currencyCode={order.currencyCode}
+            insurance={order.insurance}
+          />
+        </div>
+      ) : null}
 
       <div className="gh-admin-order-detail-layout grid gap-4 lg:grid-cols-[1fr_340px]">
         <div className="gh-admin-order-detail-main grid gap-4">

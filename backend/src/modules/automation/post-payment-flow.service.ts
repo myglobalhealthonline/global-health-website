@@ -15,6 +15,7 @@ import { createAutomationRun, finishAutomationRun } from "./automation-run.servi
 import {
   detectAutomationLanguage,
   pendingAppointmentDateLabel,
+  prefixServiceName,
 } from "./pre-payment-messages.js";
 import { formatOrderTotal, resolvePatientFullName, splitPatientName } from "./pre-payment-email-template.js";
 import { sendAutomationEmail } from "./send-automation-notification.js";
@@ -141,7 +142,7 @@ async function loadPostPaymentContext(orderId: string) {
     patientLastName: lastName,
     patientEmail: order.email,
     patientPhone: order.phone?.trim() ?? "",
-    serviceName: primary.name,
+    serviceName: prefixServiceName(primary.name, order.countryCode),
     doctorName,
     appointmentDate: appointmentStart
       ? formatDeadline(appointmentStart, primary.patientTimezone, lang)

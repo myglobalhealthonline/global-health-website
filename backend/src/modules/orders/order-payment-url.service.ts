@@ -16,6 +16,17 @@ function isSessionOpen(session: {
 }
 
 /**
+ * Short, branded pay link that 302-redirects to the live Stripe Checkout URL
+ * (frontend `app/pay/[orderId]` → backend `/api/orders/:id/pay-url`). Handed to
+ * WhatsApp/email instead of the 200-char Stripe URL, and always resolves the
+ * freshest session (and the cancelled/paid guard) at click time.
+ */
+export function orderPayShortLink(orderId: string): string {
+  const base = env.PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? "http://localhost:3000";
+  return `${base}/pay/${orderId}`;
+}
+
+/**
  * Returns a working Stripe Checkout URL for an unpaid order.
  * Reuses an open session when possible; creates a fresh session when the
  * original has expired (Stripe sessions expire after ~24h).

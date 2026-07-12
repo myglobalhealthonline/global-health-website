@@ -266,6 +266,7 @@ export async function doctorPayoutStatementReport(
       consultationType: true,
       serviceId: true,
       currencyCode: true,
+      insuranceCompanyId: true,
       service: { select: { name: true, currencyCode: true } },
     },
   });
@@ -286,15 +287,49 @@ export async function doctorPayoutStatementReport(
     for (const p of payouts) payoutByServiceId.set(p.serviceId, p.doctorAmountCents);
   }
 
+  // Insurance bookings (appointment.insuranceCompanyId set) pay the SEPARATE
+  // per-(company, service, doctor) insurance payout INSTEAD of the standard
+  // per-service payout. No fallback: an unset insurance payout shows "Not set".
+  const insuranceCompanyIds = Array.from(
+    new Set(capped.map((a) => a.insuranceCompanyId).filter((id): id is string => !!id)),
+  );
+  const insurancePayoutByKey = new Map<string, number | null>();
+  const companyNameById = new Map<string, string>();
+  if (insuranceCompanyIds.length > 0) {
+    const [insPayouts, companies] = await Promise.all([
+      prisma.serviceDoctorInsurancePayout.findMany({
+        where: { doctorId, insuranceCompanyId: { in: insuranceCompanyIds }, serviceId: { in: serviceIds } },
+        select: { insuranceCompanyId: true, serviceId: true, doctorAmountCents: true },
+      }),
+      prisma.insuranceCompany.findMany({
+        where: { id: { in: insuranceCompanyIds } },
+        select: { id: true, name: true },
+      }),
+    ]);
+    for (const p of insPayouts) {
+      insurancePayoutByKey.set(`${p.insuranceCompanyId}:${p.serviceId}`, p.doctorAmountCents);
+    }
+    for (const c of companies) companyNameById.set(c.id, c.name);
+  }
+
   const totals: Record<string, number> = {};
   const rows: ReportRow[] = capped.map((a) => {
-    const payout = a.serviceId ? payoutByServiceId.get(a.serviceId) ?? null : null;
+    const isInsurance = Boolean(a.insuranceCompanyId);
+    const payout = isInsurance
+      ? a.serviceId
+        ? insurancePayoutByKey.get(`${a.insuranceCompanyId}:${a.serviceId}`) ?? null
+        : null
+      : a.serviceId
+        ? payoutByServiceId.get(a.serviceId) ?? null
+        : null;
+    const insurer = isInsurance ? companyNameById.get(a.insuranceCompanyId as string) ?? "Insurance" : "—";
     const currency = a.service?.currencyCode ?? a.currencyCode ?? "—";
     if (payout != null) totals[currency] = (totals[currency] ?? 0) + payout;
     return {
       date: fmtDate(a.scheduledAt ?? a.createdAt),
       patient: a.fullName,
       service: a.service?.name ?? "—",
+      insurer,
       type: a.consultationType,
       payout: payout == null ? "Not set" : fmtMoney(payout, currency),
     };
@@ -307,6 +342,7 @@ export async function doctorPayoutStatementReport(
       date: "",
       patient: "",
       service: "",
+      insurer: "",
       type: "TOTAL",
       payout: fmtMoney(cents, currency),
     });
@@ -321,6 +357,7 @@ export async function doctorPayoutStatementReport(
       { key: "date", label: "Date" },
       { key: "patient", label: "Patient" },
       { key: "service", label: "Service" },
+      { key: "insurer", label: "Insurer" },
       { key: "type", label: "Type" },
       { key: "payout", label: "Payout", align: "right" },
     ],

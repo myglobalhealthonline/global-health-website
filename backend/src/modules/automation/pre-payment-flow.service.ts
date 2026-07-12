@@ -3,7 +3,7 @@ import { prisma } from "../../db/prisma.js";
 import { releaseSlotsToBaseGrid } from "../doctor-availability/doctor-availability.service.js";
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import { resolveEmailLogoUrl } from "../../lib/email/resolve-email-logo-url.js";
-import { resolveOrderPaymentUrl } from "../orders/order-payment-url.service.js";
+import { resolveOrderPaymentUrl, orderPayShortLink } from "../orders/order-payment-url.service.js";
 import { sendAutomationEmail } from "./send-automation-notification.js";
 import { sendWhatsAppText, formatWhatsAppSendError } from "../../lib/whatsapp/wasender.js";
 import { resolveDoctorContact } from "../../lib/whatsapp/resolve-doctor-contact.js";
@@ -23,6 +23,7 @@ import {
 import {
   detectAutomationLanguage,
   formatDeadline,
+  prefixServiceName,
   pendingAppointmentDateLabel,
   patientEmailSubject,
   patientWhatsAppInitial,
@@ -41,6 +42,11 @@ import {
 } from "./resolve-order-portal-access.service.js";
 
 const MS_HOUR = 60 * 60 * 1000;
+const MS_MIN = 60 * 1000;
+/** Books this close to the consultation → give a short 5-min pay window instead
+ *  of the normal 1h, so an urgent last-minute booking isn't cancelled on the
+ *  spot for "non-payment" before the patient can pay. */
+const URGENT_BOOKING_HOURS = 2;
 const CONSULTATION_KINDS: CartItemKind[] = [
   CartItemKind.GENERAL_CONSULTATION,
   CartItemKind.SPECIALIST_CONSULTATION,
@@ -83,11 +89,15 @@ export function computePrePaymentPlan(input: {
       : Number.POSITIVE_INFINITY;
 
   if (hoursUntilConsult <= 48) {
+    // Urgent last-minute booking (≤2h out): a 1h-before deadline would already
+    // be in the past at booking time, cancelling the order immediately. Shrink
+    // the lead to 5 minutes before the consultation so the patient can still pay.
+    const leadMs = hoursUntilConsult <= URGENT_BOOKING_HOURS ? 5 * MS_MIN : 1 * MS_HOUR;
     return {
       flow: PrePaymentFlow.WITHIN_48H,
       paymentDueAt:
         consultAt != null
-          ? new Date(consultAt.getTime() - 1 * MS_HOUR)
+          ? new Date(consultAt.getTime() - leadMs)
           : new Date(bookedAt.getTime() + 1 * MS_HOUR),
     };
   }
@@ -210,19 +220,23 @@ async function loadOrderContext(orderId: string, paymentUrl: string | null) {
   const deadline = order.paymentDueAt ?? new Date();
   const patientFullName = resolvePatientFullName(order.fullName, primary.patientFullName);
   const { firstName, lastName } = splitPatientName(patientFullName);
+  // Resolve to confirm the order is still payable, but hand the SHORT branded
+  // link to messages (the raw Stripe URL is ~200 chars and looks broken in
+  // WhatsApp). The short link re-resolves the live session at click time.
   const resolvedPaymentLink = await resolveOrderPaymentUrl(orderId, paymentUrl);
+  const messagePaymentLink = resolvedPaymentLink ? orderPayShortLink(orderId) : "";
   const ctx: PrePaymentMessageContext = {
     patientName: patientFullName,
     patientFirstName: firstName,
     patientLastName: lastName,
-    serviceName: primary.name,
+    serviceName: prefixServiceName(primary.name, order.countryCode),
     doctorName: doctor
       ? formatDoctorForPatientNotification(doctor.fullName, doctor.title)
       : "Assigned doctor",
     appointmentDate: appointmentStart
       ? formatDeadline(appointmentStart, primary.patientTimezone, lang)
       : pendingAppointmentDateLabel(lang),
-    paymentLink: resolvedPaymentLink,
+    paymentLink: messagePaymentLink,
     deadline: formatDeadline(deadline, primary.patientTimezone, lang),
     orderNumber: formatOrderDisplayId({ id: order.id, orderNumber: order.orderNumber }),
     totalLabel: formatOrderTotal(order.totalCents, order.currencyCode),
@@ -525,6 +539,85 @@ export async function startPrePaymentFlow(
   });
 }
 
+/**
+ * Send the "reservation cancelled — non-payment" notifications (patient
+ * WhatsApp + email, doctor WhatsApp + email). Extracted so EVERY unpaid-cancel
+ * path fires the same messages the deadline sweep does — the pre-payment cron
+ * cancel AND the Stripe `checkout.session.expired` webhook. Idempotent: the
+ * automation-run keys are stable, and it's safe to call whether the order is
+ * still PENDING or already flipped to CANCELLED. `stageKeyOverride` lets the
+ * sweep reuse its stage-N key; other callers pass a path-specific key.
+ */
+export async function sendPrePaymentCancelledNotifications(
+  orderId: string,
+  stageKeyOverride?: string,
+): Promise<void> {
+  const loaded = await loadOrderContext(orderId, null);
+  if (!loaded) return;
+  const { order, primary, lang, ctx, phoneHints } = loaded;
+  const flow = order.prePaymentFlow ?? PrePaymentFlow.WITHIN_48H;
+  const baseKey = automationBaseKey(flow);
+  const stageKey = stageKeyOverride ?? `${baseKey}_cancelled`;
+
+  const msg = reminderMessage(ctx, lang, "cancelled");
+  await sendWhatsApp(stageKey, orderId, order.phone, msg.whatsapp, "Patient WhatsApp — reservation cancelled", phoneHints, primary.patientWhatsappConsent);
+  await sendPatientEmail(
+    stageKey,
+    orderId,
+    order.email,
+    lang,
+    ctx,
+    "Patient email — reservation cancelled",
+    "cancelled",
+    msg.subject,
+  );
+
+  // Notify doctor that the reservation was cancelled
+  if (primary.doctorId) {
+    const doctorContact = await resolveDoctorContact(primary.doctorId);
+    const cancelKey = `${stageKey}_doctor`;
+    if (doctorContact?.whatsappNumber) {
+      await sendWhatsApp(
+        `${cancelKey}_whatsapp`,
+        orderId,
+        doctorContact.whatsappNumber,
+        doctorWhatsAppCancelled(ctx, lang),
+        "Doctor WhatsApp — reservation cancelled",
+        doctorContact.whatsappHints,
+      );
+    }
+    if (doctorContact?.loginEmail) {
+      const run = await createAutomationRun({
+        automationKey: `${cancelKey}_email`,
+        orderId,
+        channel: "email",
+        recipient: doctorContact.loginEmail,
+        summary: "Doctor email — reservation cancelled",
+        status: "RUNNING",
+      });
+      try {
+        const body = doctorWhatsAppCancelled(ctx, lang);
+        await sendAutomationEmail(
+          {
+            to: doctorContact.loginEmail,
+            subject: doctorEmailSubjectCancelled(lang),
+            text: body,
+            html: `<div style="font-family:Georgia,serif;line-height:1.6;white-space:pre-wrap;">${body.replace(/\n/g, "<br/>")}</div>`,
+          },
+          { recordLabel: ctx.orderNumber },
+        );
+        await finishAutomationRun(run.id, { status: "SUCCESS", summary: "Doctor email — reservation cancelled" });
+      } catch (err) {
+        await finishAutomationRun(run.id, {
+          status: "FAILED",
+          summary: "Doctor email — reservation cancelled",
+          error: err instanceof Error ? err.message : String(err),
+        });
+      }
+    }
+  }
+}
+
 async function executeReminderStage(
   orderId: string,
   flow: PrePaymentFlow,
@@ -540,64 +633,9 @@ async function executeReminderStage(
   const isFinal = stage === cancelStage;
 
   if (isFinal) {
-    const msg = reminderMessage(ctx, lang, "cancelled");
-    await sendWhatsApp(stageKey, orderId, order.phone, msg.whatsapp, "Patient WhatsApp — reservation cancelled", phoneHints, primary.patientWhatsappConsent);
-    await sendPatientEmail(
-      stageKey,
-      orderId,
-      order.email,
-      lang,
-      ctx,
-      "Patient email — reservation cancelled",
-      "cancelled",
-      msg.subject,
-    );
-
-    // Notify doctor that the reservation was cancelled
-    if (primary.doctorId) {
-      const doctorContact = await resolveDoctorContact(primary.doctorId);
-      const cancelKey = `${stageKey}_doctor`;
-      if (doctorContact?.whatsappNumber) {
-        await sendWhatsApp(
-          `${cancelKey}_whatsapp`,
-          orderId,
-          doctorContact.whatsappNumber,
-          doctorWhatsAppCancelled(ctx, lang),
-          "Doctor WhatsApp — reservation cancelled",
-          doctorContact.whatsappHints,
-        );
-      }
-      if (doctorContact?.loginEmail) {
-        const run = await createAutomationRun({
-          automationKey: `${cancelKey}_email`,
-          orderId,
-          channel: "email",
-          recipient: doctorContact.loginEmail,
-          summary: "Doctor email — reservation cancelled",
-          status: "RUNNING",
-        });
-        try {
-          const body = doctorWhatsAppCancelled(ctx, lang);
-          await sendAutomationEmail(
-            {
-              to: doctorContact.loginEmail,
-              subject: doctorEmailSubjectCancelled(lang),
-              text: body,
-              html: `<div style="font-family:Georgia,serif;line-height:1.6;white-space:pre-wrap;">${body.replace(/\n/g, "<br/>")}</div>`,
-            },
-            { recordLabel: ctx.orderNumber },
-          );
-          await finishAutomationRun(run.id, { status: "SUCCESS", summary: "Doctor email — reservation cancelled" });
-        } catch (err) {
-          await finishAutomationRun(run.id, {
-            status: "FAILED",
-            summary: "Doctor email — reservation cancelled",
-            error: err instanceof Error ? err.message : String(err),
-          });
-        }
-      }
-    }
-
+    // Notify (patient + doctor), then cancel. Reuses the shared sender so the
+    // Stripe session-expiry path fires identical messages.
+    await sendPrePaymentCancelledNotifications(orderId, stageKey);
     await cancelPrePaymentOrder(orderId);
     return;
   }

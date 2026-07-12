@@ -1,0 +1,377 @@
+import { InsurancePricingMode } from "@prisma/client";
+import { prisma } from "../../db/prisma.js";
+import { normalizeDbError } from "../shared/db-errors.js";
+import { resolveInsurancePrice } from "../pricing/insurance-pricing.service.js";
+import { normalizePhoneToE164 } from "../../lib/whatsapp/normalize-phone.js";
+
+export type InsuranceCompanyInput = {
+  name: string;
+  pricingMode: InsurancePricingMode;
+  discountPercent?: number | null;
+  isActive?: boolean;
+  sortOrder?: number;
+  /** Admin-notify recipients — raw (unnormalized) emails + phone numbers. */
+  notifyEmails?: string[];
+  notifyWhatsappNumbers?: string[];
+};
+
+const COMPANY_SELECT = {
+  id: true,
+  countryId: true,
+  name: true,
+  pricingMode: true,
+  discountPercent: true,
+  isActive: true,
+  sortOrder: true,
+  notifyEmails: true,
+  notifyWhatsappNumbers: true,
+} as const;
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** Trim + lowercase + dedupe valid emails. */
+function sanitizeEmails(raw: string[] | undefined): string[] {
+  if (!raw) return [];
+  const seen = new Set<string>();
+  for (const e of raw) {
+    const v = e.trim().toLowerCase();
+    if (v && EMAIL_RE.test(v)) seen.add(v);
+  }
+  return [...seen];
+}
+
+/** Normalize to E.164 (using the country as a hint for bare-local numbers),
+ *  drop anything that can't be parsed, dedupe. */
+function sanitizeWhatsapps(raw: string[] | undefined, countryCode: string | null): string[] {
+  if (!raw) return [];
+  const seen = new Set<string>();
+  for (const p of raw) {
+    const e164 = normalizePhoneToE164(p, countryCode ? { orderCountryCode: countryCode } : undefined);
+    if (e164) seen.add(e164);
+  }
+  return [...seen];
+}
+
+/** Normalize a company's pricing fields: PERCENT keeps its percent, FIXED drops it. */
+function normalizePricing(mode: InsurancePricingMode, discountPercent?: number | null) {
+  return mode === InsurancePricingMode.PERCENT
+    ? { pricingMode: mode, discountPercent: discountPercent ?? 0 }
+    : { pricingMode: mode, discountPercent: null };
+}
+
+export async function listInsuranceCompanies(countryId: string) {
+  try {
+    return await prisma.insuranceCompany.findMany({
+      where: { countryId },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+      select: { ...COMPANY_SELECT, _count: { select: { coverages: true } } },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Insurance companies unavailable");
+  }
+}
+
+export async function createInsuranceCompany(countryId: string, input: InsuranceCompanyInput) {
+  const country = await prisma.country.findUnique({
+    where: { id: countryId },
+    select: { id: true, code: true },
+  });
+  if (!country) return null;
+  try {
+    return await prisma.insuranceCompany.create({
+      data: {
+        countryId,
+        name: input.name,
+        ...normalizePricing(input.pricingMode, input.discountPercent),
+        isActive: input.isActive ?? true,
+        sortOrder: input.sortOrder ?? 0,
+        notifyEmails: sanitizeEmails(input.notifyEmails),
+        notifyWhatsappNumbers: sanitizeWhatsapps(input.notifyWhatsappNumbers, country.code),
+      },
+      select: COMPANY_SELECT,
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Could not create insurance company");
+  }
+}
+
+export async function updateInsuranceCompany(id: string, input: Partial<InsuranceCompanyInput>) {
+  const existing = await prisma.insuranceCompany.findUnique({
+    where: { id },
+    select: { id: true, pricingMode: true, country: { select: { code: true } } },
+  });
+  if (!existing) return null;
+  // If the mode changes, re-normalize the percent for the NEW mode.
+  const nextMode = input.pricingMode ?? existing.pricingMode;
+  const pricing =
+    input.pricingMode !== undefined || input.discountPercent !== undefined
+      ? normalizePricing(nextMode, input.discountPercent)
+      : {};
+  try {
+    return await prisma.insuranceCompany.update({
+      where: { id },
+      data: {
+        ...(input.name !== undefined && { name: input.name }),
+        ...pricing,
+        ...(input.isActive !== undefined && { isActive: input.isActive }),
+        ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
+        ...(input.notifyEmails !== undefined && { notifyEmails: sanitizeEmails(input.notifyEmails) }),
+        ...(input.notifyWhatsappNumbers !== undefined && {
+          notifyWhatsappNumbers: sanitizeWhatsapps(input.notifyWhatsappNumbers, existing.country.code),
+        }),
+      },
+      select: COMPANY_SELECT,
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Could not update insurance company");
+  }
+}
+
+export async function deleteInsuranceCompany(id: string): Promise<boolean> {
+  const existing = await prisma.insuranceCompany.findUnique({ where: { id }, select: { id: true } });
+  if (!existing) return false;
+  try {
+    await prisma.insuranceCompany.delete({ where: { id } });
+    return true;
+  } catch (error) {
+    throw normalizeDbError(error, "Could not delete insurance company");
+  }
+}
+
+export type CoverageDoctorRow = {
+  doctorId: string;
+  name: string;
+  /** This company's per-service payout for this doctor (null = not set). */
+  amountCents: number | null;
+};
+
+export type CoverageServiceRow = {
+  serviceId: string;
+  name: string;
+  basePriceCents: number | null;
+  currencyCode: string | null;
+  covered: boolean;
+  overridePriceCents: number | null;
+  /** Resolved insurance price for display (FIXED override or PERCENT-computed). */
+  insurancePriceCents: number | null;
+  /** Doctors assigned to this service + their insurance payout for this company.
+   *  Admin sets the payout the doctor earns when the service is booked under
+   *  this insurer (separate from the standard ServiceDoctor payout). */
+  doctors: CoverageDoctorRow[];
+};
+
+/**
+ * Every active service in the company's country, LEFT-joined with this
+ * company's coverage state. Drives the admin coverage editor: which services
+ * the company covers + the per-service price (typed for FIXED, computed for
+ * PERCENT).
+ */
+export async function listCountryServicesWithCoverage(
+  countryId: string,
+  companyId: string,
+): Promise<{ companyId: string; pricingMode: InsurancePricingMode; discountPercent: number | null; services: CoverageServiceRow[] } | null> {
+  const company = await prisma.insuranceCompany.findFirst({
+    where: { id: companyId, countryId },
+    select: { id: true, pricingMode: true, discountPercent: true },
+  });
+  if (!company) return null;
+  try {
+    const [services, coverages, assignments, payouts] = await Promise.all([
+      prisma.service.findMany({
+        where: { countryId, isActive: true },
+        orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+        select: {
+          id: true,
+          name: true,
+          basePriceCents: true,
+          currencyCode: true,
+          country: { select: { currency: { select: { code: true } } } },
+        },
+      }),
+      prisma.insuranceServiceCoverage.findMany({
+        where: { insuranceCompanyId: companyId },
+        select: { serviceId: true, overridePriceCents: true },
+      }),
+      // Active doctor assignments for this country's services (drives which
+      // doctors show under each covered service in the payout editor).
+      prisma.serviceDoctor.findMany({
+        where: {
+          isActive: true,
+          status: "active",
+          service: { countryId },
+          doctor: { active: true },
+        },
+        orderBy: { sortOrder: "asc" },
+        select: { serviceId: true, doctor: { select: { id: true, fullName: true } } },
+      }),
+      prisma.serviceDoctorInsurancePayout.findMany({
+        where: { insuranceCompanyId: companyId },
+        select: { serviceId: true, doctorId: true, doctorAmountCents: true },
+      }),
+    ]);
+    const coverageByServiceId = new Map(coverages.map((c) => [c.serviceId, c]));
+    // Group assignments by service; index payouts by service:doctor.
+    const doctorsByServiceId = new Map<string, { id: string; fullName: string }[]>();
+    for (const a of assignments) {
+      const list = doctorsByServiceId.get(a.serviceId) ?? [];
+      list.push(a.doctor);
+      doctorsByServiceId.set(a.serviceId, list);
+    }
+    const payoutByKey = new Map(
+      payouts.map((p) => [`${p.serviceId}:${p.doctorId}`, p.doctorAmountCents]),
+    );
+    const rows: CoverageServiceRow[] = services.map((svc) => {
+      const cov = coverageByServiceId.get(svc.id);
+      const covered = cov !== undefined;
+      const insurancePriceCents =
+        covered && svc.basePriceCents != null
+          ? resolveInsurancePrice({
+              basePriceCents: svc.basePriceCents,
+              company,
+              coverage: { overridePriceCents: cov?.overridePriceCents ?? null },
+            })
+          : null;
+      const doctors: CoverageDoctorRow[] = (doctorsByServiceId.get(svc.id) ?? []).map((d) => ({
+        doctorId: d.id,
+        name: d.fullName,
+        amountCents: payoutByKey.get(`${svc.id}:${d.id}`) ?? null,
+      }));
+      return {
+        serviceId: svc.id,
+        name: svc.name,
+        basePriceCents: svc.basePriceCents,
+        currencyCode: svc.currencyCode ?? svc.country.currency.code,
+        covered,
+        overridePriceCents: cov?.overridePriceCents ?? null,
+        insurancePriceCents,
+        doctors,
+      };
+    });
+    return {
+      companyId: company.id,
+      pricingMode: company.pricingMode,
+      discountPercent: company.discountPercent,
+      services: rows,
+    };
+  } catch (error) {
+    throw normalizeDbError(error, "Could not load service coverage");
+  }
+}
+
+export type CoverageInputItem = {
+  serviceId: string;
+  covered: boolean;
+  /** FIXED companies only — the admin-typed price. Ignored for PERCENT. */
+  overridePriceCents?: number | null;
+  /** Per-doctor insurance payout for this service (null clears/leaves unset). */
+  doctorPayouts?: { doctorId: string; amountCents: number | null }[];
+};
+
+/**
+ * Replace a company's full coverage set in one transaction. Covered services
+ * are upserted (FIXED carries its per-service override; PERCENT stores null and
+ * derives at read time); un-covered services have their coverage row removed.
+ * Services from other countries are rejected so a company can never cover a
+ * service outside its market.
+ */
+export async function setCompanyCoverage(
+  companyId: string,
+  items: CoverageInputItem[],
+): Promise<boolean> {
+  const company = await prisma.insuranceCompany.findUnique({
+    where: { id: companyId },
+    select: { id: true, countryId: true, pricingMode: true },
+  });
+  if (!company) return false;
+
+  const covered = items.filter((i) => i.covered);
+  const serviceIds = covered.map((i) => i.serviceId);
+  // Validate every covered service belongs to the company's country.
+  if (serviceIds.length > 0) {
+    const valid = await prisma.service.count({
+      where: { id: { in: serviceIds }, countryId: company.countryId },
+    });
+    if (valid !== serviceIds.length) {
+      throw new Error("One or more services do not belong to this company's country");
+    }
+  }
+  const isFixed = company.pricingMode === InsurancePricingMode.FIXED;
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      // Drop coverage for services no longer selected.
+      await tx.insuranceServiceCoverage.deleteMany({
+        where: {
+          insuranceCompanyId: companyId,
+          ...(serviceIds.length > 0 ? { serviceId: { notIn: serviceIds } } : {}),
+        },
+      });
+      // Drop insurance payouts for services no longer covered.
+      await tx.serviceDoctorInsurancePayout.deleteMany({
+        where: {
+          insuranceCompanyId: companyId,
+          ...(serviceIds.length > 0 ? { serviceId: { notIn: serviceIds } } : {}),
+        },
+      });
+      for (const item of covered) {
+        const overridePriceCents = isFixed ? item.overridePriceCents ?? null : null;
+        await tx.insuranceServiceCoverage.upsert({
+          where: {
+            insuranceCompanyId_serviceId: {
+              insuranceCompanyId: companyId,
+              serviceId: item.serviceId,
+            },
+          },
+          create: { insuranceCompanyId: companyId, serviceId: item.serviceId, overridePriceCents },
+          update: { overridePriceCents },
+        });
+        // When the form submitted a doctor list for this service (rendered only
+        // for covered services with assigned doctors), it is authoritative:
+        // drop any payout row for a doctor NO LONGER in that list — e.g. a
+        // doctor since removed from the service — so no orphan payout lingers.
+        const submitted = item.doctorPayouts;
+        if (submitted && submitted.length > 0) {
+          await tx.serviceDoctorInsurancePayout.deleteMany({
+            where: {
+              insuranceCompanyId: companyId,
+              serviceId: item.serviceId,
+              doctorId: { notIn: submitted.map((p) => p.doctorId) },
+            },
+          });
+        }
+        // Per-doctor insurance payout: upsert a set amount, delete when cleared.
+        for (const p of item.doctorPayouts ?? []) {
+          if (p.amountCents == null) {
+            await tx.serviceDoctorInsurancePayout.deleteMany({
+              where: {
+                insuranceCompanyId: companyId,
+                serviceId: item.serviceId,
+                doctorId: p.doctorId,
+              },
+            });
+          } else {
+            await tx.serviceDoctorInsurancePayout.upsert({
+              where: {
+                insuranceCompanyId_serviceId_doctorId: {
+                  insuranceCompanyId: companyId,
+                  serviceId: item.serviceId,
+                  doctorId: p.doctorId,
+                },
+              },
+              create: {
+                insuranceCompanyId: companyId,
+                serviceId: item.serviceId,
+                doctorId: p.doctorId,
+                doctorAmountCents: p.amountCents,
+              },
+              update: { doctorAmountCents: p.amountCents },
+            });
+          }
+        }
+      }
+    });
+    return true;
+  } catch (error) {
+    throw normalizeDbError(error, "Could not save service coverage");
+  }
+}

@@ -19,6 +19,7 @@ import { PhoneField } from "@/components/forms/phone-field";
 import { DobField, isoToDisplayDob } from "@/components/forms/dob-field";
 import { dialCodeForCountrySlug } from "@/lib/phone/dial-codes";
 import type { CommonLocale } from "@/lib/i18n/types";
+import type { InsuranceOption } from "@/lib/content/get-country-collections";
 
 type Slot = {
   id: string;
@@ -61,6 +62,10 @@ type Props = {
     requireNationalId: boolean;
     requireAddress: boolean;
   };
+  /** Insurance companies covering this service. When non-empty the form shows
+   *  an "Insurance company" dropdown; picking one + entering the policy number
+   *  switches the shown + charged price to the negotiated insurance price. */
+  insuranceOptions?: InsuranceOption[];
 };
 
 /** Saved patient profile fields we prefill on the details step (req #2). */
@@ -102,6 +107,7 @@ export function ConsultationBookingForm({
   autoAssign,
   i18n,
   bookingRequirements,
+  insuranceOptions = [],
 }: Props) {
   const requirePhone = bookingRequirements?.requirePhone ?? false;
   const requireDob = bookingRequirements?.requireDateOfBirth ?? false;
@@ -165,6 +171,22 @@ export function ConsultationBookingForm({
   // Default ON (offer to save) until we learn the profile already has an
   // address; flipped in the profile fetch below.
   const [saveAddress, setSaveAddress] = useState(true);
+  // Insurance selection (only surfaced when this service has covering
+  // companies). Picking a company + entering the policy number switches the
+  // shown + charged price to the negotiated insurance price. The server is the
+  // price authority — it re-validates coverage and re-derives the price.
+  const [insuranceCompanyId, setInsuranceCompanyId] = useState("");
+  const [insurancePolicyNumber, setInsurancePolicyNumber] = useState("");
+  const selectedInsurance = insuranceCompanyId
+    ? insuranceOptions.find((o) => o.companyId === insuranceCompanyId) ?? null
+    : null;
+  // The insurance price only "reveals" once the patient has entered their card
+  // number, mirroring the requirement that the price updates when they provide
+  // their insurance details.
+  const insuranceActive = Boolean(selectedInsurance && insurancePolicyNumber.trim());
+  const displayedPriceCents = insuranceActive
+    ? selectedInsurance!.insurancePriceCents
+    : selectedSlot?.priceCents;
 
   useEffect(() => {
     let cancelled = false;
@@ -409,11 +431,18 @@ export function ConsultationBookingForm({
         // pre-selects the credit benefit (server re-verifies eligibility). For a
         // SELF booking, carry the benefit chosen at this step (B6); the server
         // re-resolves it authoritatively at checkout.
-        ...(selectedMember
-          ? { familyMemberId: selectedMember.id, benefitSelection: "USE_PLAN_CREDIT" as const }
-          : !treatingOther && benefitSelection !== "PAY_NORMAL"
-            ? { benefitSelection }
-            : {}),
+        // Insurance replaces plan/family benefits (no stacking): when a company
+        // is selected + its policy entered, skip the benefit fields entirely.
+        ...(insuranceActive
+          ? {
+              insuranceCompanyId: selectedInsurance!.companyId,
+              insurancePolicyNumber: insurancePolicyNumber.trim(),
+            }
+          : selectedMember
+            ? { familyMemberId: selectedMember.id, benefitSelection: "USE_PLAN_CREDIT" as const }
+            : !treatingOther && benefitSelection !== "PAY_NORMAL"
+              ? { benefitSelection }
+              : {}),
         patient: {
           fullName: patientName,
           email,
@@ -547,10 +576,19 @@ export function ConsultationBookingForm({
             </p>
             <p className="mt-1 text-sm font-semibold text-[var(--color-text-primary)]">
               {formatAppDate(selectedSlot.startAt, tz)} · {formatAppTime(selectedSlot.startAt, tz)} ({tzLabel})
-              {typeof selectedSlot.priceCents === "number"
-                ? ` · ${formatPriceRounded(selectedSlot.priceCents, selectedSlot.currencyCode ?? "EUR")}`
+              {typeof displayedPriceCents === "number"
+                ? ` · ${formatPriceRounded(displayedPriceCents, selectedSlot.currencyCode ?? "EUR")}`
                 : ""}
             </p>
+            {insuranceActive ? (
+              <p className="mt-1 text-xs font-semibold" style={{ color: "var(--color-brand-primary)" }}>
+                Insurance price with {selectedInsurance!.name} applied
+                {typeof selectedSlot.priceCents === "number" &&
+                selectedSlot.priceCents !== displayedPriceCents
+                  ? ` (was ${formatPriceRounded(selectedSlot.priceCents, selectedSlot.currencyCode ?? "EUR")})`
+                  : ""}
+              </p>
+            ) : null}
           </div>
           <Link
             href={changeTimeHref}
@@ -855,6 +893,53 @@ export function ConsultationBookingForm({
             {i18n.nationalIdHint}
           </p>
         </label>
+
+        {/* Insurance company — only for services a company covers. Selecting a
+          * company + entering the policy/card number switches the shown +
+          * charged price to the negotiated insurance price (server re-validated). */}
+        {insuranceOptions.length > 0 ? (
+          <div className="mt-4 grid gap-3">
+            <label className="block">
+              <span className="text-xs font-semibold text-[var(--color-text-body)]">
+                Insurance company{" "}
+                <span className="text-[11px] font-normal text-[var(--color-text-muted)]">(optional)</span>
+              </span>
+              <select
+                value={insuranceCompanyId}
+                onChange={(e) => setInsuranceCompanyId(e.target.value)}
+                className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+              >
+                <option value="">Pay standard price (no insurance)</option>
+                {insuranceOptions.map((opt) => (
+                  <option key={opt.companyId} value={opt.companyId}>
+                    {opt.name} — {formatPriceRounded(opt.insurancePriceCents, selectedSlot?.currencyCode ?? "EUR")}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {selectedInsurance ? (
+              <label className="block">
+                <span className="text-xs font-semibold text-[var(--color-text-body)]">
+                  Insurance card / policy number
+                </span>
+                <input
+                  type="text"
+                  value={insurancePolicyNumber}
+                  onChange={(e) => setInsurancePolicyNumber(e.target.value)}
+                  maxLength={120}
+                  autoComplete="off"
+                  placeholder="Enter your policy number to apply the insurance price"
+                  className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+                />
+                <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                  Your insurance price applies once you enter your card number. We&rsquo;ll reserve
+                  your time and verify your card before taking payment — you&rsquo;ll get a secure
+                  payment link by email &amp; WhatsApp once it&rsquo;s verified.
+                </p>
+              </label>
+            ) : null}
+          </div>
+        ) : null}
 
         <label className="mt-4 block">
           <span className="text-xs font-semibold text-[var(--color-text-body)]">

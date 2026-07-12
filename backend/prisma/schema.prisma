@@ -367,6 +367,10 @@ model Country {
   authorityLinks             CountryAuthorityLink[]
   /// SEO landing pages (condition / audience marketing pages) for this market.
   seoLandingPages            SeoLandingPage[]
+  /// Insurance companies registered for this market. Each covers a chosen
+  /// set of this country's services at a negotiated price (fixed or a
+  /// percentage discount). See InsuranceCompany.
+  insuranceCompanies         InsuranceCompany[]
   createdAt                  DateTime             @default(now())
   updatedAt                  DateTime             @updatedAt
 }
@@ -457,6 +461,7 @@ model Doctor {
   /// catalogue services the doctor is bookable for. Public consult flow
   /// uses this join to filter doctor cards by selected service.
   assignedServices            ServiceDoctor[]
+  insuranceDoctorPayouts      ServiceDoctorInsurancePayout[]
   /// Recurring weekly windows the doctor publishes for patient booking.
   /// Concrete slots are derived from these into `DoctorTimeSlot` rows.
   availabilities              DoctorAvailability[]
@@ -815,6 +820,7 @@ model Service {
   /// Inverse of `ServiceDoctor.serviceId`. Admin-controlled M:N — which
   /// doctors are bookable for this service.
   assignedDoctors       ServiceDoctor[]
+  insuranceDoctorPayouts ServiceDoctorInsurancePayout[]
   appointments          Appointment[]
   /// Per-consultation services-rendered line items. Doctor logs which
   /// catalogue services they performed during the consult; admin uses
@@ -830,6 +836,9 @@ model Service {
   /// peak price and slots outside it the off-peak price; otherwise the
   /// flat basePriceCents applies. See ServicePeakPricing.
   peakPricing           ServicePeakPricing?
+  /// Insurance-company coverage rows for this service (which companies
+  /// cover it + the negotiated per-service price). See InsuranceServiceCoverage.
+  insuranceCoverages    InsuranceServiceCoverage[]
   /// Admin-managed FAQ entries for this service's public detail page.
   faqs                  ServiceFaq[]
   /// Contextual internal-link callouts shown ON this page (upgrade/entry/etc).
@@ -988,6 +997,66 @@ model ServicePeakWindow {
   @@index([pricingId])
 }
 
+/// How an insurance company prices the services it covers. Chosen once when
+/// the company is set up and applied to every covered service:
+///  - FIXED   → admin types an explicit new price per covered service
+///              (InsuranceServiceCoverage.overridePriceCents).
+///  - PERCENT → a single discount % off the service's basePriceCents,
+///              applied automatically to every covered service.
+enum InsurancePricingMode {
+  FIXED
+  PERCENT
+}
+
+/// An insurance company registered for a single country. Patients booking a
+/// covered service can select the company in the booking form; the negotiated
+/// insurance price then becomes the amount charged at checkout. The pricing
+/// mode is fixed at setup and shared by every service the company covers.
+model InsuranceCompany {
+  id              String                     @id @default(cuid())
+  countryId       String
+  country         Country                    @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  name            String
+  pricingMode     InsurancePricingMode
+  /// PERCENT mode only: whole-number discount 0..100 applied to basePriceCents.
+  /// Null for FIXED companies (per-service prices live on the coverage rows).
+  discountPercent Int?
+  isActive        Boolean                    @default(true)
+  sortOrder       Int                        @default(0)
+  /// Admin recipients notified (email + WhatsApp) when an insurance order for
+  /// this company comes in and needs manual card verification. Each entry in
+  /// notifyWhatsappNumbers is a stored E.164 number.
+  notifyEmails          String[]             @default([])
+  notifyWhatsappNumbers String[]             @default([])
+  coverages       InsuranceServiceCoverage[]
+  doctorPayouts   ServiceDoctorInsurancePayout[]
+  createdAt       DateTime                   @default(now())
+  updatedAt       DateTime                   @updatedAt
+
+  @@unique([countryId, name])
+  @@index([countryId, isActive])
+}
+
+/// Join row: an insurance company covers a specific service. Existence of the
+/// row is what makes the company selectable for that service in the booking
+/// form (and drives the "We also have …" SEO line on the service page).
+model InsuranceServiceCoverage {
+  id                 String           @id @default(cuid())
+  insuranceCompanyId String
+  company            InsuranceCompany @relation(fields: [insuranceCompanyId], references: [id], onDelete: Cascade)
+  serviceId          String
+  service            Service          @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  /// FIXED companies: the admin-typed negotiated price for this service.
+  /// PERCENT companies: null — the price is derived from basePriceCents at
+  /// read time so it tracks base-price changes automatically.
+  overridePriceCents Int?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@unique([insuranceCompanyId, serviceId])
+  @@index([serviceId])
+}
+
 /// Per-locale display content for a Service. One stable Service record per
 /// real service; this table holds the language-specific marketing copy so
 /// the same Service.id (and its booking flow) serves every locale.
@@ -1039,6 +1108,32 @@ model ServiceDoctor {
   @@index([doctorId, isActive])
   @@index([serviceId, isActive, sortOrder])
   @@index([doctorId, status])
+}
+
+/// Per-(insurance company, service, doctor) doctor payout. Separate from the
+/// standard ServiceDoctor.doctorAmountCents: when a consultation is booked
+/// UNDER an insurance company, the doctor is paid this amount instead of the
+/// standard per-service payout. Only meaningful for a doctor assigned to a
+/// service the company covers. Keyed on the three ids directly (NOT via
+/// ServiceDoctor) so re-syncing service↔doctor assignments never cascade-wipes
+/// a payout. Null amount = not set (the payout statement shows "Not set").
+model ServiceDoctorInsurancePayout {
+  id                 String           @id @default(cuid())
+  insuranceCompanyId String
+  company            InsuranceCompany @relation(fields: [insuranceCompanyId], references: [id], onDelete: Cascade)
+  serviceId          String
+  service            Service          @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  doctorId           String
+  doctor             Doctor           @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  /// Amount the clinic pays this doctor for this service when booked under this
+  /// insurer, in cents. Currency follows the parent Service.currencyCode.
+  doctorAmountCents  Int?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@unique([insuranceCompanyId, serviceId, doctorId])
+  @@index([serviceId, doctorId])
+  @@index([insuranceCompanyId])
 }
 
 model PricingPlan {
@@ -1509,6 +1604,12 @@ model Appointment {
   gdprConsentedAt           DateTime?
   /// WhatsApp appointment updates — default ON; patient opts OUT at booking.
   whatsappConsent           Boolean                   @default(true)
+  /// Insurance selection snapshot for the clinical record — copied from the
+  /// OrderItem when the appointment is minted. Bare company id (no relation);
+  /// policy/card number as an encrypted `phi:v1:` envelope. The charged amount
+  /// already lives on `amountCents`, so these are record-keeping only.
+  insuranceCompanyId        String?
+  insurancePolicyNumber     String?
   createdAt                 DateTime                  @default(now())
   updatedAt                 DateTime                  @updatedAt
 
@@ -1943,6 +2044,14 @@ model CartItem {
   patientGdprConsentedAt     DateTime?
   /// WhatsApp appointment updates — default ON; patient opts OUT at booking.
   patientWhatsappConsent     Boolean   @default(true)
+  /// Insurance-company selection snapshot (consultation lines only). When set,
+  /// `unitPriceCents` above is the insurance price. Bare id like
+  /// `corporateCompanyId` — no relation. The policy/card number is stored as
+  /// an encrypted `phi:v1:` envelope. `insurancePriceCents` is an audit copy
+  /// of the resolved insurance price; checkout re-derives the charged amount.
+  insuranceCompanyId         String?
+  insurancePolicyNumber      String?
+  insurancePriceCents        Int?
   createdAt                DateTime     @default(now())
 
   @@index([heldUntil])
@@ -1965,6 +2074,17 @@ model Order {
   totalCents            Int
   status                OrderStatus @default(PENDING)
   paymentStatus         PaymentStatus @default(UNPAID)
+  /// Insurance card manual-verification state. Null = ordinary (non-insurance)
+  /// order. PENDING = booked with insurance, awaiting admin card verification
+  /// (no Stripe session yet, slot reserved). VERIFIED = admin confirmed the
+  /// card → patient sent a payment link at the insurance price. REJECTED =
+  /// card could not be verified → order re-priced to standard, patient sent a
+  /// payment link at the normal price. See insurance-verification.service.
+  insuranceVerificationStatus VerificationStatus?
+  /// The insurance company selected for this order (mirror of the single
+  /// consultation line's company). Null for non-insurance orders. Drives the
+  /// admin-notify recipient lookup + the admin verification UI.
+  insuranceCompanyId    String?
   stripeSessionId       String?     @unique
   stripePaymentIntentId String?     @unique
   stripeInvoiceId       String?     @unique
@@ -2133,6 +2253,13 @@ model OrderItem {
   patientGdprConsentedAt     DateTime?
   /// WhatsApp appointment updates — default ON; patient opts OUT at booking.
   patientWhatsappConsent     Boolean   @default(true)
+  /// Insurance selection snapshot copied from the CartItem at checkout. When
+  /// set, `unitPriceCents` above is the insurance price (server-recomputed).
+  /// Bare id like `corporateCompanyId`; policy number is an encrypted
+  /// `phi:v1:` envelope; `insurancePriceCents` is an audit copy.
+  insuranceCompanyId         String?
+  insurancePolicyNumber      String?
+  insurancePriceCents        Int?
 
   @@index([orderId])
 }

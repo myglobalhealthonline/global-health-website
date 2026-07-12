@@ -11,12 +11,12 @@ import {
   type WeekDay,
 } from "./calendar-utils";
 
-const HOUR_PX = 68; // row height per hour — roomy enough for 15-min slots
+const HOUR_PX = 88; // row height per hour — roomy: a 15-min slot = 22px, no overlap
 const PX_PER_MIN = HOUR_PX / 60;
 const DEFAULT_START_HOUR = 7;
 const DEFAULT_END_HOUR = 20;
 const CONSULT_FALLBACK_MIN = 30; // consultations carry no end time
-const MIN_BLOCK_PX = 22; // never render a block shorter than this
+const MIN_BLOCK_PX = 18; // floor < a 15-min slot's 22px span, so blocks keep a gap
 
 type Props = {
   /** Any calendar date inside the week to render ("YYYY-MM-DD"). */
@@ -150,20 +150,24 @@ function packDay(items: CalendarItem[], tz: string): PositionedItem[] {
   }));
 }
 
-/** Drop the BOOKED/HELD slot block when a consultation already occupies the
- *  same start — the consultation carries the patient name, the slot is noise. */
-function dedupeBookedSlots(items: CalendarItem[]): CalendarItem[] {
-  const consultStarts = new Set(
-    items.filter((i) => i.kind === "consultation").map((i) => i.startAt),
-  );
-  return items.filter(
-    (i) =>
-      !(
-        i.kind === "slot" &&
-        (i.status === "BOOKED" || i.status === "HELD") &&
-        consultStarts.has(i.startAt)
-      ),
-  );
+/** A consultation occupies its whole time span. Drop ANY slot block — OPEN,
+ *  BOOKED, or HELD — that starts inside a consultation, so a booked time never
+ *  shows a duplicate green "open" slot (or a redundant booked slot) beside the
+ *  patient block. The consultation carries the patient name; the slot is noise. */
+function dropSlotsUnderConsultations(items: CalendarItem[]): CalendarItem[] {
+  const consults = items
+    .filter((i) => i.kind === "consultation")
+    .map((c) => {
+      const start = new Date(c.startAt).getTime();
+      const durMin = c.endAt ? durationMinutes(c.startAt, c.endAt) : CONSULT_FALLBACK_MIN;
+      return { start, end: start + durMin * 60_000 };
+    });
+  if (consults.length === 0) return items;
+  return items.filter((i) => {
+    if (i.kind !== "slot") return true;
+    const s = new Date(i.startAt).getTime();
+    return !consults.some((c) => s >= c.start && s < c.end);
+  });
 }
 
 export function WeekCalendar({
@@ -186,7 +190,7 @@ export function WeekCalendar({
     let maxHour = DEFAULT_END_HOUR;
     const perDay = new Map<string, PositionedItem[]>();
     for (const day of weekDays) {
-      const raw = dedupeBookedSlots(itemsByDay.get(day.key) ?? []);
+      const raw = dropSlotsUnderConsultations(itemsByDay.get(day.key) ?? []);
       const positioned = packDay(raw, tz);
       for (const p of positioned) {
         minHour = Math.min(minHour, Math.floor(p.top / 60));
