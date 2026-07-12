@@ -3969,8 +3969,8 @@ a.gh-appointment-card:hover {
   /* ── geometry ───────────────────────────────────────────── */
   --portal-radius-sm: 10px;
   --portal-radius: 12px; /* buttons, inputs */
-  --portal-radius-lg: 16px; /* cards */
-  --portal-radius-xl: 20px; /* band, modals, popovers */
+  --portal-radius-lg: 20px; /* cards */
+  --portal-radius-xl: 24px; /* band, modals, popovers */
   --portal-radius-pill: 999px; /* status pills only */
 
   /* ── layout (unchanged from earlier portal system versions) ─ */
@@ -3992,13 +3992,13 @@ a.gh-appointment-card:hover {
    * canvas gradient now matches --lux-plane-bg's ivory base instead of a
    * dark fill — no more dark strip showing through around the content plane. */
   --lux-canvas-bg:
-    radial-gradient(1400px 900px at 85% -12%, rgba(29, 75, 54, 0.09), transparent 60%),
-    radial-gradient(900px 700px at -10% 110%, rgba(100, 114, 105, 0.07), transparent 55%),
-    linear-gradient(170deg, #f5f6f3 0%, #edf0ea 45%, #e6eae3 100%);
+    radial-gradient(1400px 900px at 85% -12%, rgba(29, 75, 54, 0.16), transparent 60%),
+    radial-gradient(900px 700px at -10% 110%, rgba(143, 176, 33, 0.05), transparent 55%),
+    linear-gradient(170deg, #f8f8f4 0%, #f4f5f1 45%, #eef0eb 100%);
   --lux-canvas-bloom:
-    radial-gradient(1100px 760px at 86% -12%, rgba(29, 75, 54, 0.07), transparent 62%),
-    radial-gradient(760px 560px at -8% 108%, rgba(100, 114, 105, 0.05), transparent 58%);
-  --lux-seam-light: linear-gradient(90deg, transparent, rgba(29, 75, 54, 0.22) 35%, rgba(29, 75, 54, 0.05) 70%, transparent);
+    radial-gradient(1100px 760px at 86% -12%, rgba(29, 75, 54, 0.13), transparent 62%),
+    radial-gradient(760px 560px at -8% 108%, rgba(143, 176, 33, 0.04), transparent 58%);
+  --lux-seam-light: linear-gradient(90deg, transparent, rgba(29, 75, 54, 0.45) 35%, rgba(29, 75, 54, 0.10) 70%, transparent);
   --lux-card-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.66));
   --lux-modal-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.86));
   --lux-card-border: linear-gradient(160deg, rgba(255, 255, 255, 0.95) 0%, rgba(16, 23, 19, 0.06) 38%, rgba(16, 23, 19, 0.10) 62%, rgba(143, 176, 33, 0.22) 100%);
@@ -4567,6 +4567,14 @@ a.gh-appointment-card:hover {
   padding: 15px 18px;
   background: color-mix(in srgb, var(--portal-surface) 50%, transparent);
   border-bottom: 1px solid var(--portal-line-soft);
+}
+
+/* A section header is a full-width surface inside many portal cards. Give its
+ * exposed top edge the same radius as the shell; otherwise its background
+ * paints square corners over the card, as on the doctor dashboard panels. */
+.gh-portal-shell :is(.gh-admin-card, .gh-card, .gh-stat-card) > .gh-portal-section-header:first-child {
+  border-start-start-radius: calc(var(--portal-radius-lg) - 1px);
+  border-start-end-radius: calc(var(--portal-radius-lg) - 1px);
 }
 
 .gh-admin-main :where(.grid) {
