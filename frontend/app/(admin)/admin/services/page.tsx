@@ -243,14 +243,7 @@ export default async function AdminServicesPage({
           because the sidebar already navigates between them; rendering
           the same control twice was redundant. */}
       {showKindTabs ? (
-        <div
-          className="gh-admin-service-kind-tabs mb-4 inline-flex items-center gap-1 border border-[var(--color-border)]"
-          style={{
-            padding: 4,
-            background: "var(--color-background-soft)",
-            borderRadius: 12,
-          }}
-        >
+        <div className="gh-admin-service-kind-tabs mb-4 inline-flex items-center">
           {SERVICE_KIND_ORDER.map((option) => {
             const optionMeta = SERVICE_KIND_META[option];
             const href = optionMeta.listHref;
@@ -259,21 +252,10 @@ export default async function AdminServicesPage({
               <Link
                 key={option}
                 href={href}
+                aria-current={active ? "page" : undefined}
                 className={`gh-admin-service-kind-tab inline-flex items-center gap-2 transition-all duration-150 ${
                   active ? "gh-admin-service-kind-tab--active" : ""
                 }`}
-                style={{
-                  padding: "8px 14px",
-                  borderRadius: 8,
-                  background: active ? "var(--color-background-page)" : "transparent",
-                  color: active
-                    ? "var(--color-brand-primary)"
-                    : "var(--color-text-muted)",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  boxShadow: active ? "var(--shadow-soft)" : "none",
-                  textDecoration: "none",
-                }}
               >
                 {optionMeta.label}
               </Link>

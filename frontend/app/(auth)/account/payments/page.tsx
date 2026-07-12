@@ -295,7 +295,7 @@ export default async function AccountPaymentsPage() {
                     href={receiptUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--portal-primary)]"
+                    className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface-elevated)] px-3 py-1.5 text-xs font-semibold text-[var(--portal-primary)]"
                   >
                     {inv.viewInvoice}
                     <ExternalLink className="size-3.5" aria-hidden />

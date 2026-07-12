@@ -276,18 +276,19 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
         </p>
       ) : null}
 
-      {/* Tabs */}
-      <nav className="mb-4 flex flex-wrap gap-1.5" aria-label="Company sections">
+      {/* Tabs — real route navigation (each tab is a server-rendered page
+          section with its own data fetch), so these stay <Link>s rather
+          than becoming a PortalTabs button tablist. Styled with the same
+          .gh-portal-tabs/.gh-portal-tab underline skin + portal tokens so
+          it reads as one shared tab system, not a bespoke pill nav. */}
+      <nav className="gh-portal-tabs mb-4" aria-label="Company sections">
         {TABS.map((t) => (
           <Link
             key={t}
             href={`/admin/corporate/${id}?tab=${t}`}
             aria-current={tab === t ? "page" : undefined}
-            className={`rounded-full px-3.5 py-1.5 text-portal-compact font-bold capitalize transition-colors ${
-              tab === t
-                ? "bg-[var(--color-text-primary)] text-[var(--color-surface)]"
-                : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-            }`}
+            className="gh-portal-tab capitalize"
+            data-active={tab === t || undefined}
           >
             {t}
           </Link>

@@ -409,7 +409,7 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
             {unpaidItems.map((item) => (
               <div
                 key={item.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] bg-white px-3 py-2.5"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] bg-[var(--portal-surface-elevated)] px-3 py-2.5"
               >
                 <div>
                   <p className="text-sm font-semibold" style={{ color: "var(--portal-text)" }}>

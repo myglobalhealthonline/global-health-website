@@ -15,7 +15,7 @@ import { GdprPreferencesTab } from "./gdpr-tab";
 import type { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { PhoneField } from "@/components/forms/phone-field";
 import { AdminSummaryStrip, Btn, PageHeader } from "@/components/portal-atoms";
-import { PortalTabs } from "@/components/PortalTabs";
+import { PortalTabs, PortalTabPanel } from "@/components/PortalTabs";
 import { FormSection } from "@/components/FormSection";
 
 type Tab = "personal" | "insurance" | "verification" | "nationality" | "privacy";
@@ -174,11 +174,14 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
           value={activeTab}
           onChange={(v) => setActiveTab(v as Tab)}
           items={TABS.map((tab) => ({ value: tab.id, label: tab.label }))}
+          syncParam="tab"
         />
       </div>
 
-      {/* Personal tab */}
-      {activeTab === "personal" && (
+      {/* Personal tab — every panel below stays mounted (kept-mounted
+          pattern, RC4) so switching tabs doesn't unmount/re-fetch; visibility
+          is toggled via the `hidden` attribute inside PortalTabPanel. */}
+      <PortalTabPanel value="personal" activeValue={activeTab}>
         <>
           {loading ? (
             <div className="gh-card p-6">
@@ -275,9 +278,9 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
           )}
           <PatientProfileSection i18n={a.profile} />
         </>
-      )}
+      </PortalTabPanel>
 
-      {activeTab === "insurance" && (
+      <PortalTabPanel value="insurance" activeValue={activeTab}>
         <InsuranceTab
           i18n={{
             ...a.insurance,
@@ -287,8 +290,8 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
             badgeRejected: a.profile.badgeRejected,
           }}
         />
-      )}
-      {activeTab === "verification" && (
+      </PortalTabPanel>
+      <PortalTabPanel value="verification" activeValue={activeTab}>
         <VerificationTab
           i18n={{
             ...a.verification,
@@ -304,8 +307,8 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
             docOther: a.profile.docOther,
           }}
         />
-      )}
-      {activeTab === "nationality" && (
+      </PortalTabPanel>
+      <PortalTabPanel value="nationality" activeValue={activeTab}>
         <NationalityTab
           i18n={{
             ...a.nationality,
@@ -321,8 +324,10 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
             docOther: a.profile.docOther,
           }}
         />
-      )}
-      {activeTab === "privacy" && <GdprPreferencesTab i18n={a.privacy} />}
+      </PortalTabPanel>
+      <PortalTabPanel value="privacy" activeValue={activeTab}>
+        <GdprPreferencesTab i18n={a.privacy} />
+      </PortalTabPanel>
     </div>
   );
 }

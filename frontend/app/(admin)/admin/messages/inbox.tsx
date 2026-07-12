@@ -16,7 +16,7 @@ export function AdminMessagesInbox({
   const items: InboxThread[] = threads.map((t) => ({
     id: t.appointmentId,
     orderNumber: t.orderNumber,
-    orderHref: `/admin/appointments/${t.appointmentId}#patient-chat`,
+    orderHref: `/admin/appointments/${t.appointmentId}?tab=messages#patient-chat`,
     name: t.patientName,
     subtitle: `${t.consultationType}${t.patientEmail ? ` · ${t.patientEmail}` : ""}`,
     preview: t.lastMessage

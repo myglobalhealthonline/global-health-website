@@ -3641,24 +3641,6 @@ a.gh-appointment-card:hover {
   color: var(--portal-text, var(--color-text-primary));
 }
 
-.gh-admin-detail-layout {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-}
-
-@media (max-width: 1024px)  {
-  .gh-admin-detail-layout.gh-admin-appointment-workspace {
-    grid-template-columns: minmax(0, 1fr) !important;
-  }
-
-  .gh-admin-detail-layout.gh-admin-appointment-workspace > .grid {
-    min-width: 0;
-  }
-}
-
-
-
 .gh-admin-pager-btn {
   min-height: 36px;
   padding: 0 14px;

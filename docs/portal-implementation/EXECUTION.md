@@ -91,8 +91,8 @@ F4 Write `VERIFICATION.md` + final report per TASK format
 
 - [x] Phase A investigation (A1 runtime, A2 components, A3 forms, A4 a11y — done)
 - [x] FINDINGS.md consolidated
-- [ ] Phase B shared foundations
-- [ ] Phase C doctor
+- [x] Phase B shared foundations (commit 4ca59296)
+- [x] Phase C doctor (commit 07d75ad2; calendar/list runtime matrix deferred to F)
 - [ ] Phase D patient
 - [ ] Phase E admin
 - [ ] Phase F verification + report

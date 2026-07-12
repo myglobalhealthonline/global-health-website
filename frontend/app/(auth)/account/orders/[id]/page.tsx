@@ -176,7 +176,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
 
           <AdminCard className="bg-[var(--portal-well)]">
             <div className="flex items-start gap-3">
-              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-white text-[var(--portal-primary)]">
+              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-[var(--portal-surface-elevated)] text-[var(--portal-primary)]">
                 <PackageCheck className="size-5" aria-hidden />
               </span>
               <div>
