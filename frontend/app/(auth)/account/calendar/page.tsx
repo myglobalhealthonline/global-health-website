@@ -68,7 +68,12 @@ export default async function AccountCalendarPage() {
       />
 
       {history.ok ? (
-        <PatientCalendarUI items={items} defaultTz={defaultTz} emptyLabel={a.calendar.emptyDay} />
+        <PatientCalendarUI
+          items={items}
+          defaultTz={defaultTz}
+          emptyLabel={a.calendar.emptyDay}
+          emptyHint={a.calendar.emptyDayHint}
+        />
       ) : (
         <div className="gh-patient-empty-state rounded-[var(--radius-card-sm)] border border-[var(--portal-line)] bg-[var(--portal-surface-elevated)] px-5 py-4">
           <p className="text-sm text-[var(--portal-muted)]">{history.message}</p>

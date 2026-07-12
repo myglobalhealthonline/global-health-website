@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type MouseEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
   AlertTriangle,
   ArrowRight,
@@ -34,6 +34,7 @@ import {
 } from "@/lib/api/account-appointment-actions";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
+import { getJoinState } from "@/lib/join-state";
 
 // Mirrors backend appointment-status-transitions.ts allowedTransitions —
 // only these statuses can still move to CANCELLED. Keep in sync.
@@ -230,6 +231,8 @@ function formatPaymentLabel(
 
 export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKINGS_I18N }: BookingsShellProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   // Only one chat thread is open at a time. Keeps polling load to one
   // background fetch every 10s regardless of how many bookings the
   // patient has in their history.
@@ -245,8 +248,31 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
   const [paymentRedirectUrl, setPaymentRedirectUrl] = useState<string | null>(null);
   // ColumnPriorityTable row -> details drawer (fix 02-003). Only one booking's
   // full detail (scheduled band, where, notes, chat/reschedule/cancel) is
-  // mounted at a time, same as the old per-card dialogs.
-  const [detailsId, setDetailsId] = useState<string | null>(null);
+  // mounted at a time, same as the old per-card dialogs. Deep-linkable via
+  // ?booking=<id> — initialized from the URL so a fresh load with the param
+  // opens the drawer immediately.
+  const [detailsId, setDetailsId] = useState<string | null>(() => searchParams.get("booking"));
+
+  // Keep ?booking=<id> in sync with detailsId on every open/close path
+  // (row click, Details button, footer Close, Escape/overlay dismiss) —
+  // router.replace, no scroll, no history entry per navigation.
+  function syncDetailsParam(id: string | null) {
+    const next = new URLSearchParams(searchParams.toString());
+    if (id) next.set("booking", id);
+    else next.delete("booking");
+    const qs = next.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }
+
+  function openDetails(id: string) {
+    setDetailsId(id);
+    syncDetailsParam(id);
+  }
+
+  function closeDetails() {
+    setDetailsId(null);
+    syncDetailsParam(null);
+  }
 
   // Navigation is a side effect, not a render/handler-body concern — run it
   // here so it fires exactly once per URL rather than inline during the
@@ -330,7 +356,7 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
           type="button"
           onClick={(e) => {
             e.stopPropagation();
-            setDetailsId(item.id);
+            openDetails(item.id);
           }}
           className="gh-btn gh-btn-soft text-sm"
         >
@@ -351,9 +377,12 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
             {b.completePayment}
           </Btn>
         ) : null}
-        {item.meetingUrl ? (
+        {getJoinState(
+          { status: item.status, meetingUrl: item.meetingUrl, startAt: item.scheduledAt },
+          new Date(),
+        ).kind === "ready" ? (
           <a
-            href={item.meetingUrl}
+            href={item.meetingUrl!}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
@@ -552,7 +581,7 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
             cardTone={(item) =>
               item.status === "COMPLETED" ? "success" : item.status === "CANCELLED" ? "danger" : "neutral"
             }
-            onRowClick={(item) => setDetailsId(item.id)}
+            onRowClick={(item) => openDetails(item.id)}
             cardActions={bookingActionsCell}
           />
         </div>
@@ -565,7 +594,7 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
       <RecordDetailsDrawer
         open={detailsItem !== null}
         onOpenChange={(next) => {
-          if (!next) setDetailsId(null);
+          if (!next) closeDetails();
         }}
         title={
           detailsItem
@@ -584,7 +613,7 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
           ) : null
         }
         footer={
-          <Btn variant="ghost" onClick={() => setDetailsId(null)}>
+          <Btn variant="ghost" onClick={() => closeDetails()}>
             Close
           </Btn>
         }
@@ -594,6 +623,10 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
             {(() => {
               const item = detailsItem;
               const paymentLabel = formatPaymentLabel(item.paymentStatus, item.amountCents, item.currencyCode, i18n);
+              const joinState = getJoinState(
+                { status: item.status, meetingUrl: item.meetingUrl, startAt: item.scheduledAt },
+                new Date(),
+              );
               return (
                 <>
                   <div className="gh-portal-mobile-card__meta">
@@ -635,9 +668,9 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
                           </p>
                         </div>
                       </div>
-                      {item.meetingUrl ? (
+                      {joinState.kind === "ready" ? (
                         <a
-                          href={item.meetingUrl}
+                          href={item.meetingUrl!}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="gh-btn gh-btn-primary text-sm"
@@ -645,6 +678,21 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
                           <Video className="size-4" aria-hidden />
                           {i18n.dashboard.joinCall}
                         </a>
+                      ) : item.meetingUrl ? (
+                        // Mirrors EventDetailDialog's join-gating copy — link
+                        // exists but isn't joinable yet (unconfirmed/too
+                        // early/ended/cancelled).
+                        <p className="text-xs" style={{ color: "var(--portal-muted)" }}>
+                          {joinState.kind === "unconfirmed"
+                            ? "This request hasn't been confirmed yet."
+                            : joinState.kind === "cancelled"
+                              ? "This consultation was cancelled."
+                              : joinState.kind === "ended"
+                                ? "This consultation has ended."
+                                : joinState.kind === "too-early"
+                                  ? `The join link opens at ${formatAppDateTime(joinState.opensAt.toISOString(), item.patientTimezone)}.`
+                                  : null}
+                        </p>
                       ) : null}
                     </div>
                   ) : null}
@@ -677,7 +725,7 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
                         // Close the details drawer first — Radix's modal focus
                         // trap on the still-open AppSheet blocks pointer events
                         // reaching a second body-level PortalDialog otherwise.
-                        setDetailsId(null);
+                        closeDetails();
                         setOpenConsultChatId(null);
                         setOpenChatId(item.id);
                       }}
@@ -704,7 +752,7 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
                       <button
                         type="button"
                         onClick={() => {
-                          setDetailsId(null);
+                          closeDetails();
                           setOpenChatId(null);
                           setOpenConsultChatId(item.id);
                         }}
@@ -727,7 +775,7 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
                         <button
                           type="button"
                           onClick={() => {
-                            setDetailsId(null);
+                            closeDetails();
                             setCancelError(null);
                             setCancelTarget(item);
                           }}

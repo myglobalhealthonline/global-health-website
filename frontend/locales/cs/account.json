@@ -57,7 +57,13 @@
     "goToSecurity": "Zabezpečení",
     "securityHint": "Heslo, email",
     "bookCta": "Rezervovat konzultaci",
-    "booked": "Rezervováno {date}"
+    "booked": "Rezervováno {date}",
+    "needsAttentionTitle": "Vyžaduje pozornost",
+    "needsAttentionPaymentRow": "{type} vyžaduje platbu",
+    "payNow": "Zaplatit",
+    "needsAttentionAwaitingOne": "1 žádost o rezervaci čeká na potvrzení",
+    "needsAttentionAwaitingMany": "{count} žádostí o rezervaci čeká na potvrzení",
+    "reviewAction": "Zkontrolovat"
   },
   "bookings": {
     "breadcrumb": "Účet",
@@ -300,6 +306,8 @@
     "saveMedicalProfile": "Uložit zdravotní profil",
     "medicalSaved": "Zdravotní profil uložen",
     "medicalSaveFailed": "Zdravotní profil se nepodařilo uložit",
+    "tabContact": "Kontakt",
+    "tabMedical": "Zdravotní údaje",
     "tabPersonal": "Osobní",
     "tabInsurance": "Pojištění",
     "tabVerification": "Ověření",
@@ -551,7 +559,8 @@
     "uploaded": "Dokument nahrán",
     "enableSecond": "Nejprve uložte Státní příslušnost 1, abyste mohli přidat druhou.",
     "maxReached": "Dosažen maximální počet dvou dokladů o státní příslušnosti.",
-    "loadingRecords": "Načítání záznamů o státní příslušnosti"
+    "loadingRecords": "Načítání záznamů o státní příslušnosti",
+    "saveSlot": "Uložit národnost {n}"
   },
   "privacy": {
     "intro": "Rozhodujte o tom, jak se používají vaše zdravotní údaje. Změny se zaznamenávají pro účely souladu s předpisy.",
@@ -613,7 +622,8 @@
     "sumMeetLinksHint": "Připraveno k připojení",
     "sumMarkets": "Trhy",
     "sumMarketsHint": "Zastoupené země",
-    "emptyDay": "V tento den žádné konzultace."
+    "emptyDay": "V tento den žádné konzultace.",
+    "emptyDayHint": "Pick another day to review your appointments."
   },
   "messages": {
     "eyebrow": "Zprávy",

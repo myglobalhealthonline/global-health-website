@@ -34,6 +34,9 @@ type Props = {
   items: CalendarItem[];
   tz: string;
   emptyLabel?: string;
+  /** Body sentence under the empty-day title. Defaults to the doctor-portal
+   *  copy (unchanged); patient calendar passes patient-appropriate text. */
+  emptyHint?: string;
   /** Click handler for consultation rows (opens the detail dialog). */
   onSelectConsultation?: (item: CalendarItem) => void;
   /** Per-slot action (e.g. the doctor's block/unblock button). */
@@ -79,6 +82,7 @@ export function DayAgenda({
   items,
   tz,
   emptyLabel = "Nothing scheduled.",
+  emptyHint = "Add availability or open another day to review appointments.",
   onSelectConsultation,
   renderSlotAction,
   showDoctorName,
@@ -136,7 +140,7 @@ export function DayAgenda({
               {emptyLabel}
             </p>
             <p className="mx-auto mt-1 max-w-xs text-portal-meta" style={{ color: "var(--portal-muted)" }}>
-              Add availability or open another day to review appointments.
+              {emptyHint}
             </p>
           </div>
         ) : (
@@ -146,13 +150,16 @@ export function DayAgenda({
                 <p className="mb-2 text-portal-thead font-bold uppercase tracking-[0.12em]" style={{ color: "var(--portal-muted)" }}>
                   Consultations
                 </p>
-                <ul className="grid gap-2">
+                {/* min-w-0 on ul+li: without it, the badge's min-content
+                    (ignoring truncate/ellipsis) blows out the implicit grid
+                    track past the panel width — classic grid overflow. */}
+                <ul className="grid min-w-0 gap-2">
                   {consultations.map((item) => (
-                    <li key={item.id}>
+                    <li key={item.id} className="min-w-0">
                       <button
                         type="button"
                         onClick={() => onSelectConsultation?.(item)}
-                        className="gh-agenda-row flex w-full items-center gap-3 rounded-[var(--portal-radius)] px-3 py-2.5 text-left transition"
+                        className="gh-agenda-row flex w-full items-center gap-3 overflow-hidden rounded-[var(--portal-radius)] px-3 py-2.5 text-left transition"
                         style={{ border: "1px solid var(--portal-line)", background: "var(--portal-surface)" }}
                       >
                         <span
@@ -178,7 +185,10 @@ export function DayAgenda({
                             </span>
                           ) : null}
                         </span>
-                        <span className={`gh-badge ${consultationBadgeClass(item.status)} shrink-0`}>
+                        <span
+                          className={`gh-badge ${consultationBadgeClass(item.status)} max-w-[92px] shrink-0 truncate`}
+                          title={humanizeStatus(item.status)}
+                        >
                           {humanizeStatus(item.status)}
                         </span>
                         {item.meta?.meetingUrl ? (

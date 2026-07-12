@@ -58,7 +58,13 @@ const DEFAULT_I18N: InsuranceI18n = {
   badgeRejected: "Rejected",
 };
 
-export function InsuranceTab({ i18n = DEFAULT_I18N }: { i18n?: InsuranceI18n }) {
+export function InsuranceTab({
+  i18n = DEFAULT_I18N,
+  onDirtyChange,
+}: {
+  i18n?: InsuranceI18n;
+  onDirtyChange?: (dirty: boolean) => void;
+}) {
   const STATUS_BADGE: Record<VerificationStatus, { label: string; cls: string }> = {
     NOT_VERIFIED: { label: i18n.badgeNotVerified, cls: "bg-gray-100 text-gray-700" },
     PENDING: { label: i18n.badgePending, cls: "bg-amber-100 text-amber-800" },
@@ -90,7 +96,11 @@ export function InsuranceTab({ i18n = DEFAULT_I18N }: { i18n?: InsuranceI18n }) 
     });
   }, []);
 
-  useUnsavedChanges(loaded && (providerName !== initial.providerName || policyNumber !== initial.policyNumber));
+  const dirty = loaded && (providerName !== initial.providerName || policyNumber !== initial.policyNumber);
+  useUnsavedChanges(dirty);
+  useEffect(() => {
+    onDirtyChange?.(dirty);
+  }, [dirty, onDirtyChange]);
 
   function onSave(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

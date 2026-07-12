@@ -6,6 +6,7 @@ import {
   buildMonthGrid,
   WEEKDAY_LABELS,
   monthLabel,
+  dayLabel,
 } from "./calendar-utils";
 import { IconBtn } from "@/components/portal-atoms";
 
@@ -113,6 +114,11 @@ export function MonthCalendar({
               key={cell.key}
               type="button"
               onClick={() => onSelectDay(cell.key)}
+              aria-label={
+                consults > 0
+                  ? `${dayLabel(cell.key)}, ${consults} consultation${consults > 1 ? "s" : ""}`
+                  : dayLabel(cell.key)
+              }
               className={`gh-calendar-day gh-calendar-day--tappable relative flex min-h-[68px] flex-col items-start gap-1 p-1 text-left transition sm:min-h-[92px] sm:p-1.5 ${
                 cell.inMonth ? "" : "gh-calendar-day-outside"
               } ${isSelected ? "gh-calendar-day-selected" : ""}`}
@@ -138,12 +144,24 @@ export function MonthCalendar({
               {hasAny ? (
                 <span className="mt-auto flex w-full flex-wrap gap-1">
                   {consults > 0 ? (
-                    <span
-                      className="inline-flex max-w-full items-center truncate rounded-full px-1.5 py-0.5 text-portal-micro font-bold leading-none"
-                      style={{ background: "var(--portal-success-soft)", color: "var(--portal-success-text)" }}
-                    >
-                      {consults} consult{consults > 1 ? "s" : ""}
-                    </span>
+                    <>
+                      {/* Full word badge — enough room from sm: up. */}
+                      <span
+                        className="hidden max-w-full items-center truncate rounded-full px-1.5 py-0.5 text-portal-micro font-bold leading-none sm:inline-flex"
+                        style={{ background: "var(--portal-success-soft)", color: "var(--portal-success-text)" }}
+                      >
+                        {consults} consult{consults > 1 ? "s" : ""}
+                      </span>
+                      {/* Narrow-width fallback — dot + numeral, matches the
+                          open/booked/blocked pattern below (05-003). */}
+                      <span
+                        className="inline-flex items-center gap-0.5 text-portal-micro font-semibold sm:hidden"
+                        style={{ color: "var(--portal-success-text)" }}
+                      >
+                        <span className="size-1.5 rounded-full" style={{ background: "var(--portal-success)" }} />
+                        {consults}
+                      </span>
+                    </>
                   ) : null}
                   {booked > 0 ? (
                     <span

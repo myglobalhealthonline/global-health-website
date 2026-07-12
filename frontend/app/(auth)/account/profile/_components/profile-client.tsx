@@ -6,6 +6,7 @@ import {
   BadgeCheck,
   FileCheck2,
   Flag,
+  HeartPulse,
   Save,
   ShieldCheck,
   User,
@@ -27,7 +28,7 @@ import { PortalTabs, PortalTabPanel } from "@/components/PortalTabs";
 import { FormSection } from "@/components/FormSection";
 import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
-type Tab = "personal" | "insurance" | "verification" | "nationality" | "privacy";
+type Tab = "contact" | "medical" | "verification" | "insurance" | "nationality" | "privacy";
 
 type Account = ReturnType<typeof loadLocaleBundle>["account"];
 
@@ -48,8 +49,16 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
-  const [activeTab, setActiveTab] = useState<Tab>("personal");
+  const [activeTab, setActiveTab] = useState<Tab>("contact");
   const [initialContact, setInitialContact] = useState({ fullName: "", phone: "", dateOfBirth: "" });
+  // Per-tab dirty flags (17-005 §12) — lifted from each tab's own
+  // useUnsavedChanges-backed form state so the tab strip can show which
+  // tabs have unsaved edits before the user navigates away from them.
+  // Verification has no dirty state (auto-upload, nothing to lose).
+  const [medicalDirty, setMedicalDirty] = useState(false);
+  const [insuranceDirty, setInsuranceDirty] = useState(false);
+  const [nationalityDirty, setNationalityDirty] = useState(false);
+  const [privacyDirty, setPrivacyDirty] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -91,18 +100,31 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
 
   const a = i18n;
   const p = a.profile;
-  const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
-    { id: "personal", label: p.tabPersonal, icon: <User aria-hidden /> },
-    { id: "insurance", label: p.tabInsurance, icon: <ShieldCheck aria-hidden /> },
-    { id: "verification", label: p.tabVerification, icon: <BadgeCheck aria-hidden /> },
-    { id: "nationality", label: p.tabNationality, icon: <Flag aria-hidden /> },
-    { id: "privacy", label: p.tabPrivacy, icon: <FileCheck2 aria-hidden /> },
-  ];
   const contactDirty =
     fullName !== initialContact.fullName ||
     phone !== initialContact.phone ||
     dateOfBirth !== initialContact.dateOfBirth;
   useUnsavedChanges(contactDirty);
+
+  // Small "•" badge (reusing PortalTabs' existing badge/badgeAlert props,
+  // no new visual primitive) marks a tab with unsaved edits so switching
+  // tabs never silently loses work (17-005 §12).
+  const TAB_DIRTY: Record<Tab, boolean> = {
+    contact: contactDirty,
+    medical: medicalDirty,
+    verification: false,
+    insurance: insuranceDirty,
+    nationality: nationalityDirty,
+    privacy: privacyDirty,
+  };
+  const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
+    { id: "contact", label: p.tabContact, icon: <User aria-hidden /> },
+    { id: "medical", label: p.tabMedical, icon: <HeartPulse aria-hidden /> },
+    { id: "verification", label: p.tabVerification, icon: <BadgeCheck aria-hidden /> },
+    { id: "insurance", label: p.tabInsurance, icon: <ShieldCheck aria-hidden /> },
+    { id: "nationality", label: p.tabNationality, icon: <Flag aria-hidden /> },
+    { id: "privacy", label: p.tabPrivacy, icon: <FileCheck2 aria-hidden /> },
+  ];
 
   const needsAttention = Boolean(user && !user.emailVerifiedAt) || !ghn;
   const profileStatusItems = [
@@ -203,15 +225,23 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
           ariaLabel={p.tabsAria}
           value={activeTab}
           onChange={(v) => setActiveTab(v as Tab)}
-          items={TABS.map((tab) => ({ value: tab.id, label: tab.label, icon: tab.icon }))}
+          items={TABS.map((tab) => ({
+            value: tab.id,
+            label: tab.label,
+            icon: tab.icon,
+            badge: TAB_DIRTY[tab.id] ? "•" : undefined,
+            badgeAlert: TAB_DIRTY[tab.id],
+          }))}
           syncParam="tab"
         />
       </div>
 
-      {/* Personal tab — every panel below stays mounted (kept-mounted
-          pattern, RC4) so switching tabs doesn't unmount/re-fetch; visibility
-          is toggled via the `hidden` attribute inside PortalTabPanel. */}
-      <PortalTabPanel value="personal" activeValue={activeTab}>
+      {/* Every panel below stays mounted (kept-mounted pattern, RC4) so
+          switching tabs doesn't unmount/re-fetch; visibility is toggled via
+          the `hidden` attribute inside PortalTabPanel. Contact and Medical
+          used to be one "Personal" tab stacking two independently-saved
+          forms — split per 17-004 so each tab owns exactly one Save. */}
+      <PortalTabPanel value="contact" activeValue={activeTab}>
         <>
           {loading ? (
             <div className="gh-card p-6">
@@ -306,21 +336,13 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
               </form>
             </FormSection>
           )}
-          <PatientProfileSection i18n={a.profile} />
         </>
       </PortalTabPanel>
 
-      <PortalTabPanel value="insurance" activeValue={activeTab}>
-        <InsuranceTab
-          i18n={{
-            ...a.insurance,
-            badgeNotVerified: a.profile.badgeNotVerified,
-            badgePending: a.profile.badgePending,
-            badgeVerified: a.profile.badgeVerified,
-            badgeRejected: a.profile.badgeRejected,
-          }}
-        />
+      <PortalTabPanel value="medical" activeValue={activeTab}>
+        <PatientProfileSection i18n={a.profile} onDirtyChange={setMedicalDirty} />
       </PortalTabPanel>
+
       <PortalTabPanel value="verification" activeValue={activeTab}>
         <VerificationTab
           i18n={{
@@ -338,6 +360,18 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
           }}
         />
       </PortalTabPanel>
+      <PortalTabPanel value="insurance" activeValue={activeTab}>
+        <InsuranceTab
+          i18n={{
+            ...a.insurance,
+            badgeNotVerified: a.profile.badgeNotVerified,
+            badgePending: a.profile.badgePending,
+            badgeVerified: a.profile.badgeVerified,
+            badgeRejected: a.profile.badgeRejected,
+          }}
+          onDirtyChange={setInsuranceDirty}
+        />
+      </PortalTabPanel>
       <PortalTabPanel value="nationality" activeValue={activeTab}>
         <NationalityTab
           i18n={{
@@ -353,10 +387,11 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
             docCnic: a.profile.docCnic,
             docOther: a.profile.docOther,
           }}
+          onDirtyChange={setNationalityDirty}
         />
       </PortalTabPanel>
       <PortalTabPanel value="privacy" activeValue={activeTab}>
-        <GdprPreferencesTab i18n={a.privacy} />
+        <GdprPreferencesTab i18n={a.privacy} onDirtyChange={setPrivacyDirty} />
       </PortalTabPanel>
     </div>
   );

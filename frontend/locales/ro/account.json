@@ -57,7 +57,13 @@
     "goToSecurity": "Securitate",
     "securityHint": "Parolă, email",
     "bookCta": "Rezervă o consultație",
-    "booked": "Rezervat {date}"
+    "booked": "Rezervat {date}",
+    "needsAttentionTitle": "Necesită atenția ta",
+    "needsAttentionPaymentRow": "{type} necesită plată",
+    "payNow": "Plătește acum",
+    "needsAttentionAwaitingOne": "1 cerere de rezervare așteaptă confirmare",
+    "needsAttentionAwaitingMany": "{count} cereri de rezervare așteaptă confirmare",
+    "reviewAction": "Verifică"
   },
   "bookings": {
     "breadcrumb": "Cont",
@@ -300,6 +306,8 @@
     "saveMedicalProfile": "Salvează profilul medical",
     "medicalSaved": "Profil medical salvat",
     "medicalSaveFailed": "Nu s-a putut salva profilul medical",
+    "tabContact": "Contact",
+    "tabMedical": "Date medicale",
     "tabPersonal": "Personal",
     "tabInsurance": "Asigurare",
     "tabVerification": "Verificare",
@@ -551,7 +559,8 @@
     "uploaded": "Document încărcat",
     "enableSecond": "Salvează mai întâi Cetățenia 1 pentru a activa o a doua cetățenie.",
     "maxReached": "S-a atins numărul maxim de două documente de cetățenie.",
-    "loadingRecords": "Se încarcă înregistrările de cetățenie"
+    "loadingRecords": "Se încarcă înregistrările de cetățenie",
+    "saveSlot": "Salvează naționalitatea {n}"
   },
   "privacy": {
     "intro": "Controlează modul în care sunt folosite datele tale medicale. Modificările sunt înregistrate pentru conformitate.",
@@ -613,7 +622,8 @@
     "sumMeetLinksHint": "Gata de conectare",
     "sumMarkets": "Piețe",
     "sumMarketsHint": "Țări reprezentate",
-    "emptyDay": "Nicio consultație în această zi."
+    "emptyDay": "Nicio consultație în această zi.",
+    "emptyDayHint": "Pick another day to review your appointments."
   },
   "messages": {
     "eyebrow": "Mesaje",

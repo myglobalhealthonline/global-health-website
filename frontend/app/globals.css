@@ -1445,6 +1445,53 @@ img {
     var(--liquid-specular),                    /* lit top edge + lime under-rim */
     0 18px 40px -18px rgba(4, 24, 18, 0.55);   /* calm premium shadow */
 }
+/* Portal-return band (04-001/04-002) — shown above the booking wizard only
+ * when a signed-in patient arrived from `/account` (`?from=portal`, then a
+ * short-lived cookie so it survives the wizard's 4 steps). Public/anonymous
+ * visitors never render this. Same forest-glass material as the wizard
+ * chrome so it reads as part of the flow, not a bolted-on banner. */
+.gh-portal-return-band {
+  background: var(--liquid-fill-dark), rgba(4, 32, 24, 0.92);
+  border-bottom: var(--gh-chrome-border);
+  -webkit-backdrop-filter: var(--gh-chrome-filter);
+  backdrop-filter: var(--gh-chrome-filter);
+}
+.gh-portal-return-band__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+}
+.gh-portal-return-band__link:hover { color: var(--color-brand-accent); }
+.gh-portal-return-band__badge {
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-brand-accent);
+  background: rgba(176, 241, 34, 0.10);
+  border: 1px solid rgba(176, 241, 34, 0.18);
+}
+@media (pointer: coarse) {
+  .gh-portal-return-band {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: #0b2a20;
+  }
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .gh-portal-return-band {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: #0b2a20;
+  }
+}
+
 /* Premium ivory card — replaces flat bg-white cards on light sections.
  * Also re-declares the ink tokens: when nested inside .gh2-dark-content
  * (booking form panels on glass-forest cards) the dark overrides would

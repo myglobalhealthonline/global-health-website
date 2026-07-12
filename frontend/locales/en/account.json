@@ -57,7 +57,13 @@
     "goToSecurity": "Security",
     "securityHint": "Password, email",
     "bookCta": "Book a consultation",
-    "booked": "Booked {date}"
+    "booked": "Booked {date}",
+    "needsAttentionTitle": "Needs your attention",
+    "needsAttentionPaymentRow": "{type} needs payment",
+    "payNow": "Pay now",
+    "needsAttentionAwaitingOne": "1 booking request awaiting confirmation",
+    "needsAttentionAwaitingMany": "{count} booking requests awaiting confirmation",
+    "reviewAction": "Review"
   },
   "bookings": {
     "breadcrumb": "Account",
@@ -300,6 +306,8 @@
     "saveMedicalProfile": "Save medical profile",
     "medicalSaved": "Medical profile saved",
     "medicalSaveFailed": "Could not save medical profile",
+    "tabContact": "Contact",
+    "tabMedical": "Medical details",
     "tabPersonal": "Personal",
     "tabInsurance": "Insurance",
     "tabVerification": "Verification",
@@ -551,7 +559,8 @@
     "uploaded": "Document uploaded",
     "enableSecond": "Save Nationality 1 first to enable a second nationality.",
     "maxReached": "Maximum of two nationality documents reached.",
-    "loadingRecords": "Loading nationality records"
+    "loadingRecords": "Loading nationality records",
+    "saveSlot": "Save Nationality {n}"
   },
   "privacy": {
     "intro": "Control how your medical data is used. Changes are logged for compliance.",
@@ -613,7 +622,8 @@
     "sumMeetLinksHint": "Ready to join",
     "sumMarkets": "Markets",
     "sumMarketsHint": "Countries represented",
-    "emptyDay": "No consultations on this day."
+    "emptyDay": "No consultations on this day.",
+    "emptyDayHint": "Pick another day to review your appointments."
   },
   "messages": {
     "eyebrow": "Messages",

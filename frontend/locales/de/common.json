@@ -658,7 +658,9 @@
     "languageAll": "Alle",
     "noForLanguage": "Derzeit sind keine Ärzte für diesen Service in {language} verfügbar.",
     "chooseAnotherLanguage": "Bitte wählen Sie eine andere Sprache oder schauen Sie später wieder vorbei.",
-    "showAllLanguages": "Alle Sprachen anzeigen"
+    "showAllLanguages": "Alle Sprachen anzeigen",
+    "backToAccount": "Zurück zu meinem Konto",
+    "portalBadge": "Patientenportal"
   },
   "cardVerify": {
     "title": "Firmenkarten-Prüfung",

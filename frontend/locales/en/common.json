@@ -658,7 +658,9 @@
     "languageAll": "All",
     "noForLanguage": "No doctors are currently available for this service in {language}.",
     "chooseAnotherLanguage": "Please choose another language or check again later.",
-    "showAllLanguages": "Show all languages"
+    "showAllLanguages": "Show all languages",
+    "backToAccount": "Back to my account",
+    "portalBadge": "Patient Portal"
   },
   "cardVerify": {
     "title": "Corporate card verification",

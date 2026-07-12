@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { Video } from "lucide-react";
-import { formatAppDateTime } from "@/lib/format-datetime";
+import { formatAppDateTime, formatAppTime } from "@/lib/format-datetime";
 import type { CalendarItem } from "./calendar-types";
 import {
   RecordDetailsDrawer,
   RecordDetailsSection,
   RecordDetailsField,
 } from "@/components/RecordDetailsDrawer";
+import { getJoinState } from "@/lib/join-state";
 
 type Props = {
   item: CalendarItem | null;
@@ -17,6 +18,11 @@ type Props = {
   onClose: () => void;
   /** Optional URL binding — pass e.g. "event" to sync `?event=<id>` (admin calendar only). */
   paramKey?: string;
+  /** Viewer context. "patient" avoids repeating the doctor's name in the
+   *  title/subtitle (it already appears once in the Doctor row) and hides
+   *  the self-referential Patient row. Omit for doctor/admin — unchanged
+   *  default behavior. */
+  viewerRole?: "patient" | "doctor" | "admin";
 };
 
 function statusBadgeClass(status: string): string {
@@ -35,42 +41,36 @@ function humanize(status: string): string {
     .join(" ");
 }
 
-// ponytail: role-agnostic join gating — same statuses cover patient
-// consultations (REQUEST_RECEIVED/UNDER_REVIEW/CONTACTED/COMPLETED/CANCELLED)
-// and admin/doctor slot items (OPEN/HELD/BOOKED/BLOCKED); both mean
-// "confirmed" / "cancelled-or-unavailable" in their own vocabulary.
-const CONFIRMED_STATUSES = new Set(["CONTACTED", "BOOKED"]);
-const ENDED_STATUSES = new Set(["COMPLETED"]);
-const CANCELLED_STATUSES = new Set(["CANCELLED", "BLOCKED"]);
-const JOIN_WINDOW_BEFORE_MS = 15 * 60 * 1000;
-/** Fallback call length when the item carries no `endAt` (consultations don't). */
-const DEFAULT_DURATION_MS = 60 * 60 * 1000;
-
-type JoinState =
-  | { kind: "ready" }
-  | { kind: "no-link" }
-  | { kind: "unconfirmed" }
-  | { kind: "cancelled" }
-  | { kind: "ended" }
-  | { kind: "too-early"; opensAt: Date };
-
-function getJoinState(item: CalendarItem, now: Date): JoinState {
-  if (!item.meta?.meetingUrl) return { kind: "no-link" };
-  if (CANCELLED_STATUSES.has(item.status)) return { kind: "cancelled" };
-  if (ENDED_STATUSES.has(item.status)) return { kind: "ended" };
-  if (!CONFIRMED_STATUSES.has(item.status)) return { kind: "unconfirmed" };
-
-  const start = new Date(item.startAt);
-  const end = item.endAt ? new Date(item.endAt) : new Date(start.getTime() + DEFAULT_DURATION_MS);
-  const opensAt = new Date(start.getTime() - JOIN_WINDOW_BEFORE_MS);
-  if (now < opensAt) return { kind: "too-early", opensAt };
-  if (now > end) return { kind: "ended" };
-  return { kind: "ready" };
+/** IANA id → readable label, e.g. "Asia/Karachi" → "Karachi (GMT+05:00)". */
+function humanTimezone(tz: string): string {
+  try {
+    const offset = new Intl.DateTimeFormat("en-GB", {
+      timeZone: tz,
+      timeZoneName: "longOffset",
+    })
+      .formatToParts(new Date())
+      .find((p) => p.type === "timeZoneName")?.value;
+    const city = tz.includes("/") ? tz.slice(tz.lastIndexOf("/") + 1).replace(/_/g, " ") : tz;
+    return offset ? `${city} (${offset})` : city;
+  } catch {
+    return tz;
+  }
 }
 
-export function EventDetailDialog({ item, tz, onClose, paramKey }: Props) {
+export function EventDetailDialog({ item, tz, onClose, paramKey, viewerRole }: Props) {
+  const isPatientView = viewerRole === "patient";
   const meetingUrl = item?.meta?.meetingUrl ?? null;
-  const joinState = item ? getJoinState(item, new Date()) : null;
+  const joinState = item
+    ? getJoinState(
+        { status: item.status, meetingUrl, startAt: item.startAt, endAt: item.endAt },
+        new Date(),
+      )
+    : null;
+  const dialogTitle = item
+    ? isPatientView
+      ? `${item.meta?.consultationType ?? "Consultation"} · ${formatAppTime(item.startAt, tz)}`
+      : item.title
+    : "";
 
   return (
     <RecordDetailsDrawer
@@ -81,7 +81,7 @@ export function EventDetailDialog({ item, tz, onClose, paramKey }: Props) {
       paramKey={paramKey}
       paramValue={item?.id}
       size="sm"
-      title={item?.title ?? ""}
+      title={dialogTitle}
       eyebrow={item?.meta?.consultationType ?? "Consultation"}
       summary={
         item ? (
@@ -93,7 +93,7 @@ export function EventDetailDialog({ item, tz, onClose, paramKey }: Props) {
               {formatAppDateTime(item.startAt, tz)}
               {item.endAt ? ` – ${formatAppDateTime(item.endAt, tz)}` : ""}
             </span>
-            {item.meta?.doctorName ? (
+            {!isPatientView && item.meta?.doctorName ? (
               <span style={{ color: "var(--portal-muted)" }}>· {item.meta.doctorName}</span>
             ) : null}
           </div>
@@ -115,7 +115,9 @@ export function EventDetailDialog({ item, tz, onClose, paramKey }: Props) {
               value={item.meta?.consultationType ?? undefined}
             />
             <RecordDetailsField label="Doctor" value={item.meta?.doctorName ?? undefined} />
-            <RecordDetailsField label="Patient" value={item.meta?.patientName ?? undefined} />
+            {isPatientView && !item.meta?.patientName ? null : (
+              <RecordDetailsField label="Patient" value={item.meta?.patientName ?? undefined} />
+            )}
             <RecordDetailsField
               label="Country"
               value={item.meta?.countryCode?.toUpperCase()}
@@ -140,11 +142,10 @@ export function EventDetailDialog({ item, tz, onClose, paramKey }: Props) {
 
           <RecordDetailsSection title="Timing">
             <RecordDetailsField label="Start" value={formatAppDateTime(item.startAt, tz)} />
-            <RecordDetailsField
-              label="End"
-              value={item.endAt ? formatAppDateTime(item.endAt, tz) : undefined}
-            />
-            <RecordDetailsField label="Timezone" value={tz} />
+            {item.endAt ? (
+              <RecordDetailsField label="End" value={formatAppDateTime(item.endAt, tz)} />
+            ) : null}
+            <RecordDetailsField label="Timezone" value={humanTimezone(tz)} />
           </RecordDetailsSection>
 
           <RecordDetailsSection title="Links">

@@ -123,7 +123,13 @@ const EMPTY: ProfileResponse = {
  * The page header sells the section as "Your medical identity" — a
  * single round-trip GET/PATCH against /api/account/profile.
  */
-export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI18n }) {
+export function PatientProfileSection({
+  i18n = DEFAULT_I18N,
+  onDirtyChange,
+}: {
+  i18n?: MedicalI18n;
+  onDirtyChange?: (dirty: boolean) => void;
+}) {
   const [values, setValues] = useState<ProfileResponse>(EMPTY);
   const [initial, setInitial] = useState<ProfileResponse>(EMPTY);
   const [loaded, setLoaded] = useState(false);
@@ -146,7 +152,11 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
       .finally(() => setLoaded(true));
   }, []);
 
-  useUnsavedChanges(loaded && JSON.stringify(values) !== JSON.stringify(initial));
+  const dirty = loaded && JSON.stringify(values) !== JSON.stringify(initial);
+  useUnsavedChanges(dirty);
+  useEffect(() => {
+    onDirtyChange?.(dirty);
+  }, [dirty, onDirtyChange]);
 
   function update<K extends keyof ProfileResponse>(
     key: K,

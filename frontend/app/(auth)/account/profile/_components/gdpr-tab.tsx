@@ -64,7 +64,13 @@ function statusLabel(val: boolean | null, i18n: PrivacyI18n): { text: string; cl
   return { text: i18n.statusDeclined, cls: "bg-rose-50 text-rose-700" };
 }
 
-export function GdprPreferencesTab({ i18n = DEFAULT_I18N }: { i18n?: PrivacyI18n }) {
+export function GdprPreferencesTab({
+  i18n = DEFAULT_I18N,
+  onDirtyChange,
+}: {
+  i18n?: PrivacyI18n;
+  onDirtyChange?: (dirty: boolean) => void;
+}) {
   const [consents, setConsents] = useState<ConsentItem[]>([]);
   const [draft, setDraft] = useState<Draft>({});
   const [loaded, setLoaded] = useState(false);
@@ -90,7 +96,11 @@ export function GdprPreferencesTab({ i18n = DEFAULT_I18N }: { i18n?: PrivacyI18n
 
   const savedDraft: Draft = {};
   for (const c of consents) savedDraft[c.consentType] = c.consentValue;
-  useUnsavedChanges(loaded && JSON.stringify(draft) !== JSON.stringify(savedDraft));
+  const dirty = loaded && JSON.stringify(draft) !== JSON.stringify(savedDraft);
+  useUnsavedChanges(dirty);
+  useEffect(() => {
+    onDirtyChange?.(dirty);
+  }, [dirty, onDirtyChange]);
 
   function toggle(type: string, value: boolean) {
     setDraft((prev) => ({ ...prev, [type]: value }));

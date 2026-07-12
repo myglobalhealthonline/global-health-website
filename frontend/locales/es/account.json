@@ -57,7 +57,13 @@
     "goToSecurity": "Seguridad",
     "securityHint": "Contraseña, correo",
     "bookCta": "Reservar una consulta",
-    "booked": "Reservado el {date}"
+    "booked": "Reservado el {date}",
+    "needsAttentionTitle": "Requiere tu atención",
+    "needsAttentionPaymentRow": "{type} necesita pago",
+    "payNow": "Pagar ahora",
+    "needsAttentionAwaitingOne": "1 solicitud de reserva pendiente de confirmación",
+    "needsAttentionAwaitingMany": "{count} solicitudes de reserva pendientes de confirmación",
+    "reviewAction": "Revisar"
   },
   "bookings": {
     "breadcrumb": "Cuenta",
@@ -300,6 +306,8 @@
     "saveMedicalProfile": "Guardar perfil médico",
     "medicalSaved": "Perfil médico guardado",
     "medicalSaveFailed": "No se pudo guardar el perfil médico",
+    "tabContact": "Contacto",
+    "tabMedical": "Datos médicos",
     "tabPersonal": "Personal",
     "tabInsurance": "Seguro",
     "tabVerification": "Verificación",
@@ -551,7 +559,8 @@
     "uploaded": "Documento subido",
     "enableSecond": "Guarda primero la Nacionalidad 1 para habilitar una segunda nacionalidad.",
     "maxReached": "Se alcanzó el máximo de dos documentos de nacionalidad.",
-    "loadingRecords": "Cargando registros de nacionalidad"
+    "loadingRecords": "Cargando registros de nacionalidad",
+    "saveSlot": "Guardar nacionalidad {n}"
   },
   "privacy": {
     "intro": "Controla cómo se usan tus datos médicos. Los cambios se registran por motivos de cumplimiento.",
@@ -613,7 +622,8 @@
     "sumMeetLinksHint": "Listos para unirse",
     "sumMarkets": "Mercados",
     "sumMarketsHint": "Países representados",
-    "emptyDay": "No hay consultas este día."
+    "emptyDay": "No hay consultas este día.",
+    "emptyDayHint": "Pick another day to review your appointments."
   },
   "messages": {
     "eyebrow": "Mensajes",

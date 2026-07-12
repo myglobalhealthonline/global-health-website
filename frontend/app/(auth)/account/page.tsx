@@ -1,7 +1,8 @@
 import Link from "next/link";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import {
   AlertCircle,
+  AlertTriangle,
   CalendarDays,
   ChevronRight,
   Clock,
@@ -82,11 +83,44 @@ export default async function AccountOverviewPage() {
   const paidPayments = appointments.filter(
     (a) => a.paymentStatus === "PAID",
   ).length;
-  const paymentActionCount = appointments.filter(
+  const unpaidAppointments = appointments.filter(
     (a) =>
       (a.amountCents ?? 0) > 0 &&
       ["FAILED", "REQUIRES_ACTION", "UNPAID"].includes(a.paymentStatus),
+  );
+  const paymentActionCount = unpaidAppointments.length;
+  const awaitingConfirmation = appointments.filter(
+    (a) => a.status === "REQUEST_RECEIVED" || a.status === "UNDER_REVIEW",
   ).length;
+
+  // ── Needs attention band ───────────────────────────────────────────
+  // Built only from data already fetched above (appointments) — no extra
+  // API calls. Unpaid bookings get one row each (deep-links to the exact
+  // booking); requests awaiting confirmation collapse into a single row.
+  type NeedsAttentionRow = { key: string; icon: ReactNode; label: string; href: string; action: string };
+  const needsAttention: NeedsAttentionRow[] = [
+    ...unpaidAppointments.map((appt) => ({
+      key: `pay-${appt.id}`,
+      icon: <CreditCard className="size-4 shrink-0" style={{ color: "var(--portal-warning-text)" }} aria-hidden />,
+      label: a.dashboard.needsAttentionPaymentRow.replace("{type}", appt.consultationType),
+      href: `/account/bookings?booking=${appt.id}`,
+      action: a.dashboard.payNow,
+    })),
+    ...(awaitingConfirmation > 0
+      ? [
+          {
+            key: "awaiting-confirmation",
+            icon: <Clock className="size-4 shrink-0" style={{ color: "var(--portal-warning-text)" }} aria-hidden />,
+            label:
+              awaitingConfirmation === 1
+                ? a.dashboard.needsAttentionAwaitingOne
+                : a.dashboard.needsAttentionAwaitingMany.replace("{count}", String(awaitingConfirmation)),
+            href: "/account/bookings",
+            action: a.dashboard.reviewAction,
+          },
+        ]
+      : []),
+  ];
 
   // ── Next scheduled call ────────────────────────────────────────────
   const nextCall = appointments
@@ -153,6 +187,37 @@ export default async function AccountOverviewPage() {
           )
         }
       />
+
+      {/* ── Needs attention (conditional, stat cards below stay) ────── */}
+      {needsAttention.length > 0 ? (
+        <div
+          className="mt-4 rounded-[var(--radius-card)] border-2 px-4 py-4"
+          style={{ borderColor: "var(--portal-warning)", background: "var(--portal-warning-soft)" }}
+        >
+          <div className="mb-3 flex items-center gap-2">
+            <AlertTriangle className="size-5 shrink-0" style={{ color: "var(--portal-warning-text)" }} aria-hidden />
+            <h2 className="text-sm font-bold uppercase tracking-wide" style={{ color: "var(--portal-warning-text)" }}>
+              {a.dashboard.needsAttentionTitle}
+            </h2>
+          </div>
+          <ul className="divide-y divide-[var(--portal-line)]">
+            {needsAttention.map((row) => (
+              <li key={row.key} className="flex items-center justify-between gap-3 py-2 first:pt-0 last:pb-0">
+                <span className="flex min-w-0 items-center gap-2 text-sm font-medium text-[var(--portal-text)]">
+                  {row.icon}
+                  <span className="truncate">{row.label}</span>
+                </span>
+                <Link
+                  href={row.href}
+                  className="shrink-0 text-portal-compact font-semibold text-[var(--portal-primary)] hover:underline"
+                >
+                  {row.action}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
 
       {/* ── Stat tiles ─────────────────────────────────────────────── */}
       <div
@@ -341,12 +406,12 @@ export default async function AccountOverviewPage() {
                       </p>
                     </div>
                     <Btn
-                      href="/account/bookings"
+                      href={`/account/bookings?booking=${b.id}`}
                       variant="secondary"
                       size="sm"
                       iconRight={<ChevronRight className="size-3.5" />}
                     >
-                      {a.dashboard.openLabel}
+                      {a.dashboard.viewDetails}
                     </Btn>
                   </li>
                 ))}

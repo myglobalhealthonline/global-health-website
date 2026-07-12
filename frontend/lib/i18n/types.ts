@@ -655,6 +655,8 @@ export type CommonLocale = {
     noForLanguage: string;
     chooseAnotherLanguage: string;
     showAllLanguages: string;
+    backToAccount: string;
+    portalBadge: string;
   };
   portalChrome: {
     account: string;

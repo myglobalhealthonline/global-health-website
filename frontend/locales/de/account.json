@@ -57,7 +57,13 @@
     "goToSecurity": "Sicherheit",
     "securityHint": "Passwort, E-Mail",
     "bookCta": "Eine Beratung buchen",
-    "booked": "Gebucht am {date}"
+    "booked": "Gebucht am {date}",
+    "needsAttentionTitle": "Erfordert Aufmerksamkeit",
+    "needsAttentionPaymentRow": "{type} erfordert Zahlung",
+    "payNow": "Jetzt bezahlen",
+    "needsAttentionAwaitingOne": "1 Buchungsanfrage wartet auf Bestätigung",
+    "needsAttentionAwaitingMany": "{count} Buchungsanfragen warten auf Bestätigung",
+    "reviewAction": "Prüfen"
   },
   "bookings": {
     "breadcrumb": "Konto",
@@ -300,6 +306,8 @@
     "saveMedicalProfile": "Medizinisches Profil speichern",
     "medicalSaved": "Medizinisches Profil gespeichert",
     "medicalSaveFailed": "Medizinisches Profil konnte nicht gespeichert werden",
+    "tabContact": "Kontakt",
+    "tabMedical": "Medizinische Daten",
     "tabPersonal": "Persönlich",
     "tabInsurance": "Versicherung",
     "tabVerification": "Verifizierung",
@@ -551,7 +559,8 @@
     "uploaded": "Dokument hochgeladen",
     "enableSecond": "Speichere zuerst Staatsangehörigkeit 1, um eine zweite hinzuzufügen.",
     "maxReached": "Maximal zwei Staatsangehörigkeitsdokumente erreicht.",
-    "loadingRecords": "Staatsangehörigkeitseinträge werden geladen"
+    "loadingRecords": "Staatsangehörigkeitseinträge werden geladen",
+    "saveSlot": "Staatsangehörigkeit {n} speichern"
   },
   "privacy": {
     "intro": "Bestimme, wie deine medizinischen Daten verwendet werden. Änderungen werden aus Compliance-Gründen protokolliert.",
@@ -613,7 +622,8 @@
     "sumMeetLinksHint": "Bereit zum Beitreten",
     "sumMarkets": "Märkte",
     "sumMarketsHint": "Vertretene Länder",
-    "emptyDay": "Keine Beratungen an diesem Tag."
+    "emptyDay": "Keine Beratungen an diesem Tag.",
+    "emptyDayHint": "Pick another day to review your appointments."
   },
   "messages": {
     "eyebrow": "Nachrichten",

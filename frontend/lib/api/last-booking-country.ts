@@ -15,6 +15,10 @@ import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
  *  - the patient has no bookings yet (first-time CTA)
  *  - the API call fails (offline / DB blip)
  *  - the country has been deactivated since the booking was made
+ *
+ * `?from=portal` is appended so the booking wizard can show a "back to my
+ * account" return band for patients arriving from the portal (04-001/04-002)
+ * — every portal "Book consultation" CTA routes through this one function.
  */
 export async function resolveBookConsultationHref(): Promise<string> {
   try {
@@ -32,7 +36,7 @@ export async function resolveBookConsultationHref(): Promise<string> {
     );
     if (!country) return "/";
     const lang = country.defaultLocale.toLowerCase();
-    return `/${country.slug}/${lang}/book`;
+    return `/${country.slug}/${lang}/book?from=portal`;
   } catch {
     return "/";
   }

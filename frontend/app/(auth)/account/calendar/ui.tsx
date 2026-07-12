@@ -28,10 +28,12 @@ export function PatientCalendarUI({
   items,
   defaultTz,
   emptyLabel = "No consultations on this day.",
+  emptyHint,
 }: {
   items: CalendarItem[];
   defaultTz: string | null;
   emptyLabel?: string;
+  emptyHint?: string;
 }) {
   // Render in the patient's booking timezone when we captured one, else the
   // browser's current zone.
@@ -96,12 +98,18 @@ export function PatientCalendarUI({
           tz={tz}
           hideHeader
           emptyLabel={emptyLabel}
+          emptyHint={emptyHint}
           showDoctorName
           onSelectConsultation={openEvent}
         />
       </AppSheet>
 
-      <EventDetailDialog item={activeItem} tz={tz} onClose={() => setActiveItem(null)} />
+      <EventDetailDialog
+        item={activeItem}
+        tz={tz}
+        onClose={() => setActiveItem(null)}
+        viewerRole="patient"
+      />
     </div>
   );
 }

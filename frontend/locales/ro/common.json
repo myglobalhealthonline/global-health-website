@@ -658,7 +658,9 @@
     "languageAll": "Toate",
     "noForLanguage": "Niciun medic nu este disponibil momentan pentru acest serviciu în {language}.",
     "chooseAnotherLanguage": "Te rugăm să alegi o altă limbă sau să verifici din nou mai târziu.",
-    "showAllLanguages": "Arată toate limbile"
+    "showAllLanguages": "Arată toate limbile",
+    "backToAccount": "Înapoi la contul meu",
+    "portalBadge": "Portalul pacientului"
   },
   "cardVerify": {
     "title": "Verificarea cardului corporativ",
