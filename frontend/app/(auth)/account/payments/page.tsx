@@ -9,7 +9,7 @@ import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { ReceiptButton } from "./_components/receipt-button";
 import { PayNowButton } from "./_components/pay-now-button";
-import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
+import { MetaLine, PageHeader } from "@/components/portal-atoms";
 import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 
 export const dynamic = "force-dynamic";
@@ -254,13 +254,14 @@ export default async function AccountPaymentsPage() {
         description={a.payments.subtitle}
       />
 
-      <AdminSummaryStrip
-        className="mb-5"
+      {/* Rule S3 (audit 16-003): counts as a plain meta line, not stat cards —
+          keeps the payment tables above the fold. */}
+      <MetaLine
         items={[
-          { label: a.payments.sumReceipts, value: String(receiptsCount), hint: a.payments.sumReceiptsHint },
-          { label: a.payments.sumPaid, value: String(paidCount), hint: a.payments.sumPaidHint },
-          { label: a.payments.sumNeedsAction, value: String(actionCount), hint: a.payments.sumNeedsActionHint },
-          { label: a.payments.sumLatest, value: lastPayment ? formatAppDate(lastPayment.paidAt) : a.payments.noneYet, hint: a.payments.sumLatestHint },
+          { label: a.payments.sumReceiptsHint, value: receiptsCount },
+          { label: a.payments.sumPaidHint, value: paidCount },
+          { label: a.payments.sumNeedsActionHint, value: actionCount },
+          { label: a.payments.sumLatestHint, value: lastPayment ? formatAppDate(lastPayment.paidAt) : a.payments.noneYet },
         ]}
       />
 

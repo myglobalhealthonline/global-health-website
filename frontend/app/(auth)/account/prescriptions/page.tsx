@@ -1,7 +1,7 @@
 import { FileText, Pill, RefreshCw, ShoppingBag, ChevronRight } from "lucide-react";
 import { fetchPatientPrescriptions } from "@/lib/api/prescriptions-api";
 import { resolveBookConsultationHref } from "@/lib/api/last-booking-country";
-import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, PageHeader, Pill as PillBadge, SectionHeader } from "@/components/portal-atoms";
+import { AdminCard, AdminEmptyState, Btn, MetaLine, PageHeader, Pill as PillBadge, SectionHeader } from "@/components/portal-atoms";
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
@@ -37,21 +37,14 @@ export default async function AccountPrescriptionsPage() {
         description={a.prescriptions.subtitle}
       />
 
-      <AdminSummaryStrip
+      {/* Rule S3 (Wave 2, audit §13): stat strip replaced with a plain
+          meta line — Paid/Needs-action dropped as trivia (already visible
+          per-row via the payment status pill below). */}
+      <MetaLine
         className="mb-5"
         items={[
-          { label: "Doctor issued", value: String(issued.length), hint: "Clinical prescriptions from consultations" },
-          { label: "Online orders", value: String(orders.length), hint: "Prescription checkout requests" },
-          {
-            label: "Paid orders",
-            value: String(orders.filter((order) => order.paymentStatus === "PAID").length),
-            hint: "Ready or already processed",
-          },
-          {
-            label: "Needs action",
-            value: String(orders.filter((order) => order.paymentStatus !== "PAID").length),
-            hint: "Payment or review pending",
-          },
+          { label: a.prescriptions.issuedByDoctor, value: issued.length },
+          { label: a.prescriptions.onlineOrders, value: orders.length },
         ]}
       />
 

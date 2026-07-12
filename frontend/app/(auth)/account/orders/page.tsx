@@ -1,7 +1,7 @@
 import { CheckCircle2, Clock, ShoppingBag, ChevronRight } from "lucide-react";
 import { fetchAccountOrders } from "@/lib/api/cart-server";
 import { CompletePaymentButton } from "./[id]/_components/complete-payment-button";
-import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
+import { AdminCard, AdminEmptyState, Btn, MetaLine, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
@@ -39,13 +39,14 @@ export default async function AccountOrdersPage() {
         description={a.orders.subtitle}
       />
 
-      <AdminSummaryStrip
-        className="mb-5"
+      {/* Rule S3 (audit 14-001/14-004): counts as a plain meta line, not stat
+          cards — keeps the order list above the fold. */}
+      <MetaLine
         items={[
-          { label: "Orders", value: String(items.length), hint: "Health tests and prescription orders" },
-          { label: "Paid", value: String(paid), hint: "Completed or fulfilled" },
-          { label: "Pending", value: String(pending), hint: "Needs processing or payment" },
-          { label: "Total", value: formatPrice(totalCents, currency), hint: "Across visible orders" },
+          { label: a.orders.sumOrdersHint, value: items.length },
+          { label: a.orders.sumPaidHint, value: paid },
+          { label: a.orders.sumPendingHint, value: pending },
+          { label: a.orders.sumTotalHint, value: formatPrice(totalCents, currency) },
         ]}
       />
 

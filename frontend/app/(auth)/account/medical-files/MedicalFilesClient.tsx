@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 import { Download, FileText, FlaskConical, Stethoscope, Upload } from "lucide-react";
-import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
+import { PageHeader } from "@/components/portal-atoms";
 import { DocumentRow } from "@/components/DocumentRow";
 import { PortalTabs, type PortalTabItem } from "@/components/PortalTabs";
 
@@ -303,6 +303,9 @@ export function MedicalFilesClient({
         {tab.label}
       </span>
     ),
+    // Rule S3 (Wave 2, audit 09-002/09-003): per-tab count replaces the
+    // 4-card stat strip — covers all 5 tabs (strip only had 4) for free.
+    badge: loaded ? countFor(tab.id) : undefined,
   }));
 
   return (
@@ -316,16 +319,6 @@ export function MedicalFilesClient({
           </span>
         }
         description={description}
-      />
-
-      <AdminSummaryStrip
-        className="mb-5"
-        items={[
-          { label: "Uploaded", value: String(countFor("uploaded")), hint: "Reports you added" },
-          { label: "Results", value: String(countFor("results")), hint: "Doctor result documents" },
-          { label: "Requests", value: String(countFor("exam-requests")), hint: "Exam requests from clinicians" },
-          { label: "Prescriptions", value: String(countFor("prescriptions")), hint: "Medication documents" },
-        ]}
       />
 
       <PortalTabs

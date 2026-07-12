@@ -15,7 +15,7 @@ import {
 import { formatAppDate } from "@/lib/format-datetime";
 import { DeleteAccountButton } from "./delete-account-button";
 import type { loadLocaleBundle } from "@/lib/i18n/load-locale";
-import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
+import { PageHeader } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
 import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
@@ -185,16 +185,9 @@ export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
         </div>
       ) : (
         <>
-            <AdminSummaryStrip
-              className="mb-5"
-              items={[
-                { label: "Email", value: verified ? a.security.verified : "Needs verification", hint: user?.email ?? "Account email" },
-                { label: "Data export", value: "Available", hint: "Download your account data" },
-                { label: "Password", value: "Protected", hint: "Update credentials anytime" },
-                { label: "Account", value: "Patient", hint: "Security controls" },
-              ]}
-            />
-
+            {/* Rule S3 (audit 19-003): strip restated near-constant state
+                (password "Protected", account "Patient") with no decision
+                value — removed, no section reorder in this pass. */}
             {/* Email verification panel */}
             <FormSection title={a.security.emailVerification}>
               <div className="gh-form-section__span-2 flex items-start gap-3">

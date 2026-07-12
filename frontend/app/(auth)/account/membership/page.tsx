@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getCountryByCode } from "@/data/countries";
-import { getServerSubscription } from "@/lib/api/me-subscription-server";
+import { getServerCredits, getServerSubscription } from "@/lib/api/me-subscription-server";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
-import { AdminEmptyState, AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
+import { AdminEmptyState, MetaLine, PageHeader } from "@/components/portal-atoms";
 import { ManagePanel, type PlanOption } from "./_components/ManagePanel";
 import { SubscriptionDashboard } from "../_components/SubscriptionDashboard";
 
@@ -20,13 +20,15 @@ export default async function MembershipPage({
 }: {
   searchParams: Promise<Search>;
 }) {
-  const [{ subscription: returnState, plan: requestedPlanId }, sub, locale] = await Promise.all([
+  const [{ subscription: returnState, plan: requestedPlanId }, sub, credits, locale] = await Promise.all([
     searchParams,
     getServerSubscription(),
+    getServerCredits(),
     getPageLocale(),
   ]);
   const { subscription } = loadLocaleBundle(locale);
   const t = subscription.manage;
+  const d = subscription.dashboard;
 
   if (!sub || !sub.plan) {
     return (
@@ -71,13 +73,14 @@ export default async function MembershipPage({
   return (
     <div className="gh-patient-page gh-patient-membership-page">
       <PageHeader title={t.title} description={t.subtitle} />
-      <AdminSummaryStrip
-        className="mb-5"
+      {/* Rule S3 (audit 11-003/11-006): plan name/status/price/next-billing
+          already live on the "Current plan" card below — the strip was pure
+          duplication. Only credits remaining (not shown on that card) survive
+          as a MetaLine, reclaiming the fold on short viewports. */}
+      <MetaLine
         items={[
-          { label: "Plan", value: sub.plan.name, hint: "Current membership" },
-          { label: "Status", value: sub.status.toLowerCase(), hint: sub.cancelAtPeriodEnd ? "Cancellation scheduled" : "Membership lifecycle" },
-          { label: "Next billing", value: nextBillingLabel ?? "Not scheduled", hint: "Renewal date" },
-          { label: "Price", value: priceLabel, hint: "Monthly subscription" },
+          { label: d.creditsTitle, value: credits?.consultation.balance ?? 0 },
+          { label: d.wellnessTitle, value: credits?.wellness.balance ?? 0 },
         ]}
       />
       <ManagePanel

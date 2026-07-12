@@ -4,7 +4,7 @@ import { ArrowLeft, PackageCheck, Truck } from "lucide-react";
 import { fetchAccountOrder } from "@/lib/api/cart-server";
 import { ReorderButton } from "./_components/reorder-button";
 import { CompletePaymentButton } from "./_components/complete-payment-button";
-import { AdminCard, AdminSummaryStrip, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
+import { AdminCard, MetaLine, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
@@ -90,13 +90,12 @@ export default async function AccountOrderDetailPage({ params }: Props) {
         </div>
       ) : null}
 
-      <AdminSummaryStrip
-        className="mb-5"
+      {/* Rule S3 (audit 15-004): order status lives in the H1 pill, items/total
+          in the content below — only payment state + total need orientation here. */}
+      <MetaLine
         items={[
-          { label: a.orders.sumStatus, value: order.status.toLowerCase(), hint: a.orders.sumStatusHint },
-          { label: a.orders.payment, value: order.paymentStatus.toLowerCase(), hint: paymentHint(order, a) },
-          { label: a.orders.sumItems, value: String(order.items.length), hint: a.orders.sumItemsHint },
-          { label: a.orders.total, value: formatPrice(order.totalCents, order.currencyCode), hint: a.orders.inclShipping },
+          { value: order.paymentStatus.toLowerCase(), label: paymentHint(order, a) },
+          { value: formatPrice(order.totalCents, order.currencyCode), label: a.orders.inclShipping },
         ]}
       />
 
@@ -194,21 +193,6 @@ export default async function AccountOrderDetailPage({ params }: Props) {
               <p className="text-[var(--portal-muted)]">{order.email}</p>
               {order.phone ? (
                 <p className="text-[var(--portal-muted)]">{order.phone}</p>
-              ) : null}
-            </div>
-          </AdminCard>
-
-          <AdminCard padding={0}>
-            <SectionHeader title={a.orders.payment} />
-            <div className="p-5 text-sm">
-              <p>
-                <span className="text-[var(--portal-muted)]">{a.orders.statusLabel}:</span>{" "}
-                <span className="font-semibold">{order.paymentStatus}</span>
-              </p>
-              {order.paidAt ? (
-                <p className="mt-1 text-xs text-[var(--portal-muted)]">
-                  {a.orders.paidOn.replace("{date}", formatAppDateTime(order.paidAt))}
-                </p>
               ) : null}
             </div>
           </AdminCard>
