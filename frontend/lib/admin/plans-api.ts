@@ -42,6 +42,8 @@ export type AdminPlanListItem = {
   stripePriceId: string | null;
   country: AdminPlanCountry;
   _count: { consultationRules: number; perkRules: number; healthTestRules: number; subscriptions: number };
+  /** Per-locale CMS content (display-only EN name preference). */
+  translations: { locale: string; name: string }[];
 };
 
 export type AdminConsultationRule = {
@@ -90,7 +92,7 @@ export type AdminPlanTranslation = {
   features: string[];
 };
 
-export type AdminPlanDetail = AdminPlanListItem & {
+export type AdminPlanDetail = Omit<AdminPlanListItem, "translations"> & {
   longDescription: string | null;
   notesTerms: string | null;
   stripeProductId: string | null;

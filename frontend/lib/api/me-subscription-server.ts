@@ -41,8 +41,9 @@ async function meServerGet<T>(path: string): Promise<T | null> {
   }
 }
 
-export function getServerSubscription(): Promise<SubscriptionView | null> {
-  return meServerGet<SubscriptionView | null>("subscription");
+export async function getServerSubscription(): Promise<SubscriptionView | null> {
+  const locale = (await cookies()).get("gh_locale")?.value?.toUpperCase();
+  return meServerGet<SubscriptionView | null>(locale ? `subscription?locale=${locale}` : "subscription");
 }
 
 export function getServerCredits(): Promise<CreditsView | null> {

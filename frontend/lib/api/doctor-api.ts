@@ -438,8 +438,12 @@ export type ConsultationServiceLineDto = {
 };
 
 export async function fetchDoctorConsultationServices(consultationId: string) {
+  // Service names are translatable; backend resolves against ?locale=, so
+  // thread the doctor's UI language (gh_locale cookie) through.
+  const locale = (await cookies()).get("gh_locale")?.value;
+  const qs = locale ? `?locale=${encodeURIComponent(locale.toUpperCase())}` : "";
   return doctorRequest<{ items: ConsultationServiceLineDto[] }>(
-    `/api/doctor/consultations/${consultationId}/services`,
+    `/api/doctor/consultations/${consultationId}/services${qs}`,
   );
 }
 
@@ -615,5 +619,9 @@ export type DoctorServicesPayload = {
 };
 
 export async function fetchDoctorServices() {
-  return doctorRequest<DoctorServicesPayload>("/api/doctor/services");
+  // Service names/summaries are translatable; backend resolves against
+  // ?locale=, so thread the doctor's UI language (gh_locale cookie) through.
+  const locale = (await cookies()).get("gh_locale")?.value;
+  const qs = locale ? `?locale=${encodeURIComponent(locale.toUpperCase())}` : "";
+  return doctorRequest<DoctorServicesPayload>(`/api/doctor/services${qs}`);
 }

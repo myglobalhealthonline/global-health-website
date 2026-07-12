@@ -12,6 +12,7 @@ import { parseLocaleTranslations } from "@/lib/admin/translation-form-parse";
 import { ManagedImageField } from "../../../_components/managed-image-field";
 import { SpecialtyTranslationTabs } from "../../_components/specialty-translation-tabs";
 import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
+import { displayNameFrom } from "@/lib/admin/display-name";
 
 export const dynamic = "force-dynamic";
 
@@ -117,7 +118,7 @@ export default async function AdminSpecialtyEditPage({
       </Link>
       <PageHeader
         eyebrow="Global"
-        title={`Edit ${s.name}`}
+        title={`Edit ${displayNameFrom(s.name, s.translations)}`}
         description="Update card image, summary, theme color, and sort order."
         actions={
           <Btn href="/admin/specialties" variant="ghost">

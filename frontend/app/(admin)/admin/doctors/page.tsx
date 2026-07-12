@@ -26,6 +26,7 @@ import {
   PageHeader,
   Pill,
 } from "../_components/atoms";
+import { displayNameFrom } from "@/lib/admin/display-name";
 
 export const dynamic = "force-dynamic";
 
@@ -128,7 +129,11 @@ function doctorFields(
       key: "title",
       label: "Title",
       priority: 3,
-      render: (d) => <span className="text-portal-compact text-[var(--color-text-body)]">{d.title}</span>,
+      render: (d) => (
+        <span className="text-portal-compact text-[var(--color-text-body)]">
+          {displayNameFrom(d.title, d.translations, "title")}
+        </span>
+      ),
     },
     {
       key: "languages",

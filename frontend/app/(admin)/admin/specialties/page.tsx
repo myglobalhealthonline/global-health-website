@@ -25,6 +25,8 @@ import {
   postAdminSpecialty,
 } from "@/lib/admin/admin-api";
 import { FlagBadge } from "../_components/flag-badge";
+import { displayNameFrom } from "@/lib/admin/display-name";
+import type { AdminSpecialtyTranslationDto } from "@/lib/admin/admin-api/services";
 import { SortableOrderList } from "../_components/sortable-order-list";
 import {
   AdminCard,
@@ -62,6 +64,8 @@ const GENERAL_SLUGS = new Set([
 type GridRow = {
   slug: string;
   name: string;
+  /** display-only: EN translation row's name, when available (ponytail). */
+  translations: AdminSpecialtyTranslationDto[];
   type: "GENERAL" | "SPECIALIST";
   byCountry: Record<string, SpecialtyRow | undefined>;
 };
@@ -115,6 +119,7 @@ export default async function AdminCategoriesMatrixPage({
         existing ?? {
           slug,
           name: s.name,
+          translations: s.translations,
           type: isGeneral ? "GENERAL" : "SPECIALIST",
           byCountry: {},
         };
@@ -298,7 +303,7 @@ export default async function AdminCategoriesMatrixPage({
                           </span>
                           <div className="min-w-0">
                             <p className="m-0 whitespace-nowrap text-portal-body font-bold text-[var(--color-text-primary)]">
-                              {row.name}
+                              {displayNameFrom(row.name, row.translations)}
                             </p>
                             <p className="m-0 whitespace-nowrap font-mono text-portal-thead text-[var(--color-text-muted)]">
                               /{row.slug}
@@ -332,7 +337,7 @@ export default async function AdminCategoriesMatrixPage({
                               />
                               <Toggle
                                 on={isActive}
-                                ariaLabel={`Toggle ${row.name} for ${c.name}`}
+                                ariaLabel={`Toggle ${displayNameFrom(row.name, row.translations)} for ${c.name}`}
                               />
                             </form>
                           </Td>
@@ -345,7 +350,7 @@ export default async function AdminCategoriesMatrixPage({
                       </Td>
                       <Td align="right">
                         <IconBtn
-                          ariaLabel={`More options for ${row.name}`}
+                          ariaLabel={`More options for ${displayNameFrom(row.name, row.translations)}`}
                           href={`/admin/specialties/${
                             // link to first existing specialty row's edit page
                             Object.values(row.byCountry).find((s) => s)?.id ?? ""

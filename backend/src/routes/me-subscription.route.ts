@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+import { LocaleCode } from "@prisma/client";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -38,6 +39,13 @@ const changeBodySchema = z.object({
   planId: z.string().trim().min(1).max(120),
 });
 const portalQuerySchema = z.object({ returnTo: returnToSchema });
+const localeQuerySchema = z.object({
+  // .catch(undefined): an unknown locale falls back to the country default
+  // instead of failing the whole query parse.
+  locale: z
+    .preprocess((v) => (typeof v === "string" ? v.toUpperCase() : v), z.nativeEnum(LocaleCode).optional())
+    .catch(undefined),
+});
 
 async function requirePatient(
   request: FastifyRequest,
@@ -70,8 +78,9 @@ const meSubscriptionRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/me/subscription", async (request, reply) => {
     const user = await requirePatient(request, reply);
     if (!user) return;
+    const query = localeQuerySchema.safeParse(request.query);
     try {
-      return okResponse(await getSubscriptionView(user.id));
+      return okResponse(await getSubscriptionView(user.id, query.success ? query.data.locale : undefined));
     } catch (err) {
       return handleError(reply, err, app);
     }

@@ -165,8 +165,14 @@ export default async function AdminServiceDetailPage({
             {meta.label}
           </span>
         }
-        title={service.name}
-        description={service.summary ?? meta.singularLabel}
+        title={
+          service.translations.find((t) => t.locale.toUpperCase() === "EN")?.name || service.name
+        }
+        description={
+          service.translations.find((t) => t.locale.toUpperCase() === "EN")?.summary ??
+          service.summary ??
+          meta.singularLabel
+        }
         actions={
           <>
             <Pill tone={service.isActive ? "published" : "draft"}>

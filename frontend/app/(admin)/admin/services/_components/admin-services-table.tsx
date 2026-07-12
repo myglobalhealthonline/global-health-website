@@ -8,6 +8,12 @@ import { FlagBadge } from "../../_components/flag-badge";
 import { adminHrefForService } from "@/lib/admin/service-kind";
 import type { AdminServiceDto } from "@/lib/admin/admin-api/services";
 
+// ponytail: display-only EN preference for admin staff; base `name`/`summary`
+// columns stay in the country's default locale and are unchanged by this.
+function displayName(s: AdminServiceDto): string {
+  return s.translations.find((t) => t.locale.toUpperCase() === "EN")?.name || s.name;
+}
+
 function formatMoney(cents: number | null, currency: string | null) {
   if (cents === null || cents === undefined) return "—";
   const code = currency?.trim().toUpperCase() || "EUR";
@@ -42,7 +48,7 @@ export function AdminServicesTable({
       key: "name",
       label: "Title",
       priority: 1,
-      render: (s) => <span className="font-bold text-[var(--color-text-primary)]">{s.name}</span>,
+      render: (s) => <span className="font-bold text-[var(--color-text-primary)]">{displayName(s)}</span>,
     },
     {
       key: "slug",

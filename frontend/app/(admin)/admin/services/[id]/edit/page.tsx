@@ -31,6 +31,7 @@ import { Upload } from "lucide-react";
 import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 import { FlagBadge } from "../../../_components/flag-badge";
 import { FormSection } from "@/components/FormSection";
+import { displayNameFrom } from "@/lib/admin/display-name";
 
 export const dynamic = "force-dynamic";
 
@@ -431,7 +432,7 @@ export default async function AdminEditServicePage({
         href={`/admin/services/${id}?kind=${encodeURIComponent(kind)}`}
         className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
-        <ArrowLeft className="size-3.5" /> Back to {service.name}
+        <ArrowLeft className="size-3.5" /> Back to {displayNameFrom(service.name, service.translations)}
       </Link>
       <PageHeader
         className="gh-admin-service-edit-hero"
@@ -441,7 +442,7 @@ export default async function AdminEditServicePage({
             {meta.label}
           </span>
         }
-        title={service.name}
+        title={displayNameFrom(service.name, service.translations)}
         description="One form serves all four service types — fields adapt based on type."
         actions={
           <>
@@ -577,7 +578,7 @@ export default async function AdminEditServicePage({
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={service.assets[0].path}
-                    alt={service.name}
+                    alt={displayNameFrom(service.name, service.translations)}
                     className="block w-full"
                     style={{ aspectRatio: "4 / 3", objectFit: "cover" }}
                   />

@@ -6,6 +6,7 @@ import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/Colu
 import { Btn, IconBtn, Pill } from "../../_components/atoms";
 import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
 import type { AdminPlanListItem } from "@/lib/admin/plans-api";
+import { displayNameFrom } from "@/lib/admin/display-name";
 
 function formatMoney(cents: number, currency: string): string {
   return `${(cents / 100).toFixed(2)} ${currency.toUpperCase()}`;
@@ -30,7 +31,7 @@ export function AdminPlansTable({
       render: (plan) => (
         <div className="flex flex-col">
           <span className="font-semibold text-[var(--color-text-primary)]">
-            {plan.name}
+            {displayNameFrom(plan.name, plan.translations)}
             {plan.isFeatured ? (
               <span className="ml-2 align-middle">
                 <Pill tone="brand">{plan.badgeLabel ?? "Featured"}</Pill>

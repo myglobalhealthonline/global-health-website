@@ -1,4 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
+import { z } from "zod";
+import { LocaleCode } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
@@ -14,12 +16,21 @@ import { resolveCorporateDiscountsForItems } from "../modules/corporate/corporat
  * nothing; checkout recomputes authoritatively. Auth required (D15) — guests get
  * 401 so the UI can prompt "log in to use plan benefits".
  */
+const localeQuerySchema = z.object({
+  // .catch(undefined): an unknown locale falls back to the country default
+  // instead of failing the whole query parse.
+  locale: z
+    .preprocess((v) => (typeof v === "string" ? v.toUpperCase() : v), z.nativeEnum(LocaleCode).optional())
+    .catch(undefined),
+});
+
 const meCartPreviewRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/me/cart-preview", async (request, reply) => {
     const user = await resolveOptionalAuthUser(request);
     if (!user || user.role !== "PATIENT") {
       return reply.status(401).send(errorResponse("Authentication required"));
     }
+    const query = localeQuerySchema.safeParse(request.query);
     try {
       const cart = await prisma.cart.findUnique({
         where: { userId: user.id },
@@ -50,6 +61,7 @@ const meCartPreviewRoute: FastifyPluginAsync = async (app) => {
           familyMemberId: i.familyMemberId,
         })),
         peakPriceByItemId,
+        locale: query.success ? query.data.locale : undefined,
       });
       // Corporate benefit preview (plan doc §3.3): mirror of the checkout
       // hook — automatic % discount on lines the subscription plan did

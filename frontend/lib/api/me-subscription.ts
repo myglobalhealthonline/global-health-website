@@ -5,6 +5,8 @@
  * via `credentials:"include"` (mirrors auth-api). All routes require auth (D15).
  */
 
+import { readClientLocale } from "@/lib/i18n/get-client-locale";
+
 export type MeResult<T> =
   | { ok: true; data: T; message?: string }
   | { ok: false; message: string; status?: number; code?: string };
@@ -112,7 +114,7 @@ async function meRequest<T>(
 /** Current subscription view — used by the activation poller on return from
  *  Stripe checkout to await the webhook flipping status to ACTIVE (B4). */
 export function getSubscription(): Promise<MeResult<SubscriptionView>> {
-  return meRequest("subscription");
+  return meRequest(`subscription?locale=${readClientLocale().toUpperCase()}`);
 }
 
 export function getRedemptions(): Promise<MeResult<RedemptionsView>> {
@@ -184,7 +186,7 @@ export interface CartCoverageView {
 /** Read-only subscription coverage for the patient's current cart (§6).
  *  Guests get a 401 (handled by the caller as a "log in to use benefits"). */
 export function getCartPreview(): Promise<MeResult<CartCoverageView>> {
-  return meRequest("cart-preview");
+  return meRequest(`cart-preview?locale=${readClientLocale().toUpperCase()}`);
 }
 
 export interface ServiceBenefitOption {
@@ -211,7 +213,7 @@ export function getBenefitPreview(
   serviceId: string,
   basePriceCents: number,
 ): Promise<MeResult<ServiceBenefitPreview>> {
-  const qs = `?serviceId=${encodeURIComponent(serviceId)}&basePriceCents=${basePriceCents}`;
+  const qs = `?serviceId=${encodeURIComponent(serviceId)}&basePriceCents=${basePriceCents}&locale=${readClientLocale().toUpperCase()}`;
   return meRequest(`benefit-preview${qs}`);
 }
 

@@ -90,7 +90,12 @@ export function ServiceTranslationTabs({
 }: Props) {
   const upperDefault = defaultLocale.toUpperCase();
   const [active, setActive] = useState(
-    locales.find((l) => l.code === upperDefault)?.code ?? locales[0]?.code ?? upperDefault,
+    // ponytail: admin staff read English; default to the EN tab when one
+    // exists instead of the country's default locale.
+    locales.find((l) => l.code === "EN")?.code ??
+      locales.find((l) => l.code === upperDefault)?.code ??
+      locales[0]?.code ??
+      upperDefault,
   );
 
   function valuesFor(code: string): Omit<ServiceTranslationInitial, "locale"> {

@@ -6,6 +6,7 @@ import { AdminEmptyState, Btn, IconBtn, Pill } from "../../_components/atoms";
 import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
 import { FlagBadge } from "../../_components/flag-badge";
 import type { AdminHealthTestDto } from "@/lib/admin/admin-api/health-tests";
+import { displayNameFrom } from "@/lib/admin/display-name";
 
 function formatMoney(cents: number, currency: string) {
   try {
@@ -35,7 +36,11 @@ export function AdminHealthTestsTable({
       key: "title",
       label: "Title",
       priority: 1,
-      render: (t) => <span className="font-bold text-[var(--color-text-primary)]">{t.title}</span>,
+      render: (t) => (
+        <span className="font-bold text-[var(--color-text-primary)]">
+          {displayNameFrom(t.title, t.translations, "title")}
+        </span>
+      ),
     },
     {
       key: "slug",

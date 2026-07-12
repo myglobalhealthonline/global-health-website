@@ -4,6 +4,7 @@ import { absoluteSiteUrl, sendEmail } from "../../lib/email/send-email.js";
 import { wrapHtml } from "../../lib/email/templates.js";
 import { getBalance } from "../credits/credit-balance.service.js";
 import { asPlanSnapshot } from "./plan-snapshot.js";
+import { resolveTranslation } from "../shared/resolve-translation.js";
 import enCopy from "./email-copy/en.json";
 import ptCopy from "./email-copy/pt.json";
 import esCopy from "./email-copy/es.json";
@@ -83,7 +84,7 @@ async function loadRecipient(subscriptionId: string): Promise<Recipient | null> 
     select: {
       countryCode: true,
       user: { select: { id: true, email: true, fullName: true } },
-      plan: { select: { name: true } },
+      plan: { select: { name: true, translations: true } },
     },
   });
   if (!sub?.user?.email) return null;
@@ -96,12 +97,15 @@ async function loadRecipient(subscriptionId: string): Promise<Recipient | null> 
     });
     if (country?.defaultLocale) locale = country.defaultLocale;
   }
+  const planName = sub.plan
+    ? resolveTranslation(sub.plan.translations, locale, locale).tr?.name ?? sub.plan.name
+    : "your plan";
   return {
     userId: sub.user.id,
     email: sub.user.email,
     fullName: sub.user.fullName,
     locale,
-    planName: sub.plan?.name ?? "your plan",
+    planName,
   };
 }
 
