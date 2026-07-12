@@ -3992,13 +3992,13 @@ a.gh-appointment-card:hover {
    * canvas gradient now matches --lux-plane-bg's ivory base instead of a
    * dark fill — no more dark strip showing through around the content plane. */
   --lux-canvas-bg:
-    radial-gradient(1400px 900px at 85% -12%, rgba(176, 241, 34, 0.16), transparent 60%),
-    radial-gradient(900px 700px at -10% 110%, rgba(143, 176, 33, 0.10), transparent 55%),
-    linear-gradient(170deg, #eef1e6 0%, #e6ebdc 45%, #dfe5d3 100%);
+    radial-gradient(1400px 900px at 85% -12%, rgba(29, 75, 54, 0.09), transparent 60%),
+    radial-gradient(900px 700px at -10% 110%, rgba(100, 114, 105, 0.07), transparent 55%),
+    linear-gradient(170deg, #f5f6f3 0%, #edf0ea 45%, #e6eae3 100%);
   --lux-canvas-bloom:
-    radial-gradient(1100px 760px at 86% -12%, rgba(176, 241, 34, 0.13), transparent 62%),
-    radial-gradient(760px 560px at -8% 108%, rgba(143, 176, 33, 0.08), transparent 58%);
-  --lux-seam-light: linear-gradient(90deg, transparent, rgba(176, 241, 34, 0.45) 35%, rgba(176, 241, 34, 0.10) 70%, transparent);
+    radial-gradient(1100px 760px at 86% -12%, rgba(29, 75, 54, 0.07), transparent 62%),
+    radial-gradient(760px 560px at -8% 108%, rgba(100, 114, 105, 0.05), transparent 58%);
+  --lux-seam-light: linear-gradient(90deg, transparent, rgba(29, 75, 54, 0.22) 35%, rgba(29, 75, 54, 0.05) 70%, transparent);
   --lux-card-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.66));
   --lux-modal-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.86));
   --lux-card-border: linear-gradient(160deg, rgba(255, 255, 255, 0.95) 0%, rgba(16, 23, 19, 0.06) 38%, rgba(16, 23, 19, 0.10) 62%, rgba(143, 176, 33, 0.22) 100%);
