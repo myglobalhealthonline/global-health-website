@@ -257,7 +257,7 @@ export default async function CountryLangBookPage({
                 sidebar (the header's compact step counter already covers
                 "where am I" without the full panel above the fold). */}
             <aside className="order-2 lg:order-none lg:sticky lg:top-24 lg:self-start">
-              <div className="gh2-glass-forest gh2-dark-content p-5">
+              <div className="gh2-glass-forest gh2-dark-content transform-gpu p-5">
                 <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]">
                   {bp.bookingSteps}
                 </p>
@@ -417,7 +417,7 @@ async function GpBookingFlow({
                 sidebar (the header's compact step counter already covers
                 "where am I" without the full panel above the fold). */}
             <aside className="order-2 lg:order-none lg:sticky lg:top-24 lg:self-start">
-                <div className="gh2-glass-forest gh2-dark-content p-5">
+                <div className="gh2-glass-forest gh2-dark-content transform-gpu p-5">
                   <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]">
                     {bp.bookingSteps}
                   </p>
