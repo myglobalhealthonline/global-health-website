@@ -87,7 +87,7 @@ async function proxy(request: NextRequest, segments: string[]) {
   return res;
 }
 
-type Ctx = { params: Promise<{ path: string[] }> };
+type Ctx = { params: Promise<{ path?: string[] }> };
 
 export async function GET(req: NextRequest, { params }: Ctx) {
   return proxy(req, (await params).path ?? []);
