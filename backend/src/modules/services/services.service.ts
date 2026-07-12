@@ -335,7 +335,24 @@ export async function listServicesByCountry(
         // currently active. The public consult flow uses this to
         // scope the doctor card grid by the chosen service.
         assignedDoctors: {
-          where: { isActive: true, doctor: { active: true } },
+          where: {
+            isActive: true,
+            status: "active",
+            doctor: {
+              active: true,
+              OR: [
+                { country: { code: countryCode, isActive: true } },
+                {
+                  additionalCountries: {
+                    some: {
+                      active: true,
+                      country: { code: countryCode, isActive: true },
+                    },
+                  },
+                },
+              ],
+            },
+          },
           orderBy: { sortOrder: "asc" },
           select: { doctorId: true },
         },
