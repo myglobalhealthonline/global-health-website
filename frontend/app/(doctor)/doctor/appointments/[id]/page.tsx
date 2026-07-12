@@ -126,6 +126,17 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   const consultationMode = appointment.consultationMode ?? "ONLINE";
   const followUpFromId = appointment.followUpFromAppointmentId ?? null;
   const signed = consultation?.status === "SIGNED";
+  // Finalize-checklist readiness signals (doctor audit 03/UX-002·UX-006),
+  // derived from data already fetched above — no new API calls.
+  const noteRecorded = Boolean(
+    consultation &&
+      (consultation.chiefComplaint ||
+        consultation.subjective ||
+        consultation.objective ||
+        consultation.assessment ||
+        consultation.plan),
+  );
+  const timeReached = !appointment.scheduledAt || new Date(appointment.scheduledAt) <= new Date();
   // Services-used are scoped by consultationId, so we can only fetch
   // them once the row exists. Hit the API conditionally to skip a 404
   // for fresh appointments.
@@ -320,8 +331,9 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                     <FinalizeChecklist
                       appointmentId={appointment.id}
                       initialFinalized={appointment.finalized ?? false}
-                      initialNotesUploaded={appointment.notesUploaded ?? false}
                       initialFilesUploaded={appointment.filesUploaded ?? false}
+                      noteRecorded={noteRecorded}
+                      timeReached={timeReached}
                       copy={d.finalizeChecklist}
                     />
                     <div className="mt-4 border-t border-[var(--portal-line)] pt-4">

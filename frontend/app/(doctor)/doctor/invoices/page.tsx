@@ -9,6 +9,7 @@ import {
 } from "@/components/portal-atoms";
 import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 import { PayoutInvoicePanel, type InvoiceStrings } from "./_components/payout-invoice-panel";
+import { InvoicesTabsClient } from "./_components/invoices-tabs-client";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -131,6 +132,7 @@ export default async function DoctorInvoicesPage({
       ["UNPAID", "FAILED", "PENDING"].includes(row.paymentStatus) ||
       row.doctorAmountCents == null,
   ).length;
+  const unsetPayoutCount = invoices.filter((row) => row.doctorAmountCents == null).length;
   const currencyCode = invoices.find((row) => row.currencyCode)?.currencyCode ?? "USD";
   const fields: ColumnPriorityField<(typeof invoices)[number]>[] = [
     {
@@ -194,11 +196,9 @@ export default async function DoctorInvoicesPage({
         description={d.invoices.description}
       />
 
-      <PayoutInvoicePanel strings={d.invoices as InvoiceStrings} />
-
       {result.ok ? (
         <AdminSummaryStrip
-          className="mb-4"
+          className="mb-2"
           items={[
             {
               label: d.invoices.visibleInvoices,
@@ -228,103 +228,119 @@ export default async function DoctorInvoicesPage({
         />
       ) : null}
 
-      <div className="gh-card gh-doctor-filter-card mb-4 p-4">
-        <form className="gh-doctor-filter-grid grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          <label className="flex flex-col gap-1">
-            <span className="gh-field-label">{d.common.status}</span>
-            <select name="status" defaultValue={status ?? ""} className="gh-select">
-              <option value="">{d.common.any}</option>
-              <option value="UNPAID">{d.invoices.statusUnpaid}</option>
-              <option value="PENDING">{d.invoices.statusPending}</option>
-              <option value="PAID">{d.invoices.statusPaid}</option>
-              <option value="REFUNDED">{d.invoices.statusRefunded}</option>
-              <option value="FAILED">{d.invoices.statusFailed}</option>
-            </select>
-          </label>
-          <label className="flex flex-col gap-1">
-            <span className="gh-field-label">{d.common.from}</span>
-            <input
-              type="date"
-              name="from"
-              defaultValue={from ?? ""}
-              className="gh-input"
-            />
-          </label>
-          <label className="flex flex-col gap-1">
-            <span className="gh-field-label">{d.common.to}</span>
-            <input
-              type="date"
-              name="to"
-              defaultValue={to ?? ""}
-              className="gh-input"
-            />
-          </label>
-          <div className="gh-doctor-filter-actions sm:col-span-2 lg:col-span-5 flex items-center gap-2">
-            <button type="submit" className="gh-btn gh-btn-primary text-sm">
-              {d.common.apply}
-            </button>
-            <Link href="/doctor/invoices" className="gh-btn gh-btn-soft text-sm">
-              {d.common.reset}
-            </Link>
-          </div>
-        </form>
-      </div>
+      {unsetPayoutCount > 0 ? (
+        <p className="mb-4 text-xs text-[var(--portal-muted)]">
+          {d.invoices.unsetPayoutNote.replace("{count}", String(unsetPayoutCount))}
+        </p>
+      ) : null}
 
-      {!result.ok ? (
-        <div className="gh-card p-6">
-          <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
-            {result.message}
-          </p>
-        </div>
-      ) : invoices.length === 0 ? (
-        <AdminEmptyState
-          className="gh-doctor-empty-state"
-          icon={status || from || to ? <SearchX className="size-5" aria-hidden /> : <Receipt className="size-5" aria-hidden />}
-          assetSrc={status || from || to ? undefined : "/images/portal/obsidian/empty-payments.svg"}
-          title={status || from || to ? d.invoices.emptyFilteredTitle : d.invoices.emptyTitle}
-          description={
-            status || from || to
-              ? d.invoices.emptyFilteredDesc
-              : d.invoices.emptyDesc
-          }
-          action={
-            status || from || to ? (
-              <Link href="/doctor/invoices" className="gh-btn gh-btn-soft text-sm">
-                {d.common.clearFilters}
-              </Link>
-            ) : (
-              <Link href="/doctor/appointments" className="gh-btn gh-btn-primary text-sm">
-                {d.invoices.viewAppointments}
-              </Link>
-            )
-          }
-        />
-      ) : (
-        <div className="gh-card gh-doctor-table-card p-0 overflow-hidden">
-          <ColumnPriorityTable
-            fields={fields}
-            rows={invoices}
-            getRowKey={(row) => row.id}
-            cardTone={(row) => {
-              const tone = paymentTone(row.paymentStatus);
-              return tone === "active" ? "success" : tone === "inactive" ? "danger" : tone === "pending" ? "warning" : "neutral";
-            }}
-            cardActions={(row) => (
-              <Link href={`/doctor/appointments/${row.id}`} className="gh-btn gh-btn-soft text-sm">
-                {d.invoices.openConsultation} <ChevronRight className="size-3.5" />
-              </Link>
-            )}
-          />
-          {result.data.pagination.totalPages > 1 ? (
-            <div className="border-t border-[var(--portal-line)] px-4 py-3 text-xs text-[var(--portal-muted)]">
-              {d.common.pagination
-                .replace("{page}", String(result.data.pagination.page))
-                .replace("{totalPages}", String(result.data.pagination.totalPages))
-                .replace("{total}", String(result.data.pagination.total))}
+      <InvoicesTabsClient
+        tabConsultations={d.invoices.tabConsultations}
+        tabStatement={d.invoices.tabMonthlyStatement}
+        tabsAria={d.invoices.tabsAriaLabel}
+        consultationsPanel={
+          <>
+            <div className="gh-card gh-doctor-filter-card mb-4 p-4">
+              <form className="gh-doctor-filter-grid grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">{d.common.status}</span>
+                  <select name="status" defaultValue={status ?? ""} className="gh-select">
+                    <option value="">{d.common.any}</option>
+                    <option value="UNPAID">{d.invoices.statusUnpaid}</option>
+                    <option value="PENDING">{d.invoices.statusPending}</option>
+                    <option value="PAID">{d.invoices.statusPaid}</option>
+                    <option value="REFUNDED">{d.invoices.statusRefunded}</option>
+                    <option value="FAILED">{d.invoices.statusFailed}</option>
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">{d.common.from}</span>
+                  <input
+                    type="date"
+                    name="from"
+                    defaultValue={from ?? ""}
+                    className="gh-input"
+                  />
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">{d.common.to}</span>
+                  <input
+                    type="date"
+                    name="to"
+                    defaultValue={to ?? ""}
+                    className="gh-input"
+                  />
+                </label>
+                <div className="gh-doctor-filter-actions sm:col-span-2 lg:col-span-5 flex items-center gap-2">
+                  <button type="submit" className="gh-btn gh-btn-primary text-sm">
+                    {d.common.apply}
+                  </button>
+                  <Link href="/doctor/invoices" className="gh-btn gh-btn-soft text-sm">
+                    {d.common.reset}
+                  </Link>
+                </div>
+              </form>
             </div>
-          ) : null}
-        </div>
-      )}
+
+            {!result.ok ? (
+              <div className="gh-card p-6">
+                <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
+                  {result.message}
+                </p>
+              </div>
+            ) : invoices.length === 0 ? (
+              <AdminEmptyState
+                className="gh-doctor-empty-state"
+                icon={status || from || to ? <SearchX className="size-5" aria-hidden /> : <Receipt className="size-5" aria-hidden />}
+                assetSrc={status || from || to ? undefined : "/images/portal/obsidian/empty-payments.svg"}
+                title={status || from || to ? d.invoices.emptyFilteredTitle : d.invoices.emptyTitle}
+                description={
+                  status || from || to
+                    ? d.invoices.emptyFilteredDesc
+                    : d.invoices.emptyDesc
+                }
+                action={
+                  status || from || to ? (
+                    <Link href="/doctor/invoices" className="gh-btn gh-btn-soft text-sm">
+                      {d.common.clearFilters}
+                    </Link>
+                  ) : (
+                    <Link href="/doctor/appointments" className="gh-btn gh-btn-primary text-sm">
+                      {d.invoices.viewAppointments}
+                    </Link>
+                  )
+                }
+              />
+            ) : (
+              <div className="gh-card gh-doctor-table-card p-0 overflow-hidden">
+                <ColumnPriorityTable
+                  fields={fields}
+                  rows={invoices}
+                  getRowKey={(row) => row.id}
+                  cardTone={(row) => {
+                    const tone = paymentTone(row.paymentStatus);
+                    return tone === "active" ? "success" : tone === "inactive" ? "danger" : tone === "pending" ? "warning" : "neutral";
+                  }}
+                  cardActions={(row) => (
+                    <Link href={`/doctor/appointments/${row.id}`} className="gh-btn gh-btn-soft text-sm">
+                      {d.invoices.openConsultation} <ChevronRight className="size-3.5" />
+                    </Link>
+                  )}
+                />
+                {result.data.pagination.totalPages > 1 ? (
+                  <div className="border-t border-[var(--portal-line)] px-4 py-3 text-xs text-[var(--portal-muted)]">
+                    {d.common.pagination
+                      .replace("{page}", String(result.data.pagination.page))
+                      .replace("{totalPages}", String(result.data.pagination.totalPages))
+                      .replace("{total}", String(result.data.pagination.total))}
+                  </div>
+                ) : null}
+              </div>
+            )}
+          </>
+        }
+        statementPanel={<PayoutInvoicePanel strings={d.invoices as InvoiceStrings} />}
+      />
     </>
   );
 }

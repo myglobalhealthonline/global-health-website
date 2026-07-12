@@ -3,6 +3,8 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
+import { PortalDialog } from "@/components/PortalDialog";
+import { Btn } from "@/components/portal-atoms";
 
 type SoapState = {
   chiefComplaint: string;
@@ -25,6 +27,9 @@ export type ConsultationFormCopy = {
   fieldPlan: string;
   fieldPlanHelper: string;
   signConfirm: string;
+  signDialogTitle: string;
+  signDialogConfirm: string;
+  cancel: string;
   couldNotSave: string;
   saved: string;
   networkError: string;
@@ -63,6 +68,7 @@ export function ConsultationForm({
   const [message, setMessage] = useState<
     { kind: "success" | "error"; text: string } | null
   >(null);
+  const [signConfirmOpen, setSignConfirmOpen] = useState(false);
   const signed = state.status === "SIGNED";
 
   const dirty =
@@ -125,9 +131,11 @@ export function ConsultationForm({
 
   function sign() {
     setMessage(null);
-    if (!confirm(copy.signConfirm)) {
-      return;
-    }
+    setSignConfirmOpen(true);
+  }
+
+  function confirmSign() {
+    setSignConfirmOpen(false);
     startTransition(async () => {
       try {
         const res = await fetch(
@@ -238,6 +246,27 @@ export function ConsultationForm({
           </button>
         </div>
       </div>
+
+      <PortalDialog
+        open={signConfirmOpen}
+        onClose={() => setSignConfirmOpen(false)}
+        title={copy.signDialogTitle}
+        danger
+        footer={
+          <>
+            <Btn variant="ghost" onClick={() => setSignConfirmOpen(false)}>
+              {copy.cancel}
+            </Btn>
+            <Btn variant="danger" disabled={pending} onClick={confirmSign}>
+              {pending ? copy.saving : copy.signDialogConfirm}
+            </Btn>
+          </>
+        }
+      >
+        <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
+          {copy.signConfirm}
+        </p>
+      </PortalDialog>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, ClipboardCheck } from "lucide-react";
+import { CheckCircle2, ClipboardCheck, Circle } from "lucide-react";
 
 export type FinalizeChecklistCopy = {
   finalizedTitle: string;
@@ -10,28 +10,42 @@ export type FinalizeChecklistCopy = {
   confirmBothItems: string;
   title: string;
   description: string;
-  notesUploadedLabel: string;
+  noteRecordedLabel: string;
+  noteRecordedPendingHint: string;
+  timeReachedLabel: string;
+  timeReachedPendingHint: string;
   filesUploadedLabel: string;
   finalizing: string;
   finalizeButton: string;
   couldNotFinalize: string;
 };
 
+/**
+ * Finalize readiness checklist (doctor audit 03/UX-002 · 03/UX-006). The
+ * first two rows are system-derived from data already loaded on the page
+ * (consultation content, scheduled time) — the doctor can't uncheck them,
+ * they just reflect reality. "Required files uploaded" stays a manual
+ * attest: the system has no way to know what documents this specific
+ * consultation requires, only whether *a* document exists.
+ */
 export function FinalizeChecklist({
   appointmentId,
   initialFinalized,
-  initialNotesUploaded,
   initialFilesUploaded,
+  noteRecorded,
+  timeReached,
   copy,
 }: {
   appointmentId: string;
   initialFinalized: boolean;
-  initialNotesUploaded: boolean;
   initialFilesUploaded: boolean;
+  /** Derived: consultation has at least one non-empty SOAP field. */
+  noteRecorded: boolean;
+  /** Derived: the appointment's scheduled time has passed (or is unset). */
+  timeReached: boolean;
   copy: FinalizeChecklistCopy;
 }) {
   const router = useRouter();
-  const [notesUploaded, setNotesUploaded] = useState(initialNotesUploaded);
   const [filesUploaded, setFilesUploaded] = useState(initialFilesUploaded);
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
@@ -50,9 +64,11 @@ export function FinalizeChecklist({
     );
   }
 
+  const ready = noteRecorded && timeReached && filesUploaded;
+
   function finalize() {
     setMessage(null);
-    if (!notesUploaded || !filesUploaded) {
+    if (!ready) {
       setMessage(copy.confirmBothItems);
       return;
     }
@@ -89,14 +105,18 @@ export function FinalizeChecklist({
           </p>
         </div>
       </div>
-      <label className="flex items-center gap-2 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2 text-sm">
-        <input
-          type="checkbox"
-          checked={notesUploaded}
-          onChange={(e) => setNotesUploaded(e.target.checked)}
-        />
-        {copy.notesUploadedLabel}
-      </label>
+
+      <ReadinessRow
+        done={noteRecorded}
+        label={copy.noteRecordedLabel}
+        hint={!noteRecorded ? copy.noteRecordedPendingHint : undefined}
+      />
+      <ReadinessRow
+        done={timeReached}
+        label={copy.timeReachedLabel}
+        hint={!timeReached ? copy.timeReachedPendingHint : undefined}
+      />
+
       <label className="flex items-center gap-2 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2 text-sm">
         <input
           type="checkbox"
@@ -105,6 +125,7 @@ export function FinalizeChecklist({
         />
         {copy.filesUploadedLabel}
       </label>
+
       {message ? (
         <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
           {message}
@@ -112,12 +133,48 @@ export function FinalizeChecklist({
       ) : null}
       <button
         type="button"
-        disabled={pending}
+        disabled={pending || !ready}
         onClick={finalize}
         className="gh-btn gh-btn-primary text-sm"
       >
         {pending ? copy.finalizing : copy.finalizeButton}
       </button>
+    </div>
+  );
+}
+
+/** Read-only status row for a system-derived checklist item — not a checkbox
+ *  the doctor can toggle, just a reflection of what's already true. */
+function ReadinessRow({
+  done,
+  label,
+  hint,
+}: {
+  done: boolean;
+  label: string;
+  hint?: string;
+}) {
+  return (
+    <div
+      className={`flex items-start gap-2 rounded-md border px-3 py-2 text-sm ${
+        done
+          ? "border-[var(--portal-line)] bg-[var(--portal-well)] text-[var(--portal-text)]"
+          : "border-amber-200 bg-amber-50 text-amber-800"
+      }`}
+    >
+      {done ? (
+        <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" aria-hidden />
+      ) : (
+        <Circle className="mt-0.5 size-4 shrink-0 text-amber-600" aria-hidden />
+      )}
+      <span>
+        {label}
+        {hint ? (
+          <span className="mt-0.5 block text-portal-meta font-normal opacity-80">
+            {hint}
+          </span>
+        ) : null}
+      </span>
     </div>
   );
 }
