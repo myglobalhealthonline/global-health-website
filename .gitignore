@@ -74,3 +74,6 @@ docs/design-fetch*.zip
 docs/*.zip
 docs/admin-portal-reference.html
 backups/
+
+# Session verification screenshots — large PNG dumps, never shipped
+docs/portal-implementation/screenshots/
