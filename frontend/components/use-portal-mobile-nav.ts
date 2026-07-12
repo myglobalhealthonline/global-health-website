@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type RefObject } from "react";
+import { useEffect, useLayoutEffect, useRef, type RefObject } from "react";
 
 /**
  * Shared a11y hardening for the mobile sidebar nav in both portal shells
@@ -25,7 +25,9 @@ export function usePortalMobileNavA11y(
   // drawer is open don't tear down the trap (which would restore focus and
   // churn the body scroll lock mid-open).
   const onCloseRef = useRef(onClose);
-  onCloseRef.current = onClose;
+  useLayoutEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (!open) return;

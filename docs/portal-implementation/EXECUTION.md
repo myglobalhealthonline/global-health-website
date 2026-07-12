@@ -93,6 +93,6 @@ F4 Write `VERIFICATION.md` + final report per TASK format
 - [x] FINDINGS.md consolidated
 - [x] Phase B shared foundations (commit 4ca59296)
 - [x] Phase C doctor (commit 07d75ad2; calendar/list runtime matrix deferred to F)
-- [ ] Phase D patient
-- [ ] Phase E admin
-- [ ] Phase F verification + report
+- [x] Phase D patient (commit 21b7dacd)
+- [x] Phase E admin (commit 21b7dacd)
+- [x] Phase F verification + report (VERIFICATION.md; lint/tsc/test 67/67/build/playwright 52/52 green)

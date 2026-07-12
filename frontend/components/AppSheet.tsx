@@ -2,7 +2,7 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 export type AppSheetSize = "sm" | "md" | "lg";
 export type AppSheetSide = "right" | "bottom";
@@ -46,6 +46,15 @@ export function AppSheet({
   children: ReactNode;
   ariaLabel?: string;
 }) {
+  // Radix's default close-focus-restore doesn't reliably return focus to
+  // whatever opened the sheet here (observed landing on <body> instead —
+  // Phase F regression finding). Capture it ourselves on open and drive
+  // `onCloseAutoFocus`, same pattern as PortalDialog/usePortalMobileNavA11y.
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    if (open) returnFocusRef.current = document.activeElement as HTMLElement | null;
+  }, [open]);
+
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
@@ -55,6 +64,12 @@ export function AppSheet({
         <Dialog.Content
           aria-label={ariaLabel}
           className={`gh-app-sheet gh-app-sheet--${theme} gh-app-sheet--${side} gh-app-sheet--${size}`}
+          onCloseAutoFocus={(e) => {
+            if (returnFocusRef.current) {
+              e.preventDefault();
+              returnFocusRef.current.focus();
+            }
+          }}
         >
           <div className="gh-app-sheet__header">
             {header}
