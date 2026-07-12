@@ -136,77 +136,85 @@ export default async function AccountOrderDetailPage({ params }: Props) {
           </div>
         </AdminCard>
 
-        <aside className="grid gap-4 self-start">
-          {order.trackingNumber ? (
-            <AdminCard padding={0}>
-              <SectionHeader title={a.orders.trackShipment} />
-              <div className="p-5 text-sm">
-                <div className="flex items-start gap-3">
-                  <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
-                    <Truck className="size-5" aria-hidden />
-                  </span>
-                  <div className="min-w-0">
-                    {order.trackingCarrier ? (
-                      <p className="text-xs text-[var(--portal-muted)]">{order.trackingCarrier}</p>
-                    ) : null}
-                    {order.trackingUrl ? (
-                      <a
-                        href={order.trackingUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-semibold text-[var(--portal-primary)] underline-offset-2 hover:underline"
-                      >
-                        {order.trackingNumber}
-                      </a>
-                    ) : (
-                      <p className="font-semibold text-[var(--portal-text)]">{order.trackingNumber}</p>
-                    )}
+        {/* 15-006: one "Order info" surface with dividered sub-sections
+            instead of 5 separate AdminCards — no content removed, only
+            merged. Tracking stays first when present (most actionable). */}
+        <aside className="self-start">
+          <AdminCard padding={0}>
+            <SectionHeader title={a.orders.orderInfoSection} />
+            <div className="divide-y divide-[var(--portal-line)]">
+              {order.trackingNumber ? (
+                <div className="p-5 text-sm">
+                  <p className="mb-2 text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
+                    {a.orders.trackShipment}
+                  </p>
+                  <div className="flex items-start gap-3">
+                    <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+                      <Truck className="size-5" aria-hidden />
+                    </span>
+                    <div className="min-w-0">
+                      {order.trackingCarrier ? (
+                        <p className="text-xs text-[var(--portal-muted)]">{order.trackingCarrier}</p>
+                      ) : null}
+                      {order.trackingUrl ? (
+                        <a
+                          href={order.trackingUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-semibold text-[var(--portal-primary)] underline-offset-2 hover:underline"
+                        >
+                          {order.trackingNumber}
+                        </a>
+                      ) : (
+                        <p className="font-semibold text-[var(--portal-text)]">{order.trackingNumber}</p>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </AdminCard>
-          ) : null}
-
-          <AdminCard padding={0}>
-            <SectionHeader title={a.orders.shippingSection} />
-            <div className="p-5 text-sm text-[var(--portal-text)]">
-              {order.ship.name ? (
-                <>
-                  <p className="font-semibold">{order.ship.name}</p>
-                  <p>{order.ship.line1}</p>
-                  {order.ship.line2 ? <p>{order.ship.line2}</p> : null}
-                  <p>
-                    {order.ship.city} {order.ship.postalCode}
-                  </p>
-                  <p>{order.ship.countryCode}</p>
-                </>
-              ) : (
-                <p className="text-[var(--portal-muted)]">{a.orders.noAddress}</p>
-              )}
-            </div>
-          </AdminCard>
-
-          <AdminCard padding={0}>
-            <SectionHeader title={a.orders.contact} />
-            <div className="p-5 text-sm">
-              <p>{order.fullName}</p>
-              <p className="text-[var(--portal-muted)]">{order.email}</p>
-              {order.phone ? (
-                <p className="text-[var(--portal-muted)]">{order.phone}</p>
               ) : null}
-            </div>
-          </AdminCard>
 
-          <AdminCard className="bg-[var(--portal-well)]">
-            <div className="flex items-start gap-3">
-              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-[var(--portal-surface-elevated)] text-[var(--portal-primary)]">
-                <PackageCheck className="size-5" aria-hidden />
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-[var(--portal-text)]">{a.orders.careRecordTitle}</p>
-                <p className="mt-1 text-xs leading-relaxed text-[var(--portal-muted)]">
-                  {a.orders.careRecordBody}
+              <div className="p-5 text-sm text-[var(--portal-text)]">
+                <p className="mb-2 text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
+                  {a.orders.shippingSection}
                 </p>
+                {order.ship.name ? (
+                  <>
+                    <p className="font-semibold">{order.ship.name}</p>
+                    <p>{order.ship.line1}</p>
+                    {order.ship.line2 ? <p>{order.ship.line2}</p> : null}
+                    <p>
+                      {order.ship.city} {order.ship.postalCode}
+                    </p>
+                    <p>{order.ship.countryCode}</p>
+                  </>
+                ) : (
+                  <p className="text-[var(--portal-muted)]">{a.orders.noAddress}</p>
+                )}
+              </div>
+
+              <div className="p-5 text-sm">
+                <p className="mb-2 text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
+                  {a.orders.contact}
+                </p>
+                <p>{order.fullName}</p>
+                <p className="text-[var(--portal-muted)]">{order.email}</p>
+                {order.phone ? (
+                  <p className="text-[var(--portal-muted)]">{order.phone}</p>
+                ) : null}
+              </div>
+
+              <div className="p-5">
+                <div className="flex items-start gap-3">
+                  <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-[var(--portal-surface-elevated)] text-[var(--portal-primary)]">
+                    <PackageCheck className="size-5" aria-hidden />
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--portal-text)]">{a.orders.careRecordTitle}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-[var(--portal-muted)]">
+                      {a.orders.careRecordBody}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </AdminCard>

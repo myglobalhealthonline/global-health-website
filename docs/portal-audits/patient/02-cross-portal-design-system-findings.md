@@ -41,7 +41,7 @@ Footer meta       — counts/links, de-emphasized
 |---|---|
 | `AdminSummaryStrip` | Restrict to dashboards (Rule S3). Add per-metric icon prop — the identical `BarChart3` glyph on every card (01, 05, 14) communicates nothing. |
 | `PortalMobileCard` | Return to its designed role: mobile fallback under `ColumnPriorityTable` only. Flatten `__meta-item` boxes to plain label/value rows. |
-| `AdminCard` | Forbid `padding={0}` + inner padded div. Lint-able. |
+| `AdminCard` | ~~Forbid `padding={0}` + inner padded div~~ REVISED during Wave 2b: that idiom is the established flush-SectionHeader composition (`.gh-portal-section-header` `:first-child` radius rules depend on it). Rule withdrawn; a real fix would be an AdminCard `header` slot — optional, low priority. |
 | `SectionHeader`/`AdminEmptyState` | Fix heading levels (`h3`→`h2` / configurable) — single root cause of the H2-skip on 5+ pages. Cross-portal regression pass required. |
 | `PortalTabs` | Wire `PortalTabPanel` everywhere (ARIA broken on medical-files); add mobile overflow affordance (17-003). |
 | `PortalDialog` | `danger` variant reserved for destructive actions only (11-001 misuse: plan change styled like cancellation). |

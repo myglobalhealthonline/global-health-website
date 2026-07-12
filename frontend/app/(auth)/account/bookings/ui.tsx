@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
@@ -16,9 +16,10 @@ import {
 } from "lucide-react";
 import type { AccountAppointment } from "@/lib/api/account-appointments-api";
 import { PortalDialog } from "@/components/PortalDialog";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
 import { AdminEmptyState, Btn, Pill } from "@/components/portal-atoms";
 import type { PillTone } from "@/components/portal-atoms";
+import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
+import { RecordDetailsDrawer } from "@/components/RecordDetailsDrawer";
 import { ChatThread } from "@/components/chat/ChatThread";
 import { fetchPatientMessages, postPatientMessage } from "@/lib/api/chat-api";
 import { ConsultationChat } from "@/components/chat/ConsultationChat";
@@ -242,6 +243,10 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
   const [payingId, setPayingId] = useState<string | null>(null);
   const [payError, setPayError] = useState<string | null>(null);
   const [paymentRedirectUrl, setPaymentRedirectUrl] = useState<string | null>(null);
+  // ColumnPriorityTable row -> details drawer (fix 02-003). Only one booking's
+  // full detail (scheduled band, where, notes, chat/reschedule/cancel) is
+  // mounted at a time, same as the old per-card dialogs.
+  const [detailsId, setDetailsId] = useState<string | null>(null);
 
   // Navigation is a side effect, not a render/handler-body concern — run it
   // here so it fires exactly once per URL rather than inline during the
@@ -309,6 +314,100 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
     { value: "CONTACTED", label: b.filterContacted },
     { value: "COMPLETED", label: b.filterConcluded },
     { value: "CANCELLED", label: b.filterCancelled },
+  ];
+
+  const detailsItem = items.find((item) => item.id === detailsId) ?? null;
+  const consultChatItem = items.find((item) => item.id === openConsultChatId) ?? null;
+
+  // Shared actions cell — rendered as the desktop table's trailing column AND
+  // as the mobile PortalMobileCard's action row (ColumnPriorityTable's
+  // `cardActions`), so both surfaces stay in sync from one place.
+  // stopPropagation keeps these from also firing the row's onRowClick.
+  function bookingActionsCell(item: AccountAppointment) {
+    return (
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setDetailsId(item.id);
+          }}
+          className="gh-btn gh-btn-soft text-sm"
+        >
+          Details
+        </button>
+        {requiresPayment(item) ? (
+          <Btn
+            variant="primary"
+            size="sm"
+            disabled={payingId === item.id}
+            loading={payingId === item.id}
+            iconLeft={<CreditCard className="size-3.5" aria-hidden />}
+            onClick={(e: MouseEvent<HTMLButtonElement>) => {
+              e.stopPropagation();
+              void onCompletePayment(item.id);
+            }}
+          >
+            {b.completePayment}
+          </Btn>
+        ) : null}
+        {item.meetingUrl ? (
+          <a
+            href={item.meetingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="gh-btn gh-btn-primary text-sm"
+          >
+            <Video className="size-3.5" aria-hidden />
+            {i18n.dashboard.joinCall}
+          </a>
+        ) : null}
+      </div>
+    );
+  }
+
+  const bookingFields: ColumnPriorityField<AccountAppointment>[] = [
+    {
+      key: "type",
+      label: "Type",
+      priority: 1,
+      cardPrimary: true,
+      render: (item) => (
+        <>
+          <span className="block font-semibold text-[var(--portal-text)]">
+            {item.orderNumber
+              ? `${item.orderNumber} · ${consultLabel(item.consultationType, i18n)}`
+              : consultLabel(item.consultationType, i18n)}
+          </span>
+          {item.doctorName ? (
+            <span className="block text-xs text-[var(--portal-muted)]">{item.doctorName}</span>
+          ) : null}
+        </>
+      ),
+    },
+    {
+      key: "booked",
+      label: "Booked",
+      priority: 2,
+      render: (item) => (
+        <span className="text-[var(--portal-muted)]">{formatAppDateTime(item.createdAt)}</span>
+      ),
+    },
+    {
+      key: "status",
+      label: "Status",
+      priority: 1,
+      render: (item) => <Pill tone={statusTone(item.status)}>{formatStatus(item.status)}</Pill>,
+    },
+    {
+      key: "actions",
+      label: "",
+      priority: 1,
+      align: "right",
+      desktopOnly: true,
+      render: bookingActionsCell,
+    },
   ];
 
   if (unavailableMessage) {
@@ -445,203 +544,252 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
           description={b.noMatchBody}
         />
       ) : (
-        <div className="gh-patient-bookings-list grid gap-4">
-          {filtered.map((item) => {
-            const paymentLabel = formatPaymentLabel(item.paymentStatus, item.amountCents, item.currencyCode, i18n);
-            return (
-              <PortalMobileCard
-                key={item.id}
-                tone={item.status === "COMPLETED" ? "success" : item.status === "CANCELLED" ? "danger" : "neutral"}
-                title={
-                  item.orderNumber
-                    ? `${item.orderNumber} · ${consultLabel(item.consultationType, i18n)}`
-                    : consultLabel(item.consultationType, i18n)
-                }
-                subtitle={`Booked ${formatAppDateTime(item.createdAt)}`}
-                statusPill={<Pill tone={statusTone(item.status)}>{formatStatus(item.status)}</Pill>}
-                meta={[
-                  ...(item.orderNumber
-                    ? [{ label: b.metaOrder, value: <span className="font-mono">{item.orderNumber}</span> }]
-                    : []),
-                  { label: b.metaCountry, value: item.countryCode.toUpperCase() },
-                  ...(item.doctorName
-                    ? [{ label: b.metaDoctor, value: item.doctorName }]
-                    : []),
-                  ...(item.scheduledAt
-                    ? [{ label: b.metaScheduled, value: formatAppDateTime(item.scheduledAt, item.patientTimezone) }]
-                    : []),
-                  ...(paymentLabel
-                    ? [{ label: b.metaPayment, value: <Pill tone={paymentTone(item.paymentStatus)}>{paymentLabel}</Pill> }]
-                    : []),
-                ]}
-              >
-                {/* Payment-needed state now lives exclusively in the "Action
-                    required" banner at the top of the list (fix #3) — no
-                    duplicate inline warning here, just the disabled-chat
-                    pill further down. */}
+        <div className="gh-patient-bookings-list gh-card overflow-hidden p-0">
+          <ColumnPriorityTable
+            fields={bookingFields}
+            rows={filtered}
+            getRowKey={(item) => item.id}
+            cardTone={(item) =>
+              item.status === "COMPLETED" ? "success" : item.status === "CANCELLED" ? "danger" : "neutral"
+            }
+            onRowClick={(item) => setDetailsId(item.id)}
+            cardActions={bookingActionsCell}
+          />
+        </div>
+      )}
 
-                {/* Scheduled-call band — appears only once admin sets the slot.
-                    The whole row links to the Meet link if present so patients
-                    can join with one click. */}
-                {item.scheduledAt || item.meetingUrl ? (
-                  <div
-                    className="gh-patient-booking-band mt-3 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border px-4 py-3"
-                    style={{ borderColor: "var(--portal-success)", background: "var(--portal-success-soft)" }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Clock className="size-4" style={{ color: "var(--portal-success-text)" }} aria-hidden />
-                      <div>
-                        <p
-                          className="text-xs font-semibold uppercase tracking-wider"
-                          style={{ color: "var(--portal-success-text)" }}
-                        >
-                          {b.scheduledLabel}
-                        </p>
-                        <p className="mt-0.5 text-sm font-medium" style={{ color: "var(--portal-text)" }}>
-                          {item.scheduledAt
-                            ? formatAppDateTime(item.scheduledAt, item.patientTimezone)
-                            : b.timeTbc}
-                        </p>
-                      </div>
-                    </div>
-                    {item.meetingUrl ? (
-                      <a
-                        href={item.meetingUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="gh-btn gh-btn-primary text-sm"
-                      >
-                        <Video className="size-4" aria-hidden />
-                        {i18n.dashboard.joinCall}
-                      </a>
+      {/* Details drawer — everything that used to render unconditionally
+          inside every PortalMobileCard (scheduled band, where, notes, chat/
+          reschedule/cancel actions) now mounts once for whichever booking
+          was opened. Content/formatters are unchanged from the old card. */}
+      <RecordDetailsDrawer
+        open={detailsItem !== null}
+        onOpenChange={(next) => {
+          if (!next) setDetailsId(null);
+        }}
+        title={
+          detailsItem
+            ? detailsItem.orderNumber
+              ? `${detailsItem.orderNumber} · ${consultLabel(detailsItem.consultationType, i18n)}`
+              : consultLabel(detailsItem.consultationType, i18n)
+            : ""
+        }
+        summary={
+          detailsItem ? (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+              <Pill tone={statusTone(detailsItem.status)}>{formatStatus(detailsItem.status)}</Pill>
+              <span>Booked {formatAppDateTime(detailsItem.createdAt)}</span>
+              {detailsItem.doctorName ? <span>{detailsItem.doctorName}</span> : null}
+            </div>
+          ) : null
+        }
+        footer={
+          <Btn variant="ghost" onClick={() => setDetailsId(null)}>
+            Close
+          </Btn>
+        }
+      >
+        {detailsItem ? (
+          <>
+            {(() => {
+              const item = detailsItem;
+              const paymentLabel = formatPaymentLabel(item.paymentStatus, item.amountCents, item.currencyCode, i18n);
+              return (
+                <>
+                  <div className="gh-portal-mobile-card__meta">
+                    <span className="gh-portal-mobile-card__meta-item">
+                      <em>{b.metaCountry}</em>
+                      <strong>{item.countryCode.toUpperCase()}</strong>
+                    </span>
+                    {paymentLabel ? (
+                      <span className="gh-portal-mobile-card__meta-item">
+                        <em>{b.metaPayment}</em>
+                        <strong>
+                          <Pill tone={paymentTone(item.paymentStatus)}>{paymentLabel}</Pill>
+                        </strong>
+                      </span>
                     ) : null}
                   </div>
-                ) : null}
 
-                {/* In-person "Where" block — appears when consultationMode is
-                    IN_PERSON and admin has set a Clinic or a free-text address. */}
-                {item.consultationMode === "IN_PERSON" &&
-                (item.clinicName || item.locationAddress) ? (
-                  <WhereBlock
-                    clinicName={item.clinicName ?? null}
-                    clinicCity={item.clinicCity ?? null}
-                    locationAddress={item.locationAddress ?? null}
-                    i18n={b}
-                  />
-                ) : null}
-
-                {item.notesPreview ? (
-                  <div className="mt-3 rounded-[var(--radius-card-sm)] bg-[var(--portal-well)] px-3 py-2">
-                    <p className="text-xs font-semibold text-[var(--portal-muted)]">{b.notesLabel}</p>
-                    <p className="mt-0.5 text-sm text-[var(--portal-text-2)]">{item.notesPreview}</p>
-                  </div>
-                ) : null}
-
-                {/* Admin chat + doctor chat — each opens in its own drawer dialog
-                    rather than expanding inline, so a long booking list doesn't
-                    get pushed around by an open thread. */}
-                <div className="gh-patient-booking-actions mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setOpenConsultChatId(null);
-                      setOpenChatId(item.id);
-                    }}
-                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)] sm:w-auto"
-                  >
-                    <MessageCircle className="size-4" aria-hidden />
-                    {b.messageClinic}
-                  </button>
-
-                  {requiresPayment(item) ? (
-                    <span
-                      className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium sm:w-auto"
-                      style={{
-                        borderColor: "var(--portal-warning)",
-                        background: "var(--portal-warning-soft)",
-                        color: "var(--portal-warning-text)",
-                      }}
-                      title={b.doctorChatLocked}
+                  {/* Scheduled-call band — appears only once admin sets the slot.
+                      The whole row links to the Meet link if present so patients
+                      can join with one click. */}
+                  {item.scheduledAt || item.meetingUrl ? (
+                    <div
+                      className="gh-patient-booking-band mt-3 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border px-4 py-3"
+                      style={{ borderColor: "var(--portal-success)", background: "var(--portal-success-soft)" }}
                     >
-                      <MessageCircle className="size-4" aria-hidden />
-                      {b.doctorChatLocked}
-                    </span>
-                  ) : (
+                      <div className="flex items-center gap-2">
+                        <Clock className="size-4" style={{ color: "var(--portal-success-text)" }} aria-hidden />
+                        <div>
+                          <p
+                            className="text-xs font-semibold uppercase tracking-wider"
+                            style={{ color: "var(--portal-success-text)" }}
+                          >
+                            {b.scheduledLabel}
+                          </p>
+                          <p className="mt-0.5 text-sm font-medium" style={{ color: "var(--portal-text)" }}>
+                            {item.scheduledAt
+                              ? formatAppDateTime(item.scheduledAt, item.patientTimezone)
+                              : b.timeTbc}
+                          </p>
+                        </div>
+                      </div>
+                      {item.meetingUrl ? (
+                        <a
+                          href={item.meetingUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="gh-btn gh-btn-primary text-sm"
+                        >
+                          <Video className="size-4" aria-hidden />
+                          {i18n.dashboard.joinCall}
+                        </a>
+                      ) : null}
+                    </div>
+                  ) : null}
+
+                  {/* In-person "Where" block — appears when consultationMode is
+                      IN_PERSON and admin has set a Clinic or a free-text address. */}
+                  {item.consultationMode === "IN_PERSON" &&
+                  (item.clinicName || item.locationAddress) ? (
+                    <WhereBlock
+                      clinicName={item.clinicName ?? null}
+                      clinicCity={item.clinicCity ?? null}
+                      locationAddress={item.locationAddress ?? null}
+                      i18n={b}
+                    />
+                  ) : null}
+
+                  {item.notesPreview ? (
+                    <div className="mt-3 rounded-[var(--radius-card-sm)] bg-[var(--portal-well)] px-3 py-2">
+                      <p className="text-xs font-semibold text-[var(--portal-muted)]">{b.notesLabel}</p>
+                      <p className="mt-0.5 text-sm text-[var(--portal-text-2)]">{item.notesPreview}</p>
+                    </div>
+                  ) : null}
+
+                  {/* Admin chat + doctor chat — each opens in its own drawer dialog
+                      rather than expanding inline. */}
+                  <div className="gh-patient-booking-actions mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                     <button
                       type="button"
                       onClick={() => {
-                        setOpenChatId(null);
-                        setOpenConsultChatId(item.id);
+                        // Close the details drawer first — Radix's modal focus
+                        // trap on the still-open AppSheet blocks pointer events
+                        // reaching a second body-level PortalDialog otherwise.
+                        setDetailsId(null);
+                        setOpenConsultChatId(null);
+                        setOpenChatId(item.id);
                       }}
                       className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)] sm:w-auto"
                     >
                       <MessageCircle className="size-4" aria-hidden />
-                      {b.chatWithDoctor}
+                      {b.messageClinic}
                     </button>
-                  )}
 
-                  {CANCELLABLE_STATUSES.has(item.status) ? (
-                    <>
-                      <a
-                        href={`/account/bookings/${item.id}/reschedule`}
-                        className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)] sm:w-auto"
+                    {requiresPayment(item) ? (
+                      <span
+                        className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium sm:w-auto"
+                        style={{
+                          borderColor: "var(--portal-warning)",
+                          background: "var(--portal-warning-soft)",
+                          color: "var(--portal-warning-text)",
+                        }}
+                        title={b.doctorChatLocked}
                       >
-                        <Clock className="size-4" aria-hidden />
-                        {b.rescheduleAction}
-                      </a>
+                        <MessageCircle className="size-4" aria-hidden />
+                        {b.doctorChatLocked}
+                      </span>
+                    ) : (
                       <button
                         type="button"
                         onClick={() => {
-                          setCancelError(null);
-                          setCancelTarget(item);
+                          setDetailsId(null);
+                          setOpenChatId(null);
+                          setOpenConsultChatId(item.id);
                         }}
-                        className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-sm font-semibold sm:w-auto"
-                        style={{ borderColor: "var(--portal-danger)", color: "var(--portal-danger-text)" }}
+                        className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)] sm:w-auto"
                       >
-                        <XCircle className="size-4" aria-hidden />
-                        {b.cancelBooking}
+                        <MessageCircle className="size-4" aria-hidden />
+                        {b.chatWithDoctor}
                       </button>
-                    </>
-                  ) : null}
-                </div>
+                    )}
 
-                <PortalDialog
-                  open={openChatId === item.id}
-                  onClose={() => setOpenChatId(null)}
-                  title={b.messageClinic}
-                  width="sm"
-                  noBodyPadding
-                >
-                  <ChatThread
-                    appointmentId={item.id}
-                    viewerRole="PATIENT"
-                    fetcher={fetchPatientMessages}
-                    poster={postPatientMessage}
-                    variant="embedded"
-                  />
-                </PortalDialog>
+                    {CANCELLABLE_STATUSES.has(item.status) ? (
+                      <>
+                        <a
+                          href={`/account/bookings/${item.id}/reschedule`}
+                          className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)] sm:w-auto"
+                        >
+                          <Clock className="size-4" aria-hidden />
+                          {b.rescheduleAction}
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDetailsId(null);
+                            setCancelError(null);
+                            setCancelTarget(item);
+                          }}
+                          className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-sm font-semibold sm:w-auto"
+                          style={{ borderColor: "var(--portal-danger)", color: "var(--portal-danger-text)" }}
+                        >
+                          <XCircle className="size-4" aria-hidden />
+                          {b.cancelBooking}
+                        </button>
+                      </>
+                    ) : null}
+                  </div>
+                </>
+              );
+            })()}
+          </>
+        ) : null}
+      </RecordDetailsDrawer>
 
-                <PortalDialog
-                  open={openConsultChatId === item.id && !requiresPayment(item)}
-                  onClose={() => setOpenConsultChatId(null)}
-                  title={b.chatWithDoctor}
-                  width="sm"
-                  noBodyPadding
-                >
-                  <ConsultationChat
-                    appointmentId={item.id}
-                    viewerRole="PATIENT"
-                    fetcher={fetchPatientChat}
-                    poster={postPatientChatMessage}
-                    fileUploader={uploadPatientChatFile}
-                    variant="embedded"
-                  />
-                </PortalDialog>
-              </PortalMobileCard>
-            );
-          })}
-        </div>
-      )}
+      {/* Chat dialogs live outside the details drawer (not nested inside its
+          conditional content) — the "Message clinic"/"Chat with doctor"
+          buttons above close the drawer before opening these, and a still-
+          mounted AppSheet's Radix focus trap blocks pointer events reaching
+          a second body-level PortalDialog, so the drawer must actually be
+          gone from the DOM by the time these open. Keyed off item id, same
+          as before the ColumnPriorityTable migration. */}
+      {openChatId ? (
+        <PortalDialog
+          open={openChatId !== null}
+          onClose={() => setOpenChatId(null)}
+          title={b.messageClinic}
+          width="sm"
+          noBodyPadding
+        >
+          <ChatThread
+            appointmentId={openChatId}
+            viewerRole="PATIENT"
+            fetcher={fetchPatientMessages}
+            poster={postPatientMessage}
+            variant="embedded"
+          />
+        </PortalDialog>
+      ) : null}
+
+      {openConsultChatId && consultChatItem && !requiresPayment(consultChatItem) ? (
+        <PortalDialog
+          open={openConsultChatId !== null}
+          onClose={() => setOpenConsultChatId(null)}
+          title={b.chatWithDoctor}
+          width="sm"
+          noBodyPadding
+        >
+          <ConsultationChat
+            appointmentId={openConsultChatId}
+            viewerRole="PATIENT"
+            fetcher={fetchPatientChat}
+            poster={postPatientChatMessage}
+            fileUploader={uploadPatientChatFile}
+            variant="embedded"
+          />
+        </PortalDialog>
+      ) : null}
 
       <PortalDialog
         open={cancelTarget !== null}

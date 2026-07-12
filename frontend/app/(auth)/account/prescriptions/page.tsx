@@ -78,11 +78,11 @@ export default async function AccountPrescriptionsPage() {
               }
             />
           ) : (
-            <ul className="grid gap-3">
+            <ul className="divide-y divide-[var(--portal-line)]">
               {issued.map((p) => (
                 <li
                   key={p.id}
-                  className="gh-patient-prescription-card rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-4"
+                  className="gh-patient-list-row py-3 first:pt-0 last:pb-0"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">

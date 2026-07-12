@@ -157,7 +157,13 @@
     "paymentActionBody": "This order hasn't been paid yet. Complete payment to finish processing it.",
     "completePayment": "Complete payment",
     "completePaymentLoading": "Loading…",
-    "completePaymentError": "Couldn't start payment — try again."
+    "completePaymentError": "Couldn't start payment — try again.",
+    "colOrderNumber": "Order #",
+    "colDate": "Date",
+    "colItems": "Items",
+    "colStatus": "Status",
+    "colTotal": "Total",
+    "orderInfoSection": "Order info"
   },
   "prescriptions": {
     "breadcrumb": "Conta",

@@ -1,8 +1,10 @@
-import { CheckCircle2, Clock, ShoppingBag, ChevronRight } from "lucide-react";
+import { ShoppingBag, ChevronRight } from "lucide-react";
 import { fetchAccountOrders } from "@/lib/api/cart-server";
+import type { OrderListItem } from "@/lib/api/cart-types";
 import { CompletePaymentButton } from "./[id]/_components/complete-payment-button";
 import { AdminCard, AdminEmptyState, Btn, MetaLine, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
 import type { PillTone } from "@/components/portal-atoms";
+import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
 import { formatOrderDisplayId } from "@/lib/format-order-display";
@@ -31,6 +33,77 @@ export default async function AccountOrdersPage() {
   const totalCents = items.reduce((sum, item) => sum + item.totalCents, 0);
   const currency = items.find((item) => item.currencyCode)?.currencyCode ?? "EUR";
 
+  const needsPayment = (o: OrderListItem) =>
+    o.paymentStatus !== "PAID" &&
+    o.paymentStatus !== "REFUNDED" &&
+    o.status !== "CANCELLED" &&
+    o.status !== "REFUNDED";
+
+  const orderFields: ColumnPriorityField<OrderListItem>[] = [
+    {
+      key: "orderNumber",
+      label: a.orders.colOrderNumber,
+      priority: 1,
+      cardPrimary: true,
+      render: (o) => (
+        <span className="font-mono text-xs text-[var(--portal-muted)]">
+          #{formatOrderDisplayId(o)}
+        </span>
+      ),
+    },
+    {
+      key: "date",
+      label: a.orders.colDate,
+      priority: 2,
+      render: (o) => formatAppDate(o.createdAt),
+    },
+    {
+      key: "items",
+      label: a.orders.colItems,
+      priority: 2,
+      render: (o) =>
+        o.itemCount === 1
+          ? a.orders.items.replace("{count}", String(o.itemCount))
+          : a.orders.itemsPlural.replace("{count}", String(o.itemCount)),
+    },
+    {
+      key: "status",
+      label: a.orders.colStatus,
+      priority: 2,
+      render: (o) => <Pill tone={statusTone(o.status)}>{o.status.toLowerCase()}</Pill>,
+    },
+    {
+      key: "total",
+      label: a.orders.colTotal,
+      priority: 2,
+      render: (o) => (
+        <span className="font-semibold text-[var(--portal-text)]">
+          {formatPrice(o.totalCents, o.currencyCode)}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      label: "",
+      priority: 2,
+      align: "right",
+      desktopOnly: true,
+      render: (o) => (
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {needsPayment(o) ? <CompletePaymentButton orderId={o.id} i18n={a.orders} size="sm" /> : null}
+          <Btn
+            href={`/account/orders/${o.id}`}
+            variant="secondary"
+            size="sm"
+            iconRight={<ChevronRight className="size-3.5" />}
+          >
+            {a.orders.open}
+          </Btn>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="gh-patient-page gh-patient-orders-page">
       <PageHeader
@@ -50,21 +123,21 @@ export default async function AccountOrdersPage() {
         ]}
       />
 
-      <AdminCard padding={0}>
-        <SectionHeader
-          title={
-            <span className="inline-flex items-center gap-2">
-              <ShoppingBag className="size-4" aria-hidden /> {a.orders.orderHistory}
-            </span>
-          }
-          right={
-            <Btn href="/" variant="primary" size="sm">
-              {a.orders.orderMore}
-            </Btn>
-          }
-        />
-        <div className="p-5">
-          {items.length === 0 ? (
+      {items.length === 0 ? (
+        <AdminCard padding={0}>
+          <SectionHeader
+            title={
+              <span className="inline-flex items-center gap-2">
+                <ShoppingBag className="size-4" aria-hidden /> {a.orders.orderHistory}
+              </span>
+            }
+            right={
+              <Btn href="/" variant="primary" size="sm">
+                {a.orders.orderMore}
+              </Btn>
+            }
+          />
+          <div className="p-5">
             <AdminEmptyState
               icon={<ShoppingBag className="size-6" aria-hidden />}
               assetSrc="/images/portal/obsidian/empty-payments.svg"
@@ -76,59 +149,45 @@ export default async function AccountOrdersPage() {
                 </Btn>
               }
             />
-          ) : (
-            <ul className="divide-y divide-[var(--portal-line)]">
-              {items.map((o) => (
-                <li
-                  key={o.id}
-                className="gh-patient-list-row flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
+          </div>
+        </AdminCard>
+      ) : (
+        // 14-002/14-003: single surface, no nested padding div — the
+        // SectionHeader's own padding + ColumnPriorityTable's built-in row
+        // padding replace the old AdminCard > div.p-5 > ul double-wrap.
+        <AdminCard padding={0}>
+          <SectionHeader
+            title={
+              <span className="inline-flex items-center gap-2">
+                <ShoppingBag className="size-4" aria-hidden /> {a.orders.orderHistory}
+              </span>
+            }
+            right={
+              <Btn href="/" variant="primary" size="sm">
+                {a.orders.orderMore}
+              </Btn>
+            }
+          />
+          <ColumnPriorityTable
+            fields={orderFields}
+            rows={items}
+            getRowKey={(o) => o.id}
+            cardActions={(o) => (
+              <div className="flex flex-wrap items-center gap-2">
+                {needsPayment(o) ? <CompletePaymentButton orderId={o.id} i18n={a.orders} size="sm" /> : null}
+                <Btn
+                  href={`/account/orders/${o.id}`}
+                  variant="secondary"
+                  size="sm"
+                  iconRight={<ChevronRight className="size-3.5" />}
                 >
-                  <div className="min-w-0 flex-1">
-                    <p className="font-mono text-xs text-[var(--portal-muted)]">
-                      #{formatOrderDisplayId(o)}
-                    </p>
-                    <p className="mt-1 flex flex-wrap items-center gap-2 text-sm">
-                      {o.status === "PAID" || o.status === "FULFILLED" ? (
-                        <CheckCircle2 className="size-3.5 text-emerald-700" aria-hidden />
-                      ) : (
-                        <Clock className="size-3.5 text-amber-700" aria-hidden />
-                      )}
-                      <span className="font-semibold text-[var(--portal-text)]">
-                        {o.itemCount === 1
-                          ? a.orders.items.replace("{count}", String(o.itemCount))
-                          : a.orders.itemsPlural.replace("{count}", String(o.itemCount))}
-                      </span>
-                      <span className="text-[var(--portal-muted)]">
-                        · {formatAppDate(o.createdAt)}
-                      </span>
-                      <Pill tone={statusTone(o.status)}>{o.status.toLowerCase()}</Pill>
-                      <span className="font-semibold text-[var(--portal-text)]">
-                        {formatPrice(o.totalCents, o.currencyCode)}
-                      </span>
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    {o.paymentStatus !== "PAID" &&
-                    o.paymentStatus !== "REFUNDED" &&
-                    o.status !== "CANCELLED" &&
-                    o.status !== "REFUNDED" ? (
-                      <CompletePaymentButton orderId={o.id} i18n={a.orders} size="sm" />
-                    ) : null}
-                    <Btn
-                      href={`/account/orders/${o.id}`}
-                      variant="secondary"
-                      size="sm"
-                      iconRight={<ChevronRight className="size-3.5" />}
-                    >
-                      {a.orders.open}
-                    </Btn>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </AdminCard>
+                  {a.orders.open}
+                </Btn>
+              </div>
+            )}
+          />
+        </AdminCard>
+      )}
     </div>
   );
 }

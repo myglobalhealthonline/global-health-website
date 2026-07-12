@@ -154,14 +154,13 @@ export function GdprPreferencesTab({ i18n = DEFAULT_I18N }: { i18n?: PrivacyI18n
         {i18n.intro}
       </p>
 
-      <div className="space-y-3">
+      <div className="gh-patient-consent-card gh-card overflow-hidden divide-y divide-[var(--portal-line)]">
         {consents.map((c) => {
           const current = draft[c.consentType];
           const status = statusLabel(c.consentValue, i18n);
 
           return (
-            <div key={c.consentType} className="gh-patient-consent-card gh-card p-4">
-                <div className="gh-patient-consent-row flex items-start justify-between gap-4">
+            <div key={c.consentType} className="gh-patient-consent-row flex items-start justify-between gap-4 p-4">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-medium text-[var(--portal-text)]">{c.label}</p>
@@ -202,7 +201,6 @@ export function GdprPreferencesTab({ i18n = DEFAULT_I18N }: { i18n?: PrivacyI18n
                     {i18n.decline}
                   </button>
                 </div>
-              </div>
             </div>
           );
         })}

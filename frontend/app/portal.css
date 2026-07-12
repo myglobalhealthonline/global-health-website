@@ -790,10 +790,6 @@
 
 .gh-portal-mobile-card__meta-item {
   min-width: 0;
-  border: 1px solid var(--portal-line);
-  border-radius: var(--portal-radius-sm);
-  background: var(--portal-well);
-  padding: 8px;
 }
 
 .gh-portal-mobile-card__meta-item em {
