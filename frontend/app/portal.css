@@ -1177,6 +1177,14 @@ a.gh-admin-summary-item--link:focus-visible {
   .gh-portal-stat-row {
     grid-template-columns: 1fr !important;
   }
+
+  /* Doctor appointment-detail stat strip (audit 03/VIS-003) — 4 cards is
+   * disproportionate as a full-height 1-col stack above the tab bar;
+   * scoped to this page only so other AdminSummaryStrip consumers keep
+   * their existing 1-col-mobile default. */
+  .gh-doctor-appointment-workspace .gh-admin-summary-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
 }
 
 .gh-admin-dashboard-body {

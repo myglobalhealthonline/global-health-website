@@ -83,12 +83,6 @@ export function NotificationListClient({
           hint: strings.recentHint,
           tone: "brand",
         },
-        {
-          label: strings.source,
-          value: <Bell className="size-5" aria-hidden />,
-          hint: strings.sourceHint,
-          tone: "success",
-        },
       ]}
     />
   );

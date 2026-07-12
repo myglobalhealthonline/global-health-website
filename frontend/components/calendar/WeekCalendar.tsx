@@ -1,7 +1,7 @@
 "use client";
 
 import { type CSSProperties, useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, User } from "lucide-react";
+import { Ban, ChevronLeft, ChevronRight, Clock, User } from "lucide-react";
 import { IconBtn } from "@/components/portal-atoms";
 import type { CalendarItem } from "./calendar-types";
 import {
@@ -115,6 +115,22 @@ function useNowMinutes(tz: string): number | null {
 // 24-hour gutter label, matching the 24-hour block times below.
 function hourLabel(h: number): string {
   return `${String(h).padStart(2, "0")}:00`;
+}
+
+// Slot status isn't color-only: a small glyph rides next to the time so
+// color-blind users can tell BLOCKED/BOOKED/HELD apart without the legend.
+// OPEN has no icon — its pale outline already reads as "empty".
+function statusIcon(status: string) {
+  switch (status) {
+    case "BLOCKED":
+      return <Ban className="size-3 shrink-0" aria-hidden />;
+    case "BOOKED":
+      return <User className="size-3 shrink-0" aria-hidden />;
+    case "HELD":
+      return <Clock className="size-3 shrink-0" aria-hidden />;
+    default:
+      return null;
+  }
 }
 
 /** Greedy lane packing so overlapping blocks sit side-by-side instead of
@@ -398,8 +414,9 @@ export function WeekCalendar({
                         </span>
                       </>
                     ) : (
-                      <span className="block truncate text-portal-thead font-bold leading-tight">
-                        {time}
+                      <span className="flex items-center gap-1 text-portal-thead font-bold leading-tight">
+                        {statusIcon(p.item.status)}
+                        <span className="truncate">{time}</span>
                       </span>
                     );
                     // Doctor mode: click an OPEN/BLOCKED slot to toggle it.

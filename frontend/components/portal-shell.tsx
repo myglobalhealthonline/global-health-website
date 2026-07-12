@@ -362,7 +362,12 @@ export function PortalShell({
                 {breadcrumbs.map((crumb, i) => {
                   const isLast = i === breadcrumbs.length - 1;
                   return (
-                    <span key={crumb.href} className="flex items-center gap-1.5">
+                    <span
+                      key={crumb.href}
+                      className={`min-w-0 items-center gap-1.5 ${
+                        isLast ? "flex" : "hidden sm:flex"
+                      }`}
+                    >
                       {isLast ? (
                         <span
                           aria-current="page"
@@ -373,7 +378,7 @@ export function PortalShell({
                       ) : (
                         <Link
                           href={crumb.href}
-                          className="truncate font-medium text-[var(--portal-chrome-text)] transition hover:text-[var(--portal-chrome-text-active)]"
+                          className="max-w-[16ch] truncate font-medium text-[var(--portal-chrome-text)] transition hover:text-[var(--portal-chrome-text-active)]"
                         >
                           {crumb.label}
                         </Link>

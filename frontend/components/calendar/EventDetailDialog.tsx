@@ -59,6 +59,7 @@ function humanTimezone(tz: string): string {
 
 export function EventDetailDialog({ item, tz, onClose, paramKey, viewerRole }: Props) {
   const isPatientView = viewerRole === "patient";
+  const isDoctorView = viewerRole === "doctor";
   const meetingUrl = item?.meta?.meetingUrl ?? null;
   const joinState = item
     ? getJoinState(
@@ -114,7 +115,9 @@ export function EventDetailDialog({ item, tz, onClose, paramKey, viewerRole }: P
               label="Type"
               value={item.meta?.consultationType ?? undefined}
             />
-            <RecordDetailsField label="Doctor" value={item.meta?.doctorName ?? undefined} />
+            {isDoctorView ? null : (
+              <RecordDetailsField label="Doctor" value={item.meta?.doctorName ?? undefined} />
+            )}
             {isPatientView && !item.meta?.patientName ? null : (
               <RecordDetailsField label="Patient" value={item.meta?.patientName ?? undefined} />
             )}

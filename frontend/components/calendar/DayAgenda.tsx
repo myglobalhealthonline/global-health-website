@@ -186,10 +186,13 @@ export function DayAgenda({
                           ) : null}
                         </span>
                         <span
-                          className={`gh-badge ${consultationBadgeClass(item.status)} max-w-[92px] shrink-0 truncate`}
+                          className={`gh-badge ${consultationBadgeClass(item.status)} max-w-[104px] shrink-0`}
                           title={humanizeStatus(item.status)}
                         >
-                          {humanizeStatus(item.status)}
+                          {/* text-overflow:ellipsis doesn't reliably clip on an
+                              inline-flex container (.gh-badge) — truncate the
+                              text on a nested block span instead (CAL-04-006). */}
+                          <span className="block truncate">{humanizeStatus(item.status)}</span>
                         </span>
                         {item.meta?.meetingUrl ? (
                           <Video className="size-4 shrink-0" style={{ color: "var(--portal-success-text)" }} aria-hidden />

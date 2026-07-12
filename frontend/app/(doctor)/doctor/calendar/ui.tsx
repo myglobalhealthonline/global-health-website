@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { CalendarOff, CalendarPlus, Lock, Plus, Unlock } from "lucide-react";
+import { CalendarOff, CalendarPlus, Info, Lock, Plus, Unlock } from "lucide-react";
 import { Btn } from "@/components/portal-atoms";
+import { AppMenu } from "@/components/AppMenu";
 import { FormSection } from "@/components/FormSection";
 import {
   bulkBlockSlots,
@@ -340,17 +341,34 @@ export function DoctorCalendarUI({
     <div className="gh-doctor-calendar grid gap-4">
       {/* Toolbar */}
       <div className="gh-doctor-calendar-toolbar flex flex-wrap items-center justify-between gap-3">
-        <div className="gh-doctor-calendar-legend flex flex-wrap items-center gap-3 text-xs text-[var(--portal-muted)]">
-          <LegendDot className="bg-emerald-500" label={s.legendOpen} />
-          <LegendDot className="bg-rose-400" label={s.legendBlocked} />
-          <LegendDot className="bg-blue-500" label={s.legendBooked} />
-          <span className="inline-flex items-center gap-1.5">
-            <span className="inline-flex items-center rounded-full bg-emerald-100 px-1.5 py-0.5 text-portal-micro font-bold text-emerald-800">
-              N
+        {/* Legend was a permanent floating row (CAL-04-008) — now a toggled
+            popover so it doesn't cost vertical space on every load. */}
+        <AppMenu
+          trigger={
+            <button
+              type="button"
+              className="gh-doctor-calendar-legend-trigger inline-flex items-center gap-1.5 rounded-[999px] px-3 py-1.5 text-xs font-semibold transition hover:bg-[var(--portal-well)]"
+              style={{ border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
+            >
+              <Info className="size-3.5" aria-hidden />
+              {s.legendToggle}
+            </button>
+          }
+          align="start"
+          contentClassName="gh-portal-menu-content min-w-[220px] p-3"
+        >
+          <div className="gh-doctor-calendar-legend flex flex-col gap-2 text-xs text-[var(--portal-muted)]">
+            <LegendDot className="bg-emerald-500" label={s.legendOpen} />
+            <LegendDot className="bg-rose-400" label={s.legendBlocked} />
+            <LegendDot className="bg-blue-500" label={s.legendBooked} />
+            <span className="inline-flex items-center gap-1.5">
+              <span className="inline-flex items-center rounded-full bg-emerald-100 px-1.5 py-0.5 text-portal-micro font-bold text-emerald-800">
+                N
+              </span>
+              {s.legendConsultations}
             </span>
-            {s.legendConsultations}
-          </span>
-        </div>
+          </div>
+        </AppMenu>
         <TimezoneSelect value={tz} options={tzOptions} onChange={onChangeTz} />
       </div>
 
@@ -468,6 +486,7 @@ export function DoctorCalendarUI({
                 <input
                   type="date"
                   value={addFromDate}
+                  min={todayKey(clinicTimezone)}
                   onChange={(e) => setAddFromDate(e.target.value)}
                   className="gh-input h-10"
                 />
@@ -477,6 +496,7 @@ export function DoctorCalendarUI({
                 <input
                   type="date"
                   value={addToDate}
+                  min={addFromDate || todayKey(clinicTimezone)}
                   onChange={(e) => setAddToDate(e.target.value)}
                   className="gh-input h-10"
                 />
@@ -529,7 +549,7 @@ export function DoctorCalendarUI({
               onClick={onAddAvailability}
               iconLeft={<Plus className="size-3.5" />}
             >
-              {s.addAvailabilityButton}
+              {s.saveAvailabilityButton}
             </Btn>
           </div>
         </FormSection>
@@ -608,7 +628,12 @@ export function DoctorCalendarUI({
         </FormSection>
       </div>
 
-      <EventDetailDialog item={activeItem} tz={tz} onClose={() => setActiveItem(null)} />
+      <EventDetailDialog
+        item={activeItem}
+        tz={tz}
+        onClose={() => setActiveItem(null)}
+        viewerRole="doctor"
+      />
     </div>
   );
 }

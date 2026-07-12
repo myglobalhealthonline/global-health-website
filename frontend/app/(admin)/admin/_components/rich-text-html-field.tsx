@@ -320,6 +320,7 @@ export function RichTextHtmlField({ name, label, helperText, initialValue, onCha
               <button
                 key={c.value}
                 type="button"
+                aria-label={`Text color: ${c.label}`}
                 className={`h-4 w-4 rounded-sm border-2 ${color === c.value ? "border-[var(--portal-primary)]" : "border-transparent"}`}
                 style={{ backgroundColor: c.value }}
                 title={c.label}

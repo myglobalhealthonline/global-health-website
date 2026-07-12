@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AlertTriangle, CalendarDays, CheckCircle2, ChevronRight, SearchX, Video } from "lucide-react";
+import { AlertTriangle, CalendarDays, CheckCircle2, SearchX, Video } from "lucide-react";
 import { fetchDoctorAppointments, type DoctorAppointment } from "@/lib/api/doctor-api";
 import {
   doctorAppointmentView,
@@ -271,7 +271,6 @@ export default async function DoctorAppointmentsPage({
               return (
                 <AppointmentCard
                   key={a.id}
-                  href={a.meetingUrl ? undefined : `/doctor/appointments/${a.id}`}
                   time={a.scheduledAt ? formatAppTime(a.scheduledAt) : "—"}
                   timeMeta={
                     a.scheduledAt
@@ -311,9 +310,13 @@ export default async function DoctorAppointmentsPage({
                         </Btn>
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-2 text-xs text-[var(--portal-muted)]">
-                        {d.appointments.meetingLinkNotCreated}
-                        <ChevronRight className="size-4" aria-hidden />
+                      <span className="inline-flex items-center gap-2">
+                        <span className="hidden text-xs text-[var(--portal-muted)] lg:inline">
+                          {d.appointments.meetingLinkNotCreated}
+                        </span>
+                        <Btn href={`/doctor/appointments/${a.id}`} variant="secondary" size="sm">
+                          {d.common.open}
+                        </Btn>
                       </span>
                     )
                   }

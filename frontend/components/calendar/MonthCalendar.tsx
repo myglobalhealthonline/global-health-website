@@ -36,6 +36,24 @@ function summarize(items: CalendarItem[] | undefined) {
   return { consults, open, blocked, booked };
 }
 
+/** Accessible name for a day cell — the visible counts are color-coded dots
+ *  only (open/blocked/booked), so screen-reader users need the full
+ *  breakdown spelled out (CAL-04-004). */
+function buildDayAriaLabel(
+  key: string,
+  consults: number,
+  open: number,
+  blocked: number,
+  booked: number,
+): string {
+  const parts: string[] = [];
+  if (consults > 0) parts.push(`${consults} consultation${consults > 1 ? "s" : ""}`);
+  if (open > 0) parts.push(`${open} open slot${open > 1 ? "s" : ""}`);
+  if (blocked > 0) parts.push(`${blocked} blocked slot${blocked > 1 ? "s" : ""}`);
+  if (booked > 0) parts.push(`${booked} booked slot${booked > 1 ? "s" : ""}`);
+  return parts.length > 0 ? `${dayLabel(key)}, ${parts.join(", ")}` : dayLabel(key);
+}
+
 export function MonthCalendar({
   year,
   month,
@@ -114,11 +132,7 @@ export function MonthCalendar({
               key={cell.key}
               type="button"
               onClick={() => onSelectDay(cell.key)}
-              aria-label={
-                consults > 0
-                  ? `${dayLabel(cell.key)}, ${consults} consultation${consults > 1 ? "s" : ""}`
-                  : dayLabel(cell.key)
-              }
+              aria-label={buildDayAriaLabel(cell.key, consults, open, blocked, booked)}
               className={`gh-calendar-day gh-calendar-day--tappable relative flex min-h-[68px] flex-col items-start gap-1 p-1 text-left transition sm:min-h-[92px] sm:p-1.5 ${
                 cell.inMonth ? "" : "gh-calendar-day-outside"
               } ${isSelected ? "gh-calendar-day-selected" : ""}`}

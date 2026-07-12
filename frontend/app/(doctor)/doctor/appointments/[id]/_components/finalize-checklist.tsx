@@ -52,7 +52,7 @@ export function FinalizeChecklist({
 
   if (initialFinalized) {
     return (
-      <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50/80 p-3 text-sm font-semibold text-emerald-800">
+      <div className="rounded-lg border border-emerald-200 bg-emerald-50/80 p-3 text-sm font-semibold text-emerald-800">
         <p className="flex items-center gap-2">
           <CheckCircle2 className="size-4" aria-hidden />
           {copy.finalizedTitle}
@@ -91,7 +91,7 @@ export function FinalizeChecklist({
   }
 
   return (
-    <div className="mt-3 space-y-3 rounded-lg border border-[var(--portal-line)] bg-white/75 p-3 shadow-sm">
+    <div className="space-y-3">
       <div className="flex items-start gap-2">
         <span className="grid size-9 shrink-0 place-items-center rounded-md bg-[var(--portal-primary)] text-white">
           <ClipboardCheck className="size-4" aria-hidden />

@@ -87,7 +87,7 @@ export function ProfileSections({
           these so the doctor sees at a glance what they can consult
           on, even though the values themselves stay admin-only. */}
       <section className="gh-card gh-doctor-practice-context mb-4 p-6">
-        <h3
+        <h2
           className="m-0 text-[var(--portal-text)]"
           style={{
             fontFamily: "var(--font-display)",
@@ -96,7 +96,7 @@ export function ProfileSections({
           }}
         >
           {strings.practiceContext}
-        </h3>
+        </h2>
         <dl className="gh-doctor-context-grid mt-3 grid gap-3 sm:grid-cols-3">
           <div>
             <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
@@ -169,6 +169,7 @@ export function ProfileSections({
           bankBic: doctor.bank.bic ?? "",
           bankIbanMasked: doctor.bank.ibanMasked,
           bankIbanSet: doctor.bank.ibanSet,
+          primaryCountryCode: primaryCountry.code,
           markets: doctor.markets,
         }}
       />

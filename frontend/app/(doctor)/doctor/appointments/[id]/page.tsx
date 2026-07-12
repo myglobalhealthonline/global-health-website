@@ -329,6 +329,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       initialStatus={appointment.status}
                       initialScheduledAt={appointment.scheduledAt}
                       initialMode={consultationMode}
+                      clinicTimezone={appointment.clinicTimezone}
                       copy={d.appointmentActions}
                     />
                   </div>
@@ -622,7 +623,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                     description={d.appointmentDetail.patientChatDesc}
                   >
                     <div className="gh-form-section__span-2">
-                      <DoctorConsultationChatSection appointmentId={appointment.id} copy={d.consultationChat} />
+                      <DoctorConsultationChatSection appointmentId={appointment.id} />
                     </div>
                   </FormSection>
                 </div>

@@ -176,36 +176,55 @@ export default async function DoctorReportsPage({
             />
           </div>
 
-          <div className="gh-doctor-report-grid grid gap-4 lg:grid-cols-2">
-            <section className="gh-card gh-doctor-report-card p-6">
-              <SectionHeader
-                title={d.reports.byStatusTitle}
-                description={d.reports.byStatusDesc}
-              />
-              <BreakdownTable
-                rows={(result.data.appointments?.byStatus ?? []).map((r) => ({
-                  label: r.status,
-                  count: r.count,
-                }))}
-                emptyTitle={d.reports.emptyRangeTitle}
-                emptyDesc={d.reports.emptyRangeDesc}
-              />
-            </section>
-            <section className="gh-card gh-doctor-report-card p-6">
-              <SectionHeader
-                title={d.reports.byTypeTitle}
-                description={d.reports.byTypeDesc}
-              />
-              <BreakdownTable
-                rows={(result.data.appointments?.byConsultationType ?? []).map((r) => ({
-                  label: r.consultationType,
-                  count: r.count,
-                }))}
-                emptyTitle={d.reports.emptyRangeTitle}
-                emptyDesc={d.reports.emptyRangeDesc}
-              />
-            </section>
-          </div>
+          {(() => {
+            const byStatusRows = (result.data.appointments?.byStatus ?? []).map((r) => ({
+              label: r.status,
+              count: r.count,
+            }));
+            const byTypeRows = (result.data.appointments?.byConsultationType ?? []).map((r) => ({
+              label: r.consultationType,
+              count: r.count,
+            }));
+            // 13-001: both breakdowns are empty for the exact same reason (no
+            // appointments in range) — show one empty-state, not two.
+            if (byStatusRows.length === 0 && byTypeRows.length === 0) {
+              return (
+                <section className="gh-card gh-doctor-report-card p-6">
+                  <AdminEmptyState
+                    className="gh-doctor-empty-state"
+                    title={d.reports.emptyRangeTitle}
+                    description={d.reports.emptyRangeDesc}
+                  />
+                </section>
+              );
+            }
+            return (
+              <div className="gh-doctor-report-grid grid gap-4 lg:grid-cols-2">
+                <section className="gh-card gh-doctor-report-card p-6">
+                  <SectionHeader
+                    title={d.reports.byStatusTitle}
+                    description={d.reports.byStatusDesc}
+                  />
+                  <BreakdownTable
+                    rows={byStatusRows}
+                    emptyTitle={d.reports.emptyRangeTitle}
+                    emptyDesc={d.reports.emptyRangeDesc}
+                  />
+                </section>
+                <section className="gh-card gh-doctor-report-card p-6">
+                  <SectionHeader
+                    title={d.reports.byTypeTitle}
+                    description={d.reports.byTypeDesc}
+                  />
+                  <BreakdownTable
+                    rows={byTypeRows}
+                    emptyTitle={d.reports.emptyRangeTitle}
+                    emptyDesc={d.reports.emptyRangeDesc}
+                  />
+                </section>
+              </div>
+            );
+          })()}
         </>
       )}
     </>

@@ -1,4 +1,5 @@
 import { Stethoscope } from "lucide-react";
+import Link from "next/link";
 import { fetchDoctorServices } from "@/lib/api/doctor-api";
 import { AdminCard, PageHeader } from "@/components/portal-atoms";
 import { DoctorServiceSelectionForm } from "./_components/service-selection-form";
@@ -26,6 +27,9 @@ export default async function DoctorServicesPage() {
           <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
             {result.message}
           </p>
+          <Link href="/doctor/services" className="gh-btn gh-btn-soft text-sm mt-3 inline-flex">
+            {d.common.tryAgain}
+          </Link>
         </AdminCard>
       </>
     );

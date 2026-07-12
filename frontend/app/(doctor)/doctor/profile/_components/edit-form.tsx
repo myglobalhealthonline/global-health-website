@@ -5,12 +5,14 @@ import { useRouter } from "next/navigation";
 import { Globe2, Upload, Trash2 } from "lucide-react";
 import { RichTextHtmlField } from "@/app/(admin)/admin/_components/rich-text-html-field";
 import { PhoneField } from "@/components/forms/phone-field";
+import { dialCodeForCountry } from "@/lib/phone/dial-codes";
 import {
   LanguagePicker,
   canonicalizeLanguages,
 } from "@/components/forms/LanguagePicker";
 import { PortalTabs } from "@/components/PortalTabs";
 import { FormSection } from "@/components/FormSection";
+import { PortalDialog } from "@/components/PortalDialog";
 import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 import type { ProfileStrings } from "./profile-sections";
 
@@ -40,6 +42,9 @@ type Initial = {
   /** Masked IBAN ("•••• 1234") when one is on file, else null. */
   bankIbanMasked: string | null;
   bankIbanSet: boolean;
+  /** Doctor's primary market country code — used to default the WhatsApp
+   *  dial code (15-015) rather than always falling back to Ireland. */
+  primaryCountryCode: string;
   markets: Array<{
     id: string;
     countryId: string;
@@ -85,6 +90,8 @@ function normalizeBioPayload(html: string): string | null {
 function MessageBanner({ msg }: { msg: Msg }) {
   return (
     <p
+      role="status"
+      aria-live="polite"
       className={`${
         msg.kind === "success" ? "gh-status-success" : "gh-status-warning"
       } mt-4 rounded-md border px-4 py-3 text-sm`}
@@ -92,6 +99,25 @@ function MessageBanner({ msg }: { msg: Msg }) {
       {msg.text}
     </p>
   );
+}
+
+/** Country-matched IBAN/BIC examples (15-005) — a doctor editing their
+ *  Czechia profile shouldn't see an Irish IBAN placeholder. Keyed by the
+ *  app's country code; falls back to the Ireland example for markets not
+ *  in this list yet. */
+const IBAN_EXAMPLES: Record<string, { iban: string; bic: string }> = {
+  ie: { iban: "IE29 AIBK 9311 5212 3456 78", bic: "AIBKIE2D" },
+  cz: { iban: "CZ65 0800 0000 1920 0014 5399", bic: "GIBACZPX" },
+  pt: { iban: "PT50 0002 0123 1234 5678 9015 4", bic: "BPIPPTPL" },
+  es: { iban: "ES91 2100 0418 4502 0005 1332", bic: "CAIXESBB" },
+  ro: { iban: "RO49 AAAA 1B31 0075 9384 0000", bic: "BTRLRO22" },
+  gb: { iban: "GB29 NWBK 6016 1331 9268 19", bic: "NWBKGB2L" },
+  br: { iban: "BR15 0000 0000 0000 1093 7840 9C2", bic: "BASABRSPXXX" },
+  mt: { iban: "MT84 MALT 0110 0001 2345 MTLCAST001S", bic: "MALTMTMT" },
+};
+
+function ibanExample(countryCode: string | null | undefined) {
+  return IBAN_EXAMPLES[(countryCode ?? "").toLowerCase()] ?? IBAN_EXAMPLES.ie;
 }
 
 function localeLabel(code: string, strings: ProfileStrings): string {
@@ -281,6 +307,7 @@ export function DoctorProfileEditForm({
     initial.profileImagePath,
   );
   const [photoError, setPhotoError] = useState<string | null>(null);
+  const [removePhotoDialogOpen, setRemovePhotoDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -397,9 +424,9 @@ export function DoctorProfileEditForm({
     });
   }
 
-  function removePhoto() {
+  function confirmRemovePhoto() {
     setPhotoError(null);
-    if (!confirm(strings.removePhotoConfirm)) return;
+    setRemovePhotoDialogOpen(false);
     startPhotoTransition(async () => {
       const res = await fetch("/api/doctor/profile/photo", {
         method: "DELETE",
@@ -568,6 +595,7 @@ export function DoctorProfileEditForm({
           <FormSection
             title={strings.identitySection}
             description={strings.identitySectionDesc}
+            titleAs="h2"
           >
             <span className="gh-form-section__span-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-[var(--portal-line)] bg-[var(--portal-well)] px-2.5 py-1 text-portal-thead font-semibold text-[var(--portal-muted)]">
               <Globe2 className="size-3.5 text-[var(--portal-primary)]" aria-hidden />
@@ -611,6 +639,7 @@ export function DoctorProfileEditForm({
               <PhoneField
                 key={initial.whatsappNumber}
                 defaultValue={initial.whatsappNumber}
+                defaultDial={dialCodeForCountry(initial.primaryCountryCode)}
                 onChange={setWhatsappNumber}
                 className="flex min-w-0 gap-2"
               />
@@ -646,6 +675,7 @@ export function DoctorProfileEditForm({
                 "{country}",
                 activeMarket.country.name,
               )}
+              titleAs="h2"
             >
               <div className="gh-form-section__span-2 flex flex-col gap-3">
                 <div>
@@ -697,10 +727,10 @@ export function DoctorProfileEditForm({
                     </p>
                   </div>
                   <span
-                    className={`rounded-full border px-2.5 py-1 text-portal-thead font-semibold ${
+                    className={`rounded-full px-2.5 py-1 text-portal-thead font-semibold ${
                       activeMarket.isVerified
-                        ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                        : "border-[var(--portal-line)] bg-[var(--portal-bg)] text-[var(--portal-muted)]"
+                        ? "gh-status-success border"
+                        : "border border-[var(--portal-line)] bg-[var(--portal-bg)] text-[var(--portal-muted)]"
                     }`}
                   >
                     {activeMarket.isVerified ? strings.verified : strings.needsVerification}
@@ -772,6 +802,7 @@ export function DoctorProfileEditForm({
                 {strings.payoutPrivateNote}
               </>
             }
+            titleAs="h2"
           >
             <label className="gh-form-section__span-2 flex flex-col gap-2">
               <span className="gh-field-label">{strings.accountHolderName}</span>
@@ -800,7 +831,7 @@ export function DoctorProfileEditForm({
                 placeholder={
                   activeMarketHasIban
                     ? strings.ibanOnFilePlaceholder.replace("{masked}", activeMarketIbanMasked)
-                    : strings.ibanPlaceholder
+                    : ibanExample(activeMarket?.country.code).iban
                 }
               />
               {ibanFieldError ? (
@@ -826,7 +857,7 @@ export function DoctorProfileEditForm({
                 maxLength={16}
                 autoComplete="off"
                 spellCheck={false}
-                placeholder={strings.bicPlaceholder}
+                placeholder={ibanExample(activeMarket?.country.code).bic}
               />
               {bicFieldError ? (
                 <span className="text-xs text-red-600">{bicFieldError}</span>
@@ -855,7 +886,7 @@ export function DoctorProfileEditForm({
       {/* ── Sidebar: photo + admin-managed ───────── */}
       <aside className="gh-doctor-side-stack grid gap-4 self-start">
         <section className="gh-card gh-doctor-profile-photo-card p-6">
-          <h3
+          <h2
             className="m-0 text-[var(--portal-text)]"
             style={{
               fontFamily: "var(--font-display)",
@@ -864,7 +895,7 @@ export function DoctorProfileEditForm({
             }}
           >
             {strings.profilePhotoTitle}
-          </h3>
+          </h2>
           <p className="mt-1 text-portal-compact text-[var(--portal-muted)]">
             {strings.profilePhotoHint}
           </p>
@@ -927,7 +958,7 @@ export function DoctorProfileEditForm({
               {photoPath ? (
                 <button
                   type="button"
-                  onClick={removePhoto}
+                  onClick={() => setRemovePhotoDialogOpen(true)}
                   disabled={photoPending}
                   className="gh-btn gh-btn-soft w-full"
                 >
@@ -944,7 +975,7 @@ export function DoctorProfileEditForm({
         </section>
 
         <section className="gh-card gh-doctor-admin-note-card p-6">
-          <h3
+          <h2
             className="m-0 text-[var(--portal-text)]"
             style={{
               fontFamily: "var(--font-display)",
@@ -953,12 +984,42 @@ export function DoctorProfileEditForm({
             }}
           >
             {strings.adminManagedTitle}
-          </h3>
+          </h2>
           <p className="mt-1 text-portal-compact text-[var(--portal-muted)]">
             {strings.adminManagedDesc}
           </p>
         </section>
       </aside>
+
+      <PortalDialog
+        open={removePhotoDialogOpen}
+        onClose={() => setRemovePhotoDialogOpen(false)}
+        title={strings.removePhotoConfirm}
+        danger
+        width="sm"
+        footer={
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              onClick={() => setRemovePhotoDialogOpen(false)}
+              disabled={photoPending}
+              className="gh-btn gh-btn-soft"
+            >
+              {strings.cancel}
+            </button>
+            <button
+              type="button"
+              onClick={confirmRemovePhoto}
+              disabled={photoPending}
+              className="gh-btn gh-btn-primary"
+            >
+              {photoPending ? strings.uploading : strings.removePhoto}
+            </button>
+          </div>
+        }
+      >
+        <p className="text-sm text-[var(--portal-muted)]">{strings.removePhotoBody}</p>
+      </PortalDialog>
     </div>
   );
 }

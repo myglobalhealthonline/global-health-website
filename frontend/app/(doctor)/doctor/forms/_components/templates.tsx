@@ -172,8 +172,8 @@ export function FormTemplatesClient({
     });
   }
 
-  function remove(id: string) {
-    if (!confirm(strings.deleteConfirm)) return;
+  function remove(id: string, title: string) {
+    if (!confirm(strings.deleteConfirm.replace("{title}", title))) return;
     startTransition(async () => {
       const res = await fetch(`/api/doctor/form-templates/${id}`, {
         method: "DELETE",
@@ -244,7 +244,7 @@ export function FormTemplatesClient({
                   {t.ownedBySelf ? (
                     <button
                       type="button"
-                      onClick={() => remove(t.id)}
+                      onClick={() => remove(t.id, t.title)}
                       className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
                       aria-label={strings.deleteTemplateAria}
                     >
@@ -283,7 +283,12 @@ export function FormTemplatesClient({
         <p className="mb-3 text-portal-label text-[var(--portal-muted)]">
           {strings.newTemplateDesc}
         </p>
-        <form id="doctor-new-template-form" onSubmit={create} className="gh-doctor-template-form">
+        <form
+          id="doctor-new-template-form"
+          onSubmit={create}
+          className="gh-doctor-template-form"
+          noValidate
+        >
         <div className="grid gap-3">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">{strings.titleField}</span>
@@ -292,7 +297,6 @@ export function FormTemplatesClient({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               maxLength={200}
-              required
             />
           </label>
           <label className="flex flex-col gap-1">
@@ -332,7 +336,6 @@ export function FormTemplatesClient({
                     value={f.label}
                     onChange={(e) => updateField(i, { label: e.target.value })}
                     maxLength={200}
-                    required
                   />
                 </label>
                 <label className="flex flex-col gap-1">

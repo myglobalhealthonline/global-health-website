@@ -93,7 +93,13 @@ export function DoctorAvailabilityUI({
   const [windows, setWindows] = useState(initialWindows);
   const [slots, setSlots] = useState(initialSlots);
   const [busy, startTransition] = useTransition();
+  // Single top-of-page banner for API/network failures (05-005 — the week
+  // grid used to keep its own duplicate banner; it now reports up here).
   const [error, setError] = useState<string | null>(null);
+  // Inline, field-adjacent validation errors for the add-window form
+  // (05-006 — these used to render in the shared top banner, far from the
+  // offending field).
+  const [fieldError, setFieldError] = useState<{ field: "time" | "date"; message: string } | null>(null);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const deleteTarget = windows.find((w) => w.id === deleteTargetId) ?? null;
 
@@ -129,10 +135,11 @@ export function DoctorAvailabilityUI({
   function onAddWindow(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
+    setFieldError(null);
     const startMin = timeToMinutes(startTime);
     const endMin = timeToMinutes(endTime);
     if (endMin <= startMin) {
-      setError(s.errorEndAfterStart);
+      setFieldError({ field: "time", message: s.errorEndAfterStart });
       return;
     }
     if (
@@ -140,7 +147,7 @@ export function DoctorAvailabilityUI({
       effectiveUntilDate &&
       effectiveFromDate > effectiveUntilDate
     ) {
-      setError(s.errorEndDateAfterStart);
+      setFieldError({ field: "date", message: s.errorEndDateAfterStart });
       return;
     }
     startTransition(async () => {
@@ -203,6 +210,24 @@ export function DoctorAvailabilityUI({
     [slots],
   );
 
+  // 05-003: near-duplicate windows on the same weekday (e.g. two "Mon
+  // 09:00–17:00") were indistinguishable at a glance. Group by weekday with
+  // a subheading and sort within it by effective-from date, so identity
+  // lives in structure instead of a barely-legible date sub-line.
+  const windowGroups = useMemo(() => {
+    const sorted = [...windows].sort((a, b) => {
+      if (a.weekday !== b.weekday) return a.weekday - b.weekday;
+      return (a.effectiveFrom ?? "").localeCompare(b.effectiveFrom ?? "");
+    });
+    const groups: { weekday: number; items: AvailabilityWindow[] }[] = [];
+    for (const w of sorted) {
+      const last = groups[groups.length - 1];
+      if (last && last.weekday === w.weekday) last.items.push(w);
+      else groups.push({ weekday: w.weekday, items: [w] });
+    }
+    return groups;
+  }, [windows]);
+
   return (
     <>
       {error ? (
@@ -259,6 +284,7 @@ export function DoctorAvailabilityUI({
               clinicTz={countryTimeZone}
               initialWeekAnchor={initialWeekAnchor}
               onSlotsChange={setSlots}
+              onError={setError}
               strings={{ weekViewHelp: s.weekViewHelp }}
             />
           </div>
@@ -281,49 +307,75 @@ export function DoctorAvailabilityUI({
                 />
               ) : (
                 <ul className="gh-doctor-window-list grid gap-2">
-                  {windows.map((w) => (
-                    <li
-                      key={w.id}
-                      className="gh-doctor-window-row flex items-center justify-between gap-3 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2"
-                    >
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold text-[var(--portal-text)]">
-                          {WEEKDAYS.find((d) => d.value === w.weekday)?.label ?? "—"}{" "}
-                          · {minutesToTime(w.startMinute)}–
-                          {minutesToTime(w.endMinute)}
-                        </p>
-                        <p className="text-portal-thead text-[var(--portal-muted)]">
-                          {s.baseGrid.replace("{duration}", String(w.slotDurationMinutes))}
-                          {!w.isActive ? s.paused : ""}
-                        </p>
-                        {w.effectiveFrom || w.effectiveUntil ? (
-                          <p className="text-portal-micro text-[var(--portal-muted)]">
-                            {w.effectiveFrom
-                              ? s.fromDate.replace("{date}", new Date(w.effectiveFrom).toLocaleDateString("en-IE"))
-                              : s.fromAlways}
-                            {" "}·{" "}
-                            {w.effectiveUntil
-                              ? s.untilDate.replace("{date}", new Date(w.effectiveUntil).toLocaleDateString("en-IE"))
-                              : s.forever}
+                  {windowGroups.map((group) => {
+                    const hasDuplicates = group.items.length > 1;
+                    return (
+                      <li key={group.weekday} className="grid gap-2">
+                        {hasDuplicates ? (
+                          <p className="text-portal-micro font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+                            {WEEKDAYS.find((d) => d.value === group.weekday)?.label ?? "—"}
                           </p>
                         ) : null}
-                      </div>
-                      <div className="gh-doctor-window-actions flex items-center gap-2">
-                        <Pill tone={w.isActive ? "active" : "neutral"}>
-                          {w.isActive ? s.active : s.pausedPill}
-                        </Pill>
-                        <button
-                          type="button"
-                          onClick={() => onDeleteWindow(w.id)}
-                          disabled={busy}
-                          aria-label={s.deleteWindow}
-                          className="rounded-md p-1 text-rose-600 hover:bg-rose-50 disabled:opacity-60"
-                        >
-                          <Trash2 className="size-3.5" aria-hidden />
-                        </button>
-                      </div>
-                    </li>
-                  ))}
+                        <ul className="grid gap-2">
+                          {group.items.map((w) => (
+                            <li
+                              key={w.id}
+                              className="gh-doctor-window-row flex items-center justify-between gap-3 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2"
+                            >
+                              <div className="min-w-0">
+                                <p className="text-sm font-semibold text-[var(--portal-text)]">
+                                  {!hasDuplicates
+                                    ? `${WEEKDAYS.find((d) => d.value === w.weekday)?.label ?? "—"} · `
+                                    : ""}
+                                  {minutesToTime(w.startMinute)}–
+                                  {minutesToTime(w.endMinute)}
+                                </p>
+                                <p className="text-portal-thead text-[var(--portal-muted)]">
+                                  {s.baseGrid.replace("{duration}", String(w.slotDurationMinutes))}
+                                  {!w.isActive ? s.paused : ""}
+                                </p>
+                                {w.effectiveFrom || w.effectiveUntil ? (
+                                  <p
+                                    className={
+                                      hasDuplicates
+                                        ? "text-sm font-medium text-[var(--portal-text)]"
+                                        : "text-portal-micro text-[var(--portal-muted)]"
+                                    }
+                                  >
+                                    {w.effectiveFrom
+                                      ? s.fromDate.replace("{date}", new Date(w.effectiveFrom).toLocaleDateString("en-IE"))
+                                      : s.fromAlways}
+                                    {" "}·{" "}
+                                    {w.effectiveUntil
+                                      ? s.untilDate.replace("{date}", new Date(w.effectiveUntil).toLocaleDateString("en-IE"))
+                                      : s.forever}
+                                  </p>
+                                ) : hasDuplicates ? (
+                                  <p className="text-sm font-medium text-[var(--portal-text)]">
+                                    {s.fromAlways} · {s.forever}
+                                  </p>
+                                ) : null}
+                              </div>
+                              <div className="gh-doctor-window-actions flex items-center gap-2">
+                                <Pill tone={w.isActive ? "active" : "neutral"}>
+                                  {w.isActive ? s.active : s.pausedPill}
+                                </Pill>
+                                <button
+                                  type="button"
+                                  onClick={() => onDeleteWindow(w.id)}
+                                  disabled={busy}
+                                  aria-label={s.deleteWindow}
+                                  className="flex min-h-11 min-w-11 items-center justify-center rounded-md text-rose-600 hover:bg-rose-50 disabled:opacity-60"
+                                >
+                                  <Trash2 className="size-3.5" aria-hidden />
+                                </button>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </div>
@@ -369,6 +421,9 @@ export function DoctorAvailabilityUI({
                   />
                 </label>
               </div>
+              {fieldError?.field === "time" ? (
+                <p className="text-sm text-rose-700">{fieldError.message}</p>
+              ) : null}
               <label className="flex flex-col gap-1 text-sm">
                 <span className="gh-field-label">{s.baseSlotLength}</span>
                 <select
@@ -408,6 +463,9 @@ export function DoctorAvailabilityUI({
                   />
                 </label>
               </div>
+              {fieldError?.field === "date" ? (
+                <p className="text-sm text-rose-700">{fieldError.message}</p>
+              ) : null}
               <p className="text-portal-thead text-[var(--portal-muted)]">
                 {s.datesHint}
               </p>
