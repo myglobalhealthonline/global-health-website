@@ -35,7 +35,7 @@ import { PortalUserMenu } from "@/components/PortalUserMenu";
 import { IdleLogout } from "@/components/IdleLogout";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { usePortalMobileNavA11y } from "@/components/use-portal-mobile-nav";
-import { isEmailSegment, PII_SAFE_CRUMB_LABEL } from "@/lib/breadcrumb-utils";
+import { isEmailSegment, isIdSegment, PII_SAFE_CRUMB_LABEL, shortIdLabel } from "@/lib/breadcrumb-utils";
 import type { LocaleCode } from "@/lib/i18n/types";
 
 export type PortalShellUser = {
@@ -129,12 +129,10 @@ function useBreadcrumbs(pathname: string, rootHref: string, rootLabel: string) {
         crumbs.push({ label: rootLabel, href: rootHref });
         continue;
       }
-      const isCuid =
-        segments[i].length === 25 && /^[a-z0-9]+$/i.test(segments[i]);
       const label = isEmailSegment(segments[i])
         ? PII_SAFE_CRUMB_LABEL
-        : isCuid
-          ? `${segments[i].slice(0, 8)}…`
+        : isIdSegment(segments[i])
+          ? shortIdLabel(segments[i])
           : humanizeSegment(segments[i]);
       crumbs.push({ label, href: acc });
     }

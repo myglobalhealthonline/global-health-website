@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IdleLogout } from "@/components/IdleLogout";
-import { isEmailSegment, PII_SAFE_CRUMB_LABEL } from "@/lib/breadcrumb-utils";
+import { isEmailSegment, isIdSegment, PII_SAFE_CRUMB_LABEL, shortIdLabel } from "@/lib/breadcrumb-utils";
 import { usePortalMobileNavA11y } from "@/components/use-portal-mobile-nav";
 import {
   BarChart3,
@@ -271,11 +271,10 @@ function useBreadcrumbs(
         }
         continue;
       }
-      const isCuid = segments[i].length === 25 && /^[a-z0-9]+$/i.test(segments[i]);
       const label = isEmailSegment(segments[i])
         ? PII_SAFE_CRUMB_LABEL
-        : isCuid
-          ? `${segments[i].slice(0, 8)}…`
+        : isIdSegment(segments[i])
+          ? shortIdLabel(segments[i])
           : humanizeSegment(segments[i], countries);
       crumbs.push({ label, href: acc });
     }
