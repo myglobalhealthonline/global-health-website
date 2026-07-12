@@ -7,6 +7,7 @@ import type { FormFieldDef, FormTemplateDto } from "@/lib/api/doctor-api";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
 import { AdminEmptyState } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 /**
  * Form templates manager. Tiny inline builder — title + description +
@@ -59,6 +60,23 @@ export function FormTemplatesClient({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [fields, setFields] = useState<DraftField[]>([emptyField()]);
+
+  // Draft always starts blank (see emptyField()), so "dirty" is just "does
+  // the draft still equal that blank starting point" — no separate baseline
+  // needed. Auto-clears on submit success (state resets to blank there).
+  const isDraftFieldDirty = (f: DraftField) =>
+    f.key !== "" ||
+    f.label !== "" ||
+    f.type !== "text" ||
+    f.required ||
+    f.optionsText !== "" ||
+    f.helper !== "";
+  const draftDirty =
+    title.trim() !== "" ||
+    description.trim() !== "" ||
+    fields.length > 1 ||
+    fields.some(isDraftFieldDirty);
+  useUnsavedChanges(draftDirty);
 
   function updateField(index: number, patch: Partial<DraftField>) {
     setFields((prev) => prev.map((f, i) => (i === index ? { ...f, ...patch } : f)));

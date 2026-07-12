@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IdleLogout } from "@/components/IdleLogout";
+import { isEmailSegment, PII_SAFE_CRUMB_LABEL } from "@/lib/breadcrumb-utils";
 import { usePortalMobileNavA11y } from "@/components/use-portal-mobile-nav";
 import {
   BarChart3,
@@ -239,7 +240,6 @@ function humanizeSegment(seg: string, countries: CountryPickerOption[]): string 
   const decoded = decodeURIComponent(seg);
   const country = countries.find((c) => c.slug === decoded || c.code.toLowerCase() === decoded.toLowerCase());
   if (country) return country.name;
-  if (decoded.includes("@")) return decoded;
   return decoded.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
@@ -272,7 +272,11 @@ function useBreadcrumbs(
         continue;
       }
       const isCuid = segments[i].length === 25 && /^[a-z0-9]+$/i.test(segments[i]);
-      const label = isCuid ? `${segments[i].slice(0, 8)}…` : humanizeSegment(segments[i], countries);
+      const label = isEmailSegment(segments[i])
+        ? PII_SAFE_CRUMB_LABEL
+        : isCuid
+          ? `${segments[i].slice(0, 8)}…`
+          : humanizeSegment(segments[i], countries);
       crumbs.push({ label, href: acc });
     }
     return crumbs;

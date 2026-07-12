@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type SoapState = {
   chiefComplaint: string;
@@ -53,11 +54,25 @@ export function ConsultationForm({
 }) {
   const router = useRouter();
   const [state, setState] = useState<SoapState>(initial);
+  // Baseline for dirty-tracking (typed-note-lost fix, doctor audit 03/UX-001).
+  // Re-baselined to the just-saved text on a successful save so the guard
+  // clears; not derived from `initial` since that prop never changes after
+  // mount (SSR-only), unlike the patient-side forms that refetch client-side.
+  const [baseline, setBaseline] = useState<SoapState>(initial);
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<
     { kind: "success" | "error"; text: string } | null
   >(null);
   const signed = state.status === "SIGNED";
+
+  const dirty =
+    !signed &&
+    (state.chiefComplaint !== baseline.chiefComplaint ||
+      state.subjective !== baseline.subjective ||
+      state.objective !== baseline.objective ||
+      state.assessment !== baseline.assessment ||
+      state.plan !== baseline.plan);
+  useUnsavedChanges(dirty);
 
   function update<K extends keyof SoapState>(key: K, value: SoapState[K]) {
     setState((prev) => ({ ...prev, [key]: value }));
@@ -65,6 +80,7 @@ export function ConsultationForm({
 
   function save() {
     setMessage(null);
+    const savedValues = state;
     startTransition(async () => {
       const payload = {
         chiefComplaint: state.chiefComplaint.trim() || null,
@@ -99,6 +115,7 @@ export function ConsultationForm({
           }));
         }
         setMessage({ kind: "success", text: copy.saved });
+        setBaseline(savedValues);
         router.refresh();
       } catch {
         setMessage({ kind: "error", text: copy.networkError });

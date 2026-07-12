@@ -29,6 +29,7 @@ import { ExamResultsList } from "./_components/exam-results-list";
 import { ServicesUsedList } from "./_components/services-used-list";
 import { ShareConsultationButton } from "./_components/share-button";
 import { AppointmentActions } from "./_components/appointment-actions";
+import { MeetingLinkCta } from "./_components/meeting-link-cta";
 import { FormFillSection } from "./_components/form-fill";
 import { FollowUpButton } from "./_components/follow-up-button";
 import { AppointmentDocumentsTab } from "./_components/appointment-documents-tab";
@@ -234,6 +235,8 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             >
               <ExternalLink className="size-3.5" /> {d.appointmentDetail.joinCall}
             </a>
+          ) : consultationMode === "ONLINE" ? (
+            <MeetingLinkCta label={d.appointmentDetail.createMeetingLink} />
           ) : null}
           <Link
             href={`/print/appointments/${id}`}

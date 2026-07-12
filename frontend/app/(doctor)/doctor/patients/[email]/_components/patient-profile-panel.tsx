@@ -3,6 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { Link2 } from "lucide-react";
 import { FormSection } from "@/components/FormSection";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type Profile = {
   weightKg: number | null;
@@ -116,6 +117,12 @@ export function PatientProfilePanel({
   // types (BMI itself is never posted — the server derives/stores it).
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");
+  // Chart form mixes uncontrolled text/textarea inputs with FormData-on-submit
+  // (see comment below), so a field-by-field snapshot diff isn't available —
+  // any edit event flips this flag; it's cleared again on a successful save.
+  const [dirty, setDirty] = useState(false);
+  useUnsavedChanges(dirty);
+  const markDirty = () => setDirty(true);
 
   useEffect(() => {
     fetch(`/api/doctor/patients/${encodeURIComponent(email)}/profile`)
@@ -213,6 +220,7 @@ export function PatientProfilePanel({
       if (json.ok && json.data?.profile) {
         setProfile(json.data.profile);
         setSaveMsg(copy.chartSaved);
+        setDirty(false);
       } else {
         setSaveMsg(json.message ?? copy.chartSaveFailed);
       }
@@ -259,7 +267,12 @@ export function PatientProfilePanel({
         </div>
       ) : null}
 
-      <form className="gh-doctor-patient-profile-form mt-4 grid gap-5 text-sm" onSubmit={save}>
+      <form
+        className="gh-doctor-patient-profile-form mt-4 grid gap-5 text-sm"
+        onSubmit={save}
+        onInput={markDirty}
+        onChange={markDirty}
+      >
         {/* Identity (national ID / tax ID / passport) and Address sections
             intentionally hidden from the doctor portal per GDPR plan.
             They remain editable from /admin/users for staff.

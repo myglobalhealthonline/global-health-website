@@ -11,6 +11,7 @@ import {
 } from "@/components/forms/LanguagePicker";
 import { PortalTabs } from "@/components/PortalTabs";
 import { FormSection } from "@/components/FormSection";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 import type { ProfileStrings } from "./profile-sections";
 
 /**
@@ -183,9 +184,13 @@ export function DoctorProfileEditForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultLocale, supportedLocaleSource, localeTabsKey]);
 
-  /* ── Profile form ─────────────────────────────────── */
-  const [profilePending, startProfileTransition] = useTransition();
-  const [profileMsg, setProfileMsg] = useState<Msg | null>(null);
+  /* ── Identity form (global — applies to all countries) ─ */
+  const [identityPending, startIdentityTransition] = useTransition();
+  const [identityMsg, setIdentityMsg] = useState<Msg | null>(null);
+
+  /* ── Country listing form (bio + registration — this market only) ─ */
+  const [countryListingPending, startCountryListingTransition] = useTransition();
+  const [countryListingMsg, setCountryListingMsg] = useState<Msg | null>(null);
   const [activeBioLocale, setActiveBioLocale] = useState(
     localeTabs.find((locale) => locale.isDefault)?.code ?? localeTabs[0].code,
   );
@@ -210,27 +215,37 @@ export function DoctorProfileEditForm({
   // useState (not useRef) so the dirty comparison below can read the
   // snapshot during render — reading ref.current at render time is a
   // react-hooks/refs violation since refs can change without a re-render.
-  const [initialProfileSnapshot, setInitialProfileSnapshot] = useState(() =>
+  // Split into identity (global, PATCH /api/doctor/profile) vs country
+  // listing (this market only, PATCH /api/doctor/profile/markets/[id])
+  // snapshots so dirty state matches the two save scopes 1:1 (15-006).
+  const [initialIdentitySnapshot, setInitialIdentitySnapshot] = useState(() =>
     JSON.stringify({
       fullName: initial.fullName,
       qualifications: initialQualificationsText,
       languages: initialLanguages,
       whatsappNumber: initial.whatsappNumber,
+    }),
+  );
+  const isIdentityDirty =
+    JSON.stringify({ fullName, qualifications, languages, whatsappNumber }) !==
+    initialIdentitySnapshot;
+
+  const [initialCountryListingSnapshot, setInitialCountryListingSnapshot] = useState(() =>
+    JSON.stringify({
       chamberEntity: activeMarket?.chamberEntity ?? "",
       registrationNumber: activeMarket?.registrationNumber ?? "",
       registrationDivision: activeMarket?.division ?? "",
     }),
   );
-  const isProfileDirty =
-    JSON.stringify({
-      fullName,
-      qualifications,
-      languages,
-      whatsappNumber,
-      chamberEntity,
-      registrationNumber,
-      registrationDivision,
-    }) !== initialProfileSnapshot;
+  // Bio (RichTextHtmlField) tracked separately — it's uncontrolled/read-on-
+  // submit, so its onChange callback (15-004) mirrors its sanitized HTML
+  // into this map instead of the form-level snapshot above.
+  const [bioByLocale, setBioByLocale] = useState<Record<string, string>>({});
+  const [initialBioSnapshot, setInitialBioSnapshot] = useState<Record<string, string>>({});
+  const isCountryListingDirty =
+    JSON.stringify({ chamberEntity, registrationNumber, registrationDivision }) !==
+      initialCountryListingSnapshot ||
+    JSON.stringify(bioByLocale) !== JSON.stringify(initialBioSnapshot);
 
   /* ── Payout form ──────────────────────────────────── */
   const [payoutPending, startPayoutTransition] = useTransition();
@@ -254,14 +269,11 @@ export function DoctorProfileEditForm({
     JSON.stringify({ bankAccountHolder, bankBic, bankIban }) !==
     initialPayoutSnapshot;
 
-  useEffect(() => {
-    function onBeforeUnload(e: BeforeUnloadEvent) {
-      if (!isProfileDirty && !isPayoutDirty) return;
-      e.preventDefault();
-    }
-    window.addEventListener("beforeunload", onBeforeUnload);
-    return () => window.removeEventListener("beforeunload", onBeforeUnload);
-  }, [isProfileDirty, isPayoutDirty]);
+  // Shared guard (15-003): covers hard nav (its own beforeunload listener)
+  // AND in-app SPA link clicks via UnsavedChangesGuard mounted in the doctor
+  // layout — a plain beforeunload effect here never fires on App Router
+  // client-side navigation.
+  useUnsavedChanges(isIdentityDirty || isCountryListingDirty || isPayoutDirty);
 
   /* ── Photo ────────────────────────────────────────── */
   const [photoPending, startPhotoTransition] = useTransition();
@@ -293,17 +305,29 @@ export function DoctorProfileEditForm({
     // Re-baseline dirty snapshots against the freshly synced values so a
     // successful save (which triggers router.refresh() -> new `initial`)
     // clears the dirty flag instead of comparing against stale state.
-    setInitialProfileSnapshot(
+    setInitialIdentitySnapshot(
       JSON.stringify({
         fullName: initial.fullName,
         qualifications: initialQualificationsText,
         languages: initialLanguages,
         whatsappNumber: initial.whatsappNumber,
+      }),
+    );
+    setInitialCountryListingSnapshot(
+      JSON.stringify({
         chamberEntity: activeMarket?.chamberEntity ?? "",
         registrationNumber: activeMarket?.registrationNumber ?? "",
         registrationDivision: activeMarket?.division ?? "",
       }),
     );
+    {
+      const bioSnapshot: Record<string, string> = {};
+      for (const locale of localeTabs) {
+        bioSnapshot[locale.code] = initialBioForLocale(locale.code);
+      }
+      setBioByLocale(bioSnapshot);
+      setInitialBioSnapshot(bioSnapshot);
+    }
     setInitialPayoutSnapshot(
       JSON.stringify({
         bankAccountHolder: activeMarket?.bank.accountHolder ?? initial.bankAccountHolder,
@@ -326,6 +350,9 @@ export function DoctorProfileEditForm({
     activeMarket?.division,
     activeMarket?.bank.accountHolder,
     activeMarket?.bank.bic,
+    activeMarket?.translations,
+    initial.translations,
+    initial.bio,
     localeTabs,
     localeTabsKey,
   ]);
@@ -388,17 +415,10 @@ export function DoctorProfileEditForm({
     });
   }
 
-  /* ── Profile submit ──────────────────────────────── */
-  function onSubmitProfile(event: React.FormEvent<HTMLFormElement>) {
+  /* ── Identity submit (global — PATCH /api/doctor/profile) ──── */
+  function onSubmitIdentity(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setProfileMsg(null);
-    const formData = new FormData(event.currentTarget);
-    const translations = localeTabs.map((locale) => {
-      const bio = normalizeBioPayload(
-        String(formData.get(`bio_${locale.code}`) ?? ""),
-      );
-      return { locale: locale.code, bio };
-    });
+    setIdentityMsg(null);
     const payload = {
       fullName: fullName.trim(),
       qualifications: qualifications
@@ -408,15 +428,7 @@ export function DoctorProfileEditForm({
       languages: languages.map((l) => l.trim()).filter(Boolean),
       whatsappNumber: whatsappNumber.trim() || null,
     };
-    const marketPayload = activeMarket
-      ? {
-          translations,
-          chamberEntity: chamberEntity.trim() || null,
-          registrationNumber: registrationNumber.trim() || null,
-          division: registrationDivision.trim() || null,
-        }
-      : null;
-    startProfileTransition(async () => {
+    startIdentityTransition(async () => {
       try {
         const res = await fetch("/api/doctor/profile", {
           method: "PATCH",
@@ -425,45 +437,75 @@ export function DoctorProfileEditForm({
         });
         const json = (await res.json()) as { ok?: boolean; message?: string };
         if (!res.ok || !json.ok) {
-          setProfileMsg({
+          setIdentityMsg({
             kind: "error",
             text: json.message ?? strings.saveProfileFailed,
           });
           return;
         }
-        if (activeMarket && marketPayload) {
-          const marketRes = await fetch(
-            `/api/doctor/profile/markets/${encodeURIComponent(activeMarket.countryId)}`,
-            {
-              method: "PATCH",
-              headers: { "content-type": "application/json" },
-              body: JSON.stringify(marketPayload),
-            },
-          );
-          const marketJson = (await marketRes.json()) as {
-            ok?: boolean;
-            message?: string;
-          };
-          if (!marketRes.ok || !marketJson.ok) {
-            setProfileMsg({
-              kind: "error",
-              text: marketJson.message ?? strings.saveCountryProfileFailed,
-            });
-            return;
-          }
-        }
-        setProfileMsg({
+        setIdentityMsg({
           kind: "success",
-          text: activeMarket
-            ? strings.profileAndCountryUpdated.replace(
-                "{country}",
-                activeCountryName ?? strings.defaultDoctorProfile,
-              )
-            : json.message ?? strings.profileUpdated,
+          text: json.message ?? strings.profileUpdated,
         });
         router.refresh();
       } catch {
-        setProfileMsg({ kind: "error", text: strings.networkErrorRetry });
+        setIdentityMsg({ kind: "error", text: strings.networkErrorRetry });
+      }
+    });
+  }
+
+  /* ── Country listing submit (this market only — PATCH markets/[id]) ── */
+  function onSubmitCountryListing(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setCountryListingMsg(null);
+    if (!activeMarket) {
+      setCountryListingMsg({ kind: "error", text: strings.noActiveCountry });
+      return;
+    }
+    const formData = new FormData(event.currentTarget);
+    const translations = localeTabs.map((locale) => {
+      const bio = normalizeBioPayload(
+        String(formData.get(`bio_${locale.code}`) ?? ""),
+      );
+      return { locale: locale.code, bio };
+    });
+    const marketPayload = {
+      translations,
+      chamberEntity: chamberEntity.trim() || null,
+      registrationNumber: registrationNumber.trim() || null,
+      division: registrationDivision.trim() || null,
+    };
+    startCountryListingTransition(async () => {
+      try {
+        const marketRes = await fetch(
+          `/api/doctor/profile/markets/${encodeURIComponent(activeMarket.countryId)}`,
+          {
+            method: "PATCH",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(marketPayload),
+          },
+        );
+        const marketJson = (await marketRes.json()) as {
+          ok?: boolean;
+          message?: string;
+        };
+        if (!marketRes.ok || !marketJson.ok) {
+          setCountryListingMsg({
+            kind: "error",
+            text: marketJson.message ?? strings.saveCountryProfileFailed,
+          });
+          return;
+        }
+        setCountryListingMsg({
+          kind: "success",
+          text: strings.countryListingUpdated.replace(
+            "{country}",
+            activeCountryName ?? strings.defaultDoctorProfile,
+          ),
+        });
+        router.refresh();
+      } catch {
+        setCountryListingMsg({ kind: "error", text: strings.networkErrorRetry });
       }
     });
   }
@@ -548,16 +590,17 @@ export function DoctorProfileEditForm({
             />
           </div>
         </section>
-        {/* ── Public profile form ─────────────────── */}
-        <form onSubmit={onSubmitProfile}>
+        {/* ── Identity form (global — applies to all countries) ── */}
+        <form onSubmit={onSubmitIdentity}>
           <FormSection
-            title={strings.publicProfileSection}
-            description={
-              activeCountryName
-                ? strings.publicProfileDescCountry.replace("{country}", activeCountryName)
-                : strings.publicProfileDesc
-            }
+            title={strings.identitySection}
+            description={strings.identitySectionDesc}
           >
+            <span className="gh-form-section__span-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-[var(--portal-line)] bg-[var(--portal-well)] px-2.5 py-1 text-portal-thead font-semibold text-[var(--portal-muted)]">
+              <Globe2 className="size-3.5 text-[var(--portal-primary)]" aria-hidden />
+              {strings.appliesToAllCountries}
+            </span>
+
             <label className="flex flex-col gap-2">
               <span className="gh-field-label">{strings.fullName}</span>
               <input
@@ -568,42 +611,6 @@ export function DoctorProfileEditForm({
                 required
               />
             </label>
-
-            <div className="gh-form-section__span-2 flex flex-col gap-3">
-              <div>
-                <span className="gh-field-label">{strings.bioByLanguage}</span>
-                <p className="mt-1 text-xs text-[var(--portal-muted)]">
-                  {strings.bioByLanguageHint}
-                </p>
-              </div>
-              <PortalTabs
-                ariaLabel="Bio languages"
-                value={activeBioLocale}
-                onChange={setActiveBioLocale}
-                items={localeTabs.map((locale) => ({
-                  value: locale.code,
-                  label: `${localeLabel(locale.code, strings)}${locale.isDefault ? strings.defaultSuffix : ""}`,
-                }))}
-              />
-              {localeTabs.map((locale) => (
-                <div
-                  key={locale.code}
-                  role="tabpanel"
-                  hidden={locale.code !== activeBioLocale}
-                >
-                  <RichTextHtmlField
-                    name={`bio_${locale.code}`}
-                    label={strings.bioLabel.replace("{language}", localeLabel(locale.code, strings))}
-                    initialValue={initialBioForLocale(locale.code)}
-                    helperText={
-                      locale.isDefault
-                        ? strings.bioHelperDefault
-                        : strings.bioHelperNonDefault
-                    }
-                  />
-                </div>
-              ))}
-            </div>
 
             <label className="gh-form-section__span-2 flex flex-col gap-2">
               <span className="gh-field-label">{strings.qualifications}</span>
@@ -639,7 +646,73 @@ export function DoctorProfileEditForm({
               </span>
             </label>
 
-            {activeMarket ? (
+            {identityMsg ? (
+              <div className="gh-form-section__span-2">
+                <MessageBanner msg={identityMsg} />
+              </div>
+            ) : null}
+
+            <div className="gh-form-section__span-2 gh-doctor-form-actions flex justify-end">
+              <button
+                type="submit"
+                disabled={identityPending}
+                className="gh-btn gh-btn-primary"
+              >
+                {identityPending ? strings.saving : strings.saveIdentity}
+              </button>
+            </div>
+          </FormSection>
+        </form>
+
+        {/* ── Country listing form (bio + registration — this market only) ── */}
+        {activeMarket ? (
+          <form onSubmit={onSubmitCountryListing}>
+            <FormSection
+              title={strings.countryListingSection.replace("{country}", activeMarket.country.name)}
+              description={strings.countryListingSectionDesc.replace(
+                "{country}",
+                activeMarket.country.name,
+              )}
+            >
+              <div className="gh-form-section__span-2 flex flex-col gap-3">
+                <div>
+                  <span className="gh-field-label">{strings.bioByLanguage}</span>
+                  <p className="mt-1 text-xs text-[var(--portal-muted)]">
+                    {strings.bioByLanguageHint}
+                  </p>
+                </div>
+                <PortalTabs
+                  ariaLabel="Bio languages"
+                  value={activeBioLocale}
+                  onChange={setActiveBioLocale}
+                  items={localeTabs.map((locale) => ({
+                    value: locale.code,
+                    label: `${localeLabel(locale.code, strings)}${locale.isDefault ? strings.defaultSuffix : ""}`,
+                  }))}
+                />
+                {localeTabs.map((locale) => (
+                  <div
+                    key={locale.code}
+                    role="tabpanel"
+                    hidden={locale.code !== activeBioLocale}
+                  >
+                    <RichTextHtmlField
+                      name={`bio_${locale.code}`}
+                      label={strings.bioLabel.replace("{language}", localeLabel(locale.code, strings))}
+                      initialValue={initialBioForLocale(locale.code)}
+                      helperText={
+                        locale.isDefault
+                          ? strings.bioHelperDefault
+                          : strings.bioHelperNonDefault
+                      }
+                      onChange={(html) =>
+                        setBioByLocale((prev) => ({ ...prev, [locale.code]: html }))
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+
               <div className="gh-form-section__span-2 gh-doctor-registration-card rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
@@ -692,25 +765,27 @@ export function DoctorProfileEditForm({
                   </label>
                 </div>
               </div>
-            ) : null}
 
-            {profileMsg ? (
-              <div className="gh-form-section__span-2">
-                <MessageBanner msg={profileMsg} />
+              {countryListingMsg ? (
+                <div className="gh-form-section__span-2">
+                  <MessageBanner msg={countryListingMsg} />
+                </div>
+              ) : null}
+
+              <div className="gh-form-section__span-2 gh-doctor-form-actions flex justify-end">
+                <button
+                  type="submit"
+                  disabled={countryListingPending}
+                  className="gh-btn gh-btn-primary"
+                >
+                  {countryListingPending
+                    ? strings.saving
+                    : strings.saveCountryListing.replace("{country}", activeMarket.country.name)}
+                </button>
               </div>
-            ) : null}
-
-            <div className="gh-form-section__span-2 gh-doctor-form-actions flex justify-end">
-              <button
-                type="submit"
-                disabled={profilePending}
-                className="gh-btn gh-btn-primary"
-              >
-                {profilePending ? strings.saving : strings.saveChanges}
-              </button>
-            </div>
-          </FormSection>
-        </form>
+            </FormSection>
+          </form>
+        ) : null}
 
         {/* ── Payout / bank details form ───────────── */}
         <form onSubmit={onSubmitPayout}>

@@ -152,8 +152,8 @@ export default async function DoctorAppointmentsPage({
         />
       ) : null}
 
-      <details className="gh-card gh-doctor-filter-card mb-4 p-4" open>
-        <summary className="flex cursor-pointer items-center gap-2 text-sm font-semibold sm:pointer-events-none sm:cursor-default">
+      <details className="gh-card gh-doctor-filter-card mb-4 p-4">
+        <summary className="flex cursor-pointer items-center gap-2 text-sm font-semibold">
           <span>{d.common.filters}</span>
           {activeFilterCount > 0 ? (
             <Pill tone="brand">{d.common.activeCount.replace("{count}", String(activeFilterCount))}</Pill>

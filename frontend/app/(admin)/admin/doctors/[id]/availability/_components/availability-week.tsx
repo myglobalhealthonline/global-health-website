@@ -68,23 +68,25 @@ export function AvailabilityWeek({
   }
 
   return (
-    <div className="grid gap-3">
+    <div className="grid min-w-0 gap-3">
       <div className="flex flex-wrap items-center justify-end gap-3">
         <TimezoneSelect value={tz} options={tzOptions} onChange={setTz} />
       </div>
 
-      <WeekCalendar
-        anchorDayKey={weekAnchor}
-        weekDays={weekDays}
-        itemsByDay={itemsByDay}
-        tz={tz}
-        todayKey={todayKey(tz)}
-        onSelectOpenSlot={setSelectedSlot}
-        onSelectConsultation={setActiveConsult}
-        onPrevWeek={() => goToWeek(addWeeksKey(weekAnchor, -1))}
-        onNextWeek={() => goToWeek(addWeeksKey(weekAnchor, 1))}
-        onToday={() => goToWeek(todayKey(tz))}
-      />
+      <div className="min-w-0">
+        <WeekCalendar
+          anchorDayKey={weekAnchor}
+          weekDays={weekDays}
+          itemsByDay={itemsByDay}
+          tz={tz}
+          todayKey={todayKey(tz)}
+          onSelectOpenSlot={setSelectedSlot}
+          onSelectConsultation={setActiveConsult}
+          onPrevWeek={() => goToWeek(addWeeksKey(weekAnchor, -1))}
+          onNextWeek={() => goToWeek(addWeeksKey(weekAnchor, 1))}
+          onToday={() => goToWeek(todayKey(tz))}
+        />
+      </div>
 
       <BookSlotDialog
         key={selectedSlot?.id ?? "none"}

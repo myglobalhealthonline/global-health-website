@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { CalendarOff, CalendarPlus, Lock, Plus, Unlock } from "lucide-react";
 import { Btn } from "@/components/portal-atoms";
@@ -77,6 +77,9 @@ type Props = {
   minutesShort: string;
   errorEndAfterStart: string;
   errorEndDateAfterStart: string;
+  /** Stat strip, rendered below the month grid (grid is the primary task
+   *  surface and must be reachable without scrolling — see CAL-04-001). */
+  statsSlot?: ReactNode;
 };
 
 export function DoctorCalendarUI({
@@ -91,6 +94,7 @@ export function DoctorCalendarUI({
   minutesShort,
   errorEndAfterStart,
   errorEndDateAfterStart,
+  statsSlot,
 }: Props) {
   const [tz, setTz] = useState(clinicTimezone);
   // Default view = the doctor's operating-country clinic zone; switcher also
@@ -365,6 +369,8 @@ export function DoctorCalendarUI({
           setSelectedDay(todayKey(tz));
         }}
       />
+
+      {statsSlot}
 
       {/* Day agenda — lux sheet, same composition as the admin calendar's
           day drawer (RC7: doctor previously rendered this inline in a fixed

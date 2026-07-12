@@ -9,6 +9,10 @@ type Props = {
   label: string;
   helperText?: string;
   initialValue?: string | null;
+  /** Fired with the sanitized HTML whenever the editor content changes.
+   *  Optional — existing consumers that read the hidden input on submit
+   *  don't need to pass this. */
+  onChange?: (html: string) => void;
 };
 
 // execCommand is deprecated but no cross-browser contenteditable API replaces it.
@@ -155,7 +159,7 @@ function sanitizeEditorHtml(html: string) {
   return root.innerHTML.trim();
 }
 
-export function RichTextHtmlField({ name, label, helperText, initialValue }: Props) {
+export function RichTextHtmlField({ name, label, helperText, initialValue, onChange }: Props) {
   const editorId = useId();
   const editorRef = useRef<HTMLDivElement>(null);
   const hiddenRef = useRef<HTMLInputElement>(null);
@@ -170,7 +174,10 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
     if (!editorRef.current) return;
     const value = initialValue?.trim();
     editorRef.current.innerHTML = value ? value : "<p><br/></p>";
-    syncToHidden({ rewriteEditor: true });
+    // notify: false — this is the initial/re-synced value, not a user edit;
+    // firing onChange here would make dirty-tracking consumers see a false
+    // positive the instant this effect re-runs after a server refetch.
+    syncToHidden({ rewriteEditor: true, notify: false });
     // Enable inline-style mode so fontName/foreColor/etc. emit
     // `<span style="font-family: …">` rather than legacy `<font face>` tags.
     // The sanitizer still tolerates both, but inline styles render reliably
@@ -182,13 +189,14 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
     }
   }, [initialValue]);
 
-  function syncToHidden(options?: { rewriteEditor?: boolean }) {
+  function syncToHidden(options?: { rewriteEditor?: boolean; notify?: boolean }) {
     if (!editorRef.current || !hiddenRef.current) return;
     const sanitized = sanitizeEditorHtml(editorRef.current.innerHTML);
     if (options?.rewriteEditor) {
       editorRef.current.innerHTML = sanitized || "<p><br/></p>";
     }
     hiddenRef.current.value = sanitized;
+    if (options?.notify !== false) onChange?.(sanitized);
   }
 
   function rememberSelection() {

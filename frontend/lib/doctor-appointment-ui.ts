@@ -6,6 +6,14 @@ export function focusDoctorReviewSend() {
   window.dispatchEvent(new CustomEvent(DOCTOR_FOCUS_REVIEW_SEND_EVENT));
 }
 
+/** Switch appointment workspace to Overview tab and focus the meeting-URL field. */
+export const DOCTOR_FOCUS_MEETING_LINK_EVENT = "gh:doctor:focus-meeting-link";
+
+export function focusDoctorMeetingLink() {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent(DOCTOR_FOCUS_MEETING_LINK_EVENT));
+}
+
 /** Open a generated PDF in a separate browser tab (avoids popup blockers after async fetch). */
 export function openDoctorPdfInNewTab(pdfUrl: string) {
   if (typeof window === "undefined") return;

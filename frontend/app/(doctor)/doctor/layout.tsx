@@ -31,6 +31,7 @@ import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { supportedLocaleCodes } from "@/lib/i18n/types";
+import { UnsavedChangesGuard } from "@/components/UnsavedChangesGuard";
 
 /**
  * Doctor portal layout. Reuses `PortalShell` so admin / doctor / patient
@@ -188,6 +189,14 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
       }
     >
       {children}
+      <UnsavedChangesGuard
+        i18n={{
+          title: common.portalChrome.unsavedChangesTitle,
+          body: common.portalChrome.unsavedChangesBody,
+          keepEditing: common.portalChrome.unsavedChangesKeepEditing,
+          discard: common.portalChrome.unsavedChangesDiscard,
+        }}
+      />
     </PortalShell>
   );
 }

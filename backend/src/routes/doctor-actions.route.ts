@@ -510,7 +510,7 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
             doctorId: auth.doctorId,
             email: { equals: decodedEmail, mode: "insensitive" },
           },
-          orderBy: { createdAt: "desc" },
+          orderBy: [{ scheduledAt: "desc" }, { createdAt: "desc" }],
           take: 100,
           select: {
             id: true,

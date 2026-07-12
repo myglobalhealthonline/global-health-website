@@ -10,6 +10,7 @@ import {
   setupTwoFactor,
 } from "@/lib/api/auth-api";
 import { formatAppDate } from "@/lib/format-datetime";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type Msg = { kind: "ok" | "err"; text: string } | null;
 type SecurityStrings = Record<string, string>;
@@ -75,6 +76,11 @@ export function DoctorSecurityForm({
   const [disablePassword, setDisablePassword] = useState("");
   const [disabling, setDisabling] = useState(false);
   const [disableMsg, setDisableMsg] = useState<Msg>(null);
+
+  // 16-004: a freshly generated secret/backup codes only exist client-side
+  // until confirmed — navigating away silently discards them, forcing the
+  // doctor to restart 2FA setup from scratch.
+  useUnsavedChanges(setup !== null);
 
   useEffect(() => {
     let cancelled = false;

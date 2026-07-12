@@ -109,7 +109,7 @@ export function DoctorAvailabilityWeekView({
   }
 
   return (
-    <div className="grid gap-3">
+    <div className="grid min-w-0 gap-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-portal-compact text-[var(--portal-muted)]">
           {strings.weekViewHelp}
@@ -125,7 +125,11 @@ export function DoctorAvailabilityWeekView({
 
       <div
         aria-busy={busy}
-        className={busy ? "pointer-events-none opacity-70 transition" : "transition"}
+        className={
+          busy
+            ? "min-w-0 pointer-events-none opacity-70 transition"
+            : "min-w-0 transition"
+        }
       >
         <WeekCalendar
           anchorDayKey={weekAnchor}

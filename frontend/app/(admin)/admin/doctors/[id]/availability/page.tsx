@@ -342,7 +342,7 @@ export default async function AdminDoctorAvailabilityPage({
         title="Week calendar"
         description="Booked appointments and open slots for this doctor. Click a green (open) time to book directly — patient, service, and mode are filled in a quick dialog; the doctor and time come from the slot you clicked."
       >
-        <div className="gh-form-section__span-2 mt-4">
+        <div className="gh-form-section__span-2 mt-4 min-w-0">
           {calendarResult.ok ? (
             <AvailabilityWeek
               doctorId={id}

@@ -90,7 +90,14 @@ export function PortalTabs({
       e.preventDefault();
       const next = items[nextIdx];
       select(next.value);
-      refs.current[next.value]?.focus();
+      const el = refs.current[next.value];
+      el?.focus();
+      // Strip scrolls horizontally when tabs exceed the container width
+      // (.gh-portal-tabs `overflow-x: auto`) — browsers don't reliably
+      // auto-scroll a programmatically-focused button into view inside a
+      // scroll container, so do it explicitly. No-op when everything
+      // already fits (nothing to scroll).
+      el?.scrollIntoView({ block: "nearest", inline: "nearest" });
     }
   }
 

@@ -81,42 +81,7 @@ export default async function DoctorCalendarPage() {
           </span>
         }
         title={d.calendar.title}
-        description={d.calendar.description}
         icon={<CalendarRange aria-hidden />}
-      />
-
-      <AdminSummaryStrip
-        className="mb-4"
-        items={[
-          {
-            label: d.calendar.statConsultations,
-            value: consultations.length,
-            hint: d.calendar.statConsultationsHint,
-            tone: consultations.length > 0 ? "brand" : "neutral",
-            icon: <CalendarCheck2 aria-hidden />,
-          },
-          {
-            label: d.calendar.statOpenSlots,
-            value: openSlots,
-            hint: d.calendar.statOpenSlotsHint,
-            tone: openSlots > 0 ? "success" : "warning",
-            icon: <Clock aria-hidden />,
-          },
-          {
-            label: d.calendar.statBlockedSlots,
-            value: blockedSlots,
-            hint: d.calendar.statBlockedSlotsHint,
-            tone: blockedSlots > 0 ? "warning" : "neutral",
-            icon: <Ban aria-hidden />,
-          },
-          {
-            label: d.calendar.statTimezone,
-            value: clinicTimezone.split("/").pop()?.replace(/_/g, " ") ?? clinicTimezone,
-            hint: d.calendar.statTimezoneHint,
-            tone: "neutral",
-            icon: <Globe2 aria-hidden />,
-          },
-        ]}
       />
 
       <DoctorCalendarUI
@@ -131,6 +96,41 @@ export default async function DoctorCalendarPage() {
         minutesShort={d.availability.minutesShort}
         errorEndAfterStart={d.availability.errorEndAfterStart}
         errorEndDateAfterStart={d.availability.errorEndDateAfterStart}
+        statsSlot={
+          <AdminSummaryStrip
+            className="mb-4"
+            items={[
+              {
+                label: d.calendar.statConsultations,
+                value: consultations.length,
+                hint: d.calendar.statConsultationsHint,
+                tone: consultations.length > 0 ? "brand" : "neutral",
+                icon: <CalendarCheck2 aria-hidden />,
+              },
+              {
+                label: d.calendar.statOpenSlots,
+                value: openSlots,
+                hint: d.calendar.statOpenSlotsHint,
+                tone: openSlots > 0 ? "success" : "warning",
+                icon: <Clock aria-hidden />,
+              },
+              {
+                label: d.calendar.statBlockedSlots,
+                value: blockedSlots,
+                hint: d.calendar.statBlockedSlotsHint,
+                tone: blockedSlots > 0 ? "warning" : "neutral",
+                icon: <Ban aria-hidden />,
+              },
+              {
+                label: d.calendar.statTimezone,
+                value: clinicTimezone.split("/").pop()?.replace(/_/g, " ") ?? clinicTimezone,
+                hint: d.calendar.statTimezoneHint,
+                tone: "neutral",
+                icon: <Globe2 aria-hidden />,
+              },
+            ]}
+          />
+        }
       />
     </>
   );

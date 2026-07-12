@@ -2,7 +2,10 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
-import { DOCTOR_FOCUS_REVIEW_SEND_EVENT } from "@/lib/doctor-appointment-ui";
+import {
+  DOCTOR_FOCUS_MEETING_LINK_EVENT,
+  DOCTOR_FOCUS_REVIEW_SEND_EVENT,
+} from "@/lib/doctor-appointment-ui";
 import { PortalTabs, PortalTabPanel } from "@/components/PortalTabs";
 
 /**
@@ -56,6 +59,27 @@ export function AppointmentTabs({
     };
     window.addEventListener(DOCTOR_FOCUS_REVIEW_SEND_EVENT, handler);
     return () => window.removeEventListener(DOCTOR_FOCUS_REVIEW_SEND_EVENT, handler);
+  }, [tabs]);
+
+  // Header "Create meeting link" CTA (no meetingUrl yet, UX-005): jump to
+  // Overview and focus the meeting-URL field instead of leaving the doctor
+  // to hunt for it — same dispatch/listen pattern as the review-send focus
+  // above, just targeting a field instead of a tab.
+  useEffect(() => {
+    const handler = () => {
+      if (tabs.some((t) => t.id === "overview")) {
+        setActive("overview");
+      }
+      window.setTimeout(() => {
+        const field = document.getElementById("meeting-url-field");
+        if (field instanceof HTMLInputElement) {
+          field.scrollIntoView({ behavior: "smooth", block: "center" });
+          field.focus();
+        }
+      }, 150);
+    };
+    window.addEventListener(DOCTOR_FOCUS_MEETING_LINK_EVENT, handler);
+    return () => window.removeEventListener(DOCTOR_FOCUS_MEETING_LINK_EVENT, handler);
   }, [tabs]);
 
   // Scroll to a URL hash target (e.g. `#patient-chat`) inside whichever

@@ -18,6 +18,7 @@ import type {
   DoctorSelectableService,
   DoctorServiceAssignment,
 } from "@/lib/api/doctor-api";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type Kind = DoctorSelectableService["kind"];
 // Type-only import (erased at build time) — no runtime locale-loading code
@@ -140,6 +141,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items, strings, c
     for (const id of selected) if (!initialSelected.has(id)) return true;
     return false;
   }, [selected, initialSelected]);
+  useUnsavedChanges(dirty);
 
   function toggle(service: DoctorSelectableService) {
     const isAdminLocked =

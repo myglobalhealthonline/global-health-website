@@ -189,6 +189,7 @@ export function AppointmentActions({
       <label className="flex flex-col gap-1.5">
         <span className="gh-field-label">{copy.meetingUrlLabel}</span>
         <input
+          id="meeting-url-field"
           type="url"
           className="gh-input font-mono text-portal-meta"
           value={meetingUrl}
