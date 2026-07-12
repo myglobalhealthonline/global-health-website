@@ -399,6 +399,30 @@
   padding-right: 4px;
 }
 
+/* Inline orientation counts (audit Rule S3) — the no-card replacement for
+ * AdminSummaryStrip on list/detail pages. Typography only: no surface, no
+ * border; middot separators between items. */
+.gh-portal-meta-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 6px;
+  row-gap: 2px;
+  margin: -6px 0 18px;
+  font-size: 13px;
+  color: var(--portal-muted);
+  font-variant-numeric: tabular-nums;
+}
+.gh-portal-meta-line__item + .gh-portal-meta-line__item::before {
+  content: "·";
+  margin-right: 6px;
+  color: var(--portal-line-strong);
+}
+.gh-portal-meta-line__value {
+  font-weight: 700;
+  color: var(--portal-text);
+}
+
 /* Admin deep-pass shared content primitives.
  * KEY LAYOUT RULE (design brief §2): the row is ALWAYS one line on
  * desktop/tablet regardless of card count — column count tracks card
