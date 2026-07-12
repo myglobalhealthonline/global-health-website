@@ -18,6 +18,7 @@ type NationalityI18n = {
   slotTitle: string;
   country: string;
   countryPlaceholder: string;
+  fieldRequired: string;
   documentType: string;
   documentNumber: string;
   storedEncrypted: string;
@@ -58,6 +59,7 @@ const DEFAULT_I18N: NationalityI18n = {
   slotTitle: "Nationality {n}",
   country: "Country",
   countryPlaceholder: "e.g. Ireland, Pakistan",
+  fieldRequired: "This field is required.",
   documentType: "Document type",
   documentNumber: "Document number",
   storedEncrypted: "Stored encrypted",
@@ -149,11 +151,16 @@ function SlotCard({
   const [delPending, startDel] = useTransition();
   const [uploadPending, startUpload] = useTransition();
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  // On-blur required check for `nationalityCountry` — same rule the native
+  // `required` attribute + onSave bail already enforce, surfaced earlier.
+  const [countryTouched, setCountryTouched] = useState(false);
 
   useEffect(() => {
     // Reset local edit state when a fresh `doc` snapshot arrives from the server.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setForm(doc ? docToForm(doc) : EMPTY_FORM);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCountryTouched(false);
   }, [doc]);
 
   function update(key: keyof SlotFormState, val: string) {
@@ -162,6 +169,8 @@ function SlotCard({
 
   const baseline = doc ? docToForm(doc) : EMPTY_FORM;
   const dirty = JSON.stringify(form) !== JSON.stringify(baseline);
+  const countryError =
+    countryTouched && form.nationalityCountry.trim() === "" ? i18n.fieldRequired : undefined;
   useUnsavedChanges(dirty);
   useEffect(() => {
     onDirtyChange?.(slot, dirty);
@@ -258,11 +267,24 @@ function SlotCard({
               type="text"
               value={form.nationalityCountry}
               onChange={(e) => update("nationalityCountry", e.target.value)}
+              onBlur={() => setCountryTouched(true)}
               maxLength={100}
               required
+              aria-invalid={countryError ? true : undefined}
+              aria-describedby={countryError ? `nationality-${slot}-country-error` : undefined}
               placeholder={i18n.countryPlaceholder}
               className="gh-input mt-1 min-w-0"
             />
+            {countryError ? (
+              <p
+                id={`nationality-${slot}-country-error`}
+                role="alert"
+                className="mt-1 text-xs"
+                style={{ color: "var(--portal-danger-text)" }}
+              >
+                {countryError}
+              </p>
+            ) : null}
           </label>
           <label className="block">
             <span className="gh-field-label">{i18n.documentType}</span>

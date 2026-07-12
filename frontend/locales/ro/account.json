@@ -278,6 +278,7 @@
     "emailLabel": "Email",
     "emailNote": "Emailul nu poate fi schimbat momentan. Contactează suportul dacă ai nevoie să îl schimbi.",
     "fullNameLabel": "Nume complet",
+    "fieldRequired": "This field is required.",
     "phoneLabel": "Telefon",
     "phonePlaceholder": "+40 7…",
     "phoneNote": "Pentru ca clinica să te poată contacta despre rezervarea ta. Lasă gol dacă preferi doar email.",
@@ -407,7 +408,10 @@
     "sumAccountValue": "Pacient",
     "sumAccountHint": "Setări de securitate",
     "deletionCancelled": "Ștergerea contului a fost anulată.",
-    "closeDialog": "Închide fereastra"
+    "closeDialog": "Închide fereastra",
+    "tabsAria": "Secțiuni de securitate",
+    "tabPassword": "Parolă",
+    "tabAccess": "Acces la cont"
   },
   "family": {
     "breadcrumb": "Cont",
@@ -417,6 +421,7 @@
     "empty": "Nu ai adăugat încă niciun membru al familiei.",
     "addHeading": "Adaugă un membru al familiei",
     "fullName": "Nume complet",
+    "fieldRequired": "This field is required.",
     "fullNamePlaceholder": "ex. Maria Santos",
     "relationship": "Relație",
     "relationshipPlaceholder": "ex. Soț/Soție, Copil, Părinte",
@@ -539,6 +544,7 @@
     "subtitle": "Înregistrează până la două cetățenii. Numerele documentelor sunt stocate criptat.",
     "slotTitle": "Cetățenia {n}",
     "country": "Țară",
+    "fieldRequired": "This field is required.",
     "countryPlaceholder": "ex. Irlanda, Pakistan",
     "documentType": "Tip de document",
     "documentNumber": "Număr de document",

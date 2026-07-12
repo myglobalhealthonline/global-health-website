@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, PackageCheck, Truck } from "lucide-react";
+import { ArrowLeft, PackageCheck, Truck, CreditCard, ShoppingBag } from "lucide-react";
 import { fetchAccountOrder } from "@/lib/api/cart-server";
 import { ReorderButton } from "./_components/reorder-button";
 import { CompletePaymentButton } from "./_components/complete-payment-button";
@@ -85,10 +85,10 @@ export default async function AccountOrderDetailPage({ params }: Props) {
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: a.orders.sumStatus, value: order.status.toLowerCase(), hint: a.orders.sumStatusHint },
-          { label: a.orders.payment, value: order.paymentStatus.toLowerCase(), hint: paymentHint(order, a) },
-          { label: a.orders.sumItems, value: String(order.items.length), hint: a.orders.sumItemsHint },
-          { label: a.orders.total, value: formatPrice(order.totalCents, order.currencyCode), hint: a.orders.inclShipping },
+          { label: a.orders.sumStatus, value: order.status.toLowerCase(), hint: a.orders.sumStatusHint, icon: <PackageCheck aria-hidden /> },
+          { label: a.orders.payment, value: order.paymentStatus.toLowerCase(), hint: paymentHint(order, a), icon: <CreditCard aria-hidden /> },
+          { label: a.orders.sumItems, value: String(order.items.length), hint: a.orders.sumItemsHint, icon: <ShoppingBag aria-hidden /> },
+          { label: a.orders.total, value: formatPrice(order.totalCents, order.currencyCode), hint: a.orders.inclShipping, icon: <Truck aria-hidden /> },
         ]}
       />
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Sparkles, Gift, CheckCircle2, Award } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import {
   getServerCredits,
@@ -68,10 +69,10 @@ export default async function RewardsPage({ searchParams }: { searchParams: Prom
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: "Wellness balance", value: String(credits?.wellness.balance ?? 0), hint: "Credits available" },
-          { label: "Reward kits", value: String(kitsWithUnlock.length), hint: "Available to review" },
-          { label: "Eligible now", value: String(kitsWithUnlock.filter((kit) => kit.eligible).length), hint: "Ready to redeem" },
-          { label: "Membership", value: sub.status.toLowerCase(), hint: sub.plan?.name ?? "Current plan" },
+          { label: "Wellness balance", value: String(credits?.wellness.balance ?? 0), hint: "Credits available", icon: <Sparkles aria-hidden /> },
+          { label: "Reward kits", value: String(kitsWithUnlock.length), hint: "Available to review", icon: <Gift aria-hidden /> },
+          { label: "Eligible now", value: String(kitsWithUnlock.filter((kit) => kit.eligible).length), hint: "Ready to redeem", icon: <CheckCircle2 aria-hidden /> },
+          { label: "Membership", value: sub.status.toLowerCase(), hint: sub.plan?.name ?? "Current plan", icon: <Award aria-hidden /> },
         ]}
       />
       <RewardsPanel

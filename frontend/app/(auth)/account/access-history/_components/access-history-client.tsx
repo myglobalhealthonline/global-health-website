@@ -118,6 +118,26 @@ function LogRow({ entry, i18n }: { entry: AccessLogEntry; i18n: AccessHistoryI18
   );
 }
 
+/** Groups log rows by calendar day (server order preserved within a day). */
+function groupByDate(logs: AccessLogEntry[]): [string, AccessLogEntry[]][] {
+  const groups = new Map<string, AccessLogEntry[]>();
+  for (const entry of logs) {
+    const key = entry.createdAt.slice(0, 10);
+    const bucket = groups.get(key);
+    if (bucket) bucket.push(entry);
+    else groups.set(key, [entry]);
+  }
+  return Array.from(groups.entries());
+}
+
+function formatGroupDate(dateKey: string): string {
+  return new Date(`${dateKey}T00:00:00`).toLocaleDateString(undefined, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
 export function AccessHistoryClient({ i18n }: { i18n: AccessHistoryI18n }) {
   const [logs, setLogs] = useState<AccessLogEntry[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
@@ -179,8 +199,15 @@ export function AccessHistoryClient({ i18n }: { i18n: AccessHistoryI18n }) {
           </div>
         ) : (
           <div className="px-4">
-            {logs.map((entry) => (
-              <LogRow key={entry.id} entry={entry} i18n={i18n} />
+            {groupByDate(logs).map(([dateKey, group]) => (
+              <div key={dateKey}>
+                <p className="pt-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--portal-muted)] first:pt-4">
+                  {formatGroupDate(dateKey)}
+                </p>
+                {group.map((entry) => (
+                  <LogRow key={entry.id} entry={entry} i18n={i18n} />
+                ))}
+              </div>
             ))}
           </div>
         )}

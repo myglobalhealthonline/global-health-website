@@ -322,35 +322,45 @@ export async function SubscriptionDashboard({
             </p>
           </div>
           <ul className="mt-3">
-            {credits.ledger.slice(0, 8).map((entry, i) => (
-              <li
-                key={i}
-                className="grid gap-2 border-t py-2.5 text-sm first:border-t-0 sm:grid-cols-[1fr_auto] sm:items-center"
-                style={{ borderColor: "var(--portal-line)" }}
-              >
-                <div className="flex items-center gap-2.5">
-                  {entry.kind === "WELLNESS" ? (
-                    <Sparkles className="size-4 shrink-0" style={{ color: "var(--portal-accent)" }} aria-hidden />
-                  ) : (
-                    <Stethoscope className="size-4 shrink-0" style={{ color: "var(--portal-primary)" }} aria-hidden />
-                  )}
-                  <span style={{ color: "var(--portal-text)" }}>
-                    {creditReasonLabel(entry.reason, t as Record<string, string>)}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 sm:justify-end">
-                  <span
-                    className="font-semibold tabular-nums"
-                    style={{ color: entry.deltaCredits >= 0 ? "var(--portal-primary)" : "var(--portal-danger-text)" }}
-                  >
-                    {formatCreditDelta(entry.deltaCredits)}
-                  </span>
-                  <span className="text-xs" style={{ color: "var(--portal-muted)" }}>
-                    {formatAppDate(entry.createdAt)}
-                  </span>
-                </div>
-              </li>
-            ))}
+            {credits.ledger.slice(0, 8).map((entry, i) => {
+              // A CONSUMED row with a 0 delta is the completion echo of the
+              // paired "Reserved · −1" row — the delta already moved there,
+              // so showing "Used for consultation · 0" reads as a no-op.
+              // Relabel + hide the delta for this specific case only.
+              const isCompletedConsumption = entry.reason === "CONSUMED" && entry.deltaCredits === 0;
+              const label = isCompletedConsumption
+                ? t.reason_CONSUMED_COMPLETED
+                : creditReasonLabel(entry.reason, t as Record<string, string>);
+              return (
+                <li
+                  key={i}
+                  className="grid gap-2 border-t py-2.5 text-sm first:border-t-0 sm:grid-cols-[1fr_auto] sm:items-center"
+                  style={{ borderColor: "var(--portal-line)" }}
+                >
+                  <div className="flex items-center gap-2.5">
+                    {entry.kind === "WELLNESS" ? (
+                      <Sparkles className="size-4 shrink-0" style={{ color: "var(--portal-accent)" }} aria-hidden />
+                    ) : (
+                      <Stethoscope className="size-4 shrink-0" style={{ color: "var(--portal-primary)" }} aria-hidden />
+                    )}
+                    <span style={{ color: "var(--portal-text)" }}>{label}</span>
+                  </div>
+                  <div className="flex items-center gap-3 sm:justify-end">
+                    {isCompletedConsumption ? null : (
+                      <span
+                        className="font-semibold tabular-nums"
+                        style={{ color: entry.deltaCredits >= 0 ? "var(--portal-primary)" : "var(--portal-danger-text)" }}
+                      >
+                        {formatCreditDelta(entry.deltaCredits)}
+                      </span>
+                    )}
+                    <span className="text-xs" style={{ color: "var(--portal-muted)" }}>
+                      {formatAppDate(entry.createdAt)}
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </AdminCard>
       ) : null}

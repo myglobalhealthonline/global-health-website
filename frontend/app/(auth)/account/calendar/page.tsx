@@ -1,4 +1,4 @@
-import { CalendarRange } from "lucide-react";
+import { CalendarRange, Clock, Video, Globe } from "lucide-react";
 import { fetchAccountAppointments } from "@/lib/api/account-appointments-api";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { PatientCalendarUI } from "./ui";
@@ -60,10 +60,10 @@ export default async function AccountCalendarPage() {
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: a.calendar.sumScheduled, value: String(items.length), hint: a.calendar.sumScheduledHint },
-          { label: a.calendar.sumUpcoming, value: String(upcoming), hint: a.calendar.sumUpcomingHint },
-          { label: a.calendar.sumMeetLinks, value: String(meetReady), hint: a.calendar.sumMeetLinksHint },
-          { label: a.calendar.sumMarkets, value: String(countries), hint: a.calendar.sumMarketsHint },
+          { label: a.calendar.sumScheduled, value: String(items.length), hint: a.calendar.sumScheduledHint, icon: <CalendarRange aria-hidden /> },
+          { label: a.calendar.sumUpcoming, value: String(upcoming), hint: a.calendar.sumUpcomingHint, icon: <Clock aria-hidden /> },
+          { label: a.calendar.sumMeetLinks, value: String(meetReady), hint: a.calendar.sumMeetLinksHint, icon: <Video aria-hidden /> },
+          { label: a.calendar.sumMarkets, value: String(countries), hint: a.calendar.sumMarketsHint, icon: <Globe aria-hidden /> },
         ]}
       />
 

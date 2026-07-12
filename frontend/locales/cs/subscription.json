@@ -151,6 +151,7 @@
     "reason_RESET_EXPIRE": "Předchozí měsíc resetován",
     "reason_RESERVED": "Rezervováno",
     "reason_CONSUMED": "Použito na konzultaci",
+    "reason_CONSUMED_COMPLETED": "Konzultace dokončena",
     "reason_REDEEMED": "Uplatněno na sadu",
     "reason_RELEASED": "Vráceno zpět",
     "reason_ADJUSTMENT": "Ruční úprava",
@@ -216,6 +217,12 @@
       "body": "Vaše členství zahrnuje tuto sadu. Uplatněte ji za {required} wellness kreditů — aktuálně máte {balance}.",
       "cta": "Uplatnit tuto sadu",
       "progress": "Nasbíráno {progress} z {required} wellness kreditů"
+    },
+    "howItWorks": {
+      "title": "Jak fungují wellness kredity",
+      "step1": "Získávejte wellness kredity automaticky každý zaplacený měsíc členství.",
+      "step2": "Nasbírejte dostatek kreditů na požadovanou hodnotu sady.",
+      "step3": "Uplatněte — sadu vám pošleme přímo domů."
     }
   },
   "invoice": {

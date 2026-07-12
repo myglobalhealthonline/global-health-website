@@ -1,4 +1,4 @@
-import { ShoppingBag, ChevronRight } from "lucide-react";
+import { ShoppingBag, ChevronRight, CheckCircle2, Clock3, CreditCard } from "lucide-react";
 import { fetchAccountOrders } from "@/lib/api/cart-server";
 import type { OrderListItem } from "@/lib/api/cart-types";
 import { CompletePaymentButton } from "./[id]/_components/complete-payment-button";
@@ -107,10 +107,10 @@ export default async function AccountOrdersPage() {
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: "Orders", value: String(items.length), hint: "Health tests and prescription orders" },
-          { label: "Paid", value: String(paid), hint: "Completed or fulfilled" },
-          { label: "Pending", value: String(pending), hint: "Needs processing or payment" },
-          { label: "Total", value: formatPrice(totalCents, currency), hint: "Across visible orders" },
+          { label: "Orders", value: String(items.length), hint: "Health tests and prescription orders", icon: <ShoppingBag aria-hidden /> },
+          { label: "Paid", value: String(paid), hint: "Completed or fulfilled", icon: <CheckCircle2 aria-hidden /> },
+          { label: "Pending", value: String(pending), hint: "Needs processing or payment", icon: <Clock3 aria-hidden /> },
+          { label: "Total", value: formatPrice(totalCents, currency), hint: "Across visible orders", icon: <CreditCard aria-hidden /> },
         ]}
       />
 

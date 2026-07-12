@@ -278,6 +278,7 @@
     "emailLabel": "E-mail",
     "emailNote": "E-mail zatím nelze změnit. Pokud potřebujete změnit, kontaktujte podporu.",
     "fullNameLabel": "Celé jméno",
+    "fieldRequired": "This field is required.",
     "phoneLabel": "Telefon",
     "phonePlaceholder": "+420 7…",
     "phoneNote": "Aby vás klinika mohla kontaktovat ohledně vaší rezervace. Ponechte prázdné, pokud preferujete pouze email.",
@@ -407,7 +408,10 @@
     "sumAccountValue": "Pacient",
     "sumAccountHint": "Nastavení zabezpečení",
     "deletionCancelled": "Smazání účtu bylo zrušeno.",
-    "closeDialog": "Zavřít dialog"
+    "closeDialog": "Zavřít dialog",
+    "tabsAria": "Sekce zabezpečení",
+    "tabPassword": "Heslo",
+    "tabAccess": "Přístup k účtu"
   },
   "family": {
     "breadcrumb": "Účet",
@@ -417,6 +421,7 @@
     "empty": "Zatím jste nepřidali žádného rodinného příslušníka.",
     "addHeading": "Přidat rodinného příslušníka",
     "fullName": "Celé jméno",
+    "fieldRequired": "This field is required.",
     "fullNamePlaceholder": "např. Maria Santos",
     "relationship": "Vztah",
     "relationshipPlaceholder": "např. Manžel/ka, Dítě, Rodič",
@@ -539,6 +544,7 @@
     "subtitle": "Zaregistrujte až dvě státní příslušnosti. Čísla dokladů jsou uložena šifrovaně.",
     "slotTitle": "Státní příslušnost {n}",
     "country": "Země",
+    "fieldRequired": "This field is required.",
     "countryPlaceholder": "např. Irsko, Pákistán",
     "documentType": "Typ dokumentu",
     "documentNumber": "Číslo dokladu",

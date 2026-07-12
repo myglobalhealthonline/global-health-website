@@ -278,6 +278,7 @@
     "emailLabel": "Email",
     "emailNote": "O email não pode ser alterado de momento. Contacte o suporte se precisar de trocar.",
     "fullNameLabel": "Nome completo",
+    "fieldRequired": "This field is required.",
     "phoneLabel": "Telefone",
     "phonePlaceholder": "+351 9…",
     "phoneNote": "Para a clínica o contactar sobre a sua marcação. Deixe em branco se preferir apenas email.",
@@ -407,7 +408,10 @@
     "sumAccountValue": "Paciente",
     "sumAccountHint": "Controlos de segurança",
     "deletionCancelled": "Eliminação da conta cancelada.",
-    "closeDialog": "Fechar janela"
+    "closeDialog": "Fechar janela",
+    "tabsAria": "Secções de segurança",
+    "tabPassword": "Palavra-passe",
+    "tabAccess": "Acesso à conta"
   },
   "family": {
     "breadcrumb": "Conta",
@@ -417,6 +421,7 @@
     "empty": "Ainda não adicionou nenhum membro da família.",
     "addHeading": "Adicionar um membro da família",
     "fullName": "Nome completo",
+    "fieldRequired": "This field is required.",
     "fullNamePlaceholder": "ex. Maria Santos",
     "relationship": "Parentesco",
     "relationshipPlaceholder": "ex. Cônjuge, Filho(a), Pai/Mãe",
@@ -539,6 +544,7 @@
     "subtitle": "Registe até duas nacionalidades. Os números dos documentos são guardados encriptados.",
     "slotTitle": "Nacionalidade {n}",
     "country": "País",
+    "fieldRequired": "This field is required.",
     "countryPlaceholder": "ex.: Irlanda, Paquistão",
     "documentType": "Tipo de documento",
     "documentNumber": "Número do documento",

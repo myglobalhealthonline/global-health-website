@@ -205,8 +205,11 @@ export function MessagesInbox({
         </ul>
       </div>
 
-      {/* Conversation pane */}
-      <div className={selected ? "block" : "hidden md:block"}>
+      {/* Conversation pane. `self-start` only when empty — otherwise this
+          column stretches to match the (often much taller) thread-list
+          column, pushing the "Select a conversation" placeholder far below
+          the fold instead of showing a compact box near the top. */}
+      <div className={selected ? "block" : "hidden self-start md:block"}>
         {selected ? (
           <div
             className="flex h-full min-h-[420px] flex-col overflow-hidden rounded-[14px] border"
@@ -251,9 +254,15 @@ export function MessagesInbox({
             className="hidden h-full min-h-[420px] place-items-center rounded-[14px] border md:grid"
             style={{ borderColor: line, background: surfaceSoft }}
           >
-            <p className="text-sm" style={{ color: muted }}>
-              Select a conversation to read and reply.
-            </p>
+            <div className="text-center">
+              <MessageSquare className="mx-auto size-7" style={{ color: muted }} aria-hidden />
+              <p className="mt-3 text-sm font-bold" style={{ color: text }}>
+                Select a conversation
+              </p>
+              <p className="mt-1 text-sm" style={{ color: muted }}>
+                Choose a thread on the left to read and reply.
+              </p>
+            </div>
           </div>
         )}
       </div>

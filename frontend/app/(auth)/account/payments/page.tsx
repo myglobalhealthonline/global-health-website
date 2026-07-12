@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CreditCard, ExternalLink } from "lucide-react";
+import { CreditCard, ExternalLink, FileText, CheckCircle2, AlertCircle, Clock3 } from "lucide-react";
 import { fetchAccountPayments, type AccountPayment } from "@/lib/api/account-payments-api";
 import { getServerInvoices } from "@/lib/api/me-subscription-server";
 import type { SubscriptionInvoiceView } from "@/lib/api/me-subscription";
@@ -257,10 +257,10 @@ export default async function AccountPaymentsPage() {
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: a.payments.sumReceipts, value: String(receiptsCount), hint: a.payments.sumReceiptsHint },
-          { label: a.payments.sumPaid, value: String(paidCount), hint: a.payments.sumPaidHint },
-          { label: a.payments.sumNeedsAction, value: String(actionCount), hint: a.payments.sumNeedsActionHint },
-          { label: a.payments.sumLatest, value: lastPayment ? formatAppDate(lastPayment.paidAt) : a.payments.noneYet, hint: a.payments.sumLatestHint },
+          { label: a.payments.sumReceipts, value: String(receiptsCount), hint: a.payments.sumReceiptsHint, icon: <FileText aria-hidden /> },
+          { label: a.payments.sumPaid, value: String(paidCount), hint: a.payments.sumPaidHint, icon: <CheckCircle2 aria-hidden /> },
+          { label: a.payments.sumNeedsAction, value: String(actionCount), hint: a.payments.sumNeedsActionHint, icon: <AlertCircle aria-hidden /> },
+          { label: a.payments.sumLatest, value: lastPayment ? formatAppDate(lastPayment.paidAt) : a.payments.noneYet, hint: a.payments.sumLatestHint, icon: <Clock3 aria-hidden /> },
         ]}
       />
 

@@ -51,6 +51,9 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("contact");
   const [initialContact, setInitialContact] = useState({ fullName: "", phone: "", dateOfBirth: "" });
+  // 17-001: on-blur required-field check, same rule the native `required`
+  // attribute already enforces at submit — just surfaced earlier.
+  const [fullNameTouched, setFullNameTouched] = useState(false);
   // Per-tab dirty flags (17-005 §12) — lifted from each tab's own
   // useUnsavedChanges-backed form state so the tab strip can show which
   // tabs have unsaved edits before the user navigates away from them.
@@ -105,6 +108,7 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
     phone !== initialContact.phone ||
     dateOfBirth !== initialContact.dateOfBirth;
   useUnsavedChanges(contactDirty);
+  const fullNameError = fullNameTouched && fullName.trim() === "" ? p.fieldRequired : undefined;
 
   // Small "•" badge (reusing PortalTabs' existing badge/badgeAlert props,
   // no new visual primitive) marks a tab with unsaved edits so switching
@@ -274,10 +278,18 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
+                    onBlur={() => setFullNameTouched(true)}
                     required
                     maxLength={120}
+                    aria-invalid={fullNameError ? true : undefined}
+                    aria-describedby={fullNameError ? "fullName-error" : undefined}
                     className="gh-input mt-1 min-w-0"
                   />
+                  {fullNameError ? (
+                    <p id="fullName-error" role="alert" className="mt-1 text-xs" style={{ color: "var(--portal-danger-text)" }}>
+                      {fullNameError}
+                    </p>
+                  ) : null}
                 </label>
 
                 <label className="block">

@@ -278,6 +278,7 @@
     "emailLabel": "E-Mail",
     "emailNote": "Die E-Mail kann derzeit nicht geändert werden. Kontaktiere den Support, wenn du sie ändern musst.",
     "fullNameLabel": "Vollständiger Name",
+    "fieldRequired": "This field is required.",
     "phoneLabel": "Telefon",
     "phonePlaceholder": "+49 1…",
     "phoneNote": "Damit die Klinik dich wegen deiner Buchung erreichen kann. Lass es leer, wenn du nur E-Mail bevorzugst.",
@@ -407,7 +408,10 @@
     "sumAccountValue": "Patient",
     "sumAccountHint": "Sicherheitseinstellungen",
     "deletionCancelled": "Kontolöschung abgebrochen.",
-    "closeDialog": "Dialog schließen"
+    "closeDialog": "Dialog schließen",
+    "tabsAria": "Sicherheitsbereiche",
+    "tabPassword": "Passwort",
+    "tabAccess": "Kontozugriff"
   },
   "family": {
     "breadcrumb": "Konto",
@@ -417,6 +421,7 @@
     "empty": "Sie haben noch keine Familienmitglieder hinzugefügt.",
     "addHeading": "Familienmitglied hinzufügen",
     "fullName": "Vollständiger Name",
+    "fieldRequired": "This field is required.",
     "fullNamePlaceholder": "z. B. Maria Santos",
     "relationship": "Beziehung",
     "relationshipPlaceholder": "z. B. Ehepartner, Kind, Elternteil",
@@ -539,6 +544,7 @@
     "subtitle": "Registriere bis zu zwei Staatsangehörigkeiten. Dokumentnummern werden verschlüsselt gespeichert.",
     "slotTitle": "Staatsangehörigkeit {n}",
     "country": "Land",
+    "fieldRequired": "This field is required.",
     "countryPlaceholder": "z. B. Irland, Pakistan",
     "documentType": "Dokumenttyp",
     "documentNumber": "Dokumentnummer",

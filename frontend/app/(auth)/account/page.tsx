@@ -253,21 +253,25 @@ export default async function AccountOverviewPage() {
             label: "Next appointment",
             value: nextCall?.scheduledAt ? formatAppDateTime(nextCall.scheduledAt) : "Not scheduled",
             hint: nextCall?.meetingUrl ? "Meet link ready" : "Book or wait for scheduling",
+            icon: <CalendarDays aria-hidden />,
           },
           {
             label: "Payments",
             value: paymentActionCount > 0 ? `${paymentActionCount} needs action` : `${paidPayments} paid`,
             hint: `${payments.length} receipt${payments.length === 1 ? "" : "s"} on file`,
+            icon: <CreditCard aria-hidden />,
           },
           {
             label: "Records",
             value: ghn ? "GHN active" : "Profile pending",
             hint: "Used for prescriptions and medical documents",
+            icon: <ShieldCheck aria-hidden />,
           },
           {
             label: "Quick path",
             value: "Book care",
             hint: "Start a consultation or review appointments",
+            icon: <ChevronRight aria-hidden />,
           },
         ]}
       />

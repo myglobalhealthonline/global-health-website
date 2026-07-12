@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Info, Loader2, Pencil, Plus, Trash2, Users, X } from "lucide-react";
+import { Info, Loader2, Pencil, Plus, Trash2, Users, X, CreditCard, UserRound } from "lucide-react";
 import {
   addFamilyMember,
   listFamilyMembers,
@@ -90,16 +90,18 @@ export function FamilyPanel({
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: t.membersMetric, value: String(items.length), hint: t.membersMetricHint },
+          { label: t.membersMetric, value: String(items.length), hint: t.membersMetricHint, icon: <Users aria-hidden /> },
           {
             label: t.benefitsMetric,
             value: String(items.filter((member) => member.canUseCredits).length),
             hint: t.benefitsMetricHint,
+            icon: <CreditCard aria-hidden />,
           },
           {
             label: t.profilesMetric,
             value: items.length > 0 ? t.profilesActive : t.profilesNotStarted,
             hint: t.profilesMetricHint,
+            icon: <UserRound aria-hidden />,
           },
         ]}
       />
@@ -148,6 +150,10 @@ function AddMemberForm({ t, onAdded }: { t: FamilyCopy; onAdded: () => Promise<v
   const [form, setForm] = useState<FamilyMemberInput>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  // 18-001: on-blur required check, same rule the native `required` +
+  // onSubmit bail already enforce, surfaced earlier.
+  const [fullNameTouched, setFullNameTouched] = useState(false);
+  const fullNameError = fullNameTouched && form.fullName.trim() === "" ? t.fieldRequired : undefined;
 
   useUnsavedChanges(JSON.stringify(form) !== JSON.stringify(emptyForm));
 
@@ -160,6 +166,7 @@ function AddMemberForm({ t, onAdded }: { t: FamilyCopy; onAdded: () => Promise<v
     setSubmitting(false);
     if (res.ok) {
       setForm(emptyForm);
+      setFullNameTouched(false);
       await onAdded();
     } else {
       setMsg(res.message);
@@ -180,9 +187,17 @@ function AddMemberForm({ t, onAdded }: { t: FamilyCopy; onAdded: () => Promise<v
           maxLength={120}
           value={form.fullName}
           onChange={(e) => setForm((f) => ({ ...f, fullName: e.target.value }))}
+          onBlur={() => setFullNameTouched(true)}
           placeholder={t.fullNamePlaceholder}
+          aria-invalid={fullNameError ? true : undefined}
+          aria-describedby={fullNameError ? "add-member-fullname-error" : undefined}
           className="gh-input mt-1 min-w-0"
         />
+        {fullNameError ? (
+          <p id="add-member-fullname-error" role="alert" className="mt-1 text-xs" style={{ color: "var(--portal-danger-text)" }}>
+            {fullNameError}
+          </p>
+        ) : null}
       </label>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -460,6 +475,8 @@ function EditMemberForm({
   const [form, setForm] = useState<FamilyMemberInput>(initialEditForm);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [fullNameTouched, setFullNameTouched] = useState(false);
+  const fullNameError = fullNameTouched && form.fullName.trim() === "" ? t.fieldRequired : undefined;
 
   useUnsavedChanges(JSON.stringify(form) !== JSON.stringify(initialEditForm));
 
@@ -487,8 +504,16 @@ function EditMemberForm({
           maxLength={120}
           value={form.fullName}
           onChange={(e) => setForm((f) => ({ ...f, fullName: e.target.value }))}
+          onBlur={() => setFullNameTouched(true)}
+          aria-invalid={fullNameError ? true : undefined}
+          aria-describedby={fullNameError ? "edit-member-fullname-error" : undefined}
           className="gh-input mt-1 min-w-0"
         />
+        {fullNameError ? (
+          <p id="edit-member-fullname-error" role="alert" className="mt-1 text-xs" style={{ color: "var(--portal-danger-text)" }}>
+            {fullNameError}
+          </p>
+        ) : null}
       </label>
 
       <div className="grid gap-4 sm:grid-cols-2">

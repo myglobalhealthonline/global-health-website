@@ -151,6 +151,7 @@
     "reason_RESET_EXPIRE": "Mês anterior reiniciado",
     "reason_RESERVED": "Reservado",
     "reason_CONSUMED": "Usado em consulta",
+    "reason_CONSUMED_COMPLETED": "Consulta concluída",
     "reason_REDEEMED": "Resgatado por kit",
     "reason_RELEASED": "Devolvido",
     "reason_ADJUSTMENT": "Ajuste manual",
@@ -216,6 +217,12 @@
       "body": "A sua adesão inclui este kit. Resgate-o com {required} créditos de bem-estar — tem atualmente {balance}.",
       "cta": "Resgatar este kit",
       "progress": "{progress} de {required} créditos de bem-estar acumulados"
+    },
+    "howItWorks": {
+      "title": "Como funcionam os créditos de bem-estar",
+      "step1": "Ganhe créditos de bem-estar automaticamente em cada mês pago de adesão.",
+      "step2": "Acumule créditos suficientes para atingir o requisito de um kit.",
+      "step3": "Resgate — enviamos o kit diretamente para a sua morada."
     }
   },
   "invoice": {

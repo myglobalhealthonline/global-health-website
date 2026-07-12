@@ -157,6 +157,7 @@
     "reason_RESET_EXPIRE": "Previous month reset",
     "reason_RESERVED": "Reserved",
     "reason_CONSUMED": "Used for consultation",
+    "reason_CONSUMED_COMPLETED": "Consultation completed",
     "reason_REDEEMED": "Redeemed for kit",
     "reason_RELEASED": "Released back",
     "reason_ADJUSTMENT": "Manual adjustment",
@@ -222,6 +223,12 @@
       "body": "Your membership includes this kit. Redeem it with {required} wellness credits — you currently have {balance}.",
       "cta": "Redeem this kit",
       "progress": "{progress} of {required} wellness credits collected"
+    },
+    "howItWorks": {
+      "title": "How wellness credits work",
+      "step1": "Earn wellness credits automatically every paid membership month.",
+      "step2": "Collect enough credits to reach a kit's requirement.",
+      "step3": "Redeem — we ship the kit straight to your door."
     }
   },
   "invoice": {

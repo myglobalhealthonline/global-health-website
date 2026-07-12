@@ -151,6 +151,7 @@
     "reason_RESET_EXPIRE": "Mes anterior restablecido",
     "reason_RESERVED": "Reservado",
     "reason_CONSUMED": "Usado en consulta",
+    "reason_CONSUMED_COMPLETED": "Consulta completada",
     "reason_REDEEMED": "Canjeado por kit",
     "reason_RELEASED": "Devuelto",
     "reason_ADJUSTMENT": "Ajuste manual",
@@ -216,6 +217,12 @@
       "body": "Su membresía incluye este kit. Cánjelo con {required} créditos de bienestar: actualmente tiene {balance}.",
       "cta": "Canjear este kit",
       "progress": "{progress} de {required} créditos de bienestar acumulados"
+    },
+    "howItWorks": {
+      "title": "Cómo funcionan los créditos de bienestar",
+      "step1": "Gane créditos de bienestar automáticamente cada mes pagado de membresía.",
+      "step2": "Acumule créditos suficientes para alcanzar el requisito de un kit.",
+      "step3": "Canjee: le enviamos el kit directamente a su domicilio."
     }
   },
   "invoice": {

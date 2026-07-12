@@ -4552,6 +4552,9 @@ a.gh-appointment-card:hover {
 @media (max-width: 760px)  {
   .gh-portal-main {
     overflow-x: hidden;
+    /* Clears the site-wide floating chat-launcher bubble (bottom-right)
+       so the last row of mobile list pages isn't covered (02-007). */
+    padding-bottom: calc(var(--portal-pad-y) + env(safe-area-inset-bottom, 0px) + 72px);
   }
 }
 
@@ -5435,6 +5438,9 @@ a.gh-appointment-card:hover {
 
   .gh-portal-main {
     padding: var(--portal-pad-y) var(--portal-pad-x) !important;
+    /* Clears the site-wide floating chat-launcher bubble (bottom-right)
+       so the last row of mobile list pages isn't covered (02-007). */
+    padding-bottom: calc(var(--portal-pad-y) + env(safe-area-inset-bottom, 0px) + 72px) !important;
   }
 
   .gh-portal-page-header,

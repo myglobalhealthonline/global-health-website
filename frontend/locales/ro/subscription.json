@@ -151,6 +151,7 @@
     "reason_RESET_EXPIRE": "Luna anterioară resetată",
     "reason_RESERVED": "Rezervat",
     "reason_CONSUMED": "Folosit pentru consultație",
+    "reason_CONSUMED_COMPLETED": "Consultație finalizată",
     "reason_REDEEMED": "Răscumpărat pentru kit",
     "reason_RELEASED": "Returnat",
     "reason_ADJUSTMENT": "Ajustare manuală",
@@ -216,6 +217,12 @@
       "body": "Abonamentul dumneavoastră include acest kit. Valorificați-l cu {required} credite de wellness — în prezent aveți {balance}.",
       "cta": "Valorificați acest kit",
       "progress": "{progress} din {required} credite de wellness strânse"
+    },
+    "howItWorks": {
+      "title": "Cum funcționează creditele de wellness",
+      "step1": "Câștigați automat credite de wellness în fiecare lună plătită de abonament.",
+      "step2": "Strângeți suficiente credite pentru a atinge cerința unui kit.",
+      "step3": "Valorificați — vă trimitem kitul direct la domiciliu."
     }
   },
   "invoice": {

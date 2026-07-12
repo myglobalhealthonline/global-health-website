@@ -340,10 +340,10 @@ export function MedicalFilesClient({
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: "Uploaded", value: String(countFor("uploaded")), hint: "Reports you added" },
-          { label: "Results", value: String(countFor("results")), hint: "Doctor result documents" },
-          { label: "Requests", value: String(countFor("exam-requests")), hint: "Exam requests from clinicians" },
-          { label: "Prescriptions", value: String(countFor("prescriptions")), hint: "Medication documents" },
+          { label: "Uploaded", value: String(countFor("uploaded")), hint: "Reports you added", icon: <Upload aria-hidden /> },
+          { label: "Results", value: String(countFor("results")), hint: "Doctor result documents", icon: <FlaskConical aria-hidden /> },
+          { label: "Requests", value: String(countFor("exam-requests")), hint: "Exam requests from clinicians", icon: <Stethoscope aria-hidden /> },
+          { label: "Prescriptions", value: String(countFor("prescriptions")), hint: "Medication documents", icon: <FileText aria-hidden /> },
         ]}
       />
 

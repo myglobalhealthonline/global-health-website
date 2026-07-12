@@ -278,6 +278,7 @@
     "emailLabel": "Email",
     "emailNote": "Email can't be changed yet. Contact support if you need to switch.",
     "fullNameLabel": "Full name",
+    "fieldRequired": "This field is required.",
     "phoneLabel": "Phone",
     "phonePlaceholder": "+353 89 …",
     "phoneNote": "Used so the clinic can reach you about your booking. Leave blank if you prefer email only.",
@@ -407,7 +408,10 @@
     "sumAccountValue": "Patient",
     "sumAccountHint": "Security controls",
     "deletionCancelled": "Account deletion cancelled.",
-    "closeDialog": "Close dialog"
+    "closeDialog": "Close dialog",
+    "tabsAria": "Security sections",
+    "tabPassword": "Password",
+    "tabAccess": "Account access"
   },
   "family": {
     "breadcrumb": "Account",
@@ -417,6 +421,7 @@
     "empty": "You have not added any family members yet.",
     "addHeading": "Add a family member",
     "fullName": "Full name",
+    "fieldRequired": "This field is required.",
     "fullNamePlaceholder": "e.g. Maria Santos",
     "relationship": "Relationship",
     "relationshipPlaceholder": "e.g. Spouse, Child, Parent",
@@ -539,6 +544,7 @@
     "subtitle": "Register up to two nationalities. Document numbers are stored encrypted.",
     "slotTitle": "Nationality {n}",
     "country": "Country",
+    "fieldRequired": "This field is required.",
     "countryPlaceholder": "e.g. Ireland, Pakistan",
     "documentType": "Document type",
     "documentNumber": "Document number",

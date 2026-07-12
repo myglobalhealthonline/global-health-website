@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Gift, Loader2, Lock, Sparkles } from "lucide-react";
+import { CheckCircle2, Gift, Loader2, Lock, Sparkles, Coins, Package } from "lucide-react";
 import { redeemKit, type RedemptionKit } from "@/lib/api/me-subscription";
 import { interpolate, progressPercent, remainingCredits } from "@/lib/subscription/format";
 import { AdminCard, Btn } from "@/components/portal-atoms";
@@ -189,6 +189,32 @@ export function RewardsPanel(props: RewardsPanelProps) {
           </AdminCard>
         );
       })}
+
+      {t.howItWorks ? (
+        <AdminCard className="gh-patient-rewards-explainer">
+          <h2 className="text-sm font-bold tracking-[-0.01em]" style={{ color: "var(--portal-text)" }}>
+            {t.howItWorks.title}
+          </h2>
+          <ol className="mt-3 grid gap-3 sm:grid-cols-3">
+            {[
+              { icon: Coins, body: t.howItWorks.step1 },
+              { icon: Sparkles, body: t.howItWorks.step2 },
+              { icon: Package, body: t.howItWorks.step3 },
+            ].map((step, i) => (
+              <li key={i} className="flex items-start gap-2.5">
+                <span
+                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-[10px]"
+                  style={{ background: "var(--portal-well)", color: "var(--portal-accent-text)" }}
+                  aria-hidden
+                >
+                  <step.icon className="size-4" />
+                </span>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--portal-muted)" }}>{step.body}</p>
+              </li>
+            ))}
+          </ol>
+        </AdminCard>
+      ) : null}
     </div>
   );
 }

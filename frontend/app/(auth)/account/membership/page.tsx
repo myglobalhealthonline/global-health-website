@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Award, Activity, CalendarClock, CreditCard } from "lucide-react";
 import { getCountryByCode } from "@/data/countries";
 import { getServerSubscription } from "@/lib/api/me-subscription-server";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
@@ -74,10 +75,10 @@ export default async function MembershipPage({
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: "Plan", value: sub.plan.name, hint: "Current membership" },
-          { label: "Status", value: sub.status.toLowerCase(), hint: sub.cancelAtPeriodEnd ? "Cancellation scheduled" : "Membership lifecycle" },
-          { label: "Next billing", value: nextBillingLabel ?? "Not scheduled", hint: "Renewal date" },
-          { label: "Price", value: priceLabel, hint: "Monthly subscription" },
+          { label: "Plan", value: sub.plan.name, hint: "Current membership", icon: <Award aria-hidden /> },
+          { label: "Status", value: sub.status.toLowerCase(), hint: sub.cancelAtPeriodEnd ? "Cancellation scheduled" : "Membership lifecycle", icon: <Activity aria-hidden /> },
+          { label: "Next billing", value: nextBillingLabel ?? "Not scheduled", hint: "Renewal date", icon: <CalendarClock aria-hidden /> },
+          { label: "Price", value: priceLabel, hint: "Monthly subscription", icon: <CreditCard aria-hidden /> },
         ]}
       />
       <ManagePanel
