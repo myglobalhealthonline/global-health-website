@@ -693,9 +693,9 @@
     "openNavigation": "Abrir navegação",
     "closeMenu": "Fechar menu",
     "allCaughtUp": "Está tudo em dia.",
-    "unsavedChangesTitle": "Unsaved changes",
-    "unsavedChangesBody": "You have unsaved changes on this page. If you leave now, they'll be lost.",
-    "unsavedChangesKeepEditing": "Keep editing",
-    "unsavedChangesDiscard": "Discard changes"
+    "unsavedChangesTitle": "Alterações não guardadas",
+    "unsavedChangesBody": "Tem alterações não guardadas nesta página. Se sair agora, serão perdidas.",
+    "unsavedChangesKeepEditing": "Continuar a editar",
+    "unsavedChangesDiscard": "Descartar alterações"
   }
 }

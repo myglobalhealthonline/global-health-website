@@ -394,7 +394,7 @@ export function ManagePanel(props: ManagePanelProps) {
           </Btn>
         ) : null}
         <Link href={props.pricingHref} className="inline-flex justify-center text-sm font-semibold underline sm:inline" style={{ color: "var(--portal-primary)" }}>
-          {t.change}
+          {t.browseAllPlans}
         </Link>
       </div>
 

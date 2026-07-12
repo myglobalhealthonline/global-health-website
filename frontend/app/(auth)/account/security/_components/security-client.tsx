@@ -168,6 +168,7 @@ export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
       ) : null}
       {deletionMsg ? (
         <p
+          role={deletionMsg.kind === "ok" ? "status" : "alert"}
           className={`mb-5 rounded-md px-3 py-2 text-sm ${
             deletionMsg.kind === "ok" ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"
           }`}
@@ -231,6 +232,7 @@ export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
                   )}
                   {verifyMsg ? (
                     <p
+                      role={verifyMsg.kind === "ok" ? "status" : "alert"}
                       className={`mt-3 rounded-md px-3 py-2 text-sm ${
                         verifyMsg.kind === "ok"
                           ? "bg-emerald-50 text-emerald-800"
@@ -279,7 +281,7 @@ export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
                   {signingOutAll ? a.security.signingOutAll : a.security.signOutAllDevices}
                 </button>
                 {signOutMsg ? (
-                  <p className="mt-3 rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-800">
+                  <p role="alert" className="mt-3 rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-800">
                     {signOutMsg}
                   </p>
                 ) : null}
@@ -336,6 +338,7 @@ export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
 
                     {pwdMsg ? (
                       <p
+                        role={pwdMsg.kind === "ok" ? "status" : "alert"}
                         className={`rounded-md px-3 py-2 text-sm ${
                           pwdMsg.kind === "ok"
                             ? "bg-emerald-50 text-emerald-800"

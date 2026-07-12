@@ -56,7 +56,7 @@ export default async function AccountPrescriptionsPage() {
       />
 
       {unavailable ? (
-        <div className="mb-4 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <div role="status" className="mb-4 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           {unavailable}
         </div>
       ) : null}
@@ -64,6 +64,7 @@ export default async function AccountPrescriptionsPage() {
       {/* ── Issued by your doctor (clinical) ────────────────────── */}
       <AdminCard padding={0} className="mb-4 gh-card-jewel">
         <SectionHeader
+          as="h2"
           title={
             <span className="inline-flex items-center gap-2">
               <Pill className="size-4" aria-hidden /> {a.prescriptions.issuedByDoctor}
@@ -134,7 +135,7 @@ export default async function AccountPrescriptionsPage() {
                           iconLeft={<RefreshCw className="size-3.5" />}
                           title="Refills aren't one-click yet — this starts a new consultation booking so a doctor can approve the refill."
                         >
-                          Refill
+                          {a.prescriptions.refillButton}
                         </Btn>
                       ) : null}
                       <Btn
@@ -157,6 +158,7 @@ export default async function AccountPrescriptionsPage() {
       {/* ── Online prescription orders ──────────────────────────── */}
       <AdminCard padding={0}>
         <SectionHeader
+          as="h2"
           title={
             <span className="inline-flex items-center gap-2">
               <ShoppingBag className="size-4" aria-hidden /> {a.prescriptions.onlineOrders}
@@ -164,9 +166,11 @@ export default async function AccountPrescriptionsPage() {
           }
           description={a.prescriptions.onlineOrdersHint}
           right={
-            <Btn href="/" variant="primary" size="sm">
-              {a.prescriptions.orderNew}
-            </Btn>
+            orders.length > 0 ? (
+              <Btn href="/" variant="primary" size="sm">
+                {a.prescriptions.orderNew}
+              </Btn>
+            ) : undefined
           }
         />
         <div className="p-5">

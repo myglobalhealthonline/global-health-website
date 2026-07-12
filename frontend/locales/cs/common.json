@@ -693,9 +693,9 @@
     "openNavigation": "Otevřít navigaci",
     "closeMenu": "Zavřít menu",
     "allCaughtUp": "Vše je vyřízeno.",
-    "unsavedChangesTitle": "Unsaved changes",
-    "unsavedChangesBody": "You have unsaved changes on this page. If you leave now, they'll be lost.",
-    "unsavedChangesKeepEditing": "Keep editing",
-    "unsavedChangesDiscard": "Discard changes"
+    "unsavedChangesTitle": "Neuložené změny",
+    "unsavedChangesBody": "Na této stránce máte neuložené změny. Pokud nyní odejdete, budou ztraceny.",
+    "unsavedChangesKeepEditing": "Pokračovat v úpravách",
+    "unsavedChangesDiscard": "Zahodit změny"
   }
 }

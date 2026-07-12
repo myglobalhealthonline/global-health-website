@@ -693,9 +693,9 @@
     "openNavigation": "Deschide navigarea",
     "closeMenu": "Închide meniul",
     "allCaughtUp": "Ești la zi.",
-    "unsavedChangesTitle": "Unsaved changes",
-    "unsavedChangesBody": "You have unsaved changes on this page. If you leave now, they'll be lost.",
-    "unsavedChangesKeepEditing": "Keep editing",
-    "unsavedChangesDiscard": "Discard changes"
+    "unsavedChangesTitle": "Modificări nesalvate",
+    "unsavedChangesBody": "Ai modificări nesalvate pe această pagină. Dacă pleci acum, acestea se vor pierde.",
+    "unsavedChangesKeepEditing": "Continuă editarea",
+    "unsavedChangesDiscard": "Renunță la modificări"
   }
 }

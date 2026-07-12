@@ -92,6 +92,7 @@
     "cancelScheduled": "Abonamentul dumneavoastră este anulat. Beneficiile continuă până la {date}.",
     "cancelAtPeriodEnd": "Se anulează la {date}",
     "change": "Schimbați planul",
+    "browseAllPlans": "Vezi toate planurile",
     "upgrade": "Treceți la un plan superior sau inferior",
     "changeTo": "Treceți la {plan}",
     "changing": "Se programează schimbarea…",
@@ -119,8 +120,8 @@
       "paused": "Abonamentul dumneavoastră este suspendat, iar beneficiile sunt în așteptare. Reluați facturarea din portalul de facturare de mai jos pentru a vă restabili creditele și reducerile.",
       "confirming": "Confirmăm plata dumneavoastră… de obicei durează doar câteva secunde.",
       "stillProcessing": "Plată primită — activarea abonamentului durează puțin mai mult decât de obicei.",
-"alreadyActive": "You already have an active membership — manage it below.",
-      "dismiss": "Dismiss",
+      "alreadyActive": "Aveți deja un abonament activ — gestionați-l mai jos.",
+      "dismiss": "Închide",
       "refresh": "Reîmprospătați"
     }
   },

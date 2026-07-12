@@ -3,23 +3,15 @@ import { fetchAccountOrders } from "@/lib/api/cart-server";
 import type { OrderListItem } from "@/lib/api/cart-types";
 import { CompletePaymentButton } from "./[id]/_components/complete-payment-button";
 import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
-import type { PillTone } from "@/components/portal-atoms";
 import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
 import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { statusTone } from "@/lib/format-order-status";
 
 export const dynamic = "force-dynamic";
-
-function statusTone(status: string): PillTone {
-  if (status === "PAID") return "published";
-  if (status === "FULFILLED") return "active";
-  if (status === "CANCELLED" || status === "REFUNDED") return "inactive";
-  if (status === "PENDING") return "pending";
-  return "neutral";
-}
 
 export default async function AccountOrdersPage() {
   const [result, locale] = await Promise.all([
@@ -125,6 +117,7 @@ export default async function AccountOrdersPage() {
       {items.length === 0 ? (
         <AdminCard padding={0}>
           <SectionHeader
+            as="h2"
             title={
               <span className="inline-flex items-center gap-2">
                 <ShoppingBag className="size-4" aria-hidden /> {a.orders.orderHistory}
@@ -142,11 +135,6 @@ export default async function AccountOrdersPage() {
               assetSrc="/images/portal/obsidian/empty-payments.svg"
               title={a.orders.noOrders}
               description="Health tests, prescriptions, and checkout orders will appear here after purchase."
-              action={
-                <Btn href="/" variant="primary" size="sm">
-                  {a.orders.browseProducts}
-                </Btn>
-              }
             />
           </div>
         </AdminCard>
@@ -156,6 +144,7 @@ export default async function AccountOrdersPage() {
         // padding replace the old AdminCard > div.p-5 > ul double-wrap.
         <AdminCard padding={0}>
           <SectionHeader
+            as="h2"
             title={
               <span className="inline-flex items-center gap-2">
                 <ShoppingBag className="size-4" aria-hidden /> {a.orders.orderHistory}

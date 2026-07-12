@@ -5658,6 +5658,10 @@ a.gh-appointment-card:hover {
 .gh-portal-menu-content {
   border: 1px solid transparent;
   border-radius: var(--portal-radius-xl);
+  /* Solid opaque base UNDER the translucent lux gradient — same fix as
+     .gh-portal-dialog (01-001): without it, page text under the popover
+     bleeds through the semi-transparent fill. */
+  background-color: #ffffff;
   background-image: var(--lux-modal-fill), var(--lux-card-border);
   background-origin: border-box;
   background-clip: padding-box, border-box;

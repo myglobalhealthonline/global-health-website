@@ -92,6 +92,7 @@
     "cancelScheduled": "Ihre Mitgliedschaft ist gekündigt. Die Leistungen gelten bis zum {date} weiter.",
     "cancelAtPeriodEnd": "Kündigt zum {date}",
     "change": "Tarif ändern",
+    "browseAllPlans": "Alle Tarife ansehen",
     "upgrade": "Upgrade oder Downgrade",
     "changeTo": "Zu {plan} wechseln",
     "changing": "Änderung wird geplant…",
@@ -119,8 +120,8 @@
       "paused": "Ihre Mitgliedschaft ist pausiert und die Vorteile sind ausgesetzt. Setzen Sie die Abrechnung über das Abrechnungsportal unten fort, um Ihre Guthaben und Rabatte wiederherzustellen.",
       "confirming": "Wir bestätigen Ihre Zahlung… das dauert normalerweise nur wenige Sekunden.",
       "stillProcessing": "Zahlung erhalten — die Aktivierung Ihrer Mitgliedschaft dauert etwas länger als üblich.",
-"alreadyActive": "You already have an active membership — manage it below.",
-      "dismiss": "Dismiss",
+      "alreadyActive": "Sie haben bereits eine aktive Mitgliedschaft — verwalten Sie sie unten.",
+      "dismiss": "Schließen",
       "refresh": "Aktualisieren"
     }
   },

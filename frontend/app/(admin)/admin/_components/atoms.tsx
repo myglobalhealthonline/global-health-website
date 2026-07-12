@@ -110,17 +110,22 @@ export function SectionHeader({
   title,
   description,
   right,
+  as: Heading = "h3",
 }: {
   title: ReactNode;
   description?: ReactNode;
   right?: ReactNode;
+  /** Heading level (default "h3" — matches prior hardcoded markup). Pass
+   *  "h2" when this renders directly under the page's h1 with nothing
+   *  between, to keep the heading outline unbroken. */
+  as?: "h2" | "h3" | "h4";
 }) {
   return (
     <div className="gh-portal-section-header flex items-start justify-between gap-4 px-5 py-4">
       <div className="min-w-0">
         <div className="flex items-center gap-2.5">
           <span aria-hidden className="gh-portal-section-rule" />
-          <h3
+          <Heading
             className="m-0"
             style={{
               fontFamily: "var(--font-display)",
@@ -131,7 +136,7 @@ export function SectionHeader({
             }}
           >
             {title}
-          </h3>
+          </Heading>
         </div>
         {description ? (
           <p className="mt-1 pl-[14px] text-portal-meta" style={{ color: "var(--portal-muted)" }}>
@@ -219,6 +224,7 @@ export function AdminEmptyState({
   assetSrc,
   tone = "neutral",
   className = "",
+  as: Heading = "h3",
 }: {
   title: ReactNode;
   description?: ReactNode;
@@ -228,6 +234,10 @@ export function AdminEmptyState({
   /** "danger" = root error.tsx anatomy (DESIGN.md §16 DoD); neutral = normal empty list. */
   tone?: "neutral" | "danger";
   className?: string;
+  /** Heading level (default "h3" — matches prior hardcoded markup). Pass
+   *  "h2" when this renders directly under the page's h1 with nothing
+   *  between, to keep the heading outline unbroken. */
+  as?: "h2" | "h3" | "h4";
 }) {
   return (
     <div className={`gh-admin-empty-state ${className}`}>
@@ -249,7 +259,7 @@ export function AdminEmptyState({
         </span>
       ) : null}
       <div className="min-w-0">
-        <h3>{title}</h3>
+        <Heading>{title}</Heading>
         {description ? <p>{description}</p> : null}
         {action ? <div className="gh-admin-empty-state__action">{action}</div> : null}
       </div>

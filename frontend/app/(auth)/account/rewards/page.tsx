@@ -36,6 +36,7 @@ export default async function RewardsPage({ searchParams }: { searchParams: Prom
         <PageHeader title={t.title} description={t.subtitle} />
         <div className="gh-patient-empty-state gh-card max-w-xl p-8">
           <AdminEmptyState
+            as="h2"
             title="No rewards available"
             description={subscription.dashboard.wellnessNone}
             action={

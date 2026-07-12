@@ -10,7 +10,7 @@ import {
   type FamilyMember,
   type FamilyMemberInput,
 } from "@/lib/api/family-client";
-import { Btn, PageHeader } from "@/components/portal-atoms";
+import { AdminSummaryStrip, Btn, PageHeader } from "@/components/portal-atoms";
 import { PortalDialog } from "@/components/PortalDialog";
 import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
@@ -87,19 +87,22 @@ export function FamilyPanel({
         </div>
       ) : null}
 
-      <div className="mb-5 grid gap-3 sm:grid-cols-3">
-        <FamilyMetric label={t.membersMetric} value={String(items.length)} hint={t.membersMetricHint} />
-        <FamilyMetric
-          label={t.benefitsMetric}
-          value={String(items.filter((member) => member.canUseCredits).length)}
-          hint={t.benefitsMetricHint}
-        />
-        <FamilyMetric
-          label={t.profilesMetric}
-          value={items.length > 0 ? t.profilesActive : t.profilesNotStarted}
-          hint={t.profilesMetricHint}
-        />
-      </div>
+      <AdminSummaryStrip
+        className="mb-5"
+        items={[
+          { label: t.membersMetric, value: String(items.length), hint: t.membersMetricHint },
+          {
+            label: t.benefitsMetric,
+            value: String(items.filter((member) => member.canUseCredits).length),
+            hint: t.benefitsMetricHint,
+          },
+          {
+            label: t.profilesMetric,
+            value: items.length > 0 ? t.profilesActive : t.profilesNotStarted,
+            hint: t.profilesMetricHint,
+          },
+        ]}
+      />
 
       <AddMemberForm t={t} onAdded={refetch} />
 
@@ -137,24 +140,6 @@ export function FamilyPanel({
           ))}
         </ul>
       )}
-    </div>
-  );
-}
-
-function FamilyMetric({
-  label,
-  value,
-  hint,
-}: {
-  label: string;
-  value: string;
-  hint: string;
-}) {
-  return (
-    <div className="rounded-lg border border-[var(--portal-line)] bg-[var(--portal-surface-elevated)]/80 p-3">
-      <p className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">{label}</p>
-      <p className="mt-1 text-lg font-extrabold text-[var(--portal-text)]">{value}</p>
-      <p className="mt-1 text-xs text-[var(--portal-muted)]">{hint}</p>
     </div>
   );
 }

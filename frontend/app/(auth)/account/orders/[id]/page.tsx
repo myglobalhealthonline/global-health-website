@@ -5,24 +5,16 @@ import { fetchAccountOrder } from "@/lib/api/cart-server";
 import { ReorderButton } from "./_components/reorder-button";
 import { CompletePaymentButton } from "./_components/complete-payment-button";
 import { AdminCard, AdminSummaryStrip, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
-import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
 import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { statusTone } from "@/lib/format-order-status";
 
 export const dynamic = "force-dynamic";
 
 type Props = { params: Promise<{ id: string }> };
-
-function statusTone(status: string): PillTone {
-  if (status === "PAID") return "published";
-  if (status === "FULFILLED") return "active";
-  if (status === "CANCELLED" || status === "REFUNDED") return "inactive";
-  if (status === "PENDING") return "pending";
-  return "neutral";
-}
 
 /** Payment stat-card hint — status-specific instead of a blanket "awaiting
  *  confirmation" for every non-paid state (was contradicting a FAILED/
@@ -103,6 +95,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
       <div className="gh-patient-detail-grid grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <AdminCard padding={0}>
           <SectionHeader
+            as="h2"
             title={a.orders.itemsSection}
             right={<ReorderButton items={order.items} i18n={a.orders} />}
           />
@@ -142,7 +135,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
             merged. Tracking stays first when present (most actionable). */}
         <aside className="self-start">
           <AdminCard padding={0}>
-            <SectionHeader title={a.orders.orderInfoSection} />
+            <SectionHeader as="h2" title={a.orders.orderInfoSection} />
             <div className="divide-y divide-[var(--portal-line)]">
               {order.trackingNumber ? (
                 <div className="p-5 text-sm">

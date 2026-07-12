@@ -399,6 +399,7 @@ export function ConsultationChat({
             type="button"
             onClick={() => fileRef.current?.click()}
             title="Attach a file (PDF / image)"
+            aria-label="Attach a file (PDF / image)"
             className="gh-chat-attach shrink-0 rounded-md p-2 transition hover:bg-[var(--portal-well)]"
             style={{ color: "var(--portal-muted)" }}
           >

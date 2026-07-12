@@ -311,6 +311,7 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
 
                 {msg ? (
                   <p
+                    role={msg.kind === "ok" ? "status" : "alert"}
                     className="rounded-md px-3 py-2 text-sm"
                     style={
                       msg.kind === "ok"

@@ -112,6 +112,7 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
       <>
         <PageHeader eyebrow={t.eyebrow} title={t.title} />
         <AdminEmptyState
+          as="h2"
           icon={<BadgeCheck className="size-8" aria-hidden />}
           title={t.noMembershipTitle}
           description={t.noMembershipBody}
@@ -158,10 +159,11 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
         }
       />
 
-      {sp.welcome ? (
-        <p className="gh-status-success mb-4 rounded-md border px-4 py-3 text-sm">
-          {t.welcome.replace("{company}", membership.companyName)}
-          {showChecklist ? t.welcomeFinish : "."}
+      {/* 20-003: inactive-plan notice is the most actionable state, so it
+          renders first; error/success/welcome follow in priority order. */}
+      {!membership.companyLive ? (
+        <p className="gh-status-warning mb-4 rounded-md border px-4 py-3 text-sm">
+          {t.inactiveNotice}
         </p>
       ) : null}
       {sp.error ? (
@@ -170,9 +172,10 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
       {sp.success ? (
         <p className="gh-status-success mb-4 rounded-md border px-4 py-3 text-sm">{sp.success}</p>
       ) : null}
-      {!membership.companyLive ? (
-        <p className="gh-status-warning mb-4 rounded-md border px-4 py-3 text-sm">
-          {t.inactiveNotice}
+      {sp.welcome ? (
+        <p className="gh-status-success mb-4 rounded-md border px-4 py-3 text-sm">
+          {t.welcome.replace("{company}", membership.companyName)}
+          {showChecklist ? t.welcomeFinish : "."}
         </p>
       ) : null}
 
@@ -180,7 +183,7 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
         {/* Onboarding checklist */}
         {showChecklist ? (
           <AdminCard padding={0} className="overflow-hidden lg:col-span-2">
-            <SectionHeader title={t.checklistTitle} description={t.checklistDesc} />
+            <SectionHeader as="h2" title={t.checklistTitle} description={t.checklistDesc} />
             <ul className="m-0 list-none divide-y divide-[var(--color-border)] p-0">
               {checklist.map((step) => (
                 <li key={step.label} className="flex items-center gap-3 px-5 py-3.5">
@@ -211,8 +214,8 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
 
         {/* Digital benefit card */}
         <AdminCard padding={0} className="overflow-hidden">
-          <SectionHeader title={t.cardTitle} description={t.cardDesc} />
-          <div className="border-t border-[var(--color-border)] p-5">
+          <SectionHeader as="h2" title={t.cardTitle} description={t.cardDesc} />
+          <div className="p-5">
             {card ? (
               <div
                 className={`relative overflow-hidden rounded-2xl p-6 text-white shadow-lg ${
@@ -269,7 +272,7 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
 
         {/* Open requests */}
         <AdminCard padding={0} className="overflow-hidden">
-          <SectionHeader title={t.requestsTitle} description={t.requestsDesc} />
+          <SectionHeader as="h2" title={t.requestsTitle} description={t.requestsDesc} />
           {openRequests.length === 0 ? (
             <p className="px-5 py-4 text-sm text-[var(--color-text-muted)]">
               {t.requestsEmpty}
@@ -310,6 +313,7 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
         {isEmployee ? (
           <AdminCard padding={0} className="overflow-hidden lg:col-span-2">
             <SectionHeader
+              as="h2"
               title={t.beneficiariesTitle}
               description={t.beneficiariesUsage
                 .replace("{used}", String(beneficiaries.length))
@@ -334,7 +338,12 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
                         <form action={beneficiaryRowAction}>
                           <input type="hidden" name="beneficiaryId" value={b.id} />
                           <input type="hidden" name="action" value="RESEND" />
-                          <Btn type="submit" variant="ghost" size="sm">
+                          <Btn
+                            type="submit"
+                            variant="ghost"
+                            size="sm"
+                            aria-label={`${t.resendInvite} ${b.firstName} ${b.lastName}`}
+                          >
                             {t.resendInvite}
                           </Btn>
                         </form>
@@ -342,7 +351,12 @@ export default async function AccountCorporatePage({ searchParams }: PageProps) 
                       <form action={beneficiaryRowAction}>
                         <input type="hidden" name="beneficiaryId" value={b.id} />
                         <input type="hidden" name="action" value="REMOVE" />
-                        <Btn type="submit" variant="danger" size="sm">
+                        <Btn
+                          type="submit"
+                          variant="danger"
+                          size="sm"
+                          aria-label={`${t.remove} ${b.firstName} ${b.lastName}`}
+                        >
                           {t.remove}
                         </Btn>
                       </form>

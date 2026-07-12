@@ -92,6 +92,7 @@
     "cancelScheduled": "A sua adesão foi cancelada. Os benefícios mantêm-se até {date}.",
     "cancelAtPeriodEnd": "Cancela em {date}",
     "change": "Alterar plano",
+    "browseAllPlans": "Ver todos os planos",
     "upgrade": "Subir ou descer de plano",
     "changeTo": "Mudar para {plan}",
     "changing": "A agendar alteração…",
@@ -119,8 +120,8 @@
       "paused": "A sua adesão está em pausa e os benefícios estão suspensos. Retome a faturação no portal de faturação abaixo para restaurar os seus créditos e descontos.",
       "confirming": "A confirmar o seu pagamento… normalmente demora apenas alguns segundos.",
       "stillProcessing": "Pagamento recebido — a ativação da sua adesão está a demorar um pouco mais do que o habitual.",
-"alreadyActive": "You already have an active membership — manage it below.",
-      "dismiss": "Dismiss",
+      "alreadyActive": "Já tem uma adesão ativa — faça a gestão abaixo.",
+      "dismiss": "Fechar",
       "refresh": "Atualizar"
     }
   },

@@ -169,6 +169,14 @@ export function MessagesInbox({
                       </span>
                     ) : null}
                   </span>
+                  {t.subtitle ? (
+                    <span
+                      className="truncate text-portal-thead"
+                      style={{ color: muted }}
+                    >
+                      {t.subtitle}
+                    </span>
+                  ) : null}
                   {t.preview ? (
                     <span
                       className="truncate text-portal-label"

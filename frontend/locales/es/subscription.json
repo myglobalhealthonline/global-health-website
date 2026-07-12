@@ -92,6 +92,7 @@
     "cancelScheduled": "Su membresía está cancelada. Las ventajas continúan hasta el {date}.",
     "cancelAtPeriodEnd": "Se cancela el {date}",
     "change": "Cambiar de plan",
+    "browseAllPlans": "Ver todos los planes",
     "upgrade": "Subir o bajar de plan",
     "changeTo": "Cambiar a {plan}",
     "changing": "Programando el cambio…",
@@ -119,8 +120,8 @@
       "paused": "Su membresía está pausada y los beneficios están en espera. Reanude la facturación desde el portal de facturación de abajo para restaurar sus créditos y descuentos.",
       "confirming": "Confirmando su pago… normalmente solo tarda unos segundos.",
       "stillProcessing": "Pago recibido: la activación de su membresía está tardando un poco más de lo habitual.",
-"alreadyActive": "You already have an active membership — manage it below.",
-      "dismiss": "Dismiss",
+      "alreadyActive": "Ya tiene una membresía activa — gestiónela a continuación.",
+      "dismiss": "Cerrar",
       "refresh": "Actualizar"
     }
   },

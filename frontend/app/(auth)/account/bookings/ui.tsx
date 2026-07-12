@@ -108,7 +108,7 @@ const DEFAULT_BOOKINGS_I18N: BookingsI18n = {
     noBookingsBody: "You have not made any booking requests. Start by booking your first consultation.",
     bookOnline: "Book online",
     searchLabel: "Search",
-    searchPlaceholder: "Consultation type, country, status…",
+    searchPlaceholder: "Type, doctor, order #, country, status…",
     statusLabel: "Status",
     filterAll: "All statuses",
     filterCreated: "Created",

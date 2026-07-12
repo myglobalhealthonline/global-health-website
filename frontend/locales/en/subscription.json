@@ -98,6 +98,7 @@
     "cancelScheduled": "Your membership is cancelled. Benefits continue until {date}.",
     "cancelAtPeriodEnd": "Cancels on {date}",
     "change": "Change plan",
+    "browseAllPlans": "Browse all plans",
     "upgrade": "Upgrade or downgrade",
     "changeTo": "Switch to {plan}",
     "changing": "Scheduling change…",
