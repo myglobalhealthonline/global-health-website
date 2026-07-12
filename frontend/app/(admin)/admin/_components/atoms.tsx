@@ -180,6 +180,7 @@ export type AdminSummaryTone = "brand" | "success" | "warning" | "neutral";
 export function AdminSummaryStrip({
   items,
   className = "",
+  compact = false,
 }: {
   items: Array<{
     label: ReactNode;
@@ -189,29 +190,48 @@ export function AdminSummaryStrip({
     /** Icon badge on the top-right of the card (design brief §2). Optional
      *  — without it the top row is just the label, unchanged layout. */
     icon?: ReactNode;
+    /** Renders the tile as a link (filter shortcut / drill-down). Optional
+     *  — without it the tile stays a static div, unchanged. */
+    href?: string;
   }>;
   className?: string;
+  /** Single-line, reduced-height tiles so the content below stays above
+   *  the fold (audit 06-001). Opt-in; default rendering unchanged. */
+  compact?: boolean;
 }) {
   return (
     <section
-      className={`gh-admin-summary-strip ${className}`}
+      className={`gh-admin-summary-strip${compact ? " gh-admin-summary-strip--compact" : ""} ${className}`}
       style={{ "--card-count": items.length } as CSSProperties}
     >
-      {items.map((item, index) => (
-        <div
-          key={index}
-          className={`gh-admin-summary-item gh-admin-summary-item--${item.tone ?? "neutral"}`}
-        >
-          <div className="gh-admin-summary-item__top">
-            <span className="gh-admin-summary-label">{item.label}</span>
-            <span aria-hidden className="gh-portal-icon-badge">
-              {item.icon ?? <BarChart3 />}
-            </span>
+      {items.map((item, index) => {
+        const itemClass = `gh-admin-summary-item gh-admin-summary-item--${item.tone ?? "neutral"}`;
+        const inner = (
+          <>
+            <div className="gh-admin-summary-item__top">
+              <span className="gh-admin-summary-label">{item.label}</span>
+              <span aria-hidden className="gh-portal-icon-badge">
+                {item.icon ?? <BarChart3 />}
+              </span>
+            </div>
+            <strong>{item.value}</strong>
+            {item.hint ? <span className="gh-admin-summary-hint">{item.hint}</span> : null}
+          </>
+        );
+        return item.href ? (
+          <Link
+            key={index}
+            href={item.href}
+            className={`${itemClass} gh-admin-summary-item--link`}
+          >
+            {inner}
+          </Link>
+        ) : (
+          <div key={index} className={itemClass}>
+            {inner}
           </div>
-          <strong>{item.value}</strong>
-          {item.hint ? <span className="gh-admin-summary-hint">{item.hint}</span> : null}
-        </div>
-      ))}
+        );
+      })}
     </section>
   );
 }

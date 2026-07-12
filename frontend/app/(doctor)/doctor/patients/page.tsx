@@ -104,9 +104,34 @@ export default async function DoctorPatientsPage({
         description={d.patients.description}
       />
 
+      {/* Search first, stats compact — the list must be reachable without
+          scrolling past 3 full-size stat cards on short/mobile (audit 06-001). */}
+      <div className="gh-card gh-doctor-filter-card mb-4 p-4">
+        <form className="gh-doctor-filter-actions flex flex-wrap items-end gap-3">
+          <label className="flex flex-col gap-1 sm:min-w-[260px]">
+            <span className="gh-field-label">{d.common.search}</span>
+            <input
+              name="q"
+              defaultValue={q ?? ""}
+              placeholder={d.patients.searchPlaceholder}
+              className="gh-input"
+            />
+          </label>
+          <button type="submit" className="gh-btn gh-btn-primary text-sm">
+            {d.common.apply}
+          </button>
+          {q ? (
+            <Link href="/doctor/patients" className="gh-btn gh-btn-soft text-sm">
+              {d.common.reset}
+            </Link>
+          ) : null}
+        </form>
+      </div>
+
       {result.ok ? (
         <AdminSummaryStrip
           className="mb-4"
+          compact
           items={[
             {
               label: d.patients.statPatients,
@@ -129,28 +154,6 @@ export default async function DoctorPatientsPage({
           ]}
         />
       ) : null}
-
-      <div className="gh-card gh-doctor-filter-card mb-4 p-4">
-        <form className="gh-doctor-filter-actions flex flex-wrap items-end gap-3">
-          <label className="flex flex-col gap-1 sm:min-w-[260px]">
-            <span className="gh-field-label">{d.common.search}</span>
-            <input
-              name="q"
-              defaultValue={q ?? ""}
-              placeholder={d.patients.searchPlaceholder}
-              className="gh-input"
-            />
-          </label>
-          <button type="submit" className="gh-btn gh-btn-primary text-sm">
-            {d.common.apply}
-          </button>
-          {q ? (
-            <Link href="/doctor/patients" className="gh-btn gh-btn-soft text-sm">
-              {d.common.reset}
-            </Link>
-          ) : null}
-        </form>
-      </div>
 
       {!result.ok ? (
         <div className="gh-card p-6">

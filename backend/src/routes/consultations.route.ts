@@ -94,6 +94,12 @@ async function findReadableAppointment(
       consultationType: true,
       countryCode: true,
       status: true,
+      // Coarse paid/unpaid flag only (no amounts) — lets the doctor UI show
+      // the same booking-state wording (list's "Booked – waiting payment" /
+      // "Booking confirmed") on the appointment detail page's status readout,
+      // same as the list row for this appointment. Not an invoice/amount
+      // field, so it doesn't cross the "no patient billing to doctors" line.
+      paymentStatus: true,
       scheduledAt: true,
       meetingUrl: true,
       notes: true,

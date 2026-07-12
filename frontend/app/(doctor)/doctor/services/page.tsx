@@ -1,6 +1,6 @@
 import { Stethoscope } from "lucide-react";
 import { fetchDoctorServices } from "@/lib/api/doctor-api";
-import { AdminCard, AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
+import { AdminCard, PageHeader } from "@/components/portal-atoms";
 import { DoctorServiceSelectionForm } from "./_components/service-selection-form";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -30,10 +30,22 @@ export default async function DoctorServicesPage() {
       </>
     );
   }
-  const active = result.data.items.filter((item) => item.assignment?.status === "active").length;
-  const pending = result.data.items.filter((item) => item.assignment?.status === "pending").length;
-  const selected = result.data.items.filter((item) => item.assignment != null).length;
-  const countries = new Set(result.data.items.map((item) => item.countryCode)).size;
+  const description = (
+    <>
+      {d.services.description} {d.services.explainerIntro}{" "}
+      {result.data.approvalRequired ? (
+        <>
+          {d.services.explainerApprovalRequired}
+          <span className="font-semibold">{" "}{d.services.explainerApproved}</span>{" "}
+          {d.services.explainerBecomeBookable}{" "}
+          <span className="font-semibold">{d.services.explainerRejected}</span>.
+        </>
+      ) : (
+        d.services.explainerNoApproval
+      )}{" "}
+      {d.services.explainerHealthTests}
+    </>
+  );
 
   return (
     <>
@@ -44,37 +56,7 @@ export default async function DoctorServicesPage() {
           </span>
         }
         title={d.services.title}
-        description={d.services.description}
-      />
-
-      <AdminSummaryStrip
-        className="mb-4"
-        items={[
-          {
-            label: d.services.selected,
-            value: selected,
-            hint: d.services.selectedHint,
-            tone: selected > 0 ? "brand" : "warning",
-          },
-          {
-            label: d.services.bookable,
-            value: active,
-            hint: d.services.bookableHint,
-            tone: active > 0 ? "success" : "neutral",
-          },
-          {
-            label: d.services.awaitingApproval,
-            value: pending,
-            hint: d.services.awaitingHint,
-            tone: pending > 0 ? "warning" : "neutral",
-          },
-          {
-            label: d.services.markets,
-            value: countries,
-            hint: d.services.marketsHint,
-            tone: "neutral",
-          },
-        ]}
+        description={description}
       />
 
       <DoctorServiceSelectionForm

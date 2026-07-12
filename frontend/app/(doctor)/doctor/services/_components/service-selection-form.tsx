@@ -12,7 +12,7 @@ import {
   Stethoscope,
 } from "lucide-react";
 import type { ReactNode } from "react";
-import { Pill } from "@/components/portal-atoms";
+import { AdminSummaryStrip, Pill } from "@/components/portal-atoms";
 import { PortalTabs } from "@/components/PortalTabs";
 import type {
   DoctorSelectableService,
@@ -123,6 +123,18 @@ export function DoctorServiceSelectionForm({ approvalRequired, items, strings, c
     [items, multiCountry, activeCountryId],
   );
 
+  // Stat strip is scoped to the active country tab (falls back to all items
+  // when single-country) so counts never read as stale when switching tabs.
+  const activeCountryName = multiCountry
+    ? countries.find((c) => c.id === activeCountryId)?.name
+    : undefined;
+  const stats = useMemo(() => {
+    const active = scopedItems.filter((s) => s.assignment?.status === "active").length;
+    const pendingCount = scopedItems.filter((s) => s.assignment?.status === "pending").length;
+    const selectedCount = scopedItems.filter((s) => s.assignment != null).length;
+    return { active, pending: pendingCount, selected: selectedCount };
+  }, [scopedItems]);
+
   const grouped = useMemo(
     () =>
       KIND_ORDER.map((kind) => ({
@@ -207,29 +219,40 @@ export function DoctorServiceSelectionForm({ approvalRequired, items, strings, c
 
   return (
     <div className="gh-doctor-service-selection grid gap-5">
-      {/* How it works */}
-      <div className="gh-doctor-service-explainer rounded-[var(--radius-card-sm)] border border-[var(--portal-line-soft)] bg-[var(--portal-well)] px-5 py-4">
-        <p className="m-0 text-portal-compact leading-relaxed text-[var(--portal-muted)]">
-          {strings.explainerIntro}{" "}
-          {approvalRequired ? (
-            <>
-              {strings.explainerApprovalRequired}
-              <span className="font-semibold text-[var(--portal-text)]">
-                {" "}
-                {strings.explainerApproved}
-              </span>{" "}
-              {strings.explainerBecomeBookable}{" "}
-              <span className="font-semibold text-[var(--portal-text)]">
-                {strings.explainerRejected}
-              </span>
-              .
-            </>
-          ) : (
-            strings.explainerNoApproval
-          )}{" "}
-          {strings.explainerHealthTests}
-        </p>
-      </div>
+      <AdminSummaryStrip
+        items={[
+          {
+            label: strings.selected,
+            value: stats.selected,
+            hint: activeCountryName
+              ? strings.selectedHint + " · " + activeCountryName
+              : strings.selectedHint,
+            tone: stats.selected > 0 ? "brand" : "warning",
+          },
+          {
+            label: strings.bookable,
+            value: stats.active,
+            hint: activeCountryName
+              ? strings.bookableHint + " · " + activeCountryName
+              : strings.bookableHint,
+            tone: stats.active > 0 ? "success" : "neutral",
+          },
+          {
+            label: strings.awaitingApproval,
+            value: stats.pending,
+            hint: activeCountryName
+              ? strings.awaitingHint + " · " + activeCountryName
+              : strings.awaitingHint,
+            tone: stats.pending > 0 ? "warning" : "neutral",
+          },
+          {
+            label: strings.markets,
+            value: countries.length,
+            hint: strings.marketsHint,
+            tone: "neutral",
+          },
+        ]}
+      />
 
       {message ? (
         <div

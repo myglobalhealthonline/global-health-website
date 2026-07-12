@@ -118,6 +118,12 @@ export function DoctorCalendarUI({
   const [activeItem, setActiveItem] = useState<CalendarItem | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Add-availability / time-off validation and submit errors render inline
+  // next to their own form instead of the shared top-of-page banner, which
+  // sits ~170px above these bottom-of-page forms with no scroll affordance
+  // (CAL-04-002).
+  const [addAvailError, setAddAvailError] = useState<string | null>(null);
+  const [timeOffError, setTimeOffError] = useState<string | null>(null);
 
   function openDay(key: string) {
     setSelectedDay(key);
@@ -246,20 +252,20 @@ export function DoctorCalendarUI({
 
   async function onRangeTimeOff(action: "BLOCK" | "UNBLOCK") {
     if (!offFrom || !offTo) {
-      setError(s.errorPickStartEnd);
+      setTimeOffError(s.errorPickStartEnd);
       return;
     }
     if (offFrom >= offTo) {
-      setError(s.errorEndMustBeAfterStart);
+      setTimeOffError(s.errorEndMustBeAfterStart);
       return;
     }
     const fromUtc = zonedLocalDateTimeToUtc(offFrom, tz);
     const toUtc = zonedLocalDateTimeToUtc(offTo, tz);
     if (!fromUtc || !toUtc) {
-      setError(s.errorInvalidDateTime);
+      setTimeOffError(s.errorInvalidDateTime);
       return;
     }
-    setError(null);
+    setTimeOffError(null);
     setBusy(true);
     const res = await bulkBlockSlots({
       fromUtc,
@@ -273,7 +279,7 @@ export function DoctorCalendarUI({
       setOffTo("");
       setOffReason("");
     } else {
-      setError(res.message);
+      setTimeOffError(res.message);
     }
     setBusy(false);
   }
@@ -284,25 +290,25 @@ export function DoctorCalendarUI({
   // each consultation type needs.
   async function onAddAvailability() {
     if (!addFromDate || !addToDate) {
-      setError(s.errorPickDates);
+      setAddAvailError(s.errorPickDates);
       return;
     }
     if (addFromDate > addToDate) {
-      setError(errorEndDateAfterStart);
+      setAddAvailError(errorEndDateAfterStart);
       return;
     }
     const startMin = timeToMinutes(addStart);
     const endMin = timeToMinutes(addEnd);
     if (endMin <= startMin) {
-      setError(errorEndAfterStart);
+      setAddAvailError(errorEndAfterStart);
       return;
     }
     const weekdays = weekdaysInRange(addFromDate, addToDate);
     if (weekdays.length === 0) {
-      setError(s.errorInvalidRange);
+      setAddAvailError(s.errorInvalidRange);
       return;
     }
-    setError(null);
+    setAddAvailError(null);
     setBusy(true);
     const effectiveFrom = `${addFromDate}T00:00:00.000Z`;
     const effectiveUntil = `${addToDate}T23:59:59.999Z`;
@@ -321,7 +327,7 @@ export function DoctorCalendarUI({
         break;
       }
     }
-    if (failed) setError(failed);
+    if (failed) setAddAvailError(failed);
     else {
       await refetchMonth();
       setAddFromDate("");
@@ -510,6 +516,11 @@ export function DoctorCalendarUI({
                 </select>
               </label>
             </div>
+            {addAvailError ? (
+              <p className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
+                {addAvailError}
+              </p>
+            ) : null}
             <Btn
               type="button"
               size="sm"
@@ -566,6 +577,11 @@ export function DoctorCalendarUI({
                 className="gh-input h-10"
               />
             </label>
+            {timeOffError ? (
+              <p className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
+                {timeOffError}
+              </p>
+            ) : null}
             <div className="gh-doctor-calendar-range-actions flex gap-2">
               <Btn
                 type="button"

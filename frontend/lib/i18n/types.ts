@@ -666,6 +666,7 @@ export type CommonLocale = {
     openNavigation: string;
     closeMenu: string;
     allCaughtUp: string;
+    skipToContent: string;
     unsavedChangesTitle: string;
     unsavedChangesBody: string;
     unsavedChangesKeepEditing: string;

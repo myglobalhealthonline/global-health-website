@@ -23,11 +23,18 @@ export function ProfileSections({
   strings: ProfileStrings;
 }) {
   const primaryCountry = doctor.country;
-  const additional = doctor.additionalCountries
-    .map((row) => row.country)
-    .filter((c) => c.code !== primaryCountry.code);
+  // Single source for market counts (15-001): derive from `doctor.markets`
+  // (the real per-country registration rows, each with its own `active`
+  // flag) instead of `doctor.additionalCountries` (a looser admin-managed
+  // list with no active flag that can go stale — e.g. a country the doctor
+  // is no longer actively listed in but that lingers in that join table).
+  const marketRows = doctor.markets.filter((m) => m.country.code !== primaryCountry.code);
+  const additional = marketRows.filter((m) => m.active).map((m) => m.country);
+  const additionalInactive = marketRows.filter((m) => !m.active).map((m) => m.country);
+  const marketsCount = 1 + additional.length;
   const specialties = doctor.specialties.map((s) => s.specialty);
   const activeCountryName = activeMarket?.country.name ?? null;
+  const payoutOnFile = activeMarket?.bank.ibanSet ?? doctor.bank.ibanSet;
 
   return (
     <>
@@ -53,7 +60,7 @@ export function ProfileSections({
           },
           {
             label: strings.marketsLabel,
-            value: 1 + additional.length,
+            value: marketsCount,
             hint: strings.activeCountryListings,
             tone: "neutral",
           },
@@ -64,10 +71,13 @@ export function ProfileSections({
             tone: specialties.length > 0 ? "success" : "warning",
           },
           {
-            label: strings.languagesLabel,
-            value: doctor.languages.length,
-            hint: strings.patientFacingProfile,
-            tone: "neutral",
+            // 15-002 — folds the one non-duplicate ProfileInsight signal
+            // (payout status) in here; the strip already covers markets/
+            // categories, so a separate "Languages" tile was decorative.
+            label: strings.payout,
+            value: payoutOnFile ? strings.onFile : strings.missing,
+            hint: activeCountryName ?? strings.bankDetails,
+            tone: payoutOnFile ? "success" : "warning",
           },
         ]}
       />
@@ -101,11 +111,14 @@ export function ProfileSections({
               {strings.alsoListedIn}
             </dt>
             <dd className="mt-1 text-portal-body text-[var(--portal-text)]">
-              {additional.length === 0
+              {additional.length === 0 && additionalInactive.length === 0
                 ? "—"
-                : additional
-                    .map((c) => `${c.name} (${c.code.toUpperCase()})`)
-                    .join(", ")}
+                : [
+                    ...additional.map((c) => `${c.name} (${c.code.toUpperCase()})`),
+                    ...additionalInactive.map(
+                      (c) => `${c.name} (${c.code.toUpperCase()}, ${strings.inactive})`,
+                    ),
+                  ].join(", ")}
             </dd>
           </div>
           <div>

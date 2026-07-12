@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { BadgeCheck, Globe2, Landmark, Upload, Trash2 } from "lucide-react";
+import { Globe2, Upload, Trash2 } from "lucide-react";
 import { RichTextHtmlField } from "@/app/(admin)/admin/_components/rich-text-html-field";
 import { PhoneField } from "@/components/forms/phone-field";
 import {
@@ -282,7 +282,6 @@ export function DoctorProfileEditForm({
   );
   const [photoError, setPhotoError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const verifiedMarketCount = initial.markets.filter((market) => market.isVerified).length;
 
   useEffect(() => {
     // Resets all local edit state when a fresh `initial` snapshot arrives
@@ -564,32 +563,6 @@ export function DoctorProfileEditForm({
   return (
     <div className="gh-doctor-detail-grid gh-doctor-profile-edit-layout grid gap-4">
       <div className="grid gap-4">
-        <section className="gh-card p-4">
-          <div className="grid gap-3 sm:grid-cols-3">
-            <ProfileInsight
-              icon={<Globe2 className="size-4" aria-hidden />}
-              label={strings.marketsLabel}
-              value={String(initial.markets.length)}
-              helper={
-                activeCountryName
-                  ? strings.editingCountry.replace("{country}", activeCountryName)
-                  : strings.defaultDoctorProfile
-              }
-            />
-            <ProfileInsight
-              icon={<BadgeCheck className="size-4" aria-hidden />}
-              label={strings.verified}
-              value={`${verifiedMarketCount}/${initial.markets.length || 1}`}
-              helper={strings.countryRegistrationStatus}
-            />
-            <ProfileInsight
-              icon={<Landmark className="size-4" aria-hidden />}
-              label={strings.payout}
-              value={activeMarketHasIban ? strings.onFile : strings.missing}
-              helper={activeCountryName ?? strings.bankDetails}
-            />
-          </div>
-        </section>
         {/* ── Identity form (global — applies to all countries) ── */}
         <form onSubmit={onSubmitIdentity}>
           <FormSection
@@ -990,29 +963,3 @@ export function DoctorProfileEditForm({
   );
 }
 
-function ProfileInsight({
-  icon,
-  label,
-  value,
-  helper,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  helper: string;
-}) {
-  return (
-    <div className="rounded-lg border border-[var(--portal-line)] bg-[var(--portal-well)] p-3">
-      <p className="flex items-center gap-2 text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-        <span className="text-[var(--portal-primary)]">{icon}</span>
-        {label}
-      </p>
-      <p className="mt-2 text-lg font-extrabold text-[var(--portal-text)]">
-        {value}
-      </p>
-      <p className="mt-1 text-portal-meta text-[var(--portal-muted)]">
-        {helper}
-      </p>
-    </div>
-  );
-}

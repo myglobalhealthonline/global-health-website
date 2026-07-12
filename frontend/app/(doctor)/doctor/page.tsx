@@ -126,7 +126,13 @@ export default async function DoctorOverviewPage() {
     <>
       <CommandBand
         context={isLive ? d.dashboard.consultationLive : d.dashboard.nextConsultation}
-        title={nextAppointment ? nextAppointment.fullName : d.dashboard.noConsultsToday}
+        title={
+          nextAppointment
+            ? nextAppointment.fullName
+            : stats.totalActive > 0
+              ? d.dashboard.noConsultsTodayOpen.replace("{count}", String(stats.totalActive))
+              : d.dashboard.noConsultsToday
+        }
         chip={subtitle}
         metrics={[
           {
@@ -140,6 +146,11 @@ export default async function DoctorOverviewPage() {
         ]}
         action={
           <div className="flex flex-wrap items-center gap-2.5">
+            {!nextAppointment && stats.totalActive > 0 ? (
+              <Btn href="/doctor/appointments?openOnly=true" variant="primary" size="sm">
+                {d.dashboard.viewOpenQueue}
+              </Btn>
+            ) : null}
             {nextAppointment?.meetingUrl ? (
               <Btn
                 href={nextAppointment.meetingUrl}
@@ -182,6 +193,8 @@ export default async function DoctorOverviewPage() {
           icon={<Calendar className="size-5" aria-hidden />}
         />
         <StatCard
+          tone={stats.totalActive > 0 ? "warning" : "neutral"}
+          href={stats.totalActive > 0 ? "/doctor/appointments?openOnly=true" : undefined}
           label={d.dashboard.open}
           value={stats.totalActive}
           hint={d.dashboard.notCancelledOrCompleted}

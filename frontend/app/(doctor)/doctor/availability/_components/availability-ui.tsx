@@ -39,6 +39,24 @@ function timeToMinutes(t: string): number {
   return (h || 0) * 60 + (m || 0);
 }
 
+// Effective-date ranges overlap when both are unbounded or bounded ends
+// cross; null/"" means "always" on that side. Dates compare fine as
+// YYYY-MM-DD strings.
+function dateRangesOverlap(
+  aFrom: string | null,
+  aUntil: string | null,
+  bFrom: string,
+  bUntil: string,
+): boolean {
+  const aFromD = aFrom ? aFrom.slice(0, 10) : null;
+  const aUntilD = aUntil ? aUntil.slice(0, 10) : null;
+  const bFromD = bFrom || null;
+  const bUntilD = bUntil || null;
+  const startsBeforeOtherEnds = !aUntilD || !bFromD || aUntilD >= bFromD;
+  const endsAfterOtherStarts = !aFromD || !bUntilD || aFromD <= bUntilD;
+  return startsBeforeOtherEnds && endsAfterOtherStarts;
+}
+
 type Props = {
   initialWindows: AvailabilityWindow[];
   initialSlots: DoctorTimeSlotView[];
@@ -76,7 +94,8 @@ export function DoctorAvailabilityUI({
   const [slots, setSlots] = useState(initialSlots);
   const [busy, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const deleteTarget = windows.find((w) => w.id === deleteTargetId) ?? null;
 
   // ── Add-window form state ───────────────────────────────────────
   const [weekday, setWeekday] = useState(1); // Mon
@@ -86,6 +105,26 @@ export function DoctorAvailabilityUI({
   // ISO date strings (YYYY-MM-DD). Empty = "always" / "forever".
   const [effectiveFromDate, setEffectiveFromDate] = useState("");
   const [effectiveUntilDate, setEffectiveUntilDate] = useState("");
+
+  // Non-blocking overlap warning: does the in-progress form conflict with an
+  // existing active window on the same weekday within an overlapping
+  // effective-date range? Doesn't prevent submit — legitimate overlaps
+  // (e.g. a temporary extra evening clinic) do exist.
+  const overlapWindow = useMemo(() => {
+    const startMin = timeToMinutes(startTime);
+    const endMin = timeToMinutes(endTime);
+    if (endMin <= startMin) return null;
+    return (
+      windows.find(
+        (w) =>
+          w.isActive &&
+          w.weekday === weekday &&
+          startMin < w.endMinute &&
+          endMin > w.startMinute &&
+          dateRangesOverlap(w.effectiveFrom, w.effectiveUntil, effectiveFromDate, effectiveUntilDate),
+      ) ?? null
+    );
+  }, [windows, weekday, startTime, endTime, effectiveFromDate, effectiveUntilDate]);
 
   function onAddWindow(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -129,13 +168,13 @@ export function DoctorAvailabilityUI({
   }
 
   function onDeleteWindow(id: string) {
-    setDeleteTarget(id);
+    setDeleteTargetId(id);
   }
 
   function confirmDeleteWindow() {
-    const id = deleteTarget;
+    const id = deleteTargetId;
     if (!id) return;
-    setDeleteTarget(null);
+    setDeleteTargetId(null);
     startTransition(async () => {
       const res = await deleteAvailabilityWindow(id);
       if (!res.ok) {
@@ -373,6 +412,15 @@ export function DoctorAvailabilityUI({
                 {s.datesHint}
               </p>
 
+              {overlapWindow ? (
+                <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                  {s.overlapWarning
+                    .replace("{day}", WEEKDAYS.find((d) => d.value === overlapWindow.weekday)?.label ?? "—")
+                    .replace("{start}", minutesToTime(overlapWindow.startMinute))
+                    .replace("{end}", minutesToTime(overlapWindow.endMinute))}
+                </p>
+              ) : null}
+
               <Btn type="submit" variant="primary" size="sm" disabled={busy} iconLeft={<Plus className="size-3.5" />}>
                 {busy ? s.adding : s.addWindow}
               </Btn>
@@ -396,12 +444,19 @@ export function DoctorAvailabilityUI({
 
       <PortalDialog
         open={deleteTarget !== null}
-        onClose={() => setDeleteTarget(null)}
-        title={s.removeWindowTitle}
+        onClose={() => setDeleteTargetId(null)}
+        title={
+          deleteTarget
+            ? s.removeWindowTitleNamed
+                .replace("{day}", WEEKDAYS.find((d) => d.value === deleteTarget.weekday)?.label ?? "—")
+                .replace("{start}", minutesToTime(deleteTarget.startMinute))
+                .replace("{end}", minutesToTime(deleteTarget.endMinute))
+            : s.removeWindowTitle
+        }
         danger
         footer={
           <>
-            <Btn variant="ghost" onClick={() => setDeleteTarget(null)}>
+            <Btn variant="ghost" onClick={() => setDeleteTargetId(null)}>
               {s.cancel}
             </Btn>
             <Btn variant="danger" onClick={confirmDeleteWindow}>
@@ -411,6 +466,21 @@ export function DoctorAvailabilityUI({
         }
       >
         <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
+          {deleteTarget?.effectiveFrom || deleteTarget?.effectiveUntil
+            ? s.removeWindowDateQualifier
+                .replace(
+                  "{from}",
+                  deleteTarget.effectiveFrom
+                    ? new Date(deleteTarget.effectiveFrom).toLocaleDateString("en-IE")
+                    : s.fromAlways,
+                )
+                .replace(
+                  "{until}",
+                  deleteTarget.effectiveUntil
+                    ? new Date(deleteTarget.effectiveUntil).toLocaleDateString("en-IE")
+                    : s.forever,
+                ) + " "
+            : ""}
           {s.removeWindowBody}
         </p>
       </PortalDialog>

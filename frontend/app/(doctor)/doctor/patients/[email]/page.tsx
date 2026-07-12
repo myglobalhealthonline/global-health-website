@@ -5,6 +5,8 @@ import { AdminEmptyState, AdminSummaryStrip, PageHeader, Pill } from "@/componen
 import { PortalMobileCard } from "@/components/PortalMobileCard";
 import { PatientProfilePanel } from "./_components/patient-profile-panel";
 import { ConsultationHistoryPanel } from "./_components/consultation-history-panel";
+import { PatientSafetyStrip } from "./_components/patient-safety-strip";
+import { PatientRecordTabs } from "./_components/patient-record-tabs";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 // ponytail: cs/de/ro doctor.json don't yet carry the newer patients.* keys
@@ -57,6 +59,8 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
         description={d.patients.recordDesc}
       />
 
+      <PatientSafetyStrip email={patient.email} strings={d.patients as unknown as PatientsCopy} />
+
       <AdminSummaryStrip
         className="mb-4"
         items={[
@@ -78,11 +82,23 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
             hint: d.patients.lockedNotes,
             tone: patient.signedConsultCount > 0 ? "success" : "neutral",
           },
+          {
+            label: d.common.dateOfBirth,
+            value: patient.dateOfBirth
+              ? new Date(patient.dateOfBirth).toLocaleDateString()
+              : "—",
+            hint: d.patients.recordEyebrow,
+            tone: "neutral",
+          },
         ]}
       />
 
-      <div className="gh-doctor-detail-grid gh-doctor-patient-detail-layout grid gap-4">
-        <div className="grid gap-4">
+      <PatientRecordTabs
+        tabsAria={d.patients.recordEyebrow}
+        tabHistoryLabel={d.patients.historyTitle}
+        tabConsultLabel={d.patients.consultHistoryTitle}
+        tabChartLabel={d.patients.chartTitle}
+        historyPanel={
         <section className="gh-card gh-doctor-patient-history-card p-6">
           <h3
             className="m-0 text-[var(--portal-text)]"
@@ -214,7 +230,8 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
             </>
           )}
         </section>
-
+        }
+        consultPanel={
         <section className="gh-card gh-doctor-patient-history-card p-6">
           <h3
             className="m-0 text-[var(--portal-text)]"
@@ -233,63 +250,20 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
             <ConsultationHistoryPanel patientEmail={patient.email} strings={d.patients as unknown as PatientsCopy} />
           </div>
         </section>
-
-        {/* Documents card hidden from doctor portal per GDPR plan —
-            doctors view (but don't download) docs inside the appointment
-            workspace via the existing per-appointment Documents tab.
-            Admin retains the all-documents archive under /admin/users. */}
-        </div>
-
-        <aside className="gh-doctor-side-stack grid gap-4 self-start">
+        }
+        chartPanel={
+          <>
           <PatientProfilePanel email={patient.email} strings={d.patients as unknown as PatientsCopy} />
-          <section className="gh-card gh-doctor-summary-card p-6">
-            <h3
-              className="m-0 text-[var(--portal-text)]"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: 16,
-                fontWeight: 800,
-              }}
-            >
-              {d.patients.summary}
-            </h3>
-            <dl className="mt-3 grid gap-2 text-portal-compact">
-              <Row label={d.common.country} value={patient.countryCode.toUpperCase()} />
-              <Row
-                label={d.common.dateOfBirth}
-                value={
-                  patient.dateOfBirth
-                    ? new Date(patient.dateOfBirth).toLocaleDateString()
-                    : "—"
-                }
-              />
-              <Row
-                label={d.common.firstSeen}
-                value={new Date(patient.firstSeen).toLocaleDateString()}
-              />
-              <Row
-                label={d.patients.totalAppointments}
-                value={String(patient.appointmentCount)}
-              />
-              <Row
-                label={d.patients.signedConsults}
-                value={String(patient.signedConsultCount)}
-              />
-            </dl>
-          </section>
-        </aside>
-      </div>
+          {/* "Summary" card removed (07-006) — its non-duplicate value
+              (DOB) moved into the stat strip above; the rest duplicated
+              AdminSummaryStrip. Documents card stays out of the doctor
+              portal per GDPR plan — doctors view (but don't download)
+              docs inside the appointment workspace via the existing
+              per-appointment Documents tab. Admin retains the
+              all-documents archive under /admin/users. */}
+          </>
+        }
+      />
     </>
-  );
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-baseline justify-between gap-3 border-b border-[var(--portal-line)]/60 py-1">
-      <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-        {label}
-      </dt>
-      <dd className="text-right text-[var(--portal-text)]">{value}</dd>
-    </div>
   );
 }

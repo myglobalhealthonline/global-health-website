@@ -49,6 +49,7 @@ import { AdminSummaryStrip } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { doctorAppointmentView } from "@/lib/api/appointment-status-labels";
 
 export const dynamic = "force-dynamic";
 
@@ -67,12 +68,19 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   const { id } = await params;
   const locale = await getPageLocale();
   const { doctor: d } = loadLocaleBundle(locale);
-  const statusValueText: Record<string, string> = {
-    REQUEST_RECEIVED: d.appointmentDetail.statusCreated,
-    UNDER_REVIEW: d.appointmentDetail.statusSent,
-    CONTACTED: d.appointmentDetail.statusContacted,
-    COMPLETED: d.appointmentDetail.statusConcluded,
-    CANCELLED: d.appointmentDetail.statusCancelled,
+  // Same shared lexicon + collapsing logic as the appointments list
+  // (lib/api/appointment-status-labels.ts) and the same locale keys
+  // (d.appointments.status*), so the patient-context "Status" readout here
+  // reads identically to the list row for the same appointment. The
+  // Appointment status *select* below (appointment-actions.tsx) is a
+  // separate, intentionally more granular workflow-stage editor — it still
+  // uses its own five-value vocabulary since collapsing it would make
+  // distinct backend states indistinguishable in the dropdown.
+  const doctorViewStatusText: Record<string, string> = {
+    waiting_payment: d.appointments.statusWaitingPayment,
+    confirmed: d.appointments.statusConfirmed,
+    cancelled: d.appointments.statusCancelled,
+    concluded: d.appointments.statusConcluded,
   };
   const [
     consultRes,
@@ -645,7 +653,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             panel: (
               <PatientContextPanel
                 appointment={appointment}
-                statusText={statusValueText[appointment.status] ?? appointment.status}
+                statusText={doctorViewStatusText[doctorAppointmentView(appointment.status, appointment.paymentStatus)]}
                 copy={patientContextCopy}
               />
             ),
@@ -657,7 +665,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
       <aside className="gh-doctor-context-rail">
         <PatientContextPanel
           appointment={appointment}
-          statusText={statusValueText[appointment.status] ?? appointment.status}
+          statusText={doctorViewStatusText[doctorAppointmentView(appointment.status, appointment.paymentStatus)]}
           copy={patientContextCopy}
         />
         {/* Patient billing/invoice is intentionally NOT shown to doctors —

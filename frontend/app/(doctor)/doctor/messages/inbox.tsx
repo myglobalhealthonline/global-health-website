@@ -6,6 +6,7 @@ import {
   fetchDoctorChat,
   postDoctorMessage,
   uploadDoctorChatFile,
+  toggleDoctorChatLock,
 } from "@/lib/api/consultation-chat-api";
 import type { DoctorMessageThread } from "@/lib/api/doctor-api";
 
@@ -44,11 +45,13 @@ export function DoctorMessagesInbox({
           fetcher={fetchDoctorChat}
           poster={postDoctorMessage}
           fileUploader={uploadDoctorChatFile}
+          onToggleLock={(open) => toggleDoctorChatLock(thread.id, open)}
           variant="embedded"
         />
       )}
       emptyTitle={s.emptyTitle}
       emptyDescription={s.emptyDescription}
+      orderFallbackLabel={s.orderFallbackLabel}
     />
   );
 }

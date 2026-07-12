@@ -286,6 +286,9 @@ export type AppointmentDetailDto = {
   consultationType: string;
   countryCode: string;
   status: string;
+  /** Coarse paid/unpaid flag (no amounts) — drives the same booking-state
+   *  wording the appointments list uses (see appointment-status-labels.ts). */
+  paymentStatus: string;
   scheduledAt: string | null;
   meetingUrl: string | null;
   notes: string | null;

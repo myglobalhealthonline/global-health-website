@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AlertTriangle, CalendarDays, CheckCircle2, ChevronRight, ClipboardList, SearchX, Video } from "lucide-react";
+import { AlertTriangle, CalendarDays, CheckCircle2, ChevronRight, SearchX, Video } from "lucide-react";
 import { fetchDoctorAppointments, type DoctorAppointment } from "@/lib/api/doctor-api";
 import {
   doctorAppointmentView,
@@ -99,7 +99,6 @@ export default async function DoctorAppointmentsPage({
   const openAppointments = appointments.filter(
     (item) => item.status !== "COMPLETED" && item.status !== "CANCELLED",
   ).length;
-  const readyToJoin = appointments.filter((item) => item.meetingUrl).length;
   const unfinalized = appointments.filter((item) => !item.finalized).length;
 
   return (
@@ -121,25 +120,12 @@ export default async function DoctorAppointmentsPage({
           className="mb-4"
           items={[
             {
-              label: d.appointments.visibleResults,
-              value: appointments.length,
-              hint: d.common.totalHint.replace("{total}", String(result.data.pagination.total)),
-              tone: "brand",
-              icon: <ClipboardList aria-hidden />,
-            },
-            {
               label: d.appointments.openConsults,
               value: openAppointments,
               hint: d.appointments.openConsultsHint,
               tone: openAppointments > 0 ? "warning" : "neutral",
               icon: <AlertTriangle aria-hidden />,
-            },
-            {
-              label: d.appointments.meetingLinks,
-              value: readyToJoin,
-              hint: d.appointments.meetingLinksHint,
-              tone: readyToJoin > 0 ? "success" : "neutral",
-              icon: <Video aria-hidden />,
+              href: "/doctor/appointments?openOnly=true",
             },
             {
               label: d.appointments.notFinalized,
@@ -147,6 +133,7 @@ export default async function DoctorAppointmentsPage({
               hint: d.appointments.notFinalizedHint,
               tone: unfinalized > 0 ? "warning" : "neutral",
               icon: <CheckCircle2 aria-hidden />,
+              href: "/doctor/appointments?finalized=false",
             },
           ]}
         />

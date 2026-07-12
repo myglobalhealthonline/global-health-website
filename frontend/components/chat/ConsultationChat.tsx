@@ -304,6 +304,13 @@ export function ConsultationChat({
           </p>
         )}
 
+        {loading && items.length === 0 && (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="size-5 animate-spin" style={{ color: "var(--portal-muted)" }} aria-hidden />
+            <span className="sr-only">Loading messages…</span>
+          </div>
+        )}
+
         {!loading && items.length === 0 && (
           <div className="gh-chat-empty flex items-center gap-3 rounded-lg px-4 py-3 text-left">
             <Send className="size-4 shrink-0" style={{ color: "var(--portal-muted)" }} aria-hidden />

@@ -15,7 +15,15 @@
  *  - Portal label + home href are props (Doctor portal / Patient portal)
  */
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight, Menu, X } from "lucide-react";
@@ -67,6 +75,7 @@ export type PortalShellChrome = {
   openNavigation: string;
   closeMenu: string;
   allCaughtUp: string;
+  skipToContent: string;
 };
 
 const DEFAULT_CHROME: PortalShellChrome = {
@@ -77,7 +86,29 @@ const DEFAULT_CHROME: PortalShellChrome = {
   openNavigation: "Open navigation",
   closeMenu: "Close menu",
   allCaughtUp: "You're all caught up.",
+  skipToContent: "Skip to main content",
 };
+
+/** Live unread-notifications count, shared between the shell's own bell/nav
+ *  badges and any descendant page content (e.g. the notifications list).
+ *  Initialized from the server-rendered prop and kept in sync with it on
+ *  every render, but mark-read actions can also update it immediately —
+ *  relying on `router.refresh()` alone to reliably re-run a *parent*
+ *  layout's data fetch on every Next.js version is exactly the kind of
+ *  thing that silently regresses (11-001). */
+const NotificationCenterContext = createContext<{
+  unreadCount: number;
+  setUnreadCount: (value: number | ((prev: number) => number)) => void;
+} | null>(null);
+
+/** Call from a descendant page (inside a portal layout using `PortalShell`)
+ *  to read/adjust the live unread count so the bell dot + sidebar badge
+ *  update in the same tick as an optimistic mark-read UI change. No-op
+ *  setter outside a `PortalShell` so callers don't need to guard usage. */
+export function useNotificationCenter() {
+  const ctx = useContext(NotificationCenterContext);
+  return ctx ?? { unreadCount: 0, setUnreadCount: () => {} };
+}
 
 function humanizeSegment(seg: string): string {
   if (!seg) return "";
@@ -174,6 +205,13 @@ export function PortalShell({
   const c = chrome ?? DEFAULT_CHROME;
   const [navOpen, setNavOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(notificationsUnreadCount);
+  // Re-sync from the server prop on every real navigation/reload (source of
+  // truth); mark-read actions below additionally update it optimistically
+  // in between, independent of whether router.refresh() re-ran this layout.
+  useEffect(() => {
+    setUnreadCount(notificationsUnreadCount);
+  }, [notificationsUnreadCount]);
   const pathname = usePathname();
   const breadcrumbs = useBreadcrumbs(pathname, rootHref, rootBreadcrumb);
   const navRef = useRef<HTMLElement | null>(null);
@@ -201,6 +239,7 @@ export function PortalShell({
   const noTranslate = portalKey !== "patient";
 
   return (
+    <NotificationCenterContext.Provider value={{ unreadCount, setUnreadCount }}>
     <div
       className={`gh-portal-shell min-h-screen${noTranslate ? " notranslate" : ""}`}
       translate={noTranslate ? "no" : undefined}
@@ -208,6 +247,13 @@ export function PortalShell({
       data-density="comfortable"
     >
       <IdleLogout />
+      {/* 16-005: first focusable element in the shell — visually hidden
+          until focused, jumps keyboard users past the ~15-item sidebar
+          straight to page content. Reuses the public site's `.gh-skip-link`
+          (globals.css, shared) rather than a new portal.css rule. */}
+      <a href="#main-content" className="gh-skip-link">
+        {c.skipToContent}
+      </a>
       {/* Mobile overlay */}
       {navOpen ? (
         <button
@@ -260,7 +306,7 @@ export function PortalShell({
                         href={s.href}
                         icon={s.icon}
                         label={s.label}
-                        badge={s.badge}
+                        badge={s.href === notificationsViewAllHref ? unreadCount : s.badge}
                         active={isActive(s.href)}
                         onNavigate={() => setNavOpen(false)}
                       />
@@ -359,7 +405,7 @@ export function PortalShell({
               >
                 <NotificationPopover
                   items={notifications ?? []}
-                  unreadCount={notificationsUnreadCount}
+                  unreadCount={unreadCount}
                   viewAllHref={notificationsViewAllHref ?? null}
                   emptyMessage={notificationsEmptyMessage ?? c.allCaughtUp}
                 />
@@ -382,11 +428,12 @@ export function PortalShell({
 
           {banner}
 
-          <main className="gh-admin-main gh-portal-main min-w-0 flex-1">
+          <main id="main-content" className="gh-admin-main gh-portal-main min-w-0 flex-1">
             {children}
           </main>
         </div>
     </div>
+    </NotificationCenterContext.Provider>
   );
 }
 

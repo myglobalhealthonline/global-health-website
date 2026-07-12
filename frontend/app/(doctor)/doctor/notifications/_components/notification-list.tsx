@@ -5,7 +5,8 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Bell, Check, CheckCheck } from "lucide-react";
 import { formatAppDateTime } from "@/lib/format-datetime";
-import { AdminEmptyState } from "@/components/portal-atoms";
+import { AdminEmptyState, AdminSummaryStrip } from "@/components/portal-atoms";
+import { useNotificationCenter } from "@/components/portal-shell";
 
 type NotificationItem = {
   id: string;
@@ -35,11 +36,16 @@ export function NotificationListClient({
   const router = useRouter();
   const [items, setItems] = useState<NotificationItem[]>(initial);
   const [pending, startTransition] = useTransition();
+  const { setUnreadCount } = useNotificationCenter();
 
   function markOne(id: string) {
+    const wasUnread = items.some((n) => n.id === id && !n.readAt);
     setItems((prev) =>
       prev.map((n) => (n.id === id ? { ...n, readAt: new Date().toISOString() } : n)),
     );
+    // Optimistic — updates the bell/sidebar badge in the same tick instead
+    // of waiting on router.refresh() to re-run the shell layout's own fetch.
+    if (wasUnread) setUnreadCount((prev) => Math.max(0, prev - 1));
     startTransition(async () => {
       await fetch(`/api/doctor/notifications/${id}/read`, { method: "PATCH" });
       router.refresh();
@@ -50,25 +56,61 @@ export function NotificationListClient({
     setItems((prev) =>
       prev.map((n) => ({ ...n, readAt: n.readAt ?? new Date().toISOString() })),
     );
+    setUnreadCount(0);
     startTransition(async () => {
       await fetch("/api/doctor/notifications/read-all", { method: "POST" });
       router.refresh();
     });
   }
 
+  // Derived from `items` (not a server-computed prop) so it stays correct
+  // through optimistic mark-read/mark-all clicks without depending on
+  // router.refresh() re-running the page's own data fetch (11-001).
+  const unreadCount = items.filter((n) => !n.readAt).length;
+  const summaryStrip = (
+    <AdminSummaryStrip
+      className="mb-4"
+      items={[
+        {
+          label: strings.unread,
+          value: unreadCount,
+          hint: strings.needsReview,
+          tone: unreadCount > 0 ? "warning" : "neutral",
+        },
+        {
+          label: strings.total,
+          value: items.length,
+          hint: strings.recentHint,
+          tone: "brand",
+        },
+        {
+          label: strings.source,
+          value: <Bell className="size-5" aria-hidden />,
+          hint: strings.sourceHint,
+          tone: "success",
+        },
+      ]}
+    />
+  );
+
   if (items.length === 0) {
     return (
-      <AdminEmptyState
-        className="gh-doctor-empty-state"
-        icon={<Bell className="size-5" aria-hidden />}
-        assetSrc="/images/portal/obsidian/empty-notifications.svg"
-        title={strings.emptyTitle}
-        description={strings.emptyDesc}
-      />
+      <>
+        {summaryStrip}
+        <AdminEmptyState
+          className="gh-doctor-empty-state"
+          icon={<Bell className="size-5" aria-hidden />}
+          assetSrc="/images/portal/obsidian/empty-notifications.svg"
+          title={strings.emptyTitle}
+          description={strings.emptyDesc}
+        />
+      </>
     );
   }
 
   return (
+    <>
+    {summaryStrip}
     <div className="gh-card gh-doctor-notification-list overflow-hidden p-0">
       <div className="gh-doctor-list-toolbar flex items-center justify-between border-b border-[var(--portal-line)] px-4 py-3">
         <p className="text-portal-meta text-[var(--portal-muted)]">
@@ -145,5 +187,6 @@ export function NotificationListClient({
         })}
       </ul>
     </div>
+    </>
   );
 }

@@ -53,12 +53,15 @@ export function MessagesInbox({
   initialSelectedId,
   emptyTitle = "No conversations",
   emptyDescription = "Messages will appear here.",
+  orderFallbackLabel = "Open appointment",
 }: {
   threads: InboxThread[];
   renderChat: (thread: InboxThread) => ReactNode;
   initialSelectedId?: string | null;
   emptyTitle?: string;
   emptyDescription?: string;
+  /** Link label used when a thread has no `orderNumber` (still navigates via `orderHref`). */
+  orderFallbackLabel?: string;
 }) {
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(
@@ -228,16 +231,14 @@ export function MessagesInbox({
               >
                 <ArrowLeft className="size-4" aria-hidden />
               </button>
-              {selected.orderNumber ? (
-                <Link
-                  href={selected.orderHref}
-                  className="rounded px-1.5 py-0.5 font-mono text-portal-meta font-bold underline-offset-2 hover:underline"
-                  style={{ background: surfaceSoft, color: signal }}
-                  title="Open the appointment"
-                >
-                  {selected.orderNumber}
-                </Link>
-              ) : null}
+              <Link
+                href={selected.orderHref}
+                className="rounded px-1.5 py-0.5 font-mono text-portal-meta font-bold underline-offset-2 hover:underline"
+                style={{ background: surfaceSoft, color: signal }}
+                title="Open the appointment"
+              >
+                {selected.orderNumber ?? orderFallbackLabel}
+              </Link>
               <span className="text-[15px] font-bold" style={{ color: text }}>
                 {selected.name}
               </span>
