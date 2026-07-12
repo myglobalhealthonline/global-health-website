@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, CalendarClock, LayoutDashboard, MessageSquare, UserRound } from "lucide-react";
 import { MANUAL_BOOKING_COOKIE } from "@/lib/admin/manual-booking-cookie";
 import {
   fetchAdminAppointmentById,
@@ -352,6 +352,7 @@ export default async function AdminAppointmentDetailPage({
         }
         title={appointment.fullName}
         description={`${appointment.consultationType} · ${formatDate(appointment.createdAt)}`}
+        icon={<UserRound aria-hidden />}
         actions={
           <Pill tone={statusToneFor(appointment.status)}>
             {appointment.status.replace(/_/g, " ").toLowerCase()}
@@ -430,6 +431,7 @@ export default async function AdminAppointmentDetailPage({
           {
             id: "overview",
             label: "Overview",
+            icon: <LayoutDashboard aria-hidden />,
             panel: (
               <div className="grid gap-4">
                 <AdminCard>
@@ -532,6 +534,7 @@ export default async function AdminAppointmentDetailPage({
           {
             id: "schedule",
             label: "Schedule",
+            icon: <CalendarClock aria-hidden />,
             panel: (
               <div className="grid gap-4">
                 {/* Schedule the Google Meet call. Filling both fields and
@@ -709,6 +712,7 @@ export default async function AdminAppointmentDetailPage({
           {
             id: "messages",
             label: "Messages",
+            icon: <MessageSquare aria-hidden />,
             panel: (
               <div className="grid gap-4">
                 {/* Patient ↔ admin chat for this appointment. Polling-based;

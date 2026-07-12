@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertCircle, Save } from "lucide-react";
+import {
+  AlertCircle,
+  BadgeCheck,
+  FileCheck2,
+  Flag,
+  Save,
+  ShieldCheck,
+  User,
+} from "lucide-react";
 import {
   fetchCurrentUser,
   patchCurrentUser,
@@ -75,12 +83,12 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
 
   const a = i18n;
   const p = a.profile;
-  const TABS: { id: Tab; label: string }[] = [
-    { id: "personal", label: p.tabPersonal },
-    { id: "insurance", label: p.tabInsurance },
-    { id: "verification", label: p.tabVerification },
-    { id: "nationality", label: p.tabNationality },
-    { id: "privacy", label: p.tabPrivacy },
+  const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
+    { id: "personal", label: p.tabPersonal, icon: <User aria-hidden /> },
+    { id: "insurance", label: p.tabInsurance, icon: <ShieldCheck aria-hidden /> },
+    { id: "verification", label: p.tabVerification, icon: <BadgeCheck aria-hidden /> },
+    { id: "nationality", label: p.tabNationality, icon: <Flag aria-hidden /> },
+    { id: "privacy", label: p.tabPrivacy, icon: <FileCheck2 aria-hidden /> },
   ];
   const needsAttention = Boolean(user && !user.emailVerifiedAt) || !ghn;
   const profileStatusItems = [
@@ -88,21 +96,27 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
       label: p.statusEmail,
       value: user?.emailVerifiedAt ? p.statusVerified : p.statusNeedsVerification,
       hint: user?.email ?? p.statusAccountEmail,
+      tone: user?.emailVerifiedAt ? ("success" as const) : ("warning" as const),
+      icon: <AlertCircle aria-hidden />,
     },
     {
       label: p.statusPhone,
       value: phone ? p.statusAdded : p.statusMissing,
       hint: p.statusPhoneHint,
+      icon: <User aria-hidden />,
     },
     {
       label: p.statusPatientId,
       value: ghn ? p.statusActive : p.statusPending,
       hint: p.statusPatientIdHint,
+      tone: ghn ? ("success" as const) : ("warning" as const),
+      icon: <BadgeCheck aria-hidden />,
     },
     {
       label: p.statusProfile,
       value: fullName ? p.statusStarted : p.statusIncomplete,
       hint: p.statusProfileHint,
+      icon: <FileCheck2 aria-hidden />,
     },
   ];
 
@@ -130,6 +144,7 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
         eyebrow={a.profile.breadcrumb}
         title={a.profile.title}
         description={a.profile.subtitle}
+        icon={<User aria-hidden />}
         actions={
           ghn ? (
             <span
@@ -173,7 +188,7 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
           ariaLabel={p.tabsAria}
           value={activeTab}
           onChange={(v) => setActiveTab(v as Tab)}
-          items={TABS.map((tab) => ({ value: tab.id, label: tab.label }))}
+          items={TABS.map((tab) => ({ value: tab.id, label: tab.label, icon: tab.icon }))}
           syncParam="tab"
         />
       </div>

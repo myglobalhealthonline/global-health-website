@@ -24,6 +24,8 @@ export type AppointmentTab = {
   badge?: string | null;
   /** Amber dot styling for pending-send counts. */
   badgeAlert?: boolean;
+  /** Optional outline icon rendered left of the label (design brief §3). */
+  icon?: ReactNode;
   panel: ReactNode;
 };
 
@@ -84,6 +86,7 @@ export function AppointmentTabs({
           label: tab.label,
           badge: tab.badge,
           badgeAlert: tab.badgeAlert,
+          icon: tab.icon,
         }))}
       />
 

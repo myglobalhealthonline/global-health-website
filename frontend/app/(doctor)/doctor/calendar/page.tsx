@@ -1,4 +1,4 @@
-import { CalendarRange } from "lucide-react";
+import { Ban, CalendarCheck2, CalendarRange, Clock, Globe2 } from "lucide-react";
 import { PageHeader, AdminCard, AdminSummaryStrip } from "@/components/portal-atoms";
 import { fetchDoctorAvailabilityRange } from "@/lib/api/doctor-availability-server";
 import { fetchDoctorAppointments } from "@/lib/api/doctor-api";
@@ -82,6 +82,7 @@ export default async function DoctorCalendarPage() {
         }
         title={d.calendar.title}
         description={d.calendar.description}
+        icon={<CalendarRange aria-hidden />}
       />
 
       <AdminSummaryStrip
@@ -92,24 +93,28 @@ export default async function DoctorCalendarPage() {
             value: consultations.length,
             hint: d.calendar.statConsultationsHint,
             tone: consultations.length > 0 ? "brand" : "neutral",
+            icon: <CalendarCheck2 aria-hidden />,
           },
           {
             label: d.calendar.statOpenSlots,
             value: openSlots,
             hint: d.calendar.statOpenSlotsHint,
             tone: openSlots > 0 ? "success" : "warning",
+            icon: <Clock aria-hidden />,
           },
           {
             label: d.calendar.statBlockedSlots,
             value: blockedSlots,
             hint: d.calendar.statBlockedSlotsHint,
             tone: blockedSlots > 0 ? "warning" : "neutral",
+            icon: <Ban aria-hidden />,
           },
           {
             label: d.calendar.statTimezone,
             value: clinicTimezone.split("/").pop()?.replace(/_/g, " ") ?? clinicTimezone,
             hint: d.calendar.statTimezoneHint,
             tone: "neutral",
+            icon: <Globe2 aria-hidden />,
           },
         ]}
       />

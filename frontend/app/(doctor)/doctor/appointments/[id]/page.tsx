@@ -1,5 +1,17 @@
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, Globe2, MapPin, Printer } from "lucide-react";
+import {
+  ArrowLeft,
+  ExternalLink,
+  FileStack,
+  FileText,
+  Globe2,
+  LayoutDashboard,
+  MapPin,
+  MessageSquare,
+  Printer,
+  Stethoscope,
+  User,
+} from "lucide-react";
 import { formatAppDualTz } from "@/lib/format-datetime";
 import {
   fetchDoctorConsultation,
@@ -277,6 +289,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           {
             id: "overview",
             label: d.appointmentDetail.tabOverview,
+            icon: <LayoutDashboard aria-hidden />,
             panel: (
               <div className="gh-doctor-appointment-overview grid gap-4">
                 <FormSection
@@ -333,6 +346,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           {
             id: "consultation",
             label: d.appointmentDetail.tabConsultation,
+            icon: <Stethoscope aria-hidden />,
             badge: signed ? d.common.signed : d.common.draft,
             panel: (
               <FormSection
@@ -437,6 +451,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           {
             id: "clinical",
             label: d.appointmentDetail.tabClinical,
+            icon: <FileText aria-hidden />,
             badge:
               exams.length + prescriptions.length > 0
                 ? String(exams.length + prescriptions.length)
@@ -471,6 +486,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           {
             id: "forms",
             label: d.appointmentDetail.tabForms,
+            icon: <FileStack aria-hidden />,
             badge: submissions.length > 0 ? String(submissions.length) : null,
             panel: (
               <div className="grid gap-4">
@@ -542,6 +558,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           {
             id: "documents",
             label: d.appointmentDetail.tabDocuments,
+            icon: <FileStack aria-hidden />,
             badge: documentsTabBadge,
             badgeAlert: Boolean(documentsTabBadge),
             panel: (
@@ -569,6 +586,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           {
             id: "messages",
             label: d.appointmentDetail.tabMessages,
+            icon: <MessageSquare aria-hidden />,
             panel: (
               <div className="grid gap-4">
                 <div id="patient-chat" className="scroll-mt-24">
@@ -604,6 +622,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             // Hidden at >=lg via CSS since the rail already shows this content.
             id: "patient",
             label: d.appointmentDetail.patient,
+            icon: <User aria-hidden />,
             panel: (
               <PatientContextPanel
                 appointment={appointment}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, ChevronRight, SearchX, Video } from "lucide-react";
+import { AlertTriangle, CalendarDays, CheckCircle2, ChevronRight, ClipboardList, SearchX, Video } from "lucide-react";
 import { fetchDoctorAppointments, type DoctorAppointment } from "@/lib/api/doctor-api";
 import {
   doctorAppointmentView,
@@ -108,6 +108,7 @@ export default async function DoctorAppointmentsPage({
         eyebrow={d.appointments.eyebrow}
         title={d.appointments.title}
         description={d.appointments.description}
+        icon={<CalendarDays aria-hidden />}
         actions={
           <Link href="/doctor/calendar" className="gh-btn gh-btn-soft text-sm">
             {d.appointments.calendarView}
@@ -124,24 +125,28 @@ export default async function DoctorAppointmentsPage({
               value: appointments.length,
               hint: d.common.totalHint.replace("{total}", String(result.data.pagination.total)),
               tone: "brand",
+              icon: <ClipboardList aria-hidden />,
             },
             {
               label: d.appointments.openConsults,
               value: openAppointments,
               hint: d.appointments.openConsultsHint,
               tone: openAppointments > 0 ? "warning" : "neutral",
+              icon: <AlertTriangle aria-hidden />,
             },
             {
               label: d.appointments.meetingLinks,
               value: readyToJoin,
               hint: d.appointments.meetingLinksHint,
               tone: readyToJoin > 0 ? "success" : "neutral",
+              icon: <Video aria-hidden />,
             },
             {
               label: d.appointments.notFinalized,
               value: unfinalized,
               hint: d.appointments.notFinalizedHint,
               tone: unfinalized > 0 ? "warning" : "neutral",
+              icon: <CheckCircle2 aria-hidden />,
             },
           ]}
         />

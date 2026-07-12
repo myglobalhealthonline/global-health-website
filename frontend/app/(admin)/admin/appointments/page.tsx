@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, CalendarClock } from "lucide-react";
 import { fetchAdminAppointments, fetchAdminCountries } from "@/lib/admin/admin-api";
 import { getActiveCountry, scopedCountryCode } from "@/lib/admin/admin-scope";
 import { FlagBadge } from "../_components/flag-badge";
@@ -177,6 +177,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
         eyebrow="Operations"
         title="Appointment queue"
         description="Internal review queue. Filters and pagination run on the server; status moves follow rules on the detail page."
+        icon={<CalendarClock aria-hidden />}
         actions={
           <Btn
             href={

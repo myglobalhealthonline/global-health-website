@@ -27,49 +27,60 @@ export function PageHeader({
   title,
   description,
   actions,
+  icon,
   className = "",
 }: {
   eyebrow?: ReactNode;
   title: ReactNode;
   description?: ReactNode;
   actions?: ReactNode;
+  /** Icon badge rendered left of the title group (design brief §1). Optional
+   *  — omitting it renders the banner without a badge, unchanged layout. */
+  icon?: ReactNode;
   className?: string;
 }) {
   return (
     <header
-      className={`gh-portal-page-header relative mb-5 flex flex-wrap items-end justify-between gap-4 ${className}`}
+      className={`gh-portal-page-header relative mb-5 flex flex-wrap items-center justify-between gap-4 ${className}`}
     >
-      <div className="min-w-0">
-        {eyebrow ? (
-          <>
-            <p className="gh-eyebrow inline-flex items-center gap-2">
-              <span aria-hidden className="gh-portal-eyebrow-dot" />
-              {eyebrow}
-            </p>
-            <span aria-hidden className="gh-portal-eyebrow-hairline" />
-          </>
+      <div className="flex min-w-0 items-center gap-3">
+        {icon ? (
+          <span aria-hidden className="gh-portal-icon-badge gh-portal-icon-badge--header">
+            {icon}
+          </span>
         ) : null}
-        <h1
-          className="m-0 tracking-[-0.02em]"
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "clamp(24px, 2vw, 34px)",
-            fontWeight: 800,
-            lineHeight: 1.08,
-            marginTop: eyebrow ? 10 : 0,
-            color: "var(--portal-text)",
-          }}
-        >
-          {title}
-        </h1>
-        {description ? (
-          <p
-            className="mt-2 text-portal-body leading-relaxed"
-            style={{ color: "var(--portal-text-2)", maxWidth: "68ch" }}
+        <div className="min-w-0">
+          {eyebrow ? (
+            <>
+              <p className="gh-eyebrow inline-flex items-center gap-2">
+                <span aria-hidden className="gh-portal-eyebrow-dot" />
+                {eyebrow}
+              </p>
+              <span aria-hidden className="gh-portal-eyebrow-hairline" />
+            </>
+          ) : null}
+          <h1
+            className="m-0 tracking-[-0.02em]"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(24px, 2vw, 34px)",
+              fontWeight: 800,
+              lineHeight: 1.08,
+              marginTop: eyebrow ? 10 : 0,
+              color: "var(--portal-text)",
+            }}
           >
-            {description}
-          </p>
-        ) : null}
+            {title}
+          </h1>
+          {description ? (
+            <p
+              className="mt-2 text-portal-body leading-relaxed"
+              style={{ color: "var(--portal-text-2)", maxWidth: "68ch" }}
+            >
+              {description}
+            </p>
+          ) : null}
+        </div>
       </div>
       {actions ? (
         <div className="gh-portal-page-header-actions flex flex-wrap items-center gap-2.5">{actions}</div>
@@ -169,17 +180,30 @@ export function AdminSummaryStrip({
     value: ReactNode;
     hint?: ReactNode;
     tone?: AdminSummaryTone;
+    /** Icon badge on the top-right of the card (design brief §2). Optional
+     *  — without it the top row is just the label, unchanged layout. */
+    icon?: ReactNode;
   }>;
   className?: string;
 }) {
   return (
-    <section className={`gh-admin-summary-strip ${className}`}>
+    <section
+      className={`gh-admin-summary-strip ${className}`}
+      style={{ "--card-count": items.length } as CSSProperties}
+    >
       {items.map((item, index) => (
         <div
           key={index}
           className={`gh-admin-summary-item gh-admin-summary-item--${item.tone ?? "neutral"}`}
         >
-          <span className="gh-admin-summary-label">{item.label}</span>
+          <div className="gh-admin-summary-item__top">
+            <span className="gh-admin-summary-label">{item.label}</span>
+            {item.icon ? (
+              <span aria-hidden className="gh-portal-icon-badge">
+                {item.icon}
+              </span>
+            ) : null}
+          </div>
           <strong>{item.value}</strong>
           {item.hint ? <span className="gh-admin-summary-hint">{item.hint}</span> : null}
         </div>

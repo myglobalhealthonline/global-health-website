@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ClipboardList, Users } from "lucide-react";
+import { Building2, CalendarCheck2, CheckCircle2, ClipboardList, Mail, UserCheck, Users } from "lucide-react";
 import {
   fetchCorporateOverview,
   fetchCorporatePortalRequests,
@@ -60,6 +60,12 @@ export default async function CorporateDashboardPage() {
     count: bucket.statuses.reduce((sum, s) => sum + (overview.statusCounts[s] ?? 0), 0),
   }));
   const recentRequests = requestsResult.ok ? requestsResult.data.requests.slice(0, 6) : [];
+  const FUNNEL_ICONS = [
+    <Mail key="invited" aria-hidden />,
+    <UserCheck key="registered" aria-hidden />,
+    <CalendarCheck2 key="preassessment" aria-hidden />,
+    <CheckCircle2 key="active" aria-hidden />,
+  ];
 
   return (
     <>
@@ -67,6 +73,7 @@ export default async function CorporateDashboardPage() {
         eyebrow="Corporate"
         title={overview.companyName}
         description={`${overview.planName} plan — employee benefits, onboarding, and billing at a glance.`}
+        icon={<Building2 aria-hidden />}
         actions={
           <Pill tone={companyStatusTone(overview.companyStatus)}>
             {companyStatusLabel(overview.companyStatus)}
@@ -82,11 +89,13 @@ export default async function CorporateDashboardPage() {
             value: overview.employeeTotal,
             hint: "Enrolled (excludes drafts + removed)",
             tone: "brand",
+            icon: <Users aria-hidden />,
           },
-          ...funnel.map((bucket) => ({
+          ...funnel.map((bucket, i) => ({
             label: bucket.label,
             value: bucket.count,
             tone: "neutral" as const,
+            icon: FUNNEL_ICONS[i],
           })),
         ]}
       />

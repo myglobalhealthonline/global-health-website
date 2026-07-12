@@ -399,11 +399,16 @@
   padding-right: 4px;
 }
 
-/* Admin deep-pass shared content primitives */
+/* Admin deep-pass shared content primitives.
+ * KEY LAYOUT RULE (design brief §2): the row is ALWAYS one line on
+ * desktop/tablet regardless of card count — column count tracks card
+ * count via --card-count (set inline from items.length), never a fixed
+ * repeat(3). Cards compress via clamp() instead of wrapping; wrapping is
+ * left to the max-width:760px override below (small mobile only). */
 .gh-admin-summary-strip {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(var(--card-count, 3), minmax(0, 1fr));
+  gap: clamp(8px, 1vw, 16px);
   margin-bottom: 16px;
 }
 
@@ -416,8 +421,21 @@
   background-image: var(--lux-card-fill), var(--lux-card-border);
   background-origin: border-box;
   background-clip: padding-box, border-box;
-  box-shadow: var(--lux-elev-1);
-  padding: 14px 16px;
+  box-shadow: var(--lux-elev-1), inset 0 0 0 1px color-mix(in srgb, var(--gh-summary-tone, transparent) 15%, transparent);
+  padding: clamp(14px, 1.6vw, 18px);
+  transition: transform 150ms ease-out, box-shadow 150ms ease-out;
+}
+
+.gh-admin-summary-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--lux-elev-2), inset 0 0 0 1px color-mix(in srgb, var(--gh-summary-tone, transparent) 25%, transparent);
+}
+
+.gh-admin-summary-item__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .gh-admin-summary-item--brand {
@@ -462,7 +480,7 @@
   overflow: hidden;
   margin-top: 7px;
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: clamp(18px, 2vw, 28px);
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1;
@@ -3958,6 +3976,18 @@ a.gh-appointment-card:hover {
   --lux-scrollbar-thumb: rgba(16, 23, 19, 0.18);
   --lux-scrollbar-thumb-hover: rgba(16, 23, 19, 0.30);
   --lux-selection: rgba(176, 241, 34, 0.35);
+
+  /* Design-brief restyle (2026-07-12): page-header banner / stat-row /
+   * tab-bar gradients + shared icon-badge motif — derived from existing
+   * hues via color-mix(), no new palette. */
+  --portal-band-fill: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--portal-primary) 6%, var(--portal-well)) 0%,
+    color-mix(in srgb, var(--portal-signal) 12%, var(--portal-well)) 100%
+  );
+  --portal-band-border: color-mix(in srgb, var(--portal-primary) 18%, transparent);
+  --portal-cta-halo: radial-gradient(circle, color-mix(in srgb, var(--portal-signal) 32%, transparent), transparent 70%);
+  --portal-icon-badge-fill: var(--lux-forest-duotone);
 }
 .gh-portal-shell .gh-eyebrow {
   color: var(--portal-accent-text);
@@ -4244,12 +4274,12 @@ a.gh-appointment-card:hover {
   position: relative;
   isolation: isolate;
   min-height: 0;
-  margin-bottom: 0;
-  padding: 4px 0 var(--portal-section-gap) 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
+  margin-bottom: var(--portal-section-gap);
+  padding: clamp(20px, 2vw, 24px) clamp(20px, 2vw, 28px);
+  border: 1px solid var(--portal-band-border);
+  border-radius: var(--portal-radius-xl);
+  background: var(--portal-band-fill);
+  box-shadow: var(--lux-elev-1);
 }
 
 .gh-portal-page-header::before,
@@ -4257,11 +4287,11 @@ a.gh-appointment-card:hover {
   content: "";
   position: absolute;
   z-index: -1;
-  inset: -18px -20px auto -20px;
-  height: 160px;
+  inset: 0;
   border-radius: var(--portal-radius-xl);
   /* §13 H1 — header-aura.webp behind a 0.70 ivory veil (≤0.30 cap); the
-   * per-portal CSS aura tints on top. Whole zone masked to fade out. */
+   * per-portal CSS aura tints on top of the new banner gradient (see
+   * --portal-band-fill above). Whole zone masked to fade out. */
   background-image: var(--lux-header-aura), var(--lux-asset-veil-light), var(--lux-asset-header, none);
   background-size: auto, auto, cover;
   background-position: 0 0, 0 0, left center;
@@ -4315,6 +4345,77 @@ a.gh-appointment-card:hover {
 .gh-portal-page-header p,
 .gh-admin-main > header:not(.gh-portal-page-header) p {
   overflow-wrap: break-word;
+}
+
+/* Shared icon-in-rounded-square badge motif — reused by PageHeader,
+ * AdminSummaryStrip and any future primitive that needs it. One class,
+ * sized via modifiers, never a per-component variant. */
+.gh-portal-icon-badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--portal-radius);
+  background: var(--portal-icon-badge-fill);
+  color: var(--portal-bg);
+  box-shadow: var(--lux-elev-press);
+}
+
+.gh-portal-icon-badge svg {
+  width: 16px;
+  height: 16px;
+}
+
+.gh-portal-icon-badge--header {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  box-shadow: var(--lux-elev-1);
+}
+
+.gh-portal-icon-badge--header svg {
+  width: 20px;
+  height: 20px;
+}
+
+.gh-admin-summary-item--warning .gh-portal-icon-badge {
+  background: linear-gradient(180deg, var(--portal-warning), color-mix(in srgb, var(--portal-warning) 55%, black));
+}
+
+/* Primary action CTA inside the header banner — gradient pill + halo,
+ * DESIGN brief §1. Scoped to the header actions slot so it doesn't touch
+ * every .gh-btn-primary on the page (table toolbars, forms, etc). */
+.gh-portal-page-header-actions .gh-btn-primary {
+  position: relative;
+  border-radius: var(--portal-radius-pill);
+  transition: transform 180ms ease-out, box-shadow 180ms ease-out, filter 180ms ease-out;
+}
+
+.gh-portal-page-header-actions .gh-btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: -1;
+  width: 220%;
+  height: 220%;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: var(--portal-cta-halo);
+  pointer-events: none;
+}
+
+.gh-portal-page-header-actions .gh-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px var(--portal-signal-glow), inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  filter: brightness(1.04);
+}
+
+.gh-portal-page-header-actions .gh-btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px var(--portal-signal-glow), inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  filter: none;
 }
 .gh-admin-card {
   /* Cards routinely sit inside a nested `grid gap-*` stack (main column of
@@ -4699,7 +4800,8 @@ a.gh-appointment-card:hover {
 .gh-portal-tabs,
 .gh-admin-main :where([role="tablist"]) {
   display: flex;
-  gap: 18px;
+  align-items: center;
+  gap: 22px;
   max-width: 100%;
   overflow-x: auto;
   /* Leaving overflow-y unset makes it compute to `auto` too (CSS spec:
@@ -4709,7 +4811,11 @@ a.gh-appointment-card:hover {
      tabs/pills. This is a single-row strip; it never needs to scroll
      vertically. */
   overflow-y: hidden;
-  border-bottom: 1px solid var(--portal-line);
+  border: 1px solid var(--portal-line);
+  border-radius: var(--portal-radius-lg);
+  background: var(--portal-surface);
+  box-shadow: var(--lux-elev-1);
+  padding: 12px 18px;
   -webkit-mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
   mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
 }
@@ -4721,47 +4827,50 @@ a.gh-appointment-card:hover {
 
 .gh-portal-tab {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   flex: 0 0 auto;
-  padding: 8px 2px;
+  padding: 8px 4px;
   border: none;
+  border-radius: var(--portal-radius-pill);
   background: transparent;
   color: var(--portal-muted);
   font-size: 13px;
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
-  transition: color 160ms ease-out;
+  transition: color 180ms ease-out, background-color 180ms ease-out, transform 180ms ease-out, box-shadow 180ms ease-out, padding 180ms ease-out;
+}
+
+.gh-portal-tab svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 .gh-portal-tab:hover {
-  color: var(--portal-text);
+  color: var(--portal-primary);
+  background: var(--portal-hover);
 }
 
+/* Active = gradient pill, lifted with its own shadow (brief §3). Replaces
+ * the previous underline treatment. Never shows hover styling. */
 .gh-portal-tab[data-active] {
-  color: var(--portal-text);
+  padding: 9px 17px;
+  background: var(--lux-forest-duotone);
+  color: var(--portal-bg);
+  box-shadow: 0 4px 14px var(--portal-signal-glow), inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
 }
 
-.gh-portal-tab::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 2px;
-  background: var(--portal-accent);
-  box-shadow: 0 0 4px color-mix(in srgb, var(--portal-accent) 30%, transparent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.gh-portal-tab[data-active]::after {
-  transform: scaleX(1);
+.gh-portal-tab[data-active]:hover {
+  color: var(--portal-bg);
+  background: var(--lux-forest-duotone);
 }
 
 .gh-portal-tab:focus-visible {
   outline: none;
-  border-radius: 4px;
+  border-radius: var(--portal-radius-pill);
   box-shadow: 0 0 0 3px var(--portal-focus);
 }
 
@@ -4782,8 +4891,8 @@ a.gh-appointment-card:hover {
 }
 
 .gh-portal-tab[data-active] .gh-portal-tab__badge {
-  background: var(--portal-mint-soft);
-  color: var(--portal-mint-text);
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--portal-bg);
 }
 
 .gh-portal-tab__badge--alert {
@@ -4791,16 +4900,25 @@ a.gh-appointment-card:hover {
   color: var(--portal-warning-text);
 }
 
+.gh-portal-tab[data-active] .gh-portal-tab__badge--alert {
+  background: var(--portal-warning);
+  color: #fff;
+}
+
 /* PortalTabs `sticky` variant — pins the strip under the topbar using the
  * shared offset var (portal.css --portal-topbar-h), themed background (not
  * bg-white/80), z below the header token. Replaces the pattern of
- * consumers hand-rolling `sticky top-[58px] z-10 bg-white/80` per-file. */
+ * consumers hand-rolling `sticky top-[58px] z-10 bg-white/80` per-file.
+ * The bar itself (.gh-portal-tabs) now carries its own opaque surface,
+ * border and shadow (design brief §3) — this wrapper only supplies the
+ * translucent scroll-blur frame + sticky offset around it, so nothing
+ * double-draws a border/shadow. */
 .gh-portal-tabs-sticky {
   position: sticky;
   top: var(--portal-topbar-h);
   z-index: var(--z-sticky);
   margin: 0 calc(-1 * var(--portal-pad-x));
-  padding: 8px var(--portal-pad-x) 0;
+  padding: 8px var(--portal-pad-x) 10px;
   background: var(--portal-bg);
   -webkit-backdrop-filter: blur(var(--portal-blur-overlay));
   backdrop-filter: blur(var(--portal-blur-overlay));

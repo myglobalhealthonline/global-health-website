@@ -10,6 +10,9 @@ export type PortalTabItem = {
   badge?: ReactNode;
   /** Signal tone for the badge — pending-send counts, alerts. */
   badgeAlert?: boolean;
+  /** Optional outline icon rendered left of the label (design brief §3).
+   *  Consumers that omit it keep the label-only look unchanged. */
+  icon?: ReactNode;
 };
 
 /**
@@ -111,6 +114,7 @@ export function PortalTabs({
             className="gh-portal-tab"
             data-active={active || undefined}
           >
+            {item.icon ? <span aria-hidden>{item.icon}</span> : null}
             {item.label}
             {item.badge ? (
               <span

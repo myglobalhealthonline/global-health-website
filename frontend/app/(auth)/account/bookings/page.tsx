@@ -6,6 +6,7 @@ import { syncOrderPaymentServer } from "@/lib/api/cart-server";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { AdminSummaryStrip, Btn, PageHeader } from "@/components/portal-atoms";
+import { CalendarClock, CreditCard, History, Video } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -51,6 +52,7 @@ export default async function AccountBookingsPage({ searchParams }: Props) {
         eyebrow={a.bookings.breadcrumb}
         title={a.bookings.title}
         description={a.bookings.subtitle}
+        icon={<CalendarClock aria-hidden />}
         actions={
           <Btn href="/" variant="primary" size="sm">
             {a.bookings.bookCta}
@@ -61,10 +63,10 @@ export default async function AccountBookingsPage({ searchParams }: Props) {
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: "Upcoming", value: String(upcoming), hint: "Scheduled consultations" },
-          { label: "Payment", value: needsPayment ? `${needsPayment} action` : "Clear", hint: "Required before doctor chat" },
-          { label: "Meet links", value: String(meetReady), hint: "Ready video calls" },
-          { label: "History", value: String(items.length), hint: "All appointment requests" },
+          { label: "Upcoming", value: String(upcoming), hint: "Scheduled consultations", tone: "brand", icon: <CalendarClock aria-hidden /> },
+          { label: "Payment", value: needsPayment ? `${needsPayment} action` : "Clear", hint: "Required before doctor chat", tone: needsPayment > 0 ? "warning" : "neutral", icon: <CreditCard aria-hidden /> },
+          { label: "Meet links", value: String(meetReady), hint: "Ready video calls", tone: meetReady > 0 ? "success" : "neutral", icon: <Video aria-hidden /> },
+          { label: "History", value: String(items.length), hint: "All appointment requests", icon: <History aria-hidden /> },
         ]}
       />
 
