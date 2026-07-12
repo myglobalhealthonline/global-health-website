@@ -64,14 +64,13 @@ export default async function RewardsPage({ searchParams }: { searchParams: Prom
   return (
     <div className="gh-patient-page gh-patient-rewards-page">
       <PageHeader title={t.title} description={t.subtitle} />
-      {/* Audit 12-002: "Membership" card dropped — duplicates the Membership
-          page's own plan/status data. The rest of the strip is kept as-is. */}
       <AdminSummaryStrip
         className="mb-5"
         items={[
           { label: "Wellness balance", value: String(credits?.wellness.balance ?? 0), hint: "Credits available" },
           { label: "Reward kits", value: String(kitsWithUnlock.length), hint: "Available to review" },
           { label: "Eligible now", value: String(kitsWithUnlock.filter((kit) => kit.eligible).length), hint: "Ready to redeem" },
+          { label: "Membership", value: sub.status.toLowerCase(), hint: sub.plan?.name ?? "Current plan" },
         ]}
       />
       <RewardsPanel

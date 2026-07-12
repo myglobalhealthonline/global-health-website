@@ -4,7 +4,7 @@ import { ArrowLeft, PackageCheck, Truck } from "lucide-react";
 import { fetchAccountOrder } from "@/lib/api/cart-server";
 import { ReorderButton } from "./_components/reorder-button";
 import { CompletePaymentButton } from "./_components/complete-payment-button";
-import { AdminCard, MetaLine, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
+import { AdminCard, AdminSummaryStrip, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
@@ -90,12 +90,13 @@ export default async function AccountOrderDetailPage({ params }: Props) {
         </div>
       ) : null}
 
-      {/* Rule S3 (audit 15-004): order status lives in the H1 pill, items/total
-          in the content below — only payment state + total need orientation here. */}
-      <MetaLine
+      <AdminSummaryStrip
+        className="mb-5"
         items={[
-          { value: order.paymentStatus.toLowerCase(), label: paymentHint(order, a) },
-          { value: formatPrice(order.totalCents, order.currencyCode), label: a.orders.inclShipping },
+          { label: a.orders.sumStatus, value: order.status.toLowerCase(), hint: a.orders.sumStatusHint },
+          { label: a.orders.payment, value: order.paymentStatus.toLowerCase(), hint: paymentHint(order, a) },
+          { label: a.orders.sumItems, value: String(order.items.length), hint: a.orders.sumItemsHint },
+          { label: a.orders.total, value: formatPrice(order.totalCents, order.currencyCode), hint: a.orders.inclShipping },
         ]}
       />
 

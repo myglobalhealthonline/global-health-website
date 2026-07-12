@@ -211,27 +211,6 @@ export function AdminSummaryStrip({
   );
 }
 
-/** One-line orientation counts for list/detail pages (audit Rule S3:
- *  AdminSummaryStrip stays on true dashboards; everywhere else counts render
- *  as this plain meta line so content stays above the fold). */
-export function MetaLine({
-  items,
-  className = "",
-}: {
-  items: Array<{ label: ReactNode; value: ReactNode }>;
-  className?: string;
-}) {
-  return (
-    <p className={`gh-portal-meta-line ${className}`}>
-      {items.map((item, index) => (
-        <span key={index} className="gh-portal-meta-line__item">
-          <strong className="gh-portal-meta-line__value">{item.value}</strong> {item.label}
-        </span>
-      ))}
-    </p>
-  );
-}
-
 export function AdminEmptyState({
   title,
   description,
