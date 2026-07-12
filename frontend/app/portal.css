@@ -418,21 +418,24 @@
 
 .gh-admin-summary-item {
   --gh-summary-tone: var(--portal-accent);
+  --gh-summary-surface-start: #f7f9f6;
+  --gh-summary-surface-end: #f1f5f1;
+  --gh-summary-border: rgba(29, 75, 54, 0.18);
   min-width: 0;
   position: relative;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--gh-summary-tone) 20%, transparent);
+  border: 1px solid var(--gh-summary-border);
   border-radius: var(--portal-radius-lg);
-  background: linear-gradient(135deg, color-mix(in srgb, var(--gh-summary-tone) 10%, white), color-mix(in srgb, var(--gh-summary-tone) 4%, white));
-  box-shadow: 0 1px 2px rgba(16, 23, 19, 0.04), 0 8px 24px color-mix(in srgb, var(--gh-summary-tone) 12%, transparent);
+  background: linear-gradient(135deg, var(--gh-summary-surface-start), var(--gh-summary-surface-end));
+  box-shadow: 0 1px 2px rgba(16, 23, 19, 0.04), 0 8px 24px rgba(29, 75, 54, 0.1);
   padding: clamp(14px, 1.6vw, 18px);
   transition: transform 180ms ease-out, border-color 180ms ease-out, box-shadow 180ms ease-out;
 }
 
 .gh-admin-summary-item:hover {
   transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--gh-summary-tone) 38%, transparent);
-  box-shadow: 0 4px 8px rgba(16, 23, 19, 0.06), 0 14px 32px color-mix(in srgb, var(--gh-summary-tone) 20%, transparent);
+  border-color: rgba(29, 75, 54, 0.32);
+  box-shadow: 0 4px 8px rgba(16, 23, 19, 0.06), 0 14px 32px rgba(29, 75, 54, 0.15);
 }
 
 .gh-admin-summary-item__top {
@@ -448,10 +451,16 @@
 
 .gh-admin-summary-item--success {
   --gh-summary-tone: var(--portal-success);
+  --gh-summary-surface-start: #f5f8f4;
+  --gh-summary-surface-end: #eef5ef;
+  --gh-summary-border: rgba(47, 125, 78, 0.22);
 }
 
 .gh-admin-summary-item--warning {
-  --gh-summary-tone: var(--portal-warning);
+  --gh-summary-tone: #82ad1e;
+  --gh-summary-surface-start: #fbfdf1;
+  --gh-summary-surface-end: #f6fbe7;
+  --gh-summary-border: rgba(143, 176, 33, 0.3);
 }
 
 .gh-admin-summary-item--neutral {
@@ -508,9 +517,9 @@
 }
 
 .gh-admin-summary-item .gh-portal-icon-badge {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--gh-summary-tone) 88%, white), var(--gh-summary-tone));
+  background: linear-gradient(135deg, #397b5d, var(--portal-primary));
   color: white;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 6px 16px color-mix(in srgb, var(--gh-summary-tone) 24%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 6px 16px rgba(29, 75, 54, 0.2);
 }
 
 .gh-admin-summary-item .gh-portal-icon-badge svg {
@@ -522,29 +531,42 @@
  * and patient portals cannot drift apart. */
 .gh-stat-card {
   --gh-stat-tone: var(--portal-accent);
-  border-color: color-mix(in srgb, var(--gh-stat-tone) 20%, transparent);
-  background: linear-gradient(135deg, color-mix(in srgb, var(--gh-stat-tone) 10%, white), color-mix(in srgb, var(--gh-stat-tone) 4%, white));
-  box-shadow: 0 1px 2px rgba(16, 23, 19, 0.04), 0 8px 24px color-mix(in srgb, var(--gh-stat-tone) 12%, transparent);
+  --gh-stat-surface-start: #f7f9f6;
+  --gh-stat-surface-end: #f1f5f1;
+  --gh-stat-border: rgba(29, 75, 54, 0.18);
+  border-color: var(--gh-stat-border);
+  background: linear-gradient(135deg, var(--gh-stat-surface-start), var(--gh-stat-surface-end));
+  box-shadow: 0 1px 2px rgba(16, 23, 19, 0.04), 0 8px 24px rgba(29, 75, 54, 0.1);
   transition: transform 180ms ease-out, border-color 180ms ease-out, box-shadow 180ms ease-out;
 }
 
 .gh-stat-card--brand { --gh-stat-tone: var(--portal-primary); }
 .gh-stat-card--accent,
-.gh-stat-card--warning { --gh-stat-tone: var(--portal-warning); }
-.gh-stat-card--success { --gh-stat-tone: var(--portal-success); }
+.gh-stat-card--warning {
+  --gh-stat-tone: #82ad1e;
+  --gh-stat-surface-start: #fbfdf1;
+  --gh-stat-surface-end: #f6fbe7;
+  --gh-stat-border: rgba(143, 176, 33, 0.3);
+}
+.gh-stat-card--success {
+  --gh-stat-tone: var(--portal-success);
+  --gh-stat-surface-start: #f5f8f4;
+  --gh-stat-surface-end: #eef5ef;
+  --gh-stat-border: rgba(47, 125, 78, 0.22);
+}
 .gh-stat-card--neutral { --gh-stat-tone: var(--portal-accent); }
 
 .gh-stat-card:hover {
-  border-color: color-mix(in srgb, var(--gh-stat-tone) 38%, transparent);
-  box-shadow: 0 4px 8px rgba(16, 23, 19, 0.06), 0 14px 32px color-mix(in srgb, var(--gh-stat-tone) 20%, transparent);
+  border-color: rgba(29, 75, 54, 0.32);
+  box-shadow: 0 4px 8px rgba(16, 23, 19, 0.06), 0 14px 32px rgba(29, 75, 54, 0.15);
   transform: translateY(-2px);
 }
 
 .gh-stat-card__icon-tile {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--gh-stat-tone) 88%, white), var(--gh-stat-tone));
-  border-color: color-mix(in srgb, var(--gh-stat-tone) 44%, transparent);
+  background: linear-gradient(135deg, #397b5d, var(--portal-primary));
+  border-color: rgba(29, 75, 54, 0.42);
   color: white;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 6px 16px color-mix(in srgb, var(--gh-stat-tone) 24%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 6px 16px rgba(29, 75, 54, 0.2);
 }
 
 .gh-stat-card__icon-tile svg { stroke-width: 2; }
@@ -4463,10 +4485,6 @@ a.gh-appointment-card:hover {
   height: 20px;
 }
 
-.gh-admin-summary-item--warning .gh-portal-icon-badge {
-  background: linear-gradient(180deg, var(--portal-warning), color-mix(in srgb, var(--portal-warning) 55%, black));
-}
-
 /* Primary action CTA inside the header banner — gradient pill + halo,
  * DESIGN brief §1. Scoped to the header actions slot so it doesn't touch
  * every .gh-btn-primary on the page (table toolbars, forms, etc). */
@@ -5793,14 +5811,14 @@ a.gh-appointment-card:hover {
  * portal foundation below the stat-strip rules above, so its background must
  * not flatten a dashboard metric back to the generic card treatment. */
 .gh-admin-card.gh-stat-card {
-  border-color: color-mix(in srgb, var(--gh-stat-tone) 20%, transparent);
-  background: linear-gradient(135deg, color-mix(in srgb, var(--gh-stat-tone) 10%, white), color-mix(in srgb, var(--gh-stat-tone) 4%, white));
-  box-shadow: 0 1px 2px rgba(16, 23, 19, 0.04), 0 8px 24px color-mix(in srgb, var(--gh-stat-tone) 12%, transparent);
+  border-color: var(--gh-stat-border);
+  background: linear-gradient(135deg, var(--gh-stat-surface-start), var(--gh-stat-surface-end));
+  box-shadow: 0 1px 2px rgba(16, 23, 19, 0.04), 0 8px 24px rgba(29, 75, 54, 0.1);
 }
 
 .gh-admin-card.gh-stat-card:hover {
-  border-color: color-mix(in srgb, var(--gh-stat-tone) 38%, transparent);
-  box-shadow: 0 4px 8px rgba(16, 23, 19, 0.06), 0 14px 32px color-mix(in srgb, var(--gh-stat-tone) 20%, transparent);
+  border-color: rgba(29, 75, 54, 0.32);
+  box-shadow: 0 4px 8px rgba(16, 23, 19, 0.06), 0 14px 32px rgba(29, 75, 54, 0.15);
 }
 
 /* Portal-wide radius safety net. Admin, Doctor, Patient, and Corporate
