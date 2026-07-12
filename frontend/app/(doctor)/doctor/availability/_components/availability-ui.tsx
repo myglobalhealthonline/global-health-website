@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarClock, Plus, Trash2 } from "lucide-react";
+import { Ban, CalendarClock, CheckCircle2, Plus, Trash2, UserRound } from "lucide-react";
 import {
   createAvailabilityWindow,
   deleteAvailabilityWindow,
@@ -180,24 +180,28 @@ export function DoctorAvailabilityUI({
             value: windows.length,
             hint: s.recurringScheduleRules,
             tone: windows.length > 0 ? "brand" : "warning",
+            icon: <CalendarClock aria-hidden />,
           },
           {
             label: s.openSlots,
             value: slotCounts.open,
             hint: s.slotsGenerated.replace("{count}", String(slotCounts.total)),
             tone: slotCounts.open > 0 ? "success" : "neutral",
+            icon: <CheckCircle2 aria-hidden />,
           },
           {
             label: s.booked,
             value: slotCounts.booked,
             hint: s.patientClaimed,
             tone: slotCounts.booked > 0 ? "brand" : "neutral",
+            icon: <UserRound aria-hidden />,
           },
           {
             label: s.blocked,
             value: slotCounts.blocked,
             hint: s.markedUnavailable,
             tone: slotCounts.blocked > 0 ? "warning" : "neutral",
+            icon: <Ban aria-hidden />,
           },
         ]}
       />

@@ -412,23 +412,27 @@
   margin-bottom: 16px;
 }
 
+.gh-portal-stat-row {
+  grid-template-columns: repeat(var(--card-count, 3), minmax(0, 1fr));
+}
+
 .gh-admin-summary-item {
+  --gh-summary-tone: var(--portal-accent);
   min-width: 0;
   position: relative;
   overflow: hidden;
-  border: 1px solid transparent;
+  border: 1px solid color-mix(in srgb, var(--gh-summary-tone) 20%, transparent);
   border-radius: 12px;
-  background-image: var(--lux-card-fill), var(--lux-card-border);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-  box-shadow: var(--lux-elev-1), inset 0 0 0 1px color-mix(in srgb, var(--gh-summary-tone, transparent) 15%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--gh-summary-tone) 10%, white), color-mix(in srgb, var(--gh-summary-tone) 4%, white));
+  box-shadow: 0 1px 2px rgba(16, 23, 19, 0.04), 0 8px 24px color-mix(in srgb, var(--gh-summary-tone) 12%, transparent);
   padding: clamp(14px, 1.6vw, 18px);
-  transition: transform 150ms ease-out, box-shadow 150ms ease-out;
+  transition: transform 180ms ease-out, border-color 180ms ease-out, box-shadow 180ms ease-out;
 }
 
 .gh-admin-summary-item:hover {
   transform: translateY(-2px);
-  box-shadow: var(--lux-elev-2), inset 0 0 0 1px color-mix(in srgb, var(--gh-summary-tone, transparent) 25%, transparent);
+  border-color: color-mix(in srgb, var(--gh-summary-tone) 38%, transparent);
+  box-shadow: 0 4px 8px rgba(16, 23, 19, 0.06), 0 14px 32px color-mix(in srgb, var(--gh-summary-tone) 20%, transparent);
 }
 
 .gh-admin-summary-item__top {
@@ -448,6 +452,10 @@
 
 .gh-admin-summary-item--warning {
   --gh-summary-tone: var(--portal-warning);
+}
+
+.gh-admin-summary-item--neutral {
+  --gh-summary-tone: var(--portal-accent);
 }
 
 .gh-admin-summary-item::before {
@@ -471,6 +479,7 @@
 }
 
 .gh-admin-summary-label {
+  color: color-mix(in srgb, var(--gh-summary-tone) 76%, var(--portal-text));
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -484,9 +493,7 @@
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1;
-  background: var(--lux-numeral-ink);
-  background-clip: text;
-  color: transparent;
+  color: var(--portal-text);
   font-variant-numeric: tabular-nums;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -498,6 +505,69 @@
   font-weight: 600;
   letter-spacing: 0;
   text-transform: none;
+}
+
+.gh-admin-summary-item .gh-portal-icon-badge {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--gh-summary-tone) 88%, white), var(--gh-summary-tone));
+  color: white;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 6px 16px color-mix(in srgb, var(--gh-summary-tone) 24%, transparent);
+}
+
+.gh-admin-summary-item .gh-portal-icon-badge svg {
+  stroke-width: 2;
+}
+
+/* Dashboard StatCard uses the same metric anatomy as AdminSummaryStrip.
+ * Keep the treatment here instead of per-dashboard so the admin, doctor,
+ * and patient portals cannot drift apart. */
+.gh-stat-card {
+  --gh-stat-tone: var(--portal-accent);
+  border-color: color-mix(in srgb, var(--gh-stat-tone) 20%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--gh-stat-tone) 10%, white), color-mix(in srgb, var(--gh-stat-tone) 4%, white));
+  box-shadow: 0 1px 2px rgba(16, 23, 19, 0.04), 0 8px 24px color-mix(in srgb, var(--gh-stat-tone) 12%, transparent);
+  transition: transform 180ms ease-out, border-color 180ms ease-out, box-shadow 180ms ease-out;
+}
+
+.gh-stat-card--brand { --gh-stat-tone: var(--portal-primary); }
+.gh-stat-card--accent,
+.gh-stat-card--warning { --gh-stat-tone: var(--portal-warning); }
+.gh-stat-card--success { --gh-stat-tone: var(--portal-success); }
+.gh-stat-card--neutral { --gh-stat-tone: var(--portal-accent); }
+
+.gh-stat-card:hover {
+  border-color: color-mix(in srgb, var(--gh-stat-tone) 38%, transparent);
+  box-shadow: 0 4px 8px rgba(16, 23, 19, 0.06), 0 14px 32px color-mix(in srgb, var(--gh-stat-tone) 20%, transparent);
+  transform: translateY(-2px);
+}
+
+.gh-stat-card__icon-tile {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--gh-stat-tone) 88%, white), var(--gh-stat-tone));
+  border-color: color-mix(in srgb, var(--gh-stat-tone) 44%, transparent);
+  color: white;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 6px 16px color-mix(in srgb, var(--gh-stat-tone) 24%, transparent);
+}
+
+.gh-stat-card__icon-tile svg { stroke-width: 2; }
+
+.gh-stat-card > .relative > div > p {
+  color: color-mix(in srgb, var(--gh-stat-tone) 76%, var(--portal-text)) !important;
+}
+
+.gh-stat-card > .relative > div > p::before {
+  background: var(--gh-stat-tone);
+}
+
+.gh-stat-card__value {
+  margin-top: clamp(6px, 0.8vw, 8px) !important;
+  font-size: clamp(18px, 2vw, 28px);
+  background: none;
+  color: var(--portal-text);
+}
+
+.gh-stat-card__value ~ p {
+  margin-top: 7px;
+  padding-top: 0;
+  border-top: 0;
 }
 
 /* Empty state — DESIGN.md §5.15: illustration or 44px icon tile, centered
@@ -849,9 +919,14 @@
   .gh-admin-country-choice,
   .gh-admin-appointment-country-form,
   .gh-admin-service-summary-strip,
-  .gh-admin-service-edit-summary,
-  .gh-admin-summary-strip {
+  .gh-admin-service-edit-summary {
     grid-template-columns: 1fr;
+  }
+
+  .gh-admin-summary-strip,
+  .gh-admin-dashboard-stats,
+  .gh-portal-stat-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 
   .gh-admin-empty-state {
@@ -1040,7 +1115,15 @@
 
 /* Batch 3C: admin dashboard and core navigation primitives */
 .gh-admin-dashboard-stats {
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+  grid-template-columns: repeat(var(--card-count, 4), minmax(0, 1fr)) !important;
+}
+
+@media (max-width: 480px) {
+  .gh-admin-summary-strip,
+  .gh-admin-dashboard-stats,
+  .gh-portal-stat-row {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 .gh-admin-dashboard-body {
@@ -5704,4 +5787,18 @@ a.gh-appointment-card:hover {
  * fade hard so the current month reads as the only "real" content. */
 .gh-calendar-day-outside > * {
   opacity: 0.3;
+}
+
+/* This is intentionally last: AdminCard's base surface is defined in the
+ * portal foundation below the stat-strip rules above, so its background must
+ * not flatten a dashboard metric back to the generic card treatment. */
+.gh-admin-card.gh-stat-card {
+  border-color: color-mix(in srgb, var(--gh-stat-tone) 20%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--gh-stat-tone) 10%, white), color-mix(in srgb, var(--gh-stat-tone) 4%, white));
+  box-shadow: 0 1px 2px rgba(16, 23, 19, 0.04), 0 8px 24px color-mix(in srgb, var(--gh-stat-tone) 12%, transparent);
+}
+
+.gh-admin-card.gh-stat-card:hover {
+  border-color: color-mix(in srgb, var(--gh-stat-tone) 38%, transparent);
+  box-shadow: 0 4px 8px rgba(16, 23, 19, 0.06), 0 14px 32px color-mix(in srgb, var(--gh-stat-tone) 20%, transparent);
 }

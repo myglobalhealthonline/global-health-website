@@ -253,6 +253,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             value: signed ? d.common.signed : d.common.draft,
             hint: signed ? d.appointmentDetail.signedHint : d.appointmentDetail.draftHint,
             tone: signed ? "success" : "warning",
+            icon: <FileText aria-hidden />,
           },
           {
             label: d.appointmentDetail.documents,
@@ -262,18 +263,21 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                 ? d.appointmentDetail.waitingToSend.replace("{count}", String(pendingSendCount))
                 : d.appointmentDetail.documentsHint,
             tone: pendingSendCount > 0 ? "warning" : "neutral",
+            icon: <FileStack aria-hidden />,
           },
           {
             label: d.appointmentDetail.clinicalItems,
             value: exams.length + prescriptions.length,
             hint: d.appointmentDetail.clinicalItemsHint,
             tone: exams.length + prescriptions.length > 0 ? "brand" : "neutral",
+            icon: <Stethoscope aria-hidden />,
           },
           {
             label: d.appointmentDetail.messages,
             value: messages.length,
             hint: d.appointmentDetail.messagesHint,
             tone: messages.length > 0 ? "success" : "neutral",
+            icon: <MessageSquare aria-hidden />,
           },
         ]}
       />

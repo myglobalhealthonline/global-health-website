@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import {
   AlertCircle,
   CalendarDays,
@@ -154,7 +155,10 @@ export default async function AccountOverviewPage() {
       />
 
       {/* ── Stat tiles ─────────────────────────────────────────────── */}
-      <div className="gh-patient-stat-grid grid gap-3 sm:grid-cols-[1fr_0.9fr_1.1fr]">
+      <div
+        className="gh-patient-stat-grid gh-portal-stat-row grid gap-3"
+        style={{ "--card-count": 3 } as CSSProperties}
+      >
         <StatCard
           tone="brand"
           label={a.dashboard.openLabel}

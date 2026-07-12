@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
+import type { CSSProperties } from "react";
 import {
   CalendarClock,
   ChevronRight,
@@ -259,7 +260,10 @@ export default async function AdminDashboardPage() {
       />
 
       {/* Stat strip — 5 up */}
-      <section className="gh-admin-dashboard-stats mb-5 grid gap-3">
+      <section
+        className="gh-admin-dashboard-stats mb-5 grid gap-3"
+        style={{ "--card-count": 6 } as CSSProperties}
+      >
         <StatCard
           label="Active countries"
           value={countries.filter((c) => c.isActive).length}

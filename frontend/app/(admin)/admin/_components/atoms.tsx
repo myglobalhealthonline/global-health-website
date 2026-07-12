@@ -10,6 +10,7 @@
  */
 
 import Link from "next/link";
+import { BarChart3 } from "lucide-react";
 import type {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
@@ -198,11 +199,9 @@ export function AdminSummaryStrip({
         >
           <div className="gh-admin-summary-item__top">
             <span className="gh-admin-summary-label">{item.label}</span>
-            {item.icon ? (
-              <span aria-hidden className="gh-portal-icon-badge">
-                {item.icon}
-              </span>
-            ) : null}
+            <span aria-hidden className="gh-portal-icon-badge">
+              {item.icon ?? <BarChart3 />}
+            </span>
           </div>
           <strong>{item.value}</strong>
           {item.hint ? <span className="gh-admin-summary-hint">{item.hint}</span> : null}
@@ -322,7 +321,7 @@ export function CommandBand({
   );
 }
 
-export type StatTone = "brand" | "accent" | "neutral";
+export type StatTone = "brand" | "accent" | "success" | "warning" | "neutral";
 
 export function StatCard({
   label,
@@ -335,15 +334,11 @@ export function StatCard({
   label: string;
   value: ReactNode;
   hint?: ReactNode;
-  icon: ReactNode;
-  /** Neutral = ink glyph (default). Brand/accent tint the glyph with the
-   *  role accent — the tile fill itself always stays the neutral well
-   *  (DESIGN.md §5.6: surfaces are never green, only glyphs signal). */
+  icon?: ReactNode;
+  /** The semantic tone drives the icon badge, border, and subtle card wash. */
   tone?: StatTone;
   href?: string;
 }) {
-  const tileGlyphColor = tone === "neutral" ? "var(--portal-text)" : "var(--portal-accent-text)";
-
   const inner = (
     <div className="relative">
       <div className="relative flex items-start justify-between">
@@ -353,13 +348,12 @@ export function StatCard({
         <span
           className="gh-stat-card__icon-tile inline-flex items-center justify-center"
           style={{
-            width: 40,
-            height: 40,
+            width: "clamp(30px, 2.6vw, 34px)",
+            height: "clamp(30px, 2.6vw, 34px)",
             borderRadius: "var(--portal-radius)",
-            color: tileGlyphColor,
           }}
         >
-          {icon}
+          {icon ?? <BarChart3 />}
         </span>
       </div>
       <p className="gh-stat-card__value relative m-0 mt-3">{value}</p>
@@ -374,13 +368,13 @@ export function StatCard({
 
   if (href) {
     return (
-      <Link href={href} className="gh-stat-card block" style={{ padding: 20, textDecoration: "none", color: "inherit" }}>
+      <Link href={href} className={`gh-stat-card gh-stat-card--${tone} block`} style={{ padding: "clamp(14px, 1.6vw, 18px)", textDecoration: "none", color: "inherit" }}>
         {inner}
       </Link>
     );
   }
   return (
-    <AdminCard padding={20} className="gh-stat-card">
+    <AdminCard padding={18} className={`gh-stat-card gh-stat-card--${tone}`}>
       {inner}
     </AdminCard>
   );
