@@ -615,7 +615,8 @@
     "notScheduled": "Nenaplánováno",
     "sumNextBillingHint": "Datum obnovení",
     "sumPrice": "Cena",
-    "sumPriceHint": "Měsíční předplatné"
+    "sumPriceHint": "Měsíční předplatné",
+    "tabsAria": "Sekce členství a odměn"
   },
   "calendar": {
     "eyebrow": "Můj rozvrh",

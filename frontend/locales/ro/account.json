@@ -615,7 +615,8 @@
     "notScheduled": "Neprogramată",
     "sumNextBillingHint": "Data reînnoirii",
     "sumPrice": "Preț",
-    "sumPriceHint": "Abonament lunar"
+    "sumPriceHint": "Abonament lunar",
+    "tabsAria": "Secțiuni abonament și recompense"
   },
   "calendar": {
     "eyebrow": "Programul meu",

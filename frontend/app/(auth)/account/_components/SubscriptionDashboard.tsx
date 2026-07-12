@@ -32,15 +32,21 @@ import { AdminCard, Pill, type PillTone } from "@/components/portal-atoms";
 /**
  * `embedded` renders the benefit detail WITHOUT the plan summary card or the
  * section heading — used on the Membership page, where `ManagePanel` already
- * shows the plan, status, billing date and lifecycle actions. The default
- * (overview dashboard) is unchanged.
+ * shows the plan, status, billing date and lifecycle actions.
+ *
+ * `variant="compact"` is the opposite cut: ONLY the plan card, nothing else
+ * (credits/wellness/perks/ledger). Used on the dashboard overview — owner
+ * request: "overview page is directed to membership, just display membership
+ * card nothing more". The full render (default) stays on the Membership page.
  */
 export async function SubscriptionDashboard({
   locale,
   embedded = false,
+  variant,
 }: {
   locale: LocaleCode;
   embedded?: boolean;
+  variant?: "compact";
 }) {
   const [sub, credits, redemptions] = await Promise.all([
     getServerSubscription(),
@@ -94,6 +100,64 @@ export async function SubscriptionDashboard({
   );
   const perkLabel = (key: string): string =>
     (t as Record<string, string>)[`perk_${key}`] ?? key;
+
+  if (variant === "compact") {
+    return (
+      <section className="gh-patient-subscription-dashboard mt-6">
+        <div
+          className="gh-patient-membership-card overflow-hidden"
+          style={{
+            borderRadius: "var(--portal-radius-lg)",
+            border: "1px solid var(--portal-line)",
+            boxShadow: "var(--portal-shadow)",
+          }}
+        >
+          <div
+            className="gh-patient-membership-card__header flex items-start justify-between gap-3 p-5"
+            style={{
+              background: "var(--portal-chrome-solid)",
+              borderBottom: "1px solid var(--portal-member, var(--portal-chrome-border))",
+            }}
+          >
+            <span
+              className="inline-flex size-10 items-center justify-center rounded-[12px]"
+              style={{ background: "color-mix(in srgb, var(--portal-member, var(--portal-accent)) 18%, transparent)", color: "var(--portal-member, var(--portal-accent))" }}
+            >
+              <Award className="size-5" aria-hidden />
+            </span>
+            <Pill tone={statusTone} withDot>{statusLabel}</Pill>
+          </div>
+          <div className="p-5" style={{ background: "var(--portal-surface)" }}>
+            <p className="text-portal-thead font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
+              {t.planCardTitle}
+            </p>
+            <p className="mt-1 font-extrabold tracking-[-0.02em]" style={{ fontSize: "1.25rem", color: "var(--portal-text)" }}>
+              {sub.plan.name}
+            </p>
+            <p className="mt-1 text-sm" style={{ color: "var(--portal-muted)" }}>
+              {priceLabel} {subscription.pricing.perMonth}
+              {nextBilling ? ` · ${interpolate(t.nextBilling, { date: nextBilling })}` : ""}
+            </p>
+            {sub.paidMonthsCount > 0 ? (
+              <p className="mt-0.5 text-xs" style={{ color: "var(--portal-muted)" }}>
+                {interpolate(
+                  pluralTemplate(sub.paidMonthsCount, t.memberMonthsSingular, t.memberMonths),
+                  { months: sub.paidMonthsCount },
+                )}
+              </p>
+            ) : null}
+            <Link
+              href="/account/membership"
+              className="mt-4 inline-flex text-sm font-semibold underline"
+              style={{ color: "var(--portal-primary)" }}
+            >
+              {t.manage}
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="gh-patient-subscription-dashboard mt-6">

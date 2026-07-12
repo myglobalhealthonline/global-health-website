@@ -10,7 +10,6 @@ import {
   CalendarRange,
   CreditCard,
   FileText,
-  Gift,
   History,
   LayoutDashboard,
   MessagesSquare,
@@ -106,7 +105,6 @@ export default async function AccountLayout({ children }: { children: ReactNode 
         ...(hasCorporateMembership
           ? [{ href: "/account/corporate", label: a.nav.corporate, icon: <Briefcase className="size-4" aria-hidden /> }]
           : []),
-        { href: "/account/rewards", label: a.nav.rewards, icon: <Gift className="size-4" aria-hidden /> },
       ],
     },
     {

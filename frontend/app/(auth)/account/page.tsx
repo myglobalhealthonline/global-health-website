@@ -349,8 +349,10 @@ export default async function AccountOverviewPage() {
         </div>
       ) : null}
 
-      {/* ── Subscription dashboard (renders nothing for non-subscribers) ── */}
-      <SubscriptionDashboard locale={locale} />
+      {/* ── Membership section: plan card only (owner request — everything
+          else, credits/wellness/perks/ledger, lives on /account/membership).
+          Renders nothing for non-subscribers. ── */}
+      <SubscriptionDashboard locale={locale} variant="compact" />
 
       {/* ── Main grid: Recent bookings + Quick actions ────────────── */}
       <div className="gh-patient-overview-grid mt-5 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">

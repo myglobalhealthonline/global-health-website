@@ -615,7 +615,8 @@
     "notScheduled": "No programada",
     "sumNextBillingHint": "Fecha de renovación",
     "sumPrice": "Precio",
-    "sumPriceHint": "Suscripción mensual"
+    "sumPriceHint": "Suscripción mensual",
+    "tabsAria": "Secciones de membresía y recompensas"
   },
   "calendar": {
     "eyebrow": "Mi agenda",

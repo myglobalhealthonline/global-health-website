@@ -615,7 +615,8 @@
     "notScheduled": "Nicht geplant",
     "sumNextBillingHint": "Verlängerungsdatum",
     "sumPrice": "Preis",
-    "sumPriceHint": "Monatliches Abonnement"
+    "sumPriceHint": "Monatliches Abonnement",
+    "tabsAria": "Bereiche für Mitgliedschaft und Prämien"
   },
   "calendar": {
     "eyebrow": "Mein Zeitplan",
