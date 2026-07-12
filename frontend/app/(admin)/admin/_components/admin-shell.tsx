@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IdleLogout } from "@/components/IdleLogout";
+import { usePortalMobileNavA11y } from "@/components/use-portal-mobile-nav";
 import {
   BarChart3,
   CalendarRange,
@@ -303,6 +304,8 @@ export function AdminShell({
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const breadcrumbs = useBreadcrumbs(pathname, countries, activeCountry);
+  const navRef = useRef<HTMLElement | null>(null);
+  usePortalMobileNavA11y(navOpen, () => setNavOpen(false), navRef);
   const pathSegments = pathname.split("/").filter(Boolean);
   const isOnCountryScopedRoute =
     pathSegments.length >= 2 && COUNTRY_HREFS.has(`/${pathSegments[0]}/${pathSegments[1]}`);
@@ -354,6 +357,10 @@ export function AdminShell({
       ) : null}
 
       <aside
+        ref={navRef}
+        role={navOpen ? "dialog" : undefined}
+        aria-modal={navOpen ? true : undefined}
+        aria-label={navOpen ? "Admin navigation" : undefined}
         className={`gh-portal-sidebar fixed inset-y-0 left-0 z-[var(--z-header)] flex w-[var(--portal-sidebar-w)] max-w-[86vw] flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
           navOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
         }`}
@@ -459,7 +466,8 @@ export function AdminShell({
           doesn't slide under the fixed sidebar. */}
       <div className="flex min-h-screen min-w-0 flex-col lg:pl-[var(--portal-sidebar-w)]">
           <header
-            className={`gh-portal-topbar${scrolled ? " gh-portal-topbar--scrolled" : ""} sticky top-0 z-[var(--z-header)] flex h-16 shrink-0 items-center justify-between gap-3 px-4 sm:px-6`}
+            className={`gh-portal-topbar${scrolled ? " gh-portal-topbar--scrolled" : ""} sticky top-0 z-[var(--z-header)] flex shrink-0 items-center justify-between gap-3 px-4 sm:px-6`}
+            style={{ height: "var(--portal-topbar-h)" }}
           >
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <button

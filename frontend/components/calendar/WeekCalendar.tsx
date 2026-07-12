@@ -62,8 +62,9 @@ function solidTone(tone: string): CSSProperties {
 }
 
 // Deep slate for booked appointments — darker than --portal-info so the white
-// patient name reads with strong contrast.
-const BOOKED_FILL = "#33505b";
+// patient name reads with strong contrast. Tokenized (portal.css
+// --portal-booked-fill) so it's defined once alongside the other status tones.
+const BOOKED_FILL = "var(--portal-booked-fill)";
 
 function toneStyle(item: CalendarItem): CSSProperties {
   // Booked consultations are the thing an admin most needs to spot — solid fill.

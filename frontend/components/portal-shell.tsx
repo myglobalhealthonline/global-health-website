@@ -15,7 +15,7 @@
  *  - Portal label + home href are props (Doctor portal / Patient portal)
  */
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight, Menu, X } from "lucide-react";
@@ -26,6 +26,7 @@ import {
 import { PortalUserMenu } from "@/components/PortalUserMenu";
 import { IdleLogout } from "@/components/IdleLogout";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { usePortalMobileNavA11y } from "@/components/use-portal-mobile-nav";
 import type { LocaleCode } from "@/lib/i18n/types";
 
 export type PortalShellUser = {
@@ -172,6 +173,8 @@ export function PortalShell({
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const breadcrumbs = useBreadcrumbs(pathname, rootHref, rootBreadcrumb);
+  const navRef = useRef<HTMLElement | null>(null);
+  usePortalMobileNavA11y(navOpen, () => setNavOpen(false), navRef);
 
   // Topbar seam-light swap — the ONLY scroll-linked effect in the system
   // (DESIGN.md §5.2). Purely presentational, one class toggle.
@@ -216,6 +219,10 @@ export function PortalShell({
           translate; on desktop the main column gets `lg:pl-[260px]`
           so content doesn't slide under it. */}
       <aside
+        ref={navRef}
+        role={navOpen ? "dialog" : undefined}
+        aria-modal={navOpen ? true : undefined}
+        aria-label={navOpen ? portalLabel : undefined}
         className={`gh-portal-sidebar fixed inset-y-0 left-0 z-[var(--z-header)] flex w-[var(--portal-sidebar-w)] max-w-[86vw] flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
           navOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
         }`}
@@ -273,7 +280,8 @@ export function PortalShell({
       <div className="flex min-h-screen min-w-0 flex-col lg:pl-[var(--portal-sidebar-w)]">
           {/* Top header — sticky dark glass over scrolling content. */}
           <header
-            className={`gh-portal-topbar${scrolled ? " gh-portal-topbar--scrolled" : ""} sticky top-0 z-[var(--z-header)] flex h-16 shrink-0 items-center justify-between gap-3 px-4 sm:px-6`}
+            className={`gh-portal-topbar${scrolled ? " gh-portal-topbar--scrolled" : ""} sticky top-0 z-[var(--z-header)] flex shrink-0 items-center justify-between gap-3 px-4 sm:px-6`}
+            style={{ height: "var(--portal-topbar-h)" }}
           >
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <button

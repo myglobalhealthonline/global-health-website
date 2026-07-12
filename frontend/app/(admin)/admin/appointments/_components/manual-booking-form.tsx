@@ -388,7 +388,7 @@ export function ManualBookingForm({
             />
             {errors.email ? <FieldError msg={errors.email} /> : null}
             {showPatientMenu && (lookupLoading || patientOptions.length > 0) ? (
-              <div className="gh-admin-manual-patient-menu absolute left-0 right-0 top-[calc(100%+4px)] z-20 max-h-64 overflow-auto rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] shadow-lg">
+              <div className="gh-admin-manual-patient-menu absolute left-0 right-0 top-[calc(100%+4px)] z-[var(--z-dropdown)] max-h-64 overflow-auto rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] shadow-lg">
                 {lookupLoading ? (
                   <div className="flex items-center gap-2 px-3 py-2 text-portal-meta text-[var(--color-text-muted)]">
                     <Loader2 className="size-3.5 animate-spin" aria-hidden /> Searching existing

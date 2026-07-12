@@ -47,17 +47,23 @@ export function PortalDialog({
     if (!open) return;
     returnFocusRef.current = document.activeElement as HTMLElement | null;
     const panel = panelRef.current;
-    const focusable = panel?.querySelectorAll<HTMLElement>(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-    );
-    focusable?.[0]?.focus();
+    function queryFocusable(): NodeListOf<HTMLElement> | undefined {
+      return panel?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+    }
+    queryFocusable()?.[0]?.focus();
 
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
         onClose();
         return;
       }
-      if (e.key !== "Tab" || !focusable || focusable.length === 0) return;
+      if (e.key !== "Tab") return;
+      // Query fresh on every Tab press — content can change while open
+      // (tabs, async-loaded fields), so a mount-time snapshot goes stale.
+      const focusable = queryFocusable();
+      if (!focusable || focusable.length === 0) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
       if (e.shiftKey && document.activeElement === first) {

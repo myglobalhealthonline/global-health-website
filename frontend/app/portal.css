@@ -3801,6 +3801,9 @@ a.gh-appointment-card:hover {
   --portal-info: #56707a;
   --portal-info-text: #3f565f;
   --portal-info-soft: rgba(86, 112, 122, 0.12);
+  /* Deep slate for booked calendar blocks — darker than --portal-info so
+     the white patient name reads with strong contrast (WeekCalendar). */
+  --portal-booked-fill: #33505b;
 
   /* ── lines + interaction ────────────────────────────────── */
   --portal-line: rgba(16, 23, 19, 0.08);
@@ -3825,6 +3828,11 @@ a.gh-appointment-card:hover {
   --portal-radius-pill: 999px; /* status pills only */
 
   /* ── layout (unchanged from earlier portal system versions) ─ */
+  /* Single source of truth for the topbar's rendered height (h-16 in both
+   * shells) — every sticky offset below the topbar (tab strips, context
+   * rails) derives from this instead of hardcoding 58px/top-4/etc (A2/A4
+   * findings, RC1). */
+  --portal-topbar-h: 64px;
   --portal-sidebar-w: 272px;
   --portal-main-max: 1500px;
   --portal-readable-max: 1180px;
@@ -4759,6 +4767,43 @@ a.gh-appointment-card:hover {
   background: var(--portal-warning-soft);
   color: var(--portal-warning-text);
 }
+
+/* PortalTabs `sticky` variant — pins the strip under the topbar using the
+ * shared offset var (portal.css --portal-topbar-h), themed background (not
+ * bg-white/80), z below the header token. Replaces the pattern of
+ * consumers hand-rolling `sticky top-[58px] z-10 bg-white/80` per-file. */
+.gh-portal-tabs-sticky {
+  position: sticky;
+  top: var(--portal-topbar-h);
+  z-index: var(--z-sticky);
+  margin: 0 calc(-1 * var(--portal-pad-x));
+  padding: 8px var(--portal-pad-x) 0;
+  background: var(--portal-bg);
+  -webkit-backdrop-filter: blur(var(--portal-blur-overlay));
+  backdrop-filter: blur(var(--portal-blur-overlay));
+}
+
+@supports not (backdrop-filter: blur(1px))  {
+  .gh-portal-tabs-sticky {
+    background: var(--portal-bg);
+  }
+}
+
+@media (pointer: coarse)  {
+  .gh-portal-tabs-sticky {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+
+/* Short viewports (TASK §3 matrix): un-stick so a sticky strip never eats
+ * scarce vertical space above tab content. */
+@media (max-height: 560px) {
+  .gh-portal-tabs-sticky {
+    position: static;
+  }
+}
+
 .gh-portal-dialog-overlay {
   position: fixed;
   inset: 0;
@@ -4868,6 +4913,12 @@ a.gh-appointment-card:hover {
     max-height: 88svh;
     border-radius: var(--portal-radius-xl) var(--portal-radius-xl) 0 0;
     animation: gh-dialog-sheet-in 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    /* Notch/home-indicator clearance — mirrors AppSheet__footer
+       (globals.css:2687); the mobile bottom-sheet sits flush to the
+       viewport edge so it needs its own inset, not just the footer's. */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   .gh-portal-dialog::before {

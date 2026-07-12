@@ -155,7 +155,7 @@ export function CountrySelect({
 
       {open ? (
         <div
-          className="gh-admin-country-select__menu absolute z-50 mt-1 w-full overflow-hidden rounded-md border bg-white shadow-lg"
+          className="gh-admin-country-select__menu absolute z-[var(--z-dropdown)] mt-1 w-full overflow-hidden rounded-md border bg-[var(--portal-surface-elevated)] shadow-lg"
           style={{ borderColor: "var(--color-border)" }}
         >
           <div className="border-b border-[var(--color-border)] p-2">
