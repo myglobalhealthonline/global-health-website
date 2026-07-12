@@ -5705,6 +5705,34 @@ a.gh-appointment-card:hover {
   }
 }
 
+/* Page-level (html) scrollbar on portal routes — matches the sidebar's
+ * .gh-dark-scroll look (thin, transparent track, lime thumb) instead of
+ * globals.css's thick forest-track bar meant for the public site. Wins
+ * over the globals.css `html::-webkit-scrollbar` rule because portal.css
+ * imports after globals.css in every portal route-group layout. */
+html::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+html::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 999px;
+}
+html::-webkit-scrollbar-thumb {
+  background-color: rgba(200, 230, 160, 0.45);
+  border-radius: 999px;
+  border: none;
+}
+html::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(200, 230, 160, 0.7);
+}
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(200, 230, 160, 0.55) rgba(255, 255, 255, 0.05);
+  }
+}
+
 
 @media (pointer: coarse)  {
 .gh-portal-sidebar,
