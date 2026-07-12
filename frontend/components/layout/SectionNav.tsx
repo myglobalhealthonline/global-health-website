@@ -108,6 +108,7 @@ export function SectionNav({
                 <DropdownMenu.Content
                   sideOffset={10}
                   align="start"
+                  onCloseAutoFocus={(e) => e.preventDefault()}
                   className={
                     isDark
                       ? "gh2-glass-forest gh2-filters-dark z-[var(--z-dropdown)] min-w-[280px] p-2 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"

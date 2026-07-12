@@ -296,9 +296,23 @@ function normalizeSlug(slug: string): string {
   return slug.toLowerCase().replace(/['’]/g, "");
 }
 
+/**
+ * Per-country authored GP-hub copy. Only clinic-approved, market-specific
+ * legal/marketing text goes here — never generic copy reused across
+ * countries (pricing, regulator names and disclaimers are market-legal).
+ * Adding a market = add its approved GpHubContent entry.
+ */
+const GP_HUB_CONTENT: Record<string, GpHubContent> = {
+  ie: IE_GP_HUB,
+};
+
+const SERVICE_DETAIL_CONTENT: Record<string, Record<string, ServiceDetailContent>> = {
+  ie: IE_SERVICE_DETAIL,
+};
+
 /** Resolve the GP hub content for a country, or null when not authored. */
 export function getGpHubContent(countryCode: string): GpHubContent | null {
-  return countryCode.toLowerCase() === "ie" ? IE_GP_HUB : null;
+  return GP_HUB_CONTENT[countryCode.toLowerCase()] ?? null;
 }
 
 /** Resolve long-form detail content for a (country, service slug) pair. */
@@ -306,11 +320,12 @@ export function getServiceDetailContent(
   countryCode: string,
   serviceSlug: string,
 ): ServiceDetailContent | null {
-  if (countryCode.toLowerCase() !== "ie") return null;
-  const direct = IE_SERVICE_DETAIL[serviceSlug.toLowerCase()];
+  const countryMap = SERVICE_DETAIL_CONTENT[countryCode.toLowerCase()];
+  if (!countryMap) return null;
+  const direct = countryMap[serviceSlug.toLowerCase()];
   if (direct) return direct;
   const target = normalizeSlug(serviceSlug);
-  for (const [key, value] of Object.entries(IE_SERVICE_DETAIL)) {
+  for (const [key, value] of Object.entries(countryMap)) {
     if (normalizeSlug(key) === target) return value;
   }
   return null;
