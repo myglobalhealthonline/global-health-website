@@ -1,5 +1,6 @@
 import { fetchDoctorReports } from "@/lib/api/doctor-api";
-import { AdminEmptyState, PageHeader, SectionHeader } from "@/components/portal-atoms";
+import { AdminEmptyState, AdminSummaryStrip, PageHeader, SectionHeader } from "@/components/portal-atoms";
+import { CalendarCheck, FileCheck, Receipt, Repeat, Users } from "lucide-react";
 import { ReportsCsvButton } from "./_components/csv-button";
 import { DoctorReportExports } from "./_components/report-exports";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
@@ -58,6 +59,44 @@ export default async function DoctorReportsPage({
         description={d.reports.description}
         actions={result.ok ? <ReportsCsvButton data={result.data} label={d.reports.exportCsv} /> : null}
       />
+
+      {result.ok ? (
+        <AdminSummaryStrip
+          className="mb-4"
+          items={[
+            {
+              label: d.reports.tileAppointments,
+              value: String(result.data.appointments?.total ?? 0),
+              icon: <CalendarCheck className="size-4" aria-hidden />,
+            },
+            {
+              label: d.reports.tileSignedConsults,
+              value: String(result.data.signedConsults ?? 0),
+              icon: <FileCheck className="size-4" aria-hidden />,
+            },
+            {
+              label: d.reports.tileFollowUps,
+              value: String(result.data.followUps ?? 0),
+              icon: <Repeat className="size-4" aria-hidden />,
+            },
+            {
+              label: d.reports.tileDistinctPatients,
+              value: String(result.data.distinctPatients ?? 0),
+              icon: <Users className="size-4" aria-hidden />,
+            },
+            {
+              label: d.reports.tileRevenuePaid,
+              value:
+                Object.keys(result.data.revenueByCurrency ?? {}).length === 0
+                  ? "—"
+                  : Object.entries(result.data.revenueByCurrency ?? {})
+                      .map(([code, cents]) => fmtCurrency(cents, code))
+                      .join(" + "),
+              icon: <Receipt className="size-4" aria-hidden />,
+            },
+          ]}
+        />
+      ) : null}
 
       <form className="gh-card gh-doctor-filter-card gh-doctor-filter-grid mb-4 grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-5" method="get">
         <label className="flex flex-col gap-1">
@@ -147,35 +186,6 @@ export default async function DoctorReportsPage({
         </div>
       ) : (
         <>
-          <div className="gh-doctor-report-tile-grid mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            <Tile
-              label={d.reports.tileAppointments}
-              value={String(result.data.appointments?.total ?? 0)}
-            />
-            <Tile
-              label={d.reports.tileSignedConsults}
-              value={String(result.data.signedConsults ?? 0)}
-            />
-            <Tile
-              label={d.reports.tileFollowUps}
-              value={String(result.data.followUps ?? 0)}
-            />
-            <Tile
-              label={d.reports.tileDistinctPatients}
-              value={String(result.data.distinctPatients ?? 0)}
-            />
-            <Tile
-              label={d.reports.tileRevenuePaid}
-              value={
-                Object.keys(result.data.revenueByCurrency ?? {}).length === 0
-                  ? "—"
-                  : Object.entries(result.data.revenueByCurrency ?? {})
-                      .map(([code, cents]) => fmtCurrency(cents, code))
-                      .join(" + ")
-              }
-            />
-          </div>
-
           {(() => {
             const byStatusRows = (result.data.appointments?.byStatus ?? []).map((r) => ({
               label: r.status,
@@ -228,19 +238,6 @@ export default async function DoctorReportsPage({
         </>
       )}
     </>
-  );
-}
-
-function Tile({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="gh-card gh-doctor-report-tile p-5">
-      <p className="text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
-        {label}
-      </p>
-      <p className="mt-2 text-2xl font-bold text-[var(--portal-text)]">
-        {value}
-      </p>
-    </div>
   );
 }
 

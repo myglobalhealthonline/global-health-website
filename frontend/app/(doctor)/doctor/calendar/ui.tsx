@@ -339,6 +339,8 @@ export function DoctorCalendarUI({
 
   return (
     <div className="gh-doctor-calendar grid gap-4">
+      {statsSlot}
+
       {/* Toolbar */}
       <div className="gh-doctor-calendar-toolbar flex flex-wrap items-center justify-between gap-3">
         {/* Legend was a permanent floating row (CAL-04-008) — now a toggled
@@ -393,8 +395,6 @@ export function DoctorCalendarUI({
           setSelectedDay(todayKey(tz));
         }}
       />
-
-      {statsSlot}
 
       {/* Day agenda — lux sheet, same composition as the admin calendar's
           day drawer (RC7: doctor previously rendered this inline in a fixed
