@@ -108,7 +108,8 @@
     "metaCountry": "País",
     "metaDoctor": "Médico",
     "metaScheduled": "Agendada",
-    "metaPayment": "Pagamento"
+    "metaPayment": "Pagamento",
+    "tabsAria": "Vistas de reservas"
   },
   "orders": {
     "breadcrumb": "Conta",

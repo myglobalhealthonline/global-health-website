@@ -108,7 +108,8 @@
     "metaCountry": "Země",
     "metaDoctor": "Lékař",
     "metaScheduled": "Naplánováno",
-    "metaPayment": "Platba"
+    "metaPayment": "Platba",
+    "tabsAria": "Zobrazení rezervací"
   },
   "orders": {
     "breadcrumb": "Účet",

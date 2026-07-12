@@ -108,7 +108,8 @@
     "metaCountry": "Country",
     "metaDoctor": "Doctor",
     "metaScheduled": "Scheduled",
-    "metaPayment": "Payment"
+    "metaPayment": "Payment",
+    "tabsAria": "Booking views"
   },
   "orders": {
     "breadcrumb": "Account",

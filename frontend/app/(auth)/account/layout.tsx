@@ -7,7 +7,6 @@ import {
   Bell,
   Briefcase,
   CalendarDays,
-  CalendarRange,
   CreditCard,
   FileText,
   History,
@@ -93,7 +92,6 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       items: [
         { href: "/account/bookings", label: a.nav.myBookings, icon: <CalendarDays className="size-4" aria-hidden /> },
         { href: "/account/messages", label: a.nav.messages, icon: <MessagesSquare className="size-4" aria-hidden />, badge: unreadMessages },
-        { href: "/account/calendar", label: a.nav.calendar, icon: <CalendarRange className="size-4" aria-hidden /> },
         { href: "/account/prescriptions", label: a.nav.prescriptions, icon: <PillBottle className="size-4" aria-hidden /> },
         { href: "/account/medical-files", label: a.nav.medicalFiles, icon: <FileText className="size-4" aria-hidden /> },
       ],

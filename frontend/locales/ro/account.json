@@ -108,7 +108,8 @@
     "metaCountry": "Țară",
     "metaDoctor": "Medic",
     "metaScheduled": "Programată",
-    "metaPayment": "Plată"
+    "metaPayment": "Plată",
+    "tabsAria": "Vizualizări rezervări"
   },
   "orders": {
     "breadcrumb": "Cont",

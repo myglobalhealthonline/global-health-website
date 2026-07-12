@@ -3472,7 +3472,10 @@
 }
 
 .gh-patient-calendar {
-  grid-template-columns: minmax(0, 1fr) 360px;
+  /* Single grid child (MonthCalendar) — one full-width track. The old
+   * 1fr/360px split reserved a second column for a sidebar that was never
+   * built, leaving the month grid ~360px short of the content edge. */
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .gh-patient-subscription-grid > *,
