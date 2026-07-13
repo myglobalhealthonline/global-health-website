@@ -349,6 +349,7 @@ model Country {
   blogPostCountries          BlogPostCountry[]
   faqs                       Faq[]
   contentPages               ContentPage[]
+  pageContents               PageContent[]
   badges                     Badge[]
   partners                   Partner[]
   reviews                    Review[]
@@ -2561,6 +2562,73 @@ model ContentPage {
   updatedAt          DateTime      @updatedAt
 
   @@unique([countryId, pageKey, locale])
+}
+
+model PageContent {
+  id        String        @id @default(cuid())
+  countryId String
+  pageKey   PageKey
+  status    PublishStatus @default(DRAFT)
+  isActive  Boolean       @default(true)
+
+  // Non-translatable config
+  heroImagePath String?
+  ogImagePath   String?
+  ctaHref       String?
+
+  // Per-section visibility toggles. Public renders a section only when
+  // its toggle is ON *and* resolved content is non-empty *and* the row
+  // is PUBLISHED + active. Toggle OFF = intentionally hidden;
+  // toggle ON with empty content = "not configured" (hidden + admin warning).
+  showIntro      Boolean @default(false)
+  showWhoFor     Boolean @default(false)
+  showWhyChoose  Boolean @default(false)
+  showFaq        Boolean @default(false)
+  showDisclaimer Boolean @default(false)
+  showBody       Boolean @default(false)
+
+  country      Country                  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  translations PageContentTranslation[]
+  createdAt    DateTime                 @default(now())
+  updatedAt    DateTime                 @updatedAt
+
+  @@unique([countryId, pageKey])
+}
+
+model PageContentTranslation {
+  id            String     @id @default(cuid())
+  pageContentId String
+  locale        LocaleCode
+
+  // Hero copy (overrides the page's i18n defaults, exactly like old ContentPage did)
+  heroTitle    String?
+  heroSubtitle String?
+  heroTitleLead   String?
+  heroTitleAccent String?
+  ctaLabel     String?
+
+  // Structured sections — shapes mirror GpHubContent so the public
+  // components receive identical props to today's hardcoded IE copy.
+  intro                String? // ServiceIntro body (plain text/short paragraph)
+  whoForTitle          String?
+  whoForIntro          String?
+  whoForItems          Json?   // string[] — one entry per checklist card
+  whyChooseTitle       String?
+  whyChooseItems       Json?   // string[] — one entry per card
+  faq                  Json?   // Array<{question: string; answer: string}>
+  disclaimerParagraphs Json?   // string[] — full disclaimer, one entry per paragraph
+  disclaimerShort      String?
+
+  body String? // sanitized rich HTML (RichBodySection)
+
+  seoTitle       String?
+  seoDescription String?
+
+  pageContent PageContent @relation(fields: [pageContentId], references: [id], onDelete: Cascade)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([pageContentId, locale])
 }
 
 enum ReviewProvider {
