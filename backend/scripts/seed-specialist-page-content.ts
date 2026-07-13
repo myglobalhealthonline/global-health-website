@@ -569,6 +569,15 @@ async function upsertMarket(market: MarketConfig): Promise<UpsertResult> {
       if (!existingTranslation) return ours;
       return (current ?? ours) as V;
     };
+    // Arrays: treat an existing EMPTY array the same as null (fill it). A row
+    // that was published/saved before this seed can hold `[]` for the item
+    // lists — `[] ?? ours` keeps the empty array, which is the bug that left
+    // CZ/ES/RO/BR specialist items blank. Only a non-empty existing array
+    // (a real admin edit) is preserved.
+    const pickArr = <V>(ours: V[], current: unknown): V[] => {
+      if (isIe || !existingTranslation) return ours;
+      return Array.isArray(current) && current.length > 0 ? (current as V[]) : ours;
+    };
 
     await prisma.pageContentTranslation.upsert({
       where: { pageContentId_locale: { pageContentId: base.id, locale } },
@@ -593,14 +602,11 @@ async function upsertMarket(market: MarketConfig): Promise<UpsertResult> {
         intro: pick(t.intro, existingTranslation?.intro),
         whoForTitle: pick(t.whoForTitle, existingTranslation?.whoForTitle),
         whoForIntro: pick(t.whoForIntro, existingTranslation?.whoForIntro),
-        whoForItems: isIe || !existingTranslation ? t.whoForItems : ((existingTranslation.whoForItems as string[] | null) ?? t.whoForItems),
+        whoForItems: pickArr(t.whoForItems, existingTranslation?.whoForItems),
         whyChooseTitle: pick(t.whyChooseTitle, existingTranslation?.whyChooseTitle),
-        whyChooseItems: isIe || !existingTranslation ? t.whyChooseItems : ((existingTranslation.whyChooseItems as string[] | null) ?? t.whyChooseItems),
-        faq: isIe || !existingTranslation ? t.faq : ((existingTranslation.faq as unknown as FaqItem[] | null) ?? t.faq),
-        disclaimerParagraphs:
-          isIe || !existingTranslation
-            ? t.disclaimerParagraphs
-            : ((existingTranslation.disclaimerParagraphs as string[] | null) ?? t.disclaimerParagraphs),
+        whyChooseItems: pickArr(t.whyChooseItems, existingTranslation?.whyChooseItems),
+        faq: pickArr(t.faq, existingTranslation?.faq),
+        disclaimerParagraphs: pickArr(t.disclaimerParagraphs, existingTranslation?.disclaimerParagraphs),
         disclaimerShort: pick(t.disclaimerShort, existingTranslation?.disclaimerShort),
       },
     });
