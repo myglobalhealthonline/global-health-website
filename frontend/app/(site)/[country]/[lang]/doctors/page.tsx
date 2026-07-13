@@ -11,7 +11,7 @@ import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
 import { getSiteUrl } from "@/lib/seo/site-url";
-import { breadcrumbJsonLd, physicianJsonLd } from "@/lib/seo/structured-data";
+import { breadcrumbJsonLd, physicianJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
 import { resolveBrandTitle } from "@/lib/seo/page-seo";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
@@ -20,6 +20,13 @@ import {
   type PublicLocale,
 } from "@/lib/content/get-page-content";
 import { RichBodySection } from "@/components/sections/RichBodySection";
+import { FAQSection } from "@/components/sections/FAQSection";
+import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import {
+  ServiceIntro,
+  ChecklistSection,
+  WhyChooseSection,
+} from "@/components/sections/ServiceContentSections";
 import { SITE_NAME } from "@/lib/constants";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -154,6 +161,17 @@ export default async function CountryLangDoctorsPage({
           physicianItemListJsonLd,
         ]}
       />
+      {page?.sections.faq ? <JsonLd data={faqJsonLd(page.faq)} /> : null}
+      {page?.sections.intro ? <ServiceIntro body={page.intro!} theme="light" /> : null}
+      {page?.sections.whoFor ? (
+        <ChecklistSection
+          eyebrow="Who it's for"
+          title={page.whoForTitle!}
+          intro={page.whoForIntro ?? undefined}
+          items={page.whoForItems}
+          theme="light"
+        />
+      ) : null}
       <Suspense fallback={<DoctorDirectoryView view={unfilteredView} />}>
         <DoctorsDirectoryClient ctx={directoryCtx} />
       </Suspense>
@@ -165,7 +183,16 @@ export default async function CountryLangDoctorsPage({
         headline="What patients say about"
         headlineAccent="our doctors"
       />
+      {page?.sections.whyChoose ? (
+        <WhyChooseSection
+          title={page.whyChooseTitle!}
+          items={page.whyChooseItems}
+          theme="soft"
+        />
+      ) : null}
       <RichBodySection html={page?.body} />
+      {page?.sections.faq ? <FAQSection items={page.faq} /> : null}
+      {page?.sections.disclaimer ? <MedicalDisclaimer paragraphs={page.disclaimerParagraphs} /> : null}
     </>
   );
 }

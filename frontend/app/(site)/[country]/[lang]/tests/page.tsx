@@ -194,11 +194,13 @@ export default async function HealthTestsPage({
       />
 
       {/* Admin-authored structured sections (DB-backed, toggle-gated per
-          country). Off by default — additive to the hub copy below, in
-          the same GP-hub relative order (Part B.3). */}
-      {page?.sections.intro ? <ServiceIntro body={page.intro!} theme="light" /> : null}
-
-      <ServiceIntro body={hub.overview.body} theme="light" />
+          country). Off by default — DB section replaces the generic hub
+          copy 1:1 when set, never both (Part B.3). */}
+      {page?.sections.intro ? (
+        <ServiceIntro body={page.intro!} theme="light" />
+      ) : (
+        <ServiceIntro body={hub.overview.body} theme="light" />
+      )}
 
       {items.length > 0 ? (
         <section
@@ -278,18 +280,23 @@ export default async function HealthTestsPage({
           items={page.whoForItems}
           theme="light"
         />
-      ) : null}
-      <ChecklistSection {...hub.whoFor} theme="light" />
+      ) : (
+        <ChecklistSection {...hub.whoFor} theme="light" />
+      )}
 
       {page?.sections.whyChoose ? (
         <WhyChooseSection title={page.whyChooseTitle!} items={page.whyChooseItems} theme="soft" />
-      ) : null}
-      <WhyChooseSection title={hub.whyChoose.title} items={hub.whyChoose.items} theme="soft" />
+      ) : (
+        <WhyChooseSection title={hub.whyChoose.title} items={hub.whyChoose.items} theme="soft" />
+      )}
 
       <RichBodySection html={page?.body} theme="light" />
 
-      {page?.sections.faq ? <FAQSection title={t.watermark} items={page.faq} /> : null}
-      <FAQSection title={t.watermark} items={hub.faq} />
+      {page?.sections.faq ? (
+        <FAQSection title={t.watermark} items={page.faq} />
+      ) : (
+        <FAQSection title={t.watermark} items={hub.faq} />
+      )}
 
       <DoctifyReviewsSection
         theme="ivory"
