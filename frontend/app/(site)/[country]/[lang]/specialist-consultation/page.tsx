@@ -266,9 +266,9 @@ export default async function CountryLangSpecialistConsultationPage({
       {/* Admin-authored structured sections (DB-backed, toggle-gated per
           country). Off by default — additive to the existing hub copy
           below, in the same GP-hub relative order (Part B.3). */}
-      {page?.sections.intro ? <ServiceIntro body={page.intro!} theme="light" /> : null}
-
-      {serviceItems.length > 0 ? (
+      {page?.sections.intro ? (
+        <ServiceIntro body={page.intro!} theme="light" />
+      ) : serviceItems.length > 0 ? (
         <ServiceIntro body={hub.overview.body} theme="light" />
       ) : null}
 
@@ -293,9 +293,9 @@ export default async function CountryLangSpecialistConsultationPage({
           items={page.whoForItems}
           theme="light"
         />
-      ) : null}
-
-      <ChecklistSection {...hub.whoFor} theme="light" />
+      ) : (
+        <ChecklistSection {...hub.whoFor} theme="light" />
+      )}
 
       {/* The clinicians behind the service. */}
       {doctorItems.length > 0 ? (
@@ -309,15 +309,17 @@ export default async function CountryLangSpecialistConsultationPage({
 
       {page?.sections.whyChoose ? (
         <WhyChooseSection title={page.whyChooseTitle!} items={page.whyChooseItems} theme="soft" />
-      ) : null}
-
-      <WhyChooseSection title={hub.whyChoose.title} items={hub.whyChoose.items} theme="soft" />
+      ) : (
+        <WhyChooseSection title={hub.whyChoose.title} items={hub.whyChoose.items} theme="soft" />
+      )}
 
       <RichBodySection html={page?.body} theme="light" />
 
-      {page?.sections.faq ? <FAQSection title={c.extra.consultFaqTitle} items={page.faq} /> : null}
-
-      <FAQSection title={c.extra.consultFaqTitle} items={hub.faq} />
+      {page?.sections.faq ? (
+        <FAQSection title={c.extra.consultFaqTitle} items={page.faq} />
+      ) : (
+        <FAQSection title={c.extra.consultFaqTitle} items={hub.faq} />
+      )}
 
       <DoctifyReviewsSection
         theme="ivory"

@@ -1,9 +1,10 @@
 import { cache } from "react";
 import { adminRequest } from "./core";
 
+// HOME + DOCTORS_INDEX intentionally excluded: those pages keep their own
+// bespoke layouts and are not managed through the structured page-content CMS.
+// (The backend PageKey enum still has them; only the admin surface omits them.)
 export type AdminPageContentKey =
-  | "HOME"
-  | "DOCTORS_INDEX"
   | "GENERAL_CONSULTATION"
   | "SPECIALIST_CONSULTATION"
   | "PRESCRIPTIONS"
@@ -14,19 +15,15 @@ export type AdminPageContentLocale = "EN" | "PT" | "ES" | "CS" | "RO" | "DE";
 export type AdminPageContentStatus = "DRAFT" | "PUBLISHED";
 
 export const ADMIN_PAGE_CONTENT_KEY_LABELS: Record<AdminPageContentKey, string> = {
-  HOME: "Home",
   GENERAL_CONSULTATION: "GP hub",
   SPECIALIST_CONSULTATION: "Specialist hub",
-  DOCTORS_INDEX: "Doctors index",
   PRESCRIPTIONS: "Prescriptions",
   HEALTH_TESTS: "Health tests",
 };
 
 export const ADMIN_PAGE_CONTENT_KEYS: AdminPageContentKey[] = [
-  "HOME",
   "GENERAL_CONSULTATION",
   "SPECIALIST_CONSULTATION",
-  "DOCTORS_INDEX",
   "PRESCRIPTIONS",
   "HEALTH_TESTS",
 ];

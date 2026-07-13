@@ -21,6 +21,7 @@ import {
   fetchAdminPageContentList,
   fetchAdminPendingServiceRequests,
   fetchAdminServices,
+  ADMIN_PAGE_CONTENT_KEYS,
   type AdminPageContentListItem,
 } from "@/lib/admin/admin-api";
 import { COUNTRY_PREF_COOKIE } from "./_components/country-picker-constants";
@@ -47,7 +48,7 @@ const NON_TERMINAL_STATUSES = new Set([
   "CONTACTED",
 ]);
 
-const EXPECTED_PAGE_KEYS_PER_COUNTRY = 4; // HOME · DOCTORS_INDEX · GENERAL · SPECIALIST
+const EXPECTED_PAGE_KEYS_PER_COUNTRY = 4; // GP hub · Specialist hub · Prescriptions · Health tests
 
 function timeAgo(date: Date): string {
   const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
@@ -95,16 +96,34 @@ export default async function AdminDashboardPage() {
     ? { countryId: activeCountry.id }
     : {};
 
-  const [doctorsRes, servicesRes, appointmentsRes, pagesRes, approvalsRes] =
-    await Promise.all([
-      fetchAdminDoctors(scopeQuery),
-      fetchAdminServices(scopeQuery),
-      fetchAdminAppointments(activeCountry ? { countryCode: activeCountry.code } : undefined),
-      fetchAdminPageContentList(),
-      fetchAdminPendingServiceRequests(
-        activeCountry ? { countryCode: activeCountry.code } : undefined,
-      ),
-    ]);
+  const [
+    doctorsRes,
+    servicesRes,
+    appointmentsRes,
+    pagesRes,
+    approvalsRes,
+    // The Country-health table is a GLOBAL per-country overview, so it needs
+    // its own un-scoped, high-page fetches. Reusing the scoped stat-strip
+    // fetches above (countryId-filtered, default pageSize 20) zeroed out every
+    // non-active country and silently dropped rows past the 20th.
+    // ponytail: pageSize 250/100 covers current scale (6 countries, tens of
+    //   rows); move to a backend per-country COUNT endpoint if any one entity
+    //   exceeds the service-layer 100-row cap (appointments hard-cap at 100).
+    allDoctorsRes,
+    allServicesRes,
+    allAppointmentsRes,
+  ] = await Promise.all([
+    fetchAdminDoctors(scopeQuery),
+    fetchAdminServices(scopeQuery),
+    fetchAdminAppointments(activeCountry ? { countryCode: activeCountry.code } : undefined),
+    fetchAdminPageContentList(),
+    fetchAdminPendingServiceRequests(
+      activeCountry ? { countryCode: activeCountry.code } : undefined,
+    ),
+    fetchAdminDoctors({ pageSize: "250" }),
+    fetchAdminServices({ pageSize: "250" }),
+    fetchAdminAppointments({ pageSize: "100" }),
+  ]);
 
   const pendingApprovals = approvalsRes.ok ? approvalsRes.data.count : 0;
 
@@ -128,7 +147,12 @@ export default async function AdminDashboardPage() {
     NON_TERMINAL_STATUSES.has(a.status),
   ).length;
 
-  const allPageContentItems: AdminPageContentListItem[] = pagesRes.ok ? pagesRes.data.items : [];
+  // Only the CMS-managed page keys count here — HOME/DOCTORS_INDEX keep their
+  // own bespoke layouts and are not part of the structured page-content model.
+  const managedKeys = new Set<string>(ADMIN_PAGE_CONTENT_KEYS);
+  const allPageContentItems: AdminPageContentListItem[] = pagesRes.ok
+    ? pagesRes.data.items.filter((p) => managedKeys.has(p.pageKey))
+    : [];
   const pages = activeCountry
     ? allPageContentItems.filter((p) => p.countryId === activeCountry.id)
     : allPageContentItems;
@@ -137,9 +161,11 @@ export default async function AdminDashboardPage() {
     ? EXPECTED_PAGE_KEYS_PER_COUNTRY
     : countries.length * EXPECTED_PAGE_KEYS_PER_COUNTRY;
 
-  // Per-country aggregation (only used in global scope).
-  const allDoctors = doctorsRes.ok ? doctorsRes.data.items : [];
-  const allServices = servicesItems;
+  // Per-country aggregation for the Country-health table — always global,
+  // never the active-country scope (see the fetch block above).
+  const allDoctors = allDoctorsRes.ok ? allDoctorsRes.data.items : [];
+  const allServices = allServicesRes.ok ? allServicesRes.data.items : [];
+  const allAppointments = allAppointmentsRes.ok ? allAppointmentsRes.data.items : [];
   const allPages = allPageContentItems;
   const countryRows = countries
     .filter((c) => c.isActive)
@@ -154,7 +180,7 @@ export default async function AdminDashboardPage() {
       const pgs = allPages.filter(
         (p) => p.countryId === c.id && p.status === "PUBLISHED" && p.isActive,
       ).length;
-      const pending = appointments.filter(
+      const pending = allAppointments.filter(
         (a) =>
           a.country?.toLowerCase() === c.code.toLowerCase() &&
           NON_TERMINAL_STATUSES.has(a.status),
@@ -186,14 +212,14 @@ export default async function AdminDashboardPage() {
     .split(/\s+/)[0];
 
   const countryHomeHref = activeCountry
-    ? `/admin/page-content/${activeCountry.id}/HOME`
-    : "/admin/country-home";
+    ? `/admin/page-content/${activeCountry.id}/GENERAL_CONSULTATION`
+    : "/admin/page-content";
 
   const quickActions = [
     {
       icon: FileText,
-      label: activeCountry ? `Edit ${activeCountry.name} home` : "Edit country home",
-      sub: activeCountry ? "Hero, copy, CTA, SEO" : "Pick a country first",
+      label: activeCountry ? `Edit ${activeCountry.name} GP hub` : "Edit page content",
+      sub: activeCountry ? "Sections, hero, SEO" : "Pick a country first",
       href: countryHomeHref,
     },
     {
