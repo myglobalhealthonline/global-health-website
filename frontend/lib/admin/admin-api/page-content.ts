@@ -44,6 +44,8 @@ export type AdminPageContentListItem = {
 
 export type AdminPageContentFaqItem = { question: string; answer: string };
 
+export type AdminPageContentSectionTheme = "green" | "ivory" | null;
+
 export type AdminPageContentTranslationDto = {
   id: string;
   pageContentId: string;
@@ -84,6 +86,11 @@ export type AdminPageContentDto = {
   showFaq: boolean;
   showDisclaimer: boolean;
   showBody: boolean;
+  introTheme: AdminPageContentSectionTheme;
+  whoForTheme: AdminPageContentSectionTheme;
+  whyChooseTheme: AdminPageContentSectionTheme;
+  faqTheme: AdminPageContentSectionTheme;
+  disclaimerTheme: AdminPageContentSectionTheme;
   translations: AdminPageContentTranslationDto[];
   createdAt: string;
   updatedAt: string;
@@ -122,6 +129,11 @@ export type AdminPageContentUpsertBody = {
   showFaq?: boolean;
   showDisclaimer?: boolean;
   showBody?: boolean;
+  introTheme?: AdminPageContentSectionTheme;
+  whoForTheme?: AdminPageContentSectionTheme;
+  whyChooseTheme?: AdminPageContentSectionTheme;
+  faqTheme?: AdminPageContentSectionTheme;
+  disclaimerTheme?: AdminPageContentSectionTheme;
   translations: AdminPageContentTranslationInput[];
 };
 

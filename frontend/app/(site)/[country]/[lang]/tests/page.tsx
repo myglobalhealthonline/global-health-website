@@ -16,6 +16,7 @@ import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
   getPageContent,
   isSupportedLocale,
+  themeProp,
   type PublicLocale,
 } from "@/lib/content/get-page-content";
 import { getCountryHealthTests } from "@/lib/content/get-country-collections";
@@ -197,9 +198,9 @@ export default async function HealthTestsPage({
           country). Off by default — DB section replaces the generic hub
           copy 1:1 when set, never both (Part B.3). */}
       {page?.sections.intro ? (
-        <ServiceIntro body={page.intro!} theme="light" />
+        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
       ) : (
-        <ServiceIntro body={hub.overview.body} theme="light" />
+        <ServiceIntro body={hub.overview.body} theme={themeProp(page?.introTheme, "light")} />
       )}
 
       {items.length > 0 ? (
@@ -278,16 +279,24 @@ export default async function HealthTestsPage({
           title={page.whoForTitle!}
           intro={page.whoForIntro ?? undefined}
           items={page.whoForItems}
-          theme="light"
+          theme={themeProp(page?.whoForTheme, "light")}
         />
       ) : (
-        <ChecklistSection {...hub.whoFor} theme="light" />
+        <ChecklistSection {...hub.whoFor} theme={themeProp(page?.whoForTheme, "light")} />
       )}
 
       {page?.sections.whyChoose ? (
-        <WhyChooseSection title={page.whyChooseTitle!} items={page.whyChooseItems} theme="soft" />
+        <WhyChooseSection
+          title={page.whyChooseTitle!}
+          items={page.whyChooseItems}
+          theme={themeProp(page?.whyChooseTheme, "soft")}
+        />
       ) : (
-        <WhyChooseSection title={hub.whyChoose.title} items={hub.whyChoose.items} theme="soft" />
+        <WhyChooseSection
+          title={hub.whyChoose.title}
+          items={hub.whyChoose.items}
+          theme={themeProp(page?.whyChooseTheme, "soft")}
+        />
       )}
 
       <RichBodySection html={page?.body} theme="light" />

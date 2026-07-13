@@ -28,6 +28,7 @@ import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
   getPageContent,
   isSupportedLocale,
+  themeProp,
   type PublicLocale,
 } from "@/lib/content/get-page-content";
 import {
@@ -267,9 +268,9 @@ export default async function CountryLangSpecialistConsultationPage({
           country). Off by default — additive to the existing hub copy
           below, in the same GP-hub relative order (Part B.3). */}
       {page?.sections.intro ? (
-        <ServiceIntro body={page.intro!} theme="light" />
+        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
       ) : serviceItems.length > 0 ? (
-        <ServiceIntro body={hub.overview.body} theme="light" />
+        <ServiceIntro body={hub.overview.body} theme={themeProp(page?.introTheme, "light")} />
       ) : null}
 
       {/* 1 — The product: specialist consultations straight after the hero. */}
@@ -291,10 +292,10 @@ export default async function CountryLangSpecialistConsultationPage({
           title={page.whoForTitle!}
           intro={page.whoForIntro ?? undefined}
           items={page.whoForItems}
-          theme="light"
+          theme={themeProp(page?.whoForTheme, "light")}
         />
       ) : (
-        <ChecklistSection {...hub.whoFor} theme="light" />
+        <ChecklistSection {...hub.whoFor} theme={themeProp(page?.whoForTheme, "light")} />
       )}
 
       {/* The clinicians behind the service. */}
@@ -308,9 +309,17 @@ export default async function CountryLangSpecialistConsultationPage({
       ) : null}
 
       {page?.sections.whyChoose ? (
-        <WhyChooseSection title={page.whyChooseTitle!} items={page.whyChooseItems} theme="soft" />
+        <WhyChooseSection
+          title={page.whyChooseTitle!}
+          items={page.whyChooseItems}
+          theme={themeProp(page?.whyChooseTheme, "soft")}
+        />
       ) : (
-        <WhyChooseSection title={hub.whyChoose.title} items={hub.whyChoose.items} theme="soft" />
+        <WhyChooseSection
+          title={hub.whyChoose.title}
+          items={hub.whyChoose.items}
+          theme={themeProp(page?.whyChooseTheme, "soft")}
+        />
       )}
 
       <RichBodySection html={page?.body} theme="light" />

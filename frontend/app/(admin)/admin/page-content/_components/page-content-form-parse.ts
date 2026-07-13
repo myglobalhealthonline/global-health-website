@@ -20,6 +20,11 @@ function rawStr(formData: FormData, key: string): string {
   return String(formData.get(key) ?? "");
 }
 
+function themeVal(formData: FormData, key: string): "green" | "ivory" | null {
+  const v = formData.get(key);
+  return v === "green" || v === "ivory" ? v : null;
+}
+
 function slots(formData: FormData, prefix: string, locale: string, count: number): string[] {
   const out: string[] = [];
   for (let i = 0; i < count; i++) {
@@ -78,6 +83,11 @@ export function parsePageContentForm(formData: FormData): AdminPageContentUpsert
     showFaq: formData.get("showFaq") === "on",
     showDisclaimer: formData.get("showDisclaimer") === "on",
     showBody: formData.get("showBody") === "on",
+    introTheme: themeVal(formData, "introTheme"),
+    whoForTheme: themeVal(formData, "whoForTheme"),
+    whyChooseTheme: themeVal(formData, "whyChooseTheme"),
+    faqTheme: themeVal(formData, "faqTheme"),
+    disclaimerTheme: themeVal(formData, "disclaimerTheme"),
     translations,
   };
 }

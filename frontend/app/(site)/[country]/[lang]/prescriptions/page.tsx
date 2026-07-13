@@ -15,6 +15,7 @@ import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
   getPageContent,
   isSupportedLocale,
+  themeProp,
   type PublicLocale,
 } from "@/lib/content/get-page-content";
 import { getCountryServices } from "@/lib/content/get-country-collections";
@@ -147,7 +148,9 @@ export default async function PrescriptionsPage({
 
       {/* Admin-authored structured sections (DB-backed, toggle-gated per
           country). Off by default. Order mirrors the GP hub (Part B.3). */}
-      {page?.sections.intro ? <ServiceIntro body={page.intro!} theme="light" /> : null}
+      {page?.sections.intro ? (
+        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
+      ) : null}
 
       {/* Admin-edited rich body from PageContent (PRESCRIPTIONS). Hidden
           when no row exists. */}
@@ -197,12 +200,16 @@ export default async function PrescriptionsPage({
           title={page.whoForTitle!}
           intro={page.whoForIntro ?? undefined}
           items={page.whoForItems}
-          theme="light"
+          theme={themeProp(page?.whoForTheme, "light")}
         />
       ) : null}
 
       {page?.sections.whyChoose ? (
-        <WhyChooseSection title={page.whyChooseTitle!} items={page.whyChooseItems} theme="soft" />
+        <WhyChooseSection
+          title={page.whyChooseTitle!}
+          items={page.whyChooseItems}
+          theme={themeProp(page?.whyChooseTheme, "soft")}
+        />
       ) : null}
 
       {page?.sections.faq ? <FAQSection title={c.gpPage.faqTitle} items={page.faq} /> : null}

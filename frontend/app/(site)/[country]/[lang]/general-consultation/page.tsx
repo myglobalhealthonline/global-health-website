@@ -30,6 +30,7 @@ import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
   getPageContent,
   isSupportedLocale,
+  themeProp,
   type PublicLocale,
 } from "@/lib/content/get-page-content";
 import {
@@ -298,7 +299,9 @@ export default async function CountryLangGeneralConsultationPage({
       ) : null}
 
       {/* 1 — What this is: short authored positioning intro (when present). */}
-      {page?.sections.intro ? <ServiceIntro body={page.intro!} theme="light" /> : null}
+      {page?.sections.intro ? (
+        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
+      ) : null}
 
       {/* 2 — The product: bookable GP consultations, straight after the hero
           so the offer is visible before any supporting copy. */}
@@ -324,7 +327,7 @@ export default async function CountryLangGeneralConsultationPage({
           title={page.whoForTitle!}
           intro={page.whoForIntro ?? undefined}
           items={page.whoForItems}
-          theme="light"
+          theme={themeProp(page?.whoForTheme, "light")}
         />
       ) : null}
 
@@ -344,7 +347,7 @@ export default async function CountryLangGeneralConsultationPage({
         <WhyChooseSection
           title={page.whyChooseTitle!}
           items={page.whyChooseItems}
-          theme="soft"
+          theme={themeProp(page?.whyChooseTheme, "soft")}
         />
       ) : null}
 

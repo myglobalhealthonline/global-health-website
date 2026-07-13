@@ -42,6 +42,7 @@ import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
   getPageContent,
   isSupportedLocale,
+  themeProp,
   type PublicLocale,
 } from "@/lib/content/get-page-content";
 import {
@@ -504,7 +505,9 @@ export default async function CountryLangHomePage({
       {page?.sections.faq ? <JsonLd data={faqJsonLd(page.faq)} /> : null}
       <TrustMarquee items={trustMarqueeItems} />
       {/* Overview intro sits BELOW the trust marquee (marquee hugs the hero). */}
-      {page?.sections.intro ? <ServiceIntro body={page.intro!} theme="light" /> : null}
+      {page?.sections.intro ? (
+        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
+      ) : null}
       <RichBodySection html={page?.body} theme="light" />
       <TrustRibbon items={trustItems} theme="light" />
       <ServiceCatalog services={serviceCatalogItems} i18n={tServices.catalog} />
@@ -516,7 +519,7 @@ export default async function CountryLangHomePage({
           title={page.whoForTitle!}
           intro={page.whoForIntro ?? undefined}
           items={page.whoForItems}
-          theme="light"
+          theme={themeProp(page?.whoForTheme, "light")}
         />
       ) : null}
       {/* ── Team section — featured card + full grid under one heading ── */}
@@ -602,7 +605,7 @@ export default async function CountryLangHomePage({
         <WhyChooseSection
           title={page.whyChooseTitle!}
           items={page.whyChooseItems}
-          theme="soft"
+          theme={themeProp(page?.whyChooseTheme, "soft")}
         />
       ) : null}
       {countryTrust ? (

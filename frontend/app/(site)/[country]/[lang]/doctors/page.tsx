@@ -17,6 +17,7 @@ import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
   getPageContent,
   isSupportedLocale,
+  themeProp,
   type PublicLocale,
 } from "@/lib/content/get-page-content";
 import { RichBodySection } from "@/components/sections/RichBodySection";
@@ -162,14 +163,16 @@ export default async function CountryLangDoctorsPage({
         ]}
       />
       {page?.sections.faq ? <JsonLd data={faqJsonLd(page.faq)} /> : null}
-      {page?.sections.intro ? <ServiceIntro body={page.intro!} theme="light" /> : null}
+      {page?.sections.intro ? (
+        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
+      ) : null}
       {page?.sections.whoFor ? (
         <ChecklistSection
           eyebrow="Who it's for"
           title={page.whoForTitle!}
           intro={page.whoForIntro ?? undefined}
           items={page.whoForItems}
-          theme="light"
+          theme={themeProp(page?.whoForTheme, "light")}
         />
       ) : null}
       <Suspense fallback={<DoctorDirectoryView view={unfilteredView} />}>
@@ -187,7 +190,7 @@ export default async function CountryLangDoctorsPage({
         <WhyChooseSection
           title={page.whyChooseTitle!}
           items={page.whyChooseItems}
-          theme="soft"
+          theme={themeProp(page?.whyChooseTheme, "soft")}
         />
       ) : null}
       <RichBodySection html={page?.body} />

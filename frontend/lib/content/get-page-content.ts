@@ -39,6 +39,11 @@ export type PublicPageContentRecord = {
   seoTitle: string | null;
   seoDescription: string | null;
   sections: PageContentSections;
+  introTheme: "green" | "ivory" | null;
+  whoForTheme: "green" | "ivory" | null;
+  whyChooseTheme: "green" | "ivory" | null;
+  faqTheme: "green" | "ivory" | null;
+  disclaimerTheme: "green" | "ivory" | null;
 };
 
 export type PublicPageContent = {
@@ -69,6 +74,20 @@ function faqList(v: unknown): Array<{ question: string; answer: string }> {
 
 function boolField(v: unknown): boolean {
   return v === true;
+}
+
+function themeField(v: unknown): "green" | "ivory" | null {
+  return v === "green" || v === "ivory" ? v : null;
+}
+
+/**
+ * Maps an admin-selected section theme ("green"/"ivory"/unset) to the
+ * component-level `theme` prop value. Unset -> `fallback`, which callers
+ * pass as today's hardcoded literal for that section, so an unset theme
+ * renders byte-identical to before this feature existed.
+ */
+export function themeProp<T extends string>(v: string | null | undefined, fallback: T): "dark" | "light" | T {
+  return v === "green" ? "dark" : v === "ivory" ? "light" : fallback;
 }
 
 function normalizeRecord(raw: unknown): PublicPageContentRecord | null {
@@ -110,6 +129,11 @@ function normalizeRecord(raw: unknown): PublicPageContentRecord | null {
       disclaimer: boolField(sectionsRaw.disclaimer),
       body: boolField(sectionsRaw.body),
     },
+    introTheme: themeField(r.introTheme),
+    whoForTheme: themeField(r.whoForTheme),
+    whyChooseTheme: themeField(r.whyChooseTheme),
+    faqTheme: themeField(r.faqTheme),
+    disclaimerTheme: themeField(r.disclaimerTheme),
   };
 }
 

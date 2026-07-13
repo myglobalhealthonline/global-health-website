@@ -134,6 +134,53 @@ function SectionToggle({
   );
 }
 
+/** Per-page (base-row) Green/Ivory background picker for a section card.
+ *  Rendered once per card (not per locale tab) — mirrors SectionToggle's
+ *  "shared across every locale" placement in SectionAside. Empty/"Default"
+ *  keeps today's hardcoded look (see `themeProp` in get-page-content.ts). */
+function ThemePicker({
+  name,
+  defaultValue,
+}: {
+  name: string;
+  defaultValue: "green" | "ivory" | null;
+}) {
+  const [value, setValue] = useState<"" | "green" | "ivory">(defaultValue ?? "");
+  const options: Array<{ value: "" | "green" | "ivory"; label: string }> = [
+    { value: "", label: "Default" },
+    { value: "green", label: "Green" },
+    { value: "ivory", label: "Ivory" },
+  ];
+  return (
+    <div
+      role="radiogroup"
+      aria-label="Section background"
+      className="inline-flex items-center gap-0.5 rounded-full border border-[var(--color-border)] p-0.5"
+    >
+      {options.map((opt) => (
+        <label
+          key={opt.value || "default"}
+          className="cursor-pointer rounded-full px-2.5 py-1 text-portal-thead font-semibold uppercase tracking-[0.06em] transition-colors"
+          style={{
+            background: value === opt.value ? "var(--portal-accent, var(--color-accent, #0f2e24))" : "transparent",
+            color: value === opt.value ? "#fff" : "var(--color-text-muted)",
+          }}
+        >
+          <input
+            type="radio"
+            name={name}
+            value={opt.value}
+            checked={value === opt.value}
+            onChange={() => setValue(opt.value)}
+            className="sr-only"
+          />
+          {opt.label}
+        </label>
+      ))}
+    </div>
+  );
+}
+
 function RepeatableTextRows({
   prefix,
   locale,
@@ -396,7 +443,12 @@ export function PageContentEditor({
         description="Positioning paragraph shown under the hero."
         right={
           <SectionAside
-            toggle={<SectionToggle name="showIntro" defaultChecked={record?.showIntro ?? false} warn={(record?.showIntro ?? false) && !nonEmpty(defaultTranslation?.intro)} />}
+            toggle={
+              <>
+                <SectionToggle name="showIntro" defaultChecked={record?.showIntro ?? false} warn={(record?.showIntro ?? false) && !nonEmpty(defaultTranslation?.intro)} />
+                <ThemePicker name="introTheme" defaultValue={record?.introTheme ?? null} />
+              </>
+            }
             preview={<SectionPreview kind="intro" />}
           />
         }
@@ -417,11 +469,14 @@ export function PageContentEditor({
         right={
           <SectionAside
             toggle={
-              <SectionToggle
-                name="showWhoFor"
-                defaultChecked={record?.showWhoFor ?? false}
-                warn={(record?.showWhoFor ?? false) && !listNonEmpty(defaultTranslation?.whoForItems)}
-              />
+              <>
+                <SectionToggle
+                  name="showWhoFor"
+                  defaultChecked={record?.showWhoFor ?? false}
+                  warn={(record?.showWhoFor ?? false) && !listNonEmpty(defaultTranslation?.whoForItems)}
+                />
+                <ThemePicker name="whoForTheme" defaultValue={record?.whoForTheme ?? null} />
+              </>
             }
             preview={<SectionPreview kind="whoFor" />}
           />
@@ -451,11 +506,14 @@ export function PageContentEditor({
         right={
           <SectionAside
             toggle={
-              <SectionToggle
-                name="showWhyChoose"
-                defaultChecked={record?.showWhyChoose ?? false}
-                warn={(record?.showWhyChoose ?? false) && !listNonEmpty(defaultTranslation?.whyChooseItems)}
-              />
+              <>
+                <SectionToggle
+                  name="showWhyChoose"
+                  defaultChecked={record?.showWhyChoose ?? false}
+                  warn={(record?.showWhyChoose ?? false) && !listNonEmpty(defaultTranslation?.whyChooseItems)}
+                />
+                <ThemePicker name="whyChooseTheme" defaultValue={record?.whyChooseTheme ?? null} />
+              </>
             }
             preview={<SectionPreview kind="whyChoose" />}
           />
@@ -481,11 +539,14 @@ export function PageContentEditor({
         right={
           <SectionAside
             toggle={
-              <SectionToggle
-                name="showFaq"
-                defaultChecked={record?.showFaq ?? false}
-                warn={(record?.showFaq ?? false) && !listNonEmpty(defaultTranslation?.faq)}
-              />
+              <>
+                <SectionToggle
+                  name="showFaq"
+                  defaultChecked={record?.showFaq ?? false}
+                  warn={(record?.showFaq ?? false) && !listNonEmpty(defaultTranslation?.faq)}
+                />
+                <ThemePicker name="faqTheme" defaultValue={record?.faqTheme ?? null} />
+              </>
             }
             preview={<SectionPreview kind="faq" />}
           />
@@ -507,15 +568,18 @@ export function PageContentEditor({
         right={
           <SectionAside
             toggle={
-              <SectionToggle
-                name="showDisclaimer"
-                defaultChecked={record?.showDisclaimer ?? false}
-                warn={
-                  (record?.showDisclaimer ?? false) &&
-                  !listNonEmpty(defaultTranslation?.disclaimerParagraphs) &&
-                  !nonEmpty(defaultTranslation?.disclaimerShort)
-                }
-              />
+              <>
+                <SectionToggle
+                  name="showDisclaimer"
+                  defaultChecked={record?.showDisclaimer ?? false}
+                  warn={
+                    (record?.showDisclaimer ?? false) &&
+                    !listNonEmpty(defaultTranslation?.disclaimerParagraphs) &&
+                    !nonEmpty(defaultTranslation?.disclaimerShort)
+                  }
+                />
+                <ThemePicker name="disclaimerTheme" defaultValue={record?.disclaimerTheme ?? null} />
+              </>
             }
             preview={<SectionPreview kind="disclaimer" />}
           />
