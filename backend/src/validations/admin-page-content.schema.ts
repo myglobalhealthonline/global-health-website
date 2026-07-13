@@ -90,6 +90,17 @@ export const pageContentUpsertBodySchema = z.object({
 
 export type PageContentUpsertBody = z.infer<typeof pageContentUpsertBodySchema>;
 
+export const pageContentFlagsBodySchema = z
+  .object({
+    status: pageContentStatusSchema.optional(),
+    isActive: z.boolean().optional(),
+  })
+  .refine((v) => v.status !== undefined || v.isActive !== undefined, {
+    message: "At least one of status or isActive is required",
+  });
+
+export type PageContentFlagsBody = z.infer<typeof pageContentFlagsBodySchema>;
+
 export const pageContentAdminParamsSchema = z.object({
   countryId: z.string().trim().min(1),
   pageKey: pageContentPageKeySchema,

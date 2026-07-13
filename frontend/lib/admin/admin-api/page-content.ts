@@ -137,6 +137,27 @@ export const fetchAdminPageContent = cache(
   },
 );
 
+export type AdminPageContentFlagsDto = {
+  id: string;
+  countryId: string;
+  pageKey: AdminPageContentKey;
+  status: AdminPageContentStatus;
+  isActive: boolean;
+};
+
+/** Flags-only patch for the overview grid's inline publish/active toggles —
+ *  hits PATCH .../flags (plain field update), not the full PUT upsert. */
+export async function patchPageContentFlags(
+  countryId: string,
+  pageKey: AdminPageContentKey,
+  body: { status?: AdminPageContentStatus; isActive?: boolean },
+) {
+  return adminRequest<{ record: AdminPageContentFlagsDto }>(
+    `/api/admin/page-content/${encodeURIComponent(countryId)}/${encodeURIComponent(pageKey)}/flags`,
+    { method: "PATCH", body },
+  );
+}
+
 export async function putAdminPageContent(
   countryId: string,
   pageKey: AdminPageContentKey,

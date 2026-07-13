@@ -18,6 +18,13 @@ export class PageContentLocaleNotSupportedError extends Error {
   }
 }
 
+export class PageContentNotConfiguredError extends Error {
+  constructor() {
+    super("Page content is not configured for this country/page yet — create it in the editor first");
+    this.name = "PageContentNotConfiguredError";
+  }
+}
+
 async function assertCountryExists(countryId: string): Promise<void> {
   const row = await prisma.country.findUnique({ where: { id: countryId }, select: { id: true } });
   if (!row) throw new PageContentCountryNotFoundError();
@@ -128,6 +135,36 @@ export async function upsertPageContent(
       });
     });
   } catch (error) {
+    throw normalizeDbError(error, "Page content data is unavailable");
+  }
+}
+
+export type PageContentFlagsPatch = { status?: PublishStatus; isActive?: boolean };
+
+/**
+ * Lightweight flags-only patch for the overview grid's inline toggles.
+ * Plain `update` (not `upsertPageContent`'s upsert) — never creates a row,
+ * so an unconfigured page can't be silently toggled into existence, and
+ * never touches translations (upsert's delete+recreate would be wasteful
+ * and risky for a two-field flip).
+ */
+export async function setPageContentFlags(
+  countryId: string,
+  pageKey: PageKey,
+  patch: PageContentFlagsPatch,
+) {
+  try {
+    return await prisma.pageContent.update({
+      where: { countryId_pageKey: { countryId, pageKey } },
+      data: {
+        ...(patch.status !== undefined && { status: patch.status }),
+        ...(patch.isActive !== undefined && { isActive: patch.isActive }),
+      },
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+      throw new PageContentNotConfiguredError();
+    }
     throw normalizeDbError(error, "Page content data is unavailable");
   }
 }

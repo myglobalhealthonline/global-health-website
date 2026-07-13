@@ -1,29 +1,39 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
+import { revalidatePath, revalidateTag } from "next/cache";
 import {
   ADMIN_PAGE_CONTENT_KEYS,
   ADMIN_PAGE_CONTENT_KEY_LABELS,
   fetchAdminPageContentList,
+  patchPageContentFlags,
   type AdminPageContentKey,
   type AdminPageContentListItem,
+  type AdminPageContentStatus,
 } from "@/lib/admin/admin-api";
-import { AdminCard, PageHeader, Pill } from "../_components/atoms";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
+import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
+import { AdminCard, PageHeader } from "../_components/atoms";
 import { FlagBadge } from "../_components/flag-badge";
+import { PageContentCell } from "./_components/page-content-cell";
 
 export const dynamic = "force-dynamic";
 
-function cellTone(item: AdminPageContentListItem | undefined): "draft" | "published" | "inactive" | "neutral" {
-  if (!item || !item.configured) return "neutral";
-  if (!item.isActive) return "inactive";
-  return item.status === "PUBLISHED" ? "published" : "draft";
+// Every translation locale the page-content admin supports. The flags PATCH
+// only knows the (countryId, pageKey) it changed, not which locales that
+// country has enabled, so on a flip we bust the public cache tag for all of
+// them — revalidateTag is just a stale-mark, cheap even for tags with no
+// cached entry.
+const ALL_PAGE_CONTENT_LOCALES = ["EN", "PT", "ES", "CS", "RO", "DE"] as const;
+
+function isPageKey(value: string): value is AdminPageContentKey {
+  return (ADMIN_PAGE_CONTENT_KEYS as string[]).includes(value);
 }
 
-function cellLabel(item: AdminPageContentListItem | undefined): string {
-  if (!item || !item.configured) return "Not configured";
-  if (!item.isActive) return "Disabled";
-  return item.status === "PUBLISHED" ? "Published" : "Draft";
-}
+type PageProps = {
+  searchParams?: Promise<{ error?: string }>;
+};
 
-export default async function AdminPageContentOverview() {
+export default async function AdminPageContentOverview({ searchParams }: PageProps) {
+  const messages = searchParams ? await searchParams : {};
   const result = await fetchAdminPageContentList();
   const items = result.ok ? result.data.items : [];
 
@@ -38,13 +48,48 @@ export default async function AdminPageContentOverview() {
   }
   const countryRows = Array.from(byCountry.values()).sort((a, b) => a.countryName.localeCompare(b.countryName));
 
+  async function setFlagsAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const countryId = String(formData.get("countryId") ?? "").trim();
+    const countryCode = String(formData.get("countryCode") ?? "").trim().toUpperCase();
+    const pageKeyRaw = String(formData.get("pageKey") ?? "").trim();
+    const field = String(formData.get("field") ?? "").trim();
+    const nextValue = String(formData.get("nextValue") ?? "").trim();
+
+    if (!countryId || !isPageKey(pageKeyRaw) || (field !== "status" && field !== "isActive")) {
+      redirect(`/admin/page-content?error=${encodeURIComponent("Invalid toggle request")}`);
+    }
+    const pageKey = pageKeyRaw as AdminPageContentKey;
+    const patch: { status?: AdminPageContentStatus; isActive?: boolean } =
+      field === "status" ? { status: nextValue as AdminPageContentStatus } : { isActive: nextValue === "true" };
+
+    const res = await patchPageContentFlags(countryId, pageKey, patch);
+    if (!res.ok) {
+      redirect(`/admin/page-content?error=${encodeURIComponent(res.message)}`);
+    }
+
+    revalidatePath("/admin/page-content");
+    if (countryCode) {
+      for (const locale of ALL_PAGE_CONTENT_LOCALES) {
+        revalidateTag(SITE_CACHE_TAGS.countryPageContent(countryCode, pageKey, locale), "max");
+      }
+    }
+  }
+
   return (
     <>
       <PageHeader
         eyebrow="Content"
         title="Page content"
-        description="Per-country structured copy for the home, GP hub, specialist hub, doctors index, prescriptions, and health tests pages. Toggle sections and publish per country."
+        description="Per-country structured copy for the home, GP hub, specialist hub, doctors index, prescriptions, and health tests pages. Publish, activate, or open the full editor per cell."
       />
+
+      {messages?.error ? (
+        <AdminCard>
+          <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">{messages.error}</p>
+        </AdminCard>
+      ) : null}
 
       {!result.ok ? (
         <AdminCard>
@@ -87,19 +132,19 @@ export default async function AdminPageContentOverview() {
                     const item = row.byKey.get(key);
                     return (
                       <td key={key} style={{ padding: "14px 16px", verticalAlign: "middle" }}>
-                        <Link
-                          href={`/admin/page-content/${row.countryId}/${key}`}
-                          className="inline-flex items-center gap-2 hover:underline"
-                        >
-                          <Pill tone={cellTone(item)} withDot>
-                            {cellLabel(item)}
-                          </Pill>
-                          {item && item.enabledSectionCount > 0 ? (
-                            <span className="text-portal-thead text-[var(--color-text-muted)]">
-                              {item.enabledSectionCount} section{item.enabledSectionCount === 1 ? "" : "s"}
-                            </span>
-                          ) : null}
-                        </Link>
+                        <PageContentCell
+                          countryId={row.countryId}
+                          countryCode={row.countryCode}
+                          countryName={row.countryName}
+                          pageKey={key}
+                          pageLabel={ADMIN_PAGE_CONTENT_KEY_LABELS[key]}
+                          editHref={`/admin/page-content/${row.countryId}/${key}`}
+                          configured={!!item?.configured}
+                          status={item?.status ?? null}
+                          isActive={item?.isActive ?? null}
+                          enabledSectionCount={item?.enabledSectionCount ?? 0}
+                          setFlagsAction={setFlagsAction}
+                        />
                       </td>
                     );
                   })}

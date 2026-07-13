@@ -4,11 +4,14 @@ import {
   listAdminPageContent,
   PageContentCountryNotFoundError,
   PageContentLocaleNotSupportedError,
+  PageContentNotConfiguredError,
+  setPageContentFlags,
   upsertPageContent,
 } from "../modules/page-content/page-content.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
   pageContentAdminParamsSchema,
+  pageContentFlagsBodySchema,
   pageContentUpsertBodySchema,
 } from "../validations/admin-page-content.schema.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
@@ -24,6 +27,9 @@ function handlePageContentWriteError(
     error instanceof PageContentLocaleNotSupportedError
   ) {
     return reply.status(400).send(errorResponse(error.message));
+  }
+  if (error instanceof PageContentNotConfiguredError) {
+    return reply.status(404).send(errorResponse(error.message));
   }
   if (error instanceof DatabaseUnavailableError) {
     return reply.status(503).send(errorResponse(error.message));
@@ -87,6 +93,27 @@ const adminPageContentRoute: FastifyPluginAsync = async (app) => {
     }
     try {
       const record = await upsertPageContent(params.data.countryId, params.data.pageKey, body.data);
+      return okResponse({ record });
+    } catch (error) {
+      return handlePageContentWriteError(app, reply, error);
+    }
+  });
+
+  app.patch("/api/admin/page-content/:countryId/:pageKey/flags", async (request, reply) => {
+    const params = pageContentAdminParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply
+        .status(400)
+        .send(errorResponse("Invalid page-content lookup", params.error.flatten()));
+    }
+    const body = pageContentFlagsBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply
+        .status(400)
+        .send(errorResponse("Invalid page-content flags payload", body.error.flatten()));
+    }
+    try {
+      const record = await setPageContentFlags(params.data.countryId, params.data.pageKey, body.data);
       return okResponse({ record });
     } catch (error) {
       return handlePageContentWriteError(app, reply, error);
