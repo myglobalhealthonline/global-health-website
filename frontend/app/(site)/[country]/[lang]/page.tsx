@@ -16,7 +16,6 @@ import { StatsBand, type StatBandItem } from "@/components/sections/StatsBand";
 import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
-import { RichBodySection } from "@/components/sections/RichBodySection";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import {
@@ -508,7 +507,6 @@ export default async function CountryLangHomePage({
       {page?.sections.intro ? (
         <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
       ) : null}
-      <RichBodySection html={page?.body} theme="light" />
       <TrustRibbon items={trustItems} theme="light" />
       <ServiceCatalog services={serviceCatalogItems} i18n={tServices.catalog} />
       <StatsBand items={statsItems} theme="light" i18n={t.statsBand} />
@@ -615,10 +613,17 @@ export default async function CountryLangHomePage({
         </>
       ) : null}
       <HowItWorksNarrative theme="light" i18n={t.howItWorks} />
-      {page?.sections.faq ? <FAQSection items={page.faq} /> : null}
+      {page?.sections.faq ? (
+        <FAQSection items={page.faq} theme={themeProp(page?.faqTheme, "dark")} />
+      ) : null}
       <FinalCTA primaryHref={bookHref} secondaryHref={doctorsHref} i18n={t.finalCta} />
       <StickyBookingCTA href={bookHref} />
-      {page?.sections.disclaimer ? <MedicalDisclaimer paragraphs={page.disclaimerParagraphs} /> : null}
+      {page?.sections.disclaimer ? (
+        <MedicalDisclaimer
+          paragraphs={page.disclaimerParagraphs}
+          theme={themeProp(page?.disclaimerTheme, "dark")}
+        />
+      ) : null}
     </>
   );
 }

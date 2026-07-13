@@ -19,7 +19,6 @@ import {
   type PublicLocale,
 } from "@/lib/content/get-page-content";
 import { getCountryServices } from "@/lib/content/get-country-collections";
-import { RichBodySection } from "@/components/sections/RichBodySection";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
@@ -61,7 +60,20 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/repeat-prescription-request") },
-    openGraph: { type: "website", siteName: SITE_NAME, url, title, description },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      url,
+      title,
+      description,
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
   };
 }
 
@@ -152,10 +164,6 @@ export default async function PrescriptionsPage({
         <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
       ) : null}
 
-      {/* Admin-edited rich body from PageContent (PRESCRIPTIONS). Hidden
-          when no row exists. */}
-      <RichBodySection html={page?.body} />
-
       <TrustRibbon
         items={[
           { v: t.trustLicensedValue, l: t.trustLicensedLabel, icon: "doctor" },
@@ -212,7 +220,13 @@ export default async function PrescriptionsPage({
         />
       ) : null}
 
-      {page?.sections.faq ? <FAQSection title={c.gpPage.faqTitle} items={page.faq} /> : null}
+      {page?.sections.faq ? (
+        <FAQSection
+          title={c.gpPage.faqTitle}
+          items={page.faq}
+          theme={themeProp(page?.faqTheme, "dark")}
+        />
+      ) : null}
 
       <DoctifyReviewsSection
         theme="ivory"
@@ -227,7 +241,10 @@ export default async function PrescriptionsPage({
       <FinalCTA primaryHref={bookHref} secondaryHref={fallbackHref} />
 
       {page?.sections.disclaimer ? (
-        <MedicalDisclaimer paragraphs={page.disclaimerParagraphs} />
+        <MedicalDisclaimer
+          paragraphs={page.disclaimerParagraphs}
+          theme={themeProp(page?.disclaimerTheme, "dark")}
+        />
       ) : null}
     </>
   );

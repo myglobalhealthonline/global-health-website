@@ -7,7 +7,6 @@ import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
-import { RichBodySection } from "@/components/sections/RichBodySection";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import {
@@ -73,8 +72,20 @@ export async function generateMetadata({
     title: resolveBrandTitle(title),
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/see-a-specialist") },
-    openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
-    twitter: { card: "summary_large_image", title, description },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      title,
+      description,
+      url,
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
   };
 }
 
@@ -322,10 +333,12 @@ export default async function CountryLangSpecialistConsultationPage({
         />
       )}
 
-      <RichBodySection html={page?.body} theme="light" />
-
       {page?.sections.faq ? (
-        <FAQSection title={c.extra.consultFaqTitle} items={page.faq} />
+        <FAQSection
+          title={c.extra.consultFaqTitle}
+          items={page.faq}
+          theme={themeProp(page?.faqTheme, "dark")}
+        />
       ) : (
         <FAQSection title={c.extra.consultFaqTitle} items={hub.faq} />
       )}
@@ -369,7 +382,10 @@ export default async function CountryLangSpecialistConsultationPage({
       </section>
 
       {page?.sections.disclaimer ? (
-        <MedicalDisclaimer paragraphs={page.disclaimerParagraphs} />
+        <MedicalDisclaimer
+          paragraphs={page.disclaimerParagraphs}
+          theme={themeProp(page?.disclaimerTheme, "dark")}
+        />
       ) : null}
     </>
   );

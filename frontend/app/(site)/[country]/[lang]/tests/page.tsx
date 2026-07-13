@@ -20,7 +20,6 @@ import {
   type PublicLocale,
 } from "@/lib/content/get-page-content";
 import { getCountryHealthTests } from "@/lib/content/get-country-collections";
-import { RichBodySection } from "@/components/sections/RichBodySection";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { CartServiceCard } from "@/components/cards/CartServiceCard";
@@ -68,7 +67,20 @@ export async function generateMetadata({
     title: resolveBrandTitle(title),
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/lab-tests") },
-    openGraph: { type: "website", siteName: SITE_NAME, url, title, description },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      url,
+      title,
+      description,
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
   };
 }
 
@@ -299,10 +311,12 @@ export default async function HealthTestsPage({
         />
       )}
 
-      <RichBodySection html={page?.body} theme="light" />
-
       {page?.sections.faq ? (
-        <FAQSection title={t.watermark} items={page.faq} />
+        <FAQSection
+          title={t.watermark}
+          items={page.faq}
+          theme={themeProp(page?.faqTheme, "dark")}
+        />
       ) : (
         <FAQSection title={t.watermark} items={hub.faq} />
       )}
@@ -346,7 +360,10 @@ export default async function HealthTestsPage({
       </section>
 
       {page?.sections.disclaimer ? (
-        <MedicalDisclaimer paragraphs={page.disclaimerParagraphs} />
+        <MedicalDisclaimer
+          paragraphs={page.disclaimerParagraphs}
+          theme={themeProp(page?.disclaimerTheme, "dark")}
+        />
       ) : null}
     </>
   );

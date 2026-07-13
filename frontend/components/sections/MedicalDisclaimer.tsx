@@ -17,6 +17,9 @@ type FullProps = {
   /** One string per paragraph. */
   paragraphs: string[];
   title?: string;
+  /** "dark" (default) = today's forest-glass card, unchanged. "light" =
+   *  ivory variant for pages that opt into the CMS green/ivory picker. */
+  theme?: "dark" | "light";
 };
 
 type ShortProps = {
@@ -79,33 +82,42 @@ export function MedicalDisclaimer(props: MedicalDisclaimerProps) {
     );
   }
 
-  const { paragraphs, title = "Medical disclaimer" } = props;
+  const { paragraphs, title = "Medical disclaimer", theme = "dark" } = props;
+  const light = theme === "light";
 
   return (
     <section
       aria-label="Medical disclaimer"
-      className="gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
+      className={
+        light
+          ? "gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
+          : "gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
+      }
       style={{
         padding: "clamp(40px,5vw,72px) 0",
-        borderTop: "1px solid rgba(255,255,255,0.06)",
+        borderTop: light ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
       }}
     >
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <div
-          className="rounded-[var(--radius-card)] p-6 sm:p-8 lg:p-10 gh2-glass-forest"
+          className={
+            light
+              ? "rounded-[var(--radius-card)] p-6 sm:p-8 lg:p-10 gh2-card-ivory"
+              : "rounded-[var(--radius-card)] p-6 sm:p-8 lg:p-10 gh2-glass-forest"
+          }
           style={{
-            border: "1px solid rgba(255,255,255,0.14)",
+            border: light ? "1px solid rgba(29,75,54,0.14)" : "1px solid rgba(255,255,255,0.14)",
           }}
         >
           <div className="flex items-center gap-2.5">
             <ShieldAlert
               className="size-5"
-              style={{ color: "var(--color-brand-accent)" }}
+              style={{ color: light ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
               aria-hidden
             />
             <h2
               className="text-[11px] font-bold uppercase tracking-[0.18em]"
-              style={{ color: "var(--color-brand-accent)" }}
+              style={{ color: light ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
             >
               {title}
             </h2>
@@ -116,7 +128,10 @@ export function MedicalDisclaimer(props: MedicalDisclaimerProps) {
               <p
                 key={i}
                 className="text-sm leading-relaxed"
-                style={{ color: "rgba(255,255,255,0.72)", maxWidth: "78ch" }}
+                style={{
+                  color: light ? "var(--color-text-body)" : "rgba(255,255,255,0.72)",
+                  maxWidth: "78ch",
+                }}
               >
                 {p}
               </p>

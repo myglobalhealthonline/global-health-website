@@ -20,7 +20,6 @@ import {
   themeProp,
   type PublicLocale,
 } from "@/lib/content/get-page-content";
-import { RichBodySection } from "@/components/sections/RichBodySection";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import {
@@ -63,8 +62,20 @@ export async function generateMetadata({
     title: resolveBrandTitle(title),
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/doctors") },
-    openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
-    twitter: { card: "summary_large_image", title, description },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      title,
+      description,
+      url,
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
   };
 }
 
@@ -195,9 +206,15 @@ export default async function CountryLangDoctorsPage({
           theme={themeProp(page?.whyChooseTheme, "soft")}
         />
       ) : null}
-      <RichBodySection html={page?.body} />
-      {page?.sections.faq ? <FAQSection items={page.faq} /> : null}
-      {page?.sections.disclaimer ? <MedicalDisclaimer paragraphs={page.disclaimerParagraphs} /> : null}
+      {page?.sections.faq ? (
+        <FAQSection items={page.faq} theme={themeProp(page?.faqTheme, "dark")} />
+      ) : null}
+      {page?.sections.disclaimer ? (
+        <MedicalDisclaimer
+          paragraphs={page.disclaimerParagraphs}
+          theme={themeProp(page?.disclaimerTheme, "dark")}
+        />
+      ) : null}
     </>
   );
 }

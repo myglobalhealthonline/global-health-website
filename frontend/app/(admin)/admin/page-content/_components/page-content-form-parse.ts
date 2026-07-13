@@ -16,10 +16,6 @@ function str(formData: FormData, key: string): string | null {
   return s === "" ? null : s;
 }
 
-function rawStr(formData: FormData, key: string): string {
-  return String(formData.get(key) ?? "");
-}
-
 function themeVal(formData: FormData, key: string): "green" | "ivory" | null {
   const v = formData.get(key);
   return v === "green" || v === "ivory" ? v : null;
@@ -66,7 +62,6 @@ export function parsePageContentForm(formData: FormData): AdminPageContentUpsert
     faq: faqSlots(formData, locale),
     disclaimerParagraphs: slots(formData, "disclaimerParagraphs", locale, DISCLAIMER_SLOTS),
     disclaimerShort: str(formData, `disclaimerShort__${locale}`),
-    body: rawStr(formData, `body__${locale}`),
     seoTitle: str(formData, `seoTitle__${locale}`),
     seoDescription: str(formData, `seoDescription__${locale}`),
   }));
@@ -82,7 +77,6 @@ export function parsePageContentForm(formData: FormData): AdminPageContentUpsert
     showWhyChoose: formData.get("showWhyChoose") === "on",
     showFaq: formData.get("showFaq") === "on",
     showDisclaimer: formData.get("showDisclaimer") === "on",
-    showBody: formData.get("showBody") === "on",
     introTheme: themeVal(formData, "introTheme"),
     whoForTheme: themeVal(formData, "whoForTheme"),
     whyChooseTheme: themeVal(formData, "whyChooseTheme"),

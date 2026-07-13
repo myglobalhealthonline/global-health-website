@@ -8,7 +8,6 @@ import { MessageCircle, ShieldCheck, Clock, Star, Lock } from "lucide-react";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
-import { RichBodySection } from "@/components/sections/RichBodySection";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import {
@@ -73,8 +72,20 @@ export async function generateMetadata({
     title: resolveBrandTitle(title),
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/gp-appointment") },
-    openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
-    twitter: { card: "summary_large_image", title, description },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      title,
+      description,
+      url,
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
   };
 }
 
@@ -351,12 +362,14 @@ export default async function CountryLangGeneralConsultationPage({
         />
       ) : null}
 
-      {/* 7 — Admin-edited rich body (SEO/long-form) sits below the
-          conversion path instead of interrupting it. */}
-      <RichBodySection html={page?.body} theme="light" />
-
-      {/* 8 — FAQs + closing CTA. */}
-      {page?.sections.faq ? <FAQSection title={gp.faqTitle} items={page.faq} /> : null}
+      {/* FAQs + closing CTA. */}
+      {page?.sections.faq ? (
+        <FAQSection
+          title={gp.faqTitle}
+          items={page.faq}
+          theme={themeProp(page?.faqTheme, "dark")}
+        />
+      ) : null}
 
       <DoctifyReviewsSection
         theme="ivory"
@@ -381,7 +394,10 @@ export default async function CountryLangGeneralConsultationPage({
           </div>
         </section>
       ) : page?.sections.disclaimer ? (
-        <MedicalDisclaimer paragraphs={page.disclaimerParagraphs} />
+        <MedicalDisclaimer
+          paragraphs={page.disclaimerParagraphs}
+          theme={themeProp(page?.disclaimerTheme, "dark")}
+        />
       ) : null}
     </>
   );

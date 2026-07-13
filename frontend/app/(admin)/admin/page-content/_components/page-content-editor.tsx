@@ -7,7 +7,6 @@ import { FormSection } from "@/components/FormSection";
 import { Btn } from "../../_components/atoms";
 import { ManagedImageField } from "../../_components/managed-image-field";
 import { SectionPreview } from "./section-preview";
-import { RichTextHtmlFieldLazy as RichTextHtmlField } from "../../_components/rich-text-html-field-lazy";
 import {
   DISCLAIMER_SLOTS,
   FAQ_SLOTS,
@@ -606,27 +605,7 @@ export function PageContentEditor({
       </FormSection>
 
       <FormSection
-        title={<SectionTitle n="07" label="Rich body" />}
-        description="Editable rich-text body shown under the hero."
-        right={
-          <SectionAside
-            toggle={<SectionToggle name="showBody" defaultChecked={record?.showBody ?? false} warn={(record?.showBody ?? false) && !nonEmpty(defaultTranslation?.body)} />}
-            preview={<SectionPreview kind="body" />}
-          />
-        }
-      >
-        {locales.map((l) => {
-          const t = translationsByLocale.get(l.code) ?? emptyTranslation(l.code);
-          return (
-            <div key={l.code} hidden={l.code !== activeLocale} className="gh-form-section__span-2">
-              <RichTextHtmlField name={`body__${l.code}`} label="Body content" initialValue={t.body ?? ""} />
-            </div>
-          );
-        })}
-      </FormSection>
-
-      <FormSection
-        title={<SectionTitle n="08" label="SEO" />}
+        title={<SectionTitle n="07" label="SEO" />}
         description="Meta title, description, and Open Graph image."
         right={<SectionAside preview={<SectionPreview kind="seo" />} />}
       >
