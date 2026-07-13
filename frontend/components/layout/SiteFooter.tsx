@@ -53,7 +53,7 @@ const SOCIAL_FIELDS: ReadonlyArray<{
 
 type CareField = { flag: string | null; labelKey: keyof SiteNavigationData; slug: string };
 const CARE_FIELDS: ReadonlyArray<CareField> = [
-  { flag: "general-consultations", labelKey: "navBookGp", slug: "gp-appointment" },
+  { flag: "general-consultations", labelKey: "navBookGp", slug: "gp-consultation-online" },
   { flag: "specialist-consultations", labelKey: "navSeeSpecialist", slug: "see-a-specialist" },
   { flag: "online-prescriptions", labelKey: "navRepeatPrescription", slug: "repeat-prescription-request" },
   { flag: "health-tests", labelKey: "navLabTests", slug: "lab-tests" },

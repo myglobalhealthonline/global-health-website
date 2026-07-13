@@ -26,7 +26,7 @@ export async function GET() {
     const lang = (c.defaultLocale ?? "EN").toLowerCase();
     lines.push(`- [${c.name}](${origin}/${slug}/${lang}): country landing page with available doctors and consultation types.`);
     lines.push(`- [${c.name} - book online](${origin}/${slug}/${lang}/book): guided booking for service, clinician, time, and patient details.`);
-    lines.push(`- [${c.name} - Book a GP appointment](${origin}/${slug}/${lang}/gp-appointment): general practitioners registered in ${c.name}.`);
+    lines.push(`- [${c.name} - Book a GP appointment](${origin}/${slug}/${lang}/gp-consultation-online): general practitioners registered in ${c.name}.`);
     lines.push(`- [${c.name} - See a specialist](${origin}/${slug}/${lang}/see-a-specialist): specialists registered in ${c.name}.`);
     lines.push(`- [${c.name} - doctors](${origin}/${slug}/${lang}/doctors): clinician roster with qualifications and specialties.`);
   }

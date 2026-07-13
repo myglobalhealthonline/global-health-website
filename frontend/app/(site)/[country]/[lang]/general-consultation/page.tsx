@@ -59,7 +59,7 @@ export async function generateMetadata({
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
   const { record: page } = await getPageContent(code, "GENERAL_CONSULTATION", lang as PublicLocale);
-  const url = `${getSiteUrl()}/${country}/${lang}/gp-appointment`;
+  const url = `${getSiteUrl()}/${country}/${lang}/gp-consultation-online`;
   const title =
     page?.seoTitle ?? `General practitioners registered in ${config.name}`;
   const description =
@@ -71,7 +71,7 @@ export async function generateMetadata({
     // "%s · Global Health" template never doubles it.
     title: resolveBrandTitle(title),
     description,
-    alternates: { canonical: url, languages: hreflangAlternates(config, "/gp-appointment") },
+    alternates: { canonical: url, languages: hreflangAlternates(config, "/gp-consultation-online") },
     openGraph: {
       type: "website",
       siteName: SITE_NAME,
@@ -204,7 +204,7 @@ export default async function CountryLangGeneralConsultationPage({
         data={breadcrumbJsonLd([
           { name: "Home", url: "/" },
           { name: config.name, url: `/${slug}/${lang}` },
-          { name: "GP appointment", url: `/${slug}/${lang}/gp-appointment` },
+          { name: "Online GP consultation", url: `/${slug}/${lang}/gp-consultation-online` },
         ])}
       />
       <JsonLd
@@ -212,7 +212,7 @@ export default async function CountryLangGeneralConsultationPage({
           name: `General practitioners in ${config.name}`,
           description: `Network of general practitioners registered to practise in ${config.name}. Profiles include credentials, specialties and languages.`,
           countryName: config.name,
-          url: `/${slug}/${lang}/gp-appointment`,
+          url: `/${slug}/${lang}/gp-consultation-online`,
           bookingUrl: ctaHref,
         })}
       />
@@ -377,8 +377,8 @@ export default async function CountryLangGeneralConsultationPage({
         variant="carousel"
         language={lang}
         eyebrow="Patient reviews"
-        headline="Trusted by patients"
-        headlineAccent="across Europe"
+        headline="Trusted by patients in"
+        headlineAccent={config.name}
         body="Independent, verified reviews collected by Doctify from patients treated by our clinicians."
       />
 

@@ -59,7 +59,7 @@ function sectionNavForCountryLang(
   }> = [];
   if (enabled("general-consultations")) {
     servicesChildren.push({
-      href: `${base}/gp-appointment`,
+      href: `${base}/gp-consultation-online`,
       label: nav.navBookGp,
       description: nav.navBookGpDesc,
     });

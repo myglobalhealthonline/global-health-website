@@ -100,7 +100,7 @@ export function FinalCTA({
                 }}
               >
                 {i18n?.body ??
-                  "Browse licensed doctors registered with national medical councils across Europe, then choose an open appointment time where availability is shown."}
+                  "Browse licensed, nationally-registered doctors, then choose an open appointment time where availability is shown."}
               </p>
 
               <div className="mt-10 flex flex-wrap gap-3">
