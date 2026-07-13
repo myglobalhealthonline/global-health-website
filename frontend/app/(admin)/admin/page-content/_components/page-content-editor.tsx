@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import type { AdminPageContentDto, AdminPageContentTranslationDto } from "@/lib/admin/admin-api";
 import { PortalTabs } from "@/components/PortalTabs";
 import { FormSection } from "@/components/FormSection";
 import { Btn } from "../../_components/atoms";
 import { ManagedImageField } from "../../_components/managed-image-field";
+import { SectionPreview } from "./section-preview";
 import { RichTextHtmlFieldLazy as RichTextHtmlField } from "../../_components/rich-text-html-field-lazy";
 import {
   DISCLAIMER_SLOTS,
@@ -60,9 +61,11 @@ function emptyTranslation(locale: string): AdminPageContentTranslationDto {
   };
 }
 
-/** Section header toggle checkbox — value is shared across every locale tab
+/** Section header toggle — value is shared across every locale tab
  *  (it lives on the base row, not the translation), so it only needs to be
- *  rendered once regardless of which tab is active. */
+ *  rendered once regardless of which tab is active. Real checkbox (same
+ *  form name/semantics) visually dressed as the portal switch — mirrors the
+ *  .gh-admin-status-toggle track/thumb look without new CSS. */
 function SectionToggle({
   name,
   defaultChecked,
@@ -72,6 +75,7 @@ function SectionToggle({
   defaultChecked: boolean;
   warn?: boolean;
 }) {
+  const [on, setOn] = useState(defaultChecked);
   return (
     <div className="flex items-center gap-3">
       {warn ? (
@@ -91,8 +95,39 @@ function SectionToggle({
           No content — hidden on site
         </span>
       ) : null}
-      <label className="inline-flex items-center gap-2 text-portal-compact text-[var(--color-text-primary)]">
-        <input type="checkbox" name={name} defaultChecked={defaultChecked} className="size-4" />
+      <label className="inline-flex cursor-pointer items-center gap-2 text-portal-compact text-[var(--color-text-primary)]">
+        <input
+          type="checkbox"
+          name={name}
+          checked={on}
+          onChange={(e) => setOn(e.target.checked)}
+          className="peer sr-only"
+        />
+        <span
+          aria-hidden
+          className="peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2"
+          style={{
+            width: 34,
+            height: 20,
+            borderRadius: 999,
+            padding: 2,
+            display: "inline-flex",
+            justifyContent: on ? "flex-end" : "flex-start",
+            background: on ? "var(--portal-accent, var(--color-accent, #0f2e24))" : "var(--color-border)",
+            transition: "background 140ms ease",
+            flexShrink: 0,
+          }}
+        >
+          <span
+            style={{
+              width: 16,
+              height: 16,
+              borderRadius: "50%",
+              background: "#fff",
+              boxShadow: "0 1px 2px rgba(0,0,0,0.25)",
+            }}
+          />
+        </span>
         Show on site
       </label>
     </div>
@@ -115,17 +150,45 @@ function RepeatableTextRows({
   return (
     <div className="gh-form-section__span-2 grid gap-2">
       {Array.from({ length: count }, (_, i) => (
-        <input
-          key={i}
-          name={`${prefix}__${locale}__${i}`}
-          defaultValue={values[i] ?? ""}
-          maxLength={2000}
-          className={inputClass}
-          style={{ marginTop: 0 }}
-          placeholder={`${placeholder} ${i + 1}`}
-        />
+        <div key={i} className="flex items-center gap-2.5">
+          <RowChip n={i + 1} />
+          <input
+            name={`${prefix}__${locale}__${i}`}
+            defaultValue={values[i] ?? ""}
+            maxLength={2000}
+            className={`${inputClass} flex-1`}
+            style={{ marginTop: 0 }}
+            placeholder={`${placeholder} ${i + 1}`}
+          />
+        </div>
       ))}
     </div>
+  );
+}
+
+/** Small numbered chip marking each repeatable input row. */
+function RowChip({ n }: { n: number }) {
+  return (
+    <span
+      aria-hidden
+      style={{
+        width: 22,
+        height: 22,
+        borderRadius: "50%",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0,
+        fontSize: 10.5,
+        fontWeight: 700,
+        fontVariantNumeric: "tabular-nums",
+        color: "var(--color-text-muted)",
+        background: "var(--color-background-soft)",
+        border: "1px solid var(--color-border)",
+      }}
+    >
+      {n}
+    </span>
   );
 }
 
@@ -137,14 +200,17 @@ function FaqRows({
   faq: Array<{ question: string; answer: string }>;
 }) {
   return (
-    <div className="gh-form-section__span-2 grid gap-2">
+    <div className="gh-form-section__span-2 grid">
       {Array.from({ length: FAQ_SLOTS }, (_, i) => {
         const row = faq[i];
         return (
           <div
             key={i}
-            className="grid gap-2 rounded border border-[var(--color-border)] bg-[var(--color-background-soft)] p-2 sm:grid-cols-2"
+            className="flex items-center gap-2.5 py-2"
+            style={i > 0 ? { borderTop: "1px solid var(--color-border)" } : undefined}
           >
+            <RowChip n={i + 1} />
+            <div className="grid flex-1 gap-2 sm:grid-cols-2">
             <input
               name={`faq_q__${locale}__${i}`}
               defaultValue={row?.question ?? ""}
@@ -161,9 +227,57 @@ function FaqRows({
               style={{ marginTop: 0 }}
               placeholder={`Answer ${i + 1}`}
             />
+            </div>
           </div>
         );
       })}
+    </div>
+  );
+}
+
+/** Section number eyebrow + title — gives the 8 cards a clear "01–08"
+ *  reading order matching the public page's section order. */
+function SectionTitle({ n, label }: { n: string; label: string }) {
+  return (
+    <span className="inline-flex items-baseline gap-2.5">
+      <span
+        aria-hidden
+        style={{
+          fontSize: 10.5,
+          fontWeight: 800,
+          letterSpacing: "0.14em",
+          fontVariantNumeric: "tabular-nums",
+          color: "var(--color-text-muted)",
+        }}
+      >
+        {n}
+      </span>
+      {label}
+    </span>
+  );
+}
+
+/** Stacks the show/hide switch above the section's mini preview in the
+ *  FormSection header's right slot. */
+function SectionAside({ toggle, preview }: { toggle?: ReactNode; preview?: ReactNode }) {
+  return (
+    <div className="flex max-w-full flex-col items-end gap-3">
+      {toggle}
+      {preview}
+      {preview ? (
+        <span
+          aria-hidden
+          style={{
+            fontSize: 9.5,
+            fontWeight: 800,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            color: "var(--color-text-muted)",
+          }}
+        >
+          Live section preview
+        </span>
+      ) : null}
     </div>
   );
 }
@@ -199,15 +313,7 @@ export function PageContentEditor({
     <form action={saveAction} className="gh-admin-page-form mt-6 flex flex-col gap-6">
       <input type="hidden" name="locales" value={localeCsv} />
 
-      <FormSection
-        title="Publish"
-        description={`${countryName} · ${pageLabel}`}
-        right={
-          <Btn type="submit" variant="primary" size="md">
-            Save
-          </Btn>
-        }
-      >
+      <FormSection title="Publish" description={`${countryName} · ${pageLabel}`}>
         <label className={labelClass}>
           Status
           <select name="status" defaultValue={record?.status ?? "DRAFT"} className={inputClass}>
@@ -221,7 +327,7 @@ export function PageContentEditor({
         </label>
       </FormSection>
 
-      <div>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
         <PortalTabs
           ariaLabel="Page content languages"
           value={activeLocale}
@@ -231,12 +337,16 @@ export function PageContentEditor({
             label: `${localeLabel(l.code)}${l.isDefault ? " · default" : ""}`,
           }))}
         />
-        <p className="mt-2 text-portal-meta text-[var(--color-text-muted)]">
-          Empty fields in other languages fall back to the default language on the site.
-        </p>
+        <span className="text-portal-meta text-[var(--color-text-muted)]" style={{ fontStyle: "italic" }}>
+          Empty fields fall back to the default language on the site.
+        </span>
       </div>
 
-      <FormSection title="Hero" description="Overrides the page's default headline, subheadline and CTA.">
+      <FormSection
+        title={<SectionTitle n="01" label="Hero" />}
+        description="Overrides the page's default headline, subheadline and CTA."
+        right={<SectionAside preview={<SectionPreview kind="hero" />} />}
+      >
         {locales.map((l) => {
           const t = translationsByLocale.get(l.code) ?? emptyTranslation(l.code);
           return (
@@ -282,9 +392,14 @@ export function PageContentEditor({
       </FormSection>
 
       <FormSection
-        title="Intro"
+        title={<SectionTitle n="02" label="Intro" />}
         description="Positioning paragraph shown under the hero."
-        right={<SectionToggle name="showIntro" defaultChecked={record?.showIntro ?? false} warn={(record?.showIntro ?? false) && !nonEmpty(defaultTranslation?.intro)} />}
+        right={
+          <SectionAside
+            toggle={<SectionToggle name="showIntro" defaultChecked={record?.showIntro ?? false} warn={(record?.showIntro ?? false) && !nonEmpty(defaultTranslation?.intro)} />}
+            preview={<SectionPreview kind="intro" />}
+          />
+        }
       >
         {locales.map((l) => {
           const t = translationsByLocale.get(l.code) ?? emptyTranslation(l.code);
@@ -297,13 +412,18 @@ export function PageContentEditor({
       </FormSection>
 
       <FormSection
-        title="Who it's for"
+        title={<SectionTitle n="03" label="Who it's for" />}
         description="Each item renders as one checklist card, identical design to the Ireland page."
         right={
-          <SectionToggle
-            name="showWhoFor"
-            defaultChecked={record?.showWhoFor ?? false}
-            warn={(record?.showWhoFor ?? false) && !listNonEmpty(defaultTranslation?.whoForItems)}
+          <SectionAside
+            toggle={
+              <SectionToggle
+                name="showWhoFor"
+                defaultChecked={record?.showWhoFor ?? false}
+                warn={(record?.showWhoFor ?? false) && !listNonEmpty(defaultTranslation?.whoForItems)}
+              />
+            }
+            preview={<SectionPreview kind="whoFor" />}
           />
         }
       >
@@ -326,13 +446,18 @@ export function PageContentEditor({
       </FormSection>
 
       <FormSection
-        title="Why choose Global Health"
+        title={<SectionTitle n="04" label="Why choose Global Health" />}
         description="Each item renders as one card, identical design to the Ireland page."
         right={
-          <SectionToggle
-            name="showWhyChoose"
-            defaultChecked={record?.showWhyChoose ?? false}
-            warn={(record?.showWhyChoose ?? false) && !listNonEmpty(defaultTranslation?.whyChooseItems)}
+          <SectionAside
+            toggle={
+              <SectionToggle
+                name="showWhyChoose"
+                defaultChecked={record?.showWhyChoose ?? false}
+                warn={(record?.showWhyChoose ?? false) && !listNonEmpty(defaultTranslation?.whyChooseItems)}
+              />
+            }
+            preview={<SectionPreview kind="whyChoose" />}
           />
         }
       >
@@ -351,13 +476,18 @@ export function PageContentEditor({
       </FormSection>
 
       <FormSection
-        title="FAQ"
+        title={<SectionTitle n="05" label="FAQ" />}
         description="Question/answer pairs shown in the FAQ accordion."
         right={
-          <SectionToggle
-            name="showFaq"
-            defaultChecked={record?.showFaq ?? false}
-            warn={(record?.showFaq ?? false) && !listNonEmpty(defaultTranslation?.faq)}
+          <SectionAside
+            toggle={
+              <SectionToggle
+                name="showFaq"
+                defaultChecked={record?.showFaq ?? false}
+                warn={(record?.showFaq ?? false) && !listNonEmpty(defaultTranslation?.faq)}
+              />
+            }
+            preview={<SectionPreview kind="faq" />}
           />
         }
       >
@@ -372,17 +502,22 @@ export function PageContentEditor({
       </FormSection>
 
       <FormSection
-        title="Disclaimer"
+        title={<SectionTitle n="06" label="Disclaimer" />}
         description="Legal text — publish only clinic-approved wording."
         right={
-          <SectionToggle
-            name="showDisclaimer"
-            defaultChecked={record?.showDisclaimer ?? false}
-            warn={
-              (record?.showDisclaimer ?? false) &&
-              !listNonEmpty(defaultTranslation?.disclaimerParagraphs) &&
-              !nonEmpty(defaultTranslation?.disclaimerShort)
+          <SectionAside
+            toggle={
+              <SectionToggle
+                name="showDisclaimer"
+                defaultChecked={record?.showDisclaimer ?? false}
+                warn={
+                  (record?.showDisclaimer ?? false) &&
+                  !listNonEmpty(defaultTranslation?.disclaimerParagraphs) &&
+                  !nonEmpty(defaultTranslation?.disclaimerShort)
+                }
+              />
             }
+            preview={<SectionPreview kind="disclaimer" />}
           />
         }
       >
@@ -407,9 +542,14 @@ export function PageContentEditor({
       </FormSection>
 
       <FormSection
-        title="Rich body"
+        title={<SectionTitle n="07" label="Rich body" />}
         description="Editable rich-text body shown under the hero."
-        right={<SectionToggle name="showBody" defaultChecked={record?.showBody ?? false} warn={(record?.showBody ?? false) && !nonEmpty(defaultTranslation?.body)} />}
+        right={
+          <SectionAside
+            toggle={<SectionToggle name="showBody" defaultChecked={record?.showBody ?? false} warn={(record?.showBody ?? false) && !nonEmpty(defaultTranslation?.body)} />}
+            preview={<SectionPreview kind="body" />}
+          />
+        }
       >
         {locales.map((l) => {
           const t = translationsByLocale.get(l.code) ?? emptyTranslation(l.code);
@@ -421,7 +561,11 @@ export function PageContentEditor({
         })}
       </FormSection>
 
-      <FormSection title="SEO" description="Meta title, description, and Open Graph image.">
+      <FormSection
+        title={<SectionTitle n="08" label="SEO" />}
+        description="Meta title, description, and Open Graph image."
+        right={<SectionAside preview={<SectionPreview kind="seo" />} />}
+      >
         {locales.map((l) => {
           const t = translationsByLocale.get(l.code) ?? emptyTranslation(l.code);
           return (
@@ -442,7 +586,18 @@ export function PageContentEditor({
         </div>
       </FormSection>
 
-      <div className="gh-admin-support-actions flex items-center justify-end gap-2">
+      <div
+        className="gh-admin-support-actions flex items-center justify-end gap-2"
+        style={{
+          position: "sticky",
+          bottom: 0,
+          zIndex: "var(--z-sticky)",
+          borderTop: "1px solid var(--color-border)",
+          background: "var(--color-background-page)",
+          padding: "12px 0",
+          marginTop: 8,
+        }}
+      >
         <Btn type="submit" variant="primary" size="md">
           Save
         </Btn>
