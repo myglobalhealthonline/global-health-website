@@ -2587,6 +2587,14 @@ model PageContent {
   showDisclaimer Boolean @default(false)
   showBody       Boolean @default(false)
 
+  // Per-section background theme override. Null = use the page's hardcoded
+  // default. Values: "green" | "ivory".
+  introTheme      String?
+  whoForTheme     String?
+  whyChooseTheme  String?
+  faqTheme        String?
+  disclaimerTheme String?
+
   country      Country                  @relation(fields: [countryId], references: [id], onDelete: Cascade)
   translations PageContentTranslation[]
   createdAt    DateTime                 @default(now())

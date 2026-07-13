@@ -88,6 +88,11 @@ export async function upsertPageContent(
           showFaq: input.showFaq ?? false,
           showDisclaimer: input.showDisclaimer ?? false,
           showBody: input.showBody ?? false,
+          introTheme: input.introTheme ?? null,
+          whoForTheme: input.whoForTheme ?? null,
+          whyChooseTheme: input.whyChooseTheme ?? null,
+          faqTheme: input.faqTheme ?? null,
+          disclaimerTheme: input.disclaimerTheme ?? null,
         },
         update: {
           ...(input.status !== undefined && { status: input.status }),
@@ -101,6 +106,11 @@ export async function upsertPageContent(
           ...(input.showFaq !== undefined && { showFaq: input.showFaq }),
           ...(input.showDisclaimer !== undefined && { showDisclaimer: input.showDisclaimer }),
           ...(input.showBody !== undefined && { showBody: input.showBody }),
+          ...(input.introTheme !== undefined && { introTheme: input.introTheme }),
+          ...(input.whoForTheme !== undefined && { whoForTheme: input.whoForTheme }),
+          ...(input.whyChooseTheme !== undefined && { whyChooseTheme: input.whyChooseTheme }),
+          ...(input.faqTheme !== undefined && { faqTheme: input.faqTheme }),
+          ...(input.disclaimerTheme !== undefined && { disclaimerTheme: input.disclaimerTheme }),
         },
       });
 
@@ -262,6 +272,11 @@ export type PageContentBase = {
   showFaq: boolean;
   showDisclaimer: boolean;
   showBody: boolean;
+  introTheme: string | null;
+  whoForTheme: string | null;
+  whyChooseTheme: string | null;
+  faqTheme: string | null;
+  disclaimerTheme: string | null;
 };
 
 export type MergedTranslation = {
@@ -378,6 +393,11 @@ export async function getPublicPageContent(
       showFaq: row.showFaq,
       showDisclaimer: row.showDisclaimer,
       showBody: row.showBody,
+      introTheme: row.introTheme,
+      whoForTheme: row.whoForTheme,
+      whyChooseTheme: row.whyChooseTheme,
+      faqTheme: row.faqTheme,
+      disclaimerTheme: row.disclaimerTheme,
     };
 
     return {

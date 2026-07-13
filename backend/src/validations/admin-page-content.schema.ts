@@ -73,6 +73,8 @@ export const pageContentTranslationInputSchema = z.object({
 
 export type PageContentTranslationInput = z.infer<typeof pageContentTranslationInputSchema>;
 
+const sectionThemeSchema = z.enum(["green", "ivory"]).nullable().optional();
+
 export const pageContentUpsertBodySchema = z.object({
   status: pageContentStatusSchema.optional(),
   isActive: z.boolean().optional(),
@@ -85,6 +87,11 @@ export const pageContentUpsertBodySchema = z.object({
   showFaq: z.boolean().optional(),
   showDisclaimer: z.boolean().optional(),
   showBody: z.boolean().optional(),
+  introTheme: sectionThemeSchema,
+  whoForTheme: sectionThemeSchema,
+  whyChooseTheme: sectionThemeSchema,
+  faqTheme: sectionThemeSchema,
+  disclaimerTheme: sectionThemeSchema,
   translations: z.array(pageContentTranslationInputSchema).min(1),
 });
 

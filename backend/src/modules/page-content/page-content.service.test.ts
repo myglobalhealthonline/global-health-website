@@ -13,6 +13,11 @@ const allOff: PageContentBase = {
   showFaq: false,
   showDisclaimer: false,
   showBody: false,
+  introTheme: null,
+  whoForTheme: null,
+  whyChooseTheme: null,
+  faqTheme: null,
+  disclaimerTheme: null,
 };
 
 const allOn: PageContentBase = {
@@ -22,6 +27,11 @@ const allOn: PageContentBase = {
   showFaq: true,
   showDisclaimer: true,
   showBody: true,
+  introTheme: null,
+  whoForTheme: null,
+  whyChooseTheme: null,
+  faqTheme: null,
+  disclaimerTheme: null,
 };
 
 const emptyTranslation: MergedTranslation = {
