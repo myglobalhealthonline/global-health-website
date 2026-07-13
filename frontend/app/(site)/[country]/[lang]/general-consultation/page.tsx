@@ -115,7 +115,10 @@ export default async function CountryLangGeneralConsultationPage({
       getCountryDisclaimer(code, lang),
     ]);
 
-  const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
+  // Structured PageContent self-gates via publish status + per-section
+  // toggles (the `disabled` flag already covers unpublished/inactive), so the
+  // legacy coarse "pages" country-feature no longer gates it.
+  const page = pageDisabled ? null : rawPage;
 
   // Long-form GP positioning copy, now DB-backed (per country) instead of
   // hardcoded to Ireland. `hubActive` mirrors the old `gpHub` truthy gate

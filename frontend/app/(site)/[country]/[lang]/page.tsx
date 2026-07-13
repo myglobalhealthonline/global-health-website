@@ -194,7 +194,7 @@ export default async function CountryLangHomePage({
 
   // Null out CMS content when the page entry is disabled or the "pages"
   // feature is toggled off — structural sections still render with defaults.
-  const page = (pageDisabled || !isCountryFeatureEnabled(config, "pages")) ? null : rawPage;
+  const page = pageDisabled ? null : rawPage;
 
   const prescriptionsHref = `/${slug}/${lang}/prescriptions`;
   const catalogLabels = {

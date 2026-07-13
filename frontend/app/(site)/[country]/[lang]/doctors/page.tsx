@@ -94,7 +94,9 @@ export default async function CountryLangDoctorsPage({
   ]);
   const verifyUrl = doctorVerificationUrl(countryTrust) ?? undefined;
 
-  const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
+  // Structured PageContent self-gates via publish status; legacy "pages"
+  // country-feature no longer gates it.
+  const page = pageDisabled ? null : rawPage;
 
   // Physician ItemList schema — one Physician node per registered doctor in
   // this country (the FULL roster, independent of any client-side filter).

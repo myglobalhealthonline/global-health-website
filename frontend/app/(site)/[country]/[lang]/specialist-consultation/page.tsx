@@ -119,7 +119,9 @@ export default async function CountryLangSpecialistConsultationPage({
     getCountryDisclaimer(code, lang),
   ]);
 
-  const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
+  // Structured PageContent self-gates via publish status; legacy "pages"
+  // country-feature no longer gates it.
+  const page = pageDisabled ? null : rawPage;
 
   const hub = getServiceHubContent("specialist", {
     countryName: config.name,

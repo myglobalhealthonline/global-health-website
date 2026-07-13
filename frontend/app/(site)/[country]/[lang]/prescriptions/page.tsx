@@ -94,7 +94,9 @@ export default async function PrescriptionsPage({
     getPageContent(code, "PRESCRIPTIONS", lang as PublicLocale),
   ]);
 
-  const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
+  // Structured PageContent self-gates via publish status; legacy "pages"
+  // country-feature no longer gates it.
+  const page = pageDisabled ? null : rawPage;
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const t = c.prescriptionsPage;
   const bookHref = "#prescriptions";
