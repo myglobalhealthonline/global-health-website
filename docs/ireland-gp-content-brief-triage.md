@@ -20,8 +20,8 @@ Three buckets:
 | # | Item | Bucket | Status / action |
 |---|------|--------|-----------------|
 | 1 | Slug `gp-appointment` → `gp-consultation-online` + 301 | **A** | ✅ done — see files below |
-| 6 | Review claim `4.8/5 · 2,000+ reviews` | **C** | ⚠ **compliance** — false/unverifiable claim (EU Omnibus + Google Ads disapproval). Global i18n `gpPage.hero.stat2*`, shared by all 6 markets. **Recommend fixing now** (see C-6). |
-| 7 | Card 1 price `€45` → `from €39` | **C** | Product-team confirm which price is canonical, then apply (C-7). |
+| 6 | Review claim `4.8/5 · 2,000+ reviews` | **A** | ✅ done — replaced with `45,000 consultations in 2025 / Reviewed on Doctify` across all 6 locale files (gpPage + specialistPage heroes). |
+| 7 | Card 1 price `€45` → `€39` | **B** | ✅ resolved: "show the lowest price" → `acute-medical-consultation` €45→€39 (lowest consultation; `second-opinion` was the real €39). In patch script — **money path**, ships on `--apply`. |
 | 4,5 | Title tag + meta description | **B** | Run patch script `--apply`. |
 | 8 | Footer description (drop "across Europe") | **B** | In patch script (IE `CountryFooter.tagline`). |
 | 9 | Footer clinics: Czechia→Czech Republic; +Romania,+Brazil | **B**/**C** | cz rename in script. **Romania/Brazil = market go-live decision, not a copy edit** (C-9). |
@@ -82,20 +82,20 @@ Dry-run runs the updates inside a transaction and rolls back, printing real matc
 
 ## Bucket C — blocked / decision needed
 
-**C-6 · Review claim (🔴 critical, compliance).** `gpPage.hero.stat2Title` = `"4.8/5 patient
-rating"`, `stat2Subtitle` = `"From 2,000+ verified patient reviews."` — global i18n in all 6
-locale files (`en/pt/es/cs/ro/de common.json`). The brief's replacement (`"45,000 consultations
-in 2025 · Reviewed on Doctify"`) is an IE-specific volume claim that can't live in shared copy.
-The fabricated `4.8/5 · 2,000+` is a genuine liability everywhere. **Recommended: replace the
-shared stat with a country-neutral, verifiable claim** (e.g. `"Independently reviewed" /
-"Verified patient reviews collected on Doctify."`) across all 6 locale files — removes the risk
-site-wide without a false number. Say the word and I'll do it. If the literal "45,000
-consultations" is wanted for IE only, that needs a per-country hero-stat field on `PageContent`.
+**C-6 · Review claim — DONE.** `gpPage.hero.stat2*` and `specialistPage.hero.stat2*` said
+`"4.8/5 patient rating" / "From 2,000+ verified patient reviews."` — fabricated, a liability
+(EU Omnibus + Ads). Replaced with `"45,000 consultations in 2025" / "Reviewed on Doctify."` in
+all 6 locale files (`en/pt/es/cs/ro/de common.json`, translated). Applied to BOTH hero blocks
+since both markets carried the same false claim. The number is the company-wide 2025 volume, so
+it's valid on every market's hero (not IE-specific). Doctify link/widget already on the page =
+verifiable.
 
-**C-7 · Card 1 price €45 → from €39.** `Service.basePriceCents`. Brief itself says *"confirm with
-product team which price to display."* Once confirmed: set the IE GENERAL card's `basePriceCents`
-(and check the card renders a `from` prefix). One-line update or admin edit — deliberately kept
-out of the script so no price ships unconfirmed.
+**C-7 · Card 1 price — DONE (in patch script).** Actual data: the GP Consultation card
+(`acute-medical-consultation`) is €45; the brief's "€39" is really `second-opinion-consultation`.
+Lowest GP *consultation* = €39, lowest GP *service* = €29 (`treatment-review`). Per "show the
+lowest price", the patch script sets `acute-medical-consultation` €45→€39 (matched on 4500), so
+the flagship card matches the FAQ/meta €39 anchor. **This is a money path — it lowers the charged
+price too; ships only on `--apply`.** Other cards keep their real prices (€29–€60).
 
 **C-9 · Romania/Brazil footer clinics.** Footer clinics come from the CMS active-country list
 (`Country.isActive`). They're "missing" because those markets aren't activated. **Activating a

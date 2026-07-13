@@ -13,7 +13,6 @@
  * Covers only the per-country DB fields (PageContentTranslation, Service,
  * Doctor, CountryFooter, Country). Deliberately NOT covered here — see the
  * triage doc docs/ireland-gp-content-brief-triage.md:
- *   - GP consultation price €45 -> from €39 (brief §4.2) — product-team confirm.
  *   - Romania/Brazil footer clinics (brief §10) — market go-live decision, not
  *     a copy edit; do NOT flip Country.isActive from a content script.
  *   - Hero bullets / review stat / Practice-areas H2 / Team H2 (brief items
@@ -84,6 +83,15 @@ const SERVICE_SUMMARIES: Array<[from: string, to: string]> = [
     "Our IMC-registered GPs provide ongoing chronic condition care via secure video call. Same-day and scheduled appointments available.",
   ],
 ];
+
+// Card 1 price (brief item 7) — "show the lowest price": the flagship GP
+// Consultation card is `acute-medical-consultation`, currently €45. The lowest
+// GP *consultation* price is €39, so align the card to €39 to match the FAQ +
+// meta anchors. MONEY PATH: this changes both the displayed AND charged price;
+// matched on the current 4500 so it's idempotent and no-ops if already €39.
+const GP_PRICE_SLUG = "acute-medical-consultation";
+const GP_PRICE_FROM_CENTS = 4500;
+const GP_PRICE_TO_CENTS = 3900;
 
 // Doctor title fix (brief item 26).
 const DOCTOR_NAME_MATCH = "Maklad";
@@ -196,6 +204,13 @@ async function main() {
       const tr = await tx.serviceTranslation.updateMany({ where: { locale: LOCALE, summary: from, service: { countryId } }, data: { summary: to } });
       if (base.count || tr.count) note(`Service summary (card 4) updated (${base.count} base, ${tr.count} tr)`);
     }
+
+    // 2b) Card 1 price €45 -> €39 (lowest consultation; brief item 7).
+    const price = await tx.service.updateMany({
+      where: { countryId, slug: GP_PRICE_SLUG, basePriceCents: GP_PRICE_FROM_CENTS },
+      data: { basePriceCents: GP_PRICE_TO_CENTS },
+    });
+    if (price.count) note(`Service price ${GP_PRICE_SLUG}: €${GP_PRICE_FROM_CENTS / 100} -> €${GP_PRICE_TO_CENTS / 100} (charged + displayed)`);
 
     // 3) Doctor title (base col + any IE market translation).
     const docBase = await tx.doctor.updateMany({
