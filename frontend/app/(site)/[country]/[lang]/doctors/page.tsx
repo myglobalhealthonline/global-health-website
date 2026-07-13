@@ -15,10 +15,10 @@ import { breadcrumbJsonLd, physicianJsonLd } from "@/lib/seo/structured-data";
 import { resolveBrandTitle } from "@/lib/seo/page-seo";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
-  getPublicPage,
+  getPageContent,
   isSupportedLocale,
   type PublicLocale,
-} from "@/lib/content/get-public-page";
+} from "@/lib/content/get-page-content";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { SITE_NAME } from "@/lib/constants";
 import type { LocaleCode } from "@/lib/i18n/types";
@@ -44,7 +44,7 @@ export async function generateMetadata({
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
-  const { record: page } = await getPublicPage(code, "DOCTORS_INDEX", lang as PublicLocale);
+  const { record: page } = await getPageContent(code, "DOCTORS_INDEX", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}/doctors`;
   const title =
     page?.seoTitle ?? `${config.name} — registered doctors and specialists`;
@@ -87,7 +87,7 @@ export default async function CountryLangDoctorsPage({
 
   const [doctors, { record: rawPage, disabled: pageDisabled }, countryTrust, generalServices, specialistServices] = await Promise.all([
     getCountryDoctors(code, lang),
-    getPublicPage(code, "DOCTORS_INDEX", lang as PublicLocale),
+    getPageContent(code, "DOCTORS_INDEX", lang as PublicLocale),
     getCountryTrust(code),
     getCountryServices(code, "GENERAL", lang),
     getCountryServices(code, "SPECIALIST", lang),

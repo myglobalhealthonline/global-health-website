@@ -32,10 +32,10 @@ import { getSiteUrl } from "@/lib/seo/site-url";
 import { resolveBrandTitle } from "@/lib/seo/page-seo";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
-  getPublicPage,
+  getPageContent,
   isSupportedLocale,
   type PublicLocale,
-} from "@/lib/content/get-public-page";
+} from "@/lib/content/get-page-content";
 import {
   getCountryDoctors,
   getCountryServices,
@@ -72,7 +72,7 @@ export async function generateMetadata({
   if (!config) return { title: SITE_NAME };
   if (!isSupportedLocale(lang)) return { title: SITE_NAME };
 
-  const { record: page } = await getPublicPage(code, "HOME", lang as PublicLocale);
+  const { record: page } = await getPageContent(code, "HOME", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}`;
   const title =
     page?.seoTitle ?? `${config.name} — registered doctors and specialists`;
@@ -89,7 +89,7 @@ export async function generateMetadata({
       title,
       description,
       url,
-      ...(page?.ogImage?.src ? { images: [{ url: page.ogImage.src }] } : {}),
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
     },
     twitter: { card: "summary_large_image", title, description },
   };
@@ -171,7 +171,7 @@ export default async function CountryLangHomePage({
     gpLanguages,
   ] =
     await Promise.all([
-      getPublicPage(code, "HOME", lang as PublicLocale),
+      getPageContent(code, "HOME", lang as PublicLocale),
       getCountryDoctors(code, lang),
       // One query for every kind, partitioned in memory below — replaces the
       // former three per-kind round-trips (each with its own country check).

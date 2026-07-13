@@ -14,10 +14,10 @@ import { getSiteUrl } from "@/lib/seo/site-url";
 import { breadcrumbJsonLd, catalogueItemListJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
-  getPublicPage,
+  getPageContent,
   isSupportedLocale,
   type PublicLocale,
-} from "@/lib/content/get-public-page";
+} from "@/lib/content/get-page-content";
 import { getCountryHealthTests } from "@/lib/content/get-country-collections";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { SITE_NAME } from "@/lib/constants";
@@ -54,7 +54,7 @@ export async function generateMetadata({
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
   // Admin-editable copy via /admin/pages (PageKey=HEALTH_TESTS).
   // Falls back to the hardcoded strings if no ContentPage row exists.
-  const { record: page } = await getPublicPage(code, "HEALTH_TESTS", lang as PublicLocale);
+  const { record: page } = await getPageContent(code, "HEALTH_TESTS", lang as PublicLocale);
   const hub = getServiceHubContent("tests", {
     countryName: config.name,
     locale: lang,
@@ -96,7 +96,7 @@ export default async function HealthTestsPage({
     { short: testsShortDisclaimer },
   ] = await Promise.all([
     getCountryHealthTests(code, lang),
-    getPublicPage(code, "HEALTH_TESTS", lang as PublicLocale),
+    getPageContent(code, "HEALTH_TESTS", lang as PublicLocale),
     getCountryDisclaimer(code, lang),
   ]);
 
@@ -191,6 +191,11 @@ export default async function HealthTestsPage({
         ]}
       />
 
+      {/* Admin-authored structured sections (DB-backed, toggle-gated per
+          country). Off by default — additive to the hub copy below, in
+          the same GP-hub relative order (Part B.3). */}
+      {page?.sections.intro ? <ServiceIntro body={page.intro!} theme="light" /> : null}
+
       <ServiceIntro body={hub.overview.body} theme="light" />
 
       {items.length > 0 ? (
@@ -263,11 +268,25 @@ export default async function HealthTestsPage({
         </section>
       )}
 
+      {page?.sections.whoFor ? (
+        <ChecklistSection
+          eyebrow="Who it's for"
+          title={page.whoForTitle!}
+          intro={page.whoForIntro ?? undefined}
+          items={page.whoForItems}
+          theme="light"
+        />
+      ) : null}
       <ChecklistSection {...hub.whoFor} theme="light" />
+
+      {page?.sections.whyChoose ? (
+        <WhyChooseSection title={page.whyChooseTitle!} items={page.whyChooseItems} theme="soft" />
+      ) : null}
       <WhyChooseSection title={hub.whyChoose.title} items={hub.whyChoose.items} theme="soft" />
 
       <RichBodySection html={page?.body} theme="light" />
 
+      {page?.sections.faq ? <FAQSection title={t.watermark} items={page.faq} /> : null}
       <FAQSection title={t.watermark} items={hub.faq} />
 
       <DoctifyReviewsSection
@@ -307,6 +326,10 @@ export default async function HealthTestsPage({
           />
         </div>
       </section>
+
+      {page?.sections.disclaimer ? (
+        <MedicalDisclaimer paragraphs={page.disclaimerParagraphs} />
+      ) : null}
     </>
   );
 }

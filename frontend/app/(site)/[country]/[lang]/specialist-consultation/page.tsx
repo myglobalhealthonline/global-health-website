@@ -26,10 +26,10 @@ import { resolveBrandTitle } from "@/lib/seo/page-seo";
 import { breadcrumbJsonLd, faqJsonLd, medicalServiceHubJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
-  getPublicPage,
+  getPageContent,
   isSupportedLocale,
   type PublicLocale,
-} from "@/lib/content/get-public-page";
+} from "@/lib/content/get-page-content";
 import {
   getCountryDoctors,
   getCountryServices,
@@ -59,7 +59,7 @@ export async function generateMetadata({
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
-  const { record: page } = await getPublicPage(code, "SPECIALIST_CONSULTATION", lang as PublicLocale);
+  const { record: page } = await getPageContent(code, "SPECIALIST_CONSULTATION", lang as PublicLocale);
   const hub = getServiceHubContent("specialist", {
     countryName: config.name,
     locale: lang,
@@ -112,7 +112,7 @@ export default async function CountryLangSpecialistConsultationPage({
     legal,
     { short: specialistShortDisclaimer },
   ] = await Promise.all([
-    getPublicPage(code, "SPECIALIST_CONSULTATION", lang as PublicLocale),
+    getPageContent(code, "SPECIALIST_CONSULTATION", lang as PublicLocale),
     getCountryServices(code, "SPECIALIST", lang),
     getCountryDoctors(code, lang),
     getCountryLegal(code),
@@ -261,6 +261,11 @@ export default async function CountryLangSpecialistConsultationPage({
         ]}
       />
 
+      {/* Admin-authored structured sections (DB-backed, toggle-gated per
+          country). Off by default — additive to the existing hub copy
+          below, in the same GP-hub relative order (Part B.3). */}
+      {page?.sections.intro ? <ServiceIntro body={page.intro!} theme="light" /> : null}
+
       {serviceItems.length > 0 ? (
         <ServiceIntro body={hub.overview.body} theme="light" />
       ) : null}
@@ -278,6 +283,16 @@ export default async function CountryLangSpecialistConsultationPage({
         </div>
       ) : null}
 
+      {page?.sections.whoFor ? (
+        <ChecklistSection
+          eyebrow="Who it's for"
+          title={page.whoForTitle!}
+          intro={page.whoForIntro ?? undefined}
+          items={page.whoForItems}
+          theme="light"
+        />
+      ) : null}
+
       <ChecklistSection {...hub.whoFor} theme="light" />
 
       {/* The clinicians behind the service. */}
@@ -290,9 +305,15 @@ export default async function CountryLangSpecialistConsultationPage({
         />
       ) : null}
 
+      {page?.sections.whyChoose ? (
+        <WhyChooseSection title={page.whyChooseTitle!} items={page.whyChooseItems} theme="soft" />
+      ) : null}
+
       <WhyChooseSection title={hub.whyChoose.title} items={hub.whyChoose.items} theme="soft" />
 
       <RichBodySection html={page?.body} theme="light" />
+
+      {page?.sections.faq ? <FAQSection title={c.extra.consultFaqTitle} items={page.faq} /> : null}
 
       <FAQSection title={c.extra.consultFaqTitle} items={hub.faq} />
 
@@ -333,6 +354,10 @@ export default async function CountryLangSpecialistConsultationPage({
           />
         </div>
       </section>
+
+      {page?.sections.disclaimer ? (
+        <MedicalDisclaimer paragraphs={page.disclaimerParagraphs} />
+      ) : null}
     </>
   );
 }
