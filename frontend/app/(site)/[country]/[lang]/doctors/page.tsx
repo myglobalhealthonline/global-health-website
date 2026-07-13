@@ -13,7 +13,7 @@ import { countryLangParams } from "@/lib/routing/static-params";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { breadcrumbJsonLd, physicianJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
 import { resolveBrandTitle } from "@/lib/seo/page-seo";
-import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
   getPageContent,
   isSupportedLocale,
@@ -68,6 +68,7 @@ export async function generateMetadata({
       title,
       description,
       url,
+      ...ogLocales(config, lang),
       ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
     },
     twitter: {

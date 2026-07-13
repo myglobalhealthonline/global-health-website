@@ -23,7 +23,7 @@ import { buildBookHref } from "@/lib/routing/book-href";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { resolveBrandTitle } from "@/lib/seo/page-seo";
 import { breadcrumbJsonLd, faqJsonLd, medicalServiceHubJsonLd } from "@/lib/seo/structured-data";
-import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
   getPageContent,
   isSupportedLocale,
@@ -78,6 +78,7 @@ export async function generateMetadata({
       title,
       description,
       url,
+      ...ogLocales(config, lang),
       ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
     },
     twitter: {

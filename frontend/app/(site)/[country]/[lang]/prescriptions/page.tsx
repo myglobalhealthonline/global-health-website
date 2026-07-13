@@ -11,7 +11,7 @@ import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
-import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
   getPageContent,
   isSupportedLocale,
@@ -66,6 +66,7 @@ export async function generateMetadata({
       url,
       title,
       description,
+      ...ogLocales(config, lang),
       ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
     },
     twitter: {

@@ -24,7 +24,7 @@ import { countryLangParams } from "@/lib/routing/static-params";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
-import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
@@ -78,7 +78,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/book") },
-    openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
+    openGraph: { type: "website", siteName: SITE_NAME, title, description, url, ...ogLocales(config, lang) },
     twitter: { card: "summary_large_image", title, description },
   };
 }
