@@ -11,7 +11,8 @@
     "s2_i3": "Payment data: Stripe charge IDs, amounts, and timestamps. We never see card numbers — Stripe holds those directly.",
     "s2_i4": "Email-delivery metadata: when SendGrid accepted, opened, or bounced our messages.",
     "s3_h": "Cookies",
-    "s3_p": "We set one strictly-necessary session cookie (gh_auth) so you stay logged in. Country and language preferences are also stored as cookies. No third-party trackers.",
+    "s3_p": "Strictly-necessary cookies: gh_auth keeps you signed in, gh_locale and gh-last-country remember your language and country, and gh-consent records the choice you make below. Only with your consent do we also load the Meta Pixel (advertising measurement, set by Meta) and Doctify review widgets (patient reviews, set by doctify.com) — both place their own cookies. Refuse them and neither is ever loaded.",
+    "s3_manage": "You can change or withdraw your choice at any time:",
     "s4_h": "Your rights",
     "s4_intro": "Under GDPR you can:",
     "s4_i1_pre": "Request a copy of everything we hold — sign in and go to ",
@@ -23,7 +24,7 @@
     "s5_h": "Retention",
     "s5_p": "Account data is kept while your account is active. Booking and payment data is retained for 7 years to satisfy medical record-keeping and tax-audit requirements, even if you delete your account.",
     "s6_h": "Sub-processors",
-    "s6_p": "We use Railway (hosting), Stripe (payments), and SendGrid (transactional email). Each is GDPR-compliant and bound by Data Processing Agreements."
+    "s6_p": "We use Railway (hosting), Stripe (payments), and SendGrid (transactional email). Each is GDPR-compliant and bound by Data Processing Agreements. Subject to your cookie choice, we also use Meta (advertising measurement) and Doctify (patient reviews)."
   },
   "terms": {
     "eyebrow": "Legal",

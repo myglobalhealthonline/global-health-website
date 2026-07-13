@@ -62,10 +62,11 @@ type Props = {
     requireNationalId: boolean;
     requireAddress: boolean;
   };
-  /** Insurance companies covering this service. When non-empty the form shows
-   *  an "Insurance company" dropdown; picking one + entering the policy number
-   *  switches the shown + charged price to the negotiated insurance price. */
-  insuranceOptions?: InsuranceOption[];
+  /** The insurer the patient chose back at the INSURANCE step (null = paying the
+   *  standard price). The choice happens before time + doctor because only
+   *  doctors in that insurer's network take its patients, so by the time we get
+   *  here it's fixed — this form just collects the card number for it. */
+  selectedInsurance?: InsuranceOption | null;
 };
 
 /** Saved patient profile fields we prefill on the details step (req #2). */
@@ -107,7 +108,7 @@ export function ConsultationBookingForm({
   autoAssign,
   i18n,
   bookingRequirements,
-  insuranceOptions = [],
+  selectedInsurance = null,
 }: Props) {
   const requirePhone = bookingRequirements?.requirePhone ?? false;
   const requireDob = bookingRequirements?.requireDateOfBirth ?? false;
@@ -171,15 +172,13 @@ export function ConsultationBookingForm({
   // Default ON (offer to save) until we learn the profile already has an
   // address; flipped in the profile fetch below.
   const [saveAddress, setSaveAddress] = useState(true);
-  // Insurance selection (only surfaced when this service has covering
-  // companies). Picking a company + entering the policy number switches the
-  // shown + charged price to the negotiated insurance price. The server is the
-  // price authority — it re-validates coverage and re-derives the price.
-  const [insuranceCompanyId, setInsuranceCompanyId] = useState("");
+  // Insurance: the company was chosen at the INSURANCE step (before time +
+  // doctor, because the insurer decides which doctors exist). All this form does
+  // is collect the card number. The server stays the price authority — it
+  // re-validates coverage + the doctor's network membership and re-derives the
+  // price.
   const [insurancePolicyNumber, setInsurancePolicyNumber] = useState("");
-  const selectedInsurance = insuranceCompanyId
-    ? insuranceOptions.find((o) => o.companyId === insuranceCompanyId) ?? null
-    : null;
+  const insuranceCompanyId = selectedInsurance?.companyId ?? "";
   // The insurance price only "reveals" once the patient has entered their card
   // number, mirroring the requirement that the price updates when they provide
   // their insurance details.
@@ -894,50 +893,37 @@ export function ConsultationBookingForm({
           </p>
         </label>
 
-        {/* Insurance company — only for services a company covers. Selecting a
-          * company + entering the policy/card number switches the shown +
-          * charged price to the negotiated insurance price (server re-validated). */}
-        {insuranceOptions.length > 0 ? (
-          <div className="mt-4 grid gap-3">
+        {/* Insurance card number. The insurer itself was chosen at the earlier
+          * INSURANCE step (it decides which doctors are bookable), so it's fixed
+          * here — we only collect the card to verify. */}
+        {selectedInsurance ? (
+          <div className="mt-4 grid gap-3 rounded-md border border-[var(--color-border)] p-3">
+            <p className="m-0 text-xs font-semibold text-[var(--color-text-body)]">
+              Booking with {selectedInsurance.name} —{" "}
+              {formatPriceRounded(
+                selectedInsurance.insurancePriceCents,
+                selectedSlot?.currencyCode ?? "EUR",
+              )}
+            </p>
             <label className="block">
               <span className="text-xs font-semibold text-[var(--color-text-body)]">
-                Insurance company{" "}
-                <span className="text-[11px] font-normal text-[var(--color-text-muted)]">(optional)</span>
+                Insurance card / policy number
               </span>
-              <select
-                value={insuranceCompanyId}
-                onChange={(e) => setInsuranceCompanyId(e.target.value)}
+              <input
+                type="text"
+                value={insurancePolicyNumber}
+                onChange={(e) => setInsurancePolicyNumber(e.target.value)}
+                maxLength={120}
+                autoComplete="off"
+                placeholder="Enter your policy number to apply the insurance price"
                 className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-              >
-                <option value="">Pay standard price (no insurance)</option>
-                {insuranceOptions.map((opt) => (
-                  <option key={opt.companyId} value={opt.companyId}>
-                    {opt.name} — {formatPriceRounded(opt.insurancePriceCents, selectedSlot?.currencyCode ?? "EUR")}
-                  </option>
-                ))}
-              </select>
+              />
+              <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                Your insurance price applies once you enter your card number. We&rsquo;ll reserve
+                your time and verify your card before taking payment — you&rsquo;ll get a secure
+                payment link by email &amp; WhatsApp once it&rsquo;s verified.
+              </p>
             </label>
-            {selectedInsurance ? (
-              <label className="block">
-                <span className="text-xs font-semibold text-[var(--color-text-body)]">
-                  Insurance card / policy number
-                </span>
-                <input
-                  type="text"
-                  value={insurancePolicyNumber}
-                  onChange={(e) => setInsurancePolicyNumber(e.target.value)}
-                  maxLength={120}
-                  autoComplete="off"
-                  placeholder="Enter your policy number to apply the insurance price"
-                  className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-                />
-                <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                  Your insurance price applies once you enter your card number. We&rsquo;ll reserve
-                  your time and verify your card before taking payment — you&rsquo;ll get a secure
-                  payment link by email &amp; WhatsApp once it&rsquo;s verified.
-                </p>
-              </label>
-            ) : null}
           </div>
         ) : null}
 

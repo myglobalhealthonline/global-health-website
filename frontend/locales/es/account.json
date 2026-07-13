@@ -659,6 +659,8 @@
     "backToBookings": "Volver a las reservas",
     "cantRescheduleTitle": "Esta reserva no se puede reprogramar",
     "cantRescheduleBody": "Esta cita ya se completó o canceló, por lo que ya no acepta un nuevo horario.",
+    "pastAppointmentTitle": "La hora de esta cita ya pasó",
+    "pastAppointmentBody": "Su horario programado ya pasó, por lo que no se puede reprogramar. Reserva una nueva consulta o contacta a la clínica.",
     "noClinicianTitle": "Aún sin médico asignado",
     "noClinicianBody": "Esta solicitud aún no se ha emparejado con un médico, por lo que no hay disponibilidad para reprogramar. Contacta a la clínica si necesitas un horario específico.",
     "pickNewDate": "Elige una nueva fecha",

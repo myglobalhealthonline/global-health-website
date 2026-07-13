@@ -56,6 +56,66 @@ export function resolveInsurancePrice(args: ResolveInsurancePriceArgs): number |
 }
 
 /**
+ * The doctors in an insurer's NETWORK for a service.
+ *
+ * A doctor joins an insurer's network by having a payout set for that
+ * (company, service) — see ServiceDoctorInsurancePayout. Doctors without one
+ * have not agreed to see that insurer's patients for that service (they'd earn
+ * the standard rate), so they must not be offered or bookable under it.
+ *
+ * Cross-checked against the live ServiceDoctor assignment so a payout left over
+ * for a doctor who was since unassigned or deactivated never resurrects them.
+ */
+export async function getInsuranceNetworkDoctorIds(
+  serviceId: string,
+  insuranceCompanyId: string,
+): Promise<string[]> {
+  try {
+    const rows = await prisma.serviceDoctorInsurancePayout.findMany({
+      where: {
+        serviceId,
+        insuranceCompanyId,
+        doctorAmountCents: { not: null },
+        doctor: {
+          active: true,
+          assignedServices: { some: { serviceId, isActive: true, status: "active" } },
+        },
+      },
+      select: { doctorId: true },
+    });
+    return rows.map((r) => r.doctorId);
+  } catch (error) {
+    throw normalizeDbError(error, "Could not read insurance network");
+  }
+}
+
+/** True when this doctor may take this service under this insurer. */
+export async function isDoctorInInsuranceNetwork(
+  serviceId: string,
+  doctorId: string,
+  insuranceCompanyId: string,
+): Promise<boolean> {
+  try {
+    const row = await prisma.serviceDoctorInsurancePayout.findFirst({
+      where: {
+        serviceId,
+        doctorId,
+        insuranceCompanyId,
+        doctorAmountCents: { not: null },
+        doctor: {
+          active: true,
+          assignedServices: { some: { serviceId, isActive: true, status: "active" } },
+        },
+      },
+      select: { id: true },
+    });
+    return row !== null;
+  } catch (error) {
+    throw normalizeDbError(error, "Could not read insurance network");
+  }
+}
+
+/**
  * Load + VALIDATE the insurance price a patient's selected company gives for a
  * service. This is the spoof guard the money path relies on: the price is only
  * returned when a coverage row actually exists AND the company is active AND

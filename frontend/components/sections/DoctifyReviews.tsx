@@ -1,6 +1,14 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
+import { getCommonLocale } from "@/lib/i18n/get-common-locale";
+import { resolveLocale } from "@/lib/i18n/resolve-locale";
+import {
+  openCookiePreferences,
+  readConsent,
+  writeConsent,
+} from "@/components/compliance/cookie-consent";
+import { useConsent } from "@/components/compliance/use-consent";
 
 /**
  * Doctify review widgets (practice: Global Health Ireland, tenant athena-ie).
@@ -12,6 +20,11 @@ import { useEffect, useId, useState } from "react";
  *    widget with soft ivory review cards (matches gh2-card-ivory surfaces).
  *  - <DoctifyReviewsSection /> — full section wrapper (forest or ivory)
  *    with the standard eyebrow + headline treatment.
+ *
+ * Every widget that injects a doctify.com script or iframe is gated on the
+ * "third-party content" consent category. The gate lives on each leaf rather
+ * than on DoctifyReviewsLazy because DoctifyReviewsSection renders
+ * DoctifyRatingStrip directly — a wrapper-level gate would miss it.
  */
 
 const TENANT = "athena-ie";
@@ -39,6 +52,67 @@ function useDoctifyId(): string {
   return "doctify" + useId().replace(/[^a-zA-Z0-9]/g, "");
 }
 
+/** True only once consent is known AND third-party content is allowed.
+ *  Un-resolved consent reads as "not allowed", so SSR and the first client
+ *  paint agree and nothing loads before the visitor has decided. */
+function useDoctifyAllowed(): boolean {
+  const { consent, ready } = useConsent();
+  return ready && consent?.thirdParty === true;
+}
+
+/**
+ * Shown in place of a widget when third-party content is refused. "Load
+ * reviews" grants the category outright (and persists it), so the choice
+ * sticks across pages instead of being a per-view escape hatch that keeps
+ * asking. Marketing consent is left exactly as it was.
+ */
+function DoctifyPlaceholder({
+  language,
+  minHeightClass,
+  onDark = false,
+  className,
+}: {
+  language: string;
+  minHeightClass: string;
+  onDark?: boolean;
+  className?: string;
+}) {
+  const t = getCommonLocale(resolveLocale({ explicitLocale: language })).cookie;
+
+  function allowThirdParty() {
+    const existing = readConsent();
+    writeConsent({
+      marketing: existing?.marketing === true,
+      thirdParty: true,
+    });
+  }
+
+  return (
+    <div
+      className={`gh-cookie-placeholder ${onDark ? "gh-cookie-placeholder-dark" : ""} ${minHeightClass} ${className ?? ""}`}
+    >
+      <p className="gh-cookie-placeholder-title">{t.doctifyBlockedTitle}</p>
+      <p className="gh-cookie-placeholder-body">{t.doctifyBlockedBody}</p>
+      <div className="gh-cookie-placeholder-actions">
+        <button
+          type="button"
+          onClick={allowThirdParty}
+          className={onDark ? "gh2-btn-lime" : "gh-btn gh-btn-primary"}
+        >
+          {t.doctifyLoad}
+        </button>
+        <button
+          type="button"
+          onClick={openCookiePreferences}
+          className={onDark ? "gh-cookie-link" : "text-sm font-semibold text-[var(--color-brand-primary)] underline"}
+        >
+          {t.settingsLink}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /* ── Compact average-rating strip (iframe + autoresize plugin) ── */
 
 export function DoctifyRatingStrip({
@@ -51,14 +125,27 @@ export function DoctifyRatingStrip({
   className?: string;
 }) {
   const id = useDoctifyId();
+  const allowed = useDoctifyAllowed();
 
   useEffect(() => {
+    if (!allowed) return;
     const script = document.createElement("script");
     script.src = `https://www.doctify.com/wv2/doctify-widget-autoresize-plugin.js?tenantId=${TENANT}&widgetName=average-carousel-rating-widget&containerId=${id}`;
     script.async = true;
     document.body.appendChild(script);
     return () => cleanupDoctifyScript(script);
-  }, [id]);
+  }, [id, allowed]);
+
+  if (!allowed) {
+    return (
+      <DoctifyPlaceholder
+        language={language}
+        minHeightClass="min-h-[120px]"
+        onDark={onDark}
+        className={className}
+      />
+    );
+  }
 
   const src =
     `https://www.doctify.com/wv2/average-carousel-rating-widget?containerId=${id}` +
@@ -104,15 +191,17 @@ export function DoctifyWidget({
   theme?: "light" | "dark";
 }) {
   const id = useDoctifyId();
+  const allowed = useDoctifyAllowed();
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    if (!allowed) return;
     const container = document.getElementById(id);
     if (!container) return;
-    
+
     // Clear any previous content
     container.innerHTML = "";
-    
+
     const script = document.createElement("script");
     script.src =
       `https://www.doctify.com/get-script?widget_container_id=${id}` +
@@ -120,19 +209,19 @@ export function DoctifyWidget({
       `&profileType=practice&slugs=${SLUG}&background=${theme === "dark" ? "ivory" : "transparent"}`;
     script.async = true;
     script.onload = () => setLoaded(true);
-    
+
     document.body.appendChild(script);
-    
+
     // Fallback: if script doesn't trigger load, show container after delay
     const timer = setTimeout(() => setLoaded(true), 3000);
-    
+
     return () => {
       clearTimeout(timer);
       cleanupDoctifyScript(script);
       const el = document.getElementById(id);
       if (el) el.innerHTML = "";
     };
-  }, [id, variant, language, theme]);
+  }, [id, variant, language, theme, allowed]);
 
   const minHeightClass =
     variant === "micro"
@@ -142,6 +231,17 @@ export function DoctifyWidget({
         : variant === "grid"
           ? "min-h-[400px]"
           : "min-h-[320px]";
+
+  if (!allowed) {
+    return (
+      <DoctifyPlaceholder
+        language={language}
+        minHeightClass={minHeightClass}
+        onDark={theme === "dark"}
+        className={className}
+      />
+    );
+  }
 
   return (
     <div
@@ -237,14 +337,27 @@ export function DoctifyInlineRating({
   className?: string;
 }) {
   const id = useDoctifyId();
+  const allowed = useDoctifyAllowed();
 
   useEffect(() => {
+    if (!allowed) return;
     const script = document.createElement("script");
     script.src = `https://www.doctify.com/wv2/doctify-widget-autoresize-plugin.js?tenantId=${TENANT}&widgetName=average-carousel-rating-widget&containerId=${id}`;
     script.async = true;
     document.body.appendChild(script);
     return () => cleanupDoctifyScript(script);
-  }, [id]);
+  }, [id, allowed]);
+
+  if (!allowed) {
+    return (
+      <DoctifyPlaceholder
+        language={language}
+        minHeightClass="min-h-[100px]"
+        onDark
+        className={className}
+      />
+    );
+  }
 
   const src =
     `https://www.doctify.com/wv2/average-carousel-rating-widget?containerId=${id}` +

@@ -75,6 +75,29 @@ export default async function RescheduleAppointmentPage({
     );
   }
 
+  // A slot whose start time has passed is no longer self-serviceable — the
+  // backend rejects it too (AppointmentAlreadyStartedError). An unscheduled
+  // request (scheduledAt === null) has no time to be late for, so it passes.
+  const scheduledMs = appointment.scheduledAt ? Date.parse(appointment.scheduledAt) : NaN;
+  if (Number.isFinite(scheduledMs) && scheduledMs <= Date.now()) {
+    return (
+      <div className="gh-patient-page">
+        <PageHeader eyebrow={r.breadcrumb} title={r.title} />
+        <AdminEmptyState
+          className="mt-6"
+          tone="danger"
+          title={r.pastAppointmentTitle}
+          description={r.pastAppointmentBody}
+          action={
+            <Btn href="/account/bookings" variant="ghost" size="sm">
+              {r.backToBookings}
+            </Btn>
+          }
+        />
+      </div>
+    );
+  }
+
   if (!appointment.doctorSlug) {
     return (
       <div className="gh-patient-page">

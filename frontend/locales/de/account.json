@@ -659,6 +659,8 @@
     "backToBookings": "Zurück zu den Buchungen",
     "cantRescheduleTitle": "Diese Buchung kann nicht verschoben werden",
     "cantRescheduleBody": "Dieser Termin wurde bereits abgeschlossen oder storniert und akzeptiert daher keinen neuen Zeitpunkt mehr.",
+    "pastAppointmentTitle": "Der Zeitpunkt dieses Termins ist bereits vorbei",
+    "pastAppointmentBody": "Der geplante Zeitpunkt liegt in der Vergangenheit, daher kann der Termin nicht mehr verschoben werden. Buche eine neue Beratung oder kontaktiere die Klinik.",
     "noClinicianTitle": "Noch kein Arzt zugewiesen",
     "noClinicianBody": "Für diese Anfrage wurde noch kein Arzt zugewiesen, daher gibt es keine Verfügbarkeit zum Verschieben. Kontaktiere die Klinik, wenn du einen bestimmten Termin benötigst.",
     "pickNewDate": "Neues Datum wählen",

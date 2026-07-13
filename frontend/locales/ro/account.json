@@ -659,6 +659,8 @@
     "backToBookings": "Înapoi la rezervări",
     "cantRescheduleTitle": "Această rezervare nu poate fi reprogramată",
     "cantRescheduleBody": "Această consultație a fost deja finalizată sau anulată, astfel încât nu mai acceptă o nouă oră.",
+    "pastAppointmentTitle": "Ora acestei programări a trecut deja",
+    "pastAppointmentBody": "Ora programată este deja în trecut, așa că nu mai poate fi reprogramată. Rezervă o nouă consultație sau contactează clinica.",
     "noClinicianTitle": "Niciun medic atribuit încă",
     "noClinicianBody": "Această cerere nu a fost încă asociată cu un medic, deci nu există disponibilitate pentru reprogramare. Contactează clinica dacă ai nevoie de o oră anume.",
     "pickNewDate": "Alege o nouă dată",

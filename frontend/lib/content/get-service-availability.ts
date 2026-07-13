@@ -33,6 +33,8 @@ export async function getServiceAggregatedAvailability(
   countryCode: string,
   serviceSlug: string,
   days = 14,
+  /** Restrict to this insurer's in-network doctors for the service. */
+  insuranceCompanyId?: string | null,
 ): Promise<ServiceAggregatedAvailability> {
   const empty: ServiceAggregatedAvailability = {
     found: false,
@@ -42,9 +44,12 @@ export async function getServiceAggregatedAvailability(
   };
   const backend = getBackendOrigin();
   if (!backend) return empty;
+  const insuranceParam = insuranceCompanyId
+    ? `&insurance=${encodeURIComponent(insuranceCompanyId)}`
+    : "";
   const url = `${backend}/api/services/${encodeURIComponent(countryCode)}/${encodeURIComponent(
     serviceSlug,
-  )}/aggregated-availability?days=${days}`;
+  )}/aggregated-availability?days=${days}${insuranceParam}`;
   try {
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) return empty;

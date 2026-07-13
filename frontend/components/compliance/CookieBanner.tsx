@@ -1,56 +1,63 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
-import { resolveLocale } from "@/lib/i18n/resolve-locale";
-import { COOKIE_CONSENT_STORAGE_KEY, COOKIE_CONSENT_EVENT } from "./cookie-consent";
-
-const STORAGE_KEY = COOKIE_CONSENT_STORAGE_KEY;
-
-function readClientLocale(): LocaleCode {
-  try {
-    const match = document.cookie.match(/(?:^|;\s*)gh_locale=([^;]+)/);
-    const raw = match ? decodeURIComponent(match[1]) : "";
-    return resolveLocale({ cookieLocale: raw });
-  } catch {
-    return "en";
-  }
-}
+import { readClientLocale } from "@/lib/i18n/get-client-locale";
+import {
+  ACCEPT_ALL,
+  CONSENT_OPEN_EVENT,
+  DENY_ALL,
+  purgeLegacyConsent,
+  readConsent,
+  writeConsent,
+  type ConsentChoices,
+} from "./cookie-consent";
 
 export function CookieBanner() {
   const [visible, setVisible] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [locale, setLocale] = useState<LocaleCode>("en");
+  const [choices, setChoices] = useState<ConsentChoices>(DENY_ALL);
+  const headingRef = useRef<HTMLHeadingElement | null>(null);
+  // Only steal focus when the visitor *asked* for the panel (footer link).
+  // Grabbing it on first page load would be hostile.
+  const focusOnOpen = useRef(false);
 
   useEffect(() => {
-    let cancelled = false;
-    Promise.resolve().then(() => {
-      if (cancelled) return;
-      try {
-        const existing = window.localStorage.getItem(STORAGE_KEY);
-        if (!existing) {
-          setLocale(readClientLocale());
-          setVisible(true);
-        }
-      } catch {
-        // localStorage blocked — fail closed
-      }
-    });
-    return () => {
-      cancelled = true;
-    };
+    purgeLegacyConsent();
+    setLocale(readClientLocale());
+    if (!readConsent()) setVisible(true);
+
+    function onOpen() {
+      const existing = readConsent();
+      setLocale(readClientLocale());
+      setChoices(
+        existing
+          ? { marketing: existing.marketing, thirdParty: existing.thirdParty }
+          : DENY_ALL,
+      );
+      focusOnOpen.current = true;
+      setExpanded(true);
+      setVisible(true);
+    }
+    window.addEventListener(CONSENT_OPEN_EVENT, onOpen);
+    return () => window.removeEventListener(CONSENT_OPEN_EVENT, onOpen);
   }, []);
 
-  function acknowledge() {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, "acknowledged");
-    } catch {
-      // ignored
+  useEffect(() => {
+    if (visible && focusOnOpen.current) {
+      focusOnOpen.current = false;
+      headingRef.current?.focus();
     }
-    window.dispatchEvent(new Event(COOKIE_CONSENT_EVENT));
+  }, [visible]);
+
+  const decide = useCallback((next: ConsentChoices) => {
+    writeConsent(next);
     setVisible(false);
-  }
+    setExpanded(false);
+  }, []);
 
   if (!visible) return null;
 
@@ -58,30 +65,109 @@ export function CookieBanner() {
 
   return (
     <div
-      role="region"
-      aria-live="polite"
-      aria-label={t.title}
-      className="fixed bottom-24 left-4 right-4 z-[var(--z-fixed-bar)] mx-auto max-w-2xl rounded-xl border border-slate-200 bg-white p-4 shadow-[0_10px_30px_rgba(15,46,37,0.18)] sm:p-5 md:bottom-4"
-      style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
+      role="dialog"
+      aria-modal="false"
+      aria-labelledby="gh-cookie-title"
+      className="gh-cookie-bar"
     >
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-slate-700">
-          {t.body}{" "}
-          <Link href="/privacy" className="font-semibold text-emerald-700 underline">
-            {t.privacyNotice}
-          </Link>{" "}
-          {t.forDetails}
-        </p>
-        <div className="shrink-0">
+      <h2 id="gh-cookie-title" ref={headingRef} tabIndex={-1} className="gh-cookie-title">
+        {t.title}
+      </h2>
+      <p className="gh-cookie-body">
+        {t.body}{" "}
+        <Link href="/privacy" className="gh-cookie-link">
+          {t.privacyNotice}
+        </Link>{" "}
+        {t.forDetails}
+      </p>
+
+      {expanded ? (
+        <div className="gh-cookie-categories">
+          <div className="gh-cookie-row">
+            <div>
+              <p className="gh-cookie-row-title">{t.necessaryTitle}</p>
+              <p className="gh-cookie-row-body">{t.necessaryBody}</p>
+            </div>
+            <span className="gh-cookie-always">{t.alwaysOn}</span>
+          </div>
+
+          <CategoryRow
+            title={t.marketingTitle}
+            body={t.marketingBody}
+            checked={choices.marketing}
+            onChange={(v) => setChoices((c) => ({ ...c, marketing: v }))}
+          />
+          <CategoryRow
+            title={t.thirdPartyTitle}
+            body={t.thirdPartyBody}
+            checked={choices.thirdParty}
+            onChange={(v) => setChoices((c) => ({ ...c, thirdParty: v }))}
+          />
+        </div>
+      ) : null}
+
+      <div className="gh-cookie-actions">
+        {expanded ? (
           <button
             type="button"
-            onClick={acknowledge}
-            className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800"
+            onClick={() => decide(choices)}
+            className="gh-btn gh-cookie-btn-ghost"
           >
-            {t.gotIt}
+            {t.save}
           </button>
-        </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setExpanded(true)}
+            className="gh-btn gh-cookie-btn-ghost"
+          >
+            {t.manage}
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={() => decide(DENY_ALL)}
+          className="gh-btn gh-cookie-btn-ghost"
+        >
+          {t.deny}
+        </button>
+        <button
+          type="button"
+          onClick={() => decide(ACCEPT_ALL)}
+          className="gh2-btn-lime"
+        >
+          {t.acceptAll}
+        </button>
       </div>
+    </div>
+  );
+}
+
+function CategoryRow({
+  title,
+  body,
+  checked,
+  onChange,
+}: {
+  title: string;
+  body: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}) {
+  return (
+    <div className="gh-cookie-row">
+      <div>
+        <p className="gh-cookie-row-title">{title}</p>
+        <p className="gh-cookie-row-body">{body}</p>
+      </div>
+      <input
+        type="checkbox"
+        role="switch"
+        aria-label={title}
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="gh-cookie-toggle"
+      />
     </div>
   );
 }

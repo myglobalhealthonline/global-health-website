@@ -4,6 +4,8 @@ import { SITE_NAME } from "@/lib/constants";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
+import { CookieSettingsButton } from "@/components/compliance/CookieSettingsButton";
+import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 
 export const metadata: Metadata = {
   title: "Privacy notice",
@@ -13,6 +15,7 @@ export const metadata: Metadata = {
 export default async function PrivacyPage() {
   const locale = await getPageLocale();
   const { privacy } = loadLocaleBundle(locale).legal;
+  const { cookie } = getCommonLocale(locale);
 
   return (
     <>
@@ -57,6 +60,13 @@ export default async function PrivacyPage() {
               {privacy.s3_h}
             </h2>
             <p className="mt-2">{privacy.s3_p}</p>
+            <p className="mt-2">
+              {privacy.s3_manage}{" "}
+              <CookieSettingsButton
+                label={cookie.settingsLink}
+                className="font-medium text-[var(--color-brand-primary)] underline underline-offset-2"
+              />
+            </p>
           </section>
 
           <section>

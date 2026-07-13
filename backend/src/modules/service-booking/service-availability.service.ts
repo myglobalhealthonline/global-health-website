@@ -67,10 +67,15 @@ export async function getServiceAggregatedAvailability(
   countryCode: string,
   serviceSlug: string,
   days: number,
+  /** When booking under an insurer, only doctors in that insurer's network for
+   *  this service are offered (they must have a payout set for it). */
+  insuranceCompanyId?: string | null,
 ): Promise<ServiceAggregatedAvailability> {
   const code = countryCode.trim().toLowerCase();
   const clampedDays = Math.min(30, Math.max(1, days));
-  const cacheKey = `${code}:${serviceSlug}:${clampedDays}`;
+  // Insurer is part of the key — the eligible doctor pool differs per network,
+  // so a shared key would serve one insurer's slots to another.
+  const cacheKey = `${code}:${serviceSlug}:${clampedDays}:${insuranceCompanyId ?? "none"}`;
   const cached = cache.get(cacheKey);
   if (cached) return cached;
 
@@ -100,6 +105,9 @@ export async function getServiceAggregatedAvailability(
 
     // Active doctors assigned to the service + reachable from this country.
     // Matches the per-doctor availability route's gate (ServiceDoctor.isActive).
+    // Under an insurer, narrow to that insurer's network: a doctor is in-network
+    // for a service only when the admin set them a payout for it. No in-network
+    // doctor ⇒ zero slots ("no doctors available for this insurer").
     const doctors = await prisma.doctor.findMany({
       where: {
         active: true,
@@ -108,6 +116,17 @@ export async function getServiceAggregatedAvailability(
           { additionalCountries: { some: { active: true, country: { code, isActive: true } } } },
         ],
         assignedServices: { some: { serviceId: service.id, isActive: true } },
+        ...(insuranceCompanyId
+          ? {
+              insuranceDoctorPayouts: {
+                some: {
+                  serviceId: service.id,
+                  insuranceCompanyId,
+                  doctorAmountCents: { not: null },
+                },
+              },
+            }
+          : {}),
       },
       select: { id: true, slug: true },
     });
