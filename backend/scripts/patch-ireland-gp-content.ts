@@ -149,7 +149,8 @@ async function main() {
   if (!country) throw new Error(`Country ${COUNTRY_CODE} not found`);
   const countryId = country.id;
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(
+    async (tx) => {
     // 1) PageContentTranslation (IE / GENERAL_CONSULTATION / EN).
     const pc = await tx.pageContent.findUnique({
       where: { countryId_pageKey: { countryId, pageKey: "GENERAL_CONSULTATION" } },
@@ -245,7 +246,9 @@ async function main() {
     if (cz.count) note(`Country cz name: "${CZ_NAME_FROM}" -> "${CZ_NAME_TO}"`);
 
     if (!APPLY) throw new ROLLBACK();
-  }).catch((e) => {
+    },
+    { timeout: 30_000 },
+  ).catch((e) => {
     if (e instanceof ROLLBACK) return; // dry-run: intentional rollback
     throw e;
   });
