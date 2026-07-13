@@ -502,8 +502,9 @@ export default async function CountryLangHomePage({
         i18n={t.countryHero}
       />
       {page?.sections.faq ? <JsonLd data={faqJsonLd(page.faq)} /> : null}
-      {page?.sections.intro ? <ServiceIntro body={page.intro!} theme="light" /> : null}
       <TrustMarquee items={trustMarqueeItems} />
+      {/* Overview intro sits BELOW the trust marquee (marquee hugs the hero). */}
+      {page?.sections.intro ? <ServiceIntro body={page.intro!} theme="light" /> : null}
       <RichBodySection html={page?.body} theme="light" />
       <TrustRibbon items={trustItems} theme="light" />
       <ServiceCatalog services={serviceCatalogItems} i18n={tServices.catalog} />
