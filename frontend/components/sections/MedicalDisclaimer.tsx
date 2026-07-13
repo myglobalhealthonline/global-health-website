@@ -6,7 +6,7 @@
  *     booking form / confirmation step).
  *
  * Light-theme by default to read as a serious legal notice rather than a
- * marketing band. Content is passed in (see ireland-service-content.ts).
+ * marketing band. Content is passed in (per-country PageContent CMS).
  */
 
 import Link from "next/link";

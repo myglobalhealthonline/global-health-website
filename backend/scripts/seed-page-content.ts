@@ -767,16 +767,24 @@ async function upsertMarket(draft: MarketDraft, opts: { neverDowngradeToDraft: b
       showDisclaimer: true,
       showBody: false,
     },
-    update: {
-      status,
-      showIntro: true,
-      showWhoFor: true,
-      showWhyChoose: true,
-      showFaq: true,
-      showDisclaimer: true,
-      // showBody intentionally left untouched on update — don't clobber an
-      // admin's independent rich-body toggle.
-    },
+    update:
+      // Draft markets updating an already-PUBLISHED row (e.g. a row migrated
+      // from the old ContentPage CMS): write NOTHING to status or toggles —
+      // flipping toggles on a live row would publish unreviewed drafted copy.
+      // The drafted translations below still land (null-fill only), hidden
+      // until the owner enables the sections in /admin/page-content.
+      opts.neverDowngradeToDraft && existing?.status === PublishStatus.PUBLISHED
+        ? {}
+        : {
+            status,
+            showIntro: true,
+            showWhoFor: true,
+            showWhyChoose: true,
+            showFaq: true,
+            showDisclaimer: true,
+            // showBody intentionally left untouched on update — don't clobber an
+            // admin's independent rich-body toggle.
+          },
   });
 
   const base = await prisma.pageContent.findUniqueOrThrow({
