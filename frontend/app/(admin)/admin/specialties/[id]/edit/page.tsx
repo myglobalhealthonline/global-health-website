@@ -12,6 +12,7 @@ import { parseLocaleTranslations } from "@/lib/admin/translation-form-parse";
 import { ManagedImageField } from "../../../_components/managed-image-field";
 import { SpecialtyTranslationTabs } from "../../_components/specialty-translation-tabs";
 import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
+import { displayNameFrom } from "@/lib/admin/display-name";
 
 export const dynamic = "force-dynamic";
 
@@ -111,13 +112,13 @@ export default async function AdminSpecialtyEditPage({
     <>
       <Link
         href="/admin/specialties"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to categories
       </Link>
       <PageHeader
         eyebrow="Global"
-        title={`Edit ${s.name}`}
+        title={`Edit ${displayNameFrom(s.name, s.translations)}`}
         description="Update card image, summary, theme color, and sort order."
         actions={
           <Btn href="/admin/specialties" variant="ghost">
@@ -159,7 +160,7 @@ export default async function AdminSpecialtyEditPage({
               required
             />
           </label>
-          <p className="-mt-2 text-[12px] text-[var(--color-text-muted)]">
+          <p className="-mt-2 text-portal-meta text-[var(--color-text-muted)]">
             Slug must be lowercase and use hyphens only.
           </p>
 
@@ -200,14 +201,14 @@ export default async function AdminSpecialtyEditPage({
             </label>
           </div>
 
-          <p className="text-[12px] text-[var(--color-text-muted)]">
+          <p className="text-portal-meta text-[var(--color-text-muted)]">
             Card target resolves automatically from this category&apos;s active services.{" "}
             <span className="font-bold">Resolved service:</span>{" "}
             {s.primaryService?.name ?? "None yet"} ·{" "}
             <span className="font-bold">Theme:</span> {s.cardThemeColor ?? "Default"}
           </p>
 
-          <label className="flex items-center gap-2 text-[13px] text-[var(--color-text-primary)]">
+          <label className="flex items-center gap-2 text-portal-compact text-[var(--color-text-primary)]">
             <input
               type="checkbox"
               name="active"
@@ -217,16 +218,16 @@ export default async function AdminSpecialtyEditPage({
             Active
           </label>
 
-          <div className="gh-admin-support-actions flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
-            <button type="submit" className="gh-btn gh-btn-primary">
-              Save changes
-            </button>
+          <div className="gh-admin-support-actions flex flex-wrap justify-end gap-3 border-t border-[var(--color-border)] pt-6">
             <Link
               href="/admin/specialties"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="gh-btn gh-btn-ghost"
             >
               Cancel
             </Link>
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Save changes
+            </button>
           </div>
         </form>
       </AdminCard>

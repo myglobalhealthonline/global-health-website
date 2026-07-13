@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ChevronDown, ChevronUp, Edit3, Eye, FlaskConical, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   fetchAdminCountries,
   fetchAdminHealthTests,
@@ -10,24 +10,9 @@ import {
   purgeAdminHealthTest,
 } from "@/lib/admin/admin-api";
 import { getActiveCountry, scopedCountryId } from "@/lib/admin/admin-scope";
-import { FlagBadge } from "../_components/flag-badge";
-import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import { ScopeBanner } from "../_components/scope-banner";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
-import {
-  AdminCard,
-  AdminEmptyState,
-  AdminSummaryStrip,
-  AdminTable,
-  Btn,
-  IconBtn,
-  PageHeader,
-  Pill,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "../_components/atoms";
+import { AdminHealthTestsTable } from "./_components/admin-health-tests-table";
+import { AdminCard, AdminSummaryStrip, Btn, PageHeader } from "../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -49,18 +34,6 @@ function buildHref(
   }
   const qs = params.toString();
   return qs ? `/admin/health-tests?${qs}` : "/admin/health-tests";
-}
-
-function formatMoney(cents: number, currency: string) {
-  try {
-    return new Intl.NumberFormat("en", {
-      style: "currency",
-      currency,
-      maximumFractionDigits: 2,
-    }).format(cents / 100);
-  } catch {
-    return `${currency} ${(cents / 100).toFixed(2)}`;
-  }
 }
 
 type PageProps = {
@@ -253,11 +226,11 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
             </button>
             <Link
               href="/admin/health-tests"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Clear filters
             </Link>
-            <span className="ml-auto text-[12px] text-[var(--color-text-muted)]">
+            <span className="ml-auto text-portal-meta text-[var(--color-text-muted)]">
               {total === 0
                 ? "No health tests match these filters."
                 : `Showing ${items.length} of ${total}.`}
@@ -268,175 +241,22 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
 
       {/* Table */}
       <AdminCard padding={0} className="overflow-hidden">
-        <div className="gh-admin-health-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
-          <AdminTable>
-            <Thead>
-              <Th>Title</Th>
-              <Th>Slug</Th>
-              <Th>Country</Th>
-              <Th align="right">Price</Th>
-              <Th>Sample / results</Th>
-              <Th align="right">Order</Th>
-              <Th>Status</Th>
-              <Th align="right" style={{ width: 120 }}>
-                Actions
-              </Th>
-            </Thead>
-            <tbody>
-              {items.map((item, index) => {
-                const prev = items[index - 1];
-                const next = items[index + 1];
-                const isFirstInCountry = !prev || prev.countryId !== item.countryId;
-                const isLastInCountry = !next || next.countryId !== item.countryId;
-                return (
-                <Tr key={item.id}>
-                  <Td>
-                    <span className="font-bold text-[var(--color-text-primary)]">
-                      {item.title}
-                    </span>
-                  </Td>
-                  <Td>
-                    <span className="font-mono text-[11px] text-[var(--color-text-muted)]">
-                      {item.slug}
-                    </span>
-                  </Td>
-                  <Td>
-                    <span className="inline-flex items-center gap-2">
-                      <FlagBadge code={item.country.code} size={14} />
-                      <span className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                        {item.country.code}
-                      </span>
-                    </span>
-                  </Td>
-                  <Td align="right">
-                    <span className="font-bold text-[var(--color-text-primary)]">
-                      {formatMoney(item.priceCents, item.currencyCode)}
-                    </span>
-                  </Td>
-                  <Td>
-                    <span className="text-[13px] text-[var(--color-text-muted)]">
-                      {[item.sampleType, item.resultsTimeline]
-                        .filter(Boolean)
-                        .join(" · ") || "—"}
-                    </span>
-                  </Td>
-                  <Td align="right">
-                    <div className="flex items-center justify-end gap-1">
-                      <form action={moveRowAction} className="inline-flex">
-                        <input type="hidden" name="id" value={item.id} />
-                        <input type="hidden" name="direction" value="up" />
-                        <input type="hidden" name="_qs" value={currentQs} />
-                        <button
-                          type="submit"
-                          disabled={isFirstInCountry}
-                          aria-label={`Move ${item.title} up`}
-                          className="inline-flex items-center justify-center border-0 bg-transparent p-0.5 text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text-primary)] disabled:cursor-default disabled:opacity-35 disabled:hover:text-[var(--color-text-muted)]"
-                        >
-                          <ChevronUp className="size-3.5" aria-hidden />
-                        </button>
-                      </form>
-                      <form action={moveRowAction} className="inline-flex">
-                        <input type="hidden" name="id" value={item.id} />
-                        <input type="hidden" name="direction" value="down" />
-                        <input type="hidden" name="_qs" value={currentQs} />
-                        <button
-                          type="submit"
-                          disabled={isLastInCountry}
-                          aria-label={`Move ${item.title} down`}
-                          className="inline-flex items-center justify-center border-0 bg-transparent p-0.5 text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text-primary)] disabled:cursor-default disabled:opacity-35 disabled:hover:text-[var(--color-text-muted)]"
-                        >
-                          <ChevronDown className="size-3.5" aria-hidden />
-                        </button>
-                      </form>
-                    </div>
-                  </Td>
-                  <Td>
-                    <Pill tone={item.isActive ? "published" : "draft"}>
-                      {item.isActive ? "Active" : "Inactive"}
-                    </Pill>
-                  </Td>
-                  <Td align="right">
-                    <div className="gh-admin-health-actions gh-admin-health-actions--row flex justify-end gap-1.5">
-                      <IconBtn
-                        ariaLabel={`View ${item.title}`}
-                        href={`/admin/health-tests/${item.id}`}
-                      >
-                        <Eye className="size-3.5" aria-hidden />
-                      </IconBtn>
-                      <IconBtn
-                        ariaLabel={`Edit ${item.title}`}
-                        href={`/admin/health-tests/${item.id}/edit`}
-                      >
-                        <Edit3 className="size-3.5" aria-hidden />
-                      </IconBtn>
-                      <form action={deleteAction} className="inline-flex">
-                        <input type="hidden" name="id" value={item.id} />
-                        <ConfirmDeleteButton
-                          message={`Permanently delete health test "${item.title}"? This cannot be undone.`}
-                          ariaLabel={`Delete ${item.title}`}
-                        />
-                      </form>
-                    </div>
-                  </Td>
-                </Tr>
-                );
-              })}
-            </tbody>
-          </AdminTable>
-        </div>
-
-        {items.length > 0 ? (
-          <div className="gh-admin-mobile-list">
-            {items.map((item) => (
-              <PortalMobileCard
-                key={item.id}
-                tone={item.isActive ? "success" : "neutral"}
-                title={item.title}
-                subtitle={item.slug}
-                statusPill={
-                  <Pill tone={item.isActive ? "published" : "draft"}>
-                    {item.isActive ? "Active" : "Inactive"}
-                  </Pill>
-                }
-                meta={[
-                  { label: "Country", value: item.country.code.toUpperCase() },
-                  { label: "Price", value: formatMoney(item.priceCents, item.currencyCode) },
-                  { label: "Sample", value: item.sampleType || "Not set" },
-                  { label: "Results", value: item.resultsTimeline || "Not set" },
-                ]}
-                actions={
-                  <>
-                    <IconBtn ariaLabel={`View ${item.title}`} href={`/admin/health-tests/${item.id}`}>
-                      <Eye className="size-3.5" aria-hidden />
-                    </IconBtn>
-                    <IconBtn ariaLabel={`Edit ${item.title}`} href={`/admin/health-tests/${item.id}/edit`}>
-                      <Edit3 className="size-3.5" aria-hidden />
-                    </IconBtn>
-                  </>
-                }
-              />
-            ))}
-          </div>
-        ) : null}
-
-        {items.length === 0 ? (
-          <AdminEmptyState
-            icon={<FlaskConical className="size-8" aria-hidden />}
-            title="No health tests match these filters"
-            description="Broaden the country or status filters, or add a test with pricing, sample type, and result timing."
-            action={<Btn href="/admin/health-tests/new" variant="soft" size="sm">Add health test</Btn>}
-          />
-        ) : null}
+        <AdminHealthTestsTable
+          items={items}
+          currentQs={currentQs}
+          moveRowAction={moveRowAction}
+          deleteAction={deleteAction}
+        />
 
         {totalPages > 1 ? (
-          <nav className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3 text-[13px]">
+          <nav className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3 text-portal-compact">
             <div className="text-[var(--color-text-muted)]">
               Page {page} of {totalPages} · {pageSize} per page
             </div>
             <div className="flex flex-wrap gap-2">
               <Link
                 href={buildHref(filters, { page: String(Math.max(1, page - 1)) })}
-                className={`gh-btn gh-btn-soft text-[13px] ${
+                className={`gh-btn gh-btn-soft text-portal-compact ${
                   page <= 1 ? "pointer-events-none opacity-40" : ""
                 }`}
                 style={{ minHeight: 36, padding: "0 14px" }}
@@ -447,7 +267,7 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
                 href={buildHref(filters, {
                   page: String(Math.min(totalPages, page + 1)),
                 })}
-                className={`gh-btn gh-btn-primary text-[13px] ${
+                className={`gh-btn gh-btn-primary text-portal-compact ${
                   page >= totalPages ? "pointer-events-none opacity-40" : ""
                 }`}
                 style={{ minHeight: 36, padding: "0 14px" }}

@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+/* Phase 7 role type tokens — portal fixed-px scale (DESIGN2 §6.1 / responsive
+ * design-system plan §2.2). Utility names: text-portal-micro … text-portal-body.
+ * Values are exact matches for the spec'd roles; swapping an arbitrary
+ * text-[Npx] for the same-valued role class is a zero-visual-change move.
+ * Public scale stays on the existing --text-* clamp vars — never cross scales. */
+@theme {
+  --text-portal-micro: 10px;   /* caption/micro — uppercase micro-badges, 10px hard floor */
+  --text-portal-thead: 11px;   /* table header caps + eyebrow (10.5–11 band) */
+  --text-portal-meta: 12px;    /* helper/meta */
+  --text-portal-label: 12.5px; /* form labels, mono data */
+  --text-portal-compact: 13px; /* body-compact, button sm */
+  --text-portal-cell: 13.5px;  /* table cell */
+  --text-portal-body: 14px;    /* body */
+}
+
 /* Two-file CSS architecture (P-009): this file loads on EVERY route via
  * app/layout.tsx and holds all public-site styles plus anything shared with
  * the portals (Obsidian Ivory shell + --portal- and --lux- tokens, .gh-card/
@@ -43,6 +58,30 @@
   .gh-dark-scroll {
     scrollbar-width: thin;
     scrollbar-color: rgba(200, 230, 160, 0.55) rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* Site-wide page scrollbar (public + portals): forest track, lime thumb —
+ * replaces the OS-default grey bar everywhere, not just .gh-dark-scroll
+ * surfaces. Same Chromium-pseudo / Firefox-@supports split as above. */
+html::-webkit-scrollbar {
+  width: 12px;
+}
+html::-webkit-scrollbar-track {
+  background: var(--color-brand-primary);
+}
+html::-webkit-scrollbar-thumb {
+  background-color: var(--color-brand-accent);
+  border-radius: 999px;
+  border: 2px solid var(--color-brand-primary);
+}
+html::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-brand-accent-soft);
+}
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-brand-accent) var(--color-brand-primary);
   }
 }
 
@@ -160,13 +199,28 @@
   --section-padding-y-sm: 64px;
   --header-height: 88px;
 
+  /* Shared layering bands. Overlay roles use these values instead of ad-hoc
+   * Tailwind steps so portals can escape header and shell stacking contexts. */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-header: 200;
+  --z-fixed-bar: 250;
+  --z-dropdown: 300;
+  --z-drawer-overlay: 400;
+  --z-drawer: 410;
+  --z-modal-overlay: 500;
+  --z-modal: 510;
+  --z-toast: 600;
+  --z-skip-link: 700;
+
   /* Spacing — fluid block tokens. Drive every section + card inner
    * padding from these instead of hand-coded px values, so the whole
    * page rhythm can be retuned from one place. */
-  --space-section: clamp(4rem, 3rem + 4vw, 7.5rem);
+  --space-section: clamp(4rem, calc(2.5rem + 3vw + 2svh), 7.5rem);
   --space-section-sm: clamp(56px, 7vw, 96px);
   --space-section-tight: clamp(40px, 5vw, 64px);
-  --space-stack: clamp(16px, 1.5vw, 24px);
+  --space-stack: clamp(16px, calc(0.5rem + 1vw + 1svh), 24px);
   --space-inset: clamp(20px, 3vw, 32px);
 
   /* Radius alias — kept as a separate name from --radius-card-sm so
@@ -343,7 +397,6 @@ img {
 
 /* Typography */
 /* Eyebrow — the brand's signature label. ALL-CAPS, wide tracking, bold, always brand-colored. */
-.gh-heading-eyebrow,
 .gh-eyebrow {
   font-size: 11px;
   font-weight: 700;
@@ -371,28 +424,6 @@ img {
   color: var(--color-text-primary);
 }
 
-.gh-display-em {
-  font-style: italic;
-  font-weight: 500;
-  color: var(--color-brand-primary);
-}
-
-/* Big sans display alternative — for bolder, more modern sections. */
-.gh-display-sans {
-  font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 1.02;
-  color: var(--color-text-primary);
-}
-
-.gh-h1 {
-  font-size: var(--text-h1);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: var(--color-text-primary);
-}
-
 .gh-h2 {
   font-size: var(--text-h2);
   font-weight: 800;
@@ -406,12 +437,6 @@ img {
   font-weight: 700;
   line-height: 1.25;
   color: var(--color-text-primary);
-}
-
-.gh-body-lg {
-  font-size: var(--text-body-lg);
-  line-height: 1.6;
-  color: var(--color-text-body);
 }
 
 .gh-body {
@@ -438,17 +463,12 @@ img {
 }
 
 /* Section block-padding driven by --space-section (fluid 64→112px).
- * Replaces inline `padding: 112px 0` + ad-hoc Tailwind `py-12`. Use
- * .gh-section-tight (fluid 40→64px) between sub-sections of one
- * topic that should breathe together. */
+ * Replaces inline `padding: 112px 0` + ad-hoc Tailwind `py-12`. */
 .gh-section {
   padding-block: var(--space-section);
 }
 .gh-section-sm {
   padding-block: var(--space-section-sm);
-}
-.gh-section-tight {
-  padding-block: var(--space-section-tight);
 }
 
 /* Canonical card grid. One source of truth for the mobile→tablet→
@@ -590,59 +610,6 @@ img {
   background: linear-gradient(270deg, #0F2E25 0%, transparent 100%);
 }
 
-/* Hero composition — type column on the left, live-availability
- * panel on the right at lg+. Stacks below 1024px so the panel
- * doesn't squeeze the headline on tablets. Asymmetric ratio (1.15fr
- * to 1fr) gives the type more breathing room than a 50/50 split. */
-.gh-hero-split {
-  grid-template-columns: 1fr;
-}
-@media (min-width: 1024px) {
-  .gh-hero-split { grid-template-columns: 1.15fr 1fr; }
-}
-
-/* Hero headline — fluid scale up to a confident desktop size. */
-.gh-hero-title {
-  font-size: clamp(2.5rem, 5.5vw + 0.5rem, 5.5rem);
-  line-height: 0.98;
-}
-
-/* Hero accent — highlighter band underneath a single phrase. Single
- * solid lime block; no gradient. Sits behind the text via box-shadow
- * inset so it tracks the type baseline at every viewport. */
-.gh-hero-accent {
-  background-image: linear-gradient(
-    180deg,
-    transparent 0,
-    transparent 62%,
-    var(--color-accent) 62%,
-    var(--color-accent) 92%,
-    transparent 92%
-  );
-  padding-inline: 0.08em;
-}
-
-/* Paper-texture grain that warms the otherwise sterile white canvas.
- * Tuned so it's invisible at a glance but visible enough to feel
- * tactile when the eye rests on a large empty zone. */
-.gh-hero-grain {
-  opacity: 0.06;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.06  0 0 0 0 0.18  0 0 0 0 0.14  0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 280px 280px;
-  mix-blend-mode: multiply;
-}
-
-/* Hero bottom grid — kept as alias for any consumer that still
- * references it. (HomeHero no longer needs it after the rewrite.) */
-.gh-hero-bottom {
-  display: grid;
-  gap: var(--space-stack);
-  grid-template-columns: 1fr;
-}
-@media (min-width: 900px) {
-  .gh-hero-bottom { grid-template-columns: 1.1fr 1fr; }
-}
-
 /* Pulse dot — used by the live-doctor live indicator. Honours
  * prefers-reduced-motion via @keyframes gh-pulse fallback below. */
 @keyframes gh-pulse {
@@ -669,7 +636,7 @@ img {
 .gh-header-sticky {
   position: sticky;
   top: 0;
-  z-index: 40;
+  z-index: var(--z-header);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -711,11 +678,6 @@ img {
 }
 
 .gh-header-bookCta {
-  min-height: 44px;
-  text-decoration: none;
-}
-
-.gh-header-bookCtaMobile {
   min-height: 44px;
   text-decoration: none;
 }
@@ -944,10 +906,6 @@ img {
   }
 }
 
-.gh-footer-disclaimer {
-  color: rgba(255, 255, 255, 0.58);
-}
-
 .gh-footer-copyrightBar {
   margin-top: 40px;
   padding-top: 24px;
@@ -981,10 +939,20 @@ img {
 
 /* Hero viewport cap — prevents translated text from causing page scroll on
  * desktop. Only active at lg+ (1024px+); mobile heroes scroll naturally. */
-@media (min-width: 1024px) {
+/* Caps apply only when the viewport is tall enough to fit the hero content;
+ * shorter viewports fall back to natural page scroll instead of clipping
+ * under the heroes' overflow:hidden (plan rule: never clip, scroll is the
+ * fallback). */
+@media (min-width: 1024px) and (min-height: 700px) {
   .gh-hero-cap {
     max-height: calc(100svh - var(--header-height));
   }
+}
+/* Cap only when the viewport can actually fit the hero content (booking card
+ * column min-height 660px + header + vertical padding ≈ 880px). Shorter
+ * viewports fall back to natural page scroll instead of clipping the card
+ * under the hero's overflow:hidden. */
+@media (min-width: 1024px) and (min-height: 880px) {
   .gh-hero-cap-full {
     max-height: 100svh;
   }
@@ -1030,10 +998,31 @@ img {
 }
 
 .gh-home-hero-title {
-  font-size: clamp(2.5rem, 8vw, 6rem);
+  /* min(8vw, 11svh): width-driven size, height-capped so short viewports
+     (landscape phones, short laptops) don't get a headline that fills the
+     whole fold. Matches the inline size from fitHeadingFontSize(). */
+  font-size: clamp(2.5rem, min(8vw, 11svh), 6rem);
   font-weight: 800;
   line-height: 0.94;
   letter-spacing: -0.045em;
+}
+
+/* Short-viewport compact tier — home hero vertical rhythm compresses on
+   short screens so headline + lead + CTA fit the fold; content is never
+   clipped, page scroll remains the fallback. */
+@media (max-height: 720px) {
+  .gh-home-hero-grid {
+    padding-top: calc(var(--header-height) + 1.5rem);
+    padding-bottom: 2rem;
+    gap: 1.75rem;
+  }
+  .gh-home-hero-left {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  .gh-home-hero-left .mb-9 {
+    margin-bottom: 1.25rem;
+  }
 }
 
 .gh-home-hero-titleAccent {
@@ -1170,18 +1159,6 @@ img {
   color: var(--color-brand-secondary);
 }
 
-/* Lime accent — for rare moments where Forest would feel heavy. */
-.gh-btn-accent {
-  background: var(--color-brand-accent);
-  color: var(--color-text-primary);
-  border-color: var(--color-brand-accent);
-}
-
-.gh-btn-accent:hover {
-  background: var(--color-brand-accent-soft);
-  border-color: var(--color-brand-accent-soft);
-}
-
 .gh-btn-soft {
   background: var(--color-background-soft);
   color: var(--color-brand-primary);
@@ -1201,29 +1178,6 @@ img {
 
 .gh-btn-danger:hover {
   background: var(--color-status-error-border);
-}
-
-.gh-btn-ghost-dark {
-  background: var(--color-brand-secondary);
-  color: var(--color-brand-primary);
-  border: none;
-}
-
-.gh-btn-ghost-dark:hover {
-  background: var(--color-background-soft);
-}
-
-.gh-link-arrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--color-brand-primary);
-}
-
-.gh-link-arrow:hover {
-  color: var(--color-brand-primary-hover);
 }
 
 /* Forms */
@@ -1335,22 +1289,6 @@ img {
   border-top: 1px solid var(--color-border);
 }
 
-/* Kicker */
-.gh-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border-radius: 999px;
-  background: var(--color-brand-secondary);
-  padding: 6px 14px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--color-brand-primary);
-  box-shadow: var(--shadow-soft);
-}
-
 /* Status utilities */
 .gh-status-error {
   border: 1px solid var(--color-status-error-border);
@@ -1372,51 +1310,6 @@ img {
   background: var(--color-status-info-bg);
   color: var(--color-status-info-text);
 }
-
-/* ── Admin page header pattern ──────────────────────────────── */
-/* Eyebrow → H1 (28–32px) → description → right-aligned actions */
-.gh-page-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-.gh-page-header-content { min-width: 0; }
-.gh-page-header-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-.gh-page-title {
-  font-size: clamp(1.5rem, 2vw + 0.5rem, 2rem);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: var(--color-text-primary);
-  margin-top: 4px;
-}
-.gh-page-description {
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--color-text-muted);
-  margin-top: 4px;
-  max-width: 52ch;
-}
-
-/* Booking / marketing hero radial blooms */
-.gh-booking-hero-bloom {
-  background:
-    radial-gradient(900px 480px at 90% -10%, rgba(176, 241, 34, 0.18), transparent 60%),
-    radial-gradient(800px 460px at -10% 110%, rgba(29, 75, 54, 0.08), transparent 60%);
-}
-
-/* Admin appointment detail */
-
-/* ── Admin card section wrapper ─────────────────────────────── */
 
 /* Badges */
 .gh-badge {
@@ -1468,11 +1361,6 @@ img {
   background: var(--color-accent-soft);
   color: var(--color-brand-primary);
   flex-shrink: 0;
-}
-.gh-icon-tile-sm {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
 }
 .gh-icon-tile-lg {
   width: 48px;
@@ -1581,6 +1469,53 @@ img {
     var(--liquid-specular),                    /* lit top edge + lime under-rim */
     0 18px 40px -18px rgba(4, 24, 18, 0.55);   /* calm premium shadow */
 }
+/* Portal-return band (04-001/04-002) — shown above the booking wizard only
+ * when a signed-in patient arrived from `/account` (`?from=portal`, then a
+ * short-lived cookie so it survives the wizard's 4 steps). Public/anonymous
+ * visitors never render this. Same forest-glass material as the wizard
+ * chrome so it reads as part of the flow, not a bolted-on banner. */
+.gh-portal-return-band {
+  background: var(--liquid-fill-dark), rgba(4, 32, 24, 0.92);
+  border-bottom: var(--gh-chrome-border);
+  -webkit-backdrop-filter: var(--gh-chrome-filter);
+  backdrop-filter: var(--gh-chrome-filter);
+}
+.gh-portal-return-band__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+}
+.gh-portal-return-band__link:hover { color: var(--color-brand-accent); }
+.gh-portal-return-band__badge {
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-brand-accent);
+  background: rgba(176, 241, 34, 0.10);
+  border: 1px solid rgba(176, 241, 34, 0.18);
+}
+@media (pointer: coarse) {
+  .gh-portal-return-band {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: #0b2a20;
+  }
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .gh-portal-return-band {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: #0b2a20;
+  }
+}
+
 /* Premium ivory card — replaces flat bg-white cards on light sections.
  * Also re-declares the ink tokens: when nested inside .gh2-dark-content
  * (booking form panels on glass-forest cards) the dark overrides would
@@ -1635,7 +1570,6 @@ img {
  * "Licensed care" panel). Pair with gh-medical-pattern
  * gh-medical-pattern-panel for the faint plus-grid texture. */
 .gh2-section-ivory  { background: linear-gradient(180deg, #fffdf1 0%, #f6f8f1 52%, #edf2e2 100%); }
-.gh2-section-soft   { background: var(--color-background); }
 /* Meta chip (light + dark) — price/duration/credential badges. */
 .gh2-meta-chip {
   display: inline-flex;
@@ -1715,6 +1649,15 @@ img {
   mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 40px), transparent 100%);
 }
 
+/* Public FAQ tabs use the same bilateral edge fade as PortalTabs. It keeps
+ * the strip horizontally scrollable while making overflow discoverable. */
+.gh-faq-tabs {
+  max-width: 100%;
+  overflow-y: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
+  mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
+}
+
 /* Dark theme override for content inside glass-forest cards on ivory sections.
  * Replaces light-theme CSS variables with dark equivalents. */
 .gh2-dark-content {
@@ -1773,6 +1716,22 @@ img {
 }
 .gh-icon-btn:active {
   transform: translateY(1px);
+}
+/* Coarse pointers: keep the 32px visual (§5.8) but guarantee a ≥44px hit
+ * area via an invisible centered overlay. */
+@media (pointer: coarse) {
+  .gh-icon-btn {
+    position: relative;
+  }
+  .gh-icon-btn::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
 }
 
 /* Admin sidebar logo — radial glow behind the wordmark to give the
@@ -2221,9 +2180,7 @@ a.gh-stat-card:hover .gh-stat-card__underline {
  * Clip at the content boundary; anything that needs its own horizontal
  * scroll (e.g. a data table) still scrolls inside its own wrap div. */
 
-/* Interactive cards lift + gain a stronger border; static cards never move
- * (opt in via .gh-card-interactive, matching the atom's `href`/onClick use). */
-.gh-card-interactive:hover,
+/* Interactive cards lift + gain a stronger border; static cards never move. */
 a.gh-stat-card:hover {
   background-image: var(--lux-card-fill), var(--lux-card-border-hover);
   box-shadow: var(--lux-elev-2);
@@ -2370,6 +2327,18 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   }
 }
 
+/* Form action-bar recipe — end-aligned, wraps on narrow widths, static (in
+ * flow) by default. Pair with `.gh-portal-sticky-actions` (portal.css) when
+ * a form specifically wants the mobile sticky Save/Cancel behavior; this
+ * class alone stays static everywhere. */
+.gh-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 /* PortalDialog — DESIGN.md §5.13. Styles live in portal.css. */
 
 @keyframes gh-dialog-fade {
@@ -2458,28 +2427,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   padding-inline: clamp(20px, 4vw, 56px);
 }
 
-/* A premium "calm" card — no border, soft tone shift on hover. */
-.gh-card-calm {
-  background: var(--color-background-soft);
-  border-radius: var(--radius-card);
-  transition: background-color 180ms cubic-bezier(0.23, 1, 0.32, 1),
-    transform 180ms cubic-bezier(0.23, 1, 0.32, 1),
-    box-shadow 180ms cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.gh-card-calm:hover {
-  background: var(--color-background-panel);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-card-hover);
-}
-
-/* Hairline divider — replaces the eyebrow "line" pattern. */
-.gh-hairline {
-  height: 1px;
-  width: 100%;
-  background: var(--color-border);
-}
-
 /* Cards — flatter, sharper, brand-aligned. Default card sits on a
  * 1px hairline border with NO resting shadow (shadows on every card
  * read as a 2010 SaaS template). Shadow appears only on hover, and
@@ -2494,34 +2441,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
     box-shadow 220ms cubic-bezier(0.23, 1, 0.32, 1),
     transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
     border-color 180ms ease-out;
-}
-
-.gh-card-hover:hover {
-  border-color: var(--color-brand-mint);
-  box-shadow: var(--shadow-card-hover);
-  transform: translateY(-3px);
-}
-@media (prefers-reduced-motion: reduce) {
-  .gh-card-hover:hover { transform: none; }
-}
-
-.gh-card-interactive {
-  cursor: pointer;
-}
-
-.gh-card-interactive:hover {
-  box-shadow: var(--shadow-card-hover);
-  transform: translateY(-2px);
-}
-
-.gh-card-interactive:active {
-  transform: translateY(0) scale(0.99);
-}
-
-.gh-panel {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card-sm);
-  background: var(--color-background-panel);
 }
 
 /* Section backgrounds */
@@ -2540,23 +2459,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 
 .gh-section-dark {
   background: linear-gradient(178deg, #12342A 0%, #0F2E25 100%);
-  color: var(--color-brand-secondary);
-}
-
-/* Dark panel */
-.gh-dark-panel {
-  background: var(--color-brand-primary);
-  color: var(--color-brand-secondary);
-}
-
-.gh-dark-panel .gh-body,
-.gh-dark-panel .gh-body-sm {
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.gh-dark-panel .gh-h1,
-.gh-dark-panel .gh-h2,
-.gh-dark-panel .gh-h3 {
   color: var(--color-brand-secondary);
 }
 
@@ -2625,43 +2527,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   to   { opacity: 1; }
 }
 
-/* Base: invisible until JS kicks in. JS adds this class on mount,
- * so SSR/no-JS users always see content (progressive enhancement). */
-.gh-reveal {
-  opacity: 0;
-}
-
-/* Triggered by IntersectionObserver — added alongside gh-reveal */
-.gh-reveal-visible {
-  animation: gh-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-  animation-delay: var(--gh-delay, 0ms);
-}
-
-/* Stagger system — delays cascade through direct children.
- * Container gets .gh-stagger; each child picks up --gh-delay via
- * nth-child. Max 8 items; beyond that delay plateaus at 525ms. */
-.gh-stagger > *:nth-child(1)  { --gh-delay: 0ms;   }
-.gh-stagger > *:nth-child(2)  { --gh-delay: 75ms;  }
-.gh-stagger > *:nth-child(3)  { --gh-delay: 150ms; }
-.gh-stagger > *:nth-child(4)  { --gh-delay: 225ms; }
-.gh-stagger > *:nth-child(5)  { --gh-delay: 300ms; }
-.gh-stagger > *:nth-child(6)  { --gh-delay: 375ms; }
-.gh-stagger > *:nth-child(7)  { --gh-delay: 450ms; }
-.gh-stagger > *:nth-child(8)  { --gh-delay: 525ms; }
-
-/* Hero load — above-fold elements animate on page load (no IO).
- * Applied directly to JSX elements via className + animationDelay. */
-.gh-hero-animate {
-  animation: gh-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/* Reduced-motion: skip all entry animations. */
-@media (prefers-reduced-motion: reduce) {
-  .gh-reveal         { opacity: 1; }
-  .gh-reveal-visible { animation: none; }
-  .gh-hero-animate   { opacity: 1; animation: none; }
-}
-
 /* Animations */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
@@ -2705,115 +2570,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   margin: 0.25rem 0;
 }
 
-/* Public blog HTML renderer styles */
-.gh-blog-html-content {
-  color: var(--color-text-muted);
-  font-size: 1.125rem;
-  line-height: 2rem;
-}
-
-.gh-blog-html-content > * + * {
-  margin-top: 1.5rem;
-}
-
-.gh-blog-html-content h1,
-.gh-blog-html-content h2,
-.gh-blog-html-content h3,
-.gh-blog-html-content h4 {
-  color: var(--color-text-primary);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  margin-top: 2rem;
-}
-
-.gh-blog-html-content h1 {
-  font-size: clamp(2rem, 3vw + 0.5rem, 2.75rem);
-}
-
-.gh-blog-html-content h2 {
-  font-size: clamp(1.6rem, 2.3vw + 0.4rem, 2.2rem);
-}
-
-.gh-blog-html-content h3,
-.gh-blog-html-content h4 {
-  font-size: clamp(1.25rem, 1.5vw + 0.4rem, 1.6rem);
-}
-
-.gh-blog-html-content ul,
-.gh-blog-html-content ol {
-  padding-left: 1.5rem;
-}
-
-.gh-blog-html-content ul {
-  list-style: disc;
-}
-
-.gh-blog-html-content ol {
-  list-style: decimal;
-}
-
-.gh-blog-html-content a {
-  color: var(--color-brand-primary);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  font-weight: 600;
-}
-
-.gh-blog-html-content a:hover {
-  color: var(--color-brand-primary-hover);
-}
-
-.gh-blog-html-content blockquote {
-  border-left: 4px solid var(--color-brand-accent);
-  background: var(--color-background-soft);
-  color: var(--color-text-body);
-  border-radius: 0.75rem;
-  padding: 1rem 1.25rem;
-}
-
-.gh-blog-html-content img {
-  width: 100%;
-  height: auto;
-  border-radius: 1rem;
-  margin-top: 1.25rem;
-}
-
-.gh-blog-html-content table {
-  width: 100%;
-  border-collapse: collapse;
-  display: block;
-  overflow-x: auto;
-  overflow-y: hidden;
-  white-space: nowrap;
-}
-
-.gh-blog-html-content th,
-.gh-blog-html-content td {
-  border: 1px solid var(--color-border);
-  padding: 0.75rem 1rem;
-  text-align: left;
-}
-
-.gh-blog-html-content th {
-  background: var(--color-background-soft);
-  color: var(--color-text-primary);
-  font-weight: 700;
-}
-
-/* Doctor wall card hover */
-
-/* Service tile link hover */
-.gh-service-tile {
-  transition: transform 180ms cubic-bezier(0.23, 1, 0.32, 1),
-    box-shadow 180ms cubic-bezier(0.23, 1, 0.32, 1) !important;
-}
-
-.gh-service-tile:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-card-hover);
-}
-
 /* ════════════════════════════════════════════════════════════════
  * Country homepage redesign system — "clinical editorial" (gh2-*)
  * Deep forest-night atmosphere, arch portrait motif, mono section
@@ -2829,23 +2585,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
     radial-gradient(1100px 720px at 82% -8%, rgba(176, 241, 34, 0.09), transparent 55%),
     radial-gradient(900px 640px at -12% 112%, rgba(0, 0, 0, 0.35), transparent 60%),
     linear-gradient(172deg, #1D4B36 0%, #15382A 44%, #0F2E25 100%);
-}
-
-/* Auth shell — one-screen layout locked at desktop, form scrolls inside. */
-@media (min-width: 1024px) {
-  .gh2-auth-shell {
-    height: calc(100svh - var(--header-height));
-    overflow: hidden;
-  }
-  .gh2-auth-shell-left {
-    height: 100%;
-    overflow: hidden;
-  }
-  .gh2-auth-shell-right {
-    height: 100%;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
 }
 
 /* Giant outlined watermark — atmosphere layer, never reads as copy. */
@@ -2909,6 +2648,181 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   }
 }
 
+/* Shared short-viewport tiers: reduce rhythm before vertical scrolling is
+   needed, without scaling or hiding content. */
+@media (max-height: 720px) {
+  :root {
+    --space-section: clamp(3rem, calc(2rem + 2vw + 1svh), 5rem);
+    --space-stack: clamp(14px, calc(0.5rem + 0.75vw + 0.75svh), 20px);
+  }
+}
+
+@media (max-height: 568px) {
+  :root {
+    --space-section: clamp(2.5rem, calc(1.5rem + 1vw + 1svh), 4rem);
+    --space-stack: 14px;
+  }
+}
+
+/* Shared menu mechanics. Scope visual skin per surface; every menu remains
+   inside the short viewport and scrolls internally rather than clipping. */
+.gh-app-menu-content {
+  max-height: min(calc(100svh - 2rem), 28rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* ── AppSheet — shared side-drawer/bottom-sheet primitive ───────────────
+ * DRAWER_ARCHITECTURE_PLAN §1, RESPONSIVE_DESIGN_SYSTEM_PLAN §3.2/§4b/§4c.
+ * Structural mechanics (position/size/slots) live here since both scopes
+ * consume AppSheet; theme skins split per the CSS-split rule: portal skin
+ * (`--portal`) in portal.css, public gh2-glass skin (`--public`) below. */
+@keyframes gh-sheet-slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.gh-app-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-drawer-overlay);
+  animation: gh-dialog-fade 200ms ease-out;
+}
+
+.gh-app-sheet {
+  position: fixed;
+  z-index: var(--z-drawer);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  outline: none;
+}
+
+/* Side: right (desktop panel) */
+.gh-app-sheet--right {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  height: 100svh;
+  max-height: 100svh;
+  width: 100%;
+  animation: gh-sheet-slide-in-right 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Size variants — desktop widths, tablet min(80vw,size). */
+.gh-app-sheet--right.gh-app-sheet--sm { max-width: min(80vw, 420px); }
+.gh-app-sheet--right.gh-app-sheet--md { max-width: min(80vw, 520px); }
+.gh-app-sheet--right.gh-app-sheet--lg { max-width: min(80vw, 640px); }
+
+/* Side: bottom (filter sheets etc.) */
+.gh-app-sheet--bottom {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 100%;
+  max-height: min(88svh, 640px);
+  border-radius: 20px 20px 0 0;
+  animation: gh-dialog-sheet-in 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gh-app-sheet__header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px 14px;
+  flex-shrink: 0;
+}
+
+.gh-app-sheet__close {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.gh-app-sheet__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px 20px 20px;
+}
+
+.gh-app-sheet__footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+}
+
+/* Mobile: full-screen sheet, no side offset regardless of `side` prop. */
+@media (max-width: 640px) {
+  .gh-app-sheet--right {
+    max-width: 100% !important;
+    height: 100svh;
+    max-height: 100svh;
+    border-radius: 0;
+  }
+  .gh-app-sheet--bottom {
+    max-height: min(92svh, 100svh);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-app-sheet-overlay,
+  .gh-app-sheet--right,
+  .gh-app-sheet--bottom {
+    animation: none;
+  }
+}
+
+/* Public theme skin — gh2 forest/ivory glass per DESIGN.md. */
+.gh-app-sheet-overlay--public {
+  background: rgba(4, 20, 14, 0.6);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.gh-app-sheet--public {
+  background: var(--liquid-fill-dark), rgba(4, 32, 24, 0.94);
+  border: var(--gh-chrome-border);
+  -webkit-backdrop-filter: var(--gh-chrome-filter);
+  backdrop-filter: var(--gh-chrome-filter);
+  box-shadow: var(--liquid-specular), 0 18px 40px -18px rgba(4, 24, 18, 0.55);
+  color: #eef7ef;
+}
+
+.gh-app-sheet--public .gh-app-sheet__header {
+  border-bottom: 1px solid var(--liquid-edge);
+}
+
+.gh-app-sheet--public .gh-app-sheet__footer {
+  border-top: 1px solid var(--liquid-edge);
+}
+
+.gh-app-sheet--public .gh-app-sheet__close {
+  color: #eef7ef;
+}
+
+.gh-app-sheet--public .gh-app-sheet__close:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .gh2-btn-ghost {
   display: inline-flex;
   align-items: center;
@@ -2931,8 +2845,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 /* ── Public CTA extensions ─────────────────────────────────────────────
  * Shared classes for the public website only (never portal shells).
  * Hierarchy: gh2-btn-lime (page primary) > gh2-btn-ghost (page secondary
- * on dark) > gh2-btn-outline (page/card secondary on light) >
- * gh2-btn-card-* (card footer actions, 48px) > gh2-btn-compact-* (dense
+ * on dark) > gh2-btn-card-* (card footer actions, 48px) > gh2-btn-compact-* (dense
  * booking-selection actions, 48px minimum for mobile tap targets) >
  * gh2-pill-filter (filter chips, 44px minimum). All inherit the global :focus-visible
  * dual ring — do not add focus-visible:outline-none on consumers. */
@@ -2987,28 +2900,6 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   border-color: rgba(255, 255, 255, 0.4);
   background: rgba(255, 255, 255, 0.06);
 }
-/* Secondary on light surfaces — outline that fills on hover. */
-.gh2-btn-outline {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 48px;
-  padding: 0 22px;
-  border-radius: 999px;
-  border: 1px solid var(--color-border);
-  background: transparent;
-  color: var(--color-brand-primary);
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  text-decoration: none;
-  transition: background-color 180ms ease-out, border-color 180ms ease-out;
-}
-.gh2-btn-outline:hover {
-  border-color: rgba(29, 75, 54, 0.4);
-  background: var(--color-background-soft);
-}
 /* Filter pill pair — selected = forest fill, unselected = quiet outline. */
 .gh2-pill-filter {
   display: inline-flex;
@@ -3059,25 +2950,23 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   border-color: var(--color-brand-accent);
   color: #0a1f14;
 }
-/* Compact dropdown filter trigger (DoctorFilters) — native <details>/
- * <summary>, no JS required to open/close. Replaces the old
- * always-expanded chip panel with a slim row of pill dropdowns. */
+/* Compact dropdown filter trigger (DoctorFilters) — plain <button> that
+ * opens a portalled AppMenu (desktop) or AppSheet (mobile). */
 .gh2-filter-trigger {
   display: inline-flex;
   min-height: 44px;
   cursor: pointer;
-  list-style: none;
   align-items: center;
   gap: 6px;
-  padding: 0 16px;
-  border-radius: 999px;
-  border: none;
+  padding: 0 18px;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
   background: var(--color-background-soft);
   color: var(--color-text-primary);
   font-size: 12.5px;
   font-weight: 700;
   outline: none;
-  transition: background-color 150ms ease-out, color 150ms ease-out;
+  transition: background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out;
 }
 .gh2-filter-trigger:focus-visible {
   outline: 2px solid var(--color-brand-primary);
@@ -3088,16 +2977,13 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   outline-offset: 2px;
   box-shadow: 0 0 0 5px rgba(3, 31, 24, 0.85);
 }
-.gh2-filter-trigger::-webkit-details-marker {
-  display: none;
-}
 .gh2-filter-trigger:hover {
   background: var(--color-background-panel);
 }
 .gh2-filter-chevron {
   transition: transform 200ms ease-out;
 }
-details[open] > .gh2-filter-trigger .gh2-filter-chevron {
+.gh2-filter-trigger[data-state="open"] .gh2-filter-chevron {
   transform: rotate(180deg);
 }
 @media (prefers-reduced-motion: reduce) {
@@ -3108,11 +2994,21 @@ details[open] > .gh2-filter-trigger .gh2-filter-chevron {
 .gh2-filter-count {
   color: var(--color-brand-primary);
 }
-.gh2-filter-panel {
-  position: absolute;
-  left: 0;
-  top: calc(100% + 8px);
-  z-index: 20;
+.gh2-filters-dark .gh2-filter-trigger {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: var(--color-brand-primary);
+  color: rgba(255, 255, 255, 0.92);
+}
+.gh2-filters-dark .gh2-filter-trigger:hover {
+  border-color: rgba(176, 241, 34, 0.45);
+  background: var(--color-brand-primary-hover);
+}
+.gh2-filters-dark .gh2-filter-count {
+  color: var(--color-brand-accent);
+}
+/* AppMenu content skin for the doctor filter panels (extends
+ * .gh-app-menu-content's shared max-height/scroll mechanics). */
+.gh2-filter-menu-content {
   display: flex;
   min-width: 240px;
   max-width: min(360px, 90vw);
@@ -3124,19 +3020,22 @@ details[open] > .gh2-filter-trigger .gh2-filter-chevron {
   background: var(--color-background-page);
   box-shadow: var(--shadow-elevated);
 }
-.gh2-filters-dark .gh2-filter-trigger {
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.92);
-}
-.gh2-filters-dark .gh2-filter-trigger:hover {
-  background: rgba(176, 241, 34, 0.14);
-}
-.gh2-filters-dark .gh2-filter-count {
-  color: var(--color-brand-accent);
-}
-.gh2-filters-dark .gh2-filter-panel {
+.gh2-filter-menu-content--dark {
   border-color: rgba(255, 255, 255, 0.14);
   background: #0f2e25;
+}
+.gh2-filter-sheet-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #eef7ef;
+}
+.gh2-filter-sheet-heading {
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--gh2-on-dark-muted);
 }
 /* Focus ring variant for controls sitting on dark glass chrome, where
  * the default forest outline is invisible. Use INSTEAD of removing the
@@ -3145,14 +3044,6 @@ details[open] > .gh2-filter-trigger .gh2-filter-chevron {
   outline: 2px solid var(--color-brand-accent);
   outline-offset: 2px;
   box-shadow: 0 0 0 5px rgba(3, 31, 24, 0.85);
-}
-
-/* Light-menu dropdown items (country/language switchers) — explicit
- * focus-visible background since these are plain <button> menuitems
- * with inline styles, not the dark chrome focus recipe above. */
-.gh-switcher-item:focus-visible {
-  outline: none;
-  background: var(--color-brand-mint-soft) !important;
 }
 
 /* Dark service card — lift + lime border bloom on hover. */
@@ -3343,10 +3234,29 @@ details[open] > .gh2-filter-trigger .gh2-filter-chevron {
   height: auto;
 }
 
+/* Full-viewport split at lg — safe at any height because the right panel
+ * (.gh-inline-panel-base) scrolls internally (lg:overflow-y-auto). The 620px
+ * floor only applies when the viewport can fit it; shorter windows track the
+ * viewport exactly instead of clipping. */
 @media (min-width: 1024px) {
   .gh-inline-split-hero {
     height: calc(100svh - var(--header-height));
+  }
+}
+@media (min-width: 1024px) and (min-height: 700px) {
+  .gh-inline-split-hero {
     min-height: 620px;
+  }
+}
+/* Short-viewport compact tier — right panel rhythm + type shrink so more of
+ * the content fits before internal scroll kicks in. */
+@media (min-width: 1024px) and (max-height: 760px) {
+  .gh-inline-panel-base {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  .gh-inline-content-max h1 {
+    font-size: clamp(1.6rem, min(2.2vw + 0.9rem, 6.5svh), 3.4rem);
   }
 }
 
@@ -3855,8 +3765,12 @@ details[open] > .gh2-filter-trigger .gh2-filter-chevron {
   .gh2-glass-forest,
   .gh-glass-emerald,
   .gh-inline-forest-glass,
-  .gh-inline-doctor-glass {
+  .gh-inline-doctor-glass,
+  .gh-app-sheet--public {
     background: linear-gradient(168deg, #0e3125, #08251c);
+  }
+  .gh-app-sheet-overlay--public {
+    background: rgba(4, 20, 14, 0.78);
   }
   .gh2-glass-ivory,
   .gh-liquid-light {
@@ -3918,8 +3832,12 @@ details[open] > .gh2-filter-trigger .gh2-filter-chevron {
   .gh-glass-emerald,
   .gh-inline-forest-glass,
   .gh-inline-doctor-glass,
-  .gh-cookie-bar {
+  .gh-cookie-bar,
+  .gh-app-sheet--public {
     background: linear-gradient(168deg, #0e3125, #08251c);
+  }
+  .gh-app-sheet-overlay--public {
+    background: rgba(4, 20, 14, 0.78);
   }
   .gh2-glass-ivory,
   .gh-liquid-light {

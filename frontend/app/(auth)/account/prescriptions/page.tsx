@@ -1,4 +1,4 @@
-import { FileText, Pill, RefreshCw, ShoppingBag, ChevronRight } from "lucide-react";
+import { FileText, Pill, RefreshCw, ShoppingBag, ChevronRight, CreditCard, AlertCircle } from "lucide-react";
 import { fetchPatientPrescriptions } from "@/lib/api/prescriptions-api";
 import { resolveBookConsultationHref } from "@/lib/api/last-booking-country";
 import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, PageHeader, Pill as PillBadge, SectionHeader } from "@/components/portal-atoms";
@@ -40,23 +40,25 @@ export default async function AccountPrescriptionsPage() {
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: "Doctor issued", value: String(issued.length), hint: "Clinical prescriptions from consultations" },
-          { label: "Online orders", value: String(orders.length), hint: "Prescription checkout requests" },
+          { label: "Doctor issued", value: String(issued.length), hint: "Clinical prescriptions from consultations", icon: <Pill aria-hidden /> },
+          { label: "Online orders", value: String(orders.length), hint: "Prescription checkout requests", icon: <ShoppingBag aria-hidden /> },
           {
             label: "Paid orders",
             value: String(orders.filter((order) => order.paymentStatus === "PAID").length),
             hint: "Ready or already processed",
+            icon: <CreditCard aria-hidden />,
           },
           {
             label: "Needs action",
             value: String(orders.filter((order) => order.paymentStatus !== "PAID").length),
             hint: "Payment or review pending",
+            icon: <AlertCircle aria-hidden />,
           },
         ]}
       />
 
       {unavailable ? (
-        <div className="mb-4 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <div role="status" className="mb-4 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           {unavailable}
         </div>
       ) : null}
@@ -64,6 +66,7 @@ export default async function AccountPrescriptionsPage() {
       {/* ── Issued by your doctor (clinical) ────────────────────── */}
       <AdminCard padding={0} className="mb-4 gh-card-jewel">
         <SectionHeader
+          as="h2"
           title={
             <span className="inline-flex items-center gap-2">
               <Pill className="size-4" aria-hidden /> {a.prescriptions.issuedByDoctor}
@@ -85,11 +88,11 @@ export default async function AccountPrescriptionsPage() {
               }
             />
           ) : (
-            <ul className="grid gap-3">
+            <ul className="divide-y divide-[var(--portal-line)]">
               {issued.map((p) => (
                 <li
                   key={p.id}
-                  className="gh-patient-prescription-card rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-4"
+                  className="gh-patient-list-row py-3 first:pt-0 last:pb-0"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
@@ -115,11 +118,11 @@ export default async function AccountPrescriptionsPage() {
                           .join(" · ") || "—"}
                       </p>
                       {p.instructions ? (
-                        <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--portal-text-2)]">
+                        <p className="mt-2 whitespace-pre-wrap text-portal-compact text-[var(--portal-text-2)]">
                           {p.instructions}
                         </p>
                       ) : null}
-                      <p className="mt-2 text-[11px] text-[var(--portal-muted)]">
+                      <p className="mt-2 text-portal-thead text-[var(--portal-muted)]">
                         {a.prescriptions.issuedBy
                           .replace("{doctor}", p.doctorName)
                           .replace("{date}", formatAppDate(p.consultationSignedAt ?? p.createdAt))}
@@ -134,7 +137,7 @@ export default async function AccountPrescriptionsPage() {
                           iconLeft={<RefreshCw className="size-3.5" />}
                           title="Refills aren't one-click yet — this starts a new consultation booking so a doctor can approve the refill."
                         >
-                          Refill
+                          {a.prescriptions.refillButton}
                         </Btn>
                       ) : null}
                       <Btn
@@ -157,6 +160,7 @@ export default async function AccountPrescriptionsPage() {
       {/* ── Online prescription orders ──────────────────────────── */}
       <AdminCard padding={0}>
         <SectionHeader
+          as="h2"
           title={
             <span className="inline-flex items-center gap-2">
               <ShoppingBag className="size-4" aria-hidden /> {a.prescriptions.onlineOrders}
@@ -164,9 +168,11 @@ export default async function AccountPrescriptionsPage() {
           }
           description={a.prescriptions.onlineOrdersHint}
           right={
-            <Btn href="/" variant="primary" size="sm">
-              {a.prescriptions.orderNew}
-            </Btn>
+            orders.length > 0 ? (
+              <Btn href="/" variant="primary" size="sm">
+                {a.prescriptions.orderNew}
+              </Btn>
+            ) : undefined
           }
         />
         <div className="p-5">

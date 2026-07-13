@@ -49,7 +49,7 @@ export function FormFillSection({
   if (activeTemplates.length === 0) {
     const [prefix, suffix] = copy.noTemplatesText.split("{link}");
     return (
-      <p className="text-[13px] text-[var(--portal-muted)]">
+      <p className="text-portal-compact text-[var(--portal-muted)]">
         {prefix}
         <Link
           href="/doctor/forms"
@@ -131,7 +131,7 @@ export function FormFillSection({
       {currentTemplate ? (
         <div className="grid gap-3 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3">
           {currentTemplate.description ? (
-            <p className="text-[12.5px] text-[var(--portal-muted)]">
+            <p className="text-portal-label text-[var(--portal-muted)]">
               {currentTemplate.description}
             </p>
           ) : null}
@@ -190,7 +190,7 @@ export function FormFillSection({
       ) : null}
 
       {error ? (
-        <p className="gh-status-warning rounded-md border px-3 py-2 text-[12.5px]">
+        <p className="gh-status-warning rounded-md border px-3 py-2 text-portal-label">
           {error}
         </p>
       ) : null}

@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Award, Activity, CalendarClock, CreditCard, Sparkles, Gift, CheckCircle2 } from "lucide-react";
 import { getCountryByCode } from "@/data/countries";
-import { getServerSubscription } from "@/lib/api/me-subscription-server";
+import { getServerAuthUser } from "@/lib/api/server-auth";
+import {
+  getServerCredits,
+  getServerRedemptions,
+  getServerSubscription,
+} from "@/lib/api/me-subscription-server";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -9,24 +15,37 @@ import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
 import { AdminEmptyState, AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 import { ManagePanel, type PlanOption } from "./_components/ManagePanel";
+import { MembershipTabsClient } from "./_components/MembershipTabsClient";
 import { SubscriptionDashboard } from "../_components/SubscriptionDashboard";
+import { RewardsPanel } from "../rewards/_components/RewardsPanel";
 
 export const metadata: Metadata = { title: "Your membership", robots: { index: false } };
 
-type Search = { subscription?: string; redemption?: string; plan?: string };
+type Search = { subscription?: string; redemption?: string; plan?: string; tab?: string };
 
 export default async function MembershipPage({
   searchParams,
 }: {
   searchParams: Promise<Search>;
 }) {
-  const [{ subscription: returnState, plan: requestedPlanId }, sub, locale] = await Promise.all([
+  const [
+    { subscription: returnState, plan: requestedPlanId, redemption: redemptionState },
+    sub,
+    credits,
+    redemptions,
+    user,
+    locale,
+  ] = await Promise.all([
     searchParams,
     getServerSubscription(),
+    getServerCredits(),
+    getServerRedemptions(),
+    getServerAuthUser(),
     getPageLocale(),
   ]);
-  const { subscription } = loadLocaleBundle(locale);
+  const { subscription, account: a } = loadLocaleBundle(locale);
   const t = subscription.manage;
+  const rt = subscription.redeem;
 
   if (!sub || !sub.plan) {
     return (
@@ -47,7 +66,8 @@ export default async function MembershipPage({
     );
   }
 
-  // Upgrade/downgrade options come from the same country's catalogue.
+  // Upgrade/downgrade options come from the same country's catalogue. Also
+  // drives the wellness-kit unlock condition below (one fetch, both tabs).
   const config = sub.countryCode ? getCountryByCode(sub.countryCode) : null;
   const plans = sub.countryCode ? await getCountryPlans(sub.countryCode, locale) : [];
   const planOptions: PlanOption[] = plans
@@ -68,39 +88,89 @@ export default async function MembershipPage({
     : null;
   const pricingHref = config ? `/${config.slug}/${locale}/pricing` : "/";
 
+  const kits = redemptions?.kits ?? [];
+  const livePlan = plans.find((p) => p.id === sub.plan?.id);
+  const unlockByKit = new Map(
+    (livePlan?.wellnessKits ?? []).map((k) => [k.healthTestId, k.unlockAfterPaidMonths]),
+  );
+  const kitsWithUnlock = kits.map((k) => ({
+    ...k,
+    unlockMonths: unlockByKit.get(k.healthTestId) ?? null,
+  }));
+
   return (
     <div className="gh-patient-page gh-patient-membership-page">
       <PageHeader title={t.title} description={t.subtitle} />
-      <AdminSummaryStrip
-        className="mb-5"
-        items={[
-          { label: "Plan", value: sub.plan.name, hint: "Current membership" },
-          { label: "Status", value: sub.status.toLowerCase(), hint: sub.cancelAtPeriodEnd ? "Cancellation scheduled" : "Membership lifecycle" },
-          { label: "Next billing", value: nextBillingLabel ?? "Not scheduled", hint: "Renewal date" },
-          { label: "Price", value: priceLabel, hint: "Monthly subscription" },
-        ]}
+      <MembershipTabsClient
+        tabMembership={a.nav.membership}
+        tabRewards={a.nav.rewards}
+        tabsAria={a.membership.tabsAria}
+        membershipPanel={
+          <>
+            <AdminSummaryStrip
+              className="mb-5"
+              items={[
+                { label: "Plan", value: sub.plan.name, hint: "Current membership", icon: <Award aria-hidden /> },
+                { label: "Status", value: sub.status.toLowerCase(), hint: sub.cancelAtPeriodEnd ? "Cancellation scheduled" : "Membership lifecycle", icon: <Activity aria-hidden /> },
+                { label: "Next billing", value: nextBillingLabel ?? "Not scheduled", hint: "Renewal date", icon: <CalendarClock aria-hidden /> },
+                { label: "Price", value: priceLabel, hint: "Monthly subscription", icon: <CreditCard aria-hidden /> },
+              ]}
+            />
+            <ManagePanel
+              t={t}
+              status={sub.status}
+              planName={sub.plan.name}
+              priceLabel={priceLabel}
+              currentPriceCents={sub.plan.monthlyPriceCents}
+              nextBillingLabel={nextBillingLabel}
+              cancelAtPeriodEnd={sub.cancelAtPeriodEnd}
+              pendingChangePlanName={sub.pendingChange?.planName ?? null}
+              pendingChangeDate={pendingChangeDate}
+              planOptions={planOptions}
+              // Pricing-page "Switch to this plan" carries ?plan= — preselect it in
+              // the change dropdown when it's a valid switch target.
+              initialPlanId={planOptions.some((p) => p.id === requestedPlanId) ? requestedPlanId! : null}
+              returnState={returnState ?? null}
+              pricingHref={pricingHref}
+            />
+            {/* Consolidated benefits: GP credits remaining, wellness, discount perks
+                and their unlock conditions (Req 3). Reuses the dashboard widgets;
+                `embedded` hides its plan card since ManagePanel shows that above. */}
+            <SubscriptionDashboard locale={locale} embedded />
+          </>
+        }
+        rewardsPanel={
+          kits.length === 0 ? (
+            <div className="gh-patient-empty-state gh-card max-w-xl p-8">
+              <AdminEmptyState
+                as="h2"
+                title="No rewards available"
+                description={subscription.dashboard.wellnessNone}
+              />
+            </div>
+          ) : (
+            <>
+              <AdminSummaryStrip
+                className="mb-5"
+                items={[
+                  { label: "Wellness balance", value: String(credits?.wellness.balance ?? 0), hint: "Credits available", icon: <Sparkles aria-hidden /> },
+                  { label: "Reward kits", value: String(kitsWithUnlock.length), hint: "Available to review", icon: <Gift aria-hidden /> },
+                  { label: "Eligible now", value: String(kitsWithUnlock.filter((kit) => kit.eligible).length), hint: "Ready to redeem", icon: <CheckCircle2 aria-hidden /> },
+                  { label: "Membership", value: sub.status.toLowerCase(), hint: sub.plan?.name ?? "Current plan", icon: <Award aria-hidden /> },
+                ]}
+              />
+              <RewardsPanel
+                t={rt}
+                kits={kitsWithUnlock}
+                wellnessBalance={credits?.wellness.balance ?? 0}
+                prefillName={user?.fullName ?? ""}
+                prefillCountry={(sub.countryCode ?? "").toUpperCase()}
+                returnState={redemptionState ?? null}
+              />
+            </>
+          )
+        }
       />
-      <ManagePanel
-        t={t}
-        status={sub.status}
-        planName={sub.plan.name}
-        priceLabel={priceLabel}
-        currentPriceCents={sub.plan.monthlyPriceCents}
-        nextBillingLabel={nextBillingLabel}
-        cancelAtPeriodEnd={sub.cancelAtPeriodEnd}
-        pendingChangePlanName={sub.pendingChange?.planName ?? null}
-        pendingChangeDate={pendingChangeDate}
-        planOptions={planOptions}
-        // Pricing-page "Switch to this plan" carries ?plan= — preselect it in
-        // the change dropdown when it's a valid switch target.
-        initialPlanId={planOptions.some((p) => p.id === requestedPlanId) ? requestedPlanId! : null}
-        returnState={returnState ?? null}
-        pricingHref={pricingHref}
-      />
-      {/* Consolidated benefits: GP credits remaining, wellness, discount perks
-          and their unlock conditions (Req 3). Reuses the dashboard widgets;
-          `embedded` hides its plan card since ManagePanel shows that above. */}
-      <SubscriptionDashboard locale={locale} embedded />
     </div>
   );
 }

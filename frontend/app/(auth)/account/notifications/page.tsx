@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BellRing, Bell, CheckCircle2 } from "lucide-react";
 import { getServerNotifications } from "@/lib/api/me-subscription-server";
 import { PatientNotificationList } from "./_components/patient-notification-list";
 import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
@@ -26,12 +27,13 @@ export default async function AccountNotificationsPage() {
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: n.unread, value: String(unread), hint: n.unreadHint },
-          { label: n.total, value: String(items.length), hint: n.totalHint },
+          { label: n.unread, value: String(unread), hint: n.unreadHint, icon: <BellRing aria-hidden /> },
+          { label: n.total, value: String(items.length), hint: n.totalHint, icon: <Bell aria-hidden /> },
           {
             label: n.statusLabel,
             value: unread > 0 ? n.reviewNeeded : n.caughtUp,
             hint: n.statusHint,
+            icon: <CheckCircle2 aria-hidden />,
           },
         ]}
       />

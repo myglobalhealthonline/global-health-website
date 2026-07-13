@@ -21,7 +21,6 @@ import {
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import {
   fetchDoctorComplianceStatus,
-  fetchDoctorMe,
   fetchDoctorNotifications,
   fetchDoctorUnreadMessageCount,
 } from "@/lib/api/doctor-api";
@@ -31,6 +30,7 @@ import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { supportedLocaleCodes } from "@/lib/i18n/types";
+import { UnsavedChangesGuard } from "@/components/UnsavedChangesGuard";
 
 /**
  * Doctor portal layout. Reuses `PortalShell` so admin / doctor / patient
@@ -66,10 +66,9 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     createdAt: string;
     readAt: string | null;
   }[] = [];
-  const [notif, unreadMessages, me, compliance, locale] = await Promise.all([
+  const [notif, unreadMessages, compliance, locale] = await Promise.all([
     fetchDoctorNotifications(false),
     fetchDoctorUnreadMessageCount(),
-    fetchDoctorMe(),
     fetchDoctorComplianceStatus(),
     getPageLocale(),
   ]);
@@ -99,18 +98,11 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     });
   }
 
-  // One "Profile" link, unless the doctor practices in 2+ countries — then
-  // give each its own entry ("Profile (Ireland)", "Profile (Portugal)") so
-  // they can jump straight to that country's editor.
-  const activeMarkets = me.ok ? me.data.doctor.markets.filter((m) => m.active) : [];
-  const profileItems: PortalNavItem[] =
-    activeMarkets.length >= 2
-      ? activeMarkets.map((m) => ({
-          href: `/doctor/profile/${m.country.slug}`,
-          label: d.nav.profileCountry.replace("{country}", m.country.name),
-          icon: <UserCog className="size-4" aria-hidden />,
-        }))
-      : [{ href: "/doctor/profile", label: d.nav.profile, icon: <UserCog className="size-4" aria-hidden /> }];
+  // Single "Profile" link regardless of market count — the profile editor
+  // is one page with a tab per market (?tab=<country-slug>).
+  const profileItems: PortalNavItem[] = [
+    { href: "/doctor/profile", label: d.nav.profile, icon: <UserCog className="size-4" aria-hidden /> },
+  ];
 
   const groups: PortalNavGroup[] = [
     {
@@ -188,6 +180,14 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
       }
     >
       {children}
+      <UnsavedChangesGuard
+        i18n={{
+          title: common.portalChrome.unsavedChangesTitle,
+          body: common.portalChrome.unsavedChangesBody,
+          keepEditing: common.portalChrome.unsavedChangesKeepEditing,
+          discard: common.portalChrome.unsavedChangesDiscard,
+        }}
+      />
     </PortalShell>
   );
 }

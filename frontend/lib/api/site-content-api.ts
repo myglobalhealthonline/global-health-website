@@ -41,6 +41,8 @@ export const SITE_CACHE_TAGS = {
   countryPlans: (code: string) => `country:${code}:plans`,
   countryPage: (code: string, pageKey: string, locale: string) =>
     `country:${code}:pages:${pageKey}:${locale}`,
+  countryPageContent: (code: string, pageKey: string, locale: string) =>
+    `country:${code}:page-content:${pageKey}:${locale}`,
   globalDoctors: (locale?: string) =>
     locale ? `global:doctors:${locale}` : "global:doctors",
   globalServices: () => "global:services",
@@ -154,6 +156,28 @@ export async function fetchPublicPage(
       timeoutMs,
       revalidate: REVALIDATE_SECONDS,
       tags: [SITE_CACHE_TAGS.countryPage(countryCode, pageKey, locale)],
+    },
+  );
+}
+
+export async function fetchPublicPageContent(
+  countryCode: string,
+  pageKey:
+    | "HOME"
+    | "DOCTORS_INDEX"
+    | "GENERAL_CONSULTATION"
+    | "SPECIALIST_CONSULTATION"
+    | "PRESCRIPTIONS"
+    | "HEALTH_TESTS",
+  locale: string,
+  timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+) {
+  return apiRequest<{ record: unknown; disabled?: boolean }>(
+    `/api/countries/${encodeURIComponent(countryCode)}/page-content/${encodeURIComponent(pageKey)}?locale=${encodeURIComponent(locale)}`,
+    {
+      timeoutMs,
+      revalidate: REVALIDATE_SECONDS,
+      tags: [SITE_CACHE_TAGS.countryPageContent(countryCode, pageKey, locale)],
     },
   );
 }

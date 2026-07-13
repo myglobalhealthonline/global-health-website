@@ -147,7 +147,7 @@ export function DocumentsList({
           {pending ? copy.uploading : copy.uploadDocument}
         </button>
         {error ? (
-          <p className="gh-status-warning rounded-md border px-3 py-2 text-[12.5px]">
+          <p className="gh-status-warning rounded-md border px-3 py-2 text-portal-label">
             {error}
           </p>
         ) : null}
@@ -160,7 +160,7 @@ export function DocumentsList({
             aria-hidden
           />
           <p className="mt-2 text-sm font-bold text-[var(--portal-text)]">{copy.emptyTitle}</p>
-          <p className="mx-auto mt-1 max-w-sm text-[12px] text-[var(--portal-muted)]">
+          <p className="mx-auto mt-1 max-w-sm text-portal-meta text-[var(--portal-muted)]">
             {copy.emptyDesc}
           </p>
         </div>
@@ -176,7 +176,7 @@ export function DocumentsList({
                 aria-hidden
               />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[13px] font-semibold text-[var(--portal-text)]">
+                <p className="truncate text-portal-compact font-semibold text-[var(--portal-text)]" title={d.label}>
                   {d.label}
                 </p>
                 <p className="text-[11.5px] text-[var(--portal-muted)]">
@@ -188,7 +188,7 @@ export function DocumentsList({
                 href={d.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-[12px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)] sm:w-auto"
+                className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-portal-meta font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)] sm:w-auto"
               >
                 <Download className="size-3.5" /> {copy.open}
               </a>

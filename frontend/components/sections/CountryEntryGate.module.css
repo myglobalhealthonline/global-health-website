@@ -264,7 +264,11 @@
 
 .panelBody {
   position: relative;
+  flex: 1 1 auto;
   min-height: 0;
+  /* .selectPanel is height-capped with overflow:hidden; on short viewports the
+     body scrolls internally instead of clipping the country list. */
+  overflow-y: auto;
   padding: clamp(20px, 2.2vw, 30px);
 }
 

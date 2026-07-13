@@ -61,7 +61,7 @@ function AttachmentPreview({
       ) : (
         <FileText className="size-4 shrink-0" aria-hidden />
       )}
-      <span className="max-w-[200px] truncate">{label}</span>
+      <span className="max-w-[200px] truncate" title={label}>{label}</span>
     </div>
   );
 
@@ -304,6 +304,13 @@ export function ConsultationChat({
           </p>
         )}
 
+        {loading && items.length === 0 && (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="size-5 animate-spin" style={{ color: "var(--portal-muted)" }} aria-hidden />
+            <span className="sr-only">Loading messages…</span>
+          </div>
+        )}
+
         {!loading && items.length === 0 && (
           <div className="gh-chat-empty flex items-center gap-3 rounded-lg px-4 py-3 text-left">
             <Send className="size-4 shrink-0" style={{ color: "var(--portal-muted)" }} aria-hidden />
@@ -341,7 +348,7 @@ export function ConsultationChat({
                     <p className="whitespace-pre-wrap">{m.body}</p>
                   )}
                   <p
-                    className={`gh-chat-bubble__time mt-1 text-[10px] opacity-80 ${
+                    className={`gh-chat-bubble__time mt-1 text-portal-micro opacity-80 ${
                       last ? "" : "gh-chat-bubble__time--hover-only"
                     }`}
                   >
@@ -359,7 +366,7 @@ export function ConsultationChat({
       {pendingFile && (
         <div className="gh-chat-pending-file flex items-center gap-3 px-4 py-2">
           <FileText className="size-4 shrink-0" style={{ color: "var(--portal-muted)" }} aria-hidden />
-          <span className="min-w-0 flex-1 truncate text-sm" style={{ color: "var(--portal-text)" }}>
+          <span className="min-w-0 flex-1 truncate text-sm" style={{ color: "var(--portal-text)" }} title={pendingFile.name}>
             {pendingFile.name}
           </span>
           <button
@@ -399,6 +406,7 @@ export function ConsultationChat({
             type="button"
             onClick={() => fileRef.current?.click()}
             title="Attach a file (PDF / image)"
+            aria-label="Attach a file (PDF / image)"
             className="gh-chat-attach shrink-0 rounded-md p-2 transition hover:bg-[var(--portal-well)]"
             style={{ color: "var(--portal-muted)" }}
           >

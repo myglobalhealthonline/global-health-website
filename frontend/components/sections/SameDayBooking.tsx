@@ -274,7 +274,7 @@ export function SameDayBooking({
 
   return (
     <div
-      className={`gh-sameday relative flex w-full max-w-[900px] flex-col overflow-hidden rounded-[26px] p-6 sm:p-8 ${className ?? ""}`}
+      className={`gh-sameday relative flex w-full max-w-[900px] flex-col rounded-[26px] p-6 sm:p-8 ${className ?? ""}`}
       style={{
         background: "rgba(8, 33, 27, 0.82)",
         border: "1px solid rgba(255,255,255,0.12)",
@@ -316,7 +316,7 @@ export function SameDayBooking({
           {dropdownOpen && (
             <ul
               role="listbox"
-              className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 max-h-[240px] overflow-y-auto rounded-[16px] border border-[var(--color-brand-accent)]/30 bg-[#0a1f1a] py-1.5 shadow-[0_16px_48px_rgba(0,0,0,0.6)] [scrollbar-width:thin] [scrollbar-color:var(--color-brand-accent)_transparent]"
+              className="absolute left-0 right-0 top-[calc(100%+6px)] z-[var(--z-dropdown)] max-h-[240px] overflow-y-auto rounded-[16px] border border-[var(--color-brand-accent)]/30 bg-[#0a1f1a] py-1.5 shadow-[0_16px_48px_rgba(0,0,0,0.6)] [scrollbar-width:thin] [scrollbar-color:var(--color-brand-accent)_transparent]"
             >
               {languages.map((code) => {
                 const isSelected = selectedLanguage === code;

@@ -5,7 +5,7 @@ import { useEffect, useState, useTransition } from "react";
 import { Download, FileText, FlaskConical, Stethoscope, Upload } from "lucide-react";
 import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 import { DocumentRow } from "@/components/DocumentRow";
-import { PortalTabs, type PortalTabItem } from "@/components/PortalTabs";
+import { PortalTabs, PortalTabPanel, type PortalTabItem } from "@/components/PortalTabs";
 
 type Tab = "uploaded" | "results" | "exam-requests" | "prescriptions" | "consult-summaries";
 
@@ -24,36 +24,53 @@ type MedicalDoc = {
   createdAt: string;
 };
 
-const TABS: { id: Tab; label: string; icon: React.ReactNode; docTypes: string[] }[] = [
+const TABS: {
+  id: Tab;
+  label: string;
+  icon: React.ReactNode;
+  docTypes: string[];
+  emptyTitle: string;
+  emptyDescription: string;
+}[] = [
   {
     id: "uploaded",
     label: "My Reports",
     icon: <Upload className="size-4" aria-hidden />,
     docTypes: ["REPORT", "OTHER"],
+    emptyTitle: "No reports uploaded yet",
+    emptyDescription: "Reports you upload for your doctor to review ahead of a consultation will appear here.",
   },
   {
     id: "results",
     label: "Doctor Results",
     icon: <Stethoscope className="size-4" aria-hidden />,
     docTypes: ["EXAM_RESULT"],
+    emptyTitle: "No doctor results yet",
+    emptyDescription: "Test and exam results your doctor shares with you will appear here.",
   },
   {
     id: "exam-requests",
     label: "Exam Requests",
     icon: <FlaskConical className="size-4" aria-hidden />,
     docTypes: ["EXAM_REQUEST"],
+    emptyTitle: "No exam requests yet",
+    emptyDescription: "Exam requests your doctor creates will appear here for you to complete.",
   },
   {
     id: "prescriptions",
     label: "Prescriptions",
     icon: <FileText className="size-4" aria-hidden />,
     docTypes: ["PRESCRIPTION"],
+    emptyTitle: "No prescription documents yet",
+    emptyDescription: "Prescription files your doctor issues will appear here.",
   },
   {
     id: "consult-summaries",
     label: "Consult Summaries",
     icon: <FileText className="size-4" aria-hidden />,
     docTypes: ["CONSULT_SUMMARY"],
+    emptyTitle: "No consult summaries yet",
+    emptyDescription: "Summaries from your past consultations will appear here.",
   },
 ];
 
@@ -95,7 +112,7 @@ function DocCard({ doc }: { doc: MedicalDoc }) {
           <>
             {doc.title}
             {doc.description ? (
-              <span className="block truncate text-[12px] font-normal text-[var(--portal-muted)]">
+              <span className="block truncate text-portal-meta font-normal text-[var(--portal-muted)]" title={doc.description}>
                 {doc.description}
               </span>
             ) : null}
@@ -168,8 +185,8 @@ function UploadForm({ onUploaded }: { onUploaded: (doc: MedicalDoc) => void }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-3 p-5">
-      <h4 className="font-semibold text-[var(--portal-text)]">Upload a report</h4>
+    <form onSubmit={onSubmit} method="post" className="gh-patient-form-card gh-card space-y-3 p-5">
+      <h2 className="font-semibold text-[var(--portal-text)]">Upload a report</h2>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">
           <span className="gh-field-label">Title <span aria-hidden>*</span></span>
@@ -224,6 +241,7 @@ function UploadForm({ onUploaded }: { onUploaded: (doc: MedicalDoc) => void }) {
           {msg.text}
         </p>
       )}
+      <div className="flex justify-end">
       <button
         type="submit"
         disabled={pending || !file || !title.trim()}
@@ -232,6 +250,7 @@ function UploadForm({ onUploaded }: { onUploaded: (doc: MedicalDoc) => void }) {
         <Upload aria-hidden className="size-4" />
         {pending ? "Uploading…" : "Upload"}
       </button>
+      </div>
     </form>
   );
 }
@@ -321,10 +340,10 @@ export function MedicalFilesClient({
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: "Uploaded", value: String(countFor("uploaded")), hint: "Reports you added" },
-          { label: "Results", value: String(countFor("results")), hint: "Doctor result documents" },
-          { label: "Requests", value: String(countFor("exam-requests")), hint: "Exam requests from clinicians" },
-          { label: "Prescriptions", value: String(countFor("prescriptions")), hint: "Medication documents" },
+          { label: "Uploaded", value: String(countFor("uploaded")), hint: "Reports you added", icon: <Upload aria-hidden /> },
+          { label: "Results", value: String(countFor("results")), hint: "Doctor result documents", icon: <FlaskConical aria-hidden /> },
+          { label: "Requests", value: String(countFor("exam-requests")), hint: "Exam requests from clinicians", icon: <Stethoscope aria-hidden /> },
+          { label: "Prescriptions", value: String(countFor("prescriptions")), hint: "Medication documents", icon: <FileText aria-hidden /> },
         ]}
       />
 
@@ -336,57 +355,67 @@ export function MedicalFilesClient({
         onChange={(value) => setActiveTab(value as Tab)}
       />
 
-      {activeTab === "uploaded" && (
-        <div className="mb-6">
-          <UploadForm onUploaded={onUploaded} />
-        </div>
-      )}
+      {/* Every tab gets a real, always-mounted PortalTabPanel (kept-mounted
+          pattern, mirrors profile-client.tsx) so aria-controls always
+          resolves to an existing tabpanel — not just the active one. */}
+      {TABS.map((tab) => {
+        const docsForTab = allDocs.filter((d) => tab.docTypes.includes(d.documentType));
+        return (
+          <PortalTabPanel key={tab.id} value={tab.id} activeValue={activeTab}>
+            {tab.id === "uploaded" && (
+              <div className="mb-6">
+                <UploadForm onUploaded={onUploaded} />
+              </div>
+            )}
 
-      {!loaded ? (
-        <div className="gh-patient-empty-state gh-card p-6">
-          <div className="h-4 w-36 rounded bg-[var(--portal-well)]" />
-          <div className="mt-4 grid gap-3">
-            <div className="h-20 rounded-lg bg-[var(--portal-well)]" />
-            <div className="h-20 rounded-lg bg-[var(--portal-well)]" />
-          </div>
-        </div>
-      ) : filteredDocs.length === 0 ? (
-        <div className="gh-patient-empty-state gh-patient-medical-empty gh-card p-6">
-          <Image
-            src="/images/portal/obsidian/empty-records.svg"
-            alt=""
-            aria-hidden
-            width={224}
-            height={224}
-            className="gh-patient-medical-empty__image"
-          />
-          <div className="min-w-0">
-            <p className="font-semibold text-[var(--portal-text)]">
-              No {currentTabConfig?.label.toLowerCase() ?? "documents"} yet
-            </p>
-            <p className="mt-1 text-sm text-[var(--portal-muted)]">
-              Uploaded reports, prescriptions, requests, and summaries will appear here.
-            </p>
-          </div>
-        </div>
-      ) : (
-        <div className="gh-patient-doc-list space-y-3">
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={onDownloadAll}
-              disabled={downloadingAll}
-              className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-1.5 text-sm font-medium text-[var(--portal-text)] hover:bg-[var(--portal-well)] disabled:opacity-60"
-            >
-              <Download aria-hidden className="size-4" />
-              {downloadingAll ? downloadingAllLabel : downloadAllLabel}
-            </button>
-          </div>
-          {filteredDocs.map((doc) => (
-            <DocCard key={doc.id} doc={doc} />
-          ))}
-        </div>
-      )}
+            {!loaded ? (
+              <div className="gh-patient-empty-state gh-card p-6">
+                <div className="h-4 w-36 rounded bg-[var(--portal-well)]" />
+                <div className="mt-4 grid gap-3">
+                  <div className="h-20 rounded-lg bg-[var(--portal-well)]" />
+                  <div className="h-20 rounded-lg bg-[var(--portal-well)]" />
+                </div>
+              </div>
+            ) : docsForTab.length === 0 ? (
+              <div className="gh-patient-empty-state gh-patient-medical-empty gh-card p-6">
+                <Image
+                  src="/images/portal/obsidian/empty-records.svg"
+                  alt=""
+                  aria-hidden
+                  width={224}
+                  height={224}
+                  className="gh-patient-medical-empty__image"
+                />
+                <div className="min-w-0">
+                  <p className="font-semibold text-[var(--portal-text)]">
+                    {tab.emptyTitle}
+                  </p>
+                  <p className="mt-1 text-sm text-[var(--portal-muted)]">
+                    {tab.emptyDescription}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="gh-patient-doc-list space-y-3">
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={onDownloadAll}
+                    disabled={downloadingAll}
+                    className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-1.5 text-sm font-medium text-[var(--portal-text)] hover:bg-[var(--portal-well)] disabled:opacity-60"
+                  >
+                    <Download aria-hidden className="size-4" />
+                    {downloadingAll ? downloadingAllLabel : downloadAllLabel}
+                  </button>
+                </div>
+                {docsForTab.map((doc) => (
+                  <DocCard key={doc.id} doc={doc} />
+                ))}
+              </div>
+            )}
+          </PortalTabPanel>
+        );
+      })}
     </div>
   );
 }

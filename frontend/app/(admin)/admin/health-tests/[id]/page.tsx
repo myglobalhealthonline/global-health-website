@@ -109,7 +109,7 @@ export default async function AdminHealthTestDetailPage({
     <>
       <Link
         href="/admin/health-tests"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to health tests
       </Link>
@@ -170,7 +170,7 @@ export default async function AdminHealthTestDetailPage({
           {test.detailIntro ? (
             <AdminCard>
               <h3 style={cardTitleStyle}>Detail intro</h3>
-              <p className="mt-3 whitespace-pre-line text-[14px] leading-relaxed text-[var(--color-text-body)]">
+              <p className="mt-3 whitespace-pre-line text-portal-body leading-relaxed text-[var(--color-text-body)]">
                 {test.detailIntro}
               </p>
             </AdminCard>
@@ -179,7 +179,7 @@ export default async function AdminHealthTestDetailPage({
           {test.whatThisTestCovers.length > 0 ? (
             <AdminCard>
               <h3 style={cardTitleStyle}>What this test covers</h3>
-              <ul className="mt-3 grid gap-2 text-[14px] leading-relaxed text-[var(--color-text-body)]">
+              <ul className="mt-3 grid gap-2 text-portal-body leading-relaxed text-[var(--color-text-body)]">
                 {test.whatThisTestCovers.map((item) => (
                   <li
                     key={item}
@@ -206,7 +206,7 @@ export default async function AdminHealthTestDetailPage({
           {test.whyGetTested.length > 0 ? (
             <AdminCard>
               <h3 style={cardTitleStyle}>Why get tested</h3>
-              <ul className="mt-3 grid gap-2 text-[14px] leading-relaxed text-[var(--color-text-body)]">
+              <ul className="mt-3 grid gap-2 text-portal-body leading-relaxed text-[var(--color-text-body)]">
                 {test.whyGetTested.map((item) => (
                   <li
                     key={item}
@@ -242,7 +242,7 @@ export default async function AdminHealthTestDetailPage({
         <div className="grid gap-4 self-start">
           <AdminCard>
             <h3 style={cardTitleStyle}>Visibility</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Deactivating hides this test from the public catalogue.
             </p>
             {test.isActive ? (
@@ -252,7 +252,7 @@ export default async function AdminHealthTestDetailPage({
                 </button>
               </form>
             ) : (
-              <p className="text-[13px] text-[var(--color-text-muted)]">
+              <p className="text-portal-compact text-[var(--color-text-muted)]">
                 This health test is inactive. Re-enable from Edit.
               </p>
             )}
@@ -267,7 +267,7 @@ export default async function AdminHealthTestDetailPage({
             >
               Danger zone
             </h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Permanent delete removes this record instead of hiding it.
             </p>
             <form action={deleteAction}>
@@ -297,11 +297,11 @@ function FieldRow({
 }) {
   return (
     <div>
-      <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+      <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
         {label}
       </dt>
       <dd
-        className="mt-1 text-[14px] text-[var(--color-text-primary)]"
+        className="mt-1 text-portal-body text-[var(--color-text-primary)]"
         style={mono ? { fontFamily: "ui-monospace, monospace", fontSize: 12.5 } : undefined}
       >
         {value}

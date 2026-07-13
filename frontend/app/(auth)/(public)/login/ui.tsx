@@ -103,7 +103,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-5" suppressHydrationWarning>
+    <form onSubmit={onSubmit} method="post" className="grid gap-5" suppressHydrationWarning>
       {/* Email */}
       <div className="grid gap-2">
         <label htmlFor="login-email" className="gh-field-label" data-required>
@@ -168,7 +168,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
       </div>
 
       {/* Remember me */}
-      <label className="flex cursor-pointer items-center gap-2 text-[13px] text-[var(--color-text-body)]">
+      <label className="flex cursor-pointer items-center gap-2 text-portal-compact text-[var(--color-text-body)]">
         <input
           type="checkbox"
           name="remember"

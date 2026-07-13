@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { HeartPulse, Save } from "lucide-react";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type ProfileResponse = {
   nationalIdNumber: string | null;
@@ -122,8 +123,15 @@ const EMPTY: ProfileResponse = {
  * The page header sells the section as "Your medical identity" — a
  * single round-trip GET/PATCH against /api/account/profile.
  */
-export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI18n }) {
+export function PatientProfileSection({
+  i18n = DEFAULT_I18N,
+  onDirtyChange,
+}: {
+  i18n?: MedicalI18n;
+  onDirtyChange?: (dirty: boolean) => void;
+}) {
   const [values, setValues] = useState<ProfileResponse>(EMPTY);
+  const [initial, setInitial] = useState<ProfileResponse>(EMPTY);
   const [loaded, setLoaded] = useState(false);
   const [pending, startTransition] = useTransition();
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(
@@ -135,12 +143,20 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
       .then((r) => r.json())
       .then((json: { ok?: boolean; data?: { profile?: ProfileResponse | null } }) => {
         if (json.ok && json.data?.profile) {
-          setValues({ ...EMPTY, ...json.data.profile });
+          const loaded = { ...EMPTY, ...json.data.profile };
+          setValues(loaded);
+          setInitial(loaded);
         }
       })
       .catch(() => {})
       .finally(() => setLoaded(true));
   }, []);
+
+  const dirty = loaded && JSON.stringify(values) !== JSON.stringify(initial);
+  useUnsavedChanges(dirty);
+  useEffect(() => {
+    onDirtyChange?.(dirty);
+  }, [dirty, onDirtyChange]);
 
   function update<K extends keyof ProfileResponse>(
     key: K,
@@ -184,7 +200,13 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
         data?: { profile?: ProfileResponse | null };
       };
       if (json.ok) {
-        if (json.data?.profile) setValues({ ...EMPTY, ...json.data.profile });
+        if (json.data?.profile) {
+          const saved = { ...EMPTY, ...json.data.profile };
+          setValues(saved);
+          setInitial(saved);
+        } else {
+          setInitial(values);
+        }
         setMsg({ kind: "ok", text: i18n.medicalSaved });
       } else {
         setMsg({
@@ -225,7 +247,7 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
           </div>
         </div>
       ) : (
-      <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-5 p-6">
+      <form onSubmit={onSubmit} method="post" className="gh-patient-form-card gh-card space-y-5 p-6">
           <fieldset className="grid gap-3 sm:grid-cols-3">
             <legend className="gh-field-label mb-1 sm:col-span-3">
               {i18n.identityNumbers}
@@ -388,6 +410,7 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
 
           {msg ? (
             <p
+              role={msg.kind === "ok" ? "status" : "alert"}
               className={`rounded-md px-3 py-2 text-sm ${
                 msg.kind === "ok"
                   ? "bg-emerald-50 text-emerald-800"
@@ -398,14 +421,16 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
             </p>
           ) : null}
 
-          <button
-            type="submit"
-            disabled={pending}
-            className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
-          >
-            <Save className="size-4" aria-hidden />
-            {pending ? i18n.savingMedical : i18n.saveMedicalProfile}
-          </button>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={pending}
+              className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+            >
+              <Save className="size-4" aria-hidden />
+              {pending ? i18n.savingMedical : i18n.saveMedicalProfile}
+            </button>
+          </div>
         </form>
       )}
     </section>

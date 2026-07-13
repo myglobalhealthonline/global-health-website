@@ -369,7 +369,7 @@ export function ServiceHero({
             <div className="mt-7 flex flex-wrap items-center gap-3.5">
               <Link
                 href={primaryCta.href}
-                className="gh2-btn-lime pr-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(176,241,34,0.45)]"
+                className="gh2-btn-lime pr-2 gh-focus-on-dark "
               >
                 {primaryCta.label}
                 <span
@@ -382,7 +382,7 @@ export function ServiceHero({
               </Link>
               <Link
                 href={secondaryCta.href}
-                className="gh2-btn-ghost focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                className="gh2-btn-ghost gh-focus-on-dark "
               >
                 {secondaryCta.label}
                 <Users className="size-4" strokeWidth={1.75} aria-hidden />

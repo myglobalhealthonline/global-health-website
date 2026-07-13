@@ -98,11 +98,11 @@ function CountryForm({
           <p className="m-0 text-[15px] font-bold text-[var(--color-text-primary)]">
             {market.country.name} ({market.country.code.toUpperCase()})
           </p>
-          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+          <p className="mt-1 text-portal-meta text-[var(--color-text-muted)]">
             Default locale: {market.country.defaultLocale}
           </p>
         </div>
-        <div className="gh-admin-doctor-toggle-row flex flex-wrap items-center gap-3 text-[13px]">
+        <div className="gh-admin-doctor-toggle-row flex flex-wrap items-center gap-3 text-portal-compact">
           <label className="inline-flex items-center gap-2">
             <input name="active" type="checkbox" defaultChecked={market.active} />
             Active
@@ -232,10 +232,10 @@ function CountryForm({
       })}
 
       <div className="gh-admin-doctor-payout-note mt-4 rounded-md border border-[var(--color-border)] bg-[var(--color-background)] p-3">
-        <h4 className="m-0 text-[13px] font-bold text-[var(--color-text-primary)]">
+        <h4 className="m-0 text-portal-compact font-bold text-[var(--color-text-primary)]">
           Payout details
         </h4>
-        <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+        <p className="mt-1 text-portal-meta text-[var(--color-text-muted)]">
           Bank / IBAN is entered by the doctor in their portal — admins cannot
           set it. {market.bank.ibanSet ? `On file: ${market.bank.ibanMasked ?? "•••• ••••"}.` : "None on file yet."}
         </p>
@@ -276,7 +276,7 @@ export function CountryProfileTabs({
             label: (
               <>
                 {market.country.name}{" "}
-                <span className="text-[11px] font-bold uppercase tracking-[0.06em] opacity-70">
+                <span className="text-portal-thead font-bold uppercase tracking-[0.06em] opacity-70">
                   {market.country.code}
                 </span>
               </>

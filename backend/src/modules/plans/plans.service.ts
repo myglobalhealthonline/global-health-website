@@ -78,6 +78,8 @@ const adminPlanInclude = {
 const adminPlanListInclude = {
   country: { select: { id: true, code: true, name: true } },
   _count: { select: { consultationRules: true, perkRules: true, healthTestRules: true, subscriptions: true } },
+  // display-only: lets the admin list show the EN translation's name (ponytail).
+  translations: { select: { locale: true, name: true } },
 } satisfies Prisma.PricingPlanInclude;
 
 export type AdminPlanRecord = Prisma.PricingPlanGetPayload<{ include: typeof adminPlanInclude }>;

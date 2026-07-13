@@ -25,6 +25,8 @@ import {
   postAdminSpecialty,
 } from "@/lib/admin/admin-api";
 import { FlagBadge } from "../_components/flag-badge";
+import { displayNameFrom } from "@/lib/admin/display-name";
+import type { AdminSpecialtyTranslationDto } from "@/lib/admin/admin-api/services";
 import { SortableOrderList } from "../_components/sortable-order-list";
 import {
   AdminCard,
@@ -62,6 +64,8 @@ const GENERAL_SLUGS = new Set([
 type GridRow = {
   slug: string;
   name: string;
+  /** display-only: EN translation row's name, when available (ponytail). */
+  translations: AdminSpecialtyTranslationDto[];
   type: "GENERAL" | "SPECIALIST";
   byCountry: Record<string, SpecialtyRow | undefined>;
 };
@@ -115,6 +119,7 @@ export default async function AdminCategoriesMatrixPage({
         existing ?? {
           slug,
           name: s.name,
+          translations: s.translations,
           type: isGeneral ? "GENERAL" : "SPECIALIST",
           byCountry: {},
         };
@@ -238,7 +243,7 @@ export default async function AdminCategoriesMatrixPage({
       ) : null}
 
       <AdminCard padding={0} className="gh-admin-specialties-list overflow-hidden">
-        <div className="gh-admin-support-table-wrap overflow-x-auto">
+        <div className="gh-admin-support-table-wrap gh-admin-specialty-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Category</Th>
@@ -297,10 +302,10 @@ export default async function AdminCategoriesMatrixPage({
                             )}
                           </span>
                           <div className="min-w-0">
-                            <p className="m-0 whitespace-nowrap text-[14px] font-bold text-[var(--color-text-primary)]">
-                              {row.name}
+                            <p className="m-0 whitespace-nowrap text-portal-body font-bold text-[var(--color-text-primary)]">
+                              {displayNameFrom(row.name, row.translations)}
                             </p>
-                            <p className="m-0 whitespace-nowrap font-mono text-[11px] text-[var(--color-text-muted)]">
+                            <p className="m-0 whitespace-nowrap font-mono text-portal-thead text-[var(--color-text-muted)]">
                               /{row.slug}
                             </p>
                           </div>
@@ -332,20 +337,20 @@ export default async function AdminCategoriesMatrixPage({
                               />
                               <Toggle
                                 on={isActive}
-                                ariaLabel={`Toggle ${row.name} for ${c.name}`}
+                                ariaLabel={`Toggle ${displayNameFrom(row.name, row.translations)} for ${c.name}`}
                               />
                             </form>
                           </Td>
                         );
                       })}
                       <Td align="right">
-                        <span className="text-[12px] text-[var(--color-text-muted)]">
+                        <span className="text-portal-meta text-[var(--color-text-muted)]">
                           {inUse} / {countries.length}
                         </span>
                       </Td>
                       <Td align="right">
                         <IconBtn
-                          ariaLabel={`More options for ${row.name}`}
+                          ariaLabel={`More options for ${displayNameFrom(row.name, row.translations)}`}
                           href={`/admin/specialties/${
                             // link to first existing specialty row's edit page
                             Object.values(row.byCountry).find((s) => s)?.id ?? ""
@@ -366,7 +371,7 @@ export default async function AdminCategoriesMatrixPage({
       {/* Sort-order editor — pick a country to manage per-country specialty order */}
       <AdminCard className="gh-admin-specialty-sort mt-6">
         <h3 className="text-[15px] font-bold text-[var(--color-text-primary)]">Sort order</h3>
-        <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+        <p className="mt-1 text-portal-meta text-[var(--color-text-muted)]">
           Choose a country to set the display order of its categories. Lower number = appears first.
         </p>
         <form method="get" className="gh-admin-support-filter-row mt-3 flex flex-wrap items-end gap-3">
@@ -392,7 +397,7 @@ export default async function AdminCategoriesMatrixPage({
 
         {sortCountry && sortSpecialties.length > 0 ? (
           <form action={reorderSpecialtiesAction} className="gh-admin-specialty-sort-form mt-5">
-            <p className="mb-3 text-[13px] font-semibold text-[var(--color-text-body)]">
+            <p className="mb-3 text-portal-compact font-semibold text-[var(--color-text-body)]">
               {sortCountry.name}
             </p>
             <SortableOrderList
@@ -406,13 +411,13 @@ export default async function AdminCategoriesMatrixPage({
             </div>
           </form>
         ) : sortCountry && sortSpecialties.length === 0 ? (
-          <p className="mt-3 text-[13px] text-[var(--color-text-muted)]">
+          <p className="mt-3 text-portal-compact text-[var(--color-text-muted)]">
             No categories enabled for {sortCountry.name} yet.
           </p>
         ) : null}
       </AdminCard>
 
-      <p className="mt-6 text-[12px] text-[var(--color-text-muted)]">
+      <p className="mt-6 text-portal-meta text-[var(--color-text-muted)]">
         Categories without a service yet won&apos;t appear on the public site. Add a specialist consultation under{" "}
         <Link
           href="/admin/specialist-consultations"

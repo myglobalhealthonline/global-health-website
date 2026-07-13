@@ -148,7 +148,7 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
     <>
       <Link
         href="/admin/health-tests"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to health tests
       </Link>
@@ -177,16 +177,16 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
             locales={locales}
             defaultLocale={defaultLocale}
           />
-          <div className="gh-admin-health-actions border-t border-[var(--color-border)] pt-6">
-            <button type="submit" className="gh-btn gh-btn-primary">
-              Create health test
-            </button>
+          <div className="gh-admin-health-actions justify-end border-t border-[var(--color-border)] pt-6">
             <Link
               href="/admin/health-tests"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="gh-btn gh-btn-ghost"
             >
               Cancel
             </Link>
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Create health test
+            </button>
           </div>
         </form>
       </AdminCard>

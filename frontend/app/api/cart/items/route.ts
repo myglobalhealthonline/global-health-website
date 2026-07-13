@@ -11,7 +11,10 @@ export async function POST(request: NextRequest) {
   }
   const cookieHeader = request.headers.get("cookie") ?? "";
   const bodyText = await request.text();
-  const upstream = await fetch(`${backend}/api/cart/items`, {
+  const locale =
+    request.nextUrl.searchParams.get("locale") ?? request.cookies.get("gh_locale")?.value;
+  const path = locale ? `/api/cart/items?locale=${encodeURIComponent(locale)}` : "/api/cart/items";
+  const upstream = await fetch(`${backend}${path}`, {
     method: "POST",
     headers: {
       "content-type": "application/json",

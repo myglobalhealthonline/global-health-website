@@ -207,7 +207,7 @@ export function AppointmentDocumentsTab({
   return (
     <div className="gh-doctor-documents-tab mt-4 grid gap-4">
       <div className="gh-doctor-documents-toolbar flex flex-wrap items-center justify-between gap-3">
-        <p className="text-[13px] text-[var(--portal-muted)]">
+        <p className="text-portal-compact text-[var(--portal-muted)]">
           {copy.summary.replace("{count}", String(docCount))}
         </p>
         <button
@@ -233,7 +233,7 @@ export function AppointmentDocumentsTab({
       />
 
       {loadError ? (
-        <p className="gh-status-warning rounded-md border px-3 py-2 text-[12.5px]">{loadError}</p>
+        <p className="gh-status-warning rounded-md border px-3 py-2 text-portal-label">{loadError}</p>
       ) : null}
 
       <DocumentsReviewSendPanel
@@ -247,10 +247,10 @@ export function AppointmentDocumentsTab({
       />
 
       {loadingGenerated ? (
-        <p className="text-[13px] text-[var(--portal-muted)]">{copy.loading}</p>
+        <p className="text-portal-compact text-[var(--portal-muted)]">{copy.loading}</p>
       ) : generatedHistory.length === 0 ? (
         <HistorySection title={copy.generatedDocumentsTitle} count={0} defaultOpen={false}>
-          <p className="px-4 py-3 text-[13px] text-[var(--portal-muted)]">
+          <p className="px-4 py-3 text-portal-compact text-[var(--portal-muted)]">
             {copy.emptyGeneratedPre} <strong>{copy.generateDocuments}</strong>{" "}
             {copy.emptyGeneratedPost}
           </p>
@@ -282,7 +282,7 @@ export function AppointmentDocumentsTab({
 
       <HistorySection title={copy.uploadedFilesTitle} count={uploads.length} defaultOpen={false}>
         {uploads.length === 0 ? (
-          <p className="px-4 py-3 text-[13px] text-[var(--portal-muted)]">
+          <p className="px-4 py-3 text-portal-compact text-[var(--portal-muted)]">
             {copy.noUploadedFiles}
           </p>
         ) : (

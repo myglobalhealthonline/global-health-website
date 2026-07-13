@@ -8,7 +8,6 @@ import { MessageCircle, ShieldCheck, Clock, Star, Lock } from "lucide-react";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
-import { RichBodySection } from "@/components/sections/RichBodySection";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import {
@@ -16,7 +15,6 @@ import {
   ChecklistSection,
   WhyChooseSection,
 } from "@/components/sections/ServiceContentSections";
-import { getGpHubContent } from "@/lib/content/ireland-service-content";
 import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
 import { getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
@@ -27,12 +25,13 @@ import { buildBookHref } from "@/lib/routing/book-href";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { resolveBrandTitle } from "@/lib/seo/page-seo";
 import { breadcrumbJsonLd, medicalProcedureJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
-import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
-  getPublicPage,
+  getPageContent,
   isSupportedLocale,
+  themeProp,
   type PublicLocale,
-} from "@/lib/content/get-public-page";
+} from "@/lib/content/get-page-content";
 import {
   getCountryDoctors,
   getCountryServices,
@@ -59,14 +58,12 @@ export async function generateMetadata({
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
-  const { record: page } = await getPublicPage(code, "GENERAL_CONSULTATION", lang as PublicLocale);
-  const hub = getGpHubContent(code);
+  const { record: page } = await getPageContent(code, "GENERAL_CONSULTATION", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}/gp-appointment`;
   const title =
-    page?.seoTitle ?? hub?.seoTitle ?? `General practitioners registered in ${config.name}`;
+    page?.seoTitle ?? `General practitioners registered in ${config.name}`;
   const description =
     page?.seoDescription ??
-    hub?.seoDescription ??
     `General practitioners registered to practise in ${config.name}. View credentials and languages, then book a consultation.`;
   return {
     // resolveBrandTitle returns an absolute title when the (CMS- or hub-)
@@ -75,8 +72,21 @@ export async function generateMetadata({
     title: resolveBrandTitle(title),
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/gp-appointment") },
-    openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
-    twitter: { card: "summary_large_image", title, description },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      title,
+      description,
+      url,
+      ...ogLocales(config, lang),
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
   };
 }
 
@@ -112,31 +122,42 @@ export default async function CountryLangGeneralConsultationPage({
   // started together instead of awaited one after another.
   const [{ record: rawPage, disabled: pageDisabled }, services, doctors, { short: gpShortDisclaimer }] =
     await Promise.all([
-      getPublicPage(code, "GENERAL_CONSULTATION", lang as PublicLocale),
+      getPageContent(code, "GENERAL_CONSULTATION", lang as PublicLocale),
       getCountryServices(code, "GENERAL", lang),
       getCountryDoctors(code, lang),
       getCountryDisclaimer(code, lang),
     ]);
 
-  const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
+  // Structured PageContent self-gates via publish status + per-section
+  // toggles (the `disabled` flag already covers unpublished/inactive), so the
+  // legacy coarse "pages" country-feature no longer gates it.
+  const page = pageDisabled ? null : rawPage;
 
-  // Long-form GP positioning copy (Ireland only for now). When present it
-  // reshapes the hero headline and adds the marketing / FAQ / disclaimer
-  // sections below the doctor + service grids.
-  const gpHub = getGpHubContent(code);
+  // Long-form GP positioning copy, now DB-backed (per country) instead of
+  // hardcoded to Ireland. `hubActive` mirrors the old `gpHub` truthy gate
+  // used for the hero country label — true whenever any of the marketing
+  // sections (intro/whoFor/whyChoose/faq) is toggled on for this country.
+  const hubActive = !!(
+    page?.sections.intro ||
+    page?.sections.whoFor ||
+    page?.sections.whyChoose ||
+    page?.sections.faq
+  );
 
   // Provider-first defaults per Google Ads "restricted services" guidance.
-  // Admin can override via the ContentPage row when localised copy lands.
+  // Admin can override via the PageContent row when localised copy lands.
   const heroTitle = page?.heroTitle ?? gp.heroTitle;
   const heroSubtitle =
     page?.heroSubtitle ?? gp.heroSubtitle.replace("{country}", config.name);
   const ctaLabel = page?.ctaLabel ?? c.doctors.bookAppointment;
-  // Hero headline composition: GP hub copy takes over the lead/accent for
-  // markets with authored copy; generic "Meet our licensed doctors."
-  // elsewhere.
-  const heroLead = gpHub ? gpHub.h1Lead : gp.heroLead;
-  const heroAccent = gpHub ? gpHub.h1Accent : gp.heroAccent;
-  const heroTrail = gpHub ? undefined : gp.heroTrail;
+  // Hero headline: DB `heroTitleLead`/`heroTitleAccent` override the i18n
+  // lead/accent when authored (e.g. IE's "Online GP Consultation in" +
+  // accent "Ireland"); falls back to the generic i18n composition otherwise.
+  const heroLead = page?.heroTitleLead ?? gp.heroLead;
+  const heroAccent = page?.heroTitleAccent ?? gp.heroAccent;
+  // Authored DB headline carries no trail word (matches the old IE hub copy);
+  // the generic i18n composition keeps its trail.
+  const heroTrail = page?.heroTitleLead ? undefined : gp.heroTrail;
   // Cart-first booking: hero CTA jumps to the in-page service list
   // instead of the legacy /book-online form. Admin can still override
   // via the ContentPage row.
@@ -200,14 +221,14 @@ export default async function CountryLangGeneralConsultationPage({
         * copy still takes precedence via the heroTitle / heroSubtitle
         * overrides; titleAccent is the only place we baked in the
         * page-type-specific italic word. */}
-      {gpHub ? (
-        <JsonLd data={faqJsonLd(gpHub.faq)} />
+      {page?.sections.faq ? (
+        <JsonLd data={faqJsonLd(page.faq)} />
       ) : null}
 
       <ServiceHero
         countryCode={config.code}
         countryLabel={
-          gpHub
+          hubActive
             ? gp.countryLabelGp.replace("{country}", config.name)
             : gp.countryLabelGeneral.replace("{country}", config.name)
         }
@@ -290,7 +311,9 @@ export default async function CountryLangGeneralConsultationPage({
       ) : null}
 
       {/* 1 — What this is: short authored positioning intro (when present). */}
-      {gpHub ? <ServiceIntro body={gpHub.intro} theme="light" /> : null}
+      {page?.sections.intro ? (
+        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
+      ) : null}
 
       {/* 2 — The product: bookable GP consultations, straight after the hero
           so the offer is visible before any supporting copy. */}
@@ -310,13 +333,13 @@ export default async function CountryLangGeneralConsultationPage({
       ) : null}
 
       {/* Who it's for (authored hub copy, when present). */}
-      {gpHub ? (
+      {page?.sections.whoFor ? (
         <ChecklistSection
           eyebrow="Who it's for"
-          title={gpHub.whoFor.title}
-          intro={gpHub.whoFor.intro}
-          items={gpHub.whoFor.items}
-          theme="light"
+          title={page.whoForTitle!}
+          intro={page.whoForIntro ?? undefined}
+          items={page.whoForItems}
+          theme={themeProp(page?.whoForTheme, "light")}
         />
       ) : null}
 
@@ -332,20 +355,22 @@ export default async function CountryLangGeneralConsultationPage({
         />
       ) : null}
 
-      {gpHub ? (
+      {page?.sections.whyChoose ? (
         <WhyChooseSection
-          title={gpHub.whyChoose.title}
-          items={gpHub.whyChoose.items}
-          theme="soft"
+          title={page.whyChooseTitle!}
+          items={page.whyChooseItems}
+          theme={themeProp(page?.whyChooseTheme, "soft")}
         />
       ) : null}
 
-      {/* 7 — Admin-edited rich body (SEO/long-form) sits below the
-          conversion path instead of interrupting it. */}
-      <RichBodySection html={page?.body} theme="light" />
-
-      {/* 8 — FAQs + closing CTA. */}
-      {gpHub ? <FAQSection title={gp.faqTitle} items={gpHub.faq} /> : null}
+      {/* FAQs + closing CTA. */}
+      {page?.sections.faq ? (
+        <FAQSection
+          title={gp.faqTitle}
+          items={page.faq}
+          theme={themeProp(page?.faqTheme, "dark")}
+        />
+      ) : null}
 
       <DoctifyReviewsSection
         theme="ivory"
@@ -369,8 +394,11 @@ export default async function CountryLangGeneralConsultationPage({
             <MedicalDisclaimer variant="short" text={gpShortDisclaimer} />
           </div>
         </section>
-      ) : gpHub ? (
-        <MedicalDisclaimer paragraphs={gpHub.disclaimerFull} />
+      ) : page?.sections.disclaimer ? (
+        <MedicalDisclaimer
+          paragraphs={page.disclaimerParagraphs}
+          theme={themeProp(page?.disclaimerTheme, "dark")}
+        />
       ) : null}
     </>
   );

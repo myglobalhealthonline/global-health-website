@@ -104,7 +104,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-4" suppressHydrationWarning>
+    <form onSubmit={onSubmit} method="post" className="grid gap-4" suppressHydrationWarning>
       <div className="grid gap-2">
         <label htmlFor="register-name" className="gh-field-label" data-required>
           {i18n.fullNameLabel}
@@ -179,7 +179,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
       </div>
 
       <label
-        className="flex cursor-pointer items-start gap-2.5 rounded-xl px-4 py-3 text-[12px] leading-relaxed"
+        className="flex cursor-pointer items-start gap-2.5 rounded-xl px-4 py-3 text-portal-meta leading-relaxed"
         style={{ background: "var(--color-background-soft)", color: "var(--color-text-muted)" }}
       >
         <input

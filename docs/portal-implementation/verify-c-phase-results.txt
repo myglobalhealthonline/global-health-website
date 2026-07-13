@@ -1,0 +1,31 @@
+Post-login URL: http://localhost:3000/doctor
+Appointment page URL: http://localhost:3000/doctor/appointments/9482a98c-1ad7-4c77-9c48-746806e322f4
+[375x667] horizontal overflow: OK
+[375x667] tab/rail overlap: OK (no overlap or rail not laid out at this width)
+[375x667] patient reachable: OK (rail display=none, patient-tab display=block)
+[375x667] all tabs clickable/visible: OK
+[768x1024] horizontal overflow: OK
+[768x1024] tab/rail overlap: OK (no overlap or rail not laid out at this width)
+[768x1024] patient reachable: OK (rail display=none, patient-tab display=block)
+[768x1024] all tabs clickable/visible: OK
+[1024x600] horizontal overflow: OK
+[1024x600] tab/rail overlap: OK (no overlap or rail not laid out at this width)
+[1024x600] patient reachable: OK (rail display=grid, patient-tab display=none)
+[1024x600] all tabs clickable/visible: OK
+[1280x500] horizontal overflow: OK
+[1280x500] tab/rail overlap: OK (no overlap or rail not laid out at this width)
+[1280x500] patient reachable: OK (rail display=grid, patient-tab display=none)
+[1280x500] all tabs clickable/visible: OK
+[1440x550] horizontal overflow: OK
+[1440x550] tab/rail overlap: OK (no overlap or rail not laid out at this width)
+[1440x550] patient reachable: OK (rail display=grid, patient-tab display=none)
+[1440x550] all tabs clickable/visible: OK
+[1440x900] horizontal overflow: OK
+[1440x900] tab/rail overlap: OK (no overlap or rail not laid out at this width)
+[1440x900] patient reachable: OK (rail display=grid, patient-tab display=none)
+[1440x900] all tabs clickable/visible: OK
+[1920x1080] horizontal overflow: OK
+[1920x1080] tab/rail overlap: OK (no overlap or rail not laid out at this width)
+[1920x1080] patient reachable: OK (rail display=grid, patient-tab display=none)
+[1920x1080] all tabs clickable/visible: OK
+SOAP state preserved across tab switch: OK

@@ -1,13 +1,13 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import {
   doctorApiErrorMessage,
   parseDoctorApiJson,
 } from "@/lib/doctor-api-client";
 import { HistorySection, SessionTypeBadge, type SessionMeta } from "@/app/(doctor)/doctor/_components/doctor-document-tables";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 
 type MedicalNoteRow = {
   id: string;
@@ -64,9 +64,6 @@ const DEFAULT_COPY: AppointmentMedicalNotesCopy = {
   hideNote: "Hide note",
   viewNote: "View note",
 };
-
-const TABLE_HEAD =
-  "text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]";
 
 export function AppointmentMedicalNotesSection({
   appointmentId,
@@ -146,6 +143,33 @@ export function AppointmentMedicalNotesSection({
     });
   }
 
+  const fields: ColumnPriorityField<MedicalNoteRow>[] = [
+    { key: "sessionDate", label: copy.colSessionDate, priority: 1, render: () => <span className="whitespace-nowrap">{session.sessionDate}</span> },
+    { key: "time", label: copy.colTime, priority: 3, render: () => <span className="whitespace-nowrap">{session.sessionTime}</span> },
+    { key: "order", label: copy.colOrderNumber, priority: 3, render: () => session.orderNumber },
+    { key: "sessionType", label: copy.colSessionType, priority: 2, render: () => <SessionTypeBadge label={session.consultationTypeLabel} /> },
+    { key: "doctor", label: copy.colDoctor, priority: 4, render: (n) => n.createdByName },
+    {
+      key: "note",
+      label: copy.colMedicalNotes,
+      priority: 1,
+      cardPrimary: true,
+      render: (n) =>
+        expandedId === n.id ? (
+          <span className="flex items-center gap-2 whitespace-pre-wrap text-[var(--portal-text)]">
+            <ChevronDown className="size-3.5 shrink-0 text-[var(--portal-muted)]" />
+            {n.content}
+          </span>
+        ) : (
+          <span className="flex items-center gap-2 truncate text-[var(--portal-muted)]">
+            <ChevronRight className="size-3.5 shrink-0" />
+            {n.content.slice(0, 80)}
+            {n.content.length > 80 ? "…" : ""}
+          </span>
+        ),
+    },
+  ];
+
   return (
     <HistorySection title={copy.title} count={notes.length} defaultOpen>
       <div className="border-b border-[var(--portal-line)] p-4">
@@ -168,111 +192,42 @@ export function AppointmentMedicalNotesSection({
           {pending ? copy.saving : copy.saveNote}
         </button>
         {error ? (
-          <p className="gh-status-warning mt-2 rounded-md border px-3 py-2 text-[12.5px]">
+          <p className="gh-status-warning mt-2 rounded-md border px-3 py-2 text-portal-label">
             {error}
           </p>
         ) : null}
         {success ? (
-          <p className="mt-2 text-[12.5px] font-semibold text-[var(--portal-primary)]">
+          <p className="mt-2 text-portal-label font-semibold text-[var(--portal-primary)]">
             {success}
           </p>
         ) : null}
       </div>
 
       {loading ? (
-        <p className="px-4 py-3 text-[13px] text-[var(--portal-muted)]">{copy.loading}</p>
+        <p className="px-4 py-3 text-portal-compact text-[var(--portal-muted)]">{copy.loading}</p>
       ) : notes.length === 0 ? (
-        <p className="px-4 py-3 text-[13px] text-[var(--portal-muted)]">{copy.empty}</p>
+        <p className="px-4 py-3 text-portal-compact text-[var(--portal-muted)]">{copy.empty}</p>
       ) : (
-        <>
-        <div className="hidden overflow-x-auto md:block">
-          <table className="w-full min-w-[640px] text-[13px]">
-            <thead>
-              <tr className={TABLE_HEAD}>
-                <th className="px-3 py-2 text-left">{copy.colSessionDate}</th>
-                <th className="px-3 py-2 text-left">{copy.colTime}</th>
-                <th className="px-3 py-2 text-left">{copy.colOrderNumber}</th>
-                <th className="px-3 py-2 text-left">{copy.colSessionType}</th>
-                <th className="px-3 py-2 text-left">{copy.colDoctor}</th>
-                <th className="px-3 py-2 text-left">{copy.colMedicalNotes}</th>
-                <th className="px-3 py-2 w-8" />
-              </tr>
-            </thead>
-            <tbody>
-              {notes.map((n) => (
-                <Fragment key={n.id}>
-                  <tr
-                    className="cursor-pointer border-t border-[var(--portal-line)] hover:bg-[var(--portal-well)]"
-                    onClick={() => setExpandedId(expandedId === n.id ? null : n.id)}
-                  >
-                    <td className="px-3 py-2.5 whitespace-nowrap">{session.sessionDate}</td>
-                    <td className="px-3 py-2.5 whitespace-nowrap">{session.sessionTime}</td>
-                    <td className="px-3 py-2.5">{session.orderNumber}</td>
-                    <td className="px-3 py-2.5">
-                      <SessionTypeBadge label={session.consultationTypeLabel} />
-                    </td>
-                    <td className="px-3 py-2.5">{n.createdByName}</td>
-                    <td className="max-w-[200px] truncate px-3 py-2.5 text-[var(--portal-muted)]">
-                      {n.content.slice(0, 80)}
-                      {n.content.length > 80 ? "…" : ""}
-                    </td>
-                    <td className="px-3 py-2.5">
-                      {expandedId === n.id ? (
-                        <ChevronDown className="size-4 text-[var(--portal-muted)]" />
-                      ) : (
-                        <ChevronRight className="size-4 text-[var(--portal-muted)]" />
-                      )}
-                    </td>
-                  </tr>
-                  {expandedId === n.id ? (
-                    <tr className="border-t border-[var(--portal-line)] bg-[var(--portal-well)]">
-                      <td colSpan={7} className="px-4 py-3 whitespace-pre-wrap">
-                        {n.content}
-                      </td>
-                    </tr>
-                  ) : null}
-                </Fragment>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="grid gap-3 p-3 md:hidden">
-          {notes.map((n) => (
-            <PortalMobileCard
-              key={n.id}
-              title={session.orderNumber}
-              subtitle={`${session.sessionDate} at ${session.sessionTime}`}
-              statusPill={<SessionTypeBadge label={session.consultationTypeLabel} />}
-              meta={[{ label: "Doctor", value: n.createdByName }]}
-              actions={
-                <button
-                  type="button"
-                  onClick={() => setExpandedId(expandedId === n.id ? null : n.id)}
-                  className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)]"
-                >
-                  {expandedId === n.id ? copy.hideNote : copy.viewNote}
-                  {expandedId === n.id ? (
-                    <ChevronDown className="size-3.5" />
-                  ) : (
-                    <ChevronRight className="size-3.5" />
-                  )}
-                </button>
-              }
+        <ColumnPriorityTable
+          fields={fields}
+          rows={notes}
+          getRowKey={(n) => n.id}
+          onRowClick={(n) => setExpandedId(expandedId === n.id ? null : n.id)}
+          cardActions={(n) => (
+            <button
+              type="button"
+              onClick={() => setExpandedId(expandedId === n.id ? null : n.id)}
+              className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-primary)]"
             >
+              {expandedId === n.id ? copy.hideNote : copy.viewNote}
               {expandedId === n.id ? (
-                <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--portal-text)]">
-                  {n.content}
-                </p>
+                <ChevronDown className="size-3.5" />
               ) : (
-                <p className="mt-2 truncate text-[13px] text-[var(--portal-muted)]">
-                  {n.content.slice(0, 80)}
-                  {n.content.length > 80 ? "…" : ""}
-                </p>
+                <ChevronRight className="size-3.5" />
               )}
-            </PortalMobileCard>
-          ))}
-        </div>
-        </>
+            </button>
+          )}
+        />
       )}
     </HistorySection>
   );

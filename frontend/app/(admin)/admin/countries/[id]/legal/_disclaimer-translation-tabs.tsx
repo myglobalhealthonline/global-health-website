@@ -99,7 +99,7 @@ export function DisclaimerTranslationTabs({
                 defaultValue={v.shortDisclaimer ?? ""}
                 placeholder={blankHint}
               />
-              <span className="text-[11px] text-[var(--color-text-muted)]">
+              <span className="text-portal-thead text-[var(--color-text-muted)]">
                 Condensed version for service pages, booking flow, and doctor profiles.
               </span>
             </label>
@@ -113,7 +113,7 @@ export function DisclaimerTranslationTabs({
                 defaultValue={v.fullDisclaimer ?? ""}
                 placeholder={blankHint}
               />
-              <span className="text-[11px] text-[var(--color-text-muted)]">
+              <span className="text-portal-thead text-[var(--color-text-muted)]">
                 Long-form version for the standalone legal page and footer link.
               </span>
             </label>

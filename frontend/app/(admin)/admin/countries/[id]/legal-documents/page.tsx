@@ -132,7 +132,7 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
     <>
       <Link
         href={`/admin/countries/${id}`}
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-4 inline-flex items-center gap-1.5 text-portal-compact text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" />
         Back to {c.name}
@@ -189,9 +189,9 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
                   </Td>
                   <Td>
                     {doc ? (
-                      <span className="text-[13px] text-[var(--color-text-body)]">{doc.title}</span>
+                      <span className="text-portal-compact text-[var(--color-text-body)]">{doc.title}</span>
                     ) : (
-                      <span className="text-[12px] text-[var(--color-text-muted)]">Not created</span>
+                      <span className="text-portal-meta text-[var(--color-text-muted)]">Not created</span>
                     )}
                   </Td>
                   <Td>
@@ -204,7 +204,7 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
                     )}
                   </Td>
                   <Td>
-                    <span className="text-[12px] text-[var(--color-text-muted)]">
+                    <span className="text-portal-meta text-[var(--color-text-muted)]">
                       {doc ? `v${doc.version}` : "—"}
                     </span>
                   </Td>
@@ -212,7 +212,7 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
                     <div className="flex items-center justify-end gap-2">
                       <Link
                         href={`/admin/countries/${id}/legal-documents?edit=${type}`}
-                        className="gh-btn gh-btn-soft text-[12px]"
+                        className="gh-btn gh-btn-soft text-portal-meta"
                       >
                         {doc ? "Edit" : <><Plus className="size-3 inline" /> Create</>}
                       </Link>
@@ -221,7 +221,7 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
                           <input type="hidden" name="docId" value={doc.id} />
                           <button
                             type="submit"
-                            className="gh-btn gh-btn-danger flex items-center gap-1 text-[12px]"
+                            className="gh-btn gh-btn-danger flex items-center gap-1 text-portal-meta"
                             aria-label={`Delete ${DOCUMENT_TYPE_LABELS[type]}`}
                           >
                             <Trash2 className="size-3" aria-hidden />
@@ -266,19 +266,19 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
                 name="content"
                 rows={20}
                 defaultValue={editDoc?.content ?? ""}
-                className="gh-input resize-y font-mono text-[12px]"
+                className="gh-input resize-y font-mono text-portal-meta"
                 placeholder="<p>Legal document content…</p>"
               />
-              <p className="m-0 text-[11px] text-[var(--color-text-muted)]">
+              <p className="m-0 text-portal-thead text-[var(--color-text-muted)]">
                 Provide content here or attach a PDF below — at least one is required.
               </p>
             </label>
             <div className="flex flex-col gap-1">
               <span className="gh-field-label">PDF attachment (optional, max 10 MB)</span>
               {editDoc?.pdfPath ? (
-                <div className="mb-1 flex items-center gap-2 text-[12px] text-[var(--color-text-muted)]">
+                <div className="mb-1 flex items-center gap-2 text-portal-meta text-[var(--color-text-muted)]">
                   <FileText className="size-3.5 shrink-0" aria-hidden />
-                  <span className="truncate font-mono">{editDoc.pdfPath}</span>
+                  <span className="truncate font-mono" title={editDoc.pdfPath}>{editDoc.pdfPath}</span>
                   <a
                     href={`/api/media/${editDoc.pdfPath.split("/").map(encodeURIComponent).join("/")}`}
                     target="_blank"
@@ -294,9 +294,9 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
                 type="file"
                 name="pdfFile"
                 accept="application/pdf"
-                className="text-[13px] text-[var(--color-text-body)]"
+                className="text-portal-compact text-[var(--color-text-body)]"
               />
-              <p className="text-[11px] text-[var(--color-text-muted)]">
+              <p className="text-portal-thead text-[var(--color-text-muted)]">
                 Leave empty to keep the existing PDF. Uploading a new file replaces it.
               </p>
             </div>
@@ -307,18 +307,18 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
                 defaultChecked={editDoc?.isPublished ?? false}
                 className="size-4"
               />
-              <span className="text-[13px] text-[var(--color-text-body)]">Published</span>
+              <span className="text-portal-compact text-[var(--color-text-body)]">Published</span>
             </label>
-            <div className="gh-admin-country-actions flex items-center gap-3">
-              <button type="submit" className="gh-btn gh-btn-primary">
-                Save document
-              </button>
+            <div className="gh-admin-country-actions flex items-center justify-end gap-3">
               <Link
                 href={`/admin/countries/${id}/legal-documents`}
                 className="gh-btn gh-btn-soft"
               >
                 Cancel
               </Link>
+              <button type="submit" className="gh-btn gh-btn-primary">
+                Save document
+              </button>
             </div>
           </form>
         </AdminCard>

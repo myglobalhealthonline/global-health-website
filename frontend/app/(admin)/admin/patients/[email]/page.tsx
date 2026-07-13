@@ -48,8 +48,8 @@ function Section({ icon, title, children }: { icon: React.ReactNode; title: stri
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="gh-admin-patient-row flex items-start justify-between gap-4 border-b border-[var(--color-border)] py-2 last:border-0">
-      <span className="shrink-0 text-[13px] text-[var(--color-text-muted)]">{label}</span>
-      <span className="text-right text-[13px] font-medium text-[var(--color-text-primary)]">{value ?? "—"}</span>
+      <span className="shrink-0 text-portal-compact text-[var(--color-text-muted)]">{label}</span>
+      <span className="text-right text-portal-compact font-medium text-[var(--color-text-primary)]">{value ?? "—"}</span>
     </div>
   );
 }
@@ -96,7 +96,7 @@ export default async function AdminPatientDetailPage({ params, searchParams }: P
   if (!profileRes.ok || !profileRes.data.profile) {
     return (
       <>
-        <Link href="/admin/patients" className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]">
+        <Link href="/admin/patients" className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]">
           <ArrowLeft className="size-3.5" /> Back to patients
         </Link>
         <PageHeader eyebrow="Patient" title="Not found" />
@@ -117,7 +117,7 @@ export default async function AdminPatientDetailPage({ params, searchParams }: P
 
   return (
     <>
-      <Link href="/admin/patients" className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]">
+      <Link href="/admin/patients" className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]">
         <ArrowLeft className="size-3.5" /> Back to patients
       </Link>
       <PageHeader
@@ -171,13 +171,13 @@ export default async function AdminPatientDetailPage({ params, searchParams }: P
             ] as { label: string; status: VerificationStatus }[]
           ).map(({ label, status }) => (
             <div key={label} className="flex flex-col gap-1 rounded border border-[var(--color-border)] p-3">
-              <span className="text-[12px] text-[var(--color-text-muted)]">{label}</span>
+              <span className="text-portal-meta text-[var(--color-text-muted)]">{label}</span>
               <StatusBadge status={status} />
             </div>
           ))}
         </div>
         {profile.insuranceProviderName ? (
-          <p className="mt-3 text-[13px] text-[var(--color-text-muted)]">
+          <p className="mt-3 text-portal-compact text-[var(--color-text-muted)]">
             Insurance provider: <strong>{profile.insuranceProviderName}</strong>
           </p>
         ) : null}
@@ -190,14 +190,14 @@ export default async function AdminPatientDetailPage({ params, searchParams }: P
             {nationalities.map((doc) => (
               <div key={doc.id} className="rounded border border-[var(--color-border)] p-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[13px] font-medium">Slot {doc.slotNumber} — {doc.nationalityCountry}</span>
+                  <span className="text-portal-compact font-medium">Slot {doc.slotNumber} — {doc.nationalityCountry}</span>
                   <StatusBadge status={doc.verificationStatus} />
                 </div>
-                <div className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+                <div className="mt-1 text-portal-meta text-[var(--color-text-muted)]">
                   {doc.documentType}{doc.expiryDate ? ` · Expires ${fmt(doc.expiryDate)}` : ""}
                 </div>
                 {doc.adminNotes ? (
-                  <p className="mt-1 text-[12px] italic text-[var(--color-status-warning-text)]">{doc.adminNotes}</p>
+                  <p className="mt-1 text-portal-meta italic text-[var(--color-status-warning-text)]">{doc.adminNotes}</p>
                 ) : null}
               </div>
             ))}
@@ -223,7 +223,7 @@ export default async function AdminPatientDetailPage({ params, searchParams }: P
                   <tr key={c.consentType}>
                     <td>
                       <div className="font-medium">{c.label}</div>
-                      <div className="text-[11px] text-[var(--color-text-muted)]">{c.description}</div>
+                      <div className="text-portal-thead text-[var(--color-text-muted)]">{c.description}</div>
                     </td>
                     <td>
                       {c.consentValue === null ? (

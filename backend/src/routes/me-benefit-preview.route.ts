@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
+import { LocaleCode } from "@prisma/client";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -18,6 +19,11 @@ import { resolveCorporateDiscount } from "../modules/corporate/corporate-benefit
 const querySchema = z.object({
   serviceId: z.string().trim().min(1).max(80),
   basePriceCents: z.coerce.number().int().min(0).max(10_000_000),
+  // .catch(undefined): an unknown locale falls back to the country default
+  // instead of failing the whole query parse.
+  locale: z
+    .preprocess((v) => (typeof v === "string" ? v.toUpperCase() : v), z.nativeEnum(LocaleCode).optional())
+    .catch(undefined),
 });
 
 const meBenefitPreviewRoute: FastifyPluginAsync = async (app) => {
@@ -35,6 +41,7 @@ const meBenefitPreviewRoute: FastifyPluginAsync = async (app) => {
         userId: user.id,
         serviceId: parsed.data.serviceId,
         basePriceCents: parsed.data.basePriceCents,
+        locale: parsed.data.locale,
       });
       // Corporate benefit engine: attach the automatic member discount so
       // the booking step can show "Corporate Standard −10%". Applies only

@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { Bell } from "lucide-react";
 import { fetchDoctorNotifications } from "@/lib/api/doctor-api";
-import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
+import { PageHeader } from "@/components/portal-atoms";
 import { NotificationListClient } from "./_components/notification-list";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -37,30 +36,6 @@ export default async function DoctorNotificationsPage() {
         description={d.notificationsPage.description}
       />
 
-      <AdminSummaryStrip
-        className="mb-4"
-        items={[
-          {
-            label: d.notificationsPage.unread,
-            value: result.data.unreadCount,
-            hint: d.notificationsPage.needsReview,
-            tone: result.data.unreadCount > 0 ? "warning" : "neutral",
-          },
-          {
-            label: d.notificationsPage.total,
-            value: result.data.items.length,
-            hint: d.notificationsPage.recentHint,
-            tone: "brand",
-          },
-          {
-            label: d.notificationsPage.source,
-            value: <Bell className="size-5" aria-hidden />,
-            hint: d.notificationsPage.sourceHint,
-            tone: "success",
-          },
-        ]}
-      />
-
       <NotificationListClient
         initial={result.data.items.map((n) => ({
           id: n.id,
@@ -76,7 +51,7 @@ export default async function DoctorNotificationsPage() {
         strings={d.notificationsPage}
       />
 
-      <p className="mt-6 text-[12px] text-[var(--portal-muted)]">
+      <p className="mt-6 text-portal-meta text-[var(--portal-muted)]">
         {d.notificationsPage.footerHint}{" "}
         <Link
           href="/doctor/appointments"

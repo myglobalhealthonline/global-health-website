@@ -1,8 +1,11 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import {
   AlertTriangle,
   Bell,
   Calendar,
+  CalendarClock,
+  CalendarRange,
   ChevronRight,
   ClipboardList,
   FileText,
@@ -23,7 +26,7 @@ import {
   SectionHeader,
   StatCard,
 } from "@/components/portal-atoms";
-import { formatAppTime } from "@/lib/format-datetime";
+import { formatAppDateTimeShort, formatAppTime } from "@/lib/format-datetime";
 import { doctorAppointmentView } from "@/lib/api/appointment-status-labels";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -125,7 +128,13 @@ export default async function DoctorOverviewPage() {
     <>
       <CommandBand
         context={isLive ? d.dashboard.consultationLive : d.dashboard.nextConsultation}
-        title={nextAppointment ? nextAppointment.fullName : d.dashboard.noConsultsToday}
+        title={
+          nextAppointment
+            ? nextAppointment.fullName
+            : stats.totalActive > 0
+              ? d.dashboard.noConsultsTodayOpen.replace("{count}", String(stats.totalActive))
+              : d.dashboard.noConsultsToday
+        }
         chip={subtitle}
         metrics={[
           {
@@ -139,6 +148,11 @@ export default async function DoctorOverviewPage() {
         ]}
         action={
           <div className="flex flex-wrap items-center gap-2.5">
+            {!nextAppointment && stats.totalActive > 0 ? (
+              <Btn href="/doctor/appointments?openOnly=true" variant="primary" size="sm">
+                {d.dashboard.viewOpenQueue}
+              </Btn>
+            ) : null}
             {nextAppointment?.meetingUrl ? (
               <Btn
                 href={nextAppointment.meetingUrl}
@@ -162,22 +176,27 @@ export default async function DoctorOverviewPage() {
       />
 
       {/* ── Stat tiles ─────────────────────────────────────────────── */}
-      <div className="gh-doctor-stat-grid grid gap-3 sm:grid-cols-[1fr_0.9fr_1.1fr]">
+      <div
+        className="gh-doctor-stat-grid gh-portal-stat-row grid gap-3"
+        style={{ "--card-count": 3 } as CSSProperties}
+      >
         <StatCard
           tone="brand"
           label={d.dashboard.today}
           value={stats.todayCount}
           hint={d.dashboard.scheduledAppointments}
-          icon={<Calendar className="size-5" aria-hidden />}
+          icon={<CalendarClock className="size-5" aria-hidden />}
         />
         <StatCard
           tone="accent"
           label={d.dashboard.thisWeek}
           value={stats.weekCount}
           hint={d.dashboard.scheduledWithin7Days}
-          icon={<Calendar className="size-5" aria-hidden />}
+          icon={<CalendarRange className="size-5" aria-hidden />}
         />
         <StatCard
+          tone={stats.totalActive > 0 ? "warning" : "neutral"}
+          href={stats.totalActive > 0 ? "/doctor/appointments?openOnly=true" : undefined}
           label={d.dashboard.open}
           value={stats.totalActive}
           hint={d.dashboard.notCancelledOrCompleted}
@@ -198,7 +217,7 @@ export default async function DoctorOverviewPage() {
                 aria-hidden
               />
               <div className="min-w-0 flex-1">
-                <p className="text-[14px] font-bold text-[var(--portal-text)]">
+                <p className="text-portal-body font-bold text-[var(--portal-text)]">
                   {missingMeetingLink.length === 1
                     ? d.dashboard.missingLinkOne
                     : d.dashboard.missingLinkMany.replace(
@@ -210,7 +229,7 @@ export default async function DoctorOverviewPage() {
                   {missingMeetingLink.slice(0, 5).map((a) => (
                     <li
                       key={a.id}
-                      className="gh-doctor-alert-list-row flex items-center justify-between gap-2 text-[13px]"
+                      className="gh-doctor-alert-list-row flex items-center justify-between gap-2 text-portal-compact"
                     >
                       <span className="truncate text-[var(--portal-text)]">
                         {a.fullName}
@@ -220,7 +239,7 @@ export default async function DoctorOverviewPage() {
                       </span>
                       <Link
                         href={`/doctor/appointments/${a.id}`}
-                        className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
+                        className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-primary)] hover:underline"
                       >
                         {d.dashboard.addLink} <ChevronRight className="size-3" />
                       </Link>
@@ -239,6 +258,7 @@ export default async function DoctorOverviewPage() {
           <SectionHeader
             title={d.dashboard.todaysSchedule}
             description={d.dashboard.todaysScheduleDesc}
+            flat
           />
           <div className="p-5">
             {todayAppointments.length === 0 ? (
@@ -267,11 +287,11 @@ export default async function DoctorOverviewPage() {
                     className="gh-doctor-schedule-row flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
                   >
                     <div className="min-w-0">
-                      <p className="text-[14px] font-semibold text-[var(--portal-text)]">
+                      <p className="text-portal-body font-semibold text-[var(--portal-text)]">
                         {a.scheduledAt ? formatAppTime(a.scheduledAt) : d.common.unscheduled}{" "}
                         · {a.fullName}
                       </p>
-                      <p className="text-[12px] text-[var(--portal-muted)]">
+                      <p className="text-portal-meta text-[var(--portal-muted)]">
                         {a.consultationType} · {viewStatusText[doctorAppointmentView(a.status, a.paymentStatus)]}
                       </p>
                     </div>
@@ -311,6 +331,7 @@ export default async function DoctorOverviewPage() {
                 <Bell className="size-4" aria-hidden /> {d.dashboard.unreadNotifications}
               </span>
             }
+            flat
           />
           <div className="p-5">
             {unreadNotifs.length === 0 ? (
@@ -324,12 +345,15 @@ export default async function DoctorOverviewPage() {
             ) : (
               <ul className="gh-doctor-notification-mini-list grid gap-3">
                 {unreadNotifs.slice(0, 6).map((n) => (
-                  <li key={n.id} className="text-[13px]">
-                    <p className="font-semibold text-[var(--portal-text)]">
-                      {NOTIF_TYPE_LABEL[n.type] ?? n.type.replace(/_/g, " ").toLowerCase()}
+                  <li key={n.id} className="text-portal-compact">
+                    <p className="flex items-baseline justify-between gap-2 font-semibold text-[var(--portal-text)]">
+                      <span>{NOTIF_TYPE_LABEL[n.type] ?? n.type.replace(/_/g, " ").toLowerCase()}</span>
+                      <span className="shrink-0 text-portal-meta font-medium text-[var(--portal-muted)]">
+                        {formatAppDateTimeShort(n.createdAt)}
+                      </span>
                     </p>
                     {n.payload?.snippet ? (
-                      <p className="line-clamp-2 text-[12px] text-[var(--portal-muted)]">
+                      <p className="line-clamp-2 text-portal-meta text-[var(--portal-muted)]">
                         {n.payload.snippet}
                       </p>
                     ) : null}
@@ -347,7 +371,7 @@ export default async function DoctorOverviewPage() {
             )}
             <Link
               href="/doctor/notifications"
-              className="mt-4 inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
+              className="mt-4 inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-primary)] hover:underline"
             >
               {d.common.seeAll} <ChevronRight className="size-3" />
             </Link>

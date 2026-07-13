@@ -1,31 +1,14 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ClipboardList, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   cancelCorporatePortalRequest,
   fetchCorporateEmployees,
   fetchCorporatePortalRequests,
   postCorporatePortalRequest,
 } from "@/lib/corporate/corporate-api";
-import {
-  AdminCard,
-  AdminEmptyState,
-  AdminTable,
-  Btn,
-  PageHeader,
-  Pill,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "@/components/portal-atoms";
-import {
-  formatDate,
-  isRequestCancellable,
-  requestStatusLabel,
-  requestStatusTone,
-  REQUEST_TYPE_LABELS,
-} from "@/app/(admin)/admin/corporate/_lib";
+import { AdminCard, Btn, PageHeader } from "@/components/portal-atoms";
+import { RequestsTable } from "./requests-table";
 
 export const dynamic = "force-dynamic";
 
@@ -146,7 +129,7 @@ export default async function CorporateRequestsPage({ searchParams }: PageProps)
       {/* List */}
       <AdminCard padding={0} className="overflow-hidden">
         <div className="flex flex-wrap items-center gap-3 border-b border-[var(--color-border)] px-5 py-3.5">
-          <form method="get" className="flex items-center gap-2">
+          <form method="get" className="flex flex-wrap items-center gap-2">
             <select name="status" defaultValue={sp.status ?? ""} className="gh-select">
               <option value="">All statuses</option>
               <option value="REQUESTED">Requested</option>
@@ -166,67 +149,11 @@ export default async function CorporateRequestsPage({ searchParams }: PageProps)
           <p className="gh-status-warning m-5 rounded-md border px-4 py-3 text-sm">
             Could not load requests: {requestsResult.message}
           </p>
-        ) : requestsResult.data.requests.length === 0 ? (
-          <AdminEmptyState
-            icon={<ClipboardList className="size-8" aria-hidden />}
-            title="No requests"
-            description="Create a request to have an employee attend an illness-benefit or fit-for-work consultation."
-          />
         ) : (
-          <div className="overflow-x-auto">
-            <AdminTable>
-              <Thead>
-                <Th>Employee</Th>
-                <Th>Type</Th>
-                <Th>Status</Th>
-                <Th>Booked</Th>
-                <Th>Created</Th>
-                <Th>Expires</Th>
-                <Th align="right">Actions</Th>
-              </Thead>
-              <tbody>
-                {requestsResult.data.requests.map((r) => (
-                  <Tr key={r.id}>
-                    <Td>
-                      <span className="font-bold text-[var(--color-text-primary)]">
-                        {r.employeeName ?? "—"}
-                      </span>
-                      {r.reason ? (
-                        <p className="max-w-[26rem] truncate text-xs text-[var(--color-text-muted)]">
-                          {r.reason}
-                        </p>
-                      ) : null}
-                    </Td>
-                    <Td>{REQUEST_TYPE_LABELS[r.type] ?? r.type}</Td>
-                    <Td>
-                      <Pill tone={requestStatusTone(r.status)}>{requestStatusLabel(r.status)}</Pill>
-                    </Td>
-                    <Td>{r.hasAppointment ? "✓" : "—"}</Td>
-                    <Td>
-                      <span className="text-[var(--color-text-muted)]">
-                        {formatDate(r.createdAt)}
-                      </span>
-                    </Td>
-                    <Td>
-                      <span className="text-[var(--color-text-muted)]">
-                        {formatDate(r.expiresAt)}
-                      </span>
-                    </Td>
-                    <Td align="right">
-                      {isRequestCancellable(r.status) && r.status !== "BOOKED" ? (
-                        <form action={cancelRequestAction}>
-                          <input type="hidden" name="requestId" value={r.id} />
-                          <Btn type="submit" variant="ghost" size="sm">
-                            Cancel
-                          </Btn>
-                        </form>
-                      ) : null}
-                    </Td>
-                  </Tr>
-                ))}
-              </tbody>
-            </AdminTable>
-          </div>
+          <RequestsTable
+            requests={requestsResult.data.requests}
+            cancelRequestAction={cancelRequestAction}
+          />
         )}
       </AdminCard>
     </>

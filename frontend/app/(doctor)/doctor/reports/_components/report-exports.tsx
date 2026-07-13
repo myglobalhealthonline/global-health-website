@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { FileSpreadsheet, FileText, Loader2 } from "lucide-react";
 import { fetchDownload } from "@/lib/download";
 
@@ -11,7 +12,7 @@ import { fetchDownload } from "@/lib/download";
  * carries the `gh_auth` cookie) and trigger a plain browser download.
  */
 
-type Dataset = "payout" | "services" | "patients" | "appointments";
+type Dataset = "services" | "patients" | "appointments";
 type ReportsStrings = Record<string, string>;
 
 export function DoctorReportExports({
@@ -32,12 +33,11 @@ export function DoctorReportExports({
   pdfLabel: string;
 }) {
   const DATASETS: { value: Dataset; label: string; note: string }[] = [
-    { value: "payout", label: s.datasetPayoutLabel, note: s.datasetPayoutNote },
     { value: "services", label: s.datasetServicesLabel, note: s.datasetServicesNote },
     { value: "patients", label: s.datasetPatientsLabel, note: s.datasetPatientsNote },
     { value: "appointments", label: s.datasetAppointmentsLabel, note: s.datasetAppointmentsNote },
   ];
-  const [dataset, setDataset] = useState<Dataset>("payout");
+  const [dataset, setDataset] = useState<Dataset>("services");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -66,10 +66,20 @@ export function DoctorReportExports({
 
   return (
     <section className="gh-card p-6">
-      <p className="gh-field-label">{s.downloadListsTitle}</p>
-      <p className="mt-1 text-sm text-[var(--portal-muted)]">
-        {s.downloadListsDesc}
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <p className="gh-field-label">{s.downloadListsTitle}</p>
+          <p className="mt-1 text-sm text-[var(--portal-muted)]">
+            {s.downloadListsDesc}
+          </p>
+        </div>
+        <Link
+          href="/doctor/invoices?tab=statement"
+          className="text-xs text-[var(--portal-muted)] underline underline-offset-2 hover:text-[var(--portal-text)]"
+        >
+          {s.crossLinkToInvoices}
+        </Link>
+      </div>
       <div className="mt-4 flex flex-wrap items-end gap-3">
         <label className="flex flex-col gap-1">
           <span className="gh-field-label">{s.reportLabel}</span>

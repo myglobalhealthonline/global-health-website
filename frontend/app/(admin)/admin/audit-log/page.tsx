@@ -21,7 +21,7 @@ function pick(sp: SearchParams, key: string): string | undefined {
  */
 function AuditDiff({ metadata }: { metadata: unknown }) {
   if (!metadata || typeof metadata !== "object") {
-    return <span className="text-[12px] text-[var(--color-text-muted)]">—</span>;
+    return <span className="text-portal-meta text-[var(--color-text-muted)]">—</span>;
   }
   const m = metadata as Record<string, unknown>;
 
@@ -33,10 +33,10 @@ function AuditDiff({ metadata }: { metadata: unknown }) {
     );
     return (
       <details>
-        <summary className="cursor-pointer text-[11px] font-semibold text-[var(--color-brand-primary)]">
+        <summary className="cursor-pointer text-portal-thead font-semibold text-[var(--color-brand-primary)]">
           View diff ({fields.length})
         </summary>
-        <ul className="mt-1 space-y-0.5 text-[11px] text-[var(--color-text-muted)]">
+        <ul className="mt-1 space-y-0.5 text-portal-thead text-[var(--color-text-muted)]">
           {fields.map((f) => (
             <li key={f}>
               <span className="font-semibold text-[var(--color-text-primary)]">{f}</span>:{" "}
@@ -55,10 +55,10 @@ function AuditDiff({ metadata }: { metadata: unknown }) {
     if (changed.length > 0) {
       return (
         <details>
-          <summary className="cursor-pointer text-[11px] font-semibold text-[var(--color-brand-primary)]">
+          <summary className="cursor-pointer text-portal-thead font-semibold text-[var(--color-brand-primary)]">
             View diff ({changed.length})
           </summary>
-          <ul className="mt-1 space-y-0.5 text-[11px] text-[var(--color-text-muted)]">
+          <ul className="mt-1 space-y-0.5 text-portal-thead text-[var(--color-text-muted)]">
             {changed.map((f) => (
               <li key={f}>
                 <span className="font-semibold text-[var(--color-text-primary)]">{f}</span> changed
@@ -73,10 +73,10 @@ function AuditDiff({ metadata }: { metadata: unknown }) {
 
   return (
     <details>
-      <summary className="cursor-pointer text-[11px] font-semibold text-[var(--color-brand-primary)]">
+      <summary className="cursor-pointer text-portal-thead font-semibold text-[var(--color-brand-primary)]">
         Raw payload
       </summary>
-      <pre className="m-0 mt-1 whitespace-pre-wrap break-all text-[11px] text-[var(--color-text-muted)]">
+      <pre className="m-0 mt-1 whitespace-pre-wrap break-all text-portal-thead text-[var(--color-text-muted)]">
         {JSON.stringify(metadata, null, 0)}
       </pre>
     </details>
@@ -199,7 +199,7 @@ export default async function AdminAuditLogPage({
           />
         ) : null}
         <div className="gh-admin-ops-quick-filters mb-3 flex flex-wrap items-center gap-2">
-          <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+          <span className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
             Quick filters
           </span>
           {QUICK_FILTERS.map((qf) => {
@@ -209,7 +209,7 @@ export default async function AdminAuditLogPage({
               <a
                 key={qf.label}
                 href={`?action=${encodeURIComponent(value)}`}
-                className={`rounded-full px-3 py-1 text-[12px] font-semibold ${
+                className={`rounded-full px-3 py-1 text-portal-meta font-semibold ${
                   isActive
                     ? "bg-[var(--color-brand-primary)] text-white"
                     : "bg-[var(--color-background-soft)] text-[var(--color-text-primary)] hover:bg-[var(--color-background-muted)]"
@@ -222,7 +222,7 @@ export default async function AdminAuditLogPage({
           {action ? (
             <a
               href="?"
-              className="rounded-full px-3 py-1 text-[12px] font-semibold text-[var(--color-text-muted)] underline-offset-2 hover:underline"
+              className="rounded-full px-3 py-1 text-portal-meta font-semibold text-[var(--color-text-muted)] underline-offset-2 hover:underline"
             >
               Clear
             </a>
@@ -296,7 +296,7 @@ export default async function AdminAuditLogPage({
           />
         ) : (
           <>
-          <div className="gh-admin-mobile-list">
+          <div className="gh-admin-mobile-list gh-cpt-mobile-list">
             {result.data.items.map((r) => (
               <PortalMobileCard
                 key={r.id}
@@ -304,7 +304,7 @@ export default async function AdminAuditLogPage({
                 subtitle={new Date(r.createdAt).toLocaleString()}
                 statusPill={
                   <span
-                    className={`gh-admin-ops-badge inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.04em] ${
+                    className={`gh-admin-ops-badge inline-flex rounded-full px-2 py-0.5 text-portal-thead font-bold uppercase tracking-[0.04em] ${
                       ACTION_TONE[r.action] ??
                       "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
                     }`}
@@ -321,27 +321,27 @@ export default async function AdminAuditLogPage({
               />
             ))}
           </div>
-          <div className="gh-admin-ops-table-wrap gh-admin-deep-table-wrap overflow-hidden rounded-md border border-[var(--color-border)]">
-            <table className="w-full text-[13px]">
-              <thead className="bg-[var(--color-background-soft)] text-left text-[11px] uppercase tracking-wider text-[var(--color-text-muted)]">
+          <div className="gh-admin-ops-table-wrap gh-cpt-table-wrap overflow-x-auto rounded-md border border-[var(--color-border)]">
+            <table className="w-full text-portal-compact">
+              <thead className="bg-[var(--color-background-soft)] text-left text-portal-thead uppercase tracking-wider text-[var(--color-text-muted)]">
                 <tr>
                   <th className="px-3 py-2 font-semibold">When</th>
                   <th className="px-3 py-2 font-semibold">Action</th>
                   <th className="px-3 py-2 font-semibold">Actor</th>
                   <th className="px-3 py-2 font-semibold">Entity</th>
-                  <th className="px-3 py-2 font-semibold">IP</th>
-                  <th className="px-3 py-2 font-semibold">Metadata</th>
+                  <th className="px-3 py-2 font-semibold gh-cpt-p3">IP</th>
+                  <th className="px-3 py-2 font-semibold gh-cpt-p3">Metadata</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-border)]">
                 {result.data.items.map((r) => (
                   <tr key={r.id} className="align-top">
-                    <td className="whitespace-nowrap px-3 py-2 text-[12px] text-[var(--color-text-muted)]">
+                    <td className="whitespace-nowrap px-3 py-2 text-portal-meta text-[var(--color-text-muted)]">
                       {new Date(r.createdAt).toLocaleString()}
                     </td>
                     <td className="px-3 py-2">
                       <span
-                        className={`gh-admin-ops-badge inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.04em] ${
+                        className={`gh-admin-ops-badge inline-flex rounded-full px-2 py-0.5 text-portal-thead font-bold uppercase tracking-[0.04em] ${
                           ACTION_TONE[r.action] ??
                           "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
                         }`}
@@ -355,12 +355,12 @@ export default async function AdminAuditLogPage({
                           <p className="font-semibold text-[var(--color-text-primary)]">
                             {r.actor.fullName}
                           </p>
-                          <p className="text-[11px] text-[var(--color-text-muted)]">
+                          <p className="text-portal-thead text-[var(--color-text-muted)]">
                             {r.actor.email} · {r.actorRole ?? r.actor.role}
                           </p>
                         </>
                       ) : (
-                        <span className="text-[12px] text-[var(--color-text-muted)]">
+                        <span className="text-portal-meta text-[var(--color-text-muted)]">
                           System
                         </span>
                       )}
@@ -369,10 +369,10 @@ export default async function AdminAuditLogPage({
                       <p className="text-[var(--color-text-primary)]">{r.entityType}</p>
                       <p className="text-[var(--color-text-muted)]">{r.entityId}</p>
                     </td>
-                    <td className="px-3 py-2 font-mono text-[11px] text-[var(--color-text-muted)]">
+                    <td className="px-3 py-2 font-mono text-portal-thead text-[var(--color-text-muted)] gh-cpt-p3">
                       {r.ipAddress ?? "—"}
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-3 py-2 gh-cpt-p3">
                       <AuditDiff metadata={r.metadata} />
                     </td>
                   </tr>
@@ -394,7 +394,7 @@ export default async function AdminAuditLogPage({
                   return `/admin/audit-log?${qs.toString()}`;
                 };
                 return (
-                  <div className="gh-admin-ops-pagination flex items-center justify-between gap-3 border-t border-[var(--color-border)] px-3 py-2 text-[12px] text-[var(--color-text-muted)]">
+                  <div className="gh-admin-ops-pagination flex items-center justify-between gap-3 border-t border-[var(--color-border)] px-3 py-2 text-portal-meta text-[var(--color-text-muted)]">
                     <span>
                       Page {cur} of {totalPages} · {result.data.pagination.total} events total
                     </span>

@@ -131,7 +131,7 @@ export function MultiImageField({
     <div className="gh-admin-media-field">
       <div className="flex items-center justify-between">
         <span className="gh-field-label">{label}</span>
-        <span className="text-[11px] text-[var(--portal-muted)]">
+        <span className="text-portal-thead text-[var(--portal-muted)]">
           {paths.length} / {max}
         </span>
       </div>
@@ -156,10 +156,10 @@ export function MultiImageField({
         >
           <div className="flex flex-col items-center gap-1.5 px-4 py-6 text-center">
             <Upload aria-hidden className="size-5" />
-            <span className="text-[13px] font-semibold text-[var(--portal-text)]">
+            <span className="text-portal-compact font-semibold text-[var(--portal-text)]">
               Add an image
             </span>
-            <span className="text-[11px]">
+            <span className="text-portal-thead">
               JPEG / PNG / WebP / GIF / AVIF · max 5 MB each
             </span>
           </div>
@@ -206,7 +206,7 @@ export function MultiImageField({
                   <button
                     type="button"
                     onClick={() => inputRefs.current[index]?.click()}
-                    className="grid h-full w-full place-items-center text-[12px] text-[var(--portal-muted)]"
+                    className="grid h-full w-full place-items-center text-portal-meta text-[var(--portal-muted)]"
                     style={{ cursor: busy ? "wait" : "pointer" }}
                   >
                     <span className="inline-flex items-center gap-1.5">
@@ -267,7 +267,7 @@ export function MultiImageField({
                   aspectRatio: "4 / 3",
                 }}
               >
-                <span className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold">
+                <span className="inline-flex items-center gap-1.5 text-portal-label font-semibold">
                   <Plus aria-hidden className="size-4" />
                   Add image
                 </span>
@@ -278,10 +278,10 @@ export function MultiImageField({
       )}
 
       {msg ? (
-        <p className="text-[12px] text-[var(--portal-warning-text)]">{msg}</p>
+        <p className="text-portal-meta text-[var(--portal-warning-text)]">{msg}</p>
       ) : null}
       {helperText ? (
-        <span className="text-[12px] text-[var(--portal-muted)]">{helperText}</span>
+        <span className="text-portal-meta text-[var(--portal-muted)]">{helperText}</span>
       ) : null}
     </div>
   );

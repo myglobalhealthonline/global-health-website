@@ -63,7 +63,12 @@ export function ConfidentialityForm({
         </p>
       ) : null}
 
-      <div className="mt-4 max-h-[26rem] overflow-y-auto whitespace-pre-wrap rounded-[var(--radius-card-sm)] border border-[var(--portal-line)] bg-[var(--portal-well)] p-4 text-sm leading-6 text-[var(--portal-ink)] first:mt-0">
+      <div
+        className="mt-4 max-h-[min(60vh,32rem)] overflow-y-auto whitespace-pre-wrap rounded-[var(--radius-card-sm)] border border-[var(--portal-line)] bg-[var(--portal-well)] p-4 text-sm leading-6 text-[var(--portal-ink)] first:mt-0"
+        tabIndex={0}
+        role="region"
+        aria-label={s.agreementTextAriaLabel}
+      >
         {agreementText}
       </div>
 

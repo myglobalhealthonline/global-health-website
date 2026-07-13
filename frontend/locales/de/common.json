@@ -678,7 +678,9 @@
     "languageAll": "Alle",
     "noForLanguage": "Derzeit sind keine Ärzte für diesen Service in {language} verfügbar.",
     "chooseAnotherLanguage": "Bitte wählen Sie eine andere Sprache oder schauen Sie später wieder vorbei.",
-    "showAllLanguages": "Alle Sprachen anzeigen"
+    "showAllLanguages": "Alle Sprachen anzeigen",
+    "backToAccount": "Zurück zu meinem Konto",
+    "portalBadge": "Patientenportal"
   },
   "cardVerify": {
     "title": "Firmenkarten-Prüfung",
@@ -710,6 +712,11 @@
     "closeNavigation": "Navigation schließen",
     "openNavigation": "Navigation öffnen",
     "closeMenu": "Menü schließen",
-    "allCaughtUp": "Alles erledigt."
+    "allCaughtUp": "Alles erledigt.",
+    "skipToContent": "Zum Hauptinhalt springen",
+    "unsavedChangesTitle": "Nicht gespeicherte Änderungen",
+    "unsavedChangesBody": "Du hast nicht gespeicherte Änderungen auf dieser Seite. Wenn du jetzt gehst, gehen sie verloren.",
+    "unsavedChangesKeepEditing": "Weiter bearbeiten",
+    "unsavedChangesDiscard": "Änderungen verwerfen"
   }
 }

@@ -2,32 +2,16 @@ import Link from "next/link";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Edit3, Eye, ImageIcon, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   adminAssetPreviewable,
   fetchAdminAssets,
   fetchAdminCountries,
   purgeAdminAsset,
-  type AdminAssetDto,
   type AdminAssetKind,
 } from "@/lib/admin/admin-api";
-import { FlagBadge } from "../_components/flag-badge";
-import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
-import {
-  AdminCard,
-  AdminEmptyState,
-  AdminSummaryStrip,
-  AdminTable,
-  Btn,
-  IconBtn,
-  PageHeader,
-  Pill,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "../_components/atoms";
+import { AdminCard, AdminSummaryStrip, Btn, PageHeader } from "../_components/atoms";
+import { AdminAssetsTable } from "./_components/admin-assets-table";
 
 export const dynamic = "force-dynamic";
 
@@ -53,23 +37,6 @@ function spRead(
   const v = sp[key];
   if (Array.isArray(v)) return v[0];
   return v;
-}
-
-function PreviewCell({ item }: { item: AdminAssetDto }) {
-  const path = item.path;
-  const ok = adminAssetPreviewable(item.kind as AdminAssetKind, path);
-  if (!ok) {
-    return <span className="text-[var(--color-text-muted)]">—</span>;
-  }
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={path}
-      alt={item.altText ?? ""}
-      className="max-h-10 max-w-[100px] rounded border border-[var(--color-border)] object-contain"
-      loading="lazy"
-    />
-  );
 }
 
 type PageProps = {
@@ -259,11 +226,11 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
             </button>
             <Link
               href="/admin/assets"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Clear filters
             </Link>
-            <span className="ml-auto text-[12px] text-[var(--color-text-muted)]">
+            <span className="ml-auto text-portal-meta text-[var(--color-text-muted)]">
               {total === 0
                 ? "No assets match filters."
                 : `Showing ${items.length} of ${total}.`}
@@ -274,142 +241,10 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
 
       {/* Table */}
       <AdminCard padding={0} className="overflow-hidden">
-        <div className="gh-admin-asset-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
-          <AdminTable>
-            <Thead>
-              <Th style={{ width: 120 }}>Preview</Th>
-              <Th>Key</Th>
-              <Th>Kind</Th>
-              <Th>Country</Th>
-              <Th>Alt</Th>
-              <Th>Usage</Th>
-              <Th>Status</Th>
-              <Th align="right" style={{ width: 120 }}>
-                Actions
-              </Th>
-            </Thead>
-            <tbody>
-              {items.map((a) => (
-                <Tr key={a.id}>
-                  <Td>
-                    <PreviewCell item={a} />
-                  </Td>
-                  <Td>
-                    <span className="font-mono text-[11px] text-[var(--color-text-primary)]">
-                      {a.key}
-                    </span>
-                  </Td>
-                  <Td>
-                    <span className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                      {a.kind}
-                    </span>
-                  </Td>
-                  <Td>
-                    {a.country ? (
-                      <span className="inline-flex items-center gap-2">
-                        <FlagBadge code={a.country.code} size={14} />
-                        <span className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                          {a.country.code}
-                        </span>
-                      </span>
-                    ) : (
-                      <span className="text-[var(--color-text-placeholder)]">—</span>
-                    )}
-                  </Td>
-                  <Td>
-                    <span className="block max-w-[12rem] truncate text-[13px] text-[var(--color-text-muted)]">
-                      {a.altText ?? "—"}
-                    </span>
-                  </Td>
-                  <Td>
-                    <span className="block max-w-[14rem] truncate text-[13px] text-[var(--color-text-muted)]">
-                      {a.usageNote ?? "—"}
-                    </span>
-                  </Td>
-                  <Td>
-                    <Pill tone={a.isActive ? "published" : "draft"}>
-                      {a.isActive ? "Active" : "Inactive"}
-                    </Pill>
-                  </Td>
-                  <Td align="right">
-                    <div className="gh-admin-asset-row-actions flex justify-end gap-1.5">
-                      <IconBtn
-                        ariaLabel={`View ${a.key}`}
-                        href={`/admin/assets/${a.id}`}
-                      >
-                        <Eye className="size-3.5" aria-hidden />
-                      </IconBtn>
-                      <IconBtn
-                        ariaLabel={`Edit ${a.key}`}
-                        href={`/admin/assets/${a.id}/edit`}
-                      >
-                        <Edit3 className="size-3.5" aria-hidden />
-                      </IconBtn>
-                      <form action={deleteAssetAction} className="inline-flex">
-                        <input type="hidden" name="id" value={a.id} />
-                        <ConfirmDeleteButton
-                          message={`Permanently delete asset "${a.key}"? This cannot be undone.`}
-                          ariaLabel={`Delete ${a.key}`}
-                        />
-                      </form>
-                    </div>
-                  </Td>
-                </Tr>
-              ))}
-            </tbody>
-          </AdminTable>
-        </div>
-
-        {items.length > 0 ? (
-          <div className="gh-admin-mobile-list">
-            {items.map((a) => (
-              <PortalMobileCard
-                key={a.id}
-                tone={a.isActive ? "success" : "neutral"}
-                leading={<PreviewCell item={a} />}
-                title={a.key}
-                subtitle={a.path}
-                statusPill={
-                  <Pill tone={a.isActive ? "published" : "draft"}>
-                    {a.isActive ? "Active" : "Inactive"}
-                  </Pill>
-                }
-                meta={[
-                  { label: "Kind", value: a.kind },
-                  { label: "Country", value: a.country?.code.toUpperCase() ?? "Global" },
-                  { label: "Alt text", value: a.altText ?? "Not set" },
-                  { label: "Usage", value: a.usageNote ?? "Unassigned" },
-                ]}
-                actions={
-                  <>
-                    <IconBtn ariaLabel={`View ${a.key}`} href={`/admin/assets/${a.id}`}>
-                      <Eye className="size-3.5" aria-hidden />
-                    </IconBtn>
-                    <IconBtn ariaLabel={`Edit ${a.key}`} href={`/admin/assets/${a.id}/edit`}>
-                      <Edit3 className="size-3.5" aria-hidden />
-                    </IconBtn>
-                  </>
-                }
-              />
-            ))}
-          </div>
-        ) : null}
-
-        {items.length === 0 ? (
-          <AdminEmptyState
-            icon={<ImageIcon className="size-8" aria-hidden />}
-            title="No assets match these filters"
-            description="Clear the current filters or add a scoped asset for country heroes, logos, badges, and social previews."
-            action={
-              <Btn href="/admin/assets/new" variant="soft" size="sm">
-                Add asset
-              </Btn>
-            }
-          />
-        ) : null}
+        <AdminAssetsTable items={items} deleteAssetAction={deleteAssetAction} />
 
         {totalPages > 1 ? (
-          <nav className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3 text-[13px]">
+          <nav className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3 text-portal-compact">
             <div className="text-[var(--color-text-muted)]">
               Page {page} of {totalPages} · {pageSize} per page
             </div>
@@ -418,7 +253,7 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
                 href={buildAssetsHref(filters, {
                   page: String(Math.max(1, page - 1)),
                 })}
-                className={`gh-btn gh-btn-soft text-[13px] ${
+                className={`gh-btn gh-btn-soft text-portal-compact ${
                   page <= 1 ? "pointer-events-none opacity-40" : ""
                 }`}
                 style={{ minHeight: 36, padding: "0 14px" }}
@@ -429,7 +264,7 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
                 href={buildAssetsHref(filters, {
                   page: String(Math.min(totalPages, page + 1)),
                 })}
-                className={`gh-btn gh-btn-primary text-[13px] ${
+                className={`gh-btn gh-btn-primary text-portal-compact ${
                   page >= totalPages ? "pointer-events-none opacity-40" : ""
                 }`}
                 style={{ minHeight: 36, padding: "0 14px" }}

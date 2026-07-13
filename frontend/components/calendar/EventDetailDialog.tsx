@@ -1,17 +1,28 @@
 "use client";
 
-import type { ReactNode } from "react";
 import Link from "next/link";
 import { Video } from "lucide-react";
-import { formatAppDateTime } from "@/lib/format-datetime";
+import { formatAppDateTime, formatAppTime } from "@/lib/format-datetime";
 import type { CalendarItem } from "./calendar-types";
-import { PortalDialog } from "@/components/PortalDialog";
+import {
+  RecordDetailsDrawer,
+  RecordDetailsSection,
+  RecordDetailsField,
+} from "@/components/RecordDetailsDrawer";
+import { getJoinState } from "@/lib/join-state";
 
 type Props = {
   item: CalendarItem | null;
   /** Timezone the times are rendered in (viewer's zone). */
   tz: string;
   onClose: () => void;
+  /** Optional URL binding — pass e.g. "event" to sync `?event=<id>` (admin calendar only). */
+  paramKey?: string;
+  /** Viewer context. "patient" avoids repeating the doctor's name in the
+   *  title/subtitle (it already appears once in the Doctor row) and hides
+   *  the self-referential Patient row. Omit for doctor/admin — unchanged
+   *  default behavior. */
+  viewerRole?: "patient" | "doctor" | "admin";
 };
 
 function statusBadgeClass(status: string): string {
@@ -30,79 +41,144 @@ function humanize(status: string): string {
     .join(" ");
 }
 
-export function EventDetailDialog({ item, tz, onClose }: Props) {
-  const meetingUrl = item?.meta?.meetingUrl ?? null;
-
-  return (
-    <PortalDialog open={item !== null} onClose={onClose} title={item?.title ?? ""} width="sm">
-      {item ? (
-        <>
-          <p className="gh-eyebrow mb-3">{item.meta?.consultationType ?? "Consultation"}</p>
-
-          <dl
-            className="grid gap-3 rounded-[var(--portal-radius)] p-3 text-sm"
-            style={{ border: "1px solid var(--portal-line)", background: "var(--portal-well)" }}
-          >
-            <Row label="When">{formatAppDateTime(item.startAt, tz)}</Row>
-            {item.meta?.doctorName ? <Row label="Doctor">{item.meta.doctorName}</Row> : null}
-            {item.meta?.patientName ? <Row label="Patient">{item.meta.patientName}</Row> : null}
-            {item.meta?.countryCode ? (
-              <Row label="Country">{item.meta.countryCode.toUpperCase()}</Row>
-            ) : null}
-            {item.meta?.orderId ? (
-              <Row label="Order">
-                <Link
-                  href={`/admin/orders/${item.meta.orderId}`}
-                  className="font-semibold underline decoration-dotted underline-offset-2"
-                  style={{ color: "var(--portal-accent, #1B4D3E)" }}
-                >
-                  {item.meta.orderNumber
-                    ? `#${item.meta.orderNumber}`
-                    : `#${item.meta.orderId.slice(-8).toUpperCase()}`}
-                </Link>
-              </Row>
-            ) : null}
-            <Row label="Status">
-              <span className={`gh-badge ${statusBadgeClass(item.status)}`}>
-                {humanize(item.status)}
-              </span>
-            </Row>
-          </dl>
-
-          {meetingUrl ? (
-            <a
-              href={meetingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="gh-btn gh-btn-primary mt-5 flex w-full items-center justify-center gap-2"
-              style={{ minHeight: 44 }}
-            >
-              <Video className="size-4" aria-hidden />
-              Join video call
-            </a>
-          ) : (
-            <p
-              className="mt-5 rounded-[var(--portal-radius-sm)] px-3 py-2.5 text-center text-xs"
-              style={{ background: "var(--portal-well)", color: "var(--portal-muted)" }}
-            >
-              Join link will appear here once the call is scheduled.
-            </p>
-          )}
-        </>
-      ) : null}
-    </PortalDialog>
-  );
+/** IANA id → readable label, e.g. "Asia/Karachi" → "Karachi (GMT+05:00)". */
+function humanTimezone(tz: string): string {
+  try {
+    const offset = new Intl.DateTimeFormat("en-GB", {
+      timeZone: tz,
+      timeZoneName: "longOffset",
+    })
+      .formatToParts(new Date())
+      .find((p) => p.type === "timeZoneName")?.value;
+    const city = tz.includes("/") ? tz.slice(tz.lastIndexOf("/") + 1).replace(/_/g, " ") : tz;
+    return offset ? `${city} (${offset})` : city;
+  } catch {
+    return tz;
+  }
 }
 
-function Row({ label, children }: { label: string; children: ReactNode }) {
+export function EventDetailDialog({ item, tz, onClose, paramKey, viewerRole }: Props) {
+  const isPatientView = viewerRole === "patient";
+  const isDoctorView = viewerRole === "doctor";
+  const meetingUrl = item?.meta?.meetingUrl ?? null;
+  const joinState = item
+    ? getJoinState(
+        { status: item.status, meetingUrl, startAt: item.startAt, endAt: item.endAt },
+        new Date(),
+      )
+    : null;
+  const dialogTitle = item
+    ? isPatientView
+      ? `${item.meta?.consultationType ?? "Consultation"} · ${formatAppTime(item.startAt, tz)}`
+      : item.title
+    : "";
+
   return (
-    <div className="grid gap-1 sm:grid-cols-[110px_1fr] sm:items-center">
-      <dt className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--portal-muted)" }}>
-        {label}
-      </dt>
-      <dd className="font-medium sm:text-right" style={{ color: "var(--portal-text)" }}>
-        {children}
-      </dd>
-    </div>
+    <RecordDetailsDrawer
+      open={item !== null}
+      onOpenChange={(next) => {
+        if (!next) onClose();
+      }}
+      paramKey={paramKey}
+      paramValue={item?.id}
+      size="sm"
+      title={dialogTitle}
+      eyebrow={item?.meta?.consultationType ?? "Consultation"}
+      summary={
+        item ? (
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className={`gh-badge ${statusBadgeClass(item.status)}`}>
+              {humanize(item.status)}
+            </span>
+            <span style={{ color: "var(--portal-muted)" }}>
+              {formatAppDateTime(item.startAt, tz)}
+              {item.endAt ? ` – ${formatAppDateTime(item.endAt, tz)}` : ""}
+            </span>
+            {!isPatientView && item.meta?.doctorName ? (
+              <span style={{ color: "var(--portal-muted)" }}>· {item.meta.doctorName}</span>
+            ) : null}
+          </div>
+        ) : null
+      }
+      footer={
+        <div className="flex w-full items-center justify-end gap-2">
+          <button type="button" className="gh-btn gh-btn-ghost" onClick={onClose}>
+            Close
+          </button>
+        </div>
+      }
+    >
+      {item ? (
+        <>
+          <RecordDetailsSection title="Appointment">
+            <RecordDetailsField
+              label="Type"
+              value={item.meta?.consultationType ?? undefined}
+            />
+            {isDoctorView ? null : (
+              <RecordDetailsField label="Doctor" value={item.meta?.doctorName ?? undefined} />
+            )}
+            {isPatientView && !item.meta?.patientName ? null : (
+              <RecordDetailsField label="Patient" value={item.meta?.patientName ?? undefined} />
+            )}
+            <RecordDetailsField
+              label="Country"
+              value={item.meta?.countryCode?.toUpperCase()}
+            />
+            {item.meta?.orderId ? (
+              <RecordDetailsField
+                label="Order"
+                value={
+                  <Link
+                    href={`/admin/orders/${item.meta.orderId}`}
+                    className="font-semibold underline decoration-dotted underline-offset-2"
+                    style={{ color: "var(--portal-accent, #1B4D3E)" }}
+                  >
+                    {item.meta.orderNumber
+                      ? `#${item.meta.orderNumber}`
+                      : `#${item.meta.orderId.slice(-8).toUpperCase()}`}
+                  </Link>
+                }
+              />
+            ) : null}
+          </RecordDetailsSection>
+
+          <RecordDetailsSection title="Timing">
+            <RecordDetailsField label="Start" value={formatAppDateTime(item.startAt, tz)} />
+            {item.endAt ? (
+              <RecordDetailsField label="End" value={formatAppDateTime(item.endAt, tz)} />
+            ) : null}
+            <RecordDetailsField label="Timezone" value={humanTimezone(tz)} />
+          </RecordDetailsSection>
+
+          <RecordDetailsSection title="Links">
+            {joinState?.kind === "ready" && meetingUrl ? (
+              <a
+                href={meetingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="gh-btn gh-btn-primary flex w-full items-center justify-center gap-2"
+                style={{ minHeight: 44 }}
+              >
+                <Video className="size-4" aria-hidden />
+                Join video call
+              </a>
+            ) : (
+              <p className="text-xs" style={{ color: "var(--portal-muted)" }}>
+                {joinState?.kind === "unconfirmed"
+                  ? "This request hasn't been confirmed yet."
+                  : joinState?.kind === "cancelled"
+                    ? "This consultation was cancelled."
+                    : joinState?.kind === "ended"
+                      ? "This consultation has ended."
+                      : joinState?.kind === "too-early"
+                        ? `The join link opens at ${formatAppDateTime(joinState.opensAt.toISOString(), tz)}.`
+                        : "Join link will appear here once the call is scheduled."}
+              </p>
+            )}
+          </RecordDetailsSection>
+        </>
+      ) : null}
+    </RecordDetailsDrawer>
   );
 }

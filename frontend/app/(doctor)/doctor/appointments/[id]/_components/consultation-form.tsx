@@ -2,6 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
+import { PortalDialog } from "@/components/PortalDialog";
+import { Btn } from "@/components/portal-atoms";
 
 type SoapState = {
   chiefComplaint: string;
@@ -24,6 +27,9 @@ export type ConsultationFormCopy = {
   fieldPlan: string;
   fieldPlanHelper: string;
   signConfirm: string;
+  signDialogTitle: string;
+  signDialogConfirm: string;
+  cancel: string;
   couldNotSave: string;
   saved: string;
   networkError: string;
@@ -53,11 +59,26 @@ export function ConsultationForm({
 }) {
   const router = useRouter();
   const [state, setState] = useState<SoapState>(initial);
+  // Baseline for dirty-tracking (typed-note-lost fix, doctor audit 03/UX-001).
+  // Re-baselined to the just-saved text on a successful save so the guard
+  // clears; not derived from `initial` since that prop never changes after
+  // mount (SSR-only), unlike the patient-side forms that refetch client-side.
+  const [baseline, setBaseline] = useState<SoapState>(initial);
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<
     { kind: "success" | "error"; text: string } | null
   >(null);
+  const [signConfirmOpen, setSignConfirmOpen] = useState(false);
   const signed = state.status === "SIGNED";
+
+  const dirty =
+    !signed &&
+    (state.chiefComplaint !== baseline.chiefComplaint ||
+      state.subjective !== baseline.subjective ||
+      state.objective !== baseline.objective ||
+      state.assessment !== baseline.assessment ||
+      state.plan !== baseline.plan);
+  useUnsavedChanges(dirty);
 
   function update<K extends keyof SoapState>(key: K, value: SoapState[K]) {
     setState((prev) => ({ ...prev, [key]: value }));
@@ -65,6 +86,7 @@ export function ConsultationForm({
 
   function save() {
     setMessage(null);
+    const savedValues = state;
     startTransition(async () => {
       const payload = {
         chiefComplaint: state.chiefComplaint.trim() || null,
@@ -99,6 +121,7 @@ export function ConsultationForm({
           }));
         }
         setMessage({ kind: "success", text: copy.saved });
+        setBaseline(savedValues);
         router.refresh();
       } catch {
         setMessage({ kind: "error", text: copy.networkError });
@@ -108,9 +131,11 @@ export function ConsultationForm({
 
   function sign() {
     setMessage(null);
-    if (!confirm(copy.signConfirm)) {
-      return;
-    }
+    setSignConfirmOpen(true);
+  }
+
+  function confirmSign() {
+    setSignConfirmOpen(false);
     startTransition(async () => {
       try {
         const res = await fetch(
@@ -194,7 +219,7 @@ export function ConsultationForm({
       ) : null}
 
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[12px] text-[var(--portal-muted)]">
+        <p className="text-portal-meta text-[var(--portal-muted)]">
           {signed
             ? copy.signedAt.replace(
                 "{date}",
@@ -221,6 +246,27 @@ export function ConsultationForm({
           </button>
         </div>
       </div>
+
+      <PortalDialog
+        open={signConfirmOpen}
+        onClose={() => setSignConfirmOpen(false)}
+        title={copy.signDialogTitle}
+        danger
+        footer={
+          <>
+            <Btn variant="ghost" onClick={() => setSignConfirmOpen(false)}>
+              {copy.cancel}
+            </Btn>
+            <Btn variant="danger" disabled={pending} onClick={confirmSign}>
+              {pending ? copy.saving : copy.signDialogConfirm}
+            </Btn>
+          </>
+        }
+      >
+        <p className="text-sm" style={{ color: "var(--portal-text-2)" }}>
+          {copy.signConfirm}
+        </p>
+      </PortalDialog>
     </div>
   );
 }

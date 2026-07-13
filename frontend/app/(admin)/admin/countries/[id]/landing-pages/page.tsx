@@ -110,7 +110,7 @@ export default async function CountryLandingPagesAdmin({ params, searchParams }:
     <>
       <Link
         href={`/admin/countries/${id}`}
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-4 inline-flex items-center gap-1.5 text-portal-compact text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to {c.name}
       </Link>
@@ -155,7 +155,7 @@ export default async function CountryLandingPagesAdmin({ params, searchParams }:
             {pages.length === 0 ? (
               <Tr>
                 <Td>
-                  <span className="text-[12px] text-[var(--color-text-muted)]">No landing pages yet.</span>
+                  <span className="text-portal-meta text-[var(--color-text-muted)]">No landing pages yet.</span>
                 </Td>
                 <Td></Td>
                 <Td></Td>
@@ -170,7 +170,7 @@ export default async function CountryLandingPagesAdmin({ params, searchParams }:
                 return (
                   <Tr key={p.id}>
                     <Td>
-                      <span className="font-mono text-[12px]">/health/{p.slug}</span>
+                      <span className="font-mono text-portal-meta">/health/{p.slug}</span>
                     </Td>
                     <Td>{tr?.title ?? "—"}</Td>
                     <Td>
@@ -182,7 +182,7 @@ export default async function CountryLandingPagesAdmin({ params, searchParams }:
                       <div className="flex items-center justify-end gap-2">
                         <Link
                           href={`/admin/countries/${id}/landing-pages?edit=${p.slug}`}
-                          className="gh-btn gh-btn-soft text-[12px]"
+                          className="gh-btn gh-btn-soft text-portal-meta"
                         >
                           Edit
                         </Link>
@@ -190,7 +190,7 @@ export default async function CountryLandingPagesAdmin({ params, searchParams }:
                           <input type="hidden" name="pageId" value={p.id} />
                           <button
                             type="submit"
-                            className="gh-btn gh-btn-danger flex items-center gap-1 text-[12px]"
+                            className="gh-btn gh-btn-danger flex items-center gap-1 text-portal-meta"
                             aria-label={`Delete ${p.slug}`}
                           >
                             <Trash2 className="size-3" aria-hidden />
@@ -263,21 +263,21 @@ export default async function CountryLandingPagesAdmin({ params, searchParams }:
                 name="bodyHtml"
                 defaultValue={editTr?.bodyHtml ?? ""}
                 rows={16}
-                className="gh-input resize-y font-mono text-[12px]"
+                className="gh-input resize-y font-mono text-portal-meta"
                 placeholder="<p>…</p>"
               />
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" name="isPublished" defaultChecked={editPage?.isPublished ?? false} className="size-4" />
-              <span className="text-[13px] text-[var(--color-text-body)]">Published</span>
+              <span className="text-portal-compact text-[var(--color-text-body)]">Published</span>
             </label>
-            <div className="gh-admin-country-actions flex items-center gap-3">
-              <button type="submit" className="gh-btn gh-btn-primary">
-                Save landing page
-              </button>
+            <div className="gh-admin-country-actions flex items-center justify-end gap-3">
               <Link href={`/admin/countries/${id}/landing-pages`} className="gh-btn gh-btn-soft">
                 Cancel
               </Link>
+              <button type="submit" className="gh-btn gh-btn-primary">
+                Save landing page
+              </button>
             </div>
           </form>
         </AdminCard>

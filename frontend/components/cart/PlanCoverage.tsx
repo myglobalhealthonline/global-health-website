@@ -164,7 +164,7 @@ export function PlanCoverage({
           const b = badge(line);
           return (
             <li key={line.itemId} className="flex items-center justify-between gap-3 text-[13px]">
-              <span className="min-w-0 truncate" style={{ color: onDarkBody }}>
+              <span className="min-w-0 truncate" style={{ color: onDarkBody }} title={`${itemNames[line.itemId] ?? "—"}${line.familyMemberName ? ` · ${line.familyMemberName}` : ""}`}>
                 {itemNames[line.itemId] ?? "—"}
                 {line.familyMemberName ? (
                   <span className="ml-1.5 text-[11px]" style={{ color: onDarkMuted }}>

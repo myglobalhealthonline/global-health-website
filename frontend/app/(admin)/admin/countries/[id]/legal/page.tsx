@@ -152,7 +152,7 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
     <>
       <Link
         href={`/admin/countries/${id}`}
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-4 inline-flex items-center gap-1.5 text-portal-compact text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" />
         Back to {c.name}
@@ -189,7 +189,7 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
         {/* Medical Disclaimer */}
         <AdminCard>
           <SectionTitle>Medical Disclaimer</SectionTitle>
-          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+          <p className="mt-1 text-portal-meta text-[var(--color-text-muted)]">
             Country-specific medical/legal disclaimer copy, per language. The
             short version is embedded on service pages, the GP listing, the
             booking consent step and doctor profiles; the full version is shown
@@ -273,7 +273,7 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
         {/* Legal Backlinks */}
         <AdminCard>
           <SectionTitle>Legal Backlinks</SectionTitle>
-          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+          <p className="mt-1 text-portal-meta text-[var(--color-text-muted)]">
             URLs linked from legal pages / footer for regulatory transparency.
           </p>
           <div className="gh-admin-country-field-grid mt-4 grid gap-4 sm:grid-cols-2">
@@ -289,7 +289,7 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
         {/* Data Protection */}
         <AdminCard>
           <SectionTitle>Data Protection</SectionTitle>
-          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+          <p className="mt-1 text-portal-meta text-[var(--color-text-muted)]">
             Override &ldquo;GDPR&rdquo; with the country-specific law name (e.g. LGPD for Brazil).
           </p>
           <div className="gh-admin-country-field-grid mt-4 grid gap-4 sm:grid-cols-2">
@@ -407,7 +407,7 @@ function TextareaField({
         defaultValue={defaultValue ?? ""}
         className="gh-input resize-y"
       />
-      {hint ? <span className="text-[11px] text-[var(--color-text-muted)]">{hint}</span> : null}
+      {hint ? <span className="text-portal-thead text-[var(--color-text-muted)]">{hint}</span> : null}
     </label>
   );
 }

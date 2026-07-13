@@ -2,29 +2,40 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ShieldCheck, Clock, MapPin, Lock } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { ServiceHero } from "@/components/sections/ServiceHero";
 import { FinalCTA } from "@/components/sections/FinalCTA";
+import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
 import { getSiteUrl } from "@/lib/seo/site-url";
-import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
-import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { breadcrumbJsonLd, catalogueItemListJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
-  getPublicPage,
+  getPageContent,
   isSupportedLocale,
+  themeProp,
   type PublicLocale,
-} from "@/lib/content/get-public-page";
+} from "@/lib/content/get-page-content";
 import { getCountryHealthTests } from "@/lib/content/get-country-collections";
-import { RichBodySection } from "@/components/sections/RichBodySection";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { CartServiceCard } from "@/components/cards/CartServiceCard";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { FAQSection } from "@/components/sections/FAQSection";
+import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import {
+  ChecklistSection,
+  ServiceIntro,
+  WhyChooseSection,
+} from "@/components/sections/ServiceContentSections";
+import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
+import { getServiceHubContent } from "@/lib/content/service-hub-content";
+import { resolveBrandTitle } from "@/lib/seo/page-seo";
+import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 
 type Params = { country: string; lang: string };
 
@@ -43,16 +54,34 @@ export async function generateMetadata({
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
   // Admin-editable copy via /admin/pages (PageKey=HEALTH_TESTS).
   // Falls back to the hardcoded strings if no ContentPage row exists.
-  const { record: page } = await getPublicPage(code, "HEALTH_TESTS", lang as PublicLocale);
+  const { record: page } = await getPageContent(code, "HEALTH_TESTS", lang as PublicLocale);
+  const hub = getServiceHubContent("tests", {
+    countryName: config.name,
+    locale: lang,
+    serviceNames: [],
+  });
   const url = `${getSiteUrl()}/${country}/${lang}/lab-tests`;
-  const title = page?.seoTitle ?? `Lab Test Booking in ${config.name} · ${SITE_NAME}`;
-  const description =
-    page?.seoDescription ?? `Lab-quality home health tests delivered in ${config.name}.`;
+  const title = page?.seoTitle ?? `${hub.overview.title} · ${config.name}`;
+  const description = page?.seoDescription ?? hub.overview.body;
   return {
-    title,
+    title: resolveBrandTitle(title),
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/lab-tests") },
-    openGraph: { type: "website", siteName: SITE_NAME, url, title, description },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      url,
+      title,
+      description,
+      ...ogLocales(config, lang),
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
   };
 }
 
@@ -75,21 +104,29 @@ export default async function HealthTestsPage({
   // Honor the per-country `health-tests` toggle from /admin/country-features.
   const overlay = await getPublicCountryByCode(code);
   if (!isCountryFeatureEnabled(overlay, "health-tests")) notFound();
-  const [items, { record: rawPage, disabled: pageDisabled }] = await Promise.all([
+  const [
+    items,
+    { record: rawPage, disabled: pageDisabled },
+    { short: testsShortDisclaimer },
+  ] = await Promise.all([
     getCountryHealthTests(code, lang),
-    getPublicPage(code, "HEALTH_TESTS", lang as PublicLocale),
+    getPageContent(code, "HEALTH_TESTS", lang as PublicLocale),
+    getCountryDisclaimer(code, lang),
   ]);
 
-  const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
+  // Structured PageContent self-gates via publish status; legacy "pages"
+  // country-feature no longer gates it.
+  const page = pageDisabled ? null : rawPage;
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const t = c.testsPage;
   // Cart-first booking: hero/final CTA points at the tests grid below.
   const bookHref = "#tests";
-  // Provider-first defaults per Google Ads "restricted services" guidance.
-  // Lab-test pages also fall under restricted scope when copy emphasises
-  // the kit/sample/process. Anchor on the reviewing clinician instead.
-  const heroSubtitle =
-    page?.heroSubtitle ?? t.heroSubtitle.replace("{country}", config.name);
+  const hub = getServiceHubContent("tests", {
+    countryName: config.name,
+    locale: lang,
+    serviceNames: items.map((item) => item.title),
+  });
+  const heroSubtitle = page?.heroSubtitle ?? t.heroSubtitle.replace("{country}", config.name);
 
   return (
     <>
@@ -100,23 +137,39 @@ export default async function HealthTestsPage({
           { name: "Lab tests", url: `/${slug}/${lang}/lab-tests` },
         ])}
       />
+      <JsonLd data={faqJsonLd(hub.faq)} />
+      {items.length > 0 ? (
+        <JsonLd
+          data={catalogueItemListJsonLd(
+            items.map((item) => ({
+              name: item.title,
+              url: `/${slug}/${lang}/tests/${item.slug}`,
+            })),
+          )}
+        />
+      ) : null}
 
       <ServiceHero
         countryCode={config.code}
         countryLabel={t.countryLabel.replace("{country}", config.name)}
-        titleLead={t.titleLead}
-        titleAccent={t.titleAccent}
-        titleTrail={t.titleTrail}
+        titleLead={page?.heroTitle ?? t.titleLead}
+        titleAccent={page?.heroTitle ? "" : t.titleAccent}
+        titleTrail={page?.heroTitle ? undefined : t.titleTrail}
         lede={heroSubtitle}
-        primaryCta={{ label: t.ctaLabel, href: bookHref }}
+        primaryCta={{ label: page?.ctaLabel ?? t.ctaLabel, href: page?.ctaHref ?? bookHref }}
         secondaryCta={{
           label: t.secondaryLabel,
           href: `/${slug}/${lang}/doctors`,
         }}
         heroImage={{
-          src: "/images/stock/tests.jpg",
-          alt: `Lab-quality home health test results reviewed by a doctor in ${config.name}`,
+          src: page?.heroImageSrc ?? "/images/stock/tests.jpg",
+          alt: hub.overview.title,
           priority: true,
+        }}
+        badge={{
+          title: t.hero.feature1Title,
+          subtitle: t.hero.feature2Title,
+          accent: t.hero.feature3Title.replace("{country}", config.name),
         }}
         featureCards={[
           {
@@ -154,16 +207,14 @@ export default async function HealthTestsPage({
         ]}
       />
 
-      {/* Trust signals immediately under the hero, then straight into
-          the product grid — supporting copy moves below the offer. */}
-      <TrustRibbon
-        items={[
-          { v: t.trustLabQualityValue, l: t.trustLabQualityLabel, icon: "sparkles" },
-          { v: t.trustDoctorValue, l: t.trustDoctorLabel, icon: "doctor" },
-          { v: t.trustHomeValue, l: t.trustHomeLabel, icon: "shield" },
-          { v: t.trustGdprValue, l: t.trustGdprLabel, icon: "lock" },
-        ]}
-      />
+      {/* Admin-authored structured sections (DB-backed, toggle-gated per
+          country). Off by default — DB section replaces the generic hub
+          copy 1:1 when set, never both (Part B.3). */}
+      {page?.sections.intro ? (
+        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
+      ) : (
+        <ServiceIntro body={hub.overview.body} theme={themeProp(page?.introTheme, "light")} />
+      )}
 
       {items.length > 0 ? (
         <section
@@ -208,7 +259,7 @@ export default async function HealthTestsPage({
                     sampleType={t.sampleType}
                     resultsTimeline={t.resultsTimeline}
                     startingPrice={priceLabel}
-                    ctaLabel={`Add to cart · ${priceLabel}`}
+                    ctaLabel={c.testDetailPage.addToCart.replace("{price}", priceLabel)}
                     detailHref={`/${slug}/${lang}/tests/${t.slug}`}
                     soldOut={soldOut}
                     lowStock={lowStock}
@@ -221,6 +272,7 @@ export default async function HealthTestsPage({
         </section>
       ) : (
         <section
+          id="tests"
           className="relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
           style={{
             padding: "clamp(48px,6vw,80px) 0",
@@ -228,17 +280,92 @@ export default async function HealthTestsPage({
           }}
         >
           <div className="mx-auto max-w-3xl px-5 md:px-10 text-center">
-            <p style={{ color: "rgba(255,255,255,0.55)" }}>
-              {t.comingSoon.replace("{country}", config.name)}
-            </p>
+            <h2 className="text-2xl font-extrabold text-white">{hub.emptyState.title}</h2>
+            <p className="mt-4" style={{ color: "rgba(255,255,255,0.65)" }}>{hub.emptyState.body}</p>
           </div>
         </section>
       )}
 
-      {/* Admin-edited rich body from ContentPage (HEALTH_TESTS). */}
-      <RichBodySection html={page?.body} theme="light" />
+      {page?.sections.whoFor ? (
+        <ChecklistSection
+          eyebrow="Who it's for"
+          title={page.whoForTitle!}
+          intro={page.whoForIntro ?? undefined}
+          items={page.whoForItems}
+          theme={themeProp(page?.whoForTheme, "light")}
+        />
+      ) : (
+        <ChecklistSection {...hub.whoFor} theme={themeProp(page?.whoForTheme, "light")} />
+      )}
 
-      <FinalCTA primaryHref={bookHref} secondaryHref={`/${slug}/${lang}/doctors`} />
+      {page?.sections.whyChoose ? (
+        <WhyChooseSection
+          title={page.whyChooseTitle!}
+          items={page.whyChooseItems}
+          theme={themeProp(page?.whyChooseTheme, "soft")}
+        />
+      ) : (
+        <WhyChooseSection
+          title={hub.whyChoose.title}
+          items={hub.whyChoose.items}
+          theme={themeProp(page?.whyChooseTheme, "soft")}
+        />
+      )}
+
+      {page?.sections.faq ? (
+        <FAQSection
+          title={t.watermark}
+          items={page.faq}
+          theme={themeProp(page?.faqTheme, "dark")}
+        />
+      ) : (
+        <FAQSection title={t.watermark} items={hub.faq} />
+      )}
+
+      <DoctifyReviewsSection
+        theme="ivory"
+        variant="carousel"
+        language={lang}
+        eyebrow="Patient reviews"
+        headline="Trusted by patients"
+        headlineAccent="across Europe"
+        body="Independent, verified reviews collected by Doctify from patients treated by our clinicians."
+      />
+
+      <FinalCTA
+        primaryHref={bookHref}
+        secondaryHref={`/${slug}/${lang}`}
+        i18n={{
+          eyebrow: t.reviewedEyebrow,
+          liveLabel: config.name,
+          calendarLine: heroSubtitle,
+          headlinePre: t.titleLead,
+          headlineAccent: t.titleAccent,
+          headlinePost: t.titleTrail,
+          body: hub.overview.body,
+          primaryCta: t.ctaLabel,
+          secondaryCta: t.secondaryLabel,
+        }}
+      />
+      <StickyBookingCTA href={bookHref} label={t.ctaLabel} />
+      <section
+        className="relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
+        style={{ padding: "clamp(28px,4vw,48px) 0" }}
+      >
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <MedicalDisclaimer
+            variant="short"
+            text={testsShortDisclaimer ?? hub.importantInformation.paragraphs[0]}
+          />
+        </div>
+      </section>
+
+      {page?.sections.disclaimer ? (
+        <MedicalDisclaimer
+          paragraphs={page.disclaimerParagraphs}
+          theme={themeProp(page?.disclaimerTheme, "dark")}
+        />
+      ) : null}
     </>
   );
 }

@@ -1,6 +1,8 @@
 import Link from "next/link";
+import type { CSSProperties, ReactNode } from "react";
 import {
   AlertCircle,
+  AlertTriangle,
   CalendarDays,
   ChevronRight,
   Clock,
@@ -81,11 +83,44 @@ export default async function AccountOverviewPage() {
   const paidPayments = appointments.filter(
     (a) => a.paymentStatus === "PAID",
   ).length;
-  const paymentActionCount = appointments.filter(
+  const unpaidAppointments = appointments.filter(
     (a) =>
       (a.amountCents ?? 0) > 0 &&
       ["FAILED", "REQUIRES_ACTION", "UNPAID"].includes(a.paymentStatus),
+  );
+  const paymentActionCount = unpaidAppointments.length;
+  const awaitingConfirmation = appointments.filter(
+    (a) => a.status === "REQUEST_RECEIVED" || a.status === "UNDER_REVIEW",
   ).length;
+
+  // ── Needs attention band ───────────────────────────────────────────
+  // Built only from data already fetched above (appointments) — no extra
+  // API calls. Unpaid bookings get one row each (deep-links to the exact
+  // booking); requests awaiting confirmation collapse into a single row.
+  type NeedsAttentionRow = { key: string; icon: ReactNode; label: string; href: string; action: string };
+  const needsAttention: NeedsAttentionRow[] = [
+    ...unpaidAppointments.map((appt) => ({
+      key: `pay-${appt.id}`,
+      icon: <CreditCard className="size-4 shrink-0" style={{ color: "var(--portal-warning-text)" }} aria-hidden />,
+      label: a.dashboard.needsAttentionPaymentRow.replace("{type}", appt.consultationType),
+      href: `/account/bookings?booking=${appt.id}`,
+      action: a.dashboard.payNow,
+    })),
+    ...(awaitingConfirmation > 0
+      ? [
+          {
+            key: "awaiting-confirmation",
+            icon: <Clock className="size-4 shrink-0" style={{ color: "var(--portal-warning-text)" }} aria-hidden />,
+            label:
+              awaitingConfirmation === 1
+                ? a.dashboard.needsAttentionAwaitingOne
+                : a.dashboard.needsAttentionAwaitingMany.replace("{count}", String(awaitingConfirmation)),
+            href: "/account/bookings",
+            action: a.dashboard.reviewAction,
+          },
+        ]
+      : []),
+  ];
 
   // ── Next scheduled call ────────────────────────────────────────────
   const nextCall = appointments
@@ -153,8 +188,42 @@ export default async function AccountOverviewPage() {
         }
       />
 
+      {/* ── Needs attention (conditional, stat cards below stay) ────── */}
+      {needsAttention.length > 0 ? (
+        <div
+          className="mt-4 rounded-[var(--radius-card)] border-2 px-4 py-4"
+          style={{ borderColor: "var(--portal-warning)", background: "var(--portal-warning-soft)" }}
+        >
+          <div className="mb-3 flex items-center gap-2">
+            <AlertTriangle className="size-5 shrink-0" style={{ color: "var(--portal-warning-text)" }} aria-hidden />
+            <h2 className="text-sm font-bold uppercase tracking-wide" style={{ color: "var(--portal-warning-text)" }}>
+              {a.dashboard.needsAttentionTitle}
+            </h2>
+          </div>
+          <ul className="divide-y divide-[var(--portal-line)]">
+            {needsAttention.map((row) => (
+              <li key={row.key} className="flex items-center justify-between gap-3 py-2 first:pt-0 last:pb-0">
+                <span className="flex min-w-0 items-center gap-2 text-sm font-medium text-[var(--portal-text)]">
+                  {row.icon}
+                  <span className="truncate">{row.label}</span>
+                </span>
+                <Link
+                  href={row.href}
+                  className="shrink-0 text-portal-compact font-semibold text-[var(--portal-primary)] hover:underline"
+                >
+                  {row.action}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
       {/* ── Stat tiles ─────────────────────────────────────────────── */}
-      <div className="gh-patient-stat-grid grid gap-3 sm:grid-cols-[1fr_0.9fr_1.1fr]">
+      <div
+        className="gh-patient-stat-grid gh-portal-stat-row grid gap-3"
+        style={{ "--card-count": 3 } as CSSProperties}
+      >
         <StatCard
           tone="brand"
           label={a.dashboard.openLabel}
@@ -184,21 +253,25 @@ export default async function AccountOverviewPage() {
             label: "Next appointment",
             value: nextCall?.scheduledAt ? formatAppDateTime(nextCall.scheduledAt) : "Not scheduled",
             hint: nextCall?.meetingUrl ? "Meet link ready" : "Book or wait for scheduling",
+            icon: <CalendarDays aria-hidden />,
           },
           {
             label: "Payments",
             value: paymentActionCount > 0 ? `${paymentActionCount} needs action` : `${paidPayments} paid`,
             hint: `${payments.length} receipt${payments.length === 1 ? "" : "s"} on file`,
+            icon: <CreditCard aria-hidden />,
           },
           {
             label: "Records",
             value: ghn ? "GHN active" : "Profile pending",
             hint: "Used for prescriptions and medical documents",
+            icon: <ShieldCheck aria-hidden />,
           },
           {
             label: "Quick path",
             value: "Book care",
             hint: "Start a consultation or review appointments",
+            icon: <ChevronRight aria-hidden />,
           },
         ]}
       />
@@ -224,7 +297,7 @@ export default async function AccountOverviewPage() {
                   <p className="text-sm font-bold text-[var(--portal-text)]">
                     {a.dashboard.verifyEmail}
                   </p>
-                  <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
+                  <p className="mt-1 text-portal-compact text-[var(--portal-muted)]">
                     {a.dashboard.verifyEmailBody.replace("{email}", user.email)}
                   </p>
                 </div>
@@ -253,7 +326,7 @@ export default async function AccountOverviewPage() {
                   aria-hidden
                 />
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "var(--trustpilot-green)" }}>
+                  <p className="text-portal-thead font-bold uppercase tracking-[0.18em]" style={{ color: "var(--trustpilot-green)" }}>
                     Share your experience
                   </p>
                   <p className="mt-0.5 text-sm font-medium text-[var(--portal-text)]">
@@ -276,8 +349,10 @@ export default async function AccountOverviewPage() {
         </div>
       ) : null}
 
-      {/* ── Subscription dashboard (renders nothing for non-subscribers) ── */}
-      <SubscriptionDashboard locale={locale} />
+      {/* ── Membership section: plan card only (owner request — everything
+          else, credits/wellness/perks/ledger, lives on /account/membership).
+          Renders nothing for non-subscribers. ── */}
+      <SubscriptionDashboard locale={locale} variant="compact" />
 
       {/* ── Main grid: Recent bookings + Quick actions ────────────── */}
       <div className="gh-patient-overview-grid mt-5 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
@@ -287,7 +362,7 @@ export default async function AccountOverviewPage() {
             right={
               <Link
                 href="/account/bookings"
-                className="text-[13px] font-semibold text-[var(--portal-primary)] hover:underline"
+                className="text-portal-compact font-semibold text-[var(--portal-primary)] hover:underline"
               >
                 {a.dashboard.seeAll}
               </Link>
@@ -337,12 +412,12 @@ export default async function AccountOverviewPage() {
                       </p>
                     </div>
                     <Btn
-                      href="/account/bookings"
+                      href={`/account/bookings?booking=${b.id}`}
                       variant="secondary"
                       size="sm"
                       iconRight={<ChevronRight className="size-3.5" />}
                     >
-                      {a.dashboard.openLabel}
+                      {a.dashboard.viewDetails}
                     </Btn>
                   </li>
                 ))}
@@ -439,7 +514,7 @@ function QuickLink({
           <span className="text-sm font-semibold text-[var(--portal-text)]">
             {label}
           </span>
-          <span className="text-[11px] text-[var(--portal-muted)]">{hint}</span>
+          <span className="text-portal-thead text-[var(--portal-muted)]">{hint}</span>
         </span>
       </span>
       <ChevronRight className="size-4 text-[var(--portal-muted)]" aria-hidden />

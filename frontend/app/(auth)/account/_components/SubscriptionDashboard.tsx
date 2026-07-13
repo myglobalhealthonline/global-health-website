@@ -32,15 +32,21 @@ import { AdminCard, Pill, type PillTone } from "@/components/portal-atoms";
 /**
  * `embedded` renders the benefit detail WITHOUT the plan summary card or the
  * section heading — used on the Membership page, where `ManagePanel` already
- * shows the plan, status, billing date and lifecycle actions. The default
- * (overview dashboard) is unchanged.
+ * shows the plan, status, billing date and lifecycle actions.
+ *
+ * `variant="compact"` is the opposite cut: ONLY the plan card, nothing else
+ * (credits/wellness/perks/ledger). Used on the dashboard overview — owner
+ * request: "overview page is directed to membership, just display membership
+ * card nothing more". The full render (default) stays on the Membership page.
  */
 export async function SubscriptionDashboard({
   locale,
   embedded = false,
+  variant,
 }: {
   locale: LocaleCode;
   embedded?: boolean;
+  variant?: "compact";
 }) {
   const [sub, credits, redemptions] = await Promise.all([
     getServerSubscription(),
@@ -95,10 +101,68 @@ export async function SubscriptionDashboard({
   const perkLabel = (key: string): string =>
     (t as Record<string, string>)[`perk_${key}`] ?? key;
 
+  if (variant === "compact") {
+    return (
+      <section className="gh-patient-subscription-dashboard mt-6">
+        <div
+          className="gh-patient-membership-card overflow-hidden"
+          style={{
+            borderRadius: "var(--portal-radius-lg)",
+            border: "1px solid var(--portal-line)",
+            boxShadow: "var(--portal-shadow)",
+          }}
+        >
+          <div
+            className="gh-patient-membership-card__header flex items-start justify-between gap-3 p-5"
+            style={{
+              background: "var(--portal-chrome-solid)",
+              borderBottom: "1px solid var(--portal-member, var(--portal-chrome-border))",
+            }}
+          >
+            <span
+              className="inline-flex size-10 items-center justify-center rounded-[12px]"
+              style={{ background: "color-mix(in srgb, var(--portal-member, var(--portal-accent)) 18%, transparent)", color: "var(--portal-member, var(--portal-accent))" }}
+            >
+              <Award className="size-5" aria-hidden />
+            </span>
+            <Pill tone={statusTone} withDot>{statusLabel}</Pill>
+          </div>
+          <div className="p-5" style={{ background: "var(--portal-surface)" }}>
+            <p className="text-portal-thead font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
+              {t.planCardTitle}
+            </p>
+            <p className="mt-1 font-extrabold tracking-[-0.02em]" style={{ fontSize: "1.25rem", color: "var(--portal-text)" }}>
+              {sub.plan.name}
+            </p>
+            <p className="mt-1 text-sm" style={{ color: "var(--portal-muted)" }}>
+              {priceLabel} {subscription.pricing.perMonth}
+              {nextBilling ? ` · ${interpolate(t.nextBilling, { date: nextBilling })}` : ""}
+            </p>
+            {sub.paidMonthsCount > 0 ? (
+              <p className="mt-0.5 text-xs" style={{ color: "var(--portal-muted)" }}>
+                {interpolate(
+                  pluralTemplate(sub.paidMonthsCount, t.memberMonthsSingular, t.memberMonths),
+                  { months: sub.paidMonthsCount },
+                )}
+              </p>
+            ) : null}
+            <Link
+              href="/account/membership"
+              className="mt-4 inline-flex text-sm font-semibold underline"
+              style={{ color: "var(--portal-primary)" }}
+            >
+              {t.manage}
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="gh-patient-subscription-dashboard mt-6">
       {embedded ? null : (
-        <h2 className="mb-3 text-[13px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
+        <h2 className="mb-3 text-portal-compact font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
           {t.heading}
         </h2>
       )}
@@ -133,7 +197,7 @@ export async function SubscriptionDashboard({
             <Pill tone={statusTone} withDot>{statusLabel}</Pill>
           </div>
           <div className="p-5" style={{ background: "var(--portal-surface)" }}>
-            <p className="text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
+            <p className="text-portal-thead font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
               {t.planCardTitle}
             </p>
             <p className="mt-1 font-extrabold tracking-[-0.02em]" style={{ fontSize: "1.25rem", color: "var(--portal-text)" }}>
@@ -173,7 +237,7 @@ export async function SubscriptionDashboard({
               <Stethoscope className="size-5" aria-hidden />
             </span>
           </div>
-          <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
+          <p className="mt-4 text-portal-thead font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
             {t.creditsTitle}
           </p>
           {benefitsLocked ? (
@@ -227,7 +291,7 @@ export async function SubscriptionDashboard({
               <Sparkles className="size-5" aria-hidden />
             </span>
           </div>
-          <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
+          <p className="mt-4 text-portal-thead font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
             {t.wellnessTitle}
           </p>
           {hasWellness ? (
@@ -271,7 +335,7 @@ export async function SubscriptionDashboard({
         <AdminCard className="mt-4">
           <div className="flex items-center gap-2.5">
             <CreditCard className="size-4" style={{ color: "var(--portal-primary)" }} aria-hidden />
-            <p className="text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
+            <p className="text-portal-thead font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
               {t.perksTitle}
             </p>
           </div>
@@ -317,40 +381,50 @@ export async function SubscriptionDashboard({
         <AdminCard className="mt-4">
           <div className="flex items-center gap-2.5">
             <CreditCard className="size-4" style={{ color: "var(--portal-primary)" }} aria-hidden />
-            <p className="text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
+            <p className="text-portal-thead font-bold uppercase tracking-[0.14em]" style={{ color: "var(--portal-muted)" }}>
               {t.activityTitle}
             </p>
           </div>
           <ul className="mt-3">
-            {credits.ledger.slice(0, 8).map((entry, i) => (
-              <li
-                key={i}
-                className="grid gap-2 border-t py-2.5 text-sm first:border-t-0 sm:grid-cols-[1fr_auto] sm:items-center"
-                style={{ borderColor: "var(--portal-line)" }}
-              >
-                <div className="flex items-center gap-2.5">
-                  {entry.kind === "WELLNESS" ? (
-                    <Sparkles className="size-4 shrink-0" style={{ color: "var(--portal-accent)" }} aria-hidden />
-                  ) : (
-                    <Stethoscope className="size-4 shrink-0" style={{ color: "var(--portal-primary)" }} aria-hidden />
-                  )}
-                  <span style={{ color: "var(--portal-text)" }}>
-                    {creditReasonLabel(entry.reason, t as Record<string, string>)}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 sm:justify-end">
-                  <span
-                    className="font-semibold tabular-nums"
-                    style={{ color: entry.deltaCredits >= 0 ? "var(--portal-primary)" : "var(--portal-danger-text)" }}
-                  >
-                    {formatCreditDelta(entry.deltaCredits)}
-                  </span>
-                  <span className="text-xs" style={{ color: "var(--portal-muted)" }}>
-                    {formatAppDate(entry.createdAt)}
-                  </span>
-                </div>
-              </li>
-            ))}
+            {credits.ledger.slice(0, 8).map((entry, i) => {
+              // A CONSUMED row with a 0 delta is the completion echo of the
+              // paired "Reserved · −1" row — the delta already moved there,
+              // so showing "Used for consultation · 0" reads as a no-op.
+              // Relabel + hide the delta for this specific case only.
+              const isCompletedConsumption = entry.reason === "CONSUMED" && entry.deltaCredits === 0;
+              const label = isCompletedConsumption
+                ? t.reason_CONSUMED_COMPLETED
+                : creditReasonLabel(entry.reason, t as Record<string, string>);
+              return (
+                <li
+                  key={i}
+                  className="grid gap-2 border-t py-2.5 text-sm first:border-t-0 sm:grid-cols-[1fr_auto] sm:items-center"
+                  style={{ borderColor: "var(--portal-line)" }}
+                >
+                  <div className="flex items-center gap-2.5">
+                    {entry.kind === "WELLNESS" ? (
+                      <Sparkles className="size-4 shrink-0" style={{ color: "var(--portal-accent)" }} aria-hidden />
+                    ) : (
+                      <Stethoscope className="size-4 shrink-0" style={{ color: "var(--portal-primary)" }} aria-hidden />
+                    )}
+                    <span style={{ color: "var(--portal-text)" }}>{label}</span>
+                  </div>
+                  <div className="flex items-center gap-3 sm:justify-end">
+                    {isCompletedConsumption ? null : (
+                      <span
+                        className="font-semibold tabular-nums"
+                        style={{ color: entry.deltaCredits >= 0 ? "var(--portal-primary)" : "var(--portal-danger-text)" }}
+                      >
+                        {formatCreditDelta(entry.deltaCredits)}
+                      </span>
+                    )}
+                    <span className="text-xs" style={{ color: "var(--portal-muted)" }}>
+                      {formatAppDate(entry.createdAt)}
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </AdminCard>
       ) : null}

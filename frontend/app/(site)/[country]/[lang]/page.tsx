@@ -16,7 +16,13 @@ import { StatsBand, type StatBandItem } from "@/components/sections/StatsBand";
 import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
-import { RichBodySection } from "@/components/sections/RichBodySection";
+import { FAQSection } from "@/components/sections/FAQSection";
+import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import {
+  ServiceIntro,
+  ChecklistSection,
+  WhyChooseSection,
+} from "@/components/sections/ServiceContentSections";
 import { countries } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
@@ -27,15 +33,17 @@ import {
   medicalBusinessJsonLd,
   organizationJsonLd,
   websiteJsonLd,
+  faqJsonLd,
 } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { resolveBrandTitle } from "@/lib/seo/page-seo";
-import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
-  getPublicPage,
+  getPageContent,
   isSupportedLocale,
+  themeProp,
   type PublicLocale,
-} from "@/lib/content/get-public-page";
+} from "@/lib/content/get-page-content";
 import {
   getCountryDoctors,
   getCountryServices,
@@ -72,7 +80,7 @@ export async function generateMetadata({
   if (!config) return { title: SITE_NAME };
   if (!isSupportedLocale(lang)) return { title: SITE_NAME };
 
-  const { record: page } = await getPublicPage(code, "HOME", lang as PublicLocale);
+  const { record: page } = await getPageContent(code, "HOME", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}`;
   const title =
     page?.seoTitle ?? `${config.name} — registered doctors and specialists`;
@@ -89,7 +97,8 @@ export async function generateMetadata({
       title,
       description,
       url,
-      ...(page?.ogImage?.src ? { images: [{ url: page.ogImage.src }] } : {}),
+      ...ogLocales(config, lang),
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
     },
     twitter: { card: "summary_large_image", title, description },
   };
@@ -171,7 +180,7 @@ export default async function CountryLangHomePage({
     gpLanguages,
   ] =
     await Promise.all([
-      getPublicPage(code, "HOME", lang as PublicLocale),
+      getPageContent(code, "HOME", lang as PublicLocale),
       getCountryDoctors(code, lang),
       // One query for every kind, partitioned in memory below — replaces the
       // former three per-kind round-trips (each with its own country check).
@@ -194,7 +203,7 @@ export default async function CountryLangHomePage({
 
   // Null out CMS content when the page entry is disabled or the "pages"
   // feature is toggled off — structural sections still render with defaults.
-  const page = (pageDisabled || !isCountryFeatureEnabled(config, "pages")) ? null : rawPage;
+  const page = pageDisabled ? null : rawPage;
 
   const prescriptionsHref = `/${slug}/${lang}/prescriptions`;
   const catalogLabels = {
@@ -493,12 +502,25 @@ export default async function CountryLangHomePage({
         ctaLabel={page?.ctaLabel ?? null}
         i18n={t.countryHero}
       />
+      {page?.sections.faq ? <JsonLd data={faqJsonLd(page.faq)} /> : null}
       <TrustMarquee items={trustMarqueeItems} />
-      <RichBodySection html={page?.body} theme="light" />
+      {/* Overview intro sits BELOW the trust marquee (marquee hugs the hero). */}
+      {page?.sections.intro ? (
+        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
+      ) : null}
       <TrustRibbon items={trustItems} theme="light" />
       <ServiceCatalog services={serviceCatalogItems} i18n={tServices.catalog} />
       <StatsBand items={statsItems} theme="light" i18n={t.statsBand} />
       <DoctifyReviewsSection theme="ivory" variant="carousel" language={lang} />
+      {page?.sections.whoFor ? (
+        <ChecklistSection
+          eyebrow="Who it's for"
+          title={page.whoForTitle!}
+          intro={page.whoForIntro ?? undefined}
+          items={page.whoForItems}
+          theme={themeProp(page?.whoForTheme, "light")}
+        />
+      ) : null}
       {/* ── Team section — featured card + full grid under one heading ── */}
       <section className="relative border-t border-white/6 gh2-section-forest gh-medical-pattern gh-medical-pattern-dark">
         <div
@@ -578,6 +600,13 @@ export default async function CountryLangHomePage({
           />
         </div>
       </section>
+      {page?.sections.whyChoose ? (
+        <WhyChooseSection
+          title={page.whyChooseTitle!}
+          items={page.whyChooseItems}
+          theme={themeProp(page?.whyChooseTheme, "soft")}
+        />
+      ) : null}
       {countryTrust ? (
         <>
           <VerifiedProfessionals trust={countryTrust} locale={lang} />
@@ -585,8 +614,17 @@ export default async function CountryLangHomePage({
         </>
       ) : null}
       <HowItWorksNarrative theme="light" i18n={t.howItWorks} />
+      {page?.sections.faq ? (
+        <FAQSection items={page.faq} theme={themeProp(page?.faqTheme, "dark")} />
+      ) : null}
       <FinalCTA primaryHref={bookHref} secondaryHref={doctorsHref} i18n={t.finalCta} />
       <StickyBookingCTA href={bookHref} />
+      {page?.sections.disclaimer ? (
+        <MedicalDisclaimer
+          paragraphs={page.disclaimerParagraphs}
+          theme={themeProp(page?.disclaimerTheme, "dark")}
+        />
+      ) : null}
     </>
   );
 }

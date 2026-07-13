@@ -10,6 +10,7 @@ import {
   type NationalityDoc,
   type VerificationStatus,
 } from "@/lib/api/account-profile-api";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type NationalityI18n = {
   title: string;
@@ -17,11 +18,13 @@ type NationalityI18n = {
   slotTitle: string;
   country: string;
   countryPlaceholder: string;
+  fieldRequired: string;
   documentType: string;
   documentNumber: string;
   storedEncrypted: string;
   expiryDate: string;
   save: string;
+  saveSlot: string;
   saving: string;
   saved: string;
   remove: string;
@@ -56,11 +59,13 @@ const DEFAULT_I18N: NationalityI18n = {
   slotTitle: "Nationality {n}",
   country: "Country",
   countryPlaceholder: "e.g. Ireland, Pakistan",
+  fieldRequired: "This field is required.",
   documentType: "Document type",
   documentNumber: "Document number",
   storedEncrypted: "Stored encrypted",
   expiryDate: "Expiry date",
   save: "Save",
+  saveSlot: "Save Nationality {n}",
   saving: "Saving…",
   saved: "Nationality saved",
   remove: "Remove",
@@ -117,12 +122,14 @@ function SlotCard({
   doc,
   onSaved,
   onDeleted,
+  onDirtyChange,
   i18n,
 }: {
   slot: 1 | 2;
   doc: NationalityDoc | undefined;
   onSaved: (doc: NationalityDoc) => void;
   onDeleted: (slot: 1 | 2) => void;
+  onDirtyChange?: (slot: 1 | 2, dirty: boolean) => void;
   i18n: NationalityI18n;
 }) {
   const BADGE: Record<VerificationStatus, { label: string; cls: string }> = {
@@ -144,16 +151,30 @@ function SlotCard({
   const [delPending, startDel] = useTransition();
   const [uploadPending, startUpload] = useTransition();
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  // On-blur required check for `nationalityCountry` — same rule the native
+  // `required` attribute + onSave bail already enforce, surfaced earlier.
+  const [countryTouched, setCountryTouched] = useState(false);
 
   useEffect(() => {
     // Reset local edit state when a fresh `doc` snapshot arrives from the server.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setForm(doc ? docToForm(doc) : EMPTY_FORM);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCountryTouched(false);
   }, [doc]);
 
   function update(key: keyof SlotFormState, val: string) {
     setForm((f) => ({ ...f, [key]: val }));
   }
+
+  const baseline = doc ? docToForm(doc) : EMPTY_FORM;
+  const dirty = JSON.stringify(form) !== JSON.stringify(baseline);
+  const countryError =
+    countryTouched && form.nationalityCountry.trim() === "" ? i18n.fieldRequired : undefined;
+  useUnsavedChanges(dirty);
+  useEffect(() => {
+    onDirtyChange?.(slot, dirty);
+  }, [slot, dirty, onDirtyChange]);
 
   function onSave(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -238,7 +259,7 @@ function SlotCard({
         </p>
       )}
 
-      <form onSubmit={onSave} className="space-y-3">
+      <form onSubmit={onSave} method="post" className="space-y-3">
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block">
             <span className="gh-field-label">{i18n.country}</span>
@@ -246,11 +267,24 @@ function SlotCard({
               type="text"
               value={form.nationalityCountry}
               onChange={(e) => update("nationalityCountry", e.target.value)}
+              onBlur={() => setCountryTouched(true)}
               maxLength={100}
               required
+              aria-invalid={countryError ? true : undefined}
+              aria-describedby={countryError ? `nationality-${slot}-country-error` : undefined}
               placeholder={i18n.countryPlaceholder}
               className="gh-input mt-1 min-w-0"
             />
+            {countryError ? (
+              <p
+                id={`nationality-${slot}-country-error`}
+                role="alert"
+                className="mt-1 text-xs"
+                style={{ color: "var(--portal-danger-text)" }}
+              >
+                {countryError}
+              </p>
+            ) : null}
           </label>
           <label className="block">
             <span className="gh-field-label">{i18n.documentType}</span>
@@ -286,14 +320,16 @@ function SlotCard({
           </label>
         </div>
 
-        <button
-          type="submit"
-          disabled={savePending}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60 sm:w-auto"
-        >
-          <Save aria-hidden className="size-4" />
-          {savePending ? i18n.saving : i18n.save}
-        </button>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={savePending}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60 sm:w-auto"
+          >
+            <Save aria-hidden className="size-4" />
+            {savePending ? i18n.saving : i18n.saveSlot.replace("{n}", String(slot))}
+          </button>
+        </div>
       </form>
 
       {doc && (
@@ -329,6 +365,7 @@ function SlotCard({
 
       {msg ? (
         <p
+          role={msg.kind === "ok" ? "status" : "alert"}
           className={`mt-3 rounded-md px-3 py-2 text-sm ${
             msg.kind === "ok" ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"
           }`}
@@ -340,9 +377,24 @@ function SlotCard({
   );
 }
 
-export function NationalityTab({ i18n = DEFAULT_I18N }: { i18n?: NationalityI18n }) {
+export function NationalityTab({
+  i18n = DEFAULT_I18N,
+  onDirtyChange,
+}: {
+  i18n?: NationalityI18n;
+  onDirtyChange?: (dirty: boolean) => void;
+}) {
   const [docs, setDocs] = useState<NationalityDoc[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [slotDirty, setSlotDirty] = useState<{ 1: boolean; 2: boolean }>({ 1: false, 2: false });
+
+  function handleSlotDirty(slot: 1 | 2, dirty: boolean) {
+    setSlotDirty((prev) => (prev[slot] === dirty ? prev : { ...prev, [slot]: dirty }));
+  }
+
+  useEffect(() => {
+    onDirtyChange?.(slotDirty[1] || slotDirty[2]);
+  }, [slotDirty, onDirtyChange]);
 
   useEffect(() => {
     void fetchNationality().then((res) => {
@@ -388,10 +440,24 @@ export function NationalityTab({ i18n = DEFAULT_I18N }: { i18n?: NationalityI18n
         {i18n.subtitle}
       </p>
 
-      <SlotCard slot={1} doc={slot1} onSaved={handleSaved} onDeleted={handleDeleted} i18n={i18n} />
+      <SlotCard
+        slot={1}
+        doc={slot1}
+        onSaved={handleSaved}
+        onDeleted={handleDeleted}
+        onDirtyChange={handleSlotDirty}
+        i18n={i18n}
+      />
 
       {slot1 ? (
-        <SlotCard slot={2} doc={slot2} onSaved={handleSaved} onDeleted={handleDeleted} i18n={i18n} />
+        <SlotCard
+          slot={2}
+          doc={slot2}
+          onSaved={handleSaved}
+          onDeleted={handleDeleted}
+          onDirtyChange={handleSlotDirty}
+          i18n={i18n}
+        />
       ) : (
         <p className="text-xs text-[var(--portal-muted)]">
           {i18n.enableSecond}

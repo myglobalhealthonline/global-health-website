@@ -25,6 +25,7 @@ import { PlanTranslationTabs } from "../../../_components/plan-translation-tabs"
 import { PlanEditTabs } from "../../../_components/plan-edit-tabs";
 import { AdminCard, Btn, PageHeader, Pill, SectionHeader } from "../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
+import { displayNameFrom } from "@/lib/admin/display-name";
 
 export const dynamic = "force-dynamic";
 
@@ -336,13 +337,13 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
     <>
       <Link
         href="/admin/plans"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to plans
       </Link>
       <PageHeader
         eyebrow="Subscriptions"
-        title={plan.name}
+        title={displayNameFrom(plan.name, plan.translations)}
         description={`${PLAN_TYPE_LABEL[plan.planType] ?? plan.planType} plan for ${plan.country.name}. Edit each section below, then press its Save button — changes go live straight away.`}
         actions={
           <Btn href={`/admin/plans/new?countryId=${encodeURIComponent(plan.countryId)}`} variant="ghost">
@@ -375,7 +376,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                 <SectionHeader title="Basics & price" description="Name, monthly price, and what's included each month. Saving updates billing automatically." />
           <form action={updatePlanAction} className="flex flex-col gap-8 p-6">
             <PlanFields countries={countries} initial={plan} pinnedCountryId={plan.countryId} />
-            <div className="border-t border-[var(--color-border)] pt-6">
+            <div className="flex justify-end border-t border-[var(--color-border)] pt-6">
               <button type="submit" className="gh-btn gh-btn-primary">
                 Save plan
               </button>
@@ -428,7 +429,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                       <input type="hidden" name="serviceId" value={rule.serviceId} />
                       <ConfirmDeleteButton
                         message={`Remove the rule for "${rule.service.name}"? This deletes it from the plan.`}
-                        className="text-[13px] font-semibold text-[var(--color-status-error-text)] hover:underline"
+                        className="text-portal-compact font-semibold text-[var(--color-status-error-text)] hover:underline"
                       >
                         Remove
                       </ConfirmDeleteButton>
@@ -437,7 +438,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                 ))}
               </ul>
             )}
-            <p className="mb-4 rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] px-4 py-3 text-[13px] text-[var(--color-text-body)]">
+            <p className="mb-4 rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] px-4 py-3 text-portal-compact text-[var(--color-text-body)]">
               <span className="font-semibold">Add or update a visit:</span> 1) pick the service, 2) choose what members pay,
               3) (optional) set when it unlocks. Re-adding the same service updates it.
             </p>
@@ -537,7 +538,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                       <input type="hidden" name="perkKey" value={perk.perkKey} />
                       <ConfirmDeleteButton
                         message={`Remove the "${PERK_LABELS[perk.perkKey] ?? perk.perkKey}" perk rule?`}
-                        className="text-[13px] font-semibold text-[var(--color-status-error-text)] hover:underline"
+                        className="text-portal-compact font-semibold text-[var(--color-status-error-text)] hover:underline"
                       >
                         Remove
                       </ConfirmDeleteButton>
@@ -613,7 +614,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                       <input type="hidden" name="healthTestId" value={rule.healthTestId} />
                       <ConfirmDeleteButton
                         message={`Remove the redemption rule for "${rule.healthTest.title}"? This deletes it from the plan.`}
-                        className="text-[13px] font-semibold text-[var(--color-status-error-text)] hover:underline"
+                        className="text-portal-compact font-semibold text-[var(--color-status-error-text)] hover:underline"
                       >
                         Remove
                       </ConfirmDeleteButton>
@@ -681,7 +682,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                 features: defaultPlanFeatures(plan),
               }}
             />
-            <div className="border-t border-[var(--color-border)] pt-6">
+            <div className="flex justify-end border-t border-[var(--color-border)] pt-6">
               <button type="submit" className="gh-btn gh-btn-primary">
                 Save translations
               </button>

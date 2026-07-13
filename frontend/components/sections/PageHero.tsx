@@ -275,7 +275,7 @@ export function PageHero({
                   {ctaHref && ctaLabel ? (
                     <Link
                       href={ctaHref}
-                      className="gh2-btn-lime pr-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(176,241,34,0.45)]"
+                      className="gh2-btn-lime pr-2 gh-focus-on-dark "
                     >
                       {ctaLabel}
                       <span
@@ -290,7 +290,7 @@ export function PageHero({
                   {secondaryHref && secondaryLabel ? (
                     <Link
                       href={secondaryHref}
-                      className="gh2-btn-ghost focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                      className="gh2-btn-ghost gh-focus-on-dark "
                     >
                       {secondaryLabel}
                       {secondaryIcon}
@@ -429,7 +429,7 @@ export function PageHero({
                 {ctaHref && ctaLabel ? (
                   <Link
                     href={ctaHref}
-                    className="gh2-btn-lime focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(176,241,34,0.45)]"
+                    className="gh2-btn-lime gh-focus-on-dark "
                   >
                     {ctaLabel}
                     <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
@@ -438,7 +438,7 @@ export function PageHero({
                 {secondaryHref && secondaryLabel ? (
                   <Link
                     href={secondaryHref}
-                    className="gh2-btn-ghost focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                    className="gh2-btn-ghost gh-focus-on-dark "
                   >
                     {secondaryLabel}
                     {secondaryIcon}

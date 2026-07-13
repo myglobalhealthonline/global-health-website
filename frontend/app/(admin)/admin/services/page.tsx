@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ChevronDown, ChevronUp, Edit3, Eye, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   fetchAdminCountries,
   fetchAdminServices,
@@ -11,29 +11,11 @@ import {
   purgeAdminService,
 } from "@/lib/admin/admin-api";
 import { getActiveCountry, scopedCountryId } from "@/lib/admin/admin-scope";
-import {
-  adminHrefForService,
-  readServiceKind,
-  SERVICE_KIND_META,
-  SERVICE_KIND_ORDER,
-} from "@/lib/admin/service-kind";
+import { readServiceKind, SERVICE_KIND_META, SERVICE_KIND_ORDER } from "@/lib/admin/service-kind";
 import { FlagBadge } from "../_components/flag-badge";
-import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import { ScopeBanner } from "../_components/scope-banner";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
-import {
-  AdminCard,
-  AdminEmptyState,
-  AdminTable,
-  Btn,
-  IconBtn,
-  PageHeader,
-  Pill,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "../_components/atoms";
+import { AdminServicesTable } from "./_components/admin-services-table";
+import { AdminCard, Btn, PageHeader } from "../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -60,20 +42,6 @@ function spRead(
   const v = sp[key];
   if (Array.isArray(v)) return v[0];
   return v;
-}
-
-function formatMoney(cents: number | null, currency: string | null) {
-  if (cents === null || cents === undefined) return "—";
-  const code = currency?.trim().toUpperCase() || "EUR";
-  try {
-    return new Intl.NumberFormat("en", {
-      style: "currency",
-      currency: code,
-      maximumFractionDigits: 2,
-    }).format(cents / 100);
-  } catch {
-    return `${code} ${(cents / 100).toFixed(2)}`;
-  }
 }
 
 export type AdminServicesPageProps = {
@@ -275,14 +243,7 @@ export default async function AdminServicesPage({
           because the sidebar already navigates between them; rendering
           the same control twice was redundant. */}
       {showKindTabs ? (
-        <div
-          className="gh-admin-service-kind-tabs mb-4 inline-flex items-center gap-1 border border-[var(--color-border)]"
-          style={{
-            padding: 4,
-            background: "var(--color-background-soft)",
-            borderRadius: 12,
-          }}
-        >
+        <div className="gh-admin-service-kind-tabs mb-4 inline-flex items-center">
           {SERVICE_KIND_ORDER.map((option) => {
             const optionMeta = SERVICE_KIND_META[option];
             const href = optionMeta.listHref;
@@ -291,21 +252,10 @@ export default async function AdminServicesPage({
               <Link
                 key={option}
                 href={href}
+                aria-current={active ? "page" : undefined}
                 className={`gh-admin-service-kind-tab inline-flex items-center gap-2 transition-all duration-150 ${
                   active ? "gh-admin-service-kind-tab--active" : ""
                 }`}
-                style={{
-                  padding: "8px 14px",
-                  borderRadius: 8,
-                  background: active ? "var(--color-background-page)" : "transparent",
-                  color: active
-                    ? "var(--color-brand-primary)"
-                    : "var(--color-text-muted)",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  boxShadow: active ? "var(--shadow-soft)" : "none",
-                  textDecoration: "none",
-                }}
               >
                 {optionMeta.label}
               </Link>
@@ -376,11 +326,11 @@ export default async function AdminServicesPage({
             </button>
             <Link
               href={basePath}
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
               Clear filters
             </Link>
-            <span className="ml-auto text-[12px] text-[var(--color-text-muted)]">
+            <span className="ml-auto text-portal-meta text-[var(--color-text-muted)]">
               {total === 0
                 ? `No ${meta.label.toLowerCase()} match these filters.`
                 : `Showing ${items.length} of ${total}.`}
@@ -391,255 +341,17 @@ export default async function AdminServicesPage({
 
       {/* Table */}
       <AdminCard padding={0} className="overflow-hidden">
-        <div className="gh-admin-service-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
-          <AdminTable>
-            <Thead>
-              <Th>Title</Th>
-              <Th>Slug</Th>
-              <Th>Country</Th>
-              <Th align="right">Price</Th>
-              <Th align="right">Duration</Th>
-              <Th align="right">Doctors</Th>
-              <Th align="right">Order</Th>
-              <Th>Active</Th>
-              <Th align="right" style={{ width: 120 }}>
-                Actions
-              </Th>
-            </Thead>
-            <tbody>
-              {items.map((service, index) => {
-                const prev = items[index - 1];
-                const next = items[index + 1];
-                const isFirstInCountry = !prev || prev.countryId !== service.countryId;
-                const isLastInCountry = !next || next.countryId !== service.countryId;
-                return (
-                <Tr key={service.id}>
-                  <Td>
-                    <span className="font-bold text-[var(--color-text-primary)]">
-                      {service.name}
-                    </span>
-                  </Td>
-                  <Td>
-                    <span className="font-mono text-[11px] text-[var(--color-text-muted)]">
-                      {service.slug}
-                    </span>
-                  </Td>
-                  <Td>
-                    <span className="inline-flex items-center gap-2">
-                      <FlagBadge code={service.country.code} size={14} />
-                      <span className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                        {service.country.code}
-                      </span>
-                    </span>
-                  </Td>
-                  <Td align="right">
-                    <span className="font-bold text-[var(--color-text-primary)]">
-                      {formatMoney(service.basePriceCents, service.currencyCode)}
-                    </span>
-                  </Td>
-                  <Td align="right">
-                    <span className="text-[var(--color-text-muted)]">
-                      {service.durationMinutes != null
-                        ? `${service.durationMinutes} min`
-                        : "—"}
-                    </span>
-                  </Td>
-                  <Td align="right">
-                    <span className="font-bold text-[var(--color-text-primary)]">
-                      {service.assignedDoctors.filter((d) => d.isActive).length}
-                    </span>
-                  </Td>
-                  <Td align="right">
-                    <div className="flex items-center justify-end gap-1">
-                      <form action={moveRowAction} className="inline-flex">
-                        <input type="hidden" name="id" value={service.id} />
-                        <input type="hidden" name="direction" value="up" />
-                        <input type="hidden" name="_qs" value={currentQs} />
-                        <button
-                          type="submit"
-                          disabled={isFirstInCountry}
-                          aria-label={`Move ${service.name} up`}
-                          className="inline-flex items-center justify-center border-0 bg-transparent p-0.5 text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text-primary)] disabled:cursor-default disabled:opacity-35 disabled:hover:text-[var(--color-text-muted)]"
-                        >
-                          <ChevronUp className="size-3.5" aria-hidden />
-                        </button>
-                      </form>
-                      <form action={moveRowAction} className="inline-flex">
-                        <input type="hidden" name="id" value={service.id} />
-                        <input type="hidden" name="direction" value="down" />
-                        <input type="hidden" name="_qs" value={currentQs} />
-                        <button
-                          type="submit"
-                          disabled={isLastInCountry}
-                          aria-label={`Move ${service.name} down`}
-                          className="inline-flex items-center justify-center border-0 bg-transparent p-0.5 text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text-primary)] disabled:cursor-default disabled:opacity-35 disabled:hover:text-[var(--color-text-muted)]"
-                        >
-                          <ChevronDown className="size-3.5" aria-hidden />
-                        </button>
-                      </form>
-                    </div>
-                  </Td>
-                  <Td>
-                    <form action={toggleServiceAction} className="gh-admin-service-toggle-form inline-flex">
-                      <input type="hidden" name="id" value={service.id} />
-                      <input
-                        type="hidden"
-                        name="next"
-                        value={service.isActive ? "false" : "true"}
-                      />
-                      <button
-                        type="submit"
-                        role="switch"
-                        aria-checked={service.isActive}
-                        aria-label={`${service.isActive ? "Deactivate" : "Activate"} ${service.name}`}
-                        title={service.isActive ? "Active - click to deactivate" : "Inactive - click to activate"}
-                        className={`gh-admin-status-toggle ${
-                          service.isActive
-                            ? "gh-admin-status-toggle-on"
-                            : "gh-admin-status-toggle-off"
-                        }`}
-                      >
-                        <span className="gh-admin-status-toggle__track" aria-hidden>
-                          <span className="gh-admin-status-toggle__thumb" />
-                        </span>
-                        <span className="gh-admin-status-toggle__label">
-                          {service.isActive ? "Active" : "Inactive"}
-                        </span>
-                      </button>
-                    </form>
-                  </Td>
-                  <Td align="right">
-                    <div className="gh-admin-service-row-actions flex justify-end gap-1.5">
-                      <IconBtn
-                        ariaLabel={`View ${service.name}`}
-                        href={adminHrefForService(service)}
-                      >
-                        <Eye className="size-3.5" aria-hidden />
-                      </IconBtn>
-                      <IconBtn
-                        ariaLabel={`Edit ${service.name}`}
-                        href={adminHrefForService(service, "edit")}
-                      >
-                        <Edit3 className="size-3.5" aria-hidden />
-                      </IconBtn>
-                      <form action={deleteServiceAction} className="inline-flex">
-                        <input type="hidden" name="id" value={service.id} />
-                        <ConfirmDeleteButton
-                          message={`Permanently delete service "${service.name}"? This cannot be undone.`}
-                          ariaLabel={`Delete ${service.name}`}
-                        />
-                      </form>
-                    </div>
-                  </Td>
-                </Tr>
-                );
-              })}
-            </tbody>
-          </AdminTable>
-        </div>
-
-        <div className="gh-admin-service-mobile-list">
-          {items.map((service) => (
-            <PortalMobileCard
-              key={service.id}
-              tone={service.isActive ? "success" : "neutral"}
-              title={service.name}
-              subtitle={<span className="font-mono">{service.slug}</span>}
-              statusPill={
-                <Pill tone={service.isActive ? "active" : "inactive"}>
-                  {service.isActive ? "Active" : "Inactive"}
-                </Pill>
-              }
-              meta={[
-                {
-                  label: "Market",
-                  value: (
-                    <span className="inline-flex items-center gap-2">
-                      <FlagBadge code={service.country.code} size={14} />
-                      {service.country.code.toUpperCase()}
-                    </span>
-                  ),
-                },
-                { label: "Price", value: formatMoney(service.basePriceCents, service.currencyCode) },
-                {
-                  label: "Duration",
-                  value: service.durationMinutes != null ? `${service.durationMinutes} min` : "—",
-                },
-                {
-                  label: "Doctors",
-                  value: service.assignedDoctors.filter((d) => d.isActive).length,
-                },
-              ]}
-            >
-              <div className="gh-admin-service-mobile-controls">
-                <form action={toggleServiceAction} className="inline-flex">
-                  <input type="hidden" name="id" value={service.id} />
-                  <input
-                    type="hidden"
-                    name="next"
-                    value={service.isActive ? "false" : "true"}
-                  />
-                  <button
-                    type="submit"
-                    role="switch"
-                    aria-checked={service.isActive}
-                    aria-label={`${service.isActive ? "Deactivate" : "Activate"} ${service.name}`}
-                    title={service.isActive ? "Active - click to deactivate" : "Inactive - click to activate"}
-                    className={`gh-admin-status-toggle ${
-                      service.isActive
-                        ? "gh-admin-status-toggle-on"
-                        : "gh-admin-status-toggle-off"
-                    }`}
-                  >
-                    <span className="gh-admin-status-toggle__track" aria-hidden>
-                      <span className="gh-admin-status-toggle__thumb" />
-                    </span>
-                    <span className="gh-admin-status-toggle__label">
-                      {service.isActive ? "Active" : "Inactive"}
-                    </span>
-                  </button>
-                </form>
-                <div className="gh-admin-service-row-actions flex justify-end gap-1.5">
-                  <IconBtn
-                    ariaLabel={`View ${service.name}`}
-                    href={adminHrefForService(service)}
-                  >
-                    <Eye className="size-3.5" aria-hidden />
-                  </IconBtn>
-                  <IconBtn
-                    ariaLabel={`Edit ${service.name}`}
-                    href={adminHrefForService(service, "edit")}
-                  >
-                    <Edit3 className="size-3.5" aria-hidden />
-                  </IconBtn>
-                  <form action={deleteServiceAction} className="inline-flex">
-                    <input type="hidden" name="id" value={service.id} />
-                    <ConfirmDeleteButton
-                      message={`Permanently delete service "${service.name}"? This cannot be undone.`}
-                      ariaLabel={`Delete ${service.name}`}
-                    />
-                  </form>
-                </div>
-              </div>
-            </PortalMobileCard>
-          ))}
-        </div>
-
-        {items.length === 0 ? (
-          <AdminEmptyState
-            assetSrc="/images/portal/obsidian/empty-content.svg"
-            title="No services match these filters"
-            description="Clear search, market, or status filters to review the full service catalog."
-            action={
-              <Btn href={basePath} variant="secondary" size="sm">
-                Clear filters
-              </Btn>
-            }
-          />
-        ) : null}
+        <AdminServicesTable
+          items={items}
+          basePath={basePath}
+          currentQs={currentQs}
+          toggleServiceAction={toggleServiceAction}
+          moveRowAction={moveRowAction}
+          deleteServiceAction={deleteServiceAction}
+        />
 
         {totalPages > 1 ? (
-          <nav className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3 text-[13px]">
+          <nav className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3 text-portal-compact">
             <div className="text-[var(--color-text-muted)]">
               Page {page} of {totalPages} · {pageSize} per page
             </div>
@@ -648,7 +360,7 @@ export default async function AdminServicesPage({
                 href={buildServicesHref(basePath, filters, {
                   page: String(Math.max(1, page - 1)),
                 })}
-                className={`gh-btn gh-btn-soft text-[13px] ${
+                className={`gh-btn gh-btn-soft text-portal-compact ${
                   page <= 1 ? "pointer-events-none opacity-40" : ""
                 }`}
                 style={{ minHeight: 36, padding: "0 14px" }}
@@ -659,7 +371,7 @@ export default async function AdminServicesPage({
                 href={buildServicesHref(basePath, filters, {
                   page: String(Math.min(totalPages, page + 1)),
                 })}
-                className={`gh-btn gh-btn-primary text-[13px] ${
+                className={`gh-btn gh-btn-primary text-portal-compact ${
                   page >= totalPages ? "pointer-events-none opacity-40" : ""
                 }`}
                 style={{ minHeight: 36, padding: "0 14px" }}

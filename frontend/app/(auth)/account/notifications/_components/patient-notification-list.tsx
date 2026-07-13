@@ -132,11 +132,11 @@ export function PatientNotificationList({
                   {n.payload?.title ?? i18n.fallbackTitle}
                 </span>
                 {n.payload?.body ? (
-                  <span className="text-[13px]" style={{ color: "var(--portal-muted)" }}>
+                  <span className="text-portal-compact" style={{ color: "var(--portal-muted)" }}>
                     {n.payload.body}
                   </span>
                 ) : null}
-                <span className="text-[10px] uppercase tracking-wider" style={{ color: "var(--portal-muted)" }}>
+                <span className="text-portal-micro uppercase tracking-wider" style={{ color: "var(--portal-muted)" }}>
                   {timeAgo(n.createdAt, i18n)}
                 </span>
               </span>

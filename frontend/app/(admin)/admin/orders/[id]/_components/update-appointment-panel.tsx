@@ -163,7 +163,7 @@ export async function UpdateAppointmentPanel({
 
           <ScheduleTzOffsetInput formId={formId} />
 
-          <button type="submit" className="gh-btn gh-btn-primary w-fit">
+          <button type="submit" className="gh-btn gh-btn-primary w-fit justify-self-end">
             Save changes & notify
           </button>
         </form>

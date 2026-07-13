@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { BookingSkipLink } from "@/components/layout/BookingSkipLink";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { CountryTrustBar } from "@/components/sections/CountryTrustBar";
 import { EMERGENCY_NOTICE } from "@/lib/constants";
@@ -62,6 +63,16 @@ export function SiteChrome({
       <a href="#main-content" className="gh-skip-link">
         Skip to content
       </a>
+      {/* 04-003: the booking wizard is a single-task flow reached from the
+       * portal — a keyboard user tabbing past the generic skip link still
+       * has to tab through the entire shared header (nav, switchers, cart,
+       * bell, avatar) before reaching the first service card. This second
+       * skip link, page-scoped to `/book`, jumps straight to it. Uses
+       * `usePathname()` (client-side) rather than `parsed.rest` — the
+       * `[country]/[lang]/layout.tsx` above intentionally keeps `parsed`
+       * built from route params only (`rest: []`) to stay static-generation
+       * safe; see that file's comment. */}
+      <BookingSkipLink />
       {isGatewayHome ? null : (
         <SiteHeader
           siteName={siteName}

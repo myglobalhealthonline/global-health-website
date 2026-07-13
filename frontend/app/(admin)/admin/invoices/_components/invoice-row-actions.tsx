@@ -50,7 +50,7 @@ export function InvoiceRowActions({
   const btnBase =
     variant === "card"
       ? "gh-btn gh-btn-ghost text-sm inline-flex items-center gap-1.5"
-      : "inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-[11px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]";
+      : "inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-portal-thead font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]";
 
   function label(state: SendState, idle: string): string {
     if (state === "sending") return "Sending…";

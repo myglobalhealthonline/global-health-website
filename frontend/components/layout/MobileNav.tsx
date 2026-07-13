@@ -24,7 +24,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { SiteNavigationData } from "@/data/navigation";
 import { DEFAULT_BRAND_LOGO } from "@/lib/content/brand-logo";
-import type { CountryConfig } from "@/data/countries";
+import type { CountryConfig, CountryCode } from "@/data/countries";
 import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
@@ -46,6 +46,7 @@ export function MobileNav({
   countryFeatures,
   bookHref,
   countries,
+  lastCountry,
 }: {
   siteName: string;
   navigation: SiteNavigationData;
@@ -53,15 +54,25 @@ export function MobileNav({
   countryFeatures?: Record<string, string[] | undefined>;
   bookHref: string;
   countries: CountryConfig[];
+  /** Remembered country (server-read gh-last-country cookie) so the drawer
+   *  keeps the in-country IA on global pages — mirrors SiteHeader. */
+  lastCountry?: { code: CountryCode; slug: string; lang: string } | null;
 }) {
   // P-001: read from the client-fetched session instead of a server prop
   // sourced from headers() — see PublicAuthContext.tsx.
   const { user: authUser, loading: authLoading } = usePublicAuth();
   const pathname = usePathname() || "/";
   const parsed = parseSitePath(pathname);
-  const activeCountryCode = parsed.country
-    ? countryCodeFromSlug(parsed.country)
-    : null;
+  // Country context: URL segment first, else the remembered last-country.
+  // Without the cookie fallback the drawer dropped Doctors / Services /
+  // Plans on global pages (/about, /blog, /contact) even after the visitor
+  // had picked a country — the desktop SectionNav already uses this fallback.
+  const activeCountryCode =
+    (parsed.country ? countryCodeFromSlug(parsed.country) : null) ??
+    lastCountry?.code ??
+    null;
+  const navCountrySlug = parsed.country ?? lastCountry?.slug ?? null;
+  const navLang = parsed.lang ?? lastCountry?.lang ?? null;
 
   // Country/language switches HARD-navigate (window.location.href) and sync
   // the gh_locale cookie. Client-side nav (<Link>) preserves the shared
@@ -74,7 +85,7 @@ export function MobileNav({
     globalThis.location.assign(href);
   }
   const activeCountry = activeCountryCode ? (countries.find((c) => c.code === activeCountryCode) ?? null) : null;
-  const activeLang = parsed.lang ?? activeCountry?.defaultLocale ?? null;
+  const activeLang = navLang ?? activeCountry?.defaultLocale ?? null;
 
   const portalHref = authUser?.role === "ADMIN" ? "/admin" : "/account";
   const portalLabel = authUser?.role === "ADMIN" ? navigation.navAdminPortal : navigation.navAccountPortal;
@@ -89,14 +100,14 @@ export function MobileNav({
   // About / Blog / FAQ. Services expand inline on mobile (no nested
   // dropdown — taps go straight to the destination).
   const sectionLinks =
-    activeCountry && parsed.country && parsed.lang
+    activeCountry && navCountrySlug && navLang
       ? [
-          { href: `/${parsed.country}/${parsed.lang}`, label: navigation.navHome },
-          { href: `/${parsed.country}/${parsed.lang}/doctors`, label: navigation.navDoctors },
+          { href: `/${navCountrySlug}/${navLang}`, label: navigation.navHome },
+          { href: `/${navCountrySlug}/${navLang}/doctors`, label: navigation.navDoctors },
           ...(isFeatureOn("general-consultations")
             ? [
                 {
-                  href: `/${parsed.country}/${parsed.lang}/gp-appointment`,
+                  href: `/${navCountrySlug}/${navLang}/gp-appointment`,
                   label: navigation.navBookGp,
                 },
               ]
@@ -104,7 +115,7 @@ export function MobileNav({
           ...(isFeatureOn("specialist-consultations")
             ? [
                 {
-                  href: `/${parsed.country}/${parsed.lang}/see-a-specialist`,
+                  href: `/${navCountrySlug}/${navLang}/see-a-specialist`,
                   label: navigation.navSeeSpecialist,
                 },
               ]
@@ -112,7 +123,7 @@ export function MobileNav({
           ...(isFeatureOn("online-prescriptions")
             ? [
                 {
-                  href: `/${parsed.country}/${parsed.lang}/repeat-prescription-request`,
+                  href: `/${navCountrySlug}/${navLang}/repeat-prescription-request`,
                   label: navigation.navRepeatPrescription,
                 },
               ]
@@ -120,7 +131,7 @@ export function MobileNav({
           ...(isFeatureOn("health-tests")
             ? [
                 {
-                  href: `/${parsed.country}/${parsed.lang}/lab-tests`,
+                  href: `/${navCountrySlug}/${navLang}/lab-tests`,
                   label: navigation.navLabTests,
                 },
               ]
@@ -129,12 +140,12 @@ export function MobileNav({
           ...(activeFeatures?.includes("subscriptions")
             ? [
                 {
-                  href: `/${parsed.country}/${parsed.lang}/pricing`,
+                  href: `/${navCountrySlug}/${navLang}/pricing`,
                   label: navigation.navPlans,
                 },
               ]
             : []),
-          { href: `/${parsed.country}/${parsed.lang}#how-it-works`, label: navigation.navHowItWorks },
+          { href: `/${navCountrySlug}/${navLang}#how-it-works`, label: navigation.navHowItWorks },
           { href: "/about", label: navigation.navAbout },
           { href: "/contact", label: navigation.navContact },
         ]
@@ -162,8 +173,8 @@ export function MobileNav({
       </Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" />
-        <Dialog.Content className="fixed inset-x-0 top-0 z-50 flex max-h-[100dvh] flex-col bg-white shadow-[var(--shadow-elevated)] xl:hidden">
+        <Dialog.Overlay className="fixed inset-0 z-[var(--z-drawer-overlay)] bg-black/50 backdrop-blur-sm" />
+        <Dialog.Content className="fixed inset-x-0 top-0 z-[var(--z-drawer)] flex max-h-[100dvh] flex-col bg-white shadow-[var(--shadow-elevated)] xl:hidden">
           <Dialog.Title className="sr-only">{navigation.navHome} navigation</Dialog.Title>
           <Dialog.Description className="sr-only">
             Switch country, change language, and book a consultation.

@@ -312,7 +312,7 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
                               <span className={`${styles.flagWrap} inline-flex items-center justify-center`}>
                                 <span aria-hidden className={`${flagCls} ${styles.flagIcon} inline-block`} />
                               </span>
-                              <p className={`${styles.countryName} min-w-0 flex-1 truncate text-white`}>{c.name}</p>
+                              <p className={`${styles.countryName} min-w-0 flex-1 truncate text-white`} title={c.name}>{c.name}</p>
                             </div>
                             <div className={`${styles.cardFooter} flex items-center gap-1.5`}>
                               <span className={styles.cardEnter}>

@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarClock, Route, Save, Video } from "lucide-react";
+import { formatAppDateTime } from "@/lib/format-datetime";
 
 export type AppointmentActionsCopy = {
   statusCreated: string;
@@ -27,6 +28,7 @@ export type AppointmentActionsCopy = {
   nothingToChange: string;
   saved: string;
   couldNotSave: string;
+  clinicTimePreview: string;
 };
 
 /**
@@ -66,6 +68,7 @@ export function AppointmentActions({
   initialStatus,
   initialScheduledAt,
   initialMode,
+  clinicTimezone,
   copy,
 }: {
   appointmentId: string;
@@ -73,6 +76,10 @@ export function AppointmentActions({
   initialStatus: string;
   initialScheduledAt: string | null;
   initialMode: "ONLINE" | "IN_PERSON";
+  /** IANA zone the clinic operates in — used to show a clinic-time
+   *  preview under the reschedule field, which otherwise submits in
+   *  the doctor's browser-local timezone (audit 03/UX-006). */
+  clinicTimezone?: string | null;
   copy: AppointmentActionsCopy;
 }) {
   const STATUS_OPTIONS = [
@@ -140,17 +147,17 @@ export function AppointmentActions({
   }
 
   return (
-    <form onSubmit={save} className="mt-3 grid gap-4 rounded-lg border border-[var(--portal-line)] bg-white/75 p-3 shadow-sm">
+    <form onSubmit={save} className="grid gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--portal-line)] pb-3">
         <div>
-          <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+          <p className="text-portal-meta font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
             {copy.controlsTitle}
           </p>
           <p className="mt-1 text-sm text-[var(--portal-muted)]">
             {copy.controlsDesc}
           </p>
         </div>
-        <span className="inline-flex items-center gap-1 rounded-full bg-[var(--portal-well)] px-2.5 py-1 text-[11px] font-bold text-[var(--portal-primary)]">
+        <span className="inline-flex items-center gap-1 rounded-full bg-[var(--portal-well)] px-2.5 py-1 text-portal-thead font-bold text-[var(--portal-primary)]">
           <Route className="size-3" aria-hidden />
           {STATUS_OPTIONS.find((option) => option.value === status)?.label ?? status}
         </span>
@@ -167,6 +174,17 @@ export function AppointmentActions({
             value={scheduledAtLocal}
             onChange={(e) => setScheduledAtLocal(e.target.value)}
           />
+          {clinicTimezone && scheduledAtLocal ? (
+            <span className="text-[11.5px] text-[var(--portal-muted)]">
+              {copy.clinicTimePreview.replace(
+                "{time}",
+                formatAppDateTime(
+                  fromLocalInputValue(scheduledAtLocal) ?? "",
+                  clinicTimezone,
+                ),
+              )}
+            </span>
+          ) : null}
         </label>
         <label className="flex flex-col gap-1.5">
           <span className="gh-field-label">{copy.deliveryLabel}</span>
@@ -189,8 +207,9 @@ export function AppointmentActions({
       <label className="flex flex-col gap-1.5">
         <span className="gh-field-label">{copy.meetingUrlLabel}</span>
         <input
+          id="meeting-url-field"
           type="url"
-          className="gh-input font-mono text-[12px]"
+          className="gh-input font-mono text-portal-meta"
           value={meetingUrl}
           onChange={(e) => setMeetingUrl(e.target.value)}
           placeholder={
@@ -236,7 +255,7 @@ export function AppointmentActions({
             href={meetingUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--portal-primary)] hover:underline"
+            className="inline-flex items-center gap-1 text-portal-label font-semibold text-[var(--portal-primary)] hover:underline"
           >
             <Video className="size-3.5" /> {copy.testLink}
           </a>

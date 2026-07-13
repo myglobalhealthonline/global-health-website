@@ -19,6 +19,17 @@ Rules:
   file the class lives in — both files carry their own copy of those blocks.
 - `@keyframes` used by both files stay in `globals.css`.
 
+## UI primitives (Phase 2, responsive overhaul)
+
+New dropdowns/popovers/dialogs/drawers — never hand-roll: use `AppMenu`
+(dropdown/popover), `PortalDialog` (modal), `AppSheet`/`RecordDetailsDrawer`
+(drawer/sheet). New list/table pages — never hand-write twin table+card
+markup: use a `ColumnPriorityTable` config (`ResponsiveField` priority 1-4 +
+drawer flag), which renders both the desktop table and the `PortalMobileCard`
+fallback from one source. See `docs/responsive-audit/HANDOFF.md` for the full
+migration history and `shared/RESPONSIVE_DESIGN_SYSTEM_PLAN.md` for the rules
+(z-token scale, height-axis tiers, theme fidelity).
+
 ## Dependency overrides
 
 `pnpm.overrides` are NOT inherited by the deployed services (each builds

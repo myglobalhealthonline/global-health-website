@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Calendar, Check, Loader2 } from "lucide-react";
-import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
+import { formatAppDate, formatAppDateTime, formatAppTime } from "@/lib/format-datetime";
 import { rescheduleAccountAppointment } from "@/lib/api/account-appointment-actions";
 import { AdminEmptyState, Btn } from "@/components/portal-atoms";
 
@@ -27,6 +27,10 @@ type RescheduleI18n = {
   noOpenTimesBody: string;
   backToBookings: string;
   availableDates: string;
+  newTime: string;
+  confirmReschedule: string;
+  cancelSelection: string;
+  confirming: string;
 };
 
 const DEFAULT_I18N: RescheduleI18n = {
@@ -44,6 +48,10 @@ const DEFAULT_I18N: RescheduleI18n = {
     "Your clinician has no available slots in the next two weeks. Cancel this booking and rebook, or message the clinic to ask for a specific time.",
   backToBookings: "Back to bookings",
   availableDates: "Available dates",
+  newTime: "New time",
+  confirmReschedule: "Confirm reschedule",
+  cancelSelection: "Cancel",
+  confirming: "Rescheduling…",
 };
 
 type Props = {
@@ -69,6 +77,7 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
   const [submitting, startSubmit] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
 
   const tz = clinicTimezone || "UTC";
   const openSlots = useMemo(
@@ -92,10 +101,29 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
     firstSlot ? formatAppDate(firstSlot.startAt, tz) : null,
   );
 
-  function chooseSlot(slotId: string) {
+  const selectedSlot = useMemo(
+    () => (selectedSlotId ? openSlots.find((s) => s.id === selectedSlotId) ?? null : null),
+    [openSlots, selectedSlotId],
+  );
+  const currentSlot = useMemo(
+    () => (currentTimeSlotId ? slots.find((s) => s.id === currentTimeSlotId) ?? null : null),
+    [slots, currentTimeSlotId],
+  );
+
+  function selectSlot(slotId: string) {
+    setError(null);
+    setSelectedSlotId(slotId);
+  }
+
+  function clearSelection() {
+    setSelectedSlotId(null);
+  }
+
+  function confirmReschedule() {
+    if (!selectedSlotId) return;
     setError(null);
     startSubmit(async () => {
-      const res = await rescheduleAccountAppointment(appointmentId, slotId);
+      const res = await rescheduleAccountAppointment(appointmentId, selectedSlotId);
       if (!res.ok) {
         setError(res.message);
         return;
@@ -144,7 +172,7 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
       ) : null}
 
       <div className="flex items-baseline justify-between gap-3">
-        <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+        <p className="text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
           {i18n.pickNewDate}
         </p>
         <p className="text-xs text-[var(--color-text-muted)]">
@@ -182,16 +210,16 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
               {isActive ? (
                 <Check className="absolute right-1.5 top-1.5 size-3.5 text-white" aria-hidden />
               ) : null}
-              <span className={isActive ? "text-[10px] font-bold uppercase tracking-[0.12em] text-white/80" : "text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]"}>
+              <span className={isActive ? "text-portal-micro font-bold uppercase tracking-[0.12em] text-white/80" : "text-portal-micro font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]"}>
                 {weekday}
               </span>
               <span className={isActive ? "text-2xl font-bold leading-none [font-variant-numeric:tabular-nums] text-white" : "text-2xl font-bold leading-none [font-variant-numeric:tabular-nums] text-[var(--color-text-primary)]"}>
                 {dayNum}
               </span>
-              <span className={isActive ? "text-[10px] font-semibold uppercase tracking-[0.1em] text-white/70" : "text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]"}>
+              <span className={isActive ? "text-portal-micro font-semibold uppercase tracking-[0.1em] text-white/70" : "text-portal-micro font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]"}>
                 {month}
               </span>
-              <span className={isActive ? "mt-1 text-[10px] font-semibold text-white/80" : "mt-1 text-[10px] font-semibold text-[var(--color-brand-primary)]"}>
+              <span className={isActive ? "mt-1 text-portal-micro font-semibold text-white/80" : "mt-1 text-portal-micro font-semibold text-[var(--color-brand-primary)]"}>
                 {(daySlots.length === 1 ? i18n.slotAvailable : i18n.slotsAvailable).replace("{count}", String(daySlots.length))}
               </span>
             </button>
@@ -201,7 +229,7 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
 
       {selectedDay ? (
         <div className="mt-6 w-full overflow-hidden">
-          <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+          <p className="text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
             {i18n.timesOn.replace("{day}", selectedDay)}
           </p>
           <div
@@ -211,26 +239,74 @@ export function ReschedulePicker({ appointmentId, slots, clinicTimezone, current
           >
             {(grouped.get(selectedDay) ?? []).map((s) => {
               const isCurrent = s.id === currentTimeSlotId;
+              const isSelected = s.id === selectedSlotId;
               return (
                 <button
                   key={s.id}
                   type="button"
-                  onClick={() => chooseSlot(s.id)}
+                  aria-pressed={isSelected}
+                  data-selected={isSelected}
+                  onClick={() => selectSlot(s.id)}
                   disabled={submitting}
-                  className="gh2-selectable flex flex-col items-center justify-center gap-1 rounded-lg border-[rgba(29,75,54,.18)] bg-white px-2 py-2 text-xs text-[var(--color-text-primary)] sm:text-sm font-semibold [font-variant-numeric:tabular-nums] transition-transform duration-200 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60 min-h-[70px] sm:min-h-[80px]"
+                  className={
+                    isSelected
+                      ? "gh2-selectable relative flex flex-col items-center justify-center gap-1 rounded-lg px-2 py-2 text-xs sm:text-sm font-semibold [font-variant-numeric:tabular-nums] shadow-[var(--shadow-card)] disabled:opacity-60 min-h-[70px] sm:min-h-[80px]"
+                      : "gh2-selectable flex flex-col items-center justify-center gap-1 rounded-lg border-[rgba(29,75,54,.18)] bg-white px-2 py-2 text-xs text-[var(--color-text-primary)] sm:text-sm font-semibold [font-variant-numeric:tabular-nums] transition-transform duration-200 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60 min-h-[70px] sm:min-h-[80px]"
+                  }
                 >
-                  <span className="flex items-center justify-center gap-1 leading-tight">
-                    {submitting ? <Loader2 className="size-2.5 sm:size-3 animate-spin" aria-hidden /> : null}
+                  {isSelected ? (
+                    <Check className="absolute right-1.5 top-1.5 size-3 text-white" aria-hidden />
+                  ) : null}
+                  <span className={isSelected ? "flex items-center justify-center gap-1 leading-tight text-white" : "flex items-center justify-center gap-1 leading-tight"}>
                     <span className="truncate">{formatAppTime(s.startAt, tz)}</span>
                   </span>
                   {isCurrent ? (
-                    <span className="rounded-full bg-[rgba(29,75,54,0.08)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                    <span
+                      className={
+                        isSelected
+                          ? "rounded-full bg-white/20 px-1.5 py-0.5 text-portal-micro font-bold uppercase tracking-[0.08em] text-white/80"
+                          : "rounded-full bg-[rgba(29,75,54,0.08)] px-1.5 py-0.5 text-portal-micro font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]"
+                      }
+                    >
                       {i18n.current}
                     </span>
                   ) : null}
                 </button>
               );
             })}
+          </div>
+        </div>
+      ) : null}
+
+      {selectedSlot ? (
+        <div
+          className="mt-4 rounded-[var(--radius-card-sm)] border bg-white px-4 py-3"
+          style={{ borderColor: "rgba(29,75,54,.18)" }}
+        >
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+            {currentSlot ? (
+              <>
+                <span className="text-[var(--color-text-muted)]">{i18n.current}:</span>
+                <span className="font-semibold text-[var(--color-text-primary)] line-through decoration-[var(--color-text-muted)]">
+                  {formatAppDateTime(currentSlot.startAt, tz)}
+                </span>
+                <span aria-hidden className="text-[var(--color-text-muted)]">
+                  →
+                </span>
+              </>
+            ) : null}
+            <span className="text-[var(--color-text-muted)]">{i18n.newTime}:</span>
+            <span className="font-bold text-[var(--color-text-primary)]">
+              {formatAppDateTime(selectedSlot.startAt, tz)}
+            </span>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Btn variant="primary" size="sm" onClick={confirmReschedule} loading={submitting}>
+              {submitting ? i18n.confirming : i18n.confirmReschedule}
+            </Btn>
+            <Btn variant="ghost" size="sm" onClick={clearSelection} disabled={submitting}>
+              {i18n.cancelSelection}
+            </Btn>
           </div>
         </div>
       ) : null}

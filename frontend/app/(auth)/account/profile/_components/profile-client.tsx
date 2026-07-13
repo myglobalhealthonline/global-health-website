@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertCircle, Save } from "lucide-react";
+import {
+  AlertCircle,
+  BadgeCheck,
+  FileCheck2,
+  Flag,
+  HeartPulse,
+  Save,
+  ShieldCheck,
+  User,
+} from "lucide-react";
 import {
   fetchCurrentUser,
   patchCurrentUser,
@@ -15,10 +24,11 @@ import { GdprPreferencesTab } from "./gdpr-tab";
 import type { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { PhoneField } from "@/components/forms/phone-field";
 import { AdminSummaryStrip, Btn, PageHeader } from "@/components/portal-atoms";
-import { PortalTabs } from "@/components/PortalTabs";
+import { PortalTabs, PortalTabPanel } from "@/components/PortalTabs";
 import { FormSection } from "@/components/FormSection";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
-type Tab = "personal" | "insurance" | "verification" | "nationality" | "privacy";
+type Tab = "contact" | "medical" | "verification" | "insurance" | "nationality" | "privacy";
 
 type Account = ReturnType<typeof loadLocaleBundle>["account"];
 
@@ -39,7 +49,19 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
-  const [activeTab, setActiveTab] = useState<Tab>("personal");
+  const [activeTab, setActiveTab] = useState<Tab>("contact");
+  const [initialContact, setInitialContact] = useState({ fullName: "", phone: "", dateOfBirth: "" });
+  // 17-001: on-blur required-field check, same rule the native `required`
+  // attribute already enforces at submit — just surfaced earlier.
+  const [fullNameTouched, setFullNameTouched] = useState(false);
+  // Per-tab dirty flags (17-005 §12) — lifted from each tab's own
+  // useUnsavedChanges-backed form state so the tab strip can show which
+  // tabs have unsaved edits before the user navigates away from them.
+  // Verification has no dirty state (auto-upload, nothing to lose).
+  const [medicalDirty, setMedicalDirty] = useState(false);
+  const [insuranceDirty, setInsuranceDirty] = useState(false);
+  const [nationalityDirty, setNationalityDirty] = useState(false);
+  const [privacyDirty, setPrivacyDirty] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -56,9 +78,15 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
       if (cancelled) return;
       if (authRes.ok) {
         setUser(authRes.data.user);
-        setFullName(authRes.data.user.fullName ?? "");
-        setPhone(authRes.data.user.phone ?? "");
-        setDateOfBirth(authRes.data.user.dateOfBirth?.slice(0, 10) ?? "");
+        const loaded = {
+          fullName: authRes.data.user.fullName ?? "",
+          phone: authRes.data.user.phone ?? "",
+          dateOfBirth: authRes.data.user.dateOfBirth?.slice(0, 10) ?? "",
+        };
+        setFullName(loaded.fullName);
+        setPhone(loaded.phone);
+        setDateOfBirth(loaded.dateOfBirth);
+        setInitialContact(loaded);
       } else {
         setMsg({ kind: "err", text: authRes.message });
       }
@@ -75,34 +103,60 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
 
   const a = i18n;
   const p = a.profile;
-  const TABS: { id: Tab; label: string }[] = [
-    { id: "personal", label: p.tabPersonal },
-    { id: "insurance", label: p.tabInsurance },
-    { id: "verification", label: p.tabVerification },
-    { id: "nationality", label: p.tabNationality },
-    { id: "privacy", label: p.tabPrivacy },
+  const contactDirty =
+    fullName !== initialContact.fullName ||
+    phone !== initialContact.phone ||
+    dateOfBirth !== initialContact.dateOfBirth;
+  useUnsavedChanges(contactDirty);
+  const fullNameError = fullNameTouched && fullName.trim() === "" ? p.fieldRequired : undefined;
+
+  // Small "•" badge (reusing PortalTabs' existing badge/badgeAlert props,
+  // no new visual primitive) marks a tab with unsaved edits so switching
+  // tabs never silently loses work (17-005 §12).
+  const TAB_DIRTY: Record<Tab, boolean> = {
+    contact: contactDirty,
+    medical: medicalDirty,
+    verification: false,
+    insurance: insuranceDirty,
+    nationality: nationalityDirty,
+    privacy: privacyDirty,
+  };
+  const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
+    { id: "contact", label: p.tabContact, icon: <User aria-hidden /> },
+    { id: "medical", label: p.tabMedical, icon: <HeartPulse aria-hidden /> },
+    { id: "verification", label: p.tabVerification, icon: <BadgeCheck aria-hidden /> },
+    { id: "insurance", label: p.tabInsurance, icon: <ShieldCheck aria-hidden /> },
+    { id: "nationality", label: p.tabNationality, icon: <Flag aria-hidden /> },
+    { id: "privacy", label: p.tabPrivacy, icon: <FileCheck2 aria-hidden /> },
   ];
+
   const needsAttention = Boolean(user && !user.emailVerifiedAt) || !ghn;
   const profileStatusItems = [
     {
       label: p.statusEmail,
       value: user?.emailVerifiedAt ? p.statusVerified : p.statusNeedsVerification,
       hint: user?.email ?? p.statusAccountEmail,
+      tone: user?.emailVerifiedAt ? ("success" as const) : ("warning" as const),
+      icon: <AlertCircle aria-hidden />,
     },
     {
       label: p.statusPhone,
       value: phone ? p.statusAdded : p.statusMissing,
       hint: p.statusPhoneHint,
+      icon: <User aria-hidden />,
     },
     {
       label: p.statusPatientId,
       value: ghn ? p.statusActive : p.statusPending,
       hint: p.statusPatientIdHint,
+      tone: ghn ? ("success" as const) : ("warning" as const),
+      icon: <BadgeCheck aria-hidden />,
     },
     {
       label: p.statusProfile,
       value: fullName ? p.statusStarted : p.statusIncomplete,
       hint: p.statusProfileHint,
+      icon: <FileCheck2 aria-hidden />,
     },
   ];
 
@@ -118,6 +172,7 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
     setSaving(false);
     if (res.ok) {
       setUser(res.data.user);
+      setInitialContact({ fullName, phone, dateOfBirth });
       setMsg({ kind: "ok", text: a.profile.saved });
     } else {
       setMsg({ kind: "err", text: res.message });
@@ -130,6 +185,7 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
         eyebrow={a.profile.breadcrumb}
         title={a.profile.title}
         description={a.profile.subtitle}
+        icon={<User aria-hidden />}
         actions={
           ghn ? (
             <span
@@ -173,12 +229,23 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
           ariaLabel={p.tabsAria}
           value={activeTab}
           onChange={(v) => setActiveTab(v as Tab)}
-          items={TABS.map((tab) => ({ value: tab.id, label: tab.label }))}
+          items={TABS.map((tab) => ({
+            value: tab.id,
+            label: tab.label,
+            icon: tab.icon,
+            badge: TAB_DIRTY[tab.id] ? "•" : undefined,
+            badgeAlert: TAB_DIRTY[tab.id],
+          }))}
+          syncParam="tab"
         />
       </div>
 
-      {/* Personal tab */}
-      {activeTab === "personal" && (
+      {/* Every panel below stays mounted (kept-mounted pattern, RC4) so
+          switching tabs doesn't unmount/re-fetch; visibility is toggled via
+          the `hidden` attribute inside PortalTabPanel. Contact and Medical
+          used to be one "Personal" tab stacking two independently-saved
+          forms — split per 17-004 so each tab owns exactly one Save. */}
+      <PortalTabPanel value="contact" activeValue={activeTab}>
         <>
           {loading ? (
             <div className="gh-card p-6">
@@ -191,7 +258,7 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
             </div>
           ) : (
             <FormSection title={a.profile.title} description={a.profile.subtitle}>
-              <form onSubmit={onSubmit} className="gh-form-section__span-2 grid gap-4">
+              <form onSubmit={onSubmit} method="post" className="gh-form-section__span-2 grid gap-4">
                 <label className="block">
                   <span className="gh-field-label">{a.profile.emailLabel}</span>
                   <input
@@ -211,10 +278,18 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
+                    onBlur={() => setFullNameTouched(true)}
                     required
                     maxLength={120}
+                    aria-invalid={fullNameError ? true : undefined}
+                    aria-describedby={fullNameError ? "fullName-error" : undefined}
                     className="gh-input mt-1 min-w-0"
                   />
+                  {fullNameError ? (
+                    <p id="fullName-error" role="alert" className="mt-1 text-xs" style={{ color: "var(--portal-danger-text)" }}>
+                      {fullNameError}
+                    </p>
+                  ) : null}
                 </label>
 
                 <label className="block">
@@ -248,6 +323,7 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
 
                 {msg ? (
                   <p
+                    role={msg.kind === "ok" ? "status" : "alert"}
                     className="rounded-md px-3 py-2 text-sm"
                     style={
                       msg.kind === "ok"
@@ -266,29 +342,21 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
                   disabled={saving}
                   loading={saving}
                   iconLeft={<Save aria-hidden className="size-4" />}
-                  className="justify-self-start"
+                  className="justify-self-end"
                 >
                   {saving ? a.profile.saving : a.profile.saveChanges}
                 </Btn>
               </form>
             </FormSection>
           )}
-          <PatientProfileSection i18n={a.profile} />
         </>
-      )}
+      </PortalTabPanel>
 
-      {activeTab === "insurance" && (
-        <InsuranceTab
-          i18n={{
-            ...a.insurance,
-            badgeNotVerified: a.profile.badgeNotVerified,
-            badgePending: a.profile.badgePending,
-            badgeVerified: a.profile.badgeVerified,
-            badgeRejected: a.profile.badgeRejected,
-          }}
-        />
-      )}
-      {activeTab === "verification" && (
+      <PortalTabPanel value="medical" activeValue={activeTab}>
+        <PatientProfileSection i18n={a.profile} onDirtyChange={setMedicalDirty} />
+      </PortalTabPanel>
+
+      <PortalTabPanel value="verification" activeValue={activeTab}>
         <VerificationTab
           i18n={{
             ...a.verification,
@@ -304,8 +372,20 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
             docOther: a.profile.docOther,
           }}
         />
-      )}
-      {activeTab === "nationality" && (
+      </PortalTabPanel>
+      <PortalTabPanel value="insurance" activeValue={activeTab}>
+        <InsuranceTab
+          i18n={{
+            ...a.insurance,
+            badgeNotVerified: a.profile.badgeNotVerified,
+            badgePending: a.profile.badgePending,
+            badgeVerified: a.profile.badgeVerified,
+            badgeRejected: a.profile.badgeRejected,
+          }}
+          onDirtyChange={setInsuranceDirty}
+        />
+      </PortalTabPanel>
+      <PortalTabPanel value="nationality" activeValue={activeTab}>
         <NationalityTab
           i18n={{
             ...a.nationality,
@@ -320,9 +400,12 @@ export function AccountProfileClient({ i18n }: { i18n: ProfilePageI18n }) {
             docCnic: a.profile.docCnic,
             docOther: a.profile.docOther,
           }}
+          onDirtyChange={setNationalityDirty}
         />
-      )}
-      {activeTab === "privacy" && <GdprPreferencesTab i18n={a.privacy} />}
+      </PortalTabPanel>
+      <PortalTabPanel value="privacy" activeValue={activeTab}>
+        <GdprPreferencesTab i18n={a.privacy} onDirtyChange={setPrivacyDirty} />
+      </PortalTabPanel>
     </div>
   );
 }

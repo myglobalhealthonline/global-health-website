@@ -26,28 +26,16 @@
 .gh-admin-service-tablist,
 .gh-admin-service-kind-tabs,
 .gh-admin-country-health .gh-admin-table-wrap,
-.gh-admin-blog-table-wrap,
-.gh-admin-health-tablist,
 .gh-admin-ops-table-wrap,
 .gh-admin-country-table-wrap,
-.gh-admin-disclaimer-tablist,
 .gh-admin-plan-table-wrap,
-.gh-admin-plan-tablist,
-.gh-admin-plan-translation-tablist,
 .gh-admin-rich-text__toolbar,
 .gh-admin-support-table-wrap,
-.gh-admin-specialty-tablist,
-.gh-admin-order-table-wrap,
-.gh-admin-doctor-tabs,
-.gh-doctor-tabs {
+.gh-admin-order-table-wrap {
   overflow-y: hidden;
 }
 
 /* Batch 3A: admin services route family */
-.gh-admin-service-mobile-list {
-  display: none;
-}
-
 .gh-admin-service-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.85fr);
@@ -92,20 +80,11 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-.gh-admin-service-note,
 .gh-admin-service-helper {
   border: 1px solid rgba(29, 75, 54, 0.12);
   border-radius: var(--portal-radius-sm);
   background: rgba(241, 245, 235, 0.72);
   color: var(--portal-muted, var(--color-text-muted));
-}
-
-.gh-admin-service-note {
-  padding: 12px 14px;
-  font-size: 13px;
-}
-
-.gh-admin-service-helper {
   margin: 0;
   padding: 10px 12px;
   font-size: 12px;
@@ -144,7 +123,7 @@
 .gh-admin-service-kind-tab {
   min-height: 32px !important;
   flex: 0 0 auto;
-  border-radius: 8px !important;
+  border-radius: var(--portal-radius) !important;
   border: 1px solid transparent !important;
   padding: 7px 12px !important;
   font-size: 12.5px !important;
@@ -284,10 +263,6 @@
   padding: 14px;
 }
 
-.gh-admin-service-table-wrap table {
-  min-width: 880px;
-}
-
 .gh-admin-service-toggle-form {
   width: auto !important;
 }
@@ -311,50 +286,6 @@
 
 .gh-admin-appointment-mobile-list {
   display: none;
-}
-
-.gh-admin-appointment-mobile-card {
-  border: 1px solid rgba(29, 75, 54, 0.12);
-  border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(250, 252, 247, 0.94));
-  box-shadow: 0 10px 24px rgba(24, 70, 51, 0.07);
-  padding: 14px;
-}
-
-.gh-admin-appointment-mobile-meta {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin: 12px 0;
-}
-
-.gh-admin-appointment-mobile-meta div {
-  min-width: 0;
-}
-
-.gh-admin-appointment-mobile-meta dt,
-.gh-admin-service-mobile-meta em {
-  display: block;
-  margin-bottom: 3px;
-  color: var(--color-text-muted);
-  font-size: 10px;
-  font-style: normal;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.gh-admin-appointment-mobile-meta dd {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: 6px;
-  margin: 0;
-  color: var(--color-text-primary);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.35;
 }
 
 .gh-admin-country-choice {
@@ -382,7 +313,7 @@
   align-items: end;
   padding: 14px;
   border: 1px solid rgba(29, 75, 54, 0.1);
-  border-radius: 8px;
+  border-radius: var(--portal-radius-lg);
   background: rgba(255, 255, 255, 0.78);
 }
 
@@ -398,7 +329,7 @@
 .gh-admin-service-edit-summary > div {
   min-width: 0;
   border: 1px solid rgba(29, 75, 54, 0.1);
-  border-radius: 8px;
+  border-radius: var(--portal-radius-lg);
   background: rgba(255, 255, 255, 0.82);
   box-shadow: 0 10px 28px rgba(24, 70, 51, 0.06);
   padding: 14px;
@@ -426,24 +357,6 @@
   font-size: 12px;
 }
 
-.gh-admin-service-mobile-meta span {
-  min-width: 0;
-  border: 1px solid rgba(29, 75, 54, 0.08);
-  border-radius: 8px;
-  background: rgba(247, 250, 243, 0.72);
-  padding: 8px;
-}
-
-.gh-admin-service-mobile-meta strong {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  color: var(--color-text-primary);
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1.25;
-}
-
 .gh-admin-service-side-card {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(250, 252, 247, 0.94)) !important;
@@ -458,7 +371,7 @@
 
 .gh-admin-service-doctor-summary > div {
   border: 1px solid rgba(29, 75, 54, 0.1);
-  border-radius: 8px;
+  border-radius: var(--portal-radius);
   background: rgba(247, 250, 243, 0.82);
   padding: 10px;
 }
@@ -486,25 +399,50 @@
   padding-right: 4px;
 }
 
-/* Admin deep-pass shared content primitives */
+/* Admin deep-pass shared content primitives.
+ * KEY LAYOUT RULE (design brief §2): the row is ALWAYS one line on
+ * desktop/tablet regardless of card count — column count tracks card
+ * count via --card-count (set inline from items.length), never a fixed
+ * repeat(3). Cards compress via clamp() instead of wrapping; wrapping is
+ * left to the max-width:760px override below (small mobile only). */
 .gh-admin-summary-strip {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(var(--card-count, 3), minmax(0, 1fr));
+  gap: clamp(8px, 1vw, 16px);
   margin-bottom: 16px;
 }
 
+.gh-portal-stat-row {
+  grid-template-columns: repeat(var(--card-count, 3), minmax(0, 1fr));
+}
+
 .gh-admin-summary-item {
+  --gh-summary-tone: var(--portal-accent);
+  --gh-summary-surface-start: #f7f9f6;
+  --gh-summary-surface-end: #f1f5f1;
+  --gh-summary-border: rgba(29, 75, 54, 0.18);
   min-width: 0;
   position: relative;
   overflow: hidden;
-  border: 1px solid transparent;
-  border-radius: 12px;
-  background-image: var(--lux-card-fill), var(--lux-card-border);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-  box-shadow: var(--lux-elev-1);
-  padding: 14px 16px;
+  border: 1px solid var(--gh-summary-border);
+  border-radius: var(--portal-radius-lg);
+  background: linear-gradient(135deg, var(--gh-summary-surface-start), var(--gh-summary-surface-end));
+  box-shadow: 0 1px 2px rgba(16, 23, 19, 0.04), 0 8px 24px rgba(29, 75, 54, 0.1);
+  padding: clamp(14px, 1.6vw, 18px);
+  transition: transform 180ms ease-out, border-color 180ms ease-out, box-shadow 180ms ease-out;
+}
+
+.gh-admin-summary-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(29, 75, 54, 0.32);
+  box-shadow: 0 4px 8px rgba(16, 23, 19, 0.06), 0 14px 32px rgba(29, 75, 54, 0.15);
+}
+
+.gh-admin-summary-item__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .gh-admin-summary-item--brand {
@@ -513,10 +451,20 @@
 
 .gh-admin-summary-item--success {
   --gh-summary-tone: var(--portal-success);
+  --gh-summary-surface-start: #f5f8f4;
+  --gh-summary-surface-end: #eef5ef;
+  --gh-summary-border: rgba(47, 125, 78, 0.22);
 }
 
 .gh-admin-summary-item--warning {
-  --gh-summary-tone: var(--portal-warning);
+  --gh-summary-tone: #82ad1e;
+  --gh-summary-surface-start: #fbfdf1;
+  --gh-summary-surface-end: #f6fbe7;
+  --gh-summary-border: rgba(143, 176, 33, 0.3);
+}
+
+.gh-admin-summary-item--neutral {
+  --gh-summary-tone: var(--portal-accent);
 }
 
 .gh-admin-summary-item::before {
@@ -540,6 +488,7 @@
 }
 
 .gh-admin-summary-label {
+  color: color-mix(in srgb, var(--gh-summary-tone) 76%, var(--portal-text));
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -549,13 +498,11 @@
   overflow: hidden;
   margin-top: 7px;
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: clamp(18px, 2vw, 28px);
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1;
-  background: var(--lux-numeral-ink);
-  background-clip: text;
-  color: transparent;
+  color: var(--portal-text);
   font-variant-numeric: tabular-nums;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -567,6 +514,117 @@
   font-weight: 600;
   letter-spacing: 0;
   text-transform: none;
+}
+
+.gh-admin-summary-item .gh-portal-icon-badge {
+  background: linear-gradient(135deg, #397b5d, var(--portal-primary));
+  color: white;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 6px 16px rgba(29, 75, 54, 0.2);
+}
+
+.gh-admin-summary-item .gh-portal-icon-badge svg {
+  stroke-width: 2;
+}
+
+/* Linked tile (filter shortcut) — same anatomy, plus link semantics. */
+a.gh-admin-summary-item--link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a.gh-admin-summary-item--link:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--portal-focus), 0 1px 2px rgba(16, 23, 19, 0.04), 0 8px 24px rgba(29, 75, 54, 0.1);
+}
+
+/* Compact strip (audit 06-001) — one line per tile, no icon badge, tight
+ * padding, so lists below stay above the fold on short/mobile viewports. */
+.gh-admin-summary-strip--compact .gh-admin-summary-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 10px 14px;
+}
+
+.gh-admin-summary-strip--compact .gh-admin-summary-item .gh-portal-icon-badge {
+  display: none;
+}
+
+.gh-admin-summary-strip--compact .gh-admin-summary-item strong {
+  margin-top: 0;
+  font-size: 18px;
+}
+
+.gh-admin-summary-strip--compact .gh-admin-summary-hint {
+  display: none;
+}
+
+/* Dashboard StatCard uses the same metric anatomy as AdminSummaryStrip.
+ * Keep the treatment here instead of per-dashboard so the admin, doctor,
+ * and patient portals cannot drift apart. */
+.gh-stat-card {
+  --gh-stat-tone: var(--portal-accent);
+  --gh-stat-surface-start: #f7f9f6;
+  --gh-stat-surface-end: #f1f5f1;
+  --gh-stat-border: rgba(29, 75, 54, 0.18);
+  border-color: var(--gh-stat-border);
+  background: linear-gradient(135deg, var(--gh-stat-surface-start), var(--gh-stat-surface-end));
+  box-shadow: 0 1px 2px rgba(16, 23, 19, 0.04), 0 8px 24px rgba(29, 75, 54, 0.1);
+  transition: transform 180ms ease-out, border-color 180ms ease-out, box-shadow 180ms ease-out;
+}
+
+.gh-stat-card--brand { --gh-stat-tone: var(--portal-primary); }
+.gh-stat-card--accent,
+.gh-stat-card--warning {
+  --gh-stat-tone: #82ad1e;
+  --gh-stat-surface-start: #fbfdf1;
+  --gh-stat-surface-end: #f6fbe7;
+  --gh-stat-border: rgba(143, 176, 33, 0.3);
+}
+.gh-stat-card--success {
+  --gh-stat-tone: var(--portal-success);
+  --gh-stat-surface-start: #f5f8f4;
+  --gh-stat-surface-end: #eef5ef;
+  --gh-stat-border: rgba(47, 125, 78, 0.22);
+}
+.gh-stat-card--neutral { --gh-stat-tone: var(--portal-accent); }
+
+.gh-stat-card:hover {
+  border-color: rgba(29, 75, 54, 0.32);
+  box-shadow: 0 4px 8px rgba(16, 23, 19, 0.06), 0 14px 32px rgba(29, 75, 54, 0.15);
+  transform: translateY(-2px);
+}
+
+.gh-stat-card__icon-tile {
+  background: linear-gradient(135deg, #397b5d, var(--portal-primary));
+  border-color: rgba(29, 75, 54, 0.42);
+  color: white;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 6px 16px rgba(29, 75, 54, 0.2);
+}
+
+.gh-stat-card__icon-tile svg { stroke-width: 2; }
+
+.gh-stat-card > .relative > div > p {
+  color: color-mix(in srgb, var(--gh-stat-tone) 76%, var(--portal-text)) !important;
+}
+
+.gh-stat-card > .relative > div > p::before {
+  background: var(--gh-stat-tone);
+}
+
+.gh-stat-card__value {
+  margin-top: clamp(6px, 0.8vw, 8px) !important;
+  font-size: clamp(18px, 2vw, 28px);
+  background: none;
+  color: var(--portal-text);
+}
+
+.gh-stat-card__value ~ p {
+  margin-top: 7px;
+  padding-top: 0;
+  border-top: 0;
 }
 
 /* Empty state — DESIGN.md §5.15: illustration or 44px icon tile, centered
@@ -743,10 +801,6 @@
 
 .gh-portal-mobile-card__meta-item {
   min-width: 0;
-  border: 1px solid var(--portal-line);
-  border-radius: var(--portal-radius-sm);
-  background: var(--portal-well);
-  padding: 8px;
 }
 
 .gh-portal-mobile-card__meta-item em {
@@ -909,10 +963,6 @@
 }
 
 @media (max-width: 760px) {
-  .gh-admin-appointment-table-wrap {
-    display: none;
-  }
-
   .gh-admin-appointment-mobile-list {
     display: grid;
     gap: 10px;
@@ -922,9 +972,14 @@
   .gh-admin-country-choice,
   .gh-admin-appointment-country-form,
   .gh-admin-service-summary-strip,
-  .gh-admin-service-edit-summary,
-  .gh-admin-summary-strip {
+  .gh-admin-service-edit-summary {
     grid-template-columns: 1fr;
+  }
+
+  .gh-admin-summary-strip,
+  .gh-admin-dashboard-stats,
+  .gh-portal-stat-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 
   .gh-admin-empty-state {
@@ -937,32 +992,12 @@
     padding: 12px;
   }
 
-  .gh-admin-deep-table-wrap {
-    display: none;
-  }
-
-  .gh-admin-mobile-actions {
-    justify-content: stretch;
-  }
-
-  .gh-admin-mobile-actions > * {
-    justify-content: center;
-  }
-
   .gh-admin-country-picker {
     max-width: 52vw;
   }
 
   .gh-admin-appointment-country-form :where(.gh-btn, button) {
     width: 100%;
-  }
-
-  .gh-admin-service-mobile-card {
-    gap: 10px;
-  }
-
-  .gh-admin-service-mobile-meta {
-    gap: 7px;
   }
 
   .gh-admin-service-doctor-grid {
@@ -995,53 +1030,11 @@
     margin-left: 0;
   }
 
-  .gh-admin-service-table-wrap {
-    display: none;
-  }
-
-  .gh-admin-service-mobile-list {
-    display: grid;
-    gap: 10px;
-    padding: 12px;
-  }
-
-  .gh-admin-service-mobile-card {
-    display: grid;
-    gap: 12px;
-    border: 1px solid rgba(29, 75, 54, 0.12);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.94);
-    padding: 14px;
-    box-shadow: 0 14px 28px rgba(20, 55, 43, 0.055);
-  }
-
-  .gh-admin-service-mobile-meta {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    color: var(--color-text-muted);
-    font-size: 12px;
-    font-weight: 700;
-  }
-
-  .gh-admin-service-mobile-controls {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-  }
-
   .gh-admin-service-actions :where(.gh-btn, button, a),
   .gh-admin-service-country-form :where(.gh-btn, button),
-  .gh-admin-service-faq__actions :where(.gh-btn, button),
-  .gh-admin-service-row-actions :where(.gh-btn, button, a) {
+  .gh-admin-service-faq__actions :where(.gh-btn, button) {
     width: 100%;
     justify-content: center;
-  }
-
-  .gh-admin-service-mobile-controls .gh-admin-service-row-actions :where(.gh-btn, button, a) {
-    width: 34px;
-    min-width: 34px;
   }
 }
 
@@ -1175,7 +1168,23 @@
 
 /* Batch 3C: admin dashboard and core navigation primitives */
 .gh-admin-dashboard-stats {
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+  grid-template-columns: repeat(var(--card-count, 4), minmax(0, 1fr)) !important;
+}
+
+@media (max-width: 480px) {
+  .gh-admin-summary-strip,
+  .gh-admin-dashboard-stats,
+  .gh-portal-stat-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Doctor appointment-detail stat strip (audit 03/VIS-003) — 4 cards is
+   * disproportionate as a full-height 1-col stack above the tab bar;
+   * scoped to this page only so other AdminSummaryStrip consumers keep
+   * their existing 1-col-mobile default. */
+  .gh-doctor-appointment-workspace .gh-admin-summary-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
 }
 
 .gh-admin-dashboard-body {
@@ -1274,10 +1283,6 @@
 
 .gh-admin-appointment-actions > span {
   margin-left: auto;
-}
-
-.gh-admin-appointment-table-wrap table {
-  min-width: 1040px;
 }
 
 .gh-admin-appointment-field-row {
@@ -1383,7 +1388,6 @@
 }
 
 .gh-admin-asset-filter-grid,
-.gh-admin-asset-field-grid,
 .gh-admin-asset-detail-grid {
   display: grid;
   min-width: 0;
@@ -1394,13 +1398,11 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-.gh-admin-asset-field-grid--two,
 .gh-admin-asset-detail-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .gh-admin-asset-form,
-.gh-admin-asset-fields,
 .gh-admin-asset-path-field {
   display: flex;
   min-width: 0;
@@ -1428,18 +1430,11 @@
   margin-left: auto;
 }
 
-.gh-admin-asset-note,
 .gh-admin-asset-active-row,
 .gh-admin-asset-preview {
   border-radius: var(--portal-radius);
   border: 1px solid var(--portal-line, var(--color-border));
   background: rgba(241, 245, 235, 0.66);
-}
-
-.gh-admin-asset-note {
-  padding: 12px 14px;
-  font-size: 13px;
-  color: var(--portal-muted, var(--color-text-muted));
 }
 
 .gh-admin-asset-active-row {
@@ -1453,10 +1448,6 @@
   min-width: 0;
   border-bottom: 1px solid rgba(29, 75, 54, 0.08);
   padding-bottom: 10px;
-}
-
-.gh-admin-asset-table-wrap table {
-  min-width: 980px;
 }
 
 .gh-admin-asset-preview {
@@ -1475,7 +1466,6 @@
 
 @media (max-width: 760px) {
   .gh-admin-asset-filter-grid,
-  .gh-admin-asset-field-grid--two,
   .gh-admin-asset-detail-grid,
   .gh-admin-asset-country-form {
     grid-template-columns: 1fr;
@@ -1501,7 +1491,6 @@
 }
 
 /* Batch 3F: admin blog/content editor route family */
-.gh-admin-blog-filters,
 .gh-admin-blog-field-grid,
 .gh-admin-blog-country-grid {
   display: grid;
@@ -1509,16 +1498,10 @@
   gap: 14px;
 }
 
-.gh-admin-blog-filters {
-  grid-template-columns: repeat(5, minmax(140px, 1fr)) auto;
-  align-items: end;
-}
-
 .gh-admin-blog-field-grid--two {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.gh-admin-blog-field-grid--three,
 .gh-admin-blog-country-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -1549,14 +1532,6 @@
   margin-left: auto;
 }
 
-.gh-admin-blog-table-wrap {
-  overflow-x: auto;
-}
-
-.gh-admin-blog-table-wrap table {
-  min-width: 920px;
-}
-
 .gh-admin-html-editor-textarea {
   min-height: 360px !important;
   border-radius: var(--portal-radius-sm) !important;
@@ -1584,13 +1559,6 @@
   padding: 10px 12px;
 }
 
-.gh-admin-blog-section-heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-}
-
 .gh-admin-blog-country-option {
   display: inline-flex;
   align-items: center;
@@ -1600,20 +1568,13 @@
 }
 
 @media (max-width: 1180px) {
-  .gh-admin-blog-filters {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .gh-admin-blog-field-grid--three,
   .gh-admin-blog-country-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 760px) {
-  .gh-admin-blog-filters,
   .gh-admin-blog-field-grid--two,
-  .gh-admin-blog-field-grid--three,
   .gh-admin-blog-country-grid {
     grid-template-columns: 1fr;
   }
@@ -1661,10 +1622,6 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.gh-admin-health-field-grid--three {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
 .gh-admin-health-form,
 .gh-admin-health-fields,
 .gh-admin-health-panel {
@@ -1693,10 +1650,6 @@
   margin-left: auto;
 }
 
-.gh-admin-health-table-wrap table {
-  min-width: 940px;
-}
-
 .gh-admin-health-translations,
 .gh-admin-health-faq__item,
 .gh-admin-health-faq-form,
@@ -1713,31 +1666,6 @@
   flex-direction: column;
   gap: 16px;
   padding: 18px;
-}
-
-.gh-admin-health-tablist {
-  display: flex;
-  max-width: 100%;
-  gap: 6px;
-  overflow-x: auto;
-  border-radius: var(--portal-radius);
-  background: rgba(241, 245, 235, 0.88);
-  padding: 5px;
-}
-
-.gh-admin-health-tab {
-  min-height: 32px !important;
-  flex: 0 0 auto;
-  border-radius: 8px !important;
-  padding: 7px 12px !important;
-  font-size: 12.5px !important;
-  font-weight: 800 !important;
-  white-space: nowrap;
-}
-
-.gh-admin-health-tab[aria-selected="true"] {
-  background: var(--lux-forest-duotone) !important;
-  color: var(--portal-bg) !important;
 }
 
 .gh-admin-health-active-row {
@@ -1783,7 +1711,6 @@
 @media (max-width: 760px) {
   .gh-admin-health-filter-grid,
   .gh-admin-health-field-grid--two,
-  .gh-admin-health-field-grid--three,
   .gh-admin-health-detail-grid,
   .gh-admin-health-country-form {
     grid-template-columns: 1fr;
@@ -1866,15 +1793,6 @@
   min-width: 0;
 }
 
-.gh-admin-calendar-grid {
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
-  align-items: start;
-}
-
-.gh-admin-calendar-grid > * {
-  min-width: 0;
-}
-
 .gh-admin-loading-state {
   width: 100%;
 }
@@ -1886,10 +1804,6 @@
 @media (max-width: 1024px) {
   .gh-admin-ops-filter-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .gh-admin-calendar-grid {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -1944,6 +1858,13 @@
   min-width: 820px;
 }
 
+/* Country-features (sidebar toggle) table is only 3 columns — the shared
+ * 820px floor above forces needless horizontal scroll well before the
+ * table actually needs it (Pattern A: no card split, just let it shrink). */
+.gh-admin-country-feature-table-wrap table {
+  min-width: 0;
+}
+
 .gh-admin-country-row-actions,
 .gh-admin-country-actions,
 .gh-admin-country-toolbar {
@@ -1959,7 +1880,6 @@
   min-width: 0;
 }
 
-.gh-admin-country-fieldset,
 .gh-admin-authority-row,
 .gh-admin-country-route-list > li,
 .gh-admin-country-domain-list > li {
@@ -1968,23 +1888,12 @@
   background: rgba(255, 255, 255, 0.9);
 }
 
-.gh-admin-country-fieldset,
 .gh-admin-authority-row {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.62);
 }
 
-.gh-admin-country-locale-grid,
-.gh-admin-country-check-row {
+.gh-admin-country-locale-grid {
   min-width: 0;
-}
-
-.gh-admin-country-check-row {
-  align-items: flex-start;
-}
-
-.gh-admin-country-check-row input[type="checkbox"] {
-  margin-top: 2px;
-  flex: 0 0 auto;
 }
 
 .gh-admin-country-select {
@@ -2025,25 +1934,6 @@
   grid-template-columns: 1fr;
 }
 
-.gh-admin-disclaimer-tablist {
-  max-width: 100%;
-  overflow-x: auto;
-  border-radius: var(--portal-radius);
-  background: rgba(241, 245, 235, 0.88);
-  padding: 5px;
-}
-
-.gh-admin-disclaimer-tab {
-  flex: 0 0 auto;
-  border-radius: 8px !important;
-  white-space: nowrap;
-}
-
-.gh-admin-disclaimer-tab[aria-selected="true"] {
-  background: var(--lux-forest-duotone) !important;
-  color: var(--portal-bg) !important;
-}
-
 .gh-admin-disclaimer-panel textarea,
 .gh-admin-country-editor-form textarea,
 .gh-admin-country-legal-form textarea {
@@ -2058,10 +1948,6 @@
 .gh-admin-country-feature-summary,
 .gh-admin-country-features {
   min-width: 0;
-}
-
-.gh-admin-country-feature-row td {
-  vertical-align: top;
 }
 
 @media (max-width: 1180px) {
@@ -2094,11 +1980,6 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-  }
-
-  .gh-admin-country-check-row {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
   }
 
   .gh-admin-country-select__menu {
@@ -2151,36 +2032,6 @@
   background: rgba(255, 255, 255, 0.9);
 }
 
-.gh-admin-plan-tablist,
-.gh-admin-plan-translation-tablist {
-  max-width: 100%;
-  overflow-x: auto;
-  border-radius: var(--portal-radius);
-  background: rgba(241, 245, 235, 0.88) !important;
-  padding: 5px !important;
-}
-
-.gh-admin-plan-tab,
-.gh-admin-plan-translation-tab {
-  flex: 0 0 auto;
-  border-radius: 8px !important;
-  white-space: nowrap;
-}
-
-.gh-admin-plan-tab[aria-selected="true"],
-.gh-admin-plan-translation-tab[aria-selected="true"] {
-  background: var(--portal-primary) !important;
-  color: var(--portal-bg) !important;
-}
-
-.gh-admin-plan-field-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.gh-admin-plan-field-grid--three {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
 .gh-admin-plan-checks {
   align-items: flex-start;
 }
@@ -2225,12 +2076,6 @@
   min-width: 0;
 }
 
-@media (max-width: 1024px) {
-  .gh-admin-plan-field-grid--three {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 @media (max-width: 760px) {
   .gh-admin-plan-country-form,
   .gh-admin-plan-actions,
@@ -2240,11 +2085,6 @@
   .gh-admin-subscription-approval-row {
     align-items: stretch;
     flex-direction: column;
-  }
-
-  .gh-admin-plan-field-grid,
-  .gh-admin-plan-field-grid--three {
-    grid-template-columns: 1fr;
   }
 
   .gh-admin-plan-country-form :where(.gh-btn, button, select),
@@ -2291,6 +2131,14 @@
   min-width: 860px;
 }
 
+/* Categories matrix (specialties) has a dynamic column per country, so a
+ * fixed min-width fights the natural table width instead of letting it
+ * shrink — drop the forced floor here only (Pattern A: no card split, just
+ * let the table size itself and rely on the wrap's overflow-x). */
+.gh-admin-specialty-table-wrap table {
+  min-width: 0;
+}
+
 .gh-admin-user-detail-layout {
   grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.85fr);
   align-items: start;
@@ -2325,26 +2173,6 @@
   padding: 14px;
 }
 
-.gh-admin-specialty-tablist {
-  max-width: 100%;
-  overflow-x: auto;
-  border-radius: var(--portal-radius);
-  background: rgba(241, 245, 235, 0.88);
-  padding: 5px;
-}
-
-.gh-admin-specialty-tab {
-  flex: 0 0 auto;
-  border-radius: 8px !important;
-  white-space: nowrap;
-}
-
-.gh-admin-specialty-tab[aria-selected="true"] {
-  background: var(--lux-forest-duotone) !important;
-  color: var(--portal-bg) !important;
-}
-
-.gh-admin-specialty-order-list > div,
 .gh-admin-patient-row {
   min-width: 0;
 }
@@ -2410,7 +2238,9 @@
 }
 
 .gh-admin-order-table-wrap table {
-  min-width: 1180px;
+  /* Pattern B trim: checkbox + Order/Customer/Total/Status/Created + actions
+     (Country/Items/Meet/Invoice/Payment moved to the D-01 quick-view drawer). */
+  min-width: 700px;
 }
 
 .gh-admin-order-bulkbar,
@@ -2469,7 +2299,6 @@
  * gradient — §10.4 bans new gradients beyond the four sanctioned ones). */
 .gh-calendar-panel,
 .gh-agenda-panel,
-.gh-calendar-dialog,
 .gh-chat-panel {
   border: 1px solid transparent !important;
   border-radius: var(--portal-radius-lg, 14px) !important;
@@ -2592,9 +2421,11 @@
 
 .gh-chat-panel,
 .gh-chat-panel-embedded {
-  height: 60vh;
-  max-height: 560px;
-  min-height: 320px;
+  /* Scales with viewport instead of forcing a fixed 320px floor — on a
+     500-600px-tall viewport (RC8) a hard floor could push the composer
+     below the fold. The internal .gh-chat-body (flex:1 min-height:0) is
+     the actual scroll owner, so the panel itself can shrink safely. */
+  height: clamp(220px, 60svh, 560px);
 }
 
 .gh-chat-panel {
@@ -2771,7 +2602,7 @@
 
 .gh-language-picker__chip,
 .gh-language-picker__option {
-  border-radius: 7px !important;
+  border-radius: var(--portal-radius-sm) !important;
 }
 
 .gh-language-picker__option {
@@ -2819,22 +2650,6 @@
   }
 }
 
-.gh-icon-circle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-tile);
-  background: var(--color-accent-soft);
-  color: var(--color-brand-primary);
-}
-.gh-icon-circle-lg {
-  width: 56px;
-  height: 56px;
-  border-radius: 18px;
-}
-
 /* ── Status pills (admin lists) ─────────────────────────────── */
 /* Status pills — 11px caps, 0.04em tracking, weight 700.
    Matches ADMIN_DESIGN_BRIEF.md "Status pills" + Atoms.jsx Pill. */
@@ -2857,9 +2672,11 @@
   border: 1px solid transparent;
 }
 .gh-pill-active {
-  background: var(--color-status-success-bg);
-  color: var(--color-status-success-text);
-  border: 1px solid var(--color-status-success-border);
+  /* Phase 7: repointed from public --color-status-* to the portal lux status
+   * tokens so pills and badges render the same hues inside the portal. */
+  background: var(--portal-success-soft);
+  color: var(--portal-success-text);
+  border: 1px solid transparent;
 }
 .gh-pill-draft {
   background: var(--color-background-soft);
@@ -2867,14 +2684,14 @@
   border: 1px solid var(--color-border);
 }
 .gh-pill-inactive {
-  background: var(--color-status-error-bg);
-  color: var(--color-status-error-text);
-  border: 1px solid var(--color-status-error-border);
+  background: var(--portal-danger-soft);
+  color: var(--portal-danger-text);
+  border: 1px solid transparent;
 }
 .gh-pill-pending {
-  background: var(--color-status-warning-bg);
-  color: var(--color-status-warning-text);
-  border: 1px solid var(--color-status-warning-border);
+  background: var(--portal-warning-soft);
+  color: var(--portal-warning-text);
+  border: 1px solid transparent;
 }
 .gh-pill-brand {
   background: rgba(27,77,62,0.10);
@@ -2911,7 +2728,6 @@
   min-width: 0;
 }
 
-.gh-admin-doctor-table-wrap table,
 .gh-admin-doctor-availability-table {
   min-width: 920px;
 }
@@ -2926,7 +2742,6 @@
   min-width: 0;
 }
 
-.gh-admin-doctor-form-section,
 .gh-admin-doctor-country-form,
 .gh-admin-doctor-credential-row,
 .gh-admin-doctor-registration-row,
@@ -2937,10 +2752,6 @@
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(247, 250, 247, 0.74)),
     var(--color-background-soft);
-}
-
-.gh-admin-doctor-form-section {
-  padding: clamp(16px, 2vw, 22px);
 }
 
 .gh-admin-doctor-specialty-option,
@@ -2954,17 +2765,6 @@
 .gh-admin-doctor-service-row:hover {
   border-color: rgba(29, 75, 54, 0.24);
   background: rgba(247, 250, 247, 0.88);
-}
-
-.gh-admin-doctor-tabs {
-  max-width: 100%;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  padding-bottom: 2px;
-}
-
-.gh-admin-doctor-tabs > button {
-  white-space: nowrap;
 }
 
 .gh-admin-doctor-tab-panel,
@@ -3063,7 +2863,6 @@
     justify-content: flex-start;
   }
 
-  .gh-admin-doctor-table-wrap,
   .gh-admin-doctor-availability-table-wrap {
     margin-left: -16px;
     margin-right: -16px;
@@ -3085,7 +2884,6 @@
 }
 
 @media (max-width: 430px) {
-  .gh-admin-doctor-form-section,
   .gh-admin-doctor-country-form,
   .gh-admin-doctor-credential-row,
   .gh-admin-doctor-registration-row,
@@ -3106,7 +2904,6 @@
 .gh-doctor-table-card,
 .gh-doctor-empty-state,
 .gh-doctor-practice-context,
-.gh-doctor-profile-form-card,
 .gh-doctor-profile-photo-card,
 .gh-doctor-admin-note-card,
 .gh-doctor-template-list,
@@ -3116,8 +2913,21 @@
 .gh-doctor-summary-card,
 .gh-doctor-all-documents-card,
 .gh-doctor-report-card,
-.gh-doctor-report-tile {
+.gh-doctor-report-tile,
+.gh-doctor-safety-strip {
   box-shadow: 0 18px 42px rgba(20, 55, 43, 0.065);
+}
+
+/* Compliance banner: warning-tinted background, not border-only (audit
+ * 01-002). Extra tint layer on top of the .gh-admin-card fill/border pair
+ * (double class outranks the later .gh-admin-card background-image). */
+.gh-admin-card.gh-doctor-compliance-banner {
+  background-image:
+    linear-gradient(180deg, var(--portal-warning-soft), var(--portal-warning-soft)),
+    var(--lux-card-fill),
+    var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, padding-box, border-box;
 }
 
 .gh-doctor-detail-grid,
@@ -3137,10 +2947,6 @@
 .gh-doctor-patient-detail-layout > *,
 .gh-doctor-templates-layout > * {
   min-width: 0;
-}
-
-.gh-doctor-page-header {
-  max-width: min(100%, var(--portal-readable-max));
 }
 
 .gh-doctor-stat-grid,
@@ -3178,17 +2984,6 @@
   padding-bottom: 8px;
 }
 
-.gh-doctor-tabs {
-  max-width: 100%;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  padding-bottom: 2px;
-}
-
-.gh-doctor-tabs > button {
-  white-space: nowrap;
-}
-
 .gh-doctor-quick-card,
 .gh-doctor-service-card,
 .gh-doctor-template-row,
@@ -3202,7 +2997,7 @@
 .gh-doctor-schedule-row {
   position: relative;
   padding-left: 14px;
-  border-radius: 8px;
+  border-radius: var(--portal-radius);
   transition: background-color 150ms ease;
 }
 
@@ -3289,10 +3084,6 @@
   box-shadow: 0 12px 28px rgba(20, 55, 43, 0.07);
 }
 
-.gh-doctor-slot-chip {
-  min-height: 34px;
-}
-
 .gh-doctor-schedule-row,
 .gh-doctor-alert-list-row,
 .gh-doctor-notification-title,
@@ -3369,7 +3160,6 @@
 @media (max-width: 430px) {
   .gh-doctor-filter-card,
   .gh-doctor-practice-context,
-  .gh-doctor-profile-form-card,
   .gh-doctor-profile-photo-card,
   .gh-doctor-admin-note-card,
   .gh-doctor-template-list,
@@ -3383,20 +3173,51 @@
     padding: 16px;
   }
 
-  .gh-doctor-slot-grid {
-    gap: 8px;
-  }
-
-  .gh-doctor-slot-chip {
-    width: 100%;
-    justify-content: center;
-  }
 }
 
 /* Batch 4B/4C: doctor appointment workspace and calendar */
 .gh-doctor-appointment-workspace,
 .gh-doctor-calendar {
   min-width: 0;
+}
+
+/* Appointment workspace two-region layout (C1-C3, TASK §1). Left = tabs,
+ * right = persistent patient-context rail. Rail is a Patient tab below
+ * `lg` instead (hidden here, shown via #gh-tab-patient); never a floating
+ * card stacked above the tab strip. */
+.gh-doctor-workspace-grid {
+  min-width: 0;
+}
+
+.gh-doctor-context-rail {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .gh-doctor-context-rail {
+    display: grid;
+    gap: 16px;
+    align-self: start;
+    min-width: 0;
+  }
+
+  /* The rail already carries the Patient info at this width — the
+   * duplicate "Patient" tab button (kept in the tabs array so `?tab=`
+   * deep links + narrow widths still work) is redundant here. */
+  .gh-doctor-appointment-tabs #gh-tab-patient {
+    display: none;
+  }
+}
+
+/* Sticky only with enough vertical room (TASK §1: "never overlaps header/
+ * tabs/footer"). Short viewports keep the rail in normal flow so it can
+ * never collide with the sticky tab strip above it. */
+@media (min-width: 1024px) and (min-height: 700px) {
+  .gh-doctor-context-rail {
+    position: sticky;
+    top: calc(var(--portal-topbar-h) + 16px);
+    z-index: var(--z-sticky);
+  }
 }
 
 .gh-doctor-appointment-workspace .gh-card,
@@ -3414,7 +3235,6 @@
   border-color: rgba(29, 75, 54, 0.13);
 }
 
-.gh-doctor-appointment-tablist,
 .gh-doctor-doc-modal-tabs {
   overscroll-behavior-x: contain;
 }
@@ -3423,8 +3243,7 @@
  * is live, the form zone drops hover-lift chrome and softens decorative
  * accents so nothing competes for attention with the actual consult. */
 .gh-doctor-appointment-workspace--calm .gh-card:hover,
-.gh-doctor-appointment-workspace--calm .gh-admin-card:hover,
-.gh-doctor-appointment-workspace--calm .gh-card-interactive:hover {
+.gh-doctor-appointment-workspace--calm .gh-admin-card:hover {
   transform: none !important;
   box-shadow: var(--portal-shadow) !important;
 }
@@ -3440,7 +3259,6 @@
   }
 }
 
-.gh-doctor-appointment-tablist > button,
 .gh-doctor-doc-modal-tabs > button {
   white-space: nowrap;
 }
@@ -3522,17 +3340,9 @@
     width: 100%;
   }
 
-  .gh-doctor-review-actions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: 100%;
-  }
-
-  .gh-doctor-review-actions .gh-btn,
-  .gh-doctor-review-actions a,
-  .gh-doctor-review-actions button {
-    justify-content: center;
-  }
+  /* .gh-doctor-review-actions keeps its Tailwind `hidden md:flex` — the
+     panel now renders a dedicated compact mobile cluster + AppMenu overflow
+     instead of reflowing the desktop cluster into a grid. */
 
   .gh-doctor-doc-modal {
     align-items: stretch;
@@ -3540,7 +3350,7 @@
   }
 
   .gh-doctor-doc-modal-panel {
-    max-height: calc(100vh - 20px);
+    max-height: calc(100svh - 20px);
     border-radius: 10px;
   }
 
@@ -3563,13 +3373,6 @@
     padding: 16px;
   }
 
-  .gh-doctor-review-actions {
-    grid-template-columns: 1fr;
-  }
-
-  .gh-doctor-appointment-tablist {
-    top: 52px;
-  }
 }
 
 /* Batch 5: patient/account portal pages and route components */
@@ -3588,7 +3391,6 @@
   width: 100%;
 }
 
-.gh-patient-page-header,
 .gh-patient-overview-grid,
 .gh-patient-detail-grid,
 .gh-patient-calendar,
@@ -3597,10 +3399,8 @@
 }
 
 .gh-patient-overview .gh-card,
-.gh-patient-booking-card,
 .gh-patient-doc-card,
 .gh-patient-form-card,
-.gh-patient-security-card,
 .gh-patient-family-card,
 .gh-patient-access-card,
 .gh-patient-notification-list,
@@ -3614,10 +3414,8 @@
   box-shadow: 0 18px 42px rgba(20, 55, 43, 0.06);
 }
 
-.gh-patient-booking-card,
 .gh-patient-doc-card,
 .gh-patient-form-card,
-.gh-patient-security-card,
 .gh-patient-family-card,
 .gh-patient-access-card,
 .gh-patient-notification-list,
@@ -3702,14 +3500,8 @@
   white-space: nowrap;
 }
 
-.gh-patient-table-wrap {
-  max-width: 100%;
-  overscroll-behavior-x: contain;
-}
-
 .gh-patient-list-row,
 .gh-patient-alert-row,
-.gh-patient-booking-card-header,
 .gh-patient-booking-band,
 .gh-patient-booking-actions,
 .gh-patient-doc-card,
@@ -3736,7 +3528,10 @@
 }
 
 .gh-patient-calendar {
-  grid-template-columns: minmax(0, 1fr) 360px;
+  /* Single grid child (MonthCalendar) — one full-width track. The old
+   * 1fr/360px split reserved a second column for a sidebar that was never
+   * built, leaving the month grid ~360px short of the content edge. */
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .gh-patient-subscription-grid > *,
@@ -3772,34 +3567,28 @@
 }
 
 @media (max-width: 768px) {
-  .gh-patient-page-header,
   .gh-patient-alert-row,
   .gh-patient-list-row,
-  .gh-patient-booking-card-header,
   .gh-patient-booking-band,
   .gh-patient-booking-actions,
   .gh-patient-doc-card,
   .gh-patient-family-card-header,
   .gh-patient-notification-toolbar,
   .gh-patient-consent-row,
-  .gh-patient-form-actions,
-  .gh-patient-access-row {
+  .gh-patient-form-actions {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .gh-patient-page-header > *,
   .gh-patient-alert-row > *,
   .gh-patient-list-row > *,
-  .gh-patient-booking-card-header > *,
   .gh-patient-booking-band > *,
   .gh-patient-booking-actions > *,
   .gh-patient-doc-card > *,
   .gh-patient-family-card-header > *,
   .gh-patient-notification-toolbar > *,
   .gh-patient-consent-row > *,
-  .gh-patient-form-actions > *,
-  .gh-patient-access-row > * {
+  .gh-patient-form-actions > * {
     width: 100%;
   }
 
@@ -3811,19 +3600,11 @@
     justify-content: center;
   }
 
-  .gh-patient-table-wrap {
-    margin-left: -16px;
-    margin-right: -16px;
-    padding-left: 16px;
-    padding-right: 16px;
-  }
 }
 
 @media (max-width: 430px) {
   .gh-patient-form-card,
-  .gh-patient-booking-card,
   .gh-patient-doc-card,
-  .gh-patient-security-card,
   .gh-patient-family-card,
   .gh-patient-empty-state {
     padding: 16px;
@@ -3996,22 +3777,6 @@ a.gh-appointment-card:hover {
  * portal-only CSS. Their @media/@supports fallback blocks moved together
  * with them. ===== */
 
-.gh-admin-nav-link {
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  padding: 10px 14px;
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
-  background: var(--color-background-soft);
-  transition: background-color 180ms ease-out, color 180ms ease-out, border-color 180ms ease-out;
-}
-
-.gh-admin-nav-link:hover {
-  color: var(--color-text-primary);
-  background: var(--color-brand-secondary);
-  border-color: var(--color-border-strong);
-}
 .gh-admin-main table {
   width: 100%;
   border-collapse: collapse;
@@ -4052,24 +3817,6 @@ a.gh-appointment-card:hover {
   color: var(--portal-text, var(--color-text-primary));
 }
 
-.gh-admin-detail-layout {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-}
-
-@media (max-width: 1024px)  {
-  .gh-admin-detail-layout.gh-admin-appointment-workspace {
-    grid-template-columns: minmax(0, 1fr) !important;
-  }
-
-  .gh-admin-detail-layout.gh-admin-appointment-workspace > .grid {
-    min-width: 0;
-  }
-}
-
-
-
 .gh-admin-pager-btn {
   min-height: 36px;
   padding: 0 14px;
@@ -4087,12 +3834,6 @@ a.gh-appointment-card:hover {
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 13px;
-}
-.gh-admin-section {
-  padding: 24px;
-}
-@media (min-width: 640px)  {
-  .gh-admin-section { padding: 32px; }
 }
 
 
@@ -4133,6 +3874,11 @@ a.gh-appointment-card:hover {
 }
 .gh-admin-main table {
   font-size: 13.5px;
+}
+
+.gh-admin-main {
+  container-type: inline-size;
+  container-name: list;
 }
 
 .gh-admin-main th {
@@ -4201,7 +3947,13 @@ a.gh-appointment-card:hover {
 .gh-admin-main :where([role="tab"], .gh-admin-nav-link) {
   border-radius: var(--portal-radius-sm);
 }
-.gh-portal-shell {
+/* :root added alongside .gh-portal-shell so these tokens reach content that
+ * Radix/React portals mount directly on <body> (AppSheet, AppMenu, dialogs) —
+ * body sits outside .gh-portal-shell's DOM subtree so scoped custom
+ * properties don't cascade to it otherwise (same class of bug documented on
+ * .gh-admin-country-picker-menu below). portal.css only loads on portal
+ * route groups, so :root here can't leak into the public site. */
+:root, .gh-portal-shell {
   /* ── worlds ─────────────────────────────────────────────── */
   --portal-canvas: #07120c;
   --portal-bg: #fafbf7; /* ivory work plane */
@@ -4248,6 +4000,9 @@ a.gh-appointment-card:hover {
   --portal-info: #56707a;
   --portal-info-text: #3f565f;
   --portal-info-soft: rgba(86, 112, 122, 0.12);
+  /* Deep slate for booked calendar blocks — darker than --portal-info so
+     the white patient name reads with strong contrast (WeekCalendar). */
+  --portal-booked-fill: #33505b;
 
   /* ── lines + interaction ────────────────────────────────── */
   --portal-line: rgba(16, 23, 19, 0.08);
@@ -4265,13 +4020,18 @@ a.gh-appointment-card:hover {
   --portal-shadow-popover: 0 24px 80px rgba(5, 12, 8, 0.27); /* modal @60% strength — DESIGN.md §5.10 */
 
   /* ── geometry ───────────────────────────────────────────── */
-  --portal-radius-sm: 8px;
-  --portal-radius: 10px; /* buttons, inputs */
-  --portal-radius-lg: 14px; /* cards */
-  --portal-radius-xl: 18px; /* band, modals, popovers */
+  --portal-radius-sm: 10px;
+  --portal-radius: 12px; /* buttons, inputs */
+  --portal-radius-lg: 20px; /* cards */
+  --portal-radius-xl: 24px; /* band, modals, popovers */
   --portal-radius-pill: 999px; /* status pills only */
 
   /* ── layout (unchanged from earlier portal system versions) ─ */
+  /* Single source of truth for the topbar's rendered height (h-16 in both
+   * shells) — every sticky offset below the topbar (tab strips, context
+   * rails) derives from this instead of hardcoding 58px/top-4/etc (A2/A4
+   * findings, RC1). */
+  --portal-topbar-h: 64px;
   --portal-sidebar-w: 272px;
   --portal-main-max: 1500px;
   --portal-readable-max: 1180px;
@@ -4285,13 +4045,13 @@ a.gh-appointment-card:hover {
    * canvas gradient now matches --lux-plane-bg's ivory base instead of a
    * dark fill — no more dark strip showing through around the content plane. */
   --lux-canvas-bg:
-    radial-gradient(1400px 900px at 85% -12%, rgba(176, 241, 34, 0.16), transparent 60%),
-    radial-gradient(900px 700px at -10% 110%, rgba(143, 176, 33, 0.10), transparent 55%),
-    linear-gradient(170deg, #eef1e6 0%, #e6ebdc 45%, #dfe5d3 100%);
+    radial-gradient(1400px 900px at 85% -12%, rgba(29, 75, 54, 0.16), transparent 60%),
+    radial-gradient(900px 700px at -10% 110%, rgba(143, 176, 33, 0.05), transparent 55%),
+    linear-gradient(170deg, #f8f8f4 0%, #f4f5f1 45%, #eef0eb 100%);
   --lux-canvas-bloom:
-    radial-gradient(1100px 760px at 86% -12%, rgba(176, 241, 34, 0.13), transparent 62%),
-    radial-gradient(760px 560px at -8% 108%, rgba(143, 176, 33, 0.08), transparent 58%);
-  --lux-seam-light: linear-gradient(90deg, transparent, rgba(176, 241, 34, 0.45) 35%, rgba(176, 241, 34, 0.10) 70%, transparent);
+    radial-gradient(1100px 760px at 86% -12%, rgba(29, 75, 54, 0.13), transparent 62%),
+    radial-gradient(760px 560px at -8% 108%, rgba(143, 176, 33, 0.04), transparent 58%);
+  --lux-seam-light: linear-gradient(90deg, transparent, rgba(29, 75, 54, 0.45) 35%, rgba(29, 75, 54, 0.10) 70%, transparent);
   --lux-card-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.66));
   --lux-modal-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.86));
   --lux-card-border: linear-gradient(160deg, rgba(255, 255, 255, 0.95) 0%, rgba(16, 23, 19, 0.06) 38%, rgba(16, 23, 19, 0.10) 62%, rgba(143, 176, 33, 0.22) 100%);
@@ -4374,6 +4134,18 @@ a.gh-appointment-card:hover {
   --lux-scrollbar-thumb: rgba(16, 23, 19, 0.18);
   --lux-scrollbar-thumb-hover: rgba(16, 23, 19, 0.30);
   --lux-selection: rgba(176, 241, 34, 0.35);
+
+  /* Design-brief restyle (2026-07-12): page-header banner / stat-row /
+   * tab-bar gradients + shared icon-badge motif — derived from existing
+   * hues via color-mix(), no new palette. */
+  --portal-band-fill: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--portal-primary) 6%, var(--portal-well)) 0%,
+    color-mix(in srgb, var(--portal-signal) 12%, var(--portal-well)) 100%
+  );
+  --portal-band-border: color-mix(in srgb, var(--portal-primary) 18%, transparent);
+  --portal-cta-halo: radial-gradient(circle, color-mix(in srgb, var(--portal-signal) 32%, transparent), transparent 70%);
+  --portal-icon-badge-fill: var(--lux-forest-duotone);
 }
 .gh-portal-shell .gh-eyebrow {
   color: var(--portal-accent-text);
@@ -4420,9 +4192,6 @@ a.gh-appointment-card:hover {
   transition: width 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.gh-card-interactive:hover .gh-admin-card-title::after {
-  width: 24px;
-}
 .gh-portal-sidebar {
   overflow: hidden;
   background: var(--lux-chrome-fill);
@@ -4642,6 +4411,11 @@ a.gh-appointment-card:hover {
   gap: var(--portal-section-gap);
   position: relative;
   border-radius: 0;
+  /* Page-header aura (::before, inset -20px) pokes past the viewport once
+   * --portal-pad-x drops below 20px — clip the decorative bleed so no page
+   * gains a 4-5px horizontal scroll. Tables scroll inside their own
+   * overflow-x-auto wrappers, so nothing legitimate is clipped. */
+  overflow-x: clip;
 }
 
 .gh-portal-main > .mx-auto[class*="max-w-"] {
@@ -4658,12 +4432,12 @@ a.gh-appointment-card:hover {
   position: relative;
   isolation: isolate;
   min-height: 0;
-  margin-bottom: 0;
-  padding: 4px 0 var(--portal-section-gap) 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
+  margin-bottom: var(--portal-section-gap);
+  padding: clamp(20px, 2vw, 24px) clamp(20px, 2vw, 28px);
+  border: 1px solid var(--portal-band-border);
+  border-radius: var(--portal-radius-xl);
+  background: var(--portal-band-fill);
+  box-shadow: var(--lux-elev-1);
 }
 
 .gh-portal-page-header::before,
@@ -4671,11 +4445,11 @@ a.gh-appointment-card:hover {
   content: "";
   position: absolute;
   z-index: -1;
-  inset: -18px -20px auto -20px;
-  height: 160px;
+  inset: 0;
   border-radius: var(--portal-radius-xl);
   /* §13 H1 — header-aura.webp behind a 0.70 ivory veil (≤0.30 cap); the
-   * per-portal CSS aura tints on top. Whole zone masked to fade out. */
+   * per-portal CSS aura tints on top of the new banner gradient (see
+   * --portal-band-fill above). Whole zone masked to fade out. */
   background-image: var(--lux-header-aura), var(--lux-asset-veil-light), var(--lux-asset-header, none);
   background-size: auto, auto, cover;
   background-position: 0 0, 0 0, left center;
@@ -4730,6 +4504,73 @@ a.gh-appointment-card:hover {
 .gh-admin-main > header:not(.gh-portal-page-header) p {
   overflow-wrap: break-word;
 }
+
+/* Shared icon-in-rounded-square badge motif — reused by PageHeader,
+ * AdminSummaryStrip and any future primitive that needs it. One class,
+ * sized via modifiers, never a per-component variant. */
+.gh-portal-icon-badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--portal-radius);
+  background: var(--portal-icon-badge-fill);
+  color: var(--portal-bg);
+  box-shadow: var(--lux-elev-press);
+}
+
+.gh-portal-icon-badge svg {
+  width: 16px;
+  height: 16px;
+}
+
+.gh-portal-icon-badge--header {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  box-shadow: var(--lux-elev-1);
+}
+
+.gh-portal-icon-badge--header svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Primary action CTA inside the header banner — gradient pill + halo,
+ * DESIGN brief §1. Scoped to the header actions slot so it doesn't touch
+ * every .gh-btn-primary on the page (table toolbars, forms, etc). */
+.gh-portal-page-header-actions .gh-btn-primary {
+  position: relative;
+  border-radius: var(--portal-radius-pill);
+  transition: transform 180ms ease-out, box-shadow 180ms ease-out, filter 180ms ease-out;
+}
+
+.gh-portal-page-header-actions .gh-btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: -1;
+  width: 220%;
+  height: 220%;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: var(--portal-cta-halo);
+  pointer-events: none;
+}
+
+.gh-portal-page-header-actions .gh-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px var(--portal-signal-glow), inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  filter: brightness(1.04);
+}
+
+.gh-portal-page-header-actions .gh-btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px var(--portal-signal-glow), inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  filter: none;
+}
 .gh-admin-card {
   /* Cards routinely sit inside a nested `grid gap-*` stack (main column of
      a two-column page layout). As a grid item, min-width defaults to
@@ -4770,6 +4611,9 @@ a.gh-appointment-card:hover {
 @media (max-width: 760px)  {
   .gh-portal-main {
     overflow-x: hidden;
+    /* Clears the site-wide floating chat-launcher bubble (bottom-right)
+       so the last row of mobile list pages isn't covered (02-007). */
+    padding-bottom: calc(var(--portal-pad-y) + env(safe-area-inset-bottom, 0px) + 72px);
   }
 }
 
@@ -4779,6 +4623,21 @@ a.gh-appointment-card:hover {
   padding: 15px 18px;
   background: color-mix(in srgb, var(--portal-surface) 50%, transparent);
   border-bottom: 1px solid var(--portal-line-soft);
+}
+
+/* Opt-in flat variant (audit 11-001): drop the tinted background so the
+ * header doesn't read as a second "section start" surface stacked on
+ * top of the parent card's own top edge — keep only the bottom rule. */
+.gh-portal-section-header--flat {
+  background: transparent;
+}
+
+/* A section header is a full-width surface inside many portal cards. Give its
+ * exposed top edge the same radius as the shell; otherwise its background
+ * paints square corners over the card, as on the doctor dashboard panels. */
+.gh-portal-shell :is(.gh-admin-card, .gh-card, .gh-stat-card) > .gh-portal-section-header:first-child {
+  border-start-start-radius: calc(var(--portal-radius-lg) - 1px);
+  border-start-end-radius: calc(var(--portal-radius-lg) - 1px);
 }
 
 .gh-admin-main :where(.grid) {
@@ -5077,9 +4936,8 @@ a.gh-appointment-card:hover {
   font-variant-numeric: tabular-nums;
 }
 
-.gh-admin-main :where(.overflow-x-auto table, .gh-admin-table-wrap table) {
-  min-width: 720px;
-}
+/* Each list declares its own column budget. Do not reintroduce a blanket
+   min-width here: it forces simple tables to scroll on tablet-sized portals. */
 
 .gh-admin-main :where(thead) {
   background: color-mix(in srgb, var(--portal-well) 70%, transparent) !important;
@@ -5103,10 +4961,19 @@ a.gh-appointment-card:hover {
 .gh-admin-main :where(tbody tr:hover) {
   background: var(--portal-hover);
 }
+/* Edge-fade scroll affordance for horizontally-scrollable tables/strips
+   outside the tab strip above (D-xx: bare overflow-x-auto gives no visual
+   hint that there's more content off-screen). */
+.gh-hscroll-fade {
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
+  mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
+}
+
 .gh-portal-tabs,
 .gh-admin-main :where([role="tablist"]) {
   display: flex;
-  gap: 18px;
+  align-items: center;
+  gap: 22px;
   max-width: 100%;
   overflow-x: auto;
   /* Leaving overflow-y unset makes it compute to `auto` too (CSS spec:
@@ -5116,7 +4983,11 @@ a.gh-appointment-card:hover {
      tabs/pills. This is a single-row strip; it never needs to scroll
      vertically. */
   overflow-y: hidden;
-  border-bottom: 1px solid var(--portal-line);
+  border: 1px solid var(--portal-line);
+  border-radius: var(--portal-radius-lg);
+  background: var(--portal-surface);
+  box-shadow: var(--lux-elev-1);
+  padding: 12px 18px;
   -webkit-mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
   mask-image: linear-gradient(90deg, transparent, black 16px, black calc(100% - 16px), transparent);
 }
@@ -5128,47 +4999,50 @@ a.gh-appointment-card:hover {
 
 .gh-portal-tab {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   flex: 0 0 auto;
-  padding: 8px 2px;
+  padding: 8px 4px;
   border: none;
+  border-radius: var(--portal-radius-pill);
   background: transparent;
   color: var(--portal-muted);
   font-size: 13px;
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
-  transition: color 160ms ease-out;
+  transition: color 180ms ease-out, background-color 180ms ease-out, transform 180ms ease-out, box-shadow 180ms ease-out, padding 180ms ease-out;
+}
+
+.gh-portal-tab svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 .gh-portal-tab:hover {
-  color: var(--portal-text);
+  color: var(--portal-primary);
+  background: var(--portal-hover);
 }
 
+/* Active = gradient pill, lifted with its own shadow (brief §3). Replaces
+ * the previous underline treatment. Never shows hover styling. */
 .gh-portal-tab[data-active] {
-  color: var(--portal-text);
+  padding: 9px 17px;
+  background: var(--lux-forest-duotone);
+  color: var(--portal-bg);
+  box-shadow: 0 4px 14px var(--portal-signal-glow), inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
 }
 
-.gh-portal-tab::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 2px;
-  background: var(--portal-accent);
-  box-shadow: 0 0 4px color-mix(in srgb, var(--portal-accent) 30%, transparent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.gh-portal-tab[data-active]::after {
-  transform: scaleX(1);
+.gh-portal-tab[data-active]:hover {
+  color: var(--portal-bg);
+  background: var(--lux-forest-duotone);
 }
 
 .gh-portal-tab:focus-visible {
   outline: none;
-  border-radius: 4px;
+  border-radius: var(--portal-radius-pill);
   box-shadow: 0 0 0 3px var(--portal-focus);
 }
 
@@ -5189,18 +5063,64 @@ a.gh-appointment-card:hover {
 }
 
 .gh-portal-tab[data-active] .gh-portal-tab__badge {
-  background: var(--portal-mint-soft);
-  color: var(--portal-mint-text);
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--portal-bg);
 }
 
 .gh-portal-tab__badge--alert {
   background: var(--portal-warning-soft);
   color: var(--portal-warning-text);
 }
+
+.gh-portal-tab[data-active] .gh-portal-tab__badge--alert {
+  background: var(--portal-warning);
+  color: #fff;
+}
+
+/* PortalTabs `sticky` variant — pins the strip under the topbar using the
+ * shared offset var (portal.css --portal-topbar-h), themed background (not
+ * bg-white/80), z below the header token. Replaces the pattern of
+ * consumers hand-rolling `sticky top-[58px] z-10 bg-white/80` per-file.
+ * The bar itself (.gh-portal-tabs) now carries its own opaque surface,
+ * border and shadow (design brief §3) — this wrapper only supplies the
+ * translucent scroll-blur frame + sticky offset around it, so nothing
+ * double-draws a border/shadow. */
+.gh-portal-tabs-sticky {
+  position: sticky;
+  top: var(--portal-topbar-h);
+  z-index: var(--z-sticky);
+  margin: 0 calc(-1 * var(--portal-pad-x));
+  padding: 8px var(--portal-pad-x) 10px;
+  background: var(--portal-bg);
+  -webkit-backdrop-filter: blur(var(--portal-blur-overlay));
+  backdrop-filter: blur(var(--portal-blur-overlay));
+}
+
+@supports not (backdrop-filter: blur(1px))  {
+  .gh-portal-tabs-sticky {
+    background: var(--portal-bg);
+  }
+}
+
+@media (pointer: coarse)  {
+  .gh-portal-tabs-sticky {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+
+/* Short viewports (TASK §3 matrix): un-stick so a sticky strip never eats
+ * scarce vertical space above tab content. */
+@media (max-height: 560px) {
+  .gh-portal-tabs-sticky {
+    position: static;
+  }
+}
+
 .gh-portal-dialog-overlay {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: var(--z-modal-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5212,9 +5132,14 @@ a.gh-appointment-card:hover {
 }
 
 .gh-portal-dialog {
+  position: relative;
+  z-index: var(--z-modal);
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
   width: 100%;
-  max-height: min(88vh, 720px);
-  overflow-y: auto;
+  max-height: min(88svh, 720px);
+  overflow: hidden;
   border: 1px solid transparent;
   border-radius: var(--portal-radius-xl);
   /* Solid opaque base UNDER the (translucent) lux gradient so page content
@@ -5238,11 +5163,12 @@ a.gh-appointment-card:hover {
 
 .gh-portal-dialog--full {
   max-width: 100%;
-  height: 100%;
-  max-height: 100%;
+  height: min(88svh, 720px);
+  max-height: min(88svh, 720px);
 }
 
 .gh-portal-dialog__header {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -5270,17 +5196,21 @@ a.gh-appointment-card:hover {
 }
 
 .gh-portal-dialog__body {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 20px;
 }
 
 .gh-portal-dialog__body--flush {
   padding: 0;
-  max-height: 70vh;
   display: flex;
   flex-direction: column;
 }
 
 .gh-portal-dialog__footer {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -5288,25 +5218,6 @@ a.gh-appointment-card:hover {
   padding: 16px 20px;
   border-top: 1px solid var(--portal-line);
 }
-.gh-portal-user-menu {
-  border: 1px solid transparent;
-  border-radius: var(--portal-radius-xl);
-  background-image: var(--lux-modal-fill), var(--lux-card-border);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-  box-shadow: var(--lux-elev-modal);
-  transform-origin: top right;
-  animation: gh-popover-in 200ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-
-@media (prefers-reduced-motion: reduce)  {
-.gh-portal-user-menu {
-    animation: none;
-  }
-}
-
-
 
 @media (max-width: 640px)  {
   .gh-portal-dialog-overlay {
@@ -5316,9 +5227,15 @@ a.gh-appointment-card:hover {
 
   .gh-portal-dialog {
     max-width: 100% !important;
-    max-height: 88vh;
+    max-height: 88svh;
     border-radius: var(--portal-radius-xl) var(--portal-radius-xl) 0 0;
     animation: gh-dialog-sheet-in 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    /* Notch/home-indicator clearance — mirrors AppSheet__footer
+       (globals.css:2687); the mobile bottom-sheet sits flush to the
+       viewport edge so it needs its own inset, not just the footer's. */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   .gh-portal-dialog::before {
@@ -5338,6 +5255,224 @@ a.gh-appointment-card:hover {
   .gh-portal-dialog-overlay,
   .gh-portal-dialog {
     animation: none;
+  }
+}
+
+/* ── AppSheet — portal skin (Obsidian Ivory · Liquid Lux) ────────────────
+ * DRAWER_ARCHITECTURE_PLAN §1: ivory panel, obsidian scrim, lux hairlines/
+ * radii/shadows — reads as a native portal surface, not a generic sheet.
+ * Structural mechanics live in globals.css (shared with the public theme). */
+.gh-app-sheet-overlay--portal {
+  background: var(--lux-overlay-fill);
+  -webkit-backdrop-filter: blur(var(--lux-blur-overlay));
+  backdrop-filter: blur(var(--lux-blur-overlay));
+}
+
+.gh-app-sheet--portal {
+  border: 1px solid transparent;
+  background-image: var(--lux-modal-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-modal);
+  color: var(--portal-text);
+}
+
+.gh-app-sheet--portal.gh-app-sheet--right {
+  border-radius: var(--portal-radius-xl) 0 0 var(--portal-radius-xl);
+}
+
+.gh-app-sheet--portal.gh-app-sheet--bottom {
+  border-radius: var(--portal-radius-xl) var(--portal-radius-xl) 0 0;
+}
+
+.gh-app-sheet--portal .gh-app-sheet__header {
+  border-bottom: 1px solid var(--portal-line);
+}
+
+.gh-app-sheet--portal .gh-app-sheet__footer {
+  border-top: 1px solid var(--portal-line);
+}
+
+.gh-app-sheet--portal .gh-app-sheet__close {
+  color: var(--portal-text);
+}
+
+.gh-app-sheet--portal .gh-app-sheet__close:hover {
+  background: var(--portal-well);
+}
+
+@media (max-width: 640px) {
+  .gh-app-sheet--portal.gh-app-sheet--right {
+    border-radius: var(--portal-radius-xl) var(--portal-radius-xl) 0 0;
+  }
+}
+
+/* RecordDetailsDrawer — content patterns inside an AppSheet (portal-only,
+ * DRAWER_ARCHITECTURE_PLAN §5). Eyebrow/title typography matches
+ * .gh-portal-dialog__title / DESIGN2.md portal card headers. */
+.gh-record-drawer__title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.gh-record-drawer__eyebrow {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--portal-muted);
+}
+
+.gh-record-drawer__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--portal-text);
+  overflow-wrap: anywhere;
+}
+
+.gh-record-drawer__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--portal-text-2);
+}
+
+.gh-record-drawer__sections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.gh-record-drawer__section-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--portal-muted);
+}
+
+.gh-record-drawer__section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gh-record-drawer__field {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  border-bottom: 1px solid var(--portal-line);
+  padding-bottom: 8px;
+  font-size: 13px;
+}
+
+.gh-record-drawer__field-label {
+  color: var(--portal-muted);
+  flex-shrink: 0;
+}
+
+.gh-record-drawer__field-value {
+  color: var(--portal-text);
+  font-weight: 600;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.gh-record-drawer__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gh-record-drawer__skeleton-line {
+  height: 14px;
+  border-radius: 999px;
+  background: var(--portal-well);
+}
+
+.gh-record-drawer__error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--portal-danger-text);
+}
+
+.gh-record-drawer__retry {
+  border-radius: var(--portal-radius-sm);
+  border: 1px solid var(--portal-line);
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ColumnPriorityTable — priority-driven column hiding (portal-only,
+ * RESPONSIVE_DESIGN_SYSTEM_PLAN §3.2/§4). Card mode already replaces the
+ * table below 760px / list-container 960px via the existing
+ * .gh-admin-mobile-list / @container list rules above. */
+@media (max-width: 1279px) {
+  .gh-cpt-p4 {
+    display: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .gh-cpt-p3 {
+    display: none;
+  }
+}
+
+/* ResponsiveFilterBar — recipe wrapper on .gh-admin-appointment-filter-grid
+ * (RESPONSIVE_DESIGN_SYSTEM_PLAN §5). */
+.gh-rfb__search {
+  grid-column: 1 / -1;
+}
+
+.gh-rfb__trigger {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.gh-rfb__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--portal-primary);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 800;
+}
+
+.gh-rfb__sheet-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@media (max-width: 760px) {
+  .gh-rfb__desktop-controls {
+    display: none;
+  }
+  .gh-rfb__trigger {
+    display: inline-flex;
+    grid-column: 1 / -1;
   }
 }
 
@@ -5369,6 +5504,9 @@ a.gh-appointment-card:hover {
 
   .gh-portal-main {
     padding: var(--portal-pad-y) var(--portal-pad-x) !important;
+    /* Clears the site-wide floating chat-launcher bubble (bottom-right)
+       so the last row of mobile list pages isn't covered (02-007). */
+    padding-bottom: calc(var(--portal-pad-y) + env(safe-area-inset-bottom, 0px) + 72px) !important;
   }
 
   .gh-portal-page-header,
@@ -5391,7 +5529,12 @@ a.gh-appointment-card:hover {
     max-width: 100%;
   }
 
-  .gh-admin-main :where(form .gh-btn, form button[type="submit"]) {
+  /* :not(.gh-chat-send) — chat composers (ConsultationChat/ChatThread/
+     InternalMessagesThread) are a flex row, not a stacked admin form; this
+     rule was forcing the Send button to width:100%, which (as flex-basis)
+     crushed the sibling textarea down to ~0 and wrapped the placeholder
+     one character per line. */
+  .gh-admin-main :where(form .gh-btn, form button[type="submit"]):not(.gh-chat-send) {
     width: 100%;
   }
 
@@ -5504,17 +5647,6 @@ a.gh-appointment-card:hover {
 .gh-admin-status-toggle-off .gh-admin-status-toggle__label {
   color: #64776e;
 }
-.gh-doctor-card {
-  transition: background-color 160ms cubic-bezier(0.23, 1, 0.32, 1),
-    border-color 160ms cubic-bezier(0.23, 1, 0.32, 1),
-    transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.gh-doctor-card:hover {
-  background: rgba(255, 255, 255, 0.09) !important;
-  border-color: rgba(255, 255, 255, 0.20) !important;
-  transform: translateY(-2px);
-}
 .gh-portal-shell ::selection {
   background: var(--lux-selection);
   color: var(--portal-text);
@@ -5527,15 +5659,12 @@ a.gh-appointment-card:hover {
 .gh-portal-shell :where(a:hover svg, button:hover svg, [aria-current="page"] svg) {
   opacity: var(--lux-icon-active);
 }
-.gh-admin-mobile-card,
-.gh-admin-appointment-mobile-card {
+.gh-admin-mobile-card {
   position: relative;
   overflow: hidden;
 }
 
-
-.gh-admin-mobile-card::before,
-.gh-admin-appointment-mobile-card::before {
+.gh-admin-mobile-card::before {
   content: "";
   position: absolute;
   inset-block: 12px;
@@ -5576,6 +5705,34 @@ a.gh-appointment-card:hover {
   }
 }
 
+/* Page-level (html) scrollbar on portal routes — matches the sidebar's
+ * .gh-dark-scroll look (thin, transparent track, lime thumb) instead of
+ * globals.css's thick forest-track bar meant for the public site. Wins
+ * over the globals.css `html::-webkit-scrollbar` rule because portal.css
+ * imports after globals.css in every portal route-group layout. */
+html::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+html::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 999px;
+}
+html::-webkit-scrollbar-thumb {
+  background-color: rgba(200, 230, 160, 0.45);
+  border-radius: 999px;
+  border: none;
+}
+html::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(200, 230, 160, 0.7);
+}
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(200, 230, 160, 0.55) rgba(255, 255, 255, 0.05);
+  }
+}
+
 
 @media (pointer: coarse)  {
 .gh-portal-sidebar,
@@ -5586,4 +5743,203 @@ a.gh-appointment-card:hover {
   .gh-portal-sidebar {
     box-shadow: none !important;
   }
+
+  /* AppSheet portal skin — stacked blur (scrim + panel) is the exact
+     GPU-tile pattern that corrupts on Android; solidify both layers. */
+  .gh-app-sheet-overlay--portal {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: rgba(9, 15, 12, 0.72);
+  }
+}
+
+/* AppMenu portal skin — elevated ivory liquid surface, with Radix handling
+   the portal, collision and keyboard mechanics. */
+.gh-portal-menu-content {
+  border: 1px solid transparent;
+  border-radius: var(--portal-radius-xl);
+  /* Solid opaque base UNDER the translucent lux gradient — same fix as
+     .gh-portal-dialog (01-001): without it, page text under the popover
+     bleeds through the semi-transparent fill. */
+  background-color: #ffffff;
+  background-image: var(--lux-modal-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-modal);
+  color: var(--portal-text);
+}
+
+.gh-portal-menu-item {
+  display: block;
+  border-radius: var(--portal-radius-sm);
+  padding: 6px 8px;
+  color: var(--portal-text);
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+}
+
+.gh-portal-menu-item:hover,
+.gh-portal-menu-item:focus-visible,
+.gh-portal-menu-item[data-highlighted] {
+  background: var(--portal-well);
+}
+
+/* Container-aware list fallback: the available main-column width, rather than
+   the viewport, decides when established portal card lists replace tables. */
+@container list (max-width: 960px) {
+  .gh-admin-mobile-list,
+  .gh-admin-appointment-mobile-list {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+  }
+}
+
+/* Orders table (D-01): trimmed to 5 cols, fits down to a 700px container —
+   narrower than the generic 960px band above (tuned for untrimmed tables).
+   Cancel the false-positive card-switch in the 700-960px band, then re-open
+   it at the table's own budget. */
+@container list (max-width: 960px) {
+  .gh-admin-order-mobile-list {
+    display: none;
+  }
+}
+@container list (max-width: 700px) {
+  .gh-admin-order-table-wrap {
+    display: none;
+  }
+  .gh-admin-order-mobile-list {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+  }
+}
+
+/* ColumnPriorityTable (Phase 4): its tables are already column-trimmed
+   (P3 cols hide < 1024px viewport), so they fit down to a ~760px container —
+   the generic 960px band above would flip 1280px laptops (content ≈ 957px)
+   into card mode. Cancel the generic card-switch in the 760–960px band, then
+   swap table → cards at the trimmed tables' own budget. */
+@container list (max-width: 960px) {
+  .gh-cpt-mobile-list {
+    display: none;
+  }
+}
+@container list (max-width: 760px) {
+  .gh-cpt-table-wrap {
+    display: none;
+  }
+  .gh-cpt-mobile-list {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+  }
+}
+
+@media (max-height: 720px) {
+  .gh-portal-topbar {
+    min-height: 56px;
+  }
+
+  .gh-portal-dialog__header,
+  .gh-portal-dialog__body,
+  .gh-portal-dialog__footer {
+    padding-block: 14px;
+  }
+}
+
+@media (max-height: 568px) {
+  .gh-portal-dialog-overlay {
+    padding: 12px;
+  }
+}
+
+/* Calendar upgrade (admin/doctor/patient shared calendar components) —
+ * Google-ergonomics, Obsidian Ivory tone. Today = filled accent circle
+ * (was ring-only) so it reads at a glance next to the selected-day fill. */
+.gh-calendar-day-number--today {
+  background: var(--portal-accent) !important;
+  color: var(--portal-bg, #08110c) !important;
+  box-shadow: var(--lux-calendar-today-ring);
+}
+
+/* Coarse-pointer day cells: known 24-28px tap-target audit finding — pad the
+ * hit area up to the ≥44px minimum without changing the visual cell size. */
+@media (pointer: coarse) {
+  .gh-calendar-day--tappable {
+    min-height: 44px;
+    padding-block: 6px;
+  }
+}
+
+/* Week grid — sticky day-header row, current-time indicator, today column
+ * tint. Horizontal scroll below 720px is intentional (dense hour grid). */
+.gh-week-header-row {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--portal-surface);
+}
+
+.gh-week-day-col--today {
+  background: var(--portal-mint-soft);
+}
+
+.gh-week-now-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 2px solid var(--portal-accent);
+  z-index: 4;
+  pointer-events: none;
+}
+
+.gh-week-now-dot {
+  position: absolute;
+  left: -4px;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--portal-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-week-now-line {
+    transition: none;
+  }
+}
+
+/* Adjacent-month day cells — super light: date number and event chips both
+ * fade hard so the current month reads as the only "real" content. */
+.gh-calendar-day-outside > * {
+  opacity: 0.3;
+}
+
+/* This is intentionally last: AdminCard's base surface is defined in the
+ * portal foundation below the stat-strip rules above, so its background must
+ * not flatten a dashboard metric back to the generic card treatment. */
+.gh-admin-card.gh-stat-card {
+  border-color: var(--gh-stat-border);
+  background: linear-gradient(135deg, var(--gh-stat-surface-start), var(--gh-stat-surface-end));
+  box-shadow: 0 1px 2px rgba(16, 23, 19, 0.04), 0 8px 24px rgba(29, 75, 54, 0.1);
+}
+
+.gh-admin-card.gh-stat-card:hover {
+  border-color: rgba(29, 75, 54, 0.32);
+  box-shadow: 0 4px 8px rgba(16, 23, 19, 0.06), 0 14px 32px rgba(29, 75, 54, 0.15);
+}
+
+/* Portal-wide radius safety net. Admin, Doctor, Patient, and Corporate
+ * pages still contain a few older Tailwind utility corners; normalize those
+ * interactive and surface utilities here without touching public pages or
+ * intentionally square editor interiors and table seams. */
+.gh-portal-shell :where(.rounded-sm, .rounded-md, [class*="rounded-[6px]"]) {
+  border-radius: var(--portal-radius) !important;
+}
+
+.gh-portal-shell :where(.rounded-lg) {
+  border-radius: var(--portal-radius-lg) !important;
 }

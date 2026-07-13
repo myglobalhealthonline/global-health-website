@@ -12,9 +12,9 @@ type Props = {
 };
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]";
+  "mt-1 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-portal-body text-[var(--color-text-primary)]";
 
-const labelClass = "block text-[12px] font-semibold text-[var(--color-text-muted)]";
+const labelClass = "block text-portal-meta font-semibold text-[var(--color-text-muted)]";
 
 export function BlogFields({ post, isCreate, doctors = [] }: Props) {
   return (
@@ -182,7 +182,7 @@ export function BlogFields({ post, isCreate, doctors = [] }: Props) {
               ))}
             </select>
           </label>
-          <label className="mt-6 flex items-center gap-2 text-[13px] font-semibold text-[var(--color-text-primary)]">
+          <label className="mt-6 flex items-center gap-2 text-portal-compact font-semibold text-[var(--color-text-primary)]">
             <input
               type="checkbox"
               name="isActive"

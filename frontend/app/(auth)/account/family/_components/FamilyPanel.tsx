@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Info, Loader2, Pencil, Plus, Trash2, Users, X } from "lucide-react";
+import { Info, Loader2, Pencil, Plus, Trash2, Users, X, CreditCard, UserRound } from "lucide-react";
 import {
   addFamilyMember,
   listFamilyMembers,
@@ -10,8 +10,9 @@ import {
   type FamilyMember,
   type FamilyMemberInput,
 } from "@/lib/api/family-client";
-import { Btn, PageHeader } from "@/components/portal-atoms";
+import { AdminSummaryStrip, Btn, PageHeader } from "@/components/portal-atoms";
 import { PortalDialog } from "@/components/PortalDialog";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type FamilyCopy = ReturnType<
   typeof import("@/lib/i18n/load-locale")["loadLocaleBundle"]
@@ -86,19 +87,24 @@ export function FamilyPanel({
         </div>
       ) : null}
 
-      <div className="mb-5 grid gap-3 sm:grid-cols-3">
-        <FamilyMetric label={t.membersMetric} value={String(items.length)} hint={t.membersMetricHint} />
-        <FamilyMetric
-          label={t.benefitsMetric}
-          value={String(items.filter((member) => member.canUseCredits).length)}
-          hint={t.benefitsMetricHint}
-        />
-        <FamilyMetric
-          label={t.profilesMetric}
-          value={items.length > 0 ? t.profilesActive : t.profilesNotStarted}
-          hint={t.profilesMetricHint}
-        />
-      </div>
+      <AdminSummaryStrip
+        className="mb-5"
+        items={[
+          { label: t.membersMetric, value: String(items.length), hint: t.membersMetricHint, icon: <Users aria-hidden /> },
+          {
+            label: t.benefitsMetric,
+            value: String(items.filter((member) => member.canUseCredits).length),
+            hint: t.benefitsMetricHint,
+            icon: <CreditCard aria-hidden />,
+          },
+          {
+            label: t.profilesMetric,
+            value: items.length > 0 ? t.profilesActive : t.profilesNotStarted,
+            hint: t.profilesMetricHint,
+            icon: <UserRound aria-hidden />,
+          },
+        ]}
+      />
 
       <AddMemberForm t={t} onAdded={refetch} />
 
@@ -140,28 +146,16 @@ export function FamilyPanel({
   );
 }
 
-function FamilyMetric({
-  label,
-  value,
-  hint,
-}: {
-  label: string;
-  value: string;
-  hint: string;
-}) {
-  return (
-    <div className="rounded-lg border border-[var(--portal-line)] bg-white/80 p-3">
-      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">{label}</p>
-      <p className="mt-1 text-lg font-extrabold text-[var(--portal-text)]">{value}</p>
-      <p className="mt-1 text-xs text-[var(--portal-muted)]">{hint}</p>
-    </div>
-  );
-}
-
 function AddMemberForm({ t, onAdded }: { t: FamilyCopy; onAdded: () => Promise<void> }) {
   const [form, setForm] = useState<FamilyMemberInput>(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  // 18-001: on-blur required check, same rule the native `required` +
+  // onSubmit bail already enforce, surfaced earlier.
+  const [fullNameTouched, setFullNameTouched] = useState(false);
+  const fullNameError = fullNameTouched && form.fullName.trim() === "" ? t.fieldRequired : undefined;
+
+  useUnsavedChanges(JSON.stringify(form) !== JSON.stringify(emptyForm));
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -172,6 +166,7 @@ function AddMemberForm({ t, onAdded }: { t: FamilyCopy; onAdded: () => Promise<v
     setSubmitting(false);
     if (res.ok) {
       setForm(emptyForm);
+      setFullNameTouched(false);
       await onAdded();
     } else {
       setMsg(res.message);
@@ -179,7 +174,7 @@ function AddMemberForm({ t, onAdded }: { t: FamilyCopy; onAdded: () => Promise<v
   }
 
   return (
-      <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-4 p-6">
+      <form onSubmit={onSubmit} method="post" className="gh-patient-form-card gh-card space-y-4 p-6">
       <h2 className="text-sm font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
         {t.addHeading}
       </h2>
@@ -192,9 +187,17 @@ function AddMemberForm({ t, onAdded }: { t: FamilyCopy; onAdded: () => Promise<v
           maxLength={120}
           value={form.fullName}
           onChange={(e) => setForm((f) => ({ ...f, fullName: e.target.value }))}
+          onBlur={() => setFullNameTouched(true)}
           placeholder={t.fullNamePlaceholder}
+          aria-invalid={fullNameError ? true : undefined}
+          aria-describedby={fullNameError ? "add-member-fullname-error" : undefined}
           className="gh-input mt-1 min-w-0"
         />
+        {fullNameError ? (
+          <p id="add-member-fullname-error" role="alert" className="mt-1 text-xs" style={{ color: "var(--portal-danger-text)" }}>
+            {fullNameError}
+          </p>
+        ) : null}
       </label>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -265,18 +268,20 @@ function AddMemberForm({ t, onAdded }: { t: FamilyCopy; onAdded: () => Promise<v
         </p>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={submitting || form.fullName.trim() === ""}
-        className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
-      >
-        {submitting ? (
-          <Loader2 className="size-4 animate-spin" aria-hidden />
-        ) : (
-          <Plus className="size-4" aria-hidden />
-        )}
-        {submitting ? t.adding : t.add}
-      </button>
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          disabled={submitting || form.fullName.trim() === ""}
+          className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+        >
+          {submitting ? (
+            <Loader2 className="size-4 animate-spin" aria-hidden />
+          ) : (
+            <Plus className="size-4" aria-hidden />
+          )}
+          {submitting ? t.adding : t.add}
+        </button>
+      </div>
     </form>
   );
 }
@@ -363,7 +368,7 @@ function MemberDisplay({
     <div className="gh-patient-family-card gh-card p-4">
       <div className="gh-patient-family-card-header flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-sm font-bold text-[var(--portal-text)]">
+          <p className="truncate text-sm font-bold text-[var(--portal-text)]" title={member.fullName}>
             {member.fullName}
           </p>
           <p className="text-xs text-[var(--portal-muted)]">
@@ -371,7 +376,12 @@ function MemberDisplay({
             {member.dateOfBirth ? ` · ${member.dateOfBirth.slice(0, 10)}` : ""}
           </p>
           {member.email ? (
-            <p className="truncate text-xs text-[var(--portal-muted)]">{member.email}</p>
+            <p
+              title={member.email}
+              className="break-words text-xs text-[var(--portal-muted)] [overflow-wrap:anywhere]"
+            >
+              {member.email}
+            </p>
           ) : null}
         </div>
 
@@ -455,15 +465,20 @@ function EditMemberForm({
   onDone: () => Promise<void>;
   onCancel: () => void;
 }) {
-  const [form, setForm] = useState<FamilyMemberInput>({
+  const initialEditForm: FamilyMemberInput = {
     fullName: member.fullName,
     relationship: member.relationship ?? "",
     dateOfBirth: member.dateOfBirth ? member.dateOfBirth.slice(0, 10) : "",
     email: member.email ?? "",
     canUseCredits: member.canUseCredits,
-  });
+  };
+  const [form, setForm] = useState<FamilyMemberInput>(initialEditForm);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [fullNameTouched, setFullNameTouched] = useState(false);
+  const fullNameError = fullNameTouched && form.fullName.trim() === "" ? t.fieldRequired : undefined;
+
+  useUnsavedChanges(JSON.stringify(form) !== JSON.stringify(initialEditForm));
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -480,7 +495,7 @@ function EditMemberForm({
   }
 
   return (
-      <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-4 p-4">
+      <form onSubmit={onSubmit} method="post" className="gh-patient-form-card gh-card space-y-4 p-4">
       <label className="block">
         <span className="gh-field-label">{t.fullName}</span>
         <input
@@ -489,8 +504,16 @@ function EditMemberForm({
           maxLength={120}
           value={form.fullName}
           onChange={(e) => setForm((f) => ({ ...f, fullName: e.target.value }))}
+          onBlur={() => setFullNameTouched(true)}
+          aria-invalid={fullNameError ? true : undefined}
+          aria-describedby={fullNameError ? "edit-member-fullname-error" : undefined}
           className="gh-input mt-1 min-w-0"
         />
+        {fullNameError ? (
+          <p id="edit-member-fullname-error" role="alert" className="mt-1 text-xs" style={{ color: "var(--portal-danger-text)" }}>
+            {fullNameError}
+          </p>
+        ) : null}
       </label>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -547,15 +570,7 @@ function EditMemberForm({
         </p>
       ) : null}
 
-      <div className="flex items-center gap-2">
-        <button
-          type="submit"
-          disabled={saving || form.fullName.trim() === ""}
-          className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
-        >
-          {saving ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
-          {saving ? t.saving : t.save}
-        </button>
+      <div className="flex items-center justify-end gap-2">
         <button
           type="button"
           onClick={onCancel}
@@ -563,6 +578,14 @@ function EditMemberForm({
         >
           <X className="size-4" aria-hidden />
           {t.cancel}
+        </button>
+        <button
+          type="submit"
+          disabled={saving || form.fullName.trim() === ""}
+          className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+        >
+          {saving ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
+          {saving ? t.saving : t.save}
         </button>
       </div>
     </form>

@@ -166,7 +166,7 @@ export function ExamResultsList({
             <p className="text-sm font-bold text-[var(--portal-text)]">
               {copy.title}
             </p>
-            <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
+            <p className="mt-1 text-portal-meta text-[var(--portal-muted)]">
               {copy.description}
             </p>
           </div>
@@ -255,7 +255,7 @@ export function ExamResultsList({
             <FlaskConical className="size-4 text-[var(--portal-primary)]" aria-hidden />
             {copy.noExamsTitle}
           </p>
-          <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
+          <p className="mt-1 text-portal-meta text-[var(--portal-muted)]">
             {copy.noExamsDescription}
           </p>
         </div>
@@ -268,10 +268,10 @@ export function ExamResultsList({
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-[14px] font-semibold text-[var(--portal-text)]">
+                  <p className="text-portal-body font-semibold text-[var(--portal-text)]">
                     {r.testName}
                     <span
-                      className={`ml-2 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] ${
+                      className={`ml-2 rounded-full px-2 py-0.5 text-portal-micro font-bold uppercase tracking-[0.08em] ${
                         r.status === "REQUESTED"
                           ? "bg-amber-100 text-amber-800"
                           : "bg-emerald-100 text-emerald-800"
@@ -280,7 +280,7 @@ export function ExamResultsList({
                       {r.status === "REQUESTED" ? copy.pendingBadge : copy.completedBadge}
                     </span>
                   </p>
-                  <p className="text-[12px] text-[var(--portal-muted)]">
+                  <p className="text-portal-meta text-[var(--portal-muted)]">
                     {r.performedAt
                       ? new Date(r.performedAt).toLocaleDateString()
                       : copy.noDate}{" "}
@@ -293,7 +293,7 @@ export function ExamResultsList({
                       type="button"
                       onClick={() => markComplete(r.id)}
                       disabled={pending}
-                      className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-[12px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
+                      className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-portal-meta font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
                     >
                       <Check className="size-3.5" /> {copy.markComplete}
                     </button>
@@ -301,7 +301,7 @@ export function ExamResultsList({
                   <button
                     type="button"
                     onClick={() => remove(r.id)}
-                    className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
+                    className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
                     aria-label={copy.deleteAria}
                   >
                     <Trash2 className="size-3.5" />
@@ -309,7 +309,7 @@ export function ExamResultsList({
                 </div>
               </div>
               {r.notes ? (
-                <p className="mt-2 whitespace-pre-wrap text-[13px] text-[var(--portal-text)]">
+                <p className="mt-2 whitespace-pre-wrap text-portal-compact text-[var(--portal-text)]">
                   {r.notes}
                 </p>
               ) : null}
@@ -318,7 +318,7 @@ export function ExamResultsList({
                   href={r.externalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-2 inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--portal-primary)] hover:underline"
+                  className="mt-2 inline-flex items-center gap-1 text-portal-label font-semibold text-[var(--portal-primary)] hover:underline"
                 >
                   {copy.openLabReport} <ExternalLink className="size-3" />
                 </a>

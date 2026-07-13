@@ -87,11 +87,11 @@ export function DocumentContextBanner({
       ) : null}
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3">
-          <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-primary)]">
+          <p className="flex items-center gap-1.5 text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--portal-primary)]">
             <User className="size-3.5" aria-hidden />
             {copy.patientHeading}
           </p>
-          <dl className="mt-2 grid gap-1.5 text-[13px]">
+          <dl className="mt-2 grid gap-1.5 text-portal-compact">
             <Row label={copy.rowName} value={patient.fullName} />
             {patient.patientIdLine ? (
               <Row label={copy.rowId} value={patient.patientIdLine} />
@@ -101,18 +101,18 @@ export function DocumentContextBanner({
             <Row label={copy.rowConsultationDate} value={patient.consultationDate} />
             {patient.pharmacy ? <Row label={copy.rowPharmacy} value={patient.pharmacy} /> : null}
           </dl>
-          <p className="mt-2 text-[11px] text-[var(--portal-muted)]">{copy.patientAutoNote}</p>
+          <p className="mt-2 text-portal-thead text-[var(--portal-muted)]">{copy.patientAutoNote}</p>
         </div>
         <div className="rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3">
-          <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-primary)]">
+          <p className="flex items-center gap-1.5 text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--portal-primary)]">
             <Stethoscope className="size-3.5" aria-hidden />
             {copy.prescriberHeading}
           </p>
-          <dl className="mt-2 grid gap-1.5 text-[13px]">
+          <dl className="mt-2 grid gap-1.5 text-portal-compact">
             <Row label={copy.rowDoctor} value={doctor.name} />
             <Row label={copy.rowRegistration} value={doctor.registrationLine} />
           </dl>
-          <p className="mt-2 text-[11px] text-[var(--portal-muted)]">
+          <p className="mt-2 text-portal-thead text-[var(--portal-muted)]">
             {copy.templateLine
               .replace("{country}", context.countryLabel)
               .replace("{code}", context.countryCode.toUpperCase())}
@@ -126,7 +126,7 @@ export function DocumentContextBanner({
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-[11px] font-semibold text-[var(--portal-muted)]">{label}</dt>
+      <dt className="text-portal-thead font-semibold text-[var(--portal-muted)]">{label}</dt>
       <dd className="font-medium text-[var(--portal-text)]">{value}</dd>
     </div>
   );

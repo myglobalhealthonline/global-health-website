@@ -53,12 +53,15 @@ export function MessagesInbox({
   initialSelectedId,
   emptyTitle = "No conversations",
   emptyDescription = "Messages will appear here.",
+  orderFallbackLabel = "Open appointment",
 }: {
   threads: InboxThread[];
   renderChat: (thread: InboxThread) => ReactNode;
   initialSelectedId?: string | null;
   emptyTitle?: string;
   emptyDescription?: string;
+  /** Link label used when a thread has no `orderNumber` (still navigates via `orderHref`). */
+  orderFallbackLabel?: string;
 }) {
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(
@@ -122,7 +125,7 @@ export function MessagesInbox({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search"
-            className="w-full rounded-full border py-2 pl-9 pr-3 text-sm focus:outline-none"
+            className="w-full rounded-full border py-2 pl-9 pr-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--portal-focus)]"
             style={{ borderColor: line, background: surface, color: text }}
           />
         </label>
@@ -147,14 +150,14 @@ export function MessagesInbox({
                   <span className="flex items-center gap-2">
                     {t.orderNumber ? (
                       <span
-                        className="rounded px-1.5 py-0.5 font-mono text-[11px] font-semibold"
+                        className="rounded px-1.5 py-0.5 font-mono text-portal-thead font-semibold"
                         style={{ background: surfaceSoft, color: muted }}
                       >
                         {t.orderNumber}
                       </span>
                     ) : null}
                     <span
-                      className="min-w-0 flex-1 truncate text-[14px] font-bold"
+                      className="min-w-0 flex-1 truncate text-portal-body font-bold"
                       style={{ color: text }}
                     >
                       {t.name}
@@ -162,16 +165,24 @@ export function MessagesInbox({
                     {t.tag}
                     {unread > 0 ? (
                       <span
-                        className="inline-flex min-w-[18px] items-center justify-center rounded-full px-1.5 text-[11px] font-bold text-white"
+                        className="inline-flex min-w-[18px] items-center justify-center rounded-full px-1.5 text-portal-thead font-bold text-white"
                         style={{ background: signal }}
                       >
                         {unread}
                       </span>
                     ) : null}
                   </span>
+                  {t.subtitle ? (
+                    <span
+                      className="truncate text-portal-thead"
+                      style={{ color: muted }}
+                    >
+                      {t.subtitle}
+                    </span>
+                  ) : null}
                   {t.preview ? (
                     <span
-                      className="truncate text-[12.5px]"
+                      className="truncate text-portal-label"
                       style={{
                         color: muted,
                         fontWeight: unread > 0 ? 600 : 400,
@@ -197,8 +208,11 @@ export function MessagesInbox({
         </ul>
       </div>
 
-      {/* Conversation pane */}
-      <div className={selected ? "block" : "hidden md:block"}>
+      {/* Conversation pane. `self-start` only when empty — otherwise this
+          column stretches to match the (often much taller) thread-list
+          column, pushing the "Select a conversation" placeholder far below
+          the fold instead of showing a compact box near the top. */}
+      <div className={selected ? "block" : "hidden self-start md:block"}>
         {selected ? (
           <div
             className="flex h-full min-h-[420px] flex-col overflow-hidden rounded-[14px] border"
@@ -217,21 +231,19 @@ export function MessagesInbox({
               >
                 <ArrowLeft className="size-4" aria-hidden />
               </button>
-              {selected.orderNumber ? (
-                <Link
-                  href={selected.orderHref}
-                  className="rounded px-1.5 py-0.5 font-mono text-[12px] font-bold underline-offset-2 hover:underline"
-                  style={{ background: surfaceSoft, color: signal }}
-                  title="Open the appointment"
-                >
-                  {selected.orderNumber}
-                </Link>
-              ) : null}
+              <Link
+                href={selected.orderHref}
+                className="rounded px-1.5 py-0.5 font-mono text-portal-meta font-bold underline-offset-2 hover:underline"
+                style={{ background: surfaceSoft, color: signal }}
+                title="Open the appointment"
+              >
+                {selected.orderNumber ?? orderFallbackLabel}
+              </Link>
               <span className="text-[15px] font-bold" style={{ color: text }}>
                 {selected.name}
               </span>
               {selected.subtitle ? (
-                <span className="text-[12px]" style={{ color: muted }}>
+                <span className="text-portal-meta" style={{ color: muted }}>
                   {selected.subtitle}
                 </span>
               ) : null}
@@ -243,9 +255,15 @@ export function MessagesInbox({
             className="hidden h-full min-h-[420px] place-items-center rounded-[14px] border md:grid"
             style={{ borderColor: line, background: surfaceSoft }}
           >
-            <p className="text-sm" style={{ color: muted }}>
-              Select a conversation to read and reply.
-            </p>
+            <div className="text-center">
+              <MessageSquare className="mx-auto size-7" style={{ color: muted }} aria-hidden />
+              <p className="mt-3 text-sm font-bold" style={{ color: text }}>
+                Select a conversation
+              </p>
+              <p className="mt-1 text-sm" style={{ color: muted }}>
+                Choose a thread on the left to read and reply.
+              </p>
+            </div>
           </div>
         )}
       </div>

@@ -93,7 +93,7 @@ function HealthSection({
 }) {
   return (
     <div className="gh-admin-subscription-health__section">
-      <p className="mb-1.5 text-[13px] font-semibold text-[var(--color-text-primary)]">{title}</p>
+      <p className="mb-1.5 text-portal-compact font-semibold text-[var(--color-text-primary)]">{title}</p>
       {empty ? (
         <p className="text-sm text-[var(--color-text-muted)]">{emptyText}</p>
       ) : (

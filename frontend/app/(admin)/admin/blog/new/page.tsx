@@ -42,7 +42,7 @@ export default async function AdminNewBlogPage({ searchParams }: PageProps) {
     <>
       <Link
         href="/admin/blog"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to blog
       </Link>

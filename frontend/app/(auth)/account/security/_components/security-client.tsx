@@ -16,14 +16,19 @@ import { formatAppDate } from "@/lib/format-datetime";
 import { DeleteAccountButton } from "./delete-account-button";
 import type { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
+import { PortalTabs, PortalTabPanel } from "@/components/PortalTabs";
 import { FormSection } from "@/components/FormSection";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 export type SecurityI18n = ReturnType<typeof loadLocaleBundle>["account"]["security"];
+
+type Tab = "password" | "access" | "data";
 
 export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
   const router = useRouter();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<Tab>("password");
 
   // Change-password form state.
   const [currentPassword, setCurrentPassword] = useState("");
@@ -131,6 +136,7 @@ export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
   }
 
   const verified = Boolean(user?.emailVerifiedAt);
+  useUnsavedChanges(Boolean(currentPassword || newPassword || confirmPassword));
 
   return (
     <div className="gh-patient-page gh-patient-security-page">
@@ -166,6 +172,7 @@ export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
       ) : null}
       {deletionMsg ? (
         <p
+          role={deletionMsg.kind === "ok" ? "status" : "alert"}
           className={`mb-5 rounded-md px-3 py-2 text-sm ${
             deletionMsg.kind === "ok" ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"
           }`}
@@ -186,112 +193,36 @@ export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
             <AdminSummaryStrip
               className="mb-5"
               items={[
-                { label: "Email", value: verified ? a.security.verified : "Needs verification", hint: user?.email ?? "Account email" },
-                { label: "Data export", value: "Available", hint: "Download your account data" },
-                { label: "Password", value: "Protected", hint: "Update credentials anytime" },
-                { label: "Account", value: "Patient", hint: "Security controls" },
+                { label: "Email", value: verified ? a.security.verified : "Needs verification", hint: user?.email ?? "Account email", icon: <MailCheck aria-hidden /> },
+                { label: "Data export", value: "Available", hint: "Download your account data", icon: <Download aria-hidden /> },
+                { label: "Password", value: "Protected", hint: "Update credentials anytime", icon: <KeyRound aria-hidden /> },
+                { label: "Account", value: "Patient", hint: "Security controls", icon: <ShieldCheck aria-hidden /> },
               ]}
             />
 
-            {/* Email verification panel */}
-            <FormSection title={a.security.emailVerification}>
-              <div className="gh-form-section__span-2 flex items-start gap-3">
-                <span
-                  className={`inline-flex size-9 shrink-0 items-center justify-center rounded-full ${
-                    verified
-                      ? "bg-emerald-50 text-emerald-700"
-                      : "bg-amber-50 text-amber-700"
-                  }`}
-                >
-                  <MailCheck className="size-5" aria-hidden />
-                </span>
-                <div className="min-w-0 flex-1">
-                  {verified ? (
-                    <p className="text-sm text-[var(--portal-muted)]">
-                      <span className="font-semibold text-emerald-700">{a.security.verified}</span>{" "}
-                      {a.security.verifiedOn}{" "}
-                      {formatAppDate(user!.emailVerifiedAt!)}.
-                    </p>
-                  ) : (
-                    <>
-                      <p className="text-sm text-[var(--portal-muted)]">
-                        {a.security.unverifiedBody.replace("{email}", user?.email ?? "")}
-                      </p>
-                      <button
-                        type="button"
-                        onClick={onResendVerification}
-                        disabled={sendingVerify}
-                        className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-md border border-emerald-700 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 disabled:opacity-60 sm:w-auto"
-                      >
-                        {sendingVerify ? a.security.sending : a.security.resendVerification}
-                      </button>
-                    </>
-                  )}
-                  {verifyMsg ? (
-                    <p
-                      className={`mt-3 rounded-md px-3 py-2 text-sm ${
-                        verifyMsg.kind === "ok"
-                          ? "bg-emerald-50 text-emerald-800"
-                          : "bg-rose-50 text-rose-800"
-                      }`}
-                    >
-                      {verifyMsg.text}
-                    </p>
-                  ) : null}
-                </div>
-              </div>
-            </FormSection>
+            <div className="mb-5">
+              <PortalTabs
+                ariaLabel={a.security.tabsAria}
+                value={activeTab}
+                onChange={(v) => setActiveTab(v as Tab)}
+                items={[
+                  { value: "password", label: a.security.tabPassword, icon: <KeyRound aria-hidden /> },
+                  { value: "access", label: a.security.tabAccess, icon: <ShieldCheck aria-hidden /> },
+                  { value: "data", label: a.security.yourData, icon: <Download aria-hidden /> },
+                ]}
+                syncParam="tab"
+              />
+            </div>
 
-            {/* Privacy controls — GDPR data-export + account-delete */}
-            <FormSection title={a.security.yourData} description={a.security.gdprBody} className="mt-4">
-              <div className="gh-form-section__span-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <a
-                  href={downloadOwnDataUrl()}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-emerald-700 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 sm:w-auto"
-                >
-                  <Download className="size-4" aria-hidden />
-                  {a.security.downloadData}
-                </a>
-
-                <DeleteAccountButton
-                  i18n={a.security}
-                  onScheduled={setDeletionScheduledAt}
-                />
-              </div>
-            </FormSection>
-
-            {/* Sign out of all devices */}
-            <FormSection
-              title={a.security.signOutAllDevices}
-              description={a.security.signOutAllDevicesBody}
-              className="mt-4"
-            >
-              <div className="gh-form-section__span-2">
-                <button
-                  type="button"
-                  onClick={() => void onSignOutAll()}
-                  disabled={signingOutAll}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-rose-300 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-60 sm:w-auto"
-                >
-                  <LogOut className="size-4" aria-hidden />
-                  {signingOutAll ? a.security.signingOutAll : a.security.signOutAllDevices}
-                </button>
-                {signOutMsg ? (
-                  <p className="mt-3 rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-800">
-                    {signOutMsg}
-                  </p>
-                ) : null}
-              </div>
-            </FormSection>
-
+            <PortalTabPanel value="password" activeValue={activeTab}>
             {/* Change-password panel */}
-            <FormSection title={a.security.changePassword} description={a.security.changePasswordBody} className="mt-4">
+            <FormSection title={a.security.changePassword} description={a.security.changePasswordBody}>
               <div className="gh-form-section__span-2 flex items-start gap-3">
                 <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
                   <KeyRound className="size-5" aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <form onSubmit={onChangePassword} className="space-y-3">
+                  <form onSubmit={onChangePassword} method="post" className="space-y-3">
                     <label className="block">
                       <span className="gh-field-label">{a.security.currentPassword}</span>
                       <input
@@ -334,6 +265,7 @@ export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
 
                     {pwdMsg ? (
                       <p
+                        role={pwdMsg.kind === "ok" ? "status" : "alert"}
                         className={`rounded-md px-3 py-2 text-sm ${
                           pwdMsg.kind === "ok"
                             ? "bg-emerald-50 text-emerald-800"
@@ -344,17 +276,116 @@ export function AccountSecurityClient({ i18n }: { i18n: SecurityI18n }) {
                       </p>
                     ) : null}
 
-                    <button
-                      type="submit"
-                      disabled={savingPwd}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60 sm:w-auto"
-                    >
-                      {savingPwd ? a.security.updating : a.security.updatePassword}
-                    </button>
+                    <div className="flex justify-end">
+                      <button
+                        type="submit"
+                        disabled={savingPwd}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60 sm:w-auto"
+                      >
+                        {savingPwd ? a.security.updating : a.security.updatePassword}
+                      </button>
+                    </div>
                   </form>
                 </div>
               </div>
             </FormSection>
+            </PortalTabPanel>
+
+            <PortalTabPanel value="access" activeValue={activeTab}>
+            {/* Email verification panel */}
+            <FormSection title={a.security.emailVerification}>
+              <div className="gh-form-section__span-2 flex items-start gap-3">
+                <span
+                  className={`inline-flex size-9 shrink-0 items-center justify-center rounded-full ${
+                    verified
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "bg-amber-50 text-amber-700"
+                  }`}
+                >
+                  <MailCheck className="size-5" aria-hidden />
+                </span>
+                <div className="min-w-0 flex-1">
+                  {verified ? (
+                    <p className="text-sm text-[var(--portal-muted)]">
+                      <span className="font-semibold text-emerald-700">{a.security.verified}</span>{" "}
+                      {a.security.verifiedOn}{" "}
+                      {formatAppDate(user!.emailVerifiedAt!)}.
+                    </p>
+                  ) : (
+                    <>
+                      <p className="text-sm text-[var(--portal-muted)]">
+                        {a.security.unverifiedBody.replace("{email}", user?.email ?? "")}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={onResendVerification}
+                        disabled={sendingVerify}
+                        className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-md border border-emerald-700 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 disabled:opacity-60 sm:w-auto"
+                      >
+                        {sendingVerify ? a.security.sending : a.security.resendVerification}
+                      </button>
+                    </>
+                  )}
+                  {verifyMsg ? (
+                    <p
+                      role={verifyMsg.kind === "ok" ? "status" : "alert"}
+                      className={`mt-3 rounded-md px-3 py-2 text-sm ${
+                        verifyMsg.kind === "ok"
+                          ? "bg-emerald-50 text-emerald-800"
+                          : "bg-rose-50 text-rose-800"
+                      }`}
+                    >
+                      {verifyMsg.text}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            </FormSection>
+
+            {/* Sign out of all devices */}
+            <FormSection
+              title={a.security.signOutAllDevices}
+              description={a.security.signOutAllDevicesBody}
+              className="mt-4"
+            >
+              <div className="gh-form-section__span-2">
+                <button
+                  type="button"
+                  onClick={() => void onSignOutAll()}
+                  disabled={signingOutAll}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-rose-300 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-60 sm:w-auto"
+                >
+                  <LogOut className="size-4" aria-hidden />
+                  {signingOutAll ? a.security.signingOutAll : a.security.signOutAllDevices}
+                </button>
+                {signOutMsg ? (
+                  <p role="alert" className="mt-3 rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-800">
+                    {signOutMsg}
+                  </p>
+                ) : null}
+              </div>
+            </FormSection>
+            </PortalTabPanel>
+
+            <PortalTabPanel value="data" activeValue={activeTab}>
+            {/* Privacy controls — GDPR data-export + account-delete */}
+            <FormSection title={a.security.yourData} description={a.security.gdprBody}>
+              <div className="gh-form-section__span-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <a
+                  href={downloadOwnDataUrl()}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-emerald-700 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 sm:w-auto"
+                >
+                  <Download className="size-4" aria-hidden />
+                  {a.security.downloadData}
+                </a>
+
+                <DeleteAccountButton
+                  i18n={a.security}
+                  onScheduled={setDeletionScheduledAt}
+                />
+              </div>
+            </FormSection>
+            </PortalTabPanel>
           </>
       )}
     </div>

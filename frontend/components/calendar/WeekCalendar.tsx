@@ -1,7 +1,7 @@
 "use client";
 
-import { type CSSProperties, useMemo } from "react";
-import { ChevronLeft, ChevronRight, User } from "lucide-react";
+import { type CSSProperties, useEffect, useMemo, useState } from "react";
+import { Ban, ChevronLeft, ChevronRight, Clock, User } from "lucide-react";
 import { IconBtn } from "@/components/portal-atoms";
 import type { CalendarItem } from "./calendar-types";
 import {
@@ -62,8 +62,9 @@ function solidTone(tone: string): CSSProperties {
 }
 
 // Deep slate for booked appointments — darker than --portal-info so the white
-// patient name reads with strong contrast.
-const BOOKED_FILL = "#33505b";
+// patient name reads with strong contrast. Tokenized (portal.css
+// --portal-booked-fill) so it's defined once alongside the other status tones.
+const BOOKED_FILL = "var(--portal-booked-fill)";
 
 function toneStyle(item: CalendarItem): CSSProperties {
   // Booked consultations are the thing an admin most needs to spot — solid fill.
@@ -87,9 +88,49 @@ function toneStyle(item: CalendarItem): CSSProperties {
   }
 }
 
+/** Minutes-since-midnight "now", ticking every 30s in the given tz — used for
+ *  the current-time indicator line. Null on the server (no flash of a wrong
+ *  line before hydration). */
+function useNowMinutes(tz: string): number | null {
+  const [minutes, setMinutes] = useState<number | null>(null);
+  useEffect(() => {
+    function tick() {
+      const parts = new Intl.DateTimeFormat("en-GB", {
+        timeZone: tz,
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
+      }).formatToParts(new Date());
+      const h = Number(parts.find((p) => p.type === "hour")?.value ?? 0);
+      const m = Number(parts.find((p) => p.type === "minute")?.value ?? 0);
+      setMinutes(h * 60 + m);
+    }
+    tick();
+    const id = setInterval(tick, 30_000);
+    return () => clearInterval(id);
+  }, [tz]);
+  return minutes;
+}
+
 // 24-hour gutter label, matching the 24-hour block times below.
 function hourLabel(h: number): string {
   return `${String(h).padStart(2, "0")}:00`;
+}
+
+// Slot status isn't color-only: a small glyph rides next to the time so
+// color-blind users can tell BLOCKED/BOOKED/HELD apart without the legend.
+// OPEN has no icon — its pale outline already reads as "empty".
+function statusIcon(status: string) {
+  switch (status) {
+    case "BLOCKED":
+      return <Ban className="size-3 shrink-0" aria-hidden />;
+    case "BOOKED":
+      return <User className="size-3 shrink-0" aria-hidden />;
+    case "HELD":
+      return <Clock className="size-3 shrink-0" aria-hidden />;
+    default:
+      return null;
+  }
 }
 
 /** Greedy lane packing so overlapping blocks sit side-by-side instead of
@@ -198,6 +239,9 @@ export function WeekCalendar({
     (_, i) => startHour + i,
   );
   const bodyHeight = (endHour - startHour) * HOUR_PX;
+  const nowMinutes = useNowMinutes(tz);
+  const nowTop =
+    nowMinutes !== null ? (nowMinutes - startHour * 60) * PX_PER_MIN : null;
 
   return (
     <div className="gh-calendar-panel gh-card overflow-hidden p-0">
@@ -237,9 +281,9 @@ export function WeekCalendar({
 
       <div className="overflow-x-auto">
         <div className="gh-week-grid" style={{ minWidth: 720 }}>
-          {/* Day header row */}
+          {/* Day header row — sticky while the hour grid scrolls */}
           <div
-            className="grid"
+            className="gh-week-header-row grid"
             style={{
               gridTemplateColumns: "56px repeat(7, minmax(0, 1fr))",
               borderBottom: "1px solid var(--portal-line)",
@@ -255,7 +299,7 @@ export function WeekCalendar({
                   style={{ borderLeft: "1px solid var(--portal-line)" }}
                 >
                   <div
-                    className="text-[10px] font-bold uppercase tracking-[0.12em]"
+                    className="text-portal-micro font-bold uppercase tracking-[0.12em]"
                     style={{ color: "var(--portal-muted)" }}
                   >
                     {d.weekday}
@@ -285,7 +329,7 @@ export function WeekCalendar({
               {hours.map((h, i) => (
                 <div
                   key={h}
-                  className="pr-2 text-right text-[10px] font-semibold"
+                  className="pr-2 text-right text-portal-micro font-semibold"
                   style={{
                     position: "absolute",
                     top: i * HOUR_PX - 6,
@@ -301,15 +345,22 @@ export function WeekCalendar({
             {/* One positioned column per day */}
             {weekDays.map((d) => {
               const positioned = perDay.get(d.key) ?? [];
+              const isTodayCol = d.key === todayKey;
               return (
                 <div
                   key={d.key}
+                  className={isTodayCol ? "gh-week-day-col--today" : undefined}
                   style={{
                     position: "relative",
                     height: bodyHeight,
                     borderLeft: "1px solid var(--portal-line)",
                   }}
                 >
+                  {isTodayCol && nowTop !== null && nowTop >= 0 && nowTop <= bodyHeight ? (
+                    <div className="gh-week-now-line" style={{ top: nowTop }}>
+                      <span className="gh-week-now-dot" aria-hidden />
+                    </div>
+                  ) : null}
                   {/* Hour gridlines */}
                   {hours.map((h, i) => (
                     <div
@@ -354,17 +405,18 @@ export function WeekCalendar({
                     // status (green = open, red = blocked), no text label.
                     const inner = isConsult ? (
                       <>
-                        <span className="block truncate text-[10px] font-semibold leading-none opacity-90">
+                        <span className="block truncate text-portal-micro font-semibold leading-none opacity-90">
                           {time}
                         </span>
-                        <span className="mt-0.5 flex items-center gap-1 text-[12px] font-bold leading-tight">
+                        <span className="mt-0.5 flex items-center gap-1 text-portal-meta font-bold leading-tight">
                           <User className="size-3.5 shrink-0" aria-hidden />
                           <span className="truncate">{patientName}</span>
                         </span>
                       </>
                     ) : (
-                      <span className="block truncate text-[11px] font-bold leading-tight">
-                        {time}
+                      <span className="flex items-center gap-1 text-portal-thead font-bold leading-tight">
+                        {statusIcon(p.item.status)}
+                        <span className="truncate">{time}</span>
                       </span>
                     );
                     // Doctor mode: click an OPEN/BLOCKED slot to toggle it.

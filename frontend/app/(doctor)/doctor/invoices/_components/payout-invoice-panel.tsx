@@ -233,7 +233,7 @@ export function PayoutInvoicePanel({ strings }: { strings: InvoiceStrings }) {
             {items.map((it) => (
               <li key={it.key} className="flex items-center justify-between gap-3 py-2 text-sm">
                 <div className="min-w-0">
-                  <p className="truncate font-medium text-[var(--portal-text)]">{it.filename}</p>
+                  <p className="truncate font-medium text-[var(--portal-text)]" title={it.filename}>{it.filename}</p>
                   <p className="text-xs text-[var(--portal-muted)]">
                     {it.period} · {fmtSize(it.size)}
                     {it.uploadedAt ? ` · ${new Date(it.uploadedAt).toLocaleDateString("en-GB")}` : ""}

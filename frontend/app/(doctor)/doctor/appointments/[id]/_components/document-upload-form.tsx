@@ -74,7 +74,7 @@ export function DocumentUploadForm({
         </span>
         <div>
           <p className="text-sm font-bold text-[var(--portal-text)]">{copy.title}</p>
-          <p className="mt-1 text-[12px] text-[var(--portal-muted)]">{copy.description}</p>
+          <p className="mt-1 text-portal-meta text-[var(--portal-muted)]">{copy.description}</p>
         </div>
       </div>
       <label className="flex flex-col gap-1">
@@ -97,8 +97,8 @@ export function DocumentUploadForm({
         tabIndex={0}
       >
         <Upload className="size-6 text-[var(--portal-muted)]" aria-hidden />
-        <p className="text-[13px] font-semibold text-[var(--portal-text)]">{copy.chooseFiles}</p>
-        <p className="text-[11px] text-[var(--portal-muted)]">{copy.acceptedTypes}</p>
+        <p className="text-portal-compact font-semibold text-[var(--portal-text)]">{copy.chooseFiles}</p>
+        <p className="text-portal-thead text-[var(--portal-muted)]">{copy.acceptedTypes}</p>
       </div>
       <input
         ref={fileInputRef}
@@ -121,7 +121,7 @@ export function DocumentUploadForm({
         {pending ? copy.uploading : copy.uploadFiles}
       </button>
       {error ? (
-        <p className="gh-status-warning rounded-md border px-3 py-2 text-[12.5px]">{error}</p>
+        <p className="gh-status-warning rounded-md border px-3 py-2 text-portal-label">{error}</p>
       ) : null}
     </div>
   );

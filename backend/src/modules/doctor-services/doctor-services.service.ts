@@ -1,6 +1,7 @@
-import type { ServiceKind } from "@prisma/client";
+import type { LocaleCode, ServiceKind } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { resolveTranslation } from "../shared/resolve-translation.js";
 
 /** Service kinds doctors may self-select (health tests remain admin-only). */
 export const DOCTOR_SELECTABLE_SERVICE_KINDS: ServiceKind[] = [
@@ -72,7 +73,10 @@ async function isDoctorServiceSelfSelectApprovalRequired(
   return setting?.doctorServiceSelfSelectApproval ?? true;
 }
 
-export async function listDoctorSelectableServices(doctorId: string): Promise<{
+export async function listDoctorSelectableServices(
+  doctorId: string,
+  locale?: LocaleCode,
+): Promise<{
   approvalRequired: boolean;
   items: DoctorSelectableServiceDto[];
 }> {
@@ -101,7 +105,10 @@ export async function listDoctorSelectableServices(doctorId: string): Promise<{
           basePriceCents: true,
           currencyCode: true,
           countryId: true,
-          country: { select: { name: true, code: true } },
+          country: { select: { name: true, code: true, defaultLocale: true } },
+          translations: {
+            select: { locale: true, name: true, summary: true },
+          },
         },
       }),
       prisma.serviceDoctor.findMany({
@@ -133,12 +140,19 @@ export async function listDoctorSelectableServices(doctorId: string): Promise<{
 
     return {
       approvalRequired,
-      items: services.map(({ country, ...s }) => ({
-        ...s,
-        countryName: country.name,
-        countryCode: country.code,
-        assignment: assignmentByServiceId.get(s.id) ?? null,
-      })),
+      items: services.map(({ country, translations, ...s }) => {
+        const { tr } = locale
+          ? resolveTranslation(translations, locale, country.defaultLocale)
+          : { tr: null };
+        return {
+          ...s,
+          name: tr?.name ?? s.name,
+          summary: tr?.summary ?? s.summary,
+          countryName: country.name,
+          countryCode: country.code,
+          assignment: assignmentByServiceId.get(s.id) ?? null,
+        };
+      }),
     };
   } catch (error) {
     throw normalizeDbError(error, "Doctor services data is unavailable");

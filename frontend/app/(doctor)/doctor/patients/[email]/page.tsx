@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { ArrowLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { ArrowLeft, Cake, CalendarCheck, ChevronRight, ExternalLink, FileCheck, Globe } from "lucide-react";
 import { fetchDoctorPatientDetail } from "@/lib/api/doctor-api";
 import { AdminEmptyState, AdminSummaryStrip, PageHeader, Pill } from "@/components/portal-atoms";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
 import { PatientProfilePanel } from "./_components/patient-profile-panel";
 import { ConsultationHistoryPanel } from "./_components/consultation-history-panel";
+import { PatientSafetyStrip } from "./_components/patient-safety-strip";
+import { PatientRecordTabs } from "./_components/patient-record-tabs";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 // ponytail: cs/de/ro doctor.json don't yet carry the newer patients.* keys
@@ -30,7 +32,7 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
       <div className="gh-card p-6">
         <Link
           href="/doctor/patients"
-          className="mb-3 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
+          className="mb-3 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
         >
           <ArrowLeft className="size-3.5" /> {d.patients.back}
         </Link>
@@ -47,7 +49,7 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
     <>
       <Link
         href="/doctor/patients"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-text)]"
       >
         <ArrowLeft className="size-3.5" /> {d.patients.back}
       </Link>
@@ -57,6 +59,8 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
         description={d.patients.recordDesc}
       />
 
+      <PatientSafetyStrip email={patient.email} strings={d.patients as unknown as PatientsCopy} />
+
       <AdminSummaryStrip
         className="mb-4"
         items={[
@@ -65,24 +69,40 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
             value: patient.countryCode.toUpperCase(),
             hint: d.patients.bookingMarket,
             tone: "brand",
+            icon: <Globe className="size-4" aria-hidden />,
           },
           {
             label: d.patients.appointments,
             value: patient.appointmentCount,
             hint: d.patients.withYou,
             tone: "neutral",
+            icon: <CalendarCheck className="size-4" aria-hidden />,
           },
           {
             label: d.patients.signedConsults,
             value: patient.signedConsultCount,
             hint: d.patients.lockedNotes,
             tone: patient.signedConsultCount > 0 ? "success" : "neutral",
+            icon: <FileCheck className="size-4" aria-hidden />,
+          },
+          {
+            label: d.common.dateOfBirth,
+            value: patient.dateOfBirth
+              ? new Date(patient.dateOfBirth).toLocaleDateString()
+              : "—",
+            hint: d.patients.recordEyebrow,
+            tone: "neutral",
+            icon: <Cake className="size-4" aria-hidden />,
           },
         ]}
       />
 
-      <div className="gh-doctor-detail-grid gh-doctor-patient-detail-layout grid gap-4">
-        <div className="grid gap-4">
+      <PatientRecordTabs
+        tabsAria={d.patients.recordEyebrow}
+        tabHistoryLabel={d.patients.historyTitle}
+        tabConsultLabel={d.patients.consultHistoryTitle}
+        tabChartLabel={d.patients.chartTitle}
+        historyPanel={
         <section className="gh-card gh-doctor-patient-history-card p-6">
           <h3
             className="m-0 text-[var(--portal-text)]"
@@ -94,7 +114,7 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
           >
             {d.patients.historyTitle}
           </h3>
-          <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
+          <p className="mt-1 text-portal-compact text-[var(--portal-muted)]">
             {d.patients.historyDesc}
           </p>
           {appointments.length === 0 ? (
@@ -107,9 +127,9 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
           ) : (
             <>
             <div className="hidden md:block gh-doctor-table-wrap mt-4 overflow-x-auto">
-            <table className="w-full text-[13px]">
+            <table className="w-full text-portal-compact">
               <thead>
-                <tr className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+                <tr className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
                   <th className="py-2 text-left">{d.patients.colWhen}</th>
                   <th className="py-2 text-left">{d.patients.colType}</th>
                   <th className="py-2 text-left">{d.patients.colStatus}</th>
@@ -127,9 +147,9 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
                         : new Date(a.createdAt).toLocaleDateString()}
                     </td>
                     <td className="py-2.5 capitalize">{a.consultationType}</td>
-                    <td className="py-2.5 text-[12px]">{a.status}</td>
-                    <td className="py-2.5 text-[12px]">{a.paymentStatus}</td>
-                    <td className="py-2.5 text-[12px]">
+                    <td className="py-2.5 text-portal-meta">{a.status}</td>
+                    <td className="py-2.5 text-portal-meta">{a.paymentStatus}</td>
+                    <td className="py-2.5 text-portal-meta">
                       {a.consultation
                         ? a.consultation.status === "SIGNED"
                           ? d.common.signed
@@ -143,14 +163,14 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
                             href={a.meetingUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:underline"
+                            className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-primary)] hover:underline"
                           >
                             <ExternalLink className="size-3" /> {d.common.join}
                           </a>
                         ) : null}
                         <Link
                           href={`/doctor/appointments/${a.id}`}
-                          className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-[12px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
+                          className="inline-flex items-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-portal-meta font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
                         >
                           {d.common.open} <ChevronRight className="size-3" />
                         </Link>
@@ -214,7 +234,8 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
             </>
           )}
         </section>
-
+        }
+        consultPanel={
         <section className="gh-card gh-doctor-patient-history-card p-6">
           <h3
             className="m-0 text-[var(--portal-text)]"
@@ -226,70 +247,27 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
           >
             {d.patients.consultHistoryTitle}
           </h3>
-          <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
+          <p className="mt-1 text-portal-compact text-[var(--portal-muted)]">
             {d.patients.consultHistoryDesc}
           </p>
           <div className="mt-4">
             <ConsultationHistoryPanel patientEmail={patient.email} strings={d.patients as unknown as PatientsCopy} />
           </div>
         </section>
-
-        {/* Documents card hidden from doctor portal per GDPR plan —
-            doctors view (but don't download) docs inside the appointment
-            workspace via the existing per-appointment Documents tab.
-            Admin retains the all-documents archive under /admin/users. */}
-        </div>
-
-        <aside className="gh-doctor-side-stack grid gap-4 self-start">
+        }
+        chartPanel={
+          <>
           <PatientProfilePanel email={patient.email} strings={d.patients as unknown as PatientsCopy} />
-          <section className="gh-card gh-doctor-summary-card p-6">
-            <h3
-              className="m-0 text-[var(--portal-text)]"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: 16,
-                fontWeight: 800,
-              }}
-            >
-              {d.patients.summary}
-            </h3>
-            <dl className="mt-3 grid gap-2 text-[13px]">
-              <Row label={d.common.country} value={patient.countryCode.toUpperCase()} />
-              <Row
-                label={d.common.dateOfBirth}
-                value={
-                  patient.dateOfBirth
-                    ? new Date(patient.dateOfBirth).toLocaleDateString()
-                    : "—"
-                }
-              />
-              <Row
-                label={d.common.firstSeen}
-                value={new Date(patient.firstSeen).toLocaleDateString()}
-              />
-              <Row
-                label={d.patients.totalAppointments}
-                value={String(patient.appointmentCount)}
-              />
-              <Row
-                label={d.patients.signedConsults}
-                value={String(patient.signedConsultCount)}
-              />
-            </dl>
-          </section>
-        </aside>
-      </div>
+          {/* "Summary" card removed (07-006) — its non-duplicate value
+              (DOB) moved into the stat strip above; the rest duplicated
+              AdminSummaryStrip. Documents card stays out of the doctor
+              portal per GDPR plan — doctors view (but don't download)
+              docs inside the appointment workspace via the existing
+              per-appointment Documents tab. Admin retains the
+              all-documents archive under /admin/users. */}
+          </>
+        }
+      />
     </>
-  );
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-baseline justify-between gap-3 border-b border-[var(--portal-line)]/60 py-1">
-      <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
-        {label}
-      </dt>
-      <dd className="text-right text-[var(--portal-text)]">{value}</dd>
-    </div>
   );
 }

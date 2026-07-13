@@ -1,31 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Bell } from "lucide-react";
 import { formatAppDate } from "@/lib/format-datetime";
+import { AppMenu, AppMenuItem } from "@/components/AppMenu";
 import { Btn } from "@/components/portal-atoms";
-
-/**
- * Notification dropdown for the admin/doctor/patient topbar.
- *
- * Renders the bell button + a popover with the 5 most recent items.
- * When `items` is empty, surfaces a friendly `emptyMessage` instead of
- * collapsing — so admins/patients still get feedback that the bell is
- * a real control even before their notification feed ships.
- *
- * State is local — opening the popover never re-fetches, the caller is
- * responsible for passing fresh items from the server layout.
- */
 
 export type NotificationPopoverItem = {
   id: string;
   title: string;
   body: string | null;
   href: string | null;
-  /** ISO timestamp. */
   createdAt: string;
-  /** Null = unread. ISO timestamp once dismissed. */
   readAt: string | null;
 };
 
@@ -41,6 +27,7 @@ function timeAgo(iso: string): string {
   return formatAppDate(iso);
 }
 
+/** Portalled notification menu with Radix dismissal, collision and focus handling. */
 export function NotificationPopover({
   items,
   unreadCount,
@@ -52,199 +39,55 @@ export function NotificationPopover({
   viewAllHref: string | null;
   emptyMessage?: string;
 }) {
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef<HTMLUListElement | null>(null);
-
-  // Close on Escape — keeps keyboard parity with the user menu next to it.
-  useEffect(() => {
-    if (!open) return;
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
-    }
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open]);
-
-  // Arrow-key roving nav between rows — role="menu" implies this per the
-  // ARIA menu pattern; rows without an href aren't focusable and are
-  // skipped automatically since the query only picks up [role="menuitem"].
-  function onMenuKeyDown(e: React.KeyboardEvent<HTMLUListElement>) {
-    if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
-    const menuItems = Array.from(
-      menuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [],
-    );
-    if (menuItems.length === 0) return;
-    e.preventDefault();
-    const currentIndex = menuItems.indexOf(document.activeElement as HTMLElement);
-    const nextIndex =
-      e.key === "ArrowDown"
-        ? (currentIndex + 1) % menuItems.length
-        : (currentIndex - 1 + menuItems.length) % menuItems.length;
-    menuItems[nextIndex]?.focus();
-  }
-
   const recent = items.slice(0, 5);
 
   return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-label="Notifications"
-        aria-expanded={open}
-        aria-haspopup="menu"
-        className="gh-notification-button relative inline-flex size-9 items-center justify-center rounded-full transition hover:bg-white/5"
-        style={{ color: "var(--portal-chrome-text)" }}
-      >
-        <Bell className="size-4" aria-hidden />
-        {unreadCount > 0 ? (
-          <span
-            aria-hidden
-            className="absolute right-[6px] top-[6px] size-[6px] rounded-full"
-            style={{
-              background: "var(--portal-signal)",
-              boxShadow: "0 0 0 2px var(--portal-signal-glow)",
-            }}
-          />
-        ) : null}
-        {unreadCount > 0 ? (
-          <span className="sr-only">{unreadCount} unread notifications</span>
-        ) : null}
-      </button>
-
-      {open ? (
-        <>
-          <button
-            type="button"
-            aria-label="Close notifications"
-            onClick={() => setOpen(false)}
-            className="fixed inset-0 z-30"
-          />
-          <div
-            role="menu"
-            className="gh-notification-popover absolute right-0 top-[calc(100%+8px)] z-40 w-[min(360px,calc(100vw-32px))] p-2"
-            style={{
-              borderRadius: "var(--portal-radius-xl)",
-              border: "1px solid var(--portal-line)",
-              background: "var(--portal-surface-elevated)",
-              boxShadow: "var(--portal-shadow-popover)",
-            }}
-          >
-            <div
-              className="gh-notification-popover__header flex items-center justify-between px-2 pb-2"
-              style={{ borderBottom: "1px solid var(--portal-line)" }}
-            >
-              <span className="text-sm font-bold" style={{ color: "var(--portal-text)" }}>
-                Notifications
-              </span>
-              {unreadCount > 0 ? (
-                <span className="text-[11px] font-semibold" style={{ color: "var(--portal-muted)" }}>
-                  {unreadCount} unread
+    <AppMenu
+      contentClassName="gh-portal-menu-content gh-notification-popover w-[min(360px,calc(100vw-32px))] p-2"
+      trigger={
+        <button
+          type="button"
+          aria-label="Notifications"
+          className="gh-notification-button relative inline-flex size-9 items-center justify-center rounded-full transition hover:bg-white/5"
+          style={{ color: "var(--portal-chrome-text)" }}
+        >
+          <Bell className="size-4" aria-hidden />
+          {unreadCount > 0 ? <span aria-hidden className="absolute right-[6px] top-[6px] size-[6px] rounded-full bg-[var(--portal-signal)] shadow-[0_0_0_2px_var(--portal-signal-glow)]" /> : null}
+          {unreadCount > 0 ? <span className="sr-only">{unreadCount} unread notifications</span> : null}
+        </button>
+      }
+    >
+      <div className="flex items-center justify-between px-2 pb-2" style={{ borderBottom: "1px solid var(--portal-line)" }}>
+        <span className="text-sm font-bold text-[var(--portal-text)]">Notifications</span>
+        {unreadCount > 0 ? <span className="text-[11px] font-semibold text-[var(--portal-muted)]">{unreadCount} unread</span> : null}
+      </div>
+      {recent.length === 0 ? (
+        <p className="px-3 py-6 text-center text-sm text-[var(--portal-muted)]">{emptyMessage}</p>
+      ) : (
+        <div className="py-1">
+          {recent.map((notification) => {
+            const unread = notification.readAt === null;
+            const content = (
+              <span className="flex items-start gap-2">
+                <span aria-hidden className={`mt-[6px] size-[5px] shrink-0 rounded-full ${unread ? "bg-[var(--portal-signal)] shadow-[0_0_0_2px_var(--portal-signal-glow)]" : ""}`} />
+                <span className="flex min-w-0 flex-col gap-0.5">
+                  <span className={`text-sm ${unread ? "font-bold text-[var(--portal-text)]" : "font-semibold text-[var(--portal-muted)]"}`}>{notification.title}</span>
+                  {notification.body ? <span className="line-clamp-2 text-[12.5px] text-[var(--portal-muted)]">{notification.body}</span> : null}
+                  <span className="text-[10px] uppercase tracking-wider text-[var(--portal-muted)]">{timeAgo(notification.createdAt)}</span>
                 </span>
-              ) : null}
-            </div>
-
-            {recent.length === 0 ? (
-              <p
-                className="gh-notification-popover__empty px-3 py-6 text-center text-sm"
-                style={{ color: "var(--portal-muted)" }}
-              >
-                {emptyMessage}
-              </p>
+              </span>
+            );
+            return notification.href ? (
+              <AppMenuItem key={notification.id} asChild>
+                <Link href={notification.href} className={`gh-notification-popover__item block rounded-[var(--portal-radius-sm)] px-3 py-2 outline-none data-[highlighted]:bg-[var(--portal-well)] ${unread ? "bg-[color-mix(in_srgb,var(--portal-signal-soft)_50%,transparent)]" : ""}`}>{content}</Link>
+              </AppMenuItem>
             ) : (
-              <ul
-                ref={menuRef}
-                className="max-h-[360px] overflow-y-auto py-1"
-                onKeyDown={onMenuKeyDown}
-              >
-                {recent.map((n) => {
-                  const unread = n.readAt === null;
-                  const inner = (
-                    <span className="flex items-start gap-2">
-                      {unread ? (
-                        <span
-                          aria-hidden
-                          className="mt-[6px] size-[5px] shrink-0 rounded-full"
-                          style={{
-                            background: "var(--portal-signal)",
-                            boxShadow: "0 0 0 2px var(--portal-signal-glow)",
-                          }}
-                        />
-                      ) : (
-                        <span aria-hidden className="mt-[6px] size-[5px] shrink-0" />
-                      )}
-                      <span className="flex min-w-0 flex-col gap-0.5">
-                        <span
-                          className="text-sm"
-                          style={{
-                            fontWeight: unread ? 700 : 600,
-                            color: unread ? "var(--portal-text)" : "var(--portal-muted)",
-                          }}
-                        >
-                          {n.title}
-                        </span>
-                        {n.body ? (
-                          <span className="line-clamp-2 text-[12.5px]" style={{ color: "var(--portal-muted)" }}>
-                            {n.body}
-                          </span>
-                        ) : null}
-                        <span
-                          className="text-[10px] uppercase tracking-wider"
-                          style={{ color: "var(--portal-muted)" }}
-                        >
-                          {timeAgo(n.createdAt)}
-                        </span>
-                      </span>
-                    </span>
-                  );
-                  return (
-                    <li key={n.id}>
-                      {n.href ? (
-                        <Link
-                          href={n.href}
-                          role="menuitem"
-                          onClick={() => setOpen(false)}
-                          className="gh-notification-popover__item block rounded-[var(--portal-radius-sm)] px-3 py-2 hover:bg-[var(--portal-well)]"
-                          style={{
-                            background: unread
-                              ? "color-mix(in srgb, var(--portal-signal-soft) 50%, transparent)"
-                              : "transparent",
-                          }}
-                        >
-                          {inner}
-                        </Link>
-                      ) : (
-                        <div
-                          className="gh-notification-popover__item rounded-[var(--portal-radius-sm)] px-3 py-2"
-                          style={{
-                            background: unread
-                              ? "color-mix(in srgb, var(--portal-signal-soft) 50%, transparent)"
-                              : "transparent",
-                          }}
-                        >
-                          {inner}
-                        </div>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-
-            {viewAllHref ? (
-              <Btn
-                href={viewAllHref}
-                onClick={() => setOpen(false)}
-                variant="soft"
-                size="sm"
-                className="mt-2 w-full justify-center"
-              >
-                View all
-              </Btn>
-            ) : null}
-          </div>
-        </>
-      ) : null}
-    </div>
+              <div key={notification.id} className={`rounded-[var(--portal-radius-sm)] px-3 py-2 ${unread ? "bg-[color-mix(in_srgb,var(--portal-signal-soft)_50%,transparent)]" : ""}`}>{content}</div>
+            );
+          })}
+        </div>
+      )}
+      {viewAllHref ? <Btn href={viewAllHref} variant="soft" size="sm" className="mt-2 w-full justify-center">View all</Btn> : null}
+    </AppMenu>
   );
 }

@@ -19,12 +19,28 @@ export function RichBodySection({
   theme?: "dark" | "light";
 }) {
   const trimmed = (html ?? "").trim();
-  if (!trimmed || trimmed === "<p><br/></p>" || trimmed === "<p><br></p>") {
+  if (!trimmed) {
     return null;
   }
 
   const safeHtml = sanitizePageBodyHtml(trimmed);
   if (!safeHtml) {
+    return null;
+  }
+
+  // Rich-text editors leave "empty" content in many shapes that survive
+  // sanitization (`<p><br></p>`, nested empty tags, stray whitespace
+  // entities) — matching a couple of literal strings on the raw input
+  // missed most of them. Check the sanitized output's actual visible
+  // content instead, so any effectively-empty body renders nothing rather
+  // than a blank padded section.
+  const hasVisibleContent =
+    /<img[\s>]/i.test(safeHtml) ||
+    safeHtml
+      .replace(/<[^>]*>/g, "")
+      .replace(/&nbsp;/gi, " ")
+      .trim().length > 0;
+  if (!hasVisibleContent) {
     return null;
   }
 

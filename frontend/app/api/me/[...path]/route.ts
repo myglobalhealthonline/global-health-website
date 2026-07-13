@@ -22,6 +22,7 @@ const ROUTE_TABLE: Record<string, Set<string>> = {
     "redemptions",
     "invoices",
     "cart-preview",
+    "benefit-preview",
     "notifications",
   ]),
   POST: new Set([

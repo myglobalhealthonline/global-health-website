@@ -1,5 +1,4 @@
 import { notFound, redirect } from "next/navigation";
-import Image from "next/image";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { cookies } from "next/headers";
@@ -122,6 +121,45 @@ function fmtMoney(cents: number, currencyCode: string) {
   }
 }
 
+// ── Variant K design tokens (mirrors backend/src/lib/pdf/brand.ts) ──────────
+
+const VK = {
+  night: "#0F2E25",
+  forest: "#1D4B36",
+  ink: "#26332D",
+  muted: "#66716A",
+  faint: "#9AA49D",
+  hairline: "#E4E7E0",
+  hairlineDark: "#C9CFC7",
+  paper: "#FFFFFF",
+  ivory: "#F6F8F1",
+  lime: "#B0F122",
+};
+const VK_SANS = `"Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif`;
+const VK_SERIF = `Georgia, "Times New Roman", serif`;
+
+/** ECG pulse rule — brand motif, mirrors backend/src/lib/pdf/brand.ts pdfEcgRule(). */
+function EcgRule({ strokeColor = VK.night, limePeak = true }: { strokeColor?: string; limePeak?: boolean }) {
+  return (
+    <svg viewBox="0 0 600 24" preserveAspectRatio="none" style={{ display: "block", width: "100%", height: 10 }}>
+      <path
+        d="M0 12 H250 L262 12 L268 12 L274 4 L282 20 L288 12 L300 12 H600"
+        fill="none"
+        stroke={strokeColor}
+        strokeWidth={1.2}
+      />
+      {limePeak ? (
+        <path
+          d="M262 12 L268 12 L274 4 L282 20 L288 12 L294 12"
+          fill="none"
+          stroke={VK.lime}
+          strokeWidth={1.6}
+        />
+      ) : null}
+    </svg>
+  );
+}
+
 // ── Data fetching ─────────────────────────────────────────────────────────────
 
 type InvoiceDetail = {
@@ -220,303 +258,310 @@ export default async function PrintOrderInvoicePage({
         ? L.invoiceReceipt
         : L.invoice;
   const isUnpaid = invoice.documentType === "INVOICE";
+  const statusLabel = isCreditNote ? L.refunded : isUnpaid ? L.unpaid : L.paid;
 
   return (
-    <main
-      style={{
-        maxWidth: 740,
-        margin: "0 auto",
-        padding: "40px 32px",
-        fontFamily: "'Helvetica Neue', Arial, sans-serif",
-        color: "#111",
-        lineHeight: 1.55,
-        background: "#fff",
-      }}
-    >
-      {/* ── Header ── */}
-      <header
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-          marginBottom: 32,
-          paddingBottom: 24,
-          borderBottom: "2px solid #1B4D3E",
-        }}
-      >
-        {/* Logo */}
-        <div>
-          <Image
-            src="/logos/global-health-dark.png"
-            alt="Global Health"
-            width={180}
-            height={60}
-            style={{ objectFit: "contain", objectPosition: "left" }}
-            priority
-          />
-          <p
-            style={{
-              margin: "10px 0 0",
-              fontSize: 11,
-              color: "#555",
-              lineHeight: 1.4,
-            }}
-          >
-            {L.company}
-            <br />
-            {L.address}
-          </p>
+    <div className="vk-backdrop">
+      <div className="vk-sheet">
+        <div className="vk-spine" />
+        <div className="vk-spine-caption">
+          <span>Global Health</span>
         </div>
 
-        {/* Invoice meta */}
-        <div style={{ textAlign: "right" }}>
-          <p
-            style={{
-              margin: 0,
-              fontSize: 11,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "#1B4D3E",
-              fontWeight: 700,
-            }}
-          >
-            {docTitle}
-          </p>
-          <p
-            style={{
-              margin: "6px 0 0",
-              fontSize: 28,
-              fontWeight: 800,
-              color: "#1B4D3E",
-              letterSpacing: "0.04em",
-            }}
-          >
-            {invoice.invoiceNumber}
-          </p>
-          <p style={{ margin: "8px 0 0", fontSize: 12, color: "#555" }}>{invoiceDate}</p>
-          <span
-            style={{
-              display: "inline-block",
-              marginTop: 10,
-              padding: "3px 10px",
-              borderRadius: 999,
-              background: isCreditNote ? "#fee2e2" : isUnpaid ? "#fef3c7" : "#d1fae5",
-              color: isCreditNote ? "#991b1b" : isUnpaid ? "#92400e" : "#065f46",
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-            }}
-          >
-            {isCreditNote ? L.refunded : isUnpaid ? L.unpaid : L.paid}
-          </span>
-        </div>
-      </header>
+        <div className="vk-page">
+          <div className="vk-topline">
+            <span className="vk-logo-text">Global Health</span>
+            <span className="vk-caps vk-topline-caps">
+              {L.invoiceRef} — {invoice.invoiceNumber}
+            </span>
+          </div>
 
-      {/* ── Billing parties ── */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 24,
-          marginBottom: 32,
-        }}
-      >
-        {/* From */}
-        <div>
-          <p
-            style={{
-              margin: "0 0 6px",
-              fontSize: 10,
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.14em",
-              color: "#888",
-            }}
-          >
-            {L.from}
-          </p>
-          <p style={{ margin: 0, fontWeight: 700, fontSize: 14 }}>Global Health</p>
-          <p style={{ margin: "2px 0 0", fontSize: 12, color: "#555" }}>{L.address}</p>
-          <p style={{ margin: "2px 0 0", fontSize: 12, color: "#555" }}>
-            info@myglobalhealth.online
-          </p>
-        </div>
+          <div className="vk-masthead">
+            <div className="vk-mast-title">{docTitle}</div>
+            <div className="vk-mast-sub">
+              <span className="vk-mast-no">Nº {invoice.invoiceNumber}</span>
+              <span className="vk-mast-issued">{invoiceDate}</span>
+              <span className="vk-mast-status">
+                {statusLabel}
+                {!isUnpaid && order.paidAt
+                  ? ` · ${new Date(order.paidAt).toLocaleDateString("en-GB")}`
+                  : ""}
+              </span>
+            </div>
+            <div className="vk-ecg">
+              <EcgRule />
+            </div>
+          </div>
 
-        {/* Bill to */}
-        <div>
-          <p
-            style={{
-              margin: "0 0 6px",
-              fontSize: 10,
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.14em",
-              color: "#888",
-            }}
-          >
-            {L.billTo}
-          </p>
-          <p style={{ margin: 0, fontWeight: 700, fontSize: 14 }}>{order.fullName}</p>
-          <p style={{ margin: "2px 0 0", fontSize: 12, color: "#555" }}>{order.email}</p>
-          {order.phone ? (
-            <p style={{ margin: "2px 0 0", fontSize: 12, color: "#555" }}>{order.phone}</p>
-          ) : null}
-          {order.taxIdNumber ? (
-            <p style={{ margin: "2px 0 0", fontSize: 12, color: "#555" }}>
-              {L.taxId}: {order.taxIdNumber}
-            </p>
-          ) : null}
-          {order.consultationDate ? (
-            <p style={{ margin: "2px 0 0", fontSize: 12, color: "#555" }}>
-              {L.consultationDate}:{" "}
-              {new Date(order.consultationDate).toLocaleDateString("en-GB", {
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-              })}
-            </p>
-          ) : null}
+          <div className="vk-parties">
+            <div className="vk-party">
+              <span className="vk-caps">{L.from}</span>
+              <div className="vk-n">Global Health</div>
+              <div className="vk-l">{L.company.split("·").slice(1).join("·").trim()}</div>
+              <div className="vk-l">{L.address}</div>
+              <div className="vk-l">info@myglobalhealth.online</div>
+            </div>
+            <div className="vk-party">
+              <span className="vk-caps">{L.billTo}</span>
+              <div className="vk-n">{order.fullName}</div>
+              <div className="vk-l">{order.email}</div>
+              {order.phone ? <div className="vk-l">{order.phone}</div> : null}
+              {order.taxIdNumber ? (
+                <div className="vk-l">
+                  {L.taxId} {order.taxIdNumber}
+                </div>
+              ) : null}
+            </div>
+            {doctor ? (
+              <div className="vk-party vk-party-dr">
+                <span className="vk-caps">{L.doctor}</span>
+                <div className="vk-n vk-n-dr">{doctor.fullName}</div>
+                {doctor.chamberEntity ? <div className="vk-l">{doctor.chamberEntity}</div> : null}
+                {doctor.registrationNumber ? (
+                  <div className="vk-l">
+                    {L.reg} {doctor.registrationNumber}
+                  </div>
+                ) : null}
+                {order.consultationDate ? (
+                  <div className="vk-l">
+                    {L.consultationDate}:{" "}
+                    {new Date(order.consultationDate).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </div>
+                ) : null}
+              </div>
+            ) : order.consultationDate ? (
+              <div className="vk-party vk-party-dr">
+                <span className="vk-caps">{L.consultationDate}</span>
+                <div className="vk-l" style={{ marginTop: 6 }}>
+                  {new Date(order.consultationDate).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </div>
+              </div>
+            ) : null}
+          </div>
+
+          <table className="vk-items">
+            <thead>
+              <tr>
+                <th className="vk-idx-h">Nº</th>
+                <th>{L.description}</th>
+                <th className="vk-num">{L.qty}</th>
+                <th className="vk-num">{L.unit}</th>
+                <th className="vk-num">{L.total}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {order.items.map((item, idx) => (
+                <tr key={item.id}>
+                  <td className="vk-td vk-idx">{String(idx + 1).padStart(2, "0")}</td>
+                  <td className="vk-td vk-desc">{item.name}</td>
+                  <td className="vk-td vk-num">{item.quantity}</td>
+                  <td className="vk-td vk-num">{fmtMoney(item.unitPriceCents, currency)}</td>
+                  <td className="vk-td vk-num vk-strong">
+                    {fmtMoney(item.lineTotalCents, currency)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div className="vk-settle">
+            <div className="vk-settle-left">
+              {L.invoiceRef} <b>{invoice.invoiceNumber}</b>
+            </div>
+            <div className="vk-totals">
+              {order.shippingCents > 0 ? (
+                <div className="vk-trow">
+                  <span>Shipping</span>
+                  <span className="vk-tv">{fmtMoney(order.shippingCents, currency)}</span>
+                </div>
+              ) : null}
+              <div className="vk-grand">
+                <span className="vk-gl">{L.total}</span>
+                <span className="vk-gv">{fmtMoney(order.totalCents, currency)}</span>
+              </div>
+              {order.paidAt ? (
+                <div className="vk-settled">
+                  {isCreditNote ? "Refund issued" : "Settled in full"} ·{" "}
+                  {new Date(order.paidAt).toLocaleDateString("en-GB")}
+                </div>
+              ) : isUnpaid ? (
+                <div className="vk-settled">
+                  Amount due: {fmtMoney(order.totalCents, currency)}
+                </div>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="vk-foot">
+            <div className="vk-foot-rule" />
+            <div className="vk-fb">
+              <span className="vk-fb-brand">Global Health</span>
+              <span className="vk-fb-tag">Medicine Anytime Anywhere — myglobalhealth.online</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* ── Doctor block (if present) ── */}
-      {doctor ? (
-        <div
-          style={{
-            marginBottom: 28,
-            padding: "12px 16px",
-            background: "#f4f7f5",
-            borderLeft: "3px solid #1B4D3E",
-            borderRadius: 4,
-          }}
-        >
-          <p
-            style={{
-              margin: "0 0 4px",
-              fontSize: 10,
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.14em",
-              color: "#555",
-            }}
-          >
-            {L.doctor}
-          </p>
-          <p style={{ margin: 0, fontWeight: 600, fontSize: 13 }}>{doctor.fullName}</p>
-          {doctor.chamberEntity && doctor.registrationNumber ? (
-            <p style={{ margin: "2px 0 0", fontSize: 12, color: "#555" }}>
-              {doctor.chamberEntity} · {L.reg}: {doctor.registrationNumber}
-            </p>
-          ) : doctor.registrationNumber ? (
-            <p style={{ margin: "2px 0 0", fontSize: 12, color: "#555" }}>
-              {L.reg}: {doctor.registrationNumber}
-            </p>
-          ) : null}
-        </div>
-      ) : null}
-
-      {/* ── Line items ── */}
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          fontSize: 13,
-          marginBottom: 8,
-        }}
-      >
-        <thead>
-          <tr
-            style={{
-              borderBottom: "2px solid #1B4D3E",
-              fontSize: 10,
-              textTransform: "uppercase",
-              letterSpacing: "0.1em",
-              color: "#555",
-            }}
-          >
-            <th style={{ textAlign: "left", padding: "6px 0 8px" }}>{L.description}</th>
-            <th style={{ textAlign: "center", padding: "6px 0 8px", width: 50 }}>{L.qty}</th>
-            <th style={{ textAlign: "right", padding: "6px 0 8px", width: 110 }}>{L.unit}</th>
-            <th style={{ textAlign: "right", padding: "6px 0 8px", width: 110 }}>{L.total}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {order.items.map((item) => (
-            <tr key={item.id} style={{ borderBottom: "1px solid #eee" }}>
-              <td style={{ padding: "10px 0" }}>{item.name}</td>
-              <td style={{ textAlign: "center", padding: "10px 0" }}>{item.quantity}</td>
-              <td style={{ textAlign: "right", padding: "10px 0" }}>
-                {fmtMoney(item.unitPriceCents, currency)}
-              </td>
-              <td style={{ textAlign: "right", padding: "10px 0" }}>
-                {fmtMoney(item.lineTotalCents, currency)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          {order.shippingCents > 0 ? (
-            <tr style={{ borderTop: "1px solid #ddd" }}>
-              <td
-                colSpan={3}
-                style={{ textAlign: "right", padding: "8px 0", color: "#555", fontSize: 12 }}
-              >
-                Shipping
-              </td>
-              <td style={{ textAlign: "right", padding: "8px 0", color: "#555", fontSize: 12 }}>
-                {fmtMoney(order.shippingCents, currency)}
-              </td>
-            </tr>
-          ) : null}
-          <tr style={{ borderTop: "2px solid #1B4D3E" }}>
-            <td
-              colSpan={3}
-              style={{ textAlign: "right", padding: "12px 0", fontWeight: 700, fontSize: 14 }}
-            >
-              {L.total}
-            </td>
-            <td
-              style={{
-                textAlign: "right",
-                padding: "12px 0",
-                fontWeight: 800,
-                fontSize: 16,
-                color: "#1B4D3E",
-              }}
-            >
-              {fmtMoney(order.totalCents, currency)}
-            </td>
-          </tr>
-        </tfoot>
-      </table>
-
-      {/* ── Invoice reference ── */}
-      <p style={{ marginTop: 24, fontSize: 11, color: "#888" }}>
-        {L.invoiceRef}: <strong>{invoice.invoiceNumber}</strong>
-        {order.paidAt ? ` · Paid ${new Date(order.paidAt).toLocaleDateString("en-GB")}` : ""}
-      </p>
-
-      {/* ── Footer ── */}
-      <footer
-        style={{
-          marginTop: 48,
-          paddingTop: 16,
-          borderTop: "1px solid #e5e5e3",
-          fontSize: 11,
-          color: "#888",
-          textAlign: "center",
-        }}
-      >
-        {L.footer}
-      </footer>
-
       <style>{`
+        .vk-backdrop {
+          background: ${VK.ivory};
+          min-height: 100vh;
+          padding: 40px 16px;
+          font-family: ${VK_SANS};
+          color: ${VK.ink};
+        }
+        .vk-sheet {
+          position: relative;
+          max-width: 820px;
+          margin: 0 auto;
+          background: ${VK.paper};
+          box-shadow: 0 1px 3px rgba(15, 46, 37, 0.08), 0 20px 48px rgba(15, 46, 37, 0.1);
+          overflow: hidden;
+        }
+        .vk-spine {
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 18px;
+          background: ${VK.night};
+        }
+        .vk-spine-caption {
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 18px;
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
+          padding-bottom: 32px;
+        }
+        .vk-spine-caption span {
+          writing-mode: vertical-rl;
+          transform: rotate(180deg);
+          font-size: 8px;
+          font-weight: 600;
+          letter-spacing: 0.4em;
+          text-transform: uppercase;
+          color: rgba(242, 245, 236, 0.75);
+        }
+        .vk-page { position: relative; padding: 32px 32px 40px 56px; }
+        .vk-caps {
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 0.24em;
+          text-transform: uppercase;
+          color: ${VK.faint};
+        }
+        .vk-topline {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid ${VK.hairlineDark};
+          padding-bottom: 14px;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+        .vk-topline-caps { color: ${VK.forest}; }
+        .vk-logo-text { font-size: 18px; font-weight: 700; color: ${VK.forest}; letter-spacing: 0.04em; }
+        .vk-masthead { margin-top: 28px; }
+        .vk-mast-title {
+          font-family: ${VK_SERIF};
+          font-style: italic;
+          font-size: 40px;
+          line-height: 1.05;
+          color: ${VK.night};
+          letter-spacing: -0.01em;
+        }
+        .vk-mast-sub { margin-top: 14px; display: flex; align-items: baseline; gap: 20px; flex-wrap: wrap; }
+        .vk-mast-no { font-size: 13px; font-weight: 700; letter-spacing: 0.16em; color: ${VK.forest}; }
+        .vk-mast-issued { font-size: 13px; color: ${VK.muted}; }
+        .vk-mast-status {
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: ${VK.night};
+          border-bottom: 2px solid ${VK.lime};
+          padding-bottom: 2px;
+        }
+        .vk-ecg { margin-top: 20px; }
+        .vk-parties { display: flex; gap: 32px; margin-top: 28px; flex-wrap: wrap; }
+        .vk-party { flex: 1 1 160px; min-width: 160px; }
+        .vk-party .vk-caps { display: block; margin-bottom: 6px; }
+        .vk-n { font-family: ${VK_SERIF}; font-size: 16px; color: ${VK.night}; }
+        .vk-n-dr { font-size: 15px; }
+        .vk-l { font-size: 12.5px; color: ${VK.muted}; margin-top: 3px; }
+        .vk-items { width: 100%; border-collapse: collapse; margin-top: 28px; }
+        .vk-items th {
+          text-align: left;
+          padding: 0 0 8px;
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: ${VK.forest};
+          border-bottom: 2px solid ${VK.night};
+        }
+        .vk-items th.vk-num, .vk-items .vk-idx-h { text-align: right; }
+        .vk-items th:first-child { text-align: left; width: 32px; }
+        .vk-items th:nth-child(3) { width: 48px; }
+        .vk-items th:nth-child(4), .vk-items th:nth-child(5) { width: 96px; }
+        .vk-td { padding: 14px 0; border-bottom: 1px solid ${VK.hairline}; }
+        .vk-td.vk-idx { width: 32px; font-size: 12px; color: ${VK.faint}; font-variant-numeric: tabular-nums; }
+        .vk-td.vk-desc { font-family: ${VK_SERIF}; font-size: 15px; color: ${VK.night}; padding-right: 24px; }
+        .vk-td.vk-num {
+          text-align: right;
+          white-space: nowrap;
+          font-variant-numeric: tabular-nums;
+          font-size: 13.5px;
+          color: ${VK.muted};
+        }
+        .vk-td.vk-strong { color: ${VK.night}; }
+        .vk-settle { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 24px; flex-wrap: wrap; gap: 16px; }
+        .vk-settle-left { font-size: 12px; color: ${VK.faint}; max-width: 280px; }
+        .vk-settle-left b { color: ${VK.muted}; }
+        .vk-totals { width: 280px; max-width: 100%; }
+        .vk-trow { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; color: ${VK.muted}; }
+        .vk-trow .vk-tv { font-variant-numeric: tabular-nums; color: ${VK.ink}; }
+        .vk-grand {
+          border-top: 2px solid ${VK.night};
+          margin-top: 6px;
+          padding-top: 8px;
+          display: flex;
+          justify-content: space-between;
+          align-items: baseline;
+        }
+        .vk-gl { font-size: 10px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: ${VK.forest}; }
+        .vk-gv { font-family: ${VK_SERIF}; font-style: italic; font-size: 28px; color: ${VK.night}; letter-spacing: -0.01em; }
+        .vk-settled { text-align: right; font-size: 12px; color: ${VK.muted}; margin-top: 6px; }
+        .vk-foot { margin-top: 40px; }
+        .vk-foot-rule { border-top: 1px solid ${VK.hairline}; margin-bottom: 14px; }
+        .vk-fb { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; font-size: 11px; }
+        .vk-fb-brand { font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: ${VK.forest}; }
+        .vk-fb-tag { color: ${VK.faint}; font-family: ${VK_SERIF}; font-style: italic; font-size: 13px; }
+
         @media print {
-          body { background: #fff; margin: 0; }
-          a { color: inherit; text-decoration: none; }
-          @page { margin: 18mm; }
+          @page { size: A4; margin: 0; }
+          html, body { background: ${VK.paper}; }
+          .vk-backdrop { background: ${VK.paper}; padding: 0; min-height: 0; }
+          .vk-sheet { max-width: none; box-shadow: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .vk-spine, .vk-spine-caption {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+          }
+          .vk-page { padding: 18mm 16mm 20mm 24mm; }
         }
       `}</style>
-    </main>
+    </div>
   );
 }

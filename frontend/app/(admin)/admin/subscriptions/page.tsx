@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { RefreshCw, RotateCw, Banknote } from "lucide-react";
 import { requireAdminAction, requireSuperAdminAction } from "@/lib/admin/require-admin-action";
 import {
   fetchAdminPerkGrants,
@@ -18,40 +17,17 @@ import {
   AdminCard,
   AdminEmptyState,
   AdminSummaryStrip,
-  AdminTable,
-  IconBtn,
   PageHeader,
   Pill,
   SectionHeader,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  type PillTone,
 } from "../_components/atoms";
 import { CreditAdjustForm } from "../_components/credit-adjust-form";
-import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import { SubscriptionHealthPanel } from "../_components/subscription-health-panel";
-import { AdminSubscriberLedger } from "../_components/subscriber-ledger";
-import { PortalMobileCard, type PortalMobileCardTone } from "@/components/PortalMobileCard";
+import { AdminSubscriptionsTable } from "./_components/admin-subscriptions-table";
 
 export const dynamic = "force-dynamic";
 
 const STATUS_FILTERS = ["", "ACTIVE", "PAST_DUE", "CANCELED", "PAUSED", "INCOMPLETE"] as const;
-
-function statusTone(status: string): PillTone {
-  if (status === "ACTIVE") return "active";
-  if (status === "PAST_DUE" || status === "INCOMPLETE") return "pending";
-  if (status === "CANCELED") return "inactive";
-  return "neutral";
-}
-
-function statusCardTone(status: string): PortalMobileCardTone {
-  if (status === "ACTIVE") return "success";
-  if (status === "PAST_DUE" || status === "INCOMPLETE") return "warning";
-  if (status === "CANCELED") return "danger";
-  return "neutral";
-}
 
 function balanceOf(balances: Array<{ kind: CreditKind; balance: number }>, kind: CreditKind): number {
   return balances.find((b) => b.kind === kind)?.balance ?? 0;
@@ -267,171 +243,13 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                 description="Choose a different status filter to review active, paused, canceled, or incomplete subscriptions."
               />
             ) : (
-              <>
-              <div className="gh-admin-plan-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
-              <AdminTable>
-                <Thead>
-                  <Th>Subscriber</Th>
-                  <Th>Plan</Th>
-                  <Th>Status</Th>
-                  <Th>Credits (GP / wellness)</Th>
-                  <Th align="right">Actions</Th>
-                </Thead>
-                <tbody>
-                  {subsResult.data.items.map((sub) => (
-                    <Tr key={sub.id}>
-                      <Td>
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-[var(--color-text-primary)]">
-                            {sub.user.fullName ?? sub.user.email}
-                          </span>
-                          <span className="text-xs text-[var(--color-text-muted)]">
-                            {sub.user.email} · {sub.countryCode.toUpperCase()}
-                          </span>
-                        </div>
-                      </Td>
-                      <Td>{sub.plan.name}</Td>
-                      <Td>
-                        <Pill tone={statusTone(sub.status)}>{sub.status}</Pill>
-                        {sub.cancelAtPeriodEnd ? (
-                          <span className="ml-1">
-                            <Pill tone="draft">cancels</Pill>
-                          </span>
-                        ) : null}
-                      </Td>
-                      <Td>
-                        <span className="font-semibold text-[var(--color-text-primary)]">
-                          {balanceOf(sub.balances, "CONSULTATION")} / {balanceOf(sub.balances, "WELLNESS")}
-                        </span>
-                        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
-                          <AdminSubscriberLedger subscriptionId={sub.id} />
-                          <span aria-hidden className="text-[var(--color-text-muted)]">·</span>
-                          <a
-                            href={`/admin/audit-log?entityType=UserSubscription&entityId=${sub.id}`}
-                            className="text-[11px] font-semibold text-[var(--color-brand-primary)] underline-offset-2 hover:underline"
-                          >
-                            View audit trail
-                          </a>
-                        </div>
-                      </Td>
-                      <Td align="right">
-                        {/* Ops repair actions (§6.4) — both safe: resync is a
-                            read-and-reconcile, regrant is period-idempotent.
-                            Refund is the only money-moving action, so it's the
-                            only one gated behind a confirm dialog. */}
-                        <div className="flex items-center justify-end gap-1">
-                          <form action={resyncAction}>
-                            <input type="hidden" name="subscriptionId" value={sub.id} />
-                            <IconBtn
-                              type="submit"
-                              ariaLabel="Resync from Stripe"
-                              title="Resync from Stripe"
-                              style={{ minHeight: 32, minWidth: 32 }}
-                            >
-                              <RefreshCw className="size-3.5" />
-                            </IconBtn>
-                          </form>
-                          <form action={regrantAction}>
-                            <input type="hidden" name="subscriptionId" value={sub.id} />
-                            <IconBtn
-                              type="submit"
-                              ariaLabel="Re-run period grant"
-                              title="Re-run period grant"
-                              style={{ minHeight: 32, minWidth: 32 }}
-                            >
-                              <RotateCw className="size-3.5" />
-                            </IconBtn>
-                          </form>
-                          {subsResult.data.capabilities?.canAdjustCredits ? (
-                            <form action={refundAction}>
-                              <input type="hidden" name="subscriptionId" value={sub.id} />
-                              <ConfirmDeleteButton
-                                title="Issue refund?"
-                                message={`This refunds ${sub.user.fullName ?? sub.user.email}'s latest paid period at the provider, claws back unused consultation/wellness credits for that period, and cancels the subscription. This moves real money and cannot be undone from here. Denied if outside the 7-day window or a consultation credit was already used this period.`}
-                                ariaLabel="Issue refund"
-                              >
-                                <Banknote className="size-3.5" aria-hidden />
-                              </ConfirmDeleteButton>
-                            </form>
-                          ) : null}
-                        </div>
-                      </Td>
-                    </Tr>
-                  ))}
-                </tbody>
-              </AdminTable>
-              </div>
-              <div className="gh-admin-mobile-list">
-                {subscriptions.map((sub) => (
-                  <PortalMobileCard
-                    key={sub.id}
-                    tone={statusCardTone(sub.status)}
-                    title={sub.user.fullName ?? sub.user.email}
-                    subtitle={`${sub.user.email} - ${sub.countryCode.toUpperCase()}`}
-                    statusPill={<Pill tone={statusTone(sub.status)}>{sub.status}</Pill>}
-                    meta={[
-                      { label: "Plan", value: sub.plan.name },
-                      {
-                        label: "Balances",
-                        value: `GP ${balanceOf(sub.balances, "CONSULTATION")} / wellness ${balanceOf(sub.balances, "WELLNESS")}`,
-                      },
-                      ...(sub.cancelAtPeriodEnd
-                        ? [{ label: "Renewal", value: <Pill tone="draft">cancels at period end</Pill> }]
-                        : []),
-                    ]}
-                    actions={
-                      <>
-                        <form action={resyncAction}>
-                          <input type="hidden" name="subscriptionId" value={sub.id} />
-                          <IconBtn
-                            type="submit"
-                            ariaLabel="Resync from Stripe"
-                            title="Resync from Stripe"
-                            style={{ minHeight: 32, minWidth: 32 }}
-                          >
-                            <RefreshCw className="size-3.5" />
-                          </IconBtn>
-                        </form>
-                        <form action={regrantAction}>
-                          <input type="hidden" name="subscriptionId" value={sub.id} />
-                          <IconBtn
-                            type="submit"
-                            ariaLabel="Re-run period grant"
-                            title="Re-run period grant"
-                            style={{ minHeight: 32, minWidth: 32 }}
-                          >
-                            <RotateCw className="size-3.5" />
-                          </IconBtn>
-                        </form>
-                        {subsResult.data.capabilities?.canAdjustCredits ? (
-                          <form action={refundAction}>
-                            <input type="hidden" name="subscriptionId" value={sub.id} />
-                            <ConfirmDeleteButton
-                              title="Issue refund?"
-                              message={`This refunds ${sub.user.fullName ?? sub.user.email}'s latest paid period at the provider, claws back unused consultation/wellness credits for that period, and cancels the subscription. This moves real money and cannot be undone from here. Denied if outside the 7-day window or a consultation credit was already used this period.`}
-                              ariaLabel="Issue refund"
-                            >
-                              <Banknote className="size-3.5" aria-hidden />
-                            </ConfirmDeleteButton>
-                          </form>
-                        ) : null}
-                      </>
-                    }
-                  >
-                    <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
-                      <AdminSubscriberLedger subscriptionId={sub.id} />
-                      <span aria-hidden className="text-[var(--color-text-muted)]">·</span>
-                      <a
-                        href={`/admin/audit-log?entityType=UserSubscription&entityId=${sub.id}`}
-                        className="text-[11px] font-semibold text-[var(--color-brand-primary)] underline-offset-2 hover:underline"
-                      >
-                        View audit trail
-                      </a>
-                    </div>
-                  </PortalMobileCard>
-                ))}
-              </div>
-              </>
+              <AdminSubscriptionsTable
+                items={subsResult.data.items}
+                canAdjustCredits={Boolean(subsResult.data.capabilities?.canAdjustCredits)}
+                resyncAction={resyncAction}
+                regrantAction={regrantAction}
+                refundAction={refundAction}
+              />
             )}
           </div>
         </AdminCard>

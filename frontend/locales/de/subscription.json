@@ -92,6 +92,7 @@
     "cancelScheduled": "Ihre Mitgliedschaft ist gekündigt. Die Leistungen gelten bis zum {date} weiter.",
     "cancelAtPeriodEnd": "Kündigt zum {date}",
     "change": "Tarif ändern",
+    "browseAllPlans": "Alle Tarife ansehen",
     "upgrade": "Upgrade oder Downgrade",
     "changeTo": "Zu {plan} wechseln",
     "changing": "Änderung wird geplant…",
@@ -119,6 +120,8 @@
       "paused": "Ihre Mitgliedschaft ist pausiert und die Vorteile sind ausgesetzt. Setzen Sie die Abrechnung über das Abrechnungsportal unten fort, um Ihre Guthaben und Rabatte wiederherzustellen.",
       "confirming": "Wir bestätigen Ihre Zahlung… das dauert normalerweise nur wenige Sekunden.",
       "stillProcessing": "Zahlung erhalten — die Aktivierung Ihrer Mitgliedschaft dauert etwas länger als üblich.",
+      "alreadyActive": "Sie haben bereits eine aktive Mitgliedschaft — verwalten Sie sie unten.",
+      "dismiss": "Schließen",
       "refresh": "Aktualisieren"
     }
   },
@@ -148,6 +151,7 @@
     "reason_RESET_EXPIRE": "Vormonat zurückgesetzt",
     "reason_RESERVED": "Reserviert",
     "reason_CONSUMED": "Für Beratung verwendet",
+    "reason_CONSUMED_COMPLETED": "Beratung abgeschlossen",
     "reason_REDEEMED": "Für Set eingelöst",
     "reason_RELEASED": "Zurückgebucht",
     "reason_ADJUSTMENT": "Manuelle Anpassung",
@@ -213,6 +217,12 @@
       "body": "Ihre Mitgliedschaft umfasst dieses Kit. Lösen Sie es mit {required} Wellness-Guthaben ein — Sie haben derzeit {balance}.",
       "cta": "Dieses Kit einlösen",
       "progress": "{progress} von {required} Wellness-Guthaben gesammelt"
+    },
+    "howItWorks": {
+      "title": "So funktionieren Wellness-Guthaben",
+      "step1": "Verdienen Sie automatisch Wellness-Guthaben in jedem bezahlten Mitgliedschaftsmonat.",
+      "step2": "Sammeln Sie genug Guthaben, um den Bedarf eines Kits zu erreichen.",
+      "step3": "Einlösen — wir versenden das Kit direkt zu Ihnen nach Hause."
     }
   },
   "invoice": {
@@ -226,7 +236,8 @@
     "status_paid": "Bezahlt",
     "status_open": "Offen",
     "status_void": "Storniert",
-    "status_uncollectible": "Unbezahlt"
+    "status_uncollectible": "Unbezahlt",
+    "status_processing": "In Bearbeitung"
   },
   "legal": {
     "eyebrow": "Rechtliches",

@@ -5,6 +5,8 @@
  * file so existing Admin `loading.tsx` imports keep working.
  */
 
+import type { CSSProperties } from "react";
+
 function Bar({ className = "" }: { className?: string }) {
   return <div className={`gh-skeleton-bar ${className}`} />;
 }
@@ -78,22 +80,31 @@ export function ChatThreadSkeleton({ bubbles = 4 }: { bubbles?: number }) {
 
 export function PageHeaderSkeleton() {
   return (
-    <header className="gh-portal-page-header gh-skeleton-header space-y-2">
-      <Bar className="h-3 w-24" />
-      <Bar className="h-7 w-48" />
-      <Bar className="h-4 w-72" />
+    <header className="gh-portal-page-header gh-skeleton-header flex items-center gap-3">
+      <Bar className="h-11 w-11 shrink-0 rounded-xl" />
+      <div className="min-w-0 flex-1 space-y-2">
+        <Bar className="h-3 w-24" />
+        <Bar className="h-7 w-48" />
+        <Bar className="h-4 w-72" />
+      </div>
     </header>
   );
 }
 
 export function SummaryStripSkeleton({ items = 3 }: { items?: number }) {
   return (
-    <section className="gh-admin-summary-strip gh-skeleton-summary">
+    <section
+      className="gh-admin-summary-strip gh-skeleton-summary"
+      style={{ "--card-count": items } as CSSProperties}
+    >
       {Array.from({ length: items }).map((_, i) => (
         <div key={i} className="gh-admin-summary-item">
-          <Bar className="h-3 w-20" />
-          <Bar className="h-6 w-16" />
-          <Bar className="h-3 w-28" />
+          <div className="flex items-start justify-between gap-2">
+            <Bar className="h-3 w-20" />
+            <Bar className="h-8 w-8 rounded-[var(--portal-radius)]" />
+          </div>
+          <Bar className="mt-3 h-6 w-16" />
+          <Bar className="mt-1.5 h-3 w-28" />
         </div>
       ))}
     </section>

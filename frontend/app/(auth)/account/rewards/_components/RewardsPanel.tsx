@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Gift, Loader2, Lock, Sparkles } from "lucide-react";
+import { CheckCircle2, Gift, Loader2, Lock, Sparkles, Coins, Package } from "lucide-react";
 import { redeemKit, type RedemptionKit } from "@/lib/api/me-subscription";
 import { interpolate, progressPercent, remainingCredits } from "@/lib/subscription/format";
 import { AdminCard, Btn } from "@/components/portal-atoms";
@@ -114,7 +114,7 @@ export function RewardsPanel(props: RewardsPanelProps) {
                   <Sparkles className="size-5" aria-hidden />
                 </span>
                 <div>
-                  <p className="font-bold tracking-[-0.01em]" style={{ color: "var(--portal-text)" }}>{kit.name}</p>
+                  <h2 className="font-bold tracking-[-0.01em]" style={{ color: "var(--portal-text)" }}>{kit.name}</h2>
                   <p className="mt-0.5 text-xs" style={{ color: "var(--portal-muted)" }}>
                     {interpolate(t.progressLabel, {
                       progress: Math.min(props.wellnessBalance, kit.requiredWellnessCredits),
@@ -155,26 +155,26 @@ export function RewardsPanel(props: RewardsPanelProps) {
                     {interpolate(t.redeemCta, { count: kit.requiredWellnessCredits })}
                   </Btn>
                 ) : (
-                  <form onSubmit={(e) => onRedeem(e, kit.healthTestId)} className="gh-patient-form-card grid gap-3">
+                  <form onSubmit={(e) => onRedeem(e, kit.healthTestId)} method="post" className="gh-patient-form-card grid gap-3">
                     <p className="text-xs leading-relaxed" style={{ color: "var(--portal-muted)" }}>{t.shippingNote}</p>
                     <div className="grid gap-3 sm:grid-cols-2">
-                      <input name="shipName" required minLength={2} maxLength={120} defaultValue={props.prefillName} placeholder="Full name" className="gh-input sm:col-span-2" />
-                      <input name="shipLine1" required minLength={2} maxLength={200} placeholder="Address line 1" className="gh-input sm:col-span-2" />
-                      <input name="shipLine2" maxLength={200} placeholder="Address line 2 (optional)" className="gh-input sm:col-span-2" />
-                      <input name="shipCity" required minLength={1} maxLength={120} placeholder="City" className="gh-input" />
-                      <input name="shipPostalCode" required minLength={1} maxLength={40} placeholder="Postal code" className="gh-input" />
-                      <input name="shipCountryCode" required minLength={2} maxLength={4} defaultValue={props.prefillCountry} placeholder="Country" className="gh-input" style={{ textTransform: "uppercase" }} />
+                      <input name="shipName" aria-label="Full name" required minLength={2} maxLength={120} defaultValue={props.prefillName} placeholder="Full name" className="gh-input sm:col-span-2" />
+                      <input name="shipLine1" aria-label="Address line 1" required minLength={2} maxLength={200} placeholder="Address line 1" className="gh-input sm:col-span-2" />
+                      <input name="shipLine2" aria-label="Address line 2 (optional)" maxLength={200} placeholder="Address line 2 (optional)" className="gh-input sm:col-span-2" />
+                      <input name="shipCity" aria-label="City" required minLength={1} maxLength={120} placeholder="City" className="gh-input" />
+                      <input name="shipPostalCode" aria-label="Postal code" required minLength={1} maxLength={40} placeholder="Postal code" className="gh-input" />
+                      <input name="shipCountryCode" aria-label="Country" required minLength={2} maxLength={4} defaultValue={props.prefillCountry} placeholder="Country" className="gh-input" style={{ textTransform: "uppercase" }} />
                     </div>
                     {error ? (
                       <p className="rounded-md px-3 py-2 text-sm" style={{ background: "var(--portal-danger-soft)", color: "var(--portal-danger-text)" }} role="alert">{error}</p>
                     ) : null}
-                    <div className="gh-patient-form-actions grid gap-2 sm:flex sm:items-center">
+                    <div className="gh-patient-form-actions grid gap-2 sm:flex sm:items-center sm:justify-end">
+                      <button type="button" onClick={() => setOpenKit(null)} aria-label="Cancel redemption" className="inline-flex justify-center rounded-md border border-[var(--portal-line)] px-4 py-2 text-sm font-semibold text-[var(--portal-muted)] hover:bg-[var(--portal-well)]">
+                        ×
+                      </button>
                       <button type="submit" disabled={submitting} className="gh-btn gh-btn-primary inline-flex justify-center disabled:opacity-60">
                         {submitting ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Gift className="size-4" aria-hidden />}
                         {submitting ? t.redeeming : interpolate(t.redeemCta, { count: kit.requiredWellnessCredits })}
-                      </button>
-                      <button type="button" onClick={() => setOpenKit(null)} aria-label="Cancel redemption" className="inline-flex justify-center rounded-md border border-[var(--portal-line)] px-4 py-2 text-sm font-semibold text-[var(--portal-muted)] hover:bg-[var(--portal-well)]">
-                        ×
                       </button>
                     </div>
                   </form>
@@ -189,6 +189,32 @@ export function RewardsPanel(props: RewardsPanelProps) {
           </AdminCard>
         );
       })}
+
+      {t.howItWorks ? (
+        <AdminCard className="gh-patient-rewards-explainer">
+          <h2 className="text-sm font-bold tracking-[-0.01em]" style={{ color: "var(--portal-text)" }}>
+            {t.howItWorks.title}
+          </h2>
+          <ol className="mt-3 grid gap-3 sm:grid-cols-3">
+            {[
+              { icon: Coins, body: t.howItWorks.step1 },
+              { icon: Sparkles, body: t.howItWorks.step2 },
+              { icon: Package, body: t.howItWorks.step3 },
+            ].map((step, i) => (
+              <li key={i} className="flex items-start gap-2.5">
+                <span
+                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-[10px]"
+                  style={{ background: "var(--portal-well)", color: "var(--portal-accent-text)" }}
+                  aria-hidden
+                >
+                  <step.icon className="size-4" />
+                </span>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--portal-muted)" }}>{step.body}</p>
+              </li>
+            ))}
+          </ol>
+        </AdminCard>
+      ) : null}
     </div>
   );
 }

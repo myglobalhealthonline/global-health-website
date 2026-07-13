@@ -370,7 +370,7 @@ export function FooterEditor({ initial, saveAction }: Props) {
                     className="gh-admin-footer-link-row flex flex-wrap items-end gap-2 rounded-md bg-[var(--color-background-page)] p-2"
                     >
                       <label className="block flex-1 min-w-[120px]">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
+                        <span className="text-portal-micro font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
                           Label
                         </span>
                         <input
@@ -384,7 +384,7 @@ export function FooterEditor({ initial, saveAction }: Props) {
                         />
                       </label>
                       <label className="block flex-[2] min-w-[160px]">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
+                        <span className="text-portal-micro font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
                           Href
                         </span>
                         <input
@@ -407,7 +407,7 @@ export function FooterEditor({ initial, saveAction }: Props) {
                           }
                           className="size-3.5"
                         />
-                        <span className="text-[11px] text-[var(--color-text-muted)]">
+                        <span className="text-portal-thead text-[var(--color-text-muted)]">
                           New tab
                         </span>
                       </label>

@@ -75,7 +75,7 @@ export function DoctorFaqsCard({ doctorId, doctorSlug, countryCodes, data }: Pro
       <h3 className="m-0 [font-family:var(--font-display)] text-base font-extrabold text-[var(--color-text-primary)]">
         FAQs
       </h3>
-      <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+      <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
         One FAQ set per doctor, edited by language and shown on every country
         profile. Admin-managed.
       </p>

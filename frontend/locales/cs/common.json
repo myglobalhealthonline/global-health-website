@@ -678,7 +678,9 @@
     "languageAll": "Vše",
     "noForLanguage": "Pro tuto službu nejsou momentálně v jazyce {language} dostupní žádní lékaři.",
     "chooseAnotherLanguage": "Vyberte si prosím jiný jazyk nebo to zkuste později.",
-    "showAllLanguages": "Zobrazit všechny jazyky"
+    "showAllLanguages": "Zobrazit všechny jazyky",
+    "backToAccount": "Zpět na můj účet",
+    "portalBadge": "Portál pacienta"
   },
   "cardVerify": {
     "title": "Ověření firemní karty",
@@ -710,6 +712,11 @@
     "closeNavigation": "Zavřít navigaci",
     "openNavigation": "Otevřít navigaci",
     "closeMenu": "Zavřít menu",
-    "allCaughtUp": "Vše je vyřízeno."
+    "allCaughtUp": "Vše je vyřízeno.",
+    "skipToContent": "Přeskočit na hlavní obsah",
+    "unsavedChangesTitle": "Neuložené změny",
+    "unsavedChangesBody": "Na této stránce máte neuložené změny. Pokud nyní odejdete, budou ztraceny.",
+    "unsavedChangesKeepEditing": "Pokračovat v úpravách",
+    "unsavedChangesDiscard": "Zahodit změny"
   }
 }

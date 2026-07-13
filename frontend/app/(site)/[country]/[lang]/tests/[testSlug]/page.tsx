@@ -18,6 +18,7 @@ import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { getCountryHealthTestDetail } from "@/lib/content/get-country-collections";
 import { getSiteUrl } from "@/lib/seo/site-url";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -53,6 +54,7 @@ export async function generateMetadata({
   const { country, lang, testSlug } = await params;
   const code = countryCodeFromSlug(country);
   if (!code || !isSupportedLocale(lang)) return { title: SITE_NAME };
+  const config = getCountryByCode(code);
 
   const detail = await getCountryHealthTestDetail(code, testSlug, lang);
   if (!detail) return { title: SITE_NAME };
@@ -68,8 +70,18 @@ export async function generateMetadata({
   return {
     title: detail.seoTitle ? { absolute: title } : title,
     description,
-    alternates: { canonical: url },
-    openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
+    alternates: {
+      canonical: url,
+      ...(config ? { languages: hreflangAlternates(config, `/tests/${testSlug}`) } : {}),
+    },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      title,
+      description,
+      url,
+      ...(config ? ogLocales(config, lang) : {}),
+    },
     twitter: { card: "summary_large_image", title, description },
   };
 }
@@ -126,7 +138,7 @@ export default async function HealthTestDetailPage({
       <section
         className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-visible lg:overflow-hidden"
       >
-        <div className="grid h-auto grid-rows-[240px_auto] lg:h-full lg:grid-cols-2 lg:grid-rows-1">
+        <div className="grid h-auto grid-rows-[clamp(180px,30svh,280px)_auto] lg:h-full lg:grid-cols-2 lg:grid-rows-1">
 
           {/* ── LEFT — full-bleed test image ──────────────────────────── */}
           <div className="relative h-full min-h-0 overflow-hidden">

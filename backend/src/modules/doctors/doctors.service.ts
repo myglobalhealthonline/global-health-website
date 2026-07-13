@@ -488,8 +488,10 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
         assignedServices: {
           where: {
             isActive: true,
+            status: "active",
             service: {
               isActive: true,
+              visibility: "PUBLIC",
               country: { code: countryCode, isActive: true },
             },
           },

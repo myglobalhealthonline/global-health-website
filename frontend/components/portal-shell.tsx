@@ -15,17 +15,27 @@
  *  - Portal label + home href are props (Doctor portal / Patient portal)
  */
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, ChevronRight, Menu, X } from "lucide-react";
+import { ChevronRight, Menu, X } from "lucide-react";
 import {
   NotificationPopover,
   type NotificationPopoverItem,
 } from "@/components/NotificationPopover";
-import { Pill, Btn } from "@/components/portal-atoms";
+import { PortalUserMenu } from "@/components/PortalUserMenu";
 import { IdleLogout } from "@/components/IdleLogout";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { usePortalMobileNavA11y } from "@/components/use-portal-mobile-nav";
+import { isEmailSegment, isIdSegment, PII_SAFE_CRUMB_LABEL, shortIdLabel } from "@/lib/breadcrumb-utils";
 import type { LocaleCode } from "@/lib/i18n/types";
 
 export type PortalShellUser = {
@@ -65,6 +75,7 @@ export type PortalShellChrome = {
   openNavigation: string;
   closeMenu: string;
   allCaughtUp: string;
+  skipToContent: string;
 };
 
 const DEFAULT_CHROME: PortalShellChrome = {
@@ -75,18 +86,28 @@ const DEFAULT_CHROME: PortalShellChrome = {
   openNavigation: "Open navigation",
   closeMenu: "Close menu",
   allCaughtUp: "You're all caught up.",
+  skipToContent: "Skip to main content",
 };
 
-function initials(name: string, email: string): string {
-  if (name?.trim()) {
-    return name
-      .trim()
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((p) => p[0]?.toUpperCase() ?? "")
-      .join("");
-  }
-  return email[0]?.toUpperCase() ?? "?";
+/** Live unread-notifications count, shared between the shell's own bell/nav
+ *  badges and any descendant page content (e.g. the notifications list).
+ *  Initialized from the server-rendered prop and kept in sync with it on
+ *  every render, but mark-read actions can also update it immediately —
+ *  relying on `router.refresh()` alone to reliably re-run a *parent*
+ *  layout's data fetch on every Next.js version is exactly the kind of
+ *  thing that silently regresses (11-001). */
+const NotificationCenterContext = createContext<{
+  unreadCount: number;
+  setUnreadCount: (value: number | ((prev: number) => number)) => void;
+} | null>(null);
+
+/** Call from a descendant page (inside a portal layout using `PortalShell`)
+ *  to read/adjust the live unread count so the bell dot + sidebar badge
+ *  update in the same tick as an optimistic mark-read UI change. No-op
+ *  setter outside a `PortalShell` so callers don't need to guard usage. */
+export function useNotificationCenter() {
+  const ctx = useContext(NotificationCenterContext);
+  return ctx ?? { unreadCount: 0, setUnreadCount: () => {} };
 }
 
 function humanizeSegment(seg: string): string {
@@ -108,11 +129,11 @@ function useBreadcrumbs(pathname: string, rootHref: string, rootLabel: string) {
         crumbs.push({ label: rootLabel, href: rootHref });
         continue;
       }
-      const isCuid =
-        segments[i].length === 25 && /^[a-z0-9]+$/i.test(segments[i]);
-      const label = isCuid
-        ? `${segments[i].slice(0, 8)}…`
-        : humanizeSegment(segments[i]);
+      const label = isEmailSegment(segments[i])
+        ? PII_SAFE_CRUMB_LABEL
+        : isIdSegment(segments[i])
+          ? shortIdLabel(segments[i])
+          : humanizeSegment(segments[i]);
       crumbs.push({ label, href: acc });
     }
     return crumbs;
@@ -181,10 +202,18 @@ export function PortalShell({
 }) {
   const c = chrome ?? DEFAULT_CHROME;
   const [navOpen, setNavOpen] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(notificationsUnreadCount);
+  // Re-sync from the server prop on every real navigation/reload (source of
+  // truth); mark-read actions below additionally update it optimistically
+  // in between, independent of whether router.refresh() re-ran this layout.
+  useEffect(() => {
+    setUnreadCount(notificationsUnreadCount);
+  }, [notificationsUnreadCount]);
   const pathname = usePathname();
   const breadcrumbs = useBreadcrumbs(pathname, rootHref, rootBreadcrumb);
+  const navRef = useRef<HTMLElement | null>(null);
+  usePortalMobileNavA11y(navOpen, () => setNavOpen(false), navRef);
 
   // Topbar seam-light swap — the ONLY scroll-linked effect in the system
   // (DESIGN.md §5.2). Purely presentational, one class toggle.
@@ -208,6 +237,7 @@ export function PortalShell({
   const noTranslate = portalKey !== "patient";
 
   return (
+    <NotificationCenterContext.Provider value={{ unreadCount, setUnreadCount }}>
     <div
       className={`gh-portal-shell min-h-screen${noTranslate ? " notranslate" : ""}`}
       translate={noTranslate ? "no" : undefined}
@@ -215,13 +245,20 @@ export function PortalShell({
       data-density="comfortable"
     >
       <IdleLogout />
+      {/* 16-005: first focusable element in the shell — visually hidden
+          until focused, jumps keyboard users past the ~15-item sidebar
+          straight to page content. Reuses the public site's `.gh-skip-link`
+          (globals.css, shared) rather than a new portal.css rule. */}
+      <a href="#main-content" className="gh-skip-link">
+        {c.skipToContent}
+      </a>
       {/* Mobile overlay */}
       {navOpen ? (
         <button
           type="button"
           aria-label={c.closeNavigation}
           onClick={() => setNavOpen(false)}
-          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-[calc(var(--z-header)-1)] bg-black/40 backdrop-blur-sm lg:hidden"
         />
       ) : null}
 
@@ -229,7 +266,11 @@ export function PortalShell({
           translate; on desktop the main column gets `lg:pl-[260px]`
           so content doesn't slide under it. */}
       <aside
-        className={`gh-portal-sidebar fixed inset-y-0 left-0 z-40 flex w-[var(--portal-sidebar-w)] max-w-[86vw] flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
+        ref={navRef}
+        role={navOpen ? "dialog" : undefined}
+        aria-modal={navOpen ? true : undefined}
+        aria-label={navOpen ? portalLabel : undefined}
+        className={`gh-portal-sidebar fixed inset-y-0 left-0 z-[var(--z-header)] flex w-[var(--portal-sidebar-w)] max-w-[86vw] flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
           navOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
         }`}
       >
@@ -263,7 +304,7 @@ export function PortalShell({
                         href={s.href}
                         icon={s.icon}
                         label={s.label}
-                        badge={s.badge}
+                        badge={s.href === notificationsViewAllHref ? unreadCount : s.badge}
                         active={isActive(s.href)}
                         onNavigate={() => setNavOpen(false)}
                       />
@@ -286,7 +327,8 @@ export function PortalShell({
       <div className="flex min-h-screen min-w-0 flex-col lg:pl-[var(--portal-sidebar-w)]">
           {/* Top header — sticky dark glass over scrolling content. */}
           <header
-            className={`gh-portal-topbar${scrolled ? " gh-portal-topbar--scrolled" : ""} sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between gap-3 px-4 sm:px-6`}
+            className={`gh-portal-topbar${scrolled ? " gh-portal-topbar--scrolled" : ""} sticky top-0 z-[var(--z-header)] flex shrink-0 items-center justify-between gap-3 px-4 sm:px-6`}
+            style={{ height: "var(--portal-topbar-h)" }}
           >
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <button
@@ -318,7 +360,12 @@ export function PortalShell({
                 {breadcrumbs.map((crumb, i) => {
                   const isLast = i === breadcrumbs.length - 1;
                   return (
-                    <span key={crumb.href} className="flex items-center gap-1.5">
+                    <span
+                      key={crumb.href}
+                      className={`min-w-0 items-center gap-1.5 ${
+                        isLast ? "flex" : "hidden sm:flex"
+                      }`}
+                    >
                       {isLast ? (
                         <span
                           aria-current="page"
@@ -329,7 +376,7 @@ export function PortalShell({
                       ) : (
                         <Link
                           href={crumb.href}
-                          className="truncate font-medium text-[var(--portal-chrome-text)] transition hover:text-[var(--portal-chrome-text-active)]"
+                          className="max-w-[16ch] truncate font-medium text-[var(--portal-chrome-text)] transition hover:text-[var(--portal-chrome-text-active)]"
                         >
                           {crumb.label}
                         </Link>
@@ -361,7 +408,7 @@ export function PortalShell({
               >
                 <NotificationPopover
                   items={notifications ?? []}
-                  unreadCount={notificationsUnreadCount}
+                  unreadCount={unreadCount}
                   viewAllHref={notificationsViewAllHref ?? null}
                   emptyMessage={notificationsEmptyMessage ?? c.allCaughtUp}
                 />
@@ -371,101 +418,25 @@ export function PortalShell({
                   className="gh-portal-user-divider"
                 />
 
-                {/* User menu */}
-                <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setUserMenuOpen((v) => !v)}
-                  aria-expanded={userMenuOpen}
-                  aria-haspopup="menu"
-                  className="inline-flex items-center gap-2 rounded-full py-1 pl-1 pr-3 text-sm font-semibold text-[var(--portal-chrome-text-active)] transition hover:bg-white/5"
-                >
-                  <span
-                    className="gh-portal-avatar inline-flex size-7 items-center justify-center rounded-[9px] text-[11px] font-extrabold text-white"
-                  >
-                    {initials(user.fullName, user.email)}
-                  </span>
-                  <span className="hidden max-w-[140px] truncate md:inline">
-                    {user.fullName || user.email.split("@")[0]}
-                  </span>
-                  <ChevronDown
-                    className="size-3 opacity-70"
-                    aria-hidden
-                  />
-                </button>
-                {userMenuOpen ? (
-                  <>
-                    <button
-                      type="button"
-                      aria-label={c.closeMenu}
-                      onClick={() => setUserMenuOpen(false)}
-                      className="fixed inset-0 z-30"
-                    />
-                    <div
-                      className="gh-portal-user-menu absolute right-0 top-[calc(100%+8px)] z-40 min-w-[224px] p-3"
-                      style={{
-                        borderRadius: "var(--portal-radius-xl)",
-                        border: "1px solid var(--portal-line)",
-                        background: "var(--portal-surface-elevated)",
-                        boxShadow: "var(--portal-shadow-popover)",
-                      }}
-                    >
-                      <div className="flex items-center gap-2.5 pb-3" style={{ borderBottom: "1px solid var(--portal-line)" }}>
-                        <span
-                          className="gh-portal-avatar inline-flex size-9 shrink-0 items-center justify-center rounded-[10px] text-[11px] font-extrabold text-white"
-                        >
-                          {initials(user.fullName, user.email)}
-                        </span>
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold" style={{ color: "var(--portal-text)" }}>
-                            {user.fullName || user.email}
-                          </p>
-                          <p className="truncate text-xs" style={{ color: "var(--portal-muted)" }}>
-                            {user.email}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="mt-2">
-                        <Pill tone="neutral">{user.role}</Pill>
-                      </div>
-                      <nav className="mt-2 flex flex-col gap-0.5">
-                        <Link
-                          href={accountHref ?? rootHref}
-                          onClick={() => setUserMenuOpen(false)}
-                          className="rounded-md px-2 py-1.5 text-sm font-semibold hover:bg-[var(--portal-well)]"
-                          style={{ color: "var(--portal-text)" }}
-                        >
-                          {c.account}
-                        </Link>
-                        <Link
-                          href="/"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="rounded-md px-2 py-1.5 text-sm font-semibold hover:bg-[var(--portal-well)]"
-                          style={{ color: "var(--portal-text)" }}
-                        >
-                          {c.mainSite}
-                        </Link>
-                      </nav>
-                      <form action={signOutAction} className="mt-2 pt-2" style={{ borderTop: "1px solid var(--portal-line)" }}>
-                        <Btn type="submit" variant="danger" size="sm" className="w-full justify-center">
-                          {c.signOut}
-                        </Btn>
-                      </form>
-                    </div>
-                  </>
-                ) : null}
-                </div>
+                <PortalUserMenu
+                  user={user}
+                  accountHref={accountHref ?? rootHref}
+                  rootHref="/"
+                  signOutAction={signOutAction}
+                  labels={{ account: c.account, mainSite: c.mainSite, signOut: c.signOut }}
+                />
               </div>
             </div>
           </header>
 
           {banner}
 
-          <main className="gh-admin-main gh-portal-main min-w-0 flex-1">
+          <main id="main-content" className="gh-admin-main gh-portal-main min-w-0 flex-1">
             {children}
           </main>
         </div>
     </div>
+    </NotificationCenterContext.Provider>
   );
 }
 

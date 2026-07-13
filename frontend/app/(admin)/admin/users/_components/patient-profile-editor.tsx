@@ -80,7 +80,7 @@ export function PatientProfileEditor({
   return (
     <AdminCard className="gh-admin-patient-profile-editor">
       <h3 style={cardTitleStyle}>Patient profile</h3>
-      <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+      <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
         Persistent chart keyed by email. Identity + address + clinical
         alerts visible to the assigned doctor on the patient chart.
       </p>
@@ -88,7 +88,7 @@ export function PatientProfileEditor({
       <form action={saveProfile} className="gh-admin-patient-profile-form grid gap-6">
         {profile?.statusAlert ? (
           <p
-            className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-[13px] font-semibold text-red-800"
+            className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-portal-compact font-semibold text-red-800"
             role="status"
           >
             ⚠ Status alert preview: {profile.statusAlert}
@@ -96,7 +96,7 @@ export function PatientProfileEditor({
         ) : null}
         {profile?.clinicAlert ? (
           <p
-            className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-[13px] text-amber-900"
+            className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-portal-compact text-amber-900"
             role="status"
           >
             ⓘ Clinic alert preview: {profile.clinicAlert}
@@ -200,7 +200,7 @@ export function PatientProfileEditor({
             />
           </div>
           {profile?.pricingPlanId ? (
-            <p className="mt-2 text-[12px] text-[var(--color-text-muted)]">
+            <p className="mt-2 text-portal-meta text-[var(--color-text-muted)]">
               Plan: {profile.pricingPlanId} · change from the patient UI.
             </p>
           ) : null}
@@ -208,7 +208,7 @@ export function PatientProfileEditor({
 
         <section className="gh-admin-patient-profile-section">
           <h4 style={sectionTitleStyle}>Clinical alerts</h4>
-          <p className="mb-2 text-[12px] text-[var(--color-text-muted)]">
+          <p className="mb-2 text-portal-meta text-[var(--color-text-muted)]">
             Visible to the doctor only (red / yellow banners on the chart).
             Patient never sees these.
           </p>
@@ -267,7 +267,7 @@ export function PatientProfileEditor({
           </div>
         </section>
 
-        <div>
+        <div className="flex justify-end">
           <button type="submit" className="gh-btn gh-btn-primary">
             Save patient profile
           </button>
@@ -308,7 +308,7 @@ function Field({
         className="gh-input"
       />
       {hint ? (
-        <span className="text-[11px] text-[var(--color-text-muted)]">
+        <span className="text-portal-thead text-[var(--color-text-muted)]">
           {hint}
         </span>
       ) : null}

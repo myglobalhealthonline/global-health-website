@@ -1,13 +1,14 @@
 import { randomUUID } from "node:crypto";
 import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
 import { z } from "zod";
-import { CartItemKind, Prisma } from "@prisma/client";
+import { CartItemKind, LocaleCode, Prisma } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { env } from "../config/env.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { assertCorporateServiceBookable } from "../modules/corporate/corporate-benefit.service.js";
+import { resolveTranslation } from "../modules/shared/resolve-translation.js";
 import {
   holdConsecutiveSlots,
   releaseSlotsToBaseGrid,
@@ -65,6 +66,17 @@ const benefitSelectionSchema = z.enum([
   "USE_PLAN_CREDIT",
   "USE_PLAN_DISCOUNT",
 ]);
+
+const cartQuerySchema = z.object({
+  // .catch(undefined): unknown locale falls back to the country default
+  // (see services.route.ts countryQuerySchema for the same pattern).
+  locale: z
+    .preprocess(
+      (v) => (typeof v === "string" ? v.toUpperCase() : v),
+      z.nativeEnum(LocaleCode).optional(),
+    )
+    .catch(undefined),
+});
 
 const addItemBodySchema = z.object({
   kind: z.enum([
@@ -694,6 +706,8 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       if (!body.success) {
         return reply.status(400).send(errorResponse("Invalid item", body.error.flatten()));
       }
+      const queryParse = cartQuerySchema.safeParse(request.query);
+      const requestedLocale = queryParse.success ? queryParse.data.locale : undefined;
       const { kind, healthTestId, serviceId, quantity, timeSlotId, doctorId, patient, benefitSelection, familyMemberId, insuranceCompanyId, insurancePolicyNumber } =
         body.data;
       const qty = quantity ?? 1;
@@ -741,7 +755,10 @@ const cartRoute: FastifyPluginAsync = async (app) => {
           }
           const ht = await prisma.healthTest.findUnique({
             where: { id: healthTestId },
-            include: { country: true },
+            include: {
+              country: true,
+              translations: { select: { locale: true, title: true } },
+            },
           });
           if (!ht || !ht.isActive) {
             return reply.status(404).send(errorResponse("Health test not found"));
@@ -758,7 +775,10 @@ const cartRoute: FastifyPluginAsync = async (app) => {
               .status(409)
               .send(errorResponse(`Only ${ht.stock} left in stock`));
           }
-          name = ht.title;
+          name = requestedLocale
+            ? (resolveTranslation(ht.translations, requestedLocale, ht.country.defaultLocale).tr
+                ?.title ?? ht.title)
+            : ht.title;
           unitPriceCents = ht.priceCents;
           shippingCents = ht.shippingCents ?? 0;
           countryCode = ht.country.code;
@@ -773,7 +793,10 @@ const cartRoute: FastifyPluginAsync = async (app) => {
           }
           const svc = await prisma.service.findUnique({
             where: { id: serviceId },
-            include: { country: { include: { currency: true } } },
+            include: {
+              country: { include: { currency: true } },
+              translations: { select: { locale: true, name: true, summary: true } },
+            },
           });
           if (!svc || !svc.isActive) {
             return reply.status(404).send(errorResponse("Service not found"));
@@ -817,7 +840,10 @@ const cartRoute: FastifyPluginAsync = async (app) => {
           if (svc.basePriceCents == null) {
             return reply.status(400).send(errorResponse("Service has no price"));
           }
-          name = svc.name;
+          name = requestedLocale
+            ? (resolveTranslation(svc.translations, requestedLocale, svc.country.defaultLocale).tr
+                ?.name ?? svc.name)
+            : svc.name;
           unitPriceCents = svc.basePriceCents;
           // Online consultations (GENERAL / SPECIALIST) never ship; the
           // schema default for Service.shippingCents is 0, so the admin

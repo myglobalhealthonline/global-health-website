@@ -9,6 +9,7 @@ import {
   type InsuranceData,
   type VerificationStatus,
 } from "@/lib/api/account-profile-api";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type InsuranceI18n = {
   title: string;
@@ -57,7 +58,13 @@ const DEFAULT_I18N: InsuranceI18n = {
   badgeRejected: "Rejected",
 };
 
-export function InsuranceTab({ i18n = DEFAULT_I18N }: { i18n?: InsuranceI18n }) {
+export function InsuranceTab({
+  i18n = DEFAULT_I18N,
+  onDirtyChange,
+}: {
+  i18n?: InsuranceI18n;
+  onDirtyChange?: (dirty: boolean) => void;
+}) {
   const STATUS_BADGE: Record<VerificationStatus, { label: string; cls: string }> = {
     NOT_VERIFIED: { label: i18n.badgeNotVerified, cls: "bg-gray-100 text-gray-700" },
     PENDING: { label: i18n.badgePending, cls: "bg-amber-100 text-amber-800" },
@@ -67,6 +74,7 @@ export function InsuranceTab({ i18n = DEFAULT_I18N }: { i18n?: InsuranceI18n }) 
   const [data, setData] = useState<InsuranceData | null>(null);
   const [providerName, setProviderName] = useState("");
   const [policyNumber, setPolicyNumber] = useState("");
+  const [initial, setInitial] = useState({ providerName: "", policyNumber: "" });
   const [loaded, setLoaded] = useState(false);
   const [savePending, startSave] = useTransition();
   const [uploadPending, startUpload] = useTransition();
@@ -76,12 +84,23 @@ export function InsuranceTab({ i18n = DEFAULT_I18N }: { i18n?: InsuranceI18n }) 
     void fetchInsurance().then((res) => {
       if (res.ok) {
         setData(res.data.insurance);
-        setProviderName(res.data.insurance.insuranceProviderName ?? "");
-        setPolicyNumber(res.data.insurance.insurancePolicyNumber ?? "");
+        const loaded = {
+          providerName: res.data.insurance.insuranceProviderName ?? "",
+          policyNumber: res.data.insurance.insurancePolicyNumber ?? "",
+        };
+        setProviderName(loaded.providerName);
+        setPolicyNumber(loaded.policyNumber);
+        setInitial(loaded);
       }
       setLoaded(true);
     });
   }, []);
+
+  const dirty = loaded && (providerName !== initial.providerName || policyNumber !== initial.policyNumber);
+  useUnsavedChanges(dirty);
+  useEffect(() => {
+    onDirtyChange?.(dirty);
+  }, [dirty, onDirtyChange]);
 
   function onSave(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -92,6 +111,7 @@ export function InsuranceTab({ i18n = DEFAULT_I18N }: { i18n?: InsuranceI18n }) 
         insurancePolicyNumber: policyNumber.trim() || null,
       });
       if (res.ok) {
+        setInitial({ providerName, policyNumber });
         setMsg({ kind: "ok", text: i18n.saved });
       } else {
         setMsg({ kind: "err", text: res.message });
@@ -141,7 +161,7 @@ export function InsuranceTab({ i18n = DEFAULT_I18N }: { i18n?: InsuranceI18n }) 
             </p>
           </div>
         </header>
-        <form onSubmit={onSave} className="space-y-4">
+        <form onSubmit={onSave} method="post" className="space-y-4">
           <label className="block">
             <span className="gh-field-label">{i18n.providerName}</span>
             <input
@@ -164,14 +184,16 @@ export function InsuranceTab({ i18n = DEFAULT_I18N }: { i18n?: InsuranceI18n }) 
               className="gh-input mt-1 min-w-0"
             />
           </label>
-          <button
-            type="submit"
-            disabled={savePending}
-            className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
-          >
-            <Save aria-hidden className="size-4" />
-            {savePending ? i18n.saving : i18n.save}
-          </button>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={savePending}
+              className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+            >
+              <Save aria-hidden className="size-4" />
+              {savePending ? i18n.saving : i18n.save}
+            </button>
+          </div>
         </form>
       </div>
 
@@ -205,6 +227,7 @@ export function InsuranceTab({ i18n = DEFAULT_I18N }: { i18n?: InsuranceI18n }) 
 
       {msg ? (
         <p
+          role={msg.kind === "ok" ? "status" : "alert"}
           className={`rounded-md px-3 py-2 text-sm ${
             msg.kind === "ok" ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"
           }`}

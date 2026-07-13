@@ -75,7 +75,7 @@ export function PeakPricingCard({
       >
         Peak-hour pricing
       </h3>
-      <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+      <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
         Charge more during busy hours. When enabled, booking slots inside any
         peak window show the peak price; all other slots show the off-peak
         price. Add multiple windows if your busy hours are split (e.g.

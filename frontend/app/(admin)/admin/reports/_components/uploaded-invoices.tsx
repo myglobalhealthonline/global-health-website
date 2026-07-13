@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Download, RefreshCw } from "lucide-react";
+import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
 
 /**
  * Admin list of doctor-uploaded payout invoices. Read-only — the doctor owns
@@ -23,6 +24,43 @@ function fmtSize(bytes: number): string {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
+
+const uploadedInvoiceFields: ColumnPriorityField<Item>[] = [
+  { key: "doctorName", label: "Doctor", priority: 1, render: (it) => it.doctorName },
+  {
+    key: "period",
+    label: "Period",
+    priority: 1,
+    render: (it) => <span className="font-mono text-xs">{it.period}</span>,
+  },
+  {
+    key: "filename",
+    label: "File",
+    priority: 2,
+    render: (it) => <span className="block max-w-[220px] truncate" title={it.filename}>{it.filename}</span>,
+  },
+  { key: "size", label: "Size", priority: 3, render: (it) => fmtSize(it.size) },
+  {
+    key: "uploadedAt",
+    label: "Uploaded",
+    priority: 3,
+    render: (it) => (it.uploadedAt ? new Date(it.uploadedAt).toLocaleDateString("en-GB") : "—"),
+  },
+  {
+    key: "download",
+    label: "Download",
+    priority: 1,
+    align: "right",
+    render: (it) => (
+      <a
+        href={`/api/admin/payout-invoices/download?key=${encodeURIComponent(it.key)}`}
+        className="gh-btn gh-btn-soft text-xs"
+      >
+        <Download className="size-3.5" /> Download
+      </a>
+    ),
+  },
+];
 
 export function AdminUploadedInvoices({
   doctors,
@@ -86,43 +124,11 @@ export function AdminUploadedInvoices({
       ) : items.length === 0 ? (
         <p className="text-sm text-[var(--color-text-muted)]">No uploaded invoices yet.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
-              <tr>
-                <th className="py-2 pr-4 font-semibold">Doctor</th>
-                <th className="py-2 pr-4 font-semibold">Period</th>
-                <th className="py-2 pr-4 font-semibold">File</th>
-                <th className="py-2 pr-4 font-semibold">Size</th>
-                <th className="py-2 pr-4 font-semibold">Uploaded</th>
-                <th className="py-2 font-semibold text-right">Download</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--color-border)]">
-              {items.map((it) => (
-                <tr key={it.key}>
-                  <td className="py-2 pr-4">{it.doctorName}</td>
-                  <td className="py-2 pr-4 font-mono text-xs">{it.period}</td>
-                  <td className="py-2 pr-4">
-                    <span className="block max-w-[220px] truncate">{it.filename}</span>
-                  </td>
-                  <td className="py-2 pr-4 text-xs">{fmtSize(it.size)}</td>
-                  <td className="py-2 pr-4 text-xs">
-                    {it.uploadedAt ? new Date(it.uploadedAt).toLocaleDateString("en-GB") : "—"}
-                  </td>
-                  <td className="py-2 text-right">
-                    <a
-                      href={`/api/admin/payout-invoices/download?key=${encodeURIComponent(it.key)}`}
-                      className="gh-btn gh-btn-soft text-xs"
-                    >
-                      <Download className="size-3.5" /> Download
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ColumnPriorityTable<Item>
+          fields={uploadedInvoiceFields}
+          rows={items}
+          getRowKey={(it) => it.key}
+        />
       )}
     </div>
   );

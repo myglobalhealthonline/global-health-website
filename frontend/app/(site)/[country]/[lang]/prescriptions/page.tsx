@@ -11,15 +11,22 @@ import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
-import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
-  getPublicPage,
+  getPageContent,
   isSupportedLocale,
+  themeProp,
   type PublicLocale,
-} from "@/lib/content/get-public-page";
+} from "@/lib/content/get-page-content";
 import { getCountryServices } from "@/lib/content/get-country-collections";
-import { RichBodySection } from "@/components/sections/RichBodySection";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
+import { FAQSection } from "@/components/sections/FAQSection";
+import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import {
+  ChecklistSection,
+  ServiceIntro,
+  WhyChooseSection,
+} from "@/components/sections/ServiceContentSections";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import type { LocaleCode } from "@/lib/i18n/types";
@@ -43,7 +50,7 @@ export async function generateMetadata({
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
   // Admin-editable copy via /admin/pages (PageKey=PRESCRIPTIONS).
   // Falls back to the hardcoded strings if no ContentPage row exists.
-  const { record: page } = await getPublicPage(code, "PRESCRIPTIONS", lang as PublicLocale);
+  const { record: page } = await getPageContent(code, "PRESCRIPTIONS", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}/repeat-prescription-request`;
   const title = page?.seoTitle ?? `Repeat Prescription Request in ${config.name} · ${SITE_NAME}`;
   const description =
@@ -53,7 +60,21 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/repeat-prescription-request") },
-    openGraph: { type: "website", siteName: SITE_NAME, url, title, description },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      url,
+      title,
+      description,
+      ...ogLocales(config, lang),
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
   };
 }
 
@@ -84,10 +105,12 @@ export default async function PrescriptionsPage({
   if (!isCountryFeatureEnabled(overlay, "online-prescriptions")) notFound();
   const [services, { record: rawPage, disabled: pageDisabled }] = await Promise.all([
     getCountryServices(code, "PRESCRIPTION", lang),
-    getPublicPage(code, "PRESCRIPTIONS", lang as PublicLocale),
+    getPageContent(code, "PRESCRIPTIONS", lang as PublicLocale),
   ]);
 
-  const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
+  // Structured PageContent self-gates via publish status; legacy "pages"
+  // country-feature no longer gates it.
+  const page = pageDisabled ? null : rawPage;
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const t = c.prescriptionsPage;
   const bookHref = "#prescriptions";
@@ -136,9 +159,11 @@ export default async function PrescriptionsPage({
         }}
       />
 
-      {/* Admin-edited rich body from ContentPage (PRESCRIPTIONS). Hidden
-          when no row exists. */}
-      <RichBodySection html={page?.body} />
+      {/* Admin-authored structured sections (DB-backed, toggle-gated per
+          country). Off by default. Order mirrors the GP hub (Part B.3). */}
+      {page?.sections.intro ? (
+        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
+      ) : null}
 
       <TrustRibbon
         items={[
@@ -178,6 +203,32 @@ export default async function PrescriptionsPage({
         </section>
       )}
 
+      {page?.sections.whoFor ? (
+        <ChecklistSection
+          eyebrow="Who it's for"
+          title={page.whoForTitle!}
+          intro={page.whoForIntro ?? undefined}
+          items={page.whoForItems}
+          theme={themeProp(page?.whoForTheme, "light")}
+        />
+      ) : null}
+
+      {page?.sections.whyChoose ? (
+        <WhyChooseSection
+          title={page.whyChooseTitle!}
+          items={page.whyChooseItems}
+          theme={themeProp(page?.whyChooseTheme, "soft")}
+        />
+      ) : null}
+
+      {page?.sections.faq ? (
+        <FAQSection
+          title={c.gpPage.faqTitle}
+          items={page.faq}
+          theme={themeProp(page?.faqTheme, "dark")}
+        />
+      ) : null}
+
       <DoctifyReviewsSection
         theme="ivory"
         variant="grid"
@@ -189,6 +240,13 @@ export default async function PrescriptionsPage({
       />
 
       <FinalCTA primaryHref={bookHref} secondaryHref={fallbackHref} />
+
+      {page?.sections.disclaimer ? (
+        <MedicalDisclaimer
+          paragraphs={page.disclaimerParagraphs}
+          theme={themeProp(page?.disclaimerTheme, "dark")}
+        />
+      ) : null}
     </>
   );
 }

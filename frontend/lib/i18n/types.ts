@@ -676,6 +676,8 @@ export type CommonLocale = {
     noForLanguage: string;
     chooseAnotherLanguage: string;
     showAllLanguages: string;
+    backToAccount: string;
+    portalBadge: string;
   };
   portalChrome: {
     account: string;
@@ -685,6 +687,11 @@ export type CommonLocale = {
     openNavigation: string;
     closeMenu: string;
     allCaughtUp: string;
+    skipToContent: string;
+    unsavedChangesTitle: string;
+    unsavedChangesBody: string;
+    unsavedChangesKeepEditing: string;
+    unsavedChangesDiscard: string;
   };
   cardVerify: {
     title: string;

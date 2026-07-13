@@ -133,7 +133,7 @@ export function PrescriptionsList({
             <Pill className="size-4 text-[var(--portal-primary)]" aria-hidden />
             {copy.noneTitle}
           </p>
-          <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
+          <p className="mt-1 text-portal-meta text-[var(--portal-muted)]">
             {consultationLocked
               ? copy.noneDescriptionLocked
               : copy.noneDescriptionUnlocked}
@@ -147,7 +147,7 @@ export function PrescriptionsList({
               className="flex flex-wrap items-start justify-between gap-3 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3"
             >
               <div className="min-w-0 flex-1">
-                <p className="text-[14px] font-semibold text-[var(--portal-text)]">
+                <p className="text-portal-body font-semibold text-[var(--portal-text)]">
                   <Pill className="mr-1.5 inline size-4" aria-hidden />
                   {p.drugName}
                   {p.dose ? (
@@ -156,7 +156,7 @@ export function PrescriptionsList({
                     </span>
                   ) : null}
                 </p>
-                <p className="mt-1 text-[12px] text-[var(--portal-muted)]">
+                <p className="mt-1 text-portal-meta text-[var(--portal-muted)]">
                   {[
                     p.frequency,
                     p.durationDays != null
@@ -170,7 +170,7 @@ export function PrescriptionsList({
                     .join(" · ") || "—"}
                 </p>
                 {p.instructions ? (
-                  <p className="mt-1 text-[12px] text-[var(--portal-text-2)] whitespace-pre-wrap">
+                  <p className="mt-1 text-portal-meta text-[var(--portal-text-2)] whitespace-pre-wrap">
                     {p.instructions}
                   </p>
                 ) : null}
@@ -205,7 +205,7 @@ export function PrescriptionsList({
             <button
               type="button"
               onClick={() => setOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface)] px-3 py-1.5 text-[13px] font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
+              className="inline-flex items-center gap-1.5 rounded-md border border-[var(--portal-line)] bg-[var(--portal-surface)] px-3 py-1.5 text-portal-compact font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)]"
             >
               <Plus className="size-3.5" aria-hidden />
               {copy.issuePrescription}

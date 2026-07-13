@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import { FileText, Plus, Trash2 } from "lucide-react";
 import type { FormFieldDef, FormTemplateDto } from "@/lib/api/doctor-api";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
-import { AdminEmptyState } from "@/components/portal-atoms";
+import { AdminEmptyState, Btn } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
+import { PortalDialog } from "@/components/PortalDialog";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 /**
  * Form templates manager. Tiny inline builder — title + description +
@@ -55,10 +57,42 @@ export function FormTemplatesClient({
   const [items, setItems] = useState(initial);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [fields, setFields] = useState<DraftField[]>([emptyField()]);
+
+  // Draft always starts blank (see emptyField()), so "dirty" is just "does
+  // the draft still equal that blank starting point" — no separate baseline
+  // needed. Auto-clears on submit success (state resets to blank there).
+  const isDraftFieldDirty = (f: DraftField) =>
+    f.key !== "" ||
+    f.label !== "" ||
+    f.type !== "text" ||
+    f.required ||
+    f.optionsText !== "" ||
+    f.helper !== "";
+  const draftDirty =
+    title.trim() !== "" ||
+    description.trim() !== "" ||
+    fields.length > 1 ||
+    fields.some(isDraftFieldDirty);
+  useUnsavedChanges(draftDirty);
+
+  function resetDraft() {
+    setError(null);
+    setTitle("");
+    setDescription("");
+    setFields([emptyField()]);
+  }
+
+  /** Dialog close (X / Escape / backdrop) — confirm before discarding a dirty draft. */
+  function closeDialog() {
+    if (draftDirty && !confirm(strings.discardConfirm)) return;
+    resetDraft();
+    setDialogOpen(false);
+  }
 
   function updateField(index: number, patch: Partial<DraftField>) {
     setFields((prev) => prev.map((f, i) => (i === index ? { ...f, ...patch } : f)));
@@ -132,15 +166,14 @@ export function FormTemplatesClient({
           ...prev,
         ]);
       }
-      setTitle("");
-      setDescription("");
-      setFields([emptyField()]);
+      resetDraft();
+      setDialogOpen(false);
       router.refresh();
     });
   }
 
-  function remove(id: string) {
-    if (!confirm(strings.deleteConfirm)) return;
+  function remove(id: string, title: string) {
+    if (!confirm(strings.deleteConfirm.replace("{title}", title))) return;
     startTransition(async () => {
       const res = await fetch(`/api/doctor/form-templates/${id}`, {
         method: "DELETE",
@@ -156,8 +189,21 @@ export function FormTemplatesClient({
   }
 
   return (
-    <div className="gh-doctor-detail-grid gh-doctor-templates-layout grid gap-4">
-      <FormSection title={strings.yourTemplates} className="gh-doctor-template-list">
+    <div className="grid gap-4">
+      <FormSection
+        title={strings.yourTemplates}
+        className="gh-doctor-template-list"
+        right={
+          <Btn
+            variant="primary"
+            size="sm"
+            iconLeft={<Plus className="size-3.5" aria-hidden />}
+            onClick={() => setDialogOpen(true)}
+          >
+            {strings.newTemplate}
+          </Btn>
+        }
+      >
         <div className="gh-form-section__span-2">
         {items.length === 0 ? (
           <AdminEmptyState
@@ -176,16 +222,16 @@ export function FormTemplatesClient({
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-[14px] font-semibold text-[var(--portal-text)]">
+                    <p className="text-portal-body font-semibold text-[var(--portal-text)]">
                       {t.title}
                       {t.ownedBySelf ? null : (
-                        <span className="ml-2 rounded-full bg-[var(--portal-well)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+                        <span className="ml-2 rounded-full bg-[var(--portal-well)] px-2 py-0.5 text-portal-micro font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
                           {strings.sharedBadge}
                         </span>
                       )}
                     </p>
                     {t.description ? (
-                      <p className="text-[12.5px] text-[var(--portal-muted)]">
+                      <p className="text-portal-label text-[var(--portal-muted)]">
                         {t.description}
                       </p>
                     ) : null}
@@ -198,8 +244,8 @@ export function FormTemplatesClient({
                   {t.ownedBySelf ? (
                     <button
                       type="button"
-                      onClick={() => remove(t.id)}
-                      className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
+                      onClick={() => remove(t.id, t.title)}
+                      className="inline-flex items-center gap-1 text-portal-meta font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
                       aria-label={strings.deleteTemplateAria}
                     >
                       <Trash2 className="size-3.5" />
@@ -213,12 +259,36 @@ export function FormTemplatesClient({
         </div>
       </FormSection>
 
-      <FormSection
+      <PortalDialog
+        open={dialogOpen}
+        onClose={closeDialog}
         title={strings.newTemplate}
-        description={strings.newTemplateDesc}
-        className="gh-doctor-template-form"
+        width="lg"
+        footer={
+          <div className="flex justify-end gap-2">
+            <button type="button" onClick={closeDialog} className="gh-btn gh-btn-secondary">
+              {strings.cancel}
+            </button>
+            <button
+              type="submit"
+              form="doctor-new-template-form"
+              disabled={pending}
+              className="gh-btn gh-btn-primary"
+            >
+              {pending ? strings.saving : strings.createTemplate}
+            </button>
+          </div>
+        }
       >
-        <form onSubmit={create} className="gh-form-section__span-2">
+        <p className="mb-3 text-portal-label text-[var(--portal-muted)]">
+          {strings.newTemplateDesc}
+        </p>
+        <form
+          id="doctor-new-template-form"
+          onSubmit={create}
+          className="gh-doctor-template-form"
+          noValidate
+        >
         <div className="grid gap-3">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">{strings.titleField}</span>
@@ -227,7 +297,6 @@ export function FormTemplatesClient({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               maxLength={200}
-              required
             />
           </label>
           <label className="flex flex-col gap-1">
@@ -246,14 +315,14 @@ export function FormTemplatesClient({
               className="gh-doctor-template-field rounded-md border border-[var(--portal-line)] p-3"
             >
               <div className="flex items-start justify-between gap-2">
-                <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+                <p className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
                   {strings.fieldN.replace("{n}", String(i + 1))}
                 </p>
                 {fields.length > 1 ? (
                   <button
                     type="button"
                     onClick={() => removeField(i)}
-                    className="text-[11px] font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
+                    className="text-portal-thead font-semibold text-[var(--portal-muted)] hover:text-[var(--portal-danger)]"
                   >
                     {strings.removeField}
                   </button>
@@ -267,7 +336,6 @@ export function FormTemplatesClient({
                     value={f.label}
                     onChange={(e) => updateField(i, { label: e.target.value })}
                     maxLength={200}
-                    required
                   />
                 </label>
                 <label className="flex flex-col gap-1">
@@ -296,7 +364,7 @@ export function FormTemplatesClient({
                     />
                   </label>
                 ) : null}
-                <label className="flex items-center gap-2 text-[13px]">
+                <label className="flex items-center gap-2 text-portal-compact">
                   <input
                     type="checkbox"
                     checked={f.required}
@@ -311,23 +379,19 @@ export function FormTemplatesClient({
           <button
             type="button"
             onClick={addField}
-            className="inline-flex items-center gap-1 self-start text-[13px] font-semibold text-[var(--portal-primary)] hover:underline"
+            className="inline-flex items-center gap-1 self-start text-portal-compact font-semibold text-[var(--portal-primary)] hover:underline"
           >
             <Plus className="size-3.5" /> {strings.addField}
           </button>
 
           {error ? (
-            <p className="gh-status-warning rounded-md border px-3 py-2 text-[12.5px]">
+            <p className="gh-status-warning rounded-md border px-3 py-2 text-portal-label">
               {error}
             </p>
           ) : null}
-
-          <button type="submit" disabled={pending} className="gh-btn gh-btn-primary">
-            {pending ? strings.saving : strings.createTemplate}
-          </button>
         </div>
         </form>
-      </FormSection>
+      </PortalDialog>
     </div>
   );
 }

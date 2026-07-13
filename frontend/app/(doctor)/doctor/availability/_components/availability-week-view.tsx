@@ -27,6 +27,8 @@ type Props = {
   /** Any date inside the initial week ("YYYY-MM-DD"), clinic-local. */
   initialWeekAnchor: string;
   onSlotsChange?: (slots: DoctorTimeSlotView[]) => void;
+  /** Lifted to the page's single error banner (05-005: no second banner here). */
+  onError?: (message: string | null) => void;
   strings: { weekViewHelp: string };
 };
 
@@ -51,13 +53,13 @@ export function DoctorAvailabilityWeekView({
   clinicTz,
   initialWeekAnchor,
   onSlotsChange,
+  onError,
   strings,
 }: Props) {
   const [tz, setTz] = useState(clinicTz);
   const [weekAnchor, setWeekAnchor] = useState(initialWeekAnchor);
   const [slots, setSlots] = useState<DoctorTimeSlotView[]>(initialSlots);
   const [activeConsult, setActiveConsult] = useState<CalendarItem | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [busy, startTransition] = useTransition();
 
   const tzOptions = useMemo(() => {
@@ -79,23 +81,23 @@ export function DoctorAvailabilityWeekView({
 
   function goToWeek(anchor: string) {
     setWeekAnchor(anchor);
-    setError(null);
+    onError?.(null);
     startTransition(async () => {
       const { fromIso, toIso } = weekRangeIso(anchor, tz);
       const res = await fetchAvailabilityRangeClient(fromIso, toIso);
       if (res.ok) updateSlots(res.data.slots);
-      else setError(res.message);
+      else onError?.(res.message);
     });
   }
 
   function onToggleSlot(item: CalendarItem) {
     if (item.status !== "OPEN" && item.status !== "BLOCKED") return;
     const next = item.status === "OPEN" ? "BLOCKED" : "OPEN";
-    setError(null);
+    onError?.(null);
     startTransition(async () => {
       const res = await toggleSlotStatus(item.id, next);
       if (!res.ok) {
-        setError(res.message);
+        onError?.(res.message);
         return;
       }
       updateSlots(
@@ -109,23 +111,21 @@ export function DoctorAvailabilityWeekView({
   }
 
   return (
-    <div className="grid gap-3">
+    <div className="grid min-w-0 gap-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-[13px] text-[var(--portal-muted)]">
+        <p className="text-portal-compact text-[var(--portal-muted)]">
           {strings.weekViewHelp}
         </p>
         <TimezoneSelect value={tz} options={tzOptions} onChange={setTz} />
       </div>
 
-      {error ? (
-        <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
-          {error}
-        </div>
-      ) : null}
-
       <div
         aria-busy={busy}
-        className={busy ? "pointer-events-none opacity-70 transition" : "transition"}
+        className={
+          busy
+            ? "min-w-0 pointer-events-none opacity-70 transition"
+            : "min-w-0 transition"
+        }
       >
         <WeekCalendar
           anchorDayKey={weekAnchor}

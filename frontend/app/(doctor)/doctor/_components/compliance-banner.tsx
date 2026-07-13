@@ -18,6 +18,9 @@ export type ComplianceBannerCopy = {
   acceptConfidentiality: string;
   enable2fa: string;
   dismissAria: string;
+  /** Clarifies dismiss is session-only (01-004). Optional so older copy
+   *  bundles without this key don't break the type. */
+  dismissCaption?: string;
 };
 
 export function ComplianceBanner({
@@ -58,7 +61,7 @@ export function ComplianceBanner({
   return (
     <div
       role="status"
-      className="gh-admin-card mx-4 mt-4 flex items-start justify-between gap-3 px-4 py-3 text-sm lg:mx-6"
+      className="gh-admin-card gh-doctor-compliance-banner mx-4 mt-4 flex items-start justify-between gap-3 px-4 py-3 text-sm lg:mx-6"
       style={{
         borderLeft: "3px solid var(--portal-warning)",
         color: "var(--portal-warning-text)",
@@ -84,7 +87,7 @@ export function ComplianceBanner({
           {!twoFactorEnabled ? (
             <li>
               <Link
-                href="/doctor/security"
+                href="/doctor/security?tab=2fa"
                 className="font-semibold underline underline-offset-2"
                 style={{ color: "var(--portal-warning-text)" }}
               >
@@ -93,6 +96,11 @@ export function ComplianceBanner({
             </li>
           ) : null}
         </ul>
+        {copy.dismissCaption ? (
+          <p className="mt-1.5 text-portal-meta" style={{ color: "var(--portal-muted)" }}>
+            {copy.dismissCaption}
+          </p>
+        ) : null}
       </div>
       <button
         type="button"

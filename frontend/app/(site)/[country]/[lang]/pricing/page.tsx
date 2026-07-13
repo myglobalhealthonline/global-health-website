@@ -11,7 +11,7 @@ import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
-import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
 import { getServerAuthUser } from "@/lib/api/server-auth";
@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     title,
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/pricing") },
-    openGraph: { type: "website", siteName: SITE_NAME, url, title, description },
+    openGraph: { type: "website", siteName: SITE_NAME, url, title, description, ...ogLocales(config, lang) },
   };
 }
 

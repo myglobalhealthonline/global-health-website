@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
-import { Prisma, type LocaleCode } from "@prisma/client";
+import { LocaleCode, Prisma } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -740,8 +740,19 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
     if (!auth.ok) {
       return reply.status(auth.status).send(errorResponse(auth.message));
     }
+    // .catch(undefined): an unknown locale falls back to the country default
+    // instead of failing the request.
+    const localeSchema = z
+      .preprocess(
+        (v) => (typeof v === "string" ? v.toUpperCase() : v),
+        z.nativeEnum(LocaleCode).optional(),
+      )
+      .catch(undefined);
+    const locale = localeSchema.parse(
+      (request.query as { locale?: string } | undefined)?.locale,
+    );
     try {
-      const data = await listDoctorSelectableServices(auth.doctorId);
+      const data = await listDoctorSelectableServices(auth.doctorId, locale);
       return okResponse(data);
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {

@@ -191,22 +191,22 @@ export default async function AdminNewCorporateCompanyPage({ searchParams }: Pag
             <label className="flex flex-col gap-1">
               <span className="gh-field-label">Corporate-admin email</span>
               <input type="email" name="adminEmail" maxLength={320} className="gh-input" />
-              <span className="text-[12px] text-[var(--color-text-muted)]">
+              <span className="text-portal-meta text-[var(--color-text-muted)]">
                 Optional — sends a portal invite to this address immediately.
               </span>
             </label>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] px-5 py-5">
-            <Btn type="submit" variant="primary" size="md">
-              Create company
-            </Btn>
+          <div className="flex flex-wrap items-center justify-end gap-3 border-t border-[var(--color-border)] px-5 py-5">
             <Link
               href="/admin/corporate"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="gh-btn gh-btn-ghost"
             >
               Cancel
             </Link>
+            <Btn type="submit" variant="primary" size="md">
+              Create company
+            </Btn>
           </div>
         </form>
       </AdminCard>

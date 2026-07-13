@@ -130,7 +130,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
     <>
       <Link
         href="/admin/users"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to users
       </Link>
@@ -182,7 +182,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
 
         <div className="gh-admin-user-detail-side grid gap-4 self-start">
           <FormSection title="Status">
-            <p className="text-[13px] text-[var(--color-text-muted)]">
+            <p className="text-portal-compact text-[var(--color-text-muted)]">
               Suspended users can&apos;t log in. Their bookings stay intact.
             </p>
             <form action={toggleActiveAction} className="mt-3">
@@ -213,7 +213,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
               the doctor id from /admin/doctors. A future iteration could
               swap this for a searchable dropdown of unlinked doctors. */}
           <FormSection title="Doctor profile link">
-            <p className="text-[13px] text-[var(--color-text-muted)]">
+            <p className="text-portal-compact text-[var(--color-text-muted)]">
               {user.role === "DOCTOR"
                 ? "Paste the Doctor profile id (from /admin/doctors). One profile per user — re-link will fail if the target is already taken. Leave blank to unlink."
                 : "Set role=DOCTOR first, then link the user to a Doctor profile here."}
@@ -233,7 +233,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
           </FormSection>
 
           <FormSection title="Reset password">
-            <p className="text-[13px] text-[var(--color-text-muted)]">
+            <p className="text-portal-compact text-[var(--color-text-muted)]">
               Admin override — sets a new password without an email token.
               Share via a secure channel.
             </p>
@@ -262,10 +262,10 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+      <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
         {label}
       </dt>
-      <dd className="mt-1 text-[14px] text-[var(--color-text-primary)]">{value}</dd>
+      <dd className="mt-1 text-portal-body text-[var(--color-text-primary)]">{value}</dd>
     </div>
   );
 }

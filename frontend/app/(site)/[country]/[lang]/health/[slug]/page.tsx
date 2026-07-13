@@ -6,7 +6,7 @@ import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { getCountryLandingPage } from "@/lib/content/get-country-collections";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { getSiteUrl } from "@/lib/seo/site-url";
-import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -34,7 +34,14 @@ export async function generateMetadata({
       canonical: url,
       ...(config ? { languages: hreflangAlternates(config, `/health/${slug}`) } : {}),
     },
-    openGraph: { type: "article", siteName: SITE_NAME, title, description, url },
+    openGraph: {
+      type: "article",
+      siteName: SITE_NAME,
+      title,
+      description,
+      url,
+      ...(config ? ogLocales(config, lang) : {}),
+    },
     twitter: { card: "summary_large_image", title, description },
   };
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { createPortal } from "react-dom";
 import {
   doctorApiErrorMessage,
@@ -222,6 +222,12 @@ export function ConsultationDocumentsModal({
   const [certEndDate, setCertEndDate] = useState("");
   const [certReason, setCertReason] = useState("");
 
+  // Focus trap + restore — same pattern as PortalDialog (query focusables
+  // fresh on every Tab press; a tab switch inside this modal changes what's
+  // focusable, so a mount-time snapshot would go stale).
+  const panelRef = useRef<HTMLDivElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+
   const loadContext = useCallback(async () => {
     setContextLoading(true);
     try {
@@ -293,13 +299,41 @@ export function ConsultationDocumentsModal({
     }
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
+    returnFocusRef.current = document.activeElement as HTMLElement | null;
+    function queryFocusable(): NodeListOf<HTMLElement> | undefined {
+      return panelRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+    }
+    // Focus the panel's first focusable on open (deferred a tick so the
+    // portal has actually mounted the DOM this ref points at).
+    const focusTimer = window.setTimeout(() => queryFocusable()?.[0]?.focus(), 0);
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const focusable = queryFocusable();
+      if (!focusable || focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = prev;
+      window.clearTimeout(focusTimer);
       window.removeEventListener("keydown", onKey);
+      returnFocusRef.current?.focus();
     };
   }, [open, loadContext, initialTab, editDraft, onClose]);
 
@@ -443,7 +477,7 @@ export function ConsultationDocumentsModal({
 
   const modal = (
     <div
-      className="gh-doctor-doc-modal fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"
+      className="gh-doctor-doc-modal fixed inset-0 z-[var(--z-modal-overlay)] flex items-center justify-center p-4 sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-labelledby="consultation-docs-title"
@@ -454,7 +488,10 @@ export function ConsultationDocumentsModal({
         aria-label={copy.closeDialogAria}
         onClick={onClose}
       />
-      <div className="gh-doctor-doc-modal-panel relative z-10 flex max-h-[min(92vh,900px)] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-[var(--portal-line)] bg-white shadow-2xl">
+      <div
+        ref={panelRef}
+        className="gh-doctor-doc-modal-panel relative z-[var(--z-modal)] flex max-h-[min(92svh,900px)] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-[var(--portal-line)] bg-white shadow-2xl"
+      >
         <div className="gh-doctor-doc-modal-header flex shrink-0 items-center justify-between border-b border-[var(--portal-line)] bg-white px-4 py-3">
           <div>
             <h2

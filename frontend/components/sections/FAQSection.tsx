@@ -1,6 +1,10 @@
 /**
- * FAQ accordion — dark luxury version.
+ * FAQ accordion — dark luxury version by default.
  * Forest-night canvas, border-top dividers, lime expand icon.
+ *
+ * `theme="light"` renders the ivory variant (same structure/padding,
+ * dark-on-ivory colors, gh2-card-ivory accordion cards) for pages that
+ * opt into the CMS green/ivory section picker.
  */
 
 type FAQItem = { question: string; answer: string };
@@ -8,15 +12,21 @@ type FAQItem = { question: string; answer: string };
 type FAQSectionProps = {
   title?: string;
   items: FAQItem[];
+  theme?: "dark" | "light";
 };
 
-export function FAQSection({ title = "FAQs", items }: FAQSectionProps) {
+export function FAQSection({ title = "FAQs", items, theme = "dark" }: FAQSectionProps) {
+  const light = theme === "light";
   return (
     <section
-      className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
+      className={
+        light
+          ? "relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
+          : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
+      }
       style={{
         padding: "clamp(64px,8vw,120px) 0",
-        borderTop: "1px solid rgba(255,255,255,0.06)",
+        borderTop: light ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
       }}
     >
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
@@ -24,7 +34,7 @@ export function FAQSection({ title = "FAQs", items }: FAQSectionProps) {
         <div className="mb-12 lg:mb-16">
           <p
             className="text-[11px] font-bold tracking-[0.22em] uppercase"
-            style={{ color: "var(--color-brand-accent)" }}
+            style={{ color: light ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
           >
             Questions
           </p>
@@ -32,7 +42,7 @@ export function FAQSection({ title = "FAQs", items }: FAQSectionProps) {
             className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
             style={{
               fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)",
-              color: "rgba(255,255,255,0.95)",
+              color: light ? "var(--color-text-primary)" : "rgba(255,255,255,0.95)",
               maxWidth: "22ch",
             }}
           >
@@ -48,25 +58,39 @@ export function FAQSection({ title = "FAQs", items }: FAQSectionProps) {
             return (
               <details
                 key={item.question}
-                className="group gh2-glass-forest gh2-glass-hover rounded-[14px] px-5 motion-reduce:transition-none md:px-6"
+                className={
+                  light
+                    ? "group gh2-card-ivory rounded-[14px] px-5 motion-reduce:transition-none md:px-6"
+                    : "group gh2-glass-forest gh2-glass-hover rounded-[14px] px-5 motion-reduce:transition-none md:px-6"
+                }
               >
                 <summary
                   id={summaryId}
                   aria-controls={answerId}
-                  className="gh-focus-on-dark flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 rounded-md py-5 md:py-6"
+                  className={
+                    light
+                      ? "flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 rounded-md py-5 md:py-6"
+                      : "gh-focus-on-dark flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 rounded-md py-5 md:py-6"
+                  }
                 >
                   <span
-                    className="text-base font-semibold leading-snug transition-colors duration-200 group-hover:text-[var(--color-brand-accent)] motion-reduce:transition-none"
-                    style={{ color: "rgba(255,255,255,0.88)" }}
+                    className={
+                      light
+                        ? "text-base font-semibold leading-snug transition-colors duration-200 group-hover:text-[var(--color-brand-primary)] motion-reduce:transition-none"
+                        : "text-base font-semibold leading-snug transition-colors duration-200 group-hover:text-[var(--color-brand-accent)] motion-reduce:transition-none"
+                    }
+                    style={{
+                      color: light ? "var(--color-text-primary)" : "rgba(255,255,255,0.88)",
+                    }}
                   >
                     {item.question}
                   </span>
                   <span
                     className="inline-flex size-8 shrink-0 items-center justify-center rounded-full transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none"
                     style={{
-                      background: "rgba(255,255,255,0.05)",
-                      border: "1px solid rgba(255,255,255,0.10)",
-                      color: "var(--color-brand-accent)",
+                      background: light ? "rgba(29,75,54,0.08)" : "rgba(255,255,255,0.05)",
+                      border: light ? "1px solid rgba(29,75,54,0.14)" : "1px solid rgba(255,255,255,0.10)",
+                      color: light ? "var(--color-brand-primary)" : "var(--color-brand-accent)",
                     }}
                   >
                     <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -79,7 +103,10 @@ export function FAQSection({ title = "FAQs", items }: FAQSectionProps) {
                   role="region"
                   aria-labelledby={summaryId}
                   className="pb-6 text-sm leading-relaxed"
-                  style={{ color: "rgba(255,255,255,0.78)", maxWidth: "62ch" }}
+                  style={{
+                    color: light ? "var(--color-text-body)" : "rgba(255,255,255,0.78)",
+                    maxWidth: "62ch",
+                  }}
                 >
                   {item.answer}
                 </p>

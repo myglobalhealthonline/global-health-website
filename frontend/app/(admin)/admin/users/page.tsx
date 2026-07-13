@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { UsersRound } from "lucide-react";
-import { fetchAdminUsers, type AdminUserDto } from "@/lib/admin/admin-api";
-import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader, Pill } from "../_components/atoms";
-import { PortalMobileCard } from "@/components/PortalMobileCard";
+import { fetchAdminUsers } from "@/lib/admin/admin-api";
+import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader } from "../_components/atoms";
+import { AdminUsersTable } from "./_components/admin-users-table";
 
 export const dynamic = "force-dynamic";
 
@@ -119,91 +119,7 @@ export default async function AdminUsersPage({
             description="Clear the search, role, or status filters to broaden the account list."
           />
         ) : (
-          <>
-          <div className="gh-admin-support-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
-          <table className="w-full min-w-[820px] text-sm">
-            <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
-              <tr>
-                <th className="px-4 py-3 font-semibold">Email</th>
-                <th className="px-4 py-3 font-semibold">Name</th>
-                <th className="px-4 py-3 font-semibold">Role</th>
-                <th className="px-4 py-3 font-semibold">Status</th>
-                <th className="px-4 py-3 font-semibold">Verified</th>
-                <th className="px-4 py-3 font-semibold">Created</th>
-                <th className="px-4 py-3 font-semibold text-right">Open</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--color-border)]">
-              {result.data.items.map((u: AdminUserDto) => (
-                <tr key={u.id}>
-                  <td className="px-4 py-2 font-semibold text-[var(--color-text-primary)]">
-                    {u.email}
-                  </td>
-                  <td className="px-4 py-2">{u.fullName}</td>
-                  <td className="px-4 py-2">
-                    <Pill tone={u.role === "ADMIN" ? "published" : "neutral"}>
-                      {u.role}
-                    </Pill>
-                  </td>
-                  <td className="px-4 py-2">
-                    <Pill tone={u.isActive ? "active" : "inactive"}>
-                      {u.isActive ? "Active" : "Suspended"}
-                    </Pill>
-                  </td>
-                  <td className="px-4 py-2 text-xs text-[var(--color-text-muted)]">
-                    {u.emailVerifiedAt
-                      ? new Date(u.emailVerifiedAt).toLocaleDateString()
-                      : "—"}
-                  </td>
-                  <td className="px-4 py-2 text-xs text-[var(--color-text-muted)]">
-                    {new Date(u.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-4 py-2 text-right">
-                    <Link
-                      href={`/admin/users/${u.id}`}
-                      className="text-xs font-semibold text-emerald-700 hover:underline"
-                    >
-                      Open →
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
-          <div className="gh-admin-mobile-list">
-            {result.data.items.map((u: AdminUserDto) => (
-              <PortalMobileCard
-                key={u.id}
-                tone={u.isActive ? "success" : "danger"}
-                title={<span className="break-all">{u.email}</span>}
-                subtitle={u.fullName || "No name set"}
-                statusPill={
-                  <Pill tone={u.isActive ? "active" : "inactive"}>
-                    {u.isActive ? "Active" : "Suspended"}
-                  </Pill>
-                }
-                meta={[
-                  { label: "Role", value: <Pill tone={u.role === "ADMIN" ? "published" : "neutral"}>{u.role}</Pill> },
-                  {
-                    label: "Email status",
-                    value: (
-                      <Pill tone={u.emailVerifiedAt ? "active" : "neutral"}>
-                        {u.emailVerifiedAt ? "Verified" : "Unverified"}
-                      </Pill>
-                    ),
-                  },
-                  { label: "Created", value: new Date(u.createdAt).toLocaleDateString() },
-                ]}
-                actions={
-                  <Link href={`/admin/users/${u.id}`} className="gh-btn gh-btn-secondary text-sm">
-                    Open user
-                  </Link>
-                }
-              />
-            ))}
-          </div>
-          </>
+          <AdminUsersTable items={result.data.items} />
         )}
 
         {result.ok && result.data.pagination.totalPages > 1 ? (

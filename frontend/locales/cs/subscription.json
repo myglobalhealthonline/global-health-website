@@ -92,6 +92,7 @@
     "cancelScheduled": "Vaše členství je zrušeno. Výhody pokračují do {date}.",
     "cancelAtPeriodEnd": "Ruší se {date}",
     "change": "Změnit plán",
+    "browseAllPlans": "Procházet všechny plány",
     "upgrade": "Přejít na vyšší nebo nižší plán",
     "changeTo": "Přepnout na {plan}",
     "changing": "Plánování změny…",
@@ -119,6 +120,8 @@
       "paused": "Vaše členství je pozastaveno a výhody jsou dočasně neaktivní. Obnovte fakturaci v portálu pro fakturaci níže, abyste obnovili své kredity a slevy.",
       "confirming": "Potvrzujeme vaši platbu… obvykle to trvá jen několik sekund.",
       "stillProcessing": "Platba přijata — aktivace vašeho členství trvá o něco déle než obvykle.",
+      "alreadyActive": "Již máte aktivní členství — spravujte ho níže.",
+      "dismiss": "Zavřít",
       "refresh": "Obnovit"
     }
   },
@@ -148,6 +151,7 @@
     "reason_RESET_EXPIRE": "Předchozí měsíc resetován",
     "reason_RESERVED": "Rezervováno",
     "reason_CONSUMED": "Použito na konzultaci",
+    "reason_CONSUMED_COMPLETED": "Konzultace dokončena",
     "reason_REDEEMED": "Uplatněno na sadu",
     "reason_RELEASED": "Vráceno zpět",
     "reason_ADJUSTMENT": "Ruční úprava",
@@ -213,6 +217,12 @@
       "body": "Vaše členství zahrnuje tuto sadu. Uplatněte ji za {required} wellness kreditů — aktuálně máte {balance}.",
       "cta": "Uplatnit tuto sadu",
       "progress": "Nasbíráno {progress} z {required} wellness kreditů"
+    },
+    "howItWorks": {
+      "title": "Jak fungují wellness kredity",
+      "step1": "Získávejte wellness kredity automaticky každý zaplacený měsíc členství.",
+      "step2": "Nasbírejte dostatek kreditů na požadovanou hodnotu sady.",
+      "step3": "Uplatněte — sadu vám pošleme přímo domů."
     }
   },
   "invoice": {
@@ -226,7 +236,8 @@
     "status_paid": "Zaplaceno",
     "status_open": "Otevřeno",
     "status_void": "Stornováno",
-    "status_uncollectible": "Nezaplaceno"
+    "status_uncollectible": "Nezaplaceno",
+    "status_processing": "Zpracovává se"
   },
   "legal": {
     "eyebrow": "Právní informace",

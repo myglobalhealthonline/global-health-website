@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type ConsentItem = {
   consentType: string;
@@ -63,7 +64,13 @@ function statusLabel(val: boolean | null, i18n: PrivacyI18n): { text: string; cl
   return { text: i18n.statusDeclined, cls: "bg-rose-50 text-rose-700" };
 }
 
-export function GdprPreferencesTab({ i18n = DEFAULT_I18N }: { i18n?: PrivacyI18n }) {
+export function GdprPreferencesTab({
+  i18n = DEFAULT_I18N,
+  onDirtyChange,
+}: {
+  i18n?: PrivacyI18n;
+  onDirtyChange?: (dirty: boolean) => void;
+}) {
   const [consents, setConsents] = useState<ConsentItem[]>([]);
   const [draft, setDraft] = useState<Draft>({});
   const [loaded, setLoaded] = useState(false);
@@ -86,6 +93,14 @@ export function GdprPreferencesTab({ i18n = DEFAULT_I18N }: { i18n?: PrivacyI18n
       .catch(() => {})
       .finally(() => setLoaded(true));
   }, []);
+
+  const savedDraft: Draft = {};
+  for (const c of consents) savedDraft[c.consentType] = c.consentValue;
+  const dirty = loaded && JSON.stringify(draft) !== JSON.stringify(savedDraft);
+  useUnsavedChanges(dirty);
+  useEffect(() => {
+    onDirtyChange?.(dirty);
+  }, [dirty, onDirtyChange]);
 
   function toggle(type: string, value: boolean) {
     setDraft((prev) => ({ ...prev, [type]: value }));
@@ -149,14 +164,13 @@ export function GdprPreferencesTab({ i18n = DEFAULT_I18N }: { i18n?: PrivacyI18n
         {i18n.intro}
       </p>
 
-      <div className="space-y-3">
+      <div className="gh-patient-consent-card gh-card overflow-hidden divide-y divide-[var(--portal-line)]">
         {consents.map((c) => {
           const current = draft[c.consentType];
           const status = statusLabel(c.consentValue, i18n);
 
           return (
-            <div key={c.consentType} className="gh-patient-consent-card gh-card p-4">
-                <div className="gh-patient-consent-row flex items-start justify-between gap-4">
+            <div key={c.consentType} className="gh-patient-consent-row flex items-start justify-between gap-4 p-4">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-medium text-[var(--portal-text)]">{c.label}</p>
@@ -197,7 +211,6 @@ export function GdprPreferencesTab({ i18n = DEFAULT_I18N }: { i18n?: PrivacyI18n
                     {i18n.decline}
                   </button>
                 </div>
-              </div>
             </div>
           );
         })}
@@ -205,6 +218,7 @@ export function GdprPreferencesTab({ i18n = DEFAULT_I18N }: { i18n?: PrivacyI18n
 
       {msg && (
         <p
+          role={msg.kind === "ok" ? "status" : "alert"}
           className={`rounded-md px-3 py-2 text-sm ${
             msg.kind === "ok" ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"
           }`}
@@ -213,14 +227,16 @@ export function GdprPreferencesTab({ i18n = DEFAULT_I18N }: { i18n?: PrivacyI18n
         </p>
       )}
 
-      <button
-        type="button"
-        onClick={onSave}
-        disabled={saving}
-        className="inline-flex min-h-11 items-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
-      >
-        {saving ? i18n.saving : i18n.save}
-      </button>
+      <div className="flex justify-end">
+        <button
+          type="button"
+          onClick={onSave}
+          disabled={saving}
+          className="inline-flex min-h-11 items-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+        >
+          {saving ? i18n.saving : i18n.save}
+        </button>
+      </div>
     </div>
   );
 }

@@ -276,18 +276,19 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
         </p>
       ) : null}
 
-      {/* Tabs */}
-      <nav className="mb-4 flex flex-wrap gap-1.5" aria-label="Company sections">
+      {/* Tabs — real route navigation (each tab is a server-rendered page
+          section with its own data fetch), so these stay <Link>s rather
+          than becoming a PortalTabs button tablist. Styled with the same
+          .gh-portal-tabs/.gh-portal-tab underline skin + portal tokens so
+          it reads as one shared tab system, not a bespoke pill nav. */}
+      <nav className="gh-portal-tabs mb-4" aria-label="Company sections">
         {TABS.map((t) => (
           <Link
             key={t}
             href={`/admin/corporate/${id}?tab=${t}`}
             aria-current={tab === t ? "page" : undefined}
-            className={`rounded-full px-3.5 py-1.5 text-[13px] font-bold capitalize transition-colors ${
-              tab === t
-                ? "bg-[var(--color-text-primary)] text-[var(--color-surface)]"
-                : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-            }`}
+            className="gh-portal-tab capitalize"
+            data-active={tab === t || undefined}
           >
             {t}
           </Link>
@@ -401,7 +402,7 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
                   defaultValue={company.contractEndAt?.slice(0, 10) ?? ""}
                   className="gh-input"
                 />
-                <span className="text-[12px] text-[var(--color-text-muted)]">
+                <span className="text-portal-meta text-[var(--color-text-muted)]">
                   Leave empty for open-ended. Past date stops all discounts + cards.
                 </span>
               </label>
@@ -792,7 +793,7 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
                             {r.employeeName ?? "—"}
                           </span>
                           {r.reason ? (
-                            <p className="max-w-[24rem] truncate text-xs text-[var(--color-text-muted)]">
+                            <p className="max-w-[24rem] truncate text-xs text-[var(--color-text-muted)]" title={r.reason}>
                               {r.reason}
                             </p>
                           ) : null}
@@ -865,7 +866,7 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
                 Save
               </Btn>
               {!company.preAssessmentDoctorId ? (
-                <span className="text-[12px] text-[var(--color-text-muted)]">
+                <span className="text-portal-meta text-[var(--color-text-muted)]">
                   ⚠ No doctor pinned — employees can book with any GP offering the pre-assessment.
                 </span>
               ) : null}

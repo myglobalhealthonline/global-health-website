@@ -15,13 +15,14 @@
  * No component edits required.
  */
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronDown, Languages, Check } from "lucide-react";
+import { ChevronDown, Languages } from "lucide-react";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { localeDisplayName } from "@/lib/i18n/locale-display";
 import { swapLangInPath } from "@/lib/routing/path-rewrites";
 import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
+import { AppMenu, AppMenuItem } from "@/components/AppMenu";
 
 export function LanguageSwitcher({
   currentLang,
@@ -42,86 +43,39 @@ export function LanguageSwitcher({
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    function onClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    }
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        setOpen(false);
-        triggerRef.current?.focus();
-      }
-    }
-    document.addEventListener("mousedown", onClick);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", onClick);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open]);
 
   if (availableLocales.length <= 1) return null;
 
-  const itemStyle = (isActive: boolean): React.CSSProperties => ({
-    minHeight: 44,
-    padding: "10px 14px",
-    borderRadius: 8,
-    textDecoration: "none",
-    background: isActive ? "var(--color-background-soft)" : "transparent",
-    color: "var(--color-text-primary)",
-    fontSize: 13,
-    fontWeight: isActive ? 700 : 500,
-    cursor: "pointer",
-    border: "none",
-    width: "100%",
-    textAlign: "left" as const,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-  });
+  const itemClass = (isActive: boolean) =>
+    `group/sub flex min-h-[44px] w-full cursor-pointer items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border-none px-3.5 py-2.5 text-left text-[13px] font-semibold outline-none transition-colors duration-150 hover:bg-white/[0.08] focus-visible:bg-white/[0.08] data-[highlighted]:bg-white/[0.08] motion-reduce:transition-none ${
+      isActive ? "text-[var(--color-brand-accent)]" : "text-white/90"
+    }`;
 
   return (
-    <div ref={ref} className="relative">
-      <button
-        ref={triggerRef}
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-haspopup="true"
-        aria-expanded={open}
-        data-open={open}
-        className="gh-focus-on-dark inline-flex cursor-pointer items-center gap-1.5 rounded-full border-none bg-transparent px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:text-white data-[open=true]:text-white"
-        style={{ minHeight: 44 }}
-      >
-        <Languages aria-hidden className="size-3.5 opacity-80" />
-        <span className="uppercase">{currentLang}</span>
-        <ChevronDown
-          aria-hidden
-          className="size-3 opacity-70 transition-transform duration-200 motion-reduce:transition-none"
-          style={{ transform: open ? "rotate(180deg)" : "none" }}
-        />
-      </button>
-
-      {open ? (
-        <div
-          aria-label="Choose language"
-          className="absolute right-0 z-50 mt-2 overflow-hidden"
-          style={{
-            minWidth: 200,
-            maxHeight: "min(calc(100vh - 120px), 320px)",
-            overflowY: "auto",
-            background: "var(--color-background-page)",
-            border: "1px solid var(--color-border)",
-            borderRadius: 12,
-            boxShadow: "var(--shadow-elevated)",
-          }}
+    <AppMenu
+      onOpenChange={setOpen}
+      contentClassName="gh2-glass-forest gh2-filters-dark min-w-[200px] p-2"
+      trigger={
+        <button
+          type="button"
+          aria-haspopup="true"
+          aria-expanded={open}
+          data-open={open}
+          className="gh-focus-on-dark inline-flex cursor-pointer items-center gap-1.5 rounded-full border-none bg-transparent px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:text-white data-[open=true]:text-white"
+          style={{ minHeight: 44 }}
         >
-          <ul className="m-0 list-none p-1">
-            {availableLocales.map((loc) => {
+          <Languages aria-hidden className="size-3.5 opacity-80" />
+          <span className="uppercase">{currentLang}</span>
+          <ChevronDown
+            aria-hidden
+            className="size-3 opacity-70 transition-transform duration-200 motion-reduce:transition-none"
+            style={{ transform: open ? "rotate(180deg)" : "none" }}
+          />
+        </button>
+      }
+    >
+      <ul aria-label="Choose language" className="m-0 list-none">
+        {availableLocales.map((loc) => {
               const isActive = loc === currentLang;
               const current = pathname || "/";
               const swapped = swapLangInPath(current, loc);
@@ -133,9 +87,14 @@ export function LanguageSwitcher({
 
               const label = (
                 <span className="inline-flex items-center gap-2">
-                  <span className="uppercase text-[var(--color-text-muted)]">
-                    {loc}
-                  </span>
+                  <span
+                    aria-hidden
+                    className={`h-3.5 w-[3px] shrink-0 rounded-full transition-opacity duration-150 group-hover/sub:opacity-100 group-focus-visible/sub:opacity-100 group-data-[highlighted]/sub:opacity-100 ${
+                      isActive ? "opacity-100" : "opacity-0"
+                    }`}
+                    style={{ background: "var(--color-brand-accent)" }}
+                  />
+                  <span className="uppercase text-white/55">{loc}</span>
                   <span>{localeDisplayName(loc, "native")}</span>
                 </span>
               );
@@ -147,24 +106,19 @@ export function LanguageSwitcher({
                 // x-gh-locale header stamped by the middleware.
                 return (
                   <li key={loc}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setClientLocaleCookie(loc);
-                        setOpen(false);
-                        window.location.href = swapped;
-                      }}
-                      className="gh-switcher-item"
-                      style={itemStyle(isActive)}
-                    >
-                      {label}
-                      {isActive ? (
-                        <Check
-                          aria-hidden
-                          className="size-3.5 text-[var(--color-brand-primary)]"
-                        />
-                      ) : null}
-                    </button>
+                    <AppMenuItem asChild>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setClientLocaleCookie(loc);
+                          setOpen(false);
+                          window.location.href = swapped;
+                        }}
+                        className={itemClass(isActive)}
+                      >
+                        {label}
+                      </button>
+                    </AppMenuItem>
                   </li>
                 );
               }
@@ -173,30 +127,23 @@ export function LanguageSwitcher({
               // re-renders the same page in the chosen language.
               return (
                 <li key={loc}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setClientLocaleCookie(loc);
-                      setOpen(false);
-                      router.refresh();
-                    }}
-                    className="gh-switcher-item"
-                    style={itemStyle(isActive)}
-                  >
-                    {label}
-                    {isActive ? (
-                      <Check
-                        aria-hidden
-                        className="size-3.5 text-[var(--color-brand-primary)]"
-                      />
-                    ) : null}
-                  </button>
+                  <AppMenuItem asChild>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setClientLocaleCookie(loc);
+                        setOpen(false);
+                        router.refresh();
+                      }}
+                      className={itemClass(isActive)}
+                    >
+                      {label}
+                    </button>
+                  </AppMenuItem>
                 </li>
               );
-            })}
-          </ul>
-        </div>
-      ) : null}
-    </div>
+        })}
+      </ul>
+    </AppMenu>
   );
 }

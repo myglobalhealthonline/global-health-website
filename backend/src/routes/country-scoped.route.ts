@@ -344,6 +344,7 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
             serviceId: service.id,
             doctorId: doctor.id,
             isActive: true,
+            status: "active",
           },
           select: { id: true },
         });

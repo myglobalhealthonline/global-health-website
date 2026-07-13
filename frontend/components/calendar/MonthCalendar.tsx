@@ -6,6 +6,7 @@ import {
   buildMonthGrid,
   WEEKDAY_LABELS,
   monthLabel,
+  dayLabel,
 } from "./calendar-utils";
 import { IconBtn } from "@/components/portal-atoms";
 
@@ -33,6 +34,24 @@ function summarize(items: CalendarItem[] | undefined) {
     else if (it.status === "BOOKED" || it.status === "HELD") booked += 1;
   }
   return { consults, open, blocked, booked };
+}
+
+/** Accessible name for a day cell — the visible counts are color-coded dots
+ *  only (open/blocked/booked), so screen-reader users need the full
+ *  breakdown spelled out (CAL-04-004). */
+function buildDayAriaLabel(
+  key: string,
+  consults: number,
+  open: number,
+  blocked: number,
+  booked: number,
+): string {
+  const parts: string[] = [];
+  if (consults > 0) parts.push(`${consults} consultation${consults > 1 ? "s" : ""}`);
+  if (open > 0) parts.push(`${open} open slot${open > 1 ? "s" : ""}`);
+  if (blocked > 0) parts.push(`${blocked} blocked slot${blocked > 1 ? "s" : ""}`);
+  if (booked > 0) parts.push(`${booked} booked slot${booked > 1 ? "s" : ""}`);
+  return parts.length > 0 ? `${dayLabel(key)}, ${parts.join(", ")}` : dayLabel(key);
 }
 
 export function MonthCalendar({
@@ -92,7 +111,7 @@ export function MonthCalendar({
         {WEEKDAY_LABELS.map((d, i) => (
           <div
             key={d}
-            className="px-2 py-2 text-center text-[10px] font-bold uppercase tracking-[0.12em]"
+            className="px-2 py-2 text-center text-portal-micro font-bold uppercase tracking-[0.12em]"
             style={{ color: "var(--portal-muted)", opacity: i >= 5 ? 0.6 : 1 }}
           >
             {d}
@@ -103,17 +122,18 @@ export function MonthCalendar({
       {/* Day grid */}
       <div className="gh-calendar-grid grid grid-cols-7 overflow-hidden">
         {cells.map((cell) => {
-          const items = itemsByDay.get(cell.key);
-          const { consults, open, blocked, booked } = summarize(items);
+          const items = itemsByDay.get(cell.key) ?? [];
           const isToday = cell.key === todayKey;
           const isSelected = cell.key === selectedDay;
-          const hasAny = (items?.length ?? 0) > 0;
+          const hasAny = items.length > 0;
+          const { consults, open, blocked, booked } = summarize(items);
           return (
             <button
               key={cell.key}
               type="button"
               onClick={() => onSelectDay(cell.key)}
-              className={`gh-calendar-day relative flex min-h-[68px] flex-col items-start gap-1 p-1 text-left transition sm:min-h-[92px] sm:p-1.5 ${
+              aria-label={buildDayAriaLabel(cell.key, consults, open, blocked, booked)}
+              className={`gh-calendar-day gh-calendar-day--tappable relative flex min-h-[68px] flex-col items-start gap-1 p-1 text-left transition sm:min-h-[92px] sm:p-1.5 ${
                 cell.inMonth ? "" : "gh-calendar-day-outside"
               } ${isSelected ? "gh-calendar-day-selected" : ""}`}
               style={{
@@ -138,16 +158,28 @@ export function MonthCalendar({
               {hasAny ? (
                 <span className="mt-auto flex w-full flex-wrap gap-1">
                   {consults > 0 ? (
-                    <span
-                      className="inline-flex max-w-full items-center truncate rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none"
-                      style={{ background: "var(--portal-success-soft)", color: "var(--portal-success-text)" }}
-                    >
-                      {consults} consult{consults > 1 ? "s" : ""}
-                    </span>
+                    <>
+                      {/* Full word badge — enough room from sm: up. */}
+                      <span
+                        className="hidden max-w-full items-center truncate rounded-full px-1.5 py-0.5 text-portal-micro font-bold leading-none sm:inline-flex"
+                        style={{ background: "var(--portal-success-soft)", color: "var(--portal-success-text)" }}
+                      >
+                        {consults} consult{consults > 1 ? "s" : ""}
+                      </span>
+                      {/* Narrow-width fallback — dot + numeral, matches the
+                          open/booked/blocked pattern below (05-003). */}
+                      <span
+                        className="inline-flex items-center gap-0.5 text-portal-micro font-semibold sm:hidden"
+                        style={{ color: "var(--portal-success-text)" }}
+                      >
+                        <span className="size-1.5 rounded-full" style={{ background: "var(--portal-success)" }} />
+                        {consults}
+                      </span>
+                    </>
                   ) : null}
                   {booked > 0 ? (
                     <span
-                      className="inline-flex items-center gap-0.5 text-[10px] font-semibold"
+                      className="inline-flex items-center gap-0.5 text-portal-micro font-semibold"
                       style={{ color: "var(--portal-info-text)" }}
                     >
                       <span className="size-1.5 rounded-full" style={{ background: "var(--portal-info)" }} />
@@ -156,7 +188,7 @@ export function MonthCalendar({
                   ) : null}
                   {open > 0 ? (
                     <span
-                      className="inline-flex items-center gap-0.5 text-[10px] font-semibold"
+                      className="inline-flex items-center gap-0.5 text-portal-micro font-semibold"
                       style={{ color: "var(--portal-success-text)" }}
                     >
                       <span className="size-1.5 rounded-full" style={{ background: "var(--portal-success)" }} />
@@ -165,7 +197,7 @@ export function MonthCalendar({
                   ) : null}
                   {blocked > 0 ? (
                     <span
-                      className="inline-flex items-center gap-0.5 text-[10px] font-semibold"
+                      className="inline-flex items-center gap-0.5 text-portal-micro font-semibold"
                       style={{ color: "var(--portal-danger-text)" }}
                     >
                       <span className="size-1.5 rounded-full" style={{ background: "var(--portal-danger)" }} />

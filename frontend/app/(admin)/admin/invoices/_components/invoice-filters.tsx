@@ -33,9 +33,9 @@ export type InvoiceFilterValues = {
 };
 
 const labelCls =
-  "mb-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]";
+  "mb-1 block text-portal-micro font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]";
 const fieldCls =
-  "w-full rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-[13px] text-[var(--color-text-primary)] outline-none focus:border-[var(--color-brand-primary)]";
+  "w-full rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-portal-compact text-[var(--color-text-primary)] outline-none focus:border-[var(--color-brand-primary)]";
 
 export function InvoiceFilters({ values }: { values: InvoiceFilterValues }) {
   const router = useRouter();
@@ -191,7 +191,7 @@ export function InvoiceFilters({ values }: { values: InvoiceFilterValues }) {
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex items-center gap-1.5 rounded-md bg-[var(--color-brand-primary)] px-4 py-2 text-[13px] font-semibold text-white hover:opacity-90 disabled:opacity-60"
+          className="inline-flex items-center gap-1.5 rounded-md bg-[var(--color-brand-primary)] px-4 py-2 text-portal-compact font-semibold text-white hover:opacity-90 disabled:opacity-60"
         >
           {pending ? (
             <Loader2 className="size-3.5 animate-spin" aria-hidden />
@@ -205,7 +205,7 @@ export function InvoiceFilters({ values }: { values: InvoiceFilterValues }) {
             type="button"
             onClick={handleClear}
             disabled={pending}
-            className="inline-flex items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-white px-4 py-2 text-[13px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)] disabled:opacity-60"
+            className="inline-flex items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-white px-4 py-2 text-portal-compact font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)] disabled:opacity-60"
           >
             <X className="size-3.5" aria-hidden />
             Clear

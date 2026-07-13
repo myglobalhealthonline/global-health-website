@@ -91,7 +91,7 @@ export function ResetPasswordClient({ t }: { t: ResetPasswordStrings }) {
             {t.noToken.replace("{kind}", isInvite ? t.inviteTokenKind : t.resetTokenKind)}
           </p>
         ) : (
-          <form onSubmit={onSubmit} className="mt-6 space-y-4">
+          <form onSubmit={onSubmit} method="post" className="mt-6 space-y-4">
             <label className="block">
               <span className="gh-field-label" data-required>{t.newPasswordLabel}</span>
               <input

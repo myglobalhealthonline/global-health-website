@@ -238,7 +238,7 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
     <>
       <Link
         href={meta.listHref}
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to {meta.label.toLowerCase()}
       </Link>
@@ -269,16 +269,16 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
             locales={locales}
             defaultLocale={defaultLocale}
           />
-          <div className="gh-admin-service-actions border-t border-[var(--color-border)] pt-6">
-            <button type="submit" className="gh-btn gh-btn-primary">
-              Create {meta.singularLabel.toLowerCase()}
-            </button>
+          <div className="gh-admin-service-actions justify-end border-t border-[var(--color-border)] pt-6">
             <Link
               href={meta.listHref}
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="gh-btn gh-btn-ghost"
             >
               Cancel
             </Link>
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Create {meta.singularLabel.toLowerCase()}
+            </button>
           </div>
         </form>
       </AdminCard>

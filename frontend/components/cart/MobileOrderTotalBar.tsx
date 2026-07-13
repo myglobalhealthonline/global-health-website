@@ -46,7 +46,7 @@ export function MobileOrderTotalBar({
   return (
     <div
       ref={barRef}
-      className={`gh2-glass-deep fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-4 px-5 py-3 md:hidden ${
+        className={`gh2-glass-deep fixed inset-x-0 bottom-0 z-[var(--z-fixed-bar)] flex items-center justify-between gap-4 px-5 py-3 md:hidden ${
         hidden ? "pointer-events-none opacity-0" : "opacity-100"
       } transition-opacity duration-150 motion-reduce:transition-none`}
       style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}

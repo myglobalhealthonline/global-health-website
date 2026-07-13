@@ -92,6 +92,7 @@
     "cancelScheduled": "Su membresía está cancelada. Las ventajas continúan hasta el {date}.",
     "cancelAtPeriodEnd": "Se cancela el {date}",
     "change": "Cambiar de plan",
+    "browseAllPlans": "Ver todos los planes",
     "upgrade": "Subir o bajar de plan",
     "changeTo": "Cambiar a {plan}",
     "changing": "Programando el cambio…",
@@ -119,6 +120,8 @@
       "paused": "Su membresía está pausada y los beneficios están en espera. Reanude la facturación desde el portal de facturación de abajo para restaurar sus créditos y descuentos.",
       "confirming": "Confirmando su pago… normalmente solo tarda unos segundos.",
       "stillProcessing": "Pago recibido: la activación de su membresía está tardando un poco más de lo habitual.",
+      "alreadyActive": "Ya tiene una membresía activa — gestiónela a continuación.",
+      "dismiss": "Cerrar",
       "refresh": "Actualizar"
     }
   },
@@ -148,6 +151,7 @@
     "reason_RESET_EXPIRE": "Mes anterior restablecido",
     "reason_RESERVED": "Reservado",
     "reason_CONSUMED": "Usado en consulta",
+    "reason_CONSUMED_COMPLETED": "Consulta completada",
     "reason_REDEEMED": "Canjeado por kit",
     "reason_RELEASED": "Devuelto",
     "reason_ADJUSTMENT": "Ajuste manual",
@@ -213,6 +217,12 @@
       "body": "Su membresía incluye este kit. Cánjelo con {required} créditos de bienestar: actualmente tiene {balance}.",
       "cta": "Canjear este kit",
       "progress": "{progress} de {required} créditos de bienestar acumulados"
+    },
+    "howItWorks": {
+      "title": "Cómo funcionan los créditos de bienestar",
+      "step1": "Gane créditos de bienestar automáticamente cada mes pagado de membresía.",
+      "step2": "Acumule créditos suficientes para alcanzar el requisito de un kit.",
+      "step3": "Canjee: le enviamos el kit directamente a su domicilio."
     }
   },
   "invoice": {
@@ -226,7 +236,8 @@
     "status_paid": "Pagada",
     "status_open": "Pendiente",
     "status_void": "Anulada",
-    "status_uncollectible": "Sin pagar"
+    "status_uncollectible": "Sin pagar",
+    "status_processing": "En proceso"
   },
   "legal": {
     "eyebrow": "Aspectos legales",

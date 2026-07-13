@@ -121,7 +121,8 @@ export function PricingPlanCard({
 
       {/* Plan name — reserve 2 lines so the price row lines up across cards. */}
       <h3
-        className="flex items-start font-extrabold tracking-[-0.02em]"
+        className="line-clamp-2 flex items-start font-extrabold tracking-[-0.02em]"
+        title={plan.name}
         style={{
           fontSize: "clamp(1.2rem,1.1vw + 0.7rem,1.45rem)",
           lineHeight: 1.2,
@@ -146,7 +147,8 @@ export function PricingPlanCard({
 
       {/* Short description — reserve 2 lines so dividers align. */}
       <p
-        className="mt-3 text-sm leading-relaxed"
+        className="mt-3 line-clamp-2 text-sm leading-relaxed"
+        title={plan.shortDescription ?? undefined}
         style={{ color: "rgba(255,255,255,0.65)", minHeight: "2.8em" }}
       >
         {plan.shortDescription}

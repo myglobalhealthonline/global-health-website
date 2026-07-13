@@ -57,7 +57,13 @@
     "goToSecurity": "Security",
     "securityHint": "Password, email",
     "bookCta": "Book a consultation",
-    "booked": "Booked {date}"
+    "booked": "Booked {date}",
+    "needsAttentionTitle": "Needs your attention",
+    "needsAttentionPaymentRow": "{type} needs payment",
+    "payNow": "Pay now",
+    "needsAttentionAwaitingOne": "1 booking request awaiting confirmation",
+    "needsAttentionAwaitingMany": "{count} booking requests awaiting confirmation",
+    "reviewAction": "Review"
   },
   "bookings": {
     "breadcrumb": "Account",
@@ -69,7 +75,7 @@
     "noBookingsBody": "You have not made any booking requests. Start by booking your first consultation.",
     "bookOnline": "Book online",
     "searchLabel": "Search",
-    "searchPlaceholder": "Consultation type, country, status…",
+    "searchPlaceholder": "Type, doctor, order #, country, status…",
     "statusLabel": "Status",
     "filterAll": "All statuses",
     "filterCreated": "Created",
@@ -102,19 +108,20 @@
     "metaCountry": "Country",
     "metaDoctor": "Doctor",
     "metaScheduled": "Scheduled",
-    "metaPayment": "Payment"
+    "metaPayment": "Payment",
+    "tabsAria": "Booking views"
   },
   "orders": {
     "breadcrumb": "Account",
     "title": "My orders",
     "subtitle": "Health tests + online prescriptions you've ordered. Consultation bookings live under 'My bookings'.",
-    "orderMore": "Order more",
+    "orderMore": "Start new order",
     "orderHistory": "Order history",
     "noOrders": "No orders yet.",
     "browseProducts": "Browse products →",
     "items": "{count} item",
     "itemsPlural": "{count} items",
-    "open": "Open",
+    "open": "View order",
     "backToOrders": "Back to orders",
     "placedOn": "Placed {date}",
     "itemsSection": "Items",
@@ -142,6 +149,8 @@
     "sumStatus": "Order status",
     "sumStatusHint": "Fulfillment state",
     "awaitingConfirmation": "Awaiting confirmation",
+    "paymentFailedHint": "Payment failed — please try again",
+    "paymentCancelledHint": "Order cancelled — no payment needed",
     "sumItems": "Items",
     "sumItemsHint": "Products in this order",
     "inclShipping": "Including shipping",
@@ -150,7 +159,18 @@
     "careRecordBody": "Keep this order with your prescriptions and medical files for follow-up conversations.",
     "reorder": "Reorder",
     "reorderAdding": "Adding to cart…",
-    "reorderError": "Could not add every item to your cart."
+    "reorderError": "Could not add every item to your cart.",
+    "paymentActionTitle": "Payment needed",
+    "paymentActionBody": "This order hasn't been paid yet. Complete payment to finish processing it.",
+    "completePayment": "Complete payment",
+    "completePaymentLoading": "Loading…",
+    "completePaymentError": "Couldn't start payment — try again.",
+    "colOrderNumber": "Order #",
+    "colDate": "Date",
+    "colItems": "Items",
+    "colStatus": "Status",
+    "colTotal": "Total",
+    "orderInfoSection": "Order info"
   },
   "prescriptions": {
     "breadcrumb": "Account",
@@ -162,6 +182,7 @@
     "days": "day(s)",
     "refill": "refill",
     "refills": "refills",
+    "refillButton": "Request refill",
     "issuedBy": "Issued by {doctor} on {date}",
     "viewBooking": "View booking",
     "onlineOrders": "Online orders",
@@ -170,7 +191,7 @@
     "noOnlineOrders": "No online prescription orders yet.",
     "browseProducts": "Browse products →",
     "ordered": "Ordered {date}",
-    "open": "Open"
+    "open": "View booking"
   },
   "medicalFiles": {
     "breadcrumb": "Patient portal",
@@ -244,6 +265,7 @@
     "refundedNote": "This payment was refunded. It can take a few business days to appear on your statement.",
     "refundedNoteShort": "Refunded — a few days to appear on your statement.",
     "payNow": "Complete payment",
+    "payNowError": "Couldn't start payment — try again.",
     "loading": "Loading…",
     "receipt": "Receipt",
     "viewReceipt": "View receipt",
@@ -257,6 +279,7 @@
     "emailLabel": "Email",
     "emailNote": "Email can't be changed yet. Contact support if you need to switch.",
     "fullNameLabel": "Full name",
+    "fieldRequired": "This field is required.",
     "phoneLabel": "Phone",
     "phonePlaceholder": "+353 89 …",
     "phoneNote": "Used so the clinic can reach you about your booking. Leave blank if you prefer email only.",
@@ -286,6 +309,8 @@
     "saveMedicalProfile": "Save medical profile",
     "medicalSaved": "Medical profile saved",
     "medicalSaveFailed": "Could not save medical profile",
+    "tabContact": "Contact",
+    "tabMedical": "Medical details",
     "tabPersonal": "Personal",
     "tabInsurance": "Insurance",
     "tabVerification": "Verification",
@@ -384,7 +409,10 @@
     "sumAccountValue": "Patient",
     "sumAccountHint": "Security controls",
     "deletionCancelled": "Account deletion cancelled.",
-    "closeDialog": "Close dialog"
+    "closeDialog": "Close dialog",
+    "tabsAria": "Security sections",
+    "tabPassword": "Password",
+    "tabAccess": "Account access"
   },
   "family": {
     "breadcrumb": "Account",
@@ -394,6 +422,7 @@
     "empty": "You have not added any family members yet.",
     "addHeading": "Add a family member",
     "fullName": "Full name",
+    "fieldRequired": "This field is required.",
     "fullNamePlaceholder": "e.g. Maria Santos",
     "relationship": "Relationship",
     "relationshipPlaceholder": "e.g. Spouse, Child, Parent",
@@ -410,7 +439,7 @@
     "edit": "Edit",
     "remove": "Remove",
     "deleting": "Removing…",
-    "confirmRemove": "Remove this family member?",
+    "confirmRemove": "Remove this family member? They'll no longer be bookable and will lose access to shared plan credits.",
     "optional": "optional",
     "benefitsOn": "Plan benefits enabled",
     "benefitsOff": "Plan benefits off",
@@ -516,6 +545,7 @@
     "subtitle": "Register up to two nationalities. Document numbers are stored encrypted.",
     "slotTitle": "Nationality {n}",
     "country": "Country",
+    "fieldRequired": "This field is required.",
     "countryPlaceholder": "e.g. Ireland, Pakistan",
     "documentType": "Document type",
     "documentNumber": "Document number",
@@ -537,7 +567,8 @@
     "uploaded": "Document uploaded",
     "enableSecond": "Save Nationality 1 first to enable a second nationality.",
     "maxReached": "Maximum of two nationality documents reached.",
-    "loadingRecords": "Loading nationality records"
+    "loadingRecords": "Loading nationality records",
+    "saveSlot": "Save Nationality {n}"
   },
   "privacy": {
     "intro": "Control how your medical data is used. Changes are logged for compliance.",
@@ -585,7 +616,8 @@
     "notScheduled": "Not scheduled",
     "sumNextBillingHint": "Renewal date",
     "sumPrice": "Price",
-    "sumPriceHint": "Monthly subscription"
+    "sumPriceHint": "Monthly subscription",
+    "tabsAria": "Membership and rewards sections"
   },
   "calendar": {
     "eyebrow": "My schedule",
@@ -599,7 +631,8 @@
     "sumMeetLinksHint": "Ready to join",
     "sumMarkets": "Markets",
     "sumMarketsHint": "Countries represented",
-    "emptyDay": "No consultations on this day."
+    "emptyDay": "No consultations on this day.",
+    "emptyDayHint": "Pick another day to review your appointments."
   },
   "messages": {
     "eyebrow": "Messages",
@@ -641,7 +674,11 @@
     "takingYouBack": "Taking you back to your bookings…",
     "noOpenTimesTitle": "No open times right now",
     "noOpenTimesBody": "Your clinician has no available slots in the next two weeks. Cancel this booking and rebook, or message the clinic to ask for a specific time.",
-    "availableDates": "Available dates"
+    "availableDates": "Available dates",
+    "newTime": "New time",
+    "confirmReschedule": "Confirm reschedule",
+    "cancelSelection": "Cancel",
+    "confirming": "Rescheduling…"
   },
   "accessHistory": {
     "breadcrumb": "Patient portal",

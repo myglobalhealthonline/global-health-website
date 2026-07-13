@@ -7,10 +7,8 @@ import {
   Bell,
   Briefcase,
   CalendarDays,
-  CalendarRange,
   CreditCard,
   FileText,
-  Gift,
   History,
   LayoutDashboard,
   MessagesSquare,
@@ -32,6 +30,7 @@ import type { NotificationPopoverItem } from "@/components/NotificationPopover";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { supportedLocaleCodes } from "@/lib/i18n/types";
+import { UnsavedChangesGuard } from "@/components/UnsavedChangesGuard";
 
 /**
  * Patient portal layout. Reuses `PortalShell` so admin / doctor / patient
@@ -93,7 +92,6 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       items: [
         { href: "/account/bookings", label: a.nav.myBookings, icon: <CalendarDays className="size-4" aria-hidden /> },
         { href: "/account/messages", label: a.nav.messages, icon: <MessagesSquare className="size-4" aria-hidden />, badge: unreadMessages },
-        { href: "/account/calendar", label: a.nav.calendar, icon: <CalendarRange className="size-4" aria-hidden /> },
         { href: "/account/prescriptions", label: a.nav.prescriptions, icon: <PillBottle className="size-4" aria-hidden /> },
         { href: "/account/medical-files", label: a.nav.medicalFiles, icon: <FileText className="size-4" aria-hidden /> },
       ],
@@ -105,7 +103,6 @@ export default async function AccountLayout({ children }: { children: ReactNode 
         ...(hasCorporateMembership
           ? [{ href: "/account/corporate", label: a.nav.corporate, icon: <Briefcase className="size-4" aria-hidden /> }]
           : []),
-        { href: "/account/rewards", label: a.nav.rewards, icon: <Gift className="size-4" aria-hidden /> },
       ],
     },
     {
@@ -150,6 +147,14 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       chrome={common.portalChrome}
     >
       {children}
+      <UnsavedChangesGuard
+        i18n={{
+          title: common.portalChrome.unsavedChangesTitle,
+          body: common.portalChrome.unsavedChangesBody,
+          keepEditing: common.portalChrome.unsavedChangesKeepEditing,
+          discard: common.portalChrome.unsavedChangesDiscard,
+        }}
+      />
     </PortalShell>
   );
 }

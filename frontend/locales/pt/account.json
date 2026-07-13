@@ -57,7 +57,13 @@
     "goToSecurity": "Segurança",
     "securityHint": "Palavra-passe, email",
     "bookCta": "Marcar uma consulta",
-    "booked": "Marcado {date}"
+    "booked": "Marcado {date}",
+    "needsAttentionTitle": "Requer atenção",
+    "needsAttentionPaymentRow": "{type} precisa de pagamento",
+    "payNow": "Pagar agora",
+    "needsAttentionAwaitingOne": "1 pedido de marcação a aguardar confirmação",
+    "needsAttentionAwaitingMany": "{count} pedidos de marcação a aguardar confirmação",
+    "reviewAction": "Rever"
   },
   "bookings": {
     "breadcrumb": "Conta",
@@ -69,7 +75,7 @@
     "noBookingsBody": "Ainda não efetuou nenhum pedido de marcação. Comece por marcar a sua primeira consulta.",
     "bookOnline": "Marcar online",
     "searchLabel": "Pesquisar",
-    "searchPlaceholder": "Tipo de consulta, país, estado…",
+    "searchPlaceholder": "Tipo, médico, nº da encomenda, país, estado…",
     "statusLabel": "Estado",
     "filterAll": "Todos os estados",
     "filterCreated": "Criada",
@@ -102,19 +108,20 @@
     "metaCountry": "País",
     "metaDoctor": "Médico",
     "metaScheduled": "Agendada",
-    "metaPayment": "Pagamento"
+    "metaPayment": "Pagamento",
+    "tabsAria": "Vistas de reservas"
   },
   "orders": {
     "breadcrumb": "Conta",
     "title": "As minhas encomendas",
     "subtitle": "Testes de saúde + prescrições online que encomendou. As marcações de consultas encontram-se em 'As minhas marcações'.",
-    "orderMore": "Encomendar mais",
+    "orderMore": "Iniciar nova encomenda",
     "orderHistory": "Histórico de encomendas",
     "noOrders": "Sem encomendas ainda.",
     "browseProducts": "Ver produtos →",
     "items": "{count} artigo",
     "itemsPlural": "{count} artigos",
-    "open": "Abrir",
+    "open": "Ver encomenda",
     "backToOrders": "Voltar às encomendas",
     "placedOn": "Efetuado em {date}",
     "itemsSection": "Artigos",
@@ -143,6 +150,8 @@
     "sumStatusHint": "Estado de entrega",
     "sumItems": "Itens",
     "awaitingConfirmation": "A aguardar confirmação",
+    "paymentFailedHint": "O pagamento falhou — tente novamente",
+    "paymentCancelledHint": "Encomenda cancelada — não é necessário pagamento",
     "sumItemsHint": "Produtos nesta encomenda",
     "inclShipping": "Inclui envio",
     "trackShipment": "Acompanhar envio",
@@ -150,7 +159,18 @@
     "careRecordBody": "Guarde esta encomenda junto das suas prescrições e ficheiros médicos para conversas de acompanhamento.",
     "reorder": "Encomendar novamente",
     "reorderAdding": "A adicionar ao carrinho…",
-    "reorderError": "Não foi possível adicionar todos os artigos ao carrinho."
+    "reorderError": "Não foi possível adicionar todos os artigos ao carrinho.",
+    "paymentActionTitle": "Pagamento necessário",
+    "paymentActionBody": "Esta encomenda ainda não foi paga. Conclua o pagamento para terminar o processamento.",
+    "completePayment": "Concluir pagamento",
+    "completePaymentLoading": "A carregar…",
+    "completePaymentError": "Não foi possível iniciar o pagamento — tente novamente.",
+    "colOrderNumber": "N.º de encomenda",
+    "colDate": "Data",
+    "colItems": "Itens",
+    "colStatus": "Estado",
+    "colTotal": "Total",
+    "orderInfoSection": "Informação da encomenda"
   },
   "prescriptions": {
     "breadcrumb": "Conta",
@@ -162,6 +182,7 @@
     "days": "dia(s)",
     "refill": "renovação",
     "refills": "renovações",
+    "refillButton": "Pedir renovação",
     "issuedBy": "Emitido por {doctor} em {date}",
     "viewBooking": "Ver marcação",
     "onlineOrders": "Encomendas online",
@@ -170,7 +191,7 @@
     "noOnlineOrders": "Ainda não tem encomendas de prescrição online.",
     "browseProducts": "Ver produtos →",
     "ordered": "Encomendado {date}",
-    "open": "Abrir"
+    "open": "Ver marcação"
   },
   "medicalFiles": {
     "breadcrumb": "Portal do paciente",
@@ -244,6 +265,7 @@
     "refundedNote": "Este pagamento foi reembolsado. Pode demorar alguns dias úteis a aparecer no seu extrato.",
     "refundedNoteShort": "Reembolsado — alguns dias até aparecer no seu extrato.",
     "payNow": "Concluir pagamento",
+    "payNowError": "Não foi possível iniciar o pagamento — tente novamente.",
     "loading": "A carregar…",
     "receipt": "Recibo",
     "viewReceipt": "Ver recibo",
@@ -257,6 +279,7 @@
     "emailLabel": "Email",
     "emailNote": "O email não pode ser alterado de momento. Contacte o suporte se precisar de trocar.",
     "fullNameLabel": "Nome completo",
+    "fieldRequired": "This field is required.",
     "phoneLabel": "Telefone",
     "phonePlaceholder": "+351 9…",
     "phoneNote": "Para a clínica o contactar sobre a sua marcação. Deixe em branco se preferir apenas email.",
@@ -286,6 +309,8 @@
     "saveMedicalProfile": "Guardar perfil médico",
     "medicalSaved": "Perfil médico guardado",
     "medicalSaveFailed": "Não foi possível guardar o perfil médico",
+    "tabContact": "Contacto",
+    "tabMedical": "Dados médicos",
     "tabPersonal": "Pessoal",
     "tabInsurance": "Seguro",
     "tabVerification": "Verificação",
@@ -384,7 +409,10 @@
     "sumAccountValue": "Paciente",
     "sumAccountHint": "Controlos de segurança",
     "deletionCancelled": "Eliminação da conta cancelada.",
-    "closeDialog": "Fechar janela"
+    "closeDialog": "Fechar janela",
+    "tabsAria": "Secções de segurança",
+    "tabPassword": "Palavra-passe",
+    "tabAccess": "Acesso à conta"
   },
   "family": {
     "breadcrumb": "Conta",
@@ -394,6 +422,7 @@
     "empty": "Ainda não adicionou nenhum membro da família.",
     "addHeading": "Adicionar um membro da família",
     "fullName": "Nome completo",
+    "fieldRequired": "This field is required.",
     "fullNamePlaceholder": "ex. Maria Santos",
     "relationship": "Parentesco",
     "relationshipPlaceholder": "ex. Cônjuge, Filho(a), Pai/Mãe",
@@ -410,7 +439,7 @@
     "edit": "Editar",
     "remove": "Remover",
     "deleting": "A remover…",
-    "confirmRemove": "Remover este membro da família?",
+    "confirmRemove": "Remover este membro da família? Deixará de poder ser reservado e perderá o acesso aos créditos partilhados do plano.",
     "optional": "opcional",
     "benefitsOn": "Benefícios do plano ativados",
     "benefitsOff": "Benefícios do plano desativados",
@@ -516,6 +545,7 @@
     "subtitle": "Registe até duas nacionalidades. Os números dos documentos são guardados encriptados.",
     "slotTitle": "Nacionalidade {n}",
     "country": "País",
+    "fieldRequired": "This field is required.",
     "countryPlaceholder": "ex.: Irlanda, Paquistão",
     "documentType": "Tipo de documento",
     "documentNumber": "Número do documento",
@@ -537,7 +567,8 @@
     "uploaded": "Documento carregado",
     "enableSecond": "Guarde primeiro a Nacionalidade 1 para ativar uma segunda nacionalidade.",
     "maxReached": "Atingido o máximo de dois documentos de nacionalidade.",
-    "loadingRecords": "A carregar registos de nacionalidade"
+    "loadingRecords": "A carregar registos de nacionalidade",
+    "saveSlot": "Guardar nacionalidade {n}"
   },
   "privacy": {
     "intro": "Controle como os seus dados médicos são utilizados. As alterações são registadas para fins de conformidade.",
@@ -585,7 +616,8 @@
     "notScheduled": "Não agendada",
     "sumNextBillingHint": "Data de renovação",
     "sumPrice": "Preço",
-    "sumPriceHint": "Subscrição mensal"
+    "sumPriceHint": "Subscrição mensal",
+    "tabsAria": "Secções de subscrição e recompensas"
   },
   "calendar": {
     "eyebrow": "A minha agenda",
@@ -599,7 +631,8 @@
     "sumMeetLinksHint": "Prontos para entrar",
     "sumMarkets": "Mercados",
     "sumMarketsHint": "Países representados",
-    "emptyDay": "Sem consultas neste dia."
+    "emptyDay": "Sem consultas neste dia.",
+    "emptyDayHint": "Escolha outro dia para ver as suas consultas."
   },
   "messages": {
     "eyebrow": "Mensagens",
@@ -641,7 +674,11 @@
     "takingYouBack": "A regressar às suas marcações…",
     "noOpenTimesTitle": "Sem horários disponíveis de momento",
     "noOpenTimesBody": "O seu médico não tem horários disponíveis nas próximas duas semanas. Cancele esta marcação e volte a marcar, ou contacte a clínica para pedir um horário específico.",
-    "availableDates": "Datas disponíveis"
+    "availableDates": "Datas disponíveis",
+    "newTime": "Novo horário",
+    "confirmReschedule": "Confirmar reagendamento",
+    "cancelSelection": "Cancelar",
+    "confirming": "A reagendar…"
   },
   "accessHistory": {
     "breadcrumb": "Portal do paciente",

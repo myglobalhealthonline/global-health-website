@@ -103,7 +103,7 @@ export function FollowUpButton({
       onSubmit={submit}
       className="rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-3"
     >
-      <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+      <p className="text-portal-meta font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
         {copy.newFollowUpTitle}
       </p>
       <div className="mt-2 grid gap-2">
@@ -138,7 +138,7 @@ export function FollowUpButton({
           />
         </label>
         {error ? (
-          <p className="gh-status-warning rounded-md border px-3 py-2 text-[12.5px]">
+          <p className="gh-status-warning rounded-md border px-3 py-2 text-portal-label">
             {error}
           </p>
         ) : null}

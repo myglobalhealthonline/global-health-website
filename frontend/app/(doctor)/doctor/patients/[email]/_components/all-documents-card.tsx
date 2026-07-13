@@ -30,7 +30,7 @@ export async function AllDocumentsCard({ email }: { email: string }) {
         <h3 className="text-base font-bold text-[var(--portal-text)]">
           {p.allDocsTitle}
         </h3>
-        <p className="mt-2 text-[13px] text-rose-700">{result.message}</p>
+        <p className="mt-2 text-portal-compact text-rose-700">{result.message}</p>
       </section>
     );
   }
@@ -43,7 +43,7 @@ export async function AllDocumentsCard({ email }: { email: string }) {
       <h3 className="text-base font-bold text-[var(--portal-text)]">
         {p.allDocsTitle}
       </h3>
-      <p className="mt-1 text-[13px] text-[var(--portal-muted)]">
+      <p className="mt-1 text-portal-compact text-[var(--portal-muted)]">
         {p.allDocsDesc}
       </p>
 
@@ -53,7 +53,7 @@ export async function AllDocumentsCard({ email }: { email: string }) {
           <p className="mt-2 text-sm font-bold text-[var(--portal-text)]">
             {p.allDocsEmptyTitle}
           </p>
-          <p className="mx-auto mt-1 max-w-sm text-[12px] text-[var(--portal-muted)]">
+          <p className="mx-auto mt-1 max-w-sm text-portal-meta text-[var(--portal-muted)]">
             {p.allDocsEmptyDesc}
           </p>
         </div>
@@ -111,11 +111,11 @@ function Section({
 }) {
   return (
     <div className="gh-doctor-document-section">
-      <h4 className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+      <h4 className="mb-2 text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
         {title}
       </h4>
       {rows.length === 0 ? (
-        <p className="text-[13px] text-[var(--portal-muted)]">{empty}</p>
+        <p className="text-portal-compact text-[var(--portal-muted)]">{empty}</p>
       ) : (
         <ul className="gh-doctor-document-list divide-y divide-[var(--portal-line)]">
           {rows.map((r) => (
@@ -129,23 +129,23 @@ function Section({
                   aria-hidden
                 />
                 <div className="min-w-0">
-                  <p className="truncate text-[13px] font-semibold text-[var(--portal-text)]">
+                  <p className="truncate text-portal-compact font-semibold text-[var(--portal-text)]" title={r.title}>
                     {r.title}
                   </p>
-                  <p className="text-[11px] text-[var(--portal-muted)]">
+                  <p className="text-portal-thead text-[var(--portal-muted)]">
                     {r.meta} · {new Date(r.createdAt).toLocaleDateString()}
                   </p>
                 </div>
               </div>
               <div className="gh-doctor-document-actions flex shrink-0 flex-wrap items-center gap-2">
                 {r.badge ? (
-                  <span className="rounded-full bg-[var(--portal-well)] px-2 py-0.5 text-[11px] font-semibold text-[var(--portal-muted)]">
+                  <span className="rounded-full bg-[var(--portal-well)] px-2 py-0.5 text-portal-thead font-semibold text-[var(--portal-muted)]">
                     {r.badge}
                   </span>
                 ) : null}
                 <Link
                   href={`/doctor/appointments/${r.appointmentId}`}
-                  className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-[12px] font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)] sm:w-auto"
+                  className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-portal-meta font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)] sm:w-auto"
                 >
                   <Download className="size-3" aria-hidden /> {openLabel}
                 </Link>

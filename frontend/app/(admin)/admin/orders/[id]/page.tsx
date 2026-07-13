@@ -221,7 +221,7 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
                       {i.appointmentId ? (
                         <Link
                           href={`/admin/appointments/${i.appointmentId}`}
-                          className="mt-1 inline-block text-[11px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+                          className="mt-1 inline-block text-portal-thead font-semibold text-[var(--color-brand-primary)] hover:underline"
                         >
                           → Open appointment
                         </Link>
@@ -330,12 +330,12 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
                 </p>
               ) : null}
               {order.stripeSessionId ? (
-                <p className="text-[11px] text-[var(--color-text-muted)]">
+                <p className="text-portal-thead text-[var(--color-text-muted)]">
                   <span className="font-mono">Session: {order.stripeSessionId.slice(-12)}</span>
                 </p>
               ) : null}
               {order.stripePaymentIntentId ? (
-                <p className="text-[11px] text-[var(--color-text-muted)]">
+                <p className="text-portal-thead text-[var(--color-text-muted)]">
                   <span className="font-mono">PI: {order.stripePaymentIntentId.slice(-12)}</span>
                 </p>
               ) : null}

@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IdleLogout } from "@/components/IdleLogout";
+import { isEmailSegment, isIdSegment, PII_SAFE_CRUMB_LABEL, shortIdLabel } from "@/lib/breadcrumb-utils";
+import { usePortalMobileNavA11y } from "@/components/use-portal-mobile-nav";
 import {
   BarChart3,
   CalendarRange,
-  ChevronDown,
   ChevronRight,
   CreditCard,
   FileText,
@@ -38,7 +39,7 @@ import {
   NotificationPopover,
   type NotificationPopoverItem,
 } from "@/components/NotificationPopover";
-import { Pill, Btn } from "@/components/portal-atoms";
+import { PortalUserMenu } from "@/components/PortalUserMenu";
 
 export type AdminShellUser = {
   fullName: string;
@@ -68,7 +69,7 @@ const GLOBAL_ICONS: Record<string, LucideIcon> = {
   "/admin/invoices": ReceiptText,
   "/admin/automation": Workflow,
   "/admin/reports": BarChart3,
-  "/admin/pages": FileText,
+  "/admin/page-content": FileText,
   "/admin/services": Stethoscope,
   "/admin/blog": Newspaper,
   "/admin/subscriptions": CreditCard,
@@ -115,7 +116,7 @@ const COUNTRY_HREFS = new Set([
   "/admin/country-home",
   "/admin/country-content",
   "/admin/footer",
-  "/admin/pages",
+  "/admin/page-content",
   "/admin/services",
   "/admin/general-consultations",
   "/admin/specialist-consultations",
@@ -133,7 +134,7 @@ const COUNTRY_HREFS = new Set([
 const HREF_TO_FEATURE_KEY: Record<string, string> = {
   "/admin/country-home": "country-home",
   "/admin/country-content": "country-content",
-  "/admin/pages": "pages",
+  "/admin/page-content": "pages",
   "/admin/footer": "footer",
   "/admin/general-consultations": "general-consultations",
   "/admin/specialist-consultations": "specialist-consultations",
@@ -159,7 +160,7 @@ const ORDER: Record<string, number> = {
   // Country-scoped — by priority: controller → content → services →
   // bookings → footer last (site chrome, lowest priority).
   "/admin/country-features": 0,
-  "/admin/pages": 1,
+  "/admin/page-content": 1,
   "/admin/services": 2,
   "/admin/general-consultations": 3,
   "/admin/specialist-consultations": 4,
@@ -234,24 +235,11 @@ function bucketGlobalSections(global: Section[]): { label: string; items: Sectio
   return groups;
 }
 
-function initials(name: string, email: string): string {
-  if (name?.trim()) {
-    return name
-      .trim()
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((p) => p[0]?.toUpperCase() ?? "")
-      .join("");
-  }
-  return email[0]?.toUpperCase() ?? "?";
-}
-
 function humanizeSegment(seg: string, countries: CountryPickerOption[]): string {
   if (!seg) return "";
   const decoded = decodeURIComponent(seg);
   const country = countries.find((c) => c.slug === decoded || c.code.toLowerCase() === decoded.toLowerCase());
   if (country) return country.name;
-  if (decoded.includes("@")) return decoded;
   return decoded.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
@@ -269,7 +257,7 @@ function useBreadcrumbs(
     // the "Admin" crumb's target.
     const crumbs: { label: string; href: string | null }[] = [];
     let acc = "";
-    // Country-scoped routes (e.g. /admin/pages) implicitly operate on the
+    // Country-scoped routes (e.g. /admin/page-content) implicitly operate on the
     // topbar-selected country rather than a country segment in the URL —
     // surface that context in the trail so "Admin / Pages" doesn't read as
     // global when it's actually scoped to whichever country is active.
@@ -283,8 +271,11 @@ function useBreadcrumbs(
         }
         continue;
       }
-      const isCuid = segments[i].length === 25 && /^[a-z0-9]+$/i.test(segments[i]);
-      const label = isCuid ? `${segments[i].slice(0, 8)}…` : humanizeSegment(segments[i], countries);
+      const label = isEmailSegment(segments[i])
+        ? PII_SAFE_CRUMB_LABEL
+        : isIdSegment(segments[i])
+          ? shortIdLabel(segments[i])
+          : humanizeSegment(segments[i], countries);
       crumbs.push({ label, href: acc });
     }
     return crumbs;
@@ -315,10 +306,11 @@ export function AdminShell({
   children: ReactNode;
 }) {
   const [navOpen, setNavOpen] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const breadcrumbs = useBreadcrumbs(pathname, countries, activeCountry);
+  const navRef = useRef<HTMLElement | null>(null);
+  usePortalMobileNavA11y(navOpen, () => setNavOpen(false), navRef);
   const pathSegments = pathname.split("/").filter(Boolean);
   const isOnCountryScopedRoute =
     pathSegments.length >= 2 && COUNTRY_HREFS.has(`/${pathSegments[0]}/${pathSegments[1]}`);
@@ -365,12 +357,16 @@ export function AdminShell({
           type="button"
           aria-label="Close navigation"
           onClick={() => setNavOpen(false)}
-          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-[calc(var(--z-header)-1)] bg-black/40 backdrop-blur-sm lg:hidden"
         />
       ) : null}
 
       <aside
-        className={`gh-portal-sidebar fixed inset-y-0 left-0 z-40 flex w-[var(--portal-sidebar-w)] max-w-[86vw] flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
+        ref={navRef}
+        role={navOpen ? "dialog" : undefined}
+        aria-modal={navOpen ? true : undefined}
+        aria-label={navOpen ? "Admin navigation" : undefined}
+        className={`gh-portal-sidebar fixed inset-y-0 left-0 z-[var(--z-header)] flex w-[var(--portal-sidebar-w)] max-w-[86vw] flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
           navOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
         }`}
       >
@@ -388,7 +384,7 @@ export function AdminShell({
               />
             </Link>
             <p
-              className="gh-portal-label mt-2 text-[10px] font-bold uppercase tracking-[0.22em]"
+              className="gh-portal-label mt-2 text-portal-micro font-bold uppercase tracking-[0.22em]"
             >
               Super admin
             </p>
@@ -465,7 +461,7 @@ export function AdminShell({
           </nav>
 
           <div
-            className="gh-portal-sidebar-footer px-5 py-4 text-[12px] font-bold uppercase tracking-[0.06em]"
+            className="gh-portal-sidebar-footer px-5 py-4 text-portal-meta font-bold uppercase tracking-[0.06em]"
           >
             v1.0 · medicine anytime anywhere
           </div>
@@ -475,7 +471,8 @@ export function AdminShell({
           doesn't slide under the fixed sidebar. */}
       <div className="flex min-h-screen min-w-0 flex-col lg:pl-[var(--portal-sidebar-w)]">
           <header
-            className={`gh-portal-topbar${scrolled ? " gh-portal-topbar--scrolled" : ""} sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between gap-3 px-4 sm:px-6`}
+            className={`gh-portal-topbar${scrolled ? " gh-portal-topbar--scrolled" : ""} sticky top-0 z-[var(--z-header)] flex shrink-0 items-center justify-between gap-3 px-4 sm:px-6`}
+            style={{ height: "var(--portal-topbar-h)" }}
           >
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <button
@@ -564,77 +561,12 @@ export function AdminShell({
                   className="gh-portal-user-divider"
                 />
 
-                {/* User menu */}
-                <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setUserMenuOpen((v) => !v)}
-                  aria-expanded={userMenuOpen}
-                  aria-haspopup="menu"
-                  className="inline-flex items-center gap-2 rounded-full py-1 pl-1 pr-3 text-sm font-semibold text-[var(--portal-chrome-text-active)] transition hover:bg-white/5"
-                >
-                  <span
-                    className="gh-portal-avatar inline-flex size-7 items-center justify-center rounded-[9px] text-[11px] font-extrabold text-white"
-                  >
-                    {initials(user.fullName, user.email)}
-                  </span>
-                  <span className="hidden max-w-[140px] truncate md:inline">
-                    {user.fullName || user.email.split("@")[0]}
-                  </span>
-                  <ChevronDown className="size-3 opacity-70" aria-hidden />
-                </button>
-                {userMenuOpen ? (
-                  <>
-                    <button
-                      type="button"
-                      aria-label="Close menu"
-                      onClick={() => setUserMenuOpen(false)}
-                      className="fixed inset-0 z-30"
-                    />
-                    <div
-                      className="gh-portal-user-menu absolute right-0 top-[calc(100%+8px)] z-40 min-w-[224px] p-3"
-                      style={{
-                        borderRadius: "var(--portal-radius-xl)",
-                        border: "1px solid var(--portal-line)",
-                        background: "var(--portal-surface-elevated)",
-                        boxShadow: "var(--portal-shadow-popover)",
-                      }}
-                    >
-                      <div className="flex items-center gap-2.5 pb-3" style={{ borderBottom: "1px solid var(--portal-line)" }}>
-                        <span
-                          className="gh-portal-avatar inline-flex size-9 shrink-0 items-center justify-center rounded-[10px] text-[11px] font-extrabold text-white"
-                        >
-                          {initials(user.fullName, user.email)}
-                        </span>
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold" style={{ color: "var(--portal-text)" }}>
-                            {user.fullName || user.email}
-                          </p>
-                          <p className="truncate text-xs" style={{ color: "var(--portal-muted)" }}>{user.email}</p>
-                        </div>
-                      </div>
-                      <div className="mt-2">
-                        <Pill tone="neutral">{user.role}</Pill>
-                      </div>
-                      <nav className="mt-2 flex flex-col gap-0.5">
-                        <Link
-                          href="/"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="rounded-md px-2 py-1.5 text-sm font-semibold hover:bg-[var(--portal-well)]"
-                          style={{ color: "var(--portal-text)" }}
-                        >
-                          Main site
-                        </Link>
-                      </nav>
-                      <form action={signOutAction} className="mt-2 pt-2" style={{ borderTop: "1px solid var(--portal-line)" }}>
-                        <Btn type="submit" variant="danger" size="sm" className="w-full justify-center">
-                          Sign out
-                        </Btn>
-                      </form>
-                    </div>
-                  </>
-                ) : null}
-                </div>
+                <PortalUserMenu
+                  user={user}
+                  rootHref="/"
+                  signOutAction={signOutAction}
+                  labels={{ mainSite: "Main site", signOut: "Sign out" }}
+                />
               </div>
             </div>
           </header>

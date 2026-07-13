@@ -42,11 +42,11 @@ function FieldRow({
 }) {
   return (
     <div className={full ? "gh-admin-asset-field-row sm:col-span-2" : "gh-admin-asset-field-row"}>
-      <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+      <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
         {label}
       </dt>
       <dd
-        className="mt-1 break-all text-[14px] text-[var(--color-text-primary)]"
+        className="mt-1 break-all text-portal-body text-[var(--color-text-primary)]"
         style={mono ? { fontFamily: "ui-monospace, monospace", fontSize: 12.5 } : undefined}
       >
         {value}
@@ -115,7 +115,7 @@ export default async function AdminAssetDetailPage({
     <>
       <Link
         href="/admin/assets"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to assets
       </Link>
@@ -173,7 +173,7 @@ export default async function AdminAssetDetailPage({
 
           <AdminCard>
             <h3 style={cardTitleStyle}>Asset details</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Path + metadata. Files served via Railway Bucket when storage env vars are configured.
             </p>
             <dl className="gh-admin-asset-detail-grid">
@@ -201,7 +201,7 @@ export default async function AdminAssetDetailPage({
         <div className="grid gap-4 self-start">
           <AdminCard>
             <h3 style={cardTitleStyle}>Visibility</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Deactivate hides this asset from the public listing API.
             </p>
             {isActive ? (
@@ -211,7 +211,7 @@ export default async function AdminAssetDetailPage({
                 </button>
               </form>
             ) : (
-              <p className="text-[13px] text-[var(--color-text-muted)]">
+              <p className="text-portal-compact text-[var(--color-text-muted)]">
                 This asset is inactive. Re-enable from Edit.
               </p>
             )}
@@ -226,7 +226,7 @@ export default async function AdminAssetDetailPage({
             >
               Danger zone
             </h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Permanent delete removes this asset record entirely.
             </p>
             <form action={deleteAssetAction}>

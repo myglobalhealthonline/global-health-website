@@ -1,14 +1,19 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { ServiceHero } from "@/components/sections/ServiceHero";
-import { Stethoscope, ShieldCheck, Lock, Star } from "lucide-react";
+import { Stethoscope, ShieldCheck, Lock } from "lucide-react";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
-import { RichBodySection } from "@/components/sections/RichBodySection";
+import { FAQSection } from "@/components/sections/FAQSection";
+import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import {
+  ChecklistSection,
+  ServiceIntro,
+  WhyChooseSection,
+} from "@/components/sections/ServiceContentSections";
 import { getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
@@ -17,13 +22,14 @@ import { countryLangParams } from "@/lib/routing/static-params";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { resolveBrandTitle } from "@/lib/seo/page-seo";
-import { breadcrumbJsonLd, medicalProcedureJsonLd } from "@/lib/seo/structured-data";
-import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { breadcrumbJsonLd, faqJsonLd, medicalServiceHubJsonLd } from "@/lib/seo/structured-data";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
-  getPublicPage,
+  getPageContent,
   isSupportedLocale,
+  themeProp,
   type PublicLocale,
-} from "@/lib/content/get-public-page";
+} from "@/lib/content/get-page-content";
 import {
   getCountryDoctors,
   getCountryServices,
@@ -33,6 +39,9 @@ import { formatPriceRounded } from "@/lib/format-currency";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
+import { getCountryDisclaimer, getCountryLegal } from "@/lib/content/get-country-legal";
+import { getServiceHubContent } from "@/lib/content/service-hub-content";
+import { selectSpecialistDoctors } from "@/lib/content/specialist-doctor-selection";
 
 type Params = { country: string; lang: string };
 
@@ -50,18 +59,34 @@ export async function generateMetadata({
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
-  const { record: page } = await getPublicPage(code, "SPECIALIST_CONSULTATION", lang as PublicLocale);
+  const { record: page } = await getPageContent(code, "SPECIALIST_CONSULTATION", lang as PublicLocale);
+  const hub = getServiceHubContent("specialist", {
+    countryName: config.name,
+    locale: lang,
+    serviceNames: [],
+  });
   const url = `${getSiteUrl()}/${country}/${lang}/see-a-specialist`;
-  const title = page?.seoTitle ?? `Specialists registered in ${config.name}`;
-  const description =
-    page?.seoDescription ??
-    `Specialists registered to practise in ${config.name}. Cardiology, dermatology, nutrition, and more.`;
+  const title = page?.seoTitle ?? `${hub.overview.title} · ${config.name}`;
+  const description = page?.seoDescription ?? hub.overview.body;
   return {
     title: resolveBrandTitle(title),
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/see-a-specialist") },
-    openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
-    twitter: { card: "summary_large_image", title, description },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      title,
+      description,
+      url,
+      ...ogLocales(config, lang),
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
   };
 }
 
@@ -93,25 +118,30 @@ export default async function CountryLangSpecialistConsultationPage({
   // Honor the per-country `specialist-consultations` toggle from /admin/country-features.
   const overlay = await getPublicCountryByCode(code);
   if (!isCountryFeatureEnabled(overlay, "specialist-consultations")) notFound();
-  const [{ record: rawPage, disabled: pageDisabled }, services, doctors] = await Promise.all([
-    getPublicPage(code, "SPECIALIST_CONSULTATION", lang as PublicLocale),
+  const [
+    { record: rawPage, disabled: pageDisabled },
+    services,
+    doctors,
+    legal,
+    { short: specialistShortDisclaimer },
+  ] = await Promise.all([
+    getPageContent(code, "SPECIALIST_CONSULTATION", lang as PublicLocale),
     getCountryServices(code, "SPECIALIST", lang),
     getCountryDoctors(code, lang),
+    getCountryLegal(code),
+    getCountryDisclaimer(code, lang),
   ]);
 
-  const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
+  // Structured PageContent self-gates via publish status; legacy "pages"
+  // country-feature no longer gates it.
+  const page = pageDisabled ? null : rawPage;
 
-  // Provider-first defaults per Google Ads "restricted services" guidance.
-  const heroTitle = page?.heroTitle ?? sp.heroTitle;
-  const heroSubtitle =
-    page?.heroSubtitle ?? sp.heroSubtitle.replace("{country}", config.name);
-  const ctaLabel = page?.ctaLabel ?? c.doctors.bookAppointment;
-  // Cart-first booking: hero CTA scrolls to the in-page service grid
-  // rather than dumping into the legacy /book-online form. Admin can
-  // still override via ContentPage.
-  const ctaHref =
-    page?.ctaHref ??
-    buildBookHref({ country: slug, lang, service: services[0]?.slug ?? null });
+  const hub = getServiceHubContent("specialist", {
+    countryName: config.name,
+    locale: lang,
+    serviceNames: services.map((service) => service.name),
+  });
+  const heroSubtitle = page?.heroSubtitle ?? sp.heroSubtitle.replace("{country}", config.name);
 
   // Specialist service cards — auto from Service rows where kind=SPECIALIST.
   // Each card links to the booking form WITH `?service=<slug>` so the
@@ -131,21 +161,41 @@ export default async function CountryLangSpecialistConsultationPage({
     imageSrc: s.imageSrc ?? null,
   }));
 
-  // Doctor cards filtered to those with at least one specialty link.
-  const doctorItems = doctors
-    .filter((d) => d.specialties.length > 0)
-    .slice(0, 6)
-    .map((d) => ({
+  const eligibleDoctors = selectSpecialistDoctors(doctors, services);
+  const firstEligible = eligibleDoctors[0];
+  const hasEligibleDoctor = Boolean(firstEligible);
+  const ctaLabel = hasEligibleDoctor
+    ? page?.ctaLabel ?? c.doctors.bookAppointment
+    : sp.specialistConsultationsTitle;
+  const ctaHref = hasEligibleDoctor && firstEligible
+    ? page?.ctaHref ?? buildBookHref({
+        country: slug,
+        lang,
+        service: firstEligible.serviceSlug,
+        doctor: firstEligible.doctor.slug,
+      })
+    : services.length > 0 ? "#services" : `/${slug}/${lang}`;
+  const doctorItems = eligibleDoctors.map(({ doctor: d, serviceSlug, serviceNames }) => ({
       name: d.fullName,
-      title: d.title,
+      title: d.specialties.length > 0 ? d.specialties.join(", ") : serviceNames.join(", ") || d.title,
       bio: d.bio ?? "",
       languages: d.languages,
-      country: config.name,
+      country: config.code,
       imageSrc: d.imageSrc ?? null,
+      imageAltText: d.imageAltText,
+      imageTitle: d.imageTitle,
+      imageCaption: d.imageCaption,
+      imageDescription: d.imageDescription,
+      imcRegistration: d.imcRegistration,
+      registrationDivision: d.registrationDivision,
+      registrationVerified: d.registrationVerified,
+      credentials: d.credentials,
+      medicalRegistrationUrl: d.medicalRegistrationUrl,
+      verificationUrl: legal?.profile?.medicalRegulatorUrl ?? undefined,
       href: `/${slug}/${lang}/doctors/${d.slug}`,
-      bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
-      whatsappNumber: d.whatsappNumber,
+      bookingHref: buildBookHref({ country: slug, lang, service: serviceSlug, doctor: d.slug }),
       ctaLabel: c.doctors.viewProfile,
+      bookLabel: c.doctors.bookAppointment,
     }));
 
   return (
@@ -157,22 +207,23 @@ export default async function CountryLangSpecialistConsultationPage({
           { name: "See a specialist", url: `/${slug}/${lang}/see-a-specialist` },
         ])}
       />
+      <JsonLd data={faqJsonLd(hub.faq)} />
       <JsonLd
-        data={medicalProcedureJsonLd({
-          name: `Specialists in ${config.name}`,
-          description: `Network of specialists (cardiology, dermatology, psychiatry, nutrition, and more) registered to practise in ${config.name}.`,
+        data={medicalServiceHubJsonLd({
+          name: hub.overview.title,
+          description: hub.overview.body,
           countryName: config.name,
           url: `/${slug}/${lang}/see-a-specialist`,
-          bookingUrl: ctaHref,
+          bookingUrl: hasEligibleDoctor ? ctaHref : null,
         })}
       />
 
       <ServiceHero
         countryCode={config.code}
         countryLabel={sp.countryLabel.replace("{country}", config.name)}
-        titleLead={sp.heroLead}
-        titleAccent={sp.heroAccent}
-        titleTrail={sp.heroTrail}
+        titleLead={page?.heroTitle ?? sp.heroLead}
+        titleAccent={page?.heroTitle ? "" : sp.heroAccent}
+        titleTrail={page?.heroTitle ? undefined : sp.heroTrail}
         lede={heroSubtitle}
         primaryCta={{ label: ctaLabel, href: ctaHref }}
         secondaryCta={{
@@ -180,9 +231,14 @@ export default async function CountryLangSpecialistConsultationPage({
           href: `/${slug}/${lang}/doctors`,
         }}
         heroImage={{
-          src: "/images/stock/specialist.jpg",
+          src: page?.heroImageSrc ?? "/images/stock/specialist.jpg",
           alt: `Specialist available for an online consultation in ${config.name}`,
           priority: true,
+        }}
+        badge={{
+          title: sp.hero.feature1Title,
+          subtitle: sp.hero.feature2Title.replace("{country}", config.name),
+          accent: sp.hero.feature3Title,
         }}
         featureCards={[
           {
@@ -208,7 +264,7 @@ export default async function CountryLangSpecialistConsultationPage({
             subtitle: sp.hero.stat1Subtitle.replace("{country}", config.name),
           },
           {
-            icon: <Star className="size-5" strokeWidth={2} aria-hidden />,
+            icon: <Stethoscope className="size-5" strokeWidth={2} aria-hidden />,
             title: sp.hero.stat2Title.replace("{country}", config.name),
             subtitle: sp.hero.stat2Subtitle.replace("{country}", config.name),
           },
@@ -220,27 +276,13 @@ export default async function CountryLangSpecialistConsultationPage({
         ]}
       />
 
-      {page?.heroImageSrc ? (
-        <section className="gh2-section-forest gh-medical-pattern gh-medical-pattern-dark" style={{ padding: "clamp(64px,8vw,120px) 0" }}>
-          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 -mt-16 relative">
-            <div
-              className="relative w-full overflow-hidden rounded-[var(--radius-card)]"
-              style={{ border: "1px solid rgba(255,255,255,0.09)", aspectRatio: "2.2 / 1", maxHeight: 480 }}
-            >
-              <Image
-                src={page.heroImageSrc}
-                alt={heroTitle}
-                fill
-                sizes="(min-width:1024px) 1024px, 100vw"
-                className="object-cover"
-                unoptimized={
-                  /^https?:\/\//i.test(page.heroImageSrc) &&
-                  !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(page.heroImageSrc)
-                }
-              />
-            </div>
-          </div>
-        </section>
+      {/* Admin-authored structured sections (DB-backed, toggle-gated per
+          country). Off by default — additive to the existing hub copy
+          below, in the same GP-hub relative order (Part B.3). */}
+      {page?.sections.intro ? (
+        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
+      ) : serviceItems.length > 0 ? (
+        <ServiceIntro body={hub.overview.body} theme={themeProp(page?.introTheme, "light")} />
       ) : null}
 
       {/* 1 — The product: specialist consultations straight after the hero. */}
@@ -256,32 +298,96 @@ export default async function CountryLangSpecialistConsultationPage({
         </div>
       ) : null}
 
+      {page?.sections.whoFor ? (
+        <ChecklistSection
+          eyebrow="Who it's for"
+          title={page.whoForTitle!}
+          intro={page.whoForIntro ?? undefined}
+          items={page.whoForItems}
+          theme={themeProp(page?.whoForTheme, "light")}
+        />
+      ) : (
+        <ChecklistSection {...hub.whoFor} theme={themeProp(page?.whoForTheme, "light")} />
+      )}
+
       {/* The clinicians behind the service. */}
       {doctorItems.length > 0 ? (
         <DoctorsSection
-          title={sp.doctorsSectionTitle.replace("{country}", config.name)}
+          title={`${doctorItems.length} · ${sp.doctorsSectionTitle.replace("{country}", config.name)}`}
           intro={sp.doctorsSectionIntro}
           doctors={doctorItems}
-          theme="light"
-          cardTheme="dark"
+          theme="dark"
         />
       ) : null}
 
-      {/* 5 — Admin-edited rich body sits below the conversion path. */}
-      <RichBodySection html={page?.body} theme="light" />
+      {page?.sections.whyChoose ? (
+        <WhyChooseSection
+          title={page.whyChooseTitle!}
+          items={page.whyChooseItems}
+          theme={themeProp(page?.whyChooseTheme, "soft")}
+        />
+      ) : (
+        <WhyChooseSection
+          title={hub.whyChoose.title}
+          items={hub.whyChoose.items}
+          theme={themeProp(page?.whyChooseTheme, "soft")}
+        />
+      )}
+
+      {page?.sections.faq ? (
+        <FAQSection
+          title={c.extra.consultFaqTitle}
+          items={page.faq}
+          theme={themeProp(page?.faqTheme, "dark")}
+        />
+      ) : (
+        <FAQSection title={c.extra.consultFaqTitle} items={hub.faq} />
+      )}
 
       <DoctifyReviewsSection
-        theme="forest"
+        theme="ivory"
         variant="carousel"
         language={lang}
-        eyebrow="Patient reviews"
-        headline="Trusted by patients"
-        headlineAccent="across Europe"
-        body="Independent, verified reviews collected by Doctify from patients treated by our specialists."
+        eyebrow={hub.whyChoose.eyebrow}
+        headline={hub.whyChoose.title}
+        headlineAccent=""
+        body={hub.overview.body}
       />
 
-      <FinalCTA primaryHref={ctaHref} secondaryHref={`/${slug}/${lang}/doctors`} />
-      <StickyBookingCTA href={ctaHref} />
+      <FinalCTA
+        primaryHref={ctaHref}
+        secondaryHref={`/${slug}/${lang}/doctors`}
+        i18n={{
+          eyebrow: sp.specialtyAreas,
+          liveLabel: config.name,
+          calendarLine: sp.specialistConsultationsIntro,
+          headlinePre: sp.heroLead,
+          headlineAccent: sp.heroAccent,
+          headlinePost: sp.heroTrail,
+          body: heroSubtitle,
+          primaryCta: ctaLabel,
+          secondaryCta: sp.secondaryLabel,
+        }}
+      />
+      <StickyBookingCTA href={ctaHref} label={ctaLabel} />
+      <section
+        className="relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
+        style={{ padding: "clamp(28px,4vw,48px) 0" }}
+      >
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <MedicalDisclaimer
+            variant="short"
+            text={specialistShortDisclaimer ?? hub.importantInformation.paragraphs[0]}
+          />
+        </div>
+      </section>
+
+      {page?.sections.disclaimer ? (
+        <MedicalDisclaimer
+          paragraphs={page.disclaimerParagraphs}
+          theme={themeProp(page?.disclaimerTheme, "dark")}
+        />
+      ) : null}
     </>
   );
 }

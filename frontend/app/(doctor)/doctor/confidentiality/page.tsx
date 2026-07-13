@@ -30,7 +30,17 @@ export default async function DoctorConfidentialityPage() {
             {d.confidentiality.title}
           </span>
         }
-        description={d.confidentiality.descriptionVersion.replace("{version}", String(result.data.currentVersion))}
+        description={
+          result.data.accepted
+            ? d.confidentiality.descriptionAccepted.replace(
+                "{version}",
+                String(result.data.currentVersion),
+              )
+            : d.confidentiality.descriptionVersion.replace(
+                "{version}",
+                String(result.data.currentVersion),
+              )
+        }
       />
 
       <ConfidentialityForm

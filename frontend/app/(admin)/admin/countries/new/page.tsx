@@ -118,16 +118,16 @@ export default async function AdminNewCountryPage({ searchParams }: PageProps) {
       <AdminCard>
         <form action={createCountryAction} className="gh-admin-country-form flex flex-col gap-8">
           <CountryFields currencies={currenciesResult.data.currencies} />
-          <div className="gh-admin-country-actions flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
-            <button type="submit" className="gh-btn gh-btn-primary">
-              Create country
-            </button>
+          <div className="gh-admin-country-actions flex flex-wrap items-center justify-end gap-3 border-t border-[var(--color-border)] pt-6">
             <Link
               href="/admin/countries"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="gh-btn gh-btn-ghost"
             >
               Cancel
             </Link>
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Create country
+            </button>
           </div>
         </form>
       </AdminCard>

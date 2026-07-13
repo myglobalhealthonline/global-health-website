@@ -1,14 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import * as Dialog from "@radix-ui/react-dialog";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { MonthCalendar } from "@/components/calendar/MonthCalendar";
 import { DayAgenda } from "@/components/calendar/DayAgenda";
 import { EventDetailDialog } from "@/components/calendar/EventDetailDialog";
 import { TimezoneSelect } from "@/components/calendar/TimezoneSelect";
+import { AppSheet } from "@/components/AppSheet";
 import {
   addMonths,
+  dayLabel,
   groupItemsByLocalDay,
   todayKey,
   yearMonthParam,
@@ -44,9 +47,28 @@ export function AdminCalendarUI({
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [tz, setTz] = useState<string>(DEFAULT_TZ);
   const [selectedDay, setSelectedDay] = useState<string>(() => todayKey(DEFAULT_TZ));
-  const [activeItem, setActiveItem] = useState<CalendarItem | null>(null);
+  const [daySheetOpen, setDaySheetOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState<CalendarItem | null>(() => {
+    const eventId = searchParams.get("event");
+    return eventId ? items.find((i) => i.id === eventId) ?? null : null;
+  });
+
+  function openEvent(item: CalendarItem) {
+    // Event drawer replaces the day sheet — no stacked overlays.
+    setDaySheetOpen(false);
+    setActiveItem(item);
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("event", item.id);
+    router.replace(`${pathname}?${next.toString()}`, { scroll: false });
+  }
+
+  function openDay(key: string) {
+    setSelectedDay(key);
+    setDaySheetOpen(true);
+  }
   // Default to "all" so open (bookable) slots — and their Book action — are
   // visible as soon as a day is picked.
   const [slotFilter, setSlotFilter] = useState<SlotAgendaFilter>("all");
@@ -139,16 +161,53 @@ export function AdminCalendarUI({
       </div>
 
       <div
-        className="gh-admin-calendar-legend flex flex-wrap items-center justify-between gap-3 text-xs"
+        className="gh-admin-calendar-legend flex flex-wrap items-center gap-3 text-xs"
         style={{ color: "var(--portal-muted)" }}
       >
-        <div className="flex flex-wrap items-center gap-3">
-          <LegendDot tone="var(--portal-success)" label="Open" />
-          <LegendDot tone="var(--portal-info)" label="Booked" />
-          <LegendDot tone="var(--portal-danger)" label="Blocked" />
-        </div>
+        <LegendDot tone="var(--portal-success)" label="Open" />
+        <LegendDot tone="var(--portal-info)" label="Booked" />
+        <LegendDot tone="var(--portal-danger)" label="Blocked" />
+      </div>
+
+      <MonthCalendar
+        year={year}
+        month={month}
+        itemsByDay={itemsByDay}
+        selectedDay={selectedDay}
+        todayKey={todayKey(tz)}
+        onSelectDay={openDay}
+        onPrevMonth={() =>
+          pushParams({ ym: yearMonthParam(...monthTuple(addMonths(year, month, -1))) })
+        }
+        onNextMonth={() =>
+          pushParams({ ym: yearMonthParam(...monthTuple(addMonths(year, month, 1))) })
+        }
+        onToday={() => {
+          const d = new Date();
+          pushParams({ ym: yearMonthParam(d.getFullYear(), d.getMonth() + 1) });
+          setSelectedDay(todayKey(tz));
+        }}
+      />
+
+      {/* Day agenda — lux sheet, same skin as the event drawer. */}
+      <AppSheet
+        open={daySheetOpen}
+        onOpenChange={setDaySheetOpen}
+        size="md"
+        theme="portal"
+        header={
+          <div className="gh-record-drawer__title-block">
+            <span className="gh-record-drawer__eyebrow">Day agenda</span>
+            <Dialog.Title asChild>
+              <h2 className="gh-record-drawer__title">
+                {selectedDay ? dayLabel(selectedDay) : ""}
+              </h2>
+            </Dialog.Title>
+          </div>
+        }
+      >
         <label
-          className="flex items-center gap-2 text-xs font-semibold"
+          className="mb-3 flex items-center justify-end gap-2 text-xs font-semibold"
           style={{ color: "var(--portal-text-2)" }}
         >
           Agenda slots
@@ -164,40 +223,19 @@ export function AdminCalendarUI({
             <option value="blocked">Blocked only</option>
           </select>
         </label>
-      </div>
-
-      <div className="gh-admin-calendar-grid grid gap-4 lg:grid-cols-[1fr_360px]">
-        <MonthCalendar
-          year={year}
-          month={month}
-          itemsByDay={itemsByDay}
-          selectedDay={selectedDay}
-          todayKey={todayKey(tz)}
-          onSelectDay={setSelectedDay}
-          onPrevMonth={() =>
-            pushParams({ ym: yearMonthParam(...monthTuple(addMonths(year, month, -1))) })
-          }
-          onNextMonth={() =>
-            pushParams({ ym: yearMonthParam(...monthTuple(addMonths(year, month, 1))) })
-          }
-          onToday={() => {
-            const d = new Date();
-            pushParams({ ym: yearMonthParam(d.getFullYear(), d.getMonth() + 1) });
-            setSelectedDay(todayKey(tz));
-          }}
-        />
 
         <DayAgenda
           dayKey={selectedDay}
           items={agendaItems}
           tz={tz}
+          hideHeader
           emptyLabel={
             slotFilter === "all"
               ? "No consultations or slots on this day."
               : "Nothing matching this filter on this day. Try “All (incl. available)” in the Agenda slots dropdown."
           }
           showDoctorName
-          onSelectConsultation={setActiveItem}
+          onSelectConsultation={openEvent}
           renderSlotAction={(item) => {
             // Only genuinely bookable inventory gets the deep link into the
             // manual-booking form, prefilled with doctor + slot.
@@ -212,16 +250,21 @@ export function AdminCalendarUI({
             return (
               <a
                 href={`/admin/appointments/new?${params.toString()}`}
-                className="ml-0.5 rounded-full border border-current px-1.5 text-[10px] font-bold uppercase tracking-wide hover:opacity-80"
+                className="ml-0.5 rounded-full border border-current px-1.5 text-portal-micro font-bold uppercase tracking-wide hover:opacity-80"
               >
                 Book
               </a>
             );
           }}
         />
-      </div>
+      </AppSheet>
 
-      <EventDetailDialog item={activeItem} tz={tz} onClose={() => setActiveItem(null)} />
+      <EventDetailDialog
+        item={activeItem}
+        tz={tz}
+        paramKey="event"
+        onClose={() => setActiveItem(null)}
+      />
     </div>
   );
 }

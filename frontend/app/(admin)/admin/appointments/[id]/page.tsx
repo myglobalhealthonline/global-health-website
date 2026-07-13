@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, CalendarClock, LayoutDashboard, MessageSquare, UserRound } from "lucide-react";
 import { MANUAL_BOOKING_COOKIE } from "@/lib/admin/manual-booking-cookie";
 import {
   fetchAdminAppointmentById,
@@ -23,6 +23,7 @@ import {
 import { FlagBadge } from "../../_components/flag-badge";
 import { ScheduleTzOffsetInput } from "../_components/schedule-tz-offset";
 import { ScheduleSlotInput } from "../_components/schedule-slot-input";
+import { AdminAppointmentTabs } from "./_components/appointment-tabs";
 import {
   AdminCard,
   Btn,
@@ -75,10 +76,10 @@ function FieldRow({
 }) {
   return (
     <div className={full ? "gh-admin-appointment-field-row sm:col-span-2" : "gh-admin-appointment-field-row"}>
-      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+      <p className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
         {label}
       </p>
-      <p className="mt-1 text-[14px] text-[var(--color-text-primary)]">{value}</p>
+      <p className="mt-1 text-portal-body text-[var(--color-text-primary)]">{value}</p>
     </div>
   );
 }
@@ -338,7 +339,7 @@ export default async function AdminAppointmentDetailPage({
     <>
       <Link
         href="/admin/appointments"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to queue
       </Link>
@@ -351,6 +352,7 @@ export default async function AdminAppointmentDetailPage({
         }
         title={appointment.fullName}
         description={`${appointment.consultationType} · ${formatDate(appointment.createdAt)}`}
+        icon={<UserRound aria-hidden />}
         actions={
           <Pill tone={statusToneFor(appointment.status)}>
             {appointment.status.replace(/_/g, " ").toLowerCase()}
@@ -377,7 +379,7 @@ export default async function AdminAppointmentDetailPage({
               ? " Pre-payment automation started (WhatsApp + reservation email)."
               : " Automation failed — copy the details below and share manually."}
           </p>
-          <dl className="mt-2 grid gap-1 text-[13px] text-[var(--color-text-body)]">
+          <dl className="mt-2 grid gap-1 text-portal-compact text-[var(--color-text-body)]">
             {manualBooking.tempPassword ? (
               <div>
                 <dt className="inline font-semibold">Temp password:</dt>{" "}
@@ -423,306 +425,331 @@ export default async function AdminAppointmentDetailPage({
         </div>
       ) : null}
 
-      <div className="gh-admin-detail-layout gh-admin-appointment-workspace">
-        <div className="grid gap-4">
-          <AdminCard>
-            <h3 className="gh-admin-card-title">Patient details</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
-              Contact info captured at booking.
-            </p>
-            <div className="gh-admin-appointment-detail-grid">
-              <FieldRow label="Full name" value={appointment.fullName} />
-              <FieldRow label="Email" value={appointment.email} />
-              <FieldRow
-                label="Phone"
-                value={appointment.phone ?? "No phone provided"}
-              />
-              <FieldRow label="Country" value={appointment.country.toUpperCase()} />
-              <FieldRow label="Consultation type" value={appointment.consultationType} />
-              <FieldRow
-                label="Payment"
-                value={
-                  appointment.amountCents
-                    ? `${appointment.paymentStatus} · ${(
-                        appointment.amountCents / 100
-                      ).toFixed(2)} ${appointment.currencyCode ?? ""}`
-                    : "No price configured"
-                }
-              />
-              <FieldRow
-                label="Scheduled call"
-                value={
-                  appointment.scheduledAt
-                    ? formatDate(appointment.scheduledAt)
-                    : "Not scheduled yet"
-                }
-              />
-              <FieldRow
-                label="Meeting URL"
-                value={
-                  appointment.meetingUrl ? (
-                    <a
-                      href={appointment.meetingUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline text-[var(--color-brand-primary)]"
-                    >
-                      {appointment.meetingUrl}
-                    </a>
-                  ) : (
-                    "No link set"
-                  )
-                }
-              />
-              <FieldRow label="Created" value={formatDate(appointment.createdAt)} />
-              <FieldRow label="Updated" value={formatDate(appointment.updatedAt)} full />
-            </div>
-          </AdminCard>
-
-          <AdminCard>
-            <h3 className="gh-admin-card-title">Notes</h3>
-            <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed text-[var(--color-text-body)]">
-              {appointment.notes ?? "No notes provided."}
-            </p>
-          </AdminCard>
-        </div>
-
-        <div className="grid gap-4 self-start">
-          <AdminCard>
-            <h3 className="gh-admin-card-title">Status</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
-              {terminal
-                ? "This booking request is closed. Status updates are disabled."
-                : canUpdate
-                  ? "Move the request through the queue."
-                  : "No status updates are available for this record."}
-            </p>
-
-            {canUpdate ? (
-              <form action={updateStatusAction} className="gh-admin-appointment-side-form">
-                <label className="flex flex-col gap-1.5">
-                  <span className="gh-field-label">Move status to</span>
-                  <select
-                    name="status"
-                    className="gh-select"
-                    defaultValue={allowedNext[0]}
-                    required
-                  >
-                    {allowedNext.map((status) => (
-                      <option key={status} value={status}>
-                        {status.replace(/_/g, " ")}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <button type="submit" className="gh-btn gh-btn-primary w-full">
-                  Save status
-                </button>
-              </form>
-            ) : null}
-          </AdminCard>
-
-          {/* Patient ↔ admin chat for this appointment. Polling-based;
-              only loads when this page is in view. `id` is the deep-link
-              target for the notification bell. */}
-          <div id="patient-chat" className="scroll-mt-24">
-            <AdminCard>
-              <h3 className="gh-admin-card-title">Patient chat</h3>
-              <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
-                Pre-consult messages. The patient sees replies in their Messages tab.
-              </p>
-              <AdminAppointmentChat appointmentId={appointment.id} />
-            </AdminCard>
-          </div>
-
-          {/* Internal (doctor ↔ admin) per-appointment notes. NOT
-              patient-visible. Same thread surface as on the doctor portal
-              at /doctor/appointments/[id]. */}
-          <AdminCard>
-            <h3 className="gh-admin-card-title">Internal notes (doctor ↔ admin)</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
-              Handoff context between you and the doctor. Hidden from the
-              patient.
-            </p>
-            <InternalMessagesThread
-              appointmentId={appointment.id}
-              initialItems={internalMessages}
-              postEndpoint={`/api/admin/appointments/${appointment.id}/internal-messages`}
-              currentRole="ADMIN"
-            />
-          </AdminCard>
-
-          {/* Reassign the booking to a different doctor. Goes through the
-              /update endpoint so patient + new + previous doctor are all
-              notified (email + WhatsApp) and future reminders follow the
-              new doctor. */}
-          <AdminCard>
-            <h3 className="gh-admin-card-title">Assigned doctor</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
-              Reassign this booking if the original doctor is unavailable.
-              The patient and both doctors are notified by email + WhatsApp,
-              and all future reminders switch to the new doctor.
-            </p>
-
-            <form action={reassignDoctorAction} className="gh-admin-appointment-side-form">
-              <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Doctor</span>
-                <select
-                  name="doctorId"
-                  className="gh-select"
-                  defaultValue={appointment.doctorId ?? ""}
-                >
-                  <option value="">Unassigned</option>
-                  {doctors.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.fullName}
-                    </option>
-                  ))}
-                </select>
-                {!doctorsResult.ok ? (
-                  <span className="text-[11px] text-[var(--color-text-muted)]">
-                    Could not load doctors: {doctorsResult.message}
-                  </span>
-                ) : null}
-              </label>
-
-              <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">
-                  Reason for change{" "}
-                  <span className="text-[var(--color-text-muted)]">(required)</span>
-                </span>
-                <textarea
-                  name="changeReason"
-                  className="gh-input min-h-[96px]"
-                  required
-                  minLength={10}
-                  maxLength={500}
-                  placeholder="Explain why the doctor is being changed (shown to patient and doctor)."
-                />
-              </label>
-
-              <button type="submit" className="gh-btn gh-btn-primary w-full">
-                Reassign &amp; notify
-              </button>
-            </form>
-          </AdminCard>
-
-          {/* Schedule the Google Meet call. Filling both fields and saving
-              emails the patient with the link via SendGrid. */}
-          <AdminCard>
-            <h3 className="gh-admin-card-title">Schedule call</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
-              Set the slot and paste the Google Meet (or Zoom/Teams/Whereby/Daily)
-              link. Saving emails the patient with the link.
-            </p>
-
-            <form action={scheduleCallAction} className="gh-admin-appointment-side-form">
-              {/* Browser-side TZ offset so the server can convert the
-                  datetime-local string to a UTC ISO that matches the
-                  admin's actual clock — independent of the Node server
-                  timezone. */}
-              <ScheduleTzOffsetInput />
-              <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Slot (your local time)</span>
-                {/* Client-side conversion of the stored UTC ISO into the
-                    admin's browser-local datetime-local string. Avoids
-                    server-timezone leakage on reopen. */}
-                <ScheduleSlotInput
-                  name="scheduledAt"
-                  initialIso={appointment.scheduledAt}
-                />
-                <span className="text-[11px] text-[var(--color-text-muted)]">
-                  Leave blank to clear.
-                </span>
-              </label>
-
-              <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Meeting URL</span>
-                <input
-                  type="url"
-                  name="meetingUrl"
-                  className="gh-input"
-                  placeholder="https://meet.google.com/abc-defg-hij"
-                  defaultValue={appointment.meetingUrl ?? ""}
-                  maxLength={500}
-                />
-                <span className="text-[11px] text-[var(--color-text-muted)]">
-                  Allowed hosts: meet.google.com, zoom.us, teams.microsoft.com,
-                  whereby.com, daily.co.
-                </span>
-              </label>
-
-              <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Mode</span>
-                <select
-                  name="consultationMode"
-                  defaultValue={appointment.consultationMode ?? "ONLINE"}
-                  className="gh-select"
-                >
-                  <option value="ONLINE">Online (video call)</option>
-                  <option value="IN_PERSON">In person (at a clinic)</option>
-                </select>
-                <span className="text-[11px] text-[var(--color-text-muted)]">
-                  In-person hides the Meet link + shows a venue picker. Save
-                  the form once to switch modes, then re-open to see the picker.
-                </span>
-              </label>
-
-              {isInPerson ? (
-                <fieldset className="gh-admin-appointment-venue">
-                  <legend className="px-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                    Where (in-person)
-                  </legend>
-                  <label className="flex flex-col gap-1.5">
-                    <span className="gh-field-label">Clinic</span>
-                    <select
-                      name="clinicId"
-                      defaultValue={
-                        appointment.clinicId
-                          ? appointment.clinicId
-                          : appointment.locationAddress
-                            ? "__custom__"
-                            : "__none__"
-                      }
-                      className="gh-select"
-                    >
-                      <option value="__none__">— No location set —</option>
-                      {clinicOptions.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.name}
-                          {c.city ? ` · ${c.city}` : ""}
-                        </option>
-                      ))}
-                      <option value="__custom__">Other (custom address)…</option>
-                    </select>
-                    <span className="text-[11px] text-[var(--color-text-muted)]">
-                      Pick from {appointment.country.toUpperCase()} clinics, or
-                      switch to a free-text address below.
-                    </span>
-                  </label>
-                  <label className="flex flex-col gap-1.5">
-                    <span className="gh-field-label">
-                      Custom address (used only when &ldquo;Other&rdquo; is selected)
-                    </span>
-                    <input
-                      type="text"
-                      name="locationAddress"
-                      className="gh-input"
-                      placeholder="Street, city, postal code"
-                      defaultValue={appointment.locationAddress ?? ""}
-                      maxLength={500}
+      <AdminAppointmentTabs
+        ariaLabel="Appointment sections"
+        tabs={[
+          {
+            id: "overview",
+            label: "Overview",
+            icon: <LayoutDashboard aria-hidden />,
+            panel: (
+              <div className="grid gap-4">
+                <AdminCard>
+                  <h3 className="gh-admin-card-title">Patient details</h3>
+                  <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
+                    Contact info captured at booking.
+                  </p>
+                  <div className="gh-admin-appointment-detail-grid">
+                    <FieldRow label="Full name" value={appointment.fullName} />
+                    <FieldRow label="Email" value={appointment.email} />
+                    <FieldRow
+                      label="Phone"
+                      value={appointment.phone ?? "No phone provided"}
                     />
-                  </label>
-                </fieldset>
-              ) : null}
+                    <FieldRow label="Country" value={appointment.country.toUpperCase()} />
+                    <FieldRow label="Consultation type" value={appointment.consultationType} />
+                    <FieldRow
+                      label="Payment"
+                      value={
+                        appointment.amountCents
+                          ? `${appointment.paymentStatus} · ${(
+                              appointment.amountCents / 100
+                            ).toFixed(2)} ${appointment.currencyCode ?? ""}`
+                          : "No price configured"
+                      }
+                    />
+                    <FieldRow
+                      label="Scheduled call"
+                      value={
+                        appointment.scheduledAt
+                          ? formatDate(appointment.scheduledAt)
+                          : "Not scheduled yet"
+                      }
+                    />
+                    <FieldRow
+                      label="Meeting URL"
+                      value={
+                        appointment.meetingUrl ? (
+                          <a
+                            href={appointment.meetingUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline text-[var(--color-brand-primary)]"
+                          >
+                            {appointment.meetingUrl}
+                          </a>
+                        ) : (
+                          "No link set"
+                        )
+                      }
+                    />
+                    <FieldRow label="Created" value={formatDate(appointment.createdAt)} />
+                    <FieldRow label="Updated" value={formatDate(appointment.updatedAt)} full />
+                  </div>
+                </AdminCard>
 
-              <button type="submit" className="gh-btn gh-btn-primary w-full">
-                Save schedule
-              </button>
-            </form>
-          </AdminCard>
-        </div>
-      </div>
+                <AdminCard>
+                  <h3 className="gh-admin-card-title">Notes</h3>
+                  <p className="mt-3 whitespace-pre-wrap text-portal-body leading-relaxed text-[var(--color-text-body)]">
+                    {appointment.notes ?? "No notes provided."}
+                  </p>
+                </AdminCard>
+
+                <AdminCard>
+                  <h3 className="gh-admin-card-title">Status</h3>
+                  <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
+                    {terminal
+                      ? "This booking request is closed. Status updates are disabled."
+                      : canUpdate
+                        ? "Move the request through the queue."
+                        : "No status updates are available for this record."}
+                  </p>
+
+                  {canUpdate ? (
+                    <form action={updateStatusAction} className="gh-admin-appointment-side-form">
+                      <label className="flex flex-col gap-1.5">
+                        <span className="gh-field-label">Move status to</span>
+                        <select
+                          name="status"
+                          className="gh-select"
+                          defaultValue={allowedNext[0]}
+                          required
+                        >
+                          {allowedNext.map((status) => (
+                            <option key={status} value={status}>
+                              {status.replace(/_/g, " ")}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <button type="submit" className="gh-btn gh-btn-primary w-full">
+                        Save status
+                      </button>
+                    </form>
+                  ) : null}
+                </AdminCard>
+              </div>
+            ),
+          },
+          {
+            id: "schedule",
+            label: "Schedule",
+            icon: <CalendarClock aria-hidden />,
+            panel: (
+              <div className="grid gap-4">
+                {/* Schedule the Google Meet call. Filling both fields and
+                    saving emails the patient with the link via SendGrid. */}
+                <AdminCard>
+                  <h3 className="gh-admin-card-title">Schedule call</h3>
+                  <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
+                    Set the slot and paste the Google Meet (or Zoom/Teams/Whereby/Daily)
+                    link. Saving emails the patient with the link.
+                  </p>
+
+                  <form action={scheduleCallAction} className="gh-admin-appointment-side-form">
+                    {/* Browser-side TZ offset so the server can convert the
+                        datetime-local string to a UTC ISO that matches the
+                        admin's actual clock — independent of the Node server
+                        timezone. */}
+                    <ScheduleTzOffsetInput />
+                    <label className="flex flex-col gap-1.5">
+                      <span className="gh-field-label">Slot (your local time)</span>
+                      {/* Client-side conversion of the stored UTC ISO into the
+                          admin's browser-local datetime-local string. Avoids
+                          server-timezone leakage on reopen. */}
+                      <ScheduleSlotInput
+                        name="scheduledAt"
+                        initialIso={appointment.scheduledAt}
+                      />
+                      <span className="text-portal-thead text-[var(--color-text-muted)]">
+                        Leave blank to clear.
+                      </span>
+                    </label>
+
+                    <label className="flex flex-col gap-1.5">
+                      <span className="gh-field-label">Meeting URL</span>
+                      <input
+                        type="url"
+                        name="meetingUrl"
+                        className="gh-input"
+                        placeholder="https://meet.google.com/abc-defg-hij"
+                        defaultValue={appointment.meetingUrl ?? ""}
+                        maxLength={500}
+                      />
+                      <span className="text-portal-thead text-[var(--color-text-muted)]">
+                        Allowed hosts: meet.google.com, zoom.us, teams.microsoft.com,
+                        whereby.com, daily.co.
+                      </span>
+                    </label>
+
+                    <label className="flex flex-col gap-1.5">
+                      <span className="gh-field-label">Mode</span>
+                      <select
+                        name="consultationMode"
+                        defaultValue={appointment.consultationMode ?? "ONLINE"}
+                        className="gh-select"
+                      >
+                        <option value="ONLINE">Online (video call)</option>
+                        <option value="IN_PERSON">In person (at a clinic)</option>
+                      </select>
+                      <span className="text-portal-thead text-[var(--color-text-muted)]">
+                        In-person hides the Meet link + shows a venue picker. Save
+                        the form once to switch modes, then re-open to see the picker.
+                      </span>
+                    </label>
+
+                    {isInPerson ? (
+                      <fieldset className="gh-admin-appointment-venue">
+                        <legend className="px-1 text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                          Where (in-person)
+                        </legend>
+                        <label className="flex flex-col gap-1.5">
+                          <span className="gh-field-label">Clinic</span>
+                          <select
+                            name="clinicId"
+                            defaultValue={
+                              appointment.clinicId
+                                ? appointment.clinicId
+                                : appointment.locationAddress
+                                  ? "__custom__"
+                                  : "__none__"
+                            }
+                            className="gh-select"
+                          >
+                            <option value="__none__">— No location set —</option>
+                            {clinicOptions.map((c) => (
+                              <option key={c.id} value={c.id}>
+                                {c.name}
+                                {c.city ? ` · ${c.city}` : ""}
+                              </option>
+                            ))}
+                            <option value="__custom__">Other (custom address)…</option>
+                          </select>
+                          <span className="text-portal-thead text-[var(--color-text-muted)]">
+                            Pick from {appointment.country.toUpperCase()} clinics, or
+                            switch to a free-text address below.
+                          </span>
+                        </label>
+                        <label className="flex flex-col gap-1.5">
+                          <span className="gh-field-label">
+                            Custom address (used only when &ldquo;Other&rdquo; is selected)
+                          </span>
+                          <input
+                            type="text"
+                            name="locationAddress"
+                            className="gh-input"
+                            placeholder="Street, city, postal code"
+                            defaultValue={appointment.locationAddress ?? ""}
+                            maxLength={500}
+                          />
+                        </label>
+                      </fieldset>
+                    ) : null}
+
+                    <button type="submit" className="gh-btn gh-btn-primary w-full">
+                      Save schedule
+                    </button>
+                  </form>
+                </AdminCard>
+
+                {/* Reassign the booking to a different doctor. Goes through
+                    the /update endpoint so patient + new + previous doctor
+                    are all notified (email + WhatsApp) and future reminders
+                    follow the new doctor. */}
+                <AdminCard>
+                  <h3 className="gh-admin-card-title">Assigned doctor</h3>
+                  <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
+                    Reassign this booking if the original doctor is unavailable.
+                    The patient and both doctors are notified by email + WhatsApp,
+                    and all future reminders switch to the new doctor.
+                  </p>
+
+                  <form action={reassignDoctorAction} className="gh-admin-appointment-side-form">
+                    <label className="flex flex-col gap-1.5">
+                      <span className="gh-field-label">Doctor</span>
+                      <select
+                        name="doctorId"
+                        className="gh-select"
+                        defaultValue={appointment.doctorId ?? ""}
+                      >
+                        <option value="">Unassigned</option>
+                        {doctors.map((d) => (
+                          <option key={d.id} value={d.id}>
+                            {d.fullName}
+                          </option>
+                        ))}
+                      </select>
+                      {!doctorsResult.ok ? (
+                        <span className="text-portal-thead text-[var(--color-text-muted)]">
+                          Could not load doctors: {doctorsResult.message}
+                        </span>
+                      ) : null}
+                    </label>
+
+                    <label className="flex flex-col gap-1.5">
+                      <span className="gh-field-label">
+                        Reason for change{" "}
+                        <span className="text-[var(--color-text-muted)]">(required)</span>
+                      </span>
+                      <textarea
+                        name="changeReason"
+                        className="gh-input min-h-[96px]"
+                        required
+                        minLength={10}
+                        maxLength={500}
+                        placeholder="Explain why the doctor is being changed (shown to patient and doctor)."
+                      />
+                    </label>
+
+                    <button type="submit" className="gh-btn gh-btn-primary w-full">
+                      Reassign &amp; notify
+                    </button>
+                  </form>
+                </AdminCard>
+              </div>
+            ),
+          },
+          {
+            id: "messages",
+            label: "Messages",
+            icon: <MessageSquare aria-hidden />,
+            panel: (
+              <div className="grid gap-4">
+                {/* Patient ↔ admin chat for this appointment. Polling-based;
+                    only loads when this panel is active. `id` is the
+                    deep-link target for the notification bell
+                    (`?tab=messages#patient-chat`). */}
+                <div id="patient-chat" className="scroll-mt-24">
+                  <AdminCard>
+                    <h3 className="gh-admin-card-title">Patient chat</h3>
+                    <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
+                      Pre-consult messages. The patient sees replies in their Messages tab.
+                    </p>
+                    <AdminAppointmentChat appointmentId={appointment.id} />
+                  </AdminCard>
+                </div>
+
+                {/* Internal (doctor ↔ admin) per-appointment notes. NOT
+                    patient-visible. Same thread surface as on the doctor
+                    portal at /doctor/appointments/[id]. */}
+                <AdminCard>
+                  <h3 className="gh-admin-card-title">Internal notes (doctor ↔ admin)</h3>
+                  <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
+                    Handoff context between you and the doctor. Hidden from the
+                    patient.
+                  </p>
+                  <InternalMessagesThread
+                    appointmentId={appointment.id}
+                    initialItems={internalMessages}
+                    postEndpoint={`/api/admin/appointments/${appointment.id}/internal-messages`}
+                    currentRole="ADMIN"
+                  />
+                </AdminCard>
+              </div>
+            ),
+          },
+        ]}
+      />
     </>
   );
 }

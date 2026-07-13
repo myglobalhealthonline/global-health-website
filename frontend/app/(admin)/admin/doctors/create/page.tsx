@@ -213,7 +213,7 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
     <>
       <Link
         href="/admin/doctors"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to doctors
       </Link>
@@ -247,16 +247,16 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
               No formId needed; the hidden input is already a child of
               this <form>. */}
           <DoctorProfileImageField />
-          <div className="gh-admin-doctor-form-actions flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
-            <button type="submit" className="gh-btn gh-btn-primary">
-              Create profile
-            </button>
+          <div className="gh-admin-doctor-form-actions flex flex-wrap justify-end gap-3 border-t border-[var(--color-border)] pt-6">
             <Link
               href="/admin/doctors"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="gh-btn gh-btn-ghost"
             >
               Cancel
             </Link>
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Create profile
+            </button>
           </div>
         </form>
       </AdminCard>

@@ -3,6 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { Link2 } from "lucide-react";
 import { FormSection } from "@/components/FormSection";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 
 type Profile = {
   weightKg: number | null;
@@ -116,6 +117,12 @@ export function PatientProfilePanel({
   // types (BMI itself is never posted — the server derives/stores it).
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");
+  // Chart form mixes uncontrolled text/textarea inputs with FormData-on-submit
+  // (see comment below), so a field-by-field snapshot diff isn't available —
+  // any edit event flips this flag; it's cleared again on a successful save.
+  const [dirty, setDirty] = useState(false);
+  useUnsavedChanges(dirty);
+  const markDirty = () => setDirty(true);
 
   useEffect(() => {
     fetch(`/api/doctor/patients/${encodeURIComponent(email)}/profile`)
@@ -213,6 +220,7 @@ export function PatientProfilePanel({
       if (json.ok && json.data?.profile) {
         setProfile(json.data.profile);
         setSaveMsg(copy.chartSaved);
+        setDirty(false);
       } else {
         setSaveMsg(json.message ?? copy.chartSaveFailed);
       }
@@ -245,7 +253,7 @@ export function PatientProfilePanel({
       {profile?.statusAlert ? (
         <div
           role="alert"
-          className="mt-3 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-[13px] font-semibold text-red-800"
+          className="mt-3 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-portal-compact font-semibold text-red-800"
         >
           ⚠ {profile.statusAlert}
         </div>
@@ -253,13 +261,18 @@ export function PatientProfilePanel({
       {profile?.clinicAlert ? (
         <div
           role="status"
-          className="mt-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-[13px] text-amber-900"
+          className="mt-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-portal-compact text-amber-900"
         >
           ⓘ {profile.clinicAlert}
         </div>
       ) : null}
 
-      <form className="gh-doctor-patient-profile-form mt-4 grid gap-5 text-sm" onSubmit={save}>
+      <form
+        className="gh-doctor-patient-profile-form mt-4 grid gap-5 text-sm"
+        onSubmit={save}
+        onInput={markDirty}
+        onChange={markDirty}
+      >
         {/* Identity (national ID / tax ID / passport) and Address sections
             intentionally hidden from the doctor portal per GDPR plan.
             They remain editable from /admin/users for staff.
@@ -423,7 +436,7 @@ export function PatientProfilePanel({
         </Section>
 
         <Section title={copy.clinicalAlertsSection}>
-          <p className="-mt-1 mb-2 text-[12px] text-[var(--portal-muted)]">
+          <p className="-mt-1 mb-2 text-portal-meta text-[var(--portal-muted)]">
             {copy.clinicalAlertsDesc}
           </p>
           <div className="grid gap-3">
@@ -461,7 +474,7 @@ export function PatientProfilePanel({
             {copy.saveChart}
           </button>
           {saveMsg ? (
-            <span className="text-[12px] text-[var(--portal-muted)]">
+            <span className="text-portal-meta text-[var(--portal-muted)]">
               {saveMsg}
             </span>
           ) : null}
@@ -497,7 +510,7 @@ function Section({
 }) {
   return (
     <section className="gh-doctor-chart-section">
-      <h4 className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
+      <h4 className="mb-2 text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--portal-muted)]">
         {title}
       </h4>
       {children}
@@ -538,7 +551,7 @@ function Field({
         className="gh-input"
       />
       {hint ? (
-        <span className="text-[11px] text-[var(--portal-muted)]">
+        <span className="text-portal-thead text-[var(--portal-muted)]">
           {hint}
         </span>
       ) : null}

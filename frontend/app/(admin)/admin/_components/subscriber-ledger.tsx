@@ -76,7 +76,7 @@ export function AdminSubscriberLedger({ subscriptionId }: { subscriptionId: stri
       <button
         type="button"
         onClick={toggle}
-        className="gh-admin-subscriber-ledger__toggle text-[11px] font-semibold underline underline-offset-2"
+        className="gh-admin-subscriber-ledger__toggle text-portal-thead font-semibold underline underline-offset-2"
         style={{ color: "var(--color-brand-primary)" }}
         aria-expanded={open}
       >
@@ -85,16 +85,16 @@ export function AdminSubscriberLedger({ subscriptionId }: { subscriptionId: stri
       {open ? (
         <div className="gh-admin-subscriber-ledger__panel mt-2 min-w-[220px]">
           {state.status === "loading" ? (
-            <p className="text-[11px]" style={{ color: "var(--color-text-muted)" }}>Loading…</p>
+            <p className="text-portal-thead" style={{ color: "var(--color-text-muted)" }}>Loading…</p>
           ) : state.status === "error" ? (
-            <p className="text-[11px]" style={{ color: "var(--color-status-error)" }}>{state.message}</p>
+            <p className="text-portal-thead" style={{ color: "var(--color-status-error)" }}>{state.message}</p>
           ) : state.status === "ready" && state.rows.length > 0 ? (
             <ul className="gh-admin-subscriber-ledger__list space-y-1">
               {state.rows.slice(0, 12).map((entry, i) => (
-                <li key={i} className="flex items-center justify-between gap-3 text-[11px]">
+                <li key={i} className="flex items-center justify-between gap-3 text-portal-thead">
                   <span style={{ color: "var(--color-text-body)" }}>
                     <span
-                      className="mr-1.5 rounded px-1 py-0.5 text-[10px] font-semibold"
+                      className="mr-1.5 rounded px-1 py-0.5 text-portal-micro font-semibold"
                       style={{ background: "var(--color-background-soft)", color: "var(--color-text-muted)" }}
                     >
                       {entry.kind === "WELLNESS" ? "WL" : "GP"}
@@ -116,7 +116,7 @@ export function AdminSubscriberLedger({ subscriptionId }: { subscriptionId: stri
               ))}
             </ul>
           ) : (
-            <p className="text-[11px]" style={{ color: "var(--color-text-muted)" }}>No activity.</p>
+            <p className="text-portal-thead" style={{ color: "var(--color-text-muted)" }}>No activity.</p>
           )}
         </div>
       ) : null}

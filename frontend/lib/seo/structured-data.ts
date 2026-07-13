@@ -274,6 +274,54 @@ export function medicalProcedureJsonLd(input: {
   };
 }
 
+/** Neutral service-hub schema. Unlike the detail-page MedicalProcedure
+ * builder, this makes no assumptions about video provider, preparation,
+ * documentation or follow-up that are not present in the hub payload. */
+export function medicalServiceHubJsonLd(input: {
+  name: string;
+  description: string;
+  countryName: string;
+  url: string;
+  bookingUrl?: string | null;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: input.name,
+    description: input.description,
+    serviceType: "Online specialist consultation",
+    url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
+    areaServed: { "@type": "Country", name: input.countryName },
+    provider: { "@type": "MedicalOrganization", name: SITE_NAME },
+    ...(input.bookingUrl
+      ? {
+          potentialAction: {
+            "@type": "ReserveAction",
+            target: input.bookingUrl.startsWith("http")
+              ? input.bookingUrl
+              : `${SITE_URL}${input.bookingUrl}`,
+          },
+        }
+      : {}),
+  };
+}
+
+/** ItemList for a country health-test hub. Product-specific medical and offer
+ * claims remain on detail pages; the hub asserts only visible names/URLs. */
+export function catalogueItemListJsonLd(items: Array<{ name: string; url: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    numberOfItems: items.length,
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      url: item.url.startsWith("http") ? item.url : `${SITE_URL}${item.url}`,
+    })),
+  };
+}
+
 /** Best-guess Schema.org MedicalSpecialty for a service, from its slug/kind.
  *  Falls back to PrimaryCare for general GP services. */
 export function medicalSpecialtyForService(kind: string, slug: string): string {

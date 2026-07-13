@@ -57,7 +57,13 @@
     "goToSecurity": "Securitate",
     "securityHint": "Parolă, email",
     "bookCta": "Rezervă o consultație",
-    "booked": "Rezervat {date}"
+    "booked": "Rezervat {date}",
+    "needsAttentionTitle": "Necesită atenția ta",
+    "needsAttentionPaymentRow": "{type} necesită plată",
+    "payNow": "Plătește acum",
+    "needsAttentionAwaitingOne": "1 cerere de rezervare așteaptă confirmare",
+    "needsAttentionAwaitingMany": "{count} cereri de rezervare așteaptă confirmare",
+    "reviewAction": "Verifică"
   },
   "bookings": {
     "breadcrumb": "Cont",
@@ -69,7 +75,7 @@
     "noBookingsBody": "Nu ai făcut nicio cerere de rezervare. Începe prin a rezerva prima ta consultație.",
     "bookOnline": "Rezervă online",
     "searchLabel": "Caută",
-    "searchPlaceholder": "Tip de consultație, țară, stare…",
+    "searchPlaceholder": "Tip, medic, nr. comandă, țară, stare…",
     "statusLabel": "Stare",
     "filterAll": "Toate stările",
     "filterCreated": "Creată",
@@ -102,19 +108,20 @@
     "metaCountry": "Țară",
     "metaDoctor": "Medic",
     "metaScheduled": "Programată",
-    "metaPayment": "Plată"
+    "metaPayment": "Plată",
+    "tabsAria": "Vizualizări rezervări"
   },
   "orders": {
     "breadcrumb": "Cont",
     "title": "Comenzile mele",
     "subtitle": "Teste de sănătate + rețete online pe care le-ai comandat. Rezervările de consultații sunt la 'Rezervările mele'.",
-    "orderMore": "Comandă mai mult",
+    "orderMore": "Începe o comandă nouă",
     "orderHistory": "Istoricul comenzilor",
     "noOrders": "Nicio comandă încă.",
     "browseProducts": "Vezi produse →",
     "items": "{count} articol",
     "itemsPlural": "{count} articole",
-    "open": "Deschide",
+    "open": "Vezi comanda",
     "backToOrders": "Înapoi la comenzi",
     "placedOn": "Plasată {date}",
     "itemsSection": "Articole",
@@ -143,6 +150,8 @@
     "sumStatusHint": "Stadiul livrării",
     "sumItems": "Articole",
     "awaitingConfirmation": "În așteptarea confirmării",
+    "paymentFailedHint": "Plata a eșuat — încercați din nou",
+    "paymentCancelledHint": "Comandă anulată — nu este necesară plata",
     "sumItemsHint": "Produse în această comandă",
     "inclShipping": "Inclusiv livrarea",
     "trackShipment": "Urmărește livrarea",
@@ -150,7 +159,18 @@
     "careRecordBody": "Păstrează această comandă împreună cu rețetele și fișierele tale medicale pentru discuții ulterioare.",
     "reorder": "Recomandă din nou",
     "reorderAdding": "Se adaugă în coș…",
-    "reorderError": "Nu s-au putut adăuga toate articolele în coș."
+    "reorderError": "Nu s-au putut adăuga toate articolele în coș.",
+    "paymentActionTitle": "Plată necesară",
+    "paymentActionBody": "Această comandă nu a fost încă plătită. Finalizează plata pentru a continua procesarea.",
+    "completePayment": "Finalizează plata",
+    "completePaymentLoading": "Se încarcă…",
+    "completePaymentError": "Plata nu a putut fi inițiată — încearcă din nou.",
+    "colOrderNumber": "Nr. comandă",
+    "colDate": "Data",
+    "colItems": "Articole",
+    "colStatus": "Stare",
+    "colTotal": "Total",
+    "orderInfoSection": "Informații comandă"
   },
   "prescriptions": {
     "breadcrumb": "Cont",
@@ -162,6 +182,7 @@
     "days": "zi(le)",
     "refill": "reînnoire",
     "refills": "reînnoiri",
+    "refillButton": "Solicită reînnoirea",
     "issuedBy": "Emisă de {doctor} pe {date}",
     "viewBooking": "Vezi rezervarea",
     "onlineOrders": "Comenzi online",
@@ -170,7 +191,7 @@
     "noOnlineOrders": "Nicio comandă online cu rețetă încă.",
     "browseProducts": "Vezi produse →",
     "ordered": "Comandat {date}",
-    "open": "Deschide"
+    "open": "Vezi rezervarea"
   },
   "medicalFiles": {
     "breadcrumb": "Portalul pacientului",
@@ -244,6 +265,7 @@
     "refundedNote": "Această plată a fost rambursată. Poate dura câteva zile lucrătoare până apare pe extras.",
     "refundedNoteShort": "Rambursat — apare pe extras în câteva zile.",
     "payNow": "Finalizează plata",
+    "payNowError": "Plata nu a putut fi inițiată — încearcă din nou.",
     "loading": "Se încarcă…",
     "receipt": "Chitanță",
     "viewReceipt": "Vezi chitanța",
@@ -257,6 +279,7 @@
     "emailLabel": "Email",
     "emailNote": "Emailul nu poate fi schimbat momentan. Contactează suportul dacă ai nevoie să îl schimbi.",
     "fullNameLabel": "Nume complet",
+    "fieldRequired": "This field is required.",
     "phoneLabel": "Telefon",
     "phonePlaceholder": "+40 7…",
     "phoneNote": "Pentru ca clinica să te poată contacta despre rezervarea ta. Lasă gol dacă preferi doar email.",
@@ -286,6 +309,8 @@
     "saveMedicalProfile": "Salvează profilul medical",
     "medicalSaved": "Profil medical salvat",
     "medicalSaveFailed": "Nu s-a putut salva profilul medical",
+    "tabContact": "Contact",
+    "tabMedical": "Date medicale",
     "tabPersonal": "Personal",
     "tabInsurance": "Asigurare",
     "tabVerification": "Verificare",
@@ -384,7 +409,10 @@
     "sumAccountValue": "Pacient",
     "sumAccountHint": "Setări de securitate",
     "deletionCancelled": "Ștergerea contului a fost anulată.",
-    "closeDialog": "Închide fereastra"
+    "closeDialog": "Închide fereastra",
+    "tabsAria": "Secțiuni de securitate",
+    "tabPassword": "Parolă",
+    "tabAccess": "Acces la cont"
   },
   "family": {
     "breadcrumb": "Cont",
@@ -394,6 +422,7 @@
     "empty": "Nu ai adăugat încă niciun membru al familiei.",
     "addHeading": "Adaugă un membru al familiei",
     "fullName": "Nume complet",
+    "fieldRequired": "This field is required.",
     "fullNamePlaceholder": "ex. Maria Santos",
     "relationship": "Relație",
     "relationshipPlaceholder": "ex. Soț/Soție, Copil, Părinte",
@@ -410,7 +439,7 @@
     "edit": "Editează",
     "remove": "Elimină",
     "deleting": "Se elimină…",
-    "confirmRemove": "Elimini acest membru al familiei?",
+    "confirmRemove": "Elimini acest membru al familiei? Nu va mai putea fi rezervat și va pierde accesul la creditele partajate ale planului.",
     "optional": "opțional",
     "benefitsOn": "Beneficiile planului activate",
     "benefitsOff": "Beneficiile planului dezactivate",
@@ -516,6 +545,7 @@
     "subtitle": "Înregistrează până la două cetățenii. Numerele documentelor sunt stocate criptat.",
     "slotTitle": "Cetățenia {n}",
     "country": "Țară",
+    "fieldRequired": "This field is required.",
     "countryPlaceholder": "ex. Irlanda, Pakistan",
     "documentType": "Tip de document",
     "documentNumber": "Număr de document",
@@ -537,7 +567,8 @@
     "uploaded": "Document încărcat",
     "enableSecond": "Salvează mai întâi Cetățenia 1 pentru a activa o a doua cetățenie.",
     "maxReached": "S-a atins numărul maxim de două documente de cetățenie.",
-    "loadingRecords": "Se încarcă înregistrările de cetățenie"
+    "loadingRecords": "Se încarcă înregistrările de cetățenie",
+    "saveSlot": "Salvează naționalitatea {n}"
   },
   "privacy": {
     "intro": "Controlează modul în care sunt folosite datele tale medicale. Modificările sunt înregistrate pentru conformitate.",
@@ -585,7 +616,8 @@
     "notScheduled": "Neprogramată",
     "sumNextBillingHint": "Data reînnoirii",
     "sumPrice": "Preț",
-    "sumPriceHint": "Abonament lunar"
+    "sumPriceHint": "Abonament lunar",
+    "tabsAria": "Secțiuni abonament și recompense"
   },
   "calendar": {
     "eyebrow": "Programul meu",
@@ -599,7 +631,8 @@
     "sumMeetLinksHint": "Gata de conectare",
     "sumMarkets": "Piețe",
     "sumMarketsHint": "Țări reprezentate",
-    "emptyDay": "Nicio consultație în această zi."
+    "emptyDay": "Nicio consultație în această zi.",
+    "emptyDayHint": "Alege o altă zi pentru a-ți vedea consultațiile."
   },
   "messages": {
     "eyebrow": "Mesaje",
@@ -641,7 +674,11 @@
     "takingYouBack": "Te ducem înapoi la rezervările tale…",
     "noOpenTimesTitle": "Momentan nu există ore libere",
     "noOpenTimesBody": "Medicul tău nu are ore disponibile în următoarele două săptămâni. Anulează această rezervare și rezervă din nou, sau contactează clinica pentru a cere o oră anume.",
-    "availableDates": "Date disponibile"
+    "availableDates": "Date disponibile",
+    "newTime": "Ora nouă",
+    "confirmReschedule": "Confirmă reprogramarea",
+    "cancelSelection": "Anulează",
+    "confirming": "Se reprogramează…"
   },
   "accessHistory": {
     "breadcrumb": "Portal pacient",

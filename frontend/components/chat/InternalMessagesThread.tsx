@@ -67,7 +67,7 @@ export function InternalMessagesThread({
     <div className="mt-3 grid gap-3">
       <ul className="grid gap-2">
         {items.length === 0 ? (
-          <li className="text-[13px]" style={{ color: "var(--portal-muted)" }}>
+          <li className="text-portal-compact" style={{ color: "var(--portal-muted)" }}>
             No internal notes yet.
           </li>
         ) : (
@@ -98,7 +98,7 @@ export function InternalMessagesThread({
           maxLength={8000}
         />
         {error ? (
-          <p className="gh-status-warning rounded-md border px-3 py-2 text-[12.5px]">
+          <p className="gh-status-warning rounded-md border px-3 py-2 text-portal-label">
             {error}
           </p>
         ) : null}

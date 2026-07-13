@@ -11,15 +11,22 @@ import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
 import { getSiteUrl } from "@/lib/seo/site-url";
-import { breadcrumbJsonLd, physicianJsonLd } from "@/lib/seo/structured-data";
+import { breadcrumbJsonLd, physicianJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
 import { resolveBrandTitle } from "@/lib/seo/page-seo";
-import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
-  getPublicPage,
+  getPageContent,
   isSupportedLocale,
+  themeProp,
   type PublicLocale,
-} from "@/lib/content/get-public-page";
-import { RichBodySection } from "@/components/sections/RichBodySection";
+} from "@/lib/content/get-page-content";
+import { FAQSection } from "@/components/sections/FAQSection";
+import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import {
+  ServiceIntro,
+  ChecklistSection,
+  WhyChooseSection,
+} from "@/components/sections/ServiceContentSections";
 import { SITE_NAME } from "@/lib/constants";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -44,7 +51,7 @@ export async function generateMetadata({
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
-  const { record: page } = await getPublicPage(code, "DOCTORS_INDEX", lang as PublicLocale);
+  const { record: page } = await getPageContent(code, "DOCTORS_INDEX", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}/doctors`;
   const title =
     page?.seoTitle ?? `${config.name} — registered doctors and specialists`;
@@ -55,8 +62,21 @@ export async function generateMetadata({
     title: resolveBrandTitle(title),
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/doctors") },
-    openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
-    twitter: { card: "summary_large_image", title, description },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      title,
+      description,
+      url,
+      ...ogLocales(config, lang),
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
+    },
   };
 }
 
@@ -87,14 +107,16 @@ export default async function CountryLangDoctorsPage({
 
   const [doctors, { record: rawPage, disabled: pageDisabled }, countryTrust, generalServices, specialistServices] = await Promise.all([
     getCountryDoctors(code, lang),
-    getPublicPage(code, "DOCTORS_INDEX", lang as PublicLocale),
+    getPageContent(code, "DOCTORS_INDEX", lang as PublicLocale),
     getCountryTrust(code),
     getCountryServices(code, "GENERAL", lang),
     getCountryServices(code, "SPECIALIST", lang),
   ]);
   const verifyUrl = doctorVerificationUrl(countryTrust) ?? undefined;
 
-  const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
+  // Structured PageContent self-gates via publish status; legacy "pages"
+  // country-feature no longer gates it.
+  const page = pageDisabled ? null : rawPage;
 
   // Physician ItemList schema — one Physician node per registered doctor in
   // this country (the FULL roster, independent of any client-side filter).
@@ -152,6 +174,9 @@ export default async function CountryLangDoctorsPage({
           physicianItemListJsonLd,
         ]}
       />
+      {page?.sections.faq ? <JsonLd data={faqJsonLd(page.faq)} /> : null}
+      {/* Directory IS this page's header/hero (no ServiceHero here) — every
+          marketing section below must render AFTER it, never before. */}
       <Suspense fallback={<DoctorDirectoryView view={unfilteredView} />}>
         <DoctorsDirectoryClient ctx={directoryCtx} />
       </Suspense>
@@ -163,7 +188,34 @@ export default async function CountryLangDoctorsPage({
         headline="What patients say about"
         headlineAccent="our doctors"
       />
-      <RichBodySection html={page?.body} />
+      {page?.sections.intro ? (
+        <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
+      ) : null}
+      {page?.sections.whoFor ? (
+        <ChecklistSection
+          eyebrow="Who it's for"
+          title={page.whoForTitle!}
+          intro={page.whoForIntro ?? undefined}
+          items={page.whoForItems}
+          theme={themeProp(page?.whoForTheme, "light")}
+        />
+      ) : null}
+      {page?.sections.whyChoose ? (
+        <WhyChooseSection
+          title={page.whyChooseTitle!}
+          items={page.whyChooseItems}
+          theme={themeProp(page?.whyChooseTheme, "soft")}
+        />
+      ) : null}
+      {page?.sections.faq ? (
+        <FAQSection items={page.faq} theme={themeProp(page?.faqTheme, "dark")} />
+      ) : null}
+      {page?.sections.disclaimer ? (
+        <MedicalDisclaimer
+          paragraphs={page.disclaimerParagraphs}
+          theme={themeProp(page?.disclaimerTheme, "dark")}
+        />
+      ) : null}
     </>
   );
 }

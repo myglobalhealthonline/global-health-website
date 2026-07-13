@@ -180,7 +180,7 @@ export default async function AdminDoctorDetailPage({
     <>
       <Link
         href="/admin/doctors"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to doctors
       </Link>
@@ -248,7 +248,7 @@ export default async function AdminDoctorDetailPage({
         <div className="grid gap-4">
           <AdminCard>
             <h3 className={cardTitleClass}>Identifiers</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Public marketing profile — not a login account.
             </p>
             <div className="gh-admin-doctor-field-grid grid gap-4 sm:grid-cols-2">
@@ -278,7 +278,7 @@ export default async function AdminDoctorDetailPage({
                   d.whatsappNumber ? (
                     <span className="flex items-center gap-2">
                       <span>{d.whatsappNumber}</span>
-                      <span className="inline-block rounded border border-[var(--color-border)] bg-[var(--color-background-soft)] px-1.5 py-px text-[10px] font-semibold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">
+                      <span className="inline-block rounded border border-[var(--color-border)] bg-[var(--color-background-soft)] px-1.5 py-px text-portal-micro font-semibold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">
                         Internal
                       </span>
                     </span>
@@ -313,7 +313,7 @@ export default async function AdminDoctorDetailPage({
           <AdminCard>
             <h3 className={cardTitleClass}>Qualifications</h3>
             {d.qualifications.length > 0 ? (
-              <ul className="gh-admin-doctor-chip-list mt-3 grid gap-2 text-[14px] leading-relaxed text-[var(--color-text-body)]">
+              <ul className="gh-admin-doctor-chip-list mt-3 grid gap-2 text-portal-body leading-relaxed text-[var(--color-text-body)]">
                 {d.qualifications.map((q, i) => (
                   <li
                     key={i}
@@ -328,7 +328,7 @@ export default async function AdminDoctorDetailPage({
                 ))}
               </ul>
             ) : (
-              <p className="mt-3 text-[13px] text-[var(--color-text-muted)]">
+              <p className="mt-3 text-portal-compact text-[var(--color-text-muted)]">
                 No qualifications provided.
               </p>
             )}
@@ -342,7 +342,7 @@ export default async function AdminDoctorDetailPage({
                 dangerouslySetInnerHTML={{ __html: sanitizeDoctorBioHtml(d.bio) }}
               />
             ) : (
-              <p className="mt-3 text-[13px] text-[var(--color-text-muted)]">
+              <p className="mt-3 text-portal-compact text-[var(--color-text-muted)]">
                 No bio provided.
               </p>
             )}
@@ -371,35 +371,35 @@ export default async function AdminDoctorDetailPage({
 
           <AdminCard>
             <h3 className={cardTitleClass}>Payout bank details</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Entered by the doctor in their portal. The IBAN is stored
               encrypted; revealing the full number is logged.
             </p>
             {bank && (bank.ibanSet || bank.accountHolder || bank.bic) ? (
               <dl className="gh-admin-doctor-bank-list grid gap-3">
                 <div>
-                  <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                  <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                     Account holder
                   </dt>
-                  <dd className="mt-1 text-[14px] text-[var(--color-text-primary)]">
+                  <dd className="mt-1 text-portal-body text-[var(--color-text-primary)]">
                     {bank.accountHolder ?? "—"}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                  <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                     IBAN
                   </dt>
-                  <dd className="mt-1 font-mono text-[14px] text-[var(--color-text-primary)]">
+                  <dd className="mt-1 font-mono text-portal-body text-[var(--color-text-primary)]">
                     {revealBank && bank.iban
                       ? bank.iban
                       : bank.ibanMasked ?? "—"}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                  <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                     BIC / SWIFT
                   </dt>
-                  <dd className="mt-1 font-mono text-[14px] text-[var(--color-text-primary)]">
+                  <dd className="mt-1 font-mono text-portal-body text-[var(--color-text-primary)]">
                     {bank.bic ?? "—"}
                   </dd>
                 </div>
@@ -413,7 +413,7 @@ export default async function AdminDoctorDetailPage({
                 ) : null}
               </dl>
             ) : (
-              <p className="text-[13px] text-[var(--color-text-muted)]">
+              <p className="text-portal-compact text-[var(--color-text-muted)]">
                 The doctor has not added payout bank details yet.
               </p>
             )}
@@ -423,16 +423,16 @@ export default async function AdminDoctorDetailPage({
         <div className="gh-admin-doctor-side-stack grid gap-4 self-start">
           <AdminCard>
             <h3 className={cardTitleClass}>Account access</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Invite the doctor by email — they&apos;ll set a password and
               land straight in the portal.
             </p>
             {d.loginUser ? (
               <div className="grid gap-3">
-                <div className="gh-admin-doctor-account-card rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3 text-[13px]">
+                <div className="gh-admin-doctor-account-card rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3 text-portal-compact">
                   <p className="flex items-center gap-2 font-semibold text-[var(--color-text-primary)]">
                     <span>{d.loginUser.email}</span>
-                    <span className="inline-block rounded border border-[var(--color-border)] bg-[var(--color-background)] px-1.5 py-px text-[10px] font-semibold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">
+                    <span className="inline-block rounded border border-[var(--color-border)] bg-[var(--color-background)] px-1.5 py-px text-portal-micro font-semibold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">
                       Internal
                     </span>
                   </p>
@@ -457,7 +457,7 @@ export default async function AdminDoctorDetailPage({
                 </form>
                 <Link
                   href={`/admin/users/${d.loginUser.id}`}
-                  className="text-[12px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+                  className="text-portal-meta font-semibold text-[var(--color-brand-primary)] hover:underline"
                 >
                   Manage account at /admin/users →
                 </Link>
@@ -484,7 +484,7 @@ export default async function AdminDoctorDetailPage({
                     defaultValue={d.fullName}
                     className="gh-input"
                   />
-                  <span className="text-[11px] text-[var(--color-text-muted)]">
+                  <span className="text-portal-thead text-[var(--color-text-muted)]">
                     Falls back to the doctor profile name above if left blank.
                   </span>
                 </label>
@@ -500,7 +500,7 @@ export default async function AdminDoctorDetailPage({
 
           <AdminCard>
             <h3 className={cardTitleClass}>Visibility</h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Deactivating hides this profile from the public doctors listing API.
             </p>
             {isActive ? (
@@ -510,7 +510,7 @@ export default async function AdminDoctorDetailPage({
                 </button>
               </form>
             ) : (
-              <p className="text-[13px] text-[var(--color-text-muted)]">
+              <p className="text-portal-compact text-[var(--color-text-muted)]">
                 This profile is inactive. Re-enable from Edit.
               </p>
             )}
@@ -520,7 +520,7 @@ export default async function AdminDoctorDetailPage({
             <h3 className="m-0 [font-family:var(--font-display)] text-base font-extrabold text-[var(--color-status-error-text)]">
               Danger zone
             </h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Permanent delete removes this profile and any linked assets.
             </p>
             <form action={deleteDoctorAction} className="gh-admin-doctor-danger-action">
@@ -555,11 +555,11 @@ function FieldRow({
 }) {
   return (
     <div className={full ? "gh-admin-doctor-field-row sm:col-span-2" : "gh-admin-doctor-field-row"}>
-      <div className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+      <div className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
         {label}
       </div>
       <div
-        className={`mt-1 text-[var(--color-text-primary)] ${mono ? "font-mono text-[12.5px]" : "text-[14px]"}`}
+        className={`mt-1 text-[var(--color-text-primary)] ${mono ? "font-mono text-portal-label" : "text-portal-body"}`}
       >
         {value}
       </div>

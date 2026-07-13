@@ -1,5 +1,6 @@
 import { fetchDoctorReports } from "@/lib/api/doctor-api";
-import { AdminEmptyState, PageHeader, SectionHeader } from "@/components/portal-atoms";
+import { AdminEmptyState, AdminSummaryStrip, PageHeader, SectionHeader } from "@/components/portal-atoms";
+import { CalendarCheck, FileCheck, Receipt, Repeat, Users } from "lucide-react";
 import { ReportsCsvButton } from "./_components/csv-button";
 import { DoctorReportExports } from "./_components/report-exports";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
@@ -59,7 +60,45 @@ export default async function DoctorReportsPage({
         actions={result.ok ? <ReportsCsvButton data={result.data} label={d.reports.exportCsv} /> : null}
       />
 
-      <form className="gh-card gh-doctor-filter-card gh-doctor-filter-grid mb-4 grid gap-3 p-4 sm:grid-cols-5" method="get">
+      {result.ok ? (
+        <AdminSummaryStrip
+          className="mb-4"
+          items={[
+            {
+              label: d.reports.tileAppointments,
+              value: String(result.data.appointments?.total ?? 0),
+              icon: <CalendarCheck className="size-4" aria-hidden />,
+            },
+            {
+              label: d.reports.tileSignedConsults,
+              value: String(result.data.signedConsults ?? 0),
+              icon: <FileCheck className="size-4" aria-hidden />,
+            },
+            {
+              label: d.reports.tileFollowUps,
+              value: String(result.data.followUps ?? 0),
+              icon: <Repeat className="size-4" aria-hidden />,
+            },
+            {
+              label: d.reports.tileDistinctPatients,
+              value: String(result.data.distinctPatients ?? 0),
+              icon: <Users className="size-4" aria-hidden />,
+            },
+            {
+              label: d.reports.tileRevenuePaid,
+              value:
+                Object.keys(result.data.revenueByCurrency ?? {}).length === 0
+                  ? "—"
+                  : Object.entries(result.data.revenueByCurrency ?? {})
+                      .map(([code, cents]) => fmtCurrency(cents, code))
+                      .join(" + "),
+              icon: <Receipt className="size-4" aria-hidden />,
+            },
+          ]}
+        />
+      ) : null}
+
+      <form className="gh-card gh-doctor-filter-card gh-doctor-filter-grid mb-4 grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-5" method="get">
         <label className="flex flex-col gap-1">
           <span className="gh-field-label">{d.common.from}</span>
           <input
@@ -123,7 +162,7 @@ export default async function DoctorReportsPage({
             <option value="FAILED">{d.reports.paymentFailed}</option>
           </select>
         </label>
-        <div className="gh-doctor-filter-actions sm:col-span-5 flex flex-wrap items-center gap-2">
+        <div className="gh-doctor-filter-actions sm:col-span-2 lg:col-span-5 flex flex-wrap items-center gap-2">
           <button type="submit" className="gh-btn gh-btn-primary text-sm">
             {d.common.apply}
           </button>
@@ -147,81 +186,58 @@ export default async function DoctorReportsPage({
         </div>
       ) : (
         <>
-          <div className="gh-doctor-report-tile-grid mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            <Tile
-              label={d.reports.tileAppointments}
-              value={String(result.data.appointments?.total ?? 0)}
-            />
-            <Tile
-              label={d.reports.tileSignedConsults}
-              value={String(result.data.signedConsults ?? 0)}
-            />
-            <Tile
-              label={d.reports.tileFollowUps}
-              value={String(result.data.followUps ?? 0)}
-            />
-            <Tile
-              label={d.reports.tileDistinctPatients}
-              value={String(result.data.distinctPatients ?? 0)}
-            />
-            <Tile
-              label={d.reports.tileRevenuePaid}
-              value={
-                Object.keys(result.data.revenueByCurrency ?? {}).length === 0
-                  ? "—"
-                  : Object.entries(result.data.revenueByCurrency ?? {})
-                      .map(([code, cents]) => fmtCurrency(cents, code))
-                      .join(" + ")
-              }
-            />
-          </div>
-
-          <div className="gh-doctor-report-grid grid gap-4 lg:grid-cols-2">
-            <section className="gh-card gh-doctor-report-card p-6">
-              <SectionHeader
-                title={d.reports.byStatusTitle}
-                description={d.reports.byStatusDesc}
-              />
-              <BreakdownTable
-                rows={(result.data.appointments?.byStatus ?? []).map((r) => ({
-                  label: r.status,
-                  count: r.count,
-                }))}
-                emptyTitle={d.reports.emptyRangeTitle}
-                emptyDesc={d.reports.emptyRangeDesc}
-              />
-            </section>
-            <section className="gh-card gh-doctor-report-card p-6">
-              <SectionHeader
-                title={d.reports.byTypeTitle}
-                description={d.reports.byTypeDesc}
-              />
-              <BreakdownTable
-                rows={(result.data.appointments?.byConsultationType ?? []).map((r) => ({
-                  label: r.consultationType,
-                  count: r.count,
-                }))}
-                emptyTitle={d.reports.emptyRangeTitle}
-                emptyDesc={d.reports.emptyRangeDesc}
-              />
-            </section>
-          </div>
+          {(() => {
+            const byStatusRows = (result.data.appointments?.byStatus ?? []).map((r) => ({
+              label: r.status,
+              count: r.count,
+            }));
+            const byTypeRows = (result.data.appointments?.byConsultationType ?? []).map((r) => ({
+              label: r.consultationType,
+              count: r.count,
+            }));
+            // 13-001: both breakdowns are empty for the exact same reason (no
+            // appointments in range) — show one empty-state, not two.
+            if (byStatusRows.length === 0 && byTypeRows.length === 0) {
+              return (
+                <section className="gh-card gh-doctor-report-card p-6">
+                  <AdminEmptyState
+                    className="gh-doctor-empty-state"
+                    title={d.reports.emptyRangeTitle}
+                    description={d.reports.emptyRangeDesc}
+                  />
+                </section>
+              );
+            }
+            return (
+              <div className="gh-doctor-report-grid grid gap-4 lg:grid-cols-2">
+                <section className="gh-card gh-doctor-report-card p-6">
+                  <SectionHeader
+                    title={d.reports.byStatusTitle}
+                    description={d.reports.byStatusDesc}
+                  />
+                  <BreakdownTable
+                    rows={byStatusRows}
+                    emptyTitle={d.reports.emptyRangeTitle}
+                    emptyDesc={d.reports.emptyRangeDesc}
+                  />
+                </section>
+                <section className="gh-card gh-doctor-report-card p-6">
+                  <SectionHeader
+                    title={d.reports.byTypeTitle}
+                    description={d.reports.byTypeDesc}
+                  />
+                  <BreakdownTable
+                    rows={byTypeRows}
+                    emptyTitle={d.reports.emptyRangeTitle}
+                    emptyDesc={d.reports.emptyRangeDesc}
+                  />
+                </section>
+              </div>
+            );
+          })()}
         </>
       )}
     </>
-  );
-}
-
-function Tile({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="gh-card gh-doctor-report-tile p-5">
-      <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
-        {label}
-      </p>
-      <p className="mt-2 text-2xl font-bold text-[var(--portal-text)]">
-        {value}
-      </p>
-    </div>
   );
 }
 
@@ -244,7 +260,7 @@ function BreakdownTable({
     );
   }
   return (
-    <table className="gh-doctor-mini-table mt-4 w-full text-[13px]">
+    <table className="gh-doctor-mini-table mt-4 w-full text-portal-compact">
       <tbody>
         {rows.map((r) => (
           <tr key={r.label} className="border-t border-[var(--portal-line)]">

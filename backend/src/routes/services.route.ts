@@ -18,7 +18,7 @@ function optionalUserId(request: FastifyRequest): string | null {
 
 const slugParamsSchema = z.object({ slug: z.string().trim().min(1) });
 const countryQuerySchema = z.object({
-  countryCode: z.string().trim().min(1).max(8).optional(),
+  countryCode: z.string().trim().min(1).max(8).toLowerCase().optional(),
   // .catch(undefined): an unknown locale falls back to the country default
   // instead of failing the whole query parse (which would also silently
   // drop countryCode and serve the wrong country's content).

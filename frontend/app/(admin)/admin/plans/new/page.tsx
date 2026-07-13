@@ -104,7 +104,7 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
                 className="gh-admin-plan-type-card flex flex-col items-start gap-0.5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-4 py-3 text-left transition-colors hover:border-[var(--color-brand-accent)] hover:bg-[var(--color-surface-2)]"
               >
                 <span className="font-semibold text-[var(--color-text-primary)]">{t.label}</span>
-                <span className="text-[13px] text-[var(--color-text-muted)]">{t.blurb}</span>
+                <span className="text-portal-compact text-[var(--color-text-muted)]">{t.blurb}</span>
               </button>
             ))}
           </form>
@@ -133,7 +133,7 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
     <>
       <Link
         href="/admin/plans"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to plans
       </Link>
@@ -153,16 +153,16 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
       <AdminCard>
         <form action={createPlanAction} className="gh-admin-plan-form flex flex-col gap-8">
           <PlanFields countries={countries} pinnedCountryId={countryId} planType={planType} />
-          <div className="gh-admin-plan-actions flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
-            <button type="submit" className="gh-btn gh-btn-primary">
-              Create plan
-            </button>
+          <div className="gh-admin-plan-actions flex flex-wrap items-center justify-end gap-3 border-t border-[var(--color-border)] pt-6">
             <Link
               href="/admin/plans"
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="gh-btn gh-btn-ghost"
             >
               Cancel
             </Link>
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Create plan
+            </button>
           </div>
         </form>
       </AdminCard>

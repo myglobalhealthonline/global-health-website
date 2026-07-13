@@ -188,11 +188,11 @@ export function SlotPickerStep({
                   </span>
                 ) : null}
                 {s.pricingType === "PEAK" ? (
-                  <span className="rounded-full bg-[rgba(255,196,0,0.16)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-white/70">
+                  <span className="rounded-full bg-[rgba(255,196,0,0.16)] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-white/70">
                     Peak
                   </span>
                 ) : s.pricingType === "OFF_PEAK" ? (
-                  <span className="rounded-full bg-[rgba(176,241,34,0.10)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-[var(--color-brand-accent)]">
+                  <span className="rounded-full bg-[rgba(176,241,34,0.10)] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-brand-accent)]">
                     Off-peak
                   </span>
                 ) : null}

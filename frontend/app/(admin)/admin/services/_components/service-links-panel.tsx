@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type { AdminServiceLinkDto, AdminServiceLinkType } from "@/lib/admin/admin-api";
+import { PortalTabs } from "@/components/PortalTabs";
 
 type SaveAction = (formData: FormData) => void | Promise<void>;
 
@@ -165,25 +166,15 @@ export function ServiceLinksPanel({
       {/* Locale tabs — switch which language you are editing across all rows.
           Other locales are optional; blank ones fall back to {default}. */}
       {localeCodes.length > 1 ? (
-        <div className="gh-admin-service-tablist">
-          {localeCodes.map((code) => (
-            <button
-              key={code}
-              type="button"
-              onClick={() => setActiveLocale(code)}
-              className="gh-btn gh-admin-service-tab px-3 py-1 text-[12px] font-semibold"
-              aria-pressed={activeLocale === code}
-              style={
-                activeLocale === code
-                  ? { background: "var(--color-brand-primary)", color: "#fff" }
-                  : undefined
-              }
-            >
-              {code}
-              {code === def ? " · default" : ""}
-            </button>
-          ))}
-        </div>
+        <PortalTabs
+          ariaLabel="Edit locale"
+          value={activeLocale}
+          onChange={setActiveLocale}
+          items={localeCodes.map((code) => ({
+            value: code,
+            label: code === def ? `${code} · default` : code,
+          }))}
+        />
       ) : null}
 
       {rows.map((r, i) => {

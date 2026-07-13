@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
+import type { CSSProperties } from "react";
 import {
   CalendarClock,
   ChevronRight,
@@ -17,10 +18,11 @@ import {
   fetchAdminAppointments,
   fetchAdminCountries,
   fetchAdminDoctors,
-  fetchAdminPages,
+  fetchAdminPageContentList,
   fetchAdminPendingServiceRequests,
   fetchAdminServices,
-  type AdminPageDto,
+  ADMIN_PAGE_CONTENT_KEYS,
+  type AdminPageContentListItem,
 } from "@/lib/admin/admin-api";
 import { COUNTRY_PREF_COOKIE } from "./_components/country-picker-constants";
 import { FlagBadge } from "./_components/flag-badge";
@@ -46,7 +48,7 @@ const NON_TERMINAL_STATUSES = new Set([
   "CONTACTED",
 ]);
 
-const EXPECTED_PAGE_KEYS_PER_COUNTRY = 4; // HOME · DOCTORS_INDEX · GENERAL · SPECIALIST
+const EXPECTED_PAGE_KEYS_PER_COUNTRY = 6; // Home · GP hub · Specialist hub · Doctors · Prescriptions · Health tests
 
 function timeAgo(date: Date): string {
   const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
@@ -94,16 +96,34 @@ export default async function AdminDashboardPage() {
     ? { countryId: activeCountry.id }
     : {};
 
-  const [doctorsRes, servicesRes, appointmentsRes, pagesRes, approvalsRes] =
-    await Promise.all([
-      fetchAdminDoctors(scopeQuery),
-      fetchAdminServices(scopeQuery),
-      fetchAdminAppointments(activeCountry ? { countryCode: activeCountry.code } : undefined),
-      fetchAdminPages({ ...scopeQuery, pageSize: "100" }),
-      fetchAdminPendingServiceRequests(
-        activeCountry ? { countryCode: activeCountry.code } : undefined,
-      ),
-    ]);
+  const [
+    doctorsRes,
+    servicesRes,
+    appointmentsRes,
+    pagesRes,
+    approvalsRes,
+    // The Country-health table is a GLOBAL per-country overview, so it needs
+    // its own un-scoped, high-page fetches. Reusing the scoped stat-strip
+    // fetches above (countryId-filtered, default pageSize 20) zeroed out every
+    // non-active country and silently dropped rows past the 20th.
+    // ponytail: pageSize 250/100 covers current scale (6 countries, tens of
+    //   rows); move to a backend per-country COUNT endpoint if any one entity
+    //   exceeds the service-layer 100-row cap (appointments hard-cap at 100).
+    allDoctorsRes,
+    allServicesRes,
+    allAppointmentsRes,
+  ] = await Promise.all([
+    fetchAdminDoctors(scopeQuery),
+    fetchAdminServices(scopeQuery),
+    fetchAdminAppointments(activeCountry ? { countryCode: activeCountry.code } : undefined),
+    fetchAdminPageContentList(),
+    fetchAdminPendingServiceRequests(
+      activeCountry ? { countryCode: activeCountry.code } : undefined,
+    ),
+    fetchAdminDoctors({ pageSize: "250" }),
+    fetchAdminServices({ pageSize: "250" }),
+    fetchAdminAppointments({ pageSize: "100" }),
+  ]);
 
   const pendingApprovals = approvalsRes.ok ? approvalsRes.data.count : 0;
 
@@ -127,16 +147,26 @@ export default async function AdminDashboardPage() {
     NON_TERMINAL_STATUSES.has(a.status),
   ).length;
 
-  const pages: AdminPageDto[] = pagesRes.ok ? pagesRes.data.items : [];
+  // Only the CMS-managed page keys count here — HOME/DOCTORS_INDEX keep their
+  // own bespoke layouts and are not part of the structured page-content model.
+  const managedKeys = new Set<string>(ADMIN_PAGE_CONTENT_KEYS);
+  const allPageContentItems: AdminPageContentListItem[] = pagesRes.ok
+    ? pagesRes.data.items.filter((p) => managedKeys.has(p.pageKey))
+    : [];
+  const pages = activeCountry
+    ? allPageContentItems.filter((p) => p.countryId === activeCountry.id)
+    : allPageContentItems;
   const publishedPages = pages.filter((p) => p.status === "PUBLISHED" && p.isActive);
   const expectedPages = activeCountry
     ? EXPECTED_PAGE_KEYS_PER_COUNTRY
     : countries.length * EXPECTED_PAGE_KEYS_PER_COUNTRY;
 
-  // Per-country aggregation (only used in global scope).
-  const allDoctors = doctorsRes.ok ? doctorsRes.data.items : [];
-  const allServices = servicesItems;
-  const allPages = pages;
+  // Per-country aggregation for the Country-health table — always global,
+  // never the active-country scope (see the fetch block above).
+  const allDoctors = allDoctorsRes.ok ? allDoctorsRes.data.items : [];
+  const allServices = allServicesRes.ok ? allServicesRes.data.items : [];
+  const allAppointments = allAppointmentsRes.ok ? allAppointmentsRes.data.items : [];
+  const allPages = allPageContentItems;
   const countryRows = countries
     .filter((c) => c.isActive)
     .map((c) => {
@@ -150,7 +180,7 @@ export default async function AdminDashboardPage() {
       const pgs = allPages.filter(
         (p) => p.countryId === c.id && p.status === "PUBLISHED" && p.isActive,
       ).length;
-      const pending = appointments.filter(
+      const pending = allAppointments.filter(
         (a) =>
           a.country?.toLowerCase() === c.code.toLowerCase() &&
           NON_TERMINAL_STATUSES.has(a.status),
@@ -172,17 +202,9 @@ export default async function AdminDashboardPage() {
       target: a.consultationType,
     });
   }
-  for (const p of pages.slice(0, 12)) {
-    activity.push({
-      id: `page:${p.id}`,
-      kind: "page",
-      timestamp: new Date(p.updatedAt),
-      countrySlug: p.country?.slug ?? null,
-      primary: "Admin",
-      verb: p.status === "PUBLISHED" ? "published" : "edited",
-      target: `${p.pageKey.replace(/_/g, " ").toLowerCase()} · ${p.locale}`,
-    });
-  }
+  // ponytail: page-content list overview has no per-row updatedAt/locale, so
+  // it can no longer feed the "recently edited page" activity rows the old
+  // ContentPage list provided. Bookings still populate this feed.
   activity.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   const recentActivity = activity.slice(0, 7);
 
@@ -190,8 +212,8 @@ export default async function AdminDashboardPage() {
     .split(/\s+/)[0];
 
   const countryHomeHref = activeCountry
-    ? `/admin/pages?countryId=${activeCountry.id}&pageKey=HOME`
-    : "/admin/country-home";
+    ? `/admin/page-content/${activeCountry.id}/HOME`
+    : "/admin/page-content";
 
   const quickActions = [
     {
@@ -247,19 +269,22 @@ export default async function AdminDashboardPage() {
               View public site
             </Btn>
             <Btn
-              href="/admin/pages/new"
+              href="/admin/page-content"
               variant="on-chrome"
               size="sm"
               iconLeft={<Plus className="size-3.5" aria-hidden />}
             >
-              New page
+              Page content
             </Btn>
           </div>
         }
       />
 
       {/* Stat strip — 5 up */}
-      <section className="gh-admin-dashboard-stats mb-5 grid gap-3">
+      <section
+        className="gh-admin-dashboard-stats mb-5 grid gap-3"
+        style={{ "--card-count": 6 } as CSSProperties}
+      >
         <StatCard
           label="Active countries"
           value={countries.filter((c) => c.isActive).length}
@@ -288,7 +313,7 @@ export default async function AdminDashboardPage() {
           tone={
             publishedPages.length >= expectedPages ? "brand" : "neutral"
           }
-          href={activeCountry ? `/admin/pages?countryId=${activeCountry.id}` : "/admin/pages"}
+          href="/admin/page-content"
         />
         <StatCard
           label="Services published"
@@ -346,10 +371,10 @@ export default async function AdminDashboardPage() {
               <span className="gh-icon-tile gh-icon-tile-lg mb-2">
                 <FileText className="size-5" aria-hidden />
               </span>
-              <p className="text-[13px] font-medium text-[var(--color-text-primary)]">
+              <p className="text-portal-compact font-medium text-[var(--color-text-primary)]">
                 No activity yet
               </p>
-              <p className="max-w-xs text-[12px] text-[var(--color-text-muted)]">
+              <p className="max-w-xs text-portal-meta text-[var(--color-text-muted)]">
                 New booking requests and content edits will appear here.
               </p>
             </div>
@@ -380,7 +405,7 @@ export default async function AdminDashboardPage() {
                       />
                     )}
                     <div className="min-w-0 flex-1">
-                      <p className="m-0 truncate text-[13px] text-[var(--color-text-body)]">
+                      <p className="m-0 truncate text-portal-compact text-[var(--color-text-body)]">
                         <strong className="font-bold text-[var(--color-text-primary)]">
                           {row.primary}
                         </strong>{" "}
@@ -393,7 +418,7 @@ export default async function AdminDashboardPage() {
                     <Pill tone={row.kind === "booking" ? "pending" : "neutral"}>
                       {row.kind}
                     </Pill>
-                    <span className="ml-2 shrink-0 whitespace-nowrap text-[12px] text-[var(--color-text-muted)]">
+                    <span className="ml-2 shrink-0 whitespace-nowrap text-portal-meta text-[var(--color-text-muted)]">
                       {timeAgo(row.timestamp)}
                     </span>
                   </li>
@@ -438,10 +463,10 @@ export default async function AdminDashboardPage() {
                     <Icon className="size-4" aria-hidden />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="m-0 text-[13px] font-bold" style={{ color: "var(--portal-text)" }}>
+                    <p className="m-0 text-portal-compact font-bold" style={{ color: "var(--portal-text)" }}>
                       {a.label}
                     </p>
-                    <p className="m-0 mt-0.5 text-[12px]" style={{ color: "var(--portal-muted)" }}>
+                    <p className="m-0 mt-0.5 text-portal-meta" style={{ color: "var(--portal-muted)" }}>
                       {a.sub}
                     </p>
                   </div>
@@ -509,8 +534,8 @@ export default async function AdminDashboardPage() {
                     </Td>
                     <Td align="right">
                       <Link
-                        href={`/admin/pages?countryId=${row.country.id}`}
-                        className="text-[13px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+                        href="/admin/page-content"
+                        className="text-portal-compact font-semibold text-[var(--color-brand-primary)] hover:underline"
                       >
                         Open
                       </Link>

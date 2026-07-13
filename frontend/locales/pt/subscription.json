@@ -92,6 +92,7 @@
     "cancelScheduled": "A sua adesão foi cancelada. Os benefícios mantêm-se até {date}.",
     "cancelAtPeriodEnd": "Cancela em {date}",
     "change": "Alterar plano",
+    "browseAllPlans": "Ver todos os planos",
     "upgrade": "Subir ou descer de plano",
     "changeTo": "Mudar para {plan}",
     "changing": "A agendar alteração…",
@@ -119,6 +120,8 @@
       "paused": "A sua adesão está em pausa e os benefícios estão suspensos. Retome a faturação no portal de faturação abaixo para restaurar os seus créditos e descontos.",
       "confirming": "A confirmar o seu pagamento… normalmente demora apenas alguns segundos.",
       "stillProcessing": "Pagamento recebido — a ativação da sua adesão está a demorar um pouco mais do que o habitual.",
+      "alreadyActive": "Já tem uma adesão ativa — faça a gestão abaixo.",
+      "dismiss": "Fechar",
       "refresh": "Atualizar"
     }
   },
@@ -148,6 +151,7 @@
     "reason_RESET_EXPIRE": "Mês anterior reiniciado",
     "reason_RESERVED": "Reservado",
     "reason_CONSUMED": "Usado em consulta",
+    "reason_CONSUMED_COMPLETED": "Consulta concluída",
     "reason_REDEEMED": "Resgatado por kit",
     "reason_RELEASED": "Devolvido",
     "reason_ADJUSTMENT": "Ajuste manual",
@@ -213,6 +217,12 @@
       "body": "A sua adesão inclui este kit. Resgate-o com {required} créditos de bem-estar — tem atualmente {balance}.",
       "cta": "Resgatar este kit",
       "progress": "{progress} de {required} créditos de bem-estar acumulados"
+    },
+    "howItWorks": {
+      "title": "Como funcionam os créditos de bem-estar",
+      "step1": "Ganhe créditos de bem-estar automaticamente em cada mês pago de adesão.",
+      "step2": "Acumule créditos suficientes para atingir o requisito de um kit.",
+      "step3": "Resgate — enviamos o kit diretamente para a sua morada."
     }
   },
   "invoice": {
@@ -226,7 +236,8 @@
     "status_paid": "Paga",
     "status_open": "Em aberto",
     "status_void": "Anulada",
-    "status_uncollectible": "Não paga"
+    "status_uncollectible": "Não paga",
+    "status_processing": "Em processamento"
   },
   "legal": {
     "eyebrow": "Aspetos legais",

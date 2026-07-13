@@ -124,7 +124,7 @@ export default async function AdminCountryDetailPage({
     <>
       <Link
         href="/admin/countries"
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to countries
       </Link>
@@ -192,7 +192,7 @@ export default async function AdminCountryDetailPage({
           </FormSection>
 
           <FormSection title="Public routes" description="Paths the public site uses to reach this country.">
-            <ul className="gh-admin-country-route-list gh-form-section__span-2 grid gap-2 font-mono text-[12.5px] text-[var(--color-text-body)]">
+            <ul className="gh-admin-country-route-list gh-form-section__span-2 grid gap-2 font-mono text-portal-label text-[var(--color-text-body)]">
               <li className="rounded-md bg-[var(--color-background-soft)] px-3 py-2">
                 {c.legacyHomePath}
               </li>
@@ -210,9 +210,9 @@ export default async function AdminCountryDetailPage({
 
           <FormSection title="Domains" description="Hostnames mapped to this country.">
             {c.domains.length === 0 ? (
-              <p className="gh-form-section__span-2 text-[13px] text-[var(--color-text-muted)]">None configured.</p>
+              <p className="gh-form-section__span-2 text-portal-compact text-[var(--color-text-muted)]">None configured.</p>
             ) : (
-              <ul className="gh-admin-country-domain-list gh-form-section__span-2 grid gap-2 font-mono text-[12.5px]">
+              <ul className="gh-admin-country-domain-list gh-form-section__span-2 grid gap-2 font-mono text-portal-label">
                 {c.domains.map((d) => (
                   <li
                     key={d.id}
@@ -243,13 +243,13 @@ export default async function AdminCountryDetailPage({
             ) : (
               <form action={saveGpSettingsAction} className="gh-admin-country-gp-form gh-form-section__span-2 grid gap-4">
                 <label className="grid gap-1.5">
-                  <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                  <span className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                     Same-day GP service
                   </span>
                   <select
                     name="sameDayServiceId"
                     defaultValue={gp.sameDayServiceId ?? ""}
-                    className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+                    className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-portal-body text-[var(--color-text-primary)]"
                   >
                     <option value="">Auto — first GENERAL service</option>
                     {gp.generalServices.map((s) => (
@@ -261,13 +261,13 @@ export default async function AdminCountryDetailPage({
                 </label>
 
                 <label className="grid gap-1.5">
-                  <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                  <span className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                     Priority doctor (24h window)
                   </span>
                   <select
                     name="priorityDoctorId"
                     defaultValue={gp.priorityDoctorId ?? ""}
-                    className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+                    className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-portal-body text-[var(--color-text-primary)]"
                   >
                     <option value="">None — pure rotation</option>
                     {gp.gpDoctors.map((d) => (
@@ -278,7 +278,7 @@ export default async function AdminCountryDetailPage({
                     ))}
                   </select>
                   {gp.gpDoctors.length === 0 ? (
-                    <span className="text-[12px] text-[var(--color-text-muted)]">
+                    <span className="text-portal-meta text-[var(--color-text-muted)]">
                       No doctors are assigned to the same-day service yet.
                     </span>
                   ) : null}
@@ -299,7 +299,7 @@ export default async function AdminCountryDetailPage({
           <FormSection title="Visibility" description="Pull this country off the public site without losing data.">
             {isActive ? (
               <form action={deactivateCountryAction}>
-                <p className="mb-3 text-[13px] text-[var(--color-text-muted)]">
+                <p className="mb-3 text-portal-compact text-[var(--color-text-muted)]">
                   Soft-deactivate hides the country from the public countries API. Re-enable from Edit.
                 </p>
                 <button type="submit" className="gh-btn gh-btn-danger w-full">
@@ -307,7 +307,7 @@ export default async function AdminCountryDetailPage({
                 </button>
               </form>
             ) : (
-              <p className="text-[13px] text-[var(--color-text-muted)]">
+              <p className="text-portal-compact text-[var(--color-text-muted)]">
                 This country is inactive. Re-enable from Edit.
               </p>
             )}
@@ -334,10 +334,10 @@ export default async function AdminCountryDetailPage({
                     borderTop: "1px solid var(--color-border)",
                   }}
                 >
-                  <span className="text-[13px] text-[var(--color-text-muted)]">
+                  <span className="text-portal-compact text-[var(--color-text-muted)]">
                     {k}
                   </span>
-                  <span className="text-[13px] font-bold text-[var(--color-text-primary)]">
+                  <span className="text-portal-compact font-bold text-[var(--color-text-primary)]">
                     {v}
                   </span>
                 </div>
@@ -357,7 +357,7 @@ export default async function AdminCountryDetailPage({
             >
               Danger zone
             </h3>
-            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
               Permanent delete removes this country and dependent admin content.
             </p>
             <form action={deleteCountryAction}>
@@ -389,11 +389,11 @@ function Field({
 }) {
   return (
     <div>
-      <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+      <dt className="text-portal-thead font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
         {label}
       </dt>
       <dd
-        className="mt-1 text-[14px] text-[var(--color-text-primary)]"
+        className="mt-1 text-portal-body text-[var(--color-text-primary)]"
         style={mono ? { fontFamily: "ui-monospace, monospace" } : undefined}
       >
         {value}

@@ -24,7 +24,7 @@ import { buildBookHref } from "@/lib/routing/book-href";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { getSiteUrl } from "@/lib/seo/site-url";
-import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -99,7 +99,14 @@ export async function generateMetadata({
       canonical: url,
       ...(config ? { languages: hreflangAlternates(config, `/services/${serviceSlug}`) } : {}),
     },
-    openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      title,
+      description,
+      url,
+      ...(config ? ogLocales(config, lang) : {}),
+    },
     twitter: { card: "summary_large_image", title, description },
   };
 }
@@ -193,7 +200,7 @@ export default async function ServiceDetailPage({
       <section
         className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-visible lg:overflow-hidden"
       >
-        <div className="grid h-auto grid-rows-[240px_auto] lg:h-full lg:grid-cols-2 lg:grid-rows-1">
+        <div className="grid h-auto grid-rows-[clamp(180px,30svh,280px)_auto] lg:h-full lg:grid-cols-2 lg:grid-rows-1">
 
           {/* ── LEFT — full-bleed service image ────────────────────────────── */}
           <div className="relative h-full min-h-0 overflow-hidden">

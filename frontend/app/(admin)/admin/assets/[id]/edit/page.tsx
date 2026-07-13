@@ -127,7 +127,7 @@ export default async function AdminEditAssetPage({
     <>
       <Link
         href={`/admin/assets/${id}`}
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to {asset.key}
       </Link>
@@ -155,16 +155,16 @@ export default async function AdminEditAssetPage({
             doctorOptions={doctorOptions}
             initial={asset}
           />
-          <div className="gh-admin-asset-actions border-t border-[var(--color-border)] pt-6">
-            <button type="submit" className="gh-btn gh-btn-primary">
-              Save changes
-            </button>
+          <div className="gh-admin-asset-actions justify-end border-t border-[var(--color-border)] pt-6">
             <Link
               href={`/admin/assets/${id}`}
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="gh-btn gh-btn-ghost"
             >
               Cancel
             </Link>
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Save changes
+            </button>
           </div>
         </form>
       </AdminCard>

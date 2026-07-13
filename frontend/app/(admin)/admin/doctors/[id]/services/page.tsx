@@ -268,7 +268,7 @@ export default async function AdminDoctorServicesPage({
             <p className="m-0 text-[15px] font-semibold text-[var(--color-text-primary)]">
               {row.service.name}
             </p>
-            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+            <p className="mt-1 text-portal-compact text-[var(--color-text-muted)]">
               {KIND_LABELS[row.service.kind] ?? row.service.kind}
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
@@ -287,7 +287,7 @@ export default async function AdminDoctorServicesPage({
               className="mt-3 flex flex-wrap items-end gap-2"
             >
               <input type="hidden" name="serviceDoctorId" value={row.id} />
-              <label className="flex flex-col gap-1 text-[12px] font-semibold text-[var(--color-text-muted)]">
+              <label className="flex flex-col gap-1 text-portal-meta font-semibold text-[var(--color-text-muted)]">
                 Doctor payout{" "}
                 {row.service.currencyCode ? `(${row.service.currencyCode})` : ""}
                 <input
@@ -360,7 +360,7 @@ export default async function AdminDoctorServicesPage({
     <>
       <Link
         href={`/admin/doctors/${id}`}
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to doctor
       </Link>
@@ -408,10 +408,10 @@ export default async function AdminDoctorServicesPage({
                     {group.country ? (
                       <FlagBadge code={group.country.code} size={14} />
                     ) : null}
-                    <h4 className="m-0 text-[13px] font-bold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">
+                    <h4 className="m-0 text-portal-compact font-bold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">
                       {group.country ? group.country.name : "Other markets"}
                     </h4>
-                    <span className="text-[12px] text-[var(--color-text-muted)]">
+                    <span className="text-portal-meta text-[var(--color-text-muted)]">
                       ({group.rows.length})
                     </span>
                   </div>
@@ -428,7 +428,7 @@ export default async function AdminDoctorServicesPage({
           <h3 className="m-0 text-base font-bold text-[var(--color-text-primary)]">
             Manually assign service
           </h3>
-          <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+          <p className="mt-1 text-portal-compact text-[var(--color-text-muted)]">
             Admin assignments are active immediately. Pick a service under the
             country it belongs to — this doctor serves{" "}
             {assignableCountries.length === 1
@@ -441,7 +441,7 @@ export default async function AdminDoctorServicesPage({
               <div key={country.id}>
                 <div className="flex items-center gap-2 border-b border-[var(--color-border-subtle)] pb-2">
                   <FlagBadge code={country.code} size={14} />
-                  <h4 className="m-0 text-[13px] font-bold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">
+                  <h4 className="m-0 text-portal-compact font-bold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">
                     {country.name}
                   </h4>
                 </div>

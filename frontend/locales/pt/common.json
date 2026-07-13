@@ -678,7 +678,9 @@
     "languageAll": "Todos",
     "noForLanguage": "Não há médicos disponíveis para este serviço em {language} neste momento.",
     "chooseAnotherLanguage": "Escolha outro idioma ou volte a verificar mais tarde.",
-    "showAllLanguages": "Mostrar todos os idiomas"
+    "showAllLanguages": "Mostrar todos os idiomas",
+    "backToAccount": "Voltar à minha conta",
+    "portalBadge": "Portal do Paciente"
   },
   "cardVerify": {
     "title": "Verificação de cartão corporativo",
@@ -710,6 +712,11 @@
     "closeNavigation": "Fechar navegação",
     "openNavigation": "Abrir navegação",
     "closeMenu": "Fechar menu",
-    "allCaughtUp": "Está tudo em dia."
+    "allCaughtUp": "Está tudo em dia.",
+    "skipToContent": "Saltar para o conteúdo principal",
+    "unsavedChangesTitle": "Alterações não guardadas",
+    "unsavedChangesBody": "Tem alterações não guardadas nesta página. Se sair agora, serão perdidas.",
+    "unsavedChangesKeepEditing": "Continuar a editar",
+    "unsavedChangesDiscard": "Descartar alterações"
   }
 }

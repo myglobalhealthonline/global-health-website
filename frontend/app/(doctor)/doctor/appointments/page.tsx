@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, ChevronRight, SearchX, Video } from "lucide-react";
+import { AlertTriangle, CalendarDays, CheckCircle2, SearchX, Video } from "lucide-react";
 import { fetchDoctorAppointments, type DoctorAppointment } from "@/lib/api/doctor-api";
 import {
   doctorAppointmentView,
@@ -99,7 +99,6 @@ export default async function DoctorAppointmentsPage({
   const openAppointments = appointments.filter(
     (item) => item.status !== "COMPLETED" && item.status !== "CANCELLED",
   ).length;
-  const readyToJoin = appointments.filter((item) => item.meetingUrl).length;
   const unfinalized = appointments.filter((item) => !item.finalized).length;
 
   return (
@@ -108,6 +107,7 @@ export default async function DoctorAppointmentsPage({
         eyebrow={d.appointments.eyebrow}
         title={d.appointments.title}
         description={d.appointments.description}
+        icon={<CalendarDays aria-hidden />}
         actions={
           <Link href="/doctor/calendar" className="gh-btn gh-btn-soft text-sm">
             {d.appointments.calendarView}
@@ -120,41 +120,33 @@ export default async function DoctorAppointmentsPage({
           className="mb-4"
           items={[
             {
-              label: d.appointments.visibleResults,
-              value: appointments.length,
-              hint: d.common.totalHint.replace("{total}", String(result.data.pagination.total)),
-              tone: "brand",
-            },
-            {
               label: d.appointments.openConsults,
               value: openAppointments,
               hint: d.appointments.openConsultsHint,
               tone: openAppointments > 0 ? "warning" : "neutral",
-            },
-            {
-              label: d.appointments.meetingLinks,
-              value: readyToJoin,
-              hint: d.appointments.meetingLinksHint,
-              tone: readyToJoin > 0 ? "success" : "neutral",
+              icon: <AlertTriangle aria-hidden />,
+              href: "/doctor/appointments?openOnly=true",
             },
             {
               label: d.appointments.notFinalized,
               value: unfinalized,
               hint: d.appointments.notFinalizedHint,
               tone: unfinalized > 0 ? "warning" : "neutral",
+              icon: <CheckCircle2 aria-hidden />,
+              href: "/doctor/appointments?finalized=false",
             },
           ]}
         />
       ) : null}
 
-      <details className="gh-card gh-doctor-filter-card mb-4 p-4" open>
-        <summary className="flex cursor-pointer items-center gap-2 text-sm font-semibold sm:pointer-events-none sm:cursor-default">
+      <details className="gh-card gh-doctor-filter-card mb-4 p-4">
+        <summary className="flex cursor-pointer items-center gap-2 text-sm font-semibold">
           <span>{d.common.filters}</span>
           {activeFilterCount > 0 ? (
             <Pill tone="brand">{d.common.activeCount.replace("{count}", String(activeFilterCount))}</Pill>
           ) : null}
         </summary>
-        <form className="gh-doctor-filter-grid mt-3 grid grid-cols-1 gap-3 sm:grid-cols-6">
+        <form className="gh-doctor-filter-grid mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
           <label className="flex flex-col gap-1 sm:col-span-2">
             <span className="gh-field-label">{d.common.search}</span>
             <input
@@ -225,7 +217,7 @@ export default async function DoctorAppointmentsPage({
             />
             <span className="text-sm">{d.appointments.legacyOpenWindow}</span>
           </label>
-          <div className="gh-doctor-filter-actions sm:col-span-6 flex items-center gap-2">
+          <div className="gh-doctor-filter-actions sm:col-span-2 lg:col-span-6 flex items-center gap-2">
             <button type="submit" className="gh-btn gh-btn-primary text-sm">
               {d.common.apply}
             </button>
@@ -279,7 +271,6 @@ export default async function DoctorAppointmentsPage({
               return (
                 <AppointmentCard
                   key={a.id}
-                  href={a.meetingUrl ? undefined : `/doctor/appointments/${a.id}`}
                   time={a.scheduledAt ? formatAppTime(a.scheduledAt) : "—"}
                   timeMeta={
                     a.scheduledAt
@@ -319,9 +310,13 @@ export default async function DoctorAppointmentsPage({
                         </Btn>
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-2 text-xs text-[var(--portal-muted)]">
-                        {d.appointments.meetingLinkNotCreated}
-                        <ChevronRight className="size-4" aria-hidden />
+                      <span className="inline-flex items-center gap-2">
+                        <span className="hidden text-xs text-[var(--portal-muted)] lg:inline">
+                          {d.appointments.meetingLinkNotCreated}
+                        </span>
+                        <Btn href={`/doctor/appointments/${a.id}`} variant="secondary" size="sm">
+                          {d.common.open}
+                        </Btn>
                       </span>
                     )
                   }

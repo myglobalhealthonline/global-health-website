@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { Prisma } from "@prisma/client";
+import { LocaleCode, Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
+import { resolveTranslation } from "../shared/resolve-translation.js";
 import { recordAudit } from "../audit/audit.service.js";
 import { commitReservation, releaseReservation, reserveCredits } from "../credits/credit-balance.service.js";
 import {
@@ -54,6 +55,16 @@ export interface ApplyPricingResult {
 }
 
 const CONSULTATION_KINDS = new Set(["GENERAL_CONSULTATION", "SPECIALIST_CONSULTATION"]);
+
+/** Locale-resolved plan name, falling back to the base (country-default-locale) column. */
+function resolvePlanName(
+  plan: { name: string; translations: { locale: LocaleCode; name: string }[]; country: { defaultLocale: LocaleCode } },
+  requestedLocale?: LocaleCode,
+): string {
+  const defaultLocale = plan.country.defaultLocale;
+  const requested = requestedLocale ?? defaultLocale;
+  return resolveTranslation(plan.translations, requested, defaultLocale).tr?.name ?? plan.name;
+}
 
 /** Loaded dependent rows keyed by id; the primaryUserId filter is the spoof guard. */
 type FamilyMemberLite = { id: string; primaryUserId: string; canUseCredits: boolean; fullName: string };
@@ -269,6 +280,7 @@ export async function previewConsultationPricing(input: {
   items: CheckoutCartItem[];
   peakPriceByItemId: Map<string, number>;
   now?: Date;
+  locale?: LocaleCode;
 }): Promise<CartCoverage> {
   const now = input.now ?? new Date();
   const empty: CartCoverage = {
@@ -288,7 +300,7 @@ export async function previewConsultationPricing(input: {
       status: { in: ["ACTIVE", "PAST_DUE"] },
     },
     orderBy: { createdAt: "desc" },
-    include: { plan: { select: { name: true } } },
+    include: { plan: { select: { name: true, translations: true, country: { select: { defaultLocale: true } } } } },
   });
   if (
     !sub ||
@@ -303,7 +315,7 @@ export async function previewConsultationPricing(input: {
   }
 
   const snapshot = asPlanSnapshot(sub.planSnapshot);
-  if (!snapshot) return { ...empty, subscriptionId: sub.id, planName: sub.plan.name };
+  if (!snapshot) return { ...empty, subscriptionId: sub.id, planName: resolvePlanName(sub.plan, input.locale) };
 
   const members = await loadFamilyMembers(
     prisma,
@@ -399,7 +411,7 @@ export async function previewConsultationPricing(input: {
 
   return {
     subscriptionId: sub.id,
-    planName: sub.plan.name,
+    planName: resolvePlanName(sub.plan, input.locale),
     consultationCreditsRemaining: creditsAvailable,
     lines,
     totalBaseCents,
@@ -454,6 +466,7 @@ export async function previewServiceBenefit(input: {
   serviceId: string;
   basePriceCents: number;
   now?: Date;
+  locale?: LocaleCode;
 }): Promise<ServiceBenefitPreview> {
   const now = input.now ?? new Date();
   const base = Math.max(0, Math.round(input.basePriceCents));
@@ -470,7 +483,7 @@ export async function previewServiceBenefit(input: {
   const sub = await prisma.userSubscription.findFirst({
     where: { userId: input.userId, status: { in: ["ACTIVE", "PAST_DUE"] } },
     orderBy: { createdAt: "desc" },
-    include: { plan: { select: { name: true } } },
+    include: { plan: { select: { name: true, translations: true, country: { select: { defaultLocale: true } } } } },
   });
   if (
     !sub ||
@@ -485,7 +498,7 @@ export async function previewServiceBenefit(input: {
   }
 
   const snapshot = asPlanSnapshot(sub.planSnapshot);
-  if (!snapshot) return { ...payNormalOnly, subscriptionId: sub.id, planName: sub.plan.name };
+  if (!snapshot) return { ...payNormalOnly, subscriptionId: sub.id, planName: resolvePlanName(sub.plan, input.locale) };
 
   const rule = snapshot.consultationRules.find((r) => r.serviceId === input.serviceId) ?? null;
   const balanceRow = await prisma.subscriptionCreditBalance.findUnique({
@@ -519,7 +532,7 @@ export async function previewServiceBenefit(input: {
 
   return {
     subscriptionId: sub.id,
-    planName: sub.plan.name,
+    planName: resolvePlanName(sub.plan, input.locale),
     benefitsUnlocked: sub.paidMonthsCount >= benefitsUnlockMonths,
     consultationCreditsRemaining: creditsAvailable,
     eligibleSelections,

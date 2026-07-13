@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { CalendarOff, CalendarPlus, Lock, Plus, Unlock } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { CalendarOff, CalendarPlus, Info, Lock, Plus, Unlock } from "lucide-react";
 import { Btn } from "@/components/portal-atoms";
+import { AppMenu } from "@/components/AppMenu";
 import { FormSection } from "@/components/FormSection";
 import {
   bulkBlockSlots,
@@ -16,6 +18,7 @@ import { MonthCalendar } from "@/components/calendar/MonthCalendar";
 import { DayAgenda } from "@/components/calendar/DayAgenda";
 import { EventDetailDialog } from "@/components/calendar/EventDetailDialog";
 import { TimezoneSelect } from "@/components/calendar/TimezoneSelect";
+import { AppSheet } from "@/components/AppSheet";
 import { CURATED_TIME_ZONES } from "@/lib/timezones";
 import {
   addMonths,
@@ -75,6 +78,9 @@ type Props = {
   minutesShort: string;
   errorEndAfterStart: string;
   errorEndDateAfterStart: string;
+  /** Stat strip, rendered below the month grid (grid is the primary task
+   *  surface and must be reachable without scrolling — see CAL-04-001). */
+  statsSlot?: ReactNode;
 };
 
 export function DoctorCalendarUI({
@@ -89,6 +95,7 @@ export function DoctorCalendarUI({
   minutesShort,
   errorEndAfterStart,
   errorEndDateAfterStart,
+  statsSlot,
 }: Props) {
   const [tz, setTz] = useState(clinicTimezone);
   // Default view = the doctor's operating-country clinic zone; switcher also
@@ -108,9 +115,28 @@ export function DoctorCalendarUI({
   const [ym, setYm] = useState({ year: initialYear, month: initialMonth });
   const [slots, setSlots] = useState<DoctorTimeSlotView[]>(initialSlots);
   const [selectedDay, setSelectedDay] = useState<string>(() => todayKey(clinicTimezone));
+  const [daySheetOpen, setDaySheetOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<CalendarItem | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Add-availability / time-off validation and submit errors render inline
+  // next to their own form instead of the shared top-of-page banner, which
+  // sits ~170px above these bottom-of-page forms with no scroll affordance
+  // (CAL-04-002).
+  const [addAvailError, setAddAvailError] = useState<string | null>(null);
+  const [timeOffError, setTimeOffError] = useState<string | null>(null);
+
+  function openDay(key: string) {
+    setSelectedDay(key);
+    setDaySheetOpen(true);
+  }
+
+  function openEvent(item: CalendarItem) {
+    // Event dialog replaces the day sheet — no stacked overlays (matches
+    // admin calendar composition).
+    setDaySheetOpen(false);
+    setActiveItem(item);
+  }
 
   // Range time-off form (datetime-local — date + time)
   const [offFrom, setOffFrom] = useState("");
@@ -227,20 +253,20 @@ export function DoctorCalendarUI({
 
   async function onRangeTimeOff(action: "BLOCK" | "UNBLOCK") {
     if (!offFrom || !offTo) {
-      setError(s.errorPickStartEnd);
+      setTimeOffError(s.errorPickStartEnd);
       return;
     }
     if (offFrom >= offTo) {
-      setError(s.errorEndMustBeAfterStart);
+      setTimeOffError(s.errorEndMustBeAfterStart);
       return;
     }
     const fromUtc = zonedLocalDateTimeToUtc(offFrom, tz);
     const toUtc = zonedLocalDateTimeToUtc(offTo, tz);
     if (!fromUtc || !toUtc) {
-      setError(s.errorInvalidDateTime);
+      setTimeOffError(s.errorInvalidDateTime);
       return;
     }
-    setError(null);
+    setTimeOffError(null);
     setBusy(true);
     const res = await bulkBlockSlots({
       fromUtc,
@@ -254,7 +280,7 @@ export function DoctorCalendarUI({
       setOffTo("");
       setOffReason("");
     } else {
-      setError(res.message);
+      setTimeOffError(res.message);
     }
     setBusy(false);
   }
@@ -265,25 +291,25 @@ export function DoctorCalendarUI({
   // each consultation type needs.
   async function onAddAvailability() {
     if (!addFromDate || !addToDate) {
-      setError(s.errorPickDates);
+      setAddAvailError(s.errorPickDates);
       return;
     }
     if (addFromDate > addToDate) {
-      setError(errorEndDateAfterStart);
+      setAddAvailError(errorEndDateAfterStart);
       return;
     }
     const startMin = timeToMinutes(addStart);
     const endMin = timeToMinutes(addEnd);
     if (endMin <= startMin) {
-      setError(errorEndAfterStart);
+      setAddAvailError(errorEndAfterStart);
       return;
     }
     const weekdays = weekdaysInRange(addFromDate, addToDate);
     if (weekdays.length === 0) {
-      setError(s.errorInvalidRange);
+      setAddAvailError(s.errorInvalidRange);
       return;
     }
-    setError(null);
+    setAddAvailError(null);
     setBusy(true);
     const effectiveFrom = `${addFromDate}T00:00:00.000Z`;
     const effectiveUntil = `${addToDate}T23:59:59.999Z`;
@@ -302,7 +328,7 @@ export function DoctorCalendarUI({
         break;
       }
     }
-    if (failed) setError(failed);
+    if (failed) setAddAvailError(failed);
     else {
       await refetchMonth();
       setAddFromDate("");
@@ -313,19 +339,38 @@ export function DoctorCalendarUI({
 
   return (
     <div className="gh-doctor-calendar grid gap-4">
+      {statsSlot}
+
       {/* Toolbar */}
       <div className="gh-doctor-calendar-toolbar flex flex-wrap items-center justify-between gap-3">
-        <div className="gh-doctor-calendar-legend flex flex-wrap items-center gap-3 text-xs text-[var(--portal-muted)]">
-          <LegendDot className="bg-emerald-500" label={s.legendOpen} />
-          <LegendDot className="bg-rose-400" label={s.legendBlocked} />
-          <LegendDot className="bg-blue-500" label={s.legendBooked} />
-          <span className="inline-flex items-center gap-1.5">
-            <span className="inline-flex items-center rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-800">
-              N
+        {/* Legend was a permanent floating row (CAL-04-008) — now a toggled
+            popover so it doesn't cost vertical space on every load. */}
+        <AppMenu
+          trigger={
+            <button
+              type="button"
+              className="gh-doctor-calendar-legend-trigger inline-flex items-center gap-1.5 rounded-[999px] px-3 py-1.5 text-xs font-semibold transition hover:bg-[var(--portal-well)]"
+              style={{ border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
+            >
+              <Info className="size-3.5" aria-hidden />
+              {s.legendToggle}
+            </button>
+          }
+          align="start"
+          contentClassName="gh-portal-menu-content min-w-[220px] p-3"
+        >
+          <div className="gh-doctor-calendar-legend flex flex-col gap-2 text-xs text-[var(--portal-muted)]">
+            <LegendDot className="bg-emerald-500" label={s.legendOpen} />
+            <LegendDot className="bg-rose-400" label={s.legendBlocked} />
+            <LegendDot className="bg-blue-500" label={s.legendBooked} />
+            <span className="inline-flex items-center gap-1.5">
+              <span className="inline-flex items-center rounded-full bg-emerald-100 px-1.5 py-0.5 text-portal-micro font-bold text-emerald-800">
+                N
+              </span>
+              {s.legendConsultations}
             </span>
-            {s.legendConsultations}
-          </span>
-        </div>
+          </div>
+        </AppMenu>
         <TimezoneSelect value={tz} options={tzOptions} onChange={onChangeTz} />
       </div>
 
@@ -335,83 +380,92 @@ export function DoctorCalendarUI({
         </div>
       ) : null}
 
-      <div className="gh-doctor-calendar-main grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <MonthCalendar
-          year={ym.year}
-          month={ym.month}
-          itemsByDay={itemsByDay}
-          selectedDay={selectedDay}
-          todayKey={todayKey(tz)}
-          onSelectDay={setSelectedDay}
-          onPrevMonth={() => setYm((p) => addMonths(p.year, p.month, -1))}
-          onNextMonth={() => setYm((p) => addMonths(p.year, p.month, 1))}
-          onToday={() => {
-            const d = new Date();
-            setYm({ year: d.getFullYear(), month: d.getMonth() + 1 });
-            setSelectedDay(todayKey(tz));
+      <MonthCalendar
+        year={ym.year}
+        month={ym.month}
+        itemsByDay={itemsByDay}
+        selectedDay={selectedDay}
+        todayKey={todayKey(tz)}
+        onSelectDay={openDay}
+        onPrevMonth={() => setYm((p) => addMonths(p.year, p.month, -1))}
+        onNextMonth={() => setYm((p) => addMonths(p.year, p.month, 1))}
+        onToday={() => {
+          const d = new Date();
+          setYm({ year: d.getFullYear(), month: d.getMonth() + 1 });
+          setSelectedDay(todayKey(tz));
+        }}
+      />
+
+      {/* Day agenda — lux sheet, same composition as the admin calendar's
+          day drawer (RC7: doctor previously rendered this inline in a fixed
+          sidebar, which clipped/overflowed at short viewport heights). */}
+      <AppSheet
+        open={daySheetOpen}
+        onOpenChange={setDaySheetOpen}
+        size="md"
+        theme="portal"
+        header={
+          <div className="gh-record-drawer__title-block">
+            <span className="gh-record-drawer__eyebrow">{s.dayAgendaEyebrow ?? "Day agenda"}</span>
+            <Dialog.Title asChild>
+              <h2 className="gh-record-drawer__title">
+                {selectedDay ? dayLabel(selectedDay) : ""}
+              </h2>
+            </Dialog.Title>
+          </div>
+        }
+      >
+        <div className="gh-doctor-calendar-day-actions mb-3 flex flex-wrap gap-2">
+          <Btn
+            type="button"
+            size="sm"
+            variant="soft"
+            disabled={busy || !dayHasOpen}
+            onClick={() => onBlockDay("BLOCK")}
+            iconLeft={<Lock className="size-3.5" />}
+          >
+            {s.blockWholeDay}
+          </Btn>
+          <Btn
+            type="button"
+            size="sm"
+            variant="ghost"
+            disabled={busy || !dayHasBlocked}
+            onClick={() => onBlockDay("UNBLOCK")}
+            iconLeft={<Unlock className="size-3.5" />}
+          >
+            {s.reopenDay}
+          </Btn>
+        </div>
+
+        <DayAgenda
+          dayKey={selectedDay}
+          items={dayItems}
+          tz={tz}
+          hideHeader
+          emptyLabel={s.noItemsOnDay}
+          onSelectConsultation={openEvent}
+          renderSlotAction={(item) => {
+            if (item.status !== "OPEN" && item.status !== "BLOCKED") return null;
+            const isOpen = item.status === "OPEN";
+            return (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => onToggleSlot(item)}
+                title={isOpen ? s.blockSlotTitle : s.reopenSlotTitle}
+                className="ml-0.5 inline-flex items-center disabled:opacity-50"
+              >
+                {isOpen ? (
+                  <Lock className="size-3" aria-hidden />
+                ) : (
+                  <Unlock className="size-3" aria-hidden />
+                )}
+              </button>
+            );
           }}
         />
-
-        <div className="gh-doctor-calendar-side grid gap-4 self-start">
-          {/* Day-level block controls */}
-          {selectedDay ? (
-            <div className="gh-doctor-calendar-day-card gh-card p-4">
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
-                {dayLabel(selectedDay)}
-              </p>
-              <div className="gh-doctor-calendar-day-actions mt-3 flex flex-wrap gap-2">
-                <Btn
-                  type="button"
-                  size="sm"
-                  variant="soft"
-                  disabled={busy || !dayHasOpen}
-                  onClick={() => onBlockDay("BLOCK")}
-                  iconLeft={<Lock className="size-3.5" />}
-                >
-                  {s.blockWholeDay}
-                </Btn>
-                <Btn
-                  type="button"
-                  size="sm"
-                  variant="ghost"
-                  disabled={busy || !dayHasBlocked}
-                  onClick={() => onBlockDay("UNBLOCK")}
-                  iconLeft={<Unlock className="size-3.5" />}
-                >
-                  {s.reopenDay}
-                </Btn>
-              </div>
-            </div>
-          ) : null}
-
-          <DayAgenda
-            dayKey={selectedDay}
-            items={dayItems}
-            tz={tz}
-            emptyLabel={s.noItemsOnDay}
-            onSelectConsultation={setActiveItem}
-            renderSlotAction={(item) => {
-              if (item.status !== "OPEN" && item.status !== "BLOCKED") return null;
-              const isOpen = item.status === "OPEN";
-              return (
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => onToggleSlot(item)}
-                  title={isOpen ? s.blockSlotTitle : s.reopenSlotTitle}
-                  className="ml-0.5 inline-flex items-center disabled:opacity-50"
-                >
-                  {isOpen ? (
-                    <Lock className="size-3" aria-hidden />
-                  ) : (
-                    <Unlock className="size-3" aria-hidden />
-                  )}
-                </button>
-              );
-            }}
-          />
-        </div>
-      </div>
+      </AppSheet>
 
       <div className="gh-doctor-calendar-forms grid gap-4 lg:grid-cols-2">
         {/* Add availability over a date + time range */}
@@ -432,6 +486,7 @@ export function DoctorCalendarUI({
                 <input
                   type="date"
                   value={addFromDate}
+                  min={todayKey(clinicTimezone)}
                   onChange={(e) => setAddFromDate(e.target.value)}
                   className="gh-input h-10"
                 />
@@ -441,6 +496,7 @@ export function DoctorCalendarUI({
                 <input
                   type="date"
                   value={addToDate}
+                  min={addFromDate || todayKey(clinicTimezone)}
                   onChange={(e) => setAddToDate(e.target.value)}
                   className="gh-input h-10"
                 />
@@ -480,6 +536,11 @@ export function DoctorCalendarUI({
                 </select>
               </label>
             </div>
+            {addAvailError ? (
+              <p className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
+                {addAvailError}
+              </p>
+            ) : null}
             <Btn
               type="button"
               size="sm"
@@ -488,7 +549,7 @@ export function DoctorCalendarUI({
               onClick={onAddAvailability}
               iconLeft={<Plus className="size-3.5" />}
             >
-              {s.addAvailabilityButton}
+              {s.saveAvailabilityButton}
             </Btn>
           </div>
         </FormSection>
@@ -536,6 +597,11 @@ export function DoctorCalendarUI({
                 className="gh-input h-10"
               />
             </label>
+            {timeOffError ? (
+              <p className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
+                {timeOffError}
+              </p>
+            ) : null}
             <div className="gh-doctor-calendar-range-actions flex gap-2">
               <Btn
                 type="button"
@@ -562,7 +628,12 @@ export function DoctorCalendarUI({
         </FormSection>
       </div>
 
-      <EventDetailDialog item={activeItem} tz={tz} onClose={() => setActiveItem(null)} />
+      <EventDetailDialog
+        item={activeItem}
+        tz={tz}
+        onClose={() => setActiveItem(null)}
+        viewerRole="doctor"
+      />
     </div>
   );
 }

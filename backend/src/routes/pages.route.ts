@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
-import { getPublicPage } from "../modules/pages/pages.service.js";
+import { getPublicPageContent } from "../modules/page-content/page-content.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
   publicPageParamsSchema,
@@ -8,6 +8,14 @@ import {
 import { errorResponse, okResponse } from "../utils/response.js";
 import { prisma } from "../db/prisma.js";
 
+/**
+ * Compat adapter (see docs/plans/page-content-cms-implementation-prompt.md
+ * Part D Phase 2): the old `/pages` CMS (`ContentPage`) is being replaced by
+ * the new structured `PageContent` model. This route's URL and response
+ * shape stay exactly as before so existing consumers keep working; the
+ * handler body now reads from the new model instead of `ContentPage`.
+ * Kept alive for one release; deletion happens in a future cleanup branch.
+ */
 const pagesRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/countries/:countryCode/pages/:pageKey", async (request, reply) => {
     reply.header(
@@ -40,14 +48,29 @@ const pagesRoute: FastifyPluginAsync = async (app) => {
         locale = country.defaultLocale;
       }
 
-      const result = await getPublicPage(params.data.countryCode, params.data.pageKey, locale);
-      if (!result.page) {
+      const result = await getPublicPageContent(params.data.countryCode, params.data.pageKey, locale);
+      if (!result.record) {
         if (result.disabled) {
           return okResponse({ page: null, disabled: true });
         }
         return reply.status(404).send(errorResponse("Page not published for this country/locale"));
       }
-      return okResponse({ page: result.page });
+      const r = result.record;
+      return okResponse({
+        page: {
+          title: null,
+          body: r.body ?? "",
+          heroTitle: r.heroTitle,
+          heroSubtitle: r.heroSubtitle,
+          heroImagePath: r.heroImagePath,
+          ctaLabel: r.ctaLabel,
+          ctaHref: r.ctaHref,
+          ogImagePath: r.ogImagePath,
+          seoTitle: r.seoTitle,
+          seoDescription: r.seoDescription,
+          status: "PUBLISHED",
+        },
+      });
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));

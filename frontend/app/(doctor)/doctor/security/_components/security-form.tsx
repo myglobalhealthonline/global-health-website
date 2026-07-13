@@ -2,18 +2,25 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Copy, ShieldCheck, ShieldOff } from "lucide-react";
+import { Copy, KeyRound, LogOut, ShieldCheck, ShieldOff } from "lucide-react";
 import {
+  changeCurrentPassword,
   confirmTwoFactor,
   disableTwoFactor,
   fetchTwoFactorStatus,
   setupTwoFactor,
+  signOutAllDevices,
 } from "@/lib/api/auth-api";
 import { formatAppDate } from "@/lib/format-datetime";
+import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
+import { PageHeader } from "@/components/portal-atoms";
+import { PortalTabs, PortalTabPanel } from "@/components/PortalTabs";
+import { FormSection } from "@/components/FormSection";
 
 type Msg = { kind: "ok" | "err"; text: string } | null;
 type SecurityStrings = Record<string, string>;
 type CopyStrings = { copy: string; copied: string };
+type Tab = "password" | "2fa" | "sessions";
 
 function CopyableField({
   label,
@@ -58,23 +65,40 @@ export function DoctorSecurityForm({
   copyStrings: CopyStrings;
 }) {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<Tab>("password");
+
+  // Change-password tab state (mirrors /account/security's onChangePassword).
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [savingPwd, setSavingPwd] = useState(false);
+  const [pwdMsg, setPwdMsg] = useState<Msg>(null);
+
+  // Sessions tab state.
+  const [signingOutAll, setSigningOutAll] = useState(false);
+  const [signOutMsg, setSignOutMsg] = useState<string | null>(null);
+
+  // 2FA tab state.
   const [loading, setLoading] = useState(true);
   const [enabled, setEnabled] = useState(false);
   const [enabledAt, setEnabledAt] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
-
-  // Setup flow state — populated by the setup endpoint, round-tripped to confirm.
   const [setup, setSetup] = useState<{ secret: string; qrUri: string; backupCodes: string[] } | null>(null);
   const [settingUp, setSettingUp] = useState(false);
   const [code, setCode] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirming, setConfirming] = useState(false);
   const [msg, setMsg] = useState<Msg>(null);
-
-  // Disable flow state.
   const [disablePassword, setDisablePassword] = useState("");
   const [disabling, setDisabling] = useState(false);
   const [disableMsg, setDisableMsg] = useState<Msg>(null);
+
+  // 16-004: a freshly generated secret/backup codes only exist client-side
+  // until confirmed, and an in-progress password change is real unsaved
+  // work too — navigating away should warn for either.
+  useUnsavedChanges(
+    setup !== null || Boolean(currentPassword || newPassword || confirmNewPassword),
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -94,6 +118,43 @@ export function DoctorSecurityForm({
       cancelled = true;
     };
   }, []);
+
+  async function onChangePassword(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setPwdMsg(null);
+    if (newPassword !== confirmNewPassword) {
+      setPwdMsg({ kind: "err", text: s.passwordNoMatch });
+      return;
+    }
+    if (newPassword.length < 8) {
+      setPwdMsg({ kind: "err", text: s.passwordTooShort });
+      return;
+    }
+    setSavingPwd(true);
+    const res = await changeCurrentPassword({ currentPassword, newPassword });
+    setSavingPwd(false);
+    if (res.ok) {
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+      setPwdMsg({ kind: "ok", text: s.passwordUpdated });
+    } else {
+      setPwdMsg({ kind: "err", text: res.message });
+    }
+  }
+
+  async function onSignOutAll() {
+    setSignOutMsg(null);
+    setSigningOutAll(true);
+    const res = await signOutAllDevices();
+    setSigningOutAll(false);
+    if (res.ok) {
+      router.replace("/login");
+      router.refresh();
+    } else {
+      setSignOutMsg(res.message);
+    }
+  }
 
   async function onStartSetup() {
     setMsg(null);
@@ -152,114 +213,236 @@ export function DoctorSecurityForm({
 
   return (
     <>
-      {loading ? (
-        <div className="gh-card grid gap-4 p-6">
-          <div className="h-4 w-40 animate-pulse rounded-full bg-[var(--portal-well)]" />
-          <div className="h-24 animate-pulse rounded-[14px] bg-[var(--portal-well)]" />
-          <span className="sr-only">{s.loadingStatus}</span>
-        </div>
-      ) : loadError ? (
-        <div className="gh-card p-6">
-          <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">{loadError}</p>
-        </div>
-      ) : enabled ? (
-        <div className="gh-card p-6">
-          <p className="flex items-start gap-2 rounded-md bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-            <ShieldCheck className="mt-0.5 size-4 shrink-0" aria-hidden />
-            <span>
-              {s.enabledPrefix}
-              {enabledAt ? s.enabledSince.replace("{date}", formatAppDate(enabledAt)) : ""}
-              {s.enabledSuffix}
+      <PageHeader
+        eyebrow={s.eyebrow}
+        title={
+          <span className="flex items-center gap-2">
+            <ShieldCheck className="size-6 text-[var(--portal-primary)]" aria-hidden />
+            {s.title}
+          </span>
+        }
+        description={s.pageDescription}
+      />
+
+      <div className="mb-5">
+        <PortalTabs
+          ariaLabel={s.tabsAria}
+          value={activeTab}
+          onChange={(v) => setActiveTab(v as Tab)}
+          items={[
+            { value: "password", label: s.tabPassword, icon: <KeyRound aria-hidden /> },
+            { value: "2fa", label: s.tab2fa, icon: <ShieldCheck aria-hidden /> },
+            { value: "sessions", label: s.tabSessions, icon: <LogOut aria-hidden /> },
+          ]}
+          syncParam="tab"
+        />
+      </div>
+
+      <PortalTabPanel value="password" activeValue={activeTab}>
+        <FormSection title={s.changePasswordTitle} description={s.changePasswordBody}>
+          <div className="gh-form-section__span-2 flex items-start gap-3">
+            <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+              <KeyRound className="size-5" aria-hidden />
             </span>
-          </p>
+            <div className="min-w-0 flex-1">
+              <form onSubmit={onChangePassword} method="post" className="space-y-3">
+                <label className="block">
+                  <span className="gh-field-label">{s.currentPasswordLabel}</span>
+                  <input
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    required
+                    autoComplete="current-password"
+                    className="gh-input mt-1 min-w-0"
+                  />
+                </label>
 
-          <form onSubmit={onDisable} className="mt-6 max-w-sm space-y-3">
-            <h2 className="text-sm font-semibold text-[var(--portal-ink)]">{s.disable2faTitle}</h2>
-            <p className="text-sm text-[var(--portal-muted)]">{s.disable2faDesc}</p>
-            <label className="block">
-              <span className="gh-field-label">{s.currentPasswordLabel}</span>
-              <input
-                type="password"
-                value={disablePassword}
-                onChange={(e) => setDisablePassword(e.target.value)}
-                required
-                autoComplete="current-password"
-                className="gh-input mt-1 min-w-0"
-              />
-            </label>
-            {disableMsg ? (
-              <p
-                className={`rounded-md px-3 py-2 text-sm ${
-                  disableMsg.kind === "ok" ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"
-                }`}
+                <label className="block">
+                  <span className="gh-field-label">{s.newPasswordLabel}</span>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    minLength={8}
+                    maxLength={128}
+                    autoComplete="new-password"
+                    className="gh-input mt-1 min-w-0"
+                  />
+                </label>
+
+                <label className="block">
+                  <span className="gh-field-label">{s.confirmNewPasswordLabel}</span>
+                  <input
+                    type="password"
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    required
+                    minLength={8}
+                    maxLength={128}
+                    autoComplete="new-password"
+                    className="gh-input mt-1 min-w-0"
+                  />
+                </label>
+
+                {pwdMsg ? (
+                  <p
+                    role={pwdMsg.kind === "ok" ? "status" : "alert"}
+                    className={`rounded-md px-3 py-2 text-sm ${
+                      pwdMsg.kind === "ok" ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"
+                    }`}
+                  >
+                    {pwdMsg.text}
+                  </p>
+                ) : null}
+
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={savingPwd}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60 sm:w-auto"
+                  >
+                    {savingPwd ? s.updating : s.updatePasswordButton}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </FormSection>
+      </PortalTabPanel>
+
+      <PortalTabPanel value="2fa" activeValue={activeTab}>
+        <p className="mb-4 text-sm text-[var(--portal-muted)]">{s.description}</p>
+        {loading ? (
+          <div className="gh-card grid gap-4 p-6">
+            <div className="h-4 w-40 animate-pulse rounded-full bg-[var(--portal-well)]" />
+            <div className="h-24 animate-pulse rounded-[14px] bg-[var(--portal-well)]" />
+            <span className="sr-only">{s.loadingStatus}</span>
+          </div>
+        ) : loadError ? (
+          <div className="gh-card p-6">
+            <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">{loadError}</p>
+          </div>
+        ) : enabled ? (
+          <div className="gh-card p-6">
+            <p className="flex items-start gap-2 rounded-md bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+              <ShieldCheck className="mt-0.5 size-4 shrink-0" aria-hidden />
+              <span>
+                {s.enabledPrefix}
+                {enabledAt ? s.enabledSince.replace("{date}", formatAppDate(enabledAt)) : ""}
+                {s.enabledSuffix}
+              </span>
+            </p>
+
+            <form onSubmit={onDisable} className="mt-6 max-w-sm space-y-3">
+              <h2 className="text-sm font-semibold text-[var(--portal-ink)]">{s.disable2faTitle}</h2>
+              <p className="text-sm text-[var(--portal-muted)]">{s.disable2faDesc}</p>
+              <label className="block">
+                <span className="gh-field-label">{s.currentPasswordLabel}</span>
+                <input
+                  type="password"
+                  value={disablePassword}
+                  onChange={(e) => setDisablePassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  className="gh-input mt-1 min-w-0"
+                />
+              </label>
+              {disableMsg ? (
+                <p
+                  className={`rounded-md px-3 py-2 text-sm ${
+                    disableMsg.kind === "ok" ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"
+                  }`}
+                >
+                  {disableMsg.text}
+                </p>
+              ) : null}
+              <button
+                type="submit"
+                disabled={disabling}
+                className="inline-flex items-center justify-center gap-2 rounded-md border border-rose-300 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-60"
               >
-                {disableMsg.text}
-              </p>
-            ) : null}
-            <button
-              type="submit"
-              disabled={disabling}
-              className="inline-flex items-center justify-center gap-2 rounded-md border border-rose-300 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-60"
-            >
-              <ShieldOff className="size-4" aria-hidden />
-              {disabling ? s.disabling : s.disable2faButton}
-            </button>
-          </form>
-        </div>
-      ) : setup ? (
-        <div className="gh-card space-y-5 p-6">
-          <div>
-            <h2 className="text-sm font-semibold text-[var(--portal-ink)]">{s.step1Title}</h2>
-            <p className="mt-1 text-sm text-[var(--portal-muted)]">{s.step1Desc}</p>
-            <div className="mt-3 space-y-3">
-              <CopyableField label={s.setupKeyLabel} value={setup.secret} copyStrings={copyStrings} />
-              <CopyableField label={s.otpauthLabel} value={setup.qrUri} copyStrings={copyStrings} />
-            </div>
+                <ShieldOff className="size-4" aria-hidden />
+                {disabling ? s.disabling : s.disable2faButton}
+              </button>
+            </form>
           </div>
-
-          <div>
-            <h2 className="text-sm font-semibold text-[var(--portal-ink)]">{s.step2Title}</h2>
-            <p className="mt-1 text-sm text-[var(--portal-muted)]">{s.step2Desc}</p>
-            <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1.5 rounded-[var(--radius-card-sm)] border border-[var(--portal-line)] bg-[var(--portal-well)] p-4 sm:grid-cols-5">
-              {setup.backupCodes.map((c) => (
-                <code key={c} className="text-xs text-[var(--portal-ink)]">
-                  {c}
-                </code>
-              ))}
+        ) : setup ? (
+          <div className="gh-card space-y-5 p-6">
+            <div>
+              <h2 className="text-sm font-semibold text-[var(--portal-ink)]">{s.step1Title}</h2>
+              <p className="mt-1 text-sm text-[var(--portal-muted)]">{s.step1Desc}</p>
+              <div className="mt-3 space-y-3">
+                <CopyableField label={s.setupKeyLabel} value={setup.secret} copyStrings={copyStrings} />
+                <CopyableField label={s.otpauthLabel} value={setup.qrUri} copyStrings={copyStrings} />
+              </div>
             </div>
-          </div>
 
-          <form onSubmit={onConfirm} className="max-w-sm space-y-3">
-            <h2 className="text-sm font-semibold text-[var(--portal-ink)]">{s.step3Title}</h2>
-            <label className="block">
-              <span className="gh-field-label">{s.currentPasswordLabel}</span>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                autoComplete="current-password"
-                className="gh-input mt-1 min-w-0"
-              />
-            </label>
-            <label className="block">
-              <span className="gh-field-label">{s.sixDigitLabel}</span>
-              <input
-                type="text"
-                inputMode="numeric"
-                pattern="\d{6}"
-                minLength={6}
-                maxLength={6}
-                value={code}
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-                required
-                autoComplete="one-time-code"
-                className="gh-input mt-1 min-w-0 tracking-[0.3em]"
-              />
-            </label>
+            <div>
+              <h2 className="text-sm font-semibold text-[var(--portal-ink)]">{s.step2Title}</h2>
+              <p className="mt-1 text-sm text-[var(--portal-muted)]">{s.step2Desc}</p>
+              <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1.5 rounded-[var(--radius-card-sm)] border border-[var(--portal-line)] bg-[var(--portal-well)] p-4 sm:grid-cols-5">
+                {setup.backupCodes.map((c) => (
+                  <code key={c} className="text-xs text-[var(--portal-ink)]">
+                    {c}
+                  </code>
+                ))}
+              </div>
+            </div>
+
+            <form onSubmit={onConfirm} className="max-w-sm space-y-3">
+              <h2 className="text-sm font-semibold text-[var(--portal-ink)]">{s.step3Title}</h2>
+              <label className="block">
+                <span className="gh-field-label">{s.currentPasswordLabel}</span>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  className="gh-input mt-1 min-w-0"
+                />
+              </label>
+              <label className="block">
+                <span className="gh-field-label">{s.sixDigitLabel}</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="\d{6}"
+                  minLength={6}
+                  maxLength={6}
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+                  required
+                  autoComplete="one-time-code"
+                  className="gh-input mt-1 min-w-0 tracking-[0.3em]"
+                />
+              </label>
+              {msg ? (
+                <p
+                  className={`rounded-md px-3 py-2 text-sm ${
+                    msg.kind === "ok" ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"
+                  }`}
+                >
+                  {msg.text}
+                </p>
+              ) : null}
+              <button
+                type="submit"
+                disabled={confirming || code.length !== 6 || confirmPassword.length === 0}
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+              >
+                {confirming ? s.verifying : s.enable2faButton}
+              </button>
+            </form>
+          </div>
+        ) : (
+          <div className="gh-card p-6">
+            <p className="text-sm text-[var(--portal-muted)]">{s.notEnabledDesc}</p>
             {msg ? (
               <p
-                className={`rounded-md px-3 py-2 text-sm ${
+                className={`mt-3 rounded-md px-3 py-2 text-sm ${
                   msg.kind === "ok" ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"
                 }`}
               >
@@ -267,37 +450,38 @@ export function DoctorSecurityForm({
               </p>
             ) : null}
             <button
-              type="submit"
-              disabled={confirming || code.length !== 6 || confirmPassword.length === 0}
-              className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+              type="button"
+              onClick={() => void onStartSetup()}
+              disabled={settingUp}
+              className="mt-4 inline-flex items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
             >
-              {confirming ? s.verifying : s.enable2faButton}
+              <ShieldCheck className="size-4" aria-hidden />
+              {settingUp ? s.preparing : s.enable2faButton}
             </button>
-          </form>
-        </div>
-      ) : (
-        <div className="gh-card p-6">
-          <p className="text-sm text-[var(--portal-muted)]">{s.notEnabledDesc}</p>
-          {msg ? (
-            <p
-              className={`mt-3 rounded-md px-3 py-2 text-sm ${
-                msg.kind === "ok" ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"
-              }`}
+          </div>
+        )}
+      </PortalTabPanel>
+
+      <PortalTabPanel value="sessions" activeValue={activeTab}>
+        <FormSection title={s.signOutAllDevicesTitle} description={s.signOutAllDevicesBody}>
+          <div className="gh-form-section__span-2">
+            <button
+              type="button"
+              onClick={() => void onSignOutAll()}
+              disabled={signingOutAll}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-rose-300 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-60 sm:w-auto"
             >
-              {msg.text}
-            </p>
-          ) : null}
-          <button
-            type="button"
-            onClick={() => void onStartSetup()}
-            disabled={settingUp}
-            className="mt-4 inline-flex items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
-          >
-            <ShieldCheck className="size-4" aria-hidden />
-            {settingUp ? s.preparing : s.enable2faButton}
-          </button>
-        </div>
-      )}
+              <LogOut className="size-4" aria-hidden />
+              {signingOutAll ? s.signingOutAll : s.signOutAllDevicesButton}
+            </button>
+            {signOutMsg ? (
+              <p role="alert" className="mt-3 rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-800">
+                {signOutMsg}
+              </p>
+            ) : null}
+          </div>
+        </FormSection>
+      </PortalTabPanel>
     </>
   );
 }

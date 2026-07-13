@@ -125,7 +125,7 @@ export function CountrySelect({
               }}
             />
           )}
-          <span className="truncate text-[14px]">
+          <span className="truncate text-portal-body" title={selected?.name}>
             {selected ? (
               <>
                 {selected.name}{" "}
@@ -155,7 +155,7 @@ export function CountrySelect({
 
       {open ? (
         <div
-          className="gh-admin-country-select__menu absolute z-50 mt-1 w-full overflow-hidden rounded-md border bg-white shadow-lg"
+          className="gh-admin-country-select__menu absolute z-[var(--z-dropdown)] mt-1 w-full overflow-hidden rounded-md border bg-[var(--portal-surface-elevated)] shadow-lg"
           style={{ borderColor: "var(--color-border)" }}
         >
           <div className="border-b border-[var(--color-border)] p-2">
@@ -170,7 +170,7 @@ export function CountrySelect({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search country or ISO code…"
-                className="gh-input w-full min-w-0 pl-8 text-[14px]"
+                className="gh-input w-full min-w-0 pl-8 text-portal-body"
               />
             </div>
           </div>
@@ -190,7 +190,7 @@ export function CountrySelect({
                     <button
                       type="button"
                       onClick={() => pick(c)}
-                      className="gh-admin-country-select__item flex w-full items-center gap-2.5 px-3 py-2 text-left text-[14px] hover:bg-[var(--color-background-soft)]"
+                      className="gh-admin-country-select__item flex w-full items-center gap-2.5 px-3 py-2 text-left text-portal-body hover:bg-[var(--color-background-soft)]"
                     >
                       <span
                         aria-hidden
@@ -204,8 +204,8 @@ export function CountrySelect({
                           flex: "0 0 22px",
                         }}
                       />
-                      <span className="flex-1 truncate">{c.name}</span>
-                      <span className="text-[12px] text-[var(--color-text-muted)]">
+                      <span className="flex-1 truncate" title={c.name}>{c.name}</span>
+                      <span className="text-portal-meta text-[var(--color-text-muted)]">
                         {c.iso.toUpperCase()}
                       </span>
                       {isPicked ? (

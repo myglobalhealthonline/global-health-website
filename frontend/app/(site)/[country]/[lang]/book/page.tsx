@@ -24,13 +24,14 @@ import { countryLangParams } from "@/lib/routing/static-params";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
-import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
 import { ConsultationBookingForm } from "../consult/[serviceSlug]/_components/consultation-booking-form";
 import { SlotPickerStep } from "../consult/[serviceSlug]/_components/slot-picker-step";
 import { LanguageFilteredDoctors } from "./_components/language-filtered-doctors";
+import { PortalReturnBand } from "./_components/portal-return-band";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -47,6 +48,9 @@ type SearchParams = {
   /** Insurance choice made right after the service: a company id, or "none"
    *  for "pay the standard price". Absent = the patient still owes the choice. */
   insurance?: string | string[];
+  /** Portal-return chrome (04-001/04-002): set on every "Book consultation"
+   *  CTA inside `/account` via `resolveBookConsultationHref`. */
+  from?: string | string[];
 };
 
 type Notice = { tone: "info" | "warning"; message: string } | null;
@@ -75,7 +79,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/book") },
-    openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
+    openGraph: { type: "website", siteName: SITE_NAME, title, description, url, ...ogLocales(config, lang) },
     twitter: { card: "summary_large_image", title, description },
   };
 }
@@ -98,6 +102,13 @@ export default async function CountryLangBookPage({
   // Started here, awaited where first needed below — lets the (independent)
   // `overlay` fetch on the non-GP path start without waiting on this one.
   const bookingRequirementsPromise = getPublicBookingRequirements(code);
+
+  // Portal-return chrome (04-001/04-002): `?from=portal` is only present on
+  // arrival (step 1) — `buildBookHref`, the wizard's own step-link builder,
+  // doesn't forward unknown query params, so steps 2-4 rely on client-side
+  // sessionStorage (set by `PortalReturnBand` itself) to keep the band up.
+  // Public visitors never carry `?from=portal`, so this is always false.
+  const fromPortalParam = firstParam(sp.from) === "portal";
 
   // Same-day GP quick-book entry from the homepage: the patient already chose a
   // language + time; here they only fill details. The GP is auto-assigned at
@@ -321,6 +332,8 @@ export default async function CountryLangBookPage({
         ])}
       />
 
+      <PortalReturnBand fromPortalParam={fromPortalParam} backLabel={bp.backToAccount} badgeLabel={bp.portalBadge} />
+
       <GH2FlowHeader
         title={bp.title}
         subtitle={bp.subtitle.replace("{country}", config.name)}
@@ -334,8 +347,12 @@ export default async function CountryLangBookPage({
       >
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.8fr)]">
-            <aside className="lg:sticky lg:top-24 lg:self-start">
-              <div className="gh2-glass-forest gh2-dark-content p-5">
+            {/* 04-009: below `lg:` there's no side-by-side space, so document
+                order = visual order — step content must render before this
+                sidebar (the header's compact step counter already covers
+                "where am I" without the full panel above the fold). */}
+            <aside className="order-2 lg:order-none lg:sticky lg:top-24 lg:self-start">
+              <div className="gh2-glass-forest gh2-dark-content transform-gpu p-5">
                 <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]">
                   {bp.bookingSteps}
                 </p>
@@ -371,7 +388,7 @@ export default async function CountryLangBookPage({
               </div>
             </aside>
 
-            <div className="min-w-0">
+            <div className="order-1 min-w-0 lg:order-none">
               {notice ? <InlineNotice notice={notice} /> : null}
               {!selectedService ? (
                 <ServicePicker
@@ -503,8 +520,12 @@ async function GpBookingFlow({
             </div>
           ) : (
             <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.8fr)]">
-              <aside className="lg:sticky lg:top-24 lg:self-start">
-                <div className="gh2-glass-forest gh2-dark-content p-5">
+              {/* 04-009: below `lg:` there's no side-by-side space, so document
+                order = visual order — step content must render before this
+                sidebar (the header's compact step counter already covers
+                "where am I" without the full panel above the fold). */}
+            <aside className="order-2 lg:order-none lg:sticky lg:top-24 lg:self-start">
+                <div className="gh2-glass-forest gh2-dark-content transform-gpu p-5">
                   <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]">
                     {bp.bookingSteps}
                   </p>
@@ -540,7 +561,7 @@ async function GpBookingFlow({
                 </div>
               </aside>
 
-              <div className="min-w-0">
+              <div className="order-1 min-w-0 lg:order-none">
                 <BookingSectionHeader
                   eyebrow={bp.stepDetails}
                   title={bp.detailsTitle}

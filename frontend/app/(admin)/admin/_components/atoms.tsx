@@ -10,10 +10,12 @@
  */
 
 import Link from "next/link";
+import { BarChart3 } from "lucide-react";
 import type {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
   CSSProperties,
+  MouseEvent,
   ReactNode,
 } from "react";
 
@@ -26,49 +28,60 @@ export function PageHeader({
   title,
   description,
   actions,
+  icon,
   className = "",
 }: {
   eyebrow?: ReactNode;
   title: ReactNode;
   description?: ReactNode;
   actions?: ReactNode;
+  /** Icon badge rendered left of the title group (design brief §1). Optional
+   *  — omitting it renders the banner without a badge, unchanged layout. */
+  icon?: ReactNode;
   className?: string;
 }) {
   return (
     <header
-      className={`gh-portal-page-header relative mb-5 flex flex-wrap items-end justify-between gap-4 ${className}`}
+      className={`gh-portal-page-header relative mb-5 flex flex-wrap items-center justify-between gap-4 ${className}`}
     >
-      <div className="min-w-0">
-        {eyebrow ? (
-          <>
-            <p className="gh-eyebrow inline-flex items-center gap-2">
-              <span aria-hidden className="gh-portal-eyebrow-dot" />
-              {eyebrow}
-            </p>
-            <span aria-hidden className="gh-portal-eyebrow-hairline" />
-          </>
+      <div className="flex min-w-0 items-center gap-3">
+        {icon ? (
+          <span aria-hidden className="gh-portal-icon-badge gh-portal-icon-badge--header">
+            {icon}
+          </span>
         ) : null}
-        <h1
-          className="m-0 tracking-[-0.02em]"
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "clamp(24px, 2vw, 34px)",
-            fontWeight: 800,
-            lineHeight: 1.08,
-            marginTop: eyebrow ? 10 : 0,
-            color: "var(--portal-text)",
-          }}
-        >
-          {title}
-        </h1>
-        {description ? (
-          <p
-            className="mt-2 text-[14px] leading-relaxed"
-            style={{ color: "var(--portal-text-2)", maxWidth: "68ch" }}
+        <div className="min-w-0">
+          {eyebrow ? (
+            <>
+              <p className="gh-eyebrow inline-flex items-center gap-2">
+                <span aria-hidden className="gh-portal-eyebrow-dot" />
+                {eyebrow}
+              </p>
+              <span aria-hidden className="gh-portal-eyebrow-hairline" />
+            </>
+          ) : null}
+          <h1
+            className="m-0 tracking-[-0.02em]"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(24px, 2vw, 34px)",
+              fontWeight: 800,
+              lineHeight: 1.08,
+              marginTop: eyebrow ? 10 : 0,
+              color: "var(--portal-text)",
+            }}
           >
-            {description}
-          </p>
-        ) : null}
+            {title}
+          </h1>
+          {description ? (
+            <p
+              className="mt-2 text-portal-body leading-relaxed"
+              style={{ color: "var(--portal-text-2)", maxWidth: "68ch" }}
+            >
+              {description}
+            </p>
+          ) : null}
+        </div>
       </div>
       {actions ? (
         <div className="gh-portal-page-header-actions flex flex-wrap items-center gap-2.5">{actions}</div>
@@ -97,17 +110,31 @@ export function SectionHeader({
   title,
   description,
   right,
+  as: Heading = "h3",
+  flat = false,
 }: {
   title: ReactNode;
   description?: ReactNode;
   right?: ReactNode;
+  /** Heading level (default "h3" — matches prior hardcoded markup). Pass
+   *  "h2" when this renders directly under the page's h1 with nothing
+   *  between, to keep the heading outline unbroken. */
+  as?: "h2" | "h3" | "h4";
+  /** Drops the header's own tinted background, leaving only the bottom
+   *  rule, so it doesn't double up with the parent card's top edge as a
+   *  second "section start" cue (audit 11-001). Opt-in — default
+   *  rendering is unchanged for every other consumer. */
+  flat?: boolean;
 }) {
   return (
-    <div className="gh-portal-section-header flex items-start justify-between gap-4 px-5 py-4">
+    <div
+      className={`gh-portal-section-header${flat ? " gh-portal-section-header--flat" : ""} flex items-start justify-between gap-4 px-5 py-4`}
+    >
+
       <div className="min-w-0">
         <div className="flex items-center gap-2.5">
           <span aria-hidden className="gh-portal-section-rule" />
-          <h3
+          <Heading
             className="m-0"
             style={{
               fontFamily: "var(--font-display)",
@@ -118,10 +145,10 @@ export function SectionHeader({
             }}
           >
             {title}
-          </h3>
+          </Heading>
         </div>
         {description ? (
-          <p className="mt-1 pl-[14px] text-[12px]" style={{ color: "var(--portal-muted)" }}>
+          <p className="mt-1 pl-[14px] text-portal-meta" style={{ color: "var(--portal-muted)" }}>
             {description}
           </p>
         ) : null}
@@ -162,27 +189,58 @@ export type AdminSummaryTone = "brand" | "success" | "warning" | "neutral";
 export function AdminSummaryStrip({
   items,
   className = "",
+  compact = false,
 }: {
   items: Array<{
     label: ReactNode;
     value: ReactNode;
     hint?: ReactNode;
     tone?: AdminSummaryTone;
+    /** Icon badge on the top-right of the card (design brief §2). Optional
+     *  — without it the top row is just the label, unchanged layout. */
+    icon?: ReactNode;
+    /** Renders the tile as a link (filter shortcut / drill-down). Optional
+     *  — without it the tile stays a static div, unchanged. */
+    href?: string;
   }>;
   className?: string;
+  /** Single-line, reduced-height tiles so the content below stays above
+   *  the fold (audit 06-001). Opt-in; default rendering unchanged. */
+  compact?: boolean;
 }) {
   return (
-    <section className={`gh-admin-summary-strip ${className}`}>
-      {items.map((item, index) => (
-        <div
-          key={index}
-          className={`gh-admin-summary-item gh-admin-summary-item--${item.tone ?? "neutral"}`}
-        >
-          <span className="gh-admin-summary-label">{item.label}</span>
-          <strong>{item.value}</strong>
-          {item.hint ? <span className="gh-admin-summary-hint">{item.hint}</span> : null}
-        </div>
-      ))}
+    <section
+      className={`gh-admin-summary-strip${compact ? " gh-admin-summary-strip--compact" : ""} ${className}`}
+      style={{ "--card-count": items.length } as CSSProperties}
+    >
+      {items.map((item, index) => {
+        const itemClass = `gh-admin-summary-item gh-admin-summary-item--${item.tone ?? "neutral"}`;
+        const inner = (
+          <>
+            <div className="gh-admin-summary-item__top">
+              <span className="gh-admin-summary-label">{item.label}</span>
+              <span aria-hidden className="gh-portal-icon-badge">
+                {item.icon ?? <BarChart3 />}
+              </span>
+            </div>
+            <strong>{item.value}</strong>
+            {item.hint ? <span className="gh-admin-summary-hint">{item.hint}</span> : null}
+          </>
+        );
+        return item.href ? (
+          <Link
+            key={index}
+            href={item.href}
+            className={`${itemClass} gh-admin-summary-item--link`}
+          >
+            {inner}
+          </Link>
+        ) : (
+          <div key={index} className={itemClass}>
+            {inner}
+          </div>
+        );
+      })}
     </section>
   );
 }
@@ -195,6 +253,7 @@ export function AdminEmptyState({
   assetSrc,
   tone = "neutral",
   className = "",
+  as: Heading = "h3",
 }: {
   title: ReactNode;
   description?: ReactNode;
@@ -204,6 +263,10 @@ export function AdminEmptyState({
   /** "danger" = root error.tsx anatomy (DESIGN.md §16 DoD); neutral = normal empty list. */
   tone?: "neutral" | "danger";
   className?: string;
+  /** Heading level (default "h3" — matches prior hardcoded markup). Pass
+   *  "h2" when this renders directly under the page's h1 with nothing
+   *  between, to keep the heading outline unbroken. */
+  as?: "h2" | "h3" | "h4";
 }) {
   return (
     <div className={`gh-admin-empty-state ${className}`}>
@@ -225,7 +288,7 @@ export function AdminEmptyState({
         </span>
       ) : null}
       <div className="min-w-0">
-        <h3>{title}</h3>
+        <Heading>{title}</Heading>
         {description ? <p>{description}</p> : null}
         {action ? <div className="gh-admin-empty-state__action">{action}</div> : null}
       </div>
@@ -297,7 +360,7 @@ export function CommandBand({
   );
 }
 
-export type StatTone = "brand" | "accent" | "neutral";
+export type StatTone = "brand" | "accent" | "success" | "warning" | "neutral";
 
 export function StatCard({
   label,
@@ -310,15 +373,11 @@ export function StatCard({
   label: string;
   value: ReactNode;
   hint?: ReactNode;
-  icon: ReactNode;
-  /** Neutral = ink glyph (default). Brand/accent tint the glyph with the
-   *  role accent — the tile fill itself always stays the neutral well
-   *  (DESIGN.md §5.6: surfaces are never green, only glyphs signal). */
+  icon?: ReactNode;
+  /** The semantic tone drives the icon badge, border, and subtle card wash. */
   tone?: StatTone;
   href?: string;
 }) {
-  const tileGlyphColor = tone === "neutral" ? "var(--portal-text)" : "var(--portal-accent-text)";
-
   const inner = (
     <div className="relative">
       <div className="relative flex items-start justify-between">
@@ -328,18 +387,17 @@ export function StatCard({
         <span
           className="gh-stat-card__icon-tile inline-flex items-center justify-center"
           style={{
-            width: 40,
-            height: 40,
+            width: "clamp(30px, 2.6vw, 34px)",
+            height: "clamp(30px, 2.6vw, 34px)",
             borderRadius: "var(--portal-radius)",
-            color: tileGlyphColor,
           }}
         >
-          {icon}
+          {icon ?? <BarChart3 />}
         </span>
       </div>
       <p className="gh-stat-card__value relative m-0 mt-3">{value}</p>
       {hint ? (
-        <p className="m-0 mt-1.5 text-[12px] font-medium" style={{ color: "var(--portal-muted)" }}>
+        <p className="m-0 mt-1.5 text-portal-meta font-medium" style={{ color: "var(--portal-muted)" }}>
           {hint}
         </p>
       ) : null}
@@ -349,13 +407,13 @@ export function StatCard({
 
   if (href) {
     return (
-      <Link href={href} className="gh-stat-card block" style={{ padding: 20, textDecoration: "none", color: "inherit" }}>
+      <Link href={href} className={`gh-stat-card gh-stat-card--${tone} block`} style={{ padding: "clamp(14px, 1.6vw, 18px)", textDecoration: "none", color: "inherit" }}>
         {inner}
       </Link>
     );
   }
   return (
-    <AdminCard padding={20} className="gh-stat-card">
+    <AdminCard padding={18} className={`gh-stat-card gh-stat-card--${tone}`}>
       {inner}
     </AdminCard>
   );
@@ -496,14 +554,20 @@ export function Th({
 export function Td({
   children,
   align = "left",
+  className,
   style = {},
+  onClick,
 }: {
   children?: ReactNode;
   align?: "left" | "right" | "center";
+  className?: string;
   style?: CSSProperties;
+  onClick?: (e: MouseEvent<HTMLTableCellElement>) => void;
 }) {
   return (
     <td
+      className={className}
+      onClick={onClick}
       style={{
         padding: "14px 16px",
         textAlign: align,
@@ -518,8 +582,20 @@ export function Td({
   );
 }
 
-export function Tr({ children }: { children: ReactNode }) {
-  return <tr className="gh-admin-row">{children}</tr>;
+export function Tr({
+  children,
+  className,
+  onClick,
+}: {
+  children: ReactNode;
+  className?: string;
+  onClick?: (e: MouseEvent<HTMLTableRowElement>) => void;
+}) {
+  return (
+    <tr className={className ? `gh-admin-row ${className}` : "gh-admin-row"} onClick={onClick}>
+      {children}
+    </tr>
+  );
 }
 
 /* ─────────────────────────────────────────────────────────────

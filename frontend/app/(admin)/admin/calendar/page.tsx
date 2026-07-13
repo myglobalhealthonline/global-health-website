@@ -114,6 +114,7 @@ export default async function AdminCalendarPage({ searchParams }: Props) {
         }
         title="Calendar"
         description="All doctors' availability and scheduled consultations. Filter by doctor, consultation type, or country. Click an open slot's Book action to start a manual booking."
+        icon={<CalendarRange aria-hidden />}
       />
 
       {calendar.ok ? (

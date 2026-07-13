@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
+import { LocaleCode } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
@@ -9,6 +10,16 @@ import {
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { resolveTranslation } from "../modules/shared/resolve-translation.js";
+
+// .catch(undefined): an unknown locale falls back to the country default
+// instead of failing the request.
+const localeQuerySchema = z
+  .preprocess(
+    (v) => (typeof v === "string" ? v.toUpperCase() : v),
+    z.nativeEnum(LocaleCode).optional(),
+  )
+  .catch(undefined);
 
 /**
  * Per-consultation services-rendered line items.
@@ -48,6 +59,9 @@ const consultationServicesRoute: FastifyPluginAsync = async (app) => {
     async (request, reply) => {
       const auth = await verifyClinicalReadAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      const locale = localeQuerySchema.parse(
+        (request.query as { locale?: string } | undefined)?.locale,
+      );
       try {
         const consult = await prisma.consultation.findFirst({
           where: {
@@ -79,18 +93,34 @@ const consultationServicesRoute: FastifyPluginAsync = async (app) => {
           orderBy: { createdAt: "asc" },
           include: {
             service: {
-              select: { id: true, name: true, basePriceCents: true, currencyCode: true },
+              select: {
+                id: true,
+                name: true,
+                basePriceCents: true,
+                currencyCode: true,
+                country: { select: { defaultLocale: true } },
+                translations: { select: { locale: true, name: true } },
+              },
             },
           },
         });
         return okResponse({
-          items: items.map((r) => ({
+          items: items.map((r) => {
+            const resolvedName =
+              r.service && locale
+                ? resolveTranslation(
+                    r.service.translations,
+                    locale,
+                    r.service.country.defaultLocale,
+                  ).tr?.name
+                : undefined;
+            return {
             id: r.id,
             serviceId: r.serviceId,
             service: r.service
               ? {
                   id: r.service.id,
-                  name: r.service.name,
+                  name: resolvedName ?? r.service.name,
                   basePriceCents: r.service.basePriceCents,
                   currencyCode: r.service.currencyCode,
                 }
@@ -100,7 +130,8 @@ const consultationServicesRoute: FastifyPluginAsync = async (app) => {
             unitPriceCents: r.unitPriceCents,
             currencyCode: r.currencyCode,
             createdAt: r.createdAt.toISOString(),
-          })),
+            };
+          }),
         });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {

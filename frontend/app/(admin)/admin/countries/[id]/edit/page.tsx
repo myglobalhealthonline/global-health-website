@@ -134,7 +134,7 @@ export default async function AdminEditCountryPage({
     <>
       <Link
         href={`/admin/countries/${id}`}
-        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+        className="mb-2 inline-flex items-center gap-1.5 text-portal-compact font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" /> Back to {country.name}
       </Link>
@@ -161,16 +161,16 @@ export default async function AdminEditCountryPage({
             currencies={currenciesResult.data.currencies}
             initial={country}
           />
-          <div className="gh-admin-country-actions flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
-            <button type="submit" className="gh-btn gh-btn-primary">
-              Save changes
-            </button>
+          <div className="gh-admin-country-actions flex flex-wrap items-center justify-end gap-3 border-t border-[var(--color-border)] pt-6">
             <Link
               href={`/admin/countries/${id}`}
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              className="gh-btn gh-btn-ghost"
             >
               Cancel
             </Link>
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Save changes
+            </button>
           </div>
         </form>
       </AdminCard>

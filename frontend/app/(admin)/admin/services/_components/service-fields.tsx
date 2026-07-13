@@ -205,11 +205,11 @@ export function ServiceFields({
       <fieldset className="gh-form-section__span-2 gh-admin-service-doctors">
         <legend className="gh-field-label">Assigned doctors</legend>
         {doctorOptions === null ? (
-          <p className="text-[12px] text-[var(--color-text-muted)]">
+          <p className="text-portal-meta text-[var(--color-text-muted)]">
             Pick the country first to load eligible doctors.
           </p>
         ) : !doctorOptions || doctorOptions.length === 0 ? (
-          <p className="text-[12px] text-[var(--color-text-muted)]">
+          <p className="text-portal-meta text-[var(--color-text-muted)]">
             No doctors are listed in this country yet. Create or assign one
             under{" "}
             <Link
@@ -262,10 +262,11 @@ export function ServiceFields({
                             ? "text-[var(--color-text-primary)]"
                             : "text-[var(--color-text-muted)] line-through"
                         }`}
+                        title={doc.fullName}
                       >
                         {doc.fullName}
                       </span>
-                      <span className="truncate text-[11px] text-[var(--color-text-muted)]">
+                      <span className="truncate text-portal-thead text-[var(--color-text-muted)]" title={doc.title}>
                         {doc.title}
                         {doc.active ? "" : " · inactive"}
                       </span>
@@ -273,7 +274,7 @@ export function ServiceFields({
                   </label>
                 ))}
             </div>
-            <span className="text-[11px] text-[var(--color-text-muted)]">
+            <span className="text-portal-thead text-[var(--color-text-muted)]">
               Patients booking this service only see ticked doctors. Untick
               all to take the service offline without changing its status.
             </span>

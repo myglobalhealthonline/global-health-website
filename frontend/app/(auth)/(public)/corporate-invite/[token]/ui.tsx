@@ -110,7 +110,7 @@ export function CorporateInviteForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-5">
+    <form onSubmit={onSubmit} method="post" className="grid gap-5">
       {/* Password */}
       <div className="grid gap-2">
         <label htmlFor="invite-password" className="gh-field-label" data-required>
@@ -220,7 +220,7 @@ export function CorporateInviteForm({
         <legend className="gh-field-label mb-1" data-required>
           {i18n.consents}
         </legend>
-        <label className="flex cursor-pointer items-start gap-2 text-[13px] leading-relaxed text-[var(--color-text-body)]">
+        <label className="flex cursor-pointer items-start gap-2 text-portal-compact leading-relaxed text-[var(--color-text-body)]">
           <input type="checkbox" name="terms" required className="mt-0.5 size-4" />
           <span>
             {i18n.acceptTermsPrefix}{" "}
@@ -229,7 +229,7 @@ export function CorporateInviteForm({
             </Link>
           </span>
         </label>
-        <label className="flex cursor-pointer items-start gap-2 text-[13px] leading-relaxed text-[var(--color-text-body)]">
+        <label className="flex cursor-pointer items-start gap-2 text-portal-compact leading-relaxed text-[var(--color-text-body)]">
           <input type="checkbox" name="privacy" required className="mt-0.5 size-4" />
           <span>
             {i18n.acceptPrivacyPrefix}{" "}
@@ -238,7 +238,7 @@ export function CorporateInviteForm({
             </Link>
           </span>
         </label>
-        <label className="flex cursor-pointer items-start gap-2 text-[13px] leading-relaxed text-[var(--color-text-body)]">
+        <label className="flex cursor-pointer items-start gap-2 text-portal-compact leading-relaxed text-[var(--color-text-body)]">
           <input type="checkbox" name="dataProcessing" required className="mt-0.5 size-4" />
           <span>{i18n.healthConsent}</span>
         </label>

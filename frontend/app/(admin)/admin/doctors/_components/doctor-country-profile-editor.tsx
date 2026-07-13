@@ -99,14 +99,14 @@ export function DoctorCountryProfileEditor({ doctorId, doctorSlug, markets }: Pr
       <h3 className="m-0 [font-family:var(--font-display)] text-base font-extrabold text-[var(--color-text-primary)]">
         Country profile
       </h3>
-      <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+      <p className="mb-4 mt-1 text-portal-compact text-[var(--color-text-muted)]">
         {markets.length > 1
           ? "Pick a country, then edit that country's title, bio and SEO by language, plus registration and payout. Each country saves on its own."
           : "Edit the doctor's title, bio and SEO by language, plus registration and payout."}
       </p>
 
       {markets.length === 0 ? (
-        <p className="text-[13px] text-[var(--color-text-muted)]">
+        <p className="text-portal-compact text-[var(--color-text-muted)]">
           No country rows exist yet. Save the main profile form once to generate
           the primary country row.
         </p>
