@@ -163,6 +163,19 @@ export default async function CountryLangDoctorsPage({
         ]}
       />
       {page?.sections.faq ? <JsonLd data={faqJsonLd(page.faq)} /> : null}
+      {/* Directory IS this page's header/hero (no ServiceHero here) — every
+          marketing section below must render AFTER it, never before. */}
+      <Suspense fallback={<DoctorDirectoryView view={unfilteredView} />}>
+        <DoctorsDirectoryClient ctx={directoryCtx} />
+      </Suspense>
+      {countryTrust ? <VerifiedProfessionals trust={countryTrust} locale={lang} /> : null}
+      <DoctifyReviewsSection
+        theme="forest"
+        variant="carousel"
+        language={lang}
+        headline="What patients say about"
+        headlineAccent="our doctors"
+      />
       {page?.sections.intro ? (
         <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
       ) : null}
@@ -175,17 +188,6 @@ export default async function CountryLangDoctorsPage({
           theme={themeProp(page?.whoForTheme, "light")}
         />
       ) : null}
-      <Suspense fallback={<DoctorDirectoryView view={unfilteredView} />}>
-        <DoctorsDirectoryClient ctx={directoryCtx} />
-      </Suspense>
-      {countryTrust ? <VerifiedProfessionals trust={countryTrust} locale={lang} /> : null}
-      <DoctifyReviewsSection
-        theme="forest"
-        variant="carousel"
-        language={lang}
-        headline="What patients say about"
-        headlineAccent="our doctors"
-      />
       {page?.sections.whyChoose ? (
         <WhyChooseSection
           title={page.whyChooseTitle!}
