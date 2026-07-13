@@ -586,18 +586,7 @@ export function PageContentEditor({
         </div>
       </FormSection>
 
-      <div
-        className="gh-admin-support-actions flex items-center justify-end gap-2"
-        style={{
-          position: "sticky",
-          bottom: 0,
-          zIndex: "var(--z-sticky)",
-          borderTop: "1px solid var(--color-border)",
-          background: "var(--color-background-page)",
-          padding: "12px 0",
-          marginTop: 8,
-        }}
-      >
+      <div className="gh-admin-support-actions gh-portal-sticky-actions flex flex-wrap justify-end gap-3 border-t border-[var(--color-border)] pt-6">
         <Btn type="submit" variant="primary" size="md">
           Save
         </Btn>
