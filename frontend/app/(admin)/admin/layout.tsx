@@ -85,7 +85,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     //     redirect, so clicking them looked broken. Page content +
     //     URL-level filters are sufficient.
     { href: "/admin/country-features", label: "Pages" },
-    { href: "/admin/pages", label: "Page content" },
+    { href: "/admin/page-content", label: "Page content" },
     { href: "/admin/footer", label: "Footer" },
     { href: "/admin/services", label: "Services" },
     { href: "/admin/general-consultations", label: "General consultations" },

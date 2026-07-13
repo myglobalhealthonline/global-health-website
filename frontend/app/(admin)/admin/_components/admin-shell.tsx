@@ -69,7 +69,7 @@ const GLOBAL_ICONS: Record<string, LucideIcon> = {
   "/admin/invoices": ReceiptText,
   "/admin/automation": Workflow,
   "/admin/reports": BarChart3,
-  "/admin/pages": FileText,
+  "/admin/page-content": FileText,
   "/admin/services": Stethoscope,
   "/admin/blog": Newspaper,
   "/admin/subscriptions": CreditCard,
@@ -116,7 +116,7 @@ const COUNTRY_HREFS = new Set([
   "/admin/country-home",
   "/admin/country-content",
   "/admin/footer",
-  "/admin/pages",
+  "/admin/page-content",
   "/admin/services",
   "/admin/general-consultations",
   "/admin/specialist-consultations",
@@ -134,7 +134,7 @@ const COUNTRY_HREFS = new Set([
 const HREF_TO_FEATURE_KEY: Record<string, string> = {
   "/admin/country-home": "country-home",
   "/admin/country-content": "country-content",
-  "/admin/pages": "pages",
+  "/admin/page-content": "pages",
   "/admin/footer": "footer",
   "/admin/general-consultations": "general-consultations",
   "/admin/specialist-consultations": "specialist-consultations",
@@ -160,7 +160,7 @@ const ORDER: Record<string, number> = {
   // Country-scoped — by priority: controller → content → services →
   // bookings → footer last (site chrome, lowest priority).
   "/admin/country-features": 0,
-  "/admin/pages": 1,
+  "/admin/page-content": 1,
   "/admin/services": 2,
   "/admin/general-consultations": 3,
   "/admin/specialist-consultations": 4,
@@ -257,7 +257,7 @@ function useBreadcrumbs(
     // the "Admin" crumb's target.
     const crumbs: { label: string; href: string | null }[] = [];
     let acc = "";
-    // Country-scoped routes (e.g. /admin/pages) implicitly operate on the
+    // Country-scoped routes (e.g. /admin/page-content) implicitly operate on the
     // topbar-selected country rather than a country segment in the URL —
     // surface that context in the trail so "Admin / Pages" doesn't read as
     // global when it's actually scoped to whichever country is active.

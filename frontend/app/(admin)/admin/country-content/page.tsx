@@ -16,7 +16,7 @@ export default async function AdminCountryContentRedirect() {
   const countries = countriesResult.ok ? countriesResult.data.countries : [];
   const active = await getActiveCountry(countries);
   if (active) {
-    redirect(`/admin/pages?countryId=${encodeURIComponent(active.id)}`);
+    redirect(`/admin/page-content?countryId=${encodeURIComponent(active.id)}`);
   }
-  redirect("/admin/pages");
+  redirect("/admin/page-content");
 }

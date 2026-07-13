@@ -13,7 +13,8 @@ export default async function AdminCountryHomeRedirect() {
   const countriesResult = await fetchAdminCountries();
   const countries = countriesResult.ok ? countriesResult.data.countries : [];
   const active = await getActiveCountry(countries);
-  const params = new URLSearchParams({ pageKey: "HOME" });
-  if (active) params.set("countryId", active.id);
-  redirect(`/admin/pages?${params.toString()}`);
+  if (active) {
+    redirect(`/admin/page-content/${encodeURIComponent(active.id)}/HOME`);
+  }
+  redirect("/admin/page-content?pageKey=HOME");
 }

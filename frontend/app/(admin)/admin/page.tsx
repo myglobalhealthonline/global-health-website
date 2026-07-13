@@ -18,10 +18,10 @@ import {
   fetchAdminAppointments,
   fetchAdminCountries,
   fetchAdminDoctors,
-  fetchAdminPages,
+  fetchAdminPageContentList,
   fetchAdminPendingServiceRequests,
   fetchAdminServices,
-  type AdminPageDto,
+  type AdminPageContentListItem,
 } from "@/lib/admin/admin-api";
 import { COUNTRY_PREF_COOKIE } from "./_components/country-picker-constants";
 import { FlagBadge } from "./_components/flag-badge";
@@ -100,7 +100,7 @@ export default async function AdminDashboardPage() {
       fetchAdminDoctors(scopeQuery),
       fetchAdminServices(scopeQuery),
       fetchAdminAppointments(activeCountry ? { countryCode: activeCountry.code } : undefined),
-      fetchAdminPages({ ...scopeQuery, pageSize: "100" }),
+      fetchAdminPageContentList(),
       fetchAdminPendingServiceRequests(
         activeCountry ? { countryCode: activeCountry.code } : undefined,
       ),
@@ -128,7 +128,10 @@ export default async function AdminDashboardPage() {
     NON_TERMINAL_STATUSES.has(a.status),
   ).length;
 
-  const pages: AdminPageDto[] = pagesRes.ok ? pagesRes.data.items : [];
+  const allPageContentItems: AdminPageContentListItem[] = pagesRes.ok ? pagesRes.data.items : [];
+  const pages = activeCountry
+    ? allPageContentItems.filter((p) => p.countryId === activeCountry.id)
+    : allPageContentItems;
   const publishedPages = pages.filter((p) => p.status === "PUBLISHED" && p.isActive);
   const expectedPages = activeCountry
     ? EXPECTED_PAGE_KEYS_PER_COUNTRY
@@ -137,7 +140,7 @@ export default async function AdminDashboardPage() {
   // Per-country aggregation (only used in global scope).
   const allDoctors = doctorsRes.ok ? doctorsRes.data.items : [];
   const allServices = servicesItems;
-  const allPages = pages;
+  const allPages = allPageContentItems;
   const countryRows = countries
     .filter((c) => c.isActive)
     .map((c) => {
@@ -173,17 +176,9 @@ export default async function AdminDashboardPage() {
       target: a.consultationType,
     });
   }
-  for (const p of pages.slice(0, 12)) {
-    activity.push({
-      id: `page:${p.id}`,
-      kind: "page",
-      timestamp: new Date(p.updatedAt),
-      countrySlug: p.country?.slug ?? null,
-      primary: "Admin",
-      verb: p.status === "PUBLISHED" ? "published" : "edited",
-      target: `${p.pageKey.replace(/_/g, " ").toLowerCase()} · ${p.locale}`,
-    });
-  }
+  // ponytail: page-content list overview has no per-row updatedAt/locale, so
+  // it can no longer feed the "recently edited page" activity rows the old
+  // ContentPage list provided. Bookings still populate this feed.
   activity.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   const recentActivity = activity.slice(0, 7);
 
@@ -191,7 +186,7 @@ export default async function AdminDashboardPage() {
     .split(/\s+/)[0];
 
   const countryHomeHref = activeCountry
-    ? `/admin/pages?countryId=${activeCountry.id}&pageKey=HOME`
+    ? `/admin/page-content/${activeCountry.id}/HOME`
     : "/admin/country-home";
 
   const quickActions = [
@@ -248,12 +243,12 @@ export default async function AdminDashboardPage() {
               View public site
             </Btn>
             <Btn
-              href="/admin/pages/new"
+              href="/admin/page-content"
               variant="on-chrome"
               size="sm"
               iconLeft={<Plus className="size-3.5" aria-hidden />}
             >
-              New page
+              Page content
             </Btn>
           </div>
         }
@@ -292,7 +287,7 @@ export default async function AdminDashboardPage() {
           tone={
             publishedPages.length >= expectedPages ? "brand" : "neutral"
           }
-          href={activeCountry ? `/admin/pages?countryId=${activeCountry.id}` : "/admin/pages"}
+          href="/admin/page-content"
         />
         <StatCard
           label="Services published"
@@ -513,7 +508,7 @@ export default async function AdminDashboardPage() {
                     </Td>
                     <Td align="right">
                       <Link
-                        href={`/admin/pages?countryId=${row.country.id}`}
+                        href="/admin/page-content"
                         className="text-portal-compact font-semibold text-[var(--color-brand-primary)] hover:underline"
                       >
                         Open

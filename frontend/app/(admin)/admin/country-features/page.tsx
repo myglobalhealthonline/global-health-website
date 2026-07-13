@@ -79,7 +79,7 @@ const FEATURE_META: FeatureMeta[] = [
     label: "Page content",
     description: "Editorial copy for public country pages (Health tests, Prescriptions, …).",
     icon: FileText,
-    href: "/admin/pages",
+    href: "/admin/page-content",
   },
   {
     key: "footer",
