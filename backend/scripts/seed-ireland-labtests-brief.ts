@@ -6,13 +6,16 @@
  * Randox home-kit service model, removing the false "every result reviewed
  * by a doctor" claim (Consumer Protection Act 2007 / EU Omnibus risk).
  *
+ * Owner-confirmed 2026-07-14: follow-up consult = "See a Doctor Online in
+ * Ireland" (slug acute-medical-consultation), live price €45 — copy now
+ * states "from €45" wherever the follow-up is mentioned. No CTA hyperlink:
+ * intro/whoFor/whyChoose/faq/disclaimer are plain-text fields, no link
+ * support in ServiceIntro/FAQSection/MedicalDisclaimer.
+ *
  * Deliberately NOT touched here (flagged to owner):
- *   - IE non-EN locales (PT/ES/CS/RO/DE) still carry the old "reviewed by
- *     doctors" copy — needs a translation pass before those locales launch.
  *   - Other markets (cz/pt/es/ro/br) HEALTH_TESTS content — different model.
- *   - Follow-up consult PRICE: brief says "€39" but live IE GP consults are
- *     €29/€39(second-opinion)/€45(standard). Price intentionally omitted from
- *     copy until owner confirms the product + price.
+ *   - Standalone CTA button-band (brief §6) — needs a bespoke section, not
+ *     requested.
  *
  *   npx tsx scripts/seed-ireland-labtests-brief.ts          # dry run
  *   npx tsx scripts/seed-ireland-labtests-brief.ts --apply  # write (PROD)
@@ -27,13 +30,13 @@ const LOCALE = "EN" as const;
 // ── PageContent EN copy (Randox model) ──
 const HERO_TITLE = "Home Blood Tests Ireland — Randox Lab Kits, Results in Up to 10 Days";
 const HERO_SUBTITLE =
-  "Order a Randox home blood test kit, take your sample at home, and receive your results in up to 10 days. Want a doctor to explain your results? Book a follow-up consultation with an IMC-registered Global Health doctor.";
+  "Order a Randox home blood test kit, take your sample at home, and receive your results in up to 10 days. Want a doctor to explain your results? Book a follow-up consultation with an IMC-registered Global Health doctor from €45.";
 const SEO_TITLE = "Home Blood Tests Ireland — Randox Lab Kits | Global Health";
 const SEO_DESCRIPTION =
-  "Order a Randox home blood test kit in Ireland from €89. Full Blood Count, Thyroid Function and more. Take your sample at home and receive results in up to 10 days. Book a follow-up with an IMC-registered doctor.";
+  "Order a Randox home blood test kit in Ireland from €89. Full Blood Count, Thyroid Function and more. Take your sample at home and receive results in up to 10 days. Book a follow-up with an IMC-registered doctor from €45.";
 
 const INTRO =
-  "Global Health offers Randox home blood test kits in Ireland — clinical-grade tests you take yourself at home. Order your kit, collect your sample following the instructions provided, and post it to the Randox laboratory in the freepost envelope included. Randox delivers your results digitally in up to 10 days. If you would like a doctor to talk you through what your results mean, you can book an optional follow-up consultation with an IMC-registered Global Health doctor.";
+  "Global Health offers Randox home blood test kits in Ireland — clinical-grade tests you take yourself at home. Order your kit, collect your sample following the instructions provided, and post it to the Randox laboratory in the freepost envelope included. Randox delivers your results digitally in up to 10 days. If you would like a doctor to talk you through what your results mean, you can book an optional follow-up consultation with an IMC-registered Global Health doctor from €45.";
 
 const WHO_FOR_TITLE = "Who these tests are for";
 const WHO_FOR_INTRO = "Our home blood tests may be a good fit if you are looking into:";
@@ -51,7 +54,7 @@ const WHY_CHOOSE_ITEMS = [
   "Take your sample at home — follow the instructions included in the kit (finger-prick or venous self-collection, depending on the test).",
   "Post your sample to the Randox lab — a freepost return envelope is included in every kit.",
   "Receive your results — Randox delivers your results digitally in up to 10 days.",
-  "Optional — book a follow-up consultation with an IMC-registered Global Health doctor to review your results and advise on next steps.",
+  "Optional — book a follow-up consultation with an IMC-registered Global Health doctor from €45 to review your results and advise on next steps.",
 ];
 
 const FAQ = [
@@ -77,12 +80,12 @@ const FAQ = [
   {
     question: "What happens if my results show something abnormal?",
     answer:
-      "Your results are delivered to you by Randox. If anything looks abnormal, or you are unsure what your results mean, we recommend booking a follow-up consultation with an IMC-registered Global Health doctor, who can explain your results and advise on next steps. In a medical emergency, call 112 or attend your nearest emergency department.",
+      "Your results are delivered to you by Randox. If anything looks abnormal, or you are unsure what your results mean, we recommend booking a follow-up consultation with an IMC-registered Global Health doctor (from €45), who can explain your results and advise on next steps. In a medical emergency, call 112 or attend your nearest emergency department.",
   },
   {
     question: "Is the doctor consultation included in the €89?",
     answer:
-      "No. The €89 covers the Randox test kit and its laboratory analysis. A doctor review is optional and booked separately as a follow-up consultation with an IMC-registered Global Health doctor.",
+      "No. The €89 covers the Randox test kit and its laboratory analysis. A doctor review is optional and booked separately as a follow-up consultation with an IMC-registered Global Health doctor, from €45.",
   },
   {
     question: "Can I get these tests on the HSE?",
@@ -98,13 +101,13 @@ const FAQ = [
 
 const DISCLAIMER_PARAGRAPHS = [
   "Home blood test kits offered through Global Health in Ireland are provided and analysed by Randox, a UKAS-accredited laboratory. Your results are delivered to you directly by Randox.",
-  "A test result does not by itself constitute a diagnosis. A doctor review is not included in the price of the kit. If you would like your results explained, you can book an optional follow-up consultation with a doctor registered with the Irish Medical Council, who can advise on any recommended next steps at their professional discretion.",
+  "A test result does not by itself constitute a diagnosis. A doctor review is not included in the price of the kit. If you would like your results explained, you can book an optional follow-up consultation with a doctor registered with the Irish Medical Council, from €45, who can advise on any recommended next steps at their professional discretion.",
   "Our doctors do not routinely prescribe controlled substances through online consultations.",
   "Home blood tests are not suitable for medical emergencies. If you are experiencing a medical emergency, contact emergency services immediately by calling 112 or attend your nearest emergency department.",
 ];
 
 const DISCLAIMER_SHORT =
-  "Home blood test kits in Ireland are provided and analysed by Randox, a UKAS-accredited laboratory, and results are delivered to you directly. A test result does not itself constitute a diagnosis, and a doctor review is not included in the kit price — an optional follow-up consultation with an IMC-registered doctor is available separately. In a medical emergency call 112.";
+  "Home blood test kits in Ireland are provided and analysed by Randox, a UKAS-accredited laboratory, and results are delivered to you directly. A test result does not itself constitute a diagnosis, and a doctor review is not included in the kit price — an optional follow-up consultation with an IMC-registered doctor is available separately from €45. In a medical emergency call 112.";
 
 // ── HealthTest card fixes (base columns + EN translation) ──
 const RANDOX_ATTR = "Provided and analysed by Randox, a UKAS-accredited laboratory.";
