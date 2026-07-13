@@ -280,6 +280,7 @@ export function SiteHeader({
             countryFeatures={countryFeatures}
             bookHref={bookHref}
             countries={countries}
+            lastCountry={lastCountry}
           />
         </div>
       </div>
