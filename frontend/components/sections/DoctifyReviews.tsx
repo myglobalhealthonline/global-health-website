@@ -97,7 +97,7 @@ function DoctifyPlaceholder({
         <button
           type="button"
           onClick={allowThirdParty}
-          className={`gh-btn ${onDark ? "gh-btn-accent" : "gh-btn-primary"}`}
+          className={onDark ? "gh2-btn-lime" : "gh-btn gh-btn-primary"}
         >
           {t.doctifyLoad}
         </button>

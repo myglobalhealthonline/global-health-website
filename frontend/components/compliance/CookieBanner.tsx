@@ -134,7 +134,7 @@ export function CookieBanner() {
         <button
           type="button"
           onClick={() => decide(ACCEPT_ALL)}
-          className="gh-btn gh-btn-accent"
+          className="gh2-btn-lime"
         >
           {t.acceptAll}
         </button>

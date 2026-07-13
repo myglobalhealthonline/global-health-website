@@ -3576,13 +3576,20 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   }
 }
 
-/* The bar's buttons run shorter than the site's 52px page CTAs — this is
- * chrome, not a call to action, and a full-height pill stack eats the
- * viewport on a phone. */
+/* The bar's buttons run shorter than the site's page CTAs — this is chrome,
+ * not a call to action, and a full-height pill stack eats the viewport on a
+ * phone. .gh2-btn-lime ships its own 56px height, so it needs its own reset. */
 .gh-cookie-bar .gh-btn {
   min-height: 44px;
   padding: 0 20px;
   font-size: 0.875rem;
+}
+
+.gh-cookie-bar .gh2-btn-lime {
+  height: 44px;
+  padding: 0 22px;
+  font-size: 0.875rem;
+  justify-content: center;
 }
 
 /* Ghost button on the forest pane — .gh-btn-outline's forest-on-white
@@ -3732,6 +3739,13 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   min-height: 40px;
   padding: 0 18px;
   font-size: 0.8125rem;
+}
+
+.gh-cookie-placeholder .gh2-btn-lime {
+  height: 40px;
+  padding: 0 20px;
+  font-size: 0.8125rem;
+  justify-content: center;
 }
 
 /* On a forest band the dashed ivory card would glare — invert it. */
