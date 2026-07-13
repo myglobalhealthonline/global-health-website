@@ -48,7 +48,7 @@ const NON_TERMINAL_STATUSES = new Set([
   "CONTACTED",
 ]);
 
-const EXPECTED_PAGE_KEYS_PER_COUNTRY = 4; // GP hub · Specialist hub · Prescriptions · Health tests
+const EXPECTED_PAGE_KEYS_PER_COUNTRY = 6; // Home · GP hub · Specialist hub · Doctors · Prescriptions · Health tests
 
 function timeAgo(date: Date): string {
   const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
@@ -212,14 +212,14 @@ export default async function AdminDashboardPage() {
     .split(/\s+/)[0];
 
   const countryHomeHref = activeCountry
-    ? `/admin/page-content/${activeCountry.id}/GENERAL_CONSULTATION`
+    ? `/admin/page-content/${activeCountry.id}/HOME`
     : "/admin/page-content";
 
   const quickActions = [
     {
       icon: FileText,
-      label: activeCountry ? `Edit ${activeCountry.name} GP hub` : "Edit page content",
-      sub: activeCountry ? "Sections, hero, SEO" : "Pick a country first",
+      label: activeCountry ? `Edit ${activeCountry.name} home` : "Edit country home",
+      sub: activeCountry ? "Hero, copy, CTA, SEO" : "Pick a country first",
       href: countryHomeHref,
     },
     {
