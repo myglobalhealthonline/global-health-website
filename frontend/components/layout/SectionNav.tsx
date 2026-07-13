@@ -115,38 +115,43 @@ export function SectionNav({
                       : "z-[var(--z-dropdown)] min-w-[280px] rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-page)] p-2 shadow-[var(--shadow-elevated)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
                   }
                 >
-                  {item.children.map((c) => (
-                    <DropdownMenu.Item key={c.href} asChild>
-                      <Link
-                        href={c.href}
-                        className={
-                          isDark
-                            ? "group/sub flex flex-col gap-0.5 rounded-[var(--radius-card-sm)] px-3 py-2.5 text-sm font-semibold text-white/90 outline-none transition-colors duration-150 hover:bg-white/[0.08] focus-visible:bg-white/[0.08] data-[highlighted]:bg-white/[0.08] motion-reduce:transition-none"
-                            : "group/sub flex flex-col gap-0.5 rounded-[var(--radius-card-sm)] px-3 py-2.5 text-sm font-semibold text-[var(--color-text-primary)] outline-none transition-colors duration-150 hover:bg-[var(--color-background-soft)] focus-visible:bg-[var(--color-background-soft)] data-[highlighted]:bg-[var(--color-background-soft)] motion-reduce:transition-none"
-                        }
-                      >
-                        <span className="inline-flex items-center gap-2">
-                          <span
-                            aria-hidden
-                            className="h-3.5 w-[3px] rounded-full opacity-0 transition-opacity duration-150 group-hover/sub:opacity-100 group-focus-visible/sub:opacity-100 group-data-[highlighted]/sub:opacity-100"
-                            style={{ background: "var(--color-brand-accent)" }}
-                          />
-                          {c.label}
-                        </span>
-                        {c.description ? (
-                          <span
-                            className={
-                              isDark
-                                ? "pl-[11px] text-xs font-normal text-white/55"
-                                : "pl-[11px] text-xs font-normal text-[var(--color-text-muted)]"
-                            }
-                          >
-                            {c.description}
+                  {item.children.map((c) => {
+                    const childActive =
+                      pathname === c.href || pathname.startsWith(`${c.href}/`);
+                    return (
+                      <DropdownMenu.Item key={c.href} asChild>
+                        <Link
+                          href={c.href}
+                          className={
+                            isDark
+                              ? `group/sub flex flex-col gap-0.5 rounded-[var(--radius-card-sm)] px-3 py-2.5 text-sm font-semibold outline-none transition-colors duration-150 hover:bg-white/[0.08] focus-visible:bg-white/[0.08] data-[highlighted]:bg-white/[0.08] motion-reduce:transition-none ${childActive ? "text-[var(--color-brand-accent)]" : "text-white/90"}`
+                              : `group/sub flex flex-col gap-0.5 rounded-[var(--radius-card-sm)] px-3 py-2.5 text-sm font-semibold outline-none transition-colors duration-150 hover:bg-[var(--color-background-soft)] focus-visible:bg-[var(--color-background-soft)] data-[highlighted]:bg-[var(--color-background-soft)] motion-reduce:transition-none ${childActive ? "text-[var(--color-brand-primary)]" : "text-[var(--color-text-primary)]"}`
+                          }
+                          aria-current={childActive ? "page" : undefined}
+                        >
+                          <span className="inline-flex items-center gap-2">
+                            <span
+                              aria-hidden
+                              className={`h-3.5 w-[3px] rounded-full transition-opacity duration-150 group-hover/sub:opacity-100 group-focus-visible/sub:opacity-100 group-data-[highlighted]/sub:opacity-100 ${childActive ? "opacity-100" : "opacity-0"}`}
+                              style={{ background: "var(--color-brand-accent)" }}
+                            />
+                            {c.label}
                           </span>
-                        ) : null}
-                      </Link>
-                    </DropdownMenu.Item>
-                  ))}
+                          {c.description ? (
+                            <span
+                              className={
+                                isDark
+                                  ? "pl-[11px] text-xs font-normal text-white/55"
+                                  : "pl-[11px] text-xs font-normal text-[var(--color-text-muted)]"
+                              }
+                            >
+                              {c.description}
+                            </span>
+                          ) : null}
+                        </Link>
+                      </DropdownMenu.Item>
+                    );
+                  })}
                 </DropdownMenu.Content>
               </DropdownMenu.Portal>
             </DropdownMenu.Root>

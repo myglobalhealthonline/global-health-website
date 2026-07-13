@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ChevronDown, SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, X } from "lucide-react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { AppMenu, AppMenuItem } from "@/components/AppMenu";
 import { AppSheet } from "@/components/AppSheet";
 
 /**
@@ -16,10 +15,8 @@ import { AppSheet } from "@/components/AppSheet";
  * state to keep in sync, URL stays shareable. The page owns all the
  * option/active/href logic; this component only styles + positions it.
  *
- * Desktop: each group opens in a portalled AppMenu (Radix DropdownMenu) —
- * collision-aware, single-panel-open, outside-click/Escape, focus restore
- * all come from Radix. Mobile (<768px): a single "Filters" trigger opens
- * every group inside a bottom AppSheet.
+ * One "Filters" trigger (all breakpoints) opens every group inside a
+ * bottom AppSheet — no separate per-group desktop dropdowns.
  */
 export type FilterOption = {
   /** Stable token (language code / specialty slug) — used for the key. */
@@ -55,7 +52,6 @@ export function DoctorFilters({
   const visibleGroups = groups.filter((g) => g.options.length > 0);
   if (visibleGroups.length === 0) return null;
 
-  const headingColor = dark ? "var(--color-brand-accent)" : "var(--color-brand-primary)";
   const activeCount = visibleGroups.reduce(
     (n, g) => n + g.options.filter((o) => o.active).length,
     0,
@@ -77,72 +73,38 @@ export function DoctorFilters({
     </Link>
   ) : null;
 
+  // The sheet's own panel is always the dark forest-glass skin (theme="public"
+  // on AppSheet), independent of `dark` (which only styles the inline desktop
+  // bar) — so its pills/clear link need the on-dark treatment regardless.
+  const sheetClearControl = hasActive ? (
+    <Link
+      href={clearHref}
+      scroll={false}
+      className="inline-flex min-h-11 items-center gap-1.5 rounded-full border px-3.5 text-[12px] font-semibold transition-colors duration-150"
+      style={{ borderColor: "rgba(255,255,255,0.20)", color: "var(--gh2-on-dark-muted)" }}
+    >
+      <X className="size-3.5" strokeWidth={2} aria-hidden />
+      {clearLabel ?? "Clear all filters"}
+    </Link>
+  ) : null;
+
   return (
     <div
-      className={`relative z-[var(--z-raised)] mb-8 flex flex-wrap items-center gap-2.5 ${
-        dark ? "gh2-glass-forest gh2-filters-dark px-4 py-2.5" : ""
+      className={`relative z-[var(--z-raised)] mb-8 flex w-fit flex-wrap items-center gap-2.5 ${
+        dark ? "gh2-filters-dark" : ""
       }`}
     >
-      <span
-        className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.16em]"
-        style={{ color: dark ? "rgba(255,255,255,0.92)" : "var(--color-text-primary)" }}
+      {/* Single trigger (all breakpoints) opens every group in a sheet. */}
+      <button
+        type="button"
+        className="gh2-filter-trigger inline-flex items-center gap-1.5"
+        onClick={() => setMobileOpen(true)}
       >
         <SlidersHorizontal className="size-[14px]" strokeWidth={1.8} aria-hidden />
         Filters
-        {activeCount > 0 ? (
-          <span className="tabular-nums" style={{ color: headingColor }}>
-            · {activeCount}
-          </span>
-        ) : null}
-      </span>
-
-      {/* Desktop: one portalled AppMenu per group. */}
-      <div className="hidden md:contents">
-        {visibleGroups.map((group) => {
-          const groupActiveCount = group.options.filter((o) => o.active).length;
-          return (
-            <AppMenu
-              key={group.heading}
-              align="start"
-              contentClassName={`gh2-filter-menu-content${dark ? " gh2-filter-menu-content--dark gh2-filters-dark" : ""}`}
-              trigger={
-                <button type="button" className="gh2-filter-trigger">
-                  {group.heading}
-                  {groupActiveCount > 0 ? (
-                    <span className="gh2-filter-count tabular-nums">· {groupActiveCount}</span>
-                  ) : null}
-                  <ChevronDown className="gh2-filter-chevron size-3.5 opacity-70" strokeWidth={2} aria-hidden />
-                </button>
-              }
-            >
-              {group.options.map((opt) => (
-                <AppMenuItem key={opt.token} asChild onSelect={(e) => e.preventDefault()}>
-                  <Link
-                    href={opt.href}
-                    aria-current={opt.active ? "page" : undefined}
-                    data-active={opt.active}
-                    scroll={false}
-                    className="gh2-pill-filter text-[12.5px]"
-                  >
-                    {opt.label}
-                  </Link>
-                </AppMenuItem>
-              ))}
-            </AppMenu>
-          );
-        })}
-        {clearControl}
-      </div>
-
-      {/* Mobile: single trigger opening every group in a bottom sheet. */}
-      <button
-        type="button"
-        className="gh2-filter-trigger md:hidden"
-        onClick={() => setMobileOpen(true)}
-      >
-        Filters
         {activeCount > 0 ? <span className="gh2-filter-count tabular-nums">· {activeCount}</span> : null}
       </button>
+      {clearControl}
       <AppSheet
         open={mobileOpen}
         onOpenChange={setMobileOpen}
@@ -157,7 +119,7 @@ export function DoctorFilters({
         }
         footer={
           <div className="flex items-center justify-between gap-3">
-            {clearControl}
+            {sheetClearControl}
             <button
               type="button"
               className="gh2-btn-compact gh2-btn-compact-primary"
@@ -168,7 +130,7 @@ export function DoctorFilters({
           </div>
         }
       >
-        <div className="flex flex-col gap-5">
+        <div className="gh2-filters-dark flex flex-col gap-5">
           {visibleGroups.map((group) => (
             <div key={group.heading}>
               <p className="gh2-filter-sheet-heading">{group.heading}</p>

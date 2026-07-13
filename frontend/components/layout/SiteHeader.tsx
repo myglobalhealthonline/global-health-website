@@ -185,12 +185,6 @@ export function SiteHeader({
       ? sectionNavForCountryLang(effectiveCountrySlug, effectiveLang, activeFeatures, navigation)
       : sectionNavGlobal(navigation);
 
-  // 1024–1279px intermediate band: conversion links only (Doctors + Plans);
-  // everything else stays in the drawer.
-  const lgItems = sectionItems.filter(
-    (i) => i.label === navigation.navDoctors || i.label === navigation.navPlans,
-  );
-
   // Cart-first booking: the header "Book" CTA opens the guided /book page
   // (service → doctor → time → details in one flow). Outside a country we
   // drop them on the global landing — the country gate resolves before
@@ -223,13 +217,10 @@ export function SiteHeader({
         />
       </Link>
 
-      {/* Section tabs — full set at xl+; 1024–1279px shows only the
-          conversion pair (Doctors / Plans), rest lives in the drawer. */}
+      {/* Section tabs — full set at xl+ only; below that the drawer
+          (hamburger) is the sole nav, no partial in-between row. */}
       <nav aria-label="Sections" className="gh-header-navCenter hidden min-w-0 justify-center xl:flex">
         {sectionItems.length > 0 ? <SectionNav items={sectionItems} variant="dark" /> : null}
-      </nav>
-      <nav aria-label="Sections" className="gh-header-navCenter hidden min-w-0 justify-center lg:flex xl:hidden">
-        {lgItems.length > 0 ? <SectionNav items={lgItems} variant="dark" /> : null}
       </nav>
 
       {/* Right — switchers + auth + CTA */}

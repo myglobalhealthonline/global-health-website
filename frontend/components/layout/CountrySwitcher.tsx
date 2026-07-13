@@ -13,7 +13,7 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Check } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { type CountryCode, type CountryConfig } from "@/data/countries";
 import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 import { parseSitePath, swapCountryInPath } from "@/lib/routing/path-rewrites";
@@ -74,7 +74,7 @@ export function CountrySwitcher({
   return (
     <AppMenu
       onOpenChange={setOpen}
-      contentClassName="gh2-glass-ivory min-w-[220px] rounded-xl p-1 text-[var(--color-text-primary)]"
+      contentClassName="gh2-glass-forest gh2-filters-dark min-w-[220px] p-2"
       trigger={
         <button
           type="button"
@@ -127,22 +127,19 @@ export function CountrySwitcher({
                 <button
                   type="button"
                   onClick={() => handleSwitch(href, c.code, nextLang)}
-                  className={`flex min-h-[44px] w-full cursor-pointer items-center justify-between gap-3 rounded-lg border-none px-3.5 py-2.5 text-left text-[13px] text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:bg-[var(--color-brand-mint-soft)] ${
-                    isActive
-                      ? "bg-[var(--color-background-soft)] font-bold"
-                      : "bg-transparent font-medium"
+                  className={`group/sub flex min-h-[44px] w-full cursor-pointer items-center gap-2 rounded-[var(--radius-card-sm)] border-none px-3.5 py-2.5 text-left text-[13px] font-semibold outline-none transition-colors duration-150 hover:bg-white/[0.08] focus-visible:bg-white/[0.08] data-[highlighted]:bg-white/[0.08] motion-reduce:transition-none ${
+                    isActive ? "text-[var(--color-brand-accent)]" : "text-white/90"
                   }`}
                 >
-                  <span className="inline-flex items-center gap-2.5">
-                    <Flag code={c.code} size="sm" />
-                    <span>{c.name}</span>
-                  </span>
-                  {isActive ? (
-                    <Check
-                      aria-hidden
-                      className="size-3.5 text-[var(--color-brand-primary)]"
-                    />
-                  ) : null}
+                  <span
+                    aria-hidden
+                    className={`h-3.5 w-[3px] shrink-0 rounded-full transition-opacity duration-150 group-hover/sub:opacity-100 group-focus-visible/sub:opacity-100 group-data-[highlighted]/sub:opacity-100 ${
+                      isActive ? "opacity-100" : "opacity-0"
+                    }`}
+                    style={{ background: "var(--color-brand-accent)" }}
+                  />
+                  <Flag code={c.code} size="sm" />
+                  <span>{c.name}</span>
                 </button>
               </AppMenuItem>
             </li>

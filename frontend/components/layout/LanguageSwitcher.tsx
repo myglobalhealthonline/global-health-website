@@ -17,7 +17,7 @@
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronDown, Languages, Check } from "lucide-react";
+import { ChevronDown, Languages } from "lucide-react";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { localeDisplayName } from "@/lib/i18n/locale-display";
 import { swapLangInPath } from "@/lib/routing/path-rewrites";
@@ -46,29 +46,15 @@ export function LanguageSwitcher({
 
   if (availableLocales.length <= 1) return null;
 
-  const itemStyle = (isActive: boolean): React.CSSProperties => ({
-    minHeight: 44,
-    padding: "10px 14px",
-    borderRadius: 8,
-    textDecoration: "none",
-    background: isActive ? "var(--color-background-soft)" : "transparent",
-    color: "var(--color-text-primary)",
-    fontSize: 13,
-    fontWeight: isActive ? 700 : 500,
-    cursor: "pointer",
-    border: "none",
-    width: "100%",
-    textAlign: "left" as const,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-  });
+  const itemClass = (isActive: boolean) =>
+    `group/sub flex min-h-[44px] w-full cursor-pointer items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border-none px-3.5 py-2.5 text-left text-[13px] font-semibold outline-none transition-colors duration-150 hover:bg-white/[0.08] focus-visible:bg-white/[0.08] data-[highlighted]:bg-white/[0.08] motion-reduce:transition-none ${
+      isActive ? "text-[var(--color-brand-accent)]" : "text-white/90"
+    }`;
 
   return (
     <AppMenu
       onOpenChange={setOpen}
-      contentClassName="gh2-glass-ivory min-w-[200px] rounded-xl p-1 text-[var(--color-text-primary)]"
+      contentClassName="gh2-glass-forest gh2-filters-dark min-w-[200px] p-2"
       trigger={
         <button
           type="button"
@@ -101,9 +87,14 @@ export function LanguageSwitcher({
 
               const label = (
                 <span className="inline-flex items-center gap-2">
-                  <span className="uppercase text-[var(--color-text-muted)]">
-                    {loc}
-                  </span>
+                  <span
+                    aria-hidden
+                    className={`h-3.5 w-[3px] shrink-0 rounded-full transition-opacity duration-150 group-hover/sub:opacity-100 group-focus-visible/sub:opacity-100 group-data-[highlighted]/sub:opacity-100 ${
+                      isActive ? "opacity-100" : "opacity-0"
+                    }`}
+                    style={{ background: "var(--color-brand-accent)" }}
+                  />
+                  <span className="uppercase text-white/55">{loc}</span>
                   <span>{localeDisplayName(loc, "native")}</span>
                 </span>
               );
@@ -117,22 +108,15 @@ export function LanguageSwitcher({
                   <li key={loc}>
                     <AppMenuItem asChild>
                       <button
-                      type="button"
-                      onClick={() => {
-                        setClientLocaleCookie(loc);
-                        setOpen(false);
-                        window.location.href = swapped;
-                      }}
-                      className="gh-switcher-item"
-                      style={itemStyle(isActive)}
-                    >
-                      {label}
-                      {isActive ? (
-                        <Check
-                          aria-hidden
-                          className="size-3.5 text-[var(--color-brand-primary)]"
-                        />
-                      ) : null}
+                        type="button"
+                        onClick={() => {
+                          setClientLocaleCookie(loc);
+                          setOpen(false);
+                          window.location.href = swapped;
+                        }}
+                        className={itemClass(isActive)}
+                      >
+                        {label}
                       </button>
                     </AppMenuItem>
                   </li>
@@ -145,22 +129,15 @@ export function LanguageSwitcher({
                 <li key={loc}>
                   <AppMenuItem asChild>
                     <button
-                    type="button"
-                    onClick={() => {
-                      setClientLocaleCookie(loc);
-                      setOpen(false);
-                      router.refresh();
-                    }}
-                    className="gh-switcher-item"
-                    style={itemStyle(isActive)}
-                  >
-                    {label}
-                    {isActive ? (
-                      <Check
-                        aria-hidden
-                        className="size-3.5 text-[var(--color-brand-primary)]"
-                      />
-                    ) : null}
+                      type="button"
+                      onClick={() => {
+                        setClientLocaleCookie(loc);
+                        setOpen(false);
+                        router.refresh();
+                      }}
+                      className={itemClass(isActive)}
+                    >
+                      {label}
                     </button>
                   </AppMenuItem>
                 </li>
