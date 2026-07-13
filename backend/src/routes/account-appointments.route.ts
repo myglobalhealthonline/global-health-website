@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import {
+  AppointmentAlreadyStartedError,
   AppointmentNotOwnedError,
   cancelAppointmentForPatient,
   getAppointmentForReschedule,
@@ -269,7 +270,10 @@ const accountAppointmentsRoute: FastifyPluginAsync = async (app) => {
       if (error instanceof SlotAlreadyTakenError) {
         return reply.status(409).send(errorResponse(error.message));
       }
-      if (error instanceof RescheduleDoctorMismatchError) {
+      if (
+        error instanceof RescheduleDoctorMismatchError ||
+        error instanceof AppointmentAlreadyStartedError
+      ) {
         return reply.status(400).send(errorResponse(error.message));
       }
       if (

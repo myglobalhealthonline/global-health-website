@@ -22,6 +22,7 @@ import {
   getServicePeakConfig,
 } from "../modules/pricing/peak-pricing.service.js";
 import { getServiceAggregatedAvailability } from "../modules/service-booking/service-availability.service.js";
+import { isDoctorInInsuranceNetwork } from "../modules/pricing/insurance-pricing.service.js";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -76,6 +77,8 @@ const serviceAvailabilityParamsSchema = z.object({
 
 const serviceAvailabilityQuerySchema = z.object({
   days: z.coerce.number().int().min(1).max(60).default(14),
+  /** Booking under an insurer → only that insurer's in-network doctors. */
+  insurance: z.string().trim().min(1).max(64).optional(),
 });
 
 function handleError(
@@ -350,6 +353,22 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
             .send(errorResponse("Doctor is not assigned to this service"));
         }
 
+        // Booking under an insurer: the doctor must also be in that insurer's
+        // network for this service (admin set them a payout for it). Otherwise
+        // they never take that insurer's patients — same 404 as unassigned.
+        if (query.data.insurance) {
+          const inNetwork = await isDoctorInInsuranceNetwork(
+            service.id,
+            doctor.id,
+            query.data.insurance,
+          );
+          if (!inNetwork) {
+            return reply
+              .status(404)
+              .send(errorResponse("Doctor does not take this insurance for this service"));
+          }
+        }
+
         const now = new Date();
         const toUtc = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
         const slots = await listOpenSlotsForDoctorAndService(
@@ -426,6 +445,7 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
           params.data.countryCode,
           params.data.serviceSlug,
           query.data.days,
+          query.data.insurance ?? null,
         );
         return okResponse(result);
       } catch (error) {

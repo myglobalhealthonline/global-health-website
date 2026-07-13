@@ -18,7 +18,10 @@ import {
   computeSlotPrice,
   getServicePeakConfig,
 } from "../modules/pricing/peak-pricing.service.js";
-import { loadValidatedInsurancePrice } from "../modules/pricing/insurance-pricing.service.js";
+import {
+  loadValidatedInsurancePrice,
+  isDoctorInInsuranceNetwork,
+} from "../modules/pricing/insurance-pricing.service.js";
 import { encryptPhi } from "../lib/crypto/phi-crypto.js";
 
 /**
@@ -892,6 +895,22 @@ const cartRoute: FastifyPluginAsync = async (app) => {
                 return reply
                   .status(400)
                   .send(errorResponse("Selected insurance company does not cover this service."));
+              }
+              // Doctor must be in this insurer's network for this service (the
+              // admin set them a payout for it). Doctors without one never take
+              // that insurer's patients, so a forged doctor+insurer pair is
+              // rejected here even though the picker would never offer it.
+              const inNetwork = await isDoctorInInsuranceNetwork(
+                svc.id,
+                doctorId,
+                insuranceCompanyIdValue,
+              );
+              if (!inNetwork) {
+                return reply.status(400).send(
+                  errorResponse(
+                    "That doctor does not take this insurance for this service. Please pick another doctor.",
+                  ),
+                );
               }
               unitPriceCents = insurancePrice;
             }

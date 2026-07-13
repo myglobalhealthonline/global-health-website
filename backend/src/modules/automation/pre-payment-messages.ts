@@ -1,3 +1,5 @@
+import { timezoneLabel } from "./timezone-label.js";
+
 export type AutomationLang = "en" | "pt" | "ro" | "cs" | "es";
 type Lang = AutomationLang;
 
@@ -491,18 +493,18 @@ export function formatDeadline(
             ? "es-ES"
             : "en-GB";
   try {
-    // Explicit components (not dateStyle/timeStyle) so we can append
-    // timeZoneName — the message must show which timezone the time is in.
-    return new Intl.DateTimeFormat(locale, {
+    // Explicit components (not dateStyle/timeStyle) so the timezone is named by
+    // its country instead of Intl's "GMT+1" — patients don't read offsets.
+    const formatted = new Intl.DateTimeFormat(locale, {
       day: "numeric",
       month: "short",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
       timeZone: timeZone ?? "UTC",
-      timeZoneName: "short",
     }).format(date);
+    return `${formatted} (${timezoneLabel(timeZone, locale)})`;
   } catch {
-    return date.toUTCString();
+    return `${date.toISOString().slice(0, 16).replace("T", " ")} (UTC)`;
   }
 }

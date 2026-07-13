@@ -81,15 +81,21 @@ export async function getServiceDoctorAvailability(
   serviceSlug: string,
   doctorSlug: string,
   days = 14,
+  /** Booking under an insurer — the backend 404s if this doctor isn't in that
+   *  insurer's network for the service, which surfaces as no slots. */
+  insuranceCompanyId?: string | null,
 ): Promise<DoctorAvailabilityResult> {
   const empty: DoctorAvailabilityResult = { slots: [], clinicTimezone: "UTC" };
   const backend = getBackendOrigin();
   if (!backend) return empty;
+  const insuranceParam = insuranceCompanyId
+    ? `&insurance=${encodeURIComponent(insuranceCompanyId)}`
+    : "";
   const url = `${backend}/api/services/${encodeURIComponent(
     countryCode,
   )}/${encodeURIComponent(serviceSlug)}/doctors/${encodeURIComponent(
     doctorSlug,
-  )}/availability?days=${days}`;
+  )}/availability?days=${days}${insuranceParam}`;
   try {
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) return empty;

@@ -44,11 +44,12 @@ type SearchParams = {
   gp?: string | string[];
   language?: string | string[];
   at?: string | string[];
+  /** Insurance choice made right after the service: a company id, or "none"
+   *  for "pay the standard price". Absent = the patient still owes the choice. */
+  insurance?: string | string[];
 };
 
 type Notice = { tone: "info" | "warning"; message: string } | null;
-
-const STEPS = [{ n: 1 }, { n: 2 }, { n: 3 }, { n: 4 }] as const;
 
 type BookT = import("@/lib/i18n/types").CommonLocale["bookPage"];
 
@@ -169,40 +170,134 @@ export default async function CountryLangBookPage({
   const timeValue = atParam
     ? `${formatAppDate(atParam)} · ${formatAppTime(atParam)}`
     : null;
+
+  // ── Insurance step ──────────────────────────────────────────────────────
+  // Offered only for services that have at least one BOOKABLE insurer — the
+  // public payload already drops insurers with no in-network doctor for the
+  // service, so an empty list means "no insurance path here" and the wizard
+  // keeps its usual 4 steps. Chosen BEFORE time/doctor because the insurer
+  // decides which doctors exist: only doctors with a payout set for that
+  // insurer take its patients.
+  const insuranceParam = firstParam(sp.insurance);
+  const insuranceOptions = selectedService?.insuranceOptions ?? [];
+  const hasInsuranceStep = Boolean(selectedService) && insuranceOptions.length > 0;
+  const insuranceCompanyId =
+    insuranceParam && insuranceParam !== "none" ? insuranceParam : null;
+  const selectedInsurance = insuranceCompanyId
+    ? insuranceOptions.find((o) => o.companyId === insuranceCompanyId) ?? null
+    : null;
+  // A stale/forged id (insurer delisted, or it lost its last in-network doctor)
+  // is treated as "not chosen" so the patient re-picks rather than booking on a
+  // price the server would reject.
+  const insuranceChosen = insuranceParam === "none" || Boolean(selectedInsurance);
+  const needsInsuranceChoice = hasInsuranceStep && !insuranceChosen;
+  // The param to carry on every downstream link (null once the patient opted out).
+  const insuranceHrefParam = hasInsuranceStep && insuranceChosen ? insuranceParam : null;
+  const insuranceValue = selectedInsurance
+    ? selectedInsurance.name
+    : insuranceParam === "none"
+      ? bp.insuranceNone
+      : null;
+
   const stepValues: (string | null)[] = doctorFirst
-    ? [requestedDoctor?.fullName ?? null, selectedService?.name ?? null, timeValue, null]
-    : [selectedService?.name ?? null, timeValue, requestedDoctor?.fullName ?? null, null];
+    ? [
+        requestedDoctor?.fullName ?? null,
+        selectedService?.name ?? null,
+        ...(hasInsuranceStep ? [insuranceValue] : []),
+        timeValue,
+        null,
+      ]
+    : [
+        selectedService?.name ?? null,
+        ...(hasInsuranceStep ? [insuranceValue] : []),
+        timeValue,
+        requestedDoctor?.fullName ?? null,
+        null,
+      ];
   const stepLabels: string[] = doctorFirst
-    ? [bp.stepDoctor, bp.stepService, bp.stepTime, bp.stepDetails]
-    : [bp.stepService, bp.stepTime, bp.stepDoctor, bp.stepDetails];
+    ? [
+        bp.stepDoctor,
+        bp.stepService,
+        ...(hasInsuranceStep ? [bp.stepInsurance] : []),
+        bp.stepTime,
+        bp.stepDetails,
+      ]
+    : [
+        bp.stepService,
+        ...(hasInsuranceStep ? [bp.stepInsurance] : []),
+        bp.stepTime,
+        bp.stepDoctor,
+        bp.stepDetails,
+      ];
   // Back-nav hrefs per step — same targets the old per-card "Change
   // service" / "Edit doctor" / "Change time" ghost buttons used, now
   // surfaced as clickable rows in the sidebar instead (only completed
   // steps get one; the current/future steps aren't reachable yet).
+  const insuranceStepHref = selectedService
+    ? buildBookHref({ country: slug, lang, service: selectedService.slug })
+    : null;
   const stepHrefs: (string | null)[] = doctorFirst
     ? [
         buildBookHref({ country: slug, lang }),
         requestedDoctor ? buildBookHref({ country: slug, lang, doctor: requestedDoctor.slug }) : null,
+        ...(hasInsuranceStep
+          ? [
+              selectedService
+                ? buildBookHref({
+                    country: slug,
+                    lang,
+                    doctor: requestedDoctor?.slug,
+                    service: selectedService.slug,
+                  })
+                : null,
+            ]
+          : []),
         selectedService
-          ? buildBookHref({ country: slug, lang, doctor: requestedDoctor?.slug, service: selectedService.slug })
+          ? buildBookHref({
+              country: slug,
+              lang,
+              doctor: requestedDoctor?.slug,
+              service: selectedService.slug,
+              insurance: insuranceHrefParam,
+            })
           : null,
         null,
       ]
     : [
         buildBookHref({ country: slug, lang }),
-        selectedService ? buildBookHref({ country: slug, lang, service: selectedService.slug }) : null,
+        ...(hasInsuranceStep ? [insuranceStepHref] : []),
         selectedService
-          ? buildBookHref({ country: slug, lang, service: selectedService.slug, at: atParam })
+          ? buildBookHref({
+              country: slug,
+              lang,
+              service: selectedService.slug,
+              insurance: insuranceHrefParam,
+            })
+          : null,
+        selectedService
+          ? buildBookHref({
+              country: slug,
+              lang,
+              service: selectedService.slug,
+              insurance: insuranceHrefParam,
+              at: atParam,
+            })
           : null,
         null,
       ];
+  // Step numbers shift by one once the insurance step exists.
+  const insuranceOffset = hasInsuranceStep ? 1 : 0;
   let currentStep: number;
   if (doctorFirst) {
-    const baseStep = !selectedService ? 2 : 3;
-    currentStep = baseStep === 3 && slotParam ? 4 : baseStep;
+    // Doctor(1) → Service(2) → [Insurance] → Time → Details.
+    if (!selectedService) currentStep = 2;
+    else if (needsInsuranceChoice) currentStep = 3;
+    else currentStep = (slotParam ? 4 : 3) + insuranceOffset;
   } else {
-    // Service-first: Service(1) → Time(2) → Doctor(3) → Details(4).
-    currentStep = !selectedService ? 1 : slotParam ? 4 : atParam ? 3 : 2;
+    // Service(1) → [Insurance] → Time → Doctor → Details.
+    if (!selectedService) currentStep = 1;
+    else if (needsInsuranceChoice) currentStep = 2;
+    else currentStep = (slotParam ? 4 : atParam ? 3 : 2) + insuranceOffset;
   }
   const itemKind =
     selectedService?.kind === "SPECIALIST"
@@ -288,6 +383,16 @@ export default async function CountryLangBookPage({
                   bp={bp}
                   minSuffix={c.extra.minSuffix}
                 />
+              ) : needsInsuranceChoice ? (
+                <InsurancePicker
+                  country={slug}
+                  lang={lang}
+                  service={selectedService}
+                  doctorSlug={doctorFirst ? requestedDoctor?.slug ?? null : null}
+                  options={insuranceOptions}
+                  bp={bp}
+                  currencyCode={selectedService.currencyCode}
+                />
               ) : (
                 <SelectedServiceFlow
                   code={code}
@@ -302,6 +407,9 @@ export default async function CountryLangBookPage({
                   bf={bf}
                   bp={bp}
                   bookingRequirements={bookingRequirements}
+                  insuranceCompanyId={insuranceCompanyId}
+                  selectedInsurance={selectedInsurance}
+                  insuranceHrefParam={insuranceHrefParam}
                 />
               )}
             </div>
@@ -484,6 +592,9 @@ async function SelectedServiceFlow({
   bf,
   bp,
   bookingRequirements,
+  insuranceCompanyId,
+  selectedInsurance,
+  insuranceHrefParam,
 }: {
   code: string;
   country: string;
@@ -497,6 +608,11 @@ async function SelectedServiceFlow({
   bf: import("@/lib/i18n/types").CommonLocale["bookingForm"];
   bp: BookT;
   bookingRequirements: import("@/lib/content/get-public-countries").PublicBookingRequirements;
+  /** Chosen insurer (null = paying the standard price). */
+  insuranceCompanyId: string | null;
+  selectedInsurance: import("@/lib/content/get-country-collections").InsuranceOption | null;
+  /** The `insurance` value to carry on downstream links (id or "none"). */
+  insuranceHrefParam: string | null;
 }) {
   const assignedDoctorIds = new Set(service.assignedDoctorIds);
   const serviceDoctors =
@@ -511,7 +627,15 @@ async function SelectedServiceFlow({
   // (A doctor-first arrival with a valid assigned doctor resolves selectedDoctor
   // above and skips this whole block.)
   if (!selectedDoctor) {
-    const agg = await getServiceAggregatedAvailability(code, service.slug, 14);
+    // Under an insurer, the backend narrows the doctor pool to that insurer's
+    // network — so zero slots here means "no doctor takes this insurance for
+    // this service", exactly the empty state below.
+    const agg = await getServiceAggregatedAvailability(
+      code,
+      service.slug,
+      14,
+      insuranceCompanyId,
+    );
 
     // DOCTOR step — a time was chosen (?at=): offer the doctors free then.
     if (at) {
@@ -532,7 +656,12 @@ async function SelectedServiceFlow({
               <CalendarDays className="mx-auto size-6 text-[var(--color-text-muted)]" aria-hidden />
               <p className="mt-3 font-semibold text-[var(--color-text-primary)]">{bp.slotNoLongerOpen}</p>
               <Link
-                href={buildBookHref({ country, lang, service: service.slug })}
+                href={buildBookHref({
+                  country,
+                  lang,
+                  service: service.slug,
+                  insurance: insuranceHrefParam,
+                })}
                 className="gh2-btn-lime mt-4"
               >
                 {bp.pickTime}
@@ -547,6 +676,7 @@ async function SelectedServiceFlow({
               slotByDoctorId={slotByDoctorId}
               at={at}
               bp={bp}
+              insurance={insuranceHrefParam}
             />
           )}
         </div>
@@ -571,13 +701,22 @@ async function SelectedServiceFlow({
               <CalendarDays className="mx-auto size-6 text-[var(--color-text-muted)]" aria-hidden />
               <p className="mt-3 font-semibold text-[var(--color-text-primary)]">{bp.noOpenSlots}</p>
               <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-                {bp.checkBackClinician.replace("{service}", service.name)}
+                {selectedInsurance
+                  ? bp.noInsuranceDoctors.replace("{insurer}", selectedInsurance.name)
+                  : bp.checkBackClinician.replace("{service}", service.name)}
               </p>
+              {/* Under an insurer with no in-network doctor, the useful escape is
+                * back to the insurance step (pay standard instead), not the
+                * service list. */}
               <Link
-                href={buildBookHref({ country, lang })}
+                href={
+                  selectedInsurance
+                    ? buildBookHref({ country, lang, service: service.slug })
+                    : buildBookHref({ country, lang })
+                }
                 className="gh2-btn-lime mt-5"
               >
-                {bp.changeService}
+                {selectedInsurance ? bp.stepInsurance : bp.changeService}
               </Link>
             </div>
           ) : (
@@ -589,6 +728,7 @@ async function SelectedServiceFlow({
                 slots={agg.slots}
                 clinicTimezone={agg.clinicTimezone}
                 i18n={bf}
+                insurance={insuranceHrefParam}
               />
             </div>
           )}
@@ -597,11 +737,14 @@ async function SelectedServiceFlow({
     );
   }
 
+  // Under an insurer the backend 404s a doctor outside that insurer's network,
+  // which lands here as zero slots → the "no doctor for this insurer" state.
   const { slots, clinicTimezone } = await getServiceDoctorAvailability(
     code,
     service.slug,
     selectedDoctor.slug,
     14,
+    insuranceCompanyId,
   );
   // Slot is confirmed only when ?slot= is set AND still open. Until then the
   // patient is on the TIME step (slot picker); once confirmed, the DETAILS
@@ -642,13 +785,19 @@ async function SelectedServiceFlow({
               {bp.noOpenSlots}
             </p>
             <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-              {bp.checkBackClinician.replace("{service}", service.name)}
+              {selectedInsurance
+                ? bp.noInsuranceDoctors.replace("{insurer}", selectedInsurance.name)
+                : bp.checkBackClinician.replace("{service}", service.name)}
             </p>
             <Link
-              href={buildBookHref({ country, lang, service: service.slug })}
+              href={
+                selectedInsurance
+                  ? buildBookHref({ country, lang, service: service.slug })
+                  : buildBookHref({ country, lang, service: service.slug })
+              }
               className="gh2-btn-lime mt-5"
             >
-              {bp.pickAnotherClinician}
+              {selectedInsurance ? bp.stepInsurance : bp.pickAnotherClinician}
             </Link>
           </div>
         ) : !slotConfirmed ? (
@@ -662,10 +811,13 @@ async function SelectedServiceFlow({
               slots={slots}
               clinicTimezone={clinicTimezone}
               i18n={bf}
+              insurance={insuranceHrefParam}
             />
           </div>
         ) : (
           // Step 4 — DETAILS. Slot is fixed (shown as a summary in the form).
+          // The insurer was chosen back at the insurance step, so the form only
+          // collects the card number for it — no dropdown here.
           <div className="mt-6">
             <ConsultationBookingForm
               doctorId={selectedDoctor.id}
@@ -678,16 +830,109 @@ async function SelectedServiceFlow({
               changeTimeHref={
                 at
                   ? // Service-first: back to the aggregated TIME step (drop doctor).
-                    buildBookHref({ country, lang, service: service.slug })
+                    buildBookHref({
+                      country,
+                      lang,
+                      service: service.slug,
+                      insurance: insuranceHrefParam,
+                    })
                   : // Doctor-first: back to this doctor's time picker.
-                    buildBookHref({ country, lang, service: service.slug, doctor: selectedDoctor.slug })
+                    buildBookHref({
+                      country,
+                      lang,
+                      service: service.slug,
+                      doctor: selectedDoctor.slug,
+                      insurance: insuranceHrefParam,
+                    })
               }
               i18n={bf}
               bookingRequirements={bookingRequirements}
-              insuranceOptions={service.insuranceOptions}
+              selectedInsurance={selectedInsurance}
             />
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Insurance step — shown right after the service, BEFORE time + doctor.
+ *
+ * The insurer decides which doctors exist: only doctors the admin gave a payout
+ * for that insurer take its patients. Choosing here lets the time + doctor steps
+ * be filtered to that network. Insurers with no in-network doctor for the
+ * service never reach this list (the public payload drops them), so every option
+ * shown is bookable.
+ */
+function InsurancePicker({
+  country,
+  lang,
+  service,
+  doctorSlug,
+  options,
+  bp,
+  currencyCode,
+}: {
+  country: string;
+  lang: string;
+  service: CountryServiceCard;
+  doctorSlug: string | null;
+  options: import("@/lib/content/get-country-collections").InsuranceOption[];
+  bp: BookT;
+  currencyCode: string | null;
+}) {
+  const hrefFor = (insurance: string) =>
+    buildBookHref({ country, lang, service: service.slug, doctor: doctorSlug, insurance });
+
+  return (
+    <div className="grid gap-6">
+      <BookingSectionHeader
+        eyebrow={bp.stepInsurance}
+        title={bp.insuranceTitle}
+        description={bp.insuranceDesc}
+      />
+      <div className="gh2-glass-forest gh2-dark-content min-w-0 p-5 sm:p-6">
+        <ul className="grid gap-3">
+          {options.map((option) => (
+            <li key={option.companyId}>
+              <Link
+                href={hrefFor(option.companyId)}
+                className="gh2-choice-card flex items-center gap-3 rounded-[14px] border border-[var(--color-border)] p-4 transition hover:border-[var(--color-brand-accent)]"
+              >
+                <ShieldCheck className="size-5 shrink-0 text-[var(--color-brand-accent)]" aria-hidden />
+                <span className="min-w-0 flex-1">
+                  <span className="block font-semibold text-[var(--color-text-primary)]">
+                    {option.name}
+                  </span>
+                  <span className="block text-sm text-[var(--color-text-muted)]">
+                    {formatPriceRounded(option.insurancePriceCents, currencyCode)}
+                  </span>
+                </span>
+                <ArrowRight className="size-4 shrink-0 text-[var(--color-text-muted)]" aria-hidden />
+              </Link>
+            </li>
+          ))}
+          <li>
+            <Link
+              href={hrefFor("none")}
+              className="gh2-choice-card flex items-center gap-3 rounded-[14px] border border-[var(--color-border)] p-4 transition hover:border-[var(--color-brand-accent)]"
+            >
+              <UserRound className="size-5 shrink-0 text-[var(--color-text-muted)]" aria-hidden />
+              <span className="min-w-0 flex-1">
+                <span className="block font-semibold text-[var(--color-text-primary)]">
+                  {bp.insuranceStandard}
+                </span>
+                <span className="block text-sm text-[var(--color-text-muted)]">
+                  {service.basePriceCents != null
+                    ? formatPriceRounded(service.basePriceCents, currencyCode)
+                    : ""}
+                </span>
+              </span>
+              <ArrowRight className="size-4 shrink-0 text-[var(--color-text-muted)]" aria-hidden />
+            </Link>
+          </li>
+        </ul>
       </div>
     </div>
   );
@@ -870,7 +1115,10 @@ function StepIndicator({
         aria-hidden
         className="absolute left-4 top-4 bottom-4 w-px bg-white/12"
       />
-      {STEPS.map((step) => {
+      {labels.map((_label, i) => {
+        // Step count is dynamic: services with a bookable insurer add an
+        // Insurance step between Service and Time.
+        const step = { n: i + 1 };
         const complete = step.n < current;
         const active = step.n === current;
         const value = values[step.n - 1] ?? null;
@@ -903,7 +1151,7 @@ function StepIndicator({
             >
               {labels[step.n - 1]}
               {active ? (
-                <span className="sr-only"> — Step {step.n} of {STEPS.length}</span>
+                <span className="sr-only"> — Step {step.n} of {labels.length}</span>
               ) : null}
             </span>
             {value ? (

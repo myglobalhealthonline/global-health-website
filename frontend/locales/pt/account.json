@@ -626,6 +626,8 @@
     "backToBookings": "Voltar às marcações",
     "cantRescheduleTitle": "Esta marcação não pode ser remarcada",
     "cantRescheduleBody": "Esta consulta já foi concluída ou cancelada, pelo que já não aceita um novo horário.",
+    "pastAppointmentTitle": "O horário desta marcação já passou",
+    "pastAppointmentBody": "O horário agendado já passou, pelo que já não é possível remarcar. Marque uma nova consulta ou contacte a clínica.",
     "noClinicianTitle": "Ainda sem médico atribuído",
     "noClinicianBody": "Este pedido ainda não foi associado a um médico, pelo que não há disponibilidade para remarcar. Contacte a clínica se precisar de um horário específico.",
     "pickNewDate": "Escolha uma nova data",

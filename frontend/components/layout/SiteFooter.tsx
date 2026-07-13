@@ -30,6 +30,9 @@ import {
   type BrandIcon,
 } from "@/components/ui/BrandIcons";
 import { NewsletterSignup } from "./NewsletterSignup";
+import { CookieSettingsButton } from "@/components/compliance/CookieSettingsButton";
+import { getCommonLocale } from "@/lib/i18n/get-common-locale";
+import { resolveLocale } from "@/lib/i18n/resolve-locale";
 
 const REGULATORY_TEXT: Partial<Record<string, string>> = {
   cz: "Global Health je obchodní značkou společnosti Global Guest s.r.o., poskytovatele zdravotních služeb zapsaného v Národním registru poskytovatelů zdravotních služeb (NRPZS) pod registračním číslem 19071680.",
@@ -77,6 +80,10 @@ export function SiteFooter({
   parsed: ParsedSitePath;
 }) {
   const year = new Date().getFullYear();
+
+  const cookieCopy = getCommonLocale(
+    resolveLocale({ explicitLocale: parsed.lang }),
+  ).cookie;
 
   const careBase =
     parsed.country && parsed.lang ? `/${parsed.country}/${parsed.lang}` : null;
@@ -312,6 +319,13 @@ export function SiteFooter({
             >
               {navigation.footerPrivacyLink}
             </Link>
+            <span aria-hidden>·</span>
+            {/* Consent must be as easy to withdraw as it was to give — this
+                reopens the banner with the stored choices pre-filled. */}
+            <CookieSettingsButton
+              label={cookieCopy.settingsLink}
+              className="gh-footer-legalLink gh-focus-on-dark"
+            />
             <span aria-hidden>·</span>
             <span>{navigation.footerEuCompliant}</span>
           </span>

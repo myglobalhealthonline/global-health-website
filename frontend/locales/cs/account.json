@@ -626,6 +626,8 @@
     "backToBookings": "Zpět na rezervace",
     "cantRescheduleTitle": "Tuto rezervaci nelze přeložit",
     "cantRescheduleBody": "Tato konzultace již byla dokončena nebo zrušena, takže již nelze nastavit nový termín.",
+    "pastAppointmentTitle": "Čas této rezervace již uplynul",
+    "pastAppointmentBody": "Naplánovaný termín je již v minulosti, takže jej nelze přeložit. Objednejte novou konzultaci nebo kontaktujte kliniku.",
     "noClinicianTitle": "Zatím nepřiřazen žádný lékař",
     "noClinicianBody": "K tomuto požadavku zatím nebyl přiřazen lékař, takže není k dispozici žádný termín k přeložení. Pokud potřebujete konkrétní čas, kontaktujte kliniku.",
     "pickNewDate": "Vyberte nové datum",

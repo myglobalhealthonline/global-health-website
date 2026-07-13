@@ -11,7 +11,8 @@
     "s2_i3": "Platební údaje: ID poplatků Stripe, částky a časová razítka. Čísla karet nikdy nevidíme — ta ukládá přímo Stripe.",
     "s2_i4": "Metadata doručení e-mailů: kdy SendGrid přijal, otevřel nebo zamítl naše zprávy.",
     "s3_h": "Soubory cookie",
-    "s3_p": "Nastavujeme jeden nezbytně nutný cookie relace (gh_auth), abyste zůstali přihlášeni. Předvolby země a jazyka jsou také uloženy jako cookies. Žádné sledovací nástroje třetích stran.",
+    "s3_p": "Nezbytně nutné cookies: gh_auth vás udržuje přihlášené, gh_locale a gh-last-country si pamatují váš jazyk a zemi a gh-consent zaznamenává volbu, kterou níže učiníte. Pouze s vaším souhlasem načítáme také Meta Pixel (měření reklamy, nastavuje Meta) a widgety hodnocení Doctify (hodnocení pacientů, nastavuje doctify.com) — obojí ukládá vlastní cookies. Pokud je odmítnete, nenačte se ani jedno.",
+    "s3_manage": "Svou volbu můžete kdykoli změnit nebo odvolat:",
     "s4_h": "Vaše práva",
     "s4_intro": "Podle GDPR máte právo:",
     "s4_i1_pre": "Požádat o kopii všeho, co o vás uchováváme — přihlaste se a přejděte na ",
@@ -23,7 +24,7 @@
     "s5_h": "Uchovávání",
     "s5_p": "Údaje o účtu jsou uchovávány po dobu, kdy je váš účet aktivní. Údaje o rezervacích a platbách jsou uchovávány po dobu 7 let z důvodu požadavků na vedení zdravotnické dokumentace a daňové audity, a to i v případě, že svůj účet smažete.",
     "s6_h": "Zpracovatelé",
-    "s6_p": "Využíváme Railway (hosting), Stripe (platby) a SendGrid (transakční e-mail). Každý z nich splňuje požadavky GDPR a je vázán smlouvami o zpracování údajů."
+    "s6_p": "Využíváme Railway (hosting), Stripe (platby) a SendGrid (transakční e-mail). Každý z nich splňuje požadavky GDPR a je vázán smlouvami o zpracování údajů. V závislosti na vaší volbě cookies využíváme také Meta (měření reklamy) a Doctify (hodnocení pacientů)."
   },
   "terms": {
     "eyebrow": "Právní",

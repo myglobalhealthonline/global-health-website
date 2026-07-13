@@ -11,7 +11,8 @@
     "s2_i3": "Zahlungsdaten: Stripe-Belastungs-IDs, Beträge und Zeitstempel. Wir sehen niemals Kartennummern — Stripe speichert diese direkt.",
     "s2_i4": "E-Mail-Zustellungsmetadaten: wann SendGrid unsere Nachrichten akzeptiert, geöffnet oder zurückgewiesen hat.",
     "s3_h": "Cookies",
-    "s3_p": "Wir setzen ein unbedingt erforderliches Sitzungs-Cookie (gh_auth), damit Sie angemeldet bleiben. Länder- und Sprachpräferenzen werden ebenfalls als Cookies gespeichert. Keine Drittanbieter-Tracker.",
+    "s3_p": "Unbedingt erforderliche Cookies: gh_auth hält Sie angemeldet, gh_locale und gh-last-country merken sich Ihre Sprache und Ihr Land, und gh-consent hält die Entscheidung fest, die Sie unten treffen. Nur mit Ihrer Einwilligung laden wir zusätzlich das Meta Pixel (Werbemessung, gesetzt von Meta) und die Doctify-Bewertungs-Widgets (Patientenbewertungen, gesetzt von doctify.com) — beide setzen eigene Cookies. Lehnen Sie ab, wird keines davon geladen.",
+    "s3_manage": "Sie können Ihre Entscheidung jederzeit ändern oder widerrufen:",
     "s4_h": "Ihre Rechte",
     "s4_intro": "Gemäß DSGVO können Sie:",
     "s4_i1_pre": "Eine Kopie aller gespeicherten Daten anfordern — melden Sie sich an und gehen Sie zu ",
@@ -23,7 +24,7 @@
     "s5_h": "Aufbewahrung",
     "s5_p": "Kontodaten werden gespeichert, solange Ihr Konto aktiv ist. Buchungs- und Zahlungsdaten werden 7 Jahre lang aufbewahrt, um den Anforderungen an die Führung von Patientenakten und Steuerprüfungen zu genügen, auch wenn Sie Ihr Konto löschen.",
     "s6_h": "Auftragsverarbeiter",
-    "s6_p": "Wir verwenden Railway (Hosting), Stripe (Zahlungen) und SendGrid (transaktionale E-Mails). Jeder ist DSGVO-konform und durch Auftragsverarbeitungsverträge gebunden."
+    "s6_p": "Wir verwenden Railway (Hosting), Stripe (Zahlungen) und SendGrid (transaktionale E-Mails). Jeder ist DSGVO-konform und durch Auftragsverarbeitungsverträge gebunden. Abhängig von Ihrer Cookie-Entscheidung nutzen wir außerdem Meta (Werbemessung) und Doctify (Patientenbewertungen)."
   },
   "terms": {
     "eyebrow": "Rechtliches",

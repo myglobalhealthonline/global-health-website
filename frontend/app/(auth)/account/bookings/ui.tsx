@@ -38,6 +38,18 @@ import { formatPrice } from "@/lib/format-currency";
 // only these statuses can still move to CANCELLED. Keep in sync.
 const CANCELLABLE_STATUSES = new Set(["REQUEST_RECEIVED", "UNDER_REVIEW", "CONTACTED"]);
 
+/**
+ * A booking can only be moved while its slot is still in the future — the
+ * backend rejects a reschedule once `scheduledAt` has passed. A request with
+ * no time yet (`scheduledAt === null`) has nothing to be late for, so it
+ * stays reschedulable.
+ */
+function isSlotInFuture(scheduledAt: string | null, nowMs: number): boolean {
+  if (!scheduledAt) return true;
+  const ms = Date.parse(scheduledAt);
+  return !Number.isFinite(ms) || ms > nowMs;
+}
+
 type BookingsI18n = {
   bookings: {
     noBookings: string;
@@ -242,6 +254,17 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
   const [payingId, setPayingId] = useState<string | null>(null);
   const [payError, setPayError] = useState<string | null>(null);
   const [paymentRedirectUrl, setPaymentRedirectUrl] = useState<string | null>(null);
+  // Starts at 0 so the server-rendered HTML and the first client render agree
+  // (every real slot is "in the future" against 0); the effect below swaps in
+  // the real clock after mount and re-ticks so a slot that lapses while the
+  // page is open drops its Reschedule action without a refresh.
+  const [nowMs, setNowMs] = useState(0);
+
+  useEffect(() => {
+    setNowMs(Date.now());
+    const timer = setInterval(() => setNowMs(Date.now()), 30_000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Navigation is a side effect, not a render/handler-body concern — run it
   // here so it fires exactly once per URL rather than inline during the
@@ -579,13 +602,15 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
 
                   {CANCELLABLE_STATUSES.has(item.status) ? (
                     <>
-                      <a
-                        href={`/account/bookings/${item.id}/reschedule`}
-                        className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)] sm:w-auto"
-                      >
-                        <Clock className="size-4" aria-hidden />
-                        {b.rescheduleAction}
-                      </a>
+                      {isSlotInFuture(item.scheduledAt, nowMs) ? (
+                        <a
+                          href={`/account/bookings/${item.id}/reschedule`}
+                          className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-2 text-sm font-semibold text-[var(--portal-text)] hover:bg-[var(--portal-well)] sm:w-auto"
+                        >
+                          <Clock className="size-4" aria-hidden />
+                          {b.rescheduleAction}
+                        </a>
+                      ) : null}
                       <button
                         type="button"
                         onClick={() => {

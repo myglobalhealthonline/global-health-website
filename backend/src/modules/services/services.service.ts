@@ -33,18 +33,45 @@ type CoverageWithCompany = {
   company: { id: string; name: string } & InsuranceCompanyPricing;
 };
 
+/** Payout row read alongside a service — proves a doctor is in an insurer's network. */
+type NetworkPayoutRow = { insuranceCompanyId: string; doctorId: string };
+
+/**
+ * Company ids with at least ONE in-network doctor for this service. A doctor
+ * joins an insurer's network by having a payout set for that (company, service);
+ * doctors without one never see that insurer's patients. Cross-checked against
+ * the service's active assigned doctors so a stale payout can't resurrect a
+ * doctor who was unassigned or deactivated.
+ */
+function insurersWithDoctors(
+  payouts: NetworkPayoutRow[],
+  assignedDoctorIds: Set<string>,
+): Set<string> {
+  const out = new Set<string>();
+  for (const p of payouts) {
+    if (assignedDoctorIds.has(p.doctorId)) out.add(p.insuranceCompanyId);
+  }
+  return out;
+}
+
 /**
  * Resolve the public insurance options for a service: one entry per active
  * company that covers it, priced via `resolveInsurancePrice` (FIXED override or
  * PERCENT-computed). Options that can't be priced (misconfigured) are dropped.
+ *
+ * An insurer is only offered when it has at least one in-network doctor for the
+ * service (`eligibleCompanyIds`) — a company nobody will see patients for is
+ * unbookable, so it must not appear in the booking dropdown or the SEO line.
  */
 export function buildInsuranceOptions(
   basePriceCents: number | null,
   coverages: CoverageWithCompany[],
+  eligibleCompanyIds: Set<string>,
 ): InsuranceOption[] {
   if (basePriceCents == null) return [];
   const out: InsuranceOption[] = [];
   for (const cov of coverages) {
+    if (!eligibleCompanyIds.has(cov.company.id)) continue;
     const price = resolveInsurancePrice({
       basePriceCents,
       company: cov.company,
@@ -350,6 +377,12 @@ export async function listServicesByCountry(
             },
           },
         },
+        // Doctor↔insurer network rows: a set payout means the doctor takes this
+        // service under that insurer. Drives which insurers are bookable at all.
+        insuranceDoctorPayouts: {
+          where: { doctorAmountCents: { not: null }, company: { isActive: true } },
+          select: { insuranceCompanyId: true, doctorId: true },
+        },
       },
     });
     // Merge each row to the requested locale (falling back to the
@@ -360,8 +393,17 @@ export async function listServicesByCountry(
         locale ?? row.country.defaultLocale,
         row.country.defaultLocale,
       );
-      const insuranceOptions = buildInsuranceOptions(row.basePriceCents, row.insuranceCoverages);
-      const { insuranceCoverages: _insuranceCoverages, ...mergedRest } = merged;
+      const assignedDoctorIds = new Set(row.assignedDoctors.map((a) => a.doctorId));
+      const insuranceOptions = buildInsuranceOptions(
+        row.basePriceCents,
+        row.insuranceCoverages,
+        insurersWithDoctors(row.insuranceDoctorPayouts, assignedDoctorIds),
+      );
+      const {
+        insuranceCoverages: _insuranceCoverages,
+        insuranceDoctorPayouts: _insuranceDoctorPayouts,
+        ...mergedRest
+      } = merged;
       return {
         ...mergedRest,
         insuranceOptions,
@@ -953,6 +995,13 @@ export async function getPublicServiceBySlug(
           },
         },
         translations: { select: serviceTranslationSelect },
+        // Active doctor assignments + the doctor↔insurer network rows. An
+        // insurer is only offered when at least one assigned doctor has a payout
+        // set for it (i.e. agreed to see that insurer's patients).
+        assignedDoctors: {
+          where: { isActive: true, doctor: { active: true } },
+          select: { doctorId: true },
+        },
         insuranceCoverages: {
           where: { company: { isActive: true } },
           orderBy: [{ company: { sortOrder: "asc" } }, { company: { name: "asc" } }],
@@ -962,6 +1011,10 @@ export async function getPublicServiceBySlug(
               select: { id: true, name: true, pricingMode: true, discountPercent: true },
             },
           },
+        },
+        insuranceDoctorPayouts: {
+          where: { doctorAmountCents: { not: null }, company: { isActive: true } },
+          select: { insuranceCompanyId: true, doctorId: true },
         },
       },
     });
@@ -980,9 +1033,19 @@ export async function getPublicServiceBySlug(
       merged.resolvedLocale,
       row.country.defaultLocale,
     );
-    const insuranceOptions = buildInsuranceOptions(row.basePriceCents, row.insuranceCoverages);
-    // Strip the raw coverage rows — only the resolved options/SEO line ship.
-    const { insuranceCoverages: _insuranceCoverages, ...mergedRest } = merged;
+    const assignedDoctorIds = new Set(row.assignedDoctors.map((a) => a.doctorId));
+    const insuranceOptions = buildInsuranceOptions(
+      row.basePriceCents,
+      row.insuranceCoverages,
+      insurersWithDoctors(row.insuranceDoctorPayouts, assignedDoctorIds),
+    );
+    // Strip the raw coverage/network rows — only the resolved options/SEO line ship.
+    const {
+      insuranceCoverages: _insuranceCoverages,
+      insuranceDoctorPayouts: _insuranceDoctorPayouts,
+      assignedDoctors: _assignedDoctors,
+      ...mergedRest
+    } = merged;
     return {
       ...mergedRest,
       faqs,

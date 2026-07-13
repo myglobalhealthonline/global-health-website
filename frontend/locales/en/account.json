@@ -626,6 +626,8 @@
     "backToBookings": "Back to bookings",
     "cantRescheduleTitle": "This booking can't be rescheduled",
     "cantRescheduleBody": "This appointment has already been completed or cancelled, so it no longer accepts a new time.",
+    "pastAppointmentTitle": "This appointment's time has passed",
+    "pastAppointmentBody": "Its scheduled time is already in the past, so it can no longer be rescheduled. Book a new consultation or message the clinic.",
     "noClinicianTitle": "No clinician assigned yet",
     "noClinicianBody": "This request hasn't been matched with a clinician yet, so there's no availability to reschedule against. Message the clinic if you need a different time.",
     "pickNewDate": "Pick a new date",

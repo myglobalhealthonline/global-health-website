@@ -33,11 +33,14 @@ export function LanguageFilteredDoctors({
   slotByDoctorId,
   at,
   bp,
+  insurance,
 }: {
   country: string;
   lang: string;
   service: CountryServiceCard;
   doctors: CountryDoctorCard[];
+  /** Chosen insurer (id or "none") carried across the doctor-card links. */
+  insurance?: string | null;
   /** Service-first time→doctor step: the doctor's concrete slot at the chosen
    *  time, keyed by doctor id. When set, each card books that exact slot so the
    *  patient lands straight on the details step. */
@@ -164,6 +167,7 @@ export function LanguageFilteredDoctors({
                   country,
                   lang,
                   service: service.slug,
+                  insurance,
                   doctor: doctor.slug,
                   slot: slotByDoctorId?.[doctor.id] ?? null,
                   at: at ?? null,

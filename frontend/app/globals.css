@@ -3580,6 +3580,264 @@ details[open] > .gh2-filter-trigger .gh2-filter-chevron {
     var(--liquid-specular);
 }
 
+/* ═══════════════════════════════════════════════════════════════
+ * COOKIE CONSENT BAR
+ * ═══════════════════════════════════════════════════════════════
+ * Same glass chrome as the navbar + footer (--gh-chrome-*), so the
+ * consent bar reads as part of the site's own furniture rather than a
+ * bolted-on third-party widget. Forest surface → on-dark text tokens.
+ * `bottom: 6rem` on mobile clears the sticky bottom CTA. */
+.gh-cookie-bar {
+  position: fixed;
+  left: 1rem;
+  right: 1rem;
+  bottom: 6rem;
+  z-index: 60;
+  margin-inline: auto;
+  max-width: 44rem;
+  padding: 20px;
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
+  border-radius: var(--radius-card);
+  background: var(--gh-chrome);
+  -webkit-backdrop-filter: var(--gh-chrome-filter);
+  backdrop-filter: var(--gh-chrome-filter);
+  border: var(--gh-chrome-border);
+  box-shadow: var(--gh-chrome-shadow);
+  color: #fff;
+  animation: gh-cookie-rise 420ms var(--ease-out) both;
+}
+
+@media (min-width: 768px) {
+  .gh-cookie-bar {
+    bottom: 1rem;
+    padding: 24px;
+  }
+}
+
+@keyframes gh-cookie-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-cookie-bar {
+    animation: none;
+  }
+}
+
+.gh-cookie-title {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.gh-cookie-body {
+  margin-top: 8px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--gh2-on-dark-muted);
+}
+
+.gh-cookie-link {
+  font-weight: 600;
+  color: var(--color-brand-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.gh-cookie-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+@media (min-width: 640px) {
+  .gh-cookie-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+}
+
+/* The bar's buttons run shorter than the site's 52px page CTAs — this is
+ * chrome, not a call to action, and a full-height pill stack eats the
+ * viewport on a phone. */
+.gh-cookie-bar .gh-btn {
+  min-height: 44px;
+  padding: 0 20px;
+  font-size: 0.875rem;
+}
+
+/* Ghost button on the forest pane — .gh-btn-outline's forest-on-white
+ * inverts wrongly here. */
+.gh-cookie-btn-ghost {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: transparent;
+  color: #fff;
+}
+
+.gh-cookie-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+/* ── Category rows (expanded state) ───────────────────────────── */
+.gh-cookie-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 12px;
+}
+
+.gh-cookie-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+}
+
+.gh-cookie-row + .gh-cookie-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.gh-cookie-row-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.gh-cookie-row-body {
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--gh2-on-dark-faint);
+}
+
+.gh-cookie-always {
+  flex-shrink: 0;
+  align-self: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-brand-accent);
+}
+
+/* ── Toggle switch — native checkbox, restyled. ───────────────── */
+.gh-cookie-toggle {
+  flex-shrink: 0;
+  align-self: center;
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: var(--radius-chip);
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  cursor: pointer;
+  transition: background-color 180ms var(--ease-out), border-color 180ms var(--ease-out);
+}
+
+.gh-cookie-toggle::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 180ms var(--ease-out);
+}
+
+.gh-cookie-toggle:checked {
+  background: var(--color-brand-accent);
+  border-color: var(--color-brand-accent);
+}
+
+.gh-cookie-toggle:checked::after {
+  transform: translateX(20px);
+  background: var(--color-brand-primary);
+}
+
+.gh-cookie-toggle:focus-visible {
+  outline: 2px solid var(--color-brand-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-cookie-toggle,
+  .gh-cookie-toggle::after {
+    transition: none;
+  }
+}
+
+/* ── Doctify click-to-load placeholder ────────────────────────── */
+.gh-cookie-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 28px 20px;
+  text-align: center;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-card);
+  background: var(--color-background-soft);
+}
+
+.gh-cookie-placeholder-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.gh-cookie-placeholder-body {
+  max-width: 42ch;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.gh-cookie-placeholder-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.gh-cookie-placeholder .gh-btn {
+  min-height: 40px;
+  padding: 0 18px;
+  font-size: 0.8125rem;
+}
+
+/* On a forest band the dashed ivory card would glare — invert it. */
+.gh-cookie-placeholder-dark {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.gh-cookie-placeholder-dark .gh-cookie-placeholder-title {
+  color: #fff;
+}
+
+.gh-cookie-placeholder-dark .gh-cookie-placeholder-body {
+  color: var(--gh2-on-dark-muted);
+}
+
 /* ── Fallback: no backdrop-filter support ─────────────────────
  * The public-site glass previously had no fallback (only the portal
  * lux system did) — translucent fills over busy imagery turn to mud
@@ -3589,6 +3847,9 @@ details[open] > .gh2-filter-trigger .gh2-filter-chevron {
   .gh2-glass,
   .gh-liquid {
     background: linear-gradient(168deg, #123528, #0b2a20);
+  }
+  .gh-cookie-bar {
+    background: linear-gradient(168deg, #0e3125, #08251c);
   }
   .gh2-glass-deep,
   .gh2-glass-forest,
@@ -3656,7 +3917,8 @@ details[open] > .gh2-filter-trigger .gh2-filter-chevron {
   .gh2-glass-forest,
   .gh-glass-emerald,
   .gh-inline-forest-glass,
-  .gh-inline-doctor-glass {
+  .gh-inline-doctor-glass,
+  .gh-cookie-bar {
     background: linear-gradient(168deg, #0e3125, #08251c);
   }
   .gh2-glass-ivory,

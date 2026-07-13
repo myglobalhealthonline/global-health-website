@@ -1,45 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Script from "next/script";
-import { COOKIE_CONSENT_STORAGE_KEY, COOKIE_CONSENT_EVENT } from "./cookie-consent";
+import { useConsent } from "./use-consent";
 
 const META_PIXEL_ID = "5455895281301269";
 
 /**
- * S-027: the pixel must never fire before the visitor has acknowledged the
- * cookie notice, and must never mount on authenticated portal routes at all
- * (this component is only rendered from the public (site) layout). Consent
- * is read from the same localStorage key CookieBanner writes; a same-tab
- * custom event lets first-time visitors get tracked immediately after they
- * click through the banner, without needing a reload.
+ * S-027: the pixel must never fire before the visitor has opted in to the
+ * "Advertising" category, and must never mount on authenticated portal routes
+ * at all (this component is only rendered from the public (site) layout).
+ * `useConsent()` re-reads on the same-tab change event, so a first-time visitor
+ * who clicks Accept is tracked immediately without needing a reload — and one
+ * who later withdraws consent stops being tracked on the next navigation.
  */
 export function MetaPixel() {
-  const [consented, setConsented] = useState(false);
+  const { consent } = useConsent();
 
-  useEffect(() => {
-    let cancelled = false;
-    Promise.resolve().then(() => {
-      if (cancelled) return;
-      try {
-        if (window.localStorage.getItem(COOKIE_CONSENT_STORAGE_KEY)) {
-          setConsented(true);
-        }
-      } catch {
-        // localStorage blocked — fail closed, no tracking
-      }
-    });
-    function onConsent() {
-      setConsented(true);
-    }
-    window.addEventListener(COOKIE_CONSENT_EVENT, onConsent);
-    return () => {
-      cancelled = true;
-      window.removeEventListener(COOKIE_CONSENT_EVENT, onConsent);
-    };
-  }, []);
-
-  if (!consented) return null;
+  if (consent?.marketing !== true) return null;
 
   return (
     <>

@@ -146,7 +146,21 @@ export type CommonLocale = {
     body: string;
     privacyNotice: string;
     forDetails: string;
-    gotIt: string;
+    acceptAll: string;
+    deny: string;
+    manage: string;
+    save: string;
+    necessaryTitle: string;
+    necessaryBody: string;
+    alwaysOn: string;
+    marketingTitle: string;
+    marketingBody: string;
+    thirdPartyTitle: string;
+    thirdPartyBody: string;
+    settingsLink: string;
+    doctifyBlockedTitle: string;
+    doctifyBlockedBody: string;
+    doctifyLoad: string;
   };
   cart: {
     adding: string;
@@ -612,6 +626,13 @@ export type CommonLocale = {
     stepDoctor: string;
     stepTime: string;
     stepDetails: string;
+    /** Insurance step — only shown for services with a bookable insurer. */
+    stepInsurance: string;
+    insuranceTitle: string;
+    insuranceDesc: string;
+    insuranceStandard: string;
+    insuranceNone: string;
+    noInsuranceDoctors: string;
     title: string;
     subtitle: string;
     bookingSteps: string;

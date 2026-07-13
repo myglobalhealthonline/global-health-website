@@ -40,6 +40,19 @@ export class RescheduleDoctorMismatchError extends Error {
 }
 
 /**
+ * Thrown when a patient tries to reschedule an appointment whose scheduled
+ * time has already passed. A consultation that has started (or is over) can
+ * no longer be self-served onto a new slot — the patient books again or
+ * contacts the clinic.
+ */
+export class AppointmentAlreadyStartedError extends Error {
+  constructor() {
+    super("This appointment's time has already passed and can no longer be rescheduled.");
+    this.name = "AppointmentAlreadyStartedError";
+  }
+}
+
+/**
  * Thrown when a patient tries to book a slot whose doctor isn't
  * assigned to the chosen service. Surfaced as `400 Bad Request` so the
  * frontend can hint at "this doctor no longer offers that service" and
@@ -836,7 +849,7 @@ export async function rescheduleAppointmentForPatient(
 ): Promise<AccountAppointmentDetail | null> {
   const owned = await prisma.appointment.findFirst({
     where: { id, userId },
-    select: { id: true, timeSlotId: true, status: true, doctorId: true },
+    select: { id: true, timeSlotId: true, status: true, doctorId: true, scheduledAt: true },
   });
   if (!owned) throw new AppointmentNotOwnedError();
 
@@ -845,6 +858,12 @@ export async function rescheduleAppointmentForPatient(
   // transitions at all, so probing against CANCELLED is a reliable stand-in
   // for "is this appointment still active" without inventing a second matrix.
   assertValidStatusTransition(owned.status as AppointmentStatus, "CANCELLED");
+
+  // The held time must still be in the future. An unscheduled request
+  // (scheduledAt === null) has nothing to be late for, so it stays open.
+  if (owned.scheduledAt && owned.scheduledAt.getTime() <= Date.now()) {
+    throw new AppointmentAlreadyStartedError();
+  }
 
   if (owned.timeSlotId === newTimeSlotId) {
     // No-op reschedule onto the same slot — return current state as-is.
