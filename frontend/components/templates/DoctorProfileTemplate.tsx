@@ -16,6 +16,7 @@ import {
 import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
 import { focalStyle } from "@/components/media/doctor-photo";
 import { SectionSeam } from "@/components/ui/SectionSeam";
+import HeroFitContent from "@/components/sections/HeroFitContent";
 
 /* ─── Types ──────────────────────────────────────────────────────────────── */
 type DoctorProfileTemplateProps = {
@@ -192,10 +193,12 @@ export function DoctorProfileTemplate({
           <div
             className="gh-inline-panel-base relative flex h-auto flex-col justify-center overflow-visible px-8 py-6 md:px-12 lg:h-full lg:overflow-y-auto lg:px-14 lg:py-8"
           >
-            {/* Layer 1 — gradient depth */}
+            {/* Layer 1 — gradient depth. Desktop only: at mobile the panel
+                 background is the real profile photo (above), and this
+                 opaque gradient would paint over it. */}
             <div
               aria-hidden
-              className="gh-inline-panel-depth pointer-events-none absolute inset-0 z-0"
+              className="gh-inline-panel-depth pointer-events-none absolute inset-0 z-0 hidden lg:block"
             />
             {/* Layer 2 — technical lime grid */}
             <div
@@ -222,8 +225,8 @@ export function DoctorProfileTemplate({
               className="gh-inline-plus-small pointer-events-none absolute z-0 select-none font-bold leading-none"
             >+</span>
 
-            {/* Content */}
-            <div className="gh-inline-content-max relative z-10">
+            {/* Content — scale-to-fit on short viewports, no inner scrollbar */}
+            <HeroFitContent className="gh-inline-content-max relative z-10">
 
               {/* Top nav pills */}
               <div className="flex flex-wrap items-center gap-2">
@@ -390,7 +393,7 @@ export function DoctorProfileTemplate({
                 ))}
               </ul>
 
-            </div>
+            </HeroFitContent>
           </div>
 
         </div>

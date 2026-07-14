@@ -43,11 +43,11 @@ function TwoActions({
   dark: boolean;
 }) {
   return (
-    <div className="relative z-10 mt-6 flex gap-2.5">
+    <div className="relative z-10 mt-6 flex flex-col gap-2 sm:flex-row sm:gap-2.5">
       <Link
         href={detailHref}
         className={cn(
-          "inline-flex h-12 shrink-0 items-center justify-center gap-1.5 rounded-full px-4 text-sm font-bold tracking-[-0.005em] whitespace-nowrap transition-[background-color,color,border-color] duration-200 focus-visible:outline-none",
+          "inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full px-4 text-sm font-bold tracking-[-0.005em] whitespace-nowrap transition-[background-color,color,border-color] duration-200 focus-visible:outline-none sm:w-auto sm:shrink-0",
           dark
             ? "border border-white/25 bg-white/[0.06] text-white/90 hover:bg-white hover:text-[var(--color-brand-primary)]"
             : "border border-[var(--color-border-strong)] bg-transparent text-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:border-[var(--color-brand-primary)] hover:text-white",
@@ -58,7 +58,7 @@ function TwoActions({
       </Link>
       <Link
         href={bookHref}
-        className="inline-flex h-12 flex-1 items-center justify-center gap-1.5 rounded-full px-4 text-sm font-extrabold tracking-[-0.005em] transition-[transform,filter,box-shadow,background-color] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0 whitespace-nowrap"
+        className="inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full px-4 text-sm font-extrabold tracking-[-0.005em] transition-[transform,filter,box-shadow,background-color] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0 whitespace-nowrap sm:flex-1"
         style={
           dark
             ? {
