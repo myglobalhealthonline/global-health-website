@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, ShieldCheck, Stethoscope, Globe2, Clock, BadgeCheck, Users, ChevronDown } from "lucide-react";
+import { ArrowUpRight, ShieldCheck, Stethoscope, Globe2, Clock, BadgeCheck, Users } from "lucide-react";
 import { PageHero } from "@/components/sections/PageHero";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
+import { FAQSection } from "@/components/sections/FAQSection";
 import { pageMetadata, ROUTE_SEO } from "@/lib/seo/page-seo";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -310,37 +311,8 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* DARK — FAQ */}
-      <section className="gh-inline-clamp-section-pricing relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark border-t border-white/7 gh2-section-forest">
-        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-          <p className="text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-accent)]">
-            Frequently asked questions
-          </p>
-          <h2 className="mt-3 max-w-[20ch] text-[clamp(1.75rem,3vw+0.5rem,2.75rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-white/92">
-            The answers people ask for most.
-          </h2>
-          <div className="mt-10 max-w-[820px] rounded-[var(--radius-card)] border border-white/10 bg-white/[0.03] px-5 sm:px-7">
-            {FAQ_ITEMS.map((item) => (
-              <details
-                key={item.question}
-                className="group border-t border-white/10 py-5 first:border-t-0"
-              >
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[1.0625rem] font-extrabold tracking-[-0.01em] text-white/90 [&::-webkit-details-marker]:hidden">
-                  {item.question}
-                  <ChevronDown
-                    className="size-5 shrink-0 text-[var(--color-brand-accent)] transition-transform duration-200 group-open:rotate-180"
-                    strokeWidth={2}
-                    aria-hidden
-                  />
-                </summary>
-                <p className="mt-3 max-w-[72ch] text-[length:var(--text-body)] leading-relaxed text-white/70">
-                  {item.answer}
-                </p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* DARK — FAQ (shared home FAQSection: forest-night, gh2-glass-forest cards) */}
+      <FAQSection title="Frequently asked questions" items={[...FAQ_ITEMS]} theme="dark" />
 
       {/* Structured data — breadcrumb + FAQ (schema mirrors the visible FAQ above) */}
       <JsonLd
