@@ -95,6 +95,25 @@ async function main() {
     }
   }
 
+  // 1b. IE market translation (DoctorMarketTranslation EN) — this OVERRIDES the
+  // base Doctor fields on the /ireland/en profile, so it must carry the same
+  // title + SEO copy or the base updates never surface.
+  const ieDc = await prisma.doctorCountry.findFirst({
+    where: { doctorId: doctor.id, country: { code: "ie" } },
+    include: { translations: { where: { locale: LocaleCode.EN } } },
+  });
+  const ieEn = ieDc?.translations[0];
+  if (ieEn) {
+    const patch: Record<string, string> = {};
+    if (ieEn.title !== NEW_TITLE) patch.title = NEW_TITLE;
+    if (ieEn.seoTitle !== SEO_TITLE) patch.seoTitle = SEO_TITLE;
+    if (ieEn.seoDescription !== SEO_DESCRIPTION) patch.seoDescription = SEO_DESCRIPTION;
+    if (Object.keys(patch).length) {
+      note(`IE market translation (EN): ${Object.keys(patch).join(", ")} -> brief values (was title="${ieEn.title}", seoTitle="${ieEn.seoTitle}")`);
+      if (APPLY) await prisma.doctorMarketTranslation.update({ where: { id: ieEn.id }, data: patch });
+    } else note("IE market translation (EN): already correct");
+  } else note("IE market translation (EN): none — base fields apply");
+
   // Specialty pill (label above name) comes from DoctorSpecialty — report only,
   // renaming a shared Specialty row could affect other doctors.
   for (const ds of doctor.specialties) {
