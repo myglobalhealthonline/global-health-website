@@ -163,6 +163,15 @@ const envSchema = z.object({
    *  horizontally so throttling is global. Example: redis://:pass@host:6379. */
   REDIS_URL: z.string().url().optional(),
 
+  /** Shared secret between the Next.js frontend proxies and this API. When a
+   *  request carries x-gh-proxy-secret matching this value, the rate limiter
+   *  keys on the x-gh-client-ip header (the real visitor IP the frontend saw)
+   *  instead of request.ip — otherwise ALL proxied traffic collapses onto the
+   *  frontend service's single egress IP and one shared bucket 429s the whole
+   *  site. Set the SAME value on both Railway services. Unset → limiter keys
+   *  on request.ip only (previous behaviour). */
+  PROXY_CLIENT_IP_SECRET: z.string().min(16).optional(),
+
   /** Optional ops-alert webhook (Slack/Discord/generic). When set, money/ops
    *  reconciliation findings + subscription webhook failures POST a JSON
    *  {text,severity,...} here. Unset → alerts are logged only (§39). */

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { forwardSetCookies } from "@/lib/server/set-cookie";
+import { proxyClientIpHeaders } from "@/lib/server/proxy-client-ip";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +28,10 @@ async function proxy(request: NextRequest, method: "GET" | "DELETE") {
   try {
     upstream = await fetch(`${backend}/api/cart`, {
       method,
-      headers: cookieHeader ? { cookie: cookieHeader } : {},
+      headers: {
+        ...(cookieHeader ? { cookie: cookieHeader } : {}),
+        ...proxyClientIpHeaders(request),
+      },
       cache: "no-store",
     });
   } catch (err) {

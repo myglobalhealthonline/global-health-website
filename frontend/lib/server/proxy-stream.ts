@@ -1,6 +1,7 @@
 import "server-only";
 import { NextRequest, NextResponse } from "next/server";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { proxyClientIpHeaders } from "@/lib/server/proxy-client-ip";
 
 /**
  * Binary/multipart-safe same-origin proxy for Next route handlers.
@@ -44,7 +45,7 @@ export async function forwardStream(
     }
   }
 
-  const headers: Record<string, string> = {};
+  const headers: Record<string, string> = { ...proxyClientIpHeaders(request) };
   if (cookie) headers.cookie = cookie;
   if (contentType) headers["content-type"] = contentType;
 

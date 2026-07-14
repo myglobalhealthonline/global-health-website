@@ -1,6 +1,7 @@
 import "server-only";
 import { NextRequest, NextResponse } from "next/server";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { proxyClientIpHeaders } from "@/lib/server/proxy-client-ip";
 
 /**
  * Shared cookie-forwarding proxy helper for Next route handlers. Reused
@@ -32,6 +33,7 @@ export async function forwardToBackend(
         ? { "content-type": request.headers.get("content-type")! }
         : {}),
       ...(cookie ? { cookie } : {}),
+      ...proxyClientIpHeaders(request),
     },
     cache: "no-store",
     signal: AbortSignal.timeout(timeoutMs),

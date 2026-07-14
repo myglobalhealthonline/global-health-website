@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { proxyClientIpHeaders } from "@/lib/server/proxy-client-ip";
 
 export const dynamic = "force-dynamic";
 
@@ -60,6 +61,7 @@ async function proxyPublic(
       ...(!isFormData && contentType
         ? { "content-type": contentType }
         : {}),
+      ...proxyClientIpHeaders(request),
     },
     cache: "no-store",
   };

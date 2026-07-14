@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { proxyClientIpHeaders } from "@/lib/server/proxy-client-ip";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,7 @@ export async function POST(request: NextRequest) {
     headers: {
       "content-type": "application/json",
       ...(cookieHeader ? { cookie: cookieHeader } : {}),
+      ...proxyClientIpHeaders(request),
     },
     body: bodyText || undefined,
     cache: "no-store",

@@ -153,6 +153,22 @@ export async function buildApp() {
     timeWindow: "1 minute",
     max: 300,
     skipOnError: true, // never 500 because Redis is down etc.
+    // The Next.js frontend proxies browser API calls server-side, so at this
+    // hop request.ip is the frontend service's egress IP for EVERY visitor —
+    // one shared bucket for the whole site, which 429s under normal traffic.
+    // When the frontend authenticates itself with the shared secret, key on
+    // the real visitor IP it forwards. Secret mismatch/absent → request.ip,
+    // so direct callers can't spoof their bucket with a forged header.
+    keyGenerator: (req) => {
+      const secret = env.PROXY_CLIENT_IP_SECRET;
+      if (secret && req.headers["x-gh-proxy-secret"] === secret) {
+        const fwd = req.headers["x-gh-client-ip"];
+        if (typeof fwd === "string" && fwd.length > 0 && fwd.length <= 64) {
+          return fwd;
+        }
+      }
+      return req.ip;
+    },
     ...(rateLimitRedis ? { redis: rateLimitRedis } : {}),
   });
 
