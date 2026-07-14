@@ -28,6 +28,10 @@ export const profileImageRefSchema = z.preprocess(
     ),
 );
 
+/** Percent-based crop focal point (0-100) + zoom (1-3x) for doctor photos. */
+export const focalPointSchema = z.coerce.number().int().min(0).max(100);
+export const zoomSchema = z.coerce.number().min(1).max(3);
+
 export const adminDoctorsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   // Admin duplicate-check UIs fetch up to 250 rows in one country.
@@ -145,6 +149,9 @@ const adminDoctorBaseObject = z.object({
   profileImageTitle: nullableTrimmed(500),
   profileImageCaption: nullableTrimmed(1000),
   profileImageDescription: nullableTrimmed(2000),
+  profileImageFocalX: focalPointSchema.optional(),
+  profileImageFocalY: focalPointSchema.optional(),
+  profileImageZoom: zoomSchema.optional(),
   active: z.boolean().optional(),
   /**
    * Per-doctor RBAC flag for the manual-entry CTA in their portal.

@@ -10,6 +10,7 @@ import {
   IconLinkedin,
 } from "@/components/ui/BrandIcons";
 import { Flag } from "@/components/ui/Flag";
+import { focalStyle } from "@/components/media/doctor-photo";
 
 /* ─── Mint icon box ──────────────────────────────────────────────────────── */
 function IconBox({ children }: { children: React.ReactNode }) {
@@ -57,6 +58,11 @@ type DoctorCardProps = {
   imageTitle?: string | null;
   imageCaption?: string | null;
   imageDescription?: string | null;
+  /** Focal point (0-100, default 50) + zoom (1-3, default 1) — doctor's
+   *  chosen crop, set via the admin/doctor-portal focal-point editor. */
+  imageFocalX?: number;
+  imageFocalY?: number;
+  imageZoom?: number;
   /** Initials fallback shown when imageSrc is missing. Without it the card
    *  falls back to a single stock SVG for every photo-less doctor. */
   initials?: string;
@@ -99,6 +105,9 @@ export function DoctorCard({
   imageTitle,
   imageCaption,
   imageDescription,
+  imageFocalX = 50,
+  imageFocalY = 50,
+  imageZoom = 1,
   initials,
   href,
   bookingHref,
@@ -187,7 +196,7 @@ export function DoctorCard({
             fill
             sizes="(min-width:1024px) 360px, (min-width:768px) 50vw, 100vw"
             unoptimized={unoptimized}
-            className="object-cover object-top"
+            style={focalStyle(imageFocalX, imageFocalY, imageZoom)}
           />
         ) : (
           <div

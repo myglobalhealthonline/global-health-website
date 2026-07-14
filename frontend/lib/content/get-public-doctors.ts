@@ -56,6 +56,10 @@ export type PublicDoctorRecord = {
   profileImageTitle?: string;
   profileImageCaption?: string;
   profileImageDescription?: string;
+  /** Focal point (0-100, default 50) + zoom (1-3, default 1). */
+  profileImageFocalX: number;
+  profileImageFocalY: number;
+  profileImageZoom: number;
   editorialChecklist?: Record<string, unknown>;
 };
 
@@ -76,6 +80,9 @@ function profileImageFromRow(row: unknown):
       title?: string;
       caption?: string;
       description?: string;
+      focalX: number;
+      focalY: number;
+      zoom: number;
     }
   | undefined {
   const assets = (row as { assets?: unknown }).assets;
@@ -92,6 +99,9 @@ function profileImageFromRow(row: unknown):
       title?: unknown;
       caption?: unknown;
       description?: unknown;
+      focalX?: unknown;
+      focalY?: unknown;
+      zoom?: unknown;
     };
     if (rec.kind !== "IMAGE" || typeof rec.path !== "string") continue;
     const url = resolveTrustedAssetUrl(rec.path);
@@ -110,6 +120,9 @@ function profileImageFromRow(row: unknown):
       ...(typeof rec.description === "string" && rec.description.trim()
         ? { description: rec.description.trim() }
         : {}),
+      focalX: typeof rec.focalX === "number" ? rec.focalX : 50,
+      focalY: typeof rec.focalY === "number" ? rec.focalY : 50,
+      zoom: typeof rec.zoom === "number" ? rec.zoom : 1,
     };
   }
   return undefined;
@@ -231,6 +244,9 @@ export function normalizePublicDoctorRecord(row: unknown): PublicDoctorRecord | 
     ...(profileImage?.description
       ? { profileImageDescription: profileImage.description }
       : {}),
+    profileImageFocalX: profileImage?.focalX ?? 50,
+    profileImageFocalY: profileImage?.focalY ?? 50,
+    profileImageZoom: profileImage?.zoom ?? 1,
     ...(editorialChecklist ? { editorialChecklist } : {}),
   };
 }

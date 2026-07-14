@@ -155,6 +155,9 @@ export function ProfileSections({
             languages: doctor.languages,
             whatsappNumber: doctor.whatsappNumber ?? "",
             profileImagePath: doctor.profileImagePath ?? null,
+            profileImageFocalX: doctor.profileImageFocalX,
+            profileImageFocalY: doctor.profileImageFocalY,
+            profileImageZoom: doctor.profileImageZoom,
             primaryCountryCode: primaryCountry.code,
           }}
         />

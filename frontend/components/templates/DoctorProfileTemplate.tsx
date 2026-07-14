@@ -14,6 +14,7 @@ import {
   Video,
 } from "lucide-react";
 import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
+import { focalStyle } from "@/components/media/doctor-photo";
 
 /* ─── Types ──────────────────────────────────────────────────────────────── */
 type DoctorProfileTemplateProps = {
@@ -48,6 +49,9 @@ type DoctorProfileTemplateProps = {
   };
   bottomCta: { title: string; description: string; ctaLabel: string; ctaHref: string };
   profileImageSrc?: string;
+  profileImageFocalX?: number;
+  profileImageFocalY?: number;
+  profileImageZoom?: number;
   bookingCtaImage?: { src: string; alt: string };
   showReviewScore?: boolean;
   doctifyWidgetUrl?: string;
@@ -71,10 +75,14 @@ export function DoctorProfileTemplate({
   profile,
   bottomCta,
   profileImageSrc,
+  profileImageFocalX = 50,
+  profileImageFocalY = 50,
+  profileImageZoom = 1,
   doctifyWidgetUrl,
   t,
 }: DoctorProfileTemplateProps) {
   const safeBio = sanitizeDoctorBioHtml(profile.bio);
+  const heroImageStyle = focalStyle(profileImageFocalX, profileImageFocalY, profileImageZoom);
   const backHref = hero.secondaryCta?.href;
   const verifyHref = profile.verificationUrl ?? profile.medicalRegistrationUrl;
   const primarySpecialty = profile.specialties[0] ?? "General practice";
@@ -98,7 +106,7 @@ export function DoctorProfileTemplate({
               fill
               sizes="100vw"
               priority
-              className="object-cover object-top"
+              style={heroImageStyle}
               unoptimized={
                 /^https?:\/\//i.test(profileImageSrc) ||
                 profileImageSrc.startsWith("/api/media/")
@@ -144,7 +152,8 @@ export function DoctorProfileTemplate({
                 fill
                 sizes="(min-width:1024px) 50vw, 100vw"
                 priority
-                className="z-[1] object-cover object-top"
+                className="z-[1]"
+                style={heroImageStyle}
                 unoptimized={
                   /^https?:\/\//i.test(profileImageSrc) ||
                   profileImageSrc.startsWith("/api/media/")

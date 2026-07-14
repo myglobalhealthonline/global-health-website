@@ -61,6 +61,9 @@ export type DoctorMe = {
     }>;
     specialties: Array<{ specialty: { name: string; slug: string } }>;
     profileImagePath: string | null;
+    profileImageFocalX?: number;
+    profileImageFocalY?: number;
+    profileImageZoom?: number;
     /** Masked payout bank details — the full IBAN never leaves the server. */
     bank: {
       accountHolder: string | null;

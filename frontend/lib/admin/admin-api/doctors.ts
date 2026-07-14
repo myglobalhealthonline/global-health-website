@@ -175,6 +175,9 @@ export type AdminDoctorAssetDto = {
   title: string | null;
   caption: string | null;
   description: string | null;
+  focalX: number;
+  focalY: number;
+  zoom: number;
 };
 
 export type AdminDoctorTranslationDto = {

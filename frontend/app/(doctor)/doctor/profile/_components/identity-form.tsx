@@ -2,12 +2,14 @@
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, Trash2 } from "lucide-react";
+import { Upload, Trash2, Crop } from "lucide-react";
 import { PhoneField } from "@/components/forms/phone-field";
 import { dialCodeForCountry } from "@/lib/phone/dial-codes";
 import { LanguagePicker, canonicalizeLanguages } from "@/components/forms/LanguagePicker";
 import { FormSection } from "@/components/FormSection";
 import { PortalDialog } from "@/components/PortalDialog";
+import { FocalPointEditor, type FocalValue } from "@/components/media/focal-point-editor";
+import { focalStyle } from "@/components/media/doctor-photo";
 import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
 import { MessageBanner, resolvePhotoSrc, type Msg } from "./form-helpers";
 import type { ProfileStrings } from "./profile-sections";
@@ -27,6 +29,9 @@ export function DoctorIdentityForm({
     languages: string[];
     whatsappNumber: string;
     profileImagePath: string | null;
+    profileImageFocalX?: number;
+    profileImageFocalY?: number;
+    profileImageZoom?: number;
     primaryCountryCode: string;
   };
   strings: ProfileStrings;
@@ -70,6 +75,46 @@ export function DoctorIdentityForm({
   const [removePhotoDialogOpen, setRemovePhotoDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  /* ── Focal point / zoom ──────────────────────────── */
+  const [focal, setFocal] = useState<FocalValue>({
+    focalX: initial.profileImageFocalX ?? 50,
+    focalY: initial.profileImageFocalY ?? 50,
+    zoom: initial.profileImageZoom ?? 1,
+  });
+  const [focalDraft, setFocalDraft] = useState<FocalValue>(focal);
+  const [focalEditorOpen, setFocalEditorOpen] = useState(false);
+  const [focalSaving, setFocalSaving] = useState(false);
+
+  function openFocalEditor() {
+    setFocalDraft(focal);
+    setFocalEditorOpen(true);
+  }
+
+  function saveFocal() {
+    setFocalSaving(true);
+    startPhotoTransition(async () => {
+      try {
+        const res = await fetch("/api/doctor/profile/photo/position", {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(focalDraft),
+        });
+        const json = (await res.json()) as { ok?: boolean; message?: string };
+        if (!res.ok || !json.ok) {
+          setPhotoError(json.message ?? strings.saveProfileFailed);
+          return;
+        }
+        setFocal(focalDraft);
+        setFocalEditorOpen(false);
+        router.refresh();
+      } catch {
+        setPhotoError(strings.networkError);
+      } finally {
+        setFocalSaving(false);
+      }
+    });
+  }
+
   useEffect(() => {
     // Resets local edit state when a fresh `initial` snapshot arrives (server
     // refetch after save via router.refresh()) — intentional sync, mirrors
@@ -80,6 +125,11 @@ export function DoctorIdentityForm({
     setLanguages(initialLanguages);
     setWhatsappNumber(initial.whatsappNumber);
     setPhotoPath(initial.profileImagePath);
+    setFocal({
+      focalX: initial.profileImageFocalX ?? 50,
+      focalY: initial.profileImageFocalY ?? 50,
+      zoom: initial.profileImageZoom ?? 1,
+    });
     setInitialSnapshot(
       JSON.stringify({
         fullName: initial.fullName,
@@ -88,7 +138,16 @@ export function DoctorIdentityForm({
         whatsappNumber: initial.whatsappNumber,
       }),
     );
-  }, [initial.fullName, initialQualificationsText, initialLanguages, initial.whatsappNumber, initial.profileImagePath]);
+  }, [
+    initial.fullName,
+    initialQualificationsText,
+    initialLanguages,
+    initial.whatsappNumber,
+    initial.profileImagePath,
+    initial.profileImageFocalX,
+    initial.profileImageFocalY,
+    initial.profileImageZoom,
+  ]);
 
   function uploadPhoto(file: File) {
     setPhotoError(null);
@@ -107,6 +166,12 @@ export function DoctorIdentityForm({
           return;
         }
         if (json.data?.path) setPhotoPath(json.data.path);
+        // New photo — reset the crop and open the editor so the doctor sets
+        // a focal point before it goes live everywhere.
+        const defaultFocal = { focalX: 50, focalY: 50, zoom: 1 };
+        setFocal(defaultFocal);
+        setFocalDraft(defaultFocal);
+        setFocalEditorOpen(true);
         router.refresh();
       } catch {
         setPhotoError(strings.networkError);
@@ -237,7 +302,7 @@ export function DoctorIdentityForm({
                 <img
                   src={resolvePhotoSrc(photoPath) ?? photoPath}
                   alt="Profile"
-                  style={{ height: "100%", width: "100%", objectFit: "cover" }}
+                  style={{ height: "100%", width: "100%", ...focalStyle(focal.focalX, focal.focalY, focal.zoom) }}
                 />
               ) : (
                 <span className="text-[28px] font-bold" style={{ color: "var(--portal-primary)" }}>
@@ -271,6 +336,16 @@ export function DoctorIdentityForm({
                 <Upload className="size-3.5" />
                 {photoPending ? strings.uploading : photoPath ? strings.replacePhoto : strings.uploadPhoto}
               </button>
+              {photoPath ? (
+                <button
+                  type="button"
+                  onClick={openFocalEditor}
+                  disabled={photoPending}
+                  className="gh-btn gh-btn-soft w-full"
+                >
+                  <Crop className="size-3.5" /> Adjust image
+                </button>
+              ) : null}
               {photoPath ? (
                 <button
                   type="button"
@@ -328,6 +403,38 @@ export function DoctorIdentityForm({
       >
         <p className="text-sm text-[var(--portal-muted)]">{strings.removePhotoBody}</p>
       </PortalDialog>
+
+      {photoPath ? (
+        <PortalDialog
+          open={focalEditorOpen}
+          onClose={() => setFocalEditorOpen(false)}
+          title="Adjust photo"
+          width="lg"
+          footer={
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setFocalEditorOpen(false)}
+                disabled={focalSaving}
+                className="gh-btn gh-btn-soft"
+              >
+                {strings.cancel}
+              </button>
+              <button type="button" onClick={saveFocal} disabled={focalSaving} className="gh-btn gh-btn-primary">
+                {focalSaving ? strings.saving : strings.saveIdentity}
+              </button>
+            </div>
+          }
+        >
+          <FocalPointEditor
+            src={resolvePhotoSrc(photoPath) ?? photoPath}
+            focalX={focalDraft.focalX}
+            focalY={focalDraft.focalY}
+            zoom={focalDraft.zoom}
+            onChange={setFocalDraft}
+          />
+        </PortalDialog>
+      ) : null}
     </div>
   );
 }

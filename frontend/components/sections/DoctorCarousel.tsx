@@ -29,6 +29,9 @@ export type DoctorCarouselItem = {
   imageTitle?: string | null;
   imageCaption?: string | null;
   imageDescription?: string | null;
+  imageFocalX?: number;
+  imageFocalY?: number;
+  imageZoom?: number;
   initials?: string;
   href?: string;
   bookingHref?: string;

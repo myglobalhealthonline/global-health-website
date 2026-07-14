@@ -1,7 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Trash2, Upload } from "lucide-react";
+import { Trash2, Upload, Crop } from "lucide-react";
+import { PortalDialog } from "@/components/PortalDialog";
+import { FocalPointEditor, type FocalValue } from "@/components/media/focal-point-editor";
+import { focalStyle } from "@/components/media/doctor-photo";
 
 type Props = {
   initialPath?: string;
@@ -9,6 +12,9 @@ type Props = {
   initialTitle?: string | null;
   initialCaption?: string | null;
   initialDescription?: string | null;
+  initialFocalX?: number;
+  initialFocalY?: number;
+  initialZoom?: number;
   /**
    * Optional id of the parent <form> when this component is rendered
    * outside the form element. HTML5 form-association ties the hidden
@@ -86,6 +92,9 @@ export function DoctorProfileImageField({
   initialTitle,
   initialCaption,
   initialDescription,
+  initialFocalX,
+  initialFocalY,
+  initialZoom,
   formId,
   fullName,
 }: Props) {
@@ -93,6 +102,12 @@ export function DoctorProfileImageField({
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [focal, setFocal] = useState<FocalValue>({
+    focalX: initialFocalX ?? 50,
+    focalY: initialFocalY ?? 50,
+    zoom: initialZoom ?? 1,
+  });
+  const [editorOpen, setEditorOpen] = useState(false);
 
   const previewSrc = resolvePreviewSrc(path);
   const hasImage = Boolean(previewSrc);
@@ -121,6 +136,10 @@ export function DoctorProfileImageField({
         throw new Error(json.message ?? "Upload failed");
       }
       setPath(persistedPath);
+      // New photo — reset the crop and open the editor so the admin sets
+      // a focal point before saving instead of shipping an uncropped photo.
+      setFocal({ focalX: 50, focalY: 50, zoom: 1 });
+      setEditorOpen(true);
     } catch (e) {
       setMsg(e instanceof Error ? e.message : "Upload failed");
     } finally {
@@ -195,7 +214,7 @@ export function DoctorProfileImageField({
               inset: 0,
               width: "100%",
               height: "100%",
-              objectFit: "cover",
+              ...focalStyle(focal.focalX, focal.focalY, focal.zoom),
             }}
           />
         ) : (
@@ -243,6 +262,29 @@ export function DoctorProfileImageField({
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
+                setEditorOpen(true);
+              }}
+              aria-label="Adjust image"
+              disabled={busy}
+              title="Adjust"
+              className="inline-flex items-center justify-center rounded-full text-white"
+              style={{
+                width: 28,
+                height: 28,
+                background: "rgba(0,0,0,0.55)",
+                backdropFilter: "blur(4px)",
+                border: "none",
+                cursor: busy ? "wait" : "pointer",
+              }}
+            >
+              <Crop aria-hidden className="size-3.5" />
+            </button>
+          ) : null}
+          {hasImage ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
                 removeImage();
               }}
               aria-label="Remove image"
@@ -264,13 +306,16 @@ export function DoctorProfileImageField({
         </div>
       </div>
 
-      {/* Hidden form input — what the parent server action reads. */}
+      {/* Hidden form inputs — what the parent server action reads. */}
       <input
         type="hidden"
         name="profileImagePath"
         value={path}
         {...(formId ? { form: formId } : {})}
       />
+      <input type="hidden" name="profileImageFocalX" value={focal.focalX} {...(formId ? { form: formId } : {})} />
+      <input type="hidden" name="profileImageFocalY" value={focal.focalY} {...(formId ? { form: formId } : {})} />
+      <input type="hidden" name="profileImageZoom" value={focal.zoom} {...(formId ? { form: formId } : {})} />
 
       <div className="gh-admin-doctor-profile-image-fields grid gap-2">
         <label className="flex flex-col gap-1">
@@ -323,6 +368,30 @@ export function DoctorProfileImageField({
       <span className="text-portal-thead text-[var(--color-text-muted)]">
         JPEG / PNG / WebP · max 5 MB. Click the tile or drop a file to upload.
       </span>
+
+      {previewSrc ? (
+        <PortalDialog
+          open={editorOpen}
+          onClose={() => setEditorOpen(false)}
+          title="Adjust photo"
+          width="lg"
+          footer={
+            <div className="flex justify-end">
+              <button type="button" className="gh-btn gh-btn-primary" onClick={() => setEditorOpen(false)}>
+                Done
+              </button>
+            </div>
+          }
+        >
+          <FocalPointEditor
+            src={previewSrc}
+            focalX={focal.focalX}
+            focalY={focal.focalY}
+            zoom={focal.zoom}
+            onChange={setFocal}
+          />
+        </PortalDialog>
+      ) : null}
     </div>
   );
 }

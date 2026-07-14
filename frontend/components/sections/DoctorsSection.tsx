@@ -29,6 +29,9 @@ type DoctorItem = {
   imageTitle?: string | null;
   imageCaption?: string | null;
   imageDescription?: string | null;
+  imageFocalX?: number;
+  imageFocalY?: number;
+  imageZoom?: number;
   /** Initials fallback when imageSrc is missing (DoctorCard derives from
    *  name if omitted). */
   initials?: string;

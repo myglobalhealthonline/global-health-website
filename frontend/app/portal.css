@@ -5943,3 +5943,42 @@ html::-webkit-scrollbar-thumb:hover {
 .gh-portal-shell :where(.rounded-lg) {
   border-radius: var(--portal-radius-lg) !important;
 }
+
+/* ── Doctor photo focal-point editor (admin + doctor portal) ───────────── */
+.gh-focal-editor-frame {
+  border-radius: var(--portal-radius-lg, 12px);
+  border: 1px solid var(--portal-line);
+  background: var(--portal-well);
+  cursor: grab;
+}
+.gh-focal-editor-frame:active {
+  cursor: grabbing;
+}
+.gh-focal-editor-frame:focus-visible {
+  outline: 2px solid var(--portal-primary);
+  outline-offset: 2px;
+}
+.gh-focal-editor-crosshair {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  margin-left: -9px;
+  margin-top: -9px;
+  border-radius: 9999px;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+.gh-focal-editor-zoom {
+  accent-color: var(--portal-primary);
+}
+.gh-focal-editor-preview {
+  border: 1px solid var(--portal-line);
+  background: var(--portal-well);
+}
+.gh-focal-editor-dpad button {
+  min-width: 0;
+  padding: 4px 0;
+  width: 32px;
+  height: 28px;
+}

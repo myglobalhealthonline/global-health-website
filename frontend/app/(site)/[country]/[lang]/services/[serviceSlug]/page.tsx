@@ -472,6 +472,9 @@ export default async function ServiceDetailPage({
                     whatsappNumber={d.whatsappNumber}
                     bio={d.bio ?? ""}
                     imageSrc={d.imageSrc ?? null}
+                    imageFocalX={d.imageFocalX}
+                    imageFocalY={d.imageFocalY}
+                    imageZoom={d.imageZoom}
                     country={country}
                     href={`/${country}/${lang}/doctors/${d.slug}`}
                     bookingHref={buildBookHref({

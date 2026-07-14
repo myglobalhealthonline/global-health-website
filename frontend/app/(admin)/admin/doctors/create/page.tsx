@@ -156,6 +156,9 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
         raw.profileImageCaption === "" ? null : raw.profileImageCaption,
       profileImageDescription:
         raw.profileImageDescription === "" ? null : raw.profileImageDescription,
+      profileImageFocalX: raw.profileImageFocalX,
+      profileImageFocalY: raw.profileImageFocalY,
+      profileImageZoom: raw.profileImageZoom,
       active: raw.active,
     };
 

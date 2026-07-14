@@ -21,6 +21,7 @@ import {
   IconLinkedin,
   type BrandIcon,
 } from "@/components/ui/BrandIcons";
+import { focalStyle } from "@/components/media/doctor-photo";
 
 type DoctorSpotlightProps = {
   name: string;
@@ -38,6 +39,9 @@ type DoctorSpotlightProps = {
   imageTitle?: string | null;
   imageCaption?: string | null;
   imageDescription?: string | null;
+  imageFocalX?: number;
+  imageFocalY?: number;
+  imageZoom?: number;
   href?: string;
   bookingHref?: string;
   /** WhatsApp contact — rendered as a "Call" pill next to the booking
@@ -143,7 +147,7 @@ export function FeaturedDoctor({
               }
               fill
               unoptimized={unoptimized}
-              className="object-cover object-top"
+              style={focalStyle(doctor.imageFocalX, doctor.imageFocalY, doctor.imageZoom)}
               sizes="(min-width:640px) 340px, 100vw"
             />
           ) : (

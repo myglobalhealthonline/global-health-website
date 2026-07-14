@@ -37,6 +37,9 @@ export type DoctorProfilePageData = {
   bottomCta: { title: string; description: string; ctaLabel: string; ctaHref: string };
   /** Local public-folder path from CMS asset when safe (same-origin relative path). */
   profileImageSrc?: string;
+  profileImageFocalX?: number;
+  profileImageFocalY?: number;
+  profileImageZoom?: number;
   /** Optional image shown inside the booking CTA banner. */
   bookingCtaImage?: { src: string; alt: string };
 };
@@ -176,6 +179,9 @@ export async function resolveDoctorProfilePageData(
   const resolvedImageSrc = backend.profileImageSrc ?? profileImageSrc;
   if (resolvedImageSrc) {
     out.profileImageSrc = resolvedImageSrc;
+    out.profileImageFocalX = backend.profileImageFocalX;
+    out.profileImageFocalY = backend.profileImageFocalY;
+    out.profileImageZoom = backend.profileImageZoom;
     out.bookingCtaImage = {
       src: resolvedImageSrc,
       alt: backend.profileImageAltText ?? backend.fullName,

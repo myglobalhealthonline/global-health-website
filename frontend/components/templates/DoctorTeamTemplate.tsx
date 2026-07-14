@@ -27,6 +27,9 @@ type Doctor = {
   linkedinUrl?: string | null;
   bio: string;
   imageSrc?: string | null;
+  imageFocalX?: number;
+  imageFocalY?: number;
+  imageZoom?: number;
   href?: string;
   bookingHref?: string;
   ctaLabel?: string;
@@ -220,6 +223,9 @@ export function DoctorTeamTemplate({
                       linkedinUrl={d.linkedinUrl}
                       bio={d.bio}
                       imageSrc={d.imageSrc}
+                      imageFocalX={d.imageFocalX}
+                      imageFocalY={d.imageFocalY}
+                      imageZoom={d.imageZoom}
                       href={d.href}
                       bookingHref={d.bookingHref ?? bookingHref}
                       ctaLabel={d.ctaLabel ?? "View profile"}

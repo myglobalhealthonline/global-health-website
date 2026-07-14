@@ -300,6 +300,9 @@ const adminDoctorInclude = {
       title: true,
       caption: true,
       description: true,
+      focalX: true,
+      focalY: true,
+      zoom: true,
     },
   },
   /**
@@ -866,6 +869,9 @@ async function syncProfileImageAsset(
     profileImageTitle?: string | null;
     profileImageCaption?: string | null;
     profileImageDescription?: string | null;
+    profileImageFocalX?: number;
+    profileImageFocalY?: number;
+    profileImageZoom?: number;
   },
 ): Promise<void> {
   const key = doctorProfileImageKey(doctorId);
@@ -918,6 +924,9 @@ async function syncProfileImageAsset(
         title: imageSeo?.profileImageTitle ?? null,
         caption: imageSeo?.profileImageCaption ?? null,
         description: imageSeo?.profileImageDescription ?? null,
+        focalX: imageSeo?.profileImageFocalX ?? 50,
+        focalY: imageSeo?.profileImageFocalY ?? 50,
+        zoom: imageSeo?.profileImageZoom ?? 1,
         isActive: true,
       },
       update: {
@@ -935,6 +944,15 @@ async function syncProfileImageAsset(
         }),
         ...(imageSeo?.profileImageDescription !== undefined && {
           description: imageSeo.profileImageDescription,
+        }),
+        ...(imageSeo?.profileImageFocalX !== undefined && {
+          focalX: imageSeo.profileImageFocalX,
+        }),
+        ...(imageSeo?.profileImageFocalY !== undefined && {
+          focalY: imageSeo.profileImageFocalY,
+        }),
+        ...(imageSeo?.profileImageZoom !== undefined && {
+          zoom: imageSeo.profileImageZoom,
         }),
         isActive: true,
       },
@@ -1084,6 +1102,9 @@ export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<A
             title: input.profileImageTitle ?? null,
             caption: input.profileImageCaption ?? null,
             description: input.profileImageDescription ?? null,
+            focalX: input.profileImageFocalX ?? 50,
+            focalY: input.profileImageFocalY ?? 50,
+            zoom: input.profileImageZoom ?? 1,
           },
           update: {
             path,
@@ -1093,6 +1114,9 @@ export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<A
             title: input.profileImageTitle ?? null,
             caption: input.profileImageCaption ?? null,
             description: input.profileImageDescription ?? null,
+            focalX: input.profileImageFocalX ?? 50,
+            focalY: input.profileImageFocalY ?? 50,
+            zoom: input.profileImageZoom ?? 1,
           },
         });
       }
