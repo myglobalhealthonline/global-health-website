@@ -70,7 +70,7 @@
     "myAccount": "My account",
     "privacyPolicy": "Privacy policy",
     "termsOfService": "Terms of service",
-    "tagline": "Medicine anytime anywhere. Online medical consultations with locally-registered doctors across Europe.",
+    "tagline": "Medicine anytime anywhere. Online medical consultations with locally-registered doctors in the markets where we operate.",
     "stayInformed": "Stay informed",
     "newsletterDesc": "Monthly health updates on new countries, doctors, and health topics. No spam.",
     "subscribe": "Subscribe",
@@ -78,7 +78,7 @@
     "disclaimer": "Online consultations are not a substitute for emergency care. If you need urgent help, call 112 or your local emergency number. Information on this website is general guidance; prescriptions, certificates, referrals and next steps depend on clinical assessment and are issued at the treating clinician's discretion.",
     "copyrightSuffix": "Medicine anytime anywhere",
     "privacyLink": "Privacy",
-    "euCompliant": "EU-registered telemedicine provider · GDPR compliant"
+    "euCompliant": "Licensed telemedicine platform · GDPR compliant"
   },
   "countrySelector": {
     "title": "Choose your country",
@@ -102,7 +102,7 @@
     "trustSecure": "Secure online consultations",
     "trustLocal": "Country-specific healthcare",
     "trustGdpr": "GDPR-compliant care",
-    "euProvider": "EU-registered telemedicine provider",
+    "euProvider": "Licensed telemedicine platform",
     "gdprNote": "GDPR compliant · Doctors registered locally"
   },
   "cta": {

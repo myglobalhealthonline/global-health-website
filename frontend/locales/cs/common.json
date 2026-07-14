@@ -70,7 +70,7 @@
     "myAccount": "Můj účet",
     "privacyPolicy": "Zásady ochrany soukromí",
     "termsOfService": "Podmínky služby",
-    "tagline": "Medicína kdykoliv a kdekoliv. Online lékařské konzultace s lékaři registrovanými ve vaší zemi v celé Evropě.",
+    "tagline": "Medicína kdykoliv a kdekoliv. Online lékařské konzultace s lékaři registrovanými ve vaší zemi na trzích, kde působíme.",
     "stayInformed": "Zůstaňte informováni",
     "newsletterDesc": "Měsíční zdravotní aktualizace o nových zemích, lékařích a zdravotních tématech. Žádný spam.",
     "subscribe": "Odebírat",
@@ -78,7 +78,7 @@
     "disclaimer": "Online konzultace nejsou náhradou za pohotovostní péči. Pokud potřebujete naléhavou pomoc, volejte 112 nebo místní číslo tísňové linky. Informace na tomto webu jsou obecným návodem; předpisy, certifikáty, doporučení a další kroky závisí na klinickém posouzení a jsou vydávány dle uvážení ošetřujícího lékaře.",
     "copyrightSuffix": "Medicína kdykoliv a kdekoliv",
     "privacyLink": "Soukromí",
-    "euCompliant": "Poskytovatel telemedicíny registrovaný v EU · Splňuje požadavky GDPR"
+    "euCompliant": "Licencovaná telemedicínská platforma · Splňuje požadavky GDPR"
   },
   "countrySelector": {
     "title": "Vyberte svou zemi",
@@ -102,7 +102,7 @@
     "trustSecure": "Bezpečné online konzultace",
     "trustLocal": "Zdravotní péče specifická pro danou zemi",
     "trustGdpr": "Péče v souladu s GDPR",
-    "euProvider": "Poskytovatel telemedicíny registrovaný v EU",
+    "euProvider": "Licencovaná telemedicínská platforma",
     "gdprNote": "V souladu s GDPR · Lékaři registrovaní lokálně"
   },
   "cta": {

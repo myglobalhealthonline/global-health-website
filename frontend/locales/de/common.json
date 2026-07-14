@@ -70,7 +70,7 @@
     "myAccount": "Mein Konto",
     "privacyPolicy": "Datenschutzerklärung",
     "termsOfService": "Nutzungsbedingungen",
-    "tagline": "Medizin jederzeit und überall. Online-Arztkonsultationen mit lokal registrierten Ärzten in ganz Europa.",
+    "tagline": "Medizin jederzeit und überall. Online-Arztkonsultationen mit lokal registrierten Ärzten in den Märkten, in denen wir tätig sind.",
     "stayInformed": "Informiert bleiben",
     "newsletterDesc": "Monatliche Gesundheitsupdates zu neuen Ländern, Ärzten und Gesundheitsthemen. Kein Spam.",
     "subscribe": "Abonnieren",
@@ -78,7 +78,7 @@
     "disclaimer": "Online-Konsultationen ersetzen keine Notfallversorgung. Wenn Sie dringende Hilfe benötigen, rufen Sie 112 oder Ihre lokale Notrufnummer an. Die Informationen auf dieser Website sind allgemeine Hinweise; Rezepte, Zertifikate, Überweisungen und nächste Schritte hängen von der klinischen Beurteilung ab und werden nach Ermessen des behandelnden Arztes ausgestellt.",
     "copyrightSuffix": "Medizin jederzeit und überall",
     "privacyLink": "Datenschutz",
-    "euCompliant": "In der EU registrierter Telemedizin-Anbieter · DSGVO-konform"
+    "euCompliant": "Lizenzierte Telemedizin-Plattform · DSGVO-konform"
   },
   "countrySelector": {
     "title": "Land auswählen",
@@ -102,7 +102,7 @@
     "trustSecure": "Sichere Online-Sprechstunden",
     "trustLocal": "Länderspezifische Gesundheitsversorgung",
     "trustGdpr": "DSGVO-konforme Versorgung",
-    "euProvider": "In der EU registrierter Telemedizin-Anbieter",
+    "euProvider": "Lizenzierte Telemedizin-Plattform",
     "gdprNote": "DSGVO-konform · Ärzte lokal registriert"
   },
   "cta": {

@@ -70,7 +70,7 @@
     "myAccount": "A minha conta",
     "privacyPolicy": "Política de privacidade",
     "termsOfService": "Termos de serviço",
-    "tagline": "Medicina a qualquer hora e em qualquer lugar. Consultas médicas online com médicos registados localmente em toda a Europa.",
+    "tagline": "Medicina a qualquer hora e em qualquer lugar. Consultas médicas online com médicos registados localmente nos mercados onde operamos.",
     "stayInformed": "Mantenha-se informado",
     "newsletterDesc": "Atualizações mensais de saúde sobre novos países, médicos e temas de saúde. Sem spam.",
     "subscribe": "Subscrever",
@@ -78,7 +78,7 @@
     "disclaimer": "As consultas online não substituem os cuidados de emergência. Se precisar de ajuda urgente, ligue 112 ou o número de emergência local. A informação neste website é orientação geral; prescrições, certificados, referências e próximos passos dependem de avaliação clínica e são emitidos à discrição do médico.",
     "copyrightSuffix": "Medicina a qualquer hora e em qualquer lugar",
     "privacyLink": "Privacidade",
-    "euCompliant": "Prestador de telemedicina registado na UE · Conforme com o RGPD"
+    "euCompliant": "Plataforma de telemedicina licenciada · Conforme com o RGPD"
   },
   "countrySelector": {
     "title": "Escolha o seu país",
@@ -102,7 +102,7 @@
     "trustSecure": "Consultas online seguras",
     "trustLocal": "Cuidados de saúde específicos do país",
     "trustGdpr": "Cuidados conformes com o RGPD",
-    "euProvider": "Prestador de telemedicina registado na UE",
+    "euProvider": "Plataforma de telemedicina licenciada",
     "gdprNote": "Conforme com o RGPD · Médicos registados localmente"
   },
   "cta": {
