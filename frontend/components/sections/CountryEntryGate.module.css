@@ -220,8 +220,13 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  max-height: min(760px, calc(100dvh - 168px));
+  /* No viewport cap and no inner scroll: the panel renders at its natural
+     height and is scaled down to fit as one piece (like object-fit: contain)
+     by the fit-to-viewport effect in CountryEntryGate.tsx — see --gate-fit.
+     overflow:hidden stays only to clip the globe's square top corners. */
   overflow: hidden;
+  transform: scale(var(--gate-fit, 1));
+  transform-origin: top center;
   border-radius: 28px;
   background: rgba(8, 33, 27, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -266,9 +271,8 @@
   position: relative;
   flex: 1 1 auto;
   min-height: 0;
-  /* .selectPanel is height-capped with overflow:hidden; on short viewports the
-     body scrolls internally instead of clipping the country list. */
-  overflow-y: auto;
+  /* No internal scroll — the panel scales to fit (see .selectPanel). */
+  overflow: visible;
   padding: clamp(20px, 2.2vw, 30px);
 }
 
@@ -342,10 +346,13 @@
 .countryScroller {
   display: grid;
   min-height: 0;
-  max-height: 220px;
+  /* Show ~3 country cards (card ~50px + 10px gap), then scroll the rest.
+     ~3 cards + a sliver of the 4th peeking to signal scrollability. The extra
+     top/left padding is a buffer so overflow clipping never shaves the first
+     card's top border, hover lift (translateY(-2px)) or focus outline. */
+  max-height: 196px;
   margin-top: 14px;
-  padding-right: 8px;
-  padding-bottom: 2px;
+  padding: 6px 8px 4px 2px;
   gap: 10px;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -535,6 +542,25 @@
   color: rgba(255, 255, 255, 0.4);
 }
 
+/* Below the 1024px two-column grid the panel is not pinned beside the hero, so
+   the whole page scrolls. Nothing inside the panel should open its own
+   scrollbar (that stacked a nested list-scroll on top of the page scroll).
+   Everything flows to natural height; the globe shrinks with viewport height so
+   short screens fit with minimal page scroll instead of crushing the list. */
+@media (max-width: 1023px) {
+  .selectPanel {
+    max-height: none;
+  }
+
+  .panelBody {
+    overflow: visible;
+  }
+
+  .globeStage {
+    height: clamp(130px, 20dvh, 220px);
+  }
+}
+
 @media (max-width: 767px) {
   .root {
     min-height: 100dvh;
@@ -555,49 +581,50 @@
   }
 
   .globeStage {
-    height: 250px;
+    height: clamp(150px, 26dvh, 250px);
   }
 
   .countryGlobe {
     top: -8px;
     width: min(360px, 104%);
   }
-
-  .countryScroller {
-    max-height: min(330px, 46dvh);
-  }
 }
 
-@media (min-width: 1024px) and (max-height: 940px) {
+@media (min-width: 1024px) and (max-height: 1040px) {
   .root {
     min-height: 100dvh;
     overflow-y: auto;
   }
 
   .header {
-    padding-top: 16px;
-    padding-bottom: 12px;
+    padding-top: 12px;
+    padding-bottom: 8px;
   }
 
   .logo {
-    height: clamp(52px, 4vw, 60px);
+    height: clamp(44px, 3.4vw, 52px);
   }
 
   .body {
-    padding-top: 8px;
-    padding-bottom: 12px;
+    padding-top: 4px;
+    padding-bottom: 8px;
+  }
+
+  .eyebrow {
+    margin-bottom: 10px;
   }
 
   .heroTitle {
-    font-size: clamp(36px, 4vw, 58px);
+    font-size: clamp(32px, 3.6vw, 52px);
   }
 
   .heroLead {
-    margin-top: 18px;
+    margin-top: 12px;
   }
 
   .trustList {
-    margin-top: 24px;
+    margin-top: 14px;
+    gap: 10px 24px;
   }
 
   .globeStage {
@@ -618,7 +645,8 @@
   }
 
   .countryScroller {
-    max-height: min(224px, 28dvh);
+    /* Cards are padded larger (14px) in this band, so ~3 rows need more room. */
+    max-height: 220px;
     margin-top: 12px;
   }
 
@@ -627,7 +655,7 @@
   }
 
   .footer {
-    padding-top: 8px;
-    padding-bottom: 12px;
+    padding-top: 6px;
+    padding-bottom: 8px;
   }
 }

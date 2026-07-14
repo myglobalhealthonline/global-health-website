@@ -14,7 +14,7 @@
  * default locale when it doesn't support the detected one).
  */
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { ArrowRight, ShieldCheck, Lock, Globe2, FileCheck2, Search } from "lucide-react";
 import type { CountryConfig } from "@/data/countries";
@@ -120,6 +120,8 @@ function matchNavigatorLocale(): LocaleCode | null {
 
 export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
   const [countryQuery, setCountryQuery] = useState("");
+  const panelSlotRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   // Replay the slug registry so client slug helpers resolve admin-added codes.
   registerCountrySlugs(countries);
@@ -138,6 +140,55 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
       /* cookie unavailable — server-detected locale still applies */
     }
   }, [detectedLocale]);
+
+  // Scale the country panel down as one piece (like object-fit: contain) so it
+  // fits the viewport with no inner scrollbar and nothing clipped. Two-column
+  // only (>=1024px): below that the layout is single-column and the page scrolls
+  // naturally, so scaling is left off. Only ever scales DOWN; floors at 0.72 to
+  // keep text legible (below that the page scrolls the small remainder).
+  useEffect(() => {
+    const slot = panelSlotRef.current;
+    const panel = panelRef.current;
+    const grid = slot?.parentElement;
+    if (!slot || !panel || !grid) return;
+
+    let raf = 0;
+    const apply = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        if (window.innerWidth < 1024) {
+          // Single-column: let CSS flow govern (no scaling).
+          panel.style.removeProperty("--gate-fit");
+          slot.style.removeProperty("height");
+          return;
+        }
+        // offsetHeight is the UNSCALED layout height (ignores the transform),
+        // so measuring never feeds back into the scale it produces.
+        const natural = panel.offsetHeight;
+        if (!natural) return;
+        // Anchor on the grid top, not the panel's own (centered) top — the grid
+        // top is fixed by the header above it, so shrinking the panel can't move
+        // the reference and oscillate the result.
+        const top = grid.getBoundingClientRect().top;
+        const avail = window.innerHeight - top - 24;
+        const fit = Math.max(0.72, Math.min(1, avail / natural));
+        panel.style.setProperty("--gate-fit", fit.toFixed(4));
+        // Reserve the scaled height so the footer/page flow beneath it.
+        slot.style.height = `${Math.round(natural * fit)}px`;
+      });
+    };
+
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(panel);
+    window.addEventListener("resize", apply);
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", apply);
+    };
+    // ResizeObserver on the panel catches list-length/content changes itself.
+  }, []);
 
   function enter(country: CountryConfig) {
     const slug = country.slug || countrySlug(country.code);
@@ -267,8 +318,8 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
             </div>
 
             {/* Right — country selection panel */}
-            <HeroReveal delay={260} className="min-w-0">
-              <div className={styles.selectPanel}>
+            <div ref={panelSlotRef} className="min-w-0">
+              <div ref={panelRef} className={styles.selectPanel}>
                 <div aria-hidden className={styles.globeStage}>
                   <Globe
                     markers={globeMarkers}
@@ -330,7 +381,7 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
                   </div>
                 </div>
               </div>
-            </HeroReveal>
+            </div>
           </div>
         </div>
       </section>
