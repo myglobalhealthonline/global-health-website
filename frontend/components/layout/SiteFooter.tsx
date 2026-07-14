@@ -107,16 +107,22 @@ export function SiteFooter({
     if (!activeFeatures) return true; // no toggle data → assume on (legacy default)
     return activeFeatures.includes(slug);
   };
-  const bookHref =
-    parsed.country && parsed.lang
-      ? buildBookHref({ country: parsed.country, lang: parsed.lang })
-      : "/";
+  // Care links must always resolve to a real service page. Inside a country
+  // they use that country's scope; on global pages (/about, /blog, /faq…)
+  // parsed.country/lang are null — fall back to Ireland/en so the links point
+  // at live pages instead of dumping every visitor back on the homepage.
+  // (careBase stays null-on-global for isFeatureEnabled + the Company-column
+  // legal links, which have no global variant.)
+  const careCountry = parsed.country ?? "ireland";
+  const careLang = parsed.lang ?? "en";
+  const careScope = `/${careCountry}/${careLang}`;
+  const bookHref = buildBookHref({ country: careCountry, lang: careLang });
   const careLinks = [
     { label: navigation.navBookAppointment, href: bookHref },
     ...CARE_FIELDS.flatMap((entry) =>
       entry.flag !== null && !isFeatureEnabled(entry.flag)
         ? []
-        : [{ label: navigation[entry.labelKey] as string, href: careBase ? `${careBase}/${entry.slug}` : "/" }],
+        : [{ label: navigation[entry.labelKey] as string, href: `${careScope}/${entry.slug}` }],
     ),
   ];
 

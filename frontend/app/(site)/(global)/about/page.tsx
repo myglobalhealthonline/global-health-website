@@ -1,18 +1,86 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, ShieldCheck, Stethoscope, Globe2, Clock, BadgeCheck, Users } from "lucide-react";
-import { SITE_NAME } from "@/lib/constants";
+import { ArrowUpRight, ShieldCheck, Stethoscope, Globe2, Clock, BadgeCheck, Users, ChevronDown } from "lucide-react";
 import { PageHero } from "@/components/sections/PageHero";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
+import { pageMetadata, ROUTE_SEO } from "@/lib/seo/page-seo";
+import { getSiteUrl } from "@/lib/seo/site-url";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
 
-export const metadata: Metadata = {
-  title: `About | ${SITE_NAME}`,
-  description:
-    "Global Health is a European telemedicine platform connecting patients with locally-licensed doctors. Medicine Anytime Anywhere.",
-};
+const ABOUT_URL = `${getSiteUrl()}/about`;
+
+// title.absolute skips the root layout's `%s · Global Health` template so the
+// brand isn't duplicated (the route title already leads with "About Global
+// Health"). Canonical + hreflang (en / x-default) are set here because /about
+// is an English-only global page with no per-market variant.
+export const metadata: Metadata = pageMetadata("/about", {
+  title: { absolute: ROUTE_SEO["/about"].title },
+  alternates: {
+    canonical: ABOUT_URL,
+    languages: { en: ABOUT_URL, "x-default": ABOUT_URL },
+  },
+});
+
+// Six live markets, each linked to its market home so the About page passes
+// PageRank down the hierarchy (SEO brief item 22). Flag code ≠ market name for
+// Czech Republic (flag "cz").
+const MARKETS: ReadonlyArray<{ code: string; name: string; href: string }> = [
+  { code: "ie", name: "Ireland", href: "/ireland/en" },
+  { code: "pt", name: "Portugal", href: "/portugal/pt" },
+  { code: "es", name: "Spain", href: "/spain/es" },
+  { code: "cz", name: "Czech Republic", href: "/czechia/cs" },
+  { code: "ro", name: "Romania", href: "/romania/ro" },
+  { code: "br", name: "Brazil", href: "/brazil/pt" },
+];
+
+// Verifiable company facts for journalists/investors hitting /about (brief
+// section 6). Registry numbers + names are locale-independent, so this block
+// is authored once in English.
+const COMPANY_FACTS: ReadonlyArray<{ label: string; value: string }> = [
+  { label: "Founded", value: "2023 — Global Guest s.r.o. (IČO: 19071680), Czech Republic" },
+  { label: "Ireland branch", value: "2024 — Global Health (CRO 910267), Ireland" },
+  { label: "Markets", value: "Ireland · Portugal · Spain · Czech Republic · Romania · Brazil" },
+  { label: "Doctors", value: "60+ GPs and specialists across all markets" },
+  { label: "Consultations", value: "45,000+ consultations delivered in 2025" },
+  { label: "Headquarters", value: "Prague, Czech Republic" },
+  { label: "Operations", value: "Dublin · Lisbon · Prague" },
+  { label: "Contact", value: "info@myglobalhealth.online" },
+];
+
+// SEO/GEO/AEO-optimised FAQ (brief section 7). Single source of truth: this
+// same array feeds both the visible <details> list and the FAQPage JSON-LD, so
+// the schema always mirrors on-page content (Google's FAQ requirement).
+const FAQ_ITEMS: ReadonlyArray<{ question: string; answer: string }> = [
+  {
+    question: "Is Global Health a regulated healthcare provider?",
+    answer:
+      "Yes. All doctors on the Global Health platform are registered with the national medical council in their country. Registration numbers are displayed on every doctor profile and are independently verifiable on the relevant medical council website. Global Health is operated by Global Guest s.r.o. (IČO: 19071680), registered in the Czech Republic, with a branch registered in Ireland (CRO 910267). Patient data is processed in compliance with the applicable data protection legislation in each market, including GDPR in Europe.",
+  },
+  {
+    question: "Which countries does Global Health operate in?",
+    answer:
+      "Global Health currently operates across multiple markets in Europe and Latin America, including Ireland, Portugal, Spain, Czech Republic, Romania and Brazil. New markets are added as the platform grows. Consultations are available in English, Portuguese, Spanish, Czech, Romanian, Arabic, Urdu and more, subject to clinician availability.",
+  },
+  {
+    question: "Are the doctors on Global Health real licensed doctors?",
+    answer:
+      "Yes. Every doctor on the Global Health platform is individually named, photographed, and registered with the national medical council in their country — for example, the Irish Medical Council (IMC) in Ireland or the Conselho Federal de Medicina (CFM) in Brazil. Registration numbers are displayed on every doctor profile and are independently verifiable on the relevant medical council website. There are no anonymous rotas and no call centres — the doctor on the profile is the doctor on the call.",
+  },
+  {
+    question: "How does booking and payment work on Global Health?",
+    answer:
+      "Booking an online consultation with Global Health takes three steps. Choose your market and service, select a doctor and an available time slot, and pay securely at checkout — your consultation is confirmed once payment is complete. Stripe handles all payments. Prices are shown in full before you book — no hidden fees, no membership required for pay-per-consultation services.",
+  },
+  {
+    question: "Is my health data safe with Global Health?",
+    answer:
+      "Yes. All patient data is processed in EU data centres and handled in compliance with the applicable data protection legislation in each market — including GDPR in Europe. Data is never sold, never shared with insurers, and never used for advertising. The only people who can access your clinical records are you and the doctor on your call. Our Data Protection Officer can be contacted at dpo@myglobalhealth.online.",
+  },
+];
 
 export default async function AboutPage() {
   const locale = await getPageLocale();
@@ -53,7 +121,7 @@ export default async function AboutPage() {
       />
 
       {/* LIGHT — three pillars */}
-      <section className="gh-inline-clamp-section-pricing border-t border-[rgba(29,75,54,0.10)] bg-[var(--color-background-soft)]">
+      <section className="gh-inline-clamp-section-pricing relative overflow-hidden border-t border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <p
             className="gh-eyebrow text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-primary)]"
@@ -91,48 +159,86 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* DARK — how we work */}
-      <section
-        className="gh-inline-clamp-section-pricing gh-medical-pattern gh-medical-pattern-dark border-t border-white/7 gh2-section-forest"
-      >
+      {/* DARK — mission / why we built this */}
+      <section className="gh-inline-clamp-section-pricing relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark border-t border-white/7 gh2-section-forest">
+        <div className="mx-auto grid max-w-[var(--container-width)] gap-12 px-5 md:px-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-accent)]">
+              Why we built this
+            </p>
+            <h2 className="mt-4 text-[clamp(1.75rem,3vw+0.5rem,2.75rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-white/92">
+              Medicine Anytime Anywhere isn&rsquo;t just a tagline &mdash;{" "}
+              <span className="text-[var(--color-brand-accent)]">it&rsquo;s a design principle.</span>
+            </h2>
+            <p className="mt-6 inline-flex items-center gap-2 text-[length:var(--text-meta)] font-semibold uppercase tracking-[0.14em] text-white/55">
+              <BadgeCheck className="size-4 text-[var(--color-brand-accent)]" strokeWidth={2} aria-hidden />
+              Founded 2023 · Prague
+            </p>
+          </div>
+          <div className="space-y-5 text-[length:var(--text-body)] leading-relaxed text-white/70">
+            <p>
+              For the patient who moved countries and can&rsquo;t find a doctor who speaks their
+              language or understands their health history. For the professional whose schedule
+              makes a 9am GP appointment impossible. For the parent trying to get their child seen
+              without taking a day off work. For the person who simply shouldn&rsquo;t have to wait
+              three weeks for something that takes twenty minutes.
+            </p>
+            <p>
+              We built Global Health to close the gap between the healthcare system people have and
+              the healthcare experience they deserve. Founded in 2023 in Prague, operating across
+              multiple markets in Europe and Latin America, Global Health connects patients with
+              locally-registered doctors who work within the same regulatory framework as a GP or
+              specialist in their country.
+            </p>
+            <p className="font-medium text-white/90">
+              Acting local at a global scale. A place where patients feel comfortable with their
+              healthcare wherever they are &mdash; whether they&rsquo;ve lived there all their life
+              or just arrived. Trusted, efficient, safe, and built for real people.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* LIGHT — how we work */}
+      <section className="gh-inline-clamp-section-pricing relative overflow-hidden border-t border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
             <div>
               <p
-                className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-accent)]"
+                className="gh-eyebrow text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-primary)]"
               >
                 {about.steps_eyebrow}
               </p>
               <h2
-                className="mt-4 text-[clamp(1.75rem,3vw+0.5rem,2.75rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-white"
+                className="mt-4 text-[clamp(1.75rem,3vw+0.5rem,2.75rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-[var(--color-text-primary)]"
               >
                 {about.steps_headline_pre}{" "}
-                <span className="text-[var(--color-brand-accent)]">{about.steps_headline_accent}</span>
+                <span className="text-[var(--color-brand-primary)]">{about.steps_headline_accent}</span>
                 {about.steps_headline_post}
               </h2>
             </div>
             <div className="space-y-8">
-              <DarkStep num="01" title={about.s1_title} body={about.s1_body} />
-              <DarkStep num="02" title={about.s2_title} body={about.s2_body} />
-              <DarkStep num="03" title={about.s3_title} body={about.s3_body} />
-              <DarkStep num="04" title={about.s4_title} body={about.s4_body} />
+              <Step num="01" title={about.s1_title} body={about.s1_body} />
+              <Step num="02" title={about.s2_title} body={about.s2_body} />
+              <Step num="03" title={about.s3_title} body={about.s3_body} />
+              <Step num="04" title={about.s4_title} body={about.s4_body} />
             </div>
           </div>
         </div>
       </section>
 
-      {/* LIGHT — coverage */}
-      <section className="gh-inline-clamp-section-cta border-t border-[rgba(29,75,54,0.10)] bg-[var(--color-background-soft)]">
+      {/* DARK — coverage */}
+      <section className="gh-inline-clamp-section-cta relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark border-t border-white/7 gh2-section-forest">
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div>
               <p
-                className="gh-eyebrow text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-primary)]"
+                className="text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-accent)]"
               >
                 {about.coverage_eyebrow}
               </p>
               <h2
-                className="mt-3 max-w-[16ch] text-[clamp(1.75rem,3vw+0.5rem,2.75rem)] font-extrabold leading-[1.05] tracking-[-0.025em] text-[var(--color-text-primary)]"
+                className="mt-3 max-w-[16ch] text-[clamp(1.75rem,3vw+0.5rem,2.75rem)] font-extrabold leading-[1.05] tracking-[-0.025em] text-white/92"
               >
                 {about.coverage_headline}
               </h2>
@@ -145,32 +251,107 @@ export default async function AboutPage() {
               <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
             </Link>
           </div>
-          <ul className="mt-10 grid gap-2 sm:grid-cols-3 lg:grid-cols-5 text-[length:var(--text-meta)]">
-            {[
-              { code: "ie", name: "Ireland" },
-              { code: "pt", name: "Portugal" },
-              { code: "es", name: "Spain" },
-              { code: "cz", name: "Czechia" },
-              { code: "ro", name: "Romania" },
-            ].map((c) => (
-              <li
-                key={c.code}
-                className="flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-[rgba(29,75,54,0.12)] bg-white/70 px-4 py-3"
-              >
-                <span aria-hidden className={`fi fi-${c.code} inline-block text-xl leading-none`} />
-                <span className="font-semibold text-[var(--color-text-primary)]">
-                  {c.name}
-                </span>
-                <Globe2
-                  className="ml-auto size-4 text-[rgba(29,75,54,0.35)]"
-                  strokeWidth={1.5}
-                  aria-hidden
-                />
+          <ul className="mt-10 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 text-[length:var(--text-meta)]">
+            {MARKETS.map((c) => (
+              <li key={c.code}>
+                <Link
+                  href={c.href}
+                  className="group flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-white/10 bg-white/[0.04] px-4 py-3 transition-colors hover:border-white/20 hover:bg-white/[0.08]"
+                >
+                  <span aria-hidden className={`fi fi-${c.code} inline-block text-xl leading-none`} />
+                  <span className="font-semibold text-white/90">
+                    {c.name}
+                  </span>
+                  <ArrowUpRight
+                    className="ml-auto size-4 text-white/40 transition-colors group-hover:text-[var(--color-brand-accent)]"
+                    strokeWidth={1.5}
+                    aria-hidden
+                  />
+                </Link>
               </li>
             ))}
           </ul>
         </div>
       </section>
+
+      {/* LIGHT — company facts / at a glance */}
+      <section className="gh-inline-clamp-section-pricing relative overflow-hidden border-t border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <p className="gh-eyebrow text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-primary)]">
+            Company
+          </p>
+          <h2 className="mt-3 max-w-[18ch] text-[clamp(1.75rem,3vw+0.5rem,2.75rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-[var(--color-text-primary)]">
+            Global Health at a glance
+          </h2>
+          <dl className="mt-12 grid gap-x-12 sm:grid-cols-2">
+            {COMPANY_FACTS.map((f) => (
+              <div
+                key={f.label}
+                className="grid gap-1 border-t border-[rgba(29,75,54,0.12)] py-5 sm:grid-cols-[9rem_1fr] sm:items-baseline sm:gap-6"
+              >
+                <dt className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
+                  {f.label}
+                </dt>
+                <dd className="text-[length:var(--text-body)] leading-relaxed text-[var(--color-text-primary)]">
+                  {f.label === "Contact" ? (
+                    <a
+                      href={`mailto:${f.value}`}
+                      className="underline decoration-[rgba(29,75,54,0.3)] underline-offset-4 transition-colors hover:decoration-[var(--color-brand-primary)]"
+                    >
+                      {f.value}
+                    </a>
+                  ) : (
+                    f.value
+                  )}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      {/* DARK — FAQ */}
+      <section className="gh-inline-clamp-section-pricing relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark border-t border-white/7 gh2-section-forest">
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <p className="text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-accent)]">
+            Frequently asked questions
+          </p>
+          <h2 className="mt-3 max-w-[20ch] text-[clamp(1.75rem,3vw+0.5rem,2.75rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-white/92">
+            The answers people ask for most.
+          </h2>
+          <div className="mt-10 max-w-[820px] rounded-[var(--radius-card)] border border-white/10 bg-white/[0.03] px-5 sm:px-7">
+            {FAQ_ITEMS.map((item) => (
+              <details
+                key={item.question}
+                className="group border-t border-white/10 py-5 first:border-t-0"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[1.0625rem] font-extrabold tracking-[-0.01em] text-white/90 [&::-webkit-details-marker]:hidden">
+                  {item.question}
+                  <ChevronDown
+                    className="size-5 shrink-0 text-[var(--color-brand-accent)] transition-transform duration-200 group-open:rotate-180"
+                    strokeWidth={2}
+                    aria-hidden
+                  />
+                </summary>
+                <p className="mt-3 max-w-[72ch] text-[length:var(--text-body)] leading-relaxed text-white/70">
+                  {item.answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Structured data — breadcrumb + FAQ (schema mirrors the visible FAQ above) */}
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", url: "/" },
+            { name: "About", url: "/about" },
+          ]),
+          faqJsonLd(FAQ_ITEMS.map((f) => ({ question: f.question, answer: f.answer }))),
+        ]}
+      />
 
       {/* Doctify — independent verified patient reviews, full grid */}
       <DoctifyReviewsSection
@@ -189,7 +370,7 @@ function AboutArchPanel({ locale }: { locale: { float1_title: string; float1_sub
     <div className="relative mx-auto aspect-square w-full max-w-[600px]">
       <HeroPlusImage
         src="/images/stock/about.jpg"
-        alt="Telemedicine care team reviewing a secure digital health dashboard"
+        alt="Global Health telemedicine platform — online doctor consultations across multiple markets"
       />
 
       {/* Floating — Five countries */}
@@ -271,7 +452,7 @@ function Pillar({
   );
 }
 
-function DarkStep({
+function Step({
   num,
   title,
   body,
@@ -282,21 +463,21 @@ function DarkStep({
 }) {
   return (
     <article
-      className="grid gap-5 border-t border-white/8 pt-8 sm:grid-cols-[auto_1fr] sm:gap-7"
+      className="grid gap-5 border-t border-[rgba(29,75,54,0.12)] pt-8 sm:grid-cols-[auto_1fr] sm:gap-7"
     >
       <span
-        className="text-[2rem] font-extrabold leading-none tracking-[-0.03em] text-[var(--color-brand-accent)] [font-variant-numeric:tabular-nums]"
+        className="text-[2rem] font-extrabold leading-none tracking-[-0.03em] text-[var(--color-brand-primary)] [font-variant-numeric:tabular-nums]"
       >
         {num}
       </span>
       <div>
         <h3
-          className="text-lg font-extrabold tracking-[-0.01em] text-white/90"
+          className="text-lg font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]"
         >
           {title}
         </h3>
         <p
-          className="mt-2 max-w-[56ch] text-[length:var(--text-body)] leading-relaxed text-white/70"
+          className="mt-2 max-w-[56ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-text-muted)]"
         >
           {body}
         </p>
