@@ -38,6 +38,7 @@ export function PortalReturnBand({
         // Private browsing / storage blocked — the band just won't survive
         // to later steps; step 1 already showed it via the prop above.
       }
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reads browser-only sessionStorage, must run post-mount for SSR-safety
       setShow(true);
       return;
     }

@@ -203,13 +203,10 @@ export function PortalShell({
   const c = chrome ?? DEFAULT_CHROME;
   const [navOpen, setNavOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(notificationsUnreadCount);
-  // Re-sync from the server prop on every real navigation/reload (source of
-  // truth); mark-read actions below additionally update it optimistically
-  // in between, independent of whether router.refresh() re-ran this layout.
-  useEffect(() => {
-    setUnreadCount(notificationsUnreadCount);
-  }, [notificationsUnreadCount]);
+  // Seeded once from the server-rendered prop (source of truth on first
+  // mount); mark-read actions below update it optimistically from real
+  // events afterwards, rather than re-mirroring the prop on every render.
+  const [unreadCount, setUnreadCount] = useState(() => notificationsUnreadCount);
   const pathname = usePathname();
   const breadcrumbs = useBreadcrumbs(pathname, rootHref, rootBreadcrumb);
   const navRef = useRef<HTMLElement | null>(null);

@@ -179,7 +179,6 @@ export function ConsultationBookingForm({
   // re-validates coverage + the doctor's network membership and re-derives the
   // price.
   const [insurancePolicyNumber, setInsurancePolicyNumber] = useState("");
-  const insuranceCompanyId = selectedInsurance?.companyId ?? "";
   // The insurance price only "reveals" once the patient has entered their card
   // number, mirroring the requirement that the price updates when they provide
   // their insurance details.

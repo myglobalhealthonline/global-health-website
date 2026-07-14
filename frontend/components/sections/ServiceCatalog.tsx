@@ -294,10 +294,12 @@ export function ServiceCatalog({
  *  Buttons mirror the site-wide CTA pair: lime primary with glow + outline
  *  secondary that fills on hover. */
 function TileActions({
+  title,
   detailHref,
   bookHref,
   bookLabel,
 }: {
+  title: string;
   detailHref: string;
   bookHref: string;
   bookLabel: string;
@@ -306,6 +308,7 @@ function TileActions({
     <div className="relative z-[var(--z-raised)] mt-4 flex gap-2.5">
       <Link
         href={detailHref}
+        aria-label={`Learn more: ${title}`}
         className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-full border border-white/25 bg-white/[0.06] px-3 text-[13px] font-bold tracking-[-0.005em] text-white/90 transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)] focus-visible:outline-none"
       >
         Learn more
@@ -313,6 +316,7 @@ function TileActions({
       </Link>
       <Link
         href={bookHref}
+        aria-label={`${bookLabel}: ${title}`}
         className="inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-full px-3 text-[13px] font-extrabold tracking-[-0.005em] transition-[transform,filter] duration-200 hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0"
         style={{
           background: "var(--color-brand-accent)",
@@ -468,7 +472,7 @@ export function ServiceTile({
             </div>
 
             {twoButton ? (
-              <TileActions detailHref={s.detailHref!} bookHref={s.bookHref!} bookLabel={bookLabel} />
+              <TileActions title={s.title} detailHref={s.detailHref!} bookHref={s.bookHref!} bookLabel={bookLabel} />
             ) : (
               <span
                 className="
@@ -523,7 +527,10 @@ export function ServiceTile({
               alt={`${s.title} telemedicine consultation`}
               fill
               sizes="(min-width:1024px) 33vw, (min-width:768px) 50vw, 100vw"
-              unoptimized={/^https?:\/\//i.test(tileImageSrc) || tileImageSrc.startsWith("/api/media/")}
+              unoptimized={
+                /^https?:\/\//i.test(tileImageSrc) &&
+                !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(tileImageSrc)
+              }
               className="object-cover"
             />
             <span
@@ -623,7 +630,7 @@ export function ServiceTile({
           </div>
 
           {twoButton ? (
-            <TileActions detailHref={s.detailHref!} bookHref={s.bookHref!} bookLabel={bookLabel} />
+            <TileActions title={s.title} detailHref={s.detailHref!} bookHref={s.bookHref!} bookLabel={bookLabel} />
           ) : (
             <span
               className="

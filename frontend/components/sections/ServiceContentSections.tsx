@@ -25,7 +25,7 @@ function sectionClass(theme: Theme): string {
     : "relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel";
 }
 
-function sectionStyle(theme: Theme): React.CSSProperties {
+function sectionStyle(): React.CSSProperties {
   return {
     padding: "clamp(56px,7vw,104px) 0",
   };
@@ -73,7 +73,7 @@ export function ServiceIntro({
   theme?: Theme;
 }) {
   return (
-    <section className={sectionClass(theme)} style={sectionStyle(theme)}>
+    <section className={sectionClass(theme)} style={sectionStyle()}>
       <SectionSeam theme={isDark(theme) ? "dark" : "light"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
@@ -110,7 +110,7 @@ export function ChecklistSection({
 }) {
   const dark = isDark(theme);
   return (
-    <section className={sectionClass(theme)} style={sectionStyle(theme)}>
+    <section className={sectionClass(theme)} style={sectionStyle()}>
       <SectionSeam theme={dark ? "dark" : "light"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
@@ -182,7 +182,7 @@ export function WhyChooseSection({
 }) {
   const dark = isDark(theme);
   return (
-    <section className={sectionClass(theme)} style={sectionStyle(theme)}>
+    <section className={sectionClass(theme)} style={sectionStyle()}>
       <SectionSeam theme={dark ? "dark" : "light"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
@@ -244,7 +244,7 @@ export function ProcessStepsSection({
 }) {
   const dark = isDark(theme);
   return (
-    <section className={sectionClass(theme)} style={sectionStyle(theme)}>
+    <section className={sectionClass(theme)} style={sectionStyle()}>
       <SectionSeam theme={dark ? "dark" : "light"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
@@ -300,7 +300,7 @@ export function ImportantInfoSection({
   theme?: Theme;
 }) {
   return (
-    <section className={sectionClass(theme)} style={sectionStyle(theme)}>
+    <section className={sectionClass(theme)} style={sectionStyle()}>
       <SectionSeam theme={isDark(theme) ? "dark" : "light"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <div

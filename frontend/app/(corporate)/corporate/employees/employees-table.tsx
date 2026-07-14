@@ -88,6 +88,10 @@ export function EmployeesTable({
 
   useEffect(() => {
     if (!selected) {
+      // Reset is tied to the async fetch below (same effect owns both); a
+      // clean derivation would need a bigger data-fetching refactor
+      // (cache/suspense) than this lint fix warrants.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDetail(null);
       return;
     }

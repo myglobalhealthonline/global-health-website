@@ -31,6 +31,7 @@ interface RevealOnScrollProps {
   style?: CSSProperties;
   threshold?: number;
   rootMargin?: string;
+  role?: string;
 }
 
 const EASING = "cubic-bezier(0.16, 1, 0.3, 1)";
@@ -45,6 +46,7 @@ export function RevealOnScroll({
   style,
   threshold = 0.08,
   rootMargin = "-48px 0px",
+  role,
 }: RevealOnScrollProps) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -96,7 +98,7 @@ export function RevealOnScroll({
   }, [stagger, delay, threshold, rootMargin]);
 
   return (
-    <div ref={ref} className={className} style={style}>
+    <div ref={ref} className={className} style={style} role={role}>
       {children}
     </div>
   );

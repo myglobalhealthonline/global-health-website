@@ -159,7 +159,6 @@ function SlotCard({
     // Reset local edit state when a fresh `doc` snapshot arrives from the server.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setForm(doc ? docToForm(doc) : EMPTY_FORM);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCountryTouched(false);
   }, [doc]);
 

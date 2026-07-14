@@ -27,6 +27,7 @@ export function CookieBanner() {
 
   useEffect(() => {
     purgeLegacyConsent();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reads browser-only consent storage, must run post-mount for SSR-safety
     setLocale(readClientLocale());
     if (!readConsent()) setVisible(true);
 

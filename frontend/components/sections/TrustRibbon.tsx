@@ -62,6 +62,7 @@ export function TrustRibbon({ items, theme = "light" }: { items?: TrustRibbonIte
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <RevealOnScroll
           stagger
+          role="list"
           className={isLight ? "grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-5" : "grid grid-cols-2 lg:grid-cols-4"}
         >
           {list.map((it, i) => {

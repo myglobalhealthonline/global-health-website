@@ -40,6 +40,7 @@ function useNearViewport(rootMargin = "300px") {
   useEffect(() => {
     if (near) return;
     if (typeof IntersectionObserver === "undefined") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- IntersectionObserver unavailable, fall back to eager mount, must run post-mount
       setNear(true);
       return;
     }

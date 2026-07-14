@@ -41,6 +41,7 @@ export function PortalDialog({
   // (lux glass cards use backdrop-filter/transform, which would otherwise trap it
   // behind sibling cards). Mount-gated to stay SSR-safe.
   const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR-safe mount flag, must run post-hydration
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {

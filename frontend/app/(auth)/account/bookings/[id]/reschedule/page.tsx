@@ -79,6 +79,7 @@ export default async function RescheduleAppointmentPage({
   // backend rejects it too (AppointmentAlreadyStartedError). An unscheduled
   // request (scheduledAt === null) has no time to be late for, so it passes.
   const scheduledMs = appointment.scheduledAt ? Date.parse(appointment.scheduledAt) : NaN;
+  // eslint-disable-next-line react-hooks/purity -- Server Component: evaluated once per request, no client re-render
   if (Number.isFinite(scheduledMs) && scheduledMs <= Date.now()) {
     return (
       <div className="gh-patient-page">

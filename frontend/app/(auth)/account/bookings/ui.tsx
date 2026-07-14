@@ -258,14 +258,13 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
   const [payingId, setPayingId] = useState<string | null>(null);
   const [payError, setPayError] = useState<string | null>(null);
   const [paymentRedirectUrl, setPaymentRedirectUrl] = useState<string | null>(null);
-  // Starts at 0 so the server-rendered HTML and the first client render agree
-  // (every real slot is "in the future" against 0); the effect below swaps in
-  // the real clock after mount and re-ticks so a slot that lapses while the
-  // page is open drops its Reschedule action without a refresh.
-  const [nowMs, setNowMs] = useState(0);
+  // Lazy-initialized to the real clock so no separate effect is needed just
+  // to set the first value; the effect below only re-syncs the clock every
+  // 30s so a slot that lapses while the page is open drops its Reschedule
+  // action without a refresh.
+  const [nowMs, setNowMs] = useState(() => Date.now());
 
   useEffect(() => {
-    setNowMs(Date.now());
     const timer = setInterval(() => setNowMs(Date.now()), 30_000);
     return () => clearInterval(timer);
   }, []);
@@ -352,7 +351,7 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
         (item.orderNumber ?? "").toLowerCase().includes(term)
       );
     });
-  }, [items, search, status]);
+  }, [items, search, status, i18n]);
 
   const unpaidItems = useMemo(() => items.filter(requiresPayment), [items]);
 

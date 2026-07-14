@@ -11,6 +11,7 @@
  * comes in as a prop so this file doesn't force a client boundary.
  */
 
+import Image from "next/image";
 import Link from "next/link";
 import { countries as staticCountries, type CountryConfig } from "@/data/countries";
 import {
@@ -204,10 +205,11 @@ export function SiteFooter({
               className="gh-footer-brandLink gh-focus-on-dark inline-flex items-center"
               aria-label={siteName || "Global Health"}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src="/logos/global-health-light.png"
                 alt={siteName || "Global Health"}
+                width={399}
+                height={260}
                 className="gh-footer-logo"
               />
             </Link>

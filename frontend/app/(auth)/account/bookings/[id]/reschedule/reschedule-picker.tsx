@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Check, Loader2 } from "lucide-react";
+import { Calendar, Check } from "lucide-react";
 import { formatAppDate, formatAppDateTime, formatAppTime } from "@/lib/format-datetime";
 import { rescheduleAccountAppointment } from "@/lib/api/account-appointment-actions";
 import { AdminEmptyState, Btn } from "@/components/portal-atoms";

@@ -610,22 +610,31 @@ img {
   background: linear-gradient(270deg, #0F2E25 0%, transparent 100%);
 }
 
-/* Pulse dot — used by the live-doctor live indicator. Honours
- * prefers-reduced-motion via @keyframes gh-pulse fallback below. */
+/* Pulse dot — used by the live-doctor live indicator. Ring pulse animates
+ * transform/opacity on a ::after pseudo-element (composited, GPU-only) instead
+ * of box-shadow (paints every frame — Lighthouse "non-composited animation").
+ * Honours prefers-reduced-motion via the fallback below. */
 @keyframes gh-pulse {
-  0%, 100% { box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.18); }
-  50%      { box-shadow: 0 0 0 8px rgba(22, 163, 74, 0.05); }
+  0%   { transform: scale(1); opacity: 0.55; }
+  100% { transform: scale(2.6); opacity: 0; }
 }
 .gh-pulse-dot {
+  position: relative;
   width: 10px;
   height: 10px;
   border-radius: 999px;
   background: #16A34A;
-  box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.18);
+}
+.gh-pulse-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(22, 163, 74, 0.4);
   animation: gh-pulse 2s ease-out infinite;
 }
 @media (prefers-reduced-motion: reduce) {
-  .gh-pulse-dot { animation: none; }
+  .gh-pulse-dot::after { animation: none; }
 }
 
 /* Shared dark chrome shell — header + footer use the same forest gradient. */
@@ -3061,17 +3070,26 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   transform: scale(1.05);
 }
 
-/* Live ring — expanding lime pulse for the "Live" closer stat. */
+/* Live ring — expanding lime pulse for the "Live" closer stat. transform/opacity
+ * on ::after (composited) instead of box-shadow (paints every frame). */
 @keyframes gh2-ring {
-  0%   { box-shadow: 0 0 0 0 rgba(176, 241, 34, 0.35); }
-  70%  { box-shadow: 0 0 0 16px rgba(176, 241, 34, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(176, 241, 34, 0); }
+  0%   { transform: scale(1); opacity: 0.35; }
+  70%  { transform: scale(2.3); opacity: 0; }
+  100% { transform: scale(2.3); opacity: 0; }
 }
 .gh2-live-dot {
+  position: relative;
   width: 12px;
   height: 12px;
   border-radius: 999px;
   background: var(--color-brand-accent);
+}
+.gh2-live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(176, 241, 34, 0.35);
   animation: gh2-ring 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
 
@@ -3160,7 +3178,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 /* §Batch 3M (admin doctor mgmt), sticky form-action bar, Batches 4A-4C (doctor) + calm mode, Batch 5 (patient/account) moved to app/portal.css (portal-only) */
 
 @media (prefers-reduced-motion: reduce) {
-  .gh2-live-dot { animation: none; }
+  .gh2-live-dot::after { animation: none; }
   .gh2-zoom:hover img { transform: none; }
   .gh2-btn-lime:hover { transform: none; }
   .gh2-step:hover .gh2-step-arrow { transform: none; }

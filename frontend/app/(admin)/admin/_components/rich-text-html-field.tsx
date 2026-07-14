@@ -187,6 +187,14 @@ export function RichTextHtmlField({ name, label, helperText, initialValue, onCha
     } catch {
       // Older browsers / browsers with execCommand stubs will ignore this.
     }
+    // `syncToHidden` is a plain closure (not useCallback) recreated every
+    // render, and some consumers (e.g. market-form.tsx) pass an inline
+    // `onChange`, so its identity changes on every parent render too. Adding
+    // it here would re-run this effect — and its `rewriteEditor: true`
+    // innerHTML rewrite — on every keystroke elsewhere in the form, wiping
+    // the user's in-progress edit and cursor position. This effect must only
+    // re-sync when `initialValue` itself changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialValue]);
 
   function syncToHidden(options?: { rewriteEditor?: boolean; notify?: boolean }) {
