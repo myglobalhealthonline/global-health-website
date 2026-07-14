@@ -23,7 +23,6 @@ import {
   ChecklistSection,
   WhyChooseSection,
 } from "@/components/sections/ServiceContentSections";
-import { countries } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
@@ -44,6 +43,7 @@ import {
   themeProp,
   type PublicLocale,
 } from "@/lib/content/get-page-content";
+import { homePageExtras, overrideHomeBundle } from "@/lib/content/country-home-copy";
 import {
   getCountryDoctors,
   getCountryServices,
@@ -59,7 +59,7 @@ import { localeDisplayName } from "@/lib/i18n/locale-display";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { SITE_NAME } from "@/lib/constants";
-import { Stethoscope, Globe2, ShieldCheck, Activity } from "lucide-react";
+import { Stethoscope, ShieldCheck, Activity, Languages } from "lucide-react";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 
 type Params = { country: string; lang: string };
@@ -81,12 +81,18 @@ export async function generateMetadata({
   if (!isSupportedLocale(lang)) return { title: SITE_NAME };
 
   const { record: page } = await getPageContent(code, "HOME", lang as PublicLocale);
+  const extras = homePageExtras(code, lang);
   const url = `${getSiteUrl()}/${country}/${lang}`;
   const title =
-    page?.seoTitle ?? `${config.name} — registered doctors and specialists`;
+    page?.seoTitle ?? extras?.seoTitle ?? `${config.name} — registered doctors and specialists`;
   const description =
     page?.seoDescription ??
+    extras?.seoDescription ??
     `Licensed doctors and specialists registered to practise in ${config.name}. View profiles, credentials, specialties and languages.`;
+  // OG/Twitter may carry a distinct social-optimised variant; fall back to
+  // the page title/description otherwise.
+  const ogTitle = extras?.ogTitle ?? title;
+  const ogDescription = extras?.ogDescription ?? description;
   return {
     title: resolveBrandTitle(title),
     description,
@@ -94,13 +100,13 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       siteName: SITE_NAME,
-      title,
-      description,
+      title: ogTitle,
+      description: ogDescription,
       url,
       ...ogLocales(config, lang),
       ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
     },
-    twitter: { card: "summary_large_image", title, description },
+    twitter: { card: "summary_large_image", title: ogTitle, description: ogDescription },
   };
 }
 
@@ -125,6 +131,7 @@ function mapServiceToCatalogItem(
     price: s.basePriceCents == null ? null : Math.round(s.basePriceCents / 100),
     currency: s.currencyCode ?? "EUR",
     dur: s.durationMinutes != null ? `${s.durationMinutes} ${labels.min}` : "—",
+    description: s.summary?.trim() || null,
     // "Learn more" → service detail page; "Book" → consult doctor-pick.
     // `href` kept as the single-CTA fallback (= book) for safety.
     href: hrefs.bookHref,
@@ -162,12 +169,23 @@ export default async function CountryLangHomePage({
   params: Promise<Params>;
 }) {
   const { country: slug, lang } = await params;
-  const { home: t, services: tServices, common: cc } = loadLocaleBundle(lang as LocaleCode);
   const code = countryCodeFromSlug(slug);
   if (!code) notFound();
   const config = await getPublicCountryByCode(code);
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
+  // Layer per-country/-locale copy over the shared i18n bundle (see
+  // country-home-copy.ts). Non-overridden markets keep the generic copy.
+  const bundle = loadLocaleBundle(lang as LocaleCode);
+  const cc = bundle.common;
+  const extras = homePageExtras(code, lang);
+  const t = overrideHomeBundle(bundle.home, code, lang);
+  const tServices = extras?.servicesHeadline
+    ? {
+        ...bundle.services,
+        catalog: { ...bundle.services.catalog, headline: extras.servicesHeadline },
+      }
+    : bundle.services;
   const bookHref = buildBookHref({ country: slug, lang });
   const doctorsHref = `/${slug}/${lang}/doctors`;
 
@@ -321,6 +339,16 @@ export default async function CountryLangHomePage({
       ? { v: regulatorAbbrev, l: t.trust.gdpr, icon: "shield" }
       : { v: "GDPR", l: t.trust.gdpr, icon: "lock" };
 
+  // Cross-market "N European markets" tile replaced with a country-general
+  // "consultation languages" tile: it belongs on a single clinic's hub (a
+  // visitor booking a local doctor cares which languages they speak, not how
+  // many markets exist) and keeps the four-across layout consistent across
+  // every country page. Falls back to a GDPR tile only when a market has no
+  // languages configured, so the count stays four everywhere.
+  const languageTile: TrustRibbonItem =
+    gpLanguages.languages.length > 0
+      ? { v: String(gpLanguages.languages.length), l: t.trust.languagesSpoken, icon: "globe" }
+      : { v: "GDPR", l: t.trust.gdpr, icon: "lock" };
   const trustItems: TrustRibbonItem[] = [
     {
       v:
@@ -330,11 +358,7 @@ export default async function CountryLangHomePage({
       l: countryDoctors.length === 1 ? t.trust.licensedSingular : t.trust.licensedPlural,
       icon: "doctor",
     },
-    {
-      v: String(countries.length),
-      l: t.trust.markets,
-      icon: "globe",
-    },
+    languageTile,
     regulatorTile,
     {
       v: cc.homeCatalog.trustLive,
@@ -416,19 +440,33 @@ export default async function CountryLangHomePage({
     generalServices.length +
     specialistServices.length +
     prescriptionServices.length;
+  // Country-scoped stats: this country's registered doctors + bookable
+  // services, not the platform-wide totals — a clinic hub should state its
+  // own numbers so the count matches the doctors/services actually shown.
+  // The cross-market "European markets" card is replaced with a general
+  // "consultation languages" card (see the trust ribbon above) so the 2×2
+  // grid stays full and consistent across every country page.
+  const languageStat: StatBandItem =
+    gpLanguages.languages.length > 0
+      ? {
+          value: String(gpLanguages.languages.length),
+          label: t.trust.languagesSpoken,
+          caption: gpLanguagesSummary || undefined,
+          icon: <Languages className="size-5" strokeWidth={1.5} aria-hidden />,
+        }
+      : {
+          value: "GDPR",
+          label: t.trust.gdpr,
+          icon: <ShieldCheck className="size-5" strokeWidth={1.5} aria-hidden />,
+        };
   const statsItems: StatBandItem[] = [
     {
-      value: String(totalDoctorsAcrossEurope),
+      value: String(countryDoctors.length),
       label: t.statsBand.stat1Label,
       caption: t.statsBand.stat1Caption,
       icon: <Stethoscope className="size-5" strokeWidth={1.5} aria-hidden />,
     },
-    {
-      value: String(countries.length),
-      label: t.statsBand.stat2Label,
-      caption: t.statsBand.stat2Caption,
-      icon: <Globe2 className="size-5" strokeWidth={1.5} aria-hidden />,
-    },
+    languageStat,
     {
       value: t.statsBand.stat3Value,
       label: t.statsBand.stat3Label,
@@ -478,9 +516,9 @@ export default async function CountryLangHomePage({
         ]}
       />
 
-      {/* Hero H1 intentionally not CMS-overridable per country: the brand
-          headline stays identical everywhere and translates only with the
-          language (t.countryHero). */}
+      {/* Hero H1/paragraph/bullets: admin CMS wins, then the per-country copy
+          override (country-home-copy.ts), then the shared i18n default. Markets
+          without an override keep the generic brand headline (t.countryHero). */}
       <HomeHero
         countryCode={config.code}
         countryName={config.name}
@@ -496,8 +534,9 @@ export default async function CountryLangHomePage({
           languages: gpLanguages.languages,
           configured: gpLanguages.configured,
         }}
-        heroTitle={null}
-        heroSubtitle={page?.heroSubtitle ?? null}
+        heroTitle={page?.heroTitle ?? extras?.heroTitle ?? null}
+        heroSubtitle={page?.heroSubtitle ?? extras?.heroSubtitle ?? null}
+        heroBullets={extras?.heroBullets ?? null}
         heroImageSrc={page?.heroImageSrc ?? null}
         ctaLabel={page?.ctaLabel ?? null}
         i18n={t.countryHero}

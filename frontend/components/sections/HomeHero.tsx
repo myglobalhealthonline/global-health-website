@@ -71,6 +71,7 @@ export function HomeHero({
   sameDay,
   heroTitle,
   heroSubtitle,
+  heroBullets,
   heroImageSrc,
   ctaLabel,
   i18n,
@@ -85,6 +86,8 @@ export function HomeHero({
   sameDay?: SameDayHeroData;
   heroTitle?: string | null;
   heroSubtitle?: string | null;
+  /** Verbatim trust bullets (no country name appended). Overrides i18n. */
+  heroBullets?: string[] | null;
   heroImageSrc?: string | null;
   ctaLabel?: string | null;
   i18n?: HomeHeroI18n;
@@ -109,10 +112,19 @@ export function HomeHero({
     idealChars: IDEAL_HEADING_CHARS,
   });
 
+  // Per-country override supplies all three bullets verbatim; otherwise the
+  // i18n default composes them (bullet 1 appends the country name).
+  const bulletOverride = heroBullets && heroBullets.length === 3 ? heroBullets : null;
   const trustItems = [
-    { icon: ShieldCheck, label: `${i18n?.trustLicensed ?? "Licensed in"} ${countryName}` },
-    { icon: Clock, label: i18n?.trustAvailability ?? "Live availability" },
-    { icon: Stethoscope, label: i18n?.trustAppointments ?? "Online appointments" },
+    {
+      icon: ShieldCheck,
+      label: bulletOverride?.[0] ?? `${i18n?.trustLicensed ?? "Licensed in"} ${countryName}`,
+    },
+    { icon: Clock, label: bulletOverride?.[1] ?? i18n?.trustAvailability ?? "Live availability" },
+    {
+      icon: Stethoscope,
+      label: bulletOverride?.[2] ?? i18n?.trustAppointments ?? "Online appointments",
+    },
   ];
 
   return (
@@ -159,8 +171,6 @@ export function HomeHero({
               <span className="gh-home-hero-countryBadge inline-flex items-center gap-2.5 rounded-full py-1.5 pl-2 pr-4 text-[11px] font-bold uppercase tracking-[0.18em] text-white/85">
                 <Flag code={countryCode} size="sm" />
                 {countryName}
-                <span className="opacity-40">·</span>
-                <span>Medical Clinic</span>
               </span>
               <span className="gh-home-hero-availableBadge inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--color-brand-accent)]">
                 <span aria-hidden className="gh-pulse-dot !size-1.5" />

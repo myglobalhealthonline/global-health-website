@@ -30,6 +30,8 @@ export type ServiceCatalogItem = {
   price: number | null;
   currency?: string;
   dur: string;
+  /** Short service summary shown under the title on standard tiles. */
+  description?: string | null;
   /** Single-CTA target (category tiles, or legacy). Whole tile links here. */
   href: string;
   imageSrc?: string | null;
@@ -573,6 +575,15 @@ function ServiceTile({
         >
           {s.title}
         </h3>
+
+        {s.description ? (
+          <p
+            className="mt-3 text-[length:var(--text-body-sm)] leading-relaxed"
+            style={{ color: "rgba(255,255,255,0.62)" }}
+          >
+            {s.description}
+          </p>
+        ) : null}
 
         <div className="mt-auto pt-6">
           <div
