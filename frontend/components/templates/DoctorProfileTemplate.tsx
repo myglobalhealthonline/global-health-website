@@ -94,7 +94,7 @@ export function DoctorProfileTemplate({
 
       {/* ── HERO — viewport-locked 50/50 split ── */}
       <section
-        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
+        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate !overflow-visible lg:!overflow-hidden"
       >
         {/* Mobile/tablet only — full-bleed tinted portrait behind the text,
          *  same treatment as the team page hero: text sits in front of the
@@ -124,7 +124,7 @@ export function DoctorProfileTemplate({
           </div>
         ) : null}
 
-        <div className="relative grid h-full lg:grid-cols-2">
+        <div className="relative grid h-auto lg:h-full lg:grid-cols-2">
 
           {/* ── LEFT — full-bleed doctor portrait (desktop only) ── */}
           <div className="relative hidden h-full overflow-hidden lg:block">
@@ -190,7 +190,7 @@ export function DoctorProfileTemplate({
 
           {/* ── RIGHT — profile content ── */}
           <div
-            className="gh-inline-panel-base relative flex h-full flex-col justify-center overflow-y-auto px-8 py-6 md:px-12 lg:px-14 lg:py-8"
+            className="gh-inline-panel-base relative flex h-auto flex-col justify-center overflow-visible px-8 py-6 md:px-12 lg:h-full lg:overflow-y-auto lg:px-14 lg:py-8"
           >
             {/* Layer 1 — gradient depth */}
             <div

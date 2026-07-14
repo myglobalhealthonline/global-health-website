@@ -151,10 +151,10 @@ export function DoctorsHero({
   });
 
   return (
-    <section className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden text-white gh-hero-cap">
+    <section className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate !overflow-visible text-white gh-hero-cap">
       {/* Mobile/tablet only — full-bleed portrait behind a dark-green tint,
        *  replacing the plus mask (which is desktop-only, see aside below). */}
-      <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 lg:hidden">
+      <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 overflow-hidden lg:hidden">
         <Image
           src={heroImage.src}
           alt=""
@@ -188,15 +188,20 @@ export function DoctorsHero({
             "radial-gradient(680px 520px at 18% 30%, #000 0%, transparent 72%)",
         }}
       />
-      <div
-        aria-hidden
-        className="gh2-watermark gh-medical-pattern-layer pointer-events-none -right-[0.06em] bottom-[-0.16em] hidden select-none lg:block"
-        style={{
-          fontSize: "clamp(5rem,15vw,14rem)",
-          WebkitTextStroke: "1.5px rgba(255,255,255,0.08)",
-        }}
-      >
-        Doctors
+      {/* Watermark bleeds off the section edge on purpose, so it gets its
+           own clip container — the section itself must stay overflow-visible
+           so long titles/copy (long translations) push it taller instead of
+           getting silently clipped. */}
+      <div aria-hidden className="gh-medical-pattern-layer pointer-events-none absolute inset-0 hidden overflow-hidden lg:block">
+        <div
+          className="gh2-watermark absolute -right-[0.06em] bottom-[-0.16em] select-none"
+          style={{
+            fontSize: "clamp(5rem,15vw,14rem)",
+            WebkitTextStroke: "1.5px rgba(255,255,255,0.08)",
+          }}
+        >
+          Doctors
+        </div>
       </div>
       {/* Lime bloom behind the portrait */}
       <div
@@ -276,7 +281,7 @@ export function DoctorsHero({
                 className="gh2-btn-lime gh-focus-on-dark "
               >
                 {primaryCta.label}
-                <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
+                <ArrowUpRight className="size-4" strokeWidth={2} aria-hidden />
               </Link>
               <Link
                 href={secondaryCta.href}

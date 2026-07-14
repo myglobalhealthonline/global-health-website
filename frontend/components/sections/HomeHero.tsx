@@ -130,7 +130,7 @@ export function HomeHero({
   return (
     <section
       aria-labelledby="hero-title"
-      className="gh-home-hero-root gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden gh-hero-cap-full max-lg:!min-h-[min(calc(100svh-var(--header-height)),760px)]"
+      className="gh-home-hero-root gh-medical-pattern gh-medical-pattern-dark relative !overflow-visible gh-hero-cap-full max-lg:!min-h-[min(calc(100svh-var(--header-height)),760px)]"
     >
       {/* ── Base layer: hero photo, full-bleed ── */}
       <div className="gh-home-hero-photoLayer gh-medical-pattern-layer absolute inset-0">
@@ -154,12 +154,14 @@ export function HomeHero({
 
       {/* ── Watermark — sits above overlay, below content. Hidden below lg:
            its clamp() font-size still reads huge on phone widths and is
-           pure atmosphere, not content. ── */}
-      <div
-        aria-hidden
-        className="gh-home-hero-watermark gh-medical-pattern-layer gh2-watermark pointer-events-none absolute bottom-[-0.06em] left-[-0.04em] hidden select-none lg:block"
-      >
-        {countryName}
+           pure atmosphere, not content. Bleeds off the section edge on
+           purpose, so it gets its own clip — the section itself must stay
+           overflow-visible so long titles/copy (long translations) push it
+           taller instead of getting silently clipped. ── */}
+      <div aria-hidden className="gh-medical-pattern-layer pointer-events-none absolute inset-0 hidden overflow-hidden lg:block">
+        <div className="gh-home-hero-watermark gh2-watermark absolute bottom-[-0.06em] left-[-0.04em] select-none">
+          {countryName}
+        </div>
       </div>
 
       {/* ── Content ── */}

@@ -199,7 +199,7 @@ export default async function ServiceDetailPage({
 
       {/* ── Hero — full-viewport 50/50 split: image left, content + booking right ── */}
       <section
-        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-visible lg:overflow-hidden"
+        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate !overflow-visible lg:!overflow-hidden"
       >
         <div className="grid h-auto grid-rows-[clamp(180px,30svh,280px)_auto] lg:h-full lg:grid-cols-2 lg:grid-rows-1">
 

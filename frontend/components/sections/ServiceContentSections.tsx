@@ -194,8 +194,8 @@ export function WhyChooseSection({
               key={item}
               className={
                 dark
-                  ? "flex items-start gap-3 rounded-[var(--radius-card)] p-5"
-                  : "gh2-glass-forest gh2-glass-hover flex items-start gap-3 rounded-[var(--radius-card)] p-5"
+                  ? "flex items-center gap-3 rounded-[var(--radius-card)] p-5"
+                  : "gh2-glass-forest gh2-glass-hover flex items-center gap-3 rounded-[var(--radius-card)] p-5"
               }
               style={
                 dark
@@ -207,7 +207,7 @@ export function WhyChooseSection({
               }
             >
               <span
-                className="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full"
+                className="inline-flex size-6 shrink-0 items-center justify-center rounded-full"
                 style={{
                   background: "var(--color-brand-accent)",
                   color: "#0a1f14",
