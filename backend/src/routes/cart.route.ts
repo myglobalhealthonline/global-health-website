@@ -1238,8 +1238,9 @@ const cartRoute: FastifyPluginAsync = async (app) => {
               patient?.gdprConsentPlatform === true
                 ? new Date()
                 : null,
-            // Default-ON / opt-OUT: absence of the field = consent true.
-            patientWhatsappConsent: patient?.whatsappConsent !== false,
+            // GDPR opt-IN: only an explicit true counts as consent (Art. 4(11) —
+            // silence/absence is not consent).
+            patientWhatsappConsent: patient?.whatsappConsent === true,
             // Insurance snapshot (consultation-only). unitPriceCents above is
             // already the validated insurance price when a company is selected.
             // The policy/card number is stored encrypted (phi:v1: envelope),

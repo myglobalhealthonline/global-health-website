@@ -279,6 +279,8 @@ export type CommonLocale = {
     benefitPayNormal: string;
     benefitUseCredit: string;
     benefitUseDiscount: string;
+    /** Caption under the benefit selector: "{plan}" = subscriber's plan name. */
+    benefitExplainer: string;
     pickDate: string;
     daysAvailable: string;
     day: string;

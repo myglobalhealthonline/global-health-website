@@ -1608,8 +1608,9 @@ model Appointment {
   gdprConsentClinic         Boolean                   @default(false)
   gdprConsentPlatform       Boolean                   @default(false)
   gdprConsentedAt           DateTime?
-  /// WhatsApp appointment updates — default ON; patient opts OUT at booking.
-  whatsappConsent           Boolean                   @default(true)
+  /// WhatsApp appointment updates — GDPR opt-IN; patient must explicitly
+  /// consent at booking (default OFF, Art. 4(11)).
+  whatsappConsent           Boolean                   @default(false)
   /// Insurance selection snapshot for the clinical record — copied from the
   /// OrderItem when the appointment is minted. Bare company id (no relation);
   /// policy/card number as an encrypted `phi:v1:` envelope. The charged amount

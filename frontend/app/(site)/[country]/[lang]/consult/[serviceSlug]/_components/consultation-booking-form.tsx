@@ -164,6 +164,7 @@ export function ConsultationBookingForm({
   // subscriber can choose here instead of only in the cart. Pre-selected to the
   // cheapest eligible option; written onto the line at add-to-cart.
   const [benefitOptions, setBenefitOptions] = useState<ServiceBenefitOption[]>([]);
+  const [benefitPlanName, setBenefitPlanName] = useState<string | null>(null);
   const [benefitSelection, setBenefitSelection] = useState<BenefitSelection>("PAY_NORMAL");
   const [corporateDiscount, setCorporateDiscount] = useState<CorporateDiscountInfo | null>(null);
   // Saved profile (address + national ID) so we don't ask for it again (req #2).
@@ -245,6 +246,7 @@ export function ConsultationBookingForm({
       if (cancelled || !res.ok) return;
       const opts = res.data.options;
       setBenefitOptions(opts);
+      setBenefitPlanName(res.data.planName ?? null);
       setCorporateDiscount(res.data.corporateDiscount ?? null);
       if (opts.length > 1) {
         const best = [...opts].sort((a, b) =>
@@ -331,7 +333,9 @@ export function ConsultationBookingForm({
     const consent = form.get("consent") === "on";
     const gdprConsentClinic = form.get("gdprConsentClinic") === "on";
     const gdprConsentPlatform = form.get("gdprConsentPlatform") === "on";
-    const whatsappConsent = form.get("whatsappOptOut") !== "on";
+    // GDPR: WhatsApp messaging consent must be an affirmative opt-in
+    // (Art. 4(11) / Planet49) — unchecked box means NO consent.
+    const whatsappConsent = form.get("whatsappOptIn") === "on";
 
     if (!selectedMember && !bookingForOther && fullName.length < 2) {
       setError(i18n.enterFullName);
@@ -687,6 +691,11 @@ export function ConsultationBookingForm({
             <span className="text-xs font-semibold text-[var(--color-text-body)]">
               {i18n.benefitHeading}
             </span>
+            {benefitPlanName ? (
+              <p className="mt-0.5 text-xs text-[var(--color-text-muted)]">
+                {i18n.benefitExplainer.replace("{plan}", benefitPlanName)}
+              </p>
+            ) : null}
             <div role="radiogroup" aria-label={i18n.benefitHeading} className="mt-1.5 flex flex-wrap gap-1.5">
               {benefitOptions.map((opt) => {
                 const active = benefitSelection === opt.selection;
@@ -1064,13 +1073,13 @@ export function ConsultationBookingForm({
           />
           <span>{i18n.gdprPlatformConsent}</span>
         </label>
-        {/* WhatsApp updates are ON by default — this checkbox is an OPT-OUT
-          * (unchecked = consent). Ticking it sets whatsappConsent=false and
-          * patient WhatsApp notifications are skipped server-side. */}
+        {/* WhatsApp updates OPT-IN (GDPR affirmative consent — pre-ticked /
+          * opt-out boxes are invalid per Art. 4(11) + CJEU Planet49).
+          * Unchecked = whatsappConsent=false, notifications skipped server-side. */}
         <label className="mt-3 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
           <input
             type="checkbox"
-            name="whatsappOptOut"
+            name="whatsappOptIn"
             className="mt-0.5 size-4 rounded border-[var(--color-border)]"
           />
           <span>{i18n.whatsappConsent}</span>
