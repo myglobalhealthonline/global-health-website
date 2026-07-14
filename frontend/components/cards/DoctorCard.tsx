@@ -10,7 +10,7 @@ import {
   IconLinkedin,
 } from "@/components/ui/BrandIcons";
 import { Flag } from "@/components/ui/Flag";
-import { focalStyle } from "@/components/media/doctor-photo";
+import { focalStyle, DoctorAvatarFallback } from "@/components/media/doctor-photo";
 
 /* ─── Mint icon box ──────────────────────────────────────────────────────── */
 function IconBox({ children }: { children: React.ReactNode }) {
@@ -63,9 +63,6 @@ type DoctorCardProps = {
   imageFocalX?: number;
   imageFocalY?: number;
   imageZoom?: number;
-  /** Initials fallback shown when imageSrc is missing. Without it the card
-   *  falls back to a single stock SVG for every photo-less doctor. */
-  initials?: string;
   /** Card-wide link target — usually the doctor's profile page. The whole
    *  card surface routes here; inner CTAs sit above via z-index. */
   href?: string;
@@ -108,7 +105,6 @@ export function DoctorCard({
   imageFocalX = 50,
   imageFocalY = 50,
   imageZoom = 1,
-  initials,
   href,
   bookingHref,
   ctaLabel = "View profile",
@@ -126,7 +122,6 @@ export function DoctorCard({
   const unoptimized =
     /^https?:\/\//i.test(src) &&
     !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(src);
-  const initialsLabel = initials?.trim() || nameToInitials(name);
   // Doctor phone (WhatsApp) is clinic↔clinician contact only — never shown on
   // public cards (the public API no longer sends the number either).
   const profileHref = href;
@@ -199,19 +194,7 @@ export function DoctorCard({
             style={focalStyle(imageFocalX, imageFocalY, imageZoom)}
           />
         ) : (
-          <div
-            className="flex h-full w-full items-center justify-center font-extrabold tracking-tight"
-            style={{
-              background:
-                "radial-gradient(120% 90% at 20% 0%, rgba(176,241,34,0.14), transparent 55%), linear-gradient(160deg, #1D4B36 0%, #0F2E25 100%)",
-              color: "rgba(255,255,255,0.88)",
-              fontSize: "clamp(40px,6vw,64px)",
-              letterSpacing: "0.04em",
-            }}
-            aria-hidden
-          >
-            {initialsLabel}
-          </div>
+          <DoctorAvatarFallback />
         )}
         {imageCaption || imageDescription ? (
           <p id={`${nameToInitials(name)}-image-seo`} className="sr-only">

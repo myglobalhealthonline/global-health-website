@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { User } from "lucide-react";
 
 /**
  * Doctor profile-image focal point + zoom system.
@@ -20,6 +21,25 @@ export function focalStyle(x = 50, y = 50, zoom = 1): CSSProperties {
       ? { transform: `scale(${clampZoom(zoom)})`, transformOrigin: pos }
       : {}),
   };
+}
+
+/**
+ * Generic silhouette placeholder shown in doctor portrait tiles when no
+ * photo is uploaded (replaces the old initials-letter tile).
+ */
+export function DoctorAvatarFallback({ iconSize = "34%" }: { iconSize?: string }) {
+  return (
+    <div
+      className="flex h-full w-full items-center justify-center"
+      style={{
+        background:
+          "radial-gradient(120% 90% at 20% 0%, rgba(176,241,34,0.14), transparent 55%), linear-gradient(160deg, #1D4B36 0%, #0F2E25 100%)",
+      }}
+      aria-hidden
+    >
+      <User style={{ width: iconSize, height: iconSize, color: "rgba(255,255,255,0.45)" }} strokeWidth={1.4} />
+    </div>
+  );
 }
 
 function clampPct(n: number): number {

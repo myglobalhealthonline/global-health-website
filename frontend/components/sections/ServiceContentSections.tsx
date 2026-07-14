@@ -81,9 +81,8 @@ export function ServiceIntro({
         <p
           className="mt-5 leading-relaxed"
           style={{
-            fontSize: "clamp(1.15rem, 1vw + 0.9rem, 1.5rem)",
+            fontSize: "var(--text-body-lg)",
             color: isDark(theme) ? "rgba(255,255,255,0.78)" : "var(--color-text-body)",
-            fontWeight: 500,
           }}
         >
           {body}
