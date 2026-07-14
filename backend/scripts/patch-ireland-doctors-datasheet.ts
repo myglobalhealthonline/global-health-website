@@ -138,9 +138,16 @@ async function patchDoctor(sheet: DoctorSheet) {
 
     // --- 9a. DoctorTranslation EN title
     for (const tr of doctor.translations.filter((t) => t.locale === LocaleCode.EN)) {
-      if (tr.title !== sheet.specialty) {
-        change(`translation(EN).title: "${tr.title}" -> "${sheet.specialty}"`);
-        if (APPLY) await prisma.doctorTranslation.update({ where: { id: tr.id }, data: { title: sheet.specialty } });
+      // EN translation row masks base bio/seo on the global doctor payload —
+      // mirror the full sheet EN content, not just the title.
+      const trPatch: Record<string, string> = {};
+      if (tr.title !== sheet.specialty) trPatch.title = sheet.specialty;
+      if (tr.bio != null && tr.bio !== sheet.bio) trPatch.bio = sheet.bio;
+      if (tr.seoTitle != null && tr.seoTitle !== sheet.seoTitle) trPatch.seoTitle = sheet.seoTitle;
+      if (tr.seoDescription != null && tr.seoDescription !== sheet.seoDescription) trPatch.seoDescription = sheet.seoDescription;
+      if (Object.keys(trPatch).length) {
+        change(`translation(EN): ${Object.keys(trPatch).join(", ")} -> sheet values`);
+        if (APPLY) await prisma.doctorTranslation.update({ where: { id: tr.id }, data: trPatch });
       }
     }
 
@@ -150,6 +157,8 @@ async function patchDoctor(sheet: DoctorSheet) {
       if (ieEn.title !== sheet.specialty) patch.title = sheet.specialty;
       if (ieEn.seoTitle !== sheet.seoTitle) patch.seoTitle = sheet.seoTitle;
       if (ieEn.seoDescription !== sheet.seoDescription) patch.seoDescription = sheet.seoDescription;
+      // Market bio masks the base Doctor.bio on /ireland/en — mirror it too.
+      if (ieEn.bio != null && ieEn.bio !== sheet.bio) patch.bio = sheet.bio;
       if (Object.keys(patch).length) {
         change(`IE market translation (EN): ${Object.keys(patch).join(", ")} -> sheet values`);
         if (APPLY) await prisma.doctorMarketTranslation.update({ where: { id: ieEn.id }, data: patch });

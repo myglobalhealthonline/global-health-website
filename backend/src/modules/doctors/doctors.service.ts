@@ -427,7 +427,7 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
       orderBy: [{ fullName: "asc" }],
       take: PUBLIC_DOCTORS_LIST_CAP,
       include: {
-        country: { select: { id: true, code: true, slug: true, name: true, defaultLocale: true } },
+        country: { select: { id: true, code: true, slug: true, name: true, defaultLocale: true, teamPath: true } },
         specialties: {
           include: {
             specialty: {
@@ -635,7 +635,7 @@ export async function getDoctorByCountryAndSlug(
         ],
       },
       include: {
-        country: { select: { id: true, code: true, slug: true, name: true, defaultLocale: true } },
+        country: { select: { id: true, code: true, slug: true, name: true, defaultLocale: true, teamPath: true } },
         specialties: {
           include: {
             specialty: {
