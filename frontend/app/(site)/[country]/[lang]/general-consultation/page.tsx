@@ -113,7 +113,7 @@ export default async function CountryLangGeneralConsultationPage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
-  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const { common: c, home } = loadLocaleBundle(lang as LocaleCode);
   const gp = c.gpPage;
 
   // Honor the per-country `general-consultations` toggle from /admin/country-features.
@@ -375,7 +375,7 @@ export default async function CountryLangGeneralConsultationPage({
         body="Independent, verified reviews collected by Doctify from patients treated by our clinicians."
       />
 
-      <FinalCTA primaryHref={ctaHref} secondaryHref={`/${slug}/${lang}/doctors`} />
+      <FinalCTA primaryHref={ctaHref} secondaryHref={`/${slug}/${lang}/doctors`} i18n={home.finalCta} />
       <StickyBookingCTA href={ctaHref} />
 
       {page?.sections.disclaimer ? (

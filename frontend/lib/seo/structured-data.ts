@@ -76,6 +76,11 @@ export function organizationJsonLd(sameAs: string[] = []) {
         name: "Irish company registration",
         value: "CRO: 910267",
       },
+      {
+        "@type": "PropertyValue",
+        name: "NRPZS",
+        value: "4687/2026",
+      },
     ],
   };
 }
