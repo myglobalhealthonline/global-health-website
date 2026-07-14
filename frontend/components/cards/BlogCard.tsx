@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 
 type BlogCardProps = {
   title: string;
@@ -59,10 +60,7 @@ export function BlogCard({
             fill
             sizes="(min-width:640px) 400px, 100vw"
             className="object-cover"
-            unoptimized={
-              /^https?:\/\//i.test(coverImageSrc) &&
-              !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(coverImageSrc)
-            }
+            unoptimized={isUnoptimizedImageSrc(coverImageSrc)}
           />
         </Link>
       ) : null}

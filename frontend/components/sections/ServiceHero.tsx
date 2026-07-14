@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Flag } from "@/components/ui/Flag";
 import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
+import { isUnoptimizedImageSrc as isUnlistedRemote } from "@/lib/content/asset-media-url";
 
 /**
  * Reusable premium service-page hero (clinical-editorial gh2 system).
@@ -28,16 +29,6 @@ import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
  * level). The floating checklist card is intentionally text-free (skeleton
  * bars) so it needs no translation.
  */
-
-/** True only for an absolute URL whose host isn't in next.config.ts's
- *  images.remotePatterns (images.unsplash.com / images.pexels.com are
- *  allow-listed; /api/media/* is a same-origin rewrite, never absolute). */
-function isUnlistedRemote(src: string): boolean {
-  return (
-    /^https?:\/\//i.test(src) &&
-    !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(src)
-  );
-}
 
 type CtaLink = { label: string; href: string };
 type FeatureCard = { icon: ReactNode; title: string; subtitle: string };

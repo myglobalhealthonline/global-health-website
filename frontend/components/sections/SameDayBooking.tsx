@@ -287,9 +287,9 @@ export function SameDayBooking({
         <CalendarClock className="size-4" strokeWidth={1.8} aria-hidden />
         {t.eyebrow}
       </p>
-      <h3 className="mt-2 text-[clamp(1.5rem,1rem+1.4vw,2rem)] font-extrabold leading-[1.05] tracking-[-0.02em] text-white">
+      <h2 className="mt-2 text-[clamp(1.5rem,1rem+1.4vw,2rem)] font-extrabold leading-[1.05] tracking-[-0.02em] text-white">
         {t.title}
-      </h3>
+      </h2>
 
       {/* Step 1 — language (custom dropdown — native select ignores CSS for open state) */}
       <div className="mt-5 block">

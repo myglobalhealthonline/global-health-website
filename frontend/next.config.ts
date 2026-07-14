@@ -21,9 +21,11 @@ function mediaRemotePatterns(): NonNullable<NonNullable<NextConfig["images"]>["r
     { protocol: "https", hostname: "images.pexels.com", pathname: "/**" },
   ];
   const raw = process.env.NEXT_PUBLIC_API_URL?.trim();
+  let apiHost: string | undefined;
   if (raw) {
     try {
       const url = new URL(raw);
+      apiHost = url.hostname.toLowerCase();
       patterns.push({
         protocol: url.protocol.replace(":", "") as "http" | "https",
         hostname: url.hostname,
@@ -32,6 +34,19 @@ function mediaRemotePatterns(): NonNullable<NonNullable<NextConfig["images"]>["r
       });
     } catch {
       // ignore a malformed NEXT_PUBLIC_API_URL
+    }
+  }
+  // `resolveTrustedAssetUrl()` (lib/content/asset-media-url.ts) also treats
+  // every NEXT_PUBLIC_MEDIA_ALLOWED_HOSTS entry as a trusted media host (the
+  // storage bucket, or a Railway backend host that differs from
+  // NEXT_PUBLIC_API_URL in this environment) — mirror them here too, or
+  // next/image throws "hostname not configured" for a host the resolver
+  // already considers safe.
+  const extraHosts = process.env.NEXT_PUBLIC_MEDIA_ALLOWED_HOSTS?.trim();
+  if (extraHosts) {
+    for (const host of extraHosts.split(",").map((h) => h.trim().toLowerCase()).filter(Boolean)) {
+      if (host === apiHost) continue;
+      patterns.push({ protocol: "https", hostname: host, pathname: "/api/media/**" });
     }
   }
   return patterns;

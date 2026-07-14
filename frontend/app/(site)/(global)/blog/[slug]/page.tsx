@@ -12,6 +12,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { articleJsonLd } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { getCountryTrust } from "@/lib/content/get-country-trust";
+import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -140,10 +141,7 @@ export default async function BlogPostPage({ params }: Props) {
                 priority
                 sizes="(min-width:1024px) 1024px, 100vw"
                 className="object-cover"
-                unoptimized={
-                  /^https?:\/\//i.test(post.coverImageSrc) &&
-                  !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(post.coverImageSrc)
-                }
+                unoptimized={isUnoptimizedImageSrc(post.coverImageSrc)}
               />
             </div>
           </div>

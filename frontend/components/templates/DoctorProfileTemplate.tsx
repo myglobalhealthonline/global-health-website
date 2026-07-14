@@ -16,6 +16,7 @@ import {
 import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
 import { focalStyle } from "@/components/media/doctor-photo";
 import { SectionSeam } from "@/components/ui/SectionSeam";
+import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import HeroFitContent from "@/components/sections/HeroFitContent";
 
 /* ─── Types ──────────────────────────────────────────────────────────────── */
@@ -109,10 +110,7 @@ export function DoctorProfileTemplate({
               sizes="100vw"
               priority
               style={heroImageStyle}
-              unoptimized={
-                /^https?:\/\//i.test(profileImageSrc) ||
-                profileImageSrc.startsWith("/api/media/")
-              }
+              unoptimized={isUnoptimizedImageSrc(profileImageSrc)}
             />
             <div
               className="absolute inset-0"

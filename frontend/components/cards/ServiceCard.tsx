@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CalendarDays, Clock, Tag, Stethoscope } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 
 type ServiceCardProps = {
   /** Single-CTA mode: whole card links here. Optional when detailHref is set. */
@@ -38,18 +39,21 @@ function TwoActions({
   bookHref,
   learnLabel,
   bookLabel,
+  title,
   dark,
 }: {
   detailHref: string;
   bookHref: string;
   learnLabel: string;
   bookLabel: string;
+  title: string;
   dark: boolean;
 }) {
   return (
     <div className="relative z-10 mt-6 flex flex-col gap-2 sm:flex-row sm:gap-2.5">
       <Link
         href={detailHref}
+        aria-label={`${learnLabel}: ${title}`}
         className={cn(
           "inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full px-4 text-sm font-bold tracking-[-0.005em] whitespace-nowrap transition-[background-color,color,border-color] duration-200 focus-visible:outline-none sm:w-auto sm:shrink-0",
           dark
@@ -62,6 +66,7 @@ function TwoActions({
       </Link>
       <Link
         href={bookHref}
+        aria-label={`${bookLabel}: ${title}`}
         className="inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full px-4 text-sm font-extrabold tracking-[-0.005em] transition-[transform,filter,box-shadow,background-color] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0 whitespace-nowrap sm:flex-1"
         style={
           dark
@@ -144,10 +149,7 @@ export function ServiceCard({
               alt={title}
               fill
               sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
-              unoptimized={
-                /^https?:\/\//i.test(imageSrc) &&
-                !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(imageSrc)
-              }
+              unoptimized={isUnoptimizedImageSrc(imageSrc)}
               className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             />
             {/* Bottom fade so the body edge reads clean */}
@@ -231,6 +233,7 @@ export function ServiceCard({
                   bookHref={bookHref!}
                   learnLabel={learnLabel}
                   bookLabel={bookLabel}
+                  title={title}
                   dark
                 />
               ) : (
@@ -303,6 +306,7 @@ export function ServiceCard({
               bookHref={bookHref!}
               learnLabel={learnLabel}
               bookLabel={bookLabel}
+              title={title}
               dark
             />
           ) : (
@@ -345,7 +349,7 @@ export function ServiceCard({
             alt={title}
             fill
             sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
-            unoptimized={/^https?:\/\//i.test(imageSrc) || imageSrc.startsWith("/api/media/")}
+            unoptimized={isUnoptimizedImageSrc(imageSrc)}
             className="object-cover"
           />
         </div>
@@ -379,6 +383,7 @@ export function ServiceCard({
             bookHref={bookHref!}
             learnLabel={learnLabel}
             bookLabel={bookLabel}
+            title={title}
             dark={false}
           />
         ) : (

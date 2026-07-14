@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
+import { isUnoptimizedImageSrc as isUnlistedRemote } from "@/lib/content/asset-media-url";
 import {
   ArrowUpRight,
   Users,
@@ -27,16 +28,6 @@ import {
  * headline / lede / availability / primary CTA flow from i18n. Swap the
  * defaults for real figures before launch.
  */
-
-/** True only for an absolute URL whose host isn't in next.config.ts's
- *  images.remotePatterns (images.unsplash.com / images.pexels.com are
- *  allow-listed; /api/media/* is a same-origin rewrite, never absolute). */
-function isUnlistedRemote(src: string): boolean {
-  return (
-    /^https?:\/\//i.test(src) &&
-    !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(src)
-  );
-}
 
 type CtaLink = { label: string; href: string };
 

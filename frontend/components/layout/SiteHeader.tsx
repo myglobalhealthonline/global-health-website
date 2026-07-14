@@ -40,6 +40,7 @@ import { CartIcon } from "@/components/cart/CartIcon";
 import { HeaderScrollShell } from "@/components/layout/HeaderScrollShell";
 import { RememberCountryOnMount } from "@/components/layout/RememberCountryOnMount";
 import { HeaderAuthActions } from "@/components/layout/HeaderAuthActions";
+import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import { ArrowUpRight } from "lucide-react";
 
 function sectionNavForCountryLang(
@@ -210,10 +211,7 @@ export function SiteHeader({
           height={272}
           priority
           className="h-12 w-auto md:h-14"
-          unoptimized={
-            /^https?:\/\//i.test(brandLogo?.src ?? "") &&
-            !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(brandLogo?.src ?? "")
-          }
+          unoptimized={isUnoptimizedImageSrc(brandLogo?.src ?? "")}
         />
       </Link>
 

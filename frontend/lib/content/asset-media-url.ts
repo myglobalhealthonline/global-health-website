@@ -28,6 +28,27 @@ export function getTrustedMediaHosts(): string[] {
   return cachedHosts;
 }
 
+/**
+ * True when `src` is an absolute URL to a host NOT covered by
+ * next.config.ts's `images.remotePatterns` (our API origin,
+ * images.unsplash.com, images.pexels.com) — Next's image optimizer throws
+ * for unlisted hosts, so those must render unoptimized. Relative paths and
+ * listed hosts (incl. `resolveTrustedAssetUrl`'s absolute `/api/media/*`
+ * URLs) can be optimized safely. Single source of truth — every `<Image>`
+ * rendering a CMS asset should use this instead of a local regex copy.
+ */
+export function isUnoptimizedImageSrc(src: string): boolean {
+  if (!/^https?:\/\//i.test(src)) return false;
+  let host: string;
+  try {
+    host = new URL(src).hostname.toLowerCase();
+  } catch {
+    return true;
+  }
+  if (host === "images.unsplash.com" || host === "images.pexels.com") return false;
+  return !getTrustedMediaHosts().includes(host);
+}
+
 function getApiOrigin(): string | undefined {
   if (cachedApiOrigin !== undefined) return cachedApiOrigin ?? undefined;
   const raw = process.env.NEXT_PUBLIC_API_URL?.trim();

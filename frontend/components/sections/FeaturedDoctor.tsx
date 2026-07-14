@@ -15,6 +15,7 @@ import Image from "next/image";
 import { ArrowRight, ArrowUpRight, Globe, ShieldCheck, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { toDoctorBioPlainText } from "@/lib/content/doctor-bio-format";
+import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import {
   IconInstagram,
   IconFacebook,
@@ -68,13 +69,7 @@ export function FeaturedDoctor({
   const trimmedImage = doctor.imageSrc?.trim();
   const hasImage = Boolean(trimmedImage);
   const src = trimmedImage ?? "";
-  // /api/media/* is a same-origin rewrite and images.unsplash.com /
-  // images.pexels.com are allow-listed in next.config.ts remotePatterns —
-  // only a genuinely different remote host needs unoptimized.
-  const unoptimized =
-    hasImage &&
-    /^https?:\/\//i.test(src) &&
-    !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(src);
+  const unoptimized = hasImage && isUnoptimizedImageSrc(src);
   const languageList =
     doctor.languages && doctor.languages.length > 0
       ? doctor.languages.join(", ")

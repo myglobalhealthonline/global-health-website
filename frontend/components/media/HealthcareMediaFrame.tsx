@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Stethoscope, HeartPulse, Package, MessageCircle, Cross } from "lucide-react";
+import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 
 export type HealthcareMediaVariant = "hero" | "doctor" | "delivery" | "cta" | "generic";
 
@@ -165,10 +166,7 @@ export function HealthcareMediaFrame({
           sizes="100vw"
           className={`h-auto w-full ${objectFit === "cover" ? "object-cover" : "object-contain"}`}
           priority={priority}
-          unoptimized={
-            /^https?:\/\//i.test(src) &&
-            !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(src)
-          }
+          unoptimized={isUnoptimizedImageSrc(src)}
         />
       </div>
     </div>

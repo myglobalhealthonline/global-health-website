@@ -88,7 +88,7 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
           className="grid grid-cols-1 gap-5 sm:grid-cols-2"
         >
           {items.slice(0, 4).map((it) => (
-            <dl
+            <div
               key={`${it.label}-${it.value}`}
               className={`group relative m-0 flex flex-col gap-5 overflow-hidden rounded-2xl p-7 ${
                 isLight ? "gh2-glass-forest gh2-glass-hover" : ""
@@ -126,7 +126,7 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
               ) : null}
 
               {/* Value */}
-              <dd
+              <p
                 className="m-0 font-extrabold leading-none tracking-[-0.045em] [font-variant-numeric:tabular-nums]"
                 style={{
                   fontSize: "clamp(2.75rem,5.5vw,4.25rem)",
@@ -134,15 +134,15 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
                 }}
               >
                 {it.value}
-              </dd>
+              </p>
 
               {/* Label */}
-              <dt
+              <p
                 className="text-[11px] font-bold uppercase tracking-[0.18em]"
                 style={{ color: isLight ? "rgba(255,255,255,0.80)" : "rgba(255,255,255,0.60)" }}
               >
                 {it.label}
-              </dt>
+              </p>
 
               {/* Caption */}
               {it.caption ? (
@@ -156,7 +156,7 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
                   {it.caption}
                 </p>
               ) : null}
-            </dl>
+            </div>
           ))}
         </RevealOnScroll>
       </div>

@@ -6,6 +6,7 @@ import type { CountryCode } from "@/data/countries";
 import { Flag } from "@/components/ui/Flag";
 import { HeroReveal } from "@/components/motion/HeroReveal";
 import { fitHeadingFontSize, IDEAL_HEADING_CHARS } from "@/lib/text/fit-heading-size";
+import { isUnoptimizedImageSrc as isUnlistedRemote } from "@/lib/content/asset-media-url";
 
 // SameDayBooking renders real server-fetchable markup (slot grid, CTA) once
 // hydrated — keep SSR on so it isn't blank/no-index on first paint. Dynamic
@@ -342,16 +343,6 @@ export function HomeHero({
         className="gh-home-hero-bottomRule gh-medical-pattern-layer absolute bottom-0 left-0 right-0 h-px"
       />
     </section>
-  );
-}
-
-/** True only for an absolute URL whose host isn't in next.config.ts's
- *  images.remotePatterns (images.unsplash.com / images.pexels.com are
- *  allow-listed; /api/media/* is a same-origin rewrite, never absolute). */
-function isUnlistedRemote(src: string): boolean {
-  return (
-    /^https?:\/\//i.test(src) &&
-    !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(src)
   );
 }
 

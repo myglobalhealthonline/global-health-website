@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/BrandIcons";
 import { Flag } from "@/components/ui/Flag";
 import { focalStyle, DoctorAvatarFallback } from "@/components/media/doctor-photo";
+import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 
 /* ─── Mint icon box ──────────────────────────────────────────────────────── */
 function IconBox({ children }: { children: React.ReactNode }) {
@@ -116,12 +117,7 @@ export function DoctorCard({
   const trimmedImage = imageSrc?.trim();
   const hasImage = Boolean(trimmedImage);
   const src = trimmedImage ?? "";
-  // /api/media/* is a same-origin rewrite and images.unsplash.com /
-  // images.pexels.com are allow-listed in next.config.ts remotePatterns —
-  // only a genuinely different remote host needs unoptimized.
-  const unoptimized =
-    /^https?:\/\//i.test(src) &&
-    !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(src);
+  const unoptimized = isUnoptimizedImageSrc(src);
   // Doctor phone (WhatsApp) is clinic↔clinician contact only — never shown on
   // public cards (the public API no longer sends the number either).
   const profileHref = href;

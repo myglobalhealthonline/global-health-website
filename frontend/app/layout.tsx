@@ -37,10 +37,10 @@ export default function RootLayout({
       className="h-full antialiased"
       suppressHydrationWarning
     >
-      <head>
-        <link rel="preconnect" href="https://www.doctify.com" />
-        <link rel="dns-prefetch" href="https://www.doctify.com" />
-      </head>
+      {/* No sitewide Doctify preconnect: the widget is intersection- and
+          consent-gated (DoctifyReviewsLazy) and often never loads, so a
+          global connection warm-up on every route is wasted setup that
+          competes with connections the page actually needs. */}
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         {/* Meta Pixel moved to app/(site)/layout.tsx (MetaPixel component) —
             it must never load on (auth)/(admin)/(doctor) portal routes and

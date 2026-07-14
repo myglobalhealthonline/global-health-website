@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { ServiceHero } from "@/components/sections/ServiceHero";
 import { MessageCircle, ShieldCheck, Clock, Star, Lock } from "lucide-react";
+import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
@@ -295,10 +296,7 @@ export default async function CountryLangGeneralConsultationPage({
                 fill
                 sizes="(min-width:1024px) 1024px, 100vw"
                 className="object-cover"
-                unoptimized={
-                  /^https?:\/\//i.test(page.heroImageSrc) &&
-                  !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(page.heroImageSrc)
-                }
+                unoptimized={isUnoptimizedImageSrc(page.heroImageSrc)}
               />
             </div>
           </div>

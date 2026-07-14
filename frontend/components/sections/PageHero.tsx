@@ -5,16 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Flag } from "@/components/ui/Flag";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import { fitHeadingFontSize } from "@/lib/text/fit-heading-size";
-
-/** True only for an absolute URL whose host isn't in next.config.ts's
- *  images.remotePatterns (images.unsplash.com / images.pexels.com are
- *  allow-listed; /api/media/* is a same-origin rewrite, never absolute). */
-function isUnlistedRemote(src: string): boolean {
-  return (
-    /^https?:\/\//i.test(src) &&
-    !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(src)
-  );
-}
+import { isUnoptimizedImageSrc as isUnlistedRemote } from "@/lib/content/asset-media-url";
 
 export type PageHeroProps = {
   countryCode?: string;

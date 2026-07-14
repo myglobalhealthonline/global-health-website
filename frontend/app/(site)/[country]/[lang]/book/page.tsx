@@ -17,6 +17,7 @@ import {
 import { getServiceDoctorAvailability } from "@/lib/content/get-doctor-availability";
 import { getGpAvailability } from "@/lib/content/get-gp-availability";
 import { getServiceAggregatedAvailability } from "@/lib/content/get-service-availability";
+import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import { ServiceTimePicker } from "./_components/service-time-picker";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
@@ -1058,7 +1059,7 @@ function ServiceChoiceCard({
             fill
             sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
             className="object-cover"
-            unoptimized={/^https?:\/\//i.test(service.imageSrc) || service.imageSrc.startsWith("/api/media/")}
+            unoptimized={isUnoptimizedImageSrc(service.imageSrc)}
           />
         </div>
       ) : null}

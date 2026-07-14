@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, CalendarClock, Check, Loader2 } from "lucide-react";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { formatPriceRounded } from "@/lib/format-currency";
+import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 
 /**
  * Hero booking wizard — a compact 3-step quick-book panel that replaces the
@@ -412,7 +413,7 @@ function Avatar({ name, imageSrc }: { name: string; imageSrc?: string | null }) 
     .join("");
   const src = imageSrc?.trim();
   if (src) {
-    const unoptimized = /^https?:\/\//i.test(src) || src.startsWith("/api/media/");
+    const unoptimized = isUnoptimizedImageSrc(src);
     return (
       <span className="relative size-11 shrink-0 overflow-hidden rounded-full">
         <Image src={src} alt={name} fill sizes="44px" unoptimized={unoptimized} className="object-cover" />

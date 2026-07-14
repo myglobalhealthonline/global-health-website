@@ -9,6 +9,7 @@ import { useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { currencySymbol } from "@/lib/format-currency";
+import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import {
   ArrowUpRight,
   CheckCircle2,
@@ -380,10 +381,7 @@ export function ServiceTile({
                 alt={`${s.title} telemedicine consultation`}
                 fill
                 sizes="(min-width:1024px) 40vw, 100vw"
-                unoptimized={
-                  /^https?:\/\//i.test(tileImageSrc) &&
-                  !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(tileImageSrc)
-                }
+                unoptimized={isUnoptimizedImageSrc(tileImageSrc)}
                 className="object-cover"
               />
               {/* Subtle right-edge fade into card body */}
@@ -527,10 +525,7 @@ export function ServiceTile({
               alt={`${s.title} telemedicine consultation`}
               fill
               sizes="(min-width:1024px) 33vw, (min-width:768px) 50vw, 100vw"
-              unoptimized={
-                /^https?:\/\//i.test(tileImageSrc) &&
-                !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(tileImageSrc)
-              }
+              unoptimized={isUnoptimizedImageSrc(tileImageSrc)}
               className="object-cover"
             />
             <span
