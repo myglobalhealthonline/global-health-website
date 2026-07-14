@@ -24,6 +24,19 @@ FROM node:22-bookworm-slim AS builder
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# NEXT_PUBLIC_* vars are inlined by `next build` (webpack/SWC DefinePlugin),
+# so they must exist in THIS build stage's env, not just the runtime
+# container's. Railway auto-populates ARGs from service variables of the
+# same name — without these, next.config.ts's images.remotePatterns silently
+# builds with no backend-media host (only unsplash/pexels), which only broke
+# visibly once <Image> stopped hardcoding unoptimized for our own media.
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_MEDIA_ALLOWED_HOSTS
+ARG NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_MEDIA_ALLOWED_HOSTS=$NEXT_PUBLIC_MEDIA_ALLOWED_HOSTS
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
