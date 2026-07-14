@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function Loading() {
   return (
     <div
@@ -9,10 +11,13 @@ export default function Loading() {
       <div className="relative flex items-center justify-center">
         <span className="absolute size-32 animate-ping rounded-full bg-[var(--color-accent)]/10" />
         <span className="absolute size-32 animate-spin rounded-full border-2 border-white/10 border-t-[var(--color-accent)]" />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        {/* next/image (not raw <img>) so the 38.8 KiB source PNG is served
+            resized + as webp/avif; width/height match the h-16 render. */}
+        <Image
           src="/logos/global-health-light.png"
           alt="Global Health"
+          width={98}
+          height={64}
           className="relative h-16 w-auto"
         />
       </div>

@@ -205,11 +205,14 @@ export function SiteFooter({
               className="gh-footer-brandLink gh-focus-on-dark inline-flex items-center"
               aria-label={siteName || "Global Health"}
             >
+              {/* width/height match the rendered size (.gh-footer-logo is
+                  38px tall) so the optimizer serves a ~76px 2x variant
+                  instead of the full 399px source. */}
               <Image
                 src="/logos/global-health-light.png"
                 alt={siteName || "Global Health"}
-                width={399}
-                height={260}
+                width={58}
+                height={38}
                 className="gh-footer-logo"
               />
             </Link>

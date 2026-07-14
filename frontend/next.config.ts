@@ -132,6 +132,9 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns,
     formats: ["image/avif", "image/webp"],
+    // Next 16 only serves qualities declared here (default [75]) — 60 is
+    // used by decorative hero backgrounds that sit under tint overlays.
+    qualities: [60, 75],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2560],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60 * 60 * 24 * 365,

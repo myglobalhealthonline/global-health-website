@@ -204,11 +204,14 @@ export function SiteHeader({
         className="gh-header-brandLink inline-flex shrink-0 min-w-max items-center"
         aria-label={siteName || "Global Health"}
       >
+        {/* width/height match the rendered size (h-12 md:h-14 → 56px tall,
+            width auto) so the optimizer serves a ~172px 2x variant instead
+            of the 828px one the old 404×272 props requested. */}
         <Image
           src={brandLogo?.src ?? "/logos/global-health-dark.png"}
           alt={brandLogo?.alt ?? siteName ?? "Global Health"}
-          width={404}
-          height={272}
+          width={86}
+          height={56}
           priority
           className="h-12 w-auto md:h-14"
           unoptimized={isUnoptimizedImageSrc(brandLogo?.src ?? "")}

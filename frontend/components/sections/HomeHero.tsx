@@ -135,12 +135,15 @@ export function HomeHero({
     >
       {/* ── Base layer: hero photo, full-bleed ── */}
       <div className="gh-home-hero-photoLayer gh-medical-pattern-layer absolute inset-0">
+        {/* quality 60: decorative background under a heavy tint overlay —
+            compression artefacts invisible, saves ~8 KiB on the LCP path. */}
         <Image
           src={heroPhotoSrc}
           alt=""
           aria-hidden
           fill
           priority
+          quality={60}
           unoptimized={unoptimizedHeroPhoto}
           className="object-cover object-center"
           sizes="100vw"
