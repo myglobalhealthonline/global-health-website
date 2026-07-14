@@ -261,11 +261,6 @@ export default async function CountryLangGeneralConsultationPage({
             subtitle: gp.hero.feature3Subtitle,
           },
         ]}
-        badge={{
-          title: gp.hero.badgeTitle,
-          subtitle: gp.hero.badgeSubtitle,
-          accent: gp.hero.badgeAccent,
-        }}
         trustStats={[
           {
             icon: <ShieldCheck className="size-5" strokeWidth={2} aria-hidden />,

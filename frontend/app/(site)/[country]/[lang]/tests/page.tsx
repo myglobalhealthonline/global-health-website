@@ -163,11 +163,6 @@ export default async function HealthTestsPage({
           alt: hub.overview.title,
           priority: true,
         }}
-        badge={{
-          title: t.hero.feature1Title,
-          subtitle: t.hero.feature2Title,
-          accent: t.hero.feature3Title.replace("{country}", config.name),
-        }}
         featureCards={[
           {
             icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,

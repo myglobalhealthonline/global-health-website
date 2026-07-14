@@ -233,11 +233,6 @@ export default async function CountryLangSpecialistConsultationPage({
           alt: `Specialist available for an online consultation in ${config.name}`,
           priority: true,
         }}
-        badge={{
-          title: sp.hero.feature1Title,
-          subtitle: sp.hero.feature2Title.replace("{country}", config.name),
-          accent: sp.hero.feature3Title,
-        }}
         featureCards={[
           {
             icon: <Stethoscope className="size-[18px]" strokeWidth={2} aria-hidden />,
