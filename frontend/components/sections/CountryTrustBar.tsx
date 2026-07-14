@@ -249,6 +249,7 @@ export function CountryTrustBar({
                         <DoctifyWidget
                           variant="micro"
                           language={locale ?? "en"}
+                          theme="dark"
                           className="mt-auto"
                         />
                       </div>

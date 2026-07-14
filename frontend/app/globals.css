@@ -1690,7 +1690,15 @@ img {
 }
 .gh2-selectable:disabled { opacity: .45; cursor: not-allowed; text-decoration: line-through; }
 /* Dark-surface variant. */
-.gh2-selectable-dark { border: 2px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.85); }
+.gh2-selectable-dark {
+  border: 2px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.85);
+  transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
+}
+.gh2-selectable-dark:hover:not(:disabled) {
+  border-color: var(--color-brand-accent); background: rgba(255,255,255,0.09);
+  box-shadow: 0 0 0 1px var(--color-brand-accent);
+}
+.gh2-selectable-dark:active:not(:disabled) { border-color: var(--color-brand-accent); background: rgba(176,241,34,0.18); }
 .gh2-selectable-dark[aria-pressed="true"], .gh2-selectable-dark[data-selected="true"] {
   border-color: var(--color-brand-accent); background: var(--color-brand-accent); color: #0a1f1a;
 }
