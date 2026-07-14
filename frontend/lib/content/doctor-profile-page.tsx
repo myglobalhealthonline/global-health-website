@@ -10,6 +10,7 @@ import { validatePublicDoctorRecord } from "@/lib/content/publication-validation
 import { getSiteUrl } from "@/lib/seo/site-url";
 import {
   breadcrumbJsonLd,
+  faqJsonLd,
   physicianJsonLd,
 } from "@/lib/seo/structured-data";
 import { SITE_NAME } from "@/lib/constants";
@@ -74,7 +75,10 @@ export async function buildDoctorProfileMetadata(
     data.profile.seoDescription ??
     `Book an online consultation with ${data.profile.name}, ${data.profile.title} in ${data.profile.country}. Languages: ${data.profile.languages.join(", ") || "English"}.`;
   return {
-    title,
+    // Admin-authored seoTitle already carries the brand — absolute skips the
+    // root layout's `%s · Global Health` template to avoid "… | Global Health
+    // Ireland · Global Health" duplication.
+    title: data.profile.seoTitle ? { absolute: data.profile.seoTitle } : title,
     description,
     keywords: data.profile.seoKeywords,
     alternates: { canonical: url },
@@ -229,12 +233,19 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
             division: profileDoc?.registrationDivision ?? null,
             regulator,
             credentials: profileDoc?.credentials,
+            specialty: data.profile.specialties[0] ?? null,
           }),
           breadcrumbJsonLd([
             { name: "Home", url: "/" },
-            { name: data.profile.country, url: teamHref },
+            { name: data.profile.country, url: `/${slug}/${lang}` },
+            { name: "Doctors", url: teamHref },
             { name: data.profile.name, url: profileHref },
           ]),
+          // FAQPage schema mirrors the visible FAQ accordion — only emitted
+          // when the doctor actually has FAQ content, never speculative.
+          ...(data.profile.faqs && data.profile.faqs.length > 0
+            ? [faqJsonLd(data.profile.faqs.map((f) => ({ question: f.question, answer: f.answer })))]
+            : []),
         ]}
       />
       <DoctorProfileTemplate {...templateData} t={dp} />

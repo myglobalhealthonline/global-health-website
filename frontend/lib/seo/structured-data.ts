@@ -180,6 +180,7 @@ export function physicianJsonLd(doc: {
   division?: string | null;
   regulator?: SchemaRegulator | null;
   credentials?: SchemaCredential[];
+  specialty?: string | null;
 }) {
   const hasCredential = buildHasCredential(doc);
   return {
@@ -191,6 +192,12 @@ export function physicianJsonLd(doc: {
     image: doc.imageSrc,
     knowsLanguage: doc.languages,
     areaServed: doc.countryName,
+    ...(doc.specialty ? { medicalSpecialty: doc.specialty } : {}),
+    worksFor: {
+      "@type": "MedicalOrganization",
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
     ...(doc.registrationNumber
       ? {
           identifier: {

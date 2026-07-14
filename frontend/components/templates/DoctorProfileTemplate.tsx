@@ -415,7 +415,7 @@ export function DoctorProfileTemplate({
               About {profile.name.split(" ").slice(0, 2).join(" ")}
             </h2>
             <div
-              className="mt-8 text-[16px] leading-[1.85] text-[var(--color-text-body)] [&_a]:underline [&_a]:underline-offset-2 [&_p:first-child]:mt-0 [&_p]:mt-5"
+              className="mt-8 text-[16px] leading-[1.85] text-[var(--color-text-body)] [&_a]:underline [&_a]:underline-offset-2 [&_p:first-child]:mt-0 [&_p]:mt-5 [&_ul]:mt-5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mt-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mt-2"
               dangerouslySetInnerHTML={{ __html: safeBio }}
             />
 
