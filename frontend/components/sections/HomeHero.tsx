@@ -143,6 +143,7 @@ export function HomeHero({
           aria-hidden
           fill
           priority
+          fetchPriority="high"
           quality={60}
           unoptimized={unoptimizedHeroPhoto}
           className="object-cover object-center"
