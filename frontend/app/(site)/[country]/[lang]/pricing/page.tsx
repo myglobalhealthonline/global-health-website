@@ -322,7 +322,11 @@ function PlansArchPanel({ countryName }: { countryName: string }) {
       <div
         className="gh-glass-emerald gh-floaty absolute -right-6 top-[12%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0s]"
       >
-        <Zap className="size-5 shrink-0 text-[var(--color-brand-accent)]" strokeWidth={1.75} aria-hidden />
+        <span
+          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"
+        >
+          <Zap className="size-4" strokeWidth={2} aria-hidden />
+        </span>
         <span className="min-w-0">
           <span className="block text-[13px] font-bold leading-tight text-white">Monthly care</span>
           <span className="block text-[11.5px] leading-tight text-white/55">Renew or cancel anytime</span>
@@ -331,7 +335,7 @@ function PlansArchPanel({ countryName }: { countryName: string }) {
 
       {/* Floating — Secure payments */}
       <div
-        className="gh-glass-emerald gh-floaty absolute -right-4 top-[56%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:1.4s]"
+        className="gh-glass-emerald gh-floaty absolute -right-6 top-[56%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:1.4s]"
       >
         <span
           className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"
@@ -346,7 +350,7 @@ function PlansArchPanel({ countryName }: { countryName: string }) {
 
       {/* Floating — Licensed doctors */}
       <div
-        className="gh-glass-emerald gh-floaty absolute -left-8 bottom-[5%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0.7s]"
+        className="gh-glass-emerald gh-floaty absolute -left-6 bottom-[5%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0.7s]"
       >
         <span
           className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"

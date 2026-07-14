@@ -225,7 +225,7 @@ function ContactArchPanel({ locale }: { locale: { float1_title: string; float1_s
 
       {/* Floating — Real humans */}
       <div
-        className="gh-glass-emerald gh-floaty absolute -right-4 top-[56%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
+        className="gh-glass-emerald gh-floaty absolute -right-6 top-[56%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
         style={{ maxWidth: 232, animationDelay: "1.4s" }}
       >
         <span
@@ -242,7 +242,7 @@ function ContactArchPanel({ locale }: { locale: { float1_title: string; float1_s
 
       {/* Floating — GDPR safe */}
       <div
-        className="gh-glass-emerald gh-floaty absolute -left-8 bottom-[5%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
+        className="gh-glass-emerald gh-floaty absolute -left-6 bottom-[5%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
         style={{ maxWidth: 232, animationDelay: "0.7s" }}
       >
         <span
