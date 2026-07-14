@@ -26,6 +26,12 @@ interface HeroRevealProps {
   children: ReactNode;
   /** Delay in ms before the reveal transition starts. */
   delay?: number;
+  /**
+   * Set false for the LCP element (hero headline): elements first painted at
+   * opacity 0 are permanently excluded as LCP candidates (NO_LCP / inflated
+   * LCP on real devices), so it slides in via transform only.
+   */
+  fade?: boolean;
   className?: string;
   style?: CSSProperties;
 }
@@ -36,6 +42,7 @@ const DURATION = "0.9s";
 export function HeroReveal({
   children,
   delay = 0,
+  fade = true,
   className = "",
   style,
 }: HeroRevealProps) {
@@ -57,7 +64,7 @@ export function HeroReveal({
       className={className}
       style={{
         ...style,
-        opacity: revealed ? 1 : 0,
+        opacity: revealed || !fade ? 1 : 0,
         transform: revealed ? "translateY(0px)" : "translateY(32px)",
         // Add transition only when revealing — prevents instant re-hide on unmount
         transition: revealed

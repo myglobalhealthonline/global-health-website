@@ -185,7 +185,9 @@ export function HomeHero({
             </div>
           </HeroReveal>
 
-          <HeroReveal delay={130}>
+          {/* fade=false: the headline is the LCP candidate — first paint at
+              opacity 0 would exclude it from LCP entirely (NO_LCP). */}
+          <HeroReveal delay={130} fade={false}>
             <h1
               id="hero-title"
               className="gh-home-hero-title text-white"

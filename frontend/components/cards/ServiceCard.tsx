@@ -51,9 +51,11 @@ function TwoActions({
 }) {
   return (
     <div className="relative z-10 mt-6 flex flex-col gap-2 sm:flex-row sm:gap-2.5">
+      {/* sr-only suffix (not aria-label): Lighthouse's descriptive-link-text
+          SEO audit reads visible/text content only, so an aria-label alone
+          still flags "Learn more" as generic. */}
       <Link
         href={detailHref}
-        aria-label={`${learnLabel}: ${title}`}
         className={cn(
           "inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full px-4 text-sm font-bold tracking-[-0.005em] whitespace-nowrap transition-[background-color,color,border-color] duration-200 focus-visible:outline-none sm:w-auto sm:shrink-0",
           dark
@@ -62,11 +64,11 @@ function TwoActions({
         )}
       >
         {learnLabel}
+        <span className="sr-only">: {title}</span>
         <ArrowRight className="size-4 shrink-0" aria-hidden />
       </Link>
       <Link
         href={bookHref}
-        aria-label={`${bookLabel}: ${title}`}
         className="inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full px-4 text-sm font-extrabold tracking-[-0.005em] transition-[transform,filter,box-shadow,background-color] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0 whitespace-nowrap sm:flex-1"
         style={
           dark
@@ -84,6 +86,7 @@ function TwoActions({
       >
         <CalendarDays className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
         {bookLabel}
+        <span className="sr-only">: {title}</span>
       </Link>
     </div>
   );
