@@ -65,16 +65,29 @@ const COPY: Record<string, Copy> = {
   },
 };
 
+// Country-scoped eyebrow overrides — keyed by `${countryCode}:${locale}` so
+// a market-specific regulator claim never leaks onto another market's page
+// (same no-leak rule as country-home-copy.ts / country-doctors-copy.ts).
+const EYEBROW_OVERRIDE: Record<string, string> = {
+  "IE:en": "IMC-verified doctors and clinicians",
+};
+
 export function VerifiedProfessionals({
   trust,
   locale,
+  country,
 }: {
   trust: CountryTrust;
   locale?: string;
+  /** Country code (e.g. "IE") — scopes eyebrow overrides to one market. */
+  country?: string;
 }) {
   const c = COPY[(locale ?? "en").toLowerCase()] ?? COPY.en;
   const regulatorName = trust.regulator?.name ?? "the national medical regulator";
   const regulatorUrl = trust.regulator?.url ?? null;
+  const eyebrow =
+    EYEBROW_OVERRIDE[`${(country ?? "").toUpperCase()}:${(locale ?? "en").toLowerCase()}`] ??
+    c.eyebrow;
 
   return (
     <section
@@ -88,7 +101,7 @@ export function VerifiedProfessionals({
           <RevealOnScroll delay={0}>
             <div className="lg:sticky lg:top-[calc(var(--header-height)_+_32px)]">
               <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-primary)]">
-                {c.eyebrow}
+                {eyebrow}
               </span>
               <h2
                 id="verified-professionals-heading"

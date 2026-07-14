@@ -162,6 +162,8 @@ export function FeaturedDoctor({
             }}
           >
             <Sparkles className="size-3.5" strokeWidth={2} aria-hidden />
+            {/* Intentional org label — one Clinical Director per country (owner decision,
+                overrides brief item 4.1). Doctor's clinical specialty shows via title below. */}
             Clinical Director
           </span>
 

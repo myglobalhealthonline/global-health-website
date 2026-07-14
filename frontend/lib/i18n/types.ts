@@ -102,6 +102,19 @@ export type CommonLocale = {
     viewProfile: string;
     bookAppointment: string;
     pickTime: string;
+    viewDoctors?: string;
+    trustCard1Title?: string;
+    trustCard1Subtitle?: string;
+    trustCard2Title?: string;
+    trustCard2Subtitle?: string;
+    trustCard3Title?: string;
+    trustCard3Subtitle?: string;
+    floatCard1Title?: string;
+    floatCard1Subtitle?: string;
+    floatCard2Title?: string;
+    floatCard2Subtitle?: string;
+    floatCard3Title?: string;
+    floatCard3Subtitle?: string;
   };
   countrySelector: {
     title: string;

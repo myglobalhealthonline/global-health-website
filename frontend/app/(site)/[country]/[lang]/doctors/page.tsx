@@ -6,8 +6,6 @@ import { getCountryByCode } from "@/data/countries";
 import { getCountryDoctors, getCountryServices } from "@/lib/content/get-country-collections";
 import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-country-trust";
 import { VerifiedProfessionals } from "@/components/sections/VerifiedProfessionals";
-import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
-import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
 import { getSiteUrl } from "@/lib/seo/site-url";
@@ -31,8 +29,8 @@ import { SITE_NAME } from "@/lib/constants";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
-import { buildDoctorDirectoryView, type DoctorDirectoryContext } from "@/lib/content/doctor-directory";
-import { DoctorDirectoryView } from "./_components/DoctorDirectoryView";
+import type { DoctorDirectoryContext } from "@/lib/content/doctor-directory";
+import { overrideDoctorsBundle } from "@/lib/content/country-doctors-copy";
 import { DoctorsDirectoryClient } from "./_components/DoctorsDirectoryClient";
 
 type Params = { country: string; lang: string };
@@ -86,9 +84,16 @@ export async function generateMetadata({
  * page eligible for static generation (P-001). The `?lang=`/`?type=`
  * filter chips are applied client-side by `DoctorsDirectoryClient`, which
  * needs `useSearchParams` and is therefore wrapped in `<Suspense>` below.
- * The Suspense fallback renders the same unfiltered roster server-side, so
- * the statically generated shell always ships real content (not a spinner)
- * to crawlers and pre-hydration visitors.
+ *
+ * The fallback here is a lightweight, contentless skeleton — NOT another
+ * copy of the directory. `DoctorsDirectoryClient` doesn't actually suspend
+ * (`useSearchParams` resolves synchronously), so React's streaming SSR
+ * flushes the fallback frame and then immediately flushes the resolved
+ * child into the same response. A real `<DoctorDirectoryView>` fallback
+ * therefore shipped the ENTIRE directory (hero, stat bar, featured card,
+ * every doctor card) TWICE in the raw HTML — a duplicate-content SEO bug.
+ * The full roster still reaches crawlers exactly once, via the resolved
+ * child render; the SEO win from static generation is unaffected.
  */
 export default async function CountryLangDoctorsPage({
   params,
@@ -101,7 +106,6 @@ export default async function CountryLangDoctorsPage({
   const config = getCountryByCode(code);
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
-  const overlay = await getPublicCountryByCode(code);
 
   const { common } = loadLocaleBundle(lang as LocaleCode);
 
@@ -156,11 +160,8 @@ export default async function CountryLangDoctorsPage({
     generalServiceIds: generalServices.map((s) => s.id),
     specialistServiceIds: specialistServices.map((s) => s.id),
     verifyUrl,
-    i18n: common.doctors,
+    i18n: overrideDoctorsBundle(common.doctors, code, lang),
   };
-  // Fallback = no filters active, i.e. the full roster — identical to what
-  // a direct visit to `/doctors` (no query string) renders anyway.
-  const unfilteredView = buildDoctorDirectoryView(directoryCtx, [], []);
 
   return (
     <>
@@ -177,10 +178,12 @@ export default async function CountryLangDoctorsPage({
       {page?.sections.faq ? <JsonLd data={faqJsonLd(page.faq)} /> : null}
       {/* Directory IS this page's header/hero (no ServiceHero here) — every
           marketing section below must render AFTER it, never before. */}
-      <Suspense fallback={<DoctorDirectoryView view={unfilteredView} />}>
+      <Suspense fallback={<DoctorsDirectorySkeleton />}>
         <DoctorsDirectoryClient ctx={directoryCtx} />
       </Suspense>
-      {countryTrust ? <VerifiedProfessionals trust={countryTrust} locale={lang} /> : null}
+      {countryTrust ? (
+        <VerifiedProfessionals trust={countryTrust} locale={lang} country={code} />
+      ) : null}
       <DoctifyReviewsSection
         theme="forest"
         variant="carousel"
@@ -217,5 +220,22 @@ export default async function CountryLangDoctorsPage({
         />
       ) : null}
     </>
+  );
+}
+
+/** Contentless placeholder for the brief window before `DoctorsDirectoryClient`
+ *  resolves — see the duplicate-content note above the page component. */
+function DoctorsDirectorySkeleton() {
+  return (
+    <div aria-hidden className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+      <div className="h-[70vh] min-h-[520px] w-full animate-pulse bg-[var(--color-brand-primary)]/90" />
+      <div className="gh-container py-16">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-[360px] animate-pulse rounded-2xl bg-black/5" />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
