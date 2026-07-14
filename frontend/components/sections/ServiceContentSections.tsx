@@ -9,6 +9,7 @@
 
 import type { ReactNode } from "react";
 import { Check } from "lucide-react";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 type Theme = "light" | "soft" | "dark";
 
@@ -27,9 +28,6 @@ function sectionClass(theme: Theme): string {
 function sectionStyle(theme: Theme): React.CSSProperties {
   return {
     padding: "clamp(56px,7vw,104px) 0",
-    borderTop: isDark(theme)
-      ? "1px solid rgba(255,255,255,0.06)"
-      : "1px solid rgba(29,75,54,0.10)",
   };
 }
 
@@ -76,6 +74,7 @@ export function ServiceIntro({
 }) {
   return (
     <section className={sectionClass(theme)} style={sectionStyle(theme)}>
+      <SectionSeam theme={isDark(theme) ? "dark" : "light"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
         <p
@@ -112,6 +111,7 @@ export function ChecklistSection({
   const dark = isDark(theme);
   return (
     <section className={sectionClass(theme)} style={sectionStyle(theme)}>
+      <SectionSeam theme={dark ? "dark" : "light"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
         <SectionTitle theme={theme}>{title}</SectionTitle>
@@ -183,6 +183,7 @@ export function WhyChooseSection({
   const dark = isDark(theme);
   return (
     <section className={sectionClass(theme)} style={sectionStyle(theme)}>
+      <SectionSeam theme={dark ? "dark" : "light"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
         <SectionTitle theme={theme}>{title}</SectionTitle>
@@ -244,6 +245,7 @@ export function ProcessStepsSection({
   const dark = isDark(theme);
   return (
     <section className={sectionClass(theme)} style={sectionStyle(theme)}>
+      <SectionSeam theme={dark ? "dark" : "light"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
         <SectionTitle theme={theme}>{title}</SectionTitle>
@@ -299,6 +301,7 @@ export function ImportantInfoSection({
 }) {
   return (
     <section className={sectionClass(theme)} style={sectionStyle(theme)}>
+      <SectionSeam theme={isDark(theme) ? "dark" : "light"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <div
           className="rounded-[var(--radius-card)] p-6 sm:p-8 lg:p-10"

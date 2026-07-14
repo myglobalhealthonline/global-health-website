@@ -6,6 +6,7 @@
  * slipped past the admin editor can never execute in a visitor's browser.
  */
 import { sanitizePageBodyHtml } from "@/lib/content/sanitize-page-body";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 export function RichBodySection({
   html,
@@ -55,11 +56,9 @@ export function RichBodySection({
       }
       style={{
         padding: "clamp(40px,5vw,64px) 0",
-        borderTop: isLight
-          ? "1px solid rgba(29,75,54,0.10)"
-          : "1px solid rgba(255,255,255,0.06)",
       }}
     >
+      <SectionSeam theme={isLight ? "light" : "dark"} />
       <div
         className="mx-auto"
         style={{

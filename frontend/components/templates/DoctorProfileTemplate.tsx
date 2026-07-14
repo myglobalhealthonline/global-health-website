@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
 import { focalStyle } from "@/components/media/doctor-photo";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 /* ─── Types ──────────────────────────────────────────────────────────────── */
 type DoctorProfileTemplateProps = {
@@ -396,7 +397,8 @@ export function DoctorProfileTemplate({
       </section>
 
       {/* ── BODY — long-form bio + sticky booking ── */}
-      <section className="border-t border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel py-[clamp(56px,7vw,96px)]">
+      <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel py-[clamp(56px,7vw,96px)]">
+        <SectionSeam theme="light" />
         <div className="gh-container grid gap-16 lg:grid-cols-[1.5fr_1fr] lg:gap-24">
           <article>
             <p
@@ -509,7 +511,8 @@ export function DoctorProfileTemplate({
       </section>
 
       {/* ── Bottom CTA ── */}
-      <section className="border-t border-white/6 bg-[linear-gradient(168deg,#15382A_0%,#0F2E25_55%,#0B241C_100%)] gh-inline-clamp-section-cta">
+      <section className="relative bg-[linear-gradient(168deg,#15382A_0%,#0F2E25_55%,#0B241C_100%)] gh-inline-clamp-section-cta">
+        <SectionSeam theme="dark" />
         <div className="gh-container">
           <div className="grid items-end gap-10 lg:grid-cols-[1.6fr_1fr]">
             <div>

@@ -336,10 +336,7 @@ export function PageHero({
   const bgSrc = mobileBgSrc ?? heroImage?.src;
 
   return (
-    <section
-      className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden text-white gh-hero-cap"
-      style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
-    >
+    <section className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden text-white gh-hero-cap">
       {/* Mobile/tablet only — full-bleed portrait behind a dark-green tint,
        *  replacing the plus mask (which is desktop-only, see aside below). */}
       {bgSrc ? (

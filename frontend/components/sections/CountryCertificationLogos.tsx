@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import {
   getCountryPartnerLogos,
   type CountryCertificationLogo,
@@ -49,6 +50,7 @@ export function CountryCertificationLogos({
       aria-label={`${trust.country.name} certification and partner logos`}
       className="relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark py-[clamp(44px,5vw,72px)]"
     >
+      <SectionSeam theme="dark" />
       <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <RevealOnScroll delay={0}>
           <div>

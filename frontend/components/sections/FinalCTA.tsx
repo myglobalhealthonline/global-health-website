@@ -7,6 +7,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 export type FinalCtaI18n = {
   eyebrow: string;
@@ -37,6 +38,7 @@ export function FinalCTA({
           "radial-gradient(900px 560px at 92% -12%, rgba(176,241,34,0.10), transparent 60%), linear-gradient(168deg, #15382A 0%, #0F2E25 60%, #0B241C 100%)",
       }}
     >
+      <SectionSeam theme="dark" />
       <div
         className="
           relative z-[1]

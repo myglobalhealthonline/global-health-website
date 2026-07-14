@@ -40,6 +40,7 @@ import { ServiceLinkedBody } from "@/components/sections/ServiceLinkedBody";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 type Params = { country: string; lang: string; serviceSlug: string };
 
@@ -423,7 +424,8 @@ export default async function ServiceDetailPage({
 
       {/* Admin-authored rich detail body */}
       {bodyHtml ? (
-        <section className="gh-inline-clamp-section border-t border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+        <section className="gh-inline-clamp-section gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+          <SectionSeam theme="light" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-primary)]">
               {t.aboutService}
@@ -443,7 +445,8 @@ export default async function ServiceDetailPage({
 
       {/* Who you'll see — clinicians assigned to this service. */}
       {assignedDoctors.length > 0 ? (
-        <section className="gh-inline-clamp-section border-t border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+        <section className="gh-inline-clamp-section gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+          <SectionSeam theme="light" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <header>
               <h2
@@ -498,7 +501,8 @@ export default async function ServiceDetailPage({
       ) : null}
 
       {/* Doctify social proof — compact verified-rating strip */}
-      <section className="border-t border-[var(--color-border)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">
+      <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">
+        <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <DoctifyWidget variant="horizontal" language={lang} />
         </div>
@@ -513,8 +517,9 @@ export default async function ServiceDetailPage({
 
       {/* Closing booking band — visual parity with FinalCTA (§14) */}
       <section
-        className="gh-inline-clamp-section gh2-section-forest relative isolate overflow-hidden border-t border-white/7 gh-medical-pattern gh-medical-pattern-dark"
+        className="gh-inline-clamp-section gh2-section-forest relative isolate overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
       >
+        <SectionSeam theme="dark" />
         <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid items-end gap-8 lg:grid-cols-[1.6fr_1fr]">
             <div>

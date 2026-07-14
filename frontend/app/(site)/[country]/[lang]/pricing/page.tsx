@@ -23,6 +23,7 @@ import { interpolate } from "@/lib/subscription/format";
 import { PricingPlanCard } from "./_components/PricingPlanCard";
 import { Stethoscope, Calendar, ShieldCheck, CreditCard, Zap, BadgeCheck } from "lucide-react";
 import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 type Params = { country: string; lang: string };
 
@@ -159,6 +160,7 @@ export default async function PricingPage({
         id="plans"
         className="scroll-mt-24 gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-pricing"
       >
+        <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="mx-auto max-w-2xl text-center">
             <p
@@ -221,7 +223,8 @@ export default async function PricingPage({
       </section>
 
       {/* Doctify social proof — verified patient ratings above the fold-out steps */}
-      <section className="border-t border-[var(--color-border)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">
+      <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">
+        <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <DoctifyWidget variant="horizontal" language={lang} />
         </div>
@@ -229,6 +232,7 @@ export default async function PricingPage({
 
       {/* How it works — 5-step onboarding overview (subscriptions are IE-only). */}
       <section className="gh2-section-forest gh-medical-pattern gh-medical-pattern-dark gh-inline-clamp-section-pricing">
+        <SectionSeam theme="dark" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="mx-auto max-w-2xl text-center">
             <p

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { DoctorsHero } from "@/components/sections/DoctorsHero";
 import { DoctorCard } from "@/components/cards/DoctorCard";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 const PAGE_SIZE = 6;
 
@@ -128,7 +129,8 @@ export function DoctorTeamTemplate({
       />
 
       {/* GRID — light ivory band; dark liquid-glass DoctorCards float on it. */}
-      <section id="doctor-grid" className="gh-section relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel" style={{ scrollMarginTop: "96px", borderTop: "1px solid rgba(29,75,54,0.10)" }}>
+      <section id="doctor-grid" className="gh-section relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel" style={{ scrollMarginTop: "96px" }}>
+        <SectionSeam theme="light" />
         <div className="gh-container">
           {/* Featured-doctor spotlight (admin-chosen) above the filters. */}
           {spotlight}
@@ -241,7 +243,8 @@ export function DoctorTeamTemplate({
       </section>
 
       {showBottomCta ? (
-        <section className="gh-section relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <section className="gh-section relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest">
+          <SectionSeam theme="dark" />
           <div className="gh-container">
             <div className="grid items-center gap-10 lg:grid-cols-[1.6fr_1fr]">
               <h2

@@ -5,6 +5,7 @@ import { listBlogPosts } from "@/lib/content/get-public-blog";
 import { BlogCard } from "@/components/cards/BlogCard";
 import { PageHero } from "@/components/sections/PageHero";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import { Stethoscope, ShieldCheck, BookOpen } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -51,12 +52,12 @@ export default async function BlogIndexPage() {
 
       <section
         id="articles"
-        className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
+        className="relative gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
         style={{
-          borderTop: "1px solid rgba(29,75,54,0.10)",
           padding: "clamp(64px,8vw,120px) 0",
         }}
       >
+        <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           {ordered.length === 0 ? (
             <div className="mx-auto max-w-[520px] text-center">

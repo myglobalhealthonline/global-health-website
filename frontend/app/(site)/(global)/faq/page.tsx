@@ -5,6 +5,7 @@ import { SITE_NAME } from "@/lib/constants";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { PageHero } from "@/components/sections/PageHero";
 import { FAQTabs } from "@/components/sections/FAQTabs";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import { faqJsonLd } from "@/lib/seo/structured-data";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -85,6 +86,7 @@ export default async function FAQPage() {
           padding: "clamp(64px,8vw,96px) 0",
         }}
       >
+        <SectionSeam theme="dark" />
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0"

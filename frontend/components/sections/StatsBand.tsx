@@ -6,6 +6,7 @@
  */
 
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import type { ReactNode } from "react";
 
 export type StatBandItem = {
@@ -35,11 +36,10 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
           : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
       }
       style={{
-        borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
-        borderBottom: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
         padding: "clamp(64px,8vw,120px) 0",
       }}
     >
+      <SectionSeam />
       <div
         className="mx-auto grid items-center gap-14 px-5 md:px-10 lg:grid-cols-[1fr_1.35fr] lg:gap-20"
         style={{ maxWidth: "var(--container-width)" }}

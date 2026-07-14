@@ -15,6 +15,7 @@ import {
   ChecklistSection,
   WhyChooseSection,
 } from "@/components/sections/ServiceContentSections";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import { getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
@@ -282,6 +283,7 @@ export default async function CountryLangGeneralConsultationPage({
 
       {page?.heroImageSrc ? (
         <section className="gh2-section-forest gh-medical-pattern gh-medical-pattern-dark" style={{ padding: "clamp(64px,8vw,120px) 0" }}>
+          <SectionSeam theme="dark" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 -mt-16 relative">
             <div
               className="relative w-full overflow-hidden rounded-[var(--radius-card)]"

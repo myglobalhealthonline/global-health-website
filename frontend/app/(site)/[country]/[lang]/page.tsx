@@ -18,6 +18,7 @@ import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import {
   ServiceIntro,
   ChecklistSection,
@@ -564,7 +565,8 @@ export default async function CountryLangHomePage({
         />
       ) : null}
       {/* ── Team section — featured card + full grid under one heading ── */}
-      <section className="relative border-t border-white/6 gh2-section-forest gh-medical-pattern gh-medical-pattern-dark">
+      <section className="relative gh2-section-forest gh-medical-pattern gh-medical-pattern-dark">
+        <SectionSeam theme="dark" />
         <div
           className="gh-section mx-auto max-w-[var(--container-width)] px-5 md:px-10"
         >

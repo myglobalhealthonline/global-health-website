@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ServiceCard } from "@/components/cards/ServiceCard";
 import { Container } from "@/components/layout/Container";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 type Item = {
   title: string;
@@ -84,11 +85,11 @@ export function ServicesGrid({
         isDark
           ? {
               padding: "clamp(64px,8vw,120px) 0",
-              borderTop: "1px solid rgba(255,255,255,0.07)",
             }
           : { background: "var(--color-background-page)", padding: "clamp(48px,6vw,96px) 0" }
       }
     >
+      {isDark ? <SectionSeam theme="dark" /> : null}
       <Container>
         {/* Header row */}
         <div className="flex flex-wrap items-end justify-between gap-8 mb-12 lg:mb-14">

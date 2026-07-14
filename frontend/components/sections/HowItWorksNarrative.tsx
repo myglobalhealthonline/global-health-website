@@ -5,6 +5,7 @@
  */
 
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 export type HowItWorksI18n = {
   eyebrow: string;
@@ -63,9 +64,9 @@ export function HowItWorksNarrative({
       }
       style={{
         padding: "clamp(64px,8vw,120px) 0",
-        borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
       }}
     >
+      <SectionSeam theme={isLight ? "light" : "dark"} />
       <div
         className="mx-auto px-5 md:px-10"
         style={{ maxWidth: "var(--container-width)" }}

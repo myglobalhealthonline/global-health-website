@@ -31,6 +31,7 @@ import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 
 type Params = { country: string; lang: string };
@@ -192,9 +193,9 @@ export default async function PrescriptionsPage({
           className="relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
           style={{
             padding: "clamp(48px,6vw,80px) 0",
-            borderTop: "1px solid rgba(255,255,255,0.07)",
           }}
         >
+          <SectionSeam theme="dark" />
           <div className="mx-auto max-w-3xl px-5 md:px-10 text-center">
             <p style={{ color: "rgba(255,255,255,0.55)" }}>
               {t.comingSoon.replace("{country}", config.name)}

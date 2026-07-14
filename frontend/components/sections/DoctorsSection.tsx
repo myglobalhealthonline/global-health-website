@@ -10,6 +10,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DoctorCard } from "@/components/cards/DoctorCard";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 type DoctorItem = {
   name: string;
@@ -129,9 +130,9 @@ export function DoctorsSection({ title, intro, doctors, theme = "dark", cardThem
       }
       style={{
         padding: "clamp(64px,8vw,120px) 0",
-        borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
       }}
     >
+      <SectionSeam theme={isLight ? "light" : "dark"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         {(title || intro || showPager) && (
           <div className="flex flex-wrap items-end justify-between gap-4 mb-12 lg:mb-14">

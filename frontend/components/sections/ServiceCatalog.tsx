@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 export type ServiceTileType = "general" | "specialist" | "prescription" | "test";
 
@@ -133,11 +134,12 @@ export function ServiceCatalog({
   return (
     <section
       id="services"
-      className="scroll-mt-24 gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
+      className="relative scroll-mt-24 gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
       style={{
         padding: "clamp(64px,8vw,120px) 0",
       }}
     >
+      <SectionSeam theme="dark" />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         {/* Header */}
         <header className="grid items-end gap-8 lg:grid-cols-[1fr_auto] mb-12 md:mb-16">

@@ -15,6 +15,7 @@ import {
   Zap,
 } from "lucide-react";
 import { MarqueeTrack } from "@/components/sections/MarqueeTrack";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 const ICONS = {
   star: Star,
@@ -43,8 +44,9 @@ export function TrustMarquee({ items }: { items: TrustMarqueeItem[] }) {
   return (
     <section
       aria-label="Why patients trust us"
-      className="gh2-section-forest relative overflow-hidden border-y border-white/[0.07]"
+      className="gh2-section-forest relative overflow-hidden"
     >
+      <SectionSeam theme="dark" />
       {/* Edge fade masks */}
       <div
         aria-hidden

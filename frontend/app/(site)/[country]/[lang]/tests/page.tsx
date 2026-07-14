@@ -35,6 +35,7 @@ import {
 import { getServiceHubContent } from "@/lib/content/service-hub-content";
 import { resolveBrandTitle } from "@/lib/seo/page-seo";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 type Params = { country: string; lang: string };
 
@@ -214,9 +215,9 @@ export default async function HealthTestsPage({
           className="scroll-mt-24 relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
           style={{
             padding: "clamp(64px,8vw,120px) 0",
-            borderTop: "1px solid rgba(255,255,255,0.07)",
           }}
         >
+          <SectionSeam theme="dark" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <p
               className="text-[11px] font-bold uppercase tracking-[0.2em]"
@@ -268,9 +269,9 @@ export default async function HealthTestsPage({
           className="relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
           style={{
             padding: "clamp(48px,6vw,80px) 0",
-            borderTop: "1px solid rgba(255,255,255,0.07)",
           }}
         >
+          <SectionSeam theme="dark" />
           <div className="mx-auto max-w-3xl px-5 md:px-10 text-center">
             <h2 className="text-2xl font-extrabold text-white">{hub.emptyState.title}</h2>
             <p className="mt-4" style={{ color: "rgba(255,255,255,0.65)" }}>{hub.emptyState.body}</p>

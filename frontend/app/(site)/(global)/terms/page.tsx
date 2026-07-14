@@ -4,6 +4,7 @@ import { SITE_NAME } from "@/lib/constants";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 export const metadata: Metadata = {
   title: "Terms of service",
@@ -27,7 +28,8 @@ export default async function TermsPage() {
       {/* Prose body — full-bleed ivory wrapper; body{} is dark forest
           globally, so every section must supply its own background or
           text reads dark-on-dark. Inner div keeps the readable measure. */}
-      <section className="gh2-section-ivory">
+      <section className="relative gh2-section-ivory">
+        <SectionSeam theme="light" />
         <div
           className="mx-auto max-w-3xl px-5 md:px-10"
           style={{ padding: "clamp(48px,6vw,80px) 20px" }}

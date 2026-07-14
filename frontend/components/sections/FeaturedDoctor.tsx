@@ -22,6 +22,7 @@ import {
   type BrandIcon,
 } from "@/components/ui/BrandIcons";
 import { focalStyle, DoctorAvatarFallback } from "@/components/media/doctor-photo";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 type DoctorSpotlightProps = {
   name: string;
@@ -353,10 +354,10 @@ export function FeaturedDoctor({
       <section
         className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
         style={{
-          borderTop: "1px solid rgba(255,255,255,0.06)",
           padding: "clamp(48px,7vw,96px) 0",
         }}
       >
+        <SectionSeam theme="dark" />
         <div
           className="mx-auto"
           style={{

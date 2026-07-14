@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight, ShieldCheck, Stethoscope, Globe2, Clock, BadgeCheck, Users } from "lucide-react";
 import { PageHero } from "@/components/sections/PageHero";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
@@ -122,7 +123,8 @@ export default async function AboutPage() {
       />
 
       {/* LIGHT — three pillars */}
-      <section className="gh-inline-clamp-section-pricing relative overflow-hidden border-t border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+      <section className="gh-inline-clamp-section-pricing relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+        <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <p
             className="gh-eyebrow text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-primary)]"
@@ -161,7 +163,8 @@ export default async function AboutPage() {
       </section>
 
       {/* DARK — mission / why we built this */}
-      <section className="gh-inline-clamp-section-pricing relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark border-t border-white/7 gh2-section-forest">
+      <section className="gh-inline-clamp-section-pricing relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest">
+        <SectionSeam theme="dark" />
         <div className="mx-auto grid max-w-[var(--container-width)] gap-12 px-5 md:px-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-accent)]">
@@ -201,7 +204,8 @@ export default async function AboutPage() {
       </section>
 
       {/* LIGHT — how we work */}
-      <section className="gh-inline-clamp-section-pricing relative overflow-hidden border-t border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+      <section className="gh-inline-clamp-section-pricing relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+        <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
             <div>
@@ -229,7 +233,8 @@ export default async function AboutPage() {
       </section>
 
       {/* DARK — coverage */}
-      <section className="gh-inline-clamp-section-cta relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark border-t border-white/7 gh2-section-forest">
+      <section className="gh-inline-clamp-section-cta relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest">
+        <SectionSeam theme="dark" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div>
@@ -276,7 +281,8 @@ export default async function AboutPage() {
       </section>
 
       {/* LIGHT — company facts / at a glance */}
-      <section className="gh-inline-clamp-section-pricing relative overflow-hidden border-t border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+      <section className="gh-inline-clamp-section-pricing relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+        <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <p className="gh-eyebrow text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-primary)]">
             Company

@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { PageHero } from "@/components/sections/PageHero";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import { Mail, Clock, AlertTriangle, ShieldCheck, BadgeCheck, MessageSquare } from "lucide-react";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -105,7 +106,8 @@ export default async function ContactPage() {
       />
 
       {/* IVORY — contact form + reach info */}
-      <section id="contact-form" className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel" style={{ borderTop: "1px solid rgba(29,75,54,0.10)" }}>
+      <section id="contact-form" className="relative gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+        <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 gh-section">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.6fr]">
             <aside>

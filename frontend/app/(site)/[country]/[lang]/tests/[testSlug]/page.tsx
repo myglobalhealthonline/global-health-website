@@ -32,6 +32,7 @@ import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import { KitRedemptionCallout } from "@/components/subscription/KitRedemptionCallout";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -482,9 +483,9 @@ export default async function HealthTestDetailPage({
         className="gh2-hero relative isolate overflow-hidden"
         style={{
           padding: "clamp(56px,7vw,96px) 0",
-          borderTop: "1px solid rgba(255,255,255,0.07)",
         }}
       >
+        <SectionSeam theme="dark" />
         <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid items-end gap-8 lg:grid-cols-[1.6fr_1fr]">
             <div>
