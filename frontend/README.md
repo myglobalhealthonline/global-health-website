@@ -32,9 +32,6 @@ Optional for local fallback-only mode:
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:4000
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
-# Optional server-side overrides
-# API_BASE_URL=http://localhost:4000
-# ADMIN_API_BASE_URL=http://localhost:4000
 ```
 
 If `NEXT_PUBLIC_API_URL` is missing:

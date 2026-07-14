@@ -6,7 +6,7 @@ Use this checklist before promoting to staging/production.
 
 - [ ] `NEXT_PUBLIC_API_URL` points to deployed backend API.
 - [ ] `NEXT_PUBLIC_SITE_URL` points to canonical public site origin.
-- [ ] Optional server overrides (`API_BASE_URL`, `ADMIN_API_BASE_URL`) are set correctly if frontend and backend are on different hosts.
+- [ ] No stale `API_BASE_URL` / `ADMIN_API_BASE_URL` vars remain on the service (removed 2026-07 — `NEXT_PUBLIC_API_URL` is the single backend origin).
 - [ ] No secrets are present in frontend `NEXT_PUBLIC_*` variables.
 
 ## Public Route QA

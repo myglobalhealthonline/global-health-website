@@ -1,14 +1,11 @@
 import "server-only";
 import { cookies } from "next/headers";
+import { getBackendOrigin } from "@/lib/server/backend-origin";
 
 const DEFAULT_ADMIN_API_BASE_URL = "http://localhost:4000";
 
 function getAdminApiBaseUrl() {
-  return (
-    process.env.ADMIN_API_BASE_URL?.replace(/\/$/, "") ??
-    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
-    DEFAULT_ADMIN_API_BASE_URL
-  );
+  return getBackendOrigin() || DEFAULT_ADMIN_API_BASE_URL;
 }
 
 function getAdminApiToken() {

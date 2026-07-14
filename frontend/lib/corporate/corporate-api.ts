@@ -1,5 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
+import { getBackendOrigin } from "@/lib/server/backend-origin";
 
 /* ─────────────────────────────────────────────────────────────
    Corporate portal API — typed wrappers over
@@ -11,11 +12,7 @@ import { cookies } from "next/headers";
 const DEFAULT_API_BASE_URL = "http://localhost:4000";
 
 function getApiBaseUrl() {
-  return (
-    process.env.ADMIN_API_BASE_URL?.replace(/\/$/, "") ??
-    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
-    DEFAULT_API_BASE_URL
-  );
+  return getBackendOrigin() || DEFAULT_API_BASE_URL;
 }
 
 export type CorporateApiResponse<T> =
