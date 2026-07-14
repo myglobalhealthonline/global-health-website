@@ -125,7 +125,7 @@ export function DoctorProfileTemplate({
           </div>
         ) : null}
 
-        <div className="relative grid h-auto lg:h-full lg:grid-cols-2">
+        <div className="relative grid h-auto lg:grid-cols-2">
 
           {/* ── LEFT — full-bleed doctor portrait (desktop only) ── */}
           <div className="relative hidden h-full overflow-hidden lg:block">
@@ -191,7 +191,7 @@ export function DoctorProfileTemplate({
 
           {/* ── RIGHT — profile content ── */}
           <div
-            className="gh-inline-panel-base relative flex h-auto flex-col justify-center overflow-visible px-8 py-6 md:px-12 lg:h-full lg:overflow-y-auto lg:px-14 lg:py-8"
+            className="gh-inline-panel-base relative flex h-auto flex-col justify-center overflow-visible px-8 py-6 md:px-12 lg:px-14 lg:py-8"
           >
             {/* Layer 1 — gradient depth. Desktop only: at mobile the panel
                  background is the real profile photo (above), and this

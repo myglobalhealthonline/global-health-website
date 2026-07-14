@@ -169,7 +169,7 @@ export default async function HealthTestDetailPage({
           </div>
         ) : null}
 
-        <div className="grid h-auto lg:h-full lg:grid-cols-2">
+        <div className="grid h-auto lg:grid-cols-2">
 
           {/* ── LEFT — full-bleed test image (desktop only) ─────────────── */}
           <div className="relative hidden h-full overflow-hidden lg:block">
@@ -230,7 +230,7 @@ export default async function HealthTestDetailPage({
 
           {/* ── RIGHT — content + product card ──────────────────────── */}
           <div
-            className="gh-inline-panel-base relative flex h-auto min-h-0 flex-col justify-center overflow-visible px-8 py-6 md:px-12 lg:h-full lg:overflow-y-auto lg:px-14 lg:py-8"
+            className="gh-inline-panel-base relative flex h-auto min-h-0 flex-col justify-center overflow-visible px-8 py-6 md:px-12 lg:px-14 lg:py-8"
           >
             {/* 1 — gradient depth. Desktop only: at mobile the panel
                  background is the real test photo (above), and this opaque

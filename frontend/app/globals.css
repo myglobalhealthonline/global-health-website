@@ -937,26 +937,11 @@ img {
   margin-top: calc(-1 * var(--header-height));
 }
 
-/* Hero viewport cap — prevents translated text from causing page scroll on
- * desktop. Only active at lg+ (1024px+); mobile heroes scroll naturally. */
-/* Caps apply only when the viewport is tall enough to fit the hero content;
- * shorter viewports fall back to natural page scroll instead of clipping
- * under the heroes' overflow:hidden (plan rule: never clip, scroll is the
- * fallback). */
-@media (min-width: 1024px) and (min-height: 700px) {
-  .gh-hero-cap {
-    max-height: calc(100svh - var(--header-height));
-  }
-}
-/* Cap only when the viewport can actually fit the hero content (booking card
- * column min-height 660px + header + vertical padding ≈ 880px). Shorter
- * viewports fall back to natural page scroll instead of clipping the card
- * under the hero's overflow:hidden. */
-@media (min-width: 1024px) and (min-height: 880px) {
-  .gh-hero-cap-full {
-    max-height: 100svh;
-  }
-}
+/* Hero viewport cap — RETIRED 2026-07-14. Capping heroes to the viewport made
+ * content overflow/clip under trust strips on shorter windows. Heroes now use
+ * min-height only: they fill the viewport when there's room and grow with
+ * their content otherwise (page scroll is the fallback, never clipping).
+ * .gh-hero-cap / .gh-hero-cap-full remain in markup as inert markers. */
 
 .gh-home-hero-photoLayer {
   z-index: 0;
@@ -3242,18 +3227,15 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   height: auto;
 }
 
-/* Full-viewport split at lg — safe at any height because the right panel
- * (.gh-inline-panel-base) scrolls internally (lg:overflow-y-auto). The 620px
- * floor only applies when the viewport can fit it; shorter windows track the
- * viewport exactly instead of clipping. */
+/* Split hero at lg — fills the viewport when there's room (min-height), but
+ * grows with its content on short windows so nothing is ever clipped or
+ * scrolled internally; the page just scrolls past it. */
 @media (min-width: 1024px) {
   .gh-inline-split-hero {
-    height: calc(100svh - var(--header-height));
+    min-height: calc(100svh - var(--header-height));
   }
-}
-@media (min-width: 1024px) and (min-height: 700px) {
-  .gh-inline-split-hero {
-    min-height: 620px;
+  .gh-inline-split-hero > .grid {
+    min-height: calc(100svh - var(--header-height));
   }
 }
 /* Short-viewport compact tier — right panel rhythm + type shrink so more of
