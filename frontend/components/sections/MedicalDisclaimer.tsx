@@ -130,7 +130,6 @@ export function MedicalDisclaimer(props: MedicalDisclaimerProps) {
                 className="text-sm leading-relaxed"
                 style={{
                   color: light ? "var(--color-text-body)" : "rgba(255,255,255,0.72)",
-                  maxWidth: "78ch",
                 }}
               >
                 {p}

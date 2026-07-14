@@ -15,7 +15,6 @@ import {
   ChecklistSection,
   WhyChooseSection,
 } from "@/components/sections/ServiceContentSections";
-import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
 import { getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
@@ -120,12 +119,11 @@ export default async function CountryLangGeneralConsultationPage({
   if (!isCountryFeatureEnabled(overlay, "general-consultations")) notFound();
   // Independent of each other (and of `overlay`, already resolved above) —
   // started together instead of awaited one after another.
-  const [{ record: rawPage, disabled: pageDisabled }, services, doctors, { short: gpShortDisclaimer }] =
+  const [{ record: rawPage, disabled: pageDisabled }, services, doctors] =
     await Promise.all([
       getPageContent(code, "GENERAL_CONSULTATION", lang as PublicLocale),
       getCountryServices(code, "GENERAL", lang),
       getCountryDoctors(code, lang),
-      getCountryDisclaimer(code, lang),
     ]);
 
   // Structured PageContent self-gates via publish status + per-section
@@ -385,16 +383,7 @@ export default async function CountryLangGeneralConsultationPage({
       <FinalCTA primaryHref={ctaHref} secondaryHref={`/${slug}/${lang}/doctors`} />
       <StickyBookingCTA href={ctaHref} />
 
-      {gpShortDisclaimer ? (
-        <section
-          className="relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
-          style={{ padding: "clamp(28px,4vw,48px) 0" }}
-        >
-          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-            <MedicalDisclaimer variant="short" text={gpShortDisclaimer} />
-          </div>
-        </section>
-      ) : page?.sections.disclaimer ? (
+      {page?.sections.disclaimer ? (
         <MedicalDisclaimer
           paragraphs={page.disclaimerParagraphs}
           theme={themeProp(page?.disclaimerTheme, "dark")}

@@ -39,7 +39,7 @@ import { formatPriceRounded } from "@/lib/format-currency";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
-import { getCountryDisclaimer, getCountryLegal } from "@/lib/content/get-country-legal";
+import { getCountryLegal } from "@/lib/content/get-country-legal";
 import { getServiceHubContent } from "@/lib/content/service-hub-content";
 import { selectSpecialistDoctors } from "@/lib/content/specialist-doctor-selection";
 
@@ -123,13 +123,11 @@ export default async function CountryLangSpecialistConsultationPage({
     services,
     doctors,
     legal,
-    { short: specialistShortDisclaimer },
   ] = await Promise.all([
     getPageContent(code, "SPECIALIST_CONSULTATION", lang as PublicLocale),
     getCountryServices(code, "SPECIALIST", lang),
     getCountryDoctors(code, lang),
     getCountryLegal(code),
-    getCountryDisclaimer(code, lang),
   ]);
 
   // Structured PageContent self-gates via publish status; legacy "pages"
@@ -370,17 +368,6 @@ export default async function CountryLangSpecialistConsultationPage({
         }}
       />
       <StickyBookingCTA href={ctaHref} label={ctaLabel} />
-      <section
-        className="relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
-        style={{ padding: "clamp(28px,4vw,48px) 0" }}
-      >
-        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-          <MedicalDisclaimer
-            variant="short"
-            text={specialistShortDisclaimer ?? hub.importantInformation.paragraphs[0]}
-          />
-        </div>
-      </section>
 
       {page?.sections.disclaimer ? (
         <MedicalDisclaimer

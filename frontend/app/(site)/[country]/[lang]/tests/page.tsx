@@ -32,7 +32,6 @@ import {
   ServiceIntro,
   WhyChooseSection,
 } from "@/components/sections/ServiceContentSections";
-import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
 import { getServiceHubContent } from "@/lib/content/service-hub-content";
 import { resolveBrandTitle } from "@/lib/seo/page-seo";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
@@ -107,11 +106,9 @@ export default async function HealthTestsPage({
   const [
     items,
     { record: rawPage, disabled: pageDisabled },
-    { short: testsShortDisclaimer },
   ] = await Promise.all([
     getCountryHealthTests(code, lang),
     getPageContent(code, "HEALTH_TESTS", lang as PublicLocale),
-    getCountryDisclaimer(code, lang),
   ]);
 
   // Structured PageContent self-gates via publish status; legacy "pages"
@@ -348,17 +345,6 @@ export default async function HealthTestsPage({
         }}
       />
       <StickyBookingCTA href={bookHref} label={t.ctaLabel} />
-      <section
-        className="relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
-        style={{ padding: "clamp(28px,4vw,48px) 0" }}
-      >
-        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-          <MedicalDisclaimer
-            variant="short"
-            text={testsShortDisclaimer ?? hub.importantInformation.paragraphs[0]}
-          />
-        </div>
-      </section>
 
       {page?.sections.disclaimer ? (
         <MedicalDisclaimer
