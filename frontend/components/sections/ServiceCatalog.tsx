@@ -29,6 +29,8 @@ export type ServiceCatalogItem = {
   title: string;
   tag: string;
   price: number | null;
+  /** Preformatted price string (e.g. "€45"). Wins over price+currency when set. */
+  priceLabel?: string;
   currency?: string;
   dur: string;
   /** Short service summary shown under the title on standard tiles. */
@@ -81,7 +83,7 @@ export type ServiceCatalogI18n = {
   filters: { all: string; general: string; specialist: string; prescription: string; test: string };
 };
 
-const DEFAULT_I18N: ServiceCatalogI18n = {
+export const SERVICE_CATALOG_DEFAULT_I18N: ServiceCatalogI18n = {
   eyebrow: "What we treat",
   headline: "Care for what's actually going on.",
   featuredDescription: "Most patients start here. Choose an open consultation slot with a doctor registered in your country.",
@@ -104,7 +106,7 @@ export function ServiceCatalog({
   intro?: string;
   i18n?: ServiceCatalogI18n;
 }) {
-  const i18n = i18nProp ?? DEFAULT_I18N;
+  const i18n = i18nProp ?? SERVICE_CATALOG_DEFAULT_I18N;
   const [filter, setFilter] = useState<FilterId>("all");
   const [page, setPage] = useState(0);
 
@@ -324,7 +326,7 @@ function TileActions({
   );
 }
 
-function ServiceTile({
+export function ServiceTile({
   service: s,
   variant,
   i18n,
@@ -447,9 +449,9 @@ function ServiceTile({
                 </p>
                 <p
                   className="mt-1 text-3xl font-semibold leading-none tracking-[-0.02em] [font-variant-numeric:tabular-nums]"
-                  style={{ color: "rgba(255,255,255,0.92)" }}
+                  style={{ color: "var(--color-brand-accent)" }}
                 >
-                  {s.price == null ? "—" : `${symbol}${s.price}`}
+                  {s.priceLabel ?? (s.price == null ? "—" : `${symbol}${s.price}`)}
                 </p>
               </div>
               <div className="text-right">
@@ -459,7 +461,7 @@ function ServiceTile({
                 >
                   {s.type === "test" ? i18n.turnaroundLabel : i18n.durationLabel}
                 </p>
-                <p className="mt-1 text-sm font-semibold" style={{ color: "rgba(255,255,255,0.50)" }}>
+                <p className="mt-1 text-sm font-semibold" style={{ color: "var(--color-brand-accent)" }}>
                   {s.dur}
                 </p>
               </div>
@@ -512,10 +514,9 @@ function ServiceTile({
       {overlay}
       {/* Top: inset photo or icon tile */}
       {tileImageSrc ? (
-        <div className="p-2.5 pb-0">
+        <div className="flex flex-1 p-2.5 pb-0">
           <div
-            className="relative overflow-hidden rounded-[14px]"
-            style={{ height: 168 }}
+            className="relative min-h-[168px] flex-1 overflow-hidden rounded-[14px]"
           >
             <Image
               src={tileImageSrc}
@@ -570,7 +571,9 @@ function ServiceTile({
         </div>
       )}
 
-      <div className="flex flex-1 flex-col p-6">
+      {/* Image cards: photo (flex-1 above) absorbs extra row height, so the
+          body keeps natural height — no dead gap before the price footer. */}
+      <div className={cn("flex flex-col p-6", !tileImageSrc && "flex-1")}>
         <h3
           className="font-semibold tracking-[-0.015em] text-[length:var(--text-h3)] leading-snug"
           style={{ color: "rgba(255,255,255,0.88)" }}
@@ -601,9 +604,9 @@ function ServiceTile({
               </p>
               <p
                 className="mt-1 text-2xl font-semibold leading-none tracking-[-0.015em] [font-variant-numeric:tabular-nums]"
-                style={{ color: "rgba(255,255,255,0.88)" }}
+                style={{ color: "var(--color-brand-accent)" }}
               >
-                {s.price == null ? "—" : `${symbol}${s.price}`}
+                {s.priceLabel ?? (s.price == null ? "—" : `${symbol}${s.price}`)}
               </p>
             </div>
             <div className="text-right">
@@ -613,7 +616,7 @@ function ServiceTile({
               >
                 {s.type === "test" ? i18n.turnaroundLabel : i18n.durationLabel}
               </p>
-              <p className="mt-1 text-sm font-semibold" style={{ color: "rgba(255,255,255,0.55)" }}>
+              <p className="mt-1 text-sm font-semibold" style={{ color: "var(--color-brand-accent)" }}>
                 {s.dur}
               </p>
             </div>
