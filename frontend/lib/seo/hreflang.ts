@@ -53,11 +53,33 @@ export function hreflangAlternates(
 }
 
 /**
+ * Natural region for a language's OWN locale tag (`en` -> British English,
+ * `de` -> Germany, …) — used for `og:locale:alternate` entries, which name
+ * *other* language versions of the page and therefore must carry a real,
+ * valid locale for that language, not the host country's region.
+ *
+ * ponytail: flat map for the 6 seeded site languages. Add an entry here
+ * before adding a 7th to `LocaleCode`.
+ */
+const LANGUAGE_NATIVE_REGION: Record<string, string> = {
+  es: "ES",
+  en: "GB",
+  pt: "PT",
+  cs: "CZ",
+  ro: "RO",
+  de: "DE",
+};
+
+/**
  * Open Graph locale pair for Meta/Facebook — feeds `og:locale` +
  * `og:locale:alternate`. Meta requires `language_REGION` with an UNDERSCORE
- * (`en_IE`), unlike the hyphen hreflang uses; same region source, different
- * separator. `locale` is the page's current language; `alternateLocale` lists
- * the country's other supported languages.
+ * (`en_IE`), unlike the hyphen hreflang uses. `locale` is the page's current
+ * language, regionalised to THIS country (e.g. an Ireland English page is
+ * intentionally `en_IE`, not `en_GB` — the content targets that market).
+ * `alternateLocale` lists the *other* language versions of the same page —
+ * each stamped with ITS OWN natural region, not the host country's, so a
+ * Spanish page's English alternate reads `en_GB`, not the nonsensical
+ * `en_ES` (and its German alternate reads `de_DE`, not `de_ES`).
  *
  * Use as: `openGraph: { …, ...ogLocales(country, lang) }`.
  */
@@ -71,6 +93,6 @@ export function ogLocales(
     locale: `${current}_${region}`,
     alternateLocale: supportedLocalesOf(country)
       .filter((l) => l !== current)
-      .map((l) => `${l}_${region}`),
+      .map((l) => `${l}_${LANGUAGE_NATIVE_REGION[l] ?? l.toUpperCase()}`),
   };
 }

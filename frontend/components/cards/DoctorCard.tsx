@@ -39,8 +39,11 @@ type DoctorCardProps = {
   registrationVerified?: boolean;
   medicalRegistrationUrl?: string;
   /** Country regulator's public verification page (medicalcouncil.ie,
-   *  ordemdosmedicos.pt). Preferred over medicalRegistrationUrl for the
-   *  "Verify" link so every card points patients at the official register. */
+   *  ordemdosmedicos.pt) — fallback "Verify" link for doctors who don't
+   *  carry their own medicalRegistrationUrl. A doctor whose registration
+   *  body differs from the country's default regulator (e.g. a Spanish
+   *  psychologist registered with COP, not CGCOM) sets medicalRegistrationUrl
+   *  to their own body's site; that always wins over this generic fallback. */
   verificationUrl?: string;
   /** Confirmed extra professional credentials (FRCP, fellowships). */
   credentials?: Array<{ label: string; bodyName: string; bodyUrl?: string }>;
@@ -268,9 +271,9 @@ export function DoctorCard({
                 >
                   Registration{registrationVerified ? " · Verified" : ""}
                 </p>
-                {verificationUrl || medicalRegistrationUrl ? (
+                {medicalRegistrationUrl || verificationUrl ? (
                   <a
-                    href={verificationUrl ?? medicalRegistrationUrl}
+                    href={medicalRegistrationUrl ?? verificationUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Verify registration on the official register"
@@ -431,7 +434,7 @@ export function DoctorCard({
                     : "relative z-20 inline-flex min-h-12 w-full items-center justify-center gap-1.5 rounded-full border-[1.5px] border-[color:var(--dc-line)] px-4 text-[13px] font-bold tracking-[-0.005em] text-[color:var(--dc-ink)] transition-[background-color,color,border-color] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
                 }
               >
-                {bookHref ? "View Profile" : ctaLabel}
+                {ctaLabel}
                 <ArrowRight className="size-[14px] shrink-0" strokeWidth={1.8} aria-hidden />
               </Link>
             ) : null}

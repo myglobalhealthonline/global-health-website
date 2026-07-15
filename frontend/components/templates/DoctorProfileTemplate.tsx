@@ -87,7 +87,12 @@ export function DoctorProfileTemplate({
   const safeBio = sanitizeDoctorBioHtml(profile.bio);
   const heroImageStyle = focalStyle(profileImageFocalX, profileImageFocalY, profileImageZoom);
   const backHref = hero.secondaryCta?.href;
-  const verifyHref = profile.verificationUrl ?? profile.medicalRegistrationUrl;
+  // Doctor's own registration link wins — a doctor whose registration body
+  // differs from the country's default regulator (e.g. a Spanish
+  // psychologist registered with COP, not CGCOM) sets medicalRegistrationUrl
+  // to their own body's site; the generic country verificationUrl is only a
+  // fallback. Mirrors the same-priority fix in DoctorCard.tsx.
+  const verifyHref = profile.medicalRegistrationUrl ?? profile.verificationUrl;
   const primarySpecialty = profile.specialties[0] ?? "General practice";
   const languageList = profile.languages.length > 0 ? profile.languages.join(", ") : "English";
 

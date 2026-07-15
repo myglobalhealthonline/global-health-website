@@ -56,6 +56,88 @@ const OVERRIDES: Record<string, DoctorsOverride> = {
     trustCard2Title: "Bewertet auf Doctify",
     trustCard2Subtitle: "45.000 Konsultationen im Jahr 2025",
   },
+  // Romania — July 2026 SEO brief. "Inregistrati la CMR" is the specific,
+  // recognisable trust signal for Romanian patients (more precise than the
+  // generic "Licentiat in Romania" the shared bundle uses). Same EU Omnibus
+  // liability as Ireland applies here too: the unverifiable "4.9 rating /
+  // 2,000+ reviews" claim must not appear on the Romania page in any locale.
+  "ro:ro": {
+    trustCard1Title: "Înregistrați la CMR",
+    trustCard2Title: "Evaluat pe Doctify",
+    trustCard2Subtitle: "45.000 de consultații în 2025",
+  },
+  "ro:en": {
+    trustCard2Title: "Reviewed on Doctify",
+    trustCard2Subtitle: "45,000 consultations in 2025",
+  },
+  "ro:es": {
+    trustCard2Title: "Valorado en Doctify",
+    trustCard2Subtitle: "45.000 consultas en 2025",
+  },
+  "ro:pt": {
+    trustCard2Title: "Avaliado no Doctify",
+    trustCard2Subtitle: "45.000 consultas em 2025",
+  },
+  "ro:cs": {
+    trustCard2Title: "Hodnoceno na Doctify",
+    trustCard2Subtitle: "45 000 konzultací v roce 2025",
+  },
+  "ro:de": {
+    trustCard2Title: "Bewertet auf Doctify",
+    trustCard2Subtitle: "45.000 Konsultationen im Jahr 2025",
+  },
+  // Spain — July 2026 SEO brief. Same EU Omnibus liability as Ireland/Romania:
+  // the unverifiable "4.9 rating / 2,000+ reviews" claim must not appear.
+  // trustCard1Title is the fully-formed Spanish phrase (not "{country}" + a
+  // template swap) because `config.name` for Spain is the untranslated
+  // English display name ("Spain"), so the generic "{country}" substitution
+  // would otherwise render "Licensed in Spain" on the Spanish-language page.
+  "es:es": {
+    trustCard1Title: "Colegiado en España",
+    trustCard2Title: "Evaluado en Doctify",
+    trustCard2Subtitle: "45.000 consultas en 2025",
+  },
+  // Brazil — July 2026 SEO brief. Brazil's default locale is pt, but the
+  // shared pt.json bundle is Portugal's own PT-PT market copy ("licenciado",
+  // "a equipa", "marca"), which reads as European Portuguese — not PT-BR —
+  // on the Brazil page. "{country}" substitutions are also skipped here
+  // (fully-formed strings instead) for the same reason as es:es above:
+  // `config.name` for Brazil is the untranslated English display name
+  // ("Brazil"), so "registrado no {country}" would render "no Brazil".
+  "br:pt": {
+    theTeamBadge: "Nossos médicos",
+    heroLedeTemplate:
+      "Cada clínico abaixo está registrado no Brasil, verificado para atendimento online e avaliado por pacientes após cada consulta.",
+    bookAppointment: "Agendar consulta",
+    trustCard1Title: "Registrado no CRM",
+    trustCard1Subtitle: "Clínicos totalmente verificados",
+    trustCard2Title: "Avaliado no Doctify",
+    trustCard2Subtitle: "45.000 consultas em 2025",
+  },
+  // Same EU/Brazilian consumer-protection issue as Ireland/Romania: the
+  // fabricated "4.9 rating / 2,000+ reviews" claim must not appear on the
+  // Brazil page in any locale — reuses each locale's already-translated
+  // Doctify copy.
+  "br:en": {
+    trustCard2Title: "Reviewed on Doctify",
+    trustCard2Subtitle: "45,000 consultations in 2025",
+  },
+  "br:es": {
+    trustCard2Title: "Valorado en Doctify",
+    trustCard2Subtitle: "45.000 consultas en 2025",
+  },
+  "br:cs": {
+    trustCard2Title: "Hodnoceno na Doctify",
+    trustCard2Subtitle: "45 000 konzultací v roce 2025",
+  },
+  "br:ro": {
+    trustCard2Title: "Evaluat pe Doctify",
+    trustCard2Subtitle: "45.000 de consultații în 2025",
+  },
+  "br:de": {
+    trustCard2Title: "Bewertet auf Doctify",
+    trustCard2Subtitle: "45.000 Konsultationen im Jahr 2025",
+  },
 };
 
 /** Merge the country/locale override (if any) onto the `doctors` bundle. */

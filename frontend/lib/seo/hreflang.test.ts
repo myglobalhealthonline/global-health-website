@@ -29,12 +29,23 @@ describe("hreflangAlternates", () => {
 });
 
 describe("ogLocales", () => {
-  it("emits underscore language_REGION for Meta og:locale + alternates", () => {
+  it("emits underscore language_REGION for Meta og:locale, current page regionalised to the host country", () => {
     const ie = getCountryByCode("ie")!;
-    expect(ogLocales(ie, "pt")).toEqual({
-      locale: "pt_IE",
-      alternateLocale: ["en_IE", "es_IE", "cs_IE", "ro_IE", "de_IE"],
-    });
+    expect(ogLocales(ie, "pt").locale).toBe("pt_IE");
+  });
+
+  it("stamps each alternate with ITS OWN natural region, not the host country's", () => {
+    // Regression: Spain's `de` alternate was rendering as the nonsensical
+    // "de_ES" (German language + Spain region) because every alternate was
+    // blindly stamped with the current page's country region.
+    const ie = getCountryByCode("ie")!;
+    expect(ogLocales(ie, "pt").alternateLocale).toEqual([
+      "en_GB",
+      "es_ES",
+      "cs_CZ",
+      "ro_RO",
+      "de_DE",
+    ]);
   });
 
   it("uses the country's own region for a non-default-locale page", () => {
