@@ -107,6 +107,17 @@ export const CART_ITEM_MAX_QTY = 5;
  *  setting heldUntil; UI uses it to show the countdown. */
 export const HOLD_TTL_MS = 10 * 60 * 1000;
 
+/** A consultation appointment attached to an order — the assigned doctor and
+ *  the scheduled call time. Empty for pure commerce orders. */
+export type OrderConsultation = {
+  appointmentId: string;
+  /** Assigned doctor's full name; null until a doctor is assigned. */
+  doctorName: string | null;
+  /** ISO instant of the scheduled call; null when not yet scheduled. */
+  scheduledAt: string | null;
+  consultationType: string;
+};
+
 export type OrderListItem = {
   id: string;
   orderNumber?: string | null;
@@ -118,6 +129,7 @@ export type OrderListItem = {
   shippingCents: number;
   totalCents: number;
   itemCount: number;
+  consultations?: OrderConsultation[];
   paidAt: string | null;
   createdAt: string;
 };
@@ -158,6 +170,7 @@ export type OrderDetail = {
     countryCode: string | null;
   };
   items: OrderItem[];
+  consultations?: OrderConsultation[];
   trackingNumber: string | null;
   trackingCarrier: string | null;
   trackingUrl: string | null;

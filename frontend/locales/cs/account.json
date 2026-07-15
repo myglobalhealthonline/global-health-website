@@ -170,6 +170,11 @@
     "colItems": "Položky",
     "colStatus": "Stav",
     "colTotal": "Celkem",
+    "colDoctor": "Lékař",
+    "colConsultation": "Konzultace",
+    "consultationSection": "Konzultace",
+    "doctorUnassigned": "Zatím nepřiřazeno",
+    "timeTbc": "Čas bude potvrzen",
     "orderInfoSection": "Informace o objednávce"
   },
   "prescriptions": {

@@ -170,6 +170,11 @@
     "colItems": "Items",
     "colStatus": "Status",
     "colTotal": "Total",
+    "colDoctor": "Doctor",
+    "colConsultation": "Consultation",
+    "consultationSection": "Consultation",
+    "doctorUnassigned": "Not yet assigned",
+    "timeTbc": "Time to be confirmed",
     "orderInfoSection": "Order info"
   },
   "prescriptions": {

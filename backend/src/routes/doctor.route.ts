@@ -370,31 +370,74 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
             }
           : {}),
       };
-      const [total, rows] = await prisma.$transaction([
+      const selectFields = {
+        id: true,
+        fullName: true,
+        email: true,
+        phone: true,
+        consultationType: true,
+        countryCode: true,
+        status: true,
+        paymentStatus: true,
+        scheduledAt: true,
+        meetingUrl: true,
+        createdAt: true,
+        notes: true,
+        finalized: true,
+        manualEntry: true,
+      } as const;
+
+      // Doctor-queue ordering: UPCOMING consultations first (soonest at the
+      // top), then PAST ones (most recent first), with unscheduled requests
+      // last. A plain `scheduledAt asc` buried every future consultation under
+      // a wall of old completed rows once a doctor had >1 page of history —
+      // so the queue "showed no upcoming consultations" (bug report 2026-07-16).
+      const nowTs = new Date();
+      const upcomingWhere: Prisma.AppointmentWhereInput = {
+        AND: [where, { scheduledAt: { gte: nowTs } }],
+      };
+      const pastWhere: Prisma.AppointmentWhereInput = {
+        AND: [where, { OR: [{ scheduledAt: { lt: nowTs } }, { scheduledAt: null }] }],
+      };
+
+      const [total, upcomingCount] = await Promise.all([
         prisma.appointment.count({ where }),
-        prisma.appointment.findMany({
-          where,
-          orderBy: [{ scheduledAt: "asc" }, { createdAt: "desc" }],
-          skip: (page - 1) * pageSize,
-          take: pageSize,
-          select: {
-            id: true,
-            fullName: true,
-            email: true,
-            phone: true,
-            consultationType: true,
-            countryCode: true,
-            status: true,
-            paymentStatus: true,
-            scheduledAt: true,
-            meetingUrl: true,
-            createdAt: true,
-            notes: true,
-            finalized: true,
-            manualEntry: true,
-          },
-        }),
+        prisma.appointment.count({ where: upcomingWhere }),
       ]);
+
+      const skip = (page - 1) * pageSize;
+      // Page window straddles the upcoming→past boundary: fill from the
+      // upcoming bucket (asc) first, top up from the past bucket (desc) with
+      // unscheduled rows sorted last.
+      let rows;
+      if (skip < upcomingCount) {
+        const upcoming = await prisma.appointment.findMany({
+          where: upcomingWhere,
+          orderBy: [{ scheduledAt: "asc" }, { createdAt: "asc" }],
+          skip,
+          take: pageSize,
+          select: selectFields,
+        });
+        const remaining = pageSize - upcoming.length;
+        const past =
+          remaining > 0
+            ? await prisma.appointment.findMany({
+                where: pastWhere,
+                orderBy: [{ scheduledAt: { sort: "desc", nulls: "last" } }, { createdAt: "desc" }],
+                take: remaining,
+                select: selectFields,
+              })
+            : [];
+        rows = [...upcoming, ...past];
+      } else {
+        rows = await prisma.appointment.findMany({
+          where: pastWhere,
+          orderBy: [{ scheduledAt: { sort: "desc", nulls: "last" } }, { createdAt: "desc" }],
+          skip: skip - upcomingCount,
+          take: pageSize,
+          select: selectFields,
+        });
+      }
       return okResponse({
         items: rows.map((r) => ({
           ...r,

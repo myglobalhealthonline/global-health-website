@@ -170,6 +170,11 @@
     "colItems": "Itens",
     "colStatus": "Estado",
     "colTotal": "Total",
+    "colDoctor": "Médico",
+    "colConsultation": "Consulta",
+    "consultationSection": "Consulta",
+    "doctorUnassigned": "Ainda não atribuído",
+    "timeTbc": "Hora a confirmar",
     "orderInfoSection": "Informação da encomenda"
   },
   "prescriptions": {
