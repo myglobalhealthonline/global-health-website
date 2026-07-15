@@ -372,6 +372,10 @@ model Country {
   /// set of this country's services at a negotiated price (fixed or a
   /// percentage discount). See InsuranceCompany.
   insuranceCompanies         InsuranceCompany[]
+  /// Physical test centers / exam clinics registered for this market. Each
+  /// lists the exams it offers (from the global ExamType catalog) with our
+  /// cost + a markup → the patient price. See TestCenter.
+  testCenters                TestCenter[]
   createdAt                  DateTime             @default(now())
   updatedAt                  DateTime             @updatedAt
 }
@@ -1056,6 +1060,77 @@ model InsuranceServiceCoverage {
 
   @@unique([insuranceCompanyId, serviceId])
   @@index([serviceId])
+}
+
+/// Global, country-independent catalogue of exam / test types (e.g. "MRI
+/// Brain", "Full Blood Count", "Chest X-ray"). Defined once by admins and
+/// reused across every country's test centers so a prescribed exam maps to a
+/// consistent name. A center attaches an exam via TestCenterExam and sets its
+/// own cost + markup there. Prices do NOT live here — this is naming only.
+model ExamType {
+  id          String           @id @default(cuid())
+  name        String
+  slug        String           @unique
+  /// Optional grouping label surfaced in the admin UI (e.g. "Imaging",
+  /// "Blood", "Cardiology"). Free text — not an enum.
+  category    String?
+  description String?
+  isActive    Boolean          @default(true)
+  sortOrder   Int              @default(0)
+  offerings   TestCenterExam[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+/// A physical test center / exam clinic in a single country where patients can
+/// have prescribed exams performed. Admins set these up under the country
+/// Insurance area (§commerce). The exams offered + pricing live on
+/// TestCenterExam. Ready for a later doctor referral → booking flow (not built
+/// yet): when a doctor prescribes an exam we can list the centers that offer
+/// it and the patient price.
+model TestCenter {
+  id          String           @id @default(cuid())
+  countryId   String
+  name        String
+  slug        String
+  addressLine String?
+  city        String?
+  phone       String?
+  email       String?
+  notes       String?
+  isActive    Boolean          @default(true)
+  sortOrder   Int              @default(0)
+  country     Country          @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  exams       TestCenterExam[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@unique([countryId, slug])
+  @@index([countryId, isActive])
+}
+
+/// Join row: a specific exam offered at a specific test center, with pricing.
+/// `costCents` is what the center bills us; `markupMode`/`markupValue` produce
+/// the patient-facing price (computed at read time, never stored):
+///  - FIXED   → markupValue is cents added on top of cost.
+///  - PERCENT → markupValue is basis points (100 = 1.00%) applied to cost.
+/// Reuses the shared InsurancePricingMode enum (FIXED | PERCENT).
+model TestCenterExam {
+  id           String               @id @default(cuid())
+  testCenterId String
+  examTypeId   String
+  costCents    Int
+  markupMode   InsurancePricingMode
+  markupValue  Int
+  currencyCode String
+  isActive     Boolean              @default(true)
+  testCenter   TestCenter           @relation(fields: [testCenterId], references: [id], onDelete: Cascade)
+  examType     ExamType             @relation(fields: [examTypeId], references: [id], onDelete: Restrict)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  @@unique([testCenterId, examTypeId])
+  @@index([examTypeId])
 }
 
 /// Per-locale display content for a Service. One stable Service record per
