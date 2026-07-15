@@ -27,6 +27,30 @@ const COPY: Record<string, Copy> = {
     body: "Farmacias, diagnostico e parceiros clinicos ligados a prestacao local de servicos.",
     partnersRow: "Parceiros de confianca",
   },
+  es: {
+    eyebrow: "Socios operativos",
+    heading: "Socios que respaldan la atención en este mercado.",
+    body: "Estos son los socios de farmacia, diagnóstico y cuidado conectados a la prestación local del servicio.",
+    partnersRow: "Socios de confianza",
+  },
+  cs: {
+    eyebrow: "Provozní partneři",
+    heading: "Partneři podporující péči na tomto trhu.",
+    body: "Jedná se o lékárenské, diagnostické a zdravotní partnery napojené na místní poskytování služeb.",
+    partnersRow: "Důvěryhodní partneři",
+  },
+  ro: {
+    eyebrow: "Parteneri operaționali",
+    heading: "Parteneri care susțin îngrijirea pe această piață.",
+    body: "Aceștia sunt partenerii de farmacie, diagnostic și îngrijire conectați la furnizarea locală a serviciilor.",
+    partnersRow: "Parteneri de încredere",
+  },
+  de: {
+    eyebrow: "Betriebliche Partner",
+    heading: "Partner, die die Versorgung in diesem Markt unterstützen.",
+    body: "Dies sind die Apotheken-, Diagnostik- und Pflegepartner, die mit der lokalen Leistungserbringung verbunden sind.",
+    partnersRow: "Vertrauenswürdige Partner",
+  },
 };
 
 export function CountryCertificationLogos({

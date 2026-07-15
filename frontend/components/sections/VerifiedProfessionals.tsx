@@ -63,6 +63,94 @@ const COPY: Record<string, Copy> = {
       },
     ],
   },
+  es: {
+    eyebrow: "Profesionales médicos verificados",
+    heading: "El médico que reserva es el médico que",
+    headingAccent: "le atiende",
+    body: (r) =>
+      `Cada médico de la plataforma tiene nombre, foto y colegiación en el ${r}. Reserva con un médico concreto - no con un call center, no con un turno anónimo - y es ese mismo médico quien realiza su consulta.`,
+    verifyAt: "Verifique cualquier colegiación en",
+    points: [
+      {
+        title: "Con nombre, no anónimo",
+        body: "Cada perfil muestra el nombre real del médico, su número de colegiado y su especialidad. Sin turnos ocultos detrás de la reserva.",
+      },
+      {
+        title: "Verificable de forma independiente",
+        body: "Cada colegiación enlaza directamente al registro público oficial, para que pueda confirmarlo usted mismo antes de reservar.",
+      },
+      {
+        title: "Solo credenciales confirmadas",
+        body: "Las credenciales solo aparecen una vez verificadas - sin certificaciones vagas, sin títulos que no podamos acreditar.",
+      },
+    ],
+  },
+  cs: {
+    eyebrow: "Ověření lékaři",
+    heading: "Lékař, kterého si rezervujete, je lékař, který vás",
+    headingAccent: "ošetří",
+    body: (r) =>
+      `Každý lékař na platformě má uvedené jméno, fotografii a registraci u ${r}. Rezervujete konkrétního lékaře - ne call centrum, ne anonymní rotaci - a stejný lékař provede vaši konzultaci.`,
+    verifyAt: "Ověřte registraci na",
+    points: [
+      {
+        title: "Jmenovitě, ne anonymně",
+        body: "Každý profil obsahuje skutečné jméno lékaře, registrační číslo a obor registrace. Žádná skrytá rotace za rezervací.",
+      },
+      {
+        title: "Nezávisle ověřitelné",
+        body: "Každá registrace odkazuje přímo na oficiální veřejný registr, takže si ji můžete sami ověřit před rezervací.",
+      },
+      {
+        title: "Pouze potvrzené kvalifikace",
+        body: "Kvalifikace se zobrazují až po ověření - žádná vágní tvrzení, žádné tituly, které nemůžeme doložit.",
+      },
+    ],
+  },
+  ro: {
+    eyebrow: "Profesioniști medicali verificați",
+    heading: "Medicul pe care îl rezervați este medicul care vă",
+    headingAccent: "consultă",
+    body: (r) =>
+      `Fiecare medic de pe platformă are nume, fotografie și înregistrare la ${r}. Rezervați cu un medic anume - nu un call center, nu o tură anonimă - și același medic vă efectuează consultația.`,
+    verifyAt: "Verificați orice înregistrare la",
+    points: [
+      {
+        title: "Cu nume, nu anonim",
+        body: "Fiecare profil arată numele real al medicului, numărul de înregistrare și diviziunea de înregistrare. Fără ture ascunse în spatele rezervării.",
+      },
+      {
+        title: "Verificabil independent",
+        body: "Fiecare înregistrare face trimitere direct la registrul public oficial, ca să o puteți confirma singur înainte de a rezerva.",
+      },
+      {
+        title: "Doar calificări confirmate",
+        body: "Calificările apar doar după verificare - fără afirmații vagi, fără titluri pe care nu le putem dovedi.",
+      },
+    ],
+  },
+  de: {
+    eyebrow: "Verifizierte Ärzte",
+    heading: "Der Arzt, den Sie buchen, ist der Arzt, der Sie",
+    headingAccent: "behandelt",
+    body: (r) =>
+      `Jeder Kliniker auf der Plattform ist namentlich genannt, mit Foto und bei der ${r} registriert. Sie buchen einen bestimmten Arzt - kein Callcenter, keine anonyme Rotation - und derselbe Arzt führt Ihre Konsultation durch.`,
+    verifyAt: "Registrierung überprüfen unter",
+    points: [
+      {
+        title: "Namentlich, nicht anonym",
+        body: "Jedes Profil zeigt den echten Namen des Arztes, die Registrierungsnummer und die Zulassungsabteilung. Keine versteckte Rotation hinter der Buchung.",
+      },
+      {
+        title: "Unabhängig überprüfbar",
+        body: "Jede Registrierung verlinkt direkt zum offiziellen öffentlichen Register, sodass Sie sie selbst vor der Buchung bestätigen können.",
+      },
+      {
+        title: "Nur bestätigte Qualifikationen",
+        body: "Qualifikationen erscheinen erst nach Verifizierung - keine vagen Behauptungen, keine Titel, die wir nicht belegen können.",
+      },
+    ],
+  },
 };
 
 // Country-scoped eyebrow overrides — keyed by `${countryCode}:${locale}` so
@@ -70,6 +158,11 @@ const COPY: Record<string, Copy> = {
 // (same no-leak rule as country-home-copy.ts / country-doctors-copy.ts).
 const EYEBROW_OVERRIDE: Record<string, string> = {
   "IE:en": "IMC-verified doctors and clinicians",
+  "IE:es": "Médicos y clínicos verificados por el IMC",
+  "IE:pt": "Médicos e clínicos verificados pelo IMC",
+  "IE:cs": "Lékaři a klinici ověření IMC",
+  "IE:ro": "Medici și clinicieni verificați de IMC",
+  "IE:de": "Von IMC verifizierte Ärzte und Kliniker",
 };
 
 export function VerifiedProfessionals({

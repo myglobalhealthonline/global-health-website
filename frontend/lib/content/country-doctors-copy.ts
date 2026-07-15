@@ -32,6 +32,30 @@ const OVERRIDES: Record<string, DoctorsOverride> = {
     trustCard2Title: "Reviewed on Doctify",
     trustCard2Subtitle: "45,000 consultations in 2025",
   },
+  // Same EU Omnibus liability applies regardless of page language — the
+  // fabricated "4.9 rating / 2,000+ reviews" claim must not appear on the
+  // Ireland page in any locale. Reuses each locale's already-translated
+  // gpPage/specialistPage.hero.stat2 copy for consistency.
+  "ie:es": {
+    trustCard2Title: "Valorado en Doctify",
+    trustCard2Subtitle: "45.000 consultas en 2025",
+  },
+  "ie:pt": {
+    trustCard2Title: "Avaliado no Doctify",
+    trustCard2Subtitle: "45.000 consultas em 2025",
+  },
+  "ie:cs": {
+    trustCard2Title: "Hodnoceno na Doctify",
+    trustCard2Subtitle: "45 000 konzultací v roce 2025",
+  },
+  "ie:ro": {
+    trustCard2Title: "Evaluat pe Doctify",
+    trustCard2Subtitle: "45.000 de consultații în 2025",
+  },
+  "ie:de": {
+    trustCard2Title: "Bewertet auf Doctify",
+    trustCard2Subtitle: "45.000 Konsultationen im Jahr 2025",
+  },
 };
 
 /** Merge the country/locale override (if any) onto the `doctors` bundle. */
