@@ -7,70 +7,70 @@ import { AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 import { DocumentRow } from "@/components/DocumentRow";
 import { PortalTabs, PortalTabPanel, type PortalTabItem } from "@/components/PortalTabs";
 
-type Tab = "uploaded" | "results" | "exam-requests" | "prescriptions" | "consult-summaries";
+type Tab = "uploaded" | "exam-prescriptions" | "certificates" | "doctor-documents";
+
+type DocCategory =
+  | "MY_UPLOAD"
+  | "EXAM_PRESCRIPTION"
+  | "EXAM_RESULT"
+  | "CERTIFICATE"
+  | "DOCTOR_DOCUMENT";
+
+type DocSource = "MEDICAL_DOC" | "GENERATED" | "APPOINTMENT";
 
 type MedicalDoc = {
   id: string;
-  documentType: string;
+  source: DocSource;
+  category: DocCategory;
   title: string;
   description: string | null;
   fileName: string;
   mimetype: string;
   byteSize: number;
-  uploadedByRole: string;
-  visibleToPatient: boolean;
-  relatedAppointmentId: string | null;
-  relatedConsultationId: string | null;
   createdAt: string;
+  sourceGeneratedDocumentId: string | null;
+  prescriptionNumber: number | null;
 };
 
 const TABS: {
   id: Tab;
   label: string;
   icon: React.ReactNode;
-  docTypes: string[];
+  categories: DocCategory[];
   emptyTitle: string;
   emptyDescription: string;
 }[] = [
   {
     id: "uploaded",
-    label: "My Reports",
+    label: "My Uploads",
     icon: <Upload className="size-4" aria-hidden />,
-    docTypes: ["REPORT", "OTHER"],
-    emptyTitle: "No reports uploaded yet",
-    emptyDescription: "Reports you upload for your doctor to review ahead of a consultation will appear here.",
+    categories: ["MY_UPLOAD"],
+    emptyTitle: "No documents uploaded yet",
+    emptyDescription: "Documents you upload for your doctor to review will appear here and sync to your doctor's portal.",
   },
   {
-    id: "results",
-    label: "Doctor Results",
-    icon: <Stethoscope className="size-4" aria-hidden />,
-    docTypes: ["EXAM_RESULT"],
-    emptyTitle: "No doctor results yet",
-    emptyDescription: "Test and exam results your doctor shares with you will appear here.",
-  },
-  {
-    id: "exam-requests",
-    label: "Exam Requests",
+    id: "exam-prescriptions",
+    label: "Exam Prescriptions",
     icon: <FlaskConical className="size-4" aria-hidden />,
-    docTypes: ["EXAM_REQUEST"],
-    emptyTitle: "No exam requests yet",
-    emptyDescription: "Exam requests your doctor creates will appear here for you to complete.",
+    categories: ["EXAM_PRESCRIPTION", "EXAM_RESULT"],
+    emptyTitle: "No exam prescriptions yet",
+    emptyDescription: "Exam prescriptions your doctor issues — and the results you upload against them — appear here.",
   },
   {
-    id: "prescriptions",
-    label: "Prescriptions",
+    id: "certificates",
+    label: "Certificates",
     icon: <FileText className="size-4" aria-hidden />,
-    docTypes: ["PRESCRIPTION"],
-    emptyTitle: "No prescription documents yet",
-    emptyDescription: "Prescription files your doctor issues will appear here.",
+    categories: ["CERTIFICATE"],
+    emptyTitle: "No certificates yet",
+    emptyDescription: "Absence and custom certificates your doctor issues will appear here once sent.",
   },
   {
-    id: "consult-summaries",
-    label: "Consult Summaries",
-    icon: <FileText className="size-4" aria-hidden />,
-    docTypes: ["CONSULT_SUMMARY"],
-    emptyTitle: "No consult summaries yet",
-    emptyDescription: "Summaries from your past consultations will appear here.",
+    id: "doctor-documents",
+    label: "Doctor Documents",
+    icon: <Stethoscope className="size-4" aria-hidden />,
+    categories: ["DOCTOR_DOCUMENT"],
+    emptyTitle: "No doctor documents yet",
+    emptyDescription: "Files and results your doctor shares with you will appear here.",
   },
 ];
 
@@ -81,9 +81,10 @@ function formatBytes(bytes: number): string {
 }
 
 async function downloadDoc(doc: MedicalDoc) {
-  const res = await fetch(`/api/account/medical-documents/${doc.id}/download`, {
-    credentials: "include",
-  });
+  const res = await fetch(
+    `/api/account/medical-documents/${doc.id}/download?source=${doc.source}`,
+    { credentials: "include" },
+  );
   if (!res.ok) return;
   const blob = await res.blob();
   const url = URL.createObjectURL(blob);
@@ -111,6 +112,9 @@ function DocCard({ doc }: { doc: MedicalDoc }) {
         title={
           <>
             {doc.title}
+            {doc.category === "EXAM_PRESCRIPTION" && doc.prescriptionNumber != null
+              ? ` #${doc.prescriptionNumber}`
+              : ""}
             {doc.description ? (
               <span className="block truncate text-portal-meta font-normal text-[var(--portal-muted)]" title={doc.description}>
                 {doc.description}
@@ -120,10 +124,11 @@ function DocCard({ doc }: { doc: MedicalDoc }) {
         }
         meta={
           <>
-            {doc.fileName} · {formatBytes(doc.byteSize)} ·{" "}
+            {doc.fileName}
+            {doc.byteSize > 0 ? ` · ${formatBytes(doc.byteSize)}` : ""} ·{" "}
             {new Date(doc.createdAt).toLocaleDateString()}
-            {doc.uploadedByRole !== "PATIENT" && (
-              <span className="capitalize">· shared by {doc.uploadedByRole.toLowerCase()}</span>
+            {doc.category === "EXAM_RESULT" && (
+              <span>· exam result</span>
             )}
           </>
         }
@@ -169,11 +174,36 @@ function UploadForm({ onUploaded }: { onUploaded: (doc: MedicalDoc) => void }) {
       });
       const json = (await res.json().catch(() => ({}))) as {
         ok?: boolean;
-        data?: { document?: MedicalDoc };
+        data?: {
+          document?: {
+            id: string;
+            title: string;
+            description: string | null;
+            fileName: string;
+            mimetype: string;
+            byteSize: number;
+            createdAt: string;
+          };
+        };
         message?: string;
       };
       if (json.ok && json.data?.document) {
-        onUploaded(json.data.document);
+        const d = json.data.document;
+        // Normalize the create response (legacy MedicalDocument shape) into
+        // the unified row shape the list renders.
+        onUploaded({
+          id: d.id,
+          source: "MEDICAL_DOC",
+          category: "MY_UPLOAD",
+          title: d.title,
+          description: d.description ?? null,
+          fileName: d.fileName,
+          mimetype: d.mimetype,
+          byteSize: d.byteSize,
+          createdAt: d.createdAt,
+          sourceGeneratedDocumentId: null,
+          prescriptionNumber: null,
+        });
         setFile(null);
         setTitle("");
         setDescription("");
@@ -289,11 +319,11 @@ export function MedicalFilesClient({
 
   const currentTabConfig = TABS.find((t) => t.id === activeTab);
   const filteredDocs = allDocs.filter((d) =>
-    currentTabConfig?.docTypes.includes(d.documentType),
+    currentTabConfig?.categories.includes(d.category),
   );
   const countFor = (tab: Tab) => {
     const config = TABS.find((item) => item.id === tab);
-    return allDocs.filter((doc) => config?.docTypes.includes(doc.documentType)).length;
+    return allDocs.filter((doc) => config?.categories.includes(doc.category)).length;
   };
 
   function onUploaded(doc: MedicalDoc) {
@@ -340,10 +370,10 @@ export function MedicalFilesClient({
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: "Uploaded", value: String(countFor("uploaded")), hint: "Reports you added", icon: <Upload aria-hidden /> },
-          { label: "Results", value: String(countFor("results")), hint: "Doctor result documents", icon: <FlaskConical aria-hidden /> },
-          { label: "Requests", value: String(countFor("exam-requests")), hint: "Exam requests from clinicians", icon: <Stethoscope aria-hidden /> },
-          { label: "Prescriptions", value: String(countFor("prescriptions")), hint: "Medication documents", icon: <FileText aria-hidden /> },
+          { label: "Uploaded", value: String(countFor("uploaded")), hint: "Documents you added", icon: <Upload aria-hidden /> },
+          { label: "Exam Prescriptions", value: String(countFor("exam-prescriptions")), hint: "Prescriptions & results", icon: <FlaskConical aria-hidden /> },
+          { label: "Certificates", value: String(countFor("certificates")), hint: "Absence & custom certificates", icon: <FileText aria-hidden /> },
+          { label: "Doctor Documents", value: String(countFor("doctor-documents")), hint: "Shared by your doctor", icon: <Stethoscope aria-hidden /> },
         ]}
       />
 
@@ -359,7 +389,7 @@ export function MedicalFilesClient({
           pattern, mirrors profile-client.tsx) so aria-controls always
           resolves to an existing tabpanel — not just the active one. */}
       {TABS.map((tab) => {
-        const docsForTab = allDocs.filter((d) => tab.docTypes.includes(d.documentType));
+        const docsForTab = allDocs.filter((d) => tab.categories.includes(d.category));
         return (
           <PortalTabPanel key={tab.id} value={tab.id} activeValue={activeTab}>
             {tab.id === "uploaded" && (

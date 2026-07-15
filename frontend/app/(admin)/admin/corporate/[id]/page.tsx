@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { ArrowLeft, ClipboardList, UserRound, Users } from "lucide-react";
+import { ArrowLeft, ClipboardList, ExternalLink, Receipt, UserRound, Users } from "lucide-react";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { fetchAdminDoctors } from "@/lib/admin/admin-api";
 import {
@@ -9,19 +9,25 @@ import {
   fetchCorporateBeneficiaries,
   fetchCorporateCompanyById,
   fetchCorporateEmployees,
+  fetchCorporateInvoices,
   fetchCorporateRequests,
   patchCorporateBeneficiary,
   patchCorporateCompany,
   patchCorporateEmployee,
   postCorporateAdminInvite,
   postCorporateEmployee,
+  postCorporateInvoice,
   postCorporateRequest,
   resendCorporateBeneficiaryInvite,
   resendCorporateEmployeeInvite,
   type CorporateBeneficiaryAction,
   type CorporateEmployeeAction,
+  type CorporateInvoiceDocument,
+  type CorporateInvoiceDocumentType,
   type CorporateRequestType,
 } from "@/lib/admin/admin-api/corporate";
+import { InvoiceRowActions } from "../../invoices/_components/invoice-row-actions";
+import { formatPrice } from "@/lib/format-currency";
 import {
   AdminCard,
   AdminEmptyState,
@@ -50,7 +56,7 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const TABS = ["overview", "employees", "beneficiaries", "requests", "settings"] as const;
+const TABS = ["overview", "employees", "beneficiaries", "requests", "invoices", "settings"] as const;
 type Tab = (typeof TABS)[number];
 
 type PageProps = {
@@ -58,7 +64,7 @@ type PageProps = {
   searchParams?: Promise<{ tab?: string; success?: string; error?: string }>;
 };
 
-function backTo(companyId: string, tab: Tab, params: Record<string, string>) {
+function backTo(companyId: string, tab: Tab, params: Record<string, string>): never {
   const qs = new URLSearchParams({ tab, ...params }).toString();
   redirect(`/admin/corporate/${companyId}?${qs}`);
 }
@@ -208,6 +214,37 @@ async function updateDoctorAction(formData: FormData) {
   backTo(companyId, "settings", { success: "Pre-assessment doctor updated" });
 }
 
+async function generateInvoiceAction(formData: FormData) {
+  "use server";
+  await requireAdminAction();
+  const companyId = String(formData.get("companyId") ?? "");
+  const documentType = String(formData.get("documentType") ?? "") as CorporateInvoiceDocumentType;
+  const description = String(formData.get("description") ?? "").trim();
+  const amountMajor = Number(String(formData.get("amount") ?? "").trim());
+  const quantity = Math.max(1, Math.round(Number(String(formData.get("quantity") ?? "1")) || 1));
+  const send = formData.get("send") === "on";
+
+  if (!["INVOICE", "RECEIPT", "INVOICE_RECEIPT", "CREDIT_NOTE"].includes(documentType)) {
+    backTo(companyId, "invoices", { error: "Pick a document type" });
+  }
+  if (!description) backTo(companyId, "invoices", { error: "Enter a description" });
+  if (!Number.isFinite(amountMajor) || amountMajor <= 0) {
+    backTo(companyId, "invoices", { error: "Enter an amount greater than zero" });
+  }
+  const result = await postCorporateInvoice(companyId, {
+    documentType,
+    amountCents: Math.round(amountMajor * 100),
+    description,
+    quantity,
+    send,
+  });
+  if (!result.ok) backTo(companyId, "invoices", { error: result.message });
+  revalidatePath(`/admin/corporate/${companyId}`);
+  backTo(companyId, "invoices", {
+    success: `${result.data.invoiceNumber} created${send ? " and emailed" : ""}`,
+  });
+}
+
 /* ── Page ────────────────────────────────────────────────────────────────── */
 
 export default async function AdminCorporateCompanyPage({ params, searchParams }: PageProps) {
@@ -231,14 +268,16 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
   }
   const company = companyResult.data;
 
-  const [employeesResult, beneficiariesResult, requestsResult, doctorsResult] = await Promise.all([
-    tab === "employees" || tab === "requests"
-      ? fetchCorporateEmployees(id)
-      : Promise.resolve(null),
-    tab === "beneficiaries" ? fetchCorporateBeneficiaries(id) : Promise.resolve(null),
-    tab === "requests" ? fetchCorporateRequests(id) : Promise.resolve(null),
-    tab === "settings" ? fetchAdminDoctors({ pageSize: "250" }) : Promise.resolve(null),
-  ]);
+  const [employeesResult, beneficiariesResult, requestsResult, doctorsResult, invoicesResult] =
+    await Promise.all([
+      tab === "employees" || tab === "requests"
+        ? fetchCorporateEmployees(id)
+        : Promise.resolve(null),
+      tab === "beneficiaries" ? fetchCorporateBeneficiaries(id) : Promise.resolve(null),
+      tab === "requests" ? fetchCorporateRequests(id) : Promise.resolve(null),
+      tab === "settings" ? fetchAdminDoctors({ pageSize: "250" }) : Promise.resolve(null),
+      tab === "invoices" ? fetchCorporateInvoices(id) : Promise.resolve(null),
+    ]);
 
   return (
     <>
@@ -835,6 +874,121 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
         </>
       ) : null}
 
+      {tab === "invoices" ? (
+        <>
+          <AdminCard padding={0} className="mb-4 overflow-hidden">
+            <details>
+              <summary className="flex cursor-pointer list-none items-center gap-2 px-5 py-3.5 text-sm font-bold text-[var(--color-text-primary)] [&::-webkit-details-marker]:hidden">
+                <Receipt className="size-4" aria-hidden /> Generate document
+              </summary>
+              <form
+                action={generateInvoiceAction}
+                className="grid grid-cols-1 gap-3 border-t border-[var(--color-border)] px-5 py-4 sm:grid-cols-2"
+              >
+                <input type="hidden" name="companyId" value={company.id} />
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">Document type *</span>
+                  <select name="documentType" defaultValue="INVOICE_RECEIPT" className="gh-select">
+                    <option value="INVOICE">Invoice — unpaid (bill to pay later)</option>
+                    <option value="INVOICE_RECEIPT">Invoice / Receipt — paid</option>
+                    <option value="RECEIPT">Receipt — paid</option>
+                    <option value="CREDIT_NOTE">Credit note — refund</option>
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">
+                    Amount ({company.billing.currencyCode}) *
+                  </span>
+                  <input
+                    name="amount"
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    required
+                    defaultValue={(company.billing.totalAnnualCents / 100).toFixed(2)}
+                    className="gh-input"
+                  />
+                </label>
+                <label className="flex flex-col gap-1 sm:col-span-2">
+                  <span className="gh-field-label">Description *</span>
+                  <input
+                    name="description"
+                    required
+                    maxLength={240}
+                    defaultValue={`${company.plan.name} — annual corporate plan (${company.billing.employeeCount} employees)`}
+                    className="gh-input"
+                  />
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">Quantity</span>
+                  <input name="quantity" type="number" min="1" step="1" defaultValue={1} className="gh-input" />
+                </label>
+                <label className="flex items-center gap-2 self-end pb-2 text-sm text-[var(--color-text-primary)]">
+                  <input type="checkbox" name="send" className="size-4" />
+                  Email to {company.billingEmail}
+                </label>
+                <div className="sm:col-span-2">
+                  <Btn type="submit" variant="primary" size="sm">
+                    Generate
+                  </Btn>
+                  <span className="ml-3 text-portal-meta text-[var(--color-text-muted)]">
+                    Uses the same fiscal format + numbering series as patient invoices.
+                  </span>
+                </div>
+              </form>
+            </details>
+          </AdminCard>
+
+          <AdminCard padding={0} className="mb-4 overflow-hidden">
+            <SectionHeader
+              title="Subscription documents"
+              description="Invoices, receipts and credit notes generated for this company's billing."
+            />
+            {!invoicesResult || !invoicesResult.ok ? (
+              <p className="gh-status-warning m-5 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+                Could not load documents{invoicesResult ? `: ${invoicesResult.message}` : ""}
+              </p>
+            ) : invoicesResult.data.subscription.length === 0 ? (
+              <AdminEmptyState
+                icon={<Receipt className="size-8" aria-hidden />}
+                title="No subscription documents"
+                description="Generate an invoice, receipt or credit note above — it appears here to download or email."
+              />
+            ) : (
+              <div className="flex flex-col gap-2 border-t border-[var(--color-border)] px-4 py-4">
+                {invoicesResult.data.subscription.map((doc) => (
+                  <CorporateInvoiceRow key={doc.id} doc={doc} />
+                ))}
+              </div>
+            )}
+          </AdminCard>
+
+          <AdminCard padding={0} className="overflow-hidden">
+            <SectionHeader
+              title="Employee consultation documents"
+              description="Invoices and receipts from consultations booked by this company's employees."
+            />
+            {!invoicesResult || !invoicesResult.ok ? (
+              <p className="gh-status-warning m-5 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+                Could not load documents{invoicesResult ? `: ${invoicesResult.message}` : ""}
+              </p>
+            ) : invoicesResult.data.consultations.length === 0 ? (
+              <AdminEmptyState
+                icon={<Receipt className="size-8" aria-hidden />}
+                title="No consultation documents"
+                description="Once employees book and pay for consultations, their invoices/receipts appear here."
+              />
+            ) : (
+              <div className="flex flex-col gap-2 border-t border-[var(--color-border)] px-4 py-4">
+                {invoicesResult.data.consultations.map((doc) => (
+                  <CorporateInvoiceRow key={doc.id} doc={doc} />
+                ))}
+              </div>
+            )}
+          </AdminCard>
+        </>
+      ) : null}
+
       {tab === "settings" ? (
         <div className="grid gap-4 lg:grid-cols-2">
           <AdminCard padding={0} className="overflow-hidden">
@@ -910,5 +1064,59 @@ export default async function AdminCorporateCompanyPage({ params, searchParams }
         </div>
       ) : null}
     </>
+  );
+}
+
+/* ── Corporate invoice document row ──────────────────────────────────────── */
+
+const DOC_TYPE_META: Record<
+  CorporateInvoiceDocumentType,
+  { label: string; className: string }
+> = {
+  INVOICE: { label: "Invoice · Unpaid", className: "bg-amber-100 text-amber-800" },
+  RECEIPT: { label: "Receipt", className: "bg-sky-100 text-sky-800" },
+  INVOICE_RECEIPT: { label: "Invoice / Receipt", className: "bg-emerald-100 text-emerald-800" },
+  CREDIT_NOTE: { label: "Credit Note", className: "bg-rose-100 text-rose-800" },
+};
+
+function CorporateInvoiceRow({ doc }: { doc: CorporateInvoiceDocument }) {
+  const meta = DOC_TYPE_META[doc.documentType] ?? DOC_TYPE_META.INVOICE_RECEIPT;
+  return (
+    <div className="flex flex-col gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white px-3 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+        <span
+          className={`gh-admin-ops-badge inline-block rounded-full px-2 py-0.5 text-portal-micro font-bold uppercase ${meta.className}`}
+        >
+          {meta.label}
+        </span>
+        <span className="font-mono text-portal-compact font-bold text-[var(--color-text-primary)]">
+          {doc.invoiceNumber}
+        </span>
+        <span className="text-portal-thead text-[var(--color-text-muted)]">
+          {formatPrice(doc.totalCents, doc.currencyCode)} · {formatDate(doc.generatedAt)}
+        </span>
+        <span
+          className={`gh-admin-ops-badge inline-block rounded-full px-2 py-0.5 text-portal-micro font-bold uppercase ${
+            doc.emailSentAt ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
+          }`}
+        >
+          {doc.emailSentAt ? "Sent" : "Pending"}
+        </span>
+      </div>
+      <div className="flex flex-wrap items-center justify-end gap-1.5">
+        <Link
+          href={`/print/order-invoices/${doc.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-portal-thead font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]"
+        >
+          <ExternalLink className="size-3" aria-hidden />
+          View
+        </Link>
+        {/* Download PDF + Send to billing email (email / WhatsApp) — reuses the
+            same per-invoice endpoints as the main Invoices page. */}
+        <InvoiceRowActions invoiceId={doc.id} variant="card" />
+      </div>
+    </div>
   );
 }

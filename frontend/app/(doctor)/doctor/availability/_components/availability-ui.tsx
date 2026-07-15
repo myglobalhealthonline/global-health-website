@@ -168,6 +168,13 @@ export function DoctorAvailabilityUI({
         return;
       }
       setWindows((prev) => [...prev, res.data.availability]);
+      // Reset the whole add-form, not just the dates. Leaving weekday/time
+      // as-is made the non-blocking overlap warning fire against the window
+      // the doctor had just successfully added — a confusing false positive.
+      setWeekday(1);
+      setStartTime("09:00");
+      setEndTime("17:00");
+      setDuration(15);
       setEffectiveFromDate("");
       setEffectiveUntilDate("");
       router.refresh();

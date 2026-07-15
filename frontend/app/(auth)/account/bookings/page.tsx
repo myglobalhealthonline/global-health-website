@@ -45,7 +45,15 @@ export default async function AccountBookingsPage({ searchParams }: Props) {
   const items = history.ok ? history.data.items : [];
   const now = getRequestNowMs();
   const upcoming = items.filter((item) => item.scheduledAt && new Date(item.scheduledAt).getTime() >= now).length;
-  const needsPayment = items.filter((item) => item.amountCents && item.amountCents > 0 && item.paymentStatus !== "PAID").length;
+  // Mirror requiresPayment() in ui.tsx — a cancelled booking's order is
+  // cancelled too, so it never needs payment (its payment link can't resolve).
+  const needsPayment = items.filter(
+    (item) =>
+      item.amountCents &&
+      item.amountCents > 0 &&
+      item.paymentStatus !== "PAID" &&
+      item.status !== "CANCELLED",
+  ).length;
   const meetReady = items.filter((item) => item.meetingUrl).length;
 
   const calendarItems: CalendarItem[] = items

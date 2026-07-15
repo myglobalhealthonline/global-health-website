@@ -42,6 +42,29 @@ const doctorPatientDocumentsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid email param"));
       }
       try {
+        // Patient's own Medical Files uploads live in MedicalDocument (no
+        // appointment scope) — surface them here as "Uploaded document" so
+        // the patient upload flow stays in sync with the doctor portal.
+        const profile = await prisma.patientProfile.findUnique({
+          where: { email },
+          select: { id: true },
+        });
+        const patientUploads = profile
+          ? await prisma.medicalDocument.findMany({
+              where: { patientProfileId: profile.id, uploadedByRole: "PATIENT" },
+              orderBy: { createdAt: "desc" },
+              take: LIST_CAP,
+              select: {
+                id: true,
+                title: true,
+                fileName: true,
+                mimetype: true,
+                byteSize: true,
+                createdAt: true,
+              },
+            })
+          : [];
+
         // First pull every appointment-id the doctor shares with this
         // patient so we can filter both child tables by that set in one
         // round-trip per table.
@@ -54,7 +77,14 @@ const doctorPatientDocumentsRoute: FastifyPluginAsync = async (app) => {
         });
         const appointmentIds = appointments.map((a) => a.id);
         if (appointmentIds.length === 0) {
-          return okResponse({ uploads: [], generated: [] });
+          return okResponse({
+            uploads: [],
+            generated: [],
+            patientUploads: patientUploads.map((u) => ({
+              ...u,
+              createdAt: u.createdAt.toISOString(),
+            })),
+          });
         }
 
         const [uploads, generated] = await Promise.all([
@@ -97,6 +127,10 @@ const doctorPatientDocumentsRoute: FastifyPluginAsync = async (app) => {
           generated: generated.map((g) => ({
             ...g,
             createdAt: g.createdAt.toISOString(),
+          })),
+          patientUploads: patientUploads.map((u) => ({
+            ...u,
+            createdAt: u.createdAt.toISOString(),
           })),
         });
       } catch (error) {

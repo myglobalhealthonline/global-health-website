@@ -5,7 +5,10 @@ import { cookies } from "next/headers";
 import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 import { formatPrice } from "@/lib/format-currency";
 import { InvoiceFilters, type InvoiceFilterValues } from "./_components/invoice-filters";
-import { AdminInvoicesTable, type InvoiceRow } from "./_components/admin-invoices-table";
+import {
+  AdminInvoiceOrdersTable,
+  type InvoiceOrderGroup,
+} from "./_components/admin-invoice-orders-table";
 
 export const dynamic = "force-dynamic";
 
@@ -23,9 +26,9 @@ const FILTER_KEYS = [
 async function fetchAdminInvoices(
   filters: InvoiceFilterValues,
   cursor?: string,
-): Promise<{ items: InvoiceRow[]; nextCursor: string | null }> {
+): Promise<{ orders: InvoiceOrderGroup[]; nextCursor: string | null }> {
   const backend = getBackendOrigin();
-  if (!backend) return { items: [], nextCursor: null };
+  if (!backend) return { orders: [], nextCursor: null };
   const store = await cookies();
   const cookieHeader = store
     .getAll()
@@ -42,15 +45,15 @@ async function fetchAdminInvoices(
       headers: cookieHeader ? { cookie: cookieHeader } : undefined,
       cache: "no-store",
     });
-    if (!res.ok) return { items: [], nextCursor: null };
+    if (!res.ok) return { orders: [], nextCursor: null };
     const json = (await res.json()) as {
       ok?: boolean;
-      data?: { items: InvoiceRow[]; nextCursor: string | null };
+      data?: { orders: InvoiceOrderGroup[]; nextCursor: string | null };
     };
-    if (!json.ok || !json.data) return { items: [], nextCursor: null };
+    if (!json.ok || !json.data) return { orders: [], nextCursor: null };
     return json.data;
   } catch {
-    return { items: [], nextCursor: null };
+    return { orders: [], nextCursor: null };
   }
 }
 
@@ -72,7 +75,8 @@ export default async function AdminInvoicesPage({
     consultFrom: sp.consultFrom,
     consultTo: sp.consultTo,
   };
-  const { items, nextCursor } = await fetchAdminInvoices(filters, cursor);
+  const { orders, nextCursor } = await fetchAdminInvoices(filters, cursor);
+  const allDocs = orders.flatMap((o) => o.documents);
 
   // Query string carrying the active filters (no cursor) so pagination keeps them.
   const filterQs = new URLSearchParams();
@@ -86,9 +90,9 @@ export default async function AdminInvoicesPage({
   const nextPageHref = nextCursor
     ? `/admin/invoices?${filterSuffix ? `${filterSuffix}&` : ""}cursor=${encodeURIComponent(nextCursor)}`
     : null;
-  const sentCount = items.filter((inv) => inv.emailSentAt).length;
-  const totalCents = items.reduce((sum, inv) => sum + inv.totalCents, 0);
-  const primaryCurrency = items[0]?.currencyCode ?? "EUR";
+  const sentCount = allDocs.filter((inv) => inv.emailSentAt).length;
+  const totalCents = orders.reduce((sum, o) => sum + o.totalCents, 0);
+  const primaryCurrency = orders[0]?.currencyCode ?? "EUR";
 
   return (
     <>
@@ -107,16 +111,16 @@ export default async function AdminInvoicesPage({
           <AdminSummaryStrip
             items={[
               {
-                label: "Invoices shown",
-                value: items.length,
-                hint: cursor ? "Cursor page" : "Latest batch",
+                label: "Orders shown",
+                value: orders.length,
+                hint: `${allDocs.length} documents · ${cursor ? "cursor page" : "latest batch"}`,
                 tone: "brand",
               },
               {
                 label: "Email sent",
                 value: sentCount,
-                hint: `${items.length - sentCount} pending`,
-                tone: sentCount === items.length && items.length > 0 ? "success" : "neutral",
+                hint: `${allDocs.length - sentCount} pending`,
+                tone: sentCount === allDocs.length && allDocs.length > 0 ? "success" : "neutral",
               },
               {
                 label: "Visible value",
@@ -130,7 +134,7 @@ export default async function AdminInvoicesPage({
 
         <InvoiceFilters values={filters} />
 
-        {items.length === 0 ? (
+        {orders.length === 0 ? (
           hasActiveFilter ? (
             <AdminEmptyState
               assetSrc="/images/portal/obsidian/empty-payments.svg"
@@ -145,7 +149,7 @@ export default async function AdminInvoicesPage({
             />
           )
         ) : (
-          <AdminInvoicesTable items={items} />
+          <AdminInvoiceOrdersTable orders={orders} />
         )}
 
         <div className="gh-admin-ops-pagination flex items-center justify-between border-t border-[var(--color-border)] px-5 py-4 text-portal-compact">

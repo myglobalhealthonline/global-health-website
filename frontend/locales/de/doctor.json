@@ -313,7 +313,9 @@
     "chartSaveFailed": "Akte konnte nicht gespeichert werden.",
     "sendUploadLink": "Upload-Link senden",
     "uploadLinkSent": "Upload-Link per E-Mail an den Patienten gesendet.",
-    "uploadLinkFailed": "Link konnte nicht gesendet werden"
+    "uploadLinkFailed": "Link konnte nicht gesendet werden",
+    "patientUploadsTitle": "Hochgeladene Dokumente",
+    "patientUploadBadge": "Vom Patienten hochgeladen"
   },
   "availability": {
     "eyebrow": "Terminplan",

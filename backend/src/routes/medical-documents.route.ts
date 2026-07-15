@@ -12,8 +12,10 @@ import { verifySniffedMime } from "../utils/sniff-mime.js";
 import {
   createMedicalDocument,
   getPatientAccessibleDocument,
+  getPatientAccessibleGeneratedDocument,
+  getPatientAccessibleAppointmentDocument,
   listMedicalDocumentsAdmin,
-  listPatientMedicalDocuments,
+  listPatientUnifiedDocuments,
   MEDICAL_DOC_ALLOWED_MIME,
   MEDICAL_DOC_MAX_BYTES,
   VALID_DOCUMENT_TYPES,
@@ -76,20 +78,17 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
       const profile = await resolvePatientProfile(request.authUser.email);
       if (!profile) return reply.status(404).send(errorResponse("Profile not found"));
 
-      const query = z
-        .object({ type: z.string().optional() })
-        .safeParse(request.query);
-      const documentTypes =
-        query.success && query.data.type ? [query.data.type.toUpperCase()] : undefined;
-
       try {
-        const docs = await listPatientMedicalDocuments(profile.id, documentTypes);
+        // Unified view: MedicalDocument (minus hidden clinical types) +
+        // sent GeneratedDocument PDFs + AppointmentDocument uploads, kept in
+        // sync with the doctor portal Documents section.
+        const docs = await listPatientUnifiedDocuments(profile.id, request.authUser.email);
         await guardMedicalRead(
           request,
           { userId: request.authUser.sub, role: "PATIENT" },
           { patientProfileId: profile.id, resourceType: "MEDICAL_DOC", accessAction: "VIEWED" },
         ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
-        return okResponse({ documents: docs.map(serializeDoc) });
+        return okResponse({ documents: docs });
       } catch (error) {
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not load documents"));
@@ -194,24 +193,58 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
       const profile = await resolvePatientProfile(request.authUser.email);
       if (!profile) return reply.status(404).send(errorResponse("Profile not found"));
 
+      const sourceParsed = z
+        .object({ source: z.enum(["MEDICAL_DOC", "GENERATED", "APPOINTMENT"]).optional() })
+        .safeParse(request.query);
+      const source = sourceParsed.success ? sourceParsed.data.source ?? "MEDICAL_DOC" : "MEDICAL_DOC";
+      const email = request.authUser.email;
+
       try {
-        const doc = await getPatientAccessibleDocument(profile.id, request.params.id);
-        if (!doc) return reply.status(404).send(errorResponse("Document not found"));
+        // Resolve the storage key + filename from whichever table the row
+        // lives in, always verifying it belongs to this patient first.
+        let storageKey: string | null = null;
+        let fileName = "document";
+        let fallbackMime = "application/octet-stream";
+
+        if (source === "GENERATED") {
+          const doc = await getPatientAccessibleGeneratedDocument(email, request.params.id);
+          if (doc) {
+            storageKey = doc.storageKey;
+            fileName = doc.fileName;
+            fallbackMime = "application/pdf";
+          }
+        } else if (source === "APPOINTMENT") {
+          const doc = await getPatientAccessibleAppointmentDocument(email, request.params.id);
+          if (doc) {
+            storageKey = doc.storageKey;
+            fileName = doc.label || doc.storageKey.split("/").pop() || "document";
+            fallbackMime = doc.mimetype;
+          }
+        } else {
+          const doc = await getPatientAccessibleDocument(profile.id, request.params.id);
+          if (doc) {
+            storageKey = doc.fileKey;
+            fileName = doc.fileName;
+            fallbackMime = doc.mimetype;
+          }
+        }
+
+        if (!storageKey) return reply.status(404).send(errorResponse("Document not found"));
 
         await guardMedicalRead(
           request,
           { userId: request.authUser.sub, role: "PATIENT" },
-          { patientProfileId: profile.id, resourceType: "MEDICAL_DOC", accessAction: "DOWNLOADED", resourceId: doc.id },
+          { patientProfileId: profile.id, resourceType: "MEDICAL_DOC", accessAction: "DOWNLOADED", resourceId: request.params.id },
         ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
 
-        const obj = await getObject(doc.fileKey);
+        const obj = await getObject(storageKey);
         const stream = streamToNodeReadable(obj.Body);
         if (!stream) return reply.status(404).send(errorResponse("File not found in storage"));
 
-        void reply.header("Content-Type", obj.ContentType ?? doc.mimetype);
+        void reply.header("Content-Type", obj.ContentType ?? fallbackMime);
         void reply.header(
           "Content-Disposition",
-          `attachment; filename="${encodeURIComponent(doc.fileName)}"`,
+          `attachment; filename="${encodeURIComponent(fileName)}"`,
         );
         void reply.header("Cache-Control", "private, no-store");
         return reply.send(stream);

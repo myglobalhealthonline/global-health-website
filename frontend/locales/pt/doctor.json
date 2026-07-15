@@ -253,6 +253,8 @@
     "allDocsEmptyTitle": "Sem documentos registados",
     "allDocsEmptyDesc": "Os ficheiros carregados e os PDFs gerados serão reunidos aqui em todas as consultas deste paciente.",
     "doctorUploads": "Carregamentos do médico",
+    "patientUploadsTitle": "Documentos carregados",
+    "patientUploadBadge": "Carregado pelo paciente",
     "noUploadedFiles": "Nenhum ficheiro carregado.",
     "generatedPdfs": "PDFs gerados",
     "noGeneratedPdfs": "Nenhum PDF gerado.",
