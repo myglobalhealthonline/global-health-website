@@ -35,6 +35,8 @@ export type RequestRoutingContext = {
   pathname: string;
   countryCode: CountryCode;
   locale: LocaleCode;
+  /** Locale that was carried explicitly in the URL path, if any. */
+  pathLocale: string | null;
   isLegacyRoute: boolean;
   matchedLegacyRoute: string | null;
 };

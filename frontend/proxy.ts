@@ -376,6 +376,19 @@ export async function proxy(request: NextRequest) {
   });
   response.headers.set("Content-Security-Policy", csp);
 
+  // Persist the URL-carried locale so locale-less shared pages (/about,
+  // /blog, /contact, /faq) keep the language the visitor was browsing in.
+  // Without this the cookie is only ever written by an explicit language-
+  // switcher click, and navigating off a /{country}/{lang} page falls back
+  // to Accept-Language (usually English).
+  if (context.pathLocale && context.pathLocale !== request.cookies.get("gh_locale")?.value) {
+    response.cookies.set("gh_locale", context.pathLocale, {
+      path: "/",
+      maxAge: 31536000,
+      sameSite: "lax",
+    });
+  }
+
   // P-001: bare, non-HttpOnly boolean hint for the public-site client auth
   // island (PublicAuthContext) — lets the browser skip its /api/auth/me
   // round-trip for the (majority) anonymous visitor without any I/O here,

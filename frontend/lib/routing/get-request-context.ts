@@ -73,6 +73,7 @@ export function getRequestContext(input: {
     pathname,
     countryCode: countryResolution.country.code,
     locale,
+    pathLocale: explicitLocale,
     isLegacyRoute: Boolean(matchedLegacyRoute),
     matchedLegacyRoute,
   };
