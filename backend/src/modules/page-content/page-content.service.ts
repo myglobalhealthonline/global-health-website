@@ -325,7 +325,19 @@ export type PublicPageContentResult = {
         heroImagePath: string | null;
         ogImagePath: string | null;
         ctaHref: string | null;
-      } & MergedTranslation & { sections: ReturnType<typeof computeSectionVisibility> })
+      } & MergedTranslation & {
+        sections: ReturnType<typeof computeSectionVisibility>;
+        /**
+         * Which locale the (whole) requested-translation row came from:
+         * the requested locale if that row exists at all, else the
+         * country default. Per-field mixing still happens underneath
+         * (§8/#3 policy: keep the fallback, make it observable) — this
+         * flags "this page used its default-locale row" so the frontend
+         * can detect/measure a fallback instead of it silently reading
+         * as the user's own language.
+         */
+        resolvedLocale: LocaleCode;
+      })
     | null;
   disabled: boolean;
 };
@@ -408,6 +420,7 @@ export async function getPublicPageContent(
         ctaHref: row.ctaHref,
         ...merged,
         sections: computeSectionVisibility(base, merged),
+        resolvedLocale: requested ? locale : country.defaultLocale,
       },
       disabled: false,
     };

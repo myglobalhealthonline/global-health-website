@@ -89,7 +89,7 @@ type PublicSpecialtyRow = {
   }>;
 };
 
-function mergeDoctorSpecialties<T extends { specialty: PublicSpecialtyRow }>(
+export function mergeDoctorSpecialties<T extends { specialty: PublicSpecialtyRow }>(
   specialties: readonly T[],
   requested: LocaleCode,
   defaultLocale: LocaleCode,
@@ -113,7 +113,7 @@ function mergeDoctorSpecialties<T extends { specialty: PublicSpecialtyRow }>(
  * requested locale (requested -> default -> first -> base), field by field.
  * fullName + qualifications are not translated, so they pass through.
  */
-function mergeDoctorTranslation<
+export function mergeDoctorTranslation<
   S extends DoctorDisplayBase & { translations: DoctorTranslationRow[] },
 >(doctor: S, requested: LocaleCode, defaultLocale: LocaleCode): Omit<S, "translations"> & {
   resolvedLocale: LocaleCode;
@@ -130,8 +130,20 @@ function mergeDoctorTranslation<
   };
 }
 
-function mergeDoctorMarketTranslation<
-  S extends DoctorDisplayBase,
+/**
+ * Layers a DoctorMarketTranslation row on top of the already
+ * locale-merged doctor (from mergeDoctorTranslation). Resolved
+ * independently, a market row that exists only in the country's default
+ * locale would win the `resolveTranslation` default-fallback for every
+ * requested locale and stomp already-correct per-locale DoctorTranslation
+ * fields (the "selected English, page shows Portuguese" bug). Fix: only
+ * apply the market row when its resolved locale matches the doctor-level
+ * resolved locale — i.e. the market row is actually in the language we're
+ * rendering, not just the fallback language. Mismatch -> ignore the market
+ * row entirely and keep the doctor-merged object (seoKeywords []).
+ */
+export function mergeDoctorMarketTranslation<
+  S extends DoctorDisplayBase & { resolvedLocale: LocaleCode },
 >(
   doctor: S,
   marketTranslations: DoctorMarketTranslationRow[] | undefined,
@@ -140,6 +152,13 @@ function mergeDoctorMarketTranslation<
 ): S & { resolvedMarketLocale: LocaleCode; seoKeywords: string[] } {
   const rows = marketTranslations ?? [];
   const { tr, resolvedLocale } = resolveTranslation(rows, requested, defaultLocale);
+  if (resolvedLocale !== doctor.resolvedLocale) {
+    return {
+      ...doctor,
+      seoKeywords: [],
+      resolvedMarketLocale: doctor.resolvedLocale,
+    };
+  }
   return {
     ...doctor,
     title: tr?.title ?? doctor.title,

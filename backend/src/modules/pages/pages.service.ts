@@ -244,7 +244,7 @@ const publicPageInclude = {
 export type PublicPageRecord = Prisma.ContentPageGetPayload<{ include: typeof publicPageInclude }>;
 
 export type GetPublicPageResult =
-  | { page: PublicPageRecord; disabled: false }
+  | { page: PublicPageRecord; disabled: false; resolvedLocale: LocaleCode }
   | { page: null; disabled: boolean };
 
 /**
@@ -252,6 +252,12 @@ export type GetPublicPageResult =
  * with a locale fallback chain — exact locale → country defaultLocale → null.
  * disabled=true means a ContentPage entry exists but is inactive/draft (caller should
  * hide all sections rather than rendering with defaults).
+ *
+ * Policy (kept, made observable): a missing requested-locale row still falls
+ * back to the whole country-default-locale row rather than hiding the page.
+ * `resolvedLocale` reports which locale actually supplied the returned page
+ * so callers/frontend can detect and surface the fallback instead of it
+ * silently reading as "the user's language".
  */
 export async function getPublicPage(
   countryCode: string,
@@ -270,7 +276,7 @@ export async function getPublicPage(
       include: publicPageInclude,
     });
     if (exact && exact.status === PublishStatus.PUBLISHED && exact.isActive) {
-      return { page: exact, disabled: false };
+      return { page: exact, disabled: false, resolvedLocale: locale };
     }
     if (exact) {
       return { page: null, disabled: true };
@@ -288,7 +294,7 @@ export async function getPublicPage(
         include: publicPageInclude,
       });
       if (fallback && fallback.status === PublishStatus.PUBLISHED && fallback.isActive) {
-        return { page: fallback, disabled: false };
+        return { page: fallback, disabled: false, resolvedLocale: country.defaultLocale };
       }
       if (fallback) {
         return { page: null, disabled: true };
