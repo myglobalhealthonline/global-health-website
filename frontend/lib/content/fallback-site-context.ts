@@ -18,7 +18,12 @@ export async function getFallbackSiteContext(
     selectedLocale: locale,
     localeBundle,
     common: localeBundle.common,
-    navigation: buildSiteNavigationData(localeBundle.common, countryContent.activeCountries),
+    navigation: buildSiteNavigationData(
+      localeBundle.common,
+      countryContent.activeCountries,
+      countryContext.country.code,
+      locale,
+    ),
     services: countryContent.services,
     doctors: countryContent.doctors,
     pricingPlans: countryContent.pricingPlans,

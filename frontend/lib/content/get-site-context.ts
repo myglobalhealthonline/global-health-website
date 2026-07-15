@@ -34,7 +34,12 @@ export async function getSiteContext(input: SiteContextInput | string = {}) {
 
   const fallback = await getFallbackSiteContext(countryContext, locale);
   const activeCountries = await getPublicCountriesMerged();
-  const navigation = buildSiteNavigationData(fallback.common, activeCountries);
+  const navigation = buildSiteNavigationData(
+    fallback.common,
+    activeCountries,
+    countryContext.country.code,
+    locale,
+  );
 
   return {
     ...fallback,

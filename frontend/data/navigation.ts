@@ -70,9 +70,29 @@ export type SiteNavigationData = {
   footerEuCompliant: string;
 };
 
+// Per-country/-locale overrides for the handful of nav/footer strings that
+// need a market-specific dialect fix. `SiteNavigationData` is built once per
+// request from the LANGUAGE-scoped locale bundle (`copy`), so a market fix
+// here can't leak onto another country sharing the same locale — same
+// no-leak rule as country-doctors-copy.ts / country-home-copy.ts.
+const NAV_OVERRIDES: Record<
+  string,
+  Partial<Pick<SiteNavigationData, "footerOurDoctors" | "navBookAppointment">>
+> = {
+  // Brazil's default locale is pt, but the shared pt bundle is Portugal's
+  // own PT-PT copy ("Os nossos médicos", "Marcar consulta") — PT-BR omits
+  // the article before a possessive and uses "agendar", not "marcar".
+  "br:pt": {
+    footerOurDoctors: "Nossos médicos",
+    navBookAppointment: "Agendar consulta",
+  },
+};
+
 export function buildSiteNavigationData(
   copy: CommonLocale,
   countries: CountryConfig[],
+  countryCode?: string,
+  locale?: string,
 ): SiteNavigationData {
   // Phase 1: nav is country-first. Country/team links live in the Clinics
   // dropdown; About menu is intentionally light. Wix legacy items (gift card,
@@ -109,6 +129,9 @@ export function buildSiteNavigationData(
       ],
     },
   ];
+
+  const override =
+    countryCode && locale ? NAV_OVERRIDES[`${countryCode.toLowerCase()}:${locale.toLowerCase()}`] : undefined;
 
   return {
     clinicsOverviewLink: { label: copy.navigation.viewAllClinics, href: "/#countries" },
@@ -171,6 +194,7 @@ export function buildSiteNavigationData(
     footerCopyrightSuffix: copy.footer.copyrightSuffix,
     footerPrivacyLink: copy.footer.privacyLink,
     footerEuCompliant: copy.footer.euCompliant,
+    ...override,
   };
 }
 
