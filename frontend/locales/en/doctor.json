@@ -254,6 +254,8 @@
     "allDocsEmptyDesc": "Uploaded files and generated PDFs will collect here across this patient's appointments.",
     "doctorUploads": "Doctor uploads",
     "noUploadedFiles": "No uploaded files.",
+    "patientUploadsTitle": "Uploaded documents",
+    "patientUploadBadge": "Uploaded by patient",
     "generatedPdfs": "Generated PDFs",
     "noGeneratedPdfs": "No generated PDFs.",
     "sent": "Sent",

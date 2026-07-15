@@ -255,6 +255,16 @@ export type DoctorPatientDocumentsPayload = {
     metadata: unknown;
     createdAt: string;
   }>;
+  // Patient Medical Files uploads (no appointment scope) surfaced as
+  // "Uploaded document" so the patient upload flow stays in sync.
+  patientUploads?: Array<{
+    id: string;
+    title: string;
+    fileName: string;
+    mimetype: string;
+    byteSize: number;
+    createdAt: string;
+  }>;
 };
 
 export async function fetchDoctorPatientDocuments(email: string) {

@@ -35,8 +35,9 @@ export async function AllDocumentsCard({ email }: { email: string }) {
     );
   }
 
-  const { uploads, generated } = result.data;
-  const isEmpty = uploads.length === 0 && generated.length === 0;
+  const { uploads, generated, patientUploads = [] } = result.data;
+  const isEmpty =
+    uploads.length === 0 && generated.length === 0 && patientUploads.length === 0;
 
   return (
     <section className="gh-card gh-doctor-all-documents-card p-6">
@@ -72,6 +73,21 @@ export async function AllDocumentsCard({ email }: { email: string }) {
             }))}
             openLabel={d.common.open}
           />
+          {patientUploads.length > 0 ? (
+            <Section
+              title={p.patientUploadsTitle ?? "Uploaded documents"}
+              empty=""
+              rows={patientUploads.map((u) => ({
+                key: u.id,
+                title: u.title || u.fileName || "Uploaded document",
+                meta: `${u.mimetype} · ${formatBytes(u.byteSize)}`,
+                appointmentId: null,
+                createdAt: u.createdAt,
+                badge: p.patientUploadBadge ?? "Uploaded by patient",
+              }))}
+              openLabel={d.common.open}
+            />
+          ) : null}
           <Section
             title={p.generatedPdfs}
             empty={p.noGeneratedPdfs}
@@ -103,7 +119,7 @@ function Section({
     key: string;
     title: string;
     meta: string;
-    appointmentId: string;
+    appointmentId: string | null;
     createdAt: string;
     badge: string | null;
   }>;
@@ -143,12 +159,14 @@ function Section({
                     {r.badge}
                   </span>
                 ) : null}
-                <Link
-                  href={`/doctor/appointments/${r.appointmentId}`}
-                  className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-portal-meta font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)] sm:w-auto"
-                >
-                  <Download className="size-3" aria-hidden /> {openLabel}
-                </Link>
+                {r.appointmentId ? (
+                  <Link
+                    href={`/doctor/appointments/${r.appointmentId}`}
+                    className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--portal-line)] px-2 py-1 text-portal-meta font-semibold text-[var(--portal-primary)] hover:bg-[var(--portal-well)] sm:w-auto"
+                  >
+                    <Download className="size-3" aria-hidden /> {openLabel}
+                  </Link>
+                ) : null}
               </div>
             </li>
           ))}

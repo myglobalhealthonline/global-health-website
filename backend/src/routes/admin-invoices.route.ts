@@ -152,49 +152,101 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
     const where: Prisma.InvoiceWhereInput = and.length ? { AND: and } : {};
 
     try {
-      const invoices = await prisma.invoice.findMany({
+      // The list is grouped BY ORDER: each row on the admin page is one order,
+      // and opening it reveals every fiscal document linked to that order
+      // (invoice, invoice/receipt, receipt, credit note). We paginate over the
+      // invoices that match the filters (most-recent first), collapse them to
+      // the distinct orders in first-seen order, then hydrate each of those
+      // orders with ALL of its documents — so a filter narrows WHICH orders
+      // appear, but an opened order always shows its complete document set.
+      const pageInvoices = await prisma.invoice.findMany({
         where,
         orderBy: { generatedAt: "desc" },
         take: limit + 1,
         ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
-        include: {
-          order: {
-            select: {
-              id: true,
-              orderNumber: true,
-              fullName: true,
-              email: true,
-              totalCents: true,
-              currencyCode: true,
-              paymentStatus: true,
-            },
-          },
-        },
+        select: { id: true, orderId: true },
       });
 
-      const hasMore = invoices.length > limit;
-      const page = hasMore ? invoices.slice(0, limit) : invoices;
+      const hasMore = pageInvoices.length > limit;
+      const page = hasMore ? pageInvoices.slice(0, limit) : pageInvoices;
       const nextCursor = hasMore ? page[page.length - 1]?.id ?? null : null;
 
-      return okResponse({
-        items: page.map((inv) => ({
-          id: inv.id,
-          invoiceNumber: inv.invoiceNumber,
-          countryCode: inv.countryCode,
-          documentType: inv.documentType,
-          generatedAt: inv.generatedAt.toISOString(),
-          emailSentAt: inv.emailSentAt?.toISOString() ?? null,
-          emailSentTo: inv.emailSentTo,
-          orderId: inv.orderId,
-          orderNumber: inv.order.orderNumber,
-          fullName: inv.order.fullName,
-          email: inv.order.email,
-          totalCents: inv.order.totalCents,
-          currencyCode: inv.order.currencyCode,
-          paymentStatus: inv.order.paymentStatus,
-        })),
-        nextCursor,
+      // Distinct order ids in most-recent-invoice order.
+      const orderIds: string[] = [];
+      const seen = new Set<string>();
+      for (const inv of page) {
+        if (!seen.has(inv.orderId)) {
+          seen.add(inv.orderId);
+          orderIds.push(inv.orderId);
+        }
+      }
+
+      // Hydrate every document for those orders (not just the filter-matching
+      // ones) so an opened order shows its full document set.
+      const allDocs = orderIds.length
+        ? await prisma.invoice.findMany({
+            where: { orderId: { in: orderIds } },
+            orderBy: { generatedAt: "desc" },
+            include: {
+              order: {
+                select: {
+                  id: true,
+                  orderNumber: true,
+                  fullName: true,
+                  email: true,
+                  totalCents: true,
+                  currencyCode: true,
+                  paymentStatus: true,
+                },
+              },
+            },
+          })
+        : [];
+
+      const toDocument = (inv: (typeof allDocs)[number]) => ({
+        id: inv.id,
+        invoiceNumber: inv.invoiceNumber,
+        countryCode: inv.countryCode,
+        documentType: inv.documentType,
+        generatedAt: inv.generatedAt.toISOString(),
+        emailSentAt: inv.emailSentAt?.toISOString() ?? null,
+        emailSentTo: inv.emailSentTo,
+        orderId: inv.orderId,
+        orderNumber: inv.order.orderNumber,
+        fullName: inv.order.fullName,
+        email: inv.order.email,
+        totalCents: inv.order.totalCents,
+        currencyCode: inv.order.currencyCode,
+        paymentStatus: inv.order.paymentStatus,
       });
+
+      const docsByOrder = new Map<string, ReturnType<typeof toDocument>[]>();
+      for (const inv of allDocs) {
+        const list = docsByOrder.get(inv.orderId);
+        if (list) list.push(toDocument(inv));
+        else docsByOrder.set(inv.orderId, [toDocument(inv)]);
+      }
+
+      const orders = orderIds
+        .map((id) => {
+          const documents = docsByOrder.get(id) ?? [];
+          const head = documents[0];
+          if (!head) return null;
+          return {
+            orderId: id,
+            orderNumber: head.orderNumber,
+            fullName: head.fullName,
+            email: head.email,
+            countryCode: head.countryCode,
+            totalCents: head.totalCents,
+            currencyCode: head.currencyCode,
+            paymentStatus: head.paymentStatus,
+            documents,
+          };
+        })
+        .filter((o): o is NonNullable<typeof o> => o !== null);
+
+      return okResponse({ orders, nextCursor });
     } catch (err) {
       if (err instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(err.message));

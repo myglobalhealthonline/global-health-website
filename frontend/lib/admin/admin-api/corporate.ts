@@ -354,3 +354,51 @@ export async function cancelCorporateRequest(requestId: string) {
     body: {},
   });
 }
+
+// ── Invoices ─────────────────────────────────────────────────────────────────
+
+export type CorporateInvoiceDocumentType =
+  | "INVOICE"
+  | "RECEIPT"
+  | "INVOICE_RECEIPT"
+  | "CREDIT_NOTE";
+
+export type CorporateInvoiceDocument = {
+  id: string;
+  invoiceNumber: string;
+  countryCode: string;
+  documentType: CorporateInvoiceDocumentType;
+  generatedAt: string;
+  emailSentAt: string | null;
+  emailSentTo: string | null;
+  orderId: string;
+  orderNumber: string | null;
+  fullName: string;
+  email: string;
+  totalCents: number;
+  currencyCode: string;
+  source: "SUBSCRIPTION" | "CONSULTATION";
+};
+
+export async function fetchCorporateInvoices(companyId: string) {
+  return adminRequest<{
+    subscription: CorporateInvoiceDocument[];
+    consultations: CorporateInvoiceDocument[];
+  }>(`/api/admin/corporate/companies/${companyId}/invoices`);
+}
+
+export async function postCorporateInvoice(
+  companyId: string,
+  body: {
+    documentType: CorporateInvoiceDocumentType;
+    amountCents: number;
+    description: string;
+    quantity?: number;
+    send?: boolean;
+  },
+) {
+  return adminRequest<{ invoiceId: string; invoiceNumber: string }>(
+    `/api/admin/corporate/companies/${companyId}/invoices`,
+    { method: "POST", body },
+  );
+}

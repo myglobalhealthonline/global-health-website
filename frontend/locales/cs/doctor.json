@@ -313,7 +313,9 @@
     "chartSaveFailed": "Kartu se nepodařilo uložit.",
     "sendUploadLink": "Odeslat odkaz k nahrání",
     "uploadLinkSent": "Odkaz k nahrání odeslán pacientovi e-mailem.",
-    "uploadLinkFailed": "Odkaz se nepodařilo odeslat"
+    "uploadLinkFailed": "Odkaz se nepodařilo odeslat",
+    "patientUploadsTitle": "Nahrané dokumenty",
+    "patientUploadBadge": "Nahráno pacientem"
   },
   "availability": {
     "eyebrow": "Rozvrh",

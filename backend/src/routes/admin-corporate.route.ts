@@ -28,6 +28,10 @@ import {
   setBeneficiaryStanding,
   setEmployeeStanding,
 } from "../modules/corporate/corporate-status.service.js";
+import {
+  generateCorporateSubscriptionInvoice,
+  listCorporateInvoiceDocuments,
+} from "../modules/corporate/corporate-invoice.service.js";
 
 /**
  * Platform-admin corporate management. ADMIN/SUPER_ADMIN get full
@@ -625,6 +629,47 @@ const adminCorporateRoute: FastifyPluginAsync = async (app) => {
     const result = await cancelCorporateRequest({ requestId: id });
     if (!result.ok) return reply.status(400).send(errorResponse(result.message ?? "Not allowed"));
     return okResponse({ id });
+  });
+
+  // ── Invoices (subscription billing docs + employees' consultation docs) ──
+  app.get("/api/admin/corporate/companies/:id/invoices", async (request, reply) => {
+    const { id } = request.params as { id: string };
+    // Scope LOCAL_ADMIN to their allowed countries (same guard the other
+    // company-scoped reads use).
+    const localFolders = await localAdminCountryFilter(request);
+    const company = await prisma.corporateCompany.findFirst({
+      where: { id, ...(localFolders ? { countryCode: { in: localFolders } } : {}) },
+      select: { id: true },
+    });
+    if (!company) return reply.status(404).send(errorResponse("Company not found"));
+    const documents = await listCorporateInvoiceDocuments(id);
+    return okResponse(documents);
+  });
+
+  app.post("/api/admin/corporate/companies/:id/invoices", async (request, reply) => {
+    if (!(await requireWriteActor(request))) {
+      return reply.status(403).send(errorResponse("Read-only access"));
+    }
+    const { id } = request.params as { id: string };
+    const schema = z.object({
+      documentType: z.enum(["INVOICE", "RECEIPT", "INVOICE_RECEIPT", "CREDIT_NOTE"]),
+      amountCents: z.coerce.number().int().min(1).max(1_000_000_000),
+      description: z.string().trim().min(1).max(240),
+      quantity: z.coerce.number().int().min(1).max(100_000).default(1),
+      send: z.boolean().default(false),
+    });
+    const parsed = schema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.status(400).send(errorResponse("Invalid payload", parsed.error.flatten()));
+    }
+    const routeLog = {
+      info: (obj: unknown, msg?: string) => app.log.info(obj as object, msg),
+      warn: (obj: unknown, msg?: string) => app.log.warn(obj as object, msg),
+      error: (obj: unknown, msg?: string) => app.log.error(obj as object, msg),
+    };
+    const result = await generateCorporateSubscriptionInvoice(id, parsed.data, routeLog);
+    if (!result.ok) return reply.status(400).send(errorResponse(result.message));
+    return okResponse({ invoiceId: result.invoiceId, invoiceNumber: result.invoiceNumber });
   });
 };
 

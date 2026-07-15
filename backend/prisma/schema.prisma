@@ -2207,6 +2207,16 @@ model Order {
   /// Fiscal documents for this order (empty for Portugal / pre-invoice orders).
   /// Normally one invoice/receipt, plus a CREDIT_NOTE if the order was refunded.
   invoices              Invoice[]
+  /// Set ONLY on synthetic subscription orders minted for a corporate
+  /// company's offline annual billing (admin-generated invoice/receipt/
+  /// credit note in the corporate Invoices tab). Null on every ordinary
+  /// patient order — including employees' consultation orders, which tie to
+  /// the company via the unrelated per-line OrderItem.corporateCompanyId
+  /// discount-audit field. Lets the corporate invoice list separate a
+  /// company's own billing docs from its employees' consultation docs, and
+  /// lets future reports exclude these synthetic billing orders.
+  corporateCompanyId    String?
+  corporateCompany      CorporateCompany? @relation("CorporateSubscriptionOrders", fields: [corporateCompanyId], references: [id], onDelete: SetNull)
   /// Stripe Checkout URL cached for admin copy-paste. Refreshed by resolveOrderPaymentUrl.
   stripeCheckoutUrl     String?
   /// Shipment tracking — admin-entered for physical orders (health test kits,
@@ -2230,6 +2240,7 @@ model Order {
   /// replacement — the index above still serves callers that filter
   /// postPaymentStage as the leading equality condition.
   @@index([paymentStatus, postPaymentStage], map: "Order_paymentStatus_postPaymentStage_idx")
+  @@index([corporateCompanyId])
 }
 
 /// Relational join between Order and Appointment (code review 2026-07-05,
@@ -4261,6 +4272,10 @@ model CorporateCompany {
   employees             CorporateEmployee[]
   beneficiaries         CorporateBeneficiary[]
   serviceRequests       CorporateServiceRequest[]
+  /// Synthetic orders minted for this company's offline annual billing —
+  /// each carries the fiscal Invoice/Receipt/Credit-note admins generate in
+  /// the corporate Invoices tab. See Order.corporateCompanyId.
+  subscriptionOrders    Order[]                   @relation("CorporateSubscriptionOrders")
   createdAt             DateTime                  @default(now())
   updatedAt             DateTime                  @updatedAt
 

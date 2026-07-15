@@ -253,6 +253,8 @@
     "allDocsEmptyTitle": "Sin documentos registrados",
     "allDocsEmptyDesc": "Los archivos cargados y los PDF generados se reunirán aquí en todas las citas de este paciente.",
     "doctorUploads": "Cargas del médico",
+    "patientUploadsTitle": "Documentos subidos",
+    "patientUploadBadge": "Subido por el paciente",
     "noUploadedFiles": "Ningún archivo cargado.",
     "generatedPdfs": "PDF generados",
     "noGeneratedPdfs": "Ningún PDF generado.",

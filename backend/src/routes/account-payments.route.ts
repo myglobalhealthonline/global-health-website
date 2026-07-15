@@ -162,9 +162,15 @@ const accountPaymentsRoute: FastifyPluginAsync = async (app) => {
         // only resume payment via an appointment they actually own.
         const appointment = await prisma.appointment.findFirst({
           where: { id: params.data.id, userId: authUser.id },
-          select: { id: true },
+          select: { id: true, status: true },
         });
         if (!appointment) return reply.status(404).send(errorResponse("Appointment not found"));
+        // A cancelled booking's order is cancelled — its Stripe session can't
+        // be resolved, so short-circuit with a clear message instead of the
+        // generic "Could not create a payment link" 502 below.
+        if (appointment.status === "CANCELLED") {
+          return reply.status(409).send(errorResponse("This booking was cancelled and can no longer be paid."));
+        }
 
         const orderItem = await prisma.orderItem.findFirst({
           where: { appointmentId: appointment.id },

@@ -313,7 +313,9 @@
     "chartSaveFailed": "Fișa nu a putut fi salvată.",
     "sendUploadLink": "Trimite link de încărcare",
     "uploadLinkSent": "Link de încărcare trimis pacientului prin e-mail.",
-    "uploadLinkFailed": "Linkul nu a putut fi trimis"
+    "uploadLinkFailed": "Linkul nu a putut fi trimis",
+    "patientUploadsTitle": "Documente încărcate",
+    "patientUploadBadge": "Încărcat de pacient"
   },
   "availability": {
     "eyebrow": "Program",

@@ -220,6 +220,10 @@ function consultLabel(type: string, i18n: BookingsI18n): string {
 
 function requiresPayment(item: AccountAppointment): boolean {
   if (!item.amountCents || item.amountCents <= 0) return false;
+  // A cancelled booking's order is cancelled too — asking for payment shows
+  // a dead "Complete payment" button whose link fails to resolve ("Could not
+  // create a payment link"). Terminal bookings never need payment.
+  if (item.status === "CANCELLED") return false;
   return item.paymentStatus !== "PAID";
 }
 
