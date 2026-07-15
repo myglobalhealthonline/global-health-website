@@ -219,6 +219,9 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
               : d.appointmentDetail.notScheduled}{" "}
             · {appointment.countryCode.toUpperCase()}
           </p>
+          <p className="mt-0.5 inline-flex items-center gap-1 text-sm text-[var(--portal-muted)]">
+            <Stethoscope className="size-3.5" aria-hidden /> {doctorName}
+          </p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <span
               className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-portal-thead font-bold uppercase tracking-[0.08em] ${

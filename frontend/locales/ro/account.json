@@ -170,6 +170,11 @@
     "colItems": "Articole",
     "colStatus": "Stare",
     "colTotal": "Total",
+    "colDoctor": "Medic",
+    "colConsultation": "Consultație",
+    "consultationSection": "Consultație",
+    "doctorUnassigned": "Neatribuit încă",
+    "timeTbc": "Ora urmează să fie confirmată",
     "orderInfoSection": "Informații comandă"
   },
   "prescriptions": {

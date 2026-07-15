@@ -33,15 +33,26 @@ type Props = {
 };
 
 function slotsToItems(slots: DoctorTimeSlotView[]): CalendarItem[] {
-  return slots.map((s) => ({
-    id: s.id,
-    kind: "slot" as const,
-    startAt: s.startAt,
-    endAt: s.endAt,
-    status: s.status,
-    title: s.status,
-    meta: { blockReason: s.blockReason ?? null },
-  }));
+  return slots.map((s) => {
+    // A booked slot carries the patient behind it — surface their name as the
+    // block label and thread the consultation detail into meta so clicking the
+    // slot opens the same detail drawer the admin calendar shows.
+    const booked = s.status === "BOOKED";
+    return {
+      id: s.id,
+      kind: "slot" as const,
+      startAt: s.startAt,
+      endAt: s.endAt,
+      status: s.status,
+      title: booked && s.patientName ? s.patientName : s.status,
+      meta: {
+        blockReason: s.blockReason ?? null,
+        patientName: s.patientName ?? null,
+        consultationType: s.consultationType ?? null,
+        meetingUrl: s.meetingUrl ?? null,
+      },
+    };
+  });
 }
 
 /** Doctor-side week calendar — same grid the admin availability page uses.
@@ -145,6 +156,7 @@ export function DoctorAvailabilityWeekView({
       <EventDetailDialog
         item={activeConsult}
         tz={tz}
+        viewerRole="doctor"
         onClose={() => setActiveConsult(null)}
       />
     </div>

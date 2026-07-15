@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, PackageCheck, Truck, CreditCard, ShoppingBag } from "lucide-react";
+import { ArrowLeft, PackageCheck, Truck, CreditCard, ShoppingBag, Stethoscope, CalendarClock } from "lucide-react";
 import { fetchAccountOrder } from "@/lib/api/cart-server";
 import { ReorderButton } from "./_components/reorder-button";
 import { CompletePaymentButton } from "./_components/complete-payment-button";
@@ -137,6 +137,32 @@ export default async function AccountOrderDetailPage({ params }: Props) {
           <AdminCard padding={0}>
             <SectionHeader as="h2" title={a.orders.orderInfoSection} />
             <div className="divide-y divide-[var(--portal-line)]">
+              {order.consultations && order.consultations.length > 0 ? (
+                <div className="p-5 text-sm">
+                  <p className="mb-2 text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">
+                    {a.orders.consultationSection}
+                  </p>
+                  <ul className="grid gap-3">
+                    {order.consultations.map((c) => (
+                      <li key={c.appointmentId} className="flex items-start gap-3">
+                        <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-[var(--portal-surface-elevated)] text-[var(--portal-primary)]">
+                          <Stethoscope className="size-5" aria-hidden />
+                        </span>
+                        <div className="min-w-0">
+                          <p className="font-semibold text-[var(--portal-text)]">
+                            {c.doctorName ?? a.orders.doctorUnassigned}
+                          </p>
+                          <p className="mt-0.5 inline-flex items-center gap-1.5 text-xs text-[var(--portal-muted)]">
+                            <CalendarClock className="size-3.5" aria-hidden />
+                            {c.scheduledAt ? formatAppDateTime(c.scheduledAt) : a.orders.timeTbc}
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
               {order.trackingNumber ? (
                 <div className="p-5 text-sm">
                   <p className="mb-2 text-portal-thead font-bold uppercase tracking-[0.12em] text-[var(--portal-muted)]">

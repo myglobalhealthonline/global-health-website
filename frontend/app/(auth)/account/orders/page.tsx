@@ -4,7 +4,7 @@ import type { OrderListItem } from "@/lib/api/cart-types";
 import { CompletePaymentButton } from "./[id]/_components/complete-payment-button";
 import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
 import { ColumnPriorityTable, type ColumnPriorityField } from "@/components/ColumnPriorityTable";
-import { formatAppDate } from "@/lib/format-datetime";
+import { formatAppDate, formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
 import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
@@ -48,6 +48,26 @@ export default async function AccountOrdersPage() {
       label: a.orders.colDate,
       priority: 2,
       render: (o) => formatAppDate(o.createdAt),
+    },
+    {
+      key: "doctor",
+      label: a.orders.colDoctor,
+      priority: 3,
+      render: (o) => {
+        const c = o.consultations?.[0];
+        if (!c) return <span className="text-[var(--portal-muted)]">—</span>;
+        return c.doctorName ?? a.orders.doctorUnassigned;
+      },
+    },
+    {
+      key: "consultation",
+      label: a.orders.colConsultation,
+      priority: 3,
+      render: (o) => {
+        const c = o.consultations?.[0];
+        if (!c) return <span className="text-[var(--portal-muted)]">—</span>;
+        return c.scheduledAt ? formatAppDateTime(c.scheduledAt) : a.orders.timeTbc;
+      },
     },
     {
       key: "items",

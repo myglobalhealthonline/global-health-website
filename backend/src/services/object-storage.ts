@@ -1,6 +1,7 @@
 import {
   DeleteObjectCommand,
   GetObjectCommand,
+  HeadObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
   type GetObjectCommandOutput,
@@ -122,6 +123,43 @@ export async function putObject(key: string, body: Buffer, contentType: string):
     return;
   }
 
+  throw new Error("Object storage is not configured");
+}
+
+/**
+ * HEAD an object: returns its size + content type, or null if it does not
+ * exist. Cheap existence/size check (no body download) — used by the legacy
+ * migration to confirm every imported document's object is really present in
+ * storage before writing the DB row.
+ */
+export async function headObject(
+  key: string,
+): Promise<{ contentLength: number; contentType: string | null } | null> {
+  if (isObjectStorageConfigured()) {
+    try {
+      const out = await withTimeout(
+        getClient().send(new HeadObjectCommand({ Bucket: env.S3_BUCKET!, Key: key })),
+        10_000,
+        "headObject",
+      );
+      return {
+        contentLength: out.ContentLength ?? 0,
+        contentType: out.ContentType ?? null,
+      };
+    } catch (err) {
+      const e = err as { name?: string; $metadata?: { httpStatusCode?: number } };
+      if (e.name === "NotFound" || e.$metadata?.httpStatusCode === 404) return null;
+      throw err;
+    }
+  }
+  if (isDevLocalMediaEnabled()) {
+    try {
+      const st = await stat(safeLocalFilePath(key));
+      return { contentLength: st.size, contentType: contentTypeForKey(key) };
+    } catch {
+      return null;
+    }
+  }
   throw new Error("Object storage is not configured");
 }
 

@@ -71,6 +71,12 @@ type AdminOrder = {
     lineTotalCents: number;
     appointmentId: string | null;
   }[];
+  consultations?: {
+    appointmentId: string;
+    doctorName: string | null;
+    scheduledAt: string | null;
+    consultationType: string;
+  }[];
   createdAt: string;
   updatedAt: string;
 };
@@ -133,6 +139,16 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
         i.appointmentId,
     )?.appointmentId ?? null;
 
+  const consultations = order.consultations ?? [];
+  const primaryConsult = consultations[0] ?? null;
+  // appointmentId → consultation, so each consultation line item can show its
+  // own doctor + scheduled time inline.
+  const consultByAppointment = new Map(
+    consultations.map((c) => [c.appointmentId, c]),
+  );
+  const consultationTimeText = (scheduledAt: string | null) =>
+    scheduledAt ? formatAppDateTime(scheduledAt) : "Time to be confirmed";
+
   return (
     <>
       <Link
@@ -181,6 +197,18 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
             hint: hasConsultation ? "Consultation order" : "Commerce order",
             tone: hasConsultation ? "brand" : "neutral",
           },
+          ...(primaryConsult
+            ? [
+                {
+                  label: "Consultation",
+                  value: consultationTimeText(primaryConsult.scheduledAt),
+                  hint: primaryConsult.doctorName
+                    ? `with ${primaryConsult.doctorName}`
+                    : "Doctor not yet assigned",
+                  tone: "brand" as const,
+                },
+              ]
+            : []),
         ]}
       />
 
@@ -218,6 +246,16 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
                         {" · "}
                         {formatPrice(i.unitPriceCents, order.currencyCode)} × {i.quantity}
                       </p>
+                      {i.appointmentId && consultByAppointment.has(i.appointmentId) ? (
+                        <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                          {consultByAppointment.get(i.appointmentId)!.doctorName ??
+                            "Doctor not yet assigned"}
+                          {" · "}
+                          {consultationTimeText(
+                            consultByAppointment.get(i.appointmentId)!.scheduledAt,
+                          )}
+                        </p>
+                      ) : null}
                       {i.appointmentId ? (
                         <Link
                           href={`/admin/appointments/${i.appointmentId}`}
