@@ -34,10 +34,11 @@ async function blogPhysicianInput(doctor: BlogDoctor | null) {
   };
 }
 
-export async function generateStaticParams() {
-  // All posts are admin-managed (DB) and render on demand.
-  return [];
-}
+// No generateStaticParams: posts are admin-managed (DB) and render on
+// demand. An empty generateStaticParams still marks the route for static
+// generation, which conflicts with the (global) layout's cookies()/headers()
+// usage and throws DYNAMIC_SERVER_USAGE on every request in production.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

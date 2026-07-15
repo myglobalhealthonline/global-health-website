@@ -93,10 +93,8 @@ export function SiteChrome({
       ) : (
         <aside
           aria-label="Medical disclaimer"
-          style={{
-            background: "var(--color-background-soft)",
-            borderTop: "1px solid rgba(29,75,54,0.10)",
-          }}
+          className="relative gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
+          style={{ borderTop: "1px solid rgba(29,75,54,0.10)" }}
         >
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 py-6">
             <MedicalDisclaimer variant="short" text={EMERGENCY_NOTICE} />

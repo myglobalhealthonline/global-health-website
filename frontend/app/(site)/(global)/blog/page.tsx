@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { SITE_NAME } from "@/lib/constants";
 import { listBlogPosts } from "@/lib/content/get-public-blog";
 import { BlogCard } from "@/components/cards/BlogCard";
@@ -15,7 +16,14 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogIndexPage() {
-  const ordered = await listBlogPosts();
+  const [ordered, cookieStore] = await Promise.all([listBlogPosts(), cookies()]);
+
+  // Send "Back to home" to the visitor's remembered country home instead of
+  // the bare gateway "/" — the gateway renders its own country-picker logo
+  // lockup below the header, which reads as a duplicate logo.
+  const lastCountryRaw = cookieStore.get("gh-last-country")?.value;
+  const [lastSlug, lastLang] = lastCountryRaw?.split(":") ?? [];
+  const homeHref = lastSlug && lastLang ? `/${lastSlug}/${lastLang}` : "/";
 
   return (
     <>
@@ -28,7 +36,7 @@ export default async function BlogIndexPage() {
         ctaLabel="Browse articles"
         ctaHref="#articles"
         secondaryLabel="Back to home"
-        secondaryHref="/"
+        secondaryHref={homeHref}
         rightSlot={<BlogArchPanel articleCount={ordered.length} />}
         mobileBgSrc="/images/stock/blog.webp"
         trustCards={[
