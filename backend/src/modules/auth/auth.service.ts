@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { createHash, randomBytes } from "node:crypto";
-import { UserRole, VerificationStatus, type User } from "@prisma/client";
+import { LocaleCode, UserRole, VerificationStatus, type User } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import type { LoginBody, RegisterBody } from "../../validations/auth.schema.js";
@@ -33,6 +33,10 @@ export type SafeUser = {
    *  ISO datetime or null. The account stays functional until this date;
    *  the security page shows a cancellable banner while it's set. */
   deletionScheduledAt: string | null;
+  /** UI language last explicitly chosen while authenticated (LanguageSwitcher
+   *  write-on-switch). Null until the user ever switches. Only consumed by
+   *  the login flow to seed `gh_locale` when that cookie is absent. */
+  preferredLocale: LocaleCode | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -71,6 +75,7 @@ function toSafeUser(user: User): SafeUser {
     isActive: user.isActive,
     mustChangePassword: user.mustChangePassword,
     deletionScheduledAt: user.deletionScheduledAt ? user.deletionScheduledAt.toISOString() : null,
+    preferredLocale: user.preferredLocale,
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt.toISOString(),
   };
@@ -284,6 +289,9 @@ export type ProfilePatchInput = {
    *  start-of-day UTC so we don't accidentally shift across timezones
    *  when the user is east/west of UTC. Pass null to clear. */
   dateOfBirth?: string | null;
+  /** Pass a LocaleCode to record the user's explicit language choice, null
+   *  to clear it. Undefined leaves the stored value untouched. */
+  preferredLocale?: LocaleCode | null;
 };
 
 /**
@@ -638,6 +646,7 @@ export async function patchUserProfile(id: string, input: ProfilePatchInput) {
         ...(input.fullName !== undefined && { fullName: input.fullName }),
         ...(input.phone !== undefined && { phone: input.phone }),
         ...(dobValue !== undefined && { dateOfBirth: dobValue }),
+        ...(input.preferredLocale !== undefined && { preferredLocale: input.preferredLocale }),
       },
     });
     return toSafeUser(user);

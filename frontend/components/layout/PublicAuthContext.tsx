@@ -39,7 +39,10 @@ type PublicAuthContextValue = {
 
 const PublicAuthContext = createContext<PublicAuthContextValue | null>(null);
 
-function hasAuthHintCookie(): boolean {
+/** Exported so other client components (e.g. LanguageSwitcher) can cheaply
+ *  check "is anyone plausibly logged in" without their own cookie parsing
+ *  or a network round-trip — same non-HttpOnly hint `proxy.ts` stamps. */
+export function hasAuthHintCookie(): boolean {
   return document.cookie
     .split(";")
     .some((part) => part.trim().startsWith(`${AUTH_HINT_COOKIE}=`));

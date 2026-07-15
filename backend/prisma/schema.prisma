@@ -2468,6 +2468,12 @@ model User {
   /// with existing accounts. Doctors/admins don't need it set.
   dateOfBirth             DateTime?
   role                    UserRole                 @default(PATIENT)
+  /// UI language the user last explicitly chose while authenticated
+  /// (LanguageSwitcher). Nullable — most users never override it. Seeds
+  /// the `gh_locale` cookie on login when that cookie is absent (Phase 3
+  /// of docs/LOCALE_INVESTIGATION_2026-07-16.md); never itself read by
+  /// resolveLocale() directly.
+  preferredLocale         LocaleCode?
   emailVerifiedAt         DateTime?
   isActive                Boolean                  @default(true)
   /// True when this account was created with a temporary password

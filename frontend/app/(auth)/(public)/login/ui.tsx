@@ -5,7 +5,25 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
 import { loginUser } from "@/lib/api/auth-api";
+import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
 import styles from "./login.module.css";
+
+/**
+ * Phase 3 login-seed (docs/LOCALE_INVESTIGATION_2026-07-16.md §9): if this
+ * browser has no `gh_locale` cookie yet (new device, cleared cookies), seed
+ * it from the account's last explicit language choice so the user doesn't
+ * land back on Accept-Language/country-default after signing in elsewhere.
+ * Policy is seed-only-when-absent — an active device choice always wins,
+ * this never overwrites it.
+ */
+function seedLocaleFromProfile(preferredLocale: string | null): void {
+  if (!preferredLocale) return;
+  const hasCookie = document.cookie
+    .split(";")
+    .some((part) => part.trim().startsWith("gh_locale="));
+  if (hasCookie) return;
+  setClientLocaleCookie(preferredLocale.toLowerCase());
+}
 
 type LoginI18n = {
   title: string;
@@ -91,6 +109,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
     setIsError(false);
     const result = await loginUser({ email, password });
     if (result.ok) {
+      seedLocaleFromProfile(result.data.user.preferredLocale);
       setMessage(i18n.loggedInAs.replace("{name}", result.data.user.fullName));
       setLoading(false);
       router.replace(getNextPath(result.data.user.role));

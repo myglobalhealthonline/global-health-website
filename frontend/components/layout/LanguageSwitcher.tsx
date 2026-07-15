@@ -23,6 +23,22 @@ import { localeDisplayName } from "@/lib/i18n/locale-display";
 import { swapLangInPath } from "@/lib/routing/path-rewrites";
 import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
 import { AppMenu, AppMenuItem } from "@/components/AppMenu";
+import { hasAuthHintCookie } from "@/components/layout/PublicAuthContext";
+import { patchCurrentUser, type UserPreferredLocale } from "@/lib/api/auth-api";
+
+/**
+ * Persist the switch server-side when the visitor is (plausibly) signed
+ * in, so it survives to a new device/browser via the login-seed step
+ * (see the login flow). Anonymous visitors are the majority — skip the
+ * round-trip entirely unless the auth-hint cookie says otherwise, and
+ * silently ignore failures (401 on an already-expired session included):
+ * the cookie write above already applied the switch for this device, so
+ * nothing user-visible depends on this succeeding.
+ */
+function persistPreferredLocale(locale: LocaleCode): void {
+  if (!hasAuthHintCookie()) return;
+  void patchCurrentUser({ preferredLocale: locale.toUpperCase() as UserPreferredLocale }).catch(() => {});
+}
 
 export function LanguageSwitcher({
   currentLang,
@@ -111,6 +127,7 @@ export function LanguageSwitcher({
                         type="button"
                         onClick={() => {
                           setClientLocaleCookie(loc);
+                          persistPreferredLocale(loc);
                           setOpen(false);
                           window.location.href = swapped;
                         }}
@@ -132,6 +149,7 @@ export function LanguageSwitcher({
                       type="button"
                       onClick={() => {
                         setClientLocaleCookie(loc);
+                        persistPreferredLocale(loc);
                         setOpen(false);
                         router.refresh();
                       }}

@@ -1,5 +1,11 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
 
+/** Wire-format locale code (Prisma `LocaleCode` enum) — uppercase, unlike
+ *  the frontend's lowercase `LocaleCode` (`lib/i18n/types.ts`) used in URLs
+ *  and the `gh_locale` cookie. Convert with `.toLowerCase()` at the
+ *  boundary (see the login flow seeding `gh_locale` from this field). */
+export type UserPreferredLocale = "EN" | "PT" | "ES" | "CS" | "RO" | "DE";
+
 // Explicit allowlist of non-/api/auth paths this module is permitted to
 // call — same reasoning as the /api/auth/[...path] proxy's ROUTE_TABLE:
 // keep this file from silently growing into a general-purpose fetch helper.
@@ -62,6 +68,9 @@ export type AuthUser = {
   /** Set when a GDPR deletion request is pending (30-day grace period).
    *  ISO datetime or null. */
   deletionScheduledAt: string | null;
+  /** Last language explicitly chosen while authenticated, or null if never
+   *  set. Uppercase wire format — see `UserPreferredLocale`. */
+  preferredLocale: UserPreferredLocale | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -102,6 +111,9 @@ export async function patchCurrentUser(input: {
   phone?: string | null;
   /** Pass YYYY-MM-DD to set the DOB, null to clear. */
   dateOfBirth?: string | null;
+  /** Pass an uppercase LocaleCode to record the explicit language choice,
+   *  null to clear it. */
+  preferredLocale?: UserPreferredLocale | null;
 }) {
   return authRequest<{ user: AuthUser }>("/api/auth/me", {
     method: "PATCH",

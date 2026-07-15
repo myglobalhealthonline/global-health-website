@@ -1,5 +1,6 @@
 ﻿import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
+import { LocaleCode } from "@prisma/client";
 import {
   AuthInvalidCredentialsError,
   cancelAccountDeletion,
@@ -37,6 +38,49 @@ import { authCookieOptions, signAuthToken, signPending2faToken } from "../utils/
 import { requireAuth } from "../utils/require-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
+
+/** Exported for unit testing (see auth.route.schema.test.ts). Kept at
+ *  module scope — was previously local to `authRoute`, which made the
+ *  validation logic untestable without booting the full Fastify app. */
+export const profilePatchSchema = z.object({
+  fullName: z.string().trim().min(1).max(120).optional(),
+  phone: z
+    .string()
+    .trim()
+    .max(40)
+    .nullable()
+    .optional()
+    .transform((v) => (v === "" ? null : v)),
+  /** ISO date or full datetime ("2001-04-12" or "2001-04-12T00:00:00Z").
+   *  Accept either, normalize to start-of-day UTC in the service.
+   *
+   *  Tristate is meaningful here:
+   *    - missing key (undefined) → leave existing DOB untouched
+   *    - explicit `null` / `""`   → clear the stored DOB
+   *    - valid date string         → set the DOB
+   *  Earlier this transform mapped `undefined → null`, which silently
+   *  wiped DOB on every partial PATCH that touched only e.g. fullName.
+   */
+  dateOfBirth: z
+    .string()
+    .trim()
+    .nullable()
+    .optional()
+    .transform((v) => {
+      if (v === undefined) return undefined;
+      if (v === "" || v === null) return null;
+      return v;
+    })
+    .refine(
+      (v) => v === undefined || v === null || /^\d{4}-\d{2}-\d{2}(T.*)?$/.test(v),
+      "Date of birth must be a YYYY-MM-DD date",
+    ),
+  /** UI language explicit choice (LanguageSwitcher, authenticated only).
+   *  Uppercase LocaleCode to match the Prisma enum + every other
+   *  locale-bearing request field in this backend (see country-scoped
+   *  routes' `?locale=` convention). Null clears it. */
+  preferredLocale: z.nativeEnum(LocaleCode).nullable().optional(),
+});
 
 const authRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/auth/register", {
@@ -205,41 +249,6 @@ const authRoute: FastifyPluginAsync = async (app) => {
       }).catch(() => {});
     }
     return okResponse({ loggedOut: true }, "Logged out");
-  });
-
-  const profilePatchSchema = z.object({
-    fullName: z.string().trim().min(1).max(120).optional(),
-    phone: z
-      .string()
-      .trim()
-      .max(40)
-      .nullable()
-      .optional()
-      .transform((v) => (v === "" ? null : v)),
-    /** ISO date or full datetime ("2001-04-12" or "2001-04-12T00:00:00Z").
-     *  Accept either, normalize to start-of-day UTC in the service.
-     *
-     *  Tristate is meaningful here:
-     *    - missing key (undefined) → leave existing DOB untouched
-     *    - explicit `null` / `""`   → clear the stored DOB
-     *    - valid date string         → set the DOB
-     *  Earlier this transform mapped `undefined → null`, which silently
-     *  wiped DOB on every partial PATCH that touched only e.g. fullName.
-     */
-    dateOfBirth: z
-      .string()
-      .trim()
-      .nullable()
-      .optional()
-      .transform((v) => {
-        if (v === undefined) return undefined;
-        if (v === "" || v === null) return null;
-        return v;
-      })
-      .refine(
-        (v) => v === undefined || v === null || /^\d{4}-\d{2}-\d{2}(T.*)?$/.test(v),
-        "Date of birth must be a YYYY-MM-DD date",
-      ),
   });
 
   app.patch("/api/auth/me", { preHandler: requireAuth }, async (request, reply) => {
