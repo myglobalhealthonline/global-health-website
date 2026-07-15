@@ -83,6 +83,8 @@ export type SpotlightData = {
   instagramUrl?: string;
   facebookUrl?: string;
   linkedinUrl?: string;
+  viewProfileLabel?: string;
+  bookWithLabel?: string;
 };
 
 export type DoctorDirectoryView = {
@@ -92,6 +94,9 @@ export type DoctorDirectoryView = {
   i18n: CommonLocale["doctors"];
   doctorCards: DoctorCardData[];
   spotlight: SpotlightData | null;
+  /** Full filtered roster size (grid + spotlight combined) — the hero's
+   *  "available" stat should count the whole roster, not just the grid. */
+  totalDoctorCount: number;
   filterGroups: FilterGroup[];
   hasActive: boolean;
   clearHref: string;
@@ -205,6 +210,8 @@ export function buildDoctorDirectoryView(
         instagramUrl: featured.instagramUrl,
         facebookUrl: featured.facebookUrl,
         linkedinUrl: featured.linkedinUrl,
+        viewProfileLabel: i18n.viewProfile,
+        bookWithLabel: i18n.bookWithTemplate,
       }
     : null;
 
@@ -280,6 +287,7 @@ export function buildDoctorDirectoryView(
     i18n,
     doctorCards,
     spotlight,
+    totalDoctorCount: filteredDoctors.length,
     filterGroups,
     hasActive,
     clearHref: `/${countrySlug}/${lang}/doctors`,

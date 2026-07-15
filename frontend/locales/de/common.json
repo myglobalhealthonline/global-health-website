@@ -138,6 +138,7 @@
     "viewProfile": "Profil ansehen",
     "bookAppointment": "Termin buchen",
     "pickTime": "Zeit wählen",
+    "bookWithTemplate": "Buchen mit {name}",
     "viewDoctors": "Ärzte anzeigen",
     "trustCard1Title": "Zugelassen in {country}",
     "trustCard1Subtitle": "Vollständig verifizierte Kliniker",

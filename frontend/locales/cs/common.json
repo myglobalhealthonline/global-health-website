@@ -138,6 +138,7 @@
     "viewProfile": "Zobrazit profil",
     "bookAppointment": "Rezervovat konzultaci",
     "pickTime": "Vybrat čas",
+    "bookWithTemplate": "Rezervovat s {name}",
     "viewDoctors": "Zobrazit lékaře",
     "trustCard1Title": "Licencováno v {country}",
     "trustCard1Subtitle": "Plně ověření klinikové",

@@ -630,6 +630,8 @@ export default async function CountryLangHomePage({
                   instagramUrl: featuredDoctor.instagramUrl,
                   facebookUrl: featuredDoctor.facebookUrl,
                   linkedinUrl: featuredDoctor.linkedinUrl,
+                  viewProfileLabel: bundle.common.doctors.viewProfile,
+                  bookWithLabel: bundle.common.doctors.bookWithTemplate,
                 }}
               />
             </div>

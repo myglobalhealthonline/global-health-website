@@ -138,6 +138,7 @@
     "viewProfile": "View profile",
     "bookAppointment": "Book Consultation",
     "pickTime": "Pick a time",
+    "bookWithTemplate": "Book with {name}",
     "viewDoctors": "View Doctors",
     "trustCard1Title": "Licensed in {country}",
     "trustCard1Subtitle": "Fully verified clinicians",

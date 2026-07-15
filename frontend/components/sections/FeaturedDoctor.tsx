@@ -54,6 +54,11 @@ type DoctorSpotlightProps = {
   instagramUrl?: string;
   facebookUrl?: string;
   linkedinUrl?: string;
+  /** i18n override for the "View profile" CTA — falls back to English. */
+  viewProfileLabel?: string;
+  /** i18n template for the primary CTA, e.g. "Book with {name}" — falls
+   *  back to English when absent. */
+  bookWithLabel?: string;
 };
 
 export function FeaturedDoctor({
@@ -79,6 +84,10 @@ export function FeaturedDoctor({
   const firstName = doctor.name
     .replace(/^Dr\.?\s*/i, "")
     .split(" ")[0] ?? doctor.name;
+  const bookWithText = (doctor.bookWithLabel ?? "Book with {name}").replace(
+    "{name}",
+    firstName,
+  );
 
   const profileHref = doctor.href;
   const bookHref = doctor.bookingHref ?? (doctor.href ? `${doctor.href}#services` : undefined);
@@ -287,7 +296,7 @@ export function FeaturedDoctor({
                   boxShadow: "0 8px 12px -2px rgba(176,241,34,0.14)",
                 }}
               >
-                Book with {firstName}
+                {bookWithText}
                 <ArrowRight className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
               </Link>
             ) : null}
@@ -302,7 +311,7 @@ export function FeaturedDoctor({
                     : "border-[var(--color-border-strong)] text-[var(--color-brand-primary)] hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white"
                 }`}
               >
-                View profile
+                {doctor.viewProfileLabel ?? "View profile"}
                 <ArrowRight className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
               </Link>
             ) : null}

@@ -115,6 +115,8 @@ export type CommonLocale = {
     floatCard2Subtitle?: string;
     floatCard3Title?: string;
     floatCard3Subtitle?: string;
+    /** Featured-doctor spotlight primary CTA, e.g. "Book with {name}". */
+    bookWithTemplate?: string;
   };
   countrySelector: {
     title: string;

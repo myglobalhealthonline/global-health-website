@@ -73,6 +73,11 @@ type DoctorTeamTemplateProps = {
   filters?: ReactNode;
   spotlight?: ReactNode;
   i18n?: DoctorTeamI18n;
+  /** Total roster size for the hero's "available" count — defaults to
+   *  `doctors.length`. Pass this when a featured doctor is rendered
+   *  separately via `spotlight` and pulled out of `doctors`, so the count
+   *  reflects the full roster instead of undercounting by one. */
+  totalDoctorCount?: number;
 };
 
 export function DoctorTeamTemplate({
@@ -84,8 +89,10 @@ export function DoctorTeamTemplate({
   filters,
   spotlight,
   i18n,
+  totalDoctorCount,
 }: DoctorTeamTemplateProps) {
   const [page, setPage] = useState(0);
+  const availableCount = totalDoctorCount ?? doctors.length;
   const totalPages = Math.ceil(doctors.length / PAGE_SIZE);
   // Clamp so a filter that shrinks the list (URL nav keeps the page
   // state) never slices past the end into an empty grid.
@@ -101,9 +108,9 @@ export function DoctorTeamTemplate({
         titleAccent={i18n?.heroTitleAccent ?? "actually"}
         titleTrail={i18n?.heroTitleTrail ?? "pick up."}
         lede={(i18n?.heroLedeTemplate ?? "Every clinician below is licensed in {country}, vetted for online care, and reviewed by patients after each consultation.").replace("{country}", countryName)}
-        availableCount={doctors.length}
+        availableCount={availableCount}
         availableLabel={
-          doctors.length === 1
+          availableCount === 1
             ? (i18n?.heroAvailableSingular ?? "licensed clinician available")
             : (i18n?.heroAvailablePlural ?? "licensed clinicians available")
         }

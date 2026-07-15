@@ -46,7 +46,7 @@ const COPY: Record<string, Copy> = {
     heading: "O medico que marca e o medico que o",
     headingAccent: "atende",
     body: (r) =>
-      `Cada clinico na plataforma e identificado, fotografado e inscrito na ${r}. Marca com um medico especifico - nao um call center, nao uma escala anonima - e e esse medico que realiza a sua consulta.`,
+      `Cada clinico na plataforma e identificado, fotografado e inscrito no ${r}. Marca com um medico especifico - nao um call center, nao uma escala anonima - e e esse medico que realiza a sua consulta.`,
     verifyAt: "Verifique qualquer registo em",
     points: [
       {
@@ -109,23 +109,23 @@ const COPY: Record<string, Copy> = {
   },
   ro: {
     eyebrow: "Profesioniști medicali verificați",
-    heading: "Medicul pe care îl rezervați este medicul care vă",
-    headingAccent: "consultă",
+    heading: "Medicul pe care îl rezervați este medicul pe care îl",
+    headingAccent: "vedeți",
     body: (r) =>
-      `Fiecare medic de pe platformă are nume, fotografie și înregistrare la ${r}. Rezervați cu un medic anume - nu un call center, nu o tură anonimă - și același medic vă efectuează consultația.`,
+      `Fiecare clinician de pe platformă este nominal, fotografiat și înregistrat la ${r}. Rezervați un medic specific - nu un centru de apeluri, nu un program anonim - și același medic efectuează consultația dumneavoastră.`,
     verifyAt: "Verificați orice înregistrare la",
     points: [
       {
-        title: "Cu nume, nu anonim",
-        body: "Fiecare profil arată numele real al medicului, numărul de înregistrare și diviziunea de înregistrare. Fără ture ascunse în spatele rezervării.",
+        title: "Nominal, nu anonim",
+        body: "Fiecare profil conține numele real al medicului, numărul de înregistrare și divizia din registru. Niciun program ascuns în spatele rezervării.",
       },
       {
         title: "Verificabil independent",
         body: "Fiecare înregistrare face trimitere direct la registrul public oficial, ca să o puteți confirma singur înainte de a rezerva.",
       },
       {
-        title: "Doar calificări confirmate",
-        body: "Calificările apar doar după verificare - fără afirmații vagi, fără titluri pe care nu le putem dovedi.",
+        title: "Doar acreditive confirmate",
+        body: "Acreditivele apar doar după verificare - fără afirmații vagi, fără titluri pe care nu le putem dovedi.",
       },
     ],
   },
@@ -165,6 +165,35 @@ const EYEBROW_OVERRIDE: Record<string, string> = {
   "IE:de": "Von IMC verifizierte Ärzte und Kliniker",
 };
 
+// Brazil's default locale (pt) shares the `pt` entry in COPY above, which is
+// Portugal's own PT-PT market copy ("marca", "escala", "registo") — wrong
+// dialect for Brazil (PT-BR: "agenda", "plantão", "registro") and wrong
+// regulator vocabulary (Brazil uses CRM/CFM, not a single "Ordem"-style
+// register). Full standalone override, not a merge into COPY.pt, so
+// Portugal's copy is untouched — same no-leak rule as EYEBROW_OVERRIDE.
+const BR_PT_COPY: Copy = {
+  eyebrow: "Profissionais médicos verificados",
+  heading: "O médico que você agenda é o médico que te",
+  headingAccent: "atende",
+  body: (r) =>
+    `Cada clínico na plataforma é identificado pelo nome, tem foto e está registrado no ${r} do seu estado. Você agenda com um médico específico — não um call center, não uma escala anônima — e é esse médico que realiza a sua consulta.`,
+  verifyAt: "Verifique qualquer registro em",
+  points: [
+    {
+      title: "Identificado, não anônimo",
+      body: "Cada perfil contém o nome real do médico, seu número de registro no CRM e o estado de registro. Nenhum plantão oculto por trás do agendamento.",
+    },
+    {
+      title: "Verificável de forma independente",
+      body: "Cada registro linka diretamente para o portal público oficial do CFM, para que você possa confirmar antes de agendar.",
+    },
+    {
+      title: "Apenas credenciais confirmadas",
+      body: "As credenciais aparecem somente após verificação — sem alegações vagas, sem títulos que não possamos comprovar.",
+    },
+  ],
+};
+
 export function VerifiedProfessionals({
   trust,
   locale,
@@ -175,7 +204,8 @@ export function VerifiedProfessionals({
   /** Country code (e.g. "IE") — scopes eyebrow overrides to one market. */
   country?: string;
 }) {
-  const c = COPY[(locale ?? "en").toLowerCase()] ?? COPY.en;
+  const isBrPt = (country ?? "").toUpperCase() === "BR" && (locale ?? "en").toLowerCase() === "pt";
+  const c = isBrPt ? BR_PT_COPY : (COPY[(locale ?? "en").toLowerCase()] ?? COPY.en);
   const regulatorName = trust.regulator?.name ?? "the national medical regulator";
   const regulatorUrl = trust.regulator?.url ?? null;
   const eyebrow =

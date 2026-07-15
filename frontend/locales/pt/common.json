@@ -138,6 +138,7 @@
     "viewProfile": "Ver perfil",
     "bookAppointment": "Marcar consulta",
     "pickTime": "Escolher horário",
+    "bookWithTemplate": "Marcar com {name}",
     "viewDoctors": "Ver médicos",
     "trustCard1Title": "Licenciado em {country}",
     "trustCard1Subtitle": "Clínicos totalmente verificados",
