@@ -172,7 +172,7 @@ describe("invoices", () => {
       await assert.doesNotReject(() => generateInvoiceMod.generateInvoiceForOrder("nonexistent-order-id"));
     });
 
-    it("transitions an existing unpaid INVOICE to a RECEIPT on payment (same number)", async (t) => {
+    it("keeps the unpaid INVOICE and adds a separate RECEIPT on payment (same number)", async (t) => {
       if (skipIfNoDb()) return t.skip();
       const order = await makeOrder("ie");
       try {
@@ -187,10 +187,40 @@ describe("invoices", () => {
         });
         await generateInvoiceMod.generateInvoiceForOrder(order.id);
         const invoices = await prisma.invoice.findMany({ where: { orderId: order.id } });
-        assert.equal(invoices.length, 1);
-        assert.equal(invoices[0].id, existing.id);
-        assert.equal(invoices[0].documentType, "RECEIPT");
-        assert.equal(invoices[0].invoiceNumber, `IE-UNPAID-${uniq}`);
+        // Both rows kept: the original INVOICE plus a new RECEIPT sharing its number.
+        assert.equal(invoices.length, 2);
+        const invoice = invoices.find((i) => i.documentType === "INVOICE");
+        const receipt = invoices.find((i) => i.documentType === "RECEIPT");
+        assert.ok(invoice, "unpaid INVOICE row preserved");
+        assert.ok(receipt, "separate RECEIPT row created");
+        assert.equal(invoice!.id, existing.id);
+        assert.notEqual(receipt!.id, existing.id);
+        assert.equal(invoice!.invoiceNumber, `IE-UNPAID-${uniq}`);
+        assert.equal(receipt!.invoiceNumber, `IE-UNPAID-${uniq}`);
+      } finally {
+        await prisma.invoice.deleteMany({ where: { orderId: order.id } });
+        await prisma.order.delete({ where: { id: order.id } });
+      }
+    });
+
+    it("is idempotent — a second payment call does not add another RECEIPT", async (t) => {
+      if (skipIfNoDb()) return t.skip();
+      const order = await makeOrder("ie");
+      try {
+        await prisma.invoice.create({
+          data: {
+            invoiceNumber: `IE-UNPAID2-${uniq}`,
+            orderId: order.id,
+            countryCode: "ie",
+            emailSentTo: order.email,
+            documentType: "INVOICE",
+          },
+        });
+        await generateInvoiceMod.generateInvoiceForOrder(order.id);
+        await generateInvoiceMod.generateInvoiceForOrder(order.id);
+        const invoices = await prisma.invoice.findMany({ where: { orderId: order.id } });
+        assert.equal(invoices.length, 2);
+        assert.equal(invoices.filter((i) => i.documentType === "RECEIPT").length, 1);
       } finally {
         await prisma.invoice.deleteMany({ where: { orderId: order.id } });
         await prisma.order.delete({ where: { id: order.id } });
