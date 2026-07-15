@@ -44,6 +44,16 @@ export function PortalDialog({
   // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR-safe mount flag, must run post-hydration
   useEffect(() => setMounted(true), []);
 
+  // Callers rarely memoize `onClose` (a fresh arrow/function each render is
+  // the norm), so it can't be a dependency below — the effect it would
+  // trigger steals focus back to the panel's first element (see below),
+  // which would refire on every keystroke in any field inside the dialog.
+  // A ref keeps the Escape handler on the latest callback without that.
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
+
   useEffect(() => {
     if (!open) return;
     returnFocusRef.current = document.activeElement as HTMLElement | null;
@@ -57,7 +67,7 @@ export function PortalDialog({
 
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
-        onClose();
+        onCloseRef.current();
         return;
       }
       if (e.key !== "Tab") return;
@@ -83,7 +93,12 @@ export function PortalDialog({
       document.body.style.overflow = previousOverflow;
       returnFocusRef.current?.focus();
     };
-  }, [open, onClose]);
+    // Intentionally omits `onClose` — see onCloseRef above. Re-running this
+    // effect on every render would steal focus back to the panel's first
+    // focusable element (its header close button), not wherever the user
+    // is currently typing.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   if (!open || !mounted) return null;
 
