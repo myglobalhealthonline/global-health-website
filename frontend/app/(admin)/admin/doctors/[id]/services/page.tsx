@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import {
@@ -12,11 +12,25 @@ import {
   fetchAdminDoctorServices,
   fetchAdminServices,
   type AdminDoctorServiceAssignmentDto,
+  type AdminDoctorDto,
 } from "@/lib/admin/admin-api";
 import { formatServicePriceInput } from "@/lib/admin/service-form-parse";
+import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
 import { FlagBadge } from "../../../_components/flag-badge";
+
+/** A service assignment change (assign/disable/activate/remove) affects the
+ *  public book flow for every market this doctor serves, not just their home
+ *  country — bust each one so the change is visible immediately instead of
+ *  waiting out the public services cache TTL. */
+function revalidateDoctorServiceMarkets(doctor: AdminDoctorDto) {
+  revalidateTag(SITE_CACHE_TAGS.countryServices(doctor.country.code), "max");
+  for (const link of doctor.additionalCountries) {
+    if (link.active) revalidateTag(SITE_CACHE_TAGS.countryServices(link.country.code), "max");
+  }
+  revalidateTag(SITE_CACHE_TAGS.globalServices(), "max");
+}
 
 export const dynamic = "force-dynamic";
 
@@ -70,6 +84,7 @@ export default async function AdminDoctorServicesPage({
     }
     revalidatePath(`/admin/doctors/${id}/services`);
     revalidatePath(`/admin/doctors/${id}`);
+    if (doctorResult.ok) revalidateDoctorServiceMarkets(doctorResult.data.doctor);
     redirect(
       `/admin/doctors/${id}/services?success=${encodeURIComponent("Service assigned")}`,
     );
@@ -97,6 +112,7 @@ export default async function AdminDoctorServicesPage({
     }
     revalidatePath(`/admin/doctors/${id}/services`);
     revalidatePath(`/admin/doctors/${id}`);
+    if (doctorResult.ok) revalidateDoctorServiceMarkets(doctorResult.data.doctor);
     redirect(
       `/admin/doctors/${id}/services?success=${encodeURIComponent("Assignment updated")}`,
     );
@@ -119,6 +135,7 @@ export default async function AdminDoctorServicesPage({
     }
     revalidatePath(`/admin/doctors/${id}/services`);
     revalidatePath(`/admin/doctors/${id}`);
+    if (doctorResult.ok) revalidateDoctorServiceMarkets(doctorResult.data.doctor);
     redirect(
       `/admin/doctors/${id}/services?success=${encodeURIComponent("Assignment removed")}`,
     );
@@ -346,6 +363,8 @@ export default async function AdminDoctorServicesPage({
               <input type="hidden" name="serviceDoctorId" value={row.id} />
               <ConfirmDeleteButton
                 message={`Remove ${row.service.name} from this doctor?`}
+                className="gh-btn gh-btn-danger"
+                style={{ minHeight: 32, padding: "0 14px", fontSize: 13 }}
               >
                 Remove
               </ConfirmDeleteButton>

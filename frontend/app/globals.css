@@ -1194,6 +1194,16 @@ img {
   padding: 0 16px;
 }
 
+/* .gh-input/.gh-select is plain (unlayered) CSS, so it always wins over
+ * Tailwind's @layer utilities regardless of source order — a bare `pl-9` on
+ * one of these inputs (icon-prefixed search fields) gets its padding-left
+ * silently reset back to 16px. Restate it here, unlayered, so icon-prefixed
+ * inputs actually get the room the icon needs. */
+.gh-input.pl-9,
+.gh-select.pl-9 {
+  padding-left: 2.25rem;
+}
+
 .gh-textarea {
   min-height: 132px;
   padding: 12px 16px;
