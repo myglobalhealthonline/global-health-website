@@ -32,10 +32,10 @@ import {
   ServiceIntro,
   WhyChooseSection,
 } from "@/components/sections/ServiceContentSections";
-import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
 import { getServiceHubContent } from "@/lib/content/service-hub-content";
 import { resolveBrandTitle } from "@/lib/seo/page-seo";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 type Params = { country: string; lang: string };
 
@@ -107,11 +107,9 @@ export default async function HealthTestsPage({
   const [
     items,
     { record: rawPage, disabled: pageDisabled },
-    { short: testsShortDisclaimer },
   ] = await Promise.all([
     getCountryHealthTests(code, lang),
     getPageContent(code, "HEALTH_TESTS", lang as PublicLocale),
-    getCountryDisclaimer(code, lang),
   ]);
 
   // Structured PageContent self-gates via publish status; legacy "pages"
@@ -166,11 +164,6 @@ export default async function HealthTestsPage({
           alt: hub.overview.title,
           priority: true,
         }}
-        badge={{
-          title: t.hero.feature1Title,
-          subtitle: t.hero.feature2Title,
-          accent: t.hero.feature3Title.replace("{country}", config.name),
-        }}
         featureCards={[
           {
             icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,
@@ -222,9 +215,9 @@ export default async function HealthTestsPage({
           className="scroll-mt-24 relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
           style={{
             padding: "clamp(64px,8vw,120px) 0",
-            borderTop: "1px solid rgba(255,255,255,0.07)",
           }}
         >
+          <SectionSeam theme="dark" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <p
               className="text-[11px] font-bold uppercase tracking-[0.2em]"
@@ -276,9 +269,9 @@ export default async function HealthTestsPage({
           className="relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
           style={{
             padding: "clamp(48px,6vw,80px) 0",
-            borderTop: "1px solid rgba(255,255,255,0.07)",
           }}
         >
+          <SectionSeam theme="dark" />
           <div className="mx-auto max-w-3xl px-5 md:px-10 text-center">
             <h2 className="text-2xl font-extrabold text-white">{hub.emptyState.title}</h2>
             <p className="mt-4" style={{ color: "rgba(255,255,255,0.65)" }}>{hub.emptyState.body}</p>
@@ -339,26 +332,15 @@ export default async function HealthTestsPage({
           eyebrow: t.reviewedEyebrow,
           liveLabel: config.name,
           calendarLine: heroSubtitle,
-          headlinePre: t.titleLead,
-          headlineAccent: t.titleAccent,
-          headlinePost: t.titleTrail,
+          headlinePre: page?.heroTitle ?? t.titleLead,
+          headlineAccent: page?.heroTitle ? "" : t.titleAccent,
+          headlinePost: page?.heroTitle ? "" : t.titleTrail,
           body: hub.overview.body,
           primaryCta: t.ctaLabel,
           secondaryCta: t.secondaryLabel,
         }}
       />
       <StickyBookingCTA href={bookHref} label={t.ctaLabel} />
-      <section
-        className="relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
-        style={{ padding: "clamp(28px,4vw,48px) 0" }}
-      >
-        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-          <MedicalDisclaimer
-            variant="short"
-            text={testsShortDisclaimer ?? hub.importantInformation.paragraphs[0]}
-          />
-        </div>
-      </section>
 
       {page?.sections.disclaimer ? (
         <MedicalDisclaimer

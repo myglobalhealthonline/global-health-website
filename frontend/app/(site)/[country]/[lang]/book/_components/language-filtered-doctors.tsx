@@ -162,6 +162,9 @@ export function LanguageFilteredDoctors({
                 imageTitle={doctor.imageTitle}
                 imageCaption={doctor.imageCaption}
                 imageDescription={doctor.imageDescription}
+                imageFocalX={doctor.imageFocalX}
+                imageFocalY={doctor.imageFocalY}
+                imageZoom={doctor.imageZoom}
                 href={`/${country}/${lang}/doctors/${doctor.slug}`}
                 bookingHref={buildBookHref({
                   country,

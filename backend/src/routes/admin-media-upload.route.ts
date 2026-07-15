@@ -6,6 +6,7 @@ import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { buildPublicMediaUrl } from "../utils/public-media-url.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { verifySniffedMime } from "../utils/sniff-mime.js";
+import { convertToWebpIfEligible, replaceExtension } from "../utils/image-webp.js";
 
 // SVG is intentionally excluded. SVGs are XML and can carry inline
 // <script> tags or onload attributes; serving them back from /api/media/*
@@ -66,12 +67,17 @@ const adminMediaUploadRoute: FastifyPluginAsync = async (app) => {
       return reply.status(415).send(errorResponse("File content does not match declared type"));
     }
 
-    const safeName = sanitizeOriginalFilename(file.filename ?? "upload");
+    const converted = isPdf ? null : await convertToWebpIfEligible(buffer, sniffedMime);
+    const uploadBuffer = converted?.buffer ?? buffer;
+    const uploadMime = converted?.mimetype ?? sniffedMime;
+
+    let safeName = sanitizeOriginalFilename(file.filename ?? "upload");
+    if (converted) safeName = replaceExtension(safeName, converted.extension);
     const prefix = isPdf ? "documents" : "media";
     const key = `${prefix}/${randomUUID()}-${safeName}`;
 
     try {
-      await putObject(key, buffer, sniffedMime);
+      await putObject(key, uploadBuffer, uploadMime);
     } catch (error) {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Upload failed"));

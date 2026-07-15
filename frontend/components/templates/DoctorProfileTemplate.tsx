@@ -14,6 +14,9 @@ import {
   Video,
 } from "lucide-react";
 import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
+import { focalStyle } from "@/components/media/doctor-photo";
+import { SectionSeam } from "@/components/ui/SectionSeam";
+import HeroFitContent from "@/components/sections/HeroFitContent";
 
 /* ─── Types ──────────────────────────────────────────────────────────────── */
 type DoctorProfileTemplateProps = {
@@ -48,6 +51,9 @@ type DoctorProfileTemplateProps = {
   };
   bottomCta: { title: string; description: string; ctaLabel: string; ctaHref: string };
   profileImageSrc?: string;
+  profileImageFocalX?: number;
+  profileImageFocalY?: number;
+  profileImageZoom?: number;
   bookingCtaImage?: { src: string; alt: string };
   showReviewScore?: boolean;
   doctifyWidgetUrl?: string;
@@ -71,10 +77,14 @@ export function DoctorProfileTemplate({
   profile,
   bottomCta,
   profileImageSrc,
+  profileImageFocalX = 50,
+  profileImageFocalY = 50,
+  profileImageZoom = 1,
   doctifyWidgetUrl,
   t,
 }: DoctorProfileTemplateProps) {
   const safeBio = sanitizeDoctorBioHtml(profile.bio);
+  const heroImageStyle = focalStyle(profileImageFocalX, profileImageFocalY, profileImageZoom);
   const backHref = hero.secondaryCta?.href;
   const verifyHref = profile.verificationUrl ?? profile.medicalRegistrationUrl;
   const primarySpecialty = profile.specialties[0] ?? "General practice";
@@ -85,7 +95,7 @@ export function DoctorProfileTemplate({
 
       {/* ── HERO — viewport-locked 50/50 split ── */}
       <section
-        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
+        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate !overflow-visible lg:!overflow-hidden"
       >
         {/* Mobile/tablet only — full-bleed tinted portrait behind the text,
          *  same treatment as the team page hero: text sits in front of the
@@ -98,7 +108,7 @@ export function DoctorProfileTemplate({
               fill
               sizes="100vw"
               priority
-              className="object-cover object-top"
+              style={heroImageStyle}
               unoptimized={
                 /^https?:\/\//i.test(profileImageSrc) ||
                 profileImageSrc.startsWith("/api/media/")
@@ -115,7 +125,7 @@ export function DoctorProfileTemplate({
           </div>
         ) : null}
 
-        <div className="relative grid h-full lg:grid-cols-2">
+        <div className="relative grid h-auto lg:grid-cols-2">
 
           {/* ── LEFT — full-bleed doctor portrait (desktop only) ── */}
           <div className="relative hidden h-full overflow-hidden lg:block">
@@ -144,7 +154,8 @@ export function DoctorProfileTemplate({
                 fill
                 sizes="(min-width:1024px) 50vw, 100vw"
                 priority
-                className="z-[1] object-cover object-top"
+                className="z-[1]"
+                style={heroImageStyle}
                 unoptimized={
                   /^https?:\/\//i.test(profileImageSrc) ||
                   profileImageSrc.startsWith("/api/media/")
@@ -180,12 +191,14 @@ export function DoctorProfileTemplate({
 
           {/* ── RIGHT — profile content ── */}
           <div
-            className="gh-inline-panel-base relative flex h-full flex-col justify-center overflow-y-auto px-8 py-6 md:px-12 lg:px-14 lg:py-8"
+            className="gh-inline-panel-base relative flex h-auto flex-col justify-center overflow-visible px-8 py-6 md:px-12 lg:px-14 lg:py-8"
           >
-            {/* Layer 1 — gradient depth */}
+            {/* Layer 1 — gradient depth. Desktop only: at mobile the panel
+                 background is the real profile photo (above), and this
+                 opaque gradient would paint over it. */}
             <div
               aria-hidden
-              className="gh-inline-panel-depth pointer-events-none absolute inset-0 z-0"
+              className="gh-inline-panel-depth pointer-events-none absolute inset-0 z-0 hidden lg:block"
             />
             {/* Layer 2 — technical lime grid */}
             <div
@@ -212,8 +225,8 @@ export function DoctorProfileTemplate({
               className="gh-inline-plus-small pointer-events-none absolute z-0 select-none font-bold leading-none"
             >+</span>
 
-            {/* Content */}
-            <div className="gh-inline-content-max relative z-10">
+            {/* Content — scale-to-fit on short viewports, no inner scrollbar */}
+            <HeroFitContent className="gh-inline-content-max relative z-10">
 
               {/* Top nav pills */}
               <div className="flex flex-wrap items-center gap-2">
@@ -380,14 +393,15 @@ export function DoctorProfileTemplate({
                 ))}
               </ul>
 
-            </div>
+            </HeroFitContent>
           </div>
 
         </div>
       </section>
 
       {/* ── BODY — long-form bio + sticky booking ── */}
-      <section className="border-t border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel py-[clamp(56px,7vw,96px)]">
+      <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel py-[clamp(56px,7vw,96px)]">
+        <SectionSeam theme="light" />
         <div className="gh-container grid gap-16 lg:grid-cols-[1.5fr_1fr] lg:gap-24">
           <article>
             <p
@@ -500,7 +514,8 @@ export function DoctorProfileTemplate({
       </section>
 
       {/* ── Bottom CTA ── */}
-      <section className="border-t border-white/6 bg-[linear-gradient(168deg,#15382A_0%,#0F2E25_55%,#0B241C_100%)] gh-inline-clamp-section-cta">
+      <section className="relative bg-[linear-gradient(168deg,#15382A_0%,#0F2E25_55%,#0B241C_100%)] gh-inline-clamp-section-cta">
+        <SectionSeam theme="dark" />
         <div className="gh-container">
           <div className="grid items-end gap-10 lg:grid-cols-[1.6fr_1fr]">
             <div>

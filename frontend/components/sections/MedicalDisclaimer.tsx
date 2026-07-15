@@ -11,6 +11,7 @@
 
 import Link from "next/link";
 import { ShieldAlert } from "lucide-react";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 type FullProps = {
   variant?: "full";
@@ -90,14 +91,14 @@ export function MedicalDisclaimer(props: MedicalDisclaimerProps) {
       aria-label="Medical disclaimer"
       className={
         light
-          ? "gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
-          : "gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
+          ? "relative gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
+          : "relative gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
       }
       style={{
         padding: "clamp(40px,5vw,72px) 0",
-        borderTop: light ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
       }}
     >
+      <SectionSeam theme={light ? "light" : "dark"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <div
           className={
@@ -130,7 +131,6 @@ export function MedicalDisclaimer(props: MedicalDisclaimerProps) {
                 className="text-sm leading-relaxed"
                 style={{
                   color: light ? "var(--color-text-body)" : "rgba(255,255,255,0.72)",
-                  maxWidth: "78ch",
                 }}
               >
                 {p}

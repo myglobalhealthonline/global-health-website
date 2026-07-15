@@ -239,10 +239,11 @@ export default async function CountryLegalIndexPage({
         body={t.heroBody.replace("{site}", SITE_NAME).replace("{country}", config.name)}
       />
 
-      <section
-        className="mx-auto max-w-3xl px-5 md:px-10"
-        style={{ padding: "clamp(48px,6vw,80px) 20px" }}
-      >
+      <section className="relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+        <div
+          className="mx-auto max-w-3xl px-5 md:px-10"
+          style={{ padding: "clamp(48px,6vw,80px) 20px" }}
+        >
         <div className="space-y-10">
           {documents.length > 0 ? (
             <section>
@@ -345,6 +346,7 @@ export default async function CountryLegalIndexPage({
               </p>
             </section>
           ) : null}
+        </div>
         </div>
       </section>
     </>

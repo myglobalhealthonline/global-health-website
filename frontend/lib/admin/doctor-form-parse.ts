@@ -12,6 +12,11 @@ export const DOCTOR_TRANSLATABLE_FIELDS = [
   "seoDescription",
 ] as const;
 
+function numberOr(value: FormDataEntryValue | null, fallback: number): number {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
 export function parseDoctorBodyFromForm(formData: FormData, defaultLocale: string) {
   const specialtyIds = formData
     .getAll("specialtyIds")
@@ -65,6 +70,9 @@ export function parseDoctorBodyFromForm(formData: FormData, defaultLocale: strin
     profileImageTitle: String(formData.get("profileImageTitle") ?? "").trim(),
     profileImageCaption: String(formData.get("profileImageCaption") ?? "").trim(),
     profileImageDescription: String(formData.get("profileImageDescription") ?? "").trim(),
+    profileImageFocalX: numberOr(formData.get("profileImageFocalX"), 50),
+    profileImageFocalY: numberOr(formData.get("profileImageFocalY"), 50),
+    profileImageZoom: numberOr(formData.get("profileImageZoom"), 1),
     active: formData.get("active") === "on",
     canCreateManualAppointments:
       formData.get("canCreateManualAppointments") === "on",

@@ -23,6 +23,7 @@ import { interpolate } from "@/lib/subscription/format";
 import { PricingPlanCard } from "./_components/PricingPlanCard";
 import { Stethoscope, Calendar, ShieldCheck, CreditCard, Zap, BadgeCheck } from "lucide-react";
 import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 type Params = { country: string; lang: string };
 
@@ -159,6 +160,7 @@ export default async function PricingPage({
         id="plans"
         className="scroll-mt-24 gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-pricing"
       >
+        <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="mx-auto max-w-2xl text-center">
             <p
@@ -221,7 +223,8 @@ export default async function PricingPage({
       </section>
 
       {/* Doctify social proof — verified patient ratings above the fold-out steps */}
-      <section className="border-t border-[var(--color-border)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">
+      <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">
+        <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <DoctifyWidget variant="horizontal" language={lang} />
         </div>
@@ -229,6 +232,7 @@ export default async function PricingPage({
 
       {/* How it works — 5-step onboarding overview (subscriptions are IE-only). */}
       <section className="gh2-section-forest gh-medical-pattern gh-medical-pattern-dark gh-inline-clamp-section-pricing">
+        <SectionSeam theme="dark" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="mx-auto max-w-2xl text-center">
             <p
@@ -318,7 +322,11 @@ function PlansArchPanel({ countryName }: { countryName: string }) {
       <div
         className="gh-glass-emerald gh-floaty absolute -right-6 top-[12%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0s]"
       >
-        <Zap className="size-5 shrink-0 text-[var(--color-brand-accent)]" strokeWidth={1.75} aria-hidden />
+        <span
+          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"
+        >
+          <Zap className="size-4" strokeWidth={2} aria-hidden />
+        </span>
         <span className="min-w-0">
           <span className="block text-[13px] font-bold leading-tight text-white">Monthly care</span>
           <span className="block text-[11.5px] leading-tight text-white/55">Renew or cancel anytime</span>
@@ -327,7 +335,7 @@ function PlansArchPanel({ countryName }: { countryName: string }) {
 
       {/* Floating — Secure payments */}
       <div
-        className="gh-glass-emerald gh-floaty absolute -right-4 top-[56%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:1.4s]"
+        className="gh-glass-emerald gh-floaty absolute -right-6 top-[56%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:1.4s]"
       >
         <span
           className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"
@@ -342,7 +350,7 @@ function PlansArchPanel({ countryName }: { countryName: string }) {
 
       {/* Floating — Licensed doctors */}
       <div
-        className="gh-glass-emerald gh-floaty absolute -left-8 bottom-[5%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0.7s]"
+        className="gh-glass-emerald gh-floaty absolute -left-6 bottom-[5%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0.7s]"
       >
         <span
           className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"

@@ -8,23 +8,74 @@ import { getSiteUrl } from "@/lib/seo/site-url";
 
 const SITE_URL = getSiteUrl();
 
+// Official social profiles that always belong in the entity's `sameAs`,
+// regardless of which country the visitor is in. Per-country regulator
+// authority URLs are merged on top of these (passed by the layout).
+const BASE_SAME_AS = ["https://www.instagram.com/globalhealth_ie/"];
+
 export function organizationJsonLd(sameAs: string[] = []) {
   return {
     "@context": "https://schema.org",
     "@type": "MedicalOrganization",
     name: SITE_NAME,
+    legalName: "Global Guest s.r.o.",
     url: SITE_URL,
-    logo: `${SITE_URL}/images/logo.png`,
-    // Official regulators / authorities the provider is registered with or
-    // operates under. This is the AI-search authority signal — populated per
-    // active country from CountryAuthorityLink rows (showInSchema).
-    sameAs,
+    logo: `${SITE_URL}/logos/global-health-light.png`,
+    foundingDate: "2023",
+    slogan: "Medicine Anytime Anywhere",
+    description:
+      "Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.",
+    // Official social profiles + per-country regulators / authorities the
+    // provider is registered with. This is the AI-search authority signal —
+    // regulator URLs are populated per active country from CountryAuthorityLink
+    // rows (showInSchema) and merged on top of the base social profiles.
+    sameAs: [...BASE_SAME_AS, ...sameAs],
     areaServed: [
       { "@type": "Country", name: "Ireland" },
       { "@type": "Country", name: "Portugal" },
       { "@type": "Country", name: "Spain" },
-      { "@type": "Country", name: "Czechia" },
+      { "@type": "Country", name: "Czech Republic" },
       { "@type": "Country", name: "Romania" },
+      { "@type": "Country", name: "Brazil" },
+    ],
+    medicalSpecialty: [
+      "General Practice",
+      "Cardiology",
+      "Neurology",
+      "Pediatrics",
+      "Dermatology",
+      "Psychiatry",
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      email: "info@myglobalhealth.online",
+      contactType: "customer service",
+      availableLanguage: [
+        "English",
+        "Portuguese",
+        "Spanish",
+        "Czech",
+        "Romanian",
+        "Arabic",
+        "Urdu",
+      ],
+    },
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "CZ",
+      addressLocality: "Prague",
+    },
+    identifier: [
+      {
+        "@type": "PropertyValue",
+        name: "Czech company registration",
+        value: "IČO: 19071680",
+      },
+      {
+        "@type": "PropertyValue",
+        name: "Irish company registration",
+        value: "CRO: 910267",
+      },
     ],
   };
 }

@@ -21,6 +21,8 @@ import {
   IconLinkedin,
   type BrandIcon,
 } from "@/components/ui/BrandIcons";
+import { focalStyle, DoctorAvatarFallback } from "@/components/media/doctor-photo";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 type DoctorSpotlightProps = {
   name: string;
@@ -38,6 +40,9 @@ type DoctorSpotlightProps = {
   imageTitle?: string | null;
   imageCaption?: string | null;
   imageDescription?: string | null;
+  imageFocalX?: number;
+  imageFocalY?: number;
+  imageZoom?: number;
   href?: string;
   bookingHref?: string;
   /** WhatsApp contact — rendered as a "Call" pill next to the booking
@@ -70,16 +75,6 @@ export function FeaturedDoctor({
     hasImage &&
     /^https?:\/\//i.test(src) &&
     !/^https?:\/\/(images\.unsplash\.com|images\.pexels\.com)\//i.test(src);
-  // Initials fallback instead of a generic stock face when a doctor has no
-  // uploaded photo (matches DoctorCard behaviour).
-  const initials =
-    doctor.name
-      .replace(/^Dr\.?\s*/i, "")
-      .split(/\s+/)
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((w) => w[0]?.toUpperCase() ?? "")
-      .join("") || "·";
   const languageList =
     doctor.languages && doctor.languages.length > 0
       ? doctor.languages.join(", ")
@@ -143,22 +138,12 @@ export function FeaturedDoctor({
               }
               fill
               unoptimized={unoptimized}
-              className="object-cover object-top"
+              style={focalStyle(doctor.imageFocalX, doctor.imageFocalY, doctor.imageZoom)}
               sizes="(min-width:640px) 340px, 100vw"
             />
           ) : (
-            <div
-              className="absolute inset-0 flex items-center justify-center font-extrabold"
-              style={{
-                background:
-                  "radial-gradient(120% 90% at 20% 0%, rgba(176,241,34,0.14), transparent 55%), linear-gradient(160deg, #1D4B36 0%, #0F2E25 100%)",
-                color: "rgba(255,255,255,0.88)",
-                fontSize: "clamp(48px,7vw,80px)",
-                letterSpacing: "0.04em",
-              }}
-              aria-hidden
-            >
-              {initials}
+            <div className="absolute inset-0">
+              <DoctorAvatarFallback />
             </div>
           )}
           {doctor.imageCaption || doctor.imageDescription ? (
@@ -369,10 +354,10 @@ export function FeaturedDoctor({
       <section
         className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
         style={{
-          borderTop: "1px solid rgba(255,255,255,0.06)",
           padding: "clamp(48px,7vw,96px) 0",
         }}
       >
+        <SectionSeam theme="dark" />
         <div
           className="mx-auto"
           style={{

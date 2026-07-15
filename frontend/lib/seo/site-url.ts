@@ -1,4 +1,4 @@
-const PROD_SITE_URL = "https://www.myglobalhealth.online";
+const PROD_SITE_URL = "https://myglobalhealth.online";
 const DEV_SITE_URL = "http://localhost:3000";
 
 export function getSiteUrl() {

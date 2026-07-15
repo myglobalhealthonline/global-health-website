@@ -80,10 +80,10 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
 
   // ── Service-family static pages ───────────────────────────────────────────
   "/about": {
-    title: "About Global Health · Medicine anytime anywhere",
+    title: "About Global Health — Online Doctor Platform | 6 Markets | Medicine Anytime Anywhere",
     description:
-      "A network of licensed clinicians practising across Ireland, Portugal, Spain, Czechia and Romania. Verified credentials, multilingual care, in-country registration.",
-    keywords: ["about Global Health", "European clinician network", "registered doctors"],
+      "Global Health connects patients with locally-licensed doctors in the markets where we operate. No waiting rooms, no call centres, no surprise fees. Founded 2023. GDPR compliant.",
+    keywords: ["about Global Health", "online doctor platform", "telemedicine 6 markets", "registered doctors"],
   },
   "/careers": {
     title: "Careers at Global Health",

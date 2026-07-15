@@ -32,6 +32,8 @@ import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { SectionSeam } from "@/components/ui/SectionSeam";
+import HeroFitContent from "@/components/sections/HeroFitContent";
 import { KitRedemptionCallout } from "@/components/subscription/KitRedemptionCallout";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -136,12 +138,41 @@ export default async function HealthTestDetailPage({
 
       {/* ── Hero — full-viewport 50/50 split: image left, content + product card right ── */}
       <section
-        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-visible lg:overflow-hidden"
+        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate !overflow-visible lg:!overflow-hidden"
       >
-        <div className="grid h-auto grid-rows-[clamp(180px,30svh,280px)_auto] lg:h-full lg:grid-cols-2 lg:grid-rows-1">
+        {/* Mobile/tablet only — full-bleed tinted image behind the text,
+         *  same treatment as PageHero/DoctorProfileTemplate: text sits in
+         *  front of the photo instead of it being a stacked block above. */}
+        {detail.imageSrc ? (
+          <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 lg:hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={detail.imageSrc}
+              alt=""
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center top",
+              }}
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(3,31,24,0.62) 0%, rgba(3,31,24,0.78) 45%, rgba(3,31,24,0.96) 100%)," +
+                  "linear-gradient(90deg, rgba(3,31,24,0.55) 0%, rgba(3,31,24,0.35) 55%, rgba(3,31,24,0.20) 100%)",
+              }}
+            />
+          </div>
+        ) : null}
 
-          {/* ── LEFT — full-bleed test image ──────────────────────────── */}
-          <div className="relative h-full min-h-0 overflow-hidden">
+        <div className="grid h-auto lg:grid-cols-2">
+
+          {/* ── LEFT — full-bleed test image (desktop only) ─────────────── */}
+          <div className="relative hidden h-full overflow-hidden lg:block">
             {detail.imageSrc ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -199,12 +230,14 @@ export default async function HealthTestDetailPage({
 
           {/* ── RIGHT — content + product card ──────────────────────── */}
           <div
-            className="gh-inline-panel-base relative flex h-auto min-h-0 flex-col justify-center overflow-visible px-8 py-6 md:px-12 lg:h-full lg:overflow-y-auto lg:px-14 lg:py-8"
+            className="gh-inline-panel-base relative flex h-auto min-h-0 flex-col justify-center overflow-visible px-8 py-6 md:px-12 lg:px-14 lg:py-8"
           >
-            {/* 1 — gradient depth */}
+            {/* 1 — gradient depth. Desktop only: at mobile the panel
+                 background is the real test photo (above), and this opaque
+                 gradient would paint over it. */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 z-0"
+              className="pointer-events-none absolute inset-0 z-0 hidden lg:block"
               style={{
                 background:
                   "radial-gradient(circle at 88% 14%, rgba(22,89,64,0.30), transparent 42%)," +
@@ -261,8 +294,8 @@ export default async function HealthTestDetailPage({
               style={{ bottom: "8%", right: "10%", fontSize: "78px", color: "rgba(176,241,34,0.045)" }}
             >+</span>
 
-            {/* Content */}
-            <div className="relative z-10" style={{ maxWidth: 680 }}>
+            {/* Content — scale-to-fit on short viewports, no inner scrollbar */}
+            <HeroFitContent className="relative z-10 max-w-[680px]">
               {/* Back link */}
               <Link
                 href={backHref}
@@ -424,7 +457,7 @@ export default async function HealthTestDetailPage({
                   </p>
                 </div>
               </div>
-            </div>
+            </HeroFitContent>
           </div>
 
         </div>
@@ -482,9 +515,9 @@ export default async function HealthTestDetailPage({
         className="gh2-hero relative isolate overflow-hidden"
         style={{
           padding: "clamp(56px,7vw,96px) 0",
-          borderTop: "1px solid rgba(255,255,255,0.07)",
         }}
       >
+        <SectionSeam theme="dark" />
         <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid items-end gap-8 lg:grid-cols-[1.6fr_1fr]">
             <div>

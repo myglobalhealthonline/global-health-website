@@ -152,6 +152,9 @@ export default async function AdminEditDoctorPage({
         raw.profileImageCaption === "" ? null : raw.profileImageCaption,
       profileImageDescription:
         raw.profileImageDescription === "" ? null : raw.profileImageDescription,
+      profileImageFocalX: raw.profileImageFocalX,
+      profileImageFocalY: raw.profileImageFocalY,
+      profileImageZoom: raw.profileImageZoom,
       active: raw.active,
       canCreateManualAppointments: raw.canCreateManualAppointments,
     };
@@ -344,6 +347,9 @@ export default async function AdminEditDoctorPage({
               initialTitle={doctor.assets[0]?.title ?? ""}
               initialCaption={doctor.assets[0]?.caption ?? ""}
               initialDescription={doctor.assets[0]?.description ?? ""}
+              initialFocalX={doctor.assets[0]?.focalX}
+              initialFocalY={doctor.assets[0]?.focalY}
+              initialZoom={doctor.assets[0]?.zoom}
               fullName={doctor.fullName}
               formId="doctor-edit-form"
             />

@@ -1371,6 +1371,11 @@ model Asset {
   description         String?
   usageNote           String?
   isActive            Boolean       @default(true)
+  // Focal-point crop metadata (percent-based crop origin + zoom) used by
+  // doctor profile photos; consumed by the frontend cropper only.
+  focalX              Int           @default(50)
+  focalY              Int           @default(50)
+  zoom                Float         @default(1)
   country             Country?      @relation(fields: [countryId], references: [id], onDelete: Cascade)
   doctor              Doctor?       @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   specialty           Specialty?    @relation(fields: [specialtyId], references: [id], onDelete: Cascade)

@@ -1,4 +1,5 @@
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import { BadgeCheck, SearchCheck, UserCheck } from "lucide-react";
 import type { CountryTrust } from "@/lib/content/get-country-trust";
 
@@ -78,8 +79,10 @@ export function VerifiedProfessionals({
   return (
     <section
       aria-labelledby="verified-professionals-heading"
-      className="relative overflow-hidden border-y border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel py-[clamp(64px,8vw,120px)]"
+      className="relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel py-[clamp(64px,8vw,120px)]"
     >
+      <SectionSeam theme="light" />
+      <SectionSeam position="bottom" theme="light" />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <div className="grid items-center gap-14 lg:grid-cols-[1fr_1.35fr] lg:gap-20">
           <RevealOnScroll delay={0}>

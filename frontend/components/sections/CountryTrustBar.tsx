@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import {
   getCountryAuthorityLogos,
   type CountryCertificationLogo,
@@ -248,6 +249,7 @@ export function CountryTrustBar({
                         <DoctifyWidget
                           variant="micro"
                           language={locale ?? "en"}
+                          theme="dark"
                           className="mt-auto"
                         />
                       </div>
@@ -260,10 +262,10 @@ export function CountryTrustBar({
                 <span className="shrink-0 text-[10.5px] font-extrabold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]">
                   {t.emergencyTag}
                 </span>
-                <p className="text-[13.5px] leading-snug text-white/80">
+                <p className="text-[13.5px] font-bold leading-snug text-white">
                   {trust.emergency.notice ?? t.emergencyFallback(trust.emergency.number)}
                   {trust.emergency.nonEmergencyLine ? (
-                    <span className="text-white/60"> - {trust.emergency.nonEmergencyLine}</span>
+                    <span className="font-normal text-white/60"> - {trust.emergency.nonEmergencyLine}</span>
                   ) : null}
                 </p>
               </div>
@@ -352,11 +354,16 @@ function VerifyLink({
       rel="noopener noreferrer"
       className={
         variant === "dark"
-          ? "inline-flex items-center gap-1 text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-brand-accent)] transition-opacity hover:opacity-75"
-          : "inline-flex items-center gap-1 text-[12px] font-extrabold uppercase tracking-[0.08em] text-[var(--color-brand-primary)] underline decoration-[rgba(29,75,54,0.28)] underline-offset-4 transition-colors hover:text-[var(--color-brand-primary-hover)]"
+          ? "group inline-flex items-center gap-1 text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-brand-accent)] transition-opacity hover:opacity-75"
+          : "group inline-flex items-center gap-1 text-[12px] font-extrabold uppercase tracking-[0.08em] text-[var(--color-brand-primary)] underline decoration-[rgba(29,75,54,0.28)] underline-offset-4 transition-colors hover:text-[var(--color-brand-primary-hover)]"
       }
     >
-      {label} {"->"}
+      {label}
+      <ArrowUpRight
+        className="size-[13px] shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0 motion-reduce:group-hover:translate-y-0"
+        strokeWidth={2.4}
+        aria-hidden
+      />
     </a>
   );
 }

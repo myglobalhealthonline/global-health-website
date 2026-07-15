@@ -507,11 +507,11 @@ async function GpBookingFlow({
       >
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           {!valid || !service || !slot ? (
-            <div className="gh2-status-card gh2-status-card-dark mx-auto max-w-[640px] text-center">
-              <p className="font-semibold text-white">
+            <div className="gh2-status-card mx-auto max-w-[640px] text-center">
+              <p className="font-semibold text-[var(--color-text-primary)]">
                 {bp.slotNoLongerOpen}
               </p>
-              <p className="mt-2 text-sm text-white/60">
+              <p className="mt-2 text-sm text-[var(--color-text-muted)]">
                 {bp.checkBackClinician.replace("{service}", langName)}
               </p>
               <Link href={homeHref} className="gh2-btn-lime mt-5">

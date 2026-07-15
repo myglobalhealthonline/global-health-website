@@ -9,6 +9,7 @@
 
 import type { ReactNode } from "react";
 import { Check } from "lucide-react";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 type Theme = "light" | "soft" | "dark";
 
@@ -27,9 +28,6 @@ function sectionClass(theme: Theme): string {
 function sectionStyle(theme: Theme): React.CSSProperties {
   return {
     padding: "clamp(56px,7vw,104px) 0",
-    borderTop: isDark(theme)
-      ? "1px solid rgba(255,255,255,0.06)"
-      : "1px solid rgba(29,75,54,0.10)",
   };
 }
 
@@ -76,14 +74,14 @@ export function ServiceIntro({
 }) {
   return (
     <section className={sectionClass(theme)} style={sectionStyle(theme)}>
+      <SectionSeam theme={isDark(theme) ? "dark" : "light"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
         <p
           className="mt-5 leading-relaxed"
           style={{
-            fontSize: "clamp(1.15rem, 1vw + 0.9rem, 1.5rem)",
+            fontSize: "var(--text-body-lg)",
             color: isDark(theme) ? "rgba(255,255,255,0.78)" : "var(--color-text-body)",
-            fontWeight: 500,
           }}
         >
           {body}
@@ -113,6 +111,7 @@ export function ChecklistSection({
   const dark = isDark(theme);
   return (
     <section className={sectionClass(theme)} style={sectionStyle(theme)}>
+      <SectionSeam theme={dark ? "dark" : "light"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
         <SectionTitle theme={theme}>{title}</SectionTitle>
@@ -184,6 +183,7 @@ export function WhyChooseSection({
   const dark = isDark(theme);
   return (
     <section className={sectionClass(theme)} style={sectionStyle(theme)}>
+      <SectionSeam theme={dark ? "dark" : "light"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
         <SectionTitle theme={theme}>{title}</SectionTitle>
@@ -194,8 +194,8 @@ export function WhyChooseSection({
               key={item}
               className={
                 dark
-                  ? "flex items-start gap-3 rounded-[var(--radius-card)] p-5"
-                  : "gh2-glass-forest gh2-glass-hover flex items-start gap-3 rounded-[var(--radius-card)] p-5"
+                  ? "flex items-center gap-3 rounded-[var(--radius-card)] p-5"
+                  : "gh2-glass-forest gh2-glass-hover flex items-center gap-3 rounded-[var(--radius-card)] p-5"
               }
               style={
                 dark
@@ -207,7 +207,7 @@ export function WhyChooseSection({
               }
             >
               <span
-                className="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full"
+                className="inline-flex size-6 shrink-0 items-center justify-center rounded-full"
                 style={{
                   background: "var(--color-brand-accent)",
                   color: "#0a1f14",
@@ -245,6 +245,7 @@ export function ProcessStepsSection({
   const dark = isDark(theme);
   return (
     <section className={sectionClass(theme)} style={sectionStyle(theme)}>
+      <SectionSeam theme={dark ? "dark" : "light"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
         <SectionTitle theme={theme}>{title}</SectionTitle>
@@ -300,6 +301,7 @@ export function ImportantInfoSection({
 }) {
   return (
     <section className={sectionClass(theme)} style={sectionStyle(theme)}>
+      <SectionSeam theme={isDark(theme) ? "dark" : "light"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <div
           className="rounded-[var(--radius-card)] p-6 sm:p-8 lg:p-10"

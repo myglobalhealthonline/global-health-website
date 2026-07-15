@@ -23,6 +23,10 @@ type ServiceCardProps = {
   detailHref?: string;
   bookHref?: string;
   bookLabel?: string;
+  /** When the card sits in a 2-column featured grid slot, switch to a
+   *  horizontal image-left | content-right layout on desktop so the row
+   *  stays the same height as its siblings (mirrors ServiceCatalog). */
+  featured?: boolean;
 };
 
 /** Footer actions for two-CTA mode. Sits above the card-wide overlay link
@@ -43,11 +47,11 @@ function TwoActions({
   dark: boolean;
 }) {
   return (
-    <div className="relative z-10 mt-6 flex gap-2.5">
+    <div className="relative z-10 mt-6 flex flex-col gap-2 sm:flex-row sm:gap-2.5">
       <Link
         href={detailHref}
         className={cn(
-          "inline-flex h-12 shrink-0 items-center justify-center gap-1.5 rounded-full px-4 text-sm font-bold tracking-[-0.005em] whitespace-nowrap transition-[background-color,color,border-color] duration-200 focus-visible:outline-none",
+          "inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full px-4 text-sm font-bold tracking-[-0.005em] whitespace-nowrap transition-[background-color,color,border-color] duration-200 focus-visible:outline-none sm:w-auto sm:shrink-0",
           dark
             ? "border border-white/25 bg-white/[0.06] text-white/90 hover:bg-white hover:text-[var(--color-brand-primary)]"
             : "border border-[var(--color-border-strong)] bg-transparent text-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:border-[var(--color-brand-primary)] hover:text-white",
@@ -58,7 +62,7 @@ function TwoActions({
       </Link>
       <Link
         href={bookHref}
-        className="inline-flex h-12 flex-1 items-center justify-center gap-1.5 rounded-full px-4 text-sm font-extrabold tracking-[-0.005em] transition-[transform,filter,box-shadow,background-color] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0 whitespace-nowrap"
+        className="inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full px-4 text-sm font-extrabold tracking-[-0.005em] transition-[transform,filter,box-shadow,background-color] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0 whitespace-nowrap sm:flex-1"
         style={
           dark
             ? {
@@ -93,6 +97,7 @@ export function ServiceCard({
   detailHref,
   bookHref,
   bookLabel = "Book",
+  featured = false,
 }: ServiceCardProps) {
   const twoButton = Boolean(detailHref && bookHref);
   // Card-wide overlay target: detail page in two-CTA mode, else the legacy href.
@@ -117,14 +122,23 @@ export function ServiceCard({
       return (
         <article
           className={cn(
-            "group relative flex h-full flex-col overflow-hidden gh2-glass-forest gh2-glass-hover",
+            "group relative h-full overflow-hidden gh2-glass-forest gh2-glass-hover",
+            featured ? "flex flex-col lg:grid lg:grid-cols-[2fr_3fr]" : "flex flex-col",
             "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
             className,
           )}
         >
           {overlay}
           {/* Photo */}
-          <div className="relative overflow-hidden" style={{ aspectRatio: "16 / 10" }}>
+          {/* Photo grows to absorb extra row height (aspect ratio = minimum),
+              so short-copy cards don't show a dead gap before the CTA. */}
+          <div
+            className={cn(
+              "relative overflow-hidden",
+              featured ? "aspect-[16/10] lg:aspect-auto" : "flex-1",
+            )}
+            style={featured ? undefined : { aspectRatio: "16 / 10" }}
+          >
             <Image
               src={imageSrc}
               alt={title}
@@ -139,9 +153,16 @@ export function ServiceCard({
             {/* Bottom fade so the body edge reads clean */}
             <div
               aria-hidden
-              className="absolute inset-x-0 bottom-0 h-16"
+              className={cn("absolute inset-x-0 bottom-0 h-16", featured && "lg:hidden")}
               style={{ background: "linear-gradient(180deg, transparent 0%, rgba(13,38,30,0.55) 100%)" }}
             />
+            {featured ? (
+              <div
+                aria-hidden
+                className="absolute inset-y-0 right-0 hidden w-16 lg:block"
+                style={{ background: "linear-gradient(90deg, transparent 0%, rgba(13,38,30,0.55) 100%)" }}
+              />
+            ) : null}
             {/* Price chip — top-right overlay */}
             {startingPrice ? (
               <span
@@ -170,16 +191,22 @@ export function ServiceCard({
             </span>
           </div>
 
-          {/* Body */}
-          <div className="relative flex flex-1 flex-col p-5 sm:p-6">
+          {/* Body — natural height; photo above takes the stretch. */}
+          <div className={cn("relative flex flex-col p-5 sm:p-6", featured && "flex-1 lg:p-8")}>
             <h3
-              className="text-xl font-extrabold tracking-[-0.02em] leading-tight transition-colors duration-200 group-hover:text-[var(--color-brand-accent)]"
+              className={cn(
+                "font-extrabold tracking-[-0.02em] leading-tight transition-colors duration-200 group-hover:text-[var(--color-brand-accent)]",
+                featured ? "text-xl lg:text-3xl" : "text-xl",
+              )}
               style={{ color: "rgba(255,255,255,0.95)" }}
             >
               {title}
             </h3>
             <p
-              className="mt-2 text-sm leading-relaxed line-clamp-2"
+              className={cn(
+                "mt-2 text-sm leading-relaxed",
+                featured ? "lg:mt-3 lg:text-base lg:max-w-[44ch] line-clamp-3" : "line-clamp-2",
+              )}
               style={{ color: "rgba(255,255,255,0.72)" }}
             >
               {description}
@@ -296,15 +323,22 @@ export function ServiceCard({
   return (
     <article
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden gh2-card-ivory gh2-card-hover",
+        "group relative h-full overflow-hidden gh2-card-ivory gh2-card-hover",
+        featured && imageSrc ? "flex flex-col lg:grid lg:grid-cols-[2fr_3fr]" : "flex flex-col",
         className,
       )}
     >
       {overlay}
       {imageSrc ? (
         <div
-          className="relative w-full overflow-hidden"
-          style={{ aspectRatio: "16 / 9", background: "var(--color-background-soft)" }}
+          className={cn(
+            "relative w-full overflow-hidden",
+            featured ? "aspect-[16/9] lg:aspect-auto lg:h-full" : "flex-1",
+          )}
+          style={{
+            ...(featured ? {} : { aspectRatio: "16 / 9" }),
+            background: "var(--color-background-soft)",
+          }}
         >
           <Image
             src={imageSrc}
@@ -316,7 +350,7 @@ export function ServiceCard({
           />
         </div>
       ) : null}
-      <div className="relative flex h-full flex-col p-6 sm:p-7">
+      <div className={cn("relative flex flex-col p-6 sm:p-7", (!imageSrc || featured) && "h-full")}>
         <h3 className="text-lg font-bold text-[var(--color-text-primary)] transition-colors group-hover:text-[var(--color-brand-primary)]">
           {title}
         </h3>

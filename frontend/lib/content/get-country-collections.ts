@@ -185,6 +185,9 @@ export type CountryDoctorCard = {
   imageTitle?: string;
   imageCaption?: string;
   imageDescription?: string;
+  imageFocalX?: number;
+  imageFocalY?: number;
+  imageZoom?: number;
   /** Service IDs the doctor is bookable for, in admin-defined sort
    *  order. Empty array means no current ServiceDoctor assignments. */
   assignedServiceIds: string[];
@@ -229,6 +232,9 @@ function pickImage(row: unknown):
       title?: string;
       caption?: string;
       description?: string;
+      focalX: number;
+      focalY: number;
+      zoom: number;
     }
   | undefined {
   const assets = (row as { assets?: unknown }).assets;
@@ -245,6 +251,9 @@ function pickImage(row: unknown):
       title?: unknown;
       caption?: unknown;
       description?: unknown;
+      focalX?: unknown;
+      focalY?: unknown;
+      zoom?: unknown;
     };
     if (rec.kind !== "IMAGE" || typeof rec.path !== "string") continue;
     const resolved = resolveTrustedAssetUrl(rec.path);
@@ -263,6 +272,9 @@ function pickImage(row: unknown):
       ...(typeof rec.description === "string" && rec.description.trim()
         ? { description: rec.description.trim() }
         : {}),
+      focalX: typeof rec.focalX === "number" ? rec.focalX : 50,
+      focalY: typeof rec.focalY === "number" ? rec.focalY : 50,
+      zoom: typeof rec.zoom === "number" ? rec.zoom : 1,
     };
   }
   return undefined;
@@ -470,6 +482,9 @@ export const getCountryDoctors = cache(async (
       ...(image?.title ? { imageTitle: image.title } : {}),
       ...(image?.caption ? { imageCaption: image.caption } : {}),
       ...(image?.description ? { imageDescription: image.description } : {}),
+      imageFocalX: image?.focalX ?? 50,
+      imageFocalY: image?.focalY ?? 50,
+      imageZoom: image?.zoom ?? 1,
       assignedServiceIds,
       isFeatured: r.isFeatured === true,
       ...(imcRegistration ? { imcRegistration } : {}),

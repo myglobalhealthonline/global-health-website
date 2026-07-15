@@ -89,7 +89,7 @@ export function ServiceHero({
 
   return (
     <section
-      className="gh-medical-pattern gh-medical-pattern-dark relative isolate flex flex-col overflow-hidden lg:min-h-[calc(100svh-var(--header-height))] gh-hero-cap"
+      className="gh-medical-pattern gh-medical-pattern-dark relative isolate flex flex-col !overflow-visible lg:min-h-[calc(100svh-var(--header-height))] gh-hero-cap"
       style={{ background: "#031F18" }}
     >
       {/* Mobile/tablet only — full-bleed background image behind the text,
@@ -253,7 +253,7 @@ export function ServiceHero({
 
         {/* ── RIGHT — content over layered premium background ───────────── */}
         <div
-          className="relative isolate flex flex-col justify-center overflow-hidden bg-transparent px-8 py-12 md:px-12 lg:bg-[#031F18] lg:px-16 lg:py-10"
+          className="relative isolate flex flex-col justify-center bg-transparent px-8 py-12 md:px-12 lg:bg-[#031F18] lg:px-16 lg:py-10"
         >
           {/* gradient depth + vignette — desktop only; mobile shows the
                full-bleed background photo instead (see layer above) */}

@@ -7,6 +7,8 @@
  * opt into the CMS green/ivory section picker.
  */
 
+import { SectionSeam } from "@/components/ui/SectionSeam";
+
 type FAQItem = { question: string; answer: string };
 
 type FAQSectionProps = {
@@ -26,9 +28,9 @@ export function FAQSection({ title = "FAQs", items, theme = "dark" }: FAQSection
       }
       style={{
         padding: "clamp(64px,8vw,120px) 0",
-        borderTop: light ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
       }}
     >
+      <SectionSeam theme={light ? "light" : "dark"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         {/* Header */}
         <div className="mb-12 lg:mb-16">

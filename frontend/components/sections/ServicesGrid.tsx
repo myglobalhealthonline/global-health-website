@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ServiceCard } from "@/components/cards/ServiceCard";
+import {
+  SERVICE_CATALOG_DEFAULT_I18N,
+  ServiceTile,
+  type ServiceCatalogItem,
+} from "@/components/sections/ServiceCatalog";
 import { Container } from "@/components/layout/Container";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 type Item = {
   title: string;
@@ -33,6 +39,23 @@ type ServicesGridProps = {
 
 const PAGE_SIZE_FEATURED = 5;
 const PAGE_SIZE_REGULAR = 6;
+
+/** Adapt a ServicesGrid item to the home-page catalog tile shape. */
+function toCatalogItem(item: Item): ServiceCatalogItem {
+  return {
+    type: item.serviceType ?? "general",
+    title: item.title,
+    tag: item.audience ?? (item.serviceType === "specialist" ? "Specialist" : "General"),
+    price: null,
+    priceLabel: item.startingPrice,
+    dur: item.duration ?? "",
+    description: item.description,
+    href: item.detailHref ?? item.href ?? "#",
+    imageSrc: item.imageSrc,
+    detailHref: item.detailHref,
+    bookHref: item.bookHref,
+  };
+}
 
 export function ServicesGrid({
   title,
@@ -84,11 +107,11 @@ export function ServicesGrid({
         isDark
           ? {
               padding: "clamp(64px,8vw,120px) 0",
-              borderTop: "1px solid rgba(255,255,255,0.07)",
             }
           : { background: "var(--color-background-page)", padding: "clamp(48px,6vw,96px) 0" }
       }
     >
+      {isDark ? <SectionSeam theme="dark" /> : null}
       <Container>
         {/* Header row */}
         <div className="flex flex-wrap items-end justify-between gap-8 mb-12 lg:mb-14">
@@ -154,15 +177,34 @@ export function ServicesGrid({
           )}
         </div>
 
-        {/* Card grid */}
+        {/* Card grid — dark sections reuse the home-page catalog tiles so
+            service pages and the country home share one card design. */}
         <div className={useFeaturedFirst ? "gh-card-grid gh-card-grid--featured" : "gh-card-grid"}>
-          {paged.map((item) => (
-            <ServiceCard
-              key={item.detailHref ?? item.href ?? item.title}
-              {...item}
-              dark={isDark}
-            />
-          ))}
+          {isDark
+            ? paged.map((item, i) => (
+                <ServiceTile
+                  key={item.detailHref ?? item.href ?? item.title}
+                  service={toCatalogItem(item)}
+                  variant={useFeaturedFirst && i === 0 ? "featured" : "default"}
+                  i18n={{
+                    ...SERVICE_CATALOG_DEFAULT_I18N,
+                    // Featured tile shows the service's own summary, and Book
+                    // buttons keep the caller's (localised) label.
+                    featuredDescription:
+                      paged[0]?.description ?? SERVICE_CATALOG_DEFAULT_I18N.featuredDescription,
+                    bookConsultation:
+                      item.bookLabel ?? SERVICE_CATALOG_DEFAULT_I18N.bookConsultation,
+                  }}
+                />
+              ))
+            : paged.map((item, i) => (
+                <ServiceCard
+                  key={item.detailHref ?? item.href ?? item.title}
+                  {...item}
+                  dark={isDark}
+                  featured={useFeaturedFirst && i === 0}
+                />
+              ))}
         </div>
       </Container>
     </section>

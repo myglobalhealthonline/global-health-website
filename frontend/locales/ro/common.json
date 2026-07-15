@@ -70,7 +70,7 @@
     "myAccount": "Contul meu",
     "privacyPolicy": "Politica de confidențialitate",
     "termsOfService": "Termeni de serviciu",
-    "tagline": "Medicină oricând și oriunde. Consultații medicale online cu medici înregistrați local în toată Europa.",
+    "tagline": "Medicină oricând și oriunde. Consultații medicale online cu medici înregistrați local pe piețele unde operăm.",
     "stayInformed": "Rămâi informat",
     "newsletterDesc": "Actualizări lunare de sănătate despre noi țări, medici și subiecte de sănătate. Fără spam.",
     "subscribe": "Abonați-vă",
@@ -78,7 +78,7 @@
     "disclaimer": "Consultațiile online nu înlocuiesc îngrijirea de urgență. Dacă aveți nevoie de ajutor urgent, sunați la 112 sau la numărul de urgență local. Informațiile de pe acest site sunt orientări generale; rețetele, certificatele, trimiterile și pașii următori depind de evaluarea clinică și sunt emise la discreția medicului curant.",
     "copyrightSuffix": "Medicină oricând și oriunde",
     "privacyLink": "Confidențialitate",
-    "euCompliant": "Furnizor de telemedicină înregistrat în UE · Conform GDPR"
+    "euCompliant": "Platformă de telemedicină licențiată · Conform GDPR"
   },
   "countrySelector": {
     "title": "Alegeți țara",
@@ -102,7 +102,7 @@
     "trustSecure": "Consultații online securizate",
     "trustLocal": "Servicii medicale specifice țării",
     "trustGdpr": "Îngrijire conformă cu GDPR",
-    "euProvider": "Furnizor de telemedicină înregistrat în UE",
+    "euProvider": "Platformă de telemedicină licențiată",
     "gdprNote": "Conform GDPR · Medici înregistrați local"
   },
   "cta": {
@@ -209,8 +209,8 @@
       "feature3Subtitle": "Programează-te când îți convine, inclusiv în aceeași zi.",
       "stat1Title": "Înregistrați în {country}",
       "stat1Subtitle": "Toți medicii de familie sunt înregistrați pentru a profesa în {country}.",
-      "stat2Title": "Evaluare 4,8/5",
-      "stat2Subtitle": "Din peste 2000 de recenzii verificate ale pacienților.",
+      "stat2Title": "45.000 de consultații în 2025",
+      "stat2Subtitle": "Evaluat pe Doctify.",
       "stat3Title": "Apreciați de mii de oameni",
       "stat3Subtitle": "Alătură-te miilor de pacienți din {country}."
     }
@@ -237,8 +237,8 @@
       "feature3Subtitle": "Private, confidențiale și ușor de programat.",
       "stat1Title": "Înregistrați în {country}",
       "stat1Subtitle": "Toți specialiștii sunt înregistrați pentru a profesa în {country}.",
-      "stat2Title": "Evaluare 4,8/5",
-      "stat2Subtitle": "Din peste 2000 de recenzii verificate ale pacienților.",
+      "stat2Title": "45.000 de consultații în 2025",
+      "stat2Subtitle": "Evaluat pe Doctify.",
       "stat3Title": "Apreciați de mii de oameni",
       "stat3Subtitle": "Alătură-te miilor de pacienți din {country}."
     }

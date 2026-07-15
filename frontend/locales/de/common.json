@@ -70,7 +70,7 @@
     "myAccount": "Mein Konto",
     "privacyPolicy": "Datenschutzerklärung",
     "termsOfService": "Nutzungsbedingungen",
-    "tagline": "Medizin jederzeit und überall. Online-Arztkonsultationen mit lokal registrierten Ärzten in ganz Europa.",
+    "tagline": "Medizin jederzeit und überall. Online-Arztkonsultationen mit lokal registrierten Ärzten in den Märkten, in denen wir tätig sind.",
     "stayInformed": "Informiert bleiben",
     "newsletterDesc": "Monatliche Gesundheitsupdates zu neuen Ländern, Ärzten und Gesundheitsthemen. Kein Spam.",
     "subscribe": "Abonnieren",
@@ -78,7 +78,7 @@
     "disclaimer": "Online-Konsultationen ersetzen keine Notfallversorgung. Wenn Sie dringende Hilfe benötigen, rufen Sie 112 oder Ihre lokale Notrufnummer an. Die Informationen auf dieser Website sind allgemeine Hinweise; Rezepte, Zertifikate, Überweisungen und nächste Schritte hängen von der klinischen Beurteilung ab und werden nach Ermessen des behandelnden Arztes ausgestellt.",
     "copyrightSuffix": "Medizin jederzeit und überall",
     "privacyLink": "Datenschutz",
-    "euCompliant": "In der EU registrierter Telemedizin-Anbieter · DSGVO-konform"
+    "euCompliant": "Lizenzierte Telemedizin-Plattform · DSGVO-konform"
   },
   "countrySelector": {
     "title": "Land auswählen",
@@ -102,7 +102,7 @@
     "trustSecure": "Sichere Online-Sprechstunden",
     "trustLocal": "Länderspezifische Gesundheitsversorgung",
     "trustGdpr": "DSGVO-konforme Versorgung",
-    "euProvider": "In der EU registrierter Telemedizin-Anbieter",
+    "euProvider": "Lizenzierte Telemedizin-Plattform",
     "gdprNote": "DSGVO-konform · Ärzte lokal registriert"
   },
   "cta": {
@@ -209,8 +209,8 @@
       "feature3Subtitle": "Buchen Sie Termine, die zu Ihnen passen – auch am selben Tag.",
       "stat1Title": "Registriert in {country}",
       "stat1Subtitle": "Alle Hausärzte sind zur Ausübung in {country} registriert.",
-      "stat2Title": "Bewertung 4,8/5",
-      "stat2Subtitle": "Aus über 2000 verifizierten Patientenbewertungen.",
+      "stat2Title": "45.000 Konsultationen im Jahr 2025",
+      "stat2Subtitle": "Bewertet auf Doctify.",
       "stat3Title": "Von Tausenden vertraut",
       "stat3Subtitle": "Schließen Sie sich Tausenden Patienten in {country} an."
     }
@@ -237,8 +237,8 @@
       "feature3Subtitle": "Privat, vertraulich und einfach zu buchen.",
       "stat1Title": "Registriert in {country}",
       "stat1Subtitle": "Alle Fachärzte sind zur Ausübung in {country} registriert.",
-      "stat2Title": "Bewertung 4,8/5",
-      "stat2Subtitle": "Aus über 2000 verifizierten Patientenbewertungen.",
+      "stat2Title": "45.000 Konsultationen im Jahr 2025",
+      "stat2Subtitle": "Bewertet auf Doctify.",
       "stat3Title": "Von Tausenden vertraut",
       "stat3Subtitle": "Schließen Sie sich Tausenden Patienten in {country} an."
     }

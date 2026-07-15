@@ -31,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       { url: `${base}${slug}/${lang}`, changeFrequency: "weekly", priority: 0.9 },
       { url: `${base}${slug}/${lang}/doctors`, changeFrequency: "weekly", priority: 0.8 },
       {
-        url: `${base}${slug}/${lang}/gp-appointment`,
+        url: `${base}${slug}/${lang}/gp-consultation-online`,
         changeFrequency: "weekly",
         priority: 0.8,
       },

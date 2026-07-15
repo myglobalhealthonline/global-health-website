@@ -15,7 +15,7 @@ import {
   ChecklistSection,
   WhyChooseSection,
 } from "@/components/sections/ServiceContentSections";
-import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import { getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
@@ -59,7 +59,7 @@ export async function generateMetadata({
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
   const { record: page } = await getPageContent(code, "GENERAL_CONSULTATION", lang as PublicLocale);
-  const url = `${getSiteUrl()}/${country}/${lang}/gp-appointment`;
+  const url = `${getSiteUrl()}/${country}/${lang}/gp-consultation-online`;
   const title =
     page?.seoTitle ?? `General practitioners registered in ${config.name}`;
   const description =
@@ -71,7 +71,7 @@ export async function generateMetadata({
     // "%s · Global Health" template never doubles it.
     title: resolveBrandTitle(title),
     description,
-    alternates: { canonical: url, languages: hreflangAlternates(config, "/gp-appointment") },
+    alternates: { canonical: url, languages: hreflangAlternates(config, "/gp-consultation-online") },
     openGraph: {
       type: "website",
       siteName: SITE_NAME,
@@ -120,12 +120,11 @@ export default async function CountryLangGeneralConsultationPage({
   if (!isCountryFeatureEnabled(overlay, "general-consultations")) notFound();
   // Independent of each other (and of `overlay`, already resolved above) —
   // started together instead of awaited one after another.
-  const [{ record: rawPage, disabled: pageDisabled }, services, doctors, { short: gpShortDisclaimer }] =
+  const [{ record: rawPage, disabled: pageDisabled }, services, doctors] =
     await Promise.all([
       getPageContent(code, "GENERAL_CONSULTATION", lang as PublicLocale),
       getCountryServices(code, "GENERAL", lang),
       getCountryDoctors(code, lang),
-      getCountryDisclaimer(code, lang),
     ]);
 
   // Structured PageContent self-gates via publish status + per-section
@@ -204,7 +203,7 @@ export default async function CountryLangGeneralConsultationPage({
         data={breadcrumbJsonLd([
           { name: "Home", url: "/" },
           { name: config.name, url: `/${slug}/${lang}` },
-          { name: "GP appointment", url: `/${slug}/${lang}/gp-appointment` },
+          { name: "Online GP consultation", url: `/${slug}/${lang}/gp-consultation-online` },
         ])}
       />
       <JsonLd
@@ -212,7 +211,7 @@ export default async function CountryLangGeneralConsultationPage({
           name: `General practitioners in ${config.name}`,
           description: `Network of general practitioners registered to practise in ${config.name}. Profiles include credentials, specialties and languages.`,
           countryName: config.name,
-          url: `/${slug}/${lang}/gp-appointment`,
+          url: `/${slug}/${lang}/gp-consultation-online`,
           bookingUrl: ctaHref,
         })}
       />
@@ -263,11 +262,6 @@ export default async function CountryLangGeneralConsultationPage({
             subtitle: gp.hero.feature3Subtitle,
           },
         ]}
-        badge={{
-          title: gp.hero.badgeTitle,
-          subtitle: gp.hero.badgeSubtitle,
-          accent: gp.hero.badgeAccent,
-        }}
         trustStats={[
           {
             icon: <ShieldCheck className="size-5" strokeWidth={2} aria-hidden />,
@@ -289,6 +283,7 @@ export default async function CountryLangGeneralConsultationPage({
 
       {page?.heroImageSrc ? (
         <section className="gh2-section-forest gh-medical-pattern gh-medical-pattern-dark" style={{ padding: "clamp(64px,8vw,120px) 0" }}>
+          <SectionSeam theme="dark" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 -mt-16 relative">
             <div
               className="relative w-full overflow-hidden rounded-[var(--radius-card)]"
@@ -377,24 +372,15 @@ export default async function CountryLangGeneralConsultationPage({
         variant="carousel"
         language={lang}
         eyebrow="Patient reviews"
-        headline="Trusted by patients"
-        headlineAccent="across Europe"
+        headline="Trusted by patients in"
+        headlineAccent={config.name}
         body="Independent, verified reviews collected by Doctify from patients treated by our clinicians."
       />
 
       <FinalCTA primaryHref={ctaHref} secondaryHref={`/${slug}/${lang}/doctors`} />
       <StickyBookingCTA href={ctaHref} />
 
-      {gpShortDisclaimer ? (
-        <section
-          className="relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
-          style={{ padding: "clamp(28px,4vw,48px) 0" }}
-        >
-          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-            <MedicalDisclaimer variant="short" text={gpShortDisclaimer} />
-          </div>
-        </section>
-      ) : page?.sections.disclaimer ? (
+      {page?.sections.disclaimer ? (
         <MedicalDisclaimer
           paragraphs={page.disclaimerParagraphs}
           theme={themeProp(page?.disclaimerTheme, "dark")}

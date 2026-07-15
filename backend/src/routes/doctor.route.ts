@@ -185,7 +185,7 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
           },
           assets: {
             where: { kind: "IMAGE", isActive: true },
-            select: { path: true },
+            select: { path: true, focalX: true, focalY: true, zoom: true },
             orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
             take: 1,
           },
@@ -258,6 +258,9 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
               (code === country.defaultLocale ? doctor.bio : null),
           })),
           profileImagePath: assets[0]?.path ?? null,
+          profileImageFocalX: assets[0]?.focalX ?? 50,
+          profileImageFocalY: assets[0]?.focalY ?? 50,
+          profileImageZoom: assets[0]?.zoom ?? 1,
           // Masked payout details — full IBAN never leaves the server.
           bank: {
             accountHolder: bankAccount?.accountHolder ?? null,

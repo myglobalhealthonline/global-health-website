@@ -5,6 +5,7 @@ import { listBlogPosts } from "@/lib/content/get-public-blog";
 import { BlogCard } from "@/components/cards/BlogCard";
 import { PageHero } from "@/components/sections/PageHero";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import { Stethoscope, ShieldCheck, BookOpen } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -51,12 +52,12 @@ export default async function BlogIndexPage() {
 
       <section
         id="articles"
-        className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
+        className="relative gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"
         style={{
-          borderTop: "1px solid rgba(29,75,54,0.10)",
           padding: "clamp(64px,8vw,120px) 0",
         }}
       >
+        <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           {ordered.length === 0 ? (
             <div className="mx-auto max-w-[520px] text-center">
@@ -107,7 +108,11 @@ function BlogArchPanel({ articleCount }: { articleCount: number }) {
       <div
         className="gh-glass-emerald gh-floaty absolute -right-6 top-[12%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0s]"
       >
-        <BookOpen className="size-5 shrink-0 text-[var(--color-brand-accent)]" strokeWidth={1.75} aria-hidden />
+        <span
+          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"
+        >
+          <BookOpen className="size-4" strokeWidth={2} aria-hidden />
+        </span>
         <span className="min-w-0">
           <span className="block text-[13px] font-bold leading-tight text-white">{articleCount} {articleCount === 1 ? "article" : "articles"}</span>
           <span className="block text-[11.5px] leading-tight text-white/55">Available now</span>
@@ -116,7 +121,7 @@ function BlogArchPanel({ articleCount }: { articleCount: number }) {
 
       {/* Floating — Doctor reviewed */}
       <div
-        className="gh-glass-emerald gh-floaty absolute -right-4 top-[56%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:1.4s]"
+        className="gh-glass-emerald gh-floaty absolute -right-6 top-[56%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:1.4s]"
       >
         <span
           className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"
@@ -131,7 +136,7 @@ function BlogArchPanel({ articleCount }: { articleCount: number }) {
 
       {/* Floating — Evidence based */}
       <div
-        className="gh-glass-emerald gh-floaty absolute -left-8 bottom-[5%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0.7s]"
+        className="gh-glass-emerald gh-floaty absolute -left-6 bottom-[5%] z-10 flex max-w-[232px] items-center gap-2.5 rounded-2xl px-3.5 py-3 [animation-delay:0.7s]"
       >
         <span
           className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-[rgba(176,241,34,0.12)] text-[var(--color-brand-accent)]"

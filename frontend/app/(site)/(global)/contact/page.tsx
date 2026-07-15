@@ -1,17 +1,68 @@
 import type { Metadata } from "next";
 import { SITE_NAME } from "@/lib/constants";
+import { getSiteUrl } from "@/lib/seo/site-url";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { PageHero } from "@/components/sections/PageHero";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import { Mail, Clock, AlertTriangle, ShieldCheck, BadgeCheck, MessageSquare } from "lucide-react";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 
+const CONTACT_URL = `${getSiteUrl()}/contact`;
+const OG_TITLE = "Contact Global Health — We respond within 24 hours";
+const OG_DESCRIPTION =
+  "Drop us a line — bookings, consultations, partnerships or anything else. A real person on our team gets back to you within 24 hours on working days. No bots, no ticket queue.";
+const OG_IMAGE = "/images/stock/contact.jpg";
+
 export const metadata: Metadata = {
-  title: `Contact us | ${SITE_NAME}`,
+  // Absolute title bypasses the layout's "%s · Global Health" template so the
+  // brand isn't doubled (the title already contains it).
+  title: { absolute: "Contact Global Health — Get in Touch | Response within 24 Hours" },
   description:
     "Get in touch with the Global Health team. We usually respond within 24 hours on working days.",
+  alternates: { canonical: CONTACT_URL },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
+    url: CONTACT_URL,
+    images: [{ url: OG_IMAGE, width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
+    images: [OG_IMAGE],
+  },
+};
+
+const CONTACT_PAGE_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  name: "Contact Global Health",
+  url: CONTACT_URL,
+  description:
+    "Contact the Global Health team. We respond within 24 hours on working days. No bots, no ticket queue.",
+  mainEntity: {
+    "@type": "Organization",
+    name: "Global Health",
+    url: getSiteUrl(),
+    contactPoint: {
+      "@type": "ContactPoint",
+      email: "info@myglobalhealth.online",
+      contactType: "customer service",
+      availableLanguage: ["English", "Portuguese", "Spanish", "Czech", "Romanian"],
+      hoursAvailable: {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        description: "Response within 24 hours on working days",
+      },
+    },
+  },
 };
 
 export default async function ContactPage() {
@@ -20,6 +71,7 @@ export default async function ContactPage() {
 
   return (
     <section>
+      <JsonLd data={CONTACT_PAGE_JSONLD} />
       {/* DARK — hero */}
       <PageHero
         watermark="Contact"
@@ -54,7 +106,8 @@ export default async function ContactPage() {
       />
 
       {/* IVORY — contact form + reach info */}
-      <section id="contact-form" className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel" style={{ borderTop: "1px solid rgba(29,75,54,0.10)" }}>
+      <section id="contact-form" className="relative gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+        <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 gh-section">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.6fr]">
             <aside>
@@ -63,7 +116,7 @@ export default async function ContactPage() {
               </h2>
 
               <ul className="mt-6 space-y-3">
-                <li className="gh2-glass-forest" style={{ border: "1px solid rgba(255,255,255,0.14)", borderRadius: "var(--radius-card)", padding: "1rem" }}>
+                <li className="gh2-glass-forest flex items-center gap-3" style={{ border: "1px solid rgba(255,255,255,0.14)", borderRadius: "var(--radius-card)", padding: "1rem" }}>
                   <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full" style={{ background: "rgba(176,241,34,0.10)", border: "1px solid rgba(176,241,34,0.18)" }}>
                     <Mail className="size-4" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.5} aria-hidden />
                   </span>
@@ -81,7 +134,7 @@ export default async function ContactPage() {
                   </div>
                 </li>
 
-                <li className="gh2-glass-forest" style={{ border: "1px solid rgba(255,255,255,0.14)", borderRadius: "var(--radius-card)", padding: "1rem" }}>
+                <li className="gh2-glass-forest flex items-center gap-3" style={{ border: "1px solid rgba(255,255,255,0.14)", borderRadius: "var(--radius-card)", padding: "1rem" }}>
                   <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full" style={{ background: "rgba(176,241,34,0.10)", border: "1px solid rgba(176,241,34,0.18)" }}>
                     <Clock className="size-4" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.5} aria-hidden />
                   </span>
@@ -172,7 +225,7 @@ function ContactArchPanel({ locale }: { locale: { float1_title: string; float1_s
 
       {/* Floating — Real humans */}
       <div
-        className="gh-glass-emerald gh-floaty absolute -right-4 top-[56%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
+        className="gh-glass-emerald gh-floaty absolute -right-6 top-[56%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
         style={{ maxWidth: 232, animationDelay: "1.4s" }}
       >
         <span
@@ -189,7 +242,7 @@ function ContactArchPanel({ locale }: { locale: { float1_title: string; float1_s
 
       {/* Floating — GDPR safe */}
       <div
-        className="gh-glass-emerald gh-floaty absolute -left-8 bottom-[5%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
+        className="gh-glass-emerald gh-floaty absolute -left-6 bottom-[5%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
         style={{ maxWidth: 232, animationDelay: "0.7s" }}
       >
         <span

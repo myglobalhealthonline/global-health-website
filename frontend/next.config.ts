@@ -203,16 +203,16 @@ const nextConfig: NextConfig = {
         // these new ones so SEO migrates cleanly.
         //
         // Final approved slug set (from product brief):
-        //   GENERAL       → /gp-appointment
+        //   GENERAL       → /gp-consultation-online
         //   SPECIALIST    → /see-a-specialist
         //   PRESCRIPTION  → /repeat-prescription-request
         //   HEALTH_TEST   → /lab-tests
         {
-          source: "/:country/:lang/gp-appointment",
+          source: "/:country/:lang/gp-consultation-online",
           destination: "/:country/:lang/general-consultation",
         },
         {
-          source: "/:country/:lang/gp-appointment/:slug",
+          source: "/:country/:lang/gp-consultation-online/:slug",
           destination: "/:country/:lang/general-consultation/:slug",
         },
         {
@@ -299,10 +299,18 @@ const nextConfig: NextConfig = {
         destination: "/:country/:lang/book",
         permanent: true,
       },
+      // Launch slug rename: the old public GP slug 301s to the new
+      // search-intent slug. MUST ship at launch to preserve any pre-indexed
+      // /gp-appointment links (brief §1.4).
+      {
+        source: "/:country/:lang/gp-appointment",
+        destination: "/:country/:lang/gp-consultation-online",
+        permanent: true,
+      },
       // Legacy → final
       {
         source: "/:country/:lang/general-consultation",
-        destination: "/:country/:lang/gp-appointment",
+        destination: "/:country/:lang/gp-consultation-online",
         permanent: true,
       },
       {
@@ -323,7 +331,7 @@ const nextConfig: NextConfig = {
       // Interim → final (safety net)
       {
         source: "/:country/:lang/online-doctor-visit",
-        destination: "/:country/:lang/gp-appointment",
+        destination: "/:country/:lang/gp-consultation-online",
         permanent: true,
       },
       {

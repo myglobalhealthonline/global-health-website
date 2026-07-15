@@ -107,7 +107,7 @@ export function MobileNav({
           ...(isFeatureOn("general-consultations")
             ? [
                 {
-                  href: `/${navCountrySlug}/${navLang}/gp-appointment`,
+                  href: `/${navCountrySlug}/${navLang}/gp-consultation-online`,
                   label: navigation.navBookGp,
                 },
               ]

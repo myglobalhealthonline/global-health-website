@@ -23,6 +23,7 @@ import {
 import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-country-trust";
 import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import type { CountryTrust } from "@/lib/content/get-country-trust";
 import { formatPriceRounded } from "@/lib/format-currency";
 import type { LocaleCode } from "@/lib/i18n/types";
@@ -249,9 +250,9 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
           className="scroll-mt-24 relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
           style={{
             padding: "clamp(64px,8vw,120px) 0",
-            borderTop: "1px solid rgba(255,255,255,0.07)",
           }}
         >
+          <SectionSeam theme="dark" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <div
               className="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em]"
@@ -309,9 +310,9 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
           className="scroll-mt-24 relative overflow-hidden gh2-section-forest gh-medical-pattern gh-medical-pattern-dark"
           style={{
             padding: "clamp(48px,6vw,80px) 0",
-            borderTop: "1px solid rgba(255,255,255,0.07)",
           }}
         >
+          <SectionSeam theme="dark" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <div
               className="mx-auto max-w-lg rounded-[var(--radius-card)] p-8 text-center"
@@ -353,6 +354,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
             padding: "clamp(28px,4vw,48px) 0",
           }}
         >
+          <SectionSeam theme="light" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <MedicalDisclaimer
               variant="short"

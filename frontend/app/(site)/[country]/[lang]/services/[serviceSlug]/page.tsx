@@ -40,6 +40,8 @@ import { ServiceLinkedBody } from "@/components/sections/ServiceLinkedBody";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
+import { SectionSeam } from "@/components/ui/SectionSeam";
+import HeroFitContent from "@/components/sections/HeroFitContent";
 
 type Params = { country: string; lang: string; serviceSlug: string };
 
@@ -198,12 +200,34 @@ export default async function ServiceDetailPage({
 
       {/* ── Hero — full-viewport 50/50 split: image left, content + booking right ── */}
       <section
-        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-visible lg:overflow-hidden"
+        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate !overflow-visible lg:!overflow-hidden"
       >
-        <div className="grid h-auto grid-rows-[clamp(180px,30svh,280px)_auto] lg:h-full lg:grid-cols-2 lg:grid-rows-1">
+        {/* Mobile/tablet only — full-bleed tinted image behind the text,
+         *  same treatment as PageHero/DoctorProfileTemplate: text sits in
+         *  front of the photo instead of it being a stacked block above. */}
+        {detail.imageSrc ? (
+          <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 lg:hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={detail.imageSrc}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover object-top"
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(3,31,24,0.62) 0%, rgba(3,31,24,0.78) 45%, rgba(3,31,24,0.96) 100%)," +
+                  "linear-gradient(90deg, rgba(3,31,24,0.55) 0%, rgba(3,31,24,0.35) 55%, rgba(3,31,24,0.20) 100%)",
+              }}
+            />
+          </div>
+        ) : null}
 
-          {/* ── LEFT — full-bleed service image ────────────────────────────── */}
-          <div className="relative h-full min-h-0 overflow-hidden">
+        <div className="grid h-auto lg:grid-cols-2">
+
+          {/* ── LEFT — full-bleed service image (desktop only) ──────────────── */}
+          <div className="relative hidden h-full overflow-hidden lg:block">
             {detail.imageSrc ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -235,13 +259,15 @@ export default async function ServiceDetailPage({
 
           {/* ── RIGHT — service content + booking panel ─────────────────────── */}
           <div
-            className="gh-inline-panel-base relative flex h-auto min-h-0 flex-col justify-center overflow-visible px-8 py-6 md:px-12 lg:h-full lg:overflow-y-auto lg:px-14 lg:py-8"
+            className="gh-inline-panel-base relative flex h-auto min-h-0 flex-col justify-center overflow-visible px-8 py-6 md:px-12 lg:px-14 lg:py-8"
           >
             {/* Atmospheric layers */}
-            {/* 1 — gradient depth */}
+            {/* 1 — gradient depth. Desktop only: at mobile the panel
+                 background is the real service photo (above), and this
+                 opaque gradient would paint over it. */}
             <div
               aria-hidden
-              className="gh-inline-panel-depth pointer-events-none absolute inset-0 z-0"
+              className="gh-inline-panel-depth pointer-events-none absolute inset-0 z-0 hidden lg:block"
             />
             {/* 2 — technical lime grid */}
             <div
@@ -268,8 +294,8 @@ export default async function ServiceDetailPage({
               className="gh-inline-plus-small pointer-events-none absolute z-0 select-none font-bold leading-none"
             >+</span>
 
-            {/* Content */}
-            <div className="gh-inline-content-max relative z-10">
+            {/* Content — scale-to-fit on short viewports, no inner scrollbar */}
+            <HeroFitContent className="gh-inline-content-max relative z-10">
               {/* Back link */}
               <Link
                 href={back.href}
@@ -415,7 +441,7 @@ export default async function ServiceDetailPage({
                   </p>
                 </div>
               </div>
-            </div>
+            </HeroFitContent>
           </div>
 
         </div>
@@ -423,7 +449,8 @@ export default async function ServiceDetailPage({
 
       {/* Admin-authored rich detail body */}
       {bodyHtml ? (
-        <section className="gh-inline-clamp-section border-t border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+        <section className="gh-inline-clamp-section gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+          <SectionSeam theme="light" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-primary)]">
               {t.aboutService}
@@ -443,7 +470,8 @@ export default async function ServiceDetailPage({
 
       {/* Who you'll see — clinicians assigned to this service. */}
       {assignedDoctors.length > 0 ? (
-        <section className="gh-inline-clamp-section border-t border-[rgba(29,75,54,0.10)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+        <section className="gh-inline-clamp-section gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+          <SectionSeam theme="light" />
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <header>
               <h2
@@ -472,6 +500,9 @@ export default async function ServiceDetailPage({
                     whatsappNumber={d.whatsappNumber}
                     bio={d.bio ?? ""}
                     imageSrc={d.imageSrc ?? null}
+                    imageFocalX={d.imageFocalX}
+                    imageFocalY={d.imageFocalY}
+                    imageZoom={d.imageZoom}
                     country={country}
                     href={`/${country}/${lang}/doctors/${d.slug}`}
                     bookingHref={buildBookHref({
@@ -495,7 +526,8 @@ export default async function ServiceDetailPage({
       ) : null}
 
       {/* Doctify social proof — compact verified-rating strip */}
-      <section className="border-t border-[var(--color-border)] gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">
+      <section className="gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel gh-inline-clamp-section-tight">
+        <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <DoctifyWidget variant="horizontal" language={lang} />
         </div>
@@ -510,8 +542,9 @@ export default async function ServiceDetailPage({
 
       {/* Closing booking band — visual parity with FinalCTA (§14) */}
       <section
-        className="gh-inline-clamp-section gh2-section-forest relative isolate overflow-hidden border-t border-white/7 gh-medical-pattern gh-medical-pattern-dark"
+        className="gh-inline-clamp-section gh2-section-forest relative isolate overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
       >
+        <SectionSeam theme="dark" />
         <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid items-end gap-8 lg:grid-cols-[1.6fr_1fr]">
             <div>

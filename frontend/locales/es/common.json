@@ -70,7 +70,7 @@
     "myAccount": "Mi cuenta",
     "privacyPolicy": "Política de privacidad",
     "termsOfService": "Términos de servicio",
-    "tagline": "Medicina cuando y donde quieras. Consultas médicas online con médicos colegiados localmente en toda Europa.",
+    "tagline": "Medicina cuando y donde quieras. Consultas médicas online con médicos colegiados localmente en los mercados donde operamos.",
     "stayInformed": "Mantente informado",
     "newsletterDesc": "Actualizaciones mensuales de salud sobre nuevos países, médicos y temas de salud. Sin spam.",
     "subscribe": "Suscribirse",
@@ -78,7 +78,7 @@
     "disclaimer": "Las consultas online no sustituyen la atención de emergencia. Si necesitas ayuda urgente, llama al 112 o al número de emergencia local. La información de este sitio web es orientación general; recetas, certificados, derivaciones y próximos pasos dependen de la evaluación clínica y se emiten a discreción del médico tratante.",
     "copyrightSuffix": "Medicina cuando y donde quieras",
     "privacyLink": "Privacidad",
-    "euCompliant": "Proveedor de telemedicina registrado en la UE · Conforme con el RGPD"
+    "euCompliant": "Plataforma de telemedicina autorizada · Conforme con el RGPD"
   },
   "countrySelector": {
     "title": "Elige tu país",
@@ -102,7 +102,7 @@
     "trustSecure": "Consultas online seguras",
     "trustLocal": "Atención sanitaria específica del país",
     "trustGdpr": "Atención conforme al RGPD",
-    "euProvider": "Proveedor de telemedicina registrado en la UE",
+    "euProvider": "Plataforma de telemedicina autorizada",
     "gdprNote": "Conforme al RGPD · Médicos registrados localmente"
   },
   "cta": {
@@ -209,8 +209,8 @@
       "feature3Subtitle": "Reserva citas que se adapten a ti, incluso el mismo día.",
       "stat1Title": "Colegiados en {country}",
       "stat1Subtitle": "Todos los médicos de cabecera están colegiados para ejercer en {country}.",
-      "stat2Title": "Valoración de 4,8/5",
-      "stat2Subtitle": "De más de 2000 reseñas verificadas de pacientes.",
+      "stat2Title": "45.000 consultas en 2025",
+      "stat2Subtitle": "Valorado en Doctify.",
       "stat3Title": "La confianza de miles",
       "stat3Subtitle": "Únete a miles de pacientes en {country}."
     }
@@ -237,8 +237,8 @@
       "feature3Subtitle": "Privadas, confidenciales y fáciles de reservar.",
       "stat1Title": "Colegiados en {country}",
       "stat1Subtitle": "Todos los especialistas están colegiados para ejercer en {country}.",
-      "stat2Title": "Valoración de 4,8/5",
-      "stat2Subtitle": "De más de 2000 reseñas verificadas de pacientes.",
+      "stat2Title": "45.000 consultas en 2025",
+      "stat2Subtitle": "Valorado en Doctify.",
       "stat3Title": "La confianza de miles",
       "stat3Subtitle": "Únete a miles de pacientes en {country}."
     }

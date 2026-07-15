@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 
 export type TrustRibbonItem = {
   v: string;
@@ -53,11 +54,11 @@ export function TrustRibbon({ items, theme = "light" }: { items?: TrustRibbonIte
     <section
       className={isLight ? "relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"}
       style={{
-        borderTop: isLight ? "2px solid rgba(176,241,34,0.24)" : undefined,
-        borderBottom: `1px solid ${hairline}`,
         padding: "clamp(48px,6vw,88px) 0",
       }}
     >
+      <SectionSeam theme={isLight ? "light" : "dark"} />
+      <SectionSeam position="bottom" theme={isLight ? "light" : "dark"} />
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <RevealOnScroll
           stagger

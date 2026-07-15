@@ -53,6 +53,9 @@ export type DoctorCardData = {
   linkedinUrl?: string | null;
   bio: string;
   imageSrc?: string | null;
+  imageFocalX?: number;
+  imageFocalY?: number;
+  imageZoom?: number;
   href?: string;
   bookingHref?: string;
   ctaLabel?: string;
@@ -71,6 +74,9 @@ export type SpotlightData = {
   languages?: string[];
   bio: string;
   imageSrc?: string | null;
+  imageFocalX?: number;
+  imageFocalY?: number;
+  imageZoom?: number;
   href: string;
   bookingHref: string;
   whatsappNumber?: string;
@@ -168,6 +174,9 @@ export function buildDoctorDirectoryView(
     linkedinUrl: d.linkedinUrl,
     bio: d.bio ?? `Licensed clinician available for online consultations in ${countryName}.`,
     imageSrc: d.imageSrc,
+    imageFocalX: d.imageFocalX,
+    imageFocalY: d.imageFocalY,
+    imageZoom: d.imageZoom,
     href: `/${countrySlug}/${lang}/doctors/${d.slug}`,
     bookingHref: buildBookHref({ country: countrySlug, lang, doctor: d.slug }),
     ctaLabel: i18n.viewProfile,
@@ -187,6 +196,9 @@ export function buildDoctorDirectoryView(
         languages: featured.languages,
         bio: featured.bio ?? "",
         imageSrc: featured.imageSrc ?? null,
+        imageFocalX: featured.imageFocalX,
+        imageFocalY: featured.imageFocalY,
+        imageZoom: featured.imageZoom,
         href: `/${countrySlug}/${lang}/doctors/${featured.slug}`,
         bookingHref: buildBookHref({ country: countrySlug, lang, doctor: featured.slug }),
         whatsappNumber: featured.whatsappNumber,

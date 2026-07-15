@@ -80,7 +80,7 @@ export function PageHero({
   if (variant === "immersive") {
     return (
       <section
-        className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden gh-hero-cap"
+        className="gh-medical-pattern gh-medical-pattern-dark relative isolate !overflow-visible gh-hero-cap"
         style={{ background: "#0F2E25" }}
       >
         <div
@@ -131,9 +131,12 @@ export function PageHero({
             />
           </div>
 
-          {/* RIGHT — content + layered premium background */}
+          {/* RIGHT — content + layered premium background. No overflow-hidden:
+               long titles/copy (long translations) must push this taller and
+               scroll, never get clipped — the "+" watermark glyphs below bleed
+               only ~2%, a non-issue left unclipped. */}
           <div
-            className="relative isolate flex flex-col justify-center overflow-hidden px-8 py-12 md:px-12 lg:px-16 lg:py-20"
+            className="relative isolate flex flex-col justify-center px-8 py-12 md:px-12 lg:px-16 lg:py-20"
             style={{ background: "#0F2E25" }}
           >
             {/* 1 — dark-to-green gradient depth (base) + edge vignette */}
@@ -336,14 +339,11 @@ export function PageHero({
   const bgSrc = mobileBgSrc ?? heroImage?.src;
 
   return (
-    <section
-      className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden text-white gh-hero-cap"
-      style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
-    >
+    <section className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate !overflow-visible text-white gh-hero-cap">
       {/* Mobile/tablet only — full-bleed portrait behind a dark-green tint,
        *  replacing the plus mask (which is desktop-only, see aside below). */}
       {bgSrc ? (
-        <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 lg:hidden">
+        <div aria-hidden className="gh-medical-pattern-layer absolute inset-0 overflow-hidden lg:hidden">
           <Image
             src={bgSrc}
             alt=""
@@ -365,13 +365,17 @@ export function PageHero({
       ) : null}
 
       {/* Hidden below lg — huge outlined text over the mobile bg photo adds
-           visual noise without a legibility/brand payoff at phone widths. */}
-      <div
-        aria-hidden
-        className="gh2-watermark gh-medical-pattern-layer pointer-events-none -right-[0.06em] bottom-[-0.16em] hidden select-none lg:block"
-        style={{ fontSize: "clamp(5rem,14vw,13rem)" }}
-      >
-        {watermarkText}
+           visual noise without a legibility/brand payoff at phone widths.
+           Bleeds off the section edge on purpose, so it needs its own clip —
+           the section itself must stay overflow-visible so long titles/copy
+           (long translations) push it taller instead of getting clipped. */}
+      <div aria-hidden className="gh-medical-pattern-layer pointer-events-none absolute inset-0 hidden overflow-hidden lg:block">
+        <div
+          className="gh2-watermark absolute -right-[0.06em] bottom-[-0.16em] select-none"
+          style={{ fontSize: "clamp(5rem,14vw,13rem)" }}
+        >
+          {watermarkText}
+        </div>
       </div>
 
       <div

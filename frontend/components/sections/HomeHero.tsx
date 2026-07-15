@@ -71,6 +71,7 @@ export function HomeHero({
   sameDay,
   heroTitle,
   heroSubtitle,
+  heroBullets,
   heroImageSrc,
   ctaLabel,
   i18n,
@@ -85,6 +86,8 @@ export function HomeHero({
   sameDay?: SameDayHeroData;
   heroTitle?: string | null;
   heroSubtitle?: string | null;
+  /** Verbatim trust bullets (no country name appended). Overrides i18n. */
+  heroBullets?: string[] | null;
   heroImageSrc?: string | null;
   ctaLabel?: string | null;
   i18n?: HomeHeroI18n;
@@ -109,16 +112,25 @@ export function HomeHero({
     idealChars: IDEAL_HEADING_CHARS,
   });
 
+  // Per-country override supplies all three bullets verbatim; otherwise the
+  // i18n default composes them (bullet 1 appends the country name).
+  const bulletOverride = heroBullets && heroBullets.length === 3 ? heroBullets : null;
   const trustItems = [
-    { icon: ShieldCheck, label: `${i18n?.trustLicensed ?? "Licensed in"} ${countryName}` },
-    { icon: Clock, label: i18n?.trustAvailability ?? "Live availability" },
-    { icon: Stethoscope, label: i18n?.trustAppointments ?? "Online appointments" },
+    {
+      icon: ShieldCheck,
+      label: bulletOverride?.[0] ?? `${i18n?.trustLicensed ?? "Licensed in"} ${countryName}`,
+    },
+    { icon: Clock, label: bulletOverride?.[1] ?? i18n?.trustAvailability ?? "Live availability" },
+    {
+      icon: Stethoscope,
+      label: bulletOverride?.[2] ?? i18n?.trustAppointments ?? "Online appointments",
+    },
   ];
 
   return (
     <section
       aria-labelledby="hero-title"
-      className="gh-home-hero-root gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden gh-hero-cap-full max-lg:!min-h-[min(calc(100svh-var(--header-height)),760px)]"
+      className="gh-home-hero-root gh-medical-pattern gh-medical-pattern-dark relative !overflow-visible gh-hero-cap-full max-lg:!min-h-[min(calc(100svh-var(--header-height)),760px)]"
     >
       {/* ── Base layer: hero photo, full-bleed ── */}
       <div className="gh-home-hero-photoLayer gh-medical-pattern-layer absolute inset-0">
@@ -142,12 +154,14 @@ export function HomeHero({
 
       {/* ── Watermark — sits above overlay, below content. Hidden below lg:
            its clamp() font-size still reads huge on phone widths and is
-           pure atmosphere, not content. ── */}
-      <div
-        aria-hidden
-        className="gh-home-hero-watermark gh-medical-pattern-layer gh2-watermark pointer-events-none absolute bottom-[-0.06em] left-[-0.04em] hidden select-none lg:block"
-      >
-        {countryName}
+           pure atmosphere, not content. Bleeds off the section edge on
+           purpose, so it gets its own clip — the section itself must stay
+           overflow-visible so long titles/copy (long translations) push it
+           taller instead of getting silently clipped. ── */}
+      <div aria-hidden className="gh-medical-pattern-layer pointer-events-none absolute inset-0 hidden overflow-hidden lg:block">
+        <div className="gh-home-hero-watermark gh2-watermark absolute bottom-[-0.06em] left-[-0.04em] select-none">
+          {countryName}
+        </div>
       </div>
 
       {/* ── Content ── */}
@@ -159,8 +173,6 @@ export function HomeHero({
               <span className="gh-home-hero-countryBadge inline-flex items-center gap-2.5 rounded-full py-1.5 pl-2 pr-4 text-[11px] font-bold uppercase tracking-[0.18em] text-white/85">
                 <Flag code={countryCode} size="sm" />
                 {countryName}
-                <span className="opacity-40">·</span>
-                <span>Medical Clinic</span>
               </span>
               <span className="gh-home-hero-availableBadge inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--color-brand-accent)]">
                 <span aria-hidden className="gh-pulse-dot !size-1.5" />

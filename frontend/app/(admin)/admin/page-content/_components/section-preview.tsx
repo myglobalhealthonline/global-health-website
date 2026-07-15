@@ -1,7 +1,7 @@
 /** Preview thumbnails so the admin can see, at a glance, which public
  * section a FormSection card edits. Hero/intro/who-for/why-choose/FAQ/
  * disclaimer render REAL screenshots of the live IE GP hub
- * (/ie/en/gp-appointment), captured once via Playwright into
+ * (/ie/en/gp-consultation-online), captured once via Playwright into
  * frontend/public/admin/section-previews/{kind}.png — see git history for
  * the (deleted) capture script. Body has no live section (content cleared)
  * and SEO has no visual section, so those two keep a decorative schematic

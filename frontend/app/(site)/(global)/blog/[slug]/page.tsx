@@ -7,6 +7,7 @@ import { SITE_NAME } from "@/lib/constants";
 import { getBlogPost, type BlogDoctor } from "@/lib/content/get-public-blog";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
+import { SectionSeam } from "@/components/ui/SectionSeam";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { articleJsonLd } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
@@ -169,9 +170,9 @@ export default async function BlogPostPage({ params }: Props) {
         className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark gh2-section-forest"
         style={{
           padding: "clamp(64px,8vw,100px) 0",
-          borderTop: "1px solid rgba(255,255,255,0.07)",
         }}
       >
+        <SectionSeam theme="dark" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid items-end gap-10 lg:grid-cols-[1.6fr_1fr]">
             <div>
