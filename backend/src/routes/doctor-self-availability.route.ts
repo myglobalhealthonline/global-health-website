@@ -129,6 +129,17 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
               endAt: true,
               status: true,
               blockReason: true,
+              // Booked/held slots carry the claiming appointment — surface the
+              // patient + consultation detail so the doctor's calendar can open
+              // a booked slot the same way the admin calendar does.
+              appointment: {
+                select: {
+                  id: true,
+                  fullName: true,
+                  consultationType: true,
+                  meetingUrl: true,
+                },
+              },
             },
           }),
           resolveDoctorTimeZone(auth.doctorId),
@@ -143,6 +154,11 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
             endAt: s.endAt.toISOString(),
             status: s.status,
             blockReason: s.blockReason,
+            // Only booked slots have a patient behind them; open/blocked stay bare.
+            appointmentId: s.appointment?.id ?? null,
+            patientName: s.appointment?.fullName ?? null,
+            consultationType: s.appointment?.consultationType ?? null,
+            meetingUrl: s.appointment?.meetingUrl ?? null,
           })),
           clinicTimezone,
           availableTimezones,

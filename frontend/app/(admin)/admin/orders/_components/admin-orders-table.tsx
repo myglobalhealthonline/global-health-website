@@ -16,7 +16,7 @@ import {
   Tr,
   type PillTone,
 } from "@/components/portal-atoms";
-import { formatAppDate } from "@/lib/format-datetime";
+import { formatAppDate, formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
 import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { OrderMeetLinkDisplay } from "./order-meet-link-display";
@@ -27,6 +27,13 @@ import {
   RecordDetailsSection,
   RecordDetailsField,
 } from "@/components/RecordDetailsDrawer";
+
+export type OrderConsultation = {
+  appointmentId: string;
+  doctorName: string | null;
+  scheduledAt: string | null;
+  consultationType: string;
+};
 
 export type AdminOrderRow = {
   id: string;
@@ -45,7 +52,32 @@ export type AdminOrderRow = {
   stripeCheckoutUrl: string | null;
   paidAt: string | null;
   createdAt: string;
+  /** Consultation appointment(s) on this order — doctor + scheduled time.
+   *  Empty for pure commerce orders (health tests / prescriptions). */
+  consultations?: OrderConsultation[];
 };
+
+/** The order's primary (earliest) consultation, or null for commerce orders. */
+function primaryConsultation(o: AdminOrderRow): OrderConsultation | null {
+  return o.consultations?.[0] ?? null;
+}
+
+/** "Dr Jane Doe" / "Unassigned" / "—" (no consultation). Appends "+N" when an
+ *  order bundles more than one consultation. */
+function doctorLabel(o: AdminOrderRow): string {
+  const c = primaryConsultation(o);
+  if (!c) return "—";
+  const base = c.doctorName ?? "Unassigned";
+  const extra = (o.consultations?.length ?? 0) - 1;
+  return extra > 0 ? `${base} +${extra}` : base;
+}
+
+/** Scheduled consultation time, "Time TBC" when unscheduled, "—" otherwise. */
+function consultationTimeLabel(o: AdminOrderRow): string {
+  const c = primaryConsultation(o);
+  if (!c) return "—";
+  return c.scheduledAt ? formatAppDateTime(c.scheduledAt) : "Time TBC";
+}
 
 function CopyLinkButton({ url }: { url: string }) {
   const [copied, setCopied] = useState(false);
@@ -257,6 +289,8 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
             </Th>
             <Th>Order</Th>
             <Th>Customer</Th>
+            <Th>Doctor</Th>
+            <Th>Consultation</Th>
             <Th align="right">Total</Th>
             <Th>Status</Th>
             <Th>Created</Th>
@@ -294,6 +328,16 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                     </span>
                     <span className="block text-xs text-[var(--color-text-muted)]">
                       {o.email}
+                    </span>
+                  </Td>
+                  <Td>
+                    <span className="text-sm text-[var(--color-text-primary)]">
+                      {doctorLabel(o)}
+                    </span>
+                  </Td>
+                  <Td>
+                    <span className="text-sm text-[var(--color-text-muted)]">
+                      {consultationTimeLabel(o)}
                     </span>
                   </Td>
                   <Td align="right">
@@ -353,6 +397,12 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
               { label: "Country", value: o.countryCode.toUpperCase() },
               { label: "Items", value: o.itemCount },
               { label: "Created", value: formatAppDate(o.createdAt) },
+              ...(primaryConsultation(o)
+                ? [
+                    { label: "Doctor", value: doctorLabel(o) },
+                    { label: "Consultation", value: consultationTimeLabel(o) },
+                  ]
+                : []),
             ]}
             actions={
               <>
@@ -466,6 +516,23 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
       >
         {quickViewOrder ? (
           <>
+            {quickViewOrder.consultations && quickViewOrder.consultations.length > 0 ? (
+              <RecordDetailsSection title="Consultation">
+                {quickViewOrder.consultations.map((c) => (
+                  <div key={c.appointmentId} className="grid gap-1">
+                    <RecordDetailsField
+                      label="Doctor"
+                      value={c.doctorName ?? "Unassigned"}
+                    />
+                    <RecordDetailsField
+                      label="Time"
+                      value={c.scheduledAt ? formatAppDateTime(c.scheduledAt) : "Time TBC"}
+                    />
+                  </div>
+                ))}
+              </RecordDetailsSection>
+            ) : null}
+
             <RecordDetailsSection title="Items">
               <RecordDetailsField
                 label="Country"

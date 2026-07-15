@@ -55,6 +55,60 @@ import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 
 const CART_COOKIE = "gh_cart";
 
+// Prisma include that pulls each order's consultation appointment(s) plus the
+// assigned doctor's name — so every order surface (admin + patient) can show
+// "which doctor, at what time" without a second round-trip. Shared by the
+// four order-read handlers below.
+const orderConsultationsInclude = {
+  orderAppointments: {
+    include: {
+      appointment: {
+        select: {
+          id: true,
+          scheduledAt: true,
+          consultationType: true,
+          doctor: { select: { fullName: true } },
+        },
+      },
+    },
+  },
+} as const;
+
+type OrderConsultationDto = {
+  appointmentId: string;
+  doctorName: string | null;
+  scheduledAt: string | null;
+  consultationType: string;
+};
+
+/** Flatten an order's `orderAppointments` join into a lean, wire-ready list of
+ *  consultations (earliest scheduled first; unscheduled last). */
+function buildOrderConsultations(
+  orderAppointments: {
+    appointment: {
+      id: string;
+      scheduledAt: Date | null;
+      consultationType: string;
+      doctor: { fullName: string } | null;
+    } | null;
+  }[],
+): OrderConsultationDto[] {
+  return orderAppointments
+    .map((oa) => oa.appointment)
+    .filter((a): a is NonNullable<typeof a> => a !== null)
+    .sort(
+      (a, b) =>
+        (a.scheduledAt?.getTime() ?? Number.POSITIVE_INFINITY) -
+        (b.scheduledAt?.getTime() ?? Number.POSITIVE_INFINITY),
+    )
+    .map((a) => ({
+      appointmentId: a.id,
+      doctorName: a.doctor?.fullName ?? null,
+      scheduledAt: a.scheduledAt?.toISOString() ?? null,
+      consultationType: a.consultationType,
+    }));
+}
+
 const checkoutBodySchema = z.object({
   email: z.string().trim().email("Invalid email"),
   fullName: z.string().trim().min(2, "Name too short").max(120),
@@ -572,7 +626,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       const orders = await prisma.order.findMany({
         where: { userId: user.id },
         orderBy: { createdAt: "desc" },
-        include: { items: true },
+        include: { items: true, ...orderConsultationsInclude },
       });
       return okResponse({
         items: orders.map((o) => ({
@@ -586,6 +640,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           shippingCents: o.shippingCents,
           totalCents: o.totalCents,
           itemCount: o.items.reduce((s, i) => s + i.quantity, 0),
+          consultations: buildOrderConsultations(o.orderAppointments),
           paidAt: o.paidAt?.toISOString() ?? null,
           createdAt: o.createdAt.toISOString(),
         })),
@@ -704,7 +759,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             id: params.data.id,
             userId: user.id,
           },
-          include: { items: true },
+          include: { items: true, ...orderConsultationsInclude },
         });
         if (!order) return reply.status(404).send(errorResponse("Order not found"));
         return okResponse({
@@ -741,6 +796,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             healthTestId: i.healthTestId,
             serviceId: i.serviceId,
           })),
+          consultations: buildOrderConsultations(order.orderAppointments),
           trackingNumber: order.trackingNumber,
           trackingCarrier: order.trackingCarrier,
           trackingUrl: order.trackingUrl,
@@ -822,6 +878,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         include: {
           items: { select: { quantity: true, kind: true } },
           invoices: { where: { documentType: { not: "CREDIT_NOTE" } }, select: { id: true }, take: 1 },
+          ...orderConsultationsInclude,
         },
         take: limit + 1,
         ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
@@ -877,6 +934,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           meetingUrl: meetingUrlById.get(o.id) ?? o.meetingUrl,
           hasConsultation: orderHasConsultationItem(o.items),
           invoiceId: o.invoices[0]?.id ?? null,
+          consultations: buildOrderConsultations(o.orderAppointments),
           // Suppress the pay link once the order is no longer payable
           // (cancelled / refunded / already paid).
           stripeCheckoutUrl:
@@ -913,7 +971,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       try {
         const order = await prisma.order.findUnique({
           where: { id: params.data.id },
-          include: { items: true },
+          include: { items: true, ...orderConsultationsInclude },
         });
         if (!order) return reply.status(404).send(errorResponse("Order not found"));
 
@@ -1018,6 +1076,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             appointmentId: i.appointmentId,
           })),
           appointmentIds: order.appointmentIds,
+          consultations: buildOrderConsultations(order.orderAppointments),
           meetingUrl,
           trackingNumber: order.trackingNumber,
           trackingCarrier: order.trackingCarrier,

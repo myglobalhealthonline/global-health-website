@@ -388,6 +388,14 @@ export function WeekCalendar({
                       p.item.status === "OPEN" &&
                       new Date(p.item.startAt).getTime() > Date.now();
                     const isConsult = p.item.kind === "consultation";
+                    // A booked availability slot that knows its patient (doctor
+                    // calendar) reads + behaves like a consultation block:
+                    // patient name as the hero, click to open the detail drawer.
+                    const isBookedWithPatient =
+                      p.item.kind === "slot" &&
+                      p.item.status === "BOOKED" &&
+                      Boolean(p.item.meta?.patientName);
+                    const showPatient = isConsult || isBookedWithPatient;
                     const patientName =
                       p.item.meta?.patientName || p.item.title;
                     const style: CSSProperties = {
@@ -403,7 +411,7 @@ export function WeekCalendar({
                     // block bounds (truncate + the block clips overflow). Open
                     // and blocked slots show only the time — colour carries the
                     // status (green = open, red = blocked), no text label.
-                    const inner = isConsult ? (
+                    const inner = showPatient ? (
                       <>
                         <span className="block truncate text-portal-micro font-semibold leading-none opacity-90">
                           {time}
@@ -456,7 +464,7 @@ export function WeekCalendar({
                         </button>
                       );
                     }
-                    if (isConsult) {
+                    if (isConsult || isBookedWithPatient) {
                       return (
                         <button
                           key={p.item.id}

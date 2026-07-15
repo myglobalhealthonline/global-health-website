@@ -427,6 +427,10 @@ model Clinic {
 /// `user.doctorProfile` to scope queries to this row's id.
 model Doctor {
   id                          String                @id @default(cuid())
+  /// Legacy import: source `GlobalDoctors._id` (Mongo ObjectId hex). Null for
+  /// doctors created natively in this app. Unique so the loader upserts
+  /// idempotently. See backend/scripts/legacy-migration/.
+  legacyMongoId               String?               @unique
   countryId                   String
   slug                        String
   fullName                    String
@@ -1533,6 +1537,12 @@ enum AppointmentStatus {
 
 model Appointment {
   id                        String                    @id @default(cuid())
+  /// Legacy import: source `Appointments._id` (Mongo ObjectId hex). Null for
+  /// native bookings. Unique — the loader upserts on it idempotently.
+  legacyMongoId             String?                   @unique
+  /// strict:false overflow from the Mongo import — source keys not promoted to
+  /// a real column. Nothing dropped silently.
+  legacyExtra               Json?
   userId                    String?
   countryCode               String
   consultationType          String
@@ -1725,6 +1735,19 @@ model Appointment {
 model PatientProfile {
   id                 String       @id @default(cuid())
   email              String       @unique
+  /// Legacy import: source `patients_<market>._id` values merged into this
+  /// profile. An array (not a single unique id) because one patient can exist
+  /// in several market collections and dedups to ONE row here, keyed by email.
+  /// Resolve a legacy patient id with `where: { legacyMongoIds: { has: id } }`.
+  legacyMongoIds     String[]     @default([])
+  /// Parallel to legacyMongoIds: which source collection each legacy id came
+  /// from (e.g. "patients_ireland"). Same index positions.
+  legacySourceMarkets String[]    @default([])
+  /// strict:false overflow from the Mongo import — any source key NOT promoted
+  /// to a real column above (Numero de Utente, health-plan number, CIF, exotic
+  /// localized keys, ...). Nothing from the source is dropped silently. Promote
+  /// fields out of here into real columns later at leisure.
+  legacyExtra        Json?
   userId             String?      @unique
   user               User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
   fullName           String?
@@ -1866,6 +1889,9 @@ model PatientProfile {
 
 model GeneratedDocument {
   id            String                @id @default(cuid())
+  /// Legacy import: source patient-embedded generated-doc element id (re-routed
+  /// from MedicalDocument so doctors see it in consultation history). Unique.
+  legacyMongoId String?               @unique
   appointmentId String
   doctorId      String
   patientEmail  String
@@ -1893,6 +1919,10 @@ model GeneratedDocument {
 /// Free-text clinical note per appointment (not a PDF; no review/send).
 model MedicalNote {
   id                String      @id @default(cuid())
+  /// Legacy import: source patient-embedded `medicalNotes[]` element id (subdoc
+  /// _id hex, or synthetic "<patientId>:note:<ordinal>"). Unique so the loader
+  /// upserts idempotently.
+  legacyMongoId     String?     @unique
   appointmentId     String
   patientEmail      String
   content           String
@@ -1909,6 +1939,9 @@ model MedicalNote {
 
 model BrazilConsentSubmission {
   id              String                     @id @default(cuid())
+  /// Legacy import: source `brazil_consent_submissions._id` (Mongo ObjectId
+  /// hex). Null for native rows. Unique — loader upserts on it idempotently.
+  legacyMongoId   String?                    @unique
   appointmentId   String
   fullName        String?
   dob             String?
@@ -1930,6 +1963,9 @@ model BrazilConsentSubmission {
 
 model ReviewInvite {
   id                    String       @id @default(cuid())
+  /// Legacy import: source `reviewinvites._id` (Mongo ObjectId hex). Null for
+  /// native rows. Unique — loader upserts on it idempotently.
+  legacyMongoId         String?      @unique
   /// SHA-256 hex digest of the bearer token — never store the raw token
   /// (S-009). The raw token only ever exists in the URL emailed/WhatsApp'd
   /// to the patient.
@@ -3085,6 +3121,9 @@ model AuditLog {
 /// access surface is unambiguous.
 model AppointmentDocument {
   id            String      @id @default(cuid())
+  /// Legacy import: source patient-embedded upload element id (re-routed from
+  /// MedicalDocument so doctors see it in the appointment workspace). Unique.
+  legacyMongoId String?     @unique
   appointmentId String
   doctorId      String
   label         String
@@ -3234,6 +3273,11 @@ model PatientNationalityDocument {
 /// visibleToPatient controls what the patient portal shows.
 model MedicalDocument {
   id                    String   @id @default(cuid())
+  /// Legacy import: source patient-embedded `UPLOAD MEDICAL CERTIFICATES AND
+  /// JUSTIFICATIONS[]` element id (Mongo subdoc _id hex, or a synthetic
+  /// "<patientId>:<ordinal>" when the source element has no _id). Unique so
+  /// the loader upserts idempotently.
+  legacyMongoId         String?  @unique
   patientProfileId      String
   globalHealthNumber    String?
   uploadedByUserId      String?
@@ -3690,7 +3734,9 @@ model InvoiceCounter {
 
 /// Fiscal document tied to an Order. The type reflects how the booking was paid:
 ///   INVOICE          — manual / AI-agent booking, issued unpaid; patient pays later.
-///   RECEIPT          — an INVOICE that has since been paid (same number, relabeled).
+///   RECEIPT          — issued when a manual/AI INVOICE is PAID. A SEPARATE row that
+///                      reuses the invoice's number; the unpaid INVOICE row is kept
+///                      so the order retains both documents.
 ///   INVOICE_RECEIPT  — direct website checkout, paid on issue; acts as both.
 enum InvoiceDocumentType {
   INVOICE
@@ -3703,12 +3749,13 @@ enum InvoiceDocumentType {
 
 /// Invoice/receipt tied to an Order (Portugal excluded).
 /// invoiceNumber is the human-facing reference: IE-00001, CZ-00001, SP-00001, RO-00001.
-/// The same number is reused when an INVOICE transitions to a RECEIPT on payment.
-/// An order normally has ONE fiscal document, plus at most one CREDIT_NOTE issued
-/// on refund — hence orderId is indexed, not unique.
+/// NOT unique: a manual/AI booking keeps its unpaid INVOICE row AND gets a separate
+/// RECEIPT row that reuses the SAME number when paid — so one number can appear on
+/// two rows (the invoice it settles + the receipt). Orders may also carry a
+/// CREDIT_NOTE (own CN- number) on refund — hence orderId is indexed, not unique.
 model Invoice {
   id            String              @id @default(cuid())
-  invoiceNumber String              @unique
+  invoiceNumber String
   orderId       String
   order         Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
   countryCode   String
@@ -3719,6 +3766,7 @@ model Invoice {
 
   @@map("invoices")
   @@index([orderId])
+  @@index([invoiceNumber])
   @@index([countryCode, generatedAt(sort: Desc)])
   @@index([documentType, generatedAt(sort: Desc)])
 }
@@ -4422,4 +4470,33 @@ model CorporateServiceRequest {
 
   @@index([companyId, status])
   @@index([employeeId, status])
+}
+
+/// Legacy-migration audit trail. Every source reference that the loader could
+/// NOT resolve into a real FK (a broken patientId, a missing doctor author, a
+/// review invite whose orderNumber matched no appointment, a document whose
+/// object is missing from storage, ...) lands here instead of being silently
+/// dropped or NULLed. An empty table after a run is the goal; every row must be
+/// read and accepted before cutover. Populated by
+/// backend/scripts/legacy-migration/. Never read by app runtime.
+model MigrationUnresolved {
+  id           String   @id @default(cuid())
+  /// Which loader / source produced this (e.g. "appointments", "notes").
+  stage        String
+  /// Source collection the row came from (e.g. "Appointments").
+  sourceColl   String
+  /// The unresolved source document's Mongo _id (hex), when known.
+  legacyId     String?
+  /// The target model/column the reference would have populated.
+  targetModel  String?
+  columnName   String?
+  /// The raw legacy value that failed to resolve (an ObjectId, order number,
+  /// object key, ...). Do NOT put decrypted PHI here.
+  legacyValue  String?
+  /// Human-readable reason (e.g. "no doctor with legacyMongoId", "object 404").
+  reason       String
+  createdAt    DateTime @default(now())
+
+  @@index([stage])
+  @@index([sourceColl, legacyId])
 }

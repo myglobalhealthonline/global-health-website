@@ -16,6 +16,13 @@ export type DoctorTimeSlotView = {
   status: "OPEN" | "HELD" | "BOOKED" | "BLOCKED";
   /** Reason recorded when the slot was bulk-blocked (vacation / time-off). */
   blockReason?: string | null;
+  /** Booked slots carry their claiming appointment so the doctor can open the
+   *  slot and see who booked it — parity with the admin calendar. Null on
+   *  open / blocked / held slots. */
+  appointmentId?: string | null;
+  patientName?: string | null;
+  consultationType?: string | null;
+  meetingUrl?: string | null;
 };
 
 export type DoctorAvailabilityResponse = {
