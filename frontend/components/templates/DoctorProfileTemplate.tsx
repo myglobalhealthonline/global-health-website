@@ -515,7 +515,7 @@ export function DoctorProfileTemplate({
       <section className="relative bg-[linear-gradient(168deg,#15382A_0%,#0F2E25_55%,#0B241C_100%)] gh-inline-clamp-section-cta">
         <SectionSeam theme="dark" />
         <div className="gh-container">
-          <div className="grid items-end gap-10 lg:grid-cols-[1.6fr_1fr]">
+          <div className="grid items-center gap-10 lg:grid-cols-[1.6fr_1fr]">
             <div>
               <p
                 className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]"
