@@ -93,11 +93,6 @@ export function PortalDialog({
       document.body.style.overflow = previousOverflow;
       returnFocusRef.current?.focus();
     };
-    // Intentionally omits `onClose` — see onCloseRef above. Re-running this
-    // effect on every render would steal focus back to the panel's first
-    // focusable element (its header close button), not wherever the user
-    // is currently typing.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   if (!open || !mounted) return null;
