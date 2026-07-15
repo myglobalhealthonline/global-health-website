@@ -54,6 +54,12 @@
     "switchToThisPlan": "Zu diesem Plan wechseln",
     "viewDetails": "Tarifdetails",
     "onlineOnlyNote": "Nur Online-/Videoberatungen — keine persönlichen Besuche und keine Verschreibungen.",
+    "trust_card1_title": "Zugelassene Ärzte",
+    "trust_card1_subtitle": "Lokal registriert",
+    "trust_card2_title": "Flexible Tarife",
+    "trust_card2_subtitle": "Jederzeit kündbar",
+    "trust_card3_title": "Sichere Zahlungen",
+    "trust_card3_subtitle": "Geschützt durch Stripe",
     "empty": {
       "title": "Mitgliedschaft ist in {country} noch nicht verfügbar",
       "body": "Monatstarife sind in Ihrem Land noch nicht verfügbar. Sie können in der Zwischenzeit weiterhin Online-Beratungen und Gesundheitstests für zu Hause buchen.",

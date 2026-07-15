@@ -54,6 +54,12 @@
     "switchToThisPlan": "Schimbă la acest plan",
     "viewDetails": "Detalii plan",
     "onlineOnlyNote": "Doar consultații online/video — fără vizite în persoană și fără prescripții medicale.",
+    "trust_card1_title": "Medici licențiați",
+    "trust_card1_subtitle": "Înregistrați local",
+    "trust_card2_title": "Planuri flexibile",
+    "trust_card2_subtitle": "Anulați oricând",
+    "trust_card3_title": "Plăți securizate",
+    "trust_card3_subtitle": "Protejat de Stripe",
     "empty": {
       "title": "Abonamentul nu este încă disponibil în {country}",
       "body": "Planurile lunare nu au fost încă lansate în țara dumneavoastră. Între timp, puteți totuși să programați consultații online și teste de sănătate la domiciliu.",

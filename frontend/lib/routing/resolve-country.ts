@@ -1,4 +1,9 @@
-﻿import { countries, getCountryByCode, type CountryCode } from "@/data/countries";
+﻿import {
+  countries as staticCountries,
+  getCountryByCode,
+  type CountryCode,
+  type CountryConfig,
+} from "@/data/countries";
 import { getEnabledDomainConfig } from "@/lib/routing/domain-map";
 import { legacyPrefixToCountry } from "@/lib/routing/legacy-route-map";
 import type { CountryRuntimeContext, ResolveCountryInput } from "@/lib/routing/types";
@@ -10,7 +15,21 @@ function normalizePathname(pathname?: string | null): string {
   return pathname.toLowerCase().split("?")[0] ?? "/";
 }
 
+function findByCode(list: CountryConfig[], code: CountryCode | null | undefined) {
+  if (!code) return undefined;
+  return list.find((c) => c.code === code);
+}
+
+/**
+ * `input.countries`, when supplied, is the admin/DB-merged country list
+ * (`getPublicCountriesMerged()`) — resolution then reflects admin-edited
+ * `defaultLocale` and admin-added countries instead of only the static seed.
+ * Defaults to the static seed when omitted, which is what the edge
+ * middleware (`proxy.ts` → `getRequestContext`) always does — it never
+ * fetches at the edge, by design.
+ */
 export function resolveCountry(input: ResolveCountryInput = {}): CountryRuntimeContext {
+  const list = input.countries ?? staticCountries;
   const pathname = normalizePathname(input.pathname);
 
   // Canonical routes are `/{country-slug}/{lang}/...`. An explicit country
@@ -21,13 +40,13 @@ export function resolveCountry(input: ResolveCountryInput = {}): CountryRuntimeC
   // codes, so matching the first segment here is safe.
   const firstSegment = pathname.split("/").filter(Boolean)[0];
   if (firstSegment) {
-    const byPathSlug = countries.find((c) => c.slug.toLowerCase() === firstSegment);
+    const byPathSlug = list.find((c) => c.slug.toLowerCase() === firstSegment);
     if (byPathSlug) return { country: byPathSlug, reason: "path-slug" };
   }
 
   const domainConfig = getEnabledDomainConfig(input.host);
   if (domainConfig) {
-    const byDomain = getCountryByCode(domainConfig.countryCode);
+    const byDomain = findByCode(list, domainConfig.countryCode);
     if (byDomain) return { country: byDomain, reason: "domain" };
   }
 
@@ -36,11 +55,18 @@ export function resolveCountry(input: ResolveCountryInput = {}): CountryRuntimeC
   );
 
   if (matchedLegacy) {
-    const byPath = getCountryByCode(matchedLegacy.countryCode);
+    const byPath = findByCode(list, matchedLegacy.countryCode);
     if (byPath) return { country: byPath, reason: "legacy-path" };
   }
 
   const fallbackCode = input.defaultCountryCode ?? DEFAULT_COUNTRY_CODE;
-  const fallbackCountry = getCountryByCode(fallbackCode) ?? countries[0];
+  // List-first, then the static seed (covers a fetch failure that returned
+  // an unexpectedly narrow list), then the list's own first entry — never
+  // throws even if every lookup misses.
+  const fallbackCountry =
+    findByCode(list, fallbackCode) ??
+    getCountryByCode(fallbackCode) ??
+    list[0] ??
+    staticCountries[0];
   return { country: fallbackCountry, reason: "fallback" };
 }

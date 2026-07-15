@@ -54,6 +54,12 @@
     "switchToThisPlan": "Přejít na tento plán",
     "viewDetails": "Podrobnosti plánu",
     "onlineOnlyNote": "Pouze online/video konzultace — žádné osobní návštěvy a žádné předpisy.",
+    "trust_card1_title": "Licencovaní lékaři",
+    "trust_card1_subtitle": "Registrovaní lokálně",
+    "trust_card2_title": "Flexibilní plány",
+    "trust_card2_subtitle": "Zrušte kdykoli",
+    "trust_card3_title": "Bezpečné platby",
+    "trust_card3_subtitle": "Chráněno Stripe",
     "empty": {
       "title": "Členství zatím není v zemi {country} dostupné",
       "body": "Měsíční plány ve vaší zemi zatím nebyly spuštěny. Mezitím si stále můžete rezervovat online konzultace a domácí zdravotní testy.",

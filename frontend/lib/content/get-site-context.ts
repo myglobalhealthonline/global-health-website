@@ -18,10 +18,17 @@ export async function getSiteContext(input: SiteContextInput | string = {}) {
   const normalizedInput: SiteContextInput =
     typeof input === "string" ? { explicitLocale: input } : input;
 
+  // Fetch the admin/DB-merged country list first so resolution reflects an
+  // admin-edited `defaultLocale` (or an admin-added country) instead of only
+  // the static seed (§4/§8 of the locale investigation). Falls back to the
+  // static seed internally on a backend fetch error — never throws.
+  const activeCountries = await getPublicCountriesMerged();
+
   const countryContext = resolveCountry({
     host: normalizedInput.host,
     pathname: normalizedInput.pathname,
     defaultCountryCode: normalizedInput.explicitCountryCode,
+    countries: activeCountries,
   });
 
   const locale = resolveLocale({
@@ -33,7 +40,6 @@ export async function getSiteContext(input: SiteContextInput | string = {}) {
   });
 
   const fallback = await getFallbackSiteContext(countryContext, locale);
-  const activeCountries = await getPublicCountriesMerged();
   const navigation = buildSiteNavigationData(
     fallback.common,
     activeCountries,

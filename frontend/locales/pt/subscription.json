@@ -54,6 +54,12 @@
     "switchToThisPlan": "Mudar para este plano",
     "viewDetails": "Detalhes do plano",
     "onlineOnlyNote": "Apenas consultas online/por vídeo — sem consultas presenciais e sem prescrições.",
+    "trust_card1_title": "Médicos licenciados",
+    "trust_card1_subtitle": "Registados localmente",
+    "trust_card2_title": "Planos flexíveis",
+    "trust_card2_subtitle": "Cancele quando quiser",
+    "trust_card3_title": "Pagamentos seguros",
+    "trust_card3_subtitle": "Protegido pela Stripe",
     "empty": {
       "title": "A adesão ainda não está disponível em {country}",
       "body": "Os planos mensais ainda não foram lançados no seu país. Entretanto, pode na mesma marcar consultas online e testes de saúde ao domicílio.",

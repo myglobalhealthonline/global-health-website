@@ -54,6 +54,12 @@
     "switchToThisPlan": "Cambiar a este plan",
     "viewDetails": "Detalles del plan",
     "onlineOnlyNote": "Solo consultas online/por videollamada: sin visitas presenciales y sin recetas.",
+    "trust_card1_title": "Médicos colegiados",
+    "trust_card1_subtitle": "Registrados localmente",
+    "trust_card2_title": "Planes flexibles",
+    "trust_card2_subtitle": "Cancele cuando quiera",
+    "trust_card3_title": "Pagos seguros",
+    "trust_card3_subtitle": "Protegido por Stripe",
     "empty": {
       "title": "La membresía aún no está disponible en {country}",
       "body": "Los planes mensuales todavía no se han lanzado en su país. Mientras tanto, puede seguir reservando consultas online y kits de análisis de salud a domicilio.",

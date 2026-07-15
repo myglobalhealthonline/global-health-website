@@ -13,7 +13,7 @@ import {
 } from "@/lib/content/merge-ireland-home-media";
 import { getSiteContext } from "@/lib/content/get-site-context";
 import { resolveLocale } from "@/lib/i18n/resolve-locale";
-import { getCountryByCode, type CountryCode } from "@/data/countries";
+import type { CountryCode } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { parseSitePath } from "@/lib/routing/path-rewrites";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/seo/structured-data";
@@ -36,6 +36,13 @@ export default async function GlobalSiteLayout({ children }: { children: ReactNo
   const requestHeaders = await headers();
   const cookieStore = await cookies();
 
+  // Fetch the admin/DB-merged list up front (falls back to the static seed
+  // internally on a backend error) so an admin-added country is recognized
+  // here and its admin-edited defaultLocale is used below, instead of only
+  // the static seed (§4/§8 of the locale investigation).
+  const countriesMerged = await getPublicCountriesMerged();
+  const mergedByCode = new Map(countriesMerged.map((c) => [c.code, c] as const));
+
   const pathname = requestHeaders.get("x-gh-pathname") ?? "/";
   const headerCountry = requestHeaders.get("x-gh-country");
 
@@ -46,14 +53,15 @@ export default async function GlobalSiteLayout({ children }: { children: ReactNo
   const urlCountryCode = firstSegment ? countryCodeFromSlug(firstSegment) : null;
   const resolvedCountryCode = urlCountryCode ?? headerCountry ?? null;
   const runtimeCountry =
-    resolvedCountryCode && getCountryByCode(resolvedCountryCode as CountryCode)
+    resolvedCountryCode && mergedByCode.has(resolvedCountryCode as CountryCode)
       ? (resolvedCountryCode as CountryCode)
       : undefined;
+  const runtimeCountryConfig = runtimeCountry ? mergedByCode.get(runtimeCountry) : undefined;
 
   // runtimeCountry is known here, so the per-country footer fetch can run
   // in the same parallel batch instead of as an extra serial round-trip
   // after it (one less hop on every global page's TTFB).
-  const [{ common, navigation }, assets, countriesMerged, activeFooter, activeTrust] =
+  const [{ common, navigation }, assets, activeFooter, activeTrust] =
     await Promise.all([
       getSiteContext({
         explicitCountryCode: runtimeCountry,
@@ -62,7 +70,6 @@ export default async function GlobalSiteLayout({ children }: { children: ReactNo
         cookieLocale: cookieStore.get("gh_locale")?.value ?? null,
       }),
       getPublicAssetsNormalized(),
-      getPublicCountriesMerged(),
       runtimeCountry ? getCountryFooter(runtimeCountry) : Promise.resolve(null),
       runtimeCountry ? getCountryTrust(runtimeCountry) : Promise.resolve(null),
     ]);
@@ -85,8 +92,7 @@ export default async function GlobalSiteLayout({ children }: { children: ReactNo
     headerLocale: requestHeaders.get("x-gh-locale"),
     cookieLocale: cookieStore.get("gh_locale")?.value,
     acceptLanguageHeader: requestHeaders.get("accept-language"),
-    countryDefaultLocale:
-      runtimeCountry ? getCountryByCode(runtimeCountry)?.defaultLocale : undefined,
+    countryDefaultLocale: runtimeCountryConfig?.defaultLocale,
   });
 
   // Read the gh-last-country cookie server-side so the header renders

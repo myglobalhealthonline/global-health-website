@@ -1,5 +1,6 @@
 import type { LocaleCode } from "@/lib/i18n/types";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
+import { deepMergeLocale } from "@/lib/i18n/deep-merge-locale";
 
 import enHome from "@/locales/en/home.json";
 import ptHome from "@/locales/pt/home.json";
@@ -90,21 +91,33 @@ const accountByLocale = { en: enAccount, pt: ptAccount, es: esAccount, cs: csAcc
 const subscriptionByLocale = { en: enSubscription, pt: ptSubscription, es: esSubscription, cs: csSubscription, ro: roSubscription, de: deSubscription } as const;
 const doctorByLocale = { en: enDoctor, pt: ptDoctor, es: esDoctor, cs: csDoctor, ro: roDoctor, de: deDoctor } as const;
 
-export function loadLocaleBundle(locale: LocaleCode) {
+function buildLocaleBundle(locale: LocaleCode) {
   return {
     common: getCommonLocale(locale),
-    home: homeByLocale[locale] ?? homeByLocale.en,
-    services: servicesByLocale[locale] ?? servicesByLocale.en,
-    faq: faqByLocale[locale] ?? faqByLocale.en,
-    legal: legalByLocale[locale] ?? legalByLocale.en,
-    forms: formsByLocale[locale] ?? formsByLocale.en,
-    about: aboutByLocale[locale] ?? aboutByLocale.en,
-    contact: contactByLocale[locale] ?? contactByLocale.en,
-    auth: authByLocale[locale] ?? authByLocale.en,
-    account: accountByLocale[locale] ?? accountByLocale.en,
-    subscription: subscriptionByLocale[locale] ?? subscriptionByLocale.en,
+    home: deepMergeLocale(homeByLocale.en, homeByLocale[locale]),
+    services: deepMergeLocale(servicesByLocale.en, servicesByLocale[locale]),
+    faq: deepMergeLocale(faqByLocale.en, faqByLocale[locale]),
+    legal: deepMergeLocale(legalByLocale.en, legalByLocale[locale]),
+    forms: deepMergeLocale(formsByLocale.en, formsByLocale[locale]),
+    about: deepMergeLocale(aboutByLocale.en, aboutByLocale[locale]),
+    contact: deepMergeLocale(contactByLocale.en, contactByLocale[locale]),
+    auth: deepMergeLocale(authByLocale.en, authByLocale[locale]),
+    account: deepMergeLocale(accountByLocale.en, accountByLocale[locale]),
+    subscription: deepMergeLocale(subscriptionByLocale.en, subscriptionByLocale[locale]),
     // en doctor.json is the schema source of truth; the translation
     // workflow keeps the other locales key-complete, so type against en.
-    doctor: (doctorByLocale[locale] ?? doctorByLocale.en) as typeof enDoctor,
+    doctor: deepMergeLocale(enDoctor, doctorByLocale[locale] ?? doctorByLocale.en) as typeof enDoctor,
   };
+}
+
+// Module-level cache: each locale's merged bundle is computed once, not per
+// request/render (missing keys in a non-en JSON fall back to English).
+const bundleCache = new Map<LocaleCode, ReturnType<typeof buildLocaleBundle>>();
+
+export function loadLocaleBundle(locale: LocaleCode) {
+  const cached = bundleCache.get(locale);
+  if (cached) return cached;
+  const bundle = buildLocaleBundle(locale);
+  bundleCache.set(locale, bundle);
+  return bundle;
 }

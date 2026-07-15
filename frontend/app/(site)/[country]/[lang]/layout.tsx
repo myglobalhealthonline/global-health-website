@@ -47,18 +47,26 @@ export default async function CountryLangLayout({
   children: ReactNode;
   params: Promise<{ country: string; lang: string }>;
 }) {
-  const [{ country: slug, lang }] = await Promise.all([params, getPublicCountriesMerged()]);
+  const [{ country: slug, lang }, countriesMerged] = await Promise.all([
+    params,
+    getPublicCountriesMerged(),
+  ]);
 
   const code = countryCodeFromSlug(slug);
   if (!code) notFound();
-  const config = getCountryByCode(code);
+  // Resolve against the admin/DB-merged list first so an admin-added
+  // country renders instead of 404ing and an admin-edited defaultLocale
+  // takes effect (§4/§8/§9 of the locale investigation). The static seed
+  // (`getCountryByCode`) is only the fallback for a merge-fetch failure —
+  // `getPublicCountriesMerged` already falls back to the seed itself in
+  // that case, so this is defense in depth, not the primary path.
+  const config = countriesMerged.find((c) => c.code === code) ?? getCountryByCode(code);
   if (!config) notFound();
 
-  const [{ common, navigation }, assets, countriesMerged, activeFooter, activeTrust] =
+  const [{ common, navigation }, assets, activeFooter, activeTrust] =
     await Promise.all([
       getSiteContext({ explicitCountryCode: code, explicitLocale: lang }),
       getPublicAssetsNormalized(),
-      getPublicCountriesMerged(),
       getCountryFooter(code),
       getCountryTrust(code),
     ]);

@@ -10,6 +10,14 @@ export type ResolveCountryInput = {
   host?: string | null;
   pathname?: string | null;
   defaultCountryCode?: CountryCode;
+  /**
+   * Country list to resolve against. RSC callers pass the admin/DB-merged
+   * list (`getPublicCountriesMerged()`) so an admin-configured
+   * `defaultLocale`/admin-added country resolves correctly. Defaults to the
+   * static seed — the edge middleware never passes this (no data fetching
+   * at the edge).
+   */
+  countries?: CountryConfig[];
 };
 
 export type LocaleResolutionInput = {
