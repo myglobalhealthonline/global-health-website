@@ -151,7 +151,10 @@
     "floatCard2Title": "Verifizierte Kliniker",
     "floatCard2Subtitle": "Identitäts- und Lizenzverifizierung",
     "floatCard3Title": "Online-Beratung",
-    "floatCard3Subtitle": "Privat, sicher und bequem"
+    "floatCard3Subtitle": "Privat, sicher und bequem",
+    "filters": "Filter",
+    "bioFallbackTemplate": "Approbierter Arzt für Online-Konsultationen in {country} verfügbar.",
+    "verifyRegistrationAria": "Zulassung im offiziellen Register überprüfen"
   },
   "cookie": {
     "title": "Cookie-Einstellungen",
@@ -338,7 +341,9 @@
     "selectedTime": "Gewählte Zeit",
     "changeTime": "Zeit ändern",
     "saveAddressToProfile": "Diese Adresse in meinem Profil speichern",
-    "pickTimeToContinue": "Wählen Sie eine Zeit, um mit Ihren Angaben fortzufahren."
+    "pickTimeToContinue": "Wählen Sie eine Zeit, um mit Ihren Angaben fortzufahren.",
+    "insurancePolicyPlaceholder": "Geben Sie Ihre Versicherungsnummer ein, um den Versicherungspreis anzuwenden",
+    "availableDatesAriaLabel": "Verfügbare Termine"
   },
   "extra": {
     "specialistsWatermark": "Fachärzte",
@@ -408,7 +413,8 @@
     "whyTitle": "Gründe für diesen Test",
     "ctaHeading": "Bestellen Sie {title} noch heute",
     "goodToKnow": "Gut zu wissen",
-    "disclaimer": "Die Testergebnisse werden von einem in {country} zur Berufsausübung zugelassenen Arzt geprüft. Diese Seite enthält allgemeine Informationen und ersetzt keine professionelle medizinische Beratung, Diagnose oder Behandlung."
+    "disclaimer": "Die Testergebnisse werden von einem in {country} zur Berufsausübung zugelassenen Arzt geprüft. Diese Seite enthält allgemeine Informationen und ersetzt keine professionelle medizinische Beratung, Diagnose oder Behandlung.",
+    "faqTitle": "Häufig gestellte Fragen"
   },
   "prescriptionsPage": {
     "countryLabel": "{country} · Ärzte für Folgerezepte",
@@ -720,5 +726,34 @@
     "unsavedChangesBody": "Du hast nicht gespeicherte Änderungen auf dieser Seite. Wenn du jetzt gehst, gehen sie verloren.",
     "unsavedChangesKeepEditing": "Weiter bearbeiten",
     "unsavedChangesDiscard": "Änderungen verwerfen"
+  },
+  "a11y": {
+    "whyPatientsTrustUs": "Warum Patienten uns vertrauen",
+    "previousPage": "Vorherige Seite",
+    "nextPage": "Nächste Seite",
+    "medicalDisclaimer": "Medizinischer Haftungsausschluss"
+  },
+  "flow": {
+    "cartOpeningTitle": "Ihr Warenkorb wird geöffnet",
+    "cartOpeningBody": "Ihr Warenkorb wird geöffnet …",
+    "checkoutOpeningTitle": "Kasse wird geöffnet",
+    "checkoutOpeningBody": "Kasse wird geöffnet …",
+    "checkoutCancelledTitle": "Rückkehr zum Warenkorb",
+    "checkoutCancelledBody": "Wir öffnen die länderspezifische Warenkorbseite.",
+    "patientUploadTitle": "Medizinische Dateien hochladen",
+    "patientUploadSubtitle": "Sichere Dateiübertragung für eine bestehende Terminanfrage.",
+    "patientUploadStepUpload": "Hochladen",
+    "patientUploadStepReview": "Überprüfung",
+    "reviewRateTitle": "Bewerten Sie Ihre Behandlung",
+    "reviewRateSubtitle": "Teilen Sie uns Ihr Feedback zu Ihrer Konsultation mit.",
+    "reviewRateStepRatings": "Bewertungen",
+    "reviewRateStepSubmit": "Absenden"
+  },
+  "blogPage": {
+    "articlesAvailableNow": "Jetzt verfügbar",
+    "doctorReviewedTitle": "Ärztlich geprüft",
+    "verifiedByClinicians": "Von Klinikern verifiziert",
+    "evidenceBasedTitle": "Evidenzbasiert",
+    "noAdsNoSponsors": "Keine Werbung, keine Sponsoren"
   }
 }

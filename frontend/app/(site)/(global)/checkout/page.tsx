@@ -1,37 +1,18 @@
-"use client";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getCommonLocale } from "@/lib/i18n/get-common-locale";
+import { LegacyCheckoutRedirectClient } from "./LegacyCheckoutRedirectClient";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useCart } from "@/components/cart/CartContext";
-import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
-import { getCountryByCode, type CountryCode } from "@/data/countries";
-import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
-
-export default function LegacyCheckoutRedirect() {
-  const router = useRouter();
-  const { cart, loading } = useCart();
-
-  useEffect(() => {
-    if (loading) return;
-    const code = cart.countryCode?.toLowerCase() as CountryCode | undefined;
-    const config = code ? getCountryByCode(code) : null;
-    if (config) {
-      const slug = COUNTRY_CODE_TO_SLUG[config.code] ?? config.code;
-      const lang = (config.defaultLocale ?? "en").toLowerCase();
-      router.replace(`/${slug}/${lang}/checkout`);
-    } else {
-      router.replace("/");
-    }
-  }, [loading, cart.countryCode, router]);
+export default async function LegacyCheckoutRedirect() {
+  const locale = await getPageLocale();
+  const common = getCommonLocale(locale);
 
   return (
-    <>
-      <GH2FlowHeader title="Opening checkout" activeStep={2} steps={["Cart", "Checkout", "Payment"]} />
-      <section className="bg-[var(--color-background-soft)] px-5 py-12">
-        <div className="mx-auto max-w-5xl">
-          <p className="text-sm text-[var(--color-text-muted)]">Opening checkout...</p>
-        </div>
-      </section>
-    </>
+    <LegacyCheckoutRedirectClient
+      title={common.flow.checkoutOpeningTitle}
+      stepCart={common.cartPage.stepCart}
+      stepCheckout={common.cartPage.stepCheckout}
+      stepPayment={common.cartPage.stepPayment}
+      body={common.flow.checkoutOpeningBody}
+    />
   );
 }

@@ -35,6 +35,9 @@ const i18n = {
   viewProfile: "View profile",
   bookAppointment: "Book",
   pickTime: "Pick a time",
+  filters: "Filters",
+  bioFallbackTemplate: "Licensed clinician available for online consultations in {country}.",
+  verifyRegistrationAria: "Verify registration on the official register",
 };
 
 const gpService = "svc-gp";

@@ -39,12 +39,15 @@ export function DoctorFilters({
   clearHref,
   hasActive,
   clearLabel,
+  filtersLabel,
   dark = false,
 }: {
   groups: FilterGroup[];
   clearHref: string;
   hasActive: boolean;
   clearLabel?: string;
+  /** "Filters" trigger label / sheet title / sheet aria-label. */
+  filtersLabel?: string;
   /** Forest-glass panel + on-dark chips — for dark grid sections. */
   dark?: boolean;
 }) {
@@ -101,7 +104,7 @@ export function DoctorFilters({
         onClick={() => setMobileOpen(true)}
       >
         <SlidersHorizontal className="size-[14px]" strokeWidth={1.8} aria-hidden />
-        Filters
+        {filtersLabel ?? "Filters"}
         {activeCount > 0 ? <span className="gh2-filter-count tabular-nums">· {activeCount}</span> : null}
       </button>
       {clearControl}
@@ -111,10 +114,10 @@ export function DoctorFilters({
         side="bottom"
         size="sm"
         theme="public"
-        ariaLabel="Filters"
+        ariaLabel={filtersLabel ?? "Filters"}
         header={
           <Dialog.Title asChild>
-            <h2 className="gh2-filter-sheet-title">Filters</h2>
+            <h2 className="gh2-filter-sheet-title">{filtersLabel ?? "Filters"}</h2>
           </Dialog.Title>
         }
         footer={

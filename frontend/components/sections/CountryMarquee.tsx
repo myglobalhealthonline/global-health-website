@@ -15,14 +15,22 @@ export type MarqueeCountry = {
   doctorCount: number;
 };
 
-export function CountryMarquee({ countries }: { countries: MarqueeCountry[] }) {
+export function CountryMarquee({
+  countries,
+  ariaLabel = "Countries we serve",
+}: {
+  countries: MarqueeCountry[];
+  /** No live caller currently threads a locale value through (component is
+   *  presently unreferenced) — kept i18n-ready via this prop. */
+  ariaLabel?: string;
+}) {
   const active = countries?.filter((c) => c.doctorCount > 0) ?? [];
   if (active.length === 0) return null;
   const items = [...active, ...active];
 
   return (
     <section
-      aria-label="Countries we serve"
+      aria-label={ariaLabel}
       className="relative overflow-hidden border-y border-[rgba(29,75,54,0.10)] bg-[var(--color-background-soft)]"
     >
       {/* Edge fade masks */}

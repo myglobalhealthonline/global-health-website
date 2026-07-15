@@ -287,6 +287,8 @@ export default async function CountryLangSpecialistConsultationPage({
             intro={sp.specialistConsultationsIntro}
             items={serviceItems}
             variant="dark"
+            previousPageLabel={c.a11y.previousPage}
+            nextPageLabel={c.a11y.nextPage}
           />
         </div>
       ) : null}
@@ -310,6 +312,8 @@ export default async function CountryLangSpecialistConsultationPage({
           intro={sp.doctorsSectionIntro}
           doctors={doctorItems}
           theme="dark"
+          previousPageLabel={c.a11y.previousPage}
+          nextPageLabel={c.a11y.nextPage}
         />
       ) : null}
 
@@ -368,6 +372,7 @@ export default async function CountryLangSpecialistConsultationPage({
         <MedicalDisclaimer
           paragraphs={page.disclaimerParagraphs}
           theme={themeProp(page?.disclaimerTheme, "dark")}
+          title={c.a11y.medicalDisclaimer}
         />
       ) : null}
     </>

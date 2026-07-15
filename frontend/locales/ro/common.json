@@ -151,7 +151,10 @@
     "floatCard2Title": "Medici verificați",
     "floatCard2Subtitle": "Verificare identitate și licență",
     "floatCard3Title": "Consultație online",
-    "floatCard3Subtitle": "Privată, sigură și convenabilă"
+    "floatCard3Subtitle": "Privată, sigură și convenabilă",
+    "filters": "Filtre",
+    "bioFallbackTemplate": "Medic licențiat disponibil pentru consultații online în {country}.",
+    "verifyRegistrationAria": "Verificați înregistrarea în registrul oficial"
   },
   "cookie": {
     "title": "Preferințe cookie",
@@ -338,7 +341,9 @@
     "selectedTime": "Ora selectată",
     "changeTime": "Schimbă ora",
     "saveAddressToProfile": "Salvează această adresă în profilul meu",
-    "pickTimeToContinue": "Alegeți o oră pentru a continua cu detaliile."
+    "pickTimeToContinue": "Alegeți o oră pentru a continua cu detaliile.",
+    "insurancePolicyPlaceholder": "Introduceți numărul poliței pentru a aplica prețul de asigurare",
+    "availableDatesAriaLabel": "Date disponibile"
   },
   "extra": {
     "specialistsWatermark": "Specialiști",
@@ -408,7 +413,8 @@
     "whyTitle": "Motive pentru a face acest test",
     "ctaHeading": "Comandă {title} astăzi",
     "goodToKnow": "Bine de știut",
-    "disclaimer": "Rezultatele testelor sunt verificate de un medic înregistrat pentru a profesa în {country}. Această pagină conține informații generale și nu înlocuiește sfatul, diagnosticul sau tratamentul medical profesional."
+    "disclaimer": "Rezultatele testelor sunt verificate de un medic înregistrat pentru a profesa în {country}. Această pagină conține informații generale și nu înlocuiește sfatul, diagnosticul sau tratamentul medical profesional.",
+    "faqTitle": "Întrebări frecvente"
   },
   "prescriptionsPage": {
     "countryLabel": "{country} · Medici care gestionează rețetele repetate",
@@ -720,5 +726,34 @@
     "unsavedChangesBody": "Ai modificări nesalvate pe această pagină. Dacă pleci acum, acestea se vor pierde.",
     "unsavedChangesKeepEditing": "Continuă editarea",
     "unsavedChangesDiscard": "Renunță la modificări"
+  },
+  "a11y": {
+    "whyPatientsTrustUs": "De ce au încredere pacienții în noi",
+    "previousPage": "Pagina anterioară",
+    "nextPage": "Pagina următoare",
+    "medicalDisclaimer": "Aviz medical"
+  },
+  "flow": {
+    "cartOpeningTitle": "Se deschide coșul dvs.",
+    "cartOpeningBody": "Se deschide coșul dvs. ...",
+    "checkoutOpeningTitle": "Se deschide finalizarea comenzii",
+    "checkoutOpeningBody": "Se deschide finalizarea comenzii...",
+    "checkoutCancelledTitle": "Revenire la coș",
+    "checkoutCancelledBody": "Deschidem pagina coșului specifică țării dvs.",
+    "patientUploadTitle": "Încărcați documente medicale",
+    "patientUploadSubtitle": "Transfer securizat de fișiere pentru o solicitare de programare existentă.",
+    "patientUploadStepUpload": "Încărcare",
+    "patientUploadStepReview": "Verificare",
+    "reviewRateTitle": "Evaluați îngrijirea primită",
+    "reviewRateSubtitle": "Oferiți feedback despre experiența dvs. de consultație.",
+    "reviewRateStepRatings": "Evaluări",
+    "reviewRateStepSubmit": "Trimitere"
+  },
+  "blogPage": {
+    "articlesAvailableNow": "Disponibil acum",
+    "doctorReviewedTitle": "Verificat de medici",
+    "verifiedByClinicians": "Verificat de clinicieni",
+    "evidenceBasedTitle": "Bazat pe dovezi",
+    "noAdsNoSponsors": "Fără reclame, fără sponsori"
   }
 }

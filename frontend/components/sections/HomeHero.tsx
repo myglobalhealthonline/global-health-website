@@ -59,6 +59,7 @@ export type HomeHeroI18n = {
   doctorsAcrossEurope: string;
   consultingIn: string;
   bookNow: string;
+  availabilityPanelAriaLabel?: string;
 };
 
 export function HomeHero({
@@ -291,7 +292,7 @@ export function HomeHero({
             </div>
           ) : doctorsForPanel.length > 0 ? (
             <aside
-              aria-label="Doctors available now"
+              aria-label={i18n?.availabilityPanelAriaLabel ?? "Doctors available now"}
               className="gh-home-hero-availabilityPanel absolute -bottom-8 -left-9 flex w-[300px] flex-col"
             >
               <p className="gh-home-hero-panelEyebrow mb-4 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em]">

@@ -186,6 +186,8 @@ export default async function PrescriptionsPage({
               .replace("{country}", config.name)}
             items={serviceItems}
             variant="dark"
+            previousPageLabel={c.a11y.previousPage}
+            nextPageLabel={c.a11y.nextPage}
           />
         </div>
       ) : (
@@ -246,6 +248,7 @@ export default async function PrescriptionsPage({
         <MedicalDisclaimer
           paragraphs={page.disclaimerParagraphs}
           theme={themeProp(page?.disclaimerTheme, "dark")}
+          title={c.a11y.medicalDisclaimer}
         />
       ) : null}
     </>

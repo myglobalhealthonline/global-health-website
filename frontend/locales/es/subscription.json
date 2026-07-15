@@ -7,11 +7,26 @@
     "availability": "Solo Irlanda",
     "stepLabel": "Paso {n}",
     "steps": [
-      { "title": "Elige tu plan perfecto", "body": "Selecciona el plan de salud que se adapta a tu estilo de vida y necesidades — Essential, Comprehensive o Premium Wellness." },
-      { "title": "Regístrate con facilidad", "body": "Crea tu cuenta en minutos y comienza tu suscripción mensual segura, sin complicaciones." },
-      { "title": "Agenda tu cita en cualquier momento", "body": "Reserva una consulta online cuando te convenga — de día o de noche, desde cualquier dispositivo." },
-      { "title": "Sin tarifas de programación adicionales", "body": "Tu plan mensual cubre la reserva — sin cargos sorpresa por agendar una consulta." },
-      { "title": "Conéctate con un médico desde cualquier lugar", "body": "Habla con tu médico por videollamada segura desde casa, el trabajo o de viaje." }
+      {
+        "title": "Elige tu plan perfecto",
+        "body": "Selecciona el plan de salud que se adapta a tu estilo de vida y necesidades — Essential, Comprehensive o Premium Wellness."
+      },
+      {
+        "title": "Regístrate con facilidad",
+        "body": "Crea tu cuenta en minutos y comienza tu suscripción mensual segura, sin complicaciones."
+      },
+      {
+        "title": "Agenda tu cita en cualquier momento",
+        "body": "Reserva una consulta online cuando te convenga — de día o de noche, desde cualquier dispositivo."
+      },
+      {
+        "title": "Sin tarifas de programación adicionales",
+        "body": "Tu plan mensual cubre la reserva — sin cargos sorpresa por agendar una consulta."
+      },
+      {
+        "title": "Conéctate con un médico desde cualquier lugar",
+        "body": "Habla con tu médico por videollamada segura desde casa, el trabajo o de viaje."
+      }
     ]
   },
   "note": {
@@ -64,7 +79,13 @@
       "title": "La membresía aún no está disponible en {country}",
       "body": "Los planes mensuales todavía no se han lanzado en su país. Mientras tanto, puede seguir reservando consultas online y kits de análisis de salud a domicilio.",
       "cta": "Explorar atención online"
-    }
+    },
+    "archMonthlyCareTitle": "Atención mensual",
+    "archMonthlyCareSubtitle": "Renueva o cancela cuando quieras",
+    "archSecurePaymentsTitle": "Pagos seguros",
+    "archSecurePaymentsSubtitle": "Protegido por Stripe",
+    "archLicensedTitle": "Médicos colegiados",
+    "archLicensedSubtitleTemplate": "Colegiados en {country}"
   },
   "subscribe": {
     "title": "Confirme su membresía",

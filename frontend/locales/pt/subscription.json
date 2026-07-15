@@ -7,11 +7,26 @@
     "availability": "Apenas Irlanda",
     "stepLabel": "Passo {n}",
     "steps": [
-      { "title": "Escolha o plano perfeito para si", "body": "Selecione o plano de saúde que se adapta ao seu estilo de vida e às suas necessidades — Essential, Comprehensive ou Premium Wellness." },
-      { "title": "Inscreva-se com facilidade", "body": "Crie a sua conta em minutos e comece a sua subscrição mensal segura, sem complicações." },
-      { "title": "Marque a sua consulta a qualquer hora", "body": "Marque uma consulta online quando lhe der jeito — de dia ou à noite, a partir de qualquer dispositivo." },
-      { "title": "Sem taxas de marcação adicionais", "body": "O seu plano mensal cobre a marcação — sem custos surpresa para agendar uma consulta." },
-      { "title": "Fale com um médico a partir de qualquer lugar", "body": "Fale com o seu médico por videochamada segura, a partir de casa, do trabalho ou em viagem." }
+      {
+        "title": "Escolha o plano perfeito para si",
+        "body": "Selecione o plano de saúde que se adapta ao seu estilo de vida e às suas necessidades — Essential, Comprehensive ou Premium Wellness."
+      },
+      {
+        "title": "Inscreva-se com facilidade",
+        "body": "Crie a sua conta em minutos e comece a sua subscrição mensal segura, sem complicações."
+      },
+      {
+        "title": "Marque a sua consulta a qualquer hora",
+        "body": "Marque uma consulta online quando lhe der jeito — de dia ou à noite, a partir de qualquer dispositivo."
+      },
+      {
+        "title": "Sem taxas de marcação adicionais",
+        "body": "O seu plano mensal cobre a marcação — sem custos surpresa para agendar uma consulta."
+      },
+      {
+        "title": "Fale com um médico a partir de qualquer lugar",
+        "body": "Fale com o seu médico por videochamada segura, a partir de casa, do trabalho ou em viagem."
+      }
     ]
   },
   "note": {
@@ -64,7 +79,13 @@
       "title": "A adesão ainda não está disponível em {country}",
       "body": "Os planos mensais ainda não foram lançados no seu país. Entretanto, pode na mesma marcar consultas online e testes de saúde ao domicílio.",
       "cta": "Explorar cuidados online"
-    }
+    },
+    "archMonthlyCareTitle": "Cuidados mensais",
+    "archMonthlyCareSubtitle": "Renove ou cancele quando quiser",
+    "archSecurePaymentsTitle": "Pagamentos seguros",
+    "archSecurePaymentsSubtitle": "Protegido pela Stripe",
+    "archLicensedTitle": "Médicos licenciados",
+    "archLicensedSubtitleTemplate": "Registados em {country}"
   },
   "subscribe": {
     "title": "Confirme a sua adesão",

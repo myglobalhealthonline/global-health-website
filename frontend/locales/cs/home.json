@@ -20,7 +20,8 @@
     "openCalendars": "Otevřené kalendáře",
     "doctorsAcrossEurope": "{count} lékařů v celé Evropě",
     "consultingIn": "Konzultace v jazyce {lang}",
-    "bookNow": "Rezervovat nyní"
+    "bookNow": "Rezervovat nyní",
+    "availabilityPanelAriaLabel": "Lékaři dostupní nyní"
   },
   "team": {
     "eyebrow": "Tým",
@@ -33,7 +34,9 @@
     "filterAll": "Vše",
     "filterGP": "Praktický lékař",
     "filterSpecialist": "Specialista",
-    "pickTime": "Vybrat čas"
+    "pickTime": "Vybrat čas",
+    "previousLabel": "Předchozí",
+    "nextLabel": "Další"
   },
   "trust": {
     "licensedSingular": "Licencovaný lékař",

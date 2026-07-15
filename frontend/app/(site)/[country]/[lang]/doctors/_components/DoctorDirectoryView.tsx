@@ -9,7 +9,7 @@ import type { DoctorDirectoryView as DoctorDirectoryViewModel } from "@/lib/cont
  * the client (`DoctorsDirectoryClient`, after applying the URL filters).
  */
 export function DoctorDirectoryView({ view }: { view: DoctorDirectoryViewModel }) {
-  const { countryName, bookingHref, bookingLabel, i18n, doctorCards, spotlight, totalDoctorCount, filterGroups, hasActive, clearHref, clearLabel } = view;
+  const { countryName, bookingHref, bookingLabel, i18n, doctorCards, spotlight, totalDoctorCount, filterGroups, hasActive, clearHref, clearLabel, filtersLabel } = view;
 
   return (
     <DoctorTeamTemplate
@@ -34,6 +34,7 @@ export function DoctorDirectoryView({ view }: { view: DoctorDirectoryViewModel }
           clearHref={clearHref}
           hasActive={hasActive}
           clearLabel={clearLabel}
+          filtersLabel={filtersLabel}
           dark
         />
       }

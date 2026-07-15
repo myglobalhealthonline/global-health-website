@@ -114,7 +114,7 @@ export function SlotPickerStep({
       {/* Date pills — local selection, no navigation. */}
       <div
         role="tablist"
-        aria-label="Available dates"
+        aria-label={i18n.availableDatesAriaLabel}
         className="gh2-scroll-fade mt-3 -mx-1 flex min-w-0 max-w-full gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin]"
       >
         {Array.from(grouped.entries()).map(([day, daySlots]) => {

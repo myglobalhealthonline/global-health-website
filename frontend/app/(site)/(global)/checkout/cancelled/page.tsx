@@ -1,32 +1,18 @@
-"use client";
+import { Suspense } from "react";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getCommonLocale } from "@/lib/i18n/get-common-locale";
+import { LegacyCheckoutCancelledRedirectClient } from "./LegacyCheckoutCancelledRedirectClient";
 
-import { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useCart } from "@/components/cart/CartContext";
-import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
-import { getCountryByCode, type CountryCode } from "@/data/countries";
-import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
-
-export default function LegacyCheckoutCancelledRedirect() {
-  const router = useRouter();
-  const params = useSearchParams();
-  const { cart, loading } = useCart();
-
-  useEffect(() => {
-    if (loading) return;
-    const code = cart.countryCode?.toLowerCase() as CountryCode | undefined;
-    const config = code ? getCountryByCode(code) : null;
-    const qs = params?.toString();
-    if (config) {
-      const slug = COUNTRY_CODE_TO_SLUG[config.code] ?? config.code;
-      const lang = (config.defaultLocale ?? "en").toLowerCase();
-      router.replace(`/${slug}/${lang}/checkout/cancelled${qs ? `?${qs}` : ""}`);
-    } else {
-      router.replace("/");
-    }
-  }, [loading, cart.countryCode, params, router]);
+export default async function LegacyCheckoutCancelledRedirect() {
+  const locale = await getPageLocale();
+  const common = getCommonLocale(locale);
 
   return (
-    <GH2StatusPage status="cancelled" title="Returning to cart" body="We are opening your country-specific cart page." />
+    <Suspense fallback={null}>
+      <LegacyCheckoutCancelledRedirectClient
+        title={common.flow.checkoutCancelledTitle}
+        body={common.flow.checkoutCancelledBody}
+      />
+    </Suspense>
   );
 }

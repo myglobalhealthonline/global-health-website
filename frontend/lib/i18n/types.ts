@@ -117,6 +117,13 @@ export type CommonLocale = {
     floatCard3Subtitle?: string;
     /** Featured-doctor spotlight primary CTA, e.g. "Book with {name}". */
     bookWithTemplate?: string;
+    /** Directory filter-sheet trigger/title, e.g. "Filters". */
+    filters: string;
+    /** Fallback bio when a doctor record has none, e.g. "Licensed clinician
+     *  available for online consultations in {country}." */
+    bioFallbackTemplate: string;
+    /** aria-label for the featured-doctor "verify registration" link. */
+    verifyRegistrationAria: string;
   };
   countrySelector: {
     title: string;
@@ -345,6 +352,10 @@ export type CommonLocale = {
     changeTime: string;
     saveAddressToProfile: string;
     pickTimeToContinue: string;
+    /** Insurance card/policy number input placeholder (consult booking form). */
+    insurancePolicyPlaceholder: string;
+    /** aria-label for the date-picker tablist (slot-picker-step). */
+    availableDatesAriaLabel: string;
   };
   extra: {
     specialistsWatermark: string;
@@ -415,6 +426,7 @@ export type CommonLocale = {
     ctaHeading: string;
     goodToKnow: string;
     disclaimer: string;
+    faqTitle: string;
   };
   prescriptionsPage: {
     countryLabel: string;
@@ -732,5 +744,37 @@ export type CommonLocale = {
     notFound: string;
     checkNumber: string;
     couldNotVerify: string;
+  };
+  /** Generic accessibility labels shared across public sections. */
+  a11y: {
+    whyPatientsTrustUs: string;
+    previousPage: string;
+    nextPage: string;
+    medicalDisclaimer: string;
+  };
+  /** Transient redirect/flow pages with no [country]/[lang] segment
+   *  (cart, checkout, checkout/cancelled, patient-upload, reviews/rate). */
+  flow: {
+    cartOpeningTitle: string;
+    cartOpeningBody: string;
+    checkoutOpeningTitle: string;
+    checkoutOpeningBody: string;
+    checkoutCancelledTitle: string;
+    checkoutCancelledBody: string;
+    patientUploadTitle: string;
+    patientUploadSubtitle: string;
+    patientUploadStepUpload: string;
+    patientUploadStepReview: string;
+    reviewRateTitle: string;
+    reviewRateSubtitle: string;
+    reviewRateStepRatings: string;
+    reviewRateStepSubmit: string;
+  };
+  blogPage: {
+    articlesAvailableNow: string;
+    doctorReviewedTitle: string;
+    verifiedByClinicians: string;
+    evidenceBasedTitle: string;
+    noAdsNoSponsors: string;
   };
 };

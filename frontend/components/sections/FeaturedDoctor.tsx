@@ -59,6 +59,9 @@ type DoctorSpotlightProps = {
   /** i18n template for the primary CTA, e.g. "Book with {name}" — falls
    *  back to English when absent. */
   bookWithLabel?: string;
+  /** aria-label for the registration-verification link — falls back to
+   *  English when absent. */
+  verifyRegistrationLabel?: string;
 };
 
 export function FeaturedDoctor({
@@ -231,7 +234,7 @@ export function FeaturedDoctor({
                       href={doctor.verificationUrl ?? doctor.medicalRegistrationUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label="Verify registration on the official register"
+                      aria-label={doctor.verifyRegistrationLabel ?? "Verify registration on the official register"}
                       className="inline-flex items-center gap-1 font-semibold underline underline-offset-2 transition-opacity hover:opacity-75 motion-reduce:transition-none"
                       style={{ color: body }}
                     >

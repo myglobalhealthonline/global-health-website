@@ -505,7 +505,7 @@ export default async function HealthTestDetailPage({
 
       {detail.faqs.length > 0 ? (
         <FAQSection
-          title="Frequently asked questions"
+          title={t.faqTitle}
           items={detail.faqs}
         />
       ) : null}
@@ -563,6 +563,7 @@ export default async function HealthTestDetailPage({
 
       <MedicalDisclaimer
         paragraphs={[t.disclaimer.replace("{country}", config.name)]}
+        title={c.a11y.medicalDisclaimer}
       />
     </>
   );

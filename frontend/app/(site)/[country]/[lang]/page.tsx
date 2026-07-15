@@ -546,7 +546,7 @@ export default async function CountryLangHomePage({
         i18n={t.countryHero}
       />
       {page?.sections.faq ? <JsonLd data={faqJsonLd(page.faq)} /> : null}
-      <TrustMarquee items={trustMarqueeItems} />
+      <TrustMarquee items={trustMarqueeItems} ariaLabel={cc.a11y.whyPatientsTrustUs} />
       {/* Overview intro sits BELOW the trust marquee (marquee hugs the hero). */}
       {page?.sections.intro ? (
         <ServiceIntro body={page.intro!} theme={themeProp(page?.introTheme, "light")} />
@@ -632,6 +632,7 @@ export default async function CountryLangHomePage({
                   linkedinUrl: featuredDoctor.linkedinUrl,
                   viewProfileLabel: bundle.common.doctors.viewProfile,
                   bookWithLabel: bundle.common.doctors.bookWithTemplate,
+                  verifyRegistrationLabel: bundle.common.doctors.verifyRegistrationAria,
                 }}
               />
             </div>
@@ -645,6 +646,8 @@ export default async function CountryLangHomePage({
               filterGP: t.team.filterGP,
               filterSpecialist: t.team.filterSpecialist,
               pickTime: t.team.pickTime,
+              previousLabel: t.team.previousLabel,
+              nextLabel: t.team.nextLabel,
             }}
           />
         </div>
@@ -672,6 +675,7 @@ export default async function CountryLangHomePage({
         <MedicalDisclaimer
           paragraphs={page.disclaimerParagraphs}
           theme={themeProp(page?.disclaimerTheme, "dark")}
+          title={cc.a11y.medicalDisclaimer}
         />
       ) : null}
     </>

@@ -88,7 +88,7 @@ export function MedicalDisclaimer(props: MedicalDisclaimerProps) {
 
   return (
     <section
-      aria-label="Medical disclaimer"
+      aria-label={title}
       className={
         light
           ? "relative gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel"

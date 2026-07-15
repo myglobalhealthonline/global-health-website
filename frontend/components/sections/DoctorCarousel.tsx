@@ -45,6 +45,8 @@ type DoctorCarouselProps = {
     filterGP: string;
     filterSpecialist: string;
     pickTime: string;
+    previousLabel?: string;
+    nextLabel?: string;
   };
 };
 
@@ -163,7 +165,7 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
               <button
                 onClick={() => scrollByViewport(-1)}
                 disabled={!canPrev}
-                aria-label="Previous"
+                aria-label={i18n.previousLabel ?? "Previous"}
                 className="gh-focus-on-dark size-11 rounded-full border inline-flex items-center justify-center transition-all duration-150 disabled:cursor-not-allowed"
                 style={arrowStyle(canPrev)}
               >
@@ -187,7 +189,7 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
               <button
                 onClick={() => scrollByViewport(1)}
                 disabled={!canNext}
-                aria-label="Next"
+                aria-label={i18n.nextLabel ?? "Next"}
                 className="gh-focus-on-dark size-11 rounded-full border inline-flex items-center justify-center transition-all duration-150 disabled:cursor-not-allowed"
                 style={arrowStyle(canNext)}
               >

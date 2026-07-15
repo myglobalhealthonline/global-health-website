@@ -142,7 +142,7 @@ export default async function AccountOverviewPage() {
     <div className="gh-patient-page gh-patient-overview">
       <CommandBand
         context={a.dashboard.welcome}
-        title={user?.fullName || user?.email || "My account"}
+        title={user?.fullName || user?.email || a.dashboard.myAccountFallback}
         chip={
           ghn ? (
             <>
@@ -250,27 +250,33 @@ export default async function AccountOverviewPage() {
         className="mt-4"
         items={[
           {
-            label: "Next appointment",
-            value: nextCall?.scheduledAt ? formatAppDateTime(nextCall.scheduledAt) : "Not scheduled",
-            hint: nextCall?.meetingUrl ? "Meet link ready" : "Book or wait for scheduling",
+            label: a.dashboard.summaryNextAppointment,
+            value: nextCall?.scheduledAt ? formatAppDateTime(nextCall.scheduledAt) : a.dashboard.summaryNotScheduled,
+            hint: nextCall?.meetingUrl ? a.dashboard.summaryMeetLinkReady : a.dashboard.summaryBookOrWait,
             icon: <CalendarDays aria-hidden />,
           },
           {
-            label: "Payments",
-            value: paymentActionCount > 0 ? `${paymentActionCount} needs action` : `${paidPayments} paid`,
-            hint: `${payments.length} receipt${payments.length === 1 ? "" : "s"} on file`,
+            label: a.dashboard.summaryPayments,
+            value:
+              paymentActionCount > 0
+                ? a.dashboard.summaryPaymentsNeedsActionTemplate.replace("{count}", String(paymentActionCount))
+                : a.dashboard.summaryPaymentsPaidTemplate.replace("{count}", String(paidPayments)),
+            hint: (payments.length === 1
+              ? a.dashboard.summaryReceiptSingularTemplate
+              : a.dashboard.summaryReceiptPluralTemplate
+            ).replace("{count}", String(payments.length)),
             icon: <CreditCard aria-hidden />,
           },
           {
-            label: "Records",
-            value: ghn ? "GHN active" : "Profile pending",
-            hint: "Used for prescriptions and medical documents",
+            label: a.dashboard.summaryRecords,
+            value: ghn ? a.dashboard.summaryGhnActive : a.dashboard.summaryProfilePending,
+            hint: a.dashboard.summaryRecordsHint,
             icon: <ShieldCheck aria-hidden />,
           },
           {
-            label: "Quick path",
-            value: "Book care",
-            hint: "Start a consultation or review appointments",
+            label: a.dashboard.summaryQuickPath,
+            value: a.dashboard.summaryBookCare,
+            hint: a.dashboard.summaryQuickPathHint,
             icon: <ChevronRight aria-hidden />,
           },
         ]}
@@ -327,10 +333,10 @@ export default async function AccountOverviewPage() {
                 />
                 <div>
                   <p className="text-portal-thead font-bold uppercase tracking-[0.18em]" style={{ color: "var(--trustpilot-green)" }}>
-                    Share your experience
+                    {a.dashboard.trustpilotEyebrow}
                   </p>
                   <p className="mt-0.5 text-sm font-medium text-[var(--portal-text)]">
-                    Your consultation is complete — leave us a review on Trustpilot
+                    {a.dashboard.trustpilotBody}
                   </p>
                 </div>
               </div>
@@ -342,7 +348,7 @@ export default async function AccountOverviewPage() {
                 size="sm"
                 iconLeft={<Star className="size-4" />}
               >
-                Write a review
+                {a.dashboard.trustpilotCta}
               </Btn>
             </div>
           </AdminCard>

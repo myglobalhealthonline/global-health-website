@@ -20,7 +20,8 @@
     "openCalendars": "Open calendars",
     "doctorsAcrossEurope": "{count} doctors across Europe",
     "consultingIn": "Consulting in {lang}",
-    "bookNow": "Book now"
+    "bookNow": "Book now",
+    "availabilityPanelAriaLabel": "Doctors available now"
   },
   "team": {
     "eyebrow": "The team",
@@ -33,7 +34,9 @@
     "filterAll": "All",
     "filterGP": "See a GP",
     "filterSpecialist": "Specialist",
-    "pickTime": "Pick a time"
+    "pickTime": "Pick a time",
+    "previousLabel": "Previous",
+    "nextLabel": "Next"
   },
   "trust": {
     "licensedSingular": "Licensed doctor",

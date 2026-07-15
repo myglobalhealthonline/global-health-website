@@ -321,6 +321,8 @@ export default async function CountryLangGeneralConsultationPage({
               .replace("{country}", config.name)}
             items={serviceItems}
             variant="dark"
+            previousPageLabel={c.a11y.previousPage}
+            nextPageLabel={c.a11y.nextPage}
           />
         </div>
       ) : null}
@@ -345,6 +347,8 @@ export default async function CountryLangGeneralConsultationPage({
           intro={gp.doctorsSectionIntro}
           doctors={doctorItems}
           theme="dark"
+          previousPageLabel={c.a11y.previousPage}
+          nextPageLabel={c.a11y.nextPage}
         />
       ) : null}
 
@@ -382,6 +386,7 @@ export default async function CountryLangGeneralConsultationPage({
         <MedicalDisclaimer
           paragraphs={page.disclaimerParagraphs}
           theme={themeProp(page?.disclaimerTheme, "dark")}
+          title={c.a11y.medicalDisclaimer}
         />
       ) : null}
     </>

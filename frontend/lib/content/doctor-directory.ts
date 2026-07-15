@@ -85,6 +85,7 @@ export type SpotlightData = {
   linkedinUrl?: string;
   viewProfileLabel?: string;
   bookWithLabel?: string;
+  verifyRegistrationLabel?: string;
 };
 
 export type DoctorDirectoryView = {
@@ -101,6 +102,7 @@ export type DoctorDirectoryView = {
   hasActive: boolean;
   clearHref: string;
   clearLabel: string;
+  filtersLabel: string;
 };
 
 /**
@@ -177,7 +179,7 @@ export function buildDoctorDirectoryView(
     instagramUrl: d.instagramUrl,
     facebookUrl: d.facebookUrl,
     linkedinUrl: d.linkedinUrl,
-    bio: d.bio ?? `Licensed clinician available for online consultations in ${countryName}.`,
+    bio: d.bio ?? i18n.bioFallbackTemplate.replace("{country}", countryName),
     imageSrc: d.imageSrc,
     imageFocalX: d.imageFocalX,
     imageFocalY: d.imageFocalY,
@@ -212,6 +214,7 @@ export function buildDoctorDirectoryView(
         linkedinUrl: featured.linkedinUrl,
         viewProfileLabel: i18n.viewProfile,
         bookWithLabel: i18n.bookWithTemplate,
+        verifyRegistrationLabel: i18n.verifyRegistrationAria,
       }
     : null;
 
@@ -292,5 +295,6 @@ export function buildDoctorDirectoryView(
     hasActive,
     clearHref: `/${countrySlug}/${lang}/doctors`,
     clearLabel: i18n.clearFilters,
+    filtersLabel: i18n.filters,
   };
 }

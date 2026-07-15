@@ -925,7 +925,7 @@ export function ConsultationBookingForm({
                 onChange={(e) => setInsurancePolicyNumber(e.target.value)}
                 maxLength={120}
                 autoComplete="off"
-                placeholder="Enter your policy number to apply the insurance price"
+                placeholder={i18n.insurancePolicyPlaceholder}
                 className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
               />
               <p className="mt-1 text-xs text-[var(--color-text-muted)]">

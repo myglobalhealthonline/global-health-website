@@ -20,7 +20,8 @@
     "openCalendars": "Calendare deschise",
     "doctorsAcrossEurope": "{count} medici în toată Europa",
     "consultingIn": "Consultând în {lang}",
-    "bookNow": "Rezervă acum"
+    "bookNow": "Rezervă acum",
+    "availabilityPanelAriaLabel": "Medici disponibili acum"
   },
   "team": {
     "eyebrow": "Echipa",
@@ -33,7 +34,9 @@
     "filterAll": "Toate",
     "filterGP": "Medic de familie",
     "filterSpecialist": "Specialist",
-    "pickTime": "Alegeți o oră"
+    "pickTime": "Alegeți o oră",
+    "previousLabel": "Anterior",
+    "nextLabel": "Următor"
   },
   "trust": {
     "licensedSingular": "Medic licențiat",

@@ -217,6 +217,7 @@ export default async function CountryLangDoctorsPage({
         <MedicalDisclaimer
           paragraphs={page.disclaimerParagraphs}
           theme={themeProp(page?.disclaimerTheme, "dark")}
+          title={common.a11y.medicalDisclaimer}
         />
       ) : null}
     </>

@@ -20,7 +20,8 @@
     "openCalendars": "Calendarios abiertos",
     "doctorsAcrossEurope": "{count} médicos en toda Europa",
     "consultingIn": "Consultando en {lang}",
-    "bookNow": "Reservar ahora"
+    "bookNow": "Reservar ahora",
+    "availabilityPanelAriaLabel": "Médicos disponibles ahora"
   },
   "team": {
     "eyebrow": "El equipo",
@@ -33,7 +34,9 @@
     "filterAll": "Todos",
     "filterGP": "Ver médico",
     "filterSpecialist": "Especialista",
-    "pickTime": "Elegir hora"
+    "pickTime": "Elegir hora",
+    "previousLabel": "Anterior",
+    "nextLabel": "Siguiente"
   },
   "trust": {
     "licensedSingular": "Médico colegiado",

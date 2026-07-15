@@ -151,7 +151,10 @@
     "floatCard2Title": "Ověření lékaři",
     "floatCard2Subtitle": "Ověření totožnosti a licence",
     "floatCard3Title": "Online konzultace",
-    "floatCard3Subtitle": "Soukromá, bezpečná a pohodlná"
+    "floatCard3Subtitle": "Soukromá, bezpečná a pohodlná",
+    "filters": "Filtry",
+    "bioFallbackTemplate": "Licencovaný lékař dostupný pro online konzultace v {country}.",
+    "verifyRegistrationAria": "Ověřit registraci v oficiálním registru"
   },
   "cookie": {
     "title": "Nastavení cookies",
@@ -338,7 +341,9 @@
     "selectedTime": "Vybraný čas",
     "changeTime": "Změnit čas",
     "saveAddressToProfile": "Uložit tuto adresu do mého profilu",
-    "pickTimeToContinue": "Vyberte čas a pokračujte k údajům."
+    "pickTimeToContinue": "Vyberte čas a pokračujte k údajům.",
+    "insurancePolicyPlaceholder": "Zadejte číslo pojistky pro uplatnění pojištěné ceny",
+    "availableDatesAriaLabel": "Dostupná data"
   },
   "extra": {
     "specialistsWatermark": "Specialisté",
@@ -408,7 +413,8 @@
     "whyTitle": "Důvody pro tento test",
     "ctaHeading": "Objednejte si {title} ještě dnes",
     "goodToKnow": "Dobré vědět",
-    "disclaimer": "Výsledky testů posuzuje lékař registrovaný k výkonu praxe v {country}. Tato stránka obsahuje obecné informace a nenahrazuje odbornou lékařskou radu, diagnózu ani léčbu."
+    "disclaimer": "Výsledky testů posuzuje lékař registrovaný k výkonu praxe v {country}. Tato stránka obsahuje obecné informace a nenahrazuje odbornou lékařskou radu, diagnózu ani léčbu.",
+    "faqTitle": "Časté otázky"
   },
   "prescriptionsPage": {
     "countryLabel": "{country} · Lékaři vyřizující opakované předpisy",
@@ -720,5 +726,34 @@
     "unsavedChangesBody": "Na této stránce máte neuložené změny. Pokud nyní odejdete, budou ztraceny.",
     "unsavedChangesKeepEditing": "Pokračovat v úpravách",
     "unsavedChangesDiscard": "Zahodit změny"
+  },
+  "a11y": {
+    "whyPatientsTrustUs": "Proč nám pacienti důvěřují",
+    "previousPage": "Předchozí stránka",
+    "nextPage": "Další stránka",
+    "medicalDisclaimer": "Lékařské upozornění"
+  },
+  "flow": {
+    "cartOpeningTitle": "Otevírá se váš košík",
+    "cartOpeningBody": "Otevírá se váš košík...",
+    "checkoutOpeningTitle": "Otevírá se pokladna",
+    "checkoutOpeningBody": "Otevírá se pokladna...",
+    "checkoutCancelledTitle": "Návrat do košíku",
+    "checkoutCancelledBody": "Otevíráme stránku košíku pro vaši zemi.",
+    "patientUploadTitle": "Nahrát lékařské soubory",
+    "patientUploadSubtitle": "Bezpečný přenos souborů pro existující žádost o schůzku.",
+    "patientUploadStepUpload": "Nahrát",
+    "patientUploadStepReview": "Kontrola",
+    "reviewRateTitle": "Ohodnoťte svou péči",
+    "reviewRateSubtitle": "Podělte se o zpětnou vazbu ke své konzultaci.",
+    "reviewRateStepRatings": "Hodnocení",
+    "reviewRateStepSubmit": "Odeslat"
+  },
+  "blogPage": {
+    "articlesAvailableNow": "Nyní k dispozici",
+    "doctorReviewedTitle": "Ověřeno lékaři",
+    "verifiedByClinicians": "Ověřeno klinickými lékaři",
+    "evidenceBasedTitle": "Na základě důkazů",
+    "noAdsNoSponsors": "Žádné reklamy, žádní sponzoři"
   }
 }

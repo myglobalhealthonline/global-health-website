@@ -34,7 +34,13 @@ export type TrustMarqueeItem = {
   label: string;
 };
 
-export function TrustMarquee({ items }: { items: TrustMarqueeItem[] }) {
+export function TrustMarquee({
+  items,
+  ariaLabel = "Why patients trust us",
+}: {
+  items: TrustMarqueeItem[];
+  ariaLabel?: string;
+}) {
   if (!items || items.length === 0) return null;
   // Duplicate the sequence so the CSS track loops seamlessly; short lists
   // get quadrupled so the belt never shows a gap on ultra-wide screens.
@@ -43,7 +49,7 @@ export function TrustMarquee({ items }: { items: TrustMarqueeItem[] }) {
 
   return (
     <section
-      aria-label="Why patients trust us"
+      aria-label={ariaLabel}
       className="gh2-section-forest relative overflow-hidden"
     >
       <SectionSeam theme="dark" />

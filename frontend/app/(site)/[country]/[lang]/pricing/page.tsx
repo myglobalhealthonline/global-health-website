@@ -135,7 +135,7 @@ export default async function PricingPage({
         ctaHref="#plans"
         secondaryLabel={t.secondaryLabel}
         secondaryHref={`/${slug}/${lang}/doctors`}
-        rightSlot={<PlansArchPanel countryName={config.name} />}
+        rightSlot={<PlansArchPanel countryName={config.name} i18n={t} />}
         mobileBgSrc="/images/stock/plans.webp"
         trustCards={[
           {
@@ -310,7 +310,16 @@ export default async function PricingPage({
   );
 }
 
-function PlansArchPanel({ countryName }: { countryName: string }) {
+type PlansArchPanelI18n = {
+  archMonthlyCareTitle: string;
+  archMonthlyCareSubtitle: string;
+  archSecurePaymentsTitle: string;
+  archSecurePaymentsSubtitle: string;
+  archLicensedTitle: string;
+  archLicensedSubtitleTemplate: string;
+};
+
+function PlansArchPanel({ countryName, i18n }: { countryName: string; i18n: PlansArchPanelI18n }) {
   return (
     <div className="relative mx-auto aspect-square w-full max-w-[600px]">
       <HeroPlusImage
@@ -328,8 +337,8 @@ function PlansArchPanel({ countryName }: { countryName: string }) {
           <Zap className="size-4" strokeWidth={2} aria-hidden />
         </span>
         <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">Monthly care</span>
-          <span className="block text-[11.5px] leading-tight text-white/55">Renew or cancel anytime</span>
+          <span className="block text-[13px] font-bold leading-tight text-white">{i18n.archMonthlyCareTitle}</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">{i18n.archMonthlyCareSubtitle}</span>
         </span>
       </div>
 
@@ -343,8 +352,8 @@ function PlansArchPanel({ countryName }: { countryName: string }) {
           <CreditCard className="size-4" strokeWidth={2} aria-hidden />
         </span>
         <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">Secure payments</span>
-          <span className="block text-[11.5px] leading-tight text-white/55">Stripe protected</span>
+          <span className="block text-[13px] font-bold leading-tight text-white">{i18n.archSecurePaymentsTitle}</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">{i18n.archSecurePaymentsSubtitle}</span>
         </span>
       </div>
 
@@ -358,8 +367,10 @@ function PlansArchPanel({ countryName }: { countryName: string }) {
           <BadgeCheck className="size-4" strokeWidth={2} aria-hidden />
         </span>
         <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">Licensed doctors</span>
-          <span className="block text-[11.5px] leading-tight text-white/55">Registered in {countryName}</span>
+          <span className="block text-[13px] font-bold leading-tight text-white">{i18n.archLicensedTitle}</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">
+            {i18n.archLicensedSubtitleTemplate.replace("{country}", countryName)}
+          </span>
         </span>
       </div>
     </div>

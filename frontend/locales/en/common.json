@@ -151,7 +151,10 @@
     "floatCard2Title": "Verified clinicians",
     "floatCard2Subtitle": "Identity & license verification",
     "floatCard3Title": "Online consultation",
-    "floatCard3Subtitle": "Private, secure & convenient"
+    "floatCard3Subtitle": "Private, secure & convenient",
+    "filters": "Filters",
+    "bioFallbackTemplate": "Licensed clinician available for online consultations in {country}.",
+    "verifyRegistrationAria": "Verify registration on the official register"
   },
   "cookie": {
     "title": "Cookie preferences",
@@ -338,7 +341,9 @@
     "selectedTime": "Selected time",
     "changeTime": "Change time",
     "saveAddressToProfile": "Save this address to my profile",
-    "pickTimeToContinue": "Pick a time to continue to your details."
+    "pickTimeToContinue": "Pick a time to continue to your details.",
+    "insurancePolicyPlaceholder": "Enter your policy number to apply the insurance price",
+    "availableDatesAriaLabel": "Available dates"
   },
   "extra": {
     "specialistsWatermark": "Specialists",
@@ -408,7 +413,8 @@
     "whyTitle": "Reasons to take this test",
     "ctaHeading": "Order your {title} today",
     "goodToKnow": "Good to know",
-    "disclaimer": "Test results are reviewed by a doctor registered to practise in {country}. This page is general information and is not a substitute for professional medical advice, diagnosis or treatment."
+    "disclaimer": "Test results are reviewed by a doctor registered to practise in {country}. This page is general information and is not a substitute for professional medical advice, diagnosis or treatment.",
+    "faqTitle": "Frequently asked questions"
   },
   "prescriptionsPage": {
     "countryLabel": "{country} · Doctors handling repeat prescriptions",
@@ -720,5 +726,34 @@
     "unsavedChangesBody": "You have unsaved changes on this page. If you leave now, they'll be lost.",
     "unsavedChangesKeepEditing": "Keep editing",
     "unsavedChangesDiscard": "Discard changes"
+  },
+  "a11y": {
+    "whyPatientsTrustUs": "Why patients trust us",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "medicalDisclaimer": "Medical disclaimer"
+  },
+  "flow": {
+    "cartOpeningTitle": "Opening your cart",
+    "cartOpeningBody": "Opening your cart...",
+    "checkoutOpeningTitle": "Opening checkout",
+    "checkoutOpeningBody": "Opening checkout...",
+    "checkoutCancelledTitle": "Returning to cart",
+    "checkoutCancelledBody": "We are opening your country-specific cart page.",
+    "patientUploadTitle": "Upload medical files",
+    "patientUploadSubtitle": "Secure file transfer for an existing appointment request.",
+    "patientUploadStepUpload": "Upload",
+    "patientUploadStepReview": "Review",
+    "reviewRateTitle": "Rate your care",
+    "reviewRateSubtitle": "Share feedback on your consultation experience.",
+    "reviewRateStepRatings": "Ratings",
+    "reviewRateStepSubmit": "Submit"
+  },
+  "blogPage": {
+    "articlesAvailableNow": "Available now",
+    "doctorReviewedTitle": "Doctor-reviewed",
+    "verifiedByClinicians": "Verified by clinicians",
+    "evidenceBasedTitle": "Evidence-based",
+    "noAdsNoSponsors": "No ads, no sponsors"
   }
 }

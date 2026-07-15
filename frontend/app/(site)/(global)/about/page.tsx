@@ -86,7 +86,7 @@ const FAQ_ITEMS: ReadonlyArray<{ question: string; answer: string }> = [
 
 export default async function AboutPage() {
   const locale = await getPageLocale();
-  const { about } = loadLocaleBundle(locale);
+  const { about, faq } = loadLocaleBundle(locale);
 
   return (
     <section>
@@ -318,7 +318,7 @@ export default async function AboutPage() {
       </section>
 
       {/* DARK — FAQ (shared home FAQSection: forest-night, gh2-glass-forest cards) */}
-      <FAQSection title="Frequently asked questions" items={[...FAQ_ITEMS]} theme="dark" />
+      <FAQSection title={faq.faq_section_title} items={[...FAQ_ITEMS]} theme="dark" />
 
       {/* Structured data — breadcrumb + FAQ (schema mirrors the visible FAQ above) */}
       <JsonLd

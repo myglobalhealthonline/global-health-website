@@ -151,7 +151,10 @@
     "floatCard2Title": "Clínicos verificados",
     "floatCard2Subtitle": "Verificação de identidade e licença",
     "floatCard3Title": "Consulta online",
-    "floatCard3Subtitle": "Privada, segura e conveniente"
+    "floatCard3Subtitle": "Privada, segura e conveniente",
+    "filters": "Filtros",
+    "bioFallbackTemplate": "Clínico licenciado disponível para consultas online em {country}.",
+    "verifyRegistrationAria": "Verificar registo no registo oficial"
   },
   "cookie": {
     "title": "Preferências de cookies",
@@ -338,7 +341,9 @@
     "selectedTime": "Hora selecionada",
     "changeTime": "Alterar hora",
     "saveAddressToProfile": "Guardar esta morada no meu perfil",
-    "pickTimeToContinue": "Escolha uma hora para continuar com os seus dados."
+    "pickTimeToContinue": "Escolha uma hora para continuar com os seus dados.",
+    "insurancePolicyPlaceholder": "Introduza o número da apólice para aplicar o preço do seguro",
+    "availableDatesAriaLabel": "Datas disponíveis"
   },
   "extra": {
     "specialistsWatermark": "Especialistas",
@@ -408,7 +413,8 @@
     "whyTitle": "Razões para fazer esta análise",
     "ctaHeading": "Encomende o seu {title} hoje",
     "goodToKnow": "Bom saber",
-    "disclaimer": "Os resultados das análises são revistos por um médico registado para exercer em {country}. Esta página contém informação geral e não substitui aconselhamento, diagnóstico ou tratamento médico profissional."
+    "disclaimer": "Os resultados das análises são revistos por um médico registado para exercer em {country}. Esta página contém informação geral e não substitui aconselhamento, diagnóstico ou tratamento médico profissional.",
+    "faqTitle": "Perguntas frequentes"
   },
   "prescriptionsPage": {
     "countryLabel": "{country} · Médicos que tratam prescrições renováveis",
@@ -720,5 +726,34 @@
     "unsavedChangesBody": "Tem alterações não guardadas nesta página. Se sair agora, serão perdidas.",
     "unsavedChangesKeepEditing": "Continuar a editar",
     "unsavedChangesDiscard": "Descartar alterações"
+  },
+  "a11y": {
+    "whyPatientsTrustUs": "Porque os pacientes confiam em nós",
+    "previousPage": "Página anterior",
+    "nextPage": "Página seguinte",
+    "medicalDisclaimer": "Aviso médico"
+  },
+  "flow": {
+    "cartOpeningTitle": "A abrir o seu carrinho",
+    "cartOpeningBody": "A abrir o seu carrinho...",
+    "checkoutOpeningTitle": "A abrir o checkout",
+    "checkoutOpeningBody": "A abrir o checkout...",
+    "checkoutCancelledTitle": "A regressar ao carrinho",
+    "checkoutCancelledBody": "Estamos a abrir a página do carrinho específica do seu país.",
+    "patientUploadTitle": "Carregar ficheiros médicos",
+    "patientUploadSubtitle": "Transferência segura de ficheiros para um pedido de consulta existente.",
+    "patientUploadStepUpload": "Carregar",
+    "patientUploadStepReview": "Revisão",
+    "reviewRateTitle": "Avalie o seu atendimento",
+    "reviewRateSubtitle": "Partilhe a sua opinião sobre a experiência de consulta.",
+    "reviewRateStepRatings": "Avaliações",
+    "reviewRateStepSubmit": "Enviar"
+  },
+  "blogPage": {
+    "articlesAvailableNow": "Disponível agora",
+    "doctorReviewedTitle": "Revisto por médicos",
+    "verifiedByClinicians": "Verificado por clínicos",
+    "evidenceBasedTitle": "Baseado em evidência",
+    "noAdsNoSponsors": "Sem anúncios, sem patrocínios"
   }
 }

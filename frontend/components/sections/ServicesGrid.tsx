@@ -35,6 +35,8 @@ type ServicesGridProps = {
   featureFirst?: boolean;
   /** "dark" renders forest-night glass cards; "light" (default) renders white cards. */
   variant?: "light" | "dark";
+  previousPageLabel?: string;
+  nextPageLabel?: string;
 };
 
 const PAGE_SIZE_FEATURED = 5;
@@ -64,6 +66,8 @@ export function ServicesGrid({
   items,
   featureFirst = true,
   variant = "light",
+  previousPageLabel = "Previous page",
+  nextPageLabel = "Next page",
 }: ServicesGridProps) {
   const [page, setPage] = useState(0);
   const isDark = variant === "dark";
@@ -158,7 +162,7 @@ export function ServicesGrid({
               <button
                 onClick={() => setPage((p) => p - 1)}
                 disabled={page === 0}
-                aria-label="Previous page"
+                aria-label={previousPageLabel}
                 className="size-11 rounded-full inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
                 style={page === 0 ? arrowInactive : arrowActive}
               >
@@ -167,7 +171,7 @@ export function ServicesGrid({
               <button
                 onClick={() => setPage((p) => p + 1)}
                 disabled={page >= totalPages - 1}
-                aria-label="Next page"
+                aria-label={nextPageLabel}
                 className="size-11 rounded-full inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
                 style={page >= totalPages - 1 ? arrowInactive : arrowActive}
               >

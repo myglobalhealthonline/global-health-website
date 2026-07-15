@@ -8,6 +8,9 @@ import { PageHero } from "@/components/sections/PageHero";
 import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { Stethoscope, ShieldCheck, BookOpen } from "lucide-react";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { getCommonLocale } from "@/lib/i18n/get-common-locale";
+import type { CommonLocale } from "@/lib/i18n/types";
 
 export const metadata: Metadata = {
   title: `Health Blog | ${SITE_NAME}`,
@@ -16,7 +19,9 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogIndexPage() {
-  const [ordered, cookieStore] = await Promise.all([listBlogPosts(), cookies()]);
+  const [ordered, cookieStore, locale] = await Promise.all([listBlogPosts(), cookies(), getPageLocale()]);
+  const common = getCommonLocale(locale);
+  const bp = common.blogPage;
 
   // Send "Back to home" to the visitor's remembered country home instead of
   // the bare gateway "/" — the gateway renders its own country-picker logo
@@ -37,23 +42,23 @@ export default async function BlogIndexPage() {
         ctaHref="#articles"
         secondaryLabel="Back to home"
         secondaryHref={homeHref}
-        rightSlot={<BlogArchPanel articleCount={ordered.length} />}
+        rightSlot={<BlogArchPanel articleCount={ordered.length} i18n={bp} />}
         mobileBgSrc="/images/stock/blog.webp"
         trustCards={[
           {
             icon: <Stethoscope className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: "Doctor-reviewed",
-            subtitle: "Verified by clinicians",
+            title: bp.doctorReviewedTitle,
+            subtitle: bp.verifiedByClinicians,
           },
           {
             icon: <BookOpen className="size-[18px]" strokeWidth={2} aria-hidden />,
             title: `${ordered.length} articles`,
-            subtitle: "Available now",
+            subtitle: bp.articlesAvailableNow,
           },
           {
             icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: "Evidence-based",
-            subtitle: "No ads, no sponsors",
+            title: bp.evidenceBasedTitle,
+            subtitle: bp.noAdsNoSponsors,
           },
         ]}
       />
@@ -104,7 +109,13 @@ export default async function BlogIndexPage() {
   );
 }
 
-function BlogArchPanel({ articleCount }: { articleCount: number }) {
+function BlogArchPanel({
+  articleCount,
+  i18n,
+}: {
+  articleCount: number;
+  i18n: CommonLocale["blogPage"];
+}) {
   return (
     <div className="relative mx-auto aspect-square w-full max-w-[600px]">
       <HeroPlusImage
@@ -123,7 +134,7 @@ function BlogArchPanel({ articleCount }: { articleCount: number }) {
         </span>
         <span className="min-w-0">
           <span className="block text-[13px] font-bold leading-tight text-white">{articleCount} {articleCount === 1 ? "article" : "articles"}</span>
-          <span className="block text-[11.5px] leading-tight text-white/55">Available now</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">{i18n.articlesAvailableNow}</span>
         </span>
       </div>
 
@@ -137,8 +148,8 @@ function BlogArchPanel({ articleCount }: { articleCount: number }) {
           <Stethoscope className="size-4" strokeWidth={2} aria-hidden />
         </span>
         <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">Doctor-reviewed</span>
-          <span className="block text-[11.5px] leading-tight text-white/55">Verified by clinicians</span>
+          <span className="block text-[13px] font-bold leading-tight text-white">{i18n.doctorReviewedTitle}</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">{i18n.verifiedByClinicians}</span>
         </span>
       </div>
 
@@ -152,8 +163,8 @@ function BlogArchPanel({ articleCount }: { articleCount: number }) {
           <ShieldCheck className="size-4" strokeWidth={2} aria-hidden />
         </span>
         <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">Evidence-based</span>
-          <span className="block text-[11.5px] leading-tight text-white/55">No ads, no sponsors</span>
+          <span className="block text-[13px] font-bold leading-tight text-white">{i18n.evidenceBasedTitle}</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">{i18n.noAdsNoSponsors}</span>
         </span>
       </div>
     </div>

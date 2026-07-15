@@ -20,7 +20,8 @@
     "openCalendars": "Offene Kalender",
     "doctorsAcrossEurope": "{count} Ärzte in ganz Europa",
     "consultingIn": "Beratung auf {lang}",
-    "bookNow": "Jetzt buchen"
+    "bookNow": "Jetzt buchen",
+    "availabilityPanelAriaLabel": "Jetzt verfügbare Ärzte"
   },
   "team": {
     "eyebrow": "Das Team",
@@ -33,7 +34,9 @@
     "filterAll": "Alle",
     "filterGP": "Hausarzt",
     "filterSpecialist": "Facharzt",
-    "pickTime": "Zeit wählen"
+    "pickTime": "Zeit wählen",
+    "previousLabel": "Zurück",
+    "nextLabel": "Weiter"
   },
   "trust": {
     "licensedSingular": "Zugelassener Arzt",

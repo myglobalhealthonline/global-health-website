@@ -7,11 +7,26 @@
     "availability": "Nur Irland",
     "stepLabel": "Schritt {n}",
     "steps": [
-      { "title": "Wählen Sie Ihren perfekten Plan", "body": "Wählen Sie den Gesundheitsplan, der zu Ihrem Lebensstil und Ihren Bedürfnissen passt — Essential, Comprehensive oder Premium Wellness." },
-      { "title": "Einfach anmelden", "body": "Erstellen Sie Ihr Konto in wenigen Minuten und starten Sie Ihre sichere monatliche Mitgliedschaft ganz unkompliziert." },
-      { "title": "Vereinbaren Sie jederzeit Ihren Termin", "body": "Buchen Sie eine Online-Beratung, wann immer es Ihnen passt — tagsüber oder abends, von jedem Gerät." },
-      { "title": "Keine zusätzlichen Buchungsgebühren", "body": "Ihr Monatsplan deckt die Buchung ab — keine versteckten Gebühren für die Terminvereinbarung." },
-      { "title": "Verbinden Sie sich von überall mit einem Arzt", "body": "Treffen Sie Ihren Arzt per sicherem Video — von zu Hause, der Arbeit oder unterwegs." }
+      {
+        "title": "Wählen Sie Ihren perfekten Plan",
+        "body": "Wählen Sie den Gesundheitsplan, der zu Ihrem Lebensstil und Ihren Bedürfnissen passt — Essential, Comprehensive oder Premium Wellness."
+      },
+      {
+        "title": "Einfach anmelden",
+        "body": "Erstellen Sie Ihr Konto in wenigen Minuten und starten Sie Ihre sichere monatliche Mitgliedschaft ganz unkompliziert."
+      },
+      {
+        "title": "Vereinbaren Sie jederzeit Ihren Termin",
+        "body": "Buchen Sie eine Online-Beratung, wann immer es Ihnen passt — tagsüber oder abends, von jedem Gerät."
+      },
+      {
+        "title": "Keine zusätzlichen Buchungsgebühren",
+        "body": "Ihr Monatsplan deckt die Buchung ab — keine versteckten Gebühren für die Terminvereinbarung."
+      },
+      {
+        "title": "Verbinden Sie sich von überall mit einem Arzt",
+        "body": "Treffen Sie Ihren Arzt per sicherem Video — von zu Hause, der Arbeit oder unterwegs."
+      }
     ]
   },
   "note": {
@@ -64,7 +79,13 @@
       "title": "Mitgliedschaft ist in {country} noch nicht verfügbar",
       "body": "Monatstarife sind in Ihrem Land noch nicht verfügbar. Sie können in der Zwischenzeit weiterhin Online-Beratungen und Gesundheitstests für zu Hause buchen.",
       "cta": "Online-Versorgung entdecken"
-    }
+    },
+    "archMonthlyCareTitle": "Monatliche Betreuung",
+    "archMonthlyCareSubtitle": "Jederzeit verlängern oder kündigen",
+    "archSecurePaymentsTitle": "Sichere Zahlungen",
+    "archSecurePaymentsSubtitle": "Durch Stripe geschützt",
+    "archLicensedTitle": "Approbierte Ärzte",
+    "archLicensedSubtitleTemplate": "Registriert in {country}"
   },
   "subscribe": {
     "title": "Bestätigen Sie Ihre Mitgliedschaft",

@@ -151,7 +151,10 @@
     "floatCard2Title": "Médicos verificados",
     "floatCard2Subtitle": "Verificación de identidad y licencia",
     "floatCard3Title": "Consulta online",
-    "floatCard3Subtitle": "Privada, segura y conveniente"
+    "floatCard3Subtitle": "Privada, segura y conveniente",
+    "filters": "Filtros",
+    "bioFallbackTemplate": "Clínico colegiado disponible para consultas online en {country}.",
+    "verifyRegistrationAria": "Verificar colegiación en el registro oficial"
   },
   "cookie": {
     "title": "Preferencias de cookies",
@@ -338,7 +341,9 @@
     "selectedTime": "Hora seleccionada",
     "changeTime": "Cambiar hora",
     "saveAddressToProfile": "Guardar esta dirección en mi perfil",
-    "pickTimeToContinue": "Elige una hora para continuar con tus datos."
+    "pickTimeToContinue": "Elige una hora para continuar con tus datos.",
+    "insurancePolicyPlaceholder": "Introduce el número de póliza para aplicar el precio del seguro",
+    "availableDatesAriaLabel": "Fechas disponibles"
   },
   "extra": {
     "specialistsWatermark": "Especialistas",
@@ -408,7 +413,8 @@
     "whyTitle": "Motivos para hacerte esta prueba",
     "ctaHeading": "Pide tu {title} hoy",
     "goodToKnow": "Información útil",
-    "disclaimer": "Los resultados de las pruebas son revisados por un médico colegiado para ejercer en {country}. Esta página contiene información general y no sustituye el asesoramiento, diagnóstico o tratamiento médico profesional."
+    "disclaimer": "Los resultados de las pruebas son revisados por un médico colegiado para ejercer en {country}. Esta página contiene información general y no sustituye el asesoramiento, diagnóstico o tratamiento médico profesional.",
+    "faqTitle": "Preguntas frecuentes"
   },
   "prescriptionsPage": {
     "countryLabel": "{country} · Médicos que gestionan recetas de repetición",
@@ -720,5 +726,34 @@
     "unsavedChangesBody": "Tienes cambios sin guardar en esta página. Si sales ahora, se perderán.",
     "unsavedChangesKeepEditing": "Seguir editando",
     "unsavedChangesDiscard": "Descartar cambios"
+  },
+  "a11y": {
+    "whyPatientsTrustUs": "Por qué los pacientes confían en nosotros",
+    "previousPage": "Página anterior",
+    "nextPage": "Página siguiente",
+    "medicalDisclaimer": "Aviso médico"
+  },
+  "flow": {
+    "cartOpeningTitle": "Abriendo tu carrito",
+    "cartOpeningBody": "Abriendo tu carrito...",
+    "checkoutOpeningTitle": "Abriendo el pago",
+    "checkoutOpeningBody": "Abriendo el pago...",
+    "checkoutCancelledTitle": "Volviendo al carrito",
+    "checkoutCancelledBody": "Estamos abriendo la página del carrito específica de tu país.",
+    "patientUploadTitle": "Subir archivos médicos",
+    "patientUploadSubtitle": "Transferencia segura de archivos para una solicitud de cita existente.",
+    "patientUploadStepUpload": "Subir",
+    "patientUploadStepReview": "Revisión",
+    "reviewRateTitle": "Valora tu atención",
+    "reviewRateSubtitle": "Comparte tu opinión sobre tu experiencia de consulta.",
+    "reviewRateStepRatings": "Valoraciones",
+    "reviewRateStepSubmit": "Enviar"
+  },
+  "blogPage": {
+    "articlesAvailableNow": "Disponible ahora",
+    "doctorReviewedTitle": "Revisado por médicos",
+    "verifiedByClinicians": "Verificado por clínicos",
+    "evidenceBasedTitle": "Basado en evidencia",
+    "noAdsNoSponsors": "Sin anuncios, sin patrocinios"
   }
 }

@@ -35,5 +35,6 @@
   "g4_q1": "When do I see the price?",
   "g4_a1": "Service prices are shown before booking and checkout. Final availability and payment options depend on the selected country and service.",
   "g4_q2": "Do I need a subscription or wellness plan?",
-  "g4_a2": "No. The public site is currently built around pay-per-consultation and service-based bookings, not bundled wellness plans."
+  "g4_a2": "No. The public site is currently built around pay-per-consultation and service-based bookings, not bundled wellness plans.",
+  "faq_section_title": "Frequently asked questions"
 }
