@@ -260,7 +260,8 @@ export async function resendInvoiceWhatsApp(
  * - Skips Portugal + prefixless countries (same rule as the paid path).
  * - Idempotent: returns early if an invoice already exists for the order.
  * - The presence of this row is later how generateInvoiceForOrder knows the
- *   booking was manual/AI (→ transition to RECEIPT) rather than direct web.
+ *   booking was manual/AI (→ issue a separate RECEIPT beside it) rather than
+ *   direct web (→ single combined INVOICE_RECEIPT).
  */
 export async function createUnpaidInvoiceForOrder(
   orderId: string,
@@ -331,8 +332,8 @@ export async function createUnpaidInvoiceForOrder(
  * Issue or finalise the fiscal document for a PAID order and email the patient.
  *
  * - Skips Portugal (countryCode === "pt") — no invoices issued there.
- * - Manual/AI booking (an unpaid INVOICE row already exists) → transitions it to
- *   a RECEIPT (same number) and emails the receipt.
+ * - Manual/AI booking (an unpaid INVOICE row already exists) → keeps the INVOICE and
+ *   creates a SEPARATE RECEIPT row reusing the same number, then emails the receipt.
  * - Direct-website order (no invoice yet) → creates a combined INVOICE_RECEIPT.
  * - Idempotent: an already-finalised RECEIPT / INVOICE_RECEIPT returns early.
  * - Called from ensureOrderPaidAutomations after the order is marked PAID.
@@ -374,38 +375,43 @@ export async function generateInvoiceForOrder(
     return;
   }
 
-  // Manual/AI booking: an unpaid INVOICE was pre-issued at booking time.
-  const existing = order.invoices[0];
-  if (existing) {
-    if (existing.documentType !== "INVOICE") {
-      // Already a RECEIPT or INVOICE_RECEIPT — idempotent no-op.
-      log.info({ orderId }, "Invoice already finalised — skipping");
-      return;
-    }
+  // Already finalised (a RECEIPT or INVOICE_RECEIPT exists) → idempotent no-op,
+  // so webhook retries never issue a second receipt.
+  if (order.invoices.some((i) => i.documentType === "RECEIPT" || i.documentType === "INVOICE_RECEIPT")) {
+    log.info({ orderId }, "Invoice already finalised — skipping");
+    return;
+  }
 
-    // Transition INVOICE → RECEIPT, keeping the same number.
-    await prisma.invoice.update({
-      where: { id: existing.id },
-      data: { documentType: "RECEIPT" },
+  // Manual/AI booking: an unpaid INVOICE was pre-issued at booking time. Keep that
+  // INVOICE row and issue a SEPARATE RECEIPT that reuses the same number (invoiceNumber
+  // is no longer DB-unique), so the order retains both the invoice and its receipt.
+  const unpaidInvoice = order.invoices.find((i) => i.documentType === "INVOICE");
+  if (unpaidInvoice) {
+    const receipt = await prisma.invoice.create({
+      data: {
+        invoiceNumber: unpaidInvoice.invoiceNumber,
+        orderId: order.id,
+        countryCode: order.countryCode.toLowerCase(),
+        emailSentTo: order.email,
+        documentType: "RECEIPT",
+      },
     });
     log.info(
-      { orderId, invoiceId: existing.id, invoiceNumber: existing.invoiceNumber },
-      "Invoice transitioned to receipt on payment",
+      { orderId, invoiceId: receipt.id, invoiceNumber: receipt.invoiceNumber },
+      "Receipt issued on payment (unpaid invoice row preserved)",
     );
 
     // Fire-and-forget — webhook failure must never block the receipt.
-    sendPaymentWebhookToMake(orderId, existing.id, existing.invoiceNumber, log).catch(
-      (err) => {
-        log.warn({ err, orderId, invoiceNumber: existing.invoiceNumber }, "Make.com invoice webhook failed");
-      },
-    );
+    sendPaymentWebhookToMake(orderId, receipt.id, receipt.invoiceNumber, log).catch((err) => {
+      log.warn({ err, orderId, invoiceNumber: receipt.invoiceNumber }, "Make.com invoice webhook failed");
+    });
 
     await renderAndSendInvoiceDoc(
       {
-        invoiceId: existing.id,
+        invoiceId: receipt.id,
         orderId: order.id,
-        invoiceNumber: existing.invoiceNumber,
-        invoiceDateIso: existing.generatedAt.toISOString(),
+        invoiceNumber: receipt.invoiceNumber,
+        invoiceDateIso: receipt.generatedAt.toISOString(),
         email: order.email,
         fullName: order.fullName,
         countryCode: order.countryCode,
