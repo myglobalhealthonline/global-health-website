@@ -1,16 +1,22 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { UserRole } from "@prisma/client";
+import { Prisma, UserRole } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError, normalizeDbError } from "../modules/shared/db-errors.js";
 import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { emailSchema, fullNameSchema } from "../validations/shared.schema.js";
 
 // Signals "would remove the last active SUPER_ADMIN" out of the transaction
 // below so the route can reply 409 instead of the generic 500 handler.
 class LastSuperAdminError extends Error {}
+
+// Raised inside the update transaction when the requested email is already
+// taken by another User or by an unrelated PatientProfile row, so the route
+// replies 409 instead of surfacing a raw P2002.
+class EmailTakenError extends Error {}
 
 /**
  * Admin patient + admin-user management.
@@ -18,7 +24,9 @@ class LastSuperAdminError extends Error {}
  * Surfaces:
  *   GET  /api/admin/users               — list + search + role filter (paginated)
  *   GET  /api/admin/users/:id           — single user detail + booking count
- *   PATCH /api/admin/users/:id          — flip isActive, change role
+ *   PATCH /api/admin/users/:id          — flip isActive, change role/doctor
+ *                                          link, correct identity fields
+ *                                          (email, fullName, phone, DOB)
  *   POST /api/admin/users/:id/reset-password
  *     — set a fresh password directly (admin override; bypasses email
  *        token because the operator is acting on behalf of the user)
@@ -59,12 +67,17 @@ const patchBodySchema = z
      *  Pass null to unlink. Backend rejects when the target Doctor
      *  is already linked to another user. */
     doctorId: z.string().trim().min(1).nullable().optional(),
+    /** Login identifier. Normalised to lowercase because every lookup
+     *  (login, PatientProfile join) lower-cases before querying. */
+    email: emailSchema.toLowerCase().optional(),
+    fullName: fullNameSchema.optional(),
+    phone: z.string().trim().min(6).max(32).nullable().optional(),
+    dateOfBirth: z.string().datetime().nullable().optional(),
   })
-  .refine(
-    (d) =>
-      d.isActive !== undefined || d.role !== undefined || d.doctorId !== undefined,
-    { message: "Provide at least one of isActive, role, or doctorId" },
-  );
+  .strict()
+  .refine((d) => Object.keys(d).length > 0, {
+    message: "Provide at least one field to update",
+  });
 
 const resetPasswordBodySchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters").max(128),
@@ -170,6 +183,12 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
           email: true,
           fullName: true,
           phone: true,
+          // dateOfBirth + doctorId are both edited from the detail page, so
+          // they have to come back here to prefill the form. doctorId was
+          // already declared on AdminUserDto and read by the page but never
+          // selected, so the link input silently rendered empty.
+          dateOfBirth: true,
+          doctorId: true,
           role: true,
           isActive: true,
           emailVerifiedAt: true,
@@ -184,6 +203,7 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
       return okResponse({
         user: {
           ...user,
+          dateOfBirth: user.dateOfBirth?.toISOString() ?? null,
           emailVerifiedAt: user.emailVerifiedAt?.toISOString() ?? null,
           createdAt: user.createdAt.toISOString(),
           updatedAt: user.updatedAt.toISOString(),
@@ -226,6 +246,16 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
         .status(403)
         .send(errorResponse("Only SUPER_ADMIN can change a user's role or doctor link"));
     }
+    // Email is the login identifier AND the password-reset destination, so
+    // rewriting it is an account-takeover primitive (point the address at
+    // yourself, then request a reset). Same bar as a role change.
+    // fullName / phone / dateOfBirth stay open to plain ADMIN — they are
+    // ordinary PII corrections with no privilege effect.
+    if (body.data.email !== undefined && sessionActor?.role !== "SUPER_ADMIN") {
+      return reply
+        .status(403)
+        .send(errorResponse("Only SUPER_ADMIN can change a user's email"));
+    }
     // Self-protection: an admin acting on their own account can't change
     // their own role or deactivate themselves through this endpoint —
     // closes the "compromised session locks out real admins" and
@@ -260,8 +290,19 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
       }
       const before = await prisma.user.findUnique({
         where: { id: params.data.id },
-        select: { role: true, isActive: true },
+        select: { role: true, isActive: true, email: true },
       });
+      // Answer "no such user" directly. Falling through would hit the update
+      // and surface a raw P2025 as a 500, and would also make `emailChanging`
+      // below silently false for a request that did ask to change the email.
+      if (!before) {
+        return reply.status(404).send(errorResponse("User not found"));
+      }
+      // Only treat email as "changing" when it actually differs — a form that
+      // round-trips the unchanged address must not nuke emailVerifiedAt or
+      // log the admin out for nothing.
+      const nextEmail = body.data.email;
+      const emailChanging = nextEmail !== undefined && nextEmail !== before.email;
       // Last-SUPER_ADMIN protection: refuse to demote or deactivate the
       // only remaining active SUPER_ADMIN — that would leave nobody able
       // to grant SUPER_ADMIN back.
@@ -276,7 +317,8 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
       const bumpTokenVersion =
         body.data.role !== undefined ||
         body.data.isActive !== undefined ||
-        body.data.doctorId !== undefined;
+        body.data.doctorId !== undefined ||
+        emailChanging;
       // Count + update run in one SERIALIZABLE transaction so two concurrent
       // demotions of different SUPER_ADMINs can't both pass the count check
       // and leave zero active SUPER_ADMINs (ReadCommitted would still let
@@ -291,12 +333,47 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
             throw new LastSuperAdminError();
           }
         }
+        if (emailChanging && nextEmail) {
+          // Both tables carry a unique on email. Check them inside the tx so
+          // the answer can't go stale between check and write, and so the
+          // admin gets a readable 409 rather than a raw P2002.
+          const [takenByUser, takenByProfile] = await Promise.all([
+            tx.user.findFirst({
+              where: { email: nextEmail, id: { not: params.data.id } },
+              select: { id: true },
+            }),
+            tx.patientProfile.findFirst({
+              where: { email: nextEmail, userId: { not: params.data.id } },
+              select: { id: true },
+            }),
+          ]);
+          if (takenByUser || takenByProfile) {
+            throw new EmailTakenError();
+          }
+          // PatientProfile is joined by email, not by userId — every admin
+          // and doctor read does findUnique({ where: { email } }). Moving the
+          // User without moving the profile would strand the entire clinical
+          // chart at the old address, so both move together or neither does.
+          await tx.patientProfile.updateMany({
+            where: { email: before.email },
+            data: { email: nextEmail },
+          });
+        }
         return tx.user.update({
           where: { id: params.data.id },
           data: {
             ...(body.data.isActive !== undefined && { isActive: body.data.isActive }),
             ...(body.data.role !== undefined && { role: body.data.role }),
             ...(body.data.doctorId !== undefined && { doctorId: body.data.doctorId }),
+            ...(body.data.email !== undefined && { email: body.data.email }),
+            ...(body.data.fullName !== undefined && { fullName: body.data.fullName }),
+            ...(body.data.phone !== undefined && { phone: body.data.phone }),
+            ...(body.data.dateOfBirth !== undefined && {
+              dateOfBirth: body.data.dateOfBirth ? new Date(body.data.dateOfBirth) : null,
+            }),
+            // A new address is unproven — drop verification so the account
+            // re-verifies rather than inheriting the old address's trust.
+            ...(emailChanging && { emailVerifiedAt: null }),
             ...(bumpTokenVersion && { tokenVersion: { increment: 1 } }),
           },
           select: {
@@ -321,9 +398,13 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
         entityId: updated.id,
         metadata: {
           email: updated.email,
+          changedFields: Object.keys(body.data),
           ...(roleChanged ? { roleFrom: before?.role, roleTo: updated.role } : {}),
           ...(body.data.isActive !== undefined ? { isActive: updated.isActive } : {}),
           ...(body.data.doctorId !== undefined ? { doctorLinked: Boolean(updated.doctorId) } : {}),
+          // Both addresses are already-logged identifiers on this route, and
+          // an email move is exactly the event an auditor needs to retrace.
+          ...(emailChanging ? { emailFrom: before?.email, emailTo: updated.email } : {}),
         },
         request,
       });
@@ -335,6 +416,20 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
         return reply
           .status(409)
           .send(errorResponse("Cannot remove the last active SUPER_ADMIN"));
+      }
+      if (error instanceof EmailTakenError) {
+        return reply
+          .status(409)
+          .send(errorResponse("That email is already in use by another account"));
+      }
+      // Backstop for the pre-check losing a race against a concurrent insert.
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        return reply
+          .status(409)
+          .send(errorResponse("That email is already in use by another account"));
       }
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));
