@@ -33,7 +33,6 @@ import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { SectionSeam } from "@/components/ui/SectionSeam";
-import HeroFitContent from "@/components/sections/HeroFitContent";
 import { KitRedemptionCallout } from "@/components/subscription/KitRedemptionCallout";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -136,9 +135,9 @@ export default async function HealthTestDetailPage({
         ])}
       />
 
-      {/* ── Hero — full-viewport 50/50 split: image left, content + product card right ── */}
+      {/* ── Hero — 50/50 split: image left, content + product card right ── */}
       <section
-        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate !overflow-visible lg:!overflow-hidden"
+        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate !overflow-visible"
       >
         {/* Mobile/tablet only — full-bleed tinted image behind the text,
          *  same treatment as PageHero/DoctorProfileTemplate: text sits in
@@ -294,8 +293,8 @@ export default async function HealthTestDetailPage({
               style={{ bottom: "8%", right: "10%", fontSize: "78px", color: "rgba(176,241,34,0.045)" }}
             >+</span>
 
-            {/* Content — scale-to-fit on short viewports, no inner scrollbar */}
-            <HeroFitContent className="relative z-10 max-w-[680px]">
+            {/* Content stays at its natural size; the document owns scrolling. */}
+            <div className="relative z-10 max-w-[680px]">
               {/* Back link */}
               <Link
                 href={backHref}
@@ -457,7 +456,7 @@ export default async function HealthTestDetailPage({
                   </p>
                 </div>
               </div>
-            </HeroFitContent>
+            </div>
           </div>
 
         </div>

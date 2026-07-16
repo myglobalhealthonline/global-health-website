@@ -17,7 +17,6 @@ import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
 import { focalStyle } from "@/components/media/doctor-photo";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
-import HeroFitContent from "@/components/sections/HeroFitContent";
 
 /* ─── Types ──────────────────────────────────────────────────────────────── */
 type DoctorProfileTemplateProps = {
@@ -99,9 +98,9 @@ export function DoctorProfileTemplate({
   return (
     <section className="bg-[var(--color-background-page)]">
 
-      {/* ── HERO — viewport-locked 50/50 split ── */}
+      {/* ── HERO — 50/50 split; grows naturally on short viewports ── */}
       <section
-        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate !overflow-visible lg:!overflow-hidden"
+        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate !overflow-visible"
       >
         {/* Mobile/tablet only — full-bleed tinted portrait behind the text,
          *  same treatment as the team page hero: text sits in front of the
@@ -228,8 +227,8 @@ export function DoctorProfileTemplate({
               className="gh-inline-plus-small pointer-events-none absolute z-0 select-none font-bold leading-none"
             >+</span>
 
-            {/* Content — scale-to-fit on short viewports, no inner scrollbar */}
-            <HeroFitContent className="gh-inline-content-max relative z-10">
+            {/* Content stays at its natural size; the document owns scrolling. */}
+            <div className="gh-inline-content-max relative z-10">
 
               {/* Top nav pills */}
               <div className="flex flex-wrap items-center gap-2">
@@ -396,7 +395,7 @@ export function DoctorProfileTemplate({
                 ))}
               </ul>
 
-            </HeroFitContent>
+            </div>
           </div>
 
         </div>

@@ -3349,8 +3349,8 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
     min-height: calc(100svh - var(--header-height));
   }
 }
-/* Short-viewport compact tier — right panel rhythm + type shrink so more of
- * the content fits before internal scroll kicks in. */
+/* Short-viewport compact tier — keeps the first screen useful while the hero
+ * remains in natural document flow and continues on the page scrollbar. */
 @media (min-width: 1024px) and (max-height: 760px) {
   .gh-inline-panel-base {
     padding-top: 20px;

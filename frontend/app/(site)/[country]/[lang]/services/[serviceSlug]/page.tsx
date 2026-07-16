@@ -41,7 +41,6 @@ import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyWidgetLazy as DoctifyWidget } from "@/components/sections/DoctifyReviewsLazy";
 import { SectionSeam } from "@/components/ui/SectionSeam";
-import HeroFitContent from "@/components/sections/HeroFitContent";
 
 type Params = { country: string; lang: string; serviceSlug: string };
 
@@ -198,9 +197,9 @@ export default async function ServiceDetailPage({
         })}
       />
 
-      {/* ── Hero — full-viewport 50/50 split: image left, content + booking right ── */}
+      {/* ── Hero — 50/50 split: image left, content + booking right ── */}
       <section
-        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate !overflow-visible lg:!overflow-hidden"
+        className="gh-inline-split-hero gh-medical-pattern gh-medical-pattern-dark relative isolate !overflow-visible"
       >
         {/* Mobile/tablet only — full-bleed tinted image behind the text,
          *  same treatment as PageHero/DoctorProfileTemplate: text sits in
@@ -294,8 +293,8 @@ export default async function ServiceDetailPage({
               className="gh-inline-plus-small pointer-events-none absolute z-0 select-none font-bold leading-none"
             >+</span>
 
-            {/* Content — scale-to-fit on short viewports, no inner scrollbar */}
-            <HeroFitContent className="gh-inline-content-max relative z-10">
+            {/* Content stays at its natural size; the document owns scrolling. */}
+            <div className="gh-inline-content-max relative z-10">
               {/* Back link */}
               <Link
                 href={back.href}
@@ -441,7 +440,7 @@ export default async function ServiceDetailPage({
                   </p>
                 </div>
               </div>
-            </HeroFitContent>
+            </div>
           </div>
 
         </div>
