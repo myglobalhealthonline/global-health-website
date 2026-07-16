@@ -11,7 +11,10 @@ import {
   type WeekDay,
 } from "./calendar-utils";
 
-const HOUR_PX = 88; // row height per hour — roomy: a 15-min slot = 22px, no overlap
+// Row height per hour. Sized so the *smallest* slot a doctor can author
+// (15 min = 40px) still fits a two-line block — time range + patient name —
+// without clipping. Everything longer scales up from there.
+const HOUR_PX = 160;
 const PX_PER_MIN = HOUR_PX / 60;
 const DEFAULT_START_HOUR = 7;
 const DEFAULT_END_HOUR = 20;
@@ -19,7 +22,10 @@ const DEFAULT_END_HOUR = 20;
 // duration behind it. Everything else arrives with a real `endAt` and is drawn
 // across the minutes it actually occupies.
 const CONSULT_FALLBACK_MIN = 30;
-const MIN_BLOCK_PX = 18; // floor < a 15-min slot's 22px span, so blocks keep a gap
+const MIN_BLOCK_PX = 34; // floor < a 15-min slot's 40px span, so blocks keep a gap
+// Height tiers: a block only shows what it can render without clipping.
+const TWO_LINE_PX = 38; // time range + name
+const THREE_LINE_PX = 58; // + consultation type
 
 type Props = {
   /** Any calendar date inside the week to render ("YYYY-MM-DD"). */
@@ -307,7 +313,7 @@ export function WeekCalendar({
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="gh-week-scroll">
         <div className="gh-week-grid" style={{ minWidth: 720 }}>
           {/* Day header row — sticky while the hour grid scrolls */}
           <div
@@ -434,7 +440,21 @@ export function WeekCalendar({
                       width: `calc(${laneWidth}% - 4px)`,
                       ...toneStyle(p.item),
                     };
-                    const time = fmtTime.format(new Date(p.item.startAt));
+                    // Draw the SPAN, not just the start: a 45-min consult that
+                    // reads "09:00" alone is silently assumed to be the grid's
+                    // base step. "09:00 – 09:45" can't be misread.
+                    const startLabel = fmtTime.format(new Date(p.item.startAt));
+                    const endLabel = p.item.endAt
+                      ? fmtTime.format(new Date(p.item.endAt))
+                      : null;
+                    const timeLabel = endLabel
+                      ? `${startLabel} – ${endLabel}`
+                      : startLabel;
+                    const consultType = p.item.meta?.consultationType ?? null;
+                    // Only render what fits — a clipped third line reads as a
+                    // rendering bug, not as density.
+                    const showName = height >= TWO_LINE_PX;
+                    const showType = height >= THREE_LINE_PX && Boolean(consultType);
                     // Booked block: patient NAME is the hero, kept inside the
                     // block bounds (truncate + the block clips overflow). Open
                     // and blocked slots show only the time — colour carries the
@@ -442,19 +462,33 @@ export function WeekCalendar({
                     const inner = showPatient ? (
                       <>
                         <span className="block truncate text-portal-micro font-semibold leading-none opacity-90">
-                          {time}
+                          {timeLabel}
                         </span>
-                        <span className="mt-0.5 flex items-center gap-1 text-portal-meta font-bold leading-tight">
-                          <User className="size-3.5 shrink-0" aria-hidden />
-                          <span className="truncate">{patientName}</span>
-                        </span>
+                        {showName ? (
+                          <span className="mt-1 flex items-center gap-1 text-portal-meta font-bold leading-tight">
+                            <User className="size-3.5 shrink-0" aria-hidden />
+                            <span className="truncate">{patientName}</span>
+                          </span>
+                        ) : null}
+                        {showType ? (
+                          <span className="mt-0.5 block truncate text-portal-micro font-medium leading-none opacity-80">
+                            {consultType}
+                          </span>
+                        ) : null}
                       </>
                     ) : (
                       <span className="flex items-center gap-1 text-portal-thead font-bold leading-tight">
                         {statusIcon(p.item.status)}
-                        <span className="truncate">{time}</span>
+                        <span className="truncate">{timeLabel}</span>
                       </span>
                     );
+                    // Hover always carries the full record, even when the block
+                    // was too short to draw every line.
+                    const fullTitle = showPatient
+                      ? [timeLabel, patientName, consultType]
+                          .filter(Boolean)
+                          .join(" · ")
+                      : `${timeLabel} · ${p.item.status}`;
                     // Doctor mode: click an OPEN/BLOCKED slot to toggle it.
                     const toggleable =
                       onToggleSlot &&
@@ -466,11 +500,11 @@ export function WeekCalendar({
                           key={p.item.id}
                           type="button"
                           onClick={() => onToggleSlot(p.item)}
-                          title={
+                          title={`${timeLabel} · ${
                             p.item.status === "OPEN"
                               ? t.clickToBlock
                               : t.clickToReopen
-                          }
+                          }`}
                           className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
                           style={style}
                         >
@@ -484,7 +518,7 @@ export function WeekCalendar({
                           key={p.item.id}
                           type="button"
                           onClick={() => onSelectOpenSlot(p.item)}
-                          title={t.bookThisTime}
+                          title={`${timeLabel} · ${t.bookThisTime}`}
                           className="gh-week-block gh-week-block--open overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
                           style={style}
                         >
@@ -498,7 +532,7 @@ export function WeekCalendar({
                           key={p.item.id}
                           type="button"
                           onClick={() => onSelectConsultation(p.item)}
-                          title={p.item.meta?.consultationType ?? p.item.title}
+                          title={fullTitle}
                           className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
                           style={style}
                         >
@@ -509,7 +543,11 @@ export function WeekCalendar({
                     return (
                       <div
                         key={p.item.id}
-                        title={p.item.meta?.blockReason ?? p.item.status}
+                        title={
+                          p.item.meta?.blockReason
+                            ? `${timeLabel} · ${p.item.meta.blockReason}`
+                            : fullTitle
+                        }
                         className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1"
                         style={style}
                       >
