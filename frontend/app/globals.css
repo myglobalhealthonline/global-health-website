@@ -172,13 +172,12 @@ html::-webkit-scrollbar-thumb:hover {
   --shadow-focus:      0 0 0 3px rgba(29, 75, 54, 0.28);
   --shadow-focus-error:0 0 0 3px rgba(185, 28, 28, 0.28);
 
-  /* Medical pattern tokens. Range per docs/medical-pattern-rollout-plan.md:
-     light backgrounds 0.035-0.07, dark backgrounds 0.08-0.16. */
+  /* Medical pattern tokens */
   --medical-pattern-size: 28px;
   --medical-pattern-color: var(--color-brand-primary);
-  --medical-pattern-opacity: 0.05;
-  --medical-pattern-dark-opacity: 0.1;
-  --medical-pattern-soft-opacity: 0.035;
+  --medical-pattern-opacity: 0.022;
+  --medical-pattern-dark-opacity: 0.04;
+  --medical-pattern-soft-opacity: 0.016;
 
   /* Fluid type — bigger, more confident display sizes. */
   --text-display: clamp(2.5rem, 7vw + 1rem, 6rem);
@@ -2568,7 +2567,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 
 .gh-medical-pattern-panel::before {
   background-image: url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231d4b36' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E");
-  opacity: var(--medical-pattern-opacity);
+  opacity: 0.03;
 }
 
 /* ── Entry animation system ─────────────────────────────────────────
