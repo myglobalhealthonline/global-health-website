@@ -1,5 +1,8 @@
 import Link from "next/link";
-import { requireAdminAction } from "@/lib/admin/require-admin-action";
+import {
+  requireAdminAction,
+  requireSuperAdminAction,
+} from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import {
@@ -9,9 +12,11 @@ import {
   resetAdminUserPassword,
   type AdminUserRole,
 } from "@/lib/admin/admin-api";
+import { getServerAuthUser } from "@/lib/api/server-auth";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
 import { PatientProfileEditor } from "../_components/patient-profile-editor";
 import { FormSection } from "@/components/FormSection";
+import { PhoneField } from "@/components/forms/phone-field";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +64,73 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
     patientProfileResult && patientProfileResult.ok
       ? patientProfileResult.data.profile
       : null;
+
+  // Gates the email editor. The backend rejects a non-SUPER_ADMIN email
+  // change on its own; this only keeps a control the operator can't use
+  // from rendering at all.
+  const viewer = await getServerAuthUser();
+  const canEditEmail = viewer?.role === "SUPER_ADMIN";
+
+  // Identity corrections (typo'd name, stale phone, missing DOB). Open to
+  // plain ADMIN — no privilege effect. Email is deliberately NOT here; it
+  // has its own SUPER_ADMIN-gated form below.
+  async function updateIdentityAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const fail = (message: string) =>
+      redirect(`/admin/users/${id}?error=${encodeURIComponent(message)}`);
+
+    const fullName = String(formData.get("fullName") ?? "").trim();
+    if (fullName.length < 2) {
+      fail("Full name must be at least 2 characters");
+    }
+    const phoneRaw = String(formData.get("phone") ?? "").trim();
+    if (phoneRaw !== "" && phoneRaw.length < 6) {
+      fail("Phone must be at least 6 characters");
+    }
+    const dobRaw = String(formData.get("dateOfBirth") ?? "").trim();
+    let dateOfBirth: string | null = null;
+    if (dobRaw !== "") {
+      const parsed = new Date(dobRaw);
+      if (Number.isNaN(parsed.getTime())) {
+        fail("Date of birth is not a valid date");
+      }
+      dateOfBirth = parsed.toISOString();
+    }
+
+    const res = await patchAdminUser(id, {
+      fullName,
+      phone: phoneRaw === "" ? null : phoneRaw,
+      dateOfBirth,
+    });
+    if (!res.ok) {
+      fail(res.message);
+    }
+    redirect(`/admin/users/${id}?success=${encodeURIComponent("Account details saved")}`);
+  }
+
+  // Email is the login identifier and the password-reset destination, so
+  // rewriting it is an account-takeover primitive. SUPER_ADMIN only — the
+  // backend enforces the same bar independently.
+  async function updateEmailAction(formData: FormData) {
+    "use server";
+    await requireSuperAdminAction();
+    const email = String(formData.get("email") ?? "").trim().toLowerCase();
+    if (!email.includes("@")) {
+      redirect(
+        `/admin/users/${id}?error=${encodeURIComponent("Enter a valid email address")}`,
+      );
+    }
+    const res = await patchAdminUser(id, { email });
+    if (!res.ok) {
+      redirect(`/admin/users/${id}?error=${encodeURIComponent(res.message)}`);
+    }
+    redirect(
+      `/admin/users/${id}?success=${encodeURIComponent(
+        "Email updated. The account is now unverified and has been signed out of all devices.",
+      )}`,
+    );
+  }
 
   async function toggleActiveAction() {
     "use server";
@@ -158,11 +230,53 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
 
       <div className="gh-admin-user-detail-layout grid gap-4">
         <div className="gh-admin-user-detail-main grid gap-4">
-          <FormSection title="Profile">
+          <FormSection title="Account details">
+            <form
+              action={updateIdentityAction}
+              className="gh-admin-support-field-grid gh-form-section__span-2 grid gap-3 sm:grid-cols-2"
+            >
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">Full name</span>
+                <input
+                  type="text"
+                  name="fullName"
+                  required
+                  minLength={2}
+                  maxLength={120}
+                  defaultValue={user.fullName}
+                  className="gh-input"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">Phone</span>
+                <PhoneField name="phone" defaultValue={user.phone ?? ""} />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">Date of birth</span>
+                <input
+                  type="date"
+                  name="dateOfBirth"
+                  defaultValue={user.dateOfBirth?.slice(0, 10) ?? ""}
+                  className="gh-input"
+                />
+              </label>
+              <div className="flex items-end justify-end sm:col-span-2">
+                <button type="submit" className="gh-btn gh-btn-primary">
+                  Save account details
+                </button>
+              </div>
+            </form>
+
+            {user.role === "PATIENT" ? (
+              <p className="gh-form-section__span-2 mt-1 text-portal-meta text-[var(--color-text-muted)]">
+                Name / phone / DOB on the clinical chart are stored separately
+                and edited under “Patient profile” below — saving here does not
+                change them.
+              </p>
+            ) : null}
+
             <dl className="gh-admin-user-facts gh-form-section__span-2 mt-4 grid gap-4 sm:grid-cols-2">
               <Field label="Email" value={user.email} />
-              <Field label="Full name" value={user.fullName} />
-              <Field label="Phone" value={user.phone ?? "—"} />
               <Field label="Role" value={user.role} />
               <Field label="Email verified" value={user.emailVerifiedAt ? new Date(user.emailVerifiedAt).toLocaleString() : "Not verified"} />
               <Field label="Bookings" value={String(stats.appointmentCount)} />
@@ -194,6 +308,30 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
               </button>
             </form>
           </FormSection>
+
+          {canEditEmail ? (
+            <FormSection title="Email address">
+              <p className="text-portal-compact text-[var(--color-text-muted)]">
+                Login identifier. Changing it clears email verification, signs
+                the user out everywhere, and moves their patient chart to the
+                new address. Tell the user before you change it.
+              </p>
+              <form action={updateEmailAction} className="mt-3 flex flex-col gap-2">
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  maxLength={200}
+                  defaultValue={user.email}
+                  autoComplete="off"
+                  className="gh-input"
+                />
+                <button type="submit" className="gh-btn gh-btn-primary w-full">
+                  Update email
+                </button>
+              </form>
+            </FormSection>
+          ) : null}
 
           <FormSection title="Role">
             <form action={changeRoleAction} className="flex flex-col gap-2">
