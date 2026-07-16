@@ -155,7 +155,8 @@
     "filters": "Filter",
     "bioFallbackTemplate": "Approbierter Arzt für Online-Konsultationen in {country} verfügbar.",
     "verifyRegistrationAria": "Zulassung im offiziellen Register überprüfen",
-    "viewProfileAria": "Profil von {name} anzeigen"
+    "viewProfileAria": "Profil von {name} anzeigen",
+    "languagesMoreTemplate": "{languages} & mehr"
   },
   "cookie": {
     "title": "Cookie-Einstellungen",

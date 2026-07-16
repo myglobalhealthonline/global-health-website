@@ -155,7 +155,8 @@
     "filters": "Filtry",
     "bioFallbackTemplate": "Licencovaný lékař dostupný pro online konzultace v {country}.",
     "verifyRegistrationAria": "Ověřit registraci v oficiálním registru",
-    "viewProfileAria": "Zobrazit profil pro {name}"
+    "viewProfileAria": "Zobrazit profil pro {name}",
+    "languagesMoreTemplate": "{languages} a další"
   },
   "cookie": {
     "title": "Nastavení cookies",

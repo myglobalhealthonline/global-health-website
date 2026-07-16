@@ -155,7 +155,8 @@
     "filters": "Filtre",
     "bioFallbackTemplate": "Medic licențiat disponibil pentru consultații online în {country}.",
     "verifyRegistrationAria": "Verificați înregistrarea în registrul oficial",
-    "viewProfileAria": "Vizualizați profilul pentru {name}"
+    "viewProfileAria": "Vizualizați profilul pentru {name}",
+    "languagesMoreTemplate": "{languages} și altele"
   },
   "cookie": {
     "title": "Preferințe cookie",

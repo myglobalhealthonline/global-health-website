@@ -155,7 +155,8 @@
     "filters": "Filters",
     "bioFallbackTemplate": "Licensed clinician available for online consultations in {country}.",
     "verifyRegistrationAria": "Verify registration on the official register",
-    "viewProfileAria": "View profile for {name}"
+    "viewProfileAria": "View profile for {name}",
+    "languagesMoreTemplate": "{languages} & More"
   },
   "cookie": {
     "title": "Cookie preferences",

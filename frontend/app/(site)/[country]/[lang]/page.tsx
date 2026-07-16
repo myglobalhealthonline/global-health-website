@@ -11,7 +11,7 @@ import { DoctorCarousel, type DoctorCarouselItem } from "@/components/sections/D
 import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
 import { TrustMarquee, type TrustMarqueeItem } from "@/components/sections/TrustMarquee";
 import { fetchPublicReviewConfig } from "@/lib/api/reviews-config";
-import { languageLabel as gpLanguageLabel } from "@/lib/content/languages";
+import { localizedLanguageLabel } from "@/lib/content/languages";
 import { StatsBand, type StatBandItem } from "@/components/sections/StatsBand";
 import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
 import { FinalCTA } from "@/components/sections/FinalCTA";
@@ -388,11 +388,14 @@ export default async function CountryLangHomePage({
       : null;
   const gpLanguageNames = gpLanguages.languages
     .slice(0, 3)
-    .map((l) => gpLanguageLabel(l));
+    .map((l) => localizedLanguageLabel(l, lang));
   const gpLanguagesSummary =
     gpLanguageNames.length > 0
       ? gpLanguages.languages.length > 3
-        ? `${gpLanguageNames.join(", ")} & More`
+        ? bundle.common.doctors.languagesMoreTemplate.replace(
+            "{languages}",
+            gpLanguageNames.join(", "),
+          )
         : gpLanguageNames.join(", ")
       : "";
   const trustMarqueeItems: TrustMarqueeItem[] = [

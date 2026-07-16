@@ -155,7 +155,8 @@
     "filters": "Filtros",
     "bioFallbackTemplate": "Clínico licenciado disponível para consultas online em {country}.",
     "verifyRegistrationAria": "Verificar registo no registo oficial",
-    "viewProfileAria": "Ver perfil de {name}"
+    "viewProfileAria": "Ver perfil de {name}",
+    "languagesMoreTemplate": "{languages} e mais"
   },
   "cookie": {
     "title": "Preferências de cookies",

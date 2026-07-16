@@ -126,6 +126,8 @@ export type CommonLocale = {
     verifyRegistrationAria: string;
     /** DoctorCard overlay-link aria-label, "{name}" placeholder. */
     viewProfileAria?: string;
+    /** Truncated language-list suffix, e.g. "{languages} & More". */
+    languagesMoreTemplate: string;
   };
   countrySelector: {
     title: string;

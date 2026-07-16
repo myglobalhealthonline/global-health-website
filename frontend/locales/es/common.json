@@ -155,7 +155,8 @@
     "filters": "Filtros",
     "bioFallbackTemplate": "Clínico colegiado disponible para consultas online en {country}.",
     "verifyRegistrationAria": "Verificar colegiación en el registro oficial",
-    "viewProfileAria": "Ver perfil de {name}"
+    "viewProfileAria": "Ver perfil de {name}",
+    "languagesMoreTemplate": "{languages} y más"
   },
   "cookie": {
     "title": "Preferencias de cookies",

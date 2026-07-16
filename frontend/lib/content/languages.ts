@@ -107,3 +107,27 @@ export function languageLabel(token: string): string {
   const raw = token.trim();
   return raw ? raw[0].toUpperCase() + raw.slice(1) : raw;
 }
+
+// Shared pt.json is PT-PT; Node's bare "pt" ICU data is pt-BR ("tcheco"
+// instead of "checo"), so pin the region.
+const DISPLAY_NAME_LOCALE: Record<string, string> = { pt: "pt-PT" };
+
+/**
+ * Locale-aware display label via Intl.DisplayNames (capitalised, since we
+ * render these as list items). Falls back to the English canonical label
+ * for unrecognised tokens or missing ICU data.
+ */
+export function localizedLanguageLabel(token: string, locale: string): string {
+  const entry = resolveLanguage(token);
+  if (!entry) return languageLabel(token);
+  if (locale === "en" || locale.startsWith("en-")) return entry.label;
+  try {
+    const name = new Intl.DisplayNames([DISPLAY_NAME_LOCALE[locale] ?? locale], {
+      type: "language",
+    }).of(entry.code);
+    if (!name || name === entry.code) return entry.label;
+    return name[0].toUpperCase() + name.slice(1);
+  } catch {
+    return entry.label;
+  }
+}

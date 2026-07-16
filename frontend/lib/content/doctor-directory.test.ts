@@ -38,6 +38,7 @@ const i18n = {
   filters: "Filters",
   bioFallbackTemplate: "Licensed clinician available for online consultations in {country}.",
   verifyRegistrationAria: "Verify registration on the official register",
+  languagesMoreTemplate: "{languages} & More",
 };
 
 const gpService = "svc-gp";
