@@ -3,7 +3,7 @@ import { invoicePrefix, generateInvoiceNumber, generateCreditNoteNumber } from "
 import { sendInvoiceEmail } from "../../lib/email/templates.js";
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
-import { buildInvoicePdfData, renderInvoicePdfBuffer } from "./invoice-pdf.js";
+import { buildInvoicePdfData, renderInvoicePdfBuffer, type CreditNoteReason } from "./invoice-pdf.js";
 
 const MAKE_INVOICE_WEBHOOK_URL = process.env.MAKE_INVOICE_WEBHOOK_URL;
 const MAKE_INVOICE_WEBHOOK_ALLOWED_HOST = "hook.eu1.make.com";
@@ -88,38 +88,56 @@ const noopLog: PaymentLog = {
 
 type InvoiceDocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT" | "CREDIT_NOTE";
 
+type InvoiceDocRef = {
+  invoiceId: string;
+  orderId: string;
+  invoiceNumber: string;
+  invoiceDateIso: string;
+  email: string;
+  fullName: string;
+  countryCode: string;
+  documentType: InvoiceDocumentType;
+  /** CREDIT_NOTE only — refund vs cancellation wording. */
+  creditNoteReason?: CreditNoteReason | null;
+};
+
+export type CreditNoteIssueResult = {
+  invoiceId: string;
+  invoiceNumber: string;
+  /** Number of the document being reversed — null when the order had none. */
+  creditedInvoiceNumber: string | null;
+  /** Only set for `deliver: "caller"`; undefined if the render failed. */
+  pdfBuffer?: Buffer;
+};
+
 /**
- * Render the document PDF and email it to the patient, then stamp emailSentAt.
- * Shared by every issue/transition path. PDF + email failures are non-fatal —
- * the invoice row is the source of truth and must survive email trouble.
+ * Render the document PDF. Never throws — a failed render degrades to a
+ * link-only email rather than losing the document.
  */
-async function renderAndSendInvoiceDoc(
-  opts: {
-    invoiceId: string;
-    orderId: string;
-    invoiceNumber: string;
-    invoiceDateIso: string;
-    email: string;
-    fullName: string;
-    countryCode: string;
-    documentType: InvoiceDocumentType;
-  },
-  log: PaymentLog,
-): Promise<void> {
-  let pdfBuffer: Buffer | undefined;
+async function renderInvoiceDocPdf(opts: InvoiceDocRef, log: PaymentLog): Promise<Buffer | undefined> {
   try {
     const pdfData = await buildInvoicePdfData(
       opts.orderId,
       opts.invoiceNumber,
       opts.invoiceDateIso,
       opts.documentType,
+      opts.creditNoteReason ?? null,
     );
-    if (pdfData) {
-      pdfBuffer = (await renderInvoicePdfBuffer(pdfData)) ?? undefined;
-    }
+    if (!pdfData) return undefined;
+    return (await renderInvoicePdfBuffer(pdfData)) ?? undefined;
   } catch (err) {
-    log.warn({ err, orderId: opts.orderId }, "Invoice PDF generation failed — sending link-only email");
+    log.warn({ err, orderId: opts.orderId }, "Invoice PDF generation failed");
+    return undefined;
   }
+}
+
+/**
+ * Render the document PDF and email it to the patient, then stamp emailSentAt.
+ * Shared by every issue/transition path. PDF + email failures are non-fatal —
+ * the invoice row is the source of truth and must survive email trouble.
+ */
+async function renderAndSendInvoiceDoc(opts: InvoiceDocRef, log: PaymentLog): Promise<void> {
+  const pdfBuffer = await renderInvoiceDocPdf(opts, log);
 
   const invoiceUrl = absoluteSiteUrl(`/print/order-invoices/${opts.invoiceId}`);
   try {
@@ -131,6 +149,7 @@ async function renderAndSendInvoiceDoc(
       countryCode: opts.countryCode.toLowerCase(),
       pdfBuffer,
       documentType: opts.documentType,
+      creditNoteReason: opts.creditNoteReason ?? null,
     });
     await prisma.invoice.update({
       where: { id: opts.invoiceId },
@@ -158,6 +177,7 @@ export async function resendInvoiceDocument(
       invoiceNumber: true,
       generatedAt: true,
       documentType: true,
+      creditNoteReason: true,
       countryCode: true,
       order: { select: { id: true, email: true, fullName: true } },
     },
@@ -174,6 +194,7 @@ export async function resendInvoiceDocument(
       fullName: invoice.order.fullName,
       countryCode: invoice.countryCode,
       documentType: invoice.documentType as InvoiceDocumentType,
+      creditNoteReason: invoice.creditNoteReason as CreditNoteReason | null,
     },
     log,
   );
@@ -464,19 +485,41 @@ export async function generateInvoiceForOrder(
 }
 
 /**
- * Issue a CREDIT_NOTE for a refunded order and email it to the patient. The
- * credit note reverses the order's paid fiscal document and reuses the exact
- * invoice PDF template (title "Credit Note", red REFUNDED badge).
+ * Issue a CREDIT_NOTE for an order and email it to the patient. The credit note
+ * reverses the order's earlier fiscal document and reuses the exact invoice PDF
+ * template (title "Credit Note").
+ *
+ * Two reasons, and the reason is persisted on the row so re-renders and admin
+ * resends keep saying the same thing:
+ *   REFUND       — the paid document was refunded (red REFUNDED badge).
+ *   CANCELLATION — an unpaid INVOICE was voided after the booking was cancelled
+ *                  for non-payment (CANCELLED badge, no refund wording). Only
+ *                  manual/AI bookings reach this: they are the only orders that
+ *                  carry an invoice before payment.
  *
  * - Skips Portugal (no Invoice rows there — PT lives in InvoiceExpress).
  * - Skips prefixless countries (same rule as the invoice path).
+ * - CANCELLATION additionally requires an existing document to credit — a
+ *   direct-web order cancelled before payment has none, and crediting a document
+ *   that was never issued would burn a CN number on nothing.
  * - Idempotent: returns the existing credit note if one was already issued.
  * - Own numbering series: CN-IE-00001, CN-CZ-00001, …
+ *
+ * `deliver` picks who emails the PDF:
+ *   "email"  (default) — this function sends the standard credit-note email.
+ *   "caller"           — returns the rendered PDF and sends nothing. The
+ *                        cancellation path uses this to attach the credit note to
+ *                        the "reservation cancelled" email the patient already
+ *                        gets, instead of sending a second message. The caller
+ *                        owns stamping emailSentAt.
  */
 export async function generateCreditNoteForOrder(
   orderId: string,
   log: PaymentLog = noopLog,
-): Promise<{ invoiceId: string; invoiceNumber: string } | null> {
+  opts: { reason?: CreditNoteReason; deliver?: "email" | "caller" } = {},
+): Promise<CreditNoteIssueResult | null> {
+  const reason: CreditNoteReason = opts.reason ?? "REFUND";
+  const deliver = opts.deliver ?? "email";
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     select: {
@@ -484,7 +527,15 @@ export async function generateCreditNoteForOrder(
       email: true,
       fullName: true,
       countryCode: true,
-      invoices: { where: { documentType: "CREDIT_NOTE" }, select: { id: true, invoiceNumber: true } },
+      invoices: {
+        select: {
+          id: true,
+          invoiceNumber: true,
+          documentType: true,
+          creditNoteReason: true,
+          generatedAt: true,
+        },
+      },
     },
   });
 
@@ -501,11 +552,46 @@ export async function generateCreditNoteForOrder(
     return null;
   }
 
+  // The document this credit note reverses. Only manual/AI bookings carry an
+  // invoice before payment; a direct-web order cancelled unpaid has none, so a
+  // cancellation credit note would reverse thin air — skip rather than burn a
+  // CN number on nothing.
+  const credited = order.invoices.find((i) => i.documentType !== "CREDIT_NOTE") ?? null;
+
   // Idempotent: a credit note already exists for this order.
-  const already = order.invoices[0];
+  const already = order.invoices.find((i) => i.documentType === "CREDIT_NOTE");
   if (already) {
     log.info({ orderId, invoiceNumber: already.invoiceNumber }, "Credit note already issued — skipping");
-    return { invoiceId: already.id, invoiceNumber: already.invoiceNumber };
+    return {
+      invoiceId: already.id,
+      invoiceNumber: already.invoiceNumber,
+      creditedInvoiceNumber: credited?.invoiceNumber ?? null,
+      // Re-render for a caller that owns delivery — it still has an email to
+      // attach this to. The "email" path already sent the document on the first
+      // run and must not send it twice.
+      pdfBuffer:
+        deliver === "caller"
+          ? await renderInvoiceDocPdf(
+              {
+                invoiceId: already.id,
+                orderId: order.id,
+                invoiceNumber: already.invoiceNumber,
+                invoiceDateIso: already.generatedAt.toISOString(),
+                email: order.email,
+                fullName: order.fullName,
+                countryCode: order.countryCode,
+                documentType: "CREDIT_NOTE",
+                creditNoteReason: already.creditNoteReason as CreditNoteReason | null,
+              },
+              log,
+            )
+          : undefined,
+    };
+  }
+
+  if (reason === "CANCELLATION" && !credited) {
+    log.info({ orderId }, "No issued document to credit — skipping cancellation credit note");
+    return null;
   }
 
   let creditNoteNumber: string;
@@ -523,24 +609,36 @@ export async function generateCreditNoteForOrder(
       countryCode: order.countryCode.toLowerCase(),
       emailSentTo: order.email,
       documentType: "CREDIT_NOTE",
+      creditNoteReason: reason,
     },
   });
 
-  log.info({ orderId, creditNoteNumber, invoiceId: creditNote.id }, "Credit note created");
-
-  await renderAndSendInvoiceDoc(
-    {
-      invoiceId: creditNote.id,
-      orderId: order.id,
-      invoiceNumber: creditNoteNumber,
-      invoiceDateIso: creditNote.generatedAt.toISOString(),
-      email: order.email,
-      fullName: order.fullName,
-      countryCode: order.countryCode,
-      documentType: "CREDIT_NOTE",
-    },
-    log,
+  log.info(
+    { orderId, creditNoteNumber, invoiceId: creditNote.id, reason, credits: credited?.invoiceNumber ?? null },
+    "Credit note created",
   );
 
-  return { invoiceId: creditNote.id, invoiceNumber: creditNoteNumber };
+  const docRef: InvoiceDocRef = {
+    invoiceId: creditNote.id,
+    orderId: order.id,
+    invoiceNumber: creditNoteNumber,
+    invoiceDateIso: creditNote.generatedAt.toISOString(),
+    email: order.email,
+    fullName: order.fullName,
+    countryCode: order.countryCode,
+    documentType: "CREDIT_NOTE",
+    creditNoteReason: reason,
+  };
+  const result: CreditNoteIssueResult = {
+    invoiceId: creditNote.id,
+    invoiceNumber: creditNoteNumber,
+    creditedInvoiceNumber: credited?.invoiceNumber ?? null,
+  };
+
+  if (deliver === "caller") {
+    return { ...result, pdfBuffer: await renderInvoiceDocPdf(docRef, log) };
+  }
+
+  await renderAndSendInvoiceDoc(docRef, log);
+  return result;
 }

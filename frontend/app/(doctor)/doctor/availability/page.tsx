@@ -15,7 +15,7 @@ export default async function DoctorAvailabilityPage() {
   const { doctor: d } = loadLocaleBundle(locale);
   const [result, appointments] = await Promise.all([
     fetchDoctorAvailability(14),
-    fetchDoctorAppointments({ pageSize: "100" }),
+    fetchDoctorAppointments({ pageSize: "100", excludeLegacy: "true" }),
   ]);
 
   if (!result.ok) {

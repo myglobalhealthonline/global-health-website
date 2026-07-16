@@ -150,6 +150,10 @@ export type CreateManualAppointmentInput = {
   locationAddress?: string | null;
   notes?: string | null;
   countryCode: string;
+  /** Booking under an insurer. The backend re-derives the insurance price and
+   *  requires the doctor to be in that insurer's network for the service. */
+  insuranceCompanyId?: string | null;
+  insurancePolicyNumber?: string | null;
   returnTo?: string;
 };
 

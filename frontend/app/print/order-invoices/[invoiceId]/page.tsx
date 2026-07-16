@@ -16,6 +16,7 @@ const LABELS: Record<string, Record<string, string>> = {
     invoiceReceipt: "Invoice / Receipt",
     creditNote: "Credit Note",
     refunded: "REFUNDED",
+    cancelled: "CANCELLED",
     unpaid: "UNPAID",
     invoiceRef: "Invoice reference",
     from: "From",
@@ -39,6 +40,7 @@ const LABELS: Record<string, Record<string, string>> = {
     invoiceReceipt: "Faktura / Účtenka",
     creditNote: "Dobropis",
     refunded: "VRÁCENO",
+    cancelled: "STORNOVÁNO",
     unpaid: "NEZAPLACENO",
     invoiceRef: "Číslo faktury",
     from: "Od",
@@ -62,6 +64,7 @@ const LABELS: Record<string, Record<string, string>> = {
     invoiceReceipt: "Factura / Recibo",
     creditNote: "Nota de crédito",
     refunded: "REEMBOLSADO",
+    cancelled: "ANULADA",
     unpaid: "NO PAGADO",
     invoiceRef: "Referencia de factura",
     from: "De",
@@ -85,6 +88,7 @@ const LABELS: Record<string, Record<string, string>> = {
     invoiceReceipt: "Factură / Chitanță",
     creditNote: "Notă de credit",
     refunded: "RAMBURSAT",
+    cancelled: "ANULATĂ",
     unpaid: "NEACHITAT",
     invoiceRef: "Referință factură",
     from: "De la",
@@ -168,6 +172,8 @@ type InvoiceDetail = {
     invoiceNumber: string;
     countryCode: string;
     documentType: "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT" | "CREDIT_NOTE";
+    /** CREDIT_NOTE only — a cancellation note voids an unpaid invoice, nothing was refunded. */
+    creditNoteReason: "REFUND" | "CANCELLATION" | null;
     generatedAt: string;
     emailSentAt: string | null;
   };
@@ -258,7 +264,14 @@ export default async function PrintOrderInvoicePage({
         ? L.invoiceReceipt
         : L.invoice;
   const isUnpaid = invoice.documentType === "INVOICE";
-  const statusLabel = isCreditNote ? L.refunded : isUnpaid ? L.unpaid : L.paid;
+  const isCancellationNote = isCreditNote && invoice.creditNoteReason === "CANCELLATION";
+  const statusLabel = isCancellationNote
+    ? L.cancelled
+    : isCreditNote
+      ? L.refunded
+      : isUnpaid
+        ? L.unpaid
+        : L.paid;
 
   return (
     <div className="vk-backdrop">

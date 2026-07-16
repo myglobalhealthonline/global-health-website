@@ -154,6 +154,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
       name: s.name,
       basePriceCents: s.basePriceCents,
       currencyCode: s.currencyCode,
+      insuranceOptions: s.insuranceOptions ?? [],
     }));
   const doctors = doctorsResult.data.items
     .filter((d) => d.active)
@@ -245,6 +246,10 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
       locationAddress,
       notes: readOpt("notes"),
       countryCode: readStr("countryCode"),
+      // Insurance: the backend re-derives the price and enforces that the
+      // doctor is in the insurer's network — never trusted from the form.
+      insuranceCompanyId: readOpt("insuranceCompanyId"),
+      insurancePolicyNumber: readOpt("insurancePolicyNumber"),
     });
 
     if (!result.ok) {

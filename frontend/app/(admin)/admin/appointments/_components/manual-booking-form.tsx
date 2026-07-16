@@ -15,12 +15,23 @@ import {
   type ManualBookingErrors,
 } from "@/lib/admin/manual-booking-validation";
 
+/** A bookable insurer for a service: only companies that cover it AND have at
+ *  least one in-network doctor reach the form. `doctorIds` are that insurer's
+ *  in-network doctors for the service. */
+type InsuranceOption = {
+  companyId: string;
+  name: string;
+  insurancePriceCents: number;
+  doctorIds: string[];
+};
+
 type ServiceOption = {
   id: string;
   slug: string;
   name: string;
   basePriceCents: number | null;
   currencyCode: string | null;
+  insuranceOptions: InsuranceOption[];
 };
 
 type DoctorOption = {
@@ -122,6 +133,10 @@ export function ManualBookingForm({
 
   const [serviceId, setServiceId] = useState("");
   const [doctorId, setDoctorId] = useState("");
+  // Insurance choice for this booking ("" = standard price). Picked after the
+  // service, because the insurer decides which doctors are bookable.
+  const [insuranceCompanyId, setInsuranceCompanyId] = useState("");
+  const [insurancePolicyNumber, setInsurancePolicyNumber] = useState("");
   const [consultationMode, setConsultationMode] = useState<"ONLINE" | "IN_PERSON">(
     "ONLINE",
   );
@@ -150,18 +165,33 @@ export function ManualBookingForm({
     [doctors, doctorId],
   );
 
+  // Insurers bookable for the chosen service (backend already dropped any with
+  // no in-network doctor), and the one currently selected.
+  const insuranceOptions = selectedService?.insuranceOptions ?? [];
+  const selectedInsurance = useMemo(
+    () => insuranceOptions.find((o) => o.companyId === insuranceCompanyId) ?? null,
+    [insuranceOptions, insuranceCompanyId],
+  );
+
   // Doctors bookable for the chosen service (mirrors the public consult
   // filter). Before a service is picked, show none — the admin picks the
-  // service first.
+  // service first. Under an insurer, narrow to that insurer's network: only
+  // doctors with a payout set for it take its patients (the backend rejects
+  // the rest anyway).
   const filteredDoctors = useMemo(() => {
     if (!serviceId) return [];
-    return doctors.filter((d) => d.serviceIds.includes(serviceId));
-  }, [doctors, serviceId]);
+    const base = doctors.filter((d) => d.serviceIds.includes(serviceId));
+    if (!selectedInsurance) return base;
+    const network = new Set(selectedInsurance.doctorIds);
+    return base.filter((d) => network.has(d.id));
+  }, [doctors, serviceId, selectedInsurance]);
 
   // Reset cascades happen in the select handlers below (not effects) so we
   // don't trigger cascading setState-in-effect renders.
   function handleServiceChange(value: string) {
     setServiceId(value);
+    // Insurers are per-service — the previous pick can't carry over.
+    setInsuranceCompanyId("");
     setDoctorId((cur) => {
       if (cur && doctors.find((d) => d.id === cur)?.serviceIds.includes(value)) return cur;
       // Calendar deep link: auto-pick the clicked doctor once a service they
@@ -174,6 +204,17 @@ export function ManualBookingForm({
       }
       return "";
     });
+    setSelectedSlotId("");
+    setSelectedDay(null);
+    setSlots([]);
+  }
+
+  function handleInsuranceChange(value: string) {
+    setInsuranceCompanyId(value);
+    // Switching insurer changes the eligible doctor pool — drop a doctor who
+    // isn't in the new insurer's network (and their slot with them).
+    const next = insuranceOptions.find((o) => o.companyId === value) ?? null;
+    setDoctorId((cur) => (!cur || !next || next.doctorIds.includes(cur) ? cur : ""));
     setSelectedSlotId("");
     setSelectedDay(null);
     setSlots([]);
@@ -553,6 +594,62 @@ export function ManualBookingForm({
             {errors.serviceId ? <FieldError msg={errors.serviceId} /> : null}
           </label>
 
+          {/* Insurance — only for services with a bookable insurer in this
+            * country. Picked before the doctor: an insurer's patients are only
+            * seen by doctors who have a payout set for it. Booking here counts
+            * as verified (the admin took the card details), so the patient gets
+            * the payment link at the insurance price immediately. */}
+          {insuranceOptions.length > 0 ? (
+            <label className="flex flex-col gap-1.5">
+              <span className="gh-field-label">Insurance</span>
+              <select
+                name="insuranceCompanyId"
+                className="gh-select"
+                value={insuranceCompanyId}
+                onChange={(e) => handleInsuranceChange(e.target.value)}
+              >
+                <option value="">
+                  Standard price
+                  {selectedService?.basePriceCents != null && selectedService.currencyCode
+                    ? ` — ${(selectedService.basePriceCents / 100).toFixed(2)} ${selectedService.currencyCode}`
+                    : ""}
+                </option>
+                {insuranceOptions.map((o) => (
+                  <option key={o.companyId} value={o.companyId}>
+                    {o.name}
+                    {selectedService?.currencyCode
+                      ? ` — ${(o.insurancePriceCents / 100).toFixed(2)} ${selectedService.currencyCode}`
+                      : ""}
+                  </option>
+                ))}
+              </select>
+              <span className="text-portal-meta text-[var(--color-text-muted)]">
+                {selectedInsurance
+                  ? "Charged at the insurance price. Only doctors in this insurer's network are listed."
+                  : "Optional — pick an insurer to use its negotiated price."}
+              </span>
+            </label>
+          ) : null}
+
+          {selectedInsurance ? (
+            <label className="flex flex-col gap-1.5">
+              <span className="gh-field-label">Insurance card / policy number</span>
+              <input
+                type="text"
+                name="insurancePolicyNumber"
+                className="gh-input"
+                maxLength={120}
+                autoComplete="off"
+                value={insurancePolicyNumber}
+                onChange={(e) => setInsurancePolicyNumber(e.target.value)}
+                placeholder="Card number from the patient"
+              />
+              <span className="text-portal-meta text-[var(--color-text-muted)]">
+                Stored encrypted. Booking here records the card as verified by you.
+              </span>
+            </label>
+          ) : null}
+
           <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">Doctor *</span>
             <select
@@ -573,8 +670,16 @@ export function ManualBookingForm({
               ))}
             </select>
             <span className="text-portal-meta text-[var(--color-text-muted)]">
-              Only doctors assigned to the selected service are listed.
+              {selectedInsurance
+                ? `Only doctors in ${selectedInsurance.name}'s network for this service are listed.`
+                : "Only doctors assigned to the selected service are listed."}
             </span>
+            {serviceId && selectedInsurance && filteredDoctors.length === 0 ? (
+              <span className="text-portal-meta text-[var(--color-status-warning-text,#b45309)]">
+                No doctor takes {selectedInsurance.name} for this service. Set a payout for one on
+                the insurance company, or book at the standard price.
+              </span>
+            ) : null}
             {errors.doctorId ? <FieldError msg={errors.doctorId} /> : null}
           </label>
 
@@ -680,6 +785,7 @@ export function ManualBookingForm({
                 setSelectedSlotId(firstSlotId);
               }}
               onSelectSlot={setSelectedSlotId}
+              insurancePriceCents={selectedInsurance?.insurancePriceCents ?? null}
             />
           )}
           {errors.timeSlotId ? (
@@ -740,6 +846,7 @@ function SlotPicker({
   selectedSlotId,
   onSelectDay,
   onSelectSlot,
+  insurancePriceCents,
 }: {
   grouped: Map<string, Slot[]>;
   tz: string;
@@ -747,6 +854,10 @@ function SlotPicker({
   selectedSlotId: string;
   onSelectDay: (day: string, firstSlotId: string) => void;
   onSelectSlot: (slotId: string) => void;
+  /** Under an insurer the negotiated flat price replaces the slot's peak price
+   *  (the availability endpoint is insurance-unaware), so labels match what the
+   *  patient is actually charged. */
+  insurancePriceCents?: number | null;
 }) {
   const daySlots = selectedDay ? grouped.get(selectedDay) ?? [] : [];
   return (
@@ -807,7 +918,7 @@ function SlotPicker({
                 }
               >
                 <span>{formatAppTime(s.startAt, tz)}</span>
-                {typeof s.priceCents === "number" ? (
+                {typeof (insurancePriceCents ?? s.priceCents) === "number" ? (
                   <span
                     className={
                       isSelected
@@ -815,7 +926,10 @@ function SlotPicker({
                         : "mt-0.5 text-xs font-medium text-[var(--color-text-muted)]"
                     }
                   >
-                    {formatPriceRounded(s.priceCents, s.currencyCode ?? "EUR")}
+                    {formatPriceRounded(
+                      (insurancePriceCents ?? s.priceCents) as number,
+                      s.currencyCode ?? "EUR",
+                    )}
                   </span>
                 ) : null}
               </button>

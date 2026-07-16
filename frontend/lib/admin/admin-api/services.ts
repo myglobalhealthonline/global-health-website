@@ -89,6 +89,16 @@ export type AdminServiceDto = {
   galleryImagePaths: string[];
   /** Doctor join rows for the admin assignment multi-select. Empty
    *  array means no doctors are bookable for this service yet. */
+  /** Insurers that cover this service AND have at least one in-network doctor
+   *  among its active assignments (so every option here is bookable).
+   *  `doctorIds` are that insurer's in-network doctors — the manual-booking
+   *  form intersects them with the service's doctors. */
+  insuranceOptions?: Array<{
+    companyId: string;
+    name: string;
+    insurancePriceCents: number;
+    doctorIds: string[];
+  }>;
   assignedDoctors: Array<{
     id: string;
     serviceId: string;

@@ -294,12 +294,71 @@ const adminServiceInclude = {
   },
   // Per-locale CMS content for the admin translation tabs (form pre-fill).
   translations: { orderBy: { locale: "asc" as const } },
+  // Insurance: which active companies cover this service, and the doctor↔insurer
+  // network rows. Lets the manual-booking form offer an insurer + narrow the
+  // doctor list without extra round-trips (mirrors the public payload).
+  insuranceCoverages: {
+    where: { company: { isActive: true } },
+    orderBy: [
+      { company: { sortOrder: "asc" as const } },
+      { company: { name: "asc" as const } },
+    ],
+    select: {
+      overridePriceCents: true,
+      company: {
+        select: { id: true, name: true, pricingMode: true, discountPercent: true },
+      },
+    },
+  },
+  insuranceDoctorPayouts: {
+    where: { doctorAmountCents: { not: null }, company: { isActive: true } },
+    select: { insuranceCompanyId: true, doctorId: true },
+  },
 } satisfies Prisma.ServiceInclude;
 
 export type AdminServiceRecord = Prisma.ServiceGetPayload<{ include: typeof adminServiceInclude }>;
 
+/** Admin insurance option — the public shape plus the in-network doctor ids so
+ *  the manual-booking form can narrow its doctor select client-side. */
+export type AdminInsuranceOption = InsuranceOption & { doctorIds: string[] };
+
+/** An admin service row with its resolved insurance options attached (raw
+ *  coverage/payout rows stripped). */
+export type AdminServiceListRecord = Omit<
+  AdminServiceRecord,
+  "insuranceCoverages" | "insuranceDoctorPayouts"
+> & { insuranceOptions: AdminInsuranceOption[] };
+
+/**
+ * Insurance options for an admin service record: active companies covering it
+ * that have at least one in-network doctor among the service's active
+ * assignments, each with that insurer's doctor ids. Same eligibility rule as
+ * the public payload — an insurer nobody will see patients for is not bookable.
+ */
+export function buildAdminInsuranceOptions(row: AdminServiceRecord): AdminInsuranceOption[] {
+  const assignedDoctorIds = new Set(
+    row.assignedDoctors
+      .filter((a) => a.isActive && a.status === "active" && a.doctor.active)
+      .map((a) => a.doctorId),
+  );
+  const doctorIdsByCompany = new Map<string, string[]>();
+  for (const p of row.insuranceDoctorPayouts) {
+    if (!assignedDoctorIds.has(p.doctorId)) continue;
+    const list = doctorIdsByCompany.get(p.insuranceCompanyId) ?? [];
+    list.push(p.doctorId);
+    doctorIdsByCompany.set(p.insuranceCompanyId, list);
+  }
+  return buildInsuranceOptions(
+    row.basePriceCents,
+    row.insuranceCoverages,
+    new Set(doctorIdsByCompany.keys()),
+  ).map((o) => ({ ...o, doctorIds: doctorIdsByCompany.get(o.companyId) ?? [] }));
+}
+
 export type ListAdminServicesResult = {
-  items: AdminServiceRecord[];
+  /** Each row carries its resolved `insuranceOptions` (bookable insurers +
+   *  their in-network doctor ids) for the manual-booking form. */
+  items: AdminServiceListRecord[];
   pagination: {
     page: number;
     pageSize: number;
@@ -718,7 +777,16 @@ export async function listAdminServices(query: AdminServicesQuery): Promise<List
     });
 
     return {
-      items,
+      // Resolve insurance options per row and strip the raw join rows they were
+      // derived from — the admin form only needs the resolved options.
+      items: items.map((row) => {
+        const {
+          insuranceCoverages: _insuranceCoverages,
+          insuranceDoctorPayouts: _insuranceDoctorPayouts,
+          ...rest
+        } = row;
+        return { ...rest, insuranceOptions: buildAdminInsuranceOptions(row) };
+      }),
       pagination: {
         page: effectivePage,
         pageSize,
