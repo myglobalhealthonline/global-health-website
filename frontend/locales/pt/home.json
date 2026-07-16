@@ -21,7 +21,17 @@
     "doctorsAcrossEurope": "{count} médicos em toda a Europa",
     "consultingIn": "A consultar em {lang}",
     "bookNow": "Marcar agora",
-    "availabilityPanelAriaLabel": "Médicos disponíveis agora"
+    "availabilityPanelAriaLabel": "Médicos disponíveis agora",
+    "sameDay": {
+      "eyebrow": "Precisa de ajuda?",
+      "title": "Consulta no Mesmo Dia",
+      "languageLabel": "Idioma da consulta",
+      "pickTime": "Escolha uma hora",
+      "today": "Hoje",
+      "continue": "Continuar",
+      "minSuffix": "min",
+      "reassure": "Escolha o seu idioma, escolha uma hora — nós iremos atribuir o médico de família adequado."
+    }
   },
   "team": {
     "eyebrow": "A equipa",
@@ -137,5 +147,11 @@
     "successTitle": "Pagamento recebido",
     "successBody": "Obrigado. O seu consentimento Brasil foi registado com sucesso.",
     "backToHome": "Voltar ao início"
+  },
+  "doctifyReviews": {
+    "eyebrow": "Avaliações de pacientes",
+    "headline": "Classificado por pacientes reais",
+    "headlineAccent": "na Doctify",
+    "body": "Avaliações independentes e verificadas recolhidas pela Doctify de pacientes tratados pelos nossos clínicos."
   }
 }

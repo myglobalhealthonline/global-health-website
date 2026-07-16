@@ -7,6 +7,7 @@ import { Flag } from "@/components/ui/Flag";
 import { HeroReveal } from "@/components/motion/HeroReveal";
 import { fitHeadingFontSize, IDEAL_HEADING_CHARS } from "@/lib/text/fit-heading-size";
 import { isUnoptimizedImageSrc as isUnlistedRemote } from "@/lib/content/asset-media-url";
+import type { SameDayBookingI18n } from "@/components/sections/SameDayBooking";
 
 // SameDayBooking renders real server-fetchable markup (slot grid, CTA) once
 // hydrated — keep SSR on so it isn't blank/no-index on first paint. Dynamic
@@ -60,6 +61,7 @@ export type HomeHeroI18n = {
   consultingIn: string;
   bookNow: string;
   availabilityPanelAriaLabel?: string;
+  sameDay?: Partial<SameDayBookingI18n>;
 };
 
 export function HomeHero({
@@ -272,6 +274,7 @@ export function HomeHero({
                 languages={sameDay.languages}
                 configured={sameDay.configured}
                 className="max-w-none"
+                i18n={i18n?.sameDay}
               />
             </HeroReveal>
           ) : null}
@@ -288,6 +291,7 @@ export function HomeHero({
                 languages={sameDay.languages}
                 configured={sameDay.configured}
                 className="max-w-none"
+                i18n={i18n?.sameDay}
               />
             </div>
           ) : doctorsForPanel.length > 0 ? (

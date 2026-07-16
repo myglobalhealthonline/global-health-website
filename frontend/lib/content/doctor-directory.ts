@@ -86,6 +86,7 @@ export type SpotlightData = {
   viewProfileLabel?: string;
   bookWithLabel?: string;
   verifyRegistrationLabel?: string;
+  clinicalDirectorLabel?: string;
 };
 
 export type DoctorDirectoryView = {
@@ -215,6 +216,7 @@ export function buildDoctorDirectoryView(
         viewProfileLabel: i18n.viewProfile,
         bookWithLabel: i18n.bookWithTemplate,
         verifyRegistrationLabel: i18n.verifyRegistrationAria,
+        clinicalDirectorLabel: i18n.clinicalDirectorLabel,
       }
     : null;
 

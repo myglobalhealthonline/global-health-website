@@ -78,7 +78,9 @@
     "disclaimer": "Online konzultace nejsou náhradou za pohotovostní péči. Pokud potřebujete naléhavou pomoc, volejte 112 nebo místní číslo tísňové linky. Informace na tomto webu jsou obecným návodem; předpisy, certifikáty, doporučení a další kroky závisí na klinickém posouzení a jsou vydávány dle uvážení ošetřujícího lékaře.",
     "copyrightSuffix": "Medicína kdykoliv a kdekoliv",
     "privacyLink": "Soukromí",
-    "euCompliant": "Licencovaná telemedicínská platforma · Splňuje požadavky GDPR"
+    "euCompliant": "Licencovaná telemedicínská platforma · Splňuje požadavky GDPR",
+    "legalInformation": "Právní informace",
+    "medicalDisclaimer": "Zdravotní upozornění"
   },
   "countrySelector": {
     "title": "Vyberte svou zemi",
@@ -156,7 +158,8 @@
     "bioFallbackTemplate": "Licencovaný lékař dostupný pro online konzultace v {country}.",
     "verifyRegistrationAria": "Ověřit registraci v oficiálním registru",
     "viewProfileAria": "Zobrazit profil pro {name}",
-    "languagesMoreTemplate": "{languages} a další"
+    "languagesMoreTemplate": "{languages} a další",
+    "clinicalDirectorLabel": "Klinický ředitel"
   },
   "cookie": {
     "title": "Nastavení cookies",
@@ -287,7 +290,14 @@
     "primaryCareConsults": "Konzultace primární péče",
     "languagesLabel": "Jazyky",
     "availabilityLabel": "Dostupnost",
-    "onlineAppointments": "Online termíny"
+    "onlineAppointments": "Online termíny",
+    "profileEyebrow": "Profil",
+    "aboutHeadingTemplate": "O {name}",
+    "qualificationsLabel": "Kvalifikace",
+    "faqsLabel": "Často kladené otázky",
+    "bookThisClinicianLabel": "Rezervovat tohoto lékaře",
+    "openVideoSlotsHeading": "Otevřené video sloty, v závislosti na dostupnosti.",
+    "calendarInviteBody": "Okamžitě po rezervaci obdržíte pozvánku do kalendáře — žádné zbytečné dohady."
   },
   "bookingForm": {
     "benefitHeading": "Použít váš plán",

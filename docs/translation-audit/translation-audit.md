@@ -8,18 +8,18 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | Severity | Count |
 |---|---|
 | Critical | 0 |
-| Warning | 241 |
+| Warning | 246 |
 | Info | 1 |
 
 ### Per-locale key health (vs en)
 
 | Locale | Keys checked | Missing | Empty | Identical to en (flagged) |
 |---|---|---|---|---|
-| pt | 3243 | 0 | 0 | 31 |
-| es | 3243 | 0 | 0 | 34 |
-| cs | 3243 | 0 | 0 | 16 |
-| ro | 3243 | 0 | 0 | 62 |
-| de | 3243 | 0 | 0 | 46 |
+| pt | 3265 | 0 | 0 | 32 |
+| es | 3265 | 0 | 0 | 35 |
+| cs | 3265 | 0 | 0 | 17 |
+| ro | 3265 | 0 | 0 | 63 |
+| de | 3265 | 0 | 0 | 47 |
 
 ## Wiring checks (persistence, fallback, SSR/CSR)
 
@@ -36,7 +36,7 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 
 ## Findings
 
-### identical-to-english (189) — warning
+### identical-to-english (194) — warning
 
 > Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).
 
@@ -71,6 +71,7 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/pt/doctor.json` | `servicesUsedList.colItem` | pt | Item |  |
 | `frontend/locales/pt/doctor.json` | `servicesUsedList.total` | pt | Total |  |
 | `frontend/locales/pt/faq.json` | `hero_eyebrow` | pt | Global Health · FAQ |  |
+| `frontend/locales/pt/home.json` | `countryHero.sameDay.minSuffix` | pt | min |  |
 | `frontend/locales/pt/legal.json` | `privacy.eyebrow` | pt | Legal |  |
 | `frontend/locales/pt/legal.json` | `terms.eyebrow` | pt | Legal |  |
 | `frontend/locales/es/account.json` | `dashboard.totalLabel` | es | Total |  |
@@ -105,6 +106,7 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/es/doctor.json` | `servicesUsedList.total` | es | Total |  |
 | `frontend/locales/es/doctor.json` | `consultationForm.fieldPlan` | es | Plan |  |
 | `frontend/locales/es/faq.json` | `hero_eyebrow` | es | Global Health · FAQ |  |
+| `frontend/locales/es/home.json` | `countryHero.sameDay.minSuffix` | es | min |  |
 | `frontend/locales/es/legal.json` | `privacy.eyebrow` | es | Legal |  |
 | `frontend/locales/es/legal.json` | `terms.eyebrow` | es | Legal |  |
 | `frontend/locales/cs/account.json` | `profile.nationalIdHint` | cs | NIC / DNI / RG / CC |  |
@@ -123,6 +125,7 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/cs/doctor.json` | `appointmentActions.modeOnline` | cs | Online (video) |  |
 | `frontend/locales/cs/doctor.json` | `followUpButton.onlineOption` | cs | Online (video) |  |
 | `frontend/locales/cs/faq.json` | `hero_eyebrow` | cs | Global Health · FAQ |  |
+| `frontend/locales/cs/home.json` | `countryHero.sameDay.minSuffix` | cs | min |  |
 | `frontend/locales/ro/account.json` | `nav.calendar` | ro | Calendar |  |
 | `frontend/locales/ro/account.json` | `dashboard.totalLabel` | ro | Total |  |
 | `frontend/locales/ro/account.json` | `orders.subtotal` | ro | Subtotal |  |
@@ -176,6 +179,7 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/ro/doctor.json` | `consultationForm.fieldPlan` | ro | Plan |  |
 | `frontend/locales/ro/doctor.json` | `calendar.title` | ro | Calendar |  |
 | `frontend/locales/ro/faq.json` | `hero_eyebrow` | ro | Global Health · FAQ |  |
+| `frontend/locales/ro/home.json` | `countryHero.sameDay.minSuffix` | ro | min |  |
 | `frontend/locales/ro/home.json` | `team.filterSpecialist` | ro | Specialist |  |
 | `frontend/locales/ro/home.json` | `finalCta.liveLabel` | ro | Live |  |
 | `frontend/locales/ro/home.json` | `finalCta.headlineAccent` | ro | clinician |  |
@@ -224,6 +228,7 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/de/doctor.json` | `confidentiality.eyebrow` | de | Compliance |  |
 | `frontend/locales/de/faq.json` | `hero_eyebrow` | de | Global Health · FAQ |  |
 | `frontend/locales/de/forms.json` | `contact.phoneOptional` | de | (optional) |  |
+| `frontend/locales/de/home.json` | `countryHero.sameDay.minSuffix` | de | min |  |
 | `frontend/locales/de/home.json` | `finalCta.liveLabel` | de | Live |  |
 | `frontend/locales/de/home.json` | `statsBand.stat3Value` | de | Live |  |
 | `frontend/locales/de/home.json` | `brazilConsent.fieldName` | de | Name |  |
@@ -288,7 +293,7 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/components/sections/DoctorsSection.tsx` |  |  |  | 1 candidate string(s): "Our Team" |
 | `frontend/components/sections/FeaturedDoctor.tsx` |  |  |  | 1 candidate string(s): "Featured clinician" |
 | `frontend/components/sections/GH2PagePrimitives.tsx` |  |  |  | 2 candidate string(s): "Skip to main content", "Encrypted end-to-end. Your health data st… |
-| `frontend/components/templates/DoctorProfileTemplate.tsx` |  |  |  | 4 candidate string(s): "Book this clinician", "Open video slots, subject to availability.… |
+| `frontend/components/templates/DoctorProfileTemplate.tsx` |  |  |  | 2 candidate string(s): "Next step", "[attr] Patient reviews" |
 | `frontend/components/templates/DoctorTeamTemplate.tsx` |  |  |  | 2 candidate string(s): "[attr] Previous page", "[attr] Next page" |
 
 ### wiring (1) — info

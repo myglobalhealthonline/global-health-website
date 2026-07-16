@@ -78,7 +78,9 @@
     "disclaimer": "Consultațiile online nu înlocuiesc îngrijirea de urgență. Dacă aveți nevoie de ajutor urgent, sunați la 112 sau la numărul de urgență local. Informațiile de pe acest site sunt orientări generale; rețetele, certificatele, trimiterile și pașii următori depind de evaluarea clinică și sunt emise la discreția medicului curant.",
     "copyrightSuffix": "Medicină oricând și oriunde",
     "privacyLink": "Confidențialitate",
-    "euCompliant": "Platformă de telemedicină licențiată · Conform GDPR"
+    "euCompliant": "Platformă de telemedicină licențiată · Conform GDPR",
+    "legalInformation": "Informații legale",
+    "medicalDisclaimer": "Declinare de responsabilitate medicală"
   },
   "countrySelector": {
     "title": "Alegeți țara",
@@ -156,7 +158,8 @@
     "bioFallbackTemplate": "Medic licențiat disponibil pentru consultații online în {country}.",
     "verifyRegistrationAria": "Verificați înregistrarea în registrul oficial",
     "viewProfileAria": "Vizualizați profilul pentru {name}",
-    "languagesMoreTemplate": "{languages} și altele"
+    "languagesMoreTemplate": "{languages} și altele",
+    "clinicalDirectorLabel": "Director clinic"
   },
   "cookie": {
     "title": "Preferințe cookie",
@@ -287,7 +290,14 @@
     "primaryCareConsults": "Consultații de medicină primară",
     "languagesLabel": "Limbi",
     "availabilityLabel": "Disponibilitate",
-    "onlineAppointments": "Programări online"
+    "onlineAppointments": "Programări online",
+    "profileEyebrow": "Profil",
+    "aboutHeadingTemplate": "Despre {name}",
+    "qualificationsLabel": "Calificări",
+    "faqsLabel": "Întrebări frecvente",
+    "bookThisClinicianLabel": "Programează acest clinician",
+    "openVideoSlotsHeading": "Sloturi video disponibile, în funcție de disponibilitate.",
+    "calendarInviteBody": "Veți primi o invitație în calendar imediat după rezervare — fără discuții suplimentare."
   },
   "bookingForm": {
     "benefitHeading": "Aplicați planul",

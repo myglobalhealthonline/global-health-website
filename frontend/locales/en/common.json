@@ -78,7 +78,9 @@
     "disclaimer": "Online consultations are not a substitute for emergency care. If you need urgent help, call 112 or your local emergency number. Information on this website is general guidance; prescriptions, certificates, referrals and next steps depend on clinical assessment and are issued at the treating clinician's discretion.",
     "copyrightSuffix": "Medicine anytime anywhere",
     "privacyLink": "Privacy",
-    "euCompliant": "Licensed telemedicine platform · GDPR compliant"
+    "euCompliant": "Licensed telemedicine platform · GDPR compliant",
+    "legalInformation": "Legal information",
+    "medicalDisclaimer": "Medical disclaimer"
   },
   "countrySelector": {
     "title": "Choose your country",
@@ -156,7 +158,8 @@
     "bioFallbackTemplate": "Licensed clinician available for online consultations in {country}.",
     "verifyRegistrationAria": "Verify registration on the official register",
     "viewProfileAria": "View profile for {name}",
-    "languagesMoreTemplate": "{languages} & More"
+    "languagesMoreTemplate": "{languages} & More",
+    "clinicalDirectorLabel": "Clinical Director"
   },
   "cookie": {
     "title": "Cookie preferences",
@@ -287,7 +290,14 @@
     "primaryCareConsults": "Primary care consultations",
     "languagesLabel": "Languages",
     "availabilityLabel": "Availability",
-    "onlineAppointments": "Online appointments"
+    "onlineAppointments": "Online appointments",
+    "profileEyebrow": "Profile",
+    "aboutHeadingTemplate": "About {name}",
+    "qualificationsLabel": "Qualifications",
+    "faqsLabel": "FAQs",
+    "bookThisClinicianLabel": "Book this clinician",
+    "openVideoSlotsHeading": "Open video slots, subject to availability.",
+    "calendarInviteBody": "You'll receive a calendar invite immediately after booking — no back-and-forth."
   },
   "bookingForm": {
     "benefitHeading": "Apply your plan",

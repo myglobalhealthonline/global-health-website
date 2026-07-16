@@ -81,6 +81,8 @@ export type CommonLocale = {
     copyrightSuffix: string;
     privacyLink: string;
     euCompliant: string;
+    legalInformation: string;
+    medicalDisclaimer: string;
   };
   doctors: {
     theTeamBadge: string;
@@ -128,6 +130,8 @@ export type CommonLocale = {
     viewProfileAria?: string;
     /** Truncated language-list suffix, e.g. "{languages} & More". */
     languagesMoreTemplate: string;
+    /** FeaturedDoctor photo-overlay ribbon, e.g. "Clinical Director". */
+    clinicalDirectorLabel?: string;
   };
   countrySelector: {
     title: string;
@@ -297,6 +301,13 @@ export type CommonLocale = {
     languagesLabel: string;
     availabilityLabel: string;
     onlineAppointments: string;
+    profileEyebrow?: string;
+    aboutHeadingTemplate?: string;
+    qualificationsLabel?: string;
+    faqsLabel?: string;
+    bookThisClinicianLabel?: string;
+    openVideoSlotsHeading?: string;
+    calendarInviteBody?: string;
   };
   bookingForm: {
     /** Booking-step plan benefit selector (B6). */

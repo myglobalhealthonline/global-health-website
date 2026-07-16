@@ -21,7 +21,17 @@
     "doctorsAcrossEurope": "{count} medici în toată Europa",
     "consultingIn": "Consultând în {lang}",
     "bookNow": "Rezervă acum",
-    "availabilityPanelAriaLabel": "Medici disponibili acum"
+    "availabilityPanelAriaLabel": "Medici disponibili acum",
+    "sameDay": {
+      "eyebrow": "Aveți nevoie de ajutor?",
+      "title": "Consultație în aceeași zi",
+      "languageLabel": "Limba consultației",
+      "pickTime": "Alegeți o oră",
+      "today": "Astăzi",
+      "continue": "Continuați",
+      "minSuffix": "min",
+      "reassure": "Alegeți limba, selectați o oră — vă vom aloca medicul de familie potrivit."
+    }
   },
   "team": {
     "eyebrow": "Echipa",
@@ -137,5 +147,11 @@
     "successTitle": "Plata primită",
     "successBody": "Vă mulțumim. Consimțământul dumneavoastră a fost înregistrat cu succes.",
     "backToHome": "Înapoi la început"
+  },
+  "doctifyReviews": {
+    "eyebrow": "Recenzii ale pacienților",
+    "headline": "Evaluat de pacienți reali",
+    "headlineAccent": "pe Doctify",
+    "body": "Recenzii independente, verificate, colectate de Doctify de la pacienți tratați de clinicienii noștri."
   }
 }

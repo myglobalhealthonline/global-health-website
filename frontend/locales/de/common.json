@@ -78,7 +78,9 @@
     "disclaimer": "Online-Konsultationen ersetzen keine Notfallversorgung. Wenn Sie dringende Hilfe benötigen, rufen Sie 112 oder Ihre lokale Notrufnummer an. Die Informationen auf dieser Website sind allgemeine Hinweise; Rezepte, Zertifikate, Überweisungen und nächste Schritte hängen von der klinischen Beurteilung ab und werden nach Ermessen des behandelnden Arztes ausgestellt.",
     "copyrightSuffix": "Medizin jederzeit und überall",
     "privacyLink": "Datenschutz",
-    "euCompliant": "Lizenzierte Telemedizin-Plattform · DSGVO-konform"
+    "euCompliant": "Lizenzierte Telemedizin-Plattform · DSGVO-konform",
+    "legalInformation": "Rechtliche Informationen",
+    "medicalDisclaimer": "Medizinischer Haftungsausschluss"
   },
   "countrySelector": {
     "title": "Land auswählen",
@@ -156,7 +158,8 @@
     "bioFallbackTemplate": "Approbierter Arzt für Online-Konsultationen in {country} verfügbar.",
     "verifyRegistrationAria": "Zulassung im offiziellen Register überprüfen",
     "viewProfileAria": "Profil von {name} anzeigen",
-    "languagesMoreTemplate": "{languages} & mehr"
+    "languagesMoreTemplate": "{languages} & mehr",
+    "clinicalDirectorLabel": "Ärztlicher Direktor"
   },
   "cookie": {
     "title": "Cookie-Einstellungen",
@@ -287,7 +290,14 @@
     "primaryCareConsults": "Allgemeinmedizinische Beratungen",
     "languagesLabel": "Sprachen",
     "availabilityLabel": "Verfügbarkeit",
-    "onlineAppointments": "Online-Termine"
+    "onlineAppointments": "Online-Termine",
+    "profileEyebrow": "Profil",
+    "aboutHeadingTemplate": "Über {name}",
+    "qualificationsLabel": "Qualifikationen",
+    "faqsLabel": "Häufig gestellte Fragen",
+    "bookThisClinicianLabel": "Diesen Arzt buchen",
+    "openVideoSlotsHeading": "Offene Videoslots, je nach Verfügbarkeit.",
+    "calendarInviteBody": "Sie erhalten sofort nach der Buchung eine Kalendereinladung – kein Hin und Her."
   },
   "bookingForm": {
     "benefitHeading": "Tarif anwenden",

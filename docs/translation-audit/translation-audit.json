@@ -10,39 +10,39 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 241,
+    "warning": 246,
     "info": 1
   },
   "stats": {
     "pt": {
       "missing": 0,
       "empty": 0,
-      "identical": 31,
-      "total": 3243
+      "identical": 32,
+      "total": 3265
     },
     "es": {
       "missing": 0,
       "empty": 0,
-      "identical": 34,
-      "total": 3243
+      "identical": 35,
+      "total": 3265
     },
     "cs": {
       "missing": 0,
       "empty": 0,
-      "identical": 16,
-      "total": 3243
+      "identical": 17,
+      "total": 3265
     },
     "ro": {
       "missing": 0,
       "empty": 0,
-      "identical": 62,
-      "total": 3243
+      "identical": 63,
+      "total": 3265
     },
     "de": {
       "missing": 0,
       "empty": 0,
-      "identical": 46,
-      "total": 3243
+      "identical": 47,
+      "total": 3265
     }
   },
   "wiringChecks": [
@@ -360,6 +360,15 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
+      "file": "frontend/locales/pt/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "countryHero.sameDay.minSuffix",
+      "locale": "pt",
+      "english": "min"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
       "file": "frontend/locales/pt/legal.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "privacy.eyebrow",
@@ -666,6 +675,15 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
+      "file": "frontend/locales/es/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "countryHero.sameDay.minSuffix",
+      "locale": "es",
+      "english": "min"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
       "file": "frontend/locales/es/legal.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "privacy.eyebrow",
@@ -824,6 +842,15 @@
       "key": "hero_eyebrow",
       "locale": "cs",
       "english": "Global Health · FAQ"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "countryHero.sameDay.minSuffix",
+      "locale": "cs",
+      "english": "min"
     },
     {
       "severity": "warning",
@@ -1307,6 +1334,15 @@
       "type": "identical-to-english",
       "file": "frontend/locales/ro/home.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "countryHero.sameDay.minSuffix",
+      "locale": "ro",
+      "english": "min"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "team.filterSpecialist",
       "locale": "ro",
       "english": "Specialist"
@@ -1739,6 +1775,15 @@
       "type": "identical-to-english",
       "file": "frontend/locales/de/home.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "countryHero.sameDay.minSuffix",
+      "locale": "de",
+      "english": "min"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "finalCta.liveLabel",
       "locale": "de",
       "english": "Live"
@@ -2152,7 +2197,7 @@
       "type": "hardcoded-text",
       "file": "frontend/components/templates/DoctorProfileTemplate.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "4 candidate string(s): \"Book this clinician\", \"Open video slots, subject to availability.\", \"Next step\", \"[attr] Patient reviews\""
+      "value": "2 candidate string(s): \"Next step\", \"[attr] Patient reviews\""
     },
     {
       "severity": "warning",

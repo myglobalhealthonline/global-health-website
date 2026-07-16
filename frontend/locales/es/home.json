@@ -21,7 +21,17 @@
     "doctorsAcrossEurope": "{count} médicos en toda Europa",
     "consultingIn": "Consultando en {lang}",
     "bookNow": "Reservar ahora",
-    "availabilityPanelAriaLabel": "Médicos disponibles ahora"
+    "availabilityPanelAriaLabel": "Médicos disponibles ahora",
+    "sameDay": {
+      "eyebrow": "¿Necesita ayuda?",
+      "title": "Consulta el mismo día",
+      "languageLabel": "Idioma de la consulta",
+      "pickTime": "Elija una hora",
+      "today": "Hoy",
+      "continue": "Continuar",
+      "minSuffix": "min",
+      "reassure": "Elija su idioma, seleccione una hora: le asignaremos el médico general adecuado."
+    }
   },
   "team": {
     "eyebrow": "El equipo",
@@ -137,5 +147,11 @@
     "successTitle": "Pago recibido",
     "successBody": "Gracias. Su consentimiento en Brasil ha sido registrado con éxito.",
     "backToHome": "Volver a inicio"
+  },
+  "doctifyReviews": {
+    "eyebrow": "Opiniones de pacientes",
+    "headline": "Valorado por pacientes reales",
+    "headlineAccent": "en Doctify",
+    "body": "Opiniones independientes y verificadas recopiladas por Doctify de pacientes tratados por nuestros clínicos."
   }
 }

@@ -68,6 +68,8 @@ export type SiteNavigationData = {
   footerCopyrightSuffix: string;
   footerPrivacyLink: string;
   footerEuCompliant: string;
+  footerLegalInformation: string;
+  footerMedicalDisclaimer: string;
 };
 
 // Per-country/-locale overrides for the handful of nav/footer strings that
@@ -194,6 +196,8 @@ export function buildSiteNavigationData(
     footerCopyrightSuffix: copy.footer.copyrightSuffix,
     footerPrivacyLink: copy.footer.privacyLink,
     footerEuCompliant: copy.footer.euCompliant,
+    footerLegalInformation: copy.footer.legalInformation,
+    footerMedicalDisclaimer: copy.footer.medicalDisclaimer,
     ...override,
   };
 }

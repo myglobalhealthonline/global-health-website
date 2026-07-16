@@ -62,6 +62,8 @@ type DoctorSpotlightProps = {
   /** aria-label for the registration-verification link — falls back to
    *  English when absent. */
   verifyRegistrationLabel?: string;
+  /** Photo-overlay ribbon text — falls back to English when absent. */
+  clinicalDirectorLabel?: string;
 };
 
 export function FeaturedDoctor({
@@ -171,7 +173,7 @@ export function FeaturedDoctor({
             <Sparkles className="size-3.5" strokeWidth={2} aria-hidden />
             {/* Intentional org label — one Clinical Director per country (owner decision,
                 overrides brief item 4.1). Doctor's clinical specialty shows via title below. */}
-            Clinical Director
+            {doctor.clinicalDirectorLabel ?? "Clinical Director"}
           </span>
 
           {/* Right-edge fade into card body on desktop (dark surface only —

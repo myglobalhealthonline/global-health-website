@@ -21,7 +21,17 @@
     "doctorsAcrossEurope": "{count} lékařů v celé Evropě",
     "consultingIn": "Konzultace v jazyce {lang}",
     "bookNow": "Rezervovat nyní",
-    "availabilityPanelAriaLabel": "Lékaři dostupní nyní"
+    "availabilityPanelAriaLabel": "Lékaři dostupní nyní",
+    "sameDay": {
+      "eyebrow": "Potřebujete pomoc?",
+      "title": "Konzultace ve stejný den",
+      "languageLabel": "Jazyk konzultace",
+      "pickTime": "Vyberte čas",
+      "today": "Dnes",
+      "continue": "Pokračovat",
+      "minSuffix": "min",
+      "reassure": "Vyberte svůj jazyk, zvolte čas — přiřadíme vám správného lékaře."
+    }
   },
   "team": {
     "eyebrow": "Tým",
@@ -137,5 +147,11 @@
     "successTitle": "Platba přijata",
     "successBody": "Děkujeme. Váš souhlas byl úspěšně zaznamenán.",
     "backToHome": "Zpět na domovskou stránku"
+  },
+  "doctifyReviews": {
+    "eyebrow": "Hodnocení pacientů",
+    "headline": "Hodnoceno skutečnými pacienty",
+    "headlineAccent": "na Doctify",
+    "body": "Nezávislé, ověřené recenze shromážděné společností Doctify od pacientů léčených našimi klinickými pracovníky."
   }
 }

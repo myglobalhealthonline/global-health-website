@@ -78,7 +78,9 @@
     "disclaimer": "Las consultas online no sustituyen la atención de emergencia. Si necesitas ayuda urgente, llama al 112 o al número de emergencia local. La información de este sitio web es orientación general; recetas, certificados, derivaciones y próximos pasos dependen de la evaluación clínica y se emiten a discreción del médico tratante.",
     "copyrightSuffix": "Medicina cuando y donde quieras",
     "privacyLink": "Privacidad",
-    "euCompliant": "Plataforma de telemedicina autorizada · Conforme con el RGPD"
+    "euCompliant": "Plataforma de telemedicina autorizada · Conforme con el RGPD",
+    "legalInformation": "Información legal",
+    "medicalDisclaimer": "Descargo de responsabilidad médico"
   },
   "countrySelector": {
     "title": "Elige tu país",
@@ -156,7 +158,8 @@
     "bioFallbackTemplate": "Clínico colegiado disponible para consultas online en {country}.",
     "verifyRegistrationAria": "Verificar colegiación en el registro oficial",
     "viewProfileAria": "Ver perfil de {name}",
-    "languagesMoreTemplate": "{languages} y más"
+    "languagesMoreTemplate": "{languages} y más",
+    "clinicalDirectorLabel": "Director Clínico"
   },
   "cookie": {
     "title": "Preferencias de cookies",
@@ -287,7 +290,14 @@
     "primaryCareConsults": "Consultas de medicina general",
     "languagesLabel": "Idiomas",
     "availabilityLabel": "Disponibilidad",
-    "onlineAppointments": "Citas online"
+    "onlineAppointments": "Citas online",
+    "profileEyebrow": "Perfil",
+    "aboutHeadingTemplate": "Acerca de {name}",
+    "qualificationsLabel": "Cualificaciones",
+    "faqsLabel": "Preguntas frecuentes",
+    "bookThisClinicianLabel": "Reservar este clínico",
+    "openVideoSlotsHeading": "Slots de vídeo disponibles, sujeto a disponibilidad.",
+    "calendarInviteBody": "Recibirá una invitación de calendario inmediatamente después de la reserva — sin idas y venidas."
   },
   "bookingForm": {
     "benefitHeading": "Aplicar su plan",

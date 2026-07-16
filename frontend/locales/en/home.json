@@ -21,7 +21,23 @@
     "doctorsAcrossEurope": "{count} doctors across Europe",
     "consultingIn": "Consulting in {lang}",
     "bookNow": "Book now",
-    "availabilityPanelAriaLabel": "Doctors available now"
+    "availabilityPanelAriaLabel": "Doctors available now",
+    "sameDay": {
+      "eyebrow": "Need help?",
+      "title": "Same-Day Consultation",
+      "languageLabel": "Consultation language",
+      "pickTime": "Pick a time",
+      "today": "Today",
+      "continue": "Continue",
+      "minSuffix": "min",
+      "reassure": "Choose your language, pick a time — we will assign the right GP."
+    }
+  },
+  "doctifyReviews": {
+    "eyebrow": "Patient reviews",
+    "headline": "Rated by real patients",
+    "headlineAccent": "on Doctify",
+    "body": "Independent, verified reviews collected by Doctify from patients treated by our clinicians."
   },
   "team": {
     "eyebrow": "The team",

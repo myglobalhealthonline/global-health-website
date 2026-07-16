@@ -558,7 +558,15 @@ export default async function CountryLangHomePage({
       <TrustRibbon items={trustItems} theme="light" />
       <ServiceCatalog services={serviceCatalogItems} i18n={tServices.catalog} />
       <StatsBand items={statsItems} theme="light" i18n={t.statsBand} />
-      <DoctifyReviewsSection theme="ivory" variant="carousel" language={lang} />
+      <DoctifyReviewsSection
+        theme="ivory"
+        variant="carousel"
+        language={lang}
+        eyebrow={t.doctifyReviews.eyebrow}
+        headline={t.doctifyReviews.headline}
+        headlineAccent={t.doctifyReviews.headlineAccent}
+        body={t.doctifyReviews.body}
+      />
       {page?.sections.whoFor ? (
         <ChecklistSection
           eyebrow="Who it's for"
@@ -637,6 +645,7 @@ export default async function CountryLangHomePage({
                   viewProfileLabel: bundle.common.doctors.viewProfile,
                   bookWithLabel: bundle.common.doctors.bookWithTemplate,
                   verifyRegistrationLabel: bundle.common.doctors.verifyRegistrationAria,
+                  clinicalDirectorLabel: bundle.common.doctors.clinicalDirectorLabel,
                 }}
               />
             </div>

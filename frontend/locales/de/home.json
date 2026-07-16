@@ -21,7 +21,17 @@
     "doctorsAcrossEurope": "{count} Ärzte in ganz Europa",
     "consultingIn": "Beratung auf {lang}",
     "bookNow": "Jetzt buchen",
-    "availabilityPanelAriaLabel": "Jetzt verfügbare Ärzte"
+    "availabilityPanelAriaLabel": "Jetzt verfügbare Ärzte",
+    "sameDay": {
+      "eyebrow": "Brauchen Sie Hilfe?",
+      "title": "Konsultation am selben Tag",
+      "languageLabel": "Sprache der Konsultation",
+      "pickTime": "Wählen Sie eine Zeit",
+      "today": "Heute",
+      "continue": "Fortfahren",
+      "minSuffix": "min",
+      "reassure": "Wählen Sie Ihre Sprache, wählen Sie eine Zeit – wir weisen Ihnen den richtigen Hausarzt zu."
+    }
   },
   "team": {
     "eyebrow": "Das Team",
@@ -137,5 +147,11 @@
     "successTitle": "Zahlung erhalten",
     "successBody": "Danke. Ihre Zustimmung wurde erfolgreich aufgezeichnet.",
     "backToHome": "Zurück zur Startseite"
+  },
+  "doctifyReviews": {
+    "eyebrow": "Patientenbewertungen",
+    "headline": "Bewertet von echten Patienten",
+    "headlineAccent": "auf Doctify",
+    "body": "Unabhängige, verifizierte Bewertungen, die von Doctify von Patienten gesammelt wurden, die von unseren Fachleuten behandelt wurden."
   }
 }

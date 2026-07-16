@@ -1,0 +1,26 @@
+{
+  "items": [
+    { "namespace": "home", "key": "countryHero.sameDay.eyebrow" },
+    { "namespace": "home", "key": "countryHero.sameDay.title" },
+    { "namespace": "home", "key": "countryHero.sameDay.languageLabel" },
+    { "namespace": "home", "key": "countryHero.sameDay.pickTime" },
+    { "namespace": "home", "key": "countryHero.sameDay.today" },
+    { "namespace": "home", "key": "countryHero.sameDay.continue" },
+    { "namespace": "home", "key": "countryHero.sameDay.minSuffix" },
+    { "namespace": "home", "key": "countryHero.sameDay.reassure" },
+    { "namespace": "home", "key": "doctifyReviews.eyebrow" },
+    { "namespace": "home", "key": "doctifyReviews.headline" },
+    { "namespace": "home", "key": "doctifyReviews.headlineAccent" },
+    { "namespace": "home", "key": "doctifyReviews.body" },
+    { "namespace": "common", "key": "doctorProfile.profileEyebrow" },
+    { "namespace": "common", "key": "doctorProfile.aboutHeadingTemplate" },
+    { "namespace": "common", "key": "doctorProfile.qualificationsLabel" },
+    { "namespace": "common", "key": "doctorProfile.faqsLabel" },
+    { "namespace": "common", "key": "doctorProfile.bookThisClinicianLabel" },
+    { "namespace": "common", "key": "doctorProfile.openVideoSlotsHeading" },
+    { "namespace": "common", "key": "doctorProfile.calendarInviteBody" },
+    { "namespace": "common", "key": "footer.legalInformation" },
+    { "namespace": "common", "key": "footer.medicalDisclaimer" },
+    { "namespace": "common", "key": "doctors.clinicalDirectorLabel" }
+  ]
+}

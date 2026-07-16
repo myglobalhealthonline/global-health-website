@@ -158,8 +158,8 @@ export function SiteFooter({
     // Only shown inside a country scope — there is no global variant.
     ...(careBase
       ? [
-          { label: "Legal information", href: `${careBase}/legal` },
-          { label: "Medical disclaimer", href: `${careBase}/legal/medical-disclaimer` },
+          { label: navigation.footerLegalInformation, href: `${careBase}/legal` },
+          { label: navigation.footerMedicalDisclaimer, href: `${careBase}/legal/medical-disclaimer` },
         ]
       : []),
   ];

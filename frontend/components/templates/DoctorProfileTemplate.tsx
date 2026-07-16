@@ -68,6 +68,13 @@ type DoctorProfileTemplateProps = {
     languagesLabel?: string;
     availabilityLabel?: string;
     onlineAppointments?: string;
+    profileEyebrow?: string;
+    aboutHeadingTemplate?: string;
+    qualificationsLabel?: string;
+    faqsLabel?: string;
+    bookThisClinicianLabel?: string;
+    openVideoSlotsHeading?: string;
+    calendarInviteBody?: string;
   };
 };
 
@@ -409,12 +416,15 @@ export function DoctorProfileTemplate({
             <p
               className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-primary)]"
             >
-              Profile
+              {t?.profileEyebrow ?? "Profile"}
             </p>
             <h2
               className="mt-4 text-[clamp(1.85rem,3.5vw,2.75rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-[var(--color-text-primary)]"
             >
-              About {profile.name.split(" ").slice(0, 2).join(" ")}
+              {(t?.aboutHeadingTemplate ?? "About {name}").replace(
+                "{name}",
+                profile.name.split(" ").slice(0, 2).join(" "),
+              )}
             </h2>
             <div
               className="mt-8 text-[16px] leading-[1.85] text-[var(--color-text-body)] [&_a]:underline [&_a]:underline-offset-2 [&_p:first-child]:mt-0 [&_p]:mt-5 [&_ul]:mt-5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mt-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mt-2"
@@ -428,7 +438,7 @@ export function DoctorProfileTemplate({
                 <p
                   className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-primary)]"
                 >
-                  Qualifications
+                  {t?.qualificationsLabel ?? "Qualifications"}
                 </p>
                 <ul className="mt-6 space-y-3 text-[15px] leading-[1.7] text-[var(--color-text-body)]">
                   {profile.qualifications.map((q) => (
@@ -463,7 +473,7 @@ export function DoctorProfileTemplate({
                 <p
                   className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-primary)]"
                 >
-                  FAQs
+                  {t?.faqsLabel ?? "FAQs"}
                 </p>
                 <div className="mt-6 grid gap-3">
                   {profile.faqs.map((faq) => (
@@ -491,17 +501,18 @@ export function DoctorProfileTemplate({
               <span
                 className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-primary)]"
               >
-                Book this clinician
+                {t?.bookThisClinicianLabel ?? "Book this clinician"}
               </span>
               <h3
                 className="mt-4 text-[clamp(1.4rem,2.5vw,1.85rem)] font-extrabold leading-[1.1] tracking-[-0.03em] text-[var(--color-text-primary)]"
               >
-                Open video slots, subject to availability.
+                {t?.openVideoSlotsHeading ?? "Open video slots, subject to availability."}
               </h3>
               <p
                 className="mt-4 text-[14.5px] leading-[1.7] text-[var(--color-text-muted)]"
               >
-                You&apos;ll receive a calendar invite immediately after booking — no back-and-forth.
+                {t?.calendarInviteBody ??
+                  "You'll receive a calendar invite immediately after booking — no back-and-forth."}
               </p>
               <Link
                 href={hero.primaryCta.href}
