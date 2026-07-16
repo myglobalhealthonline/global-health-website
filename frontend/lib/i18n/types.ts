@@ -313,6 +313,17 @@ export type CommonLocale = {
     bookThisClinicianLabel?: string;
     openVideoSlotsHeading?: string;
     calendarInviteBody?: string;
+    heroDescription?: string;
+    bookConsultation?: string;
+    backToTeamFallback?: string;
+    bottomCtaTitle?: string;
+    bottomCtaDescription?: string;
+    startBooking?: string;
+    readFullDisclaimer?: string;
+    fallbackTitle?: string;
+    fallbackBio?: string;
+    fallbackQualification1?: string;
+    fallbackQualification2?: string;
   };
   bookingForm: {
     /** Booking-step plan benefit selector (B6). */

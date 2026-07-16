@@ -302,7 +302,18 @@
     "faqsLabel": "FAQs",
     "bookThisClinicianLabel": "Book this clinician",
     "openVideoSlotsHeading": "Open video slots, subject to availability.",
-    "calendarInviteBody": "You'll receive a calendar invite immediately after booking — no back-and-forth."
+    "calendarInviteBody": "You'll receive a calendar invite immediately after booking — no back-and-forth.",
+    "heroDescription": "Review doctor profile details, consultation areas, and booking options before scheduling your appointment.",
+    "bookConsultation": "Book consultation",
+    "backToTeamFallback": "Back to Ireland team",
+    "bottomCtaTitle": "Need to schedule with this doctor?",
+    "bottomCtaDescription": "Book your consultation and the clinic team will confirm the right appointment route based on availability.",
+    "startBooking": "Start booking",
+    "readFullDisclaimer": "Read the full medical disclaimer",
+    "fallbackTitle": "Clinic Doctor Profile",
+    "fallbackBio": "This clinician supports online consultations and follow-up guidance through Global Health.",
+    "fallbackQualification1": "Qualifications and registration details are shown when verified by the clinic team.",
+    "fallbackQualification2": "Patients can confirm clinician fit during the booking intake."
   },
   "bookingForm": {
     "benefitHeading": "Apply your plan",

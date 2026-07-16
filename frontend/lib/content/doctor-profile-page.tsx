@@ -372,7 +372,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
               text={doctorDisclaimerLead}
               link={{
                 href: `/${slug}/${lang}/legal/medical-disclaimer`,
-                label: "Read the full medical disclaimer",
+                label: dp.readFullDisclaimer ?? "Read the full medical disclaimer",
               }}
             />
           </div>

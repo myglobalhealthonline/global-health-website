@@ -112,7 +112,7 @@ export default async function PrescriptionsPage({
   // Structured PageContent self-gates via publish status; legacy "pages"
   // country-feature no longer gates it.
   const page = pageDisabled ? null : rawPage;
-  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const { common: c, services: servicesLocale } = loadLocaleBundle(lang as LocaleCode);
   const t = c.prescriptionsPage;
   const bookHref = "#prescriptions";
   const fallbackHref = `/${slug}/${lang}/doctors`;
@@ -188,6 +188,7 @@ export default async function PrescriptionsPage({
             variant="dark"
             previousPageLabel={c.a11y.previousPage}
             nextPageLabel={c.a11y.nextPage}
+            learnMoreLabel={servicesLocale.catalog.learnMore}
           />
         </div>
       ) : (

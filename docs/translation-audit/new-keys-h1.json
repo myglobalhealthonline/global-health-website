@@ -1,0 +1,15 @@
+{
+  "items": [
+    { "namespace": "common", "key": "doctorProfile.heroDescription" },
+    { "namespace": "common", "key": "doctorProfile.bookConsultation" },
+    { "namespace": "common", "key": "doctorProfile.backToTeamFallback" },
+    { "namespace": "common", "key": "doctorProfile.bottomCtaTitle" },
+    { "namespace": "common", "key": "doctorProfile.bottomCtaDescription" },
+    { "namespace": "common", "key": "doctorProfile.startBooking" },
+    { "namespace": "common", "key": "doctorProfile.readFullDisclaimer" },
+    { "namespace": "common", "key": "doctorProfile.fallbackTitle" },
+    { "namespace": "common", "key": "doctorProfile.fallbackBio" },
+    { "namespace": "common", "key": "doctorProfile.fallbackQualification1" },
+    { "namespace": "common", "key": "doctorProfile.fallbackQualification2" }
+  ]
+}

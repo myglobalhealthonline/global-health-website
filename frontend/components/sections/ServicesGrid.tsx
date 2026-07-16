@@ -37,6 +37,9 @@ type ServicesGridProps = {
   variant?: "light" | "dark";
   previousPageLabel?: string;
   nextPageLabel?: string;
+  /** "Learn more" CTA label (single-CTA cards / two-CTA detail button).
+   *  Callers should pass the locale's `services.catalog.learnMore`. */
+  learnMoreLabel?: string;
 };
 
 const PAGE_SIZE_FEATURED = 5;
@@ -68,6 +71,7 @@ export function ServicesGrid({
   variant = "light",
   previousPageLabel = "Previous page",
   nextPageLabel = "Next page",
+  learnMoreLabel = "Learn more",
 }: ServicesGridProps) {
   const [page, setPage] = useState(0);
   const isDark = variant === "dark";
@@ -198,6 +202,8 @@ export function ServicesGrid({
                       paged[0]?.description ?? SERVICE_CATALOG_DEFAULT_I18N.featuredDescription,
                     bookConsultation:
                       item.bookLabel ?? SERVICE_CATALOG_DEFAULT_I18N.bookConsultation,
+                    learnMore: learnMoreLabel,
+                    learnMoreAria: `${learnMoreLabel}: {title}`,
                   }}
                 />
               ))
@@ -205,6 +211,7 @@ export function ServicesGrid({
                 <ServiceCard
                   key={item.detailHref ?? item.href ?? item.title}
                   {...item}
+                  ctaLabel={learnMoreLabel}
                   dark={isDark}
                   featured={useFeaturedFirst && i === 0}
                 />

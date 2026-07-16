@@ -302,7 +302,18 @@
     "bookThisClinicianLabel": "Diesen Arzt buchen",
     "openVideoSlotsHeading": "Offene Videoslots, je nach Verfügbarkeit.",
     "calendarInviteBody": "Sie erhalten sofort nach der Buchung eine Kalendereinladung – kein Hin und Her.",
-    "generalPracticeFallback": "Allgemeinmedizin"
+    "generalPracticeFallback": "Allgemeinmedizin",
+    "heroDescription": "Überprüfen Sie die Details des Arztprofils, die Beratungsbereiche und die Buchungsoptionen, bevor Sie Ihren Termin vereinbaren.",
+    "bookConsultation": "Beratung buchen",
+    "backToTeamFallback": "Zurück zum Team in Irland",
+    "bottomCtaTitle": "Müssen Sie einen Termin mit diesem Arzt vereinbaren?",
+    "bottomCtaDescription": "Buchen Sie Ihre Beratung, und das Klinikteam wird den richtigen Termin basierend auf der Verfügbarkeit bestätigen.",
+    "startBooking": "Buchung starten",
+    "readFullDisclaimer": "Lesen Sie den vollständigen medizinischen Haftungsausschluss",
+    "fallbackTitle": "Klinik Arztprofil",
+    "fallbackBio": "Dieser Kliniker unterstützt Online-Konsultationen und Nachsorge über Global Health.",
+    "fallbackQualification1": "Qualifikationen und Registrierungsdetails werden angezeigt, wenn sie vom Klinikteam verifiziert sind.",
+    "fallbackQualification2": "Patienten können die Eignung des Klinikers während der Buchungsaufnahme bestätigen."
   },
   "bookingForm": {
     "benefitHeading": "Tarif anwenden",

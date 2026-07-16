@@ -302,7 +302,18 @@
     "bookThisClinicianLabel": "Rezervovat tohoto lékaře",
     "openVideoSlotsHeading": "Otevřené video sloty, v závislosti na dostupnosti.",
     "calendarInviteBody": "Okamžitě po rezervaci obdržíte pozvánku do kalendáře — žádné zbytečné dohady.",
-    "generalPracticeFallback": "Obecná praxe"
+    "generalPracticeFallback": "Obecná praxe",
+    "heroDescription": "Zkontrolujte podrobnosti profilu lékaře, oblasti konzultací a možnosti rezervace před naplánováním vaší schůzky.",
+    "bookConsultation": "Rezervovat konzultaci",
+    "backToTeamFallback": "Zpět na tým v Irsku",
+    "bottomCtaTitle": "Potřebujete se domluvit s tímto lékařem?",
+    "bottomCtaDescription": "Rezervujte si konzultaci a tým kliniky potvrdí správnou cestu k schůzce na základě dostupnosti.",
+    "startBooking": "Začít rezervaci",
+    "readFullDisclaimer": "Přečtěte si úplné lékařské prohlášení",
+    "fallbackTitle": "Profil lékaře kliniky",
+    "fallbackBio": "Tento klinik podporuje online konzultace a následné poradenství prostřednictvím Global Health.",
+    "fallbackQualification1": "Kvalifikace a registrační údaje jsou zobrazeny po ověření týmem kliniky.",
+    "fallbackQualification2": "Pacienti mohou potvrdit vhodnost klinika během procesu rezervace."
   },
   "bookingForm": {
     "benefitHeading": "Použít váš plán",

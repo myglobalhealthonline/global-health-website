@@ -302,7 +302,18 @@
     "bookThisClinicianLabel": "Programează acest clinician",
     "openVideoSlotsHeading": "Sloturi video disponibile, în funcție de disponibilitate.",
     "calendarInviteBody": "Veți primi o invitație în calendar imediat după rezervare — fără discuții suplimentare.",
-    "generalPracticeFallback": "Practică generală"
+    "generalPracticeFallback": "Practică generală",
+    "heroDescription": "Revizuiți detaliile profilului medicului, domeniile de consultație și opțiunile de programare înainte de a stabili o întâlnire.",
+    "bookConsultation": "Programează consultația",
+    "backToTeamFallback": "Înapoi la echipa din Irlanda",
+    "bottomCtaTitle": "Trebuie să programați cu acest medic?",
+    "bottomCtaDescription": "Programează-ți consultația, iar echipa clinicii va confirma ruta corectă de programare în funcție de disponibilitate.",
+    "startBooking": "Începe programarea",
+    "readFullDisclaimer": "Citiți întreaga declinare de responsabilitate medicală",
+    "fallbackTitle": "Profilul medicului clinicii",
+    "fallbackBio": "Acest clinician susține consultații online și îndrumări de urmărire prin Global Health.",
+    "fallbackQualification1": "Calificările și detaliile de înregistrare sunt afișate atunci când sunt verificate de echipa clinicii.",
+    "fallbackQualification2": "Pacienții pot confirma potrivirea clinicianului în timpul procesului de programare."
   },
   "bookingForm": {
     "benefitHeading": "Aplicați planul",

@@ -302,7 +302,18 @@
     "bookThisClinicianLabel": "Marcar este clínico",
     "openVideoSlotsHeading": "Slots de vídeo disponíveis, sujeito a disponibilidade.",
     "calendarInviteBody": "Receberá um convite de calendário imediatamente após a marcação — sem idas e vindas.",
-    "generalPracticeFallback": "Medicina geral"
+    "generalPracticeFallback": "Medicina geral",
+    "heroDescription": "Revise os detalhes do perfil do médico, áreas de consulta e opções de agendamento antes de marcar a sua consulta.",
+    "bookConsultation": "Marcar consulta",
+    "backToTeamFallback": "Voltar à equipa da Irlanda",
+    "bottomCtaTitle": "Precisa de agendar com este médico?",
+    "bottomCtaDescription": "Marque a sua consulta e a equipa da clínica confirmará o caminho de agendamento adequado com base na disponibilidade.",
+    "startBooking": "Começar a marcar",
+    "readFullDisclaimer": "Leia o aviso médico completo",
+    "fallbackTitle": "Perfil do Médico da Clínica",
+    "fallbackBio": "Este clínico apoia consultas online e orientação de acompanhamento através da Global Health.",
+    "fallbackQualification1": "As qualificações e detalhes de registo são apresentados quando verificados pela equipa da clínica.",
+    "fallbackQualification2": "Os pacientes podem confirmar a adequação do clínico durante o processo de agendamento."
   },
   "bookingForm": {
     "benefitHeading": "Aplicar o seu plano",

@@ -10,39 +10,39 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 246,
+    "warning": 282,
     "info": 1
   },
   "stats": {
     "pt": {
       "missing": 0,
       "empty": 0,
-      "identical": 32,
-      "total": 3265
+      "identical": 43,
+      "total": 3671
     },
     "es": {
       "missing": 0,
       "empty": 0,
-      "identical": 35,
-      "total": 3265
+      "identical": 42,
+      "total": 3671
     },
     "cs": {
       "missing": 0,
       "empty": 0,
-      "identical": 17,
-      "total": 3265
+      "identical": 22,
+      "total": 3671
     },
     "ro": {
       "missing": 0,
       "empty": 0,
-      "identical": 63,
-      "total": 3265
+      "identical": 78,
+      "total": 3671
     },
     "de": {
       "missing": 0,
       "empty": 0,
-      "identical": 47,
-      "total": 3265
+      "identical": 67,
+      "total": 3671
     }
   },
   "wiringChecks": [
@@ -180,11 +180,38 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
+      "file": "frontend/locales/pt/account.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "calendar.sectionSlots",
+      "locale": "pt",
+      "english": "Slots"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/account.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "calendar.eventDetailLinks",
+      "locale": "pt",
+      "english": "Links"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
       "file": "frontend/locales/pt/common.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "navigation.egiftCard",
       "locale": "pt",
       "english": "eGift Card"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/common.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "navigation.cartItemSingular",
+      "locale": "pt",
+      "english": "item"
     },
     {
       "severity": "warning",
@@ -288,6 +315,51 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
+      "file": "frontend/locales/pt/common.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blogPage.heroCountryLabel",
+      "locale": "pt",
+      "english": "Global Health · Blog"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/contact.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "form_full_name_placeholder",
+      "locale": "pt",
+      "english": "Jane Smith"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "employees.addEmployee.email",
+      "locale": "pt",
+      "english": "Email *"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "employees.bulkUpload.textareaPlaceholder",
+      "locale": "pt",
+      "english": "firstName,lastName,email,phone\nMary,Byrne,mary.byrne@acme.ie,+353871234567"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "appointmentDetail.internalNotesAuthorAdmin",
+      "locale": "pt",
+      "english": "Admin"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
       "file": "frontend/locales/pt/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "availability.minutesShort",
@@ -311,6 +383,24 @@
       "key": "profile.registrationBodyPlaceholder",
       "locale": "pt",
       "english": "IMC, OM, OMC"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "profile.focalZoom",
+      "locale": "pt",
+      "english": "Zoom"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "profile.focalPreviewAvatar",
+      "locale": "pt",
+      "english": "Avatar"
     },
     {
       "severity": "warning",
@@ -347,6 +437,15 @@
       "key": "servicesUsedList.total",
       "locale": "pt",
       "english": "Total"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/pt/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "calendar.eventDetailLinks",
+      "locale": "pt",
+      "english": "Links"
     },
     {
       "severity": "warning",
@@ -594,11 +693,56 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
+      "file": "frontend/locales/es/common.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blogPage.heroCountryLabel",
+      "locale": "es",
+      "english": "Global Health · Blog"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/contact.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "form_full_name_placeholder",
+      "locale": "es",
+      "english": "Jane Smith"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "employees.bulkUpload.textareaPlaceholder",
+      "locale": "es",
+      "english": "firstName,lastName,email,phone\nMary,Byrne,mary.byrne@acme.ie,+353871234567"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "settings.plan.plan",
+      "locale": "es",
+      "english": "Plan"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
       "file": "frontend/locales/es/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "appointments.typeGeneral",
       "locale": "es",
       "english": "General"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "appointmentDetail.internalNotesAuthorAdmin",
+      "locale": "es",
+      "english": "Admin"
     },
     {
       "severity": "warning",
@@ -626,6 +770,15 @@
       "key": "profile.registrationBodyPlaceholder",
       "locale": "es",
       "english": "IMC, OM, OMC"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "profile.focalPreviewAvatar",
+      "locale": "es",
+      "english": "Avatar"
     },
     {
       "severity": "warning",
@@ -662,6 +815,15 @@
       "key": "consultationForm.fieldPlan",
       "locale": "es",
       "english": "Plan"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/es/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "calendar.eventDetailDoctor",
+      "locale": "es",
+      "english": "Doctor"
     },
     {
       "severity": "warning",
@@ -765,11 +927,47 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
+      "file": "frontend/locales/cs/common.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blogPage.heroCountryLabel",
+      "locale": "cs",
+      "english": "Global Health · Blog"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/contact.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "form_full_name_placeholder",
+      "locale": "cs",
+      "english": "Jane Smith"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "employees.bulkUpload.textareaPlaceholder",
+      "locale": "cs",
+      "english": "firstName,lastName,email,phone\nMary,Byrne,mary.byrne@acme.ie,+353871234567"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
       "file": "frontend/locales/cs/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "nav.groupFinance",
       "locale": "cs",
       "english": "Finance"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "appointmentDetail.internalNotesAuthorAdmin",
+      "locale": "cs",
+      "english": "Admin"
     },
     {
       "severity": "warning",
@@ -806,6 +1004,15 @@
       "key": "profile.registrationBodyPlaceholder",
       "locale": "cs",
       "english": "IMC, OM, OMC"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/cs/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "profile.focalPreviewAvatar",
+      "locale": "cs",
+      "english": "Avatar"
     },
     {
       "severity": "warning",
@@ -1026,6 +1233,15 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
+      "file": "frontend/locales/ro/account.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "calendar.eventDetailDoctor",
+      "locale": "ro",
+      "english": "Doctor"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
       "file": "frontend/locales/ro/common.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "navigation.contact",
@@ -1161,11 +1377,101 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
+      "file": "frontend/locales/ro/common.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blogPage.heroCountryLabel",
+      "locale": "ro",
+      "english": "Global Health · Blog"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
       "file": "frontend/locales/ro/contact.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "hero_eyebrow",
       "locale": "ro",
       "english": "Global Health · Contact"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/contact.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "watermark",
+      "locale": "ro",
+      "english": "Contact"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/contact.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "form_full_name_placeholder",
+      "locale": "ro",
+      "english": "Jane Smith"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "employees.addEmployee.email",
+      "locale": "ro",
+      "english": "Email *"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "employees.bulkUpload.textareaPlaceholder",
+      "locale": "ro",
+      "english": "firstName,lastName,email,phone\nMary,Byrne,mary.byrne@acme.ie,+353871234567"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "employees.table.colStatus",
+      "locale": "ro",
+      "english": "Status"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "employees.table.reactivate",
+      "locale": "ro",
+      "english": "Reactivate"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "employees.table.inviteStatusLabel",
+      "locale": "ro",
+      "english": "Status"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "settings.plan.sectionTitle",
+      "locale": "ro",
+      "english": "Plan + contract"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "settings.plan.plan",
+      "locale": "ro",
+      "english": "Plan"
     },
     {
       "severity": "warning",
@@ -1217,6 +1523,15 @@
       "type": "identical-to-english",
       "file": "frontend/locales/ro/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "appointmentDetail.internalNotesAuthorAdmin",
+      "locale": "ro",
+      "english": "Admin"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "patients.docTypeDocument",
       "locale": "ro",
       "english": "Document"
@@ -1247,6 +1562,33 @@
       "key": "profile.registrationBodyPlaceholder",
       "locale": "ro",
       "english": "IMC, OM, OMC"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "profile.focalZoom",
+      "locale": "ro",
+      "english": "Zoom"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "profile.focalPreviewCard",
+      "locale": "ro",
+      "english": "Card"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/ro/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "profile.focalPreviewAvatar",
+      "locale": "ro",
+      "english": "Avatar"
     },
     {
       "severity": "warning",
@@ -1523,6 +1865,33 @@
       "type": "identical-to-english",
       "file": "frontend/locales/de/account.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "calendar.sectionSlots",
+      "locale": "de",
+      "english": "Slots"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/account.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "calendar.eventDetailPatient",
+      "locale": "de",
+      "english": "Patient"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/account.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "calendar.eventDetailLinks",
+      "locale": "de",
+      "english": "Links"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/account.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "accessHistory.roleSystem",
       "locale": "de",
       "english": "System"
@@ -1602,6 +1971,114 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
+      "file": "frontend/locales/de/common.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "blogPage.heroCountryLabel",
+      "locale": "de",
+      "english": "Global Health · Blog"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/contact.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "form_full_name_placeholder",
+      "locale": "de",
+      "english": "Jane Smith"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "nav.dashboard",
+      "locale": "de",
+      "english": "Dashboard"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "common.filter",
+      "locale": "de",
+      "english": "Filter"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "employees.bulkUpload.textareaPlaceholder",
+      "locale": "de",
+      "english": "firstName,lastName,email,phone\nMary,Byrne,mary.byrne@acme.ie,+353871234567"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "employees.bulkUpload.tableName",
+      "locale": "de",
+      "english": "Name"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "employees.table.colName",
+      "locale": "de",
+      "english": "Name"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "employees.table.colStatus",
+      "locale": "de",
+      "english": "Status"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "employees.table.inviteStatusLabel",
+      "locale": "de",
+      "english": "Status"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "employees.detail.detailsTitle",
+      "locale": "de",
+      "english": "Details"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "requests.table.colStatus",
+      "locale": "de",
+      "english": "Status"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/corporate.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "settings.plan.plan",
+      "locale": "de",
+      "english": "Plan"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
       "file": "frontend/locales/de/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "common.status",
@@ -1616,6 +2093,15 @@
       "key": "appointments.meeting",
       "locale": "de",
       "english": "Meeting"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "appointmentDetail.internalNotesAuthorAdmin",
+      "locale": "de",
+      "english": "Admin"
     },
     {
       "severity": "warning",
@@ -1685,6 +2171,24 @@
       "type": "identical-to-english",
       "file": "frontend/locales/de/doctor.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "profile.focalZoom",
+      "locale": "de",
+      "english": "Zoom"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "profile.focalPreviewAvatar",
+      "locale": "de",
+      "english": "Avatar"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "invoices.colPatient",
       "locale": "de",
       "english": "Patient"
@@ -1733,6 +2237,24 @@
       "key": "documentContextBanner.rowName",
       "locale": "de",
       "english": "Name"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "calendar.eventDetailPatient",
+      "locale": "de",
+      "english": "Patient"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
+      "file": "frontend/locales/de/doctor.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "calendar.eventDetailLinks",
+      "locale": "de",
+      "english": "Links"
     },
     {
       "severity": "warning",
@@ -1847,7 +2369,7 @@
       "type": "hardcoded-text",
       "file": "frontend/app/(site)/(global)/about/page.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "4 candidate string(s): \"Why we built this\", \"Founded 2023 · Prague\", \"Global Health at a glance\", \"[attr] Global Health telemedicine platform — online doctor consultations across multiple markets\""
+      "value": "1 candidate string(s): \"[attr] Global Health telemedicine platform — online doctor consultations across multiple markets\""
     },
     {
       "severity": "warning",
@@ -1855,13 +2377,6 @@
       "file": "frontend/app/(site)/(global)/blog/page.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
       "value": "1 candidate string(s): \"[attr] Medical team reviewing health articles and educational content\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(site)/(global)/blog/[slug]/loading.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] Loading article…\""
     },
     {
       "severity": "warning",
@@ -1950,62 +2465,6 @@
     {
       "severity": "warning",
       "type": "hardcoded-text",
-      "file": "frontend/app/(corporate)/corporate/employees/bulk-upload-form.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"Bulk upload\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(corporate)/corporate/employees/employees-table.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "4 candidate string(s): \"Resend invite\", \"View details\", \"No invites sent yet.\", \"[attr] No employees yet\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(corporate)/corporate/employees/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "17 candidate string(s): \"Add employee\", \"First name *\", \"Last name *\", \"Phone (WhatsApp)\", \"Date of birth\", …"
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(corporate)/corporate/employees/[id]/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "5 candidate string(s): \"All employees\", \"No invites sent yet.\", \"No requests for this employee.\", \"[attr] Invite history\", \"[attr] Consultation requests\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(corporate)/corporate/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "7 candidate string(s): \"per year\", \"Manage employees\", \"New request\", \"View all requests →\", \"[attr] Billing summary\", …"
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(corporate)/corporate/requests/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "9 candidate string(s): \"New request\", \"Select employee…\", \"Illness\\r\\n                    benefit\", \"Fit for work\", \"Reason (optional — visible to the employee)\", …"
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(corporate)/corporate/requests/requests-table.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] No requests\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(corporate)/corporate/settings/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "18 candidate string(s): \"Company name *\", \"Registration number\", \"Address line 1\", \"Address line 2\", \"Postal code\", …"
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
       "file": "frontend/components/calendar/DayAgenda.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
       "value": "2 candidate string(s): \"Select a day\", \"Consultations and availability slots for the selected day will appear here.\""
@@ -2013,58 +2472,9 @@
     {
       "severity": "warning",
       "type": "hardcoded-text",
-      "file": "frontend/components/calendar/EventDetailDialog.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"Join video call\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/calendar/WeekCalendar.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] Book this time\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/cards/BlogCard.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"Read article\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
       "file": "frontend/components/cards/DoctorCard.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
       "value": "1 candidate string(s): \"[attr] Verify registration on the official register\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/chat/ChatThread.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"No messages yet.\", \"[attr] Type a message…\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/chat/ConsultationChat.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "7 candidate string(s): \"Chat window closed. Contact your doctor to re-open.\", \"Loading messages…\", \"No messages yet.\", \"[attr] Remove file\", \"[attr] Attach file\", …"
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/chat/InternalMessagesThread.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"No internal notes yet.\", \"Post note\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/forms/ContactForm.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "5 candidate string(s): \"Message sent!\", \"Thank you for reaching out. Our team will get back to you within 24 hours.\", \"[attr] Jane Smith\", \"[attr] How can we help?\", \"[attr] Tell us what you need...\""
     },
     {
       "severity": "warning",
@@ -2086,13 +2496,6 @@
       "file": "frontend/components/layout/BookingSkipLink.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
       "value": "1 candidate string(s): \"Skip to booking\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/layout/CountrySwitcher.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] Choose country\""
     },
     {
       "severity": "warning",
@@ -2139,30 +2542,9 @@
     {
       "severity": "warning",
       "type": "hardcoded-text",
-      "file": "frontend/components/media/focal-point-editor.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "5 candidate string(s): \"[attr] Photo focal point — drag or use arrow keys to reposition\", \"[attr] Move up\", \"[attr] Move left\", \"[attr] Move down\", \"[attr] Move right\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/messages/MessagesInbox.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "5 candidate string(s): \"No matches.\", \"Select a conversation\", \"Choose a thread on the left to read and reply.\", \"[attr] Back to conversations\", \"[attr] Open the appointment\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
       "file": "frontend/components/sections/DoctifyReviews.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
       "value": "1 candidate string(s): \"[attr] Doctify patient reviews\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/sections/DoctorCarousel.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"No doctors found.\""
     },
     {
       "severity": "warning",
@@ -2174,23 +2556,9 @@
     {
       "severity": "warning",
       "type": "hardcoded-text",
-      "file": "frontend/components/sections/DoctorsSection.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"Our Team\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
       "file": "frontend/components/sections/FeaturedDoctor.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
       "value": "1 candidate string(s): \"Featured clinician\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/sections/GH2PagePrimitives.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"Skip to main content\", \"Encrypted end-to-end. Your health data stays private.\""
     },
     {
       "severity": "warning",

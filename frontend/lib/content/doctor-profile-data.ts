@@ -5,6 +5,9 @@ import {
 } from "@/lib/content/get-public-doctors";
 import { fetchDoctorByCountryAndSlug } from "@/lib/api/site-content-api";
 import { resolveDoctorProfileImageUrl } from "@/lib/content/get-public-assets";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import type { LocaleCode } from "@/lib/i18n/types";
+import { isSupportedLocale } from "@/lib/content/get-public-page";
 
 export type DoctorProfilePageData = {
   hero: {
@@ -73,20 +76,30 @@ const doctorSeed: Record<string, Omit<DoctorProfilePageData, "hero" | "bottomCta
   },
 };
 
-export function getDoctorProfileData(doctorSlug: string): DoctorProfilePageData {
+export function getDoctorProfileData(
+  doctorSlug: string,
+  locale?: string,
+): DoctorProfilePageData {
   const fallbackName = toLabel(doctorSlug);
   const seeded = doctorSeed[doctorSlug];
+  const { common } = loadLocaleBundle(
+    locale && isSupportedLocale(locale) ? (locale as LocaleCode) : "en",
+  );
+  const dp = common.doctorProfile;
 
   const profile =
     seeded?.profile ?? {
       name: fallbackName,
-      title: "Clinic Doctor Profile",
+      title: dp.fallbackTitle ?? "Clinic Doctor Profile",
       country: "Ireland",
       languages: ["English"],
-      bio: "This clinician supports online consultations and follow-up guidance through Global Health.",
+      bio:
+        dp.fallbackBio ??
+        "This clinician supports online consultations and follow-up guidance through Global Health.",
       qualifications: [
-        "Qualifications and registration details are shown when verified by the clinic team.",
-        "Patients can confirm clinician fit during the booking intake.",
+        dp.fallbackQualification1 ??
+          "Qualifications and registration details are shown when verified by the clinic team.",
+        dp.fallbackQualification2 ?? "Patients can confirm clinician fit during the booking intake.",
       ],
       specialties: ["General consultation", "Specialist referral guidance", "Follow-up support"],
       imageLabel: fallbackName,
@@ -96,16 +109,18 @@ export function getDoctorProfileData(doctorSlug: string): DoctorProfilePageData 
     hero: {
       title: profile.name,
       description:
+        dp.heroDescription ??
         "Review doctor profile details, consultation areas, and booking options before scheduling your appointment.",
-      primaryCta: { label: "Book consultation", href: "/ireland/en/book" },
-      secondaryCta: { label: "Back to Ireland team", href: "/ireland-team" },
+      primaryCta: { label: dp.bookConsultation ?? "Book consultation", href: "/ireland/en/book" },
+      secondaryCta: { label: dp.backToTeamFallback ?? "Back to Ireland team", href: "/ireland-team" },
     },
     profile,
     bottomCta: {
-      title: "Need to schedule with this doctor?",
+      title: dp.bottomCtaTitle ?? "Need to schedule with this doctor?",
       description:
+        dp.bottomCtaDescription ??
         "Book your consultation and the clinic team will confirm the right appointment route based on availability.",
-      ctaLabel: "Start booking",
+      ctaLabel: dp.startBooking ?? "Start booking",
       ctaHref: "/ireland/en/book",
     },
   };
@@ -116,7 +131,7 @@ export async function resolveDoctorProfilePageData(
   locale?: string,
   countryCode?: string,
 ): Promise<DoctorProfilePageData> {
-  const base = getDoctorProfileData(doctorSlug);
+  const base = getDoctorProfileData(doctorSlug, locale);
   const [countryScopedDoctor, globalDoctor, profileImageSrc] = await Promise.all([
     countryCode
       ? fetchDoctorByCountryAndSlug(countryCode, doctorSlug, locale).then((res) =>

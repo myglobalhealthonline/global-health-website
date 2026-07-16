@@ -113,7 +113,7 @@ export default async function CountryLangGeneralConsultationPage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
-  const { common: c, home } = loadLocaleBundle(lang as LocaleCode);
+  const { common: c, home, services: servicesLocale } = loadLocaleBundle(lang as LocaleCode);
   const gp = c.gpPage;
 
   // Honor the per-country `general-consultations` toggle from /admin/country-features.
@@ -323,6 +323,7 @@ export default async function CountryLangGeneralConsultationPage({
             variant="dark"
             previousPageLabel={c.a11y.previousPage}
             nextPageLabel={c.a11y.nextPage}
+            learnMoreLabel={servicesLocale.catalog.learnMore}
           />
         </div>
       ) : null}

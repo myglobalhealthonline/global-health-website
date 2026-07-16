@@ -8,18 +8,18 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | Severity | Count |
 |---|---|
 | Critical | 0 |
-| Warning | 246 |
+| Warning | 282 |
 | Info | 1 |
 
 ### Per-locale key health (vs en)
 
 | Locale | Keys checked | Missing | Empty | Identical to en (flagged) |
 |---|---|---|---|---|
-| pt | 3265 | 0 | 0 | 32 |
-| es | 3265 | 0 | 0 | 35 |
-| cs | 3265 | 0 | 0 | 17 |
-| ro | 3265 | 0 | 0 | 63 |
-| de | 3265 | 0 | 0 | 47 |
+| pt | 3671 | 0 | 0 | 43 |
+| es | 3671 | 0 | 0 | 42 |
+| cs | 3671 | 0 | 0 | 22 |
+| ro | 3671 | 0 | 0 | 78 |
+| de | 3671 | 0 | 0 | 67 |
 
 ## Wiring checks (persistence, fallback, SSR/CSR)
 
@@ -36,7 +36,7 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 
 ## Findings
 
-### identical-to-english (194) — warning
+### identical-to-english (252) — warning
 
 > Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).
 
@@ -51,7 +51,10 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/pt/account.json` | `profile.taxIdHint` | pt | NIF / PPS / CPF |  |
 | `frontend/locales/pt/account.json` | `profile.statusPatientIdHint` | pt | Global Health Number |  |
 | `frontend/locales/pt/account.json` | `notificationsPage.total` | pt | Total |  |
+| `frontend/locales/pt/account.json` | `calendar.sectionSlots` | pt | Slots |  |
+| `frontend/locales/pt/account.json` | `calendar.eventDetailLinks` | pt | Links |  |
 | `frontend/locales/pt/common.json` | `navigation.egiftCard` | pt | eGift Card |  |
+| `frontend/locales/pt/common.json` | `navigation.cartItemSingular` | pt | item |  |
 | `frontend/locales/pt/common.json` | `footer.legal` | pt | Legal |  |
 | `frontend/locales/pt/common.json` | `entryGate.motto` | pt | Medicine Anytime Anywhere |  |
 | `frontend/locales/pt/common.json` | `extra.minSuffix` | pt | min |  |
@@ -63,13 +66,21 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/pt/common.json` | `cartPage.total` | pt | Total |  |
 | `frontend/locales/pt/common.json` | `checkoutPage.subtotal` | pt | Subtotal |  |
 | `frontend/locales/pt/common.json` | `checkoutPage.total` | pt | Total |  |
+| `frontend/locales/pt/common.json` | `blogPage.heroCountryLabel` | pt | Global Health · Blog |  |
+| `frontend/locales/pt/contact.json` | `form_full_name_placeholder` | pt | Jane Smith |  |
+| `frontend/locales/pt/corporate.json` | `employees.addEmployee.email` | pt | Email * |  |
+| `frontend/locales/pt/corporate.json` | `employees.bulkUpload.textareaPlaceholder` | pt | firstName,lastName,email,phone Mary,Byrne,mary.byrne@acme.i… |  |
+| `frontend/locales/pt/doctor.json` | `appointmentDetail.internalNotesAuthorAdmin` | pt | Admin |  |
 | `frontend/locales/pt/doctor.json` | `availability.minutesShort` | pt | {count} min |  |
 | `frontend/locales/pt/doctor.json` | `availability.removeWindowDateQualifier` | pt | ({from} – {until}). |  |
 | `frontend/locales/pt/doctor.json` | `profile.registrationBodyPlaceholder` | pt | IMC, OM, OMC |  |
+| `frontend/locales/pt/doctor.json` | `profile.focalZoom` | pt | Zoom |  |
+| `frontend/locales/pt/doctor.json` | `profile.focalPreviewAvatar` | pt | Avatar |  |
 | `frontend/locales/pt/doctor.json` | `invoices.excel` | pt | Excel |  |
 | `frontend/locales/pt/doctor.json` | `notificationsPage.total` | pt | Total |  |
 | `frontend/locales/pt/doctor.json` | `servicesUsedList.colItem` | pt | Item |  |
 | `frontend/locales/pt/doctor.json` | `servicesUsedList.total` | pt | Total |  |
+| `frontend/locales/pt/doctor.json` | `calendar.eventDetailLinks` | pt | Links |  |
 | `frontend/locales/pt/faq.json` | `hero_eyebrow` | pt | Global Health · FAQ |  |
 | `frontend/locales/pt/home.json` | `countryHero.sameDay.minSuffix` | pt | min |  |
 | `frontend/locales/pt/legal.json` | `privacy.eyebrow` | pt | Legal |  |
@@ -97,14 +108,21 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/es/common.json` | `checkoutPage.total` | es | Total |  |
 | `frontend/locales/es/common.json` | `bookPage.tagGeneral` | es | General |  |
 | `frontend/locales/es/common.json` | `cardVerify.plan` | es | Plan |  |
+| `frontend/locales/es/common.json` | `blogPage.heroCountryLabel` | es | Global Health · Blog |  |
+| `frontend/locales/es/contact.json` | `form_full_name_placeholder` | es | Jane Smith |  |
+| `frontend/locales/es/corporate.json` | `employees.bulkUpload.textareaPlaceholder` | es | firstName,lastName,email,phone Mary,Byrne,mary.byrne@acme.i… |  |
+| `frontend/locales/es/corporate.json` | `settings.plan.plan` | es | Plan |  |
 | `frontend/locales/es/doctor.json` | `appointments.typeGeneral` | es | General |  |
+| `frontend/locales/es/doctor.json` | `appointmentDetail.internalNotesAuthorAdmin` | es | Admin |  |
 | `frontend/locales/es/doctor.json` | `availability.minutesShort` | es | {count} min |  |
 | `frontend/locales/es/doctor.json` | `availability.removeWindowDateQualifier` | es | ({from} – {until}). |  |
 | `frontend/locales/es/doctor.json` | `profile.registrationBodyPlaceholder` | es | IMC, OM, OMC |  |
+| `frontend/locales/es/doctor.json` | `profile.focalPreviewAvatar` | es | Avatar |  |
 | `frontend/locales/es/doctor.json` | `invoices.excel` | es | Excel |  |
 | `frontend/locales/es/doctor.json` | `notificationsPage.total` | es | Total |  |
 | `frontend/locales/es/doctor.json` | `servicesUsedList.total` | es | Total |  |
 | `frontend/locales/es/doctor.json` | `consultationForm.fieldPlan` | es | Plan |  |
+| `frontend/locales/es/doctor.json` | `calendar.eventDetailDoctor` | es | Doctor |  |
 | `frontend/locales/es/faq.json` | `hero_eyebrow` | es | Global Health · FAQ |  |
 | `frontend/locales/es/home.json` | `countryHero.sameDay.minSuffix` | es | min |  |
 | `frontend/locales/es/legal.json` | `privacy.eyebrow` | es | Legal |  |
@@ -116,11 +134,16 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/cs/common.json` | `extra.minSuffix` | cs | min |  |
 | `frontend/locales/cs/common.json` | `testsPage.testSingular` | cs | test |  |
 | `frontend/locales/cs/common.json` | `homeCatalog.testSingular` | cs | test |  |
+| `frontend/locales/cs/common.json` | `blogPage.heroCountryLabel` | cs | Global Health · Blog |  |
+| `frontend/locales/cs/contact.json` | `form_full_name_placeholder` | cs | Jane Smith |  |
+| `frontend/locales/cs/corporate.json` | `employees.bulkUpload.textareaPlaceholder` | cs | firstName,lastName,email,phone Mary,Byrne,mary.byrne@acme.i… |  |
 | `frontend/locales/cs/doctor.json` | `nav.groupFinance` | cs | Finance |  |
+| `frontend/locales/cs/doctor.json` | `appointmentDetail.internalNotesAuthorAdmin` | cs | Admin |  |
 | `frontend/locales/cs/doctor.json` | `availability.minutesShort` | cs | {count} min |  |
 | `frontend/locales/cs/doctor.json` | `availability.removeWindowDateQualifier` | cs | ({from} – {until}). |  |
 | `frontend/locales/cs/doctor.json` | `profile.urlSlug` | cs | URL slug |  |
 | `frontend/locales/cs/doctor.json` | `profile.registrationBodyPlaceholder` | cs | IMC, OM, OMC |  |
+| `frontend/locales/cs/doctor.json` | `profile.focalPreviewAvatar` | cs | Avatar |  |
 | `frontend/locales/cs/doctor.json` | `invoices.excel` | cs | Excel |  |
 | `frontend/locales/cs/doctor.json` | `appointmentActions.modeOnline` | cs | Online (video) |  |
 | `frontend/locales/cs/doctor.json` | `followUpButton.onlineOption` | cs | Online (video) |  |
@@ -145,6 +168,7 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/ro/account.json` | `membership.sumPlan` | ro | Plan |  |
 | `frontend/locales/ro/account.json` | `membership.sumStatus` | ro | Status |  |
 | `frontend/locales/ro/account.json` | `calendar.title` | ro | Calendar |  |
+| `frontend/locales/ro/account.json` | `calendar.eventDetailDoctor` | ro | Doctor |  |
 | `frontend/locales/ro/common.json` | `navigation.contact` | ro | Contact |  |
 | `frontend/locales/ro/common.json` | `footer.legal` | ro | Legal |  |
 | `frontend/locales/ro/common.json` | `entryGate.motto` | ro | Medicine Anytime Anywhere |  |
@@ -160,16 +184,30 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/ro/common.json` | `bookPage.tagGeneral` | ro | General |  |
 | `frontend/locales/ro/common.json` | `cardVerify.valid` | ro | Card valid |  |
 | `frontend/locales/ro/common.json` | `cardVerify.plan` | ro | Plan |  |
+| `frontend/locales/ro/common.json` | `blogPage.heroCountryLabel` | ro | Global Health · Blog |  |
 | `frontend/locales/ro/contact.json` | `hero_eyebrow` | ro | Global Health · Contact |  |
+| `frontend/locales/ro/contact.json` | `watermark` | ro | Contact |  |
+| `frontend/locales/ro/contact.json` | `form_full_name_placeholder` | ro | Jane Smith |  |
+| `frontend/locales/ro/corporate.json` | `employees.addEmployee.email` | ro | Email * |  |
+| `frontend/locales/ro/corporate.json` | `employees.bulkUpload.textareaPlaceholder` | ro | firstName,lastName,email,phone Mary,Byrne,mary.byrne@acme.i… |  |
+| `frontend/locales/ro/corporate.json` | `employees.table.colStatus` | ro | Status |  |
+| `frontend/locales/ro/corporate.json` | `employees.table.reactivate` | ro | Reactivate |  |
+| `frontend/locales/ro/corporate.json` | `employees.table.inviteStatusLabel` | ro | Status |  |
+| `frontend/locales/ro/corporate.json` | `settings.plan.sectionTitle` | ro | Plan + contract |  |
+| `frontend/locales/ro/corporate.json` | `settings.plan.plan` | ro | Plan |  |
 | `frontend/locales/ro/doctor.json` | `nav.calendar` | ro | Calendar |  |
 | `frontend/locales/ro/doctor.json` | `common.activeCount` | ro | {count} active |  |
 | `frontend/locales/ro/doctor.json` | `dashboard.calendar` | ro | Calendar |  |
 | `frontend/locales/ro/doctor.json` | `appointments.typeGeneral` | ro | General |  |
 | `frontend/locales/ro/doctor.json` | `appointments.typeSpecialist` | ro | Specialist |  |
+| `frontend/locales/ro/doctor.json` | `appointmentDetail.internalNotesAuthorAdmin` | ro | Admin |  |
 | `frontend/locales/ro/doctor.json` | `patients.docTypeDocument` | ro | Document |  |
 | `frontend/locales/ro/doctor.json` | `availability.minutesShort` | ro | {count} min |  |
 | `frontend/locales/ro/doctor.json` | `availability.removeWindowDateQualifier` | ro | ({from} – {until}). |  |
 | `frontend/locales/ro/doctor.json` | `profile.registrationBodyPlaceholder` | ro | IMC, OM, OMC |  |
+| `frontend/locales/ro/doctor.json` | `profile.focalZoom` | ro | Zoom |  |
+| `frontend/locales/ro/doctor.json` | `profile.focalPreviewCard` | ro | Card |  |
+| `frontend/locales/ro/doctor.json` | `profile.focalPreviewAvatar` | ro | Avatar |  |
 | `frontend/locales/ro/doctor.json` | `invoices.excel` | ro | Excel |  |
 | `frontend/locales/ro/doctor.json` | `notificationsPage.total` | ro | Total |  |
 | `frontend/locales/ro/doctor.json` | `services.kindSpecialistShort` | ro | Specialist |  |
@@ -200,52 +238,20 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/de/account.json` | `family.optional` | de | optional |  |
 | `frontend/locales/de/account.json` | `notificationsPage.statusLabel` | de | Status |  |
 | `frontend/locales/de/account.json` | `membership.sumStatus` | de | Status |  |
+| `frontend/locales/de/account.json` | `calendar.sectionSlots` | de | Slots |  |
+| `frontend/locales/de/account.json` | `calendar.eventDetailPatient` | de | Patient |  |
+| `frontend/locales/de/account.json` | `calendar.eventDetailLinks` | de | Links |  |
 | `frontend/locales/de/account.json` | `accessHistory.roleSystem` | de | System |  |
-| `frontend/locales/de/auth.json` | `register.phoneOptional` | de | (optional) |  |
-| `frontend/locales/de/common.json` | `entryGate.motto` | de | Medicine Anytime Anywhere |  |
-| `frontend/locales/de/common.json` | `bookingForm.nationalIdOptional` | de | {label} (optional) |  |
-| `frontend/locales/de/common.json` | `homeCatalog.trustLive` | de | Live |  |
-| `frontend/locales/de/common.json` | `bookPage.stepService` | de | Service |  |
-| `frontend/locales/de/common.json` | `bookPage.stepDetails` | de | Details |  |
-| `frontend/locales/de/common.json` | `cardVerify.plan` | de | Plan |  |
-| `frontend/locales/de/common.json` | `cardVerify.status` | de | Status |  |
-| `frontend/locales/de/doctor.json` | `common.status` | de | Status |  |
-| `frontend/locales/de/doctor.json` | `appointments.meeting` | de | Meeting |  |
-| `frontend/locales/de/doctor.json` | `appointmentDetail.patient` | de | Patient |  |
-| `frontend/locales/de/doctor.json` | `appointmentDetail.statusLabel` | de | Status |  |
-| `frontend/locales/de/doctor.json` | `patients.colPatient` | de | Patient |  |
-| `frontend/locales/de/doctor.json` | `patients.colStatus` | de | Status |  |
-| `frontend/locales/de/doctor.json` | `availability.removeWindowDateQualifier` | de | ({from} – {until}). |  |
-| `frontend/locales/de/doctor.json` | `profile.registrationBodyPlaceholder` | de | IMC, OM, OMC |  |
-| `frontend/locales/de/doctor.json` | `profile.bicLabel` | de | BIC / SWIFT (optional) |  |
-| `frontend/locales/de/doctor.json` | `invoices.colPatient` | de | Patient |  |
-| `frontend/locales/de/doctor.json` | `invoices.colStatus` | de | Status |  |
-| `frontend/locales/de/doctor.json` | `invoices.excel` | de | Excel |  |
-| `frontend/locales/de/doctor.json` | `brazilConsent.name` | de | Name |  |
-| `frontend/locales/de/doctor.json` | `consultationForm.fieldPlan` | de | Plan |  |
-| `frontend/locales/de/doctor.json` | `documentContextBanner.rowName` | de | Name |  |
-| `frontend/locales/de/doctor.json` | `messagesPage.patientPrefix` | de | Patient:  |  |
-| `frontend/locales/de/doctor.json` | `confidentiality.eyebrow` | de | Compliance |  |
-| `frontend/locales/de/faq.json` | `hero_eyebrow` | de | Global Health · FAQ |  |
-| `frontend/locales/de/forms.json` | `contact.phoneOptional` | de | (optional) |  |
-| `frontend/locales/de/home.json` | `countryHero.sameDay.minSuffix` | de | min |  |
-| `frontend/locales/de/home.json` | `finalCta.liveLabel` | de | Live |  |
-| `frontend/locales/de/home.json` | `statsBand.stat3Value` | de | Live |  |
-| `frontend/locales/de/home.json` | `brazilConsent.fieldName` | de | Name |  |
-| `frontend/locales/de/subscription.json` | `manage.status` | de | Status |  |
-| `frontend/locales/de/subscription.json` | `manage.upgradeLabel` | de | Upgrade |  |
-| `frontend/locales/de/subscription.json` | `manage.downgradeLabel` | de | Downgrade |  |
-| `frontend/locales/de/subscription.json` | `invoice.colStatus` | de | Status |  |
+| _…and 52 more (see JSON report)_ | | | | |
 
-### hardcoded-text (52) — warning
+### hardcoded-text (30) — warning
 
 > Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.
 
 | File | Key | Locale | English value | Detail |
 |---|---|---|---|---|
-| `frontend/app/(site)/(global)/about/page.tsx` |  |  |  | 4 candidate string(s): "Why we built this", "Founded 2023 · Prague", "Global Health at a … |
+| `frontend/app/(site)/(global)/about/page.tsx` |  |  |  | 1 candidate string(s): "[attr] Global Health telemedicine platform — online doctor consul… |
 | `frontend/app/(site)/(global)/blog/page.tsx` |  |  |  | 1 candidate string(s): "[attr] Medical team reviewing health articles and educational con… |
-| `frontend/app/(site)/(global)/blog/[slug]/loading.tsx` |  |  |  | 1 candidate string(s): "[attr] Loading article…" |
 | `frontend/app/(site)/(global)/contact/page.tsx` |  |  |  | 1 candidate string(s): "[attr] Telehealth care coordinator supporting a patient through a… |
 | `frontend/app/(site)/[country]/[lang]/book/page.tsx` |  |  |  | 1 candidate string(s): "Need a same-day GP instead?" |
 | `frontend/app/(site)/[country]/[lang]/book/_components/service-time-picker.tsx` |  |  |  | 2 candidate string(s): "Change service", "[attr] Available dates" |
@@ -258,41 +264,20 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/app/(auth)/account/profile/_components/profile-client.tsx` |  |  |  | 1 candidate string(s): "null) as Promise" |
 | `frontend/app/(doctor)/doctor/appointments/[id]/_components/services-used-list.tsx` |  |  |  | 1 candidate string(s): "locked ? null : (" |
 | `frontend/app/(doctor)/doctor/page.tsx` |  |  |  | 1 candidate string(s): "a.scheduledAt &&\r\n      new Date(a.scheduledAt).getTime()" |
-| `frontend/app/(corporate)/corporate/employees/bulk-upload-form.tsx` |  |  |  | 1 candidate string(s): "Bulk upload" |
-| `frontend/app/(corporate)/corporate/employees/employees-table.tsx` |  |  |  | 4 candidate string(s): "Resend invite", "View details", "No invites sent yet.", "[attr] N… |
-| `frontend/app/(corporate)/corporate/employees/page.tsx` |  |  |  | 17 candidate string(s): "Add employee", "First name *", "Last name *", "Phone (WhatsApp)"… |
-| `frontend/app/(corporate)/corporate/employees/[id]/page.tsx` |  |  |  | 5 candidate string(s): "All employees", "No invites sent yet.", "No requests for this emp… |
-| `frontend/app/(corporate)/corporate/page.tsx` |  |  |  | 7 candidate string(s): "per year", "Manage employees", "New request", "View all requests … |
-| `frontend/app/(corporate)/corporate/requests/page.tsx` |  |  |  | 9 candidate string(s): "New request", "Select employee…", "Illness\r\n                   … |
-| `frontend/app/(corporate)/corporate/requests/requests-table.tsx` |  |  |  | 1 candidate string(s): "[attr] No requests" |
-| `frontend/app/(corporate)/corporate/settings/page.tsx` |  |  |  | 18 candidate string(s): "Company name *", "Registration number", "Address line 1", "Addre… |
 | `frontend/components/calendar/DayAgenda.tsx` |  |  |  | 2 candidate string(s): "Select a day", "Consultations and availability slots for the sele… |
-| `frontend/components/calendar/EventDetailDialog.tsx` |  |  |  | 1 candidate string(s): "Join video call" |
-| `frontend/components/calendar/WeekCalendar.tsx` |  |  |  | 1 candidate string(s): "[attr] Book this time" |
-| `frontend/components/cards/BlogCard.tsx` |  |  |  | 1 candidate string(s): "Read article" |
 | `frontend/components/cards/DoctorCard.tsx` |  |  |  | 1 candidate string(s): "[attr] Verify registration on the official register" |
-| `frontend/components/chat/ChatThread.tsx` |  |  |  | 2 candidate string(s): "No messages yet.", "[attr] Type a message…" |
-| `frontend/components/chat/ConsultationChat.tsx` |  |  |  | 7 candidate string(s): "Chat window closed. Contact your doctor to re-open.", "Loading me… |
-| `frontend/components/chat/InternalMessagesThread.tsx` |  |  |  | 2 candidate string(s): "No internal notes yet.", "Post note" |
-| `frontend/components/forms/ContactForm.tsx` |  |  |  | 5 candidate string(s): "Message sent!", "Thank you for reaching out. Our team will get ba… |
 | `frontend/components/forms/LanguagePicker.tsx` |  |  |  | 1 candidate string(s): "[attr] Search languages…" |
 | `frontend/components/forms/phone-field.tsx` |  |  |  | 1 candidate string(s): "[attr] Country code" |
 | `frontend/components/layout/BookingSkipLink.tsx` |  |  |  | 1 candidate string(s): "Skip to booking" |
-| `frontend/components/layout/CountrySwitcher.tsx` |  |  |  | 1 candidate string(s): "[attr] Choose country" |
 | `frontend/components/layout/HeaderAuthActions.tsx` |  |  |  | 1 candidate string(s): "[attr] Your account" |
 | `frontend/components/layout/LanguageSwitcher.tsx` |  |  |  | 1 candidate string(s): "[attr] Choose language" |
 | `frontend/components/layout/MobileNav.tsx` |  |  |  | 2 candidate string(s): "Switch country, change language, and book a consultation.", "[att… |
 | `frontend/components/layout/SectionNav.tsx` |  |  |  | 1 candidate string(s): "[attr] Section navigation" |
 | `frontend/components/layout/SiteChrome.tsx` |  |  |  | 2 candidate string(s): "Skip to content", "[attr] Medical disclaimer" |
 | `frontend/components/layout/SiteHeader.tsx` |  |  |  | 1 candidate string(s): "[attr] Book an appointment" |
-| `frontend/components/media/focal-point-editor.tsx` |  |  |  | 5 candidate string(s): "[attr] Photo focal point — drag or use arrow keys to reposition",… |
-| `frontend/components/messages/MessagesInbox.tsx` |  |  |  | 5 candidate string(s): "No matches.", "Select a conversation", "Choose a thread on the le… |
 | `frontend/components/sections/DoctifyReviews.tsx` |  |  |  | 1 candidate string(s): "[attr] Doctify patient reviews" |
-| `frontend/components/sections/DoctorCarousel.tsx` |  |  |  | 1 candidate string(s): "No doctors found." |
 | `frontend/components/sections/DoctorFilters.tsx` |  |  |  | 1 candidate string(s): "Show results" |
-| `frontend/components/sections/DoctorsSection.tsx` |  |  |  | 1 candidate string(s): "Our Team" |
 | `frontend/components/sections/FeaturedDoctor.tsx` |  |  |  | 1 candidate string(s): "Featured clinician" |
-| `frontend/components/sections/GH2PagePrimitives.tsx` |  |  |  | 2 candidate string(s): "Skip to main content", "Encrypted end-to-end. Your health data st… |
 | `frontend/components/templates/DoctorProfileTemplate.tsx` |  |  |  | 2 candidate string(s): "Next step", "[attr] Patient reviews" |
 | `frontend/components/templates/DoctorTeamTemplate.tsx` |  |  |  | 2 candidate string(s): "[attr] Previous page", "[attr] Next page" |
 
