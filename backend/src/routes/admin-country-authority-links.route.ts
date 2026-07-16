@@ -6,8 +6,10 @@ import {
   deleteAuthorityLink,
   listAuthorityLinks,
   updateAuthorityLink,
+  upsertAuthorityLinkTranslation,
 } from "../modules/country-authority-links/country-authority-links.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
+import { localeCodeSchema } from "../validations/admin-countries.schema.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
@@ -59,15 +61,23 @@ const createSchema = z
 
 const updateSchema = createSchema.partial();
 
-// TODO(country-footer-trust-translations): POST/PATCH below only ever write
-// the base (country default-locale) name/abbreviation/description columns.
-// The new CountryAuthorityLinkTranslation table has no admin write path yet
-// — read path (getPublicCountryTrust, ?locale=) is fully wired and falls
-// back to the base row until this is implemented. Follow the
-// CountryFooterTranslation PUT handler in admin-country-footer.route.ts as
-// the pattern: accept an optional `locale` field and, when it differs from
-// the country's defaultLocale, upsert
-// prisma.countryAuthorityLinkTranslation instead of the base columns.
+// Locale-only PATCH payload — mirrors countryFooterTranslationUpsertSchema.
+// url/category/showInFooter/showInSchema/sortOrder/isActive are NOT
+// translatable and stay on the base row only (see
+// CountryAuthorityLinkTranslation model comment in schema.prisma), so this
+// schema only carries the three translatable fields + locale.
+// ponytail: translation writes only apply to PATCH (an existing row). POST
+// create always writes the base row — there's nothing to translate yet,
+// same reasoning as CountryFooterTranslation's PUT guard ("save the base
+// footer before adding a translation").
+export const updateTranslationSchema = z
+  .object({
+    locale: localeCodeSchema,
+    name: z.string().trim().min(1).max(200).optional(),
+    abbreviation: z.string().trim().max(32).optional().nullable(),
+    description: z.string().trim().max(500).optional().nullable(),
+  })
+  .strict();
 
 const adminCountryAuthorityLinksRoute: FastifyPluginAsync = async (app) => {
   app.addHook("onRequest", async (request, reply) => {
@@ -123,6 +133,31 @@ const adminCountryAuthorityLinksRoute: FastifyPluginAsync = async (app) => {
     async (request, reply) => {
       if (!idParam.safeParse(request.params.linkId).success) {
         return reply.status(400).send(errorResponse("Invalid link id"));
+      }
+      // A payload carrying `locale` targets one locale's translation
+      // override instead of the base row (same convention as the footer's
+      // locale-aware PUT).
+      const hasLocale =
+        !!request.body && typeof request.body === "object" && "locale" in request.body;
+      if (hasLocale) {
+        const body = updateTranslationSchema.safeParse(request.body);
+        if (!body.success) {
+          return reply
+            .status(400)
+            .send(errorResponse("Invalid authority link translation", body.error.flatten()));
+        }
+        try {
+          const { locale, ...data } = body.data;
+          const row = await upsertAuthorityLinkTranslation(request.params.linkId, locale, data);
+          if (!row) return reply.status(404).send(errorResponse("Authority link not found"));
+          return okResponse({ authorityLink: row }, "Authority link translation saved");
+        } catch (error) {
+          if (error instanceof DatabaseUnavailableError) {
+            return reply.status(503).send(errorResponse(error.message));
+          }
+          app.log.error(error);
+          return reply.status(500).send(errorResponse("Could not update authority link translation"));
+        }
       }
       const body = updateSchema.safeParse(request.body ?? {});
       if (!body.success) {

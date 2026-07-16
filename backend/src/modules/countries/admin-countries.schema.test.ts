@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import {
   adminCountryCreateBodySchema,
   adminCountryUpdateBodySchema,
+  countryLegalProfileTrustTranslationUpsertSchema,
 } from "../../validations/admin-countries.schema.js";
 
 describe("admin countries validation", () => {
@@ -90,5 +91,56 @@ describe("admin countries validation", () => {
       bookingSetting: { timezone: "Mars/Olympus_Mons" },
     });
     assert.equal(result.success, false);
+  });
+});
+
+describe("legal profile trust-translation validation", () => {
+  it("requires locale", () => {
+    const result = countryLegalProfileTrustTranslationUpsertSchema.safeParse({
+      regulatorName: "Ordem dos Médicos",
+    });
+    assert.equal(result.success, false);
+  });
+
+  it("accepts the four translatable trust fields", () => {
+    const result = countryLegalProfileTrustTranslationUpsertSchema.safeParse({
+      locale: "PT",
+      regulatorName: "Ordem dos Médicos",
+      providerRegistrationLabel: "Registado na ERS",
+      emergencyNotice: "Ligue 112 em caso de emergência",
+      dataProtectionLawName: "RGPD",
+    });
+    assert.equal(result.success, true);
+  });
+
+  it("accepts locale-only payload (no fields to change)", () => {
+    const result = countryLegalProfileTrustTranslationUpsertSchema.safeParse({ locale: "PT" });
+    assert.equal(result.success, true);
+  });
+
+  it("accepts an explicit null to clear a field", () => {
+    const result = countryLegalProfileTrustTranslationUpsertSchema.safeParse({
+      locale: "PT",
+      regulatorName: null,
+    });
+    assert.equal(result.success, true);
+    if (result.success) {
+      assert.equal(result.data.regulatorName, null);
+    }
+  });
+
+  it("rejects a non-translatable field (regulatorWebsite is base-row only)", () => {
+    const result = countryLegalProfileTrustTranslationUpsertSchema.safeParse({
+      locale: "PT",
+      regulatorWebsite: "https://example.com",
+    } as never);
+    // Extra keys are silently stripped by default zod objects — assert the
+    // stray field never survives into the parsed data rather than requiring
+    // rejection, since this schema (unlike the authority-link one) isn't
+    // `.strict()`.
+    assert.equal(result.success, true);
+    if (result.success) {
+      assert.equal("regulatorWebsite" in result.data, false);
+    }
   });
 });

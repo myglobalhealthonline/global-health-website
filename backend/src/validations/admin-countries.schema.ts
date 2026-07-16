@@ -240,6 +240,25 @@ export const countryLegalProfileBodySchema = z.object({
 
 export type CountryLegalProfileBody = z.infer<typeof countryLegalProfileBodySchema>;
 
+/**
+ * Admin write payload for one non-default-locale override of the legal
+ * profile's translatable trust-bar text. Mirrors
+ * countryFooterTranslationUpsertSchema in country-footer.schema.ts. URLs,
+ * numbers and IDs (regulatorWebsite, providerRegistrationNumber/Url,
+ * emergencyNumber, …) are NOT translatable and stay on the base row only.
+ */
+export const countryLegalProfileTrustTranslationUpsertSchema = z.object({
+  locale: localeCodeSchema,
+  regulatorName: textField,
+  providerRegistrationLabel: textField,
+  emergencyNotice: z.string().trim().max(1000).optional().nullable(),
+  dataProtectionLawName: textField,
+});
+
+export type CountryLegalProfileTrustTranslationUpsertInput = z.infer<
+  typeof countryLegalProfileTrustTranslationUpsertSchema
+>;
+
 const legalDocumentTypeValues = Object.values(LegalDocumentType) as [LegalDocumentType, ...LegalDocumentType[]];
 
 export const countryLegalDocumentBodySchema = z

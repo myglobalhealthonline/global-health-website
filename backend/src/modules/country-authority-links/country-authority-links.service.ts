@@ -1,4 +1,5 @@
 import { AuthorityCategory } from "@prisma/client";
+import type { LocaleCode } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 
@@ -14,6 +15,14 @@ export type AuthorityLinkInput = {
   isActive?: boolean;
 };
 
+export type AuthorityLinkTranslationInput = {
+  name?: string;
+  abbreviation?: string | null;
+  description?: string | null;
+};
+
+// translations included additively — base fields/shape unchanged, so
+// existing callers (public read path, admin UI list) are unaffected.
 const SELECT = {
   id: true,
   countryId: true,
@@ -26,6 +35,9 @@ const SELECT = {
   showInSchema: true,
   sortOrder: true,
   isActive: true,
+  translations: {
+    select: { id: true, locale: true, name: true, abbreviation: true, description: true },
+  },
 } as const;
 
 export async function listAuthorityLinks(countryId: string) {
@@ -85,6 +97,59 @@ export async function updateAuthorityLink(id: string, input: Partial<AuthorityLi
     });
   } catch (error) {
     throw normalizeDbError(error, "Could not update authority link");
+  }
+}
+
+/**
+ * Upsert one non-default-locale override of a link's translatable text
+ * (name/abbreviation/description), mirroring CountryFooterTranslation's PUT
+ * handler: `locale === country.defaultLocale` writes the base row instead
+ * (there's nothing to override — the base row IS that locale's copy).
+ *
+ * CountryAuthorityLinkTranslation.name is NOT NULL, so a first-time
+ * translation upsert that omits `name` falls back to the base row's
+ * current name rather than writing an empty string.
+ */
+export async function upsertAuthorityLinkTranslation(
+  id: string,
+  locale: LocaleCode,
+  input: AuthorityLinkTranslationInput,
+) {
+  const link = await prisma.countryAuthorityLink.findUnique({
+    where: { id },
+    select: { id: true, name: true, country: { select: { defaultLocale: true } } },
+  });
+  if (!link) return null;
+  try {
+    if (locale === link.country.defaultLocale) {
+      return await prisma.countryAuthorityLink.update({
+        where: { id },
+        data: {
+          ...(input.name !== undefined && { name: input.name }),
+          ...(input.abbreviation !== undefined && { abbreviation: input.abbreviation }),
+          ...(input.description !== undefined && { description: input.description }),
+        },
+        select: SELECT,
+      });
+    }
+    await prisma.countryAuthorityLinkTranslation.upsert({
+      where: { countryAuthorityLinkId_locale: { countryAuthorityLinkId: id, locale } },
+      create: {
+        countryAuthorityLinkId: id,
+        locale,
+        name: input.name ?? link.name,
+        abbreviation: input.abbreviation ?? null,
+        description: input.description ?? null,
+      },
+      update: {
+        ...(input.name !== undefined && { name: input.name }),
+        ...(input.abbreviation !== undefined && { abbreviation: input.abbreviation }),
+        ...(input.description !== undefined && { description: input.description }),
+      },
+    });
+    return await prisma.countryAuthorityLink.findUniqueOrThrow({ where: { id }, select: SELECT });
+  } catch (error) {
+    throw normalizeDbError(error, "Could not update authority link translation");
   }
 }
 

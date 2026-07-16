@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import {
   CountryCurrencyNotFoundError,
   CountryLocaleValidationError,
+  LegalProfileMissingError,
   createAdminCountry,
   disableAdminCountry,
   getAdminCountryById,
@@ -13,6 +14,7 @@ import {
   updateAdminCountry,
   getCountryLegalProfile,
   upsertCountryLegalProfile,
+  upsertCountryLegalProfileTrustTranslation,
   listCountryLegalDocuments,
   upsertCountryLegalDocument,
   deleteCountryLegalDocument,
@@ -24,6 +26,7 @@ import {
   adminCountryUpdateBodySchema,
   countryIdParamsSchema,
   countryLegalProfileBodySchema,
+  countryLegalProfileTrustTranslationUpsertSchema,
   countryLegalDocumentBodySchema,
   legalDocumentIdParamsSchema,
 } from "../validations/admin-countries.schema.js";
@@ -198,22 +201,40 @@ const adminCountriesRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  // TODO(country-footer-trust-translations): this PUT only ever writes the
-  // base (country default-locale) CountryLegalProfile columns. The new
-  // CountryLegalProfileTrustTranslation table (regulatorName,
-  // providerRegistrationLabel, emergencyNotice, dataProtectionLawName) has
-  // no admin write path yet — read path (getPublicCountryTrust, ?locale=)
-  // is fully wired and will resolve to the base row until an admin UI/route
-  // upserts translation rows. Follow the CountryFooterTranslation PUT
-  // handler in admin-country-footer.route.ts as the pattern: accept a
-  // `locale` field, and when it differs from the country's defaultLocale,
-  // upsert prisma.countryLegalProfileTrustTranslation instead of the base
-  // row's regulatorName/providerRegistrationLabel/emergencyNotice/
-  // dataProtectionLawName.
   app.put("/api/admin/countries/:id/legal", async (request, reply) => {
     const params = countryIdParamsSchema.safeParse(request.params);
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid country id", params.error.flatten()));
+    }
+    // A payload carrying `locale` targets one locale's translation override
+    // of the trust-bar fields instead of the base row (same convention as
+    // the footer's locale-aware PUT).
+    const hasLocale =
+      !!request.body && typeof request.body === "object" && "locale" in request.body;
+    if (hasLocale) {
+      const body = countryLegalProfileTrustTranslationUpsertSchema.safeParse(request.body);
+      if (!body.success) {
+        return reply
+          .status(400)
+          .send(errorResponse("Invalid legal profile translation payload", body.error.flatten()));
+      }
+      try {
+        const legalProfile = await upsertCountryLegalProfileTrustTranslation(params.data.id, body.data);
+        if (!legalProfile) return reply.status(404).send(errorResponse("Country not found"));
+        return okResponse({ legalProfile }, "Legal profile translation saved");
+      } catch (error) {
+        if (error instanceof LegalProfileMissingError) {
+          return reply.status(404).send(errorResponse(error.message));
+        }
+        if (error instanceof LocaleNotSupportedError) {
+          return reply.status(400).send(errorResponse(error.message));
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Unexpected legal profile error"));
+      }
     }
     const body = countryLegalProfileBodySchema.safeParse(request.body);
     if (!body.success) {

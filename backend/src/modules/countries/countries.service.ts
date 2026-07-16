@@ -6,6 +6,7 @@ import type {
   AdminCountryUpdateBody,
   CountryLegalProfileBody,
   CountryLegalDocumentBody,
+  CountryLegalProfileTrustTranslationUpsertInput,
 } from "../../validations/admin-countries.schema.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { assertLocaleSupported, LocaleNotSupportedError } from "../shared/locale-support.js";
@@ -23,6 +24,16 @@ export class CountryLocaleValidationError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "CountryLocaleValidationError";
+  }
+}
+
+/** Thrown when a translation write targets a legal profile that doesn't
+ *  exist yet — mirrors the footer's "save the base footer before adding a
+ *  translation" guard (there's no base row to override). */
+export class LegalProfileMissingError extends Error {
+  constructor(message = "Save the base legal profile before adding a translation") {
+    super(message);
+    this.name = "LegalProfileMissingError";
   }
 }
 
@@ -333,7 +344,10 @@ export async function getCountryLegalProfile(countryId: string) {
   try {
     return await prisma.countryLegalProfile.findUnique({
       where: { countryId },
-      include: { disclaimerTranslations: true },
+      // trustTranslations included additively alongside the pre-existing
+      // disclaimerTranslations — same row shape, extra field — so the admin
+      // UI can later prefill a per-locale trust-bar edit form.
+      include: { disclaimerTranslations: true, trustTranslations: true },
     });
   } catch (error) {
     throw normalizeDbError(error, "Legal profile unavailable");
@@ -384,12 +398,69 @@ export async function upsertCountryLegalProfile(countryId: string, data: Country
     }
     return await prisma.countryLegalProfile.findUniqueOrThrow({
       where: { id: profile.id },
-      include: { disclaimerTranslations: true },
+      include: { disclaimerTranslations: true, trustTranslations: true },
     });
   } catch (error) {
     // Locale-support rejection is a client error (400), not a DB failure.
     if (error instanceof LocaleNotSupportedError) throw error;
     throw normalizeDbError(error, "Could not save legal profile");
+  }
+}
+
+/**
+ * Upsert one non-default-locale override of the legal profile's
+ * translatable trust-bar text (regulatorName, providerRegistrationLabel,
+ * emergencyNotice, dataProtectionLawName). `locale === country.defaultLocale`
+ * writes the base CountryLegalProfile columns instead — mirrors
+ * CountryFooterTranslation's PUT handler. Throws LegalProfileMissingError
+ * when no base row exists yet (nothing to override).
+ */
+export async function upsertCountryLegalProfileTrustTranslation(
+  countryId: string,
+  data: CountryLegalProfileTrustTranslationUpsertInput,
+) {
+  const { locale, ...fields } = data;
+  const country = await prisma.country.findUnique({
+    where: { id: countryId },
+    select: { defaultLocale: true },
+  });
+  if (!country) return null;
+  const profile = await prisma.countryLegalProfile.findUnique({
+    where: { countryId },
+    select: { id: true },
+  });
+  if (!profile) throw new LegalProfileMissingError();
+
+  await assertLocaleSupported(countryId, locale);
+  try {
+    if (locale === country.defaultLocale) {
+      await prisma.countryLegalProfile.update({
+        where: { id: profile.id },
+        data: {
+          ...(fields.regulatorName !== undefined && { regulatorName: fields.regulatorName }),
+          ...(fields.providerRegistrationLabel !== undefined && {
+            providerRegistrationLabel: fields.providerRegistrationLabel,
+          }),
+          ...(fields.emergencyNotice !== undefined && { emergencyNotice: fields.emergencyNotice }),
+          ...(fields.dataProtectionLawName !== undefined && {
+            dataProtectionLawName: fields.dataProtectionLawName,
+          }),
+        },
+      });
+    } else {
+      await prisma.countryLegalProfileTrustTranslation.upsert({
+        where: { legalProfileId_locale: { legalProfileId: profile.id, locale } },
+        create: { legalProfileId: profile.id, locale, ...fields },
+        update: fields,
+      });
+    }
+    return await prisma.countryLegalProfile.findUniqueOrThrow({
+      where: { id: profile.id },
+      include: { disclaimerTranslations: true, trustTranslations: true },
+    });
+  } catch (error) {
+    if (error instanceof LocaleNotSupportedError) throw error;
+    throw normalizeDbError(error, "Could not save legal profile translation");
   }
 }
 
