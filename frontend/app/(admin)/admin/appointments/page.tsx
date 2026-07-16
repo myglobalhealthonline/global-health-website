@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ExternalLink, CalendarClock } from "lucide-react";
-import { fetchAdminAppointments, fetchAdminCountries } from "@/lib/admin/admin-api";
+import { fetchAdminAppointments, fetchAdminCountries, fetchAdminDoctors } from "@/lib/admin/admin-api";
 import { getActiveCountry, scopedCountryCode } from "@/lib/admin/admin-scope";
 import { FlagBadge } from "../_components/flag-badge";
 import { ScopeBanner } from "../_components/scope-banner";
@@ -144,7 +144,13 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
     ...baseFilters,
     countryCode: scopedCountryCode(baseFilters.countryCode, activeCountry),
   };
-  const result = await fetchAdminAppointments(filters);
+  // Doctor filter options are scoped to the same country as the queue. No
+  // isActive filter — deactivated doctors still own historical rows, and
+  // dropping them would make those appointments unfilterable.
+  const [result, doctorsResult] = await Promise.all([
+    fetchAdminAppointments(filters),
+    fetchAdminDoctors({ countryCode: filters.countryCode, pageSize: "100" }),
+  ]);
 
   if (!result.ok) {
     return (
@@ -169,6 +175,25 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
       .filter((c) => c.isActive)
       .sort((a, b) => a.name.localeCompare(b.name))
       .map((c) => ({ value: c.code, label: c.name })),
+  ];
+
+  // `doctorName` is matched server-side as a case-insensitive substring
+  // against the doctor's full name and login email, so the option value is
+  // the full name itself — no backend change needed.
+  const activeDoctorName = filters.doctorName ?? "";
+  const doctorNames = doctorsResult.ok
+    ? Array.from(new Set(doctorsResult.data.items.map((d) => d.fullName))).sort((a, b) =>
+        a.localeCompare(b),
+      )
+    : [];
+  const doctorOptions = [
+    { value: "", label: "All doctors" },
+    ...doctorNames.map((name) => ({ value: name, label: name })),
+    // A doctorName arriving by URL (or an email) must stay selected rather
+    // than silently resetting to "All doctors" on the next Apply.
+    ...(activeDoctorName && !doctorNames.includes(activeDoctorName)
+      ? [{ value: activeDoctorName, label: activeDoctorName }]
+      : []),
   ];
 
   return (
@@ -253,14 +278,30 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
             </label>
             <label className="flex min-w-0 flex-col gap-1.5">
               <span className="gh-field-label">Doctor</span>
-              <input
-                type="search"
-                name="doctorName"
-                defaultValue={filters.doctorName ?? ""}
-                placeholder="Doctor name or email"
-                className="gh-input min-w-0"
-                maxLength={120}
-              />
+              {doctorNames.length > 0 ? (
+                <select
+                  name="doctorName"
+                  defaultValue={activeDoctorName}
+                  className="gh-select min-w-0"
+                >
+                  {doctorOptions.map((o) => (
+                    <option key={o.value || "all"} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                /* Doctors endpoint unavailable, or no doctors in this country:
+                   keep the free-text filter usable instead of an empty select. */
+                <input
+                  type="search"
+                  name="doctorName"
+                  defaultValue={activeDoctorName}
+                  placeholder="Doctor name or email"
+                  className="gh-input min-w-0"
+                  maxLength={120}
+                />
+              )}
             </label>
             <label className="flex min-w-0 flex-col gap-1.5">
               <span className="gh-field-label">Date &amp; time from</span>
