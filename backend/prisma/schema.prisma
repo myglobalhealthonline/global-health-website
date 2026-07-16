@@ -723,6 +723,12 @@ model DoctorCountry {
   doctor             Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   country            Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
   translations       DoctorMarketTranslation[]
+  /// Per-locale override of `division` only (registration text is a short
+  /// label, not full market copy, so it gets its own tiny translation table
+  /// rather than growing DoctorMarketTranslation). Mirrors
+  /// CountryAuthorityLinkTranslation's pattern: base column above holds the
+  /// country's default-locale copy, a row here overrides one other locale.
+  divisionTranslations DoctorCountryTranslation[]
   bankAccount        DoctorMarketBankAccount?
   createdAt          DateTime  @default(now())
 
@@ -730,6 +736,22 @@ model DoctorCountry {
   @@index([countryId, active])
   @@index([countryId, isVerified])
   @@index([doctorId])
+}
+
+/// Per-locale override of DoctorCountry.division (e.g. Irish Medical
+/// Council "General Division" / "Specialist Division"). Base column on
+/// DoctorCountry holds the country's default-locale copy.
+model DoctorCountryTranslation {
+  id              String        @id @default(cuid())
+  doctorCountryId String
+  locale          LocaleCode
+  division        String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  doctorCountry   DoctorCountry @relation(fields: [doctorCountryId], references: [id], onDelete: Cascade)
+
+  @@unique([doctorCountryId, locale])
+  @@index([doctorCountryId])
 }
 
 /// Doctor specialty taxonomy. Used ONLY to tag doctors (DoctorSpecialty) and

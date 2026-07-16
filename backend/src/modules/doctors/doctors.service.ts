@@ -60,6 +60,13 @@ type DoctorMarketTranslationRow = {
   seoKeywords: string[];
 };
 
+const doctorCountryDivisionTranslationSelect = {
+  locale: true,
+  division: true,
+} satisfies Prisma.DoctorCountryTranslationSelect;
+
+type DoctorCountryDivisionTranslationRow = { locale: LocaleCode; division: string };
+
 type DoctorFaqRow = {
   id: string;
   locale: LocaleCode;
@@ -493,6 +500,7 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
             division: true,
             isVerified: true,
             translations: { select: doctorMarketTranslationSelect },
+            divisionTranslations: { select: doctorCountryDivisionTranslationSelect },
           },
           take: 1,
         },
@@ -546,7 +554,7 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
               requestedLocale,
               marketDefaultLocale,
             ),
-          }, countryCode),
+          }, countryCode, requestedLocale, marketDefaultLocale),
         ),
         faqs: resolveDoctorFaqs(d.faqs, requestedLocale, marketDefaultLocale),
         isFeatured: d.id === featuredId,
@@ -595,6 +603,7 @@ function overrideImcRegistrationFromCountry<
       chamberEntity: string | null;
       registrationNumber: string | null;
       division?: string | null;
+      divisionTranslations?: DoctorCountryDivisionTranslationRow[];
       isVerified: boolean;
     }>;
     credentials?: DoctorCredentialRow[];
@@ -602,6 +611,8 @@ function overrideImcRegistrationFromCountry<
 >(
   doctor: T,
   countryCode: string,
+  requestedLocale: LocaleCode,
+  defaultLocale: LocaleCode,
 ): T & {
   imcRegistration: string | null;
   registrationChamber: string | null;
@@ -614,11 +625,16 @@ function overrideImcRegistrationFromCountry<
   const credentials = (doctor.credentials ?? []).filter(
     (c) => !c.countryCode || c.countryCode.toUpperCase() === code,
   );
+  const { tr: divisionTr } = resolveTranslation(
+    link?.divisionTranslations ?? [],
+    requestedLocale,
+    defaultLocale,
+  );
   return {
     ...doctor,
     imcRegistration: link?.registrationNumber ?? null,
     registrationChamber: link?.chamberEntity ?? null,
-    registrationDivision: link?.division ?? null,
+    registrationDivision: divisionTr?.division ?? link?.division ?? null,
     registrationVerified: link?.isVerified ?? false,
     credentials,
   };
@@ -698,6 +714,7 @@ export async function getDoctorByCountryAndSlug(
             division: true,
             isVerified: true,
             translations: { select: doctorMarketTranslationSelect },
+            divisionTranslations: { select: doctorCountryDivisionTranslationSelect },
           },
           take: 1,
         },
@@ -756,7 +773,7 @@ export async function getDoctorByCountryAndSlug(
               requestedLocale,
               marketDefaultLocale,
             ),
-          }, countryCode),
+          }, countryCode, requestedLocale, marketDefaultLocale),
         ),
       faqs: resolveDoctorFaqs(doctor.faqs, requestedLocale, marketDefaultLocale),
     };
