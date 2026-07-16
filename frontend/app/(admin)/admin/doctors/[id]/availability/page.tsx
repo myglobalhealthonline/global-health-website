@@ -188,6 +188,9 @@ export default async function AdminDoctorAvailabilityPage({
           status: c.status,
           title: c.patientName,
           meta: {
+            // Both sides carry doctorId: the grid only hides a slot beneath a
+            // consultation of the SAME doctor.
+            doctorId: c.doctorId ?? null,
             doctorName: c.doctorName,
             patientName: c.patientName,
             consultationType: c.consultationType,
@@ -204,7 +207,11 @@ export default async function AdminDoctorAvailabilityPage({
           endAt: s.endAt,
           status: s.status,
           title: s.status,
-          meta: { doctorName: s.doctorName, blockReason: s.blockReason },
+          meta: {
+            doctorId: s.doctorId,
+            doctorName: s.doctorName,
+            blockReason: s.blockReason,
+          },
         })),
       ]
     : [];

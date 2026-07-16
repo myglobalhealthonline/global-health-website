@@ -303,3 +303,56 @@ export function durationMinutes(startIso: string, endIso: string): number {
   if (Number.isNaN(a) || Number.isNaN(b)) return 0;
   return Math.max(0, Math.round((b - a) / 60000));
 }
+
+/**
+ * Last resort only: a consultation with neither a claimed slot nor a service
+ * duration behind it. Everything else arrives with a real `endAt` and is drawn
+ * across the minutes it actually occupies.
+ */
+export const CONSULT_FALLBACK_MIN = 30;
+
+/**
+ * A consultation occupies its whole time span, so drop ANY slot block — OPEN,
+ * BOOKED, or HELD — that starts inside a consultation *of the same doctor*. A
+ * booked time then never shows a duplicate green "open" slot (or a redundant
+ * booked slot) beside the patient block: the consultation carries the patient
+ * name, and that doctor's slot underneath it is noise.
+ *
+ * Scoping by doctor is load-bearing on the all-doctors admin calendar: one
+ * doctor being booked at 09:00 says nothing about whether the rest of the
+ * roster is free then. Matching on time alone hid every other doctor's open
+ * 09:00 slot and rendered the whole roster as unavailable.
+ *
+ * Single-doctor surfaces (the doctor's own portal) stamp no doctorId on
+ * anything — there is only one doctor to speak of — so everything unscoped
+ * shares one bucket and dedupes on time exactly as it always has. Only a grid
+ * that actually names its doctors gets per-doctor scoping. A slot is kept when
+ * its doctor has no consultations, and an unscoped consultation never hides a
+ * *named* doctor's slot: showing a real open slot beats hiding one.
+ */
+const UNSCOPED_DOCTOR = "__unscoped__";
+
+export function dropSlotsUnderConsultations(
+  items: CalendarItem[],
+): CalendarItem[] {
+  const spansByDoctor = new Map<string, { start: number; end: number }[]>();
+  for (const i of items) {
+    if (i.kind !== "consultation") continue;
+    const key = i.meta?.doctorId ?? UNSCOPED_DOCTOR;
+    const start = new Date(i.startAt).getTime();
+    const durMin = i.endAt
+      ? durationMinutes(i.startAt, i.endAt)
+      : CONSULT_FALLBACK_MIN;
+    const list = spansByDoctor.get(key) ?? [];
+    list.push({ start, end: start + durMin * 60_000 });
+    spansByDoctor.set(key, list);
+  }
+  if (spansByDoctor.size === 0) return items;
+  return items.filter((i) => {
+    if (i.kind !== "slot") return true;
+    const spans = spansByDoctor.get(i.meta?.doctorId ?? UNSCOPED_DOCTOR);
+    if (!spans) return true;
+    const s = new Date(i.startAt).getTime();
+    return !spans.some((c) => s >= c.start && s < c.end);
+  });
+}

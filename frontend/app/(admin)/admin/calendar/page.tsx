@@ -27,7 +27,9 @@ type Props = {
 export default async function AdminCalendarPage({ searchParams }: Props) {
   const sp = await searchParams;
   const { year, month } = parseYearMonth(sp.ym);
-  const view = sp.view === "week" ? "week" : "month";
+  // Week is the default: it's the view that shows real time-of-day shape, and
+  // it matches the doctor availability grid. Month stays a click away.
+  const view = sp.view === "month" ? "month" : "week";
   const weekAnchor = parseWeekAnchor(sp.wk, ADMIN_CALENDAR_DEFAULT_TZ);
 
   // Each view fetches only the window it draws. The week window is padded ±1
@@ -77,6 +79,10 @@ export default async function AdminCalendarPage({ searchParams }: Props) {
       status: c.status,
       title: c.patientName,
       meta: {
+        // Both sides carry doctorId: the week grid only hides a slot beneath a
+        // consultation of the SAME doctor, so one doctor's booking can't blank
+        // out the rest of the roster's open slots.
+        doctorId: c.doctorId ?? null,
         doctorName: c.doctorName,
         patientName: c.patientName,
         consultationType: c.consultationType,

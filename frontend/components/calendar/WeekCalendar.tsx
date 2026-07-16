@@ -5,6 +5,8 @@ import { Ban, ChevronLeft, ChevronRight, Clock, User } from "lucide-react";
 import { IconBtn } from "@/components/portal-atoms";
 import type { CalendarItem } from "./calendar-types";
 import {
+  CONSULT_FALLBACK_MIN,
+  dropSlotsUnderConsultations,
   durationMinutes,
   weekLabel,
   zonedMinutesOfDay,
@@ -18,14 +20,12 @@ const HOUR_PX = 160;
 const PX_PER_MIN = HOUR_PX / 60;
 const DEFAULT_START_HOUR = 7;
 const DEFAULT_END_HOUR = 20;
-// Last resort only: a consultation with neither a claimed slot nor a service
-// duration behind it. Everything else arrives with a real `endAt` and is drawn
-// across the minutes it actually occupies.
-const CONSULT_FALLBACK_MIN = 30;
 const MIN_BLOCK_PX = 34; // floor < a 15-min slot's 40px span, so blocks keep a gap
 // Height tiers: a block only shows what it can render without clipping.
 const TWO_LINE_PX = 38; // time range + name
-const THREE_LINE_PX = 58; // + consultation type
+const THREE_LINE_PX = 58; // + doctor or consultation type
+const GUTTER_PX = 56; // hour-label column
+const MIN_LANE_PX = 74; // narrower than this and a lane can't show a name
 
 type Props = {
   /** Any calendar date inside the week to render ("YYYY-MM-DD"). */
@@ -46,6 +46,11 @@ type Props = {
   onPrevWeek: () => void;
   onNextWeek: () => void;
   onToday: () => void;
+  /** Multi-doctor surfaces (the admin calendar on "All doctors") label every
+   *  block with its doctor — without it, side-by-side lanes are anonymous and
+   *  an open slot doesn't say whose it is. Single-doctor pages omit it: the
+   *  page header already names the doctor. */
+  showDoctorName?: boolean;
   /** Copy overrides for the doctor portal (i18n). Admin omits this and
    *  gets the English defaults — admin is English-by-design. */
   labels?: {
@@ -188,26 +193,6 @@ function packDay(items: CalendarItem[], tz: string): PositionedItem[] {
   }));
 }
 
-/** A consultation occupies its whole time span. Drop ANY slot block — OPEN,
- *  BOOKED, or HELD — that starts inside a consultation, so a booked time never
- *  shows a duplicate green "open" slot (or a redundant booked slot) beside the
- *  patient block. The consultation carries the patient name; the slot is noise. */
-function dropSlotsUnderConsultations(items: CalendarItem[]): CalendarItem[] {
-  const consults = items
-    .filter((i) => i.kind === "consultation")
-    .map((c) => {
-      const start = new Date(c.startAt).getTime();
-      const durMin = c.endAt ? durationMinutes(c.startAt, c.endAt) : CONSULT_FALLBACK_MIN;
-      return { start, end: start + durMin * 60_000 };
-    });
-  if (consults.length === 0) return items;
-  return items.filter((i) => {
-    if (i.kind !== "slot") return true;
-    const s = new Date(i.startAt).getTime();
-    return !consults.some((c) => s >= c.start && s < c.end);
-  });
-}
-
 export function WeekCalendar({
   anchorDayKey,
   weekDays,
@@ -220,6 +205,7 @@ export function WeekCalendar({
   onPrevWeek,
   onNextWeek,
   onToday,
+  showDoctorName = false,
   labels,
 }: Props) {
   const t = {
@@ -234,10 +220,11 @@ export function WeekCalendar({
     legendBlocked: labels?.legendBlocked ?? "Blocked",
   };
   // Positioned blocks per day + the visible hour window (expands to fit early
-  // / late items so nothing is clipped).
-  const { perDay, startHour, endHour } = useMemo(() => {
+  // / late items so nothing is clipped) + the widest lane stack in the week.
+  const { perDay, startHour, endHour, maxLanes } = useMemo(() => {
     let minHour = DEFAULT_START_HOUR;
     let maxHour = DEFAULT_END_HOUR;
+    let maxLanes = 1;
     const perDay = new Map<string, PositionedItem[]>();
     for (const day of weekDays) {
       const raw = dropSlotsUnderConsultations(itemsByDay.get(day.key) ?? []);
@@ -245,15 +232,24 @@ export function WeekCalendar({
       for (const p of positioned) {
         minHour = Math.min(minHour, Math.floor(p.top / 60));
         maxHour = Math.max(maxHour, Math.ceil((p.top + p.height) / 60));
+        maxLanes = Math.max(maxLanes, p.lanes);
       }
       perDay.set(day.key, positioned);
     }
     return {
       perDay,
+      maxLanes,
       startHour: Math.max(0, minHour),
       endHour: Math.min(24, Math.max(maxHour, minHour + 1)),
     };
   }, [weekDays, itemsByDay, tz]);
+
+  // Lanes split a day column between blocks that overlap in time. On the
+  // all-doctors calendar that stack gets deep — five doctors free at 09:00 is
+  // five lanes — and at a fixed width each lane shrinks to a nameless sliver.
+  // Grow the grid instead and let it scroll sideways: a single-doctor week
+  // (1 lane) is unaffected and keeps the original 720px.
+  const gridMinWidth = Math.max(720, GUTTER_PX + 7 * maxLanes * MIN_LANE_PX);
 
   // Explicit 24-hour clock (en-GB, hour12:false) so every block reads the same
   // — en-IE, used elsewhere, flips to AM/PM which looked inconsistent.
@@ -314,12 +310,12 @@ export function WeekCalendar({
       </div>
 
       <div className="gh-week-scroll">
-        <div className="gh-week-grid" style={{ minWidth: 720 }}>
+        <div className="gh-week-grid" style={{ minWidth: gridMinWidth }}>
           {/* Day header row — sticky while the hour grid scrolls */}
           <div
             className="gh-week-header-row grid"
             style={{
-              gridTemplateColumns: "56px repeat(7, minmax(0, 1fr))",
+              gridTemplateColumns: `${GUTTER_PX}px repeat(7, minmax(0, 1fr))`,
               borderBottom: "1px solid var(--portal-line)",
             }}
           >
@@ -356,7 +352,9 @@ export function WeekCalendar({
           {/* Time gutter + day columns */}
           <div
             className="grid"
-            style={{ gridTemplateColumns: "56px repeat(7, minmax(0, 1fr))" }}
+            style={{
+              gridTemplateColumns: `${GUTTER_PX}px repeat(7, minmax(0, 1fr))`,
+            }}
           >
             {/* Hour gutter */}
             <div style={{ position: "relative", height: bodyHeight }}>
@@ -451,44 +449,59 @@ export function WeekCalendar({
                       ? `${startLabel} – ${endLabel}`
                       : startLabel;
                     const consultType = p.item.meta?.consultationType ?? null;
-                    // Only render what fits — a clipped third line reads as a
+                    const doctorName = p.item.meta?.doctorName ?? null;
+                    // On an all-doctors grid the doctor outranks the type: it's
+                    // what tells two adjacent lanes apart.
+                    const subLabel =
+                      showDoctorName && doctorName ? doctorName : consultType;
+                    // Only render what fits — a clipped line reads as a
                     // rendering bug, not as density.
-                    const showName = height >= TWO_LINE_PX;
-                    const showType = height >= THREE_LINE_PX && Boolean(consultType);
+                    const showSecond = height >= TWO_LINE_PX;
+                    const showThird = height >= THREE_LINE_PX && Boolean(subLabel);
                     // Booked block: patient NAME is the hero, kept inside the
                     // block bounds (truncate + the block clips overflow). Open
-                    // and blocked slots show only the time — colour carries the
-                    // status (green = open, red = blocked), no text label.
+                    // and blocked slots lead with the time — colour carries the
+                    // status (green = open, red = blocked) — and pick up the
+                    // doctor only where the grid spans several.
                     const inner = showPatient ? (
                       <>
                         <span className="block truncate text-portal-micro font-semibold leading-none opacity-90">
                           {timeLabel}
                         </span>
-                        {showName ? (
+                        {showSecond ? (
                           <span className="mt-1 flex items-center gap-1 text-portal-meta font-bold leading-tight">
                             <User className="size-3.5 shrink-0" aria-hidden />
                             <span className="truncate">{patientName}</span>
                           </span>
                         ) : null}
-                        {showType ? (
+                        {showThird ? (
                           <span className="mt-0.5 block truncate text-portal-micro font-medium leading-none opacity-80">
-                            {consultType}
+                            {subLabel}
                           </span>
                         ) : null}
                       </>
                     ) : (
-                      <span className="flex items-center gap-1 text-portal-thead font-bold leading-tight">
-                        {statusIcon(p.item.status)}
-                        <span className="truncate">{timeLabel}</span>
-                      </span>
+                      <>
+                        <span className="flex items-center gap-1 text-portal-thead font-bold leading-tight">
+                          {statusIcon(p.item.status)}
+                          <span className="truncate">{timeLabel}</span>
+                        </span>
+                        {showDoctorName && doctorName && showSecond ? (
+                          <span className="mt-0.5 block truncate text-portal-micro font-medium leading-tight opacity-80">
+                            {doctorName}
+                          </span>
+                        ) : null}
+                      </>
                     );
                     // Hover always carries the full record, even when the block
                     // was too short to draw every line.
                     const fullTitle = showPatient
-                      ? [timeLabel, patientName, consultType]
+                      ? [timeLabel, patientName, doctorName, consultType]
                           .filter(Boolean)
                           .join(" · ")
-                      : `${timeLabel} · ${p.item.status}`;
+                      : [timeLabel, doctorName, p.item.status]
+                          .filter(Boolean)
+                          .join(" · ");
                     // Doctor mode: click an OPEN/BLOCKED slot to toggle it.
                     const toggleable =
                       onToggleSlot &&

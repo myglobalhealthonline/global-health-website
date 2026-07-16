@@ -139,9 +139,11 @@ export function AdminCalendarUI({
     if (doctorId) params.set("doctorId", doctorId);
     if (type) params.set("type", type);
     if (country) params.set("country", country);
+    // Week is the default, so only Month is spelled out in the URL.
     const nextView = next.view ?? view;
-    if (nextView === "week") {
-      params.set("view", "week");
+    if (nextView === "month") {
+      params.set("view", "month");
+    } else {
       params.set("wk", next.wk ?? weekAnchor);
     }
     router.push(`${pathname}?${params.toString()}`);
@@ -252,6 +254,9 @@ export function AdminCalendarUI({
           onPrevWeek={() => goToWeek(addWeeksKey(weekAnchor, -1))}
           onNextWeek={() => goToWeek(addWeeksKey(weekAnchor, 1))}
           onToday={() => goToWeek(todayKey(tz))}
+          // Filtered to one doctor, the name on every block is noise the
+          // filter already states.
+          showDoctorName={!filters.doctorId}
         />
       ) : (
         <MonthCalendar
