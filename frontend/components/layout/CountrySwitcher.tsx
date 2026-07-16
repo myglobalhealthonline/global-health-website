@@ -25,9 +25,17 @@ import { AppMenu, AppMenuItem } from "@/components/AppMenu";
 export function CountrySwitcher({
   activeCountryCode,
   countries,
+  chooseCountryLabel = "Choose country",
+  switchConfirmTemplate = "Your cart has {count} {item} from {country}. Switching to a new country will clear it. Continue?",
+  itemSingular = "item",
+  itemPlural = "items",
 }: {
   activeCountryCode: CountryCode | null;
   countries: CountryConfig[];
+  chooseCountryLabel?: string;
+  switchConfirmTemplate?: string;
+  itemSingular?: string;
+  itemPlural?: string;
 }) {
   const pathname = usePathname();
   const { cart, clear } = useCart();
@@ -55,9 +63,10 @@ export function CountrySwitcher({
       cart.countryCode.toUpperCase() !== nextCountryCode.toUpperCase()
     ) {
       const proceed = window.confirm(
-        `Your cart has ${cart.itemCount} item${
-          cart.itemCount === 1 ? "" : "s"
-        } from ${cart.countryCode.toUpperCase()}. Switching to a new country will clear it. Continue?`,
+        switchConfirmTemplate
+          .replace("{count}", String(cart.itemCount))
+          .replace("{item}", cart.itemCount === 1 ? itemSingular : itemPlural)
+          .replace("{country}", cart.countryCode.toUpperCase()),
       );
       if (!proceed) return;
       void clear();
@@ -84,7 +93,7 @@ export function CountrySwitcher({
           className="gh-focus-on-dark inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-full border-none bg-transparent px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:text-white data-[open=true]:text-white"
         >
           {active ? <Flag code={active.code} size="sm" /> : null}
-          <span>{active ? active.name : "Choose country"}</span>
+          <span>{active ? active.name : chooseCountryLabel}</span>
           <ChevronDown
             aria-hidden
             className="size-3 opacity-70 transition-transform duration-200 motion-reduce:transition-none data-[open=true]:rotate-180"
@@ -93,7 +102,7 @@ export function CountrySwitcher({
         </button>
       }
     >
-      <ul aria-label="Choose country" className="m-0 list-none">
+      <ul aria-label={chooseCountryLabel} className="m-0 list-none">
         {countries.map((c) => {
           const isActive = c.code === activeCountryCode;
               // Prefer the slug on the country data itself; the client-side

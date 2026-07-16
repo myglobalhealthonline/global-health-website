@@ -38,6 +38,9 @@ export type CommonLocale = {
     labTestsDesc: string;
     howItWorks: string;
     chooseCountry: string;
+    countrySwitchConfirmTemplate: string;
+    cartItemSingular: string;
+    cartItemPlural: string;
     language: string;
     closeMenu: string;
     adminPortal: string;
@@ -86,6 +89,7 @@ export type CommonLocale = {
   };
   doctors: {
     theTeamBadge: string;
+    ourTeamEyebrow?: string;
     heroTitleLead: string;
     heroTitleAccent: string;
     heroTitleTrail: string;
@@ -293,6 +297,7 @@ export type CommonLocale = {
     browseOtherClinicians: string;
     backToTeam: string;
     doctorProfileLabel: string;
+    generalPracticeFallback?: string;
     registeredIn: string;
     onlineConsultAvailable: string;
     verifiedProfile: string;
@@ -351,6 +356,10 @@ export type CommonLocale = {
     continueToCart: string;
     noOpenSlots: string;
     pickSlotError: string;
+    slotTakenError?: string;
+    reserveTimeError?: string;
+    addToCartError?: string;
+    yourContactDetails?: string;
     enterFullName: string;
     enterValidEmail: string;
     acceptConsent: string;
@@ -791,6 +800,18 @@ export type CommonLocale = {
     verifiedByClinicians: string;
     evidenceBasedTitle: string;
     noAdsNoSponsors: string;
+    heroWatermark?: string;
+    heroCountryLabel?: string;
+    heroTitleLead?: string;
+    heroTitleAccent?: string;
+    heroLede?: string;
+    heroCta?: string;
+    heroSecondary?: string;
+    articleSingular?: string;
+    articlePlural?: string;
+    loadingArticleAriaLabel?: string;
+    categoryFallback?: string;
+    readArticle?: string;
   };
   /** Country-home <head> fallback title/description when no CMS override
    *  exists. "{country}" placeholder. */

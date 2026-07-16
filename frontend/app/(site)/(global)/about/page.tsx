@@ -92,7 +92,7 @@ export default async function AboutPage() {
     <section>
       {/* DARK — hero */}
       <PageHero
-        watermark="About"
+        watermark={about.watermark}
         countryLabel={about.hero_eyebrow}
         titleLead={about.hero_title_lead}
         titleAccent={about.hero_title_accent}
@@ -168,37 +168,21 @@ export default async function AboutPage() {
         <div className="mx-auto grid max-w-[var(--container-width)] gap-12 px-5 md:px-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.20em] text-[var(--color-brand-accent)]">
-              Why we built this
+              {about.mission_eyebrow}
             </p>
             <h2 className="mt-4 text-[clamp(1.75rem,3vw+0.5rem,2.75rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-white/92">
-              Medicine Anytime Anywhere isn&rsquo;t just a tagline &mdash;{" "}
-              <span className="text-[var(--color-brand-accent)]">it&rsquo;s a design principle.</span>
+              {about.mission_headline_pre}{" "}
+              <span className="text-[var(--color-brand-accent)]">{about.mission_headline_accent}</span>
             </h2>
             <p className="mt-6 inline-flex items-center gap-2 text-[length:var(--text-meta)] font-semibold uppercase tracking-[0.14em] text-white/55">
               <BadgeCheck className="size-4 text-[var(--color-brand-accent)]" strokeWidth={2} aria-hidden />
-              Founded 2023 · Prague
+              {about.mission_founded}
             </p>
           </div>
           <div className="space-y-5 text-[length:var(--text-body)] leading-relaxed text-white/70">
-            <p>
-              For the patient who moved countries and can&rsquo;t find a doctor who speaks their
-              language or understands their health history. For the professional whose schedule
-              makes a 9am GP appointment impossible. For the parent trying to get their child seen
-              without taking a day off work. For the person who simply shouldn&rsquo;t have to wait
-              three weeks for something that takes twenty minutes.
-            </p>
-            <p>
-              We built Global Health to close the gap between the healthcare system people have and
-              the healthcare experience they deserve. Founded in 2023 in Prague, operating across
-              multiple markets in Europe and Latin America, Global Health connects patients with
-              locally-registered doctors who work within the same regulatory framework as a GP or
-              specialist in their country.
-            </p>
-            <p className="font-medium text-white/90">
-              Acting local at a global scale. A place where patients feel comfortable with their
-              healthcare wherever they are &mdash; whether they&rsquo;ve lived there all their life
-              or just arrived. Trusted, efficient, safe, and built for real people.
-            </p>
+            <p>{about.mission_p1}</p>
+            <p>{about.mission_p2}</p>
+            <p className="font-medium text-white/90">{about.mission_p3}</p>
           </div>
         </div>
       </section>
@@ -285,10 +269,10 @@ export default async function AboutPage() {
         <SectionSeam theme="light" />
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <p className="gh-eyebrow text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-primary)]">
-            Company
+            {about.company_eyebrow}
           </p>
           <h2 className="mt-3 max-w-[18ch] text-[clamp(1.75rem,3vw+0.5rem,2.75rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-[var(--color-text-primary)]">
-            Global Health at a glance
+            {about.company_headline}
           </h2>
           <dl className="mt-12 grid gap-x-12 sm:grid-cols-2">
             {COMPANY_FACTS.map((f) => (
@@ -336,8 +320,8 @@ export default async function AboutPage() {
         theme="ivory"
         variant="grid"
         language={locale}
-        headline="Trusted by patients"
-        headlineAccent="across Europe"
+        headline={about.doctify_headline}
+        headlineAccent={about.doctify_headline_accent}
       />
     </section>
   );

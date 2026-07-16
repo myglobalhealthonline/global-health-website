@@ -16,6 +16,8 @@ type BlogCardProps = {
   coverImageAlt?: string | null;
   /** Kept for API compatibility — long cards no longer use a featured slot. */
   featured?: boolean;
+  categoryFallback?: string;
+  readArticleLabel?: string;
 };
 
 const DATE_FORMATTER = new Intl.DateTimeFormat("en-GB", {
@@ -43,6 +45,8 @@ export function BlogCard({
   publishedAt,
   coverImageSrc,
   coverImageAlt,
+  categoryFallback = "Health guide",
+  readArticleLabel = "Read article",
 }: BlogCardProps) {
   const dateLabel = formatDate(publishedAt);
   return (
@@ -68,7 +72,7 @@ export function BlogCard({
       <div className="flex flex-1 flex-col p-6 sm:p-8">
         <div className="flex items-center gap-3 text-[var(--text-eyebrow)]">
           <span className="gh-eyebrow text-[var(--color-brand-primary)]">
-            {category ?? "Health guide"}
+            {category ?? categoryFallback}
           </span>
           {dateLabel ? (
             <>
@@ -94,7 +98,7 @@ export function BlogCard({
           href={href}
           className="mt-5 inline-flex min-h-11 w-fit items-center gap-2 rounded-full border border-[rgba(29,75,54,0.22)] bg-[var(--color-background-soft)] px-4 text-sm font-extrabold text-[var(--color-brand-primary)] transition-[background-color,border-color,color,transform] hover:-translate-y-0.5 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(29,75,54,0.35)] motion-reduce:hover:translate-y-0"
         >
-          Read article
+          {readArticleLabel}
           <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
         </Link>
       </div>

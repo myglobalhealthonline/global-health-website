@@ -46,7 +46,8 @@
     "filterSpecialist": "Specialist",
     "pickTime": "Alegeți o oră",
     "previousLabel": "Anterior",
-    "nextLabel": "Următor"
+    "nextLabel": "Următor",
+    "noDoctorsFound": "Nu au fost găsiți medici."
   },
   "trust": {
     "licensedSingular": "Medic licențiat",

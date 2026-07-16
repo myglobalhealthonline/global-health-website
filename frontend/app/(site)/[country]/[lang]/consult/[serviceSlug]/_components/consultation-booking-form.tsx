@@ -411,7 +411,7 @@ export function ConsultationBookingForm({
           };
           if (!ar.ok || !aj?.ok || !aj.data?.timeSlotId || !aj.data.doctorId) {
             setError(
-              "That time was just taken. Please go back and pick another time.",
+              i18n.slotTakenError ?? "That time was just taken. Please go back and pick another time.",
             );
             return;
           }
@@ -419,7 +419,7 @@ export function ConsultationBookingForm({
           useServiceId = aj.data.serviceId ?? serviceId;
           useSlotId = aj.data.timeSlotId;
         } catch {
-          setError("Could not reserve that time. Please go back and try again.");
+          setError(i18n.reserveTimeError ?? "Could not reserve that time. Please go back and try again.");
           return;
         }
       }
@@ -466,7 +466,7 @@ export function ConsultationBookingForm({
         },
       });
       if (!res.ok) {
-        setError(res.message ?? "Could not add to cart");
+        setError(res.message ?? i18n.addToCartError ?? "Could not add to cart");
         return;
       }
       // Persist national ID + (opted-in) address onto the logged-in patient's
@@ -607,7 +607,7 @@ export function ConsultationBookingForm({
         * the actual patient (person being treated). */}
       <div role="group" className="gh2-card-ivory p-5 sm:p-6">
         <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-brand-primary)]">
-          {treatingOther ? "Your contact details" : i18n.patientDetails}
+          {treatingOther ? (i18n.yourContactDetails ?? "Your contact details") : i18n.patientDetails}
         </p>
 
         {/* Family-member targeting — book for an approved dependent and apply

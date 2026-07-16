@@ -41,5 +41,17 @@
   "float2_title": "Médicos verificados",
   "float2_subtitle": "Licenciados localmente por país",
   "float3_title": "Sem salas de espera",
-  "float3_subtitle": "Medicina em qualquer hora e lugar"
+  "float3_subtitle": "Medicina em qualquer hora e lugar",
+  "watermark": "Sobre",
+  "mission_eyebrow": "Porque construímos isto",
+  "mission_headline_pre": "Medicina a Qualquer Hora em Qualquer Lugar não é apenas um slogan —",
+  "mission_headline_accent": "é um princípio de design.",
+  "mission_founded": "Fundada em 2023 · Praga",
+  "mission_p1": "Para o paciente que se mudou de país e não consegue encontrar um médico que fale a sua língua ou compreenda o seu histórico de saúde. Para o profissional cuja agenda torna uma consulta com o médico de família às 9h impossível. Para o pai que tenta levar o seu filho a ser atendido sem ter de tirar um dia de folga. Para a pessoa que simplesmente não deveria ter de esperar três semanas por algo que leva vinte minutos.",
+  "mission_p2": "Construímos a Global Health para fechar a lacuna entre o sistema de saúde que as pessoas têm e a experiência de saúde que merecem. Fundada em 2023 em Praga, a operar em vários mercados na Europa e na América Latina, a Global Health conecta pacientes com médicos registados localmente que trabalham dentro do mesmo quadro regulatório que um médico de família ou especialista no seu país.",
+  "mission_p3": "Agindo localmente em escala global. Um lugar onde os pacientes se sentem confortáveis com os seus cuidados de saúde, onde quer que estejam — quer tenham vivido lá toda a vida ou tenham acabado de chegar. Confiável, eficiente, seguro e construído para pessoas reais.",
+  "company_eyebrow": "Empresa",
+  "company_headline": "Global Health em resumo",
+  "doctify_headline": "Confiado pelos pacientes",
+  "doctify_headline_accent": "em toda a Europa"
 }

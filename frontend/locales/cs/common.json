@@ -40,7 +40,10 @@
     "closeMenu": "Zavřít menu",
     "adminPortal": "Adminský portál",
     "accountPortal": "Můj účet",
-    "bookNow": "Rezervovat nyní"
+    "bookNow": "Rezervovat nyní",
+    "countrySwitchConfirmTemplate": "Váš košík obsahuje {count} {item} z {country}. Přepnutí na novou zemi vymaže košík. Pokračovat?",
+    "cartItemSingular": "položka",
+    "cartItemPlural": "položky"
   },
   "footer": {
     "company": "Společnost",
@@ -159,7 +162,8 @@
     "verifyRegistrationAria": "Ověřit registraci v oficiálním registru",
     "viewProfileAria": "Zobrazit profil pro {name}",
     "languagesMoreTemplate": "{languages} a další",
-    "clinicalDirectorLabel": "Klinický ředitel"
+    "clinicalDirectorLabel": "Klinický ředitel",
+    "ourTeamEyebrow": "Náš tým"
   },
   "cookie": {
     "title": "Nastavení cookies",
@@ -297,7 +301,8 @@
     "faqsLabel": "Často kladené otázky",
     "bookThisClinicianLabel": "Rezervovat tohoto lékaře",
     "openVideoSlotsHeading": "Otevřené video sloty, v závislosti na dostupnosti.",
-    "calendarInviteBody": "Okamžitě po rezervaci obdržíte pozvánku do kalendáře — žádné zbytečné dohady."
+    "calendarInviteBody": "Okamžitě po rezervaci obdržíte pozvánku do kalendáře — žádné zbytečné dohady.",
+    "generalPracticeFallback": "Obecná praxe"
   },
   "bookingForm": {
     "benefitHeading": "Použít váš plán",
@@ -355,7 +360,11 @@
     "saveAddressToProfile": "Uložit tuto adresu do mého profilu",
     "pickTimeToContinue": "Vyberte čas a pokračujte k údajům.",
     "insurancePolicyPlaceholder": "Zadejte číslo pojistky pro uplatnění pojištěné ceny",
-    "availableDatesAriaLabel": "Dostupná data"
+    "availableDatesAriaLabel": "Dostupná data",
+    "slotTakenError": "Tento čas byl právě obsazen. Prosím, vraťte se a vyberte jiný čas.",
+    "reserveTimeError": "Nelze rezervovat tento čas. Prosím, vraťte se a zkuste to znovu.",
+    "addToCartError": "Nelze přidat do košíku",
+    "yourContactDetails": "Vaše kontaktní údaje"
   },
   "extra": {
     "specialistsWatermark": "Specialisté",
@@ -778,6 +787,18 @@
     "doctorReviewedTitle": "Ověřeno lékaři",
     "verifiedByClinicians": "Ověřeno klinickými lékaři",
     "evidenceBasedTitle": "Na základě důkazů",
-    "noAdsNoSponsors": "Žádné reklamy, žádní sponzoři"
+    "noAdsNoSponsors": "Žádné reklamy, žádní sponzoři",
+    "heroWatermark": "Blog",
+    "heroCountryLabel": "Global Health · Blog",
+    "heroTitleLead": "Zdravotní příručky",
+    "heroTitleAccent": "články.",
+    "heroLede": "Příručky založené na důkazech, které napsal a zkontroloval náš lékařský tým. Žádné reklamy, žádné zbytečnosti.",
+    "heroCta": "Procházet články",
+    "heroSecondary": "Zpět na domovskou stránku",
+    "articleSingular": "článek",
+    "articlePlural": "články",
+    "loadingArticleAriaLabel": "Načítání článku…",
+    "categoryFallback": "Zdravotní příručka",
+    "readArticle": "Přečíst článek"
   }
 }

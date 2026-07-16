@@ -267,6 +267,8 @@ export type GH2AuthShellI18n = {
   backToHome: string;
   tabSignIn: string;
   tabCreateAccount: string;
+  skipToMainContent?: string;
+  encryptedFootnote?: string;
 };
 
 // English defaults so callers that don't pass `shell` keep working unchanged.
@@ -279,6 +281,8 @@ const AUTH_SHELL_DEFAULT_I18N: GH2AuthShellI18n = {
   backToHome: "Back to home",
   tabSignIn: "Sign in",
   tabCreateAccount: "Create account",
+  skipToMainContent: "Skip to main content",
+  encryptedFootnote: "Encrypted end-to-end. Your health data stays private.",
 };
 
 export function GH2AuthShell({
@@ -311,7 +315,7 @@ export function GH2AuthShell({
     <div className="grid grid-cols-1 lg:grid-cols-2" style={{ minHeight: "100svh" }}>
       {/* Skip link — mirrors the public SiteChrome accessibility contract. */}
       <a href="#main-content" className="gh-skip-link">
-        Skip to main content
+        {shell.skipToMainContent ?? "Skip to main content"}
       </a>
 
       {/* ── LEFT — brand panel (desktop only) ──────────────────────── */}
@@ -528,7 +532,7 @@ export function GH2AuthShell({
             {/* Security note — single quiet line */}
             <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.10)", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
               <ShieldCheck style={{ width: 13, height: 13, color: "rgba(166,242,15,0.75)", flexShrink: 0 }} aria-hidden />
-              <span style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", fontWeight: 500 }}>Encrypted end-to-end. Your health data stays private.</span>
+              <span style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", fontWeight: 500 }}>{shell.encryptedFootnote ?? "Encrypted end-to-end. Your health data stays private."}</span>
             </div>
           </div>
         </div>

@@ -46,7 +46,8 @@
     "filterSpecialist": "Specialista",
     "pickTime": "Vybrat čas",
     "previousLabel": "Předchozí",
-    "nextLabel": "Další"
+    "nextLabel": "Další",
+    "noDoctorsFound": "Žádní lékaři nebyli nalezeni."
   },
   "trust": {
     "licensedSingular": "Licencovaný lékař",

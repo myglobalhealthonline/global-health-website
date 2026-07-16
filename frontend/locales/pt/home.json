@@ -46,7 +46,8 @@
     "filterSpecialist": "Especialista",
     "pickTime": "Escolher horário",
     "previousLabel": "Anterior",
-    "nextLabel": "Seguinte"
+    "nextLabel": "Seguinte",
+    "noDoctorsFound": "Nenhum médico encontrado."
   },
   "trust": {
     "licensedSingular": "Médico licenciado",

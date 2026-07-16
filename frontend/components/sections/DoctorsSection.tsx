@@ -53,6 +53,7 @@ type DoctorsSectionProps = {
   bare?: boolean;
   previousPageLabel?: string;
   nextPageLabel?: string;
+  eyebrow?: string;
 };
 
 const PAGE_SIZE = 6;
@@ -66,6 +67,7 @@ export function DoctorsSection({
   bare = false,
   previousPageLabel = "Previous page",
   nextPageLabel = "Next page",
+  eyebrow = "Our Team",
 }: DoctorsSectionProps) {
   const isLight = theme === "light";
   const isCardDark = cardTheme ? cardTheme === "dark" : !isLight;
@@ -152,7 +154,7 @@ export function DoctorsSection({
                 className="text-[11px] font-bold uppercase tracking-[0.22em]"
                 style={{ color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
               >
-                Our Team
+                {eyebrow}
               </span>
               {title && (
                 <h2

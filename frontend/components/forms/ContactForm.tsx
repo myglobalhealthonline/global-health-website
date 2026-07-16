@@ -12,7 +12,41 @@ type FieldErrors = {
   message?: string[];
 };
 
-export function ContactForm() {
+export type ContactFormI18n = {
+  successTitle: string;
+  successBody: string;
+  fullName: string;
+  fullNamePlaceholder: string;
+  email: string;
+  emailPlaceholder: string;
+  subject: string;
+  subjectPlaceholder: string;
+  message: string;
+  messagePlaceholder: string;
+  sending: string;
+  send: string;
+  genericError: string;
+  networkError: string;
+};
+
+const DEFAULT_I18N: ContactFormI18n = {
+  successTitle: "Message sent!",
+  successBody: "Thank you for reaching out. Our team will get back to you within 24 hours.",
+  fullName: "Full name",
+  fullNamePlaceholder: "Jane Smith",
+  email: "Email address",
+  emailPlaceholder: "jane@example.com",
+  subject: "Subject",
+  subjectPlaceholder: "How can we help?",
+  message: "Message",
+  messagePlaceholder: "Tell us what you need...",
+  sending: "Sending…",
+  send: "Send message",
+  genericError: "Something went wrong. Please try again.",
+  networkError: "Could not reach the server. Please try again.",
+};
+
+export function ContactForm({ i18n = DEFAULT_I18N }: { i18n?: ContactFormI18n }) {
   const [state, setState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -47,14 +81,14 @@ export function ContactForm() {
       }
 
       if (!res.ok) {
-        setErrorMessage(json.message ?? "Something went wrong. Please try again.");
+        setErrorMessage(json.message ?? i18n.genericError);
         setState("error");
         return;
       }
 
       setState("success");
     } catch {
-      setErrorMessage("Could not reach the server. Please try again.");
+      setErrorMessage(i18n.networkError);
       setState("error");
     }
   }
@@ -67,9 +101,9 @@ export function ContactForm() {
         style={{ border: "1px solid rgba(255,255,255,0.14)" }}
       >
         <CheckCircle className="size-10" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
-        <h2 className="text-xl font-bold text-white">Message sent!</h2>
+        <h2 className="text-xl font-bold text-white">{i18n.successTitle}</h2>
         <p className="max-w-sm text-sm text-white/70">
-          Thank you for reaching out. Our team will get back to you within 24 hours.
+          {i18n.successBody}
         </p>
       </div>
     );
@@ -89,30 +123,30 @@ export function ContactForm() {
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Field
-          label="Full name"
+          label={i18n.fullName}
           name="name"
           type="text"
           autoComplete="name"
-          placeholder="Jane Smith"
+          placeholder={i18n.fullNamePlaceholder}
           error={fieldErrors.name?.[0]}
           required
         />
         <Field
-          label="Email address"
+          label={i18n.email}
           name="email"
           type="email"
           autoComplete="email"
-          placeholder="jane@example.com"
+          placeholder={i18n.emailPlaceholder}
           error={fieldErrors.email?.[0]}
           required
         />
       </div>
 
       <Field
-        label="Subject"
+        label={i18n.subject}
         name="subject"
         type="text"
-        placeholder="How can we help?"
+        placeholder={i18n.subjectPlaceholder}
         error={fieldErrors.subject?.[0]}
         required
       />
@@ -123,14 +157,14 @@ export function ContactForm() {
           className="mb-1.5 block text-sm font-medium"
           style={{ color: "rgba(255,255,255,0.85)" }}
         >
-          Message <span style={{ color: "var(--color-brand-accent)" }}>*</span>
+          {i18n.message} <span style={{ color: "var(--color-brand-accent)" }}>*</span>
         </label>
         <textarea
           id="message"
           name="message"
           rows={6}
           required
-          placeholder="Tell us what you need..."
+          placeholder={i18n.messagePlaceholder}
           aria-invalid={Boolean(fieldErrors.message)}
           aria-describedby={fieldErrors.message ? "message-error" : undefined}
           className="gh-textarea resize-y"
@@ -154,7 +188,7 @@ export function ContactForm() {
         className="gh2-btn-lime disabled:opacity-60"
       >
         {state === "loading" && <Loader2 className="size-4 animate-spin" aria-hidden />}
-        {state === "loading" ? "Sending…" : "Send message"}
+        {state === "loading" ? i18n.sending : i18n.send}
       </button>
     </form>
   );

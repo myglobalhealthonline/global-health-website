@@ -41,5 +41,17 @@
   "float2_title": "Ověření lékaři",
   "float2_subtitle": "Místní licence v každé zemi",
   "float3_title": "Žádné čekárny",
-  "float3_subtitle": "Medicína kdykoli a kdekoli"
+  "float3_subtitle": "Medicína kdykoli a kdekoli",
+  "watermark": "O nás",
+  "mission_eyebrow": "Proč jsme to vytvořili",
+  "mission_headline_pre": "Medicína kdykoliv a kdekoliv není jen slogan —",
+  "mission_headline_accent": "je to designový princip.",
+  "mission_founded": "Založeno 2023 · Praha",
+  "mission_p1": "Pro pacienta, který se přestěhoval do jiné země a nemůže najít lékaře, který mluví jeho jazykem nebo rozumí jeho zdravotní historii. Pro profesionála, jehož rozvrh činí nemožným domluvit si schůzku u praktického lékaře v 9 hodin ráno. Pro rodiče, který se snaží dostat své dítě k lékaři, aniž by musel brát den volna. Pro osobu, která by jednoduše neměla čekat tři týdny na něco, co trvá dvacet minut.",
+  "mission_p2": "Vytvořili jsme Global Health, abychom překlenuli mezeru mezi zdravotnickým systémem, který lidé mají, a zdravotnickým zážitkem, který si zaslouží. Založeno v roce 2023 v Praze, působíme na několika trzích v Evropě a Latinské Americe, Global Health spojuje pacienty s místně registrovanými lékaři, kteří pracují v rámci stejného regulačního rámce jako praktický lékař nebo specialista v jejich zemi.",
+  "mission_p3": "Jednat lokálně na globální úrovni. Místo, kde se pacienti cítí pohodlně se svým zdravotním péčí, ať už tam žili celý život nebo právě dorazili. Důvěryhodné, efektivní, bezpečné a vytvořené pro skutečné lidi.",
+  "company_eyebrow": "Společnost",
+  "company_headline": "Global Health v kostce",
+  "doctify_headline": "Důvěryhodné pacienty",
+  "doctify_headline_accent": "napříč Evropou"
 }

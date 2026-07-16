@@ -41,5 +41,17 @@
   "float2_title": "Verifizierte Ärzte",
   "float2_subtitle": "Lokal in jedem Land lizenziert",
   "float3_title": "Keine Wartezimmer",
-  "float3_subtitle": "Medizin jederzeit und überall"
+  "float3_subtitle": "Medizin jederzeit und überall",
+  "watermark": "Über",
+  "mission_eyebrow": "Warum wir das gebaut haben",
+  "mission_headline_pre": "Medizin jederzeit und überall ist nicht nur ein Slogan —",
+  "mission_headline_accent": "es ist ein Gestaltungsprinzip.",
+  "mission_founded": "Gegründet 2023 · Prag",
+  "mission_p1": "Für den Patienten, der in ein anderes Land gezogen ist und keinen Arzt findet, der seine Sprache spricht oder seine Krankengeschichte versteht. Für den Berufstätigen, dessen Zeitplan einen Termin beim Hausarzt um 9 Uhr unmöglich macht. Für den Elternteil, der versucht, sein Kind zu einem Arzttermin zu bringen, ohne einen Tag freinehmen zu müssen. Für die Person, die einfach nicht drei Wochen auf etwas warten sollte, das zwanzig Minuten dauert.",
+  "mission_p2": "Wir haben Global Health gegründet, um die Lücke zwischen dem Gesundheitssystem, das die Menschen haben, und der Gesundheitsversorgung, die sie verdienen, zu schließen. Gegründet 2023 in Prag, tätig in mehreren Märkten in Europa und Lateinamerika, verbindet Global Health Patienten mit lokal registrierten Ärzten, die im gleichen regulatorischen Rahmen wie ein Hausarzt oder Spezialist in ihrem Land arbeiten.",
+  "mission_p3": "Lokal handeln im globalen Maßstab. Ein Ort, an dem Patienten sich mit ihrer Gesundheitsversorgung wohlfühlen, egal wo sie sind — ob sie dort ihr ganzes Leben gelebt haben oder gerade erst angekommen sind. Vertrauenswürdig, effizient, sicher und für echte Menschen geschaffen.",
+  "company_eyebrow": "Unternehmen",
+  "company_headline": "Global Health auf einen Blick",
+  "doctify_headline": "Von Patienten vertraut",
+  "doctify_headline_accent": "in ganz Europa"
 }

@@ -40,7 +40,10 @@
     "closeMenu": "Închide meniu",
     "adminPortal": "Portal Admin",
     "accountPortal": "Contul meu",
-    "bookNow": "Rezervă acum"
+    "bookNow": "Rezervă acum",
+    "countrySwitchConfirmTemplate": "Coșul tău conține {count} {item} din {country}. Schimbarea țării va goli coșul. Continuăm?",
+    "cartItemSingular": "articol",
+    "cartItemPlural": "articole"
   },
   "footer": {
     "company": "Companie",
@@ -159,7 +162,8 @@
     "verifyRegistrationAria": "Verificați înregistrarea în registrul oficial",
     "viewProfileAria": "Vizualizați profilul pentru {name}",
     "languagesMoreTemplate": "{languages} și altele",
-    "clinicalDirectorLabel": "Director clinic"
+    "clinicalDirectorLabel": "Director clinic",
+    "ourTeamEyebrow": "Echipa noastră"
   },
   "cookie": {
     "title": "Preferințe cookie",
@@ -297,7 +301,8 @@
     "faqsLabel": "Întrebări frecvente",
     "bookThisClinicianLabel": "Programează acest clinician",
     "openVideoSlotsHeading": "Sloturi video disponibile, în funcție de disponibilitate.",
-    "calendarInviteBody": "Veți primi o invitație în calendar imediat după rezervare — fără discuții suplimentare."
+    "calendarInviteBody": "Veți primi o invitație în calendar imediat după rezervare — fără discuții suplimentare.",
+    "generalPracticeFallback": "Practică generală"
   },
   "bookingForm": {
     "benefitHeading": "Aplicați planul",
@@ -355,7 +360,11 @@
     "saveAddressToProfile": "Salvează această adresă în profilul meu",
     "pickTimeToContinue": "Alegeți o oră pentru a continua cu detaliile.",
     "insurancePolicyPlaceholder": "Introduceți numărul poliței pentru a aplica prețul de asigurare",
-    "availableDatesAriaLabel": "Date disponibile"
+    "availableDatesAriaLabel": "Date disponibile",
+    "slotTakenError": "Această oră a fost deja rezervată. Te rugăm să te întorci și să alegi o altă oră.",
+    "reserveTimeError": "Nu s-a putut rezerva această oră. Te rugăm să te întorci și să încerci din nou.",
+    "addToCartError": "Nu s-a putut adăuga în coș",
+    "yourContactDetails": "Detaliile tale de contact"
   },
   "extra": {
     "specialistsWatermark": "Specialiști",
@@ -778,6 +787,18 @@
     "doctorReviewedTitle": "Verificat de medici",
     "verifiedByClinicians": "Verificat de clinicieni",
     "evidenceBasedTitle": "Bazat pe dovezi",
-    "noAdsNoSponsors": "Fără reclame, fără sponsori"
+    "noAdsNoSponsors": "Fără reclame, fără sponsori",
+    "heroWatermark": "Blog",
+    "heroCountryLabel": "Global Health · Blog",
+    "heroTitleLead": "Ghiduri de sănătate",
+    "heroTitleAccent": "articole.",
+    "heroLede": "Ghiduri bazate pe dovezi, scrise și revizuite de echipa noastră medicală. Fără reclame, fără exagerări.",
+    "heroCta": "Răsfoiește articolele",
+    "heroSecondary": "Înapoi la început",
+    "articleSingular": "articol",
+    "articlePlural": "articole",
+    "loadingArticleAriaLabel": "Se încarcă articolul…",
+    "categoryFallback": "Ghid de sănătate",
+    "readArticle": "Citește articolul"
   }
 }

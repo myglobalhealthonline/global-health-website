@@ -47,6 +47,7 @@ type DoctorCarouselProps = {
     pickTime: string;
     previousLabel?: string;
     nextLabel?: string;
+    noDoctorsFound?: string;
   };
 };
 
@@ -223,7 +224,7 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
           className="py-12 text-center text-sm"
           style={{ color: "var(--gh2-on-dark-muted)" }}
         >
-          No doctors found.
+          {i18n.noDoctorsFound ?? "No doctors found."}
         </p>
       )}
     </div>

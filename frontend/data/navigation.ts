@@ -42,6 +42,9 @@ export type SiteNavigationData = {
   navLabTestsDesc: string;
   navHowItWorks: string;
   navChooseCountry: string;
+  navCountrySwitchConfirmTemplate: string;
+  navCartItemSingular: string;
+  navCartItemPlural: string;
   navLanguage: string;
   navCloseMenu: string;
   navAdminPortal: string;
@@ -170,6 +173,9 @@ export function buildSiteNavigationData(
     navLabTestsDesc: copy.navigation.labTestsDesc,
     navHowItWorks: copy.navigation.howItWorks,
     navChooseCountry: copy.navigation.chooseCountry,
+    navCountrySwitchConfirmTemplate: copy.navigation.countrySwitchConfirmTemplate,
+    navCartItemSingular: copy.navigation.cartItemSingular,
+    navCartItemPlural: copy.navigation.cartItemPlural,
     navLanguage: copy.navigation.language,
     navCloseMenu: copy.navigation.closeMenu,
     navAdminPortal: copy.navigation.adminPortal,

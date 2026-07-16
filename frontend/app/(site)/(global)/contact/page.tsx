@@ -74,7 +74,7 @@ export default async function ContactPage() {
       <JsonLd data={CONTACT_PAGE_JSONLD} />
       {/* DARK — hero */}
       <PageHero
-        watermark="Contact"
+        watermark={contact.watermark}
         countryLabel={contact.hero_eyebrow}
         titleLead={contact.hero_title_lead}
         titleAccent={contact.hero_title_accent}
@@ -182,7 +182,24 @@ export default async function ContactPage() {
             </aside>
 
             <div>
-              <ContactForm />
+              <ContactForm
+                i18n={{
+                  successTitle: contact.form_success_title,
+                  successBody: contact.form_success_body,
+                  fullName: contact.form_full_name,
+                  fullNamePlaceholder: contact.form_full_name_placeholder,
+                  email: contact.form_email,
+                  emailPlaceholder: contact.form_email_placeholder,
+                  subject: contact.form_subject,
+                  subjectPlaceholder: contact.form_subject_placeholder,
+                  message: contact.form_message,
+                  messagePlaceholder: contact.form_message_placeholder,
+                  sending: contact.form_sending,
+                  send: contact.form_send,
+                  genericError: contact.form_generic_error,
+                  networkError: contact.form_network_error,
+                }}
+              />
             </div>
           </div>
         </div>
@@ -191,10 +208,10 @@ export default async function ContactPage() {
         theme="forest"
         variant="carousel"
         language={locale}
-        eyebrow="Patient reviews"
-        headline="Trusted by patients"
-        headlineAccent="worldwide"
-        body="Independent, verified reviews collected by Doctify from patients treated by our clinicians across Europe."
+        eyebrow={contact.reviews_eyebrow}
+        headline={contact.reviews_headline}
+        headlineAccent={contact.reviews_headline_accent}
+        body={contact.reviews_body}
       />
     </section>
   );

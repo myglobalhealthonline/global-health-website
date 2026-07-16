@@ -227,7 +227,14 @@ export function SiteHeader({
       {/* Right — switchers + auth + CTA */}
       <div className="gh-header-actions flex items-center gap-2.5">
         <div className="hidden xl:flex xl:items-center xl:gap-2">
-          <CountrySwitcher activeCountryCode={activeCountryCode} countries={countries} />
+          <CountrySwitcher
+            activeCountryCode={activeCountryCode}
+            countries={countries}
+            chooseCountryLabel={navigation.navChooseCountry}
+            switchConfirmTemplate={navigation.navCountrySwitchConfirmTemplate}
+            itemSingular={navigation.navCartItemSingular}
+            itemPlural={navigation.navCartItemPlural}
+          />
           <LanguageSwitcher
             currentLang={activeLang}
             availableLocales={

@@ -52,7 +52,8 @@
     "filterSpecialist": "Specialist",
     "pickTime": "Pick a time",
     "previousLabel": "Previous",
-    "nextLabel": "Next"
+    "nextLabel": "Next",
+    "noDoctorsFound": "No doctors found."
   },
   "trust": {
     "licensedSingular": "Licensed doctor",

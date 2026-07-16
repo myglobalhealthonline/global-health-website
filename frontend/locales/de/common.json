@@ -40,7 +40,10 @@
     "closeMenu": "Menü schließen",
     "adminPortal": "Admin-Portal",
     "accountPortal": "Mein Konto",
-    "bookNow": "Jetzt buchen"
+    "bookNow": "Jetzt buchen",
+    "countrySwitchConfirmTemplate": "Ihr Warenkorb enthält {count} {item} aus {country}. Der Wechsel zu einem neuen Land löscht diesen. Fortfahren?",
+    "cartItemSingular": "Artikel",
+    "cartItemPlural": "Artikel"
   },
   "footer": {
     "company": "Unternehmen",
@@ -159,7 +162,8 @@
     "verifyRegistrationAria": "Zulassung im offiziellen Register überprüfen",
     "viewProfileAria": "Profil von {name} anzeigen",
     "languagesMoreTemplate": "{languages} & mehr",
-    "clinicalDirectorLabel": "Ärztlicher Direktor"
+    "clinicalDirectorLabel": "Ärztlicher Direktor",
+    "ourTeamEyebrow": "Unser Team"
   },
   "cookie": {
     "title": "Cookie-Einstellungen",
@@ -297,7 +301,8 @@
     "faqsLabel": "Häufig gestellte Fragen",
     "bookThisClinicianLabel": "Diesen Arzt buchen",
     "openVideoSlotsHeading": "Offene Videoslots, je nach Verfügbarkeit.",
-    "calendarInviteBody": "Sie erhalten sofort nach der Buchung eine Kalendereinladung – kein Hin und Her."
+    "calendarInviteBody": "Sie erhalten sofort nach der Buchung eine Kalendereinladung – kein Hin und Her.",
+    "generalPracticeFallback": "Allgemeinmedizin"
   },
   "bookingForm": {
     "benefitHeading": "Tarif anwenden",
@@ -355,7 +360,11 @@
     "saveAddressToProfile": "Diese Adresse in meinem Profil speichern",
     "pickTimeToContinue": "Wählen Sie eine Zeit, um mit Ihren Angaben fortzufahren.",
     "insurancePolicyPlaceholder": "Geben Sie Ihre Versicherungsnummer ein, um den Versicherungspreis anzuwenden",
-    "availableDatesAriaLabel": "Verfügbare Termine"
+    "availableDatesAriaLabel": "Verfügbare Termine",
+    "slotTakenError": "Dieser Termin wurde gerade reserviert. Bitte gehen Sie zurück und wählen Sie einen anderen Termin.",
+    "reserveTimeError": "Dieser Termin konnte nicht reserviert werden. Bitte gehen Sie zurück und versuchen Sie es erneut.",
+    "addToCartError": "Konnte nicht zum Warenkorb hinzugefügt werden",
+    "yourContactDetails": "Ihre Kontaktdaten"
   },
   "extra": {
     "specialistsWatermark": "Fachärzte",
@@ -778,6 +787,18 @@
     "doctorReviewedTitle": "Ärztlich geprüft",
     "verifiedByClinicians": "Von Klinikern verifiziert",
     "evidenceBasedTitle": "Evidenzbasiert",
-    "noAdsNoSponsors": "Keine Werbung, keine Sponsoren"
+    "noAdsNoSponsors": "Keine Werbung, keine Sponsoren",
+    "heroWatermark": "Blog",
+    "heroCountryLabel": "Global Health · Blog",
+    "heroTitleLead": "Gesundheitsleitfäden",
+    "heroTitleAccent": "Artikel.",
+    "heroLede": "Evidenzbasierte Leitfäden, die von unserem medizinischen Team verfasst und überprüft wurden. Keine Werbung, kein Schnickschnack.",
+    "heroCta": "Artikel durchsuchen",
+    "heroSecondary": "Zurück zur Startseite",
+    "articleSingular": "Artikel",
+    "articlePlural": "Artikel",
+    "loadingArticleAriaLabel": "Artikel wird geladen…",
+    "categoryFallback": "Gesundheitsleitfaden",
+    "readArticle": "Artikel lesen"
   }
 }

@@ -40,7 +40,10 @@
     "closeMenu": "Fechar menu",
     "adminPortal": "Portal de Admin",
     "accountPortal": "A minha conta",
-    "bookNow": "Marcar agora"
+    "bookNow": "Marcar agora",
+    "countrySwitchConfirmTemplate": "O seu carrinho tem {count} {item} de {country}. Mudar para um novo país irá limpar o carrinho. Continuar?",
+    "cartItemSingular": "item",
+    "cartItemPlural": "itens"
   },
   "footer": {
     "company": "Empresa",
@@ -159,7 +162,8 @@
     "verifyRegistrationAria": "Verificar registo no registo oficial",
     "viewProfileAria": "Ver perfil de {name}",
     "languagesMoreTemplate": "{languages} e mais",
-    "clinicalDirectorLabel": "Diretor Clínico"
+    "clinicalDirectorLabel": "Diretor Clínico",
+    "ourTeamEyebrow": "A Nossa Equipa"
   },
   "cookie": {
     "title": "Preferências de cookies",
@@ -297,7 +301,8 @@
     "faqsLabel": "Perguntas Frequentes",
     "bookThisClinicianLabel": "Marcar este clínico",
     "openVideoSlotsHeading": "Slots de vídeo disponíveis, sujeito a disponibilidade.",
-    "calendarInviteBody": "Receberá um convite de calendário imediatamente após a marcação — sem idas e vindas."
+    "calendarInviteBody": "Receberá um convite de calendário imediatamente após a marcação — sem idas e vindas.",
+    "generalPracticeFallback": "Medicina geral"
   },
   "bookingForm": {
     "benefitHeading": "Aplicar o seu plano",
@@ -355,7 +360,11 @@
     "saveAddressToProfile": "Guardar esta morada no meu perfil",
     "pickTimeToContinue": "Escolha uma hora para continuar com os seus dados.",
     "insurancePolicyPlaceholder": "Introduza o número da apólice para aplicar o preço do seguro",
-    "availableDatesAriaLabel": "Datas disponíveis"
+    "availableDatesAriaLabel": "Datas disponíveis",
+    "slotTakenError": "Esse horário já foi reservado. Por favor, volte e escolha outro horário.",
+    "reserveTimeError": "Não foi possível reservar esse horário. Por favor, volte e tente novamente.",
+    "addToCartError": "Não foi possível adicionar ao carrinho",
+    "yourContactDetails": "Os seus dados de contacto"
   },
   "extra": {
     "specialistsWatermark": "Especialistas",
@@ -778,6 +787,18 @@
     "doctorReviewedTitle": "Revisto por médicos",
     "verifiedByClinicians": "Verificado por clínicos",
     "evidenceBasedTitle": "Baseado em evidência",
-    "noAdsNoSponsors": "Sem anúncios, sem patrocínios"
+    "noAdsNoSponsors": "Sem anúncios, sem patrocínios",
+    "heroWatermark": "Blog",
+    "heroCountryLabel": "Global Health · Blog",
+    "heroTitleLead": "Guias de saúde",
+    "heroTitleAccent": "artigos.",
+    "heroLede": "Guias baseados em evidências escritos e revistos pela nossa equipa médica. Sem anúncios, sem exageros.",
+    "heroCta": "Explorar artigos",
+    "heroSecondary": "Voltar ao início",
+    "articleSingular": "artigo",
+    "articlePlural": "artigos",
+    "loadingArticleAriaLabel": "A carregar artigo…",
+    "categoryFallback": "Guia de saúde",
+    "readArticle": "Ler artigo"
   }
 }

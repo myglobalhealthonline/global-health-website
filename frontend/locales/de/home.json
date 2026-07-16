@@ -46,7 +46,8 @@
     "filterSpecialist": "Facharzt",
     "pickTime": "Zeit wählen",
     "previousLabel": "Zurück",
-    "nextLabel": "Weiter"
+    "nextLabel": "Weiter",
+    "noDoctorsFound": "Keine Ärzte gefunden."
   },
   "trust": {
     "licensedSingular": "Zugelassener Arzt",

@@ -1,4 +1,5 @@
 {
+  "watermark": "About",
   "hero_eyebrow": "Global Health · About",
   "hero_title_lead": "Grown-up online",
   "hero_title_accent": "healthcare.",
@@ -41,5 +42,16 @@
   "float2_title": "Verified doctors",
   "float2_subtitle": "Locally licensed per country",
   "float3_title": "No waiting rooms",
-  "float3_subtitle": "Medicine anytime, anywhere"
+  "float3_subtitle": "Medicine anytime, anywhere",
+  "mission_eyebrow": "Why we built this",
+  "mission_headline_pre": "Medicine Anytime Anywhere isn’t just a tagline —",
+  "mission_headline_accent": "it’s a design principle.",
+  "mission_founded": "Founded 2023 · Prague",
+  "mission_p1": "For the patient who moved countries and can’t find a doctor who speaks their language or understands their health history. For the professional whose schedule makes a 9am GP appointment impossible. For the parent trying to get their child seen without taking a day off work. For the person who simply shouldn’t have to wait three weeks for something that takes twenty minutes.",
+  "mission_p2": "We built Global Health to close the gap between the healthcare system people have and the healthcare experience they deserve. Founded in 2023 in Prague, operating across multiple markets in Europe and Latin America, Global Health connects patients with locally-registered doctors who work within the same regulatory framework as a GP or specialist in their country.",
+  "mission_p3": "Acting local at a global scale. A place where patients feel comfortable with their healthcare wherever they are — whether they’ve lived there all their life or just arrived. Trusted, efficient, safe, and built for real people.",
+  "company_eyebrow": "Company",
+  "company_headline": "Global Health at a glance",
+  "doctify_headline": "Trusted by patients",
+  "doctify_headline_accent": "across Europe"
 }

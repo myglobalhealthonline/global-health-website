@@ -36,14 +36,14 @@ export default async function BlogIndexPage() {
   return (
     <>
       <PageHero
-        watermark="Blog"
-        countryLabel="Global Health · Blog"
-        titleLead="Health guides"
-        titleAccent="articles."
-        lede="Evidence-based guides written and reviewed by our medical team. No ads, no fluff."
-        ctaLabel="Browse articles"
+        watermark={bp.heroWatermark ?? "Blog"}
+        countryLabel={bp.heroCountryLabel ?? "Global Health · Blog"}
+        titleLead={bp.heroTitleLead ?? "Health guides"}
+        titleAccent={bp.heroTitleAccent ?? "articles."}
+        lede={bp.heroLede ?? "Evidence-based guides written and reviewed by our medical team. No ads, no fluff."}
+        ctaLabel={bp.heroCta ?? "Browse articles"}
         ctaHref="#articles"
-        secondaryLabel="Back to home"
+        secondaryLabel={bp.heroSecondary ?? "Back to home"}
         secondaryHref={homeHref}
         rightSlot={<BlogArchPanel articleCount={ordered.length} i18n={bp} />}
         mobileBgSrc="/images/stock/blog.webp"
@@ -55,7 +55,7 @@ export default async function BlogIndexPage() {
           },
           {
             icon: <BookOpen className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: `${ordered.length} articles`,
+            title: `${ordered.length} ${bp.articlePlural ?? "articles"}`,
             subtitle: bp.articlesAvailableNow,
           },
           {
@@ -102,6 +102,8 @@ export default async function BlogIndexPage() {
                   publishedAt={post.publishedAt}
                   coverImageSrc={post.coverImageSrc}
                   coverImageAlt={post.coverImageAlt}
+                  categoryFallback={bp.categoryFallback}
+                  readArticleLabel={bp.readArticle}
                 />
               ))}
             </div>
@@ -136,7 +138,7 @@ function BlogArchPanel({
           <BookOpen className="size-4" strokeWidth={2} aria-hidden />
         </span>
         <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">{articleCount} {articleCount === 1 ? "article" : "articles"}</span>
+          <span className="block text-[13px] font-bold leading-tight text-white">{articleCount} {articleCount === 1 ? (i18n.articleSingular ?? "article") : (i18n.articlePlural ?? "articles")}</span>
           <span className="block text-[11.5px] leading-tight text-white/55">{i18n.articlesAvailableNow}</span>
         </span>
       </div>

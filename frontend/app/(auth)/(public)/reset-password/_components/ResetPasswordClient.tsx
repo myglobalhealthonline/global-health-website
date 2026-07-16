@@ -79,9 +79,9 @@ export function ResetPasswordClient({ t, shell }: { t: ResetPasswordStrings; she
   return (
     <GH2AuthShell
       shell={shell}
-      eyebrow={isInvite ? "Clinician onboarding" : "Account recovery"}
-      title={isInvite ? "Set access" : "Reset access"}
-      accent="securely."
+      eyebrow={isInvite ? t.inviteEyebrow : t.resetEyebrow}
+      title={isInvite ? t.inviteHeroTitle : t.resetHeroTitle}
+      accent={t.heroAccent}
       body={subhead}
     >
         <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">{heading}</h1>
