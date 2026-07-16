@@ -3,7 +3,7 @@ import { getBackendOrigin } from "@/lib/server/backend-origin";
 
 export const dynamic = "force-dynamic";
 
-type Params = Promise<{ doctorId: string; slotId: string }>;
+type Params = Promise<{ id: string; slotId: string }>;
 
 /** Admin block/unblock of one doctor slot. Mirrors the doctor-side
  *  /api/doctor/time-slots/[slotId] proxy; the backend runs the admin
@@ -13,7 +13,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Params }
   if (!backend) {
     return NextResponse.json({ ok: false, message: "Backend not configured" }, { status: 503 });
   }
-  const { doctorId, slotId } = await params;
+  const { id: doctorId, slotId } = await params;
   const cookieHeader = request.headers.get("cookie") ?? "";
   const bodyText = await request.text();
 
