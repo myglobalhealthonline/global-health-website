@@ -153,6 +153,21 @@ function CountryForm({
             className="gh-input"
           />
         </label>
+        <label className="flex flex-col gap-1 sm:col-span-4">
+          <span className="gh-field-label">Registration URL</span>
+          <input
+            name="registrationUrl"
+            type="url"
+            maxLength={500}
+            defaultValue={market.registrationUrl ?? ""}
+            placeholder="https://..."
+            className="gh-input"
+          />
+          <span className="text-xs text-[var(--color-text-muted)]">
+            Verify-registration link for this country&apos;s chamber. Shown on this
+            country&apos;s public profile; falls back to the doctor-level URL when empty.
+          </span>
+        </label>
       </div>
 
       {/* Language tabs */}

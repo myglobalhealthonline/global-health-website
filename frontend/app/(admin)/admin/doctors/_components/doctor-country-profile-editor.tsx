@@ -69,6 +69,7 @@ export function DoctorCountryProfileEditor({ doctorId, doctorSlug, markets }: Pr
       sortOrder: Number(formData.get("sortOrder") ?? 0),
       chamberEntity: cleanString(formData.get("chamberEntity")),
       registrationNumber: cleanString(formData.get("registrationNumber")),
+      registrationUrl: cleanString(formData.get("registrationUrl")),
       division: cleanString(formData.get("division")),
       isVerified: formData.get("isVerified") === "on",
       translations,

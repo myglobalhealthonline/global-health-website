@@ -497,6 +497,7 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
             country: { select: { id: true, code: true, name: true, defaultLocale: true } },
             chamberEntity: true,
             registrationNumber: true,
+            registrationUrl: true,
             division: true,
             isVerified: true,
             translations: { select: doctorMarketTranslationSelect },
@@ -602,11 +603,13 @@ function overrideImcRegistrationFromCountry<
     additionalCountries?: Array<{
       chamberEntity: string | null;
       registrationNumber: string | null;
+      registrationUrl?: string | null;
       division?: string | null;
       divisionTranslations?: DoctorCountryDivisionTranslationRow[];
       isVerified: boolean;
     }>;
     credentials?: DoctorCredentialRow[];
+    medicalRegistrationUrl?: string | null;
   },
 >(
   doctor: T,
@@ -632,6 +635,9 @@ function overrideImcRegistrationFromCountry<
   );
   return {
     ...doctor,
+    // Per-country verify link wins over the legacy doctor-level URL so a
+    // multi-country doctor links to the right chamber on each market's page.
+    medicalRegistrationUrl: link?.registrationUrl ?? doctor.medicalRegistrationUrl ?? null,
     imcRegistration: link?.registrationNumber ?? null,
     registrationChamber: link?.chamberEntity ?? null,
     registrationDivision: divisionTr?.division ?? link?.division ?? null,
@@ -711,6 +717,7 @@ export async function getDoctorByCountryAndSlug(
             country: { select: { id: true, code: true, name: true, defaultLocale: true } },
             chamberEntity: true,
             registrationNumber: true,
+            registrationUrl: true,
             division: true,
             isVerified: true,
             translations: { select: doctorMarketTranslationSelect },

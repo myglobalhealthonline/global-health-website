@@ -100,6 +100,7 @@ function mapMarket(row: DoctorMarketRow, revealBank = false) {
     supportedLocales: supportedLocales(row),
     chamberEntity: row.chamberEntity,
     registrationNumber: row.registrationNumber,
+    registrationUrl: row.registrationUrl,
     division: row.division,
     isVerified: row.isVerified,
     verifiedAt: row.verifiedAt?.toISOString() ?? null,
@@ -204,6 +205,7 @@ export async function updateAdminDoctorMarket(
           sortOrder: input.sortOrder ?? 0,
           chamberEntity: input.chamberEntity ?? null,
           registrationNumber: input.registrationNumber ?? null,
+          registrationUrl: input.registrationUrl ?? null,
           division: input.division ?? null,
           isVerified: input.isVerified ?? false,
           verifiedAt: input.isVerified ? new Date() : null,
@@ -215,6 +217,7 @@ export async function updateAdminDoctorMarket(
           ...(input.registrationNumber !== undefined && {
             registrationNumber: input.registrationNumber,
           }),
+          ...(input.registrationUrl !== undefined && { registrationUrl: input.registrationUrl }),
           ...(input.division !== undefined && { division: input.division }),
           ...(input.isVerified !== undefined && {
             isVerified: input.isVerified,

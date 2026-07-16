@@ -711,6 +711,10 @@ model DoctorCountry {
   chamberEntity      String?
   /// Doctor's license number issued by `chamberEntity` for this country.
   registrationNumber String?
+  /// External verify-registration link for THIS country's chamber (e.g.
+  /// lkcr.cz for CZ, medicalcouncil.ie for IE). Public payloads prefer this
+  /// over the legacy doctor-level `Doctor.medicalRegistrationUrl`.
+  registrationUrl    String?
   /// Register division/scope where applicable (e.g. Irish Medical Council
   /// "General Division" / "Specialist Division"). Surfaced on doctor cards
   /// and profiles so patients see the exact register, not just a number.

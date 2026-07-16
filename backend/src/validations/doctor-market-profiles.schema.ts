@@ -71,6 +71,11 @@ export const adminDoctorMarketPatchBodySchema = z
     sortOrder: z.coerce.number().int().min(0).max(1000).optional(),
     chamberEntity: nullableTrimmed(64),
     registrationNumber: nullableTrimmed(64),
+    // https-only so the value can render as <a href> without sanitisation.
+    registrationUrl: nullableTrimmed(500).refine(
+      (v) => v == null || /^https:\/\//i.test(v),
+      { message: "Registration URL must start with https://" },
+    ),
     division: nullableTrimmed(120),
     isVerified: z.boolean().optional(),
     translations: z.array(adminDoctorMarketTranslationSchema).max(6).optional(),

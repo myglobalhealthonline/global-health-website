@@ -62,6 +62,7 @@ export type AdminDoctorMarketDto = {
   supportedLocales: Array<{ code: string; isDefault: boolean }>;
   chamberEntity: string | null;
   registrationNumber: string | null;
+  registrationUrl: string | null;
   division: string | null;
   isVerified: boolean;
   verifiedAt: string | null;
