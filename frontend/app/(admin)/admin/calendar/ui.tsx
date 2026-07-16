@@ -17,6 +17,7 @@ import {
   yearMonthParam,
 } from "@/components/calendar/calendar-utils";
 import { CURATED_TIME_ZONES } from "@/lib/timezones";
+import { adminToggleSlotStatus } from "@/lib/api/admin-slot-client";
 
 type Option = { id: string; name: string };
 
@@ -51,6 +52,8 @@ export function AdminCalendarUI({
   const [tz, setTz] = useState<string>(DEFAULT_TZ);
   const [selectedDay, setSelectedDay] = useState<string>(() => todayKey(DEFAULT_TZ));
   const [daySheetOpen, setDaySheetOpen] = useState(false);
+  const [slotBusy, setSlotBusy] = useState(false);
+  const [slotError, setSlotError] = useState<string | null>(null);
   const [activeItem, setActiveItem] = useState<CalendarItem | null>(() => {
     const eventId = searchParams.get("event");
     return eventId ? items.find((i) => i.id === eventId) ?? null : null;
@@ -68,6 +71,22 @@ export function AdminCalendarUI({
   function openDay(key: string) {
     setSelectedDay(key);
     setDaySheetOpen(true);
+  }
+
+  // Unblocking returns the slot to bookable inventory, so re-read the day from
+  // the server rather than patching local state — the agenda is server-rendered.
+  async function onUnblockSlot(item: CalendarItem) {
+    const doctorId = item.meta?.doctorId;
+    if (!doctorId || item.status !== "BLOCKED") return;
+    setSlotError(null);
+    setSlotBusy(true);
+    const res = await adminToggleSlotStatus(doctorId, item.id.replace(/^s-/, ""), "OPEN");
+    setSlotBusy(false);
+    if (!res.ok) {
+      setSlotError(res.message);
+      return;
+    }
+    router.refresh();
   }
   // Default to "all" so open (bookable) slots — and their Book action — are
   // visible as soon as a day is picked.
@@ -224,6 +243,12 @@ export function AdminCalendarUI({
           </select>
         </label>
 
+        {slotError ? (
+          <p className="gh-status-warning mb-3 rounded-[var(--radius-card-sm)] border px-3 py-2 text-portal-compact">
+            {slotError}
+          </p>
+        ) : null}
+
         <DayAgenda
           dayKey={selectedDay}
           items={agendaItems}
@@ -236,6 +261,11 @@ export function AdminCalendarUI({
           }
           showDoctorName
           onSelectConsultation={openEvent}
+          // Blocked-only: OPEN chips render a "Book" link below, and a link
+          // cannot nest inside a button.
+          canToggleSlot={(item) => item.status === "BLOCKED" && Boolean(item.meta?.doctorId)}
+          onSelectSlot={onUnblockSlot}
+          slotActionsBusy={slotBusy}
           renderSlotAction={(item) => {
             // Only genuinely bookable inventory gets the deep link into the
             // manual-booking form, prefilled with doctor + slot.

@@ -46,6 +46,10 @@ type Props = {
    *  `renderSlotAction` must be a non-interactive indicator (no nested
    *  buttons). */
   onSelectSlot?: (item: CalendarItem) => void;
+  /** Narrows which chips become buttons. Defaults to OPEN + BLOCKED. The admin
+   *  agenda overrides it to BLOCKED-only, because its OPEN chips already carry
+   *  a "Book" link from `renderSlotAction` and a link cannot nest in a button. */
+  canToggleSlot?: (item: CalendarItem) => boolean;
   /** Disables slot chips while a mutation is in flight. */
   slotActionsBusy?: boolean;
   /** Show the doctor name on each row (admin/patient views). */
@@ -98,6 +102,7 @@ export function DayAgenda({
   onSelectConsultation,
   renderSlotAction,
   onSelectSlot,
+  canToggleSlot,
   slotActionsBusy = false,
   showDoctorName,
   hideHeader = false,
@@ -231,7 +236,9 @@ export function DayAgenda({
                     // patient, so clicking them must not block anything.
                     const toggleable =
                       Boolean(onSelectSlot) &&
-                      (item.status === "OPEN" || item.status === "BLOCKED");
+                      (canToggleSlot
+                        ? canToggleSlot(item)
+                        : item.status === "OPEN" || item.status === "BLOCKED");
                     const chipClass =
                       "gh-agenda-chip inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold";
                     const inner = (
