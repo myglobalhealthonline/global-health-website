@@ -122,6 +122,7 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
   const [countryQuery, setCountryQuery] = useState("");
   const panelSlotRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLElement>(null);
 
   // Replay the slug registry so client slug helpers resolve admin-added codes.
   registerCountrySlugs(countries);
@@ -170,7 +171,11 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
         // top is fixed by the header above it, so shrinking the panel can't move
         // the reference and oscillate the result.
         const top = grid.getBoundingClientRect().top;
-        const avail = window.innerHeight - top - 24;
+        // Subtract the footer's real height — it sits below the flex-1 body,
+        // so budget that ignores it over-scales the panel and reintroduces
+        // the page scrollbar this mechanism exists to prevent.
+        const footerH = footerRef.current?.offsetHeight ?? 0;
+        const avail = window.innerHeight - top - footerH - 24;
         const fit = Math.max(0.72, Math.min(1, avail / natural));
         panel.style.setProperty("--gate-fit", fit.toFixed(4));
         // Reserve the scaled height so the footer/page flow beneath it.
@@ -387,7 +392,7 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
       </section>
 
       {/* Footer */}
-      <footer className={`${styles.footer} relative flex flex-wrap justify-between gap-4`}>
+      <footer ref={footerRef} className={`${styles.footer} relative flex flex-wrap justify-between gap-4`}>
         <span suppressHydrationWarning>
           © {new Date().getFullYear()} Global Health · {copy.euProvider}
         </span>

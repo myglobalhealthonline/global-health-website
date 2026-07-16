@@ -363,7 +363,13 @@ export function PageHero({
       <div aria-hidden className="gh-medical-pattern-layer pointer-events-none absolute inset-0 hidden overflow-hidden lg:block">
         <div
           className="gh2-watermark absolute -right-[0.06em] bottom-[-0.16em] select-none"
-          style={{ fontSize: "clamp(5rem,14vw,13rem)" }}
+          // Length-aware vw term: the watermark is nowrap and right-anchored,
+          // so a long translated string at the fixed 14vw size would push its
+          // start past the left clip edge and read as a half-cut word. ~0.62em
+          // per glyph → keep the string within ~100vw.
+          style={{
+            fontSize: `clamp(4rem, ${Math.min(14, Math.round(150 / Math.max(watermarkText.length, 1)))}vw, 13rem)`,
+          }}
         >
           {watermarkText}
         </div>

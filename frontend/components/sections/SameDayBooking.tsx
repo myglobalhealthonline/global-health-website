@@ -235,7 +235,10 @@ export function SameDayBooking({
         <span className="text-[var(--color-brand-accent)]">{heading}</span>
         <span className="font-medium normal-case tracking-normal text-white/70">{group.label}</span>
       </p>
-      <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
+      {/* @lg container query, not sm: — in the desktop hero the card sits in a
+          ~420px column while the viewport is >=1024px, so viewport breakpoints
+          overstate the available width and cram 5 columns into the panel. */}
+      <div className="grid grid-cols-4 gap-2 @lg:grid-cols-5">
         {group.slots.map((s) => {
           const active = selectedStart === s.startAt;
           return (
@@ -274,7 +277,7 @@ export function SameDayBooking({
 
   return (
     <div
-      className={`gh-sameday relative flex w-full max-w-[900px] flex-col rounded-[26px] p-6 sm:p-8 ${className ?? ""}`}
+      className={`gh-sameday @container relative flex w-full max-w-[900px] flex-col rounded-[26px] p-6 @lg:p-8 ${className ?? ""}`}
       style={{
         background: "rgba(8, 33, 27, 0.82)",
         border: "1px solid rgba(255,255,255,0.12)",
