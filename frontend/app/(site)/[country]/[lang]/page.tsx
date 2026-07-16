@@ -275,10 +275,7 @@ export default async function CountryLangHomePage({
     .slice(0, 4)
     .map((d) => ({
       name: d.fullName,
-      role:
-        d.specialties.length > 0
-          ? `${d.specialties[0]}, ${config.name}`
-          : `${d.title}, ${config.name}`,
+      role: `${d.title}, ${config.name}`,
       imageSrc: d.imageSrc,
     }));
 
@@ -301,7 +298,7 @@ export default async function CountryLangHomePage({
     return {
       kind: isGP ? "gp" : isSpecialist ? "specialist" : undefined,
       name: d.fullName,
-      title: d.specialties.length > 0 ? d.specialties[0] : d.title || cc.homeCatalog.doctorFallback,
+      title: d.title || (d.specialties.length > 0 ? d.specialties[0] : cc.homeCatalog.doctorFallback),
       imcRegistration: d.imcRegistration,
       registrationDivision: d.registrationDivision,
       registrationVerified: d.registrationVerified,

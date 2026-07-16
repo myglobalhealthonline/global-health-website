@@ -100,7 +100,7 @@ export function DoctorProfileTemplate({
   // to their own body's site; the generic country verificationUrl is only a
   // fallback. Mirrors the same-priority fix in DoctorCard.tsx.
   const verifyHref = profile.medicalRegistrationUrl ?? profile.verificationUrl;
-  const primarySpecialty = profile.specialties[0] ?? (t?.generalPracticeFallback ?? "General practice");
+  const primarySpecialty = profile.title || profile.specialties[0] || (t?.generalPracticeFallback ?? "General practice");
   const languageList = profile.languages.length > 0 ? profile.languages.join(", ") : "English";
 
   return (
