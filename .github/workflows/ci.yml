@@ -47,11 +47,7 @@ jobs:
         run: node scripts/check-override-drift.mjs
 
       - name: Audit dependencies (workspace)
-        # --ignore-registry-errors: npm retired the audits/quick + audits
-        # endpoints (410) without a pnpm-side bulk-endpoint migration yet, so
-        # every `pnpm audit` call fails on registry error rather than finding
-        # vulnerabilities. Un-skip once pnpm ships bulk-endpoint support.
-        run: pnpm audit --audit-level=high --ignore-registry-errors
+        run: pnpm audit --audit-level=high
 
   # ── Secret scan ──────────────────────────────────────────────────────────
   # Gitleaks scans every push/PR diff for hardcoded secrets (API keys,
@@ -179,6 +175,4 @@ jobs:
         # inherit root-level pnpm.overrides (--ignore-workspace) — it has its
         # own override block in this package's own package.json. Audit it
         # here directly rather than assuming the root check covers it.
-        # --ignore-registry-errors: see the workspace audit step above — npm
-        # retired the audit endpoints (410) upstream, unrelated to this repo.
-        run: pnpm audit --audit-level=high --ignore-workspace --ignore-registry-errors
+        run: pnpm audit --audit-level=high --ignore-workspace
