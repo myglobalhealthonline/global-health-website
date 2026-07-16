@@ -252,6 +252,10 @@ export const createManualAppointmentBodySchema = z
     locationAddress: z.string().trim().max(500).optional().nullable(),
     notes: z.string().trim().max(2000).optional().nullable(),
     countryCode: countryCodeSchema,
+    /** Booking under an insurer — the server re-derives the insurance price and
+     *  requires the doctor to be in that insurer's network for the service. */
+    insuranceCompanyId: z.string().trim().min(1).max(64).optional().nullable(),
+    insurancePolicyNumber: z.string().trim().max(120).optional().nullable(),
     returnTo: z
       .string()
       .trim()

@@ -27,6 +27,11 @@ import {
   computeSlotPrice,
   getServicePeakConfig,
 } from "../pricing/peak-pricing.service.js";
+import {
+  isDoctorInInsuranceNetwork,
+  loadValidatedInsurancePrice,
+} from "../pricing/insurance-pricing.service.js";
+import { encryptPhi } from "../../lib/crypto/phi-crypto.js";
 import { startPrePaymentFlow } from "../automation/pre-payment-flow.service.js";
 import { persistOrderPortalAccess } from "../automation/resolve-order-portal-access.service.js";
 import { createUnpaidInvoiceForOrder } from "../invoices/generate-invoice.service.js";
@@ -101,6 +106,22 @@ export class DoctorNotAssignedToServiceError extends Error {
   }
 }
 
+export class DoctorNotInInsuranceNetworkError extends Error {
+  constructor() {
+    super(
+      "Selected doctor does not take this insurance for this service. Pick a doctor in the insurer's network, or book at the standard price.",
+    );
+    this.name = "DoctorNotInInsuranceNetworkError";
+  }
+}
+
+export class InsuranceNotCoveredError extends Error {
+  constructor() {
+    super("Selected insurance company does not cover this service.");
+    this.name = "InsuranceNotCoveredError";
+  }
+}
+
 /**
  * The chosen DoctorTimeSlot can't be claimed: it doesn't exist, belongs
  * to a different doctor, already in the past, or was taken (HELD/BOOKED)
@@ -151,6 +172,15 @@ export type CreateManualBookingInput = {
   locationAddress?: string | null;
   notes?: string | null;
   countryCode: string;
+  /** Booking under an insurer. The doctor must be in that insurer's network for
+   *  the service (a payout set for it), and the negotiated insurance price is
+   *  charged instead of the base/peak price. Null = ordinary standard-price
+   *  booking. Unlike the patient flow, an admin doing a manual booking IS the
+   *  verifier — they have the card in hand — so the order is recorded as
+   *  already VERIFIED and the payment link goes out immediately. */
+  insuranceCompanyId?: string | null;
+  /** Patient's insurance card/policy number, stored encrypted. */
+  insurancePolicyNumber?: string | null;
   /** Path to land the patient back on after Stripe success (e.g.
    *  `/ireland/en`). Cancel URL is built off the same base. */
   returnTo?: string;
@@ -272,6 +302,31 @@ export async function createManualBooking(
     }
   }
 
+  // Booking under an insurer: the doctor must be in that insurer's network for
+  // this service (the admin set them a payout for it). Doctors without one never
+  // take that insurer's patients, so the form hides them — this is the
+  // server-side guard behind that.
+  // Both insurance checks run BEFORE the slot is held: a throw after the hold
+  // would strand the slot as HELD with no appointment to release it from.
+  // Network membership and coverage/pricing are independent — either can fail.
+  const insuranceCompanyId = input.insuranceCompanyId?.trim() || null;
+  let insurancePriceCents: number | null = null;
+  if (insuranceCompanyId) {
+    const inNetwork = await isDoctorInInsuranceNetwork(
+      service.id,
+      input.doctorId,
+      insuranceCompanyId,
+    );
+    if (!inNetwork) throw new DoctorNotInInsuranceNetworkError();
+
+    insurancePriceCents = await loadValidatedInsurancePrice(service.id, insuranceCompanyId);
+    if (insurancePriceCents == null) throw new InsuranceNotCoveredError();
+  }
+  const encryptedPolicy =
+    insuranceCompanyId && input.insurancePolicyNumber?.trim()
+      ? encryptPhi(input.insurancePolicyNumber.trim())
+      : null;
+
   // Reject IN_PERSON without a venue up-front (route Zod also enforces
   // this, but the service is callable directly by tests + future
   // automation).
@@ -326,6 +381,13 @@ export async function createManualBooking(
       clinicTimezone: tz,
     });
     amountCents = priced.unitPriceCents;
+  }
+
+  // Insurance wins over peak: a negotiated insurance price is a flat per-service
+  // rate independent of time-of-day. Resolved server-side above (never trusted
+  // from the form) — same authority the public cart uses.
+  if (insurancePriceCents != null) {
+    amountCents = insurancePriceCents;
   }
 
   // Generate the temp credential up-front so a brand-new User is
@@ -434,6 +496,10 @@ export async function createManualBooking(
         currencyCode: service.currencyCode,
         paymentStatus: PaymentStatus.UNPAID,
         manualEntry: true,
+        // Insurance snapshot for the clinical record — amountCents above is
+        // already the negotiated insurance price. Policy stays encrypted.
+        insuranceCompanyId,
+        insurancePolicyNumber: encryptedPolicy,
       },
     });
   } catch (error) {
@@ -452,6 +518,12 @@ export async function createManualBooking(
       currencyCode: service.currencyCode ?? "EUR",
       subtotalCents: amountCents,
       totalCents: amountCents,
+      // An admin doing a manual booking IS the verifier — they take the card
+      // details directly from the patient — so the order is recorded as already
+      // VERIFIED and goes straight to a payment link, rather than parking in
+      // PENDING like a self-service insurance booking.
+      insuranceCompanyId,
+      insuranceVerificationStatus: insuranceCompanyId ? "VERIFIED" : null,
       appointmentIds: [appointmentId],
       // Dual-write into the relational join table alongside the legacy
       // array (Suggestion 8, code review 2026-07-05) — real FK integrity
@@ -477,6 +549,11 @@ export async function createManualBooking(
           patientAddressCountryCode:
             input.patient.addressCountryCode?.trim().toLowerCase() || null,
           patientConsentAcceptedAt: new Date(),
+          // unitPriceCents above is already the insurance price for these lines;
+          // these record the insurer + encrypted policy + resolved price.
+          insuranceCompanyId,
+          insurancePolicyNumber: encryptedPolicy,
+          insurancePriceCents: insurancePriceCents,
         },
       },
     },

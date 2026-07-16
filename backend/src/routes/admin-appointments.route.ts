@@ -26,6 +26,8 @@ import { errorResponse, okResponse } from "../utils/response.js";
 import {
   createManualBooking,
   DoctorNotAssignedToServiceError,
+  DoctorNotInInsuranceNetworkError,
+  InsuranceNotCoveredError,
   DoctorNotAvailableInCountryError,
   DoctorNotFoundError,
   ServiceNotFoundError,
@@ -116,6 +118,8 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         locationAddress: body.data.locationAddress ?? null,
         notes: body.data.notes ?? null,
         countryCode: body.data.countryCode,
+        insuranceCompanyId: body.data.insuranceCompanyId ?? null,
+        insurancePolicyNumber: body.data.insurancePolicyNumber ?? null,
         returnTo: body.data.returnTo,
         request,
       });
@@ -132,7 +136,11 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       // admin UI is bypassed.
       if (
         error instanceof DoctorNotAvailableInCountryError ||
-        error instanceof DoctorNotAssignedToServiceError
+        error instanceof DoctorNotAssignedToServiceError ||
+        // Insurance: doctor outside the insurer's network, or the insurer
+        // doesn't cover the service. Same anti-tamper rationale.
+        error instanceof DoctorNotInInsuranceNetworkError ||
+        error instanceof InsuranceNotCoveredError
       ) {
         return reply.status(422).send(errorResponse(error.message));
       }

@@ -21,7 +21,7 @@ export default async function DoctorCalendarPage() {
 
   const [availability, appointments] = await Promise.all([
     fetchDoctorAvailabilityRange(fromIso, toIso),
-    fetchDoctorAppointments({ pageSize: "100" }),
+    fetchDoctorAppointments({ pageSize: "100", excludeLegacy: "true" }),
   ]);
 
   if (!availability.ok) {

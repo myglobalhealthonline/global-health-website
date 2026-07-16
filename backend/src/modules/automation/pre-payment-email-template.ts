@@ -9,6 +9,17 @@ export type PrePaymentEmailPortalAccess = {
   signInUrl: string;
 };
 
+/**
+ * The credit note attached to a "cancelled" email. Only manual/AI bookings carry
+ * an invoice before payment, so only they get one — see generateCreditNoteForOrder.
+ */
+export type CancellationCreditNoteRef = {
+  /** The credit note's own number (CN-IE-00007). */
+  creditNoteNumber: string;
+  /** The invoice number it voids (IE-00042). */
+  invoiceNumber: string;
+};
+
 const WHATSAPP_URL = "https://wa.me/353894715849";
 const WHATSAPP_DISPLAY = "+353 89 471 5849";
 const SUPPORT_EMAIL = "globalhealth@myglobalhealth.online";
@@ -34,6 +45,16 @@ function statusHeading(lang: Lang): string {
     ro: "REZERVAT",
     cs: "REZERVOVÁNO",
     es: "RESERVADO",
+  });
+}
+
+function creditNoteCopy(lang: Lang, cn: CancellationCreditNoteRef): string {
+  return t(lang, {
+    en: `Invoice ${cn.invoiceNumber} has been cancelled. Credit note ${cn.creditNoteNumber} is attached to this email. No payment was taken.`,
+    pt: `A fatura ${cn.invoiceNumber} foi anulada. A nota de crédito ${cn.creditNoteNumber} está anexada a este e-mail. Não foi efetuado qualquer pagamento.`,
+    ro: `Factura ${cn.invoiceNumber} a fost anulată. Nota de credit ${cn.creditNoteNumber} este atașată acestui e-mail. Nu a fost efectuată nicio plată.`,
+    cs: `Faktura ${cn.invoiceNumber} byla stornována. Dobropis ${cn.creditNoteNumber} je přiložen k tomuto e-mailu. Žádná platba nebyla stržena.`,
+    es: `La factura ${cn.invoiceNumber} ha sido anulada. La nota de crédito ${cn.creditNoteNumber} está adjunta a este correo. No se realizó ningún cobro.`,
   });
 }
 
@@ -313,12 +334,18 @@ export function buildPrePaymentEmailHtml(
   logoSrc: string,
   portal?: PrePaymentEmailPortalAccess | null,
   refLabel?: "order" | "booking",
+  creditNote?: CancellationCreditNoteRef | null,
 ): string {
   const L = labels(lang);
   const refKey = refLabel === "booking" ? L.bookingRef : L.orderNo;
   const greeting = `${L.dear} ${esc(ctx.patientName)}`;
   const intro = introCopy(lang, variant);
   const showPayment = variant !== "cancelled" && Boolean(ctx.paymentLink?.trim());
+
+  const creditNoteBlock =
+    variant === "cancelled" && creditNote
+      ? `<p style="margin:20px 0 0;font-size:14px;color:#444;">${esc(creditNoteCopy(lang, creditNote))}</p>`
+      : "";
 
   const payBlock = showPayment
     ? `<p style="margin:28px 0;text-align:center;">
@@ -378,6 +405,7 @@ export function buildPrePaymentEmailHtml(
         </table>
         ${payBlock}
         ${portalBlock}
+        ${creditNoteBlock}
         <p style="font-size:14px;color:#444;margin:24px 0 0;">
           ${L.contactLead}
           <a href="mailto:${SUPPORT_EMAIL}" style="color:#2d4f3d;">${SUPPORT_EMAIL}</a>
@@ -405,6 +433,7 @@ export function buildPrePaymentEmailText(
   variant: PrePaymentEmailVariant,
   portal?: PrePaymentEmailPortalAccess | null,
   refLabel?: "order" | "booking",
+  creditNote?: CancellationCreditNoteRef | null,
 ): string {
   const intro = introCopy(lang, variant);
   const L = labels(lang);
@@ -426,6 +455,9 @@ export function buildPrePaymentEmailText(
   }
   if (variant !== "cancelled" && portal) {
     lines.push(buildPortalTextBlock(lang, portal));
+  }
+  if (variant === "cancelled" && creditNote) {
+    lines.push("", creditNoteCopy(lang, creditNote));
   }
   lines.push("", "— Global Health");
   return lines.join("\n");

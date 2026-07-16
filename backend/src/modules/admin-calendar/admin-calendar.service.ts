@@ -104,6 +104,11 @@ export async function getAdminCalendar(
           scheduledAt: { gte: fromUtc, lt: toUtc },
           // Cancelled consultations drop off the calendar (slot already freed).
           status: { not: "CANCELLED" },
+          // Legacy-Mongo imports are historical records, not live schedule. The
+          // import flattened them all to COMPLETED but kept their original
+          // scheduledAt, so any that land in the viewed window would otherwise
+          // draw as real consultations. They stay visible everywhere else.
+          legacyMongoId: null,
           ...(doctorId ? { doctorId } : {}),
           ...(consultationType ? { consultationType } : {}),
           ...(countryCode ? { countryCode } : {}),

@@ -25,6 +25,7 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     invoiceReceipt: "Invoice / Receipt",
     creditNote: "Credit Note",
     refunded: "REFUNDED",
+    cancelled: "CANCELLED",
     unpaid: "UNPAID",
     amountDue: "Amount due",
     from: "From",
@@ -50,8 +51,10 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     vatNote: "VAT exempt — healthcare services, VATCA 2010 s.61, Sch.1 ¶23",
     shipping: "Shipping",
     totalRefunded: "Total refunded",
+    totalCredited: "Total credited",
     settledInFull: "Settled in full",
     refundIssued: "Refund issued",
+    invoiceCancelled: "Invoice cancelled — no payment was taken",
     quoteRef: "Please quote this reference in any correspondence.",
     tagline: "Medicine Anytime Anywhere",
   },
@@ -61,6 +64,7 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     invoiceReceipt: "Faktura / Účtenka",
     creditNote: "Dobropis",
     refunded: "VRÁCENO",
+    cancelled: "STORNOVÁNO",
     unpaid: "NEZAPLACENO",
     amountDue: "K úhradě",
     from: "Od",
@@ -85,8 +89,10 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     vatNote: "Osvobozeno od DPH — zdravotní služby",
     shipping: "Doprava",
     totalRefunded: "Vráceno celkem",
+    totalCredited: "Dobropisováno celkem",
     settledInFull: "Uhrazeno v plné výši",
     refundIssued: "Vráceno dne",
+    invoiceCancelled: "Faktura stornována — platba nebyla přijata",
     quoteRef: "Toto číslo prosím uvádějte při veškeré komunikaci.",
     tagline: "Medicine Anytime Anywhere",
     legalFooter: "Osvobození od DPH\nZdravotní služby jsou osvobozeny od DPH v souladu se zákonem č. 235/2004 Sb., o dani z přidané hodnoty, § 58 (osvobození zdravotních služeb).\n\nPodmínky\nGlobal Health je obchodní značka společnosti Global Guest. Veškeré transakce prováděné pod značkou Global Health jsou právně zpracovávány v rámci obchodní registrace a daňových údajů společnosti Global Guest.\n\nGlobal Health je obchodní značkou společnosti Global Guest s.r.o., poskytovatele zdravotních služeb zapsaného v Národním registru poskytovatelů zdravotních služeb (NRPZS) pod registračním číslem 19071680.",
@@ -97,6 +103,7 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     invoiceReceipt: "Factura / Recibo",
     creditNote: "Nota de crédito",
     refunded: "REEMBOLSADO",
+    cancelled: "ANULADA",
     unpaid: "NO PAGADO",
     amountDue: "Importe pendiente",
     from: "De",
@@ -121,8 +128,10 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     vatNote: "Exento de IVA — servicios sanitarios",
     shipping: "Envío",
     totalRefunded: "Total reembolsado",
+    totalCredited: "Total abonado",
     settledInFull: "Pagado en su totalidad",
     refundIssued: "Reembolso emitido",
+    invoiceCancelled: "Factura anulada — no se realizó ningún pago",
     quoteRef: "Indique esta referencia en cualquier comunicación.",
     tagline: "Medicine Anytime Anywhere",
     legalFooter: "Los servicios sanitarios están exentos de IVA de conformidad con la Ley de Consolidación del Impuesto sobre el Valor Añadido de 2010, Sección 61 y Anexo 1, Párrafo 23. El IVA no es aplicable, ya que el proveedor aún no está registrado a efectos de IVA en Irlanda, de acuerdo con la Ley de Consolidación del IVA de 2010.\n\nTérminos\nGlobal Health es un nombre comercial registrado bajo Global Guest. Todas las transacciones realizadas bajo la marca Global Health se procesan legalmente conforme al registro comercial y a los datos fiscales de Global Guest.",
@@ -133,6 +142,7 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     invoiceReceipt: "Factură / Chitanță",
     creditNote: "Notă de credit",
     refunded: "RAMBURSAT",
+    cancelled: "ANULATĂ",
     unpaid: "NEACHITAT",
     amountDue: "De plată",
     from: "De la",
@@ -157,8 +167,10 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     vatNote: "Scutit de TVA — servicii medicale",
     shipping: "Livrare",
     totalRefunded: "Total rambursat",
+    totalCredited: "Total creditat",
     settledInFull: "Achitat integral",
     refundIssued: "Rambursare emisă",
+    invoiceCancelled: "Factură anulată — nu a fost efectuată nicio plată",
     quoteRef: "Vă rugăm să menționați această referință în orice corespondență.",
     tagline: "Medicine Anytime Anywhere",
     legalFooter: "Serviciile de sănătate sunt scutite de TVA conform Legii consolidării TVA din 2010, Secțiunea 61 și Anexa 1, Paragraful 23. TVA-ul nu se aplică, deoarece furnizorul nu este încă înregistrat pentru TVA în Irlanda, conform Legii consolidării TVA din 2010.\n\nTermeni\nGlobal Health este un nume comercial înregistrat sub Global Guest. Toate tranzacțiile efectuate sub marca Global Health sunt procesate legal în baza înregistrării comerciale și a detaliilor fiscale ale Global Guest.",
@@ -169,6 +181,7 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     invoiceReceipt: "Fatura / Recibo",
     creditNote: "Nota de crédito",
     refunded: "REEMBOLSADO",
+    cancelled: "ANULADA",
     unpaid: "NÃO PAGO",
     amountDue: "Valor em dívida",
     from: "De",
@@ -193,8 +206,10 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     vatNote: "Isento de IVA — serviços de saúde",
     shipping: "Envio",
     totalRefunded: "Total reembolsado",
+    totalCredited: "Total creditado",
     settledInFull: "Pago na totalidade",
     refundIssued: "Reembolso emitido",
+    invoiceCancelled: "Fatura anulada — não foi efetuado qualquer pagamento",
     quoteRef: "Indique esta referência em qualquer comunicação.",
     tagline: "Medicine Anytime Anywhere",
     legalFooter: "Os serviços de saúde estão isentos de IVA nos termos da Lei de Consolidação do Imposto sobre o Valor Acrescentado de 2010, Secção 61 e Anexo 1, Parágrafo 23.\n\nCondições\nA Global Health é uma marca comercial registada sob a Global Guest. Todas as transações realizadas sob a marca Global Health são legalmente processadas ao abrigo do registo comercial e dos dados fiscais da Global Guest.\n\nA Global Health é uma marca comercial da Global Guest s.r.o., entidade prestadora de cuidados de saúde registada na Entidade Reguladora da Saúde (ERS) sob o número 179287.",
@@ -210,6 +225,7 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     invoiceReceipt: "Fatura / Recibo",
     creditNote: "Nota de crédito",
     refunded: "REEMBOLSADO",
+    cancelled: "CANCELADA",
     unpaid: "NÃO PAGO",
     amountDue: "Valor devido",
     from: "De",
@@ -234,8 +250,10 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     vatNote: "Isento de IVA — serviços de saúde",
     shipping: "Frete",
     totalRefunded: "Total reembolsado",
+    totalCredited: "Total creditado",
     settledInFull: "Pago integralmente",
     refundIssued: "Reembolso emitido",
+    invoiceCancelled: "Fatura cancelada — nenhum pagamento foi efetuado",
     quoteRef: "Por favor, mencione esta referência em qualquer comunicação.",
     tagline: "Medicine Anytime Anywhere",
     legalFooter: "Os serviços de saúde são isentos de IVA nos termos da Lei de Consolidação do Imposto sobre o Valor Agregado de 2010, Seção 61 e Anexo 1, Parágrafo 23. O IVA não se aplica, uma vez que o prestador ainda não está registrado para fins de IVA na Irlanda, nos termos da Lei de Consolidação do IVA de 2010.\n\nTermos\nA Global Health é um nome comercial registrado sob a Global Guest. Todas as transações realizadas sob a marca Global Health são processadas legalmente de acordo com o registro comercial e os dados fiscais da Global Guest.",
@@ -250,12 +268,21 @@ function getL(countryCode: string) {
 
 export type InvoiceDocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT" | "CREDIT_NOTE";
 
+/**
+ * Why a CREDIT_NOTE exists — drives its badge + totals wording. A CANCELLATION
+ * credit note voids an unpaid invoice, so it must never say "refunded": no money
+ * was ever taken. Ignored for non-credit-note documents.
+ */
+export type CreditNoteReason = "REFUND" | "CANCELLATION";
+
 export interface InvoicePdfData {
   invoiceNumber: string;
   invoiceDate: string; // ISO
   countryCode: string;
   /** Drives the title + paid/unpaid badge. Defaults to INVOICE_RECEIPT. */
   documentType: InvoiceDocumentType;
+  /** CREDIT_NOTE only. Defaults to REFUND — the original credit-note cause. */
+  creditNoteReason?: CreditNoteReason | null;
   order: {
     fullName: string;
     email: string;
@@ -312,6 +339,7 @@ export function buildInvoiceHtml(data: InvoicePdfData): string {
   const logo = pdfLogoDataUrl();
 
   const isCreditNote = data.documentType === "CREDIT_NOTE";
+  const isCancellationNote = isCreditNote && data.creditNoteReason === "CANCELLATION";
   const isUnpaid = data.documentType === "INVOICE";
   const docTitle = isCreditNote
     ? L.creditNote
@@ -320,7 +348,13 @@ export function buildInvoiceHtml(data: InvoicePdfData): string {
       : data.documentType === "INVOICE_RECEIPT"
         ? L.invoiceReceipt
         : L.invoice;
-  const statusLabel = isCreditNote ? L.refunded : isUnpaid ? L.unpaid : L.paid;
+  const statusLabel = isCancellationNote
+    ? L.cancelled
+    : isCreditNote
+      ? L.refunded
+      : isUnpaid
+        ? L.unpaid
+        : L.paid;
 
   const itemRows = order.items
     .map(
@@ -486,13 +520,17 @@ export function buildInvoiceHtml(data: InvoicePdfData): string {
       ${order.shippingCents > 0 ? `<div class="trow"><span>${L.shipping}</span><span class="tv">${fmtMoney(order.shippingCents, cur, loc)}</span></div>` : ""}
       <div class="trow"><span>${L.vat}</span><span class="tv">${fmtMoney(0, cur, loc)}</span></div>
       <div class="tnote">${esc(L.vatNote)}</div>
-      <div class="grand"><span class="gl">${isCreditNote ? L.totalRefunded : L.total}</span><span class="gv">${fmtMoney(order.totalCents, cur, loc)}</span></div>
+      <div class="grand"><span class="gl">${isCancellationNote ? L.totalCredited : isCreditNote ? L.totalRefunded : L.total}</span><span class="gv">${fmtMoney(order.totalCents, cur, loc)}</span></div>
       ${
-        !isUnpaid && order.paidAt
-          ? `<div class="settled">${isCreditNote ? L.refundIssued : L.settledInFull} · ${fmtDate(order.paidAt, loc)}</div>`
-          : isUnpaid
-            ? `<div class="settled">${L.amountDue}: ${fmtMoney(order.totalCents, cur, loc)}</div>`
-            : ""
+        isCancellationNote
+          ? // Nothing was ever paid, so there is no paidAt to date this by — the
+            // credit note's own issue date is the cancellation date.
+            `<div class="settled">${L.invoiceCancelled} · ${fmtDate(data.invoiceDate, loc)}</div>`
+          : !isUnpaid && order.paidAt
+            ? `<div class="settled">${isCreditNote ? L.refundIssued : L.settledInFull} · ${fmtDate(order.paidAt, loc)}</div>`
+            : isUnpaid
+              ? `<div class="settled">${L.amountDue}: ${fmtMoney(order.totalCents, cur, loc)}</div>`
+              : ""
       }
     </div>
   </div>
@@ -524,6 +562,7 @@ export async function buildInvoicePdfData(
   invoiceNumber: string,
   invoiceDate: string,
   documentType: InvoiceDocumentType = "INVOICE_RECEIPT",
+  creditNoteReason: CreditNoteReason | null = null,
 ): Promise<InvoicePdfData | null> {
   const order = await prisma.order.findUnique({
     where: { id: orderId },
@@ -624,6 +663,7 @@ export async function buildInvoicePdfData(
     invoiceDate,
     countryCode: order.countryCode,
     documentType,
+    creditNoteReason,
     order: {
       fullName: order.fullName,
       email: order.email,

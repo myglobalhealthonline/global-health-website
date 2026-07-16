@@ -559,6 +559,12 @@ const INVOICE_EMAIL_CTA: Record<string, string> = {
 
 export type InvoiceEmailDocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT" | "CREDIT_NOTE";
 
+/**
+ * Why a CREDIT_NOTE was issued. A CANCELLATION note voids an unpaid invoice —
+ * nothing was ever charged, so the refund copy below must not be used for it.
+ */
+export type CreditNoteEmailReason = "REFUND" | "CANCELLATION";
+
 /** Credit note (refund) — reverses a paid document. */
 const CREDIT_NOTE_EMAIL_SUBJECT: Record<string, string> = {
   ie: "Your credit note {invoiceNumber} — refund processed",
@@ -587,6 +593,26 @@ const CREDIT_NOTE_EMAIL_CTA: Record<string, string> = {
   es: "Ver nota de crédito",
   ro: "Vizualizați nota de credit",
   br: "Ver nota de crédito",
+};
+
+/**
+ * Credit note (cancellation) — voids an unpaid invoice after the booking was
+ * cancelled for non-payment. Heading + CTA are shared with the refund copy above;
+ * only the subject and body change, because there is no refund to announce.
+ */
+const CANCELLED_CREDIT_NOTE_EMAIL_SUBJECT: Record<string, string> = {
+  ie: "Your credit note {invoiceNumber} — invoice cancelled",
+  cz: "Váš dobropis {invoiceNumber} — faktura stornována",
+  es: "Su nota de crédito {invoiceNumber} — factura anulada",
+  ro: "Nota dvs. de credit {invoiceNumber} — factură anulată",
+  br: "Sua nota de crédito {invoiceNumber} — fatura cancelada",
+};
+const CANCELLED_CREDIT_NOTE_EMAIL_BODY: Record<string, string> = {
+  ie: "Your booking was cancelled because payment was not received, so your invoice has been cancelled. No payment was taken. Your credit note is attached and available to view and download below.",
+  cz: "Vaše rezervace byla zrušena, protože platba nebyla přijata, a proto byla vaše faktura stornována. Žádná platba nebyla stržena. Váš dobropis je přiložen a k dispozici k zobrazení a stažení níže.",
+  es: "Su reserva fue cancelada porque no se recibió el pago, por lo que su factura ha sido anulada. No se realizó ningún cobro. Su nota de crédito está adjunta y disponible para ver y descargar a continuación.",
+  ro: "Programarea dvs. a fost anulată deoarece plata nu a fost primită, prin urmare factura dvs. a fost anulată. Nu a fost efectuată nicio plată. Nota de credit este atașată și disponibilă pentru vizualizare și descărcare mai jos.",
+  br: "Sua reserva foi cancelada porque o pagamento não foi recebido, portanto sua fatura foi cancelada. Nenhum pagamento foi cobrado. Sua nota de crédito está anexada e disponível para visualização e download abaixo.",
 };
 
 /** Per-document-type overrides. Falls back to the invoice (INVOICE_RECEIPT) copy above. */
@@ -701,34 +727,41 @@ export async function sendInvoiceEmail(opts: {
   pdfBuffer?: Buffer;
   /** Drives the wording. Defaults to the combined invoice/receipt copy. */
   documentType?: InvoiceEmailDocumentType;
+  /** CREDIT_NOTE only. Defaults to REFUND — the original credit-note cause. */
+  creditNoteReason?: CreditNoteEmailReason | null;
 }) {
   const cc = opts.countryCode.toLowerCase();
   const docType = opts.documentType ?? "INVOICE_RECEIPT";
   const isReceipt = docType === "RECEIPT";
   const isUnpaidInvoice = docType === "INVOICE";
   const isCreditNote = docType === "CREDIT_NOTE";
+  const isCancellationNote = isCreditNote && opts.creditNoteReason === "CANCELLATION";
 
   const pick = (m: Record<string, string>) => m[cc] ?? m.ie!;
-  const subjectTemplate = isCreditNote
-    ? pick(CREDIT_NOTE_EMAIL_SUBJECT)
-    : isReceipt
-      ? pick(RECEIPT_EMAIL_SUBJECT)
-      : isUnpaidInvoice
-        ? pick(UNPAID_INVOICE_EMAIL_SUBJECT)
-        : pick(INVOICE_EMAIL_SUBJECT);
+  const subjectTemplate = isCancellationNote
+    ? pick(CANCELLED_CREDIT_NOTE_EMAIL_SUBJECT)
+    : isCreditNote
+      ? pick(CREDIT_NOTE_EMAIL_SUBJECT)
+      : isReceipt
+        ? pick(RECEIPT_EMAIL_SUBJECT)
+        : isUnpaidInvoice
+          ? pick(UNPAID_INVOICE_EMAIL_SUBJECT)
+          : pick(INVOICE_EMAIL_SUBJECT);
   const subject = subjectTemplate.replace("{invoiceNumber}", opts.invoiceNumber);
   const heading = isCreditNote
     ? pick(CREDIT_NOTE_EMAIL_HEADING)
     : isReceipt
       ? pick(RECEIPT_EMAIL_HEADING)
       : pick(INVOICE_EMAIL_HEADING);
-  const body = isCreditNote
-    ? pick(CREDIT_NOTE_EMAIL_BODY)
-    : isReceipt
-      ? pick(RECEIPT_EMAIL_BODY)
-      : isUnpaidInvoice
-        ? pick(UNPAID_INVOICE_EMAIL_BODY)
-        : pick(INVOICE_EMAIL_BODY);
+  const body = isCancellationNote
+    ? pick(CANCELLED_CREDIT_NOTE_EMAIL_BODY)
+    : isCreditNote
+      ? pick(CREDIT_NOTE_EMAIL_BODY)
+      : isReceipt
+        ? pick(RECEIPT_EMAIL_BODY)
+        : isUnpaidInvoice
+          ? pick(UNPAID_INVOICE_EMAIL_BODY)
+          : pick(INVOICE_EMAIL_BODY);
   const cta = isCreditNote
     ? pick(CREDIT_NOTE_EMAIL_CTA)
     : isReceipt

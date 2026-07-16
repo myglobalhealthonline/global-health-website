@@ -393,6 +393,7 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
             invoiceNumber: invoice.invoiceNumber,
             countryCode: invoice.countryCode,
             documentType: invoice.documentType,
+            creditNoteReason: invoice.creditNoteReason,
             generatedAt: invoice.generatedAt.toISOString(),
             emailSentAt: invoice.emailSentAt?.toISOString() ?? null,
           },
@@ -448,6 +449,7 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
           select: {
             invoiceNumber: true,
             documentType: true,
+            creditNoteReason: true,
             generatedAt: true,
             orderId: true,
           },
@@ -459,6 +461,7 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
           invoice.invoiceNumber,
           invoice.generatedAt.toISOString(),
           invoice.documentType,
+          invoice.creditNoteReason,
         );
         const pdfBuffer = pdfData ? await renderInvoicePdfBuffer(pdfData) : null;
         if (!pdfBuffer) {

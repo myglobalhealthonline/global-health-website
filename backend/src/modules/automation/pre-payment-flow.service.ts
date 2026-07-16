@@ -17,6 +17,7 @@ import {
   formatOrderTotal,
   resolvePatientFullName,
   splitPatientName,
+  type CancellationCreditNoteRef,
   type PrePaymentEmailPortalAccess,
   type PrePaymentEmailVariant,
 } from "./pre-payment-email-template.js";
@@ -40,6 +41,7 @@ import {
   persistOrderPortalAccess,
   resolveOrderPortalAccess,
 } from "./resolve-order-portal-access.service.js";
+import { generateCreditNoteForOrder } from "../invoices/generate-invoice.service.js";
 
 const MS_HOUR = 60 * 60 * 1000;
 const MS_MIN = 60 * 1000;
@@ -256,6 +258,13 @@ async function loadOrderContext(orderId: string, paymentUrl: string | null) {
   };
 }
 
+/** A credit note to attach to (and name inside) a "cancelled" patient email. */
+type CancelledEmailCreditNote = {
+  invoiceId: string;
+  ref: CancellationCreditNoteRef;
+  pdfBuffer: Buffer;
+};
+
 async function sendPatientEmail(
   automationKey: string,
   orderId: string,
@@ -266,6 +275,7 @@ async function sendPatientEmail(
   variant: PrePaymentEmailVariant = "initial",
   subjectOverride?: string,
   portal?: PrePaymentEmailPortalAccess | null,
+  creditNote?: CancelledEmailCreditNote | null,
 ) {
   const subject = subjectOverride ?? patientEmailSubject(ctx, lang);
   const portalAccess =
@@ -289,11 +299,32 @@ async function sendPatientEmail(
       {
         to,
         subject,
-        text: buildPrePaymentEmailText(ctx, lang, variant, portalAccess),
-        html: buildPrePaymentEmailHtml(ctx, lang, variant, logoSrc, portalAccess),
+        text: buildPrePaymentEmailText(ctx, lang, variant, portalAccess, undefined, creditNote?.ref),
+        html: buildPrePaymentEmailHtml(ctx, lang, variant, logoSrc, portalAccess, undefined, creditNote?.ref),
+        ...(creditNote
+          ? {
+              attachments: [
+                {
+                  filename: `credit-note-${creditNote.ref.creditNoteNumber}.pdf`,
+                  content: creditNote.pdfBuffer,
+                  contentType: "application/pdf",
+                },
+              ],
+            }
+          : {}),
       },
       { recordLabel: ctx.orderNumber },
     );
+    // The credit note has now reached the patient on this email — nothing else
+    // sends it, so this is the only place its delivery gets stamped.
+    if (creditNote) {
+      await prisma.invoice
+        .update({
+          where: { id: creditNote.invoiceId },
+          data: { emailSentAt: new Date(), emailSentTo: to },
+        })
+        .catch(() => undefined);
+    }
     await finishAutomationRun(run.id, { status: "SUCCESS", summary });
   } catch (err) {
     await finishAutomationRun(run.id, {
@@ -540,6 +571,32 @@ export async function startPrePaymentFlow(
 }
 
 /**
+ * Issue the credit note that voids an unpaid invoice when the booking is
+ * cancelled for non-payment, and return it ready to attach to the cancellation
+ * email. Nothing is refunded — no money was ever taken.
+ *
+ * Returns null (and the email goes out unchanged) whenever there is nothing to
+ * send: the order carries no invoice to credit (every direct-web order — only
+ * manual/AI bookings are invoiced before payment), Portugal, a prefixless
+ * country, or a failed PDF render. A render failure must not make the email
+ * claim an attachment it doesn't have; the row still exists for an admin resend.
+ */
+async function resolveCancellationCreditNote(
+  orderId: string,
+): Promise<CancelledEmailCreditNote | null> {
+  const cn = await generateCreditNoteForOrder(orderId, undefined, {
+    reason: "CANCELLATION",
+    deliver: "caller",
+  });
+  if (!cn?.pdfBuffer || !cn.creditedInvoiceNumber) return null;
+  return {
+    invoiceId: cn.invoiceId,
+    pdfBuffer: cn.pdfBuffer,
+    ref: { creditNoteNumber: cn.invoiceNumber, invoiceNumber: cn.creditedInvoiceNumber },
+  };
+}
+
+/**
  * Send the "reservation cancelled — non-payment" notifications (patient
  * WhatsApp + email, doctor WhatsApp + email). Extracted so EVERY unpaid-cancel
  * path fires the same messages the deadline sweep does — the pre-payment cron
@@ -547,6 +604,9 @@ export async function startPrePaymentFlow(
  * automation-run keys are stable, and it's safe to call whether the order is
  * still PENDING or already flipped to CANCELLED. `stageKeyOverride` lets the
  * sweep reuse its stage-N key; other callers pass a path-specific key.
+ *
+ * The patient email doubles as credit-note delivery when the order was invoiced
+ * before payment — one message, not two.
  */
 export async function sendPrePaymentCancelledNotifications(
   orderId: string,
@@ -559,6 +619,10 @@ export async function sendPrePaymentCancelledNotifications(
   const baseKey = automationBaseKey(flow);
   const stageKey = stageKeyOverride ?? `${baseKey}_cancelled`;
 
+  // Never block the cancellation notifications on invoicing trouble — the
+  // patient must be told their reservation is gone either way.
+  const creditNote = await resolveCancellationCreditNote(orderId).catch(() => null);
+
   const msg = reminderMessage(ctx, lang, "cancelled");
   await sendWhatsApp(stageKey, orderId, order.phone, msg.whatsapp, "Patient WhatsApp — reservation cancelled", phoneHints, primary.patientWhatsappConsent);
   await sendPatientEmail(
@@ -567,9 +631,13 @@ export async function sendPrePaymentCancelledNotifications(
     order.email,
     lang,
     ctx,
-    "Patient email — reservation cancelled",
+    creditNote
+      ? `Patient email — reservation cancelled (credit note ${creditNote.ref.creditNoteNumber})`
+      : "Patient email — reservation cancelled",
     "cancelled",
     msg.subject,
+    null,
+    creditNote,
   );
 
   // Notify doctor that the reservation was cancelled

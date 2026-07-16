@@ -3847,9 +3847,22 @@ enum InvoiceDocumentType {
   INVOICE
   RECEIPT
   INVOICE_RECEIPT
-  /// CREDIT_NOTE — issued on refund, reverses a paid INVOICE_RECEIPT/RECEIPT
-  /// (Portugal excluded; PT credit notes live in InvoiceExpress).
+  /// CREDIT_NOTE — reverses an earlier document. Two causes, see CreditNoteReason:
+  /// a refund of a paid INVOICE_RECEIPT/RECEIPT, or the cancellation of an unpaid
+  /// INVOICE (Portugal excluded; PT credit notes live in InvoiceExpress).
   CREDIT_NOTE
+}
+
+/// Why a CREDIT_NOTE was issued. Drives the PDF badge + patient email wording —
+/// a cancellation credit note must never tell a patient a refund was processed,
+/// because no money ever changed hands.
+///   REFUND       — the order was paid and refunded.
+///   CANCELLATION — an unpaid INVOICE (manual/AI booking) was cancelled for
+///                  non-payment; the fiscal document is voided, nothing refunded.
+/// Null on non-credit-note rows.
+enum CreditNoteReason {
+  REFUND
+  CANCELLATION
 }
 
 /// Invoice/receipt tied to an Order (Portugal excluded).
@@ -3859,15 +3872,18 @@ enum InvoiceDocumentType {
 /// two rows (the invoice it settles + the receipt). Orders may also carry a
 /// CREDIT_NOTE (own CN- number) on refund — hence orderId is indexed, not unique.
 model Invoice {
-  id            String              @id @default(cuid())
-  invoiceNumber String
-  orderId       String
-  order         Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  countryCode   String
-  documentType  InvoiceDocumentType @default(INVOICE_RECEIPT)
-  generatedAt   DateTime            @default(now())
-  emailSentAt   DateTime?
-  emailSentTo   String?
+  id               String              @id @default(cuid())
+  invoiceNumber    String
+  orderId          String
+  order            Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  countryCode      String
+  documentType     InvoiceDocumentType @default(INVOICE_RECEIPT)
+  /// Set only on CREDIT_NOTE rows. Persisted (not derived from order status) so a
+  /// re-render / admin resend reproduces the original wording forever.
+  creditNoteReason CreditNoteReason?
+  generatedAt      DateTime            @default(now())
+  emailSentAt      DateTime?
+  emailSentTo      String?
 
   @@map("invoices")
   @@index([orderId])

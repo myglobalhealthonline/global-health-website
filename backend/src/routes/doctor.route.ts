@@ -103,6 +103,17 @@ const listAppointmentsQuerySchema = z.object({
     .enum(["true", "false"])
     .optional()
     .transform((v) => v === "true"),
+  /**
+   * Drop rows imported from the legacy Mongo system (`legacyMongoId` set).
+   * The import flattened every historical booking to COMPLETED and carried its
+   * original `scheduledAt` over, so those rows render as live calendar entries.
+   * Calendar/availability views pass this; the appointments queue and patient
+   * history do NOT — they should still show imported records.
+   */
+  excludeLegacy: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((v) => v === "true"),
   page: z.coerce.number().int().min(1).default(1),
   pageSize: z.coerce.number().int().min(1).max(100).default(25),
 });
@@ -294,8 +305,19 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         .status(400)
         .send(errorResponse("Invalid query", query.error.flatten()));
     }
-    const { status, view, search, from, to, consultationType, finalized, openOnly, page, pageSize } =
-      query.data;
+    const {
+      status,
+      view,
+      search,
+      from,
+      to,
+      consultationType,
+      finalized,
+      openOnly,
+      excludeLegacy,
+      page,
+      pageSize,
+    } = query.data;
     const fromUtc = from ? new Date(`${from}T00:00:00.000Z`) : undefined;
     const toUtc = to ? new Date(`${to}T23:59:59.999Z`) : undefined;
     const openWindowStart = new Date(Date.now() - 30 * 60 * 60 * 1000);
@@ -319,6 +341,7 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
       const where: Prisma.AppointmentWhereInput = {
         doctorId: auth.doctorId,
         ...(status ? { status } : {}),
+        ...(excludeLegacy ? { legacyMongoId: null } : {}),
         ...(viewFilters.length ? { AND: viewFilters } : {}),
         ...(consultationType ? { consultationType } : {}),
         ...(finalized !== undefined ? { finalized } : {}),
