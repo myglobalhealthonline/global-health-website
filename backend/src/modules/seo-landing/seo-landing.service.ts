@@ -106,19 +106,61 @@ export async function upsertLandingPage(countryId: string, input: SeoLandingUpse
   }
 }
 
-export async function deleteLandingPage(pageId: string): Promise<boolean> {
-  const existing = await prisma.seoLandingPage.findUnique({
-    where: { id: pageId },
-    select: { id: true },
-  });
-  if (!existing) return false;
-  try {
-    await prisma.seoLandingPage.delete({ where: { id: pageId } });
-    return true;
-  } catch (error) {
-    throw normalizeDbError(error, "Landing page could not be deleted");
-  }
+export type ResolveLandingPageCountryDependencies = {
+  findPageCountry(pageId: string): Promise<{ countryId: string } | null>;
+};
+
+export type DeleteLandingPageDependencies = {
+  deletePage(where: { id: string; countryId: string }): Promise<{ count: number }>;
+};
+
+const defaultResolveDependencies: ResolveLandingPageCountryDependencies = {
+  findPageCountry: (pageId) =>
+    prisma.seoLandingPage.findUnique({
+      where: { id: pageId },
+      select: { countryId: true },
+    }),
+};
+
+const defaultDeleteDependencies: DeleteLandingPageDependencies = {
+  deletePage: (where) =>
+    prisma.seoLandingPage.deleteMany({
+      where,
+    }),
+};
+
+export function createResolveLandingPageCountry(
+  dependencies: ResolveLandingPageCountryDependencies = defaultResolveDependencies,
+) {
+  return async function resolveScopedLandingPageCountry(
+    pageId: string,
+  ): Promise<{ countryId: string } | null> {
+    try {
+      return await dependencies.findPageCountry(pageId);
+    } catch (error) {
+      throw normalizeDbError(error, "Landing page is unavailable");
+    }
+  };
 }
+
+export function createDeleteLandingPage(
+  dependencies: DeleteLandingPageDependencies = defaultDeleteDependencies,
+) {
+  return async function deleteScopedLandingPage(
+    countryId: string,
+    pageId: string,
+  ): Promise<boolean> {
+    try {
+      const deleted = await dependencies.deletePage({ id: pageId, countryId });
+      return deleted.count === 1;
+    } catch (error) {
+      throw normalizeDbError(error, "Landing page could not be deleted");
+    }
+  };
+}
+
+export const resolveLandingPageCountry = createResolveLandingPageCountry();
+export const deleteLandingPage = createDeleteLandingPage();
 
 /** Public: published landing slugs for a country (sitemap + nav exclusion). */
 export async function listPublishedLandingSlugs(countryCode: string) {
