@@ -37,7 +37,10 @@ export function AssetPathWithUpload({ initialPath }: Props) {
       if (!res.ok || !json.ok || !json.data?.publicUrl) {
         throw new Error(json.message ?? "Upload failed");
       }
-      setPath(json.data.publicUrl);
+      // Persist the pathname, not the absolute URL — absolute URLs break when
+      // the backend domain changes (matches managed-image-field.tsx).
+      const url = json.data.publicUrl;
+      setPath(url.startsWith("/") ? url : new URL(url).pathname);
     } catch (e) {
       setMsg(e instanceof Error ? e.message : "Upload failed");
     } finally {
