@@ -16,6 +16,8 @@
       "specialist": "Specialist",
       "prescription": "Rețete",
       "test": "Teste de laborator"
-    }
+    },
+    "learnMore": "Aflați mai multe",
+    "learnMoreAria": "Aflați mai multe: {title}"
   }
 }

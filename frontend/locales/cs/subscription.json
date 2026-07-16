@@ -164,9 +164,9 @@
     "notCovered": "Není zahrnuto ve vašem plánu",
     "youSave": "Ušetříte {amount} se svým plánem",
     "creditsLeft": "Poté zbývá {count} kreditů na konzultace",
-    "locked": "Not yet unlocked",
-    "familyUnavailable": "Family usage not available",
-    "notEnoughCredits": "Not enough credits"
+    "locked": "Ještě není odemčeno",
+    "familyUnavailable": "Rodinné používání není k dispozici",
+    "notEnoughCredits": "Nedostatek kreditů"
   },
   "dashboard": {
     "memberMonths": "Členem už {months} placených měsíců",

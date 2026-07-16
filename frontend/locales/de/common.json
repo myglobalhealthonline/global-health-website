@@ -142,8 +142,8 @@
     "viewDoctors": "Ärzte anzeigen",
     "trustCard1Title": "Zugelassen in {country}",
     "trustCard1Subtitle": "Vollständig verifizierte Kliniker",
-    "trustCard2Title": "4,9 Patientenbewertung",
-    "trustCard2Subtitle": "Aus über 2.000 Bewertungen",
+    "trustCard2Title": "Von Patienten bewertet",
+    "trustCard2Subtitle": "Bewertungen auf Doctify ansehen",
     "trustCard3Title": "Verfügbarkeit am selben Tag",
     "trustCard3Subtitle": "Termine heute",
     "floatCard1Title": "Heute verfügbar",
@@ -154,7 +154,8 @@
     "floatCard3Subtitle": "Privat, sicher und bequem",
     "filters": "Filter",
     "bioFallbackTemplate": "Approbierter Arzt für Online-Konsultationen in {country} verfügbar.",
-    "verifyRegistrationAria": "Zulassung im offiziellen Register überprüfen"
+    "verifyRegistrationAria": "Zulassung im offiziellen Register überprüfen",
+    "viewProfileAria": "Profil von {name} anzeigen"
   },
   "cookie": {
     "title": "Cookie-Einstellungen",
@@ -215,8 +216,8 @@
       "stat1Subtitle": "Alle Hausärzte sind zur Ausübung in {country} registriert.",
       "stat2Title": "45.000 Konsultationen im Jahr 2025",
       "stat2Subtitle": "Bewertet auf Doctify.",
-      "stat3Title": "Von Tausenden vertraut",
-      "stat3Subtitle": "Schließen Sie sich Tausenden Patienten in {country} an."
+      "stat3Title": "Vertrauenswürdige Versorgung",
+      "stat3Subtitle": "Schließen Sie sich Patienten in {country} an."
     }
   },
   "specialistPage": {
@@ -243,8 +244,8 @@
       "stat1Subtitle": "Alle Fachärzte sind zur Ausübung in {country} registriert.",
       "stat2Title": "45.000 Konsultationen im Jahr 2025",
       "stat2Subtitle": "Bewertet auf Doctify.",
-      "stat3Title": "Von Tausenden vertraut",
-      "stat3Subtitle": "Schließen Sie sich Tausenden Patienten in {country} an."
+      "stat3Title": "Vertrauenswürdige Versorgung",
+      "stat3Subtitle": "Schließen Sie sich Patienten in {country} an."
     }
   },
   "consultPage": {
@@ -332,12 +333,12 @@
     "acceptConsent": "Sie müssen der Einwilligung zustimmen, um fortzufahren.",
     "acceptClinicConsent": "Sie müssen der Datenweitergabe an die behandelnde Klinik zustimmen.",
     "acceptPlatformConsent": "Sie müssen der Datenverarbeitung durch die Plattform zustimmen.",
-    "whoIsThisFor": "Who is this booking for?",
-    "forMe": "Myself",
-    "forFamilyMember": "A family member",
-    "manageFamily": "Manage family members",
-    "familyBenefitNote": "Your plan benefit will apply if this service and member are eligible.",
-    "familyBenefitUnavailable": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member.",
+    "whoIsThisFor": "Für wen ist diese Buchung?",
+    "forMe": "Für mich selbst",
+    "forFamilyMember": "Ein Familienmitglied",
+    "manageFamily": "Familienmitglieder verwalten",
+    "familyBenefitNote": "Ihr Planvorteil gilt, wenn dieser Dienst und das Mitglied berechtigt sind.",
+    "familyBenefitUnavailable": "Die Buchung für jemand anderen ist möglich, aber die Nutzung der GP-Guthaben oder Rabatte Ihres Plans für ein Familienmitglied erfordert einen familienfähigen Plan mit einem genehmigten Mitglied.",
     "selectedTime": "Gewählte Zeit",
     "changeTime": "Zeit ändern",
     "saveAddressToProfile": "Diese Adresse in meinem Profil speichern",
@@ -385,7 +386,7 @@
       "feature3Subtitle": "Unsere Ärzte sind zur Ausübung in {country} registriert.",
       "stat1Title": "Ärztlich geprüfte Ergebnisse",
       "stat1Subtitle": "Jedes Ergebnis wird von einem registrierten Arzt geprüft.",
-      "stat2Title": "Schnelle Bearbeitung",
+      "stat2Title": "45.000 Konsultationen im Jahr 2025",
       "stat2Subtitle": "Die meisten Ergebnisse sind innerhalb von 24–48 Stunden verfügbar.",
       "stat3Title": "Sicher und privat",
       "stat3Subtitle": "Ihre Gesundheitsdaten werden vertraulich behandelt."
@@ -575,12 +576,12 @@
     "increaseQuantity": "Menge erhöhen",
     "removeAria": "{name} entfernen",
     "remove": "Entfernen",
-    "benefitLabel": "Plan benefit",
-    "payNormally": "Pay normally",
-    "usePlanCredit": "Use a credit",
-    "usePlanDiscount": "Use discount",
-    "benefitFor": "For {name}",
-    "notEnoughCreditsHint": "No credits left — this consultation will be charged at full price."
+    "benefitLabel": "Planvorteil",
+    "payNormally": "Normal bezahlen",
+    "usePlanCredit": "Guthaben verwenden",
+    "usePlanDiscount": "Rabatt verwenden",
+    "benefitFor": "Für {name}",
+    "notEnoughCreditsHint": "Keine Guthaben mehr — diese Beratung wird zum Vollpreis berechnet."
   },
   "checkoutPage": {
     "title": "Kasse",
@@ -621,7 +622,7 @@
     "successBody": "Ihre Bestellung ist bestätigt. Ein Beleg wurde Ihnen per E-Mail zugesendet.",
     "processingTitle": "Zahlung wird bestätigt…",
     "processingBody": "Ihre Zahlung wird bestätigt. Das dauert in der Regel nur einen Moment — diese Seite wird automatisch aktualisiert.",
-    "orderRef": "ORDER #{id}",
+    "orderRef": "BESTELLUNG #{id}",
     "shipping": "Versand",
     "totalPaid": "Gesamt bezahlt",
     "receiptError": "Wir konnten den Beleg gerade nicht laden. Ihre Zahlung ist bestätigt; prüfen Sie Ihre E-Mails für die Bestelldetails.",
@@ -748,6 +749,18 @@
     "reviewRateSubtitle": "Teilen Sie uns Ihr Feedback zu Ihrer Konsultation mit.",
     "reviewRateStepRatings": "Bewertungen",
     "reviewRateStepSubmit": "Absenden"
+  },
+  "homeMeta": {
+    "titleTemplate": "{country} — registrierte Ärzte und Spezialisten",
+    "descriptionTemplate": "Lizenzierte Ärzte und Spezialisten, die in {country} praktizieren. Profile, Qualifikationen, Fachgebiete und Sprachen einsehen."
+  },
+  "pricingPage": {
+    "trustLicensedTitle": "Lizenzierte Ärzte",
+    "trustLicensedSubtitle": "Lokal registriert",
+    "trustFlexibleTitle": "Flexible Pläne",
+    "trustFlexibleSubtitle": "Jederzeit kündbar",
+    "trustSecureTitle": "Sichere Zahlungen",
+    "trustSecureSubtitle": "Durch Stripe geschützt"
   },
   "blogPage": {
     "articlesAvailableNow": "Jetzt verfügbar",

@@ -83,5 +83,59 @@
     "stat3Caption": "Horários abertos de calendários de médicos ao vivo.",
     "stat4Label": "Serviços reserváveis",
     "stat4Caption": "Consultas, referências e testes em casa."
+  },
+  "blog": {
+    "noArticles": "Ainda não foram publicados artigos",
+    "checkBackSoon": "Volte em breve para guias médicos e explicações de serviços.",
+    "backToCountrySelection": "Voltar à seleção de país",
+    "allArticles": "Todos os artigos",
+    "minRead": "min de leitura",
+    "nextStep": "Próximo passo",
+    "readyToSpeak": "Pronto para falar com um médico?",
+    "bookConsultationBody": "Agende uma consulta online com um médico registado localmente no seu país. As nomeações disponíveis são mostradas durante a reserva.",
+    "bookConsultation": "Agendar consulta",
+    "clinicallyReviewedBy": "Revisado clinicamente por"
+  },
+  "flow": {
+    "patientUploadHeading": "Carregar ficheiros médicos",
+    "checkoutSuccess": {
+      "paymentReceivedTitle": "Pagamento recebido",
+      "paymentReceivedBody": "O seu pagamento foi bem-sucedido. Os detalhes de confirmação chegarão por email e WhatsApp.",
+      "confirmingPaymentTitle": "A confirmar pagamento",
+      "confirmingPaymentBody": "Estamos a abrir a sua página de confirmação específica para o país."
+    },
+    "certificate": {
+      "headerTitle": "Verificação de certificado",
+      "headerSubtitle": "Autenticar um certificado da Global Health",
+      "stepVerify": "Verificar",
+      "verifiedTitle": "Certificado verificado",
+      "verifiedBody": "Este certificado é autêntico e emitido pela Global Health.",
+      "notFoundTitle": "Certificado não encontrado",
+      "confirmAuthenticityHint": "Para confirmar a autenticidade, compare o ID do Certificado acima com o que está impresso no seu documento."
+    }
+  },
+  "brazilConsent": {
+    "headerTitle": "Consentimento médico",
+    "headerSubtitle": "Consentimento LGPD e processamento de pagamentos.",
+    "stepConsent": "Consentimento",
+    "stepPayment": "Pagamento",
+    "missingLinkError": "Este link de consentimento está em falta ou é inválido. Por favor, utilize o link do seu email.",
+    "loading": "A carregar…",
+    "thankYouTitle": "Obrigado",
+    "consentRegisteredBody": "O seu consentimento foi registado. Pagamento confirmado.",
+    "eyebrow": "Brasil · Consultoria",
+    "formTitle": "Consentimento médico",
+    "formIntro": "Complete o formulário e proceda ao pagamento de processamento (€29).",
+    "fieldName": "Nome",
+    "fieldEmail": "Email",
+    "fieldPhone": "Telefone",
+    "fieldPharmacy": "Farmácia",
+    "fieldMessage": "Mensagem",
+    "consentCheckboxText": "Concordo com o tratamento dos meus dados de saúde para fins de consulta médica e processamento de pagamento.",
+    "submitting": "A processar…",
+    "submit": "Submeter e pagar",
+    "successTitle": "Pagamento recebido",
+    "successBody": "Obrigado. O seu consentimento Brasil foi registado com sucesso.",
+    "backToHome": "Voltar ao início"
   }
 }

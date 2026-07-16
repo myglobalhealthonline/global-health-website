@@ -3,12 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { GH2AuthShell } from "@/components/sections/GH2PagePrimitives";
+import { GH2AuthShell, type GH2AuthShellI18n } from "@/components/sections/GH2PagePrimitives";
 
 // `auth.resetPassword` locale slice, resolved server-side and passed in (P-001).
 type ResetPasswordStrings = (typeof import("@/locales/en/auth.json"))["resetPassword"];
 
-export function ResetPasswordClient({ t }: { t: ResetPasswordStrings }) {
+export function ResetPasswordClient({ t, shell }: { t: ResetPasswordStrings; shell?: GH2AuthShellI18n }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") ?? "";
@@ -78,6 +78,7 @@ export function ResetPasswordClient({ t }: { t: ResetPasswordStrings }) {
 
   return (
     <GH2AuthShell
+      shell={shell}
       eyebrow={isInvite ? "Clinician onboarding" : "Account recovery"}
       title={isInvite ? "Set access" : "Reset access"}
       accent="securely."

@@ -1,0 +1,252 @@
+{
+  "items": [
+    {
+      "namespace": "auth",
+      "key": "login.metaTitle"
+    },
+    {
+      "namespace": "auth",
+      "key": "login.metaDescription"
+    },
+    {
+      "namespace": "auth",
+      "key": "login.heroEyebrow"
+    },
+    {
+      "namespace": "auth",
+      "key": "login.heroTitle"
+    },
+    {
+      "namespace": "auth",
+      "key": "login.heroAccent"
+    },
+    {
+      "namespace": "auth",
+      "key": "login.heroBody"
+    },
+    {
+      "namespace": "auth",
+      "key": "login.pageHeading"
+    },
+    {
+      "namespace": "auth",
+      "key": "login.pageSubheading"
+    },
+    {
+      "namespace": "auth",
+      "key": "register.metaTitle"
+    },
+    {
+      "namespace": "auth",
+      "key": "register.metaDescription"
+    },
+    {
+      "namespace": "auth",
+      "key": "register.heroEyebrow"
+    },
+    {
+      "namespace": "auth",
+      "key": "register.heroTitle"
+    },
+    {
+      "namespace": "auth",
+      "key": "register.heroAccent"
+    },
+    {
+      "namespace": "auth",
+      "key": "register.heroBody"
+    },
+    {
+      "namespace": "auth",
+      "key": "register.pageHeading"
+    },
+    {
+      "namespace": "auth",
+      "key": "register.pageSubheading"
+    },
+    {
+      "namespace": "auth",
+      "key": "register.consentPrefix"
+    },
+    {
+      "namespace": "auth",
+      "key": "register.termsLink"
+    },
+    {
+      "namespace": "auth",
+      "key": "register.consentAnd"
+    },
+    {
+      "namespace": "auth",
+      "key": "register.privacyLink"
+    },
+    {
+      "namespace": "auth",
+      "key": "register.healthDataNote"
+    },
+    {
+      "namespace": "auth",
+      "key": "forgotPassword.metaTitle"
+    },
+    {
+      "namespace": "auth",
+      "key": "forgotPassword.metaDescription"
+    },
+    {
+      "namespace": "auth",
+      "key": "forgotPassword.heroEyebrow"
+    },
+    {
+      "namespace": "auth",
+      "key": "forgotPassword.heroTitle"
+    },
+    {
+      "namespace": "auth",
+      "key": "forgotPassword.heroAccent"
+    },
+    {
+      "namespace": "auth",
+      "key": "forgotPassword.heroBody"
+    },
+    {
+      "namespace": "auth",
+      "key": "forgotPassword.backToLogin"
+    },
+    {
+      "namespace": "auth",
+      "key": "forgotPassword.pageHeading"
+    },
+    {
+      "namespace": "auth",
+      "key": "forgotPassword.pageSubheading"
+    },
+    {
+      "namespace": "auth",
+      "key": "verifyEmail.heroEyebrow"
+    },
+    {
+      "namespace": "auth",
+      "key": "verifyEmail.heroTitle"
+    },
+    {
+      "namespace": "auth",
+      "key": "verifyEmail.heroAccent"
+    },
+    {
+      "namespace": "auth",
+      "key": "verifyEmail.heroBody"
+    },
+    {
+      "namespace": "home",
+      "key": "blog.noArticles"
+    },
+    {
+      "namespace": "home",
+      "key": "blog.checkBackSoon"
+    },
+    {
+      "namespace": "home",
+      "key": "blog.backToCountrySelection"
+    },
+    {
+      "namespace": "home",
+      "key": "blog.allArticles"
+    },
+    {
+      "namespace": "home",
+      "key": "blog.minRead"
+    },
+    {
+      "namespace": "home",
+      "key": "blog.nextStep"
+    },
+    {
+      "namespace": "home",
+      "key": "blog.readyToSpeak"
+    },
+    {
+      "namespace": "home",
+      "key": "blog.bookConsultationBody"
+    },
+    {
+      "namespace": "home",
+      "key": "blog.bookConsultation"
+    },
+    {
+      "namespace": "home",
+      "key": "blog.clinicallyReviewedBy"
+    },
+    {
+      "namespace": "home",
+      "key": "flow.patientUploadHeading"
+    },
+    {
+      "namespace": "home",
+      "key": "flow.checkoutSuccess.paymentReceivedTitle"
+    },
+    {
+      "namespace": "home",
+      "key": "flow.checkoutSuccess.paymentReceivedBody"
+    },
+    {
+      "namespace": "home",
+      "key": "flow.checkoutSuccess.confirmingPaymentTitle"
+    },
+    {
+      "namespace": "home",
+      "key": "flow.checkoutSuccess.confirmingPaymentBody"
+    },
+    {
+      "namespace": "home",
+      "key": "flow.certificate.headerTitle"
+    },
+    {
+      "namespace": "home",
+      "key": "flow.certificate.headerSubtitle"
+    },
+    {
+      "namespace": "home",
+      "key": "flow.certificate.stepVerify"
+    },
+    {
+      "namespace": "home",
+      "key": "flow.certificate.verifiedTitle"
+    },
+    {
+      "namespace": "home",
+      "key": "flow.certificate.verifiedBody"
+    },
+    {
+      "namespace": "home",
+      "key": "flow.certificate.notFoundTitle"
+    },
+    {
+      "namespace": "home",
+      "key": "flow.certificate.confirmAuthenticityHint"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.headerTitle"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.headerSubtitle"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.stepConsent"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.stepPayment"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.missingLinkError"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.loading"
+    }
+  ]
+}

@@ -83,5 +83,59 @@
     "stat3Caption": "Otevřené termíny z živých kalendářů lékařů.",
     "stat4Label": "Rezervovatelné služby",
     "stat4Caption": "Konzultace, doporučení a domácí testy."
+  },
+  "blog": {
+    "noArticles": "Žádné články dosud nebyly publikovány",
+    "checkBackSoon": "Zkontrolujte to brzy pro lékařské příručky a vysvětlení služeb.",
+    "backToCountrySelection": "Zpět na výběr země",
+    "allArticles": "Všechny články",
+    "minRead": "min čtení",
+    "nextStep": "Další krok",
+    "readyToSpeak": "Jste připraveni mluvit s lékařem?",
+    "bookConsultationBody": "Zarezervujte si online konzultaci s místně registrovaným lékařem ve vaší zemi. Otevřené termíny jsou zobrazeny během rezervace.",
+    "bookConsultation": "Zarezervovat konzultaci",
+    "clinicallyReviewedBy": "Klinicky přezkoumáno"
+  },
+  "flow": {
+    "patientUploadHeading": "Nahrát lékařské dokumenty",
+    "checkoutSuccess": {
+      "paymentReceivedTitle": "Platba přijata",
+      "paymentReceivedBody": "Vaše platba byla úspěšná. Potvrzovací údaje obdržíte e-mailem a na WhatsApp.",
+      "confirmingPaymentTitle": "Potvrzování platby",
+      "confirmingPaymentBody": "Otevíráme vaši stránku potvrzení specifickou pro vaši zemi."
+    },
+    "certificate": {
+      "headerTitle": "Ověření certifikátu",
+      "headerSubtitle": "Ověřte certifikát Global Health",
+      "stepVerify": "Ověřit",
+      "verifiedTitle": "Certifikát ověřen",
+      "verifiedBody": "Tento certifikát je autentický a vydaný společností Global Health.",
+      "notFoundTitle": "Certifikát nebyl nalezen",
+      "confirmAuthenticityHint": "Pro potvrzení autenticity porovnejte ID certifikátu výše s tím, které je vytištěno na vašem dokumentu."
+    }
+  },
+  "brazilConsent": {
+    "headerTitle": "Lékařský souhlas",
+    "headerSubtitle": "Souhlas LGPD a zpracování plateb.",
+    "stepConsent": "Souhlas",
+    "stepPayment": "Platba",
+    "missingLinkError": "Tento odkaz na souhlas chybí nebo je neplatný. Použijte prosím odkaz z vašeho e-mailu.",
+    "loading": "Načítání…",
+    "thankYouTitle": "Děkujeme",
+    "consentRegisteredBody": "Váš souhlas byl zaznamenán. Platba potvrzena.",
+    "eyebrow": "Česká republika · Konzultace",
+    "formTitle": "Lékařský souhlas",
+    "formIntro": "Vyplňte formulář a pokračujte k zpracování platby (29 €).",
+    "fieldName": "Jméno",
+    "fieldEmail": "Email",
+    "fieldPhone": "Telefon",
+    "fieldPharmacy": "Lékárna",
+    "fieldMessage": "Zpráva",
+    "consentCheckboxText": "Souhlasím se zpracováním svých zdravotních údajů pro účely lékařské konzultace a zpracování platby.",
+    "submitting": "Zpracovává se…",
+    "submit": "Odeslat a zaplatit",
+    "successTitle": "Platba přijata",
+    "successBody": "Děkujeme. Váš souhlas byl úspěšně zaznamenán.",
+    "backToHome": "Zpět na domovskou stránku"
   }
 }

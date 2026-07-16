@@ -33,11 +33,23 @@ export function NotificationPopover({
   unreadCount,
   viewAllHref,
   emptyMessage = "You're all caught up.",
+  ariaLabel = "Notifications",
+  heading = "Notifications",
+  unreadSuffix = "unread",
+  unreadNotificationsSr = "{count} unread notifications",
+  viewAllLabel = "View all",
 }: {
   items: NotificationPopoverItem[];
   unreadCount: number;
   viewAllHref: string | null;
   emptyMessage?: string;
+  ariaLabel?: string;
+  heading?: string;
+  /** e.g. "unread" — appended after the count as "{unreadCount} {unreadSuffix}". */
+  unreadSuffix?: string;
+  /** sr-only text; "{count}" is replaced with unreadCount. */
+  unreadNotificationsSr?: string;
+  viewAllLabel?: string;
 }) {
   const recent = items.slice(0, 5);
 
@@ -47,19 +59,19 @@ export function NotificationPopover({
       trigger={
         <button
           type="button"
-          aria-label="Notifications"
+          aria-label={ariaLabel}
           className="gh-notification-button relative inline-flex size-9 items-center justify-center rounded-full transition hover:bg-white/5"
           style={{ color: "var(--portal-chrome-text)" }}
         >
           <Bell className="size-4" aria-hidden />
           {unreadCount > 0 ? <span aria-hidden className="absolute right-[6px] top-[6px] size-[6px] rounded-full bg-[var(--portal-signal)] shadow-[0_0_0_2px_var(--portal-signal-glow)]" /> : null}
-          {unreadCount > 0 ? <span className="sr-only">{unreadCount} unread notifications</span> : null}
+          {unreadCount > 0 ? <span className="sr-only">{unreadNotificationsSr.replace("{count}", String(unreadCount))}</span> : null}
         </button>
       }
     >
       <div className="flex items-center justify-between px-2 pb-2" style={{ borderBottom: "1px solid var(--portal-line)" }}>
-        <span className="text-sm font-bold text-[var(--portal-text)]">Notifications</span>
-        {unreadCount > 0 ? <span className="text-[11px] font-semibold text-[var(--portal-muted)]">{unreadCount} unread</span> : null}
+        <span className="text-sm font-bold text-[var(--portal-text)]">{heading}</span>
+        {unreadCount > 0 ? <span className="text-[11px] font-semibold text-[var(--portal-muted)]">{unreadCount} {unreadSuffix}</span> : null}
       </div>
       {recent.length === 0 ? (
         <p className="px-3 py-6 text-center text-sm text-[var(--portal-muted)]">{emptyMessage}</p>
@@ -87,7 +99,7 @@ export function NotificationPopover({
           })}
         </div>
       )}
-      {viewAllHref ? <Btn href={viewAllHref} variant="soft" size="sm" className="mt-2 w-full justify-center">View all</Btn> : null}
+      {viewAllHref ? <Btn href={viewAllHref} variant="soft" size="sm" className="mt-2 w-full justify-center">{viewAllLabel}</Btn> : null}
     </AppMenu>
   );
 }

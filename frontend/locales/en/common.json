@@ -142,8 +142,8 @@
     "viewDoctors": "View Doctors",
     "trustCard1Title": "Licensed in {country}",
     "trustCard1Subtitle": "Fully verified clinicians",
-    "trustCard2Title": "4.9 patient rating",
-    "trustCard2Subtitle": "From 2,000+ reviews",
+    "trustCard2Title": "Rated by our patients",
+    "trustCard2Subtitle": "See reviews on Doctify",
     "trustCard3Title": "Same-day availability",
     "trustCard3Subtitle": "Appointments today",
     "floatCard1Title": "Available today",
@@ -154,7 +154,8 @@
     "floatCard3Subtitle": "Private, secure & convenient",
     "filters": "Filters",
     "bioFallbackTemplate": "Licensed clinician available for online consultations in {country}.",
-    "verifyRegistrationAria": "Verify registration on the official register"
+    "verifyRegistrationAria": "Verify registration on the official register",
+    "viewProfileAria": "View profile for {name}"
   },
   "cookie": {
     "title": "Cookie preferences",
@@ -215,8 +216,8 @@
       "stat1Subtitle": "All GPs are registered to practise in {country}.",
       "stat2Title": "45,000 consultations in 2025",
       "stat2Subtitle": "Reviewed on Doctify.",
-      "stat3Title": "Trusted by thousands",
-      "stat3Subtitle": "Join thousands of patients across {country}."
+      "stat3Title": "Trusted care",
+      "stat3Subtitle": "Join patients across {country}."
     }
   },
   "specialistPage": {
@@ -243,8 +244,8 @@
       "stat1Subtitle": "All specialists are registered to practise in {country}.",
       "stat2Title": "45,000 consultations in 2025",
       "stat2Subtitle": "Reviewed on Doctify.",
-      "stat3Title": "Trusted by thousands",
-      "stat3Subtitle": "Join thousands of patients across {country}."
+      "stat3Title": "Trusted care",
+      "stat3Subtitle": "Join patients across {country}."
     }
   },
   "consultPage": {
@@ -385,7 +386,7 @@
       "feature3Subtitle": "Our doctors are registered to practise in {country}.",
       "stat1Title": "Home blood test kits",
       "stat1Subtitle": "Clinical-grade kits delivered to your door.",
-      "stat2Title": "Results delivered to you",
+      "stat2Title": "45,000 consultations in 2025",
       "stat2Subtitle": "Your results are sent to you securely and privately.",
       "stat3Title": "Secure and private",
       "stat3Subtitle": "Your health information is handled confidentially."
@@ -748,6 +749,18 @@
     "reviewRateSubtitle": "Share feedback on your consultation experience.",
     "reviewRateStepRatings": "Ratings",
     "reviewRateStepSubmit": "Submit"
+  },
+  "homeMeta": {
+    "titleTemplate": "{country} — registered doctors and specialists",
+    "descriptionTemplate": "Licensed doctors and specialists registered to practise in {country}. View profiles, credentials, specialties and languages."
+  },
+  "pricingPage": {
+    "trustLicensedTitle": "Licensed doctors",
+    "trustLicensedSubtitle": "Registered locally",
+    "trustFlexibleTitle": "Flexible plans",
+    "trustFlexibleSubtitle": "Cancel anytime",
+    "trustSecureTitle": "Secure payments",
+    "trustSecureSubtitle": "Stripe protected"
   },
   "blogPage": {
     "articlesAvailableNow": "Available now",

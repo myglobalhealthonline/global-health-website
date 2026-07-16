@@ -13,6 +13,7 @@ export default async function MedicalFilesPage() {
       description={a.medicalFiles.subtitle}
       downloadAllLabel={a.medicalFiles.downloadAll}
       downloadingAllLabel={a.medicalFiles.downloadingAll}
+      labels={a.medicalFiles}
     />
   );
 }

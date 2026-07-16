@@ -25,7 +25,13 @@
   },
   "portal": {
     "label": "Patientenportal",
-    "sectionLabel": "Konto"
+    "sectionLabel": "Konto",
+    "slogan": "v1.0 · Medizin jederzeit und überall",
+    "notificationsAriaLabel": "Benachrichtigungen",
+    "notificationsHeading": "Benachrichtigungen",
+    "notificationsUnreadSuffix": "ungelesen",
+    "notificationsUnreadSr": "{count} ungelesene Benachrichtigungen",
+    "notificationsViewAll": "Alle anzeigen"
   },
   "dashboard": {
     "welcome": "Willkommen",
@@ -216,7 +222,8 @@
     "noOnlineOrders": "Noch keine Online-Rezeptbestellungen.",
     "browseProducts": "Produkte ansehen →",
     "ordered": "Bestellt am {date}",
-    "open": "Buchung ansehen"
+    "open": "Buchung ansehen",
+    "refillButtonTitle": "Nachfüllungen sind noch nicht mit einem Klick möglich – dies startet eine neue Konsultationsbuchung, damit ein Arzt die Nachfüllung genehmigen kann."
   },
   "medicalFiles": {
     "breadcrumb": "Patientenportal",
@@ -253,7 +260,16 @@
     "sumCertificates": "Bescheinigungen",
     "sumCertificatesHint": "Abwesenheits- und individuelle Bescheinigungen",
     "sumDoctorDocuments": "Arztdokumente",
-    "sumDoctorDocumentsHint": "Von Ihrem Arzt geteilt"
+    "sumDoctorDocumentsHint": "Von Ihrem Arzt geteilt",
+    "emptyUploadedTitle": "Noch keine Dokumente hochgeladen",
+    "emptyUploadedBody": "Dokumente, die Sie für die Überprüfung durch Ihren Arzt hochladen, erscheinen hier und synchronisieren sich mit dem Portal Ihres Arztes.",
+    "emptyExamTitle": "Noch keine Prüfungsrezepte",
+    "emptyExamBody": "Prüfungsrezepte, die Ihr Arzt ausstellt – und die Ergebnisse, die Sie dagegen hochladen – erscheinen hier.",
+    "emptyCertificatesTitle": "Noch keine Zertifikate",
+    "emptyCertificatesBody": "Abwesenheits- und individuelle Zertifikate, die Ihr Arzt ausstellt, erscheinen hier, sobald sie gesendet werden.",
+    "emptyDoctorDocsTitle": "Noch keine Arztunterlagen",
+    "emptyDoctorDocsBody": "Dateien und Ergebnisse, die Ihr Arzt mit Ihnen teilt, erscheinen hier.",
+    "examResultTag": "Prüfungsergebnis"
   },
   "payments": {
     "breadcrumb": "Konto",
@@ -303,7 +319,7 @@
     "emailLabel": "E-Mail",
     "emailNote": "Die E-Mail kann derzeit nicht geändert werden. Kontaktiere den Support, wenn du sie ändern musst.",
     "fullNameLabel": "Vollständiger Name",
-    "fieldRequired": "This field is required.",
+    "fieldRequired": "Dieses Feld ist erforderlich.",
     "phoneLabel": "Telefon",
     "phonePlaceholder": "+49 1…",
     "phoneNote": "Damit die Klinik dich wegen deiner Buchung erreichen kann. Lass es leer, wenn du nur E-Mail bevorzugst.",
@@ -415,12 +431,12 @@
     "deleteAccountTitle": "Konto löschen?",
     "cancel": "Abbrechen",
     "deleteAccount": "Löschung planen",
-    "deletionScheduledBanner": "Your account is scheduled for deletion on {date}.",
-    "cancelDeletion": "Cancel deletion",
-    "cancellingDeletion": "Cancelling…",
-    "signOutAllDevices": "Sign out of all devices",
-    "signOutAllDevicesBody": "This ends every signed-in session, including this one — you'll need to log in again.",
-    "signingOutAll": "Signing out…",
+    "deletionScheduledBanner": "Ihr Konto ist für die Löschung am {date} geplant.",
+    "cancelDeletion": "Löschung abbrechen",
+    "cancellingDeletion": "Wird abgebrochen…",
+    "signOutAllDevices": "Von allen Geräten abmelden",
+    "signOutAllDevicesBody": "Dies beendet jede angemeldete Sitzung, einschließlich dieser — Sie müssen sich erneut anmelden.",
+    "signingOutAll": "Abmelden…",
     "sumEmailHint": "Konto-E-Mail",
     "needsVerification": "Verifizierung erforderlich",
     "sumDataExport": "Datenexport",
@@ -446,7 +462,7 @@
     "empty": "Sie haben noch keine Familienmitglieder hinzugefügt.",
     "addHeading": "Familienmitglied hinzufügen",
     "fullName": "Vollständiger Name",
-    "fieldRequired": "This field is required.",
+    "fieldRequired": "Dieses Feld ist erforderlich.",
     "fullNamePlaceholder": "z. B. Maria Santos",
     "relationship": "Beziehung",
     "relationshipPlaceholder": "z. B. Ehepartner, Kind, Elternteil",
@@ -569,7 +585,7 @@
     "subtitle": "Registriere bis zu zwei Staatsangehörigkeiten. Dokumentnummern werden verschlüsselt gespeichert.",
     "slotTitle": "Staatsangehörigkeit {n}",
     "country": "Land",
-    "fieldRequired": "This field is required.",
+    "fieldRequired": "Dieses Feld ist erforderlich.",
     "countryPlaceholder": "z. B. Irland, Pakistan",
     "documentType": "Dokumenttyp",
     "documentNumber": "Dokumentnummer",
@@ -641,7 +657,16 @@
     "sumNextBillingHint": "Verlängerungsdatum",
     "sumPrice": "Preis",
     "sumPriceHint": "Monatliches Abonnement",
-    "tabsAria": "Bereiche für Mitgliedschaft und Prämien"
+    "tabsAria": "Bereiche für Mitgliedschaft und Prämien",
+    "sumWellnessBalance": "Wellness-Balance",
+    "sumWellnessBalanceHint": "Verfügbare Guthaben",
+    "sumRewardKits": "Belohnungskits",
+    "sumRewardKitsHint": "Verfügbar zur Überprüfung",
+    "sumEligibleNow": "Jetzt berechtigt",
+    "sumEligibleNowHint": "Bereit zur Einlösung",
+    "sumMembership": "Mitgliedschaft",
+    "currentPlanHint": "Aktueller Plan",
+    "noRewardsTitle": "Keine Belohnungen verfügbar"
   },
   "calendar": {
     "eyebrow": "Mein Zeitplan",
@@ -656,7 +681,8 @@
     "sumMarkets": "Märkte",
     "sumMarketsHint": "Vertretene Länder",
     "emptyDay": "Keine Beratungen an diesem Tag.",
-    "emptyDayHint": "Wähle einen anderen Tag, um deine Beratungen anzuzeigen."
+    "emptyDayHint": "Wähle einen anderen Tag, um deine Beratungen anzuzeigen.",
+    "dayAgenda": "Tagesagenda"
   },
   "messages": {
     "eyebrow": "Nachrichten",
@@ -732,5 +758,14 @@
     "resourceIdDoc": "dein Ausweisdokument",
     "resourceNationalityDoc": "dein Staatsangehörigkeitsdokument",
     "resourceInsuranceDoc": "dein Versicherungsdokument"
+  },
+  "rewards": {
+    "fullName": "Vollständiger Name",
+    "addressLine1": "Adresszeile 1",
+    "addressLine2Optional": "Adresszeile 2 (optional)",
+    "city": "Stadt",
+    "postalCode": "Postleitzahl",
+    "country": "Land",
+    "cancelRedemption": "Einlösung abbrechen"
   }
 }

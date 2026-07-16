@@ -23,6 +23,11 @@ type RegisterI18n = {
   termsNotice: string;
   creating: string;
   createAccount: string;
+  consentPrefix: string;
+  termsLink: string;
+  consentAnd: string;
+  privacyLink: string;
+  healthDataNote: string;
 };
 
 const DEFAULT_I18N: RegisterI18n = {
@@ -42,6 +47,11 @@ const DEFAULT_I18N: RegisterI18n = {
   termsNotice: "By creating an account, you agree to use this platform for patient booking and consultation management.",
   creating: "Creating account...",
   createAccount: "Create account",
+  consentPrefix: "By continuing, you agree to our",
+  termsLink: "Terms",
+  consentAnd: "and",
+  privacyLink: "Privacy Policy",
+  healthDataNote: "Your health data stays private.",
 };
 
 export function RegisterFormFallback({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
@@ -191,11 +201,11 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
           style={{ accentColor: "var(--color-brand-accent)" }}
         />
         <span>
-          By continuing, you agree to our{" "}
-          <Link href="/terms" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-accent)" }}>Terms</Link>
-          {" "}and{" "}
-          <Link href="/privacy" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-accent)" }}>Privacy Policy</Link>.
-          Your health data stays private.
+          {i18n.consentPrefix}{" "}
+          <Link href="/terms" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-accent)" }}>{i18n.termsLink}</Link>
+          {" "}{i18n.consentAnd}{" "}
+          <Link href="/privacy" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-accent)" }}>{i18n.privacyLink}</Link>.
+          {" "}{i18n.healthDataNote}
         </span>
       </label>
 

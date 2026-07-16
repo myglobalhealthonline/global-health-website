@@ -142,8 +142,8 @@
     "viewDoctors": "Vezi medicii",
     "trustCard1Title": "Licențiat în {country}",
     "trustCard1Subtitle": "Medici complet verificați",
-    "trustCard2Title": "Rating de 4,9",
-    "trustCard2Subtitle": "Din peste 2.000 de recenzii",
+    "trustCard2Title": "Apreciat de pacienții noștri",
+    "trustCard2Subtitle": "Vezi recenziile pe Doctify",
     "trustCard3Title": "Disponibilitate în aceeași zi",
     "trustCard3Subtitle": "Programări azi",
     "floatCard1Title": "Disponibil azi",
@@ -154,7 +154,8 @@
     "floatCard3Subtitle": "Privată, sigură și convenabilă",
     "filters": "Filtre",
     "bioFallbackTemplate": "Medic licențiat disponibil pentru consultații online în {country}.",
-    "verifyRegistrationAria": "Verificați înregistrarea în registrul oficial"
+    "verifyRegistrationAria": "Verificați înregistrarea în registrul oficial",
+    "viewProfileAria": "Vizualizați profilul pentru {name}"
   },
   "cookie": {
     "title": "Preferințe cookie",
@@ -215,8 +216,8 @@
       "stat1Subtitle": "Toți medicii de familie sunt înregistrați pentru a profesa în {country}.",
       "stat2Title": "45.000 de consultații în 2025",
       "stat2Subtitle": "Evaluat pe Doctify.",
-      "stat3Title": "Apreciați de mii de oameni",
-      "stat3Subtitle": "Alătură-te miilor de pacienți din {country}."
+      "stat3Title": "Îngrijire de încredere",
+      "stat3Subtitle": "Alătură-te pacienților din {country}."
     }
   },
   "specialistPage": {
@@ -243,8 +244,8 @@
       "stat1Subtitle": "Toți specialiștii sunt înregistrați pentru a profesa în {country}.",
       "stat2Title": "45.000 de consultații în 2025",
       "stat2Subtitle": "Evaluat pe Doctify.",
-      "stat3Title": "Apreciați de mii de oameni",
-      "stat3Subtitle": "Alătură-te miilor de pacienți din {country}."
+      "stat3Title": "Îngrijire de încredere",
+      "stat3Subtitle": "Alătură-te pacienților din {country}."
     }
   },
   "consultPage": {
@@ -332,12 +333,12 @@
     "acceptConsent": "Trebuie să accepți consimțământul pentru a continua.",
     "acceptClinicConsent": "Trebuie să consimți la partajarea datelor cu clinica tratantă.",
     "acceptPlatformConsent": "Trebuie să consimți la prelucrarea datelor de către platformă.",
-    "whoIsThisFor": "Who is this booking for?",
-    "forMe": "Myself",
-    "forFamilyMember": "A family member",
-    "manageFamily": "Manage family members",
-    "familyBenefitNote": "Your plan benefit will apply if this service and member are eligible.",
-    "familyBenefitUnavailable": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member.",
+    "whoIsThisFor": "Pentru cine este această rezervare?",
+    "forMe": "Pentru mine",
+    "forFamilyMember": "Un membru al familiei",
+    "manageFamily": "Gestionați membrii familiei",
+    "familyBenefitNote": "Beneficiul planului dumneavoastră se va aplica dacă acest serviciu și membrul sunt eligibili.",
+    "familyBenefitUnavailable": "Rezervarea pentru altcineva este disponibilă, dar utilizarea creditelor sau a discounturilor medicului de familie din planul dumneavoastră pentru un membru al familiei necesită un plan activat pentru familie cu un membru aprobat.",
     "selectedTime": "Ora selectată",
     "changeTime": "Schimbă ora",
     "saveAddressToProfile": "Salvează această adresă în profilul meu",
@@ -385,7 +386,7 @@
       "feature3Subtitle": "Medicii noștri sunt înregistrați pentru a profesa în {country}.",
       "stat1Title": "Rezultate verificate de medici",
       "stat1Subtitle": "Fiecare rezultat este verificat de un medic înregistrat.",
-      "stat2Title": "Procesare rapidă",
+      "stat2Title": "45.000 de consultații în 2025",
       "stat2Subtitle": "Majoritatea rezultatelor sunt disponibile în 24–48 de ore.",
       "stat3Title": "Sigur și privat",
       "stat3Subtitle": "Informațiile tale de sănătate sunt tratate confidențial."
@@ -575,12 +576,12 @@
     "increaseQuantity": "Mărește cantitatea",
     "removeAria": "Elimină {name}",
     "remove": "Elimină",
-    "benefitLabel": "Plan benefit",
-    "payNormally": "Pay normally",
-    "usePlanCredit": "Use a credit",
-    "usePlanDiscount": "Use discount",
-    "benefitFor": "For {name}",
-    "notEnoughCreditsHint": "No credits left — this consultation will be charged at full price."
+    "benefitLabel": "Beneficiul planului",
+    "payNormally": "Plătiți normal",
+    "usePlanCredit": "Utilizați un credit",
+    "usePlanDiscount": "Utilizați discount",
+    "benefitFor": "Pentru {name}",
+    "notEnoughCreditsHint": "Nu mai sunt credite — această consultație va fi taxată la prețul întreg."
   },
   "checkoutPage": {
     "title": "Finalizare comandă",
@@ -621,7 +622,7 @@
     "successBody": "Comanda ta este confirmată. O chitanță ți-a fost trimisă pe e-mail.",
     "processingTitle": "Confirmăm plata dumneavoastră…",
     "processingBody": "Plata dumneavoastră se confirmă. De obicei durează doar câteva momente — această pagină se va actualiza automat.",
-    "orderRef": "ORDER #{id}",
+    "orderRef": "COMANDA #{id}",
     "shipping": "Livrare",
     "totalPaid": "Total plătit",
     "receiptError": "Nu am putut încărca chitanța în acest moment. Plata ta este confirmată; verifică-ți e-mailul pentru detaliile comenzii.",
@@ -748,6 +749,18 @@
     "reviewRateSubtitle": "Oferiți feedback despre experiența dvs. de consultație.",
     "reviewRateStepRatings": "Evaluări",
     "reviewRateStepSubmit": "Trimitere"
+  },
+  "homeMeta": {
+    "titleTemplate": "{country} — medici și specialiști autorizați",
+    "descriptionTemplate": "Medici și specialiști autorizați înregistrați pentru a practica în {country}. Vizualizați profilurile, acreditivele, specializările și limbile."
+  },
+  "pricingPage": {
+    "trustLicensedTitle": "Medici autorizați",
+    "trustLicensedSubtitle": "Înregistrați local",
+    "trustFlexibleTitle": "Planuri flexibile",
+    "trustFlexibleSubtitle": "Anulați oricând",
+    "trustSecureTitle": "Plăți securizate",
+    "trustSecureSubtitle": "Protejat de Stripe"
   },
   "blogPage": {
     "articlesAvailableNow": "Disponibil acum",

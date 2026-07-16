@@ -1,0 +1,36 @@
+{
+  "items": [
+    {
+      "namespace": "auth",
+      "key": "shell.privacyProtected"
+    },
+    {
+      "namespace": "auth",
+      "key": "shell.encryptedSessions"
+    },
+    {
+      "namespace": "auth",
+      "key": "shell.responseSupport"
+    },
+    {
+      "namespace": "auth",
+      "key": "shell.networkLabel"
+    },
+    {
+      "namespace": "auth",
+      "key": "shell.secureAccess"
+    },
+    {
+      "namespace": "auth",
+      "key": "shell.backToHome"
+    },
+    {
+      "namespace": "auth",
+      "key": "shell.tabSignIn"
+    },
+    {
+      "namespace": "auth",
+      "key": "shell.tabCreateAccount"
+    }
+  ]
+}

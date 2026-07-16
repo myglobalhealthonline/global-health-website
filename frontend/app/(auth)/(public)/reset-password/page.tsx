@@ -10,10 +10,10 @@ import { ResetPasswordClient } from "./_components/ResetPasswordClient";
 export default async function ResetPasswordPage() {
   const cookieStore = await cookies();
   const locale = resolveLocale({ cookieLocale: cookieStore.get("gh_locale")?.value ?? null });
-  const t = loadLocaleBundle(locale).auth.resetPassword;
+  const { auth } = loadLocaleBundle(locale);
   return (
     <Suspense>
-      <ResetPasswordClient t={t} />
+      <ResetPasswordClient t={auth.resetPassword} shell={auth.shell} />
     </Suspense>
   );
 }

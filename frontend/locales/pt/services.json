@@ -16,6 +16,8 @@
       "specialist": "Ver especialista",
       "prescription": "Prescrições",
       "test": "Testes laboratoriais"
-    }
+    },
+    "learnMore": "Saiba mais",
+    "learnMoreAria": "Saiba mais: {title}"
   }
 }

@@ -1,7 +1,13 @@
 {
   "portal": {
     "label": "Portal del médico",
-    "sectionLabel": "Médico"
+    "sectionLabel": "Médico",
+    "slogan": "v1.0 · medicina en cualquier momento y lugar",
+    "notificationsAriaLabel": "Notificaciones",
+    "notificationsHeading": "Notificaciones",
+    "notificationsUnreadSuffix": "no leídas",
+    "notificationsUnreadSr": "{count} notificaciones no leídas",
+    "notificationsViewAll": "Ver todas"
   },
   "nav": {
     "groupOverview": "Resumen",
@@ -97,7 +103,8 @@
     "forms": "Formularios",
     "formsHint": "Admisión / preconsulta / seguimiento",
     "invoices": "Facturas",
-    "invoicesHint": "Estado de pago + historial"
+    "invoicesHint": "Estado de pago + historial",
+    "loadingAriaLabel": "Cargando el panel del doctor"
   },
   "appointments": {
     "eyebrow": "Cola de consultas",
@@ -482,7 +489,9 @@
     "networkErrorRetry": "Error de red — inténtelo de nuevo",
     "noActiveCountry": "No hay ningún país activo disponible",
     "savePayoutFailed": "No se pudieron guardar los datos de pago",
-    "payoutSaved": "Datos de pago guardados"
+    "payoutSaved": "Datos de pago guardados",
+    "adjustImage": "Ajustar imagen",
+    "adjustPhoto": "Ajustar foto"
   },
   "invoices": {
     "eyebrow": "Visibilidad de facturación",
@@ -862,7 +871,8 @@
     "noPhoneWarning": "sin teléfono registrado",
     "whatsappWarning": "WhatsApp",
     "couldNotFinalize": "No se pudo finalizar la receta.",
-    "finalizedSuccess": "Receta médica finalizada y movida al historial."
+    "finalizedSuccess": "Receta médica finalizada y movida al historial.",
+    "moreActions": "Más acciones de documentos"
   },
   "appointmentDocumentsTab": {
     "summary": "PDFs generados y archivos subidos para esta cita ({count} en total).",

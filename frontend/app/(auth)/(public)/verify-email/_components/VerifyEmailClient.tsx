@@ -4,13 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
-import { GH2AuthShell } from "@/components/sections/GH2PagePrimitives";
+import { GH2AuthShell, type GH2AuthShellI18n } from "@/components/sections/GH2PagePrimitives";
 
 // `auth.verifyEmail` locale slice, resolved server-side and passed in (P-001).
 type VerifyEmailStrings = (typeof import("@/locales/en/auth.json"))["verifyEmail"];
 type Status = "pending" | "verifying" | "ok" | "error";
 
-export function VerifyEmailClient({ t }: { t: VerifyEmailStrings }) {
+export function VerifyEmailClient({ t, shell }: { t: VerifyEmailStrings; shell?: GH2AuthShellI18n }) {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const [status, setStatus] = useState<Status>(token ? "verifying" : "pending");
@@ -50,10 +50,11 @@ export function VerifyEmailClient({ t }: { t: VerifyEmailStrings }) {
 
   return (
     <GH2AuthShell
-      eyebrow="Email verification"
-      title="Confirm your"
-      accent="account."
-      body="Verification keeps patient records and booking updates tied to the right email address."
+      shell={shell}
+      eyebrow={t.heroEyebrow}
+      title={t.heroTitle}
+      accent={t.heroAccent}
+      body={t.heroBody}
     >
       <div aria-live="polite">
         {status === "pending" ? (

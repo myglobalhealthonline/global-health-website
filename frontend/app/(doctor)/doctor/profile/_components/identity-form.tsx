@@ -343,7 +343,7 @@ export function DoctorIdentityForm({
                   disabled={photoPending}
                   className="gh-btn gh-btn-soft w-full"
                 >
-                  <Crop className="size-3.5" /> Adjust image
+                  <Crop className="size-3.5" /> {strings.adjustImage}
                 </button>
               ) : null}
               {photoPath ? (
@@ -408,7 +408,7 @@ export function DoctorIdentityForm({
         <PortalDialog
           open={focalEditorOpen}
           onClose={() => setFocalEditorOpen(false)}
-          title="Adjust photo"
+          title={strings.adjustPhoto}
           width="lg"
           footer={
             <div className="flex justify-end gap-2">

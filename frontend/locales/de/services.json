@@ -16,6 +16,8 @@
       "specialist": "Zum Facharzt",
       "prescription": "Rezepte",
       "test": "Labortests"
-    }
+    },
+    "learnMore": "Erfahren Sie mehr",
+    "learnMoreAria": "Erfahren Sie mehr: {title}"
   }
 }

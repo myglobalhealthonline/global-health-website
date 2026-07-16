@@ -10,10 +10,10 @@ import { VerifyEmailClient } from "./_components/VerifyEmailClient";
 export default async function VerifyEmailPage() {
   const cookieStore = await cookies();
   const locale = resolveLocale({ cookieLocale: cookieStore.get("gh_locale")?.value ?? null });
-  const t = loadLocaleBundle(locale).auth.verifyEmail;
+  const { auth } = loadLocaleBundle(locale);
   return (
     <Suspense>
-      <VerifyEmailClient t={t} />
+      <VerifyEmailClient t={auth.verifyEmail} shell={auth.shell} />
     </Suspense>
   );
 }

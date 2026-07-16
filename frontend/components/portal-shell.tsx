@@ -76,6 +76,14 @@ export type PortalShellChrome = {
   closeMenu: string;
   allCaughtUp: string;
   skipToContent: string;
+  /** Sidebar footer tagline. Optional — falls back to the English default
+   *  for callers (corporate portal) that don't localize it. */
+  slogan?: string;
+  notificationsAriaLabel?: string;
+  notificationsHeading?: string;
+  notificationsUnreadSuffix?: string;
+  notificationsUnreadSr?: string;
+  notificationsViewAll?: string;
 };
 
 const DEFAULT_CHROME: PortalShellChrome = {
@@ -87,6 +95,12 @@ const DEFAULT_CHROME: PortalShellChrome = {
   closeMenu: "Close menu",
   allCaughtUp: "You're all caught up.",
   skipToContent: "Skip to main content",
+  slogan: "v1.0 · medicine anytime anywhere",
+  notificationsAriaLabel: "Notifications",
+  notificationsHeading: "Notifications",
+  notificationsUnreadSuffix: "unread",
+  notificationsUnreadSr: "{count} unread notifications",
+  notificationsViewAll: "View all",
 };
 
 /** Live unread-notifications count, shared between the shell's own bell/nav
@@ -200,7 +214,7 @@ export function PortalShell({
   chrome?: PortalShellChrome;
   children: ReactNode;
 }) {
-  const c = chrome ?? DEFAULT_CHROME;
+  const c = { ...DEFAULT_CHROME, ...chrome };
   const [navOpen, setNavOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   // Seeded once from the server-rendered prop (source of truth on first
@@ -315,7 +329,7 @@ export function PortalShell({
           <div
             className="gh-portal-sidebar-footer px-5 py-4 text-[12px] font-bold uppercase tracking-[0.06em]"
           >
-            v1.0 · medicine anytime anywhere
+            {c.slogan}
           </div>
         </aside>
 
@@ -408,6 +422,11 @@ export function PortalShell({
                   unreadCount={unreadCount}
                   viewAllHref={notificationsViewAllHref ?? null}
                   emptyMessage={notificationsEmptyMessage ?? c.allCaughtUp}
+                  ariaLabel={c.notificationsAriaLabel}
+                  heading={c.notificationsHeading}
+                  unreadSuffix={c.notificationsUnreadSuffix}
+                  unreadNotificationsSr={c.notificationsUnreadSr}
+                  viewAllLabel={c.notificationsViewAll}
                 />
 
                 <span

@@ -1,8 +1,13 @@
 import { CommandBandSkeleton, StatGridSkeleton } from "@/components/portal-skeletons";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
-export default function DoctorDashboardLoading() {
+export default async function DoctorDashboardLoading() {
+  const locale = await getPageLocale();
+  const { doctor: d } = loadLocaleBundle(locale);
+
   return (
-    <div className="grid gap-4" aria-label="Loading doctor dashboard">
+    <div className="grid gap-4" aria-label={d.dashboard.loadingAriaLabel}>
       <CommandBandSkeleton metrics={3} />
       <StatGridSkeleton items={3} />
       <div className="gh-doctor-overview-grid grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">

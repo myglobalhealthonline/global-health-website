@@ -135,7 +135,7 @@ export default async function AccountPrescriptionsPage() {
                           variant="primary"
                           size="sm"
                           iconLeft={<RefreshCw className="size-3.5" />}
-                          title="Refills aren't one-click yet — this starts a new consultation booking so a doctor can approve the refill."
+                          title={a.prescriptions.refillButtonTitle}
                         >
                           {a.prescriptions.refillButton}
                         </Btn>

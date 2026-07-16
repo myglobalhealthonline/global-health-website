@@ -1,0 +1,68 @@
+{
+  "items": [
+    {
+      "namespace": "home",
+      "key": "brazilConsent.thankYouTitle"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.consentRegisteredBody"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.eyebrow"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.formTitle"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.formIntro"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.fieldName"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.fieldEmail"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.fieldPhone"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.fieldPharmacy"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.fieldMessage"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.consentCheckboxText"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.submitting"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.submit"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.successTitle"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.successBody"
+    },
+    {
+      "namespace": "home",
+      "key": "brazilConsent.backToHome"
+    }
+  ]
+}

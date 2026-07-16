@@ -1,7 +1,13 @@
 {
   "portal": {
     "label": "Lékařský portál",
-    "sectionLabel": "Lékař"
+    "sectionLabel": "Lékař",
+    "slogan": "v1.0 · medicína kdykoliv a kdekoliv",
+    "notificationsAriaLabel": "Oznámení",
+    "notificationsHeading": "Oznámení",
+    "notificationsUnreadSuffix": "nepřečtené",
+    "notificationsUnreadSr": "{count} nepřečtená oznámení",
+    "notificationsViewAll": "Zobrazit vše"
   },
   "nav": {
     "groupOverview": "Přehled",
@@ -97,7 +103,8 @@
     "forms": "Formuláře",
     "formsHint": "Vstupní / předkonzultační / kontrolní",
     "invoices": "Faktury",
-    "invoicesHint": "Stav platby + historie"
+    "invoicesHint": "Stav platby + historie",
+    "loadingAriaLabel": "Načítání lékařského panelu"
   },
   "appointments": {
     "eyebrow": "Fronta konzultací",
@@ -482,7 +489,9 @@
     "networkErrorRetry": "Chyba sítě — zkuste to znovu",
     "noActiveCountry": "Není k dispozici žádná aktivní země",
     "savePayoutFailed": "Údaje o výplatě se nepodařilo uložit",
-    "payoutSaved": "Údaje o výplatě uloženy"
+    "payoutSaved": "Údaje o výplatě uloženy",
+    "adjustImage": "Upravit obrázek",
+    "adjustPhoto": "Upravit fotografii"
   },
   "invoices": {
     "eyebrow": "Přehled fakturace",
@@ -862,7 +871,8 @@
     "noPhoneWarning": "v evidenci není žádné telefonní číslo",
     "whatsappWarning": "WhatsApp",
     "couldNotFinalize": "Předpis se nepodařilo dokončit.",
-    "finalizedSuccess": "Lékařský předpis dokončen a přesunut do historie."
+    "finalizedSuccess": "Lékařský předpis dokončen a přesunut do historie.",
+    "moreActions": "Další akce s dokumenty"
   },
   "appointmentDocumentsTab": {
     "summary": "Vygenerovaná PDF a nahrané soubory pro tento termín (celkem {count}).",

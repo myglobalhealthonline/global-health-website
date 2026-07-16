@@ -167,7 +167,15 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
       notificationsEmptyMessage={d.notifications.emptyMessage}
       locale={locale}
       availableLocales={[...supportedLocaleCodes]}
-      chrome={common.portalChrome}
+      chrome={{
+        ...common.portalChrome,
+        slogan: d.portal.slogan,
+        notificationsAriaLabel: d.portal.notificationsAriaLabel,
+        notificationsHeading: d.portal.notificationsHeading,
+        notificationsUnreadSuffix: d.portal.notificationsUnreadSuffix,
+        notificationsUnreadSr: d.portal.notificationsUnreadSr,
+        notificationsViewAll: d.portal.notificationsViewAll,
+      }}
       banner={
         compliance.ok &&
         (!compliance.data.confidentialityAccepted || !compliance.data.twoFactorEnabled) ? (

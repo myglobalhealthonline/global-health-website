@@ -10,39 +10,39 @@
   ],
   "counts": {
     "critical": 0,
-    "warning": 394,
+    "warning": 241,
     "info": 1
   },
   "stats": {
     "pt": {
       "missing": 0,
       "empty": 0,
-      "identical": 56,
-      "total": 3102
+      "identical": 31,
+      "total": 3242
     },
     "es": {
       "missing": 0,
       "empty": 0,
-      "identical": 59,
-      "total": 3102
+      "identical": 34,
+      "total": 3242
     },
     "cs": {
       "missing": 0,
       "empty": 0,
-      "identical": 41,
-      "total": 3102
+      "identical": 16,
+      "total": 3242
     },
     "ro": {
       "missing": 0,
       "empty": 0,
-      "identical": 87,
-      "total": 3102
+      "identical": 62,
+      "total": 3242
     },
     "de": {
       "missing": 0,
       "empty": 0,
-      "identical": 70,
-      "total": 3102
+      "identical": 46,
+      "total": 3242
     }
   },
   "wiringChecks": [
@@ -146,15 +146,6 @@
       "type": "identical-to-english",
       "file": "frontend/locales/pt/account.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "profile.fieldRequired",
-      "locale": "pt",
-      "english": "This field is required."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "profile.nationalIdHint",
       "locale": "pt",
       "english": "NIC / DNI / RG / CC"
@@ -176,78 +167,6 @@
       "key": "profile.statusPatientIdHint",
       "locale": "pt",
       "english": "Global Health Number"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.deletionScheduledBanner",
-      "locale": "pt",
-      "english": "Your account is scheduled for deletion on {date}."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.cancelDeletion",
-      "locale": "pt",
-      "english": "Cancel deletion"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.cancellingDeletion",
-      "locale": "pt",
-      "english": "Cancelling…"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.signOutAllDevices",
-      "locale": "pt",
-      "english": "Sign out of all devices"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.signOutAllDevicesBody",
-      "locale": "pt",
-      "english": "This ends every signed-in session, including this one — you'll need to log in again."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.signingOutAll",
-      "locale": "pt",
-      "english": "Signing out…"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "family.fieldRequired",
-      "locale": "pt",
-      "english": "This field is required."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "nationality.fieldRequired",
-      "locale": "pt",
-      "english": "This field is required."
     },
     {
       "severity": "warning",
@@ -284,60 +203,6 @@
       "key": "entryGate.motto",
       "locale": "pt",
       "english": "Medicine Anytime Anywhere"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.whoIsThisFor",
-      "locale": "pt",
-      "english": "Who is this booking for?"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.forMe",
-      "locale": "pt",
-      "english": "Myself"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.forFamilyMember",
-      "locale": "pt",
-      "english": "A family member"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.manageFamily",
-      "locale": "pt",
-      "english": "Manage family members"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.familyBenefitNote",
-      "locale": "pt",
-      "english": "Your plan benefit will apply if this service and member are eligible."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.familyBenefitUnavailable",
-      "locale": "pt",
-      "english": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member."
     },
     {
       "severity": "warning",
@@ -407,60 +272,6 @@
       "type": "identical-to-english",
       "file": "frontend/locales/pt/common.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.benefitLabel",
-      "locale": "pt",
-      "english": "Plan benefit"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.payNormally",
-      "locale": "pt",
-      "english": "Pay normally"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.usePlanCredit",
-      "locale": "pt",
-      "english": "Use a credit"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.usePlanDiscount",
-      "locale": "pt",
-      "english": "Use discount"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.benefitFor",
-      "locale": "pt",
-      "english": "For {name}"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.notEnoughCreditsHint",
-      "locale": "pt",
-      "english": "No credits left — this consultation will be charged at full price."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "checkoutPage.subtotal",
       "locale": "pt",
       "english": "Subtotal"
@@ -473,15 +284,6 @@
       "key": "checkoutPage.total",
       "locale": "pt",
       "english": "Total"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "checkoutStatus.orderRef",
-      "locale": "pt",
-      "english": "ORDER #{id}"
     },
     {
       "severity": "warning",
@@ -576,33 +378,6 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
-      "file": "frontend/locales/pt/subscription.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "coverage.locked",
-      "locale": "pt",
-      "english": "Not yet unlocked"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/subscription.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "coverage.familyUnavailable",
-      "locale": "pt",
-      "english": "Family usage not available"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/pt/subscription.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "coverage.notEnoughCredits",
-      "locale": "pt",
-      "english": "Not enough credits"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
       "file": "frontend/locales/es/account.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "dashboard.totalLabel",
@@ -650,15 +425,6 @@
       "type": "identical-to-english",
       "file": "frontend/locales/es/account.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "profile.fieldRequired",
-      "locale": "es",
-      "english": "This field is required."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "profile.nationalIdHint",
       "locale": "es",
       "english": "NIC / DNI / RG / CC"
@@ -695,78 +461,6 @@
       "type": "identical-to-english",
       "file": "frontend/locales/es/account.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.deletionScheduledBanner",
-      "locale": "es",
-      "english": "Your account is scheduled for deletion on {date}."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.cancelDeletion",
-      "locale": "es",
-      "english": "Cancel deletion"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.cancellingDeletion",
-      "locale": "es",
-      "english": "Cancelling…"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.signOutAllDevices",
-      "locale": "es",
-      "english": "Sign out of all devices"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.signOutAllDevicesBody",
-      "locale": "es",
-      "english": "This ends every signed-in session, including this one — you'll need to log in again."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.signingOutAll",
-      "locale": "es",
-      "english": "Signing out…"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "family.fieldRequired",
-      "locale": "es",
-      "english": "This field is required."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "nationality.fieldRequired",
-      "locale": "es",
-      "english": "This field is required."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "notificationsPage.total",
       "locale": "es",
       "english": "Total"
@@ -797,60 +491,6 @@
       "key": "entryGate.motto",
       "locale": "es",
       "english": "Medicine Anytime Anywhere"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.whoIsThisFor",
-      "locale": "es",
-      "english": "Who is this booking for?"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.forMe",
-      "locale": "es",
-      "english": "Myself"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.forFamilyMember",
-      "locale": "es",
-      "english": "A family member"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.manageFamily",
-      "locale": "es",
-      "english": "Manage family members"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.familyBenefitNote",
-      "locale": "es",
-      "english": "Your plan benefit will apply if this service and member are eligible."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.familyBenefitUnavailable",
-      "locale": "es",
-      "english": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member."
     },
     {
       "severity": "warning",
@@ -911,60 +551,6 @@
       "type": "identical-to-english",
       "file": "frontend/locales/es/common.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.benefitLabel",
-      "locale": "es",
-      "english": "Plan benefit"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.payNormally",
-      "locale": "es",
-      "english": "Pay normally"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.usePlanCredit",
-      "locale": "es",
-      "english": "Use a credit"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.usePlanDiscount",
-      "locale": "es",
-      "english": "Use discount"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.benefitFor",
-      "locale": "es",
-      "english": "For {name}"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.notEnoughCreditsHint",
-      "locale": "es",
-      "english": "No credits left — this consultation will be charged at full price."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "checkoutPage.subtotal",
       "locale": "es",
       "english": "Subtotal"
@@ -977,15 +563,6 @@
       "key": "checkoutPage.total",
       "locale": "es",
       "english": "Total"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "checkoutStatus.orderRef",
-      "locale": "es",
-      "english": "ORDER #{id}"
     },
     {
       "severity": "warning",
@@ -1107,42 +684,6 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
-      "file": "frontend/locales/es/subscription.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "coverage.locked",
-      "locale": "es",
-      "english": "Not yet unlocked"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/subscription.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "coverage.familyUnavailable",
-      "locale": "es",
-      "english": "Family usage not available"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/es/subscription.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "coverage.notEnoughCredits",
-      "locale": "es",
-      "english": "Not enough credits"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "profile.fieldRequired",
-      "locale": "cs",
-      "english": "This field is required."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
       "file": "frontend/locales/cs/account.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "profile.nationalIdHint",
@@ -1170,137 +711,11 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
-      "file": "frontend/locales/cs/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.deletionScheduledBanner",
-      "locale": "cs",
-      "english": "Your account is scheduled for deletion on {date}."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.cancelDeletion",
-      "locale": "cs",
-      "english": "Cancel deletion"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.cancellingDeletion",
-      "locale": "cs",
-      "english": "Cancelling…"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.signOutAllDevices",
-      "locale": "cs",
-      "english": "Sign out of all devices"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.signOutAllDevicesBody",
-      "locale": "cs",
-      "english": "This ends every signed-in session, including this one — you'll need to log in again."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.signingOutAll",
-      "locale": "cs",
-      "english": "Signing out…"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "family.fieldRequired",
-      "locale": "cs",
-      "english": "This field is required."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "nationality.fieldRequired",
-      "locale": "cs",
-      "english": "This field is required."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
       "file": "frontend/locales/cs/common.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "entryGate.motto",
       "locale": "cs",
       "english": "Medicine Anytime Anywhere"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.whoIsThisFor",
-      "locale": "cs",
-      "english": "Who is this booking for?"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.forMe",
-      "locale": "cs",
-      "english": "Myself"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.forFamilyMember",
-      "locale": "cs",
-      "english": "A family member"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.manageFamily",
-      "locale": "cs",
-      "english": "Manage family members"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.familyBenefitNote",
-      "locale": "cs",
-      "english": "Your plan benefit will apply if this service and member are eligible."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.familyBenefitUnavailable",
-      "locale": "cs",
-      "english": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member."
     },
     {
       "severity": "warning",
@@ -1328,69 +743,6 @@
       "key": "homeCatalog.testSingular",
       "locale": "cs",
       "english": "test"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.benefitLabel",
-      "locale": "cs",
-      "english": "Plan benefit"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.payNormally",
-      "locale": "cs",
-      "english": "Pay normally"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.usePlanCredit",
-      "locale": "cs",
-      "english": "Use a credit"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.usePlanDiscount",
-      "locale": "cs",
-      "english": "Use discount"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.benefitFor",
-      "locale": "cs",
-      "english": "For {name}"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.notEnoughCreditsHint",
-      "locale": "cs",
-      "english": "No credits left — this consultation will be charged at full price."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "checkoutStatus.orderRef",
-      "locale": "cs",
-      "english": "ORDER #{id}"
     },
     {
       "severity": "warning",
@@ -1472,33 +824,6 @@
       "key": "hero_eyebrow",
       "locale": "cs",
       "english": "Global Health · FAQ"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/subscription.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "coverage.locked",
-      "locale": "cs",
-      "english": "Not yet unlocked"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/subscription.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "coverage.familyUnavailable",
-      "locale": "cs",
-      "english": "Family usage not available"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/cs/subscription.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "coverage.notEnoughCredits",
-      "locale": "cs",
-      "english": "Not enough credits"
     },
     {
       "severity": "warning",
@@ -1586,15 +911,6 @@
       "type": "identical-to-english",
       "file": "frontend/locales/ro/account.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "profile.fieldRequired",
-      "locale": "ro",
-      "english": "This field is required."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "profile.nationalIdHint",
       "locale": "ro",
       "english": "NIC / DNI / RG / CC"
@@ -1634,78 +950,6 @@
       "key": "profile.statusPatientIdHint",
       "locale": "ro",
       "english": "Global Health Number"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.deletionScheduledBanner",
-      "locale": "ro",
-      "english": "Your account is scheduled for deletion on {date}."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.cancelDeletion",
-      "locale": "ro",
-      "english": "Cancel deletion"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.cancellingDeletion",
-      "locale": "ro",
-      "english": "Cancelling…"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.signOutAllDevices",
-      "locale": "ro",
-      "english": "Sign out of all devices"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.signOutAllDevicesBody",
-      "locale": "ro",
-      "english": "This ends every signed-in session, including this one — you'll need to log in again."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.signingOutAll",
-      "locale": "ro",
-      "english": "Signing out…"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "family.fieldRequired",
-      "locale": "ro",
-      "english": "This field is required."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "nationality.fieldRequired",
-      "locale": "ro",
-      "english": "This field is required."
     },
     {
       "severity": "warning",
@@ -1784,60 +1028,6 @@
       "type": "identical-to-english",
       "file": "frontend/locales/ro/common.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.whoIsThisFor",
-      "locale": "ro",
-      "english": "Who is this booking for?"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.forMe",
-      "locale": "ro",
-      "english": "Myself"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.forFamilyMember",
-      "locale": "ro",
-      "english": "A family member"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.manageFamily",
-      "locale": "ro",
-      "english": "Manage family members"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.familyBenefitNote",
-      "locale": "ro",
-      "english": "Your plan benefit will apply if this service and member are eligible."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.familyBenefitUnavailable",
-      "locale": "ro",
-      "english": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "extra.minSuffix",
       "locale": "ro",
       "english": "min"
@@ -1901,60 +1091,6 @@
       "type": "identical-to-english",
       "file": "frontend/locales/ro/common.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.benefitLabel",
-      "locale": "ro",
-      "english": "Plan benefit"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.payNormally",
-      "locale": "ro",
-      "english": "Pay normally"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.usePlanCredit",
-      "locale": "ro",
-      "english": "Use a credit"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.usePlanDiscount",
-      "locale": "ro",
-      "english": "Use discount"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.benefitFor",
-      "locale": "ro",
-      "english": "For {name}"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.notEnoughCreditsHint",
-      "locale": "ro",
-      "english": "No credits left — this consultation will be charged at full price."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "checkoutPage.subtotal",
       "locale": "ro",
       "english": "Subtotal"
@@ -1967,15 +1103,6 @@
       "key": "checkoutPage.total",
       "locale": "ro",
       "english": "Total"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "checkoutStatus.orderRef",
-      "locale": "ro",
-      "english": "ORDER #{id}"
     },
     {
       "severity": "warning",
@@ -2259,33 +1386,6 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
-      "file": "frontend/locales/ro/subscription.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "coverage.locked",
-      "locale": "ro",
-      "english": "Not yet unlocked"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/subscription.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "coverage.familyUnavailable",
-      "locale": "ro",
-      "english": "Family usage not available"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/ro/subscription.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "coverage.notEnoughCredits",
-      "locale": "ro",
-      "english": "Not enough credits"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
       "file": "frontend/locales/de/account.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "bookings.statusLabel",
@@ -2324,15 +1424,6 @@
       "type": "identical-to-english",
       "file": "frontend/locales/de/account.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "profile.fieldRequired",
-      "locale": "de",
-      "english": "This field is required."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "profile.nationalIdHint",
       "locale": "de",
       "english": "NIC / DNI / RG / CC"
@@ -2360,60 +1451,6 @@
       "type": "identical-to-english",
       "file": "frontend/locales/de/account.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.deletionScheduledBanner",
-      "locale": "de",
-      "english": "Your account is scheduled for deletion on {date}."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.cancelDeletion",
-      "locale": "de",
-      "english": "Cancel deletion"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.cancellingDeletion",
-      "locale": "de",
-      "english": "Cancelling…"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.signOutAllDevices",
-      "locale": "de",
-      "english": "Sign out of all devices"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.signOutAllDevicesBody",
-      "locale": "de",
-      "english": "This ends every signed-in session, including this one — you'll need to log in again."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "security.signingOutAll",
-      "locale": "de",
-      "english": "Signing out…"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "security.sumAccountValue",
       "locale": "de",
       "english": "Patient"
@@ -2423,27 +1460,9 @@
       "type": "identical-to-english",
       "file": "frontend/locales/de/account.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "family.fieldRequired",
-      "locale": "de",
-      "english": "This field is required."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "family.optional",
       "locale": "de",
       "english": "optional"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/account.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "nationality.fieldRequired",
-      "locale": "de",
-      "english": "This field is required."
     },
     {
       "severity": "warning",
@@ -2504,126 +1523,9 @@
       "type": "identical-to-english",
       "file": "frontend/locales/de/common.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.whoIsThisFor",
-      "locale": "de",
-      "english": "Who is this booking for?"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.forMe",
-      "locale": "de",
-      "english": "Myself"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.forFamilyMember",
-      "locale": "de",
-      "english": "A family member"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.manageFamily",
-      "locale": "de",
-      "english": "Manage family members"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.familyBenefitNote",
-      "locale": "de",
-      "english": "Your plan benefit will apply if this service and member are eligible."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "bookingForm.familyBenefitUnavailable",
-      "locale": "de",
-      "english": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "homeCatalog.trustLive",
       "locale": "de",
       "english": "Live"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.benefitLabel",
-      "locale": "de",
-      "english": "Plan benefit"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.payNormally",
-      "locale": "de",
-      "english": "Pay normally"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.usePlanCredit",
-      "locale": "de",
-      "english": "Use a credit"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.usePlanDiscount",
-      "locale": "de",
-      "english": "Use discount"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.benefitFor",
-      "locale": "de",
-      "english": "For {name}"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "cartPage.notEnoughCreditsHint",
-      "locale": "de",
-      "english": "No credits left — this consultation will be charged at full price."
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/common.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "checkoutStatus.orderRef",
-      "locale": "de",
-      "english": "ORDER #{id}"
     },
     {
       "severity": "warning",
@@ -2853,6 +1755,15 @@
     {
       "severity": "warning",
       "type": "identical-to-english",
+      "file": "frontend/locales/de/home.json",
+      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
+      "key": "brazilConsent.fieldName",
+      "locale": "de",
+      "english": "Name"
+    },
+    {
+      "severity": "warning",
+      "type": "identical-to-english",
       "file": "frontend/locales/de/subscription.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "manage.status",
@@ -2882,33 +1793,6 @@
       "type": "identical-to-english",
       "file": "frontend/locales/de/subscription.json",
       "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "coverage.locked",
-      "locale": "de",
-      "english": "Not yet unlocked"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/subscription.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "coverage.familyUnavailable",
-      "locale": "de",
-      "english": "Family usage not available"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/subscription.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
-      "key": "coverage.notEnoughCredits",
-      "locale": "de",
-      "english": "Not enough credits"
-    },
-    {
-      "severity": "warning",
-      "type": "identical-to-english",
-      "file": "frontend/locales/de/subscription.json",
-      "recommendation": "Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).",
       "key": "invoice.colStatus",
       "locale": "de",
       "english": "Status"
@@ -2925,7 +1809,7 @@
       "type": "hardcoded-text",
       "file": "frontend/app/(site)/(global)/blog/page.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "4 candidate string(s): \"No articles published yet\", \"Check back soon for medical guides and service explainers.\", \"Back to country selection\", \"[attr] Medical team reviewing health articles and educational content\""
+      "value": "1 candidate string(s): \"[attr] Medical team reviewing health articles and educational content\""
     },
     {
       "severity": "warning",
@@ -2937,51 +1821,9 @@
     {
       "severity": "warning",
       "type": "hardcoded-text",
-      "file": "frontend/app/(site)/(global)/blog/[slug]/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "3 candidate string(s): \"Next step\", \"Ready to speak with a doctor?\", \"Book consultation\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(site)/(global)/brazil/consent/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "7 candidate string(s): \"O seu consentimento foi registado. Pagamento confirmado.\", \"Brasil · Consultoria\", \"Consentimento médico\", \"Complete o formulário e proceda ao pagamento de processamento (€29).\", \"Concordo com o tratamento dos meus dados de saúde para fins de\\r\\n              consulta médica e processamento de pagamento.\", …"
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(site)/(global)/brazil/consent/success/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"Voltar ao início\", \"[attr] Pagamento recebido\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(site)/(global)/checkout/success/LegacyCheckoutSuccessClient.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"[attr] Payment received\", \"[attr] Confirming payment\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
       "file": "frontend/app/(site)/(global)/contact/page.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
       "value": "1 candidate string(s): \"[attr] Telehealth care coordinator supporting a patient through an online consultation platform\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(site)/(global)/patient-upload/PatientUploadPageClient.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"Upload medical files\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(site)/(global)/verify/certificate/[id]/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "6 candidate string(s): \"Certificate verified\", \"This certificate is authentic and issued by Global Health.\", \"To confirm authenticity, match the Certificate ID above with the one printed on\\r\\n                your document.\", \"Certificate not found\", \"[attr] Certificate verification\", …"
     },
     {
       "severity": "warning",
@@ -3035,72 +1877,9 @@
     {
       "severity": "warning",
       "type": "hardcoded-text",
-      "file": "frontend/app/(auth)/(public)/forgot-password/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "4 candidate string(s): \"Back to login\", \"Reset your password\", \"Enter your email and we will accept the reset request. If the account exists, instructions will be sent when email delivery is enabled.\", \"[attr] Reset access\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(auth)/(public)/login/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "3 candidate string(s): \"Welcome back\", \"Sign in to your Global Health account\", \"[attr] Manage care with\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(auth)/(public)/register/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "3 candidate string(s): \"Create your account\", \"Free to join. Confirmations and receipts go to your email.\", \"[attr] Healthcare made\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(auth)/(public)/register/ui.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"Privacy Policy\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(auth)/(public)/verify-email/_components/VerifyEmailClient.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] Confirm your\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(auth)/account/calendar/ui.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"Day agenda\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(auth)/account/error.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "3 candidate string(s): \"Try again\", \"Contact support\", \"[attr] Something went wrong\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(auth)/account/medical-files/MedicalFilesClient.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"Upload a report\", \"PDF, JPG, PNG, WebP — max 10 MB\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
       "file": "frontend/app/(auth)/account/membership/page.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "3 candidate string(s): \"kit.eligible).length), hint: \\\"Ready to redeem\\\", icon:\", \"[attr] No active membership\", \"[attr] No rewards available\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(auth)/account/prescriptions/page.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] Refills aren't one-click yet — this starts a new consultation booking so a doctor can approve the refill.\""
+      "value": "1 candidate string(s): \"kit.eligible).length), hint: a.membership.sumEligibleNowHint, icon:\""
     },
     {
       "severity": "warning",
@@ -3112,20 +1891,6 @@
     {
       "severity": "warning",
       "type": "hardcoded-text",
-      "file": "frontend/app/(auth)/account/rewards/_components/RewardsPanel.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "5 candidate string(s): \"[attr] Full name\", \"[attr] Address line 1\", \"[attr] Address line 2 (optional)\", \"[attr] Postal code\", \"[attr] Cancel redemption\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(doctor)/doctor/appointments/[id]/_components/documents-review-send-panel.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] More document actions\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
       "file": "frontend/app/(doctor)/doctor/appointments/[id]/_components/services-used-list.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
       "value": "1 candidate string(s): \"locked ? null : (\""
@@ -3133,37 +1898,9 @@
     {
       "severity": "warning",
       "type": "hardcoded-text",
-      "file": "frontend/app/(doctor)/doctor/error.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"Try again\", \"[attr] Something went wrong\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(doctor)/doctor/loading.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"[attr] Loading doctor dashboard\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
       "file": "frontend/app/(doctor)/doctor/page.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
       "value": "1 candidate string(s): \"a.scheduledAt &&\\r\\n      new Date(a.scheduledAt).getTime()\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(doctor)/doctor/profile/_components/identity-form.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"Adjust image\", \"[attr] Adjust photo\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/app/(doctor)/doctor/reports/error.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "2 candidate string(s): \"Reports page error (diagnostic)\", \"Try again\""
     },
     {
       "severity": "warning",
@@ -3371,27 +2108,6 @@
     {
       "severity": "warning",
       "type": "hardcoded-text",
-      "file": "frontend/components/NotificationPopover.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"View all\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/portal-shell.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"v1.0 · medicine anytime anywhere\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/ResponsiveFilterBar.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"Show results\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
       "file": "frontend/components/sections/DoctifyReviews.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
       "value": "1 candidate string(s): \"[attr] Doctify patient reviews\""
@@ -3429,14 +2145,7 @@
       "type": "hardcoded-text",
       "file": "frontend/components/sections/GH2PagePrimitives.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "5 candidate string(s): \"Skip to main content\", \"Global Health Network\", \"Secure access\", \"Back to home\", \"Encrypted end-to-end. Your health data stays private.\""
-    },
-    {
-      "severity": "warning",
-      "type": "hardcoded-text",
-      "file": "frontend/components/sections/ServiceCatalog.tsx",
-      "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
-      "value": "1 candidate string(s): \"Learn more\""
+      "value": "2 candidate string(s): \"Skip to main content\", \"Encrypted end-to-end. Your health data stays private.\""
     },
     {
       "severity": "warning",
@@ -3451,30 +2160,6 @@
       "file": "frontend/components/templates/DoctorTeamTemplate.tsx",
       "recommendation": "Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.",
       "value": "2 candidate string(s): \"[attr] Previous page\", \"[attr] Next page\""
-    },
-    {
-      "severity": "warning",
-      "type": "page-without-i18n",
-      "file": "frontend/app/(site)/(global)/brazil/consent/page.tsx",
-      "recommendation": "Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language."
-    },
-    {
-      "severity": "warning",
-      "type": "page-without-i18n",
-      "file": "frontend/app/(site)/(global)/brazil/consent/success/page.tsx",
-      "recommendation": "Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language."
-    },
-    {
-      "severity": "warning",
-      "type": "page-without-i18n",
-      "file": "frontend/app/(site)/(global)/checkout/success/page.tsx",
-      "recommendation": "Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language."
-    },
-    {
-      "severity": "warning",
-      "type": "page-without-i18n",
-      "file": "frontend/app/(site)/(global)/verify/certificate/[id]/page.tsx",
-      "recommendation": "Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language."
     },
     {
       "severity": "info",

@@ -1,5 +1,7 @@
 import { ShieldCheck, ShieldX } from "lucide-react";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 type CertificateData = {
   certificateId: string;
@@ -37,15 +39,17 @@ export default async function CertificateVerifyPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const result = await fetchCertificate(id);
+  const [result, locale] = await Promise.all([fetchCertificate(id), getPageLocale()]);
+  const { home } = loadLocaleBundle(locale);
+  const cert = home.flow.certificate;
 
   return (
     <>
       <GH2FlowHeader
-        title="Certificate verification"
-        subtitle="Authenticate a Global Health certificate"
+        title={cert.headerTitle}
+        subtitle={cert.headerSubtitle}
         activeStep={1}
-        steps={["Verify"]}
+        steps={[cert.stepVerify]}
       />
       <section className="bg-[var(--color-background-soft)] px-5 py-12 sm:py-16">
         <div className="mx-auto max-w-lg">
@@ -55,10 +59,10 @@ export default async function CertificateVerifyPage({
                 <ShieldCheck className="size-8 text-emerald-600" aria-hidden />
                 <div>
                   <p className="text-lg font-bold text-[var(--color-text-primary)]">
-                    Certificate verified
+                    {cert.verifiedTitle}
                   </p>
                   <p className="text-sm text-[var(--color-text-muted)]">
-                    This certificate is authentic and issued by Global Health.
+                    {cert.verifiedBody}
                   </p>
                 </div>
               </div>
@@ -84,8 +88,7 @@ export default async function CertificateVerifyPage({
               </div>
 
               <p className="mt-6 text-xs text-[var(--color-text-muted)]">
-                To confirm authenticity, match the Certificate ID above with the one printed on
-                your document.
+                {cert.confirmAuthenticityHint}
               </p>
             </div>
           ) : (
@@ -94,7 +97,7 @@ export default async function CertificateVerifyPage({
                 <ShieldX className="size-8 text-red-600" aria-hidden />
                 <div>
                   <p className="text-lg font-bold text-[var(--color-text-primary)]">
-                    Certificate not found
+                    {cert.notFoundTitle}
                   </p>
                   <p className="mt-1 text-sm text-[var(--color-text-muted)]">
                     {result.message}. Check that the QR code or certificate ID is correct.

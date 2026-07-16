@@ -83,5 +83,59 @@
     "stat3Caption": "Sloturi deschise din calendare live ale medicilor.",
     "stat4Label": "Servicii rezervabile",
     "stat4Caption": "Consultații, trimiteri și teste la domiciliu."
+  },
+  "blog": {
+    "noArticles": "Nu au fost publicate articole încă",
+    "checkBackSoon": "Verificați în curând pentru ghiduri medicale și explicații ale serviciilor.",
+    "backToCountrySelection": "Înapoi la selecția țării",
+    "allArticles": "Toate articolele",
+    "minRead": "min citire",
+    "nextStep": "Pasul următor",
+    "readyToSpeak": "Sunteți gata să vorbiți cu un medic?",
+    "bookConsultationBody": "Programați o consultație online cu un medic înregistrat local în țara dumneavoastră. Programările disponibile sunt afișate în timpul rezervării.",
+    "bookConsultation": "Programați consultația",
+    "clinicallyReviewedBy": "Revizuit clinic de"
+  },
+  "flow": {
+    "patientUploadHeading": "Încărcați fișiere medicale",
+    "checkoutSuccess": {
+      "paymentReceivedTitle": "Plata primită",
+      "paymentReceivedBody": "Plata dumneavoastră a fost efectuată cu succes. Detaliile de confirmare vor sosi prin email și WhatsApp.",
+      "confirmingPaymentTitle": "Confirmarea plății",
+      "confirmingPaymentBody": "Deschidem pagina de confirmare specifică țării dumneavoastră."
+    },
+    "certificate": {
+      "headerTitle": "Verificarea certificatului",
+      "headerSubtitle": "Autentificați un certificat Global Health",
+      "stepVerify": "Verificați",
+      "verifiedTitle": "Certificatul a fost verificat",
+      "verifiedBody": "Acest certificat este autentic și emis de Global Health.",
+      "notFoundTitle": "Certificatul nu a fost găsit",
+      "confirmAuthenticityHint": "Pentru a confirma autenticitatea, potriviți ID-ul certificatului de mai sus cu cel tipărit pe documentul dumneavoastră."
+    }
+  },
+  "brazilConsent": {
+    "headerTitle": "Consimțământ medical",
+    "headerSubtitle": "Consimțământ LGPD și procesarea plăților.",
+    "stepConsent": "Consimțământ",
+    "stepPayment": "Plată",
+    "missingLinkError": "Acest link de consimțământ lipsește sau este invalid. Vă rugăm să folosiți linkul din emailul dumneavoastră.",
+    "loading": "Se încarcă…",
+    "thankYouTitle": "Vă mulțumim",
+    "consentRegisteredBody": "Consimțământul dumneavoastră a fost înregistrat. Plata confirmată.",
+    "eyebrow": "România · Consultanță",
+    "formTitle": "Consimțământ medical",
+    "formIntro": "Completați formularul și continuați cu procesarea plății (€29).",
+    "fieldName": "Nume",
+    "fieldEmail": "Email",
+    "fieldPhone": "Telefon",
+    "fieldPharmacy": "Farmacie",
+    "fieldMessage": "Mesaj",
+    "consentCheckboxText": "Sunt de acord cu prelucrarea datelor mele de sănătate în scopul consultului medical și al procesării plății.",
+    "submitting": "Se procesează…",
+    "submit": "Trimiteți și plătiți",
+    "successTitle": "Plata primită",
+    "successBody": "Vă mulțumim. Consimțământul dumneavoastră a fost înregistrat cu succes.",
+    "backToHome": "Înapoi la început"
   }
 }

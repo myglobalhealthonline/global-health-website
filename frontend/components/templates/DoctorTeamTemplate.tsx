@@ -62,6 +62,8 @@ export type DoctorTeamI18n = {
   floatCard2Subtitle?: string;
   floatCard3Title?: string;
   floatCard3Subtitle?: string;
+  /** "{name}" placeholder for each card's whole-card overlay-link aria-label. */
+  viewProfileAria?: string;
 };
 
 type DoctorTeamTemplateProps = {
@@ -240,6 +242,7 @@ export function DoctorTeamTemplate({
                       ctaLabel={d.ctaLabel ?? "View profile"}
                       bookLabel={d.bookLabel}
                       dark
+                      viewProfileAriaLabel={i18n?.viewProfileAria?.replace("{name}", d.name)}
                     />
                   </li>
                 ))}

@@ -1,7 +1,13 @@
 {
   "portal": {
     "label": "Arztportal",
-    "sectionLabel": "Arzt"
+    "sectionLabel": "Arzt",
+    "slogan": "v1.0 · Medizin jederzeit und überall",
+    "notificationsAriaLabel": "Benachrichtigungen",
+    "notificationsHeading": "Benachrichtigungen",
+    "notificationsUnreadSuffix": "ungelesen",
+    "notificationsUnreadSr": "{count} ungelesene Benachrichtigungen",
+    "notificationsViewAll": "Alle anzeigen"
   },
   "nav": {
     "groupOverview": "Übersicht",
@@ -97,7 +103,8 @@
     "forms": "Formulare",
     "formsHint": "Aufnahme / Vor-Konsultation / Nachsorge",
     "invoices": "Rechnungen",
-    "invoicesHint": "Zahlungsstatus + Verlauf"
+    "invoicesHint": "Zahlungsstatus + Verlauf",
+    "loadingAriaLabel": "Lade Arzt-Dashboard"
   },
   "appointments": {
     "eyebrow": "Konsultationswarteschlange",
@@ -482,7 +489,9 @@
     "networkErrorRetry": "Netzwerkfehler — bitte erneut versuchen",
     "noActiveCountry": "Kein aktives Land verfügbar",
     "savePayoutFailed": "Auszahlungsdaten konnten nicht gespeichert werden",
-    "payoutSaved": "Auszahlungsdaten gespeichert"
+    "payoutSaved": "Auszahlungsdaten gespeichert",
+    "adjustImage": "Bild anpassen",
+    "adjustPhoto": "Foto anpassen"
   },
   "invoices": {
     "eyebrow": "Abrechnungsübersicht",
@@ -862,7 +871,8 @@
     "noPhoneWarning": "keine Telefonnummer hinterlegt",
     "whatsappWarning": "WhatsApp",
     "couldNotFinalize": "Das Rezept konnte nicht abgeschlossen werden.",
-    "finalizedSuccess": "Arzneimittelrezept abgeschlossen und in den Verlauf verschoben."
+    "finalizedSuccess": "Arzneimittelrezept abgeschlossen und in den Verlauf verschoben.",
+    "moreActions": "Weitere Dokumentenaktionen"
   },
   "appointmentDocumentsTab": {
     "summary": "Generierte PDFs und hochgeladene Dateien für diesen Termin ({count} insgesamt).",

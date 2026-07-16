@@ -84,6 +84,10 @@ type DoctorCardProps = {
    *  (doctors directory, dark DoctorsSection). Defaults to the original
    *  white card for light sections (DoctorWall, consult page). */
   dark?: boolean;
+  /** Overlay-link aria-label — already resolved (e.g. "View profile for
+   *  Dr. Smith"). Falls back to the English default when the caller hasn't
+   *  threaded a localised value through yet. */
+  viewProfileAriaLabel?: string;
 };
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
@@ -116,6 +120,7 @@ export function DoctorCard({
   /** Override the primary button label (default: "Book with {firstName}"). */
   primaryLabel,
   dark = false,
+  viewProfileAriaLabel,
 }: DoctorCardProps) {
   const trimmedImage = imageSrc?.trim();
   const hasImage = Boolean(trimmedImage);
@@ -168,7 +173,7 @@ export function DoctorCard({
       {profileHref ? (
         <Link
           href={profileHref}
-          aria-label={`View profile for ${name}`}
+          aria-label={viewProfileAriaLabel ?? `View profile for ${name}`}
           className="absolute inset-0 z-0 rounded-[var(--radius-card)] focus:outline-none"
           tabIndex={-1}
         />

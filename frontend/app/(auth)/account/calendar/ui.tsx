@@ -29,11 +29,13 @@ export function PatientCalendarUI({
   defaultTz,
   emptyLabel = "No consultations on this day.",
   emptyHint,
+  dayAgendaLabel = "Day agenda",
 }: {
   items: CalendarItem[];
   defaultTz: string | null;
   emptyLabel?: string;
   emptyHint?: string;
+  dayAgendaLabel?: string;
 }) {
   // Render in the patient's booking timezone when we captured one, else the
   // browser's current zone.
@@ -83,7 +85,7 @@ export function PatientCalendarUI({
         theme="portal"
         header={
           <div className="gh-record-drawer__title-block">
-            <span className="gh-record-drawer__eyebrow">Day agenda</span>
+            <span className="gh-record-drawer__eyebrow">{dayAgendaLabel}</span>
             <Dialog.Title asChild>
               <h2 className="gh-record-drawer__title">
                 {selectedDay ? dayLabel(selectedDay) : ""}

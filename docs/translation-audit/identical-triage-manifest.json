@@ -1,0 +1,546 @@
+{
+  "perLocale": {
+    "pt": [
+      {
+        "namespace": "account",
+        "key": "profile.fieldRequired"
+      },
+      {
+        "namespace": "account",
+        "key": "security.deletionScheduledBanner"
+      },
+      {
+        "namespace": "account",
+        "key": "security.cancelDeletion"
+      },
+      {
+        "namespace": "account",
+        "key": "security.cancellingDeletion"
+      },
+      {
+        "namespace": "account",
+        "key": "security.signOutAllDevices"
+      },
+      {
+        "namespace": "account",
+        "key": "security.signOutAllDevicesBody"
+      },
+      {
+        "namespace": "account",
+        "key": "security.signingOutAll"
+      },
+      {
+        "namespace": "account",
+        "key": "family.fieldRequired"
+      },
+      {
+        "namespace": "account",
+        "key": "nationality.fieldRequired"
+      },
+      {
+        "namespace": "common",
+        "key": "navigation.egiftCard"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.whoIsThisFor"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.forMe"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.forFamilyMember"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.manageFamily"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.familyBenefitNote"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.familyBenefitUnavailable"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.benefitLabel"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.payNormally"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.usePlanCredit"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.usePlanDiscount"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.benefitFor"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.notEnoughCreditsHint"
+      },
+      {
+        "namespace": "common",
+        "key": "checkoutStatus.orderRef"
+      },
+      {
+        "namespace": "subscription",
+        "key": "coverage.locked"
+      },
+      {
+        "namespace": "subscription",
+        "key": "coverage.familyUnavailable"
+      },
+      {
+        "namespace": "subscription",
+        "key": "coverage.notEnoughCredits"
+      }
+    ],
+    "es": [
+      {
+        "namespace": "account",
+        "key": "profile.fieldRequired"
+      },
+      {
+        "namespace": "account",
+        "key": "security.deletionScheduledBanner"
+      },
+      {
+        "namespace": "account",
+        "key": "security.cancelDeletion"
+      },
+      {
+        "namespace": "account",
+        "key": "security.cancellingDeletion"
+      },
+      {
+        "namespace": "account",
+        "key": "security.signOutAllDevices"
+      },
+      {
+        "namespace": "account",
+        "key": "security.signOutAllDevicesBody"
+      },
+      {
+        "namespace": "account",
+        "key": "security.signingOutAll"
+      },
+      {
+        "namespace": "account",
+        "key": "family.fieldRequired"
+      },
+      {
+        "namespace": "account",
+        "key": "nationality.fieldRequired"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.whoIsThisFor"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.forMe"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.forFamilyMember"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.manageFamily"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.familyBenefitNote"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.familyBenefitUnavailable"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.benefitLabel"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.payNormally"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.usePlanCredit"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.usePlanDiscount"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.benefitFor"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.notEnoughCreditsHint"
+      },
+      {
+        "namespace": "common",
+        "key": "checkoutStatus.orderRef"
+      },
+      {
+        "namespace": "legal",
+        "key": "privacy.eyebrow"
+      },
+      {
+        "namespace": "legal",
+        "key": "terms.eyebrow"
+      },
+      {
+        "namespace": "subscription",
+        "key": "coverage.locked"
+      },
+      {
+        "namespace": "subscription",
+        "key": "coverage.familyUnavailable"
+      },
+      {
+        "namespace": "subscription",
+        "key": "coverage.notEnoughCredits"
+      }
+    ],
+    "cs": [
+      {
+        "namespace": "account",
+        "key": "profile.fieldRequired"
+      },
+      {
+        "namespace": "account",
+        "key": "security.deletionScheduledBanner"
+      },
+      {
+        "namespace": "account",
+        "key": "security.cancelDeletion"
+      },
+      {
+        "namespace": "account",
+        "key": "security.cancellingDeletion"
+      },
+      {
+        "namespace": "account",
+        "key": "security.signOutAllDevices"
+      },
+      {
+        "namespace": "account",
+        "key": "security.signOutAllDevicesBody"
+      },
+      {
+        "namespace": "account",
+        "key": "security.signingOutAll"
+      },
+      {
+        "namespace": "account",
+        "key": "family.fieldRequired"
+      },
+      {
+        "namespace": "account",
+        "key": "nationality.fieldRequired"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.whoIsThisFor"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.forMe"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.forFamilyMember"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.manageFamily"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.familyBenefitNote"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.familyBenefitUnavailable"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.benefitLabel"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.payNormally"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.usePlanCredit"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.usePlanDiscount"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.benefitFor"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.notEnoughCreditsHint"
+      },
+      {
+        "namespace": "common",
+        "key": "checkoutStatus.orderRef"
+      },
+      {
+        "namespace": "subscription",
+        "key": "coverage.locked"
+      },
+      {
+        "namespace": "subscription",
+        "key": "coverage.familyUnavailable"
+      },
+      {
+        "namespace": "subscription",
+        "key": "coverage.notEnoughCredits"
+      }
+    ],
+    "ro": [
+      {
+        "namespace": "account",
+        "key": "dashboard.totalLabel"
+      },
+      {
+        "namespace": "account",
+        "key": "orders.subtotal"
+      },
+      {
+        "namespace": "account",
+        "key": "orders.total"
+      },
+      {
+        "namespace": "account",
+        "key": "orders.sumTotal"
+      },
+      {
+        "namespace": "account",
+        "key": "orders.colTotal"
+      },
+      {
+        "namespace": "account",
+        "key": "profile.fieldRequired"
+      },
+      {
+        "namespace": "account",
+        "key": "security.deletionScheduledBanner"
+      },
+      {
+        "namespace": "account",
+        "key": "security.cancelDeletion"
+      },
+      {
+        "namespace": "account",
+        "key": "security.cancellingDeletion"
+      },
+      {
+        "namespace": "account",
+        "key": "security.signOutAllDevices"
+      },
+      {
+        "namespace": "account",
+        "key": "security.signOutAllDevicesBody"
+      },
+      {
+        "namespace": "account",
+        "key": "security.signingOutAll"
+      },
+      {
+        "namespace": "account",
+        "key": "family.fieldRequired"
+      },
+      {
+        "namespace": "account",
+        "key": "nationality.fieldRequired"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.whoIsThisFor"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.forMe"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.forFamilyMember"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.manageFamily"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.familyBenefitNote"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.familyBenefitUnavailable"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.benefitLabel"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.payNormally"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.usePlanCredit"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.usePlanDiscount"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.benefitFor"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.notEnoughCreditsHint"
+      },
+      {
+        "namespace": "common",
+        "key": "checkoutStatus.orderRef"
+      },
+      {
+        "namespace": "subscription",
+        "key": "coverage.locked"
+      },
+      {
+        "namespace": "subscription",
+        "key": "coverage.familyUnavailable"
+      },
+      {
+        "namespace": "subscription",
+        "key": "coverage.notEnoughCredits"
+      }
+    ],
+    "de": [
+      {
+        "namespace": "account",
+        "key": "profile.fieldRequired"
+      },
+      {
+        "namespace": "account",
+        "key": "security.deletionScheduledBanner"
+      },
+      {
+        "namespace": "account",
+        "key": "security.cancelDeletion"
+      },
+      {
+        "namespace": "account",
+        "key": "security.cancellingDeletion"
+      },
+      {
+        "namespace": "account",
+        "key": "security.signOutAllDevices"
+      },
+      {
+        "namespace": "account",
+        "key": "security.signOutAllDevicesBody"
+      },
+      {
+        "namespace": "account",
+        "key": "security.signingOutAll"
+      },
+      {
+        "namespace": "account",
+        "key": "family.fieldRequired"
+      },
+      {
+        "namespace": "account",
+        "key": "nationality.fieldRequired"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.whoIsThisFor"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.forMe"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.forFamilyMember"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.manageFamily"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.familyBenefitNote"
+      },
+      {
+        "namespace": "common",
+        "key": "bookingForm.familyBenefitUnavailable"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.benefitLabel"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.payNormally"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.usePlanCredit"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.usePlanDiscount"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.benefitFor"
+      },
+      {
+        "namespace": "common",
+        "key": "cartPage.notEnoughCreditsHint"
+      },
+      {
+        "namespace": "common",
+        "key": "checkoutStatus.orderRef"
+      },
+      {
+        "namespace": "subscription",
+        "key": "coverage.locked"
+      },
+      {
+        "namespace": "subscription",
+        "key": "coverage.familyUnavailable"
+      },
+      {
+        "namespace": "subscription",
+        "key": "coverage.notEnoughCredits"
+      }
+    ]
+  }
+}

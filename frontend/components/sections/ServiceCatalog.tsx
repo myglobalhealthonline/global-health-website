@@ -82,6 +82,9 @@ export type ServiceCatalogI18n = {
   prevServices: string;
   nextServices: string;
   filters: { all: string; general: string; specialist: string; prescription: string; test: string };
+  learnMore: string;
+  /** "{title}" placeholder, e.g. "Learn more: {title}". */
+  learnMoreAria: string;
 };
 
 export const SERVICE_CATALOG_DEFAULT_I18N: ServiceCatalogI18n = {
@@ -96,6 +99,8 @@ export const SERVICE_CATALOG_DEFAULT_I18N: ServiceCatalogI18n = {
   prevServices: "Previous services",
   nextServices: "Next services",
   filters: { all: "All", general: "See a GP", specialist: "See a Specialist", prescription: "Prescriptions", test: "Lab Tests" },
+  learnMore: "Learn more",
+  learnMoreAria: "Learn more: {title}",
 };
 
 export function ServiceCatalog({
@@ -299,11 +304,13 @@ function TileActions({
   detailHref,
   bookHref,
   bookLabel,
+  learnMoreLabel,
 }: {
   title: string;
   detailHref: string;
   bookHref: string;
   bookLabel: string;
+  learnMoreLabel: string;
 }) {
   return (
     <div className="relative z-[var(--z-raised)] mt-4 flex gap-2.5">
@@ -314,7 +321,7 @@ function TileActions({
         href={detailHref}
         className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-full border border-white/25 bg-white/[0.06] px-3 text-[13px] font-bold tracking-[-0.005em] text-white/90 transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)] focus-visible:outline-none"
       >
-        Learn more
+        {learnMoreLabel}
         <span className="sr-only">: {title}</span>
         <ArrowUpRight className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
       </Link>
@@ -354,7 +361,7 @@ export function ServiceTile({
   const overlay = (
     <Link
       href={overlayHref}
-      aria-label={twoButton ? `Learn more: ${s.title}` : s.title}
+      aria-label={twoButton ? i18n.learnMoreAria.replace("{title}", s.title) : s.title}
       className="absolute inset-0 z-[var(--z-base)] rounded-[var(--radius-card)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]"
       tabIndex={twoButton ? -1 : 0}
     />
@@ -473,7 +480,7 @@ export function ServiceTile({
             </div>
 
             {twoButton ? (
-              <TileActions title={s.title} detailHref={s.detailHref!} bookHref={s.bookHref!} bookLabel={bookLabel} />
+              <TileActions title={s.title} detailHref={s.detailHref!} bookHref={s.bookHref!} bookLabel={bookLabel} learnMoreLabel={i18n.learnMore} />
             ) : (
               <span
                 className="
@@ -628,7 +635,7 @@ export function ServiceTile({
           </div>
 
           {twoButton ? (
-            <TileActions title={s.title} detailHref={s.detailHref!} bookHref={s.bookHref!} bookLabel={bookLabel} />
+            <TileActions title={s.title} detailHref={s.detailHref!} bookHref={s.bookHref!} bookLabel={bookLabel} learnMoreLabel={i18n.learnMore} />
           ) : (
             <span
               className="

@@ -164,9 +164,9 @@
     "notCovered": "No incluido en tu plan",
     "youSave": "Ahorras {amount} con tu plan",
     "creditsLeft": "{count} créditos de consulta restantes después de esto",
-    "locked": "Not yet unlocked",
-    "familyUnavailable": "Family usage not available",
-    "notEnoughCredits": "Not enough credits"
+    "locked": "Aún no desbloqueado",
+    "familyUnavailable": "Uso familiar no disponible",
+    "notEnoughCredits": "Créditos insuficientes"
   },
   "dashboard": {
     "memberMonths": "Miembro desde hace {months} meses pagados",

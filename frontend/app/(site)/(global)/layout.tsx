@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { cookies, headers } from "next/headers";
 import { SiteChrome } from "@/components/layout/SiteChrome";
+import { HtmlLangSync } from "@/components/layout/HtmlLangSync";
+import { toHtmlLang } from "@/lib/i18n/get-root-html-lang";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
 import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
@@ -147,6 +149,7 @@ export default async function GlobalSiteLayout({ children }: { children: ReactNo
       parsed={parsed}
       isGatewayHome={isGatewayHome}
     >
+      <HtmlLangSync lang={toHtmlLang(currentLocale)} />
       <JsonLd data={[organizationJsonLd(organizationSameAs), websiteJsonLd()]} />
       {children}
     </SiteChrome>

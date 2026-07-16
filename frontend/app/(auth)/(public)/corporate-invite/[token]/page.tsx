@@ -63,6 +63,7 @@ export default async function CorporateInvitePage({
 
   return (
     <GH2AuthShell
+      shell={auth.shell}
       eyebrow={t.eyebrow}
       title={t.titleTop}
       accent={t.accent}

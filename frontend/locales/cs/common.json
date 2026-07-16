@@ -142,8 +142,8 @@
     "viewDoctors": "Zobrazit lékaře",
     "trustCard1Title": "Licencováno v {country}",
     "trustCard1Subtitle": "Plně ověření klinikové",
-    "trustCard2Title": "Hodnocení 4,9",
-    "trustCard2Subtitle": "Z více než 2 000 recenzí",
+    "trustCard2Title": "Hodnoceno pacienty",
+    "trustCard2Subtitle": "Recenze najdete na Doctify",
     "trustCard3Title": "Dostupnost ve stejný den",
     "trustCard3Subtitle": "Termíny dnes",
     "floatCard1Title": "K dispozici dnes",
@@ -154,7 +154,8 @@
     "floatCard3Subtitle": "Soukromá, bezpečná a pohodlná",
     "filters": "Filtry",
     "bioFallbackTemplate": "Licencovaný lékař dostupný pro online konzultace v {country}.",
-    "verifyRegistrationAria": "Ověřit registraci v oficiálním registru"
+    "verifyRegistrationAria": "Ověřit registraci v oficiálním registru",
+    "viewProfileAria": "Zobrazit profil pro {name}"
   },
   "cookie": {
     "title": "Nastavení cookies",
@@ -215,8 +216,8 @@
       "stat1Subtitle": "Všichni praktičtí lékaři jsou registrováni k výkonu praxe v {country}.",
       "stat2Title": "45 000 konzultací v roce 2025",
       "stat2Subtitle": "Hodnoceno na Doctify.",
-      "stat3Title": "Důvěřují nám tisíce",
-      "stat3Subtitle": "Přidejte se k tisícům pacientů v {country}."
+      "stat3Title": "Důvěryhodná péče",
+      "stat3Subtitle": "Přidejte se k pacientům v {country}."
     }
   },
   "specialistPage": {
@@ -243,8 +244,8 @@
       "stat1Subtitle": "Všichni specialisté jsou registrováni k výkonu praxe v {country}.",
       "stat2Title": "45 000 konzultací v roce 2025",
       "stat2Subtitle": "Hodnoceno na Doctify.",
-      "stat3Title": "Důvěřují nám tisíce",
-      "stat3Subtitle": "Přidejte se k tisícům pacientů v {country}."
+      "stat3Title": "Důvěryhodná péče",
+      "stat3Subtitle": "Přidejte se k pacientům v {country}."
     }
   },
   "consultPage": {
@@ -332,12 +333,12 @@
     "acceptConsent": "Před pokračováním musíte přijmout souhlas.",
     "acceptClinicConsent": "Musíte souhlasit se sdílením dat s ošetřující klinikou.",
     "acceptPlatformConsent": "Musíte souhlasit se zpracováním dat platformou.",
-    "whoIsThisFor": "Who is this booking for?",
-    "forMe": "Myself",
-    "forFamilyMember": "A family member",
-    "manageFamily": "Manage family members",
-    "familyBenefitNote": "Your plan benefit will apply if this service and member are eligible.",
-    "familyBenefitUnavailable": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member.",
+    "whoIsThisFor": "Pro koho je tato rezervace?",
+    "forMe": "Pro mě",
+    "forFamilyMember": "Pro člena rodiny",
+    "manageFamily": "Spravovat členy rodiny",
+    "familyBenefitNote": "Vaše výhoda plánu se uplatní, pokud je tato služba a člen způsobilý.",
+    "familyBenefitUnavailable": "Rezervace pro někoho jiného je možná, ale použití kreditů nebo slev vašeho plánu pro člena rodiny vyžaduje plán s povolenými členy.",
     "selectedTime": "Vybraný čas",
     "changeTime": "Změnit čas",
     "saveAddressToProfile": "Uložit tuto adresu do mého profilu",
@@ -385,7 +386,7 @@
       "feature3Subtitle": "Naši lékaři jsou registrováni k výkonu praxe v {country}.",
       "stat1Title": "Výsledky posouzené lékařem",
       "stat1Subtitle": "Každý výsledek posuzuje registrovaný lékař.",
-      "stat2Title": "Rychlé vyřízení",
+      "stat2Title": "45 000 konzultací v roce 2025",
       "stat2Subtitle": "Většina výsledků je k dispozici do 24–48 hodin.",
       "stat3Title": "Bezpečné a soukromé",
       "stat3Subtitle": "S vašimi zdravotními údaji nakládáme důvěrně."
@@ -575,12 +576,12 @@
     "increaseQuantity": "Zvýšit množství",
     "removeAria": "Odebrat {name}",
     "remove": "Odebrat",
-    "benefitLabel": "Plan benefit",
-    "payNormally": "Pay normally",
-    "usePlanCredit": "Use a credit",
-    "usePlanDiscount": "Use discount",
-    "benefitFor": "For {name}",
-    "notEnoughCreditsHint": "No credits left — this consultation will be charged at full price."
+    "benefitLabel": "Výhoda plánu",
+    "payNormally": "Platba běžně",
+    "usePlanCredit": "Použít kredit",
+    "usePlanDiscount": "Použít slevu",
+    "benefitFor": "Pro {name}",
+    "notEnoughCreditsHint": "Žádné kredity — tato konzultace bude účtována za plnou cenu."
   },
   "checkoutPage": {
     "title": "Pokladna",
@@ -621,7 +622,7 @@
     "successBody": "Vaše objednávka je potvrzena. Doklad vám byl zaslán e-mailem.",
     "processingTitle": "Potvrzujeme vaši platbu…",
     "processingBody": "Vaše platba se potvrzuje. Obvykle to trvá jen chvíli — tato stránka se automaticky aktualizuje.",
-    "orderRef": "ORDER #{id}",
+    "orderRef": "OBJEDNÁVKA #{id}",
     "shipping": "Doprava",
     "totalPaid": "Celkem zaplaceno",
     "receiptError": "Doklad se nám nyní nepodařilo načíst. Vaše platba je potvrzena; podrobnosti objednávky najdete ve svém e-mailu.",
@@ -748,6 +749,18 @@
     "reviewRateSubtitle": "Podělte se o zpětnou vazbu ke své konzultaci.",
     "reviewRateStepRatings": "Hodnocení",
     "reviewRateStepSubmit": "Odeslat"
+  },
+  "homeMeta": {
+    "titleTemplate": "{country} — registrovaní lékaři a specialisté",
+    "descriptionTemplate": "Licencovaní lékaři a specialisté registrovaní k výkonu praxe v {country}. Zobrazit profily, osvědčení, specializace a jazyky."
+  },
+  "pricingPage": {
+    "trustLicensedTitle": "Licencovaní lékaři",
+    "trustLicensedSubtitle": "Registrováno lokálně",
+    "trustFlexibleTitle": "Flexibilní plány",
+    "trustFlexibleSubtitle": "Zrušení kdykoliv",
+    "trustSecureTitle": "Bezpečné platby",
+    "trustSecureSubtitle": "Ochrana Stripe"
   },
   "blogPage": {
     "articlesAvailableNow": "Nyní k dispozici",

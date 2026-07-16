@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import { syncOrderPaymentServer } from "@/lib/api/cart-server";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { LegacyCheckoutSuccessClient } from "./LegacyCheckoutSuccessClient";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +14,9 @@ export default async function LegacyCheckoutSuccessPage({ searchParams }: Props)
   const { orderId, session_id: stripeSessionId, payment } = await searchParams;
   const trimmedOrderId = orderId?.trim();
   let paymentSynced = false;
+  const locale = await getPageLocale();
+  const { home } = loadLocaleBundle(locale);
+  const successI18n = home.flow.checkoutSuccess;
 
   if (payment !== "cancelled") {
     const sync = await syncOrderPaymentServer({
@@ -27,6 +32,7 @@ export default async function LegacyCheckoutSuccessPage({ searchParams }: Props)
       <LegacyCheckoutSuccessClient
         orderId={trimmedOrderId}
         paymentSynced={paymentSynced}
+        i18n={successI18n}
       />
     </Suspense>
   );

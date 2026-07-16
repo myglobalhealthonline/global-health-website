@@ -258,6 +258,29 @@ export function GH2StatusPage({
   );
 }
 
+export type GH2AuthShellI18n = {
+  privacyProtected: string;
+  encryptedSessions: string;
+  responseSupport: string;
+  networkLabel: string;
+  secureAccess: string;
+  backToHome: string;
+  tabSignIn: string;
+  tabCreateAccount: string;
+};
+
+// English defaults so callers that don't pass `shell` keep working unchanged.
+const AUTH_SHELL_DEFAULT_I18N: GH2AuthShellI18n = {
+  privacyProtected: "Privacy protected",
+  encryptedSessions: "Encrypted sessions",
+  responseSupport: "Response support",
+  networkLabel: "Global Health Network",
+  secureAccess: "Secure access",
+  backToHome: "Back to home",
+  tabSignIn: "Sign in",
+  tabCreateAccount: "Create account",
+};
+
 export function GH2AuthShell({
   eyebrow,
   title,
@@ -265,6 +288,7 @@ export function GH2AuthShell({
   body,
   children,
   activeTab,
+  shell = AUTH_SHELL_DEFAULT_I18N,
 }: {
   eyebrow: string;
   title: string;
@@ -272,11 +296,12 @@ export function GH2AuthShell({
   body?: ReactNode;
   children: ReactNode;
   activeTab?: "login" | "register";
+  shell?: GH2AuthShellI18n;
 }) {
   const TRUST = [
-    { v: "GDPR", l: "Privacy protected", icon: <ShieldCheck className="size-[15px]" aria-hidden /> },
-    { v: "E2E",  l: "Encrypted sessions", icon: <Lock className="size-[15px]" aria-hidden /> },
-    { v: "24h",  l: "Response support",  icon: <Clock className="size-[15px]" aria-hidden /> },
+    { v: "GDPR", l: shell.privacyProtected, icon: <ShieldCheck className="size-[15px]" aria-hidden /> },
+    { v: "E2E",  l: shell.encryptedSessions, icon: <Lock className="size-[15px]" aria-hidden /> },
+    { v: "24h",  l: shell.responseSupport,  icon: <Clock className="size-[15px]" aria-hidden /> },
   ];
 
   return (
@@ -403,10 +428,10 @@ export function GH2AuthShell({
             }}
           >
             <span style={{ fontFamily: "var(--font-mono, ui-monospace, monospace)", fontSize: 10.5, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255,255,255,0.34)" }}>
-              Global Health Network
+              {shell.networkLabel}
             </span>
             <span style={{ fontFamily: "var(--font-mono, ui-monospace, monospace)", fontSize: 10.5, letterSpacing: "0.16em", color: "rgba(255,255,255,0.34)" }}>
-              Secure access
+              {shell.secureAccess}
             </span>
           </div>
         </div>
@@ -435,7 +460,7 @@ export function GH2AuthShell({
           style={{ color: "#5E7B6B" }}
         >
           <ArrowUpRight className="size-3.5" aria-hidden style={{ transform: "rotate(-135deg)" }} />
-          Back to home
+          {shell.backToHome}
         </Link>
 
         <div className="relative z-10 mx-auto flex w-full flex-1 flex-col lg:block lg:flex-none" style={{ maxWidth: 460 }}>
@@ -451,7 +476,7 @@ export function GH2AuthShell({
               style={{ color: "#5E7B6B" }}
             >
               <ArrowUpRight className="size-3.5" aria-hidden style={{ transform: "rotate(-135deg)" }} />
-              Back to home
+              {shell.backToHome}
             </Link>
           </div>
 
@@ -492,7 +517,7 @@ export function GH2AuthShell({
                       boxShadow: activeTab === tab ? "0 2px 10px rgba(176,241,34,0.22)" : "none",
                     }}
                   >
-                    {tab === "login" ? "Sign in" : "Create account"}
+                    {tab === "login" ? shell.tabSignIn : shell.tabCreateAccount}
                   </Link>
                 ))}
               </div>

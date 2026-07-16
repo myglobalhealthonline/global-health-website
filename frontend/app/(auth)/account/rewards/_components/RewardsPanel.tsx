@@ -11,10 +11,17 @@ type RedeemCopy = ReturnType<
   typeof import("@/lib/i18n/load-locale")["loadLocaleBundle"]
 >["subscription"]["redeem"];
 
+/** Shipping-form field labels — sourced from account.json (this panel is
+ *  account-portal-only), not subscription.json which owns `t`. */
+export type RewardsShippingLabels = ReturnType<
+  typeof import("@/lib/i18n/load-locale")["loadLocaleBundle"]
+>["account"]["rewards"];
+
 export type RewardKit = RedemptionKit & { unlockMonths: number | null };
 
 export interface RewardsPanelProps {
   t: RedeemCopy;
+  shippingLabels: RewardsShippingLabels;
   kits: RewardKit[];
   wellnessBalance: number;
   prefillName: string;
@@ -40,7 +47,7 @@ function reasonText(kit: RewardKit, balance: number, t: RedeemCopy): string {
 }
 
 export function RewardsPanel(props: RewardsPanelProps) {
-  const { t } = props;
+  const { t, shippingLabels: sl } = props;
   const router = useRouter();
   const [openKit, setOpenKit] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -158,18 +165,18 @@ export function RewardsPanel(props: RewardsPanelProps) {
                   <form onSubmit={(e) => onRedeem(e, kit.healthTestId)} method="post" className="gh-patient-form-card grid gap-3">
                     <p className="text-xs leading-relaxed" style={{ color: "var(--portal-muted)" }}>{t.shippingNote}</p>
                     <div className="grid gap-3 sm:grid-cols-2">
-                      <input name="shipName" aria-label="Full name" required minLength={2} maxLength={120} defaultValue={props.prefillName} placeholder="Full name" className="gh-input sm:col-span-2" />
-                      <input name="shipLine1" aria-label="Address line 1" required minLength={2} maxLength={200} placeholder="Address line 1" className="gh-input sm:col-span-2" />
-                      <input name="shipLine2" aria-label="Address line 2 (optional)" maxLength={200} placeholder="Address line 2 (optional)" className="gh-input sm:col-span-2" />
-                      <input name="shipCity" aria-label="City" required minLength={1} maxLength={120} placeholder="City" className="gh-input" />
-                      <input name="shipPostalCode" aria-label="Postal code" required minLength={1} maxLength={40} placeholder="Postal code" className="gh-input" />
-                      <input name="shipCountryCode" aria-label="Country" required minLength={2} maxLength={4} defaultValue={props.prefillCountry} placeholder="Country" className="gh-input" style={{ textTransform: "uppercase" }} />
+                      <input name="shipName" aria-label={sl.fullName} required minLength={2} maxLength={120} defaultValue={props.prefillName} placeholder={sl.fullName} className="gh-input sm:col-span-2" />
+                      <input name="shipLine1" aria-label={sl.addressLine1} required minLength={2} maxLength={200} placeholder={sl.addressLine1} className="gh-input sm:col-span-2" />
+                      <input name="shipLine2" aria-label={sl.addressLine2Optional} maxLength={200} placeholder={sl.addressLine2Optional} className="gh-input sm:col-span-2" />
+                      <input name="shipCity" aria-label={sl.city} required minLength={1} maxLength={120} placeholder={sl.city} className="gh-input" />
+                      <input name="shipPostalCode" aria-label={sl.postalCode} required minLength={1} maxLength={40} placeholder={sl.postalCode} className="gh-input" />
+                      <input name="shipCountryCode" aria-label={sl.country} required minLength={2} maxLength={4} defaultValue={props.prefillCountry} placeholder={sl.country} className="gh-input" style={{ textTransform: "uppercase" }} />
                     </div>
                     {error ? (
                       <p className="rounded-md px-3 py-2 text-sm" style={{ background: "var(--portal-danger-soft)", color: "var(--portal-danger-text)" }} role="alert">{error}</p>
                     ) : null}
                     <div className="gh-patient-form-actions grid gap-2 sm:flex sm:items-center sm:justify-end">
-                      <button type="button" onClick={() => setOpenKit(null)} aria-label="Cancel redemption" className="inline-flex justify-center rounded-md border border-[var(--portal-line)] px-4 py-2 text-sm font-semibold text-[var(--portal-muted)] hover:bg-[var(--portal-well)]">
+                      <button type="button" onClick={() => setOpenKit(null)} aria-label={sl.cancelRedemption} className="inline-flex justify-center rounded-md border border-[var(--portal-line)] px-4 py-2 text-sm font-semibold text-[var(--portal-muted)] hover:bg-[var(--portal-well)]">
                         ×
                       </button>
                       <button type="submit" disabled={submitting} className="gh-btn gh-btn-primary inline-flex justify-center disabled:opacity-60">

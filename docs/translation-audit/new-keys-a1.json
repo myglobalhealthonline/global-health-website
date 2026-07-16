@@ -1,0 +1,15 @@
+{
+  "items": [
+    { "namespace": "services", "key": "catalog.learnMore" },
+    { "namespace": "services", "key": "catalog.learnMoreAria" },
+    { "namespace": "common", "key": "doctors.viewProfileAria" },
+    { "namespace": "common", "key": "homeMeta.titleTemplate" },
+    { "namespace": "common", "key": "homeMeta.descriptionTemplate" },
+    { "namespace": "common", "key": "pricingPage.trustLicensedTitle" },
+    { "namespace": "common", "key": "pricingPage.trustLicensedSubtitle" },
+    { "namespace": "common", "key": "pricingPage.trustFlexibleTitle" },
+    { "namespace": "common", "key": "pricingPage.trustFlexibleSubtitle" },
+    { "namespace": "common", "key": "pricingPage.trustSecureTitle" },
+    { "namespace": "common", "key": "pricingPage.trustSecureSubtitle" }
+  ]
+}

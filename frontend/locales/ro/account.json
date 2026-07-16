@@ -25,7 +25,13 @@
   },
   "portal": {
     "label": "Portalul pacientului",
-    "sectionLabel": "Cont"
+    "sectionLabel": "Cont",
+    "slogan": "v1.0 · medicină oricând, oriunde",
+    "notificationsAriaLabel": "Notificări",
+    "notificationsHeading": "Notificări",
+    "notificationsUnreadSuffix": "necitite",
+    "notificationsUnreadSr": "{count} notificări necitite",
+    "notificationsViewAll": "Vezi toate"
   },
   "dashboard": {
     "welcome": "Bun venit",
@@ -216,7 +222,8 @@
     "noOnlineOrders": "Nicio comandă online cu rețetă încă.",
     "browseProducts": "Vezi produse →",
     "ordered": "Comandat {date}",
-    "open": "Vezi rezervarea"
+    "open": "Vezi rezervarea",
+    "refillButtonTitle": "Reîncărcările nu sunt încă cu un singur clic — aceasta începe o nouă rezervare de consultație pentru ca un medic să poată aproba reîncărcarea."
   },
   "medicalFiles": {
     "breadcrumb": "Portalul pacientului",
@@ -253,7 +260,16 @@
     "sumCertificates": "Certificate",
     "sumCertificatesHint": "Certificate de absență și personalizate",
     "sumDoctorDocuments": "Documente medic",
-    "sumDoctorDocumentsHint": "Partajate de medicul tău"
+    "sumDoctorDocumentsHint": "Partajate de medicul tău",
+    "emptyUploadedTitle": "Nu au fost încă încărcate documente",
+    "emptyUploadedBody": "Documentele pe care le încarci pentru ca medicul tău să le revizuiască vor apărea aici și se vor sincroniza cu portalul medicului tău.",
+    "emptyExamTitle": "Nu sunt încă prescripții de examene",
+    "emptyExamBody": "Prescripțiile de examene emise de medicul tău — și rezultatele pe care le încarci împotriva acestora — apar aici.",
+    "emptyCertificatesTitle": "Nu sunt încă certificate",
+    "emptyCertificatesBody": "Certificatele de absență și cele personalizate emise de medicul tău vor apărea aici odată ce sunt trimise.",
+    "emptyDoctorDocsTitle": "Nu sunt încă documente de la medic",
+    "emptyDoctorDocsBody": "Fișierele și rezultatele pe care medicul tău le împărtășește cu tine vor apărea aici.",
+    "examResultTag": "rezultatul examenului"
   },
   "payments": {
     "breadcrumb": "Cont",
@@ -303,7 +319,7 @@
     "emailLabel": "Email",
     "emailNote": "Emailul nu poate fi schimbat momentan. Contactează suportul dacă ai nevoie să îl schimbi.",
     "fullNameLabel": "Nume complet",
-    "fieldRequired": "This field is required.",
+    "fieldRequired": "Acest câmp este obligatoriu.",
     "phoneLabel": "Telefon",
     "phonePlaceholder": "+40 7…",
     "phoneNote": "Pentru ca clinica să te poată contacta despre rezervarea ta. Lasă gol dacă preferi doar email.",
@@ -415,12 +431,12 @@
     "deleteAccountTitle": "Ștergi contul?",
     "cancel": "Anulează",
     "deleteAccount": "Programează ștergerea",
-    "deletionScheduledBanner": "Your account is scheduled for deletion on {date}.",
-    "cancelDeletion": "Cancel deletion",
-    "cancellingDeletion": "Cancelling…",
-    "signOutAllDevices": "Sign out of all devices",
-    "signOutAllDevicesBody": "This ends every signed-in session, including this one — you'll need to log in again.",
-    "signingOutAll": "Signing out…",
+    "deletionScheduledBanner": "Contul dumneavoastră este programat pentru ștergere pe {date}.",
+    "cancelDeletion": "Anulați ștergerea",
+    "cancellingDeletion": "Se anulează…",
+    "signOutAllDevices": "Deconectați-vă de pe toate dispozitivele",
+    "signOutAllDevicesBody": "Aceasta încheie fiecare sesiune conectată, inclusiv aceasta — va trebui să vă conectați din nou.",
+    "signingOutAll": "Se deconectează…",
     "sumEmailHint": "Emailul contului",
     "needsVerification": "Necesită verificare",
     "sumDataExport": "Export de date",
@@ -446,7 +462,7 @@
     "empty": "Nu ai adăugat încă niciun membru al familiei.",
     "addHeading": "Adaugă un membru al familiei",
     "fullName": "Nume complet",
-    "fieldRequired": "This field is required.",
+    "fieldRequired": "Acest câmp este obligatoriu.",
     "fullNamePlaceholder": "ex. Maria Santos",
     "relationship": "Relație",
     "relationshipPlaceholder": "ex. Soț/Soție, Copil, Părinte",
@@ -569,7 +585,7 @@
     "subtitle": "Înregistrează până la două cetățenii. Numerele documentelor sunt stocate criptat.",
     "slotTitle": "Cetățenia {n}",
     "country": "Țară",
-    "fieldRequired": "This field is required.",
+    "fieldRequired": "Acest câmp este obligatoriu.",
     "countryPlaceholder": "ex. Irlanda, Pakistan",
     "documentType": "Tip de document",
     "documentNumber": "Număr de document",
@@ -641,7 +657,16 @@
     "sumNextBillingHint": "Data reînnoirii",
     "sumPrice": "Preț",
     "sumPriceHint": "Abonament lunar",
-    "tabsAria": "Secțiuni abonament și recompense"
+    "tabsAria": "Secțiuni abonament și recompense",
+    "sumWellnessBalance": "Sold wellness",
+    "sumWellnessBalanceHint": "Credite disponibile",
+    "sumRewardKits": "Kituri de recompensă",
+    "sumRewardKitsHint": "Disponibile pentru revizuire",
+    "sumEligibleNow": "Eligibil acum",
+    "sumEligibleNowHint": "Pregătit pentru a fi răscumpărat",
+    "sumMembership": "Calitate",
+    "currentPlanHint": "Plan curent",
+    "noRewardsTitle": "Nu sunt recompense disponibile"
   },
   "calendar": {
     "eyebrow": "Programul meu",
@@ -656,7 +681,8 @@
     "sumMarkets": "Piețe",
     "sumMarketsHint": "Țări reprezentate",
     "emptyDay": "Nicio consultație în această zi.",
-    "emptyDayHint": "Alege o altă zi pentru a-ți vedea consultațiile."
+    "emptyDayHint": "Alege o altă zi pentru a-ți vedea consultațiile.",
+    "dayAgenda": "Agenda zilei"
   },
   "messages": {
     "eyebrow": "Mesaje",
@@ -732,5 +758,14 @@
     "resourceIdDoc": "documentul tău de identitate",
     "resourceNationalityDoc": "documentul tău de naționalitate",
     "resourceInsuranceDoc": "documentul tău de asigurare"
+  },
+  "rewards": {
+    "fullName": "Nume complet",
+    "addressLine1": "Adresa linie 1",
+    "addressLine2Optional": "Adresa linie 2 (opțional)",
+    "city": "Oraș",
+    "postalCode": "Cod poștal",
+    "country": "Țară",
+    "cancelRedemption": "Anulează răscumpărarea"
   }
 }

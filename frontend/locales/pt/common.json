@@ -142,8 +142,8 @@
     "viewDoctors": "Ver médicos",
     "trustCard1Title": "Licenciado em {country}",
     "trustCard1Subtitle": "Clínicos totalmente verificados",
-    "trustCard2Title": "Avaliação de 4,9",
-    "trustCard2Subtitle": "Mais de 2.000 avaliações",
+    "trustCard2Title": "Avaliado pelos nossos pacientes",
+    "trustCard2Subtitle": "Veja as avaliações no Doctify",
     "trustCard3Title": "Disponibilidade no mesmo dia",
     "trustCard3Subtitle": "Consultas hoje",
     "floatCard1Title": "Disponível hoje",
@@ -154,7 +154,8 @@
     "floatCard3Subtitle": "Privada, segura e conveniente",
     "filters": "Filtros",
     "bioFallbackTemplate": "Clínico licenciado disponível para consultas online em {country}.",
-    "verifyRegistrationAria": "Verificar registo no registo oficial"
+    "verifyRegistrationAria": "Verificar registo no registo oficial",
+    "viewProfileAria": "Ver perfil de {name}"
   },
   "cookie": {
     "title": "Preferências de cookies",
@@ -215,8 +216,8 @@
       "stat1Subtitle": "Todos os clínicos gerais estão registados para exercer em {country}.",
       "stat2Title": "45.000 consultas em 2025",
       "stat2Subtitle": "Avaliado no Doctify.",
-      "stat3Title": "Confiança de milhares",
-      "stat3Subtitle": "Junte-se a milhares de pacientes em {country}."
+      "stat3Title": "Confiança reconhecida",
+      "stat3Subtitle": "Junte-se a pacientes em {country}."
     }
   },
   "specialistPage": {
@@ -243,8 +244,8 @@
       "stat1Subtitle": "Todos os especialistas estão registados para exercer em {country}.",
       "stat2Title": "45.000 consultas em 2025",
       "stat2Subtitle": "Avaliado no Doctify.",
-      "stat3Title": "Confiança de milhares",
-      "stat3Subtitle": "Junte-se a milhares de pacientes em {country}."
+      "stat3Title": "Confiança reconhecida",
+      "stat3Subtitle": "Junte-se a pacientes em {country}."
     }
   },
   "consultPage": {
@@ -332,12 +333,12 @@
     "acceptConsent": "Deve aceitar o consentimento para continuar.",
     "acceptClinicConsent": "Deve consentir na partilha dos seus dados com a clínica tratante.",
     "acceptPlatformConsent": "Deve consentir no tratamento dos seus dados pela plataforma.",
-    "whoIsThisFor": "Who is this booking for?",
-    "forMe": "Myself",
-    "forFamilyMember": "A family member",
-    "manageFamily": "Manage family members",
-    "familyBenefitNote": "Your plan benefit will apply if this service and member are eligible.",
-    "familyBenefitUnavailable": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member.",
+    "whoIsThisFor": "Para quem é esta marcação?",
+    "forMe": "Para mim",
+    "forFamilyMember": "Um membro da família",
+    "manageFamily": "Gerir membros da família",
+    "familyBenefitNote": "O benefício do seu plano será aplicado se este serviço e membro forem elegíveis.",
+    "familyBenefitUnavailable": "A marcação para outra pessoa está disponível, mas utilizar os créditos ou descontos do seu plano para um membro da família necessita de um plano com habilitação familiar e um membro aprovado.",
     "selectedTime": "Hora selecionada",
     "changeTime": "Alterar hora",
     "saveAddressToProfile": "Guardar esta morada no meu perfil",
@@ -385,7 +386,7 @@
       "feature3Subtitle": "Os nossos médicos estão registados para exercer em {country}.",
       "stat1Title": "Resultados revistos por médicos",
       "stat1Subtitle": "Cada resultado é revisto por um médico registado.",
-      "stat2Title": "Resposta rápida",
+      "stat2Title": "45.000 consultas em 2025",
       "stat2Subtitle": "A maioria dos resultados disponível em 24–48 horas.",
       "stat3Title": "Seguro e privado",
       "stat3Subtitle": "As suas informações de saúde são tratadas de forma confidencial."
@@ -575,12 +576,12 @@
     "increaseQuantity": "Aumentar quantidade",
     "removeAria": "Remover {name}",
     "remove": "Remover",
-    "benefitLabel": "Plan benefit",
-    "payNormally": "Pay normally",
-    "usePlanCredit": "Use a credit",
-    "usePlanDiscount": "Use discount",
-    "benefitFor": "For {name}",
-    "notEnoughCreditsHint": "No credits left — this consultation will be charged at full price."
+    "benefitLabel": "Benefício do plano",
+    "payNormally": "Pagar normalmente",
+    "usePlanCredit": "Usar um crédito",
+    "usePlanDiscount": "Usar desconto",
+    "benefitFor": "Para {name}",
+    "notEnoughCreditsHint": "Sem créditos disponíveis — esta consulta será cobrada ao preço total."
   },
   "checkoutPage": {
     "title": "Finalizar compra",
@@ -621,7 +622,7 @@
     "successBody": "A sua encomenda está confirmada. Foi-lhe enviado um recibo por email.",
     "processingTitle": "A confirmar o seu pagamento…",
     "processingBody": "O seu pagamento está a ser confirmado. Normalmente demora apenas alguns momentos — esta página será atualizada automaticamente.",
-    "orderRef": "ORDER #{id}",
+    "orderRef": "PEDIDO #{id}",
     "shipping": "Envio",
     "totalPaid": "Total pago",
     "receiptError": "Não foi possível carregar o recibo neste momento. O seu pagamento está confirmado; verifique o seu email para os detalhes da encomenda.",
@@ -748,6 +749,18 @@
     "reviewRateSubtitle": "Partilhe a sua opinião sobre a experiência de consulta.",
     "reviewRateStepRatings": "Avaliações",
     "reviewRateStepSubmit": "Enviar"
+  },
+  "homeMeta": {
+    "titleTemplate": "{country} — médicos e especialistas registados",
+    "descriptionTemplate": "Médicos e especialistas licenciados registados para exercer em {country}. Veja perfis, credenciais, especialidades e idiomas."
+  },
+  "pricingPage": {
+    "trustLicensedTitle": "Médicos licenciados",
+    "trustLicensedSubtitle": "Registados localmente",
+    "trustFlexibleTitle": "Planos flexíveis",
+    "trustFlexibleSubtitle": "Cancele a qualquer momento",
+    "trustSecureTitle": "Pagamentos seguros",
+    "trustSecureSubtitle": "Protegido pela Stripe"
   },
   "blogPage": {
     "articlesAvailableNow": "Disponível agora",

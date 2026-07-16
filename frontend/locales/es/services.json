@@ -16,6 +16,8 @@
       "specialist": "Ver especialista",
       "prescription": "Recetas",
       "test": "Pruebas de laboratorio"
-    }
+    },
+    "learnMore": "Más información",
+    "learnMoreAria": "Más información: {title}"
   }
 }

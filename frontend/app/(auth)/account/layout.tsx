@@ -144,7 +144,15 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       notificationsViewAllHref="/account/notifications"
       locale={locale}
       availableLocales={[...supportedLocaleCodes]}
-      chrome={common.portalChrome}
+      chrome={{
+        ...common.portalChrome,
+        slogan: a.portal.slogan,
+        notificationsAriaLabel: a.portal.notificationsAriaLabel,
+        notificationsHeading: a.portal.notificationsHeading,
+        notificationsUnreadSuffix: a.portal.notificationsUnreadSuffix,
+        notificationsUnreadSr: a.portal.notificationsUnreadSr,
+        notificationsViewAll: a.portal.notificationsViewAll,
+      }}
     >
       {children}
       <UnsavedChangesGuard

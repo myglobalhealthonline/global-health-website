@@ -9,6 +9,45 @@ import { PortalTabs, PortalTabPanel, type PortalTabItem } from "@/components/Por
 
 type Tab = "uploaded" | "exam-prescriptions" | "certificates" | "doctor-documents";
 
+export interface MedicalFilesLabels {
+  tabMyUploads: string;
+  tabExamPrescriptions: string;
+  tabCertificates: string;
+  tabDoctorDocuments: string;
+  tabsAria: string;
+  sumUploaded: string;
+  sumUploadedHint: string;
+  sumExamPrescriptions: string;
+  sumExamPrescriptionsHint: string;
+  sumCertificates: string;
+  sumCertificatesHint: string;
+  sumDoctorDocuments: string;
+  sumDoctorDocumentsHint: string;
+  download: string;
+  downloading: string;
+  emptyUploadedTitle: string;
+  emptyUploadedBody: string;
+  emptyExamTitle: string;
+  emptyExamBody: string;
+  emptyCertificatesTitle: string;
+  emptyCertificatesBody: string;
+  emptyDoctorDocsTitle: string;
+  emptyDoctorDocsBody: string;
+  examResultTag: string;
+  uploadTitle: string;
+  fieldTitle: string;
+  fieldType: string;
+  typeReport: string;
+  typeOther: string;
+  fieldDescription: string;
+  fieldFile: string;
+  fileHint: string;
+  uploadSuccess: string;
+  uploadFailed: string;
+  upload: string;
+  uploading: string;
+}
+
 type DocCategory =
   | "MY_UPLOAD"
   | "EXAM_PRESCRIPTION"
@@ -32,47 +71,49 @@ type MedicalDoc = {
   prescriptionNumber: number | null;
 };
 
-const TABS: {
+function buildTabs(labels: MedicalFilesLabels): {
   id: Tab;
   label: string;
   icon: React.ReactNode;
   categories: DocCategory[];
   emptyTitle: string;
   emptyDescription: string;
-}[] = [
-  {
-    id: "uploaded",
-    label: "My Uploads",
-    icon: <Upload className="size-4" aria-hidden />,
-    categories: ["MY_UPLOAD"],
-    emptyTitle: "No documents uploaded yet",
-    emptyDescription: "Documents you upload for your doctor to review will appear here and sync to your doctor's portal.",
-  },
-  {
-    id: "exam-prescriptions",
-    label: "Exam Prescriptions",
-    icon: <FlaskConical className="size-4" aria-hidden />,
-    categories: ["EXAM_PRESCRIPTION", "EXAM_RESULT"],
-    emptyTitle: "No exam prescriptions yet",
-    emptyDescription: "Exam prescriptions your doctor issues — and the results you upload against them — appear here.",
-  },
-  {
-    id: "certificates",
-    label: "Certificates",
-    icon: <FileText className="size-4" aria-hidden />,
-    categories: ["CERTIFICATE"],
-    emptyTitle: "No certificates yet",
-    emptyDescription: "Absence and custom certificates your doctor issues will appear here once sent.",
-  },
-  {
-    id: "doctor-documents",
-    label: "Doctor Documents",
-    icon: <Stethoscope className="size-4" aria-hidden />,
-    categories: ["DOCTOR_DOCUMENT"],
-    emptyTitle: "No doctor documents yet",
-    emptyDescription: "Files and results your doctor shares with you will appear here.",
-  },
-];
+}[] {
+  return [
+    {
+      id: "uploaded",
+      label: labels.tabMyUploads,
+      icon: <Upload className="size-4" aria-hidden />,
+      categories: ["MY_UPLOAD"],
+      emptyTitle: labels.emptyUploadedTitle,
+      emptyDescription: labels.emptyUploadedBody,
+    },
+    {
+      id: "exam-prescriptions",
+      label: labels.tabExamPrescriptions,
+      icon: <FlaskConical className="size-4" aria-hidden />,
+      categories: ["EXAM_PRESCRIPTION", "EXAM_RESULT"],
+      emptyTitle: labels.emptyExamTitle,
+      emptyDescription: labels.emptyExamBody,
+    },
+    {
+      id: "certificates",
+      label: labels.tabCertificates,
+      icon: <FileText className="size-4" aria-hidden />,
+      categories: ["CERTIFICATE"],
+      emptyTitle: labels.emptyCertificatesTitle,
+      emptyDescription: labels.emptyCertificatesBody,
+    },
+    {
+      id: "doctor-documents",
+      label: labels.tabDoctorDocuments,
+      icon: <Stethoscope className="size-4" aria-hidden />,
+      categories: ["DOCTOR_DOCUMENT"],
+      emptyTitle: labels.emptyDoctorDocsTitle,
+      emptyDescription: labels.emptyDoctorDocsBody,
+    },
+  ];
+}
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -95,7 +136,7 @@ async function downloadDoc(doc: MedicalDoc) {
   URL.revokeObjectURL(url);
 }
 
-function DocCard({ doc }: { doc: MedicalDoc }) {
+function DocCard({ doc, labels }: { doc: MedicalDoc; labels: MedicalFilesLabels }) {
   const [downloading, startDownload] = useTransition();
 
   function onDownload() {
@@ -128,7 +169,7 @@ function DocCard({ doc }: { doc: MedicalDoc }) {
             {doc.byteSize > 0 ? ` · ${formatBytes(doc.byteSize)}` : ""} ·{" "}
             {new Date(doc.createdAt).toLocaleDateString()}
             {doc.category === "EXAM_RESULT" && (
-              <span>· exam result</span>
+              <span>· {labels.examResultTag}</span>
             )}
           </>
         }
@@ -140,7 +181,7 @@ function DocCard({ doc }: { doc: MedicalDoc }) {
             className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md border border-[var(--portal-line)] px-3 py-1.5 text-sm font-medium text-[var(--portal-text)] hover:bg-[var(--portal-well)] disabled:opacity-60"
           >
             <Download aria-hidden className="size-4" />
-            {downloading ? "Downloading…" : "Download"}
+            {downloading ? labels.downloading : labels.download}
           </button>
         }
       />
@@ -148,7 +189,13 @@ function DocCard({ doc }: { doc: MedicalDoc }) {
   );
 }
 
-function UploadForm({ onUploaded }: { onUploaded: (doc: MedicalDoc) => void }) {
+function UploadForm({
+  onUploaded,
+  labels,
+}: {
+  onUploaded: (doc: MedicalDoc) => void;
+  labels: MedicalFilesLabels;
+}) {
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -207,19 +254,19 @@ function UploadForm({ onUploaded }: { onUploaded: (doc: MedicalDoc) => void }) {
         setFile(null);
         setTitle("");
         setDescription("");
-        setMsg({ kind: "ok", text: "Document uploaded successfully" });
+        setMsg({ kind: "ok", text: labels.uploadSuccess });
       } else {
-        setMsg({ kind: "err", text: json.message ?? "Upload failed" });
+        setMsg({ kind: "err", text: json.message ?? labels.uploadFailed });
       }
     });
   }
 
   return (
     <form onSubmit={onSubmit} method="post" className="gh-patient-form-card gh-card space-y-3 p-5">
-      <h2 className="font-semibold text-[var(--portal-text)]">Upload a report</h2>
+      <h2 className="font-semibold text-[var(--portal-text)]">{labels.uploadTitle}</h2>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">
-          <span className="gh-field-label">Title <span aria-hidden>*</span></span>
+          <span className="gh-field-label">{labels.fieldTitle} <span aria-hidden>*</span></span>
           <input
             type="text"
             value={title}
@@ -230,18 +277,18 @@ function UploadForm({ onUploaded }: { onUploaded: (doc: MedicalDoc) => void }) {
           />
         </label>
         <label className="block">
-          <span className="gh-field-label">Type</span>
+          <span className="gh-field-label">{labels.fieldType}</span>
           <select
             value={documentType}
             onChange={(e) => setDocumentType(e.target.value)}
             className="gh-input mt-1"
           >
-            <option value="REPORT">Report</option>
-            <option value="OTHER">Other</option>
+            <option value="REPORT">{labels.typeReport}</option>
+            <option value="OTHER">{labels.typeOther}</option>
           </select>
         </label>
         <label className="block sm:col-span-2">
-          <span className="gh-field-label">Description</span>
+          <span className="gh-field-label">{labels.fieldDescription}</span>
           <input
             type="text"
             value={description}
@@ -251,7 +298,7 @@ function UploadForm({ onUploaded }: { onUploaded: (doc: MedicalDoc) => void }) {
           />
         </label>
         <label className="block sm:col-span-2">
-          <span className="gh-field-label">File <span aria-hidden>*</span></span>
+          <span className="gh-field-label">{labels.fieldFile} <span aria-hidden>*</span></span>
           <input
             type="file"
             accept=".pdf,.jpg,.jpeg,.png,.webp"
@@ -259,7 +306,7 @@ function UploadForm({ onUploaded }: { onUploaded: (doc: MedicalDoc) => void }) {
             required
             className="gh-input mt-1 min-w-0"
           />
-          <p className="mt-1 text-xs text-[var(--portal-muted)]">PDF, JPG, PNG, WebP — max 10 MB</p>
+          <p className="mt-1 text-xs text-[var(--portal-muted)]">{labels.fileHint}</p>
         </label>
       </div>
       {msg && (
@@ -278,7 +325,7 @@ function UploadForm({ onUploaded }: { onUploaded: (doc: MedicalDoc) => void }) {
         className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
       >
         <Upload aria-hidden className="size-4" />
-        {pending ? "Uploading…" : "Upload"}
+        {pending ? labels.uploading : labels.upload}
       </button>
       </div>
     </form>
@@ -291,6 +338,7 @@ interface MedicalFilesClientProps {
   description: string;
   downloadAllLabel: string;
   downloadingAllLabel: string;
+  labels: MedicalFilesLabels;
 }
 
 export function MedicalFilesClient({
@@ -299,11 +347,13 @@ export function MedicalFilesClient({
   description,
   downloadAllLabel,
   downloadingAllLabel,
+  labels,
 }: MedicalFilesClientProps) {
   const [activeTab, setActiveTab] = useState<Tab>("uploaded");
   const [allDocs, setAllDocs] = useState<MedicalDoc[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [downloadingAll, startDownloadAll] = useTransition();
+  const TABS = buildTabs(labels);
 
   useEffect(() => {
     void fetch("/api/account/medical-documents", { credentials: "include" })
@@ -370,16 +420,16 @@ export function MedicalFilesClient({
       <AdminSummaryStrip
         className="mb-5"
         items={[
-          { label: "Uploaded", value: String(countFor("uploaded")), hint: "Documents you added", icon: <Upload aria-hidden /> },
-          { label: "Exam Prescriptions", value: String(countFor("exam-prescriptions")), hint: "Prescriptions & results", icon: <FlaskConical aria-hidden /> },
-          { label: "Certificates", value: String(countFor("certificates")), hint: "Absence & custom certificates", icon: <FileText aria-hidden /> },
-          { label: "Doctor Documents", value: String(countFor("doctor-documents")), hint: "Shared by your doctor", icon: <Stethoscope aria-hidden /> },
+          { label: labels.sumUploaded, value: String(countFor("uploaded")), hint: labels.sumUploadedHint, icon: <Upload aria-hidden /> },
+          { label: labels.sumExamPrescriptions, value: String(countFor("exam-prescriptions")), hint: labels.sumExamPrescriptionsHint, icon: <FlaskConical aria-hidden /> },
+          { label: labels.sumCertificates, value: String(countFor("certificates")), hint: labels.sumCertificatesHint, icon: <FileText aria-hidden /> },
+          { label: labels.sumDoctorDocuments, value: String(countFor("doctor-documents")), hint: labels.sumDoctorDocumentsHint, icon: <Stethoscope aria-hidden /> },
         ]}
       />
 
       <PortalTabs
         className="gh-patient-tabs mb-6"
-        ariaLabel="Medical file categories"
+        ariaLabel={labels.tabsAria}
         items={tabItems}
         value={activeTab}
         onChange={(value) => setActiveTab(value as Tab)}
@@ -394,7 +444,7 @@ export function MedicalFilesClient({
           <PortalTabPanel key={tab.id} value={tab.id} activeValue={activeTab}>
             {tab.id === "uploaded" && (
               <div className="mb-6">
-                <UploadForm onUploaded={onUploaded} />
+                <UploadForm onUploaded={onUploaded} labels={labels} />
               </div>
             )}
 
@@ -439,7 +489,7 @@ export function MedicalFilesClient({
                   </button>
                 </div>
                 {docsForTab.map((doc) => (
-                  <DocCard key={doc.id} doc={doc} />
+                  <DocCard key={doc.id} doc={doc} labels={labels} />
                 ))}
               </div>
             )}

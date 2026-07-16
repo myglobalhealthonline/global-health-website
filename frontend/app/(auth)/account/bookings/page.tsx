@@ -138,6 +138,7 @@ export default async function AccountBookingsPage({ searchParams }: Props) {
                 defaultTz={defaultTz}
                 emptyLabel={a.calendar.emptyDay}
                 emptyHint={a.calendar.emptyDayHint}
+                dayAgendaLabel={a.calendar.dayAgenda}
               />
             ) : (
               <div className="gh-patient-empty-state rounded-[var(--radius-card-sm)] border border-[var(--portal-line)] bg-[var(--portal-surface-elevated)] px-5 py-4">

@@ -8,18 +8,18 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | Severity | Count |
 |---|---|
 | Critical | 0 |
-| Warning | 394 |
+| Warning | 241 |
 | Info | 1 |
 
 ### Per-locale key health (vs en)
 
 | Locale | Keys checked | Missing | Empty | Identical to en (flagged) |
 |---|---|---|---|---|
-| pt | 3102 | 0 | 0 | 56 |
-| es | 3102 | 0 | 0 | 59 |
-| cs | 3102 | 0 | 0 | 41 |
-| ro | 3102 | 0 | 0 | 87 |
-| de | 3102 | 0 | 0 | 70 |
+| pt | 3242 | 0 | 0 | 31 |
+| es | 3242 | 0 | 0 | 34 |
+| cs | 3242 | 0 | 0 | 16 |
+| ro | 3242 | 0 | 0 | 62 |
+| de | 3242 | 0 | 0 | 46 |
 
 ## Wiring checks (persistence, fallback, SSR/CSR)
 
@@ -36,7 +36,7 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 
 ## Findings
 
-### identical-to-english (313) — warning
+### identical-to-english (189) — warning
 
 > Review: translate if this is real copy, or add the term to the allowlist in scripts/audit-translations.mjs if intentionally untranslated (brand/technical term).
 
@@ -47,28 +47,13 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/pt/account.json` | `orders.total` | pt | Total |  |
 | `frontend/locales/pt/account.json` | `orders.sumTotal` | pt | Total |  |
 | `frontend/locales/pt/account.json` | `orders.colTotal` | pt | Total |  |
-| `frontend/locales/pt/account.json` | `profile.fieldRequired` | pt | This field is required. |  |
 | `frontend/locales/pt/account.json` | `profile.nationalIdHint` | pt | NIC / DNI / RG / CC |  |
 | `frontend/locales/pt/account.json` | `profile.taxIdHint` | pt | NIF / PPS / CPF |  |
 | `frontend/locales/pt/account.json` | `profile.statusPatientIdHint` | pt | Global Health Number |  |
-| `frontend/locales/pt/account.json` | `security.deletionScheduledBanner` | pt | Your account is scheduled for deletion on {date}. |  |
-| `frontend/locales/pt/account.json` | `security.cancelDeletion` | pt | Cancel deletion |  |
-| `frontend/locales/pt/account.json` | `security.cancellingDeletion` | pt | Cancelling… |  |
-| `frontend/locales/pt/account.json` | `security.signOutAllDevices` | pt | Sign out of all devices |  |
-| `frontend/locales/pt/account.json` | `security.signOutAllDevicesBody` | pt | This ends every signed-in session, including this one — you… |  |
-| `frontend/locales/pt/account.json` | `security.signingOutAll` | pt | Signing out… |  |
-| `frontend/locales/pt/account.json` | `family.fieldRequired` | pt | This field is required. |  |
-| `frontend/locales/pt/account.json` | `nationality.fieldRequired` | pt | This field is required. |  |
 | `frontend/locales/pt/account.json` | `notificationsPage.total` | pt | Total |  |
 | `frontend/locales/pt/common.json` | `navigation.egiftCard` | pt | eGift Card |  |
 | `frontend/locales/pt/common.json` | `footer.legal` | pt | Legal |  |
 | `frontend/locales/pt/common.json` | `entryGate.motto` | pt | Medicine Anytime Anywhere |  |
-| `frontend/locales/pt/common.json` | `bookingForm.whoIsThisFor` | pt | Who is this booking for? |  |
-| `frontend/locales/pt/common.json` | `bookingForm.forMe` | pt | Myself |  |
-| `frontend/locales/pt/common.json` | `bookingForm.forFamilyMember` | pt | A family member |  |
-| `frontend/locales/pt/common.json` | `bookingForm.manageFamily` | pt | Manage family members |  |
-| `frontend/locales/pt/common.json` | `bookingForm.familyBenefitNote` | pt | Your plan benefit will apply if this service and member are… |  |
-| `frontend/locales/pt/common.json` | `bookingForm.familyBenefitUnavailable` | pt | Booking for someone else is available, but using your plan'… |  |
 | `frontend/locales/pt/common.json` | `extra.minSuffix` | pt | min |  |
 | `frontend/locales/pt/common.json` | `legalPage.heroEyebrow` | pt | {country} · Legal |  |
 | `frontend/locales/pt/common.json` | `legalPage.heroWatermark` | pt | Legal |  |
@@ -76,15 +61,8 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/pt/common.json` | `legalDocPage.heroWatermark` | pt | Legal |  |
 | `frontend/locales/pt/common.json` | `cartPage.subtotalItems` | pt | Subtotal ({count} {unit}) |  |
 | `frontend/locales/pt/common.json` | `cartPage.total` | pt | Total |  |
-| `frontend/locales/pt/common.json` | `cartPage.benefitLabel` | pt | Plan benefit |  |
-| `frontend/locales/pt/common.json` | `cartPage.payNormally` | pt | Pay normally |  |
-| `frontend/locales/pt/common.json` | `cartPage.usePlanCredit` | pt | Use a credit |  |
-| `frontend/locales/pt/common.json` | `cartPage.usePlanDiscount` | pt | Use discount |  |
-| `frontend/locales/pt/common.json` | `cartPage.benefitFor` | pt | For {name} |  |
-| `frontend/locales/pt/common.json` | `cartPage.notEnoughCreditsHint` | pt | No credits left — this consultation will be charged at full… |  |
 | `frontend/locales/pt/common.json` | `checkoutPage.subtotal` | pt | Subtotal |  |
 | `frontend/locales/pt/common.json` | `checkoutPage.total` | pt | Total |  |
-| `frontend/locales/pt/common.json` | `checkoutStatus.orderRef` | pt | ORDER #{id} |  |
 | `frontend/locales/pt/doctor.json` | `availability.minutesShort` | pt | {count} min |  |
 | `frontend/locales/pt/doctor.json` | `availability.removeWindowDateQualifier` | pt | ({from} – {until}). |  |
 | `frontend/locales/pt/doctor.json` | `profile.registrationBodyPlaceholder` | pt | IMC, OM, OMC |  |
@@ -95,52 +73,27 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/pt/faq.json` | `hero_eyebrow` | pt | Global Health · FAQ |  |
 | `frontend/locales/pt/legal.json` | `privacy.eyebrow` | pt | Legal |  |
 | `frontend/locales/pt/legal.json` | `terms.eyebrow` | pt | Legal |  |
-| `frontend/locales/pt/subscription.json` | `coverage.locked` | pt | Not yet unlocked |  |
-| `frontend/locales/pt/subscription.json` | `coverage.familyUnavailable` | pt | Family usage not available |  |
-| `frontend/locales/pt/subscription.json` | `coverage.notEnoughCredits` | pt | Not enough credits |  |
 | `frontend/locales/es/account.json` | `dashboard.totalLabel` | es | Total |  |
 | `frontend/locales/es/account.json` | `orders.subtotal` | es | Subtotal |  |
 | `frontend/locales/es/account.json` | `orders.total` | es | Total |  |
 | `frontend/locales/es/account.json` | `orders.sumTotal` | es | Total |  |
 | `frontend/locales/es/account.json` | `orders.colTotal` | es | Total |  |
-| `frontend/locales/es/account.json` | `profile.fieldRequired` | es | This field is required. |  |
 | `frontend/locales/es/account.json` | `profile.nationalIdHint` | es | NIC / DNI / RG / CC |  |
 | `frontend/locales/es/account.json` | `profile.taxIdHint` | es | NIF / PPS / CPF |  |
 | `frontend/locales/es/account.json` | `profile.tabPersonal` | es | Personal |  |
 | `frontend/locales/es/account.json` | `profile.statusPatientIdHint` | es | Global Health Number |  |
-| `frontend/locales/es/account.json` | `security.deletionScheduledBanner` | es | Your account is scheduled for deletion on {date}. |  |
-| `frontend/locales/es/account.json` | `security.cancelDeletion` | es | Cancel deletion |  |
-| `frontend/locales/es/account.json` | `security.cancellingDeletion` | es | Cancelling… |  |
-| `frontend/locales/es/account.json` | `security.signOutAllDevices` | es | Sign out of all devices |  |
-| `frontend/locales/es/account.json` | `security.signOutAllDevicesBody` | es | This ends every signed-in session, including this one — you… |  |
-| `frontend/locales/es/account.json` | `security.signingOutAll` | es | Signing out… |  |
-| `frontend/locales/es/account.json` | `family.fieldRequired` | es | This field is required. |  |
-| `frontend/locales/es/account.json` | `nationality.fieldRequired` | es | This field is required. |  |
 | `frontend/locales/es/account.json` | `notificationsPage.total` | es | Total |  |
 | `frontend/locales/es/account.json` | `membership.sumPlan` | es | Plan |  |
 | `frontend/locales/es/common.json` | `footer.legal` | es | Legal |  |
 | `frontend/locales/es/common.json` | `entryGate.motto` | es | Medicine Anytime Anywhere |  |
-| `frontend/locales/es/common.json` | `bookingForm.whoIsThisFor` | es | Who is this booking for? |  |
-| `frontend/locales/es/common.json` | `bookingForm.forMe` | es | Myself |  |
-| `frontend/locales/es/common.json` | `bookingForm.forFamilyMember` | es | A family member |  |
-| `frontend/locales/es/common.json` | `bookingForm.manageFamily` | es | Manage family members |  |
-| `frontend/locales/es/common.json` | `bookingForm.familyBenefitNote` | es | Your plan benefit will apply if this service and member are… |  |
-| `frontend/locales/es/common.json` | `bookingForm.familyBenefitUnavailable` | es | Booking for someone else is available, but using your plan'… |  |
 | `frontend/locales/es/common.json` | `extra.minSuffix` | es | min |  |
 | `frontend/locales/es/common.json` | `homeCatalog.tagGeneral` | es | General |  |
 | `frontend/locales/es/common.json` | `legalPage.heroWatermark` | es | Legal |  |
 | `frontend/locales/es/common.json` | `legalDocPage.heroWatermark` | es | Legal |  |
 | `frontend/locales/es/common.json` | `cartPage.subtotalItems` | es | Subtotal ({count} {unit}) |  |
 | `frontend/locales/es/common.json` | `cartPage.total` | es | Total |  |
-| `frontend/locales/es/common.json` | `cartPage.benefitLabel` | es | Plan benefit |  |
-| `frontend/locales/es/common.json` | `cartPage.payNormally` | es | Pay normally |  |
-| `frontend/locales/es/common.json` | `cartPage.usePlanCredit` | es | Use a credit |  |
-| `frontend/locales/es/common.json` | `cartPage.usePlanDiscount` | es | Use discount |  |
-| `frontend/locales/es/common.json` | `cartPage.benefitFor` | es | For {name} |  |
-| `frontend/locales/es/common.json` | `cartPage.notEnoughCreditsHint` | es | No credits left — this consultation will be charged at full… |  |
 | `frontend/locales/es/common.json` | `checkoutPage.subtotal` | es | Subtotal |  |
 | `frontend/locales/es/common.json` | `checkoutPage.total` | es | Total |  |
-| `frontend/locales/es/common.json` | `checkoutStatus.orderRef` | es | ORDER #{id} |  |
 | `frontend/locales/es/common.json` | `bookPage.tagGeneral` | es | General |  |
 | `frontend/locales/es/common.json` | `cardVerify.plan` | es | Plan |  |
 | `frontend/locales/es/doctor.json` | `appointments.typeGeneral` | es | General |  |
@@ -154,38 +107,13 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/es/faq.json` | `hero_eyebrow` | es | Global Health · FAQ |  |
 | `frontend/locales/es/legal.json` | `privacy.eyebrow` | es | Legal |  |
 | `frontend/locales/es/legal.json` | `terms.eyebrow` | es | Legal |  |
-| `frontend/locales/es/subscription.json` | `coverage.locked` | es | Not yet unlocked |  |
-| `frontend/locales/es/subscription.json` | `coverage.familyUnavailable` | es | Family usage not available |  |
-| `frontend/locales/es/subscription.json` | `coverage.notEnoughCredits` | es | Not enough credits |  |
-| `frontend/locales/cs/account.json` | `profile.fieldRequired` | cs | This field is required. |  |
 | `frontend/locales/cs/account.json` | `profile.nationalIdHint` | cs | NIC / DNI / RG / CC |  |
 | `frontend/locales/cs/account.json` | `profile.taxIdHint` | cs | NIF / PPS / CPF |  |
 | `frontend/locales/cs/account.json` | `profile.statusPatientIdHint` | cs | Global Health Number |  |
-| `frontend/locales/cs/account.json` | `security.deletionScheduledBanner` | cs | Your account is scheduled for deletion on {date}. |  |
-| `frontend/locales/cs/account.json` | `security.cancelDeletion` | cs | Cancel deletion |  |
-| `frontend/locales/cs/account.json` | `security.cancellingDeletion` | cs | Cancelling… |  |
-| `frontend/locales/cs/account.json` | `security.signOutAllDevices` | cs | Sign out of all devices |  |
-| `frontend/locales/cs/account.json` | `security.signOutAllDevicesBody` | cs | This ends every signed-in session, including this one — you… |  |
-| `frontend/locales/cs/account.json` | `security.signingOutAll` | cs | Signing out… |  |
-| `frontend/locales/cs/account.json` | `family.fieldRequired` | cs | This field is required. |  |
-| `frontend/locales/cs/account.json` | `nationality.fieldRequired` | cs | This field is required. |  |
 | `frontend/locales/cs/common.json` | `entryGate.motto` | cs | Medicine Anytime Anywhere |  |
-| `frontend/locales/cs/common.json` | `bookingForm.whoIsThisFor` | cs | Who is this booking for? |  |
-| `frontend/locales/cs/common.json` | `bookingForm.forMe` | cs | Myself |  |
-| `frontend/locales/cs/common.json` | `bookingForm.forFamilyMember` | cs | A family member |  |
-| `frontend/locales/cs/common.json` | `bookingForm.manageFamily` | cs | Manage family members |  |
-| `frontend/locales/cs/common.json` | `bookingForm.familyBenefitNote` | cs | Your plan benefit will apply if this service and member are… |  |
-| `frontend/locales/cs/common.json` | `bookingForm.familyBenefitUnavailable` | cs | Booking for someone else is available, but using your plan'… |  |
 | `frontend/locales/cs/common.json` | `extra.minSuffix` | cs | min |  |
 | `frontend/locales/cs/common.json` | `testsPage.testSingular` | cs | test |  |
 | `frontend/locales/cs/common.json` | `homeCatalog.testSingular` | cs | test |  |
-| `frontend/locales/cs/common.json` | `cartPage.benefitLabel` | cs | Plan benefit |  |
-| `frontend/locales/cs/common.json` | `cartPage.payNormally` | cs | Pay normally |  |
-| `frontend/locales/cs/common.json` | `cartPage.usePlanCredit` | cs | Use a credit |  |
-| `frontend/locales/cs/common.json` | `cartPage.usePlanDiscount` | cs | Use discount |  |
-| `frontend/locales/cs/common.json` | `cartPage.benefitFor` | cs | For {name} |  |
-| `frontend/locales/cs/common.json` | `cartPage.notEnoughCreditsHint` | cs | No credits left — this consultation will be charged at full… |  |
-| `frontend/locales/cs/common.json` | `checkoutStatus.orderRef` | cs | ORDER #{id} |  |
 | `frontend/locales/cs/doctor.json` | `nav.groupFinance` | cs | Finance |  |
 | `frontend/locales/cs/doctor.json` | `availability.minutesShort` | cs | {count} min |  |
 | `frontend/locales/cs/doctor.json` | `availability.removeWindowDateQualifier` | cs | ({from} – {until}). |  |
@@ -195,9 +123,6 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/cs/doctor.json` | `appointmentActions.modeOnline` | cs | Online (video) |  |
 | `frontend/locales/cs/doctor.json` | `followUpButton.onlineOption` | cs | Online (video) |  |
 | `frontend/locales/cs/faq.json` | `hero_eyebrow` | cs | Global Health · FAQ |  |
-| `frontend/locales/cs/subscription.json` | `coverage.locked` | cs | Not yet unlocked |  |
-| `frontend/locales/cs/subscription.json` | `coverage.familyUnavailable` | cs | Family usage not available |  |
-| `frontend/locales/cs/subscription.json` | `coverage.notEnoughCredits` | cs | Not enough credits |  |
 | `frontend/locales/ro/account.json` | `nav.calendar` | ro | Calendar |  |
 | `frontend/locales/ro/account.json` | `dashboard.totalLabel` | ro | Total |  |
 | `frontend/locales/ro/account.json` | `orders.subtotal` | ro | Subtotal |  |
@@ -207,20 +132,11 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/ro/account.json` | `orders.sumTotal` | ro | Total |  |
 | `frontend/locales/ro/account.json` | `orders.colTotal` | ro | Total |  |
 | `frontend/locales/ro/account.json` | `payments.colStatus` | ro | Status |  |
-| `frontend/locales/ro/account.json` | `profile.fieldRequired` | ro | This field is required. |  |
 | `frontend/locales/ro/account.json` | `profile.nationalIdHint` | ro | NIC / DNI / RG / CC |  |
 | `frontend/locales/ro/account.json` | `profile.taxIdHint` | ro | NIF / PPS / CPF |  |
 | `frontend/locales/ro/account.json` | `profile.tabContact` | ro | Contact |  |
 | `frontend/locales/ro/account.json` | `profile.tabPersonal` | ro | Personal |  |
 | `frontend/locales/ro/account.json` | `profile.statusPatientIdHint` | ro | Global Health Number |  |
-| `frontend/locales/ro/account.json` | `security.deletionScheduledBanner` | ro | Your account is scheduled for deletion on {date}. |  |
-| `frontend/locales/ro/account.json` | `security.cancelDeletion` | ro | Cancel deletion |  |
-| `frontend/locales/ro/account.json` | `security.cancellingDeletion` | ro | Cancelling… |  |
-| `frontend/locales/ro/account.json` | `security.signOutAllDevices` | ro | Sign out of all devices |  |
-| `frontend/locales/ro/account.json` | `security.signOutAllDevicesBody` | ro | This ends every signed-in session, including this one — you… |  |
-| `frontend/locales/ro/account.json` | `security.signingOutAll` | ro | Signing out… |  |
-| `frontend/locales/ro/account.json` | `family.fieldRequired` | ro | This field is required. |  |
-| `frontend/locales/ro/account.json` | `nationality.fieldRequired` | ro | This field is required. |  |
 | `frontend/locales/ro/account.json` | `notificationsPage.total` | ro | Total |  |
 | `frontend/locales/ro/account.json` | `notificationsPage.statusLabel` | ro | Status |  |
 | `frontend/locales/ro/account.json` | `membership.sumPlan` | ro | Plan |  |
@@ -229,12 +145,6 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/ro/common.json` | `navigation.contact` | ro | Contact |  |
 | `frontend/locales/ro/common.json` | `footer.legal` | ro | Legal |  |
 | `frontend/locales/ro/common.json` | `entryGate.motto` | ro | Medicine Anytime Anywhere |  |
-| `frontend/locales/ro/common.json` | `bookingForm.whoIsThisFor` | ro | Who is this booking for? |  |
-| `frontend/locales/ro/common.json` | `bookingForm.forMe` | ro | Myself |  |
-| `frontend/locales/ro/common.json` | `bookingForm.forFamilyMember` | ro | A family member |  |
-| `frontend/locales/ro/common.json` | `bookingForm.manageFamily` | ro | Manage family members |  |
-| `frontend/locales/ro/common.json` | `bookingForm.familyBenefitNote` | ro | Your plan benefit will apply if this service and member are… |  |
-| `frontend/locales/ro/common.json` | `bookingForm.familyBenefitUnavailable` | ro | Booking for someone else is available, but using your plan'… |  |
 | `frontend/locales/ro/common.json` | `extra.minSuffix` | ro | min |  |
 | `frontend/locales/ro/common.json` | `prescriptionsPage.trustClinicianValue` | ro | Clinician |  |
 | `frontend/locales/ro/common.json` | `homeCatalog.tagGeneral` | ro | General |  |
@@ -242,24 +152,96 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/locales/ro/common.json` | `legalDocPage.heroWatermark` | ro | Legal |  |
 | `frontend/locales/ro/common.json` | `cartPage.subtotalItems` | ro | Subtotal ({count} {unit}) |  |
 | `frontend/locales/ro/common.json` | `cartPage.total` | ro | Total |  |
-| _…and 113 more (see JSON report)_ | | | | |
+| `frontend/locales/ro/common.json` | `checkoutPage.subtotal` | ro | Subtotal |  |
+| `frontend/locales/ro/common.json` | `checkoutPage.total` | ro | Total |  |
+| `frontend/locales/ro/common.json` | `bookPage.tagGeneral` | ro | General |  |
+| `frontend/locales/ro/common.json` | `cardVerify.valid` | ro | Card valid |  |
+| `frontend/locales/ro/common.json` | `cardVerify.plan` | ro | Plan |  |
+| `frontend/locales/ro/contact.json` | `hero_eyebrow` | ro | Global Health · Contact |  |
+| `frontend/locales/ro/doctor.json` | `nav.calendar` | ro | Calendar |  |
+| `frontend/locales/ro/doctor.json` | `common.activeCount` | ro | {count} active |  |
+| `frontend/locales/ro/doctor.json` | `dashboard.calendar` | ro | Calendar |  |
+| `frontend/locales/ro/doctor.json` | `appointments.typeGeneral` | ro | General |  |
+| `frontend/locales/ro/doctor.json` | `appointments.typeSpecialist` | ro | Specialist |  |
+| `frontend/locales/ro/doctor.json` | `patients.docTypeDocument` | ro | Document |  |
+| `frontend/locales/ro/doctor.json` | `availability.minutesShort` | ro | {count} min |  |
+| `frontend/locales/ro/doctor.json` | `availability.removeWindowDateQualifier` | ro | ({from} – {until}). |  |
+| `frontend/locales/ro/doctor.json` | `profile.registrationBodyPlaceholder` | ro | IMC, OM, OMC |  |
+| `frontend/locales/ro/doctor.json` | `invoices.excel` | ro | Excel |  |
+| `frontend/locales/ro/doctor.json` | `notificationsPage.total` | ro | Total |  |
+| `frontend/locales/ro/doctor.json` | `services.kindSpecialistShort` | ro | Specialist |  |
+| `frontend/locales/ro/doctor.json` | `appointmentActions.modeOnline` | ro | Online (video) |  |
+| `frontend/locales/ro/doctor.json` | `followUpButton.onlineOption` | ro | Online (video) |  |
+| `frontend/locales/ro/doctor.json` | `servicesUsedList.total` | ro | Total |  |
+| `frontend/locales/ro/doctor.json` | `consultationForm.fieldPlan` | ro | Plan |  |
+| `frontend/locales/ro/doctor.json` | `calendar.title` | ro | Calendar |  |
+| `frontend/locales/ro/faq.json` | `hero_eyebrow` | ro | Global Health · FAQ |  |
+| `frontend/locales/ro/home.json` | `team.filterSpecialist` | ro | Specialist |  |
+| `frontend/locales/ro/home.json` | `finalCta.liveLabel` | ro | Live |  |
+| `frontend/locales/ro/home.json` | `finalCta.headlineAccent` | ro | clinician |  |
+| `frontend/locales/ro/home.json` | `statsBand.stat3Value` | ro | Live |  |
+| `frontend/locales/ro/legal.json` | `privacy.eyebrow` | ro | Legal |  |
+| `frontend/locales/ro/legal.json` | `terms.eyebrow` | ro | Legal |  |
+| `frontend/locales/ro/legal.json` | `terms.s10_h` | ro | Contact |  |
+| `frontend/locales/ro/subscription.json` | `manage.upgradeLabel` | ro | Upgrade |  |
+| `frontend/locales/ro/subscription.json` | `manage.downgradeLabel` | ro | Downgrade |  |
+| `frontend/locales/de/account.json` | `bookings.statusLabel` | de | Status |  |
+| `frontend/locales/de/account.json` | `orders.statusLabel` | de | Status |  |
+| `frontend/locales/de/account.json` | `orders.colStatus` | de | Status |  |
+| `frontend/locales/de/account.json` | `payments.colStatus` | de | Status |  |
+| `frontend/locales/de/account.json` | `profile.nationalIdHint` | de | NIC / DNI / RG / CC |  |
+| `frontend/locales/de/account.json` | `profile.taxIdHint` | de | NIF / PPS / CPF |  |
+| `frontend/locales/de/account.json` | `profile.statusPatientIdHint` | de | Global Health Number |  |
+| `frontend/locales/de/account.json` | `security.sumAccountValue` | de | Patient |  |
+| `frontend/locales/de/account.json` | `family.optional` | de | optional |  |
+| `frontend/locales/de/account.json` | `notificationsPage.statusLabel` | de | Status |  |
+| `frontend/locales/de/account.json` | `membership.sumStatus` | de | Status |  |
+| `frontend/locales/de/account.json` | `accessHistory.roleSystem` | de | System |  |
+| `frontend/locales/de/auth.json` | `register.phoneOptional` | de | (optional) |  |
+| `frontend/locales/de/common.json` | `entryGate.motto` | de | Medicine Anytime Anywhere |  |
+| `frontend/locales/de/common.json` | `bookingForm.nationalIdOptional` | de | {label} (optional) |  |
+| `frontend/locales/de/common.json` | `homeCatalog.trustLive` | de | Live |  |
+| `frontend/locales/de/common.json` | `bookPage.stepService` | de | Service |  |
+| `frontend/locales/de/common.json` | `bookPage.stepDetails` | de | Details |  |
+| `frontend/locales/de/common.json` | `cardVerify.plan` | de | Plan |  |
+| `frontend/locales/de/common.json` | `cardVerify.status` | de | Status |  |
+| `frontend/locales/de/doctor.json` | `common.status` | de | Status |  |
+| `frontend/locales/de/doctor.json` | `appointments.meeting` | de | Meeting |  |
+| `frontend/locales/de/doctor.json` | `appointmentDetail.patient` | de | Patient |  |
+| `frontend/locales/de/doctor.json` | `appointmentDetail.statusLabel` | de | Status |  |
+| `frontend/locales/de/doctor.json` | `patients.colPatient` | de | Patient |  |
+| `frontend/locales/de/doctor.json` | `patients.colStatus` | de | Status |  |
+| `frontend/locales/de/doctor.json` | `availability.removeWindowDateQualifier` | de | ({from} – {until}). |  |
+| `frontend/locales/de/doctor.json` | `profile.registrationBodyPlaceholder` | de | IMC, OM, OMC |  |
+| `frontend/locales/de/doctor.json` | `profile.bicLabel` | de | BIC / SWIFT (optional) |  |
+| `frontend/locales/de/doctor.json` | `invoices.colPatient` | de | Patient |  |
+| `frontend/locales/de/doctor.json` | `invoices.colStatus` | de | Status |  |
+| `frontend/locales/de/doctor.json` | `invoices.excel` | de | Excel |  |
+| `frontend/locales/de/doctor.json` | `brazilConsent.name` | de | Name |  |
+| `frontend/locales/de/doctor.json` | `consultationForm.fieldPlan` | de | Plan |  |
+| `frontend/locales/de/doctor.json` | `documentContextBanner.rowName` | de | Name |  |
+| `frontend/locales/de/doctor.json` | `messagesPage.patientPrefix` | de | Patient:  |  |
+| `frontend/locales/de/doctor.json` | `confidentiality.eyebrow` | de | Compliance |  |
+| `frontend/locales/de/faq.json` | `hero_eyebrow` | de | Global Health · FAQ |  |
+| `frontend/locales/de/forms.json` | `contact.phoneOptional` | de | (optional) |  |
+| `frontend/locales/de/home.json` | `finalCta.liveLabel` | de | Live |  |
+| `frontend/locales/de/home.json` | `statsBand.stat3Value` | de | Live |  |
+| `frontend/locales/de/home.json` | `brazilConsent.fieldName` | de | Name |  |
+| `frontend/locales/de/subscription.json` | `manage.status` | de | Status |  |
+| `frontend/locales/de/subscription.json` | `manage.upgradeLabel` | de | Upgrade |  |
+| `frontend/locales/de/subscription.json` | `manage.downgradeLabel` | de | Downgrade |  |
+| `frontend/locales/de/subscription.json` | `invoice.colStatus` | de | Status |  |
 
-### hardcoded-text (77) — warning
+### hardcoded-text (52) — warning
 
 > Move the string into the appropriate locales/en/*.json namespace and reference it via the locale bundle, then translate in all 6 locales.
 
 | File | Key | Locale | English value | Detail |
 |---|---|---|---|---|
 | `frontend/app/(site)/(global)/about/page.tsx` |  |  |  | 4 candidate string(s): "Why we built this", "Founded 2023 · Prague", "Global Health at a … |
-| `frontend/app/(site)/(global)/blog/page.tsx` |  |  |  | 4 candidate string(s): "No articles published yet", "Check back soon for medical guides a… |
+| `frontend/app/(site)/(global)/blog/page.tsx` |  |  |  | 1 candidate string(s): "[attr] Medical team reviewing health articles and educational con… |
 | `frontend/app/(site)/(global)/blog/[slug]/loading.tsx` |  |  |  | 1 candidate string(s): "[attr] Loading article…" |
-| `frontend/app/(site)/(global)/blog/[slug]/page.tsx` |  |  |  | 3 candidate string(s): "Next step", "Ready to speak with a doctor?", "Book consultation" |
-| `frontend/app/(site)/(global)/brazil/consent/page.tsx` |  |  |  | 7 candidate string(s): "O seu consentimento foi registado. Pagamento confirmado.", "Brasi… |
-| `frontend/app/(site)/(global)/brazil/consent/success/page.tsx` |  |  |  | 2 candidate string(s): "Voltar ao início", "[attr] Pagamento recebido" |
-| `frontend/app/(site)/(global)/checkout/success/LegacyCheckoutSuccessClient.tsx` |  |  |  | 2 candidate string(s): "[attr] Payment received", "[attr] Confirming payment" |
 | `frontend/app/(site)/(global)/contact/page.tsx` |  |  |  | 1 candidate string(s): "[attr] Telehealth care coordinator supporting a patient through a… |
-| `frontend/app/(site)/(global)/patient-upload/PatientUploadPageClient.tsx` |  |  |  | 1 candidate string(s): "Upload medical files" |
-| `frontend/app/(site)/(global)/verify/certificate/[id]/page.tsx` |  |  |  | 6 candidate string(s): "Certificate verified", "This certificate is authentic and issued … |
 | `frontend/app/(site)/[country]/[lang]/book/page.tsx` |  |  |  | 1 candidate string(s): "Need a same-day GP instead?" |
 | `frontend/app/(site)/[country]/[lang]/book/_components/service-time-picker.tsx` |  |  |  | 2 candidate string(s): "Change service", "[attr] Available dates" |
 | `frontend/app/(site)/[country]/[lang]/cart/_components/CartPageClient.tsx` |  |  |  | 2 candidate string(s): "Pick another time", "void | Promise" |
@@ -267,25 +249,10 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/app/(site)/[country]/[lang]/checkout/_components/CheckoutPageClient.tsx` |  |  |  | 2 candidate string(s): "Back to home", "Use a different contact for this payment?" |
 | `frontend/app/(site)/[country]/[lang]/consult/[serviceSlug]/_components/consultation-booking-form.tsx` |  |  |  | 4 candidate string(s): "That time is no longer available — pick another.", "Patient being… |
 | `frontend/app/(site)/[country]/[lang]/consult/[serviceSlug]/_components/slot-picker-step.tsx` |  |  |  | 1 candidate string(s): "Pick another clinician" |
-| `frontend/app/(auth)/(public)/forgot-password/page.tsx` |  |  |  | 4 candidate string(s): "Back to login", "Reset your password", "Enter your email and we w… |
-| `frontend/app/(auth)/(public)/login/page.tsx` |  |  |  | 3 candidate string(s): "Welcome back", "Sign in to your Global Health account", "[attr] M… |
-| `frontend/app/(auth)/(public)/register/page.tsx` |  |  |  | 3 candidate string(s): "Create your account", "Free to join. Confirmations and receipts g… |
-| `frontend/app/(auth)/(public)/register/ui.tsx` |  |  |  | 1 candidate string(s): "Privacy Policy" |
-| `frontend/app/(auth)/(public)/verify-email/_components/VerifyEmailClient.tsx` |  |  |  | 1 candidate string(s): "[attr] Confirm your" |
-| `frontend/app/(auth)/account/calendar/ui.tsx` |  |  |  | 1 candidate string(s): "Day agenda" |
-| `frontend/app/(auth)/account/error.tsx` |  |  |  | 3 candidate string(s): "Try again", "Contact support", "[attr] Something went wrong" |
-| `frontend/app/(auth)/account/medical-files/MedicalFilesClient.tsx` |  |  |  | 2 candidate string(s): "Upload a report", "PDF, JPG, PNG, WebP — max 10 MB" |
-| `frontend/app/(auth)/account/membership/page.tsx` |  |  |  | 3 candidate string(s): "kit.eligible).length), hint: \"Ready to redeem\", icon:", "[attr]… |
-| `frontend/app/(auth)/account/prescriptions/page.tsx` |  |  |  | 1 candidate string(s): "[attr] Refills aren't one-click yet — this starts a new consultat… |
+| `frontend/app/(auth)/account/membership/page.tsx` |  |  |  | 1 candidate string(s): "kit.eligible).length), hint: a.membership.sumEligibleNowHint, ico… |
 | `frontend/app/(auth)/account/profile/_components/profile-client.tsx` |  |  |  | 1 candidate string(s): "null) as Promise" |
-| `frontend/app/(auth)/account/rewards/_components/RewardsPanel.tsx` |  |  |  | 5 candidate string(s): "[attr] Full name", "[attr] Address line 1", "[attr] Address line … |
-| `frontend/app/(doctor)/doctor/appointments/[id]/_components/documents-review-send-panel.tsx` |  |  |  | 1 candidate string(s): "[attr] More document actions" |
 | `frontend/app/(doctor)/doctor/appointments/[id]/_components/services-used-list.tsx` |  |  |  | 1 candidate string(s): "locked ? null : (" |
-| `frontend/app/(doctor)/doctor/error.tsx` |  |  |  | 2 candidate string(s): "Try again", "[attr] Something went wrong" |
-| `frontend/app/(doctor)/doctor/loading.tsx` |  |  |  | 1 candidate string(s): "[attr] Loading doctor dashboard" |
 | `frontend/app/(doctor)/doctor/page.tsx` |  |  |  | 1 candidate string(s): "a.scheduledAt &&\r\n      new Date(a.scheduledAt).getTime()" |
-| `frontend/app/(doctor)/doctor/profile/_components/identity-form.tsx` |  |  |  | 2 candidate string(s): "Adjust image", "[attr] Adjust photo" |
-| `frontend/app/(doctor)/doctor/reports/error.tsx` |  |  |  | 2 candidate string(s): "Reports page error (diagnostic)", "Try again" |
 | `frontend/app/(corporate)/corporate/employees/bulk-upload-form.tsx` |  |  |  | 1 candidate string(s): "Bulk upload" |
 | `frontend/app/(corporate)/corporate/employees/employees-table.tsx` |  |  |  | 4 candidate string(s): "Resend invite", "View details", "No invites sent yet.", "[attr] N… |
 | `frontend/app/(corporate)/corporate/employees/page.tsx` |  |  |  | 17 candidate string(s): "Add employee", "First name *", "Last name *", "Phone (WhatsApp)"… |
@@ -315,29 +282,14 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 | `frontend/components/layout/SiteHeader.tsx` |  |  |  | 1 candidate string(s): "[attr] Book an appointment" |
 | `frontend/components/media/focal-point-editor.tsx` |  |  |  | 5 candidate string(s): "[attr] Photo focal point — drag or use arrow keys to reposition",… |
 | `frontend/components/messages/MessagesInbox.tsx` |  |  |  | 5 candidate string(s): "No matches.", "Select a conversation", "Choose a thread on the le… |
-| `frontend/components/NotificationPopover.tsx` |  |  |  | 1 candidate string(s): "View all" |
-| `frontend/components/portal-shell.tsx` |  |  |  | 1 candidate string(s): "v1.0 · medicine anytime anywhere" |
-| `frontend/components/ResponsiveFilterBar.tsx` |  |  |  | 1 candidate string(s): "Show results" |
 | `frontend/components/sections/DoctifyReviews.tsx` |  |  |  | 1 candidate string(s): "[attr] Doctify patient reviews" |
 | `frontend/components/sections/DoctorCarousel.tsx` |  |  |  | 1 candidate string(s): "No doctors found." |
 | `frontend/components/sections/DoctorFilters.tsx` |  |  |  | 1 candidate string(s): "Show results" |
 | `frontend/components/sections/DoctorsSection.tsx` |  |  |  | 1 candidate string(s): "Our Team" |
 | `frontend/components/sections/FeaturedDoctor.tsx` |  |  |  | 1 candidate string(s): "Featured clinician" |
-| `frontend/components/sections/GH2PagePrimitives.tsx` |  |  |  | 5 candidate string(s): "Skip to main content", "Global Health Network", "Secure access", … |
-| `frontend/components/sections/ServiceCatalog.tsx` |  |  |  | 1 candidate string(s): "Learn more" |
+| `frontend/components/sections/GH2PagePrimitives.tsx` |  |  |  | 2 candidate string(s): "Skip to main content", "Encrypted end-to-end. Your health data st… |
 | `frontend/components/templates/DoctorProfileTemplate.tsx` |  |  |  | 4 candidate string(s): "Book this clinician", "Open video slots, subject to availability.… |
 | `frontend/components/templates/DoctorTeamTemplate.tsx` |  |  |  | 2 candidate string(s): "[attr] Previous page", "[attr] Next page" |
-
-### page-without-i18n (4) — warning
-
-> Wire the page to getPageLocale()/loadLocaleBundle() (or receive locale via layout props) so it renders in the selected language.
-
-| File | Key | Locale | English value | Detail |
-|---|---|---|---|---|
-| `frontend/app/(site)/(global)/brazil/consent/page.tsx` |  |  |  |  |
-| `frontend/app/(site)/(global)/brazil/consent/success/page.tsx` |  |  |  |  |
-| `frontend/app/(site)/(global)/checkout/success/page.tsx` |  |  |  |  |
-| `frontend/app/(site)/(global)/verify/certificate/[id]/page.tsx` |  |  |  |  |
 
 ### wiring (1) — info
 

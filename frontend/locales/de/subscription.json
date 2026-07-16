@@ -164,9 +164,9 @@
     "notCovered": "Nicht in Ihrem Tarif enthalten",
     "youSave": "Sie sparen {amount} mit Ihrem Tarif",
     "creditsLeft": "{count} Beratungsguthaben danach übrig",
-    "locked": "Not yet unlocked",
-    "familyUnavailable": "Family usage not available",
-    "notEnoughCredits": "Not enough credits"
+    "locked": "Noch nicht entsperrt",
+    "familyUnavailable": "Familiennutzung nicht verfügbar",
+    "notEnoughCredits": "Nicht genügend Guthaben"
   },
   "dashboard": {
     "memberMonths": "Mitglied seit {months} bezahlten Monaten",

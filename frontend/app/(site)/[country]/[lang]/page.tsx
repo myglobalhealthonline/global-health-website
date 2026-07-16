@@ -83,13 +83,14 @@ export async function generateMetadata({
 
   const { record: page } = await getPageContent(code, "HOME", lang as PublicLocale);
   const extras = homePageExtras(code, lang);
+  const { common: metaCommon } = loadLocaleBundle(lang as LocaleCode);
   const url = `${getSiteUrl()}/${country}/${lang}`;
   const title =
-    page?.seoTitle ?? extras?.seoTitle ?? `${config.name} — registered doctors and specialists`;
+    page?.seoTitle ?? extras?.seoTitle ?? metaCommon.homeMeta.titleTemplate.replace("{country}", config.name);
   const description =
     page?.seoDescription ??
     extras?.seoDescription ??
-    `Licensed doctors and specialists registered to practise in ${config.name}. View profiles, credentials, specialties and languages.`;
+    metaCommon.homeMeta.descriptionTemplate.replace("{country}", config.name);
   // OG/Twitter may carry a distinct social-optimised variant; fall back to
   // the page title/description otherwise.
   const ogTitle = extras?.ogTitle ?? title;

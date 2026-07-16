@@ -1,7 +1,13 @@
 {
   "portal": {
     "label": "Portalul medicului",
-    "sectionLabel": "Medic"
+    "sectionLabel": "Medic",
+    "slogan": "v1.0 · medicină oricând, oriunde",
+    "notificationsAriaLabel": "Notificări",
+    "notificationsHeading": "Notificări",
+    "notificationsUnreadSuffix": "necitite",
+    "notificationsUnreadSr": "{count} notificări necitite",
+    "notificationsViewAll": "Vezi toate"
   },
   "nav": {
     "groupOverview": "Prezentare generală",
@@ -97,7 +103,8 @@
     "forms": "Formulare",
     "formsHint": "Preluare / pre-consultație / control",
     "invoices": "Facturi",
-    "invoicesHint": "Stare plată + istoric"
+    "invoicesHint": "Stare plată + istoric",
+    "loadingAriaLabel": "Se încarcă tabloul de bord al medicului"
   },
   "appointments": {
     "eyebrow": "Coada de consultații",
@@ -482,7 +489,9 @@
     "networkErrorRetry": "Eroare de rețea — încercați din nou",
     "noActiveCountry": "Nicio țară activă disponibilă",
     "savePayoutFailed": "Detaliile de plată nu au putut fi salvate",
-    "payoutSaved": "Detalii de plată salvate"
+    "payoutSaved": "Detalii de plată salvate",
+    "adjustImage": "Ajustați imaginea",
+    "adjustPhoto": "Ajustați fotografia"
   },
   "invoices": {
     "eyebrow": "Vizibilitate facturare",
@@ -862,7 +871,8 @@
     "noPhoneWarning": "niciun telefon înregistrat",
     "whatsappWarning": "WhatsApp",
     "couldNotFinalize": "Rețeta nu a putut fi finalizată.",
-    "finalizedSuccess": "Rețetă medicală finalizată și mutată în istoric."
+    "finalizedSuccess": "Rețetă medicală finalizată și mutată în istoric.",
+    "moreActions": "Mai multe acțiuni pentru documente"
   },
   "appointmentDocumentsTab": {
     "summary": "PDF-uri generate și fișiere încărcate pentru această programare ({count} în total).",

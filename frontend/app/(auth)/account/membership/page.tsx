@@ -53,7 +53,7 @@ export default async function MembershipPage({
         <PageHeader title={t.title} description={t.subtitle} />
         <div className="gh-patient-empty-state gh-card max-w-xl p-8">
           <AdminEmptyState
-            title="No active membership"
+            title={a.membership.noActiveMembership}
             description={t.noSubscription}
             action={
               <Link href="/" className="gh-btn gh-btn-primary inline-flex justify-center">
@@ -110,10 +110,10 @@ export default async function MembershipPage({
             <AdminSummaryStrip
               className="mb-5"
               items={[
-                { label: "Plan", value: sub.plan.name, hint: "Current membership", icon: <Award aria-hidden /> },
-                { label: "Status", value: sub.status.toLowerCase(), hint: sub.cancelAtPeriodEnd ? "Cancellation scheduled" : "Membership lifecycle", icon: <Activity aria-hidden /> },
-                { label: "Next billing", value: nextBillingLabel ?? "Not scheduled", hint: "Renewal date", icon: <CalendarClock aria-hidden /> },
-                { label: "Price", value: priceLabel, hint: "Monthly subscription", icon: <CreditCard aria-hidden /> },
+                { label: a.membership.sumPlan, value: sub.plan.name, hint: a.membership.sumPlanHint, icon: <Award aria-hidden /> },
+                { label: a.membership.sumStatus, value: sub.status.toLowerCase(), hint: sub.cancelAtPeriodEnd ? a.membership.cancellationScheduled : a.membership.sumStatusHint, icon: <Activity aria-hidden /> },
+                { label: a.membership.sumNextBilling, value: nextBillingLabel ?? a.membership.notScheduled, hint: a.membership.sumNextBillingHint, icon: <CalendarClock aria-hidden /> },
+                { label: a.membership.sumPrice, value: priceLabel, hint: a.membership.sumPriceHint, icon: <CreditCard aria-hidden /> },
               ]}
             />
             <ManagePanel
@@ -144,7 +144,7 @@ export default async function MembershipPage({
             <div className="gh-patient-empty-state gh-card max-w-xl p-8">
               <AdminEmptyState
                 as="h2"
-                title="No rewards available"
+                title={a.membership.noRewardsTitle}
                 description={subscription.dashboard.wellnessNone}
               />
             </div>
@@ -153,14 +153,15 @@ export default async function MembershipPage({
               <AdminSummaryStrip
                 className="mb-5"
                 items={[
-                  { label: "Wellness balance", value: String(credits?.wellness.balance ?? 0), hint: "Credits available", icon: <Sparkles aria-hidden /> },
-                  { label: "Reward kits", value: String(kitsWithUnlock.length), hint: "Available to review", icon: <Gift aria-hidden /> },
-                  { label: "Eligible now", value: String(kitsWithUnlock.filter((kit) => kit.eligible).length), hint: "Ready to redeem", icon: <CheckCircle2 aria-hidden /> },
-                  { label: "Membership", value: sub.status.toLowerCase(), hint: sub.plan?.name ?? "Current plan", icon: <Award aria-hidden /> },
+                  { label: a.membership.sumWellnessBalance, value: String(credits?.wellness.balance ?? 0), hint: a.membership.sumWellnessBalanceHint, icon: <Sparkles aria-hidden /> },
+                  { label: a.membership.sumRewardKits, value: String(kitsWithUnlock.length), hint: a.membership.sumRewardKitsHint, icon: <Gift aria-hidden /> },
+                  { label: a.membership.sumEligibleNow, value: String(kitsWithUnlock.filter((kit) => kit.eligible).length), hint: a.membership.sumEligibleNowHint, icon: <CheckCircle2 aria-hidden /> },
+                  { label: a.membership.sumMembership, value: sub.status.toLowerCase(), hint: sub.plan?.name ?? a.membership.currentPlanHint, icon: <Award aria-hidden /> },
                 ]}
               />
               <RewardsPanel
                 t={rt}
+                shippingLabels={a.rewards}
                 kits={kitsWithUnlock}
                 wellnessBalance={credits?.wellness.balance ?? 0}
                 prefillName={user?.fullName ?? ""}

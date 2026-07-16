@@ -22,6 +22,8 @@ export function ResponsiveFilterBar({
   mobileSheet = false,
   activeCount = 0,
   className = "",
+  filtersLabel = "Filters",
+  showResultsLabel = "Show results",
 }: {
   /** Full-width search input, rendered first. */
   search?: ReactNode;
@@ -31,6 +33,10 @@ export function ResponsiveFilterBar({
   /** Count of active (non-default) filters — shown as a badge on the trigger. */
   activeCount?: number;
   className?: string;
+  /** Mobile-sheet trigger + sheet title label. */
+  filtersLabel?: string;
+  /** Mobile-sheet "apply filters" footer button label. */
+  showResultsLabel?: string;
 }) {
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -47,7 +53,7 @@ export function ResponsiveFilterBar({
             onClick={() => setSheetOpen(true)}
           >
             <SlidersHorizontal className="size-4" aria-hidden />
-            Filters
+            {filtersLabel}
             {activeCount > 0 ? (
               <span className="gh-rfb__badge">{activeCount}</span>
             ) : null}
@@ -57,10 +63,10 @@ export function ResponsiveFilterBar({
             onOpenChange={setSheetOpen}
             side="bottom"
             size="sm"
-            ariaLabel="Filters"
+            ariaLabel={filtersLabel}
             header={
               <Dialog.Title asChild>
-                <h2 className="gh-record-drawer__title">Filters</h2>
+                <h2 className="gh-record-drawer__title">{filtersLabel}</h2>
               </Dialog.Title>
             }
             footer={
@@ -69,7 +75,7 @@ export function ResponsiveFilterBar({
                 className="gh-btn gh-btn-primary"
                 onClick={() => setSheetOpen(false)}
               >
-                Show results
+                {showResultsLabel}
               </button>
             }
           >

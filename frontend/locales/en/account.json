@@ -25,7 +25,13 @@
   },
   "portal": {
     "label": "Patient portal",
-    "sectionLabel": "Account"
+    "sectionLabel": "Account",
+    "slogan": "v1.0 · medicine anytime anywhere",
+    "notificationsAriaLabel": "Notifications",
+    "notificationsHeading": "Notifications",
+    "notificationsUnreadSuffix": "unread",
+    "notificationsUnreadSr": "{count} unread notifications",
+    "notificationsViewAll": "View all"
   },
   "dashboard": {
     "welcome": "Welcome",
@@ -216,7 +222,8 @@
     "noOnlineOrders": "No online prescription orders yet.",
     "browseProducts": "Browse products →",
     "ordered": "Ordered {date}",
-    "open": "View booking"
+    "open": "View booking",
+    "refillButtonTitle": "Refills aren't one-click yet — this starts a new consultation booking so a doctor can approve the refill."
   },
   "medicalFiles": {
     "breadcrumb": "Patient portal",
@@ -253,7 +260,16 @@
     "upload": "Upload",
     "uploading": "Uploading…",
     "emptyTitle": "No {category} yet",
-    "emptyBody": "Uploaded reports, prescriptions, requests, and summaries will appear here."
+    "emptyBody": "Uploaded reports, prescriptions, requests, and summaries will appear here.",
+    "emptyUploadedTitle": "No documents uploaded yet",
+    "emptyUploadedBody": "Documents you upload for your doctor to review will appear here and sync to your doctor's portal.",
+    "emptyExamTitle": "No exam prescriptions yet",
+    "emptyExamBody": "Exam prescriptions your doctor issues — and the results you upload against them — appear here.",
+    "emptyCertificatesTitle": "No certificates yet",
+    "emptyCertificatesBody": "Absence and custom certificates your doctor issues will appear here once sent.",
+    "emptyDoctorDocsTitle": "No doctor documents yet",
+    "emptyDoctorDocsBody": "Files and results your doctor shares with you will appear here.",
+    "examResultTag": "exam result"
   },
   "payments": {
     "breadcrumb": "Account",
@@ -641,7 +657,16 @@
     "sumNextBillingHint": "Renewal date",
     "sumPrice": "Price",
     "sumPriceHint": "Monthly subscription",
-    "tabsAria": "Membership and rewards sections"
+    "tabsAria": "Membership and rewards sections",
+    "sumWellnessBalance": "Wellness balance",
+    "sumWellnessBalanceHint": "Credits available",
+    "sumRewardKits": "Reward kits",
+    "sumRewardKitsHint": "Available to review",
+    "sumEligibleNow": "Eligible now",
+    "sumEligibleNowHint": "Ready to redeem",
+    "sumMembership": "Membership",
+    "currentPlanHint": "Current plan",
+    "noRewardsTitle": "No rewards available"
   },
   "calendar": {
     "eyebrow": "My schedule",
@@ -656,7 +681,8 @@
     "sumMarkets": "Markets",
     "sumMarketsHint": "Countries represented",
     "emptyDay": "No consultations on this day.",
-    "emptyDayHint": "Pick another day to review your appointments."
+    "emptyDayHint": "Pick another day to review your appointments.",
+    "dayAgenda": "Day agenda"
   },
   "messages": {
     "eyebrow": "Messages",
@@ -732,5 +758,14 @@
     "resourceIdDoc": "your ID document",
     "resourceNationalityDoc": "your nationality document",
     "resourceInsuranceDoc": "your insurance document"
+  },
+  "rewards": {
+    "fullName": "Full name",
+    "addressLine1": "Address line 1",
+    "addressLine2Optional": "Address line 2 (optional)",
+    "city": "City",
+    "postalCode": "Postal code",
+    "country": "Country",
+    "cancelRedemption": "Cancel redemption"
   }
 }

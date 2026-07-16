@@ -10,6 +10,7 @@ import { SectionSeam } from "@/components/ui/SectionSeam";
 import { Stethoscope, ShieldCheck, BookOpen } from "lucide-react";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { CommonLocale } from "@/lib/i18n/types";
 
 export const metadata: Metadata = {
@@ -22,6 +23,8 @@ export default async function BlogIndexPage() {
   const [ordered, cookieStore, locale] = await Promise.all([listBlogPosts(), cookies(), getPageLocale()]);
   const common = getCommonLocale(locale);
   const bp = common.blogPage;
+  const { home } = loadLocaleBundle(locale);
+  const blogI18n = home.blog;
 
   // Send "Back to home" to the visitor's remembered country home instead of
   // the bare gateway "/" — the gateway renders its own country-picker logo
@@ -78,13 +81,13 @@ export default async function BlogIndexPage() {
                 00
               </p>
               <h2 className="mt-3 text-2xl font-extrabold tracking-[-0.03em] text-[var(--color-text-primary)]">
-                No articles published yet
+                {blogI18n.noArticles}
               </h2>
               <p className="mt-2 text-[length:var(--text-body)] text-[var(--color-text-muted)]">
-                Check back soon for medical guides and service explainers.
+                {blogI18n.checkBackSoon}
               </p>
               <Link href="/" className="mt-6 inline-flex rounded-full border border-[rgba(29,75,54,0.25)] px-6 py-4 text-sm font-semibold text-[var(--color-brand-primary)] hover:bg-[rgba(29,75,54,0.06)]">
-                Back to country selection
+                {blogI18n.backToCountrySelection}
               </Link>
             </div>
           ) : (

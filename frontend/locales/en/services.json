@@ -16,6 +16,8 @@
       "specialist": "See a Specialist",
       "prescription": "Prescriptions",
       "test": "Lab Tests"
-    }
+    },
+    "learnMore": "Learn more",
+    "learnMoreAria": "Learn more: {title}"
   }
 }

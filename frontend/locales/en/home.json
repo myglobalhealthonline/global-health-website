@@ -83,5 +83,59 @@
     "stat3Caption": "Open slots are shown from live doctor calendars.",
     "stat4Label": "Bookable services",
     "stat4Caption": "Consultations, referrals, and home tests."
+  },
+  "blog": {
+    "noArticles": "No articles published yet",
+    "checkBackSoon": "Check back soon for medical guides and service explainers.",
+    "backToCountrySelection": "Back to country selection",
+    "allArticles": "All articles",
+    "minRead": "min read",
+    "nextStep": "Next step",
+    "readyToSpeak": "Ready to speak with a doctor?",
+    "bookConsultationBody": "Book an online consultation with a locally-registered doctor in your country. Open appointments are shown during booking.",
+    "bookConsultation": "Book consultation",
+    "clinicallyReviewedBy": "Clinically reviewed by"
+  },
+  "flow": {
+    "patientUploadHeading": "Upload medical files",
+    "checkoutSuccess": {
+      "paymentReceivedTitle": "Payment received",
+      "paymentReceivedBody": "Your payment was successful. Confirmation details will arrive by email and WhatsApp.",
+      "confirmingPaymentTitle": "Confirming payment",
+      "confirmingPaymentBody": "We are opening your country-specific confirmation page."
+    },
+    "certificate": {
+      "headerTitle": "Certificate verification",
+      "headerSubtitle": "Authenticate a Global Health certificate",
+      "stepVerify": "Verify",
+      "verifiedTitle": "Certificate verified",
+      "verifiedBody": "This certificate is authentic and issued by Global Health.",
+      "notFoundTitle": "Certificate not found",
+      "confirmAuthenticityHint": "To confirm authenticity, match the Certificate ID above with the one printed on your document."
+    }
+  },
+  "brazilConsent": {
+    "headerTitle": "Medical consent",
+    "headerSubtitle": "LGPD consent and payment processing.",
+    "stepConsent": "Consent",
+    "stepPayment": "Payment",
+    "missingLinkError": "This consent link is missing or invalid. Please use the link from your email.",
+    "loading": "Loading…",
+    "thankYouTitle": "Thank you",
+    "consentRegisteredBody": "Your consent has been recorded. Payment confirmed.",
+    "eyebrow": "Brazil · Consultancy",
+    "formTitle": "Medical consent",
+    "formIntro": "Complete the form and proceed to the processing payment (€29).",
+    "fieldName": "Name",
+    "fieldEmail": "Email",
+    "fieldPhone": "Phone",
+    "fieldPharmacy": "Pharmacy",
+    "fieldMessage": "Message",
+    "consentCheckboxText": "I agree to the processing of my health data for the purposes of medical consultation and payment processing.",
+    "submitting": "Processing…",
+    "submit": "Submit and pay",
+    "successTitle": "Payment received",
+    "successBody": "Thank you. Your Brazil consent has been successfully recorded.",
+    "backToHome": "Back to home"
   }
 }

@@ -1,0 +1,179 @@
+# Identical-to-English allowlist candidates
+
+Category B findings from translation-audit.json `identical-to-english` — legitimately identical across languages (brand names, loanwords, abbreviations, medical/technical terms, proper nouns, or punctuation-only strings). Candidates for `scripts/audit-translations.mjs` allowlist.
+
+- `pt/account:dashboard.totalLabel` — "Total" — same spelling word in this language
+- `pt/account:orders.subtotal` — "Subtotal" — same spelling word in this language
+- `pt/account:orders.total` — "Total" — same spelling word in this language
+- `pt/account:orders.sumTotal` — "Total" — same spelling word in this language
+- `pt/account:orders.colTotal` — "Total" — same spelling word in this language
+- `pt/account:profile.nationalIdHint` — "NIC / DNI / RG / CC" — national ID document abbreviations (proper nouns/codes)
+- `pt/account:profile.taxIdHint` — "NIF / PPS / CPF" — tax ID document abbreviations (proper nouns/codes)
+- `pt/account:profile.statusPatientIdHint` — "Global Health Number" — brand term "Global Health Number"
+- `pt/account:notificationsPage.total` — "Total" — same spelling word in this language
+- `pt/common:footer.legal` — "Legal" — same spelling word in this language
+- `pt/common:extra.minSuffix` — "min" — universal abbreviation for minutes
+- `pt/common:legalPage.heroEyebrow` — "{country} · Legal" — brand template string, only "Legal" is language content, same spelling
+- `pt/common:legalPage.heroWatermark` — "Legal" — same spelling word in this language
+- `pt/common:legalDocPage.heroEyebrow` — "{country} · Legal" — brand template string, only "Legal" is language content, same spelling
+- `pt/common:legalDocPage.heroWatermark` — "Legal" — same spelling word in this language
+- `pt/common:cartPage.subtotalItems` — "Subtotal ({count} {unit})" — "Subtotal" is same spelling, rest is variables
+- `pt/common:cartPage.total` — "Total" — same spelling word in this language
+- `pt/common:checkoutPage.subtotal` — "Subtotal" — same spelling word in this language
+- `pt/common:checkoutPage.total` — "Total" — same spelling word in this language
+- `pt/doctor:availability.minutesShort` — "{count} min" — universal abbreviation for minutes
+- `pt/doctor:availability.removeWindowDateQualifier` — "({from} – {until})." — punctuation/dash + variables only, no language content
+- `pt/doctor:profile.registrationBodyPlaceholder` — "IMC, OM, OMC" — medical registration body abbreviations (proper nouns)
+- `pt/doctor:invoices.excel` — "Excel" — Microsoft product brand name
+- `pt/doctor:notificationsPage.total` — "Total" — same spelling word in this language
+- `pt/doctor:servicesUsedList.colItem` — "Item" — same spelling word in Portuguese
+- `pt/doctor:servicesUsedList.total` — "Total" — same spelling word in this language
+- `pt/faq:hero_eyebrow` — "Global Health · FAQ" — brand name + universal acronym "FAQ"
+- `pt/legal:privacy.eyebrow` — "Legal" — same spelling word in this language
+- `pt/legal:terms.eyebrow` — "Legal" — same spelling word in this language
+- `es/account:dashboard.totalLabel` — "Total" — same spelling word in this language
+- `es/account:orders.subtotal` — "Subtotal" — same spelling word in this language
+- `es/account:orders.total` — "Total" — same spelling word in this language
+- `es/account:orders.sumTotal` — "Total" — same spelling word in this language
+- `es/account:orders.colTotal` — "Total" — same spelling word in this language
+- `es/account:profile.nationalIdHint` — "NIC / DNI / RG / CC" — national ID document abbreviations (proper nouns/codes)
+- `es/account:profile.taxIdHint` — "NIF / PPS / CPF" — tax ID document abbreviations (proper nouns/codes)
+- `es/account:profile.tabPersonal` — "Personal" — same spelling word in this language
+- `es/account:profile.statusPatientIdHint` — "Global Health Number" — brand term "Global Health Number"
+- `es/account:notificationsPage.total` — "Total" — same spelling word in this language
+- `es/account:membership.sumPlan` — "Plan" — same spelling word in this language
+- `es/common:footer.legal` — "Legal" — same spelling word in this language
+- `es/common:extra.minSuffix` — "min" — universal abbreviation for minutes
+- `es/common:homeCatalog.tagGeneral` — "General" — same spelling word in this language
+- `es/common:legalPage.heroWatermark` — "Legal" — same spelling word in this language
+- `es/common:legalDocPage.heroWatermark` — "Legal" — same spelling word in this language
+- `es/common:cartPage.subtotalItems` — "Subtotal ({count} {unit})" — "Subtotal" is same spelling, rest is variables
+- `es/common:cartPage.total` — "Total" — same spelling word in this language
+- `es/common:checkoutPage.subtotal` — "Subtotal" — same spelling word in this language
+- `es/common:checkoutPage.total` — "Total" — same spelling word in this language
+- `es/common:bookPage.tagGeneral` — "General" — same spelling word in this language
+- `es/common:cardVerify.plan` — "Plan" — same spelling word in this language
+- `es/doctor:appointments.typeGeneral` — "General" — same spelling word in this language
+- `es/doctor:availability.minutesShort` — "{count} min" — universal abbreviation for minutes
+- `es/doctor:availability.removeWindowDateQualifier` — "({from} – {until})." — punctuation/dash + variables only, no language content
+- `es/doctor:profile.registrationBodyPlaceholder` — "IMC, OM, OMC" — medical registration body abbreviations (proper nouns)
+- `es/doctor:invoices.excel` — "Excel" — Microsoft product brand name
+- `es/doctor:notificationsPage.total` — "Total" — same spelling word in this language
+- `es/doctor:servicesUsedList.total` — "Total" — same spelling word in this language
+- `es/doctor:consultationForm.fieldPlan` — "Plan" — same spelling word in this language
+- `es/faq:hero_eyebrow` — "Global Health · FAQ" — brand name + universal acronym "FAQ"
+- `cs/account:profile.nationalIdHint` — "NIC / DNI / RG / CC" — national ID document abbreviations (proper nouns/codes)
+- `cs/account:profile.taxIdHint` — "NIF / PPS / CPF" — tax ID document abbreviations (proper nouns/codes)
+- `cs/account:profile.statusPatientIdHint` — "Global Health Number" — brand term "Global Health Number"
+- `cs/common:extra.minSuffix` — "min" — universal abbreviation for minutes
+- `cs/common:testsPage.testSingular` — "test" — loanword, same spelling in Czech
+- `cs/common:homeCatalog.testSingular` — "test" — loanword, same spelling in Czech
+- `cs/doctor:nav.groupFinance` — "Finance" — same spelling word in Czech
+- `cs/doctor:availability.minutesShort` — "{count} min" — universal abbreviation for minutes
+- `cs/doctor:availability.removeWindowDateQualifier` — "({from} – {until})." — punctuation/dash + variables only, no language content
+- `cs/doctor:profile.urlSlug` — "URL slug" — web-dev technical term, untranslated
+- `cs/doctor:profile.registrationBodyPlaceholder` — "IMC, OM, OMC" — medical registration body abbreviations (proper nouns)
+- `cs/doctor:invoices.excel` — "Excel" — Microsoft product brand name
+- `cs/doctor:appointmentActions.modeOnline` — "Online (video)" — "Online" universal loanword, "(video)" universal term
+- `cs/doctor:followUpButton.onlineOption` — "Online (video)" — "Online" universal loanword, "(video)" universal term
+- `cs/faq:hero_eyebrow` — "Global Health · FAQ" — brand name + universal acronym "FAQ"
+- `ro/account:nav.calendar` — "Calendar" — same spelling word in this language
+- `ro/account:orders.contact` — "Contact" — same spelling word in this language
+- `ro/account:orders.statusLabel` — "Status" — same spelling word in this language
+- `ro/account:payments.colStatus` — "Status" — same spelling word in this language
+- `ro/account:profile.nationalIdHint` — "NIC / DNI / RG / CC" — national ID document abbreviations (proper nouns/codes)
+- `ro/account:profile.taxIdHint` — "NIF / PPS / CPF" — tax ID document abbreviations (proper nouns/codes)
+- `ro/account:profile.tabContact` — "Contact" — same spelling word in this language
+- `ro/account:profile.tabPersonal` — "Personal" — same spelling word in this language
+- `ro/account:profile.statusPatientIdHint` — "Global Health Number" — brand term "Global Health Number"
+- `ro/account:notificationsPage.total` — "Total" — same spelling word in this language
+- `ro/account:notificationsPage.statusLabel` — "Status" — same spelling word in this language
+- `ro/account:membership.sumPlan` — "Plan" — same spelling word in this language
+- `ro/account:membership.sumStatus` — "Status" — same spelling word in this language
+- `ro/account:calendar.title` — "Calendar" — same spelling word in this language
+- `ro/common:navigation.contact` — "Contact" — same spelling word in Romanian
+- `ro/common:footer.legal` — "Legal" — same spelling word in this language
+- `ro/common:extra.minSuffix` — "min" — universal abbreviation for minutes
+- `ro/common:prescriptionsPage.trustClinicianValue` — "Clinician" — medical/technical term, stays Latin-derived form
+- `ro/common:homeCatalog.tagGeneral` — "General" — same spelling word in this language
+- `ro/common:legalPage.heroWatermark` — "Legal" — same spelling word in this language
+- `ro/common:legalDocPage.heroWatermark` — "Legal" — same spelling word in this language
+- `ro/common:cartPage.subtotalItems` — "Subtotal ({count} {unit})" — "Subtotal" is same spelling, rest is variables
+- `ro/common:cartPage.total` — "Total" — same spelling word in this language
+- `ro/common:checkoutPage.subtotal` — "Subtotal" — same spelling word in this language
+- `ro/common:checkoutPage.total` — "Total" — same spelling word in this language
+- `ro/common:bookPage.tagGeneral` — "General" — same spelling word in this language
+- `ro/common:cardVerify.valid` — "Card valid" — contains only variables/same-spelling words
+- `ro/common:cardVerify.plan` — "Plan" — same spelling word in this language
+- `ro/contact:hero_eyebrow` — "Global Health · Contact" — brand name + same spelling word "Contact"
+- `ro/doctor:nav.calendar` — "Calendar" — same spelling word in Romanian
+- `ro/doctor:common.activeCount` — "{count} active" — Romanian feminine/plural form "active" coincides with English spelling
+- `ro/doctor:dashboard.calendar` — "Calendar" — same spelling word in Romanian
+- `ro/doctor:appointments.typeGeneral` — "General" — same spelling word in this language
+- `ro/doctor:appointments.typeSpecialist` — "Specialist" — same spelling word in Romanian
+- `ro/doctor:patients.docTypeDocument` — "Document" — same spelling word in Romanian
+- `ro/doctor:availability.minutesShort` — "{count} min" — universal abbreviation for minutes
+- `ro/doctor:availability.removeWindowDateQualifier` — "({from} – {until})." — punctuation/dash + variables only, no language content
+- `ro/doctor:profile.registrationBodyPlaceholder` — "IMC, OM, OMC" — medical registration body abbreviations (proper nouns)
+- `ro/doctor:invoices.excel` — "Excel" — Microsoft product brand name
+- `ro/doctor:notificationsPage.total` — "Total" — same spelling word in this language
+- `ro/doctor:services.kindSpecialistShort` — "Specialist" — same spelling word in Romanian
+- `ro/doctor:appointmentActions.modeOnline` — "Online (video)" — "Online" universal loanword, "(video)" universal term
+- `ro/doctor:followUpButton.onlineOption` — "Online (video)" — "Online" universal loanword, "(video)" universal term
+- `ro/doctor:servicesUsedList.total` — "Total" — same spelling word in this language
+- `ro/doctor:consultationForm.fieldPlan` — "Plan" — same spelling word in this language
+- `ro/doctor:calendar.title` — "Calendar" — same spelling word in Romanian
+- `ro/faq:hero_eyebrow` — "Global Health · FAQ" — brand name + universal acronym "FAQ"
+- `ro/home:team.filterSpecialist` — "Specialist" — same spelling word in Romanian
+- `ro/home:finalCta.liveLabel` — "Live" — tech loanword "Live", used untranslated
+- `ro/home:finalCta.headlineAccent` — "clinician" — medical/technical term, stays Latin-derived form
+- `ro/home:statsBand.stat3Value` — "Live" — tech loanword "Live", used untranslated
+- `ro/legal:privacy.eyebrow` — "Legal" — same spelling word in this language
+- `ro/legal:terms.eyebrow` — "Legal" — same spelling word in this language
+- `ro/legal:terms.s10_h` — "Contact" — same spelling word in Romanian
+- `ro/subscription:manage.upgradeLabel` — "Upgrade" — tech loanword "Upgrade", used untranslated
+- `ro/subscription:manage.downgradeLabel` — "Downgrade" — tech loanword "Downgrade", used untranslated
+- `de/account:bookings.statusLabel` — "Status" — same spelling word in this language
+- `de/account:orders.statusLabel` — "Status" — same spelling word in this language
+- `de/account:orders.colStatus` — "Status" — same spelling word in this language
+- `de/account:payments.colStatus` — "Status" — same spelling word in this language
+- `de/account:profile.nationalIdHint` — "NIC / DNI / RG / CC" — national ID document abbreviations (proper nouns/codes)
+- `de/account:profile.taxIdHint` — "NIF / PPS / CPF" — tax ID document abbreviations (proper nouns/codes)
+- `de/account:profile.statusPatientIdHint` — "Global Health Number" — brand term "Global Health Number"
+- `de/account:security.sumAccountValue` — "Patient" — medical term, same spelling in German
+- `de/account:family.optional` — "optional" — same spelling word in German
+- `de/account:notificationsPage.statusLabel` — "Status" — same spelling word in this language
+- `de/account:membership.sumStatus` — "Status" — same spelling word in this language
+- `de/account:accessHistory.roleSystem` — "System" — same spelling word in German
+- `de/auth:register.phoneOptional` — "(optional)" — same spelling word in German
+- `de/common:bookingForm.nationalIdOptional` — "{label} (optional)" — "(optional)" is same spelling word in German, rest is variable
+- `de/common:homeCatalog.trustLive` — "Live" — tech loanword "Live", used untranslated in German
+- `de/common:bookPage.stepService` — "Service" — same spelling word in German
+- `de/common:bookPage.stepDetails` — "Details" — same spelling word in German
+- `de/common:cardVerify.plan` — "Plan" — same spelling word in this language
+- `de/common:cardVerify.status` — "Status" — same spelling word in German
+- `de/doctor:common.status` — "Status" — same spelling word in German
+- `de/doctor:appointments.meeting` — "Meeting" — common loanword "Meeting" in German
+- `de/doctor:appointmentDetail.patient` — "Patient" — same spelling word in German
+- `de/doctor:appointmentDetail.statusLabel` — "Status" — same spelling word in German
+- `de/doctor:patients.colPatient` — "Patient" — same spelling word in German
+- `de/doctor:patients.colStatus` — "Status" — same spelling word in German
+- `de/doctor:availability.removeWindowDateQualifier` — "({from} – {until})." — punctuation/dash + variables only, no language content
+- `de/doctor:profile.registrationBodyPlaceholder` — "IMC, OM, OMC" — medical registration body abbreviations (proper nouns)
+- `de/doctor:profile.bicLabel` — "BIC / SWIFT (optional)" — BIC/SWIFT are banking codes; "(optional)" same spelling in German
+- `de/doctor:invoices.colPatient` — "Patient" — same spelling word in German
+- `de/doctor:invoices.colStatus` — "Status" — same spelling word in German
+- `de/doctor:invoices.excel` — "Excel" — Microsoft product brand name
+- `de/doctor:brazilConsent.name` — "Name" — same spelling word in German
+- `de/doctor:consultationForm.fieldPlan` — "Plan" — same spelling word in this language
+- `de/doctor:documentContextBanner.rowName` — "Name" — same spelling word in German
+- `de/doctor:messagesPage.patientPrefix` — "Patient: " — same spelling word "Patient" in German
+- `de/doctor:confidentiality.eyebrow` — "Compliance" — business/legal loanword "Compliance" in German
+- `de/faq:hero_eyebrow` — "Global Health · FAQ" — brand name + universal acronym "FAQ"
+- `de/forms:contact.phoneOptional` — "(optional)" — same spelling word in German
+- `de/home:finalCta.liveLabel` — "Live" — tech loanword "Live", used untranslated
+- `de/home:statsBand.stat3Value` — "Live" — tech loanword "Live", used untranslated
+- `de/subscription:manage.status` — "Status" — same spelling word in German
+- `de/subscription:manage.upgradeLabel` — "Upgrade" — tech loanword "Upgrade", used untranslated
+- `de/subscription:manage.downgradeLabel` — "Downgrade" — tech loanword "Downgrade", used untranslated
+- `de/subscription:invoice.colStatus` — "Status" — same spelling word in German

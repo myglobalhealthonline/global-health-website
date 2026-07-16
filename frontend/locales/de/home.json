@@ -83,5 +83,59 @@
     "stat3Caption": "Offene Termine aus Live-Arztkalendern.",
     "stat4Label": "Buchbare Leistungen",
     "stat4Caption": "Konsultationen, Überweisungen und Heimtests."
+  },
+  "blog": {
+    "noArticles": "Noch keine Artikel veröffentlicht",
+    "checkBackSoon": "Schauen Sie bald wieder vorbei für medizinische Leitfäden und Serviceerklärungen.",
+    "backToCountrySelection": "Zurück zur Länderauswahl",
+    "allArticles": "Alle Artikel",
+    "minRead": "Minuten Lesezeit",
+    "nextStep": "Nächster Schritt",
+    "readyToSpeak": "Bereit, mit einem Arzt zu sprechen?",
+    "bookConsultationBody": "Buchen Sie eine Online-Konsultation mit einem lokal registrierten Arzt in Ihrem Land. Offene Termine werden während der Buchung angezeigt.",
+    "bookConsultation": "Konsultation buchen",
+    "clinicallyReviewedBy": "Klinisch überprüft von"
+  },
+  "flow": {
+    "patientUploadHeading": "Medizinische Unterlagen hochladen",
+    "checkoutSuccess": {
+      "paymentReceivedTitle": "Zahlung erhalten",
+      "paymentReceivedBody": "Ihre Zahlung war erfolgreich. Bestätigungsdetails werden per E-Mail und WhatsApp zugesendet.",
+      "confirmingPaymentTitle": "Zahlung wird bestätigt",
+      "confirmingPaymentBody": "Wir öffnen Ihre länderspezifische Bestätigungsseite."
+    },
+    "certificate": {
+      "headerTitle": "Zertifikatsüberprüfung",
+      "headerSubtitle": "Authentifizieren Sie ein Global Health-Zertifikat",
+      "stepVerify": "Überprüfen",
+      "verifiedTitle": "Zertifikat verifiziert",
+      "verifiedBody": "Dieses Zertifikat ist authentisch und wurde von Global Health ausgestellt.",
+      "notFoundTitle": "Zertifikat nicht gefunden",
+      "confirmAuthenticityHint": "Um die Authentizität zu bestätigen, vergleichen Sie die oben angegebene Zertifikats-ID mit der auf Ihrem Dokument."
+    }
+  },
+  "brazilConsent": {
+    "headerTitle": "Medizinische Einwilligung",
+    "headerSubtitle": "LGPD-Einwilligung und Zahlungsabwicklung.",
+    "stepConsent": "Einwilligung",
+    "stepPayment": "Zahlung",
+    "missingLinkError": "Dieser Einwilligungslink fehlt oder ist ungültig. Bitte verwenden Sie den Link aus Ihrer E-Mail.",
+    "loading": "Lade…",
+    "thankYouTitle": "Danke",
+    "consentRegisteredBody": "Ihre Zustimmung wurde aufgezeichnet. Zahlung bestätigt.",
+    "eyebrow": "Deutschland · Beratung",
+    "formTitle": "Medizinische Zustimmung",
+    "formIntro": "Füllen Sie das Formular aus und fahren Sie mit der Zahlungsabwicklung (€29) fort.",
+    "fieldName": "Name",
+    "fieldEmail": "E-Mail",
+    "fieldPhone": "Telefon",
+    "fieldPharmacy": "Apotheke",
+    "fieldMessage": "Nachricht",
+    "consentCheckboxText": "Ich stimme der Verarbeitung meiner Gesundheitsdaten zu, um eine medizinische Beratung und die Zahlungsabwicklung durchzuführen.",
+    "submitting": "Verarbeitung…",
+    "submit": "Einreichen und bezahlen",
+    "successTitle": "Zahlung erhalten",
+    "successBody": "Danke. Ihre Zustimmung wurde erfolgreich aufgezeichnet.",
+    "backToHome": "Zurück zur Startseite"
   }
 }

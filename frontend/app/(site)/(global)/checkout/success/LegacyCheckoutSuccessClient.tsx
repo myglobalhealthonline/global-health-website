@@ -8,12 +8,20 @@ import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
 import { getCountryByCode, type CountryCode } from "@/data/countries";
 import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 
+type SuccessI18n = {
+  paymentReceivedTitle: string;
+  paymentReceivedBody: string;
+  confirmingPaymentTitle: string;
+  confirmingPaymentBody: string;
+};
+
 type Props = {
   orderId?: string;
   paymentSynced: boolean;
+  i18n: SuccessI18n;
 };
 
-export function LegacyCheckoutSuccessClient({ orderId, paymentSynced }: Props) {
+export function LegacyCheckoutSuccessClient({ orderId, paymentSynced, i18n }: Props) {
   const router = useRouter();
   const params = useSearchParams();
   const { cart, loading } = useCart();
@@ -42,8 +50,8 @@ export function LegacyCheckoutSuccessClient({ orderId, paymentSynced }: Props) {
         ) : null}
         <GH2StatusPage
           status="success"
-          title="Payment received"
-          body="Your payment was successful. Confirmation details will arrive by email and WhatsApp."
+          title={i18n.paymentReceivedTitle}
+          body={i18n.paymentReceivedBody}
         />
       </>
     );
@@ -52,8 +60,8 @@ export function LegacyCheckoutSuccessClient({ orderId, paymentSynced }: Props) {
   return (
     <GH2StatusPage
       status="loading"
-      title="Confirming payment"
-      body="We are opening your country-specific confirmation page."
+      title={i18n.confirmingPaymentTitle}
+      body={i18n.confirmingPaymentBody}
     />
   );
 }

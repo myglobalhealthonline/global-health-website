@@ -1,7 +1,13 @@
 {
   "portal": {
     "label": "Doctor portal",
-    "sectionLabel": "Doctor"
+    "sectionLabel": "Doctor",
+    "slogan": "v1.0 · medicine anytime anywhere",
+    "notificationsAriaLabel": "Notifications",
+    "notificationsHeading": "Notifications",
+    "notificationsUnreadSuffix": "unread",
+    "notificationsUnreadSr": "{count} unread notifications",
+    "notificationsViewAll": "View all"
   },
   "nav": {
     "groupOverview": "Overview",
@@ -97,7 +103,8 @@
     "forms": "Forms",
     "formsHint": "Intake / pre-consult / follow-up",
     "invoices": "Invoices",
-    "invoicesHint": "Payment status + history"
+    "invoicesHint": "Payment status + history",
+    "loadingAriaLabel": "Loading doctor dashboard"
   },
   "appointments": {
     "eyebrow": "Consultation queue",
@@ -482,7 +489,9 @@
     "networkErrorRetry": "Network error — try again",
     "noActiveCountry": "No active country is available",
     "savePayoutFailed": "Could not save payout details",
-    "payoutSaved": "Payout details saved"
+    "payoutSaved": "Payout details saved",
+    "adjustImage": "Adjust image",
+    "adjustPhoto": "Adjust photo"
   },
   "invoices": {
     "eyebrow": "Billing visibility",
@@ -862,7 +871,8 @@
     "noPhoneWarning": "no phone on file",
     "whatsappWarning": "WhatsApp",
     "couldNotFinalize": "Could not finalize the prescription.",
-    "finalizedSuccess": "Medicine prescription finalized and moved to history."
+    "finalizedSuccess": "Medicine prescription finalized and moved to history.",
+    "moreActions": "More document actions"
   },
   "appointmentDocumentsTab": {
     "summary": "Generated PDFs and uploaded files for this appointment ({count} total).",

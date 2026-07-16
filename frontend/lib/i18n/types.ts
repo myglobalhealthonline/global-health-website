@@ -124,6 +124,8 @@ export type CommonLocale = {
     bioFallbackTemplate: string;
     /** aria-label for the featured-doctor "verify registration" link. */
     verifyRegistrationAria: string;
+    /** DoctorCard overlay-link aria-label, "{name}" placeholder. */
+    viewProfileAria?: string;
   };
   countrySelector: {
     title: string;
@@ -776,5 +778,21 @@ export type CommonLocale = {
     verifiedByClinicians: string;
     evidenceBasedTitle: string;
     noAdsNoSponsors: string;
+  };
+  /** Country-home <head> fallback title/description when no CMS override
+   *  exists. "{country}" placeholder. */
+  homeMeta: {
+    titleTemplate: string;
+    descriptionTemplate: string;
+  };
+  /** /pricing hero trust-card triplet (Licensed doctors / Flexible plans /
+   *  Secure payments). */
+  pricingPage: {
+    trustLicensedTitle: string;
+    trustLicensedSubtitle: string;
+    trustFlexibleTitle: string;
+    trustFlexibleSubtitle: string;
+    trustSecureTitle: string;
+    trustSecureSubtitle: string;
   };
 };

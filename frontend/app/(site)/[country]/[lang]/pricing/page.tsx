@@ -109,9 +109,10 @@ export default async function PricingPage({
       : null;
   const activePlanId = activeSub?.plan?.id ?? null;
   const hasActiveSub = Boolean(activeSub);
-  const { subscription } = loadLocaleBundle(lang as LocaleCode);
+  const { subscription, common: c } = loadLocaleBundle(lang as LocaleCode);
   const t = subscription.pricing;
   const hiw = subscription.howItWorks;
+  const pp = c.pricingPage;
 
   return (
     <>
@@ -140,18 +141,18 @@ export default async function PricingPage({
         trustCards={[
           {
             icon: <Stethoscope className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: "Licensed doctors",
-            subtitle: "Registered locally",
+            title: pp.trustLicensedTitle,
+            subtitle: pp.trustLicensedSubtitle,
           },
           {
             icon: <Calendar className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: "Flexible plans",
-            subtitle: "Cancel anytime",
+            title: pp.trustFlexibleTitle,
+            subtitle: pp.trustFlexibleSubtitle,
           },
           {
             icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: "Secure payments",
-            subtitle: "Stripe protected",
+            title: pp.trustSecureTitle,
+            subtitle: pp.trustSecureSubtitle,
           },
         ]}
       />

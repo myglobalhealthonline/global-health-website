@@ -13,6 +13,8 @@ import { articleJsonLd } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { getCountryTrust } from "@/lib/content/get-country-trust";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -52,10 +54,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = await getBlogPost(slug);
+  const [post, locale] = await Promise.all([getBlogPost(slug), getPageLocale()]);
   if (!post) notFound();
 
-  const formatted = new Date(post.publishedAt).toLocaleDateString("en-GB", {
+  const { home } = loadLocaleBundle(locale);
+  const blogI18n = home.blog;
+
+  const formatted = new Date(post.publishedAt).toLocaleDateString(locale, {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -95,7 +100,7 @@ export default async function BlogPostPage({ params }: Props) {
         watermark="Blog"
         body={post.excerpt}
         backHref="/blog"
-        backLabel="All articles"
+        backLabel={blogI18n.allArticles}
         meta={
           <div className="flex flex-wrap items-center gap-5 text-sm normal-case tracking-normal font-sans">
             <span className="flex items-center gap-1.5">
@@ -108,12 +113,12 @@ export default async function BlogPostPage({ params }: Props) {
             </span>
             <span className="flex items-center gap-1.5">
               <Clock className="size-4" aria-hidden />
-              {post.readingTime} min read
+              {post.readingTime} {blogI18n.minRead}
             </span>
             {reviewerName ? (
               <span className="flex items-center gap-1.5">
                 <BadgeCheck className="size-4" aria-hidden />
-                Clinically reviewed by{" "}
+                {blogI18n.clinicallyReviewedBy}{" "}
                 {reviewerHref ? (
                   <Link href={reviewerHref} className="underline underline-offset-2">
                     {reviewerName}
@@ -179,7 +184,7 @@ export default async function BlogPostPage({ params }: Props) {
                 className="text-[11px] font-bold uppercase tracking-[0.2em]"
                 style={{ color: "var(--color-brand-accent)" }}
               >
-                Next step
+                {blogI18n.nextStep}
               </p>
               <h2
                 className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
@@ -188,7 +193,7 @@ export default async function BlogPostPage({ params }: Props) {
                   color: "rgba(255,255,255,0.92)",
                 }}
               >
-                Ready to speak with a doctor?
+                {blogI18n.readyToSpeak}
               </h2>
               <p
                 className="mt-5 max-w-[48ch] text-[length:var(--text-body-lg)] leading-relaxed"
@@ -197,15 +202,14 @@ export default async function BlogPostPage({ params }: Props) {
                 {/* Blog articles live outside the [country]/[lang] segment, so we
                   * route through the root country gate (CountryEntryGate at /)
                   * which negotiates the right country + locale for the reader. */}
-                Book an online consultation with a locally-registered doctor in
-                your country. Open appointments are shown during booking.
+                {blogI18n.bookConsultationBody}
               </p>
             </div>
             <Link
               href="/"
               className="gh2-btn-lime lg:justify-self-end"
             >
-              Book consultation
+              {blogI18n.bookConsultation}
             </Link>
           </div>
         </div>

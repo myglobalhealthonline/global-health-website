@@ -25,7 +25,13 @@
   },
   "portal": {
     "label": "Portal del paciente",
-    "sectionLabel": "Cuenta"
+    "sectionLabel": "Cuenta",
+    "slogan": "v1.0 · medicina en cualquier momento y lugar",
+    "notificationsAriaLabel": "Notificaciones",
+    "notificationsHeading": "Notificaciones",
+    "notificationsUnreadSuffix": "no leídas",
+    "notificationsUnreadSr": "{count} notificaciones no leídas",
+    "notificationsViewAll": "Ver todas"
   },
   "dashboard": {
     "welcome": "Bienvenido",
@@ -216,7 +222,8 @@
     "noOnlineOrders": "Aún no tienes pedidos de receta online.",
     "browseProducts": "Ver productos →",
     "ordered": "Pedido el {date}",
-    "open": "Ver reserva"
+    "open": "Ver reserva",
+    "refillButtonTitle": "Las recargas no son de un clic aún — esto inicia una nueva reserva de consulta para que un médico pueda aprobar la recarga."
   },
   "medicalFiles": {
     "breadcrumb": "Portal del paciente",
@@ -253,7 +260,16 @@
     "sumCertificates": "Certificados",
     "sumCertificatesHint": "Certificados de ausencia y personalizados",
     "sumDoctorDocuments": "Documentos del médico",
-    "sumDoctorDocumentsHint": "Compartidos por tu médico"
+    "sumDoctorDocumentsHint": "Compartidos por tu médico",
+    "emptyUploadedTitle": "No se han subido documentos aún",
+    "emptyUploadedBody": "Los documentos que subas para que tu médico los revise aparecerán aquí y se sincronizarán con el portal de tu médico.",
+    "emptyExamTitle": "No hay recetas de exámenes aún",
+    "emptyExamBody": "Las recetas de exámenes que tu médico emita — y los resultados que subas contra ellas — aparecerán aquí.",
+    "emptyCertificatesTitle": "No hay certificados aún",
+    "emptyCertificatesBody": "Los certificados de ausencia y personalizados que tu médico emita aparecerán aquí una vez enviados.",
+    "emptyDoctorDocsTitle": "No hay documentos del médico aún",
+    "emptyDoctorDocsBody": "Los archivos y resultados que tu médico comparta contigo aparecerán aquí.",
+    "examResultTag": "resultado del examen"
   },
   "payments": {
     "breadcrumb": "Cuenta",
@@ -303,7 +319,7 @@
     "emailLabel": "Correo electrónico",
     "emailNote": "El correo no se puede cambiar aún. Contacta con soporte si necesitas cambiarlo.",
     "fullNameLabel": "Nombre completo",
-    "fieldRequired": "This field is required.",
+    "fieldRequired": "Este campo es obligatorio.",
     "phoneLabel": "Teléfono",
     "phonePlaceholder": "+34 6…",
     "phoneNote": "Para que la clínica pueda contactarte sobre tu reserva. Déjalo en blanco si prefieres solo correo.",
@@ -415,12 +431,12 @@
     "deleteAccountTitle": "¿Eliminar tu cuenta?",
     "cancel": "Cancelar",
     "deleteAccount": "Programar eliminación",
-    "deletionScheduledBanner": "Your account is scheduled for deletion on {date}.",
-    "cancelDeletion": "Cancel deletion",
-    "cancellingDeletion": "Cancelling…",
-    "signOutAllDevices": "Sign out of all devices",
-    "signOutAllDevicesBody": "This ends every signed-in session, including this one — you'll need to log in again.",
-    "signingOutAll": "Signing out…",
+    "deletionScheduledBanner": "Su cuenta está programada para ser eliminada el {date}.",
+    "cancelDeletion": "Cancelar eliminación",
+    "cancellingDeletion": "Cancelando…",
+    "signOutAllDevices": "Cerrar sesión en todos los dispositivos",
+    "signOutAllDevicesBody": "Esto finaliza todas las sesiones iniciadas, incluida esta — necesitará iniciar sesión de nuevo.",
+    "signingOutAll": "Cerrando sesión…",
     "sumEmailHint": "Email de la cuenta",
     "needsVerification": "Requiere verificación",
     "sumDataExport": "Exportación de datos",
@@ -446,7 +462,7 @@
     "empty": "Aún no has añadido ningún miembro de la familia.",
     "addHeading": "Añadir un miembro de la familia",
     "fullName": "Nombre completo",
-    "fieldRequired": "This field is required.",
+    "fieldRequired": "Este campo es obligatorio.",
     "fullNamePlaceholder": "p. ej. Maria Santos",
     "relationship": "Parentesco",
     "relationshipPlaceholder": "p. ej. Cónyuge, Hijo/a, Padre/Madre",
@@ -569,7 +585,7 @@
     "subtitle": "Registra hasta dos nacionalidades. Los números de documento se guardan cifrados.",
     "slotTitle": "Nacionalidad {n}",
     "country": "País",
-    "fieldRequired": "This field is required.",
+    "fieldRequired": "Este campo es obligatorio.",
     "countryPlaceholder": "p. ej. Irlanda, Pakistán",
     "documentType": "Tipo de documento",
     "documentNumber": "Número de documento",
@@ -641,7 +657,16 @@
     "sumNextBillingHint": "Fecha de renovación",
     "sumPrice": "Precio",
     "sumPriceHint": "Suscripción mensual",
-    "tabsAria": "Secciones de membresía y recompensas"
+    "tabsAria": "Secciones de membresía y recompensas",
+    "sumWellnessBalance": "Saldo de bienestar",
+    "sumWellnessBalanceHint": "Créditos disponibles",
+    "sumRewardKits": "Kits de recompensa",
+    "sumRewardKitsHint": "Disponibles para revisión",
+    "sumEligibleNow": "Elegible ahora",
+    "sumEligibleNowHint": "Listo para canjear",
+    "sumMembership": "Membresía",
+    "currentPlanHint": "Plan actual",
+    "noRewardsTitle": "No hay recompensas disponibles"
   },
   "calendar": {
     "eyebrow": "Mi agenda",
@@ -656,7 +681,8 @@
     "sumMarkets": "Mercados",
     "sumMarketsHint": "Países representados",
     "emptyDay": "No hay consultas este día.",
-    "emptyDayHint": "Elige otro día para revisar tus consultas."
+    "emptyDayHint": "Elige otro día para revisar tus consultas.",
+    "dayAgenda": "Agenda del día"
   },
   "messages": {
     "eyebrow": "Mensajes",
@@ -732,5 +758,14 @@
     "resourceIdDoc": "tu documento de identificación",
     "resourceNationalityDoc": "tu documento de nacionalidad",
     "resourceInsuranceDoc": "tu documento de seguro"
+  },
+  "rewards": {
+    "fullName": "Nombre completo",
+    "addressLine1": "Línea de dirección 1",
+    "addressLine2Optional": "Línea de dirección 2 (opcional)",
+    "city": "Ciudad",
+    "postalCode": "Código postal",
+    "country": "País",
+    "cancelRedemption": "Cancelar canje"
   }
 }

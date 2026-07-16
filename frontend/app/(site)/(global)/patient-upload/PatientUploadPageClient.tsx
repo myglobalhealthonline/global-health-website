@@ -6,7 +6,7 @@ import { fetchPatientUploadInfo, uploadPatientFile } from "@/lib/api/public-api"
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import type { CommonLocale } from "@/lib/i18n/types";
 
-function PatientUploadForm() {
+function PatientUploadForm({ uploadHeading }: { uploadHeading: string }) {
   const searchParams = useSearchParams();
   const token = searchParams.get("token") ?? "";
   const [info, setInfo] = useState<{ email: string; fullName: string | null } | null>(
@@ -61,7 +61,7 @@ function PatientUploadForm() {
   return (
     <div className="gh-card mx-auto max-w-lg p-8">
       <h1 className="text-xl font-bold text-[var(--color-text-primary)]">
-        Upload medical files
+        {uploadHeading}
       </h1>
       <p className="mt-2 text-sm text-[var(--color-text-muted)]">
         {info.fullName ? `For ${info.fullName}` : info.email} — PDF or images, max 10 MB.
@@ -97,7 +97,13 @@ function PatientUploadForm() {
   );
 }
 
-export function PatientUploadPageClient({ flow }: { flow: CommonLocale["flow"] }) {
+export function PatientUploadPageClient({
+  flow,
+  uploadHeading,
+}: {
+  flow: CommonLocale["flow"];
+  uploadHeading: string;
+}) {
   return (
     <>
     <GH2FlowHeader
@@ -108,7 +114,7 @@ export function PatientUploadPageClient({ flow }: { flow: CommonLocale["flow"] }
     />
     <section className="bg-[var(--color-background-soft)] px-5 py-12 sm:py-16">
       <Suspense fallback={<p className="text-center text-sm">Loading…</p>}>
-        <PatientUploadForm />
+        <PatientUploadForm uploadHeading={uploadHeading} />
       </Suspense>
     </section>
     </>

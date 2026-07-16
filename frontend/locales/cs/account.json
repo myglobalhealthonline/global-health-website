@@ -25,7 +25,13 @@
   },
   "portal": {
     "label": "Pacientský portál",
-    "sectionLabel": "Účet"
+    "sectionLabel": "Účet",
+    "slogan": "v1.0 · medicína kdykoliv a kdekoliv",
+    "notificationsAriaLabel": "Oznámení",
+    "notificationsHeading": "Oznámení",
+    "notificationsUnreadSuffix": "nepřečtené",
+    "notificationsUnreadSr": "{count} nepřečtená oznámení",
+    "notificationsViewAll": "Zobrazit vše"
   },
   "dashboard": {
     "welcome": "Vítejte",
@@ -216,7 +222,8 @@
     "noOnlineOrders": "Zatím žádné online objednávky předpisů.",
     "browseProducts": "Procházet produkty →",
     "ordered": "Objednáno {date}",
-    "open": "Zobrazit rezervaci"
+    "open": "Zobrazit rezervaci",
+    "refillButtonTitle": "Opakované předpisy zatím nejsou na jedno kliknutí — tímto se zahájí nová rezervace konzultace, aby ji lékař mohl posoudit."
   },
   "medicalFiles": {
     "breadcrumb": "Pacientský portál",
@@ -253,7 +260,16 @@
     "sumCertificates": "Potvrzení",
     "sumCertificatesHint": "Potvrzení o neschopnosti a vlastní",
     "sumDoctorDocuments": "Dokumenty lékaře",
-    "sumDoctorDocumentsHint": "Sdílené vaším lékařem"
+    "sumDoctorDocumentsHint": "Sdílené vaším lékařem",
+    "emptyUploadedTitle": "Žádné dokumenty zatím nebyly nahrány",
+    "emptyUploadedBody": "Dokumenty, které nahrajete k posouzení vaším lékařem, se zde objeví a synchronizují do portálu vašeho lékaře.",
+    "emptyExamTitle": "Žádné předpisy na vyšetření zatím",
+    "emptyExamBody": "Předpisy na vyšetření, které váš lékař vystaví — a výsledky, které proti nim nahrajete — se zde objeví.",
+    "emptyCertificatesTitle": "Žádné certifikáty zatím",
+    "emptyCertificatesBody": "Osvědčení o absenci a vlastní certifikáty, které váš lékař vystaví, se zde objeví, jakmile budou odeslány.",
+    "emptyDoctorDocsTitle": "Žádné dokumenty od lékaře zatím",
+    "emptyDoctorDocsBody": "Soubory a výsledky, které vám váš lékař sdílí, se zde objeví.",
+    "examResultTag": "výsledky vyšetření"
   },
   "payments": {
     "breadcrumb": "Účet",
@@ -303,7 +319,7 @@
     "emailLabel": "E-mail",
     "emailNote": "E-mail zatím nelze změnit. Pokud potřebujete změnit, kontaktujte podporu.",
     "fullNameLabel": "Celé jméno",
-    "fieldRequired": "This field is required.",
+    "fieldRequired": "Toto pole je povinné.",
     "phoneLabel": "Telefon",
     "phonePlaceholder": "+420 7…",
     "phoneNote": "Aby vás klinika mohla kontaktovat ohledně vaší rezervace. Ponechte prázdné, pokud preferujete pouze email.",
@@ -415,12 +431,12 @@
     "deleteAccountTitle": "Smazat váš účet?",
     "cancel": "Zrušit",
     "deleteAccount": "Naplánovat smazání",
-    "deletionScheduledBanner": "Your account is scheduled for deletion on {date}.",
-    "cancelDeletion": "Cancel deletion",
-    "cancellingDeletion": "Cancelling…",
-    "signOutAllDevices": "Sign out of all devices",
-    "signOutAllDevicesBody": "This ends every signed-in session, including this one — you'll need to log in again.",
-    "signingOutAll": "Signing out…",
+    "deletionScheduledBanner": "Vaše konto je naplánováno na smazání dne {date}.",
+    "cancelDeletion": "Zrušit smazání",
+    "cancellingDeletion": "Rušení…",
+    "signOutAllDevices": "Odhlásit se ze všech zařízení",
+    "signOutAllDevicesBody": "Tímto se ukončí všechny přihlášené relace, včetně této — budete se muset znovu přihlásit.",
+    "signingOutAll": "Odhlášení…",
     "sumEmailHint": "E-mail účtu",
     "needsVerification": "Vyžaduje ověření",
     "sumDataExport": "Export dat",
@@ -446,7 +462,7 @@
     "empty": "Zatím jste nepřidali žádného rodinného příslušníka.",
     "addHeading": "Přidat rodinného příslušníka",
     "fullName": "Celé jméno",
-    "fieldRequired": "This field is required.",
+    "fieldRequired": "Toto pole je povinné.",
     "fullNamePlaceholder": "např. Maria Santos",
     "relationship": "Vztah",
     "relationshipPlaceholder": "např. Manžel/ka, Dítě, Rodič",
@@ -569,7 +585,7 @@
     "subtitle": "Zaregistrujte až dvě státní příslušnosti. Čísla dokladů jsou uložena šifrovaně.",
     "slotTitle": "Státní příslušnost {n}",
     "country": "Země",
-    "fieldRequired": "This field is required.",
+    "fieldRequired": "Toto pole je povinné.",
     "countryPlaceholder": "např. Irsko, Pákistán",
     "documentType": "Typ dokumentu",
     "documentNumber": "Číslo dokladu",
@@ -641,7 +657,16 @@
     "sumNextBillingHint": "Datum obnovení",
     "sumPrice": "Cena",
     "sumPriceHint": "Měsíční předplatné",
-    "tabsAria": "Sekce členství a odměn"
+    "tabsAria": "Sekce členství a odměn",
+    "sumWellnessBalance": "Zůstatek wellness",
+    "sumWellnessBalanceHint": "Dostupné kredity",
+    "sumRewardKits": "Odměnové sady",
+    "sumRewardKitsHint": "Dostupné k přezkoumání",
+    "sumEligibleNow": "Nyní způsobilé",
+    "sumEligibleNowHint": "Připraveno k uplatnění",
+    "sumMembership": "Členství",
+    "currentPlanHint": "Aktuální plán",
+    "noRewardsTitle": "Žádné odměny nejsou k dispozici"
   },
   "calendar": {
     "eyebrow": "Můj rozvrh",
@@ -656,7 +681,8 @@
     "sumMarkets": "Trhy",
     "sumMarketsHint": "Zastoupené země",
     "emptyDay": "V tento den žádné konzultace.",
-    "emptyDayHint": "Vyberte jiný den pro zobrazení svých konzultací."
+    "emptyDayHint": "Vyberte jiný den pro zobrazení svých konzultací.",
+    "dayAgenda": "Denní agenda"
   },
   "messages": {
     "eyebrow": "Zprávy",
@@ -732,5 +758,14 @@
     "resourceIdDoc": "váš doklad totožnosti",
     "resourceNationalityDoc": "váš doklad o státní příslušnosti",
     "resourceInsuranceDoc": "váš pojistný doklad"
+  },
+  "rewards": {
+    "fullName": "Celé jméno",
+    "addressLine1": "Adresa řádek 1",
+    "addressLine2Optional": "Adresa řádek 2 (volitelně)",
+    "city": "Město",
+    "postalCode": "PSČ",
+    "country": "Země",
+    "cancelRedemption": "Zrušit uplatnění"
   }
 }

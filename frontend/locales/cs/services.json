@@ -16,6 +16,8 @@
       "specialist": "Navštívit specialistu",
       "prescription": "Předpisy",
       "test": "Laboratorní testy"
-    }
+    },
+    "learnMore": "Zjistit více",
+    "learnMoreAria": "Zjistit více: {title}"
   }
 }
