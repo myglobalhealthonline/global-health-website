@@ -125,11 +125,15 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
                 </span>
               ) : null}
 
-              {/* Value */}
+              {/* Value — long values (registry numbers like "4687/2026") get a
+                  smaller clamp and may wrap instead of escaping the card */}
               <p
-                className="m-0 font-extrabold leading-none tracking-[-0.045em] [font-variant-numeric:tabular-nums]"
+                className="m-0 font-extrabold leading-none tracking-[-0.045em] [font-variant-numeric:tabular-nums] [overflow-wrap:anywhere]"
                 style={{
-                  fontSize: "clamp(2.75rem,5.5vw,4.25rem)",
+                  fontSize:
+                    it.value.length > 6
+                      ? "clamp(1.9rem,4vw,3rem)"
+                      : "clamp(2.75rem,5.5vw,4.25rem)",
                   color: "var(--color-brand-accent)",
                 }}
               >
