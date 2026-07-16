@@ -328,15 +328,20 @@ export type PublicPageContentResult = {
       } & MergedTranslation & {
         sections: ReturnType<typeof computeSectionVisibility>;
         /**
-         * Which locale the (whole) requested-translation row came from:
-         * the requested locale if that row exists at all, else the
-         * country default. Per-field mixing still happens underneath
-         * (§8/#3 policy: keep the fallback, make it observable) — this
-         * flags "this page used its default-locale row" so the frontend
-         * can detect/measure a fallback instead of it silently reading
-         * as the user's own language.
+         * Which locale primarily served this record: the requested locale
+         * when its translation row exists, else the country-default row's
+         * locale, else the requested locale. Per-field mixing still happens
+         * underneath (safe-hybrid policy: keep the fallback, make it
+         * observable) — see `mixedLocaleFields`.
          */
         resolvedLocale: LocaleCode;
+        /**
+         * Field keys that were backfilled from the other-locale row because
+         * the requested-locale row exists but has them null. Empty when the
+         * page is single-locale clean. Lets frontend/ops measure the
+         * translation-backfill debt without changing what renders.
+         */
+        mixedLocaleFields: string[];
       })
     | null;
   disabled: boolean;
@@ -369,14 +374,30 @@ export async function getPublicPageContent(
       return { record: null, disabled: true };
     }
 
+    // Safe hybrid (§5B/#3): keep the per-field fallback — 158/162 live
+    // non-default-locale rows have gaps that the default-locale row fills,
+    // so strict whole-row would blank them. Instead make the mixing
+    // observable: `mixedLocaleFields` lists each field backfilled from the
+    // fallback row (empty when no mixing happened).
     const requested = row.translations.find((t) => t.locale === locale) ?? null;
     const fallback =
       locale !== country.defaultLocale
         ? row.translations.find((t) => t.locale === country.defaultLocale) ?? null
         : null;
 
-    const field = <K extends keyof MergedTranslation>(key: K): MergedTranslation[K] =>
-      ((requested?.[key] ?? fallback?.[key] ?? null) as MergedTranslation[K]);
+    const mixedLocaleFields: string[] = [];
+    const field = <K extends keyof MergedTranslation>(key: K): MergedTranslation[K] => {
+      const req = requested?.[key];
+      if (req !== null && req !== undefined) return req as MergedTranslation[K];
+      const fb = fallback?.[key];
+      if (fb !== null && fb !== undefined) {
+        // Only "mixed" when a requested-locale row exists but is missing this
+        // field — a wholesale fallback (no requested row) isn't mixing.
+        if (requested) mixedLocaleFields.push(key);
+        return fb as MergedTranslation[K];
+      }
+      return null as MergedTranslation[K];
+    };
 
     const merged: MergedTranslation = {
       heroTitle: field("heroTitle"),
@@ -420,7 +441,8 @@ export async function getPublicPageContent(
         ctaHref: row.ctaHref,
         ...merged,
         sections: computeSectionVisibility(base, merged),
-        resolvedLocale: requested ? locale : country.defaultLocale,
+        resolvedLocale: requested ? requested.locale : fallback ? fallback.locale : locale,
+        mixedLocaleFields,
       },
       disabled: false,
     };

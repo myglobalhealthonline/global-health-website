@@ -163,24 +163,75 @@ describe("computeSectionVisibility — 12-case toggle x content matrix", () => {
   });
 });
 
-describe("locale resolution semantics (field-level precedence used by getPublicPageContent)", () => {
-  // Mirrors the `field()` resolver in getPublicPageContent: requested-locale
-  // value ?? defaultLocale value ?? null. Exercised directly here since the
-  // resolver itself is a small closure inside a DB-backed function.
-  function resolveField(requested: string | null | undefined, fallback: string | null | undefined) {
-    return requested ?? fallback ?? null;
+describe("locale resolution semantics (safe hybrid used by getPublicPageContent)", () => {
+  // Mirrors the `field()` resolver in getPublicPageContent: per-field
+  // requested-locale value ?? default-locale value ?? null (kept so live
+  // partially-translated rows don't render blank), PLUS `mixedLocaleFields`
+  // recording every key backfilled from the other-locale row so the mixing
+  // is observable instead of silent (§5B/#3 safe-hybrid policy).
+  type Row = Record<string, string | null> & { locale: string };
+
+  function resolve(requested: Row | null, fallback: Row | null, keys: string[]) {
+    const mixedLocaleFields: string[] = [];
+    const merged: Record<string, string | null> = {};
+    for (const key of keys) {
+      const req = requested?.[key];
+      if (req !== null && req !== undefined) {
+        merged[key] = req;
+        continue;
+      }
+      const fb = fallback?.[key];
+      if (fb !== null && fb !== undefined) {
+        if (requested) mixedLocaleFields.push(key);
+        merged[key] = fb;
+        continue;
+      }
+      merged[key] = null;
+    }
+    const resolvedLocale = requested ? requested.locale : fallback ? fallback.locale : null;
+    return { merged, mixedLocaleFields, resolvedLocale };
   }
 
-  it("requested locale has a value -> use it, ignore fallback", () => {
-    assert.equal(resolveField("CS copy", "EN copy"), "CS copy");
+  const keys = ["heroTitle", "intro", "seoTitle"];
+
+  it("requested value present -> used, not counted as mixed", () => {
+    const requested: Row = { locale: "CS", heroTitle: "CS hero", intro: "CS intro", seoTitle: "CS seo" };
+    const fallback: Row = { locale: "EN", heroTitle: "EN hero", intro: "EN intro", seoTitle: "EN seo" };
+    const { merged, mixedLocaleFields, resolvedLocale } = resolve(requested, fallback, keys);
+    assert.deepEqual(merged, { heroTitle: "CS hero", intro: "CS intro", seoTitle: "CS seo" });
+    assert.deepEqual(mixedLocaleFields, []);
+    assert.equal(resolvedLocale, "CS");
   });
 
-  it("requested locale missing/null -> use default-locale fallback", () => {
-    assert.equal(resolveField(null, "EN copy"), "EN copy");
+  it("requested row has null fields -> backfilled from fallback AND listed in mixedLocaleFields", () => {
+    const requested: Row = { locale: "CS", heroTitle: "CS hero", intro: null, seoTitle: null };
+    const fallback: Row = { locale: "EN", heroTitle: "EN hero", intro: "EN intro", seoTitle: "EN seo" };
+    const { merged, mixedLocaleFields, resolvedLocale } = resolve(requested, fallback, keys);
+    assert.deepEqual(merged, { heroTitle: "CS hero", intro: "EN intro", seoTitle: "EN seo" });
+    assert.deepEqual(mixedLocaleFields, ["intro", "seoTitle"]);
+    assert.equal(resolvedLocale, "CS");
   });
 
-  it("neither requested nor fallback has a value -> null", () => {
-    assert.equal(resolveField(null, null), null);
-    assert.equal(resolveField(undefined, undefined), null);
+  it("no requested row -> whole fallback row, resolvedLocale = fallback locale, NOT mixed", () => {
+    const fallback: Row = { locale: "EN", heroTitle: "EN hero", intro: "EN intro", seoTitle: null };
+    const { merged, mixedLocaleFields, resolvedLocale } = resolve(null, fallback, keys);
+    assert.deepEqual(merged, { heroTitle: "EN hero", intro: "EN intro", seoTitle: null });
+    assert.deepEqual(mixedLocaleFields, []);
+    assert.equal(resolvedLocale, "EN");
+  });
+
+  it("neither row -> all null, no mixing", () => {
+    const { merged, mixedLocaleFields, resolvedLocale } = resolve(null, null, keys);
+    assert.deepEqual(merged, { heroTitle: null, intro: null, seoTitle: null });
+    assert.deepEqual(mixedLocaleFields, []);
+    assert.equal(resolvedLocale, null);
+  });
+
+  it("field null in BOTH rows -> stays null, not counted as mixed", () => {
+    const requested: Row = { locale: "CS", heroTitle: "CS hero", intro: null, seoTitle: null };
+    const fallback: Row = { locale: "EN", heroTitle: "EN hero", intro: null, seoTitle: "EN seo" };
+    const { merged, mixedLocaleFields } = resolve(requested, fallback, keys);
+    assert.equal(merged.intro, null);
+    assert.deepEqual(mixedLocaleFields, ["seoTitle"]);
   });
 });

@@ -63,12 +63,17 @@ export default async function CountryLangLayout({
   const config = countriesMerged.find((c) => c.code === code) ?? getCountryByCode(code);
   if (!config) notFound();
 
+  const currentLocale = resolveLocale({
+    explicitLocale: lang,
+    countryDefaultLocale: config.defaultLocale,
+  });
+
   const [{ common, navigation }, assets, activeFooter, activeTrust] =
     await Promise.all([
       getSiteContext({ explicitCountryCode: code, explicitLocale: lang }),
       getPublicAssetsNormalized(),
-      getCountryFooter(code),
-      getCountryTrust(code),
+      getCountryFooter(code, currentLocale),
+      getCountryTrust(code, currentLocale),
     ]);
 
   // Organization `sameAs` — this country's official authorities (IMC, ERS,
@@ -79,11 +84,6 @@ export default async function CountryLangLayout({
 
   const brandLogo = resolveSiteLogoAsset(assets) ?? DEFAULT_BRAND_LOGO_LIGHT;
   const footerDecorImage = resolveFooterCtaDecorAsset(assets);
-
-  const currentLocale = resolveLocale({
-    explicitLocale: lang,
-    countryDefaultLocale: config.defaultLocale,
-  });
 
   // Build a code -> enabledFeatures map so SiteHeader/MobileNav can hide
   // nav tabs the admin has disabled per-country via /admin/country-features.

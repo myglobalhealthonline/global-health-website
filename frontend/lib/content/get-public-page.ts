@@ -53,6 +53,12 @@ export type PublicPageRecord = {
    *  Use this in the renderer. */
   heroImageSrc: string | null;
   ogImageSrc: string | null;
+  /** Locale the backend actually served this page from — differs from the
+   *  requested locale when it fell back to the country default. */
+  resolvedLocale: string | null;
+  /** Field keys backfilled from the other-locale row (per-field fallback).
+   *  Non-empty means the page mixes two languages — translation debt. */
+  mixedLocaleFields: string[];
 };
 
 function isPageKey(v: unknown): v is PublicPageKey {
@@ -120,6 +126,10 @@ function normalizePage(raw: unknown): PublicPageRecord | null {
     ogImagePath,
     heroImageSrc,
     ogImageSrc,
+    resolvedLocale: typeof r.resolvedLocale === "string" ? r.resolvedLocale : null,
+    mixedLocaleFields: Array.isArray(r.mixedLocaleFields)
+      ? r.mixedLocaleFields.filter((x): x is string => typeof x === "string")
+      : [],
   };
 }
 

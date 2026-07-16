@@ -70,6 +70,7 @@ const pagesRoute: FastifyPluginAsync = async (app) => {
           seoDescription: r.seoDescription,
           status: "PUBLISHED",
           resolvedLocale: r.resolvedLocale,
+          mixedLocaleFields: r.mixedLocaleFields,
         },
       });
     } catch (error) {

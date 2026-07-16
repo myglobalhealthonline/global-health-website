@@ -2,6 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import type { LocaleCode } from "@/lib/i18n/types";
 
 /**
  * Per-country footer fields the public site renders. Narrower than the
@@ -29,6 +30,10 @@ export type PublicCountryFooter = {
   }>;
   copyrightLine: string | null;
   isActive: boolean;
+  /** Present only when a `locale` was passed in. The locale whose copy
+   *  actually filled the translatable fields: requested -> country
+   *  default -> base columns. */
+  resolvedLocale?: string;
 };
 
 type FooterApiResponse = {
@@ -41,17 +46,23 @@ type FooterApiResponse = {
  * the backend is unreachable, the country has no footer row, or the
  * row is soft-disabled — SiteFooter then falls back to defaults.
  *
+ * `locale` is optional and additive: omitted keeps the previous behavior
+ * (country default-locale copy). When passed, the backend resolves the
+ * translatable fields (tagline, contactHours, customColumns,
+ * copyrightLine) for that locale — see CountryFooterTranslation.
+ *
  * Cached per-request via React.cache so SiteLayout can fetch every
  * country's footer in parallel without duplicate requests.
  */
 export const getCountryFooter = cache(
-  async (countryCode: string): Promise<PublicCountryFooter | null> => {
+  async (countryCode: string, locale?: LocaleCode): Promise<PublicCountryFooter | null> => {
     const origin = getBackendOrigin();
     if (!origin) return null;
     const code = countryCode.trim().toLowerCase();
     if (!code) return null;
     try {
-      const res = await fetch(`${origin}/api/public/countries/${code}/footer`, {
+      const query = locale ? `?locale=${locale.toUpperCase()}` : "";
+      const res = await fetch(`${origin}/api/public/countries/${code}/footer${query}`, {
         method: "GET",
         // Next.js data cache — admin save calls revalidatePath(`/${slug}`, "layout")
         // so we can safely cache here without a TTL. If the layout call ever

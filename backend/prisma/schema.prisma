@@ -1486,8 +1486,34 @@ model CountryFooter {
   copyrightLine  String?
   /// Soft-disable so admin can prep a footer without surfacing it yet.
   isActive       Boolean  @default(true)
+  /// Per-locale overrides of the translatable text fields below. Base
+  /// columns above hold the country's default-locale copy, same pattern
+  /// as ServiceTranslation / ServiceFaqTranslation.
+  translations   CountryFooterTranslation[]
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+/// Per-locale override of a CountryFooter's translatable text. Base columns
+/// on CountryFooter hold the country's default-locale copy; a row here
+/// overrides for one other locale. Contact details (address/email/phone)
+/// and social URLs are NOT translatable and stay on the base row only.
+model CountryFooterTranslation {
+  id              String        @id @default(cuid())
+  countryFooterId String
+  locale          LocaleCode
+  tagline         String?
+  contactHours    String?
+  /// Same shape as CountryFooter.customColumns:
+  /// `{ title: string; links: Array<{ label; href; external? }> }[]`.
+  customColumns   Json?
+  copyrightLine   String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  countryFooter   CountryFooter @relation(fields: [countryFooterId], references: [id], onDelete: Cascade)
+
+  @@unique([countryFooterId, locale])
+  @@index([countryFooterId])
 }
 
 model BookingSetting {
@@ -3590,8 +3616,37 @@ model CountryLegalProfile {
   fullDisclaimer             String?
   disclaimerTranslations     CountryDisclaimerTranslation[]
 
+  /// Per-locale overrides of the trust-bar text fields (regulatorName,
+  /// providerRegistrationLabel, emergencyNotice, dataProtectionLawName).
+  /// Base columns above hold the country's default-locale copy. Kept
+  /// separate from disclaimerTranslations because it's a different concern
+  /// (trust/footer signage vs. medical disclaimer copy) though both key off
+  /// the same legalProfileId + locale pattern.
+  trustTranslations          CountryLegalProfileTrustTranslation[]
+
   createdAt                  DateTime @default(now())
   updatedAt                  DateTime @updatedAt
+}
+
+/// Per-locale override of CountryLegalProfile's translatable trust-bar text.
+/// Base columns on CountryLegalProfile hold the country's default-locale
+/// copy; a row here overrides for one other locale. URLs, numbers and IDs
+/// (regulatorWebsite, providerRegistrationNumber/Url, emergencyNumber, …)
+/// are NOT translatable and stay on the base row only.
+model CountryLegalProfileTrustTranslation {
+  id                        String              @id @default(cuid())
+  legalProfileId            String
+  locale                    LocaleCode
+  regulatorName             String?
+  providerRegistrationLabel String?
+  emergencyNotice           String?
+  dataProtectionLawName     String?
+  createdAt                 DateTime            @default(now())
+  updatedAt                 DateTime            @updatedAt
+  legalProfile              CountryLegalProfile @relation(fields: [legalProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([legalProfileId, locale])
+  @@index([legalProfileId])
 }
 
 /// Per-locale override of the medical disclaimers. One row per (legal profile,
@@ -3648,10 +3703,32 @@ model CountryAuthorityLink {
   showInSchema Boolean           @default(true)
   sortOrder    Int               @default(0)
   isActive     Boolean           @default(true)
+  /// Per-locale overrides of name/abbreviation/description. Base columns
+  /// above hold the country's default-locale copy; `url`/`category`/
+  /// `sortOrder`/flags are NOT translatable and stay on the base row.
+  translations CountryAuthorityLinkTranslation[]
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
 
   @@index([countryId, isActive])
+}
+
+/// Per-locale override of a CountryAuthorityLink's translatable text. Base
+/// columns on CountryAuthorityLink hold the country's default-locale copy;
+/// a row here overrides for one other locale.
+model CountryAuthorityLinkTranslation {
+  id                     String               @id @default(cuid())
+  countryAuthorityLinkId String
+  locale                 LocaleCode
+  name                   String
+  abbreviation           String?
+  description            String?
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+  authorityLink          CountryAuthorityLink @relation(fields: [countryAuthorityLinkId], references: [id], onDelete: Cascade)
+
+  @@unique([countryAuthorityLinkId, locale])
+  @@index([countryAuthorityLinkId])
 }
 
 enum LegalDocumentType {

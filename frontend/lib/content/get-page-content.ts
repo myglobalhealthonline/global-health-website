@@ -44,6 +44,12 @@ export type PublicPageContentRecord = {
   whyChooseTheme: "green" | "ivory" | null;
   faqTheme: "green" | "ivory" | null;
   disclaimerTheme: "green" | "ivory" | null;
+  /** Locale the backend actually served this content from — differs from the
+   *  requested locale when it fell back to the country default. */
+  resolvedLocale: string | null;
+  /** Field keys backfilled from the other-locale row (per-field fallback).
+   *  Non-empty means the page mixes two languages — translation debt. */
+  mixedLocaleFields: string[];
 };
 
 export type PublicPageContent = {
@@ -134,6 +140,8 @@ function normalizeRecord(raw: unknown): PublicPageContentRecord | null {
     whyChooseTheme: themeField(r.whyChooseTheme),
     faqTheme: themeField(r.faqTheme),
     disclaimerTheme: themeField(r.disclaimerTheme),
+    resolvedLocale: typeof r.resolvedLocale === "string" ? r.resolvedLocale : null,
+    mixedLocaleFields: stringList(r.mixedLocaleFields),
   };
 }
 

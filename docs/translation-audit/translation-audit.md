@@ -15,11 +15,11 @@ Baseline locale: **en**. Audited locales: en, pt, es, cs, ro, de.
 
 | Locale | Keys checked | Missing | Empty | Identical to en (flagged) |
 |---|---|---|---|---|
-| pt | 3242 | 0 | 0 | 31 |
-| es | 3242 | 0 | 0 | 34 |
-| cs | 3242 | 0 | 0 | 16 |
-| ro | 3242 | 0 | 0 | 62 |
-| de | 3242 | 0 | 0 | 46 |
+| pt | 3243 | 0 | 0 | 31 |
+| es | 3243 | 0 | 0 | 34 |
+| cs | 3243 | 0 | 0 | 16 |
+| ro | 3243 | 0 | 0 | 62 |
+| de | 3243 | 0 | 0 | 46 |
 
 ## Wiring checks (persistence, fallback, SSR/CSR)
 

@@ -59,6 +59,16 @@ const createSchema = z
 
 const updateSchema = createSchema.partial();
 
+// TODO(country-footer-trust-translations): POST/PATCH below only ever write
+// the base (country default-locale) name/abbreviation/description columns.
+// The new CountryAuthorityLinkTranslation table has no admin write path yet
+// — read path (getPublicCountryTrust, ?locale=) is fully wired and falls
+// back to the base row until this is implemented. Follow the
+// CountryFooterTranslation PUT handler in admin-country-footer.route.ts as
+// the pattern: accept an optional `locale` field and, when it differs from
+// the country's defaultLocale, upsert
+// prisma.countryAuthorityLinkTranslation instead of the base columns.
+
 const adminCountryAuthorityLinksRoute: FastifyPluginAsync = async (app) => {
   app.addHook("onRequest", async (request, reply) => {
     const auth = await verifyAdminAccess(request);

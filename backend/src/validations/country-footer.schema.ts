@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { socialUrlSchema } from "./shared.schema.js";
-import type { Prisma } from "@prisma/client";
+import type { LocaleCode, Prisma } from "@prisma/client";
+import { resolveTranslation } from "../modules/shared/resolve-translation.js";
+import { localeCodeSchema } from "./admin-countries.schema.js";
 
 /**
  * Per-country footer content edited at /admin/footer.
@@ -78,6 +80,24 @@ export const countryFooterUpsertSchema = z.object({
 export type CountryFooterUpsertInput = z.infer<typeof countryFooterUpsertSchema>;
 
 /**
+ * Admin write payload for one non-default-locale override of a country
+ * footer's translatable text. Contact details/social URLs aren't part of
+ * this schema — they're base-row-only (see CountryFooterTranslation model
+ * comment in schema.prisma).
+ */
+export const countryFooterTranslationUpsertSchema = z.object({
+  locale: localeCodeSchema,
+  tagline: optionalText(280),
+  contactHours: optionalText(160),
+  customColumns: z.array(footerColumnSchema).max(6).optional(),
+  copyrightLine: optionalText(160),
+});
+
+export type CountryFooterTranslationUpsertInput = z.infer<
+  typeof countryFooterTranslationUpsertSchema
+>;
+
+/**
  * Output shape returned by both admin GET and public GET endpoints.
  * Mirrors the Prisma row 1:1 — frontend uses this for both the admin
  * edit form (prefill) and the public SiteFooter render.
@@ -104,6 +124,10 @@ export type CountryFooterDto = {
   copyrightLine: string | null;
   isActive: boolean;
   updatedAt: string;
+  /** Present only when the caller resolved a locale (public route with
+   *  `?locale=`). The locale whose copy actually filled the translatable
+   *  fields above: requested -> country default -> base columns. */
+  resolvedLocale?: LocaleCode;
 };
 
 /**
@@ -137,5 +161,43 @@ export function toCountryFooterDto(
     copyrightLine: row.copyrightLine,
     isActive: row.isActive,
     updatedAt: row.updatedAt.toISOString(),
+  };
+}
+
+type CountryFooterTranslationRow = {
+  locale: LocaleCode;
+  tagline: string | null;
+  contactHours: string | null;
+  customColumns: unknown;
+  copyrightLine: string | null;
+};
+
+type CountryFooterRowWithTranslations = CountryFooterRowWithCountry & {
+  translations: CountryFooterTranslationRow[];
+};
+
+/**
+ * Same as toCountryFooterDto, but merges in the best-matching translation
+ * row for `requested` (requested -> country default -> base columns).
+ * Only the translatable fields (tagline, contactHours, customColumns,
+ * copyrightLine) can change; contact details/social URLs always come from
+ * the base row.
+ */
+export function toCountryFooterDtoWithLocale(
+  row: CountryFooterRowWithTranslations,
+  requested: LocaleCode,
+  defaultLocale: LocaleCode,
+): CountryFooterDto {
+  const base = toCountryFooterDto(row);
+  const { tr, resolvedLocale } = resolveTranslation(row.translations, requested, defaultLocale);
+  if (!tr) return { ...base, resolvedLocale };
+  return {
+    ...base,
+    tagline: tr.tagline ?? base.tagline,
+    contactHours: tr.contactHours ?? base.contactHours,
+    customColumns:
+      (tr.customColumns as CountryFooterDto["customColumns"] | null) ?? base.customColumns,
+    copyrightLine: tr.copyrightLine ?? base.copyrightLine,
+    resolvedLocale,
   };
 }

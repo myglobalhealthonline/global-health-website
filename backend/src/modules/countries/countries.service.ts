@@ -9,6 +9,7 @@ import type {
 } from "../../validations/admin-countries.schema.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { assertLocaleSupported, LocaleNotSupportedError } from "../shared/locale-support.js";
+import { resolveTranslation } from "../shared/resolve-translation.js";
 import type { DisclaimerTranslationInput } from "../../validations/admin-countries.schema.js";
 
 export class CountryCurrencyNotFoundError extends Error {
@@ -508,6 +509,52 @@ const publicAuthorityLinksArgs = {
   select: PUBLIC_AUTHORITY_LINK_SELECT,
 } satisfies Prisma.Country$authorityLinksArgs;
 
+/** Same as publicAuthorityLinksArgs but also pulls the translation rows,
+ *  for callers that merge a requested locale (getPublicCountryTrust). */
+const PUBLIC_AUTHORITY_LINK_SELECT_WITH_TRANSLATIONS = {
+  ...PUBLIC_AUTHORITY_LINK_SELECT,
+  translations: {
+    select: { locale: true, name: true, abbreviation: true, description: true },
+  },
+} satisfies Prisma.CountryAuthorityLinkSelect;
+
+const publicAuthorityLinksWithTranslationsArgs = {
+  where: { isActive: true },
+  orderBy: [{ sortOrder: "asc" as const }, { name: "asc" as const }],
+  select: PUBLIC_AUTHORITY_LINK_SELECT_WITH_TRANSLATIONS,
+} satisfies Prisma.Country$authorityLinksArgs;
+
+type PublicAuthorityLinkWithTranslations = Prisma.CountryAuthorityLinkGetPayload<{
+  select: typeof PUBLIC_AUTHORITY_LINK_SELECT_WITH_TRANSLATIONS;
+}>;
+
+/** True for Prisma's "table does not exist" error (P2021) — i.e. a
+ *  *Translation migration hasn't been applied to this database yet. Callers
+ *  use this to fail soft (serve the untranslated base row) instead of 500ing
+ *  the whole request just because a locale was requested. */
+function isMissingTableError(error: unknown): boolean {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2021"
+  );
+}
+
+/** Merges one authority link's translatable text with the best translation
+ *  for the requested locale (requested -> country default -> base columns). */
+function mergeAuthorityLinkTranslation(
+  link: PublicAuthorityLinkWithTranslations,
+  requested: LocaleCode,
+  defaultLocale: LocaleCode,
+) {
+  const { tr } = resolveTranslation(link.translations, requested, defaultLocale);
+  const { translations: _translations, ...rest } = link;
+  return {
+    ...rest,
+    name: tr?.name ?? link.name,
+    abbreviation: tr?.abbreviation ?? link.abbreviation,
+    description: tr?.description ?? link.description,
+  };
+}
+
 /** Legal profile + published document index + authority links for one active country. */
 export async function getPublicCountryLegal(code: string) {
   try {
@@ -588,16 +635,34 @@ export async function getPublicCountryLegalDocument(
  * a `/[country]/[lang]/*` scope, so it is intentionally minimal: provider
  * registration (ERS for Portugal), emergency signposting, and the country's
  * official authority links. Returns null when the country is unknown/inactive.
+ *
+ * `locale` is optional and additive: omitted -> current behavior (country
+ * default-locale copy from the base columns). When supplied, translatable
+ * text fields (regulatorName, providerRegistrationLabel, emergencyNotice,
+ * dataProtectionLawName, and each authority link's name/abbreviation/
+ * description) resolve via the requested -> country-default -> base-column
+ * fallback chain (resolve-translation.ts). URLs/numbers/IDs never change
+ * per locale and always come from the base row.
  */
-export async function getPublicCountryTrust(code: string) {
+export async function getPublicCountryTrust(code: string, locale?: LocaleCode) {
   try {
+    // Base select stays exactly as it was before translations existed (no
+    // trustTranslations, no authority-link translations) so this query
+    // never touches the new *Translation tables — those only exist once
+    // their migration has been applied to a given database. The
+    // translation lookups below run separately and fail soft (see
+    // isMissingTableError) so a `?locale=` request degrades to the base
+    // row instead of 500ing when the migration isn't applied yet.
     const country = await prisma.country.findFirst({
       where: { code: { equals: code, mode: "insensitive" }, isActive: true },
       select: {
+        id: true,
         code: true,
         name: true,
+        defaultLocale: true,
         legalProfile: {
           select: {
+            id: true,
             regulatorName: true,
             regulatorWebsite: true,
             providerRegistrationLabel: true,
@@ -613,28 +678,83 @@ export async function getPublicCountryTrust(code: string) {
       },
     });
     if (!country) return null;
+    const requested = locale ?? country.defaultLocale;
     const p = country.legalProfile;
+
+    let trustTranslations: Prisma.CountryLegalProfileTrustTranslationGetPayload<{
+      select: {
+        locale: true;
+        regulatorName: true;
+        providerRegistrationLabel: true;
+        emergencyNotice: true;
+        dataProtectionLawName: true;
+      };
+    }>[] = [];
+    let authorityLinksWithTranslations: PublicAuthorityLinkWithTranslations[] | null = null;
+    if (locale) {
+      try {
+        [trustTranslations, authorityLinksWithTranslations] = await Promise.all([
+          p
+            ? prisma.countryLegalProfileTrustTranslation.findMany({
+                where: { legalProfileId: p.id },
+                select: {
+                  locale: true,
+                  regulatorName: true,
+                  providerRegistrationLabel: true,
+                  emergencyNotice: true,
+                  dataProtectionLawName: true,
+                },
+              })
+            : Promise.resolve([]),
+          prisma.countryAuthorityLink.findMany({
+            where: { countryId: country.id, isActive: true },
+            orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+            select: PUBLIC_AUTHORITY_LINK_SELECT_WITH_TRANSLATIONS,
+          }),
+        ]);
+      } catch (error) {
+        if (!isMissingTableError(error)) throw error;
+        // Migration not applied yet — fall back to the base (untranslated)
+        // row/links fetched above.
+        trustTranslations = [];
+        authorityLinksWithTranslations = null;
+      }
+    }
+
+    const trustTr = resolveTranslation(trustTranslations, requested, country.defaultLocale);
+    const regulatorName = trustTr.tr?.regulatorName ?? p?.regulatorName ?? null;
+    const providerRegistrationLabel =
+      trustTr.tr?.providerRegistrationLabel ?? p?.providerRegistrationLabel ?? null;
+    const emergencyNotice = trustTr.tr?.emergencyNotice ?? p?.emergencyNotice ?? null;
+    const dataProtectionLawName =
+      trustTr.tr?.dataProtectionLawName ?? p?.dataProtectionLawName ?? "GDPR";
+    const authorityLinks = authorityLinksWithTranslations
+      ? authorityLinksWithTranslations.map((link) =>
+          mergeAuthorityLinkTranslation(link, requested, country.defaultLocale),
+        )
+      : country.authorityLinks;
     return {
       country: { code: country.code, name: country.name },
       regulator:
-        p?.regulatorName || p?.regulatorWebsite
-          ? { name: p.regulatorName, url: p.regulatorWebsite }
+        regulatorName || p?.regulatorWebsite
+          ? { name: regulatorName, url: p?.regulatorWebsite ?? null }
           : null,
       providerRegistration:
-        p?.providerRegistrationNumber || p?.providerRegistrationLabel
+        p?.providerRegistrationNumber || providerRegistrationLabel
           ? {
-              label: p.providerRegistrationLabel,
-              number: p.providerRegistrationNumber,
-              url: p.providerRegistrationUrl,
+              label: providerRegistrationLabel,
+              number: p?.providerRegistrationNumber ?? null,
+              url: p?.providerRegistrationUrl ?? null,
             }
           : null,
       emergency: {
         number: p?.emergencyNumber ?? "112",
-        notice: p?.emergencyNotice ?? null,
+        notice: emergencyNotice,
         nonEmergencyLine: p?.nonEmergencyHealthLine ?? null,
       },
-      dataProtectionLawName: p?.dataProtectionLawName ?? "GDPR",
-      authorityLinks: country.authorityLinks,
+      dataProtectionLawName,
+      authorityLinks,
+      resolvedLocale: trustTr.resolvedLocale,
     };
   } catch (error) {
     throw normalizeDbError(error, "Trust information unavailable");

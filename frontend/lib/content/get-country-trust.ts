@@ -2,6 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import type { LocaleCode } from "@/lib/i18n/types";
 
 /**
  * Country medical-authority trust signals rendered by the footer trust bar
@@ -49,6 +50,10 @@ export type CountryTrust = {
   };
   dataProtectionLawName: string;
   authorityLinks: AuthorityLink[];
+  /** Present only when a `locale` was passed in. The locale whose copy
+   *  actually filled the translatable fields: requested -> country
+   *  default -> base columns. */
+  resolvedLocale?: string;
 };
 
 type TrustApiResponse = {
@@ -61,15 +66,22 @@ type TrustApiResponse = {
  * unreachable or the country has no legal/authority data — callers then fall
  * back to generic GDPR / licensed-doctor copy. Cached per-request so the
  * layout, footer and schema can all read it without duplicate requests.
+ *
+ * `locale` is optional and additive: omitted keeps the previous behavior
+ * (country default-locale copy). When passed, the backend resolves each
+ * translatable text field (regulator/provider-registration labels,
+ * emergency notice, data-protection law name, and each authority link's
+ * name/abbreviation/description) for that locale.
  */
 export const getCountryTrust = cache(
-  async (countryCode: string): Promise<CountryTrust | null> => {
+  async (countryCode: string, locale?: LocaleCode): Promise<CountryTrust | null> => {
     const origin = getBackendOrigin();
     if (!origin) return null;
     const code = countryCode.trim().toLowerCase();
     if (!code) return null;
     try {
-      const res = await fetch(`${origin}/api/public/countries/${code}/trust`, {
+      const query = locale ? `?locale=${locale.toUpperCase()}` : "";
+      const res = await fetch(`${origin}/api/public/countries/${code}/trust${query}`, {
         method: "GET",
         next: { tags: [`country-trust:${code}`] },
       });

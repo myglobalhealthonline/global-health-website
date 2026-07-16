@@ -198,6 +198,18 @@ const adminCountriesRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
+  // TODO(country-footer-trust-translations): this PUT only ever writes the
+  // base (country default-locale) CountryLegalProfile columns. The new
+  // CountryLegalProfileTrustTranslation table (regulatorName,
+  // providerRegistrationLabel, emergencyNotice, dataProtectionLawName) has
+  // no admin write path yet — read path (getPublicCountryTrust, ?locale=)
+  // is fully wired and will resolve to the base row until an admin UI/route
+  // upserts translation rows. Follow the CountryFooterTranslation PUT
+  // handler in admin-country-footer.route.ts as the pattern: accept a
+  // `locale` field, and when it differs from the country's defaultLocale,
+  // upsert prisma.countryLegalProfileTrustTranslation instead of the base
+  // row's regulatorName/providerRegistrationLabel/emergencyNotice/
+  // dataProtectionLawName.
   app.put("/api/admin/countries/:id/legal", async (request, reply) => {
     const params = countryIdParamsSchema.safeParse(request.params);
     if (!params.success) {

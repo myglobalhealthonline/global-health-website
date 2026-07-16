@@ -60,6 +60,17 @@ export default async function GlobalSiteLayout({ children }: { children: ReactNo
       : undefined;
   const runtimeCountryConfig = runtimeCountry ? mergedByCode.get(runtimeCountry) : undefined;
 
+  // Same locale resolution the nav copy uses (URL lang > gh_locale cookie >
+  // Accept-Language). Resolved up front so it can also select the footer/
+  // trust translation below, instead of only driving the header's language
+  // switcher after the fact.
+  const currentLocale = resolveLocale({
+    headerLocale: requestHeaders.get("x-gh-locale"),
+    cookieLocale: cookieStore.get("gh_locale")?.value,
+    acceptLanguageHeader: requestHeaders.get("accept-language"),
+    countryDefaultLocale: runtimeCountryConfig?.defaultLocale,
+  });
+
   // runtimeCountry is known here, so the per-country footer fetch can run
   // in the same parallel batch instead of as an extra serial round-trip
   // after it (one less hop on every global page's TTFB).
@@ -72,8 +83,8 @@ export default async function GlobalSiteLayout({ children }: { children: ReactNo
         cookieLocale: cookieStore.get("gh_locale")?.value ?? null,
       }),
       getPublicAssetsNormalized(),
-      runtimeCountry ? getCountryFooter(runtimeCountry) : Promise.resolve(null),
-      runtimeCountry ? getCountryTrust(runtimeCountry) : Promise.resolve(null),
+      runtimeCountry ? getCountryFooter(runtimeCountry, currentLocale) : Promise.resolve(null),
+      runtimeCountry ? getCountryTrust(runtimeCountry, currentLocale) : Promise.resolve(null),
     ]);
 
   // Organization `sameAs` — the active country's official authorities (IMC,
@@ -85,17 +96,6 @@ export default async function GlobalSiteLayout({ children }: { children: ReactNo
 
   const brandLogo = resolveSiteLogoAsset(assets) ?? DEFAULT_BRAND_LOGO_LIGHT;
   const footerDecorImage = resolveFooterCtaDecorAsset(assets);
-
-  // Same locale resolution the nav copy uses — passed to the header so the
-  // language switcher displays the locale the page actually rendered in
-  // (URL lang > gh_locale cookie > Accept-Language), instead of guessing
-  // from the last-country cookie on global pages like /about and /blog.
-  const currentLocale = resolveLocale({
-    headerLocale: requestHeaders.get("x-gh-locale"),
-    cookieLocale: cookieStore.get("gh_locale")?.value,
-    acceptLanguageHeader: requestHeaders.get("accept-language"),
-    countryDefaultLocale: runtimeCountryConfig?.defaultLocale,
-  });
 
   // Read the gh-last-country cookie server-side so the header renders
   // the remembered country + lang on the first paint. Without this,
