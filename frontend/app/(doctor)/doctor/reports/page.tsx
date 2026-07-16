@@ -1,4 +1,4 @@
-import { fetchDoctorReports } from "@/lib/api/doctor-api";
+import { fetchDoctorMe, fetchDoctorReports } from "@/lib/api/doctor-api";
 import { AdminEmptyState, AdminSummaryStrip, PageHeader, SectionHeader } from "@/components/portal-atoms";
 import { CalendarCheck, FileCheck, Receipt, Repeat, Users } from "lucide-react";
 import { ReportsCsvButton } from "./_components/csv-button";
@@ -40,16 +40,36 @@ export default async function DoctorReportsPage({
   const sp = searchParams ? await searchParams : {};
   const from = pick(sp, "from");
   const to = pick(sp, "to");
+  const countryCode = pick(sp, "countryCode");
   const consultationType = pick(sp, "consultationType");
   const paymentStatus = pick(sp, "paymentStatus");
   const status = pick(sp, "status");
-  const result = await fetchDoctorReports({
-    from,
-    to,
-    consultationType,
-    paymentStatus,
-    status,
-  });
+  const [result, meResult] = await Promise.all([
+    fetchDoctorReports({
+      from,
+      to,
+      countryCode,
+      consultationType,
+      paymentStatus,
+      status,
+    }),
+    fetchDoctorMe(),
+  ]);
+
+  // The markets this doctor practises in — primary country plus any additional
+  // ones. A single-market doctor gets no country filter at all, since it could
+  // only ever narrow to the one value they already see.
+  const countries = meResult.ok
+    ? Array.from(
+        new Map(
+          [
+            meResult.data.doctor.country,
+            ...meResult.data.doctor.additionalCountries.map((a) => a.country),
+          ].map((c) => [c.code, { code: c.code, name: c.name }] as const),
+        ).values(),
+      ).sort((a, b) => a.name.localeCompare(b.name))
+    : [];
+  const showCountryFilter = countries.length > 1;
 
   return (
     <>
@@ -98,7 +118,12 @@ export default async function DoctorReportsPage({
         />
       ) : null}
 
-      <form className="gh-card gh-doctor-filter-card gh-doctor-filter-grid mb-4 grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-5" method="get">
+      <form
+        className={`gh-card gh-doctor-filter-card gh-doctor-filter-grid mb-4 grid gap-3 p-4 sm:grid-cols-2 ${
+          showCountryFilter ? "lg:grid-cols-6" : "lg:grid-cols-5"
+        }`}
+        method="get"
+      >
         <label className="flex flex-col gap-1">
           <span className="gh-field-label">{d.common.from}</span>
           <input
@@ -117,6 +142,23 @@ export default async function DoctorReportsPage({
             className="gh-input"
           />
         </label>
+        {showCountryFilter ? (
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">{d.common.country}</span>
+            <select
+              name="countryCode"
+              defaultValue={countryCode ?? ""}
+              className="gh-select"
+            >
+              <option value="">{d.common.any}</option>
+              {countries.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
         <label className="flex flex-col gap-1">
           <span className="gh-field-label">{d.common.type}</span>
           <select
@@ -162,7 +204,11 @@ export default async function DoctorReportsPage({
             <option value="FAILED">{d.reports.paymentFailed}</option>
           </select>
         </label>
-        <div className="gh-doctor-filter-actions sm:col-span-2 lg:col-span-5 flex flex-wrap items-center gap-2">
+        <div
+          className={`gh-doctor-filter-actions sm:col-span-2 ${
+            showCountryFilter ? "lg:col-span-6" : "lg:col-span-5"
+          } flex flex-wrap items-center gap-2`}
+        >
           <button type="submit" className="gh-btn gh-btn-primary text-sm">
             {d.common.apply}
           </button>
@@ -171,7 +217,7 @@ export default async function DoctorReportsPage({
 
       <div className="mb-4">
         <DoctorReportExports
-          filters={{ from, to, consultationType, paymentStatus, status }}
+          filters={{ from, to, countryCode, consultationType, paymentStatus, status }}
           strings={d.reports}
           excelLabel={d.invoices.excel}
           pdfLabel={d.invoices.pdf}

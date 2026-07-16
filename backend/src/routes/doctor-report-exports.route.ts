@@ -19,6 +19,7 @@ import {
 /**
  * GET /api/doctor/reports/export?dataset=services|patients|appointments
  *                               &format=csv|pdf&from=…&to=…&status=…
+ *                               &countryCode=…&consultationType=…
  *
  * Download the raw list behind the /doctor/reports dashboard tiles, scoped
  * to the signed-in doctor. Streams CSV or PDF as an attachment so a plain
@@ -36,6 +37,7 @@ const querySchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
     .optional(),
+  countryCode: z.string().trim().min(2).max(8).optional(),
   consultationType: z.string().trim().min(1).max(64).optional(),
   paymentStatus: z
     .enum(["UNPAID", "PENDING", "PAID", "REFUNDED", "FAILED"])
@@ -106,6 +108,10 @@ const doctorReportExportsRoute: FastifyPluginAsync = async (app) => {
         status: q.status,
         paymentStatus: q.paymentStatus,
         consultationType: q.consultationType,
+        countryCode: q.countryCode,
+        // `doctorId` is deliberately NOT read from the query — every builder
+        // below is passed `auth.doctorId`, so a doctor can never widen the
+        // scope to another clinician's rows.
       };
 
       let table: ReportTable;

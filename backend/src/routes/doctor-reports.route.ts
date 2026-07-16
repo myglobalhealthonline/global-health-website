@@ -29,6 +29,7 @@ const querySchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
     .optional(),
+  countryCode: z.string().trim().min(2).max(8).optional(),
   consultationType: z.string().trim().min(1).max(64).optional(),
   paymentStatus: z
     .enum(["UNPAID", "PENDING", "PAID", "REFUNDED", "FAILED"])
@@ -70,6 +71,7 @@ const doctorReportsRoute: FastifyPluginAsync = async (app) => {
       const apptFilter = {
         doctorId: auth.doctorId,
         createdAt: range,
+        ...(parsed.data.countryCode ? { countryCode: parsed.data.countryCode } : {}),
         ...(parsed.data.consultationType
           ? { consultationType: parsed.data.consultationType }
           : {}),
@@ -126,6 +128,9 @@ const doctorReportsRoute: FastifyPluginAsync = async (app) => {
               paymentStatus: "PAID",
               createdAt: range,
               serviceId: { not: null },
+              ...(parsed.data.countryCode
+                ? { countryCode: parsed.data.countryCode }
+                : {}),
               ...(parsed.data.consultationType
                 ? { consultationType: parsed.data.consultationType }
                 : {}),
@@ -171,6 +176,7 @@ const doctorReportsRoute: FastifyPluginAsync = async (app) => {
           to: toUtc.toISOString(),
         },
         filters: {
+          countryCode: parsed.data.countryCode ?? null,
           consultationType: parsed.data.consultationType ?? null,
           paymentStatus: parsed.data.paymentStatus ?? null,
           status: parsed.data.status ?? null,

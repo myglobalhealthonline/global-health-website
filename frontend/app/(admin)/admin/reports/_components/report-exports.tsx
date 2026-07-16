@@ -16,22 +16,22 @@ const DATASETS: { value: Dataset; label: string; note: string }[] = [
   {
     value: "payout",
     label: "Doctor payout statement",
-    note: "One doctor's consultations valued at their per-service payout, with a total. Select a doctor. Defaults to last calendar month.",
+    note: "One doctor's consultations valued at their per-service payout, with a total. Select a doctor; optionally narrow by consultation type. Defaults to last calendar month.",
   },
   {
     value: "services",
     label: "Services by doctor",
-    note: "Every doctor↔service assignment with payout. Pick a doctor to narrow. Ignores the date range.",
+    note: "Every doctor↔service assignment with payout. Narrow by doctor or country. Ignores the date range and consultation type.",
   },
   {
     value: "patients",
     label: "Patients",
-    note: "All registered patient profiles. Ignores doctor/date filters.",
+    note: "The registered patient roster with each patient's markets, doctors and consultation types. Unfiltered it lists every profile, including patients who never booked. Any country/doctor/type/date filter narrows it to the patients behind the matching appointments.",
   },
   {
     value: "appointments",
     label: "Appointments",
-    note: "All appointments, filterable by doctor, country, status, payment and date.",
+    note: "All appointments, filterable by doctor, country, consultation type, status, payment and date.",
   },
 ];
 
@@ -45,6 +45,15 @@ const APPT_STATUSES = [
 
 const PAYMENT_STATUSES = ["UNPAID", "PENDING", "PAID", "REFUNDED", "FAILED"];
 
+// Mirrors `consultationTypeSchema` in backend/src/validations/shared.schema.ts.
+const CONSULTATION_TYPES = [
+  { value: "general", label: "General" },
+  { value: "specialist", label: "Specialist" },
+  { value: "prescription", label: "Prescription" },
+  { value: "health-test", label: "Health test" },
+  { value: "follow-up", label: "Follow-up" },
+];
+
 export function AdminReportExports({
   doctors,
   countries,
@@ -55,6 +64,7 @@ export function AdminReportExports({
   const [dataset, setDataset] = useState<Dataset>("appointments");
   const [doctorId, setDoctorId] = useState("");
   const [countryCode, setCountryCode] = useState("");
+  const [consultationType, setConsultationType] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [status, setStatus] = useState("");
@@ -62,9 +72,13 @@ export function AdminReportExports({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const showDoctor = dataset !== "patients";
-  const showApptFilters = dataset === "appointments";
-  const showDateRange = dataset === "appointments" || dataset === "payout";
+  // Each flag tracks which filters the matching backend builder actually
+  // honours — a control is only rendered where it changes the output. Every
+  // dataset narrows by doctor, so that select is always shown.
+  const showCountry = dataset !== "payout";
+  const showType = dataset !== "services";
+  const showStatusFilters = dataset === "appointments";
+  const showDateRange = dataset !== "services";
   const doctorRequired = dataset === "payout";
   const blocked = doctorRequired && !doctorId;
 
@@ -74,13 +88,14 @@ export function AdminReportExports({
     const params = new URLSearchParams();
     params.set("dataset", dataset);
     params.set("format", format);
-    if (showDoctor && doctorId) params.set("doctorId", doctorId);
+    if (doctorId) params.set("doctorId", doctorId);
+    if (showCountry && countryCode) params.set("countryCode", countryCode);
+    if (showType && consultationType) params.set("consultationType", consultationType);
     if (showDateRange) {
       if (from) params.set("from", from);
       if (to) params.set("to", to);
     }
-    if (showApptFilters) {
-      if (countryCode) params.set("countryCode", countryCode);
+    if (showStatusFilters) {
       if (status) params.set("status", status);
       if (paymentStatus) params.set("paymentStatus", paymentStatus);
     }
@@ -98,7 +113,7 @@ export function AdminReportExports({
 
   return (
     <div className="grid gap-4">
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="flex flex-col gap-1">
           <span className="gh-field-label">Report</span>
           <select
@@ -114,25 +129,23 @@ export function AdminReportExports({
           </select>
         </label>
 
-        {showDoctor ? (
-          <label className="flex flex-col gap-1">
-            <span className="gh-field-label">Doctor</span>
-            <select
-              value={doctorId}
-              onChange={(e) => setDoctorId(e.target.value)}
-              className="gh-select"
-            >
-              <option value="">All doctors</option>
-              {doctors.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                </option>
-              ))}
-            </select>
-          </label>
-        ) : null}
+        <label className="flex flex-col gap-1">
+          <span className="gh-field-label">Doctor</span>
+          <select
+            value={doctorId}
+            onChange={(e) => setDoctorId(e.target.value)}
+            className="gh-select"
+          >
+            <option value="">All doctors</option>
+            {doctors.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.name}
+              </option>
+            ))}
+          </select>
+        </label>
 
-        {showApptFilters ? (
+        {showCountry ? (
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">Country</span>
             <select
@@ -144,6 +157,24 @@ export function AdminReportExports({
               {countries.map((c) => (
                 <option key={c.code} value={c.code}>
                   {c.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
+
+        {showType ? (
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">Consultation type</span>
+            <select
+              value={consultationType}
+              onChange={(e) => setConsultationType(e.target.value)}
+              className="gh-select"
+            >
+              <option value="">All types</option>
+              {CONSULTATION_TYPES.map((t) => (
+                <option key={t.value} value={t.value}>
+                  {t.label}
                 </option>
               ))}
             </select>
@@ -161,7 +192,7 @@ export function AdminReportExports({
             <span className="gh-field-label">To</span>
             <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="gh-input" />
           </label>
-          {showApptFilters ? (
+          {showStatusFilters ? (
             <>
               <label className="flex flex-col gap-1">
                 <span className="gh-field-label">Status</span>

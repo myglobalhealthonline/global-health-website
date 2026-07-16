@@ -539,6 +539,7 @@ export async function fetchDoctorInvoicesList(query?: Record<string, string | un
 export type DoctorReportsDto = {
   range: { from: string; to: string };
   filters: {
+    countryCode: string | null;
     consultationType: string | null;
     paymentStatus: string | null;
     status: string | null;
@@ -557,6 +558,7 @@ export type DoctorReportsDto = {
 export async function fetchDoctorReports(query?: {
   from?: string;
   to?: string;
+  countryCode?: string;
   consultationType?: string;
   paymentStatus?: string;
   status?: string;
@@ -564,6 +566,7 @@ export async function fetchDoctorReports(query?: {
   const params = new URLSearchParams();
   if (query?.from) params.set("from", query.from);
   if (query?.to) params.set("to", query.to);
+  if (query?.countryCode) params.set("countryCode", query.countryCode);
   if (query?.consultationType)
     params.set("consultationType", query.consultationType);
   if (query?.paymentStatus) params.set("paymentStatus", query.paymentStatus);

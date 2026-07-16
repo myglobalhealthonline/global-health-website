@@ -24,6 +24,7 @@ export function DoctorReportExports({
   filters: {
     from?: string;
     to?: string;
+    countryCode?: string;
     consultationType?: string;
     paymentStatus?: string;
     status?: string;
@@ -49,6 +50,7 @@ export function DoctorReportExports({
     params.set("format", format);
     if (filters.from) params.set("from", filters.from);
     if (filters.to) params.set("to", filters.to);
+    if (filters.countryCode) params.set("countryCode", filters.countryCode);
     if (filters.consultationType) params.set("consultationType", filters.consultationType);
     if (filters.paymentStatus) params.set("paymentStatus", filters.paymentStatus);
     if (filters.status) params.set("status", filters.status);
