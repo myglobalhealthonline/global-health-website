@@ -17,6 +17,8 @@ import {
   formatCents,
   formatDate,
 } from "@/app/(admin)/admin/corporate/_lib";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +28,8 @@ type PageProps = {
 
 async function updateCompanyAction(formData: FormData) {
   "use server";
+  const locale = await getPageLocale();
+  const { settings: s } = loadLocaleBundle(locale).corporate;
   const read = (key: string) => String(formData.get(key) ?? "").trim();
   const optional = (key: string) => {
     const value = read(key);
@@ -45,9 +49,7 @@ async function updateCompanyAction(formData: FormData) {
   };
   if (!body.name || !body.billingEmail || !body.contactName || !body.contactEmail) {
     redirect(
-      `/corporate/settings?error=${encodeURIComponent(
-        "Company name, billing email and contact details are required",
-      )}`,
+      `/corporate/settings?error=${encodeURIComponent(s.errors.requiredFields)}`,
     );
   }
   const result = await patchCorporateCompany(body);
@@ -55,17 +57,18 @@ async function updateCompanyAction(formData: FormData) {
     redirect(`/corporate/settings?error=${encodeURIComponent(result.message)}`);
   }
   revalidatePath("/corporate/settings");
-  redirect(`/corporate/settings?success=${encodeURIComponent("Company details saved")}`);
+  redirect(`/corporate/settings?success=${encodeURIComponent(s.success.saved)}`);
 }
 
 export default async function CorporateSettingsPage({ searchParams }: PageProps) {
   const sp = searchParams ? await searchParams : {};
-  const result = await fetchCorporateCompany();
+  const [result, locale] = await Promise.all([fetchCorporateCompany(), getPageLocale()]);
+  const { settings: s } = loadLocaleBundle(locale).corporate;
 
   if (!result.ok) {
     return (
       <>
-        <PageHeader eyebrow="Company" title="Settings" />
+        <PageHeader eyebrow={s.eyebrow} title={s.loadErrorFallbackTitle} />
         <AdminCard>
           <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">{result.message}</p>
         </AdminCard>
@@ -77,9 +80,9 @@ export default async function CorporateSettingsPage({ searchParams }: PageProps)
   return (
     <>
       <PageHeader
-        eyebrow="Company"
-        title="Company settings"
-        description="Your company profile and billing contact. Plan, contract, and status are managed by MyGlobalHealth."
+        eyebrow={s.eyebrow}
+        title={s.title}
+        description={s.description}
         actions={
           <Pill tone={companyStatusTone(company.status)}>{companyStatusLabel(company.status)}</Pill>
         }
@@ -94,18 +97,18 @@ export default async function CorporateSettingsPage({ searchParams }: PageProps)
 
       <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
         <AdminCard padding={0} className="overflow-hidden">
-          <SectionHeader title="Company details" />
+          <SectionHeader title={s.form.sectionTitle} />
           <form
             action={updateCompanyAction}
             className="border-t border-[var(--color-border)] px-5 py-4"
           >
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <label className="flex flex-col gap-1 sm:col-span-2">
-                <span className="gh-field-label">Company name *</span>
+                <span className="gh-field-label">{s.form.companyName}</span>
                 <input name="name" required maxLength={240} defaultValue={company.name} className="gh-input" />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Registration number</span>
+                <span className="gh-field-label">{s.form.registrationNumber}</span>
                 <input
                   name="registrationNumber"
                   maxLength={120}
@@ -114,7 +117,7 @@ export default async function CorporateSettingsPage({ searchParams }: PageProps)
                 />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Country</span>
+                <span className="gh-field-label">{s.form.country}</span>
                 <input
                   value={company.countryCode.toUpperCase()}
                   readOnly
@@ -123,7 +126,7 @@ export default async function CorporateSettingsPage({ searchParams }: PageProps)
                 />
               </label>
               <label className="flex flex-col gap-1 sm:col-span-2">
-                <span className="gh-field-label">Address line 1</span>
+                <span className="gh-field-label">{s.form.addressLine1}</span>
                 <input
                   name="addressLine1"
                   maxLength={240}
@@ -132,7 +135,7 @@ export default async function CorporateSettingsPage({ searchParams }: PageProps)
                 />
               </label>
               <label className="flex flex-col gap-1 sm:col-span-2">
-                <span className="gh-field-label">Address line 2</span>
+                <span className="gh-field-label">{s.form.addressLine2}</span>
                 <input
                   name="addressLine2"
                   maxLength={240}
@@ -141,11 +144,11 @@ export default async function CorporateSettingsPage({ searchParams }: PageProps)
                 />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">City</span>
+                <span className="gh-field-label">{s.form.city}</span>
                 <input name="city" maxLength={120} defaultValue={company.city ?? ""} className="gh-input" />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Postal code</span>
+                <span className="gh-field-label">{s.form.postalCode}</span>
                 <input
                   name="postalCode"
                   maxLength={24}
@@ -154,7 +157,7 @@ export default async function CorporateSettingsPage({ searchParams }: PageProps)
                 />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Billing email *</span>
+                <span className="gh-field-label">{s.form.billingEmail}</span>
                 <input
                   name="billingEmail"
                   type="email"
@@ -165,7 +168,7 @@ export default async function CorporateSettingsPage({ searchParams }: PageProps)
                 />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Contact name *</span>
+                <span className="gh-field-label">{s.form.contactName}</span>
                 <input
                   name="contactName"
                   required
@@ -175,7 +178,7 @@ export default async function CorporateSettingsPage({ searchParams }: PageProps)
                 />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Contact email *</span>
+                <span className="gh-field-label">{s.form.contactEmail}</span>
                 <input
                   name="contactEmail"
                   type="email"
@@ -186,7 +189,7 @@ export default async function CorporateSettingsPage({ searchParams }: PageProps)
                 />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Contact phone</span>
+                <span className="gh-field-label">{s.form.contactPhone}</span>
                 <input
                   name="contactPhone"
                   maxLength={40}
@@ -197,48 +200,48 @@ export default async function CorporateSettingsPage({ searchParams }: PageProps)
             </div>
             <div className="mt-4">
               <Btn type="submit" variant="primary" size="sm">
-                Save details
+                {s.form.submit}
               </Btn>
             </div>
           </form>
         </AdminCard>
 
         <AdminCard padding={0} className="h-fit overflow-hidden">
-          <SectionHeader title="Plan + contract" description="Managed by MyGlobalHealth." />
+          <SectionHeader title={s.plan.sectionTitle} description={s.plan.sectionDescription} />
           <dl className="m-0 grid grid-cols-1 gap-y-3 px-5 py-4 text-sm">
             <div>
-              <dt className="gh-field-label">Plan</dt>
+              <dt className="gh-field-label">{s.plan.plan}</dt>
               <dd className="m-0 mt-0.5 font-semibold text-[var(--color-text-primary)]">
                 {company.plan.name}
               </dd>
             </div>
             <div>
-              <dt className="gh-field-label">Price per employee</dt>
+              <dt className="gh-field-label">{s.plan.pricePerEmployee}</dt>
               <dd className="m-0 mt-0.5 text-[var(--color-text-primary)]">
-                {formatCents(company.plan.annualPricePerEmployeeCents, company.plan.currencyCode)} /
-                year
+                {formatCents(company.plan.annualPricePerEmployeeCents, company.plan.currencyCode)}{" "}
+                {s.plan.perYear}
               </dd>
             </div>
             <div>
-              <dt className="gh-field-label">Max beneficiaries per employee</dt>
+              <dt className="gh-field-label">{s.plan.maxBeneficiaries}</dt>
               <dd className="m-0 mt-0.5 text-[var(--color-text-primary)]">
                 {company.plan.maxBeneficiariesPerEmployee}
               </dd>
             </div>
             <div>
-              <dt className="gh-field-label">Contract start</dt>
+              <dt className="gh-field-label">{s.plan.contractStart}</dt>
               <dd className="m-0 mt-0.5 text-[var(--color-text-primary)]">
                 {formatDate(company.contractStartAt)}
               </dd>
             </div>
             <div>
-              <dt className="gh-field-label">Contract end</dt>
+              <dt className="gh-field-label">{s.plan.contractEnd}</dt>
               <dd className="m-0 mt-0.5 text-[var(--color-text-primary)]">
-                {company.contractEndAt ? formatDate(company.contractEndAt) : "Open-ended"}
+                {company.contractEndAt ? formatDate(company.contractEndAt) : s.plan.openEnded}
               </dd>
             </div>
             <div>
-              <dt className="gh-field-label">Current annual total</dt>
+              <dt className="gh-field-label">{s.plan.currentAnnualTotal}</dt>
               <dd className="m-0 mt-0.5 text-lg font-bold text-[var(--color-text-primary)]">
                 {formatCents(company.billing.totalAnnualCents, company.billing.currencyCode)}
               </dd>

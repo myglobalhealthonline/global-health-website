@@ -14,6 +14,8 @@ import {
 import { AdminCard, Btn, PageHeader } from "@/components/portal-atoms";
 import { BulkUploadForm } from "./bulk-upload-form";
 import { EmployeesTable } from "./employees-table";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +36,8 @@ function back(params: Record<string, string>) {
 
 async function addEmployeeAction(formData: FormData) {
   "use server";
+  const locale = await getPageLocale();
+  const { employees: e } = loadLocaleBundle(locale).corporate;
   const read = (key: string) => {
     const value = String(formData.get(key) ?? "").trim();
     return value || undefined;
@@ -52,24 +56,26 @@ async function addEmployeeAction(formData: FormData) {
     jobTitle: read("jobTitle"),
   };
   if (!input.firstName || !input.lastName || !input.email) {
-    back({ error: "First name, last name and email are required" });
+    back({ error: e.errors.requiredFields });
   }
   const result = await postCorporateEmployee(input);
   if (!result.ok) back({ error: result.message });
   revalidatePath("/corporate/employees");
-  back({ success: `Employee added — invite ${result.ok && result.data.status === "INVITE_FAILED" ? "could not be sent (resend below)" : "sent"}` });
+  back({ success: result.ok && result.data.status === "INVITE_FAILED" ? e.success.addedFailed : e.success.addedSent });
 }
 
 async function employeeRowAction(formData: FormData) {
   "use server";
+  const locale = await getPageLocale();
+  const { employees: e } = loadLocaleBundle(locale).corporate;
   const id = String(formData.get("employeeId") ?? "");
   const action = String(formData.get("action") ?? "");
-  if (!id || !action) back({ error: "Invalid action" });
+  if (!id || !action) back({ error: e.errors.invalidAction });
   if (action === "RESEND") {
     const result = await resendCorporateEmployeeInvite(id);
     if (!result.ok) back({ error: result.message });
     revalidatePath("/corporate/employees");
-    back({ success: "Invite resent" });
+    back({ success: e.success.inviteResent });
   }
   const result = await patchCorporateEmployee(id, {
     action: action as "SUSPEND" | "REACTIVATE" | "REMOVE",
@@ -79,10 +85,10 @@ async function employeeRowAction(formData: FormData) {
   back({
     success:
       action === "SUSPEND"
-        ? "Employee suspended — their benefits stop immediately"
+        ? e.success.suspended
         : action === "REACTIVATE"
-          ? "Employee reactivated"
-          : "Employee removed",
+          ? e.success.reactivated
+          : e.success.removed,
   });
 }
 
@@ -104,14 +110,18 @@ async function getEmployeeDetail(id: string): Promise<CorporateEmployeeDetailDto
 
 export default async function CorporateEmployeesPage({ searchParams }: PageProps) {
   const sp = searchParams ? await searchParams : {};
-  const result = await fetchCorporateEmployees({ query: sp.query, status: sp.status });
+  const [result, locale] = await Promise.all([
+    fetchCorporateEmployees({ query: sp.query, status: sp.status }),
+    getPageLocale(),
+  ]);
+  const { employees: e, common } = loadLocaleBundle(locale).corporate;
 
   return (
     <>
       <PageHeader
-        eyebrow="People"
-        title="Employees"
-        description="Enroll employees, track onboarding, and manage who holds corporate benefits. Invites go out by email — and WhatsApp when a phone number is provided."
+        eyebrow={e.eyebrow}
+        title={e.title}
+        description={e.description}
       />
 
       {sp.error ? (
@@ -126,61 +136,61 @@ export default async function CorporateEmployeesPage({ searchParams }: PageProps
         <details>
           <summary className="flex cursor-pointer list-none items-center gap-2 px-5 py-3.5 text-sm font-bold text-[var(--color-text-primary)] [&::-webkit-details-marker]:hidden">
             <UserPlus className="size-4" aria-hidden />
-            Add employee
+            {e.addEmployee.summary}
           </summary>
           <form action={addEmployeeAction} className="border-t border-[var(--color-border)] px-5 py-4">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">First name *</span>
+                <span className="gh-field-label">{e.addEmployee.firstName}</span>
                 <input name="firstName" required maxLength={120} className="gh-input" />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Last name *</span>
+                <span className="gh-field-label">{e.addEmployee.lastName}</span>
                 <input name="lastName" required maxLength={120} className="gh-input" />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Email *</span>
+                <span className="gh-field-label">{e.addEmployee.email}</span>
                 <input name="email" type="email" required maxLength={320} className="gh-input" />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Phone (WhatsApp)</span>
-                <input name="phone" maxLength={40} className="gh-input" placeholder="+353…" />
+                <span className="gh-field-label">{e.addEmployee.phone}</span>
+                <input name="phone" maxLength={40} className="gh-input" placeholder={e.addEmployee.phonePlaceholder} />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Date of birth</span>
+                <span className="gh-field-label">{e.addEmployee.dateOfBirth}</span>
                 <input name="dateOfBirth" type="date" className="gh-input" />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Employee code</span>
+                <span className="gh-field-label">{e.addEmployee.employeeCode}</span>
                 <input name="employeeCode" maxLength={64} className="gh-input" />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Address</span>
+                <span className="gh-field-label">{e.addEmployee.address}</span>
                 <input name="addressLine1" maxLength={240} className="gh-input" />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">City</span>
+                <span className="gh-field-label">{e.addEmployee.city}</span>
                 <input name="city" maxLength={120} className="gh-input" />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Postal code</span>
+                <span className="gh-field-label">{e.addEmployee.postalCode}</span>
                 <input name="postalCode" maxLength={24} className="gh-input" />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Department</span>
+                <span className="gh-field-label">{e.addEmployee.department}</span>
                 <input name="department" maxLength={120} className="gh-input" />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Job title</span>
+                <span className="gh-field-label">{e.addEmployee.jobTitle}</span>
                 <input name="jobTitle" maxLength={120} className="gh-input" />
               </label>
             </div>
             <div className="mt-4 flex items-center gap-2">
               <Btn type="submit" variant="primary" size="sm">
-                Save + send invite
+                {e.addEmployee.submit}
               </Btn>
               <span className="text-xs text-[var(--color-text-muted)]">
-                The invite goes out as soon as you save.
+                {e.addEmployee.hint}
               </span>
             </div>
           </form>
@@ -188,7 +198,7 @@ export default async function CorporateEmployeesPage({ searchParams }: PageProps
       </AdminCard>
 
       {/* Bulk upload */}
-      <BulkUploadForm action={bulkUploadAction} />
+      <BulkUploadForm action={bulkUploadAction} t={e.bulkUpload} />
 
       {/* Table */}
       <AdminCard padding={0} className="overflow-hidden">
@@ -197,42 +207,43 @@ export default async function CorporateEmployeesPage({ searchParams }: PageProps
             <input
               type="search"
               name="query"
-              placeholder="Search employees…"
+              placeholder={e.search.placeholder}
               defaultValue={sp.query ?? ""}
               className="gh-input w-full sm:max-w-xs"
             />
             <select name="status" defaultValue={sp.status ?? ""} className="gh-select">
-              <option value="">All statuses</option>
-              <option value="INVITE_SENT">Invite sent</option>
-              <option value="INVITE_FAILED">Invite failed</option>
-              <option value="REGISTERED">Registered</option>
-              <option value="PROFILE_COMPLETE">Profile complete</option>
-              <option value="PREASSESSMENT_PENDING">Pre-assessment pending</option>
-              <option value="PREASSESSMENT_BOOKED">Pre-assessment booked</option>
-              <option value="ACTIVE">Active</option>
-              <option value="SUSPENDED">Suspended</option>
-              <option value="REMOVED">Removed</option>
+              <option value="">{e.search.allStatuses}</option>
+              <option value="INVITE_SENT">{e.search.statusInviteSent}</option>
+              <option value="INVITE_FAILED">{e.search.statusInviteFailed}</option>
+              <option value="REGISTERED">{e.search.statusRegistered}</option>
+              <option value="PROFILE_COMPLETE">{e.search.statusProfileComplete}</option>
+              <option value="PREASSESSMENT_PENDING">{e.search.statusPreassessmentPending}</option>
+              <option value="PREASSESSMENT_BOOKED">{e.search.statusPreassessmentBooked}</option>
+              <option value="ACTIVE">{e.search.statusActive}</option>
+              <option value="SUSPENDED">{e.search.statusSuspended}</option>
+              <option value="REMOVED">{e.search.statusRemoved}</option>
             </select>
             <Btn type="submit" variant="ghost" size="sm">
-              Filter
+              {common.filter}
             </Btn>
           </form>
           {result.ok ? (
             <span className="ml-auto text-portal-compact text-[var(--color-text-muted)]">
-              {result.data.employees.length} employees
+              {result.data.employees.length} {e.employeesCountSuffix}
             </span>
           ) : null}
         </div>
 
         {!result.ok ? (
           <p className="gh-status-warning m-5 rounded-md border px-4 py-3 text-sm">
-            Could not load employees: {result.message}
+            {e.loadErrorPrefix}: {result.message}
           </p>
         ) : (
           <EmployeesTable
             employees={result.data.employees}
             employeeRowAction={employeeRowAction}
             getEmployeeDetail={getEmployeeDetail}
+            t={e.table}
           />
         )}
       </AdminCard>

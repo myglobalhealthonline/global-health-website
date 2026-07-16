@@ -16,26 +16,32 @@ import {
   requestStatusTone,
   REQUEST_TYPE_LABELS,
 } from "@/app/(admin)/admin/corporate/_lib";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
 /** Onboarding milestones derived from the status machine — privacy-safe
  *  (booleans only, no appointment content). */
-function milestones(status: string, preAssessment: { booked: boolean; completed: boolean }) {
+function milestones(
+  status: string,
+  preAssessment: { booked: boolean; completed: boolean },
+  t: ReturnType<typeof loadLocaleBundle>["corporate"]["employees"]["detail"],
+) {
   const reached = (targets: string[]) => targets.includes(status);
   return [
     {
-      label: "Invite accepted — account created",
+      label: t.milestoneInviteAccepted,
       done: !["DRAFT", "INVITED", "INVITE_SENT", "INVITE_FAILED"].includes(status),
     },
     {
-      label: "Profile complete",
+      label: t.milestoneProfileComplete,
       done:
         ["PROFILE_COMPLETE", "PREASSESSMENT_PENDING", "PREASSESSMENT_BOOKED"].includes(status) ||
         reached(["ACTIVE", "SUSPENDED"]),
     },
-    { label: "Pre-assessment booked", done: preAssessment.booked || reached(["ACTIVE", "SUSPENDED"]) },
-    { label: "Pre-assessment completed — benefits active", done: preAssessment.completed },
+    { label: t.milestonePreassessmentBooked, done: preAssessment.booked || reached(["ACTIVE", "SUSPENDED"]) },
+    { label: t.milestonePreassessmentCompleted, done: preAssessment.completed },
   ];
 }
 
@@ -45,12 +51,13 @@ export default async function CorporateEmployeeDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const result = await fetchCorporateEmployeeById(id);
+  const [result, locale] = await Promise.all([fetchCorporateEmployeeById(id), getPageLocale()]);
+  const t = loadLocaleBundle(locale).corporate.employees.detail;
   if (!result.ok) {
     if (result.status === 404) notFound();
     return (
       <>
-        <PageHeader eyebrow="People" title="Employee" />
+        <PageHeader eyebrow={t.eyebrow} title={t.loadErrorFallback} />
         <AdminCard>
           <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">{result.message}</p>
         </AdminCard>
@@ -58,12 +65,12 @@ export default async function CorporateEmployeeDetailPage({
     );
   }
   const employee = result.data;
-  const steps = milestones(employee.status, employee.preAssessment);
+  const steps = milestones(employee.status, employee.preAssessment, t);
 
   return (
     <>
       <PageHeader
-        eyebrow="People"
+        eyebrow={t.eyebrow}
         title={`${employee.firstName} ${employee.lastName}`}
         description={employee.email}
         actions={
@@ -75,15 +82,15 @@ export default async function CorporateEmployeeDetailPage({
         href="/corporate/employees"
         className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-text-muted)] hover:underline"
       >
-        <ArrowLeft className="size-4" aria-hidden /> All employees
+        <ArrowLeft className="size-4" aria-hidden /> {t.backToAll}
       </Link>
 
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Onboarding timeline */}
         <AdminCard padding={0} className="overflow-hidden">
           <SectionHeader
-            title="Onboarding"
-            description="Progress toward active corporate benefits. Consultation content is never visible here."
+            title={t.onboardingTitle}
+            description={t.onboardingDescription}
           />
           <ul className="m-0 list-none divide-y divide-[var(--color-border)] p-0">
             {steps.map((step) => (
@@ -107,24 +114,25 @@ export default async function CorporateEmployeeDetailPage({
           </ul>
           <div className="border-t border-[var(--color-border)] px-5 py-3 text-sm text-[var(--color-text-muted)]">
             {employee.preAssessment.scheduledAt ? (
-              <>Pre-assessment scheduled {formatDate(employee.preAssessment.scheduledAt)} · </>
+              <>{t.preassessmentScheduled.replace("{date}", formatDate(employee.preAssessment.scheduledAt))}</>
             ) : null}
-            {employee.beneficiaryCount} beneficiar{employee.beneficiaryCount === 1 ? "y" : "ies"}{" "}
-            added by this employee
+            {employee.beneficiaryCount === 1
+              ? t.beneficiariesAddedBy.replace("{count}", String(employee.beneficiaryCount))
+              : t.beneficiariesAddedByPlural.replace("{count}", String(employee.beneficiaryCount))}
           </div>
         </AdminCard>
 
         {/* Details */}
         <AdminCard padding={0} className="overflow-hidden">
-          <SectionHeader title="Details" />
+          <SectionHeader title={t.detailsTitle} />
           <dl className="m-0 grid grid-cols-1 gap-x-6 gap-y-3 px-5 py-4 text-sm sm:grid-cols-2">
             {[
-              ["Phone", employee.phone],
-              ["Department", employee.department],
-              ["Job title", employee.jobTitle],
-              ["Employee code", employee.employeeCode],
-              ["City", employee.city],
-              ["Added", formatDate(employee.createdAt)],
+              [t.fieldPhone, employee.phone],
+              [t.fieldDepartment, employee.department],
+              [t.fieldJobTitle, employee.jobTitle],
+              [t.fieldEmployeeCode, employee.employeeCode],
+              [t.fieldCity, employee.city],
+              [t.fieldAdded, formatDate(employee.createdAt)],
             ].map(([label, value]) => (
               <div key={label as string}>
                 <dt className="gh-field-label">{label}</dt>
@@ -136,22 +144,22 @@ export default async function CorporateEmployeeDetailPage({
 
         {/* Invite history */}
         <AdminCard padding={0} className="overflow-hidden">
-          <SectionHeader title="Invite history" />
+          <SectionHeader title={t.inviteHistoryTitle} />
           {employee.invites.length === 0 ? (
-            <p className="px-5 py-4 text-sm text-[var(--color-text-muted)]">No invites sent yet.</p>
+            <p className="px-5 py-4 text-sm text-[var(--color-text-muted)]">{t.noInvitesSent}</p>
           ) : (
             <ul className="m-0 list-none divide-y divide-[var(--color-border)] p-0">
               {employee.invites.map((invite, index) => (
                 <li key={index} className="px-5 py-3 text-sm">
                   <p className="font-semibold text-[var(--color-text-primary)]">
-                    Sent {formatDate(invite.createdAt)}
+                    {t.inviteSent.replace("{date}", formatDate(invite.createdAt))}
                   </p>
                   <p className="text-xs text-[var(--color-text-muted)]">
                     {invite.usedAt
-                      ? `Accepted ${formatDate(invite.usedAt)}`
+                      ? t.inviteAccepted.replace("{date}", formatDate(invite.usedAt))
                       : [
-                          invite.emailSentAt ? "email delivered" : "email pending",
-                          invite.whatsappSentAt ? "WhatsApp delivered" : null,
+                          invite.emailSentAt ? t.inviteEmailDelivered : t.inviteEmailPending,
+                          invite.whatsappSentAt ? t.inviteWhatsappDelivered : null,
                         ]
                           .filter(Boolean)
                           .join(" · ")}
@@ -165,10 +173,10 @@ export default async function CorporateEmployeeDetailPage({
 
         {/* Request history */}
         <AdminCard padding={0} className="overflow-hidden">
-          <SectionHeader title="Consultation requests" />
+          <SectionHeader title={t.requestsTitle} />
           {employee.requests.length === 0 ? (
             <p className="px-5 py-4 text-sm text-[var(--color-text-muted)]">
-              No requests for this employee.
+              {t.noRequestsForEmployee}
             </p>
           ) : (
             <ul className="m-0 list-none divide-y divide-[var(--color-border)] p-0">

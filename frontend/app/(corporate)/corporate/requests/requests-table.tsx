@@ -11,18 +11,23 @@ import {
   REQUEST_TYPE_LABELS,
 } from "@/app/(admin)/admin/corporate/_lib";
 import type { CorporatePortalRequestDto } from "@/lib/corporate/corporate-api";
+import type { loadLocaleBundle } from "@/lib/i18n/load-locale";
+
+type RequestsTableLocale = ReturnType<typeof loadLocaleBundle>["corporate"]["requests"]["table"];
 
 export function RequestsTable({
   requests,
   cancelRequestAction,
+  t,
 }: {
   requests: CorporatePortalRequestDto[];
   cancelRequestAction: (formData: FormData) => void;
+  t: RequestsTableLocale;
 }) {
   const fields: ColumnPriorityField<CorporatePortalRequestDto>[] = [
     {
       key: "employee",
-      label: "Employee",
+      label: t.colEmployee,
       priority: 1,
       render: (r) => (
         <>
@@ -39,25 +44,25 @@ export function RequestsTable({
     },
     {
       key: "type",
-      label: "Type",
+      label: t.colType,
       priority: 2,
       render: (r) => REQUEST_TYPE_LABELS[r.type] ?? r.type,
     },
     {
       key: "status",
-      label: "Status",
+      label: t.colStatus,
       priority: 2,
       render: (r) => <Pill tone={requestStatusTone(r.status)}>{requestStatusLabel(r.status)}</Pill>,
     },
     {
       key: "booked",
-      label: "Booked",
+      label: t.colBooked,
       priority: 2,
       render: (r) => (r.hasAppointment ? "✓" : "—"),
     },
     {
       key: "created",
-      label: "Created",
+      label: t.colCreated,
       priority: 3,
       render: (r) => (
         <span className="text-[var(--color-text-muted)]">{formatDate(r.createdAt)}</span>
@@ -65,7 +70,7 @@ export function RequestsTable({
     },
     {
       key: "expires",
-      label: "Expires",
+      label: t.colExpires,
       priority: 4,
       render: (r) => (
         <span className="text-[var(--color-text-muted)]">{formatDate(r.expiresAt)}</span>
@@ -73,7 +78,7 @@ export function RequestsTable({
     },
     {
       key: "actions",
-      label: "Actions",
+      label: t.colActions,
       priority: 2,
       align: "right",
       render: (r) =>
@@ -81,7 +86,7 @@ export function RequestsTable({
           <form action={cancelRequestAction}>
             <input type="hidden" name="requestId" value={r.id} />
             <Btn type="submit" variant="ghost" size="sm">
-              Cancel
+              {t.cancel}
             </Btn>
           </form>
         ) : null,
@@ -96,8 +101,8 @@ export function RequestsTable({
       emptyState={
         <AdminEmptyState
           icon={<ClipboardList className="size-8" aria-hidden />}
-          title="No requests"
-          description="Create a request to have an employee attend an illness-benefit or fit-for-work consultation."
+          title={t.emptyTitle}
+          description={t.emptyDescription}
         />
       }
     />

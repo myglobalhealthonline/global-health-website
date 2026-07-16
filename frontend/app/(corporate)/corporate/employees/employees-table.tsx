@@ -14,6 +14,9 @@ import { AppMenu, AppMenuItem } from "@/components/AppMenu";
 import { AdminEmptyState, Btn, IconBtn, Pill } from "@/components/portal-atoms";
 import { memberStatusLabel, memberStatusTone, formatDate } from "@/app/(admin)/admin/corporate/_lib";
 import type { CorporatePortalEmployeeDto, CorporateEmployeeDetailDto } from "@/lib/corporate/corporate-api";
+import type { loadLocaleBundle } from "@/lib/i18n/load-locale";
+
+type EmployeesTableLocale = ReturnType<typeof loadLocaleBundle>["corporate"]["employees"]["table"];
 
 const INVITE_STATUSES = ["DRAFT", "INVITED", "INVITE_SENT", "INVITE_FAILED"];
 
@@ -22,9 +25,11 @@ const INVITE_STATUSES = ["DRAFT", "INVITED", "INVITE_SENT", "INVITE_FAILED"];
 function EmployeeActionForms({
   employee,
   employeeRowAction,
+  t,
 }: {
   employee: CorporatePortalEmployeeDto;
   employeeRowAction: (formData: FormData) => void;
+  t: EmployeesTableLocale;
 }) {
   return (
     <>
@@ -33,7 +38,7 @@ function EmployeeActionForms({
           <input type="hidden" name="employeeId" value={employee.id} />
           <input type="hidden" name="action" value="RESEND" />
           <Btn type="submit" variant="ghost" size="sm">
-            Resend invite
+            {t.resendInvite}
           </Btn>
         </form>
       ) : null}
@@ -42,7 +47,7 @@ function EmployeeActionForms({
           <input type="hidden" name="employeeId" value={employee.id} />
           <input type="hidden" name="action" value="REACTIVATE" />
           <Btn type="submit" variant="ghost" size="sm">
-            Reactivate
+            {t.reactivate}
           </Btn>
         </form>
       ) : employee.status !== "REMOVED" ? (
@@ -50,7 +55,7 @@ function EmployeeActionForms({
           <input type="hidden" name="employeeId" value={employee.id} />
           <input type="hidden" name="action" value="SUSPEND" />
           <Btn type="submit" variant="ghost" size="sm">
-            Suspend
+            {t.suspend}
           </Btn>
         </form>
       ) : null}
@@ -59,7 +64,7 @@ function EmployeeActionForms({
           <input type="hidden" name="employeeId" value={employee.id} />
           <input type="hidden" name="action" value="REMOVE" />
           <Btn type="submit" variant="danger" size="sm">
-            Remove
+            {t.remove}
           </Btn>
         </form>
       ) : null}
@@ -71,10 +76,12 @@ export function EmployeesTable({
   employees,
   employeeRowAction,
   getEmployeeDetail,
+  t,
 }: {
   employees: CorporatePortalEmployeeDto[];
   employeeRowAction: (formData: FormData) => void;
   getEmployeeDetail: (id: string) => Promise<CorporateEmployeeDetailDto | null>;
+  t: EmployeesTableLocale;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -101,11 +108,11 @@ export function EmployeesTable({
     getEmployeeDetail(selected.id)
       .then((data) => {
         if (cancelled) return;
-        if (!data) setError("Could not load employee details");
+        if (!data) setError(t.detailLoadError);
         else setDetail(data);
       })
       .catch(() => {
-        if (!cancelled) setError("Could not load employee details");
+        if (!cancelled) setError(t.detailLoadError);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -128,7 +135,7 @@ export function EmployeesTable({
   const fields: ColumnPriorityField<CorporatePortalEmployeeDto>[] = [
     {
       key: "name",
-      label: "Name",
+      label: t.colName,
       priority: 1,
       render: (e) => (
         <>
@@ -145,30 +152,30 @@ export function EmployeesTable({
         </>
       ),
     },
-    { key: "email", label: "Email", priority: 2, render: (e) => e.email },
-    { key: "department", label: "Department", priority: 2, render: (e) => e.department ?? "—" },
+    { key: "email", label: t.colEmail, priority: 2, render: (e) => e.email },
+    { key: "department", label: t.colDepartment, priority: 2, render: (e) => e.department ?? "—" },
     {
       key: "status",
-      label: "Status",
+      label: t.colStatus,
       priority: 2,
       render: (e) => <Pill tone={memberStatusTone(e.status)}>{memberStatusLabel(e.status)}</Pill>,
     },
     {
       key: "beneficiaries",
-      label: "Beneficiaries",
+      label: t.colBeneficiaries,
       priority: 2,
       align: "right",
       render: (e) => e.beneficiaryCount,
     },
     {
       key: "actions",
-      label: "Actions",
+      label: t.colActions,
       priority: 2,
       align: "right",
       desktopOnly: true,
       render: (e) => (
         <div className="flex flex-wrap items-center justify-end gap-1.5">
-          <EmployeeActionForms employee={e} employeeRowAction={employeeRowAction} />
+          <EmployeeActionForms employee={e} employeeRowAction={employeeRowAction} t={t} />
         </div>
       ),
     },
@@ -184,15 +191,15 @@ export function EmployeesTable({
         emptyState={
           <AdminEmptyState
             icon={<Users className="size-8" aria-hidden />}
-            title="No employees yet"
-            description="Add employees one by one or paste a list — each gets an invite to join your corporate plan."
+            title={t.emptyTitle}
+            description={t.emptyDescription}
           />
         }
         cardActions={(e) => (
           <span onClick={(ev) => ev.stopPropagation()}>
             <AppMenu
               trigger={
-                <IconBtn ariaLabel="Employee actions" type="button">
+                <IconBtn ariaLabel={t.employeeActionsAriaLabel} type="button">
                   <MoreVertical className="size-4" aria-hidden />
                 </IconBtn>
               }
@@ -203,7 +210,7 @@ export function EmployeesTable({
                   className="gh-portal-menu-item"
                   onClick={() => openEmployee(e.id)}
                 >
-                  View details
+                  {t.viewDetails}
                 </button>
               </AppMenuItem>
               {INVITE_STATUSES.includes(e.status) ? (
@@ -212,7 +219,7 @@ export function EmployeesTable({
                   <input type="hidden" name="action" value="RESEND" />
                   <AppMenuItem asChild>
                     <button type="submit" className="gh-portal-menu-item">
-                      Resend invite
+                      {t.resendInvite}
                     </button>
                   </AppMenuItem>
                 </form>
@@ -223,7 +230,7 @@ export function EmployeesTable({
                   <input type="hidden" name="action" value="REACTIVATE" />
                   <AppMenuItem asChild>
                     <button type="submit" className="gh-portal-menu-item">
-                      Reactivate
+                      {t.reactivate}
                     </button>
                   </AppMenuItem>
                 </form>
@@ -233,7 +240,7 @@ export function EmployeesTable({
                   <input type="hidden" name="action" value="SUSPEND" />
                   <AppMenuItem asChild>
                     <button type="submit" className="gh-portal-menu-item">
-                      Suspend
+                      {t.suspend}
                     </button>
                   </AppMenuItem>
                 </form>
@@ -244,7 +251,7 @@ export function EmployeesTable({
                   <input type="hidden" name="action" value="REMOVE" />
                   <AppMenuItem asChild>
                     <button type="submit" className="gh-portal-menu-item text-red-600">
-                      Remove
+                      {t.remove}
                     </button>
                   </AppMenuItem>
                 </form>
@@ -262,7 +269,7 @@ export function EmployeesTable({
         }}
         paramKey="employee"
         paramValue={selected?.id}
-        eyebrow="Employee"
+        eyebrow={t.drawerEyebrow}
         title={selected ? `${selected.firstName} ${selected.lastName}` : ""}
         summary={
           selected ? (
@@ -280,28 +287,28 @@ export function EmployeesTable({
         footer={
           selected ? (
             <div className="flex flex-wrap items-center gap-1.5">
-              <EmployeeActionForms employee={selected} employeeRowAction={employeeRowAction} />
+              <EmployeeActionForms employee={selected} employeeRowAction={employeeRowAction} t={t} />
             </div>
           ) : null
         }
       >
         {selected && detail ? (
           <>
-            <RecordDetailsSection title="Invitation">
+            <RecordDetailsSection title={t.sectionInvitation}>
               {detail.invites.length === 0 ? (
-                <p className="text-sm text-[var(--color-text-muted)]">No invites sent yet.</p>
+                <p className="text-sm text-[var(--color-text-muted)]">{t.noInvitesSent}</p>
               ) : (
                 detail.invites.map((invite, i) => (
                   <div key={i}>
-                    <RecordDetailsField label="Sent" value={formatDate(invite.createdAt)} />
+                    <RecordDetailsField label={t.inviteSentLabel} value={formatDate(invite.createdAt)} />
                     <RecordDetailsField
-                      label="Status"
+                      label={t.inviteStatusLabel}
                       value={
                         invite.usedAt
-                          ? `Accepted ${formatDate(invite.usedAt)}`
+                          ? t.inviteAccepted.replace("{date}", formatDate(invite.usedAt))
                           : [
-                              invite.emailSentAt ? "email delivered" : "email pending",
-                              invite.whatsappSentAt ? "WhatsApp delivered" : null,
+                              invite.emailSentAt ? t.inviteEmailDelivered : t.inviteEmailPending,
+                              invite.whatsappSentAt ? t.inviteWhatsappDelivered : null,
                             ]
                               .filter(Boolean)
                               .join(" · ")
@@ -311,16 +318,18 @@ export function EmployeesTable({
                 ))
               )}
             </RecordDetailsSection>
-            <RecordDetailsSection title="Beneficiaries">
+            <RecordDetailsSection title={t.sectionBeneficiaries}>
               <RecordDetailsField
-                label="Count"
-                value={`${detail.beneficiaryCount} beneficiar${detail.beneficiaryCount === 1 ? "y" : "ies"}`}
+                label={t.beneficiaryCountLabel}
+                value={detail.beneficiaryCount === 1
+                  ? t.beneficiaryCount.replace("{count}", String(detail.beneficiaryCount))
+                  : t.beneficiaryCountPlural.replace("{count}", String(detail.beneficiaryCount))}
               />
             </RecordDetailsSection>
-            <RecordDetailsSection title="Department">
-              <RecordDetailsField label="Department" value={detail.department} />
-              <RecordDetailsField label="Job title" value={detail.jobTitle} />
-              <RecordDetailsField label="Employee code" value={detail.employeeCode} />
+            <RecordDetailsSection title={t.sectionDepartment}>
+              <RecordDetailsField label={t.fieldDepartment} value={detail.department} />
+              <RecordDetailsField label={t.fieldJobTitle} value={detail.jobTitle} />
+              <RecordDetailsField label={t.fieldEmployeeCode} value={detail.employeeCode} />
             </RecordDetailsSection>
           </>
         ) : null}

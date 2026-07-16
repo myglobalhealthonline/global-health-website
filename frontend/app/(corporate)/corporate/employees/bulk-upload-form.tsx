@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { UploadCloud } from "lucide-react";
 import type { CorporateEmployeeInput } from "@/lib/corporate/corporate-api";
 import { AdminCard, Btn } from "@/components/portal-atoms";
+import type { loadLocaleBundle } from "@/lib/i18n/load-locale";
+
+type BulkUploadLocale = ReturnType<typeof loadLocaleBundle>["corporate"]["employees"]["bulkUpload"];
 
 type BulkResult = { email: string; ok: boolean; status?: string; message?: string };
 
@@ -26,7 +29,8 @@ const HEADER = [
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-type ParsedRow = { row: CorporateEmployeeInput; line: number; error?: string };
+type RowErrorCode = "missingName" | "invalidEmail" | "invalidDob";
+type ParsedRow = { row: CorporateEmployeeInput; line: number; error?: RowErrorCode };
 
 /** Parse CSV/TSV pasted text. First line may be a header row (detected by
  *  "firstName"/"first name" in the first cell) — otherwise column order is
@@ -59,17 +63,17 @@ function parseRows(text: string): ParsedRow[] {
       ...(department ? { department } : {}),
       ...(jobTitle ? { jobTitle } : {}),
     };
-    let error: string | undefined;
-    if (!row.firstName || !row.lastName) error = "Missing name";
-    else if (!EMAIL_RE.test(row.email)) error = "Invalid email";
+    let error: RowErrorCode | undefined;
+    if (!row.firstName || !row.lastName) error = "missingName";
+    else if (!EMAIL_RE.test(row.email)) error = "invalidEmail";
     else if (row.dateOfBirth && !/^\d{4}-\d{2}-\d{2}$/.test(row.dateOfBirth)) {
-      error = "Date of birth must be YYYY-MM-DD";
+      error = "invalidDob";
     }
     return { row, line: index + offset, error };
   });
 }
 
-export function BulkUploadForm({ action }: { action: BulkAction }) {
+export function BulkUploadForm({ action, t }: { action: BulkAction; t: BulkUploadLocale }) {
   const router = useRouter();
   const [text, setText] = useState("");
   const [parsed, setParsed] = useState<ParsedRow[] | null>(null);
@@ -79,18 +83,20 @@ export function BulkUploadForm({ action }: { action: BulkAction }) {
 
   const valid = (parsed ?? []).filter((p) => !p.error);
   const invalid = (parsed ?? []).filter((p) => p.error);
+  const rowErrorMessage = (code: RowErrorCode) =>
+    code === "missingName" ? t.errorMissingName : code === "invalidEmail" ? t.errorInvalidEmail : t.errorInvalidDob;
 
   function onPreview() {
     setResults(null);
     setError(null);
     const rows = parseRows(text);
     if (rows.length === 0) {
-      setError("Paste at least one row");
+      setError(t.errorEmptyRows);
       setParsed(null);
       return;
     }
     if (rows.length > 500) {
-      setError("Maximum 500 employees per upload");
+      setError(t.errorTooManyRows);
       setParsed(null);
       return;
     }
@@ -116,24 +122,31 @@ export function BulkUploadForm({ action }: { action: BulkAction }) {
       <details>
         <summary className="flex cursor-pointer list-none items-center gap-2 px-5 py-3.5 text-sm font-bold text-[var(--color-text-primary)] [&::-webkit-details-marker]:hidden">
           <UploadCloud className="size-4" aria-hidden />
-          Bulk upload
+          {t.summary}
         </summary>
         <div className="border-t border-[var(--color-border)] px-5 py-4">
           <p className="mb-2 text-sm text-[var(--color-text-muted)]">
-            Paste rows from a spreadsheet (CSV, semicolon or tab separated). Column order:{" "}
-            <code className="font-mono text-xs">{HEADER.join(", ")}</code> — a header row is
-            optional. Only name + email are required. Invites are sent automatically on upload.
+            {(() => {
+              const [before, after] = t.description.split("{columns}");
+              return (
+                <>
+                  {before}
+                  <code className="font-mono text-xs">{HEADER.join(", ")}</code>
+                  {after}
+                </>
+              );
+            })()}
           </p>
           <textarea
             value={text}
             onChange={(event) => setText(event.target.value)}
             rows={6}
             className="gh-input w-full font-mono text-xs"
-            placeholder={"firstName,lastName,email,phone\nMary,Byrne,mary.byrne@acme.ie,+353871234567"}
+            placeholder={t.textareaPlaceholder}
           />
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <Btn type="button" variant="secondary" size="sm" onClick={onPreview}>
-              Preview
+              {t.preview}
             </Btn>
             {parsed ? (
               <Btn
@@ -144,8 +157,11 @@ export function BulkUploadForm({ action }: { action: BulkAction }) {
                 disabled={isPending || valid.length === 0}
               >
                 {isPending
-                  ? "Uploading…"
-                  : `Upload ${valid.length} employee${valid.length === 1 ? "" : "s"} + send invites`}
+                  ? t.uploading
+                  : (valid.length === 1 ? t.uploadButton : t.uploadButtonPlural).replace(
+                      "{count}",
+                      String(valid.length),
+                    )}
               </Btn>
             ) : null}
           </div>
@@ -159,11 +175,11 @@ export function BulkUploadForm({ action }: { action: BulkAction }) {
               <table className="w-full text-sm">
                 <thead className="text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
                   <tr>
-                    <th className="px-2 py-1.5">Line</th>
-                    <th className="px-2 py-1.5">Name</th>
-                    <th className="px-2 py-1.5">Email</th>
-                    <th className="px-2 py-1.5">Phone</th>
-                    <th className="px-2 py-1.5">Check</th>
+                    <th className="px-2 py-1.5">{t.tableLine}</th>
+                    <th className="px-2 py-1.5">{t.tableName}</th>
+                    <th className="px-2 py-1.5">{t.tableEmail}</th>
+                    <th className="px-2 py-1.5">{t.tablePhone}</th>
+                    <th className="px-2 py-1.5">{t.tableCheck}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--color-border)]">
@@ -178,10 +194,10 @@ export function BulkUploadForm({ action }: { action: BulkAction }) {
                       <td className="px-2 py-1.5">
                         {p.error ? (
                           <span className="text-xs font-semibold text-rose-700">
-                            {p.error} — skipped
+                            {rowErrorMessage(p.error)} {t.rowSkipped}
                           </span>
                         ) : (
-                          <span className="text-xs font-semibold text-emerald-700">Ready</span>
+                          <span className="text-xs font-semibold text-emerald-700">{t.rowReady}</span>
                         )}
                       </td>
                     </tr>
@@ -190,8 +206,8 @@ export function BulkUploadForm({ action }: { action: BulkAction }) {
               </table>
               {invalid.length > 0 ? (
                 <p className="mt-2 text-xs text-[var(--color-text-muted)]">
-                  {invalid.length} row{invalid.length === 1 ? "" : "s"} with problems will be
-                  skipped.
+                  {invalid.length}{" "}
+                  {invalid.length === 1 ? t.invalidRowsNotice : t.invalidRowsNoticePlural}
                 </p>
               ) : null}
             </div>
@@ -200,8 +216,9 @@ export function BulkUploadForm({ action }: { action: BulkAction }) {
           {results ? (
             <div className="mt-4">
               <p className="text-sm font-semibold text-[var(--color-text-primary)]">
-                {results.filter((r) => r.ok).length} added ·{" "}
-                {results.filter((r) => !r.ok).length} failed
+                {t.resultsSummary
+                  .replace("{added}", String(results.filter((r) => r.ok).length))
+                  .replace("{failed}", String(results.filter((r) => !r.ok).length))}
               </p>
               {results.some((r) => !r.ok) ? (
                 <ul className="mt-1.5 list-none space-y-1 p-0 text-xs text-[var(--color-text-muted)]">
@@ -209,7 +226,7 @@ export function BulkUploadForm({ action }: { action: BulkAction }) {
                     .filter((r) => !r.ok)
                     .map((r) => (
                       <li key={r.email}>
-                        <span className="font-mono">{r.email}</span> — {r.message ?? "Failed"}
+                        <span className="font-mono">{r.email}</span> — {r.message ?? t.resultFailedFallback}
                       </li>
                     ))}
                 </ul>

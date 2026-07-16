@@ -6,6 +6,9 @@ import { ClipboardList, LayoutDashboard, Settings, Users } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { PortalShell, type PortalNavGroup } from "@/components/portal-shell";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { supportedLocaleCodes } from "@/lib/i18n/types";
 
 /**
  * Corporate portal layout (role CORPORATE_ADMIN — a company's HR/admin).
@@ -30,24 +33,27 @@ export default async function CorporateLayout({ children }: { children: ReactNod
     redirect("/login?next=/corporate");
   }
 
+  const locale = await getPageLocale();
+  const { corporate: t } = loadLocaleBundle(locale);
+
   const groups: PortalNavGroup[] = [
     {
-      label: "Overview",
+      label: t.nav.groupOverview,
       items: [
-        { href: "/corporate", label: "Dashboard", icon: <LayoutDashboard className="size-4" aria-hidden /> },
+        { href: "/corporate", label: t.nav.dashboard, icon: <LayoutDashboard className="size-4" aria-hidden /> },
       ],
     },
     {
-      label: "People",
+      label: t.nav.groupPeople,
       items: [
-        { href: "/corporate/employees", label: "Employees", icon: <Users className="size-4" aria-hidden /> },
-        { href: "/corporate/requests", label: "Requests", icon: <ClipboardList className="size-4" aria-hidden /> },
+        { href: "/corporate/employees", label: t.nav.employees, icon: <Users className="size-4" aria-hidden /> },
+        { href: "/corporate/requests", label: t.nav.requests, icon: <ClipboardList className="size-4" aria-hidden /> },
       ],
     },
     {
-      label: "Company",
+      label: t.nav.groupCompany,
       items: [
-        { href: "/corporate/settings", label: "Settings", icon: <Settings className="size-4" aria-hidden /> },
+        { href: "/corporate/settings", label: t.nav.settings, icon: <Settings className="size-4" aria-hidden /> },
       ],
     },
   ];
@@ -57,12 +63,14 @@ export default async function CorporateLayout({ children }: { children: ReactNod
       user={{ fullName: user.fullName, email: user.email, role: user.role }}
       portalKey="corporate"
       groups={groups}
-      portalLabel="Corporate portal"
+      portalLabel={t.nav.portalLabel}
       rootHref="/corporate"
-      rootBreadcrumb="Corporate"
+      rootBreadcrumb={t.nav.rootBreadcrumb}
       signOutAction={logoutAction}
       accountHref="/corporate/settings"
-      notificationsEmptyMessage="No notifications yet."
+      notificationsEmptyMessage={t.nav.notificationsEmptyMessage}
+      locale={locale}
+      availableLocales={[...supportedLocaleCodes]}
     >
       {children}
     </PortalShell>

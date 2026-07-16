@@ -1,0 +1,884 @@
+{
+  "items": [
+    {
+      "namespace": "corporate",
+      "key": "nav.portalLabel"
+    },
+    {
+      "namespace": "corporate",
+      "key": "nav.rootBreadcrumb"
+    },
+    {
+      "namespace": "corporate",
+      "key": "nav.groupOverview"
+    },
+    {
+      "namespace": "corporate",
+      "key": "nav.dashboard"
+    },
+    {
+      "namespace": "corporate",
+      "key": "nav.groupPeople"
+    },
+    {
+      "namespace": "corporate",
+      "key": "nav.employees"
+    },
+    {
+      "namespace": "corporate",
+      "key": "nav.requests"
+    },
+    {
+      "namespace": "corporate",
+      "key": "nav.groupCompany"
+    },
+    {
+      "namespace": "corporate",
+      "key": "nav.settings"
+    },
+    {
+      "namespace": "corporate",
+      "key": "nav.notificationsEmptyMessage"
+    },
+    {
+      "namespace": "corporate",
+      "key": "common.filter"
+    },
+    {
+      "namespace": "corporate",
+      "key": "common.cancel"
+    },
+    {
+      "namespace": "corporate",
+      "key": "common.save"
+    },
+    {
+      "namespace": "corporate",
+      "key": "common.yes"
+    },
+    {
+      "namespace": "corporate",
+      "key": "common.no"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.eyebrow"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.planDescription"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.loadErrorPrefix"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.funnelInvited"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.funnelRegistered"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.funnelPreassessmentBooked"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.funnelActive"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.summaryEmployeesLabel"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.summaryEmployeesHint"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.billingTitle"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.billingDescription"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.billingLine"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.billingPerYear"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.manageEmployees"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.recentRequestsTitle"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.openRequestsCount"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.noRequestsTitle"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.noRequestsDescription"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.newRequest"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.viewAllRequests"
+    },
+    {
+      "namespace": "corporate",
+      "key": "dashboard.employeeFallback"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.eyebrow"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.title"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.description"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.loadErrorPrefix"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.employeesCountSuffix"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.errors.requiredFields"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.errors.invalidAction"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.success.addedSent"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.success.addedFailed"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.success.inviteResent"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.success.suspended"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.success.reactivated"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.success.removed"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.addEmployee.summary"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.addEmployee.firstName"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.addEmployee.lastName"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.addEmployee.email"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.addEmployee.phone"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.addEmployee.phonePlaceholder"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.addEmployee.dateOfBirth"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.addEmployee.employeeCode"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.addEmployee.address"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.addEmployee.city"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.addEmployee.postalCode"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.addEmployee.department"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.addEmployee.jobTitle"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.addEmployee.submit"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.addEmployee.hint"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.summary"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.description"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.textareaPlaceholder"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.preview"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.uploading"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.uploadButton"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.uploadButtonPlural"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.errorEmptyRows"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.errorTooManyRows"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.errorMissingName"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.errorInvalidEmail"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.errorInvalidDob"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.tableLine"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.tableName"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.tableEmail"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.tablePhone"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.tableCheck"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.rowSkipped"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.rowReady"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.invalidRowsNotice"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.invalidRowsNoticePlural"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.resultsSummary"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.bulkUpload.resultFailedFallback"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.search.placeholder"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.search.allStatuses"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.search.statusInviteSent"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.search.statusInviteFailed"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.search.statusRegistered"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.search.statusProfileComplete"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.search.statusPreassessmentPending"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.search.statusPreassessmentBooked"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.search.statusActive"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.search.statusSuspended"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.search.statusRemoved"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.colName"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.colEmail"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.colDepartment"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.colStatus"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.colBeneficiaries"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.colActions"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.resendInvite"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.reactivate"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.suspend"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.remove"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.viewDetails"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.employeeActionsAriaLabel"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.emptyTitle"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.emptyDescription"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.drawerEyebrow"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.sectionInvitation"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.noInvitesSent"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.inviteSentLabel"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.inviteStatusLabel"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.inviteAccepted"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.inviteEmailDelivered"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.inviteEmailPending"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.inviteWhatsappDelivered"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.sectionBeneficiaries"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.beneficiaryCountLabel"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.beneficiaryCount"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.beneficiaryCountPlural"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.sectionDepartment"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.fieldDepartment"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.fieldJobTitle"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.fieldEmployeeCode"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.table.detailLoadError"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.eyebrow"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.backToAll"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.loadErrorFallback"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.onboardingTitle"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.onboardingDescription"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.milestoneInviteAccepted"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.milestoneProfileComplete"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.milestonePreassessmentBooked"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.milestonePreassessmentCompleted"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.preassessmentScheduled"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.beneficiariesAddedBy"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.beneficiariesAddedByPlural"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.detailsTitle"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.fieldPhone"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.fieldDepartment"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.fieldJobTitle"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.fieldEmployeeCode"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.fieldCity"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.fieldAdded"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.inviteHistoryTitle"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.noInvitesSent"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.inviteSent"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.inviteAccepted"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.inviteEmailDelivered"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.inviteEmailPending"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.inviteWhatsappDelivered"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.requestsTitle"
+    },
+    {
+      "namespace": "corporate",
+      "key": "employees.detail.noRequestsForEmployee"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.eyebrow"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.title"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.description"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.loadErrorPrefix"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.errors.pickEmployeeAndType"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.errors.invalidRequest"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.success.created"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.success.cancelled"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.newRequest.summary"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.newRequest.employee"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.newRequest.selectEmployee"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.newRequest.type"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.newRequest.typeIllnessBenefit"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.newRequest.typeFitForWork"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.newRequest.reason"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.newRequest.submit"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.filter.allStatuses"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.filter.statusRequested"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.filter.statusEmployeeNotified"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.filter.statusBooked"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.filter.statusCompleted"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.filter.statusCancelled"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.filter.statusExpired"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.table.colEmployee"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.table.colType"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.table.colStatus"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.table.colBooked"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.table.colCreated"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.table.colExpires"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.table.colActions"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.table.cancel"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.table.emptyTitle"
+    },
+    {
+      "namespace": "corporate",
+      "key": "requests.table.emptyDescription"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.eyebrow"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.title"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.description"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.loadErrorFallbackTitle"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.errors.requiredFields"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.success.saved"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.form.sectionTitle"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.form.companyName"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.form.registrationNumber"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.form.country"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.form.addressLine1"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.form.addressLine2"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.form.city"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.form.postalCode"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.form.billingEmail"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.form.contactName"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.form.contactEmail"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.form.contactPhone"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.form.submit"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.plan.sectionTitle"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.plan.sectionDescription"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.plan.plan"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.plan.pricePerEmployee"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.plan.perYear"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.plan.maxBeneficiaries"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.plan.contractStart"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.plan.contractEnd"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.plan.openEnded"
+    },
+    {
+      "namespace": "corporate",
+      "key": "settings.plan.currentAnnualTotal"
+    }
+  ]
+}

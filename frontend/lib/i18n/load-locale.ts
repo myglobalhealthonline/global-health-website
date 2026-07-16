@@ -79,6 +79,13 @@ import csSubscription from "@/locales/cs/subscription.json";
 import roSubscription from "@/locales/ro/subscription.json";
 import deSubscription from "@/locales/de/subscription.json";
 
+import enCorporate from "@/locales/en/corporate.json";
+import ptCorporate from "@/locales/pt/corporate.json";
+import esCorporate from "@/locales/es/corporate.json";
+import csCorporate from "@/locales/cs/corporate.json";
+import roCorporate from "@/locales/ro/corporate.json";
+import deCorporate from "@/locales/de/corporate.json";
+
 const homeByLocale = { en: enHome, pt: ptHome, es: esHome, cs: csHome, ro: roHome, de: deHome } as const;
 const servicesByLocale = { en: enServices, pt: ptServices, es: esServices, cs: csServices, ro: roServices, de: deServices } as const;
 const faqByLocale = { en: enFaq, pt: ptFaq, es: esFaq, cs: csFaq, ro: roFaq, de: deFaq } as const;
@@ -90,6 +97,7 @@ const authByLocale = { en: enAuth, pt: ptAuth, es: esAuth, cs: csAuth, ro: roAut
 const accountByLocale = { en: enAccount, pt: ptAccount, es: esAccount, cs: csAccount, ro: roAccount, de: deAccount } as const;
 const subscriptionByLocale = { en: enSubscription, pt: ptSubscription, es: esSubscription, cs: csSubscription, ro: roSubscription, de: deSubscription } as const;
 const doctorByLocale = { en: enDoctor, pt: ptDoctor, es: esDoctor, cs: csDoctor, ro: roDoctor, de: deDoctor } as const;
+const corporateByLocale = { en: enCorporate, pt: ptCorporate, es: esCorporate, cs: csCorporate, ro: roCorporate, de: deCorporate } as const;
 
 function buildLocaleBundle(locale: LocaleCode) {
   return {
@@ -107,6 +115,8 @@ function buildLocaleBundle(locale: LocaleCode) {
     // en doctor.json is the schema source of truth; the translation
     // workflow keeps the other locales key-complete, so type against en.
     doctor: deepMergeLocale(enDoctor, doctorByLocale[locale] ?? doctorByLocale.en) as typeof enDoctor,
+    // en corporate.json is the schema source of truth, same pattern as doctor.
+    corporate: deepMergeLocale(enCorporate, corporateByLocale[locale] ?? corporateByLocale.en) as typeof enCorporate,
   };
 }
 

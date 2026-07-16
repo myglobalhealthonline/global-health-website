@@ -20,22 +20,28 @@ import {
   requestStatusTone,
   REQUEST_TYPE_LABELS,
 } from "@/app/(admin)/admin/corporate/_lib";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
-/** Onboarding funnel buckets — collapses the 12-state machine into the four
- *  stages a company admin actually tracks. */
-const FUNNEL: { label: string; statuses: string[] }[] = [
-  { label: "Invited", statuses: ["DRAFT", "INVITED", "INVITE_SENT", "INVITE_FAILED"] },
-  {
-    label: "Registered",
-    statuses: ["REGISTERED", "PROFILE_INCOMPLETE", "PROFILE_COMPLETE", "PREASSESSMENT_PENDING"],
-  },
-  { label: "Pre-assessment booked", statuses: ["PREASSESSMENT_BOOKED"] },
-  { label: "Active", statuses: ["ACTIVE"] },
-];
-
 export default async function CorporateDashboardPage() {
+  const locale = await getPageLocale();
+  const { corporate: t } = loadLocaleBundle(locale);
+  const d = t.dashboard;
+
+  /** Onboarding funnel buckets — collapses the 12-state machine into the
+   *  four stages a company admin actually tracks. */
+  const FUNNEL: { label: string; statuses: string[] }[] = [
+    { label: d.funnelInvited, statuses: ["DRAFT", "INVITED", "INVITE_SENT", "INVITE_FAILED"] },
+    {
+      label: d.funnelRegistered,
+      statuses: ["REGISTERED", "PROFILE_INCOMPLETE", "PROFILE_COMPLETE", "PREASSESSMENT_PENDING"],
+    },
+    { label: d.funnelPreassessmentBooked, statuses: ["PREASSESSMENT_BOOKED"] },
+    { label: d.funnelActive, statuses: ["ACTIVE"] },
+  ];
+
   const [overviewResult, requestsResult] = await Promise.all([
     fetchCorporateOverview(),
     fetchCorporatePortalRequests(),
@@ -44,10 +50,10 @@ export default async function CorporateDashboardPage() {
   if (!overviewResult.ok) {
     return (
       <>
-        <PageHeader eyebrow="Corporate" title="Dashboard" />
+        <PageHeader eyebrow={d.eyebrow} title={t.nav.dashboard} />
         <AdminCard>
           <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
-            Could not load your company: {overviewResult.message}
+            {d.loadErrorPrefix}: {overviewResult.message}
           </p>
         </AdminCard>
       </>
@@ -70,9 +76,9 @@ export default async function CorporateDashboardPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Corporate"
+        eyebrow={d.eyebrow}
         title={overview.companyName}
-        description={`${overview.planName} plan — employee benefits, onboarding, and billing at a glance.`}
+        description={d.planDescription.replace("{plan}", overview.planName)}
         icon={<Building2 aria-hidden />}
         actions={
           <Pill tone={companyStatusTone(overview.companyStatus)}>
@@ -85,9 +91,9 @@ export default async function CorporateDashboardPage() {
         className="mb-4"
         items={[
           {
-            label: "Employees",
+            label: d.summaryEmployeesLabel,
             value: overview.employeeTotal,
-            hint: "Enrolled (excludes drafts + removed)",
+            hint: d.summaryEmployeesHint,
             tone: "brand",
             icon: <Users aria-hidden />,
           },
@@ -104,26 +110,26 @@ export default async function CorporateDashboardPage() {
         {/* Billing */}
         <AdminCard padding={0} className="overflow-hidden">
           <SectionHeader
-            title="Billing summary"
-            description="Annual, invoiced to your company — never to employees."
+            title={d.billingTitle}
+            description={d.billingDescription}
           />
           <div className="border-t border-[var(--color-border)] px-5 py-4">
             <p className="text-sm text-[var(--color-text-muted)]">
-              {overview.billing.employeeCount} employees ×{" "}
-              {formatCents(overview.billing.pricePerEmployeeCents, overview.billing.currencyCode)}{" "}
-              / year
+              {d.billingLine
+                .replace("{count}", String(overview.billing.employeeCount))
+                .replace("{price}", formatCents(overview.billing.pricePerEmployeeCents, overview.billing.currencyCode))}
             </p>
             <p className="mt-1 text-2xl font-bold text-[var(--color-text-primary)]">
               {formatCents(overview.billing.totalAnnualCents, overview.billing.currencyCode)}
               <span className="ml-1.5 text-sm font-normal text-[var(--color-text-muted)]">
-                per year
+                {d.billingPerYear}
               </span>
             </p>
             <Link
               href="/corporate/employees"
               className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-text-primary)] hover:underline"
             >
-              <Users className="size-4" aria-hidden /> Manage employees
+              <Users className="size-4" aria-hidden /> {d.manageEmployees}
             </Link>
           </div>
         </AdminCard>
@@ -131,18 +137,18 @@ export default async function CorporateDashboardPage() {
         {/* Recent requests */}
         <AdminCard padding={0} className="overflow-hidden">
           <SectionHeader
-            title="Recent requests"
-            description={`${overview.openRequests} open consultation requests`}
+            title={d.recentRequestsTitle}
+            description={d.openRequestsCount.replace("{count}", String(overview.openRequests))}
           />
           <div className="border-t border-[var(--color-border)]">
             {recentRequests.length === 0 ? (
               <AdminEmptyState
                 icon={<ClipboardList className="size-5" aria-hidden />}
-                title="No requests yet"
-                description="Request an illness-benefit or fit-for-work consultation for an employee."
+                title={d.noRequestsTitle}
+                description={d.noRequestsDescription}
                 action={
                   <Link href="/corporate/requests" className="gh-btn gh-btn-soft text-sm">
-                    New request
+                    {d.newRequest}
                   </Link>
                 }
               />
@@ -152,7 +158,7 @@ export default async function CorporateDashboardPage() {
                   <li key={r.id} className="flex items-center gap-3 px-5 py-3">
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold text-[var(--color-text-primary)]" title={r.employeeName ?? undefined}>
-                        {r.employeeName ?? "Employee"}
+                        {r.employeeName ?? d.employeeFallback}
                       </p>
                       <p className="text-xs text-[var(--color-text-muted)]">
                         {REQUEST_TYPE_LABELS[r.type] ?? r.type} ·{" "}
@@ -171,7 +177,7 @@ export default async function CorporateDashboardPage() {
           {recentRequests.length > 0 ? (
             <div className="border-t border-[var(--color-border)] px-5 py-3">
               <Link href="/corporate/requests" className="text-sm font-semibold hover:underline">
-                View all requests →
+                {d.viewAllRequests}
               </Link>
             </div>
           ) : null}

@@ -9,6 +9,8 @@ import {
 } from "@/lib/corporate/corporate-api";
 import { AdminCard, Btn, PageHeader } from "@/components/portal-atoms";
 import { RequestsTable } from "./requests-table";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -23,11 +25,13 @@ function back(params: Record<string, string>) {
 
 async function createRequestAction(formData: FormData) {
   "use server";
+  const locale = await getPageLocale();
+  const { requests: r } = loadLocaleBundle(locale).corporate;
   const employeeId = String(formData.get("employeeId") ?? "").trim();
   const type = String(formData.get("type") ?? "");
   const reason = String(formData.get("reason") ?? "").trim();
   if (!employeeId || (type !== "ILLNESS_BENEFIT" && type !== "FIT_FOR_WORK")) {
-    back({ error: "Pick an employee and a request type" });
+    back({ error: r.errors.pickEmployeeAndType });
   }
   const result = await postCorporatePortalRequest({
     employeeId,
@@ -36,25 +40,29 @@ async function createRequestAction(formData: FormData) {
   });
   if (!result.ok) back({ error: result.message });
   revalidatePath("/corporate/requests");
-  back({ success: "Request created — the employee has been notified to book" });
+  back({ success: r.success.created });
 }
 
 async function cancelRequestAction(formData: FormData) {
   "use server";
+  const locale = await getPageLocale();
+  const { requests: r } = loadLocaleBundle(locale).corporate;
   const id = String(formData.get("requestId") ?? "");
-  if (!id) back({ error: "Invalid request" });
+  if (!id) back({ error: r.errors.invalidRequest });
   const result = await cancelCorporatePortalRequest(id);
   if (!result.ok) back({ error: result.message });
   revalidatePath("/corporate/requests");
-  back({ success: "Request cancelled" });
+  back({ success: r.success.cancelled });
 }
 
 export default async function CorporateRequestsPage({ searchParams }: PageProps) {
   const sp = searchParams ? await searchParams : {};
-  const [requestsResult, employeesResult] = await Promise.all([
+  const [requestsResult, employeesResult, locale] = await Promise.all([
     fetchCorporatePortalRequests(sp.status),
     fetchCorporateEmployees(),
+    getPageLocale(),
   ]);
+  const { requests: r, common } = loadLocaleBundle(locale).corporate;
   // Requests are only actionable for employees who exist and aren't removed.
   const selectableEmployees = employeesResult.ok
     ? employeesResult.data.employees.filter((e) => e.status !== "REMOVED")
@@ -63,9 +71,9 @@ export default async function CorporateRequestsPage({ searchParams }: PageProps)
   return (
     <>
       <PageHeader
-        eyebrow="People"
-        title="Consultation requests"
-        description="Ask an employee to attend an illness-benefit or fit-for-work consultation. They get notified and book themselves — you see status only, never medical content."
+        eyebrow={r.eyebrow}
+        title={r.title}
+        description={r.description}
       />
 
       {sp.error ? (
@@ -80,7 +88,7 @@ export default async function CorporateRequestsPage({ searchParams }: PageProps)
         <details>
           <summary className="flex cursor-pointer list-none items-center gap-2 px-5 py-3.5 text-sm font-bold text-[var(--color-text-primary)] [&::-webkit-details-marker]:hidden">
             <Plus className="size-4" aria-hidden />
-            New request
+            {r.newRequest.summary}
           </summary>
           <form
             action={createRequestAction}
@@ -88,10 +96,10 @@ export default async function CorporateRequestsPage({ searchParams }: PageProps)
           >
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">Employee *</span>
+                <span className="gh-field-label">{r.newRequest.employee}</span>
                 <select name="employeeId" required className="gh-select" defaultValue="">
                   <option value="" disabled>
-                    Select employee…
+                    {r.newRequest.selectEmployee}
                   </option>
                   {selectableEmployees.map((e) => (
                     <option key={e.id} value={e.id}>
@@ -101,25 +109,25 @@ export default async function CorporateRequestsPage({ searchParams }: PageProps)
                 </select>
               </label>
               <fieldset className="flex flex-col gap-1 border-0 p-0">
-                <legend className="gh-field-label">Type *</legend>
+                <legend className="gh-field-label">{r.newRequest.type}</legend>
                 <div className="flex items-center gap-4 pt-1.5">
                   <label className="inline-flex items-center gap-1.5 text-sm">
-                    <input type="radio" name="type" value="ILLNESS_BENEFIT" required /> Illness
-                    benefit
+                    <input type="radio" name="type" value="ILLNESS_BENEFIT" required />{" "}
+                    {r.newRequest.typeIllnessBenefit}
                   </label>
                   <label className="inline-flex items-center gap-1.5 text-sm">
-                    <input type="radio" name="type" value="FIT_FOR_WORK" /> Fit for work
+                    <input type="radio" name="type" value="FIT_FOR_WORK" /> {r.newRequest.typeFitForWork}
                   </label>
                 </div>
               </fieldset>
               <label className="flex flex-col gap-1 sm:col-span-2">
-                <span className="gh-field-label">Reason (optional — visible to the employee)</span>
+                <span className="gh-field-label">{r.newRequest.reason}</span>
                 <textarea name="reason" rows={2} maxLength={2000} className="gh-input" />
               </label>
             </div>
             <div className="mt-4">
               <Btn type="submit" variant="primary" size="sm">
-                Create request + notify employee
+                {r.newRequest.submit}
               </Btn>
             </div>
           </form>
@@ -131,28 +139,29 @@ export default async function CorporateRequestsPage({ searchParams }: PageProps)
         <div className="flex flex-wrap items-center gap-3 border-b border-[var(--color-border)] px-5 py-3.5">
           <form method="get" className="flex flex-wrap items-center gap-2">
             <select name="status" defaultValue={sp.status ?? ""} className="gh-select">
-              <option value="">All statuses</option>
-              <option value="REQUESTED">Requested</option>
-              <option value="EMPLOYEE_NOTIFIED">Employee notified</option>
-              <option value="BOOKED">Booked</option>
-              <option value="COMPLETED">Completed</option>
-              <option value="CANCELLED">Cancelled</option>
-              <option value="EXPIRED">Expired</option>
+              <option value="">{r.filter.allStatuses}</option>
+              <option value="REQUESTED">{r.filter.statusRequested}</option>
+              <option value="EMPLOYEE_NOTIFIED">{r.filter.statusEmployeeNotified}</option>
+              <option value="BOOKED">{r.filter.statusBooked}</option>
+              <option value="COMPLETED">{r.filter.statusCompleted}</option>
+              <option value="CANCELLED">{r.filter.statusCancelled}</option>
+              <option value="EXPIRED">{r.filter.statusExpired}</option>
             </select>
             <Btn type="submit" variant="ghost" size="sm">
-              Filter
+              {common.filter}
             </Btn>
           </form>
         </div>
 
         {!requestsResult.ok ? (
           <p className="gh-status-warning m-5 rounded-md border px-4 py-3 text-sm">
-            Could not load requests: {requestsResult.message}
+            {r.loadErrorPrefix}: {requestsResult.message}
           </p>
         ) : (
           <RequestsTable
             requests={requestsResult.data.requests}
             cancelRequestAction={cancelRequestAction}
+            t={r.table}
           />
         )}
       </AdminCard>
