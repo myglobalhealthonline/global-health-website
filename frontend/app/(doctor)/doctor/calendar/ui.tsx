@@ -26,7 +26,6 @@ import {
   groupItemsByLocalDay,
   monthGridRangeIso,
   todayKey,
-  zonedDayRangeUtc,
   zonedLocalDateTimeToUtc,
 } from "@/components/calendar/calendar-utils";
 
@@ -211,10 +210,6 @@ export function DoctorCalendarUI({
   );
   const itemsByDay = useMemo(() => groupItemsByLocalDay(items, tz), [items, tz]);
   const dayItems = selectedDay ? itemsByDay.get(selectedDay) ?? [] : [];
-  const daySlotItems = dayItems.filter((i) => i.kind === "slot");
-  const dayHasOpen = daySlotItems.some((i) => i.status === "OPEN");
-  const dayHasBlocked = daySlotItems.some((i) => i.status === "BLOCKED");
-
   async function onToggleSlot(item: CalendarItem) {
     if (item.status !== "OPEN" && item.status !== "BLOCKED") return;
     const next = item.status === "OPEN" ? "BLOCKED" : "OPEN";
@@ -232,22 +227,6 @@ export function DoctorCalendarUI({
     } else {
       setError(res.message);
     }
-    setBusy(false);
-  }
-
-  async function onBlockDay(action: "BLOCK" | "UNBLOCK") {
-    if (!selectedDay) return;
-    setError(null);
-    setBusy(true);
-    const { fromIso, toIso } = zonedDayRangeUtc(selectedDay, selectedDay, tz);
-    const res = await bulkBlockSlots({
-      fromUtc: fromIso,
-      toUtc: toIso,
-      action,
-      reason: action === "BLOCK" ? "Time off" : undefined,
-    });
-    if (res.ok) await refetchMonth();
-    else setError(res.message);
     setBusy(false);
   }
 
@@ -415,29 +394,6 @@ export function DoctorCalendarUI({
           </div>
         }
       >
-        <div className="gh-doctor-calendar-day-actions mb-3 flex flex-wrap gap-2">
-          <Btn
-            type="button"
-            size="sm"
-            variant="soft"
-            disabled={busy || !dayHasOpen}
-            onClick={() => onBlockDay("BLOCK")}
-            iconLeft={<Lock className="size-3.5" />}
-          >
-            {s.blockWholeDay}
-          </Btn>
-          <Btn
-            type="button"
-            size="sm"
-            variant="ghost"
-            disabled={busy || !dayHasBlocked}
-            onClick={() => onBlockDay("UNBLOCK")}
-            iconLeft={<Unlock className="size-3.5" />}
-          >
-            {s.reopenDay}
-          </Btn>
-        </div>
-
         <DayAgenda
           dayKey={selectedDay}
           items={dayItems}
@@ -447,23 +403,15 @@ export function DoctorCalendarUI({
           consultationsLabel={s.sectionConsultations}
           slotsLabel={s.sectionSlots}
           onSelectConsultation={openEvent}
+          onSelectSlot={onToggleSlot}
+          slotActionsBusy={busy}
           renderSlotAction={(item) => {
             if (item.status !== "OPEN" && item.status !== "BLOCKED") return null;
-            const isOpen = item.status === "OPEN";
-            return (
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() => onToggleSlot(item)}
-                title={isOpen ? s.blockSlotTitle : s.reopenSlotTitle}
-                className="ml-0.5 inline-flex items-center disabled:opacity-50"
-              >
-                {isOpen ? (
-                  <Lock className="size-3" aria-hidden />
-                ) : (
-                  <Unlock className="size-3" aria-hidden />
-                )}
-              </button>
+            // Indicator only — the chip itself is the button now.
+            return item.status === "OPEN" ? (
+              <Lock className="size-3" aria-hidden />
+            ) : (
+              <Unlock className="size-3" aria-hidden />
             );
           }}
         />

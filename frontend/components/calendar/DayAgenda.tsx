@@ -41,6 +41,13 @@ type Props = {
   onSelectConsultation?: (item: CalendarItem) => void;
   /** Per-slot action (e.g. the doctor's block/unblock button). */
   renderSlotAction?: (item: CalendarItem) => ReactNode;
+  /** Click handler for the whole slot chip — block/unblock by clicking the
+   *  slot itself. When set the chip becomes a button, so anything from
+   *  `renderSlotAction` must be a non-interactive indicator (no nested
+   *  buttons). */
+  onSelectSlot?: (item: CalendarItem) => void;
+  /** Disables slot chips while a mutation is in flight. */
+  slotActionsBusy?: boolean;
   /** Show the doctor name on each row (admin/patient views). */
   showDoctorName?: boolean;
   /** Skip the internal date header — for hosts (day drawer) that already
@@ -90,6 +97,8 @@ export function DayAgenda({
   emptyHint = "Add availability or open another day to review appointments.",
   onSelectConsultation,
   renderSlotAction,
+  onSelectSlot,
+  slotActionsBusy = false,
   showDoctorName,
   hideHeader = false,
   consultationsLabel = "Consultations",
@@ -217,24 +226,55 @@ export function DayAgenda({
                   {slotsLabel}
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {slots.map((item) => (
-                    <span
-                      key={item.id}
-                      className="gh-agenda-chip inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold"
-                      style={slotToneStyle(item.status)}
-                      title={item.meta?.blockReason ?? item.status}
-                    >
-                      <span className={item.status === "BLOCKED" ? "line-through" : ""}>
-                        {formatAppTime(item.startAt, tz)}
-                      </span>
-                      {showDoctorName && item.meta?.doctorName ? (
-                        <span className="font-normal opacity-80">
-                          · {item.meta.doctorName}
+                  {slots.map((item) => {
+                    // Only OPEN/BLOCKED toggle. BOOKED/HELD slots carry a
+                    // patient, so clicking them must not block anything.
+                    const toggleable =
+                      Boolean(onSelectSlot) &&
+                      (item.status === "OPEN" || item.status === "BLOCKED");
+                    const chipClass =
+                      "gh-agenda-chip inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold";
+                    const inner = (
+                      <>
+                        <span className={item.status === "BLOCKED" ? "line-through" : ""}>
+                          {formatAppTime(item.startAt, tz)}
                         </span>
-                      ) : null}
-                      {renderSlotAction ? renderSlotAction(item) : null}
-                    </span>
-                  ))}
+                        {showDoctorName && item.meta?.doctorName ? (
+                          <span className="font-normal opacity-80">
+                            · {item.meta.doctorName}
+                          </span>
+                        ) : null}
+                        {renderSlotAction ? renderSlotAction(item) : null}
+                      </>
+                    );
+
+                    if (!toggleable) {
+                      return (
+                        <span
+                          key={item.id}
+                          className={chipClass}
+                          style={slotToneStyle(item.status)}
+                          title={item.meta?.blockReason ?? item.status}
+                        >
+                          {inner}
+                        </span>
+                      );
+                    }
+
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        disabled={slotActionsBusy}
+                        onClick={() => onSelectSlot?.(item)}
+                        className={`${chipClass} transition hover:brightness-95 disabled:opacity-50`}
+                        style={slotToneStyle(item.status)}
+                        title={item.meta?.blockReason ?? item.status}
+                      >
+                        {inner}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             ) : null}
