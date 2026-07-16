@@ -10,6 +10,7 @@
     "start": "next start",
     "lint": "eslint",
     "check:locales": "node scripts/check-locale-keys.mjs",
+    "audit:translations": "node scripts/audit-translations.mjs",
     "typecheck": "node scripts/check-locale-keys.mjs && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"
