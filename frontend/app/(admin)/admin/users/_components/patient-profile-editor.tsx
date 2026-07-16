@@ -41,6 +41,37 @@ export function PatientProfileEditor({
       const n = Number(raw);
       return Number.isFinite(n) ? n : null;
     };
+    const int = (key: string) => {
+      const raw = formData.get(key);
+      if (raw === null || String(raw).trim() === "") return null;
+      const n = Number(raw);
+      return Number.isInteger(n) ? n : null;
+    };
+    // Clinical list fields are one-entry-per-line textareas. The API types
+    // them as `string[]` and does NOT accept null, so an emptied box has to
+    // send `[]` (clear the list) rather than null.
+    //
+    // The backend caps each list at 50 entries of 200 chars and answers a
+    // generic "Invalid profile" when either is exceeded. Since a failed save
+    // redirects (losing everything typed), name the offending line here so
+    // the admin can fix it in one pass instead of guessing.
+    const listErrors: string[] = [];
+    const list = (key: string, label: string) => {
+      const raw = formData.get(key);
+      if (raw === null) return undefined;
+      const entries = String(raw)
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line !== "");
+      if (entries.length > 50) {
+        listErrors.push(`${label}: ${entries.length} entries — the limit is 50`);
+      }
+      const overlong = entries.findIndex((entry) => entry.length > 200);
+      if (overlong !== -1) {
+        listErrors.push(`${label}: line ${overlong + 1} is over 200 characters`);
+      }
+      return entries;
+    };
 
     const body = {
       fullName: text("fullName"),
@@ -50,6 +81,14 @@ export function PatientProfileEditor({
       heightM: num("heightM"),
       bmi: num("bmi"),
       bloodType: text("bloodType"),
+      bloodPressureSystolic: int("bloodPressureSystolic"),
+      bloodPressureDiastolic: int("bloodPressureDiastolic"),
+      allergies: list("allergies", "Allergies"),
+      chronicDiseases: list("chronicDiseases", "Chronic diseases"),
+      familyHistory: list("familyHistory", "Family history"),
+      socialHabits: list("socialHabits", "Social habits"),
+      surgeries: list("surgeries", "Surgeries"),
+      usualMedication: list("usualMedication", "Usual medication"),
       nationalIdNumber: text("nationalIdNumber"),
       taxIdNumber: text("taxIdNumber"),
       passportNumber: text("passportNumber"),
@@ -62,6 +101,12 @@ export function PatientProfileEditor({
       statusAlert: text("statusAlert"),
       clinicAlert: text("clinicAlert"),
     };
+
+    if (listErrors.length > 0) {
+      redirect(
+        `/admin/users/${userId}?error=${encodeURIComponent(listErrors.join(" · "))}`,
+      );
+    }
 
     const result = await patchAdminPatientProfile(email, body);
     if (!result.ok) {
@@ -264,6 +309,75 @@ export function PatientProfileEditor({
               step="0.1"
               defaultValue={profile?.bmi != null ? String(profile.bmi) : ""}
             />
+            <Field
+              label="Blood pressure — systolic (mmHg)"
+              name="bloodPressureSystolic"
+              type="number"
+              step="1"
+              defaultValue={
+                profile?.bloodPressureSystolic != null
+                  ? String(profile.bloodPressureSystolic)
+                  : ""
+              }
+            />
+            <Field
+              label="Blood pressure — diastolic (mmHg)"
+              name="bloodPressureDiastolic"
+              type="number"
+              step="1"
+              defaultValue={
+                profile?.bloodPressureDiastolic != null
+                  ? String(profile.bloodPressureDiastolic)
+                  : ""
+              }
+            />
+          </div>
+        </section>
+
+        <section className="gh-admin-patient-profile-section">
+          <h4 style={sectionTitleStyle}>Clinical history</h4>
+          <p className="mb-2 text-portal-meta text-[var(--color-text-muted)]">
+            One entry per line. These feed the doctor&apos;s patient chart —
+            clearing a box deletes every entry in it. Max 50 entries per list,
+            200 characters each.
+          </p>
+          <div className="grid gap-3">
+            <ListField
+              label="Allergies"
+              name="allergies"
+              values={profile?.allergies}
+              placeholder={"Penicillin\nPeanuts"}
+            />
+            <ListField
+              label="Chronic diseases"
+              name="chronicDiseases"
+              values={profile?.chronicDiseases}
+              placeholder={"Type 2 diabetes\nHypertension"}
+            />
+            <ListField
+              label="Usual medication"
+              name="usualMedication"
+              values={profile?.usualMedication}
+              placeholder={"Metformin 850mg 2x/day"}
+            />
+            <ListField
+              label="Surgeries"
+              name="surgeries"
+              values={profile?.surgeries}
+              placeholder={"Appendectomy (2011)"}
+            />
+            <ListField
+              label="Family history"
+              name="familyHistory"
+              values={profile?.familyHistory}
+              placeholder={"Father — myocardial infarction at 58"}
+            />
+            <ListField
+              label="Social habits"
+              name="socialHabits"
+              values={profile?.socialHabits}
+              placeholder={"Non-smoker\nAlcohol: occasional"}
+            />
           </div>
         </section>
 
@@ -312,6 +426,37 @@ function Field({
           {hint}
         </span>
       ) : null}
+    </label>
+  );
+}
+
+/**
+ * Textarea bound to a `string[]` column, one entry per line. Rows grow with
+ * the existing content so a long medication list isn't hidden behind a
+ * two-line scroller.
+ */
+function ListField({
+  label,
+  name,
+  values,
+  placeholder,
+}: {
+  label: string;
+  name: string;
+  values: string[] | undefined;
+  placeholder?: string;
+}) {
+  const text = (values ?? []).join("\n");
+  return (
+    <label className="flex flex-col gap-1">
+      <span className="gh-field-label">{label}</span>
+      <textarea
+        name={name}
+        rows={Math.min(Math.max((values ?? []).length + 1, 3), 10)}
+        defaultValue={text}
+        placeholder={placeholder}
+        className="gh-input"
+      />
     </label>
   );
 }

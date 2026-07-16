@@ -10,6 +10,7 @@ export type AdminUserDto = {
   email: string;
   fullName: string;
   phone: string | null;
+  dateOfBirth: string | null;
   role: AdminUserRole;
   isActive: boolean;
   /** When set, this user logs in as a clinician and sees /doctor/*
@@ -52,9 +53,22 @@ export const fetchAdminUserById = cache(async (id: string) => {
   return adminRequest<AdminUserDetailPayload>(`/api/admin/users/${id}`);
 });
 
+/**
+ * `email` is SUPER_ADMIN-only server-side (it is the login identifier and the
+ * password-reset destination); a plain ADMIN sending it gets a 403. Changing
+ * it also clears email verification and signs the user out of every device.
+ */
 export async function patchAdminUser(
   id: string,
-  body: { isActive?: boolean; role?: AdminUserRole; doctorId?: string | null },
+  body: {
+    isActive?: boolean;
+    role?: AdminUserRole;
+    doctorId?: string | null;
+    email?: string;
+    fullName?: string;
+    phone?: string | null;
+    dateOfBirth?: string | null;
+  },
 ) {
   return adminRequest<{ user: AdminUserDto }>(`/api/admin/users/${id}`, {
     method: "PATCH",
