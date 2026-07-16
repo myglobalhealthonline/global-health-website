@@ -517,36 +517,44 @@ export async function sendPatientUploadLinkEmail(opts: {
   });
 }
 
+/**
+ * Invoice email copy, keyed by `Country.code` — ie, cz, es, ro, br. Portugal is
+ * absent on purpose: PT invoices are issued through InvoiceExpress, not here.
+ * Unknown keys fall back to `ie` (English) via `pick()` below.
+ *
+ * These were once keyed "sp"/"rm" (legacy Wix-era aliases) which match no real
+ * order, so Spanish/Romanian patients silently received English email.
+ */
 const INVOICE_EMAIL_SUBJECT: Record<string, string> = {
   ie: "Your invoice {invoiceNumber} — Global Health",
   cz: "Vaše faktura {invoiceNumber} — Global Health",
   es: "Su factura {invoiceNumber} — Global Health",
-  sp: "Su factura {invoiceNumber} — Global Health",
-  rm: "Factura dvs. {invoiceNumber} — Global Health",
+  ro: "Factura dvs. {invoiceNumber} — Global Health",
+  br: "Sua fatura {invoiceNumber} — Global Health",
 };
 
 const INVOICE_EMAIL_HEADING: Record<string, string> = {
   ie: "Your invoice",
   cz: "Vaše faktura",
   es: "Su factura",
-  sp: "Su factura",
-  rm: "Factura dvs.",
+  ro: "Factura dvs.",
+  br: "Sua fatura",
 };
 
 const INVOICE_EMAIL_BODY: Record<string, string> = {
   ie: "Your invoice is ready. Click the button below to view and download it.",
   cz: "Vaše faktura je připravena. Klikněte na tlačítko níže pro zobrazení a stažení.",
   es: "Su factura está lista. Haga clic en el botón de abajo para verla y descargarla.",
-  sp: "Su factura está lista. Haga clic en el botón de abajo para verla y descargarla.",
-  rm: "Factura dvs. este gata. Faceți clic pe butonul de mai jos pentru a o vizualiza și descărca.",
+  ro: "Factura dvs. este gata. Faceți clic pe butonul de mai jos pentru a o vizualiza și descărca.",
+  br: "Sua fatura está pronta. Clique no botão abaixo para visualizá-la e baixá-la.",
 };
 
 const INVOICE_EMAIL_CTA: Record<string, string> = {
   ie: "View invoice",
   cz: "Zobrazit fakturu",
   es: "Ver factura",
-  sp: "Ver factura",
-  rm: "Vizualizați factura",
+  ro: "Vizualizați factura",
+  br: "Ver fatura",
 };
 
 export type InvoiceEmailDocumentType = "INVOICE" | "RECEIPT" | "INVOICE_RECEIPT" | "CREDIT_NOTE";
@@ -556,29 +564,29 @@ const CREDIT_NOTE_EMAIL_SUBJECT: Record<string, string> = {
   ie: "Your credit note {invoiceNumber} — refund processed",
   cz: "Váš dobropis {invoiceNumber} — vrácení peněz zpracováno",
   es: "Su nota de crédito {invoiceNumber} — reembolso procesado",
-  sp: "Su nota de crédito {invoiceNumber} — reembolso procesado",
-  rm: "Nota dvs. de credit {invoiceNumber} — rambursare procesată",
+  ro: "Nota dvs. de credit {invoiceNumber} — rambursare procesată",
+  br: "Sua nota de crédito {invoiceNumber} — reembolso processado",
 };
 const CREDIT_NOTE_EMAIL_HEADING: Record<string, string> = {
   ie: "Your credit note",
   cz: "Váš dobropis",
   es: "Su nota de crédito",
-  sp: "Su nota de crédito",
-  rm: "Nota dvs. de credit",
+  ro: "Nota dvs. de credit",
+  br: "Sua nota de crédito",
 };
 const CREDIT_NOTE_EMAIL_BODY: Record<string, string> = {
   ie: "Your refund has been processed. Your credit note is attached and available to view and download below.",
   cz: "Vaše vrácení peněz bylo zpracováno. Váš dobropis je přiložen a k dispozici k zobrazení a stažení níže.",
   es: "Su reembolso ha sido procesado. Su nota de crédito está adjunta y disponible para ver y descargar a continuación.",
-  sp: "Su reembolso ha sido procesado. Su nota de crédito está adjunta y disponible para ver y descargar a continuación.",
-  rm: "Rambursarea dvs. a fost procesată. Nota de credit este atașată și disponibilă pentru vizualizare și descărcare mai jos.",
+  ro: "Rambursarea dvs. a fost procesată. Nota de credit este atașată și disponibilă pentru vizualizare și descărcare mai jos.",
+  br: "Seu reembolso foi processado. Sua nota de crédito está anexada e disponível para visualização e download abaixo.",
 };
 const CREDIT_NOTE_EMAIL_CTA: Record<string, string> = {
   ie: "View credit note",
   cz: "Zobrazit dobropis",
   es: "Ver nota de crédito",
-  sp: "Ver nota de crédito",
-  rm: "Vizualizați nota de credit",
+  ro: "Vizualizați nota de credit",
+  br: "Ver nota de crédito",
 };
 
 /** Per-document-type overrides. Falls back to the invoice (INVOICE_RECEIPT) copy above. */
@@ -586,29 +594,29 @@ const RECEIPT_EMAIL_SUBJECT: Record<string, string> = {
   ie: "Your receipt {invoiceNumber} — Global Health",
   cz: "Vaše účtenka {invoiceNumber} — Global Health",
   es: "Su recibo {invoiceNumber} — Global Health",
-  sp: "Su recibo {invoiceNumber} — Global Health",
-  rm: "Chitanța dvs. {invoiceNumber} — Global Health",
+  ro: "Chitanța dvs. {invoiceNumber} — Global Health",
+  br: "Seu recibo {invoiceNumber} — Global Health",
 };
 const RECEIPT_EMAIL_HEADING: Record<string, string> = {
   ie: "Your receipt",
   cz: "Vaše účtenka",
   es: "Su recibo",
-  sp: "Su recibo",
-  rm: "Chitanța dvs.",
+  ro: "Chitanța dvs.",
+  br: "Seu recibo",
 };
 const RECEIPT_EMAIL_BODY: Record<string, string> = {
   ie: "We have received your payment — thank you. Your receipt is ready to view and download below.",
   cz: "Vaši platbu jsme obdrželi — děkujeme. Vaše účtenka je připravena k zobrazení a stažení níže.",
   es: "Hemos recibido su pago — gracias. Su recibo está listo para ver y descargar a continuación.",
-  sp: "Hemos recibido su pago — gracias. Su recibo está listo para ver y descargar a continuación.",
-  rm: "Am primit plata dumneavoastră — vă mulțumim. Chitanța este gata de vizualizat și descărcat mai jos.",
+  ro: "Am primit plata dumneavoastră — vă mulțumim. Chitanța este gata de vizualizat și descărcat mai jos.",
+  br: "Recebemos seu pagamento — obrigado. Seu recibo está pronto para visualização e download abaixo.",
 };
 const RECEIPT_EMAIL_CTA: Record<string, string> = {
   ie: "View receipt",
   cz: "Zobrazit účtenku",
   es: "Ver recibo",
-  sp: "Ver recibo",
-  rm: "Vizualizați chitanța",
+  ro: "Vizualizați chitanța",
+  br: "Ver recibo",
 };
 
 /** Unpaid invoice (manual / AI booking) — asks the patient to pay. */
@@ -616,15 +624,72 @@ const UNPAID_INVOICE_EMAIL_SUBJECT: Record<string, string> = {
   ie: "Your invoice {invoiceNumber} — payment required",
   cz: "Vaše faktura {invoiceNumber} — vyžaduje platbu",
   es: "Su factura {invoiceNumber} — pago pendiente",
-  sp: "Su factura {invoiceNumber} — pago pendiente",
-  rm: "Factura dvs. {invoiceNumber} — necesită plată",
+  ro: "Factura dvs. {invoiceNumber} — necesită plată",
+  br: "Sua fatura {invoiceNumber} — pagamento pendente",
 };
 const UNPAID_INVOICE_EMAIL_BODY: Record<string, string> = {
   ie: "Your invoice is ready. Please click below to view it and complete your payment.",
   cz: "Vaše faktura je připravena. Klikněte níže pro zobrazení a dokončení platby.",
   es: "Su factura está lista. Haga clic abajo para verla y completar el pago.",
-  sp: "Su factura está lista. Haga clic abajo para verla y completar el pago.",
-  rm: "Factura dvs. este gata. Faceți clic mai jos pentru a o vizualiza și a finaliza plata.",
+  ro: "Factura dvs. este gata. Faceți clic mai jos pentru a o vizualiza și a finaliza plata.",
+  br: "Sua fatura está pronta. Clique abaixo para visualizá-la e concluir o pagamento.",
+};
+
+/**
+ * Greeting / sign-off chrome, keyed by `Country.code`. A table rather than nested
+ * `cc === "xx"` ternaries — those are what let the dead "sp"/"rm" aliases hide.
+ */
+const INVOICE_EMAIL_CHROME: Record<
+  string,
+  {
+    dear: string;
+    contactLead: string;
+    whatsappLead: string;
+    signOff: string;
+    team: string;
+    orPaste: string;
+  }
+> = {
+  ie: {
+    dear: "Dear",
+    contactLead: "If you have any questions, feel free to contact us at",
+    whatsappLead: "or message us on WhatsApp",
+    signOff: "Warm regards,",
+    team: "The Global Health Team",
+    orPaste: "Or paste this URL into your browser:",
+  },
+  cz: {
+    dear: "Vážený/á",
+    contactLead: "Máte-li dotazy, kontaktujte nás na",
+    whatsappLead: "nebo nám napište na WhatsApp",
+    signOff: "S pozdravem,",
+    team: "Tým Global Health",
+    orPaste: "Nebo vložte tuto adresu URL do svého prohlížeče:",
+  },
+  es: {
+    dear: "Estimado/a",
+    contactLead: "Si tiene alguna pregunta, contáctenos en",
+    whatsappLead: "o envíenos un mensaje por WhatsApp",
+    signOff: "Saludos cordiales,",
+    team: "El equipo de Global Health",
+    orPaste: "O pegue esta URL en su navegador:",
+  },
+  ro: {
+    dear: "Stimate",
+    contactLead: "Dacă aveți întrebări, contactați-ne la",
+    whatsappLead: "sau trimiteți-ne un mesaj pe WhatsApp",
+    signOff: "Cu stimă,",
+    team: "Echipa Global Health",
+    orPaste: "Sau inserați acest URL în browser:",
+  },
+  br: {
+    dear: "Prezado(a)",
+    contactLead: "Em caso de dúvidas, entre em contato conosco pelo",
+    whatsappLead: "ou envie uma mensagem no WhatsApp",
+    signOff: "Atenciosamente,",
+    team: "Equipe Global Health",
+    orPaste: "Ou cole este URL no seu navegador:",
+  },
 };
 
 export async function sendInvoiceEmail(opts: {
@@ -638,7 +703,6 @@ export async function sendInvoiceEmail(opts: {
   documentType?: InvoiceEmailDocumentType;
 }) {
   const cc = opts.countryCode.toLowerCase();
-  const isSpanish = cc === "es" || cc === "sp";
   const docType = opts.documentType ?? "INVOICE_RECEIPT";
   const isReceipt = docType === "RECEIPT";
   const isUnpaidInvoice = docType === "INVOICE";
@@ -679,48 +743,8 @@ export async function sendInvoiceEmail(opts: {
   const WHATSAPP_DISPLAY = "+353 89 471 5849";
   const SUPPORT_EMAIL = "globalhealth@myglobalhealth.online";
 
-  const dear = cc === "cz"
-    ? "Vážený/á"
-    : isSpanish
-      ? "Estimado/a"
-      : cc === "rm"
-        ? "Stimate"
-        : "Dear";
-  const contactLead = cc === "cz"
-    ? "Máte-li dotazy, kontaktujte nás na"
-    : isSpanish
-      ? "Si tiene alguna pregunta, contáctenos en"
-      : cc === "rm"
-        ? "Dacă aveți întrebări, contactați-ne la"
-        : "If you have any questions, feel free to contact us at";
-  const whatsappLead = cc === "cz"
-    ? "nebo nám napište na WhatsApp"
-    : isSpanish
-      ? "o envíenos un mensaje por WhatsApp"
-      : cc === "rm"
-        ? "sau trimiteți-ne un mesaj pe WhatsApp"
-        : "or message us on WhatsApp";
-  const signOff = cc === "cz"
-    ? "S pozdravem,"
-    : isSpanish
-      ? "Saludos cordiales,"
-      : cc === "rm"
-        ? "Cu stimă,"
-        : "Warm regards,";
-  const team = cc === "cz"
-    ? "Tým Global Health"
-    : isSpanish
-      ? "El equipo de Global Health"
-      : cc === "rm"
-        ? "Echipa Global Health"
-        : "The Global Health Team";
-  const orPaste = cc === "cz"
-    ? "Nebo vložte tuto adresu URL do svého prohlížeče:"
-    : isSpanish
-      ? "O pegue esta URL en su navegador:"
-      : cc === "rm"
-        ? "Sau inserați acest URL în browser:"
-        : "Or paste this URL into your browser:";
+  const { dear, contactLead, whatsappLead, signOff, team, orPaste } =
+    INVOICE_EMAIL_CHROME[cc] ?? INVOICE_EMAIL_CHROME.ie!;
 
   const html = `<div style="background-color:#f4f1ea;padding:20px;font-family:Georgia,'Times New Roman',serif;color:#333;">
   <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="background-color:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.1);max-width:100%;">

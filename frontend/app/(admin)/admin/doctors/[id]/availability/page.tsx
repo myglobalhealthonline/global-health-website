@@ -184,7 +184,7 @@ export default async function AdminDoctorAvailabilityPage({
           id: `c-${c.id}`,
           kind: "consultation" as const,
           startAt: c.scheduledAt,
-          endAt: null,
+          endAt: c.endAt,
           status: c.status,
           title: c.patientName,
           meta: {

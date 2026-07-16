@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Search, UserRound } from "lucide-react";
-import { fetchAdminPatients, type AdminPatientSearchItem } from "@/lib/admin/admin-api";
+import { fetchAdminPatients, fetchAdminCountries, type AdminPatientSearchItem } from "@/lib/admin/admin-api";
+import { getActiveCountry, scopedCountryCode } from "@/lib/admin/admin-scope";
+import { ScopeBanner } from "../_components/scope-banner";
 import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, PageHeader } from "../_components/atoms";
 import { AdminPatientsTable } from "./_components/admin-patients-table";
 
@@ -29,7 +31,34 @@ export default async function AdminPatientsPage({
   const plan = readParam(sp, "plan");
   const page = Number(readParam(sp, "page") ?? "1") || 1;
 
-  const result = await fetchAdminPatients({ ghn, email, phone, taxId, name, idNumber, plan, page: String(page), pageSize: "25" });
+  // Resolve the cookie-scoped country and apply it as the default filter, so
+  // Patients behaves like the other country-scoped sections. An explicit
+  // ?countryCode= in the URL wins (and "all countries" clears it).
+  const countriesResult = await fetchAdminCountries();
+  const countriesForScope = countriesResult.ok ? countriesResult.data.countries : [];
+  const activeCountry = await getActiveCountry(countriesForScope);
+  // `countryCode=all` explicitly drops the scope. Needed because patients whose
+  // country could not be determined (no dial-code match, no address country)
+  // belong to no folder and would otherwise be unreachable from this page.
+  const rawCountry = readParam(sp, "countryCode");
+  const showAll = rawCountry === "all";
+  const countryCode = showAll ? undefined : scopedCountryCode(rawCountry, activeCountry);
+
+  const result = await fetchAdminPatients({ ghn, email, phone, taxId, name, idNumber, plan, countryCode, page: String(page), pageSize: "25" });
+
+  // Keep the active scope + filters on the pagination links.
+  const pageQuery = (target: number) =>
+    new URLSearchParams({
+      ...(ghn ? { ghn } : {}),
+      ...(email ? { email } : {}),
+      ...(phone ? { phone } : {}),
+      ...(taxId ? { taxId } : {}),
+      ...(name ? { name } : {}),
+      ...(idNumber ? { idNumber } : {}),
+      ...(plan ? { plan } : {}),
+      ...(showAll ? { countryCode: "all" } : countryCode ? { countryCode } : {}),
+      page: String(target),
+    }).toString();
 
   const items: AdminPatientSearchItem[] = result?.ok ? result.data.items : [];
   const pagination = result?.ok ? result.data.pagination : null;
@@ -41,15 +70,29 @@ export default async function AdminPatientsPage({
   return (
     <>
       <PageHeader
-        eyebrow="Global"
+        eyebrow={showAll ? "All countries" : (activeCountry?.name ?? "All countries")}
         title="Patients"
-        description="All registered patients — search by name, GHN, email, phone, fiscal number, ID card, or healthcare plan."
+        description="Search by name, GHN, email, phone, fiscal number, ID card, or healthcare plan."
         actions={
           <Btn href="/admin/patients/new" variant="primary" iconLeft={<UserRound className="size-3.5" />}>
             New patient
           </Btn>
         }
       />
+
+      {showAll ? (
+        <div className="gh-admin-scope-banner gh-admin-scope-banner--empty mb-5">
+          <span className="min-w-0">
+            <span className="font-semibold text-[var(--portal-text)]">All countries</span> · showing
+            patients from every country, including those with no country set.
+          </span>
+          <Link href="/admin/patients" className="font-semibold text-[var(--portal-primary)] hover:underline">
+            Back to country scope
+          </Link>
+        </div>
+      ) : (
+        <ScopeBanner activeCountry={activeCountry} clearHref="/admin/patients?countryCode=all" />
+      )}
 
       <AdminCard padding={0} className="gh-admin-patients-list">
         {result?.ok ? (
@@ -79,6 +122,9 @@ export default async function AdminPatientsPage({
           </div>
         ) : null}
         <form className="gh-admin-support-filter-row flex flex-wrap items-end gap-3 border-b border-[var(--color-border)] p-4">
+          {/* Keep the active scope across searches — without this, submitting
+              the form drops ?countryCode=all back to the cookie-scoped country. */}
+          {showAll ? <input type="hidden" name="countryCode" value="all" /> : null}
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">Global Health Number</span>
             <input
@@ -169,18 +215,12 @@ export default async function AdminPatientsPage({
                 </p>
                 <div className="flex gap-2">
                   {page > 1 ? (
-                    <Link
-                      href={`/admin/patients?${new URLSearchParams({ ...(ghn ? { ghn } : {}), ...(email ? { email } : {}), ...(phone ? { phone } : {}), ...(taxId ? { taxId } : {}), ...(name ? { name } : {}), ...(idNumber ? { idNumber } : {}), ...(plan ? { plan } : {}), page: String(page - 1) })}`}
-                      className="gh-btn-ghost text-sm"
-                    >
+                    <Link href={`/admin/patients?${pageQuery(page - 1)}`} className="gh-btn-ghost text-sm">
                       ← Prev
                     </Link>
                   ) : null}
                   {page < pagination.totalPages ? (
-                    <Link
-                      href={`/admin/patients?${new URLSearchParams({ ...(ghn ? { ghn } : {}), ...(email ? { email } : {}), ...(phone ? { phone } : {}), ...(taxId ? { taxId } : {}), ...(name ? { name } : {}), ...(idNumber ? { idNumber } : {}), ...(plan ? { plan } : {}), page: String(page + 1) })}`}
-                      className="gh-btn-ghost text-sm"
-                    >
+                    <Link href={`/admin/patients?${pageQuery(page + 1)}`} className="gh-btn-ghost text-sm">
                       Next →
                     </Link>
                   ) : null}

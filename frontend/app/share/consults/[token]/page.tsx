@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { formatAppDateTime } from "@/lib/format-datetime";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 
 export const dynamic = "force-dynamic";
@@ -105,7 +106,7 @@ export default async function SharedConsultPage({
         <p style={{ margin: "4px 0 0", fontSize: 13, color: "#555" }}>
           {consultation.appointment.consultationType} ·{" "}
           {consultation.appointment.scheduledAt
-            ? new Date(consultation.appointment.scheduledAt).toLocaleString()
+            ? formatAppDateTime(consultation.appointment.scheduledAt)
             : "Not scheduled"}{" "}
           · {consultation.appointment.countryCode.toUpperCase()}
         </p>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Cake, CalendarCheck, ChevronRight, ExternalLink, FileCheck, Globe } from "lucide-react";
 import { fetchDoctorPatientDetail } from "@/lib/api/doctor-api";
+import { formatAppDate, formatAppDateTime } from "@/lib/format-datetime";
 import { AdminEmptyState, AdminSummaryStrip, PageHeader, Pill } from "@/components/portal-atoms";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
 import { PatientProfilePanel } from "./_components/patient-profile-panel";
@@ -143,8 +144,8 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
                   <tr key={a.id} className="border-t border-[var(--portal-line)]">
                     <td className="py-2.5">
                       {a.scheduledAt
-                        ? new Date(a.scheduledAt).toLocaleString()
-                        : new Date(a.createdAt).toLocaleDateString()}
+                        ? formatAppDateTime(a.scheduledAt)
+                        : formatAppDate(a.createdAt)}
                     </td>
                     <td className="py-2.5 capitalize">{a.consultationType}</td>
                     <td className="py-2.5 text-portal-meta">{a.status}</td>
@@ -188,8 +189,8 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
                   title={<span className="capitalize">{a.consultationType}</span>}
                   subtitle={
                     a.scheduledAt
-                      ? new Date(a.scheduledAt).toLocaleString()
-                      : new Date(a.createdAt).toLocaleDateString()
+                      ? formatAppDateTime(a.scheduledAt)
+                      : formatAppDate(a.createdAt)
                   }
                   statusPill={
                     <Pill tone={a.status === "COMPLETED" ? "active" : a.status === "CANCELLED" ? "inactive" : "pending"} withDot>

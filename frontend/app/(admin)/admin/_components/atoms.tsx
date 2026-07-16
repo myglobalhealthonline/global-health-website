@@ -202,6 +202,10 @@ export function AdminSummaryStrip({
     /** Renders the tile as a link (filter shortcut / drill-down). Optional
      *  — without it the tile stays a static div, unchanged. */
     href?: string;
+    /** "sm" for prose-length values (a formatted date+time, a name) that
+     *  the display size would ellipsis away at 4-up widths. Wraps instead
+     *  of clipping. Counts, prices, and single words keep the default. */
+    valueSize?: "default" | "sm";
   }>;
   className?: string;
   /** Single-line, reduced-height tiles so the content below stays above
@@ -214,7 +218,9 @@ export function AdminSummaryStrip({
       style={{ "--card-count": items.length } as CSSProperties}
     >
       {items.map((item, index) => {
-        const itemClass = `gh-admin-summary-item gh-admin-summary-item--${item.tone ?? "neutral"}`;
+        const itemClass = `gh-admin-summary-item gh-admin-summary-item--${item.tone ?? "neutral"}${
+          item.valueSize === "sm" ? " gh-admin-summary-item--value-sm" : ""
+        }`;
         const inner = (
           <>
             <div className="gh-admin-summary-item__top">

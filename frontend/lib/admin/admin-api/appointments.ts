@@ -44,6 +44,8 @@ type AdminAppointmentDetailPayload = {
     clinicId: string | null;
     locationAddress: string | null;
     doctorId: string | null;
+    /** IANA tz captured at booking time; null on legacy appointments. */
+    patientTimezone: string | null;
     createdAt: string;
     updatedAt: string;
   };
@@ -85,6 +87,9 @@ export type AdminCalendarConsultation = {
   consultationType: string;
   status: string;
   scheduledAt: string;
+  /** True end of the consultation (claimed slot's span, else service duration).
+   *  Null when neither is known — the calendar falls back to its own default. */
+  endAt: string | null;
   meetingUrl: string | null;
   countryCode: string;
   orderId: string | null;

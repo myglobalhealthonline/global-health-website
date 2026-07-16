@@ -6,7 +6,7 @@ import { FlagBadge } from "../_components/flag-badge";
 import { ScopeBanner } from "../_components/scope-banner";
 import { PortalMobileCard, type PortalMobileCardTone } from "@/components/PortalMobileCard";
 import { AppointmentCard, type AppointmentCardTone } from "@/components/AppointmentCard";
-import { formatAppTime } from "@/lib/format-datetime";
+import { formatAppDateTime, formatAppDayMonth, formatAppTime } from "@/lib/format-datetime";
 import {
   AdminCard,
   Btn,
@@ -74,17 +74,9 @@ function buildQueueHref(
   return qs ? `/admin/appointments?${qs}` : "/admin/appointments";
 }
 
-function formatDate(dateIso: string) {
-  const date = new Date(dateIso);
-  if (Number.isNaN(date.getTime())) return dateIso;
-  return date.toLocaleString("en-GB", {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
+// Server-rendered: a bare `toLocaleString` here resolves to the Node host's
+// timezone (UTC in prod), not the display zone the rest of the portal uses.
+const formatDate = formatAppDateTime;
 
 function statusToneFor(status: string): PillTone {
   if (status === "COMPLETED") return "published";
@@ -365,10 +357,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
                     time={appointment.scheduledAt ? formatAppTime(appointment.scheduledAt) : "—"}
                     timeMeta={
                       appointment.scheduledAt
-                        ? new Date(appointment.scheduledAt).toLocaleDateString("en-GB", {
-                            month: "short",
-                            day: "2-digit",
-                          })
+                        ? formatAppDayMonth(appointment.scheduledAt)
                         : `Created ${formatDate(appointment.createdAt)}`
                     }
                     person={appointment.fullName}

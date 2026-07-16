@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronDown, ChevronRight, ChevronUp, Receipt, SearchX } from "lucide-react";
 import { fetchDoctorInvoicesList } from "@/lib/api/doctor-api";
+import { formatAppDate, formatAppDateTimeShort } from "@/lib/format-datetime";
 import {
   AdminEmptyState,
   AdminSummaryStrip,
@@ -154,8 +155,8 @@ export default async function DoctorInvoicesPage({
       render: (row) => (
         <span className="text-xs">
           {row.scheduledAt
-            ? new Date(row.scheduledAt).toLocaleString(undefined, { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" })
-            : new Date(row.createdAt).toLocaleDateString()}
+            ? formatAppDateTimeShort(row.scheduledAt)
+            : formatAppDate(row.createdAt)}
         </span>
       ),
     },

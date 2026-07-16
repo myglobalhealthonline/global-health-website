@@ -4,6 +4,7 @@ import { env } from "../config/env.js";
 import { isValidCronSecret } from "../utils/cron-auth.js";
 import { sendAppointmentReminderEmail } from "../lib/email/templates.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
+import { formatNotificationDateTime } from "../modules/notifications/notification-datetime.js";
 import { notifyDoctor } from "../modules/notifications/notify.service.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
@@ -128,6 +129,16 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
           consultationType: true,
           scheduledAt: true,
           meetingUrl: true,
+          // Clinic zone for the snippet's wall clock. Pulled through the
+          // relation rather than via resolveDoctorTimeZone() per row, which
+          // would add a query per appointment to a loop of up to 200.
+          doctor: {
+            select: {
+              country: {
+                select: { bookingSetting: { select: { timezone: true } } },
+              },
+            },
+          },
         },
         take: 200,
       });
@@ -138,9 +149,10 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
         try {
           await notifyDoctor(a.doctorId, "APPOINTMENT_REMINDER", {
             appointmentId: a.id,
-            snippet: `${a.fullName} · ${new Date(a.scheduledAt).toLocaleString()}${
-              a.meetingUrl ? "" : " (missing meeting link)"
-            }`,
+            snippet: `${a.fullName} · ${formatNotificationDateTime(
+              a.scheduledAt,
+              a.doctor?.country?.bookingSetting?.timezone,
+            )}${a.meetingUrl ? "" : " (missing meeting link)"}`,
           });
           await prisma.appointment.update({
             where: { id: a.id },

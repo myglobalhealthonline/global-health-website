@@ -59,7 +59,7 @@ export default async function DoctorCalendarPage() {
       id: a.id,
       kind: "consultation" as const,
       startAt: a.scheduledAt as string,
-      endAt: null,
+      endAt: a.endAt,
       status: a.status,
       title: a.fullName,
       meta: {

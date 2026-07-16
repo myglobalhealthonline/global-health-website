@@ -296,6 +296,9 @@ export type AdminAppointmentDetail = {
   clinicId: string | null;
   locationAddress: string | null;
   doctorId: string | null;
+  /** IANA tz captured at booking time. Lets the admin reschedule UI show
+   *  which zone the slot was originally booked in. Null on legacy rows. */
+  patientTimezone: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -409,6 +412,7 @@ const ADMIN_APPT_SELECT = {
   clinicId: true,
   locationAddress: true,
   doctorId: true,
+  patientTimezone: true,
   createdAt: true,
   updatedAt: true,
 } as const;
@@ -432,6 +436,7 @@ function toAdminAppointment(record: AppointmentRecord): AdminAppointmentDetail {
     clinicId: record.clinicId,
     locationAddress: record.locationAddress,
     doctorId: record.doctorId ?? null,
+    patientTimezone: record.patientTimezone ?? null,
     createdAt: record.createdAt.toISOString(),
     updatedAt: record.updatedAt.toISOString(),
   };

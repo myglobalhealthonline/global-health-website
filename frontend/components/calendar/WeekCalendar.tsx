@@ -15,7 +15,10 @@ const HOUR_PX = 88; // row height per hour — roomy: a 15-min slot = 22px, no o
 const PX_PER_MIN = HOUR_PX / 60;
 const DEFAULT_START_HOUR = 7;
 const DEFAULT_END_HOUR = 20;
-const CONSULT_FALLBACK_MIN = 30; // consultations carry no end time
+// Last resort only: a consultation with neither a claimed slot nor a service
+// duration behind it. Everything else arrives with a real `endAt` and is drawn
+// across the minutes it actually occupies.
+const CONSULT_FALLBACK_MIN = 30;
 const MIN_BLOCK_PX = 18; // floor < a 15-min slot's 22px span, so blocks keep a gap
 
 type Props = {

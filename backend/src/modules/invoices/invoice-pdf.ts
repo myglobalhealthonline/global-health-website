@@ -4,6 +4,20 @@ import { PDF_TOKENS as T, PDF_SANS, PDF_SERIF, pdfLogoDataUrl, pdfEcgRule } from
 
 // ── i18n labels ───────────────────────────────────────────────────────────────
 
+/**
+ * Keyed by the ORDER's country — i.e. where the consultation took place. That key
+ * picks BOTH the language and the issuing entity shown in the invoice header:
+ *
+ *   cz            → the Czech company (IČO 19071680 / DIČ CZ19071680).
+ *   ie / es / ro  → the Ireland branch (CRO 910267), invoicing on behalf of those
+ *                   markets until their local branch registrations complete. Their
+ *                   `company`/`address` are the Ireland issuer translated, NOT a
+ *                   local entity — do not "localise" them to the market's country.
+ *
+ * Keys MUST match `Country.code` as stored in the DB (ie, cz, es, ro, pt). The
+ * Spanish/Romanian sets were once keyed "sp"/"rm" (legacy Wix-era aliases), which
+ * match no real order — those invoices silently fell back to `ie`, i.e. English.
+ */
 const INVOICE_LABELS: Record<string, Record<string, string>> = {
   ie: {
     invoice: "Invoice",
@@ -58,8 +72,8 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     paid: "ZAPLACENO",
     doctor: "Ošetřující lékař",
     reg: "Registrační číslo",
-    company: "Global Health · Registrováno v Irsku · CRO č. 910267",
-    address: "Irsko",
+    company: "Global Health · Registrováno v Česku · IČO 19071680 · DIČ CZ19071680",
+    address: "Česko",
     taxId: "DIČ",
     consultationDate: "Datum konzultace",
     invoiceRef: "Číslo faktury",
@@ -77,7 +91,7 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     tagline: "Medicine Anytime Anywhere",
     legalFooter: "Osvobození od DPH\nZdravotní služby jsou osvobozeny od DPH v souladu se zákonem č. 235/2004 Sb., o dani z přidané hodnoty, § 58 (osvobození zdravotních služeb).\n\nPodmínky\nGlobal Health je obchodní značka společnosti Global Guest. Veškeré transakce prováděné pod značkou Global Health jsou právně zpracovávány v rámci obchodní registrace a daňových údajů společnosti Global Guest.\n\nGlobal Health je obchodní značkou společnosti Global Guest s.r.o., poskytovatele zdravotních služeb zapsaného v Národním registru poskytovatelů zdravotních služeb (NRPZS) pod registračním číslem 19071680.",
   },
-  sp: {
+  es: {
     invoice: "Factura",
     receipt: "Recibo",
     invoiceReceipt: "Factura / Recibo",
@@ -113,7 +127,7 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     tagline: "Medicine Anytime Anywhere",
     legalFooter: "Los servicios sanitarios están exentos de IVA de conformidad con la Ley de Consolidación del Impuesto sobre el Valor Añadido de 2010, Sección 61 y Anexo 1, Párrafo 23. El IVA no es aplicable, ya que el proveedor aún no está registrado a efectos de IVA en Irlanda, de acuerdo con la Ley de Consolidación del IVA de 2010.\n\nTérminos\nGlobal Health es un nombre comercial registrado bajo Global Guest. Todas las transacciones realizadas bajo la marca Global Health se procesan legalmente conforme al registro comercial y a los datos fiscales de Global Guest.",
   },
-  rm: {
+  ro: {
     invoice: "Factură",
     receipt: "Chitanță",
     invoiceReceipt: "Factură / Chitanță",
@@ -184,6 +198,47 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     quoteRef: "Indique esta referência em qualquer comunicação.",
     tagline: "Medicine Anytime Anywhere",
     legalFooter: "Os serviços de saúde estão isentos de IVA nos termos da Lei de Consolidação do Imposto sobre o Valor Acrescentado de 2010, Secção 61 e Anexo 1, Parágrafo 23.\n\nCondições\nA Global Health é uma marca comercial registada sob a Global Guest. Todas as transações realizadas sob a marca Global Health são legalmente processadas ao abrigo do registo comercial e dos dados fiscais da Global Guest.\n\nA Global Health é uma marca comercial da Global Guest s.r.o., entidade prestadora de cuidados de saúde registada na Entidade Reguladora da Saúde (ERS) sob o número 179287.",
+  },
+  /**
+   * Brazil — Portuguese (pt-BR), invoiced by the Ireland branch exactly like
+   * es/ro. Deliberately NOT a copy of `pt`: that set's footer cites Portugal's
+   * ERS registration, which says nothing about a Brazilian consultation.
+   */
+  br: {
+    invoice: "Fatura",
+    receipt: "Recibo",
+    invoiceReceipt: "Fatura / Recibo",
+    creditNote: "Nota de crédito",
+    refunded: "REEMBOLSADO",
+    unpaid: "NÃO PAGO",
+    amountDue: "Valor devido",
+    from: "De",
+    billTo: "Faturado para",
+    description: "Descrição",
+    qty: "Qtd.",
+    unit: "Preço unit.",
+    total: "Total",
+    paid: "PAGO",
+    doctor: "Médico responsável",
+    reg: "Número de registro médico",
+    company: "Global Health · Registrada na Irlanda · N.º CRO 910267",
+    address: "Irlanda",
+    taxId: "CPF",
+    consultationDate: "Data da consulta",
+    invoiceRef: "Referência da fatura",
+    locale: "pt-BR",
+    fiscalDocument: "Documento fiscal",
+    issued: "Emitida",
+    subtotal: "Subtotal",
+    vat: "IVA (0 %)",
+    vatNote: "Isento de IVA — serviços de saúde",
+    shipping: "Frete",
+    totalRefunded: "Total reembolsado",
+    settledInFull: "Pago integralmente",
+    refundIssued: "Reembolso emitido",
+    quoteRef: "Por favor, mencione esta referência em qualquer comunicação.",
+    tagline: "Medicine Anytime Anywhere",
+    legalFooter: "Os serviços de saúde são isentos de IVA nos termos da Lei de Consolidação do Imposto sobre o Valor Agregado de 2010, Seção 61 e Anexo 1, Parágrafo 23. O IVA não se aplica, uma vez que o prestador ainda não está registrado para fins de IVA na Irlanda, nos termos da Lei de Consolidação do IVA de 2010.\n\nTermos\nA Global Health é um nome comercial registrado sob a Global Guest. Todas as transações realizadas sob a marca Global Health são processadas legalmente de acordo com o registro comercial e os dados fiscais da Global Guest.",
   },
 };
 
@@ -392,7 +447,7 @@ export function buildInvoiceHtml(data: InvoicePdfData): string {
         .map((part) => `<div class="l">${esc(part.trim())}</div>`)
         .join("")}
       <div class="l">${esc(L.address)}</div>
-      <div class="l">info@myglobalhealth.online</div>
+      <div class="l">globalhealth@myglobalhealth.online</div>
     </div>
     <div class="party">
       <span class="caps">${L.billTo}</span>

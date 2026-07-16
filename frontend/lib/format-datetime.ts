@@ -62,6 +62,23 @@ export function formatAppDate(
   }).format(value);
 }
 
+/**
+ * Day + month only, no year — for the compact date chip under the time on
+ * appointment cards, where `formatAppDate`'s year would overflow the slot.
+ */
+export function formatAppDayMonth(
+  dateLike: string,
+  tz?: string | null,
+): string {
+  const value = new Date(dateLike);
+  if (Number.isNaN(value.getTime())) return dateLike;
+  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+    month: "short",
+    day: "2-digit",
+    timeZone: resolveTz(tz),
+  }).format(value);
+}
+
 export function formatAppTime(
   dateLike: string,
   tz?: string | null,

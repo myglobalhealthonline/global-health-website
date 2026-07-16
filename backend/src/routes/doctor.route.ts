@@ -7,6 +7,7 @@ import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { sanitizeRichHtml } from "../utils/sanitize-html.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
+import { resolveConsultationEndAt } from "../modules/appointments/consultation-end.js";
 import {
   profilePatchBodySchema,
   type DoctorProfilePatchBody,
@@ -385,6 +386,10 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         notes: true,
         finalized: true,
         manualEntry: true,
+        // Real consultation length for the calendar: the claimed slot already
+        // spans it exactly; `service.durationMinutes` covers slot-less rows.
+        timeSlot: { select: { endAt: true } },
+        service: { select: { durationMinutes: true } },
       } as const;
 
       // Doctor-queue ordering: UPCOMING consultations first (soonest at the
@@ -439,9 +444,10 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         });
       }
       return okResponse({
-        items: rows.map((r) => ({
+        items: rows.map(({ timeSlot, service, ...r }) => ({
           ...r,
           scheduledAt: r.scheduledAt?.toISOString() ?? null,
+          endAt: resolveConsultationEndAt({ ...r, timeSlot, service }),
           createdAt: r.createdAt.toISOString(),
           notesPreview: r.notes ? r.notes.slice(0, 200) : null,
         })),

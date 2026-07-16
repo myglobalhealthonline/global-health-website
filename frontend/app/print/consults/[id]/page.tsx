@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { formatAppDateTime } from "@/lib/format-datetime";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import {
   fetchDoctorConsultation,
@@ -87,7 +88,7 @@ export default async function PrintConsultPage({
   const exams = examsRes.ok ? examsRes.data.items : [];
   const isSigned = consultation?.status === "SIGNED" && !!consultation.signedAt;
   const scheduledLabel = appointment.scheduledAt
-    ? new Date(appointment.scheduledAt).toLocaleString()
+    ? formatAppDateTime(appointment.scheduledAt)
     : "Not scheduled";
 
   return (

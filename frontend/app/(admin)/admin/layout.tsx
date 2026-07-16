@@ -64,7 +64,6 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/blog", label: "Blog" },
     { href: "/admin/assets", label: "Assets" },
     { href: "/admin/users", label: "Users" },
-    { href: "/admin/patients", label: "Patients" },
     { href: "/admin/messages", label: "Messages" },
     { href: "/admin/orders", label: "Orders" },
     { href: "/admin/automation", label: "Automation" },
@@ -94,6 +93,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/health-tests", label: "Health tests" },
     { href: "/admin/plans", label: "Plans" },
     { href: "/admin/appointments", label: "Appointments" },
+    { href: "/admin/patients", label: "Patients" },
     { href: "/admin/insurance", label: "Insurance" },
     { href: "/admin/test-centers", label: "Test centers" },
   ];

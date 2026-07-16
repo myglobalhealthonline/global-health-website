@@ -2,7 +2,11 @@ import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { releaseAppointmentSlot } from "../modules/doctor-availability/doctor-availability.service.js";
+import {
+  releaseAppointmentSlot,
+  resolveDoctorTimeZone,
+} from "../modules/doctor-availability/doctor-availability.service.js";
+import { formatNotificationDateTime } from "../modules/notifications/notification-datetime.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
@@ -282,11 +286,14 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
             },
             request,
           }).catch(() => {});
+          const clinicTz = updated.scheduledAt
+            ? await resolveDoctorTimeZone(auth.doctorId).catch(() => "UTC")
+            : "UTC";
           notifyAdmins("APPOINTMENT_RESCHEDULED", {
             appointmentId: updated.id,
             snippet: `${appt.fullName} · slot ${
               updated.scheduledAt
-                ? new Date(updated.scheduledAt).toLocaleString()
+                ? formatNotificationDateTime(updated.scheduledAt, clinicTz)
                 : "cleared"
             }`,
           }).catch(() => {});

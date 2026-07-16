@@ -761,6 +761,15 @@ export async function releaseSlotsToBaseGrid(slotIds: string[]): Promise<void> {
  * the slot readers so an expired hold is reclaimed the next time anyone
  * looks at the doctor's availability. 15-min grace stays clear of an
  * in-progress 10-min checkout.
+ *
+ * ONLY cart holds. A HELD slot with an Appointment behind it is a booked
+ * consultation awaiting payment (admin manual booking / AI booking), whose
+ * patient has until `Order.paymentDueAt` — 1h to 24h before the consult, see
+ * computePrePaymentPlan — to pay. Releasing those on the 15-min cart clock
+ * reopened the slot for double-booking, SetNull'd the appointment's
+ * `timeSlotId` (schema: onDelete: SetNull), and left the eventual payment
+ * unable to claim its own slot. Their release is owned by the pre-payment
+ * deadline (`cancelPrePaymentOrder`) and the admin/doctor cancel paths.
  */
 export async function releaseExpiredHeldSlots(doctorId: string): Promise<void> {
   return releaseExpiredHeldSlotsForDoctors([doctorId]);
@@ -786,6 +795,9 @@ export async function releaseExpiredHeldSlotsForDoctors(
         doctorId: { in: doctorIds },
         status: "HELD",
         updatedAt: { lt: new Date(Date.now() - 15 * 60_000) },
+        // Cart holds only — a hold carrying an appointment is a real booking
+        // waiting on payment; the pre-payment deadline releases it, not us.
+        appointment: { is: null },
       },
       select: { id: true },
     });

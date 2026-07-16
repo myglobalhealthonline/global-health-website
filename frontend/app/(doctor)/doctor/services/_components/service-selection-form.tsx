@@ -364,9 +364,6 @@ export function DoctorServiceSelectionForm({ approvalRequired, items, strings, c
                     {service.durationMinutes} min
                   </span>
                 ) : null}
-                <span className="font-mono font-semibold text-[var(--portal-text-2)]">
-                  {formatPrice(service.basePriceCents, service.currencyCode)}
-                </span>
                 <span className="inline-flex items-center gap-1 font-mono font-semibold text-[var(--portal-primary)]">
                   {strings.yourFee}{" "}
                   {service.assignment?.doctorAmountCents == null

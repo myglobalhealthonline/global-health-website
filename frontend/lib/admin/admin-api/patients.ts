@@ -186,6 +186,8 @@ export async function fetchAdminPatients(query: {
   name?: string;
   idNumber?: string;
   plan?: string;
+  /// Country folder scope (from the admin country picker). Omit for all countries.
+  countryCode?: string;
   page?: string;
   pageSize?: string;
 }) {

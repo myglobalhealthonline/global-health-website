@@ -14,7 +14,7 @@ import {
 } from "@/components/portal-atoms";
 import { PortalMobileCard } from "@/components/PortalMobileCard";
 import { AppointmentCard, type AppointmentCardTone } from "@/components/AppointmentCard";
-import { formatAppTime } from "@/lib/format-datetime";
+import { formatAppDateTimeShort, formatAppDayMonth, formatAppTime } from "@/lib/format-datetime";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -274,10 +274,7 @@ export default async function DoctorAppointmentsPage({
                   time={a.scheduledAt ? formatAppTime(a.scheduledAt) : "—"}
                   timeMeta={
                     a.scheduledAt
-                      ? new Date(a.scheduledAt).toLocaleDateString(undefined, {
-                          month: "short",
-                          day: "2-digit",
-                        })
+                      ? formatAppDayMonth(a.scheduledAt)
                       : d.common.unscheduled
                   }
                   person={a.fullName}
@@ -347,12 +344,7 @@ export default async function DoctorAppointmentsPage({
                     {
                       label: d.appointments.scheduled,
                       value: a.scheduledAt
-                        ? new Date(a.scheduledAt).toLocaleString(undefined, {
-                            month: "short",
-                            day: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })
+                        ? formatAppDateTimeShort(a.scheduledAt)
                         : d.common.unscheduled,
                     },
                     { label: d.common.payment, value: a.paymentStatus },

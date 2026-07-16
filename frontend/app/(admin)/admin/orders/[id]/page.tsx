@@ -206,6 +206,7 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
                     ? `with ${primaryConsult.doctorName}`
                     : "Doctor not yet assigned",
                   tone: "brand" as const,
+                  valueSize: "sm" as const,
                 },
               ]
             : []),

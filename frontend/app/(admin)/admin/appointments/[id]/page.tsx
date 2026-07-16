@@ -14,6 +14,7 @@ import {
   patchAdminAppointmentStatus,
   patchAdminAppointmentUpdate,
 } from "@/lib/admin/admin-api";
+import { formatAppDateTime } from "@/lib/format-datetime";
 import { InternalMessagesThread } from "@/components/chat/InternalMessagesThread";
 import { AdminAppointmentChat } from "../_components/admin-appointment-chat";
 import {
@@ -45,17 +46,11 @@ function safeHttpUrl(url: string | undefined | null): string | null {
   return /^https?:\/\//i.test(url) ? url : null;
 }
 
-function formatDate(dateIso: string) {
-  const date = new Date(dateIso);
-  if (Number.isNaN(date.getTime())) return dateIso;
-  return date.toLocaleString("en-GB", {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
+// This page renders on the server, so a bare `toLocaleString` would resolve
+// to the Node host's timezone (UTC in prod) and print an hour that disagrees
+// with the order pages. Always go through the shared formatter's explicit
+// display zone.
+const formatDate = formatAppDateTime;
 
 function statusToneFor(status: string): PillTone {
   if (status === "COMPLETED") return "published";

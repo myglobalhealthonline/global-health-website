@@ -2,6 +2,7 @@ import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { ensureSlotsForRange } from "../doctor-availability/doctor-availability.service.js";
 import { mapAppointmentOrders } from "../orders/appointment-order-number.js";
+import { resolveConsultationEndAt } from "../appointments/consultation-end.js";
 
 /**
  * Admin cross-doctor calendar.
@@ -34,6 +35,12 @@ export type AdminCalendarConsultation = {
   consultationType: string;
   status: string;
   scheduledAt: string;
+  /** True end of the consultation. Taken from the claimed slot (the collapsed
+   *  row already spans the booking's real length), falling back to the
+   *  service's `durationMinutes` for appointments with no slot. Null only when
+   *  neither is known — the calendar then falls back to its own default rather
+   *  than drawing a wrong span. */
+  endAt: string | null;
   meetingUrl: string | null;
   countryCode: string;
 };
@@ -112,6 +119,11 @@ export async function getAdminCalendar(
           meetingUrl: true,
           countryCode: true,
           doctor: { select: { fullName: true } },
+          // Real consultation length: the claimed slot spans it exactly (a
+          // 45-min consult collapsed its base slots into one [start,+45) row).
+          // `service.durationMinutes` covers appointments booked without a slot.
+          timeSlot: { select: { endAt: true } },
+          service: { select: { durationMinutes: true } },
         },
         take: 5000,
       }),
@@ -141,6 +153,7 @@ export async function getAdminCalendar(
           consultationType: a.consultationType,
           status: a.status as string,
           scheduledAt: a.scheduledAt!.toISOString(),
+          endAt: resolveConsultationEndAt(a),
           meetingUrl: a.meetingUrl,
           countryCode: a.countryCode,
           orderId: orderMap.get(a.id)?.orderId ?? null,

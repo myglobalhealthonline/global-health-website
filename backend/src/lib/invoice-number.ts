@@ -10,12 +10,20 @@ import { env } from "../config/env.js";
  * never produce duplicate numbers. Same pattern as order-number.ts.
  */
 
+/**
+ * Country.code → invoice-number prefix. Keys MUST match `Country.code` as stored
+ * in the DB (ie, cz, es, ro, br). Portugal is absent on purpose — PT invoices are
+ * issued through InvoiceExpress, not here.
+ *
+ * Previously keyed "sp"/"rm" (legacy Wix-era aliases). Those match no real order,
+ * so Romania and Brazil silently got NO invoice ("no invoice prefix — skipping").
+ */
 const COUNTRY_PREFIX: Record<string, string> = {
   ie: "IE",
   cz: "CZ",
   es: "ES",
-  sp: "SP",
-  rm: "RO",
+  ro: "RO",
+  br: "BR",
 };
 
 /** Returns null when the country has no invoice prefix (e.g. Portugal). */

@@ -7,6 +7,8 @@ import {
 } from "@/lib/admin/admin-api";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { AdminCard, SectionHeader } from "@/components/portal-atoms";
+import { ScheduleSlotInput } from "../../../appointments/_components/schedule-slot-input";
+import { ScheduleTzHint } from "../../../appointments/_components/schedule-tz-hint";
 import { ScheduleTzOffsetInput } from "../../../appointments/_components/schedule-tz-offset";
 
 type Props = {
@@ -17,14 +19,6 @@ type Props = {
   error?: string;
   success?: string;
 };
-
-function toDatetimeLocalValue(iso: string | null): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (!Number.isFinite(d.getTime())) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
 
 export async function UpdateAppointmentPanel({
   appointmentId,
@@ -122,11 +116,10 @@ export async function UpdateAppointmentPanel({
         <form id={formId} action={updateAppointmentAction} className="gh-admin-order-appointment-form grid gap-4">
           <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">Consultation date & time</span>
-            <input
-              type="datetime-local"
-              name="scheduledAt"
-              className="gh-input"
-              defaultValue={toDatetimeLocalValue(appointment.scheduledAt)}
+            <ScheduleSlotInput name="scheduledAt" initialIso={appointment.scheduledAt} />
+            <ScheduleTzHint
+              iso={appointment.scheduledAt}
+              patientTimezone={appointment.patientTimezone}
             />
           </label>
 

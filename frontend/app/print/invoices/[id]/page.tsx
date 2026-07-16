@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { formatAppDate, formatAppDateTime } from "@/lib/format-datetime";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import {
   fetchDoctorConsultation,
@@ -101,9 +102,9 @@ export default async function PrintInvoicePage({
   const isPaid = invoice.paymentStatus === "PAID";
   const isRefunded = invoice.paymentStatus === "REFUNDED";
   const scheduledLabel = appointment?.scheduledAt
-    ? new Date(appointment.scheduledAt).toLocaleString()
+    ? formatAppDateTime(appointment.scheduledAt)
     : appointment?.createdAt
-      ? new Date(appointment.createdAt).toLocaleDateString()
+      ? formatAppDate(appointment.createdAt)
       : "";
 
   const buckets = Object.entries(invoice.lineTotalsByCurrency ?? {}).filter(

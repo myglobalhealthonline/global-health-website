@@ -86,7 +86,6 @@ const GLOBAL_HREFS = new Set([
   "/admin/specialties",
   "/admin/assets",
   "/admin/users",
-  "/admin/patients",
   "/admin/messages",
   "/admin/orders",
   "/admin/invoices",
@@ -105,12 +104,13 @@ const GLOBAL_HREFS = new Set([
 const GLOBAL_GROUPS: { label: string; hrefs: string[] }[] = [
   { label: "Overview", hrefs: ["/admin", "/admin/calendar"] },
   { label: "Catalog", hrefs: ["/admin/countries", "/admin/doctors", "/admin/assets", "/admin/blog"] },
-  { label: "People", hrefs: ["/admin/users", "/admin/patients", "/admin/messages"] },
+  { label: "People", hrefs: ["/admin/users", "/admin/messages"] },
   { label: "Commerce", hrefs: ["/admin/orders", "/admin/invoices", "/admin/subscriptions"] },
   { label: "System", hrefs: ["/admin/reports", "/admin/newsletter", "/admin/automation", "/admin/audit-log"] },
 ];
 
 const COUNTRY_HREFS = new Set([
+  "/admin/patients",
   "/admin/plans",
   "/admin/country-features",
   "/admin/country-home",
@@ -169,6 +169,7 @@ const ORDER: Record<string, number> = {
   "/admin/health-tests": 6,
   "/admin/plans": 7,
   "/admin/appointments": 8,
+  "/admin/patients": 8.2,
   "/admin/insurance": 8.5,
   "/admin/test-centers": 8.6,
   "/admin/footer": 9,

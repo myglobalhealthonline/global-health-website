@@ -508,12 +508,41 @@
   white-space: nowrap;
 }
 
+/* Prose-length values (a formatted date+time such as "21 Jul 2026, 14:00")
+ * run past the tile at 4-up widths and the nowrap rule above ellipsises
+ * them mid-time. Opt-in via AdminSummaryStrip's valueSize="sm": step the
+ * type down and let it wrap to a second line instead of clipping. */
+.gh-admin-summary-item--value-sm strong {
+  font-size: clamp(16px, 1.35vw, 20px);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  white-space: normal;
+  text-overflow: clip;
+}
+
 .gh-admin-summary-hint {
   margin-top: 5px;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0;
   text-transform: none;
+}
+
+/* Timezone caption under the reschedule datetime input. Stacked lines so
+ * the browser/clinic/patient zones read as three separate facts. */
+.gh-admin-schedule-tz-hint {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--portal-muted);
+}
+
+.gh-admin-schedule-tz-hint strong {
+  font-weight: 700;
+  color: var(--portal-text);
 }
 
 .gh-admin-summary-item .gh-portal-icon-badge {

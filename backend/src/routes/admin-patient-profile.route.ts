@@ -329,6 +329,9 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         name: z.string().trim().max(200).optional(),
         idNumber: z.string().trim().max(64).optional(),
         plan: z.string().trim().max(120).optional(),
+        /// Country folder scope — the admin shell sends the picked country so
+        /// Patients behaves like the other country-scoped sections.
+        countryCode: z.string().trim().min(2).max(8).optional(),
         page: z.coerce.number().int().min(1).default(1),
         pageSize: z.coerce.number().int().min(1).max(50).default(20),
       })
@@ -336,9 +339,39 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
     if (!query.success) {
       return reply.status(400).send(errorResponse("Invalid query", query.error.flatten()));
     }
-    const { ghn, email, phone, taxId, name, idNumber, plan, page, pageSize } = query.data;
+    const { ghn, email, phone, taxId, name, idNumber, plan, countryCode, page, pageSize } =
+      query.data;
     try {
+      // LOCAL_ADMIN is country-scoped: clamp the result set to the folders they
+      // are allowed, server-side. Without this a country-scoped admin could
+      // enumerate every patient globally by simply dropping the countryCode
+      // param (the UI treats country as a default, not a restriction).
+      // Role/folders are re-read from the DB, never trusted from the JWT.
+      const actor = resolveAdminSessionActor(request);
+      let folderClamp: string[] | null = null;
+      if (actor?.role === "LOCAL_ADMIN") {
+        const u = await prisma.user.findUnique({
+          where: { id: actor.userId },
+          select: { allowedCountryFolders: true },
+        });
+        folderClamp = (u?.allowedCountryFolders ?? []).map((f) => f.trim().toLowerCase());
+        if (folderClamp.length === 0) {
+          return okResponse({
+            items: [],
+            pagination: { page, pageSize, total: 0, totalPages: 0 },
+          });
+        }
+      }
+      const requested = countryCode?.trim().toLowerCase();
+      if (requested && folderClamp && !folderClamp.includes(requested)) {
+        return reply.status(403).send(errorResponse("Country is outside your admin scope"));
+      }
+
       const where: Record<string, unknown> = {};
+      // Country folder codes are stored lowercase (matching Country.code);
+      // match case-insensitively so a stray legacy uppercase row still hits.
+      if (requested) where.countryFolderCode = { equals: requested, mode: "insensitive" };
+      else if (folderClamp) where.countryFolderCode = { in: folderClamp };
       if (ghn) where.globalHealthNumber = { contains: ghn, mode: "insensitive" };
       if (email) where.email = { contains: email, mode: "insensitive" };
       if (phone) where.phone = { contains: phone, mode: "insensitive" };
