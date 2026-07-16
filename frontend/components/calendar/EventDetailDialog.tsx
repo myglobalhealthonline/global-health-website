@@ -11,6 +11,31 @@ import {
 } from "@/components/RecordDetailsDrawer";
 import { getJoinState } from "@/lib/join-state";
 
+/** Copy overrides for patient/doctor portals (i18n). Admin omits this and
+ *  gets the English defaults — admin is English-by-design. */
+type EventDetailLabels = {
+  consultation?: string;
+  close?: string;
+  appointment?: string;
+  type?: string;
+  doctor?: string;
+  patient?: string;
+  country?: string;
+  order?: string;
+  timing?: string;
+  start?: string;
+  end?: string;
+  timezone?: string;
+  links?: string;
+  joinVideoCall?: string;
+  unconfirmed?: string;
+  cancelled?: string;
+  ended?: string;
+  /** `{time}` template for the too-early state. */
+  opensAt?: string;
+  joinPending?: string;
+};
+
 type Props = {
   item: CalendarItem | null;
   /** Timezone the times are rendered in (viewer's zone). */
@@ -23,6 +48,7 @@ type Props = {
    *  the self-referential Patient row. Omit for doctor/admin — unchanged
    *  default behavior. */
   viewerRole?: "patient" | "doctor" | "admin";
+  labels?: EventDetailLabels;
 };
 
 function statusBadgeClass(status: string): string {
@@ -57,9 +83,30 @@ function humanTimezone(tz: string): string {
   }
 }
 
-export function EventDetailDialog({ item, tz, onClose, paramKey, viewerRole }: Props) {
+export function EventDetailDialog({ item, tz, onClose, paramKey, viewerRole, labels }: Props) {
   const isPatientView = viewerRole === "patient";
   const isDoctorView = viewerRole === "doctor";
+  const t: Required<EventDetailLabels> = {
+    consultation: labels?.consultation ?? "Consultation",
+    close: labels?.close ?? "Close",
+    appointment: labels?.appointment ?? "Appointment",
+    type: labels?.type ?? "Type",
+    doctor: labels?.doctor ?? "Doctor",
+    patient: labels?.patient ?? "Patient",
+    country: labels?.country ?? "Country",
+    order: labels?.order ?? "Order",
+    timing: labels?.timing ?? "Timing",
+    start: labels?.start ?? "Start",
+    end: labels?.end ?? "End",
+    timezone: labels?.timezone ?? "Timezone",
+    links: labels?.links ?? "Links",
+    joinVideoCall: labels?.joinVideoCall ?? "Join video call",
+    unconfirmed: labels?.unconfirmed ?? "This request hasn't been confirmed yet.",
+    cancelled: labels?.cancelled ?? "This consultation was cancelled.",
+    ended: labels?.ended ?? "This consultation has ended.",
+    opensAt: labels?.opensAt ?? "The join link opens at {time}.",
+    joinPending: labels?.joinPending ?? "Join link will appear here once the call is scheduled.",
+  };
   const meetingUrl = item?.meta?.meetingUrl ?? null;
   const joinState = item
     ? getJoinState(
@@ -69,7 +116,7 @@ export function EventDetailDialog({ item, tz, onClose, paramKey, viewerRole }: P
     : null;
   const dialogTitle = item
     ? isPatientView
-      ? `${item.meta?.consultationType ?? "Consultation"} · ${formatAppTime(item.startAt, tz)}`
+      ? `${item.meta?.consultationType ?? t.consultation} · ${formatAppTime(item.startAt, tz)}`
       : item.title
     : "";
 
@@ -83,7 +130,7 @@ export function EventDetailDialog({ item, tz, onClose, paramKey, viewerRole }: P
       paramValue={item?.id}
       size="sm"
       title={dialogTitle}
-      eyebrow={item?.meta?.consultationType ?? "Consultation"}
+      eyebrow={item?.meta?.consultationType ?? t.consultation}
       summary={
         item ? (
           <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -103,31 +150,31 @@ export function EventDetailDialog({ item, tz, onClose, paramKey, viewerRole }: P
       footer={
         <div className="flex w-full items-center justify-end gap-2">
           <button type="button" className="gh-btn gh-btn-ghost" onClick={onClose}>
-            Close
+            {t.close}
           </button>
         </div>
       }
     >
       {item ? (
         <>
-          <RecordDetailsSection title="Appointment">
+          <RecordDetailsSection title={t.appointment}>
             <RecordDetailsField
-              label="Type"
+              label={t.type}
               value={item.meta?.consultationType ?? undefined}
             />
             {isDoctorView ? null : (
-              <RecordDetailsField label="Doctor" value={item.meta?.doctorName ?? undefined} />
+              <RecordDetailsField label={t.doctor} value={item.meta?.doctorName ?? undefined} />
             )}
             {isPatientView && !item.meta?.patientName ? null : (
-              <RecordDetailsField label="Patient" value={item.meta?.patientName ?? undefined} />
+              <RecordDetailsField label={t.patient} value={item.meta?.patientName ?? undefined} />
             )}
             <RecordDetailsField
-              label="Country"
+              label={t.country}
               value={item.meta?.countryCode?.toUpperCase()}
             />
             {item.meta?.orderId ? (
               <RecordDetailsField
-                label="Order"
+                label={t.order}
                 value={
                   <Link
                     href={`/admin/orders/${item.meta.orderId}`}
@@ -143,15 +190,15 @@ export function EventDetailDialog({ item, tz, onClose, paramKey, viewerRole }: P
             ) : null}
           </RecordDetailsSection>
 
-          <RecordDetailsSection title="Timing">
-            <RecordDetailsField label="Start" value={formatAppDateTime(item.startAt, tz)} />
+          <RecordDetailsSection title={t.timing}>
+            <RecordDetailsField label={t.start} value={formatAppDateTime(item.startAt, tz)} />
             {item.endAt ? (
-              <RecordDetailsField label="End" value={formatAppDateTime(item.endAt, tz)} />
+              <RecordDetailsField label={t.end} value={formatAppDateTime(item.endAt, tz)} />
             ) : null}
-            <RecordDetailsField label="Timezone" value={humanTimezone(tz)} />
+            <RecordDetailsField label={t.timezone} value={humanTimezone(tz)} />
           </RecordDetailsSection>
 
-          <RecordDetailsSection title="Links">
+          <RecordDetailsSection title={t.links}>
             {joinState?.kind === "ready" && meetingUrl ? (
               <a
                 href={meetingUrl}
@@ -161,19 +208,22 @@ export function EventDetailDialog({ item, tz, onClose, paramKey, viewerRole }: P
                 style={{ minHeight: 44 }}
               >
                 <Video className="size-4" aria-hidden />
-                Join video call
+                {t.joinVideoCall}
               </a>
             ) : (
               <p className="text-xs" style={{ color: "var(--portal-muted)" }}>
                 {joinState?.kind === "unconfirmed"
-                  ? "This request hasn't been confirmed yet."
+                  ? t.unconfirmed
                   : joinState?.kind === "cancelled"
-                    ? "This consultation was cancelled."
+                    ? t.cancelled
                     : joinState?.kind === "ended"
-                      ? "This consultation has ended."
+                      ? t.ended
                       : joinState?.kind === "too-early"
-                        ? `The join link opens at ${formatAppDateTime(joinState.opensAt.toISOString(), tz)}.`
-                        : "Join link will appear here once the call is scheduled."}
+                        ? t.opensAt.replace(
+                            "{time}",
+                            formatAppDateTime(joinState.opensAt.toISOString(), tz),
+                          )
+                        : t.joinPending}
               </p>
             )}
           </RecordDetailsSection>

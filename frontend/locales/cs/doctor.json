@@ -203,7 +203,14 @@
     "bookingNotes": "Poznámky k rezervaci",
     "openPatientChart": "Otevřít kartu pacienta",
     "editHealthDataHint": "Upravit zdravotní údaje: BMI, krevní tlak, alergie, chronická onemocnění, rodinnou anamnézu, sociální návyky, obvyklou medikaci.",
-    "tabsAriaLabel": "Sekce termínu"
+    "tabsAriaLabel": "Sekce termínu",
+    "internalNotesEmptyState": "Zatím žádné interní poznámky.",
+    "internalNotesAuthorDoctor": "Lékař",
+    "internalNotesAuthorAdmin": "Admin",
+    "internalNotesPlaceholderFromDoctor": "Poznámka pro admina (např. potřebuje potvrzení platby)…",
+    "internalNotesPlaceholderFromAdmin": "Poznámka pro lékaře (např. pacient volal ohledně následného vyšetření)…",
+    "internalNotesPostNote": "Odeslat poznámku",
+    "internalNotesPostFailed": "Nepodařilo se odeslat."
   },
   "patients": {
     "eyebrow": "Záznamy pacientů",
@@ -382,7 +389,16 @@
     "errorEndAfterStart": "Čas konce musí být po čase začátku",
     "errorEndDateAfterStart": "Datum konce musí být stejné nebo pozdější než datum začátku",
     "overlapWarning": "Toto se překrývá s vaším stávajícím oknem {day} {start}–{end}.",
-    "weekViewHelp": "Klepnutím na otevřený termín se označíte jako obsazeni, nebo klepnutím na blokovaný termín jej znovu otevřete. Rezervované termíny jsou zvýrazněny barvou a zde je nelze měnit."
+    "weekViewHelp": "Klepnutím na otevřený termín se označíte jako obsazeni, nebo klepnutím na blokovaný termín jej znovu otevřete. Rezervované termíny jsou zvýrazněny barvou a zde je nelze měnit.",
+    "weekToday": "Dnes",
+    "weekPrevAria": "Předchozí týden",
+    "weekNextAria": "Další týden",
+    "weekClickToBlock": "Klikněte pro zablokování (označit jako zaneprázdněný)",
+    "weekClickToReopen": "Klikněte pro znovuotevření",
+    "weekBookThisTime": "Rezervovat tento čas",
+    "weekLegendOpen": "Otevřeno · klikněte pro rezervaci",
+    "weekLegendBooked": "Rezervováno",
+    "weekLegendBlocked": "Zablokováno"
   },
   "profile": {
     "eyebrow": "Lékař",
@@ -491,7 +507,17 @@
     "savePayoutFailed": "Údaje o výplatě se nepodařilo uložit",
     "payoutSaved": "Údaje o výplatě uloženy",
     "adjustImage": "Upravit obrázek",
-    "adjustPhoto": "Upravit fotografii"
+    "adjustPhoto": "Upravit fotografii",
+    "focalDragAria": "Fokus fotografie — táhněte nebo použijte šipkové klávesy pro přemístění",
+    "focalZoom": "Přiblížit",
+    "focalMoveUp": "Posunout nahoru",
+    "focalMoveLeft": "Posunout vlevo",
+    "focalMoveDown": "Posunout dolů",
+    "focalMoveRight": "Posunout vpravo",
+    "focalReset": "Resetovat",
+    "focalPreviewCard": "Karta",
+    "focalPreviewProfile": "Profil",
+    "focalPreviewAvatar": "Avatar"
   },
   "invoices": {
     "eyebrow": "Přehled fakturace",
@@ -680,7 +706,28 @@
   },
   "consultationChat": {
     "title": "Zprávy ke konzultaci",
-    "description": "Sdílejte s pacientem pokyny specifické pro termín, soubory a kontext pro následnou péči."
+    "description": "Sdílejte s pacientem pokyny specifické pro termín, soubory a kontext pro následnou péči.",
+    "lockReopenTitle": "Znovuotevřít chat pro pacienta",
+    "lockCloseTitle": "Zamknout chat (pacient nemůže odpovědět)",
+    "lockReopenLabel": "Znovuotevřít",
+    "lockLabel": "Zamknout",
+    "paymentBannerPatient": "Dokončete platbu pro zahájení chatu s vaším lékařem.",
+    "paymentBannerDoctor": "Pacient nedokončil platbu — chat není k dispozici, dokud není rezervace zaplacena.",
+    "lockedBanner": "Okno chatu je zavřené. Kontaktujte svého lékaře pro znovuotevření.",
+    "loadingSr": "Načítání zpráv…",
+    "emptyTitle": "Zatím žádné zprávy.",
+    "emptyBodyCanSend": "Začněte konverzaci níže nebo přiložte dokument.",
+    "emptyBodyLocked": "Okno chatu je momentálně uzavřeno.",
+    "removeFileAria": "Odstranit soubor",
+    "attachFileLabel": "Připojit soubor (PDF / obrázek)",
+    "uploading": "Nahrávání…",
+    "upload": "Nahrát",
+    "placeholder": "Napište zprávu…",
+    "send": "Odeslat",
+    "disabledPaymentPatient": "Dokončete platbu za rezervaci, abyste odemkli chat.",
+    "disabledPaymentDoctor": "Pacient ještě neprovedl platbu.",
+    "disabledLocked": "Chat je uzavřen. Pouze váš lékař ho může znovu otevřít.",
+    "attachmentFallback": "Příloha"
   },
   "consultationDocuments": {
     "sectionDesc": "Vygenerujte vyšetření, předpisy nebo potvrzení o pracovní neschopnosti. Údaje pacienta a vaše registrace se doplní automaticky ze záznamů.",
@@ -1089,7 +1136,28 @@
     "errorEndMustBeAfterStart": "Konec musí být po začátku.",
     "errorInvalidDateTime": "Neplatné datum/čas.",
     "errorPickDates": "Vyberte datum začátku a konce.",
-    "errorInvalidRange": "Neplatný rozsah dat."
+    "errorInvalidRange": "Neplatný rozsah dat.",
+    "sectionConsultations": "Konzultace",
+    "sectionSlots": "Časy",
+    "eventDetailConsultation": "Konzultace",
+    "eventDetailClose": "Zavřít",
+    "eventDetailAppointment": "Schůzka",
+    "eventDetailType": "Typ",
+    "eventDetailDoctor": "Lékař",
+    "eventDetailPatient": "Pacient",
+    "eventDetailCountry": "Země",
+    "eventDetailOrder": "Objednávka",
+    "eventDetailTiming": "Časování",
+    "eventDetailStart": "Začátek",
+    "eventDetailEnd": "Konec",
+    "eventDetailTimezone": "Časové pásmo",
+    "eventDetailLinks": "Odkazy",
+    "eventDetailJoinVideoCall": "Připojit se k videohovoru",
+    "eventDetailUnconfirmed": "Tato žádost ještě nebyla potvrzena.",
+    "eventDetailCancelled": "Tato konzultace byla zrušena.",
+    "eventDetailEnded": "Tato konzultace skončila.",
+    "eventDetailOpensAt": "Odkaz pro připojení se otevře v {time}.",
+    "eventDetailJoinPending": "Odkaz pro připojení se zde objeví, jakmile bude hovor naplánován."
   },
   "messagesPage": {
     "eyebrow": "Zprávy",
@@ -1101,7 +1169,13 @@
     "emptyDescription": "Když vám pacient napíše z placené rezervace, konverzace se zobrazí zde.",
     "patientPrefix": "Pacient: ",
     "youPrefix": "Vy: ",
-    "orderFallbackLabel": "Otevřít termín"
+    "orderFallbackLabel": "Otevřít termín",
+    "searchPlaceholder": "Hledat",
+    "noMatchesLabel": "Žádné shody.",
+    "backAriaLabel": "Zpět na konverzace",
+    "orderLinkTitle": "Otevřít schůzku",
+    "selectConversationTitle": "Vyberte konverzaci",
+    "selectConversationBody": "Vyberte vlákno vlevo pro čtení a odpověď."
   },
   "reports": {
     "eyebrow": "Analýza praxe",

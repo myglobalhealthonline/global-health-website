@@ -37,6 +37,19 @@ type Props = {
   onPrevWeek: () => void;
   onNextWeek: () => void;
   onToday: () => void;
+  /** Copy overrides for the doctor portal (i18n). Admin omits this and
+   *  gets the English defaults — admin is English-by-design. */
+  labels?: {
+    today?: string;
+    prevWeekAria?: string;
+    nextWeekAria?: string;
+    clickToBlock?: string;
+    clickToReopen?: string;
+    bookThisTime?: string;
+    legendOpen?: string;
+    legendBooked?: string;
+    legendBlocked?: string;
+  };
 };
 
 type PositionedItem = {
@@ -198,7 +211,19 @@ export function WeekCalendar({
   onPrevWeek,
   onNextWeek,
   onToday,
+  labels,
 }: Props) {
+  const t = {
+    today: labels?.today ?? "Today",
+    prevWeekAria: labels?.prevWeekAria ?? "Previous week",
+    nextWeekAria: labels?.nextWeekAria ?? "Next week",
+    clickToBlock: labels?.clickToBlock ?? "Click to block (mark busy)",
+    clickToReopen: labels?.clickToReopen ?? "Click to re-open",
+    bookThisTime: labels?.bookThisTime ?? "Book this time",
+    legendOpen: labels?.legendOpen ?? "Open · click to book",
+    legendBooked: labels?.legendBooked ?? "Booked",
+    legendBlocked: labels?.legendBlocked ?? "Blocked",
+  };
   // Positioned blocks per day + the visible hour window (expands to fit early
   // / late items so nothing is clipped).
   const { perDay, startHour, endHour } = useMemo(() => {
@@ -260,18 +285,18 @@ export function WeekCalendar({
             className="rounded-[999px] px-3 py-1.5 text-xs font-semibold transition hover:bg-[var(--portal-well)]"
             style={{ border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
           >
-            Today
+            {t.today}
           </button>
           <IconBtn
             onClick={onPrevWeek}
-            ariaLabel="Previous week"
+            ariaLabel={t.prevWeekAria}
             style={{ width: 32, height: 32, border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
           >
             <ChevronLeft className="size-4" aria-hidden />
           </IconBtn>
           <IconBtn
             onClick={onNextWeek}
-            ariaLabel="Next week"
+            ariaLabel={t.nextWeekAria}
             style={{ width: 32, height: 32, border: "1px solid var(--portal-line-strong)", color: "var(--portal-text)" }}
           >
             <ChevronRight className="size-4" aria-hidden />
@@ -440,8 +465,8 @@ export function WeekCalendar({
                           onClick={() => onToggleSlot(p.item)}
                           title={
                             p.item.status === "OPEN"
-                              ? "Click to block (mark busy)"
-                              : "Click to re-open"
+                              ? t.clickToBlock
+                              : t.clickToReopen
                           }
                           className="gh-week-block overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
                           style={style}
@@ -456,7 +481,7 @@ export function WeekCalendar({
                           key={p.item.id}
                           type="button"
                           onClick={() => onSelectOpenSlot(p.item)}
-                          title="Book this time"
+                          title={t.bookThisTime}
                           className="gh-week-block gh-week-block--open overflow-hidden rounded-md border px-1.5 py-1 text-left transition hover:brightness-105"
                           style={style}
                         >
@@ -501,9 +526,9 @@ export function WeekCalendar({
         className="flex flex-wrap items-center gap-3 px-4 py-2.5 text-xs"
         style={{ borderTop: "1px solid var(--portal-line)", color: "var(--portal-muted)" }}
       >
-        <LegendDot tone="var(--portal-success)" label="Open · click to book" />
-        <LegendDot tone="var(--portal-info)" label="Booked" />
-        <LegendDot tone="var(--portal-danger)" label="Blocked" />
+        <LegendDot tone="var(--portal-success)" label={t.legendOpen} />
+        <LegendDot tone="var(--portal-info)" label={t.legendBooked} />
+        <LegendDot tone="var(--portal-danger)" label={t.legendBlocked} />
       </div>
     </div>
   );

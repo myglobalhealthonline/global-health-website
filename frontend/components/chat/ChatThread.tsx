@@ -26,6 +26,13 @@ type ChatThreadProps = {
   /** When set, replaces the composer with a plain-language reason instead
    *  of the input (DESIGN.md §7 states matrix — disabled chat composer). */
   disabledReason?: string | null;
+  /** Copy overrides (i18n). Admin omits these and gets the English
+   *  defaults — admin is English-by-design. The header title/subtitle
+   *  (panel variant) are admin-only in practice, so they stay English. */
+  emptyTitle?: string;
+  emptyBody?: string;
+  composerPlaceholder?: string;
+  sendLabel?: string;
 };
 
 /**
@@ -44,6 +51,10 @@ export function ChatThread({
   pollIntervalMs = 10_000,
   variant = "panel",
   disabledReason = null,
+  emptyTitle = "No messages yet.",
+  emptyBody = "Start the conversation below.",
+  composerPlaceholder = "Type a message…",
+  sendLabel = "Send",
 }: ChatThreadProps) {
   const [items, setItems] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState("");
@@ -157,8 +168,8 @@ export function ChatThread({
           <div className="gh-chat-empty flex items-center gap-3 rounded-lg px-4 py-3 text-left">
             <Send className="size-4 shrink-0" style={{ color: "var(--portal-muted)" }} aria-hidden />
             <p className="text-xs" style={{ color: "var(--portal-muted)" }}>
-              <span className="font-bold" style={{ color: "var(--portal-text)" }}>No messages yet.</span>{" "}
-              Start the conversation below.
+              <span className="font-bold" style={{ color: "var(--portal-text)" }}>{emptyTitle}</span>{" "}
+              {emptyBody}
             </p>
           </div>
         ) : null}
@@ -204,7 +215,7 @@ export function ChatThread({
             value={draft}
             onChange={onDraftChange}
             onKeyDown={onKeyDown}
-            placeholder="Type a message…"
+            placeholder={composerPlaceholder}
             maxLength={2000}
             className="gh-input gh-chat-textarea flex-1 min-w-0"
           />
@@ -217,7 +228,7 @@ export function ChatThread({
             iconLeft={<Send className="size-4" aria-hidden />}
             className="gh-chat-send"
           >
-            Send
+            {sendLabel}
           </Btn>
         </form>
       )}

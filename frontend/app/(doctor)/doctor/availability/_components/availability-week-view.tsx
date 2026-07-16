@@ -29,7 +29,19 @@ type Props = {
   onSlotsChange?: (slots: DoctorTimeSlotView[]) => void;
   /** Lifted to the page's single error banner (05-005: no second banner here). */
   onError?: (message: string | null) => void;
-  strings: { weekViewHelp: string };
+  strings: {
+    weekViewHelp: string;
+    weekToday?: string;
+    weekPrevAria?: string;
+    weekNextAria?: string;
+    weekClickToBlock?: string;
+    weekClickToReopen?: string;
+    weekBookThisTime?: string;
+    weekLegendOpen?: string;
+    weekLegendBooked?: string;
+    weekLegendBlocked?: string;
+  };
+  eventDetailLabels?: Record<string, string>;
 };
 
 function slotsToItems(slots: DoctorTimeSlotView[]): CalendarItem[] {
@@ -66,6 +78,7 @@ export function DoctorAvailabilityWeekView({
   onSlotsChange,
   onError,
   strings,
+  eventDetailLabels,
 }: Props) {
   const [tz, setTz] = useState(clinicTz);
   const [weekAnchor, setWeekAnchor] = useState(initialWeekAnchor);
@@ -150,6 +163,17 @@ export function DoctorAvailabilityWeekView({
           onPrevWeek={() => goToWeek(addWeeksKey(weekAnchor, -1))}
           onNextWeek={() => goToWeek(addWeeksKey(weekAnchor, 1))}
           onToday={() => goToWeek(todayKey(tz))}
+          labels={{
+            today: strings.weekToday,
+            prevWeekAria: strings.weekPrevAria,
+            nextWeekAria: strings.weekNextAria,
+            clickToBlock: strings.weekClickToBlock,
+            clickToReopen: strings.weekClickToReopen,
+            bookThisTime: strings.weekBookThisTime,
+            legendOpen: strings.weekLegendOpen,
+            legendBooked: strings.weekLegendBooked,
+            legendBlocked: strings.weekLegendBlocked,
+          }}
         />
       </div>
 
@@ -158,6 +182,7 @@ export function DoctorAvailabilityWeekView({
         tz={tz}
         viewerRole="doctor"
         onClose={() => setActiveConsult(null)}
+        labels={eventDetailLabels}
       />
     </div>
   );

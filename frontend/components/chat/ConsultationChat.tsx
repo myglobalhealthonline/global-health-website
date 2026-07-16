@@ -34,6 +34,32 @@ type ConsultationChatProps = {
    *  toggle still renders — thread it through the dialog title/footer if
    *  a caller needs it visible while embedded). */
   variant?: "panel" | "embedded";
+  /** Copy overrides (i18n) — every current caller uses variant="embedded",
+   *  so the panel header/subtitle below stay English (dead code today);
+   *  everything else here does render and takes overrides. */
+  labels?: {
+    lockReopenTitle?: string;
+    lockCloseTitle?: string;
+    lockReopenLabel?: string;
+    lockLabel?: string;
+    paymentBannerPatient?: string;
+    paymentBannerDoctor?: string;
+    lockedBanner?: string;
+    loadingSr?: string;
+    emptyTitle?: string;
+    emptyBodyCanSend?: string;
+    emptyBodyLocked?: string;
+    removeFileAria?: string;
+    attachFileLabel?: string;
+    uploading?: string;
+    upload?: string;
+    placeholder?: string;
+    send?: string;
+    disabledPaymentPatient?: string;
+    disabledPaymentDoctor?: string;
+    disabledLocked?: string;
+    attachmentFallback?: string;
+  };
 };
 
 function AttachmentPreview({
@@ -41,14 +67,16 @@ function AttachmentPreview({
   mimeType,
   downloadUrl,
   own,
+  fallbackLabel = "Attachment",
 }: {
   fileName: string | null;
   mimeType: string | null;
   downloadUrl: string | null;
   own: boolean;
+  fallbackLabel?: string;
 }) {
   const isImage = mimeType?.startsWith("image/");
-  const label = fileName ?? "Attachment";
+  const label = fileName ?? fallbackLabel;
 
   const inner = (
     <div
@@ -85,7 +113,33 @@ export function ConsultationChat({
   onToggleLock,
   pollIntervalMs = 10_000,
   variant = "panel",
+  labels,
 }: ConsultationChatProps) {
+  const t = {
+    lockReopenTitle: labels?.lockReopenTitle ?? "Re-open chat for patient",
+    lockCloseTitle: labels?.lockCloseTitle ?? "Lock chat (patient cannot reply)",
+    lockReopenLabel: labels?.lockReopenLabel ?? "Re-open",
+    lockLabel: labels?.lockLabel ?? "Lock",
+    paymentBannerPatient: labels?.paymentBannerPatient ?? "Complete payment to start chatting with your doctor.",
+    paymentBannerDoctor:
+      labels?.paymentBannerDoctor ??
+      "Patient has not completed payment — chat is unavailable until the booking is paid.",
+    lockedBanner: labels?.lockedBanner ?? "Chat window closed. Contact your doctor to re-open.",
+    loadingSr: labels?.loadingSr ?? "Loading messages…",
+    emptyTitle: labels?.emptyTitle ?? "No messages yet.",
+    emptyBodyCanSend: labels?.emptyBodyCanSend ?? "Start the conversation below or attach a document.",
+    emptyBodyLocked: labels?.emptyBodyLocked ?? "The chat window is currently closed.",
+    removeFileAria: labels?.removeFileAria ?? "Remove file",
+    attachFileLabel: labels?.attachFileLabel ?? "Attach a file (PDF / image)",
+    uploading: labels?.uploading ?? "Uploading…",
+    upload: labels?.upload ?? "Upload",
+    placeholder: labels?.placeholder ?? "Type a message…",
+    send: labels?.send ?? "Send",
+    disabledPaymentPatient: labels?.disabledPaymentPatient ?? "Complete your booking payment to unlock the chat.",
+    disabledPaymentDoctor: labels?.disabledPaymentDoctor ?? "Patient has not completed payment yet.",
+    disabledLocked: labels?.disabledLocked ?? "Chat is closed. Only your doctor can re-open it.",
+    attachmentFallback: labels?.attachmentFallback ?? "Attachment",
+  };
   const [items, setItems] = useState<ChatMessage[]>([]);
   const [chatLocked, setChatLocked] = useState(initialChatLocked);
   const [paymentRequired, setPaymentRequired] = useState(false);
@@ -229,7 +283,7 @@ export function ConsultationChat({
         size="sm"
         onClick={handleToggleLock}
         disabled={togglingLock}
-        title={chatLocked ? "Re-open chat for patient" : "Lock chat (patient cannot reply)"}
+        title={chatLocked ? t.lockReopenTitle : t.lockCloseTitle}
         iconLeft={
           chatLocked ? (
             <Unlock className="size-3.5" aria-hidden />
@@ -239,7 +293,7 @@ export function ConsultationChat({
         }
         className="gh-chat-lock-button"
       >
-        {chatLocked ? "Re-open" : "Lock"}
+        {chatLocked ? t.lockReopenLabel : t.lockLabel}
       </Btn>
     ) : null;
 
@@ -275,9 +329,7 @@ export function ConsultationChat({
       {paymentRequired && (
         <div className="gh-chat-alert flex items-center gap-2 px-4 py-2.5 text-sm">
           <Lock className="size-4 shrink-0" aria-hidden />
-          {viewerRole === "PATIENT"
-            ? "Complete payment to start chatting with your doctor."
-            : "Patient has not completed payment — chat is unavailable until the booking is paid."}
+          {viewerRole === "PATIENT" ? t.paymentBannerPatient : t.paymentBannerDoctor}
         </div>
       )}
 
@@ -285,7 +337,7 @@ export function ConsultationChat({
       {!paymentRequired && chatLocked && viewerRole === "PATIENT" && (
         <div className="gh-chat-alert flex items-center gap-2 px-4 py-2.5 text-sm">
           <Lock className="size-4 shrink-0" aria-hidden />
-          Chat window closed. Contact your doctor to re-open.
+          {t.lockedBanner}
         </div>
       )}
 
@@ -307,7 +359,7 @@ export function ConsultationChat({
         {loading && items.length === 0 && (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="size-5 animate-spin" style={{ color: "var(--portal-muted)" }} aria-hidden />
-            <span className="sr-only">Loading messages…</span>
+            <span className="sr-only">{t.loadingSr}</span>
           </div>
         )}
 
@@ -315,10 +367,8 @@ export function ConsultationChat({
           <div className="gh-chat-empty flex items-center gap-3 rounded-lg px-4 py-3 text-left">
             <Send className="size-4 shrink-0" style={{ color: "var(--portal-muted)" }} aria-hidden />
             <p className="text-xs" style={{ color: "var(--portal-muted)" }}>
-              <span className="font-bold" style={{ color: "var(--portal-text)" }}>No messages yet.</span>{" "}
-              {canSend
-                ? "Start the conversation below or attach a document."
-                : "The chat window is currently closed."}
+              <span className="font-bold" style={{ color: "var(--portal-text)" }}>{t.emptyTitle}</span>{" "}
+              {canSend ? t.emptyBodyCanSend : t.emptyBodyLocked}
             </p>
           </div>
         )}
@@ -342,6 +392,7 @@ export function ConsultationChat({
                       mimeType={m.mimeType}
                       downloadUrl={m.downloadUrl}
                       own={own}
+                      fallbackLabel={t.attachmentFallback}
                     />
                   ) : null}
                   {m.body && (
@@ -374,7 +425,7 @@ export function ConsultationChat({
             onClick={() => setPendingFile(null)}
             className="transition hover:opacity-70"
             style={{ color: "var(--portal-muted)" }}
-            aria-label="Remove file"
+            aria-label={t.removeFileAria}
           >
             <X className="size-4" />
           </button>
@@ -386,7 +437,7 @@ export function ConsultationChat({
             disabled={uploading}
             loading={uploading}
           >
-            {uploading ? "Uploading…" : "Upload"}
+            {uploading ? t.uploading : t.upload}
           </Btn>
         </div>
       )}
@@ -400,13 +451,13 @@ export function ConsultationChat({
             accept=".pdf,.jpg,.jpeg,.png,.webp"
             className="sr-only"
             onChange={onFileChange}
-            aria-label="Attach file"
+            aria-label={t.attachFileLabel}
           />
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            title="Attach a file (PDF / image)"
-            aria-label="Attach a file (PDF / image)"
+            title={t.attachFileLabel}
+            aria-label={t.attachFileLabel}
             className="gh-chat-attach shrink-0 rounded-md p-2 transition hover:bg-[var(--portal-well)]"
             style={{ color: "var(--portal-muted)" }}
           >
@@ -418,7 +469,7 @@ export function ConsultationChat({
             value={draft}
             onChange={onDraftChange}
             onKeyDown={onKeyDown}
-            placeholder="Type a message…"
+            placeholder={t.placeholder}
             maxLength={2000}
             className="gh-input gh-chat-textarea min-w-0 flex-1"
           />
@@ -431,16 +482,16 @@ export function ConsultationChat({
             iconLeft={<Send className="size-4" aria-hidden />}
             className="gh-chat-send"
           >
-            Send
+            {t.send}
           </Btn>
         </form>
       ) : (
         <div className="gh-chat-disabled px-4 py-3 text-center text-xs font-medium" style={{ color: "var(--portal-muted)" }}>
           {paymentRequired
             ? viewerRole === "PATIENT"
-              ? "Complete your booking payment to unlock the chat."
-              : "Patient has not completed payment yet."
-            : "Chat is closed. Only your doctor can re-open it."}
+              ? t.disabledPaymentPatient
+              : t.disabledPaymentDoctor
+            : t.disabledLocked}
         </div>
       )}
     </div>

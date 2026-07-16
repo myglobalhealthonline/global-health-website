@@ -432,6 +432,18 @@ export function DoctorIdentityForm({
             focalY={focalDraft.focalY}
             zoom={focalDraft.zoom}
             onChange={setFocalDraft}
+            labels={{
+              dragAria: strings.focalDragAria,
+              zoom: strings.focalZoom,
+              moveUp: strings.focalMoveUp,
+              moveLeft: strings.focalMoveLeft,
+              moveDown: strings.focalMoveDown,
+              moveRight: strings.focalMoveRight,
+              reset: strings.focalReset,
+              previewCard: strings.focalPreviewCard,
+              previewProfile: strings.focalPreviewProfile,
+              previewAvatar: strings.focalPreviewAvatar,
+            }}
           />
         </PortalDialog>
       ) : null}

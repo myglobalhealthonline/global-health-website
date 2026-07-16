@@ -203,7 +203,14 @@
     "bookingNotes": "Buchungsnotizen",
     "openPatientChart": "Patientenakte öffnen",
     "editHealthDataHint": "Gesundheitsdaten bearbeiten: BMI, Blutdruck, Allergien, chronische Erkrankungen, Familienanamnese, soziale Gewohnheiten, übliche Medikation.",
-    "tabsAriaLabel": "Terminabschnitte"
+    "tabsAriaLabel": "Terminabschnitte",
+    "internalNotesEmptyState": "Noch keine internen Notizen.",
+    "internalNotesAuthorDoctor": "Arzt",
+    "internalNotesAuthorAdmin": "Admin",
+    "internalNotesPlaceholderFromDoctor": "Notiz für Admin (z. B. benötigt Zahlungsbestätigung)…",
+    "internalNotesPlaceholderFromAdmin": "Notiz für Arzt (z. B. Patient hat wegen Nachsorge angerufen)…",
+    "internalNotesPostNote": "Notiz posten",
+    "internalNotesPostFailed": "Konnte nicht posten."
   },
   "patients": {
     "eyebrow": "Patientenakten",
@@ -382,7 +389,16 @@
     "errorEndAfterStart": "Die Endzeit muss nach der Startzeit liegen",
     "errorEndDateAfterStart": "Das Enddatum muss am oder nach dem Startdatum liegen",
     "overlapWarning": "Dies überschneidet sich mit Ihrem bestehenden Zeitfenster {day} {start}–{end}.",
-    "weekViewHelp": "Klicken Sie auf ein offenes Zeitfenster, um sich als beschäftigt zu markieren, oder auf ein blockiertes, um es wieder zu öffnen. Gebuchte Termine heben sich farblich ab und können hier nicht geändert werden."
+    "weekViewHelp": "Klicken Sie auf ein offenes Zeitfenster, um sich als beschäftigt zu markieren, oder auf ein blockiertes, um es wieder zu öffnen. Gebuchte Termine heben sich farblich ab und können hier nicht geändert werden.",
+    "weekToday": "Heute",
+    "weekPrevAria": "Vorherige Woche",
+    "weekNextAria": "Nächste Woche",
+    "weekClickToBlock": "Klicken, um zu blockieren (beschäftigt markieren)",
+    "weekClickToReopen": "Klicken, um wieder zu öffnen",
+    "weekBookThisTime": "Diese Zeit buchen",
+    "weekLegendOpen": "Offen · klicken, um zu buchen",
+    "weekLegendBooked": "Gebucht",
+    "weekLegendBlocked": "Blockiert"
   },
   "profile": {
     "eyebrow": "Arzt",
@@ -491,7 +507,17 @@
     "savePayoutFailed": "Auszahlungsdaten konnten nicht gespeichert werden",
     "payoutSaved": "Auszahlungsdaten gespeichert",
     "adjustImage": "Bild anpassen",
-    "adjustPhoto": "Foto anpassen"
+    "adjustPhoto": "Foto anpassen",
+    "focalDragAria": "Foto-Fokuspunkt — ziehen oder Pfeiltasten verwenden, um neu zu positionieren",
+    "focalZoom": "Zoom",
+    "focalMoveUp": "Nach oben bewegen",
+    "focalMoveLeft": "Nach links bewegen",
+    "focalMoveDown": "Nach unten bewegen",
+    "focalMoveRight": "Nach rechts bewegen",
+    "focalReset": "Zurücksetzen",
+    "focalPreviewCard": "Karte",
+    "focalPreviewProfile": "Profil",
+    "focalPreviewAvatar": "Avatar"
   },
   "invoices": {
     "eyebrow": "Abrechnungsübersicht",
@@ -680,7 +706,28 @@
   },
   "consultationChat": {
     "title": "Konsultationsnachrichten",
-    "description": "Teilen Sie terminspezifische Anweisungen, Dateien und Nachsorgekontext mit dem Patienten."
+    "description": "Teilen Sie terminspezifische Anweisungen, Dateien und Nachsorgekontext mit dem Patienten.",
+    "lockReopenTitle": "Chat für den Patienten wieder öffnen",
+    "lockCloseTitle": "Chat sperren (Patient kann nicht antworten)",
+    "lockReopenLabel": "Wieder öffnen",
+    "lockLabel": "Sperren",
+    "paymentBannerPatient": "Zahlung abschließen, um mit Ihrem Arzt zu chatten.",
+    "paymentBannerDoctor": "Patient hat die Zahlung nicht abgeschlossen — Chat ist bis zur Bezahlung der Buchung nicht verfügbar.",
+    "lockedBanner": "Chatfenster geschlossen. Kontaktieren Sie Ihren Arzt, um es wieder zu öffnen.",
+    "loadingSr": "Nachrichten werden geladen…",
+    "emptyTitle": "Noch keine Nachrichten.",
+    "emptyBodyCanSend": "Beginnen Sie das Gespräch unten oder fügen Sie ein Dokument an.",
+    "emptyBodyLocked": "Das Chatfenster ist derzeit geschlossen.",
+    "removeFileAria": "Datei entfernen",
+    "attachFileLabel": "Datei anhängen (PDF / Bild)",
+    "uploading": "Hochladen…",
+    "upload": "Hochladen",
+    "placeholder": "Nachricht eingeben…",
+    "send": "Senden",
+    "disabledPaymentPatient": "Vervollständigen Sie Ihre Buchungszahlung, um den Chat freizuschalten.",
+    "disabledPaymentDoctor": "Der Patient hat die Zahlung noch nicht abgeschlossen.",
+    "disabledLocked": "Chat ist geschlossen. Nur Ihr Arzt kann ihn wieder öffnen.",
+    "attachmentFallback": "Anhang"
   },
   "consultationDocuments": {
     "sectionDesc": "Erstellen Sie Untersuchungsverordnungen, Rezepte oder Abwesenheitsbescheinigungen. Patientendaten und Ihre Registrierung werden automatisch aus den Akten übernommen.",
@@ -1089,7 +1136,28 @@
     "errorEndMustBeAfterStart": "Das Ende muss nach dem Start liegen.",
     "errorInvalidDateTime": "Ungültiges Datum/Uhrzeit.",
     "errorPickDates": "Wählen Sie ein Start- und Enddatum.",
-    "errorInvalidRange": "Ungültiger Datumsbereich."
+    "errorInvalidRange": "Ungültiger Datumsbereich.",
+    "sectionConsultations": "Konsultationen",
+    "sectionSlots": "Zeiten",
+    "eventDetailConsultation": "Konsultation",
+    "eventDetailClose": "Schließen",
+    "eventDetailAppointment": "Termin",
+    "eventDetailType": "Typ",
+    "eventDetailDoctor": "Arzt",
+    "eventDetailPatient": "Patient",
+    "eventDetailCountry": "Land",
+    "eventDetailOrder": "Bestellung",
+    "eventDetailTiming": "Zeitplan",
+    "eventDetailStart": "Beginn",
+    "eventDetailEnd": "Ende",
+    "eventDetailTimezone": "Zeitzone",
+    "eventDetailLinks": "Links",
+    "eventDetailJoinVideoCall": "Videoanruf beitreten",
+    "eventDetailUnconfirmed": "Diese Anfrage wurde noch nicht bestätigt.",
+    "eventDetailCancelled": "Diese Konsultation wurde abgesagt.",
+    "eventDetailEnded": "Diese Konsultation ist beendet.",
+    "eventDetailOpensAt": "Der Beitrittslink öffnet sich um {time}.",
+    "eventDetailJoinPending": "Der Beitrittslink wird hier angezeigt, sobald der Anruf geplant ist."
   },
   "messagesPage": {
     "eyebrow": "Nachrichten",
@@ -1101,7 +1169,13 @@
     "emptyDescription": "Wenn Ihnen ein Patient aus einer bezahlten Buchung schreibt, erscheint die Unterhaltung hier.",
     "patientPrefix": "Patient: ",
     "youPrefix": "Sie: ",
-    "orderFallbackLabel": "Termin öffnen"
+    "orderFallbackLabel": "Termin öffnen",
+    "searchPlaceholder": "Suche",
+    "noMatchesLabel": "Keine Übereinstimmungen.",
+    "backAriaLabel": "Zurück zu den Konversationen",
+    "orderLinkTitle": "Termin öffnen",
+    "selectConversationTitle": "Wählen Sie eine Konversation",
+    "selectConversationBody": "Wählen Sie einen Thread auf der linken Seite, um zu lesen und zu antworten."
   },
   "reports": {
     "eyebrow": "Praxisanalyse",

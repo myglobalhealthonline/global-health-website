@@ -117,7 +117,13 @@ export default async function AccountBookingsPage({ searchParams }: Props) {
                   ? null
                   : a.bookings.unavailable
               }
-              i18n={{ bookings: a.bookings, payments: a.payments, dashboard: a.dashboard, messages: a.messages }}
+              i18n={{
+                bookings: a.bookings,
+                payments: a.payments,
+                dashboard: a.dashboard,
+                messages: a.messages,
+                consultationChat: a.consultationChat,
+              }}
             />
           </>
         }
@@ -139,6 +145,29 @@ export default async function AccountBookingsPage({ searchParams }: Props) {
                 emptyLabel={a.calendar.emptyDay}
                 emptyHint={a.calendar.emptyDayHint}
                 dayAgendaLabel={a.calendar.dayAgenda}
+                consultationsLabel={a.calendar.sectionConsultations}
+                slotsLabel={a.calendar.sectionSlots}
+                eventDetailLabels={{
+                  consultation: a.calendar.eventDetailConsultation,
+                  close: a.calendar.eventDetailClose,
+                  appointment: a.calendar.eventDetailAppointment,
+                  type: a.calendar.eventDetailType,
+                  doctor: a.calendar.eventDetailDoctor,
+                  patient: a.calendar.eventDetailPatient,
+                  country: a.calendar.eventDetailCountry,
+                  order: a.calendar.eventDetailOrder,
+                  timing: a.calendar.eventDetailTiming,
+                  start: a.calendar.eventDetailStart,
+                  end: a.calendar.eventDetailEnd,
+                  timezone: a.calendar.eventDetailTimezone,
+                  links: a.calendar.eventDetailLinks,
+                  joinVideoCall: a.calendar.eventDetailJoinVideoCall,
+                  unconfirmed: a.calendar.eventDetailUnconfirmed,
+                  cancelled: a.calendar.eventDetailCancelled,
+                  ended: a.calendar.eventDetailEnded,
+                  opensAt: a.calendar.eventDetailOpensAt,
+                  joinPending: a.calendar.eventDetailJoinPending,
+                }}
               />
             ) : (
               <div className="gh-patient-empty-state rounded-[var(--radius-card-sm)] border border-[var(--portal-line)] bg-[var(--portal-surface-elevated)] px-5 py-4">

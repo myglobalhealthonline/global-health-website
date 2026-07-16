@@ -16,10 +16,12 @@ export function DoctorMessagesInbox({
   threads,
   initialSelectedId,
   strings: s,
+  consultationChatLabels,
 }: {
   threads: DoctorMessageThread[];
   initialSelectedId?: string | null;
   strings: MessagesPageStrings;
+  consultationChatLabels?: Record<string, string>;
 }) {
   const items: InboxThread[] = threads.map((t) => ({
     id: t.appointmentId,
@@ -47,11 +49,18 @@ export function DoctorMessagesInbox({
           fileUploader={uploadDoctorChatFile}
           onToggleLock={(open) => toggleDoctorChatLock(thread.id, open)}
           variant="embedded"
+          labels={consultationChatLabels}
         />
       )}
       emptyTitle={s.emptyTitle}
       emptyDescription={s.emptyDescription}
       orderFallbackLabel={s.orderFallbackLabel}
+      searchPlaceholder={s.searchPlaceholder}
+      noMatchesLabel={s.noMatchesLabel}
+      backAriaLabel={s.backAriaLabel}
+      orderLinkTitle={s.orderLinkTitle}
+      selectConversationTitle={s.selectConversationTitle}
+      selectConversationBody={s.selectConversationBody}
     />
   );
 }

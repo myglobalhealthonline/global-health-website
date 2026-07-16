@@ -17,19 +17,48 @@ const DEFAULT_FOCAL: FocalValue = { focalX: 50, focalY: 50, zoom: 1 };
  * Styling reuses portal primitives (gh-btn, gh-input) plus a small
  * `.gh-focal-*` block in app/portal.css for the drag frame + slider.
  */
+/** Copy overrides for the doctor portal (i18n). Admin omits this and gets
+ *  the English defaults — admin is English-by-design. */
+type FocalPointLabels = {
+  dragAria?: string;
+  zoom?: string;
+  moveUp?: string;
+  moveLeft?: string;
+  moveDown?: string;
+  moveRight?: string;
+  reset?: string;
+  previewCard?: string;
+  previewProfile?: string;
+  previewAvatar?: string;
+};
+
 export function FocalPointEditor({
   src,
   focalX,
   focalY,
   zoom,
   onChange,
+  labels,
 }: {
   src: string;
   focalX: number;
   focalY: number;
   zoom: number;
   onChange: (value: FocalValue) => void;
+  labels?: FocalPointLabels;
 }) {
+  const t = {
+    dragAria: labels?.dragAria ?? "Photo focal point — drag or use arrow keys to reposition",
+    zoom: labels?.zoom ?? "Zoom",
+    moveUp: labels?.moveUp ?? "Move up",
+    moveLeft: labels?.moveLeft ?? "Move left",
+    moveDown: labels?.moveDown ?? "Move down",
+    moveRight: labels?.moveRight ?? "Move right",
+    reset: labels?.reset ?? "Reset",
+    previewCard: labels?.previewCard ?? "Card",
+    previewProfile: labels?.previewProfile ?? "Profile",
+    previewAvatar: labels?.previewAvatar ?? "Avatar",
+  };
   const frameRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
 
@@ -100,7 +129,7 @@ export function FocalPointEditor({
           ref={frameRef}
           role="slider"
           tabIndex={0}
-          aria-label="Photo focal point — drag or use arrow keys to reposition"
+          aria-label={t.dragAria}
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={Math.round(focalX)}
@@ -120,7 +149,7 @@ export function FocalPointEditor({
 
         <div className="flex flex-1 flex-col gap-3">
           <label className="flex flex-col gap-1.5">
-            <span className="gh-field-label">Zoom</span>
+            <span className="gh-field-label">{t.zoom}</span>
             <input
               type="range"
               min={1}
@@ -135,11 +164,11 @@ export function FocalPointEditor({
           {/* Directional nudge cluster — keyboard-free way to fine-tune on touch. */}
           <div className="gh-focal-editor-dpad grid w-fit grid-cols-3 gap-1">
             <span />
-            <button type="button" className="gh-btn gh-btn-soft" aria-label="Move up" onClick={() => nudge(0, -2)}>↑</button>
+            <button type="button" className="gh-btn gh-btn-soft" aria-label={t.moveUp} onClick={() => nudge(0, -2)}>↑</button>
             <span />
-            <button type="button" className="gh-btn gh-btn-soft" aria-label="Move left" onClick={() => nudge(-2, 0)}>←</button>
-            <button type="button" className="gh-btn gh-btn-soft" aria-label="Move down" onClick={() => nudge(0, 2)}>↓</button>
-            <button type="button" className="gh-btn gh-btn-soft" aria-label="Move right" onClick={() => nudge(2, 0)}>→</button>
+            <button type="button" className="gh-btn gh-btn-soft" aria-label={t.moveLeft} onClick={() => nudge(-2, 0)}>←</button>
+            <button type="button" className="gh-btn gh-btn-soft" aria-label={t.moveDown} onClick={() => nudge(0, 2)}>↓</button>
+            <button type="button" className="gh-btn gh-btn-soft" aria-label={t.moveRight} onClick={() => nudge(2, 0)}>→</button>
           </div>
 
           <div className="flex justify-end">
@@ -148,7 +177,7 @@ export function FocalPointEditor({
               className="gh-btn gh-btn-ghost"
               onClick={() => onChange(DEFAULT_FOCAL)}
             >
-              <RotateCcw className="size-3.5" /> Reset
+              <RotateCcw className="size-3.5" /> {t.reset}
             </button>
           </div>
         </div>
@@ -156,9 +185,9 @@ export function FocalPointEditor({
 
       {/* Live previews — same img, three ratios that mirror the real render sites. */}
       <div className="gh-focal-editor-previews flex flex-wrap gap-4">
-        <PreviewTile label="Card" ratio="1 / 1.1" src={src} style={style} />
-        <PreviewTile label="Profile" ratio="2 / 3" src={src} style={style} />
-        <PreviewTile label="Avatar" ratio="1 / 1" round src={src} style={style} />
+        <PreviewTile label={t.previewCard} ratio="1 / 1.1" src={src} style={style} />
+        <PreviewTile label={t.previewProfile} ratio="2 / 3" src={src} style={style} />
+        <PreviewTile label={t.previewAvatar} ratio="1 / 1" round src={src} style={style} />
       </div>
     </div>
   );

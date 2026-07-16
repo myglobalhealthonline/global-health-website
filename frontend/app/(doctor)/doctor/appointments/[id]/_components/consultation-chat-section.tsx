@@ -10,9 +10,10 @@ import {
 
 type Props = {
   appointmentId: string;
+  labels?: Record<string, string>;
 };
 
-export function DoctorConsultationChatSection({ appointmentId }: Props) {
+export function DoctorConsultationChatSection({ appointmentId, labels }: Props) {
   return (
     <section className="space-y-3">
       <ConsultationChat
@@ -23,6 +24,7 @@ export function DoctorConsultationChatSection({ appointmentId }: Props) {
         poster={postDoctorMessage}
         fileUploader={uploadDoctorChatFile}
         onToggleLock={(open) => toggleDoctorChatLock(appointmentId, open)}
+        labels={labels}
       />
     </section>
   );

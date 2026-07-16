@@ -111,7 +111,12 @@ type BookingsI18n = {
     typePrescription: string;
     typeHealthTest: string;
     typeHomeDelivery: string;
+    chatEmptyTitle: string;
+    chatEmptyBody: string;
+    chatPlaceholder: string;
+    chatSend: string;
   };
+  consultationChat: Record<string, string>;
 };
 
 const DEFAULT_BOOKINGS_I18N: BookingsI18n = {
@@ -171,6 +176,33 @@ const DEFAULT_BOOKINGS_I18N: BookingsI18n = {
     typePrescription: "Online prescription",
     typeHealthTest: "Health test",
     typeHomeDelivery: "Home delivery",
+    chatEmptyTitle: "No messages yet.",
+    chatEmptyBody: "Start the conversation below.",
+    chatPlaceholder: "Type a message…",
+    chatSend: "Send",
+  },
+  consultationChat: {
+    lockReopenTitle: "Re-open chat for patient",
+    lockCloseTitle: "Lock chat (patient cannot reply)",
+    lockReopenLabel: "Re-open",
+    lockLabel: "Lock",
+    paymentBannerPatient: "Complete payment to start chatting with your doctor.",
+    paymentBannerDoctor: "Patient has not completed payment — chat is unavailable until the booking is paid.",
+    lockedBanner: "Chat window closed. Contact your doctor to re-open.",
+    loadingSr: "Loading messages…",
+    emptyTitle: "No messages yet.",
+    emptyBodyCanSend: "Start the conversation below or attach a document.",
+    emptyBodyLocked: "The chat window is currently closed.",
+    removeFileAria: "Remove file",
+    attachFileLabel: "Attach a file (PDF / image)",
+    uploading: "Uploading…",
+    upload: "Upload",
+    placeholder: "Type a message…",
+    send: "Send",
+    disabledPaymentPatient: "Complete your booking payment to unlock the chat.",
+    disabledPaymentDoctor: "Patient has not completed payment yet.",
+    disabledLocked: "Chat is closed. Only your doctor can re-open it.",
+    attachmentFallback: "Attachment",
   },
 };
 
@@ -847,6 +879,10 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
             fetcher={fetchPatientMessages}
             poster={postPatientMessage}
             variant="embedded"
+            emptyTitle={i18n.messages.chatEmptyTitle}
+            emptyBody={i18n.messages.chatEmptyBody}
+            composerPlaceholder={i18n.messages.chatPlaceholder}
+            sendLabel={i18n.messages.chatSend}
           />
         </PortalDialog>
       ) : null}
@@ -866,6 +902,7 @@ export function BookingsShell({ items, unavailableMessage, i18n = DEFAULT_BOOKIN
             poster={postPatientChatMessage}
             fileUploader={uploadPatientChatFile}
             variant="embedded"
+            labels={i18n.consultationChat}
           />
         </PortalDialog>
       ) : null}

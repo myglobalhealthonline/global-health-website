@@ -444,6 +444,8 @@ export function DoctorCalendarUI({
           tz={tz}
           hideHeader
           emptyLabel={s.noItemsOnDay}
+          consultationsLabel={s.sectionConsultations}
+          slotsLabel={s.sectionSlots}
           onSelectConsultation={openEvent}
           renderSlotAction={(item) => {
             if (item.status !== "OPEN" && item.status !== "BLOCKED") return null;
@@ -633,6 +635,27 @@ export function DoctorCalendarUI({
         tz={tz}
         onClose={() => setActiveItem(null)}
         viewerRole="doctor"
+        labels={{
+          consultation: s.eventDetailConsultation,
+          close: s.eventDetailClose,
+          appointment: s.eventDetailAppointment,
+          type: s.eventDetailType,
+          doctor: s.eventDetailDoctor,
+          patient: s.eventDetailPatient,
+          country: s.eventDetailCountry,
+          order: s.eventDetailOrder,
+          timing: s.eventDetailTiming,
+          start: s.eventDetailStart,
+          end: s.eventDetailEnd,
+          timezone: s.eventDetailTimezone,
+          links: s.eventDetailLinks,
+          joinVideoCall: s.eventDetailJoinVideoCall,
+          unconfirmed: s.eventDetailUnconfirmed,
+          cancelled: s.eventDetailCancelled,
+          ended: s.eventDetailEnded,
+          opensAt: s.eventDetailOpensAt,
+          joinPending: s.eventDetailJoinPending,
+        }}
       />
     </div>
   );

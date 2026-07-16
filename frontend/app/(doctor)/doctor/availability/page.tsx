@@ -80,6 +80,7 @@ export default async function DoctorAvailabilityPage() {
         countryTimeZone={clinicTimezone}
         strings={d.availability}
         common={d.common}
+        eventDetailStrings={d.calendar}
       />
     </>
   );

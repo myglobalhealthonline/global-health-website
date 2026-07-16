@@ -55,6 +55,12 @@ export function MessagesInbox({
   emptyTitle = "No conversations",
   emptyDescription = "Messages will appear here.",
   orderFallbackLabel = "Open appointment",
+  searchPlaceholder = "Search",
+  noMatchesLabel = "No matches.",
+  backAriaLabel = "Back to conversations",
+  orderLinkTitle = "Open the appointment",
+  selectConversationTitle = "Select a conversation",
+  selectConversationBody = "Choose a thread on the left to read and reply.",
 }: {
   threads: InboxThread[];
   renderChat: (thread: InboxThread) => ReactNode;
@@ -63,6 +69,12 @@ export function MessagesInbox({
   emptyDescription?: string;
   /** Link label used when a thread has no `orderNumber` (still navigates via `orderHref`). */
   orderFallbackLabel?: string;
+  searchPlaceholder?: string;
+  noMatchesLabel?: string;
+  backAriaLabel?: string;
+  orderLinkTitle?: string;
+  selectConversationTitle?: string;
+  selectConversationBody?: string;
 }) {
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(
@@ -125,7 +137,7 @@ export function MessagesInbox({
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search"
+            placeholder={searchPlaceholder}
             className="w-full rounded-full border py-2 pl-9 pr-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--portal-focus)]"
             style={{ borderColor: line, background: surface, color: text }}
           />
@@ -203,7 +215,7 @@ export function MessagesInbox({
           })}
           {filtered.length === 0 ? (
             <li className="px-3.5 py-6 text-center text-sm" style={{ color: muted }}>
-              No matches.
+              {noMatchesLabel}
             </li>
           ) : null}
         </ul>
@@ -228,7 +240,7 @@ export function MessagesInbox({
                 onClick={() => setSelectedId(null)}
                 className="inline-flex size-8 items-center justify-center rounded-full md:hidden"
                 style={{ color: muted }}
-                aria-label="Back to conversations"
+                aria-label={backAriaLabel}
               >
                 <ArrowLeft className="size-4" aria-hidden />
               </button>
@@ -236,7 +248,7 @@ export function MessagesInbox({
                 href={selected.orderHref}
                 className="rounded px-1.5 py-0.5 font-mono text-portal-meta font-bold underline-offset-2 hover:underline"
                 style={{ background: surfaceSoft, color: primary }}
-                title="Open the appointment"
+                title={orderLinkTitle}
               >
                 {selected.orderNumber ?? orderFallbackLabel}
               </Link>
@@ -259,10 +271,10 @@ export function MessagesInbox({
             <div className="text-center">
               <MessageSquare className="mx-auto size-7" style={{ color: muted }} aria-hidden />
               <p className="mt-3 text-sm font-bold" style={{ color: text }}>
-                Select a conversation
+                {selectConversationTitle}
               </p>
               <p className="mt-1 text-sm" style={{ color: muted }}>
-                Choose a thread on the left to read and reply.
+                {selectConversationBody}
               </p>
             </div>
           </div>

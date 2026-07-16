@@ -203,7 +203,14 @@
     "bookingNotes": "Note de rezervare",
     "openPatientChart": "Deschide fișa pacientului",
     "editHealthDataHint": "Editați datele de sănătate: IMC, tensiune arterială, alergii, boli cronice, istoric familial, obiceiuri sociale, medicație obișnuită.",
-    "tabsAriaLabel": "Secțiuni programare"
+    "tabsAriaLabel": "Secțiuni programare",
+    "internalNotesEmptyState": "Nu există note interne încă.",
+    "internalNotesAuthorDoctor": "Medic",
+    "internalNotesAuthorAdmin": "Admin",
+    "internalNotesPlaceholderFromDoctor": "Notă pentru admin (de exemplu, necesită confirmarea plății)…",
+    "internalNotesPlaceholderFromAdmin": "Notă pentru medic (de exemplu, pacientul a sunat pentru un follow-up)…",
+    "internalNotesPostNote": "Publică notă",
+    "internalNotesPostFailed": "Nu s-a putut publica."
   },
   "patients": {
     "eyebrow": "Fișe pacienți",
@@ -382,7 +389,16 @@
     "errorEndAfterStart": "Ora de sfârșit trebuie să fie după ora de început",
     "errorEndDateAfterStart": "Data de sfârșit trebuie să fie la sau după data de început",
     "overlapWarning": "Aceasta se suprapune cu fereastra dvs. existentă {day} {start}–{end}.",
-    "weekViewHelp": "Faceți clic pe un interval deschis pentru a vă marca ocupat, sau pe unul blocat pentru a-l redeschide. Programările rezervate se evidențiază prin culoare și nu pot fi modificate aici."
+    "weekViewHelp": "Faceți clic pe un interval deschis pentru a vă marca ocupat, sau pe unul blocat pentru a-l redeschide. Programările rezervate se evidențiază prin culoare și nu pot fi modificate aici.",
+    "weekToday": "Astăzi",
+    "weekPrevAria": "Săptămâna trecută",
+    "weekNextAria": "Săptămâna următoare",
+    "weekClickToBlock": "Click pentru a bloca (a marca ocupat)",
+    "weekClickToReopen": "Click pentru a redeschide",
+    "weekBookThisTime": "Rezervă acest timp",
+    "weekLegendOpen": "Deschis · click pentru a rezerva",
+    "weekLegendBooked": "Rezervat",
+    "weekLegendBlocked": "Blocat"
   },
   "profile": {
     "eyebrow": "Medic",
@@ -491,7 +507,17 @@
     "savePayoutFailed": "Detaliile de plată nu au putut fi salvate",
     "payoutSaved": "Detalii de plată salvate",
     "adjustImage": "Ajustați imaginea",
-    "adjustPhoto": "Ajustați fotografia"
+    "adjustPhoto": "Ajustați fotografia",
+    "focalDragAria": "Punct focal foto — trage sau folosește tastele săgeată pentru a repoziționa",
+    "focalZoom": "Zoom",
+    "focalMoveUp": "Mută în sus",
+    "focalMoveLeft": "Mută la stânga",
+    "focalMoveDown": "Mută în jos",
+    "focalMoveRight": "Mută la dreapta",
+    "focalReset": "Resetează",
+    "focalPreviewCard": "Card",
+    "focalPreviewProfile": "Profil",
+    "focalPreviewAvatar": "Avatar"
   },
   "invoices": {
     "eyebrow": "Vizibilitate facturare",
@@ -680,7 +706,28 @@
   },
   "consultationChat": {
     "title": "Mesagerie consultație",
-    "description": "Partajați instrucțiuni specifice programării, fișiere și context de urmărire cu pacientul."
+    "description": "Partajați instrucțiuni specifice programării, fișiere și context de urmărire cu pacientul.",
+    "lockReopenTitle": "Redeschide chatul pentru pacient",
+    "lockCloseTitle": "Blochează chatul (pacientul nu poate răspunde)",
+    "lockReopenLabel": "Redeschide",
+    "lockLabel": "Blochează",
+    "paymentBannerPatient": "Finalizați plata pentru a începe conversația cu medicul dumneavoastră.",
+    "paymentBannerDoctor": "Pacientul nu a finalizat plata — chatul nu este disponibil până când rezervarea nu este plătită.",
+    "lockedBanner": "Fereastra de chat este închisă. Contactați medicul dumneavoastră pentru a redeschide.",
+    "loadingSr": "Se încarcă mesajele…",
+    "emptyTitle": "Încă nu sunt mesaje.",
+    "emptyBodyCanSend": "Începeți conversația mai jos sau atașați un document.",
+    "emptyBodyLocked": "Fereastra de chat este în prezent închisă.",
+    "removeFileAria": "Elimină fișierul",
+    "attachFileLabel": "Atașează un fișier (PDF / imagine)",
+    "uploading": "Se încarcă…",
+    "upload": "Încarcă",
+    "placeholder": "Scrie un mesaj…",
+    "send": "Trimite",
+    "disabledPaymentPatient": "Finalizează plata rezervării pentru a debloca chatul.",
+    "disabledPaymentDoctor": "Pacientul nu a finalizat încă plata.",
+    "disabledLocked": "Chatul este închis. Numai medicul tău îl poate redeschide.",
+    "attachmentFallback": "Atașament"
   },
   "consultationDocuments": {
     "sectionDesc": "Generați analize, rețete sau adeverințe de absență. Datele pacientului și înregistrarea dvs. sunt completate automat din evidențe.",
@@ -1089,7 +1136,28 @@
     "errorEndMustBeAfterStart": "Sfârșitul trebuie să fie după început.",
     "errorInvalidDateTime": "Dată/oră nevalidă.",
     "errorPickDates": "Alegeți o dată de început și de sfârșit.",
-    "errorInvalidRange": "Interval de date nevalid."
+    "errorInvalidRange": "Interval de date nevalid.",
+    "sectionConsultations": "Consultații",
+    "sectionSlots": "Sloturi",
+    "eventDetailConsultation": "Consultație",
+    "eventDetailClose": "Închide",
+    "eventDetailAppointment": "Programare",
+    "eventDetailType": "Tip",
+    "eventDetailDoctor": "Medic",
+    "eventDetailPatient": "Pacient",
+    "eventDetailCountry": "Țară",
+    "eventDetailOrder": "Comandă",
+    "eventDetailTiming": "Programare",
+    "eventDetailStart": "Început",
+    "eventDetailEnd": "Sfârșit",
+    "eventDetailTimezone": "Fus orar",
+    "eventDetailLinks": "Linkuri",
+    "eventDetailJoinVideoCall": "Alătură-te apelului video",
+    "eventDetailUnconfirmed": "Această solicitare nu a fost confirmată încă.",
+    "eventDetailCancelled": "Această consultație a fost anulată.",
+    "eventDetailEnded": "Această consultație s-a încheiat.",
+    "eventDetailOpensAt": "Linkul de alăturare se deschide la {time}.",
+    "eventDetailJoinPending": "Linkul de alăturare va apărea aici odată ce apelul este programat."
   },
   "messagesPage": {
     "eyebrow": "Mesaje",
@@ -1101,7 +1169,13 @@
     "emptyDescription": "Când un pacient vă scrie dintr-o rezervare plătită, conversația apare aici.",
     "patientPrefix": "Pacient: ",
     "youPrefix": "Dvs.: ",
-    "orderFallbackLabel": "Deschide programarea"
+    "orderFallbackLabel": "Deschide programarea",
+    "searchPlaceholder": "Caută",
+    "noMatchesLabel": "Niciun rezultat.",
+    "backAriaLabel": "Înapoi la conversații",
+    "orderLinkTitle": "Deschide programarea",
+    "selectConversationTitle": "Selectează o conversație",
+    "selectConversationBody": "Alege un fir pe stânga pentru a citi și a răspunde."
   },
   "reports": {
     "eyebrow": "Analize de practică",

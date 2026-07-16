@@ -46,6 +46,11 @@ type Props = {
   /** Skip the internal date header — for hosts (day drawer) that already
    *  render the date as their own title. */
   hideHeader?: boolean;
+  /** Section headings above the two lists. Default English — every current
+   *  caller passes hideHeader, so "Pick a day"/"Select a day" (header-only
+   *  copy) never renders; these two labels do render and take overrides. */
+  consultationsLabel?: string;
+  slotsLabel?: string;
 };
 
 function consultationBadgeClass(status: string): string {
@@ -87,6 +92,8 @@ export function DayAgenda({
   renderSlotAction,
   showDoctorName,
   hideHeader = false,
+  consultationsLabel = "Consultations",
+  slotsLabel = "Slots",
 }: Props) {
   const consultations = items.filter((i) => i.kind === "consultation");
   const slots = items.filter((i) => i.kind === "slot");
@@ -148,7 +155,7 @@ export function DayAgenda({
             {consultations.length > 0 ? (
               <div>
                 <p className="mb-2 text-portal-thead font-bold uppercase tracking-[0.12em]" style={{ color: "var(--portal-muted)" }}>
-                  Consultations
+                  {consultationsLabel}
                 </p>
                 {/* min-w-0 on ul+li: without it, the badge's min-content
                     (ignoring truncate/ellipsis) blows out the implicit grid
@@ -207,7 +214,7 @@ export function DayAgenda({
             {slots.length > 0 ? (
               <div>
                 <p className="mb-2 text-portal-thead font-bold uppercase tracking-[0.12em]" style={{ color: "var(--portal-muted)" }}>
-                  Slots
+                  {slotsLabel}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {slots.map((item) => (

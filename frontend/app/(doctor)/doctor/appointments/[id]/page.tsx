@@ -626,7 +626,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                     description={d.appointmentDetail.patientChatDesc}
                   >
                     <div className="gh-form-section__span-2">
-                      <DoctorConsultationChatSection appointmentId={appointment.id} />
+                      <DoctorConsultationChatSection appointmentId={appointment.id} labels={d.consultationChat} />
                     </div>
                   </FormSection>
                 </div>
@@ -641,6 +641,15 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       initialItems={messages}
                       postEndpoint={`/api/doctor/appointments/${appointment.id}/internal-messages`}
                       currentRole="DOCTOR"
+                      labels={{
+                        emptyState: d.appointmentDetail.internalNotesEmptyState,
+                        authorDoctor: d.appointmentDetail.internalNotesAuthorDoctor,
+                        authorAdmin: d.appointmentDetail.internalNotesAuthorAdmin,
+                        placeholderFromDoctor: d.appointmentDetail.internalNotesPlaceholderFromDoctor,
+                        placeholderFromAdmin: d.appointmentDetail.internalNotesPlaceholderFromAdmin,
+                        postNote: d.appointmentDetail.internalNotesPostNote,
+                        postFailed: d.appointmentDetail.internalNotesPostFailed,
+                      }}
                     />
                   </div>
                 </FormSection>

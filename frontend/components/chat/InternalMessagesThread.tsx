@@ -21,16 +21,39 @@ type InternalMessage = {
  * the same component renders on both the doctor and admin sides simply
  * by swapping `postEndpoint` + `currentRole`.
  */
+type InternalMessagesLabels = {
+  emptyState?: string;
+  authorDoctor?: string;
+  authorAdmin?: string;
+  placeholderFromDoctor?: string;
+  placeholderFromAdmin?: string;
+  postNote?: string;
+  postFailed?: string;
+};
+
 export function InternalMessagesThread({
   initialItems,
   postEndpoint,
   currentRole,
+  labels,
 }: {
   appointmentId: string;
   initialItems: InternalMessage[];
   postEndpoint: string;
   currentRole: "DOCTOR" | "ADMIN";
+  /** Copy overrides for the doctor portal (i18n). Admin omits this and
+   *  gets the English defaults — admin is English-by-design. */
+  labels?: InternalMessagesLabels;
 }) {
+  const t = {
+    emptyState: labels?.emptyState ?? "No internal notes yet.",
+    authorDoctor: labels?.authorDoctor ?? "Doctor",
+    authorAdmin: labels?.authorAdmin ?? "Admin",
+    placeholderFromDoctor: labels?.placeholderFromDoctor ?? "Note for admin (e.g. needs payment confirmation)…",
+    placeholderFromAdmin: labels?.placeholderFromAdmin ?? "Note for doctor (e.g. patient called about follow-up)…",
+    postNote: labels?.postNote ?? "Post note",
+    postFailed: labels?.postFailed ?? "Could not post.",
+  };
   const [items, setItems] = useState<InternalMessage[]>(initialItems);
   const [body, setBody] = useState("");
   const [pending, startTransition] = useTransition();
@@ -53,7 +76,7 @@ export function InternalMessagesThread({
         data?: { message?: InternalMessage };
       };
       if (!res.ok || !json.ok) {
-        setError(json.message ?? "Could not post.");
+        setError(json.message ?? t.postFailed);
         return;
       }
       if (json.data?.message) {
@@ -68,14 +91,14 @@ export function InternalMessagesThread({
       <ul className="grid gap-2">
         {items.length === 0 ? (
           <li className="text-portal-compact" style={{ color: "var(--portal-muted)" }}>
-            No internal notes yet.
+            {t.emptyState}
           </li>
         ) : (
           items.map((m) => (
             <li key={m.id} className="gh-chat-note">
               <div className="gh-chat-note__meta flex items-baseline justify-between gap-2">
                 <span>
-                  {m.authorRole === "DOCTOR" ? "Doctor" : "Admin"} · {m.authorName}
+                  {m.authorRole === "DOCTOR" ? t.authorDoctor : t.authorAdmin} · {m.authorName}
                 </span>
                 <time>{formatAppDateTime(m.createdAt)}</time>
               </div>
@@ -91,9 +114,7 @@ export function InternalMessagesThread({
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder={
-            currentRole === "DOCTOR"
-              ? "Note for admin (e.g. needs payment confirmation)…"
-              : "Note for doctor (e.g. patient called about follow-up)…"
+            currentRole === "DOCTOR" ? t.placeholderFromDoctor : t.placeholderFromAdmin
           }
           maxLength={8000}
         />
@@ -104,7 +125,7 @@ export function InternalMessagesThread({
         ) : null}
         <div className="flex justify-end">
           <Btn type="submit" variant="primary" size="sm" disabled={pending || body.trim() === ""} loading={pending}>
-            Post note
+            {t.postNote}
           </Btn>
         </div>
       </form>

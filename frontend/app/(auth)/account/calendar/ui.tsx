@@ -30,12 +30,18 @@ export function PatientCalendarUI({
   emptyLabel = "No consultations on this day.",
   emptyHint,
   dayAgendaLabel = "Day agenda",
+  consultationsLabel,
+  slotsLabel,
+  eventDetailLabels,
 }: {
   items: CalendarItem[];
   defaultTz: string | null;
   emptyLabel?: string;
   emptyHint?: string;
   dayAgendaLabel?: string;
+  consultationsLabel?: string;
+  slotsLabel?: string;
+  eventDetailLabels?: Record<string, string>;
 }) {
   // Render in the patient's booking timezone when we captured one, else the
   // browser's current zone.
@@ -101,6 +107,8 @@ export function PatientCalendarUI({
           hideHeader
           emptyLabel={emptyLabel}
           emptyHint={emptyHint}
+          consultationsLabel={consultationsLabel}
+          slotsLabel={slotsLabel}
           showDoctorName
           onSelectConsultation={openEvent}
         />
@@ -111,6 +119,7 @@ export function PatientCalendarUI({
         tz={tz}
         onClose={() => setActiveItem(null)}
         viewerRole="patient"
+        labels={eventDetailLabels}
       />
     </div>
   );

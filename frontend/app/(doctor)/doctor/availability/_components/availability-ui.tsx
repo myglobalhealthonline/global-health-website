@@ -69,6 +69,8 @@ type Props = {
   countryTimeZone: string;
   strings: AvailabilityStrings;
   common: CommonStrings;
+  /** Event detail drawer copy (d.calendar) — shared with the calendar page's dialog. */
+  eventDetailStrings: Record<string, string>;
 };
 
 export function DoctorAvailabilityUI({
@@ -79,6 +81,7 @@ export function DoctorAvailabilityUI({
   countryTimeZone,
   strings: s,
   common,
+  eventDetailStrings: ed,
 }: Props) {
   const router = useRouter();
   const WEEKDAYS = [
@@ -292,7 +295,39 @@ export function DoctorAvailabilityUI({
               initialWeekAnchor={initialWeekAnchor}
               onSlotsChange={setSlots}
               onError={setError}
-              strings={{ weekViewHelp: s.weekViewHelp }}
+              strings={{
+                weekViewHelp: s.weekViewHelp,
+                weekToday: s.weekToday,
+                weekPrevAria: s.weekPrevAria,
+                weekNextAria: s.weekNextAria,
+                weekClickToBlock: s.weekClickToBlock,
+                weekClickToReopen: s.weekClickToReopen,
+                weekBookThisTime: s.weekBookThisTime,
+                weekLegendOpen: s.weekLegendOpen,
+                weekLegendBooked: s.weekLegendBooked,
+                weekLegendBlocked: s.weekLegendBlocked,
+              }}
+              eventDetailLabels={{
+                consultation: ed.eventDetailConsultation,
+                close: ed.eventDetailClose,
+                appointment: ed.eventDetailAppointment,
+                type: ed.eventDetailType,
+                doctor: ed.eventDetailDoctor,
+                patient: ed.eventDetailPatient,
+                country: ed.eventDetailCountry,
+                order: ed.eventDetailOrder,
+                timing: ed.eventDetailTiming,
+                start: ed.eventDetailStart,
+                end: ed.eventDetailEnd,
+                timezone: ed.eventDetailTimezone,
+                links: ed.eventDetailLinks,
+                joinVideoCall: ed.eventDetailJoinVideoCall,
+                unconfirmed: ed.eventDetailUnconfirmed,
+                cancelled: ed.eventDetailCancelled,
+                ended: ed.eventDetailEnded,
+                opensAt: ed.eventDetailOpensAt,
+                joinPending: ed.eventDetailJoinPending,
+              }}
             />
           </div>
         </AdminCard>

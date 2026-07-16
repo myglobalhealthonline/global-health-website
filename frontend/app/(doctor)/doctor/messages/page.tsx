@@ -46,6 +46,7 @@ export default async function DoctorMessagesPage({ searchParams }: Props) {
         threads={threads}
         initialSelectedId={sp.open ?? null}
         strings={d.messagesPage}
+        consultationChatLabels={d.consultationChat}
       />
     </>
   );

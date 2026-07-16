@@ -38,6 +38,7 @@ export default async function AccountMessagesPage({ searchParams }: Props) {
         initialOpenChannel={openChannel}
         unavailableMessage={history.ok ? null : a.messages.unavailable}
         i18n={a.messages}
+        consultationChatI18n={a.consultationChat}
       />
     </div>
   );

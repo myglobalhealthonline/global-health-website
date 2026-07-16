@@ -203,7 +203,14 @@
     "bookingNotes": "Notas de la reserva",
     "openPatientChart": "Abrir historia del paciente",
     "editHealthDataHint": "Editar datos de salud: IMC, presión arterial, alergias, enfermedades crónicas, antecedentes familiares, hábitos sociales, medicación habitual.",
-    "tabsAriaLabel": "Secciones de la cita"
+    "tabsAriaLabel": "Secciones de la cita",
+    "internalNotesEmptyState": "No hay notas internas aún.",
+    "internalNotesAuthorDoctor": "Médico",
+    "internalNotesAuthorAdmin": "Admin",
+    "internalNotesPlaceholderFromDoctor": "Nota para el admin (por ejemplo, necesita confirmación de pago)…",
+    "internalNotesPlaceholderFromAdmin": "Nota para el médico (por ejemplo, el paciente llamó sobre el seguimiento)…",
+    "internalNotesPostNote": "Publicar nota",
+    "internalNotesPostFailed": "No se pudo publicar."
   },
   "patients": {
     "eyebrow": "Registros de pacientes",
@@ -382,7 +389,16 @@
     "errorEndAfterStart": "La hora de fin debe ser posterior a la hora de inicio",
     "errorEndDateAfterStart": "La fecha de fin debe ser igual o posterior a la fecha de inicio",
     "overlapWarning": "Esto se superpone con tu franja existente {day} {start}–{end}.",
-    "weekViewHelp": "Haga clic en una franja abierta para marcarse como ocupado, o en una bloqueada para reabrirla. Las citas reservadas destacan en color y no se pueden cambiar aquí."
+    "weekViewHelp": "Haga clic en una franja abierta para marcarse como ocupado, o en una bloqueada para reabrirla. Las citas reservadas destacan en color y no se pueden cambiar aquí.",
+    "weekToday": "Hoy",
+    "weekPrevAria": "Semana anterior",
+    "weekNextAria": "Semana siguiente",
+    "weekClickToBlock": "Haga clic para bloquear (marcar como ocupado)",
+    "weekClickToReopen": "Haga clic para reabrir",
+    "weekBookThisTime": "Reservar esta hora",
+    "weekLegendOpen": "Abierto · haga clic para reservar",
+    "weekLegendBooked": "Reservado",
+    "weekLegendBlocked": "Bloqueado"
   },
   "profile": {
     "eyebrow": "Médico",
@@ -491,7 +507,17 @@
     "savePayoutFailed": "No se pudieron guardar los datos de pago",
     "payoutSaved": "Datos de pago guardados",
     "adjustImage": "Ajustar imagen",
-    "adjustPhoto": "Ajustar foto"
+    "adjustPhoto": "Ajustar foto",
+    "focalDragAria": "Punto focal de la foto — arrastra o usa las teclas de flecha para reposicionar",
+    "focalZoom": "Acercar",
+    "focalMoveUp": "Mover hacia arriba",
+    "focalMoveLeft": "Mover hacia la izquierda",
+    "focalMoveDown": "Mover hacia abajo",
+    "focalMoveRight": "Mover hacia la derecha",
+    "focalReset": "Restablecer",
+    "focalPreviewCard": "Tarjeta",
+    "focalPreviewProfile": "Perfil",
+    "focalPreviewAvatar": "Avatar"
   },
   "invoices": {
     "eyebrow": "Visibilidad de facturación",
@@ -680,7 +706,28 @@
   },
   "consultationChat": {
     "title": "Mensajería de la consulta",
-    "description": "Comparta instrucciones específicas de la cita, archivos y contexto de seguimiento con el paciente."
+    "description": "Comparta instrucciones específicas de la cita, archivos y contexto de seguimiento con el paciente.",
+    "lockReopenTitle": "Reabrir chat para el paciente",
+    "lockCloseTitle": "Bloquear chat (el paciente no puede responder)",
+    "lockReopenLabel": "Reabrir",
+    "lockLabel": "Bloquear",
+    "paymentBannerPatient": "Complete el pago para comenzar a chatear con su doctor.",
+    "paymentBannerDoctor": "El paciente no ha completado el pago — el chat no está disponible hasta que se pague la reserva.",
+    "lockedBanner": "Ventana de chat cerrada. Contacte a su doctor para reabrir.",
+    "loadingSr": "Cargando mensajes…",
+    "emptyTitle": "Aún no hay mensajes.",
+    "emptyBodyCanSend": "Inicie la conversación a continuación o adjunte un documento.",
+    "emptyBodyLocked": "La ventana de chat está actualmente cerrada.",
+    "removeFileAria": "Eliminar archivo",
+    "attachFileLabel": "Adjuntar un archivo (PDF / imagen)",
+    "uploading": "Subiendo…",
+    "upload": "Subir",
+    "placeholder": "Escribe un mensaje…",
+    "send": "Enviar",
+    "disabledPaymentPatient": "Completa el pago de tu reserva para desbloquear el chat.",
+    "disabledPaymentDoctor": "El paciente aún no ha completado el pago.",
+    "disabledLocked": "El chat está cerrado. Solo tu médico puede reabrirlo.",
+    "attachmentFallback": "Adjunto"
   },
   "consultationDocuments": {
     "sectionDesc": "Genere exámenes, recetas o certificados de ausencia. Los datos del paciente y su registro se rellenan automáticamente a partir de los registros.",
@@ -1089,7 +1136,28 @@
     "errorEndMustBeAfterStart": "El fin debe ser posterior al inicio.",
     "errorInvalidDateTime": "Fecha/hora no válida.",
     "errorPickDates": "Elija una fecha de inicio y de fin.",
-    "errorInvalidRange": "Rango de fechas no válido."
+    "errorInvalidRange": "Rango de fechas no válido.",
+    "sectionConsultations": "Consultas",
+    "sectionSlots": "Franja horaria",
+    "eventDetailConsultation": "Consulta",
+    "eventDetailClose": "Cerrar",
+    "eventDetailAppointment": "Cita",
+    "eventDetailType": "Tipo",
+    "eventDetailDoctor": "Doctor",
+    "eventDetailPatient": "Paciente",
+    "eventDetailCountry": "País",
+    "eventDetailOrder": "Orden",
+    "eventDetailTiming": "Horario",
+    "eventDetailStart": "Inicio",
+    "eventDetailEnd": "Fin",
+    "eventDetailTimezone": "Zona horaria",
+    "eventDetailLinks": "Enlaces",
+    "eventDetailJoinVideoCall": "Unirse a la videollamada",
+    "eventDetailUnconfirmed": "Esta solicitud aún no ha sido confirmada.",
+    "eventDetailCancelled": "Esta consulta ha sido cancelada.",
+    "eventDetailEnded": "Esta consulta ha finalizado.",
+    "eventDetailOpensAt": "El enlace para unirse se abre a las {time}.",
+    "eventDetailJoinPending": "El enlace para unirse aparecerá aquí una vez que la llamada esté programada."
   },
   "messagesPage": {
     "eyebrow": "Mensajes",
@@ -1101,7 +1169,13 @@
     "emptyDescription": "Cuando un paciente le escriba desde una reserva pagada, la conversación aparecerá aquí.",
     "patientPrefix": "Paciente: ",
     "youPrefix": "Usted: ",
-    "orderFallbackLabel": "Abrir consulta"
+    "orderFallbackLabel": "Abrir consulta",
+    "searchPlaceholder": "Buscar",
+    "noMatchesLabel": "Sin coincidencias.",
+    "backAriaLabel": "Volver a las conversaciones",
+    "orderLinkTitle": "Abrir la cita",
+    "selectConversationTitle": "Seleccionar una conversación",
+    "selectConversationBody": "Elige un hilo a la izquierda para leer y responder."
   },
   "reports": {
     "eyebrow": "Análisis de la práctica",
