@@ -46,6 +46,7 @@ const surfaceSoft =
 const text = "var(--portal-text, var(--color-text-primary, #111827))";
 const muted = "var(--portal-muted, var(--color-text-muted, #6b7280))";
 const signal = "var(--portal-signal, var(--color-brand-primary, #16a34a))";
+const primary = "var(--portal-primary, var(--color-brand-primary, #1d4b36))";
 
 export function MessagesInbox({
   threads,
@@ -165,8 +166,8 @@ export function MessagesInbox({
                     {t.tag}
                     {unread > 0 ? (
                       <span
-                        className="inline-flex min-w-[18px] items-center justify-center rounded-full px-1.5 text-portal-thead font-bold text-white"
-                        style={{ background: signal }}
+                        className="inline-flex min-w-[18px] items-center justify-center rounded-full px-1.5 text-portal-thead font-bold"
+                        style={{ background: signal, color: "#0b150f" }}
                       >
                         {unread}
                       </span>
@@ -234,7 +235,7 @@ export function MessagesInbox({
               <Link
                 href={selected.orderHref}
                 className="rounded px-1.5 py-0.5 font-mono text-portal-meta font-bold underline-offset-2 hover:underline"
-                style={{ background: surfaceSoft, color: signal }}
+                style={{ background: surfaceSoft, color: primary }}
                 title="Open the appointment"
               >
                 {selected.orderNumber ?? orderFallbackLabel}

@@ -354,14 +354,14 @@ export function AdminShell({
           main column scrolls. On mobile it slides in/out via translate;
           on desktop it's always visible and the main column is offset by
           `lg:pl-[260px]`. */}
-      {navOpen ? (
-        <button
-          type="button"
-          aria-label="Close navigation"
-          onClick={() => setNavOpen(false)}
-          className="fixed inset-0 z-[calc(var(--z-header)-1)] bg-black/40 backdrop-blur-sm lg:hidden"
-        />
-      ) : null}
+      <button
+        type="button"
+        aria-label="Close navigation"
+        aria-hidden={!navOpen}
+        tabIndex={navOpen ? 0 : -1}
+        onClick={() => setNavOpen(false)}
+        className={`gh-portal-nav-scrim lg:hidden${navOpen ? " gh-portal-nav-scrim--open" : ""}`}
+      />
 
       <aside
         ref={navRef}

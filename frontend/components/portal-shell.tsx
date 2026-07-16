@@ -250,14 +250,14 @@ export function PortalShell({
         {c.skipToContent}
       </a>
       {/* Mobile overlay */}
-      {navOpen ? (
-        <button
-          type="button"
-          aria-label={c.closeNavigation}
-          onClick={() => setNavOpen(false)}
-          className="fixed inset-0 z-[calc(var(--z-header)-1)] bg-black/40 backdrop-blur-sm lg:hidden"
-        />
-      ) : null}
+      <button
+        type="button"
+        aria-label={c.closeNavigation}
+        aria-hidden={!navOpen}
+        tabIndex={navOpen ? 0 : -1}
+        onClick={() => setNavOpen(false)}
+        className={`gh-portal-nav-scrim lg:hidden${navOpen ? " gh-portal-nav-scrim--open" : ""}`}
+      />
 
       {/* Sidebar — fixed on every breakpoint. Mobile slide-in via
           translate; on desktop the main column gets `lg:pl-[260px]`

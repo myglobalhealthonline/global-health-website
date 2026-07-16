@@ -55,6 +55,11 @@ export function AppSheet({
     if (open) returnFocusRef.current = document.activeElement as HTMLElement | null;
   }, [open]);
 
+  // Radix autofocuses the first tabbable (the close button), which paints a
+  // focus ring in the header the moment the sheet opens. Focus the panel
+  // itself instead — the trap still holds and Tab reaches close first.
+  const contentRef = useRef<HTMLDivElement>(null);
+
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
@@ -62,8 +67,14 @@ export function AppSheet({
           className={`gh-app-sheet-overlay gh-app-sheet-overlay--${theme}`}
         />
         <Dialog.Content
+          ref={contentRef}
+          tabIndex={-1}
           aria-label={ariaLabel}
           className={`gh-app-sheet gh-app-sheet--${theme} gh-app-sheet--${side} gh-app-sheet--${size}`}
+          onOpenAutoFocus={(e) => {
+            e.preventDefault();
+            contentRef.current?.focus();
+          }}
           onCloseAutoFocus={(e) => {
             if (returnFocusRef.current) {
               e.preventDefault();

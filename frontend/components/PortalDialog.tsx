@@ -44,6 +44,20 @@ export function PortalDialog({
   // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR-safe mount flag, must run post-hydration
   useEffect(() => setMounted(true), []);
 
+  // Deferred unmount: keep the dialog rendered ~200ms after `open` flips false
+  // so the `--closing` exit animation (portal.css) can play; matches the Radix
+  // data-state="closed" choreography AppSheet/AppMenu get for free.
+  const [rendered, setRendered] = useState(open);
+  useEffect(() => {
+    if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- mirrors `open` into deferred-unmount state
+      setRendered(true);
+      return;
+    }
+    const t = setTimeout(() => setRendered(false), 200);
+    return () => clearTimeout(t);
+  }, [open]);
+
   // Callers rarely memoize `onClose` (a fresh arrow/function each render is
   // the norm), so it can't be a dependency below — the effect it would
   // trigger steals focus back to the panel's first element (see below),
@@ -95,10 +109,14 @@ export function PortalDialog({
     };
   }, [open]);
 
-  if (!open || !mounted) return null;
+  if ((!open && !rendered) || !mounted) return null;
 
   return createPortal(
-    <div className="gh-portal-dialog-overlay" role="presentation" onClick={onClose}>
+    <div
+      className={`gh-portal-dialog-overlay${open ? "" : " gh-portal-dialog-overlay--closing"}`}
+      role="presentation"
+      onClick={open ? onClose : undefined}
+    >
       <div
         ref={panelRef}
         role="dialog"

@@ -5153,6 +5153,16 @@ a.gh-appointment-card:hover {
   animation: gh-dialog-in 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Exit — PortalDialog defers unmount ~160ms while these play (see the
+ * `closing` state in PortalDialog.tsx). */
+.gh-portal-dialog-overlay--closing {
+  animation: gh-dialog-fade-out 160ms ease-in forwards;
+}
+
+.gh-portal-dialog-overlay--closing .gh-portal-dialog {
+  animation: gh-dialog-out 160ms ease-in forwards;
+}
+
 .gh-portal-dialog--sm {
   max-width: 560px;
 }
@@ -5175,6 +5185,14 @@ a.gh-appointment-card:hover {
   gap: 12px;
   padding: 20px 20px 16px;
   border-bottom: 1px solid var(--portal-line);
+  /* Forest chrome band — scoped token overrides flip the title (and IconBtn's
+     inline `var(--portal-text)`) to ivory without touching consumers. */
+  --portal-text: #f2f7ef;
+  --portal-muted: rgba(242, 247, 239, 0.72);
+  --portal-well: rgba(255, 255, 255, 0.12);
+  --portal-line: rgba(255, 255, 255, 0.14);
+  background: var(--lux-forest-duotone);
+  color: var(--portal-text);
 }
 
 .gh-portal-dialog__title {
@@ -5201,12 +5219,20 @@ a.gh-appointment-card:hover {
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 20px;
+  /* Ivory canvas under the content — white inputs/cards read as materials on
+     the portal canvas instead of white-on-white flatness; header/footer stay
+     on the panel fill so they frame the body. */
+  background: var(--lux-well-fill);
+  box-shadow: var(--lux-inset-well);
 }
 
 .gh-portal-dialog__body--flush {
   padding: 0;
   display: flex;
   flex-direction: column;
+  /* Flush bodies embed content with its own surface (chat threads) — no well. */
+  background: none;
+  box-shadow: none;
 }
 
 .gh-portal-dialog__footer {
@@ -5238,14 +5264,28 @@ a.gh-appointment-card:hover {
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  .gh-portal-dialog::before {
+  /* Grab handle lives on the forest header band (a panel-level handle would
+     leave a white sliver above the green). */
+  .gh-portal-dialog__header {
+    position: relative;
+    padding-top: 24px;
+  }
+
+  .gh-portal-dialog__header::before {
     content: "";
-    display: block;
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 36px;
     height: 4px;
-    margin: 10px auto 0;
     border-radius: 999px;
-    background: var(--portal-line-strong);
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Mobile bottom-sheet leaves the way it entered — slides back down. */
+  .gh-portal-dialog-overlay--closing .gh-portal-dialog {
+    animation: gh-dialog-sheet-out 200ms cubic-bezier(0.4, 0, 1, 1) forwards;
   }
 }
 
@@ -5253,7 +5293,9 @@ a.gh-appointment-card:hover {
 
 @media (prefers-reduced-motion: reduce)  {
   .gh-portal-dialog-overlay,
-  .gh-portal-dialog {
+  .gh-portal-dialog,
+  .gh-portal-dialog-overlay--closing,
+  .gh-portal-dialog-overlay--closing .gh-portal-dialog {
     animation: none;
   }
 }
@@ -5287,6 +5329,30 @@ a.gh-appointment-card:hover {
 
 .gh-app-sheet--portal .gh-app-sheet__header {
   border-bottom: 1px solid var(--portal-line);
+  /* Forest chrome band — same scoped-token flip as .gh-portal-dialog__header;
+     eyebrow/title/summary text inside header slots inherit the ivory tokens. */
+  --portal-text: #f2f7ef;
+  --portal-muted: rgba(242, 247, 239, 0.72);
+  --portal-well: rgba(255, 255, 255, 0.12);
+  --portal-line: rgba(255, 255, 255, 0.14);
+  background: var(--lux-forest-duotone);
+  color: var(--portal-text);
+}
+
+/* Status pills on the forest header band — their translucent "soft" fills
+ * (e.g. rgba-lime pending) go illegible over dark green. Solid ivory chip
+ * keeps each tone's fg color readable. !important: Pill paints inline. */
+.gh-portal-dialog__header .gh-pill,
+.gh-app-sheet--portal .gh-app-sheet__header .gh-pill {
+  background: rgba(255, 255, 255, 0.94) !important;
+  box-shadow: none !important;
+}
+
+.gh-app-sheet--portal .gh-app-sheet__body {
+  /* Same ivory canvas as .gh-portal-dialog__body — drawer content sits on the
+     portal canvas, not white-on-white. */
+  background: var(--lux-well-fill);
+  box-shadow: var(--lux-inset-well);
 }
 
 .gh-app-sheet--portal .gh-app-sheet__footer {
@@ -5294,16 +5360,99 @@ a.gh-appointment-card:hover {
 }
 
 .gh-app-sheet--portal .gh-app-sheet__close {
-  color: var(--portal-text);
+  /* Sits on the forest header band — translucent ivory chip, not a white one. */
+  color: rgba(242, 247, 239, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.1);
+  transition: background-color 120ms ease, color 120ms ease;
 }
 
 .gh-app-sheet--portal .gh-app-sheet__close:hover {
-  background: var(--portal-well);
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.gh-app-sheet--portal .gh-app-sheet__close:focus-visible {
+  outline: 2px solid var(--portal-accent);
+  outline-offset: 2px;
 }
 
 @media (max-width: 640px) {
   .gh-app-sheet--portal.gh-app-sheet--right {
     border-radius: var(--portal-radius-xl) var(--portal-radius-xl) 0 0;
+  }
+}
+
+/* Mobile nav scrim (admin-shell + portal-shell) — always mounted so it can
+ * fade in/out instead of popping; obsidian tone matches the lux overlay.
+ * Deliberately blur-free: it only shows < lg, where pointer:coarse would
+ * solidify a stacked scrim anyway. */
+.gh-portal-nav-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-header) - 1);
+  background: var(--lux-overlay-fill);
+  border: 0;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+
+.gh-portal-nav-scrim--open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Doctor consultation-documents modal — hand-rolled dialog (pending PortalDialog
+ * migration) aligned with the PortalDialog lux surface: obsidian scrim, ivory
+ * gradient panel, same enter motion. Panel stays opaque (white base under the
+ * translucent fill), so only the scrim blurs — same single-layer pattern as
+ * .gh-portal-dialog-overlay. */
+.gh-doctor-doc-modal {
+  background: var(--lux-overlay-fill);
+  -webkit-backdrop-filter: blur(var(--lux-blur-overlay));
+  backdrop-filter: blur(var(--lux-blur-overlay));
+  animation: gh-dialog-fade 200ms ease-out;
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .gh-doctor-doc-modal {
+    background: rgba(9, 15, 12, 0.72);
+  }
+}
+
+.gh-doctor-doc-modal-panel {
+  border: 1px solid transparent;
+  border-radius: var(--portal-radius-xl);
+  background-color: #ffffff;
+  background-image: var(--lux-modal-fill), var(--lux-card-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: var(--lux-elev-modal);
+  animation: gh-dialog-in 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gh-doctor-doc-modal-body {
+  background: var(--lux-well-fill);
+  box-shadow: var(--lux-inset-well);
+}
+
+.gh-doctor-doc-modal-header {
+  /* Forest chrome band — matches .gh-portal-dialog__header; Tailwind classes
+     inside reference the same scoped tokens. */
+  --portal-text: #f2f7ef;
+  --portal-muted: rgba(242, 247, 239, 0.72);
+  --portal-well: rgba(255, 255, 255, 0.12);
+  --portal-line: rgba(255, 255, 255, 0.14);
+  background: var(--lux-forest-duotone);
+  color: var(--portal-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-doctor-doc-modal,
+  .gh-doctor-doc-modal-panel {
+    animation: none;
   }
 }
 
@@ -5777,12 +5926,14 @@ html::-webkit-scrollbar-thumb:hover {
   font-size: 14px;
   font-weight: 600;
   outline: none;
+  transition: background-color 120ms ease;
 }
 
 .gh-portal-menu-item:hover,
 .gh-portal-menu-item:focus-visible,
 .gh-portal-menu-item[data-highlighted] {
   background: var(--portal-well);
+  box-shadow: var(--lux-inset-well);
 }
 
 /* Container-aware list fallback: the available main-column width, rather than

@@ -484,15 +484,15 @@ export function ConsultationDocumentsModal({
     >
       <button
         type="button"
-        className="absolute inset-0 bg-black/75"
+        className="absolute inset-0"
         aria-label={copy.closeDialogAria}
         onClick={onClose}
       />
       <div
         ref={panelRef}
-        className="gh-doctor-doc-modal-panel relative z-[var(--z-modal)] flex max-h-[min(92svh,900px)] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-[var(--portal-line)] bg-white shadow-2xl"
+        className="gh-doctor-doc-modal-panel relative z-[var(--z-modal)] flex max-h-[min(92svh,900px)] w-full max-w-3xl flex-col overflow-hidden"
       >
-        <div className="gh-doctor-doc-modal-header flex shrink-0 items-center justify-between border-b border-[var(--portal-line)] bg-white px-4 py-3">
+        <div className="gh-doctor-doc-modal-header flex shrink-0 items-center justify-between border-b border-[var(--portal-line)] px-4 py-3">
           <div>
             <h2
               id="consultation-docs-title"
@@ -512,7 +512,7 @@ export function ConsultationDocumentsModal({
           </button>
         </div>
 
-        <div className="gh-doctor-doc-modal-tabs shrink-0 overflow-x-auto border-b border-[var(--portal-line)] bg-white px-3 py-1">
+        <div className="gh-doctor-doc-modal-tabs shrink-0 overflow-x-auto border-b border-[var(--portal-line)] px-3 py-1">
           <PortalTabs
             ariaLabel={copy.title}
             value={tab}
@@ -521,7 +521,7 @@ export function ConsultationDocumentsModal({
           />
         </div>
 
-        <div className="gh-doctor-doc-modal-body min-h-0 flex-1 overflow-y-auto bg-white p-4">
+        <div className="gh-doctor-doc-modal-body min-h-0 flex-1 overflow-y-auto p-4">
           {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
           {success ? <p className="mb-3 text-sm text-emerald-700">{success}</p> : null}
           {editingDocId ? (

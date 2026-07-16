@@ -172,12 +172,13 @@ html::-webkit-scrollbar-thumb:hover {
   --shadow-focus:      0 0 0 3px rgba(29, 75, 54, 0.28);
   --shadow-focus-error:0 0 0 3px rgba(185, 28, 28, 0.28);
 
-  /* Medical pattern tokens */
+  /* Medical pattern tokens. Range per docs/medical-pattern-rollout-plan.md:
+     light backgrounds 0.035-0.07, dark backgrounds 0.08-0.16. */
   --medical-pattern-size: 28px;
   --medical-pattern-color: var(--color-brand-primary);
-  --medical-pattern-opacity: 0.022;
-  --medical-pattern-dark-opacity: 0.04;
-  --medical-pattern-soft-opacity: 0.016;
+  --medical-pattern-opacity: 0.05;
+  --medical-pattern-dark-opacity: 0.1;
+  --medical-pattern-soft-opacity: 0.035;
 
   /* Fluid type — bigger, more confident display sizes. */
   --text-display: clamp(2.5rem, 7vw + 1rem, 6rem);
@@ -2373,6 +2374,51 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   }
 }
 
+/* Exit choreography — shared by PortalDialog, AppSheet and AppMenu so every
+ * overlay leaves the way it arrived instead of vanishing on unmount. */
+@keyframes gh-dialog-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes gh-dialog-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+@keyframes gh-dialog-sheet-out {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
+}
+
+@keyframes gh-menu-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes gh-menu-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
 /* Notification popover / user menu — DESIGN.md §5.10: scale 0.96->1 +
  * fade 200ms from the trigger origin. */
 .gh-notification-popover {
@@ -2522,7 +2568,7 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 
 .gh-medical-pattern-panel::before {
   background-image: url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231d4b36' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E");
-  opacity: 0.03;
+  opacity: var(--medical-pattern-opacity);
 }
 
 /* ── Entry animation system ─────────────────────────────────────────
@@ -2682,6 +2728,21 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   max-height: min(calc(100svh - 2rem), 28rem);
   overflow-y: auto;
   overscroll-behavior: contain;
+  /* Scale from the trigger corner (Radix supplies the origin) so menus grow
+     out of the control that opened them instead of popping in place. */
+  transform-origin: var(--radix-dropdown-menu-content-transform-origin, top right);
+  animation: gh-menu-in 160ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gh-app-menu-content[data-state="closed"] {
+  animation: gh-menu-out 120ms ease-in forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-app-menu-content,
+  .gh-app-menu-content[data-state="closed"] {
+    animation: none;
+  }
 }
 
 /* ── AppSheet — shared side-drawer/bottom-sheet primitive ───────────────
@@ -2782,6 +2843,25 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
   padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
 }
 
+/* Exit states — Radix keeps the node mounted until the closed-state animation
+ * ends, so the scrim fades and the panel slides back out instead of vanishing. */
+.gh-app-sheet-overlay[data-state="closed"] {
+  animation: gh-dialog-fade-out 200ms ease-in forwards;
+}
+
+.gh-app-sheet--right[data-state="closed"] {
+  animation: gh-sheet-slide-out-right 220ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.gh-app-sheet--bottom[data-state="closed"] {
+  animation: gh-dialog-sheet-out 220ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes gh-sheet-slide-out-right {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
 /* Mobile: full-screen sheet, no side offset regardless of `side` prop. */
 @media (max-width: 640px) {
   .gh-app-sheet--right {
@@ -2798,7 +2878,10 @@ a.gh-stat-card:hover .gh-stat-card__icon-tile {
 @media (prefers-reduced-motion: reduce) {
   .gh-app-sheet-overlay,
   .gh-app-sheet--right,
-  .gh-app-sheet--bottom {
+  .gh-app-sheet--bottom,
+  .gh-app-sheet-overlay[data-state="closed"],
+  .gh-app-sheet--right[data-state="closed"],
+  .gh-app-sheet--bottom[data-state="closed"] {
     animation: none;
   }
 }
