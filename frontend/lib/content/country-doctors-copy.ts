@@ -138,6 +138,41 @@ const OVERRIDES: Record<string, DoctorsOverride> = {
     trustCard2Title: "Bewertet auf Doctify",
     trustCard2Subtitle: "45.000 Konsultationen im Jahr 2025",
   },
+  // Portugal — July 2026 SEO brief. "Registado" (not "licenciado") is the
+  // contemporary PT-PT term for regulator registration, and Portugal's roster
+  // spans three regulators (OM physicians, OPP psychologists, ON nutritionists) —
+  // "organismo regulador competente" accommodates that instead of naming just OM.
+  // Same EU Omnibus liability as every other market: the unverifiable "4.9 rating /
+  // 2,000+ reviews" claim must not appear on the Portugal page in any locale.
+  "pt:pt": {
+    theTeamBadge: "Os nossos clínicos",
+    heroLedeTemplate:
+      "Cada clínico abaixo está registado no organismo regulador competente em Portugal, verificado para atendimento online e avaliado por pacientes após cada consulta.",
+    trustCard1Title: "Registado em Portugal",
+    trustCard1Subtitle: "Clínicos totalmente verificados",
+    trustCard2Title: "Avaliado no Doctify",
+    trustCard2Subtitle: "45.000 consultas em 2025",
+  },
+  "pt:en": {
+    trustCard2Title: "Reviewed on Doctify",
+    trustCard2Subtitle: "45,000 consultations in 2025",
+  },
+  "pt:es": {
+    trustCard2Title: "Valorado en Doctify",
+    trustCard2Subtitle: "45.000 consultas en 2025",
+  },
+  "pt:cs": {
+    trustCard2Title: "Hodnoceno na Doctify",
+    trustCard2Subtitle: "45 000 konzultací v roce 2025",
+  },
+  "pt:ro": {
+    trustCard2Title: "Evaluat pe Doctify",
+    trustCard2Subtitle: "45.000 de consultații în 2025",
+  },
+  "pt:de": {
+    trustCard2Title: "Bewertet auf Doctify",
+    trustCard2Subtitle: "45.000 Konsultationen im Jahr 2025",
+  },
 };
 
 /** Merge the country/locale override (if any) onto the `doctors` bundle. */

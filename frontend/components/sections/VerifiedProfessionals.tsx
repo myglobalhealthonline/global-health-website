@@ -42,24 +42,24 @@ const COPY: Record<string, Copy> = {
     ],
   },
   pt: {
-    eyebrow: "Profissionais medicos verificados",
-    heading: "O medico que marca e o medico que o",
+    eyebrow: "Profissionais médicos verificados",
+    heading: "O médico que marca é o médico que o",
     headingAccent: "atende",
     body: (r) =>
-      `Cada clinico na plataforma e identificado, fotografado e inscrito no ${r}. Marca com um medico especifico - nao um call center, nao uma escala anonima - e e esse medico que realiza a sua consulta.`,
+      `Cada clínico na plataforma é identificado, fotografado e inscrito no ${r}. Marca com um médico específico - não um call center, não uma escala anónima - e é esse médico que realiza a sua consulta.`,
     verifyAt: "Verifique qualquer registo em",
     points: [
       {
-        title: "Identificado, nao anonimo",
-        body: "Cada perfil mostra o nome real do medico, o numero de cedula e a divisao de registo. Sem escala oculta.",
+        title: "Identificado, não anónimo",
+        body: "Cada perfil mostra o nome real do médico, o número de cédula e a divisão de registo. Sem escala oculta.",
       },
       {
-        title: "Verificavel de forma independente",
-        body: "Cada registo liga diretamente ao registo publico oficial, para que possa confirma-lo antes de marcar.",
+        title: "Verificável de forma independente",
+        body: "Cada registo liga diretamente ao registo público oficial, para que possa confirmá-lo antes de marcar.",
       },
       {
         title: "Apenas credenciais confirmadas",
-        body: "As credenciais so aparecem depois de verificadas - sem alegacoes vagas nem titulos sem prova.",
+        body: "As credenciais só aparecem depois de verificadas - sem alegações vagas nem títulos sem prova.",
       },
     ],
   },
@@ -194,6 +194,36 @@ const BR_PT_COPY: Copy = {
   ],
 };
 
+// Portugal's own page — July 2026 SEO brief. The shared COPY.pt above stays
+// generic (single-regulator ${r} interpolation) for every OTHER country
+// viewed in pt locale (Ireland/pt, Spain/pt, etc., which each have one
+// regulator). Portugal itself has three — OM (physicians), OPP (psychologists),
+// ON (nutritionists) — so this full override names all three explicitly,
+// same no-leak pattern as BR_PT_COPY (full standalone override, not merged
+// into COPY.pt).
+const PT_PT_COPY: Copy = {
+  eyebrow: "Profissionais médicos e clínicos verificados",
+  heading: "O médico que marca é o médico que o",
+  headingAccent: "atende",
+  body: () =>
+    "Cada clínico na plataforma está identificado pelo nome, tem fotografia e está registado no organismo regulador competente — Ordem dos Médicos (OM), Ordem dos Psicólogos Portugueses (OPP) ou Ordem dos Nutricionistas (ON). Marca com um clínico específico — não um call centre, não uma escala anónima — e é esse clínico que realiza a sua consulta. Verifique qualquer registo em ordemdosmedicos.pt, ordemdospsicologos.pt ou ordemdosnutricionistas.pt.",
+  verifyAt: "Verifique qualquer registo em",
+  points: [
+    {
+      title: "Identificado, não anónimo",
+      body: "Cada perfil contém o nome real do clínico, o número de registo no organismo regulador e a especialidade. Sem escalas ocultas por trás da marcação.",
+    },
+    {
+      title: "Verificável de forma independente",
+      body: "Cada registo tem ligação directa ao registo público oficial, para que possa confirmar antes de marcar.",
+    },
+    {
+      title: "Apenas credenciais confirmadas",
+      body: "As credenciais só aparecem depois de verificadas — sem alegações vagas, sem títulos que não possamos comprovar.",
+    },
+  ],
+};
+
 export function VerifiedProfessionals({
   trust,
   locale,
@@ -205,7 +235,8 @@ export function VerifiedProfessionals({
   country?: string;
 }) {
   const isBrPt = (country ?? "").toUpperCase() === "BR" && (locale ?? "en").toLowerCase() === "pt";
-  const c = isBrPt ? BR_PT_COPY : (COPY[(locale ?? "en").toLowerCase()] ?? COPY.en);
+  const isPtPt = (country ?? "").toUpperCase() === "PT" && (locale ?? "en").toLowerCase() === "pt";
+  const c = isBrPt ? BR_PT_COPY : isPtPt ? PT_PT_COPY : (COPY[(locale ?? "en").toLowerCase()] ?? COPY.en);
   const regulatorName = trust.regulator?.name ?? "the national medical regulator";
   const regulatorUrl = trust.regulator?.url ?? null;
   const eyebrow =
