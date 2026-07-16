@@ -6053,8 +6053,48 @@ html::-webkit-scrollbar-thumb:hover {
   }
 }
 
+/* Month ↔ Week segmented control on the admin calendar. */
+.gh-calendar-view-btn {
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.gh-calendar-view-btn:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .gh-calendar-view-btn[aria-pressed="false"]:hover {
+    background: var(--portal-well);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-calendar-view-btn {
+    transition: none;
+  }
+
+  .gh-calendar-view-btn:active {
+    transform: none;
+  }
+}
+
 /* Week grid — sticky day-header row, current-time indicator, today column
  * tint. Horizontal scroll below 720px is intentional (dense hour grid). */
+
+/* Body scroller. The grid is deliberately tall (160px/hour) so even a 15-min
+ * block fits a time range + patient name — bounding it here keeps the PAGE
+ * short and, critically, gives `.gh-week-header-row` a scroll container to
+ * stick to. Unbounded, the header's only scroll ancestor is the page, which it
+ * can never move within, so the day labels scrolled away with the grid. */
+.gh-week-scroll {
+  overflow: auto;
+  max-height: min(76vh, 940px);
+  overscroll-behavior: contain;
+}
+
 .gh-week-header-row {
   position: sticky;
   top: 0;

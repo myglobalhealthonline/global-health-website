@@ -7,6 +7,16 @@
  * module is only the source of the selectable list + labels.
  */
 
+/**
+ * Zone the admin calendar opens in. Admin spans every country, so it defaults
+ * to Ireland time and the admin can re-read the grid in any curated zone.
+ * Lives here (a plain module) rather than in the calendar's `"use client"` UI
+ * so the server page can build its fetch window in the same zone — exports of
+ * a client module read from a Server Component are client-reference proxies,
+ * not the value.
+ */
+export const ADMIN_CALENDAR_DEFAULT_TZ = "Europe/Dublin";
+
 export const CURATED_TIME_ZONES = [
   "Europe/Dublin",
   "Europe/London",

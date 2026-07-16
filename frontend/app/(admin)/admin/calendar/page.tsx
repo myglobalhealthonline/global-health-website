@@ -3,9 +3,12 @@ import { PageHeader, AdminCard } from "@/components/portal-atoms";
 import { fetchAdminCalendar, fetchAdminDoctors } from "@/lib/admin/admin-api";
 import {
   monthGridRangeIso,
+  parseWeekAnchor,
   parseYearMonth,
+  weekRangeIso,
 } from "@/components/calendar/calendar-utils";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
+import { ADMIN_CALENDAR_DEFAULT_TZ } from "@/lib/timezones";
 import { AdminCalendarUI } from "./ui";
 
 export const dynamic = "force-dynamic";
@@ -13,6 +16,8 @@ export const dynamic = "force-dynamic";
 type Props = {
   searchParams: Promise<{
     ym?: string;
+    wk?: string;
+    view?: string;
     doctorId?: string;
     type?: string;
     country?: string;
@@ -22,7 +27,23 @@ type Props = {
 export default async function AdminCalendarPage({ searchParams }: Props) {
   const sp = await searchParams;
   const { year, month } = parseYearMonth(sp.ym);
-  const { fromIso, toIso } = monthGridRangeIso(year, month);
+  const view = sp.view === "week" ? "week" : "month";
+  const weekAnchor = parseWeekAnchor(sp.wk, ADMIN_CALENDAR_DEFAULT_TZ);
+
+  // Each view fetches only the window it draws. The week window is padded ±1
+  // day because the range is built in the default tz while the admin can
+  // re-read the grid in any other one — the padding covers items that shift a
+  // column under that offset (the month grid already pads for the same reason).
+  const { fromIso, toIso } =
+    view === "week"
+      ? (() => {
+          const w = weekRangeIso(weekAnchor, ADMIN_CALENDAR_DEFAULT_TZ);
+          return {
+            fromIso: new Date(new Date(w.fromIso).getTime() - 86400000).toISOString(),
+            toIso: new Date(new Date(w.toIso).getTime() + 86400000).toISOString(),
+          };
+        })()
+      : monthGridRangeIso(year, month);
 
   const [calendar, doctors] = await Promise.all([
     fetchAdminCalendar({
@@ -121,6 +142,8 @@ export default async function AdminCalendarPage({ searchParams }: Props) {
         <AdminCalendarUI
           year={year}
           month={month}
+          view={view}
+          weekAnchor={weekAnchor}
           items={items}
           doctorOptions={doctorOptions}
           typeOptions={typeOptions}

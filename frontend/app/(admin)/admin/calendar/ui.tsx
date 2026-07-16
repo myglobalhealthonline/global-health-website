@@ -5,25 +5,33 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import * as Dialog from "@radix-ui/react-dialog";
 import type { CalendarItem } from "@/components/calendar/calendar-types";
 import { MonthCalendar } from "@/components/calendar/MonthCalendar";
+import { WeekCalendar } from "@/components/calendar/WeekCalendar";
 import { DayAgenda } from "@/components/calendar/DayAgenda";
 import { EventDetailDialog } from "@/components/calendar/EventDetailDialog";
 import { TimezoneSelect } from "@/components/calendar/TimezoneSelect";
 import { AppSheet } from "@/components/AppSheet";
 import {
   addMonths,
+  addWeeksKey,
   dayLabel,
   groupItemsByLocalDay,
   todayKey,
+  weekDaysOf,
   yearMonthParam,
 } from "@/components/calendar/calendar-utils";
-import { CURATED_TIME_ZONES } from "@/lib/timezones";
+import { ADMIN_CALENDAR_DEFAULT_TZ, CURATED_TIME_ZONES } from "@/lib/timezones";
 import { adminToggleSlotStatus } from "@/lib/api/admin-slot-client";
 
 type Option = { id: string; name: string };
 
+type CalendarView = "month" | "week";
+
 type Props = {
   year: number;
   month: number;
+  view: CalendarView;
+  /** Any calendar date inside the week the week-view renders ("YYYY-MM-DD"). */
+  weekAnchor: string;
   items: CalendarItem[];
   doctorOptions: Option[];
   typeOptions: string[];
@@ -31,15 +39,15 @@ type Props = {
   filters: { doctorId: string; type: string; country: string };
 };
 
-// Admin spans every country, so the calendar defaults to Ireland time and
-// the admin can switch to any curated zone to read the grid in.
-const DEFAULT_TZ = "Europe/Dublin";
+const DEFAULT_TZ = ADMIN_CALENDAR_DEFAULT_TZ;
 
 type SlotAgendaFilter = "reserved" | "all" | "open" | "booked" | "blocked";
 
 export function AdminCalendarUI({
   year,
   month,
+  view,
+  weekAnchor,
   items,
   doctorOptions,
   typeOptions,
@@ -113,7 +121,16 @@ export function AdminCalendarUI({
     }
   });
 
-  function pushParams(next: Partial<{ ym: string; doctorId: string; type: string; country: string }>) {
+  function pushParams(
+    next: Partial<{
+      ym: string;
+      doctorId: string;
+      type: string;
+      country: string;
+      view: CalendarView;
+      wk: string;
+    }>,
+  ) {
     const params = new URLSearchParams();
     params.set("ym", next.ym ?? yearMonthParam(year, month));
     const doctorId = next.doctorId ?? filters.doctorId;
@@ -122,8 +139,33 @@ export function AdminCalendarUI({
     if (doctorId) params.set("doctorId", doctorId);
     if (type) params.set("type", type);
     if (country) params.set("country", country);
+    const nextView = next.view ?? view;
+    if (nextView === "week") {
+      params.set("view", "week");
+      params.set("wk", next.wk ?? weekAnchor);
+    }
     router.push(`${pathname}?${params.toString()}`);
   }
+
+  // `ym` rides along with the anchor so flipping back to Month lands on the
+  // month the admin was just reading, not the one they started from.
+  function goToWeek(anchor: string) {
+    pushParams({ view: "week", wk: anchor, ym: anchor.slice(0, 7) });
+  }
+
+  // Same deep link the day agenda's "Book" action uses: an open slot in the
+  // week grid starts a manual booking prefilled with doctor + slot.
+  function startSlotBooking(item: CalendarItem) {
+    if (!item.meta?.doctorId || !item.meta?.countryCode) return;
+    const params = new URLSearchParams({
+      countryCode: item.meta.countryCode,
+      doctorId: item.meta.doctorId,
+      slotId: item.id.replace(/^s-/, ""),
+    });
+    router.push(`/admin/appointments/new?${params.toString()}`);
+  }
+
+  const weekDays = useMemo(() => weekDaysOf(weekAnchor), [weekAnchor]);
 
   return (
     <div className="gh-admin-calendar-ui grid gap-4">
@@ -176,7 +218,17 @@ export function AdminCalendarUI({
             </select>
           </label>
         </div>
-        <TimezoneSelect value={tz} options={tzList} onChange={setTz} />
+        <div className="flex items-center gap-2">
+          <ViewToggle
+            view={view}
+            onChange={(next) =>
+              next === "week"
+                ? goToWeek(selectedDay || todayKey(tz))
+                : pushParams({ view: "month" })
+            }
+          />
+          <TimezoneSelect value={tz} options={tzList} onChange={setTz} />
+        </div>
       </div>
 
       <div
@@ -188,25 +240,40 @@ export function AdminCalendarUI({
         <LegendDot tone="var(--portal-danger)" label="Blocked" />
       </div>
 
-      <MonthCalendar
-        year={year}
-        month={month}
-        itemsByDay={itemsByDay}
-        selectedDay={selectedDay}
-        todayKey={todayKey(tz)}
-        onSelectDay={openDay}
-        onPrevMonth={() =>
-          pushParams({ ym: yearMonthParam(...monthTuple(addMonths(year, month, -1))) })
-        }
-        onNextMonth={() =>
-          pushParams({ ym: yearMonthParam(...monthTuple(addMonths(year, month, 1))) })
-        }
-        onToday={() => {
-          const d = new Date();
-          pushParams({ ym: yearMonthParam(d.getFullYear(), d.getMonth() + 1) });
-          setSelectedDay(todayKey(tz));
-        }}
-      />
+      {view === "week" ? (
+        <WeekCalendar
+          anchorDayKey={weekAnchor}
+          weekDays={weekDays}
+          itemsByDay={itemsByDay}
+          tz={tz}
+          todayKey={todayKey(tz)}
+          onSelectOpenSlot={startSlotBooking}
+          onSelectConsultation={openEvent}
+          onPrevWeek={() => goToWeek(addWeeksKey(weekAnchor, -1))}
+          onNextWeek={() => goToWeek(addWeeksKey(weekAnchor, 1))}
+          onToday={() => goToWeek(todayKey(tz))}
+        />
+      ) : (
+        <MonthCalendar
+          year={year}
+          month={month}
+          itemsByDay={itemsByDay}
+          selectedDay={selectedDay}
+          todayKey={todayKey(tz)}
+          onSelectDay={openDay}
+          onPrevMonth={() =>
+            pushParams({ ym: yearMonthParam(...monthTuple(addMonths(year, month, -1))) })
+          }
+          onNextMonth={() =>
+            pushParams({ ym: yearMonthParam(...monthTuple(addMonths(year, month, 1))) })
+          }
+          onToday={() => {
+            const d = new Date();
+            pushParams({ ym: yearMonthParam(d.getFullYear(), d.getMonth() + 1) });
+            setSelectedDay(todayKey(tz));
+          }}
+        />
+      )}
 
       {/* Day agenda — lux sheet, same skin as the event drawer. */}
       <AppSheet
@@ -301,6 +368,45 @@ export function AdminCalendarUI({
 
 function monthTuple(ym: { year: number; month: number }): [number, number] {
   return [ym.year, ym.month];
+}
+
+/** Month ↔ Week segmented control. The view lives in the URL (`view=week`),
+ *  so a week the admin is reading survives a refresh and can be linked to. */
+function ViewToggle({
+  view,
+  onChange,
+}: {
+  view: CalendarView;
+  onChange: (next: CalendarView) => void;
+}) {
+  return (
+    <div
+      role="group"
+      aria-label="Calendar view"
+      className="inline-flex items-center gap-0.5 rounded-[999px] p-0.5"
+      style={{ border: "1px solid var(--portal-line-strong)" }}
+    >
+      {(["month", "week"] as const).map((v) => {
+        const active = v === view;
+        return (
+          <button
+            key={v}
+            type="button"
+            onClick={() => onChange(v)}
+            aria-pressed={active}
+            className="gh-calendar-view-btn rounded-[999px] px-3 py-1 text-xs font-semibold capitalize"
+            style={
+              active
+                ? { background: "var(--portal-info)", color: "#fff" }
+                : { color: "var(--portal-text)" }
+            }
+          >
+            {v}
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
 function LegendDot({ tone, label }: { tone: string; label: string }) {
