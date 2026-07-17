@@ -38,6 +38,7 @@ export function ColumnPriorityTable<T>({
   rows,
   getRowKey,
   onRowClick,
+  getRowAriaLabel,
   cardTone,
   emptyState,
   cardActions,
@@ -47,6 +48,10 @@ export function ColumnPriorityTable<T>({
   rows: T[];
   getRowKey: (row: T) => string;
   onRowClick?: (row: T) => void;
+  /** Accessible name for the row's click target (native <button>, see
+   *  4a/WCAG 2.1.1+4.1.2 fix). Defaults to a generic "View details for
+   *  {getRowKey(row)}" label so existing callers need no change. */
+  getRowAriaLabel?: (row: T) => string;
   /** Optional per-row tone for the mobile card's status edge. */
   cardTone?: (row: T) => PortalMobileCardTone;
   emptyState?: ReactNode;
@@ -85,18 +90,24 @@ export function ColumnPriorityTable<T>({
                       key={f.key}
                       align={f.align}
                       className={f.priority >= 3 ? `gh-cpt-p${f.priority}` : undefined}
-                      style={
-                        onRowClick && i === 0
-                          ? { cursor: "pointer" }
-                          : undefined
-                      }
                     >
-                      <span
-                        onClick={onRowClick ? () => onRowClick(row) : undefined}
-                        style={onRowClick ? { cursor: "pointer", display: "block" } : undefined}
-                      >
-                        {f.render(row)}
-                      </span>
+                      {onRowClick && i === 0 ? (
+                        <button
+                          type="button"
+                          onClick={() => onRowClick(row)}
+                          aria-label={
+                            getRowAriaLabel
+                              ? getRowAriaLabel(row)
+                              : `View details for ${getRowKey(row)}`
+                          }
+                          className="block w-full cursor-pointer text-left"
+                          style={{ background: "none", border: "none", padding: 0, font: "inherit" }}
+                        >
+                          {f.render(row)}
+                        </button>
+                      ) : (
+                        f.render(row)
+                      )}
                     </Td>
                   ))}
                 </Tr>

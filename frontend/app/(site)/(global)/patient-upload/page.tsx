@@ -1,7 +1,10 @@
+import type { Metadata } from "next";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { PatientUploadPageClient } from "./PatientUploadPageClient";
+
+export const metadata: Metadata = { title: "Upload documents" };
 
 export default async function PatientUploadPage() {
   const locale = await getPageLocale();

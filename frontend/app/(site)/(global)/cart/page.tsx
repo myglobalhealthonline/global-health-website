@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { LegacyCartRedirectClient } from "./LegacyCartRedirectClient";
+
+export const metadata: Metadata = { title: "Cart" };
 
 export default async function LegacyCartRedirect() {
   const locale = await getPageLocale();

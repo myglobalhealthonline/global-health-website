@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
 import { SyncOrderPaymentOnReturn } from "@/components/payments/SyncOrderPaymentOnReturn";
 import { fetchOrderReceipt, syncOrderPaymentServer } from "@/lib/api/cart-server";
@@ -15,6 +16,15 @@ type Props = {
   params: Promise<Params>;
   searchParams: Promise<{ orderId?: string; session_id?: string; payment?: string }>;
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<Params>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  return { title: loadLocaleBundle((lang || "en") as LocaleCode).common.checkoutStatus.successTitle };
+}
 
 export default async function CheckoutSuccessPage({ params, searchParams }: Props) {
   const { country, lang } = await params;
