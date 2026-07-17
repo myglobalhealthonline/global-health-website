@@ -4,6 +4,7 @@ import { countrySlug } from "@/lib/routing/country-slug";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
 import { fetchLandingSlugs } from "@/lib/api/site-content-api";
+import { listBlogPosts } from "@/lib/content/get-public-blog";
 import { hreflangRegion } from "@/lib/seo/hreflang";
 
 /**
@@ -41,6 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
       },
       { url: `${base}${slug}/${lang}/book`, changeFrequency: "weekly", priority: 0.85 },
+      { url: `${base}${slug}/${lang}/lab-tests`, changeFrequency: "weekly", priority: 0.7 },
     );
   }
 
@@ -83,7 +85,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static legal / global pages.
   urls.push(
     { url: `${base}/privacy`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${base}/terms`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${base}/about`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${base}/faq`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${base}/contact`, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${base}/blog`, changeFrequency: "weekly", priority: 0.6 },
   );
+
+  // Blog posts — published, admin-managed. [] when API unavailable.
+  try {
+    const posts = await listBlogPosts();
+    for (const p of posts) {
+      urls.push({
+        url: `${base}/blog/${p.slug}`,
+        lastModified: p.publishedAt,
+        changeFrequency: "monthly",
+        priority: 0.5,
+      });
+    }
+  } catch {
+    // Blog list unavailable — sitemap still emits the rest.
+  }
 
   // Doctor profile pages — one per active doctor, in their country/language.
   try {
