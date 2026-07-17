@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyGlobalAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { runReconciliation } from "../modules/subscriptions/ops/reconciliation.service.js";
 
@@ -11,7 +11,7 @@ import { runReconciliation } from "../modules/subscriptions/ops/reconciliation.s
  */
 const adminSubscriptionHealthRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/admin/subscription-health", async (request, reply) => {
-    const auth = await verifyAdminAccess(request);
+    const auth = await verifyGlobalAdminAccess(request);
     if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
     try {
       return okResponse(await runReconciliation());

@@ -43,6 +43,18 @@ const createCheckoutBodySchema = z.object({
     .optional(),
 });
 
+/**
+ * PRIV-001: the Stripe line-item label the customer sees on their receipt and
+ * Checkout page. Deliberately non-clinical — never the appointment's free-text
+ * notes (symptoms/PHI) or a raw enum. Falls back to a neutral label when the
+ * linked service has no public name.
+ */
+export function buildAppointmentCheckoutProductData(appointment: {
+  service?: { name?: string | null } | null;
+}): { name: string } {
+  return { name: appointment.service?.name?.trim() || "Medical consultation" };
+}
+
 function paymentsDisabled(reply: FastifyReply) {
   return reply
     .status(503)
@@ -155,10 +167,11 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
             price_data: {
               currency,
               unit_amount: amountCents,
-              product_data: {
-                name: appointment.service?.name ?? appointment.consultationType,
-                description: appointment.notes?.slice(0, 280) ?? undefined,
-              },
+              // PRIV-001: never send clinical free-text (appointment.notes) or
+              // any PHI to Stripe — this label shows on the customer's receipt
+              // and Checkout page. A generic public service label is enough to
+              // recognize the charge; the appointment id lives in metadata.
+              product_data: buildAppointmentCheckoutProductData(appointment),
             },
           },
         ],

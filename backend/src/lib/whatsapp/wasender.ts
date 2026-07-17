@@ -152,17 +152,21 @@ export async function sendWhatsAppText(opts: {
   countryCode?: string | null;
   hints?: PhoneNormalizeHints;
   /**
-   * S-026: pass `false` for any PATIENT-facing send when the booking lacks
-   * WhatsApp consent — the send is skipped centrally here rather than
-   * relying solely on each caller's own gate. Omit entirely for sends that
-   * are not consent-gated (doctor-facing notifications, staff numbers).
-   * Every caller-level consent guard should still stay in place; this is
-   * defense-in-depth so a future call site that forgets its own check
-   * can't silently export patient data anyway.
+   * PRIV-001 / S-026: consent gate for PATIENT-facing sends. Fail CLOSED — a
+   * consent-gated send proceeds ONLY when this is explicitly `true`. Any
+   * non-true value that is actually present (`false` OR `null`) is skipped, so
+   * a nullable/absent consent field can never leak patient data.
+   *
+   * `undefined` (key omitted) is the explicit opt-OUT of the gate for sends
+   * that are not consent-gated (doctor-facing notifications, staff numbers,
+   * transactional corporate/invoice flows). Those callers omit the key and are
+   * unaffected. Every caller-level consent guard should still stay in place;
+   * this is defense-in-depth so a call site that forgets its own check can't
+   * silently export patient data anyway.
    */
-  patientConsent?: boolean;
+  patientConsent?: boolean | null;
 }): Promise<SendWhatsAppResult> {
-  if (opts.patientConsent === false) {
+  if (opts.patientConsent === false || opts.patientConsent === null) {
     return { ok: true, skipped: true, raw: opts.to, message: "Skipped — no WhatsApp consent" };
   }
   const auth = resolveAuthHeader();

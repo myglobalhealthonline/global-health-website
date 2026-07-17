@@ -29,6 +29,7 @@ import { qrPngBuffer, qrDataUrl } from "./qr-code.js";
 import {
   buildPatientUploadUrl,
   createPatientUploadToken,
+  hashToken,
 } from "../patient-upload/patient-upload-link.service.js";
 
 const TITLES: Record<GeneratedDocumentType, string> = {
@@ -526,7 +527,7 @@ async function generateAppointmentDocumentUnlocked(input: {
           ...(upload
             ? {
                 prescriptionNumber: upload.prescriptionNumber,
-                uploadToken: upload.token,
+                uploadTokenHash: hashToken(upload.token),
                 uploadTokenExpiresAt: upload.expiresAt,
               }
             : {}),
@@ -561,7 +562,7 @@ async function generateAppointmentDocumentUnlocked(input: {
       ...(upload
         ? {
             prescriptionNumber: upload.prescriptionNumber,
-            uploadToken: upload.token,
+            uploadTokenHash: hashToken(upload.token),
             uploadTokenExpiresAt: upload.expiresAt,
           }
         : {}),
@@ -756,25 +757,22 @@ export async function sendGeneratedDocumentUploadLink(doctorId: string, document
   });
   if (!appt) return { ok: false as const, status: 404, message: "Appointment not found" };
 
-  let token = doc.uploadToken;
-  let expiresAt = doc.uploadTokenExpiresAt;
-  const expired = !token || !expiresAt || expiresAt.getTime() < Date.now();
-  if (expired) {
-    const minted = await createPatientUploadToken({
-      email: appt.email,
-      appointmentId: appt.id,
-      doctorId,
-      documentId: doc.id,
-    });
-    token = minted.token;
-    expiresAt = minted.expiresAt;
-    await prisma.generatedDocument.update({
-      where: { id: doc.id },
-      data: { uploadToken: token, uploadTokenExpiresAt: expiresAt },
-    });
-  }
+  // SEC-006: the raw token is never persisted (only its SHA-256 hash), so a
+  // link can't be reconstructed from the stored row. Every resend therefore
+  // mints a fresh token — createPatientUploadToken revokes the prior link for
+  // this scope — and we store only the new hash.
+  const { token, expiresAt } = await createPatientUploadToken({
+    email: appt.email,
+    appointmentId: appt.id,
+    doctorId,
+    documentId: doc.id,
+  });
+  await prisma.generatedDocument.update({
+    where: { id: doc.id },
+    data: { uploadTokenHash: hashToken(token), uploadTokenExpiresAt: expiresAt },
+  });
 
-  const link = buildPatientUploadUrl(token!);
+  const link = buildPatientUploadUrl(token);
   const numberLabel = doc.prescriptionNumber != null ? ` #${doc.prescriptionNumber}` : "";
   const deliveryWarnings: string[] = [];
 
@@ -803,7 +801,7 @@ export async function sendGeneratedDocumentUploadLink(doctorId: string, document
     deliveryWarnings.push("no-phone");
   }
 
-  return { ok: true as const, link, expiresAt: expiresAt!, deliveryWarnings };
+  return { ok: true as const, link, expiresAt, deliveryWarnings };
 }
 
 export async function getGeneratedDocumentFile(

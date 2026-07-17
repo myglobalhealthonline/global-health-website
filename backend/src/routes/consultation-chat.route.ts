@@ -17,6 +17,7 @@ import { sanitizeOriginalFilename } from "../utils/media-key.js";
 import { verifySniffedMime } from "../utils/sniff-mime.js";
 import { notifyDoctor, notifyUser } from "../modules/notifications/notify.service.js";
 import { mapAppointmentOrderNumbers } from "../modules/orders/appointment-order-number.js";
+import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 
 /**
  * Patient ↔ doctor consultation chat per appointment.
@@ -440,6 +441,20 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
       });
       if (!appt) return reply.status(404).send(errorResponse("Appointment not found"));
 
+      try {
+        await guardMedicalReadForAppointment(
+          request,
+          { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+          appt.id,
+          { resourceType: "MEDICAL_DOC", accessAction: "VIEWED" },
+        );
+      } catch (guardError) {
+        if (guardError instanceof MedicalAccessDeniedError) {
+          return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+        }
+        throw guardError;
+      }
+
       if (requiresPayment(appt)) {
         return okResponse({ items: [], chatLocked: true, paymentRequired: true });
       }
@@ -666,9 +681,23 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
           id: params.data.messageId,
           appointment: { doctorId: auth.doctorId },
         },
-        select: { storageKey: true, fileName: true, mimeType: true },
+        select: { storageKey: true, fileName: true, mimeType: true, appointmentId: true },
       });
       if (!msg?.storageKey) return reply.status(404).send(errorResponse("File not found"));
+
+      try {
+        await guardMedicalReadForAppointment(
+          request,
+          { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+          msg.appointmentId,
+          { resourceType: "MEDICAL_DOC", accessAction: "DOWNLOADED" },
+        );
+      } catch (guardError) {
+        if (guardError instanceof MedicalAccessDeniedError) {
+          return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+        }
+        throw guardError;
+      }
 
       const obj = await getObject(msg.storageKey);
       reply.header("content-type", msg.mimeType ?? "application/octet-stream");

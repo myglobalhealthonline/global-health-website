@@ -30,7 +30,7 @@ import {
   countryLegalDocumentBodySchema,
   legalDocumentIdParamsSchema,
 } from "../validations/admin-countries.schema.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyGlobalAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 function handleCountriesWriteError(
@@ -54,8 +54,10 @@ function handleCountriesWriteError(
 }
 
 const adminCountriesRoute: FastifyPluginAsync = async (app) => {
+  // SEC-001: country CRUD / global config is cross-country — exclude
+  // LOCAL_ADMIN, who is scoped to a single country.
   app.addHook("onRequest", async (request, reply) => {
-    const auth = await verifyAdminAccess(request);
+    const auth = await verifyGlobalAdminAccess(request);
     if (!auth.ok) {
       return reply.status(auth.status).send(errorResponse(auth.message));
     }

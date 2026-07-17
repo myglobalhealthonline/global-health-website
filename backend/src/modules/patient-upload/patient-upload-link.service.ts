@@ -10,7 +10,7 @@ import { normalizeDbError } from "../shared/db-errors.js";
 // leak doesn't hand out usable tokens), and revocable.
 const TOKEN_TTL_MS = 14 * 24 * 60 * 60 * 1000;
 
-function hashToken(token: string): string {
+export function hashToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
 

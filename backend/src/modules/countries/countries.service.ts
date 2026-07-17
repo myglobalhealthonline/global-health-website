@@ -589,12 +589,6 @@ const PUBLIC_AUTHORITY_LINK_SELECT_WITH_TRANSLATIONS = {
   },
 } satisfies Prisma.CountryAuthorityLinkSelect;
 
-const publicAuthorityLinksWithTranslationsArgs = {
-  where: { isActive: true },
-  orderBy: [{ sortOrder: "asc" as const }, { name: "asc" as const }],
-  select: PUBLIC_AUTHORITY_LINK_SELECT_WITH_TRANSLATIONS,
-} satisfies Prisma.Country$authorityLinksArgs;
-
 type PublicAuthorityLinkWithTranslations = Prisma.CountryAuthorityLinkGetPayload<{
   select: typeof PUBLIC_AUTHORITY_LINK_SELECT_WITH_TRANSLATIONS;
 }>;

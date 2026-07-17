@@ -202,9 +202,9 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
         />
         <span>
           {i18n.consentPrefix}{" "}
-          <Link href="/terms" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-accent)" }}>{i18n.termsLink}</Link>
+          <Link href="/terms" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-primary)" }}>{i18n.termsLink}</Link>
           {" "}{i18n.consentAnd}{" "}
-          <Link href="/privacy" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-accent)" }}>{i18n.privacyLink}</Link>.
+          <Link href="/privacy" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-primary)" }}>{i18n.privacyLink}</Link>.
           {" "}{i18n.healthDataNote}
         </span>
       </label>

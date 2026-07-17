@@ -3,6 +3,10 @@ import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
+import {
+  assertOrderCountryScope,
+  resolveOrderListCountryScope,
+} from "../utils/order-country-scope.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.service.js";
@@ -78,6 +82,12 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
     const { cursor, limit, q, kind, documentType, invoiceFrom, invoiceTo, consultFrom, consultTo } =
       query.data;
 
+    // SEC-001b: LOCAL_ADMIN sees only their assigned countries' invoices.
+    // null = unscoped (ADMIN/SUPER_ADMIN/token); [] = a LOCAL_ADMIN with no
+    // folders sees nothing (fail closed). Invoice.countryCode is stored
+    // lowercase (same convention as Order.countryCode); folders are lowercased.
+    const scopedFolders = await resolveOrderListCountryScope(request);
+
     // Build the filter. Every clause is ANDed; the free-text `q` is an OR across
     // the searchable columns on the invoice, its order, and its line items.
     const and: Prisma.InvoiceWhereInput[] = [];
@@ -147,6 +157,10 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
           },
         },
       });
+    }
+
+    if (scopedFolders) {
+      and.push({ countryCode: { in: scopedFolders } });
     }
 
     const where: Prisma.InvoiceWhereInput = and.length ? { AND: and } : {};
@@ -294,6 +308,12 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
 
         if (!invoice) {
           return reply.status(404).send(errorResponse("Invoice not found"));
+        }
+
+        // SEC-001b: a LOCAL_ADMIN may only open invoices in their countries.
+        const scope = await assertOrderCountryScope(request, invoice.orderId, invoice.countryCode);
+        if (!scope.allowed) {
+          return reply.status(scope.status).send(errorResponse(scope.message));
         }
 
         // Find the first consultation item that has a doctor assigned.
@@ -452,9 +472,16 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
             creditNoteReason: true,
             generatedAt: true,
             orderId: true,
+            countryCode: true,
           },
         });
         if (!invoice) return reply.status(404).send(errorResponse("Invoice not found"));
+
+        // SEC-001b: LOCAL_ADMIN may only download in-scope invoices.
+        const scope = await assertOrderCountryScope(request, invoice.orderId, invoice.countryCode);
+        if (!scope.allowed) {
+          return reply.status(scope.status).send(errorResponse(scope.message));
+        }
 
         const pdfData = await buildInvoicePdfData(
           invoice.orderId,
@@ -500,6 +527,23 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
 
       const params = idParamSchema.safeParse(request.params);
       if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+
+      // SEC-001b: LOCAL_ADMIN may only resend in-scope invoices — resolve the
+      // owning country before any send happens.
+      const invoiceScope = await prisma.invoice.findUnique({
+        where: { id: params.data.invoiceId },
+        select: { orderId: true, countryCode: true },
+      });
+      if (!invoiceScope) return reply.status(404).send(errorResponse("Invoice not found"));
+      const scope = await assertOrderCountryScope(
+        request,
+        invoiceScope.orderId,
+        invoiceScope.countryCode,
+      );
+      if (!scope.allowed) {
+        return reply.status(scope.status).send(errorResponse(scope.message));
+      }
+
       const channel =
         (request.body as { channel?: string } | null)?.channel === "whatsapp"
           ? "whatsapp"
@@ -543,6 +587,17 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
       if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
 
       try {
+        // SEC-001b: LOCAL_ADMIN may only resolve payment links for in-scope orders.
+        const order = await prisma.order.findUnique({
+          where: { id: params.data.id },
+          select: { countryCode: true },
+        });
+        if (!order) return reply.status(404).send(errorResponse("Order not found"));
+        const scope = await assertOrderCountryScope(request, params.data.id, order.countryCode);
+        if (!scope.allowed) {
+          return reply.status(scope.status).send(errorResponse(scope.message));
+        }
+
         const url = await resolveOrderPaymentUrl(params.data.id);
         if (url) {
           await prisma.order.update({

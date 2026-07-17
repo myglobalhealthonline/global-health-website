@@ -6,7 +6,7 @@ import {
   isMediaStorageConfigured,
   streamToNodeReadable,
 } from "../services/object-storage.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyGlobalAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import {
   listAllPayoutInvoices,
@@ -30,7 +30,7 @@ const downloadQuery = z.object({ key: z.string().min(1).max(400) });
 
 const adminPayoutInvoicesRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/admin/payout-invoices", async (request, reply) => {
-    const auth = await verifyAdminAccess(request);
+    const auth = await verifyGlobalAdminAccess(request);
     if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
     if (!isMediaStorageConfigured()) {
       return reply.status(503).send(errorResponse("Object storage is not configured"));
@@ -68,7 +68,7 @@ const adminPayoutInvoicesRoute: FastifyPluginAsync = async (app) => {
   });
 
   app.get("/api/admin/payout-invoices/download", async (request, reply) => {
-    const auth = await verifyAdminAccess(request);
+    const auth = await verifyGlobalAdminAccess(request);
     if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
     const parsed = downloadQuery.safeParse(request.query);
     if (!parsed.success) return reply.status(400).send(errorResponse("Invalid key"));

@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyGlobalAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { replyWithError } from "../utils/reply-error.js";
 import {
@@ -14,7 +14,7 @@ const adminSecurityAlertsRoute: FastifyPluginAsync = async (app) => {
   app.get(
     "/api/admin/security-alerts",
     async (request, reply) => {
-      const auth = await verifyAdminAccess(request);
+      const auth = await verifyGlobalAdminAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
 
       const querySchema = z.object({
@@ -55,7 +55,7 @@ const adminSecurityAlertsRoute: FastifyPluginAsync = async (app) => {
   app.patch<{ Params: { id: string } }>(
     "/api/admin/security-alerts/:id",
     async (request, reply) => {
-      const auth = await verifyAdminAccess(request);
+      const auth = await verifyGlobalAdminAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
 
       const body = patchSchema.safeParse(request.body);

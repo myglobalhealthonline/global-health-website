@@ -124,11 +124,14 @@ export function AdminSubscriptionsTable({
           </Thead>
           <tbody>
             {items.map((sub) => (
-              <Tr key={sub.id} onClick={() => openQuickView(sub.id)} className="cursor-pointer">
+              <Tr key={sub.id}>
                 <Td onClick={(e) => e.stopPropagation()}>
-                  <span
+                  <button
+                    type="button"
                     onClick={() => openQuickView(sub.id)}
-                    style={{ cursor: "pointer", display: "block" }}
+                    aria-label={`View subscription details for ${sub.user.fullName ?? sub.user.email}`}
+                    className="block w-full cursor-pointer text-left"
+                    style={{ background: "none", border: "none", padding: 0, font: "inherit" }}
                   >
                     <span className="block font-semibold text-[var(--color-text-primary)]">
                       {sub.user.fullName ?? sub.user.email}
@@ -136,7 +139,7 @@ export function AdminSubscriptionsTable({
                     <span className="block text-xs text-[var(--color-text-muted)]">
                       {sub.user.email} · {sub.countryCode.toUpperCase()}
                     </span>
-                  </span>
+                  </button>
                 </Td>
                 <Td>{sub.plan.name}</Td>
                 <Td>
