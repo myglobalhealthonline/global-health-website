@@ -21,7 +21,9 @@ const adminDataDeletionRoute: FastifyPluginAsync = async (app) => {
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
 
       const querySchema = z.object({
-        status: z.enum(["PENDING", "IN_REVIEW", "APPROVED", "REJECTED", "COMPLETED"]).optional(),
+        status: z
+          .enum(["SUBMITTED", "UNDER_REVIEW", "PARTIALLY_COMPLETED", "COMPLETED", "REJECTED"])
+          .optional(),
         page: z.coerce.number().int().min(1).default(1),
         limit: z.coerce.number().int().min(1).max(100).default(25),
       });
@@ -47,7 +49,7 @@ const adminDataDeletionRoute: FastifyPluginAsync = async (app) => {
   // ─── Update deletion request status ──────────────────────────────────────
 
   const patchSchema = z.object({
-    status: z.enum(["IN_REVIEW", "APPROVED", "REJECTED", "COMPLETED"]),
+    status: z.enum(["UNDER_REVIEW", "PARTIALLY_COMPLETED", "COMPLETED", "REJECTED"]),
     adminNotes: z.string().max(2000).optional(),
     executeAnonymize: z.boolean().optional(),
   });
@@ -75,8 +77,13 @@ const adminDataDeletionRoute: FastifyPluginAsync = async (app) => {
           notes: body.data.adminNotes,
         });
 
-        // Optionally execute anonymization immediately when approving.
-        if (body.data.executeAnonymize && body.data.status === "APPROVED") {
+        // Optionally execute anonymization immediately when marking done.
+        // (PARTIALLY_COMPLETED = anonymize ran but storage purge is queued;
+        // COMPLETED = fully done — either may carry executeAnonymize.)
+        if (
+          body.data.executeAnonymize &&
+          (body.data.status === "PARTIALLY_COMPLETED" || body.data.status === "COMPLETED")
+        ) {
           const { prisma } = await import("../db/prisma.js");
           const req = await prisma.dataDeletionRequest.findUnique({
             where: { id: request.params.id },

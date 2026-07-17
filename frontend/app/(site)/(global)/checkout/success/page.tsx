@@ -1,10 +1,12 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { syncOrderPaymentServer } from "@/lib/api/cart-server";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { LegacyCheckoutSuccessClient } from "./LegacyCheckoutSuccessClient";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = { title: "Order confirmed" };
 
 type Props = {
   searchParams: Promise<{ orderId?: string; session_id?: string; payment?: string }>;

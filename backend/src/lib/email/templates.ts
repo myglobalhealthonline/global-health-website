@@ -101,6 +101,32 @@ export async function sendEmailVerificationEmail(opts: {
 }
 
 /**
+ * Task 4 (phi-access-recovery-plan-2026-07-17): email-OTP second factor —
+ * sent instead of blocking a privileged-role login on missing TOTP
+ * enrollment. The code is plain text only, never a link — keeps it out of
+ * URL/query params entirely (S-006-adjacent: no token-in-URL for this path).
+ */
+export async function sendLoginOtpEmail(opts: {
+  to: string;
+  fullName: string;
+  code: string;
+}) {
+  return sendEmail({
+    to: opts.to,
+    subject: `${opts.code} is your Global Health sign-in code`,
+    text: `Hi ${opts.fullName},\n\nYour sign-in code is: ${opts.code}\n\nEnter it on the sign-in screen to continue. The code expires in 10 minutes and can only be used once.\n\nIf you didn't try to sign in, you can ignore this email.\n\n— Global Health`,
+    html: wrapHtml(
+      "Your sign-in code",
+      `<p>Hi ${escapeHtml(opts.fullName)},</p>
+       <p>Enter this code on the sign-in screen to continue:</p>
+       <p style="margin:24px 0;font-size:32px;font-weight:700;letter-spacing:0.3em;color:#1B4D3E;">${escapeHtml(opts.code)}</p>
+       <p style="font-size:13px;color:#737373;">Expires in 10 minutes. Single use only.</p>
+       <p>If you didn't try to sign in, you can ignore this email — nothing has changed.</p>`,
+    ),
+  });
+}
+
+/**
  * S-024: sent to an EXISTING account when someone attempts to register a
  * new account with its email. Registration itself responds identically
  * whether the email is new or already taken (no distinct conflict status),

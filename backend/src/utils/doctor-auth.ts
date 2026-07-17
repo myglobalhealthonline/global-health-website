@@ -29,16 +29,23 @@ export type DoctorAuthResult =
   | { ok: false; status: 401 | 403; message: string };
 
 /** No-op (returns false) unless the operator opted `role` into
- *  REQUIRE_2FA_FOR_ROLES — default empty, so this never fires today. */
-function require2faUnmet(role: string, twoFactorEnabled: boolean): boolean {
-  return env.REQUIRE_2FA_FOR_ROLES.has(role) && !twoFactorEnabled;
+ *  REQUIRE_2FA_FOR_ROLES — default empty, so this never fires today.
+ *  Task 4: satisfied by EITHER TOTP enrollment OR a completed email-OTP
+ *  verification — both stamp `twoFactorVerifiedAt`, so an account using
+ *  the easy fallback isn't hard-blocked just for never enrolling TOTP. */
+function require2faUnmet(
+  role: string,
+  twoFactorEnabled: boolean,
+  twoFactorVerifiedAt: Date | null,
+): boolean {
+  return env.REQUIRE_2FA_FOR_ROLES.has(role) && !twoFactorEnabled && !twoFactorVerifiedAt;
 }
 
 const TWO_FA_REQUIRED_RESULT = {
   ok: false as const,
   status: 403 as const,
   message:
-    "Two-factor authentication is required for this role. Enroll TOTP in account security settings before continuing.",
+    "Two-factor authentication is required for this role. Sign in again to receive an email code, or enroll an authenticator app in account security settings.",
 };
 
 export async function verifyDoctorAccess(
@@ -69,12 +76,13 @@ export async function verifyDoctorAccess(
         doctorId: true,
         tokenVersion: true,
         twoFactorEnabled: true,
+        twoFactorVerifiedAt: true,
       },
     });
     if (!user || !user.isActive || user.tokenVersion !== payload.tokenVersion) {
       return { ok: false, status: 401, message: "Not authenticated" };
     }
-    if (require2faUnmet(user.role, user.twoFactorEnabled)) {
+    if (require2faUnmet(user.role, user.twoFactorEnabled, user.twoFactorVerifiedAt)) {
       return TWO_FA_REQUIRED_RESULT;
     }
     if (!user.doctorId) {
@@ -174,12 +182,13 @@ export async function verifyClinicalReadAccess(
         doctorId: true,
         tokenVersion: true,
         twoFactorEnabled: true,
+        twoFactorVerifiedAt: true,
       },
     });
     if (!user || !user.isActive || user.tokenVersion !== payload.tokenVersion) {
       return { ok: false, status: 401, message: "Not authenticated" };
     }
-    if (require2faUnmet(user.role, user.twoFactorEnabled)) {
+    if (require2faUnmet(user.role, user.twoFactorEnabled, user.twoFactorVerifiedAt)) {
       return TWO_FA_REQUIRED_RESULT;
     }
     if (user.role === "DOCTOR" && !user.doctorId) {

@@ -135,13 +135,16 @@ async function hasActiveConsent(
 }
 
 /**
- * Check whether the doctor has an active (non-cancelled/completed) appointment
- * with this patient.
+ * Check whether the doctor has a treatment relationship with this patient —
+ * an appointment establishing doctor-of-record status. This includes
+ * COMPLETED appointments: the doctor who ran the consult must keep access
+ * afterward to write post-consult notes and review history. Only CANCELLED
+ * is excluded (never treated the patient).
  *
  * Appointment does not carry patientProfileId directly — it links via
  * Appointment.userId which matches PatientProfile.userId.
  */
-async function doctorHasActiveAppointment(
+async function doctorHasTreatmentRelationship(
   doctorId: string,
   patientProfileId: string,
 ): Promise<boolean> {
@@ -157,7 +160,7 @@ async function doctorHasActiveAppointment(
       where: {
         doctorId,
         userId: profile.userId,
-        status: { notIn: ["CANCELLED", "COMPLETED"] },
+        status: { notIn: ["CANCELLED"] },
       },
       select: { id: true },
     });
@@ -208,9 +211,26 @@ async function getCountryAccessModel(
 }
 
 // ---------------------------------------------------------------------------
-// Side-effect helpers (silently swallow all errors)
+// Side-effect helpers
 // ---------------------------------------------------------------------------
 
+/**
+ * SEC-008 (CWE-778): the MedicalAccessLog row is load-bearing — an ALLOWED PHI
+ * read that is served without its mandatory audit row is a compliance breach.
+ * So this writer is fail-closed for allowed reads: if the write throws while the
+ * guard is ENFORCING, it re-throws `MedicalAccessDeniedError("AUDIT_UNAVAILABLE")`
+ * so the read is denied. Fail-closed applies ONLY when:
+ *   - the decision was ALLOW (a denied decision has already blocked — best-effort
+ *     logging is fine, don't double-fail), AND
+ *   - env.MEDICAL_ACCESS_ENFORCE is on (shadow mode keeps best-effort), AND
+ *   - env.PHI_AUDIT_EMERGENCY_BYPASS is off (the audit-store-outage escape hatch).
+ * In every non-throwing case the failure is still logged loudly.
+ *
+ * Reusing MedicalAccessDeniedError (not a new error type) means call sites need
+ * NO change: they already catch it and return 403. A true 503 would require
+ * touching every route's catch block, which is out of scope — the read is denied
+ * either way; "AUDIT_UNAVAILABLE" is the distinguishing marker in the message.
+ */
 async function writeMedicalAccessLog(
   ctx: AccessContext,
   result: AccessResult,
@@ -241,8 +261,29 @@ async function writeMedicalAccessLog(
         abnormalReason: result.allowed ? null : (result.denyReason ?? null),
       },
     });
-  } catch {
-    // Log failure must never break the calling endpoint.
+  } catch (err) {
+    // Log loudly regardless of outcome (no PHI: ids + error message only).
+    console.error(
+      "[medical-access-guard] MedicalAccessLog write FAILED",
+      {
+        patientProfileId: ctx.resource.patientProfileId,
+        accessedByUserId: ctx.actor.userId,
+        allowed: result.allowed,
+        enforcing: env.MEDICAL_ACCESS_ENFORCE,
+        bypass: env.PHI_AUDIT_EMERGENCY_BYPASS,
+        error: err instanceof Error ? err.message : String(err),
+      },
+    );
+    // Fail-closed: deny an ALLOWED read whose audit row never landed, but only
+    // while enforcing and without the emergency bypass. Denied decisions and
+    // shadow mode keep the previous best-effort behaviour.
+    if (
+      result.allowed &&
+      env.MEDICAL_ACCESS_ENFORCE &&
+      !env.PHI_AUDIT_EMERGENCY_BYPASS
+    ) {
+      throw new MedicalAccessDeniedError("AUDIT_UNAVAILABLE");
+    }
   }
 }
 
@@ -429,7 +470,7 @@ export async function assertMedicalAccess(
       "MEDICAL_ACCESS_DIRECT",
     );
     if (hasDirect && actor.doctorId) {
-      const hasAppt = await doctorHasActiveAppointment(
+      const hasAppt = await doctorHasTreatmentRelationship(
         actor.doctorId,
         resource.patientProfileId,
       );

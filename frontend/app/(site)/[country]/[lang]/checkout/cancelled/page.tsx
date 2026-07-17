@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -6,6 +7,15 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 export const dynamic = "force-dynamic";
 
 type Params = { country: string; lang: string };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<Params>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  return { title: loadLocaleBundle((lang || "en") as LocaleCode).common.checkoutStatus.cancelledTitle };
+}
 
 export default async function CheckoutCancelledPage({
   params,

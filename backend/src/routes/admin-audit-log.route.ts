@@ -2,7 +2,7 @@ import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyGlobalAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 /**
@@ -84,7 +84,7 @@ function flattenMetadata(metadata: unknown): string {
 
 const adminAuditLogRoute: FastifyPluginAsync = async (app) => {
   app.addHook("onRequest", async (request, reply) => {
-    const auth = await verifyAdminAccess(request);
+    const auth = await verifyGlobalAdminAccess(request);
     if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
   });
 

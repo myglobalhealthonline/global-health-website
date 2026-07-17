@@ -95,6 +95,10 @@ export type AdminPatientAccessLogItem = {
   accessAction: string;
   accessReason: string | null;
   ipAddress: string | null;
+  /** S-002/Task 6: true when this read would be denied under
+   *  MEDICAL_ACCESS_ENFORCE (shadow mode logs it but never blocks). */
+  isAbnormal: boolean;
+  abnormalReason: string | null;
   createdAt: string;
 };
 

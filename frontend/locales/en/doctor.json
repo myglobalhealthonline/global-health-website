@@ -1292,7 +1292,7 @@
     "signOutAllDevicesBody": "This ends every signed-in session, including this one — you'll need to log in again.",
     "signingOutAll": "Signing out…",
     "signOutAllDevicesButton": "Sign out of all devices",
-    "description": "Protect access to patient records with a time-based code from an authenticator app (Google Authenticator, Authy, 1Password, …).",
+    "description": "Patient-record access is protected by a second check at login. By default we email you a 6-digit code — no setup needed. You can optionally upgrade to an authenticator app (Google Authenticator, Authy, 1Password, …) below.",
     "loadingStatus": "Loading 2FA status…",
     "enabledPrefix": "Two-factor authentication is enabled",
     "enabledSince": " since {date}",
@@ -1314,7 +1314,7 @@
     "sixDigitLabel": "6-digit code from your app",
     "verifying": "Verifying…",
     "enable2faButton": "Enable 2FA",
-    "notEnabledDesc": "Two-factor authentication is not enabled yet. Enabling it adds a second check at login — a 6-digit code from an authenticator app on your phone — so a stolen password alone can't reach patient records.",
+    "notEnabledDesc": "Email codes (default): you're already covered — every login sends a 6-digit code to your email, so a stolen password alone can't reach patient records. Authenticator app (optional): set one up below for a slightly faster sign-in that doesn't depend on email.",
     "preparing": "Preparing…"
   }
 }

@@ -590,6 +590,31 @@
   }
 }
 
+/* Touch devices: Android Chrome paints garbage tiles ("matrix" corruption)
+   when a composited scroller (.countryScroller) sits inside transformed
+   ancestors (.selectPanel scale + .globeStage translateZ) next to the WebGL
+   globe canvas. None of those layers earn their keep on mobile — the fit
+   scale only runs >=1024px and translateZ only isolated a backdrop blur
+   that globals.css already kills on coarse pointers — so drop every extra
+   compositing layer and let the country list flow with the page scroll. */
+@media (pointer: coarse) {
+  .selectPanel {
+    transform: none;
+    background: rgba(8, 33, 27, 0.94);
+  }
+
+  .globeStage {
+    transform: none;
+  }
+
+  .countryScroller {
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 2px;
+    scrollbar-gutter: auto;
+  }
+}
+
 @media (min-width: 1024px) and (max-height: 1040px) {
   .root {
     min-height: 100dvh;

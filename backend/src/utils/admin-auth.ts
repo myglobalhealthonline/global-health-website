@@ -5,6 +5,26 @@ import { evaluateAdminAccess, type AdminAccessResult } from "./admin-access-eval
 import { verifyAuthToken } from "./auth-session.js";
 
 export async function verifyAdminAccess(request: FastifyRequest): Promise<AdminAccessResult> {
+  return verifyAdminAccessInternal(request, false);
+}
+
+/**
+ * SEC-001: authorization gate for global/cross-country admin operations
+ * (country CRUD / global config, full doctor IBAN reveal). Identical to
+ * `verifyAdminAccess` except a LOCAL_ADMIN — who is scoped to a single
+ * country — is rejected 403 both at the JWT-role check and at the CURRENT-DB
+ * role re-validation, so a demoted-to-LOCAL_ADMIN cookie can't reach global
+ * ops either. ADMIN/SUPER_ADMIN and the maintenance-token fallback are
+ * unchanged.
+ */
+export async function verifyGlobalAdminAccess(request: FastifyRequest): Promise<AdminAccessResult> {
+  return verifyAdminAccessInternal(request, true);
+}
+
+async function verifyAdminAccessInternal(
+  request: FastifyRequest,
+  requireGlobalScope: boolean,
+): Promise<AdminAccessResult> {
   // JWT role must be read for DOCTOR sessions — resolveOptionalAuthUser only loads PATIENT/ADMIN.
   let sessionRole: "PATIENT" | "ADMIN" | "DOCTOR" | "LOCAL_ADMIN" | "SUPER_ADMIN" | "CORPORATE_ADMIN" | null = null;
   const cookieToken = request.cookies[env.AUTH_COOKIE_NAME];
@@ -17,6 +37,7 @@ export async function verifyAdminAccess(request: FastifyRequest): Promise<AdminA
     authorizationHeader: request.headers.authorization,
     expectedToken: env.ADMIN_API_TOKEN,
     tokenFallbackEnabled: env.ADMIN_TOKEN_FALLBACK_ENABLED,
+    requireGlobalScope,
   });
   if (!result.ok) return result;
 
@@ -28,24 +49,42 @@ export async function verifyAdminAccess(request: FastifyRequest): Promise<AdminA
   if (result.method === "session" && payload) {
     const user = await prisma.user.findUnique({
       where: { id: payload.sub },
-      select: { role: true, isActive: true, tokenVersion: true, twoFactorEnabled: true },
+      select: {
+        role: true,
+        isActive: true,
+        tokenVersion: true,
+        twoFactorEnabled: true,
+        twoFactorVerifiedAt: true,
+      },
     });
+    // For global-scope ops, LOCAL_ADMIN is not a valid session role even if
+    // the JWT still claimed a higher role (e.g. just demoted) — reject here
+    // so the CURRENT DB role governs, mirroring the evaluator's JWT check.
+    const roleAllowsSession =
+      user &&
+      (user.role === "ADMIN" ||
+        user.role === "SUPER_ADMIN" ||
+        (!requireGlobalScope && user.role === "LOCAL_ADMIN"));
     if (
       !user ||
       !user.isActive ||
       user.tokenVersion !== payload.tokenVersion ||
-      (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN" && user.role !== "LOCAL_ADMIN")
+      !roleAllowsSession
     ) {
       return { ok: false, status: 401, message: "Session is no longer valid — please sign in again" };
     }
     // Gate is a no-op (zero DB cost above) unless the operator opted the
     // role into REQUIRE_2FA_FOR_ROLES — default empty, so this never
     // fires today. Uses the CURRENT DB role, not the JWT's role claim.
-    if (env.REQUIRE_2FA_FOR_ROLES.has(user.role) && !user.twoFactorEnabled) {
+    // Task 4: satisfied by EITHER TOTP enrollment OR a completed email-OTP
+    // verification (twoFactorVerifiedAt) — the login flow stamps the same
+    // field for both methods, so accounts using the easy fallback aren't
+    // hard-blocked here just because they never enrolled TOTP.
+    if (env.REQUIRE_2FA_FOR_ROLES.has(user.role) && !user.twoFactorEnabled && !user.twoFactorVerifiedAt) {
       return {
         ok: false,
         status: 403,
-        message: "Two-factor authentication is required for this role. Enroll TOTP in account security settings before continuing.",
+        message: "Two-factor authentication is required for this role. Sign in again to receive an email code, or enroll an authenticator app in account security settings.",
       };
     }
   }

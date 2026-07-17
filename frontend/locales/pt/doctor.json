@@ -1292,7 +1292,7 @@
     "signOutAllDevicesBody": "Isto termina todas as sessões iniciadas, incluindo esta — vai precisar de iniciar sessão novamente.",
     "signingOutAll": "A terminar sessão…",
     "signOutAllDevicesButton": "Terminar sessão em todos os dispositivos",
-    "description": "Proteja o acesso aos registos de pacientes com um código temporário de uma aplicação autenticadora (Google Authenticator, Authy, 1Password, …).",
+    "description": "O acesso aos registos de pacientes é protegido por uma segunda verificação no início de sessão. Por predefinição, enviamos-lhe por email um código de 6 dígitos — sem configuração necessária. Pode, opcionalmente, atualizar para uma aplicação autenticadora (Google Authenticator, Authy, 1Password, …) abaixo.",
     "loadingStatus": "A carregar estado da 2FA…",
     "enabledPrefix": "A autenticação de dois fatores está ativada",
     "enabledSince": " desde {date}",
@@ -1314,7 +1314,7 @@
     "sixDigitLabel": "Código de 6 dígitos da sua aplicação",
     "verifying": "A verificar…",
     "enable2faButton": "Ativar 2FA",
-    "notEnabledDesc": "A autenticação de dois fatores ainda não está ativada. Ativá-la adiciona uma segunda verificação no início de sessão — um código de 6 dígitos de uma aplicação autenticadora no seu telemóvel — para que uma palavra-passe roubada, por si só, não consiga aceder aos registos de pacientes.",
+    "notEnabledDesc": "Códigos por email (predefinição): já está protegido — cada início de sessão envia um código de 6 dígitos para o seu email, para que uma palavra-passe roubada, por si só, não consiga aceder aos registos de pacientes. Aplicação autenticadora (opcional): configure uma abaixo para um início de sessão ligeiramente mais rápido que não depende do email.",
     "preparing": "A preparar…"
   }
 }

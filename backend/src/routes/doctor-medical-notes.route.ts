@@ -8,6 +8,7 @@ import {
   listMedicalNotesForAppointment,
 } from "../modules/medical-notes/medical-notes.service.js";
 import { prisma } from "../db/prisma.js";
+import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 
 const createSchema = z.object({
   note: z.string().min(1).max(50000),
@@ -21,6 +22,19 @@ const doctorMedicalNotesRoute: FastifyPluginAsync = async (app) => {
       const auth = await verifyDoctorAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       try {
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            request.params.id,
+            { resourceType: "CONSULT_NOTE", accessAction: "VIEWED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          }
+          throw guardError;
+        }
         const rows = await listMedicalNotesForAppointment(request.params.id, auth.doctorId);
         if (!rows) return reply.status(404).send(errorResponse("Appointment not found"));
         return okResponse({

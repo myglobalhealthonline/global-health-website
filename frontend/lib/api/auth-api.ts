@@ -81,6 +81,7 @@ export async function registerUser(input: {
   fullName: string;
   phone?: string;
   acceptTerms: boolean;
+  acceptMedicalConsent: boolean;
 }) {
   // user is null when the email was already registered — the backend
   // returns the same shape/status either way (S-024, account-enumeration
@@ -91,8 +92,43 @@ export async function registerUser(input: {
   });
 }
 
+/** Second-factor method the pending login must be completed with — TOTP
+ *  (authenticator app) or EMAIL_OTP (Task 4's easy fallback, a 6-digit code
+ *  emailed to the account). */
+export type Pending2faMethod = "TOTP" | "EMAIL_OTP";
+
+export type LoginResult =
+  | { needs2fa: false; user: AuthUser }
+  | { needs2fa: true; pendingToken: string; method: Pending2faMethod };
+
 export async function loginUser(input: { email: string; password: string }) {
-  return authRequest<{ user: AuthUser }>("/api/auth/login", {
+  const res = await authRequest<
+    { user: AuthUser } | { needs2fa: true; pendingToken: string; method: Pending2faMethod }
+  >("/api/auth/login", { method: "POST", body: input });
+  if (!res.ok) return res;
+  if ("needs2fa" in res.data && res.data.needs2fa) {
+    return { ok: true as const, data: res.data as LoginResult };
+  }
+  return {
+    ok: true as const,
+    data: { needs2fa: false, user: (res.data as { user: AuthUser }).user } as LoginResult,
+  };
+}
+
+/** Step 2 of a pending 2FA login: submit the code (TOTP or email-OTP) plus
+ *  the pendingToken from `loginUser`'s `needs2fa` response. Success mints
+ *  the session cookie exactly like a normal login. */
+export async function verifyPending2fa(input: { pendingToken: string; token: string }) {
+  return authRequest<{ user: AuthUser }>("/api/auth/2fa/verify-login", {
+    method: "POST",
+    body: input,
+  });
+}
+
+/** Resend the email-OTP code for a pending EMAIL_OTP login. No-op (400) if
+ *  the pending login is actually a TOTP challenge. */
+export async function resendLoginOtp(input: { pendingToken: string }) {
+  return authRequest<{ sent: true }>("/api/auth/2fa/resend-otp", {
     method: "POST",
     body: input,
   });

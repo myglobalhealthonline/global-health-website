@@ -1,8 +1,27 @@
 import sanitizeHtml from "sanitize-html";
 import type { IOptions } from "sanitize-html";
+import postcss from "postcss";
 
 /** Wrapper class the public article body + its scoped CSS hang off. */
 export const BLOG_SCOPE_CLASS = "gh-article-body";
+
+/**
+ * At-rules that either escape `@scope` containment or pull in unscoped external
+ * resources. Dropped (not repaired) whenever they appear in author CSS.
+ *   - `import`    — loads an external, unscoped stylesheet.
+ *   - `charset`   — no effect inside an inline block; only appears via injection.
+ *   - `namespace` — XML-namespace selectors, an escape/obfuscation vector.
+ */
+const DENIED_AT_RULES = new Set(["import", "charset", "namespace"]);
+
+/**
+ * `@keyframes` names are GLOBAL — `@scope` contains selectors but not keyframe
+ * identifiers, so an author animation named `spin` would collide with (or be
+ * shadowed by) any site keyframes of the same name. Every author keyframe is
+ * renamed with this prefix and its `animation` / `animation-name` references
+ * rewritten to match, so author animations stay self-contained.
+ */
+const KEYFRAME_PREFIX = "ghblog-";
 
 const BLOG_ALLOWED_TAGS = [
   ...sanitizeHtml.defaults.allowedTags,
@@ -84,26 +103,110 @@ export function scopeBlogHtml(html: string): string {
 }
 
 /**
- * Stop-gap hardening of `<style>` block contents, applied before they're
- * wrapped in `@scope`. This is regex-based, NOT a CSS parser — it only
- * rejects the specific escape/tracking vectors called out in SECURITY_AUDIT2
- * finding S-011:
- *   - `@import` — would pull in an unscoped external stylesheet.
- *   - `url(...)` / `expression(...)` — external resource loads used for
- *     tracking pixels or (legacy IE) script execution.
- *   - Unbalanced braces — the actual "close the @scope block early and run
- *     unscoped CSS after it" containment escape. Comments are stripped first
- *     so a `}` hidden inside `/* ... *\/` can't be used to fake balance.
- * Returns null (meaning: drop the whole block) if any check trips, since a
- * regex can't safely repair CSS it can't parse.
+ * Harden a `<style>` block's contents with a REAL CSS parser (postcss) before
+ * it's wrapped in `@scope`. Replaces the old regex/brace-counting scoper whose
+ * parser-differential (what the regex sees vs. what a browser parses) was the
+ * containment-escape risk in SEC-007.
+ *
+ * The parse-then-reserialize round-trip is itself the core defence: postcss
+ * only ever emits structurally well-formed, balance-guaranteed CSS, so the
+ * "close the `@scope` block early and run unscoped rules after it" escape is no
+ * longer expressible in the output regardless of how the input was crafted.
+ *
+ * On top of that it:
+ *   - drops `@import` / `@charset` / `@namespace` (see {@link DENIED_AT_RULES});
+ *   - namespaces `@keyframes` + their `animation` references
+ *     (see {@link KEYFRAME_PREFIX});
+ *   - strips declarations whose value carries `expression(`, `javascript:`, or a
+ *     `url()` pointing anywhere other than http(s) or a `data:image/*` payload
+ *     (relative/`data:` non-image/other schemes = tracking + exfil vectors).
+ *
+ * Anything postcss can't parse (unbalanced braces, stray escapes, junk) makes
+ * the whole block fail closed → returns null (drop the block entirely) with a
+ * server-side warning, never a partial repair.
+ *
+ * NOTE: layout properties (`position:fixed`, `top`, `z-index`, …) inside a
+ * `<style>` block are intentionally left intact — the live editorial article
+ * relies on them and `@scope` keeps them from affecting the surrounding page.
+ * The inline `style=""` attribute is separately constrained to a presentational
+ * allowlist by `allowedStyles` above.
  */
 function hardenStyleBlockCss(css: string): string | null {
-  const withoutComments = css.replace(/\/\*[\s\S]*?\*\//g, "");
-  if (/@import\b/i.test(withoutComments)) return null;
-  if (/url\s*\(/i.test(withoutComments)) return null;
-  if (/expression\s*\(/i.test(withoutComments)) return null;
-  const openCount = (withoutComments.match(/\{/g) ?? []).length;
-  const closeCount = (withoutComments.match(/\}/g) ?? []).length;
-  if (openCount !== closeCount) return null;
-  return withoutComments;
+  let root: postcss.Root;
+  try {
+    root = postcss.parse(css);
+  } catch (err) {
+    warnDropped("unparseable CSS", err);
+    return null;
+  }
+
+  // 1. Collect author keyframe names so both the @keyframes rules and every
+  //    animation reference to them can be renamed in lock-step.
+  const keyframeNames = new Set<string>();
+  root.walkAtRules(/^(-\w+-)?keyframes$/i, (at) => {
+    const name = at.params.trim();
+    if (name) keyframeNames.add(name);
+  });
+
+  // 2. Drop containment-escaping / resource-loading at-rules.
+  root.walkAtRules((at) => {
+    if (DENIED_AT_RULES.has(at.name.toLowerCase())) {
+      warnDropped(`@${at.name} at-rule`);
+      at.remove();
+    }
+  });
+
+  // 3. Namespace keyframe identifiers.
+  if (keyframeNames.size > 0) {
+    root.walkAtRules(/^(-\w+-)?keyframes$/i, (at) => {
+      const name = at.params.trim();
+      if (keyframeNames.has(name)) at.params = KEYFRAME_PREFIX + name;
+    });
+    root.walkDecls(/^(-\w+-)?animation(-name)?$/i, (decl) => {
+      for (const name of keyframeNames) {
+        decl.value = decl.value.replace(
+          new RegExp(`(^|[\\s,])(${escapeRegExp(name)})(?=$|[\\s,])`, "g"),
+          `$1${KEYFRAME_PREFIX}$2`,
+        );
+      }
+    });
+  }
+
+  // 4. Value hygiene: drop declarations carrying script/exfil vectors.
+  root.walkDecls((decl) => {
+    const value = decl.value;
+    if (/expression\s*\(/i.test(value) || /javascript:/i.test(value)) {
+      warnDropped(`declaration "${decl.prop}" (script vector)`);
+      decl.remove();
+      return;
+    }
+    if (/url\s*\(/i.test(value) && !hasOnlySafeUrls(value)) {
+      warnDropped(`declaration "${decl.prop}" (unsafe url())`);
+      decl.remove();
+    }
+  });
+
+  return root.toString();
+}
+
+/** Every `url(...)` in the value points at http(s) or a `data:image/*` payload. */
+function hasOnlySafeUrls(value: string): boolean {
+  const urlRe = /url\(\s*(['"]?)([^'")]*)\1\s*\)/gi;
+  let match: RegExpExecArray | null;
+  while ((match = urlRe.exec(value)) !== null) {
+    const target = match[2].trim().toLowerCase();
+    const isHttp = target.startsWith("http://") || target.startsWith("https://");
+    const isDataImage = target.startsWith("data:image/");
+    if (!isHttp && !isDataImage) return false;
+  }
+  return true;
+}
+
+function escapeRegExp(input: string): string {
+  return input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function warnDropped(what: string, err?: unknown): void {
+  const suffix = err instanceof Error ? `: ${err.message.split("\n")[0]}` : "";
+  console.warn(`[scope-blog-html] dropped ${what} from author CSS${suffix}`);
 }

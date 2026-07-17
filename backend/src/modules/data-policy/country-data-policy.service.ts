@@ -1,5 +1,29 @@
+import bcrypt from "bcryptjs";
+import { randomBytes } from "node:crypto";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { revokeTrustedDevices } from "../two-factor/login-otp.service.js";
+
+// ─── PRIV-002 per-country retention hints ─────────────────────────────────────
+//
+// ⚠️ LEGAL SIGN-OFF PENDING (docs/security/priv-002-retention-table-2026-07-17.md).
+// Retention-first defaults: clinical + financial rows are ALWAYS kept, identity
+// is ALWAYS erased — behaviour is identical for every country today. This map
+// only reserves a seam so a later legal review can diverge purge behaviour per
+// jurisdiction WITHOUT a schema change. The year hints are informational
+// (medical-record + tax retention minimums) and drive nothing yet.
+const RETENTION_HINTS: Record<
+  string,
+  { clinicalYears: number; financialYears: number }
+> = {
+  PT: { clinicalYears: 15, financialYears: 10 },
+  IE: { clinicalYears: 8, financialYears: 6 },
+  ES: { clinicalYears: 15, financialYears: 6 },
+  CZ: { clinicalYears: 10, financialYears: 10 },
+  RO: { clinicalYears: 10, financialYears: 10 },
+  DE: { clinicalYears: 10, financialYears: 10 },
+};
+const DEFAULT_RETENTION = { clinicalYears: 10, financialYears: 10 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -123,14 +147,27 @@ export async function listDataPolicies(): Promise<unknown[]> {
 export async function createDeletionRequest(params: {
   patientProfileId: string;
   globalHealthNumber?: string | null;
+  /** PRIV-002: previously discarded by the route — now persisted. */
+  reason?: string | null;
+  requestType?: string | null;
 }): Promise<{ requestId: string }> {
   try {
+    // PRIV-002: reason + requestType used to be parsed by the route then
+    // dropped on the floor. No dedicated columns exist, so persist them into
+    // the existing `notes` field (structured, no migration needed).
+    const notesParts: string[] = [];
+    if (params.requestType) notesParts.push(`requestType=${params.requestType}`);
+    if (params.reason) notesParts.push(`reason: ${params.reason}`);
+    const notes = notesParts.length ? notesParts.join("\n") : null;
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const record = await (prisma as any).dataDeletionRequest.create({
       data: {
         patientProfileId: params.patientProfileId,
         globalHealthNumber: params.globalHealthNumber ?? null,
-        requestStatus: "PENDING",
+        // requestStatus omitted — schema default SUBMITTED (the old literal
+        // "PENDING" was not a DataDeletionStatus member and failed at the DB).
+        notes,
       },
       select: { id: true },
     });
@@ -206,18 +243,27 @@ export async function updateDeletionRequest(params: {
 // ─── Anonymization ────────────────────────────────────────────────────────────
 
 /**
- * Anonymize a patient profile — scrubs all direct PII while preserving the
- * GHN-linked clinical record.
+ * PRIV-002 — complete a deletion/anonymization request under RETENTION-FIRST
+ * defaults (⚠️ LEGAL SIGN-OFF PENDING; see
+ * docs/security/priv-002-retention-table-2026-07-17.md).
  *
- * Fields wiped:
- *   fullName, phone, addressLine1, addressLine2, addressCity,
- *   addressPostalCode, nationalIdNumber, taxIdNumber, passportNumber,
- *   utenteNumber, idDocumentNumber, insurancePolicyNumber,
- *   preferredPharmacy
+ * ERASES all identity, contact, national-ID, marketing and auth artifacts;
+ * REVOKES every session; and RETAINS clinical + financial rows tombstoned to
+ * the GHN. Every run writes an auditable completion record.
  *
- * Fields preserved:
- *   globalHealthNumber, countryFolderCode, createdAt, and all clinical
- *   relations (MedicalDocument, consults, etc.).
+ * Before this change the admin path retained email, storage keys, sessions and
+ * 2FA — deletion did almost nothing. It now matches the self-service
+ * grace-period purge (`purgeOneAccount` in auth.service.ts) but is keyed by
+ * patientProfileId and reachable standalone by admins.
+ *
+ * ERASE:  User {fullName,email→tombstone,phone,dateOfBirth,passwordHash→random,
+ *         2FA fields, isActive→false, tokenVersion++}; PatientProfile identity
+ *         + contact + national IDs + upload keys + blind-index hashes +
+ *         email→tombstone; PatientNationalityDocument {documentNumber,file keys};
+ *         all TrustedDevice + LoginOtp rows; NewsletterSubscriber by email.
+ * RETAIN: globalHealthNumber, all clinical columns (weight/allergies/notes/…),
+ *         and every clinical + financial relation (MedicalDocument, Appointment,
+ *         Order, Payment, Invoice, AuditLog) — kept tombstoned.
  */
 export async function anonymizePatient(params: {
   patientProfileId: string;
@@ -226,40 +272,161 @@ export async function anonymizePatient(params: {
   const { patientProfileId, adminId } = params;
 
   try {
-    await prisma.patientProfile.update({
+    const profile = await prisma.patientProfile.findUnique({
       where: { id: patientProfileId },
-      data: {
-        fullName: null,
-        phone: null,
-        addressLine1: null,
-        addressLine2: null,
-        addressCity: null,
-        addressPostalCode: null,
-        nationalIdNumber: null,
-        taxIdNumber: null,
-        passportNumber: null,
-        utenteNumber: null,
-        // idDocumentNumber maps to the schema field `idDocumentNumber`
-        idDocumentNumber: null,
-        insurancePolicyNumber: null,
-        preferredPharmacy: null,
-        // Identity wiped → drop the blind indexes derived from it so this
-        // anonymized row can't surface as a duplicate. emailHash stays
-        // because email is intentionally preserved (GHN-linked record).
-        phoneHash: null,
-        nameDobHash: null,
-        // Phase 2 column — cast until migration is applied.
-        ...({ anonymizedAt: new Date() } as unknown as object),
+      select: {
+        id: true,
+        userId: true,
+        email: true,
+        countryFolderCode: true,
+        insuranceDocumentKey: true,
+        idDocumentKey: true,
+        idDocumentBackKey: true,
       },
     });
+    if (!profile) {
+      throw normalizeDbError(
+        new Error("Patient profile not found"),
+        "Could not anonymize patient",
+      );
+    }
 
+    const retention =
+      RETENTION_HINTS[profile.countryFolderCode ?? ""] ?? DEFAULT_RETENTION;
+    const originalEmail = profile.email;
+
+    // Personal-upload storage keys (login-account docs, NOT clinical
+    // MedicalDocument files). No object-storage delete pipeline is wired into
+    // this admin path, so the columns are nulled (unreachable through the app)
+    // and the keys recorded in the completion record for a later purge job.
+    const nationalityDocs = await prisma.patientNationalityDocument.findMany({
+      where: { patientProfileId: profile.id },
+      select: { frontFileKey: true, backFileKey: true },
+    });
+    const personalStorageKeys = [
+      profile.insuranceDocumentKey,
+      profile.idDocumentKey,
+      profile.idDocumentBackKey,
+      ...nationalityDocs.flatMap((d) => [d.frontFileKey, d.backFileKey]),
+    ].filter((k): k is string => !!k);
+
+    await prisma.$transaction(async (tx) => {
+      // ── PatientProfile: ERASE identity, RETAIN clinical ──────────────────
+      await tx.patientProfile.update({
+        where: { id: profile.id },
+        data: {
+          fullName: null,
+          phone: null,
+          dateOfBirth: null,
+          addressLine1: null,
+          addressLine2: null,
+          addressCity: null,
+          addressPostalCode: null,
+          nationalIdNumber: null,
+          taxIdNumber: null,
+          passportNumber: null,
+          utenteNumber: null,
+          idDocumentNumber: null,
+          insurancePolicyNumber: null,
+          insuranceProviderName: null,
+          preferredPharmacy: null,
+          // Personal-upload keys nulled; objects queued for purge (completion
+          // record). Clinical MedicalDocument files are untouched (retention).
+          idDocumentKey: null,
+          idDocumentBackKey: null,
+          insuranceDocumentKey: null,
+          // Identity wiped → drop every blind index derived from it (incl.
+          // emailHash now that the email is tombstoned) so the row can never
+          // resolve as a dedup match.
+          phoneHash: null,
+          nameDobHash: null,
+          emailHash: null,
+          // Tombstone the globally-unique profile email, keyed by profile id,
+          // so registerPatient's upsert-by-email can't relink a stranger.
+          email: `deleted-${profile.id}@removed.invalid`,
+          anonymizedAt: new Date(),
+        },
+      });
+
+      // National-ID documents: scrub the encrypted number + file keys, keep the
+      // rows (FK integrity / which doc types were held).
+      await tx.patientNationalityDocument.updateMany({
+        where: { patientProfileId: profile.id },
+        data: { documentNumber: null, frontFileKey: null, backFileKey: null },
+      });
+
+      // Marketing: withdraw newsletter subscription entirely (no-op if absent).
+      if (originalEmail) {
+        await tx.newsletterSubscriber.deleteMany({
+          where: { email: originalEmail },
+        });
+      }
+
+      // ── User: ERASE identity + REVOKE sessions ───────────────────────────
+      if (profile.userId) {
+        const randomPasswordHash = await bcrypt.hash(
+          randomBytes(32).toString("hex"),
+          12,
+        );
+        await tx.user.update({
+          where: { id: profile.userId },
+          data: {
+            fullName: "Deleted user",
+            phone: null,
+            dateOfBirth: null,
+            email: `deleted-${profile.userId}@removed.invalid`,
+            passwordHash: randomPasswordHash,
+            isActive: false,
+            mustChangePassword: false,
+            twoFactorEnabled: false,
+            twoFactorSecret: null,
+            twoFactorBackupCodes: [],
+            // Session revocation: every previously-issued JWT (all devices)
+            // fails the tokenVersion check on its next request.
+            tokenVersion: { increment: 1 },
+          },
+        });
+        // Email-OTP login codes — delete inside the txn (FK is Cascade on the
+        // User we keep, so they must be removed explicitly).
+        await tx.loginOtp.deleteMany({ where: { userId: profile.userId } });
+      }
+    });
+
+    // TrustedDevice rows: reuse the shared revoker (its own deleteMany, outside
+    // the txn — best-effort, deletion is already committed above).
+    if (profile.userId) {
+      await revokeTrustedDevices(profile.userId).catch(() => {});
+    }
+
+    // ── Auditable completion record ──────────────────────────────────────────
     await recordAudit({
       actorUserId: adminId,
       actorRole: "ADMIN",
       action: "PATIENT_ANONYMIZED",
       entityType: "PatientProfile",
       entityId: patientProfileId,
-      metadata: { adminId },
+      metadata: {
+        adminId,
+        userId: profile.userId,
+        countryFolderCode: profile.countryFolderCode,
+        // ⚠️ LEGAL SIGN-OFF PENDING — legal bases are the engineering default.
+        fieldsErased: [
+          "User.{fullName,email,phone,dateOfBirth,passwordHash,twoFactor*}",
+          "PatientProfile.{identity,contact,nationalIds,uploadKeys,email,blindIndexHashes}",
+          "PatientNationalityDocument.{documentNumber,frontFileKey,backFileKey}",
+          "TrustedDevice(all)",
+          "LoginOtp(all)",
+          "NewsletterSubscriber(byEmail)",
+        ],
+        sessionsRevoked: true,
+        categoriesRetained: {
+          clinical: `RETAINED (medical-record retention ~${retention.clinicalYears}y)`,
+          financial: `RETAINED (tax/financial retention ~${retention.financialYears}y)`,
+        },
+        // For a later batch purge job — no S3 delete pipeline on this path yet.
+        personalStorageKeysQueuedForPurge: personalStorageKeys,
+        legalSignOff: "PENDING",
+      },
     });
   } catch (error) {
     throw normalizeDbError(error, "Could not anonymize patient");

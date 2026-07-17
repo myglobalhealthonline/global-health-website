@@ -19,6 +19,7 @@ import { countryLangParams } from "@/lib/routing/static-params";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/seo/structured-data";
 import { toHtmlLang } from "@/lib/i18n/get-root-html-lang";
 import { HtmlLangSync } from "@/components/layout/HtmlLangSync";
+import { LocaleCookieSync } from "@/components/i18n/LocaleCookieSync";
 import type { ParsedSitePath } from "@/lib/routing/path-rewrites";
 
 /**
@@ -100,9 +101,32 @@ export default async function CountryLangLayout({
   // SiteHeader/SiteFooter (active-tab state is client-side in SectionNav).
   const parsed: ParsedSitePath = { country: slug, lang, rest: [] };
 
+  const htmlLang = toHtmlLang(lang);
+
   return (
     <>
-      <HtmlLangSync lang={toHtmlLang(lang)} />
+      {/* WCAG 3.1.1 (A11Y-001): the shared root layout ships a static
+       * lang="en" <html> (see getRootHtmlLang() — reading the request locale
+       * there would force the whole site, including every statically
+       * generated country/lang combo, to render dynamically). This inline
+       * script runs synchronously as the browser parses the HTML stream —
+       * before hydration, and before any real page content downstream of it
+       * is parsed — so it corrects `document.documentElement.lang` to the
+       * true request locale ahead of anything assistive tech would read.
+       * HtmlLangSync stays as a no-op-if-already-correct React fallback for
+       * the (rare) case JS parses this script but a later client nav skips
+       * a full document load. Not equivalent to a server-emitted attribute
+       * on the initial response bytes — see CLAUDE.md/report for the full
+       * fix (multi-root layouts) this was weighed against and why it was
+       * out of scope here. */}
+      <script
+        // eslint-disable-next-line react/no-danger -- static, non-user-derived string; sets documentElement.lang ahead of hydration
+        dangerouslySetInnerHTML={{
+          __html: `document.documentElement.lang=${JSON.stringify(htmlLang)};`,
+        }}
+      />
+      <HtmlLangSync lang={htmlLang} />
+      <LocaleCookieSync lang={lang} />
       <SiteChrome
         siteName={common.site.name}
         navigation={navigation}

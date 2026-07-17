@@ -59,11 +59,11 @@ const envSchema = z.object({
    // and refuse to boot in production if the secret is missing or
    // still the dev fallback). Prevents a misconfigured Railway service
    // from silently signing tokens with a known string.
-  // @deprecated (S-012) Legacy HS256 shared secret. Kept ONLY as the
-  // transitional verify-fallback for sessions issued before asymmetric signing
-  // shipped, and as the dev/pre-migration signing key when the RS256 keypair is
-  // absent. Remove it — and the HS256 fallback in auth-session.ts — one
-  // AUTH_JWT_EXPIRES_IN window after the keypair reaches production.
+  // @deprecated (S-012 / SEC-004) Legacy HS256 shared secret. NO LONGER used for
+  // auth sessions — those are RS256-only now (the HS256 sign/verify fallback was
+  // removed from auth-session.ts). Retained solely as the fallback HMAC key for
+  // Brazil consent-link tokens (brazil-consent-link.service.ts) until
+  // BRAZIL_CONSENT_LINK_SECRET is set everywhere; drop it once that is done.
   AUTH_JWT_SECRET: z
     .string()
     .trim()
@@ -244,6 +244,17 @@ const envSchema = z.object({
     .union([z.literal("true"), z.literal("false"), z.boolean()])
     .optional(),
 
+  /** SEC-008 emergency escape hatch for audit-store OUTAGES only. Default FALSE.
+   *  When the guard is enforcing, a failed MedicalAccessLog write DENIES the PHI
+   *  read (fail-closed, CWE-778 — no PHI served without its mandatory audit row).
+   *  Set "true" only during a confirmed audit-store outage to let reads proceed;
+   *  the write failure is then logged loudly instead of blocking. Deliberately
+   *  NOT part of the production boot assertions — it's an operational break-glass
+   *  toggle, not a steady-state config value. See lib/medical-access-guard.ts. */
+  PHI_AUDIT_EMERGENCY_BYPASS: z
+    .union([z.literal("true"), z.literal("false"), z.boolean()])
+    .optional(),
+
   /** Full WaSender send-message URL (e.g. https://wasenderapi.com/api/send-message). */
   WA_API_URL: z.string().trim().url().optional(),
   /** Authorization header value — `Bearer <token>` or raw token. */
@@ -265,11 +276,66 @@ const envSchema = z.object({
   GOOGLE_CALENDAR_ID: z.string().trim().min(1).optional(),
 });
 
+/** Privileged (non-patient) roles that MUST be gated by 2FA in production.
+ *  Matches the REQUIRE_2FA_FOR_ROLES doc example and the guard's role set. */
+const PRIVILEGED_2FA_ROLES = ["SUPER_ADMIN", "ADMIN", "LOCAL_ADMIN", "DOCTOR"] as const;
+
+/**
+ * SEC-005: fail-fast at boot when the medical-access guard would run in a
+ * shadow / non-enforcing configuration in production — a denied PHI read that
+ * is logged but still served. Refuses to start if ANY of these hold in
+ * production (each throw names the offending var):
+ *   - COMPLIANCE_MODE=relaxed (the escape hatch that skips shadow-mode enforcement)
+ *   - MEDICAL_ACCESS_ENFORCE off (shadow mode — denials logged, never blocked)
+ *   - ADMIN_PHI_REQUIRE_REASON off (plain ADMIN reads PHI with no break-glass reason)
+ *   - REQUIRE_2FA_FOR_ROLES missing any privileged role (unverified staff read PHI)
+ * Non-production keeps the permissive dev defaults untouched. Exported so the
+ * unit test can exercise each combination without mutating process.env.
+ */
+export function assertProductionMedicalAccessSafety(cfg: {
+  nodeEnv: string;
+  complianceMode: string;
+  medicalAccessEnforce: boolean;
+  adminPhiRequireReason: boolean;
+  require2faForRoles: Set<string>;
+}): void {
+  if (cfg.nodeEnv !== "production") return;
+
+  if (cfg.complianceMode === "relaxed") {
+    throw new Error(
+      'COMPLIANCE_MODE must not be "relaxed" in production — relaxed mode lets the medical-access ' +
+        "guard run in shadow mode, so a denied PHI read is still served. Set COMPLIANCE_MODE=strict.",
+    );
+  }
+  if (!cfg.medicalAccessEnforce) {
+    throw new Error(
+      "MEDICAL_ACCESS_ENFORCE must be true in production — shadow mode logs would-be denials but still " +
+        "serves PHI to the caller. Confirm the 2FA/confidentiality/consent backfill is complete via the " +
+        "shadow-mode MedicalAccessLog audit trail, then set MEDICAL_ACCESS_ENFORCE=true.",
+    );
+  }
+  if (!cfg.adminPhiRequireReason) {
+    throw new Error(
+      "ADMIN_PHI_REQUIRE_REASON must be true in production — otherwise a plain ADMIN reads any medical " +
+        "record without recording a break-glass reason. Set ADMIN_PHI_REQUIRE_REASON=true.",
+    );
+  }
+  const missing2fa = PRIVILEGED_2FA_ROLES.filter((r) => !cfg.require2faForRoles.has(r));
+  if (missing2fa.length > 0) {
+    throw new Error(
+      `REQUIRE_2FA_FOR_ROLES must include every privileged role in production (missing: ${missing2fa.join(", ")}). ` +
+        `Without it, staff who never enrolled TOTP can still read PHI. Set REQUIRE_2FA_FOR_ROLES=${PRIVILEGED_2FA_ROLES.join(",")}.`,
+    );
+  }
+}
+
 const parsed = envSchema.parse(mergeRailwayBucketAliases());
 
-// Hard-fail in production if the JWT secret is missing or still the
-// dev default. We can't rely on Zod alone because the default makes
-// the field "valid" at parse time.
+// Hard-fail in production if AUTH_JWT_SECRET is still the dev default. It no
+// longer signs/verifies auth sessions (RS256-only now), but it is still the
+// fallback HMAC key for Brazil consent-link tokens, so a dev-default value in
+// production is unsafe. We can't rely on Zod alone because the default makes the
+// field "valid" at parse time.
 const DEV_JWT_FALLBACK = "dev-only-change-this-auth-jwt-secret-min-32";
 if (parsed.NODE_ENV === "production" && parsed.AUTH_JWT_SECRET === DEV_JWT_FALLBACK) {
   throw new Error(
@@ -277,12 +343,10 @@ if (parsed.NODE_ENV === "production" && parsed.AUTH_JWT_SECRET === DEV_JWT_FALLB
   );
 }
 
-// S-012: require the RS256 keypair in production. The backend signs sessions with
-// the private key (only it can mint tokens); both services verify with the public
-// key. AUTH_JWT_SECRET may still be set alongside these — that is the valid
-// transition state (HS256 fallback for pre-deploy sessions) and does NOT satisfy
-// this check on its own. When the follow-up removes the HS256 fallback, the two
-// keys become the sole source of truth.
+// S-012 / SEC-004: RS256 is the SOLE auth-session algorithm. The backend signs
+// with the private key (only it can mint tokens); both services verify with the
+// public key. There is no HS256 fallback anymore, so the keypair is mandatory in
+// production.
 if (
   parsed.NODE_ENV === "production" &&
   (!parsed.AUTH_JWT_PRIVATE_KEY || !parsed.AUTH_JWT_PUBLIC_KEY)
@@ -348,19 +412,25 @@ const medicalAccessEnforce =
 const adminPhiRequireReason =
   parsed.ADMIN_PHI_REQUIRE_REASON === true || parsed.ADMIN_PHI_REQUIRE_REASON === "true";
 
-// Hard-fail in production if the medical-access guard is still in shadow
-// mode. Shadow mode logs would-be denials but still serves PHI to the
-// caller — acceptable during the Wave-0 backfill, never acceptable once
-// this is a live production deployment. COMPLIANCE_MODE=relaxed skips this
-// check (and ONLY this check) — the deliberate "run shadow mode in prod"
-// escape hatch while the compliance backfill is in progress.
-if (complianceMode === "strict" && parsed.NODE_ENV === "production" && !medicalAccessEnforce) {
-  throw new Error(
-    "MEDICAL_ACCESS_ENFORCE must be true in production — shadow mode still serves PHI on a denied " +
-      "access. Confirm the 2FA/confidentiality/consent backfill is complete via the shadow-mode " +
-      "MedicalAccessLog audit trail, then set MEDICAL_ACCESS_ENFORCE=true.",
-  );
-}
+// SEC-008: default OFF. When on, a failed audit write no longer blocks a PHI
+// read (audit-store-outage break-glass). Intentionally excluded from the
+// production boot assertions below — it's an operational toggle, not config.
+const phiAuditEmergencyBypass =
+  parsed.PHI_AUDIT_EMERGENCY_BYPASS === true || parsed.PHI_AUDIT_EMERGENCY_BYPASS === "true";
+
+// SEC-005: hard-fail in production if the medical-access guard would run in a
+// shadow / non-enforcing configuration. Previously COMPLIANCE_MODE=relaxed was
+// an escape hatch that skipped the shadow-mode check entirely — leaving denied
+// PHI reads served in production. assertProductionMedicalAccessSafety now closes
+// that hole: relaxed mode, shadow enforcement, a missing break-glass-reason
+// requirement, and any privileged role not gated by 2FA each refuse to boot.
+assertProductionMedicalAccessSafety({
+  nodeEnv: parsed.NODE_ENV,
+  complianceMode,
+  medicalAccessEnforce,
+  adminPhiRequireReason,
+  require2faForRoles,
+});
 
 // Hard-fail in production if billing is not wired to real Stripe. The fake
 // billing port "succeeds" checkouts in-memory with no payment ever taken —
@@ -423,5 +493,6 @@ export const env = {
   ADMIN_TOKEN_FALLBACK_ENABLED: adminTokenFallbackEnabled,
   MEDICAL_ACCESS_ENFORCE: medicalAccessEnforce,
   ADMIN_PHI_REQUIRE_REASON: adminPhiRequireReason,
+  PHI_AUDIT_EMERGENCY_BYPASS: phiAuditEmergencyBypass,
   REQUIRE_2FA_FOR_ROLES: require2faForRoles,
 };

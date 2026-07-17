@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { Prisma, UserRole } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError, normalizeDbError } from "../modules/shared/db-errors.js";
-import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
+import { verifyGlobalAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { recordCriticalAudit } from "../modules/audit/audit.service.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { emailSchema, fullNameSchema } from "../validations/shared.schema.js";
@@ -86,7 +86,7 @@ const resetPasswordBodySchema = z.object({
 const adminUsersRoute: FastifyPluginAsync = async (app) => {
   // Gate every route on this plugin behind admin auth.
   app.addHook("onRequest", async (request, reply) => {
-    const auth = await verifyAdminAccess(request);
+    const auth = await verifyGlobalAdminAccess(request);
     if (!auth.ok) {
       return reply.status(auth.status).send(errorResponse(auth.message));
     }

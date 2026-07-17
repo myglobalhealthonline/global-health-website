@@ -1,7 +1,10 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+
+export const metadata: Metadata = { title: "Consent confirmed" };
 
 export default async function BrazilConsentSuccessPage() {
   const locale = await getPageLocale();

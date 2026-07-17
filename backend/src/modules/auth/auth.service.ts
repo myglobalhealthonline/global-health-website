@@ -11,6 +11,7 @@ import {
 } from "../../lib/blind-index.js";
 import { deleteObject } from "../../services/object-storage.js";
 import { recordAudit } from "../audit/audit.service.js";
+import { revokeTrustedDevices } from "../two-factor/login-otp.service.js";
 
 export type SafeUser = {
   id: string;
@@ -155,6 +156,28 @@ export async function registerPatient(input: RegisterBody): Promise<RegisterResu
       .catch((err) => {
         // Never fail registration over the audit row — log and continue.
         console.error("Failed to record TERMS_PRIVACY consent", err);
+      });
+
+    // PHI access recovery plan Task 1 — mandatory direct-consent row so the
+    // medical-access guard's doctor-of-record path doesn't lock out a brand
+    // new patient's own doctor. Schema validation guarantees
+    // acceptMedicalConsent === true by this point. Kept as its own row
+    // (never bundled with TERMS_PRIVACY or an optional GLOBAL_NETWORK
+    // consent — GDPR: no bundling of distinct consents).
+    await prisma.patientConsent
+      .create({
+        data: {
+          patientProfileId: profile.id,
+          globalHealthNumber: profile.globalHealthNumber,
+          consentType: "MEDICAL_ACCESS_DIRECT",
+          consentValue: true,
+          source: "REGISTRATION",
+          changedByUserId: user.id,
+          changedByRole: UserRole.PATIENT,
+        },
+      })
+      .catch((err) => {
+        console.error("Failed to record MEDICAL_ACCESS_DIRECT consent", err);
       });
 
     return { kind: "created", user: toSafeUser(user) };
@@ -317,6 +340,9 @@ export async function changeUserPassword(
       // the temp password is now invalid, so the gate is satisfied.
       data: { passwordHash: newHash, mustChangePassword: false },
     });
+    // Task 4: a password change revokes every "trusted device" — a device
+    // that skipped 2FA under the old password shouldn't keep skipping it.
+    await revokeTrustedDevices(id).catch(() => {});
     return toSafeUser(updated);
   } catch (error) {
     if (error instanceof AuthInvalidCredentialsError) throw error;
@@ -335,6 +361,9 @@ export async function signOutAllDevices(id: string): Promise<number> {
       data: { tokenVersion: { increment: 1 } },
       select: { tokenVersion: true },
     });
+    // Task 4: "sign out of all devices" also revokes every trusted-device
+    // cookie — otherwise a stale one would keep skipping 2FA post-signout.
+    await revokeTrustedDevices(id).catch(() => {});
     return updated.tokenVersion;
   } catch (error) {
     throw normalizeDbError(error, "Could not sign out other devices");

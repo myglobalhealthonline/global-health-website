@@ -162,7 +162,7 @@ export function DoctorFields({
               defaultValue={initial?.medicalRegistrationUrl ?? ""}
               placeholder="https://www.medicalcouncil.ie/..."
             />
-            <span className="text-xs text-[var(--color-text-muted)]">External link to verify registration. Shown on public profile.</span>
+            <span className="text-xs text-[var(--color-text-muted)]">Fallback verify link. Per-country links are set in the <strong>Country profile</strong> card (Registration URL) and win over this one.</span>
           </label>
         </div>
 

@@ -5,7 +5,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { decryptPhi } from "../lib/crypto/phi-crypto.js";
 import { maskIban } from "../utils/iban.js";
 import { recordCriticalAudit } from "../modules/audit/audit.service.js";
-import { verifyAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
+import { verifyGlobalAdminAccess, resolveAdminSessionActor } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 /**
@@ -21,8 +21,10 @@ import { errorResponse, okResponse } from "../utils/response.js";
 const idParam = z.string().trim().min(1).max(64);
 
 const adminDoctorBankRoute: FastifyPluginAsync = async (app) => {
+  // SEC-001: doctor payout bank details (incl. full IBAN reveal) are global
+  // financial data — exclude LOCAL_ADMIN, who is scoped to a single country.
   app.addHook("onRequest", async (request, reply) => {
-    const auth = await verifyAdminAccess(request);
+    const auth = await verifyGlobalAdminAccess(request);
     if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
   });
 

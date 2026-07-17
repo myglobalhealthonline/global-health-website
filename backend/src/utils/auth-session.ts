@@ -19,59 +19,45 @@ type AuthTokenPayload = {
 const JWT_ISSUER = "global-health-backend";
 const JWT_AUDIENCE = "global-health-website";
 
-// S-012: sign sessions with an RS256 PRIVATE key that only the backend holds, so
-// a frontend compromise (which only ever gets the PUBLIC key) can never mint
-// tokens. When the keypair is absent — local dev, or the brief pre-migration
-// window — fall back to signing HS256 with the legacy shared secret. Computed
-// once at module load.
-const SIGNING: { key: string; alg: jwt.Algorithm } = env.AUTH_JWT_PRIVATE_KEY
-  ? { key: env.AUTH_JWT_PRIVATE_KEY, alg: "RS256" }
-  : { key: env.AUTH_JWT_SECRET, alg: "HS256" };
+// S-012: sessions are signed ONLY with the RS256 PRIVATE key, which just the
+// backend holds — a frontend compromise (which gets only the PUBLIC key) can
+// never mint tokens. The legacy HS256 shared-secret path (SEC-004) is gone:
+// there is no symmetric fallback for signing or verification. The keypair is
+// required in production (env.ts hard-fail) and provided in dev/test envs.
+function requireKey(value: string | undefined, name: string): string {
+  if (!value) {
+    throw new Error(
+      `${name} is required (S-012 RS256-only). Generate an RS256 keypair — see backend/.env.example.`,
+    );
+  }
+  return value;
+}
+const SIGNING_KEY = requireKey(env.AUTH_JWT_PRIVATE_KEY, "AUTH_JWT_PRIVATE_KEY");
+const VERIFY_KEY = requireKey(env.AUTH_JWT_PUBLIC_KEY, "AUTH_JWT_PUBLIC_KEY");
 
 /**
- * Verify a token this backend minted, trying the new RS256 public key first and
- * falling back to the legacy HS256 shared secret. Returns the decoded payload or
- * null; callers validate their own claims.
- *
- * TRANSITION (S-012, zero-downtime): sessions issued before asymmetric signing
- * shipped are HS256-signed with AUTH_JWT_SECRET; every new login mints an RS256
- * token. The fallback lets those old cookies keep working until they expire or the
- * user re-authenticates — nobody is force-logged-out on deploy. Each branch PINS
- * its own algorithm to its own key, so there is no RS256↔HS256 alg-confusion: the
- * public key is only ever used as an RS256 verifier, never as an HMAC secret, and
- * the shared secret is only ever used with HS256.
- *
- * FOLLOW-UP (S-012 HS256 removal): once every pre-deploy session has naturally
- * rotated — one AUTH_JWT_EXPIRES_IN window (~1 week) after this reaches
- * production — delete the HS256 branch below and remove AUTH_JWT_SECRET from
- * env.ts + Railway. Do NOT automate this; it is a deliberate manual follow-up.
+ * Verify a token this backend minted using the RS256 public key. RS256 is the
+ * SOLE accepted algorithm — the legacy HS256 shared-secret fallback was removed
+ * (SEC-004), so a leaked AUTH_JWT_SECRET can no longer mint accepted sessions.
+ * Returns the decoded payload or null; callers validate their own claims.
  */
 function verifyWithRotation(token: string): jwt.JwtPayload | null {
-  const opts = { issuer: JWT_ISSUER, audience: JWT_AUDIENCE };
-  // Primary: RS256 via the public key.
-  if (env.AUTH_JWT_PUBLIC_KEY) {
-    try {
-      const decoded = jwt.verify(token, env.AUTH_JWT_PUBLIC_KEY, { ...opts, algorithms: ["RS256"] });
-      if (decoded && typeof decoded === "object") return decoded;
-    } catch {
-      // Not a valid RS256 token — try the legacy HS256 secret below.
-    }
-  }
-  // Fallback: legacy HS256 via the shared secret (TEMPORARY — see FOLLOW-UP above).
-  if (env.AUTH_JWT_SECRET) {
-    try {
-      const decoded = jwt.verify(token, env.AUTH_JWT_SECRET, { ...opts, algorithms: ["HS256"] });
-      if (decoded && typeof decoded === "object") return decoded;
-    } catch {
-      // Invalid under both keys.
-    }
+  try {
+    const decoded = jwt.verify(token, VERIFY_KEY, {
+      issuer: JWT_ISSUER,
+      audience: JWT_AUDIENCE,
+      algorithms: ["RS256"],
+    });
+    if (decoded && typeof decoded === "object") return decoded;
+  } catch {
+    // Invalid / not an RS256 token.
   }
   return null;
 }
 
 export function signAuthToken(payload: AuthTokenPayload) {
-  return jwt.sign({ ...payload, tokenVersion: payload.tokenVersion ?? 0 }, SIGNING.key, {
-    algorithm: SIGNING.alg,
+  return jwt.sign({ ...payload, tokenVersion: payload.tokenVersion ?? 0 }, SIGNING_KEY, {
+    algorithm: "RS256",
     expiresIn: env.AUTH_JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"],
     issuer: JWT_ISSUER,
     audience: JWT_AUDIENCE,
@@ -101,21 +87,31 @@ export function verifyAuthToken(token: string): AuthTokenPayload | null {
 // 2FA is enabled. The /api/auth/2fa/verify-login endpoint consumes it and
 // issues a full auth cookie on TOTP success.
 
-export function signPending2faToken(userId: string): string {
-  return jwt.sign({ sub: userId, pending2fa: true }, SIGNING.key, {
-    algorithm: SIGNING.alg,
+/** Which second factor this pending-login must be completed with. TOTP is
+ *  the pre-existing method; EMAIL_OTP is Task 4's easy fallback for accounts
+ *  that never enrolled TOTP (phi-access-recovery-plan-2026-07-17). */
+export type Pending2faMethod = "TOTP" | "EMAIL_OTP";
+
+export function signPending2faToken(userId: string, method: Pending2faMethod = "TOTP"): string {
+  return jwt.sign({ sub: userId, pending2fa: true, method }, SIGNING_KEY, {
+    algorithm: "RS256",
     expiresIn: "5m",
     issuer: JWT_ISSUER,
     audience: JWT_AUDIENCE,
   });
 }
 
-export function verifyPending2faToken(token: string): { userId: string } | null {
+export function verifyPending2faToken(
+  token: string,
+): { userId: string; method: Pending2faMethod } | null {
   const decoded = verifyWithRotation(token);
   if (!decoded) return null;
-  const { sub, pending2fa } = decoded as Record<string, unknown>;
+  const { sub, pending2fa, method } = decoded as Record<string, unknown>;
   if (typeof sub !== "string" || pending2fa !== true) return null;
-  return { userId: sub };
+  // Tokens signed before Task 4 (or any unrecognized value) default to TOTP —
+  // the only method that existed previously.
+  const resolvedMethod: Pending2faMethod = method === "EMAIL_OTP" ? "EMAIL_OTP" : "TOTP";
+  return { userId: sub, method: resolvedMethod };
 }
 
 export function authCookieOptions() {
@@ -132,6 +128,26 @@ export function authCookieOptions() {
     secure,
     path: "/",
     maxAge: 60 * 60 * 24 * 7,
+    ...(domain ? { domain } : {}),
+  };
+}
+
+// ─── Trusted-device cookie ──────────────────────────────────────────────────
+// Task 4 (phi-access-recovery-plan-2026-07-17): opaque 30-day token, hash
+// stored in TrustedDevice — same shape/flags as authCookieOptions(), just a
+// longer TTL and a distinct name so it survives its own logout/clear.
+
+export const TRUSTED_DEVICE_COOKIE_NAME = "gh_trusted_device";
+
+export function trustedDeviceCookieOptions() {
+  const secure = env.NODE_ENV === "production";
+  const domain = env.AUTH_COOKIE_DOMAIN?.trim();
+  return {
+    httpOnly: true,
+    sameSite: "lax" as const,
+    secure,
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30,
     ...(domain ? { domain } : {}),
   };
 }

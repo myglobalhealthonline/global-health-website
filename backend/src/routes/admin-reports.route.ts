@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyGlobalAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse } from "../utils/response.js";
 import { prisma } from "../db/prisma.js";
 import {
@@ -75,7 +75,7 @@ function lastCalendarMonth(): { from: Date; to: Date } {
 
 const adminReportsRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/admin/reports/export", async (request, reply) => {
-    const auth = await verifyAdminAccess(request);
+    const auth = await verifyGlobalAdminAccess(request);
     if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
 
     const parsed = querySchema.safeParse(request.query);

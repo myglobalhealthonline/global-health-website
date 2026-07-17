@@ -24,6 +24,11 @@ export function CookieBanner() {
   // Only steal focus when the visitor *asked* for the panel (footer link).
   // Grabbing it on first page load would be hostile.
   const focusOnOpen = useRef(false);
+  // WCAG 2.4.3 (A11Y-001): whoever had focus when the panel was explicitly
+  // reopened (the footer/privacy-page trigger) gets it back on close, same
+  // pattern as PortalDialog's returnFocusRef. Null on the automatic
+  // first-visit show — there is no "opener" to return to in that case.
+  const returnFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     purgeLegacyConsent();
@@ -39,6 +44,7 @@ export function CookieBanner() {
           ? { marketing: existing.marketing, thirdParty: existing.thirdParty }
           : DENY_ALL,
       );
+      returnFocusRef.current = document.activeElement as HTMLElement | null;
       focusOnOpen.current = true;
       setExpanded(true);
       setVisible(true);
@@ -58,6 +64,8 @@ export function CookieBanner() {
     writeConsent(next);
     setVisible(false);
     setExpanded(false);
+    returnFocusRef.current?.focus();
+    returnFocusRef.current = null;
   }, []);
 
   if (!visible) return null;

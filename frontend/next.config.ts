@@ -155,9 +155,24 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // Next content-hashes everything under /_next/static (filename embeds
+      // the build hash), so a stale cache is impossible — safe to cache for
+      // a year as immutable.
+      {
+        source: "/_next/static/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      // Unhashed /public assets (icons, hero images, stock photos — see
+      // public/) are NOT content-hashed: a redeploy can overwrite
+      // public/foo.png at the same URL. `immutable` previously cached these
+      // for a year, so an overwritten file never refreshed for repeat
+      // visitors. short TTL + revalidate instead; still cheap since these
+      // rarely change.
       {
         source: "/:all*(svg|jpg|jpeg|png|webp|avif|gif|ico|woff2)",
-        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=3600, must-revalidate" },
+        ],
       },
       // Overrides the rule above for the media proxy specifically: object
       // keys here (e.g. `doctor-<id>-profile`) are stable but NOT
