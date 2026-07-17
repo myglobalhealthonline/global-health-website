@@ -3,7 +3,7 @@ $Base = "http://localhost:4000"
 $Pass = "GHAdmin2026X7qL9!"
 $s = New-Object Microsoft.PowerShell.Commands.WebRequestSession
 $login = Invoke-RestMethod -Uri "$Base/api/auth/login" -Method POST -ContentType "application/json" `
-  -Body (@{ email = "admin@globalhealthonline.com"; password = $Pass } | ConvertTo-Json) -WebSession $s
+  -Body (@{ email = "globalhealth@myglobalhealth.online"; password = $Pass } | ConvertTo-Json) -WebSession $s
 if (-not $login.ok) { Write-Error "Admin login failed"; exit 1 }
 
 $checks = @(

@@ -19,7 +19,7 @@ function Login($email, $password = $Pass) {
 }
 
 $pat = Login "patient@globalhealthonline.com"
-$adm = Login "admin@globalhealthonline.com"
+$adm = Login "globalhealth@myglobalhealth.online"
 
 # PAT-008 export
 if ($pat) {

@@ -117,9 +117,9 @@ if ($pat) {
 }
 
 # --- ADM-034 / ADM-035 ---
-$admin = Login "admin@globalhealthonline.com"
+$admin = Login "globalhealth@myglobalhealth.online"
 if ($admin) {
-  Curl-Login $cookieJar "admin@globalhealthonline.com" $Pass
+  Curl-Login $cookieJar "globalhealth@myglobalhealth.online" $Pass
   $mediaUp = Curl-Upload $cookieJar "$Base/api/admin/media/upload" $pngPath "image/png"
   $mediaOk = $mediaUp.code -eq 200 -and $mediaUp.body -match "publicUrl"
   $pdfAdmin = Curl-Upload $cookieJar "$Base/api/admin/media/upload" $pdfPath "application/pdf"
