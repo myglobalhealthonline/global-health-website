@@ -484,14 +484,27 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           addressCountryCode: string | null;
         }
       >();
+      // The booking picker must NEVER blank out just because one matched
+      // profile has a PHI field that won't decrypt (legacy row, key rotation,
+      // corrupt ciphertext). decryptPhi throws in those cases; here a single
+      // bad field would otherwise reject the whole Promise and empty the
+      // dropdown. Degrade per-field to null instead — the admin still sees the
+      // patient to book them; the prefill field is just blank.
+      const safeDecrypt = (value: string | null): string | null => {
+        try {
+          return decryptPhi(value);
+        } catch {
+          return null;
+        }
+      };
       for (const profile of profiles) {
         const email = profile.email?.trim().toLowerCase();
         if (!email) continue;
         profileByEmail.set(email, {
-          nationalIdNumber: decryptPhi(profile.nationalIdNumber),
-          taxIdNumber: decryptPhi(profile.taxIdNumber),
-          passportNumber: decryptPhi(profile.passportNumber),
-          utenteNumber: decryptPhi(profile.utenteNumber),
+          nationalIdNumber: safeDecrypt(profile.nationalIdNumber),
+          taxIdNumber: safeDecrypt(profile.taxIdNumber),
+          passportNumber: safeDecrypt(profile.passportNumber),
+          utenteNumber: safeDecrypt(profile.utenteNumber),
           addressLine1: profile.addressLine1 ?? null,
           addressCity: profile.addressCity ?? null,
           addressCountryCode: profile.addressCountryCode ?? null,
