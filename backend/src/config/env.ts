@@ -59,11 +59,11 @@ const envSchema = z.object({
    // and refuse to boot in production if the secret is missing or
    // still the dev fallback). Prevents a misconfigured Railway service
    // from silently signing tokens with a known string.
-  // @deprecated (S-012) Legacy HS256 shared secret. Kept ONLY as the
-  // transitional verify-fallback for sessions issued before asymmetric signing
-  // shipped, and as the dev/pre-migration signing key when the RS256 keypair is
-  // absent. Remove it — and the HS256 fallback in auth-session.ts — one
-  // AUTH_JWT_EXPIRES_IN window after the keypair reaches production.
+  // @deprecated (S-012 / SEC-004) Legacy HS256 shared secret. NO LONGER used for
+  // auth sessions — those are RS256-only now (the HS256 sign/verify fallback was
+  // removed from auth-session.ts). Retained solely as the fallback HMAC key for
+  // Brazil consent-link tokens (brazil-consent-link.service.ts) until
+  // BRAZIL_CONSENT_LINK_SECRET is set everywhere; drop it once that is done.
   AUTH_JWT_SECRET: z
     .string()
     .trim()
@@ -320,9 +320,11 @@ export function assertProductionMedicalAccessSafety(cfg: {
 
 const parsed = envSchema.parse(mergeRailwayBucketAliases());
 
-// Hard-fail in production if the JWT secret is missing or still the
-// dev default. We can't rely on Zod alone because the default makes
-// the field "valid" at parse time.
+// Hard-fail in production if AUTH_JWT_SECRET is still the dev default. It no
+// longer signs/verifies auth sessions (RS256-only now), but it is still the
+// fallback HMAC key for Brazil consent-link tokens, so a dev-default value in
+// production is unsafe. We can't rely on Zod alone because the default makes the
+// field "valid" at parse time.
 const DEV_JWT_FALLBACK = "dev-only-change-this-auth-jwt-secret-min-32";
 if (parsed.NODE_ENV === "production" && parsed.AUTH_JWT_SECRET === DEV_JWT_FALLBACK) {
   throw new Error(
@@ -330,12 +332,10 @@ if (parsed.NODE_ENV === "production" && parsed.AUTH_JWT_SECRET === DEV_JWT_FALLB
   );
 }
 
-// S-012: require the RS256 keypair in production. The backend signs sessions with
-// the private key (only it can mint tokens); both services verify with the public
-// key. AUTH_JWT_SECRET may still be set alongside these — that is the valid
-// transition state (HS256 fallback for pre-deploy sessions) and does NOT satisfy
-// this check on its own. When the follow-up removes the HS256 fallback, the two
-// keys become the sole source of truth.
+// S-012 / SEC-004: RS256 is the SOLE auth-session algorithm. The backend signs
+// with the private key (only it can mint tokens); both services verify with the
+// public key. There is no HS256 fallback anymore, so the keypair is mandatory in
+// production.
 if (
   parsed.NODE_ENV === "production" &&
   (!parsed.AUTH_JWT_PRIVATE_KEY || !parsed.AUTH_JWT_PUBLIC_KEY)

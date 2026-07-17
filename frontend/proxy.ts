@@ -13,15 +13,12 @@ import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
  *      we called the backend's `/api/auth/me` on every nav — measurable
  *      TTFB cost per internal link.
  *
- *      S-012: the frontend holds ONLY the RS256 PUBLIC verification key
- *      (`AUTH_JWT_PUBLIC_KEY`), never the private signing key — so a
- *      frontend compromise can verify sessions but can NEVER mint backend
- *      tokens. The verify mirrors the backend's dual-key rotation: try the
- *      RS256 public key first, then fall back to the legacy HS256 shared
- *      secret (`AUTH_JWT_SECRET`) for cookies issued before asymmetric
- *      signing shipped. See `backend/src/utils/auth-session.ts`
- *      (`verifyWithRotation`) for the matching logic and the HS256-removal
- *      follow-up.
+ *      S-012 / SEC-004: the frontend holds ONLY the RS256 PUBLIC verification
+ *      key (`AUTH_JWT_PUBLIC_KEY`), never the private signing key and no shared
+ *      secret — so a frontend compromise can verify sessions but can NEVER mint
+ *      backend tokens. Verification is RS256-ONLY; the legacy HS256 shared-secret
+ *      fallback was removed. See `backend/src/utils/auth-session.ts`
+ *      (`verifyWithRotation`) for the matching logic.
  *
  *      A backend round-trip still happens on every authenticated API
  *      request — this only skips it at navigation time.
@@ -109,17 +106,6 @@ async function getJwtPublicKey(): Promise<PublicKey | null> {
   return cachedPublicKey;
 }
 
-// Legacy HS256 shared secret — transitional verify-fallback for cookies issued
-// before asymmetric signing shipped. Remove with the S-012 HS256-removal
-// follow-up (see auth-session.ts).
-let cachedSecretKey: Uint8Array | null | undefined;
-function getJwtSecretKey(): Uint8Array | null {
-  if (cachedSecretKey !== undefined) return cachedSecretKey;
-  const raw = process.env.AUTH_JWT_SECRET?.trim();
-  cachedSecretKey = raw ? new TextEncoder().encode(raw) : null;
-  return cachedSecretKey;
-}
-
 type SessionRole =
   | "PATIENT"
   | "ADMIN"
@@ -145,44 +131,34 @@ function isSessionRole(value: unknown): value is SessionRole {
 }
 
 /**
- * Verify the cookie against the RS256 public key first, then fall back to the
- * legacy HS256 shared secret. Each branch PINS its own algorithm to its own key,
- * so there is no RS256↔HS256 alg-confusion (the public key is only ever an RS256
- * verifier, the secret only ever an HS256 one). Mirrors the backend's
+ * Verify the cookie against the RS256 public key. RS256 is the SOLE accepted
+ * algorithm (SEC-004): the frontend holds no shared secret and no signing key,
+ * so it can verify sessions but never mint them. Mirrors the backend's
  * `verifyWithRotation`. Returns the decoded payload or null.
  */
 async function verifyWithRotation(
   token: string,
-  publicKey: PublicKey | null,
-  secretKey: Uint8Array | null,
+  publicKey: PublicKey,
 ): Promise<JWTPayload | null> {
-  const opts = { issuer: JWT_ISSUER, audience: JWT_AUDIENCE };
-  if (publicKey) {
-    try {
-      const { payload } = await jwtVerify(token, publicKey, { ...opts, algorithms: ["RS256"] });
-      return payload;
-    } catch {
-      // Not a valid RS256 token — try the legacy HS256 secret below.
-    }
-  }
-  if (secretKey) {
-    try {
-      const { payload } = await jwtVerify(token, secretKey, { ...opts, algorithms: ["HS256"] });
-      return payload;
-    } catch {
-      // Invalid under both keys.
-    }
+  try {
+    const { payload } = await jwtVerify(token, publicKey, {
+      issuer: JWT_ISSUER,
+      audience: JWT_AUDIENCE,
+      algorithms: ["RS256"],
+    });
+    return payload;
+  } catch {
+    // Not a valid RS256 token.
   }
   return null;
 }
 
 async function resolveSession(request: NextRequest): Promise<SessionLookup> {
   const publicKey = await getJwtPublicKey();
-  const secretKey = getJwtSecretKey();
-  if (!publicKey && !secretKey) {
-    // The edge check is only an optimization. When the frontend env lacks BOTH
-    // verification keys, fall back to the server-side auth fetches used by the
-    // layouts/pages instead of hard-failing navigation.
+  if (!publicKey) {
+    // The edge check is only an optimization. When the frontend env lacks the
+    // RS256 public verification key, fall back to the server-side auth fetches
+    // used by the layouts/pages instead of hard-failing navigation.
     //
     // This keeps logout and role-gated redirects working even if only the
     // frontend service is missing the key, while the backend remains the source
@@ -191,7 +167,7 @@ async function resolveSession(request: NextRequest): Promise<SessionLookup> {
   }
   const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
   if (!token) return { kind: "ok", role: null, email: null };
-  const payload = await verifyWithRotation(token, publicKey, secretKey);
+  const payload = await verifyWithRotation(token, publicKey);
   if (!payload) return { kind: "ok", role: null, email: null };
   return {
     kind: "ok",
@@ -206,8 +182,8 @@ function normalizeNextPath(pathname: string) {
 }
 
 /**
- * Handle a `misconfigured` edge session (neither AUTH_JWT_PUBLIC_KEY nor the
- * legacy AUTH_JWT_SECRET set on the frontend) for a protected route.
+ * Handle a `misconfigured` edge session (AUTH_JWT_PUBLIC_KEY not set on the
+ * frontend) for a protected route.
  * Defense-in-depth: in production we fail CLOSED — log loudly and redirect to
  * login rather than silently passing unauthenticated traffic through to the
  * protected page tree. In development we pass through so a missing local key
@@ -215,7 +191,7 @@ function normalizeNextPath(pathname: string) {
  */
 function handleMisconfiguredSession(request: NextRequest, pathname: string) {
   console.error(
-    "[proxy] no JWT verification key (AUTH_JWT_PUBLIC_KEY / AUTH_JWT_SECRET) set — edge auth disabled for",
+    "[proxy] no JWT verification key (AUTH_JWT_PUBLIC_KEY) set — edge auth disabled for",
     pathname,
   );
   if (process.env.NODE_ENV !== "production") {
