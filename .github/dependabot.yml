@@ -1,0 +1,51 @@
+version: 2
+
+# NOTE on "separate daily security updates": Dependabot's security-only
+# updates (triggered by GitHub Security Advisories, independent of the
+# schedule below) are a repo-level toggle — Settings → Code security →
+# "Dependabot security updates" — not a dependabot.yml directive. Once
+# enabled there, GitHub opens a PR immediately on a new advisory regardless
+# of the weekly interval configured here. The version-update config below
+# only covers routine (non-emergency) upgrades.
+updates:
+  # ── npm: root workspace ────────────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+    open-pull-requests-limit: 10
+    labels: ["dependencies"]
+
+  # ── npm: frontend (mirrors root — see CLAUDE.md on pnpm.overrides not
+  #    being inherited by standalone builds; frontend/package.json carries
+  #    its own override block) ──────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    groups:
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+    open-pull-requests-limit: 10
+    labels: ["dependencies"]
+
+  # ── npm: backend (same reason as frontend) ────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+    groups:
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+    open-pull-requests-limit: 10
+    labels: ["dependencies"]
+
+  # ── GitHub Actions ─────────────────────────────────────────────────────
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels: ["dependencies", "github-actions"]
