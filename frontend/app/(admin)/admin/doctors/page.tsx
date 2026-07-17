@@ -13,7 +13,7 @@ import {
 import { getActiveCountry, scopedCountryId } from "@/lib/admin/admin-scope";
 import { SERVICE_KIND_META } from "@/lib/admin/service-kind";
 import { FlagBadge } from "../_components/flag-badge";
-import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
+import { DeleteDoctorButton } from "../_components/delete-doctor-button";
 import { QueryToast } from "../_components/query-toast";
 import { ScopeBanner } from "../_components/scope-banner";
 import { IconBtn } from "@/components/portal-atoms";
@@ -171,11 +171,10 @@ function doctorFields(
           </IconBtn>
           <form action={deleteDoctorAction} className="inline-flex">
             <input type="hidden" name="id" value={d.id} />
-            <ConfirmDeleteButton
-              title={`Delete Dr. ${d.fullName}?`}
-              message={`Permanently delete doctor "${d.fullName}"? This removes their profile and cannot be undone.`}
+            <DeleteDoctorButton
+              doctorId={d.id}
+              doctorName={d.fullName}
               ariaLabel={`Delete ${d.fullName}`}
-              requireTypedConfirmation={d.fullName}
             />
           </form>
         </div>
@@ -273,7 +272,10 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
     "use server";
     await requireAdminAction();
     const id = String(formData.get("id") ?? "").trim();
-    const result = await purgeAdminDoctor(id);
+    // Set by the dialog only once the admin accepted the future-appointment
+    // warning; the backend refuses an unforced purge when any exist.
+    const force = formData.get("force") === "true";
+    const result = await purgeAdminDoctor(id, { force });
     if (!result.ok) {
       redirect(`/admin/doctors?error=${encodeURIComponent(result.message)}`);
     }
