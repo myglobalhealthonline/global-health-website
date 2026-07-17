@@ -1950,8 +1950,12 @@ model GeneratedDocument {
   metadata      Json?
   /// Per-appointment sequential stamp; only set for EXAMS_PRESCRIPTION.
   prescriptionNumber   Int?
-  /// Per-prescription patient-upload link (v3 token). EXAMS_PRESCRIPTION only.
-  uploadToken          String?
+  /// SEC-006: SHA-256 hash of the current patient-upload token (same helper as
+  /// PatientUploadLink.tokenHash). The raw token is never persisted here — it's
+  /// shown to the caller once at mint time and lives (hashed) in PatientUploadLink,
+  /// the authoritative store. Non-null purely marks "an upload link was issued".
+  /// EXAMS_PRESCRIPTION only.
+  uploadTokenHash      String?
   uploadTokenExpiresAt DateTime?
   /// Unique public ID for certificate verification. CUSTOM_CERTIFICATE only.
   certificateId        String?   @unique

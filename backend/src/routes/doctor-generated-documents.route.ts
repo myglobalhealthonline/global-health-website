@@ -78,7 +78,7 @@ function mapDocRow(r: {
   createdAt: Date;
   metadata: unknown;
   prescriptionNumber?: number | null;
-  uploadToken?: string | null;
+  uploadTokenHash?: string | null;
   certificateId?: string | null;
 }) {
   const metadata =
@@ -93,7 +93,7 @@ function mapDocRow(r: {
     createdAt: r.createdAt.toISOString(),
     metadata,
     prescriptionNumber: r.prescriptionNumber ?? null,
-    hasUploadLink: Boolean(r.uploadToken),
+    hasUploadLink: Boolean(r.uploadTokenHash),
     certificateId: r.certificateId ?? null,
   };
 }
@@ -186,7 +186,7 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
                 sentToPatient: row.sentToPatient,
                 createdAt: row.createdAt.toISOString(),
                 prescriptionNumber: row.prescriptionNumber ?? null,
-                hasUploadLink: Boolean(row.uploadToken),
+                hasUploadLink: Boolean(row.uploadTokenHash),
                 certificateId: row.certificateId ?? null,
               },
               pdfUrl,

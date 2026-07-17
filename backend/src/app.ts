@@ -24,6 +24,25 @@ export async function buildApp() {
     // and session cookies never land in logs.
     logger: {
       redact: ["req.headers.authorization", "req.headers.cookie", "res.headers['set-cookie']"],
+      // SEC-006: capability tokens ride in the query string (e.g. the
+      // patient-upload `?token=` bearer). Header redaction above can't reach
+      // the URL, so strip token-looking params from the logged req.url before
+      // it lands in an access log line. Mirrors the standard Fastify req
+      // serializer shape so nothing else about request logging changes.
+      serializers: {
+        req(request) {
+          return {
+            method: request.method,
+            url: (request.url ?? "").replace(
+              /([?&](?:token|uploadToken|t)=)[^&#]+/gi,
+              "$1[REDACTED]",
+            ),
+            hostname: request.hostname,
+            remoteAddress: request.ip,
+            remotePort: request.socket?.remotePort,
+          };
+        },
+      },
     },
     bodyLimit: 5 * 1024 * 1024,
     trustProxy: 1,
