@@ -93,7 +93,6 @@ export default async function DoctorCalendarPage() {
         availableTimezones={availableTimezones}
         strings={d.calendar}
         common={d.common}
-        minutesShort={d.availability.minutesShort}
         errorEndAfterStart={d.availability.errorEndAfterStart}
         errorEndDateAfterStart={d.availability.errorEndDateAfterStart}
         statsSlot={

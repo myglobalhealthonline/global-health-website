@@ -32,10 +32,9 @@ import {
 } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
 import { PortalDialog } from "@/components/PortalDialog";
+import { BASE_SLOT_MINUTES } from "@/lib/constants";
 type AvailabilityStrings = Record<string, string>;
 type CommonStrings = Record<string, string>;
-
-const SLOT_DURATIONS = [15, 20, 30, 45, 60];
 
 // The edit form lives in the dialog body while its submit button lives in the
 // dialog footer — the `form` attribute associates them across that boundary.
@@ -135,7 +134,6 @@ export function DoctorAvailabilityUI({
   // picked. Empty forces the hours to be entered deliberately.
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
-  const [duration, setDuration] = useState(15);
   // ISO date strings (YYYY-MM-DD). Empty = "always" / "forever".
   const [effectiveFromDate, setEffectiveFromDate] = useState("");
   const [effectiveUntilDate, setEffectiveUntilDate] = useState("");
@@ -144,7 +142,6 @@ export function DoctorAvailabilityUI({
   const [editWeekday, setEditWeekday] = useState(1);
   const [editStartTime, setEditStartTime] = useState("09:00");
   const [editEndTime, setEditEndTime] = useState("17:00");
-  const [editDuration, setEditDuration] = useState(15);
   const [editFromDate, setEditFromDate] = useState("");
   const [editUntilDate, setEditUntilDate] = useState("");
   const [editActive, setEditActive] = useState(true);
@@ -198,7 +195,7 @@ export function DoctorAvailabilityUI({
         weekday,
         startMinute: startMin,
         endMinute: endMin,
-        slotDurationMinutes: duration,
+        slotDurationMinutes: BASE_SLOT_MINUTES,
         effectiveFrom: effectiveFromDate
           ? new Date(`${effectiveFromDate}T00:00:00.000Z`).toISOString()
           : undefined,
@@ -217,7 +214,6 @@ export function DoctorAvailabilityUI({
       setWeekday(1);
       setStartTime("");
       setEndTime("");
-      setDuration(15);
       setEffectiveFromDate("");
       setEffectiveUntilDate("");
       router.refresh();
@@ -229,7 +225,6 @@ export function DoctorAvailabilityUI({
     setEditWeekday(w.weekday);
     setEditStartTime(minutesToTime(w.startMinute));
     setEditEndTime(minutesToTime(w.endMinute));
-    setEditDuration(w.slotDurationMinutes);
     setEditFromDate(isoToDateInput(w.effectiveFrom));
     setEditUntilDate(isoToDateInput(w.effectiveUntil));
     setEditActive(w.isActive);
@@ -256,7 +251,8 @@ export function DoctorAvailabilityUI({
         weekday: editWeekday,
         startMinute: startMin,
         endMinute: endMin,
-        slotDurationMinutes: editDuration,
+        // Normalises any legacy window that still carries another grid step.
+        slotDurationMinutes: BASE_SLOT_MINUTES,
         // null (not undefined) so clearing a date really clears the boundary.
         effectiveFrom: editFromDate
           ? new Date(`${editFromDate}T00:00:00.000Z`).toISOString()
@@ -574,23 +570,11 @@ export function DoctorAvailabilityUI({
               {fieldError?.field === "time" ? (
                 <p className="text-sm text-rose-700">{fieldError.message}</p>
               ) : null}
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="gh-field-label">{s.baseSlotLength}</span>
-                <select
-                  className="gh-select"
-                  value={duration}
-                  onChange={(e) => setDuration(Number(e.target.value))}
-                >
-                  {SLOT_DURATIONS.map((d) => (
-                    <option key={d} value={d}>
-                      {s.minutesShort.replace("{count}", String(d))}
-                    </option>
-                  ))}
-                </select>
-                <span className="text-portal-meta text-[var(--portal-muted)]">
-                  {s.baseSlotHint}
-                </span>
-              </label>
+              {/* Base grid is fixed product-wide — stated, not chosen. */}
+              <p className="text-portal-meta text-[var(--portal-muted)]">
+                {s.baseGrid.replace("{duration}", String(BASE_SLOT_MINUTES))} ·{" "}
+                {s.baseSlotHint}
+              </p>
 
               {/* Optional effective range — leave blank for "always" */}
               <div className="gh-doctor-time-grid grid grid-cols-2 gap-2">
@@ -707,20 +691,10 @@ export function DoctorAvailabilityUI({
               />
             </label>
           </div>
-          <label className="flex flex-col gap-1 text-sm">
-            <span className="gh-field-label">{s.baseSlotLength}</span>
-            <select
-              className="gh-select"
-              value={editDuration}
-              onChange={(e) => setEditDuration(Number(e.target.value))}
-            >
-              {SLOT_DURATIONS.map((d) => (
-                <option key={d} value={d}>
-                  {s.minutesShort.replace("{count}", String(d))}
-                </option>
-              ))}
-            </select>
-          </label>
+          <p className="text-portal-meta text-[var(--portal-muted)]">
+            {s.baseGrid.replace("{duration}", String(BASE_SLOT_MINUTES))} ·{" "}
+            {s.baseSlotHint}
+          </p>
           <div className="grid grid-cols-2 gap-2">
             <label className="flex flex-col gap-1 text-sm">
               <span className="gh-field-label">{s.startsOptional}</span>
