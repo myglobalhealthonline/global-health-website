@@ -26,18 +26,41 @@ export type InvoiceFilterValues = {
   q?: string;
   kind?: string;
   documentType?: string;
+  /** Lowercase country code (`ie`), or the `all` sentinel for no scope. */
+  countryCode?: string;
+  /** Invoice-date month shortcut, `YYYY-MM`. */
+  month?: string;
   invoiceFrom?: string;
   invoiceTo?: string;
   consultFrom?: string;
   consultTo?: string;
 };
 
+/** Every key the form writes back to the URL. */
+const FORM_KEYS = [
+  "q",
+  "kind",
+  "documentType",
+  "countryCode",
+  "month",
+  "invoiceFrom",
+  "invoiceTo",
+  "consultFrom",
+  "consultTo",
+] as const;
+
 const labelCls =
   "mb-1 block text-portal-micro font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]";
 const fieldCls =
   "w-full rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-portal-compact text-[var(--color-text-primary)] outline-none focus:border-[var(--color-brand-primary)]";
 
-export function InvoiceFilters({ values }: { values: InvoiceFilterValues }) {
+export function InvoiceFilters({
+  values,
+  countryOptions,
+}: {
+  values: InvoiceFilterValues;
+  countryOptions: { value: string; label: string }[];
+}) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -45,6 +68,8 @@ export function InvoiceFilters({ values }: { values: InvoiceFilterValues }) {
     values.q ||
       values.kind ||
       values.documentType ||
+      values.countryCode ||
+      values.month ||
       values.invoiceFrom ||
       values.invoiceTo ||
       values.consultFrom ||
@@ -56,7 +81,7 @@ export function InvoiceFilters({ values }: { values: InvoiceFilterValues }) {
     const data = new FormData(e.currentTarget);
     const params = new URLSearchParams();
     // Reset cursor on any new search — filters change the result set.
-    for (const key of ["q", "kind", "documentType", "invoiceFrom", "invoiceTo", "consultFrom", "consultTo"]) {
+    for (const key of FORM_KEYS) {
       const val = (data.get(key) as string | null)?.trim();
       if (val) params.set(key, val);
     }
@@ -67,6 +92,8 @@ export function InvoiceFilters({ values }: { values: InvoiceFilterValues }) {
   }
 
   function handleClear() {
+    // Clearing drops every filter INCLUDING the explicit country choice, so the
+    // page falls back to the topbar country scope — same as a fresh visit.
     startTransition(() => {
       router.push("/admin/invoices");
     });
@@ -132,6 +159,37 @@ export function InvoiceFilters({ values }: { values: InvoiceFilterValues }) {
               </option>
             ))}
           </select>
+        </div>
+
+        <div>
+          <label className={labelCls} htmlFor="inv-filter-countryCode">
+            Country
+          </label>
+          <select
+            id="inv-filter-countryCode"
+            name="countryCode"
+            defaultValue={values.countryCode ?? ""}
+            className={fieldCls}
+          >
+            {countryOptions.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className={labelCls} htmlFor="inv-filter-month">
+            Invoice month
+          </label>
+          <input
+            id="inv-filter-month"
+            name="month"
+            type="month"
+            defaultValue={values.month ?? ""}
+            className={fieldCls}
+          />
         </div>
 
         <div>
