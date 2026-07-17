@@ -38,6 +38,16 @@ const INVOICE_DOCUMENT_TYPES = ["INVOICE", "RECEIPT", "INVOICE_RECEIPT", "CREDIT
 /** Treat blank form fields (`?q=&kind=`) as absent rather than a validation error. */
 const blankToUndefined = (v: unknown) => (v === "" ? undefined : v);
 
+/** `YYYY-MM`, e.g. `2026-07`. */
+const MONTH_RE = /^\d{4}-(0[1-9]|1[0-2])$/;
+
+/**
+ * Upper bound on the number of distinct orders the stats aggregate will sum.
+ * Beyond this the totals are reported as truncated rather than issuing an
+ * unbounded `IN (...)`, which would degrade badly once the invoice table grows.
+ */
+const STATS_ORDER_CAP = 5000;
+
 const listQuerySchema = z.object({
   cursor: z.string().min(1).max(120).optional(),
   limit: z.coerce.number().int().min(1).max(100).default(50),
@@ -60,6 +70,16 @@ const listQuerySchema = z.object({
   /** Consultation-date (appointment.scheduledAt) range, inclusive. */
   consultFrom: z.preprocess(blankToUndefined, z.coerce.date().optional()),
   consultTo: z.preprocess(blankToUndefined, z.coerce.date().optional()),
+  /**
+   * Country scope, e.g. `ie`. Matched case-insensitively against
+   * `Invoice.countryCode`, which is indexed as [countryCode, generatedAt desc].
+   */
+  countryCode: z.preprocess(blankToUndefined, z.string().trim().min(2).max(8).optional()),
+  /**
+   * Calendar-month shortcut on the invoice date, `YYYY-MM`. ANDed with
+   * invoiceFrom/invoiceTo like every other clause — it narrows, never widens.
+   */
+  month: z.preprocess(blankToUndefined, z.string().regex(MONTH_RE).optional()),
 });
 
 /** Push start/end of the given day so a plain `YYYY-MM-DD` covers the whole day. */
@@ -67,6 +87,80 @@ function endOfDay(d: Date): Date {
   const end = new Date(d);
   end.setHours(23, 59, 59, 999);
   return end;
+}
+
+/**
+ * `YYYY-MM` → half-open UTC range [first instant of the month, first instant of
+ * the next month). UTC because `generatedAt` is stored in UTC; a month boundary
+ * is therefore reckoned in UTC, not in the admin's local zone.
+ */
+function monthRangeUtc(month: string): { gte: Date; lt: Date } {
+  const [year, mon] = month.split("-").map(Number) as [number, number];
+  return {
+    gte: new Date(Date.UTC(year, mon - 1, 1)),
+    lt: new Date(Date.UTC(mon === 12 ? year + 1 : year, mon === 12 ? 0 : mon, 1)),
+  };
+}
+
+export type AdminInvoiceStats = {
+  /** Distinct orders across the whole filtered set. */
+  orderCount: number;
+  /** Fiscal documents across the whole filtered set. */
+  documentCount: number;
+  /** Of those documents, how many have been emailed. */
+  emailSentCount: number;
+  /** Order value per currency — a multi-country scope can mix currencies. */
+  totals: { currencyCode: string; totalCents: number }[];
+  /** True when the order set exceeded STATS_ORDER_CAP and `totals` is partial. */
+  truncated: boolean;
+};
+
+/**
+ * Aggregate the summary numbers over every invoice matching the filters.
+ *
+ * `groupBy` (real SQL GROUP BY) rather than `findMany({ distinct })`, which
+ * Prisma applies in memory after fetching every row.
+ */
+async function buildInvoiceStats(
+  and: Prisma.InvoiceWhereInput[],
+  where: Prisma.InvoiceWhereInput,
+): Promise<AdminInvoiceStats> {
+  const [documentCount, emailSentCount, orderGroups] = await Promise.all([
+    prisma.invoice.count({ where }),
+    prisma.invoice.count({ where: { AND: [...and, { emailSentAt: { not: null } }] } }),
+    // orderBy is mandatory alongside `take` on groupBy; the order is irrelevant
+    // here since we only ever count the rows and sum their orders.
+    prisma.invoice.groupBy({
+      by: ["orderId"],
+      where,
+      orderBy: { orderId: "asc" },
+      take: STATS_ORDER_CAP + 1,
+    }),
+  ]);
+
+  const truncated = orderGroups.length > STATS_ORDER_CAP;
+  const orderIds = orderGroups.slice(0, STATS_ORDER_CAP).map((g) => g.orderId);
+
+  // One order carries one total, however many documents hang off it — so sum
+  // Order.totalCents over the distinct orders, never over the invoice rows.
+  const valueRows = orderIds.length
+    ? await prisma.order.groupBy({
+        by: ["currencyCode"],
+        where: { id: { in: orderIds } },
+        _sum: { totalCents: true },
+      })
+    : [];
+
+  return {
+    // When truncated this is a floor ("at least STATS_ORDER_CAP"), not an exact count.
+    orderCount: orderIds.length,
+    documentCount,
+    emailSentCount,
+    totals: valueRows
+      .map((r) => ({ currencyCode: r.currencyCode, totalCents: r._sum.totalCents ?? 0 }))
+      .sort((a, b) => b.totalCents - a.totalCents),
+    truncated,
+  };
 }
 
 const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
@@ -79,8 +173,19 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
     if (!query.success) {
       return reply.status(400).send(errorResponse("Invalid query", query.error.flatten()));
     }
-    const { cursor, limit, q, kind, documentType, invoiceFrom, invoiceTo, consultFrom, consultTo } =
-      query.data;
+    const {
+      cursor,
+      limit,
+      q,
+      kind,
+      documentType,
+      invoiceFrom,
+      invoiceTo,
+      consultFrom,
+      consultTo,
+      countryCode,
+      month,
+    } = query.data;
 
     // SEC-001b: LOCAL_ADMIN sees only their assigned countries' invoices.
     // null = unscoped (ADMIN/SUPER_ADMIN/token); [] = a LOCAL_ADMIN with no
@@ -131,6 +236,14 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
 
     if (documentType) {
       and.push({ documentType });
+    }
+
+    if (countryCode) {
+      and.push({ countryCode: { equals: countryCode, mode: "insensitive" } });
+    }
+
+    if (month) {
+      and.push({ generatedAt: monthRangeUtc(month) });
     }
 
     if (invoiceFrom || invoiceTo) {
@@ -184,6 +297,11 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
       const hasMore = pageInvoices.length > limit;
       const page = hasMore ? pageInvoices.slice(0, limit) : pageInvoices;
       const nextCursor = hasMore ? page[page.length - 1]?.id ?? null : null;
+
+      // Stats span the WHOLE filtered set, not the cursor page — the numbers
+      // answer "how much did <country> bill in <month>", so they must not move
+      // when the admin pages forward.
+      const stats = await buildInvoiceStats(and, where);
 
       // Distinct order ids in most-recent-invoice order.
       const orderIds: string[] = [];
@@ -260,7 +378,7 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
         })
         .filter((o): o is NonNullable<typeof o> => o !== null);
 
-      return okResponse({ orders, nextCursor });
+      return okResponse({ orders, nextCursor, stats });
     } catch (err) {
       if (err instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(err.message));

@@ -10,6 +10,7 @@ import { stopPrePaymentFlowOnPaid } from "../automation/pre-payment-flow.service
 import { emitOpsAlert } from "../subscriptions/ops/ops-alert.js";
 import { commitOrderCreditReservations } from "../subscriptions/checkout-pricing.service.js";
 import { enqueueOrderPaidAutomations } from "../outbox/outbox.js";
+import { encryptPhi } from "../../lib/crypto/phi-crypto.js";
 
 export type PaymentLog = {
   info: (obj: unknown, msg?: string) => void;
@@ -370,13 +371,17 @@ async function fulfillPaidOrderFromCheckoutSession(
 
       if (
         aptEmail &&
-        (item.patientNationalIdNumber || item.patientAddressLine1 || item.patientAddressCity)
+        (item.patientNationalIdNumber ||
+          item.patientUtenteNumber ||
+          item.patientAddressLine1 ||
+          item.patientAddressCity)
       ) {
         const existing = await tx.patientProfile.findUnique({
           where: { email: aptEmail.toLowerCase() },
           select: {
             nationalIdNumber: true,
             taxIdNumber: true,
+            utenteNumber: true,
             addressLine1: true,
             addressLine2: true,
             addressCity: true,
@@ -394,6 +399,13 @@ async function fulfillPaidOrderFromCheckoutSession(
               item.patientNationalIdNumber,
             ),
             taxIdNumber: fill(existing?.taxIdNumber ?? null, item.patientNationalIdNumber),
+            // Encrypted on the way in: `existing` is already ciphertext when a
+            // key is configured, so keeping it as-is is correct and only the
+            // fresh snapshot value needs wrapping.
+            utenteNumber: fill(
+              existing?.utenteNumber ?? null,
+              encryptPhi(item.patientUtenteNumber),
+            ),
             addressLine1: fill(existing?.addressLine1 ?? null, item.patientAddressLine1),
             addressLine2: fill(existing?.addressLine2 ?? null, item.patientAddressLine2),
             addressCity: fill(existing?.addressCity ?? null, item.patientAddressCity),
@@ -413,6 +425,7 @@ async function fulfillPaidOrderFromCheckoutSession(
             dateOfBirth: aptDob,
             nationalIdNumber: item.patientNationalIdNumber,
             taxIdNumber: item.patientNationalIdNumber,
+            utenteNumber: encryptPhi(item.patientUtenteNumber),
             addressLine1: item.patientAddressLine1,
             addressLine2: item.patientAddressLine2,
             addressCity: item.patientAddressCity,

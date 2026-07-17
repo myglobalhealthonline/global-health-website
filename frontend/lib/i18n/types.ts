@@ -350,6 +350,8 @@ export type CommonLocale = {
     dateOfBirth: string;
     nationalIdOptional: string;
     nationalIdHint: string;
+    utenteOptional: string;
+    utenteHint: string;
     reasonForVisit: string;
     reasonPlaceholder: string;
     consentStatement: string;

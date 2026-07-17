@@ -1,6 +1,8 @@
 import { CartItemKind, PrePaymentFlow } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { releaseSlotsToBaseGrid } from "../doctor-availability/doctor-availability.service.js";
+import { cancelOrderAppointments } from "../appointments/appointments.service.js";
+import { releaseOrderCreditReservations } from "../subscriptions/checkout-pricing.service.js";
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import { resolveEmailLogoUrl } from "../../lib/email/resolve-email-logo-url.js";
 import { resolveOrderPaymentUrl, orderPayShortLink } from "../orders/order-payment-url.service.js";
@@ -697,17 +699,7 @@ async function executeReminderStage(
   const { order, primary, lang, ctx, phoneHints, portal } = loaded;
   const baseKey = automationBaseKey(flow);
   const stageKey = `${baseKey}_stage_${stage}`;
-  const cancelStage = prePaymentCancelStage(flow);
-  const isFinal = stage === cancelStage;
-
-  if (isFinal) {
-    // Notify (patient + doctor), then cancel. Reuses the shared sender so the
-    // Stripe session-expiry path fires identical messages.
-    await sendPrePaymentCancelledNotifications(orderId, stageKey);
-    await cancelPrePaymentOrder(orderId);
-    return;
-  }
-
+  // Reminder stages only — the cancel stage is owned by runPrePaymentCancelSweep.
   const kind = stage === prePaymentLastReminderStage(flow) ? "final" : "mid";
   const emailVariant: PrePaymentEmailVariant = kind === "final" ? "final" : "reminder";
   const msg = reminderMessage(ctx, lang, kind);
@@ -733,24 +725,53 @@ async function executeReminderStage(
   );
 }
 
-export async function cancelPrePaymentOrder(orderId: string) {
+/**
+ * Cancel an unpaid pre-payment order. The status flip is a single conditional
+ * update, so exactly one caller can win it — a sweep racing another sweep (or
+ * racing the Stripe session-expiry webhook) sees `false` and skips the
+ * cancelled notifications rather than double-sending them.
+ *
+ * Returns true only when THIS call performed the cancellation.
+ *
+ * Tears down the same three things the Stripe session-expiry path does
+ * (payments.route.ts): the held slots, the appointments, and any reserved plan
+ * credits. That path cannot be relied on as a backstop here — it only acts on
+ * orders still PENDING, so once this function flips the status it is skipped.
+ */
+export async function cancelPrePaymentOrder(orderId: string): Promise<boolean> {
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: { items: true },
   });
-  if (!order || order.paymentStatus === "PAID" || order.status === "PAID") return;
+  if (!order || order.paymentStatus === "PAID" || order.status === "PAID") return false;
 
   const heldSlotIds = order.items
     .map((i) => i.timeSlotId)
     .filter((id): id is string => Boolean(id));
 
-  await prisma.order.update({
-    where: { id: orderId },
+  const claimed = await prisma.order.updateMany({
+    where: { id: orderId, status: { not: "CANCELLED" }, paymentStatus: { not: "PAID" } },
     data: { status: "CANCELLED", paymentStatus: "FAILED" },
   });
+  if (claimed.count === 0) return false;
+
   if (heldSlotIds.length) {
     await releaseSlotsToBaseGrid(heldSlotIds);
   }
+
+  // Manual bookings mint the Appointment up front, before payment
+  // (manual-booking.service.ts), so a deadline cancel that skipped this would
+  // leave a REQUEST_RECEIVED row sitting on the admin/doctor calendars while
+  // releaseSlotsToBaseGrid above puts its slot back on sale — a ghost booking
+  // over a slot another patient can now claim.
+  await cancelOrderAppointments(orderId).catch(() => undefined);
+  // Hand back plan credits reserved at checkout. sweepExpiredReservations would
+  // eventually catch these anyway (they carry a 15-min reservedUntil), but only
+  // after the TTL — release them now rather than leaving the patient short of a
+  // credit for a booking that no longer exists.
+  await releaseOrderCreditReservations(orderId).catch(() => undefined);
+
+  return true;
 }
 
 export async function stopPrePaymentFlowOnPaid(orderId: string) {
@@ -789,6 +810,76 @@ export function prePaymentStageThresholdHours(
   return stageThresholdHours(flow, stage);
 }
 
+/**
+ * Deadline enforcement, split out of `runPrePaymentReminderCron` so it can tick
+ * on its own short interval. The reminder cron ticks every 15 min and its body
+ * can run for minutes (WhatsApp sends are globally serialized behind a 6s gap
+ * plus retry backoffs in wasender.ts), so an order sharing that tick was
+ * cancelled anywhere from 0 to ~15 min past `paymentDueAt`. That is worst for
+ * urgent bookings, which get a 5-minute pay window (`computePrePaymentPlan`) —
+ * a 15-min sweep could overshoot it 3x.
+ *
+ * Runs in two passes ON PURPOSE. Every due order is cancelled first (DB writes
+ * only, milliseconds each), and the notifications are sent afterwards. Cancel
+ * and notify interleaved per-order would rebuild the same bug in miniature: the
+ * cancelled pair costs seconds of serialized WhatsApp per order, so the last
+ * order in a batch of 20 would sit unenforced for minutes waiting its turn.
+ * Cancelling before notifying also matches the Stripe session-expiry path in
+ * payments.route.ts.
+ */
+export async function runPrePaymentCancelSweep() {
+  const now = new Date();
+  const due = await prisma.order.findMany({
+    where: {
+      status: "PENDING",
+      paymentStatus: { in: ["UNPAID", "PENDING"] },
+      prePaymentFlow: { not: null },
+      paymentDueAt: { not: null, lte: now },
+    },
+    take: 100,
+    orderBy: { paymentDueAt: "asc" },
+  });
+
+  // Pass 1 — enforce every deadline. No sends in this loop.
+  const claimed: { orderId: string; stageKey: string }[] = [];
+  for (const order of due) {
+    if (!order.prePaymentFlow) continue;
+    const flow = order.prePaymentFlow;
+    const cancelStage = prePaymentCancelStage(flow);
+    if (order.prePaymentReminderStage >= cancelStage) continue;
+
+    // One order failing must not hold up the rest of the batch — they are all
+    // due NOW, so a single throw would re-create the drift this sweep removes.
+    try {
+      if (!(await cancelPrePaymentOrder(order.id))) continue;
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { prePaymentReminderStage: cancelStage },
+      });
+      claimed.push({
+        orderId: order.id,
+        stageKey: `${automationBaseKey(flow)}_stage_${cancelStage}`,
+      });
+    } catch {
+      // Swallowed deliberately: an order left PENDING here is simply retried by
+      // the next tick, 60s later.
+    }
+  }
+
+  // Pass 2 — tell the patient and doctor. Slow (serialized WhatsApp), but every
+  // deadline above is already enforced, so nothing time-critical waits on this.
+  for (const { orderId, stageKey } of claimed) {
+    try {
+      await sendPrePaymentCancelledNotifications(orderId, stageKey);
+    } catch {
+      // The cancellation is already committed and won't be retried — per-channel
+      // failures are recorded as FAILED AutomationRun rows by the senders.
+    }
+  }
+
+  return { candidates: due.length, cancelled: claimed.length };
+}
+
 export async function runPrePaymentReminderCron(opts?: {
   resolvePaymentUrl?: (orderId: string) => Promise<string | null>;
 }) {
@@ -798,7 +889,10 @@ export async function runPrePaymentReminderCron(opts?: {
       status: "PENDING",
       paymentStatus: { in: ["UNPAID", "PENDING"] },
       prePaymentFlow: { not: null },
-      paymentDueAt: { not: null },
+      // Past the deadline → runPrePaymentCancelSweep owns the order. Excluding
+      // them here also means a slow reminder tick can never send a "pay now"
+      // nudge to an order that is already being cancelled.
+      paymentDueAt: { not: null, gt: now },
     },
     take: 100,
     orderBy: { paymentDueAt: "asc" },
@@ -815,21 +909,6 @@ export async function runPrePaymentReminderCron(opts?: {
     const paymentUrl = override?.trim() || (await resolveOrderPaymentUrl(order.id, null)) || null;
 
     const cancelStage = prePaymentCancelStage(flow);
-
-    // Cancel as soon as the payment deadline passes (1h or 24h before consult).
-    if (
-      now.getTime() >= order.paymentDueAt.getTime() &&
-      order.prePaymentReminderStage < cancelStage
-    ) {
-      await executeReminderStage(order.id, flow, cancelStage, paymentUrl);
-      await prisma.order.update({
-        where: { id: order.id },
-        data: { prePaymentReminderStage: cancelStage },
-      });
-      sent++;
-      continue;
-    }
-
     const nextStage = order.prePaymentReminderStage + 1;
     if (nextStage >= cancelStage) continue;
 

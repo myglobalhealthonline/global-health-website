@@ -338,6 +338,8 @@
     "dateOfBirth": "Geburtsdatum",
     "nationalIdOptional": "{label} (optional)",
     "nationalIdHint": "Wird für medizinische Dokumente in Ihrem Land benötigt. Kann auch später im Profil ergänzt werden.",
+    "utenteOptional": "Número de Utente (optional)",
+    "utenteHint": "Ihre SNS-Gesundheitsnummer, damit die Ärztin oder der Arzt auf Ihre nationale Gesundheitsakte zugreifen und elektronische Rezepte ausstellen kann. Leer lassen, wenn Sie keine haben.",
     "reasonForVisit": "Grund des Besuchs (optional)",
     "reasonPlaceholder": "Beschreiben Sie kurz Ihre Symptome oder was Sie besprechen möchten.",
     "consentStatement": "Ich bestätige, dass die obigen Angaben korrekt sind und stimme einer Videokonsultation mit dem ausgewählten Arzt zu.",

@@ -2,10 +2,19 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Ban, CalendarClock, CheckCircle2, Plus, Trash2, UserRound } from "lucide-react";
+import {
+  Ban,
+  CalendarClock,
+  CheckCircle2,
+  Pencil,
+  Plus,
+  Trash2,
+  UserRound,
+} from "lucide-react";
 import {
   createAvailabilityWindow,
   deleteAvailabilityWindow,
+  updateAvailabilityWindow,
 } from "@/lib/api/doctor-availability-client";
 import type {
   AvailabilityWindow,
@@ -23,10 +32,13 @@ import {
 } from "@/components/portal-atoms";
 import { FormSection } from "@/components/FormSection";
 import { PortalDialog } from "@/components/PortalDialog";
+import { BASE_SLOT_MINUTES } from "@/lib/constants";
 type AvailabilityStrings = Record<string, string>;
 type CommonStrings = Record<string, string>;
 
-const SLOT_DURATIONS = [15, 20, 30, 45, 60];
+// The edit form lives in the dialog body while its submit button lives in the
+// dialog footer — the `form` attribute associates them across that boundary.
+const EDIT_FORM_ID = "gh-edit-window-form";
 
 function minutesToTime(min: number): string {
   const h = Math.floor(min / 60);
@@ -37,6 +49,13 @@ function minutesToTime(min: number): string {
 function timeToMinutes(t: string): number {
   const [h, m] = t.split(":").map(Number);
   return (h || 0) * 60 + (m || 0);
+}
+
+// Effective dates are stored as UTC instants pinned to the start/end of the
+// chosen day (see onAddWindow), so the ISO date part round-trips straight back
+// into an <input type="date"> value with no timezone shift.
+function isoToDateInput(iso: string | null): string {
+  return iso ? iso.slice(0, 10) : "";
 }
 
 // Effective-date ranges overlap when both are unbounded or bounded ends
@@ -105,21 +124,35 @@ export function DoctorAvailabilityUI({
   const [fieldError, setFieldError] = useState<{ field: "time" | "date"; message: string } | null>(null);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const deleteTarget = windows.find((w) => w.id === deleteTargetId) ?? null;
+  const [editTargetId, setEditTargetId] = useState<string | null>(null);
+  const editTarget = windows.find((w) => w.id === editTargetId) ?? null;
 
   // ── Add-window form state ───────────────────────────────────────
   const [weekday, setWeekday] = useState(1); // Mon
-  const [startTime, setStartTime] = useState("09:00");
-  const [endTime, setEndTime] = useState("17:00");
-  const [duration, setDuration] = useState(15);
+  // Times start empty — a prefilled 09:00–17:00 reads as a real choice the
+  // doctor already made, so a stray submit silently books office hours nobody
+  // picked. Empty forces the hours to be entered deliberately.
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   // ISO date strings (YYYY-MM-DD). Empty = "always" / "forever".
   const [effectiveFromDate, setEffectiveFromDate] = useState("");
   const [effectiveUntilDate, setEffectiveUntilDate] = useState("");
+
+  // ── Edit-window form state (seeded from the row on dialog open) ──
+  const [editWeekday, setEditWeekday] = useState(1);
+  const [editStartTime, setEditStartTime] = useState("09:00");
+  const [editEndTime, setEditEndTime] = useState("17:00");
+  const [editFromDate, setEditFromDate] = useState("");
+  const [editUntilDate, setEditUntilDate] = useState("");
+  const [editActive, setEditActive] = useState(true);
+  const [editError, setEditError] = useState<string | null>(null);
 
   // Non-blocking overlap warning: does the in-progress form conflict with an
   // existing active window on the same weekday within an overlapping
   // effective-date range? Doesn't prevent submit — legitimate overlaps
   // (e.g. a temporary extra evening clinic) do exist.
   const overlapWindow = useMemo(() => {
+    if (!startTime || !endTime) return null;
     const startMin = timeToMinutes(startTime);
     const endMin = timeToMinutes(endTime);
     if (endMin <= startMin) return null;
@@ -139,6 +172,10 @@ export function DoctorAvailabilityUI({
     e.preventDefault();
     setError(null);
     setFieldError(null);
+    if (!startTime || !endTime) {
+      setFieldError({ field: "time", message: s.errorTimeRequired });
+      return;
+    }
     const startMin = timeToMinutes(startTime);
     const endMin = timeToMinutes(endTime);
     if (endMin <= startMin) {
@@ -158,7 +195,7 @@ export function DoctorAvailabilityUI({
         weekday,
         startMinute: startMin,
         endMinute: endMin,
-        slotDurationMinutes: duration,
+        slotDurationMinutes: BASE_SLOT_MINUTES,
         effectiveFrom: effectiveFromDate
           ? new Date(`${effectiveFromDate}T00:00:00.000Z`).toISOString()
           : undefined,
@@ -175,11 +212,67 @@ export function DoctorAvailabilityUI({
       // as-is made the non-blocking overlap warning fire against the window
       // the doctor had just successfully added — a confusing false positive.
       setWeekday(1);
-      setStartTime("09:00");
-      setEndTime("17:00");
-      setDuration(15);
+      setStartTime("");
+      setEndTime("");
       setEffectiveFromDate("");
       setEffectiveUntilDate("");
+      router.refresh();
+    });
+  }
+
+  function onEditWindow(w: AvailabilityWindow) {
+    setEditError(null);
+    setEditWeekday(w.weekday);
+    setEditStartTime(minutesToTime(w.startMinute));
+    setEditEndTime(minutesToTime(w.endMinute));
+    setEditFromDate(isoToDateInput(w.effectiveFrom));
+    setEditUntilDate(isoToDateInput(w.effectiveUntil));
+    setEditActive(w.isActive);
+    setEditTargetId(w.id);
+  }
+
+  function onSaveEdit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const id = editTargetId;
+    if (!id) return;
+    setEditError(null);
+    const startMin = timeToMinutes(editStartTime);
+    const endMin = timeToMinutes(editEndTime);
+    if (endMin <= startMin) {
+      setEditError(s.errorEndAfterStart);
+      return;
+    }
+    if (editFromDate && editUntilDate && editFromDate > editUntilDate) {
+      setEditError(s.errorEndDateAfterStart);
+      return;
+    }
+    startTransition(async () => {
+      const res = await updateAvailabilityWindow(id, {
+        weekday: editWeekday,
+        startMinute: startMin,
+        endMinute: endMin,
+        // Normalises any legacy window that still carries another grid step.
+        slotDurationMinutes: BASE_SLOT_MINUTES,
+        // null (not undefined) so clearing a date really clears the boundary.
+        effectiveFrom: editFromDate
+          ? new Date(`${editFromDate}T00:00:00.000Z`).toISOString()
+          : null,
+        effectiveUntil: editUntilDate
+          ? new Date(`${editUntilDate}T23:59:59.999Z`).toISOString()
+          : null,
+        isActive: editActive,
+      });
+      if (!res.ok) {
+        setEditError(res.message);
+        return;
+      }
+      setWindows((prev) =>
+        prev.map((w) => (w.id === id ? res.data.availability : w)),
+      );
+      // The window moved — open slots from its old shape are stale server-side
+      // and locally. Drop them; router.refresh() brings back the new grid.
+      setSlots((prev) => prev.filter((sl) => sl.status !== "OPEN"));
+      setEditTargetId(null);
       router.refresh();
     });
   }
@@ -404,6 +497,15 @@ export function DoctorAvailabilityUI({
                                 </Pill>
                                 <button
                                   type="button"
+                                  onClick={() => onEditWindow(w)}
+                                  disabled={busy}
+                                  aria-label={s.editWindow}
+                                  className="flex min-h-11 min-w-11 items-center justify-center rounded-md text-[var(--portal-muted)] hover:text-[var(--portal-text)] disabled:opacity-60"
+                                >
+                                  <Pencil className="size-3.5" aria-hidden />
+                                </button>
+                                <button
+                                  type="button"
                                   onClick={() => onDeleteWindow(w.id)}
                                   disabled={busy}
                                   aria-label={s.deleteWindow}
@@ -450,6 +552,7 @@ export function DoctorAvailabilityUI({
                     type="time"
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
+                    required
                     className="gh-input"
                   />
                 </label>
@@ -459,6 +562,7 @@ export function DoctorAvailabilityUI({
                     type="time"
                     value={endTime}
                     onChange={(e) => setEndTime(e.target.value)}
+                    required
                     className="gh-input"
                   />
                 </label>
@@ -466,23 +570,11 @@ export function DoctorAvailabilityUI({
               {fieldError?.field === "time" ? (
                 <p className="text-sm text-rose-700">{fieldError.message}</p>
               ) : null}
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="gh-field-label">{s.baseSlotLength}</span>
-                <select
-                  className="gh-select"
-                  value={duration}
-                  onChange={(e) => setDuration(Number(e.target.value))}
-                >
-                  {SLOT_DURATIONS.map((d) => (
-                    <option key={d} value={d}>
-                      {s.minutesShort.replace("{count}", String(d))}
-                    </option>
-                  ))}
-                </select>
-                <span className="text-portal-meta text-[var(--portal-muted)]">
-                  {s.baseSlotHint}
-                </span>
-              </label>
+              {/* Base grid is fixed product-wide — stated, not chosen. */}
+              <p className="text-portal-meta text-[var(--portal-muted)]">
+                {s.baseGrid.replace("{duration}", String(BASE_SLOT_MINUTES))} ·{" "}
+                {s.baseSlotHint}
+              </p>
 
               {/* Optional effective range — leave blank for "always" */}
               <div className="gh-doctor-time-grid grid grid-cols-2 gap-2">
@@ -541,6 +633,106 @@ export function DoctorAvailabilityUI({
           </AdminCard>
         </aside>
       </div>
+
+      <PortalDialog
+        open={editTarget !== null}
+        onClose={() => setEditTargetId(null)}
+        title={
+          editTarget
+            ? s.editWindowTitleNamed
+                .replace("{day}", WEEKDAYS.find((d) => d.value === editTarget.weekday)?.label ?? "—")
+                .replace("{start}", minutesToTime(editTarget.startMinute))
+                .replace("{end}", minutesToTime(editTarget.endMinute))
+            : s.editWindowTitle
+        }
+        footer={
+          <>
+            <Btn variant="ghost" onClick={() => setEditTargetId(null)} disabled={busy}>
+              {s.cancel}
+            </Btn>
+            <Btn type="submit" form={EDIT_FORM_ID} variant="primary" disabled={busy}>
+              {busy ? s.savingWindow : s.saveWindow}
+            </Btn>
+          </>
+        }
+      >
+        <form id={EDIT_FORM_ID} onSubmit={onSaveEdit} className="grid gap-3">
+          <label className="flex flex-col gap-1 text-sm">
+            <span className="gh-field-label">{s.day}</span>
+            <select
+              className="gh-select"
+              value={editWeekday}
+              onChange={(e) => setEditWeekday(Number(e.target.value))}
+            >
+              {WEEKDAYS.map((d) => (
+                <option key={d.value} value={d.value}>
+                  {d.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="gh-field-label">{common.from}</span>
+              <input
+                type="time"
+                value={editStartTime}
+                onChange={(e) => setEditStartTime(e.target.value)}
+                className="gh-input"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="gh-field-label">{common.to}</span>
+              <input
+                type="time"
+                value={editEndTime}
+                onChange={(e) => setEditEndTime(e.target.value)}
+                className="gh-input"
+              />
+            </label>
+          </div>
+          <p className="text-portal-meta text-[var(--portal-muted)]">
+            {s.baseGrid.replace("{duration}", String(BASE_SLOT_MINUTES))} ·{" "}
+            {s.baseSlotHint}
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="gh-field-label">{s.startsOptional}</span>
+              <input
+                type="date"
+                value={editFromDate}
+                onChange={(e) => setEditFromDate(e.target.value)}
+                className="gh-input"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="gh-field-label">{s.endsOptional}</span>
+              <input
+                type="date"
+                value={editUntilDate}
+                onChange={(e) => setEditUntilDate(e.target.value)}
+                className="gh-input"
+              />
+            </label>
+          </div>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={editActive}
+              onChange={(e) => setEditActive(e.target.checked)}
+              className="size-4"
+            />
+            <span className="gh-field-label">{s.windowActive}</span>
+          </label>
+          <p className="text-portal-thead text-[var(--portal-muted)]">
+            {s.windowActiveHint}
+          </p>
+          {editError ? <p className="text-sm text-rose-700">{editError}</p> : null}
+          <p className="text-portal-thead text-[var(--portal-muted)]">
+            {s.editWindowSlotsNote}
+          </p>
+        </form>
+      </PortalDialog>
 
       <PortalDialog
         open={deleteTarget !== null}

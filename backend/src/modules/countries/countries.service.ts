@@ -88,6 +88,7 @@ export async function listCountries() {
             requireDateOfBirth: true,
             requireNationalId: true,
             requireAddress: true,
+            collectUtenteNumber: true,
           },
         },
       },

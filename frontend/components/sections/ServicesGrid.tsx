@@ -76,10 +76,20 @@ export function ServicesGrid({
   const [page, setPage] = useState(0);
   const isDark = variant === "dark";
 
-  const useFeaturedFirst = featureFirst && page === 0 && items.length >= 4;
-  const pageSize = useFeaturedFirst ? PAGE_SIZE_FEATURED : PAGE_SIZE_REGULAR;
-  const totalPages = Math.ceil(items.length / pageSize);
-  const paged = items.slice(page * pageSize, (page + 1) * pageSize);
+  // Page 0 renders PAGE_SIZE_FEATURED items, every later page renders
+  // PAGE_SIZE_REGULAR — a plain `page * pageSize` offset assumes a uniform
+  // page size and silently drops the item at index PAGE_SIZE_FEATURED once
+  // you paginate past page 0. Offsets below account for the smaller first page.
+  const canFeatureFirst = featureFirst && items.length >= 4;
+  const firstPageSize = canFeatureFirst ? PAGE_SIZE_FEATURED : PAGE_SIZE_REGULAR;
+  const useFeaturedFirst = canFeatureFirst && page === 0;
+  const totalPages =
+    items.length <= firstPageSize
+      ? 1
+      : 1 + Math.ceil((items.length - firstPageSize) / PAGE_SIZE_REGULAR);
+  const start = page === 0 ? 0 : firstPageSize + (page - 1) * PAGE_SIZE_REGULAR;
+  const end = page === 0 ? firstPageSize : start + PAGE_SIZE_REGULAR;
+  const paged = items.slice(start, end);
   const showPager = totalPages > 1;
 
   const arrowActive = isDark

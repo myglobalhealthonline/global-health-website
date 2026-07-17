@@ -1,5 +1,8 @@
 import { pool } from "../db/prisma.js";
-import { runPrePaymentReminderCron } from "../modules/automation/pre-payment-flow.service.js";
+import {
+  runPrePaymentCancelSweep,
+  runPrePaymentReminderCron,
+} from "../modules/automation/pre-payment-flow.service.js";
 import { runPostPaymentReminderCron } from "../modules/automation/post-payment-flow.service.js";
 import {
   cancelAfterGrace,
@@ -17,7 +20,13 @@ import { runOutboxDispatch } from "../modules/outbox/outbox.js";
 
 type Logger = { info: (msg: string) => void; error: (msg: string) => void };
 
-const PRE_PAYMENT_INTERVAL_MS = 15 * 60 * 1000; // 15 min
+const PRE_PAYMENT_INTERVAL_MS = 15 * 60 * 1000; // 15 min — reminder stages only
+// 60s — payment-deadline cancels. Deliberately NOT folded back into the
+// pre-payment tick: that tick's body can run for minutes behind the WhatsApp
+// sender's 6s serialization, and an order waiting on it stays live past its
+// deadline. Urgent bookings have a 5-minute pay window, so the enforcement
+// interval has to be well under that.
+const PRE_PAYMENT_CANCEL_INTERVAL_MS = 60 * 1000;
 const POST_PAYMENT_INTERVAL_MS = 5 * 60 * 1000; // 5 min
 const SUBSCRIPTION_OPS_INTERVAL_MS = 5 * 60 * 1000; // 5 min — reservation sweep + cancel-after-grace
 const RECONCILIATION_INTERVAL_MS = 60 * 60 * 1000; // hourly — money/ops invariants (§39)
@@ -35,6 +44,7 @@ const LOCK_RECONCILIATION = 4010004;
 const LOCK_DAILY_REMINDERS = 4010005;
 const LOCK_ACCOUNT_PURGE = 4010006;
 const LOCK_OUTBOX = 4010007;
+const LOCK_PRE_PAYMENT_CANCEL = 4010008;
 
 // SESSION-level advisory lock (pg_advisory_lock / pg_advisory_unlock) on a
 // single manually-checked-out `pg.Pool` client, NOT a Prisma-managed
@@ -123,6 +133,30 @@ async function tickPrePayment(log: Logger) {
         log.info(`[cron] pre-payment: candidates=${r.candidates} processed=${r.processed} sent=${r.sent}`);
       } catch (err) {
         log.error(`[cron] pre-payment error: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    },
+    { failClosed: true },
+  );
+}
+
+async function tickPrePaymentCancel(log: Logger) {
+  // Non-idempotent: sends the patient/doctor "reservation cancelled" pair per
+  // order. The cancel itself is a conditional update that only one caller can
+  // win, so a duplicate run re-sends nothing — but fail CLOSED anyway, since
+  // its own lock is what makes a 60s interval safe against a slow tick.
+  await withAdvisoryLock(
+    LOCK_PRE_PAYMENT_CANCEL,
+    async () => {
+      try {
+        const r = await runPrePaymentCancelSweep();
+        // Silent on empty sweeps — at 60s this logs 1440x/day otherwise.
+        if (r.cancelled > 0) {
+          log.info(`[cron] pre-payment cancel: candidates=${r.candidates} cancelled=${r.cancelled}`);
+        }
+      } catch (err) {
+        log.error(
+          `[cron] pre-payment cancel error: ${err instanceof Error ? err.message : String(err)}`,
+        );
       }
     },
     { failClosed: true },
@@ -290,6 +324,7 @@ export function startInternalScheduler(log: Logger): () => void {
       // POST /api/cron/subscriptions/daily remains the robust external trigger.
       // Account purge IS safe on boot — idempotent, no dedup window.
       void tickPrePayment(log);
+      void tickPrePaymentCancel(log);
       void tickPostPayment(log);
       void tickSubscriptionOps(log);
       void tickReconciliation(log);
@@ -299,6 +334,9 @@ export function startInternalScheduler(log: Logger): () => void {
   );
 
   timers.push(setInterval(() => void tickPrePayment(log), PRE_PAYMENT_INTERVAL_MS));
+  timers.push(
+    setInterval(() => void tickPrePaymentCancel(log), PRE_PAYMENT_CANCEL_INTERVAL_MS),
+  );
   timers.push(setInterval(() => void tickPostPayment(log), POST_PAYMENT_INTERVAL_MS));
   timers.push(setInterval(() => void tickSubscriptionOps(log), SUBSCRIPTION_OPS_INTERVAL_MS));
   timers.push(setInterval(() => void tickAccountPurge(log), ACCOUNT_PURGE_INTERVAL_MS));

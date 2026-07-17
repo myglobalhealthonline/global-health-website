@@ -338,6 +338,8 @@
     "dateOfBirth": "Datum narození",
     "nationalIdOptional": "{label} (volitelné)",
     "nationalIdHint": "Potřebné v lékařských dokumentech ve vaší zemi. Můžete ho doplnit i v profilu.",
+    "utenteOptional": "Número de Utente (volitelné)",
+    "utenteHint": "Vaše číslo pojištěnce portugalského SNS, aby lékař mohl nahlédnout do vaší národní zdravotní dokumentace a vystavit elektronický recept. Pokud ho nemáte, nechte pole prázdné.",
     "reasonForVisit": "Důvod návštěvy (volitelné)",
     "reasonPlaceholder": "Stručně popište příznaky nebo co chcete probrat.",
     "consentStatement": "Potvrzuji, že výše uvedené údaje jsou přesné, a souhlasím s videokonsultací s vybraným lékařem.",

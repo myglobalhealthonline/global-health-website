@@ -338,6 +338,8 @@
     "dateOfBirth": "Fecha de nacimiento",
     "nationalIdOptional": "{label} (opcional)",
     "nationalIdHint": "Necesario en documentos médicos de tu país. También puedes completarlo en tu perfil más tarde.",
+    "utenteOptional": "Número de Utente (opcional)",
+    "utenteHint": "Tu número de usuario del SNS portugués, para que el médico pueda acceder a tu historial sanitario nacional y emitir recetas electrónicas. Déjalo en blanco si no tienes uno.",
     "reasonForVisit": "Motivo de la visita (opcional)",
     "reasonPlaceholder": "Describe brevemente tus síntomas o lo que quieres comentar.",
     "consentStatement": "Confirmo que los datos anteriores son correctos y consiento en una videoconsulta con el médico seleccionado.",

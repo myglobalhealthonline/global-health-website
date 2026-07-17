@@ -336,6 +336,8 @@
     "taxId": "Tax ID",
     "taxIdHint": "NIF / PPS / CPF",
     "passport": "Passport",
+    "utente": "Número de Utente",
+    "utenteHint": "Portugal (SNS) only",
     "address": "Address",
     "line1": "Line 1",
     "line2": "Line 2",

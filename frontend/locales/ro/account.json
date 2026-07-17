@@ -336,6 +336,8 @@
     "taxId": "CIF",
     "taxIdHint": "NIF / PPS / CPF",
     "passport": "Pașaport",
+    "utente": "Número de Utente",
+    "utenteHint": "Doar Portugalia (SNS)",
     "address": "Adresă",
     "line1": "Linia 1",
     "line2": "Linia 2",

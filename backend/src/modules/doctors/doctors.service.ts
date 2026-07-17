@@ -1,4 +1,4 @@
-import { AssetKind, LocaleCode, Prisma } from "@prisma/client";
+import { AssetKind, LocaleCode, Prisma, type AppointmentStatus } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import type {
   AdminDoctorCreateBody,
@@ -1409,6 +1409,98 @@ export async function purgeAdminDoctor(id: string): Promise<boolean> {
   try {
     await prisma.doctor.delete({ where: { id } });
     return true;
+  } catch (error) {
+    throw normalizeDbError(error, "Doctors data is unavailable");
+  }
+}
+
+/**
+ * Clinical rows that make a hard delete impossible. Every one of these is
+ * `onDelete: Restrict` on a non-nullable `doctorId`, so Postgres refuses the
+ * delete (P2003) while any exist — and they are retained medical records, so
+ * the right answer is to deactivate the doctor, never to cascade them away.
+ */
+export type DoctorDeleteBlockers = {
+  consultations: number;
+  prescriptions: number;
+  examResults: number;
+  generatedDocuments: number;
+  appointmentDocuments: number;
+  medicalNotes: number;
+};
+
+export type DoctorDeleteImpact = {
+  /** Bookings that have not happened yet — purging unassigns, never deletes. */
+  futureAppointments: number;
+  pastAppointments: number;
+  blockers: DoctorDeleteBlockers;
+  /** True when any blocker count is non-zero, i.e. the purge cannot proceed. */
+  blocked: boolean;
+};
+
+/** Statuses that mean the appointment is still live (not cancelled/completed). */
+const OPEN_APPOINTMENT_STATUSES = [
+  "REQUEST_RECEIVED",
+  "UNDER_REVIEW",
+  "CONTACTED",
+] as const satisfies readonly AppointmentStatus[];
+
+/**
+ * Count everything a hard delete of this doctor would touch, so the admin UI
+ * can warn precisely and the purge route can enforce the same rules.
+ * Returns null when the doctor does not exist.
+ */
+export async function getDoctorDeleteImpact(
+  id: string,
+  now: Date = new Date(),
+): Promise<DoctorDeleteImpact | null> {
+  const existing = await prisma.doctor.findUnique({ where: { id }, select: { id: true } });
+  if (!existing) return null;
+
+  try {
+    // "Future" = still going to happen: a slot booked ahead of now, or an open
+    // request that has not been scheduled yet. Cancelled/completed are neither.
+    const futureAppointmentWhere = {
+      doctorId: id,
+      status: { in: [...OPEN_APPOINTMENT_STATUSES] },
+      OR: [{ scheduledAt: { gt: now } }, { scheduledAt: null }],
+    };
+
+    const [
+      totalAppointments,
+      futureAppointments,
+      consultations,
+      prescriptions,
+      examResults,
+      generatedDocuments,
+      appointmentDocuments,
+      medicalNotes,
+    ] = await prisma.$transaction([
+      prisma.appointment.count({ where: { doctorId: id } }),
+      prisma.appointment.count({ where: futureAppointmentWhere }),
+      prisma.consultation.count({ where: { doctorId: id } }),
+      prisma.prescription.count({ where: { doctorId: id } }),
+      prisma.examResult.count({ where: { doctorId: id } }),
+      prisma.generatedDocument.count({ where: { doctorId: id } }),
+      prisma.appointmentDocument.count({ where: { doctorId: id } }),
+      prisma.medicalNote.count({ where: { createdByDoctorId: id } }),
+    ]);
+
+    const blockers: DoctorDeleteBlockers = {
+      consultations,
+      prescriptions,
+      examResults,
+      generatedDocuments,
+      appointmentDocuments,
+      medicalNotes,
+    };
+
+    return {
+      futureAppointments,
+      pastAppointments: totalAppointments - futureAppointments,
+      blockers,
+      blocked: Object.values(blockers).some((count) => count > 0),
+    };
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }

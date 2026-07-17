@@ -336,6 +336,8 @@
     "taxId": "NIF",
     "taxIdHint": "NIF / PPS / CPF",
     "passport": "Pasaporte",
+    "utente": "Número de Utente",
+    "utenteHint": "Solo Portugal (SNS)",
     "address": "Dirección",
     "line1": "Línea 1",
     "line2": "Línea 2",

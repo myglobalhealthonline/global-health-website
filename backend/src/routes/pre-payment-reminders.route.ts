@@ -1,7 +1,10 @@
 import type { FastifyPluginAsync } from "fastify";
 import { env } from "../config/env.js";
 import { isValidCronSecret } from "../utils/cron-auth.js";
-import { runPrePaymentReminderCron } from "../modules/automation/pre-payment-flow.service.js";
+import {
+  runPrePaymentCancelSweep,
+  runPrePaymentReminderCron,
+} from "../modules/automation/pre-payment-flow.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
@@ -16,8 +19,16 @@ const prePaymentRemindersRoute: FastifyPluginAsync = async (app) => {
     }
 
     try {
+      // Deadline cancels first, and before the reminders: this endpoint is the
+      // fallback for when the internal scheduler isn't running, so it has to
+      // cover both jobs, and a cancel must not queue behind a batch of
+      // serialized reminder sends.
+      const cancels = await runPrePaymentCancelSweep();
       const result = await runPrePaymentReminderCron();
-      return okResponse(result, `Pre-payment reminder run: ${result.sent} stage(s) sent.`);
+      return okResponse(
+        { ...result, cancelled: cancels.cancelled, cancelCandidates: cancels.candidates },
+        `Pre-payment run: ${cancels.cancelled} cancelled, ${result.sent} stage(s) sent.`,
+      );
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));
