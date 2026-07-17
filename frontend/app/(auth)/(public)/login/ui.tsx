@@ -328,7 +328,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-white/55 transition-colors duration-150 hover:text-[var(--color-brand-accent)]"
+            className="gh-auth-eye-toggle absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer transition-colors duration-150"
             aria-label={showPassword ? i18n.hidePassword : i18n.showPassword}
           >
             {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
