@@ -265,6 +265,59 @@ const envSchema = z.object({
   GOOGLE_CALENDAR_ID: z.string().trim().min(1).optional(),
 });
 
+/** Privileged (non-patient) roles that MUST be gated by 2FA in production.
+ *  Matches the REQUIRE_2FA_FOR_ROLES doc example and the guard's role set. */
+const PRIVILEGED_2FA_ROLES = ["SUPER_ADMIN", "ADMIN", "LOCAL_ADMIN", "DOCTOR"] as const;
+
+/**
+ * SEC-005: fail-fast at boot when the medical-access guard would run in a
+ * shadow / non-enforcing configuration in production — a denied PHI read that
+ * is logged but still served. Refuses to start if ANY of these hold in
+ * production (each throw names the offending var):
+ *   - COMPLIANCE_MODE=relaxed (the escape hatch that skips shadow-mode enforcement)
+ *   - MEDICAL_ACCESS_ENFORCE off (shadow mode — denials logged, never blocked)
+ *   - ADMIN_PHI_REQUIRE_REASON off (plain ADMIN reads PHI with no break-glass reason)
+ *   - REQUIRE_2FA_FOR_ROLES missing any privileged role (unverified staff read PHI)
+ * Non-production keeps the permissive dev defaults untouched. Exported so the
+ * unit test can exercise each combination without mutating process.env.
+ */
+export function assertProductionMedicalAccessSafety(cfg: {
+  nodeEnv: string;
+  complianceMode: string;
+  medicalAccessEnforce: boolean;
+  adminPhiRequireReason: boolean;
+  require2faForRoles: Set<string>;
+}): void {
+  if (cfg.nodeEnv !== "production") return;
+
+  if (cfg.complianceMode === "relaxed") {
+    throw new Error(
+      'COMPLIANCE_MODE must not be "relaxed" in production — relaxed mode lets the medical-access ' +
+        "guard run in shadow mode, so a denied PHI read is still served. Set COMPLIANCE_MODE=strict.",
+    );
+  }
+  if (!cfg.medicalAccessEnforce) {
+    throw new Error(
+      "MEDICAL_ACCESS_ENFORCE must be true in production — shadow mode logs would-be denials but still " +
+        "serves PHI to the caller. Confirm the 2FA/confidentiality/consent backfill is complete via the " +
+        "shadow-mode MedicalAccessLog audit trail, then set MEDICAL_ACCESS_ENFORCE=true.",
+    );
+  }
+  if (!cfg.adminPhiRequireReason) {
+    throw new Error(
+      "ADMIN_PHI_REQUIRE_REASON must be true in production — otherwise a plain ADMIN reads any medical " +
+        "record without recording a break-glass reason. Set ADMIN_PHI_REQUIRE_REASON=true.",
+    );
+  }
+  const missing2fa = PRIVILEGED_2FA_ROLES.filter((r) => !cfg.require2faForRoles.has(r));
+  if (missing2fa.length > 0) {
+    throw new Error(
+      `REQUIRE_2FA_FOR_ROLES must include every privileged role in production (missing: ${missing2fa.join(", ")}). ` +
+        `Without it, staff who never enrolled TOTP can still read PHI. Set REQUIRE_2FA_FOR_ROLES=${PRIVILEGED_2FA_ROLES.join(",")}.`,
+    );
+  }
+}
+
 const parsed = envSchema.parse(mergeRailwayBucketAliases());
 
 // Hard-fail in production if the JWT secret is missing or still the
@@ -348,19 +401,19 @@ const medicalAccessEnforce =
 const adminPhiRequireReason =
   parsed.ADMIN_PHI_REQUIRE_REASON === true || parsed.ADMIN_PHI_REQUIRE_REASON === "true";
 
-// Hard-fail in production if the medical-access guard is still in shadow
-// mode. Shadow mode logs would-be denials but still serves PHI to the
-// caller — acceptable during the Wave-0 backfill, never acceptable once
-// this is a live production deployment. COMPLIANCE_MODE=relaxed skips this
-// check (and ONLY this check) — the deliberate "run shadow mode in prod"
-// escape hatch while the compliance backfill is in progress.
-if (complianceMode === "strict" && parsed.NODE_ENV === "production" && !medicalAccessEnforce) {
-  throw new Error(
-    "MEDICAL_ACCESS_ENFORCE must be true in production — shadow mode still serves PHI on a denied " +
-      "access. Confirm the 2FA/confidentiality/consent backfill is complete via the shadow-mode " +
-      "MedicalAccessLog audit trail, then set MEDICAL_ACCESS_ENFORCE=true.",
-  );
-}
+// SEC-005: hard-fail in production if the medical-access guard would run in a
+// shadow / non-enforcing configuration. Previously COMPLIANCE_MODE=relaxed was
+// an escape hatch that skipped the shadow-mode check entirely — leaving denied
+// PHI reads served in production. assertProductionMedicalAccessSafety now closes
+// that hole: relaxed mode, shadow enforcement, a missing break-glass-reason
+// requirement, and any privileged role not gated by 2FA each refuse to boot.
+assertProductionMedicalAccessSafety({
+  nodeEnv: parsed.NODE_ENV,
+  complianceMode,
+  medicalAccessEnforce,
+  adminPhiRequireReason,
+  require2faForRoles,
+});
 
 // Hard-fail in production if billing is not wired to real Stripe. The fake
 // billing port "succeeds" checkouts in-memory with no payment ever taken —
