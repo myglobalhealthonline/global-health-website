@@ -180,7 +180,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-[var(--color-text-muted)] transition-colors duration-150 hover:text-[var(--color-text-primary)]"
+            className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-white/55 transition-colors duration-150 hover:text-[var(--color-brand-accent)]"
             aria-label={showPassword ? i18n.hidePassword : i18n.showPassword}
           >
             {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
@@ -205,9 +205,9 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
         />
         <span>
           {i18n.consentPrefix}{" "}
-          <Link href="/terms" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-primary)" }}>{i18n.termsLink}</Link>
+          <Link href="/terms" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-accent)" }}>{i18n.termsLink}</Link>
           {" "}{i18n.consentAnd}{" "}
-          <Link href="/privacy" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-primary)" }}>{i18n.privacyLink}</Link>.
+          <Link href="/privacy" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-accent)" }}>{i18n.privacyLink}</Link>.
           {" "}{i18n.healthDataNote}
         </span>
       </label>
