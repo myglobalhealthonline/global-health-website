@@ -29,12 +29,17 @@ export async function GET() {
     lines.push(`- [${c.name} - Book a GP appointment](${origin}/${slug}/${lang}/gp-consultation-online): general practitioners registered in ${c.name}.`);
     lines.push(`- [${c.name} - See a specialist](${origin}/${slug}/${lang}/see-a-specialist): specialists registered in ${c.name}.`);
     lines.push(`- [${c.name} - doctors](${origin}/${slug}/${lang}/doctors): clinician roster with qualifications and specialties.`);
+    lines.push(`- [${c.name} - lab tests](${origin}/${slug}/${lang}/lab-tests): at-home and in-clinic laboratory tests.`);
   }
 
   lines.push(
     "",
     "## Site info",
+    `- [About Global Health](${origin}/about): who we are, clinical governance, and how the service works.`,
+    `- [FAQ](${origin}/faq): common questions about consultations, prescriptions, and payments.`,
+    `- [Health blog](${origin}/blog): clinician-reviewed health guides.`,
     `- [Privacy notice](${origin}/privacy)`,
+    `- [Terms of service](${origin}/terms)`,
     `- [Sitemap](${origin}/sitemap.xml)`,
   );
 
