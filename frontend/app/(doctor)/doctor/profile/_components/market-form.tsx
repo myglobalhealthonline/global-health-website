@@ -2,18 +2,24 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Lock } from "lucide-react";
 import { RichTextHtmlField } from "@/app/(admin)/admin/_components/rich-text-html-field";
 import { PortalTabs } from "@/components/PortalTabs";
 import { FormSection } from "@/components/FormSection";
 import { Pill } from "@/components/portal-atoms";
 import { useUnsavedChanges } from "@/lib/hooks/use-unsaved-changes";
+import type { DoctorProfileChangeRequest } from "@/lib/api/doctor-api";
 import {
+  ApprovalNotice,
   MessageBanner,
   bicError,
   ibanError,
   ibanExample,
+  isPending,
   localeLabel,
   normalizeBioPayload,
+  requestFor,
+  submitChangeRequests,
   type Msg,
 } from "./form-helpers";
 import type { ProfileStrings } from "./profile-sections";
@@ -42,7 +48,9 @@ type Market = {
  * backend's `doctorMarketPatchBodySchema`. That schema is `.strict()`, so a
  * key it doesn't know fails the whole request with "Invalid market profile
  * update" — these names must track
- * `backend/src/validations/doctor-market-profiles.schema.ts`.
+ * `backend/src/validations/doctor-market-profiles.schema.ts`. The listing
+ * fields the schema also declares are admin-gated and rejected there, so only
+ * `bank` is modelled here.
  *
  * Omitting a key leaves the stored value alone; sending `null` clears it.
  */
@@ -59,9 +67,27 @@ type MarketPayoutPatchBody = {
  * status chips. Rendered once per active market inside a tab panel on the
  * combined `/doctor/profile` page — every market's instance stays mounted
  * (hidden via CSS by the tab panel) so dirty state survives tab switches.
+ *
+ * The listing half is admin-approved: submitting raises a
+ * DoctorProfileChangeRequest per changed field (bio and registration are
+ * reviewed separately) and the public listing is untouched until an admin
+ * signs it off. Payout details stay doctor-owned and save immediately.
  */
-export function DoctorMarketForm({ market, strings }: { market: Market; strings: ProfileStrings }) {
+export function DoctorMarketForm({
+  market,
+  changeRequests,
+  strings,
+}: {
+  market: Market;
+  changeRequests: DoctorProfileChangeRequest[];
+  strings: ProfileStrings;
+}) {
   const router = useRouter();
+  const bioRequest = requestFor(changeRequests, "bio", market.countryId);
+  const registrationRequest = requestFor(changeRequests, "registration", market.countryId);
+  const bioLocked = isPending(bioRequest);
+  const registrationLocked = isPending(registrationRequest);
+  const [withdrawing, startWithdrawTransition] = useTransition();
   const defaultLocale = market.country.defaultLocale.toUpperCase();
   const localeTabsKey = market.supportedLocales
     .map((locale) => `${locale.code}:${locale.isDefault ? "1" : "0"}`)
@@ -172,6 +198,25 @@ export function DoctorMarketForm({ market, strings }: { market: Market; strings:
     localeTabs,
   ]);
 
+  function withdraw(requestId: string) {
+    startWithdrawTransition(async () => {
+      try {
+        const res = await fetch(`/api/doctor/profile/change-requests/${requestId}`, {
+          method: "DELETE",
+        });
+        const json = (await res.json()) as { ok?: boolean; message?: string };
+        if (!res.ok || !json.ok) {
+          setListingMsg({ kind: "error", text: json.message ?? strings.withdrawFailed });
+          return;
+        }
+        setListingMsg({ kind: "success", text: strings.changeWithdrawn });
+        router.refresh();
+      } catch {
+        setListingMsg({ kind: "error", text: strings.networkErrorRetry });
+      }
+    });
+  }
+
   function onSubmitListing(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setListingMsg(null);
@@ -180,32 +225,42 @@ export function DoctorMarketForm({ market, strings }: { market: Market; strings:
       locale: locale.code,
       bio: normalizeBioPayload(String(formData.get(`bio_${locale.code}`) ?? "")),
     }));
-    const payload = {
-      translations,
-      chamberEntity: chamberEntity.trim() || null,
-      registrationNumber: registrationNumber.trim() || null,
-      division: registrationDivision.trim() || null,
-    };
+
+    // Bio and registration are reviewed independently, so each dirty one
+    // becomes its own request — an admin can approve a new bio without also
+    // having to accept a registration number they haven't sighted yet.
+    const jobs: Array<Record<string, unknown>> = [];
+    const bioChanged = translations.some(
+      (entry) => (entry.bio ?? "") !== (initialBioSnapshot[entry.locale] ?? ""),
+    );
+    if (!bioLocked && bioChanged) {
+      jobs.push({ field: "bio", countryId: market.countryId, translations });
+    }
+    const registrationChanged =
+      JSON.stringify({ chamberEntity, registrationNumber, registrationDivision }) !==
+      initialListingSnapshot;
+    if (!registrationLocked && registrationChanged) {
+      jobs.push({
+        field: "registration",
+        countryId: market.countryId,
+        chamberEntity: chamberEntity.trim() || null,
+        registrationNumber: registrationNumber.trim() || null,
+        division: registrationDivision.trim() || null,
+      });
+    }
+    if (jobs.length === 0) {
+      setListingMsg({ kind: "error", text: strings.noChangesToSubmit });
+      return;
+    }
+
     startListingTransition(async () => {
-      try {
-        const res = await fetch(`/api/doctor/profile/markets/${encodeURIComponent(market.countryId)}`, {
-          method: "PATCH",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        const json = (await res.json()) as { ok?: boolean; message?: string };
-        if (!res.ok || !json.ok) {
-          setListingMsg({ kind: "error", text: json.message ?? strings.saveCountryProfileFailed });
-          return;
-        }
-        setListingMsg({
-          kind: "success",
-          text: strings.countryListingUpdated.replace("{country}", market.country.name),
-        });
-        router.refresh();
-      } catch {
-        setListingMsg({ kind: "error", text: strings.networkErrorRetry });
-      }
+      const errors = await submitChangeRequests(jobs, strings.submitApprovalFailed);
+      setListingMsg(
+        errors.length === 0
+          ? { kind: "success", text: strings.changesSubmitted }
+          : { kind: "error", text: errors.join(" ") },
+      );
+      router.refresh();
     });
   }
 
@@ -263,9 +318,17 @@ export function DoctorMarketForm({ market, strings }: { market: Market; strings:
           description={strings.countryListingSectionDesc.replace("{country}", market.country.name)}
           titleAs="h2"
         >
+          <div className="gh-form-section__span-2">
+            <p className="gh-status-info m-0 rounded-md border px-3 py-2 text-portal-label">
+              {strings.countryListingApprovalHint.replace("{country}", market.country.name)}
+            </p>
+          </div>
           <div className="gh-form-section__span-2 flex flex-col gap-3">
             <div>
-              <span className="gh-field-label">{strings.bioByLanguage}</span>
+              <span className="gh-field-label inline-flex items-center gap-1.5">
+                {strings.bioByLanguage}
+                <Lock className="size-3" aria-label={strings.lockedBadge} />
+              </span>
               <p className="mt-1 text-xs text-[var(--portal-muted)]">{strings.bioByLanguageHint}</p>
             </div>
             <PortalTabs
@@ -285,16 +348,27 @@ export function DoctorMarketForm({ market, strings }: { market: Market; strings:
                   initialValue={initialBioForLocale(locale.code)}
                   helperText={locale.isDefault ? strings.bioHelperDefault : strings.bioHelperNonDefault}
                   onChange={(html) => setBioByLocale((prev) => ({ ...prev, [locale.code]: html }))}
+                  disabled={bioLocked}
                 />
               </div>
             ))}
+            {/* No renderValue: a proposed bio is rich text per locale, which
+                doesn't read as an inline one-liner. The admin queue shows the
+                full before/after instead. */}
+            <ApprovalNotice
+              request={bioRequest}
+              strings={strings}
+              busy={withdrawing}
+              onWithdraw={withdraw}
+            />
           </div>
 
           <div className="gh-form-section__span-2 gh-doctor-registration-card rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <span className="gh-field-label">
+                <span className="gh-field-label inline-flex items-center gap-1.5">
                   {strings.registrationTitle.replace("{country}", market.country.name)}
+                  <Lock className="size-3" aria-label={strings.lockedBadge} />
                 </span>
                 <p className="mt-1 text-xs text-[var(--portal-muted)]">{strings.registrationEditsHint}</p>
               </div>
@@ -317,6 +391,7 @@ export function DoctorMarketForm({ market, strings }: { market: Market; strings:
                   onChange={(e) => setChamberEntity(e.target.value)}
                   maxLength={64}
                   placeholder={strings.registrationBodyPlaceholder}
+                  disabled={registrationLocked}
                 />
               </label>
               <label className="flex flex-col gap-2">
@@ -326,6 +401,7 @@ export function DoctorMarketForm({ market, strings }: { market: Market; strings:
                   value={registrationNumber}
                   onChange={(e) => setRegistrationNumber(e.target.value)}
                   maxLength={64}
+                  disabled={registrationLocked}
                 />
               </label>
               <label className="flex flex-col gap-2">
@@ -336,9 +412,27 @@ export function DoctorMarketForm({ market, strings }: { market: Market; strings:
                   onChange={(e) => setRegistrationDivision(e.target.value)}
                   maxLength={120}
                   placeholder={strings.divisionPlaceholder}
+                  disabled={registrationLocked}
                 />
               </label>
             </div>
+            <ApprovalNotice
+              request={registrationRequest}
+              strings={strings}
+              busy={withdrawing}
+              onWithdraw={withdraw}
+              renderValue={(r) =>
+                "registrationNumber" in r.proposedValue
+                  ? [
+                      r.proposedValue.chamberEntity,
+                      r.proposedValue.registrationNumber,
+                      r.proposedValue.division,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ") || "—"
+                  : null
+              }
+            />
           </div>
 
           {listingMsg ? (
@@ -348,8 +442,14 @@ export function DoctorMarketForm({ market, strings }: { market: Market; strings:
           ) : null}
 
           <div className="gh-form-section__span-2 gh-doctor-form-actions flex justify-end">
-            <button type="submit" disabled={listingPending} className="gh-btn gh-btn-primary">
-              {listingPending ? strings.saving : strings.saveCountryListing.replace("{country}", market.country.name)}
+            <button
+              type="submit"
+              disabled={listingPending || (bioLocked && registrationLocked)}
+              className="gh-btn gh-btn-primary"
+            >
+              {listingPending
+                ? strings.submitting
+                : strings.submitCountryListing.replace("{country}", market.country.name)}
             </button>
           </div>
         </FormSection>

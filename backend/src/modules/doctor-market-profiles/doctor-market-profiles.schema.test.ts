@@ -45,12 +45,8 @@ describe("doctor market profile validation", () => {
     assert.equal(result.success, false);
   });
 
-  it("doctor payload accepts only practical market fields", () => {
+  it("doctor payload accepts payout details", () => {
     const result = doctorMarketPatchBodySchema.safeParse({
-      chamberEntity: "IMC",
-      registrationNumber: "123456",
-      division: "General Division",
-      translations: [{ locale: "EN", bio: "<p>Doctor-authored bio</p>" }],
       bank: {
         accountHolder: "Jane Smith",
         iban: "IE29AIBK93115212345678",
@@ -59,6 +55,21 @@ describe("doctor market profile validation", () => {
     });
 
     assert.equal(result.success, true);
+  });
+
+  it("doctor payload rejects bio + registration (admin-approved since the lock)", () => {
+    // These used to be a straight self-edit. They now flow through
+    // DoctorProfileChangeRequest, so the endpoint has to turn them away —
+    // see doctor-profile-change-requests.schema.test.ts for the new path.
+    const result = doctorMarketPatchBodySchema.safeParse({
+      chamberEntity: "IMC",
+      registrationNumber: "123456",
+      division: "General Division",
+      translations: [{ locale: "EN", bio: "<p>Doctor-authored bio</p>" }],
+      bank: { accountHolder: "Jane Smith" },
+    });
+
+    assert.equal(result.success, false);
   });
 
   it("doctor payload rejects SEO and FAQ fields", () => {

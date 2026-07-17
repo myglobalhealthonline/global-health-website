@@ -344,6 +344,112 @@ export async function fetchAdminPendingServiceRequests(
   return adminRequest<AdminPendingServiceRequestsPayload>(path);
 }
 
+/* ── Doctor profile change requests ───────────────────────────────── */
+
+export type AdminDoctorProfileChangeField =
+  | "fullName"
+  | "qualifications"
+  | "bio"
+  | "registration"
+  | "photo";
+
+export type AdminDoctorProfileChangeStatus =
+  | "pending"
+  | "approved"
+  | "rejected"
+  | "cancelled";
+
+/** Shape of `proposedValue` / `previousValue`, keyed by `field`. */
+export type AdminDoctorProfileChangeValue =
+  | { value: string }
+  | { value: string[] }
+  | { translations: Array<{ locale: string; bio: string | null }> }
+  | {
+      chamberEntity: string | null;
+      registrationNumber: string | null;
+      division: string | null;
+    }
+  | { removed: true }
+  | {
+      removed: false;
+      path: string;
+      storageKey: string | null;
+      focalX: number;
+      focalY: number;
+      zoom: number;
+    };
+
+export type AdminDoctorProfileChangeRequest = {
+  id: string;
+  doctorId: string;
+  field: AdminDoctorProfileChangeField;
+  countryId: string | null;
+  status: AdminDoctorProfileChangeStatus;
+  proposedValue: AdminDoctorProfileChangeValue;
+  previousValue: AdminDoctorProfileChangeValue | null;
+  doctorNote: string | null;
+  reviewNote: string | null;
+  reviewedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  doctorName: string;
+  doctorSlug: string;
+  countryCode: string;
+  countryName: string;
+  isGlobal: boolean;
+};
+
+/** Pending doctor-initiated profile edits awaiting admin approval. */
+export async function fetchAdminPendingProfileChangeRequests(
+  query?: Record<string, string | undefined>,
+) {
+  const params = new URLSearchParams();
+  if (query) {
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== "") params.set(key, value);
+    }
+  }
+  const qs = params.toString();
+  return adminRequest<{ count: number; items: AdminDoctorProfileChangeRequest[] }>(
+    qs
+      ? `/api/admin/doctor-profile-change-requests?${qs}`
+      : "/api/admin/doctor-profile-change-requests",
+  );
+}
+
+export async function fetchAdminDoctorProfileChangeRequests(doctorId: string) {
+  return adminRequest<{ items: AdminDoctorProfileChangeRequest[] }>(
+    `/api/admin/doctors/${doctorId}/profile-change-requests`,
+  );
+}
+
+/**
+ * Approve (applying the proposal to the live profile) or reject one request.
+ * `markVerified` only means anything for a `registration` change — it is the
+ * admin confirming they have sighted the documentation.
+ */
+export async function reviewDoctorProfileChangeRequest(
+  doctorId: string,
+  requestId: string,
+  body: {
+    status: "approved" | "rejected";
+    reviewNote?: string | null;
+    markVerified?: boolean;
+  },
+) {
+  return adminRequest<{
+    request: AdminDoctorProfileChangeRequest;
+    cache: {
+      countryCode: string;
+      slug: string;
+      additionalCountryCodes: string[];
+    } | null;
+  }>(`/api/admin/doctors/${doctorId}/profile-change-requests/${requestId}`, {
+    method: "PATCH",
+    body,
+  });
+}
+
 export async function postAdminDoctor(body: unknown) {
   return adminRequest<AdminDoctorDetailPayload>("/api/admin/doctors", {
     method: "POST",

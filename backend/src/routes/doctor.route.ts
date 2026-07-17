@@ -5,13 +5,9 @@ import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
-import { sanitizeRichHtml } from "../utils/sanitize-html.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { resolveConsultationEndAt } from "../modules/appointments/consultation-end.js";
-import {
-  profilePatchBodySchema,
-  type DoctorProfilePatchBody,
-} from "../validations/doctor-profile.schema.js";
+import { profilePatchBodySchema } from "../validations/doctor-profile.schema.js";
 import { encryptPhi } from "../lib/crypto/phi-crypto.js";
 import {
   ibanLast4,
@@ -32,6 +28,20 @@ import {
 import {
   doctorMarketPatchBodySchema,
 } from "../validations/doctor-market-profiles.schema.js";
+import {
+  cancelDoctorProfileChangeRequest,
+  listDoctorProfileChangeRequests,
+  submitDoctorProfileChangeRequest,
+  DoctorProfileChangeInvalidError,
+  DoctorProfileChangeMarketDeniedError,
+  DoctorProfileChangeNoopError,
+  DoctorProfileChangeNotFoundError,
+} from "../modules/doctor-profile-change-requests/doctor-profile-change-requests.service.js";
+import {
+  doctorProfileChangeRequestBodySchema,
+  doctorProfileChangeRequestParamsSchema,
+} from "../validations/doctor-profile-change-requests.schema.js";
+import { LocaleNotSupportedError } from "../modules/shared/locale-support.js";
 
 /**
  * Doctor portal API. Every endpoint here is scoped to the logged-in
@@ -43,7 +53,8 @@ import {
  *   GET  /api/doctor/me          — profile + stats (today/week appointment counts)
  *   GET  /api/doctor/appointments — list assigned appointments with filters
  *   GET  /api/doctor/patients    — distinct patients with at least one appointment
- *   PATCH /api/doctor/profile    — self-edit name, bio, qualifications, languages
+ *   PATCH /api/doctor/profile    — self-edit languages, WhatsApp, payout details
+ *   POST /api/doctor/profile/change-requests — propose an admin-locked field edit
  *
  * Deferred (documented in roadmap as Doctor Dashboard Phase 4):
  *   - Consultation notes / documents
@@ -54,6 +65,31 @@ import {
  *   - Reports
  *   - Internal messaging
  */
+
+/** Maps the change-request service's errors onto HTTP. Returns null when the
+ *  error isn't one of ours, so the caller can fall through to a 500. */
+function doctorProfileChangeErrorReply(
+  reply: { status: (code: number) => { send: (body: unknown) => unknown } },
+  error: unknown,
+): unknown | null {
+  if (
+    error instanceof DoctorProfileChangeNoopError ||
+    error instanceof DoctorProfileChangeInvalidError ||
+    error instanceof LocaleNotSupportedError
+  ) {
+    return reply.status(400).send(errorResponse(error.message));
+  }
+  if (error instanceof DoctorProfileChangeMarketDeniedError) {
+    return reply.status(403).send(errorResponse(error.message));
+  }
+  if (error instanceof DoctorProfileChangeNotFoundError) {
+    return reply.status(404).send(errorResponse(error.message));
+  }
+  if (error instanceof DatabaseUnavailableError) {
+    return reply.status(503).send(errorResponse(error.message));
+  }
+  return null;
+}
 
 const listAppointmentsQuerySchema = z.object({
   status: z.preprocess(
@@ -104,6 +140,28 @@ const listAppointmentsQuerySchema = z.object({
     .optional()
     .transform((v) => v === "true"),
   /**
+   * Summary-tile filter: consultations still needing clinical attention
+   * (`OPEN_CONSULT_WHERE`). NOT the same as `openOnly` — no 30h window and
+   * COMPLETED is excluded rather than finalized=false.
+   *
+   * Implies `excludeLegacy`: the tile linking here counts non-legacy rows only,
+   * so the filtered list must too or the number won't match what's on screen.
+   */
+  open: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((v) => v === "true"),
+  /** Summary-tile filter: `NOT_FINALIZED_WHERE`. Implies `excludeLegacy`, same reason as `open`. */
+  notFinalized: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((v) => v === "true"),
+  /** Adds the `summary` block (queue-wide tile counts) to the response. */
+  includeSummary: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((v) => v === "true"),
+  /**
    * Drop rows imported from the legacy Mongo system (`legacyMongoId` set).
    * The import flattened every historical booking to COMPLETED and carried its
    * original `scheduledAt` over, so those rows render as live calendar entries.
@@ -131,22 +189,6 @@ function supportedDoctorLocales(country: DoctorProfileCountryLocales): LocaleCod
   return Array.from(seen);
 }
 
-function normalizeProfileTranslations(
-  body: DoctorProfilePatchBody,
-  defaultLocale: LocaleCode,
-): Array<{ locale: LocaleCode; bio: string | null }> | undefined {
-  if (!body.translations) return undefined;
-  const sanitized = body.translations.map((entry) => ({
-    locale: entry.locale,
-    bio: sanitizeRichHtml(entry.bio),
-  }));
-  if (body.bio === undefined) return sanitized;
-  const defaultBio = sanitizeRichHtml(body.bio);
-  return sanitized.map((entry) =>
-    entry.locale === defaultLocale ? { ...entry, bio: defaultBio } : entry,
-  );
-}
-
 const doctorServicesBodySchema = z.object({
   serviceIds: z.array(z.string().trim().min(1)).max(100),
 });
@@ -154,6 +196,27 @@ const doctorServicesBodySchema = z.object({
 const doctorMarketCountryParamsSchema = z.object({
   countryId: z.string().trim().min(1).max(64),
 });
+
+/**
+ * Predicates behind the two doctor-queue summary tiles. Each one backs BOTH the
+ * tile's count and the `?open=` / `?notFinalized=` filter the tile links to, so
+ * the number and the list it opens cannot drift apart.
+ */
+
+/** "Open consults" — needs clinical attention. */
+const OPEN_CONSULT_WHERE: Prisma.AppointmentWhereInput = {
+  status: { notIn: ["COMPLETED", "CANCELLED"] },
+};
+
+/** "Not finalized" — notes or documents pending. Cancelled rows never get
+ *  finalized, so counting them would leave a floor the doctor can't clear. */
+const NOT_FINALIZED_WHERE: Prisma.AppointmentWhereInput = {
+  finalized: false,
+  status: { notIn: ["CANCELLED"] },
+};
+
+/** Excludes rows imported from the legacy Mongo system. */
+const NON_LEGACY_WHERE: Prisma.AppointmentWhereInput = { legacyMongoId: null };
 
 const doctorRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/doctor/me", async (request, reply) => {
@@ -314,6 +377,9 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
       consultationType,
       finalized,
       openOnly,
+      open,
+      notFinalized,
+      includeSummary,
       excludeLegacy,
       page,
       pageSize,
@@ -321,78 +387,80 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
     const fromUtc = from ? new Date(`${from}T00:00:00.000Z`) : undefined;
     const toUtc = to ? new Date(`${to}T23:59:59.999Z`) : undefined;
     const openWindowStart = new Date(Date.now() - 30 * 60 * 60 * 1000);
-    // Four-status doctor view → (status, paymentStatus) constraints. Kept in
-    // an AND array so it composes with the openOnly/search/date clauses
-    // without clobbering their top-level `status` key.
-    const viewFilters: Prisma.AppointmentWhereInput[] = [];
+    // Every status/finalized constraint goes in this AND array rather than at
+    // the top level of `where`: several of these clauses key on `status`, and a
+    // top-level spread lets the last one silently clobber the earlier ones.
+    const andFilters: Prisma.AppointmentWhereInput[] = [];
+    // Four-status doctor view → (status, paymentStatus) constraints.
     if (view === "concluded") {
-      viewFilters.push({ status: "COMPLETED" });
+      andFilters.push({ status: "COMPLETED" });
     } else if (view === "cancelled") {
-      viewFilters.push({ status: "CANCELLED" });
+      andFilters.push({ status: "CANCELLED" });
     } else if (view === "confirmed") {
-      viewFilters.push({ status: { notIn: ["CANCELLED", "COMPLETED"] }, paymentStatus: "PAID" });
+      andFilters.push({ status: { notIn: ["CANCELLED", "COMPLETED"] }, paymentStatus: "PAID" });
     } else if (view === "waiting_payment") {
-      viewFilters.push({
+      andFilters.push({
         status: { notIn: ["CANCELLED", "COMPLETED"] },
         paymentStatus: { not: "PAID" },
+      });
+    }
+    if (status) andFilters.push({ status });
+    if (finalized !== undefined) andFilters.push({ finalized });
+    // Summary-tile filters carry their own legacy exclusion so the row count
+    // matches the tile that linked here.
+    if (open) andFilters.push(OPEN_CONSULT_WHERE, NON_LEGACY_WHERE);
+    if (notFinalized) andFilters.push(NOT_FINALIZED_WHERE, NON_LEGACY_WHERE);
+    if (excludeLegacy) andFilters.push(NON_LEGACY_WHERE);
+    if (openOnly) {
+      andFilters.push({
+        finalized: false,
+        status: { notIn: ["CANCELLED"] },
+        OR: [
+          { scheduledAt: { gte: openWindowStart } },
+          {
+            AND: [{ scheduledAt: null }, { createdAt: { gte: openWindowStart } }],
+          },
+        ],
+      });
+    }
+    if (search) {
+      andFilters.push({
+        OR: [
+          { fullName: { contains: search, mode: "insensitive" as const } },
+          { email: { contains: search, mode: "insensitive" as const } },
+        ],
+      });
+    }
+    // Filter on scheduledAt when present, fall back to createdAt
+    // so a brand-new unscheduled booking still shows in "today".
+    if (fromUtc || toUtc) {
+      andFilters.push({
+        OR: [
+          {
+            scheduledAt: {
+              ...(fromUtc ? { gte: fromUtc } : {}),
+              ...(toUtc ? { lte: toUtc } : {}),
+            },
+          },
+          {
+            AND: [
+              { scheduledAt: null },
+              {
+                createdAt: {
+                  ...(fromUtc ? { gte: fromUtc } : {}),
+                  ...(toUtc ? { lte: toUtc } : {}),
+                },
+              },
+            ],
+          },
+        ],
       });
     }
     try {
       const where: Prisma.AppointmentWhereInput = {
         doctorId: auth.doctorId,
-        ...(status ? { status } : {}),
-        ...(excludeLegacy ? { legacyMongoId: null } : {}),
-        ...(viewFilters.length ? { AND: viewFilters } : {}),
+        ...(andFilters.length ? { AND: andFilters } : {}),
         ...(consultationType ? { consultationType } : {}),
-        ...(finalized !== undefined ? { finalized } : {}),
-        ...(openOnly
-          ? {
-              finalized: false,
-              status: { notIn: ["CANCELLED"] },
-              OR: [
-                { scheduledAt: { gte: openWindowStart } },
-                {
-                  AND: [
-                    { scheduledAt: null },
-                    { createdAt: { gte: openWindowStart } },
-                  ],
-                },
-              ],
-            }
-          : {}),
-        ...(search
-          ? {
-              OR: [
-                { fullName: { contains: search, mode: "insensitive" as const } },
-                { email: { contains: search, mode: "insensitive" as const } },
-              ],
-            }
-          : {}),
-        // Filter on scheduledAt when present, fall back to createdAt
-        // so a brand-new unscheduled booking still shows in "today".
-        ...(fromUtc || toUtc
-          ? {
-              OR: [
-                {
-                  scheduledAt: {
-                    ...(fromUtc ? { gte: fromUtc } : {}),
-                    ...(toUtc ? { lte: toUtc } : {}),
-                  },
-                },
-                {
-                  AND: [
-                    { scheduledAt: null },
-                    {
-                      createdAt: {
-                        ...(fromUtc ? { gte: fromUtc } : {}),
-                        ...(toUtc ? { lte: toUtc } : {}),
-                      },
-                    },
-                  ],
-                },
-              ],
-            }
-          : {}),
       };
       const selectFields = {
         id: true,
@@ -428,9 +496,22 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         AND: [where, { OR: [{ scheduledAt: { lt: nowTs } }, { scheduledAt: null }] }],
       };
 
-      const [total, upcomingCount] = await Promise.all([
+      // Summary tiles are queue-wide totals: they deliberately ignore every
+      // list filter (including the ones the tiles themselves link to) so the
+      // numbers hold still when a doctor clicks one. Legacy imports excluded.
+      const summaryWhere: Prisma.AppointmentWhereInput = {
+        doctorId: auth.doctorId,
+        ...NON_LEGACY_WHERE,
+      };
+      const [total, upcomingCount, openConsults, notFinalizedCount] = await Promise.all([
         prisma.appointment.count({ where }),
         prisma.appointment.count({ where: upcomingWhere }),
+        includeSummary
+          ? prisma.appointment.count({ where: { ...summaryWhere, ...OPEN_CONSULT_WHERE } })
+          : 0,
+        includeSummary
+          ? prisma.appointment.count({ where: { ...summaryWhere, ...NOT_FINALIZED_WHERE } })
+          : 0,
       ]);
 
       const skip = (page - 1) * pageSize;
@@ -480,6 +561,9 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
           total,
           totalPages: total === 0 ? 0 : Math.ceil(total / pageSize),
         },
+        ...(includeSummary
+          ? { summary: { openConsults, notFinalized: notFinalizedCount } }
+          : {}),
       });
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
@@ -570,119 +654,37 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         where: { id: auth.doctorId },
         select: {
           slug: true,
-          title: true,
-          seoTitle: true,
-          seoDescription: true,
-          country: {
-            select: {
-              id: true,
-              code: true,
-              defaultLocale: true,
-              countryLocales: { select: { locale: true } },
-            },
-          },
+          country: { select: { code: true } },
           additionalCountries: {
             select: { country: { select: { code: true } } },
-          },
-          translations: {
-            select: {
-              locale: true,
-              title: true,
-              seoTitle: true,
-              seoDescription: true,
-            },
           },
         },
       });
       if (!doctorMeta) {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
-      const supportedLocales = new Set(supportedDoctorLocales(doctorMeta.country));
-      const translationUpdates = normalizeProfileTranslations(
-        body.data,
-        doctorMeta.country.defaultLocale,
-      );
-      const unsupportedLocale = translationUpdates?.find(
-        (entry) => !supportedLocales.has(entry.locale),
-      );
-      if (unsupportedLocale) {
-        return reply
-          .status(400)
-          .send(errorResponse("Locale is not enabled for this doctor profile"));
-      }
-      const defaultTranslationBio = translationUpdates?.find(
-        (entry) => entry.locale === doctorMeta.country.defaultLocale,
-      )?.bio;
-      const nextBaseBio =
-        body.data.bio !== undefined ? sanitizeRichHtml(body.data.bio) : defaultTranslationBio;
-      const updated = await prisma.$transaction(async (tx) => {
-        const updatedDoctor = await tx.doctor.update({
-          where: { id: auth.doctorId },
-          data: {
-            ...(body.data.fullName !== undefined && { fullName: body.data.fullName }),
-            ...(nextBaseBio !== undefined && { bio: nextBaseBio }),
-            ...(body.data.qualifications !== undefined && {
-              qualifications: body.data.qualifications,
-            }),
-            ...(body.data.languages !== undefined && { languages: body.data.languages }),
-            ...(body.data.whatsappNumber !== undefined && {
-              whatsappNumber: normalizeDoctorWhatsAppForStorage(
-                body.data.whatsappNumber,
-                doctorMeta.country.code,
-              ),
-            }),
-          },
-          select: {
-            id: true,
-            fullName: true,
-            bio: true,
-            qualifications: true,
-            languages: true,
-            whatsappNumber: true,
-          },
-        });
-
-        const existingTranslations = new Map(
-          doctorMeta.translations.map((entry) => [entry.locale, entry]),
-        );
-        const rowsToUpsert =
-          translationUpdates ??
-          (nextBaseBio !== undefined
-            ? [{ locale: doctorMeta.country.defaultLocale, bio: updatedDoctor.bio }]
-            : []);
-
-        for (const entry of rowsToUpsert) {
-          const existing = existingTranslations.get(entry.locale);
-          await tx.doctorTranslation.upsert({
-            where: {
-              doctorId_locale: {
-                doctorId: auth.doctorId,
-                locale: entry.locale,
-              },
-            },
-            create: {
-              doctorId: auth.doctorId,
-              locale: entry.locale,
-              title: existing?.title ?? doctorMeta.title,
-              bio: entry.bio,
-              seoTitle:
-                existing?.seoTitle ??
-                (entry.locale === doctorMeta.country.defaultLocale
-                  ? doctorMeta.seoTitle
-                  : null),
-              seoDescription:
-                existing?.seoDescription ??
-                (entry.locale === doctorMeta.country.defaultLocale
-                  ? doctorMeta.seoDescription
-                  : null),
-            },
-            update: {
-              bio: entry.bio,
-            },
-          });
-        }
-
-        return updatedDoctor;
+      // Name / bio / qualifications are admin-locked and rejected by the body
+      // schema — they reach the live row only via an approved
+      // DoctorProfileChangeRequest. What's left here is freely editable.
+      const updated = await prisma.doctor.update({
+        where: { id: auth.doctorId },
+        data: {
+          ...(body.data.languages !== undefined && { languages: body.data.languages }),
+          ...(body.data.whatsappNumber !== undefined && {
+            whatsappNumber: normalizeDoctorWhatsAppForStorage(
+              body.data.whatsappNumber,
+              doctorMeta.country.code,
+            ),
+          }),
+        },
+        select: {
+          id: true,
+          fullName: true,
+          bio: true,
+          qualifications: true,
+          languages: true,
+          whatsappNumber: true,
+        },
       });
 
       // Payout bank details live on the separate DoctorBankAccount table so
@@ -807,6 +809,110 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not update market profile"));
+    }
+  });
+
+  /**
+   * Admin-locked profile fields (name, qualifications, per-market bio +
+   * registration, photo) are proposed here rather than written directly. The
+   * live profile keeps serving the public site until an admin approves.
+   *
+   * Photo proposals are raised by the /profile/photo routes instead — they
+   * need the uploaded bytes, so they can't come through as JSON.
+   *
+   *   GET    /api/doctor/profile/change-requests       — latest per field/market
+   *   POST   /api/doctor/profile/change-requests       — propose a change
+   *   DELETE /api/doctor/profile/change-requests/:id   — withdraw a pending one
+   */
+  app.get("/api/doctor/profile/change-requests", async (request, reply) => {
+    const auth = await verifyDoctorAccess(request);
+    if (!auth.ok) {
+      return reply.status(auth.status).send(errorResponse(auth.message));
+    }
+    try {
+      const items = await listDoctorProfileChangeRequests(auth.doctorId);
+      return okResponse({ items });
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not load change requests"));
+    }
+  });
+
+  app.post("/api/doctor/profile/change-requests", async (request, reply) => {
+    const auth = await verifyDoctorAccess(request);
+    if (!auth.ok) {
+      return reply.status(auth.status).send(errorResponse(auth.message));
+    }
+    const body = doctorProfileChangeRequestBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply
+        .status(400)
+        .send(errorResponse("Invalid change request", body.error.flatten()));
+    }
+    try {
+      const changeRequest = await submitDoctorProfileChangeRequest(
+        auth.doctorId,
+        body.data,
+      );
+      recordAudit({
+        actorUserId: auth.userId,
+        actorRole: "DOCTOR",
+        action: "DOCTOR_PROFILE_CHANGE_REQUESTED",
+        entityType: "Doctor",
+        entityId: auth.doctorId,
+        metadata: {
+          field: body.data.field,
+          requestId: changeRequest.id,
+          countryId: changeRequest.countryId,
+        },
+        request,
+      }).catch(() => {});
+      return okResponse(
+        { request: changeRequest },
+        "Change submitted for admin approval",
+      );
+    } catch (error) {
+      const handled = doctorProfileChangeErrorReply(reply, error);
+      if (handled) return handled;
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not submit the change request"));
+    }
+  });
+
+  app.delete("/api/doctor/profile/change-requests/:requestId", async (request, reply) => {
+    const auth = await verifyDoctorAccess(request);
+    if (!auth.ok) {
+      return reply.status(auth.status).send(errorResponse(auth.message));
+    }
+    const params = doctorProfileChangeRequestParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply
+        .status(400)
+        .send(errorResponse("Invalid request id", params.error.flatten()));
+    }
+    try {
+      const changeRequest = await cancelDoctorProfileChangeRequest(
+        auth.doctorId,
+        params.data.requestId,
+      );
+      recordAudit({
+        actorUserId: auth.userId,
+        actorRole: "DOCTOR",
+        action: "DOCTOR_PROFILE_CHANGE_CANCELLED",
+        entityType: "Doctor",
+        entityId: auth.doctorId,
+        metadata: { field: changeRequest.field, requestId: changeRequest.id },
+        request,
+      }).catch(() => {});
+      return okResponse({ request: changeRequest }, "Change request withdrawn");
+    } catch (error) {
+      const handled = doctorProfileChangeErrorReply(reply, error);
+      if (handled) return handled;
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not withdraw the change request"));
     }
   });
 

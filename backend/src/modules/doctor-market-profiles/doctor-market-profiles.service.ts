@@ -12,6 +12,7 @@ import { normalizeDbError } from "../shared/db-errors.js";
 import type {
   AdminDoctorMarketPatchBody,
   DoctorMarketPatchBody,
+  DoctorMarketSelfPatchBody,
 } from "../../validations/doctor-market-profiles.schema.js";
 
 const DOCTOR_MARKET_TX_OPTIONS = { maxWait: 10_000, timeout: 20_000 } as const;
@@ -320,10 +321,19 @@ export async function listDoctorSelfMarkets(doctorId: string) {
   }
 }
 
+/**
+ * A doctor updating their own market row — payout details only.
+ *
+ * The listing fields that used to live here (bio + the registration trio) are
+ * admin-locked: they are rejected by `doctorMarketPatchBodySchema` and instead
+ * flow through DoctorProfileChangeRequest, which writes them on approval. That
+ * also retires the old "any registration edit silently resets isVerified"
+ * behaviour — the reviewing admin now decides verification explicitly.
+ */
 export async function updateDoctorSelfMarket(
   doctorId: string,
   countryId: string,
-  input: DoctorMarketPatchBody,
+  input: DoctorMarketSelfPatchBody,
 ) {
   try {
     const doctor = await prisma.doctor.findUnique({
@@ -335,8 +345,6 @@ export async function updateDoctorSelfMarket(
       await prisma.$transaction((tx) => ensurePrimaryMarketRow(tx, doctorId), DOCTOR_MARKET_TX_OPTIONS);
     }
 
-    await assertLocales(countryId, input.translations?.map((entry) => entry.locale) ?? []);
-
     const updated = await prisma.$transaction(async (tx) => {
       const existing = await tx.doctorCountry.findUnique({
         where: { doctorId_countryId: { doctorId, countryId } },
@@ -344,44 +352,6 @@ export async function updateDoctorSelfMarket(
       });
       if (!existing) throw new DoctorMarketAccessDeniedError();
       if (!existing.active) throw new DoctorMarketAccessDeniedError();
-
-      const registrationChanged =
-        input.chamberEntity !== undefined ||
-        input.registrationNumber !== undefined ||
-        input.division !== undefined;
-
-      await tx.doctorCountry.update({
-        where: { id: existing.id },
-        data: {
-          ...(input.chamberEntity !== undefined && { chamberEntity: input.chamberEntity }),
-          ...(input.registrationNumber !== undefined && {
-            registrationNumber: input.registrationNumber,
-          }),
-          ...(input.division !== undefined && { division: input.division }),
-          ...(registrationChanged && { isVerified: false, verifiedAt: null }),
-        },
-      });
-
-      if (input.translations) {
-        for (const entry of input.translations) {
-          await tx.doctorMarketTranslation.upsert({
-            where: {
-              doctorCountryId_locale: {
-                doctorCountryId: existing.id,
-                locale: entry.locale,
-              },
-            },
-            create: {
-              doctorCountryId: existing.id,
-              locale: entry.locale,
-              bio: entry.bio == null ? null : sanitizeRichHtml(entry.bio),
-            },
-            update: {
-              bio: entry.bio == null ? null : sanitizeRichHtml(entry.bio),
-            },
-          });
-        }
-      }
 
       const bankData = bankDataFromInput(input.bank);
       if (Object.keys(bankData).length > 0) {

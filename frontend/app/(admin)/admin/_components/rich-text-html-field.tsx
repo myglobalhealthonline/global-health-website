@@ -13,6 +13,10 @@ type Props = {
    *  Optional — existing consumers that read the hidden input on submit
    *  don't need to pass this. */
   onChange?: (html: string) => void;
+  /** Read-only: hides the toolbar and stops editing, while still rendering
+   *  the content and posting it via the hidden input. Used where a field is
+   *  locked pending approval. */
+  disabled?: boolean;
 };
 
 // execCommand is deprecated but no cross-browser contenteditable API replaces it.
@@ -159,7 +163,14 @@ function sanitizeEditorHtml(html: string) {
   return root.innerHTML.trim();
 }
 
-export function RichTextHtmlField({ name, label, helperText, initialValue, onChange }: Props) {
+export function RichTextHtmlField({
+  name,
+  label,
+  helperText,
+  initialValue,
+  onChange,
+  disabled = false,
+}: Props) {
   const editorId = useId();
   const editorRef = useRef<HTMLDivElement>(null);
   const hiddenRef = useRef<HTMLInputElement>(null);
@@ -259,7 +270,10 @@ export function RichTextHtmlField({ name, label, helperText, initialValue, onCha
     <div className="gh-admin-rich-text flex flex-col gap-2">
       <label htmlFor={editorId} className="gh-field-label">{label}</label>
       <div className="gh-admin-rich-text__frame overflow-hidden rounded-[var(--portal-radius)] border border-[var(--portal-line)] bg-[var(--portal-surface)]">
-        <div className="gh-admin-rich-text__toolbar flex flex-wrap items-center gap-1.5 border-b border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2">
+        <div
+          className="gh-admin-rich-text__toolbar flex flex-wrap items-center gap-1.5 border-b border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2"
+          hidden={disabled}
+        >
           <div className="relative">
             <select
               className="h-8 appearance-none rounded border border-[var(--portal-line)] bg-[var(--portal-surface)] pl-2.5 pr-7 text-xs text-[var(--portal-text)] outline-none"
@@ -360,11 +374,15 @@ export function RichTextHtmlField({ name, label, helperText, initialValue, onCha
         <div
           id={editorId}
           ref={editorRef}
-          contentEditable
+          contentEditable={!disabled}
+          aria-readonly={disabled || undefined}
           suppressContentEditableWarning
           suppressHydrationWarning
           className="gh-admin-rich-text__editor gh-input min-h-[14rem] min-w-0 resize-y overflow-auto rounded-none border-0 bg-[var(--portal-surface)] p-4 leading-7 outline-none"
-          style={{ listStylePosition: "inside" }}
+          style={{
+            listStylePosition: "inside",
+            ...(disabled ? { opacity: 0.65, cursor: "not-allowed" } : {}),
+          }}
           onInput={() => {
             syncToHidden();
             rememberSelection();
