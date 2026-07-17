@@ -7,7 +7,7 @@ import {
 } from "../modules/automation/automation-catalog.js";
 import { listAutomationRuns, listAutomationRunOrders } from "../modules/automation/automation-run.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyGlobalAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 const listQuerySchema = z.object({
@@ -19,7 +19,7 @@ const listQuerySchema = z.object({
 
 const adminAutomationRoute: FastifyPluginAsync = async (app) => {
   app.addHook("onRequest", async (request, reply) => {
-    const auth = await verifyAdminAccess(request);
+    const auth = await verifyGlobalAdminAccess(request);
     if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
   });
 

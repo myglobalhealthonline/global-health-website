@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { getPublicReviewConfig } from "../modules/settings/settings.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { verifyGlobalAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { reviewSettingsSchema } from "../validations/admin-settings.schema.js";
 
@@ -14,7 +14,7 @@ import { reviewSettingsSchema } from "../validations/admin-settings.schema.js";
  */
 const adminSettingsRoute: FastifyPluginAsync = async (app) => {
   app.addHook("onRequest", async (request, reply) => {
-    const auth = await verifyAdminAccess(request);
+    const auth = await verifyGlobalAdminAccess(request);
     if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
   });
 
