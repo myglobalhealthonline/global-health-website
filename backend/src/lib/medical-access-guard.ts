@@ -135,13 +135,16 @@ async function hasActiveConsent(
 }
 
 /**
- * Check whether the doctor has an active (non-cancelled/completed) appointment
- * with this patient.
+ * Check whether the doctor has a treatment relationship with this patient —
+ * an appointment establishing doctor-of-record status. This includes
+ * COMPLETED appointments: the doctor who ran the consult must keep access
+ * afterward to write post-consult notes and review history. Only CANCELLED
+ * is excluded (never treated the patient).
  *
  * Appointment does not carry patientProfileId directly — it links via
  * Appointment.userId which matches PatientProfile.userId.
  */
-async function doctorHasActiveAppointment(
+async function doctorHasTreatmentRelationship(
   doctorId: string,
   patientProfileId: string,
 ): Promise<boolean> {
@@ -157,7 +160,7 @@ async function doctorHasActiveAppointment(
       where: {
         doctorId,
         userId: profile.userId,
-        status: { notIn: ["CANCELLED", "COMPLETED"] },
+        status: { notIn: ["CANCELLED"] },
       },
       select: { id: true },
     });
@@ -429,7 +432,7 @@ export async function assertMedicalAccess(
       "MEDICAL_ACCESS_DIRECT",
     );
     if (hasDirect && actor.doctorId) {
-      const hasAppt = await doctorHasActiveAppointment(
+      const hasAppt = await doctorHasTreatmentRelationship(
         actor.doctorId,
         resource.patientProfileId,
       );
