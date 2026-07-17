@@ -14,6 +14,8 @@ import {
   sendGeneratedDocuments,
   sendGeneratedDocumentUploadLink,
 } from "../modules/generated-documents/generated-documents.service.js";
+import { prisma } from "../db/prisma.js";
+import { guardMedicalReadForAppointment, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 
 const baseFields = z.record(z.string()).optional();
 
@@ -125,6 +127,19 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
       const auth = await verifyDoctorAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       try {
+        try {
+          await guardMedicalReadForAppointment(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            request.params.id,
+            { resourceType: "MEDICAL_DOC", accessAction: "VIEWED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          }
+          throw guardError;
+        }
         const result = await listGeneratedDocuments(request.params.id, auth.doctorId);
         if (!result) return reply.status(404).send(errorResponse("Appointment not found"));
         return okResponse({
@@ -293,6 +308,27 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
       const auth = await verifyDoctorAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       try {
+        // Resolve the appointment behind this document to scope the guard.
+        // Missing doc → let getGeneratedDocumentFile return the 404 below.
+        const doc = await prisma.generatedDocument.findUnique({
+          where: { id: request.params.id },
+          select: { appointmentId: true },
+        });
+        if (doc) {
+          try {
+            await guardMedicalReadForAppointment(
+              request,
+              { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+              doc.appointmentId,
+              { resourceType: "MEDICAL_DOC", accessAction: "DOWNLOADED" },
+            );
+          } catch (guardError) {
+            if (guardError instanceof MedicalAccessDeniedError) {
+              return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+            }
+            throw guardError;
+          }
+        }
         const result = await getGeneratedDocumentFile(auth.doctorId, request.params.id);
         if (result === "not_found") return reply.status(404).send(errorResponse("Document not found"));
         if (!result) {

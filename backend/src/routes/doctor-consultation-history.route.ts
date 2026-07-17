@@ -3,6 +3,8 @@ import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { getPatientConsultationHistory } from "../modules/consultation-history/consultation-history.service.js";
+import { prisma } from "../db/prisma.js";
+import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 
 const doctorConsultationHistoryRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { email: string } }>(
@@ -12,6 +14,27 @@ const doctorConsultationHistoryRoute: FastifyPluginAsync = async (app) => {
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       try {
         const email = decodeURIComponent(request.params.email);
+        // Scope the guard by the PatientProfile behind this email. A guest
+        // booking that was never claimed has no profile → nothing to authorize
+        // against, matching the `if (profile) { guard }` pattern used elsewhere.
+        const profile = await prisma.patientProfile.findUnique({
+          where: { email: email.toLowerCase() },
+          select: { id: true },
+        });
+        if (profile) {
+          try {
+            await guardMedicalRead(
+              request,
+              { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+              { patientProfileId: profile.id, resourceType: "CONSULT_NOTE", accessAction: "VIEWED" },
+            );
+          } catch (guardError) {
+            if (guardError instanceof MedicalAccessDeniedError) {
+              return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+            }
+            throw guardError;
+          }
+        }
         const data = await getPatientConsultationHistory(email, auth.doctorId);
         return okResponse(data);
       } catch (error) {
