@@ -43,7 +43,11 @@ async function main() {
 
   const rows = await prisma.medicalAccessLog.findMany({
     where: {
-      isAbnormal: true,
+      // A denial is any row carrying a deny reason — the guard does not
+      // always set isAbnormal=true alongside it (observed live: break-glass
+      // denials log abnormalReason with isAbnormal=false), so filter on the
+      // reason, not the flag.
+      abnormalReason: { not: null },
       createdAt: { gte: since },
       ...(ROLE_FILTER ? { accessedByRole: ROLE_FILTER } : {}),
     },
