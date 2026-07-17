@@ -583,9 +583,10 @@ export async function createManualBooking(
             price_data: {
               currency: (service.currencyCode ?? "EUR").toLowerCase(),
               unit_amount: amountCents,
+              // PRIV-001: never send clinical free-text (input.notes) to Stripe —
+              // this label shows on the customer's receipt. Public service name only.
               product_data: {
                 name: service.name,
-                description: input.notes?.slice(0, 280) ?? undefined,
               },
             },
           },
