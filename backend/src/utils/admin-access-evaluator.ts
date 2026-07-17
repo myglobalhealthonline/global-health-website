@@ -9,10 +9,23 @@ export type EvaluateAdminAccessInput = {
   authorizationHeader: string | undefined;
   expectedToken: string | undefined;
   tokenFallbackEnabled: boolean;
+  /**
+   * SEC-001: global/cross-country operations (country CRUD, full doctor IBAN
+   * reveal) must exclude LOCAL_ADMIN, who is scoped to a single country. When
+   * set, a LOCAL_ADMIN session is rejected 403 instead of being treated as an
+   * unrestricted ADMIN. The maintenance-token fallback stays unscoped ADMIN.
+   */
+  requireGlobalScope?: boolean;
 };
 
 export function evaluateAdminAccess(input: EvaluateAdminAccessInput): AdminAccessResult {
-  if (input.sessionRole === "ADMIN" || input.sessionRole === "SUPER_ADMIN" || input.sessionRole === "LOCAL_ADMIN") {
+  if (input.sessionRole === "ADMIN" || input.sessionRole === "SUPER_ADMIN") {
+    return { ok: true, method: "session" };
+  }
+  if (input.sessionRole === "LOCAL_ADMIN") {
+    if (input.requireGlobalScope) {
+      return { ok: false, status: 403, message: "Global admin role required" };
+    }
     return { ok: true, method: "session" };
   }
   if (
