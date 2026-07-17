@@ -128,10 +128,20 @@ export function ServiceCatalog({
 
   if (services.length === 0) return null;
 
-  const useFeaturedFirst = filter === "all" && page === 0 && allShown.length >= 4;
-  const pageSize = useFeaturedFirst ? PAGE_SIZE_FEATURED : PAGE_SIZE_REGULAR;
-  const totalPages = Math.ceil(allShown.length / pageSize);
-  const shown = allShown.slice(page * pageSize, (page + 1) * pageSize);
+  // Page 0 renders PAGE_SIZE_FEATURED items, every later page renders
+  // PAGE_SIZE_REGULAR — a plain `page * pageSize` offset assumes a uniform
+  // page size and silently drops the item at index PAGE_SIZE_FEATURED once
+  // you paginate past page 0. Offsets below account for the smaller first page.
+  const canFeatureFirst = filter === "all" && allShown.length >= 4;
+  const firstPageSize = canFeatureFirst ? PAGE_SIZE_FEATURED : PAGE_SIZE_REGULAR;
+  const useFeaturedFirst = canFeatureFirst && page === 0;
+  const totalPages =
+    allShown.length <= firstPageSize
+      ? 1
+      : 1 + Math.ceil((allShown.length - firstPageSize) / PAGE_SIZE_REGULAR);
+  const start = page === 0 ? 0 : firstPageSize + (page - 1) * PAGE_SIZE_REGULAR;
+  const end = page === 0 ? firstPageSize : start + PAGE_SIZE_REGULAR;
+  const shown = allShown.slice(start, end);
   const showPager = totalPages > 1;
 
   function handleFilter(id: FilterId) {
