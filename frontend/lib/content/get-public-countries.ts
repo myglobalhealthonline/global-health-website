@@ -165,6 +165,13 @@ export type PublicBookingRequirements = {
   requireDateOfBirth: boolean;
   requireNationalId: boolean;
   requireAddress: boolean;
+  /**
+   * Show the Número de Utente (Portuguese SNS healthcare number) field.
+   * Unlike the `require*` flags this only controls visibility — the value
+   * stays optional, since patients without an SNS number must still be able
+   * to book. On for Portugal only.
+   */
+  collectUtenteNumber: boolean;
 };
 
 /**
@@ -181,6 +188,7 @@ export const getPublicBookingRequirements = cache(
       requireDateOfBirth: false,
       requireNationalId: false,
       requireAddress: false,
+      collectUtenteNumber: false,
     };
     const res = await fetchCountries();
     if (!res.ok || !Array.isArray(res.data)) return fallback;
@@ -200,6 +208,7 @@ export const getPublicBookingRequirements = cache(
       requireDateOfBirth: b.requireDateOfBirth === true,
       requireNationalId: b.requireNationalId === true,
       requireAddress: b.requireAddress === true,
+      collectUtenteNumber: b.collectUtenteNumber === true,
     };
   },
 );

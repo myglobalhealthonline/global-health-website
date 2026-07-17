@@ -61,6 +61,9 @@ type Props = {
     requireDateOfBirth: boolean;
     requireNationalId: boolean;
     requireAddress: boolean;
+    /** Show the PT-only Número de Utente field. Visibility only — the value
+     *  is never required, so patients without an SNS number can still book. */
+    collectUtenteNumber: boolean;
   };
   /** The insurer the patient chose back at the INSURANCE step (null = paying the
    *  standard price). The choice happens before time + doctor because only
@@ -76,6 +79,7 @@ type ProfileAddress = {
   addressCity: string | null;
   addressPostalCode: string | null;
   nationalIdNumber: string | null;
+  utenteNumber: string | null;
 };
 
 /**
@@ -112,6 +116,7 @@ export function ConsultationBookingForm({
 }: Props) {
   const requirePhone = bookingRequirements?.requirePhone ?? false;
   const requireDob = bookingRequirements?.requireDateOfBirth ?? false;
+  const collectUtente = bookingRequirements?.collectUtenteNumber ?? false;
   const router = useRouter();
   const params = useParams<{ country: string; lang: string }>();
   const { add } = useCart();
@@ -213,6 +218,7 @@ export function ConsultationBookingForm({
                 addressCity: p.addressCity ?? null,
                 addressPostalCode: p.addressPostalCode ?? null,
                 nationalIdNumber: p.nationalIdNumber ?? null,
+                utenteNumber: p.utenteNumber ?? null,
               });
               // Already on file → nothing new to store, so default the save
               // checkbox off; otherwise leave it on to capture the new address.
@@ -294,6 +300,7 @@ export function ConsultationBookingForm({
       phone: me?.phone ?? "",
       dateOfBirth: me?.dateOfBirth ? me.dateOfBirth.slice(0, 10) : "",
       nationalIdNumber: profile?.nationalIdNumber ?? "",
+      utenteNumber: profile?.utenteNumber ?? "",
       addressLine1: profile?.addressLine1 ?? "",
       addressLine2: profile?.addressLine2 ?? "",
       addressCity: profile?.addressCity ?? "",
@@ -324,6 +331,11 @@ export function ConsultationBookingForm({
     const patientOtherPhone = bookingForOther ? String(form.get("patientOtherPhone") ?? "").trim() : "";
     const patientOtherDob = bookingForOther ? String(form.get("patientOtherDob") ?? "").trim() : "";
     const nationalIdNumber = String(form.get("nationalIdNumber") ?? "").trim();
+    // Gated on the flag, not just on the field being absent, so a country that
+    // doesn't collect it can never end up storing one.
+    const utenteNumber = collectUtente
+      ? String(form.get("utenteNumber") ?? "").trim()
+      : "";
     const addressLine1 = String(form.get("addressLine1") ?? "").trim();
     const addressLine2 = String(form.get("addressLine2") ?? "").trim();
     const addressCity = String(form.get("addressCity") ?? "").trim();
@@ -454,6 +466,7 @@ export function ConsultationBookingForm({
           consentAccepted: true,
           bookingForOther: treatingOther,
           nationalIdNumber: nationalIdNumber || undefined,
+          utenteNumber: utenteNumber || undefined,
           patientTimezone,
           addressLine1: addressLine1 || undefined,
           addressLine2: addressLine2 || undefined,
@@ -475,6 +488,7 @@ export function ConsultationBookingForm({
       if (me && !treatingOther) {
         const profilePatch: Record<string, string> = {};
         if (nationalIdNumber) profilePatch.nationalIdNumber = nationalIdNumber;
+        if (utenteNumber) profilePatch.utenteNumber = utenteNumber;
         if (saveAddress && addressLine1) {
           profilePatch.addressLine1 = addressLine1;
           if (addressLine2) profilePatch.addressLine2 = addressLine2;
@@ -902,6 +916,29 @@ export function ConsultationBookingForm({
             {i18n.nationalIdHint}
           </p>
         </label>
+
+        {/* Número de Utente — Portugal only, driven by the country's
+          * BookingSetting.collectUtenteNumber. Optional by design: visitors and
+          * expats treated in PT have no SNS number and must still be able to book. */}
+        {collectUtente ? (
+          <label className="mt-4 block">
+            <span className="text-xs font-semibold text-[var(--color-text-body)]">
+              {i18n.utenteOptional}
+            </span>
+            <input
+              type="text"
+              name="utenteNumber"
+              inputMode="numeric"
+              maxLength={64}
+              autoComplete="off"
+              defaultValue={defaults.utenteNumber}
+              className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+            />
+            <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+              {i18n.utenteHint}
+            </p>
+          </label>
+        ) : null}
 
         {/* Insurance card number. The insurer itself was chosen at the earlier
           * INSURANCE step (it decides which doctors are bookable), so it's fixed

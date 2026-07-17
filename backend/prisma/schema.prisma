@@ -1556,6 +1556,12 @@ model BookingSetting {
   /// (line1, city, postal). Defaults true for RX-eligible markets so we
   /// can ship prescriptions; pure-telemedicine markets can disable.
   requireAddress     Boolean  @default(true)
+  /// When true, the country's booking forms (public + admin manual) show a
+  /// Número de Utente field. Unlike the `require*` flags this only controls
+  /// visibility — the value stays optional, because patients without an SNS
+  /// number must still be able to book. Portugal-only today; default off so
+  /// no other market ever renders it.
+  collectUtenteNumber Boolean @default(false)
   /// When true, doctor self-selected services require admin approval before booking.
   doctorServiceSelfSelectApproval Boolean @default(true)
   timezone           String   @default("UTC")
@@ -1832,6 +1838,14 @@ model PatientProfile {
   /// Passport number — orthogonal to local IDs; international patients
   /// often have both.
   passportNumber     String?
+  /// Número de Utente — the Portuguese SNS healthcare number doctors use to
+  /// reach a patient's national records in the electronic prescription
+  /// system. Portugal-only: collected when the booking country has
+  /// `BookingSetting.collectUtenteNumber` on. Always optional — visitors and
+  /// expats treated in PT have no utente number and must still be able to
+  /// book. AES-256-GCM encrypted (same `phi:v1:` envelope as
+  /// `nationalIdNumber`).
+  utenteNumber       String?
   /// Persistent address. `Order.ship*` stays per-checkout so patients
   /// can ship to a different address; this is the canonical "home".
   addressLine1       String?
@@ -2203,6 +2217,10 @@ model CartItem {
   /// asking again at checkout. Mirrors the new Appointment columns added
   /// in the same migration. Nullable for product items.
   patientNationalIdNumber  String?
+  /// PT-only Número de Utente captured at add-to-cart. Stored plaintext
+  /// here (like `patientNationalIdNumber`); it is encrypted when the
+  /// payment webhook copies it onto the PatientProfile.
+  patientUtenteNumber      String?
   patientTimezone          String?
   patientAddressLine1      String?
   patientAddressLine2      String?
@@ -2423,6 +2441,7 @@ model OrderItem {
   /// with the right timezone, address, ID number, and dual GDPR consent
   /// even when the booking is for someone other than the payer.
   patientNationalIdNumber  String?
+  patientUtenteNumber      String?
   patientTimezone          String?
   patientAddressLine1      String?
   patientAddressLine2      String?

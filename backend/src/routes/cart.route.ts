@@ -130,6 +130,10 @@ const addItemBodySchema = z.object({
       // Required-ness is enforced upstream by the appointments route /
       // mint flow based on BookingSetting per country.
       nationalIdNumber: z.string().trim().max(50).optional().or(z.literal("")),
+      // PT-only Número de Utente. Shown when the country's
+      // BookingSetting.collectUtenteNumber is on, but never required —
+      // patients without an SNS number must still be able to book.
+      utenteNumber: z.string().trim().max(50).optional().or(z.literal("")),
       patientTimezone: z.string().trim().max(64).optional().or(z.literal("")),
       addressLine1: z.string().trim().max(120).optional().or(z.literal("")),
       addressLine2: z.string().trim().max(120).optional().or(z.literal("")),
@@ -1225,6 +1229,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             // New booking snapshot — mirrors the Appointment columns the
             // post-payment webhook will write when minting from this row.
             patientNationalIdNumber: patient?.nationalIdNumber || null,
+            patientUtenteNumber: patient?.utenteNumber || null,
             patientTimezone: patient?.patientTimezone || null,
             patientAddressLine1: patient?.addressLine1 || null,
             patientAddressLine2: patient?.addressLine2 || null,

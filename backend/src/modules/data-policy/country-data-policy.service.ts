@@ -212,7 +212,8 @@ export async function updateDeletionRequest(params: {
  * Fields wiped:
  *   fullName, phone, addressLine1, addressLine2, addressCity,
  *   addressPostalCode, nationalIdNumber, taxIdNumber, passportNumber,
- *   idDocumentNumber, insurancePolicyNumber, preferredPharmacy
+ *   utenteNumber, idDocumentNumber, insurancePolicyNumber,
+ *   preferredPharmacy
  *
  * Fields preserved:
  *   globalHealthNumber, countryFolderCode, createdAt, and all clinical
@@ -237,6 +238,7 @@ export async function anonymizePatient(params: {
         nationalIdNumber: null,
         taxIdNumber: null,
         passportNumber: null,
+        utenteNumber: null,
         // idDocumentNumber maps to the schema field `idDocumentNumber`
         idDocumentNumber: null,
         insurancePolicyNumber: null,

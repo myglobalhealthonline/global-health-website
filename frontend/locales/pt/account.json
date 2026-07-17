@@ -336,6 +336,8 @@
     "taxId": "NIF",
     "taxIdHint": "NIF / PPS / CPF",
     "passport": "Passaporte",
+    "utente": "Número de Utente",
+    "utenteHint": "Apenas Portugal (SNS)",
     "address": "Morada",
     "line1": "Linha 1",
     "line2": "Linha 2",

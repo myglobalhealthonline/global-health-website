@@ -152,6 +152,7 @@ export type CreateManualBookingInput = {
     nationalIdNumber?: string | null;
     taxIdNumber?: string | null;
     passportNumber?: string | null;
+    utenteNumber?: string | null;
     addressLine1?: string | null;
     addressCity?: string | null;
     addressCountryCode?: string | null;
@@ -439,6 +440,9 @@ export async function createManualBooking(
         : {}),
       ...(input.patient.passportNumber !== undefined
         ? { passportNumber: input.patient.passportNumber?.trim() || null }
+        : {}),
+      ...(input.patient.utenteNumber !== undefined
+        ? { utenteNumber: input.patient.utenteNumber?.trim() || null }
         : {}),
       ...(input.patient.addressLine1 !== undefined
         ? { addressLine1: input.patient.addressLine1?.trim() || null }

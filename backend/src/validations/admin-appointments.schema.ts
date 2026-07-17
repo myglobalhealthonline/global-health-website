@@ -230,6 +230,8 @@ export const createManualAppointmentBodySchema = z
         nationalIdNumber: z.string().trim().max(64).optional().nullable(),
         taxIdNumber: z.string().trim().max(64).optional().nullable(),
         passportNumber: z.string().trim().max(64).optional().nullable(),
+        // PT-only Número de Utente — optional even in Portugal.
+        utenteNumber: z.string().trim().max(64).optional().nullable(),
         addressLine1: z.string().trim().max(200).optional().nullable(),
         addressCity: z.string().trim().max(100).optional().nullable(),
         addressCountryCode: z.string().trim().max(8).optional().nullable(),

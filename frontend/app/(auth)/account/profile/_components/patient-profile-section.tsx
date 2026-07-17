@@ -8,6 +8,7 @@ type ProfileResponse = {
   nationalIdNumber: string | null;
   taxIdNumber: string | null;
   passportNumber: string | null;
+  utenteNumber: string | null;
   addressLine1: string | null;
   addressLine2: string | null;
   addressCity: string | null;
@@ -33,6 +34,8 @@ type MedicalI18n = {
   taxId: string;
   taxIdHint: string;
   passport: string;
+  utente: string;
+  utenteHint: string;
   address: string;
   line1: string;
   line2: string;
@@ -68,6 +71,8 @@ const DEFAULT_I18N: MedicalI18n = {
   taxId: "Tax ID",
   taxIdHint: "NIF / PPS / CPF",
   passport: "Passport",
+  utente: "Número de Utente",
+  utenteHint: "Portugal (SNS) only",
   address: "Address",
   line1: "Line 1",
   line2: "Line 2",
@@ -99,6 +104,7 @@ const EMPTY: ProfileResponse = {
   nationalIdNumber: null,
   taxIdNumber: null,
   passportNumber: null,
+  utenteNumber: null,
   addressLine1: null,
   addressLine2: null,
   addressCity: null,
@@ -270,6 +276,13 @@ export function PatientProfileSection({
               label={i18n.passport}
               value={values.passportNumber ?? ""}
               onChange={(v) => update("passportNumber", v || null)}
+              maxLength={64}
+            />
+            <TextField
+              label={i18n.utente}
+              hint={i18n.utenteHint}
+              value={values.utenteNumber ?? ""}
+              onChange={(v) => update("utenteNumber", v || null)}
               maxLength={64}
             />
           </fieldset>

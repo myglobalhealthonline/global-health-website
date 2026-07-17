@@ -82,6 +82,7 @@ export const PHI_ENCRYPTED_FIELDS = [
   "nationalIdNumber",
   "taxIdNumber",
   "passportNumber",
+  "utenteNumber",
 ] as const;
 type PhiField = (typeof PHI_ENCRYPTED_FIELDS)[number];
 

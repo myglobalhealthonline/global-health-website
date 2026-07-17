@@ -336,6 +336,8 @@
     "taxId": "DIČ",
     "taxIdHint": "NIF / PPS / CPF",
     "passport": "Pas",
+    "utente": "Número de Utente",
+    "utenteHint": "Pouze Portugalsko (SNS)",
     "address": "Adresa",
     "line1": "Řádek 1",
     "line2": "Řádek 2",

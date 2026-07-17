@@ -14,6 +14,7 @@ import {
 import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
 import { ManualBookingForm } from "../_components/manual-booking-form";
 import { dialCodeForCountry } from "@/lib/phone/dial-codes";
+import { getPublicBookingRequirements } from "@/lib/content/get-public-countries";
 import {
   hasErrors,
   validateManualBooking,
@@ -119,12 +120,16 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
     );
   }
 
-  // Load country-scoped picklists.
-  const [servicesResult, doctorsResult, clinicsResult] = await Promise.all([
-    fetchAdminServices({ countryCode, pageSize: "100" }),
-    fetchAdminDoctors({ countryCode, pageSize: "100" }),
-    fetchAdminClinicsByCountryCode(countryCode),
-  ]);
+  // Load country-scoped picklists. `bookingRequirements` drives the PT-only
+  // Número de Utente field, so the admin form and the public booking form are
+  // gated by the same BookingSetting row rather than a duplicated country check.
+  const [servicesResult, doctorsResult, clinicsResult, bookingRequirements] =
+    await Promise.all([
+      fetchAdminServices({ countryCode, pageSize: "100" }),
+      fetchAdminDoctors({ countryCode, pageSize: "100" }),
+      fetchAdminClinicsByCountryCode(countryCode),
+      getPublicBookingRequirements(countryCode),
+    ]);
   if (!servicesResult.ok || !doctorsResult.ok) {
     return (
       <>
@@ -175,6 +180,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
       : [];
   const countryName =
     countries.find((c) => c.code === countryCode)?.name ?? countryCode.toUpperCase();
+  const collectUtente = bookingRequirements.collectUtenteNumber;
 
   /**
    * Server action. Posts to the new backend route, then redirects to
@@ -232,6 +238,9 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
         nationalIdNumber: readOpt("nationalIdNumber"),
         taxIdNumber: readOpt("taxIdNumber"),
         passportNumber: readOpt("passportNumber"),
+        // Only forwarded for countries that collect it, so a stale or crafted
+        // field can't store an utente number outside Portugal.
+        utenteNumber: collectUtente ? readOpt("utenteNumber") : null,
         addressLine1: readOpt("addressLine1"),
         addressCity: readOpt("addressCity"),
         addressCountryCode: readOpt("addressCountryCode"),
@@ -316,6 +325,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
         doctors={doctors}
         clinics={clinics}
         defaultDialCode={dialCodeForCountry(countryCode)}
+        collectUtenteNumber={collectUtente}
         action={createManualAppointmentAction}
       />
     </>

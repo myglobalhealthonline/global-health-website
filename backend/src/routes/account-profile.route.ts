@@ -56,6 +56,7 @@ const patientPatchSchema = z
     nationalIdNumber: stringField(64),
     taxIdNumber: stringField(64),
     passportNumber: stringField(64),
+    utenteNumber: stringField(64),
     addressLine1: stringField(200),
     addressLine2: stringField(200),
     addressCity: stringField(120),
