@@ -1553,6 +1553,10 @@ img {
 /* The portal block below re-points .gh-field-label at --portal-text with
  * !important; on the dark auth card that paints labels near-invisible. */
 .gh2-auth-glass .gh-field-label { color: var(--color-brand-accent) !important; }
+/* Password show/hide toggle icon — hand-authored (not a Tailwind arbitrary
+ * class) so it isn't at the mercy of JIT scanning missing it on this card. */
+.gh-auth-eye-toggle { color: rgba(255, 255, 255, 0.55); }
+.gh-auth-eye-toggle:hover { color: var(--color-brand-accent); }
 .gh2-auth-glass .gh-select option { color: #1D4B36; background: #ffffff; }
 .gh2-auth-glass .gh-input:focus,
 .gh2-auth-glass .gh-select:focus {
