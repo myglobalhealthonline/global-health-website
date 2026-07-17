@@ -38,6 +38,23 @@ type Market = {
 };
 
 /**
+ * Body of `PATCH /api/doctor/profile/markets/:countryId`, mirroring the
+ * backend's `doctorMarketPatchBodySchema`. That schema is `.strict()`, so a
+ * key it doesn't know fails the whole request with "Invalid market profile
+ * update" — these names must track
+ * `backend/src/validations/doctor-market-profiles.schema.ts`.
+ *
+ * Omitting a key leaves the stored value alone; sending `null` clears it.
+ */
+type MarketPayoutPatchBody = {
+  bank: {
+    accountHolder?: string | null;
+    bic?: string | null;
+    iban?: string | null;
+  };
+};
+
+/**
  * One market's listing (bio + registration) and payout forms, plus its
  * status chips. Rendered once per active market inside a tab panel on the
  * combined `/doctor/profile` page — every market's instance stays mounted
@@ -201,18 +218,18 @@ export function DoctorMarketForm({ market, strings }: { market: Market; strings:
     setIbanFieldError(iErr);
     if (bErr || iErr) return;
 
-    const payload: Record<string, string | null> = {
-      bankAccountHolder: bankAccountHolder.trim() || null,
-      bankBic: bankBic.trim() || null,
+    const payload: MarketPayoutPatchBody["bank"] = {
+      accountHolder: bankAccountHolder.trim() || null,
+      bic: bankBic.trim() || null,
     };
-    if (bankIban.trim()) payload.bankIban = bankIban.trim();
+    if (bankIban.trim()) payload.iban = bankIban.trim();
 
     startPayoutTransition(async () => {
       try {
         const res = await fetch(`/api/doctor/profile/markets/${encodeURIComponent(market.countryId)}`, {
           method: "PATCH",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ bank: payload }),
+          body: JSON.stringify({ bank: payload } satisfies MarketPayoutPatchBody),
         });
         const json = (await res.json()) as { ok?: boolean; message?: string };
         if (!res.ok || !json.ok) {
