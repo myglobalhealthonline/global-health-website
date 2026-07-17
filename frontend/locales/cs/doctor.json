@@ -67,7 +67,9 @@
     "seeAll": "Zobrazit vše",
     "print": "Tisk",
     "pagination": "Strana {page} z {totalPages} (celkem {total})",
-    "totalHint": "celkem {total}"
+    "totalHint": "celkem {total}",
+    "previous": "Předchozí",
+    "next": "Další"
   },
   "dashboard": {
     "notLinked": "Váš účet zatím není propojen s profilem lékaře. Požádejte administrátora, aby jej nastavil v sekci /admin/users.",

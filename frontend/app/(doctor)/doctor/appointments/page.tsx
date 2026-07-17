@@ -40,6 +40,13 @@ function statusToneForAppointmentCard(status: string): AppointmentCardTone {
 
 export const dynamic = "force-dynamic";
 
+/**
+ * New-system cutover date. Consultations scheduled before this are hidden from
+ * the queue and its summary counts — pre-launch/migrated bookings are noise the
+ * doctor doesn't act on. Sent to the API as `notBefore`; not a user filter.
+ */
+const QUEUE_START_DATE = "2026-07-15";
+
 type SearchParams = Record<string, string | string[] | undefined>;
 
 function pick(sp: SearchParams, key: string): string | undefined {
@@ -92,6 +99,18 @@ export default async function DoctorAppointmentsPage({
     ),
   ).toString();
   const currentUrl = currentQuery ? `/doctor/appointments?${currentQuery}` : "/doctor/appointments";
+  // Link to another page, preserving every active filter. `page` is dropped
+  // when 1 so the first page stays on the clean base URL.
+  const pageHref = (target: number) => {
+    const params = new URLSearchParams(
+      Object.entries(sp).flatMap(([k, v]) =>
+        typeof v === "string" && k !== "page" ? [[k, v]] : [],
+      ),
+    );
+    if (target > 1) params.set("page", String(target));
+    const qs = params.toString();
+    return qs ? `/doctor/appointments?${qs}` : "/doctor/appointments";
+  };
 
   const result = await fetchDoctorAppointments({
     page: String(page),
@@ -105,6 +124,7 @@ export default async function DoctorAppointmentsPage({
     ...(finalized ? { finalized } : {}),
     ...(open ? { open: "true" } : {}),
     ...(notFinalized ? { notFinalized: "true" } : {}),
+    notBefore: QUEUE_START_DATE,
     includeSummary: "true",
   });
   const appointments = result.ok ? result.data.items : [];
@@ -392,11 +412,41 @@ export default async function DoctorAppointmentsPage({
             })}
           </div>
           {result.data.pagination.totalPages > 1 ? (
-            <div className="border-t border-[var(--portal-line)] px-4 py-3 text-xs text-[var(--portal-muted)]">
-              {d.common.pagination
-                .replace("{page}", String(result.data.pagination.page))
-                .replace("{totalPages}", String(result.data.pagination.totalPages))
-                .replace("{total}", String(result.data.pagination.total))}
+            <div className="border-t border-[var(--portal-line)] flex flex-wrap items-center justify-between gap-3 px-4 py-3 text-xs text-[var(--portal-muted)]">
+              <span>
+                {d.common.pagination
+                  .replace("{page}", String(result.data.pagination.page))
+                  .replace("{totalPages}", String(result.data.pagination.totalPages))
+                  .replace("{total}", String(result.data.pagination.total))}
+              </span>
+              <div className="flex items-center gap-2">
+                {result.data.pagination.page > 1 ? (
+                  <Link
+                    href={pageHref(result.data.pagination.page - 1)}
+                    rel="prev"
+                    className="gh-btn gh-btn-soft text-xs"
+                  >
+                    {d.common.previous}
+                  </Link>
+                ) : (
+                  <span aria-disabled="true" className="gh-btn gh-btn-soft pointer-events-none text-xs opacity-40">
+                    {d.common.previous}
+                  </span>
+                )}
+                {result.data.pagination.page < result.data.pagination.totalPages ? (
+                  <Link
+                    href={pageHref(result.data.pagination.page + 1)}
+                    rel="next"
+                    className="gh-btn gh-btn-soft text-xs"
+                  >
+                    {d.common.next}
+                  </Link>
+                ) : (
+                  <span aria-disabled="true" className="gh-btn gh-btn-soft pointer-events-none text-xs opacity-40">
+                    {d.common.next}
+                  </span>
+                )}
+              </div>
             </div>
           ) : null}
         </div>

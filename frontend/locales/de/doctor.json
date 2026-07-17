@@ -67,7 +67,9 @@
     "seeAll": "Alle anzeigen",
     "print": "Drucken",
     "pagination": "Seite {page} von {totalPages} ({total} insgesamt)",
-    "totalHint": "{total} insgesamt"
+    "totalHint": "{total} insgesamt",
+    "previous": "Zurück",
+    "next": "Weiter"
   },
   "dashboard": {
     "notLinked": "Ihr Konto ist noch keinem Arztprofil zugeordnet. Bitten Sie einen Administrator, dies unter /admin/users einzurichten.",

@@ -67,7 +67,9 @@
     "seeAll": "Vezi tot",
     "print": "Printează",
     "pagination": "Pagina {page} din {totalPages} ({total} în total)",
-    "totalHint": "{total} în total"
+    "totalHint": "{total} în total",
+    "previous": "Anterior",
+    "next": "Următor"
   },
   "dashboard": {
     "notLinked": "Contul dvs. nu este încă asociat unui profil de medic. Rugați un administrator să îl configureze în /admin/users.",
