@@ -336,6 +336,8 @@
     "taxId": "Steuernummer",
     "taxIdHint": "NIF / PPS / CPF",
     "passport": "Reisepass",
+    "utente": "Número de Utente",
+    "utenteHint": "Nur Portugal (SNS)",
     "address": "Adresse",
     "line1": "Zeile 1",
     "line2": "Zeile 2",

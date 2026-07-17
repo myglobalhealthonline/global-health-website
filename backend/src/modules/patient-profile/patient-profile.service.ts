@@ -180,6 +180,7 @@ export type ProfileWriteFields = {
   nationalIdNumber?: string | null;
   taxIdNumber?: string | null;
   passportNumber?: string | null;
+  utenteNumber?: string | null;
   addressLine1?: string | null;
   addressLine2?: string | null;
   addressCity?: string | null;

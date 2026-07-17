@@ -49,6 +49,7 @@ const adminPatchSchema = z
     nationalIdNumber: stringField(64),
     taxIdNumber: stringField(64),
     passportNumber: stringField(64),
+    utenteNumber: stringField(64),
     addressLine1: stringField(200),
     addressLine2: stringField(200),
     addressCity: stringField(120),
@@ -459,6 +460,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
             nationalIdNumber: true,
             taxIdNumber: true,
             passportNumber: true,
+            utenteNumber: true,
             addressLine1: true,
             addressCity: true,
             addressCountryCode: true,
@@ -476,6 +478,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           nationalIdNumber: string | null;
           taxIdNumber: string | null;
           passportNumber: string | null;
+          utenteNumber: string | null;
           addressLine1: string | null;
           addressCity: string | null;
           addressCountryCode: string | null;
@@ -488,6 +491,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           nationalIdNumber: decryptPhi(profile.nationalIdNumber),
           taxIdNumber: decryptPhi(profile.taxIdNumber),
           passportNumber: decryptPhi(profile.passportNumber),
+          utenteNumber: decryptPhi(profile.utenteNumber),
           addressLine1: profile.addressLine1 ?? null,
           addressCity: profile.addressCity ?? null,
           addressCountryCode: profile.addressCountryCode ?? null,
@@ -551,6 +555,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         nationalIdNumber: null,
         taxIdNumber: null,
         passportNumber: null,
+        utenteNumber: null,
         addressLine1: null,
         addressCity: null,
         addressCountryCode: null,

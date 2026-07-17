@@ -338,6 +338,8 @@
     "dateOfBirth": "Data nașterii",
     "nationalIdOptional": "{label} (opțional)",
     "nationalIdHint": "Necesar în documentele medicale din țara ta. Poți completa și din profil.",
+    "utenteOptional": "Número de Utente (opțional)",
+    "utenteHint": "Numărul tău de asigurat SNS din Portugalia, pentru ca medicul să îți poată accesa dosarul medical național și să emită rețete electronice. Lasă gol dacă nu ai unul.",
     "reasonForVisit": "Motivul vizitei (opțional)",
     "reasonPlaceholder": "Descrie pe scurt simptomele sau ce dorești să discuți.",
     "consentStatement": "Confirm că datele de mai sus sunt corecte și consimț la o videoconsultație cu clinicianul selectat.",

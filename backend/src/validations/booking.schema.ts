@@ -69,6 +69,12 @@ export const bookingSchema = z.object({
    */
   nationalIdNumber: z.string().trim().min(3).max(50).optional().or(z.literal("")),
   /**
+   * Número de Utente — Portuguese SNS healthcare number. Shown only where
+   * `BookingSetting.collectUtenteNumber` is on (PT). Never required: many
+   * patients treated in Portugal have no utente number.
+   */
+  utenteNumber: z.string().trim().min(3).max(50).optional().or(z.literal("")),
+  /**
    * IANA timezone string captured from the patient's browser at booking
    * time via `Intl.DateTimeFormat().resolvedOptions().timeZone`. Stored
    * on Appointment.patientTimezone for downstream rendering. Optional —

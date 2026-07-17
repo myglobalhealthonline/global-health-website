@@ -56,6 +56,7 @@ type PatientOption = {
   nationalIdNumber: string | null;
   taxIdNumber: string | null;
   passportNumber: string | null;
+  utenteNumber: string | null;
   addressLine1: string | null;
   addressCity: string | null;
   addressCountryCode: string | null;
@@ -77,6 +78,10 @@ type Props = {
   doctors: DoctorOption[];
   clinics: ClinicOption[];
   defaultDialCode: string;
+  /** Show the Número de Utente field — driven by the booking country's
+   *  `BookingSetting.collectUtenteNumber` (Portugal only). The value stays
+   *  optional even when shown. */
+  collectUtenteNumber: boolean;
   /** Server action that creates the booking. Runs only after the native
    *  submit proceeds — i.e. after client validation passes. */
   action: (formData: FormData) => void | Promise<void>;
@@ -106,6 +111,7 @@ export function ManualBookingForm({
   doctors,
   clinics,
   defaultDialCode,
+  collectUtenteNumber,
   action,
   initialDoctorId,
   initialSlotId,
@@ -120,6 +126,7 @@ export function ManualBookingForm({
   const [nationalIdNumber, setNationalIdNumber] = useState("");
   const [taxIdNumber, setTaxIdNumber] = useState("");
   const [passportNumber, setPassportNumber] = useState("");
+  const [utenteNumber, setUtenteNumber] = useState("");
   const [addressLine1, setAddressLine1] = useState("");
   const [addressCity, setAddressCity] = useState("");
   const [addressCountryCode, setAddressCountryCode] = useState("");
@@ -345,6 +352,7 @@ export function ManualBookingForm({
     setNationalIdNumber(p.nationalIdNumber ?? "");
     setTaxIdNumber(p.taxIdNumber ?? "");
     setPassportNumber(p.passportNumber ?? "");
+    setUtenteNumber(p.utenteNumber ?? "");
     setAddressLine1(p.addressLine1 ?? "");
     setAddressCity(p.addressCity ?? "");
     setAddressCountryCode(p.addressCountryCode ?? "");
@@ -537,6 +545,18 @@ export function ManualBookingForm({
             value={passportNumber}
             onChange={setPassportNumber}
           />
+          {/* Portugal only — the patient's SNS number, used by doctors to reach
+            * national health records. Optional: many patients treated in PT
+            * (visitors, expats) don't have one. */}
+          {collectUtenteNumber ? (
+            <Field
+              label="Número de Utente (optional)"
+              name="utenteNumber"
+              maxLength={64}
+              value={utenteNumber}
+              onChange={setUtenteNumber}
+            />
+          ) : null}
           <Field
             label="Address line 1"
             name="addressLine1"

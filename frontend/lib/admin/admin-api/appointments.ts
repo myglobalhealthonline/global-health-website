@@ -131,6 +131,9 @@ export type CreateManualAppointmentInput = {
     nationalIdNumber?: string | null;
     taxIdNumber?: string | null;
     passportNumber?: string | null;
+    /** Número de Utente (Portuguese SNS health number). Sent only for
+     *  countries with `BookingSetting.collectUtenteNumber` on; always optional. */
+    utenteNumber?: string | null;
     addressLine1?: string | null;
     addressCity?: string | null;
     addressCountryCode?: string | null;

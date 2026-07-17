@@ -62,6 +62,10 @@ export type CartItemPatientInput = {
   /** Country-specific national ID (NIF/PPS/CPF/CNP/DNI/...). Required
    *  by the backend when BookingSetting.requireNationalId is on. */
   nationalIdNumber?: string;
+  /** Número de Utente (Portuguese SNS health number). Collected only where
+   *  BookingSetting.collectUtenteNumber is on, and never required — patients
+   *  without an SNS number must still be able to book. */
+  utenteNumber?: string;
   /** IANA tz captured client-side via Intl.DateTimeFormat. Stored on
    *  Appointment.patientTimezone for downstream rendering. */
   patientTimezone?: string;

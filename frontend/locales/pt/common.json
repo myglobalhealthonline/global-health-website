@@ -338,6 +338,8 @@
     "dateOfBirth": "Data de nascimento",
     "nationalIdOptional": "{label} (opcional)",
     "nationalIdHint": "Necessário em documentos médicos no seu país. Pode preencher depois no seu perfil.",
+    "utenteOptional": "Número de Utente (opcional)",
+    "utenteHint": "O seu número de utente do SNS, para o médico aceder ao seu registo de saúde nacional e emitir receitas eletrónicas. Deixe em branco se não tiver.",
     "reasonForVisit": "Motivo da visita (opcional)",
     "reasonPlaceholder": "Descreva brevemente os seus sintomas ou o que gostaria de discutir.",
     "consentStatement": "Confirmo que os dados acima são precisos e consinto numa videoconsulta com o clínico selecionado.",
