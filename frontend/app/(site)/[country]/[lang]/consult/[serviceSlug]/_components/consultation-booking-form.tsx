@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "@/components/cart/CartContext";
 import type { CartItemKind, BenefitSelection } from "@/lib/api/cart-types";
@@ -117,6 +117,7 @@ export function ConsultationBookingForm({
   const requirePhone = bookingRequirements?.requirePhone ?? false;
   const requireDob = bookingRequirements?.requireDateOfBirth ?? false;
   const collectUtente = bookingRequirements?.collectUtenteNumber ?? false;
+  const requireAddress = bookingRequirements?.requireAddress ?? false;
   const router = useRouter();
   const params = useParams<{ country: string; lang: string }>();
   const { add } = useCart();
@@ -986,19 +987,6 @@ export function ConsultationBookingForm({
             className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
           />
         </label>
-
-        <label className="mt-4 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
-          <input
-            type="checkbox"
-            name="consent"
-            required
-            aria-required="true"
-            className="mt-0.5 size-4 rounded border-[var(--color-border)]"
-          />
-          <span>
-            {i18n.consentStatement}
-          </span>
-        </label>
       </div>
 
       {/* 3. Patient address — required when the country's BookingSetting
@@ -1015,12 +1003,14 @@ export function ConsultationBookingForm({
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="block sm:col-span-2">
-            <span className="text-xs font-semibold text-[var(--color-text-body)]">
+            <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required={requireAddress || undefined}>
               {i18n.streetAddress}
             </span>
             <input
               type="text"
               name="addressLine1"
+              required={requireAddress}
+              aria-required={requireAddress}
               maxLength={120}
               autoComplete="address-line1"
               defaultValue={defaults.addressLine1}
@@ -1041,10 +1031,12 @@ export function ConsultationBookingForm({
             />
           </label>
           <label className="block">
-            <span className="text-xs font-semibold text-[var(--color-text-body)]">{i18n.city}</span>
+            <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required={requireAddress || undefined}>{i18n.city}</span>
             <input
               type="text"
               name="addressCity"
+              required={requireAddress}
+              aria-required={requireAddress}
               maxLength={80}
               autoComplete="address-level2"
               defaultValue={defaults.addressCity}
@@ -1052,12 +1044,14 @@ export function ConsultationBookingForm({
             />
           </label>
           <label className="block">
-            <span className="text-xs font-semibold text-[var(--color-text-body)]">
+            <span className="gh-field-label text-xs font-semibold text-[var(--color-text-body)]" data-required={requireAddress || undefined}>
               {i18n.postalCode}
             </span>
             <input
               type="text"
               name="addressPostalCode"
+              required={requireAddress}
+              aria-required={requireAddress}
               maxLength={20}
               autoComplete="postal-code"
               defaultValue={defaults.addressPostalCode}
@@ -1082,16 +1076,29 @@ export function ConsultationBookingForm({
         ) : null}
       </div>
 
-      {/* 4. GDPR — two independent required checkboxes per legal review.
-        * Stored separately on Appointment so withdrawal of marketing
-        * consent (gdprConsentPlatform) doesn't invalidate the clinical
-        * record (gdprConsentClinic). Wording deliberately scopes each
-        * one's purpose to make withdrawal scope unambiguous. */}
+      {/* 4. Consent — every required tick grouped in one place at the end of
+        * the form (moved off the Patient Details card) so a patient scanning
+        * top-to-bottom hits them all together instead of missing one buried
+        * earlier. Two independent required GDPR checkboxes per legal review:
+        * stored separately on Appointment so withdrawal of marketing consent
+        * (gdprConsentPlatform) doesn't invalidate the clinical record
+        * (gdprConsentClinic). Wording deliberately scopes each one's purpose
+        * to make withdrawal scope unambiguous. */}
       <div role="group" className="gh2-card-ivory p-5 sm:p-6">
         <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-brand-primary)]">
           {i18n.gdprConsent}
         </p>
         <label className="mt-2 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
+          <input
+            type="checkbox"
+            name="consent"
+            required
+            aria-required="true"
+            className="mt-0.5 size-4 rounded border-[var(--color-border)]"
+          />
+          <span>{i18n.consentStatement}</span>
+        </label>
+        <label className="mt-3 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
           <input
             type="checkbox"
             name="gdprConsentClinic"
@@ -1129,14 +1136,10 @@ export function ConsultationBookingForm({
           ref={errorRef}
           role="alert"
           tabIndex={-1}
-          className="rounded-[var(--radius-card)] px-4 py-3 text-sm font-medium focus:outline-none"
-          style={{
-            background: "rgba(239,68,68,0.08)",
-            border: "1px solid rgba(239,68,68,0.25)",
-            color: "var(--color-text-primary)",
-          }}
+          className="gh-status-error flex items-start gap-2 rounded-[var(--radius-card)] px-4 py-3 text-sm font-semibold focus:outline-none"
         >
-          {error}
+          <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
+          <span>{error}</span>
         </div>
       ) : null}
 
