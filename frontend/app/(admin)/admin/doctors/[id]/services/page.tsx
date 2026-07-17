@@ -389,9 +389,14 @@ export default async function AdminDoctorServicesPage({
         title={`Services — ${doctor.fullName}`}
         description="Review doctor-selected services, approve or reject pending requests, and manually assign or remove services."
         actions={
-          <Btn href={`/admin/doctors/${id}/availability`} variant="ghost">
-            Availability
-          </Btn>
+          <>
+            <Btn href={`/admin/doctors/${id}/profile-requests`} variant="ghost">
+              Profile requests
+            </Btn>
+            <Btn href={`/admin/doctors/${id}/availability`} variant="ghost">
+              Availability
+            </Btn>
+          </>
         }
       />
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { fetchDoctorMe } from "@/lib/api/doctor-api";
+import { fetchDoctorMe, fetchDoctorProfileChangeRequests } from "@/lib/api/doctor-api";
 import { PageHeader } from "@/components/portal-atoms";
 import { ProfileSections, type ProfileStrings } from "./_components/profile-sections";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
@@ -10,7 +10,10 @@ export const dynamic = "force-dynamic";
 export default async function DoctorProfilePage() {
   const locale = await getPageLocale();
   const { doctor: d } = loadLocaleBundle(locale);
-  const result = await fetchDoctorMe();
+  const [result, changeRequestsResult] = await Promise.all([
+    fetchDoctorMe(),
+    fetchDoctorProfileChangeRequests(),
+  ]);
   if (!result.ok) {
     return (
       <div className="gh-card p-6">
@@ -24,12 +27,21 @@ export default async function DoctorProfilePage() {
     );
   }
   const { doctor } = result.data;
+  // A failed change-request fetch degrades to "no pending requests": the
+  // fields render editable and a stale submit is rejected by the backend's
+  // pending-uniqueness check, which is a better failure than blocking the
+  // whole profile page over a secondary read.
+  const changeRequests = changeRequestsResult.ok ? changeRequestsResult.data.items : [];
 
   return (
     <>
       <PageHeader className="mb-6" eyebrow={d.profile.eyebrow} title={d.profile.title} description={d.profile.editDescription} />
       {/* ponytail: cast — cs/ro/de doctor.json still lag en's profile keys (separate backfill task); drop cast once locales match */}
-      <ProfileSections doctor={doctor} strings={d.profile as ProfileStrings} />
+      <ProfileSections
+        doctor={doctor}
+        changeRequests={changeRequests}
+        strings={d.profile as ProfileStrings}
+      />
     </>
   );
 }

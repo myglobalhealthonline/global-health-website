@@ -3,7 +3,7 @@ import "server-only";
 import { revalidateTag } from "next/cache";
 import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 
-type DoctorProfileCacheContext = {
+export type DoctorProfileCacheContext = {
   countryCode: string;
   slug: string;
   additionalCountryCodes?: string[];
@@ -38,10 +38,16 @@ function readDoctorProfileCacheContext(text: string): DoctorProfileCacheContext 
   }
 }
 
-export function revalidateDoctorProfileCacheFromApiText(text: string): void {
-  const cache = readDoctorProfileCacheContext(text);
-  if (!cache) return;
-
+/**
+ * Busts every public cache a doctor's profile appears in: the global roster,
+ * and each market's roster + their profile page in that market.
+ *
+ * Callers that hold the backend's raw response should use
+ * `revalidateDoctorProfileCacheFromApiText`; this is the entry point for
+ * callers that already have the parsed `cache` block (e.g. the admin
+ * profile-change approval, which applies the edit server-side).
+ */
+export function revalidateDoctorProfileCache(cache: DoctorProfileCacheContext): void {
   const countryCodes = new Set<string>([cache.countryCode]);
   for (const code of cache.additionalCountryCodes ?? []) {
     if (typeof code === "string" && code.trim() !== "") {
@@ -54,4 +60,10 @@ export function revalidateDoctorProfileCacheFromApiText(text: string): void {
     revalidateTag(SITE_CACHE_TAGS.countryDoctors(code), "max");
     revalidateTag(SITE_CACHE_TAGS.countryDoctorBySlug(code, cache.slug), "max");
   }
+}
+
+export function revalidateDoctorProfileCacheFromApiText(text: string): void {
+  const cache = readDoctorProfileCacheContext(text);
+  if (!cache) return;
+  revalidateDoctorProfileCache(cache);
 }

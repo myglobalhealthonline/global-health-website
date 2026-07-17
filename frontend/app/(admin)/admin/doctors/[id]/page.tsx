@@ -229,6 +229,9 @@ export default async function AdminDoctorDetailPage({
             <Btn href={`/admin/doctors/${id}/services`} variant="ghost">
               Services
             </Btn>
+            <Btn href={`/admin/doctors/${id}/profile-requests`} variant="ghost">
+              Profile requests
+            </Btn>
             <Btn href={`/admin/doctors/${id}/edit`} variant="primary">
               Edit
             </Btn>

@@ -13,6 +13,7 @@ import { getServerAuthUser } from "@/lib/api/server-auth";
 import {
   fetchAdminCountries,
   fetchAdminNotifications,
+  fetchAdminPendingProfileChangeRequests,
   fetchAdminPendingServiceRequests,
   type AdminNotificationDto,
 } from "@/lib/admin/admin-api";
@@ -157,13 +158,18 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     // ignore — bell still shows service requests / empty state
   }
 
+  // Both doctor-approval queues badge the same "/admin/doctors" nav entry, so
+  // the count is the sum: a doctor waiting on a name change is as much an
+  // approval to action as one waiting on a service.
+  let doctorApprovalCount = 0;
+
   try {
     const res = await fetchAdminPendingServiceRequests(
       activeCountry ? { countryCode: activeCountry.code } : undefined,
     );
     if (res.ok) {
       const { count, items } = res.data;
-      navBadges = { "/admin/doctors": count };
+      doctorApprovalCount += count;
       unreadTotal += count;
       for (const r of items.slice(0, 8)) {
         feedItems.push({
@@ -178,6 +184,33 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     }
   } catch {
     // ignore — bell falls back to whatever notifications loaded
+  }
+
+  try {
+    const res = await fetchAdminPendingProfileChangeRequests(
+      activeCountry ? { countryCode: activeCountry.code } : undefined,
+    );
+    if (res.ok) {
+      const { count, items } = res.data;
+      doctorApprovalCount += count;
+      unreadTotal += count;
+      for (const r of items.slice(0, 8)) {
+        feedItems.push({
+          id: r.id,
+          title: `${r.doctorName} requested a ${profileChangeFieldLabel(r.field)} change`,
+          body: `${r.isGlobal ? "All markets" : r.countryName} — awaiting approval`,
+          href: `/admin/doctors/${r.doctorId}/profile-requests`,
+          createdAt: r.createdAt,
+          readAt: null,
+        });
+      }
+    }
+  } catch {
+    // ignore — bell falls back to whatever notifications loaded
+  }
+
+  if (doctorApprovalCount > 0) {
+    navBadges = { "/admin/doctors": doctorApprovalCount };
   }
 
   if (feedItems.length > 0 || unreadTotal > 0) {
@@ -265,5 +298,22 @@ function serviceKindLabel(kind: string): string {
       return "Prescription";
     default:
       return "Service";
+  }
+}
+
+function profileChangeFieldLabel(field: string): string {
+  switch (field) {
+    case "fullName":
+      return "name";
+    case "qualifications":
+      return "qualifications";
+    case "bio":
+      return "bio";
+    case "registration":
+      return "registration";
+    case "photo":
+      return "photo";
+    default:
+      return "profile";
   }
 }

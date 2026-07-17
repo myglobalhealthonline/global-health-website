@@ -40,6 +40,13 @@ function statusToneForAppointmentCard(status: string): AppointmentCardTone {
 
 export const dynamic = "force-dynamic";
 
+/**
+ * New-system cutover date. Consultations scheduled before this are hidden from
+ * the queue and its summary counts — pre-launch/migrated bookings are noise the
+ * doctor doesn't act on. Sent to the API as `notBefore`; not a user filter.
+ */
+const QUEUE_START_DATE = "2026-07-15";
+
 type SearchParams = Record<string, string | string[] | undefined>;
 
 function pick(sp: SearchParams, key: string): string | undefined {
@@ -68,13 +75,22 @@ export default async function DoctorAppointmentsPage({
   const consultationType = pick(sp, "consultationType");
   const openOnly = pick(sp, "openOnly");
   const finalized = pick(sp, "finalized");
+  const open = pick(sp, "open");
+  const notFinalized = pick(sp, "notFinalized");
   const page = Number(pick(sp, "page") ?? "1") || 1;
-  const hasActiveFilters = Boolean(
-    view || search || from || to || consultationType || openOnly || finalized,
-  );
-  const activeFilterCount = [view, search, from, to, consultationType, openOnly, finalized].filter(
-    Boolean,
-  ).length;
+  const filterValues = [
+    view,
+    search,
+    from,
+    to,
+    consultationType,
+    openOnly,
+    finalized,
+    open,
+    notFinalized,
+  ];
+  const hasActiveFilters = filterValues.some(Boolean);
+  const activeFilterCount = filterValues.filter(Boolean).length;
   // Same-URL link (not router.refresh — this is a server component page)
   // to give the error state a working "Try again" that re-triggers the fetch.
   const currentQuery = new URLSearchParams(
@@ -83,6 +99,18 @@ export default async function DoctorAppointmentsPage({
     ),
   ).toString();
   const currentUrl = currentQuery ? `/doctor/appointments?${currentQuery}` : "/doctor/appointments";
+  // Link to another page, preserving every active filter. `page` is dropped
+  // when 1 so the first page stays on the clean base URL.
+  const pageHref = (target: number) => {
+    const params = new URLSearchParams(
+      Object.entries(sp).flatMap(([k, v]) =>
+        typeof v === "string" && k !== "page" ? [[k, v]] : [],
+      ),
+    );
+    if (target > 1) params.set("page", String(target));
+    const qs = params.toString();
+    return qs ? `/doctor/appointments?${qs}` : "/doctor/appointments";
+  };
 
   const result = await fetchDoctorAppointments({
     page: String(page),
@@ -94,12 +122,16 @@ export default async function DoctorAppointmentsPage({
     ...(consultationType ? { consultationType } : {}),
     ...(openOnly ? { openOnly: "true" } : {}),
     ...(finalized ? { finalized } : {}),
+    ...(open ? { open: "true" } : {}),
+    ...(notFinalized ? { notFinalized: "true" } : {}),
+    notBefore: QUEUE_START_DATE,
+    includeSummary: "true",
   });
   const appointments = result.ok ? result.data.items : [];
-  const openAppointments = appointments.filter(
-    (item) => item.status !== "COMPLETED" && item.status !== "CANCELLED",
-  ).length;
-  const unfinalized = appointments.filter((item) => !item.finalized).length;
+  // Queue-wide totals from the backend — deliberately not derived from
+  // `appointments`, which is only the current page and only the current filter.
+  const openAppointments = result.ok ? (result.data.summary?.openConsults ?? 0) : 0;
+  const unfinalized = result.ok ? (result.data.summary?.notFinalized ?? 0) : 0;
 
   return (
     <>
@@ -125,7 +157,7 @@ export default async function DoctorAppointmentsPage({
               hint: d.appointments.openConsultsHint,
               tone: openAppointments > 0 ? "warning" : "neutral",
               icon: <AlertTriangle aria-hidden />,
-              href: "/doctor/appointments?openOnly=true",
+              href: "/doctor/appointments?open=true",
             },
             {
               label: d.appointments.notFinalized,
@@ -133,7 +165,7 @@ export default async function DoctorAppointmentsPage({
               hint: d.appointments.notFinalizedHint,
               tone: unfinalized > 0 ? "warning" : "neutral",
               icon: <CheckCircle2 aria-hidden />,
-              href: "/doctor/appointments?finalized=false",
+              href: "/doctor/appointments?notFinalized=true",
             },
           ]}
         />
@@ -147,6 +179,11 @@ export default async function DoctorAppointmentsPage({
           ) : null}
         </summary>
         <form className="gh-doctor-filter-grid mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
+          {/* Tile filters have no control of their own — carry them through a
+              GET submit so narrowing by type/date doesn't drop them. Reset
+              links to the bare path, which still clears them. */}
+          {open ? <input type="hidden" name="open" value="true" /> : null}
+          {notFinalized ? <input type="hidden" name="notFinalized" value="true" /> : null}
           <label className="flex flex-col gap-1 sm:col-span-2">
             <span className="gh-field-label">{d.common.search}</span>
             <input
@@ -375,11 +412,41 @@ export default async function DoctorAppointmentsPage({
             })}
           </div>
           {result.data.pagination.totalPages > 1 ? (
-            <div className="border-t border-[var(--portal-line)] px-4 py-3 text-xs text-[var(--portal-muted)]">
-              {d.common.pagination
-                .replace("{page}", String(result.data.pagination.page))
-                .replace("{totalPages}", String(result.data.pagination.totalPages))
-                .replace("{total}", String(result.data.pagination.total))}
+            <div className="border-t border-[var(--portal-line)] flex flex-wrap items-center justify-between gap-3 px-4 py-3 text-xs text-[var(--portal-muted)]">
+              <span>
+                {d.common.pagination
+                  .replace("{page}", String(result.data.pagination.page))
+                  .replace("{totalPages}", String(result.data.pagination.totalPages))
+                  .replace("{total}", String(result.data.pagination.total))}
+              </span>
+              <div className="flex items-center gap-2">
+                {result.data.pagination.page > 1 ? (
+                  <Link
+                    href={pageHref(result.data.pagination.page - 1)}
+                    rel="prev"
+                    className="gh-btn gh-btn-soft text-xs"
+                  >
+                    {d.common.previous}
+                  </Link>
+                ) : (
+                  <span aria-disabled="true" className="gh-btn gh-btn-soft pointer-events-none text-xs opacity-40">
+                    {d.common.previous}
+                  </span>
+                )}
+                {result.data.pagination.page < result.data.pagination.totalPages ? (
+                  <Link
+                    href={pageHref(result.data.pagination.page + 1)}
+                    rel="next"
+                    className="gh-btn gh-btn-soft text-xs"
+                  >
+                    {d.common.next}
+                  </Link>
+                ) : (
+                  <span aria-disabled="true" className="gh-btn gh-btn-soft pointer-events-none text-xs opacity-40">
+                    {d.common.next}
+                  </span>
+                )}
+              </div>
             </div>
           ) : null}
         </div>
