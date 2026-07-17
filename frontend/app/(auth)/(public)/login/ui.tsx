@@ -261,7 +261,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
               onClick={() => void onResend()}
               disabled={resending}
               className="font-semibold underline-offset-4 hover:underline disabled:opacity-60"
-              style={{ color: "var(--color-brand-primary)" }}
+              style={{ color: "var(--color-brand-accent)" }}
             >
               {resending ? i18n.twoFa.resending : i18n.twoFa.resend}
             </button>
@@ -305,7 +305,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
           <Link
             href="/forgot-password"
             className="text-xs font-semibold underline-offset-4 hover:underline"
-            style={{ color: "var(--color-brand-primary)" }}
+            style={{ color: "var(--color-brand-accent)" }}
           >
             {i18n.forgotPassword}
           </Link>
@@ -328,7 +328,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-[var(--color-text-muted)] transition-colors duration-150 hover:text-[var(--color-text-primary)]"
+            className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-white/55 transition-colors duration-150 hover:text-[var(--color-brand-accent)]"
             aria-label={showPassword ? i18n.hidePassword : i18n.showPassword}
           >
             {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
