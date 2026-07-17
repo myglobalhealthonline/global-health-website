@@ -35,6 +35,34 @@ export async function createAvailabilityWindow(
   return { ok: true, data: json.data };
 }
 
+/** Every field optional — send only what changed. `null` on an effective date
+ *  clears the boundary ("always" / "forever"); omitting it leaves it alone. */
+export type UpdateWindowInput = {
+  weekday?: number;
+  startMinute?: number;
+  endMinute?: number;
+  slotDurationMinutes?: number;
+  effectiveFrom?: string | null;
+  effectiveUntil?: string | null;
+  isActive?: boolean;
+};
+
+export async function updateAvailabilityWindow(
+  availabilityId: string,
+  input: UpdateWindowInput,
+): Promise<Result<{ availability: AvailabilityWindow }>> {
+  const res = await fetch(`/api/doctor/availability/${availabilityId}`, {
+    method: "PATCH",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || !json?.ok) {
+    return { ok: false, message: json?.message ?? "Could not update window" };
+  }
+  return { ok: true, data: json.data };
+}
+
 export async function deleteAvailabilityWindow(
   availabilityId: string,
 ): Promise<Result<null>> {

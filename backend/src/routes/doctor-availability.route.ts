@@ -193,6 +193,27 @@ const doctorAvailabilityRoute: FastifyPluginAsync = async (app) => {
           .send(errorResponse("Invalid availability", parsed.error.flatten()));
       }
       try {
+        // Merge onto the stored row before validating: a patch that only moves
+        // the end time must still be checked against the start time it will
+        // actually run against.
+        const existing = await prisma.doctorAvailability.findFirst({
+          where: {
+            id: request.params.availabilityId,
+            doctorId: request.params.id,
+          },
+          select: { startMinute: true, endMinute: true },
+        });
+        if (!existing) {
+          return reply.status(404).send(errorResponse("Availability not found"));
+        }
+        const startMinute = parsed.data.startMinute ?? existing.startMinute;
+        const endMinute = parsed.data.endMinute ?? existing.endMinute;
+        if (endMinute <= startMinute) {
+          return reply
+            .status(400)
+            .send(errorResponse("endMinute must be greater than startMinute"));
+        }
+
         const row = await patchAdminAvailability(
           request.params.id,
           request.params.availabilityId,
@@ -214,6 +235,23 @@ const doctorAvailabilityRoute: FastifyPluginAsync = async (app) => {
         );
         if (!row) {
           return reply.status(404).send(errorResponse("Availability not found"));
+        }
+        // The window moved, so future OPEN slots minted from its old shape are
+        // stale — drop them and let the next range fetch re-materialise from
+        // the new shape. BOOKED/HELD/BLOCKED stay: they are real commitments.
+        try {
+          await prisma.doctorTimeSlot.deleteMany({
+            where: {
+              doctorId: request.params.id,
+              status: "OPEN",
+              startAt: { gte: new Date() },
+            },
+          });
+        } catch (cleanupErr) {
+          app.log.warn(
+            { err: cleanupErr },
+            "Failed to clean up open slots after availability patch",
+          );
         }
         return okResponse({ availability: row });
       } catch (error) {

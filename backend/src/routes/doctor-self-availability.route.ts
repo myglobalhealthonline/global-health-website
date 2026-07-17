@@ -8,6 +8,7 @@ import {
   deleteAdminAvailability,
   ensureSlotsForRange,
   listAdminAvailability,
+  patchAdminAvailability,
   resolveDoctorTimeZone,
   resolveDoctorTimeZones,
 } from "../modules/doctor-availability/doctor-availability.service.js";
@@ -22,6 +23,7 @@ import { verifyDoctorAccess } from "../utils/doctor-auth.js";
  *
  *   GET    /api/doctor/availability                 — recurring windows + concrete slots (next N days)
  *   POST   /api/doctor/availability                 — add a weekly window
+ *   PATCH  /api/doctor/availability/:availabilityId — edit a window (hours, grid, dates, pause)
  *   DELETE /api/doctor/availability/:availabilityId — remove a window (+ orphan OPEN slots)
  *   PATCH  /api/doctor/time-slots/:slotId           — toggle OPEN ↔ BLOCKED (mark busy)
  *
@@ -66,6 +68,24 @@ const createBodySchema = z
   .refine((d) => d.endMinute > d.startMinute, {
     message: "endMinute must be greater than startMinute",
     path: ["endMinute"],
+  });
+
+// Every field optional — the caller sends only what changed. `endMinute` can't
+// be range-checked here (the start it must beat may live in the stored row);
+// the route merges onto the existing window and checks there.
+const patchBodySchema = z
+  .object({
+    weekday: z.number().int().min(0).max(6).optional(),
+    startMinute: z.number().int().min(0).max(24 * 60 - 1).optional(),
+    endMinute: z.number().int().min(1).max(24 * 60).optional(),
+    slotDurationMinutes: z.number().int().min(5).max(240).optional(),
+    effectiveFrom: z.string().datetime().nullable().optional(),
+    effectiveUntil: z.string().datetime().nullable().optional(),
+    isActive: z.boolean().optional(),
+  })
+  .strict()
+  .refine((d) => Object.keys(d).length > 0, {
+    message: "Provide at least one field to update",
   });
 
 const slotPatchSchema = z.object({
@@ -208,6 +228,87 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not create availability"));
+      }
+    },
+  );
+
+  // ── Edit own window (extend/shorten hours, re-date, pause) ─────────
+  app.patch<{ Params: { availabilityId: string } }>(
+    "/api/doctor/availability/:availabilityId",
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) {
+        return reply.status(auth.status).send(errorResponse(auth.message));
+      }
+      const params = availabilityIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+      const parsed = patchBodySchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply
+          .status(400)
+          .send(errorResponse("Invalid availability", parsed.error.flatten()));
+      }
+
+      try {
+        // Merge onto the stored row before validating: a patch that only moves
+        // the end time must still be checked against the start time it will
+        // actually run against.
+        const existing = await prisma.doctorAvailability.findFirst({
+          where: { id: params.data.availabilityId, doctorId: auth.doctorId },
+          select: { startMinute: true, endMinute: true },
+        });
+        if (!existing) return reply.status(404).send(errorResponse("Window not found"));
+
+        const startMinute = parsed.data.startMinute ?? existing.startMinute;
+        const endMinute = parsed.data.endMinute ?? existing.endMinute;
+        if (endMinute <= startMinute) {
+          return reply
+            .status(400)
+            .send(errorResponse("endMinute must be greater than startMinute"));
+        }
+
+        const row = await patchAdminAvailability(
+          auth.doctorId,
+          params.data.availabilityId,
+          {
+            ...parsed.data,
+            effectiveFrom:
+              parsed.data.effectiveFrom === undefined
+                ? undefined
+                : parsed.data.effectiveFrom === null
+                  ? null
+                  : new Date(parsed.data.effectiveFrom),
+            effectiveUntil:
+              parsed.data.effectiveUntil === undefined
+                ? undefined
+                : parsed.data.effectiveUntil === null
+                  ? null
+                  : new Date(parsed.data.effectiveUntil),
+          },
+        );
+        if (!row) return reply.status(404).send(errorResponse("Window not found"));
+
+        // The window moved, so future OPEN slots minted from its old shape are
+        // stale — drop them and let the next range fetch re-materialise from
+        // the new shape. BOOKED/HELD/BLOCKED stay: they are real commitments.
+        try {
+          await prisma.doctorTimeSlot.deleteMany({
+            where: {
+              doctorId: auth.doctorId,
+              status: "OPEN",
+              startAt: { gte: new Date() },
+            },
+          });
+        } catch {
+          /* non-fatal — stale open slots age out */
+        }
+        return okResponse({ availability: row });
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not update window"));
       }
     },
   );
