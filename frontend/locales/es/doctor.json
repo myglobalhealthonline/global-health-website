@@ -67,7 +67,9 @@
     "seeAll": "Ver todo",
     "print": "Imprimir",
     "pagination": "Página {page} de {totalPages} ({total} en total)",
-    "totalHint": "{total} en total"
+    "totalHint": "{total} en total",
+    "previous": "Anterior",
+    "next": "Siguiente"
   },
   "dashboard": {
     "notLinked": "Su cuenta aún no está vinculada a un perfil de médico. Pida a un administrador que la configure en /admin/users.",

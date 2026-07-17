@@ -129,6 +129,17 @@ const listAppointmentsQuerySchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "to must be YYYY-MM-DD")
     .optional(),
+  /**
+   * Hard lower bound on the queue: drop consultations scheduled before this
+   * date (unscheduled rows fall back to createdAt). Applied to BOTH the list
+   * and the summary-tile counts so the tiles stay equal to the list they open.
+   * Not a user filter — the appointments page sends the fixed cutover date; the
+   * calendar/availability callers omit it and are unaffected.
+   */
+  notBefore: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "notBefore must be YYYY-MM-DD")
+    .optional(),
   consultationType: z.string().trim().min(1).max(64).optional(),
   finalized: z
     .enum(["true", "false"])
@@ -381,12 +392,24 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
       notFinalized,
       includeSummary,
       excludeLegacy,
+      notBefore,
       page,
       pageSize,
     } = query.data;
     const fromUtc = from ? new Date(`${from}T00:00:00.000Z`) : undefined;
     const toUtc = to ? new Date(`${to}T23:59:59.999Z`) : undefined;
     const openWindowStart = new Date(Date.now() - 30 * 60 * 60 * 1000);
+    // Queue floor (see `notBefore` in the schema). Same OR shape as from/to so
+    // unscheduled requests created after the cutover still surface.
+    const notBeforeUtc = notBefore ? new Date(`${notBefore}T00:00:00.000Z`) : undefined;
+    const queueFloorWhere: Prisma.AppointmentWhereInput | undefined = notBeforeUtc
+      ? {
+          OR: [
+            { scheduledAt: { gte: notBeforeUtc } },
+            { AND: [{ scheduledAt: null }, { createdAt: { gte: notBeforeUtc } }] },
+          ],
+        }
+      : undefined;
     // Every status/finalized constraint goes in this AND array rather than at
     // the top level of `where`: several of these clauses key on `status`, and a
     // top-level spread lets the last one silently clobber the earlier ones.
@@ -411,6 +434,7 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
     if (open) andFilters.push(OPEN_CONSULT_WHERE, NON_LEGACY_WHERE);
     if (notFinalized) andFilters.push(NOT_FINALIZED_WHERE, NON_LEGACY_WHERE);
     if (excludeLegacy) andFilters.push(NON_LEGACY_WHERE);
+    if (queueFloorWhere) andFilters.push(queueFloorWhere);
     if (openOnly) {
       andFilters.push({
         finalized: false,
@@ -502,6 +526,9 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
       const summaryWhere: Prisma.AppointmentWhereInput = {
         doctorId: auth.doctorId,
         ...NON_LEGACY_WHERE,
+        // Same queue floor as the list, so a tile count never includes rows the
+        // list it links to would hide.
+        ...(queueFloorWhere ? { AND: [queueFloorWhere] } : {}),
       };
       const [total, upcomingCount, openConsults, notFinalizedCount] = await Promise.all([
         prisma.appointment.count({ where }),

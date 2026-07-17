@@ -67,7 +67,9 @@
     "seeAll": "See all",
     "print": "Print",
     "pagination": "Page {page} of {totalPages} ({total} total)",
-    "totalHint": "{total} total"
+    "totalHint": "{total} total",
+    "previous": "Previous",
+    "next": "Next"
   },
   "dashboard": {
     "notLinked": "Your account isn't linked to a doctor profile yet. Ask an admin to set it under /admin/users.",
