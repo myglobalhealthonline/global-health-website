@@ -9,9 +9,11 @@ import {
   DoctorCountryNotFoundError,
   DoctorSpecialtyInvalidError,
   getAdminDoctorById,
+  getDoctorDeleteImpact,
   listAdminDoctors,
   purgeAdminDoctor,
   updateAdminDoctor,
+  type DoctorDeleteBlockers,
 } from "../modules/doctors/doctors.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { issuePasswordResetToken } from "../modules/auth/auth.service.js";
@@ -54,11 +56,52 @@ function handleDoctorWriteError(
       .status(503)
       .send(errorResponse("Doctor save timed out — retry; if it persists, check database load"));
   }
+  // A Restrict relation refused the write — for deletes this means clinical
+  // records still reference the doctor. The purge route checks for these up
+  // front; this is the backstop so a race surfaces as 409, not a bare 500.
+  if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2003") {
+    return reply
+      .status(409)
+      .send(
+        errorResponse(
+          "Cannot delete: linked medical records still reference this doctor. Deactivate the profile instead.",
+          { code: "CLINICAL_RECORDS_EXIST" },
+        ),
+      );
+  }
   if (error instanceof DatabaseUnavailableError) {
     return reply.status(503).send(errorResponse(error.message));
   }
   app.log.error(error);
   return reply.status(500).send(errorResponse("Unexpected admin doctors error"));
+}
+
+const purgeDoctorQuerySchema = z.object({
+  /** Set once the admin has seen and accepted the future-appointment warning. */
+  force: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((v) => v === "true"),
+});
+
+const DOCTOR_BLOCKER_LABELS: Record<keyof DoctorDeleteBlockers, [string, string]> = {
+  consultations: ["consultation", "consultations"],
+  prescriptions: ["prescription", "prescriptions"],
+  examResults: ["exam result", "exam results"],
+  generatedDocuments: ["generated document", "generated documents"],
+  appointmentDocuments: ["attached document", "attached documents"],
+  medicalNotes: ["medical note", "medical notes"],
+};
+
+/** "3 consultations, 1 prescription" — only the non-zero counts, in order. */
+function describeDoctorBlockers(blockers: DoctorDeleteBlockers): string {
+  return Object.entries(blockers)
+    .filter(([, count]) => count > 0)
+    .map(([key, count]) => {
+      const [singular, plural] = DOCTOR_BLOCKER_LABELS[key as keyof DoctorDeleteBlockers];
+      return `${count} ${count === 1 ? singular : plural}`;
+    })
+    .join(", ");
 }
 
 const adminDoctorServiceAssignBodySchema = z.object({
@@ -557,6 +600,22 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
     },
   );
 
+  app.get("/api/admin/doctors/:id/delete-impact", async (request, reply) => {
+    const params = doctorIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid doctor id", params.error.flatten()));
+    }
+    try {
+      const impact = await getDoctorDeleteImpact(params.data.id);
+      if (!impact) {
+        return reply.status(404).send(errorResponse("Doctor profile not found"));
+      }
+      return okResponse(impact);
+    } catch (error) {
+      return handleDoctorWriteError(app, reply, error);
+    }
+  });
+
   app.delete(
     "/api/admin/doctors/:id/purge",
     // Hard delete — irreversible.
@@ -566,23 +625,42 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid doctor id", params.error.flatten()));
     }
+    const query = purgeDoctorQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid purge query", query.error.flatten()));
+    }
 
     try {
-      // Refuse to hard-delete a doctor that still has appointments — purging
-      // would orphan or cascade-delete clinical history. The admin must
-      // reassign/close those appointments first.
-      const appointmentCount = await prisma.appointment.count({
-        where: { doctorId: params.data.id },
-      });
-      if (appointmentCount > 0) {
-        return reply
-          .status(409)
-          .send(
-            errorResponse(
-              `Cannot delete: this doctor has ${appointmentCount} appointment(s). Reassign or remove them first.`,
-            ),
-          );
+      const impact = await getDoctorDeleteImpact(params.data.id);
+      if (!impact) {
+        return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
+
+      // Clinical records are Restrict-linked AND legally retained. No amount
+      // of admin confirmation may destroy them — deactivation is the only
+      // available action for a doctor who has practised.
+      if (impact.blocked) {
+        return reply.status(409).send(
+          errorResponse(
+            `Cannot delete: this doctor has ${describeDoctorBlockers(impact.blockers)}. ` +
+              "Medical records must be retained — deactivate the profile instead.",
+            { code: "CLINICAL_RECORDS_EXIST", impact },
+          ),
+        );
+      }
+
+      // Appointments are SetNull-linked, so a purge only unassigns them — the
+      // patient keeps the booking. Warn once; proceed when the admin confirms.
+      if (impact.futureAppointments > 0 && !query.data.force) {
+        return reply.status(409).send(
+          errorResponse(
+            `This doctor has ${impact.futureAppointments} future appointment(s). ` +
+              "Deleting keeps those bookings but leaves them unassigned.",
+            { code: "FUTURE_APPOINTMENTS_EXIST", impact },
+          ),
+        );
+      }
+
       const deleted = await purgeAdminDoctor(params.data.id);
       if (!deleted) {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
@@ -594,9 +672,17 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
         action: "DOCTOR_PURGED",
         entityType: "Doctor",
         entityId: params.data.id,
+        metadata: {
+          forced: query.data.force,
+          unassignedFutureAppointments: impact.futureAppointments,
+          unassignedPastAppointments: impact.pastAppointments,
+        },
         request,
       }).catch(() => {});
-      return okResponse({}, "Doctor profile deleted");
+      return okResponse(
+        { unassignedAppointments: impact.futureAppointments + impact.pastAppointments },
+        "Doctor profile deleted",
+      );
     } catch (error) {
       return handleDoctorWriteError(app, reply, error);
     }

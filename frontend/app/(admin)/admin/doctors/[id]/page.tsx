@@ -21,7 +21,7 @@ import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
 import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
-import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
+import { DeleteDoctorButton } from "../../_components/delete-doctor-button";
 import { DoctorRegistrationsCard } from "../_components/registrations-card";
 import { DoctorCredentialsCard } from "../_components/doctor-credentials-card";
 import { DoctorFaqsCard } from "../_components/doctor-faqs-card";
@@ -57,10 +57,13 @@ export default async function AdminDoctorDetailPage({
     redirect(`/admin/doctors/${id}?success=${encodeURIComponent("Doctor profile deactivated")}`);
   }
 
-  async function deleteDoctorAction() {
+  async function deleteDoctorAction(formData: FormData) {
     "use server";
     await requireAdminAction();
-    const deleteResult = await purgeAdminDoctor(id);
+    // Set by the dialog only once the admin accepted the future-appointment
+    // warning; the backend refuses an unforced purge when any exist.
+    const force = formData.get("force") === "true";
+    const deleteResult = await purgeAdminDoctor(id, { force });
     if (!deleteResult.ok) {
       redirect(`/admin/doctors/${id}?error=${encodeURIComponent(deleteResult.message)}`);
     }
@@ -524,13 +527,14 @@ export default async function AdminDoctorDetailPage({
               Permanent delete removes this profile and any linked assets.
             </p>
             <form action={deleteDoctorAction} className="gh-admin-doctor-danger-action">
-              <ConfirmDeleteButton
-                message="Permanently delete this doctor profile and any linked assets? This cannot be undone."
+              <DeleteDoctorButton
+                doctorId={id}
+                doctorName={d.fullName}
                 className="gh-btn gh-btn-danger w-full"
                 ariaLabel="Delete doctor permanently"
               >
                 Delete permanently
-              </ConfirmDeleteButton>
+              </DeleteDoctorButton>
             </form>
           </AdminCard>
         </div>

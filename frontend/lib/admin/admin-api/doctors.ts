@@ -565,8 +565,37 @@ export async function adminRemoveDoctorService(
   );
 }
 
-export async function purgeAdminDoctor(id: string) {
-  return adminRequest<Record<string, never>>(`/api/admin/doctors/${id}/purge`, {
-    method: "DELETE",
-  });
+export type DoctorDeleteBlockers = {
+  consultations: number;
+  prescriptions: number;
+  examResults: number;
+  generatedDocuments: number;
+  appointmentDocuments: number;
+  medicalNotes: number;
+};
+
+export type DoctorDeleteImpact = {
+  futureAppointments: number;
+  pastAppointments: number;
+  blockers: DoctorDeleteBlockers;
+  /** True when retained medical records exist — the purge cannot proceed. */
+  blocked: boolean;
+};
+
+/** What a hard delete would touch. Drives the confirm dialog's copy. */
+export async function getAdminDoctorDeleteImpact(id: string) {
+  return adminRequest<DoctorDeleteImpact>(`/api/admin/doctors/${id}/delete-impact`);
+}
+
+/**
+ * Hard-delete a doctor. Pass `force` only after the admin has confirmed the
+ * future-appointment warning — the backend rejects an unforced purge when
+ * future appointments exist, and rejects it outright when medical records do.
+ */
+export async function purgeAdminDoctor(id: string, options?: { force?: boolean }) {
+  const query = options?.force ? "?force=true" : "";
+  return adminRequest<{ unassignedAppointments: number }>(
+    `/api/admin/doctors/${id}/purge${query}`,
+    { method: "DELETE" },
+  );
 }
