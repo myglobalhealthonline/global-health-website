@@ -19,6 +19,7 @@ import { countryLangParams } from "@/lib/routing/static-params";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/seo/structured-data";
 import { toHtmlLang } from "@/lib/i18n/get-root-html-lang";
 import { HtmlLangSync } from "@/components/layout/HtmlLangSync";
+import { LocaleCookieSync } from "@/components/i18n/LocaleCookieSync";
 import type { ParsedSitePath } from "@/lib/routing/path-rewrites";
 
 /**
@@ -125,6 +126,7 @@ export default async function CountryLangLayout({
         }}
       />
       <HtmlLangSync lang={htmlLang} />
+      <LocaleCookieSync lang={lang} />
       <SiteChrome
         siteName={common.site.name}
         navigation={navigation}

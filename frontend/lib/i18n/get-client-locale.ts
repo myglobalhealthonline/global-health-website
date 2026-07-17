@@ -20,5 +20,15 @@ export function readClientLocale(): LocaleCode {
  */
 export function setClientLocaleCookie(locale: string): void {
   if (typeof document === "undefined") return;
+  try {
+    const host = window.location.hostname;
+    const parts = host.split(".");
+    if (parts.length > 2) {
+      // expire a possible Domain=.apex shadow cookie that would otherwise
+      // out-rank the host-only cookie below and keep serving a stale locale
+      const apex = parts.slice(-2).join(".");
+      document.cookie = `gh_locale=; path=/; domain=.${apex}; max-age=0; SameSite=Lax`;
+    }
+  } catch { /* SSR/odd env — host-only write below still applies */ }
   document.cookie = `gh_locale=${locale}; path=/; max-age=31536000; SameSite=Lax`;
 }
