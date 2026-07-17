@@ -47,6 +47,8 @@ const accountDataDeletionRoute: FastifyPluginAsync = async (app) => {
         const result = await createDeletionRequest({
           patientProfileId: profile.id,
           globalHealthNumber: ghnRow?.globalHealthNumber ?? null,
+          reason: body.data.reason ?? null,
+          requestType: body.data.requestType,
         });
         return reply.status(201).send(
           okResponse(result, "Deletion request submitted. Our team will process it within 30 days."),
