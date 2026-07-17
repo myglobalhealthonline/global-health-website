@@ -253,7 +253,22 @@ Security items (21 audit fail-closed, 22 deletion/anonymization, 25 CMS sanitize
 - `AUTH_JWT_PRIVATE_KEY`/`PUBLIC_KEY` present → SEC-004 deploy unblocked.
 - Production env deploys services Postgres+Frontend+Backend; preDeploy runs `prisma migrate deploy` (SEC-006 migration will apply). Nothing tracks `release/go-live` yet — point Production's deploy at it when ready.
 
-### Remaining before go-live (Stages 3–4, not security-code)
+**Stage 3 — WCAG DONE (`ab6dde82`, portal titles follow-up commit).**
+- Contrast (1.4.3): auth links lime 1.36:1 → forest 9.94:1. Browser-verified (`rgb(29,75,54)`).
+- Keyboard/SR (2.1.1/4.1.2): admin subscription rows → native `<button aria-label>`.
+- Focus (2.4.3): CookieBanner restores opener focus on close.
+- Titles (2.4.2): layout-level `title` on Admin/Doctor/Corporate/Account → ~112 pages get distinguishing titles.
+- Lang (3.1.1): MITIGATED via inline script setting `documentElement.lang` before content parses. True SSR-lang needs a multi-root-layout refactor — FOLLOW-UP. Joins public-CSP hash/nonce backlog.
+- FOLLOW-UPS: 15 public `(site)` utility pages need individual titles; `ColumnPriorityTable` shares the click-only row pattern; true SSR lang.
+
+### Stage 3–4 remaining — ALL BLOCKED on human/prod/decision (2026-07-17)
+- **Item 11 migrations/seeds** — deploy action; SEC-006 migration + any queued migrations auto-apply via preDeploy `migrate deploy` when Production deploys `release/go-live`.
+- **Item 14 integration + E2E** — Docker not running locally (same block as the audit). Needs Docker Desktop up → `docker compose up -d postgres-test` → `pnpm --filter backend test:db` (triage the 17 failures) + fix `playwright.config.ts` for E2E.
+- **Item 15 error monitoring** — needs a provider decision (Sentry/other) + DSN before wiring `error.tsx` + SDK.
+- **Item 17 `NEXT_PUBLIC_SITE_URL`** — confirmed NOT set in Production; needs the canonical site URL value + Railway set (unblocks canonicals/SEO).
+- **Item 18 live TLS/headers/CSP/CORS/`pnpm audit` sweep** — needs a deployed staging/prod URL + approval to send the dependency graph.
+
+### Original Stages 3–4 reference (not security-code)
 - Owner: set `REQUIRE_2FA_FOR_ROLES`; confirm staff 2FA enrollment; agree HS256 logout window; WhatsApp affirmative-consent legal call (`patientWhatsappConsent` default true).
 - Stage 3: apply queued migrations/seeds, env vars (`NEXT_PUBLIC_SITE_URL`), WCAG, commit prod-DB content patches.
 - Stage 4: backend integration + E2E green, monitoring/rollback, live TLS/headers/CSP sweep.
