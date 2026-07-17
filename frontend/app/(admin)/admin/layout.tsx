@@ -1,6 +1,12 @@
 import "@/app/portal.css";
 import "flag-icons/css/flag-icons.min.css";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
+
+// A11Y-001 (WCAG 2.4.2): give every admin page a distinguishing title via the
+// root template ("Admin · …") so pages without their own metadata aren't all
+// the bare site name. Child pages with their own title still override this.
+export const metadata: Metadata = { title: "Admin" };
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getServerAuthUser } from "@/lib/api/server-auth";
