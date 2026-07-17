@@ -467,6 +467,29 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                 include: { items: true },
               });
               if (order && order.status === "PENDING") {
+                // Stripe expires an unpaid Checkout Session 24h after it was
+                // created — but a pre-payment order's real payment deadline
+                // (`paymentDueAt`, e.g. 24h before the consultation) is usually
+                // DAYS later. Cancelling on session expiry would kill the
+                // reservation early: ORD-000163 was booked ~4 days out and got
+                // cancelled at booking+24h instead of at its 24h-before-consult
+                // deadline. This hit every OUTSIDE_48H order and any WITHIN_48H
+                // order booked >~25h out.
+                //
+                // When a future pre-payment deadline still owns the order, do
+                // nothing here: the slot stays HELD, resolveOrderPaymentUrl
+                // re-mints a fresh Checkout Session the next time the patient
+                // opens the pay link, and runPrePaymentCancelSweep performs the
+                // cancel + notifications at the real deadline. Only orders with
+                // no pre-payment deadline (null — e.g. product-only orders) or an
+                // already-elapsed one fall through to the cancel below.
+                const deadlineStillOwnsOrder =
+                  order.prePaymentFlow != null &&
+                  order.paymentDueAt != null &&
+                  order.paymentDueAt.getTime() > Date.now();
+                if (deadlineStillOwnsOrder) {
+                  return okResponse({ received: true });
+                }
                 const heldSlotIds = order.items
                   .map((i) => i.timeSlotId)
                   .filter((id): id is string => Boolean(id));
