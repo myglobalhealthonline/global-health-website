@@ -19,6 +19,7 @@ import { DayAgenda } from "@/components/calendar/DayAgenda";
 import { EventDetailDialog } from "@/components/calendar/EventDetailDialog";
 import { TimezoneSelect } from "@/components/calendar/TimezoneSelect";
 import { AppSheet } from "@/components/AppSheet";
+import { BASE_SLOT_MINUTES } from "@/lib/constants";
 import { CURATED_TIME_ZONES } from "@/lib/timezones";
 import {
   addMonths,
@@ -30,7 +31,6 @@ import {
 } from "@/components/calendar/calendar-utils";
 
 const TZ_STORAGE_KEY = "gh-doctor-cal-tz";
-const SLOT_DURATIONS = [15, 20, 30, 45, 60];
 
 function timeToMinutes(t: string): number {
   const [h, m] = t.split(":").map(Number);
@@ -74,7 +74,6 @@ type Props = {
   availableTimezones: string[];
   strings: CalendarStrings;
   common: CommonStrings;
-  minutesShort: string;
   errorEndAfterStart: string;
   errorEndDateAfterStart: string;
   /** Stat strip, rendered below the month grid (grid is the primary task
@@ -91,7 +90,6 @@ export function DoctorCalendarUI({
   availableTimezones,
   strings: s,
   common,
-  minutesShort,
   errorEndAfterStart,
   errorEndDateAfterStart,
   statsSlot,
@@ -148,7 +146,6 @@ export function DoctorCalendarUI({
   const [addToDate, setAddToDate] = useState("");
   const [addStart, setAddStart] = useState("09:00");
   const [addEnd, setAddEnd] = useState("17:00");
-  const [addDuration, setAddDuration] = useState(15);
 
   // Restore persisted display timezone (must be one the doctor is allowed).
   useEffect(() => {
@@ -298,7 +295,7 @@ export function DoctorCalendarUI({
         weekday,
         startMinute: startMin,
         endMinute: endMin,
-        slotDurationMinutes: addDuration,
+        slotDurationMinutes: BASE_SLOT_MINUTES,
         effectiveFrom,
         effectiveUntil,
       });
@@ -452,7 +449,7 @@ export function DoctorCalendarUI({
                 />
               </label>
             </div>
-            <div className="gh-doctor-calendar-time-grid grid grid-cols-3 gap-2">
+            <div className="gh-doctor-calendar-time-grid grid grid-cols-2 gap-2">
               <label className="flex flex-col gap-1 text-sm">
                 <span className="gh-field-label">{s.fromTime}</span>
                 <input
@@ -470,20 +467,6 @@ export function DoctorCalendarUI({
                   onChange={(e) => setAddEnd(e.target.value)}
                   className="gh-input h-10"
                 />
-              </label>
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="gh-field-label">{s.baseSlotLength}</span>
-                <select
-                  className="gh-select h-10"
-                  value={addDuration}
-                  onChange={(e) => setAddDuration(Number(e.target.value))}
-                >
-                  {SLOT_DURATIONS.map((d) => (
-                    <option key={d} value={d}>
-                      {minutesShort.replace("{count}", String(d))}
-                    </option>
-                  ))}
-                </select>
               </label>
             </div>
             {addAvailError ? (

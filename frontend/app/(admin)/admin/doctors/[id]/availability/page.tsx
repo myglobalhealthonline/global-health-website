@@ -23,6 +23,7 @@ import {
   parseWeekAnchor,
   weekRangeIso,
 } from "@/components/calendar/calendar-utils";
+import { BASE_SLOT_MINUTES } from "@/lib/constants";
 import { dialCodeForCountry } from "@/lib/phone/dial-codes";
 import {
   hasErrors,
@@ -83,9 +84,6 @@ export default async function AdminDoctorAvailabilityPage({
       const weekday = Number(formData.get("weekday"));
       const startMinute = hhmmToMinutes(String(formData.get("startTime") ?? ""));
       const endMinute = hhmmToMinutes(String(formData.get("endTime") ?? ""));
-      const slotDurationMinutes = Number(
-        formData.get("slotDurationMinutes") ?? 30,
-      );
       if (!Number.isInteger(weekday) || weekday < 0 || weekday > 6) {
         throw new Error("Invalid weekday");
       }
@@ -96,7 +94,7 @@ export default async function AdminDoctorAvailabilityPage({
         weekday,
         startMinute,
         endMinute,
-        slotDurationMinutes,
+        slotDurationMinutes: BASE_SLOT_MINUTES,
       });
       if (!res.ok) {
         redirect(
@@ -127,9 +125,6 @@ export default async function AdminDoctorAvailabilityPage({
       const weekday = Number(formData.get("weekday"));
       const startMinute = hhmmToMinutes(String(formData.get("startTime") ?? ""));
       const endMinute = hhmmToMinutes(String(formData.get("endTime") ?? ""));
-      const slotDurationMinutes = Number(
-        formData.get("slotDurationMinutes") ?? 30,
-      );
       // An unchecked checkbox sends nothing at all — absence means "paused".
       const isActive = formData.get("isActive") !== null;
       if (!Number.isInteger(weekday) || weekday < 0 || weekday > 6) {
@@ -144,7 +139,8 @@ export default async function AdminDoctorAvailabilityPage({
         weekday,
         startMinute,
         endMinute,
-        slotDurationMinutes,
+        // Normalises any legacy window that still carries another grid step.
+        slotDurationMinutes: BASE_SLOT_MINUTES,
         isActive,
       });
       if (!res.ok) {
@@ -518,24 +514,12 @@ export default async function AdminDoctorAvailabilityPage({
                 />
               </label>
             </div>
-            <label className="flex flex-col gap-1">
-              <span className="gh-field-label">Base slot length (grid)</span>
-              <select
-                name="slotDurationMinutes"
-                defaultValue="15"
-                className="gh-select"
-              >
-                <option value="15">15</option>
-                <option value="20">20</option>
-                <option value="30">30</option>
-                <option value="45">45</option>
-                <option value="60">60</option>
-              </select>
-              <span className="text-portal-meta text-[var(--color-text-muted)]">
-                Consultations consume consecutive base slots to fit their real
-                length. 15 fits 15/30/45-min consults.
-              </span>
-            </label>
+            {/* Base grid is fixed product-wide — stated, not chosen. */}
+            <p className="text-portal-meta text-[var(--color-text-muted)]">
+              Slots are generated on a fixed {BASE_SLOT_MINUTES}-min base grid.
+              Consultations consume consecutive base slots to fit their real
+              length, so {BASE_SLOT_MINUTES} fits 15/30/45-min consults.
+            </p>
             <button type="submit" className="gh-btn gh-btn-primary w-full">
               Add window
             </button>

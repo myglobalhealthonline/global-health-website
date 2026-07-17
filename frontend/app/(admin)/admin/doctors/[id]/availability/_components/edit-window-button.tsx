@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Pencil } from "lucide-react";
 import { PortalDialog } from "@/components/PortalDialog";
+import { BASE_SLOT_MINUTES } from "@/lib/constants";
 
 const WEEKDAYS = [
   { value: 0, label: "Sun" },
@@ -13,8 +14,6 @@ const WEEKDAYS = [
   { value: 5, label: "Fri" },
   { value: 6, label: "Sat" },
 ];
-
-const SLOT_DURATIONS = [15, 20, 30, 45, 60];
 
 function minutesToHHmm(mins: number) {
   const h = Math.floor(mins / 60)
@@ -30,7 +29,6 @@ type EditWindowButtonProps = {
     weekday: number;
     startMinute: number;
     endMinute: number;
-    slotDurationMinutes: number;
     isActive: boolean;
   };
   /** Server action that patches the window — receives this dialog's form. */
@@ -121,20 +119,6 @@ export function EditWindowButton({ availability: w, action }: EditWindowButtonPr
               />
             </label>
           </div>
-          <label className="flex flex-col gap-1">
-            <span className="gh-field-label">Base slot length (grid)</span>
-            <select
-              name="slotDurationMinutes"
-              defaultValue={String(w.slotDurationMinutes)}
-              className="gh-select"
-            >
-              {SLOT_DURATIONS.map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
-          </label>
           <label className="flex items-center gap-2">
             <input
               type="checkbox"
@@ -146,8 +130,8 @@ export function EditWindowButton({ availability: w, action }: EditWindowButtonPr
           </label>
           <p className="text-portal-meta text-[var(--color-text-muted)]">
             Paused windows stop generating new slots. Saving clears future open
-            slots and regenerates them from the new hours — booked appointments
-            are kept.
+            slots and regenerates them on the fixed {BASE_SLOT_MINUTES}-min base
+            grid — booked appointments are kept.
           </p>
         </form>
       </PortalDialog>

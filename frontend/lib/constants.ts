@@ -1,6 +1,18 @@
 /** Public site name — align with brand / metadata. */
 export const SITE_NAME = "Global Health";
 
+/**
+ * Base grid step (minutes) every doctor availability window is generated on.
+ * Fixed product-wide and deliberately not exposed as a control in any portal:
+ * consultations consume consecutive base slots to fit their real length, so a
+ * 15-min grid already accommodates 15/30/45-min consults.
+ *
+ * Windows created before this was fixed may still hold another step; slot
+ * generation honours whatever is stored, and such a row is normalised to this
+ * value the next time it is edited.
+ */
+export const BASE_SLOT_MINUTES = 15;
+
 /** Brand slogan — use as a brand line, not on every card. */
 export const SLOGAN = "Medicine Anytime Anywhere";
 
