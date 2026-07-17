@@ -54,7 +54,7 @@
         "zod": "^3.24.1"
     },
     "devDependencies": {
-        "@eslint/js": "^9",
+        "@eslint/js": "^10",
         "@types/jsonwebtoken": "^9.0.10",
         "@types/luxon": "^3.4.2",
         "@types/node": "^20",
