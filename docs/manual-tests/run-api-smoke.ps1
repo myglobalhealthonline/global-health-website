@@ -29,7 +29,7 @@ function Hit($sess, $method, $path, $body = $null, $expect = @(200,201)) {
 }
 
 # Admin
-$admin = Test-Auth "admin@globalhealthonline.com" "ADMIN"
+$admin = Test-Auth "globalhealth@myglobalhealth.online" "ADMIN"
 $results += [pscustomobject]@{ TC = "ADM-auth"; Pass = $admin.ok }
 
 if ($admin.ok) {

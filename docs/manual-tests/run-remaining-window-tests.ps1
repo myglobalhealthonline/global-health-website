@@ -130,7 +130,7 @@ if ($pat -and $doc) {
 }
 
 # --- DOC-035 cross-doctor scoping ---
-$admin = Login "admin@globalhealthonline.com"
+$admin = Login "globalhealth@myglobalhealth.online"
 if ($admin -and $doc) {
   $list = (Invoke-RestMethod -Uri "$Base/api/doctor/appointments?pageSize=50" -WebSession $doc.sess).data.items
   $otherApt = $list | Where-Object { $_.id -ne $AptId } | Select-Object -First 1

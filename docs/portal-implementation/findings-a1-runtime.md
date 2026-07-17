@@ -4,7 +4,7 @@ Investigator: Sonnet agent A1 · 2026-07-12 · runtime pass (Playwright, fronten
 
 **Method:** Logged into all three portals via Playwright. NOTE: local backend DB is the
 Railway prod proxy — treat as read-only, never seed/mutate. Credentials from
-`docs/manual-tests/TEST-RESULTS.md` (`admin@globalhealthonline.com` / `doctor@...` /
+`docs/manual-tests/TEST-RESULTS.md` (`globalhealth@myglobalhealth.online` / `doctor@...` /
 `patient@...`) plus appointment `9482a98c-1ad7-4c77-9c48-746806e322f4`. Tested 94
 route×viewport combos across all 9 required viewports on `/admin/appointments/[id]`,
 `/admin/services`, `/doctor/appointments/[id]`, `/doctor/appointments`, `/doctor/calendar`,

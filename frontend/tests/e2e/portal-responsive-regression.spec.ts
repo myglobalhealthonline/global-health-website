@@ -122,7 +122,7 @@ async function login(page: Page, email: string, password: string, landingPath: s
   await page.goto(landingPath, { waitUntil: "domcontentloaded" });
 }
 
-const ADMIN_EMAIL = process.env.E2E_ADMIN_EMAIL ?? "admin@globalhealthonline.com";
+const ADMIN_EMAIL = process.env.E2E_ADMIN_EMAIL ?? "globalhealth@myglobalhealth.online";
 const ADMIN_PASSWORD = process.env.E2E_ADMIN_PASSWORD ?? "GHAdmin2026X7qL9!";
 const DOCTOR_EMAIL = process.env.E2E_DOCTOR_EMAIL ?? "doctor@globalhealthonline.com";
 const DOCTOR_PASSWORD = process.env.E2E_DOCTOR_PASSWORD ?? "GHAdmin2026X7qL9!";

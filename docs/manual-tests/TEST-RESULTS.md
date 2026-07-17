@@ -94,7 +94,7 @@ Legend: ✅ PASS · ⚠️ PARTIAL · ❌ FAIL · ⏭️ SKIP · 🔄 NOT RUN
 
 - `patient@globalhealthonline.com` / `GHAdmin2026X7qL9!`
 - `doctor@globalhealthonline.com` / `GHAdmin2026X7qL9!`
-- `admin@globalhealthonline.com` / `GHAdmin2026X7qL9!`
+- `globalhealth@myglobalhealth.online` / `GHAdmin2026X7qL9!`
 - Appointment: `9482a98c-1ad7-4c77-9c48-746806e322f4` (`paymentStatus=PAID`)
 
 ```powershell
