@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { DoctorMe } from "@/lib/api/doctor-api";
+import type { DoctorMe, DoctorProfileChangeRequest } from "@/lib/api/doctor-api";
 import type enDoctor from "@/locales/en/doctor.json";
 import { AdminSummaryStrip } from "@/components/portal-atoms";
 import { PortalTabs, PortalTabPanel } from "@/components/PortalTabs";
@@ -23,9 +23,12 @@ const IDENTITY_TAB = "identity";
  */
 export function ProfileSections({
   doctor,
+  changeRequests,
   strings,
 }: {
   doctor: DoctorData;
+  /** Latest change request per (locked field, market) — see doctor-api. */
+  changeRequests: DoctorProfileChangeRequest[];
   strings: ProfileStrings;
 }) {
   const primaryCountry = doctor.country;
@@ -149,6 +152,7 @@ export function ProfileSections({
 
         <DoctorIdentityForm
           strings={strings}
+          changeRequests={changeRequests}
           initial={{
             fullName: doctor.fullName,
             qualifications: doctor.qualifications,
@@ -165,7 +169,7 @@ export function ProfileSections({
 
       {markets.map((market) => (
         <PortalTabPanel key={market.countryId} value={market.country.slug} activeValue={tab}>
-          <DoctorMarketForm market={market} strings={strings} />
+          <DoctorMarketForm market={market} changeRequests={changeRequests} strings={strings} />
         </PortalTabPanel>
       ))}
     </>

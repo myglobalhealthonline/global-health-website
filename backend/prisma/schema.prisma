@@ -196,6 +196,9 @@ enum AuditAction {
   DOCTOR_PHOTO_UPDATED
   DOCTOR_PHOTO_REMOVED
   DOCTOR_BANK_VIEWED
+  DOCTOR_PROFILE_CHANGE_REQUESTED
+  DOCTOR_PROFILE_CHANGE_CANCELLED
+  DOCTOR_PROFILE_CHANGE_REVIEWED
   APPOINTMENT_CREATED
   APPOINTMENT_PAYMENT_UPDATED
   TIMESLOT_RELEASED
@@ -340,6 +343,8 @@ model Country {
   /// Doctors with their *primary* country elsewhere who have been linked
   /// into this country's roster via the `DoctorCountry` M:N join.
   linkedDoctors              DoctorCountry[]
+  /// Pending/decided doctor edits scoped to this market (bio, registration).
+  doctorProfileChangeRequests DoctorProfileChangeRequest[]
   specialties                Specialty[]
   services                   Service[]
   healthTests                HealthTest[]
@@ -461,6 +466,10 @@ model Doctor {
   /// country still lives on `countryId` above and scopes slug uniqueness;
   /// each row here adds the doctor to another country's public roster.
   additionalCountries         DoctorCountry[]
+  /// Doctor-initiated edits to admin-locked profile fields (fullName,
+  /// qualifications, per-market bio + registration, photo) awaiting review.
+  /// See DoctorProfileChangeRequest.
+  profileChangeRequests       DoctorProfileChangeRequest[]
   /// Inverse of `User.doctorId`. When set, that User logs in as this doctor.
   loginUser                   User?                 @relation("DoctorUserLink")
   /// Inverse of `Appointment.doctorId`. Populated when admin assigns
@@ -756,6 +765,60 @@ model DoctorCountryTranslation {
 
   @@unique([doctorCountryId, locale])
   @@index([doctorCountryId])
+}
+
+/// A doctor's proposed edit to an admin-locked profile field, parked until an
+/// admin approves it.
+///
+/// Contrast with ServiceDoctor, where the pending row IS the request: here the
+/// live profile must keep serving the public site while a change waits, so the
+/// proposal parks in this table and is copied onto Doctor / DoctorCountry /
+/// Asset only on approval. Rejected + approved rows are kept as history.
+///
+/// One pending row per (doctorId, field, countryId) is enforced by a partial
+/// unique index created in raw migration SQL (Prisma can't express `WHERE
+/// status = 'pending'`), so a P2002 here means "you already have that change
+/// pending". Resubmitting supersedes the pending row rather than stacking.
+model DoctorProfileChangeRequest {
+  id               String    @id @default(cuid())
+  doctorId         String
+  /// Null for the global fields (fullName, qualifications, photo). Set for
+  /// per-market fields (bio, registration) so approval lands on the right
+  /// DoctorCountry row.
+  countryId        String?
+  /// Which locked field this proposes to change:
+  /// fullName | qualifications | bio | registration | photo
+  field            String
+  /// pending = awaiting admin; approved = applied to the live profile;
+  /// rejected = admin declined; cancelled = doctor withdrew it.
+  status           String    @default("pending")
+  /// The proposed replacement. Shape depends on `field`:
+  ///   fullName       { value: string }
+  ///   qualifications { value: string[] }
+  ///   bio            { translations: [{ locale, bio }] }
+  ///   registration   { chamberEntity, registrationNumber, division }
+  ///   photo          { removed: true } | { assetId, path, focalX, focalY, zoom }
+  proposedValue    Json
+  /// The live value snapshotted at submit time, same shape as `proposedValue`.
+  /// Lets the admin see a before/after diff without re-reading a row that an
+  /// admin edit may have moved on since.
+  previousValue    Json?
+  /// Optional doctor-written justification shown in the admin queue.
+  doctorNote       String?
+  /// Optional admin note on approve/reject, surfaced back to the doctor.
+  reviewNote       String?
+  reviewedByUserId String?
+  reviewedAt       DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  doctor     Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  country    Country? @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  reviewedBy User?    @relation("DoctorProfileChangeReviewer", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([doctorId, status])
+  @@index([status, createdAt])
+  @@index([countryId, status])
 }
 
 /// Doctor specialty taxonomy. Used ONLY to tag doctors (DoctorSpecialty) and
@@ -2575,6 +2638,8 @@ model User {
   /// Audit-log rows authored by this user (consult signs, message
   /// posts, share-link mints…). actor=null entries are SYSTEM events.
   auditEvents             AuditLog[]
+  /// Doctor profile change requests this admin approved/rejected.
+  reviewedDoctorProfileChanges DoctorProfileChangeRequest[] @relation("DoctorProfileChangeReviewer")
   patientProfile          PatientProfile?
   /// Subscriptions owned by this user (§20). One active at a time —
   /// enforced by a raw-SQL partial unique on userId for active statuses.

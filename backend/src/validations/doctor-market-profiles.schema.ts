@@ -87,6 +87,23 @@ export const adminDoctorMarketPatchBodySchema = z
 
 export type AdminDoctorMarketPatchBody = z.infer<typeof adminDoctorMarketPatchBodySchema>;
 
+/**
+ * Market listing fields a doctor may no longer write directly. The bio is
+ * public-facing clinical copy and the registration trio is what PDFs print as
+ * the prescribing credential, so both go through DoctorProfileChangeRequest and
+ * an admin approves them.
+ *
+ * They stay declared on the schema below rather than being dropped, so a
+ * request carrying one fails with an explanation instead of `.strict()`'s bare
+ * "unrecognized key". Payout/bank details remain doctor-owned and unlocked.
+ */
+const APPROVAL_GATED_MARKET_FIELDS: Record<string, string> = {
+  chamberEntity: "Registration body",
+  registrationNumber: "Registration number",
+  division: "Register division",
+  translations: "Bio",
+};
+
 export const doctorMarketPatchBodySchema = z
   .object({
     chamberEntity: nullableTrimmed(64),
@@ -106,8 +123,28 @@ export const doctorMarketPatchBodySchema = z
     bank: bankInputSchema.optional(),
   })
   .strict()
-  .refine((d) => Object.keys(d).length > 0, {
-    message: "Provide at least one field to update",
+  .superRefine((value, ctx) => {
+    const record = value as Record<string, unknown>;
+    for (const [key, label] of Object.entries(APPROVAL_GATED_MARKET_FIELDS)) {
+      if (record[key] === undefined) continue;
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: [key],
+        message: `${label} needs admin approval — submit a change request instead of editing it here`,
+      });
+    }
+    if (value.bank === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Provide at least one field to update",
+      });
+    }
   });
 
 export type DoctorMarketPatchBody = z.infer<typeof doctorMarketPatchBodySchema>;
+
+/**
+ * What actually survives validation. The gated listing fields are rejected
+ * above, so `updateDoctorSelfMarket` only ever sees payout details.
+ */
+export type DoctorMarketSelfPatchBody = Pick<DoctorMarketPatchBody, "bank">;

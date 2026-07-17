@@ -8,6 +8,7 @@ import type {
 } from "../../validations/admin-doctors.schema.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
+import { doctorProfileImageKey } from "../../utils/doctor-image-key.js";
 import { resolveTranslation } from "../shared/resolve-translation.js";
 import { assertLocaleSupported } from "../shared/locale-support.js";
 import { getFeaturedDoctorId } from "./featured-doctor.service.js";
@@ -362,10 +363,6 @@ export type ListAdminDoctorsResult = {
     totalPages: number;
   };
 };
-
-function doctorProfileImageKey(doctorId: string): string {
-  return `doctor-${doctorId}-profile`;
-}
 
 // ponytail: hard cap, not full page/pageSize — the public doctor listings
 // currently render the whole roster with no "load older" UI, and the

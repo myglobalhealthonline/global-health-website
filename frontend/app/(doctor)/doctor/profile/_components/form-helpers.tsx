@@ -1,9 +1,133 @@
+import type { ReactNode } from "react";
+import { Pill } from "@/components/portal-atoms";
+import type {
+  DoctorProfileChangeField,
+  DoctorProfileChangeRequest,
+} from "@/lib/api/doctor-api";
 import type { ProfileStrings } from "./profile-sections";
 
 /** Shared by the identity and market forms — extracted so both can import
  *  without a circular dependency now that the single edit form is split. */
 
 export type Msg = { kind: "success" | "error"; text: string };
+
+/**
+ * Submits one change request per dirty locked field and reports what actually
+ * happened.
+ *
+ * Each field is its own request so an admin can approve a bio without also
+ * accepting a registration number they haven't sighted — which means one
+ * failing must not silently discard the others. Every job runs, and the caller
+ * gets the collected errors rather than just the first.
+ */
+export async function submitChangeRequests(
+  jobs: Array<Record<string, unknown>>,
+  fallbackError: string,
+): Promise<string[]> {
+  const errors: string[] = [];
+  for (const body of jobs) {
+    try {
+      const res = await fetch("/api/doctor/profile/change-requests", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const json = (await res.json()) as { ok?: boolean; message?: string };
+      if (!res.ok || !json.ok) errors.push(json.message ?? fallbackError);
+    } catch {
+      errors.push(fallbackError);
+    }
+  }
+  return errors;
+}
+
+/**
+ * The latest change request for one locked field, or null if the field has
+ * never been proposed. `countryId` is null for the global fields (name,
+ * qualifications, photo) and set for the per-market ones (bio, registration).
+ *
+ * The backend already returns only the latest row per (field, market), so this
+ * is a lookup rather than a reduce.
+ */
+export function requestFor(
+  requests: DoctorProfileChangeRequest[],
+  field: DoctorProfileChangeField,
+  countryId: string | null,
+): DoctorProfileChangeRequest | null {
+  return (
+    requests.find((r) => r.field === field && r.countryId === countryId) ?? null
+  );
+}
+
+export function isPending(request: DoctorProfileChangeRequest | null): boolean {
+  return request?.status === "pending";
+}
+
+/**
+ * Status line under an admin-locked field: what's waiting, what the admin said
+ * if they turned it down, and a way to take a pending request back.
+ *
+ * Renders nothing for approved/cancelled/never-requested — those mean the field
+ * is simply editable, and a chip saying so would be noise.
+ */
+export function ApprovalNotice({
+  request,
+  strings,
+  renderValue,
+  onWithdraw,
+  busy,
+}: {
+  request: DoctorProfileChangeRequest | null;
+  strings: ProfileStrings;
+  /** Renders the proposed value for the doctor to double-check. Omit for
+   *  values that don't read well inline (e.g. rich-text bios). */
+  renderValue?: (request: DoctorProfileChangeRequest) => ReactNode;
+  onWithdraw: (id: string) => void;
+  busy: boolean;
+}) {
+  if (!request) return null;
+
+  if (request.status === "pending") {
+    return (
+      <div className="gh-doctor-approval-notice mt-2 rounded-md border border-[var(--portal-line)] bg-[var(--portal-well)] px-3 py-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <Pill tone="pending">{strings.pendingBadge}</Pill>
+          <button
+            type="button"
+            onClick={() => onWithdraw(request.id)}
+            disabled={busy}
+            className="gh-btn gh-btn-soft"
+            style={{ minHeight: 28, padding: "0 10px", fontSize: 12 }}
+          >
+            {busy ? strings.withdrawing : strings.withdrawRequest}
+          </button>
+        </div>
+        {renderValue ? (
+          <p className="mt-1.5 text-xs text-[var(--portal-muted)]">
+            <span className="font-semibold">{strings.pendingRequestedLabel}:</span>{" "}
+            {renderValue(request)}
+          </p>
+        ) : null}
+      </div>
+    );
+  }
+
+  if (request.status === "rejected") {
+    return (
+      <div className="gh-doctor-approval-notice mt-2 rounded-md border px-3 py-2 gh-status-warning">
+        <Pill tone="inactive">{strings.rejectedBadge}</Pill>
+        {request.reviewNote ? (
+          <p className="mt-1.5 text-xs">
+            <span className="font-semibold">{strings.adminNoteLabel}:</span>{" "}
+            {request.reviewNote}
+          </p>
+        ) : null}
+      </div>
+    );
+  }
+
+  return null;
+}
 
 export function resolvePhotoSrc(path: string | null): string | null {
   if (!path) return null;

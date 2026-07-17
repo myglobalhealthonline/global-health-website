@@ -111,6 +111,71 @@ export async function fetchDoctorMe() {
   return doctorRequest<DoctorMe>("/api/doctor/me");
 }
 
+/* ── Admin-approved profile fields ────────────────────────────────── */
+
+/**
+ * The doctor's name, qualifications, per-market bio + registration, and photo
+ * are admin-locked: editing them raises a request that an admin approves, and
+ * the live profile above is unchanged until they do. Mirrors the doctor-service
+ * approval flow, except the pending value lives in its own row rather than on
+ * the live one (a half-approved name still has to render somewhere).
+ */
+export type DoctorProfileChangeField =
+  | "fullName"
+  | "qualifications"
+  | "bio"
+  | "registration"
+  | "photo";
+
+export type DoctorProfileChangeStatus =
+  | "pending"
+  | "approved"
+  | "rejected"
+  | "cancelled";
+
+/** Shape of `proposedValue` / `previousValue`, keyed by `field`. */
+export type DoctorProfileChangeValue =
+  | { value: string }
+  | { value: string[] }
+  | { translations: Array<{ locale: string; bio: string | null }> }
+  | {
+      chamberEntity: string | null;
+      registrationNumber: string | null;
+      division: string | null;
+    }
+  | { removed: true }
+  | {
+      removed: false;
+      path: string;
+      storageKey: string | null;
+      focalX: number;
+      focalY: number;
+      zoom: number;
+    };
+
+export type DoctorProfileChangeRequest = {
+  id: string;
+  doctorId: string;
+  field: DoctorProfileChangeField;
+  /** Null for the global fields (name, qualifications, photo). */
+  countryId: string | null;
+  status: DoctorProfileChangeStatus;
+  proposedValue: DoctorProfileChangeValue;
+  previousValue: DoctorProfileChangeValue | null;
+  doctorNote: string | null;
+  reviewNote: string | null;
+  reviewedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+/** The latest request per (field, market) — pending means the field is locked. */
+export async function fetchDoctorProfileChangeRequests() {
+  return doctorRequest<{ items: DoctorProfileChangeRequest[] }>(
+    "/api/doctor/profile/change-requests",
+  );
+}
+
 export type DoctorComplianceStatus = {
   confidentialityAccepted: boolean;
   twoFactorEnabled: boolean;
@@ -190,6 +255,9 @@ export async function fetchDoctorAppointments(query?: Record<string, string | un
   return doctorRequest<{
     items: DoctorAppointment[];
     pagination: { page: number; pageSize: number; total: number; totalPages: number };
+    /** Queue-wide tile counts, legacy imports excluded. Present only when the
+     *  caller passes `includeSummary=true`; unaffected by the list filters. */
+    summary?: { openConsults: number; notFinalized: number };
   }>(path);
 }
 

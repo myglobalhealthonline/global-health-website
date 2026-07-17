@@ -36,6 +36,17 @@ import {
   listPendingDoctorServiceRequests,
   type ServiceDoctorStatus,
 } from "../modules/doctor-services/doctor-services.service.js";
+import {
+  DoctorProfileChangeInvalidError,
+  listAdminDoctorProfileChangeRequests,
+  listPendingDoctorProfileChangeRequests,
+  reviewDoctorProfileChangeRequest,
+} from "../modules/doctor-profile-change-requests/doctor-profile-change-requests.service.js";
+import {
+  adminDoctorProfileChangeParamsSchema,
+  adminDoctorProfileChangeReviewBodySchema,
+  pendingProfileChangeRequestsQuerySchema,
+} from "../validations/doctor-profile-change-requests.schema.js";
 import { z } from "zod";
 
 function handleDoctorWriteError(
@@ -477,6 +488,127 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
         .send(errorResponse("Could not load pending service requests"));
     }
   });
+
+  /**
+   * Doctor-proposed edits to admin-locked profile fields (name, qualifications,
+   * per-market bio + registration, photo). Same shape as the service-request
+   * queue above: a global list for the badge/feed, a per-doctor list for the
+   * review page, and a PATCH that approves (applying the change to the live
+   * profile) or rejects.
+   */
+  app.get("/api/admin/doctor-profile-change-requests", async (request, reply) => {
+    const query = pendingProfileChangeRequestsQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply
+        .status(400)
+        .send(errorResponse("Invalid query", query.error.flatten()));
+    }
+    try {
+      const data = await listPendingDoctorProfileChangeRequests({
+        countryCode: query.data.countryCode ?? null,
+      });
+      return okResponse(data);
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply
+        .status(500)
+        .send(errorResponse("Could not load pending profile change requests"));
+    }
+  });
+
+  app.get("/api/admin/doctors/:id/profile-change-requests", async (request, reply) => {
+    const params = doctorIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid doctor id", params.error.flatten()));
+    }
+    try {
+      const doctor = await prisma.doctor.findUnique({
+        where: { id: params.data.id },
+        select: { id: true },
+      });
+      if (!doctor) {
+        return reply.status(404).send(errorResponse("Doctor profile not found"));
+      }
+      const items = await listAdminDoctorProfileChangeRequests(params.data.id);
+      return okResponse({ items });
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply
+        .status(500)
+        .send(errorResponse("Could not load profile change requests"));
+    }
+  });
+
+  app.patch(
+    "/api/admin/doctors/:id/profile-change-requests/:requestId",
+    async (request, reply) => {
+      const params = adminDoctorProfileChangeParamsSchema.safeParse(request.params);
+      if (!params.success) {
+        return reply
+          .status(400)
+          .send(errorResponse("Invalid parameters", params.error.flatten()));
+      }
+      const body = adminDoctorProfileChangeReviewBodySchema.safeParse(request.body);
+      if (!body.success) {
+        return reply
+          .status(400)
+          .send(errorResponse("Invalid review", body.error.flatten()));
+      }
+      try {
+        const actor = resolveAdminSessionActor(request);
+        const result = await reviewDoctorProfileChangeRequest(
+          params.data.id,
+          params.data.requestId,
+          {
+            status: body.data.status,
+            reviewNote: body.data.reviewNote ?? null,
+            markVerified: body.data.markVerified === true,
+            reviewedByUserId: actor?.userId ?? null,
+          },
+        );
+        if (!result) {
+          return reply.status(404).send(errorResponse("Change request not found"));
+        }
+        recordAudit({
+          actorUserId: actor?.userId ?? null,
+          actorRole: "ADMIN",
+          action: "DOCTOR_PROFILE_CHANGE_REVIEWED",
+          entityType: "Doctor",
+          entityId: params.data.id,
+          metadata: {
+            requestId: params.data.requestId,
+            field: result.request.field,
+            status: body.data.status,
+            markVerified: body.data.markVerified === true,
+          },
+          request,
+        }).catch(() => {});
+        return okResponse(
+          { request: result.request, cache: result.cache },
+          body.data.status === "approved"
+            ? "Change approved and applied"
+            : "Change rejected",
+        );
+      } catch (error) {
+        if (error instanceof DoctorProfileChangeInvalidError) {
+          return reply.status(400).send(errorResponse(error.message));
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply
+          .status(500)
+          .send(errorResponse("Could not review the change request"));
+      }
+    },
+  );
 
   app.get("/api/admin/doctors/:id/services", async (request, reply) => {
     const params = doctorIdParamsSchema.safeParse(request.params);
