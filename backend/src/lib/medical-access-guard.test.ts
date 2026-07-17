@@ -32,7 +32,13 @@ const fixtures: {
   appointments: FakeAppointment[];
 } = { patientProfiles: {}, consents: [], appointments: [] };
 
+// SEC-008: toggled per-test to simulate an audit-store outage (MedicalAccessLog
+// write throwing). Default false so every existing test writes audit rows fine.
+let auditWriteShouldThrow = false;
+
 let assertMedicalAccess: (typeof import("./medical-access-guard.js"))["assertMedicalAccess"];
+let MedicalAccessDeniedError: (typeof import("./medical-access-guard.js"))["MedicalAccessDeniedError"];
+let env: (typeof import("../config/env.js"))["env"];
 
 // Module mocking must happen before medical-access-guard.js (and therefore
 // its "../db/prisma.js" import) is first loaded — done in `before()` rather
@@ -81,13 +87,21 @@ before(async () => {
           },
         },
         medicalAccessGrant: { findFirst: async () => null },
-        medicalAccessLog: { create: async () => ({}) },
+        medicalAccessLog: {
+          create: async () => {
+            if (auditWriteShouldThrow) throw new Error("audit store unavailable");
+            return {};
+          },
+        },
         country: { findFirst: async () => null },
       },
     },
   });
 
-  ({ assertMedicalAccess } = await import("./medical-access-guard.js"));
+  ({ assertMedicalAccess, MedicalAccessDeniedError } = await import(
+    "./medical-access-guard.js"
+  ));
+  ({ env } = await import("../config/env.js"));
 });
 
 const resource = {
@@ -190,5 +204,72 @@ describe("medical access guard — route authorization decision", () => {
     });
     assert.equal(result.allowed, false);
     assert.equal(result.denyReason, "DOCTOR_NO_VALID_ACCESS_PATH");
+  });
+});
+
+describe("SEC-008 — audit writes fail closed", () => {
+  // These tests flip enforcement + bypass on the shared env object at runtime
+  // (env is a plain module singleton, read at call-time inside the guard). Each
+  // test restores the baseline (shadow off, bypass off, audit healthy) in a
+  // finally so the shadow-mode deny tests above/below stay unaffected.
+  function reset() {
+    auditWriteShouldThrow = false;
+    env.MEDICAL_ACCESS_ENFORCE = false;
+    env.PHI_AUDIT_EMERGENCY_BYPASS = false;
+  }
+
+  it("denies an otherwise-ALLOWED read when the audit write fails while enforcing", async () => {
+    auditWriteShouldThrow = true;
+    env.MEDICAL_ACCESS_ENFORCE = true;
+    env.PHI_AUDIT_EMERGENCY_BYPASS = false;
+    try {
+      await assert.rejects(
+        assertMedicalAccess({
+          actor: { userId: "admin-1", role: "ADMIN", name: "Admin" },
+          resource,
+        }),
+        (err: unknown) =>
+          err instanceof MedicalAccessDeniedError &&
+          err.denyReason === "AUDIT_UNAVAILABLE",
+      );
+    } finally {
+      reset();
+    }
+  });
+
+  it("allows the read (no block) when PHI_AUDIT_EMERGENCY_BYPASS is set, despite the audit write failing", async () => {
+    auditWriteShouldThrow = true;
+    env.MEDICAL_ACCESS_ENFORCE = true;
+    env.PHI_AUDIT_EMERGENCY_BYPASS = true;
+    try {
+      const result = await assertMedicalAccess({
+        actor: { userId: "admin-1", role: "ADMIN", name: "Admin" },
+        resource,
+      });
+      assert.equal(result.allowed, true);
+    } finally {
+      reset();
+    }
+  });
+
+  it("keeps a DENIED decision denied for its own reason (not AUDIT_UNAVAILABLE) when the audit write also fails", async () => {
+    auditWriteShouldThrow = true;
+    env.MEDICAL_ACCESS_ENFORCE = true;
+    env.PHI_AUDIT_EMERGENCY_BYPASS = false;
+    try {
+      // PATIENT reading a non-own record → deny; audit write throws but the
+      // deny path is best-effort, so it must surface the original deny reason.
+      await assert.rejects(
+        assertMedicalAccess({
+          actor: { userId: "patient-999", role: "PATIENT", name: "Someone Else" },
+          resource,
+        }),
+        (err: unknown) =>
+          err instanceof MedicalAccessDeniedError &&
+          err.denyReason === "PATIENT_NOT_OWN_RECORD",
+      );
+    } finally {
+      reset();
+    }
   });
 });

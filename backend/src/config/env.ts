@@ -244,6 +244,17 @@ const envSchema = z.object({
     .union([z.literal("true"), z.literal("false"), z.boolean()])
     .optional(),
 
+  /** SEC-008 emergency escape hatch for audit-store OUTAGES only. Default FALSE.
+   *  When the guard is enforcing, a failed MedicalAccessLog write DENIES the PHI
+   *  read (fail-closed, CWE-778 — no PHI served without its mandatory audit row).
+   *  Set "true" only during a confirmed audit-store outage to let reads proceed;
+   *  the write failure is then logged loudly instead of blocking. Deliberately
+   *  NOT part of the production boot assertions — it's an operational break-glass
+   *  toggle, not a steady-state config value. See lib/medical-access-guard.ts. */
+  PHI_AUDIT_EMERGENCY_BYPASS: z
+    .union([z.literal("true"), z.literal("false"), z.boolean()])
+    .optional(),
+
   /** Full WaSender send-message URL (e.g. https://wasenderapi.com/api/send-message). */
   WA_API_URL: z.string().trim().url().optional(),
   /** Authorization header value — `Bearer <token>` or raw token. */
@@ -401,6 +412,12 @@ const medicalAccessEnforce =
 const adminPhiRequireReason =
   parsed.ADMIN_PHI_REQUIRE_REASON === true || parsed.ADMIN_PHI_REQUIRE_REASON === "true";
 
+// SEC-008: default OFF. When on, a failed audit write no longer blocks a PHI
+// read (audit-store-outage break-glass). Intentionally excluded from the
+// production boot assertions below — it's an operational toggle, not config.
+const phiAuditEmergencyBypass =
+  parsed.PHI_AUDIT_EMERGENCY_BYPASS === true || parsed.PHI_AUDIT_EMERGENCY_BYPASS === "true";
+
 // SEC-005: hard-fail in production if the medical-access guard would run in a
 // shadow / non-enforcing configuration. Previously COMPLIANCE_MODE=relaxed was
 // an escape hatch that skipped the shadow-mode check entirely — leaving denied
@@ -476,5 +493,6 @@ export const env = {
   ADMIN_TOKEN_FALLBACK_ENABLED: adminTokenFallbackEnabled,
   MEDICAL_ACCESS_ENFORCE: medicalAccessEnforce,
   ADMIN_PHI_REQUIRE_REASON: adminPhiRequireReason,
+  PHI_AUDIT_EMERGENCY_BYPASS: phiAuditEmergencyBypass,
   REQUIRE_2FA_FOR_ROLES: require2faForRoles,
 };
