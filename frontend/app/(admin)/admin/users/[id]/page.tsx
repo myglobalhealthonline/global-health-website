@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import {
   requireAdminAction,
   requireSuperAdminAction,
@@ -14,6 +15,7 @@ import {
 } from "@/lib/admin/admin-api";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
+import { PhiReasonGate } from "../../_components/phi-reason-gate";
 import { PatientProfileEditor } from "../_components/patient-profile-editor";
 import { FormSection } from "@/components/FormSection";
 import { PhoneField } from "@/components/forms/phone-field";
@@ -22,7 +24,7 @@ export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ error?: string; success?: string }>;
+  searchParams?: Promise<{ error?: string; success?: string; reasonError?: string }>;
 };
 
 export default async function AdminUserDetailPage({ params, searchParams }: PageProps) {
@@ -52,6 +54,23 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
   }
 
   const { user, stats } = result.data;
+
+  // S-002 break-glass, extended from /admin/patients/[email]: this page also
+  // reads a patient's clinical chart (fetchAdminPatientProfile below) when
+  // the account's role is PATIENT. Same reason-cookie gate, same 15-min
+  // window — one cookie covers both pages. Non-PATIENT accounts never
+  // trigger the PHI fetch, so they never see the gate.
+  if (user.role === "PATIENT" && process.env.ADMIN_PHI_REQUIRE_REASON === "true") {
+    const jar = await cookies();
+    if (!jar.get("gh_phi_reason")?.value?.trim()) {
+      return (
+        <PhiReasonGate
+          returnTo={`/admin/users/${id}`}
+          showError={messages.reasonError === "1"}
+        />
+      );
+    }
+  }
 
   // Fetch the patient profile in parallel below; only render the editor
   // for role=PATIENT accounts. ADMIN / DOCTOR users don't carry a clinical

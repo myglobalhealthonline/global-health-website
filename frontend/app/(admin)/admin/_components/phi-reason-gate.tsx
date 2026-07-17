@@ -1,5 +1,5 @@
 import { ShieldAlert } from "lucide-react";
-import { AdminCard } from "../../../_components/atoms";
+import { AdminCard } from "./atoms";
 import { setPhiAccessReason } from "./phi-reason-actions";
 
 /**

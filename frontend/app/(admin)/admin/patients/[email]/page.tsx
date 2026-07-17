@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { ArrowLeft, ShieldCheck, FileText, CreditCard, History, Globe } from "lucide-react";
-import { PhiReasonGate } from "./_components/phi-reason-gate";
+import { PhiReasonGate } from "../../_components/phi-reason-gate";
 import {
   fetchAdminPatientProfile,
   fetchAdminPatientNationality,
@@ -257,6 +257,7 @@ export default async function AdminPatientDetailPage({ params, searchParams }: P
                   <th>Role</th>
                   <th>Resource</th>
                   <th>Action</th>
+                  <th>Status</th>
                   <th>Date</th>
                 </tr>
               </thead>
@@ -267,6 +268,15 @@ export default async function AdminPatientDetailPage({ params, searchParams }: P
                     <td className="text-[var(--color-text-muted)]">{log.accessedByRole}</td>
                     <td>{log.accessedResourceType}</td>
                     <td>{log.accessAction}</td>
+                    <td>
+                      {log.isAbnormal ? (
+                        <Pill tone="inactive">
+                          DENIED{log.abnormalReason ? `: ${log.abnormalReason}` : ""}
+                        </Pill>
+                      ) : (
+                        <Pill tone="active">Allowed</Pill>
+                      )}
+                    </td>
                     <td className="text-[var(--color-text-muted)]">{fmt(log.createdAt)}</td>
                   </tr>
                 ))}
