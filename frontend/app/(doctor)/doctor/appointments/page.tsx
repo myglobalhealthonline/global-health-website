@@ -68,13 +68,22 @@ export default async function DoctorAppointmentsPage({
   const consultationType = pick(sp, "consultationType");
   const openOnly = pick(sp, "openOnly");
   const finalized = pick(sp, "finalized");
+  const open = pick(sp, "open");
+  const notFinalized = pick(sp, "notFinalized");
   const page = Number(pick(sp, "page") ?? "1") || 1;
-  const hasActiveFilters = Boolean(
-    view || search || from || to || consultationType || openOnly || finalized,
-  );
-  const activeFilterCount = [view, search, from, to, consultationType, openOnly, finalized].filter(
-    Boolean,
-  ).length;
+  const filterValues = [
+    view,
+    search,
+    from,
+    to,
+    consultationType,
+    openOnly,
+    finalized,
+    open,
+    notFinalized,
+  ];
+  const hasActiveFilters = filterValues.some(Boolean);
+  const activeFilterCount = filterValues.filter(Boolean).length;
   // Same-URL link (not router.refresh — this is a server component page)
   // to give the error state a working "Try again" that re-triggers the fetch.
   const currentQuery = new URLSearchParams(
@@ -94,12 +103,15 @@ export default async function DoctorAppointmentsPage({
     ...(consultationType ? { consultationType } : {}),
     ...(openOnly ? { openOnly: "true" } : {}),
     ...(finalized ? { finalized } : {}),
+    ...(open ? { open: "true" } : {}),
+    ...(notFinalized ? { notFinalized: "true" } : {}),
+    includeSummary: "true",
   });
   const appointments = result.ok ? result.data.items : [];
-  const openAppointments = appointments.filter(
-    (item) => item.status !== "COMPLETED" && item.status !== "CANCELLED",
-  ).length;
-  const unfinalized = appointments.filter((item) => !item.finalized).length;
+  // Queue-wide totals from the backend — deliberately not derived from
+  // `appointments`, which is only the current page and only the current filter.
+  const openAppointments = result.ok ? (result.data.summary?.openConsults ?? 0) : 0;
+  const unfinalized = result.ok ? (result.data.summary?.notFinalized ?? 0) : 0;
 
   return (
     <>
@@ -125,7 +137,7 @@ export default async function DoctorAppointmentsPage({
               hint: d.appointments.openConsultsHint,
               tone: openAppointments > 0 ? "warning" : "neutral",
               icon: <AlertTriangle aria-hidden />,
-              href: "/doctor/appointments?openOnly=true",
+              href: "/doctor/appointments?open=true",
             },
             {
               label: d.appointments.notFinalized,
@@ -133,7 +145,7 @@ export default async function DoctorAppointmentsPage({
               hint: d.appointments.notFinalizedHint,
               tone: unfinalized > 0 ? "warning" : "neutral",
               icon: <CheckCircle2 aria-hidden />,
-              href: "/doctor/appointments?finalized=false",
+              href: "/doctor/appointments?notFinalized=true",
             },
           ]}
         />
@@ -147,6 +159,11 @@ export default async function DoctorAppointmentsPage({
           ) : null}
         </summary>
         <form className="gh-doctor-filter-grid mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
+          {/* Tile filters have no control of their own — carry them through a
+              GET submit so narrowing by type/date doesn't drop them. Reset
+              links to the bare path, which still clears them. */}
+          {open ? <input type="hidden" name="open" value="true" /> : null}
+          {notFinalized ? <input type="hidden" name="notFinalized" value="true" /> : null}
           <label className="flex flex-col gap-1 sm:col-span-2">
             <span className="gh-field-label">{d.common.search}</span>
             <input
