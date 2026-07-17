@@ -14,6 +14,12 @@ export const registerBodySchema = z.object({
     .or(z.literal("")),
   // Must be true — registration invalid without explicit terms acceptance.
   acceptTerms: z.boolean().refine((v) => v === true, "You must accept the Terms and Privacy Policy"),
+  // Must be true — PHI access recovery plan Task 1: doctor-of-record needs
+  // explicit consent to view this patient's medical info. Client-only
+  // enforcement is not enough (client can be bypassed) — validated here too.
+  acceptMedicalConsent: z
+    .boolean()
+    .refine((v) => v === true, "You must consent to your treating doctor accessing your medical information"),
 });
 
 export type RegisterBody = z.infer<typeof registerBodySchema>;

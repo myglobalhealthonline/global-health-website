@@ -81,6 +81,7 @@ export async function registerUser(input: {
   fullName: string;
   phone?: string;
   acceptTerms: boolean;
+  acceptMedicalConsent: boolean;
 }) {
   // user is null when the email was already registered — the backend
   // returns the same shape/status either way (S-024, account-enumeration

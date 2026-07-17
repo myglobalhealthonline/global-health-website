@@ -158,6 +158,28 @@ export async function registerPatient(input: RegisterBody): Promise<RegisterResu
         console.error("Failed to record TERMS_PRIVACY consent", err);
       });
 
+    // PHI access recovery plan Task 1 — mandatory direct-consent row so the
+    // medical-access guard's doctor-of-record path doesn't lock out a brand
+    // new patient's own doctor. Schema validation guarantees
+    // acceptMedicalConsent === true by this point. Kept as its own row
+    // (never bundled with TERMS_PRIVACY or an optional GLOBAL_NETWORK
+    // consent — GDPR: no bundling of distinct consents).
+    await prisma.patientConsent
+      .create({
+        data: {
+          patientProfileId: profile.id,
+          globalHealthNumber: profile.globalHealthNumber,
+          consentType: "MEDICAL_ACCESS_DIRECT",
+          consentValue: true,
+          source: "REGISTRATION",
+          changedByUserId: user.id,
+          changedByRole: UserRole.PATIENT,
+        },
+      })
+      .catch((err) => {
+        console.error("Failed to record MEDICAL_ACCESS_DIRECT consent", err);
+      });
+
     return { kind: "created", user: toSafeUser(user) };
   } catch (error) {
     if (typeof error === "object" && error && "code" in error && (error as { code?: string }).code === "P2002") {

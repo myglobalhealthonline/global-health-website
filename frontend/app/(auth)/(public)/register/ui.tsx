@@ -28,6 +28,7 @@ type RegisterI18n = {
   consentAnd: string;
   privacyLink: string;
   healthDataNote: string;
+  medicalConsentLabel: string;
 };
 
 const DEFAULT_I18N: RegisterI18n = {
@@ -52,6 +53,7 @@ const DEFAULT_I18N: RegisterI18n = {
   consentAnd: "and",
   privacyLink: "Privacy Policy",
   healthDataNote: "Your health data stays private.",
+  medicalConsentLabel: "I consent to my treating doctor accessing my medical information for my care.",
 };
 
 export function RegisterFormFallback({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
@@ -84,6 +86,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
     const phone = String(formData.get("phone") ?? "").trim();
     const password = String(formData.get("password") ?? "");
     const acceptTerms = formData.get("acceptTerms") === "on";
+    const acceptMedicalConsent = formData.get("acceptMedicalConsent") === "on";
     // PhoneField submits "+<dial> <national>" (or "" when left blank).
     // Validate digit count before hitting the API — 7–15 digits per E.164.
     const phoneDigits = phone.replace(/[\s().-]/g, "");
@@ -95,7 +98,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
     setLoading(true);
     setMessage(null);
     setIsError(false);
-    const result = await registerUser({ fullName, email, phone, password, acceptTerms });
+    const result = await registerUser({ fullName, email, phone, password, acceptTerms, acceptMedicalConsent });
     setLoading(false);
     if (result.ok) {
       // S-024: the backend returns this identical shape/status whether the
@@ -207,6 +210,26 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
           <Link href="/privacy" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-primary)" }}>{i18n.privacyLink}</Link>.
           {" "}{i18n.healthDataNote}
         </span>
+      </label>
+
+      {/* Separate, independently-required checkbox (PHI access recovery plan
+          Task 1) — GDPR requires distinct consents not be bundled. This is
+          the mandatory direct-consent for the treating doctor; it must never
+          be merged into acceptTerms above or into any future optional
+          any-doctor-in-network consent. */}
+      <label
+        className="flex cursor-pointer items-start gap-2.5 rounded-xl px-4 py-3 text-portal-meta leading-relaxed"
+        style={{ background: "var(--color-background-soft)", color: "var(--color-text-muted)" }}
+      >
+        <input
+          type="checkbox"
+          name="acceptMedicalConsent"
+          required
+          aria-required="true"
+          className="mt-0.5 size-4 shrink-0"
+          style={{ accentColor: "var(--color-brand-accent)" }}
+        />
+        <span>{i18n.medicalConsentLabel}</span>
       </label>
 
       <div className="pt-3" style={{ borderTop: "1px solid var(--color-border)" }}>

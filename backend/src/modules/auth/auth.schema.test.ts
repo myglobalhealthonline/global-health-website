@@ -16,6 +16,7 @@ describe("auth validation", () => {
       fullName: "Patient Example",
       phone: "+3531234567",
       acceptTerms: true,
+      acceptMedicalConsent: true,
     });
     assert.equal(result.success, true);
   });
@@ -25,9 +26,23 @@ describe("auth validation", () => {
       email: "patient@example.com",
       password: "very-secure-password",
       fullName: "Patient Example",
+      acceptMedicalConsent: true,
     };
     assert.equal(registerBodySchema.safeParse(base).success, false);
     assert.equal(registerBodySchema.safeParse({ ...base, acceptTerms: false }).success, false);
+  });
+
+  // PHI access recovery plan Task 1 — mandatory, separate from acceptTerms.
+  it("register rejects missing or false medical-access consent", () => {
+    const base = {
+      email: "patient@example.com",
+      password: "very-secure-password",
+      fullName: "Patient Example",
+      acceptTerms: true,
+    };
+    assert.equal(registerBodySchema.safeParse(base).success, false);
+    assert.equal(registerBodySchema.safeParse({ ...base, acceptMedicalConsent: false }).success, false);
+    assert.equal(registerBodySchema.safeParse({ ...base, acceptMedicalConsent: true }).success, true);
   });
 
   it("register rejects short password", () => {
