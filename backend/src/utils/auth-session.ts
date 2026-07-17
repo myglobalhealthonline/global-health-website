@@ -87,8 +87,13 @@ export function verifyAuthToken(token: string): AuthTokenPayload | null {
 // 2FA is enabled. The /api/auth/2fa/verify-login endpoint consumes it and
 // issues a full auth cookie on TOTP success.
 
-export function signPending2faToken(userId: string): string {
-  return jwt.sign({ sub: userId, pending2fa: true }, SIGNING_KEY, {
+/** Which second factor this pending-login must be completed with. TOTP is
+ *  the pre-existing method; EMAIL_OTP is Task 4's easy fallback for accounts
+ *  that never enrolled TOTP (phi-access-recovery-plan-2026-07-17). */
+export type Pending2faMethod = "TOTP" | "EMAIL_OTP";
+
+export function signPending2faToken(userId: string, method: Pending2faMethod = "TOTP"): string {
+  return jwt.sign({ sub: userId, pending2fa: true, method }, SIGNING_KEY, {
     algorithm: "RS256",
     expiresIn: "5m",
     issuer: JWT_ISSUER,
@@ -96,12 +101,17 @@ export function signPending2faToken(userId: string): string {
   });
 }
 
-export function verifyPending2faToken(token: string): { userId: string } | null {
+export function verifyPending2faToken(
+  token: string,
+): { userId: string; method: Pending2faMethod } | null {
   const decoded = verifyWithRotation(token);
   if (!decoded) return null;
-  const { sub, pending2fa } = decoded as Record<string, unknown>;
+  const { sub, pending2fa, method } = decoded as Record<string, unknown>;
   if (typeof sub !== "string" || pending2fa !== true) return null;
-  return { userId: sub };
+  // Tokens signed before Task 4 (or any unrecognized value) default to TOTP —
+  // the only method that existed previously.
+  const resolvedMethod: Pending2faMethod = method === "EMAIL_OTP" ? "EMAIL_OTP" : "TOTP";
+  return { userId: sub, method: resolvedMethod };
 }
 
 export function authCookieOptions() {
@@ -118,6 +128,26 @@ export function authCookieOptions() {
     secure,
     path: "/",
     maxAge: 60 * 60 * 24 * 7,
+    ...(domain ? { domain } : {}),
+  };
+}
+
+// ─── Trusted-device cookie ──────────────────────────────────────────────────
+// Task 4 (phi-access-recovery-plan-2026-07-17): opaque 30-day token, hash
+// stored in TrustedDevice — same shape/flags as authCookieOptions(), just a
+// longer TTL and a distinct name so it survives its own logout/clear.
+
+export const TRUSTED_DEVICE_COOKIE_NAME = "gh_trusted_device";
+
+export function trustedDeviceCookieOptions() {
+  const secure = env.NODE_ENV === "production";
+  const domain = env.AUTH_COOKIE_DOMAIN?.trim();
+  return {
+    httpOnly: true,
+    sameSite: "lax" as const,
+    secure,
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30,
     ...(domain ? { domain } : {}),
   };
 }

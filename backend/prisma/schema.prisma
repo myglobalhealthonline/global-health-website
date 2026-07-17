@@ -2545,6 +2545,12 @@ model User {
   appointments            Appointment[]
   resetTokens             PasswordResetToken[]
   emailVerificationTokens EmailVerificationToken[]
+  /// Task 4 (phi-access-recovery-plan-2026-07-17): email-OTP second factor,
+  /// the "easy" alternative to TOTP for REQUIRE_2FA_FOR_ROLES accounts.
+  loginOtps               LoginOtp[]
+  /// 30-day "remember this device" cookie — skips the second factor on
+  /// subsequent logins from the same browser while the row is unexpired.
+  trustedDevices          TrustedDevice[]
   /// Internal (doctor ↔ admin) messages this user authored. Patient
   /// messages live on `Message.authorUserId` which is unrelated to
   /// this relation name.
@@ -2627,6 +2633,49 @@ model EmailVerificationToken {
   usedAt    DateTime?
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+/// Task 4 (phi-access-recovery-plan-2026-07-17): email-OTP login second
+/// factor. One active (unconsumed) row per user at a time — issuing a new
+/// code invalidates the previous one. Verification success stamps
+/// `User.twoFactorVerifiedAt` (the same field TOTP enrollment stamps), so
+/// the medical-access-guard / admin-auth / doctor-auth 2FA checks need no
+/// changes — they already just look at that timestamp.
+model LoginOtp {
+  id         String    @id @default(cuid())
+  userId     String
+  /// SHA-256 (HMAC domain-separated, see login-otp.service.ts) of the
+  /// 6-digit code. The plaintext code is only ever emailed, never stored.
+  codeHash   String
+  expiresAt  DateTime
+  /// Failed-attempt counter. Verification refuses once this reaches 5,
+  /// same ceiling as a fresh code request (re-issue flow).
+  attempts   Int       @default(0)
+  /// Set once the code is used (success) or exhausted (5 failed
+  /// attempts) — either way the row can no longer be verified against.
+  consumedAt DateTime?
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+}
+
+/// Task 4: "remember this device for 30 days" — skips the second factor
+/// (TOTP or email-OTP) on a later login while a matching, unexpired row
+/// exists. The cookie carries only the plaintext token; only its hash is
+/// stored, mirroring PasswordResetToken/EmailVerificationToken.
+model TrustedDevice {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  /// Short UA snippet for the user's own "trusted devices" visibility —
+  /// never used for any security decision.
+  userAgent String?
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 
   @@index([userId])
 }

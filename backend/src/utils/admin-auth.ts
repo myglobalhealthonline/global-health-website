@@ -49,7 +49,13 @@ async function verifyAdminAccessInternal(
   if (result.method === "session" && payload) {
     const user = await prisma.user.findUnique({
       where: { id: payload.sub },
-      select: { role: true, isActive: true, tokenVersion: true, twoFactorEnabled: true },
+      select: {
+        role: true,
+        isActive: true,
+        tokenVersion: true,
+        twoFactorEnabled: true,
+        twoFactorVerifiedAt: true,
+      },
     });
     // For global-scope ops, LOCAL_ADMIN is not a valid session role even if
     // the JWT still claimed a higher role (e.g. just demoted) — reject here
@@ -70,11 +76,15 @@ async function verifyAdminAccessInternal(
     // Gate is a no-op (zero DB cost above) unless the operator opted the
     // role into REQUIRE_2FA_FOR_ROLES — default empty, so this never
     // fires today. Uses the CURRENT DB role, not the JWT's role claim.
-    if (env.REQUIRE_2FA_FOR_ROLES.has(user.role) && !user.twoFactorEnabled) {
+    // Task 4: satisfied by EITHER TOTP enrollment OR a completed email-OTP
+    // verification (twoFactorVerifiedAt) — the login flow stamps the same
+    // field for both methods, so accounts using the easy fallback aren't
+    // hard-blocked here just because they never enrolled TOTP.
+    if (env.REQUIRE_2FA_FOR_ROLES.has(user.role) && !user.twoFactorEnabled && !user.twoFactorVerifiedAt) {
       return {
         ok: false,
         status: 403,
-        message: "Two-factor authentication is required for this role. Enroll TOTP in account security settings before continuing.",
+        message: "Two-factor authentication is required for this role. Sign in again to receive an email code, or enroll an authenticator app in account security settings.",
       };
     }
   }

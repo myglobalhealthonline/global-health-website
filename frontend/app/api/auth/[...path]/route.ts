@@ -26,6 +26,8 @@ const ROUTE_TABLE: Record<string, Set<string>> = {
     "2fa/setup",
     "2fa/confirm",
     "2fa/disable",
+    "2fa/verify-login",
+    "2fa/resend-otp",
     "login",
     "logout",
     "register",

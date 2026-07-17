@@ -1,7 +1,13 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { requireAuth } from "../utils/require-auth.js";
-import { authCookieOptions, signAuthToken, verifyPending2faToken } from "../utils/auth-session.js";
+import {
+  authCookieOptions,
+  signAuthToken,
+  verifyPending2faToken,
+  trustedDeviceCookieOptions,
+  TRUSTED_DEVICE_COOKIE_NAME,
+} from "../utils/auth-session.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { replyWithError } from "../utils/reply-error.js";
 import { env } from "../config/env.js";
@@ -14,6 +20,12 @@ import {
   TwoFactorTokenInvalidError,
   TwoFactorAlreadyEnabledError,
 } from "../modules/two-factor/two-factor.service.js";
+import {
+  issueLoginOtp,
+  verifyLoginOtp,
+  issueTrustedDevice,
+} from "../modules/two-factor/login-otp.service.js";
+import { sendLoginOtpEmail } from "../lib/email/templates.js";
 import {
   getSafeUserById,
   getUserTokenVersion,
@@ -132,9 +144,23 @@ const auth2faRoute: FastifyPluginAsync = async (app) => {
       }
 
       try {
-        const ok = await verifyTwoFactorLogin(pending.userId, body.data.token);
-        if (!ok) {
-          return reply.status(401).send(errorResponse("Invalid 2FA code"));
+        // Task 4: the pending token records which method this login started
+        // with — TOTP (pre-existing) or EMAIL_OTP (the easy fallback).
+        if (pending.method === "EMAIL_OTP") {
+          const result = await verifyLoginOtp(pending.userId, body.data.token);
+          if (!result.ok) {
+            if (result.reason === "wrong_code") {
+              return reply.status(401).send(errorResponse("Invalid code"));
+            }
+            return reply
+              .status(401)
+              .send(errorResponse("This code has expired. Request a new one."));
+          }
+        } else {
+          const ok = await verifyTwoFactorLogin(pending.userId, body.data.token);
+          if (!ok) {
+            return reply.status(401).send(errorResponse("Invalid 2FA code"));
+          }
         }
 
         const user = await getSafeUserById(pending.userId);
@@ -146,13 +172,18 @@ const auth2faRoute: FastifyPluginAsync = async (app) => {
         const sessionToken = signAuthToken({ sub: user.id, role: user.role, email: user.email, tokenVersion });
         reply.setCookie(env.AUTH_COOKIE_NAME, sessionToken, authCookieOptions());
 
+        // Task 4: remember this device for 30 days so the next login skips
+        // the second factor entirely while the cookie/row stay valid.
+        const deviceToken = await issueTrustedDevice(user.id, request.headers["user-agent"]);
+        reply.setCookie(TRUSTED_DEVICE_COOKIE_NAME, deviceToken, trustedDeviceCookieOptions());
+
         recordAudit({
           actorUserId: user.id,
           actorRole: user.role,
           action: "LOGIN",
           entityType: "User",
           entityId: user.id,
-          metadata: { email: user.email, via: "2fa" },
+          metadata: { email: user.email, via: pending.method === "EMAIL_OTP" ? "email_otp" : "totp" },
           request,
         }).catch(() => {});
 
@@ -162,6 +193,45 @@ const auth2faRoute: FastifyPluginAsync = async (app) => {
           return reply.status(400).send(errorResponse("2FA is not configured for this account"));
         }
         return replyWithError(reply, app.log, error, "Could not verify 2FA code");
+      }
+    },
+  );
+
+  // ─── Resend email-OTP code (pending-login only) ──────────────────────────
+
+  const resendOtpSchema = z.object({
+    pendingToken: z.string().trim().min(20),
+  });
+
+  app.post(
+    "/api/auth/2fa/resend-otp",
+    {
+      // Tight cap — this sends an email per call. Independent of the
+      // verify-login attempt limiter above.
+      config: { rateLimit: { max: 5, timeWindow: "15 minutes", skipOnError: false } },
+    },
+    async (request, reply) => {
+      const body = resendOtpSchema.safeParse(request.body);
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid payload", body.error.flatten()));
+      }
+      const pending = verifyPending2faToken(body.data.pendingToken);
+      if (!pending) {
+        return reply.status(401).send(errorResponse("2FA session expired. Please log in again."));
+      }
+      if (pending.method !== "EMAIL_OTP") {
+        return reply.status(400).send(errorResponse("This login isn't using an email code"));
+      }
+      try {
+        const user = await getSafeUserById(pending.userId);
+        if (!user || !user.isActive) {
+          return reply.status(401).send(errorResponse("Account not found"));
+        }
+        const code = await issueLoginOtp(user.id);
+        await sendLoginOtpEmail({ to: user.email, fullName: user.fullName, code });
+        return okResponse({ sent: true }, "A new code has been sent");
+      } catch (error) {
+        return replyWithError(reply, app.log, error, "Could not send a new code");
       }
     },
   );

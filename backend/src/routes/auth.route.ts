@@ -34,10 +34,18 @@ import {
   resetPasswordBodySchema,
 } from "../validations/auth.schema.js";
 import { env } from "../config/env.js";
-import { authCookieOptions, signAuthToken, signPending2faToken } from "../utils/auth-session.js";
+import {
+  authCookieOptions,
+  signAuthToken,
+  signPending2faToken,
+  trustedDeviceCookieOptions,
+  TRUSTED_DEVICE_COOKIE_NAME,
+} from "../utils/auth-session.js";
 import { requireAuth } from "../utils/require-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
+import { issueLoginOtp, isTrustedDevice } from "../modules/two-factor/login-otp.service.js";
+import { sendLoginOtpEmail } from "../lib/email/templates.js";
 
 /** Exported for unit testing (see auth.route.schema.test.ts). Kept at
  *  module scope — was previously local to `authRoute`, which made the
@@ -151,14 +159,40 @@ const authRoute: FastifyPluginAsync = async (app) => {
     }
     try {
       const result = await loginUser(body.data);
+      const { user } = result;
 
-      // 2FA gate — password correct but TOTP still required.
-      if (result.twoFactorEnabled) {
-        const pendingToken = signPending2faToken(result.user.id);
-        return okResponse({ needs2fa: true, pendingToken }, "2FA required");
+      // 2FA gate — password correct but a second factor is still required,
+      // either because the account enrolled TOTP or because its role opted
+      // into REQUIRE_2FA_FOR_ROLES (Task 4: phi-access-recovery-plan-2026-07-17).
+      // A valid 30-day trusted-device cookie skips this entirely.
+      const needs2fa = result.twoFactorEnabled || env.REQUIRE_2FA_FOR_ROLES.has(user.role);
+      if (needs2fa) {
+        const trustedToken = request.cookies[TRUSTED_DEVICE_COOKIE_NAME];
+        const trusted = await isTrustedDevice(user.id, trustedToken);
+        if (!trusted) {
+          if (result.twoFactorEnabled) {
+            // Enrolled TOTP — unchanged pre-Task-4 path.
+            const pendingToken = signPending2faToken(user.id, "TOTP");
+            return okResponse({ needs2fa: true, pendingToken, method: "TOTP" }, "2FA required");
+          }
+          // Privileged role, no TOTP enrolled — easy fallback: email a
+          // 6-digit code instead of hard-blocking the login.
+          let code: string;
+          try {
+            code = await issueLoginOtp(user.id);
+            await sendLoginOtpEmail({ to: user.email, fullName: user.fullName, code });
+          } catch (emailError) {
+            app.log.error({ err: emailError, userId: user.id }, "Could not send login OTP email");
+            return reply
+              .status(503)
+              .send(errorResponse("Could not send a sign-in code right now. Please try again shortly."));
+          }
+          const pendingToken = signPending2faToken(user.id, "EMAIL_OTP");
+          return okResponse({ needs2fa: true, pendingToken, method: "EMAIL_OTP" }, "2FA required");
+        }
+        // Trusted device — fall through to a normal full-session login below.
       }
 
-      const { user } = result;
       const token = signAuthToken({
         sub: user.id,
         role: user.role,
@@ -524,6 +558,7 @@ const authRoute: FastifyPluginAsync = async (app) => {
       try {
         await signOutAllDevices(payload.sub);
         reply.clearCookie(env.AUTH_COOKIE_NAME, authCookieOptions());
+        reply.clearCookie(TRUSTED_DEVICE_COOKIE_NAME, trustedDeviceCookieOptions());
         return okResponse({ signedOut: true }, "Signed out of all devices");
       } catch (error) {
         return replyWithError(reply, app.log, error, "Could not sign out of all devices");

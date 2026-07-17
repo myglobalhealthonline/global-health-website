@@ -11,6 +11,7 @@ import {
 } from "../../lib/blind-index.js";
 import { deleteObject } from "../../services/object-storage.js";
 import { recordAudit } from "../audit/audit.service.js";
+import { revokeTrustedDevices } from "../two-factor/login-otp.service.js";
 
 export type SafeUser = {
   id: string;
@@ -317,6 +318,9 @@ export async function changeUserPassword(
       // the temp password is now invalid, so the gate is satisfied.
       data: { passwordHash: newHash, mustChangePassword: false },
     });
+    // Task 4: a password change revokes every "trusted device" — a device
+    // that skipped 2FA under the old password shouldn't keep skipping it.
+    await revokeTrustedDevices(id).catch(() => {});
     return toSafeUser(updated);
   } catch (error) {
     if (error instanceof AuthInvalidCredentialsError) throw error;
@@ -335,6 +339,9 @@ export async function signOutAllDevices(id: string): Promise<number> {
       data: { tokenVersion: { increment: 1 } },
       select: { tokenVersion: true },
     });
+    // Task 4: "sign out of all devices" also revokes every trusted-device
+    // cookie — otherwise a stale one would keep skipping 2FA post-signout.
+    await revokeTrustedDevices(id).catch(() => {});
     return updated.tokenVersion;
   } catch (error) {
     throw normalizeDbError(error, "Could not sign out other devices");

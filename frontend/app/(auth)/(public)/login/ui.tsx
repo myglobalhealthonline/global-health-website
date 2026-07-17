@@ -3,8 +3,8 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
-import { loginUser } from "@/lib/api/auth-api";
+import { Eye, EyeOff, Mail, Lock, ArrowRight, ShieldCheck } from "lucide-react";
+import { loginUser, verifyPending2fa, resendLoginOtp, type Pending2faMethod } from "@/lib/api/auth-api";
 import { setClientLocaleCookie } from "@/lib/i18n/get-client-locale";
 import styles from "./login.module.css";
 
@@ -73,6 +73,25 @@ export function LoginFormFallback({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n })
   );
 }
 
+// Task 4 (phi-access-recovery-plan-2026-07-17): pending-2FA copy. Not routed
+// through the i18n bundle yet — this screen didn't exist before this task
+// (TOTP-enrolled accounts had no way to actually finish signing in through
+// this form). English-only for now; translate alongside the rest of
+// /login's locale bundle as a follow-up.
+const TWO_FA_STRINGS = {
+  titleEmail: "Check your email",
+  titleTotp: "Enter your authenticator code",
+  descEmail: "We've sent a 6-digit code to your email. It expires in 10 minutes.",
+  descTotp: "Enter the 6-digit code from your authenticator app, or a backup code.",
+  codeLabel: "Code",
+  verify: "Verify & sign in",
+  verifying: "Verifying…",
+  resend: "Resend code",
+  resending: "Sending…",
+  resendSent: "A new code has been sent.",
+  back: "Back to sign in",
+};
+
 export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -80,6 +99,14 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Pending-2FA step (TOTP or Task 4's email-OTP fallback).
+  const [pending, setPending] = useState<{ pendingToken: string; method: Pending2faMethod } | null>(null);
+  const [otpCode, setOtpCode] = useState("");
+  const [verifying, setVerifying] = useState(false);
+  const [otpMessage, setOtpMessage] = useState<string | null>(null);
+  const [otpError, setOtpError] = useState(false);
+  const [resending, setResending] = useState(false);
 
   function getNextPath(
     role: "PATIENT" | "ADMIN" | "DOCTOR" | "LOCAL_ADMIN" | "SUPER_ADMIN" | "CORPORATE_ADMIN",
@@ -108,17 +135,133 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
     setMessage(null);
     setIsError(false);
     const result = await loginUser({ email, password });
-    if (result.ok) {
-      seedLocaleFromProfile(result.data.user.preferredLocale);
-      setMessage(i18n.loggedInAs.replace("{name}", result.data.user.fullName));
-      setLoading(false);
-      router.replace(getNextPath(result.data.user.role));
-      router.refresh();
+    setLoading(false);
+    if (!result.ok) {
+      setIsError(true);
+      setMessage(result.message);
       return;
     }
-    setIsError(true);
-    setMessage(result.message);
-    setLoading(false);
+    if (result.data.needs2fa) {
+      setPending({ pendingToken: result.data.pendingToken, method: result.data.method });
+      setOtpMessage(null);
+      setOtpError(false);
+      setOtpCode("");
+      return;
+    }
+    seedLocaleFromProfile(result.data.user.preferredLocale);
+    setMessage(i18n.loggedInAs.replace("{name}", result.data.user.fullName));
+    router.replace(getNextPath(result.data.user.role));
+    router.refresh();
+  }
+
+  async function onVerify(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!pending) return;
+    setVerifying(true);
+    setOtpError(false);
+    setOtpMessage(null);
+    const result = await verifyPending2fa({ pendingToken: pending.pendingToken, token: otpCode.trim() });
+    setVerifying(false);
+    if (!result.ok) {
+      setOtpError(true);
+      setOtpMessage(result.message);
+      return;
+    }
+    seedLocaleFromProfile(result.data.user.preferredLocale);
+    router.replace(getNextPath(result.data.user.role));
+    router.refresh();
+  }
+
+  async function onResend() {
+    if (!pending) return;
+    setResending(true);
+    setOtpError(false);
+    setOtpMessage(null);
+    const result = await resendLoginOtp({ pendingToken: pending.pendingToken });
+    setResending(false);
+    setOtpError(!result.ok);
+    setOtpMessage(result.ok ? TWO_FA_STRINGS.resendSent : result.message);
+  }
+
+  if (pending) {
+    const isEmailOtp = pending.method === "EMAIL_OTP";
+    return (
+      <form onSubmit={onVerify} method="post" className="grid gap-5" suppressHydrationWarning>
+        <div>
+          <h2 className="flex items-center gap-2 text-base font-bold" style={{ color: "var(--color-text-primary)" }}>
+            <ShieldCheck className="size-5" style={{ color: "#3E8B63" }} aria-hidden />
+            {isEmailOtp ? TWO_FA_STRINGS.titleEmail : TWO_FA_STRINGS.titleTotp}
+          </h2>
+          <p className="mt-1.5 text-sm" style={{ color: "var(--color-text-muted)" }}>
+            {isEmailOtp ? TWO_FA_STRINGS.descEmail : TWO_FA_STRINGS.descTotp}
+          </p>
+        </div>
+
+        <div className="grid gap-2">
+          <label htmlFor="login-2fa-code" className="gh-field-label" data-required>
+            {TWO_FA_STRINGS.codeLabel}
+          </label>
+          <input
+            id="login-2fa-code"
+            name="code"
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            className="gh-input tracking-[0.3em]"
+            value={otpCode}
+            onChange={(e) => setOtpCode(e.target.value.replace(/\s/g, ""))}
+            minLength={6}
+            maxLength={8}
+            required
+            autoFocus
+          />
+        </div>
+
+        {otpMessage ? (
+          <p
+            className={`rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm ${
+              otpError ? "gh-status-error" : "gh-status-success"
+            }`}
+            role={otpError ? "alert" : "status"}
+            aria-live="polite"
+          >
+            {otpMessage}
+          </p>
+        ) : null}
+
+        <button
+          type="submit"
+          className="gh2-btn-lime mt-1 w-full justify-center disabled:opacity-60"
+          disabled={verifying || otpCode.trim().length < 6}
+          style={{ width: "100%" }}
+        >
+          {verifying ? TWO_FA_STRINGS.verifying : TWO_FA_STRINGS.verify}
+          {!verifying && <ArrowRight className="ml-1.5 size-4 shrink-0" aria-hidden />}
+        </button>
+
+        <div className="flex items-center justify-between text-xs">
+          <button
+            type="button"
+            onClick={() => setPending(null)}
+            className="font-semibold underline-offset-4 hover:underline"
+            style={{ color: "var(--color-text-muted)" }}
+          >
+            {TWO_FA_STRINGS.back}
+          </button>
+          {isEmailOtp ? (
+            <button
+              type="button"
+              onClick={() => void onResend()}
+              disabled={resending}
+              className="font-semibold underline-offset-4 hover:underline disabled:opacity-60"
+              style={{ color: "var(--color-brand-primary)" }}
+            >
+              {resending ? TWO_FA_STRINGS.resending : TWO_FA_STRINGS.resend}
+            </button>
+          ) : null}
+        </div>
+      </form>
+    );
   }
 
   return (
