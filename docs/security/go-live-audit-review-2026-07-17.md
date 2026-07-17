@@ -222,6 +222,30 @@ Fable signs off only when: Stage 0 human items confirmed done, all Stage 2 secur
 
 Security items (21 audit fail-closed, 22 deletion/anonymization, 25 CMS sanitizer) → **Opus**. Everything else (20 auto-logoff, 23 CI gates, 24 CSP enforce, 26 perf budgets) → **Sonnet**. **Fable** prioritizes.
 
+## 11. Execution log
+
+**Stage 1 — DONE (2026-07-17).**
+- Decision: Dev-nauman abandoned per owner ("had issues we don't want"); security fixes re-authored fresh, not merged.
+- Release branch `release/go-live` cut off `main` (main already carries audit round 1+2, `1938f27d`).
+- Audit report + review committed (`ee2b79ba`).
+- Green baseline established: `prisma generate` OK · typecheck PASS · lint PASS (removed dead `publicAuthorityLinksWithTranslationsArgs`, `0b2aa632`) · backend build PASS · frontend build PASS (556 pages).
+- Note: an untracked `go-live-execution-plan-2026-07-17.md` (16-line stub, likely concurrent session) left untouched.
+
+**Stage 2 — IN PROGRESS.** Opus authors each security fix on `release/go-live`; Fable reviews each diff + verify chain before commit.
+
+- **SEC-001 — DONE (`1f9e9ce2`).** `verifyGlobalAdminAccess` (ADMIN/SUPER_ADMIN only; LOCAL_ADMIN 403 at JWT-role + 401 at DB re-validation). Applied to country CRUD + doctor IBAN reveal. 10/10 tests, typecheck clean.
+- **SEC-001b — NEW, OPEN (same Critical class, found during SEC-001).** These global/financial/user-admin routes still use the generic `verifyAdminAccess`; a LOCAL_ADMIN can reach cross-country data through them. Triage each: global → `verifyGlobalAdminAccess`; country-scoped → add country predicate. Routes: `admin-payout-invoices.route.ts:33,71`, `admin-invoices.route.ts:71,266,440,498,539`, `admin-users.route.ts:89`, `admin-reports.route.ts:78`, `admin-audit-log.route.ts:87`, `admin-security-alerts.route.ts:17,58`, `admin-settings.route.ts:17`, `admin-subscription-health.route.ts:14`, `admin-automation.route.ts:22`.
+- **SEC-002 — DONE (`033987e9`).** Guard on all doctor PHI reads (notes, history, generated docs list+PDF, chat read+download), fail-closed 403.
+- **SEC-005 — DONE (`a2c313db`).** Prod boot refuses relaxed/shadow PHI config. **Deploy dependency:** Railway prod must set `COMPLIANCE_MODE=strict`, `MEDICAL_ACCESS_ENFORCE=true`, `ADMIN_PHI_REQUIRE_REASON=true`, `REQUIRE_2FA_FOR_ROLES=SUPER_ADMIN,ADMIN,LOCAL_ADMIN,DOCTOR` or backend won't boot.
+- **PRIV-001 — DONE (`d6584699`).** Stripe no longer receives appointment notes/PHI (both `payments.route` and `manual-booking.service`); WhatsApp fails closed on null consent.
+  - **FLAG for legal/product:** `PatientProfile.patientWhatsappConsent` is `Boolean @default(true)` — consent defaults GRANTED (opt-out, not affirmative opt-in). The audit's "affirmative consent" intent needs a schema default change to `false` + a consent-capture UI. That's a product/legal decision, NOT made here.
+
+### Stage 2 remaining — BLOCKED on decisions/human input
+
+- **SEC-004 (HS256 removal)** — code-ready to author, but removing the fallback invalidates all existing HS256-signed sessions (mass logout) and MUST NOT deploy before Stage 0 item 6 (Railway `AUTH_JWT_PRIVATE_KEY`/`PUBLIC_KEY`) is live, or the backend can't verify anything. Needs: confirm keys set, agree the logout cutover window.
+- **SEC-006 (capability token hashing)** — requires a DB migration (hash existing `uploadToken`/share/consent tokens, add columns) applied via `migrate deploy` (repo's `migrate dev` is broken). Needs: approval to author the migration + a plan for in-flight tokens (invalidate vs backfill-hash).
+- **SEC-001b** — needs product knowledge to classify each of the ~10 routes as global vs country-scoped before wiring the right gate.
+
 ## Decision
 
 NO-GO confirmed. The audit under-states risk if anything: deployment-state chaos (item 13) and absent backups (17) are launch blockers in their own right, independent of the code findings.
