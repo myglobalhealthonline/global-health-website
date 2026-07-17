@@ -155,7 +155,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
           <Link
             href="/forgot-password"
             className="text-xs font-semibold underline-offset-4 hover:underline"
-            style={{ color: "var(--color-brand-accent)" }}
+            style={{ color: "var(--color-brand-primary)" }}
           >
             {i18n.forgotPassword}
           </Link>
