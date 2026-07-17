@@ -1265,7 +1265,7 @@
     "signOutAllDevicesBody": "Aceasta încheie toate sesiunile conectate, inclusiv aceasta — va trebui să vă autentificați din nou.",
     "signingOutAll": "Se deconectează…",
     "signOutAllDevicesButton": "Deconectare de pe toate dispozitivele",
-    "description": "Protejați accesul la fișele pacienților cu un cod bazat pe timp dintr-o aplicație de autentificare (Google Authenticator, Authy, 1Password, …).",
+    "description": "Accesul la fișele pacienților este protejat printr-o a doua verificare la autentificare. Implicit, îți trimitem prin email un cod din 6 cifre — fără configurare necesară. Poți opta pentru o aplicație de autentificare (Google Authenticator, Authy, 1Password, …) mai jos.",
     "loadingStatus": "Se încarcă starea 2FA…",
     "enabledPrefix": "Autentificarea în doi factori este activată",
     "enabledSince": " din {date}",
@@ -1287,7 +1287,7 @@
     "sixDigitLabel": "Cod din 6 cifre din aplicația dvs.",
     "verifying": "Se verifică…",
     "enable2faButton": "Activează 2FA",
-    "notEnabledDesc": "Autentificarea în doi factori nu este încă activată. Activarea ei adaugă o a doua verificare la autentificare — un cod din 6 cifre dintr-o aplicație de autentificare de pe telefon — astfel încât o parolă furată să nu poată singură ajunge la fișele pacienților.",
+    "notEnabledDesc": "Coduri prin email (implicit): ești deja protejat — fiecare autentificare trimite un cod din 6 cifre pe emailul tău, astfel încât o parolă furată să nu poată singură ajunge la fișele pacienților. Aplicație de autentificare (opțional): configurează una mai jos pentru o autentificare puțin mai rapidă, care nu depinde de email.",
     "preparing": "Se pregătește…"
   }
 }

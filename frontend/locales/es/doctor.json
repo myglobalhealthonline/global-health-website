@@ -1265,7 +1265,7 @@
     "signOutAllDevicesBody": "Esto finaliza todas las sesiones iniciadas, incluida esta — deberá volver a iniciar sesión.",
     "signingOutAll": "Cerrando sesión…",
     "signOutAllDevicesButton": "Cerrar sesión en todos los dispositivos",
-    "description": "Proteja el acceso a los registros de pacientes con un código temporal de una aplicación de autenticación (Google Authenticator, Authy, 1Password, …).",
+    "description": "El acceso a los registros de pacientes está protegido por una segunda comprobación al iniciar sesión. Por defecto, le enviamos por correo electrónico un código de 6 dígitos — sin necesidad de configuración. Opcionalmente puede actualizar a una aplicación de autenticación (Google Authenticator, Authy, 1Password, …) a continuación.",
     "loadingStatus": "Cargando estado de 2FA…",
     "enabledPrefix": "La autenticación de dos factores está activada",
     "enabledSince": " desde {date}",
@@ -1287,7 +1287,7 @@
     "sixDigitLabel": "Código de 6 dígitos de su aplicación",
     "verifying": "Verificando…",
     "enable2faButton": "Activar 2FA",
-    "notEnabledDesc": "La autenticación de dos factores aún no está activada. Activarla añade una segunda comprobación al iniciar sesión — un código de 6 dígitos de una aplicación de autenticación en su teléfono — para que una contraseña robada por sí sola no pueda acceder a los registros de pacientes.",
+    "notEnabledDesc": "Códigos por correo electrónico (por defecto): ya está protegido — cada inicio de sesión envía un código de 6 dígitos a su correo electrónico, para que una contraseña robada por sí sola no pueda acceder a los registros de pacientes. Aplicación de autenticación (opcional): configure una a continuación para un inicio de sesión ligeramente más rápido que no depende del correo electrónico.",
     "preparing": "Preparando…"
   }
 }

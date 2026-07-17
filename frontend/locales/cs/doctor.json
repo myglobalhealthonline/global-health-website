@@ -1265,7 +1265,7 @@
     "signOutAllDevicesBody": "Tím se ukončí všechny přihlášené relace včetně této — budete se muset znovu přihlásit.",
     "signingOutAll": "Odhlašování…",
     "signOutAllDevicesButton": "Odhlásit se ze všech zařízení",
-    "description": "Chraňte přístup k záznamům pacientů pomocí časově omezeného kódu z autentizační aplikace (Google Authenticator, Authy, 1Password…).",
+    "description": "Přístup k záznamům pacientů je chráněn druhou kontrolou při přihlášení. Ve výchozím nastavení vám pošleme e-mailem 6místný kód — bez nutnosti nastavení. Níže si můžete volitelně nastavit autentizační aplikaci (Google Authenticator, Authy, 1Password…).",
     "loadingStatus": "Načítání stavu 2FA…",
     "enabledPrefix": "Dvoufaktorové ověřování je povoleno",
     "enabledSince": " od {date}",
@@ -1287,7 +1287,7 @@
     "sixDigitLabel": "6místný kód z vaší aplikace",
     "verifying": "Ověřování…",
     "enable2faButton": "Povolit 2FA",
-    "notEnabledDesc": "Dvoufaktorové ověřování zatím není povoleno. Jeho povolením přidáte druhou kontrolu při přihlášení — 6místný kód z autentizační aplikace v telefonu — takže samotné ukradené heslo nemůže získat přístup k záznamům pacientů.",
+    "notEnabledDesc": "E-mailové kódy (výchozí): už jste chráněni — každé přihlášení odešle 6místný kód na váš e-mail, takže samotné ukradené heslo nemůže získat přístup k záznamům pacientů. Autentizační aplikace (volitelné): nastavte si ji níže pro o něco rychlejší přihlášení, které nezávisí na e-mailu.",
     "preparing": "Příprava…"
   }
 }

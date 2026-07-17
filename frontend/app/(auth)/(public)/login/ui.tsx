@@ -38,6 +38,19 @@ type LoginI18n = {
   signingIn: string;
   signIn: string;
   loggedInAs: string;
+  twoFa: {
+    titleEmail: string;
+    titleTotp: string;
+    descEmail: string;
+    descTotp: string;
+    codeLabel: string;
+    verify: string;
+    verifying: string;
+    resend: string;
+    resending: string;
+    resendSent: string;
+    back: string;
+  };
 };
 
 const DEFAULT_I18N: LoginI18n = {
@@ -53,6 +66,19 @@ const DEFAULT_I18N: LoginI18n = {
   signingIn: "Signing in…",
   signIn: "Sign in",
   loggedInAs: "Logged in as {name}. Redirecting...",
+  twoFa: {
+    titleEmail: "Check your email",
+    titleTotp: "Enter your authenticator code",
+    descEmail: "We've sent a 6-digit code to your email. It expires in 10 minutes.",
+    descTotp: "Enter the 6-digit code from your authenticator app, or a backup code.",
+    codeLabel: "Code",
+    verify: "Verify & sign in",
+    verifying: "Verifying…",
+    resend: "Resend code",
+    resending: "Sending…",
+    resendSent: "A new code has been sent.",
+    back: "Back to sign in",
+  },
 };
 
 export function LoginFormFallback({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
@@ -72,25 +98,6 @@ export function LoginFormFallback({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n })
     </form>
   );
 }
-
-// Task 4 (phi-access-recovery-plan-2026-07-17): pending-2FA copy. Not routed
-// through the i18n bundle yet — this screen didn't exist before this task
-// (TOTP-enrolled accounts had no way to actually finish signing in through
-// this form). English-only for now; translate alongside the rest of
-// /login's locale bundle as a follow-up.
-const TWO_FA_STRINGS = {
-  titleEmail: "Check your email",
-  titleTotp: "Enter your authenticator code",
-  descEmail: "We've sent a 6-digit code to your email. It expires in 10 minutes.",
-  descTotp: "Enter the 6-digit code from your authenticator app, or a backup code.",
-  codeLabel: "Code",
-  verify: "Verify & sign in",
-  verifying: "Verifying…",
-  resend: "Resend code",
-  resending: "Sending…",
-  resendSent: "A new code has been sent.",
-  back: "Back to sign in",
-};
 
 export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
   const router = useRouter();
@@ -180,7 +187,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
     const result = await resendLoginOtp({ pendingToken: pending.pendingToken });
     setResending(false);
     setOtpError(!result.ok);
-    setOtpMessage(result.ok ? TWO_FA_STRINGS.resendSent : result.message);
+    setOtpMessage(result.ok ? i18n.twoFa.resendSent : result.message);
   }
 
   if (pending) {
@@ -190,16 +197,16 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
         <div>
           <h2 className="flex items-center gap-2 text-base font-bold" style={{ color: "var(--color-text-primary)" }}>
             <ShieldCheck className="size-5" style={{ color: "#3E8B63" }} aria-hidden />
-            {isEmailOtp ? TWO_FA_STRINGS.titleEmail : TWO_FA_STRINGS.titleTotp}
+            {isEmailOtp ? i18n.twoFa.titleEmail : i18n.twoFa.titleTotp}
           </h2>
           <p className="mt-1.5 text-sm" style={{ color: "var(--color-text-muted)" }}>
-            {isEmailOtp ? TWO_FA_STRINGS.descEmail : TWO_FA_STRINGS.descTotp}
+            {isEmailOtp ? i18n.twoFa.descEmail : i18n.twoFa.descTotp}
           </p>
         </div>
 
         <div className="grid gap-2">
           <label htmlFor="login-2fa-code" className="gh-field-label" data-required>
-            {TWO_FA_STRINGS.codeLabel}
+            {i18n.twoFa.codeLabel}
           </label>
           <input
             id="login-2fa-code"
@@ -235,7 +242,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
           disabled={verifying || otpCode.trim().length < 6}
           style={{ width: "100%" }}
         >
-          {verifying ? TWO_FA_STRINGS.verifying : TWO_FA_STRINGS.verify}
+          {verifying ? i18n.twoFa.verifying : i18n.twoFa.verify}
           {!verifying && <ArrowRight className="ml-1.5 size-4 shrink-0" aria-hidden />}
         </button>
 
@@ -246,7 +253,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
             className="font-semibold underline-offset-4 hover:underline"
             style={{ color: "var(--color-text-muted)" }}
           >
-            {TWO_FA_STRINGS.back}
+            {i18n.twoFa.back}
           </button>
           {isEmailOtp ? (
             <button
@@ -256,7 +263,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
               className="font-semibold underline-offset-4 hover:underline disabled:opacity-60"
               style={{ color: "var(--color-brand-primary)" }}
             >
-              {resending ? TWO_FA_STRINGS.resending : TWO_FA_STRINGS.resend}
+              {resending ? i18n.twoFa.resending : i18n.twoFa.resend}
             </button>
           ) : null}
         </div>

@@ -1265,7 +1265,7 @@
     "signOutAllDevicesBody": "Dadurch werden alle angemeldeten Sitzungen beendet, einschließlich dieser — Sie müssen sich erneut anmelden.",
     "signingOutAll": "Wird abgemeldet…",
     "signOutAllDevicesButton": "Von allen Geräten abmelden",
-    "description": "Schützen Sie den Zugriff auf Patientenakten mit einem zeitbasierten Code aus einer Authenticator-App (Google Authenticator, Authy, 1Password, …).",
+    "description": "Der Zugriff auf Patientenakten ist durch eine zweite Prüfung bei der Anmeldung geschützt. Standardmäßig senden wir Ihnen per E-Mail einen 6-stelligen Code — keine Einrichtung nötig. Optional können Sie unten auf eine Authenticator-App (Google Authenticator, Authy, 1Password, …) umsteigen.",
     "loadingStatus": "2FA-Status wird geladen…",
     "enabledPrefix": "Die Zwei-Faktor-Authentifizierung ist aktiviert",
     "enabledSince": " seit {date}",
@@ -1287,7 +1287,7 @@
     "sixDigitLabel": "6-stelliger Code aus Ihrer App",
     "verifying": "Wird überprüft…",
     "enable2faButton": "2FA aktivieren",
-    "notEnabledDesc": "Die Zwei-Faktor-Authentifizierung ist noch nicht aktiviert. Ihre Aktivierung fügt bei der Anmeldung eine zweite Prüfung hinzu — einen 6-stelligen Code aus einer Authenticator-App auf Ihrem Telefon —, sodass ein gestohlenes Passwort allein nicht auf Patientenakten zugreifen kann.",
+    "notEnabledDesc": "E-Mail-Codes (Standard): Sie sind bereits geschützt — jede Anmeldung sendet einen 6-stelligen Code an Ihre E-Mail-Adresse, sodass ein gestohlenes Passwort allein nicht auf Patientenakten zugreifen kann. Authenticator-App (optional): Richten Sie unten eine ein für eine etwas schnellere Anmeldung, die nicht von E-Mail abhängt.",
     "preparing": "Wird vorbereitet…"
   }
 }
