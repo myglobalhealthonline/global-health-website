@@ -240,11 +240,24 @@ Security items (21 audit fail-closed, 22 deletion/anonymization, 25 CMS sanitize
 - **PRIV-001 — DONE (`d6584699`).** Stripe no longer receives appointment notes/PHI (both `payments.route` and `manual-booking.service`); WhatsApp fails closed on null consent.
   - **FLAG for legal/product:** `PatientProfile.patientWhatsappConsent` is `Boolean @default(true)` — consent defaults GRANTED (opt-out, not affirmative opt-in). The audit's "affirmative consent" intent needs a schema default change to `false` + a consent-capture UI. That's a product/legal decision, NOT made here.
 
-### Stage 2 remaining — BLOCKED on decisions/human input
+### Stage 2 — COMPLETE (all 7 items committed, branch green)
 
-- **SEC-004 (HS256 removal)** — code-ready to author, but removing the fallback invalidates all existing HS256-signed sessions (mass logout) and MUST NOT deploy before Stage 0 item 6 (Railway `AUTH_JWT_PRIVATE_KEY`/`PUBLIC_KEY`) is live, or the backend can't verify anything. Needs: confirm keys set, agree the logout cutover window.
-- **SEC-006 (capability token hashing)** — requires a DB migration (hash existing `uploadToken`/share/consent tokens, add columns) applied via `migrate deploy` (repo's `migrate dev` is broken). Needs: approval to author the migration + a plan for in-flight tokens (invalidate vs backfill-hash).
-- **SEC-001b** — needs product knowledge to classify each of the ~10 routes as global vs country-scoped before wiring the right gate.
+- **SEC-004 — DONE (`b941f98d`).** HS256 fallback removed from both services; RS256-only. Frontend holds no secret/signing capability. Forged HS256 token rejected (test). Railway prod RS256 keys confirmed present. BREAKING: existing sessions log out on deploy (expected).
+- **SEC-001b — DONE (`472abbc1`).** 8 global/system routes → `verifyGlobalAdminAccess`; patient invoices country-scoped via existing helpers. **Confirm w/ product:** payout-invoices + reports now fail-closed for LOCAL_ADMIN.
+- **SEC-006 — DONE (`e37da4e4`).** `GeneratedDocument.uploadToken` plaintext cache column dropped (authoritative `PatientUploadLink` was already hashed). Migration `20260717110000` forward-hashes in place, invalidates no in-flight link, auto-applies via preDeploy. Request logging redacts token query params. All other capability tokens already hashed.
+
+**Stage 2 final gate (2026-07-17):** backend build PASS · frontend build PASS (556 pages) · lint PASS (0 errors) · typecheck PASS. 7 security fixes + baseline, each Opus-authored, Fable-reviewed, tested.
+
+### Railway Production check (2026-07-17, read-only — no vars changed)
+- SEC-005 config: `COMPLIANCE_MODE=strict`, `MEDICAL_ACCESS_ENFORCE=true`, `ADMIN_PHI_REQUIRE_REASON=true` all present. **`REQUIRE_2FA_FOR_ROLES` NOT set** — owner to set `SUPER_ADMIN,ADMIN,LOCAL_ADMIN,DOCTOR` (or backend won't boot). Confirm TOTP enrolled for all staff first (lockout risk).
+- `AUTH_JWT_PRIVATE_KEY`/`PUBLIC_KEY` present → SEC-004 deploy unblocked.
+- Production env deploys services Postgres+Frontend+Backend; preDeploy runs `prisma migrate deploy` (SEC-006 migration will apply). Nothing tracks `release/go-live` yet — point Production's deploy at it when ready.
+
+### Remaining before go-live (Stages 3–4, not security-code)
+- Owner: set `REQUIRE_2FA_FOR_ROLES`; confirm staff 2FA enrollment; agree HS256 logout window; WhatsApp affirmative-consent legal call (`patientWhatsappConsent` default true).
+- Stage 3: apply queued migrations/seeds, env vars (`NEXT_PUBLIC_SITE_URL`), WCAG, commit prod-DB content patches.
+- Stage 4: backend integration + E2E green, monitoring/rollback, live TLS/headers/CSP sweep.
+- Product confirm: SEC-001b payout-invoices/reports fail-closed for LOCAL_ADMIN.
 
 ## Decision
 
