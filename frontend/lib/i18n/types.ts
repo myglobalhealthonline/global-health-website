@@ -536,6 +536,7 @@ export type CommonLocale = {
     typeRefundPolicy: string;
     typeMedicalDisclaimer: string;
     typeAccessibilityStatement: string;
+    typeComplaintsProcedure: string;
     heroEyebrow: string;
     heroTitle: string;
     heroAccent: string;

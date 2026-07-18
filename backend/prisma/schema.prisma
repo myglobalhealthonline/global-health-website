@@ -3906,6 +3906,7 @@ enum LegalDocumentType {
   REFUND_POLICY
   MEDICAL_DISCLAIMER
   ACCESSIBILITY_STATEMENT
+  COMPLAINTS_PROCEDURE
 }
 
 /// Per-country legal documents (rich text and/or PDF).

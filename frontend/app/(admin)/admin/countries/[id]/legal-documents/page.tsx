@@ -37,6 +37,7 @@ const DOCUMENT_TYPE_LABELS: Record<LegalDocumentType, string> = {
   REFUND_POLICY: "Refund Policy",
   MEDICAL_DISCLAIMER: "Medical Disclaimer",
   ACCESSIBILITY_STATEMENT: "Accessibility Statement",
+  COMPLAINTS_PROCEDURE: "Complaints Procedure",
 };
 
 const DOCUMENT_TYPES = Object.keys(DOCUMENT_TYPE_LABELS) as LegalDocumentType[];
