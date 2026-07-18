@@ -150,6 +150,15 @@ const addItemBodySchema = z.object({
       gdprConsentPlatform: z.literal(true).optional(),
       /** Optional WhatsApp-updates opt-in — never required. */
       whatsappConsent: z.boolean().optional(),
+      /** GDPR: cross-border medical file access acknowledgement. Required
+       *  true for every consultation booking — enforced below alongside the
+       *  dual GDPR consent, same pattern. */
+      crossBorderConsentAccepted: z.literal(true).optional(),
+      /** Who may access the patient's medical file. Defaults to the
+       *  narrowest scope when not supplied by the form. */
+      medicalAccessConsentScope: z
+        .enum(["DIRECT", "COUNTRY_CLINIC", "GLOBAL_NETWORK"])
+        .optional(),
     })
     .optional(),
 });
@@ -1009,6 +1018,13 @@ const cartRoute: FastifyPluginAsync = async (app) => {
                 ),
               );
             }
+            if (patient?.crossBorderConsentAccepted !== true) {
+              return reply.status(400).send(
+                errorResponse(
+                  "Cross-border medical file access consent is required to book a consultation.",
+                ),
+              );
+            }
           }
         }
       } catch (err) {
@@ -1246,6 +1262,8 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             // GDPR opt-IN: only an explicit true counts as consent (Art. 4(11) —
             // silence/absence is not consent).
             patientWhatsappConsent: patient?.whatsappConsent === true,
+            patientCrossBorderConsentAccepted: patient?.crossBorderConsentAccepted === true,
+            patientMedicalAccessConsentScope: patient?.medicalAccessConsentScope ?? "DIRECT",
             // Insurance snapshot (consultation-only). unitPriceCents above is
             // already the validated insurance price when a company is selected.
             // The policy/card number is stored encrypted (phi:v1: envelope),

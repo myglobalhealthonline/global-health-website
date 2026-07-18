@@ -366,6 +366,14 @@ export type CommonLocale = {
     gdprPlatformConsent: string;
     privacyPolicyLinkLabel: string;
     whatsappConsent: string;
+    /** GDPR: cross-border medical file access acknowledgement, required. */
+    crossBorderConsent: string;
+    acceptCrossBorderConsent: string;
+    /** Medical access scope radio group (who may access the patient's file). */
+    medicalAccessScopeHeading: string;
+    medicalAccessScopeDirect: string;
+    medicalAccessScopeCountryClinic: string;
+    medicalAccessScopeGlobalNetwork: string;
     addingToCart: string;
     continueToCart: string;
     noOpenSlots: string;

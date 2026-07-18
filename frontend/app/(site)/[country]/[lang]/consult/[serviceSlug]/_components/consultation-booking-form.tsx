@@ -144,6 +144,10 @@ export function ConsultationBookingForm({
     : tz;
 
   const nationalIdLabel = idLabelForCountrySlug(params?.country);
+  // ponytail: no country-display-name helper exists in this file yet; a
+  // capitalized slug ("Portugal") reads fine for the consent radio label.
+  // Add a proper localized country name lookup if that ever needs to change.
+  const countryDisplayName = (params?.country ?? "").replace(/^./, (c) => c.toUpperCase());
   const privacyPolicyHref = `/${params?.country ?? ""}/${params?.lang ?? ""}/legal/privacy-policy`;
   const privacyPolicyLink = (
     <Link
@@ -360,6 +364,13 @@ export function ConsultationBookingForm({
     // GDPR: WhatsApp messaging consent must be an affirmative opt-in
     // (Art. 4(11) / Planet49) — unchecked box means NO consent.
     const whatsappConsent = form.get("whatsappOptIn") === "on";
+    const crossBorderConsentAccepted = form.get("crossBorderConsent") === "on";
+    const medicalAccessConsentScope = (
+      String(form.get("medicalAccessScope") ?? "DIRECT") as
+        | "DIRECT"
+        | "COUNTRY_CLINIC"
+        | "GLOBAL_NETWORK"
+    );
 
     if (!selectedMember && !bookingForOther && fullName.length < 2) {
       setError(i18n.enterFullName);
@@ -383,6 +394,10 @@ export function ConsultationBookingForm({
     }
     if (!gdprConsentPlatform) {
       setError(i18n.acceptPlatformConsent);
+      return;
+    }
+    if (!crossBorderConsentAccepted) {
+      setError(i18n.acceptCrossBorderConsent);
       return;
     }
 
@@ -489,6 +504,8 @@ export function ConsultationBookingForm({
           gdprConsentClinic: true,
           gdprConsentPlatform: true,
           whatsappConsent,
+          crossBorderConsentAccepted: true,
+          medicalAccessConsentScope,
         },
       });
       if (!res.ok) {
@@ -1145,6 +1162,53 @@ export function ConsultationBookingForm({
           />
           <span>{i18n.whatsappConsent}</span>
         </label>
+        {/* Cross-border medical file access — required, mirrors the two GDPR
+          * checkboxes above. Stored on Appointment.crossBorderConsentAccepted. */}
+        <label className="mt-3 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
+          <input
+            type="checkbox"
+            name="crossBorderConsent"
+            required
+            aria-required="true"
+            className="mt-0.5 size-4 rounded border-[var(--color-border)]"
+          />
+          <span>{i18n.crossBorderConsent}</span>
+        </label>
+        {/* Medical access scope — who may access the patient's file. Defaults
+          * to DIRECT (narrowest). Stored on Appointment.medicalAccessConsentScope. */}
+        <div role="radiogroup" aria-label={i18n.medicalAccessScopeHeading} className="mt-4">
+          <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-brand-primary)]">
+            {i18n.medicalAccessScopeHeading}
+          </p>
+          <label className="mt-1.5 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
+            <input
+              type="radio"
+              name="medicalAccessScope"
+              value="DIRECT"
+              defaultChecked
+              className="mt-0.5 size-4 border-[var(--color-border)]"
+            />
+            <span>{i18n.medicalAccessScopeDirect}</span>
+          </label>
+          <label className="mt-1.5 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
+            <input
+              type="radio"
+              name="medicalAccessScope"
+              value="COUNTRY_CLINIC"
+              className="mt-0.5 size-4 border-[var(--color-border)]"
+            />
+            <span>{i18n.medicalAccessScopeCountryClinic.replace("{country}", countryDisplayName)}</span>
+          </label>
+          <label className="mt-1.5 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
+            <input
+              type="radio"
+              name="medicalAccessScope"
+              value="GLOBAL_NETWORK"
+              className="mt-0.5 size-4 border-[var(--color-border)]"
+            />
+            <span>{i18n.medicalAccessScopeGlobalNetwork}</span>
+          </label>
+        </div>
       </div>
 
       {error ? (

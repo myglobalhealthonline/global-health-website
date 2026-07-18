@@ -14,6 +14,7 @@ import { isStripeConfigured } from "../lib/stripe/client.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { computeSlotPrice, getServicePeakConfig } from "../modules/pricing/peak-pricing.service.js";
 import { resolveDoctorTimeZone } from "../modules/doctor-availability/doctor-availability.service.js";
+import { promoteAppointmentConsents } from "../modules/consents/promote-appointment-consents.js";
 
 const appointmentsRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/appointments", {
@@ -132,6 +133,16 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
       }
 
       const created = await createAppointmentWithOptionalOwner(parsed.data, { userId: authUserId });
+
+      // Logged-in booking (not a guest) — promote the medical-access consent
+      // just captured straight into the append-only ledger. Guest bookings
+      // get promoted later, on login/verify, once we can prove email
+      // ownership (see claimGuestAppointmentsForUser callers).
+      if (authUserId) {
+        promoteAppointmentConsents(authUserId, parsed.data.email).catch((err) => {
+          app.log.warn({ err, userId: authUserId }, "Could not promote booking-time medical-access consents");
+        });
+      }
 
       // Resolve the catalogue Service (if a slug was passed) and copy its
       // price + currency onto the appointment. This makes Stripe Checkout

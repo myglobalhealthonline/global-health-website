@@ -32,6 +32,23 @@ export const bookingSchema = z.object({
   gdprConsentClinic: z.boolean().optional(),
   gdprConsentPlatform: z.boolean().optional(),
   /**
+   * GDPR: patient must confirm they understand that, if they travel /
+   * receive care in another country, their medical file may be accessed
+   * by that country's clinical team. Required true on every booking —
+   * mirrors `consentAccepted` above.
+   */
+  crossBorderConsentAccepted: z.literal(true, {
+    errorMap: () => ({
+      message: "Cross-border medical file access consent is required before submitting a booking request",
+    }),
+  }),
+  /** Who may access the patient's medical file. Defaults to the narrowest
+   *  scope (treating doctor only) when not supplied by the form. */
+  medicalAccessConsentScope: z
+    .enum(["DIRECT", "COUNTRY_CLINIC", "GLOBAL_NETWORK"])
+    .optional()
+    .default("DIRECT"),
+  /**
    * Optional opt-in to appointment updates + reminders via WhatsApp.
    * Never required — patient WhatsApp sends are skipped when false/absent.
    */

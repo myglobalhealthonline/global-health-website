@@ -356,6 +356,8 @@ async function fulfillPaidOrderFromCheckoutSession(
           gdprConsentPlatform: item.patientGdprConsentPlatform,
           gdprConsentedAt: item.patientGdprConsentedAt,
           whatsappConsent: item.patientWhatsappConsent,
+          crossBorderConsentAccepted: item.patientCrossBorderConsentAccepted,
+          medicalAccessConsentScope: item.patientMedicalAccessConsentScope ?? "DIRECT",
           // Insurance snapshot for the clinical record (amountCents above
           // already carries the charged insurance price). Policy number stays
           // in its encrypted phi:v1: envelope — copied verbatim, not decrypted.
@@ -463,6 +465,19 @@ async function fulfillPaidOrderFromCheckoutSession(
         .then((m) => m.onCorporateAppointmentCreated(appointmentId))
         .catch(() => {});
     }
+    // Promote booking-time medical-access consent into the append-only
+    // ledger for logged-in checkouts (guest orders get promoted later, on
+    // login/verify — see auth.route.ts). Fire-and-forget: a promotion miss
+    // must never affect the paid order.
+    void prisma.order
+      .findUnique({ where: { id: orderId }, select: { userId: true, email: true } })
+      .then((order) => {
+        if (!order?.userId) return;
+        return import("../consents/promote-appointment-consents.js").then((m) =>
+          m.promoteAppointmentConsents(order.userId as string, order.email),
+        );
+      })
+      .catch(() => {});
   });
 }
 
