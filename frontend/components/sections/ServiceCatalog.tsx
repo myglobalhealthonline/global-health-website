@@ -285,6 +285,7 @@ export function ServiceCatalog({
         </header>
 
         <RevealOnScroll
+          key={`${filter}-${page}`}
           stagger
           className={cn(
             "gh-card-grid",

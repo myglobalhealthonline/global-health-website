@@ -85,7 +85,7 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
         <RevealOnScroll
           stagger
           delay={120}
-          className="grid grid-cols-1 gap-5 sm:grid-cols-2"
+          className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:[&>:last-child:nth-child(odd)]:col-span-2"
         >
           {items.slice(0, 4).map((it) => (
             <div

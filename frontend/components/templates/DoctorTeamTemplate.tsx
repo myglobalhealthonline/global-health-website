@@ -215,7 +215,7 @@ export function DoctorTeamTemplate({
                   </button>
                 </div>
               )}
-              <ul className="grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+              <ul className="gh-card-grid" style={{ columnGap: "2rem", rowGap: "2rem" }}>
                 {paged.map((d) => (
                   <li key={(d.href ?? "") + d.name}>
                     <DoctorCard
