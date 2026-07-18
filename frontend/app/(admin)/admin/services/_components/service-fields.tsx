@@ -144,7 +144,9 @@ export function ServiceFields({
             name="basePrice"
             className="gh-input min-w-0"
             defaultValue={formatServicePriceInput(initial?.basePriceCents)}
-            placeholder="45.00"
+            placeholder="0.00"
+            pattern="^\d+(\.\d{1,2})?$"
+            title="Enter a valid amount like 45 or 45.00"
           />
         </label>
         <label className="flex flex-col gap-2">
@@ -170,6 +172,8 @@ export function ServiceFields({
                 : ""
             }
             placeholder="0.00"
+            pattern="^\d+(\.\d{1,2})?$"
+            title="Enter a valid amount like 5 or 5.00"
           />
           <span className="text-xs text-[var(--color-text-muted)]">
             Charged per item at checkout. Leave blank for online services

@@ -84,7 +84,7 @@ export function HealthTestFields({
 
       <label className="flex flex-col gap-2">
         <span className="gh-field-label">Price</span>
-        <input type="text" inputMode="decimal" name="price" className="gh-input min-w-0" defaultValue={formatHealthTestPriceInput(initial?.priceCents)} placeholder="84.00" />
+        <input type="text" inputMode="decimal" name="price" className="gh-input min-w-0" defaultValue={formatHealthTestPriceInput(initial?.priceCents)} placeholder="0.00" pattern="^\d+(\.\d{1,2})?$" title="Enter a valid amount like 84 or 84.00" />
       </label>
       <label className="flex flex-col gap-2">
         <span className="gh-field-label">Currency</span>
@@ -136,6 +136,8 @@ export function HealthTestFields({
           className="gh-input min-w-0"
           defaultValue={formatShippingInput(initial?.shippingCents)}
           placeholder="0.00"
+          pattern="^\d+(\.\d{1,2})?$"
+          title="Enter a valid amount like 5 or 5.00"
         />
         <span className="text-xs text-[var(--color-text-muted)]">
           Charged per kit at checkout. Leave blank for free shipping.
