@@ -141,7 +141,7 @@ export function DoctifyRatingStrip({
     return (
       <DoctifyPlaceholder
         language={language}
-        minHeightClass="min-h-[120px]"
+        minHeightClass="min-h-[160px]"
         onDark={onDark}
         className={className}
       />
@@ -160,7 +160,7 @@ export function DoctifyRatingStrip({
       src={src}
       title="Doctify patient reviews"
       name="average-carousel-rating-widget"
-      className={`doctify-widget block min-h-[120px] w-full border-0 ${className ?? ""}`}
+      className={`doctify-widget block min-h-[160px] w-full border-0 ${className ?? ""}`}
       loading="lazy"
       scrolling="no"
     />
@@ -354,7 +354,7 @@ export function DoctifyInlineRating({
     return (
       <DoctifyPlaceholder
         language={language}
-        minHeightClass="min-h-[100px]"
+        minHeightClass="min-h-[120px]"
         onDark
         className={className}
       />
@@ -373,7 +373,7 @@ export function DoctifyInlineRating({
       src={src}
       title="Doctify patient reviews"
       name="average-carousel-rating-widget"
-      className={`doctify-widget block min-h-[100px] w-full border-0 ${className ?? ""}`}
+      className={`doctify-widget block min-h-[120px] w-full border-0 ${className ?? ""}`}
       loading="lazy"
       scrolling="no"
     />

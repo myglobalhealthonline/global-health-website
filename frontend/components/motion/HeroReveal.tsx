@@ -1,14 +1,13 @@
 "use client";
 
 /**
- * HeroReveal — React-state-driven CSS transition for above-fold elements.
+ * HeroReveal — CSS-class-driven transition for above-fold elements.
  *
- * Why not CSS keyframes or direct DOM mutations?
- * - CSS keyframes: broken by React hydration (animation restarts/cancelled)
- * - Direct DOM mutations: React reconciliation resets inline styles between renders
- *
- * React state approach: opacity/transform are JSX props → React owns them →
- * reconciliation never fights us. CSS transition fires when state changes.
+ * CSS-hidden-before-paint: renders with `gh-reveal-pending` (globals.css)
+ * from the server. That class only actually hides content once the `js`
+ * class lands on <html> — a synchronous inline script in layout.tsx runs
+ * before first paint — so JS visitors never see a flash of visible content
+ * before it's hidden, and no-JS/SSR visitors stay visible always.
  *
  * Usage:
  *   <HeroReveal delay={0} className="mb-10 flex ...">
@@ -20,7 +19,7 @@
  *   </HeroReveal>
  */
 
-import { useState, useEffect, type ReactNode, type CSSProperties } from "react";
+import { useLayoutEffect, useRef, type ReactNode, type CSSProperties } from "react";
 
 interface HeroRevealProps {
   children: ReactNode;
@@ -36,9 +35,6 @@ interface HeroRevealProps {
   style?: CSSProperties;
 }
 
-const EASING = "cubic-bezier(0.16, 1, 0.3, 1)";
-const DURATION = "0.9s";
-
 export function HeroReveal({
   children,
   delay = 0,
@@ -46,30 +42,43 @@ export function HeroReveal({
   className = "",
   style,
 }: HeroRevealProps) {
-  const [revealed, setRevealed] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
     // Respect OS-level reduced-motion: skip animation, just show content
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setRevealed(true);
+      el.classList.add("gh-reveal-in");
       return;
     }
-    const id = setTimeout(() => setRevealed(true), delay);
-    return () => clearTimeout(id);
+
+    el.style.transitionDelay = `${delay}ms`;
+    // Double-RAF: let the pending (hidden) state paint first, then trigger
+    // the transition — matches original setTimeout deferral behavior.
+    let raf2 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        el.classList.add("gh-reveal-in");
+      });
+    });
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
   }, [delay]);
 
   return (
     <div
-      className={className}
+      ref={ref}
+      className={`gh-reveal-pending ${className}`.trim()}
       style={{
         ...style,
-        opacity: revealed || !fade ? 1 : 0,
-        transform: revealed ? "translateY(0px)" : "translateY(32px)",
-        // Add transition only when revealing — prevents instant re-hide on unmount
-        transition: revealed
-          ? `opacity ${DURATION} ${EASING}, transform ${DURATION} ${EASING}`
-          : "none",
+        // LCP element: never paint at opacity 0 (excludes it as an LCP
+        // candidate) — slide in via transform only, class stays for the
+        // transform/transition mechanics but opacity is pinned to 1.
+        ...(fade ? null : { opacity: 1 }),
       }}
     >
       {children}

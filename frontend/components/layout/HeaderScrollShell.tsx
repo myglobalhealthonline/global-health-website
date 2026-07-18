@@ -72,7 +72,7 @@ export function HeaderScrollShell({ children }: { children: ReactNode }) {
             backdropFilter: scrolled ? "blur(var(--gh-chrome-blur))" : "none",
             WebkitBackdropFilter: scrolled ? "blur(var(--gh-chrome-blur))" : "none",
             transition:
-              "max-width 500ms cubic-bezier(0.16,1,0.3,1), border-radius 500ms ease, background-color 450ms ease, border-color 450ms ease, box-shadow 450ms ease, backdrop-filter 450ms ease",
+              "border-radius 500ms ease, background-color 450ms ease, border-color 450ms ease, box-shadow 450ms ease",
           }}
         >
           {children}

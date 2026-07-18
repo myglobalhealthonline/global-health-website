@@ -4620,6 +4620,14 @@ a.gh-appointment-card:hover {
   box-shadow: var(--lux-elev-1);
 }
 
+@supports not (backdrop-filter: blur(1px)) {
+  .gh-admin-card {
+    /* Solid equivalent of --lux-card-fill's white-tint gradient (same
+       pattern as .gh-portal-sidebar / .gh-portal-topbar's fallback). */
+    background-color: #f2f4ef;
+  }
+}
+
 .gh-admin-card.is-static {
   -webkit-backdrop-filter: none;
   backdrop-filter: none;

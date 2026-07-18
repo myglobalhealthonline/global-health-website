@@ -12,7 +12,7 @@ export default async function VerifyEmailPage() {
   const locale = resolveLocale({ cookieLocale: cookieStore.get("gh_locale")?.value ?? null });
   const { auth } = loadLocaleBundle(locale);
   return (
-    <Suspense>
+    <Suspense fallback={<div className="min-h-[100svh]" aria-busy="true" />}>
       <VerifyEmailClient t={auth.verifyEmail} shell={auth.shell} />
     </Suspense>
   );

@@ -143,7 +143,7 @@ export function ServiceCard({
           <div
             className={cn(
               "relative overflow-hidden",
-              featured ? "aspect-[16/10] lg:aspect-auto" : "flex-1",
+              featured ? "aspect-[16/10] lg:aspect-auto lg:min-h-[280px]" : "flex-1",
             )}
             style={featured ? undefined : { aspectRatio: "16 / 10" }}
           >
