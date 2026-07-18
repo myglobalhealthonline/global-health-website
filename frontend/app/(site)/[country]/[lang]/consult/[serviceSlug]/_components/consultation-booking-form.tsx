@@ -144,10 +144,6 @@ export function ConsultationBookingForm({
     : tz;
 
   const nationalIdLabel = idLabelForCountrySlug(params?.country);
-  // ponytail: no country-display-name helper exists in this file yet; a
-  // capitalized slug ("Portugal") reads fine for the consent radio label.
-  // Add a proper localized country name lookup if that ever needs to change.
-  const countryDisplayName = (params?.country ?? "").replace(/^./, (c) => c.toUpperCase());
   const privacyPolicyHref = `/${params?.country ?? ""}/${params?.lang ?? ""}/legal/privacy-policy`;
   const privacyPolicyLink = (
     <Link
@@ -359,18 +355,12 @@ export function ConsultationBookingForm({
     const addressPostalCode = String(form.get("addressPostalCode") ?? "").trim();
     const addressCountryCode = (params?.country ?? "").slice(0, 2).toLowerCase();
     const consent = form.get("consent") === "on";
-    const gdprConsentClinic = form.get("gdprConsentClinic") === "on";
-    const gdprConsentPlatform = form.get("gdprConsentPlatform") === "on";
+    // Combined GDPR checkbox: covers clinic/doctor sharing + platform
+    // processing + cross-border access in one tick (was 3 separate boxes).
+    const gdprCombinedConsent = form.get("gdprCombinedConsent") === "on";
     // GDPR: WhatsApp messaging consent must be an affirmative opt-in
     // (Art. 4(11) / Planet49) — unchecked box means NO consent.
     const whatsappConsent = form.get("whatsappOptIn") === "on";
-    const crossBorderConsentAccepted = form.get("crossBorderConsent") === "on";
-    const medicalAccessConsentScope = (
-      String(form.get("medicalAccessScope") ?? "DIRECT") as
-        | "DIRECT"
-        | "COUNTRY_CLINIC"
-        | "GLOBAL_NETWORK"
-    );
 
     if (!selectedMember && !bookingForOther && fullName.length < 2) {
       setError(i18n.enterFullName);
@@ -388,16 +378,8 @@ export function ConsultationBookingForm({
       setError(i18n.acceptConsent);
       return;
     }
-    if (!gdprConsentClinic) {
-      setError(i18n.acceptClinicConsent);
-      return;
-    }
-    if (!gdprConsentPlatform) {
-      setError(i18n.acceptPlatformConsent);
-      return;
-    }
-    if (!crossBorderConsentAccepted) {
-      setError(i18n.acceptCrossBorderConsent);
+    if (!gdprCombinedConsent) {
+      setError(i18n.acceptCombinedConsent);
       return;
     }
 
@@ -501,11 +483,15 @@ export function ConsultationBookingForm({
           addressCity: addressCity || undefined,
           addressPostalCode: addressPostalCode || undefined,
           addressCountryCode: addressCountryCode || undefined,
+          // Combined checkbox above maps to all three backend consent
+          // fields (payload names unchanged — backend validation requires
+          // them). Medical access scope is no longer user-selectable; the
+          // combined consent already covers network-wide access.
           gdprConsentClinic: true,
           gdprConsentPlatform: true,
           whatsappConsent,
           crossBorderConsentAccepted: true,
-          medicalAccessConsentScope,
+          medicalAccessConsentScope: "GLOBAL_NETWORK",
         },
       });
       if (!res.ok) {
@@ -1108,11 +1094,11 @@ export function ConsultationBookingForm({
       {/* 4. Consent — every required tick grouped in one place at the end of
         * the form (moved off the Patient Details card) so a patient scanning
         * top-to-bottom hits them all together instead of missing one buried
-        * earlier. Two independent required GDPR checkboxes per legal review:
-        * stored separately on Appointment so withdrawal of marketing consent
-        * (gdprConsentPlatform) doesn't invalidate the clinical record
-        * (gdprConsentClinic). Wording deliberately scopes each one's purpose
-        * to make withdrawal scope unambiguous. */}
+        * earlier. Clinic sharing + platform processing + cross-border access
+        * were 3 separate required GDPR boxes; simplified to a single combined
+        * checkbox per product request. It still maps to all three backend
+        * consent fields on submit (see gdprConsentClinic/gdprConsentPlatform/
+        * crossBorderConsentAccepted above) — only the UI collapsed. */}
       <div role="group" className="gh2-card-ivory p-5 sm:p-6">
         <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-brand-primary)]">
           {i18n.gdprConsent}
@@ -1130,25 +1116,13 @@ export function ConsultationBookingForm({
         <label className="mt-3 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
           <input
             type="checkbox"
-            name="gdprConsentClinic"
+            name="gdprCombinedConsent"
             required
             aria-required="true"
             className="mt-0.5 size-4 rounded border-[var(--color-border)]"
           />
           <span>
-            {i18n.gdprClinicConsent} {privacyPolicyLink}
-          </span>
-        </label>
-        <label className="mt-3 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
-          <input
-            type="checkbox"
-            name="gdprConsentPlatform"
-            required
-            aria-required="true"
-            className="mt-0.5 size-4 rounded border-[var(--color-border)]"
-          />
-          <span>
-            {i18n.gdprPlatformConsent} {privacyPolicyLink}
+            {i18n.gdprCombinedConsent} {privacyPolicyLink}
           </span>
         </label>
         {/* WhatsApp updates OPT-IN (GDPR affirmative consent — pre-ticked /
@@ -1162,53 +1136,6 @@ export function ConsultationBookingForm({
           />
           <span>{i18n.whatsappConsent}</span>
         </label>
-        {/* Cross-border medical file access — required, mirrors the two GDPR
-          * checkboxes above. Stored on Appointment.crossBorderConsentAccepted. */}
-        <label className="mt-3 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
-          <input
-            type="checkbox"
-            name="crossBorderConsent"
-            required
-            aria-required="true"
-            className="mt-0.5 size-4 rounded border-[var(--color-border)]"
-          />
-          <span>{i18n.crossBorderConsent}</span>
-        </label>
-        {/* Medical access scope — who may access the patient's file. Defaults
-          * to DIRECT (narrowest). Stored on Appointment.medicalAccessConsentScope. */}
-        <div role="radiogroup" aria-label={i18n.medicalAccessScopeHeading} className="mt-4">
-          <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-brand-primary)]">
-            {i18n.medicalAccessScopeHeading}
-          </p>
-          <label className="mt-1.5 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
-            <input
-              type="radio"
-              name="medicalAccessScope"
-              value="DIRECT"
-              defaultChecked
-              className="mt-0.5 size-4 border-[var(--color-border)]"
-            />
-            <span>{i18n.medicalAccessScopeDirect}</span>
-          </label>
-          <label className="mt-1.5 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
-            <input
-              type="radio"
-              name="medicalAccessScope"
-              value="COUNTRY_CLINIC"
-              className="mt-0.5 size-4 border-[var(--color-border)]"
-            />
-            <span>{i18n.medicalAccessScopeCountryClinic.replace("{country}", countryDisplayName)}</span>
-          </label>
-          <label className="mt-1.5 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
-            <input
-              type="radio"
-              name="medicalAccessScope"
-              value="GLOBAL_NETWORK"
-              className="mt-0.5 size-4 border-[var(--color-border)]"
-            />
-            <span>{i18n.medicalAccessScopeGlobalNetwork}</span>
-          </label>
-        </div>
       </div>
 
       {error ? (

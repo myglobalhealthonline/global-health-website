@@ -362,18 +362,10 @@ export type CommonLocale = {
     city: string;
     postalCode: string;
     gdprConsent: string;
-    gdprClinicConsent: string;
-    gdprPlatformConsent: string;
+    /** Combined consent: clinic/doctor sharing + platform processing + cross-border access. */
+    gdprCombinedConsent: string;
     privacyPolicyLinkLabel: string;
     whatsappConsent: string;
-    /** GDPR: cross-border medical file access acknowledgement, required. */
-    crossBorderConsent: string;
-    acceptCrossBorderConsent: string;
-    /** Medical access scope radio group (who may access the patient's file). */
-    medicalAccessScopeHeading: string;
-    medicalAccessScopeDirect: string;
-    medicalAccessScopeCountryClinic: string;
-    medicalAccessScopeGlobalNetwork: string;
     addingToCart: string;
     continueToCart: string;
     noOpenSlots: string;
@@ -385,8 +377,7 @@ export type CommonLocale = {
     enterFullName: string;
     enterValidEmail: string;
     acceptConsent: string;
-    acceptClinicConsent: string;
-    acceptPlatformConsent: string;
+    acceptCombinedConsent: string;
     /** Family-member targeting (§ appointment-claim, Premium family usage). */
     whoIsThisFor: string;
     forMe: string;
