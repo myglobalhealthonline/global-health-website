@@ -344,7 +344,8 @@ export type LegalDocumentType =
   | "DATA_PROCESSING_AGREEMENT"
   | "REFUND_POLICY"
   | "MEDICAL_DISCLAIMER"
-  | "ACCESSIBILITY_STATEMENT";
+  | "ACCESSIBILITY_STATEMENT"
+  | "COMPLAINTS_PROCEDURE";
 
 export type CountryLegalDocumentDto = {
   id: string;

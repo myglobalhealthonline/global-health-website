@@ -30,6 +30,7 @@ function legalTypeLabels(t: LegalT): Record<LegalDocumentType, string> {
     REFUND_POLICY: t.typeRefundPolicy,
     MEDICAL_DISCLAIMER: t.typeMedicalDisclaimer,
     ACCESSIBILITY_STATEMENT: t.typeAccessibilityStatement,
+    COMPLAINTS_PROCEDURE: t.typeComplaintsProcedure,
   };
 }
 
