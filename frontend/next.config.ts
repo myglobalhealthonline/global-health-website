@@ -126,6 +126,12 @@ const SECURITY_HEADERS = [
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // ponytail: default 60s static-page timeout was too tight under the
+  // 31-worker build concurrency (backend fetches are individually capped at
+  // PUBLIC_CONTENT_FETCH_TIMEOUT_MS=4s, but queuing under load can still
+  // blow past 60s for one page). Raise the ceiling; if a route is genuinely
+  // hanging (not just queued), check backend logs for that build window.
+  staticPageGenerationTimeout: 180,
   turbopack: {
     root: path.resolve(__dirname, ".."),
   },
