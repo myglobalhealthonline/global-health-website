@@ -414,7 +414,12 @@ export function RichTextHtmlField({
           }}
         />
       </div>
-      <input ref={hiddenRef} type="hidden" name={name} defaultValue={initialValue ?? ""} />
+      {/* No defaultValue: React re-syncs defaultValue on every re-render and a
+          hidden input's programmatically-set .value is not protected by the
+          dirty-value flag, so any parent re-render (e.g. a tab switch) would
+          silently revert unsaved edits to the initial value. The mount effect
+          populates it via syncToHidden. */}
+      <input ref={hiddenRef} type="hidden" name={name} />
       {helperText ? <span className="text-xs text-[var(--portal-muted)]">{helperText}</span> : null}
     </div>
   );
