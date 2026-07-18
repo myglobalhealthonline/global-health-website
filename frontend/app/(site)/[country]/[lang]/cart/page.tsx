@@ -26,7 +26,7 @@ export default async function CartPage({
   const { lang } = await params;
   const bundle = loadLocaleBundle((lang || "en") as LocaleCode);
   return (
-    <Suspense>
+    <Suspense fallback={<div className="mx-auto max-w-[var(--container-width)] min-h-[70vh] px-5 md:px-10" aria-busy="true" />}>
       <CartPageClient
         t={bundle.common.cartPage}
         coverageT={bundle.subscription.coverage}

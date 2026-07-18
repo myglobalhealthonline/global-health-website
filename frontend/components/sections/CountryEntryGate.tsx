@@ -14,7 +14,7 @@
  * default locale when it doesn't support the detected one).
  */
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { ArrowRight, ShieldCheck, Lock, Globe2, FileCheck2, Search } from "lucide-react";
 import type { CountryConfig } from "@/data/countries";
@@ -147,50 +147,53 @@ export function CountryEntryGate({ countries, detectedLocale, copy }: Props) {
   // only (>=1024px): below that the layout is single-column and the page scrolls
   // naturally, so scaling is left off. Only ever scales DOWN; floors at 0.72 to
   // keep text legible (below that the page scrolls the small remainder).
-  useEffect(() => {
+  useLayoutEffect(() => {
     const slot = panelSlotRef.current;
     const panel = panelRef.current;
     const grid = slot?.parentElement;
     if (!slot || !panel || !grid) return;
 
     let raf = 0;
-    const apply = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        if (window.innerWidth < 1024) {
-          // Single-column: let CSS flow govern (no scaling).
-          panel.style.removeProperty("--gate-fit");
-          slot.style.removeProperty("height");
-          return;
-        }
-        // offsetHeight is the UNSCALED layout height (ignores the transform),
-        // so measuring never feeds back into the scale it produces.
-        const natural = panel.offsetHeight;
-        if (!natural) return;
-        // Anchor on the grid top, not the panel's own (centered) top — the grid
-        // top is fixed by the header above it, so shrinking the panel can't move
-        // the reference and oscillate the result.
-        const top = grid.getBoundingClientRect().top;
-        // Subtract the footer's real height — it sits below the flex-1 body,
-        // so budget that ignores it over-scales the panel and reintroduces
-        // the page scrollbar this mechanism exists to prevent.
-        const footerH = footerRef.current?.offsetHeight ?? 0;
-        const avail = window.innerHeight - top - footerH - 24;
-        const fit = Math.max(0.72, Math.min(1, avail / natural));
-        panel.style.setProperty("--gate-fit", fit.toFixed(4));
-        // Reserve the scaled height so the footer/page flow beneath it.
-        slot.style.height = `${Math.round(natural * fit)}px`;
-      });
+    const measureAndApply = () => {
+      if (window.innerWidth < 1024) {
+        // Single-column: let CSS flow govern (no scaling).
+        panel.style.removeProperty("--gate-fit");
+        slot.style.removeProperty("height");
+        return;
+      }
+      // offsetHeight is the UNSCALED layout height (ignores the transform),
+      // so measuring never feeds back into the scale it produces.
+      const natural = panel.offsetHeight;
+      if (!natural) return;
+      // Anchor on the grid top, not the panel's own (centered) top — the grid
+      // top is fixed by the header above it, so shrinking the panel can't move
+      // the reference and oscillate the result.
+      const top = grid.getBoundingClientRect().top;
+      // Subtract the footer's real height — it sits below the flex-1 body,
+      // so budget that ignores it over-scales the panel and reintroduces
+      // the page scrollbar this mechanism exists to prevent.
+      const footerH = footerRef.current?.offsetHeight ?? 0;
+      const avail = window.innerHeight - top - footerH - 24;
+      const fit = Math.max(0.72, Math.min(1, avail / natural));
+      panel.style.setProperty("--gate-fit", fit.toFixed(4));
+      // Reserve the scaled height so the footer/page flow beneath it.
+      slot.style.height = `${Math.round(natural * fit)}px`;
     };
+    // Apply the first measurement synchronously (before paint) so the panel
+    // never flashes at scale(1) and then snaps down.
+    measureAndApply();
 
-    apply();
-    const ro = new ResizeObserver(apply);
+    const applyAsync = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(measureAndApply);
+    };
+    const ro = new ResizeObserver(applyAsync);
     ro.observe(panel);
-    window.addEventListener("resize", apply);
+    window.addEventListener("resize", applyAsync);
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
-      window.removeEventListener("resize", apply);
+      window.removeEventListener("resize", applyAsync);
     };
     // ResizeObserver on the panel catches list-length/content changes itself.
   }, []);

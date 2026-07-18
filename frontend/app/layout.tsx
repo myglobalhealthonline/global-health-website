@@ -37,6 +37,19 @@ export default function RootLayout({
       className="h-full antialiased"
       suppressHydrationWarning
     >
+      <head>
+        {/* Synchronous, must run before first paint: flags JS-enabled
+            visitors so .gh-reveal-pending (globals.css) can hide
+            entry-animation content pre-paint, avoiding the visible->hidden->
+            visible flash from RevealOnScroll/HeroReveal mounting after
+            content is already on screen. No-JS visitors never get this
+            class, so SSR content stays fully visible (SEO/no-JS safe). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "document.documentElement.classList.add('js')",
+          }}
+        />
+      </head>
       {/* No sitewide Doctify preconnect: the widget is intersection- and
           consent-gated (DoctifyReviewsLazy) and often never loads, so a
           global connection warm-up on every route is wasted setup that
