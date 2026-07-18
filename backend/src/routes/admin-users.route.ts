@@ -354,10 +354,30 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
           // and doctor read does findUnique({ where: { email } }). Moving the
           // User without moving the profile would strand the entire clinical
           // chart at the old address, so both move together or neither does.
+          const movedProfiles = await tx.patientProfile.findMany({
+            where: { email: before.email },
+            select: { id: true, globalHealthNumber: true },
+          });
           await tx.patientProfile.updateMany({
             where: { email: before.email },
             data: { email: nextEmail },
           });
+          // Task 1c: append-only contact-change log, same transaction as the
+          // move so the log can't exist without the change (or vice versa).
+          if (movedProfiles.length > 0) {
+            await tx.patientContactChangeLog.createMany({
+              data: movedProfiles.map((p) => ({
+                patientProfileId: p.id,
+                globalHealthNumber: p.globalHealthNumber ?? null,
+                changedById: sessionActor?.userId ?? null,
+                changedByRole: sessionActor?.role ?? "ADMIN",
+                fieldChanged: "EMAIL",
+                oldValue: before.email,
+                newValue: nextEmail,
+                ipAddress: request.ip ?? null,
+              })),
+            });
+          }
         }
         return tx.user.update({
           where: { id: params.data.id },

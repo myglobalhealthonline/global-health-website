@@ -8,6 +8,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
   applyPatientProfileUpdate,
   PricingPlanCountryMismatchError,
+  VerifiedPhoneLockedError,
   serializeProfile,
 } from "../modules/patient-profile/patient-profile.service.js";
 import {
@@ -144,16 +145,26 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
     }
     try {
       const { dateOfBirth, ...rest } = body.data;
-      const { profile } = await applyPatientProfileUpdate(request.authUser.email, {
-        ...rest,
-        ...(dateOfBirth !== undefined
-          ? { dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null }
-          : {}),
-      });
+      const { profile } = await applyPatientProfileUpdate(
+        request.authUser.email,
+        {
+          ...rest,
+          ...(dateOfBirth !== undefined
+            ? { dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null }
+            : {}),
+        },
+        {
+          actor: { userId: request.authUser.sub, role: "PATIENT" },
+          ipAddress: request.ip,
+        },
+      );
       return okResponse({
         profile: serializeProfile(profile, { includeAlerts: false }),
       });
     } catch (error) {
+      if (error instanceof VerifiedPhoneLockedError) {
+        return reply.status(403).send(errorResponse(error.message));
+      }
       if (error instanceof PricingPlanCountryMismatchError) {
         return reply.status(400).send(errorResponse(error.message));
       }

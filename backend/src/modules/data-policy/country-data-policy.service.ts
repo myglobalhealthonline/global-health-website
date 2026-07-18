@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { revokeTrustedDevices } from "../two-factor/login-otp.service.js";
+import { createSecurityAlert } from "../security-alerts/security-alert.service.js";
 
 // ─── PRIV-002 per-country retention hints ─────────────────────────────────────
 //
@@ -238,6 +239,78 @@ export async function updateDeletionRequest(params: {
   } catch (error) {
     throw normalizeDbError(error, "Could not update deletion request");
   }
+}
+
+// ─── Retention sweep (report-only, Task 1d) ────────────────────────────────────
+
+/**
+ * Daily job body: for every CountryDataPolicy, count clinical records
+ * (MedicalDocument) and financial/booking records (Appointment) older than
+ * that country's retentionYears. REPORT-ONLY — never deletes anything; a
+ * single admin-facing SecurityAlert summarizes counts per country when any
+ * are found, so this can only ever surface work for an admin, not do it.
+ *
+ * Scoped by PatientProfile.countryFolderCode (MedicalDocument) / Appointment
+ * .countryCode — same country-folder join used throughout admin-patient-
+ * profile.route.ts.
+ */
+export async function runRetentionSweepReport(): Promise<{
+  perCountry: { countryCode: string; retentionYears: number; medicalDocuments: number; appointments: number }[];
+  totalOverRetention: number;
+}> {
+  const policies = await prisma.countryDataPolicy.findMany({
+    where: { isActive: true },
+    select: { countryCode: true, retentionYears: true },
+  });
+
+  const perCountry: {
+    countryCode: string;
+    retentionYears: number;
+    medicalDocuments: number;
+    appointments: number;
+  }[] = [];
+  let totalOverRetention = 0;
+
+  for (const policy of policies) {
+    const cutoff = new Date();
+    cutoff.setFullYear(cutoff.getFullYear() - policy.retentionYears);
+
+    const [medicalDocuments, appointments] = await Promise.all([
+      prisma.medicalDocument.count({
+        where: {
+          createdAt: { lt: cutoff },
+          patientProfile: { countryFolderCode: { equals: policy.countryCode, mode: "insensitive" } },
+        },
+      }),
+      prisma.appointment.count({
+        where: {
+          createdAt: { lt: cutoff },
+          countryCode: { equals: policy.countryCode, mode: "insensitive" },
+        },
+      }),
+    ]);
+
+    if (medicalDocuments > 0 || appointments > 0) {
+      perCountry.push({ countryCode: policy.countryCode, retentionYears: policy.retentionYears, medicalDocuments, appointments });
+      totalOverRetention += medicalDocuments + appointments;
+    }
+  }
+
+  if (totalOverRetention > 0) {
+    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD — 24h dedupe window
+    const summary = perCountry
+      .map((c) => `${c.countryCode}: ${c.medicalDocuments} docs / ${c.appointments} appts over ${c.retentionYears}y`)
+      .join("; ");
+    await createSecurityAlert({
+      severity: "LOW",
+      alertType: "DATA_RETENTION_SWEEP",
+      description: `Report-only retention sweep found ${totalOverRetention} record(s) past their country's retention window: ${summary}`,
+      details: { perCountry },
+      dedupeKey: `data_retention_sweep:${today}`,
+    });
+  }
+
+  return { perCountry, totalOverRetention };
 }
 
 // ─── Anonymization ────────────────────────────────────────────────────────────
