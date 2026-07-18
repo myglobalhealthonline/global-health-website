@@ -480,17 +480,46 @@ img {
   gap: var(--space-stack);
   grid-template-columns: 1fr;
 }
-@media (min-width: 640px) {
-  .gh-card-grid { grid-template-columns: repeat(2, 1fr); }
+/* 12-track grid so orphaned last rows can be re-balanced without changing
+ * card widths: 2-up = span 6, 3-up = span 4. A lone leftover card is
+ * centered at its normal width; a leftover pair at 3-up widens to halves.
+ * Content is never hidden — only the last row's placement changes. */
+@media (min-width: 640px) and (max-width: 1023.98px) {
+  .gh-card-grid { grid-template-columns: repeat(12, 1fr); }
+  .gh-card-grid > * { grid-column: span 6; }
+  /* odd count → lone last card, center it */
+  .gh-card-grid:not(.gh-card-grid--featured) > :last-child:nth-child(odd) {
+    grid-column: 4 / span 6;
+  }
+  /* featured tile goes full-width at 2-up so the remaining cards pair up */
+  .gh-card-grid--featured > :first-child { grid-column: span 12; }
+  /* after a full-width first tile, even total → lone last card */
+  .gh-card-grid--featured > :last-child:nth-child(even) {
+    grid-column: 4 / span 6;
+  }
 }
 @media (min-width: 1024px) {
-  .gh-card-grid { grid-template-columns: repeat(3, 1fr); }
-}
-/* Featured-first: wide card spans 2 columns, same row height as siblings.
- * Horizontal layout inside the tile makes up for not spanning 2 rows. */
-@media (min-width: 1024px) {
-  .gh-card-grid--featured > :first-child {
-    grid-column: span 2;
+  .gh-card-grid { grid-template-columns: repeat(12, 1fr); }
+  .gh-card-grid > * { grid-column: span 4; }
+  /* count % 3 == 2 → leftover pair widens to halves */
+  .gh-card-grid:not(.gh-card-grid--featured) > :nth-last-child(2):nth-child(3n + 1),
+  .gh-card-grid:not(.gh-card-grid--featured) > :last-child:nth-child(3n + 2) {
+    grid-column: span 6;
+  }
+  /* count % 3 == 1 → lone last card, center it */
+  .gh-card-grid:not(.gh-card-grid--featured) > :last-child:nth-child(3n + 1) {
+    grid-column: 5 / span 4;
+  }
+  /* Featured-first: wide card spans 2 of 3 columns, same row height as
+   * siblings. Horizontal layout inside the tile makes up for not
+   * spanning 2 rows. Leftover math shifts by the 2-col tile. */
+  .gh-card-grid--featured > :first-child { grid-column: span 8; }
+  .gh-card-grid--featured > :nth-last-child(2):nth-child(3n),
+  .gh-card-grid--featured > :last-child:nth-child(3n + 1):not(:first-child) {
+    grid-column: span 6;
+  }
+  .gh-card-grid--featured > :last-child:nth-child(3n):not(:first-child) {
+    grid-column: 5 / span 4;
   }
 }
 

@@ -118,7 +118,7 @@ export function DoctorsSection({
   ) : null;
 
   const grid = (
-    <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="gh-card-grid" style={{ columnGap: "2rem", rowGap: "2.5rem" }}>
       {paged.map((doctor) => (
         <DoctorCard key={doctor.href ?? `${doctor.name}-${doctor.title}`} {...doctor} dark={isCardDark} />
       ))}
