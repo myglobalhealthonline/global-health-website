@@ -69,7 +69,7 @@ export function TrustRibbon({ items, theme = "light" }: { items?: TrustRibbonIte
             const Icon = ICONS[it.icon ?? inferIcon(it.l)];
             return (
               <div
-                key={`${it.v}-${it.l}`}
+                key={`${i}-${it.v}-${it.l}`}
                 className={
                   isLight
                     ? // Light section → forest-glass tile matching the navbar chrome color.
