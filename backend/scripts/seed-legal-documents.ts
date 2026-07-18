@@ -35,14 +35,57 @@ const CONTENT_DIR = path.join(__dirname, "content", "legal");
 
 const UPLOAD_PDFS = process.argv.includes("--upload-pdfs");
 
-function readHtml(filename: string): string {
-  return readFileSync(path.join(CONTENT_DIR, filename), "utf8").trim();
+const ALL_LOCALES = ["en", "pt", "es", "cs", "ro", "de"] as const;
+type Locale = (typeof ALL_LOCALES)[number];
+
+const localesArg = process.argv.find((a) => a.startsWith("--locales="));
+const LOCALES: Locale[] = localesArg
+  ? (localesArg.slice("--locales=".length).split(",").filter(Boolean) as Locale[])
+  : [...ALL_LOCALES];
+
+function readHtml(dir: string, filename: string): string {
+  return readFileSync(path.join(dir, filename), "utf8").trim();
 }
 
-const MASTER_TC = readHtml("GlobalHealth_Master_TC_final.html");
-const PRIVACY_POLICY = readHtml("GlobalHealth_Privacy_Policy_final.html");
-const REFUND_POLICY = readHtml("GlobalHealth_Refund_Policy_final.html");
-const COMPLAINTS_PROCEDURE = readHtml("GlobalHealth_Complaints_Procedure_final.html");
+const TITLES: Record<Locale, Record<LegalDocumentType, string>> = {
+  en: {
+    ...({} as Record<LegalDocumentType, string>),
+    TERMS_OF_SERVICE: "Terms and Conditions",
+    PRIVACY_POLICY: "Privacy Policy",
+    REFUND_POLICY: "Refund Policy",
+    COMPLAINTS_PROCEDURE: "Complaints Procedure",
+  } as Record<LegalDocumentType, string>,
+  pt: {
+    TERMS_OF_SERVICE: "Termos e Condições",
+    PRIVACY_POLICY: "Política de Privacidade",
+    REFUND_POLICY: "Política de Reembolso",
+    COMPLAINTS_PROCEDURE: "Procedimento de Reclamações",
+  } as Record<LegalDocumentType, string>,
+  es: {
+    TERMS_OF_SERVICE: "Términos y Condiciones",
+    PRIVACY_POLICY: "Política de Privacidad",
+    REFUND_POLICY: "Política de Reembolso",
+    COMPLAINTS_PROCEDURE: "Procedimiento de Reclamaciones",
+  } as Record<LegalDocumentType, string>,
+  cs: {
+    TERMS_OF_SERVICE: "Obchodní podmínky",
+    PRIVACY_POLICY: "Zásady ochrany osobních údajů",
+    REFUND_POLICY: "Zásady vracení peněz",
+    COMPLAINTS_PROCEDURE: "Postup při stížnostech",
+  } as Record<LegalDocumentType, string>,
+  ro: {
+    TERMS_OF_SERVICE: "Termeni și Condiții",
+    PRIVACY_POLICY: "Politica de Confidențialitate",
+    REFUND_POLICY: "Politica de Rambursare",
+    COMPLAINTS_PROCEDURE: "Procedura de Reclamații",
+  } as Record<LegalDocumentType, string>,
+  de: {
+    TERMS_OF_SERVICE: "Allgemeine Geschäftsbedingungen",
+    PRIVACY_POLICY: "Datenschutzerklärung",
+    REFUND_POLICY: "Erstattungsrichtlinie",
+    COMPLAINTS_PROCEDURE: "Beschwerdeverfahren",
+  } as Record<LegalDocumentType, string>,
+};
 
 const ADDENDUM_FILE: Record<string, string> = {
   ie: "GlobalHealth_Ireland_Addendum_final.html",
@@ -70,20 +113,49 @@ const COUNTRIES = ["ie", "cz", "pt", "es", "ro", "br"] as const;
 
 type DocSeed = { type: LegalDocumentType; title: string; content: string };
 
-function docsFor(countryCode: string): DocSeed[] {
-  const addendum = readHtml(ADDENDUM_FILE[countryCode]);
+function localeDirFor(locale: Locale): string {
+  return locale === "en" ? CONTENT_DIR : path.join(CONTENT_DIR, locale);
+}
+
+/** Loads the 4 locale-wide files (everything except the per-country addendum) once. Throws if any is missing. */
+function loadLocaleCommon(locale: Locale) {
+  const dir = localeDirFor(locale);
+  return {
+    masterTc: readHtml(dir, "GlobalHealth_Master_TC_final.html"),
+    privacyPolicy: readHtml(dir, "GlobalHealth_Privacy_Policy_final.html"),
+    refundPolicy: readHtml(dir, "GlobalHealth_Refund_Policy_final.html"),
+    complaintsProcedure: readHtml(dir, "GlobalHealth_Complaints_Procedure_final.html"),
+  };
+}
+
+/** Returns null (and logs a warn) if the country's addendum file for this locale is missing. */
+function docsFor(
+  countryCode: string,
+  locale: Locale,
+  common: ReturnType<typeof loadLocaleCommon>,
+): DocSeed[] | null {
+  const titles = TITLES[locale];
+  let addendum: string;
+  try {
+    addendum = readHtml(localeDirFor(locale), ADDENDUM_FILE[countryCode]);
+  } catch (error) {
+    console.warn(
+      `[legal-doc] skip ${countryCode}/${locale}: addendum missing (${(error as Error).message})`,
+    );
+    return null;
+  }
   return [
     {
       type: LegalDocumentType.TERMS_OF_SERVICE,
-      title: "Terms and Conditions",
-      content: `${MASTER_TC}\n<hr />\n${addendum}`,
+      title: titles.TERMS_OF_SERVICE,
+      content: `${common.masterTc}\n<hr />\n${addendum}`,
     },
-    { type: LegalDocumentType.PRIVACY_POLICY, title: "Privacy Policy", content: PRIVACY_POLICY },
-    { type: LegalDocumentType.REFUND_POLICY, title: "Refund Policy", content: REFUND_POLICY },
+    { type: LegalDocumentType.PRIVACY_POLICY, title: titles.PRIVACY_POLICY, content: common.privacyPolicy },
+    { type: LegalDocumentType.REFUND_POLICY, title: titles.REFUND_POLICY, content: common.refundPolicy },
     {
       type: LegalDocumentType.COMPLAINTS_PROCEDURE,
-      title: "Complaints Procedure",
-      content: COMPLAINTS_PROCEDURE,
+      title: titles.COMPLAINTS_PROCEDURE,
+      content: common.complaintsProcedure,
     },
   ];
 }
@@ -113,54 +185,67 @@ async function addComplaintsProcedureEnumValue(): Promise<void> {
 async function main(): Promise<void> {
   await addComplaintsProcedureEnumValue();
 
-  for (const code of COUNTRIES) {
-    const country = await prisma.country.findFirst({
-      where: { code: { equals: code, mode: "insensitive" } },
-      select: { id: true },
-    });
-    if (!country) {
-      console.warn(`[legal-doc] skip ${code}: country not found`);
+  for (const locale of LOCALES) {
+    let common: ReturnType<typeof loadLocaleCommon>;
+    try {
+      common = loadLocaleCommon(locale);
+    } catch (error) {
+      console.warn(`[legal-doc] skip locale ${locale}: ${(error as Error).message}`);
       continue;
     }
 
-    for (const doc of docsFor(code)) {
-      const slug = `${code}-${doc.type.toLowerCase().replace(/_/g, "-")}`;
-      const pdfPath = await uploadPdf(doc.type, slug);
-
-      const existing = await prisma.countryLegalDocument.findUnique({
-        where: {
-          countryId_type_locale: { countryId: country.id, type: doc.type, locale: "en" },
-        },
+    for (const code of COUNTRIES) {
+      const country = await prisma.country.findFirst({
+        where: { code: { equals: code, mode: "insensitive" } },
         select: { id: true },
       });
+      if (!country) {
+        console.warn(`[legal-doc] skip ${code}/${locale}: country not found`);
+        continue;
+      }
 
-      if (existing) {
-        await prisma.countryLegalDocument.update({
-          where: { id: existing.id },
-          data: {
-            title: doc.title,
-            content: doc.content,
-            isPublished: true,
-            publishedAt: new Date(),
-            version: { increment: 1 },
-            ...(pdfPath ? { pdfPath } : {}),
+      const docs = docsFor(code, locale, common);
+      if (!docs) continue;
+
+      for (const doc of docs) {
+        const slug = `${code}-${doc.type.toLowerCase().replace(/_/g, "-")}`;
+        const pdfPath = locale === "en" ? await uploadPdf(doc.type, slug) : null;
+
+        const existing = await prisma.countryLegalDocument.findUnique({
+          where: {
+            countryId_type_locale: { countryId: country.id, type: doc.type, locale },
           },
+          select: { id: true },
         });
-        console.log(`[legal-doc] updated ${code}/${doc.type}`);
-      } else {
-        await prisma.countryLegalDocument.create({
-          data: {
-            countryId: country.id,
-            type: doc.type,
-            locale: "en",
-            title: doc.title,
-            content: doc.content,
-            isPublished: true,
-            publishedAt: new Date(),
-            ...(pdfPath ? { pdfPath } : {}),
-          },
-        });
-        console.log(`[legal-doc] created ${code}/${doc.type}`);
+
+        if (existing) {
+          await prisma.countryLegalDocument.update({
+            where: { id: existing.id },
+            data: {
+              title: doc.title,
+              content: doc.content,
+              isPublished: true,
+              publishedAt: new Date(),
+              version: { increment: 1 },
+              ...(pdfPath ? { pdfPath } : {}),
+            },
+          });
+          console.log(`[legal-doc] updated ${code}/${locale}/${doc.type}`);
+        } else {
+          await prisma.countryLegalDocument.create({
+            data: {
+              countryId: country.id,
+              type: doc.type,
+              locale,
+              title: doc.title,
+              content: doc.content,
+              isPublished: true,
+              publishedAt: new Date(),
+              ...(pdfPath ? { pdfPath } : {}),
+            },
+          });
+          console.log(`[legal-doc] created ${code}/${locale}/${doc.type}`);
+        }
       }
     }
   }
