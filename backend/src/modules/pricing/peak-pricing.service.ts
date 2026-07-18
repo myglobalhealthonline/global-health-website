@@ -19,7 +19,12 @@ import { utcToClinicMinuteOfDay } from "../doctor-availability/timezone.js";
 
 export type PricingType = "STANDARD" | "PEAK" | "OFF_PEAK";
 
-export type PeakWindow = { startMinute: number; endMinute: number };
+export type PeakWindow = {
+  startMinute: number;
+  endMinute: number;
+  /** Optional per-window price; null/absent → the config's peakPriceCents. */
+  priceCents?: number | null;
+};
 
 /** Stored config plus its windows — what the pricing logic reads. */
 export type PeakPricingConfig = ServicePeakPricing & {
@@ -50,6 +55,17 @@ export function isPeakMinute(minuteOfDay: number, windows: PeakWindow[]): boolea
   return windows.some((w) => minuteOfDay >= w.startMinute && minuteOfDay < w.endMinute);
 }
 
+/** First window (by stored order) containing the minute, or null. */
+export function findPeakWindow<T extends PeakWindow>(
+  minuteOfDay: number,
+  windows: T[],
+): T | null {
+  return (
+    windows.find((w) => minuteOfDay >= w.startMinute && minuteOfDay < w.endMinute) ??
+    null
+  );
+}
+
 /**
  * Decide a slot's price. Pure: no I/O, fully unit-testable.
  *
@@ -70,11 +86,15 @@ export function computeSlotPrice(args: ComputeSlotPriceArgs): SlotPrice {
   }
 
   const minuteOfDay = utcToClinicMinuteOfDay(slotStartUtc, clinicTimezone);
-  const isPeak = isPeakMinute(minuteOfDay, config.windows);
+  const window = findPeakWindow(minuteOfDay, config.windows);
 
   return {
-    unitPriceCents: isPeak ? config.peakPriceCents : config.offPeakPriceCents,
-    pricingType: isPeak ? "PEAK" : "OFF_PEAK",
+    // A window may carry its own price (lunch promo / evening surcharge);
+    // otherwise the config's shared peak price applies.
+    unitPriceCents: window
+      ? (window.priceCents ?? config.peakPriceCents)
+      : config.offPeakPriceCents,
+    pricingType: window ? "PEAK" : "OFF_PEAK",
     currencyCode: config.currencyCode,
   };
 }
@@ -126,6 +146,7 @@ export async function upsertServicePeakConfig(
             pricingId: row.id,
             startMinute: w.startMinute,
             endMinute: w.endMinute,
+            priceCents: w.priceCents ?? null,
             sortOrder: i,
           })),
         });

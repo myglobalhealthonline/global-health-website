@@ -251,8 +251,9 @@ export type AdminPeakPricingDto = {
   peakPriceCents: number;
   offPeakPriceCents: number;
   currencyCode: string;
-  /** One or more peak windows (clinic-local minute-of-day). */
-  windows: Array<{ startMinute: number; endMinute: number }>;
+  /** One or more peak windows (clinic-local minute-of-day). A window may
+   *  carry its own price; null → the shared peakPriceCents. */
+  windows: Array<{ startMinute: number; endMinute: number; priceCents: number | null }>;
 };
 
 export async function fetchAdminServicePeakPricing(id: string) {
