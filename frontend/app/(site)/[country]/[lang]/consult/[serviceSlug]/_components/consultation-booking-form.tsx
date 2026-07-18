@@ -144,6 +144,18 @@ export function ConsultationBookingForm({
     : tz;
 
   const nationalIdLabel = idLabelForCountrySlug(params?.country);
+  const privacyPolicyHref = `/${params?.country ?? ""}/${params?.lang ?? ""}/legal/privacy-policy`;
+  const privacyPolicyLink = (
+    <Link
+      href={privacyPolicyHref}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="font-medium text-[var(--color-brand-primary)] underline underline-offset-2"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {i18n.privacyPolicyLinkLabel}
+    </Link>
+  );
   // Slot is fixed on the details step — chosen on the previous (time) step and
   // carried in the URL. Resolve it for the summary; never re-pick here. When
   // an `initialSlotId` was supplied but isn't in `slots` (someone else took
@@ -1106,7 +1118,9 @@ export function ConsultationBookingForm({
             aria-required="true"
             className="mt-0.5 size-4 rounded border-[var(--color-border)]"
           />
-          <span>{i18n.gdprClinicConsent}</span>
+          <span>
+            {i18n.gdprClinicConsent} {privacyPolicyLink}
+          </span>
         </label>
         <label className="mt-3 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
           <input
@@ -1116,7 +1130,9 @@ export function ConsultationBookingForm({
             aria-required="true"
             className="mt-0.5 size-4 rounded border-[var(--color-border)]"
           />
-          <span>{i18n.gdprPlatformConsent}</span>
+          <span>
+            {i18n.gdprPlatformConsent} {privacyPolicyLink}
+          </span>
         </label>
         {/* WhatsApp updates OPT-IN (GDPR affirmative consent — pre-ticked /
           * opt-out boxes are invalid per Art. 4(11) + CJEU Planet49).
