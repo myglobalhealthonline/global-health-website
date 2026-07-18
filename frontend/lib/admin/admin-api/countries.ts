@@ -58,6 +58,10 @@ export type AdminCountryDto = {
    *  the admin nav (`country-home`, `services`, `health-tests`, …). When
    *  absent (older row), treat as "all enabled" for backward-compat. */
   enabledFeatures?: string[];
+  /** Access model controlling which doctors can access patient files in
+   *  this country. CLINIC = same-country doctors with patient consent may
+   *  access; PLATFORM = only the treating doctor. */
+  accessModel: "CLINIC" | "PLATFORM";
   createdAt: string;
   updatedAt: string;
   currency: AdminCurrencyDto;

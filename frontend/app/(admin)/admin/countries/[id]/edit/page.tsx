@@ -109,6 +109,7 @@ export default async function AdminEditCountryPage({
       supportedLocales,
       currencyId: String(formData.get("currencyId") ?? "").trim(),
       isActive: formData.get("isActive") === "on",
+      accessModel: String(formData.get("accessModel") ?? "PLATFORM").trim(),
       ...(domainsPayload !== undefined ? { domains: domainsPayload } : {}),
       ...(bookingSettingPayload !== undefined ? { bookingSetting: bookingSettingPayload } : {}),
     };

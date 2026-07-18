@@ -30,7 +30,8 @@ const fixtures: {
   patientProfiles: Record<string, { userId: string }>;
   consents: FakeConsent[];
   appointments: FakeAppointment[];
-} = { patientProfiles: {}, consents: [], appointments: [] };
+  countryAccessModels: Record<string, string>;
+} = { patientProfiles: {}, consents: [], appointments: [], countryAccessModels: {} };
 
 // SEC-008: toggled per-test to simulate an audit-store outage (MedicalAccessLog
 // write throwing). Default false so every existing test writes audit rows fine.
@@ -93,7 +94,12 @@ before(async () => {
             return {};
           },
         },
-        country: { findFirst: async () => null },
+        country: {
+          findFirst: async ({ where }: { where: { code: string } }) => {
+            const accessModel = fixtures.countryAccessModels[where.code];
+            return accessModel ? { accessModel } : null;
+          },
+        },
       },
     },
   });
@@ -201,6 +207,81 @@ describe("medical access guard — route authorization decision", () => {
         twoFactorVerifiedAt: new Date(),
       },
       resource: { ...resource, patientProfileId, patientCountryFolder: null },
+    });
+    assert.equal(result.allowed, false);
+    assert.equal(result.denyReason, "DOCTOR_NO_VALID_ACCESS_PATH");
+  });
+
+  it("allows a DOCTOR via country-clinic consent when doctor country matches patient folder and country accessModel is CLINIC", async () => {
+    const patientProfileId = "patient-profile-clinic-allow";
+    fixtures.patientProfiles[patientProfileId] = { userId: "user-clinic-allow" };
+    fixtures.consents.push({
+      patientProfileId,
+      consentType: "MEDICAL_ACCESS_COUNTRY_CLINIC",
+      consentValue: true,
+      createdAt: new Date(),
+    });
+    fixtures.countryAccessModels["PT"] = "CLINIC";
+
+    const result = await assertMedicalAccess({
+      actor: {
+        userId: "doctor-clinic-1",
+        role: "DOCTOR",
+        name: "Dr Clinic",
+        doctorId: "doc-clinic-1",
+        confidentialityAgreementAccepted: true,
+        twoFactorVerifiedAt: new Date(),
+        countryCode: "PT",
+      },
+      resource: { ...resource, patientProfileId, patientCountryFolder: "PT" },
+    });
+    assert.equal(result.allowed, true);
+    assert.equal(result.consentLevelUsed, "COUNTRY_CLINIC");
+  });
+
+  it("denies a DOCTOR with country-clinic consent when the country accessModel is PLATFORM", async () => {
+    const patientProfileId = "patient-profile-clinic-platform";
+    fixtures.patientProfiles[patientProfileId] = { userId: "user-clinic-platform" };
+    fixtures.consents.push({
+      patientProfileId,
+      consentType: "MEDICAL_ACCESS_COUNTRY_CLINIC",
+      consentValue: true,
+      createdAt: new Date(),
+    });
+    fixtures.countryAccessModels["ES"] = "PLATFORM";
+
+    const result = await assertMedicalAccess({
+      actor: {
+        userId: "doctor-clinic-2",
+        role: "DOCTOR",
+        name: "Dr Platform",
+        doctorId: "doc-clinic-2",
+        confidentialityAgreementAccepted: true,
+        twoFactorVerifiedAt: new Date(),
+        countryCode: "ES",
+      },
+      resource: { ...resource, patientProfileId, patientCountryFolder: "ES" },
+    });
+    assert.equal(result.allowed, false);
+    assert.equal(result.denyReason, "DOCTOR_NO_VALID_ACCESS_PATH");
+  });
+
+  it("denies a DOCTOR in a CLINIC country when the patient has no country-clinic consent", async () => {
+    const patientProfileId = "patient-profile-clinic-no-consent";
+    fixtures.patientProfiles[patientProfileId] = { userId: "user-clinic-no-consent" };
+    fixtures.countryAccessModels["CZ"] = "CLINIC";
+
+    const result = await assertMedicalAccess({
+      actor: {
+        userId: "doctor-clinic-3",
+        role: "DOCTOR",
+        name: "Dr NoConsent",
+        doctorId: "doc-clinic-3",
+        confidentialityAgreementAccepted: true,
+        twoFactorVerifiedAt: new Date(),
+        countryCode: "CZ",
+      },
+      resource: { ...resource, patientProfileId, patientCountryFolder: "CZ" },
     });
     assert.equal(result.allowed, false);
     assert.equal(result.denyReason, "DOCTOR_NO_VALID_ACCESS_PATH");

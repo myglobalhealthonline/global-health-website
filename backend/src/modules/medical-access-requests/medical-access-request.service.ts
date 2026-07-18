@@ -1,10 +1,25 @@
+import { createHash, randomBytes } from "node:crypto";
 import { prisma } from "../../db/prisma.js";
+import { env } from "../../config/env.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { recordCriticalAudit } from "../audit/audit.service.js";
+import { sendMedicalAccessRequestEmail } from "../../lib/email/templates.js";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const ACCESS_GRANT_DAYS = 30;
+// Same pattern as PatientUploadLink / patient-upload-link.service.ts: hash-only
+// storage, revocable, short TTL — no login required for the patient to act.
+const TOKEN_TTL_MS = 14 * 24 * 60 * 60 * 1000;
+
+function hashAccessRequestToken(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
+}
+
+export function buildAccessRequestUrl(token: string): string {
+  const base = (env.PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+  return `${base}/access-request?token=${encodeURIComponent(token)}`;
+}
 
 // ─── Public API ───────────────────────────────────────────────────────────────
 
@@ -59,10 +74,142 @@ export async function createAccessRequest(params: {
       );
     }
 
+    // Mint the patient's approve/deny email token + send the notification.
+    // Non-fatal: the request row above already committed, so a token/email
+    // failure must not fail request creation (matches the audit-write
+    // pattern above — no false 500 that would prompt a duplicate request).
+    try {
+      const [patient, doctor] = await Promise.all([
+        prisma.patientProfile.findUnique({
+          where: { id: params.patientProfileId },
+          select: { email: true, fullName: true },
+        }),
+        prisma.doctor.findUnique({
+          where: { id: params.requestingDoctorId },
+          select: { fullName: true },
+        }),
+      ]);
+
+      if (patient?.email) {
+        const token = randomBytes(32).toString("base64url");
+        const tokenExpiresAt = new Date(Date.now() + TOKEN_TTL_MS);
+        await prisma.medicalAccessRequest.update({
+          where: { id: record.id },
+          data: { tokenHash: hashAccessRequestToken(token), tokenExpiresAt },
+        });
+
+        await sendMedicalAccessRequestEmail({
+          to: patient.email,
+          patientName: patient.fullName ?? patient.email,
+          doctorName: doctor?.fullName ?? "A doctor",
+          doctorCountry: params.requestingDoctorCountry,
+          reason: params.reason,
+          link: buildAccessRequestUrl(token),
+        });
+      }
+    } catch (notifyError) {
+      console.warn(
+        "[medical-access-request] token mint / email send failed",
+        { requestId: record.id, err: notifyError instanceof Error ? notifyError.message : notifyError },
+      );
+    }
+
     return { requestId: record.id, status: "PENDING" };
   } catch (error) {
     throw normalizeDbError(error, "Could not create access request");
   }
+}
+
+/**
+ * Verify a patient-facing access-request token (no login). Returns a safe
+ * summary only — no PHI beyond what the doctor already sees on their side.
+ */
+export async function verifyAccessRequestToken(
+  token: string,
+): Promise<
+  | {
+      ok: true;
+      requestId: string;
+      doctorName: string;
+      doctorCountry: string;
+      requestedAccessScope: string;
+      reason: string;
+      createdAt: Date;
+    }
+  | { ok: false; message: string }
+> {
+  try {
+    const tokenHash = hashAccessRequestToken(token);
+    const request = await prisma.medicalAccessRequest.findUnique({
+      where: { tokenHash },
+      select: {
+        id: true,
+        status: true,
+        tokenExpiresAt: true,
+        requestingDoctorCountry: true,
+        requestedAccessScope: true,
+        reason: true,
+        createdAt: true,
+        requestingDoctorId: true,
+      },
+    });
+    if (!request) return { ok: false, message: "Invalid access request link" };
+    if (!request.tokenExpiresAt || request.tokenExpiresAt.getTime() < Date.now()) {
+      return { ok: false, message: "This link has expired" };
+    }
+    if (request.status !== "PENDING") {
+      return { ok: false, message: "This request has already been responded to" };
+    }
+
+    const doctor = request.requestingDoctorId
+      ? await prisma.doctor.findUnique({
+          where: { id: request.requestingDoctorId },
+          select: { fullName: true },
+        })
+      : null;
+
+    return {
+      ok: true,
+      requestId: request.id,
+      doctorName: doctor?.fullName ?? "A doctor",
+      doctorCountry: request.requestingDoctorCountry ?? "unknown",
+      requestedAccessScope: request.requestedAccessScope,
+      reason: request.reason,
+      createdAt: request.createdAt,
+    };
+  } catch {
+    return { ok: false, message: "Invalid access request link" };
+  }
+}
+
+/**
+ * Patient approves or denies a request via the emailed token link. Verifies
+ * the token again (defense in depth against a route-layer bug), then
+ * delegates to the same `respondToAccessRequest` the in-platform (logged-in)
+ * leg uses, and invalidates the token so the link can't be replayed.
+ */
+export async function respondToAccessRequestByToken(params: {
+  token: string;
+  approved: boolean;
+  patientResponseIp?: string;
+}): Promise<{ ok: true } | { ok: false; message: string }> {
+  const verified = await verifyAccessRequestToken(params.token);
+  if (!verified.ok) return verified;
+
+  await respondToAccessRequest({
+    requestId: verified.requestId,
+    approved: params.approved,
+    patientResponseIp: params.patientResponseIp,
+  });
+
+  // Invalidate after use — a replayed/forwarded link must not work twice.
+  // Best-effort: respondToAccessRequest already committed the decision, so a
+  // failure here must not surface as an error to the patient.
+  await prisma.medicalAccessRequest
+    .update({ where: { id: verified.requestId }, data: { tokenHash: null, tokenExpiresAt: null } })
+    .catch(() => {});
+
+  return { ok: true };
 }
 
 /**
@@ -108,12 +255,18 @@ export async function respondToAccessRequest(params: {
     });
 
     if (params.approved) {
+      if (!request.requestingUserId) {
+        // A grant without a grantee would silently match no doctor — fail loud.
+        throw new Error(
+          `Access request ${params.requestId} has no requestingUserId; cannot create grant`,
+        );
+      }
       const expiresAt = new Date(Date.now() + ACCESS_GRANT_DAYS * 24 * 60 * 60 * 1000);
       await prisma.medicalAccessGrant.create({
         data: {
           accessRequestId: params.requestId,
           patientProfileId: request.patientProfileId,
-          grantedToUserId: request.requestingUserId ?? "",
+          grantedToUserId: request.requestingUserId,
           grantedToRole: "DOCTOR",
           scope: request.requestedAccessScope,
           expiresAt,

@@ -81,6 +81,23 @@ export function submitReviewForm(
   );
 }
 
+export function fetchMedicalAccessRequest(token: string) {
+  return publicFetch<{
+    doctorName: string;
+    doctorCountry: string;
+    requestedAccessScope: string;
+    reason: string;
+    createdAt: string;
+  }>(`/api/public/medical-access-request?token=${encodeURIComponent(token)}`);
+}
+
+export function respondToMedicalAccessRequest(token: string, decision: "APPROVE" | "DENY") {
+  return publicFetch<{ responded: boolean }>("/api/public/medical-access-request", {
+    method: "POST",
+    body: JSON.stringify({ token, decision }),
+  });
+}
+
 export function fetchPatientUploadInfo(token: string) {
   return publicFetch<{ email: string; fullName: string | null }>(
     `/api/public/patient-upload?token=${encodeURIComponent(token)}`,
