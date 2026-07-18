@@ -172,7 +172,9 @@ export function PeakPricingCard({
               type="text"
               inputMode="decimal"
               name="peakPrice"
-              placeholder="49.00"
+              placeholder="0.00"
+              pattern="^\d+(\.\d{1,2})?$"
+              title="Enter a valid amount like 49 or 49.00"
               defaultValue={config ? (config.peakPriceCents / 100).toFixed(2) : ""}
               className={inputClass}
             />
@@ -186,7 +188,9 @@ export function PeakPricingCard({
               type="text"
               inputMode="decimal"
               name="offPeakPrice"
-              placeholder="39.00"
+              placeholder="0.00"
+              pattern="^\d+(\.\d{1,2})?$"
+              title="Enter a valid amount like 49 or 49.00"
               defaultValue={config ? (config.offPeakPriceCents / 100).toFixed(2) : ""}
               className={inputClass}
             />

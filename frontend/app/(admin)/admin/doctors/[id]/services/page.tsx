@@ -313,6 +313,8 @@ export default async function AdminDoctorServicesPage({
                   name="doctorAmount"
                   defaultValue={formatServicePriceInput(row.doctorAmountCents)}
                   placeholder="Not set"
+                  pattern="^\d+(\.\d{1,2})?$"
+                  title="Enter a valid amount like 30 or 30.00"
                   aria-label={`Payout to this doctor for ${row.service.name}`}
                   className="gh-input w-32 font-mono"
                 />

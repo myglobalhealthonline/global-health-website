@@ -478,7 +478,9 @@ export default async function AdminEditServicePage({
                   ? (service.basePriceCents / 100).toFixed(2)
                   : ""
               }
-              placeholder="45.00"
+              placeholder="0.00"
+              pattern="^\d+(\.\d{1,2})?$"
+              title="Enter a valid amount like 45 or 45.00"
               className="gh-input h-9 w-24 min-w-0"
             />
             <input
