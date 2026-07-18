@@ -21,7 +21,8 @@ export type LegalDocumentType =
   | "DATA_PROCESSING_AGREEMENT"
   | "REFUND_POLICY"
   | "MEDICAL_DISCLAIMER"
-  | "ACCESSIBILITY_STATEMENT";
+  | "ACCESSIBILITY_STATEMENT"
+  | "COMPLAINTS_PROCEDURE";
 
 export const LEGAL_TYPE_SLUGS: Record<LegalDocumentType, string> = {
   TERMS_OF_SERVICE: "terms-of-service",
@@ -32,6 +33,7 @@ export const LEGAL_TYPE_SLUGS: Record<LegalDocumentType, string> = {
   REFUND_POLICY: "refund-policy",
   MEDICAL_DISCLAIMER: "medical-disclaimer",
   ACCESSIBILITY_STATEMENT: "accessibility-statement",
+  COMPLAINTS_PROCEDURE: "complaints-procedure",
 };
 
 export function legalTypeFromSlug(slug: string): LegalDocumentType | null {
