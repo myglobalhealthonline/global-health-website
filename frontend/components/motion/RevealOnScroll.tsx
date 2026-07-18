@@ -3,9 +3,13 @@
 /**
  * RevealOnScroll — IntersectionObserver-driven entry animation.
  *
- * Uses JS-driven CSS transitions (not CSS keyframe classes) for reliability
- * in Next.js SSR + React hydration. CSS animations can be cancelled by React
- * reconciliation; transitions triggered after IO fire are immune.
+ * CSS-hidden-before-paint: targets render with the `gh-reveal-pending` class
+ * (globals.css) from the server. That class only actually hides content once
+ * the `js` class lands on <html> — a synchronous inline script in
+ * layout.tsx runs before first paint — so JS visitors never see a flash of
+ * visible content before it's hidden, and no-JS/SSR visitors stay visible
+ * always. IO adds `gh-reveal-in` to reveal; both classes are plain DOM
+ * mutations (no React state), immune to reconciliation resetting them.
  *
  * Usage:
  *   // Single element fade-up on scroll:
@@ -15,13 +19,9 @@
  *   <RevealOnScroll stagger className="grid grid-cols-3 gap-6">
  *     <Card /><Card /><Card />
  *   </RevealOnScroll>
- *
- * Progressive enhancement: SSR content renders visible. JS hides elements
- * on mount, IO fires → transition to visible. If JS is off, content stays
- * visible always.
  */
 
-import { useEffect, useRef, type ReactNode, type CSSProperties } from "react";
+import { useLayoutEffect, useRef, type ReactNode, type CSSProperties } from "react";
 
 interface RevealOnScrollProps {
   children: ReactNode;
@@ -34,8 +34,6 @@ interface RevealOnScrollProps {
   role?: string;
 }
 
-const EASING = "cubic-bezier(0.16, 1, 0.3, 1)";
-const DURATION = "0.7s";
 const STAGGER_STEP = 75; // ms between each child
 
 export function RevealOnScroll({
@@ -45,49 +43,58 @@ export function RevealOnScroll({
   className = "",
   style,
   threshold = 0.08,
-  rootMargin = "-48px 0px",
+  // Huge top margin: an element jumped PAST (fast scroll, anchor link,
+  // scroll restoration) still counts as intersecting once it's above the
+  // viewport, so it reveals instead of staying hidden — a plain 0px top
+  // margin never fires IO for below→above jumps that skip the viewport.
+  rootMargin = "10000px 0px -10%",
   role,
 }: RevealOnScrollProps) {
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    // Touch devices: never hide content behind the observer. On slow phones
-    // a fast scroll outruns IO + double-RAF and sections show up blank/late.
-    if (window.matchMedia("(pointer: coarse)").matches) return;
 
     const targets: HTMLElement[] = stagger
       ? (Array.from(el.children) as HTMLElement[])
       : [el];
 
-    // Hide on mount (before IO fires)
-    targets.forEach((t) => {
-      t.style.opacity = "0";
-      t.style.transform = "translateY(24px)";
-      t.style.transition = "none";
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    // Touch devices: never hide content behind the observer. On slow phones
+    // a fast scroll outruns IO and sections show up blank/late.
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+
+    if (reduced || coarse) {
+      targets.forEach((t) => t.classList.add("gh-reveal-in"));
+      return;
+    }
+
+    targets.forEach((t, i) => {
+      const d = delay + (stagger ? i * STAGGER_STEP : 0);
+      t.style.transitionDelay = `${d}ms`;
+      t.classList.add("gh-reveal-pending");
     });
+
+    // Already in view at mount (e.g. above-the-fold, or fast scroll landed
+    // past it before hydration): reveal immediately, no transition.
+    const rect = el.getBoundingClientRect();
+    const alreadyVisible =
+      rect.top < window.innerHeight * (1 - 0.1) && rect.bottom > 0;
+    if (alreadyVisible) {
+      targets.forEach((t) => {
+        t.style.transition = "none";
+        t.classList.add("gh-reveal-in");
+      });
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
         if (!entries[0]?.isIntersecting) return;
-
-        // Double-RAF: paint hidden state first, then trigger transition
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            targets.forEach((t, i) => {
-              const d = delay + (stagger ? i * STAGGER_STEP : 0);
-              t.style.transition = [
-                `opacity ${DURATION} ${EASING} ${d}ms`,
-                `transform ${DURATION} ${EASING} ${d}ms`,
-              ].join(", ");
-              t.style.opacity = "1";
-              t.style.transform = "translateY(0)";
-            });
-          });
-        });
-
+        targets.forEach((t) => t.classList.add("gh-reveal-in"));
         observer.disconnect();
       },
       { threshold, rootMargin },
@@ -98,7 +105,16 @@ export function RevealOnScroll({
   }, [stagger, delay, threshold, rootMargin]);
 
   return (
-    <div ref={ref} className={className} style={style} role={role}>
+    <div
+      ref={ref}
+      className={
+        stagger
+          ? `gh-reveal-stagger ${className}`.trim()
+          : `gh-reveal-pending ${className}`.trim()
+      }
+      style={style}
+      role={role}
+    >
       {children}
     </div>
   );

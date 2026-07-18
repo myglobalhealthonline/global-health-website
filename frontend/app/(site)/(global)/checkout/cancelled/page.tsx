@@ -11,7 +11,7 @@ export default async function LegacyCheckoutCancelledRedirect() {
   const common = getCommonLocale(locale);
 
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<div className="flex min-h-[calc(100dvh-var(--header-height))] items-center justify-center bg-[var(--color-background-soft)] px-5 py-16" aria-busy="true" />}>
       <LegacyCheckoutCancelledRedirectClient
         title={common.flow.checkoutCancelledTitle}
         body={common.flow.checkoutCancelledBody}

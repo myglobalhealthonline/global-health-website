@@ -216,7 +216,6 @@ export function PortalShell({
 }) {
   const c = { ...DEFAULT_CHROME, ...chrome };
   const [navOpen, setNavOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   // Seeded once from the server-rendered prop (source of truth on first
   // mount); mark-read actions below update it optimistically from real
   // events afterwards, rather than re-mirroring the prop on every render.
@@ -224,15 +223,25 @@ export function PortalShell({
   const pathname = usePathname();
   const breadcrumbs = useBreadcrumbs(pathname, rootHref, rootBreadcrumb);
   const navRef = useRef<HTMLElement | null>(null);
+  const topbarRef = useRef<HTMLElement | null>(null);
   usePortalMobileNavA11y(navOpen, () => setNavOpen(false), navRef);
 
   // Topbar seam-light swap — the ONLY scroll-linked effect in the system
-  // (DESIGN.md §5.2). Purely presentational, one class toggle.
+  // (DESIGN.md §5.2). Purely presentational, one class toggle applied
+  // directly to the DOM node (rAF-throttled) so it never re-renders the
+  // shell tree (sidebar/breadcrumbs/notifications) on every scroll frame.
   useEffect(() => {
-    function onScroll() {
-      setScrolled(window.scrollY > 8);
-    }
-    onScroll();
+    let ticking = false;
+    const apply = () => {
+      topbarRef.current?.classList.toggle("gh-portal-topbar--scrolled", window.scrollY > 8);
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(apply);
+    };
+    apply();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -338,7 +347,8 @@ export function PortalShell({
       <div className="flex min-h-screen min-w-0 flex-col lg:pl-[var(--portal-sidebar-w)]">
           {/* Top header — sticky dark glass over scrolling content. */}
           <header
-            className={`gh-portal-topbar${scrolled ? " gh-portal-topbar--scrolled" : ""} sticky top-0 z-[var(--z-header)] flex shrink-0 items-center justify-between gap-3 px-4 sm:px-6`}
+            ref={topbarRef}
+            className="gh-portal-topbar sticky top-0 z-[var(--z-header)] flex shrink-0 items-center justify-between gap-3 px-4 sm:px-6"
             style={{ height: "var(--portal-topbar-h)" }}
           >
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">

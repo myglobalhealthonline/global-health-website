@@ -91,9 +91,9 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
 
   useEffect(() => {
     syncScrollState();
-    window.addEventListener("resize", syncScrollState);
-    return () => window.removeEventListener("resize", syncScrollState);
-  }, [syncScrollState, filtered.length]);
+    window.addEventListener("resize", onScroll);
+    return () => window.removeEventListener("resize", onScroll);
+  }, [onScroll, syncScrollState, filtered.length]);
 
   function changeFilter(f: "all" | "gp" | "specialist") {
     setFilter(f);

@@ -30,7 +30,7 @@ export default async function LegacyCheckoutSuccessPage({ searchParams }: Props)
   }
 
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<div className="flex min-h-[calc(100dvh-var(--header-height))] items-center justify-center bg-[var(--color-background-soft)] px-5 py-16" aria-busy="true" />}>
       <LegacyCheckoutSuccessClient
         orderId={trimmedOrderId}
         paymentSynced={paymentSynced}
