@@ -3,7 +3,12 @@ import { randomBytes } from "node:crypto";
 import { UserRole } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
-import { encryptPhiFields, decryptPhiFields } from "../../lib/crypto/phi-crypto.js";
+import {
+  encryptPhiFields,
+  decryptPhiFields,
+  encryptClinicalFields,
+  decryptClinicalFields,
+} from "../../lib/crypto/phi-crypto.js";
 import { generateGlobalHealthNumber } from "../../lib/global-health-number.js";
 import {
   computeEmailBlindIndex,
@@ -156,6 +161,54 @@ export class PricingPlanCountryMismatchError extends Error {
   }
 }
 
+/** Thrown when a patient (not admin) tries to change their own phone number
+ *  after it has already passed VERIFIED status. Support/admin can still
+ *  change it via the admin route (that path never sets `actor.role`
+ *  to "PATIENT"). */
+export class VerifiedPhoneLockedError extends Error {
+  constructor() {
+    super("Verified phone number can only be changed by support/admin");
+    this.name = "VerifiedPhoneLockedError";
+  }
+}
+
+/**
+ * Fire-and-forget PatientContactChangeLog write (Task 1c). Never blocks or
+ * fails the caller's update — a missing log row must not roll back a
+ * profile edit, matching every other audit writer in this codebase.
+ */
+async function logContactChange(params: {
+  patientProfileId: string;
+  globalHealthNumber?: string | null;
+  changedById?: string | null;
+  changedByRole: string;
+  fieldChanged: "EMAIL" | "PHONE";
+  oldValue?: string | null;
+  newValue?: string | null;
+  ipAddress?: string | null;
+}): Promise<void> {
+  try {
+    await prisma.patientContactChangeLog.create({
+      data: {
+        patientProfileId: params.patientProfileId,
+        globalHealthNumber: params.globalHealthNumber ?? null,
+        changedById: params.changedById ?? null,
+        changedByRole: params.changedByRole,
+        fieldChanged: params.fieldChanged,
+        oldValue: params.oldValue ?? null,
+        newValue: params.newValue ?? null,
+        ipAddress: params.ipAddress ?? null,
+      },
+    });
+  } catch (err) {
+    console.warn("[patient-contact-change-log] failed to record", {
+      patientProfileId: params.patientProfileId,
+      fieldChanged: params.fieldChanged,
+      err: err instanceof Error ? err.message : err,
+    });
+  }
+}
+
 /**
  * Fields any role can write to. Patient self can set every field in
  * this set; doctor/admin add `statusAlert` / `clinicAlert` on top via
@@ -237,6 +290,10 @@ export async function applyPatientProfileUpdate(
   options: {
     fallbackFullName?: string | null;
     fallbackPhone?: string | null;
+    /** Who's making the change — drives the verified-phone lock (PATIENT
+     *  role only) and is stamped onto PatientContactChangeLog rows. */
+    actor?: { userId: string | null; role: string };
+    ipAddress?: string | null;
   } = {},
 ): Promise<WriteOutcome> {
   if (input.pricingPlanId) {
@@ -245,17 +302,33 @@ export async function applyPatientProfileUpdate(
   const before = await prisma.patientProfile.findUnique({
     where: { email },
     select: {
+      id: true,
       statusAlert: true,
       clinicAlert: true,
       fullName: true,
       dateOfBirth: true,
+      phone: true,
+      phoneVerificationStatus: true,
+      globalHealthNumber: true,
     },
   });
+
+  // Task 1c: a patient (never admin/doctor) may not change their own phone
+  // once it's VERIFIED — only support/admin can, via the admin route (which
+  // never passes actor.role = "PATIENT").
+  if (
+    "phone" in input &&
+    options.actor?.role === "PATIENT" &&
+    before?.phoneVerificationStatus === "VERIFIED" &&
+    (input.phone ?? null) !== (before.phone ?? null)
+  ) {
+    throw new VerifiedPhoneLockedError();
+  }
   // Encrypt the government-ID fields before they touch the DB (no-op when
   // PHI_ENCRYPTION_KEY is unset). The returned row is decrypted below.
   // fullName/phone/dateOfBirth are NOT PHI-encrypted, so the plaintext on
   // `input` is what's used to derive the blind indexes below.
-  const writeInput = encryptPhiFields(input);
+  const writeInput = encryptClinicalFields(encryptPhiFields(input));
 
   // ── Blind-index recomputation (no-op until BLIND_INDEX_KEY is set) ──
   const createFullName = input.fullName ?? options.fallbackFullName ?? null;
@@ -301,6 +374,19 @@ export async function applyPatientProfileUpdate(
     if ("clinicAlert" in input && (before?.clinicAlert ?? null) !== (input.clinicAlert ?? null)) {
       alertChanges.clinicAlert = true;
     }
+    // Task 1c: log an actual phone change, regardless of which route drove it.
+    if ("phone" in input && (before?.phone ?? null) !== (profile.phone ?? null)) {
+      void logContactChange({
+        patientProfileId: profile.id,
+        globalHealthNumber: profile.globalHealthNumber,
+        changedById: options.actor?.userId ?? null,
+        changedByRole: options.actor?.role ?? "SYSTEM",
+        fieldChanged: "PHONE",
+        oldValue: before?.phone ?? null,
+        newValue: profile.phone ?? null,
+        ipAddress: options.ipAddress ?? null,
+      });
+    }
     return { profile, alertChanges };
   } catch (error) {
     throw normalizeDbError(error, "Patient profile update temporarily unavailable");
@@ -319,7 +405,7 @@ export function serializeProfile(
   if (!profile) return null;
   // Decrypt the government-ID fields for output (passthrough on legacy
   // plaintext / when encryption is off).
-  const decrypted = decryptPhiFields(profile);
+  const decrypted = decryptClinicalFields(decryptPhiFields(profile));
   const { statusAlert, clinicAlert, ...rest } = decrypted;
   return {
     ...rest,

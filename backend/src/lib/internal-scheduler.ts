@@ -17,6 +17,7 @@ import {
 } from "../modules/subscriptions/ops/ops-alert.js";
 import { purgeExpiredAccountDeletions } from "../modules/auth/auth.service.js";
 import { runOutboxDispatch } from "../modules/outbox/outbox.js";
+import { runRetentionSweepReport } from "../modules/data-policy/country-data-policy.service.js";
 
 type Logger = { info: (msg: string) => void; error: (msg: string) => void };
 
@@ -33,6 +34,7 @@ const RECONCILIATION_INTERVAL_MS = 60 * 60 * 1000; // hourly — money/ops invar
 const DAILY_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24h — renewal reminders (24h dedup window)
 const ACCOUNT_PURGE_INTERVAL_MS = 60 * 60 * 1000; // hourly — S-017 GDPR grace-period purge
 const OUTBOX_INTERVAL_MS = 30 * 1000; // 30s — drain durable post-payment side effects (P-006/P-007)
+const DATA_RETENTION_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24h — Task 1d report-only sweep
 
 // Distinct advisory-lock keys, one per job, so only one replica runs a given
 // tick when horizontally scaled. Single-replica (today) always acquires → no
@@ -45,6 +47,7 @@ const LOCK_DAILY_REMINDERS = 4010005;
 const LOCK_ACCOUNT_PURGE = 4010006;
 const LOCK_OUTBOX = 4010007;
 const LOCK_PRE_PAYMENT_CANCEL = 4010008;
+const LOCK_DATA_RETENTION = 4010009;
 
 // SESSION-level advisory lock (pg_advisory_lock / pg_advisory_unlock) on a
 // single manually-checked-out `pg.Pool` client, NOT a Prisma-managed
@@ -285,6 +288,25 @@ async function tickOutboxDispatch(log: Logger) {
   );
 }
 
+async function tickDataRetention(log: Logger) {
+  // Read-only report (counts + one SecurityAlert, dedupe'd per UTC day) — no
+  // deletion, no customer messaging. Fail OPEN.
+  await withAdvisoryLock(
+    LOCK_DATA_RETENTION,
+    async () => {
+      try {
+        const { totalOverRetention } = await runRetentionSweepReport();
+        if (totalOverRetention > 0) {
+          log.info(`[cron] data-retention sweep: ${totalOverRetention} record(s) past retention (alert raised)`);
+        }
+      } catch (err) {
+        log.error(`[cron] data-retention sweep error: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    },
+    { failClosed: false },
+  );
+}
+
 /** No-op stop handle — returned when the scheduler never actually started
  *  (RUN_SCHEDULER=false), so callers can unconditionally invoke the
  *  returned function on shutdown without an extra null check. */
@@ -308,7 +330,7 @@ export function startInternalScheduler(log: Logger): () => void {
 
   setOpsAlertLogger({ warn: (m) => log.info(m), error: (m) => log.error(m) });
   log.info(
-    "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h, account-purge 60m, outbox 30s",
+    "[cron] internal scheduler — pre-payment 15m, post-payment 5m, subs-ops 5m, reconciliation 60m, renewal-reminders 24h, account-purge 60m, outbox 30s, data-retention 24h",
   );
 
   const timers: NodeJS.Timeout[] = [];
@@ -343,6 +365,7 @@ export function startInternalScheduler(log: Logger): () => void {
   timers.push(setInterval(() => void tickReconciliation(log), RECONCILIATION_INTERVAL_MS));
   timers.push(setInterval(() => void tickDailyReminders(log), DAILY_INTERVAL_MS));
   timers.push(setInterval(() => void tickOutboxDispatch(log), OUTBOX_INTERVAL_MS));
+  timers.push(setInterval(() => void tickDataRetention(log), DATA_RETENTION_INTERVAL_MS));
 
   return () => {
     for (const t of timers) clearTimeout(t);

@@ -1,6 +1,7 @@
 ﻿import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { LocaleCode } from "@prisma/client";
+import { promoteAppointmentConsents } from "../modules/consents/promote-appointment-consents.js";
 import {
   AuthInvalidCredentialsError,
   cancelAccountDeletion,
@@ -46,6 +47,8 @@ import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { issueLoginOtp, isTrustedDevice } from "../modules/two-factor/login-otp.service.js";
 import { sendLoginOtpEmail } from "../lib/email/templates.js";
+import { alertSuspiciousLogin } from "../modules/security-alerts/security-alert.service.js";
+import { prisma } from "../db/prisma.js";
 
 /** Exported for unit testing (see auth.route.schema.test.ts). Kept at
  *  module scope — was previously local to `authRoute`, which made the
@@ -89,6 +92,40 @@ export const profilePatchSchema = z.object({
    *  routes' `?locale=` convention). Null clears it. */
   preferredLocale: z.nativeEnum(LocaleCode).nullable().optional(),
 });
+
+/**
+ * Best-effort brute-force detector for the failed-login path. Counts
+ * LOGIN_FAILED audit rows in the last 15 minutes matching either the
+ * attempted email or the request IP; fires a MEDIUM SecurityAlert via
+ * alertSuspiciousLogin once the count hits the threshold.
+ *
+ * alertSuspiciousLogin already dedupes (same userId/reason/IP/day), so
+ * no separate dedupe check is done here. Never throws — callers must
+ * still treat this as fire-and-forget.
+ */
+async function checkSuspiciousLogin(email: string, ip: string | null): Promise<void> {
+  const since = new Date(Date.now() - 15 * 60 * 1000);
+  const count = await prisma.auditLog.count({
+    where: {
+      action: "LOGIN_FAILED",
+      createdAt: { gte: since },
+      OR: [
+        { metadata: { path: ["email"], equals: email } },
+        ...(ip ? [{ ipAddress: ip }] : []),
+      ],
+    },
+  });
+  if (count < 5) return;
+
+  const user = await findUserByEmail(email);
+  await alertSuspiciousLogin({
+    userId: user?.id ?? "unknown",
+    email,
+    ipAddress: ip ?? "unknown",
+    reason: "repeated_failed_logins",
+    details: { failedAttempts: count, windowMinutes: 15 },
+  });
+}
 
 const authRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/auth/register", {
@@ -212,6 +249,9 @@ const authRoute: FastifyPluginAsync = async (app) => {
         if (claimed > 0) {
           app.log.info({ userId: user.id, claimed }, "Linked guest appointments on login");
         }
+        promoteAppointmentConsents(user.id, user.email).catch((err) => {
+          app.log.warn({ err, userId: user.id }, "Could not promote booking-time medical-access consents");
+        });
         const claimedOrders = await claimGuestOrdersForUser(user.id, user.email);
         if (claimedOrders > 0) {
           app.log.info({ userId: user.id, claimed: claimedOrders }, "Linked guest orders on login");
@@ -245,6 +285,15 @@ const authRoute: FastifyPluginAsync = async (app) => {
           metadata: { email: body.data.email.trim().toLowerCase(), reason: "invalid_credentials" },
           request,
         }).catch(() => {});
+
+        // Fire-and-forget brute-force check — never blocks or breaks the
+        // 401 response below.
+        checkSuspiciousLogin(body.data.email.trim().toLowerCase(), request.ip ?? null).catch(
+          (alertError) => {
+            app.log.warn({ err: alertError }, "Could not run suspicious-login check");
+          },
+        );
+
         return reply.status(401).send(errorResponse(error.message));
       }
       return replyWithError(reply, app.log, error, "Unexpected authentication error");

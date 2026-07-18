@@ -1687,6 +1687,12 @@ model Appointment {
   dateOfBirth               DateTime?
   notes                     String?
   consentAccepted           Boolean
+  /// GDPR: patient confirmed they understand cross-border access to their
+  /// medical file if they travel/receive care in another country.
+  crossBorderConsentAccepted Boolean                  @default(false)
+  /// DIRECT | COUNTRY_CLINIC | GLOBAL_NETWORK — scope the patient chose at
+  /// booking time for who may access their medical file. Null for legacy rows.
+  medicalAccessConsentScope String?
   status                    AppointmentStatus         @default(REQUEST_RECEIVED)
   // Optional link to the catalogue Service that was booked. Populated when
   // the booking form passes ?service=<slug>; null for free-text bookings.
@@ -2302,6 +2308,11 @@ model CartItem {
   patientGdprConsentedAt     DateTime?
   /// WhatsApp appointment updates — default ON; patient opts OUT at booking.
   patientWhatsappConsent     Boolean   @default(true)
+  /// GDPR: cross-border medical file access acknowledgement + chosen access
+  /// scope, captured at add-to-cart time. Mirrors the Appointment columns
+  /// the payment webhook writes when minting from this row.
+  patientCrossBorderConsentAccepted Boolean @default(false)
+  patientMedicalAccessConsentScope  String?
   /// Insurance-company selection snapshot (consultation lines only). When set,
   /// `unitPriceCents` above is the insurance price. Bare id like
   /// `corporateCompanyId` — no relation. The policy/card number is stored as
@@ -2523,6 +2534,11 @@ model OrderItem {
   patientGdprConsentedAt     DateTime?
   /// WhatsApp appointment updates — default ON; patient opts OUT at booking.
   patientWhatsappConsent     Boolean   @default(true)
+  /// GDPR: cross-border medical file access acknowledgement + chosen access
+  /// scope, captured at add-to-cart time. Mirrors the Appointment columns
+  /// the payment webhook writes when minting from this row.
+  patientCrossBorderConsentAccepted Boolean @default(false)
+  patientMedicalAccessConsentScope  String?
   /// Insurance selection snapshot copied from the CartItem at checkout. When
   /// set, `unitPriceCents` above is the insurance price (server-recomputed).
   /// Bare id like `corporateCompanyId`; policy number is an encrypted
@@ -3600,6 +3616,8 @@ model MedicalAccessRequest {
   expiresAt                DateTime?
   patientResponseIp        String?
   reviewedByUserId         String?
+  tokenHash                String?                    @unique
+  tokenExpiresAt           DateTime?
   patient                  PatientProfile             @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
   reviewedByUser           User?                      @relation("MedicalAccessRequestReviewer", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
   grants                   MedicalAccessGrant[]

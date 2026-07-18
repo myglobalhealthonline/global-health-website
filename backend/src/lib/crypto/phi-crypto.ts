@@ -77,6 +77,16 @@ export function decryptPhi(value: string | null | undefined): string | null {
   return Buffer.concat([decipher.update(ct), decipher.final()]).toString("utf8");
 }
 
+/** Encrypt each element of a string array (per-element envelope, no-op-safe). */
+export function encryptPhiArray(values: string[]): string[] {
+  return values.map((v) => encryptPhi(v) ?? v);
+}
+
+/** Decrypt each element of a string array (plaintext-tolerant). */
+export function decryptPhiArray(values: string[]): string[] {
+  return values.map((v) => decryptPhi(v) ?? v);
+}
+
 /** The PatientProfile columns protected by this layer. */
 export const PHI_ENCRYPTED_FIELDS = [
   "nationalIdNumber",
@@ -85,6 +95,49 @@ export const PHI_ENCRYPTED_FIELDS = [
   "utenteNumber",
 ] as const;
 type PhiField = (typeof PHI_ENCRYPTED_FIELDS)[number];
+
+/** Free-text PatientProfile clinical scalar fields protected by this layer. */
+export const CLINICAL_ENCRYPTED_FIELDS = ["bloodType"] as const;
+type ClinicalField = (typeof CLINICAL_ENCRYPTED_FIELDS)[number];
+
+/** PatientProfile clinical String[] fields protected by this layer. */
+export const CLINICAL_ARRAY_FIELDS = [
+  "allergies",
+  "chronicDiseases",
+  "familyHistory",
+  "usualMedication",
+] as const;
+type ClinicalArrayField = (typeof CLINICAL_ARRAY_FIELDS)[number];
+
+/** Encrypt the clinical scalar + array fields present on a write payload. */
+export function encryptClinicalFields<
+  T extends Partial<Record<ClinicalField, string | null | undefined>> &
+    Partial<Record<ClinicalArrayField, string[] | undefined>>,
+>(input: T): T {
+  const out: T = { ...input };
+  for (const f of CLINICAL_ENCRYPTED_FIELDS) {
+    if (f in out) out[f] = encryptPhi(out[f]) as T[ClinicalField];
+  }
+  for (const f of CLINICAL_ARRAY_FIELDS) {
+    if (f in out && out[f]) out[f] = encryptPhiArray(out[f] as string[]) as T[ClinicalArrayField];
+  }
+  return out;
+}
+
+/** Decrypt the clinical scalar + array fields present on a read row. */
+export function decryptClinicalFields<
+  T extends Partial<Record<ClinicalField, string | null>> &
+    Partial<Record<ClinicalArrayField, string[]>>,
+>(row: T): T {
+  const out: T = { ...row };
+  for (const f of CLINICAL_ENCRYPTED_FIELDS) {
+    if (f in out) out[f] = decryptPhi(out[f]) as T[ClinicalField];
+  }
+  for (const f of CLINICAL_ARRAY_FIELDS) {
+    if (f in out && out[f]) out[f] = decryptPhiArray(out[f] as string[]) as T[ClinicalArrayField];
+  }
+  return out;
+}
 
 /** Encrypt the PHI fields present on a write payload (in place, immutably). */
 export function encryptPhiFields<T extends Partial<Record<PhiField, string | null | undefined>>>(

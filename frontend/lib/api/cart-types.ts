@@ -85,6 +85,13 @@ export type CartItemPatientInput = {
   /** Optional opt-in to appointment updates + reminders via WhatsApp.
    *  Never required — patient WhatsApp sends are skipped when absent. */
   whatsappConsent?: boolean;
+  /** GDPR: patient confirmed they understand cross-border access to their
+   *  medical file if they travel/receive care in another country. Required
+   *  true for every booking, mirrors `consentAccepted`. */
+  crossBorderConsentAccepted: true;
+  /** Who may access the patient's medical file. Defaults to DIRECT
+   *  (treating doctor only) when omitted. */
+  medicalAccessConsentScope?: "DIRECT" | "COUNTRY_CLINIC" | "GLOBAL_NETWORK";
 };
 
 export type Cart = {

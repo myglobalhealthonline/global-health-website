@@ -403,6 +403,8 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   patientGdprConsentPlatform: i.patientGdprConsentPlatform,
                   patientGdprConsentedAt: i.patientGdprConsentedAt,
                   patientWhatsappConsent: i.patientWhatsappConsent,
+                  patientCrossBorderConsentAccepted: i.patientCrossBorderConsentAccepted,
+                  patientMedicalAccessConsentScope: i.patientMedicalAccessConsentScope,
                   // Insurance snapshot carried to the order line. unitPriceCents
                   // above already reflects the insurance price for these lines;
                   // these columns record the company + encrypted policy + the

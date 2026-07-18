@@ -161,9 +161,12 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           : {}),
       };
       if (Object.keys(idAddress).length > 0) {
+        const creatingActor = resolveAdminSessionActor(request);
         const updated = await applyPatientProfileUpdate(email, idAddress, {
           fallbackFullName: parsed.data.fullName,
           fallbackPhone: parsed.data.phone ?? null,
+          actor: { userId: creatingActor?.userId ?? null, role: creatingActor?.role ?? "ADMIN" },
+          ipAddress: request.ip,
         });
         profile = updated.profile;
       }
@@ -268,13 +271,20 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       }
       try {
         const { dateOfBirth, ...rest } = body.data;
-        const { profile, alertChanges } = await applyPatientProfileUpdate(email, {
-          ...rest,
-          ...(dateOfBirth !== undefined
-            ? { dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null }
-            : {}),
-        });
         const actor = resolveAdminSessionActor(request);
+        const { profile, alertChanges } = await applyPatientProfileUpdate(
+          email,
+          {
+            ...rest,
+            ...(dateOfBirth !== undefined
+              ? { dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null }
+              : {}),
+          },
+          {
+            actor: { userId: actor?.userId ?? null, role: actor?.role ?? "ADMIN" },
+            ipAddress: request.ip,
+          },
+        );
         // Always audit the edit. Record only the changed FIELD NAMES, never
         // the values — the values are PHI/PII and must not land in the audit
         // log. The alert-specific event below keeps its existing shape.

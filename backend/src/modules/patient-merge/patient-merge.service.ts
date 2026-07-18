@@ -5,6 +5,7 @@ import {
   computePhoneBlindIndex,
   computeNameDobBlindIndex,
 } from "../../lib/blind-index.js";
+import { sendPatientMergeNotificationEmail } from "../../lib/email/templates.js";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -140,6 +141,10 @@ export async function mergePatients(params: {
 }): Promise<void> {
   const { primaryPatientId, duplicatePatientId, adminId, reason } = params;
 
+  // Populated inside the transaction below, read afterwards for the
+  // fire-and-forget notification email.
+  let mergeLogId = "";
+
   try {
     await prisma.$transaction(async (tx) => {
       // Read the authoritative rows inside the transaction (not the outer
@@ -150,9 +155,8 @@ export async function mergePatients(params: {
         tx.patientProfile.findUniqueOrThrow({ where: { id: primaryPatientId } }),
         tx.patientProfile.findUniqueOrThrow({ where: { id: duplicatePatientId } }),
       ]);
-
       // ── 1. Write the merge log with both snapshots ───────────────────────
-      await tx.patientMergeLog.create({
+      const mergeLog = await tx.patientMergeLog.create({
         data: {
           primaryPatientId,
           duplicatePatientId,
@@ -162,6 +166,7 @@ export async function mergePatients(params: {
           duplicateSnapshot: duplicateSnapshot as object,
         },
       });
+      mergeLogId = mergeLog.id;
 
       // ── 2. Re-point FK references duplicate → primary ────────────────────
 
@@ -269,6 +274,35 @@ export async function mergePatients(params: {
         reason,
       },
     });
+
+    // ── 5. Notify the surviving patient (fire-and-forget) ──────────────────
+    // Never blocks the merge response and never throws — a failed send just
+    // leaves patientInformed at its default `false` for later follow-up.
+    // Re-read post-commit (not the stale pre-merge tx snapshot) so the email
+    // reflects the current surviving record.
+    prisma.patientProfile
+      .findUnique({
+        where: { id: primaryPatientId },
+        select: { email: true, fullName: true },
+      })
+      .then((primary) => {
+        if (!primary?.email) return;
+        return sendPatientMergeNotificationEmail({
+          to: primary.email,
+          patientName: primary.fullName ?? "there",
+        }).then(() =>
+          prisma.patientMergeLog.update({
+            where: { id: mergeLogId },
+            data: { patientInformed: true },
+          }),
+        );
+      })
+      .catch((err) => {
+        console.warn("[patient-merge] could not send merge notification email", {
+          mergeLogId,
+          err: err instanceof Error ? err.message : err,
+        });
+      });
   } catch (error) {
     throw normalizeDbError(error, "Could not merge patients");
   }

@@ -16,6 +16,15 @@ import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medic
 const stringField = (max: number) =>
   z.string().trim().max(max).nullable().optional();
 
+// Government-ID numbers are intentionally withheld from the doctor portal
+// (GDPR plan): doctors see idVerificationStatus only, never the numbers.
+function stripIdentityFields<T extends Record<string, unknown> | null>(profile: T): T {
+  if (!profile) return profile;
+  const { nationalIdNumber, taxIdNumber, passportNumber, utenteNumber, ...rest } =
+    profile as Record<string, unknown>;
+  return rest as T;
+}
+
 /**
  * Doctor-side patch — accepts the full clinical + administrative
  * surface including alerts, which patient-self endpoints reject.
@@ -23,7 +32,9 @@ const stringField = (max: number) =>
 const patchProfileSchema = z
   .object({
     fullName: stringField(200),
-    phone: stringField(40),
+    // phone deliberately excluded — the doctor UI never sends it, and a
+    // verified patient's phone can only be changed by the patient or admin
+    // (see applyPatientProfileUpdate's actorRole guard).
     dateOfBirth: z.string().datetime().nullable().optional(),
     weightKg: z.number().positive().max(500).nullable().optional(),
     heightM: z.number().positive().max(3).nullable().optional(),
@@ -99,7 +110,7 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
           }
         }
         return okResponse({
-          profile: serializeProfile(profile, { includeAlerts: true }),
+          profile: stripIdentityFields(serializeProfile(profile, { includeAlerts: true })),
         });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
@@ -173,7 +184,12 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
               ? { dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null }
               : {}),
           },
-          { fallbackFullName: appt.fullName, fallbackPhone: appt.phone },
+          {
+            fallbackFullName: appt.fullName,
+            fallbackPhone: appt.phone,
+            actor: { userId: auth.userId, role: auth.role },
+            ipAddress: request.ip,
+          },
         );
         if (alertChanges.statusAlert || alertChanges.clinicAlert) {
           // S-008: resolveOptionalAuthUser only resolves PATIENT/ADMIN
@@ -198,7 +214,7 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
           });
         }
         return okResponse({
-          profile: serializeProfile(profile, { includeAlerts: true }),
+          profile: stripIdentityFields(serializeProfile(profile, { includeAlerts: true })),
         });
       } catch (error) {
         if (error instanceof PricingPlanCountryMismatchError) {

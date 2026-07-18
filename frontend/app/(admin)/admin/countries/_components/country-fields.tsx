@@ -92,6 +92,21 @@ export function CountryFields({ currencies, initial }: Props) {
           Country active (inactive countries stay hidden from public{" "}
           <code>/api/countries</code>)
         </label>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Access model</span>
+          <select
+            name="accessModel"
+            className="gh-select min-w-0"
+            defaultValue={initial?.accessModel ?? "PLATFORM"}
+          >
+            <option value="CLINIC">
+              Clinic country — same-country doctors may access records with patient consent
+            </option>
+            <option value="PLATFORM">
+              Platform country — only the treating doctor
+            </option>
+          </select>
+        </label>
       </FormSection>
 
       <FormSection title="Locales">

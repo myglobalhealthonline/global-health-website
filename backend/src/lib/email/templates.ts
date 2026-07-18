@@ -525,6 +525,28 @@ export async function sendGeneratedDocumentEmail(opts: {
 }
 
 
+/**
+ * Sent after an admin merges a duplicate patient record into this
+ * (surviving) patient. No PHI in the body — just notice that duplicate
+ * files were consolidated, per Global Health's 1-patient-1-file policy.
+ */
+export async function sendPatientMergeNotificationEmail(opts: {
+  to: string;
+  patientName: string;
+}) {
+  return sendEmail({
+    to: opts.to,
+    subject: "Your Global Health records were consolidated",
+    text: `Hi ${opts.patientName},\n\nWe found more than one medical record on file for you and consolidated them into a single, secure file. This keeps your care history complete and accurate — it's part of our 1-patient-1-file policy.\n\nNothing further is required from you. If you have any questions, please contact our support team.\n\n— Global Health`,
+    html: wrapHtml(
+      "Your records were consolidated",
+      `<p>Hi ${escapeHtml(opts.patientName)},</p>
+       <p>We found more than one medical record on file for you and consolidated them into a single, secure file. This keeps your care history complete and accurate — it's part of our 1-patient-1-file policy.</p>
+       <p>Nothing further is required from you. If you have any questions, please contact our support team.</p>`,
+    ),
+  });
+}
+
 export async function sendPatientUploadLinkEmail(opts: {
   to: string;
   patientName: string;
@@ -539,6 +561,34 @@ export async function sendPatientUploadLinkEmail(opts: {
       `<p>Hi ${escapeHtml(opts.patientName)},</p>
        <p>Use this secure link to upload your exam results for your doctor.</p>
        <p style="margin:24px 0;"><a href="${opts.link}" style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">Upload files</a></p>`,
+    ),
+  });
+}
+
+/**
+ * Sent to the patient when a doctor in another country requests access to
+ * their medical file. No PHI in the body — just who's asking and why, plus
+ * a secure approve/deny link. Mirrors sendPatientUploadLinkEmail's shape.
+ */
+export async function sendMedicalAccessRequestEmail(opts: {
+  to: string;
+  patientName: string;
+  doctorName: string;
+  doctorCountry: string;
+  reason: string;
+  link: string;
+}) {
+  return sendEmail({
+    to: opts.to,
+    subject: "A doctor is requesting access to your medical file — Global Health",
+    text: `Hi ${opts.patientName},\n\nDr. ${opts.doctorName} (${opts.doctorCountry}) is requesting access to your Global Health medical file:\n\n"${opts.reason}"\n\nReview and approve or deny this request:\n\n${opts.link}\n\nThis link expires in 14 days. If you don't recognize this request, you can safely deny it or ignore this email.\n\n— Global Health`,
+    html: wrapHtml(
+      "Medical file access request",
+      `<p>Hi ${escapeHtml(opts.patientName)},</p>
+       <p><strong>Dr. ${escapeHtml(opts.doctorName)}</strong> (${escapeHtml(opts.doctorCountry)}) is requesting access to your Global Health medical file:</p>
+       <p style="font-style:italic;color:#555;">"${escapeHtml(opts.reason)}"</p>
+       <p style="margin:24px 0;"><a href="${opts.link}" style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">Review request</a></p>
+       <p style="font-size:13px;color:#777;">This link expires in 14 days. If you don't recognize this request, you can safely deny it or ignore this email.</p>`,
     ),
   });
 }

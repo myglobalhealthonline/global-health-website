@@ -116,10 +116,11 @@ export default async function CountryLegalDocumentPage({
         meta={metaLine ? <p className="gh2-index">{metaLine}</p> : undefined}
       />
 
-      <section
-        className="mx-auto max-w-3xl px-5 md:px-10"
-        style={{ padding: "clamp(48px,6vw,80px) 20px" }}
-      >
+      <section className="relative overflow-hidden gh2-section-ivory gh-medical-pattern gh-medical-pattern-panel">
+        <div
+          className="mx-auto max-w-3xl px-5 md:px-10"
+          style={{ padding: "clamp(48px,6vw,80px) 20px" }}
+        >
         <div className="mb-8 flex flex-wrap items-center gap-3">
           <Link
             href={`/${slug}/${lang}/legal`}
@@ -143,7 +144,7 @@ export default async function CountryLegalDocumentPage({
 
         {safeHtml ? (
           <div
-            className="gh-legal-prose space-y-4 text-base leading-relaxed text-[var(--color-text-body)] [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-extrabold [&_h2]:tracking-[-0.01em] [&_h2]:text-[var(--color-text-primary)] [&_h3]:mt-6 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:text-[var(--color-text-primary)] [&_a]:font-medium [&_a]:text-[var(--color-brand-primary)] [&_a]:underline [&_a]:underline-offset-2 [&_ul]:list-inside [&_ul]:list-disc [&_ul]:space-y-1 [&_ol]:list-inside [&_ol]:list-decimal [&_ol]:space-y-1 [&_table]:mt-6 [&_table]:block [&_table]:w-full [&_table]:overflow-x-auto [&_table]:border-collapse [&_table]:text-sm [&_th]:border [&_th]:border-[var(--color-border)] [&_th]:bg-white/5 [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:font-bold [&_th]:text-[var(--color-text-primary)] [&_td]:border [&_td]:border-[var(--color-border)] [&_td]:px-3 [&_td]:py-2 [&_td]:align-top [&_td]:text-[var(--color-text-body)]"
+            className="gh-legal-prose space-y-4 text-base leading-relaxed text-[var(--color-text-body)] [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-extrabold [&_h2]:tracking-[-0.01em] [&_h2]:text-[var(--color-text-primary)] [&_h3]:mt-6 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:text-[var(--color-text-primary)] [&_a]:font-medium [&_a]:text-[var(--color-brand-primary)] [&_a]:underline [&_a]:underline-offset-2 [&_ul]:list-inside [&_ul]:list-disc [&_ul]:space-y-1 [&_ol]:list-inside [&_ol]:list-decimal [&_ol]:space-y-1 [&_table]:mt-6 [&_table]:block [&_table]:w-full [&_table]:overflow-x-auto [&_table]:border-collapse [&_table]:text-sm [&_th]:border [&_th]:border-[var(--color-border)] [&_th]:bg-[var(--color-background-panel)] [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:font-bold [&_th]:text-[var(--color-text-primary)] [&_td]:border [&_td]:border-[var(--color-border)] [&_td]:px-3 [&_td]:py-2 [&_td]:align-top [&_td]:text-[var(--color-text-body)]"
             dangerouslySetInnerHTML={{ __html: safeHtml }}
           />
         ) : disclaimerParagraphs.length > 0 ? (
@@ -157,6 +158,7 @@ export default async function CountryLegalDocumentPage({
             {t.pdfOnly}
           </p>
         ) : null}
+        </div>
       </section>
     </>
   );

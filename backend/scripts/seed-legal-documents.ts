@@ -35,6 +35,18 @@ const CONTENT_DIR = path.join(__dirname, "content", "legal");
 
 const UPLOAD_PDFS = process.argv.includes("--upload-pdfs");
 
+const pdfDirArg = process.argv.find((a) => a.startsWith("--pdf-dir="));
+const PDF_DIR = pdfDirArg ? pdfDirArg.slice("--pdf-dir=".length) : process.env.LEGAL_PDF_DIR;
+
+const ADDENDUM_PDF_FILE: Record<string, string> = {
+  ie: "GlobalHealth_Ireland_Addendum_final.pdf",
+  cz: "GlobalHealth_Czech_Addendum_final.pdf",
+  pt: "GlobalHealth_Portugal_Addendum_final.pdf",
+  es: "GlobalHealth_Spain_Addendum_final.pdf",
+  ro: "GlobalHealth_Romania_Addendum_final.pdf",
+  br: "GlobalHealth_Brazil_Addendum_final.pdf",
+};
+
 const ALL_LOCALES = ["en", "pt", "es", "cs", "ro", "de"] as const;
 type Locale = (typeof ALL_LOCALES)[number];
 
@@ -160,14 +172,41 @@ function docsFor(
   ];
 }
 
-/** Uploads a source PDF (from LEGAL_PDF_DIR) and returns the object-storage key. */
-async function uploadPdf(type: LegalDocumentType, slug: string): Promise<string | null> {
+/**
+ * Uploads a source PDF (from PDF_DIR) and returns the object-storage key.
+ * TERMS_OF_SERVICE is country-specific: merges the global Master T&C with
+ * the country's own addendum PDF (via pdf-lib) so the PDF mirrors the HTML
+ * page order (master first, addendum after). The other 3 types are one
+ * global file shared by every country — that's correct, not a bug.
+ */
+async function uploadPdf(
+  type: LegalDocumentType,
+  slug: string,
+  countryCode: string,
+): Promise<string | null> {
   if (!UPLOAD_PDFS) return null;
-  const pdfDir = process.env.LEGAL_PDF_DIR;
+  const pdfDir = PDF_DIR;
   const sourceFile = PDF_SOURCE_FILE[type];
   if (!pdfDir || !sourceFile) return null;
   const { putObject } = await import("../src/services/object-storage.js");
-  const buffer = readFileSync(path.join(pdfDir, sourceFile));
+
+  let buffer: Buffer;
+  if (type === LegalDocumentType.TERMS_OF_SERVICE) {
+    const addendumFile = ADDENDUM_PDF_FILE[countryCode];
+    const masterBytes = readFileSync(path.join(pdfDir, sourceFile));
+    const addendumBytes = readFileSync(path.join(pdfDir, addendumFile));
+    const { PDFDocument } = await import("pdf-lib");
+    const merged = await PDFDocument.create();
+    for (const bytes of [masterBytes, addendumBytes]) {
+      const src = await PDFDocument.load(bytes);
+      const pages = await merged.copyPages(src, src.getPageIndices());
+      for (const page of pages) merged.addPage(page);
+    }
+    buffer = Buffer.from(await merged.save());
+  } else {
+    buffer = readFileSync(path.join(pdfDir, sourceFile));
+  }
+
   const key = `documents/legal-${slug}.pdf`;
   await putObject(key, buffer, "application/pdf");
   return key;
@@ -209,7 +248,7 @@ async function main(): Promise<void> {
 
       for (const doc of docs) {
         const slug = `${code}-${doc.type.toLowerCase().replace(/_/g, "-")}`;
-        const pdfPath = locale === "en" ? await uploadPdf(doc.type, slug) : null;
+        const pdfPath = locale === "en" ? await uploadPdf(doc.type, slug, code) : null;
 
         const existing = await prisma.countryLegalDocument.findUnique({
           where: {

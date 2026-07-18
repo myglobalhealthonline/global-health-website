@@ -1,9 +1,16 @@
-import { LocaleCode, LegalDocumentType } from "@prisma/client";
+import { LocaleCode, LegalDocumentType, CountryAccessModel } from "@prisma/client";
 import { z } from "zod";
 
 const localeValues = Object.values(LocaleCode) as [LocaleCode, ...LocaleCode[]];
 
 export const localeCodeSchema = z.enum(localeValues);
+
+const accessModelValues = Object.values(CountryAccessModel) as [
+  CountryAccessModel,
+  ...CountryAccessModel[],
+];
+
+export const countryAccessModelSchema = z.enum(accessModelValues);
 
 /** True when the Node runtime recognizes the IANA zone. Rejects typos that
  *  the admin timezone dropdown can't produce but a hand-crafted API call
@@ -83,6 +90,7 @@ export const adminCountryCreateBodySchema = z
     currencyId: z.string().trim().min(1, "currencyId is required"),
     isActive: z.boolean().optional(),
     domains: z.array(domainEntrySchema).optional(),
+    accessModel: countryAccessModelSchema.optional(),
   })
   .superRefine((data, ctx) => {
     refineLocalesDefault(data, ctx);
@@ -148,6 +156,7 @@ export const adminCountryUpdateBodySchema = z
     domains: z.array(domainEntrySchema).optional(),
     bookingSetting: bookingSettingPartialSchema.optional(),
     enabledFeatures: z.array(countryFeatureKeySchema).optional(),
+    accessModel: countryAccessModelSchema.optional(),
   })
   .superRefine((data, ctx) => {
     if (data.supportedLocales !== undefined) {

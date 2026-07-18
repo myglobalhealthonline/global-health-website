@@ -7,6 +7,8 @@ import { replyWithError } from "../utils/reply-error.js";
 import {
   createAccessRequest,
   respondToAccessRequest,
+  respondToAccessRequestByToken,
+  verifyAccessRequestToken,
   listPendingRequestsForPatient,
   listRequestsByDoctor,
   listAllRequests,
@@ -158,6 +160,60 @@ const medicalAccessRequestsRoute: FastifyPluginAsync = async (app) => {
       } catch (error) {
         return replyWithError(reply, app.log, error, "Could not respond to access request");
       }
+    },
+  );
+
+  // ─── Public: patient approve/deny via emailed token link (no login) ──────
+
+  app.get(
+    "/api/public/medical-access-request",
+    { config: { rateLimit: { max: 30, timeWindow: "10 minutes" } } },
+    async (request, reply) => {
+      const token = (request.query as { token?: string }).token?.trim();
+      if (!token) return reply.status(400).send(errorResponse("token is required"));
+
+      const verified = await verifyAccessRequestToken(token);
+      if (!verified.ok) return reply.status(400).send(errorResponse(verified.message));
+
+      return okResponse({
+        doctorName: verified.doctorName,
+        doctorCountry: verified.doctorCountry,
+        requestedAccessScope: verified.requestedAccessScope,
+        reason: verified.reason,
+        createdAt: verified.createdAt,
+      });
+    },
+  );
+
+  const publicRespondSchema = z.object({
+    token: z.string().min(1),
+    decision: z.enum(["APPROVE", "DENY"]),
+  });
+
+  app.post(
+    "/api/public/medical-access-request",
+    { config: { rateLimit: { max: 20, timeWindow: "10 minutes" } } },
+    async (request, reply) => {
+      const body = publicRespondSchema.safeParse(request.body);
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid payload", body.error.flatten()));
+      }
+
+      const ipAddress = (request.headers["x-forwarded-for"] as string | undefined)?.split(",")[0]?.trim()
+        ?? request.ip
+        ?? undefined;
+
+      const result = await respondToAccessRequestByToken({
+        token: body.data.token,
+        approved: body.data.decision === "APPROVE",
+        patientResponseIp: ipAddress,
+      });
+      if (!result.ok) return reply.status(400).send(errorResponse(result.message));
+
+      return okResponse(
+        { responded: true },
+        body.data.decision === "APPROVE" ? "Access granted" : "Access denied",
+      );
     },
   );
 

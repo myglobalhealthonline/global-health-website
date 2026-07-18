@@ -18,6 +18,8 @@ const CONSENT_TYPES = [
   "MEDICAL_ACCESS_DIRECT",
   "MEDICAL_ACCESS_COUNTRY_CLINIC",
   "MEDICAL_ACCESS_GLOBAL_NETWORK",
+  // Cross-border file access acknowledgement, captured at booking time.
+  "CROSS_BORDER_FILE_ACCESS",
 ] as const;
 
 type ConsentType = (typeof CONSENT_TYPES)[number];
@@ -58,6 +60,10 @@ const CONSENT_LABELS: Record<ConsentType, { label: string; description: string }
   MEDICAL_ACCESS_GLOBAL_NETWORK: {
     label: "Global network access",
     description: "Allow MyGlobalHealth network doctors worldwide to access your records for second opinions and specialist referrals.",
+  },
+  CROSS_BORDER_FILE_ACCESS: {
+    label: "Cross-border file access",
+    description: "Acknowledges that, if you receive care in another country, your medical file may be accessed by that country's clinical team.",
   },
 };
 
@@ -118,7 +124,7 @@ function emptyConsentCatalog() {
  *  Health Number) when it is missing. Every patient must have a profile so
  *  the portal's medical surfaces work; legacy accounts that predate
  *  registration-time profile creation are healed lazily here. */
-async function resolveOrCreatePatientProfile(
+export async function resolveOrCreatePatientProfile(
   userId: string,
   email: string,
 ): Promise<{ id: string; globalHealthNumber: string | null }> {

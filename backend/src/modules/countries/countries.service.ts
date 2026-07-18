@@ -168,6 +168,7 @@ export async function createAdminCountry(input: AdminCountryCreateBody): Promise
           defaultLocale: input.defaultLocale,
           currencyId: input.currencyId,
           isActive: input.isActive ?? true,
+          ...(input.accessModel !== undefined && { accessModel: input.accessModel }),
           countryLocales: {
             create: input.supportedLocales.map((locale) => ({
               locale,
@@ -249,6 +250,7 @@ export async function updateAdminCountry(
           ...(body.currencyId !== undefined && { currencyId: body.currencyId }),
           ...(body.isActive !== undefined && { isActive: body.isActive }),
           ...(body.enabledFeatures !== undefined && { enabledFeatures: body.enabledFeatures }),
+          ...(body.accessModel !== undefined && { accessModel: body.accessModel }),
         },
       });
 

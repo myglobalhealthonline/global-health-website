@@ -362,8 +362,8 @@ export type CommonLocale = {
     city: string;
     postalCode: string;
     gdprConsent: string;
-    gdprClinicConsent: string;
-    gdprPlatformConsent: string;
+    /** Combined consent: clinic/doctor sharing + platform processing + cross-border access. */
+    gdprCombinedConsent: string;
     privacyPolicyLinkLabel: string;
     whatsappConsent: string;
     addingToCart: string;
@@ -377,8 +377,7 @@ export type CommonLocale = {
     enterFullName: string;
     enterValidEmail: string;
     acceptConsent: string;
-    acceptClinicConsent: string;
-    acceptPlatformConsent: string;
+    acceptCombinedConsent: string;
     /** Family-member targeting (§ appointment-claim, Premium family usage). */
     whoIsThisFor: string;
     forMe: string;
