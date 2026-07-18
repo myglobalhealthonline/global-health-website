@@ -29,10 +29,15 @@ type Profile = {
   preferredPharmacy: string | null;
   statusAlert: string | null;
   clinicAlert: string | null;
+  idVerificationStatus?: "NOT_VERIFIED" | "PENDING" | "VERIFIED" | "REJECTED" | null;
 };
 
 export type PatientProfileCopy = {
   chartTitle: string;
+  idVerifiedBadge: string;
+  idPendingBadge: string;
+  idNotVerifiedBadge: string;
+  idRejectedBadge: string;
   planPharmacySection: string;
   preferredPharmacy: string;
   vitalsSection: string;
@@ -250,6 +255,7 @@ export function PatientProfilePanel({
   return (
     <FormSection title={copy.chartTitle} className="gh-doctor-patient-profile-panel">
       <div className="gh-form-section__span-2">
+      {profile ? <IdVerificationBadge status={profile.idVerificationStatus} copy={copy} /> : null}
       {profile?.statusAlert ? (
         <div
           role="alert"
@@ -499,6 +505,25 @@ export function PatientProfilePanel({
       </div>
     </FormSection>
   );
+}
+
+function IdVerificationBadge({
+  status,
+  copy,
+}: {
+  status: Profile["idVerificationStatus"];
+  copy: PatientProfileCopy;
+}) {
+  if (status === "VERIFIED") {
+    return <span className="gh-badge gh-badge-success mt-2 inline-block">{copy.idVerifiedBadge}</span>;
+  }
+  if (status === "PENDING") {
+    return <span className="gh-badge gh-badge-warning mt-2 inline-block">{copy.idPendingBadge}</span>;
+  }
+  if (status === "REJECTED") {
+    return <span className="gh-badge gh-badge-error mt-2 inline-block">{copy.idRejectedBadge}</span>;
+  }
+  return <span className="gh-badge gh-badge-neutral mt-2 inline-block">{copy.idNotVerifiedBadge}</span>;
 }
 
 function Section({

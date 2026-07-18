@@ -11,6 +11,7 @@ export * from "./admin-api/automation";
 export * from "./admin-api/audit";
 export * from "./admin-api/users";
 export * from "./admin-api/patients";
+export * from "./admin-api/patients-merge";
 export * from "./admin-api/health-tests";
 export * from "./admin-api/test-centers";
 export * from "./admin-api/assets";

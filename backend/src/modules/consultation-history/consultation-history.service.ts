@@ -1,5 +1,6 @@
 import { GeneratedDocumentType } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
+import { decryptPhi } from "../../lib/crypto/phi-crypto.js";
 import {
   formatConsultationTypeLabel,
   formatOrderRef,
@@ -179,7 +180,7 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
       return {
         id: n.id,
         appointmentId: n.appointmentId,
-        content: n.content,
+        content: decryptPhi(n.content) ?? n.content,
         consultationType: n.consultationType,
         consultationTypeLabel: formatConsultationTypeLabel(
           n.consultationType ?? n.appointment.consultationType,

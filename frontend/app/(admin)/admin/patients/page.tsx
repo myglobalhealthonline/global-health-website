@@ -74,9 +74,14 @@ export default async function AdminPatientsPage({
         title="Patients"
         description="Search by name, GHN, email, phone, fiscal number, ID card, or healthcare plan."
         actions={
-          <Btn href="/admin/patients/new" variant="primary" iconLeft={<UserRound className="size-3.5" />}>
-            New patient
-          </Btn>
+          <>
+            <Btn href="/admin/patients/duplicates" variant="secondary">
+              Duplicates
+            </Btn>
+            <Btn href="/admin/patients/new" variant="primary" iconLeft={<UserRound className="size-3.5" />}>
+              New patient
+            </Btn>
+          </>
         }
       />
 
