@@ -188,14 +188,16 @@ export default async function AdminEditServicePage({
       peakPriceCents: number;
       offPeakPriceCents: number;
       currencyCode: string;
-      windows: Array<{ startMinute: number; endMinute: number }>;
+      windows: Array<{ startMinute: number; endMinute: number; priceCents: number | null }>;
     };
     try {
       const enabled = formData.get("enabled") === "on";
-      // One peakStart/peakEnd pair per window row (repeated form fields).
+      // One peakStart/peakEnd/peakWindowPrice triple per window row
+      // (repeated form fields). Blank window price → shared peak price.
       const starts = formData.getAll("peakStart").map(String);
       const ends = formData.getAll("peakEnd").map(String);
-      const windows: Array<{ startMinute: number; endMinute: number }> = [];
+      const winPrices = formData.getAll("peakWindowPrice").map(String);
+      const windows: Array<{ startMinute: number; endMinute: number; priceCents: number | null }> = [];
       for (let i = 0; i < Math.max(starts.length, ends.length); i += 1) {
         const startRaw = (starts[i] ?? "").trim();
         const endRaw = (ends[i] ?? "").trim();
@@ -203,18 +205,23 @@ export default async function AdminEditServicePage({
         const startMinute = hhmmToMinutes(startRaw);
         const endMinute = hhmmToMinutes(endRaw);
         if (endMinute <= startMinute) {
-          return redirectError(`Window ${i + 1}: end must be after start.`);
+          throw new Error(`Window ${i + 1}: end must be after start.`);
         }
-        windows.push({ startMinute, endMinute });
+        const priceRaw = (winPrices[i] ?? "").trim();
+        windows.push({
+          startMinute,
+          endMinute,
+          priceCents: priceRaw === "" ? null : priceToCents(priceRaw),
+        });
       }
       if (enabled && windows.length === 0) {
-        return redirectError("Add at least one peak window.");
+        throw new Error("Add at least one peak window.");
       }
       const currencyCode = String(formData.get("currencyCode") ?? "")
         .trim()
         .toUpperCase();
       if (currencyCode.length !== 3) {
-        return redirectError("Currency must be a 3-letter code like EUR.");
+        throw new Error("Currency must be a 3-letter code like EUR.");
       }
       body = {
         enabled,

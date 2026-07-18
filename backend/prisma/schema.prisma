@@ -1089,6 +1089,9 @@ model ServicePeakWindow {
   startMinute Int
   /// Clinic-local minute-of-day, 1..1440 (exclusive end).
   endMinute   Int
+  /// Optional per-window price. Null → the config's shared peakPriceCents.
+  /// Lets one window discount (lunch promo) while another surcharges (evening).
+  priceCents  Int?
   sortOrder   Int                @default(0)
   createdAt   DateTime           @default(now())
 

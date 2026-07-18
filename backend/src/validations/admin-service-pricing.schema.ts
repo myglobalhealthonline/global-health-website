@@ -7,6 +7,8 @@ const peakWindowSchema = z
   .object({
     startMinute: z.coerce.number().int().min(0).max(MINUTES_IN_DAY - 1),
     endMinute: z.coerce.number().int().min(1).max(MINUTES_IN_DAY),
+    /** Optional per-window price; null/absent → the shared peakPriceCents. */
+    priceCents: z.coerce.number().int().min(0).nullish().default(null),
   })
   .strict()
   .refine((w) => w.endMinute > w.startMinute, {

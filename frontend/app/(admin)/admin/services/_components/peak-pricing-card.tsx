@@ -23,7 +23,7 @@ type Props = {
   error?: string;
 };
 
-type WindowRow = { start: string; end: string };
+type WindowRow = { start: string; end: string; price: string };
 
 const labelClass =
   "block text-xs font-semibold text-[var(--color-text-body)] mb-1";
@@ -35,9 +35,10 @@ function initialWindows(config: AdminPeakPricingDto | null): WindowRow[] {
     return config.windows.map((w) => ({
       start: minutesToHHMM(w.startMinute),
       end: minutesToHHMM(w.endMinute),
+      price: w.priceCents != null ? (w.priceCents / 100).toFixed(2) : "",
     }));
   }
-  return [{ start: "18:00", end: "22:00" }];
+  return [{ start: "18:00", end: "22:00", price: "" }];
 }
 
 /**
@@ -61,7 +62,7 @@ export function PeakPricingCard({
     setWindows((rows) => rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
   }
   function addWindow() {
-    setWindows((rows) => [...rows, { start: "09:00", end: "10:00" }]);
+    setWindows((rows) => [...rows, { start: "09:00", end: "10:00", price: "" }]);
   }
   function removeWindow(i: number) {
     setWindows((rows) => (rows.length <= 1 ? rows : rows.filter((_, idx) => idx !== i)));
@@ -80,7 +81,9 @@ export function PeakPricingCard({
         peak window show the peak price; all other slots show the off-peak
         price. Add multiple windows if your busy hours are split (e.g.
         11:00–12:00 and 16:00–17:00). Times are in the clinic timezone. The end
-        time is exclusive.
+        time is exclusive. Each window can carry its own price (e.g. a €39
+        lunch promo and a €55 evening rate); leave a window&apos;s price blank
+        to use the shared peak price.
       </p>
 
       {success ? (
@@ -135,6 +138,23 @@ export function PeakPricingCard({
                   required
                   value={w.end}
                   onChange={(e) => updateWindow(i, { end: e.target.value })}
+                  className={inputClass}
+                />
+              </div>
+              <div className="flex-1">
+                <label className={labelClass} htmlFor={`peakWindowPrice-${i}`}>
+                  {i === 0 ? "Window price (optional)" : `Price ${i + 1} (optional)`}
+                </label>
+                <input
+                  id={`peakWindowPrice-${i}`}
+                  type="text"
+                  inputMode="decimal"
+                  name="peakWindowPrice"
+                  placeholder="Peak price"
+                  pattern="^\d+(\.\d{1,2})?$"
+                  title="Enter a valid amount like 39 or 39.00 — blank uses the peak price"
+                  value={w.price}
+                  onChange={(e) => updateWindow(i, { price: e.target.value })}
                   className={inputClass}
                 />
               </div>

@@ -24,6 +24,7 @@ function makeConfig(
       pricingId: "cfg_test",
       startMinute: w.startMinute,
       endMinute: w.endMinute,
+      priceCents: w.priceCents ?? null,
       sortOrder: i,
       createdAt: new Date(0),
     })),
@@ -153,6 +154,27 @@ describe("computeSlotPrice", () => {
     assert.equal(w1.pricingType, "PEAK");
     assert.equal(w2.pricingType, "PEAK");
     assert.equal(gap.pricingType, "OFF_PEAK");
+  });
+
+  it("charges a window's own price when set, shared peak price otherwise", () => {
+    // Lunch promo 12:00–12:30 with its own €35 price; evening 21:00–24:00
+    // carries no own price so the shared €49 peak price applies.
+    const config = makeConfig({}, [
+      { startMinute: 12 * 60, endMinute: 12 * 60 + 30, priceCents: 3500 },
+      { startMinute: 21 * 60, endMinute: 24 * 60 },
+    ]);
+    // 12:15 Dublin summer = 11:15Z → lunch window, own price.
+    const promo = computeSlotPrice({ ...BASE, config, slotStartUtc: new Date("2026-07-15T11:15:00Z") });
+    assert.equal(promo.pricingType, "PEAK");
+    assert.equal(promo.unitPriceCents, 3500);
+    // 21:30 Dublin summer = 20:30Z → evening window, shared peak price.
+    const evening = computeSlotPrice({ ...BASE, config, slotStartUtc: new Date("2026-07-15T20:30:00Z") });
+    assert.equal(evening.pricingType, "PEAK");
+    assert.equal(evening.unitPriceCents, 4900);
+    // 15:00 Dublin summer = 14:00Z → outside both → off-peak.
+    const off = computeSlotPrice({ ...BASE, config, slotStartUtc: new Date("2026-07-15T14:00:00Z") });
+    assert.equal(off.pricingType, "OFF_PEAK");
+    assert.equal(off.unitPriceCents, 3900);
   });
 
   it("returns STANDARD when enabled but there are no windows", () => {
