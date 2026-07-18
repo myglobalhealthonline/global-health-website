@@ -23,7 +23,7 @@ export function setClientLocaleCookie(locale: string): void {
   try {
     const host = window.location.hostname;
     const parts = host.split(".");
-    if (parts.length > 2) {
+    if (parts.length >= 2) {
       // expire a possible Domain=.apex shadow cookie that would otherwise
       // out-rank the host-only cookie below and keep serving a stale locale
       const apex = parts.slice(-2).join(".");
