@@ -34,12 +34,21 @@ const PAGE_BODY_ALLOWED_TAGS = [
   "figure",
   "figcaption",
   "span",
+  "table",
+  "thead",
+  "tbody",
+  "tr",
+  "th",
+  "td",
+  "caption",
 ];
 
 const PAGE_BODY_ALLOWED_ATTRIBUTES: IOptions["allowedAttributes"] = {
   "*": ["class", "aria-label", "aria-hidden"],
   a: ["href", "target", "rel", "title"],
   img: ["src", "alt", "title", "width", "height", "loading"],
+  th: ["scope", "colspan", "rowspan"],
+  td: ["colspan", "rowspan"],
 };
 
 export function sanitizePageBodyHtml(html: string | null | undefined): string {
