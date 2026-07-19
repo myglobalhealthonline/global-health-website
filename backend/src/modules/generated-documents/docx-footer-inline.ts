@@ -1,5 +1,6 @@
 import type PizZip from "pizzip";
 import { buildLineGapXml, FOOTER_GAP_LINES } from "./docx-page-layout.js";
+import { clinicAddressLines } from "../../lib/clinic-addresses.js";
 
 const COUNTRY_LEGAL_TEXTS: Partial<Record<string, { text: string; szHp: string }>> = {
   CZ: {
@@ -52,20 +53,30 @@ const BODY_FONT = process.platform === "win32" ? "Calibri" : "Carlito";
  */
 const COUNTRY_FRAME_ADDRESSES: Record<
   string,
-  { lines: string[]; x: number; y: number; szHp: string }
+  { lines: readonly string[]; x: number; y: number; szHp: string }
 > = {
+  // IR = the DOCX template prefix for Ireland; also the fallback frame
+  // position/size used for any country without its own footer overlay.
   IR: {
-    lines: ["Trinity Street 6-9 Dublin 2, D02 EY47 Ireland"],
+    lines: clinicAddressLines("IE"),
+    x: 6300,
+    y: 15500,
+    szHp: "14", // 7pt
+  },
+  IE: {
+    lines: clinicAddressLines("IE"),
+    x: 6300,
+    y: 15500,
+    szHp: "14", // 7pt
+  },
+  CZ: {
+    lines: clinicAddressLines("CZ"),
     x: 6300,
     y: 15500,
     szHp: "14", // 7pt
   },
   PT: {
-    lines: [
-      "Rua Brincos de Princesa 13",
-      "2710-683 Sintra, Portugal",
-      "Tel.: 919990810",
-    ],
+    lines: [...clinicAddressLines("PT"), "Tel.: 919990810"],
     x: 6300,
     y: 15300,
     szHp: "13", // 6.5pt
@@ -81,12 +92,12 @@ function escapeXml(text: string): string {
 
 /**
  * Build a page-anchored frame paragraph (absolutely positioned, no text flow impact)
- * that places white address text inside the footer band.
- * Returns empty string for countries that need no overlay.
+ * that places white address text inside the footer band. Unmapped/unknown
+ * countries fall back to the IR frame position with the Ireland address —
+ * every generated document must show a clinic address, never a blank one.
  */
 export function buildCountryAddressFrameXml(countryCode: string): string {
-  const cfg = COUNTRY_FRAME_ADDRESSES[countryCode.toUpperCase()];
-  if (!cfg) return "";
+  const cfg = COUNTRY_FRAME_ADDRESSES[countryCode.toUpperCase()] ?? COUNTRY_FRAME_ADDRESSES.IR;
 
   const { lines, x, y, szHp } = cfg;
   // Width: ~47mm — enough for the longest line without overflowing the right margin.
