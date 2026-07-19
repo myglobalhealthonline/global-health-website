@@ -125,8 +125,9 @@ function Card({ kind, title, subtitle, locale, background, source }: {
       {source ? (
         <div style={{
           position: "absolute", right: 52, top: 52, width: 430, height: 526, display: "flex",
-          overflow: "hidden", borderRadius: kind === "doctor" ? 215 : 36,
-          border: "8px solid rgba(255,248,232,.72)", boxShadow: "0 24px 70px rgba(4,24,18,.42)",
+          overflow: "hidden", borderRadius: kind === "doctor" ? 44 : 36,
+          border: "3px solid rgba(255,248,232,.52)",
+          boxShadow: "0 24px 64px rgba(4,24,18,.34), inset 0 1px 0 rgba(255,255,255,.18)",
         }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img alt="" src={source} width={430} height={526} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -135,31 +136,31 @@ function Card({ kind, title, subtitle, locale, background, source }: {
       <div style={{
         position: "absolute", inset: 0, display: "flex",
         background: source
-          ? "linear-gradient(90deg,rgba(15,46,37,.98) 0%,rgba(15,46,37,.94) 48%,rgba(15,46,37,.10) 82%)"
-          : "linear-gradient(90deg,rgba(15,46,37,.91) 0%,rgba(15,46,37,.48) 72%,rgba(15,46,37,.20) 100%)",
+          ? "linear-gradient(90deg,rgba(8,34,27,1) 0%,rgba(8,34,27,.99) 54%,rgba(8,34,27,.84) 64%,rgba(8,34,27,.16) 82%)"
+          : "linear-gradient(90deg,rgba(8,34,27,.98) 0%,rgba(8,34,27,.90) 66%,rgba(8,34,27,.62) 100%)",
       }} />
       <div style={{
         position: "relative", width: source ? 730 : 980, padding: "60px 72px 52px",
         display: "flex", flexDirection: "column",
       }}>
         <div style={{
-          display: "flex", alignItems: "center", color: "#FFF8E8", fontSize: 23,
+          display: "flex", alignItems: "center", color: "#FFFFFF", fontSize: 23,
           fontWeight: 700, letterSpacing: "0.16em",
         }}>
           {SITE_NAME.toUpperCase()}
         </div>
         <div style={{
-          display: "flex", marginTop: 72, color: "#B0F122", fontSize: 18, fontWeight: 700, letterSpacing: "0.13em",
+          display: "flex", marginTop: 72, color: "#C7EE62", fontSize: 18, fontWeight: 700, letterSpacing: "0.13em",
         }}>{LABELS[kind]}</div>
         <div style={{
           display: "flex", marginTop: 18, fontSize: titleSize, lineHeight: 1.05, fontWeight: 760, letterSpacing: "-0.035em", color: "#FFFFFF",
         }}>{title}</div>
-        {subtitle ? <div style={{ display: "flex", marginTop: 22, color: "#FFF8E8", fontSize: 27, lineHeight: 1.3 }}>{subtitle}</div> : null}
-        <div style={{ display: "flex", marginTop: "auto", alignItems: "center", color: "#E9E2CF", fontSize: 19 }}>
+        {subtitle ? <div style={{ display: "flex", marginTop: 22, color: "#F3F7F5", fontSize: 27, lineHeight: 1.3, fontWeight: 600 }}>{subtitle}</div> : null}
+        <div style={{ display: "flex", marginTop: "auto", alignItems: "center", color: "#F6F8F7", fontSize: 19, fontWeight: 600 }}>
           myglobalhealth.online
           {locale ? <div style={{
             display: "flex", marginLeft: 20, padding: "8px 14px", borderRadius: 999,
-            background: "rgba(176,241,34,.16)", color: "#B0F122", fontWeight: 700,
+            background: "#274A2A", color: "#D3F779", fontWeight: 700,
           }}>{locale.replace("_", "-")}</div> : null}
         </div>
       </div>
