@@ -63,6 +63,11 @@ import { SITE_NAME } from "@/lib/constants";
 import { Stethoscope, ShieldCheck, Activity, Languages } from "lucide-react";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 
+// Marquee language-chip priority: majority consultation languages surface
+// ahead of the rest of the (alphabetical) GP language pool. See
+// gpLanguageNames below — booking's own language picker is unaffected.
+const MARQUEE_PRIORITY_LANGUAGES = ["english", "portuguese", "spanish", "french", "german"];
+
 type Params = { country: string; lang: string };
 
 export async function generateStaticParams(): Promise<Params[]> {
@@ -324,21 +329,33 @@ export default async function CountryLangHomePage({
   });
 
   // Regulator-specific trust tile when the country has authority data
-  // (Ireland → IMC registry; Portugal → ERS provider registration E179287).
-  // Falls back to the generic GDPR tile elsewhere.
-  const regulatorAbbrev =
-    countryTrust?.authorityLinks.find(
-      (l) => l.category === "MEDICAL_REGULATOR" || l.category === "DOCTOR_REGISTRY",
-    )?.abbreviation ?? null;
+  // (Ireland → IMC registry; Portugal → ERS provider registration E179287;
+  // Brazil → both CFM and CRM registries, joined). Falls back to the
+  // generic data-protection-law tile elsewhere.
+  const regulatorAbbrev = (() => {
+    const abbrevs = Array.from(
+      new Set(
+        (countryTrust?.authorityLinks ?? [])
+          .filter((l) => l.category === "MEDICAL_REGULATOR" || l.category === "DOCTOR_REGISTRY")
+          .map((l) => l.abbreviation)
+          .filter((a): a is string => Boolean(a)),
+      ),
+    );
+    return abbrevs.length > 0 ? abbrevs.join("/") : null;
+  })();
+  // Data-protection law name is country-specific (GDPR, LGPD for Brazil, …) —
+  // never hardcode "GDPR" here, it must match countryTrust.dataProtectionLawName.
+  const dataLawName = countryTrust?.dataProtectionLawName ?? "GDPR";
+  const gdprLabel = t.trust.gdpr.replace("{law}", dataLawName);
   const regulatorTile: TrustRibbonItem = countryTrust?.providerRegistration?.number
     ? {
         v: countryTrust.providerRegistration.number,
-        l: countryTrust.providerRegistration.label ?? t.trust.gdpr,
+        l: countryTrust.providerRegistration.label ?? gdprLabel,
         icon: "shield",
       }
     : regulatorAbbrev
-      ? { v: regulatorAbbrev, l: t.trust.gdpr, icon: "shield" }
-      : { v: "GDPR", l: t.trust.gdpr, icon: "lock" };
+      ? { v: regulatorAbbrev, l: gdprLabel, icon: "shield" }
+      : { v: dataLawName, l: gdprLabel, icon: "lock" };
 
   // Cross-market "N European markets" tile replaced with a country-general
   // "consultation languages" tile: it belongs on a single clinic's hub (a
@@ -349,7 +366,7 @@ export default async function CountryLangHomePage({
   const languageTile: TrustRibbonItem =
     gpLanguages.languages.length > 0
       ? { v: String(gpLanguages.languages.length), l: t.trust.languagesSpoken, icon: "globe" }
-      : { v: "GDPR", l: t.trust.gdpr, icon: "lock" };
+      : { v: dataLawName, l: gdprLabel, icon: "lock" };
   const trustItems: TrustRibbonItem[] = [
     {
       v:
@@ -382,7 +399,18 @@ export default async function CountryLangHomePage({
     reviewConfigResult && reviewConfigResult.ok
       ? (reviewConfigResult.data.doctify.aggregate ?? null)
       : null;
-  const gpLanguageNames = gpLanguages.languages
+  // Marquee shows only 3 of the full (alphabetical) language pool — bias
+  // toward major consultation languages so e.g. Portuguese surfaces ahead
+  // of a minority language that happens to sort earlier (Bangla < Portuguese).
+  // Booking's actual language picker still gets the untouched full list below.
+  const gpLanguageNames = [...gpLanguages.languages]
+    .sort((a, b) => {
+      const ai = MARQUEE_PRIORITY_LANGUAGES.indexOf(a);
+      const bi = MARQUEE_PRIORITY_LANGUAGES.indexOf(b);
+      if (ai === -1 && bi === -1) return a.localeCompare(b);
+      return (ai === -1 ? MARQUEE_PRIORITY_LANGUAGES.length : ai) -
+        (bi === -1 ? MARQUEE_PRIORITY_LANGUAGES.length : bi);
+    })
     .slice(0, 3)
     .map((l) => localizedLanguageLabel(l, lang));
   const gpLanguagesSummary =
@@ -424,8 +452,8 @@ export default async function CountryLangHomePage({
       : []),
     {
       icon: (regulatorAbbrev ? "shield" : "lock") as "shield" | "lock",
-      value: regulatorAbbrev ?? "GDPR",
-      label: t.trust.gdpr,
+      value: regulatorAbbrev ?? dataLawName,
+      label: gdprLabel,
     },
     ...(gpLanguageNames.length > 0
       ? [
@@ -459,8 +487,8 @@ export default async function CountryLangHomePage({
           icon: <Languages className="size-5" strokeWidth={1.5} aria-hidden />,
         }
       : {
-          value: "GDPR",
-          label: t.trust.gdpr,
+          value: dataLawName,
+          label: gdprLabel,
           icon: <ShieldCheck className="size-5" strokeWidth={1.5} aria-hidden />,
         };
   const statsItems: StatBandItem[] = [
