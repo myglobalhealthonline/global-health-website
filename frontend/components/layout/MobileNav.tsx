@@ -145,7 +145,7 @@ export function MobileNav({
                 },
               ]
             : []),
-          { href: `/${navCountrySlug}/${navLang}#how-it-works`, label: navigation.navHowItWorks },
+          { href: `/${navCountrySlug}/${navLang}/blog`, label: navigation.navBlog },
           { href: "/about", label: navigation.navAbout },
           { href: "/contact", label: navigation.navContact },
         ]
