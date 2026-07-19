@@ -75,6 +75,7 @@
       <div class="foot-rule"></div>
       {{#if countryLegalText}}<p class="legal">{{countryLegalText}}</p>{{/if}}
       <p class="confidential">{{L.confidentialNote}}</p>
+      {{#if clinicAddressLines}}<p class="foot-address">{{#each clinicAddressLines}}{{this}}{{#unless @last}} · {{/unless}}{{/each}}</p>{{/if}}
       <div class="fb"><span class="b">Global Health</span><span class="t">Medicine Anytime Anywhere — myglobalhealth.online</span></div>
     </div>
 
