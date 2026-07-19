@@ -365,6 +365,9 @@ export type PublicBlogPost = {
   excerpt: string | null;
   body: string;
   locale: LocaleCode;
+  /** Countries this post is explicitly scoped to. Empty = global (shown
+   *  in every country) — see the admin "Country visibility" checkboxes. */
+  countries: Array<{ code: string; slug: string }>;
   category: string | null;
   author: string | null;
   reviewer: string | null;
@@ -414,6 +417,7 @@ function toPublicBlogPost(row: {
   excerpt: string | null;
   body: string;
   locale: LocaleCode;
+  countries: Array<{ country: { code: string; slug: string } }>;
   category: string | null;
   authorDisplayName: string | null;
   reviewerDisplayName: string | null;
@@ -432,6 +436,7 @@ function toPublicBlogPost(row: {
     excerpt: row.excerpt,
     body: row.body,
     locale: row.locale,
+    countries: row.countries.map((c) => ({ code: c.country.code, slug: c.country.slug })),
     category: row.category,
     author: row.authorDisplayName,
     reviewer: row.reviewerDisplayName,
@@ -471,6 +476,7 @@ const publicBlogSelect = {
   excerpt: true,
   body: true,
   locale: true,
+  countries: { select: { country: { select: { code: true, slug: true } } } },
   category: true,
   authorDisplayName: true,
   reviewerDisplayName: true,
@@ -492,13 +498,33 @@ const publicBlogSelect = {
 // content, never today's posts.
 const PUBLIC_BLOG_LIST_CAP = 300;
 
-export async function getPublicBlogPosts(locale?: LocaleCode): Promise<PublicBlogPost[]> {
+/** A post is visible to `countryCode` if it has no BlogPostCountry rows
+ *  at all (global — "shows in every country" per the admin help text) OR
+ *  one matching this country. Mirrors the "primary-or-joined" OR shape
+ *  used for doctor/service country visibility (see listDoctorsByCountry). */
+function countryVisibilityWhere(countryCode: string): Prisma.BlogPostWhereInput {
+  return {
+    OR: [
+      { countries: { none: {} } },
+      { countries: { some: { country: { code: countryCode, isActive: true } } } },
+    ],
+  };
+}
+
+export async function getPublicBlogPosts(
+  locale?: LocaleCode,
+  countryCode?: string,
+): Promise<PublicBlogPost[]> {
   try {
     const rows = await prisma.blogPost.findMany({
       where: {
         status: PublishStatus.PUBLISHED,
         isActive: true,
         ...(locale ? { locale } : {}),
+        // No countryCode (the bare, no-country-context /blog route) means
+        // "global posts only" — country-specific posts only ever surface
+        // under their own /[country]/[lang]/blog.
+        ...(countryCode ? countryVisibilityWhere(countryCode) : { countries: { none: {} } }),
       },
       orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
       take: PUBLIC_BLOG_LIST_CAP,
@@ -513,6 +539,7 @@ export async function getPublicBlogPosts(locale?: LocaleCode): Promise<PublicBlo
 export async function getPublicBlogPostBySlug(
   slug: string,
   locale?: LocaleCode,
+  countryCode?: string,
 ): Promise<PublicBlogPost | null> {
   try {
     const row = await prisma.blogPost.findFirst({
@@ -521,6 +548,12 @@ export async function getPublicBlogPostBySlug(
         status: PublishStatus.PUBLISHED,
         isActive: true,
         ...(locale ? { locale } : {}),
+        // Unlike the list function, no countryCode here means UNFILTERED
+        // (not global-only) — the bare /blog/[slug] page needs to fetch a
+        // country-specific post regardless of its assignment so it can
+        // decide where to redirect. Only a country-scoped route passes
+        // countryCode, and only then do we gate on country visibility.
+        ...(countryCode ? countryVisibilityWhere(countryCode) : {}),
       },
       orderBy: [{ publishedAt: "desc" }],
       select: publicBlogSelect,

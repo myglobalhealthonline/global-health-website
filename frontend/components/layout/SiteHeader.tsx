@@ -99,7 +99,7 @@ function sectionNavForCountryLang(
   if (features?.includes("subscriptions")) {
     items.push({ href: `${base}/pricing`, label: nav.navPlans });
   }
-  items.push({ href: "/blog", label: nav.navBlog });
+  items.push({ href: `${base}/blog`, label: nav.navBlog });
   items.push({ href: "/about", label: nav.navAbout });
   items.push({ href: "/contact", label: nav.navContact });
   return items;

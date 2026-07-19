@@ -73,6 +73,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     pushLocalized(country, "/book", 0.85);
     pushLocalized(country, "/lab-tests", 0.7);
     pushLocalized(country, "/pricing", 0.6);
+    pushLocalized(country, "/blog", 0.6);
   }
 
   // Service detail pages — active public GP/specialist services per country.
@@ -149,6 +150,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   );
 
   // Blog posts — published, admin-managed. [] when API unavailable.
+  // Global posts (no countries assigned) canonicalize at the bare URL;
+  // country-specific posts get one entry per assigned country × enabled
+  // locale (via pushLocalized), matching the redirect/canonical scheme in
+  // blog-post-page.tsx.
   try {
     const posts = await listBlogPosts();
     for (const p of posts) {
@@ -161,6 +166,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   } catch {
     // Blog list unavailable — sitemap still emits the rest.
+  }
+
+  for (const country of countries) {
+    try {
+      const countryPosts = await listBlogPosts(country.code);
+      for (const p of countryPosts) {
+        if (p.countries.length === 0) continue; // already emitted above as a bare-URL entry
+        pushLocalized(country, `/blog/${p.slug}`, 0.5, { lastModified: p.publishedAt });
+      }
+    } catch {
+      // Blog list unavailable for this country — keep the rest of the sitemap.
+    }
   }
 
   // Doctor profile pages — every enabled locale with hreflang alternates,

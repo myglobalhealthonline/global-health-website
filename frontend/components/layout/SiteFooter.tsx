@@ -148,7 +148,7 @@ export function SiteFooter({
   ];
 
   const companyLinks = [
-    { label: navigation.navBlog, href: "/blog" },
+    { label: navigation.navBlog, href: careBase ? `${careBase}/blog` : "/blog" },
     { label: navigation.navFaq, href: "/faq" },
     { label: navigation.navAbout, href: "/about" },
     { label: navigation.footerContactUs, href: "/contact" },

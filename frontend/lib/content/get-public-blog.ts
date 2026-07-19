@@ -16,6 +16,8 @@ export type BlogListItem = {
   readingTime: number;
   coverImageSrc: string | null;
   coverImageAlt: string | null;
+  /** Countries this post is scoped to. Empty = global (shown everywhere). */
+  countries: Array<{ code: string; slug: string }>;
 };
 
 /** Named clinician linked as a post's author / clinical reviewer. */
@@ -49,6 +51,7 @@ type ApiBlogPost = {
   excerpt?: unknown;
   body?: unknown;
   locale?: unknown;
+  countries?: unknown;
   category?: unknown;
   author?: unknown;
   reviewer?: unknown;
@@ -90,6 +93,19 @@ function normalizeCtaService(raw: unknown): { slug: string; name: string; countr
   return { slug, name, countrySlug };
 }
 
+function normalizeCountries(raw: unknown): Array<{ code: string; slug: string }> {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((entry) => {
+      if (!entry || typeof entry !== "object") return null;
+      const r = entry as Record<string, unknown>;
+      const code = str(r.code);
+      const slug = str(r.slug);
+      return code && slug ? { code, slug } : null;
+    })
+    .filter((c): c is { code: string; slug: string } => c !== null);
+}
+
 /** Rough reading-time estimate from the HTML body (200 wpm, min 1). */
 function readingTimeFromHtml(html: string): number {
   const text = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
@@ -110,6 +126,7 @@ function normalizeApiPost(raw: ApiBlogPost): BlogPostFull | null {
     excerpt: str(raw.excerpt),
     body,
     locale: str(raw.locale) || "EN",
+    countries: normalizeCountries(raw.countries),
     category: str(raw.category) || "Health guide",
     author: str(raw.author) || "Global Health Editorial Team",
     publishedAt,
@@ -125,9 +142,12 @@ function normalizeApiPost(raw: ApiBlogPost): BlogPostFull | null {
   };
 }
 
-/** All published, admin-managed posts (newest-first). [] when unavailable. */
-const fetchPublishedPosts = cache(async (): Promise<BlogPostFull[]> => {
-  const res = await apiRequest<{ posts?: ApiBlogPost[] }>("/api/blog", {
+/** All published, admin-managed posts (newest-first). [] when unavailable.
+ *  No countryCode = global posts only (see blog.service.ts's
+ *  countryVisibilityWhere) — the bare, no-country-context /blog route. */
+const fetchPublishedPosts = cache(async (countryCode?: string): Promise<BlogPostFull[]> => {
+  const qs = countryCode ? `?countryCode=${encodeURIComponent(countryCode)}` : "";
+  const res = await apiRequest<{ posts?: ApiBlogPost[] }>(`/api/blog${qs}`, {
     revalidate: 60,
     tags: [PUBLIC_BLOG_TAG],
   });
@@ -140,8 +160,8 @@ const fetchPublishedPosts = cache(async (): Promise<BlogPostFull[]> => {
 });
 
 /** Card list for the blog index. */
-export async function listBlogPosts(): Promise<BlogListItem[]> {
-  const posts = await fetchPublishedPosts();
+export async function listBlogPosts(countryCode?: string): Promise<BlogListItem[]> {
+  const posts = await fetchPublishedPosts(countryCode);
   return posts.map((p) => ({
     slug: p.slug,
     title: p.title,
@@ -152,21 +172,26 @@ export async function listBlogPosts(): Promise<BlogListItem[]> {
     readingTime: p.readingTime,
     coverImageSrc: p.coverImageSrc,
     coverImageAlt: p.coverImageAlt,
+    countries: p.countries,
   }));
 }
 
 /** Full post for the detail page; null when the slug is unknown or unavailable.
  *  Fetches the single post directly via /api/blog/:slug so the detail page
- *  has its own Data-Cache entry independent of the all-posts list. */
-export async function getBlogPost(slug: string): Promise<BlogPostFull | null> {
-  const res = await apiRequest<{ post?: ApiBlogPost }>(`/api/blog/${encodeURIComponent(slug)}`, {
+ *  has its own Data-Cache entry independent of the all-posts list. A
+ *  country-scoped route passes `countryCode` to gate visibility; the bare
+ *  route omits it to fetch the post regardless of country assignment (it
+ *  needs `post.countries` to decide whether to redirect). */
+export async function getBlogPost(slug: string, countryCode?: string): Promise<BlogPostFull | null> {
+  const qs = countryCode ? `?countryCode=${encodeURIComponent(countryCode)}` : "";
+  const res = await apiRequest<{ post?: ApiBlogPost }>(`/api/blog/${encodeURIComponent(slug)}${qs}`, {
     revalidate: 300,
     tags: [PUBLIC_BLOG_TAG],
   });
   if (!res.ok) {
     // Fall back to the all-posts list (handles the case where the backend
     // supports listing but the single-post endpoint is unavailable).
-    const posts = await fetchPublishedPosts();
+    const posts = await fetchPublishedPosts(countryCode);
     return posts.find((p) => p.slug === slug) ?? null;
   }
   return res.data?.post ? normalizeApiPost(res.data.post) : null;

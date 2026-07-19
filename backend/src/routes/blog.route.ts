@@ -21,7 +21,7 @@ const blogRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid blog query", query.error.flatten()));
     }
     try {
-      const posts = await getPublicBlogPosts(query.data.locale);
+      const posts = await getPublicBlogPosts(query.data.locale, query.data.countryCode);
       return okResponse({ posts });
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
@@ -46,7 +46,7 @@ const blogRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid blog query", query.error.flatten()));
     }
     try {
-      const post = await getPublicBlogPostBySlug(params.data.slug, query.data.locale);
+      const post = await getPublicBlogPostBySlug(params.data.slug, query.data.locale, query.data.countryCode);
       if (!post) {
         return reply.status(404).send(errorResponse("Blog post not found"));
       }

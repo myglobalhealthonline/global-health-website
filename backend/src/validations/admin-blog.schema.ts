@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { LocaleCode, PublishStatus } from "@prisma/client";
+import { countryCodeSchema } from "./shared.schema.js";
 
 export const localeCodeSchema = z.nativeEnum(LocaleCode);
 export const publishStatusSchema = z.nativeEnum(PublishStatus);
@@ -132,5 +133,9 @@ export const publicBlogQuerySchema = z.object({
   locale: z.preprocess(
     (v) => (v === "" || v === undefined || v === null ? undefined : v),
     localeCodeSchema.optional(),
+  ),
+  countryCode: z.preprocess(
+    (v) => (v === "" || v === undefined || v === null ? undefined : v),
+    countryCodeSchema.optional(),
   ),
 });
