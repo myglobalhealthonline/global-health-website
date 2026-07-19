@@ -332,7 +332,86 @@ const nextConfig: NextConfig = {
    * The query string is forwarded automatically by Next's redirect.
    */
   async redirects() {
+    // Localized-slug migration (2026-07): PT/CZ/RO service slugs renamed
+    // from English to default-locale slugs (backend
+    // scripts/migrate-localized-service-slugs.ts holds the same map).
+    // Old slugs are indexed — 301 them under both /services and /consult.
+    const localizedSlugRenames: Record<string, Record<string, string>> = {
+      portugal: {
+        "cardiology-consultation": "consulta-cardiologia",
+        "driving-license-medical-certificate": "certificado-medico-carta-de-conducao",
+        "family-and-general-medicine": "medicina-geral-e-familiar",
+        "hair-loss-consultation": "consulta-queda-de-cabelo",
+        "medical-certificates-consultation": "certificados-medicos",
+        "medical-consultation": "consulta-medica",
+        "mens-health-consultation": "saude-do-homem",
+        "mental-health-consultation": "saude-mental",
+        "nutrition-consultation": "consulta-de-nutricao",
+        "oncology-consultation": "consulta-de-oncologia",
+        "paediatric-primary-care-consultation": "pediatria-geral",
+        "pain-management-consultation": "gestao-da-dor",
+        "pediatric-consultation": "consulta-de-pediatria",
+        "psychiatry-consultation": "consulta-de-psiquiatria",
+        "psychology-consultation": "consulta-de-psicologia",
+        "referral-consultation": "consulta-de-referenciacao",
+        "second-opinion-consultation": "segunda-opiniao-medica",
+        "sick-leave": "baixa-medica",
+        "skin-dermatology-consultation": "consulta-dermatologia",
+        "smoking-cessation-consultation": "deixar-de-fumar",
+        "travelers-consultation": "consulta-do-viajante",
+        "treatment-renewal": "renovacao-de-tratamento",
+        "weight-loss-consultation": "perda-de-peso",
+        "womens-health-consultation": "saude-da-mulher",
+      },
+      czechia: {
+        "chronic-disease-management": "chronicka-onemocneni",
+        "hair-loss-online": "vypadavani-vlasu-online",
+        "mens-health-online": "muzske-zdravi-online",
+        "mental-health-online": "dusevni-zdravi-online",
+        "musculoskeletal-pain": "bolesti-pohyboveho-aparatu",
+        "paediatric-gp-online": "detsky-lekar-online",
+        "prague-doctor-online": "lekar-online-praha",
+        "referrals-and-investigations": "doporuceni-a-vysetreni",
+        "second-opinion-prague": "druhy-nazor-praha",
+        "sick-note-czech-republic": "neschopenka-online",
+        "skin-consultation-prague": "kozni-konzultace-praha",
+        "travel-health-prague": "cestovni-medicina-praha",
+        "treatment-renewal": "obnoveni-lecby",
+        "weight-management-online": "kontrola-vahy-online",
+        "womens-health-online": "zenske-zdravi-online",
+      },
+      romania: {
+        "chronic-disease-romania": "boli-cronice-online",
+        "hair-loss-romania": "caderea-parului-online",
+        "mens-health-romania": "sanatatea-barbatului-online",
+        "mental-health-romania": "sanatate-mintala-online",
+        "musculoskeletal-pain-romania": "dureri-musculo-scheletice",
+        "neurology-consultation-romania": "consultatie-neurologie",
+        "online-doctor-romania": "medic-online-romania",
+        "paediatric-gp-romania": "medic-pediatru-online",
+        "referrals-and-investigations-romania": "trimiteri-si-investigatii",
+        "second-opinion-romania": "a-doua-opinie-medicala",
+        "skin-consultation-romania": "consultatie-dermatologica",
+        "specialist-paediatrician-romania": "consultatie-pediatrie",
+        "specialist-pain-assessment-romania": "evaluare-durere",
+        "travel-health-romania": "medicina-calatoriei",
+        "treatment-renewal-romania": "reinnoire-tratament",
+        "weight-management-romania": "controlul-greutatii",
+        "womens-health-romania": "sanatatea-femeii-online",
+      },
+    };
+    const localizedSlugRedirects = Object.entries(localizedSlugRenames).flatMap(
+      ([countrySlug, map]) =>
+        Object.entries(map).flatMap(([oldSlug, newSlug]) =>
+          ["services", "consult"].map((section) => ({
+            source: `/${countrySlug}/:lang/${section}/${oldSlug}`,
+            destination: `/${countrySlug}/:lang/${section}/${newSlug}`,
+            permanent: true,
+          })),
+        ),
+    );
     return [
+      ...localizedSlugRedirects,
       {
         source: "/:country/:lang/book-online",
         destination: "/:country/:lang/book",

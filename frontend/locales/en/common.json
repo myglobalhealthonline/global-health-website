@@ -784,8 +784,8 @@
     "reviewRateStepSubmit": "Submit"
   },
   "homeMeta": {
-    "titleTemplate": "{country} — registered doctors and specialists",
-    "descriptionTemplate": "Licensed doctors and specialists registered to practise in {country}. View profiles, credentials, specialties and languages."
+    "titleTemplate": "Online Doctor {country} | Registered GPs & Specialists | Global Health",
+    "descriptionTemplate": "See a registered doctor online today — GP consultations, medical certificates, specialist referrals. Same-day video appointments in {country}."
   },
   "pricingPage": {
     "trustLicensedTitle": "Licensed doctors",

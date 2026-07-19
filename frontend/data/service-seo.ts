@@ -54,6 +54,17 @@ const SERVICE_SEO: Record<string, ServiceSeo> = {
     description:
       "Marque a sua consulta do viajante online com aconselhamento médico para viajar de forma rápida, segura e adaptada ao seu destino.",
   },
+  // Localized-slug aliases (2026-07 rename) — same overrides, new slugs.
+  "pt:consulta-medica": {
+    title: "Consulta Médica Online em Portugal | Consulta de Saúde Segura",
+    description:
+      "Agende a sua consulta médica online em Portugal de forma rápida e segura. Consulta de saúde em Portugal com médicos qualificados e atendimento no mesmo dia.",
+  },
+  "pt:consulta-do-viajante": {
+    title: "Consulta de Saúde Internacional | Consulta Viagem Online",
+    description:
+      "Marque a sua consulta do viajante online com aconselhamento médico para viajar de forma rápida, segura e adaptada ao seu destino.",
+  },
 };
 
 /** Normalize a slug for matching: lowercase, drop apostrophes/curly quotes
