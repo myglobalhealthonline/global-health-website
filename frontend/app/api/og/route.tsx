@@ -1,9 +1,14 @@
 import { ImageResponse } from "next/og";
+import sharp from "sharp";
 import { SITE_NAME } from "@/lib/constants";
 import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, type OgImageKind } from "@/lib/seo/og-image";
+import { getSiteUrl } from "@/lib/seo/site-url";
 
 const CACHE_CONTROL = "public, max-age=31536000, s-maxage=31536000, immutable";
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+// Keep remote portraits deliberately small. Large base64 payloads can exhaust
+// the memory available to an edge image renderer and turn the whole OG route
+// into a 502. Oversized or slow images fall back to the branded card.
+const MAX_IMAGE_BYTES = 1024 * 1024;
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const KINDS = new Set<OgImageKind>(["page", "country", "service", "doctor", "article", "pricing", "corporate", "legal"]);
 const LABELS: Record<OgImageKind, string> = {
@@ -11,6 +16,8 @@ const LABELS: Record<OgImageKind, string> = {
   doctor: "MEET YOUR DOCTOR", article: "HEALTH JOURNAL", pricing: "PLANS & PRICING",
   corporate: "GLOBAL HEALTH FOR TEAMS", legal: "INFORMATION",
 };
+
+export const runtime = "nodejs";
 
 function bounded(value: string | null, maximum: number): string | undefined {
   if (!value) return undefined;
@@ -48,12 +55,14 @@ function isImagePath(pathname: string): boolean {
       pathname.startsWith("/social/") || /\.(?:avif|jpe?g|png|webp)$/i.test(pathname));
 }
 
-function approvedSource(raw: string | undefined, requestUrl: URL): URL | undefined {
+function approvedSource(raw: string | undefined): URL | undefined {
   if (!raw) return undefined;
   try {
-    const url = new URL(raw, requestUrl.origin);
+    const publicOrigin = new URL(getSiteUrl());
+    const isRelative = raw.startsWith("/") && !raw.startsWith("//");
+    const url = isRelative ? new URL(raw, publicOrigin) : new URL(raw);
     if (url.protocol !== "https:" || url.username || url.password || !isImagePath(url.pathname)) return undefined;
-    if (url.origin === requestUrl.origin && raw.startsWith("/") && !raw.startsWith("//")) return url;
+    if (isRelative) return url.origin === publicOrigin.origin ? url : undefined;
     const host = url.hostname.toLowerCase();
     return !isPrivateHost(host) && trustedHosts().has(host) ? url : undefined;
   } catch { return undefined; }
@@ -67,7 +76,10 @@ function dataUrl(bytes: Uint8Array, type: string): string {
   return `data:${type};base64,${btoa(binary)}`;
 }
 
-async function loadImage(url: URL | undefined): Promise<string | undefined> {
+async function loadImage(
+  url: URL | undefined,
+  dimensions?: { width: number; height: number },
+): Promise<string | undefined> {
   if (!url) return undefined;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 2_500);
@@ -77,7 +89,22 @@ async function loadImage(url: URL | undefined): Promise<string | undefined> {
     const declared = Number(response.headers.get("content-length") ?? "0");
     if (!response.ok || !type || !IMAGE_TYPES.has(type) || declared > MAX_IMAGE_BYTES) return undefined;
     const bytes = new Uint8Array(await response.arrayBuffer());
-    return bytes.byteLength > 0 && bytes.byteLength <= MAX_IMAGE_BYTES ? dataUrl(bytes, type) : undefined;
+    if (bytes.byteLength === 0 || bytes.byteLength > MAX_IMAGE_BYTES) return undefined;
+
+    // Decode before handing bytes to ImageResponse. Its WASM renderer can
+    // abort the entire request on a malformed or incompatible remote image.
+    // Re-encoding gives it one known-safe format and also downsizes portraits.
+    let pipeline = sharp(bytes).rotate();
+    if (dimensions) {
+      pipeline = pipeline.resize(dimensions.width, dimensions.height, {
+        fit: "cover",
+        position: "attention",
+      });
+    }
+    const safeBytes = new Uint8Array(await pipeline.jpeg({ quality: 86, mozjpeg: true }).toBuffer());
+    return safeBytes.byteLength <= MAX_IMAGE_BYTES
+      ? dataUrl(safeBytes, "image/jpeg")
+      : undefined;
   } catch { return undefined; } finally { clearTimeout(timeout); }
 }
 
@@ -140,23 +167,44 @@ function Card({ kind, title, subtitle, locale, background, source }: {
   );
 }
 
-export async function GET(request: Request): Promise<ImageResponse> {
+async function renderCard(
+  props: Parameters<typeof Card>[0],
+): Promise<Uint8Array> {
+  const response = new ImageResponse(<Card {...props} />, {
+    width: OG_IMAGE_WIDTH,
+    height: OG_IMAGE_HEIGHT,
+  });
+  return new Uint8Array(await response.arrayBuffer());
+}
+
+export async function GET(request: Request): Promise<Response> {
   const requestUrl = new URL(request.url);
   const requestedKind = bounded(requestUrl.searchParams.get("kind"), 24) as OgImageKind | undefined;
   const kind = requestedKind && KINDS.has(requestedKind) ? requestedKind : "page";
-  const title = bounded(requestUrl.searchParams.get("title"), 160) ?? SITE_NAME;
-  const subtitle = bounded(requestUrl.searchParams.get("subtitle"), 200);
+  const title = bounded(requestUrl.searchParams.get("title"), 60) ?? SITE_NAME;
+  const subtitle = bounded(requestUrl.searchParams.get("subtitle"), 100);
   const locale = bounded(requestUrl.searchParams.get("locale"), 35);
-  const sourceUrl = approvedSource(bounded(requestUrl.searchParams.get("image"), 2_048), requestUrl);
+  const sourceUrl = approvedSource(bounded(requestUrl.searchParams.get("image"), 2_048));
   const [background, source] = await Promise.all([
-    loadImage(new URL("/social/og-background.webp", requestUrl.origin)),
-    loadImage(sourceUrl),
+    loadImage(new URL("/social/og-background.webp", getSiteUrl())),
+    loadImage(sourceUrl, { width: 430, height: 526 }),
   ]);
-  return new ImageResponse(
-    <Card kind={kind} title={title} subtitle={subtitle} locale={locale} background={background} source={source} />,
-    {
-      width: OG_IMAGE_WIDTH, height: OG_IMAGE_HEIGHT,
-      headers: { "Cache-Control": CACHE_CONTROL, "Content-Type": "image/png", "X-Content-Type-Options": "nosniff" },
+  const props = { kind, title, subtitle, locale, background, source };
+  let rendered: Uint8Array;
+  try {
+    rendered = await renderCard(props);
+  } catch {
+    rendered = await renderCard({ ...props, source: undefined });
+  }
+  const optimized = await sharp(rendered)
+    .jpeg({ quality: 84, mozjpeg: true, chromaSubsampling: "4:2:0" })
+    .toBuffer();
+
+  return new Response(new Uint8Array(optimized), {
+    headers: {
+      "Cache-Control": CACHE_CONTROL,
+      "Content-Type": "image/jpeg",
+      "X-Content-Type-Options": "nosniff",
     },
-  );
+  });
 }

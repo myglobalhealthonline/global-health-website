@@ -18,6 +18,9 @@ export type PublicMetadataInput = {
   path: string;
   title: string;
   description: string;
+  socialTitle?: string;
+  socialDescription?: string;
+  imageTitle?: string;
   locale?: string;
   type?: "website" | "article" | "profile";
   kind?: OgImageKind | string;
@@ -29,6 +32,39 @@ export type PublicMetadataInput = {
   keywords?: string[];
   noindex?: boolean;
 };
+
+const DOCUMENT_TITLE_LIMIT = 60;
+const SEARCH_DESCRIPTION_LIMIT = 155;
+const SOCIAL_DESCRIPTION_LIMIT = 125;
+const BRAND_SEPARATOR = " | ";
+
+function normalizeCopy(value: string): string {
+  return value.replace(/\s+/gu, " ").trim();
+}
+
+function wordSafeLimit(value: string, maximum: number): string {
+  const normalized = normalizeCopy(value);
+  if (Array.from(normalized).length <= maximum) return normalized;
+
+  const available = Math.max(1, maximum - 1);
+  const prefix = Array.from(normalized).slice(0, available).join("");
+  const boundary = prefix.lastIndexOf(" ");
+  const safePrefix = boundary >= Math.floor(available * 0.6) ? prefix.slice(0, boundary) : prefix;
+  return `${safePrefix.replace(/[\s,;:|·—-]+$/u, "")}…`;
+}
+
+function compactTitle(value: string): string {
+  const normalized = normalizeCopy(value);
+  if (Array.from(normalized).length <= DOCUMENT_TITLE_LIMIT) return normalized;
+
+  const brandPattern = /\s*(?:[|·—-]\s*)?global health\s*$/iu;
+  if (!brandPattern.test(normalized)) return wordSafeLimit(normalized, DOCUMENT_TITLE_LIMIT);
+
+  const unbranded = normalized.replace(brandPattern, "").trim();
+  const suffix = `${BRAND_SEPARATOR}${SITE_NAME}`;
+  const body = wordSafeLimit(unbranded, DOCUMENT_TITLE_LIMIT - suffix.length);
+  return `${body}${suffix}`;
+}
 
 function normalizeCustomImage(url: string): string | undefined {
   const value = url.trim();
@@ -46,6 +82,13 @@ function normalizeCustomImage(url: string): string | undefined {
 /** Build one complete, conflict-free metadata object for any public route. */
 export function buildPublicMetadata(input: PublicMetadataInput): Metadata {
   const canonical = getPublicUrl(input.path);
+  const title = compactTitle(input.title);
+  const socialTitle = compactTitle(input.socialTitle ?? input.title);
+  const description = wordSafeLimit(input.description, SEARCH_DESCRIPTION_LIMIT);
+  const socialDescription = wordSafeLimit(
+    input.socialDescription ?? input.description,
+    SOCIAL_DESCRIPTION_LIMIT,
+  );
   const customImage = input.image ? normalizeCustomImage(input.image.url) : undefined;
   const imageUrl =
     customImage ??
@@ -53,12 +96,12 @@ export function buildPublicMetadata(input: PublicMetadataInput): Metadata {
       kind:
         input.kind ??
         (input.type === "article" ? "article" : input.type === "profile" ? "doctor" : "page"),
-      title: input.title,
+      title: compactTitle(input.imageTitle ?? socialTitle),
       subtitle: input.subtitle,
       locale: input.locale,
       image: input.sourceImage,
     });
-  const imageAlt = input.image?.alt?.trim() || input.imageAlt?.trim() || input.title;
+  const imageAlt = input.image?.alt?.trim() || input.imageAlt?.trim() || socialTitle;
   const image = {
     url: imageUrl,
     width: OG_IMAGE_WIDTH,
@@ -67,8 +110,8 @@ export function buildPublicMetadata(input: PublicMetadataInput): Metadata {
   };
 
   return {
-    title: resolveBrandTitle(input.title),
-    description: input.description,
+    title: resolveBrandTitle(title),
+    description,
     keywords: input.keywords,
     alternates: {
       canonical,
@@ -77,16 +120,16 @@ export function buildPublicMetadata(input: PublicMetadataInput): Metadata {
     openGraph: {
       type: input.type ?? "website",
       siteName: SITE_NAME,
-      title: input.title,
-      description: input.description,
+      title: socialTitle,
+      description: socialDescription,
       url: canonical,
       ...(input.locale ? { locale: input.locale } : {}),
       images: [image],
     },
     twitter: {
       card: "summary_large_image",
-      title: input.title,
-      description: input.description,
+      title: socialTitle,
+      description: socialDescription,
       images: [imageUrl],
     },
     robots: input.noindex
@@ -311,7 +354,18 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
  * otherwise we pass the string through so the template appends the brand once.
  */
 export function resolveBrandTitle(raw: string): string | { absolute: string } {
-  return raw.toLowerCase().includes(SITE_NAME.toLowerCase()) ? { absolute: raw } : raw;
+  const normalized = normalizeCopy(raw);
+  if (normalized.toLowerCase().includes(SITE_NAME.toLowerCase())) {
+    return { absolute: compactTitle(normalized) };
+  }
+
+  const suffix = ` · ${SITE_NAME}`;
+  if (Array.from(normalized + suffix).length > DOCUMENT_TITLE_LIMIT) {
+    return {
+      absolute: `${wordSafeLimit(normalized, DOCUMENT_TITLE_LIMIT - suffix.length)}${suffix}`,
+    };
+  }
+  return normalized;
 }
 
 /** Resolve SEO row by exact pathname, returning sane fallbacks if absent. */

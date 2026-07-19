@@ -97,8 +97,11 @@ export async function generateMetadata({
   const ogDescription = extras?.ogDescription ?? description;
   return buildPublicMetadata({
     path,
-    title: ogTitle,
-    description: ogDescription,
+    title,
+    description,
+    socialTitle: ogTitle,
+    socialDescription: ogDescription,
+    imageTitle: (page?.heroTitle ?? extras?.heroTitle ?? ogTitle).split(/[—|]/u)[0]?.trim() || ogTitle,
     locale: ogLocales(config, lang).locale,
     kind: "country",
     subtitle: config.name,
