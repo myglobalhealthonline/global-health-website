@@ -154,6 +154,29 @@ const EXTRAS: Record<string, HomePageExtras> = {
     ],
     servicesHeadline: "Hausarzt- und Facharzttermine — ab 45 €.",
   },
+  // Spain/Romania/Brazil have no seeded HOME PageContentTranslation row (the
+  // seed script only covers ie/pt), so they fell through to the generic
+  // "Medicine Anytime / Anywhere" i18n default. These heroTitle-only entries
+  // give them the same "Online medical care in {Country}" pattern IE/PT get
+  // from the DB, without needing a DB write.
+  "es:en": { heroTitle: "Online medical care in Spain" },
+  "es:es": { heroTitle: "Atención médica online en España" },
+  "es:pt": { heroTitle: "Cuidados médicos online em Espanha" },
+  "es:cs": { heroTitle: "Online lékařská péče ve Španělsku" },
+  "es:ro": { heroTitle: "Îngrijire medicală online în Spania" },
+  "es:de": { heroTitle: "Online-medizinische Versorgung in Spanien" },
+  "ro:en": { heroTitle: "Online medical care in Romania" },
+  "ro:es": { heroTitle: "Atención médica online en Rumanía" },
+  "ro:pt": { heroTitle: "Cuidados médicos online na Roménia" },
+  "ro:cs": { heroTitle: "Online lékařská péče v Rumunsku" },
+  "ro:ro": { heroTitle: "Îngrijire medicală online în România" },
+  "ro:de": { heroTitle: "Online-medizinische Versorgung in Rumänien" },
+  "br:en": { heroTitle: "Online medical care in Brazil" },
+  "br:es": { heroTitle: "Atención médica online en Brasil" },
+  "br:pt": { heroTitle: "Cuidados médicos online no Brasil" },
+  "br:cs": { heroTitle: "Online lékařská péče v Brazílii" },
+  "br:ro": { heroTitle: "Îngrijire medicală online în Brazilia" },
+  "br:de": { heroTitle: "Online-medizinische Versorgung in Brasilien" },
 };
 
 const BUNDLE: Record<string, DeepPartial<HomeBundle>> = {
