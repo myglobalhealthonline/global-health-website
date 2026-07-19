@@ -3,6 +3,8 @@ import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
 import { countrySlug } from "@/lib/routing/country-slug";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
+import { getPublicServicesForCountry } from "@/lib/content/get-public-services";
+import { getCountryHealthTests } from "@/lib/content/get-country-collections";
 import { fetchLandingSlugs } from "@/lib/api/site-content-api";
 import { listBlogPosts } from "@/lib/content/get-public-blog";
 import { hreflangRegion } from "@/lib/seo/hreflang";
@@ -25,25 +27,79 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const countries = await getPublicCountriesMerged();
 
-  for (const country of countries) {
+  /** Enabled locales for a country, lowercase, default first. */
+  const countryLangs = (country: (typeof countries)[number]): string[] => {
+    const defaultLang = (country.defaultLocale ?? "en").toLowerCase();
+    const langs =
+      country.supportedLocales && country.supportedLocales.length > 0
+        ? country.supportedLocales.map((l) => l.toLowerCase())
+        : [defaultLang];
+    return [defaultLang, ...langs.filter((l) => l !== defaultLang)];
+  };
+
+  /** Push one URL per enabled locale with hreflang alternates. */
+  const pushLocalized = (
+    country: (typeof countries)[number],
+    path: string,
+    priority: number,
+    extra?: Partial<MetadataRoute.Sitemap[number]>,
+  ) => {
     const slug = `/${country.slug || countrySlug(country.code)}`;
-    const lang = (country.defaultLocale ?? "en").toLowerCase();
-    urls.push(
-      { url: `${base}${slug}/${lang}`, changeFrequency: "weekly", priority: 0.9 },
-      { url: `${base}${slug}/${lang}/doctors`, changeFrequency: "weekly", priority: 0.8 },
-      {
-        url: `${base}${slug}/${lang}/gp-consultation-online`,
+    const region = hreflangRegion(country.code);
+    const langs = countryLangs(country);
+    const languages: Record<string, string> = {};
+    for (const lang of langs) {
+      languages[`${lang}-${region}`] = `${base}${slug}/${lang}${path}`;
+    }
+    languages["x-default"] = `${base}${slug}/${langs[0]}${path}`;
+    for (const lang of langs) {
+      urls.push({
+        url: `${base}${slug}/${lang}${path}`,
         changeFrequency: "weekly",
-        priority: 0.8,
-      },
-      {
-        url: `${base}${slug}/${lang}/see-a-specialist`,
-        changeFrequency: "weekly",
-        priority: 0.8,
-      },
-      { url: `${base}${slug}/${lang}/book`, changeFrequency: "weekly", priority: 0.85 },
-      { url: `${base}${slug}/${lang}/lab-tests`, changeFrequency: "weekly", priority: 0.7 },
-    );
+        priority,
+        alternates: { languages },
+        ...extra,
+      });
+    }
+  };
+
+  // Country home + section pages — every enabled locale, with hreflang
+  // alternates so Google indexes each translated variant.
+  for (const country of countries) {
+    pushLocalized(country, "", 0.9);
+    pushLocalized(country, "/doctors", 0.8);
+    pushLocalized(country, "/gp-consultation-online", 0.8);
+    pushLocalized(country, "/see-a-specialist", 0.8);
+    pushLocalized(country, "/book", 0.85);
+    pushLocalized(country, "/lab-tests", 0.7);
+    pushLocalized(country, "/pricing", 0.6);
+  }
+
+  // Service detail pages — active public GP/specialist services per country.
+  // (PRESCRIPTION/HOME_DELIVERY kinds stay out: hidden from the public site
+  // for Ads compliance.)
+  for (const country of countries) {
+    try {
+      const services = await getPublicServicesForCountry(country.code);
+      for (const s of services) {
+        if (s.kind !== "GENERAL" && s.kind !== "SPECIALIST") continue;
+        pushLocalized(country, `/services/${s.slug}`, 0.7);
+      }
+    } catch {
+      // Service list unavailable — keep the rest of the sitemap.
+    }
+  }
+
+  // Lab-test detail pages.
+  for (const country of countries) {
+    try {
+      const tests = await getCountryHealthTests(country.code);
+      for (const t of tests) {
+        pushLocalized(country, `/lab-tests/${t.slug}`, 0.6);
+      }
+    } catch {
+      // Test list unavailable — keep the rest of the sitemap.
+    }
   }
 
   // SEO landing pages — published condition/audience pages per country.
