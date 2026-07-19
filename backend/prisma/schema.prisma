@@ -941,6 +941,9 @@ model Service {
   faqs                  ServiceFaq[]
   /// Contextual internal-link callouts shown ON this page (upgrade/entry/etc).
   sourceLinks           ServiceLink[]         @relation("SourceLinks")
+  /// Inverse of BlogPost.ctaServiceId — blog posts whose bottom "Book a
+  /// consultation" CTA links to this service.
+  blogCtaPosts          BlogPost[]            @relation("BlogCtaService")
   /// Callouts on OTHER pages that point AT this service.
   targetLinks           ServiceLink[]         @relation("TargetLinks")
   /// Subscription plan rules that reference this service (§20).
@@ -2802,6 +2805,10 @@ model BlogPost {
   /// names above remain the fallback when no doctor is linked.
   authorDoctorId      String?
   reviewerDoctorId    String?
+  /// Optional link to a Service. When set, the public article page's
+  /// bottom "Book a consultation" CTA links to this service's page
+  /// instead of the default country gate ("/").
+  ctaServiceId        String?
   coverAssetId        String?
   seoTitle            String?
   seoDescription      String?
@@ -2812,6 +2819,7 @@ model BlogPost {
   country             Country?          @relation(fields: [countryId], references: [id], onDelete: SetNull)
   authorDoctor        Doctor?           @relation("BlogAuthorDoctor", fields: [authorDoctorId], references: [id], onDelete: SetNull)
   reviewerDoctor      Doctor?           @relation("BlogReviewerDoctor", fields: [reviewerDoctorId], references: [id], onDelete: SetNull)
+  ctaService          Service?          @relation("BlogCtaService", fields: [ctaServiceId], references: [id], onDelete: SetNull)
   coverAsset          Asset?            @relation("BlogPostCover", fields: [coverAssetId], references: [id], onDelete: SetNull)
   translations        BlogTranslation[]
   countries           BlogPostCountry[]

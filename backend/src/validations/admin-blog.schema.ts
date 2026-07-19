@@ -45,6 +45,7 @@ export const adminBlogCreateBodySchema = z.object({
   // drives the Article author/reviewedBy Physician schema.
   authorDoctorId: optionalNullableString(64),
   reviewerDoctorId: optionalNullableString(64),
+  ctaServiceId: optionalNullableString(64),
   seoTitle: optionalNullableString(180),
   seoDescription: optionalNullableString(320),
   // Cover image: an uploaded media path/URL (stored as an Asset row and

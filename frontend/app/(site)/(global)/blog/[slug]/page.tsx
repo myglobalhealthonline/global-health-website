@@ -60,6 +60,10 @@ export default async function BlogPostPage({ params }: Props) {
   const { home } = loadLocaleBundle(locale);
   const blogI18n = home.blog;
 
+  const ctaHref = post.ctaService
+    ? `/${post.ctaService.countrySlug}/en/services/${post.ctaService.slug}`
+    : "/";
+
   const formatted = new Date(post.publishedAt).toLocaleDateString(locale, {
     day: "numeric",
     month: "long",
@@ -199,14 +203,16 @@ export default async function BlogPostPage({ params }: Props) {
                 className="mt-5 max-w-[48ch] text-[length:var(--text-body-lg)] leading-relaxed"
                 style={{ color: "rgba(255,255,255,0.72)" }}
               >
-                {/* Blog articles live outside the [country]/[lang] segment, so we
-                  * route through the root country gate (CountryEntryGate at /)
-                  * which negotiates the right country + locale for the reader. */}
+                {/* Blog articles live outside the [country]/[lang] segment. When
+                  * the post has a linked CTA service, we route straight to that
+                  * service's page; otherwise fall back to the root country gate
+                  * (CountryEntryGate at /) which negotiates the right country +
+                  * locale for the reader. */}
                 {blogI18n.bookConsultationBody}
               </p>
             </div>
             <Link
-              href="/"
+              href={ctaHref}
               className="gh2-btn-lime lg:justify-self-end"
             >
               {blogI18n.bookConsultation}

@@ -9,6 +9,8 @@ type Props = {
   /** Doctors selectable as the article's named author / clinical reviewer.
    *  Linking a doctor emits the Article author/reviewedBy Physician schema. */
   doctors?: Array<{ id: string; fullName: string }>;
+  /** Services selectable as the article's bottom CTA target. */
+  services?: Array<{ id: string; name: string }>;
 };
 
 const inputClass =
@@ -16,7 +18,7 @@ const inputClass =
 
 const labelClass = "block text-portal-meta font-semibold text-[var(--color-text-muted)]";
 
-export function BlogFields({ post, isCreate, doctors = [] }: Props) {
+export function BlogFields({ post, isCreate, doctors = [], services = [] }: Props) {
   return (
     <div className="gh-admin-blog-fields flex flex-col gap-5">
       <FormSection
@@ -104,6 +106,20 @@ export function BlogFields({ post, isCreate, doctors = [] }: Props) {
                 </option>
               ))}
             </select>
+          </label>
+          <label className={labelClass}>
+            CTA service
+            <select name="ctaServiceId" defaultValue={post?.ctaServiceId ?? ""} className={inputClass}>
+              <option value="">None (country gate)</option>
+              {services.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+            <span className="mt-1 block text-portal-meta font-normal text-[var(--color-text-muted)]">
+              Bottom &quot;Book a consultation&quot; CTA links to this service&apos;s booking page.
+            </span>
           </label>
         </FormSection>
 

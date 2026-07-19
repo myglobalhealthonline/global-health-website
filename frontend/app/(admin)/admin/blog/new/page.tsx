@@ -3,7 +3,7 @@ import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
-import { postAdminBlogPost, fetchAdminDoctors } from "@/lib/admin/admin-api";
+import { postAdminBlogPost, fetchAdminDoctors, fetchAdminServices } from "@/lib/admin/admin-api";
 import { PUBLIC_BLOG_TAG } from "@/lib/content/get-public-blog";
 import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
 import { BlogFields } from "../_components/blog-fields";
@@ -17,9 +17,15 @@ type PageProps = {
 
 export default async function AdminNewBlogPage({ searchParams }: PageProps) {
   const messages = searchParams ? await searchParams : {};
-  const doctorsRes = await fetchAdminDoctors({ pageSize: "200" });
+  const [doctorsRes, servicesRes] = await Promise.all([
+    fetchAdminDoctors({ pageSize: "200" }),
+    fetchAdminServices({ pageSize: "200" }),
+  ]);
   const doctors = doctorsRes.ok
     ? doctorsRes.data.items.map((d) => ({ id: d.id, fullName: d.fullName }))
+    : [];
+  const services = servicesRes.ok
+    ? servicesRes.data.items.map((s) => ({ id: s.id, name: `${s.name} — ${s.country.name}` }))
     : [];
 
   async function createBlogAction(formData: FormData) {
@@ -59,7 +65,7 @@ export default async function AdminNewBlogPage({ searchParams }: PageProps) {
       ) : null}
 
       <form action={createBlogAction} className="gh-admin-blog-form mt-6">
-        <BlogFields isCreate doctors={doctors} />
+        <BlogFields isCreate doctors={doctors} services={services} />
         <div className="gh-admin-blog-actions gh-admin-blog-actions--end">
           <Btn href="/admin/blog" variant="ghost" size="md">
             Cancel

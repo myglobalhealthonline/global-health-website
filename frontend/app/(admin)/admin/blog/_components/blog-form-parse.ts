@@ -36,6 +36,7 @@ export function parseBlogBody(formData: FormData) {
     authorDisplayName: get("authorDisplayName"),
     authorDoctorId: get("authorDoctorId"),
     reviewerDoctorId: get("reviewerDoctorId"),
+    ctaServiceId: get("ctaServiceId"),
     seoTitle: get("seoTitle"),
     seoDescription: get("seoDescription"),
     coverImagePath: get("coverImagePath"),
