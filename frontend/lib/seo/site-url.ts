@@ -1,13 +1,19 @@
-const PROD_SITE_URL = "https://myglobalhealth.online";
-const DEV_SITE_URL = "http://localhost:3000";
+const PROD_SITE_URL = "https://www.myglobalhealth.online";
 
-export function getSiteUrl() {
+export function getSiteUrl(): string {
   const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (raw) return raw.replace(/\/$/, "");
-  // No env var set. In production builds default to the canonical production
-  // domain so canonical/OG URLs never fall back to localhost or a staging
-  // subdomain (e.g. *.up.railway.app). Local dev keeps localhost so dev
-  // canonicals don't leak the production domain.
-  return process.env.NODE_ENV === "production" ? PROD_SITE_URL : DEV_SITE_URL;
+  if (!raw) return PROD_SITE_URL;
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== "https:" || url.username || url.password) return PROD_SITE_URL;
+    return url.origin;
+  } catch {
+    return PROD_SITE_URL;
+  }
 }
 
+export function getPublicUrl(pathname = "/"): string {
+  const safePath = pathname.startsWith("/") && !pathname.startsWith("//") ? pathname : "/";
+  const resolved = new URL(safePath, `${getSiteUrl()}/`).toString();
+  return safePath === "/" ? resolved.replace(/\/$/, "") : resolved;
+}

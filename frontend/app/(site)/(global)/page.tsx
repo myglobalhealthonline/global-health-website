@@ -1,11 +1,26 @@
 import { cookies, headers } from "next/headers";
+import type { Metadata } from "next";
 import { CountryEntryGate } from "@/components/sections/CountryEntryGate";
 import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
-import { pageMetadata } from "@/lib/seo/page-seo";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
-export const metadata = pageMetadata("/");
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getPageLocale();
+  const { hero } = loadLocaleBundle(locale).home;
+
+  return buildPublicMetadata({
+    path: "/",
+    title: hero.title,
+    description: hero.description,
+    locale,
+    kind: "page",
+    subtitle: hero.eyebrow,
+    imageAlt: `${hero.title} - Global Health`,
+  });
+}
 
 export default async function HomePage() {
   const requestHeaders = await headers();

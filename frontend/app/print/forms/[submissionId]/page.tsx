@@ -1,9 +1,19 @@
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = buildPublicMetadata({
+  path: "/print/forms",
+  title: "Printable clinical form",
+  description: "Secure printable clinical form from Global Health.",
+  kind: "page",
+  noindex: true,
+});
 
 type Params = { submissionId: string };
 

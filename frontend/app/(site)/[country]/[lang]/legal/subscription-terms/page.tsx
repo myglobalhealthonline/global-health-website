@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import { getCountryByCode } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
-import { getSiteUrl } from "@/lib/seo/site-url";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { SITE_NAME } from "@/lib/constants";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -20,17 +20,16 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
   const { subscription } = loadLocaleBundle(lang as LocaleCode);
-  const url = `${getSiteUrl()}/${country}/${lang}/legal/subscription-terms`;
-  const title = `${subscription.legal.title} · ${config.name} · ${SITE_NAME}`;
-  return {
+  const title = `${subscription.legal.title} · ${config.name}`;
+  return buildPublicMetadata({
+    path: `/${country}/${lang}/legal/subscription-terms`,
     title,
     description: subscription.legal.intro,
-    robots: { index: true, follow: true },
-    alternates: {
-      canonical: url,
-      languages: hreflangAlternates(config, "/legal/subscription-terms"),
-    },
-  };
+    locale: `${lang}_${code.toUpperCase()}`,
+    subtitle: config.name,
+    imageAlt: `${subscription.legal.title} — ${config.name}`,
+    languages: hreflangAlternates(config, "/legal/subscription-terms"),
+  });
 }
 
 function Section({ heading, body }: { heading: string; body: string }) {

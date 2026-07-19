@@ -8,24 +8,27 @@ import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 import { FAQSection } from "@/components/sections/FAQSection";
-import { pageMetadata, ROUTE_SEO } from "@/lib/seo/page-seo";
-import { getSiteUrl } from "@/lib/seo/site-url";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
 
-const ABOUT_URL = `${getSiteUrl()}/about`;
 
-// title.absolute skips the root layout's `%s · Global Health` template so the
-// brand isn't duplicated (the route title already leads with "About Global
-// Health"). Canonical + hreflang (en / x-default) are set here because /about
-// is an English-only global page with no per-market variant.
-export const metadata: Metadata = pageMetadata("/about", {
-  title: { absolute: ROUTE_SEO["/about"].title },
-  alternates: {
-    canonical: ABOUT_URL,
-    languages: { en: ABOUT_URL, "x-default": ABOUT_URL },
-  },
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getPageLocale();
+  const about = loadLocaleBundle(locale).about;
+  const title = `${about.hero_title_lead} ${about.hero_title_accent}`;
+
+  return buildPublicMetadata({
+    path: "/about",
+    title,
+    description: about.hero_lede,
+    locale,
+    kind: "corporate",
+    subtitle: about.hero_eyebrow,
+    sourceImage: "/images/stock/about.jpg",
+    imageAlt: `${title} - About Global Health`,
+  });
+}
 
 // Six live markets, each linked to its market home so the About page passes
 // PageRank down the hierarchy (SEO brief item 22). Flag code ≠ market name for

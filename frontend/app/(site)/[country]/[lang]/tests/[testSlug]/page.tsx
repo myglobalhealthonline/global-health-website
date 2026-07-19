@@ -17,7 +17,7 @@ import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { getCountryHealthTestDetail } from "@/lib/content/get-country-collections";
-import { getSiteUrl } from "@/lib/seo/site-url";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
@@ -67,24 +67,18 @@ export async function generateMetadata({
     detail.seoDescription ??
     stripHtml(detail.shortDescription) ??
     `Lab-quality ${detail.title}, reviewed by a doctor.`;
-  const url = `${getSiteUrl()}/${country}/${lang}/tests/${testSlug}`;
-  return {
-    title: detail.seoTitle ? { absolute: title } : title,
+  return buildPublicMetadata({
+    path: `/${country}/${lang}/lab-tests/${testSlug}`,
+    title,
     description,
-    alternates: {
-      canonical: url,
-      ...(config ? { languages: hreflangAlternates(config, `/tests/${testSlug}`) } : {}),
-    },
-    openGraph: {
-      type: "website",
-      siteName: SITE_NAME,
-      title,
-      description,
-      url,
-      ...(config ? ogLocales(config, lang) : {}),
-    },
-    twitter: { card: "summary_large_image", title, description },
-  };
+    type: "website",
+    kind: "service",
+    subtitle: config?.name,
+    sourceImage: detail.imageSrc ?? undefined,
+    imageAlt: `${detail.title} in ${config?.name ?? country}`,
+    locale: config ? ogLocales(config, lang).locale : undefined,
+    languages: config ? hreflangAlternates(config, `/lab-tests/${testSlug}`) : undefined,
+  });
 }
 
 /** Health-test product page. Dark editorial hero → CMS content sections → CTA. Cart-first — no doctor pick. */

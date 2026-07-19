@@ -14,6 +14,8 @@ import { SITE_NAME } from "@/lib/constants";
 import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
 import type { CommonLocale, LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 
 export const revalidate = 300;
 
@@ -45,14 +47,22 @@ export async function generateMetadata({
 }: {
   params: Promise<Params>;
 }): Promise<Metadata> {
-  const { country } = await params;
+  const { country, lang } = await params;
   const code = countryCodeFromSlug(country);
   const config = code ? getCountryByCode(code) : null;
-  if (!config) return { title: SITE_NAME };
-  return {
-    title: `Legal information — ${config.name}`,
-    description: `Legal documents, company registration and regulatory information for ${SITE_NAME} in ${config.name}.`,
-  };
+  if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
+  const t = loadLocaleBundle(lang as LocaleCode).common.legalPage;
+  const title = `${t.heroTitle} ${t.heroAccent} · ${config.name}`;
+  const description = t.heroBody.replace("{site}", SITE_NAME).replace("{country}", config.name);
+  return buildPublicMetadata({
+    path: `/${country}/${lang}/legal`,
+    title,
+    description,
+    locale: `${lang}_${code.toUpperCase()}`,
+    subtitle: config.name,
+    imageAlt: `${t.heroTitle} ${t.heroAccent} — ${config.name}`,
+    languages: hreflangAlternates(config, "/legal"),
+  });
 }
 
 function InfoRow({ label, value }: { label: string; value: string | null }) {

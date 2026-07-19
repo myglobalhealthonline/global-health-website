@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { formatAppDate, formatAppDateTime } from "@/lib/format-datetime";
 import { getServerAuthUser } from "@/lib/api/server-auth";
@@ -5,8 +6,17 @@ import {
   fetchDoctorConsultation,
   fetchDoctorInvoice,
 } from "@/lib/api/doctor-api";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = buildPublicMetadata({
+  path: "/print/invoices",
+  title: "Printable clinical invoice",
+  description: "Secure printable clinical billing document from Global Health.",
+  kind: "page",
+  noindex: true,
+});
 
 type Params = { id: string };
 

@@ -10,7 +10,6 @@ import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
-import { getSiteUrl } from "@/lib/seo/site-url";
 import { breadcrumbJsonLd, catalogueItemListJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
@@ -33,7 +32,7 @@ import {
   WhyChooseSection,
 } from "@/components/sections/ServiceContentSections";
 import { getServiceHubContent } from "@/lib/content/service-hub-content";
-import { resolveBrandTitle } from "@/lib/seo/page-seo";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 
@@ -50,7 +49,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { country, lang } = await params;
   const code = countryCodeFromSlug(country);
-  const config = code ? getCountryByCode(code) : null;
+  const config = code ? await getPublicCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
   // Admin-editable copy via /admin/pages (PageKey=HEALTH_TESTS).
   // Falls back to the hardcoded strings if no ContentPage row exists.
@@ -60,29 +59,19 @@ export async function generateMetadata({
     locale: lang,
     serviceNames: [],
   });
-  const url = `${getSiteUrl()}/${country}/${lang}/lab-tests`;
   const title = page?.seoTitle ?? `${hub.overview.title} · ${config.name}`;
   const description = page?.seoDescription ?? hub.overview.body;
-  return {
-    title: resolveBrandTitle(title),
+  return buildPublicMetadata({
+    path: `/${country}/${lang}/lab-tests`,
+    title,
     description,
-    alternates: { canonical: url, languages: hreflangAlternates(config, "/lab-tests") },
-    openGraph: {
-      type: "website",
-      siteName: SITE_NAME,
-      url,
-      title,
-      description,
-      ...ogLocales(config, lang),
-      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
-    },
-  };
+    locale: ogLocales(config, lang).locale,
+    kind: "service",
+    subtitle: config.name,
+    sourceImage: page?.ogImageSrc ?? undefined,
+    imageAlt: `${title} — ${config.name}`,
+    languages: hreflangAlternates(config, "/lab-tests"),
+  });
 }
 
 function formatPrice(cents: number, currency: string) {

@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ShieldAlert } from "lucide-react";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 
-export const metadata = {
+export const metadata: Metadata = buildPublicMetadata({
+  path: "/unauthorized",
   title: "Access denied",
-};
+  description: "You do not have permission to view this Global Health page.",
+  kind: "page",
+  noindex: true,
+});
 
 /**
  * Shared 403 landing page for role-mismatched portal access (e.g. a

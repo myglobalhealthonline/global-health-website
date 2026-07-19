@@ -9,7 +9,7 @@ import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
-import { getSiteUrl } from "@/lib/seo/site-url";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
@@ -47,36 +47,27 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { country, lang } = await params;
   const code = countryCodeFromSlug(country);
-  const config = code ? getCountryByCode(code) : null;
+  const config = code ? await getPublicCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
   // Admin-editable copy via /admin/pages (PageKey=PRESCRIPTIONS).
   // Falls back to the hardcoded strings if no ContentPage row exists.
   const { record: page } = await getPageContent(code, "PRESCRIPTIONS", lang as PublicLocale);
-  const url = `${getSiteUrl()}/${country}/${lang}/repeat-prescription-request`;
-  const title = page?.seoTitle ?? `Repeat Prescription Request in ${config.name} · ${SITE_NAME}`;
-  const description =
-    page?.seoDescription ??
-    `Get a prescription online from a licensed doctor in ${config.name}.`;
-  return {
+  const rxMeta = loadLocaleBundle(lang as LocaleCode).common.prescriptionsPage;
+  const title = page?.seoTitle ??
+    `${rxMeta.titleLead} ${rxMeta.titleAccent} ${rxMeta.titleTrail} · ${config.name}`;
+  const description = page?.seoDescription ??
+    rxMeta.heroSubtitle.replace("{country}", config.name);
+  return buildPublicMetadata({
+    path: `/${country}/${lang}/repeat-prescription-request`,
     title,
     description,
-    alternates: { canonical: url, languages: hreflangAlternates(config, "/repeat-prescription-request") },
-    openGraph: {
-      type: "website",
-      siteName: SITE_NAME,
-      url,
-      title,
-      description,
-      ...ogLocales(config, lang),
-      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
-    },
-  };
+    locale: ogLocales(config, lang).locale,
+    kind: "service",
+    subtitle: config.name,
+    sourceImage: page?.ogImageSrc ?? undefined,
+    imageAlt: `${title} — ${config.name}`,
+    languages: hreflangAlternates(config, "/repeat-prescription-request"),
+  });
 }
 
 function formatPrice(cents: number | null, currency: string | null): string | undefined {

@@ -15,6 +15,8 @@ import { SITE_NAME } from "@/lib/constants";
 import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 
 export const revalidate = 300;
 
@@ -38,25 +40,33 @@ export async function generateMetadata({
   if (!code || !config || !legalType || !isSupportedLocale(lang)) {
     return { title: SITE_NAME };
   }
+  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const legalDescription = c.legalPage.heroBody
+    .replace("{site}", SITE_NAME)
+    .replace("{country}", config.name);
   const result = await getCountryLegalDocument(code, legalType, lang);
+  let documentTitle: string | null = result?.document.title ?? null;
   if (!result) {
     // Mirror the page's medical-disclaimer fallback so the standalone page
     // still has a real title when only the profile field is set.
     if (legalType === "MEDICAL_DISCLAIMER") {
       const { fullParagraphs } = await getCountryDisclaimer(code, lang);
       if (fullParagraphs.length > 0) {
-        return {
-          title: `Medical Disclaimer — ${config.name}`,
-          description: `Medical disclaimer for ${SITE_NAME} in ${config.name}.`,
-        };
+        documentTitle = c.legalPage.typeMedicalDisclaimer;
       }
     }
-    return { title: SITE_NAME };
+    if (!documentTitle) return { title: SITE_NAME };
   }
-  return {
-    title: `${result.document.title} — ${config.name}`,
-    description: `${result.document.title} for ${SITE_NAME} in ${config.name}.`,
-  };
+  const title = `${documentTitle} · ${config.name}`;
+  return buildPublicMetadata({
+    path: `/${country}/${lang}/legal/${type}`,
+    title,
+    description: `${documentTitle}. ${legalDescription}`,
+    locale: `${lang}_${code.toUpperCase()}`,
+    subtitle: config.name,
+    imageAlt: `${documentTitle} — ${config.name}`,
+    languages: hreflangAlternates(config, `/legal/${type}`),
+  });
 }
 
 export default async function CountryLegalDocumentPage({

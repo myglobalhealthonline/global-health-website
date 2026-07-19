@@ -11,7 +11,97 @@
  */
 import type { Metadata } from "next";
 import { SITE_NAME } from "@/lib/constants";
-import { getSiteUrl } from "@/lib/seo/site-url";
+import { buildOgImageUrl, type OgImageKind, OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from "@/lib/seo/og-image";
+import { getPublicUrl } from "@/lib/seo/site-url";
+
+export type PublicMetadataInput = {
+  path: string;
+  title: string;
+  description: string;
+  locale?: string;
+  type?: "website" | "article" | "profile";
+  kind?: OgImageKind | string;
+  subtitle?: string;
+  sourceImage?: string;
+  imageAlt?: string;
+  image?: { url: string; alt?: string };
+  languages?: Record<string, string | URL>;
+  keywords?: string[];
+  noindex?: boolean;
+};
+
+function normalizeCustomImage(url: string): string | undefined {
+  const value = url.trim();
+  if (value.startsWith("/") && !value.startsWith("//")) return getPublicUrl(value);
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "https:" && !parsed.username && !parsed.password
+      ? parsed.toString()
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/** Build one complete, conflict-free metadata object for any public route. */
+export function buildPublicMetadata(input: PublicMetadataInput): Metadata {
+  const canonical = getPublicUrl(input.path);
+  const customImage = input.image ? normalizeCustomImage(input.image.url) : undefined;
+  const imageUrl =
+    customImage ??
+    buildOgImageUrl({
+      kind:
+        input.kind ??
+        (input.type === "article" ? "article" : input.type === "profile" ? "doctor" : "page"),
+      title: input.title,
+      subtitle: input.subtitle,
+      locale: input.locale,
+      image: input.sourceImage,
+    });
+  const imageAlt = input.image?.alt?.trim() || input.imageAlt?.trim() || input.title;
+  const image = {
+    url: imageUrl,
+    width: OG_IMAGE_WIDTH,
+    height: OG_IMAGE_HEIGHT,
+    alt: imageAlt,
+  };
+
+  return {
+    title: resolveBrandTitle(input.title),
+    description: input.description,
+    keywords: input.keywords,
+    alternates: {
+      canonical,
+      ...(input.languages ? { languages: input.languages } : {}),
+    },
+    openGraph: {
+      type: input.type ?? "website",
+      siteName: SITE_NAME,
+      title: input.title,
+      description: input.description,
+      url: canonical,
+      ...(input.locale ? { locale: input.locale } : {}),
+      images: [image],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: input.title,
+      description: input.description,
+      images: [imageUrl],
+    },
+    robots: input.noindex
+      ? { index: false, follow: false }
+      : {
+          index: true,
+          follow: true,
+          googleBot: {
+            index: true,
+            follow: true,
+            "max-image-preview": "large",
+          },
+        },
+  };
+}
 
 export type RouteSeo = {
   title: string;
@@ -21,7 +111,6 @@ export type RouteSeo = {
   noindex?: boolean;
 };
 
-const DEFAULT_OG_IMAGE = "/images/og-default.jpg";
 
 /**
  * SEO copy for every static + dynamic route family. Written tight,
@@ -239,33 +328,14 @@ export function getRouteSeo(pathname: string): RouteSeo {
 /** Build a Next.js `Metadata` object for a known pathname. */
 export function pageMetadata(pathname: string, overrides?: Partial<Metadata>): Metadata {
   const seo = getRouteSeo(pathname);
-  const url = `${getSiteUrl()}${pathname === "/" ? "" : pathname}`;
-  const image = seo.ogImage ?? DEFAULT_OG_IMAGE;
-
-  const base: Metadata = {
+  const base = buildPublicMetadata({
+    path: pathname,
     title: seo.title,
     description: seo.description,
     keywords: seo.keywords,
-    alternates: { canonical: url },
-    openGraph: {
-      type: "website",
-      siteName: SITE_NAME,
-      title: seo.title,
-      description: seo.description,
-      url,
-      images: [{ url: image, width: 1200, height: 630 }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: seo.title,
-      description: seo.description,
-      images: [image],
-    },
-    robots: seo.noindex
-      ? { index: false, follow: false }
-      : { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
-    ...overrides,
-  };
+    noindex: seo.noindex,
+    ...(seo.ogImage ? { image: { url: seo.ogImage, alt: seo.title } } : {}),
+  });
 
-  return base;
+  return { ...base, ...overrides };
 }
