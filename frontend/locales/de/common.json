@@ -784,8 +784,8 @@
     "reviewRateStepSubmit": "Absenden"
   },
   "homeMeta": {
-    "titleTemplate": "{country} — registrierte Ärzte und Spezialisten",
-    "descriptionTemplate": "Lizenzierte Ärzte und Spezialisten, die in {country} praktizieren. Profile, Qualifikationen, Fachgebiete und Sprachen einsehen."
+    "titleTemplate": "Online-Arzt {country} | Registrierte Hausärzte & Fachärzte | Global Health",
+    "descriptionTemplate": "Sprechen Sie noch heute per Videoanruf mit einem registrierten Arzt — Hausarzttermine, Atteste, Facharztüberweisungen. Termine am selben Tag, {country}."
   },
   "pricingPage": {
     "trustLicensedTitle": "Lizenzierte Ärzte",

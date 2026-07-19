@@ -784,8 +784,8 @@
     "reviewRateStepSubmit": "Odeslat"
   },
   "homeMeta": {
-    "titleTemplate": "{country} — registrovaní lékaři a specialisté",
-    "descriptionTemplate": "Licencovaní lékaři a specialisté registrovaní k výkonu praxe v {country}. Zobrazit profily, osvědčení, specializace a jazyky."
+    "titleTemplate": "Online lékař {country} | Registrovaní praktičtí lékaři a specialisté | Global Health",
+    "descriptionTemplate": "Promluvte si ještě dnes s registrovaným lékařem přes videohovor — konzultace s praktickým lékařem, potvrzení, odeslání ke specialistovi. Termíny tentýž den, {country}."
   },
   "pricingPage": {
     "trustLicensedTitle": "Licencovaní lékaři",

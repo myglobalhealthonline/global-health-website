@@ -45,6 +45,7 @@ export type AdminBlogDto = {
   reviewerDisplayName: string | null;
   authorDoctorId: string | null;
   reviewerDoctorId: string | null;
+  ctaServiceId: string | null;
   seoTitle: string | null;
   seoDescription: string | null;
   countryId: string | null;

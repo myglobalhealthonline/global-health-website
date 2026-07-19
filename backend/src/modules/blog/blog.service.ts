@@ -19,6 +19,7 @@ export class BlogCountryNotFoundError extends Error {
 const adminBlogInclude = {
   country: { select: { id: true, code: true, slug: true, name: true } },
   coverAsset: { select: { id: true, kind: true, key: true, path: true, altText: true } },
+  ctaService: { select: { id: true, name: true, slug: true } },
   translations: { orderBy: { locale: "asc" as const } },
   countries: {
     include: { country: { select: { id: true, code: true, name: true } } },
@@ -167,6 +168,7 @@ export async function createAdminBlogPost(input: AdminBlogCreateBody): Promise<A
         reviewerDisplayName: input.reviewerDisplayName ?? null,
         authorDoctorId: input.authorDoctorId ?? null,
         reviewerDoctorId: input.reviewerDoctorId ?? null,
+        ctaServiceId: input.ctaServiceId ?? null,
         seoTitle: input.seoTitle ?? null,
         seoDescription: input.seoDescription ?? null,
         countryId: input.countryId ?? null,
@@ -226,6 +228,7 @@ export async function updateAdminBlogPost(
         }),
         ...(body.authorDoctorId !== undefined && { authorDoctorId: body.authorDoctorId }),
         ...(body.reviewerDoctorId !== undefined && { reviewerDoctorId: body.reviewerDoctorId }),
+        ...(body.ctaServiceId !== undefined && { ctaServiceId: body.ctaServiceId }),
         ...(body.seoTitle !== undefined && { seoTitle: body.seoTitle }),
         ...(body.seoDescription !== undefined && { seoDescription: body.seoDescription }),
         ...(body.countryId !== undefined && { countryId: body.countryId }),
@@ -371,6 +374,7 @@ export type PublicBlogPost = {
   seoDescription: string | null;
   authorDoctor: PublicBlogDoctor | null;
   reviewerDoctor: PublicBlogDoctor | null;
+  ctaService: { slug: string; name: string; countrySlug: string } | null;
 };
 
 type BlogDoctorRow = {
@@ -418,6 +422,7 @@ function toPublicBlogPost(row: {
   seoDescription: string | null;
   authorDoctor: BlogDoctorRow | null;
   reviewerDoctor: BlogDoctorRow | null;
+  ctaService: { slug: string; name: string; isActive: boolean; country: { slug: string } | null } | null;
 }): PublicBlogPost {
   return {
     slug: row.slug,
@@ -434,6 +439,10 @@ function toPublicBlogPost(row: {
     seoDescription: row.seoDescription,
     authorDoctor: toBlogDoctor(row.authorDoctor),
     reviewerDoctor: toBlogDoctor(row.reviewerDoctor),
+    ctaService:
+      row.ctaService && row.ctaService.isActive && row.ctaService.country
+        ? { slug: row.ctaService.slug, name: row.ctaService.name, countrySlug: row.ctaService.country.slug }
+        : null,
   };
 }
 
@@ -468,6 +477,9 @@ const publicBlogSelect = {
   seoDescription: true,
   authorDoctor: { select: blogDoctorSelect },
   reviewerDoctor: { select: blogDoctorSelect },
+  ctaService: {
+    select: { slug: true, name: true, isActive: true, country: { select: { slug: true } } },
+  },
 } satisfies Prisma.BlogPostSelect;
 
 // ponytail: hard cap, not full page/pageSize — the public blog index

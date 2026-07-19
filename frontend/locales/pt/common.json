@@ -784,8 +784,8 @@
     "reviewRateStepSubmit": "Enviar"
   },
   "homeMeta": {
-    "titleTemplate": "{country} — médicos e especialistas registados",
-    "descriptionTemplate": "Médicos e especialistas licenciados registados para exercer em {country}. Veja perfis, credenciais, especialidades e idiomas."
+    "titleTemplate": "Médico Online {country} | Clínicos Gerais e Especialistas Registados | Global Health",
+    "descriptionTemplate": "Consulte hoje um médico registado por videochamada — consultas de clínica geral, atestados médicos, referenciações para especialistas. Consultas no mesmo dia em {country}."
   },
   "pricingPage": {
     "trustLicensedTitle": "Médicos licenciados",

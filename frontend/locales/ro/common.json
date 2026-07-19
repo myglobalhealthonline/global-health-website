@@ -784,8 +784,8 @@
     "reviewRateStepSubmit": "Trimitere"
   },
   "homeMeta": {
-    "titleTemplate": "{country} — medici și specialiști autorizați",
-    "descriptionTemplate": "Medici și specialiști autorizați înregistrați pentru a practica în {country}. Vizualizați profilurile, acreditivele, specializările și limbile."
+    "titleTemplate": "Medic Online {country} | Medici de Familie și Specialiști Înregistrați | Global Health",
+    "descriptionTemplate": "Vorbiți azi cu un medic înregistrat prin apel video — consultații de medicină de familie, adeverințe medicale, trimiteri către specialiști. Programări în aceeași zi, {country}."
   },
   "pricingPage": {
     "trustLicensedTitle": "Medici autorizați",

@@ -35,6 +35,7 @@ export type BlogPostFull = BlogListItem & {
   reviewer: string | null;
   authorDoctor: BlogDoctor | null;
   reviewerDoctor: BlogDoctor | null;
+  ctaService: { slug: string; name: string; countrySlug: string } | null;
 };
 
 type ApiBlogPost = {
@@ -52,6 +53,7 @@ type ApiBlogPost = {
   seoDescription?: unknown;
   authorDoctor?: unknown;
   reviewerDoctor?: unknown;
+  ctaService?: unknown;
 };
 
 const str = (v: unknown): string => (typeof v === "string" ? v : "");
@@ -70,6 +72,16 @@ function normalizeBlogDoctor(raw: unknown): BlogDoctor | null {
     registrationNumber: str(r.registrationNumber) || null,
     chamberEntity: str(r.chamberEntity) || null,
   };
+}
+
+function normalizeCtaService(raw: unknown): { slug: string; name: string; countrySlug: string } | null {
+  if (!raw || typeof raw !== "object") return null;
+  const r = raw as Record<string, unknown>;
+  const slug = str(r.slug);
+  const name = str(r.name);
+  const countrySlug = str(r.countrySlug);
+  if (!slug || !name || !countrySlug) return null;
+  return { slug, name, countrySlug };
 }
 
 /** Rough reading-time estimate from the HTML body (200 wpm, min 1). */
@@ -102,6 +114,7 @@ function normalizeApiPost(raw: ApiBlogPost): BlogPostFull | null {
     reviewer: str(raw.reviewer) || null,
     authorDoctor: normalizeBlogDoctor(raw.authorDoctor),
     reviewerDoctor: normalizeBlogDoctor(raw.reviewerDoctor),
+    ctaService: normalizeCtaService(raw.ctaService),
   };
 }
 

@@ -7,6 +7,7 @@ import {
   fetchAdminBlogPostById,
   fetchAdminCountries,
   fetchAdminDoctors,
+  fetchAdminServices,
   patchAdminBlogPost,
   purgeAdminBlogPost,
   putAdminBlogTranslation,
@@ -38,13 +39,17 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
   const messages = searchParams ? await searchParams : {};
   const editLocale = messages.editLocale?.trim() ?? null;
 
-  const [result, countriesResult, doctorsResult] = await Promise.all([
+  const [result, countriesResult, doctorsResult, servicesResult] = await Promise.all([
     fetchAdminBlogPostById(id),
     fetchAdminCountries(),
     fetchAdminDoctors({ pageSize: "200" }),
+    fetchAdminServices({ pageSize: "200" }),
   ]);
   const doctors = doctorsResult.ok
     ? doctorsResult.data.items.map((d) => ({ id: d.id, fullName: d.fullName }))
+    : [];
+  const services = servicesResult.ok
+    ? servicesResult.data.items.map((s) => ({ id: s.id, name: `${s.name} — ${s.country.name}` }))
     : [];
   if (!result.ok) {
     return (
@@ -199,7 +204,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
       ) : null}
 
       <form action={updateBlogAction} className="gh-admin-blog-form mt-6">
-        <BlogFields post={post} doctors={doctors} />
+        <BlogFields post={post} doctors={doctors} services={services} />
         <div className="gh-admin-blog-actions gh-admin-blog-actions--end">
           <Btn href="/admin/blog" variant="ghost" size="md">
             Cancel

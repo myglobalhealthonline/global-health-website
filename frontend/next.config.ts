@@ -332,7 +332,86 @@ const nextConfig: NextConfig = {
    * The query string is forwarded automatically by Next's redirect.
    */
   async redirects() {
+    // Localized-slug migration (2026-07): PT/CZ/RO service slugs renamed
+    // from English to default-locale slugs (backend
+    // scripts/migrate-localized-service-slugs.ts holds the same map).
+    // Old slugs are indexed — 301 them under both /services and /consult.
+    const localizedSlugRenames: Record<string, Record<string, string>> = {
+      portugal: {
+        "cardiology-consultation": "consulta-cardiologia",
+        "driving-license-medical-certificate": "certificado-medico-carta-de-conducao",
+        "family-and-general-medicine": "medicina-geral-e-familiar",
+        "hair-loss-consultation": "consulta-queda-de-cabelo",
+        "medical-certificates-consultation": "certificados-medicos",
+        "medical-consultation": "consulta-medica",
+        "mens-health-consultation": "saude-do-homem",
+        "mental-health-consultation": "saude-mental",
+        "nutrition-consultation": "consulta-de-nutricao",
+        "oncology-consultation": "consulta-de-oncologia",
+        "paediatric-primary-care-consultation": "pediatria-geral",
+        "pain-management-consultation": "gestao-da-dor",
+        "pediatric-consultation": "consulta-de-pediatria",
+        "psychiatry-consultation": "consulta-de-psiquiatria",
+        "psychology-consultation": "consulta-de-psicologia",
+        "referral-consultation": "consulta-de-referenciacao",
+        "second-opinion-consultation": "segunda-opiniao-medica",
+        "sick-leave": "baixa-medica",
+        "skin-dermatology-consultation": "consulta-dermatologia",
+        "smoking-cessation-consultation": "deixar-de-fumar",
+        "travelers-consultation": "consulta-do-viajante",
+        "treatment-renewal": "renovacao-de-tratamento",
+        "weight-loss-consultation": "perda-de-peso",
+        "womens-health-consultation": "saude-da-mulher",
+      },
+      czechia: {
+        "chronic-disease-management": "chronicka-onemocneni",
+        "hair-loss-online": "vypadavani-vlasu-online",
+        "mens-health-online": "muzske-zdravi-online",
+        "mental-health-online": "dusevni-zdravi-online",
+        "musculoskeletal-pain": "bolesti-pohyboveho-aparatu",
+        "paediatric-gp-online": "detsky-lekar-online",
+        "prague-doctor-online": "lekar-online-praha",
+        "referrals-and-investigations": "doporuceni-a-vysetreni",
+        "second-opinion-prague": "druhy-nazor-praha",
+        "sick-note-czech-republic": "neschopenka-online",
+        "skin-consultation-prague": "kozni-konzultace-praha",
+        "travel-health-prague": "cestovni-medicina-praha",
+        "treatment-renewal": "obnoveni-lecby",
+        "weight-management-online": "kontrola-vahy-online",
+        "womens-health-online": "zenske-zdravi-online",
+      },
+      romania: {
+        "chronic-disease-romania": "boli-cronice-online",
+        "hair-loss-romania": "caderea-parului-online",
+        "mens-health-romania": "sanatatea-barbatului-online",
+        "mental-health-romania": "sanatate-mintala-online",
+        "musculoskeletal-pain-romania": "dureri-musculo-scheletice",
+        "neurology-consultation-romania": "consultatie-neurologie",
+        "online-doctor-romania": "medic-online-romania",
+        "paediatric-gp-romania": "medic-pediatru-online",
+        "referrals-and-investigations-romania": "trimiteri-si-investigatii",
+        "second-opinion-romania": "a-doua-opinie-medicala",
+        "skin-consultation-romania": "consultatie-dermatologica",
+        "specialist-paediatrician-romania": "consultatie-pediatrie",
+        "specialist-pain-assessment-romania": "evaluare-durere",
+        "travel-health-romania": "medicina-calatoriei",
+        "treatment-renewal-romania": "reinnoire-tratament",
+        "weight-management-romania": "controlul-greutatii",
+        "womens-health-romania": "sanatatea-femeii-online",
+      },
+    };
+    const localizedSlugRedirects = Object.entries(localizedSlugRenames).flatMap(
+      ([countrySlug, map]) =>
+        Object.entries(map).flatMap(([oldSlug, newSlug]) =>
+          ["services", "consult"].map((section) => ({
+            source: `/${countrySlug}/:lang/${section}/${oldSlug}`,
+            destination: `/${countrySlug}/:lang/${section}/${newSlug}`,
+            permanent: true,
+          })),
+        ),
+    );
     return [
+      ...localizedSlugRedirects,
       {
         source: "/:country/:lang/book-online",
         destination: "/:country/:lang/book",
@@ -432,6 +511,57 @@ const nextConfig: NextConfig = {
         destination: "/:country/:lang/sick-certificate-ireland",
         permanent: true,
       },
+      // ── Legacy Wix URLs (pre-migration site) ─────────────────────────
+      // Google still has these indexed; without redirects they soft-404
+      // (HTTP 200 + "Page not found"), which is what users hit from old
+      // search results. Inventory mirrors data/routes.ts.
+      { source: "/home", destination: "/", permanent: true },
+      { source: "/gift-card", destination: "/", permanent: true },
+      { source: "/home-delivery", destination: "/", permanent: true },
+      { source: "/partner-clinics", destination: "/", permanent: true },
+      { source: "/category/:slug", destination: "/", permanent: true },
+      { source: "/pricing-plans/list", destination: "/ireland/en/pricing", permanent: true },
+      { source: "/online-prescription", destination: "/ireland/en/repeat-prescription-request", permanent: true },
+      { source: "/home-health-test", destination: "/ireland/en/lab-tests", permanent: true },
+      { source: "/home-health-tests/:slug", destination: "/ireland/en/lab-tests", permanent: true },
+      { source: "/booking-calendar", destination: "/ireland/en/book", permanent: true },
+      // Legacy country hubs
+      { source: "/ireland-team", destination: "/ireland/en/doctors", permanent: true },
+      { source: "/general-consultation-ie", destination: "/ireland/en/gp-consultation-online", permanent: true },
+      { source: "/specialty-ie", destination: "/ireland/en/see-a-specialist", permanent: true },
+      { source: "/home-cz", destination: "/czechia/cs", permanent: true },
+      { source: "/czechia-team", destination: "/czechia/cs/doctors", permanent: true },
+      { source: "/general-consultation-cz", destination: "/czechia/cs/gp-consultation-online", permanent: true },
+      { source: "/specialty-cz", destination: "/czechia/cs/see-a-specialist", permanent: true },
+      { source: "/home-pt", destination: "/portugal/pt", permanent: true },
+      { source: "/portugal-team", destination: "/portugal/pt/doctors", permanent: true },
+      { source: "/general-consultation-pt", destination: "/portugal/pt/gp-consultation-online", permanent: true },
+      { source: "/specialty-pt", destination: "/portugal/pt/see-a-specialist", permanent: true },
+      { source: "/home-sp", destination: "/spain/es", permanent: true },
+      { source: "/spain-team", destination: "/spain/es/doctors", permanent: true },
+      { source: "/general-consultation-sp", destination: "/spain/es/gp-consultation-online", permanent: true },
+      { source: "/specialty-sp", destination: "/spain/es/see-a-specialist", permanent: true },
+      { source: "/home-rm", destination: "/romania/ro", permanent: true },
+      { source: "/romania-team", destination: "/romania/ro/doctors", permanent: true },
+      { source: "/general-consultation-rm", destination: "/romania/ro/gp-consultation-online", permanent: true },
+      { source: "/specialty-rm", destination: "/romania/ro/see-a-specialist", permanent: true },
+      // Legacy Wix doctor profiles — slugs carried over 1:1.
+      { source: "/ireland-doctors/:slug", destination: "/ireland/en/doctors/:slug", permanent: true },
+      // Legacy specialist pages whose service still exists → new slug 1:1.
+      { source: "/ireland-specialist-consultations/cardiology-consultation", destination: "/ireland/en/services/cardiology-specialist-consultation", permanent: true },
+      { source: "/ireland-specialist-consultations/neurology-consultation", destination: "/ireland/en/services/neurology-specialist-consultation", permanent: true },
+      { source: "/ireland-specialist-consultations/nutrition-consultation", destination: "/ireland/en/services/nutrition-specialist-consultation", permanent: true },
+      { source: "/ireland-specialist-consultations/pediatric-consultation", destination: "/ireland/en/services/paediatric-specialist-consultation", permanent: true },
+      { source: "/ireland-specialist-consultations/physiotherapy-consultation", destination: "/ireland/en/services/physiotherapy-specialist-consultation", permanent: true },
+      { source: "/ireland-specialist-consultations/psychiatry-consultation", destination: "/ireland/en/services/psychiatry-specialist-consultation", permanent: true },
+      { source: "/ireland-specialist-consultations/psychology-consultation", destination: "/ireland/en/services/psychology-specialist-consultation", permanent: true },
+      // Remaining legacy specialist slugs (service retired) → listing page.
+      { source: "/ireland-specialist-consultations/:slug", destination: "/ireland/en/see-a-specialist", permanent: true },
+      // Legacy generic Wix service pages → specialist listing (best hub).
+      { source: "/service-page/:slug", destination: "/ireland/en/see-a-specialist", permanent: true },
+      // Legacy /ireland/<gp-slug> pages. The {3,} length guard keeps the
+      // live 2-letter locale URLs (/ireland/en, /ireland/pt, …) untouched.
+      { source: "/ireland/:slug([a-z0-9-]{3,})", destination: "/ireland/en/gp-consultation-online", permanent: true },
     ];
   },
 };
