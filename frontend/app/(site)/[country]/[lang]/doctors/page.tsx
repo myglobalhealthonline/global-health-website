@@ -8,9 +8,9 @@ import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-countr
 import { VerifiedProfessionals } from "@/components/sections/VerifiedProfessionals";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
-import { getSiteUrl } from "@/lib/seo/site-url";
+import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { breadcrumbJsonLd, physicianJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
-import { resolveBrandTitle } from "@/lib/seo/page-seo";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
   getPageContent,
@@ -46,36 +46,34 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { country, lang } = await params;
   const code = countryCodeFromSlug(country);
-  const config = code ? getCountryByCode(code) : null;
+  const config = code ? await getPublicCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
   const { record: page } = await getPageContent(code, "DOCTORS_INDEX", lang as PublicLocale);
-  const url = `${getSiteUrl()}/${country}/${lang}/doctors`;
   const title =
     page?.seoTitle ?? `${config.name} — registered doctors and specialists`;
   const description =
     page?.seoDescription ??
     `Doctors and specialists registered to practise in ${config.name}. Browse profiles by specialty and language.`;
-  return {
-    title: resolveBrandTitle(title),
-    description,
-    alternates: { canonical: url, languages: hreflangAlternates(config, "/doctors") },
-    openGraph: {
-      type: "website",
-      siteName: SITE_NAME,
-      title,
-      description,
-      url,
-      ...ogLocales(config, lang),
-      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
-    },
-  };
+  const localized = overrideDoctorsBundle(
+    loadLocaleBundle(lang as LocaleCode).common.doctors,
+    code,
+    lang,
+  );
+  const metadataTitle = (page?.seoTitle ??
+    `${localized.heroTitleLead} ${localized.heroTitleAccent} ${localized.heroTitleTrail} ? ${config.name}`) || title;
+  const metadataDescription = (page?.seoDescription ?? localized.heroLedeTemplate.replace("{country}", config.name)) || description;
+  return buildPublicMetadata({
+    path: `/${country}/${lang}/doctors`,
+    title: metadataTitle,
+    description: metadataDescription,
+    locale: ogLocales(config, lang).locale,
+    kind: "doctor",
+    subtitle: config.name,
+    sourceImage: page?.ogImageSrc ?? undefined,
+    imageAlt: `${metadataTitle} ? ${config.name}`,
+    languages: hreflangAlternates(config, "/doctors"),
+  });
 }
 
 /**

@@ -20,8 +20,8 @@ import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
 import { buildBookHref } from "@/lib/routing/book-href";
-import { getSiteUrl } from "@/lib/seo/site-url";
-import { resolveBrandTitle } from "@/lib/seo/page-seo";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
+
 import { breadcrumbJsonLd, faqJsonLd, medicalServiceHubJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
@@ -56,7 +56,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { country, lang } = await params;
   const code = countryCodeFromSlug(country);
-  const config = code ? getCountryByCode(code) : null;
+  const config = code ? await getPublicCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
   const { record: page } = await getPageContent(code, "SPECIALIST_CONSULTATION", lang as PublicLocale);
@@ -65,29 +65,19 @@ export async function generateMetadata({
     locale: lang,
     serviceNames: [],
   });
-  const url = `${getSiteUrl()}/${country}/${lang}/see-a-specialist`;
   const title = page?.seoTitle ?? `${hub.overview.title} · ${config.name}`;
   const description = page?.seoDescription ?? hub.overview.body;
-  return {
-    title: resolveBrandTitle(title),
+  return buildPublicMetadata({
+    path: `/${country}/${lang}/see-a-specialist`,
+    title,
     description,
-    alternates: { canonical: url, languages: hreflangAlternates(config, "/see-a-specialist") },
-    openGraph: {
-      type: "website",
-      siteName: SITE_NAME,
-      title,
-      description,
-      url,
-      ...ogLocales(config, lang),
-      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
-    },
-  };
+    locale: ogLocales(config, lang).locale,
+    kind: "service",
+    subtitle: config.name,
+    sourceImage: page?.ogImageSrc ?? undefined,
+    imageAlt: `${title} — ${config.name}`,
+    languages: hreflangAlternates(config, "/see-a-specialist"),
+  });
 }
 
 function formatPrice(cents: number | null, currency: string | null): string | undefined {

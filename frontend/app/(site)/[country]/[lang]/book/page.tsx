@@ -24,7 +24,7 @@ import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
-import { getSiteUrl } from "@/lib/seo/site-url";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
@@ -69,20 +69,22 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { country, lang } = await params;
   const code = countryCodeFromSlug(country);
-  const config = code ? getCountryByCode(code) : null;
+  const config = code ? await getPublicCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
-  const url = `${getSiteUrl()}/${country}/${lang}/book`;
-  const title = `Book your online consultation | ${SITE_NAME}`;
-  const description =
-    `Medicine Anytime Anywhere. Choose a service, pick a clinician, and book an online consultation in ${config.name}.`;
-  return {
+  const { common } = loadLocaleBundle(lang as LocaleCode);
+  const title = `${common.bookPage.title} ? ${config.name}`;
+  const description = common.bookPage.subtitle.replace("{country}", config.name);
+  return buildPublicMetadata({
+    path: `/${country}/${lang}/book`,
     title,
     description,
-    alternates: { canonical: url, languages: hreflangAlternates(config, "/book") },
-    openGraph: { type: "website", siteName: SITE_NAME, title, description, url, ...ogLocales(config, lang) },
-    twitter: { card: "summary_large_image", title, description },
-  };
+    locale: ogLocales(config, lang).locale,
+    kind: "service",
+    subtitle: config.name,
+    imageAlt: `${common.bookPage.title} ? ${config.name}`,
+    languages: hreflangAlternates(config, "/book"),
+  });
 }
 
 export default async function CountryLangBookPage({

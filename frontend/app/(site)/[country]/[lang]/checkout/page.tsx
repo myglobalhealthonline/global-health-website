@@ -2,6 +2,12 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
+import { getCountryByCode } from "@/data/countries";
+import { isSupportedLocale } from "@/lib/content/get-public-page";
+import { SITE_NAME } from "@/lib/constants";
+import { countryCodeFromSlug } from "@/lib/routing/country-slug";
+import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { CheckoutPageClient } from "./_components/CheckoutPageClient";
 
 type Params = { country: string; lang: string };
@@ -11,8 +17,24 @@ export async function generateMetadata({
 }: {
   params: Promise<Params>;
 }): Promise<Metadata> {
-  const { lang } = await params;
-  return { title: loadLocaleBundle((lang || "en") as LocaleCode).common.checkoutPage.title };
+  const { country, lang } = await params;
+  const code = countryCodeFromSlug(country);
+  const config = code ? getCountryByCode(code) : null;
+  if (!code || !config || !isSupportedLocale(lang)) {
+    return { title: SITE_NAME, robots: { index: false, follow: false } };
+  }
+  const t = loadLocaleBundle(lang as LocaleCode).common.checkoutPage;
+  const title = `${t.title} · ${config.name}`;
+  return buildPublicMetadata({
+    path: `/${country}/${lang}/checkout`,
+    title,
+    description: t.redirectNote,
+    locale: `${lang}_${code.toUpperCase()}`,
+    subtitle: config.name,
+    imageAlt: `${t.title} — ${SITE_NAME}`,
+    languages: hreflangAlternates(config, "/checkout"),
+    noindex: true,
+  });
 }
 
 // Server wrapper: resolve the locale slices here (server-only) and pass just

@@ -9,7 +9,7 @@ import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
-import { getSiteUrl } from "@/lib/seo/site-url";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
@@ -34,18 +34,22 @@ export async function generateStaticParams(): Promise<Params[]> {
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { country, lang } = await params;
   const code = countryCodeFromSlug(country);
-  const config = code ? getCountryByCode(code) : null;
+  const config = code ? await getPublicCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
   const { subscription } = loadLocaleBundle(lang as LocaleCode);
-  const url = `${getSiteUrl()}/${country}/${lang}/pricing`;
+
   const title = `${subscription.pricing.heading} · ${config.name} · ${SITE_NAME}`;
   const description = subscription.pricing.lede.replace("{country}", config.name);
-  return {
+  return buildPublicMetadata({
+    path: `/${country}/${lang}/pricing`,
     title,
     description,
-    alternates: { canonical: url, languages: hreflangAlternates(config, "/pricing") },
-    openGraph: { type: "website", siteName: SITE_NAME, url, title, description, ...ogLocales(config, lang) },
-  };
+    locale: ogLocales(config, lang).locale,
+    kind: "pricing",
+    subtitle: config.name,
+    imageAlt: `${title} — ${config.name}`,
+    languages: hreflangAlternates(config, "/pricing"),
+  });
 }
 
 /** Auth-aware subscribe CTA (D15 — no guest). Logged-in patients go straight to

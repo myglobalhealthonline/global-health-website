@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { ShieldCheck, ShieldX } from "lucide-react";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 
-export const metadata: Metadata = {
-  title: "Corporate card verification",
-  description: "Verify a Global Health corporate benefit card.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getPageLocale(); const card = getCommonLocale(locale).cardVerify;
+  return buildPublicMetadata({ path: "/card-verify", title: card.title, description: card.subtitle, locale, kind: "corporate", subtitle: card.step, noindex: true });
+}
 
 export const dynamic = "force-dynamic";
 

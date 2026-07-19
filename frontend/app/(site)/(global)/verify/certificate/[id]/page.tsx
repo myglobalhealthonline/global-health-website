@@ -1,10 +1,14 @@
 import { ShieldCheck, ShieldX } from "lucide-react";
 import type { Metadata } from "next";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
-export const metadata: Metadata = { title: "Verify certificate" };
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getPageLocale(); const certificate = loadLocaleBundle(locale).home.flow.certificate;
+  return buildPublicMetadata({ path: "/verify/certificate", title: certificate.headerTitle, description: certificate.headerSubtitle, locale, kind: "page", subtitle: certificate.stepVerify, noindex: true });
+}
 
 type CertificateData = {
   certificateId: string;

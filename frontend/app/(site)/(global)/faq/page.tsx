@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { SITE_NAME } from "@/lib/constants";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { PageHero } from "@/components/sections/PageHero";
 import { FAQTabs } from "@/components/sections/FAQTabs";
@@ -11,11 +11,22 @@ import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 
-export const metadata: Metadata = {
-  title: `FAQ | ${SITE_NAME}`,
-  description:
-    "Common questions about booking, online consultations, payments, privacy, and emergency-care limits on Global Health.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getPageLocale();
+  const faq = loadLocaleBundle(locale).faq;
+  const title = `${faq.hero_title_lead} ${faq.hero_title_accent} ${faq.hero_title_trail}`;
+
+  return buildPublicMetadata({
+    path: "/faq",
+    title,
+    description: faq.hero_lede,
+    locale,
+    kind: "page",
+    subtitle: faq.hero_eyebrow,
+    sourceImage: "/images/stock/contact.jpg",
+    imageAlt: `${title} - Global Health FAQ`,
+  });
+}
 
 export default async function FAQPage() {
   const locale = await getPageLocale();

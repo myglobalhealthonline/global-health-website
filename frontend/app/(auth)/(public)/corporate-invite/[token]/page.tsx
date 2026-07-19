@@ -5,11 +5,22 @@ import { GH2AuthShell } from "@/components/sections/GH2PagePrimitives";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { CorporateInviteForm, type InviteInfo } from "./ui";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 
-export const metadata: Metadata = {
-  title: "Corporate invitation",
-  description: "Activate your corporate health benefits.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getPageLocale();
+  const { auth } = loadLocaleBundle(locale);
+
+  return buildPublicMetadata({
+    // Deliberately omit the secret token from canonical and image URLs.
+    path: "/corporate-invite",
+    title: auth.corporateInvite.eyebrow,
+    description: auth.corporateInvite.body,
+    locale,
+    kind: "corporate",
+    noindex: true,
+  });
+}
 
 export const dynamic = "force-dynamic";
 

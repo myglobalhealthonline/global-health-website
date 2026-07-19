@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Clock, User, Calendar, BadgeCheck } from "lucide-react";
-import { SITE_NAME } from "@/lib/constants";
+import { getCountryByCode } from "@/data/countries";
 import { getBlogPost, type BlogDoctor, type BlogPostFull } from "@/lib/content/get-public-blog";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
@@ -12,6 +12,8 @@ import { SectionSeam } from "@/components/ui/SectionSeam";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { articleJsonLd } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { getCountryTrust } from "@/lib/content/get-country-trust";
 import { isUnoptimizedImageSrc } from "@/lib/content/asset-media-url";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
@@ -97,14 +99,37 @@ async function resolveBlogPostRoute(params: BlogPostRouteParams): Promise<Resolv
 export async function buildBlogPostMetadata(
   params: Promise<BlogPostRouteParams>,
 ): Promise<Metadata> {
-  const resolved = await resolveBlogPostRoute(await params);
+  const routeParams = await params;
+  const resolved = await resolveBlogPostRoute(routeParams);
   if (resolved.kind !== "render") return {};
   const { post, canonicalUrl } = resolved;
-  return {
-    title: post.seoTitle ?? `${post.title} | ${SITE_NAME}`,
-    description: post.seoDescription ?? post.excerpt,
-    alternates: { canonical: `${getSiteUrl()}${canonicalUrl}` },
+  const countryCode = post.countries.find(
+    (country) => country.slug === routeParams.countrySlug,
+  )?.code;
+  const config = countryCode ? getCountryByCode(countryCode) : null;
+  const language = (routeParams.lang ?? post.locale).toLowerCase();
+  const nativeRegion: Record<string, string> = {
+    en: "GB",
+    pt: "PT",
+    es: "ES",
+    cs: "CZ",
+    ro: "RO",
+    de: "DE",
   };
+  return buildPublicMetadata({
+    path: canonicalUrl,
+    title: post.seoTitle ?? post.title,
+    description: post.seoDescription ?? post.excerpt,
+    type: "article",
+    kind: "article",
+    subtitle: post.category,
+    sourceImage: post.coverImageSrc ?? undefined,
+    imageAlt: post.coverImageAlt ?? post.title,
+    locale: config
+      ? ogLocales(config, language).locale
+      : `${language}_${nativeRegion[language] ?? language.toUpperCase()}`,
+    languages: config ? hreflangAlternates(config, `/blog/${post.slug}`) : undefined,
+  });
 }
 
 export async function renderBlogPostPage(params: Promise<BlogPostRouteParams>) {

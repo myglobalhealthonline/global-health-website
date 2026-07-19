@@ -4,15 +4,20 @@ import { ArrowLeft } from "lucide-react";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { GH2AuthShell } from "@/components/sections/GH2PagePrimitives";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { ForgotPasswordForm } from "./ui";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getPageLocale();
   const { auth } = loadLocaleBundle(locale);
-  return {
+  return buildPublicMetadata({
+    path: "/forgot-password",
     title: auth.forgotPassword.metaTitle,
     description: auth.forgotPassword.metaDescription,
-  };
+    locale,
+    kind: "page",
+    noindex: true,
+  });
 }
 
 export default async function Page() {

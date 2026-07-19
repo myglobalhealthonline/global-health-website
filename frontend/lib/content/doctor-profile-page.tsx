@@ -7,13 +7,15 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { resolveDoctorProfilePageData } from "@/lib/content/doctor-profile-data";
 import { validatePublicDoctorRecord } from "@/lib/content/publication-validation";
-import { getSiteUrl } from "@/lib/seo/site-url";
+import { getCountryByCode } from "@/data/countries";
+import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import {
   breadcrumbJsonLd,
   faqJsonLd,
   physicianJsonLd,
 } from "@/lib/seo/structured-data";
-import { SITE_NAME } from "@/lib/constants";
+
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { buildBookHref } from "@/lib/routing/book-href";
 import {
@@ -68,35 +70,30 @@ export async function buildDoctorProfileMetadata(
   const slug = routeCountrySlug ?? countryNameToSlug[data.profile.country] ?? "ireland";
   const routeLang = lang ?? "en";
   const canonical = `/${slug}/${routeLang}/doctors/${doctorSlug}`;
-  const url = `${getSiteUrl()}${canonical}`;
   const title =
     data.profile.seoTitle ?? `${data.profile.name} · ${data.profile.title} · ${data.profile.country}`;
   const description =
     data.profile.seoDescription ??
     `Book an online consultation with ${data.profile.name}, ${data.profile.title} in ${data.profile.country}. Languages: ${data.profile.languages.join(", ") || "English"}.`;
-  return {
-    // Admin-authored seoTitle already carries the brand — absolute skips the
-    // root layout's `%s · Global Health` template to avoid "… | Global Health
-    // Ireland · Global Health" duplication.
-    title: data.profile.seoTitle ? { absolute: data.profile.seoTitle } : title,
+  const resolvedCode = countryCodeFromSlug(slug);
+  const config = resolvedCode ? getCountryByCode(resolvedCode) : null;
+  const shouldNoindex =
+    validation.shouldNoindex || data.profile.editorialChecklist?.readyToIndex !== true;
+  return buildPublicMetadata({
+    path: canonical,
+    title,
     description,
+    type: "profile",
+    kind: "doctor",
+    subtitle: `${data.profile.title} · ${data.profile.country}`,
+    sourceImage: data.profileImageSrc,
+    imageAlt: data.profile.imageAltText ?? `${data.profile.name}, ${data.profile.title}`,
+    locale: config ? ogLocales(config, routeLang).locale : undefined,
+    languages: config ? hreflangAlternates(config, `/doctors/${doctorSlug}`) : undefined,
     keywords: data.profile.seoKeywords,
-    alternates: { canonical: url },
-    openGraph: {
-      type: "profile",
-      siteName: SITE_NAME,
-      title,
-      description,
-      url,
-    },
-    twitter: { card: "summary_large_image", title, description },
-    robots:
-      validation.shouldNoindex || data.profile.editorialChecklist?.readyToIndex !== true
-        ? { index: false, follow: true }
-        : undefined,
-  };
+    noindex: shouldNoindex,
+  });
 }
-
 export async function renderDoctorProfilePage(params: Promise<DoctorProfileRouteParams>) {
   const { doctorSlug, countrySlug: routeCountrySlug, lang: routeLang } = await params;
   const routeCode = routeCountrySlug ? countryCodeFromSlug(routeCountrySlug) : null;
