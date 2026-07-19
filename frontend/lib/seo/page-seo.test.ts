@@ -15,6 +15,20 @@ function firstImage(images: OpenGraphMetadata["images"]) {
   };
 }
 
+function renderedDocumentTitle(title: Metadata["title"]): string {
+  if (typeof title === "string") return `${title} · Global Health`;
+  if (title && typeof title === "object" && "absolute" in title) return title.absolute;
+  throw new Error("Expected metadata to provide a renderable document title");
+}
+
+function expectWordSafeTruncation(value: string, source: string): void {
+  const finalWord = value.match(/[\p{L}\p{N}]+(?=[^\p{L}\p{N}]*$)/u)?.[0];
+  const sourceWords = new Set(source.match(/[\p{L}\p{N}]+/gu) ?? []);
+
+  expect(finalWord).toBeTruthy();
+  expect(sourceWords.has(finalWord ?? "")).toBe(true);
+}
+
 describe("buildPublicMetadata", () => {
   beforeEach(() => {
     vi.stubEnv("NODE_ENV", "production");
@@ -145,5 +159,99 @@ describe("buildPublicMetadata", () => {
     expect(firstImage((metadata.openGraph as OpenGraphMetadata).images).alt).toBe(
       "Verify a certificate",
     );
+  });
+
+  it("keeps document and social titles within word-safe preview limits", () => {
+    const title =
+      "Online Doctor Ireland | IMC-Registered General Practitioners and Specialists | Global Health";
+    const metadata = buildPublicMetadata({
+      path: "/ireland/en/online-doctor",
+      title,
+      description: "Meet licensed doctors serving patients throughout Ireland.",
+      locale: "en_IE",
+      kind: "service",
+    });
+    const documentTitle = renderedDocumentTitle(metadata.title);
+    const openGraph = metadata.openGraph as OpenGraphMetadata;
+    const ogTitle = openGraph.title as string;
+
+    expect(documentTitle.length).toBeLessThanOrEqual(60);
+    expect(ogTitle.length).toBeLessThanOrEqual(60);
+
+    expectWordSafeTruncation(documentTitle, title);
+    expectWordSafeTruncation(ogTitle, title);
+  });
+
+  it("keeps search and social descriptions within word-safe preview limits", () => {
+    const description =
+      "Book an online consultation with Irish Medical Council registered general practitioners and specialists, with multilingual support, transparent pricing, secure records, and convenient appointments throughout Ireland.";
+    const metadata = buildPublicMetadata({
+      path: "/ireland/en/online-doctor",
+      title: "Online Doctor Ireland",
+      description,
+      locale: "en_IE",
+      kind: "service",
+    });
+    const openGraph = metadata.openGraph as OpenGraphMetadata;
+    const twitter = metadata.twitter as TwitterMetadata;
+    const metaDescription = metadata.description as string;
+    const ogDescription = openGraph.description as string;
+    const twitterDescription = twitter.description as string;
+
+    expect(metaDescription.length).toBeLessThanOrEqual(160);
+    expect(ogDescription.length).toBeLessThanOrEqual(125);
+    expect(twitterDescription.length).toBeLessThanOrEqual(125);
+
+    expectWordSafeTruncation(metaDescription, description);
+    expectWordSafeTruncation(ogDescription, description);
+    expectWordSafeTruncation(twitterDescription, description);
+  });
+
+  it("never duplicates the Global Health brand in document or social titles", () => {
+    const metadata = buildPublicMetadata({
+      path: "/ireland/en/online-doctor",
+      title: "Online Doctor Ireland | Global Health",
+      description: "Meet licensed doctors serving patients throughout Ireland.",
+    });
+    const openGraph = metadata.openGraph as OpenGraphMetadata;
+    const twitter = metadata.twitter as TwitterMetadata;
+
+    for (const title of [
+      renderedDocumentTitle(metadata.title),
+      openGraph.title as string,
+      twitter.title as string,
+    ]) {
+      expect(title.match(/global health/giu)).toHaveLength(1);
+    }
+  });
+
+  it("includes the layout brand suffix inside the 60-character document limit", () => {
+    const metadata = buildPublicMetadata({
+      path: "/ireland/en/services/a-long-service",
+      title: "A very detailed specialist consultation service for patients throughout Ireland",
+      description: "Licensed medical care in Ireland.",
+    });
+
+    const title = renderedDocumentTitle(metadata.title);
+    expect(title.length).toBeLessThanOrEqual(60);
+    expect(title).toContain("Global Health");
+  });
+
+  it("keeps doctor OG metadata on the branded endpoint when the source image is untrusted", () => {
+    const metadata = buildPublicMetadata({
+      path: "/ireland/en/doctors/aoife-murphy",
+      title: "Dr Aoife Murphy",
+      description: "Irish Medical Council registered general practitioner.",
+      type: "profile",
+      kind: "doctor",
+      sourceImage: "http://localhost:8000/private/doctor.jpg",
+    });
+
+    const image = firstImage((metadata.openGraph as OpenGraphMetadata).images);
+    const imageUrl = new URL(image.url.toString());
+
+    expect(imageUrl.origin).toBe("https://myglobalhealth.online");
+    expect(imageUrl.pathname).toBe("/api/og");
+    expect(image).toMatchObject({ width: 1200, height: 630, alt: "Dr Aoife Murphy" });
   });
 });
