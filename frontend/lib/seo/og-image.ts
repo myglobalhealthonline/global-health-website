@@ -2,7 +2,7 @@ import { getSiteUrl } from "@/lib/seo/site-url";
 
 export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;
-export const OG_IMAGE_VERSION = "2026-07-19.5";
+export const OG_IMAGE_VERSION = "2026-07-19.6";
 
 export type OgImageKind =
   | "page"
