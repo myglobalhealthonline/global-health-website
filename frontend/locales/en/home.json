@@ -59,7 +59,7 @@
     "licensedSingular": "Licensed doctor",
     "licensedPlural": "Licensed doctors",
     "markets": "European markets · EU-registered",
-    "gdpr": "Compliant by default",
+    "gdpr": "{law} compliant by default",
     "slots": "Slots subject to availability",
     "languagesSpoken": "Consultation languages"
   },

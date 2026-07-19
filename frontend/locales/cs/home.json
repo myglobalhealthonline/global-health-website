@@ -53,7 +53,7 @@
     "licensedSingular": "Licencovaný lékař",
     "licensedPlural": "Licencovaní lékaři",
     "markets": "Evropské trhy · Registrováno v EU",
-    "gdpr": "Soulad s GDPR jako standard",
+    "gdpr": "Soulad s {law} jako standard",
     "slots": "Termíny dle dostupnosti",
     "languagesSpoken": "Jazyky konzultací"
   },
