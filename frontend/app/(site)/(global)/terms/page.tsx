@@ -1,15 +1,25 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SITE_NAME } from "@/lib/constants";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 
-export const metadata: Metadata = {
-  title: "Terms of service",
-  description: `The terms that apply when you use ${SITE_NAME} to book an online consultation.`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getPageLocale();
+  const { terms } = loadLocaleBundle(locale).legal;
+
+  return buildPublicMetadata({
+    path: "/terms",
+    title: terms.title,
+    description: terms.intro,
+    locale,
+    kind: "legal",
+    subtitle: terms.lastUpdated,
+    imageAlt: `${terms.title} - Global Health`,
+  });
+}
 
 export default async function TermsPage() {
   const locale = await getPageLocale();

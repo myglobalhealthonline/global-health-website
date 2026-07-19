@@ -36,7 +36,7 @@ import {
   faqJsonLd,
 } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
-import { resolveBrandTitle } from "@/lib/seo/page-seo";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
   getPageContent,
@@ -84,7 +84,7 @@ export async function generateMetadata({
   const { record: page } = await getPageContent(code, "HOME", lang as PublicLocale);
   const extras = homePageExtras(code, lang);
   const { common: metaCommon } = loadLocaleBundle(lang as LocaleCode);
-  const url = `${getSiteUrl()}/${country}/${lang}`;
+  const path = `/${country}/${lang}`;
   const title =
     page?.seoTitle ?? extras?.seoTitle ?? metaCommon.homeMeta.titleTemplate.replace("{country}", config.name);
   const description =
@@ -95,21 +95,17 @@ export async function generateMetadata({
   // the page title/description otherwise.
   const ogTitle = extras?.ogTitle ?? title;
   const ogDescription = extras?.ogDescription ?? description;
-  return {
-    title: resolveBrandTitle(title),
-    description,
-    alternates: { canonical: url, languages: hreflangAlternates(config, "") },
-    openGraph: {
-      type: "website",
-      siteName: SITE_NAME,
-      title: ogTitle,
-      description: ogDescription,
-      url,
-      ...ogLocales(config, lang),
-      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
-    },
-    twitter: { card: "summary_large_image", title: ogTitle, description: ogDescription },
-  };
+  return buildPublicMetadata({
+    path,
+    title: ogTitle,
+    description: ogDescription,
+    locale: ogLocales(config, lang).locale,
+    kind: "country",
+    subtitle: config.name,
+    sourceImage: page?.ogImageSrc ?? undefined,
+    imageAlt: `${ogTitle} ? ${config.name}`,
+    languages: hreflangAlternates(config, ""),
+  });
 }
 
 function initialsFromName(name: string): string {

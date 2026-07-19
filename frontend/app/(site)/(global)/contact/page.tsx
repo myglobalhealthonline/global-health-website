@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { SITE_NAME } from "@/lib/constants";
 import { getSiteUrl } from "@/lib/seo/site-url";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { PageHero } from "@/components/sections/PageHero";
@@ -12,33 +12,16 @@ import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 
 const CONTACT_URL = `${getSiteUrl()}/contact`;
-const OG_TITLE = "Contact Global Health — We respond within 24 hours";
-const OG_DESCRIPTION =
-  "Drop us a line — bookings, consultations, partnerships or anything else. A real person on our team gets back to you within 24 hours on working days. No bots, no ticket queue.";
-const OG_IMAGE = "/images/stock/contact.jpg";
-
-export const metadata: Metadata = {
-  // Absolute title bypasses the layout's "%s · Global Health" template so the
-  // brand isn't doubled (the title already contains it).
-  title: { absolute: "Contact Global Health — Get in Touch | Response within 24 Hours" },
-  description:
-    "Get in touch with the Global Health team. We usually respond within 24 hours on working days.",
-  alternates: { canonical: CONTACT_URL },
-  openGraph: {
-    type: "website",
-    siteName: SITE_NAME,
-    title: OG_TITLE,
-    description: OG_DESCRIPTION,
-    url: CONTACT_URL,
-    images: [{ url: OG_IMAGE, width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: OG_TITLE,
-    description: OG_DESCRIPTION,
-    images: [OG_IMAGE],
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getPageLocale();
+  const contact = loadLocaleBundle(locale).contact;
+  const title = `${contact.hero_title_lead} ${contact.hero_title_accent} ${contact.hero_title_trail}`;
+  return buildPublicMetadata({
+    path: "/contact", title, description: contact.hero_lede, locale, kind: "page",
+    subtitle: contact.response_body, sourceImage: "/images/stock/contact.jpg",
+    imageAlt: `${title} - Contact Global Health`,
+  });
+}
 
 const CONTACT_PAGE_JSONLD = {
   "@context": "https://schema.org",

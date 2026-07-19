@@ -23,8 +23,8 @@ import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { countryLangParams } from "@/lib/routing/static-params";
 import { buildBookHref } from "@/lib/routing/book-href";
-import { getSiteUrl } from "@/lib/seo/site-url";
-import { resolveBrandTitle } from "@/lib/seo/page-seo";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
+
 import { breadcrumbJsonLd, medicalProcedureJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import {
@@ -56,39 +56,25 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { country, lang } = await params;
   const code = countryCodeFromSlug(country);
-  const config = code ? getCountryByCode(code) : null;
+  const config = code ? await getPublicCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
   const { record: page } = await getPageContent(code, "GENERAL_CONSULTATION", lang as PublicLocale);
-  const url = `${getSiteUrl()}/${country}/${lang}/gp-consultation-online`;
-  const title =
-    page?.seoTitle ?? `General practitioners registered in ${config.name}`;
-  const description =
-    page?.seoDescription ??
-    `General practitioners registered to practise in ${config.name}. View credentials and languages, then book a consultation.`;
-  return {
-    // resolveBrandTitle returns an absolute title when the (CMS- or hub-)
-    // authored title already contains the brand, so the layout's
-    // "%s · Global Health" template never doubles it.
-    title: resolveBrandTitle(title),
+  const gpMeta = loadLocaleBundle(lang as LocaleCode).common.gpPage;
+  const title = page?.seoTitle ?? `${gpMeta.heroTitle} · ${config.name}`;
+  const description = page?.seoDescription ??
+    gpMeta.heroSubtitle.replace("{country}", config.name);
+  return buildPublicMetadata({
+    path: `/${country}/${lang}/gp-consultation-online`,
+    title,
     description,
-    alternates: { canonical: url, languages: hreflangAlternates(config, "/gp-consultation-online") },
-    openGraph: {
-      type: "website",
-      siteName: SITE_NAME,
-      title,
-      description,
-      url,
-      ...ogLocales(config, lang),
-      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      ...(page?.ogImageSrc ? { images: [{ url: page.ogImageSrc }] } : {}),
-    },
-  };
+    locale: ogLocales(config, lang).locale,
+    kind: "service",
+    subtitle: config.name,
+    sourceImage: page?.ogImageSrc ?? undefined,
+    imageAlt: `${title} — ${config.name}`,
+    languages: hreflangAlternates(config, "/gp-consultation-online"),
+  });
 }
 
 function formatPrice(cents: number | null, currency: string | null): string | undefined {

@@ -23,7 +23,7 @@ import {
 import { buildBookHref } from "@/lib/routing/book-href";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
-import { getSiteUrl } from "@/lib/seo/site-url";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
@@ -91,25 +91,19 @@ export async function generateMetadata({
   const description = detail.insuranceSeoLine
     ? `${baseDescription} ${detail.insuranceSeoLine}`.slice(0, 320)
     : baseDescription;
-  const url = `${getSiteUrl()}/${country}/${lang}/services/${serviceSlug}`;
-  return {
-    title: detail.seoTitle ? { absolute: title } : title,
+  return buildPublicMetadata({
+    path: `/${country}/${lang}/services/${serviceSlug}`,
+    title,
     description,
-    ...(detail.seoKeywords.length > 0 ? { keywords: detail.seoKeywords } : {}),
-    alternates: {
-      canonical: url,
-      ...(config ? { languages: hreflangAlternates(config, `/services/${serviceSlug}`) } : {}),
-    },
-    openGraph: {
-      type: "website",
-      siteName: SITE_NAME,
-      title,
-      description,
-      url,
-      ...(config ? ogLocales(config, lang) : {}),
-    },
-    twitter: { card: "summary_large_image", title, description },
-  };
+    type: "website",
+    kind: "service",
+    subtitle: config?.name,
+    sourceImage: detail.imageSrc ?? undefined,
+    imageAlt: `${detail.name} in ${config?.name ?? country}`,
+    locale: config ? ogLocales(config, lang).locale : undefined,
+    languages: config ? hreflangAlternates(config, `/services/${serviceSlug}`) : undefined,
+    keywords: detail.seoKeywords.length > 0 ? detail.seoKeywords : undefined,
+  });
 }
 
 /**

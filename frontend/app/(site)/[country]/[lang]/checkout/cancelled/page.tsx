@@ -3,6 +3,12 @@ import type { Metadata } from "next";
 import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { getCountryByCode } from "@/data/countries";
+import { isSupportedLocale } from "@/lib/content/get-public-page";
+import { SITE_NAME } from "@/lib/constants";
+import { countryCodeFromSlug } from "@/lib/routing/country-slug";
+import { hreflangAlternates } from "@/lib/seo/hreflang";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 
 export const dynamic = "force-dynamic";
 
@@ -13,8 +19,24 @@ export async function generateMetadata({
 }: {
   params: Promise<Params>;
 }): Promise<Metadata> {
-  const { lang } = await params;
-  return { title: loadLocaleBundle((lang || "en") as LocaleCode).common.checkoutStatus.cancelledTitle };
+  const { country, lang } = await params;
+  const code = countryCodeFromSlug(country);
+  const config = code ? getCountryByCode(code) : null;
+  if (!code || !config || !isSupportedLocale(lang)) {
+    return { title: SITE_NAME, robots: { index: false, follow: false } };
+  }
+  const t = loadLocaleBundle(lang as LocaleCode).common.checkoutStatus;
+  const title = `${t.cancelledTitle} · ${config.name}`;
+  return buildPublicMetadata({
+    path: `/${country}/${lang}/checkout/cancelled`,
+    title,
+    description: t.cancelledBody,
+    locale: `${lang}_${code.toUpperCase()}`,
+    subtitle: config.name,
+    imageAlt: `${t.cancelledTitle} — ${SITE_NAME}`,
+    languages: hreflangAlternates(config, "/checkout/cancelled"),
+    noindex: true,
+  });
 }
 
 export default async function CheckoutCancelledPage({

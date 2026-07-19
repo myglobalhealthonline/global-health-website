@@ -1,8 +1,19 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = buildPublicMetadata({
+  // Tokens grant access and must never be copied into crawler-facing fields.
+  path: "/share/consults",
+  title: "Secure consultation share",
+  description: "Secure access to a consultation shared through Global Health.",
+  kind: "page",
+  noindex: true,
+});
 
 type Params = { token: string };
 

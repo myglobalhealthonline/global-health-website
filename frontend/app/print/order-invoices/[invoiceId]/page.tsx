@@ -1,9 +1,19 @@
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { cookies } from "next/headers";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = buildPublicMetadata({
+  path: "/print/order-invoices",
+  title: "Printable invoice or receipt",
+  description: "Secure printable billing document from Global Health.",
+  kind: "page",
+  noindex: true,
+});
 
 type Params = { invoiceId: string };
 

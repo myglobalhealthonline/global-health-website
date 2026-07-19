@@ -1,12 +1,16 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { syncOrderPaymentServer } from "@/lib/api/cart-server";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { LegacyCheckoutSuccessClient } from "./LegacyCheckoutSuccessClient";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Order confirmed" };
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getPageLocale(); const success = loadLocaleBundle(locale).home.flow.checkoutSuccess;
+  return buildPublicMetadata({ path: "/checkout/success", title: success.paymentReceivedTitle, description: success.paymentReceivedBody, locale, kind: "page", subtitle: success.confirmingPaymentTitle, noindex: true });
+}
 
 type Props = {
   searchParams: Promise<{ orderId?: string; session_id?: string; payment?: string }>;

@@ -5,7 +5,7 @@ import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { getCountryLandingPage } from "@/lib/content/get-country-collections";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
-import { getSiteUrl } from "@/lib/seo/site-url";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 
@@ -25,25 +25,18 @@ export async function generateMetadata({
   const page = await getCountryLandingPage(code, slug, lang);
   if (!page) return { title: SITE_NAME };
   const title = page.seoTitle ?? page.title;
-  const description = page.seoDescription ?? undefined;
-  const url = `${getSiteUrl()}/${country}/${lang}/health/${slug}`;
-  return {
-    title: page.seoTitle ? { absolute: title } : title,
+  const description = page.seoDescription ?? `Learn about ${page.title} in ${config?.name ?? country}.`;
+  return buildPublicMetadata({
+    path: `/${country}/${lang}/health/${slug}`,
+    title,
     description,
-    alternates: {
-      canonical: url,
-      ...(config ? { languages: hreflangAlternates(config, `/health/${slug}`) } : {}),
-    },
-    openGraph: {
-      type: "article",
-      siteName: SITE_NAME,
-      title,
-      description,
-      url,
-      ...(config ? ogLocales(config, lang) : {}),
-    },
-    twitter: { card: "summary_large_image", title, description },
-  };
+    type: "article",
+    kind: "article",
+    subtitle: config?.name,
+    imageAlt: `${page.title} — ${config?.name ?? country}`,
+    locale: config ? ogLocales(config, lang).locale : undefined,
+    languages: config ? hreflangAlternates(config, `/health/${slug}`) : undefined,
+  });
 }
 
 /**

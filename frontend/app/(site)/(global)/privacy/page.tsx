@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SITE_NAME } from "@/lib/constants";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
@@ -8,10 +8,20 @@ import { SectionSeam } from "@/components/ui/SectionSeam";
 import { CookieSettingsButton } from "@/components/compliance/CookieSettingsButton";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 
-export const metadata: Metadata = {
-  title: "Privacy notice",
-  description: `How ${SITE_NAME} collects, stores, and protects your data.`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getPageLocale();
+  const { privacy } = loadLocaleBundle(locale).legal;
+
+  return buildPublicMetadata({
+    path: "/privacy",
+    title: privacy.title,
+    description: privacy.s1_p,
+    locale,
+    kind: "legal",
+    subtitle: privacy.lastUpdated,
+    imageAlt: `${privacy.title} - Global Health`,
+  });
+}
 
 export default async function PrivacyPage() {
   const locale = await getPageLocale();
