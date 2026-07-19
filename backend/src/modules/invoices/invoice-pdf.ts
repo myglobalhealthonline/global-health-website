@@ -1,6 +1,7 @@
 import { prisma } from "../../db/prisma.js";
 import { htmlToPdfBuffer } from "../generated-documents/html-document-renderer.js";
 import { PDF_TOKENS as T, PDF_SANS, PDF_SERIF, pdfLogoDataUrl, pdfEcgRule } from "../../lib/pdf/brand.js";
+import { clinicAddressLines } from "../../lib/clinic-addresses.js";
 
 // ── i18n labels ───────────────────────────────────────────────────────────────
 
@@ -38,7 +39,6 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     doctor: "Attending Doctor",
     reg: "Registration No.",
     company: "Global Health · Registered in Ireland · CRO No. 910267",
-    address: "6-9 Trinity Street, Dublin 2, D02 EY47, Ireland",
     taxId: "Tax ID",
     consultationDate: "Consultation date",
     invoiceRef: "Invoice reference",
@@ -77,7 +77,6 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     doctor: "Ošetřující lékař",
     reg: "Registrační číslo",
     company: "Global Health · Registrováno v Česku · IČO 19071680 · DIČ CZ19071680",
-    address: "Česko",
     taxId: "DIČ",
     consultationDate: "Datum konzultace",
     invoiceRef: "Číslo faktury",
@@ -116,7 +115,6 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     doctor: "Médico",
     reg: "Número de colegiado",
     company: "Global Health · Registrado en Irlanda · N.º CRO 910267",
-    address: "Irlanda",
     taxId: "NIF",
     consultationDate: "Fecha de consulta",
     invoiceRef: "Referencia de factura",
@@ -155,7 +153,6 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     doctor: "Medic curant",
     reg: "Număr înregistrare",
     company: "Global Health · Înregistrată în Irlanda · CRO Nr. 910267",
-    address: "Irlanda",
     taxId: "CUI",
     consultationDate: "Data consultației",
     invoiceRef: "Referință factură",
@@ -194,7 +191,6 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     doctor: "Médico",
     reg: "Número de registo médico",
     company: "Global Health · Registada na Irlanda · N.º CRO 910267",
-    address: "Irlanda",
     taxId: "NIF",
     consultationDate: "Data da consulta",
     invoiceRef: "Referência da fatura",
@@ -238,7 +234,6 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     doctor: "Médico responsável",
     reg: "Número de registro médico",
     company: "Global Health · Registrada na Irlanda · N.º CRO 910267",
-    address: "Irlanda",
     taxId: "CPF",
     consultationDate: "Data da consulta",
     invoiceRef: "Referência da fatura",
@@ -480,7 +475,9 @@ export function buildInvoiceHtml(data: InvoicePdfData): string {
         .slice(1)
         .map((part) => `<div class="l">${esc(part.trim())}</div>`)
         .join("")}
-      <div class="l">${esc(L.address)}</div>
+      ${clinicAddressLines(data.countryCode)
+        .map((line) => `<div class="l">${esc(line)}</div>`)
+        .join("")}
       <div class="l">globalhealth@myglobalhealth.online</div>
     </div>
     <div class="party">
