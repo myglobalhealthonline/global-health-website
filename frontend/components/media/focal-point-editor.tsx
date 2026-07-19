@@ -221,5 +221,5 @@ function PreviewTile({
 }
 
 function clamp(n: number): number {
-  return Math.min(100, Math.max(0, n));
+  return Math.round(Math.min(100, Math.max(0, n)));
 }
