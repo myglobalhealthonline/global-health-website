@@ -432,6 +432,57 @@ const nextConfig: NextConfig = {
         destination: "/:country/:lang/sick-certificate-ireland",
         permanent: true,
       },
+      // ── Legacy Wix URLs (pre-migration site) ─────────────────────────
+      // Google still has these indexed; without redirects they soft-404
+      // (HTTP 200 + "Page not found"), which is what users hit from old
+      // search results. Inventory mirrors data/routes.ts.
+      { source: "/home", destination: "/", permanent: true },
+      { source: "/gift-card", destination: "/", permanent: true },
+      { source: "/home-delivery", destination: "/", permanent: true },
+      { source: "/partner-clinics", destination: "/", permanent: true },
+      { source: "/category/:slug", destination: "/", permanent: true },
+      { source: "/pricing-plans/list", destination: "/ireland/en/pricing", permanent: true },
+      { source: "/online-prescription", destination: "/ireland/en/repeat-prescription-request", permanent: true },
+      { source: "/home-health-test", destination: "/ireland/en/lab-tests", permanent: true },
+      { source: "/home-health-tests/:slug", destination: "/ireland/en/lab-tests", permanent: true },
+      { source: "/booking-calendar", destination: "/ireland/en/book", permanent: true },
+      // Legacy country hubs
+      { source: "/ireland-team", destination: "/ireland/en/doctors", permanent: true },
+      { source: "/general-consultation-ie", destination: "/ireland/en/gp-consultation-online", permanent: true },
+      { source: "/specialty-ie", destination: "/ireland/en/see-a-specialist", permanent: true },
+      { source: "/home-cz", destination: "/czechia/cs", permanent: true },
+      { source: "/czechia-team", destination: "/czechia/cs/doctors", permanent: true },
+      { source: "/general-consultation-cz", destination: "/czechia/cs/gp-consultation-online", permanent: true },
+      { source: "/specialty-cz", destination: "/czechia/cs/see-a-specialist", permanent: true },
+      { source: "/home-pt", destination: "/portugal/pt", permanent: true },
+      { source: "/portugal-team", destination: "/portugal/pt/doctors", permanent: true },
+      { source: "/general-consultation-pt", destination: "/portugal/pt/gp-consultation-online", permanent: true },
+      { source: "/specialty-pt", destination: "/portugal/pt/see-a-specialist", permanent: true },
+      { source: "/home-sp", destination: "/spain/es", permanent: true },
+      { source: "/spain-team", destination: "/spain/es/doctors", permanent: true },
+      { source: "/general-consultation-sp", destination: "/spain/es/gp-consultation-online", permanent: true },
+      { source: "/specialty-sp", destination: "/spain/es/see-a-specialist", permanent: true },
+      { source: "/home-rm", destination: "/romania/ro", permanent: true },
+      { source: "/romania-team", destination: "/romania/ro/doctors", permanent: true },
+      { source: "/general-consultation-rm", destination: "/romania/ro/gp-consultation-online", permanent: true },
+      { source: "/specialty-rm", destination: "/romania/ro/see-a-specialist", permanent: true },
+      // Legacy Wix doctor profiles — slugs carried over 1:1.
+      { source: "/ireland-doctors/:slug", destination: "/ireland/en/doctors/:slug", permanent: true },
+      // Legacy specialist pages whose service still exists → new slug 1:1.
+      { source: "/ireland-specialist-consultations/cardiology-consultation", destination: "/ireland/en/services/cardiology-specialist-consultation", permanent: true },
+      { source: "/ireland-specialist-consultations/neurology-consultation", destination: "/ireland/en/services/neurology-specialist-consultation", permanent: true },
+      { source: "/ireland-specialist-consultations/nutrition-consultation", destination: "/ireland/en/services/nutrition-specialist-consultation", permanent: true },
+      { source: "/ireland-specialist-consultations/pediatric-consultation", destination: "/ireland/en/services/paediatric-specialist-consultation", permanent: true },
+      { source: "/ireland-specialist-consultations/physiotherapy-consultation", destination: "/ireland/en/services/physiotherapy-specialist-consultation", permanent: true },
+      { source: "/ireland-specialist-consultations/psychiatry-consultation", destination: "/ireland/en/services/psychiatry-specialist-consultation", permanent: true },
+      { source: "/ireland-specialist-consultations/psychology-consultation", destination: "/ireland/en/services/psychology-specialist-consultation", permanent: true },
+      // Remaining legacy specialist slugs (service retired) → listing page.
+      { source: "/ireland-specialist-consultations/:slug", destination: "/ireland/en/see-a-specialist", permanent: true },
+      // Legacy generic Wix service pages → specialist listing (best hub).
+      { source: "/service-page/:slug", destination: "/ireland/en/see-a-specialist", permanent: true },
+      // Legacy /ireland/<gp-slug> pages. The {3,} length guard keeps the
+      // live 2-letter locale URLs (/ireland/en, /ireland/pt, …) untouched.
+      { source: "/ireland/:slug([a-z0-9-]{3,})", destination: "/ireland/en/gp-consultation-online", permanent: true },
     ];
   },
 };
