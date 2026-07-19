@@ -53,7 +53,7 @@
     "licensedSingular": "Medic licențiat",
     "licensedPlural": "Medici licențiați",
     "markets": "Piețe europene · Înregistrat în UE",
-    "gdpr": "Conformitate GDPR implicit",
+    "gdpr": "Conformitate {law} implicit",
     "slots": "Locuri disponibile în funcție de program",
     "languagesSpoken": "Limbi de consultație"
   },

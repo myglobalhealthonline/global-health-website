@@ -53,7 +53,7 @@
     "licensedSingular": "Zugelassener Arzt",
     "licensedPlural": "Zugelassene Ärzte",
     "markets": "Europäische Märkte · EU-registriert",
-    "gdpr": "DSGVO-konform als Standard",
+    "gdpr": "{law}-konform als Standard",
     "slots": "Termine je nach Verfügbarkeit",
     "languagesSpoken": "Konsultationssprachen"
   },
