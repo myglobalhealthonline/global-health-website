@@ -78,7 +78,12 @@ function dataUrl(bytes: Uint8Array, type: string): string {
 
 async function loadImage(
   url: URL | undefined,
-  dimensions?: { width: number; height: number },
+  options?: {
+    width: number;
+    height: number;
+    fit?: "cover" | "contain";
+    format?: "jpeg" | "png";
+  },
 ): Promise<string | undefined> {
   if (!url) return undefined;
   const controller = new AbortController();
@@ -95,21 +100,27 @@ async function loadImage(
     // abort the entire request on a malformed or incompatible remote image.
     // Re-encoding gives it one known-safe format and also downsizes portraits.
     let pipeline = sharp(bytes).rotate();
-    if (dimensions) {
-      pipeline = pipeline.resize(dimensions.width, dimensions.height, {
-        fit: "cover",
+    if (options) {
+      pipeline = pipeline.resize(options.width, options.height, {
+        fit: options.fit ?? "cover",
         position: "attention",
       });
     }
-    const safeBytes = new Uint8Array(await pipeline.jpeg({ quality: 86, mozjpeg: true }).toBuffer());
+    const outputType = options?.format === "png" ? "image/png" : "image/jpeg";
+    const safeBytes = new Uint8Array(
+      await (options?.format === "png"
+        ? pipeline.png({ compressionLevel: 9 }).toBuffer()
+        : pipeline.jpeg({ quality: 86, mozjpeg: true }).toBuffer()),
+    );
     return safeBytes.byteLength <= MAX_IMAGE_BYTES
-      ? dataUrl(safeBytes, "image/jpeg")
+      ? dataUrl(safeBytes, outputType)
       : undefined;
   } catch { return undefined; } finally { clearTimeout(timeout); }
 }
 
-function Card({ kind, title, subtitle, locale, background, source }: {
-  kind: OgImageKind; title: string; subtitle?: string; locale?: string; background?: string; source?: string;
+function Card({ kind, title, subtitle, locale, background, source, logo }: {
+  kind: OgImageKind; title: string; subtitle?: string; locale?: string;
+  background?: string; source?: string; logo?: string;
 }) {
   const titleSize = title.length > 105 ? 48 : title.length > 70 ? 55 : 64;
   return (
@@ -143,14 +154,21 @@ function Card({ kind, title, subtitle, locale, background, source }: {
         position: "relative", width: source ? 730 : 980, padding: "60px 72px 52px",
         display: "flex", flexDirection: "column",
       }}>
+        {logo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img alt="" src={logo} width={220} height={143} style={{
+            display: "flex", width: 220, height: 143, objectFit: "contain", objectPosition: "left center",
+          }} />
+        ) : (
+          <div style={{
+            display: "flex", alignItems: "center", color: "#FFFFFF", fontSize: 23,
+            fontWeight: 700, letterSpacing: "0.16em",
+          }}>
+            {SITE_NAME.toUpperCase()}
+          </div>
+        )}
         <div style={{
-          display: "flex", alignItems: "center", color: "#FFFFFF", fontSize: 23,
-          fontWeight: 700, letterSpacing: "0.16em",
-        }}>
-          {SITE_NAME.toUpperCase()}
-        </div>
-        <div style={{
-          display: "flex", marginTop: 72, color: "#C7EE62", fontSize: 18, fontWeight: 700, letterSpacing: "0.13em",
+          display: "flex", marginTop: logo ? 18 : 72, color: "#C7EE62", fontSize: 18, fontWeight: 700, letterSpacing: "0.13em",
         }}>{LABELS[kind]}</div>
         <div style={{
           display: "flex", marginTop: 18, fontSize: titleSize, lineHeight: 1.05, fontWeight: 760, letterSpacing: "-0.035em", color: "#FFFFFF",
@@ -186,11 +204,17 @@ export async function GET(request: Request): Promise<Response> {
   const subtitle = bounded(requestUrl.searchParams.get("subtitle"), 100);
   const locale = bounded(requestUrl.searchParams.get("locale"), 35);
   const sourceUrl = approvedSource(bounded(requestUrl.searchParams.get("image"), 2_048));
-  const [background, source] = await Promise.all([
+  const [background, source, logo] = await Promise.all([
     loadImage(new URL("/social/og-background.webp", getSiteUrl())),
     loadImage(sourceUrl, { width: 430, height: 526 }),
+    loadImage(new URL("/logos/global-health-light.png", getSiteUrl()), {
+      width: 440,
+      height: 286,
+      fit: "contain",
+      format: "png",
+    }),
   ]);
-  const props = { kind, title, subtitle, locale, background, source };
+  const props = { kind, title, subtitle, locale, background, source, logo };
   let rendered: Uint8Array;
   try {
     rendered = await renderCard(props);
