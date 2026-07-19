@@ -163,20 +163,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Blog list unavailable — sitemap still emits the rest.
   }
 
-  // Doctor profile pages — one per active doctor, in their country/language.
+  // Doctor profile pages — every enabled locale with hreflang alternates,
+  // matching the section/service entries above.
   try {
     const byCode = new Map(countries.map((c) => [c.code, c]));
     const allDoctors = await getPublicDoctorsNormalized();
     for (const d of allDoctors) {
       const country = byCode.get(d.countryCode);
       if (!country) continue;
-      const slug = country.slug || countrySlug(d.countryCode);
-      const lang = (country.defaultLocale ?? "en").toLowerCase();
-      urls.push({
-        url: `${base}/${slug}/${lang}/doctors/${d.slug}`,
-        changeFrequency: "weekly",
-        priority: 0.7,
-      });
+      pushLocalized(country, `/doctors/${d.slug}`, 0.7);
     }
   } catch {
     // Doctor list unavailable — sitemap still emits the country tree.
