@@ -164,6 +164,24 @@ export const fetchAdminServiceById = cache(async (id: string) => {
   return adminRequest<AdminServiceDetailPayload>(`/api/admin/services/${id}`);
 });
 
+/**
+ * Every service across every country, for admin dropdowns that must offer
+ * the whole catalogue (e.g. the blog CTA-service picker). The backend caps
+ * pageSize at 100 (admin-services.schema.ts) and sorts by country name, so
+ * a single `pageSize: "200"` request silently drops countries that sort
+ * past the 100th row — this paginates through every page instead.
+ */
+export async function fetchAllAdminServices(): Promise<AdminServiceDto[]> {
+  const first = await fetchAdminServices({ page: "1", pageSize: "100" });
+  if (!first.ok) return [];
+  const items = [...first.data.items];
+  for (let page = 2; page <= first.data.pagination.totalPages; page++) {
+    const res = await fetchAdminServices({ page: String(page), pageSize: "100" });
+    if (res.ok) items.push(...res.data.items);
+  }
+  return items;
+}
+
 export const fetchAdminSpecialties = cache(async (countryId: string) => {
   const params = new URLSearchParams({ countryId });
   return adminRequest<AdminSpecialtiesPayload>(`/api/admin/specialties?${params.toString()}`);

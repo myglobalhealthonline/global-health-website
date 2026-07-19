@@ -7,7 +7,7 @@ import {
   fetchAdminBlogPostById,
   fetchAdminCountries,
   fetchAdminDoctors,
-  fetchAdminServices,
+  fetchAllAdminServices,
   patchAdminBlogPost,
   purgeAdminBlogPost,
   putAdminBlogTranslation,
@@ -39,18 +39,16 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
   const messages = searchParams ? await searchParams : {};
   const editLocale = messages.editLocale?.trim() ?? null;
 
-  const [result, countriesResult, doctorsResult, servicesResult] = await Promise.all([
+  const [result, countriesResult, doctorsResult, allServices] = await Promise.all([
     fetchAdminBlogPostById(id),
     fetchAdminCountries(),
     fetchAdminDoctors({ pageSize: "200" }),
-    fetchAdminServices({ pageSize: "200" }),
+    fetchAllAdminServices(),
   ]);
   const doctors = doctorsResult.ok
     ? doctorsResult.data.items.map((d) => ({ id: d.id, fullName: d.fullName }))
     : [];
-  const services = servicesResult.ok
-    ? servicesResult.data.items.map((s) => ({ id: s.id, name: `${s.name} — ${s.country.name}` }))
-    : [];
+  const services = allServices.map((s) => ({ id: s.id, name: `${s.name} — ${s.country.name}` }));
   if (!result.ok) {
     return (
       <>
