@@ -54,8 +54,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const [post, locale] = await Promise.all([getBlogPost(slug), getPageLocale()]);
+  const post = await getBlogPost(slug);
   if (!post) notFound();
+  // The post's own written language wins over the visitor's browsing
+  // locale — otherwise a Portuguese-language article gets an English CTA
+  // closer for any visitor without a pt cookie set.
+  const locale = await getPageLocale(post.locale);
 
   const { home } = loadLocaleBundle(locale);
   const blogI18n = home.blog;

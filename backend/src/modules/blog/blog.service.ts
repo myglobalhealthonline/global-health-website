@@ -364,6 +364,7 @@ export type PublicBlogPost = {
   title: string;
   excerpt: string | null;
   body: string;
+  locale: LocaleCode;
   category: string | null;
   author: string | null;
   reviewer: string | null;
@@ -412,6 +413,7 @@ function toPublicBlogPost(row: {
   title: string;
   excerpt: string | null;
   body: string;
+  locale: LocaleCode;
   category: string | null;
   authorDisplayName: string | null;
   reviewerDisplayName: string | null;
@@ -429,6 +431,7 @@ function toPublicBlogPost(row: {
     title: row.title,
     excerpt: row.excerpt,
     body: row.body,
+    locale: row.locale,
     category: row.category,
     author: row.authorDisplayName,
     reviewer: row.reviewerDisplayName,
@@ -467,6 +470,7 @@ const publicBlogSelect = {
   title: true,
   excerpt: true,
   body: true,
+  locale: true,
   category: true,
   authorDisplayName: true,
   reviewerDisplayName: true,

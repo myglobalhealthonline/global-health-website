@@ -30,6 +30,11 @@ export type BlogDoctor = {
 
 export type BlogPostFull = BlogListItem & {
   body: string;
+  /** The language the post's own title/excerpt/body are written in (admin
+   *  "Language" field) — drives which locale bundle the detail page's UI
+   *  chrome (CTA, "min read", date format) renders in, not the visitor's
+   *  browsing locale. Raw Prisma enum casing (e.g. "PT"); normalize before use. */
+  locale: string;
   seoTitle: string | null;
   seoDescription: string | null;
   reviewer: string | null;
@@ -43,6 +48,7 @@ type ApiBlogPost = {
   title?: unknown;
   excerpt?: unknown;
   body?: unknown;
+  locale?: unknown;
   category?: unknown;
   author?: unknown;
   reviewer?: unknown;
@@ -103,6 +109,7 @@ function normalizeApiPost(raw: ApiBlogPost): BlogPostFull | null {
     title,
     excerpt: str(raw.excerpt),
     body,
+    locale: str(raw.locale) || "EN",
     category: str(raw.category) || "Health guide",
     author: str(raw.author) || "Global Health Editorial Team",
     publishedAt,
