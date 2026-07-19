@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import sharp from "sharp";
 import { SITE_NAME } from "@/lib/constants";
 import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, type OgImageKind } from "@/lib/seo/og-image";
+import { getOgLabel } from "@/lib/seo/og-labels";
 import { getSiteUrl } from "@/lib/seo/site-url";
 
 const CACHE_CONTROL = "public, max-age=31536000, s-maxage=31536000, immutable";
@@ -11,12 +12,6 @@ const CACHE_CONTROL = "public, max-age=31536000, s-maxage=31536000, immutable";
 const MAX_IMAGE_BYTES = 1024 * 1024;
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const KINDS = new Set<OgImageKind>(["page", "country", "service", "doctor", "article", "pricing", "corporate", "legal"]);
-const LABELS: Record<OgImageKind, string> = {
-  page: "GLOBAL HEALTH", country: "HEALTHCARE WITHOUT BORDERS", service: "CLINICAL SERVICE",
-  doctor: "MEET YOUR DOCTOR", article: "HEALTH JOURNAL", pricing: "PLANS & PRICING",
-  corporate: "GLOBAL HEALTH FOR TEAMS", legal: "INFORMATION",
-};
-
 export const runtime = "nodejs";
 
 function bounded(value: string | null, maximum: number): string | undefined {
@@ -169,7 +164,7 @@ function Card({ kind, title, subtitle, locale, background, source, logo }: {
         )}
         <div style={{
           display: "flex", marginTop: logo ? 18 : 72, color: "#C7EE62", fontSize: 18, fontWeight: 700, letterSpacing: "0.13em",
-        }}>{LABELS[kind]}</div>
+        }}>{getOgLabel(kind, locale)}</div>
         <div style={{
           display: "flex", marginTop: 18, fontSize: titleSize, lineHeight: 1.05, fontWeight: 760, letterSpacing: "-0.035em", color: "#FFFFFF",
         }}>{title}</div>
