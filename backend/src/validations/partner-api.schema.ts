@@ -40,38 +40,43 @@ export const partnerCreateBookingBodySchema = z
     /** `slots[].id` from the availability call. Claimed atomically — a
      *  replayed request gets 409, not a duplicate booking. */
     timeSlotId: z.string().trim().min(1).max(120),
-    patient: z
-      .object({
-        email: z.string().trim().toLowerCase().email("Invalid patient email").max(254),
-        fullName: z.string().trim().min(2).max(120),
-        // Required and international. Downstream automation sends the
-        // reservation + payment messages over WhatsApp/SMS, which cannot
-        // work from a bare national number.
-        phone: z
-          .string()
-          .trim()
-          .regex(
-            /^\+[1-9]\d{0,3}[\s-]?\d{6,14}$/,
-            "Phone must include a country code, e.g. +353 871234567",
-          ),
-        dateOfBirth: z.string().trim().max(40).optional().nullable(),
-        /**
-         * Fiscal / taxpayer number, whatever the market calls it — NIF in
-         * Portugal and Spain, CPF in Brazil, PPS in Ireland, CNP in Romania,
-         * DIČ in Czechia. Deliberately ONE field rather than six
-         * country-specific ones: the value is stored as supplied and read
-         * back only for invoicing, so per-country columns would add
-         * validation surface without changing behaviour.
-         */
-        taxIdNumber: z.string().trim().max(64).optional().nullable(),
-        nationalIdNumber: z.string().trim().max(64).optional().nullable(),
-        passportNumber: z.string().trim().max(64).optional().nullable(),
-        /** Portugal only (Número de Utente). Optional even there. */
-        utenteNumber: z.string().trim().max(64).optional().nullable(),
-        /** Whole address as a single line — street, city and postcode. */
-        address: z.string().trim().max(300).optional().nullable(),
-      })
-      .strict(),
+
+    // --- patient, flat ---
+    // Deliberately NOT nested under a `patient` object: the booking body has
+    // exactly one person in it, so a wrapper adds a level of nesting without
+    // disambiguating anything. Flat keeps the payload a single object for
+    // integrators assembling it by hand.
+    email: z.string().trim().toLowerCase().email("Invalid patient email").max(254),
+    fullName: z.string().trim().min(2).max(120),
+    // Required and international. Downstream automation sends the
+    // reservation + payment messages over WhatsApp/SMS, which cannot
+    // work from a bare national number.
+    phone: z
+      .string()
+      .trim()
+      .regex(
+        /^\+[1-9]\d{0,3}[\s-]?\d{6,14}$/,
+        "Phone must include a country code, e.g. +353 871234567",
+      ),
+    dateOfBirth: z.string().trim().max(40).optional().nullable(),
+    /**
+     * Fiscal / taxpayer number, whatever the market calls it — NIF in
+     * Portugal and Spain, CPF in Brazil, PPS in Ireland, CNP in Romania,
+     * DIČ in Czechia. Deliberately ONE field rather than six
+     * country-specific ones: the value is stored as supplied and read
+     * back only for invoicing, so per-country columns would add
+     * validation surface without changing behaviour.
+     */
+    taxIdNumber: z.string().trim().max(64).optional().nullable(),
+    nationalIdNumber: z.string().trim().max(64).optional().nullable(),
+    passportNumber: z.string().trim().max(64).optional().nullable(),
+    /** Portugal only (Número de Utente). Optional even there. */
+    utenteNumber: z.string().trim().max(64).optional().nullable(),
+    /** Whole address as a single line — street, city and postcode. */
+    address: z.string().trim().max(300).optional().nullable(),
+
+    /** Booking note. Distinct from any patient field — kept last so the
+     *  flattening above reads as one block. */
     notes: z.string().trim().max(2000).optional().nullable(),
   })
   .strict();

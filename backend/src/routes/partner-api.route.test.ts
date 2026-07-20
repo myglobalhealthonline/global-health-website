@@ -21,21 +21,16 @@ import {
  * link, WhatsApp/email) is allowed to happen.
  */
 
-function validBookingPayload(
-  overrides: Record<string, unknown> = {},
-  patientOverrides: Record<string, unknown> = {},
-) {
+/** The booking body is flat — patient fields sit alongside the ids. */
+function validBookingPayload(overrides: Record<string, unknown> = {}) {
   return {
     countryCode: "ie",
     serviceId: "svc_1",
     doctorId: "doc_1",
     timeSlotId: "slot_1",
-    patient: {
-      email: "partner-patient@example.com",
-      fullName: "Partner Patient",
-      phone: "+353 871234567",
-      ...patientOverrides,
-    },
+    email: "partner-patient@example.com",
+    fullName: "Partner Patient",
+    phone: "+353 871234567",
     ...overrides,
   };
 }
@@ -144,39 +139,52 @@ describe("partner API — country scoping", () => {
 });
 
 describe("partner API — booking schema", () => {
-  it("accepts a minimal payload and normalises the email", () => {
+  it("accepts a minimal flat payload and normalises the email", () => {
     const parsed = partnerCreateBookingBodySchema.safeParse(
-      validBookingPayload({}, { email: "Partner-Patient@Example.COM" }),
+      validBookingPayload({ email: "Partner-Patient@Example.COM" }),
     );
     assert.equal(parsed.success, true);
     if (parsed.success) {
-      assert.equal(parsed.data.patient.email, "partner-patient@example.com");
+      assert.equal(parsed.data.email, "partner-patient@example.com");
     }
   });
 
   it("requires an international phone number", () => {
     const parsed = partnerCreateBookingBodySchema.safeParse(
-      validBookingPayload({}, { phone: "0871234567" }),
+      validBookingPayload({ phone: "0871234567" }),
     );
     assert.equal(parsed.success, false);
   });
 
   it("accepts the fiscal number, PT utente number and a one-line address", () => {
     const parsed = partnerCreateBookingBodySchema.safeParse(
-      validBookingPayload(
-        {},
-        {
-          taxIdNumber: "123456789",
-          utenteNumber: "987654321",
-          address: "Rua Augusta 100, 1100-053 Lisboa",
-        },
-      ),
+      validBookingPayload({
+        taxIdNumber: "123456789",
+        utenteNumber: "987654321",
+        address: "Rua Augusta 100, 1100-053 Lisboa",
+      }),
     );
     assert.equal(parsed.success, true);
     if (parsed.success) {
-      assert.equal(parsed.data.patient.taxIdNumber, "123456789");
-      assert.equal(parsed.data.patient.address, "Rua Augusta 100, 1100-053 Lisboa");
+      assert.equal(parsed.data.taxIdNumber, "123456789");
+      assert.equal(parsed.data.address, "Rua Augusta 100, 1100-053 Lisboa");
     }
+  });
+
+  /** The old nested shape must fail loudly, not be silently dropped. */
+  it("rejects the old nested patient object", () => {
+    const nested = {
+      countryCode: "ie",
+      serviceId: "svc_1",
+      doctorId: "doc_1",
+      timeSlotId: "slot_1",
+      patient: {
+        email: "partner-patient@example.com",
+        fullName: "Partner Patient",
+        phone: "+353 871234567",
+      },
+    };
+    assert.equal(partnerCreateBookingBodySchema.safeParse(nested).success, false);
   });
 
   /** These were removed from the contract — the server decides them, so a
@@ -204,7 +212,7 @@ describe("partner API — booking schema", () => {
     for (const field of ["addressLine1", "addressCity", "addressCountryCode"]) {
       assert.equal(
         partnerCreateBookingBodySchema.safeParse(
-          validBookingPayload({}, { [field]: "x" }),
+          validBookingPayload({ [field]: "x" }),
         ).success,
         false,
         `${field} should be rejected in favour of address`,

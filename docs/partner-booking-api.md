@@ -226,18 +226,19 @@ POST /api/partner/v1/bookings
   "serviceId": "clsvc…",
   "doctorId": "cldoc…",
   "timeSlotId": "clslot…",
-  "patient": {
-    "email": "patient@example.com",
-    "fullName": "João Costa",
-    "phone": "+351 912345678",
-    "dateOfBirth": "1985-03-14",
-    "taxIdNumber": "123456789",
-    "utenteNumber": "987654321",
-    "address": "Rua Augusta 100, 1100-053 Lisboa"
-  },
+  "email": "patient@example.com",
+  "fullName": "João Costa",
+  "phone": "+351 912345678",
+  "dateOfBirth": "1985-03-14",
+  "taxIdNumber": "123456789",
+  "utenteNumber": "987654321",
+  "address": "Rua Augusta 100, 1100-053 Lisboa",
   "notes": "Referred by Acme CRM"
 }
 ```
+
+The body is **flat** — patient fields sit alongside the ids, not nested under
+a `patient` object. Sending the old nested shape returns `400`.
 
 Field rules:
 
