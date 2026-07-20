@@ -1,9 +1,6 @@
 import type { FastifyRequest } from "fastify";
 import { prisma } from "../../db/prisma.js";
-import {
-  createManualBooking,
-  type CreateManualBookingInput,
-} from "../appointments/manual-booking.service.js";
+import { createManualBooking } from "../appointments/manual-booking.service.js";
 
 /**
  * Call #3 of the partner flow: turn a (country, service, doctor, slot,
@@ -26,19 +23,28 @@ import {
  * their own portal-access email regardless.
  */
 
+export type PartnerBookingPatient = {
+  email: string;
+  fullName: string;
+  phone: string;
+  dateOfBirth?: string | null;
+  /** Fiscal / taxpayer number — NIF, CPF, PPS, CNP, DIČ. */
+  taxIdNumber?: string | null;
+  nationalIdNumber?: string | null;
+  passportNumber?: string | null;
+  /** Portugal only. */
+  utenteNumber?: string | null;
+  /** Single line: street, city and postcode together. */
+  address?: string | null;
+};
+
 export type CreatePartnerBookingInput = {
   countryCode: string;
   serviceId: string;
   doctorId: string;
   timeSlotId: string;
-  durationMinutes?: number | null;
-  consultationMode: "ONLINE" | "IN_PERSON";
-  clinicId?: string | null;
-  locationAddress?: string | null;
   notes?: string | null;
-  insuranceCompanyId?: string | null;
-  insurancePolicyNumber?: string | null;
-  patient: CreateManualBookingInput["patient"];
+  patient: PartnerBookingPatient;
   partnerClientId: string;
   request?: FastifyRequest;
 };
@@ -72,18 +78,41 @@ export async function createPartnerBooking(
     // `createManualBooking` already supports via a null admin id. The
     // PartnerApiClient id lands in the audit metadata via `origin` instead.
     adminUserId: null,
-    patient: input.patient,
+    patient: {
+      email: input.patient.email,
+      fullName: input.patient.fullName,
+      phone: input.patient.phone,
+      dateOfBirth: input.patient.dateOfBirth ?? null,
+      taxIdNumber: input.patient.taxIdNumber ?? null,
+      nationalIdNumber: input.patient.nationalIdNumber ?? null,
+      passportNumber: input.patient.passportNumber ?? null,
+      utenteNumber: input.patient.utenteNumber ?? null,
+      // The partner contract takes one address line; the patient record
+      // stores street/city/country separately. City and country are left
+      // unset rather than guessed — a wrong split is worse than an absent
+      // one, and nothing downstream parses the street line.
+      addressLine1: input.patient.address ?? null,
+    },
     serviceId: input.serviceId,
     doctorId: input.doctorId,
     timeSlotId: input.timeSlotId,
-    durationMinutes: input.durationMinutes ?? null,
-    consultationMode: input.consultationMode,
-    clinicId: input.clinicId ?? null,
-    locationAddress: input.locationAddress ?? null,
+    // Duration always comes from the chosen service. The partner picks a
+    // service, and the service defines how long its consultation runs —
+    // letting the caller override it would let an external system book 5
+    // minutes of a 30-minute consultation.
+    durationMinutes: null,
+    // Partner bookings are always remote consultations, so there is no
+    // clinic or street address to attach.
+    consultationMode: "ONLINE",
+    clinicId: null,
+    locationAddress: null,
     notes: input.notes ?? null,
     countryCode: input.countryCode,
-    insuranceCompanyId: input.insuranceCompanyId ?? null,
-    insurancePolicyNumber: input.insurancePolicyNumber ?? null,
+    // Insurance-backed booking is not offered through the partner API: it
+    // requires the doctor to be in the insurer's network and an admin to
+    // have verified the card in person. Partner bookings are standard price.
+    insuranceCompanyId: null,
+    insurancePolicyNumber: null,
     request: input.request,
     origin: {
       source: "partner_api",

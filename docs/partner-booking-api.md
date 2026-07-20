@@ -226,21 +226,16 @@ POST /api/partner/v1/bookings
   "serviceId": "clsvc…",
   "doctorId": "cldoc…",
   "timeSlotId": "clslot…",
-  "consultationMode": "ONLINE",
   "patient": {
     "email": "patient@example.com",
     "fullName": "João Costa",
     "phone": "+351 912345678",
     "dateOfBirth": "1985-03-14",
-    "utenteNumber": "123456789",
-    "addressLine1": "Rua X 1",
-    "addressCity": "Lisboa",
-    "addressCountryCode": "pt"
+    "taxIdNumber": "123456789",
+    "utenteNumber": "987654321",
+    "address": "Rua Augusta 100, 1100-053 Lisboa"
   },
-  "notes": "Referred by Acme CRM",
-  "durationMinutes": 20,
-  "insuranceCompanyId": null,
-  "insurancePolicyNumber": null
+  "notes": "Referred by Acme CRM"
 }
 ```
 
@@ -248,15 +243,29 @@ Field rules:
 
 - `phone` is **required** and must carry a country code (`+351 912345678`).
   Downstream WhatsApp/SMS automation cannot work from a national number.
-- `consultationMode` defaults to `ONLINE`. When `IN_PERSON`, supply exactly
-  one of `clinicId` or `locationAddress`.
-- `durationMinutes` (5–240) overrides the service default; it consumes
-  consecutive base slots.
+- `taxIdNumber` is the patient's **fiscal / taxpayer number**, whatever the
+  market calls it — NIF (PT, ES), CPF (BR), PPS (IE), CNP (RO), DIČ (CZ).
+  One field for every country; the value is stored as supplied and read back
+  for invoicing.
+- `utenteNumber` is **Portugal only** (Número de Utente), and optional even
+  there.
+- `address` is a **single line** — street, city and postcode together.
+- `nationalIdNumber` and `passportNumber` are also accepted, both optional.
 - Unknown keys are rejected with `400` — a typo'd field is never silently
   ignored.
 - Patient identity is matched on `email`. **An unknown email auto-creates a
   patient account**; a known one reuses it and its password is never
   rotated.
+
+**Decided by the server, not the caller.** These are not accepted in the body
+and sending them returns `400`:
+
+| | |
+|---|---|
+| Duration | Taken from the chosen service. A caller cannot book 5 minutes of a 30-minute consultation. |
+| Consultation mode | Always `ONLINE`. No clinic or location is attached. |
+| Price | Derived from the service and slot. |
+| Insurance | Not offered through this API — insurance-backed booking needs an admin to verify the card in person. Partner bookings are standard price. |
 
 ### Response — `201`
 

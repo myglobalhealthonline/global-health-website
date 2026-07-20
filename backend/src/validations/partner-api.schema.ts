@@ -55,52 +55,26 @@ export const partnerCreateBookingBodySchema = z
             "Phone must include a country code, e.g. +353 871234567",
           ),
         dateOfBirth: z.string().trim().max(40).optional().nullable(),
-        nationalIdNumber: z.string().trim().max(64).optional().nullable(),
+        /**
+         * Fiscal / taxpayer number, whatever the market calls it — NIF in
+         * Portugal and Spain, CPF in Brazil, PPS in Ireland, CNP in Romania,
+         * DIČ in Czechia. Deliberately ONE field rather than six
+         * country-specific ones: the value is stored as supplied and read
+         * back only for invoicing, so per-country columns would add
+         * validation surface without changing behaviour.
+         */
         taxIdNumber: z.string().trim().max(64).optional().nullable(),
+        nationalIdNumber: z.string().trim().max(64).optional().nullable(),
         passportNumber: z.string().trim().max(64).optional().nullable(),
-        // PT-only Número de Utente — optional even in Portugal.
+        /** Portugal only (Número de Utente). Optional even there. */
         utenteNumber: z.string().trim().max(64).optional().nullable(),
-        addressLine1: z.string().trim().max(200).optional().nullable(),
-        addressCity: z.string().trim().max(100).optional().nullable(),
-        addressCountryCode: z.string().trim().max(8).optional().nullable(),
+        /** Whole address as a single line — street, city and postcode. */
+        address: z.string().trim().max(300).optional().nullable(),
       })
       .strict(),
-    /** Overrides the service default. Consumes consecutive base slots. */
-    durationMinutes: z.number().int().min(5).max(240).optional(),
-    consultationMode: z.enum(["ONLINE", "IN_PERSON"]).default("ONLINE"),
-    clinicId: z.string().trim().min(1).max(60).optional().nullable(),
-    locationAddress: z.string().trim().max(500).optional().nullable(),
     notes: z.string().trim().max(2000).optional().nullable(),
-    insuranceCompanyId: z.string().trim().min(1).max(64).optional().nullable(),
-    insurancePolicyNumber: z.string().trim().max(120).optional().nullable(),
   })
-  .strict()
-  .refine(
-    (data) => {
-      if (data.consultationMode !== "IN_PERSON") return true;
-      return Boolean(
-        (data.clinicId && data.clinicId.length > 0) ||
-          (data.locationAddress && data.locationAddress.length > 0),
-      );
-    },
-    {
-      message: "In-person appointments need a clinic or a location address.",
-      path: ["clinicId"],
-    },
-  )
-  .refine(
-    (data) =>
-      !(
-        data.clinicId &&
-        data.clinicId.length > 0 &&
-        data.locationAddress &&
-        data.locationAddress.length > 0
-      ),
-    {
-      message: "Provide a clinic OR a location address, not both.",
-      path: ["locationAddress"],
-    },
-  );
+  .strict();
 
 export const createPartnerApiClientBodySchema = z
   .object({
