@@ -7,6 +7,7 @@ import {
 import { buildInvoicePdfData, renderInvoicePdfBuffer } from "../invoices/invoice-pdf.js";
 import { sendInvoiceEmail } from "../../lib/email/templates.js";
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
+import { sendSalesInvoiceCopy } from "../../lib/email/sales-invoice-copy.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
 
 /**
@@ -344,4 +345,18 @@ async function renderAndSendCorporateInvoice(
   } catch (err) {
     log.warn({ err, invoiceId: opts.invoiceId }, "Corporate invoice email failed — doc still created");
   }
+
+  // Same accounting archive as the patient path: PAID documents outside PT/CZ
+  // are forwarded to the bookkeeping inbox. Outside the try above so a failed
+  // company email still archives. Self-gates on country + document type.
+  await sendSalesInvoiceCopy(
+    {
+      invoiceId: opts.invoiceId,
+      invoiceNumber: opts.invoiceNumber,
+      countryCode: opts.countryCode,
+      documentType: opts.documentType,
+      pdfBuffer,
+    },
+    log,
+  );
 }
