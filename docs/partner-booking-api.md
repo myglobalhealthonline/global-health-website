@@ -153,9 +153,21 @@ Errors: `404` unknown/inactive/out-of-scope country.
 ## 2. Availability — time slots
 
 ```
-GET /api/partner/v1/availability
-      ?countryCode=pt&serviceId=clsvc…&doctorId=cldoc…&days=14
+GET  /api/partner/v1/availability
+       ?countryCode=pt&serviceId=clsvc…&doctorId=cldoc…&days=14
+
+POST /api/partner/v1/availability
+       { "countryCode": "pt", "serviceId": "clsvc…",
+         "doctorId": "cldoc…", "days": 14 }
 ```
+
+Both forms take the same fields and return the same payload — use whichever
+is easier to assemble. The `GET` is canonical and cacheable; the `POST`
+exists because a `GET` cannot reliably carry a body (servers don't parse one
+and proxies strip it, so it fails silently rather than loudly).
+
+The API key stays in the `X-Api-Key` **header** in both cases — it is never a
+query parameter or a body field.
 
 `days` defaults to `14`, max `30`.
 

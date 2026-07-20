@@ -152,30 +152,58 @@ const partnerApiRoute: FastifyPluginAsync = async (app) => {
   /**
    * Call #2 — open slots for one (country, service, doctor) triple. Times are
    * UTC instants; render them in the returned `clinicTimezone`.
+   *
+   * Offered as BOTH `GET …?countryCode=…` and `POST` with a JSON body. The
+   * GET is the canonical, cacheable form; the POST exists because four
+   * query parameters are awkward to assemble in some clients and a GET
+   * cannot reliably carry a body (Fastify does not parse one, and proxies
+   * routinely strip it — it would fail silently rather than loudly).
+   * Both forms share one schema and one service call, so they cannot drift.
    */
-  app.get<{
-    Querystring: Record<string, string | undefined>;
-  }>(
+  const respondWithAvailability = async (
+    request: FastifyRequest,
+    reply: FastifyReply,
+    input: unknown,
+    invalidMessage: string,
+  ) => {
+    const caller = requireCaller(request);
+    const parsed = partnerAvailabilityQuerySchema.safeParse(input);
+    if (!parsed.success) {
+      return reply
+        .status(400)
+        .send(errorResponse(invalidMessage, parsed.error.flatten()));
+    }
+    const scope = enforceCountryScope(caller, parsed.data.countryCode, reply);
+    if (scope) return scope;
+
+    try {
+      const availability = await getPartnerAvailability(parsed.data);
+      return okResponse(availability);
+    } catch (error) {
+      return handleError(app, reply, error, "Could not load availability");
+    }
+  };
+
+  app.get<{ Querystring: Record<string, string | undefined> }>(
     "/api/partner/v1/availability",
     { config: { rateLimit: READ_RATE_LIMIT } },
-    async (request, reply) => {
-      const caller = requireCaller(request);
-      const query = partnerAvailabilityQuerySchema.safeParse(request.query);
-      if (!query.success) {
-        return reply
-          .status(400)
-          .send(errorResponse("Invalid query", query.error.flatten()));
-      }
-      const scope = enforceCountryScope(caller, query.data.countryCode, reply);
-      if (scope) return scope;
+    async (request, reply) =>
+      respondWithAvailability(request, reply, request.query, "Invalid query"),
+  );
 
-      try {
-        const availability = await getPartnerAvailability(query.data);
-        return okResponse(availability);
-      } catch (error) {
-        return handleError(app, reply, error, "Could not load availability");
-      }
-    },
+  app.post(
+    "/api/partner/v1/availability",
+    { config: { rateLimit: READ_RATE_LIMIT } },
+    async (request, reply) =>
+      respondWithAvailability(
+        request,
+        reply,
+        // An absent body arrives as null/undefined; hand the schema an object
+        // so the caller gets field-level validation errors rather than a
+        // confusing "expected object, received null".
+        request.body ?? {},
+        "Invalid body",
+      ),
   );
 
   /**
