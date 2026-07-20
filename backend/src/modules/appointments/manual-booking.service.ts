@@ -188,6 +188,17 @@ export type CreateManualBookingInput = {
   /** Caller request — forwarded to recordAudit so the IP lands in the
    *  AuditLog row, and used for structured logging. */
   request?: FastifyRequest;
+  /** Provenance of the booking, for Stripe metadata + the audit row.
+   *  Defaults to the admin console (`admin_manual`, actor role ADMIN).
+   *  The partner booking API passes its own marker plus the
+   *  `PartnerApiClient.id`, so every programmatically-created booking is
+   *  traceable to the integration that made it — an audit trail the plain
+   *  "admin did it" attribution would otherwise lose. */
+  origin?: {
+    source: string;
+    actorRole?: string;
+    partnerClientId?: string | null;
+  };
 };
 
 export type CreateManualBookingResult = {
@@ -606,7 +617,7 @@ export async function createManualBooking(
           orderId: order.id,
           appointmentId,
           countryCode: input.countryCode,
-          source: "admin_manual",
+          source: input.origin?.source ?? "admin_manual",
         },
       });
       paymentUrl = session.url ?? null;
@@ -663,13 +674,16 @@ export async function createManualBooking(
 
   recordAudit({
     actorUserId: input.adminUserId ?? null,
-    actorRole: "ADMIN",
+    actorRole: input.origin?.actorRole ?? "ADMIN",
     action: "APPOINTMENT_CREATED",
     entityType: "Appointment",
     entityId: appointmentId,
     metadata: {
-      source: "admin_manual",
+      source: input.origin?.source ?? "admin_manual",
       adminAuth: input.adminUserId ? "session" : "token",
+      ...(input.origin?.partnerClientId
+        ? { partnerClientId: input.origin.partnerClientId }
+        : {}),
       patientUserId: userId,
       patientAccountCreated: created,
       serviceId: service.id,
