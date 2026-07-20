@@ -186,7 +186,11 @@ export async function getDoctorRegistrationByCountryCode(
   countryCode: string,
 ): Promise<DoctorRegistrationRow | null> {
   const row = await prisma.doctorCountry.findFirst({
-    where: { doctorId, country: { code: countryCode.toUpperCase() } },
+    // Case-insensitive: Country.code is stored lowercase ("pt", "ie") while
+    // callers pass whatever the appointment carries. An exact match on an
+    // upper-cased code silently found nothing, which sent every document to
+    // the old cross-country fallback and printed the wrong market's number.
+    where: { doctorId, country: { code: { equals: countryCode, mode: "insensitive" } } },
     select: {
       id: true,
       doctorId: true,
