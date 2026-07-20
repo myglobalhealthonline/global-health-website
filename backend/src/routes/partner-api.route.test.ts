@@ -30,7 +30,6 @@ function validBookingPayload(
     serviceId: "svc_1",
     doctorId: "doc_1",
     timeSlotId: "slot_1",
-    consultationMode: "ONLINE",
     patient: {
       email: "partner-patient@example.com",
       fullName: "Partner Patient",
@@ -145,14 +144,13 @@ describe("partner API — country scoping", () => {
 });
 
 describe("partner API — booking schema", () => {
-  it("accepts a complete ONLINE payload and normalises the email", () => {
+  it("accepts a minimal payload and normalises the email", () => {
     const parsed = partnerCreateBookingBodySchema.safeParse(
       validBookingPayload({}, { email: "Partner-Patient@Example.COM" }),
     );
     assert.equal(parsed.success, true);
     if (parsed.success) {
       assert.equal(parsed.data.patient.email, "partner-patient@example.com");
-      assert.equal(parsed.data.consultationMode, "ONLINE");
     }
   });
 
@@ -163,29 +161,55 @@ describe("partner API — booking schema", () => {
     assert.equal(parsed.success, false);
   });
 
-  it("requires clinic OR location for IN_PERSON, and rejects both", () => {
-    assert.equal(
-      partnerCreateBookingBodySchema.safeParse(
-        validBookingPayload({ consultationMode: "IN_PERSON" }),
-      ).success,
-      false,
+  it("accepts the fiscal number, PT utente number and a one-line address", () => {
+    const parsed = partnerCreateBookingBodySchema.safeParse(
+      validBookingPayload(
+        {},
+        {
+          taxIdNumber: "123456789",
+          utenteNumber: "987654321",
+          address: "Rua Augusta 100, 1100-053 Lisboa",
+        },
+      ),
     );
-    assert.equal(
-      partnerCreateBookingBodySchema.safeParse(
-        validBookingPayload({ consultationMode: "IN_PERSON", clinicId: "clinic_1" }),
-      ).success,
-      true,
-    );
-    assert.equal(
-      partnerCreateBookingBodySchema.safeParse(
-        validBookingPayload({
-          consultationMode: "IN_PERSON",
-          clinicId: "clinic_1",
-          locationAddress: "123 Main St",
-        }),
-      ).success,
-      false,
-    );
+    assert.equal(parsed.success, true);
+    if (parsed.success) {
+      assert.equal(parsed.data.patient.taxIdNumber, "123456789");
+      assert.equal(parsed.data.patient.address, "Rua Augusta 100, 1100-053 Lisboa");
+    }
+  });
+
+  /** These were removed from the contract — the server decides them, so a
+   *  caller sending them must be told rather than silently ignored. */
+  it("rejects fields the service now controls", () => {
+    for (const [field, value] of [
+      ["durationMinutes", 45],
+      ["consultationMode", "IN_PERSON"],
+      ["clinicId", "clinic_1"],
+      ["locationAddress", "123 Main St"],
+      ["insuranceCompanyId", "ins_1"],
+      ["insurancePolicyNumber", "POL-1"],
+    ] as const) {
+      assert.equal(
+        partnerCreateBookingBodySchema.safeParse(
+          validBookingPayload({ [field]: value }),
+        ).success,
+        false,
+        `${field} should be rejected`,
+      );
+    }
+  });
+
+  it("rejects the old split address fields", () => {
+    for (const field of ["addressLine1", "addressCity", "addressCountryCode"]) {
+      assert.equal(
+        partnerCreateBookingBodySchema.safeParse(
+          validBookingPayload({}, { [field]: "x" }),
+        ).success,
+        false,
+        `${field} should be rejected in favour of address`,
+      );
+    }
   });
 
   it("rejects unknown keys so a typo'd field is never silently ignored", () => {

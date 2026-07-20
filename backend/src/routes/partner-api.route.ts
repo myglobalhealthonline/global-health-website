@@ -229,7 +229,6 @@ const partnerApiRoute: FastifyPluginAsync = async (app) => {
       try {
         const booking = await createPartnerBooking({
           ...body.data,
-          durationMinutes: body.data.durationMinutes ?? null,
           partnerClientId: caller.clientId,
           request,
         });

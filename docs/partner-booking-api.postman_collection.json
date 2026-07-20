@@ -151,7 +151,7 @@
         "header": [{ "key": "Content-Type", "value": "application/json" }],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"countryCode\": \"{{countryCode}}\",\n  \"serviceId\": \"{{serviceId}}\",\n  \"doctorId\": \"{{doctorId}}\",\n  \"timeSlotId\": \"{{timeSlotId}}\",\n  \"consultationMode\": \"ONLINE\",\n  \"patient\": {\n    \"email\": \"{{patientEmail}}\",\n    \"fullName\": \"Postman Test\",\n    \"phone\": \"+351 912345678\"\n  },\n  \"notes\": \"Created via Postman while testing the partner API\"\n}"
+          "raw": "{\n  \"countryCode\": \"{{countryCode}}\",\n  \"serviceId\": \"{{serviceId}}\",\n  \"doctorId\": \"{{doctorId}}\",\n  \"timeSlotId\": \"{{timeSlotId}}\",\n  \"patient\": {\n    \"email\": \"{{patientEmail}}\",\n    \"fullName\": \"Postman Test\",\n    \"phone\": \"+351 912345678\",\n    \"taxIdNumber\": \"123456789\",\n    \"address\": \"Rua Augusta 100, 1100-053 Lisboa\"\n  },\n  \"notes\": \"Created via Postman while testing the partner API\"\n}"
         },
         "url": {
           "raw": "{{baseUrl}}/api/partner/v1/bookings",
