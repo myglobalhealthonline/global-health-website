@@ -187,18 +187,39 @@
 
 **Steps**:
 1. From appointment detail, scroll to **Follow-up button** (below Meeting & Status)
-2. Click "Book follow-up" → inline form opens
+2. Click "Book follow-up" → inline form opens and loads the doctor's calendar
 3. Verify fields:
-   - When (datetime-local, defaults 1 week out at local 00:00)
+   - When → Day dropdown + Time button grid, populated **only** with the
+     doctor's own `OPEN`, future slots (next 60 days), rendered in the clinic
+     timezone. No free-text date entry.
    - Delivery dropdown
    - Notes textarea (max 2000)
-4. Click "Cancel" → form closes
-5. Open again, fill fields, click "Create follow-up"
-6. Verify redirect to new follow-up appointment detail page
-7. Verify new appointment has `followUpFromAppointmentId` pointing to original
-8. Navigate back to original → verify it lists in "follow-ups" relation
+   - Billing note explaining the price + patient payment link
+4. Verify "Create follow-up" is disabled until a time slot is selected
+5. Click "Cancel" → form closes
+6. Open again, pick a slot, click "Create follow-up"
+7. Verify redirect to new follow-up appointment detail page
+8. Verify new appointment has `followUpFromAppointmentId` pointing to original
+9. Navigate back to original → verify it lists in "follow-ups" relation
+10. Verify the picked slot is **no longer offered** (it is now HELD) — reopen
+    the form, and check the doctor availability calendar
+11. Verify an `Order` exists for the follow-up, priced identically to the source
+    consultation (peak pricing must NOT re-price it), and that the patient
+    received the standard pre-payment email/WhatsApp with a payment link
+12. Verify the doctor received the "new booking (payment pending)" email +
+    portal bell
+13. If the patient pays, verify slot flips HELD → BOOKED and the meeting-link
+    notifications go out; if the payment deadline passes, verify the booking is
+    cancelled and the slot returns to the base grid
 
-**Expected**: Follow-up created, linked to original
+**Expected**: Follow-up created and linked to original, sitting on a real
+reserved slot, billed at the source consultation's price, with the standard
+notification sequence sent to patient and doctor.
+
+**Regression note**: follow-ups used to INSERT a bare appointment with a
+free-text time — no slot reserved (doctor stayed double-bookable), no order
+(never charged), and no patient notification. Guard against a reintroduction of
+any of those three.
 
 ---
 
