@@ -18,7 +18,7 @@ import {
   UnrecognizedAppointmentStatusError,
 } from "./appointment-status-transitions.js";
 import { normalizeDbError } from "../shared/db-errors.js";
-import { mapAppointmentOrderNumbers } from "../orders/appointment-order-number.js";
+import { mapAppointmentOrderNumbers, mapAppointmentOrders } from "../orders/appointment-order-number.js";
 import {
   claimConsecutiveSlots,
   releaseAppointmentSlot,
@@ -303,6 +303,15 @@ export type AdminAppointmentDetail = {
   /** IANA tz captured at booking time. Lets the admin reschedule UI show
    *  which zone the slot was originally booked in. Null on legacy rows. */
   patientTimezone: string | null;
+  /** Linked order for the clickable order reference on the admin detail
+   *  page. `orderId` targets /admin/orders/[id]; `orderNumber` (ORD-000001)
+   *  is the label. Both null when the appointment has no linked order. */
+  orderId: string | null;
+  orderNumber: string | null;
+  /** Booked product/service name snapshot from the order line (e.g.
+   *  "IE - General Consultation"). Null when there's no linked order item;
+   *  the client then falls back to a label mapped from consultationType. */
+  serviceName: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -441,6 +450,12 @@ function toAdminAppointment(record: AppointmentRecord): AdminAppointmentDetail {
     locationAddress: record.locationAddress,
     doctorId: record.doctorId ?? null,
     patientTimezone: record.patientTimezone ?? null,
+    // Order-link + service-name fields are populated only by the detail
+    // path (getAppointmentById), which knows the linked order. Default to
+    // null here so every other caller of the mapper stays type-safe.
+    orderId: null,
+    orderNumber: null,
+    serviceName: null,
     createdAt: record.createdAt.toISOString(),
     updatedAt: record.updatedAt.toISOString(),
   };
@@ -580,10 +595,31 @@ export async function getAppointmentById(id: string): Promise<AdminAppointmentDe
   try {
     const row = await prisma.appointment.findUnique({
       where: { id },
-      select: ADMIN_APPT_SELECT,
+      // Live catalogue service name as a fallback for the booked-line
+      // snapshot below (appointments booked without an order line).
+      select: { ...ADMIN_APPT_SELECT, service: { select: { name: true } } },
     });
     if (!row) return null;
-    return toAdminAppointment(row as AppointmentRecord);
+
+    // Resolve the linked order (for the deep-link) and the booked service
+    // name (the immutable OrderItem snapshot the patient actually paid for).
+    // Both best-effort — a legacy/manual appointment may have neither.
+    const [orders, bookedLine] = await Promise.all([
+      mapAppointmentOrders([id]),
+      prisma.orderItem.findFirst({
+        where: { appointmentId: id, kind: { in: CONSULTATION_KINDS } },
+        select: { name: true },
+      }),
+    ]);
+    const order = orders.get(id) ?? null;
+
+    const { service, ...appointmentFields } = row;
+    return {
+      ...toAdminAppointment(appointmentFields as AppointmentRecord),
+      orderId: order?.orderId ?? null,
+      orderNumber: order?.orderNumber ?? null,
+      serviceName: bookedLine?.name ?? service?.name ?? null,
+    };
   } catch (error) {
     throw normalizeDbError(error, "Appointments are temporarily unavailable");
   }

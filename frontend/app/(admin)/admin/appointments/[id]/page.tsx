@@ -15,6 +15,7 @@ import {
   patchAdminAppointmentUpdate,
 } from "@/lib/admin/admin-api";
 import { formatAppDateTime, formatAppDateTimeWithZone } from "@/lib/format-datetime";
+import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { InternalMessagesThread } from "@/components/chat/InternalMessagesThread";
 import { AdminAppointmentChat } from "../_components/admin-appointment-chat";
 import {
@@ -370,6 +371,11 @@ export default async function AdminAppointmentDetailPage({
     ? [assignedClinic.name, assignedClinic.city].filter(Boolean).join(" · ")
     : (appointment.locationAddress ?? "No location set");
 
+  // Prefer the booked order-line name ("IE - General Consultation"); fall
+  // back to a label mapped from the raw consultationType enum.
+  const consultationDisplay =
+    appointment.serviceName ?? consultationName(appointment.consultationType);
+
   return (
     <>
       {/* Replaces the opaque id crumb ("cmrtif3u…") with the patient name. */}
@@ -388,7 +394,7 @@ export default async function AdminAppointmentDetailPage({
           </span>
         }
         title={appointment.fullName}
-        description={`${consultationName(appointment.consultationType)} · ${formatDate(appointment.createdAt)}`}
+        description={`${consultationDisplay} · ${formatDate(appointment.createdAt)}`}
         icon={<UserRound aria-hidden />}
         actions={
           <Pill tone={statusToneFor(appointment.status)}>
@@ -484,7 +490,25 @@ export default async function AdminAppointmentDetailPage({
                       value={appointment.phone ?? "No phone provided"}
                     />
                     <FieldRow label="Country" value={appointment.country.toUpperCase()} />
-                    <FieldRow label="Consultation" value={consultationName(appointment.consultationType)} />
+                    <FieldRow label="Consultation" value={consultationDisplay} />
+                    <FieldRow
+                      label="Order"
+                      value={
+                        appointment.orderId ? (
+                          <Link
+                            href={`/admin/orders/${appointment.orderId}`}
+                            className="underline text-[var(--color-brand-primary)]"
+                          >
+                            {formatOrderDisplayId({
+                              id: appointment.orderId,
+                              orderNumber: appointment.orderNumber,
+                            })}
+                          </Link>
+                        ) : (
+                          "No linked order"
+                        )
+                      }
+                    />
                     <FieldRow
                       label="Payment"
                       value={
