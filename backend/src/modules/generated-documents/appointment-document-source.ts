@@ -10,6 +10,7 @@ import {
   buildPatientIdLine,
 } from "./generated-documents-fields.js";
 import { formatDateDdMmYyyy } from "./document-template-utils.js";
+import { labelsForPrefix } from "./docx-template-labels.js";
 import { templatePrefixForCountry } from "./docx-template-profiles.js";
 
 function buildAddressBlock(
@@ -82,10 +83,22 @@ export async function resolveAppointmentDocumentSource(
     select: { name: true },
   });
 
-  const doctorName = formatDoctorForDocument(appt.doctor?.fullName?.trim() || "Global Health");
+  // Honorific matches the market the document is issued in ("Dr" in IE, "Dr."
+  // in PT/ES/RO, "MUDr." in CZ). The Global Health fallback is the brand, not a
+  // person, so it never takes one.
+  const templatePrefix = templatePrefixForCountry(appt.countryCode) ?? "IR";
+  const labels = labelsForPrefix(templatePrefix);
+  const doctorFullName = appt.doctor?.fullName?.trim();
+  const doctorName = doctorFullName
+    ? formatDoctorForDocument(doctorFullName, labels.doctorHonorific)
+    : "Global Health";
 
   const registration = await resolveDoctorRegistrationForAppointment(doctorId, appt.countryCode);
-  const formatted = formatRegistrationLine(registration, appt.countryCode);
+  const formatted = formatRegistrationLine(
+    registration,
+    appt.countryCode,
+    labels.registrationNotOnFile,
+  );
   const registrationLine = formatted.line;
   const registrationVerified = formatted.verified;
   const registrationMissing = formatted.missing;
