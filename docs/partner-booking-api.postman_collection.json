@@ -1,0 +1,234 @@
+{
+  "info": {
+    "name": "Partner Booking API v1",
+    "description": "External booking API. Run the requests in order — each one captures the ids the next request needs into collection variables, so you only ever type the API key.\n\nIMPORTANT: use the backend origin as {{baseUrl}}. The public www domain does NOT proxy /api/partner/** and will return 404.\n\nRequest 4 (Create booking) creates a REAL booking against the live database: it claims a slot, creates or reuses a patient account from the email, raises an order, and sends the patient a payment link plus portal access, and notifies the doctor. Do not run it casually.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      { "key": "key", "value": "X-Api-Key", "type": "string" },
+      { "key": "value", "value": "{{apiKey}}", "type": "string" },
+      { "key": "in", "value": "header", "type": "string" }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://backend-global-health-website.up.railway.app",
+      "type": "string"
+    },
+    { "key": "apiKey", "value": "", "type": "string" },
+    { "key": "countryCode", "value": "pt", "type": "string" },
+    { "key": "serviceId", "value": "cmr85urxe003qckjue95r99ls", "type": "string" },
+    { "key": "doctorId", "value": "cmphk7g9g000yasjuqr5fgznn", "type": "string" },
+    { "key": "timeSlotId", "value": "", "type": "string" },
+    { "key": "patientEmail", "value": "postman-test@example.com", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "0 · Countries",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/partner/v1/countries",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "partner", "v1", "countries"]
+        },
+        "description": "Markets this key may operate in, with each market's IANA timezone and currency. Start here."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('200 OK', () => pm.response.to.have.status(200));",
+              "const b = pm.response.json();",
+              "pm.test('envelope ok', () => pm.expect(b.ok).to.be.true);",
+              "const list = b.data.countries;",
+              "console.log('countries:', list.map(c => c.code + ' (' + c.timezone + ')').join(', '));",
+              "const want = list.find(c => c.code === pm.collectionVariables.get('countryCode'));",
+              "if (want) { console.log('using', want.name, '->', want.timezone); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "1 · Catalogue",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/partner/v1/countries/{{countryCode}}/catalog",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "partner", "v1", "countries", "{{countryCode}}", "catalog"]
+        },
+        "description": "Services sellable in this market, their price, and the doctors providing each. Auto-selects the first bookable service + doctor into {{serviceId}} / {{doctorId}}."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('200 OK', () => pm.response.to.have.status(200));",
+              "const b = pm.response.json();",
+              "const services = b.data.services;",
+              "pm.test('has services', () => pm.expect(services.length).to.be.above(0));",
+              "",
+              "const bookable = services.filter(s => s.isBookable && s.doctors.length > 0);",
+              "console.log('bookable:', bookable.length, '/', services.length);",
+              "bookable.slice(0, 10).forEach(s =>",
+              "  console.log(' -', s.slug, s.basePriceCents, s.currencyCode, '| ' + s.durationMinutes + 'min', '| doctors:', s.doctors.length));",
+              "",
+              "if (bookable.length) {",
+              "  const pick = bookable[0];",
+              "  pm.collectionVariables.set('serviceId', pick.id);",
+              "  pm.collectionVariables.set('doctorId', pick.doctors[0].id);",
+              "  console.log('selected ->', pick.slug, '/', pick.doctors[0].fullName);",
+              "  if (pick.peakPricingEnabled) {",
+              "    console.log('NOTE: peak pricing is on — basePriceCents is not the charged price. Use the slot price.');",
+              "  }",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 · Availability",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/partner/v1/availability?countryCode={{countryCode}}&serviceId={{serviceId}}&doctorId={{doctorId}}&days=14",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "partner", "v1", "availability"],
+          "query": [
+            { "key": "countryCode", "value": "{{countryCode}}" },
+            { "key": "serviceId", "value": "{{serviceId}}" },
+            { "key": "doctorId", "value": "{{doctorId}}" },
+            { "key": "days", "value": "14", "description": "1-30, default 14" }
+          ]
+        },
+        "description": "Open slots for that service + doctor. All instants are UTC; render them in clinicTimezone. Captures the first slot id into {{timeSlotId}}."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('200 OK', () => pm.response.to.have.status(200));",
+              "const b = pm.response.json();",
+              "const d = b.data;",
+              "console.log('timezone:', d.clinicTimezone, '| service:', d.service.slug, '| doctor:', d.doctor.fullName);",
+              "console.log('slots found:', d.slots.length);",
+              "",
+              "d.slots.slice(0, 8).forEach(s => {",
+              "  const local = new Date(s.startAt).toLocaleString('en-GB', { timeZone: d.clinicTimezone });",
+              "  console.log(' -', s.startAt, '(' + local + ' local)', s.priceCents, s.currencyCode, s.pricingType);",
+              "});",
+              "",
+              "if (d.slots.length) {",
+              "  pm.collectionVariables.set('timeSlotId', d.slots[0].id);",
+              "  console.log('timeSlotId set ->', d.slots[0].id);",
+              "} else {",
+              "  console.log('No slots. The doctor has no published availability in this window, or it is all booked.');",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 · Create booking  ⚠ REAL",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"countryCode\": \"{{countryCode}}\",\n  \"serviceId\": \"{{serviceId}}\",\n  \"doctorId\": \"{{doctorId}}\",\n  \"timeSlotId\": \"{{timeSlotId}}\",\n  \"consultationMode\": \"ONLINE\",\n  \"patient\": {\n    \"email\": \"{{patientEmail}}\",\n    \"fullName\": \"Postman Test\",\n    \"phone\": \"+351 912345678\"\n  },\n  \"notes\": \"Created via Postman while testing the partner API\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/partner/v1/bookings",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "partner", "v1", "bookings"]
+        },
+        "description": "⚠ Creates a REAL booking: claims the slot, creates or reuses a patient account from the email, raises an unpaid order, emails the patient a payment link and portal access, and notifies the doctor.\n\nUse an email you control. A repeated send returns 409 (the slot is the idempotency key), not a duplicate booking."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "  const d = pm.response.json().data;",
+              "  console.log('booking:', d.bookingId, '| order:', d.orderId);",
+              "  console.log('scheduled:', d.scheduledAt, '|', d.amountCents, d.currencyCode, '|', d.paymentStatus);",
+              "  console.log('payment url:', d.paymentUrl || '(none — card payment not configured for this country)');",
+              "  console.log('notifications queued:', d.notificationsQueued);",
+              "  pm.collectionVariables.set('lastBookingId', d.bookingId);",
+              "} else if (pm.response.code === 409) {",
+              "  console.log('409 — slot gone or this is a replay. Re-run request 2 and retry.');",
+              "} else if (pm.response.code === 422) {",
+              "  console.log('422 —', pm.response.json().message);",
+              "} else if (pm.response.code === 400) {",
+              "  console.log('400 —', JSON.stringify(pm.response.json().details));",
+              "}",
+              "pm.test('201 Created', () => pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Negative · No API key (expect 401)",
+      "request": {
+        "auth": { "type": "noauth" },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/partner/v1/countries",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "partner", "v1", "countries"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('401 without a key', () => pm.response.to.have.status(401));"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Negative · Unknown country (expect 404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/partner/v1/countries/zz/catalog",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "partner", "v1", "countries", "zz", "catalog"]
+        },
+        "description": "Also what an out-of-scope country returns — 404, not 403, so a scoped key cannot enumerate other markets."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('404 for unknown country', () => pm.response.to.have.status(404));"]
+          }
+        }
+      ]
+    }
+  ]
+}
