@@ -53,8 +53,32 @@ function safeHttpUrl(url: string | undefined | null): string | null {
 // display zone.
 const formatDate = formatAppDateTime;
 
-/** The zone every admin surface renders in — `formatAppDateTime`'s default. */
+/** Clinic zone — the fallback for legacy bookings with no captured patient tz. */
 const CLINIC_TZ = "Europe/Dublin";
+
+// Human name for the raw consultationType enum, matching the patient-facing
+// labels in locales/en/account.json (the admin API only returns the enum).
+// Falls back to a title-cased form for any unmapped value.
+const CONSULTATION_NAMES: Record<string, string> = {
+  general: "GP consultation",
+  specialist: "Specialist consultation",
+  prescription: "Online prescription",
+  health_test: "Health test",
+  home_delivery: "Home delivery",
+};
+
+function consultationName(type: string): string {
+  const key = type.toLowerCase().replace(/[\s-]+/g, "_");
+  return (
+    CONSULTATION_NAMES[key] ??
+    type
+      .replace(/[-_]/g, " ")
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(" ")
+  );
+}
 
 function statusToneFor(status: string): PillTone {
   if (status === "COMPLETED") return "published";
@@ -364,7 +388,7 @@ export default async function AdminAppointmentDetailPage({
           </span>
         }
         title={appointment.fullName}
-        description={`${appointment.consultationType} · ${formatDate(appointment.createdAt)}`}
+        description={`${consultationName(appointment.consultationType)} · ${formatDate(appointment.createdAt)}`}
         icon={<UserRound aria-hidden />}
         actions={
           <Pill tone={statusToneFor(appointment.status)}>
@@ -460,7 +484,7 @@ export default async function AdminAppointmentDetailPage({
                       value={appointment.phone ?? "No phone provided"}
                     />
                     <FieldRow label="Country" value={appointment.country.toUpperCase()} />
-                    <FieldRow label="Consultation type" value={appointment.consultationType} />
+                    <FieldRow label="Consultation" value={consultationName(appointment.consultationType)} />
                     <FieldRow
                       label="Payment"
                       value={
@@ -485,29 +509,19 @@ export default async function AdminAppointmentDetailPage({
                       label="Mode"
                       value={isInPerson ? "In person (at a clinic)" : "Online (video call)"}
                     />
-                    {/* A bare wall clock is ambiguous across admins, so the
-                        zone is spelled out — plus the patient's own local
-                        time when they booked from a different zone. */}
+                    {/* Rendered in the timezone the patient booked in and
+                        named by country — the exact string their booking
+                        notifications show. Falls back to the clinic zone for
+                        legacy bookings that captured no patient timezone. */}
                     <FieldRow
                       label="Scheduled call"
                       value={
-                        appointment.scheduledAt ? (
-                          <>
-                            {formatAppDateTimeWithZone(appointment.scheduledAt)} clinic time
-                            {appointment.patientTimezone &&
-                            appointment.patientTimezone !== CLINIC_TZ ? (
-                              <span className="mt-0.5 block text-portal-compact text-[var(--color-text-muted)]">
-                                {formatAppDateTimeWithZone(
-                                  appointment.scheduledAt,
-                                  appointment.patientTimezone,
-                                )}{" "}
-                                patient time
-                              </span>
-                            ) : null}
-                          </>
-                        ) : (
-                          "Not scheduled yet"
-                        )
+                        appointment.scheduledAt
+                          ? formatAppDateTimeWithZone(
+                              appointment.scheduledAt,
+                              appointment.patientTimezone ?? CLINIC_TZ,
+                            )
+                          : "Not scheduled yet"
                       }
                     />
                     {isInPerson ? (
