@@ -259,6 +259,13 @@ enum AuditAction {
   HEALTH_TEST_REDEEMED
   // --- Orders ---
   ORDER_REFUNDED
+  // --- Partner booking API (§ external integrations) ---
+  /// An admin minted a PartnerApiClient credential. The audit row carries the
+  /// key PREFIX only — the plaintext key is never persisted or logged.
+  PARTNER_API_CLIENT_CREATED
+  /// An admin revoked a PartnerApiClient. Soft-revoke, so the client id in
+  /// older booking audit rows stays resolvable.
+  PARTNER_API_CLIENT_REVOKED
 }
 
 enum CountryAccessModel {
@@ -4791,4 +4798,41 @@ model MigrationUnresolved {
 
   @@index([stage])
   @@index([sourceColl, legacyId])
+}
+
+/// A machine-to-machine caller of the partner booking API
+/// (`/api/partner/v1/*`). One row per integrator, so a key can be revoked
+/// without disturbing anyone else.
+///
+/// The plaintext key is shown EXACTLY ONCE, at mint time, and never stored:
+/// `keyHash` is the SHA-256 hex of the full key. Because the key is 32 bytes
+/// of CSPRNG entropy, a plain hash is sufficient (there is no low-entropy
+/// password to brute-force) and lets auth do a single indexed lookup instead
+/// of scanning + comparing every row. `keyPrefix` is the non-secret leading
+/// fragment, kept solely so the admin list can say which key is which.
+model PartnerApiClient {
+  id          String  @id @default(cuid())
+  /// Human label for the integrator, e.g. "Acme Clinic CRM".
+  name        String
+  /// Non-secret display fragment of the key (`ghp_live_abcd1234…`).
+  keyPrefix   String
+  /// SHA-256 hex of the full plaintext key. Unique = the auth lookup index.
+  keyHash     String  @unique
+  /// Country codes this client may read + book in. EMPTY = every active
+  /// country. Enforced server-side on all three endpoints, so a leaked key
+  /// scoped to `pt` cannot create Irish bookings.
+  allowedCountryCodes String[] @default([])
+  /// Soft kill-switch. Revoking sets this false rather than deleting, so the
+  /// AuditLog rows that reference this client id stay resolvable.
+  isActive    Boolean @default(true)
+  /// Observability for key rotation — "is this key still in use?"
+  lastUsedAt  DateTime?
+  revokedAt   DateTime?
+  /// User.id of the admin who minted it. Not an FK: an admin being deleted
+  /// must never cascade-delete a live integration's credentials.
+  createdByUserId String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive])
 }
